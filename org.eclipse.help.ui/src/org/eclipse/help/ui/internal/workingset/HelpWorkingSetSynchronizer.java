@@ -20,17 +20,12 @@ import org.eclipse.ui.*;
 public class HelpWorkingSetSynchronizer
 	implements IPropertyChangeListener, PropertyChange.IPropertyChangeListener {
 
-	private IWorkingSetManager eclipseWorkingSetManager;
-	private WorkingSetManager helpWorkingSetManager;
 	private ArrayList workingSets;
 
 	/**
 	 * Constructor
 	 */
 	public HelpWorkingSetSynchronizer() {
-		eclipseWorkingSetManager =
-			PlatformUI.getWorkbench().getWorkingSetManager();
-		helpWorkingSetManager = HelpSystem.getWorkingSetManager();
 		workingSets = new ArrayList();
 	}
 	/**
@@ -43,18 +38,18 @@ public class HelpWorkingSetSynchronizer
 
 			// add the help working set
 			IWorkingSet iws = (IWorkingSet) event.getNewValue();
-			WorkingSet ws = helpWorkingSetManager.getWorkingSet(iws.getName());
+			WorkingSet ws = getHelpWorkingSetManager().getWorkingSet(iws.getName());
 			if (ws == null && isHelpWorkingSet(iws)) {
 				HelpWorkingSet hws = new HelpWorkingSet(iws);
 				workingSets.add(hws);
-				helpWorkingSetManager.addWorkingSet(hws.getWorkingSet());
+				getHelpWorkingSetManager().addWorkingSet(hws.getWorkingSet());
 			}
 			// see if this is happening upon workbench startup 
 			if (ws != null && findWorkingSet(iws) == null) {
-				eclipseWorkingSetManager.removeWorkingSet(iws);
+				getEclipseWorkingSetManager().removeWorkingSet(iws);
 				HelpWorkingSet hws = new HelpWorkingSet(ws);
 				workingSets.add(hws);
-				eclipseWorkingSetManager.addWorkingSet(hws.getIWorkingSet());
+				getEclipseWorkingSetManager().addWorkingSet(hws.getIWorkingSet());
 			}
 		} else if (
 			event.getProperty().equals(
@@ -62,12 +57,12 @@ public class HelpWorkingSetSynchronizer
 
 			// remove the help working set
 			IWorkingSet iws = (IWorkingSet) event.getOldValue();
-			WorkingSet ws = helpWorkingSetManager.getWorkingSet(iws.getName());
+			WorkingSet ws = getHelpWorkingSetManager().getWorkingSet(iws.getName());
 			if (ws != null) {
 				HelpWorkingSet hws = findWorkingSet(iws);
 				if (hws != null)
 					workingSets.remove(hws);
-				helpWorkingSetManager.removeWorkingSet(ws);
+				getHelpWorkingSetManager().removeWorkingSet(ws);
 			}
 		} else if (
 			event.getProperty().equals(
@@ -110,11 +105,11 @@ public class HelpWorkingSetSynchronizer
 
 			// add an eclipse working set
 			WorkingSet ws = (WorkingSet) event.getNewValue();
-			IWorkingSet iws = eclipseWorkingSetManager.getWorkingSet(ws.getName());
+			IWorkingSet iws = getEclipseWorkingSetManager().getWorkingSet(ws.getName());
 			if (iws == null) {
 				HelpWorkingSet hws = new HelpWorkingSet(ws);
 				workingSets.add(hws);
-				eclipseWorkingSetManager.addWorkingSet(hws.getIWorkingSet());
+				getEclipseWorkingSetManager().addWorkingSet(hws.getIWorkingSet());
 			} else if (findWorkingSet(ws) == null) {
 				HelpWorkingSet hws = new HelpWorkingSet(ws, iws);
 				workingSets.add(hws);
@@ -126,12 +121,12 @@ public class HelpWorkingSetSynchronizer
 			// remove the eclipse working set
 			WorkingSet ws = (WorkingSet) event.getOldValue();
 			IWorkingSet iws =
-				eclipseWorkingSetManager.getWorkingSet(ws.getName());
+				getEclipseWorkingSetManager().getWorkingSet(ws.getName());
 			if (iws != null) {
 				HelpWorkingSet hws = findWorkingSet(ws);
 				if (hws != null)
 					workingSets.remove(hws);
-				eclipseWorkingSetManager.removeWorkingSet(iws);
+				getEclipseWorkingSetManager().removeWorkingSet(iws);
 			}
 		} else if (
 			event.getProperty().equals(
@@ -158,7 +153,7 @@ public class HelpWorkingSetSynchronizer
 
 	private IWorkingSet createEclipseWorkingSet(WorkingSet ws) {
 		IWorkingSet w =
-			eclipseWorkingSetManager.createWorkingSet(
+			getEclipseWorkingSetManager().createWorkingSet(
 				ws.getName(),
 				ws.getElements());
 		if (w instanceof org.eclipse.ui.internal.WorkingSet)
@@ -172,7 +167,7 @@ public class HelpWorkingSetSynchronizer
 		if (!isHelpWorkingSet(ws))
 			return null;
 
-		return helpWorkingSetManager.createWorkingSet(
+		return getHelpWorkingSetManager().createWorkingSet(
 			ws.getName(),
 			getElements(ws));
 	}
@@ -212,5 +207,13 @@ public class HelpWorkingSetSynchronizer
 				return hws;
 		}
 		return null;
+	}
+
+	private IWorkingSetManager getEclipseWorkingSetManager() {
+		return PlatformUI.getWorkbench().getWorkingSetManager();
+	}
+
+	private WorkingSetManager getHelpWorkingSetManager() {
+		return HelpSystem.getWorkingSetManager();
 	}
 }
