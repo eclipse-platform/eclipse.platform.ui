@@ -430,7 +430,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 			interestingResources = new IResource[resources.size()];
 			resources.copyInto(interestingResources);
 
-			String[] interestingPathnames = new String[] {"1/", "1/1/", "1/1/1/", "1/1/1/1", "1/1/2/1/", "1/1/2/2/", "1/1/2/3/", "1/2/", "1/2/1", "1/2/2", "1/2/3/", "1/2/3/1", "1/2/3/2", "1/2/3/3", "1/2/3/4", "2", "2/1", "2/2", "2/3", "2/4", "2/1/", "2/2/", "2/3/", "2/4/", "..", "."};
+			String[] interestingPathnames = new String[] {"1/", "1/1/", "1/1/1/", "1/1/1/1", "1/1/2/1/", "1/1/2/2/", "1/1/2/3/", "1/2/", "1/2/1", "1/2/2", "1/2/3/", "1/2/3/1", "1/2/3/2", "1/2/3/3", "1/2/3/4", "2", "2/1", "2/2", "2/3", "2/4", "2/1/", "2/2/", "2/3/", "2/4/", ".."};
 			interestingPaths = new IPath[interestingPathnames.length];
 			for (int i = 0; i < interestingPathnames.length; i++) {
 				interestingPaths[i] = new Path(interestingPathnames[i]);
@@ -614,16 +614,15 @@ public class IResourceTest extends EclipseWorkspaceTest {
 				} else if (visitor == deepVisitor) {
 					if (resource.getType() == IResource.FILE) {
 						return visitedResources.size() == 1 && visitedResources.elementAt(0).equals(resource);
-					} else {
-						IContainer container = (IContainer) resource;
-						int memberCount = 0;
-						try {
-							memberCount = memberCount + container.members().length;
-						} catch (CoreException ex) {
-							return false;
-						}
-						return visitedResources.size() >= memberCount + 1 && visitedResources.elementAt(0).equals(resource);
 					}
+					IContainer container = (IContainer) resource;
+					int memberCount = 0;
+					try {
+						memberCount = memberCount + container.members().length;
+					} catch (CoreException ex) {
+						return false;
+					}
+					return visitedResources.size() >= memberCount + 1 && visitedResources.elementAt(0).equals(resource);
 				} else {
 					return false;
 				}
@@ -907,17 +906,17 @@ public class IResourceTest extends EclipseWorkspaceTest {
 				final boolean[] hasUnsynchronizedResources = new boolean[] {false};
 				try {
 					resource.accept(new IResourceVisitor() {
-						public boolean visit(IResource resource) throws CoreException {
-							File target = resource.getLocation().toFile();
-							if (target.exists() != resource.exists()) {
+						public boolean visit(IResource toVisit) throws CoreException {
+							File target = toVisit.getLocation().toFile();
+							if (target.exists() != toVisit.exists()) {
 								hasUnsynchronizedResources[0] = true;
 								return false;
 							}
-							if (target.isFile() != (resource.getType() == IResource.FILE)) {
+							if (target.isFile() != (toVisit.getType() == IResource.FILE)) {
 								hasUnsynchronizedResources[0] = true;
 								return false;
 							}
-							if (unsynchronizedResources.contains(resource)) {
+							if (unsynchronizedResources.contains(toVisit)) {
 								hasUnsynchronizedResources[0] = true;
 								return false;
 							}
@@ -926,7 +925,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 							String[] list = target.list();
 							if (list == null)
 								return true;
-							IContainer container = (IContainer) resource;
+							IContainer container = (IContainer) toVisit;
 							for (int i = 0; i < list.length; i++) {
 								File file = new File(target, list[i]);
 								IResource child = file.isFile() ? (IResource) container.getFile(new Path(list[i])) : container.getFolder(new Path(list[i]));
@@ -1571,7 +1570,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		}
 
 		interestingResources = buildInterestingResources();
-		Object[][] args = new Object[][] {interestingResources, interestingResources, interestingStates(), interestingDepths()};
+		Object[][] inputs = new Object[][] {interestingResources, interestingResources, interestingStates(), interestingDepths()};
 		new TestPerformer("IResourceTest.testRefreshLocal") {
 
 			public void cleanUp(Object[] args, int count) {
@@ -1623,7 +1622,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 						return false;
 				}
 			}
-		}.performTest(args);
+		}.performTest(inputs);
 	}
 
 	/**
@@ -1729,7 +1728,10 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		project.open(null);
 		assertEquals(stamp, file.getModificationStamp());
 	}
-
+	/**
+	 * Tests IResource.isReadOnly and setReadOnly
+	 * @deprecated This test is for deprecated API
+	 */
 	public void testReadOnly() {
 		// We need to know whether or not we can unset the read-only flag
 		// in order to perform this test.
@@ -1778,7 +1780,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		}
 
 		interestingResources = buildInterestingResources();
-		Object[][] args = new Object[][] {interestingResources, interestingResources, interestingStates(), interestingDepths()};
+		Object[][] inputs = new Object[][] {interestingResources, interestingResources, interestingStates(), interestingDepths()};
 		new TestPerformer("IResourceTest.testRefreshLocal") {
 
 			public void cleanUp(Object[] args, int count) {
@@ -1810,7 +1812,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 				int depth = ((Integer) args[3]).intValue();
 				return checkAfterState(receiver, target, state, depth);
 			}
-		}.performTest(args);
+		}.performTest(inputs);
 	}
 
 	public void testRefreshLocalWithDepth() {
@@ -1870,7 +1872,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 
 		interestingResources = buildInterestingResources();
 		Long[] interestingTimes = new Long[] {new Long(-1), new Long(System.currentTimeMillis() - 1000), new Long(System.currentTimeMillis() - 100), new Long(System.currentTimeMillis()), new Long(Integer.MAX_VALUE * 512L)};
-		Object[][] args = new Object[][] {interestingResources, interestingTimes};
+		Object[][] inputs = new Object[][] {interestingResources, interestingTimes};
 		new TestPerformer("IResourceTest.testRefreshLocal") {
 
 			public void cleanUp(Object[] args, int count) {
@@ -1900,7 +1902,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 					return false;
 				return true;
 			}
-		}.performTest(args);
+		}.performTest(inputs);
 	}
 
 	/**
