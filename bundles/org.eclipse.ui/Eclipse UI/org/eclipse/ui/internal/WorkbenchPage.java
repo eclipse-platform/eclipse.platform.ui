@@ -1682,6 +1682,8 @@ public void openSystemEditor(IFile input)
  */
 private boolean partChangeAffectsZoom(IWorkbenchPart part) {
 	PartPane pane = ((PartSite)part.getSite()).getPane();
+	if (pane instanceof MultiEditorInnerPane)
+		pane = ((MultiEditorInnerPane)pane).getParentPane();
 	return getActivePerspective().getPresentation().partChangeAffectsZoom(pane);
 }
 /**
