@@ -30,6 +30,10 @@ import org.eclipse.ui.internal.*;
 public class DecoratorManager
 	implements ILabelDecorator, ILabelProviderListener, IDecoratorManager {
 
+	/**
+	 * The family for the decorate job.
+	 */
+	public static final Object FAMILY_DECORATE = new Object();
 	private DecorationScheduler scheduler;
 
 	private LightweightDecoratorManager lightweightManager;
@@ -41,6 +45,9 @@ public class DecoratorManager
 	private HashMap cachedFullDecorators = new HashMap();
 	//The full definitions read from the registry
 	private FullDecoratorDefinition[] fullDefinitions;
+	
+	private FullTextDecoratorRunnable fullTextRunnable = new FullTextDecoratorRunnable();
+	private FullImageDecoratorRunnable fullImageRunnable = new FullImageDecoratorRunnable();
 
 	private static final FullDecoratorDefinition[] EMPTY_FULL_DEF =
 		new FullDecoratorDefinition[0];
@@ -198,7 +205,7 @@ public class DecoratorManager
 		FullDecoratorDefinition[] decorators = getDecoratorsFor(element);
 		for (int i = 0; i < decorators.length; i++) {
 			if (decorators[i].getEnablement().isEnabledFor(element)) {
-				String newResult = decorators[i].decorateText(result, element);
+				String newResult = safeDecorateText(element, result, decorators[i]);
 				if (newResult != null)
 					result = newResult;
 			}
@@ -209,8 +216,7 @@ public class DecoratorManager
 			for (int i = 0; i < decorators.length; i++) {
 				if (decorators[i].isAdaptable()
 					&& decorators[i].getEnablement().isEnabledFor(adapted)) {
-					String newResult =
-						decorators[i].decorateText(result, adapted);
+					String newResult = safeDecorateText(adapted, result, decorators[i]);
 					if (newResult != null)
 						result = newResult;
 				}
@@ -218,6 +224,20 @@ public class DecoratorManager
 		}
 
 		return result;
+	}
+
+	/**
+	 * Decorate the text in a SafeRunnable.
+	 * @param element The element we are decorating
+	 * @param start The currently decorated String
+	 * @param decorator The decorator to run.
+	 * @return
+	 */
+	private String safeDecorateText(Object element, String start, FullDecoratorDefinition decorator) {
+		fullTextRunnable.setValues(start,element,decorator);
+		Platform.run(fullTextRunnable);
+		String newResult = fullTextRunnable.getResult();
+		return newResult;
 	}
 
 	/**
@@ -236,7 +256,7 @@ public class DecoratorManager
 
 		for (int i = 0; i < decorators.length; i++) {
 			if (decorators[i].getEnablement().isEnabledFor(element)) {
-				Image newResult = decorators[i].decorateImage(result, element);
+				Image newResult = safeDecorateImage(element,result,decorators[i]);
 				if (newResult != null)
 					result = newResult;
 			}
@@ -249,8 +269,7 @@ public class DecoratorManager
 			for (int i = 0; i < decorators.length; i++) {
 				if (decorators[i].isAdaptable()
 					&& decorators[i].getEnablement().isEnabledFor(adapted)) {
-					Image newResult =
-						decorators[i].decorateImage(result, adapted);
+					Image newResult = safeDecorateImage(adapted,result,decorators[i]);
 					if (newResult != null)
 						result = newResult;
 				}
@@ -258,6 +277,20 @@ public class DecoratorManager
 		}
 
 		return result;
+	}
+	
+	/**
+	 * Decorate the image in a SafeRunnable.
+	 * @param element The element we are decorating
+	 * @param start The currently decorated Image
+	 * @param decorator The decorator to run.
+	 * @return Image
+	 */
+	private Image safeDecorateImage(Object element, Image start, FullDecoratorDefinition decorator) {
+		fullImageRunnable.setValues(start,element,decorator);
+		Platform.run(fullImageRunnable);
+		Image newResult = fullImageRunnable.getResult();
+		return newResult;
 	}
 
 	/**

@@ -210,6 +210,13 @@ public abstract class DecoratorDefinition {
 
 		//If there is an error then reset the enabling to false
 		WorkbenchPlugin.getDefault().getLog().log(exception.getStatus());
+		crashDisable();
+	}
+
+	/**
+	 * A crash has occured. Disable the receiver without notification.
+	 */
+	public void crashDisable() {
 		this.enabled = false;
 	}
 
@@ -217,5 +224,6 @@ public abstract class DecoratorDefinition {
 	 * Return whether or not this is a full or lightweight definition.
 	 */
 	public abstract boolean isFull();
+	
 
 }

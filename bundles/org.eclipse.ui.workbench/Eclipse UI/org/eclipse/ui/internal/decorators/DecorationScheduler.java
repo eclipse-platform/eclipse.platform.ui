@@ -309,6 +309,13 @@ public class DecorationScheduler {
 				monitor.done();
 				return Status.OK_STATUS;
 			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
+			 */
+			public boolean belongsTo(Object family) {
+				return DecoratorManager.FAMILY_DECORATE == family;
+			}
 		};
 
 		decorationJob.setPriority(Job.DECORATE);
@@ -371,4 +378,6 @@ public class DecorationScheduler {
 
 		return job;
 	}
+	
+
 }

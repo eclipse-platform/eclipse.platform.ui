@@ -22,7 +22,7 @@ import org.eclipse.ui.internal.misc.StatusUtil;
  * The LightweightDecoratorManager is a decorator manager
  * that encapsulates the behavior for the lightweight decorators.
  */
-class LightweightDecoratorManager {
+class LightweightDecoratorManager {	
 
 	/**
 	 * The runnable is the object used to run the decorations
@@ -51,6 +51,7 @@ class LightweightDecoratorManager {
 		public void handleException(Throwable exception) {
 			IStatus status = StatusUtil.newStatus(IStatus.ERROR,exception.getMessage(),exception);
 			WorkbenchPlugin.log("Exception in Decorator",status); //$NON-NLS-1$
+			decorator.crashDisable();
 		}
 		/*
 		 * @see ISafeRunnable.run
