@@ -113,7 +113,6 @@ public class DecoratorDefinition {
 		if (decorator == null) {
 			this.decoratorCreationFailed = true;
 			this.enabled = false;
-			return null;
 		}
 
 		if (exceptions[0] != null)
