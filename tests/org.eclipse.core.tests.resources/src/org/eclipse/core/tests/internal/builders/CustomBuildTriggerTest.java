@@ -99,6 +99,14 @@ public class CustomBuildTriggerTest extends AbstractBuilderTest {
 		assertTrue("2.0", builder == null);
 
 		try {
+			project.build(IncrementalProjectBuilder.CLEAN_BUILD, getMonitor());
+		} catch (CoreException e) {
+			fail("2.91", e);
+		}
+		builder = CustomTriggerBuilder.getInstance();
+		assertTrue("2.1", builder == null);
+
+		try {
 			project.touch(getMonitor());
 			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
 		} catch (CoreException e) {
@@ -140,12 +148,19 @@ public class CustomBuildTriggerTest extends AbstractBuilderTest {
 		assertTrue("6.1", builder.wasFullBuild());
 
 		try {
-			project.touch(getMonitor());
-			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
+			project.build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
 		} catch (CoreException e) {
 			fail("7.99", e);
 		}
-		assertTrue("7.1", builder.wasIncrementalBuild());
+		builder = CustomTriggerBuilder.getInstance();
+		assertTrue("7.1", builder.wasFullBuild());
+
+		try {
+			project.build(IncrementalProjectBuilder.CLEAN_BUILD, getMonitor());
+		} catch (CoreException e) {
+			fail("8.99", e);
+		}
+		assertTrue("8.1", builder.wasCleanBuild());
 }	
 	/**
 	 * Tests that a builder that does not declare itself as configurable

@@ -46,6 +46,15 @@ public class CustomTriggerBuilder extends TestBuilder {
 		return super.build(kind, args, monitor);
 	}
 
+	protected void clean(IProgressMonitor monitor) throws CoreException {
+		super.clean(monitor);
+		triggerForLastBuild = IncrementalProjectBuilder.CLEAN_BUILD;
+	}
+	
+	public boolean wasCleanBuild() {
+		return triggerForLastBuild == IncrementalProjectBuilder.CLEAN_BUILD;
+	}
+	
 	public boolean wasFullBuild() {
 		return triggerForLastBuild == IncrementalProjectBuilder.FULL_BUILD;
 	}
