@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
@@ -866,6 +867,7 @@ public class DebugPlugin extends Plugin {
 				v = fRunnables;
 				fRunnables = new Vector(5);
 			}
+			MultiStatus failed = null;
 			monitor.beginTask(DebugCoreMessages.getString("DebugPlugin.Debug_async_queue_1"), v.size()); //$NON-NLS-1$
 			Iterator iter = v.iterator();
 			while (iter.hasNext() && !fShuttingDown && !monitor.isCanceled()) {
@@ -873,12 +875,18 @@ public class DebugPlugin extends Plugin {
 				try {
 					r.run();
 				} catch (Exception e) {
-					log(e);
+					if (failed == null) {
+						failed = new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.getString("DebugPlugin.0"), null); //$NON-NLS-1$
+					}
+					failed.add(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.getString("DebugPlugin.0"), e)); //$NON-NLS-1$
 				}
 				monitor.worked(1);
 			}
 			monitor.done();
-			return Status.OK_STATUS;
+			if (failed == null) {
+				return Status.OK_STATUS;
+			}
+			return failed;
 		}
 
 	}
