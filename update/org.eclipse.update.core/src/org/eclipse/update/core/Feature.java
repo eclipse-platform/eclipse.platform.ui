@@ -183,18 +183,7 @@ public class Feature extends FeatureModel implements IFeature {
 		}
 
 	}
-	/*
-	 * @see IFeature#isExecutable()
-	 */
-	public boolean isExecutable() {
-		return false;
-	}
-	/*
-	 * @see IFeature#isInstallable()
-	 */
-	public boolean isInstallable() {
-		return false;
-	}
+
 
 	/*
 	 * @see IFeature#install(IFeature, IProgressMonitor) throws CoreException
@@ -211,7 +200,7 @@ public class Feature extends FeatureModel implements IFeature {
 			monitor = new InstallMonitor(progress);
 
 		// do the install
-		IFeatureContentConsumer consumer = targetFeature.getContentConsumer();
+		IFeatureContentConsumer consumer = targetFeature.getFeatureContentConsumer();
 
 		try {
 			// determine list of plugins to install
@@ -286,23 +275,6 @@ public class Feature extends FeatureModel implements IFeature {
 
 		return consumer.close();
 
-	}
-
-	/*
-	 * @see IFeature#remove(IProgressMonitor) throws CoreException
-	 */
-	public void remove(IProgressMonitor progress) throws CoreException {
-		// make sure we have an InstallMonitor		
-		InstallMonitor monitor;
-		if (progress == null)
-			monitor = null;
-		else if (progress instanceof InstallMonitor)
-			monitor = (InstallMonitor) progress;
-		else
-			monitor = new InstallMonitor(progress);
-
-		// remove feature from site
-		getSite().remove(this, monitor);
 	}
 
 	/*
@@ -382,7 +354,7 @@ public class Feature extends FeatureModel implements IFeature {
 	/*
 	 * @see IFeature#getContentConsumer()
 	 */
-	public IFeatureContentConsumer getContentConsumer() throws CoreException {
+	public IFeatureContentConsumer getFeatureContentConsumer() throws CoreException {
 		throw new UnsupportedOperationException();
 	}
 

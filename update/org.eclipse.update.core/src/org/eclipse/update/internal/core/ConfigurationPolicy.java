@@ -22,6 +22,8 @@ import org.eclipse.update.core.model.FeatureReferenceModel;
 public class ConfigurationPolicy extends ConfigurationPolicyModel{
 
 
+	private IConfiguredSite configuredSite;
+
 	/**
 	 * Constructor for ConfigurationPolicyModel.
 	 */
@@ -37,6 +39,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 		setPolicy(configPolicy.getPolicy());
 		setConfiguredFeatureReferences(configPolicy.getConfiguredFeatures());
 		setUnconfiguredFeatureReferences(configPolicy.getUnconfiguredFeatures());
+		setConfiguredSite(configPolicy.getConfiguredSite());
 	}
 
 
@@ -76,16 +79,18 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 	 * adds teh feature to teh list of features if the policy is USER_EXCLUDE
 	 */
 	/*package*/
-	boolean unconfigure(IFeatureReference featureReference, IProblemHandler handler) throws CoreException {
+	boolean unconfigure(IFeatureReference featureReference,IProblemHandler handler) throws CoreException {
 
 		if (featureReference==null) return false;
 		
 		boolean unconfigure = true;
 		String uniqueId = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-		MultiStatus multiStatus = new MultiStatus(uniqueId, IStatus.WARNING, "Some plugin of this feature are required by the following running plugins", null);
+		MultiStatus multiStatus = new MultiStatus(uniqueId, IStatus.WARNING, "Some plugins of this feature are required by the following running plugins", null);
 
-		// plugins to remove		
-		IPluginEntry[] pluginsToRemove = ((SiteLocal) SiteManager.getLocalSite()).getUnusedPluginEntries(featureReference.getFeature());
+		// plugins to remove	
+		ISite site = configuredSite.getSite();
+		IFeature feature = featureReference.getFeature();	
+		IPluginEntry[] pluginsToRemove = site.getPluginEntriesOnlyReferencedBy(feature);
 
 		// all other plugins that are configured
 		IPluginDescriptor[] descriptors = Platform.getPluginRegistry().getPluginDescriptors();
@@ -276,5 +281,21 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 	}
 
 
+
+	/**
+	 * Gets the configuredSite.
+	 * @return Returns a IConfiguredSite
+	 */
+	public IConfiguredSite getConfiguredSite() {
+		return configuredSite;
+	}
+
+	/**
+	 * Sets the configuredSite.
+	 * @param configuredSite The configuredSite to set
+	 */
+	public void setConfiguredSite(IConfiguredSite configuredSite) {
+		this.configuredSite = configuredSite;
+	}
 
 }

@@ -131,19 +131,6 @@ public class MissingFeature implements IFeature {
 		return null;
 	}
 
-	/*
-	 * @see IFeature#isExecutable()
-	 */
-	public boolean isExecutable() {
-		return false;
-	}
-
-	/*
-	 * @see IFeature#isInstallable()
-	 */
-	public boolean isInstallable() {
-		return false;
-	}
 
 	/*
 	 * @see IFeature#getArchives()
@@ -247,9 +234,9 @@ public class MissingFeature implements IFeature {
 	}
 
 	/*
-	 * @see IFeature#getContentConsumer()
+	 * @see IFeature#getFeatureContentConsumer()
 	 */
-	public IFeatureContentConsumer getContentConsumer() throws CoreException {
+	public IFeatureContentConsumer getFeatureContentConsumer() throws CoreException {
 		return null;
 	}
 	

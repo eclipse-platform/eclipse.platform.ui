@@ -26,8 +26,8 @@ public class TargetFeature extends Feature {
 		super();
 	}
 
-	/*
-	 * @see IFeature#setContentConsumer(IFeatureContentConsumer)
+	/**
+	 * Sets the content Consumer
 	 */
 	public void setContentConsumer(IFeatureContentConsumer contentConsumer) {
 		this.contentConsumer = contentConsumer;
@@ -35,9 +35,9 @@ public class TargetFeature extends Feature {
 	}
 
 	/*
-	 * @see IFeature#getContentConsumer()
+	 * @see IFeature#getFeatureContentConsumer()
 	 */
-	public IFeatureContentConsumer getContentConsumer() throws CoreException {
+	public IFeatureContentConsumer getFeatureContentConsumer() throws CoreException {
 		if (this.contentConsumer == null) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Feature.NoFeatureContentConsumer", getURL().toExternalForm()), null); //$NON-NLS-1$

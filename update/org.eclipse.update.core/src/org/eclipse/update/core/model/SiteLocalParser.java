@@ -14,8 +14,9 @@ import java.util.ResourceBundle;
 
 import org.apache.xerces.parsers.SAXParser;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.configuration.ILocalSite;
 import org.eclipse.update.core.IFeatureReference;
-import org.eclipse.update.core.ILocalSite;
 import org.eclipse.update.internal.core.Assert;
 import org.eclipse.update.internal.core.BaseSiteLocalFactory;
 import org.eclipse.update.internal.core.InstallConfiguration;
@@ -139,11 +140,11 @@ public class SiteLocalParser extends DefaultHandler {
 		String historyString = attributes.getValue("history");
 		int history;
 		if (historyString == null || historyString.equals("")) {
-			history = ILocalSite.DEFAULT_HISTORY;
+			history = SiteLocalModel.DEFAULT_HISTORY;
 		} else {
 			history = Integer.parseInt(historyString);
 		}
-		site.setMaximumHistory(history);
+		site.setMaximumHistoryCount(history);
 
 		//stamp
 		String stampString = attributes.getValue("stamp");

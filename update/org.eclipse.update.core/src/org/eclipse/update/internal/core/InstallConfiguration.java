@@ -22,14 +22,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.update.core.IFeatureReference;
-import org.eclipse.update.core.IInstallConfiguration;
-import org.eclipse.update.core.IInstallConfigurationChangedListener;
-import org.eclipse.update.core.IProblemHandler;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.configuration.IActivity;
 import org.eclipse.update.configuration.IConfiguredSite;
+import org.eclipse.update.configuration.IInstallConfiguration;
+import org.eclipse.update.configuration.IInstallConfigurationChangedListener;
+import org.eclipse.update.configuration.IProblemHandler;
 import org.eclipse.update.core.model.ConfigurationActivityModel;
-import org.eclipse.update.core.model.ConfigurationSiteModel;
+import org.eclipse.update.core.model.ConfiguredSiteModel;
 import org.eclipse.update.core.model.InstallConfigurationModel;
 import org.eclipse.update.core.model.InstallConfigurationParser;
 
@@ -64,7 +64,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		// do not copy list of listeners nor activities
 		// ake a copy of the siteConfiguration object
 		if (config != null) {
-			IConfiguredSite[] sites = config.getConfigurationSites();
+			IConfiguredSite[] sites = config.getConfiguredSites();
 			if (sites != null) {
 				for (int i = 0; i < sites.length; i++) {
 					ConfiguredSite configSite = new ConfiguredSite(sites[i]);
@@ -82,8 +82,8 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	/**
 	 * 
 	 */
-	public IConfiguredSite[] getConfigurationSites() {
-		ConfigurationSiteModel[] result = getConfigurationSitesModel();
+	public IConfiguredSite[] getConfiguredSites() {
+		ConfiguredSiteModel[] result = getConfigurationSitesModel();
 		if (result.length == 0)
 			return new IConfiguredSite[0];
 		else
@@ -93,7 +93,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	/**
 	 * 
 	 */
-	public void addConfigurationSite(IConfiguredSite site) {
+	public void addConfiguredSite(IConfiguredSite site) {
 		if (!isCurrent() && isReadOnly())
 			return;
 
@@ -101,7 +101,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_SITE_INSTALL);
 		activity.setLabel(site.getSite().getURL().toExternalForm());
 		activity.setDate(new Date());
-		ConfigurationSiteModel configSiteModel = (ConfigurationSiteModel) site;
+		ConfiguredSiteModel configSiteModel = (ConfiguredSiteModel) site;
 		addConfigurationSiteModel(configSiteModel);
 		configSiteModel.setInstallConfigurationModel(this);
 		// notify listeners
@@ -125,7 +125,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			return;
 
 		for (int index = 0; index < site.length; index++) {
-			addConfigurationSite(site[index]);
+			addConfiguredSite(site[index]);
 		}
 
 	}
@@ -133,9 +133,9 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	/**
 	 * 
 	 */
-	public void removeConfigurationSite(IConfiguredSite site) {
+	public void removeConfiguredSite(IConfiguredSite site) {
 
-		if (removeConfigurationSiteModel((ConfigurationSiteModel) site)) { // notify listeners
+		if (removeConfigurationSiteModel((ConfiguredSiteModel) site)) { // notify listeners
 			Object[] configurationListeners = listeners.getListeners();
 			for (int i = 0; i < configurationListeners.length; i++) {
 				((IInstallConfigurationChangedListener) configurationListeners[i]).installSiteRemoved(site);
@@ -203,7 +203,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 
 		// Write info  into platform for the next runtime
 		IPlatformConfiguration runtimeConfiguration = BootLoader.getCurrentPlatformConfiguration();
-		ConfigurationSiteModel[] configurationSites = getConfigurationSitesModel();
+		ConfiguredSiteModel[] configurationSites = getConfigurationSitesModel();
 
 		for (int i = 0; i < configurationSites.length; i++) {
 			IConfiguredSite element = (IConfiguredSite) configurationSites[i];
@@ -217,9 +217,9 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 
 			// determine the URL to check 
 			URL urlToCheck = null;
-			ConfigurationSiteModel configSiteModel = null;
+			ConfiguredSiteModel configSiteModel = null;
 			try {
-				configSiteModel = (ConfigurationSiteModel) element;
+				configSiteModel = (ConfiguredSiteModel) element;
 				urlToCheck = new URL(configSiteModel.getPlatformURLString());
 			} catch (MalformedURLException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
@@ -227,7 +227,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 				throw new CoreException(status);
 			} catch (ClassCastException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Internal Error: The configurationSite object is not a subclass of ConfigurationSiteModel.", e);
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Internal Error: The configurationSite object is not a subclass of ConfiguredSiteModel.", e);
 				throw new CoreException(status);
 			}
 
@@ -278,7 +278,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		w.println("");
 		// site configurations
 		if (getConfigurationSitesModel() != null) {
-			ConfigurationSiteModel[] sites = getConfigurationSitesModel();
+			ConfiguredSiteModel[] sites = getConfigurationSitesModel();
 			for (int i = 0; i < sites.length; i++) {
 				ConfiguredSite element = (ConfiguredSite) sites[i];
 				((IWritable) element).write(indent + IWritable.INDENT, w);
@@ -307,8 +307,8 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 */
 	public void revertTo(IInstallConfiguration configuration, IProgressMonitor monitor, IProblemHandler handler) throws CoreException, InterruptedException {
 
-		IConfiguredSite[] oldConfigSites = configuration.getConfigurationSites();
-		IConfiguredSite[] nowConfigSites = this.getConfigurationSites();
+		IConfiguredSite[] oldConfigSites = configuration.getConfiguredSites();
+		IConfiguredSite[] nowConfigSites = this.getConfiguredSites();
 
 		// create a hashtable of the *old* sites
 		Map oldSitesMap = new Hashtable(0);
@@ -344,7 +344,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			// in the current one, or they are the delta from the current one to the old one
 			Collection sites = oldSitesMap.values();
 			if (sites != null && !sites.isEmpty()) {
-				ConfigurationSiteModel[] sitesModel = new ConfigurationSiteModel[sites.size()];
+				ConfiguredSiteModel[] sitesModel = new ConfiguredSiteModel[sites.size()];
 				sites.toArray(sitesModel);
 				setConfigurationSiteModel(sitesModel);
 			}

@@ -17,8 +17,9 @@ import org.eclipse.update.core.IFeatureFactory;
 public final class FeatureTypeFactory {
 
 	private static FeatureTypeFactory inst;
-	
 	private Map factories;
+	
+	private static final String SIMPLE_EXTENSION_ID = "featureTypes"; //$NON-NLS-1$	
 
 	/**
 	 * hide ctr 
@@ -54,7 +55,7 @@ public final class FeatureTypeFactory {
 		
 		String pluginID = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
-		IConfigurationElement[] elements = pluginRegistry.getConfigurationElementsFor(pluginID,IFeatureFactory.SIMPLE_EXTENSION_ID,type);
+		IConfigurationElement[] elements = pluginRegistry.getConfigurationElementsFor(pluginID,SIMPLE_EXTENSION_ID,type);
 		if (elements==null || elements.length==0){
 			IStatus status = new Status(IStatus.ERROR,pluginID,IStatus.OK,"Cannot find feature factory for id: " +type,null);
 			throw new CoreException(status);

@@ -29,7 +29,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		URL newURL = new URL(siteLocal.getLocationURL(),SiteLocal.SITE_LOCAL_FILE);
 		File localFile = new File(newURL.getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);
-		UpdateManagerUtils.removeFromFileSystem(new File(siteLocal.getCurrentConfiguration().getURL().getFile()));	
+		UpdateManagerUtils.removeFromFileSystem(new File(((InstallConfiguration)siteLocal.getCurrentConfiguration()).getURL().getFile()));	
 		InternalSiteManager.localSite=null;	
 
 
@@ -58,7 +58,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		URL newURL = new URL(siteLocal.getLocationURL(),SiteLocal.SITE_LOCAL_FILE);
 		File localFile = new File(newURL.getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);
-		UpdateManagerUtils.removeFromFileSystem(new File(siteLocal.getCurrentConfiguration().getURL().getFile()));	
+		UpdateManagerUtils.removeFromFileSystem(new File(((InstallConfiguration)siteLocal.getCurrentConfiguration()).getURL().getFile()));	
 		InternalSiteManager.localSite=null;
 
 		ILocalSite site = SiteManager.getLocalSite();
@@ -66,9 +66,9 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		//assertTrue("the local site already contains a config state, test cannot be executed",site.getCurrentConfiguration().getLabel().equals(SiteLocalModel.DEFAULT_CONFIG_LABEL));
 		assertTrue("The local site does not contain an history of install configuration",site.getConfigurationHistory().length!=0);
 		assertTrue("The local site does not contain an current install configuration",site.getCurrentConfiguration()!=null);
-		assertTrue("The local site does not contain a default configuration site for the current install config",site.getCurrentConfiguration().getConfigurationSites().length!=0);
+		assertTrue("The local site does not contain a default configuration site for the current install config",site.getCurrentConfiguration().getConfiguredSites().length!=0);
 		
-		System.out.println("Default Config Site is :"+site.getCurrentConfiguration().getConfigurationSites()[0].getSite().getURL().toExternalForm());
+		System.out.println("Default Config Site is :"+site.getCurrentConfiguration().getConfiguredSites()[0].getSite().getURL().toExternalForm());
 		
 		// cleanup
 		URL location = ((SiteLocal)site).getLocationURL();		
@@ -87,18 +87,19 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		URL newURL = new URL(siteLocal.getLocationURL(),SiteLocal.SITE_LOCAL_FILE);
 		File localFile = new File(newURL.getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);
-		UpdateManagerUtils.removeFromFileSystem(new File(siteLocal.getCurrentConfiguration().getURL().getFile()));	
+		UpdateManagerUtils.removeFromFileSystem(new File(((InstallConfiguration)siteLocal.getCurrentConfiguration()).getURL().getFile()));	
 		InternalSiteManager.localSite=null;		
 
 		ILocalSite site = SiteManager.getLocalSite();
 		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);
 		IFeature feature = remoteSite.getFeatureReferences()[0].getFeature();
-		int oldNumber = site.getCurrentConfiguration().getConfigurationSites().length;
+		int oldNumber = site.getCurrentConfiguration().getConfiguredSites().length;
 		
 		// we are not checking if this is read only
-		IInstallConfiguration newConfig = site.cloneCurrentConfiguration(null,"new Label");
+		IInstallConfiguration newConfig = site.cloneCurrentConfiguration();
+		newConfig.setLabel("new Label");		
 		//IInstallConfiguration newConfig = site.getCurrentConfiguration();
-		IConfiguredSite configSite = newConfig.getConfigurationSites()[0];
+		IConfiguredSite configSite = newConfig.getConfiguredSites()[0];
 		ConfigurationPolicyModel configPolicy = new BaseSiteLocalFactory().createConfigurationPolicyModel();
 		configPolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE);
 		((ConfiguredSite)configSite).setConfigurationPolicy((ConfigurationPolicy)configPolicy);
@@ -108,7 +109,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 				
 		// teh current one points to a real fature
 		// does not throw error.
-		IConfiguredSite configSite2 = site.getCurrentConfiguration().getConfigurationSites()[0];
+		IConfiguredSite configSite2 = site.getCurrentConfiguration().getConfiguredSites()[0];
 		IFeatureReference ref = configSite2.getConfiguredFeatures()[0];
 		IFeature feature2 = ref.getFeature();
 		String configuredFeature = feature2.getLabel();
@@ -126,10 +127,10 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		assertTrue("wrong number of history in Local site",site.getConfigurationHistory().length==2);
 		
 		// test same # of sites in current config
-		assertTrue("Wrong number of config sites in current config",site.getCurrentConfiguration().getConfigurationSites().length==oldNumber);
+		assertTrue("Wrong number of config sites in current config",site.getCurrentConfiguration().getConfiguredSites().length==oldNumber);
 		
 		//test only one feature for the site
-		assertTrue("wrong number of configured features for config site",site.getCurrentConfiguration().getConfigurationSites()[0].getConfiguredFeatures().length==1);
+		assertTrue("wrong number of configured features for config site",site.getCurrentConfiguration().getConfiguredSites()[0].getConfiguredFeatures().length==1);
 		
 		// test only 2 activities
 		assertTrue("Wrong number of activities for install config",site.getCurrentConfiguration().getActivities().length==2);
@@ -164,17 +165,18 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		URL newURL = new URL(siteLocal.getLocationURL(),SiteLocal.SITE_LOCAL_FILE);
 		File localFile = new File(newURL.getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);
-		UpdateManagerUtils.removeFromFileSystem(new File(siteLocal.getCurrentConfiguration().getURL().getFile()));	
+		UpdateManagerUtils.removeFromFileSystem(new File(((InstallConfiguration)siteLocal.getCurrentConfiguration()).getURL().getFile()));	
 		InternalSiteManager.localSite=null;		
 
 		ILocalSite site = SiteManager.getLocalSite();
 		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);
 		IFeature feature = remoteSite.getFeatureReferences()[0].getFeature();
-		int oldNumber = site.getCurrentConfiguration().getConfigurationSites().length;		
+		int oldNumber = site.getCurrentConfiguration().getConfiguredSites().length;		
 		
 		// we are not checking if this is read only
-		IInstallConfiguration newConfig = site.cloneCurrentConfiguration(null,"new Label");
-		IConfiguredSite configSite = newConfig.getConfigurationSites()[0];
+		IInstallConfiguration newConfig = site.cloneCurrentConfiguration();
+		newConfig.setLabel("new Label");		
+		IConfiguredSite configSite = newConfig.getConfiguredSites()[0];
 		ConfigurationPolicyModel configPolicy = new BaseSiteLocalFactory().createConfigurationPolicyModel();
 		configPolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE);
 		((ConfiguredSite)configSite).setConfigurationPolicy((ConfigurationPolicy)configPolicy);		
@@ -198,7 +200,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		
 		// teh current one points to a real fature
 		// does not throw error.
-		IConfiguredSite configSite2 = site.getCurrentConfiguration().getConfigurationSites()[0];
+		IConfiguredSite configSite2 = site.getCurrentConfiguration().getConfiguredSites()[0];
 		IFeatureReference ref = configSite2.getConfiguredFeatures()[0];
 		IFeature feature2 = ref.getFeature();
 		String configuredFeature = feature2.getLabel();
@@ -209,10 +211,10 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		assertTrue("wrong number of history in Local site",site.getConfigurationHistory().length==2);
 		
 		// test # of sites in current config
-		assertTrue("Wrong number of config sites in current config",site.getCurrentConfiguration().getConfigurationSites().length==oldNumber);
+		assertTrue("Wrong number of config sites in current config",site.getCurrentConfiguration().getConfiguredSites().length==oldNumber);
 		
 		//test only one feature for the site
-		assertTrue("wrong number of configured features for config site",site.getCurrentConfiguration().getConfigurationSites()[0].getConfiguredFeatures().length==1);
+		assertTrue("wrong number of configured features for config site",site.getCurrentConfiguration().getConfiguredSites()[0].getConfiguredFeatures().length==1);
 		
 		// test only 2 activities
 		assertTrue("Wrong number of activities for install config",site.getCurrentConfiguration().getActivities().length==2);
@@ -225,7 +227,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		UpdateManagerUtils.removeFromFileSystem(localFile);			
 		localFile = new File(new URL(location,Site.DEFAULT_FEATURE_PATH+File.separator+feature.getVersionedIdentifier().toString()).getFile());		
 		UpdateManagerUtils.removeFromFileSystem(localFile);	
-		UpdateManagerUtils.removeFromFileSystem(new File(site.getCurrentConfiguration().getURL().getFile()));				
+		UpdateManagerUtils.removeFromFileSystem(new File(((InstallConfiguration)site.getCurrentConfiguration()).getURL().getFile()));				
 		UpdateManagerUtils.removeFromFileSystem(file);		
 	}
 
@@ -236,7 +238,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		URL newURL = new URL(siteLocal.getLocationURL(),SiteLocal.SITE_LOCAL_FILE);
 		File localFile = new File(newURL.getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);
-		UpdateManagerUtils.removeFromFileSystem(new File(siteLocal.getCurrentConfiguration().getURL().getFile()));	
+		UpdateManagerUtils.removeFromFileSystem(new File(((InstallConfiguration)siteLocal.getCurrentConfiguration()).getURL().getFile()));	
 		InternalSiteManager.localSite=null;		
 
 		ILocalSite site = SiteManager.getLocalSite();
@@ -244,8 +246,9 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		IFeature feature = remoteSite.getFeatureReferences()[0].getFeature();
 		
 		// we are not checking if this is read only
-		IInstallConfiguration newConfig = site.cloneCurrentConfiguration(null,"new Label");
-		IConfiguredSite configSite = newConfig.getConfigurationSites()[0];
+		IInstallConfiguration newConfig = site.cloneCurrentConfiguration();
+		newConfig.setLabel("new Label");		
+		IConfiguredSite configSite = newConfig.getConfiguredSites()[0];
 		ConfigurationPolicyModel configPolicy = new BaseSiteLocalFactory().createConfigurationPolicyModel();
 		configPolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE);
 		((ConfiguredSite)configSite).setConfigurationPolicy((ConfigurationPolicy)configPolicy);		
@@ -258,7 +261,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		InternalSiteManager.localSite=null;
 		site = SiteManager.getLocalSite();
 		feature = remoteSite.getFeatureReferences()[0].getFeature();
-		int oldNumber = site.getCurrentConfiguration().getConfigurationSites().length;		
+		int oldNumber = site.getCurrentConfiguration().getConfiguredSites().length;		
 		
 		// check
 		// there are 2 configuration
@@ -269,7 +272,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		
 		// teh current one points to a real fature
 		// does not throw error.
-		IConfiguredSite configSite2 = site.getCurrentConfiguration().getConfigurationSites()[0];
+		IConfiguredSite configSite2 = site.getCurrentConfiguration().getConfiguredSites()[0];
 		IFeatureReference ref = configSite2.getConfiguredFeatures()[0];
 		IFeature feature2 = ref.getFeature();
 		String configuredFeature = feature2.getLabel();
@@ -280,10 +283,10 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		assertTrue("wrong number of history in Local site",site.getConfigurationHistory().length==2);
 		
 		// test same number of sites in current config
-		assertTrue("Wrong number of config sites in current config",site.getCurrentConfiguration().getConfigurationSites().length==oldNumber);
+		assertTrue("Wrong number of config sites in current config",site.getCurrentConfiguration().getConfiguredSites().length==oldNumber);
 		
 		//test only one feature for the site
-		assertTrue("wrong number of configured features for config site",site.getCurrentConfiguration().getConfigurationSites()[0].getConfiguredFeatures().length==1);
+		assertTrue("wrong number of configured features for config site",site.getCurrentConfiguration().getConfiguredSites()[0].getConfiguredFeatures().length==1);
 		
 		// test only 2 activities
 		assertTrue("Wrong number of activities for install config",site.getCurrentConfiguration().getActivities().length==2);
@@ -296,7 +299,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		UpdateManagerUtils.removeFromFileSystem(localFile);	
 		localFile = new File(new URL(location,Site.DEFAULT_FEATURE_PATH+File.separator+feature.getVersionedIdentifier().toString()).getFile());		
 		UpdateManagerUtils.removeFromFileSystem(localFile);	
-		UpdateManagerUtils.removeFromFileSystem(new File(site.getCurrentConfiguration().getURL().getFile()));						
+		UpdateManagerUtils.removeFromFileSystem(new File(((InstallConfiguration)site.getCurrentConfiguration()).getURL().getFile()));						
 		UpdateManagerUtils.removeFromFileSystem(file);		
 		localFile = new File(feature2.getURL().getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);

@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.tests.UpdateManagerTestCase;
@@ -16,16 +17,12 @@ import org.eclipse.update.tests.api.DefaultFeature;
 public class TestRemove extends UpdateManagerTestCase {
 	
 	
-	public class Listener implements ISiteChangedListener{
+	public class Listener implements IConfiguredSiteChangedListener{
 		
 		public boolean notified = false;
-		/*
-		 * @see ISiteChangedListener#featureUpdated(IFeature)
-		 */
-		public void featureUpdated(IFeature feature) {}
 
 			/*
-		 * @see ISiteChangedListener#featureInstalled(IFeature)
+		 * @see IConfiguredSiteChangedListener#featureInstalled(IFeature)
 		 */
 		public void featureInstalled(IFeature feature) {
 			notified = true;
@@ -33,7 +30,7 @@ public class TestRemove extends UpdateManagerTestCase {
 		}
 
 		/*
-		 * @see ISiteChangedListener#featureUninstalled(IFeature)
+		 * @see IConfiguredSiteChangedListener#featureUninstalled(IFeature)
 		 */
 		public void featureUninstalled(IFeature feature) {}
 
@@ -54,10 +51,8 @@ public class TestRemove extends UpdateManagerTestCase {
 		FeatureReference ref = new FeatureReference();
 		ref.setSite(site);
 		ref.setURLString("features/org.eclipse.update.core.tests.feature1_1.0.4.jar");
-		ref.resolve(site.getURL(),null);
-		//Feature remoteFeature = createPackagedFeature(url,site);
-		//remoteFeature.setFeatureIdentifier("org.eclipse.update.core.tests.feature1");
-		//remoteFeature.setFeatureVersion("1.0.4");		
+		ref.setType(ISite.DEFAULT_PACKAGED_FEATURE_TYPE);
+		ref.resolve(site.getURL(),null);	
 		return ref.getFeature();
 	}
 
@@ -83,7 +78,7 @@ public class TestRemove extends UpdateManagerTestCase {
 		File pluginFile = new File(site, Site.DEFAULT_PLUGIN_PATH + pluginName);
 		assertTrue("plugin files installed locally", !pluginFile.exists());
 
-		File featureFile = new File(site, Site.INSTALL_FEATURE_PATH +featureRef);
+		File featureFile = new File(site, Site.DEFAULT_INSTALLED_FEATURE_PATH +featureRef);
 		assertTrue("feature info installed locally:"+featureFile, !featureFile.exists());
 
 	}

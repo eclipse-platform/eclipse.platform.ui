@@ -211,7 +211,7 @@ public class AvailableUpdates
 			Vector candidates = new Vector();
 			ILocalSite localSite = SiteManager.getLocalSite();
 			IInstallConfiguration config = localSite.getCurrentConfiguration();
-			IConfiguredSite[] isites = config.getConfigurationSites();
+			IConfiguredSite[] isites = config.getConfiguredSites();
 			for (int i = 0; i < isites.length; i++) {
 				ISite isite = isites[i].getSite();
 				IFeatureReference[] refs = isite.getFeatureReferences();

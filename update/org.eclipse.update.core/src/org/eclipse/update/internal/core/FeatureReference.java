@@ -32,6 +32,8 @@ public class FeatureReference
 	 * category : delegate to teh site
 	 */
 	private List categories;
+	
+		
 
 	/**
 	 * Constructor
@@ -70,7 +72,7 @@ public class FeatureReference
 
 	/**
 	 * Returns the feature this reference points to
-	 *  @return teh feature on teh Site
+	 *  @return the feature on the Site
 	 */
 	public IFeature getFeature() throws CoreException {
 
@@ -78,30 +80,11 @@ public class FeatureReference
 		if (feature == null) {
 
 			if (type == null || type.equals("")) {
-				URL url = getURL();
-				if (url != null
-					&& url.toExternalForm().endsWith(FeaturePackagedContentProvider.JAR_EXTENSION)) {
-					// if it ends with JAR, guess it is a FeaturePackaged
-					String pluginID =
-						UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier() + ".";
-					type = (pluginID + IFeatureFactory.INSTALLABLE_FEATURE_TYPE);
-				} else {
-					// ask the Site for the default type 
-					type = (getSite().getDefaultInstallableFeatureType());
-				}
+				// ask the Site for the default type 
+				type = getSite().getDefaultPackagedFeatureType();
 			}
-
+			
 			feature = createFeature(type, getURL(), getSite());
-
-			if (feature == null) {
-				setBroken(true);
-			} else {
-				if (feature.getUpdateSiteEntry() != null) {
-					URLEntryModel model = new URLEntryModel();
-					model.setURLString(feature.getUpdateSiteEntry().getURL().toExternalForm());
-					setUpdateURL(model);
-				}
-			}
 		}
 
 		return feature;
@@ -196,6 +179,14 @@ public class FeatureReference
 	 */
 	public void setSite(ISite site) {
 		setSiteModel((SiteMapModel) site);
+	}
+
+	
+	
+
+
+	private CoreException newCoreException(String s, Throwable e) throws CoreException {
+		return new CoreException(new Status(IStatus.ERROR,"org.eclipse.update.examples.buildzip",0,s,e));
 	}
 
 }

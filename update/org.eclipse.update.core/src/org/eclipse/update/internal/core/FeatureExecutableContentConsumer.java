@@ -78,10 +78,18 @@ public class FeatureExecutableContentConsumer extends FeatureContentConsumer {
 
 	/**
 	 * returns the Content Consumer for the feature
+	 * 
+	 * Right now we are the only one to implemen SiteContentConsumer
+	 * Need to be exposed as API
 	 */
 	private ISiteContentConsumer getContentConsumer() throws CoreException {
 		if (contentConsumer==null)
-				contentConsumer = feature.getSite().createSiteContentConsumer(feature);	
+			if (feature.getSite() instanceof SiteFile){
+				SiteFile site = (SiteFile) feature.getSite();
+				contentConsumer = site.createSiteContentConsumer(feature);	
+			} else {
+				throw new UnsupportedOperationException();
+			}
 		return contentConsumer;
 	}
 

@@ -18,8 +18,6 @@ public static Test suite() {
 	suite.addTest(new TestSuite(TestFeatureParse.class));
 	suite.addTest(new TestSuite(TestSiteParse.class));	
 	suite.addTest(new TestSuite(TestCategories.class));		
-	suite.addTest(new TestSuite(TestSiteGeneration.class));		
-
 	
 	// or you can specify the method
 	//suite.addTest(new TestGetFeature("methodThatDoesNotStartWithtest"));	

@@ -19,11 +19,6 @@ import org.eclipse.update.core.model.ParsingException;
  
 public interface ISiteFactory {
 
-
-	/**
-	 * extension point ID
-	 */
-	public static final String SIMPLE_EXTENSION_ID = "siteTypes";	 //$NON-NLS-1$
 	
 	/**
 	 * Returns a site based on the URL

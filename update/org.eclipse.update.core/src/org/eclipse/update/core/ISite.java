@@ -8,15 +8,27 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.update.configuration.*;
+
+
+/**
+ * 
+ */
 
 public interface ISite {
 
+	/**
+	 * 
+	 * @since 2.0
+	 */
+	public static final String DEFAULT_INSTALLED_FEATURE_TYPE = "org.eclipse.update.core.installed";	 //$NON-NLS-1$		
 
 	/**
-	 * extension point ID
+	 * 
+	 * @since 2.0
 	 */
-	public static final String SIMPLE_EXTENSION_ID = "siteTypeProtocols"; //$NON-NLS-1$
-		
+	public static final String DEFAULT_PACKAGED_FEATURE_TYPE = "org.eclipse.update.core.packaged";	 //$NON-NLS-1$		
+
 	/**
 	 * Returns an array of feature this site contains
 	 * 
@@ -47,15 +59,6 @@ public interface ISite {
 	void remove(IFeature feature, IProgressMonitor monitor) throws CoreException;
 	
 	
-	/**
-	 * @since 2.0 
-	 */
-	void addSiteChangedListener(ISiteChangedListener listener);
-	/**
-	 * @since 2.0 
-	 */
-	void removeSiteChangedListener(ISiteChangedListener listener);
-
 	/**
 	 * 
 	 * @return teh URL of the site
@@ -114,22 +117,28 @@ public interface ISite {
 	 */
 
 	IArchiveReference[] getArchives();
-	
-		
-		
-	/**
-	 * returns the default type for an installable feature on this site
-	 * @return String the type
-	 * @since 2.0
-	 */
-	String getDefaultInstallableFeatureType();
 
 	/**
-	 * returns the default type for an executable feature on this site
+	 * returns the default type for an package feature on this site
 	 * @return String the type
 	 * @since 2.0
 	 */
-	String getDefaultExecutableFeatureType();
+	String getDefaultPackagedFeatureType();
+
+	
+	/**
+	 * Returns an array of plug-ins managed by the Site
+	 * 
+	 * @return the accessible plug-ins. Returns an empty array
+	 * if there are no plug-ins.
+	 */
+	IPluginEntry [] getPluginEntries()  ;
+
+	/**
+	 * Returns the number of managed plug-ins
+	 * @return the number of plug-ins
+	 */
+	int getPluginEntryCount() ;
 	
 	/**
 	 * returns the install size
@@ -152,40 +161,15 @@ public interface ISite {
 	 * 
 	 * @since 2.0 
 	 */
-	long getDownloadSizeFor(IFeature site) ;
-	
+	long getDownloadSizeFor(IFeature site) ;	
 	
 	/**
-	 * Returns an array of plug-ins managed by the Site
 	 * 
-	 * @return the accessible plug-ins. Returns an empty array
-	 * if there are no plug-ins.
-	 */
-
-	IPluginEntry [] getPluginEntries()  ;
-	
-	/**
-	 * Returns the number of managed plug-ins
-	 * @return the number of plug-ins
-	 */
-
-	int getPluginEntryCount() ;	
-	
-	/**
-	 * Saves the site in a persitent form
-	 * @since 2.0 
-	 */
-
-	void save() throws CoreException;
-	
-	/**
-	 *Returns the ISiteContentConsumer for a feature on this site
-	 * @param feature
-	 * @throws CoreException when the Site does not allow storage.
 	 * @since 2.0
 	 */
-	ISiteContentConsumer createSiteContentConsumer(IFeature feature) throws CoreException;	
-
+	IPluginEntry[] getPluginEntriesOnlyReferencedBy(IFeature feature) throws CoreException;
+	
+	
 	/**
 	 * Sets the ISiteContentProvider for this feature
 	 * @since 2.0

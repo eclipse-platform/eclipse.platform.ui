@@ -3,31 +3,23 @@ package org.eclipse.update.internal.ui.manager;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.part.ViewPart;
-import org.eclipse.swt.SWT;
-
-import java.io.InputStream;
-import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.update.internal.ui.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.configuration.*;
-import org.eclipse.jface.action.Action;
-import org.eclipse.update.core.IInstallConfiguration;
-import java.util.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
-import org.eclipse.ui.*;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.configuration.IConfiguredSite;
+import org.eclipse.update.configuration.IInstallConfiguration;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUIPluginImages;
+import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.update.internal.ui.parts.DefaultContentProvider;
+import org.eclipse.update.internal.ui.parts.OverlayIcon;
 
 /**
  * Insert the type's description here.
@@ -115,7 +107,7 @@ public class HistoryView
 		}
 
 		private Object[] getConfigurationSites(IInstallConfiguration config) {
-			IConfiguredSite[] sites = config.getConfigurationSites();
+			IConfiguredSite[] sites = config.getConfiguredSites();
 			Object[] adapters = new Object[sites.length];
 			for (int i = 0; i < sites.length; i++) {
 				adapters[i] = new ConfigurationSiteAdapter(config, sites[i]);

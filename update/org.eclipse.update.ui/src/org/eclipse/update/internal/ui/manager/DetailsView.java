@@ -9,6 +9,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.*;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.jface.action.*;

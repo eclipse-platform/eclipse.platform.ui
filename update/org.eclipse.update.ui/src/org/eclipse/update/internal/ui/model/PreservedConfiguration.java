@@ -4,6 +4,7 @@ package org.eclipse.update.internal.ui.model;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 
 public class PreservedConfiguration extends ModelObject {

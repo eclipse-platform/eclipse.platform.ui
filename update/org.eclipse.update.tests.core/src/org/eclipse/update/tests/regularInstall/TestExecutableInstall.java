@@ -40,12 +40,12 @@ public class TestExecutableInstall extends UpdateManagerTestCase {
 		File pluginFile = new File(site,Site.DEFAULT_PLUGIN_PATH+pluginName);
 		assertTrue("plugin files not installed locally",pluginFile.exists());
 
-		File featureFile = new File(site,Site.INSTALL_FEATURE_PATH+remoteFeature.getVersionedIdentifier().toString());
+		File featureFile = new File(site,Site.DEFAULT_INSTALLED_FEATURE_PATH+remoteFeature.getVersionedIdentifier().toString());
 		assertTrue("feature info not installed locally:"+featureFile,featureFile.exists());
 		assertTrue("feature is a file, not a directory:"+featureFile,featureFile.isDirectory());
 
 		
-		File featureFileXML = new File(site,Site.INSTALL_FEATURE_PATH+remoteFeature.getVersionedIdentifier().toString()+File.separator+"feature.xml");
+		File featureFileXML = new File(site,Site.DEFAULT_INSTALLED_FEATURE_PATH+remoteFeature.getVersionedIdentifier().toString()+File.separator+"feature.xml");
 		assertTrue("feature info not installed locally: no feature.xml",featureFileXML.exists());
 		//cleanup target 
 		UpdateManagerUtils.removeFromFileSystem(target);

@@ -44,7 +44,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 		String featurePath = null;
 		try {
 		VersionedIdentifier featureIdentifier = feature.getVersionedIdentifier();
-		String path = Site.INSTALL_FEATURE_PATH + featureIdentifier.toString() + File.separator;
+		String path = Site.DEFAULT_INSTALLED_FEATURE_PATH + featureIdentifier.toString() + File.separator;
 		URL newURL = new URL(getSite().getURL(),path);
 		featurePath = newURL.getFile();
 		} catch (MalformedURLException e){

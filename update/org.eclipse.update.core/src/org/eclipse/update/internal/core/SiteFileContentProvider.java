@@ -46,21 +46,6 @@ public class SiteFileContentProvider extends SiteContentProvider {
 		return false;
 	}
 		
-	/*
-	 * @see ISite#getDefaultExecutableFeatureType()
-	 */
-	public String getDefaultExecutableFeatureType() {
-		String pluginID = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier()+".";
-		return pluginID+IFeatureFactory.EXECUTABLE_FEATURE_TYPE;
-	}
-
-	/*
-	 * @see ISite#getDefaultInstallableFeatureType()
-	 */
-	public String getDefaultInstallableFeatureType() {
-		String pluginID = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier()+".";
-		return pluginID+IFeatureFactory.INSTALLABLE_FEATURE_TYPE;
-	}
 
 	/*
 	 * @see ISiteContentProvider#getArchiveReference(String)

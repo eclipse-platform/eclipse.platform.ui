@@ -30,7 +30,7 @@ public class BaseSiteLocalFactory {
 	/*
 	 * 
 	 */
-	public ConfigurationSiteModel createConfigurationSiteModel() {
+	public ConfiguredSiteModel createConfigurationSiteModel() {
 		return new ConfiguredSite();
 	}
 
@@ -45,14 +45,16 @@ public class BaseSiteLocalFactory {
 	/**
 	 * 
 	 */
-	public ConfigurationSiteModel createConfigurationSiteModel(SiteMapModel site, int policy){
+	public ConfiguredSiteModel createConfigurationSiteModel(SiteMapModel site, int policy){
 		//create config site
-		ConfigurationSiteModel configSite = this.createConfigurationSiteModel();
+		ConfiguredSiteModel configSite = this.createConfigurationSiteModel();
 		configSite.setSiteModel(site);
 				
 		ConfigurationPolicyModel policyModel = this.createConfigurationPolicyModel(); 
 		policyModel.setPolicy(policy);
-		configSite.setConfigurationPolicyModel(policyModel);		
+		configSite.setConfigurationPolicyModel(policyModel);
+		
+		((ConfigurationPolicy)policyModel).setConfiguredSite((ConfiguredSite) configSite);
 		
 		return configSite;
 	}

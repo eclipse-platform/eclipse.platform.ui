@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site url="/info/siteInfo.html">
-  <feature url="features/helpFeature.jar">
+  <feature url="features/helpFeature.jar" type="org.eclipse.update.core.packaged">
     <category name="eclipse/UML"/>
   </feature>
-  <feature url="features/org.eclipse.pde.feature_1.0.0.jar">
+  <feature url="features/org.eclipse.pde.feature_1.0.0.jar" type="org.eclipse.update.core.packaged">
     <category name="eclipse/J2EE"/>
   </feature>
   <feature url="install/features/feature3/">

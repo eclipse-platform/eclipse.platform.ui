@@ -41,7 +41,7 @@ public class TestSiteManagerAPI extends UpdateManagerTestCase {
 	public void testLocalSite() throws Exception {
 		
 		ILocalSite site = SiteManager.getLocalSite();
-		IConfiguredSite[] instSites = site.getCurrentConfiguration().getConfigurationSites();
+		IConfiguredSite[] instSites = site.getCurrentConfiguration().getConfiguredSites();
 		assertTrue(instSites.length>0);
 		System.out.println("Local Site:"+instSites[0].getSite().getURL().toExternalForm());
 		
@@ -49,17 +49,17 @@ public class TestSiteManagerAPI extends UpdateManagerTestCase {
 		IFeature remoteFeature = remoteSite.getFeatureReferences()[0].getFeature();
 		instSites[0].getSite().install(remoteFeature,null);
 		
-		IFeatureReference[] features = site.getCurrentConfiguration().getConfigurationSites()[0].getSite().getFeatureReferences();
+		IFeatureReference[] features = site.getCurrentConfiguration().getConfiguredSites()[0].getSite().getFeatureReferences();
 		assertTrue(features.length>0);
 
 		//cleanup
-		File file = new File(instSites[0].getSite().getURL().getFile()+File.separator+Site.INSTALL_FEATURE_PATH+remoteFeature.getVersionedIdentifier());
+		File file = new File(instSites[0].getSite().getURL().getFile()+File.separator+Site.DEFAULT_INSTALLED_FEATURE_PATH+remoteFeature.getVersionedIdentifier());
 		UpdateManagerUtils.removeFromFileSystem(file);
 		file = new File(instSites[0].getSite().getURL().getFile()+File.separator+Site.DEFAULT_PLUGIN_PATH+"org.eclipse.update.plugin1_1.1.1");
 		UpdateManagerUtils.removeFromFileSystem(file);		
 		File localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocationURL(),SiteLocal.SITE_LOCAL_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);	
-		UpdateManagerUtils.removeFromFileSystem(new File(site.getCurrentConfiguration().getURL().getFile()));				
+		UpdateManagerUtils.removeFromFileSystem(new File(((InstallConfiguration)site.getCurrentConfiguration()).getURL().getFile()));				
 		
 
 	}

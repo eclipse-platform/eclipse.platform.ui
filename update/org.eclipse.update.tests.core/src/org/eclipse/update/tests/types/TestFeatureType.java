@@ -13,6 +13,10 @@ import org.eclipse.update.tests.UpdateManagerTestCase;
 
 public class TestFeatureType extends UpdateManagerTestCase {
 
+
+	private static final String PACKAGED_FEATURE_TYPE = "packaged"; //$NON-NLS-1$
+	private static final String INSTALLED_FEATURE_TYPE = "installed"; //$NON-NLS-1$	
+	
 	/**
 	 * Test the getFeatures()
 	 */
@@ -21,12 +25,22 @@ public class TestFeatureType extends UpdateManagerTestCase {
 	}
 	
 	
+	public String getDefaultInstallableFeatureType() {
+		String pluginID = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier() + "."; //$NON-NLS-1$
+		return pluginID + PACKAGED_FEATURE_TYPE;
+	}
+	
+	public String getDefaultExecutableFeatureType() {
+		String pluginID = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier() + "."; //$NON-NLS-1$
+		return pluginID + INSTALLED_FEATURE_TYPE;
+	}		
+	
 	/**
 	 * @throws Exception
 	 */
 	public void testSimplePackagedFeatureType() throws Exception{ 
 		FeatureTypeFactory factories = FeatureTypeFactory.getInstance();
-		IFeatureFactory factory = factories.getFactory("org.eclipse.update.core.jar");
+		IFeatureFactory factory = factories.getFactory(getDefaultInstallableFeatureType());
 		
 		ISite site = SiteManager.getSite(SOURCE_FILE_SITE);
 		URL featureURL = new URL(SOURCE_FILE_SITE,"features/features2.jar ");
@@ -41,7 +55,7 @@ public class TestFeatureType extends UpdateManagerTestCase {
 	 */
 	public void testSimpleExecutableFeatureType() throws Exception{ 
 		FeatureTypeFactory factories = FeatureTypeFactory.getInstance();
-		IFeatureFactory factory = factories.getFactory("org.eclipse.update.core.exe");
+		IFeatureFactory factory = factories.getFactory(getDefaultExecutableFeatureType());
 		
 		ISite site = SiteManager.getSite(SOURCE_FILE_SITE);
 		URL featureURL = new URL(SOURCE_FILE_SITE,"install/features/feature3/");
@@ -56,7 +70,7 @@ public class TestFeatureType extends UpdateManagerTestCase {
 	 */
 	public void testFeatureType() throws Exception{ 
 		FeatureTypeFactory factories = FeatureTypeFactory.getInstance();
-		IFeatureFactory factory = factories.getFactory("org.eclipse.update.core.jar");
+		IFeatureFactory factory = factories.getFactory(getDefaultInstallableFeatureType());
 		
 		ISite site = SiteManager.getSite(SOURCE_HTTP_SITE);
 		IFeature feature = site.getFeatureReferences()[0].getFeature();
@@ -72,7 +86,7 @@ public class TestFeatureType extends UpdateManagerTestCase {
 	 */
 	public void testFeatureNewType() throws Exception{ 
 		FeatureTypeFactory factories = FeatureTypeFactory.getInstance();
-		IFeatureFactory factory = factories.getFactory("org.eclipse.update.core.exe");
+		IFeatureFactory factory = factories.getFactory(getDefaultExecutableFeatureType());
 		
 		String featurePath = dataPath+"FeatureTypeExamples/site1/site.xml";
 		ISite site = SiteManager.getSite(new File(featurePath).toURL());
@@ -94,7 +108,7 @@ public class TestFeatureType extends UpdateManagerTestCase {
 	 */
 	public void testFeatureAnotherType() throws Exception{ 
 		FeatureTypeFactory factories = FeatureTypeFactory.getInstance();
-		IFeatureFactory factory = factories.getFactory("org.eclipse.update.core.jar");
+		IFeatureFactory factory = factories.getFactory(getDefaultInstallableFeatureType());
 		
 		String featurePath = dataPath+"FeatureTypeExamples/site2/site.xml";
 		ISite site = SiteManager.getSite(new File(featurePath).toURL());
@@ -105,7 +119,7 @@ public class TestFeatureType extends UpdateManagerTestCase {
 		
 		assertTrue("Factory doesn't create same feature",feature.getVersionedIdentifier().equals(anotherFeature.getVersionedIdentifier()));
 		assertTrue(feature.getFeatureContentProvider() instanceof FeaturePackagedContentProvider);
-		assertTrue(((FeatureReference)ref).getType().equals("org.eclipse.update.core.jar"));
+		assertTrue(((FeatureReference)ref).getType().equals("org.eclipse.update.core.packaged"));
 		
 	}
 		

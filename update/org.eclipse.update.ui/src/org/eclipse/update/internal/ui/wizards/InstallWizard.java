@@ -91,7 +91,7 @@ public class InstallWizard extends Wizard {
 	private IInstallConfiguration createInstallConfiguration() {
 		try {
 			ILocalSite localSite = SiteManager.getLocalSite();
-			IInstallConfiguration config = localSite.cloneCurrentConfiguration(null, null);
+			IInstallConfiguration config = localSite.cloneCurrentConfiguration();
 			config.setLabel(config.getCreationDate().toString());
 			return config;
 		} catch (CoreException e) {
@@ -172,7 +172,7 @@ public class InstallWizard extends Wizard {
 		throws CoreException {
 		ILocalSite localSite = SiteManager.getLocalSite();
 		IConfiguredSite[] configSite =
-			localSite.getCurrentConfiguration().getConfigurationSites();
+			localSite.getCurrentConfiguration().getConfiguredSites();
 		for (int i = 0; i < configSite.length; i++) {
 			IConfiguredSite site = configSite[i];
 			if (site.getSite().getURL().equals(feature.getSite().getURL())) {

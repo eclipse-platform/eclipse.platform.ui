@@ -12,9 +12,9 @@ import org.eclipse.core.boot.IPlatformConfiguration.ISiteEntry;
 import org.eclipse.core.boot.IPlatformConfiguration.ISitePolicy;
 import org.eclipse.core.internal.boot.PlatformConfiguration;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.ILocalSite;
 import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.configuration.*;
+import org.eclipse.update.configuration.ILocalSite;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.InternalSiteManager;
 import org.eclipse.update.internal.core.SiteLocal;
@@ -63,7 +63,7 @@ public class TestSiteReconciliation extends UpdateManagerTestCase {
 
 		ILocalSite local = SiteManager.getLocalSite();
 		((SiteLocal)local).setStamp(0);
-		IConfiguredSite[] newSites = local.getCurrentConfiguration().getConfigurationSites();
+		IConfiguredSite[] newSites = local.getCurrentConfiguration().getConfiguredSites();
 		IConfiguredSite newSite = null;
 		for (int i = 0; i < newSites.length; i++) {
 			if (newSites[i].getSite().getURL().equals(url))
@@ -73,9 +73,9 @@ public class TestSiteReconciliation extends UpdateManagerTestCase {
 		if (newSite==null) fail("Site not found in configuration");
 		
 		IFeatureReference[] ref = newSite.getConfiguredFeatures();
-		assertTrue(ref.length==0);
+		assertEquals("Wrong number of configured features",0,ref.length);		
 		ref = ((ConfiguredSite)newSite).getConfigurationPolicy().getUnconfiguredFeatures();
-		assertTrue(ref.length==1);
+		assertEquals("Wrong number of unconfigured features",1,ref.length);		
 		
 		removeConfigSite(url);
 	}
@@ -89,7 +89,7 @@ public class TestSiteReconciliation extends UpdateManagerTestCase {
 		
 		ILocalSite local = SiteManager.getLocalSite();
 		((SiteLocal)local).setStamp(0);		
-		IConfiguredSite[] newSites = local.getCurrentConfiguration().getConfigurationSites();
+		IConfiguredSite[] newSites = local.getCurrentConfiguration().getConfiguredSites();
 		IConfiguredSite newSite = null;
 		for (int i = 0; i < newSites.length; i++) {
 			if (newSites[i].getSite().getURL().equals(url))
@@ -99,9 +99,9 @@ public class TestSiteReconciliation extends UpdateManagerTestCase {
 		if (newSite==null) fail("Site not found in configuration");
 		
 		IFeatureReference[] ref = newSite.getConfiguredFeatures();
-		assertTrue(ref.length==0);
+		assertEquals("Wrong number of configured features",0,ref.length);		
 		ref = ((ConfiguredSite)newSite).getConfigurationPolicy().getUnconfiguredFeatures();
-		assertTrue(ref.length==1);
+		assertEquals("Wrong number of unconfigured features",1,ref.length);				
 		removeConfigSite(url);
 	}
 
@@ -117,7 +117,7 @@ public class TestSiteReconciliation extends UpdateManagerTestCase {
 		addConfigSite(policy,url, plugins);
 		ILocalSite local = SiteManager.getLocalSite();
 		((SiteLocal)local).setStamp(0);		
-		IConfiguredSite[] newSites = local.getCurrentConfiguration().getConfigurationSites();
+		IConfiguredSite[] newSites = local.getCurrentConfiguration().getConfiguredSites();
 		IConfiguredSite newSite = null;
 		for (int i = 0; i < newSites.length; i++) {
 			if (newSites[i].getSite().getURL().equals(url))
@@ -144,7 +144,7 @@ public class TestSiteReconciliation extends UpdateManagerTestCase {
 		addConfigSite(policy,url, plugins);
 		ILocalSite local = SiteManager.getLocalSite();
 		((SiteLocal)local).setStamp(0);		
-		IConfiguredSite[] newSites = local.getCurrentConfiguration().getConfigurationSites();
+		IConfiguredSite[] newSites = local.getCurrentConfiguration().getConfiguredSites();
 		IConfiguredSite newSite = null;
 		for (int i = 0; i < newSites.length; i++) {
 			if (newSites[i].getSite().getURL().equals(url))

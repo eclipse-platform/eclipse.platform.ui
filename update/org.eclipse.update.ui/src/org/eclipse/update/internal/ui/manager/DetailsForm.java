@@ -394,7 +394,7 @@ public class DetailsForm extends PropertyWebForm {
 		try {
 			ILocalSite localSite = SiteManager.getLocalSite();
 			IInstallConfiguration config = localSite.getCurrentConfiguration();
-			IConfiguredSite[] isites = config.getConfigurationSites();
+			IConfiguredSite[] isites = config.getConfiguredSites();
 			VersionedIdentifier vid = feature.getVersionedIdentifier();
 			String id = vid.getIdentifier();
 			Version version = vid.getVersion();

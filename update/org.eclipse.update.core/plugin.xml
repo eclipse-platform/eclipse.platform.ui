@@ -21,11 +21,11 @@
 
 <extension-point id="featureTypes" name="Install/Update Concrete Feature Type Implementation Factory"/>
 
-<extension 	id="jar" point="org.eclipse.update.core.featureTypes">
+<extension 	id="packaged" point="org.eclipse.update.core.featureTypes">
 	<feature-factory class="org.eclipse.update.internal.core.FeaturePackagedFactory"/>
 </extension>
 
-<extension 	id="exe" point="org.eclipse.update.core.featureTypes">
+<extension 	id="installed" point="org.eclipse.update.core.featureTypes">
 	<feature-factory class="org.eclipse.update.internal.core.FeatureExecutableFactory"/>
 </extension>
 

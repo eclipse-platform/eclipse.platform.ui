@@ -32,7 +32,7 @@ public class PluginEntry extends PluginEntryModel implements IPluginEntry {
 	 * @param identifier The identifier to set
 	 * @since 2.0
 	 */
-	public void setIdentifier(VersionedIdentifier identifier) {
+	public void setVersionedIdentifier(VersionedIdentifier identifier) {
 		setPluginIdentifier(identifier.getIdentifier());
 		setPluginVersion(identifier.getVersion().toString());
 	}

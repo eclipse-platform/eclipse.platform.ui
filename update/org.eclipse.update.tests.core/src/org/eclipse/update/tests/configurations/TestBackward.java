@@ -10,7 +10,7 @@ import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.update.core.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.model.*;
-import org.eclipse.update.core.model.ConfigurationSiteModel;
+import org.eclipse.update.core.model.ConfiguredSiteModel;
 import org.eclipse.update.core.model.InstallConfigurationModel;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.ConfigurationPolicy;
@@ -35,7 +35,7 @@ public class TestBackward extends UpdateManagerTestCase {
 		SiteLocal siteLocal = ((SiteLocal)SiteManager.getLocalSite());
 		File localFile = new File(new URL(siteLocal.getLocationURL(),SiteLocal.SITE_LOCAL_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
-		UpdateManagerUtils.removeFromFileSystem(new File(siteLocal.getCurrentConfiguration().getURL().getFile()));
+		UpdateManagerUtils.removeFromFileSystem(new File(((InstallConfiguration)siteLocal.getCurrentConfiguration()).getURL().getFile()));
 		InternalSiteManager.localSite=null;		
 
 		ILocalSite site = SiteManager.getLocalSite();
@@ -43,7 +43,7 @@ public class TestBackward extends UpdateManagerTestCase {
 		IFeatureReference featureRef = remoteSite.getFeatureReferences()[0];
 		
 		IInstallConfiguration oldInstallConfig = site.getCurrentConfiguration();
-		IConfiguredSite oldConfigSite = oldInstallConfig.getConfigurationSites()[0];
+		IConfiguredSite oldConfigSite = oldInstallConfig.getConfiguredSites()[0];
 		oldConfigSite.install(featureRef.getFeature(),null);
 		site.save();
 	
@@ -54,7 +54,7 @@ public class TestBackward extends UpdateManagerTestCase {
 		assertTrue(activity.getInstallConfiguration().equals(current));
 		
 		// ConfigSite->InstallConfig
-		IConfiguredSite newConfigSite = current.getConfigurationSites()[0];
+		IConfiguredSite newConfigSite = current.getConfiguredSites()[0];
 		assertTrue(newConfigSite.getInstallConfiguration().equals(current));
 		
 		// cleanup

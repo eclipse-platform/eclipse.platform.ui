@@ -10,7 +10,7 @@ import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.update.core.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.model.*;
-import org.eclipse.update.core.model.ConfigurationSiteModel;
+import org.eclipse.update.core.model.ConfiguredSiteModel;
 import org.eclipse.update.core.model.InstallConfigurationModel;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.ConfigurationPolicy;
@@ -35,7 +35,7 @@ public class TestRevert extends UpdateManagerTestCase {
 		SiteLocal siteLocal = ((SiteLocal)SiteManager.getLocalSite());
 		File localFile = new File(new URL(siteLocal.getLocationURL(),SiteLocal.SITE_LOCAL_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
-		UpdateManagerUtils.removeFromFileSystem(new File(siteLocal.getCurrentConfiguration().getURL().getFile()));
+		UpdateManagerUtils.removeFromFileSystem(new File(((InstallConfiguration)siteLocal.getCurrentConfiguration()).getURL().getFile()));
 		InternalSiteManager.localSite=null;		
 
 		ILocalSite site = SiteManager.getLocalSite();
@@ -47,11 +47,13 @@ public class TestRevert extends UpdateManagerTestCase {
 		IInstallConfiguration old = site.getCurrentConfiguration();
 		ConfigurationPolicy excludepolicy = new ConfigurationPolicy();
 		excludepolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_EXCLUDE);
-		IConfiguredSite oldConfigSite = old.getConfigurationSites()[0];
-		((ConfigurationSiteModel)oldConfigSite).setConfigurationPolicyModel((ConfigurationPolicyModel)excludepolicy);
+		IConfiguredSite oldConfigSite = old.getConfiguredSites()[0];
+		excludepolicy.setConfiguredSite(oldConfigSite);		
+		((ConfiguredSiteModel)oldConfigSite).setConfigurationPolicyModel((ConfigurationPolicyModel)excludepolicy);
 		
-		IInstallConfiguration newConfig = site.cloneCurrentConfiguration(null,"new Label");
-		IConfiguredSite configSite = newConfig.getConfigurationSites()[0];
+		IInstallConfiguration newConfig = site.cloneCurrentConfiguration();
+		newConfig.setLabel("new Label");
+		IConfiguredSite configSite = newConfig.getConfiguredSites()[0];
 		if (!configSite.getSite().equals(oldConfigSite.getSite())) fail("Config sites are not equals");
 		site.addConfiguration(newConfig);		
 		IFeatureReference installedFeature = configSite.install(feature,null);
@@ -60,8 +62,9 @@ public class TestRevert extends UpdateManagerTestCase {
 		configSite.unconfigure(installedFeature.getFeature(),null);
 
 		IFeature feature2 = featureRef2.getFeature();
-		IInstallConfiguration newConfig2 = site.cloneCurrentConfiguration(null,"new Label2");
-		IConfiguredSite anotherConfigSite = newConfig2.getConfigurationSites()[0];
+		IInstallConfiguration newConfig2 = site.cloneCurrentConfiguration();
+		newConfig.setLabel("new Label");		
+		IConfiguredSite anotherConfigSite = newConfig2.getConfiguredSites()[0];
 		if (!anotherConfigSite.getSite().equals(oldConfigSite.getSite())) fail("Config sites are not equals");		
 		site.addConfiguration(newConfig2);		
 		anotherConfigSite.install(feature2,null);
@@ -80,7 +83,7 @@ public class TestRevert extends UpdateManagerTestCase {
 		// teh current one points to a real fature
 		// does not throw error.
 		IConfiguredSite newConfigSite = null;
-		IConfiguredSite[] sites = site.getCurrentConfiguration().getConfigurationSites();
+		IConfiguredSite[] sites = site.getCurrentConfiguration().getConfiguredSites();
 		for (int i = 0; i < sites.length; i++) {
 			if (sites[i].getSite().equals(oldConfigSite.getSite())){
 				 newConfigSite = sites[i];

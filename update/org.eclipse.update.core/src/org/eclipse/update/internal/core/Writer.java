@@ -8,9 +8,10 @@ package org.eclipse.update.internal.core;
 
 import java.io.PrintWriter;
 
-import org.eclipse.update.core.IInstallConfiguration;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.configuration.IInstallConfiguration;
+import org.eclipse.update.configuration.ILocalSite;
 import org.eclipse.update.core.ISite;
-import org.eclipse.update.core.ILocalSite;
 
 public class Writer {
 public Writer() {

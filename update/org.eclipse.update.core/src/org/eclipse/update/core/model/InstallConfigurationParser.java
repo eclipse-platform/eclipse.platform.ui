@@ -18,9 +18,10 @@ import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.configuration.IInstallConfiguration;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.IFeatureReference;
-import org.eclipse.update.core.IInstallConfiguration;
 import org.eclipse.update.core.ISite;
 import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.internal.core.Assert;
@@ -43,7 +44,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 	private InputStream siteStream;
 	private URL siteURL;
 	private InstallConfigurationModel config;
-	private ConfigurationSiteModel configSite;
+	private ConfiguredSiteModel configSite;
 	public static final String CONFIGURATION = "configuration";
 	public static final String CONFIGURATION_SITE = "site";
 	public static final String FEATURE = "feature";
@@ -198,10 +199,6 @@ public class InstallConfigurationParser extends DefaultHandler {
 			URLEntry entry = new URLEntry();
 			entry.setURLString(updateURLString);
 			entry.resolve(siteURL,null);
-			ref.setUpdateURL(entry);
-
-		
-
 
 			// DEBUG:		
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {

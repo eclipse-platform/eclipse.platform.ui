@@ -4,10 +4,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IFeatureReference;
-import org.eclipse.update.core.IInstallConfiguration;
-import org.eclipse.update.core.IProblemHandler;
 import org.eclipse.update.core.ISite;
-import org.eclipse.update.configuration.*;
 
 
 
@@ -24,6 +21,7 @@ import org.eclipse.update.configuration.*;
  */ 
 public interface IConfiguredSite {
 	
+	
 	/**
 	 * Returns the Site 
 	 * @since 2.0 
@@ -38,13 +36,7 @@ public interface IConfiguredSite {
 
 	boolean isUpdateable();
 
-	/**
-	 * returns true if the Site is not accessible at this time.
-	 * @return Returns a boolean
-	 * @since 2.0
-	 */
-	boolean isBroken();
-
+	
 	/**
 	 * sets if the site is an installable site
 	 * @since 2.0 
@@ -74,6 +66,14 @@ public interface IConfiguredSite {
 	 */
 
 	void remove(IFeature feature, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * returns true if the Feature is broken (a plugin is missing from the running one).
+	 * @return Returns a boolean
+	 * @since 2.0
+	 */
+	boolean isBroken(IFeature feature);
+
 		
 	/**
 	 * Configure the DefaultFeature to be available at next startup
@@ -103,6 +103,16 @@ public interface IConfiguredSite {
 	 * @since 2.0
 	 */
 	IInstallConfiguration getInstallConfiguration();
+	
+	/**
+	 * @since 2.0 
+	 */
+	void addConfiguredSiteChangedListener(IConfiguredSiteChangedListener listener);
+	/**
+	 * @since 2.0 
+	 */
+	void removeConfiguredSiteChangedListener(IConfiguredSiteChangedListener listener);
+	
 	
 }
 

@@ -3,29 +3,32 @@ package org.eclipse.update.core;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import java.io.*;
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-
 import org.eclipse.core.internal.boot.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.core.Writer;
-
-public class Site extends SiteMapModel implements ISite, IWritable {
 
 
+/**
+ * 
+ */
+public class Site extends SiteMapModel implements ISite{
 
-	/**
-	 * plugin entries 
+
+	/** 
+	 * 
 	 */
-	private List pluginEntries = new ArrayList(0);
+	private static final String PACKAGED_FEATURE_TYPE = "packaged"; //$NON-NLS-1$
+	private static final String INSTALLED_FEATURE_TYPE = "installed";	 //$NON-NLS-1$	
 
+	
 	/**
 	 * default path under the site where features will be installed
 	 */
-	public static final String INSTALL_FEATURE_PATH = "install/features/"; //$NON-NLS-1$
+	public static final String DEFAULT_INSTALLED_FEATURE_PATH = "install/features/"; //$NON-NLS-1$
 
 	/**
 	 * default path under the site where plugins will be installed
@@ -42,10 +45,16 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	 */
 	public static final String DEFAULT_FEATURE_PATH = "features/"; //$NON-NLS-1$
 
+	/**
+	 * 
+	 */
 	public static final String SITE_FILE = "site"; //$NON-NLS-1$
+	
+	/**
+	 * 
+	 */
 	public static final String SITE_XML = SITE_FILE + ".xml"; //$NON-NLS-1$
 
-	private ListenersList listeners = new ListenersList();
 	/**
 	 * The content consumer of the Site
 	 */
@@ -56,7 +65,11 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	 */
 	private ISiteContentProvider siteContentProvider;
 
-	
+	/**
+	 * plugin entries 
+	 */
+	private List pluginEntries = new ArrayList(0);
+
 	/**
 	 * Constructor for Site
 	 */
@@ -64,55 +77,33 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 		super();
 	}
 
-
+	/**
+	 * @see Object
+	 */
 	public boolean equals(Object obj) {
 		if (!(obj instanceof ISite))
 			return false;
-		if (getURL()==null)
+		if (getURL() == null)
 			return false;
-		ISite otherSite = (ISite)obj;
-		
+		ISite otherSite = (ISite) obj;
+
 		return getURL().equals(otherSite.getURL());
 	}
-	/**
-	 * Saves the site into the site.xml
+	
+	/*
+	 * @see ISite#addSiteChangedListener(IConfiguredSiteChangedListener)
 	 */
-	public void save() throws CoreException {
-		File file = new File(getURL().getFile() + SITE_XML);
-		try {
-			PrintWriter fileWriter = new PrintWriter(new FileOutputStream(file));
-			Writer writer = new Writer();
-			writer.writeSite(this, fileWriter);
-			fileWriter.close();
-		} catch (FileNotFoundException e) {
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Site.CannotSaveSiteInto", file.getAbsolutePath()), e); //$NON-NLS-1$
-			throw new CoreException(status);
-		}
-	}
 
 	/*
-	 * @see ISite#addSiteChangedListener(ISiteChangedListener)
+	 * @see ISite#removeSiteChangedListener(IConfiguredSiteChangedListener)
 	 */
-	public void addSiteChangedListener(ISiteChangedListener listener) {
-		synchronized (listeners) {
-			listeners.add(listener);
-		}
-	}
-
-	/*
-	 * @see ISite#removeSiteChangedListener(ISiteChangedListener)
-	 */
-	public void removeSiteChangedListener(ISiteChangedListener listener) {
-		synchronized (listeners) {
-			listeners.remove(listener);
-		}
-	}
 
 	/*
 	 * @see ISite#install(IFeature, IProgressMonitor)
 	 */
 	public IFeatureReference install(IFeature sourceFeature, IProgressMonitor progress) throws CoreException {
+
+		if (sourceFeature==null) return null;
 
 		// make sure we have an InstallMonitor		
 		InstallMonitor monitor;
@@ -126,19 +117,14 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 		// create new executable feature and install source content into it
 		IFeature localFeature = createExecutableFeature(sourceFeature);
 		IFeatureReference localFeatureReference = sourceFeature.install(localFeature, monitor);
-		if (localFeature instanceof FeatureModel) ((FeatureModel)localFeature).markReadOnly();
+		if (localFeature instanceof FeatureModel)
+			 ((FeatureModel) localFeature).markReadOnly();
 		this.addFeatureReference(localFeatureReference);
-		
 
-		// notify listeners
-		Object[] siteListeners = listeners.getListeners();
-		for (int i = 0; i < siteListeners.length; i++) {
-			((ISiteChangedListener) siteListeners[i]).featureInstalled(localFeature);
-		}
+	
 		return localFeatureReference;
 	}
 
-	
 	/*
 	 * @see ISite#remove(IFeature, IProgressMonitor)
 	 */
@@ -155,7 +141,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 
 		// remove the feature and the plugins if they are not used and not activated
 		// get the plugins from the feature
-		IPluginEntry[] pluginsToRemove = SiteManager.getLocalSite().getUnusedPluginEntries(feature);
+		IPluginEntry[] pluginsToRemove = getPluginEntriesOnlyReferencedBy(feature);
 
 		//finds the contentReferences for this IPluginEntry
 		for (int i = 0; i < pluginsToRemove.length; i++) {
@@ -169,7 +155,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 				UpdateManagerUtils.removeFromFileSystem(references[i].asFile());
 			} catch (IOException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Site.CannotRemoveFeature", feature.getVersionedIdentifier().getIdentifier(),getURL().toExternalForm()), e); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Site.CannotRemoveFeature", feature.getVersionedIdentifier().getIdentifier(), getURL().toExternalForm()), e); //$NON-NLS-1$
 				throw new CoreException(status);
 			}
 		}
@@ -186,18 +172,8 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 			}
 		}
 
-		// notify listeners
-
-		Object[] siteListeners = listeners.getListeners();
-		for (int i = 0; i < siteListeners.length; i++) {
-			((ISiteChangedListener) siteListeners[i]).featureUninstalled(feature);
-		}
 
 	}
-
-
-	
-	
 
 	/*
 	 * @see ISite#getURL()
@@ -233,6 +209,15 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 		else
 			return (IArchiveReference[]) result;
 	}
+	
+	
+	/**
+	 * @see ISite#getDefaultInstallableFeatureType()
+	 */
+	public String getDefaultPackagedFeatureType() {
+		return DEFAULT_PACKAGED_FEATURE_TYPE;
+	}
+
 
 	/*
 	 * @see ISite#getInfoURL()
@@ -273,7 +258,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 
 		//DEBUG:
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS && !found) {
-			UpdateManagerPlugin.getPlugin().debug(Policy.bind("Site.CannotFindCategory", key , this.getURL().toExternalForm())); //$NON-NLS-1$ //$NON-NLS-2$
+			UpdateManagerPlugin.getPlugin().debug(Policy.bind("Site.CannotFindCategory", key, this.getURL().toExternalForm())); //$NON-NLS-1$ //$NON-NLS-2$
 			if (getCategoryModels().length <= 0)
 				UpdateManagerPlugin.getPlugin().debug(Policy.bind("Site.NoCategories")); //$NON-NLS-1$
 		}
@@ -281,37 +266,10 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 		return result;
 	}
 
-	/**
+	/*
 	 * @see IPluginContainer#getPluginEntries()
 	 */
-	public IPluginEntry[] getPluginEntries() {
-		IPluginEntry[] result = new IPluginEntry[0];
-		if (!(pluginEntries == null || pluginEntries.isEmpty())) {
-			result = new IPluginEntry[pluginEntries.size()];
-			pluginEntries.toArray(result);
-		}
-		return result;
-	}
 
-	/**
-	 * Adds a plugin entry 
-	 * Either from parsing the file system or 
-	 * installing a feature
-	 * 
-	 * We cannot figure out the list of plugins by reading the Site.xml as
-	 * the archives tag are optionals
-	 */
-	public void addPluginEntry(IPluginEntry pluginEntry) {
-		pluginEntries.add(pluginEntry);
-	}
-
-
-	/*
-	 * @see ISite#getContentConsumer(IFeature)
-	 */
-	public ISiteContentConsumer createSiteContentConsumer(IFeature feature) throws CoreException {
-		return null;
-	}
 
 	/*
 	 * @see ISite#setSiteContentProvider(ISiteContentProvider)
@@ -332,83 +290,38 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 		return siteContentProvider;
 	}
 
-	/*
-	 * @see IWritable#write(int, PrintWriter)
+	/**
+	 * @see IPluginContainer#getPluginEntries()
 	 */
-	public void write(int indent, PrintWriter w) {
-
-		String gap = ""; //$NON-NLS-1$
-		for (int i = 0; i < indent; i++)
-			gap += " "; //$NON-NLS-1$
-		String increment = ""; //$NON-NLS-1$
-		for (int i = 0; i < IWritable.INDENT; i++)
-			increment += " "; //$NON-NLS-1$
-
-		w.print(gap + "<site "); //$NON-NLS-1$
-		// site type 
-		if (getType() != null) {
-			w.print("type=\"" + Writer.xmlSafe(getType()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-			w.print(" "); //$NON-NLS-1$
-		}		
-		
-		// Site URL
-		String URLInfoString = null;
-		if (getInfoURL() != null) {
-			URLInfoString = UpdateManagerUtils.getURLAsString(this.getURL(), getInfoURL());
-			w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+	public IPluginEntry[] getPluginEntries() {
+		IPluginEntry[] result = new IPluginEntry[0];
+		if (!(pluginEntries == null || pluginEntries.isEmpty())) {
+			result = new IPluginEntry[pluginEntries.size()];
+			pluginEntries.toArray(result);
 		}
-		w.println(">"); //$NON-NLS-1$
-		w.println(""); //$NON-NLS-1$
-
-		IFeatureReference[] refs = getFeatureReferences();
-		for (int index = 0; index < refs.length; index++) {
-			FeatureReference element = (FeatureReference) refs[index];
-			element.write(indent, w);
-		}
-		w.println(""); //$NON-NLS-1$
-
-		IArchiveReference[] archives = getArchives();
-		for (int index = 0; index < archives.length; index++) {
-			IArchiveReference element = (IArchiveReference) archives[index];
-			URLInfoString = UpdateManagerUtils.getURLAsString(this.getURL(), element.getURL());
-			w.println(gap + "<archive " + "path = \"" + Writer.xmlSafe(element.getPath()) + "\" url=\"" + Writer.xmlSafe(URLInfoString) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		}
-		w.println(""); //$NON-NLS-1$
-
-		ICategory[] categories = getCategories();
-		for (int index = 0; index < categories.length; index++) {
-			Category element = (Category) categories[index];
-			w.println(gap + "<category-def " + "label = \"" + Writer.xmlSafe(element.getLabel()) + "\" name=\"" + Writer.xmlSafe(element.getName()) + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-
-			IURLEntry info = element.getDescription();
-			if (info != null) {
-				w.print(gap + increment + "<description "); //$NON-NLS-1$
-				URLInfoString = null;
-				if (info.getURL() != null) {
-					URLInfoString = UpdateManagerUtils.getURLAsString(this.getURL(), info.getURL());
-					w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-				w.println(">"); //$NON-NLS-1$
-				if (info.getAnnotation() != null) {
-					w.println(gap + increment + increment + Writer.xmlSafe(info.getAnnotation()));
-				}
-				w.print(gap + increment + "</description>"); //$NON-NLS-1$
-			}
-			w.println(gap + "</category-def>"); //$NON-NLS-1$
-
-		}
-		w.println(""); //$NON-NLS-1$
-		// end
-		w.println("</site>"); //$NON-NLS-1$
-
+		return result;
 	}
 
-	/*
+	/**
 	 * @see IPluginContainer#getPluginEntryCount()
 	 */
 	public int getPluginEntryCount() {
 		return getPluginEntries().length;
+	}	
+	
+	
+	/**
+	 * Adds a plugin entry 
+	 * Either from parsing the file system or 
+	 * installing a feature
+	 * 
+	 * We cannot figure out the list of plugins by reading the Site.xml as
+	 * the archives tag are optionals
+	 */
+	public void addPluginEntry(IPluginEntry pluginEntry) {
+		pluginEntries.add(pluginEntry);
 	}
+		
 	/**
 	 * returns the download size
 	 * of the feature to be installed on the site.
@@ -428,8 +341,9 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 
 		// FIXME Intersection for NonPluginEntry (using Install Handler)
 		try {
-		result = feature.getFeatureContentProvider().getDownloadSizeFor(entriesToInstall,/* non plugin entry []*/null);
-		} catch (CoreException e){
+			result = feature.getFeatureContentProvider().getDownloadSizeFor(entriesToInstall, /* non plugin entry []*/
+			null);
+		} catch (CoreException e) {
 			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
 			result = ContentEntryModel.UNKNOWN_SIZE;
 		}
@@ -455,16 +369,15 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 
 		// FIXME Intersection for NonPluginEntry (using Install Handler)
 		try {
-		result = feature.getFeatureContentProvider().getInstallSizeFor(entriesToInstall,/* non plugin entry []*/null);
-		} catch (CoreException e){
+			result = feature.getFeatureContentProvider().getInstallSizeFor(entriesToInstall, /* non plugin entry []*/
+			null);
+		} catch (CoreException e) {
 			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
 			result = ContentEntryModel.UNKNOWN_SIZE;
 		}
-		
+
 		return result;
 	}
-
-
 
 	/*
 	 * @see IAdaptable#getAdapter(Class)
@@ -474,29 +387,14 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	}
 
 	/*
-	 * @see ISite#getDefaultExecutableFeatureType()
-	 */
-	public String getDefaultExecutableFeatureType() {
-		return null;
-	}
-
-	/*
-	 * @see ISite#getDefaultInstallableFeatureType()
-	 */
-	public String getDefaultInstallableFeatureType() {
-		String pluginID = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier() + "."; //$NON-NLS-1$
-		return pluginID + IFeatureFactory.INSTALLABLE_FEATURE_TYPE;
-	}
-
-	/*
 	 * @see ISite#getFeatureReference(IFeature)
 	 */
 	public IFeatureReference getFeatureReference(IFeature feature) {
 		IFeatureReference result = null;
 		IFeatureReference[] references = getFeatureReferences();
 		boolean found = false;
-		for (int i = 0; i < references.length &&!found; i++) {
-			if (references[i].getURL().equals(feature.getURL())){
+		for (int i = 0; i < references.length && !found; i++) {
+			if (references[i].getURL().equals(feature.getURL())) {
 				result = references[i];
 				found = true;
 			}
@@ -508,7 +406,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	 * @see ISite#getDescription()
 	 */
 	public IURLEntry getDescription() {
-		return (IURLEntry)getDescriptionModel();
+		return (IURLEntry) getDescriptionModel();
 	}
 
 	/**
@@ -533,31 +431,69 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 				UpdateManagerUtils.removeFromFileSystem(references[i].asFile());
 			} catch (IOException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Site.CannotRemovePlugin",pluginEntry.getVersionedIdentifier().toString(),getURL().toExternalForm()), e); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Site.CannotRemovePlugin", pluginEntry.getVersionedIdentifier().toString(), getURL().toExternalForm()), e); //$NON-NLS-1$
 				throw new CoreException(status);
 			}
 		}
 	}
 
-
 	/**
 	 * 
 	 */
 	private IFeature createExecutableFeature(IFeature sourceFeature) throws CoreException {
-		String executableFeatureType = getDefaultExecutableFeatureType();
 		IFeature result = null;
-		if (executableFeatureType != null) {
-			IFeatureFactory factory = FeatureTypeFactory.getInstance().getFactory(executableFeatureType);
-			result = factory.createFeature(/*URL*/null,this);
+		IFeatureFactory factory = FeatureTypeFactory.getInstance().getFactory(DEFAULT_INSTALLED_FEATURE_TYPE);
+		result = factory.createFeature(/*URL*/null, this);
 
-			// at least set the version identifier to be the same
-			 ((FeatureModel) result).setFeatureIdentifier(sourceFeature.getVersionedIdentifier().getIdentifier());
-			((FeatureModel) result).setFeatureVersion(sourceFeature.getVersionedIdentifier().getVersion().toString());
-		}
+		// at least set the version identifier to be the same
+		((FeatureModel) result).setFeatureIdentifier(sourceFeature.getVersionedIdentifier().getIdentifier());
+		((FeatureModel) result).setFeatureVersion(sourceFeature.getVersionedIdentifier().getVersion().toString());
 		return result;
 	}
 
+	/**
+	 * returns a list of PluginEntries that are not used by any other configured feature
+	 */
+	public IPluginEntry[] getPluginEntriesOnlyReferencedBy(IFeature feature) throws CoreException {
 
-	
+		IPluginEntry[] pluginsToRemove = new IPluginEntry[0];
+
+		// get the plugins from the feature
+		IPluginEntry[] entries = feature.getPluginEntries();
+		if (entries != null) {
+			// get all the other plugins from all the other features
+			Set allPluginID = new HashSet();
+			IFeatureReference[] features = getFeatureReferences();
+			if (features != null) {
+				for (int indexFeatures = 0; indexFeatures < features.length; indexFeatures++) {
+					if (!features[indexFeatures].equals(feature)) {
+						IPluginEntry[] pluginEntries = features[indexFeatures].getFeature().getPluginEntries();
+						if (pluginEntries != null) {
+							for (int indexEntries = 0; indexEntries < pluginEntries.length; indexEntries++) {
+								allPluginID.add(entries[indexEntries].getVersionedIdentifier());
+							}
+						}
+					}
+				}
+			}
+
+			// create the delta with the plugins that may be still used by other configured or unconfigured feature
+			List plugins = new ArrayList();
+			for (int indexPlugins = 0; indexPlugins < entries.length; indexPlugins++) {
+				if (!allPluginID.contains(entries[indexPlugins].getVersionedIdentifier())) {
+					plugins.add(entries[indexPlugins]);
+				}
+			}
+
+			// move List into Array
+			if (!plugins.isEmpty()) {
+				pluginsToRemove = new IPluginEntry[plugins.size()];
+				plugins.toArray(pluginsToRemove);
+			}
+
+		}
+
+		return pluginsToRemove;
+	}
 
 }

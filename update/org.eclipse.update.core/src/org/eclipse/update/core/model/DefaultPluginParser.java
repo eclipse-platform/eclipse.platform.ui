@@ -60,7 +60,7 @@ public class DefaultPluginParser extends DefaultHandler {
 			// expected, we stopped the parsing
 		}
 
-		pluginEntry.setIdentifier(new VersionedIdentifier(id, version));
+		pluginEntry.setVersionedIdentifier(new VersionedIdentifier(id, version));
 		return pluginEntry;
 	}
 

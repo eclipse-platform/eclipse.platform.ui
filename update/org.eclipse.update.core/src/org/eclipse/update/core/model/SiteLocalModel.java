@@ -11,6 +11,7 @@ import java.util.*;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.xml.sax.SAXException;
 
@@ -24,13 +25,14 @@ public class SiteLocalModel extends ModelObject {
 	public static final String SITE_LOCAL_FILE = "LocalSite.xml";
 	public static final String DEFAULT_CONFIG_FILE = "Config.xml";
 	public static final String DEFAULT_PRESERVED_CONFIG_FILE = "PreservedConfig.xml";
+	public static final int DEFAULT_HISTORY = 5;	
 
 
 	private long stamp;
 	private String label;
 	private URL location;
 	private String locationURLString;
-	private int history = ILocalSite.DEFAULT_HISTORY;
+	private int history = DEFAULT_HISTORY;
 	private List /* of InstallConfigurationModel */configurations;
 	private List /* of InstallConfigurationModel */preservedConfigurations;
 	private InstallConfigurationModel currentConfiguration;
@@ -128,14 +130,14 @@ public class SiteLocalModel extends ModelObject {
 	/**
 	 * @since 2.0
 	 */
-	public int getMaximumHistory() {
+	public int getMaximumHistoryCount() {
 		return history;
 	}
 
 	/**
 	 * @since 2.0
 	 */
-	public void setMaximumHistory(int history) {
+	public void setMaximumHistoryCount(int history) {
 		assertIsWriteable();
 		this.history = history;
 	}

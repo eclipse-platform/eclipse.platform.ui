@@ -47,7 +47,7 @@ public class TargetPage extends WizardPage {
 		 * @see IStructuredContentProvider#getElements(Object)
 		 */
 		public Object[] getElements(Object parent) {
-			return config.getConfigurationSites();
+			return config.getConfiguredSites();
 		}
 	}
 
@@ -82,12 +82,6 @@ public class TargetPage extends WizardPage {
 
 		public void installSiteRemoved(IConfiguredSite csite) {
 			tableViewer.remove(csite);
-		}
-
-		public void linkedSiteAdded(IConfiguredSite site) {
-		}
-
-		public void linkedSiteRemoved(IConfiguredSite site) {
 		}
 	}
 
@@ -182,7 +176,7 @@ public class TargetPage extends WizardPage {
 	}
 
 	private void selectFirstTarget() {
-		IConfiguredSite[] sites = config.getConfigurationSites();
+		IConfiguredSite[] sites = config.getConfiguredSites();
 		IConfiguredSite firstSite = null;
 		for (int i = 0; i < sites.length; i++) {
 			IConfiguredSite csite = sites[i];
@@ -209,7 +203,7 @@ public class TargetPage extends WizardPage {
 						file,
 						IPlatformConfiguration.ISitePolicy.USER_EXCLUDE);
 				if (csite.isUpdateable())
-					config.addConfigurationSite(csite);
+					config.addConfiguredSite(csite);
 				else {
 					String title = UpdateUIPlugin.getResourceString(KEY_LOCATION_ERROR_TITLE);
 					String message = UpdateUIPlugin.getFormattedMessage(KEY_LOCATION_ERROR_MESSAGE,

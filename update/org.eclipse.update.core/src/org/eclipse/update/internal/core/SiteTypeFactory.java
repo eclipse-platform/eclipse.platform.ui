@@ -15,6 +15,13 @@ import org.eclipse.update.core.ISiteFactory;
  * 
  */
 public final class SiteTypeFactory {
+	
+
+	/**
+	 * extension point ID
+	 */
+	public static final String SIMPLE_EXTENSION_ID = "siteTypes";	 //$NON-NLS-1$
+	
 
 	private static SiteTypeFactory inst;
 	
@@ -54,7 +61,7 @@ public final class SiteTypeFactory {
 		
 		String pluginID = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
-		IConfigurationElement[] elements = pluginRegistry.getConfigurationElementsFor(pluginID,ISiteFactory.SIMPLE_EXTENSION_ID,type);
+		IConfigurationElement[] elements = pluginRegistry.getConfigurationElementsFor(pluginID,SIMPLE_EXTENSION_ID,type);
 		if (elements==null || elements.length==0){
 			IStatus status = new Status(IStatus.ERROR,pluginID,IStatus.OK,"Cannot find site factory for id: " +type,null);
 			throw new CoreException(status);

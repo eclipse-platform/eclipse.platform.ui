@@ -248,20 +248,8 @@ public interface IFeature {
 
 	IImport[] getImports();
 	
-	/**
-	 * Returns <code> true </code> if the feature can
-	 * be added to the plugin-path of the workspace.
-	 * @since 2.0 
-	 */
-	boolean isExecutable();
+		
 	
-	/**
-	 * Returns <code> true </code> if the feature can
-	 * be installed.
-	 * @since 2.0 
-	 */
-	boolean isInstallable();
-
 	/**
 	 * Install this feature into the targetFeature
 	 * @param targetFeature the feature to install into
@@ -269,13 +257,6 @@ public interface IFeature {
 	 * @throws CoreException
 	 */
 	public IFeatureReference install(IFeature targetFeature, IProgressMonitor monitor) throws CoreException;
-
-	/**
-	 * Removes the feature from the Site
-	 * @param monitor
-	 * @throws CoreException
-	 */
-	public void remove(IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns an array of plug-ins managed by the Feature
@@ -355,7 +336,7 @@ public interface IFeature {
 	 * @throws CoreException when the DefaultFeature does not allow storage.
 	 * @since 2.0
 	 */
-	IFeatureContentConsumer getContentConsumer() throws CoreException;
+	IFeatureContentConsumer getFeatureContentConsumer() throws CoreException;
 				
 }
 

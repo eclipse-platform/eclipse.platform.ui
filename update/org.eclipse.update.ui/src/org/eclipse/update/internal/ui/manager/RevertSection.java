@@ -2,6 +2,7 @@ package org.eclipse.update.internal.ui.manager;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.update.internal.ui.parts.*;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;

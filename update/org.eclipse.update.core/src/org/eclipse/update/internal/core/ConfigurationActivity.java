@@ -6,9 +6,9 @@ package org.eclipse.update.internal.core;
  
 import java.io.PrintWriter;
 
-import org.eclipse.update.core.IInstallConfiguration;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.configuration.IActivity;
+import org.eclipse.update.configuration.IInstallConfiguration;
 import org.eclipse.update.core.model.ConfigurationActivityModel;
 import org.eclipse.update.core.model.InstallConfigurationParser;
 

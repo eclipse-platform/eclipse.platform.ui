@@ -15,7 +15,7 @@ import org.xml.sax.SAXException;
 public class SiteFileFactory extends BaseSiteFactory {
 
 	// private when parsing file system
-	private Site site;
+	private SiteFile site;
 
 	/**
 	 * manages the versionedIdentifier and location of parsed plugins
@@ -131,7 +131,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 	 */
 	public Site parseSite(File directory) throws ParsingException {
 
-		this.site = (Site) createSiteMapModel();
+		this.site = (SiteFile) createSiteMapModel();
 
 		if (!directory.exists())
 			throw new ParsingException(new Exception("The file:"+directory+" does not exist. Cannot parse site"));
@@ -148,12 +148,12 @@ public class SiteFileFactory extends BaseSiteFactory {
 
 			parsePackagedPlugins(fragmentPath);
 
-			// EXECUTABLE	
-			parseExecutableFeature(directory);
+			// INSTALLED	
+			parseInstalledFeature(directory);
 
-			parseExecutablePlugin(pluginPath);
+			parseInstalledPlugin(pluginPath);
 
-			parseExecutablePlugin(fragmentPath);
+			parseInstalledPlugin(fragmentPath);
 
 		} catch (CoreException e) {
 			throw new ParsingException(e.getStatus().getException());
@@ -167,9 +167,9 @@ public class SiteFileFactory extends BaseSiteFactory {
 	 * Method parseFeature.
 	 * @throws CoreException
 	 */
-	private void parseExecutableFeature(File directory) throws CoreException {
+	private void parseInstalledFeature(File directory) throws CoreException {
 
-		File featureDir = new File(directory, Site.INSTALL_FEATURE_PATH);
+		File featureDir = new File(directory, Site.DEFAULT_INSTALLED_FEATURE_PATH);
 		if (featureDir.exists()) {
 			String[] dir;
 			FeatureReferenceModel featureRef;
@@ -185,14 +185,15 @@ public class SiteFileFactory extends BaseSiteFactory {
 					// the URL must ends with '/' for the bundle to be resolved
 					newFilePath = dir[index] + (dir[index].endsWith("/") ? "/" : "");
 					featureURL = new File(featureDir,newFilePath).toURL();
-					IFeature newFeature = createFeature(featureURL);
+					//IFeature newFeature = createFeature(featureURL,ISite.DEFAULT_INSTALLED_FEATURE_TYPE);
 
-					if (newFeature!=null){
+					//if (newFeature!=null){
 						featureRef = archiveFactory.createFeatureReferenceModel();
 						featureRef.setSiteModel(site);
 						featureRef.setURLString(featureURL.toExternalForm());
+						featureRef.setType(ISite.DEFAULT_INSTALLED_FEATURE_TYPE);
 						((Site) site).addFeatureReferenceModel(featureRef);
-					}
+					//}
 				}
 			} catch (MalformedURLException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
@@ -222,12 +223,13 @@ public class SiteFileFactory extends BaseSiteFactory {
 				for (int index = 0; index < dir.length; index++) {
 
 					featureURL = new File(featureDir, dir[index]).toURL();
-					IFeature newFeature = createFeature(featureURL);
+					//IFeature newFeature = createFeature(featureURL,ISite.DEFAULT_PACKAGED_FEATURE_TYPE);
 
 					SiteFileFactory archiveFactory = new SiteFileFactory();
 					featureRef = archiveFactory.createFeatureReferenceModel();
 					featureRef.setSiteModel(site);
 					featureRef.setURLString(featureURL.toExternalForm());
+					featureRef.setType(ISite.DEFAULT_PACKAGED_FEATURE_TYPE);
 					site.addFeatureReferenceModel(featureRef);
 
 				}
@@ -248,7 +250,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 	 * @return VersionedIdentifier
 	 * @throws CoreException
 	 */
-	private void parseExecutablePlugin(File dir) throws CoreException {
+	private void parseInstalledPlugin(File dir) throws CoreException {
 		PluginIdentifier plugin = null;
 		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 		MultiStatus parsingStatus = new MultiStatus(id, IStatus.WARNING, "Error parsing plugin.xml in " + dir, new Exception());
@@ -359,10 +361,11 @@ public class SiteFileFactory extends BaseSiteFactory {
 	/**
 	 * 
 	 */
-	private IFeature createFeature(URL url) throws CoreException {
+	private IFeature createFeature(URL url,String type) throws CoreException {
 		FeatureReference ref = new FeatureReference();
 		ref.setSite(site);
 		ref.setURL(url);
+		ref.setType(type);
 		return ref.getFeature();
 	}
 

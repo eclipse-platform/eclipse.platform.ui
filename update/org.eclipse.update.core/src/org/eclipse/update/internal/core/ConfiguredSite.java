@@ -4,29 +4,20 @@ package org.eclipse.update.internal.core;
  * All Rights Reserved.
  */
 import java.io.PrintWriter;
-import java.net.URL;
-import java.util.Date;
-
 import java.util.*;
 
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.update.core.*;
-import org.eclipse.update.core.IFeatureReference;
 import org.eclipse.update.configuration.*;
+import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
-import org.eclipse.update.core.model.ConfigurationActivityModel;
-import org.eclipse.update.core.model.ConfigurationPolicyModel;
-import org.eclipse.update.core.model.ConfigurationSiteModel;
-import org.eclipse.update.core.model.FeatureReferenceModel;
-import org.eclipse.update.core.model.InstallConfigurationParser;
-import org.eclipse.update.core.model.SiteMapModel;
 
 /**
  * 
  */
-public class ConfiguredSite extends ConfigurationSiteModel implements IConfiguredSite, IWritable {
+public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSite, IWritable {
+
+	private ListenersList listeners = new ListenersList();
 
 
 	
@@ -47,14 +38,31 @@ public class ConfiguredSite extends ConfigurationSiteModel implements IConfigure
 		isUpdateable(configSite.isUpdateable());
 		setPreviousPluginPath(cSite.getPreviousPluginPath());
 		//
-		if (configSite instanceof ConfigurationSiteModel){
-			ConfigurationSiteModel siteModel = (ConfigurationSiteModel)configSite;
+		if (configSite instanceof ConfiguredSiteModel){
+			ConfiguredSiteModel siteModel = (ConfiguredSiteModel)configSite;
 			setPlatformURLString(siteModel.getPlatformURLString());
 		} else {
 			setPlatformURLString(configSite.getSite().getURL().toExternalForm());
 		}
 	}
 
+	/*
+	 *  @see
+	 */
+	public void addConfiguredSiteChangedListener(IConfiguredSiteChangedListener listener) {
+		synchronized (listeners) {
+			listeners.add(listener);
+		}
+	}
+	
+	/*
+	 *  @see
+	 */
+	public void removeConfiguredSiteChangedListener(IConfiguredSiteChangedListener listener) {
+		synchronized (listeners) {
+			listeners.remove(listener);
+		}
+	}
 	/*
 	 * @see IWritable#write(int, PrintWriter)
 	 */
@@ -90,8 +98,7 @@ public class ConfiguredSite extends ConfigurationSiteModel implements IConfigure
 					ISite featureSite = (ISite) ((FeatureReference) element).getSite();
 					URLInfoString = UpdateManagerUtils.getURLAsString(featureSite.getURL(), element.getURL());
 					w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\" ");
-					w.print("updateURL=\""+Writer.xmlSafe(((FeatureReference)element).getUpdateURL().getURLString())+ "\" ");
-				}
+						}
 				w.println("/>");
 			}
 		}
@@ -110,10 +117,6 @@ public class ConfiguredSite extends ConfigurationSiteModel implements IConfigure
 					ISite featureSite = element.getSite();
 					URLInfoString = UpdateManagerUtils.getURLAsString(featureSite.getURL(), element.getURL());
 					w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\" ");
-					URLEntryModel entry = ((FeatureReferenceModel)element).getUpdateURL();
-					if (entry!=null){
-						w.print("updateURL=\""+Writer.xmlSafe(entry.getURLString())+ "\" ");					
-					}
 				}
 				w.println("/>");
 			}
@@ -146,6 +149,11 @@ public class ConfiguredSite extends ConfigurationSiteModel implements IConfigure
 			// everything done ok
 			activity.setStatus(IActivity.STATUS_OK);
 
+			// notify listeners
+			Object[] siteListeners = listeners.getListeners();
+			for (int i = 0; i < siteListeners.length; i++) {
+				((IConfiguredSiteChangedListener) siteListeners[i]).featureInstalled(installedFeature.getFeature());
+			}
 		} catch (CoreException e) {
 			activity.setStatus(IActivity.STATUS_NOK);
 			throw e;
@@ -195,6 +203,12 @@ public class ConfiguredSite extends ConfigurationSiteModel implements IConfigure
 			// everything done ok
 			activity.setStatus(IActivity.STATUS_OK);
 
+			// notify listeners
+			Object[] siteListeners = listeners.getListeners();
+			for (int i = 0; i < siteListeners.length; i++) {
+				((IConfiguredSiteChangedListener) siteListeners[i]).featureUninstalled(feature);
+			}
+
 		} catch (CoreException e) {
 			activity.setStatus(IActivity.STATUS_NOK);
 			throw e;
@@ -216,7 +230,7 @@ public class ConfiguredSite extends ConfigurationSiteModel implements IConfigure
 	 */
 	public boolean unconfigure(IFeature feature, IProblemHandler handler) throws CoreException {
 		IFeatureReference featureReference = getSite().getFeatureReference(feature);		
-		return ((ConfigurationPolicy) getConfigurationPolicyModel()).unconfigure(featureReference, handler);
+		return ((ConfigurationPolicy) getConfigurationPolicyModel()).unconfigure(featureReference,handler);
 	}
 
 	/*
@@ -301,7 +315,7 @@ public class ConfiguredSite extends ConfigurationSiteModel implements IConfigure
 		IInstallConfiguration[] history = SiteManager.getLocalSite().getConfigurationHistory();
 		for (int i = 0; i < history.length; i++) {
 			IInstallConfiguration element = history[i];
-			IConfiguredSite[] configSites = element.getConfigurationSites();
+			IConfiguredSite[] configSites = element.getConfiguredSites();
 			for (int j = 0; j < configSites.length; j++) {
 				ConfiguredSite configSite = (ConfiguredSite)configSites[j];
 				if (configSite.getSite().getURL().equals(((ISite)getSite()).getURL())) {
@@ -456,4 +470,31 @@ public class ConfiguredSite extends ConfigurationSiteModel implements IConfigure
 	
 	
 	
+	/*
+	 * @see IConfiguredSite#isBroken(IFeature)
+	 */
+	public boolean isBroken(IFeature feature) {
+		// check the Plugins of all the features
+		// every plugin of the feature must be on the site
+		ISite currentSite = getSite();
+		IPluginEntry[] siteEntries = getSite().getPluginEntries();
+
+		IPluginEntry[] featuresEntries = feature.getPluginEntries();
+		IPluginEntry[] result = UpdateManagerUtils.substract(featuresEntries, siteEntries);
+		if (result == null || (result.length != 0)) {
+			IPluginEntry[] missing = UpdateManagerUtils.substract(featuresEntries, result);
+			String listOfMissingPlugins = "";
+			for (int k = 0; k < missing.length; k++) {
+				listOfMissingPlugins = "\r\nplugin:" + missing[k].getVersionedIdentifier().toString();
+			}
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "The feature " + feature.getURL().toExternalForm() + " requires some missing plugins from the site:" + currentSite.getURL().toExternalForm() + listOfMissingPlugins, null);
+			UpdateManagerPlugin.getPlugin().getLog().log(status);
+			return true;
+		}
+		return false;
+	}
+
+
+
 }

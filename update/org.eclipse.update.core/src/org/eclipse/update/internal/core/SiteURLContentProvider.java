@@ -34,20 +34,9 @@ public class SiteURLContentProvider extends SiteContentProvider {
 		return null;
 	}
 
-	/*
-	 * @see ISite#getDefaultExecutableFeatureType()
-	 */
-	public String getDefaultExecutableFeatureType() {
-		return null;
-	}
 
-	/*
-	 * @see ISite#getDefaultInstallableFeatureType()
-	 */
-	public String getDefaultInstallableFeatureType() {
-		String pluginID = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier()+".";		
-		return pluginID+IFeatureFactory.INSTALLABLE_FEATURE_TYPE;
-	}
+
+	
 	/*
 	 * @see ISiteContentProvider#getArchiveReference(String)
 	 */

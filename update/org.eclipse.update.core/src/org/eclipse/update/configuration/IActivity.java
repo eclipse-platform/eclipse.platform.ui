@@ -2,7 +2,6 @@ package org.eclipse.update.configuration;
 
 import java.util.Date;
 
-import org.eclipse.update.core.IInstallConfiguration;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.

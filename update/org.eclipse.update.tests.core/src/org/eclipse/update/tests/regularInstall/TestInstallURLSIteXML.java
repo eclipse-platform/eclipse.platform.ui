@@ -13,19 +13,20 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
-public class TestInstallURLSIteXML extends UpdateManagerTestCase {
+public class TestInstallURLSiteXML extends UpdateManagerTestCase {
 	
+	/**
+	 * 
+	 */
+	public static final String PACKAGED_FEATURE_TYPE = "packaged"; //$NON-NLS-1$	
 	
-	public class Listener implements ISiteChangedListener{
+	public class Listener implements IConfiguredSiteChangedListener{
 		
 		public boolean notified = false;
-		/*
-		 * @see ISiteChangedListener#featureUpdated(IFeature)
-		 */
-		public void featureUpdated(IFeature feature) {}
+
 
 			/*
-		 * @see ISiteChangedListener#featureInstalled(IFeature)
+		 * @see IConfiguredSiteChangedListener#featureInstalled(IFeature)
 		 */
 		public void featureInstalled(IFeature feature) {
 			notified = true;
@@ -33,7 +34,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 		}
 
 		/*
-		 * @see ISiteChangedListener#featureUninstalled(IFeature)
+		 * @see IConfiguredSiteChangedListener#featureUninstalled(IFeature)
 		 */
 		public void featureUninstalled(IFeature feature) {}
 
@@ -45,7 +46,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 	/**
 	 * Constructor for Test1
 	 */
-	public TestInstallURLSIteXML(String arg0) {
+	public TestInstallURLSiteXML(String arg0) {
 		super(arg0);
 	}
 
@@ -54,20 +55,16 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 		FeatureReference ref = new FeatureReference();
 		ref.setSite(site);
 		ref.setURLString("features/org.eclipse.update.core.tests.feature1_1.0.4.jar");
-		ref.resolve(site.getURL(),null);
-		//Feature remoteFeature = createPackagedFeature(url,site);
-		//remoteFeature.setFeatureIdentifier("org.eclipse.update.core.tests.feature1");
-		//remoteFeature.setFeatureVersion("1.0.4");		
+		ref.setType(ISite.DEFAULT_PACKAGED_FEATURE_TYPE);
+		ref.resolve(site.getURL(),null);	
 		return ref.getFeature();
 	}
 
 	public void testFileSite() throws Exception {
 
 		ISite remoteSite = SiteManager.getSite(new URL(SOURCE_FILE_SITE, Site.SITE_XML));
-		//ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);		
 		IFeature remoteFeature = getFeature1(remoteSite);
 		ISite localSite = SiteManager.getSite(new URL(TARGET_FILE_SITE, Site.SITE_XML));
-		//ISite localSite = SiteManager.getSite(TARGET_FILE_SITE);		
 		localSite.install(remoteFeature, null);
 
 		// verify
@@ -80,7 +77,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 		File pluginXMLFile = new File(site, Site.DEFAULT_PLUGIN_PATH + pluginName+File.separator + "plugin.xml");
 		assertTrue("plugin.xml file not installed locally", pluginXMLFile.exists());
 
-		File featureFile = new File(site, Site.INSTALL_FEATURE_PATH + remoteFeature.getVersionedIdentifier().toString());
+		File featureFile = new File(site, Site.DEFAULT_INSTALLED_FEATURE_PATH + remoteFeature.getVersionedIdentifier().toString());
 		assertTrue("feature info not installed locally:"+featureFile, featureFile.exists());
 		//cleanup
 		UpdateManagerUtils.removeFromFileSystem(pluginFile);
@@ -136,10 +133,10 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 		File pluginFile = new File(site, Site.DEFAULT_PLUGIN_PATH + pluginName);
 		assertTrue("plugin info not installed locally", pluginFile.exists());
 
-		File featureFile = new File(site, Site.INSTALL_FEATURE_PATH + remoteFeature.getVersionedIdentifier().toString());
+		File featureFile = new File(site, Site.DEFAULT_INSTALLED_FEATURE_PATH + remoteFeature.getVersionedIdentifier().toString());
 		assertTrue("feature info not installed locally", featureFile.exists());
 
-		localSite.save();
+		//localSite.save();
 
 		//cleanup
 		UpdateManagerUtils.removeFromFileSystem(pluginFile);
@@ -177,11 +174,11 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 
 		assertNotNull("Cannot find help.jar on site", remoteFeature);
 		ILocalSite localSite = SiteManager.getLocalSite();
-		IConfiguredSite site = localSite.getCurrentConfiguration().getConfigurationSites()[0];
+		IConfiguredSite site = localSite.getCurrentConfiguration().getConfiguredSites()[0];
 		Listener listener = new Listener();
-		site.getSite().addSiteChangedListener(listener);
+		site.addConfiguredSiteChangedListener(listener);
 		
-		site.getSite().install(remoteFeature, null);
+		site.install(remoteFeature, null);
 
 
 		IPluginEntry[] entries = remoteFeature.getPluginEntries();
@@ -192,17 +189,17 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 		File pluginFile = new File(sitePath, Site.DEFAULT_PLUGIN_PATH + pluginName);
 		assertTrue("plugin info not installed locally", pluginFile.exists());
 
-		File featureFile = new File(sitePath, Site.INSTALL_FEATURE_PATH + remoteFeature.getVersionedIdentifier().toString());
+		File featureFile = new File(sitePath, Site.DEFAULT_INSTALLED_FEATURE_PATH + remoteFeature.getVersionedIdentifier().toString());
 		assertTrue("feature info not installed locally", featureFile.exists());
 
 		//cleanup
-		File file = new File(site.getSite().getURL().getFile()+File.separator+Site.INSTALL_FEATURE_PATH+remoteFeature.getVersionedIdentifier());
+		File file = new File(site.getSite().getURL().getFile()+File.separator+Site.DEFAULT_INSTALLED_FEATURE_PATH+remoteFeature.getVersionedIdentifier());
 		UpdateManagerUtils.removeFromFileSystem(file);
 		UpdateManagerUtils.removeFromFileSystem(pluginFile);
 		UpdateManagerUtils.removeFromFileSystem(localFile);	
-		UpdateManagerUtils.removeFromFileSystem(new File(localSite.getCurrentConfiguration().getURL().getFile()));				
+		UpdateManagerUtils.removeFromFileSystem(new File(((InstallConfiguration)localSite.getCurrentConfiguration()).getURL().getFile()));				
 
-		site.getSite().removeSiteChangedListener(listener);
+		site.removeConfiguredSiteChangedListener(listener);
 		assertTrue("Listener hasn't received notification",listener.isNotified());
 	}
 	
@@ -211,7 +208,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 		
 		ISite remoteSite = SiteManager.getSite(new URL(SOURCE_FILE_SITE, Site.SITE_XML));
 		IFeature remoteFeature = getFeature1(remoteSite);
-		IConfiguredSite localSite = SiteManager.getLocalSite().getCurrentConfiguration().getConfigurationSites()[0];
+		IConfiguredSite localSite = SiteManager.getLocalSite().getCurrentConfiguration().getConfiguredSites()[0];
 		localSite.getSite().install(remoteFeature, null);
 
 		IFeatureReference[] features = localSite.getSite().getFeatureReferences();
@@ -219,7 +216,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 		if (localSite.getSite().getArchives().length==0) fail("The local site does not contain archives, should not contain an XML file but archives should be found anyway by parsing");
 		
 		//cleanup
-		File file = new File(localSite.getSite().getURL().getFile()+File.separator+Site.INSTALL_FEATURE_PATH+remoteFeature.getVersionedIdentifier());
+		File file = new File(localSite.getSite().getURL().getFile()+File.separator+Site.DEFAULT_INSTALLED_FEATURE_PATH+remoteFeature.getVersionedIdentifier());
 		UpdateManagerUtils.removeFromFileSystem(file);
 		file = new File(localSite.getSite().getURL().getFile()+File.separator+Site.DEFAULT_PLUGIN_PATH+"org.eclipse.update.core.tests.feature1.plugin1_3.5.6");
 		UpdateManagerUtils.removeFromFileSystem(file);
@@ -243,7 +240,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 	 * 
 	 */
 	private Feature createPackagedFeature(URL url,ISite site) throws CoreException {
-		String packagedFeatureType = site.getDefaultInstallableFeatureType();
+		String packagedFeatureType = ISite.DEFAULT_PACKAGED_FEATURE_TYPE;
 		Feature result = null;
 		if (packagedFeatureType != null) {
 			IFeatureFactory factory = FeatureTypeFactory.getInstance().getFactory(packagedFeatureType);
@@ -256,7 +253,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 	 */
 	public String getDefaultInstallableFeatureType() {
 		String pluginID = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier()+".";
-		return pluginID+IFeatureFactory.INSTALLABLE_FEATURE_TYPE;
+		return pluginID+PACKAGED_FEATURE_TYPE;
 	}	
 	
 }

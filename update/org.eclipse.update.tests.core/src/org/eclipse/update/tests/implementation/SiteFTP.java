@@ -5,6 +5,7 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IFeatureReference;
@@ -15,6 +16,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.IURLEntry;
+import org.eclipse.update.internal.core.*;
 
 public class SiteFTP implements ISite {
 
@@ -44,15 +46,15 @@ public class SiteFTP implements ISite {
 	}
 
 	/*
-	 * @see ISite#addSiteChangedListener(ISiteChangedListener)
+	 * @see ISite#addSiteChangedListener(IConfiguredSiteChangedListener)
 	 */
-	public void addSiteChangedListener(ISiteChangedListener listener) {
+	public void addSiteChangedListener(IConfiguredSiteChangedListener listener) {
 	}
 
 	/*
-	 * @see ISite#removeSiteChangedListener(ISiteChangedListener)
+	 * @see ISite#removeSiteChangedListener(IConfiguredSiteChangedListener)
 	 */
-	public void removeSiteChangedListener(ISiteChangedListener listener) {
+	public void removeSiteChangedListener(IConfiguredSiteChangedListener listener) {
 	}
 
 	/*
@@ -170,16 +172,9 @@ public class SiteFTP implements ISite {
 	}
 
 	/*
-	 * @see ISite#getDefaultExecutableFeatureType()
+	 * @see ISite#getDefaultPackagedFeatureType()
 	 */
-	public String getDefaultExecutableFeatureType() {
-		return null;
-	}
-
-	/*
-	 * @see ISite#getDefaultInstallableFeatureType()
-	 */
-	public String getDefaultInstallableFeatureType() {
+	public String getDefaultPackagedFeatureType() {
 		return null;
 	}
 
@@ -221,6 +216,13 @@ public class SiteFTP implements ISite {
 	 * @see ISite#getDescription()
 	 */
 	public IURLEntry getDescription() {
+		return null;
+	}
+
+	/*
+	 * @see ISite#getPluginEntriesOnlyReferencedBy(IFeature)
+	 */
+	public IPluginEntry[] getPluginEntriesOnlyReferencedBy(IFeature feature) throws CoreException {
 		return null;
 	}
 
