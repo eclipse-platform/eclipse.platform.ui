@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Menu;
  */
 public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction implements IMenuCreator {
 
-	private boolean fFillMenu= true;
 	private IAction fAction= null;
 	
 	public GroupBreakpointsByAction() {
