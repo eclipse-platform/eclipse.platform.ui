@@ -18,8 +18,8 @@ import org.eclipse.ant.internal.ui.editor.templates.AntContext;
 import org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorPartitionScanner;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
-import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.ant.internal.ui.model.AntProjectNode;
+import org.eclipse.ant.internal.ui.model.IAntModel;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -219,7 +219,7 @@ public class XmlFormatter {
 	/**
 	 * Returns the indentation level at the position of code completion.
 	 */
-	private static String getLeadingText(IDocument document, AntModel model, int completionOffset) {
+	private static String getLeadingText(IDocument document, IAntModel model, int completionOffset) {
 		AntProjectNode project= model.getProjectNode(false);
 		if (project == null) {
 			return ""; //$NON-NLS-1$

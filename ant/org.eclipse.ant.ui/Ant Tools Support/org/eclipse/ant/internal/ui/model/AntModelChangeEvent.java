@@ -14,19 +14,19 @@ package org.eclipse.ant.internal.ui.model;
 
 public class AntModelChangeEvent {
 	
-	private AntModel fModel;
+	private IAntModel fModel;
 	private boolean fPreferenceChange= false;
 	
-	public AntModelChangeEvent(AntModel model) {
+	public AntModelChangeEvent(IAntModel model) {
 		fModel= model;
 	}
 	
-	public AntModelChangeEvent(AntModel model, boolean preferenceChange) {
+	public AntModelChangeEvent(IAntModel model, boolean preferenceChange) {
 		fModel= model;
 		fPreferenceChange= preferenceChange;
 	}
 	
-	public AntModel getModel() {
+	public IAntModel getModel() {
 		return fModel;
 	}
 	

@@ -23,6 +23,7 @@ import org.eclipse.ant.internal.ui.editor.derived.HTMLTextPresenter;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.ant.internal.ui.model.AntPropertyNode;
+import org.eclipse.ant.internal.ui.model.IAntModel;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultInformationControl;
@@ -160,7 +161,7 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 	
 	private String formatFileSetMessage(AbstractFileSet set) {
 		FileScanner fileScanner= new FileScanner();
-		AntModel antModel= fEditor.getAntModel();
+		IAntModel antModel= fEditor.getAntModel();
 		Project project= antModel.getProjectNode().getProject();
 		set.setupDirectoryScanner(fileScanner, project);
 		String[] excludedPatterns= fileScanner.getExcludesPatterns();
@@ -169,7 +170,7 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 	}
 
 	private String formatPatternSetMessage(PatternSet set) {
-		AntModel antModel= fEditor.getAntModel();
+		IAntModel antModel= fEditor.getAntModel();
 		Project project= antModel.getProjectNode().getProject();
 		String[] includes= set.getIncludePatterns(project);
 		String[] excludes= set.getExcludePatterns(project);

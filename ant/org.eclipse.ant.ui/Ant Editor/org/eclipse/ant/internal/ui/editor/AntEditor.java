@@ -319,7 +319,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 					updateEditorImage();
 				}
 				if (fFoldingStructureProvider != null) {
-					fFoldingStructureProvider.updateFoldingRegions(event.getModel());
+					fFoldingStructureProvider.updateFoldingRegions((AntModel)event.getModel());
 				}
 			}
 		}

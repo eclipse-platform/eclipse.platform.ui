@@ -14,6 +14,7 @@ package org.eclipse.ant.internal.ui.editor.text;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.editor.AntEditor;
 import org.eclipse.ant.internal.ui.model.AntModel;
+import org.eclipse.ant.internal.ui.model.IAntModel;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -41,9 +42,9 @@ public class XMLReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 			IDocumentProvider provider= fEditor.getDocumentProvider();
 			if (provider instanceof AntEditorDocumentProvider) {
 				AntEditorDocumentProvider documentProvider= (AntEditorDocumentProvider) provider;
-				AntModel model= documentProvider.getAntModel(fEditor.getEditorInput());
-				if (model != null) {
-					model.reconcile();
+				IAntModel model= documentProvider.getAntModel(fEditor.getEditorInput());
+				if (model != null && model instanceof AntModel) {
+					((AntModel)model).reconcile();
 				}
 			}
 		} catch (Exception e) {

@@ -34,7 +34,7 @@ import org.apache.tools.ant.helper.AntXMLContext;
 import org.apache.tools.ant.helper.ProjectHelper2;
 import org.apache.tools.ant.util.FileUtils;
 import org.apache.tools.ant.util.JAXPUtils;
-import org.eclipse.ant.internal.ui.model.AntModel;
+import org.eclipse.ant.internal.ui.model.IAntModel;
 import org.eclipse.jface.text.BadLocationException;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -70,7 +70,7 @@ public class ProjectHelper extends ProjectHelper2 {
 	/**
 	 * The Ant Model
 	 */
-	private static AntModel fgAntModel;
+	private static IAntModel fgAntModel;
 
 	/**
 	 * The current Ant parsing context
@@ -124,7 +124,9 @@ public class ProjectHelper extends ProjectHelper2 {
 			super.onEndElement(uri, tag, context);
 			
 			Locator locator= context.getLocator();
-			getAntModel().setCurrentElementLength(locator.getLineNumber(), locator.getColumnNumber());
+			if (getAntModel().canGetTaskInfo()) {
+			    getAntModel().setCurrentElementLength(locator.getLineNumber(), locator.getColumnNumber());
+			}
 		}
 		
 		private void onStartElement0(String uri, String tag, String qname, Attributes attrs, AntXMLContext context) {
@@ -416,9 +418,11 @@ public class ProjectHelper extends ProjectHelper2 {
 		 * @see org.xml.sax.ext.LexicalHandler#endDTD()
 		 */
 		public void endDTD() throws SAXException {
-			AntXMLContext context= getContext();
-			Locator locator= context.getLocator();
-			getAntModel().setCurrentElementLength(locator.getLineNumber(), locator.getColumnNumber());
+		    if (getAntModel().canGetLexicalInfo()) {
+				AntXMLContext context= getContext();
+				Locator locator= context.getLocator();
+				getAntModel().setCurrentElementLength(locator.getLineNumber(), locator.getColumnNumber());
+		    }
 		}
 
 		/* (non-Javadoc)
@@ -431,11 +435,13 @@ public class ProjectHelper extends ProjectHelper2 {
 		 * @see org.xml.sax.ext.LexicalHandler#comment(char[], int, int)
 		 */
 		public void comment(char[] ch, int start, int length) throws SAXException {
-			AntXMLContext context= getContext();
-			Locator locator= context.getLocator();
-			if (locator != null) {
-				getAntModel().addComment(locator.getLineNumber(), locator.getColumnNumber(), length);
-			}
+		    if (getAntModel().canGetLexicalInfo()) {
+				AntXMLContext context= getContext();
+				Locator locator= context.getLocator();
+				if (locator != null) {
+					getAntModel().addComment(locator.getLineNumber(), locator.getColumnNumber(), length);
+				}
+		    }
 		}
 
 		/* (non-Javadoc)
@@ -460,16 +466,18 @@ public class ProjectHelper extends ProjectHelper2 {
 		 * @see org.xml.sax.ext.LexicalHandler#startDTD(java.lang.String, java.lang.String, java.lang.String)
 		 */
 		public void startDTD(String name, String publicId, String systemId) throws SAXException {
-			AntXMLContext context= getContext();
-			Locator locator= context.getLocator();
-			getAntModel().addDTD(name, locator.getLineNumber(), locator.getColumnNumber());
+		    if (getAntModel().canGetLexicalInfo()) {
+		        AntXMLContext context= getContext();
+		        Locator locator= context.getLocator();
+		        getAntModel().addDTD(name, locator.getLineNumber(), locator.getColumnNumber());
+		    }
 		}
 	 }
 	
-	public ProjectHelper(AntModel model) {
+	public ProjectHelper(IAntModel model) {
 		setAntModel(model);
 	}
-
+	
 	/**
      * Parses the project file, configuring the project as it goes.
      *
@@ -523,6 +531,7 @@ public class ProjectHelper extends ProjectHelper2 {
             parser.setErrorHandler(handler);
             parser.setDTDHandler(handler);
             parser.setProperty("http://xml.org/sax/properties/lexical-handler", lexicalHandler); //$NON-NLS-1$
+          
             parser.parse(inputSource);
         } catch (SAXParseException exc) {
         	getAntModel().fatalError(exc);
@@ -593,14 +602,14 @@ public class ProjectHelper extends ProjectHelper2 {
         }
 	}
 
-	public static void setAntModel(AntModel antModel) {
+	public static void setAntModel(IAntModel antModel) {
 		fgAntModel= antModel;
 		((ProjectHelper.ElementHandler)elementHandler).reset();
 		fu= null;
 		fgAntContext= null;
 	}
 
-	public static AntModel getAntModel() {
+	public static IAntModel getAntModel() {
 		return fgAntModel;
 	}
 	

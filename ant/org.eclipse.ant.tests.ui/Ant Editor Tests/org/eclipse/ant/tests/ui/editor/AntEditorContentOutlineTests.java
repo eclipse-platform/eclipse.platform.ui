@@ -41,9 +41,7 @@ public class AntEditorContentOutlineTests extends AbstractAntUITest {
     public void testCreationOfOutlineTree() throws BadLocationException {
 		AntModel model= getAntModel("buildtest1.xml");
         
-		AntElementNode[] roots = model.getRootElements();
-		assertNotNull(roots);
-		AntElementNode rootProject= roots[0];
+		AntElementNode rootProject= model.getProjectNode();
        
         assertNotNull(rootProject);
         
@@ -131,9 +129,7 @@ public class AntEditorContentOutlineTests extends AbstractAntUITest {
     public void testParsingOfNonValidFile() throws BadLocationException {
 		AntModel model= getAntModel("buildtest2.xml");
         
-		AntElementNode[] roots = model.getRootElements();
-		assertNotNull(roots);
-		AntElementNode root= roots[0];
+		AntElementNode root= model.getProjectNode();
    		assertNotNull(root);
 
         List children = root.getChildNodes();
@@ -154,10 +150,8 @@ public class AntEditorContentOutlineTests extends AbstractAntUITest {
 	 */
 	public void testWithProjectOnlyBuildFile() {
 		AntModel model= getAntModel("projectOnly.xml");
-		AntElementNode[] roots = model.getRootElements();
-		assertNotNull(roots);
-		AntElementNode root= roots[0];
-		assertNotNull(root);
+		AntElementNode rootProject= model.getProjectNode();
+		assertNotNull(rootProject);
 	}
 	
 	/**
@@ -165,9 +159,8 @@ public class AntEditorContentOutlineTests extends AbstractAntUITest {
 	 */
 	public void testWithEmptyBuildFile() {
 		AntModel model= getAntModel("empty.xml");
-		AntElementNode[] roots = model.getRootElements();
-		assertNotNull(roots);
-		assertTrue(roots.length == 0);
+		AntElementNode rootProject= model.getProjectNode();
+		assertTrue(rootProject == null);
 	}		
 
 	/**
@@ -176,9 +169,7 @@ public class AntEditorContentOutlineTests extends AbstractAntUITest {
 	public void testAdvancedTaskLocation() throws BadLocationException {
 		AntModel model= getAntModel("outline_select_test_build.xml");
         
-		AntElementNode[] roots = model.getRootElements();
-        assertNotNull(roots);
-        AntElementNode rootProject= roots[0];
+        AntElementNode rootProject= model.getProjectNode();
         // Get the content as string
         String wholeDocumentString = getCurrentDocument().get();
         

@@ -19,7 +19,7 @@ import java.util.Map;
 
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
-import org.eclipse.ant.internal.ui.model.AntModel;
+import org.eclipse.ant.internal.ui.model.IAntModel;
 import org.eclipse.ant.internal.ui.model.IProblem;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -55,7 +55,7 @@ public class AntEditorMarkerUpdater {
 		}
 	}
 	
-	private AntModel fModel= null;
+	private IAntModel fModel= null;
 	private List fCollectedProblems= new ArrayList();
 	public static final String BUILDFILE_PROBLEM_MARKER = AntUIPlugin.PI_ANTUI + ".buildFileProblem"; //$NON-NLS-1$
 	private IFile fFile= null;
@@ -96,7 +96,7 @@ public class AntEditorMarkerUpdater {
 		} 
 	}
 	
-	public void setModel(AntModel model) {
+	public void setModel(IAntModel model) {
 		fModel= model;
 	}
 	

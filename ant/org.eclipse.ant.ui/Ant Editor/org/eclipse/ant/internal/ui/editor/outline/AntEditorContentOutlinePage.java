@@ -32,6 +32,7 @@ import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.AntPropertyNode;
 import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.model.AntTaskNode;
+import org.eclipse.ant.internal.ui.model.IAntModel;
 import org.eclipse.ant.internal.ui.model.IAntModelListener;
 import org.eclipse.ant.internal.ui.model.InternalTargetFilter;
 import org.eclipse.ant.internal.ui.views.actions.AntOpenWithMenu;
@@ -72,7 +73,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	private AntOpenWithMenu fOpenWithMenu;
 	
 	private IAntModelListener fListener;
-	private AntModel fModel;
+	private IAntModel fModel;
 	private AntModelCore fCore;
 	private ListenerList fPostSelectionChangedListeners= new ListenerList();
 	private boolean fIsModelEmpty= true;
@@ -469,7 +470,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	
 	private void updateTreeExpansion() {
 		boolean wasModelEmpty= fIsModelEmpty;
-		fIsModelEmpty= fModel == null || fModel.getRootElements() == null || fModel.getRootElements().length == 0;
+		fIsModelEmpty= fModel == null || fModel.getProjectNode() == null;
 		if (wasModelEmpty && !fIsModelEmpty) {
 			getTreeViewer().expandToLevel(EXPAND_TO_LEVEL);
 		}

@@ -14,7 +14,7 @@ package org.eclipse.ant.internal.ui.editor.templates;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.editor.formatter.FormattingPreferences;
 import org.eclipse.ant.internal.ui.editor.formatter.XmlFormatter;
-import org.eclipse.ant.internal.ui.model.AntModel;
+import org.eclipse.ant.internal.ui.model.IAntModel;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -26,9 +26,9 @@ import org.eclipse.jface.text.templates.TemplateException;
 
 public class AntContext extends DocumentTemplateContext {
 	
-	private AntModel fAntModel;
+	private IAntModel fAntModel;
 	
-	public AntContext(TemplateContextType type, IDocument document, AntModel model, int completionOffset, int completionLength) {
+	public AntContext(TemplateContextType type, IDocument document, IAntModel model, int completionOffset, int completionLength) {
 		super(type, document, completionOffset, completionLength);
 		fAntModel= model;
 	}
@@ -54,7 +54,7 @@ public class AntContext extends DocumentTemplateContext {
 	/**
 	 * @return Returns the AntModel.
 	 */
-	public AntModel getAntModel() {
+	public IAntModel getAntModel() {
 		return fAntModel;
 	}
 	
