@@ -210,7 +210,7 @@ private void createMenuBar() {
 	{
 		MenuManager openInSameWindow = new MenuManager(WorkbenchMessages.getString("Workbench.open")); //$NON-NLS-1$
 		openPerspMenu = 
-			new OpenPerspectiveMenu(window, ResourcesPlugin.getWorkspace().getRoot());
+			new WindowPerspectiveMenu(window, ResourcesPlugin.getWorkspace().getRoot());
 		openInSameWindow.add(openPerspMenu);
 		popup.add(openInSameWindow);
 	}
@@ -250,6 +250,7 @@ private void createMenuBar() {
 	// Window menu.
 	popup = new MenuManager(WorkbenchMessages.getString("Workbench.window"), IWorkbenchActionConstants.M_WINDOW); //$NON-NLS-1$
 	menubar.add(popup);
+	popup.add(new OpenWorkbenchAction(window));
 	MenuManager launchWindowMenu =
 		new MenuManager(WorkbenchMessages.getString("Workbench.launch"), IWorkbenchActionConstants.M_LAUNCH); //$NON-NLS-1$
 	launchWindowMenu.add(new GroupMarker(IWorkbenchActionConstants.LAUNCH_EXT));

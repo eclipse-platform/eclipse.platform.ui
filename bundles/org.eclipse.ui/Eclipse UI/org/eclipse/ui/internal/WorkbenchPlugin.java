@@ -316,6 +316,7 @@ protected void initializeDefaultPreferences(IPreferenceStore store) {
 	store.setDefault(
 		IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE,
 		IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE);
+	store.setDefault(IPreferenceConstants.REUSE_PERSPECTIVES, false);
 		
 	FontRegistry registry = JFaceResources.getFontRegistry();
 	initializeFont(JFaceResources.DIALOG_FONT,  registry, store);

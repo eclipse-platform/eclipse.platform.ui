@@ -204,7 +204,7 @@ private void runInNewWindow(IPerspectiveDescriptor desc) {
 /**
  * Run the action.
  */
-private void runReplaceCurrent(IPerspectiveDescriptor desc) {
+protected void runReplaceCurrent(IPerspectiveDescriptor desc) {
 	IWorkbenchPage page = getWindow().getActivePage();
 	if (page != null) {
 		page.setPerspective(desc);

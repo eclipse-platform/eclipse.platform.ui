@@ -34,4 +34,8 @@ public interface IPreferenceConstants {
 	// otherwise a new editor will be opened.
 	public static final String REUSE_EDITORS = "REUSE_EDITORS"; //$NON-NLS-1$
 
+	// (boolean) If true a perspective with an input will be reused
+	// if the user opens a new perspective on the same input
+	public static final String REUSE_PERSPECTIVES = "REUSE_PERSPECTIVES"; //$NON-NLS-1$
+
 }

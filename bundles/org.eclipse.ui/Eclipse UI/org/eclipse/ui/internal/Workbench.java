@@ -124,13 +124,14 @@ private IWorkbenchWindow busyOpenWorkbenchWindow(String perspID, IAdaptable inpu
 	windowManager.add(newWindow);
 
 	// Create the initial page.
-	newWindow.openPage(perspID, input);
+	newWindow.busyOpenPage(perspID, input);
 
 	// Open after opening page, to avoid flicker.
 	newWindow.open();
 
 	return newWindow;
 }
+
 private void checkInstallErrors() {
 	if(!LaunchInfo.getCurrent().hasStatus())
 		return;
@@ -554,6 +555,27 @@ private void openWindows() {
 public IWorkbenchWindow openWorkbenchWindow(final String perspID, final IAdaptable input) 
 	throws WorkbenchException 
 {
+	// If "reuse" and a window already exists for the input reuse it.
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+	boolean reuse = 
+		store.getBoolean(IPreferenceConstants.REUSE_PERSPECTIVES);
+	if (reuse) {
+		// If a window already exists for the input then
+		// reuse it.
+		IWorkbenchPage page = findPage(input);
+		if (page != null) {
+			IWorkbenchWindow win = page.getWorkbenchWindow();
+			win.getShell().open();
+			win.setActivePage(page);
+			PerspectiveDescriptor desc = (PerspectiveDescriptor)WorkbenchPlugin
+				.getDefault().getPerspectiveRegistry().findPerspectiveWithId(perspID);
+			if (desc == null)
+				throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
+			page.setPerspective(desc);
+			return win;
+		}
+	}
+	
 	// Run op in busy cursor.
 	final Object [] result = new Object[1];
 	BusyIndicator.showWhile(null, new Runnable() {
@@ -581,6 +603,21 @@ public IWorkbenchWindow openWorkbenchWindow(IAdaptable input)
 	return openWorkbenchWindow(getPerspectiveRegistry().getDefaultPerspective(), 
 		input);
 }
+
+/**
+ * Reteturns the first page open on a particular input.
+ */
+private IWorkbenchPage findPage(IAdaptable input) {
+	IWorkbenchWindow [] windows = getWorkbenchWindows();
+	for (int nX = 0; nX < windows.length; nX ++) {
+		WorkbenchWindow win = (WorkbenchWindow)windows[nX];
+		IWorkbenchPage page = win.findPage(input);
+		if (page != null)
+			return page;
+	}
+	return null;
+}
+
 /**
  * Reads the platform and product info.
  * This info contains the platform and product name, product images,

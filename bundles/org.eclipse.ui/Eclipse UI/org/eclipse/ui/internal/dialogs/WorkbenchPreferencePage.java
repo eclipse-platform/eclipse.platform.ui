@@ -29,6 +29,7 @@ public class WorkbenchPreferencePage
 	private Button openInNewPageButton;
 	private Button replaceButton;
 	private Button switchOnNewProjectButton;
+	private Button reusePerspectivesButton;
 	private Text openInNewWindowText;
 	private Text openInNewPageText;
 	private Text replaceText;
@@ -205,6 +206,12 @@ private void createPerspectiveGroup(Composite composite) {
 
 	this.replaceText = new Text(buttonComposite, SWT.NONE);
 	this.replaceText.setEditable(false);
+
+	reusePerspectivesButton = new Button(composite, SWT.CHECK);
+	reusePerspectivesButton.setText(WorkbenchMessages.getString("WorkbenchPreference.reusePerspectives")); //$NON-NLS-1$
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+	reusePerspectivesButton.setSelection(
+		store.getBoolean(IPreferenceConstants.REUSE_PERSPECTIVES));
 
 	setTextValuesForPerspective();
 }
@@ -384,6 +391,9 @@ protected void performDefaults() {
 	replaceButton.setSelection(
 		defaultPreference.equals(
 			IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE));
+	reusePerspectivesButton.setSelection(
+		store.getDefaultBoolean(
+			IPreferenceConstants.REUSE_PERSPECTIVES));
 
 	//Project perspective preferences
 	String projectPreference =
@@ -454,6 +464,11 @@ public boolean performOk() {
 		IPreferenceConstants.REUSE_EDITORS,
 		reuseEditorsButton.getSelection());
 		
+	// store reuse perspctives setting
+	store.setValue(
+		IPreferenceConstants.REUSE_PERSPECTIVES,
+		reusePerspectivesButton.getSelection());
+		
 	// store the open in new window settings
 	store.setValue(
 		IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE,
@@ -506,7 +521,6 @@ private void setTextValuesForPerspective() {
 		}
 
 	}
-
 }
 /**
  * Get the values for the shift perspective setting. It will be window unless window is selected.

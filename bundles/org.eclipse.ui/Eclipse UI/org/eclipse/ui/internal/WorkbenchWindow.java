@@ -19,6 +19,7 @@ import org.eclipse.ui.internal.*;
 import org.eclipse.ui.actions.OpenNewWindowMenu;
 import org.eclipse.ui.actions.OpenNewPageMenu;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.window.*;
@@ -265,7 +266,7 @@ private boolean busyClose() {
  *
  * Assumes that busy cursor is active.
  */
-private IWorkbenchPage busyOpenPage(String perspID, IAdaptable input) 
+protected IWorkbenchPage busyOpenPage(String perspID, IAdaptable input) 
 	throws org.eclipse.ui.WorkbenchException 
 {
 	// Create page.
@@ -615,6 +616,25 @@ public boolean okToClose() {
 public IWorkbenchPage openPage(final String perspID, final IAdaptable input) 
 	throws WorkbenchException 
 {
+	// If "reuse" and a page already exists for the input reuse it.
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+	boolean reuse = 
+		store.getBoolean(IPreferenceConstants.REUSE_PERSPECTIVES);
+	if (reuse) {
+		// If a window already exists for the input then
+		// reuse it.
+		IWorkbenchPage page = findPage(input);
+		if (page != null) {
+			setActivePage(page);
+			PerspectiveDescriptor desc = (PerspectiveDescriptor)WorkbenchPlugin
+				.getDefault().getPerspectiveRegistry().findPerspectiveWithId(perspID);
+			if (desc == null)
+				throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
+			page.setPerspective(desc);
+			return page;
+		}
+	}
+	
 	// Run op in busy cursor.
 	final Object [] result = new Object[1];
 	BusyIndicator.showWhile(null, new Runnable() {
@@ -641,6 +661,18 @@ public IWorkbenchPage openPage(IAdaptable input)
 {
 	return openPage(workbench.getPerspectiveRegistry().getDefaultPerspective(), 
 		input);
+}
+/**
+ * Returns the first page with a given input.
+ */
+protected IWorkbenchPage findPage(IAdaptable input) {
+	IWorkbenchPage [] pages = getPages();
+	for (int nY = 0; nY < pages.length; nY ++) {
+		IAdaptable test = pages[nY].getInput();
+		if (input == test)
+			return pages[nY];
+	}
+	return null;
 }
 /*
  * Removes an listener from the part service.
