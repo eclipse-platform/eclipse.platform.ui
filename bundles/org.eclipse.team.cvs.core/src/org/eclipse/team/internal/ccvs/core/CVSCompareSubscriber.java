@@ -55,6 +55,7 @@ public class CVSCompareSubscriber extends CVSSyncTreeSubscriber implements ISubs
 		for (int i = 0; i < tags.length; i++) {
 			multiTree.addProject(projects[i], tags[i]);
 		}
+		tree = multiTree;
 		initialize();
 	}
 
@@ -196,6 +197,9 @@ public class CVSCompareSubscriber extends CVSSyncTreeSubscriber implements ISubs
 		CVSResourceVariantTree tree1 = (CVSResourceVariantTree)getRemoteTree();
 		CVSResourceVariantTree tree2 = (CVSResourceVariantTree)s.getRemoteTree();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		return tree1.getTag(root).equals(tree2.getTag(root)) && rootsEqual(s);		
+		CVSTag tag1 = tree1.getTag(root);
+		CVSTag tag2 = tree2.getTag(root);
+		if (tag1 == null || tag2 == null) return false;
+		return tag1.equals(tag2) && rootsEqual(s);		
 	}
 }
