@@ -344,4 +344,8 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 			}
 		}
 	}
+	
+	protected void dispose() {
+		DebugPlugin.getDefault().removeDebugEventListener(this);
+	}
 }

@@ -75,7 +75,7 @@ public class MemoryView extends PageBookView implements IDebugView, IMemoryBlock
 	private TabFolder emptyTabFolder;
 	protected Hashtable tabFolderHashtable;
 	
-	private Action addMemoryBlockAction;
+	private AddMemoryBlockAction addMemoryBlockAction;
 	private Action removeMemoryBlockAction;
 	private Action resetMemoryBlockAction;
 	private Action copyViewToClipboardAction;
@@ -621,6 +621,7 @@ public class MemoryView extends PageBookView implements IDebugView, IMemoryBlock
 	public void dispose() {
 		
 		removeListeners();
+		addMemoryBlockAction.dispose();
 		
 		// dispose empty folders
 		emptyTabFolder.dispose();
