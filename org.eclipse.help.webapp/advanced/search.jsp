@@ -55,7 +55,7 @@ INPUT {
 
 
 #searchTable {
-	padding-right:4px;
+	padding-left:5;
 }
 
 #searchWord {	
