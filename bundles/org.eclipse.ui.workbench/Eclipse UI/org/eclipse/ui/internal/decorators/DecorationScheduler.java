@@ -172,7 +172,8 @@ public class DecorationScheduler {
 			updateJob.setPriority(Job.DECORATE);
 		}
 	
-		updateJob.schedule();
+		//Give it a big of a lag for other updates to occur
+		updateJob.schedule(100);
 	}
 
 	/**
@@ -316,6 +317,7 @@ public class DecorationScheduler {
 			}
 		};
 
+		decorationJob.setSystem(true);
 		decorationJob.setPriority(Job.DECORATE);
 		decorationJob.schedule();
 	}
@@ -374,6 +376,7 @@ public class DecorationScheduler {
 			}
 		};
 
+		job.setSystem(true);
 		return job;
 	}
 	
