@@ -116,6 +116,13 @@ public class CVSDecorationRunnable implements Runnable {
 		if(!resource.exists() || provider==null) {
 			return null;
 		}
+		
+		// if the resource is ignored return an empty decoration. This will 
+		// force a decoration update event and clear the existing CVS decoration.
+		ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+		if(cvsResource.isIgnored()) {
+			return new CVSDecoration();
+		}
 			
 		// determine a if resource has outgoing changes (e.g. is dirty).
 		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
@@ -209,7 +216,6 @@ public class CVSDecorationRunnable implements Runnable {
 	protected static CVSTag getTagToShow(IResource resource) throws CVSException {
 		ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
 		CVSTag tag = null;
-		boolean useParentTag = false;
 		if(cvsResource.isFolder()) {
 			FolderSyncInfo folderInfo = ((ICVSFolder)cvsResource).getFolderSyncInfo();
 			if(folderInfo != null) {
@@ -219,23 +225,20 @@ public class CVSDecorationRunnable implements Runnable {
 			ResourceSyncInfo info = ((ICVSFile)cvsResource).getSyncInfo();
 			if(info != null) {
 				tag = info.getTag();
-			}  
-			if(info == null || info.isAdded()) {
-				useParentTag = true;
 			}
 		}
 		
 		ICVSFolder parent = cvsResource.getParent();
-		if(parent != null) {
+		if(parent != null && tag != null) {
 			FolderSyncInfo parentInfo = parent.getFolderSyncInfo();
 			if(parentInfo != null) {												
 				CVSTag parentTag = parentInfo.getTag();
 				parentTag = (parentTag == null ? CVSTag.DEFAULT : parentTag);
 				tag = (tag == null ? CVSTag.DEFAULT : tag);
-				if( parentTag.equals(tag) || useParentTag ) {
-					return null;
-				} else {
-					return tag;
+				// must compare tags by name because CVS doesn't do a good job of
+				// using  T and N prefixes for folders and files. 
+				if( parentTag.getName().equals(tag.getName())) {
+					tag = null;
 				}
 			}
 		}
