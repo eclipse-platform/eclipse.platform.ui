@@ -21,6 +21,7 @@ public class CVSTestSetup extends TestSetup {
 	public static String REPOSITORY_LOCATION;
 	static boolean INITIALIZE_REPO;
 	public static final boolean DEBUG;
+	public static final String RSH;
 
 	
 	public static CVSRepositoryLocation repository;
@@ -37,6 +38,7 @@ public class CVSTestSetup extends TestSetup {
 		REPOSITORY_LOCATION = System.getProperty("eclipse.cvs.repository");
 		INITIALIZE_REPO = (System.getProperty("eclipse.cvs.initrepo")==null)?false:(new Boolean(System.getProperty("eclipse.cvs.initrepo")).booleanValue());
 		DEBUG= (System.getProperty("eclipse.cvs.debug")==null)?false:(new Boolean(System.getProperty("eclipse.cvs.debug")).booleanValue());
+		RSH= (System.getProperty("eclipse.cvs.rsh")==null)?"rsh":System.getProperty("eclipse.cvs.rsh");
 	}
 	/**
 	 * Constructor for CVSTestSetup.
@@ -52,8 +54,8 @@ public class CVSTestSetup extends TestSetup {
 		String repositoryHost = repository.getHost();
 		String userName = repository.getUsername();
 		String repoRoot = repository.getRootDirectory();
-		String cmd1 = new String("rsh " + repositoryHost + " -l " + userName + " rm -rf " + repoRoot);
-		String cmd2 = new String("rsh " + repositoryHost + " -l " + userName + " cvs -d " + repoRoot + " init");
+		String cmd1 = new String(RSH + " " + repositoryHost + " -l " + userName + " rm -rf " + repoRoot);
+		String cmd2 = new String(RSH + " " + repositoryHost + " -l " + userName + " cvs -d " + repoRoot + " init");
 		try {
 			Process p = Runtime.getRuntime().exec(cmd1);
 			p.waitFor();

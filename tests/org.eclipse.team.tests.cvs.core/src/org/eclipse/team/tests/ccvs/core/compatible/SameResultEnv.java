@@ -88,18 +88,8 @@ public final class SameResultEnv extends JUnitTestCase {
 	 * Deletes files on the both of the cvs-servers.
 	 */
 	public void magicDeleteRemote(String project) throws CVSException {
-
-		referenceClientRepository = CompatibleTestSetup.referenceClientRepository;
-		eclipseClientRepository = CompatibleTestSetup.eclipseClientRepository;
-		
-		String host1 = referenceClientRepository.getHost();
-		String repoRoot1 = referenceClientRepository.getRootDirectory();
-
-		String host2 = eclipseClientRepository.getHost();
-		String repoRoot2 = eclipseClientRepository.getRootDirectory();
-		
-		magicDeleteProject(host1,repoRoot1,project);
-		magicDeleteProject(host2,repoRoot2,project);		
+		magicDeleteProject(CompatibleTestSetup.referenceClientRepository,project);
+		magicDeleteProject(CompatibleTestSetup.eclipseClientRepository,project);		
 	}
 	
 	/**

@@ -20,8 +20,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSStatus;
+import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Session;
@@ -212,18 +214,18 @@ public abstract class JUnitTestCase extends TestCase {
 		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(REPOSITORY_NAME);
 		String host = location.getHost();
 		String repoRoot = location.getRootDirectory();
-		magicDeleteProject(host, repoRoot, project);
+		magicDeleteProject(location, project);
 	}
 
 	/**
 	 * Delete a project/resource form the standard cvs-server
 	 */
-	protected static void magicDeleteProject(String host, String repoRoot, String project) throws CVSException {
+	protected static void magicDeleteProject(ICVSRepositoryLocation location, String project) throws CVSException {
 		
 		String commandLine;
 		Process process;
 		
-		commandLine = new String("rsh " + host + " rm -rf " + repoRoot + "/" + project);
+		commandLine = new String(CVSTestSetup.RSH + " " + location.getHost() + " -l " + location.getUsername() + " rm -rf " + new Path(location.getRootDirectory()).append(project).toString());
 
 		try {
 			process = Runtime.getRuntime().exec(commandLine);
@@ -246,9 +248,7 @@ public abstract class JUnitTestCase extends TestCase {
 	 */
 	public void magicSetUpRepo(String project, String[] createResources) throws CVSException {
 		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(REPOSITORY_NAME);
-		String host = location.getHost();
-		String repoRoot = location.getRootDirectory();
-		magicSetUpRepo(workspaceRoot,host,repoRoot,REPOSITORY_NAME,project,createResources);
+		magicSetUpRepo(workspaceRoot, location ,project, createResources);
 	}
 	
 	/**
@@ -262,17 +262,17 @@ public abstract class JUnitTestCase extends TestCase {
 	 * @param project e.g. org.eclipse.swt
 	 * @param createResources e.g. new String[]{"a.txt","f1/b.txt","f1/c.txt","f2/d.txt"}
 	 */
-	private static void magicSetUpRepo(File root, String host, String repoRoot, String repoName, String project, String[] createResources) throws CVSException {
+	private static void magicSetUpRepo(File root, ICVSRepositoryLocation location, String project, String[] createResources) throws CVSException {
 		
 		File workFolder;
 		
-		workFolder = new File(root,project + "tmpXXXtmp");
+		workFolder = new File(root, project + "tmpXXXtmp");
 		
 		createRandomFile(workFolder, createResources);
 		
-		magicDeleteProject(host,repoRoot,project);
+		magicDeleteProject(location, project);
 		
-		String[] gOptions = new String[]{"-d",repoName};
+		String[] gOptions = new String[]{"-d", location.getLocation()};
 		String[] lOptions = new String[]{"-m","msg"};
 		String[] args = new String[]{project,"a","b"};
 		
