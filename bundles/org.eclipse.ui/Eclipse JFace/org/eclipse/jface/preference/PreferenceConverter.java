@@ -8,6 +8,7 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.jface.resource.*;
+import java.util.Locale;
 import java.util.StringTokenizer;
 
 /**
@@ -52,10 +53,17 @@ public class PreferenceConverter {
 	 * The default-default value for <code>FontData</code> preferences.
 	 */
 	public static final FontData FONTDATA_DEFAULT_DEFAULT;
+	/**
+	 * The key suffix for font preference.
+	 */
+	private static String LOCALE_SUFFIX;	
 	static {
 		Shell shell= new Shell();
 		FONTDATA_DEFAULT_DEFAULT= shell.getFont().getFontData()[0];
 		shell.dispose();
+		LOCALE_SUFFIX = System.getProperty("os.name").trim();//$NON-NLS-1$
+		LOCALE_SUFFIX = StringConverter.removeWhiteSpaces(LOCALE_SUFFIX).toLowerCase();
+		LOCALE_SUFFIX = "_" + LOCALE_SUFFIX + "_" + Locale.getDefault().toString();
 	}
 /* (non-Javadoc)
  * private constructor to prevent instantiation.
@@ -116,6 +124,14 @@ private static Rectangle basicGetRectangle(String value) {
 		return dr;
 	return StringConverter.asRectangle(value, dr);
 }
+
+/**
+ * Return the symbolicName concatenated with platform name
+ * and locale.
+ */
+public static String localizeFontName(String symbolicName) {
+	return symbolicName + LOCALE_SUFFIX;
+}
 /**
  * Returns the current value of the color-valued preference with the
  * given name in the given preference store.
@@ -156,7 +172,7 @@ public static RGB getDefaultColor(IPreferenceStore store, String name) {
  * @return the default value of the preference
  */
 public static FontData getDefaultFontData(IPreferenceStore store, String name) {
-	return basicGetFontData(store.getDefaultString(name));
+	return basicGetFontData(store.getDefaultString(localizeFontName(name)));
 }
 /**
  * Returns the default value for the point-valued preference
@@ -198,7 +214,7 @@ public static Rectangle getDefaultRectangle(IPreferenceStore store, String name)
  * @return the font-valued preference
  */
 public static FontData getFontData(IPreferenceStore store, String name) {
-	return basicGetFontData(store.getString(name));
+	return basicGetFontData(store.getString(localizeFontName(name)));
 }
 /**
  * Returns the current value of the point-valued preference with the
@@ -237,7 +253,7 @@ public static Rectangle getRectangle(IPreferenceStore store, String name) {
  * @param value the new defaul value of the preference
  */
 public static void setDefault(IPreferenceStore store, String name, FontData value) {
-	store.setDefault(name, value.toString());
+	store.setDefault(localizeFontName(name), value.toString());
 }
 /**
  * Sets the default value of the preference with the given name
@@ -282,10 +298,8 @@ public static void setDefault(IPreferenceStore store, String name, RGB value) {
  */
 public static void setValue(IPreferenceStore store, String name, FontData value) {
 	FontData oldValue= getFontData(store, name);
-	if (oldValue == null || !(oldValue.getName().equals(value.getName()) &&
-		                      oldValue.getHeight() == value.getHeight() &&
-		                      oldValue.getStyle() == value.getStyle())) {
-		store.putValue(name, value.toString());
+	if (oldValue == null || !(oldValue.equals(value))) {
+		store.putValue(localizeFontName(name), value.toString());
 		store.firePropertyChangeEvent(name, oldValue, value);
 	}
 }

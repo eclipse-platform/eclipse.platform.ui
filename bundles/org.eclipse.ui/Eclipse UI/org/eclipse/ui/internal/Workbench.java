@@ -20,6 +20,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.*;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -45,9 +46,9 @@ public class Workbench implements IWorkbench,
 	private static final String P_PRODUCT_INFO = "productInfo";//$NON-NLS-1$
 	private static final String DEFAULT_PRODUCT_INFO_FILENAME = "product.ini";//$NON-NLS-1$
 	private static final String DEFAULT_WORKBENCH_STATE_FILENAME = "workbench.xml";//$NON-NLS-1$
+	private static String LOCALE_SUFIX;
 	private WindowManager windowManager;
 	private EditorHistory editorHistory;
-	private WorkbenchHistory workbenchHistory;
 	private boolean runEventLoop;
 	private boolean isStarting = false;
 	private boolean isClosing = false;
@@ -55,6 +56,7 @@ public class Workbench implements IWorkbench,
 	private String productInfoFilename;
 	private ProductInfo productInfo;
 	private String[] commandLineArgs;
+
 /**
  * Workbench constructor comment.
  */
@@ -239,15 +241,7 @@ public EditorHistory getEditorHistory() {
 	}
 	return editorHistory;
 }
-/**
- * Returns the editor history.
- */
-public WorkbenchHistory getWorkbenchHistory() {
-	if (workbenchHistory == null) {
-		workbenchHistory = new  WorkbenchHistory(20);
-	}
-	return workbenchHistory;
-}
+
 /**
  * Returns the editor registry for the workbench.
  *
@@ -406,35 +400,32 @@ private boolean init(String[] commandLineArgs) {
 	openWindows();
 	openWelcomeDialog();
 
-	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-	StructuredViewer.setActivateSelectionOnClick(
-		store.getBoolean(IWorkbenchPreferenceConstants.ACTIVATE_SELECTION_ON_CLICK));
-	
 	isStarting = false;
 	return true;
 }
+
 /**
  * Initialize the workbench fonts with the stored values.
  */
 private void intializeFonts() {
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 	FontRegistry registry = JFaceResources.getFontRegistry();
-	String locale = Locale.getDefault().toString();
-	initializeFont(JFaceResources.DEFAULT_FONT,locale,registry,store);
-	initializeFont(JFaceResources.DIALOG_FONT,locale,registry,store);
-	initializeFont(JFaceResources.BANNER_FONT,locale,registry,store);
-	initializeFont(JFaceResources.VIEWER_FONT,locale,registry,store);
-	initializeFont(JFaceResources.TEXT_FONT,locale,registry,store);
-	initializeFont(JFaceResources.WINDOW_FONT,locale,registry,store);
+	initializeFont(JFaceResources.DEFAULT_FONT,registry,store);
+	initializeFont(JFaceResources.DIALOG_FONT,registry,store);
+	initializeFont(JFaceResources.BANNER_FONT,registry,store);
+	initializeFont(JFaceResources.VIEWER_FONT,registry,store);
+	initializeFont(JFaceResources.TEXT_FONT,registry,store);
+	initializeFont(JFaceResources.WINDOW_FONT,registry,store);
 }
 /**
  * Initialize the specified font with the stored value.
  */
-private void initializeFont(String fontKey,String locale,FontRegistry registry,IPreferenceStore store) {
-	String font_Locale = fontKey + "_" + locale;
+private void initializeFont(String fontKey,FontRegistry registry,IPreferenceStore store) {
+	String font_Locale = PreferenceConverter.localizeFontName(fontKey);
 	if(store.isDefault(font_Locale))
 		return;
-	FontData[] font = StringConverter.asFontDataArray(store.getString(font_Locale));
+	FontData[] font = new FontData[1];
+	font[0] = PreferenceConverter.getFontData(store,fontKey);
 	registry.put(fontKey,font);
 }
 /**
