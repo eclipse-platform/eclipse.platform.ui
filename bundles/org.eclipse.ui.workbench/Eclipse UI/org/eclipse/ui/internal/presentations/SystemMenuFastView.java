@@ -10,50 +10,58 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations;
 
-import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.jface.action.Action;
 import org.eclipse.ui.internal.ViewPane;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.presentations.IStackPresentationSite;
 
-public class SystemMenuFastView extends ContributionItem {
+public class SystemMenuFastView extends Action implements ISelfUpdatingAction {
 
     private ViewPane viewPane;
+    private IStackPresentationSite site;
 
-    public SystemMenuFastView(ViewPane viewPane) {
-        this.viewPane = viewPane;
+    public SystemMenuFastView(IStackPresentationSite site) {
+        this.site = site;
+        setText(WorkbenchMessages.getString("ViewPane.fastView")); //$NON-NLS-1$
+        update();
+    }
+    
+    public void setPane(ViewPane newPane) {
+    	viewPane = newPane;
+    	update();
     }
 
+    public void update() {
+    	if (viewPane == null || !site.isMoveable(viewPane.getPresentablePart()) ) {
+    		setEnabled(false);
+    	} else {
+    		setEnabled(true);
+    		setChecked(viewPane.getPage().getActivePerspective().isFastView(viewPane.getViewReference()));
+    	}
+    }
+    
+    public boolean shouldBeVisible() {
+    	if (viewPane == null || viewPane.getPage() == null) {
+    		return false;
+    	}
+    	
+        WorkbenchWindow workbenchWindow = (WorkbenchWindow) viewPane.getPage()
+    		.getWorkbenchWindow();
+    
+        return workbenchWindow.getShowFastViewBars() 
+			&& viewPane != null && site.isMoveable(viewPane.getPresentablePart());
+    }
+    
     public void dispose() {
         viewPane = null;
     }
 
-    public void fill(Menu menu, int index) {
-        WorkbenchWindow workbenchWindow = (WorkbenchWindow) viewPane.getPage()
-                .getWorkbenchWindow();
-        if (workbenchWindow.getFastViewBar() != null
-                && !viewPane.getPage().getActivePerspective().isFixedView(viewPane.getViewReference())) {
-            final MenuItem menuItem = new MenuItem(menu, SWT.CHECK);
-            menuItem.setSelection(viewPane.getPage().getActivePerspective().isFastView(viewPane.getViewReference()));
-            menuItem.setText(WorkbenchMessages.getString("ViewPane.fastView")); //$NON-NLS-1$
-            menuItem.addSelectionListener(new SelectionAdapter() {
-
-                public void widgetSelected(SelectionEvent e) {
-                	if (menuItem.getSelection()) {
-                		viewPane.doMakeFast();
-                	} else {
-                		viewPane.doRemoveFast();
-                	}
-                }
-            });
-        }
-    }
-
-    public boolean isDynamic() {
-        return true;
-    }
+    public void run() {
+    	if (!isChecked()) {
+    		viewPane.doMakeFast();
+    	} else {
+    		viewPane.doRemoveFast();
+    	}
+    }    
 }

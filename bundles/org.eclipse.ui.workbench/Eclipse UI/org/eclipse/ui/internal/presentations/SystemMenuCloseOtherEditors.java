@@ -10,41 +10,40 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations;
 
-import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.jface.action.Action;
 import org.eclipse.ui.internal.EditorPane;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
-public class SystemMenuCloseOtherEditors extends ContributionItem {
+public class SystemMenuCloseOtherEditors extends Action implements ISelfUpdatingAction {
 
     private EditorPane editorPane;
 
     public SystemMenuCloseOtherEditors(EditorPane editorPane) {
         this.editorPane = editorPane;
+        setText(WorkbenchMessages.getString("PartPane.closeOthers")); //$NON-NLS-1$
     }
 
     public void dispose() {
         editorPane = null;
     }
     
-    public void fill(Menu menu, int index) {
-        MenuItem menuItem = new MenuItem(menu, SWT.NONE);
-        menuItem.setText(WorkbenchMessages.getString("PartPane.closeOthers")); //$NON-NLS-1$
-        menuItem.addSelectionListener(new SelectionAdapter() {
-
-            public void widgetSelected(SelectionEvent e) {
-                editorPane.doHideOthers();
-            }
-        });
-
-        menuItem.setEnabled(editorPane.getPage().getEditors().length > 1);
+    public void run() {
+        editorPane.doHideOthers();
     }
     
-    public boolean isDynamic() {
-        return true;
+    public void update() {
+    	if (editorPane == null) {
+    		setEnabled(false);
+    		return;
+    	}
+    	setEnabled(editorPane.getPage().getEditors().length > 1);
+    }
+    
+    public boolean shouldBeVisible() {
+    	return true;
+    }
+    
+    public void setPane(EditorPane pane) {
+    	editorPane = pane;
     }
 }
