@@ -1011,11 +1011,14 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		try {
 			--fOpenConnections;
 			invariant();
-		} finally {
-			if (fOpenConnections == 0) {
-				uninstall();
-			}
+		} catch (Exception e){
+			fOpenConnections= 0;
+			uninstall();
+			return;
 		}
+		
+		if (fOpenConnections == 0)
+			uninstall();
 		
 		invariant();
 	}
