@@ -122,7 +122,7 @@ public boolean visit(UnifiedTreeNode node) throws CoreException {
 	int work = 1;
 	try {
 		boolean wasSynchronized = isSynchronized(node);
-		if (!wasSynchronized) {
+		if (force && !wasSynchronized) {
 			synchronize(node);
 			// If not synchronized, the monitor did not take this resource into account.
 			// So, do not report work on it.

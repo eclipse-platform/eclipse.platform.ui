@@ -31,21 +31,44 @@ public MultiStatus getStatus() {
 	return status;
 }
 protected int synchronizeExistence(UnifiedTreeNode node, Resource target, int level) throws CoreException {
-	int state = super.synchronizeExistence(node, target, level);
-	if (state == RL_NOT_IN_SYNC)
-		changed(target);
-	return state;
+	if (node.existsInWorkspace()) {
+		if (!node.existsInFileSystem()) {
+			if (target.isLocal(IResource.DEPTH_ZERO)) {
+				changed(target);
+				resourceChanged = true;
+				return RL_NOT_IN_SYNC;
+			} else
+				return RL_IN_SYNC;
+		}
+	} else {
+		if (node.existsInFileSystem()) {
+			changed(target);
+			resourceChanged = true;
+			return RL_NOT_IN_SYNC;
+		}
+	}
+	return RL_UNKNOWN;
 }
+
 protected boolean synchronizeGender(UnifiedTreeNode node, Resource target) throws CoreException {
-	boolean inSync = super.synchronizeGender(node, target);
-	if (!inSync)
-		changed(target);
-	return inSync;
+	if (target.getType() == IResource.FILE) {
+		if (!node.isFile()) {
+			changed(target);
+			resourceChanged = true;
+			return false;
+		}
+	} else {
+		if (!node.isFolder()) {
+			changed(target);
+			resourceChanged = true;
+			return false;
+		}
+	}
+	return true;
 }
 protected boolean synchronizeLastModified(UnifiedTreeNode node, Resource target) throws CoreException {
-	boolean inSync = super.synchronizeLastModified(node, target);
-	if (!inSync)
-		changed(target);
-	return inSync;
+	changed(target);
+	resourceChanged = true;
+	return false;
 }
 }

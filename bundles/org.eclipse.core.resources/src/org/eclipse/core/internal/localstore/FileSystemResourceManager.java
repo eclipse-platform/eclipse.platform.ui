@@ -342,13 +342,13 @@ public void write(IFile target, InputStream content, boolean force, boolean keep
 				// test if timestamp is the same since last synchronization
 				ResourceInfo info = ((Resource) target).getResourceInfo(true, false);
 				if (lastModified != info.getLocalSyncInfo()) {
-					refresh(target, IResource.DEPTH_ZERO, monitor);
+//					refresh(target, IResource.DEPTH_ZERO, monitor);
 					String message = Policy.bind("localstore.resourceWasOutOfSync", target.getFullPath().toString());
 					throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message, null);
 				}
 			} else
 				if (localFile.exists()) {
-					refresh(target, IResource.DEPTH_ZERO, monitor);
+//					refresh(target, IResource.DEPTH_ZERO, monitor);
 					String message = Policy.bind("localstore.resourceExists", target.getFullPath().toString());
 					throw new ResourceException(IResourceStatus.EXISTS_LOCAL, target.getFullPath(), message, null);
 				}
