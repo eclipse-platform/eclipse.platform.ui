@@ -251,10 +251,10 @@ public class PerspectivePresentation {
 					}
 
 					// reparent part.
-					if (container instanceof PartTabFolder) {
-						PartTabFolder folder = (PartTabFolder) container;
-						part.reparent(folder.getControl().getParent());
-					} else {
+					if (!(container instanceof PartTabFolder)) {
+						// We don't need to reparent children of PartTabFolders since they will automatically
+						// reparent their children when they become visible. This if statement used to be 
+						// part of an else branch. Investigate if it is still necessary.
 						part.reparent(mainLayout.getParent());
 					}
 
