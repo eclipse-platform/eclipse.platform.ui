@@ -7,7 +7,7 @@
 	<target name="init">
 		<tstamp/>
 		<property name="destdir" value="../../plugin-export" />
-		<property name="dest"  value="${destdir}/org.eclipse.debug.core" />
+		<property name="dest"  value="${destdir}/org.eclipse.debug.core_2.0.0" />
 	</target>
 
 	<!-- Create the jar of .class files, and copy other important files to export dir -->
