@@ -35,7 +35,7 @@ public abstract class OS {
 			chars = new char[] {'\\', '/', ':', '*', '?', '"', '<', '>', '|'};
 
 			//list taken from http://support.microsoft.com/support/kb/articles/Q216/6/54.ASP
-			names = new String[] {"..", ".", "aux", "clock$", "com1", "com2", "com3", "com4", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+			names = new String[] {"aux", "clock$", "com1", "com2", "com3", "com4", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
 					"com5", "com6", "com7", "com8", "com9", "con", "lpt1", "lpt2", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
 					"lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9", "nul", "prn"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
 		} else {
@@ -43,7 +43,7 @@ public abstract class OS {
 			//taken from http://www.faqs.org/faqs/unix-faq/faq/part2/section-2.html
 			chars = new char[] {'/', '\0',};
 			//'.' and '..' have special meaning, and so can't be used as resource names
-			names = new String[] {".", ".."}; //$NON-NLS-1$ //$NON-NLS-2$
+			names = new String[] {}; 
 		}
 		INVALID_RESOURCE_CHARACTERS = chars == null ? new char[0] : chars;
 		Arrays.sort(names);
@@ -55,6 +55,9 @@ public abstract class OS {
 	 * and false otherwise.
 	 */
 	public static boolean isNameValid(String name) {
+		//. and .. have special meaning on all platforms
+		if (name.equals(".") || name.equals(".."))
+			return false;
 		if (INSTALLED_PLATFORM.equals(Constants.OS_WIN32)) {
 			//on windows, filename suffixes are not relevant to name validity
 			int dot = name.indexOf('.');
