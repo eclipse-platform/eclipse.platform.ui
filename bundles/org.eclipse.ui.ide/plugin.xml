@@ -408,15 +408,44 @@
    <extension
          point="org.eclipse.ui.commands">
       <category
+            name="%category.view.name"
+            description="%category.view.description"
+            id="org.eclipse.ui.category.views">
+      </category>
+      <category
             name="%category.project.name"
             description="%category.project.description"
             id="org.eclipse.ui.category.project">
       </category>
+   <!--   <command
+            name="%Views.Problem"
+            description="%command.showProblemsView.description"
+            category="org.eclipse.ui.category.views"
+            id="org.eclipse.ui.views.ProblemView">
+      </command>
       <command
+            name="%Views.ResourceNavigator"
+            description="%command.showResourceNavigator.description"
+            category="org.eclipse.ui.category.views"
+            id="org.eclipse.ui.views.ResourceNavigator">
+      </command>  
+    -->  <command
             name="%command.openWorkspace.name"
             description="%command.openWorkspace.description"
             categoryId="org.eclipse.ui.category.file"
             id="org.eclipse.ui.file.openWorkspace">
+      </command>
+      <command
+            name="%command.newQuickMenu.name"
+            description="%command.newQuickMenu.description"
+            categoryId="org.eclipse.ui.category.file"
+            id="org.eclipse.ui.file.newQuickMenu">
+      </command>
+       <command
+            name="%command.showInQuickMenu.name"
+            description="%command.showInQuickMenu.description"
+            categoryId="org.eclipse.ui.category.navigate"
+            id="org.eclipse.ui.navigate.showInQuickMenu">
       </command>
       <command
             name="%command.goToResource.name"
@@ -424,6 +453,7 @@
             categoryId="org.eclipse.ui.category.navigate"
             id="org.eclipse.ui.navigate.goToResource">
       </command>
+      
       <command
             name="%command.openResource.name"
             description="%command.openResource.description"
@@ -511,6 +541,46 @@
             platform="carbon"
             keySequence="Command+B"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.navigate.showInQuickMenu"
+            scope="org.eclipse.ui.globalScope"
+            keySequence="Alt+Shift+W"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            platform="carbon"
+            commandId=""
+            scope="org.eclipse.ui.globalScope"
+            keySequence="Alt+Shift+W"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            platform="carbon"
+            commandId="org.eclipse.ui.navigate.showInQuickMenu"
+            scope="org.eclipse.ui.globalScope"
+            keySequence="Command+Alt+W"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.file.newQuickMenu"
+            scope="org.eclipse.ui.globalScope"
+            keySequence="Alt+Shift+N"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            platform="carbon"
+            commandId=""
+            scope="org.eclipse.ui.globalScope"
+            keySequence="Alt+Shift+N"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            platform="carbon"
+            commandId="org.eclipse.ui.file.newQuickMenu"
+            scope="org.eclipse.ui.globalScope"
+            keySequence="Command+Alt+N"
+             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
    </extension>
    <extension

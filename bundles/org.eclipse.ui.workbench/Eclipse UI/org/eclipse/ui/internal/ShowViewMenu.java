@@ -177,6 +177,7 @@ public class ShowViewMenu extends ContributionItem {
 			IViewDescriptor desc = reg.find(id);
 			if (desc != null) {
 				action = new ShowViewAction(window, desc);
+	            action.setActionDefinitionId(id);
 				actions.put(id, action);
 			}
 		}

@@ -219,7 +219,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 			else
 				menuItem = new MenuItem(parent, SWT.CASCADE);
 
-			menuItem.setText(menuText);
+			menuItem.setText(getMenuText());
 
 			if (!menuExist())
 				menu = new Menu(parent);
@@ -664,7 +664,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 			String text = getOverrides().getText(this);
 
 			if (text == null)
-				text = menuText;
+				text = getMenuText();
 
 			if (text != null) {
 				ExternalActionManager.ICallback callback =

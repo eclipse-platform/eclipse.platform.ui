@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Preferences;
+
+import org.eclipse.core.resources.ResourcesPlugin;
+
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -24,22 +26,30 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
+
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.actions.NewWizardMenu;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
+import org.eclipse.ui.commands.ActionHandler;
+import org.eclipse.ui.commands.HandlerSubmission;
+import org.eclipse.ui.commands.IHandler;
+import org.eclipse.ui.commands.IWorkbenchCommandSupport;
+import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IIDEActionConstants;
 import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.internal.ide.actions.BuildSetMenu;
+import org.eclipse.ui.internal.ide.actions.QuickMenuAction;
 import org.eclipse.ui.internal.util.StatusLineContributionItem;
 
 /**
@@ -124,6 +134,8 @@ public final class WorkbenchActionBuilder {
 	MenuManager buildWorkingSetMenu;
 	private IWorkbenchAction quickStartAction;
 	private IWorkbenchAction tipsAndTricksAction;
+	private QuickMenuAction showInQuickMenu;
+	private QuickMenuAction newQuickMenu;
 	
 	// IDE-specific retarget actions
 	private IWorkbenchAction addBookmarkAction;
@@ -143,6 +155,7 @@ public final class WorkbenchActionBuilder {
 
 	private IWorkbenchAction introAction;
 
+	
 	/**
 	 * Constructs a new action builder which contributes actions
 	 * to the given window.
@@ -321,7 +334,15 @@ public final class WorkbenchActionBuilder {
 			// create the New submenu, using the same id for it as the New action
 		    String newText = IDEWorkbenchMessages.getString("Workbench.new"); //$NON-NLS-1$
 		    String newId = ActionFactory.NEW.getId();
-			MenuManager newMenu = new MenuManager(newText, newId); //$NON-NLS-1$
+			MenuManager newMenu = new MenuManager(newText, newId) {
+				public String getMenuText() {
+					String result= super.getMenuText();
+					String shortCut= newQuickMenu.getShortCutString();
+					if (shortCut == null)
+						return result;
+					return result + "\t" + shortCut; //$NON-NLS-1$
+				}
+			};
 			newMenu.add(new Separator(newId));
 			this.newWizardMenu = new NewWizardMenu(getWindow());
 			newMenu.add(this.newWizardMenu);
@@ -426,7 +447,16 @@ public final class WorkbenchActionBuilder {
 		}
 		menu.add(new Separator(IWorkbenchActionConstants.SHOW_EXT));
 		{
-			MenuManager showInSubMenu = new MenuManager(IDEWorkbenchMessages.getString("Workbench.showIn"), "showIn"); //$NON-NLS-1$ //$NON-NLS-2$
+		
+			MenuManager showInSubMenu = new MenuManager(IDEWorkbenchMessages.getString("Workbench.showIn"), "showIn") {  //$NON-NLS-1$ //$NON-NLS-2$
+				public String getMenuText() {
+					String result= super.getMenuText();
+					String shortCut= showInQuickMenu.getShortCutString();
+					if (shortCut == null)
+						return result;
+					return result + "\t" + shortCut; //$NON-NLS-1$
+				}
+			};
 			showInSubMenu.add(ContributionItemFactory.VIEWS_SHOW_IN.create(getWindow()));
 			menu.add(showInSubMenu);
 		}
@@ -899,6 +929,9 @@ public final class WorkbenchActionBuilder {
 		buildProjectAction.dispose();
 		openProjectAction.dispose();
 		closeProjectAction.dispose();
+		
+		showInQuickMenu.dispose();
+		newQuickMenu.dispose();
 	}
 
 	void updateModeLine(final String text) {
@@ -1167,6 +1200,23 @@ public final class WorkbenchActionBuilder {
 			introAction = ActionFactory.INTRO.create(window);
 			registerGlobalAction(introAction);
 		}
+		
+		final String showInQuickMenuId= "org.eclipse.ui.navigate.showInQuickMenu"; //$NON-NLS-1$
+		showInQuickMenu= new QuickMenuAction(showInQuickMenuId) { 
+			protected void fillMenu(IMenuManager menu) {
+				menu.add(ContributionItemFactory.VIEWS_SHOW_IN.create(getWindow()));
+			}
+		};
+		registerGlobalAction(showInQuickMenu);
+		
+		final String newQuickMenuId= "org.eclipse.ui.file.newQuickMenu"; //$NON-NLS-1$
+		newQuickMenu= new QuickMenuAction(newQuickMenuId) { 
+			protected void fillMenu(IMenuManager menu) {
+				menu.add(new NewWizardMenu(getWindow()));
+			}
+		};
+		registerGlobalAction(newQuickMenu);
+		
 	}
 
 	private void setCurrentActionBarConfigurer(IActionBarConfigurer actionBarConfigurer)

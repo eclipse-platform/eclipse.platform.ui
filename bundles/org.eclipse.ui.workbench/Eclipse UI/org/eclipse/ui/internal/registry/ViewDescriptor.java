@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,14 +17,16 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
 import org.eclipse.jface.resource.ImageDescriptor;
-
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.HandlerSubmission;
+import org.eclipse.ui.commands.IHandler;
+import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.plugin.AbstractUIPlugin; 
 
 /**
  * Capture the attributes of a view extension.
@@ -49,7 +51,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 	private String description;
 	private float fastViewWidthRatio;
 	private boolean allowMultiple;
-    
+	
 	/**
 	 * Create a new ViewDescriptor for an extension.
 	 */
@@ -58,8 +60,15 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 		configElement = e;
 		description = desc;
 		loadFromExtension();
+		registerShowViewHandler();
 	}
     
+	private void registerShowViewHandler() {
+        IHandler showViewHandler = new ShowViewHandler(id);
+        HandlerSubmission showViewSubmission = new HandlerSubmission(null, null, null, id, showViewHandler, Priority.MEDIUM);
+    	PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(showViewSubmission);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.registry.IViewDescriptor#createView()
 	 */
