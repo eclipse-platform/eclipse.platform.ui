@@ -22,7 +22,8 @@ public class ActionSetDescriptor
 	implements IActionSetDescriptor, IAdaptable, IWorkbenchAdapter
 {
 	private static final Object[] NO_CHILDREN = new Object[0];
-
+	private static final String INITIALLY_VISIBLE_PREF_ID_PREFIX = "actionSet.initiallyVisible."; //$NON-NLS-1$
+	
 	private String id;
 	private String label;
 	private String category;
@@ -118,6 +119,16 @@ public String getDescription() {
 public String getId() {
 	return id;
 }
+
+/**
+ * Returns the preference identifier used to store the initially visible preference.
+ * 
+ * @since 3.0
+ */
+private String getInitiallyVisiblePrefId() {
+	return INITIALLY_VISIBLE_PREF_ID_PREFIX + id;
+ }
+
 /**
  * Returns this action set's label. 
  * This is the value of its <code>"label"</code> attribute.
@@ -139,8 +150,28 @@ public String getLabel(Object o) {
  * Returns whether this action set is initially visible.
  */
 public boolean isInitiallyVisible() {
-	return visible;
+    if (id == null)
+		return visible;
+	Preferences prefs = WorkbenchPlugin.getDefault().getPluginPreferences();
+	String prefId = getInitiallyVisiblePrefId();
+	if (prefs.isDefault(prefId))
+		return visible;
+	return prefs.getBoolean(prefId);
 }
+
+/**
+ * Sets whether this action set is initially visible.
+ * If the action set identifier is undefined, then this is ignored.
+ * 
+ * @since 3.0
+ */
+public void setInitiallyVisible(boolean newValue) {
+	if (id == null)
+		return;
+	Preferences prefs = WorkbenchPlugin.getDefault().getPluginPreferences();
+	prefs.setValue(getInitiallyVisiblePrefId(), newValue);
+}
+
 /**
  * Sets the category of this action set.
  *

@@ -74,4 +74,12 @@ public boolean isInitiallyVisible();
  * @param cat a non-empty category id
  */
 public void setCategory(String id);
+
+/**
+ * Sets whether this action set is initially visible.
+ * 
+ * @since 3.0
+ */
+public void setInitiallyVisible(boolean visible);
+
 }
