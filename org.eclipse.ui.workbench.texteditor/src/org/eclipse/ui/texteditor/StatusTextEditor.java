@@ -204,4 +204,14 @@ public class StatusTextEditor extends AbstractTextEditor {
 		if (fParent != null && !fParent.isDisposed())
 			updatePartControl(getEditorInput());
 	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#handleElementContentReplaced()
+	 * @since 3.1
+	 */
+	protected void handleElementContentReplaced() {
+		super.handleElementContentReplaced();
+		if (fParent != null && !fParent.isDisposed())
+			updatePartControl(getEditorInput());
+	}
 }

@@ -39,7 +39,8 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 	private RetargetTextEditorAction fConvertToUNIX;
 	/** Convert to MAC action. */
 	private RetargetTextEditorAction fConvertToMac;
-
+	/** Change encoding action. */
+	private RetargetTextEditorAction fChangeEncodingAction;
 	
 	/**
 	 * Creates a new contributor.
@@ -51,6 +52,8 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 		fConvertToWindows= new RetargetTextEditorAction(TextEditorMessages.getResourceBundle(), "Editor.ConvertToWindows."); //$NON-NLS-1$ 
 		fConvertToUNIX= new RetargetTextEditorAction(TextEditorMessages.getResourceBundle(), "Editor.ConvertToUNIX."); //$NON-NLS-1$ 
 		fConvertToMac= new RetargetTextEditorAction(TextEditorMessages.getResourceBundle(), "Editor.ConvertToMac."); //$NON-NLS-1$
+		
+		fChangeEncodingAction= new RetargetTextEditorAction(TextEditorMessages.getResourceBundle(), "Editor.ChangeEncodingAction."); //$NON-NLS-1$
 	}	
 	
 	/**
@@ -75,6 +78,8 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 		fConvertToWindows.setAction(getAction(textEditor, ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_WINDOWS));
 		fConvertToUNIX.setAction(getAction(textEditor, ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_UNIX));
 		fConvertToMac.setAction(getAction(textEditor, ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_MAC));
+		
+		fChangeEncodingAction.setAction(getAction(textEditor, ITextEditorActionConstants.CHANGE_ENCODING));
 	}
 	
 	/*
@@ -86,30 +91,29 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 	}
 	
 	/*
-	 * @see EditorActionBarContributor#init(org.eclipse.ui.IActionBars)
-	 */
-	public void init(IActionBars bars) {
-		super.init(bars);
-		
-		// line delimiter conversion
-		IMenuManager menuManager= bars.getMenuManager();
-		IMenuManager editMenu= menuManager.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
-		if (editMenu != null) {
-			MenuManager subMenu= new MenuManager(TextEditorMessages.getString("Editor.ConvertLineDelimiters.label")); //$NON-NLS-1$
-
-			subMenu.add(fConvertToWindows);
-			subMenu.add(fConvertToUNIX);
-			subMenu.add(fConvertToMac);
-	
-			editMenu.add(subMenu);
-		}		
-	}
-	
-	/*
 	 * @see IEditorActionBarContributor#dispose()
 	 */
 	public void dispose() {
 		doSetActiveEditor(null);
 		super.dispose();
+	}
+
+	/*
+	 * @see EditorActionBarContributor#init(org.eclipse.ui.IActionBars)
+	 */
+	public void init(IActionBars bars) {
+		super.init(bars);
+		
+		IMenuManager menuManager= bars.getMenuManager();
+		IMenuManager editMenu= menuManager.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
+		if (editMenu != null) {
+			MenuManager subMenu= new MenuManager(TextEditorMessages.getString("Editor.ConvertLineDelimiters.label")); //$NON-NLS-1$
+			subMenu.add(fConvertToWindows);
+			subMenu.add(fConvertToUNIX);
+			subMenu.add(fConvertToMac);
+	
+			editMenu.add(subMenu);
+			editMenu.add(fChangeEncodingAction);
+		}
 	}
 }

@@ -55,7 +55,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * Value: <code>"group.find"</code>
 	 */
 	static final String GROUP_FIND= "group.find"; //$NON-NLS-1$
-	
+
 	/** 
 	 * Context menu group for save related actions. 
 	 * Value: <code>"group.save"</code>
@@ -260,6 +260,13 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 */
 	static final String CONVERT_LINE_DELIMITERS_TO_MAC= "ConvertLineDelimitersToMAC"; //$NON-NLS-1$
 	
+	/** 
+	 * Name of the change encoding action.
+	 * Value: <code>"ChangeEncoding"</code>
+	 * @since 3.1
+	 */
+	static final String CHANGE_ENCODING= "ChangeEncoding"; //$NON-NLS-1$
+
 	/** 
 	 * Name of the ruler action performed when double clicking the editor's vertical ruler. 
 	 * Value: <code>"RulerDoubleClick"</code>

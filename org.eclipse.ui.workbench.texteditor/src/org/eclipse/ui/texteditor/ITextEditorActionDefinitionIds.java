@@ -447,4 +447,11 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	 * @since 3.0
 	 */
 	public static final String TOGGLE_INSERT_MODE= "org.eclipse.ui.edit.text.toggleInsertMode"; //$NON-NLS-1$
+
+	/**
+	 * Action definition ID of the edit -> change encoding action
+	 * Value: <code>"org.eclipse.ui.edit.text.changeEncoding"</code>).
+	 * @since 3.1
+	 */
+	public static final String CHANGE_ENCODING= "org.eclipse.ui.edit.text.changeEncoding"; //$NON-NLS-1$
 }

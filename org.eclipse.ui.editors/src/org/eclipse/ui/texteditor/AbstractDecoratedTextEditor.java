@@ -1007,7 +1007,12 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		action= new AddTaskAction(TextEditorMessages.getResourceBundle(), "Editor.AddTask.", this); //$NON-NLS-1$
 		action.setHelpContextId(ITextEditorHelpContextIds.ADD_TASK_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.ADD_TASK);
-		setAction(IDEActionFactory.ADD_TASK.getId(), action);		
+		setAction(IDEActionFactory.ADD_TASK.getId(), action);
+		
+		action= new ChangeEncodingAction(TextEditorMessages.getResourceBundle(), "Editor.ChangeEncodingAction.", this); //$NON-NLS-1$
+		action.setHelpContextId(ITextEditorHelpContextIds.CHANGE_ENCODING);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CHANGE_ENCODING);
+		setAction(ITextEditorActionConstants.CHANGE_ENCODING, action);		
 	}
 	
 	/*

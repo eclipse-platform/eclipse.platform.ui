@@ -12,6 +12,7 @@ package org.eclipse.ui.editors.text;
 
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
 
 /**
@@ -46,4 +47,11 @@ public interface ITextEditorHelpContextIds extends IAbstractTextEditorHelpContex
 	 * @since 3.0
 	 */
 	public static final String ADD_TASK_ACTION= PREFIX + IDEActionFactory.ADD_TASK.getId() + ACTION_POSTFIX;
+
+	/**
+	 * Help context id for the "Change Encoding..." action.
+	 * Value: <code>"org.eclipse.ui.ChangeEncoding_action_context"</code>
+	 * @since 3.1
+	 */
+	public static final String CHANGE_ENCODING= PREFIX + ITextEditorActionConstants.CHANGE_ENCODING  + ACTION_POSTFIX;;
 }
