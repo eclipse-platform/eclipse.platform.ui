@@ -237,13 +237,13 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 		if(fObject instanceof IMarker)
 		{
 			try{
-				editor = page.openEditor(newEditorInput, modelPres.getEditorId(newEditorInput, (IMarker)fObject));
+				editor = page.openEditor(newEditorInput, modelPres.getEditorId(newEditorInput, fObject));
 			}catch(PartInitException e){}
 		}
 		else if(fObject instanceof IFile)
 		{
 			try{
-				editor = page.openEditor(newEditorInput, modelPres.getEditorId(newEditorInput,(IFile) fObject));
+				editor = page.openEditor(newEditorInput, modelPres.getEditorId(newEditorInput, fObject));
 			}catch(PartInitException e){}
 		}else { //get editor input
 			
