@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.ui.editors">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui.editors" id="null" name="Editor Template"/>
+         <meta.schema plugin="org.eclipse.ui.editors" id="templates" name="Editor Template"/>
       </appInfo>
       <documentation>
          Templates are snippets of text or code which help the user enter reoccurring patterns into a text editor. Templates may contain variables which are resolved in the context where the template is inserted.
@@ -258,11 +258,11 @@
             context=&quot;ant&quot;
             editorId=&quot;org.eclipse.ui.examples.templateeditor.editors.TemplateEditor&quot;
             description=&quot;%ant.tasks.javac.description&quot;&gt;
-         &lt;pattern&gt;&amp;lt;javac srcdir=&amp;quot;${src}&amp;quot;
- destdir=&amp;quot;${dst}&amp;quot;
- classpath=&amp;quot;${classpath}&amp;quot;
- debug=&amp;quot;${debug}&amp;quot;
-/&amp;gt;&lt;/pattern&gt;
+         &lt;pattern&gt;&lt;javac srcdir=&quot;${src}&quot;
+ destdir=&quot;${dst}&quot;
+ classpath=&quot;${classpath}&quot;
+ debug=&quot;${debug}&quot;
+/&gt;&lt;/pattern&gt;
       &lt;/template&gt;
       
       &lt;resolver
@@ -305,12 +305,8 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         &lt;p&gt;
-&lt;a href=&quot;hglegal.htm&quot;&gt;
- &lt;img SRC=&quot;ngibmcpy.gif&quot;
-   ALT=&quot;Copyright (c) 2000, 2003 IBM Corporation and others. All Rights Reserved.&quot;
-   BORDER=0 height=14 width=324&gt;&lt;/a&gt;
-&lt;/p&gt;
+         Copyright (c) 2001, 2004 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 
