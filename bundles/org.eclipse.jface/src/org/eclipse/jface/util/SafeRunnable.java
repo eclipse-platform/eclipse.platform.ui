@@ -63,7 +63,6 @@ public static boolean getIgnoreErrors(boolean flag) {
 
 /**
  * Flag to avoid interactive error dialogs during automated testing.
- * @deprecated use getIgnoreErrors()
  * 
  * @since 3.0
  */
