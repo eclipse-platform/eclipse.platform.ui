@@ -10,46 +10,20 @@
  *******************************************************************************/
 package org.eclipse.core.runtime.content;
 
-import java.io.*;
 import java.util.EventObject;
-import org.eclipse.core.runtime.QualifiedName;
 
 /**
- * The content type manager provides facilities file name and content-based
- * type lookup, and content description.
+ * The content type manager provides facilities for file name and content-based
+ * type lookup and content description.
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
+ * @see org.eclipse.core.runtime.content.IContentTypeMatcher
  * @see org.eclipse.core.runtime.Platform#getContentTypeManager()
  * @since 3.0
  */
-public interface IContentTypeManager {
-
-	/**
-	 * A listener to be used to receive content type change events.
-	 * <p>
-	 * Clients who reference the <code>org.eclipse.core.resources</code>
-	 * bundle are encouraged <em>not</em> to use this listener mechanism to
-	 * listen to content type changes. The Core Resources bundle will 
-	 * propagate changes to content types and notify clients appropriately
-	 * via the resource change mechanism.
-	 * </p>
-	 * <p>
-	 * Clients may implement this interface.
-	 * </p>
-	 */
-	public interface IContentTypeChangeListener {
-
-		/**
-		 * Notification that a content type has changed in the content type manager.
-		 * The given event object contains the content type which changed and must not
-		 * be <code>null</code>.
-		 * 
-		 * @param event the content type change event
-		 */
-		public void contentTypeChanged(ContentTypeChangeEvent event);
-	}
+public interface IContentTypeManager extends IContentTypeMatcher {
 
 	/**
 	 * An event object which describes the details of a change to a 
@@ -85,6 +59,64 @@ public interface IContentTypeManager {
 	}
 
 	/**
+	 * A listener to be used to receive content type change events.
+	 * <p>
+	 * Clients who reference the <code>org.eclipse.core.resources</code>
+	 * bundle are encouraged <em>not</em> to use this listener mechanism to
+	 * listen to content type changes. The Core Resources bundle will 
+	 * propagate changes to content types and notify clients appropriately
+	 * via the resource change mechanism.
+	 * </p>
+	 * <p>
+	 * Clients may implement this interface.
+	 * </p>
+	 */
+	public interface IContentTypeChangeListener {
+
+		/**
+		 * Notification that a content type has changed in the content type manager.
+		 * The given event object contains the content type which changed and must not
+		 * be <code>null</code>.
+		 * 
+		 * @param event the content type change event
+		 */
+		public void contentTypeChanged(ContentTypeChangeEvent event);
+	}
+
+	/**
+	 * A policy for refining the set of content types that
+	 * should be accepted during content type matching operations.
+	 * <p>
+	 * Clients may implement this interface.
+	 * </p>
+	 * 
+	 * @see IContentTypeManager#getMatcher(ISelectionPolicy)
+	 * @since 3.1
+	 */
+	public interface ISelectionPolicy {
+		/**
+		 * Returns a subset of the given content types sorted by using a custom criterion.
+		 * <p>
+		 * The given array of content types has already been sorted using 
+		 * the platform rules. If this object follows the same rules, further sorting 
+		 * is not necessary.  
+		 * </p>
+		 * <p>
+		 * The type of matching being performed (name, contents or name + contents)
+		 * might affect the outcome for this method. For instance, for file name-only 
+		 * matching, the more general type could have higher priority. For content-based 
+		 * matching,  the more specific content type could be preferred instead.
+		 * </p>
+		 * 
+		 * @param candidates an array containing content types matching some query 
+		 * @param fileName whether it is a file name-based content type matching
+		 * @param content whether its a content-based content type matching
+		 * @return an array of content types
+		 */
+		IContentType[] select(IContentType[] candidates, boolean fileName, boolean content);
+	}
+
+	/**
 	 * Content type identifier constant for platform's primary 
 	 * text-based content type: <code>org.eclipse.core.runtime.text</code>. 
 	 * <p>
@@ -112,74 +144,6 @@ public interface IContentTypeManager {
 	public void addContentTypeChangeListener(IContentTypeChangeListener listener);
 
 	/**
-	 * Returns the preferred content type for the given contents and file name.
-	 * <p>
-	 * Returns <code>null</code> if no associated content types are 
-	 * found.
-	 * </p>
-	 * <p>
-	 * If a file name is not provided, the entire content type registry will be 
-	 * queried. For performance reasons, it is highly recomended 
-	 * to provide a file name if available.
-	 * </p> 
-	 * <p>
-	 * Any IOExceptions that may occur while reading the given input stream 
-	 * will flow to the caller. The input stream will not be closed by this 
-	 * operation.
-	 * </p> 
-	 * 
-	 * @param contents an input stream
-	 * @param fileName the file name associated to the contents, or <code>null</code> 
-	 * @return the preferred content type associated to the given file name, or <code>null</code>
-	 * @throws IOException if an error occurs while reading the contents 
-	 */
-	public IContentType findContentTypeFor(InputStream contents, String fileName) throws IOException;
-
-	/**
-	 * Returns the preferred content type for the given file name. If multiple content types 
-	 * are associated with the given file name, the one considered the most appropriated will
-	 * be returned. If there are no content types associated, <code>null</code> is returned.
-	 * 
-	 * @param fileName the name of the file
-	 * @return the preferred content type associated to the given file name, or <code>null</code>
-	 */
-	public IContentType findContentTypeFor(String fileName);
-
-	/**
-	 * Returns the content types associated to the given contents and file name.
-	 * <p>
-	 * Returns an empty array if no associated content types are found.
-	 * </p>
-	 * <p>
-	 * If a file name is not provided, the entire content type registry will be 
-	 * queried. For performance reasons, it is highly recomended 
-	 * to provide a file name if available.
-	 * </p>
-	 * <p>
-	 * Any IOExceptions that may occur while reading the given input stream 
-	 * will flow to the caller.  The input stream will not be closed by this 
-	 * operation.
-	 * </p> 
-	 * 
-	 * @param contents an input stream
-	 * @param fileName the file name associated to the contents, or <code>null</code> 
-	 * @return all content types associated to the given contents and file name
-	 * @throws IOException if an error occurs while reading the contents
-	 */
-	public IContentType[] findContentTypesFor(InputStream contents, String fileName) throws IOException;
-
-	/**
-	 * Returns all content types known by the platform that are associated to the given file name.
-	 * <p> 
-	 * Returns an empty array if there are no content types associated.
-	 * </p>
-	 * 
-	 * @param fileName the name of the file
-	 * @return all content types associated to the given file spec
-	 */
-	public IContentType[] findContentTypesFor(String fileName);
-
-	/**
 	 * Returns all content types known by the platform. 
 	 * <p>
 	 * Returns an empty array if there are no content types available.
@@ -199,50 +163,12 @@ public interface IContentTypeManager {
 	public IContentType getContentType(String contentTypeIdentifier);
 
 	/**
-	 * Tries to obtain a description for the given contents and file name. 
-	 * <p>
-	 * Any IOExceptions that may occur while reading the given input stream 
-	 * will flow to the caller.  The input stream will not be closed by this 
-	 * operation.
-	 * </p>
-	 * <p>
-	 * If a file name is not provided, the entire content type registry will be 
-	 * queried. For performance reasons, it is highly recomended 
-	 * to provide a file name if available.
-	 * </p> 
-	 *  
-	 * @param contents the contents to be interpreted
-	 * @param fileName the file name associated to the contents, or <code>null</code>
-	 * @param options an array of keys for all properties that should be 
-	 * described, or <code>IContentDescription.ALL</code>,  for all of them 
-	 * @return a content description if one could be obtained, or <code>null</code>
-	 * @throws IOException if an error occurs while reading the contents
-	 * @see IContentDescription 
+	 * Returns a newly created content type matcher using the given content type selection policy.
+	 * 
+	 * @param customPolicy a selection policy
+	 * @return a content type matcher that uses the given policy
 	 */
-	public IContentDescription getDescriptionFor(InputStream contents, String fileName, QualifiedName[] options) throws IOException;
-
-	/**
-	 * Tries to obtain a description for the given contents and file name. 
-	 * <p>
-	 * Any IOExceptions that may occur while reading the given input stream 
-	 * will flow to the caller.  The reader will not be closed by this 
-	 * operation.
-	 * </p>
-	 * <p>
-	 * If a file name is not provided, the entire content type registry will be 
-	 * queried. For performance reasons, it is highly recomended 
-	 * to provide a file name if available.
-	 * </p> 
-	 *  
-	 * @param contents the contents to be interpreted
-	 * @param fileName the file name associated to the contents, or <code>null</code>
-	 * @param options an array of keys for all properties that should be 
-	 * described, or <code>IContentDescription.ALL</code>,  for all of them 
-	 * @return a content description if one could be obtained, or <code>null</code>
-	 * @throws IOException if an error occurs while reading the contents
-	 * @see IContentDescription 
-	 */
-	public IContentDescription getDescriptionFor(Reader contents, String fileName, QualifiedName[] options) throws IOException;
+	public IContentTypeMatcher getMatcher(ISelectionPolicy customPolicy);
 
 	/**
 	 * De-register the given listener from receiving notification of content type changes. 

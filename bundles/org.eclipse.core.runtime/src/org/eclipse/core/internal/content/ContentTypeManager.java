@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipse.core.internal.content;
 
-import java.io.*;
+import java.io.InputStream;
+import java.io.Reader;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.Preferences;
 
-public class ContentTypeManager implements IContentTypeManager, IRegistryChangeListener {
+public class ContentTypeManager extends ContentTypeMatcher implements IContentTypeManager, IRegistryChangeListener {
 	private static ContentTypeManager instance;
 
 	public static final int BLOCK_SIZE = 0x400;
@@ -91,33 +92,11 @@ public class ContentTypeManager implements IContentTypeManager, IRegistryChangeL
 	}
 
 	public ContentTypeManager() {
-		// nothing to do
+		super(null);
 	}
 
 	protected ContentTypeBuilder createBuilder(ContentTypeCatalog newCatalog) {
 		return new ContentTypeBuilder(newCatalog);
-	}
-
-	public IContentType findContentTypeFor(InputStream contents, String fileName) throws IOException {
-		IContentType[] all = findContentTypesFor(contents, fileName);
-		return all.length > 0 ? all[0] : null;
-	}
-
-	public IContentType findContentTypeFor(String fileName) {
-		// basic implementation just gets all content types
-		IContentType[] associated = findContentTypesFor(fileName);
-		return associated.length == 0 ? null : associated[0];
-	}
-
-	public IContentType[] findContentTypesFor(InputStream contents, String fileName) throws IOException {
-		return getCatalog().findContentTypesFor(contents, fileName);
-	}
-
-	/**
-	 * @see IContentTypeManager#findContentTypesFor(String)
-	 */
-	public IContentType[] findContentTypesFor(String fileName) {
-		return getCatalog().findContentTypesFor(fileName);
 	}
 
 	public IContentType[] getAllContentTypes() {
@@ -147,12 +126,8 @@ public class ContentTypeManager implements IContentTypeManager, IRegistryChangeL
 		return getCatalog().getContentType(contentTypeIdentifier);
 	}
 
-	public IContentDescription getDescriptionFor(InputStream contents, String fileName, QualifiedName[] options) throws IOException {
-		return getCatalog().getDescriptionFor(contents, fileName, options);
-	}
-
-	public IContentDescription getDescriptionFor(Reader contents, String fileName, QualifiedName[] options) throws IOException {
-		return getCatalog().getDescriptionFor(contents, fileName, options);
+	public IContentTypeMatcher getMatcher(final ISelectionPolicy customPolicy) {
+		return new ContentTypeMatcher(customPolicy);
 	}
 
 	Preferences getPreferences() {

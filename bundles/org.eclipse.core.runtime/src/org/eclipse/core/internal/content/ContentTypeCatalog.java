@@ -13,14 +13,51 @@ package org.eclipse.core.internal.content;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.internal.runtime.Policy;
-import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
 
 public class ContentTypeCatalog {
 	private Map aliases = new HashMap();
 	private Map allChildren = new HashMap();
 
+	private Comparator constantGeneralIsBetter = new Comparator() {
+		public int compare(Object o1, Object o2) {
+			ContentType type1 = (ContentType) o1;
+			ContentType type2 = (ContentType) o2;
+			// first criteria: depth - the lower, the better
+			int depthCriteria = type1.getDepth(ContentTypeCatalog.this) - type2.getDepth(ContentTypeCatalog.this);
+			if (depthCriteria != 0)
+				return depthCriteria;
+			// second criteria: priority - the higher, the better
+			int priorityCriteria = type1.getPriority() - type2.getPriority();
+			if (priorityCriteria != 0)
+				return -priorityCriteria;
+			// they have same depth and priority - choose one arbitrarily (stability is important)
+			return type1.getId().compareTo(type2.getId());
+		}
+	};
+	private Comparator constantSpecificIsBetter = new Comparator() {
+		public int compare(Object o1, Object o2) {
+			ContentType type1 = (ContentType) o1;
+			ContentType type2 = (ContentType) o2;
+			// first criteria: depth - the higher, the better
+			int depthCriteria = type1.getDepth(ContentTypeCatalog.this) - type2.getDepth(ContentTypeCatalog.this);
+			if (depthCriteria != 0)
+				return -depthCriteria;
+			// second criteria: priority - the higher, the better
+			int priorityCriteria = type1.getPriority() - type2.getPriority();
+			if (priorityCriteria != 0)
+				return -priorityCriteria;
+			// they have same depth and priority - choose one arbitrarily (stability is important)
+			return type1.getId().compareTo(type2.getId());
+		}
+	};
+
 	private Map contentTypes = new HashMap();
+
+	private Map fileExtensions = new HashMap();
+
+	private Map fileNames = new HashMap();
 
 	/**
 	 * A sorting policy where content types are sorted by id.
@@ -32,6 +69,8 @@ public class ContentTypeCatalog {
 			return type1.getId().compareTo(type2.getId());
 		}
 	};
+
+	private ContentTypeManager manager;
 
 	/**
 	 * A sorting policy where the more specific content type wins (if they are related), 
@@ -52,45 +91,6 @@ public class ContentTypeCatalog {
 			return 0;
 		}
 	};
-	private Comparator constantSpecificIsBetter = new Comparator() {
-		public int compare(Object o1, Object o2) {
-			ContentType type1 = (ContentType) o1;
-			ContentType type2 = (ContentType) o2;
-			// first criteria: depth - the higher, the better
-			int depthCriteria = type1.getDepth(ContentTypeCatalog.this) - type2.getDepth(ContentTypeCatalog.this);
-			if (depthCriteria != 0)
-				return -depthCriteria;
-			// second criteria: priority - the higher, the better
-			int priorityCriteria = type1.getPriority() - type2.getPriority();
-			if (priorityCriteria != 0)
-				return -priorityCriteria;
-			// they have same depth and priority - choose one arbitrarily (stability is important)
-			return type1.getId().compareTo(type2.getId());
-		}
-	};
-
-	private Comparator constantGeneralIsBetter = new Comparator() {
-		public int compare(Object o1, Object o2) {
-			ContentType type1 = (ContentType) o1;
-			ContentType type2 = (ContentType) o2;
-			// first criteria: depth - the lower, the better
-			int depthCriteria = type1.getDepth(ContentTypeCatalog.this) - type2.getDepth(ContentTypeCatalog.this);
-			if (depthCriteria != 0)
-				return depthCriteria;
-			// second criteria: priority - the higher, the better
-			int priorityCriteria = type1.getPriority() - type2.getPriority();
-			if (priorityCriteria != 0)
-				return -priorityCriteria;
-			// they have same depth and priority - choose one arbitrarily (stability is important)
-			return type1.getId().compareTo(type2.getId());
-		}
-	};
-
-	private Map fileExtensions = new HashMap();
-
-	private Map fileNames = new HashMap();
-
-	private ContentTypeManager manager;
 
 	public ContentTypeCatalog(ContentTypeManager manager) {
 		this.manager = manager;
@@ -98,6 +98,25 @@ public class ContentTypeCatalog {
 
 	void addContentType(IContentType contentType) {
 		contentTypes.put(contentType.getId(), contentType);
+	}
+
+	/**
+	 * Applies a client-provided selection policy. 
+	 */
+	private IContentType[] applyPolicy(final IContentTypeManager.ISelectionPolicy policy, final IContentType[] candidates, final boolean fileName, final boolean contents) {
+		final IContentType[][] result = new IContentType[][] {candidates};
+		Platform.run(new ISafeRunnable() {
+			public void handleException(Throwable exception) {
+				// already logged in Platform#run()
+				// default result is the original array
+				// nothing to be done
+			}
+
+			public void run() throws Exception {
+				result[0] = policy.select(candidates, fileName, contents);
+			}
+		});
+		return result[0];
 	}
 
 	void associate(ContentType contentType) {
@@ -116,6 +135,37 @@ public class ContentTypeCatalog {
 		if (existing == null)
 			fileSpecMap.put(mappingKey, existing = new HashSet());
 		existing.add(contentType);
+	}
+
+	/**
+	 * Processes all content types in source, adding those matching the given file spec to the
+	 * destination collection.
+	 */
+	private void collectMatchingByName(Collection source, final Collection destination, final String fileSpecText, final int fileSpecType) {
+		if (source == null || source.isEmpty())
+			return;
+		// process all content types in the given collection
+		for (Iterator i = source.iterator(); i.hasNext();) {
+			final ContentType root = (ContentType) i.next();
+			// From a given content type, check if it matches, and 
+			// include any children that match as well.
+			internalAccept(new ContentTypeVisitor() {
+				public int visit(ContentType type) {
+					if (type != root && type.hasBuiltInAssociations())
+						// this content type has built-in associations - visit it later as root						
+						return RETURN;
+					if (type == root && !type.hasFileSpec(fileSpecText, fileSpecType))
+						// it is the root and does not match the file name - do not add it nor look into its children						
+						return RETURN;
+					// either the content type is the root and matches the file name or 
+					// is a sub content type and does not have built-in files specs
+					if (!destination.contains(type))
+						// make sure we don't add it twice						
+						destination.add(type);
+					return CONTINUE;
+				}
+			}, root);
+		}
 	}
 
 	void dissociate(ContentType contentType, String text, int type) {
@@ -173,79 +223,21 @@ public class ContentTypeCatalog {
 		return true;
 	}
 
-	protected IContentType[] findContentTypesFor(InputStream contents, String fileName) throws IOException {
+	protected IContentType[] findContentTypesFor(InputStream contents, String fileName, IContentTypeManager.ISelectionPolicy policy) throws IOException {
 		InputStream buffer = ContentTypeManager.readBuffer(contents);
-		return internalFindContentTypesFor(buffer, false, getSubset(fileName), fileName == null ? constantSpecificIsBetter : specificIsBetter);
+		IContentType[] selected = internalFindContentTypesFor(buffer, false, getSubset(fileName), fileName == null ? constantSpecificIsBetter : specificIsBetter);
+		// give the policy a chance to change the results
+		if (policy != null)
+			selected = applyPolicy(policy, selected, fileName != null, true);
+		return selected;
 	}
 
-	public IContentType[] findContentTypesFor(final String fileName) {
-		return internalFindContentTypesFor(fileName, constantGeneralIsBetter);
-	}
-
-	/**
-	 * For testing purposes only.
-	 */
-	public IContentType[] findContentTypesFor(InputStream contents, IContentType[] subset) throws IOException {
-		InputStream buffer = ContentTypeManager.readBuffer(contents);
-		return internalFindContentTypesFor(buffer, false, subset, specificIsBetter);
-	}
-
-	/**
-	 * This is the implementation for file name based content type matching. 
-	 * 
-	 * @return all matching content types in the preferred order 
-	 * @see IContentTypeManager#findContentTypesFor(String)
-	 */
-	public IContentType[] internalFindContentTypesFor(final String fileName, Comparator sortingPolicy) {
-		final List selected = new ArrayList(5);
-		// files associated by name should appear before those associated by extension		
-		Set allByFileName = (Set) fileNames.get(FileSpec.getMappingKeyFor(fileName));
-		collectMatchingByName(allByFileName, selected, fileName, IContentType.FILE_NAME_SPEC);
-		int boundary = selected.size();
-		final String fileExtension = ContentTypeManager.getFileExtension(fileName);
-		if (fileExtension != null) {
-			Set allByFileExtension = (Set) fileExtensions.get(FileSpec.getMappingKeyFor(fileExtension));
-			collectMatchingByName(allByFileExtension, selected, fileExtension, IContentType.FILE_EXTENSION_SPEC);
-		}
-		IContentType[] result = (IContentType[]) selected.toArray(new IContentType[selected.size()]);
-		if (sortingPolicy == null)
-			return result;
-		if (boundary > 1)
-			Arrays.sort(result, 0, boundary, sortingPolicy);
-		if (boundary < result.length - 1)
-			Arrays.sort(result, boundary, result.length, sortingPolicy);
-		return result;
-	}
-
-	/**
-	 * Processes all content types in source, adding those matching the given file spec to the
-	 * destination collection.
-	 */
-	private void collectMatchingByName(Collection source, final Collection destination, final String fileSpecText, final int fileSpecType) {
-		if (source == null || source.isEmpty())
-			return;
-		// process all content types in the given collection
-		for (Iterator i = source.iterator(); i.hasNext();) {
-			final ContentType root = (ContentType) i.next();
-			// From a given content type, check if it matches, and 
-			// include any children that match as well.
-			internalAccept(new ContentTypeVisitor() {
-				public int visit(ContentType type) {
-					if (type != root && type.hasBuiltInAssociations())
-						// this content type has built-in associations - visit it later as root						
-						return RETURN;
-					if (type == root && !type.hasFileSpec(fileSpecText, fileSpecType))
-						// it is the root and does not match the file name - do not add it nor look into its children						
-						return RETURN;
-					// either the content type is the root and matches the file name or 
-					// is a sub content type and does not have built-in files specs
-					if (!destination.contains(type))
-						// make sure we don't add it twice						
-						destination.add(type);
-					return CONTINUE;
-				}
-			}, root);
-		}
+	public IContentType[] findContentTypesFor(final String fileName, IContentTypeManager.ISelectionPolicy policy) {
+		IContentType[] selected = internalFindContentTypesFor(fileName, constantGeneralIsBetter);
+		// give the policy a chance to change the results
+		if (policy != null)
+			selected = applyPolicy(policy, selected, true, false);
+		return selected;
 	}
 
 	public ContentType getAliasTarget(ContentType alias) {
@@ -282,28 +274,63 @@ public class ContentTypeCatalog {
 		return (type != null && type.isValid() && !type.isAlias(this)) ? type : null;
 	}
 
-	public IContentDescription getDescriptionFor(InputStream contents, String fileName, QualifiedName[] options) throws IOException {
+	public IContentDescription getDescriptionFor(InputStream contents, String fileName, QualifiedName[] options, IContentTypeManager.ISelectionPolicy policy) throws IOException {
 		InputStream buffer = ContentTypeManager.readBuffer(contents);
 		IContentType[] selected = internalFindContentTypesFor(buffer, false, getSubset(fileName), fileName == null ? constantSpecificIsBetter : specificIsBetter);
 		if (selected.length == 0)
 			return null;
+		// give the policy a chance to change the results
+		if (policy != null) {
+			selected = applyPolicy(policy, selected, fileName != null, true);
+			if (selected.length == 0)
+				return null;
+		}
 		return ((ContentType) selected[0]).internalGetDescriptionFor(this, buffer, options);
+	}
+
+	public IContentDescription getDescriptionFor(Reader contents, String fileName, QualifiedName[] options, IContentTypeManager.ISelectionPolicy policy) throws IOException {
+		Reader buffer = ContentTypeManager.readBuffer(contents);
+		IContentType[] selected = internalFindContentTypesFor(buffer, true, getSubset(fileName), fileName == null ? constantSpecificIsBetter : specificIsBetter);
+		if (selected.length == 0)
+			return null;
+		// give the policy a chance to change the results
+		if (policy != null) {
+			selected = applyPolicy(policy, selected, fileName != null, true);
+			if (selected.length == 0)
+				return null;
+		}
+		return ((ContentType) selected[0]).internalGetDescriptionFor(this, buffer, options);
+	}
+
+	public ContentTypeManager getManager() {
+		return manager;
 	}
 
 	private IContentType[] getSubset(String fileName) {
 		return fileName == null ? getAllContentTypes() : internalFindContentTypesFor(fileName, lexicographical);
 	}
 
-	public IContentDescription getDescriptionFor(Reader contents, String fileName, QualifiedName[] options) throws IOException {
-		Reader buffer = ContentTypeManager.readBuffer(contents);
-		IContentType[] selected = internalFindContentTypesFor(buffer, true, getSubset(fileName), fileName == null ? constantSpecificIsBetter : specificIsBetter);
-		if (selected.length == 0)
-			return null;
-		return ((ContentType) selected[0]).internalGetDescriptionFor(this, buffer, options);
-	}
-
-	public ContentTypeManager getManager() {
-		return manager;
+	public boolean internalAccept(ContentTypeVisitor visitor, ContentType root) {
+		if (!root.isValid() || root.isAlias(this))
+			return true;
+		int result = visitor.visit(root);
+		switch (result) {
+			// stop traversing the tree
+			case ContentTypeVisitor.STOP :
+				return false;
+			// stop traversing this subtree
+			case ContentTypeVisitor.RETURN :
+				return true;
+		}
+		ContentType[] children = getChildren(root);
+		if (children == null)
+			// this content type has no subtypes - keep traversing the tree
+			return true;
+		for (int i = 0; i < children.length; i++)
+			if (!internalAccept(visitor, children[i]))
+				// stop the traversal
+				return false;
+		return true;
 	}
 
 	public IContentType[] internalFindContentTypesFor(Object buffer, boolean text, IContentType[] subset, Comparator sortingPolicy) throws IOException {
@@ -328,6 +355,33 @@ public class ContentTypeCatalog {
 			Arrays.sort(result, 0, valid, sortingPolicy);
 		if (result.length - valid > 1)
 			Arrays.sort(result, valid, result.length, sortingPolicy);
+		return result;
+	}
+
+	/**
+	 * This is the implementation for file name based content type matching. 
+	 * 
+	 * @return all matching content types in the preferred order 
+	 * @see IContentTypeManager#findContentTypesFor(String)
+	 */
+	public IContentType[] internalFindContentTypesFor(final String fileName, Comparator sortingPolicy) {
+		final List selected = new ArrayList(5);
+		// files associated by name should appear before those associated by extension		
+		Set allByFileName = (Set) fileNames.get(FileSpec.getMappingKeyFor(fileName));
+		collectMatchingByName(allByFileName, selected, fileName, IContentType.FILE_NAME_SPEC);
+		int boundary = selected.size();
+		final String fileExtension = ContentTypeManager.getFileExtension(fileName);
+		if (fileExtension != null) {
+			Set allByFileExtension = (Set) fileExtensions.get(FileSpec.getMappingKeyFor(fileExtension));
+			collectMatchingByName(allByFileExtension, selected, fileExtension, IContentType.FILE_EXTENSION_SPEC);
+		}
+		IContentType[] result = (IContentType[]) selected.toArray(new IContentType[selected.size()]);
+		if (sortingPolicy == null)
+			return result;
+		if (boundary > 1)
+			Arrays.sort(result, 0, boundary, sortingPolicy);
+		if (boundary < result.length - 1)
+			Arrays.sort(result, boundary, result.length, sortingPolicy);
 		return result;
 	}
 
@@ -377,28 +431,5 @@ public class ContentTypeCatalog {
 		aliases.put(alias, target);
 		if (ContentTypeManager.DEBUGGING)
 			Policy.debug("Set alias target for " + alias + " -> " + target); //$NON-NLS-1$ //$NON-NLS-2$		
-	}
-
-	public boolean internalAccept(ContentTypeVisitor visitor, ContentType root) {
-		if (!root.isValid() || root.isAlias(this))
-			return true;
-		int result = visitor.visit(root);
-		switch (result) {
-			// stop traversing the tree
-			case ContentTypeVisitor.STOP :
-				return false;
-			// stop traversing this subtree
-			case ContentTypeVisitor.RETURN :
-				return true;
-		}
-		ContentType[] children = getChildren(root);
-		if (children == null)
-			// this content type has no subtypes - keep traversing the tree
-			return true;
-		for (int i = 0; i < children.length; i++)
-			if (!internalAccept(visitor, children[i]))
-				// stop the traversal
-				return false;
-		return true;
 	}
 }

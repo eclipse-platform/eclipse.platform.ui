@@ -116,7 +116,7 @@ public class LazyInputStreamTest extends TestCase {
 		assertEquals("2.7", 17, stream.available());
 		assertEquals("2.8", 13, stream.getOffset());
 		stream.rewind();
-		assertEquals("3.0", 0, stream.getOffset());		
+		assertEquals("3.0", 0, stream.getOffset());
 	}
 
 	public void testContentHasEOF() throws IOException {

@@ -22,7 +22,7 @@
 			<property name="charset"/>
 		</content-type>
 		<content-type id="xml" name="%xmlContentTypeName" 	
-			base-type="text"
+			base-type="org.eclipse.core.runtime.text"
 			priority="high"
 			file-extensions="xml">			
 			<property name="charset" default="UTF-8"/>
@@ -30,7 +30,7 @@
 		</content-type>
 		<!-- a placeholder for setups where JDT's official type is not available -->			
 		<content-type id="properties" name="%propertiesContentTypeName" 
-			base-type="text"
+			base-type="org.eclipse.core.runtime.text"
 			alias-for="org.eclipse.jdt.core.javaProperties"
 			file-extensions="properties">
 			<property name="charset" default="ISO-8859-1"/>
