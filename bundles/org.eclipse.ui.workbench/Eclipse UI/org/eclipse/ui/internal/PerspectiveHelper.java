@@ -1005,9 +1005,12 @@ public class PerspectiveHelper {
 		if (isFastView(pane.getPartReference()))
 			return false;
 
-		if (pane instanceof EditorPane) {
-		    EditorStack book = ((EditorPane) pane).getWorkbook();
-			if (book.equals(book.getEditorArea().getActiveWorkbook()))
+		PartPane zoomPane =
+			((WorkbenchPartReference) zoomPart).getPane();
+		if (pane instanceof EditorPane && zoomPane instanceof EditorPane) {
+			if (((EditorPane) pane)
+				.getWorkbook()
+				.equals(((EditorPane) zoomPane).getWorkbook()))
 				return false;
 		}
 
