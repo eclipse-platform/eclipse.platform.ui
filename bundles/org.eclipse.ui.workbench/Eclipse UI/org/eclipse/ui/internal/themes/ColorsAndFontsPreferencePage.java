@@ -41,6 +41,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -86,7 +87,32 @@ import org.eclipse.ui.themes.IThemePreview;
  */
 public final class ColorsAndFontsPreferencePage extends PreferencePage
         implements IWorkbenchPreferencePage {
-
+	
+	private static final String SELECTED_ELEMENT_PREF = "ColorsAndFontsPreferencePage.selectedElement"; //$NON-NLS-1$
+	/**
+	 * The preference that stores the expanded state.
+	 */
+	private static final String EXPANDED_ELEMENTS_PREF = "ColorsAndFontsPreferencePage.expandedCategories"; //$NON-NLS-1$
+	/**
+	 * The token that seperates expanded elements in EXPANDED_ELEMENTS_PREF.
+	 */
+	private static final String EXPANDED_ELEMENTS_TOKEN = "\t"; //$NON-NLS-1$
+	
+	/**
+     * Marks category tokens in EXPANDED_ELEMENTS_PREF and SELECTED_ELEMENT_PREF.
+     */
+	private static final char MARKER_CATEGORY = 'T';
+	
+	/**
+	 * Marks color tokens in EXPANDED_ELEMENTS_PREF and SELECTED_ELEMENT_PREF.
+	 */
+	private static final char MARKER_COLOR = 'C';
+	
+	/**
+	 * Marks font tokens in EXPANDED_ELEMENTS_PREF and SELECTED_ELEMENT_PREF.
+	 */
+	private static final char MARKER_FONT = 'F';
+			
     private class ThemeContentProvider implements ITreeContentProvider {
 
         private IThemeRegistry registry;
@@ -854,6 +880,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
                 }
             }
         });
+        
+        restoreTreeExpansion();
+        restoreTreeSelection();
     }
 
     /**
@@ -1478,6 +1507,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
      * @see org.eclipse.jface.preference.IPreferencePage#performOk()
      */
     public boolean performOk() {
+    	saveTreeExpansion();
+    	saveTreeSelection();
         return performColorOk() && performFontOk();
     }
 
@@ -1766,4 +1797,145 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         //recalculate the fonts for the tree
         labelProvider.clearFontCache();
     }
+    
+    /**
+	 * Restore the selection state of the tree.
+	 * 
+	 * @since 3.1
+	 */
+	private void restoreTreeSelection() {
+		String selectedElementString = getPreferenceStore().getString(
+				SELECTED_ELEMENT_PREF);
+
+		if (selectedElementString == null) {
+			return;
+		}
+
+		Object element = findElementFromMarker(selectedElementString);
+		if (element == null) {
+			return;
+		}
+
+		tree.getViewer().setSelection(new StructuredSelection(element), true);
+	}
+
+	/**
+	 * Save the selection state of the tree.
+	 *
+	 * @since 3.1
+	 */
+	private void saveTreeSelection() {
+		IStructuredSelection selection = (IStructuredSelection) tree
+				.getViewer().getSelection();
+		Object element = selection.getFirstElement();
+		StringBuffer buffer = new StringBuffer();
+		appendMarkerToBuffer(buffer, element);
+		if (buffer.length() > 0) {
+			buffer.append(((IThemeElementDefinition) element).getId());
+		}
+		getPreferenceStore().setValue(SELECTED_ELEMENT_PREF, buffer.toString());
+	}
+
+	/**
+	 * Restore the expansion state of the tree.
+	 * 
+	 * @since 3.1
+	 */
+	private void restoreTreeExpansion() {
+		String expandedElementsString = getPreferenceStore().getString(
+				EXPANDED_ELEMENTS_PREF);
+		if (expandedElementsString == null)
+			return;
+
+		String[] expandedElementIDs = expandedElementsString
+				.split(EXPANDED_ELEMENTS_TOKEN);
+		if (expandedElementIDs.length == 0)
+			return;
+
+		List elements = new ArrayList(expandedElementIDs.length);
+		for (int i = 0; i < expandedElementIDs.length; i++) {
+			IThemeElementDefinition def = findElementFromMarker(expandedElementIDs[i]);
+
+			if (def != null) {
+				elements.add(def);
+			}
+		}
+		tree.getViewer().setExpandedElements(elements.toArray());
+	}
+
+	/**
+	 * Find the theme element from the given string. It will check the first
+	 * character against the known constants and then call the appropriate
+	 * method on the theme registry. If the element does not exist or the string
+	 * is invalid <code>null</code> is returned.
+	 * 
+	 * @param string the string to parse
+	 * @return the element, or <code>null</code>
+	 */
+	private IThemeElementDefinition findElementFromMarker(String string) {
+		if (string.length() < 2)
+			return null;
+
+		char marker = string.charAt(0);
+		String id = string.substring(1);
+		IThemeElementDefinition def = null;
+		switch (marker) {
+		case MARKER_FONT:
+			def = themeRegistry.findFont(id);
+			break;
+		case MARKER_COLOR:
+			def = themeRegistry.findColor(id);
+			break;
+		case MARKER_CATEGORY:
+			def = themeRegistry.findCategory(id);
+			break;
+		}
+		return def;
+	}
+
+	/**
+	 * Saves the expansion state of the tree.
+	 * 
+	 * @since 3.1
+	 */
+	private void saveTreeExpansion() {
+		Object[] elements = tree.getViewer().getExpandedElements();
+		List elementIds = new ArrayList(elements.length);
+
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < elements.length; i++) {
+			Object object = elements[i];
+			appendMarkerToBuffer(buffer, object);
+
+			if (buffer.length() != 0) {
+				buffer.append(((IThemeElementDefinition) object).getId());
+				elementIds.add(buffer.toString());
+			}
+			buffer.setLength(0);
+		}
+
+		for (Iterator i = elementIds.iterator(); i.hasNext();) {
+			String id = (String) i.next();
+			buffer.append(id);
+			if (i.hasNext())
+				buffer.append(EXPANDED_ELEMENTS_TOKEN);
+		}
+
+		getPreferenceStore()
+				.setValue(EXPANDED_ELEMENTS_PREF, buffer.toString());
+	}
+
+	/**
+	 * @param buffer
+	 * @param object
+	 */
+	private void appendMarkerToBuffer(StringBuffer buffer, Object object) {
+		if (object instanceof FontDefinition) {
+			buffer.append(MARKER_FONT);
+		} else if (object instanceof ColorDefinition) {
+			buffer.append(MARKER_COLOR);
+		} else if (object instanceof ThemeElementCategory) {
+			buffer.append(MARKER_CATEGORY);
+		}
+	}
 }
