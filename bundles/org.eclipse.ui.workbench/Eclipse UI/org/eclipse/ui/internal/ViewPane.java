@@ -51,12 +51,12 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.internal.dnd.AbstractDragSource;
 import org.eclipse.ui.internal.dnd.DragUtil;
-import org.eclipse.ui.internal.skins.IPresentablePart;
 import org.eclipse.ui.internal.themes.IThemeDescriptor;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.part.WorkbenchPart;
+import org.eclipse.ui.presentations.IPresentablePart;
 
 /**
  * Provides support for a title bar where the

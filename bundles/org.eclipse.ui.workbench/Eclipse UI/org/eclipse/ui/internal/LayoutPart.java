@@ -25,7 +25,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.skins.IPresentablePart;
+import org.eclipse.ui.presentations.IPresentablePart;
 
 /**
  * A presentation part is used to build the presentation for the

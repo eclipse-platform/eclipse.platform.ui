@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.skins.newlook;
+package org.eclipse.ui.internal.presentations;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ColorRegistry;
@@ -24,9 +24,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.internal.ColorSchemeService;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.skins.IStackPresentationSite;
 import org.eclipse.ui.internal.themes.ITabThemeDescriptor;
 import org.eclipse.ui.internal.themes.IThemeDescriptor;
+import org.eclipse.ui.presentations.*;
 import org.eclipse.ui.themes.ITheme;
 
 /**

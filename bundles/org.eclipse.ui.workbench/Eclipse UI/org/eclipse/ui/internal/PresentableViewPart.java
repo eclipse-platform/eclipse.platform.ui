@@ -14,7 +14,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewReference;
-import org.eclipse.ui.internal.skins.IPresentablePart;
+import org.eclipse.ui.presentations.IPresentablePart;
 
 /**
  * @since 3.0

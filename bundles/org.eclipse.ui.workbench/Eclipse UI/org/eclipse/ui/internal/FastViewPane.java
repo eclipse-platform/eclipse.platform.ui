@@ -21,10 +21,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Sash;
-import org.eclipse.ui.internal.skins.IPresentablePart;
-import org.eclipse.ui.internal.skins.IPresentationSite;
-import org.eclipse.ui.internal.skins.StackPresentation;
-import org.eclipse.ui.internal.skins.newlook.PartTabFolderPresentation;
+import org.eclipse.ui.internal.presentations.PartTabFolderPresentation;
+import org.eclipse.ui.presentations.IPresentablePart;
+import org.eclipse.ui.presentations.IPresentationSite;
+import org.eclipse.ui.presentations.StackPresentation;
 
 /**
  * Handles the presentation of an active fastview. A fast view pane docks to one side of a

@@ -63,7 +63,7 @@ import org.eclipse.ui.internal.dnd.AbstractDragSource;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
-import org.eclipse.ui.internal.skins.newlook.BasicStackPresentation;
+import org.eclipse.ui.internal.presentations.BasicStackPresentation;
 
 public class TabbedEditorWorkbook extends EditorWorkbook {
 

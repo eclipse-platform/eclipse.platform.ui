@@ -36,12 +36,12 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
+import org.eclipse.ui.internal.presentations.PartTabFolderPresentation;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
-import org.eclipse.ui.internal.skins.IPresentablePart;
-import org.eclipse.ui.internal.skins.IPresentationSite;
-import org.eclipse.ui.internal.skins.StackDropResult;
-import org.eclipse.ui.internal.skins.StackPresentation;
-import org.eclipse.ui.internal.skins.newlook.PartTabFolderPresentation;
+import org.eclipse.ui.presentations.IPresentablePart;
+import org.eclipse.ui.presentations.IPresentationSite;
+import org.eclipse.ui.presentations.StackDropResult;
+import org.eclipse.ui.presentations.StackPresentation;
 
 
 public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWorkbenchDragSource {

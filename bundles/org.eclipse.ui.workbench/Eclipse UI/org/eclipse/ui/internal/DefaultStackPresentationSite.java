@@ -11,10 +11,10 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.ui.internal.skins.IPresentablePart;
-import org.eclipse.ui.internal.skins.IPresentationSite;
-import org.eclipse.ui.internal.skins.IStackPresentationSite;
-import org.eclipse.ui.internal.skins.StackPresentation;
+import org.eclipse.ui.presentations.IPresentablePart;
+import org.eclipse.ui.presentations.IPresentationSite;
+import org.eclipse.ui.presentations.IStackPresentationSite;
+import org.eclipse.ui.presentations.StackPresentation;
 
 /**
  * @since 3.0

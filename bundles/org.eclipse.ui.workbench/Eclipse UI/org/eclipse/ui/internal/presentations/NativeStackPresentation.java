@@ -8,100 +8,61 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.skins.newlook;
+package org.eclipse.ui.internal.presentations;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.resource.Gradient;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabFolder2Adapter;
-import org.eclipse.swt.custom.CTabFolderEvent;
-import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IPropertyListener;
-import org.eclipse.ui.internal.skins.IPresentablePart;
-import org.eclipse.ui.internal.skins.IPresentationSite;
-import org.eclipse.ui.internal.skins.IStackPresentationSite;
-import org.eclipse.ui.internal.skins.PresentationUtil;
-import org.eclipse.ui.internal.skins.StackDropResult;
-import org.eclipse.ui.internal.skins.StackPresentation;
+import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.presentations.*;
 
 /**
  * Base class for StackPresentations that display IPresentableParts in a CTabFolder. 
  * 
  * @since 3.0
  */
-public class BasicStackPresentation extends StackPresentation {
+public class NativeStackPresentation extends StackPresentation {
 	
-	private CTabFolder tabFolder;
+    private Composite composite;
+	private TabFolder tabFolder;
 	private IStackPresentationSite site;
 	private IPresentablePart current;
-	private boolean activeState = false;
-	private boolean assignFocusOnSelection = true;
-	private int tabPosition;
 	private MenuManager systemMenuManager = new MenuManager();
+	private IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();
 	
-	private int mousedownState = -1;
-	
-	private final static String TAB_DATA = "org.eclipse.ui.internal.skins.newlook.PartTabFolderPresentation.partId";
-	
-	private CTabFolder2Adapter expandListener = new CTabFolder2Adapter() {
-		public void minimize(CTabFolderEvent event) {
-			event.doit = false;
-			if (mousedownState == site.getState()) {
-				site.setState(IPresentationSite.STATE_MINIMIZED);
-			}
-		}
-		
-		public void restore(CTabFolderEvent event) {
-			event.doit = false;
-			site.setState(IPresentationSite.STATE_RESTORED);
-		}
-		
-		public void maximize(CTabFolderEvent event) {
-			event.doit = false;
-			site.setState(IPresentationSite.STATE_MAXIMIZED);
-		}
-	};
+	private final static String TAB_DATA = NativeStackPresentation.class.getName() + ".partId"; //$NON-NLS-1$
 	
 	private MouseListener mouseListener = new MouseAdapter() {
 		public void mouseDown(MouseEvent e) {
-			mousedownState = site.getState();
-			
-			// PR#1GDEZ25 - If selection will change in mouse up ignore mouse down.
-			// Else, set focus.
-			CTabItem newItem = tabFolder.getItem(new Point(e.x, e.y));
-			if (newItem != null) {
-				CTabItem oldItem = tabFolder.getSelection();
-				if (newItem != oldItem)
-					return;
-			}
+//			// PR#1GDEZ25 - If selection will change in mouse up ignore mouse down.
+//			// Else, set focus.
+//			TabItem newItem = tabFolder.getItem(new Point(e.x, e.y));
+//			if (newItem != null) {
+//				TabItem oldItem = tabFolder.getSelection();
+//				if (newItem != oldItem)
+//					return;
+//			}
 			if (current != null) {
 				current.setFocus();
 			}
 		}
-		
-		public void mouseDoubleClick(MouseEvent e) {
-			CTabItem newItem = tabFolder.getItem(new Point(e.x, e.y));
-			
-			if (site.getState() == IPresentationSite.STATE_MAXIMIZED) {
-				site.setState(IPresentationSite.STATE_RESTORED);
-			} else {
-				site.setState(IPresentationSite.STATE_MAXIMIZED);
-			}
-		}
-		
 	};
 	
 	private Listener menuListener = new Listener() {
@@ -110,7 +71,8 @@ public class BasicStackPresentation extends StackPresentation {
 		 */
 		public void handleEvent(Event event) {
 			Point pos = new Point(event.x, event.y);
-			CTabItem item = tabFolder.getItem(pos);
+//			TabItem item = tabFolder.getItem(pos);
+			TabItem item = null;
 			IPresentablePart part = null;
 			if (item != null) {
 				part = getPartForTab(item);
@@ -121,10 +83,10 @@ public class BasicStackPresentation extends StackPresentation {
 	
 	private Listener selectionListener = new Listener() {
 		public void handleEvent(Event e) {
-			IPresentablePart item = getPartForTab((CTabItem)e.item);
-			
+			IPresentablePart item = getPartForTab((TabItem) e.item);
 			if (item != null) {
 				site.selectPart(item);
+//				item.setFocus();
 			}
 		}
 	};
@@ -135,18 +97,6 @@ public class BasicStackPresentation extends StackPresentation {
 		}
 	};
 	
-	private CTabFolder2Adapter closeListener = new CTabFolder2Adapter() {
-		/* (non-Javadoc)
-		 * @see org.eclipse.swt.custom.CTabFolder2Adapter#close(org.eclipse.swt.custom.CTabFolderEvent)
-		 */
-		public void close(CTabFolderEvent event) {
-			event.doit = false;
-			IPresentablePart part = getPartForTab((CTabItem)event.item);
-			
-			site.close(part);
-		}
-	}; 
-
 	private IPropertyListener childPropertyChangeListener = new IPropertyListener() {
 		public void propertyChanged(Object source, int property) {
 			if (source instanceof IPresentablePart) {
@@ -156,8 +106,10 @@ public class BasicStackPresentation extends StackPresentation {
 		}	
 	};
 	
-	public BasicStackPresentation(CTabFolder control, IStackPresentationSite stackSite) {
-		tabFolder = control;
+	public NativeStackPresentation(Composite parent, IStackPresentationSite stackSite, int flags) {
+	    // TODO: flags are currently ignored
+		int tabPos = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION);
+		tabFolder = new TabFolder(parent, tabPos);
 		site = stackSite;
 		
 		// listener to switch between visible tabItems
@@ -171,14 +123,11 @@ public class BasicStackPresentation extends StackPresentation {
 		
 		tabFolder.addListener(SWT.MenuDetect, menuListener);
 
-		tabFolder.addCTabFolder2Listener(closeListener);
-		
-		tabFolder.addCTabFolder2Listener(expandListener);
-		
 		PresentationUtil.addDragListener(tabFolder, new Listener() {
 			public void handleEvent(Event event) {
 				Point localPos = new Point(event.x, event.y);
-				CTabItem tabUnderPointer = tabFolder.getItem(localPos);
+//				TabItem tabUnderPointer = tabFolder.getItem(localPos);
+				TabItem tabUnderPointer = null;
 				
 				if (tabUnderPointer == null) {
 					return;
@@ -208,7 +157,7 @@ public class BasicStackPresentation extends StackPresentation {
 			return tabFolder.getItemCount();
 		}
 	
-		CTabItem[] items = tabFolder.getItems();
+		TabItem[] items = tabFolder.getItems();
 		
 		for (int idx = 0; idx < items.length; idx++) {
 			IPresentablePart tabPart = getPartForTab(items[idx]);
@@ -227,8 +176,8 @@ public class BasicStackPresentation extends StackPresentation {
 	 * @param part the part being searched for
 	 * @return the tab for the given part, or null if there is no such tab
 	 */
-	protected final CTabItem getTab(IPresentablePart part) {
-		CTabItem[] items = tabFolder.getItems();
+	protected final TabItem getTab(IPresentablePart part) {
+		TabItem[] items = tabFolder.getItems();
 		
 		int idx = indexOf(part);
 		
@@ -244,41 +193,21 @@ public class BasicStackPresentation extends StackPresentation {
 	 * @param property
 	 */
 	protected void childPropertyChanged(IPresentablePart part, int property) {
-		CTabItem tab = getTab(part);
-		 
+		TabItem tab = getTab(part);
 		initTab(tab, part);
 	}
 
-	protected final IPresentablePart getPartForTab(CTabItem item) {
-		IPresentablePart part = (IPresentablePart)item.getData(TAB_DATA);
-		
+	protected final IPresentablePart getPartForTab(TabItem item) {
+		IPresentablePart part = (IPresentablePart) item.getData(TAB_DATA);
 		return part;
 	}
 	
-	public CTabFolder getTabFolder() {
+	protected TabFolder getTabFolder() {
 		return tabFolder;
-	}
-	
-	public void setTabPosition(int position) {
-		tabPosition = position;
-		getTabFolder().setTabPosition(tabPosition);
-	}
-	
-	public int getTabPosition() {
-		return tabPosition;
 	}
 	
 	public boolean isDisposed() {
 		return tabFolder == null || tabFolder.isDisposed();
-	}
-	
-	public void drawGradient(Color fgColor, Gradient gradient) {
-		tabFolder.setSelectionForeground(fgColor);
-		tabFolder.setSelectionBackground(gradient.getColors(), gradient.getPercents(), gradient.getDirection() == SWT.VERTICAL);			    
-	}
-	
-	public boolean isActive() {
-		return activeState;
 	}
 	
 	/**
@@ -287,7 +216,7 @@ public class BasicStackPresentation extends StackPresentation {
 	private void setControlSize() {
 		if (current == null || tabFolder == null)
 			return;
-		Rectangle bounds;
+//		Rectangle bounds;
 		// @issue as above, the mere presence of a theme should not change the behaviour
 //		if ((mapTabToPart.size() > 1)
 //			|| ((tabThemeDescriptor != null) && (mapTabToPart.size() >= 1)))
@@ -298,15 +227,15 @@ public class BasicStackPresentation extends StackPresentation {
 		//current.moveAbove(tabFolder);
 	}
 	
-	public static Rectangle calculatePageBounds(CTabFolder folder) {
+	public static Rectangle calculatePageBounds(TabFolder folder) {
 		if (folder == null)
 			return new Rectangle(0, 0, 0, 0);
 		Rectangle bounds = folder.getBounds();
 		Rectangle offset = folder.getClientArea();
 		bounds.x += offset.x;
-		bounds.y += offset.y;
+		bounds.y += offset.y + 2;
 		bounds.width = offset.width;
-		bounds.height = offset.height;
+		bounds.height = offset.height - 2;
 		return bounds;
 	}	
 	
@@ -328,26 +257,14 @@ public class BasicStackPresentation extends StackPresentation {
 	 * @see org.eclipse.ui.internal.skins.Presentation#setActive(boolean)
 	 */
 	public void setActive(boolean isActive) {
-		activeState = isActive;
+	    // do nothing
 	}
 		
-	private CTabItem createPartTab(IPresentablePart part, int tabIndex) {
-		CTabItem tabItem;
-
-		int style = SWT.NONE;
-		
-		if (site.isClosable(part)) {
-			style |= SWT.CLOSE;
-		}
-		
-		tabItem = new CTabItem(tabFolder, style, tabIndex);
-				
+	private TabItem createPartTab(IPresentablePart part, int tabIndex) {
+		TabItem tabItem = new TabItem(tabFolder, SWT.NONE, tabIndex);
 		tabItem.setData(TAB_DATA, part);
-		
 		part.addPropertyListener(childPropertyChangeListener);
-
 		initTab(tabItem, part);
-		
 		return tabItem;
 	}
 	
@@ -360,10 +277,14 @@ public class BasicStackPresentation extends StackPresentation {
 	 * @param tabItem tab for the part
 	 * @param part the part being displayed
 	 */
-	protected void initTab(CTabItem tabItem, IPresentablePart part) {
+	protected void initTab(TabItem tabItem, IPresentablePart part) {
 		tabItem.setText(part.getName());
+		tabItem.setToolTipText(part.getTitleToolTip());
 		
-		tabItem.setImage(part.getTitleImage());
+		Image tabImage = part.getTitleImage();
+		if (tabImage != tabItem.getImage()) {
+			tabItem.setImage(tabImage);
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -379,16 +300,13 @@ public class BasicStackPresentation extends StackPresentation {
 	 * @see org.eclipse.ui.internal.skins.StackPresentation#removePart(org.eclipse.ui.internal.skins.IPresentablePart)
 	 */
 	public void removePart(IPresentablePart oldPart) {
-		CTabItem item = getTab(oldPart);
+		TabItem item = getTab(oldPart);
 		if (item == null) {
 			return;
 		}
 		oldPart.setVisible(false);
 		
-		assignFocusOnSelection = false;
-		
 		item.dispose();
-		assignFocusOnSelection = true;
 	}
 	
 	/* (non-Javadoc)
@@ -409,10 +327,6 @@ public class BasicStackPresentation extends StackPresentation {
 			tabFolder.setSelection(indexOf(current));
 			setControlSize();
 			current.setVisible(true);
-			
-			if (assignFocusOnSelection) {
-				current.setFocus();
-			}
 		}
 	}
 	
@@ -445,8 +359,8 @@ public class BasicStackPresentation extends StackPresentation {
 	 * @see org.eclipse.ui.internal.skins.Presentation#setState(int)
 	 */
 	public void setState(int state) {
-		tabFolder.setMinimized(state == IPresentationSite.STATE_MINIMIZED);
-		tabFolder.setMaximized(state == IPresentationSite.STATE_MAXIMIZED);
+//		tabFolder.setMinimized(state == IPresentationSite.STATE_MINIMIZED);
+//		tabFolder.setMaximized(state == IPresentationSite.STATE_MAXIMIZED);
 	}
 	
 	/* (non-Javadoc)
@@ -480,8 +394,9 @@ public class BasicStackPresentation extends StackPresentation {
 	public StackDropResult dragOver(Control currentControl, Point location) {
 		
 		// Determine which tab we're currently dragging over
-		Point localPos = tabFolder.toControl(location);
-		final CTabItem tabUnderPointer = tabFolder.getItem(localPos);
+//		Point localPos = tabFolder.toControl(location);
+//		final TabItem tabUnderPointer = tabFolder.getItem(localPos);
+		final TabItem tabUnderPointer = null;
 		
 		// This drop target only deals with tabs... if we're not dragging over
 		// a tab, exit.
@@ -489,7 +404,8 @@ public class BasicStackPresentation extends StackPresentation {
 			return null;
 		}
 		
-		return new StackDropResult(Geometry.toDisplay(tabFolder, tabUnderPointer.getBounds()),
-			tabFolder.indexOf(tabUnderPointer));
+//		return new StackDropResult(Geometry.toDisplay(tabFolder, tabUnderPointer.getBounds()),
+//			tabFolder.indexOf(tabUnderPointer));
+		return null;
 	}
 }
