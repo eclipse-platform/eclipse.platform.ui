@@ -778,11 +778,12 @@ protected boolean validateSourceGroup() {
 }
 
 /**
- * Return whether or not the source location conflicts
+ * Returns whether the source location conflicts
  * with the destination resource. This will occur if
  * the source is already under the destination.
- * @return boolean
- * @param IPath. The path being checked.
+ * 
+ * @param sourcePath the path to check
+ * @return <code>true</code> if there is a conflict, <code>false</code> if not
  */
 protected boolean sourceConflictsWithDestination(IPath sourcePath){
 	

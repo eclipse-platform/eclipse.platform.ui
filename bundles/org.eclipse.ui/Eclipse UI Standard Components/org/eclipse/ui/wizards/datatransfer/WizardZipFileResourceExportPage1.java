@@ -315,11 +315,9 @@ protected void restoreWidgetValues() {
 }
 
 /**
- * Return a container that would cause a conflict with
- * the path name. As zip files have no restrictions on
- * destination return null.
- * @return  null
- * @param String. The path of the directory.
+ * The <code>WizardZipFileResourceExportPage1</code> implementation of this
+ * <code>WizardFileSystemResourceExportPage1</code> method simply returns
+ * <code>null</code>, since zip files have no restrictions on destination container.
  */
 protected String getConflictingContainerNameFor(String testString){
 	return null;

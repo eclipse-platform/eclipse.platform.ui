@@ -368,15 +368,16 @@ protected boolean validateDestinationGroup() {
 }
 
 /**
- * Get the name of container that has a location that encompasses targetDirectory.
- * Return null if there isn't one.
- * @return IWorkspaceRoot, IProject or null
- * @param String. The path of the directory.
+ * Returns the name of a container with a location that encompasses targetDirectory.
+ * Returns null if there is no conflict.
+ * 
+ * @param targetDirectory the path of the directory to check.
+ * @return the conflicting container name or <code>null</code>
  */
-protected String getConflictingContainerNameFor(String testString){
+protected String getConflictingContainerNameFor(String targetDirectory){
 	
 	IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-	IPath testPath = new Path(testString);
+	IPath testPath = new Path(targetDirectory);
 	
 	if(root.getLocation().isPrefixOf(testPath))
 		return DataTransferMessages.getString("FileExport.rootName");

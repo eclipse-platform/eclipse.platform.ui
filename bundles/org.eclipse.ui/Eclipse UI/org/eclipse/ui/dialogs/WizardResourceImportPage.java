@@ -452,7 +452,7 @@ protected final boolean validateDestinationGroup() {
 }
 
 /**
- * Get the error message for when the source conf;icts
+ * Returns the error message for when the source conflicts
  * with the destination.
  */
 protected final String getSourceConflictMessage(){
@@ -463,11 +463,13 @@ protected final String getSourceConflictMessage(){
 
 
 /**
- * Return whether or not the source location conflicts
+ * Returns whether or not the source location conflicts
  * with the destination resource. By default this is not
- * checked.
- * @return boolean
- * @param IPath. The path being checked.
+ * checked, so <code>false</code> is returned.
+ * 
+ * @param sourcePath the path being checked
+ * @return <code>true</code> if the source location conflicts with the
+ *   destination resource, <code>false</code> if not
  */
 protected boolean sourceConflictsWithDestination(IPath sourcePath){
 	return false;
