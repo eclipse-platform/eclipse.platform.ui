@@ -22,6 +22,7 @@ import org.osgi.framework.*;
  */
 public class HelpURLConnection extends URLConnection {
 	private final static String LANG = "lang"; //$NON-NLS-1$
+	private final static String PRODUCT_PLUGIN = "PRODUCT_PLUGIN";
 	// document caching - disabled if running in dev mode
 	protected static boolean cachingEnabled = true;
 	static {
@@ -239,6 +240,13 @@ public class HelpURLConnection extends URLConnection {
 			int i = pluginAndFile.indexOf('/');
 			String pluginId = i == -1 ? "" : pluginAndFile.substring(0, i); //$NON-NLS-1$
 			pluginId = URLCoder.decode(pluginId);
+			if(PRODUCT_PLUGIN.equals(pluginId)){
+				IProduct product = Platform.getProduct();
+				if(product !=null){
+					plugin = product.getDefiningBundle();
+					return plugin;
+				}
+			}
 			plugin = Platform.getBundle(pluginId);
 		}
 		return plugin;
