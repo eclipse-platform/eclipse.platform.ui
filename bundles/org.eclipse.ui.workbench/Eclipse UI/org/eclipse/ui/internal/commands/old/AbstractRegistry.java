@@ -17,23 +17,16 @@ import java.util.List;
 
 abstract class AbstractRegistry { 
 
-	protected List activeGestureConfigurations = Collections.EMPTY_LIST;
 	protected List activeKeyConfigurations = Collections.EMPTY_LIST;
 	protected List categories = Collections.EMPTY_LIST; 
 	protected List commands = Collections.EMPTY_LIST; 
 	protected List contextBindings = Collections.EMPTY_LIST;
 	protected List contexts = Collections.EMPTY_LIST; 
-	protected List gestureBindings = Collections.EMPTY_LIST;
-	protected List gestureConfigurations = Collections.EMPTY_LIST;
 	protected List keyBindings = Collections.EMPTY_LIST;
 	protected List keyConfigurations = Collections.EMPTY_LIST;
 	
 	protected AbstractRegistry() {
 		super();
-	}
-
-	public List getActiveGestureConfigurations() {
-		return activeGestureConfigurations;
 	}
 
 	public List getActiveKeyConfigurations() {
@@ -56,14 +49,6 @@ abstract class AbstractRegistry {
 		return contexts;
 	}
 
-	public List getGestureBindings() {
-		return gestureBindings;
-	}
-
-	public List getGestureConfigurations() {
-		return gestureConfigurations;
-	}
-	
 	public List getKeyBindings() {
 		return keyBindings;
 	}

@@ -63,6 +63,7 @@ final class PluginRegistry extends AbstractRegistry {
 		}		
 	}
 
+	private final static int RANK = 2;
 	private final static String TAG_ROOT = Persistence.PACKAGE_BASE;
 	
 	private List activeKeyConfigurations;
@@ -197,7 +198,7 @@ final class PluginRegistry extends AbstractRegistry {
 	}
 
 	private boolean readKeyBinding(IConfigurationElement element) {
-		IKeyBinding keyBinding = Persistence.readKeyBinding(new ConfigurationElementMemento(element), getPluginId(element), 2);
+		IKeyBinding keyBinding = Persistence.readKeyBinding(new ConfigurationElementMemento(element), getPluginId(element), RANK);
 	
 		if (keyBinding != null)
 			keyBindings.add(keyBinding);	

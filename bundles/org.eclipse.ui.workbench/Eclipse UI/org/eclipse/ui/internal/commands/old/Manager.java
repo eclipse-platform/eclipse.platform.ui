@@ -72,18 +72,6 @@ public class Manager {
 		} catch (IOException eIO) {
 		}
 		
-		List activeGestureConfigurations = new ArrayList();
-		activeGestureConfigurations.addAll(coreRegistry.getActiveGestureConfigurations());
-		activeGestureConfigurations.addAll(preferenceRegistry.getActiveGestureConfigurations());	
-		String activeGestureConfigurationId;
-			
-		if (activeGestureConfigurations.size() == 0)
-			activeGestureConfigurationId = Util.ZERO_LENGTH_STRING;
-		else {
-			ActiveConfiguration activeGestureConfiguration = (ActiveConfiguration) activeGestureConfigurations.get(activeGestureConfigurations.size() - 1);
-			activeGestureConfigurationId = activeGestureConfiguration.getValue();
-		}
-
 		List activeKeyConfigurations = new ArrayList();
 		activeKeyConfigurations.addAll(coreRegistry.getActiveKeyConfigurations());
 		activeKeyConfigurations.addAll(preferenceRegistry.getActiveKeyConfigurations());	
@@ -100,16 +88,6 @@ public class Manager {
 		contexts.addAll(coreRegistry.getContexts());
 		contexts.addAll(preferenceRegistry.getContexts());
 		SortedMap contextMap = SequenceMachine.buildPathMapForContextMap(Context.sortedMapById(contexts));
-
-		SortedSet gestureBindingSet = new TreeSet();		
-		gestureBindingSet.addAll(coreRegistry.getGestureBindings());
-		gestureBindingSet.addAll(preferenceRegistry.getGestureBindings());
-		Manager.validateSequenceBindings(gestureBindingSet);
-		
-		List gestureConfigurations = new ArrayList();
-		gestureConfigurations.addAll(coreRegistry.getGestureConfigurations());
-		gestureConfigurations.addAll(preferenceRegistry.getGestureConfigurations());
-		SortedMap gestureConfigurationMap = SequenceMachine.buildPathMapForConfigurationMap(Configuration.sortedMapById(gestureConfigurations));
 
 		SortedSet keyBindingSet = new TreeSet();		
 		keyBindingSet.addAll(coreRegistry.getKeyBindings());

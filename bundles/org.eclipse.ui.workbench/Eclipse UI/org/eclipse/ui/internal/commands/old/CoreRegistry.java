@@ -59,14 +59,11 @@ public final class CoreRegistry extends AbstractRegistry {
 			if (pluginRegistry != null)	
 				readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, TAG_ROOT);
 
-			CoreRegistry.this.activeGestureConfigurations = Collections.unmodifiableList(activeGestureConfigurations);
 			CoreRegistry.this.activeKeyConfigurations = Collections.unmodifiableList(activeKeyConfigurations);
 			CoreRegistry.this.categories = Collections.unmodifiableList(categories);
 			CoreRegistry.this.commands = Collections.unmodifiableList(commands);			
 			CoreRegistry.this.contextBindings = Collections.unmodifiableList(contextBindings);			
 			CoreRegistry.this.contexts = Collections.unmodifiableList(contexts);
-			CoreRegistry.this.gestureBindings = Collections.unmodifiableList(gestureBindings);
-			CoreRegistry.this.gestureConfigurations = Collections.unmodifiableList(gestureConfigurations);
 			CoreRegistry.this.keyBindings = Collections.unmodifiableList(keyBindings);
 			CoreRegistry.this.keyConfigurations = Collections.unmodifiableList(keyConfigurations);
 		}
@@ -76,9 +73,6 @@ public final class CoreRegistry extends AbstractRegistry {
 
 			if (DEPRECATED_TAG_SCOPE.equals(name))
 				return readContext(element);
-
-			if (Persistence.TAG_ACTIVE_GESTURE_CONFIGURATION.equals(name))
-				return readActiveGestureConfiguration(element);
 
 			if (Persistence.TAG_ACTIVE_KEY_CONFIGURATION.equals(name))
 				return readActiveKeyConfiguration(element);
@@ -94,12 +88,6 @@ public final class CoreRegistry extends AbstractRegistry {
 
 			if (Persistence.TAG_CONTEXT_BINDING.equals(name))
 				return readContextBinding(element);
-
-			if (Persistence.TAG_GESTURE_BINDING.equals(name))
-				return readGestureBinding(element);
-
-			if (Persistence.TAG_GESTURE_CONFIGURATION.equals(name))
-				return readGestureConfiguration(element);
 
 			if (Persistence.TAG_KEY_BINDING.equals(name))
 				return readKeyBinding(element);

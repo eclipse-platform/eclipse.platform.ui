@@ -27,6 +27,7 @@ import org.eclipse.ui.XMLMemento;
 
 final class FileRegistry extends AbstractMutableRegistry {
 
+	private final static int RANK = 1;
 	private final static String TAG_ROOT = Persistence.PACKAGE_FULL;
 
 	private File file;
@@ -51,7 +52,7 @@ final class FileRegistry extends AbstractMutableRegistry {
 			commands = Collections.unmodifiableList(Persistence.readCommands(memento, Persistence.TAG_COMMAND, null));
 			contextBindings = Collections.unmodifiableList(Persistence.readContextBindings(memento, Persistence.TAG_CONTEXT_BINDING, null));
 			imageBindings = Collections.unmodifiableList(Persistence.readImageBindings(memento, Persistence.TAG_IMAGE_BINDING, null));
-			keyBindings = Collections.unmodifiableList(Persistence.readKeyBindings(memento, Persistence.TAG_KEY_BINDING, null, 1));
+			keyBindings = Collections.unmodifiableList(Persistence.readKeyBindings(memento, Persistence.TAG_KEY_BINDING, null, RANK));
 			keyConfigurations = Collections.unmodifiableList(Persistence.readKeyConfigurations(memento, Persistence.TAG_KEY_CONFIGURATION, null));
 		} catch (WorkbenchException eWorkbench) {
 			throw new IOException();

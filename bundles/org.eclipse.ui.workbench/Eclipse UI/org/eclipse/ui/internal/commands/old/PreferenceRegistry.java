@@ -53,14 +53,11 @@ public final class PreferenceRegistry extends AbstractMutableRegistry {
 			
 			try {
 				IMemento memento = XMLMemento.createReadRoot(reader);
-				activeGestureConfigurations = Collections.unmodifiableList(Persistence.readActiveConfigurations(memento, Persistence.TAG_ACTIVE_GESTURE_CONFIGURATION, null));
 				activeKeyConfigurations = Collections.unmodifiableList(Persistence.readActiveConfigurations(memento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, null));
 				categories = Collections.unmodifiableList(Persistence.readCategories(memento, Persistence.TAG_CATEGORY, null));
 				commands = Collections.unmodifiableList(Persistence.readCommands(memento, Persistence.TAG_COMMAND, null));
 				contextBindings = Collections.unmodifiableList(Persistence.readContextBindings(memento, Persistence.TAG_CONTEXT_BINDING, null));
 				contexts = Collections.unmodifiableList(Persistence.readContexts(memento, Persistence.TAG_CONTEXT, null));			
-				gestureBindings = Collections.unmodifiableList(Persistence.readSequenceBindings(memento, Persistence.TAG_GESTURE_BINDING, null, RANK_PREFERENCE));
-				gestureConfigurations = Collections.unmodifiableList(Persistence.readConfigurations(memento, Persistence.TAG_GESTURE_CONFIGURATION, null));
 				keyBindings = Collections.unmodifiableList(Persistence.readSequenceBindings(memento, Persistence.TAG_KEY_BINDING, null, RANK_PREFERENCE));
 				keyConfigurations = Collections.unmodifiableList(Persistence.readConfigurations(memento, Persistence.TAG_KEY_CONFIGURATION, null));
 			} catch (WorkbenchException eWorkbench) {
@@ -74,14 +71,12 @@ public final class PreferenceRegistry extends AbstractMutableRegistry {
 	public void save()
 		throws IOException {
 		XMLMemento xmlMemento = XMLMemento.createWriteRoot(TAG_ROOT);		
-		Persistence.writeActiveConfigurations(xmlMemento, Persistence.TAG_ACTIVE_GESTURE_CONFIGURATION, activeGestureConfigurations);		
+
 		Persistence.writeActiveConfigurations(xmlMemento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, activeKeyConfigurations);		
 		Persistence.writeCategories(xmlMemento, Persistence.TAG_CATEGORY, categories);		
 		Persistence.writeCommands(xmlMemento, Persistence.TAG_COMMAND, commands);
 		Persistence.writeContextBindings(xmlMemento, Persistence.TAG_CONTEXT_BINDING, contextBindings);
 		Persistence.writeContexts(xmlMemento, Persistence.TAG_CONTEXT, contexts);
-		Persistence.writeSequenceBindings(xmlMemento, Persistence.TAG_GESTURE_BINDING, gestureBindings);
-		Persistence.writeConfigurations(xmlMemento, Persistence.TAG_GESTURE_CONFIGURATION, gestureConfigurations);
 		Persistence.writeSequenceBindings(xmlMemento, Persistence.TAG_KEY_BINDING, keyBindings);
 		Persistence.writeConfigurations(xmlMemento, Persistence.TAG_KEY_CONFIGURATION, keyConfigurations);
 		Writer writer = new StringWriter();

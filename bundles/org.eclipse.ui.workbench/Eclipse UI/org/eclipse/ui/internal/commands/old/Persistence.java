@@ -23,7 +23,6 @@ final class Persistence {
 	final static String DEPRECATED_TAG_SCOPE = "scope"; //$NON-NLS-1$
 	final static String PACKAGE_BASE = "commands"; //$NON-NLS-1$
 	final static String PACKAGE_FULL = "org.eclipse.ui." + PACKAGE_BASE; //$NON-NLS-1$
-	final static String TAG_ACTIVE_GESTURE_CONFIGURATION = "activeGestureConfiguration"; //$NON-NLS-1$
 	final static String TAG_ACTIVE_KEY_CONFIGURATION = "activeKeyConfiguration"; //$NON-NLS-1$
 	final static String TAG_CATEGORY = "category"; //$NON-NLS-1$
 	final static String TAG_COMMAND = "command"; //$NON-NLS-1$
@@ -31,8 +30,6 @@ final class Persistence {
 	final static String TAG_CONTEXT = "context"; //$NON-NLS-1$	
 	final static String TAG_CONTEXT_BINDING = "contextBinding"; //$NON-NLS-1$
 	final static String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
-	final static String TAG_GESTURE_BINDING = "gestureBinding"; //$NON-NLS-1$
-	final static String TAG_GESTURE_CONFIGURATION = "gestureConfiguration"; //$NON-NLS-1$
 	final static String TAG_ID = "id"; //$NON-NLS-1$
 	final static String TAG_KEY_BINDING = "keyBinding"; //$NON-NLS-1$
 	final static String TAG_KEY_CONFIGURATION = "keyConfiguration"; //$NON-NLS-1$

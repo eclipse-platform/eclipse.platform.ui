@@ -25,11 +25,6 @@ abstract class AbstractMutableRegistry extends AbstractRegistry {
 	public abstract void save()
 		throws IOException;
 
-	public void setActiveGestureConfigurations(List activeGestureConfigurations)
-		throws IllegalArgumentException {
-		this.activeGestureConfigurations = Util.safeCopy(activeGestureConfigurations, ActiveConfiguration.class);
-	}
-	
 	public void setActiveKeyConfigurations(List activeKeyConfigurations)
 		throws IllegalArgumentException {
 		this.activeKeyConfigurations = Util.safeCopy(activeKeyConfigurations, ActiveConfiguration.class);
@@ -53,16 +48,6 @@ abstract class AbstractMutableRegistry extends AbstractRegistry {
 	public void setContexts(List contexts)
 		throws IllegalArgumentException {
 		this.contexts = Util.safeCopy(contexts, Context.class);	
-	}
-	
-	public void setGestureBindings(List gestureBindings)
-		throws IllegalArgumentException {
-		this.gestureBindings = Util.safeCopy(gestureBindings, SequenceBinding.class);	
-	}
-	
-	public void setGestureConfigurations(List gestureConfigurations)
-		throws IllegalArgumentException {
-		this.gestureConfigurations = Util.safeCopy(gestureConfigurations, Configuration.class);	
 	}
 	
 	public void setKeyBindings(List keyBindings)
