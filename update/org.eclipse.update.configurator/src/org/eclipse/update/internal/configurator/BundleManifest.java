@@ -60,7 +60,6 @@ public class BundleManifest implements IConfigurationConstants {
 	 * 
 	 * @param in
 	 *            InputStream
-	 * @throws IOException
 	 */
 	private void parse(InputStream in) {
 		try {
