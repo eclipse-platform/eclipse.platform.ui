@@ -2274,7 +2274,7 @@
       </keyBinding>
 <!-- Redo -->
       <keyBinding
-            commandId="org.eclipse.ui.file.save"
+            commandId="org.eclipse.ui.edit.redo"
             keySequence="F10"
             keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
       </keyBinding>
