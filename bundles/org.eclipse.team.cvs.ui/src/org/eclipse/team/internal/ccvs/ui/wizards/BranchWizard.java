@@ -22,11 +22,16 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
+import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
 
 public class BranchWizard extends Wizard {
 	BranchWizardPage mainPage;
@@ -44,7 +49,7 @@ public class BranchWizard extends Wizard {
 		final boolean[] result = new boolean[] {false};
 		try {
 			getContainer().run(false, false, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException {
 					try {
 						String tagString = mainPage.getBranchTag();
 						boolean update = mainPage.getUpdate();
@@ -55,6 +60,7 @@ public class BranchWizard extends Wizard {
 						}
 						
 						// To do: use the wizard's progress monitor
+						RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
 						Hashtable table = getProviderMapping(resources);
 						Set keySet = table.keySet();
 						monitor.beginTask("", keySet.size() * 1000);
@@ -65,14 +71,20 @@ public class BranchWizard extends Wizard {
 							CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
 							List list = (List)table.get(provider);
 							IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
+							ICVSRepositoryLocation root = provider.getRemoteRoot();
 							CVSTag tag = new CVSTag(tagString, CVSTag.BRANCH);
 							try {
-								if (versionString != null) {
+								if (versionTag != null) {
 									provider.tag(providerResources, IResource.DEPTH_INFINITE, versionTag, subMonitor);
+									for (int i = 0; i < providerResources.length; i++) {
+										ICVSRemoteFolder remoteResource = (ICVSRemoteFolder)provider.getRemoteResource(providerResources[i]);
+										manager.addVersionTags(remoteResource, new CVSTag[] { versionTag });
+									}
 								}
 								provider.tag(providerResources, IResource.DEPTH_INFINITE, tag, subMonitor);
 								if (update) {
 									provider.update(providerResources, IResource.DEPTH_INFINITE, tag, true, subMonitor);
+									manager.addBranchTags(root, new BranchTag[] { new BranchTag(tag, root) });
 								}
 							} catch (TeamException e) {
 								status.merge(e.getStatus());
@@ -81,7 +93,9 @@ public class BranchWizard extends Wizard {
 						if (!status.isOK()) {
 							ErrorDialog.openError(getShell(), null, null, status);
 						}
-						result[0] = true;	
+						result[0] = true;
+					} catch (CVSException e) {
+						throw new InvocationTargetException(e);
 					} finally {
 						monitor.done();
 					}
@@ -90,9 +104,11 @@ public class BranchWizard extends Wizard {
 		} catch (InterruptedException e) {
 			return true;
 		} catch (InvocationTargetException e) {
-			// no exceptions are explicitly thrown by the above runnable
-			// pass through runtime exceptions to catch coding errors
 			Throwable target = e.getTargetException();
+			if (target instanceof CVSException) {
+				ErrorDialog.openError(getShell(), null, null, ((CVSException)target).getStatus());
+				return false;
+			}
 			if (target instanceof RuntimeException) {
 				throw (RuntimeException)target;
 			}
