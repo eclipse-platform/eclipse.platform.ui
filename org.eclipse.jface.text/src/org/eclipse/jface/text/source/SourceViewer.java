@@ -691,17 +691,9 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			case FORMAT:
 				{
 					final Point selection= rememberSelection();
-
-					final IRegion region= new Region(selection.x, selection.y);
 					final IRewriteTarget target= getRewriteTarget();
-					final IFormattingContext context= createFormattingContext();
+					IFormattingContext context= null;
 
-					if (selection.y == 0) {
-						context.setProperty(FormattingContextProperties.CONTEXT_DOCUMENT, Boolean.TRUE);
-					} else {
-						context.setProperty(FormattingContextProperties.CONTEXT_DOCUMENT, Boolean.FALSE);
-						context.setProperty(FormattingContextProperties.CONTEXT_REGION, region);
-					}
 					try {
 						setRedraw(false);
 						startSequentialRewriteMode(false);
@@ -714,9 +706,23 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 							
 							if (fContentFormatter instanceof IContentFormatterExtension) {
 								final IContentFormatterExtension extension= (IContentFormatterExtension) fContentFormatter;
+								context= createFormattingContext();
+								if (selection.y == 0) {
+									context.setProperty(FormattingContextProperties.CONTEXT_DOCUMENT, Boolean.TRUE);
+								} else {
+									context.setProperty(FormattingContextProperties.CONTEXT_DOCUMENT, Boolean.FALSE);
+									context.setProperty(FormattingContextProperties.CONTEXT_REGION, new Region(selection.x, selection.y));
+								}
 								extension.format(document, context);
 							} else {
-								fContentFormatter.format(document, region);
+								IRegion r;
+								if (selection.y == 0) {
+									IRegion coverage= getModelCoverage();
+									r= coverage == null ? new Region(0, 0) : coverage;
+								} else {
+									r= new Region(selection.x, selection.y);
+								}
+								fContentFormatter.format(document, r);
 							}
 							
 							updateSlaveDocuments(document);
@@ -736,7 +742,8 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 						setRedraw(true);
 
 						restoreSelection();
-						context.dispose();
+						if (context != null)
+							context.dispose();
 					}
 					return;
 				}
