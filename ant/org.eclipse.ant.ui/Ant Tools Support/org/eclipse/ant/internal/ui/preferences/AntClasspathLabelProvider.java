@@ -15,6 +15,7 @@ import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.IAntClasspathEntry;
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -42,7 +43,7 @@ public class AntClasspathLabelProvider implements ILabelProvider, IColorProvider
 	}
 
 	private Image getJarImage() {
-		return AntUIImages.getImage(IAntUIConstants.IMG_JAR_FILE);
+		return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_JAR);
 	}
 
 	public Image getClasspathImage() {
@@ -55,6 +56,9 @@ public class AntClasspathLabelProvider implements ILabelProvider, IColorProvider
 		String file;
 		if (element instanceof ClasspathEntry) {
 			ClasspathEntry entry = (ClasspathEntry) element;
+            if (entry.isEclipseRuntimeRequired()) {
+                return AntUIImages.getImage(IAntUIConstants.IMG_ANT_ECLIPSE_RUNTIME_OBJECT);
+            }
 			file= entry.toString();
 			if (file.endsWith("/")) { //$NON-NLS-1$
 				return getFolderImage();
@@ -70,19 +74,23 @@ public class AntClasspathLabelProvider implements ILabelProvider, IColorProvider
 	 */
 	public String getText(Object element) {
 		if (element instanceof IAntClasspathEntry) {
-			StringBuffer label= new StringBuffer(((IAntClasspathEntry)element).getLabel());
-			if (element instanceof GlobalClasspathEntries && ((GlobalClasspathEntries)element).getType() == ClasspathModel.ANT_HOME) {
-				AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
-				String defaultAntHome= prefs.getDefaultAntHome();
-				String currentAntHome= fBlock.getAntHome();
-				label.append(" ("); //$NON-NLS-1$
-				if (defaultAntHome.equals(currentAntHome)) {
-					label.append(AntPreferencesMessages.getString("AntClasspathLabelProvider.0")); //$NON-NLS-1$
-				} else {
-					label.append(fBlock.getAntHome());	
-				}
-				label.append(')');
-			}
+            IAntClasspathEntry entry= (IAntClasspathEntry)element;
+			StringBuffer label= new StringBuffer(entry.getLabel());
+			if (element instanceof GlobalClasspathEntries) {
+                if (((GlobalClasspathEntries)element).getType() == ClasspathModel.ANT_HOME) {
+            
+    				AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
+    				String defaultAntHome= prefs.getDefaultAntHome();
+    				String currentAntHome= fBlock.getAntHome();
+    				label.append(" ("); //$NON-NLS-1$
+    				if (defaultAntHome.equals(currentAntHome)) {
+    					label.append(AntPreferencesMessages.getString("AntClasspathLabelProvider.0")); //$NON-NLS-1$
+    				} else {
+    					label.append(fBlock.getAntHome());	
+    				}
+    				label.append(')');
+                }
+			} 
 			return label.toString();
 		}
 		return element.toString();

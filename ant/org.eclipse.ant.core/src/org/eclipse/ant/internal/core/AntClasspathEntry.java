@@ -22,7 +22,7 @@ import org.eclipse.core.variables.VariablesPlugin;
 public class AntClasspathEntry implements IAntClasspathEntry {
 
 	private String entryString;
-	private boolean eclipseRequired= true;
+	private boolean eclipseRequired= false;
 	private URL url= null;
 	
 	/* (non-Javadoc)

@@ -107,4 +107,14 @@ public class ClasspathEntry extends AbstractClasspathEntry {
 		}
 		return null;
 	}
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ant.core.IAntClasspathEntry#isEclipseRuntimeRequired()
+     */
+    public boolean isEclipseRuntimeRequired() {
+        if (entry == null) {
+            return super.isEclipseRuntimeRequired();
+        } 
+        return entry.isEclipseRuntimeRequired();
+    }
 }

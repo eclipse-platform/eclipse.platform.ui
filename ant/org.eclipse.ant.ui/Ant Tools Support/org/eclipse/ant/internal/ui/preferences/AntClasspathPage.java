@@ -81,6 +81,7 @@ public class AntClasspathPage implements IAntBlockContainer {
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 		model.setAntHomeEntries(prefs.getAntHomeClasspathEntries());
 		model.setGlobalEntries(prefs.getAdditionalClasspathEntries());
+        model.setContributedEntries(prefs.getContributedClasspathEntries());
 	}
 	
 	protected void performDefaults() {
@@ -95,6 +96,7 @@ public class AntClasspathPage implements IAntBlockContainer {
 			additionalEntries= new IAntClasspathEntry[] {toolsEntry};
 		}
 		model.setGlobalEntries(additionalEntries);
+        model.setContributedEntries(prefs.getContributedClasspathEntries());
 		antClasspathBlock.initializeAntHome(prefs.getDefaultAntHome());
 		antClasspathBlock.setInput(model);
 		update();

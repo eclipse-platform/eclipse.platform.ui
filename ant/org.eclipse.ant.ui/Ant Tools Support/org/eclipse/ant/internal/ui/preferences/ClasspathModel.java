@@ -12,26 +12,22 @@
 package org.eclipse.ant.internal.ui.preferences;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.StringTokenizer;
 
-import org.eclipse.ant.core.AntCorePlugin;
-import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.IAntClasspathEntry;
-import org.eclipse.ant.internal.ui.AntUtil;
 
 public class ClasspathModel extends AbstractClasspathEntry {
 	
 	public static final int ANT_HOME= 0;
 	public static final int GLOBAL_USER= 1;
 	public static final int USER= 2;
+    public static final int CONTRIBUTED= 3;
 	
-	private GlobalClasspathEntries antHomeEntry;
-	private GlobalClasspathEntries userGlobalEntry;
+	private GlobalClasspathEntries fAntHomeEntry;
+	private GlobalClasspathEntries fUserGlobalEntry;
+    private GlobalClasspathEntries fContributedGlobalEntry;
 	
 	public Object addEntry(Object entry) {
 		if (entry instanceof GlobalClasspathEntries) {
@@ -61,19 +57,26 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		IClasspathEntry entryParent= null;
 		switch (entryType) {
 			case ANT_HOME :
-				if (antHomeEntry == null) {
+				if (fAntHomeEntry == null) {
 					String name= AntPreferencesMessages.getString("ClasspathModel.2"); //$NON-NLS-1$
-					antHomeEntry= createGlobalEntry(new IAntClasspathEntry[0], name, false, true, ANT_HOME);
+					fAntHomeEntry= createGlobalEntry(new IAntClasspathEntry[0], name, false, true, ANT_HOME);
 				}
-				entryParent= antHomeEntry;
+				entryParent= fAntHomeEntry;
 				break;
 			case GLOBAL_USER :
-				if (userGlobalEntry == null) {
+				if (fUserGlobalEntry == null) {
 					String name= AntPreferencesMessages.getString("ClasspathModel.3"); //$NON-NLS-1$
-					userGlobalEntry= createGlobalEntry(new IAntClasspathEntry[0], name, true, true, GLOBAL_USER);
+					fUserGlobalEntry= createGlobalEntry(new IAntClasspathEntry[0], name, true, true, GLOBAL_USER);
 				}
-				entryParent= userGlobalEntry;
+				entryParent= fUserGlobalEntry;
 				break;
+            case CONTRIBUTED :
+                if (fContributedGlobalEntry == null) {
+                    String name= "Contributed Entries";
+                    fContributedGlobalEntry= createGlobalEntry(new IAntClasspathEntry[0], name, true, true, CONTRIBUTED);
+                }
+                entryParent= fContributedGlobalEntry;
+                break;
 			default :
 				break;
 		}
@@ -107,13 +110,13 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	public IAntClasspathEntry[] getEntries(int entryType) {
 		switch (entryType) {
 			case ANT_HOME :
-				if (antHomeEntry != null) {
-					return antHomeEntry.getEntries();
+				if (fAntHomeEntry != null) {
+					return fAntHomeEntry.getEntries();
 				}
 				break;
 			case GLOBAL_USER :
-				if (userGlobalEntry != null) {
-					return userGlobalEntry.getEntries();
+				if (fUserGlobalEntry != null) {
+					return fUserGlobalEntry.getEntries();
 				}
 				break;
 			case USER : 
@@ -124,8 +127,8 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	
 	public void remove(Object entry) {
 		childEntries.remove(entry);
-		if (entry == userGlobalEntry) {
-			userGlobalEntry= null;
+		if (entry == fUserGlobalEntry) {
+			fUserGlobalEntry= null;
 		}
 	}
 	
@@ -137,24 +140,24 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	}
 
 	public void removeAll() {
-		if (antHomeEntry != null) {
-			antHomeEntry.removeAll();
+		if (fAntHomeEntry != null) {
+			fAntHomeEntry.removeAll();
 		} 
-		if (userGlobalEntry != null) {
-			userGlobalEntry.removeAll();
+		if (fUserGlobalEntry != null) {
+			fUserGlobalEntry.removeAll();
 		}
 	}
 	
 	public void removeAll(int entryType) {
 		switch (entryType) {
 			case ANT_HOME :
-				if (antHomeEntry != null) {
-					antHomeEntry.removeAll();
+				if (fAntHomeEntry != null) {
+					fAntHomeEntry.removeAll();
 				}
 				break;
 			case GLOBAL_USER :
-				if (userGlobalEntry != null) {
-					userGlobalEntry.removeAll();
+				if (fUserGlobalEntry != null) {
+					fUserGlobalEntry.removeAll();
 				}
 				break;
 			default :
@@ -180,13 +183,13 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	}
 
 	public void setAntHomeEntries(IAntClasspathEntry[] entries) {
-		if (antHomeEntry == null) {
+		if (fAntHomeEntry == null) {
 			String name= AntPreferencesMessages.getString("ClasspathModel.2"); //$NON-NLS-1$
-			antHomeEntry= createGlobalEntry(entries, name, false, true, ANT_HOME);
+			fAntHomeEntry= createGlobalEntry(entries, name, false, true, ANT_HOME);
 		} else {
-			antHomeEntry.removeAll();
+			fAntHomeEntry.removeAll();
 			for (int i = 0; i < entries.length; i++) {
-				antHomeEntry.addEntry(new ClasspathEntry(entries[i], antHomeEntry));
+				fAntHomeEntry.addEntry(new ClasspathEntry(entries[i], fAntHomeEntry));
 			}
 		}
 	}
@@ -206,16 +209,28 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	}
 
 	public void setGlobalEntries(IAntClasspathEntry[] entries) {
-		if (userGlobalEntry == null) {
+		if (fUserGlobalEntry == null) {
 			String name= AntPreferencesMessages.getString("ClasspathModel.3"); //$NON-NLS-1$
-			userGlobalEntry= createGlobalEntry(entries, name, true, true, GLOBAL_USER);
+			fUserGlobalEntry= createGlobalEntry(entries, name, true, true, GLOBAL_USER);
 		} else {
-			userGlobalEntry.removeAll();
+			fUserGlobalEntry.removeAll();
 			for (int i = 0; i < entries.length; i++) {
-				userGlobalEntry.addEntry(new ClasspathEntry(entries[i], userGlobalEntry));
+				fUserGlobalEntry.addEntry(new ClasspathEntry(entries[i], fUserGlobalEntry));
 			}
 		}
 	}
+    
+    public void setContributedEntries(IAntClasspathEntry[] entries) {
+        if (fContributedGlobalEntry == null) {
+            String name= "Contributed Entries";
+            fContributedGlobalEntry= createGlobalEntry(entries, name, true, true, CONTRIBUTED);
+        } else {
+            fContributedGlobalEntry.removeAll();
+            for (int i = 0; i < entries.length; i++) {
+                fContributedGlobalEntry.addEntry(new ClasspathEntry(entries[i], fContributedGlobalEntry));
+            }
+        }
+    }
 	
 	private IAntClasspathEntry[] getUserEntries() {
 		List userEntries= new ArrayList(childEntries.size());
@@ -230,56 +245,6 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		return (IAntClasspathEntry[])userEntries.toArray(new IAntClasspathEntry[userEntries.size()]);
 	}
 	
-	public String serializeClasspath(boolean defaultAntHome) {
-		Iterator itr= childEntries.iterator();
-		StringBuffer buff= new StringBuffer();
-		while (itr.hasNext()) {
-			IClasspathEntry element = (IClasspathEntry) itr.next();
-			if (element instanceof GlobalClasspathEntries) {
-				if (element == antHomeEntry) {
-					if (!defaultAntHome || !isSameAsDefaultAntHome()) {
-						IAntClasspathEntry[] antHomeEntries= antHomeEntry.getEntries();
-						for (int i = 0; i < antHomeEntries.length; i++) {
-							IAntClasspathEntry entry = antHomeEntries[i];
-							buff.append('?');
-							buff.append(entry.toString());
-							buff.append(AntUtil.ATTRIBUTE_SEPARATOR);
-						}
-					} else {
-						buff.append(AntUtil.ANT_HOME_CLASSPATH_PLACEHOLDER);
-					}
-				} else {
-					buff.append(AntUtil.ANT_GLOBAL_USER_CLASSPATH_PLACEHOLDER);
-				}
-			} else {
-				buff.append(element.toString());
-			}
-			buff.append(AntUtil.ATTRIBUTE_SEPARATOR);
-		}
-		if (buff.length() > 0) {
-			return buff.substring(0, buff.length() - 1);
-		}
-		return ""; //$NON-NLS-1$
-	}
-	
-	private boolean isSameAsDefaultAntHome() {
-		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
-		IAntClasspathEntry[] defaultAntHomeEntries= prefs.getAntHomeClasspathEntries();
-		IAntClasspathEntry[] antHomeEntries= antHomeEntry.getEntries();
-		if (antHomeEntries.length != defaultAntHomeEntries.length) {
-			return false;
-		}
-		
-		for (int i = 0; i < antHomeEntries.length; i++) {
-			IAntClasspathEntry entry = antHomeEntries[i];
-			IAntClasspathEntry defaultEntry= defaultAntHomeEntries[i];
-			if (!sameURL(entry, defaultEntry)) {
-				return false;
-			}
-		}
-		return true;
-	}
-	
 	private boolean sameURL(IAntClasspathEntry first, IAntClasspathEntry second) {
 		if (first == null || second == null) {
 			return false;
@@ -290,66 +255,5 @@ public class ClasspathModel extends AbstractClasspathEntry {
 			return true;
 		}
 		return false;
-	}
-	
-	public ClasspathModel(String serializedClasspath, boolean customAntHome) {
-		StringTokenizer tokenizer= new StringTokenizer(serializedClasspath, AntUtil.ATTRIBUTE_SEPARATOR);
-		
-		while (tokenizer.hasMoreTokens()) {
-			String string = tokenizer.nextToken().trim();
-			if (string.equals(AntUtil.ANT_HOME_CLASSPATH_PLACEHOLDER)) {
-				IAntClasspathEntry[] antHomeEntries= new IAntClasspathEntry[0];
-				if (!customAntHome) {
-					antHomeEntries= AntCorePlugin.getPlugin().getPreferences().getAntHomeClasspathEntries();
-				} 
-				setAntHomeEntries(antHomeEntries);
-			} else if (string.equals(AntUtil.ANT_GLOBAL_USER_CLASSPATH_PLACEHOLDER)) {
-				setGlobalEntries(AntCorePlugin.getPlugin().getPreferences().getAdditionalClasspathEntries());
-			} else {
-				boolean isAntHomeEntry= false;
-				Object entry= null;
-				if (string.charAt(0) == '*') {
-					//old customclasspath
-					string= string.substring(1);
-				}
-				if (string.charAt(0) == '?') {
-					//ant home entry
-					string= string.substring(1);
-					isAntHomeEntry= true;
-				}
-				try {
-					entry=  new URL("file:" + string); //$NON-NLS-1$
-				} catch (MalformedURLException e) {
-					entry= string;
-				}
-				if (isAntHomeEntry) {
-					addEntry(ANT_HOME, entry);
-				} else {
-					addEntry(entry);
-				}
-			}
-		}
-	}
-	
-	public ClasspathModel() {
-		super();
-	}
-
-	/**
-	 * @return
-	 */
-	public Object[] getRemovedGlobalEntries() {
-		if (userGlobalEntry == null) {
-			String name= AntPreferencesMessages.getString("ClasspathModel.3"); //$NON-NLS-1$
-			return new Object[] {createGlobalEntry(new IAntClasspathEntry[0], name, true, false, GLOBAL_USER)};
-		}
-		return new Object[] {};
-	}
-
-	/**
-	 * @return
-	 */
-	public Object getAntHomeEntry() {
-		return antHomeEntry;
-	}
+    }
 }
