@@ -417,7 +417,10 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		
 		IEditorPart editor = null;
 		try {
-			editor = page.openEditor(input, editorId, false);
+			editor= page.getActiveEditor();
+			if (!editor.getEditorInput().equals(input)) {
+				editor = page.openEditor(input, editorId, false);
+			}
 		} catch (PartInitException e) {
 			DebugUIPlugin.errorDialog(DebugUIPlugin.getDefault().getShell(), 
 			 DebugUIViewsMessages.getString("LaunchView.Error_1"), DebugUIViewsMessages.getString("LaunchView.Exception_occurred_opening_editor_for_debugger._2"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$

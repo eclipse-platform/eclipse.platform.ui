@@ -71,8 +71,9 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 					clearSourceSelection(null);
 					Object parent = ((ITreeContentProvider)getTreeViewer().getContentProvider()).getParent(element);
 					refresh(parent);
+					//fire a selection change so the "Terminate" action can update
+					getView().getSite().getSelectionProvider().setSelection(getViewer().getSelection());
 				}
-				updateButtons();
 				break;
 			case DebugEvent.RESUME :
 				doHandleResumeEvent(event, element);
@@ -82,7 +83,6 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 				break;
 			case DebugEvent.CHANGE :
 				refresh(element);
-				updateButtons();
 				break;
 		}
 	}
@@ -107,15 +107,12 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		} else {
 			refresh(element);
 			if (element instanceof IThread) {
-				//select and reveal will update buttons
-				//via selection changed callback
 				selectAndReveal(element);
 				resetStackFrameCount((IThread)element);
 				return;
 			}
 		}			
 		labelChanged(element);
-		updateButtons();
 	}
 	
 	protected void resetStackFrameCount(IThread thread) {
@@ -126,7 +123,6 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		if (element instanceof IThread) {
 			doHandleSuspendThreadEvent((IThread)element);
 		}
-		updateButtons();
 	}
 	
 	// This method exists to provide some optimization for refreshing suspended
@@ -194,15 +190,6 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	}
 	
 	/**
-	 * Helper method to update the buttons of the viewer - must be called in UI thread
-	 */
-	protected void updateButtons() {
-		// fire a selection change such that the debug menu can
-		// update
-		getView().getSite().getSelectionProvider().setSelection(getViewer().getSelection());
-	}
-
-	/**
 	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */
 	public void launchRemoved(final ILaunch launch) {
@@ -227,7 +214,6 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 					
 					getLaunchView().autoExpand(target.getLaunch(), false, true);
 				}
-				updateButtons();
 			}
 		};
 
