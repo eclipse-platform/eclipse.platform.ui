@@ -436,7 +436,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_TITLE_BAR, true);
 		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_MENU_BAR, true);
 		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_COOL_BAR, true);
-		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_SHORTCUT_BAR, false);
 		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_FAST_VIEW_BARS, false);
 		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_PERSPECTIVE_BAR, false);
 		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_STATUS_LINE, true);

@@ -60,18 +60,6 @@ public interface IWorkbenchPreferences {
 	public static String SHOULD_SHOW_COOL_BAR = "SHOULD_SHOW_COOL_BAR"; //$NON-NLS-1$
 
 	/**
-	 * Workbench preference id for whether workbench windows should have a shortcut
-	 * bar by default. Boolean-valued: <code>true</code> if workbench windows
-	 * should have a shortcut bar by default, and <code>false</code> if they
-	 * should not have a shortcut bar by default.
-	 * <p>
-	 * The default value for this preference is: <code>false</code> (does not have shortcut bar)
-	 * </p>
-	 * @deprecated use SHOULD_SHOW_FAST_VIEW_BARS and/or SHOULD_SHOW_PERSPECTIVE_BAR instead
-	 */
-	public static String SHOULD_SHOW_SHORTCUT_BAR = "SHOULD_SHOW_SHORTCUT_BAR"; //$NON-NLS-1$
-
-	/**
 	 * Workbench preference id for whether workbench windows should have a status
 	 * line by default. Boolean-valued: <code>true</code> if workbench windows
 	 * should have a status line by default, and <code>false</code> if they

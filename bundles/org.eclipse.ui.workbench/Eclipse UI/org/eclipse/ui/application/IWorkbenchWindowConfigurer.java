@@ -149,31 +149,6 @@ public interface IWorkbenchWindowConfigurer {
 	public void setShowCoolBar(boolean show);
 
 	/**
-	 * Returns whether the underlying workbench window has a shortcut bar.
-	 * <p>
-	 * The initial value is controlled by the preference
-	 * {@link IWorkbenchPreferences.SHOULD_SHOW_SHORTCUT_BAR SHOULD_SHOW_SHORTCUT_BAR}
-	 * </p>
-	 * 
-	 * @return <code>true</code> for a shortcut bar, and <code>false</code>
-	 * for no shortcut bar
-	 * @deprecated use <code>getShowPerspectiveBar</code> and/or
-	 *   <code>getShowFastViewBars</code>
-	 */
-	public boolean getShowShortcutBar();
-
-	/**
-	 * Sets whether the underlying workbench window has a shortcut bar.
-	 * 
-	 * @param show <code>true</code> for a shortcut bar, and <code>false</code>
-	 * for no shortcut bar
-	 * 
-	 * @deprecated use <code>setShowPerspectiveBar</code> and/or 
-	 *   <code>setShowFastViewBars</code>
-	 */
-	public void setShowShortcutBar(boolean show);
-
-	/**
 	 * Returns whether the underlying workbench window has a status line.
 	 * <p>
 	 * The initial value is controlled by the preference
