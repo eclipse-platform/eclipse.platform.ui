@@ -147,7 +147,7 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 					// use document provider
 					IDocument document= ((ITextEditor) ep).getDocumentProvider().getDocument(input);
 					if (document != null) {
-						result.put(file, textFileBuffer.getDocument());
+						result.put(file, document);
 					}
 				}
 			}
