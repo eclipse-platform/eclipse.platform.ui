@@ -25,6 +25,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ColorSchemeService;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchThemeConstants;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.themes.ITheme;
@@ -50,7 +51,7 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
 		}
 	};
 	
-	public PartTabFolderPresentation(Composite parent, IStackPresentationSite newSite, int flags) {
+	public PartTabFolderPresentation(Composite parent, IStackPresentationSite newSite) {
 		
 		super(new CTabFolder(parent, SWT.BORDER), newSite);
 		CTabFolder tabFolder = getTabFolder();
@@ -67,14 +68,10 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
 		// do not support icons in unselected tabs.
 		tabFolder.setUnselectedImageVisible(false);
 		
-		//tabFolder.setBorderVisible(true);
 		// set basic colors
 		ColorSchemeService.setTabAttributes(this, tabFolder);
 
 		updateGradient();
-		
-		tabFolder.setMinimizeVisible((flags & SWT.MIN) != 0);
-		tabFolder.setMaximizeVisible((flags & SWT.MAX) != 0);
 	}
 	
 	/**
@@ -131,11 +128,20 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
 		
 		updateGradient();
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.presentations.StackPresentation#dispose()
 	 */
 	public void dispose() {
 		preferenceStore.removePropertyChangeListener(propertyChangeListener);
 		super.dispose();
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.presentations.BasicStackPresentation#getPartMenu()
+	 */
+	protected String getPaneName() {
+		return WorkbenchMessages.getString("ViewPane.moveView"); //$NON-NLS-1$ 
 	}
 }

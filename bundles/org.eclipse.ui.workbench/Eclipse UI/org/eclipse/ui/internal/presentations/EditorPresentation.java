@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
@@ -44,6 +43,7 @@ import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.internal.ColorSchemeService;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchThemeConstants;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
@@ -116,8 +116,7 @@ public class EditorPresentation extends BasicStackPresentation {
         }
     };
 
-    public EditorPresentation(Composite parent, IStackPresentationSite newSite,
-            int flags) {
+    public EditorPresentation(Composite parent, IStackPresentationSite newSite) {
         super(new CTabFolder(parent, SWT.BORDER), newSite);
         final CTabFolder tabFolder = getTabFolder();
         tabFolder.addCTabFolder2Listener(showListListener);
@@ -137,8 +136,6 @@ public class EditorPresentation extends BasicStackPresentation {
         // set basic colors
         ColorSchemeService.setTabAttributes(this, tabFolder);
         updateGradient();
-        tabFolder.setMinimizeVisible((flags & SWT.MIN) != 0);
-        tabFolder.setMaximizeVisible((flags & SWT.MAX) != 0);
         final Shell shell = tabFolder.getShell();
         IWorkbenchWindow workbenchWindow = null;
         IHandler openEditorDropDownHandler = new AbstractHandler() {
@@ -342,4 +339,11 @@ public class EditorPresentation extends BasicStackPresentation {
     protected String getCurrentTitle() {
         return "";
     }
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.presentations.BasicStackPresentation#getPaneName()
+	 */
+	protected String getPaneName() {		
+		return WorkbenchMessages.getString("EditorPane.moveEditor"); //$NON-NLS-1$ 
+	}
 }
