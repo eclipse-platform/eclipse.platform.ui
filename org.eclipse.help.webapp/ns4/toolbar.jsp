@@ -44,8 +44,8 @@ function printContent(button)
 function setTitle(label)
 {
 	if( label == null) label = "";
-	var title = document.title;
-	title.document.write(" "+label);
+	var toolbarTitleLayer = document.toolbarTitle;
+	toolbarTitleLayer.document.write(" "+label);
 }
 
 
@@ -80,7 +80,7 @@ TABLE {
 
 	<table id="toolbarTable"  cellpading=0 cellspacing=0 border=0 width="100%" height="100%" nowrap>
 	<tr border=1>
-	<td align=left valign=center ><div id="title" style="position:relative; text-indent:4px; font-weight:bold;"> &nbsp;<%=WebappResources.getString("Content", request)%> </div></td>
+	<td align=left valign=center ><div id="toolbarTitle" style="position:relative; text-indent:4px; font-weight:bold;"> &nbsp;<%=WebappResources.getString("Content", request)%> </div></td>
 	<td align=right >
 		<a  href="#" onclick="parent.resynch(this);"><img src="../images/synch_toc_nav.gif" alt='<%=WebappResources.getString("Synch", request)%>' border="0" ></a>&nbsp;
 		<a  href="#" onclick="parent.resynch(this);"><img src="../images/print_edit.gif" alt='<%=WebappResources.getString("Print", request)%>' border="0" ></a>&nbsp;
