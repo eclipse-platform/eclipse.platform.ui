@@ -240,7 +240,12 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 			return;
 
 		// If the container has no children then we are done.
-		IResource[] members = getMembers(resource);
+		IResource[] members = null;
+		try {
+			members = getMembers(resource);
+		} catch (CoreException e) {
+			throw TeamPlugin.wrapException(e);
+		}
 		if (members.length == 0)
 			return;
 						
@@ -263,16 +268,11 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	 * @return an array of <code>IResource</code> or an empty array if
 	 * the resource has no members.
 	 */
-	protected IResource[] getMembers(IResource resource) {
+	protected IResource[] getMembers(IResource resource) throws CoreException {
 		if (resource.getType() != IResource.FILE) {
-			try {
-				return ((IContainer) resource).members();
-			} catch (CoreException exception) {
-				exception.printStackTrace();
-				throw new RuntimeException();
-			}
-		} //end-if
-		else
+			return ((IContainer) resource).members();
+		} else {
 			return new IResource[0];
+		}
 	}	
 }
