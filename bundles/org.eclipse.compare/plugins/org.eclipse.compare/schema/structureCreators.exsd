@@ -10,6 +10,7 @@
 for specific content types. The structure creator is expected to create
 a tree of &lt;samp&gt;IStructureComparator&lt;/samp&gt;s for a given content.
 This tree is used as the input for the structural compare.
+The extension point must implement the interface &lt;samp&gt;org.eclipse.compare.structuremergeviewer.IStructureCreator&lt;/samp&gt;.
       </documentation>
    </annotation>
 
@@ -106,8 +107,7 @@ java files (extension &quot;java&quot;):
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The Compare UI plugin defines a structure 
-creator for zip archives.
+         The Compare UI plugin defines a structure creator for zip archives.
       </documentation>
    </annotation>
 

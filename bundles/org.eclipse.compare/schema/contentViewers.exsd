@@ -8,12 +8,9 @@
       <documentation>
          This extension point allows a plug-in to register 
 viewers for specific content types. 
-These viewers are used in the EditionSelectionDialog when presenting an edition 
-of a resource or a subsection thereof. The viewer 
-must extend &lt;samp&gt;org.eclipse.jface.viewers.Viewer&lt;/samp&gt; 
-and must accept a viewer input of type &lt;samp&gt;IStreamContentAccessor&lt;/samp&gt;. 
-However since viewers don&apos;t have a default constructor the extension point must implement the 
-factory interface for viewers &lt;samp&gt;org.eclipse.compare.IViewerCreator&lt;/samp&gt;.
+These viewers are used in the &lt;samp&gt;EditionSelectionDialog&lt;/samp&gt; when presenting an edition of a resource or a subsection thereof. The viewer 
+is expected to extend &lt;samp&gt;org.eclipse.jface.viewers.Viewer&lt;/samp&gt;. 
+However since viewers don&apos;t have a default constructor the extension point must implement the factory interface for viewers &lt;samp&gt;org.eclipse.compare.IViewerCreator&lt;/samp&gt;.
       </documentation>
    </annotation>
 
