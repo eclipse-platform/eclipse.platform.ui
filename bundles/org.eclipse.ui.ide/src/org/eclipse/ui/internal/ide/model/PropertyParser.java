@@ -65,6 +65,12 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 
 public class PropertyParser extends DefaultHandler implements LexicalHandler {
+	/**
+	 * @deprecated
+	 * Use the extension point
+	 * org.eclipse.core.runtime.contentTypes instead.  This internal class
+	 * will be removed in 3.1.
+	 */
 
 	// model parser
 	private static SAXParser parser;
