@@ -18,6 +18,7 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -172,7 +173,14 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 	 */
 	public void fill(Composite parent) {
 		
-		fLabel= new CLabel(parent, SWT.SHADOW_IN);
+		fLabel= new CLabel(parent, SWT.NONE);
+		
+		Color[] colors = new Color[2];
+		colors[0] = parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
+		colors[1] = fLabel.getBackground();
+		int[] gradient = new int[] {JFaceColors.STATUS_PERCENT};
+		fLabel.setBackground(colors, gradient);
+		
 		fLabel.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				fMouseListener= null;
