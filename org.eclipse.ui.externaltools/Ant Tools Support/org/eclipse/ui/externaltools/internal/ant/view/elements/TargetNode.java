@@ -1,4 +1,5 @@
 package org.eclipse.ui.externaltools.internal.ant.view.elements;
+
 /**********************************************************************
 Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
 This file is made available under the terms of the Common Public License v1.0
@@ -100,6 +101,18 @@ public class TargetNode extends AntNode {
 	 */
 	public boolean isErrorNode() {
 		return isErrorNode;
+	}
+	
+	/**
+	 * @see org.eclipse.ui.externaltools.internal.ant.view.elements.AntNode#getName()
+	 */
+	public String getName() {
+		StringBuffer name= new StringBuffer(super.getName());
+		if (getProject().getDefaultTarget().equals(this)) {
+			name.append(AntViewElementsMessages.getString("TargetNode.default")); //$NON-NLS-1$
+		} 
+		
+		return name.toString();
 	}
 
 }

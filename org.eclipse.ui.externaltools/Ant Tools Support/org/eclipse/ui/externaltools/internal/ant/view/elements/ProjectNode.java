@@ -7,6 +7,8 @@ http://www.eclipse.org/legal/cpl-v10.html
 package org.eclipse.ui.externaltools.internal.ant.view.elements;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.ListIterator;
@@ -136,11 +138,11 @@ public class ProjectNode extends AntNode {
 		try {
 			infos = AntUtil.getTargets(buildFileName);
 		} catch (CoreException e) {
-			setErrorMessage("An exception occurred retrieving targets: " + e.getMessage());
+			setErrorMessage(AntViewElementsMessages.getString("ProjectNode.Exception") + e.getMessage()); //$NON-NLS-1$
 			return;
 		}
 		if (infos.length < 1) {
-			setErrorMessage("No targets found");
+			setErrorMessage(AntViewElementsMessages.getString("ProjectNode.No_targets")); //$NON-NLS-1$
 			return;
 		}
 		ProjectInfo projectInfo= infos[0].getProject();
@@ -172,13 +174,13 @@ public class ProjectNode extends AntNode {
 			project.addTarget(target);
 		}
 		if (project.getDefaultTarget() == null) {
-			setErrorMessage("No default target found");
+			setErrorMessage(AntViewElementsMessages.getString("ProjectNode.No_default")); //$NON-NLS-1$
 			return;
 		}
 		// Set the project node data based on the Apache Ant data
 		String projectName = project.getName();
 		if (projectName == null) {
-			projectName = "(unnamed)";
+			projectName = AntViewElementsMessages.getString("ProjectNode.(unnamed)"); //$NON-NLS-1$
 		}
 		// Update the project name
 		setName(projectName);
@@ -193,7 +195,7 @@ public class ProjectNode extends AntNode {
 				targetNode.addDependency((String) targetDependencies.nextElement());
 			}
 			addTarget(targetNode);
-			if (targetNode.getName().equals(project.getDefaultTarget())) {
+			if (target.getName().equals(project.getDefaultTarget())) {
 				setDefaultTarget(targetNode);
 			}
 			// Execution Path -------
@@ -213,10 +215,26 @@ public class ProjectNode extends AntNode {
 				while (topoElements.hasNext()) {
 					int i = topoElements.nextIndex();
 					Target topoTask = (Target) topoElements.next();
-					targetNode.addToExecutionPath((i + 1) + ":" + topoTask.getName());
+					targetNode.addToExecutionPath((i + 1) + ":" + topoTask.getName()); //$NON-NLS-1$
 				}
 			}
 		}
+		Collections.sort(targets, new Comparator() {
+			/**
+			 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+			 */
+			public int compare(Object o1, Object o2) {
+				String name1=""; //$NON-NLS-1$
+				String name2= ""; //$NON-NLS-1$
+				if (o1 instanceof TargetNode) {
+					name1= ((TargetNode)o1).getName();
+				}
+				if (o2 instanceof TargetNode) {
+					name2= ((TargetNode)o2).getName();
+				}
+				return name1.compareToIgnoreCase(name2);
+			}
+		});
 	}
 	
 	/**
