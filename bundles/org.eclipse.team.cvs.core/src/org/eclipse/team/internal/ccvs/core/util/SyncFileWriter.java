@@ -315,8 +315,14 @@ public class SyncFileWriter {
 		for (int i = 0; i < entries.length; i++) {
 			String line = entries[i];
 			if(!"".equals(line)) { //$NON-NLS-1$
-				NotifyInfo info = new NotifyInfo(parent, line);
-				infos.put(info.getName(), info);			
+				try {
+                    NotifyInfo info = new NotifyInfo(parent, line);
+                    infos.put(info.getName(), info);
+                } catch (CVSException e) {
+                    // We couldn't parse the notify info
+                    // Log it and ignore
+                    CVSProviderPlugin.log(e);
+                }			
 			}
 		}
 		
