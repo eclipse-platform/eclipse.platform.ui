@@ -1,10 +1,9 @@
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 package org.eclipse.search.internal.ui.text;
 
-/*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
- */
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.StringReader;

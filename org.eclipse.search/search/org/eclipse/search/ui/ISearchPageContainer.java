@@ -1,10 +1,9 @@
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 package org.eclipse.search.ui;
 
-/*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
- */
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.viewers.ISelection;
 

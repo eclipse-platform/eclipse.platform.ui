@@ -1,10 +1,9 @@
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 package org.eclipse.search.internal.core.text;
 
-/*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
- */
 import org.eclipse.jface.util.Assert;
 
 import org.eclipse.core.resources.IFile;
