@@ -202,14 +202,14 @@ public class IWorkbenchPageTest extends UITestCase {
 			view.getCallHistory().verifyOrder(
 				new String[] { "init", "createPartControl", "setFocus" }));
 		MockViewPart view2 =
-			(MockViewPart) fActivePage.showView(MockViewPart.IDMULT, "2");
+			(MockViewPart) fActivePage.showView(MockViewPart.IDMULT, "2", IWorkbenchPage.VIEW_ACTIVATE);
 		assertNotNull(view2);
 		assertTrue(
 			view2.getCallHistory().verifyOrder(
 				new String[] { "init", "createPartControl", "setFocus" }));
 		assertTrue(!view.equals(view2));
 		MockViewPart view3 =
-			(MockViewPart) fActivePage.showView(MockViewPart.IDMULT, "3");
+			(MockViewPart) fActivePage.showView(MockViewPart.IDMULT, "3", IWorkbenchPage.VIEW_ACTIVATE);
 		assertNotNull(view3);
 		assertTrue(
 			view3.getCallHistory().verifyOrder(
@@ -228,14 +228,14 @@ public class IWorkbenchPageTest extends UITestCase {
 		CallHistory callTrace2 = view2.getCallHistory();
 		callTrace.clear();
 		callTrace2.clear();
-		assertEquals(fActivePage.showView(MockViewPart.IDMULT, "2"), view2);
+		assertEquals(fActivePage.showView(MockViewPart.IDMULT, "2", IWorkbenchPage.VIEW_ACTIVATE), view2);
 		assertEquals(callTrace2.contains("setFocus"), true);
 		assertEquals(callTrace.contains("setFocus"), false);
 		CallHistory callTrace3 = view3.getCallHistory();
 		callTrace.clear();
 		callTrace2.clear();
 		callTrace3.clear();
-		assertEquals(fActivePage.showView(MockViewPart.IDMULT, "3"), view3);
+		assertEquals(fActivePage.showView(MockViewPart.IDMULT, "3", IWorkbenchPage.VIEW_ACTIVATE), view3);
 		assertEquals(callTrace3.contains("setFocus"), true);
 		assertEquals(callTrace.contains("setFocus"), false);
 		assertEquals(callTrace2.contains("setFocus"), false);
@@ -246,7 +246,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		*/
 		boolean exceptionThrown = false;
 		try {
-		    fActivePage.showView(MockViewPart.ID, "2");
+		    fActivePage.showView(MockViewPart.ID, "2", IWorkbenchPage.VIEW_ACTIVATE);
 		}
 		catch (PartInitException e) {
 		    assertEquals(e.getMessage().indexOf("mult") != -1, true);
