@@ -5,6 +5,7 @@
 package org.eclipse.search.internal.ui;
 
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.swt.SWT;
@@ -310,8 +311,10 @@ public class SearchResultViewer extends TableViewer {
 		ISelection selection= getSelection();
 		if (selection instanceof IStructuredSelection) {
 			Object entry= ((IStructuredSelection)selection).getFirstElement();
-			return (entry instanceof ISearchResultViewEntry) && 
-				((ISearchResultViewEntry)entry).getSelectedMarker().getAttribute(SearchUI.POTENTIAL_MATCH, false);
+			if (entry instanceof ISearchResultViewEntry) {
+				IMarker marker= ((ISearchResultViewEntry)entry).getSelectedMarker();
+				return marker != null && marker.getAttribute(SearchUI.POTENTIAL_MATCH, false);
+			}
 		}
 		return false;
 	}
