@@ -133,7 +133,7 @@ public class AntClasspathBlock {
 		
 			String label;
 			if (showExternalJARButton) {
-				label= "Add E&xternal JARs...";
+				label= AntPreferencesMessages.getString("AntClasspathBlock.42"); //$NON-NLS-1$
 			} else {
 				label= AntPreferencesMessages.getString("AntClasspathBlock.addJarButtonTitle");	 //$NON-NLS-1$
 			}
@@ -181,7 +181,7 @@ public class AntClasspathBlock {
 			} 
 			String label;
 			if (showExternalJARButton) {
-				label= "Add Externa&l JARs...";
+				label= AntPreferencesMessages.getString("AntClasspathBlock.43"); //$NON-NLS-1$
 			} else {
 				label= AntPreferencesMessages.getString("AntClasspathBlock.addJarButtonTitle2");	 //$NON-NLS-1$
 			}
@@ -288,7 +288,7 @@ public class AntClasspathBlock {
 			lastUsedPath = ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
 		}
 		FileDialog dialog = new FileDialog(antTableViewer.getControl().getShell(), SWT.MULTI);
-		dialog.setFilterExtensions(new String[] { "*.jar" }); //$NON-NLS-1$;
+		dialog.setFilterExtensions(new String[] { "*.jar;*.zip" }); //$NON-NLS-1$
 		dialog.setFilterPath(lastUsedPath);
 
 		String result = dialog.open();
@@ -322,8 +322,8 @@ public class AntClasspathBlock {
 		ITreeContentProvider cp= new WorkbenchContentProvider();
 
 		ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(viewer.getControl().getShell(), lp, cp);
-		dialog.setTitle("JAR Selection"); 
-		dialog.setMessage("&Choose JARs and ZIPs to add:");
+		dialog.setTitle(AntPreferencesMessages.getString("AntClasspathBlock.44"));  //$NON-NLS-1$
+		dialog.setMessage(AntPreferencesMessages.getString("AntClasspathBlock.45")); //$NON-NLS-1$
 		dialog.addFilter(filter);
 		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());	
 		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));

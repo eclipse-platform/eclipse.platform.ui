@@ -119,8 +119,8 @@ public class AntPropertiesBlock {
 		ITreeContentProvider cp= new WorkbenchContentProvider();
 
 		ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(propertyTableViewer.getControl().getShell(), lp, cp);
-		dialog.setTitle("Property File Selection"); 
-		dialog.setMessage("&Choose the property files add:");
+		dialog.setTitle(AntPreferencesMessages.getString("AntPropertiesBlock.12"));  //$NON-NLS-1$
+		dialog.setMessage(AntPreferencesMessages.getString("AntPropertiesBlock.13")); //$NON-NLS-1$
 		dialog.addFilter(filter);
 		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());	
 		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
@@ -231,7 +231,7 @@ public class AntPropertiesBlock {
 			}
 			String label;
 			if (showExternal) {
-				label= "Add E&xternal...";
+				label= AntPreferencesMessages.getString("AntPropertiesBlock.14"); //$NON-NLS-1$
 			} else {
 				label= AntPreferencesMessages.getString("AntPropertiesBlock.addFileButton"); //$NON-NLS-1$
 			}
