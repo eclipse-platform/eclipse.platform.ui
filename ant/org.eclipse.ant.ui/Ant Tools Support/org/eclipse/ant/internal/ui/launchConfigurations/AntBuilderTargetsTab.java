@@ -57,6 +57,7 @@ public class AntBuilderTargetsTab extends AbstractLaunchConfigurationTab {
     private Map fAttributeToTargets= new HashMap();
     
     private static final String NO_TARGETS_SELECTED= AntLaunchConfigurationMessages.getString("AntBuilderTargetsTab.0");  //$NON-NLS-1$
+	private static final String DEFAULT_TARGET_SELECTED= AntLaunchConfigurationMessages.getString("AntBuilderTargetsTab.10");  //$NON-NLS-1$
     
 	private SelectionListener fSelectionListener= new SelectionAdapter() {
 		/* (non-Javadoc)
@@ -170,7 +171,11 @@ public class AntBuilderTargetsTab extends AbstractLaunchConfigurationTab {
     private void setTargetsForUser(Text text, String targetsSelected, String configTargets) {
         if (targetsSelected == null) {
             if (configTargets == null) {
-                text.setText(NO_TARGETS_SELECTED);
+				if (text.isEnabled()) {//build kind has been specified..see initializeBuildKinds
+					text.setText(DEFAULT_TARGET_SELECTED);
+				} else {
+					text.setText(NO_TARGETS_SELECTED);
+				}
                 return;
             } 
             targetsSelected= configTargets;
