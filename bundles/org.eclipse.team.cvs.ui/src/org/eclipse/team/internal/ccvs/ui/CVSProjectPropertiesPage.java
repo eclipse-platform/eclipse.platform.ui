@@ -44,8 +44,10 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.IUserInfo;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
@@ -71,10 +73,12 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 	Label portLabel;
 	Label tagLabel;
 	private Button fetchButton;
+	private Button watchEditButton;
 	
 	IUserInfo info;
 	CVSTeamProvider provider;
 	private boolean fetch;
+	private boolean watchEdit;
 
 	private class RepositorySelectionDialog extends Dialog {
 		ICVSRepositoryLocation[] locations;
@@ -185,6 +189,14 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 			}
 		});
 		
+		// Should the project be configured for watch/edit
+		watchEditButton = createCheckBox(composite, Policy.bind("CVSProjectPropertiesPage.configureForWatchEdit")); //$NON-NLS-1$
+		watchEditButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				watchEdit = watchEditButton.getSelection();
+			}
+		});
+		
 		createLabel(composite, "", 1); //$NON-NLS-1$
 		createLabel(composite, "", 1); //$NON-NLS-1$
 		createLabel(composite, "", 1); //$NON-NLS-1$
@@ -286,6 +298,7 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 		try {
 			oldLocation = cvsRoot.getRemoteLocation();
 			fetch = provider.getFetchAbsentDirectories();
+			watchEdit = provider.isWatchEditEnabled();
 		} catch (TeamException e) {
 			handle(e);
 		}
@@ -319,6 +332,7 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 			}
 			moduleLabel.setText(label);
 			fetchButton.setSelection(fetch);
+			watchEditButton.setSelection(watchEdit);
 		} catch (TeamException e) {
 			handle(e);
 		}
@@ -347,26 +361,38 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 	 * @see PreferencesPage#performOk
 	 */
 	public boolean performOk() {
+		final boolean[] changeReadOnly = { false };
 		try {
 			if (fetch != provider.getFetchAbsentDirectories())
 				provider.setFetchAbsentDirectories(fetch);
+			if (watchEdit != provider.isWatchEditEnabled()) {
+				provider.setWatchEditEnabled(watchEdit);
+				changeReadOnly[0] = true;
+			}
 		} catch (CVSException e) {
 			handle(e);
 		}
-		if (newLocation == null) {
+		if (newLocation == null && !changeReadOnly[0]) {
 			return true;
 		}
 		try {
 			new ProgressMonitorDialog(getShell()).run(true, false, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
-						provider.setRemoteRoot(newLocation, monitor);
+						monitor.beginTask(Policy.bind("CVSProjectPropertiesPage.progressTaskName"), 
+						((newLocation == null)?0:100) + (changeReadOnly[0]?100:0));
+						if (newLocation != null)
+							provider.setRemoteRoot(newLocation, Policy.subMonitorFor(monitor, 100));
+						if (changeReadOnly[0])
+							setReadOnly(watchEdit, Policy.subMonitorFor(monitor, 100));
 					} catch (TeamException e) {
 						throw new InvocationTargetException(e);
 					}
 				}
 			});
 			newLocation = null;
+			if (changeReadOnly[0])
+				CVSLightweightDecorator.refresh();
 		} catch (InvocationTargetException e) {
 			handle(e);
 		} catch (InterruptedException e) {
@@ -374,6 +400,30 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 		}
 			
 		return true;
+	}
+	/**
+	 * @param watchEdit
+	 */
+	protected void setReadOnly(final boolean watchEdit, final IProgressMonitor monitor) throws CVSException {
+		monitor.beginTask(null, 100);
+		String taskName = watchEdit?
+			Policy.bind("CVSProjectPropertiesPage.setReadOnly"):
+			Policy.bind("CVSProjectPropertiesPage.clearReadOnly");
+		monitor.subTask(taskName);
+		ICVSFolder root = CVSWorkspaceRoot.getCVSFolderFor(project);
+		root.accept(new ICVSResourceVisitor() {
+			public void visitFile(ICVSFile file) throws CVSException {
+				// only change managed, unmodified files
+				if (file.isManaged() && !file.isModified())
+					file.setReadOnly(watchEdit);
+				monitor.worked(1);
+			}
+
+			public void visitFolder(ICVSFolder folder) throws CVSException {
+				folder.acceptChildren(this);
+			}
+		});
+		monitor.done();
 	}
 	/**
 	 * Shows the given errors to the user.
