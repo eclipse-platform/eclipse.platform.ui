@@ -713,10 +713,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		menu.add(new Separator(IDebugUIConstants.VARIABLE_GROUP));
 		menu.add(getAction("ChangeVariableValue")); //$NON-NLS-1$
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
-		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
-		menu.add(getAction("ShowTypeNames")); //$NON-NLS-1$
-		menu.add(new Separator("TOGGLE_VIEW")); //$NON-NLS-1$
-		menu.add(getAction("ShowDetailPane")); //$NON-NLS-1$
 		menu.add(new Separator(IDebugUIConstants.EMPTY_NAVIGATION_GROUP));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}

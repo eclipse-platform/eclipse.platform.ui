@@ -91,8 +91,6 @@ public class BreakpointsView extends AbstractDebugView {
 		menu.add(new Separator(IDebugUIConstants.EMPTY_BREAKPOINT_GROUP));
 		menu.add(new Separator(IDebugUIConstants.BREAKPOINT_GROUP));
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
-		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
-		menu.add(getAction("ShowBreakpointsForModel")); //$NON-NLS-1$
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 	
