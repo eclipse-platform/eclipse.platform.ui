@@ -789,8 +789,8 @@ public class ConfiguredSite
 				UpdateManagerPlugin.warn(msg1);
 				IStatus status=createStatus(IStatus.ERROR,IFeature.STATUS_UNHAPPY,msg1,null);
 				multi.add(status);
-				return multi;
 			}
+			return multi;			
 		}
 
 		String msg = Policy.bind("SiteLocal.FeatureHappy"); 

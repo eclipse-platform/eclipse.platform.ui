@@ -890,6 +890,10 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			}
 			if (childFeature==null){
 				UpdateManagerPlugin.warn("Feature is null for:"+children[i],new Exception());
+				// Unable to find children feature, broken
+				String msg1 = Policy.bind("SiteLocal.NestedFeatureUnavailable",new Object[]{children[i].getURL()});
+				multiTemp.add(createStatus(IStatus.ERROR,IFeature.STATUS_UNHAPPY,msg1,null));
+				if (IFeature.STATUS_UNHAPPY>code) code = IFeature.STATUS_UNHAPPY;					
 			} else {
 				childStatus = getFeatureStatus(childFeature);	
 				// do not add the status, add the children status as getFeatureStatus
