@@ -17,6 +17,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
 import org.eclipse.core.runtime.content.IContentTypeManager.ContentTypeChangeEvent;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.util.NLS;
 
@@ -53,44 +54,26 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 		 * See WorkspaceJob#runInWorkspace(IProgressMonitor)
 		 */
 		public IStatus runInWorkspace(final IProgressMonitor monitor) {
+			if (monitor.isCanceled())
+				return Status.CANCEL_STATUS;
 			try {
-				if (monitor.isCanceled())
-					return Status.CANCEL_STATUS;
-				synchronized (ContentDescriptionManager.this) {
-					// nothing to be done if no information cached
-					if (getCacheState() == EMPTY_CACHE)
-						return Status.OK_STATUS;
-					setCacheState(FLUSHING_CACHE);
-					// flush the MRU cache
-					cache.discardAll();
-					// discard content type related flags for all files in the tree 
-					IElementContentVisitor visitor = new IElementContentVisitor() {
-						public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
-							if (monitor.isCanceled())
-								throw new OperationCanceledException();
-							if (elementContents == null)
-								return false;
-							ResourceInfo info = (ResourceInfo) elementContents;
-							if (info.getType() != IResource.FILE)
-								return true;
-							info = workspace.getResourceInfo(requestor.requestPath(), false, true);
-							if (info == null)
-								return false;
-							info.clear(ICoreConstants.M_CONTENT_CACHE);
-							return true;
-						}
-					};
-					try {
-						new ElementTreeIterator(workspace.getElementTree(), Path.ROOT).iterate(visitor);
-					} catch (WrappedRuntimeException e) {
-						throw (CoreException) e.getTargetException();
-					}
-					// done cleaning
-					setCacheState(EMPTY_CACHE);
+				monitor.beginTask(null, Policy.opWork);
+				//note that even though we are running in a workspace job, we
+				//must do a begin/endOperation to reacquire the workspace lock
+				final ISchedulingRule rule = workspace.getRoot();
+				try {
+					workspace.prepareOperation(rule, monitor);
+					workspace.beginOperation(true);
+					doFlushCache(monitor);
+				} finally {
+					workspace.endOperation(rule, false, Policy.subMonitorFor(monitor, Policy.endOpWork));
 				}
-				monitor.worked(Policy.opWork);
+			} catch (OperationCanceledException e) {
+				return Status.CANCEL_STATUS;
 			} catch (CoreException e) {
 				return e.getStatus();
+			} finally {
+				monitor.done();
 			}
 			return Status.OK_STATUS;
 		}
@@ -146,16 +129,18 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 
 	private static final QualifiedName CACHE_STATE = new QualifiedName(ResourcesPlugin.PI_RESOURCES, "contentCacheState"); //$NON-NLS-1$
 	private static final QualifiedName CACHE_TIMESTAMP = new QualifiedName(ResourcesPlugin.PI_RESOURCES, "contentCacheTimestamp"); //$NON-NLS-1$\
-	public static final byte EMPTY_CACHE = 1;
 
 	public static final String FAMILY_DESCRIPTION_CACHE_FLUSH = ResourcesPlugin.PI_RESOURCES + ".contentDescriptionCacheFamily"; //$NON-NLS-1$	
-	public static final byte FLUSHING_CACHE = 4;
+
+	//possible values for the CACHE_STATE property
+	public static final byte EMPTY_CACHE = 1;
+	public static final byte USED_CACHE = 2;
 	public static final byte INVALID_CACHE = 3;
+	public static final byte FLUSHING_CACHE = 4;
 
 	private static final String PT_CONTENTTYPES = "contentTypes"; //$NON-NLS-1$
-	public static final byte USED_CACHE = 2;
 
-	Cache cache;
+	private Cache cache;
 
 	private byte cacheState;
 
@@ -168,6 +153,39 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	 */
 	public void contentTypeChanged(ContentTypeChangeEvent event) {
 		invalidateCache(true);
+	}
+
+	synchronized void doFlushCache(final IProgressMonitor monitor) throws CoreException {
+		// nothing to be done if no information cached
+		if (getCacheState() == EMPTY_CACHE)
+			return;
+		setCacheState(FLUSHING_CACHE);
+		// flush the MRU cache
+		cache.discardAll();
+		// discard content type related flags for all files in the tree 
+		IElementContentVisitor visitor = new IElementContentVisitor() {
+			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
+				if (monitor.isCanceled())
+					throw new OperationCanceledException();
+				if (elementContents == null)
+					return false;
+				ResourceInfo info = (ResourceInfo) elementContents;
+				if (info.getType() != IResource.FILE)
+					return true;
+				info = workspace.getResourceInfo(requestor.requestPath(), false, true);
+				if (info == null)
+					return false;
+				info.clear(ICoreConstants.M_CONTENT_CACHE);
+				return true;
+			}
+		};
+		try {
+			new ElementTreeIterator(workspace.getElementTree(), Path.ROOT).iterate(visitor);
+		} catch (WrappedRuntimeException e) {
+			throw (CoreException) e.getTargetException();
+		}
+		// done cleaning
+		setCacheState(EMPTY_CACHE);
 	}
 
 	Cache getCache() {
