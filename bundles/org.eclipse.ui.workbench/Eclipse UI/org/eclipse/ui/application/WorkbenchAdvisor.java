@@ -86,7 +86,7 @@ import org.eclipse.ui.internal.util.PrefUtil;
  * either from an initial state or from a restored state;  used to adjust the
  * window</li>
  * <li><code>openIntro</code> - called immediately before a window is opened in
- * order to create the introduction component, if any.
+ * order to create the introduction component, if any.</li>
  * <li><code>postWindowOpen</code> - called after a window has been
  * opened; use to hook window listeners, etc.</li>
  * <li><code>preWindowShellClose</code> - called when a window's shell
