@@ -173,21 +173,20 @@ class IndexingOperation {
 			return new ArrayList(0);
 		// get the list of all navigation urls. 
 		Set urls = getAllDocuments(index.getLocale());
-		ArrayList addedDocs = new ArrayList(urls.size());
+		Set addedDocs = new HashSet(urls.size());
 		for (Iterator docs = urls.iterator(); docs.hasNext();) {
-			String url = (String) docs.next();
-			// only process documents that can be indexed
-			if (!isIndexable(url))
-				continue;
+			String doc = (String) docs.next();
 			// Assume the url is /pluginID/path_to_topic.html
-			int i = url.indexOf('/', 1);
-			String plugin = i == -1 ? "" : url.substring(1, i);
-			if (addedPlugins.contains(plugin))
-				try {
-					addedDocs.add(
-						new URL("help:" + url + "?lang=" + index.getLocale()));
-				} catch (MalformedURLException mue) {
-				}
+			int i = doc.indexOf('/', 1);
+			String plugin = i == -1 ? "" : doc.substring(1, i);
+			if (!addedPlugins.contains(plugin)) {
+				continue;
+			}
+
+			URL url = getIndexableURL(doc);
+			if (url != null) {
+				addedDocs.add(url);
+			}
 		}
 		return addedDocs;
 	}
@@ -203,20 +202,22 @@ class IndexingOperation {
 			return new ArrayList(0);
 		// get the list of indexed docs. This is a hashtable  (url, plugin)
 		HelpProperties indexedDocs = index.getIndexedDocs();
-		ArrayList removedDocs = new ArrayList(indexedDocs.size());
+		Set removedDocs = new HashSet(indexedDocs.size());
 		for (Iterator docs = indexedDocs.keySet().iterator();
 			docs.hasNext();
 			) {
-			String url = (String) docs.next();
+			String doc = (String) docs.next();
 			// Assume the url is /pluginID/path_to_topic.html
-			int i = url.indexOf('/', 1);
-			String plugin = i == -1 ? "" : url.substring(1, i);
-			if (removedPlugins.contains(plugin))
-				try {
-					removedDocs.add(
-						new URL("help:" + url + "?lang=" + index.getLocale()));
-				} catch (MalformedURLException mue) {
-				}
+			int i = doc.indexOf('/', 1);
+			String plugin = i == -1 ? "" : doc.substring(1, i);
+			if (!removedPlugins.contains(plugin)) {
+				continue;
+			}
+
+			URL url = getIndexableURL(doc);
+			if (url != null) {
+				removedDocs.add(url);
+			}
 		}
 		return removedDocs;
 	}
@@ -251,12 +252,34 @@ class IndexingOperation {
 		}
 		return hrefs;
 	}
-
-	private boolean isIndexable(String url) {
+	/**
+	 * Checks if document is indexable, and crates
+	 * a URL to obtain contents.
+	 * @param url specified in the navigation
+	 * @return URL to obtain document content or null
+	 */
+	private URL getIndexableURL(String url) {
 		String fileName = url.toLowerCase();
-		return fileName.endsWith(".htm")
+		if (fileName.endsWith(".htm")
 			|| fileName.endsWith(".html")
 			|| fileName.endsWith(".txt")
-			|| fileName.endsWith(".xml");
+			|| fileName.endsWith(".xml")) {
+			// indexable
+		} else if (
+			fileName.indexOf(".htm#") >= 0
+				|| fileName.indexOf(".html#") >= 0
+				|| fileName.indexOf(".xml#") >= 0) {
+			url = url.substring(0, url.lastIndexOf('#'));
+			// its a fragment, index whole document
+		} else {
+			// not indexable
+			return null;
+		}
+
+		try {
+			return new URL("help:" + url + "?lang=" + index.getLocale());
+		} catch (MalformedURLException mue) {
+			return null;
+		}
 	}
 }
