@@ -817,6 +817,19 @@ public abstract class StructuredViewer extends ContentViewer
 		}
 		return false;
 	}
+
+	/**
+	 * Returns a new hashtable using the given capacity and this viewer's element comparer.
+	 * 
+	 * @param capacity the initial capacity of the hashtable
+	 * @return a new hashtable
+	 * 
+	 * @since 3.0
+	 */
+	CustomHashtable newHashtable(int capacity) {
+	    return new CustomHashtable(capacity, getComparer());
+	}
+	
 	/**
 	 * Attempts to preserves the current selection across a run of the given
 	 * code.
@@ -1145,7 +1158,7 @@ public abstract class StructuredViewer extends ContentViewer
 		Assert.isTrue(getInput() == null,
 				"Can only enable the hash look up before input has been set");//$NON-NLS-1$
 		if (enable) {
-			elementMap = new CustomHashtable(comparer);
+			elementMap = newHashtable(CustomHashtable.DEFAULT_CAPACITY);
 		} else {
 			elementMap = null;
 		}
@@ -1182,7 +1195,7 @@ public abstract class StructuredViewer extends ContentViewer
 	 */
 	protected void unmapAllElements() {
 		if (elementMap != null) {
-			elementMap = new CustomHashtable(comparer);
+			elementMap = newHashtable(CustomHashtable.DEFAULT_CAPACITY);
 		}
 	}
 	/**

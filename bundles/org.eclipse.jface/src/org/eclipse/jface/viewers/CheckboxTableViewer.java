@@ -11,9 +11,7 @@
 package org.eclipse.jface.viewers;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.runtime.Platform;
 
@@ -266,17 +264,17 @@ public void handleSelect(SelectionEvent event) {
 protected void preservingSelection(Runnable updateCode) {
 
 	TableItem[] children = getTable().getItems();
-	Set checked = new HashSet(children.length);
-	Set grayed = new HashSet(children.length);
+	CustomHashtable checked = newHashtable(children.length*2+1);
+	CustomHashtable grayed = newHashtable(children.length*2+1);
 
 	for (int i = 0; i < children.length; i++) {
 		TableItem item = children[i];
 		Object data = item.getData();
 		if (data != null) {
 			if (item.getChecked())
-				checked.add(data);
+				checked.put(data, data);
 			if (item.getGrayed())
-				grayed.add(data);
+				grayed.put(data, data);
 		}
 	}
 
@@ -287,8 +285,8 @@ protected void preservingSelection(Runnable updateCode) {
 		TableItem item = children[i];
 		Object data = item.getData();
 		if (data != null) {
-			item.setChecked(checked.contains(data));
-			item.setGrayed(grayed.contains(data));
+			item.setChecked(checked.containsKey(data));
+			item.setGrayed(grayed.containsKey(data));
 		}
 	}
 }
@@ -350,16 +348,16 @@ public boolean setChecked(Object element, boolean state) {
  */
 public void setCheckedElements(Object[] elements) {
 	assertElementsNotNull(elements);
-	Set set = new HashSet(elements.length*2+1);
+	CustomHashtable set = newHashtable(elements.length*2+1);
 	for (int i = 0; i < elements.length; ++i) {
-		set.add(elements[i]);
+		set.put(elements[i], elements[i]);
 	}
 	TableItem[] items = getTable().getItems();
 	for (int i = 0; i < items.length; ++i) {
 		TableItem item = items[i];
 		Object element = item.getData();
 		if (element != null) {
-			boolean check = set.contains(element);
+			boolean check = set.containsKey(element);
 			// only set if different, to avoid flicker
 			if (item.getChecked() != check) {
 				item.setChecked(check);
@@ -400,16 +398,16 @@ public boolean setGrayed(Object element, boolean state) {
  */
 public void setGrayedElements(Object[] elements) {
 	assertElementsNotNull(elements);
-	Set set = new HashSet(elements.length*2+1);
+	CustomHashtable set = newHashtable(elements.length*2+1);
 	for (int i = 0; i < elements.length; ++i) {
-		set.add(elements[i]);
+		set.put(elements[i], elements[i]);
 	}
 	TableItem[] items = getTable().getItems();
 	for (int i = 0; i < items.length; ++i) {
 		TableItem item = items[i];
 		Object element = item.getData();
 		if (element != null) {
-			boolean gray = set.contains(element);
+			boolean gray = set.containsKey(element);
 			// only set if different, to avoid flicker
 			if (item.getGrayed() != gray) {
 				item.setGrayed(gray);

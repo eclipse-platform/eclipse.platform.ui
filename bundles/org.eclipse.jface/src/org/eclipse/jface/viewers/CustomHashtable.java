@@ -90,6 +90,11 @@ private class HashEnumerator implements Enumeration {
 	private static final EmptyEnumerator emptyEnumerator = new EmptyEnumerator();
 
 	/**
+	 * The default capacity used when not specified in the constructor.
+	 */
+	public static final int DEFAULT_CAPACITY = 13;
+	
+	/**
 	 * Constructs a new Hashtable using the default capacity
 	 * and load factor.
 	 */
@@ -116,7 +121,7 @@ private class HashEnumerator implements Enumeration {
 	 *   <code>equals</code> and <code>hashCode</code> methods
 	 */
 	public CustomHashtable(IElementComparer comparer) {
-		this(13, comparer);
+		this(DEFAULT_CAPACITY, comparer);
 	}
 
 	/**

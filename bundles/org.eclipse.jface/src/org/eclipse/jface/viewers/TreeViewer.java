@@ -11,10 +11,8 @@
 
 package org.eclipse.jface.viewers;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.TreeListener;
@@ -255,25 +253,32 @@ protected void setSelection(List items) {
 	getTree().setSelection(newItems);
 }
 
+/**
+ * Returns <code>true</code> if the given list and array of items
+ * refer to the same model elements.  Order is unimportant.
+ * 
+ * @param items the list of items
+ * @param current the array of items
+ * @return <code>true</code> if the refer to the same elements, <code>false</code> otherwise
+ */
 private boolean haveSameData(List items, Item[] current){
 	//If they are not the same size then they are not equivalent
-	if(items.size() != current.length)
+    int n = items.size();
+	if (n != current.length)
 		return false;
 	
-	Set values = new HashSet();
-	Iterator itemsIterator = items.iterator();
-	
-	//Set up a list of items
-	while(itemsIterator.hasNext()){
-		values.add(((Item) itemsIterator.next()).getData());
+	CustomHashtable itemSet = newHashtable(n*2+1);
+	for (Iterator i = items.iterator(); i.hasNext();) {
+        Item item = (Item) i.next();
+        Object element = item.getData();
+		itemSet.put(element, element);
 	}
 	
 	//Go through the items of the current collection
 	//If there is a mismatch return false
 	for (int i = 0; i < current.length; i++) {
-		if(values.contains(current[i].getData()))
-			continue;
-		return false;
+		if (!itemSet.containsKey(current[i].getData()))
+			return false;
 	}
 	
 	return true;

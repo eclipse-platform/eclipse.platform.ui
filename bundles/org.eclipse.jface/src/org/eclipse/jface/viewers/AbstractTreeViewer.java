@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,7 @@
 package org.eclipse.jface.viewers;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.Enumeration;
 import java.util.List;
 
 import org.eclipse.core.runtime.Platform;
@@ -1056,7 +1055,9 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 */
 	private void internalRemove(Object[] elements) {
 		Object input = getInput();
-		HashSet parentItems = new HashSet(5);
+		// Note: do not use the comparer here since the hashtable
+		// contains SWT Items, not model elements.
+		CustomHashtable parentItems = new CustomHashtable(5);
 		for (int i = 0; i < elements.length; ++i) {
 			if (equals(elements[i], input)) {
 				setInput(null);
@@ -1066,15 +1067,15 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 			if (childItem instanceof Item) {
 				Item parentItem = getParentItem((Item) childItem);
 				if (parentItem != null) {
-					parentItems.add(parentItem);
+					parentItems.put(parentItem, parentItem);
 				}
 				disassociate((Item) childItem);
 				childItem.dispose();
 			}
 		}
 		Control tree = getControl();
-		for (Iterator i = parentItems.iterator(); i.hasNext();) {
-			Item parentItem = (Item) i.next();
+		for (Enumeration e = parentItems.keys(); e.hasMoreElements();) {
+			Item parentItem = (Item) e.nextElement();
 			if (!getExpanded(parentItem) && getItemCount(parentItem) == 0) {
 				// append a dummy if necessary
 				if (isExpandable(parentItem.getData())) {
@@ -1096,7 +1097,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 * @param widget
 	 *           the widget
 	 */
-	private void internalSetExpanded(HashSet expandedElements, Widget widget) {
+	private void internalSetExpanded(CustomHashtable expandedElements, Widget widget) {
 		Item[] items = getChildren(widget);
 		for (int i = 0; i < items.length; i++) {
 			Item item = items[i];
@@ -1104,7 +1105,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 			if (data != null) {
 				// remove the element to avoid an infinite loop
 				// if the same element appears on a child item
-				boolean expanded = expandedElements.remove(data);
+				boolean expanded = expandedElements.remove(data) != null;
 				if (expanded != getExpanded(item)) {
 					if (expanded) {
 						createChildren(item);
@@ -1116,11 +1117,14 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		}
 	}
 	/**
-	 * Return whether the tree node representing the given element can be
+	 * Returns whether the tree node representing the given element can be
 	 * expanded.
 	 * <p>
 	 * The default implementation of this framework method calls <code>hasChildren</code>
-	 * on this viewer's content provider. It may be overridden if necessary.
+	 * on this viewer's content provider if there are no filters configured on this viewer.
+	 * If there are filters configured, then it calls <code>getChildren</code> on this
+	 * viewer's content provider and checks to see if any children remain after
+	 * passing them through the filters. 
 	 * </p>
 	 * 
 	 * @param element
@@ -1130,27 +1134,23 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 */
 	public boolean isExpandable(Object element) {
 		ITreeContentProvider cp = (ITreeContentProvider) getContentProvider();
-		if(cp == null)
+		if (cp == null)
 			return false;
-		
-		if(cp.hasChildren(element)){
+		// if there are filters configured, then <code>hasChildren</code>
+		// does not suffice; need to get the children and pass them through
+		// the filters
+	    if (hasFilters()) {
 			ViewerFilter[] filters = getFilters();
-			if(filters.length > 0){//If there are filters be sure there is anything
-				Object[] result = getRawChildren(element);
-				if (filters.length >0) {
-					for (int i = 0; i < filters.length; i++) {
-						ViewerFilter filter = filters[i];
-						result = filter.filter(this, element, result);
-						if(result.length == 0)
-							return false;
-					}
-					return true;//Still elements left so return true
-				}
+			Object[] result = getRawChildren(element);
+			for (int i = 0; i < filters.length; i++) {
+				ViewerFilter filter = filters[i];
+				result = filter.filter(this, element, result);
+				if (result.length == 0)
+					return false;
 			}
-			return true;//No filters then hasChildren is enough
-		}	
-		
-		return false;
+			return true; //Still elements left so return true
+		}
+		return cp.hasChildren(element);
 	}
 	/* (non-Javadoc) Method declared on Viewer. */
 	protected void labelProviderChanged() {
@@ -1321,11 +1321,12 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 */
 	public void setExpandedElements(Object[] elements) {
 		assertElementsNotNull(elements);
-		HashSet expandedElements = new HashSet(elements.length * 2 + 1);
+		CustomHashtable expandedElements = newHashtable(elements.length * 2 + 1);
 		for (int i = 0; i < elements.length; ++i) {
+		    Object element = elements[i];
 			// Ensure item exists for element
-			internalExpand(elements[i], false);
-			expandedElements.add(elements[i]);
+			internalExpand(element, false);
+			expandedElements.put(element, element);
 		}
 		internalSetExpanded(expandedElements, getControl());
 	}
@@ -1473,12 +1474,12 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		Item[] items = getChildren(widget);
 
 		// save the expanded elements
-		HashSet expanded = new HashSet(); // assume num expanded is small
+		CustomHashtable expanded = newHashtable(CustomHashtable.DEFAULT_CAPACITY); // assume num expanded is small
 		for (int i = 0; i < items.length; ++i) {
 			if (getExpanded(items[i])) {
 				Object element = items[i].getData();
 				if (element != null) {
-					expanded.add(element);
+					expanded.put(element, element);
 				}
 			}
 		}
@@ -1538,7 +1539,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 				// Need to call setExpanded for both expanded and unexpanded
 				// cases
 				// since the expanded state can change either way.
-				setExpanded(item, expanded.contains(newElement));
+				setExpanded(item, expanded.containsKey(newElement));
 			} else {
 				// old and new elements are equal
 				updatePlus(item, newElement);
@@ -1557,7 +1558,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 			// Need to restore expanded state in a separate pass
 			// because createTreeItem does not return the new item.
 			// Avoid doing this unless needed.
-			if (!expanded.isEmpty()) {
+			if (expanded.size() > 0) {
 				// get the items again, to include the new items
 				items = getChildren(widget);
 				for (int i = min; i < elementChildren.length; ++i) {
@@ -1567,7 +1568,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 					// setExpanded(false) fails if item has no children.
 					// Only need to call setExpanded if element was expanded
 					// since new items are initially unexpanded.
-					if (expanded.contains(elementChildren[i])) {
+					if (expanded.containsKey(elementChildren[i])) {
 						setExpanded(items[i], true);
 					}
 				}

@@ -11,9 +11,7 @@
 package org.eclipse.jface.viewers;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.runtime.Platform;
 
@@ -99,7 +97,7 @@ public void addCheckStateListener(ICheckStateListener listener) {
  * @param grayed a set of elements (element type: <code>Object</code>) 
  * @param widget the widget
  */
-private void applyState(Set checked, Set grayed, Widget widget) {
+private void applyState(CustomHashtable checked, CustomHashtable grayed, Widget widget) {
 	Item[] items = getChildren(widget);
 	for (int i = 0; i < items.length; i++) {
 		Item item = items[i];
@@ -107,8 +105,8 @@ private void applyState(Set checked, Set grayed, Widget widget) {
 			Object data = item.getData();
 			if (data != null) {
 				TreeItem ti = (TreeItem) item;
-				ti.setChecked(checked.contains(data));
-				ti.setGrayed(grayed.contains(data));
+				ti.setChecked(checked.containsKey(data));
+				ti.setGrayed(grayed.containsKey(data));
 			}
 		}
 		applyState(checked, grayed, item);
@@ -142,7 +140,7 @@ protected void fireCheckStateChanged(final CheckStateChangedEvent event) {
  * @param grayed a writeable set of elements (element type: <code>Object</code>) 
  * @param widget the widget
  */
-private void gatherState(Set checked, Set grayed, Widget widget) {
+private void gatherState(CustomHashtable checked, CustomHashtable grayed, Widget widget) {
 	Item[] items = getChildren(widget);
 	for (int i = 0; i < items.length; i++) {
 		Item item = items[i];
@@ -151,9 +149,9 @@ private void gatherState(Set checked, Set grayed, Widget widget) {
 			if (data != null) {
 				TreeItem ti = (TreeItem) item;
 				if (ti.getChecked())
-					checked.add(data);
+					checked.put(data, data);
 				if (ti.getGrayed())
-					grayed.add(data);
+					grayed.put(data, data);
 			}
 		}
 		gatherState(checked, grayed, item);
@@ -298,13 +296,13 @@ private void internalCollectGrayed(List result, Widget widget) {
  * @param checkedElements the set (element type: <code>Object</code>) of elements which are checked
  * @param widget the widget
  */
-private void internalSetChecked(Set checkedElements, Widget widget) {
+private void internalSetChecked(CustomHashtable checkedElements, Widget widget) {
 	Item[] items = getChildren(widget);
 	for (int i = 0; i < items.length; i++) {
 		TreeItem item = (TreeItem) items[i];
 		Object data = item.getData();
 		if (data != null) {
-			boolean checked = checkedElements.contains(data);
+			boolean checked = checkedElements.containsKey(data);
 			if (checked != item.getChecked()) {
 				item.setChecked(checked);
 			}
@@ -318,13 +316,13 @@ private void internalSetChecked(Set checkedElements, Widget widget) {
  * @param grayedElements the set (element type: <code>Object</code>) of elements which are grayed
  * @param widget the widget
  */
-private void internalSetGrayed(Set grayedElements, Widget widget) {
+private void internalSetGrayed(CustomHashtable grayedElements, Widget widget) {
 	Item[] items = getChildren(widget);
 	for (int i = 0; i < items.length; i++) {
 		TreeItem item = (TreeItem) items[i];
 		Object data = item.getData();
 		if (data != null) {
-			boolean grayed = grayedElements.contains(data);
+			boolean grayed = grayedElements.containsKey(data);
 			if (grayed != item.getGrayed()) {
 				item.setGrayed(grayed);
 			}
@@ -338,8 +336,8 @@ private void internalSetGrayed(Set grayedElements, Widget widget) {
 protected void preservingSelection(Runnable updateCode) {
 
 	int n = getItemCount(getControl());
-	Set checkedNodes = new HashSet(n);
-	Set grayedNodes = new HashSet(n);
+	CustomHashtable checkedNodes = newHashtable(n*2+1);
+	CustomHashtable grayedNodes = newHashtable(n*2+1);
 
 	gatherState(checkedNodes, grayedNodes, getControl());
 
@@ -400,11 +398,12 @@ private void setCheckedChildren(Item item, boolean state) {
  */
 public void setCheckedElements(Object[] elements) {
 	assertElementsNotNull(elements);
-	Set checkedElements = new HashSet(elements.length*2+1);
+	CustomHashtable checkedElements = newHashtable(elements.length*2+1);
 	for (int i = 0; i < elements.length; ++i) {
+	    Object element = elements[i];
 		// Ensure item exists for element
-		internalExpand(elements[i], false);
-		checkedElements.add(elements[i]);
+		internalExpand(element, false);
+		checkedElements.put(element, element);
 	}
 	Control tree = getControl();
 	tree.setRedraw(false);
@@ -464,11 +463,12 @@ public boolean setGrayChecked(Object element, boolean state) {
  */
 public void setGrayedElements(Object[] elements) {
 	assertElementsNotNull(elements);
-	Set grayedElements = new HashSet(elements.length*2+1);
+	CustomHashtable grayedElements = newHashtable(elements.length*2+1);
 	for (int i = 0; i < elements.length; ++i) {
+	    Object element = elements[i];
 		// Ensure item exists for element
-		internalExpand(elements[i], false);
-		grayedElements.add(elements[i]);
+		internalExpand(element, false);
+		grayedElements.put(element, element);
 	}
 	Control tree = getControl();
 	tree.setRedraw(false);
