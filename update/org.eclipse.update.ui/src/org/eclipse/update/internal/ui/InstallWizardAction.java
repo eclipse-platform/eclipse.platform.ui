@@ -24,13 +24,16 @@ import org.eclipse.update.internal.ui.UpdateUI;
  * Insert the type's description here.
  * @see IWorkbenchWindowActionDelegate
  */
-public class InstallWizardAction implements IWorkbenchWindowActionDelegate {
+public class InstallWizardAction extends Action implements IWorkbenchWindowActionDelegate {
 
 	IWorkbenchWindow window;
 	/**
 	 * The constructor.
 	 */
 	public InstallWizardAction() {
+	}
+	public void run() {
+		run(null);
 	}
 
 	/**
