@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.actions;
 
+import java.util.*;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
@@ -32,12 +34,12 @@ import org.eclipse.ui.actions.*;
  */
 public class RefactorActionGroup extends ActionGroup {
 
-	private DeleteResourceAction deleteAction;
 	private MoveResourceAction moveAction;
 	private RenameResourceAction renameAction;
 	private TextActionHandler textActionHandler;
 	private ISynchronizeView view;
-
+	private DeleteResourceAction deleteAction;
+	
 	public RefactorActionGroup(ISynchronizeView view) {
 		this.view = view;
 		makeActions();
@@ -74,6 +76,7 @@ public class RefactorActionGroup extends ActionGroup {
 		textActionHandler = new TextActionHandler(actionBars); // hooks handlers
 		textActionHandler.setDeleteAction(deleteAction);
 		renameAction.setTextActionHandler(textActionHandler);		
+		deleteAction.selectionChanged(getSelection());
 	}
 
 	protected void makeActions() {
@@ -87,14 +90,12 @@ public class RefactorActionGroup extends ActionGroup {
 		moveAction = new MoveResourceAction(shell);
 		renameAction = new RenameResourceAction(shell);
 		
-		deleteAction = new DeleteResourceAction(shell);
-		deleteAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
-		deleteAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));		
-		deleteAction.setHoverImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_HOVER));
-		/* NOTE: This is defined in "plugin.xml" in "org.eclipse.ui".  It is
-		 * only publicly declared in code in IWorkbenchActionDefinitionIds in
-		 * "org.eclipse.ui.workbench.texteditor".
-		 */
+		deleteAction = new DeleteResourceAction(shell) {
+			protected List getSelectedResources() {
+				return Arrays.asList(Utils.getResources(getSelection().toArray()));
+			}
+		};
+		deleteAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));			
 		deleteAction.setActionDefinitionId("org.eclipse.ui.edit.delete");  //$NON-NLS-1$
 		keyBindingService.registerAction(deleteAction);
 	}
