@@ -36,7 +36,7 @@ public class XMLAnnotationHover implements IAnnotationHover {
 	/**
 	 * Returns the distance to the ruler line. 
 	 */
-	protected int compareRulerLine(Position position, IDocument document, int line) {
+	private int compareRulerLine(Position position, IDocument document, int line) {
 		
 		if (position.getOffset() > -1 && position.getLength() > -1) {
 			try {
@@ -53,17 +53,9 @@ public class XMLAnnotationHover implements IAnnotationHover {
 	}
 	
 	/**
-	 * Selects a set of markers from the two lists. By default, it just returns
-	 * the set of exact matches.
-	 */
-	protected List select(List exactMatch, List including) {
-		return exactMatch;
-	}
-	
-	/**
 	 * Returns one marker which includes the ruler's line of activity.
 	 */
-	protected List getXMLAnnotationsForLine(ISourceViewer viewer, int line) {
+	private List getXMLAnnotationsForLine(ISourceViewer viewer, int line) {
 		
 		IDocument document= viewer.getDocument();
 		IAnnotationModel model= viewer.getAnnotationModel();
@@ -72,10 +64,9 @@ public class XMLAnnotationHover implements IAnnotationHover {
 			return null;
 			
 		List exact= new ArrayList();
-		List including= new ArrayList();
 		
 		Iterator e= model.getAnnotationIterator();
-		HashMap messagesAtPosition= new HashMap();
+		Map messagesAtPosition= new HashMap();
 		while (e.hasNext()) {
 			Object o= e.next();
 			if (o instanceof IXMLAnnotation) {
@@ -92,15 +83,12 @@ public class XMLAnnotationHover implements IAnnotationHover {
 						case 1:
 							exact.add(a);
 							break;
-						case 2:
-							including.add(a);
-							break;
 					}
 				}
 			}
 		}
 		
-		return select(exact, including);
+		return exact;
 	}
 
 	private boolean isDuplicateXMLAnnotation(Map messagesAtPosition, Position position, String message) {
@@ -138,8 +126,9 @@ public class XMLAnnotationHover implements IAnnotationHover {
 				// optimization
 				IXMLAnnotation xmlAnnotation= (IXMLAnnotation)xmlAnnotations.get(0);
 				String message= xmlAnnotation.getMessage();
-				if (message != null && message.trim().length() > 0)
+				if (message != null && message.trim().length() > 0) {
 					return formatSingleMessage(message);
+				}
 					
 			} else {
 					
@@ -149,15 +138,18 @@ public class XMLAnnotationHover implements IAnnotationHover {
 				while (e.hasNext()) {
 					IXMLAnnotation xmlAnnotation= (IXMLAnnotation)e.next();
 					String message= xmlAnnotation.getMessage();
-					if (message != null && message.trim().length() > 0)
+					if (message != null && message.trim().length() > 0) {
 						messages.add(message.trim());
+					}
 				}
 				
-				if (messages.size() == 1)
+				if (messages.size() == 1) {
 					return formatSingleMessage((String) messages.get(0));
+				}
 					
-				if (messages.size() > 1)
+				if (messages.size() > 1) {
 					return formatMultipleMessages(messages);
+				}
 			}
 		}
 		
