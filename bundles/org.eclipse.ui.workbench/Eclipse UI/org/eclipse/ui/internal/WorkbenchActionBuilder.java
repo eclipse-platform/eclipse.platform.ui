@@ -191,13 +191,16 @@ public final class WorkbenchActionBuilder {
 
 		// Listen to workbench perspective lifecycle methods to enable
 		// and disable the perspective menu items as needed.
-		// @issue action builder using internal listener hooks
-		((WorkbenchWindow)getWindow()).getPerspectiveService().addPerspectiveListener(new IInternalPerspectiveListener() {
-			public void perspectiveClosed(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
-				enableActions(page.getPerspective() != null);
+		getWindow().addPageListener(new IPageListener() {
+			public void pageActivated(IWorkbenchPage page) {
 			}
-			public void perspectiveOpened(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+			public void pageClosed(IWorkbenchPage page) {
+				enableActions(false);
 			}
+			public void pageOpened(IWorkbenchPage page) {
+			}
+		});
+		getWindow().addPerspectiveListener(new IPerspectiveListener() {
 			public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 				enableActions(true);
 			}

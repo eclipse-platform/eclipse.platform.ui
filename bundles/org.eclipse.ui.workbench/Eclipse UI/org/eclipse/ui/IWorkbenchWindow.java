@@ -98,6 +98,8 @@ public IWorkbench getWorkbench();
  * @param menuId the menu id
  * @return <code>true</code> if the specified menu is an application menu,
  *  and <code>false</code> if is not
+ * @issue this method should be deprecated and removed, only the application
+ * 	would know something like this.
  */
 public boolean isApplicationMenu(String menuId);
 /**

@@ -1356,12 +1356,10 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	
 	/**
 	 * Return whether or not given id matches the id of the coolitems that
-	 * the workbench creates.
+	 * the application creates.
 	 */
-	/* package */
-	boolean isWorkbenchCoolItemId(String id) {
-		// delegate this question to the workbench adviser
-		return getAdviser().isWorkbenchCoolItemId(getWindowConfigurer(), id);
+	/* package */ boolean isWorkbenchCoolItemId(String id) {
+		return windowConfigurer.getCoolItemIds().contains(id);
 	}
 	/**
 	 * Locks/unlocks the CoolBar for the workbench.

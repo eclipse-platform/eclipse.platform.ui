@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,7 +75,12 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 * @see #setData
 	 */
 	private Map extraData = new HashMap(1);
-	
+
+	/**
+	 * Holds onto the cool item ids added by the application.
+	 */
+	private ArrayList coolItemIds = new ArrayList(4);
+		
 	/**
 	 * Creates a new workbench configurer.
 	 * <p>
@@ -253,6 +259,7 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 		if (id == null || id.length() < 1) {
 			throw new IllegalArgumentException();
 		}
+		coolItemIds.add(id);
 		CoolBarManager cBarMgr = window.getCoolBarManager();
 		CoolBarContributionItem cBarItem = new CoolBarContributionItem(cBarMgr, id);
 		cBarMgr.add(cBarItem);
@@ -267,6 +274,7 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 		if (id == null || id.length() < 1) {
 			throw new IllegalArgumentException();
 		}
+		coolItemIds.remove(id);
 		CoolBarManager cBarMgr = window.getCoolBarManager();
 		cBarMgr.remove(id);
 	}
@@ -324,6 +332,13 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 		}
 		CoolBarManager cBarMgr = window.getCoolBarManager();
 		cBarMgr.addToMenu(menuItem);
+	}
+	
+	/**
+	 * Returns the list of cool item ids added by the application.
+	 */
+	/* package */ ArrayList getCoolItemIds() {
+		return coolItemIds;
 	}
 }
 
