@@ -317,21 +317,22 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		 * @since 3.1
 		 */
 		public String toString() {
-			String wrapLine= "\n    "; //$NON-NLS-1$
+			String delimiter= ", "; //$NON-NLS-1$
 		    StringBuffer text= new StringBuffer(super.toString());
-			text.append("\n  TextCommand:"); //$NON-NLS-1$
-			text.append(wrapLine);
+			text.append("\n    TextCommand: "); //$NON-NLS-1$
 			text.append("start: "); //$NON-NLS-1$
 			text.append(fStart);
-			text.append(wrapLine);
+			text.append(delimiter);
 		    text.append("end: "); //$NON-NLS-1$
 		    text.append(fEnd);
-			text.append(wrapLine);
-		    text.append("text: "); //$NON-NLS-1$
+			text.append(delimiter);
+		    text.append("text: '"); //$NON-NLS-1$
 			text.append(fText);
-			text.append(wrapLine);
-		    text.append("peservedText: "); //$NON-NLS-1$
+		    text.append('\''); //$NON-NLS-1$
+			text.append(delimiter);
+		    text.append("preservedText: '"); //$NON-NLS-1$
 			text.append(fPreservedText);
+		    text.append('\''); //$NON-NLS-1$
 		    return text.toString();
 		}
 	}
