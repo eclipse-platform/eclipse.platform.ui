@@ -1017,4 +1017,22 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		actual = newProperties.getProperty(key);
 		assertEquals("4.2", value, actual);
 	}
+
+	public void test60590() {
+		IEclipsePreferences root = Platform.getPreferencesService().getRootNode();
+		String one = getUniqueString();
+		String two = getUniqueString();
+		String key = "key";
+		String value = "value";
+		Preferences node = root.node(TestScope.SCOPE).node(one).node(two);
+		node.put(key, value);
+		Preferences current = node;
+		int count = 0;
+		while (current != null && current instanceof TestScope) {
+			assertTrue("1.0." + current.absolutePath(), ((TestScope) current).isDirty());
+			count++;
+			current = current.parent();
+		}
+		assertTrue("2.0." + count, count == 3);
+	}
 }
