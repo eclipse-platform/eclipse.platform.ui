@@ -11,6 +11,7 @@ import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.util.StringUtils;
 import org.eclipse.ant.core.AntSecurityException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -29,6 +30,12 @@ import org.eclipse.ui.externaltools.internal.model.ToolMessages;
  */
 public class AntProcessBuildLogger extends NullBuildLogger {
 	
+	/**
+	   * Size of left-hand column for right-justified task name.
+	   * @see #logMessage(String, BuildEvent, -1)
+	  */
+	public static final int LEFT_COLUMN_SIZE = 15;
+
 	/**
 	 * Associated process - discovered on creation via process id
 	 */
@@ -80,7 +87,21 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 				monitor = (AntStreamMonitor)proxy.getVerboseStreamMonitor();
 				break;
 		}
-		message += "\n";
+		StringBuffer fullMessage= new StringBuffer();
+		fullMessage.append(StringUtils.LINE_SEP);
+		if (event.getTask() != null && !fEmacsMode) {
+			String name = event.getTask().getTaskName();
+			int size = LEFT_COLUMN_SIZE - (name.length() + 3);
+			for (int i = 0; i < size; i++) {
+				fullMessage.append(" ");
+			}
+			fullMessage.append('[');
+			fullMessage.append(name);
+			fullMessage.append("] ");
+		}
+		fullMessage.append(message);
+		
+		message= fullMessage.toString();
 		IConsoleHyperlink link = getHyperLink(message, event);
 		if (link != null) {
 			fProcess.getConsole().addLink(link);
@@ -115,10 +136,10 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 					String fileName = path.substring(0, index);
 					String lineNumber = path.substring(index + 1);
 					IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(fileName));
-					if (file.exists()) {
+					if (file != null && file.exists()) {
 						try {
 							int line = Integer.valueOf(lineNumber).intValue();
-							return new FileLink(fLength, message.length(), file, "org.eclipse.ui.DefaultTextEditor", -1, -1, line);
+							return new FileLink(fLength, message.length(), file, null, -1, -1, line);
 						} catch (NumberFormatException e) {
 						}
 					}
@@ -182,4 +203,13 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		fMessageOutputLevel= level;
 	}
 
+	public void targetStarted(BuildEvent event) {
+		if (Project.MSG_INFO > getMessageOutputLevel()) {
+			return;
+		}
+		StringBuffer msg= new StringBuffer(StringUtils.LINE_SEP);
+		msg.append(event.getTarget().getName());
+		msg.append(':');
+		logMessage(msg.toString(), event, Project.MSG_INFO);
+	}
 }
