@@ -65,13 +65,6 @@
             class="org.eclipse.update.internal.ui.views.DetailsView"
             id="org.eclipse.update.ui.DetailsView">
       </view>
-      <view
-            name="%views.webBrowser.label"
-            icon="icons/full/cview16/browser.gif"
-            category="org.eclipse.update.ui"
-            class="org.eclipse.update.internal.ui.views.WebBrowserView"
-            id="org.eclipse.update.ui.WebBrowser">
-      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">

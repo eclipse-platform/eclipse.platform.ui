@@ -98,7 +98,7 @@ public class DetailsView extends MultiPageView {
 			IWorkbenchPage page = UpdateUIPlugin.getActivePage();
 			try {
 				IViewPart part = page.showView(UpdatePerspective.ID_BROWSER);
-				((WebBrowserView) part).openTo(url);
+				((IEmbeddedWebBrowser) part).openTo(url);
 			} catch (PartInitException e) {
 				UpdateUIPlugin.logException(e);
 			}
