@@ -55,7 +55,6 @@ public class DefineProjectionAction extends TextEditorAction {
 			int end= lineStart +  document.getLineLength(line2);
 			
 			if (line2 > line1) {
-//				System.out.println("lines " + line1 + " and " + line2 + "  are defined as collapsable.");
 				editor.defineProjection(start, end - start);
 			}
 						
