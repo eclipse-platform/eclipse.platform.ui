@@ -85,6 +85,9 @@ public class ResourceSyncInfo {
 		if(isDirectory) {
 			return null;
 		} else {
+			String permissions = this.permissions;
+			if (permissions == null)
+				permissions = DEFAULT_PERMISSIONS;
 			return SEPERATOR + name + SEPERATOR + permissions;
 		}
 	}
@@ -96,11 +99,6 @@ public class ResourceSyncInfo {
 	public void setEntryLine(String entryLine) throws CVSException {
 
 		Assert.isTrue(entryLine!=null);
-
-//		if (entryLine == null) {
-//			name = revision = timeStamp = tag = keywordMode = null;
-//			return;
-//		}
 
 		//Assert.isLegal(entryLine.startsWith(seperator) &&
 		//			   tokenizer.countTokens() == 5,
@@ -143,10 +141,7 @@ public class ResourceSyncInfo {
 	 */
 	public void setPermissionLine(String permissionLine) throws CVSException {
 
-		if (permissionLine == null) {
-			permissions = DEFAULT_PERMISSIONS;
-			return;
-		}
+		Assert.isTrue(permissionLine != null);
 
 		EmptyTokenizer tokenizer;
 		tokenizer = new EmptyTokenizer(permissionLine,SEPERATOR);
