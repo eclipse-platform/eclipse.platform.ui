@@ -20,17 +20,13 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.preferences.WorkbenchPreferenceExtensionNode;
 import org.eclipse.ui.internal.registry.CategorizedPageRegistryReader;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * A proxy for a preference page to avoid creation of preference page just to
  * show a node in the preference dialog tree.
  */
 public class WorkbenchPreferenceNode extends WorkbenchPreferenceExtensionNode {
-
-	/**
-	 * The attribute for class name.
-	 */
-	public final static String ATT_CONTRIBUTOR_CLASS = "class"; //$NON-NLS-1$
 
 	/**
 	 * Create a new instance of the receiver.
@@ -48,7 +44,7 @@ public class WorkbenchPreferenceNode extends WorkbenchPreferenceExtensionNode {
 		IWorkbenchPreferencePage page;
 		try {
 			page = (IWorkbenchPreferencePage) WorkbenchPlugin.createExtension(
-					getConfigurationElement(), ATT_CONTRIBUTOR_CLASS);
+					getConfigurationElement(), IWorkbenchRegistryConstants.ATT_CLASS);
 		} catch (CoreException e) {
 			// Just inform the user about the error. The details are
 			// written to the log by now.

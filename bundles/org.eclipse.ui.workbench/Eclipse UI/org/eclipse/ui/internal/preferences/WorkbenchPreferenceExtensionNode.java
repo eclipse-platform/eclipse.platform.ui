@@ -23,6 +23,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.internal.keywords.KeywordRegistry;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -32,12 +33,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * @since 3.1
  */
 public abstract class WorkbenchPreferenceExtensionNode extends PreferenceNode implements IPluginContribution {
-	
-	private static final String ATT_ID = "id"; //$NON-NLS-1$
-	
-	private static final String ATT_NAME = "name"; //$NON-NLS-1$
-	
-	private static final String ATT_ICON = "icon"; //$NON-NLS-1$
 	
 	private static final String TAG_KEYWORD_REFERENCE = "keywordReference"; //$NON-NLS-1$
 
@@ -75,7 +70,7 @@ public abstract class WorkbenchPreferenceExtensionNode extends PreferenceNode im
 			HashSet list = new HashSet(references.length);
 			for (int i = 0; i < references.length; i++) {
 				IConfigurationElement page = references[i];
-				String id = page.getAttribute(ATT_ID);
+				String id = page.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 				if (id != null)
 					list.add(id);
 			}
@@ -152,7 +147,7 @@ public abstract class WorkbenchPreferenceExtensionNode extends PreferenceNode im
 	 * @see org.eclipse.jface.preference.IPreferenceNode#getLabelText()
 	 */
 	public String getLabelText() {
-		return getConfigurationElement().getAttribute(ATT_NAME);
+		return getConfigurationElement().getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
 	}
 
     /**
@@ -164,7 +159,7 @@ public abstract class WorkbenchPreferenceExtensionNode extends PreferenceNode im
     	if (imageDescriptor != null) 
     		return imageDescriptor;
     	
-    	String imageName = getConfigurationElement().getAttribute(ATT_ICON);
+    	String imageName = getConfigurationElement().getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
 		if (imageName != null) {
 			String contributingPluginId = getConfigurationElement().getNamespace();
 			imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(contributingPluginId, imageName);
