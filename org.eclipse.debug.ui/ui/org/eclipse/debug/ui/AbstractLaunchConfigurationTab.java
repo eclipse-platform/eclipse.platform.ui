@@ -243,10 +243,10 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	 * configuration. If the value being set is the default, the attribute's
 	 * value is set to <code>null</code>.
 	 * 
-	 * @param attribute
-	 * @param configuration
-	 * @param value
-	 * @param defaultValue
+	 * @param attribute attribute identifier
+	 * @param configuration the configuration on which to set the attribute
+	 * @param value the value of the attribute
+	 * @param defaultValue the default value of the attribute
 	 * @since 2.1
 	 */
 	protected void setAttribute(String attribute, ILaunchConfigurationWorkingCopy configuration, boolean value, boolean defaultValue) {

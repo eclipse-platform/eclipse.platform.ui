@@ -36,6 +36,7 @@ import org.eclipse.ui.IEditorPart;
  *      class="com.example.ExampleLaunchShortcutClass"
  * 		label="Example Label"
  * 		icon="\icons\exampleshortcut.gif"
+ * 		helpContextId="com.example.shortcut_context"
  * 		modes="run, debug"&gt;
  * 		&lt;perspective id="com.example.perspectiveId1"/&gt;
  *      &lt;perspective id="com.example.perspectiveId2"/&gt;
@@ -50,6 +51,8 @@ import org.eclipse.ui.IEditorPart;
  * <li><code>label</code> specifies a label used to render this shortcut.</li>
  * <li><code>icon</code> specifies a plug-in relative path to an icon used to
  * 	render this shortcut.</li>
+ * <li><code>helpContextId</code> optional attribute specifying the help context
+ * identifier to associate with the launch shortcut action in a menu.</li>
  * <li><code>modes</code> specifies a comma separated list of modes this shortcut
  *  supports.</li>
  * <li><code>perspective</code> one or more perspective entries enumerate the

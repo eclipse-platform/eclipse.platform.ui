@@ -59,7 +59,10 @@ import org.eclipse.ui.part.PageBookView;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
- * Common function for debug related views:<ul>
+ * Common function for views related to debugging. Clients implementing
+ * views for a debugger should subclass this class. Common function 
+ * includes:
+ * <ul>
  * <li>Debug view adpater implementation - <code>IDebugView</code></li>
  * <li>Action registry - actions can be stored in this view
  * 		with a key. Actions that implement <code>IUpdate</code>

@@ -64,9 +64,9 @@ import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
- * Common launch configuration tab to specify the location a launch configuration
- * is stored, whether it should appear in the favorites list, and perspective
- * switching for an associated launch.
+ * Launch configuration tab used to specify the location a launch configuration
+ * is stored in, whether it should appear in the favorites list, and perspective
+ * switching behavior for an associated launch.
  * <p>
  * Clients may instantiate this class. This class is not intended to be subclassed.
  * </p>
