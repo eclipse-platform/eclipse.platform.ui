@@ -76,7 +76,9 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 			if (config != null && buildKindCompatible(kind, config) && configEnabled(config)) {
 				launchBuild(kind, config, monitor);
 			}
-			//forgetLastBuiltState();
+			if (shouldForgetBuildState(args)) {
+				forgetLastBuiltState();
+			}
 			return getProjectsWithinScope();
 		}
 		//need to build all external tools from one builder (see bug 39713)
@@ -92,6 +94,34 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 			}
 		}
 		return getProjectsWithinScope();
+	}
+	
+	private boolean shouldForgetBuildState(Map args) throws CoreException {
+		//if I am not the last external tool builder and there are other full build external tool builders after me I need
+		//to forget the last build state so that these builders will be called.
+
+		ICommand[] commands = getProject().getDescription().getBuildSpec();
+		int currentBuilderIndex= -1;
+		for (int i = 0; i < commands.length; i++) {
+			ICommand command= commands[i];
+			if (ID.equals(command.getBuilderName())){
+				if (command.getArguments().equals(args)) {
+					if (i + 1 == commands.length) {
+						//last builder
+						return false;
+					}
+					currentBuilderIndex= i;
+				} else if (currentBuilderIndex > -1 && i > currentBuilderIndex) {
+					ILaunchConfiguration config = BuilderUtils.configFromBuildCommandArgs(getProject(), command.getArguments(), new String[1]);
+					if (config != null && buildKindCompatible(FULL_BUILD, config) && configEnabled(config)) {
+						//another full build external tool builder needs to be triggered
+						return true;
+					}
+				}
+			}
+		}
+		
+		return false;
 	}
 
 	/**
