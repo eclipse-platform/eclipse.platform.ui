@@ -646,6 +646,9 @@ public class EclipseSynchronizer {
 	 * @param monitor the progress monitor, may be null
 	 */
 	private IStatus commitCache(IProgressMonitor monitor) {
+		if (changedFolders.isEmpty() && changedResources.isEmpty()) {
+			return SyncInfoCache.STATUS_OK;
+		}
 		List errors = new ArrayList();
 		try {
 			/*** prepare operation ***/
