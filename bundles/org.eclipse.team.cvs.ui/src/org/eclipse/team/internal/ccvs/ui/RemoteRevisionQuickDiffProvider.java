@@ -83,7 +83,7 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvi
 	 */
 	private ISubscriberChangeListener teamChangeListener = new ISubscriberChangeListener() {
 		public void subscriberResourceChanged(ISubscriberChangeEvent[] deltas) {
-			if(initialized()) {
+			if(fReferenceInitialized) {
 				for (int i = 0; i < deltas.length; i++) {
 					ISubscriberChangeEvent delta = deltas[i];
 					IResource resource = delta.getResource();
@@ -126,7 +126,8 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvi
 	 */
 	public IDocument getReference(IProgressMonitor monitor) {
 		try {
-			if (! fReferenceInitialized) {
+			if(! fReferenceInitialized) return null;
+			if (fReference == null) {
 				readDocument(monitor);
 			}
 			return fReference;
@@ -140,17 +141,22 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvi
 	 * @see org.eclipse.ui.texteditor.quickdiff.IQuickDiffProviderImplementation#setActiveEditor(org.eclipse.ui.texteditor.ITextEditor)
 	 */
 	public void setActiveEditor(ITextEditor targetEditor) {
-		if (targetEditor != fEditor) {
-			dispose();
-			fEditor= targetEditor;
-		}
+		if(! (targetEditor.getEditorInput() instanceof IFileEditorInput)) return;
+		fEditor = targetEditor;
+		fDocumentProvider= fEditor.getDocumentProvider();
+		
+		if(fDocumentProvider != null) {
+			CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().addListener(teamChangeListener);
+			((IDocumentProvider)fDocumentProvider).addElementStateListener(documentListener);
+		}	
+		fReferenceInitialized= true;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.quickdiff.IQuickDiffProviderImplementation#isEnabled()
 	 */
 	public boolean isEnabled() {
-		if (!initialized())
+		if (! fReferenceInitialized)
 			return false;
 		return getManagedCVSFile() != null;
 	}
@@ -160,26 +166,17 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvi
 	 */
 	public void dispose() {
 		fReferenceInitialized = false;
+		fReference = null;
 		// stop update job
 		if(fUpdateJob != null && fUpdateJob.getState() != Job.NONE) {
 			fUpdateJob.cancel();
-			try {
-				fUpdateJob.join();
-			} catch (InterruptedException e) {		
-			}
 		}
-		synchronized(this) {
-			// remove listeners
-			if(fDocumentProvider != null) {
-				fDocumentProvider.removeElementStateListener(documentListener);
-			}
-			CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().removeListener(teamChangeListener);			
-			
-			fReferenceInitialized = false;
-			fReference= null;
-			fUpdateJob = null;
-			fLastSyncState = null;
+		
+		// remove listeners
+		if(fDocumentProvider != null) {
+			fDocumentProvider.removeElementStateListener(documentListener);
 		}
+		CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().removeListener(teamChangeListener);				
 	}
 
 	/*
@@ -203,7 +200,7 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvi
 	 */
 	private boolean computeChange(IProgressMonitor monitor) throws TeamException {
 		boolean needToUpdateReferenceDocument = false;
-		if(initialized()) {
+		if(fReferenceInitialized) {
 			SyncInfo info = getSyncState(getFileFromEditor());
 			// check if 
 			if(info == null && fLastSyncState != null) {
@@ -235,31 +232,14 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvi
 	}
 	
 	/**
-	 * This provider is initialized if an editor has been assigned and the input for
-	 * the editor is a FileEditorInput.
-	 * @return true if initialized and false otherwise.
-	 */
-	private boolean initialized() {
-		return fEditor != null && fEditor.getEditorInput() instanceof IFileEditorInput;
-	}
-	
-	/**
 	 * Creates a document and initializes it with the contents of a CVS remote
 	 * resource.
 	 * @param monitor the progress monitor
 	 * @throws CoreException
 	 */
-	private synchronized void readDocument(IProgressMonitor monitor) throws CoreException {
-		if (!initialized())
-			return;
-
-		fReferenceInitialized= false;
-		fDocumentProvider= fEditor.getDocumentProvider();
-		
-		if (fReference == null) {
-			fReference= new Document();
-		}
-
+	private void readDocument(IProgressMonitor monitor) throws CoreException {
+		if(! fReferenceInitialized) return;
+		fReference = new Document();
 		if(computeChange(monitor)) {
 			ICVSRemoteFile remoteFile = (ICVSRemoteFile)fLastSyncState.getRemote(); 
 			if (fLastSyncState.getRemote() != null && fDocumentProvider instanceof IStorageDocumentProvider) {
@@ -268,26 +248,18 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvi
 				if (encoding == null) {
 					encoding= provider.getDefaultEncoding();
 				}
+				if(monitor.isCanceled()) return;
 				InputStream stream= remoteFile.getContents(monitor);
-				if (stream == null) {
+				if (stream == null || monitor.isCanceled() || ! fReferenceInitialized) {
 					return;
 				}
-				if(! monitor.isCanceled()) {
-					setDocumentContent(fReference, stream, encoding);
-				}
+				setDocumentContent(fReference, stream, encoding);
 			} else {
 				// the remote is null, so ensure that the document is null
-				fReference = new Document();
 				fReference.set(""); //$NON-NLS-1$
 			}
+			if(DEBUG) System.out.println("+ CVSQuickDiff: updating document " + (fReference!=null ? "remote found" : "remote empty")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		
-		if(fDocumentProvider != null) {
-			CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().addListener(teamChangeListener);
-			((IDocumentProvider)fDocumentProvider).addElementStateListener(documentListener);
-		}
-		
-		fReferenceInitialized= true;
 	}
 	
 	/**
@@ -312,6 +284,7 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvi
 				n= in.read(readBuffer);
 			}
 			document.set(caw.toString());
+			//System.out.println("+ CVSQuickDiff: updating document : " + caw.toString());
 		} catch (IOException x) {
 			throw new CVSException(Policy.bind("RemoteRevisionQuickDiffProvider.readingFile"), x); //$NON-NLS-1$
 		} finally {
@@ -359,14 +332,11 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvi
 	 * is stopped before the new job can start.
 	 */
 	private void fetchContentsInJob() {
+		if(! fReferenceInitialized) return;
 		if(fUpdateJob != null && fUpdateJob.getState() != Job.NONE) {
 			fUpdateJob.cancel();
-			try {
-				fUpdateJob.join();
-			} catch (InterruptedException e) {				
-			}
 		}
-		Job updateJob = new Job(Policy.bind("RemoteRevisionQuickDiffProvider.fetchingFile")) { //$NON-NLS-1$
+		fUpdateJob = new Job(Policy.bind("RemoteRevisionQuickDiffProvider.fetchingFile")) { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					readDocument(monitor);
@@ -376,6 +346,6 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvi
 				return Status.OK_STATUS;
 			}
 		};
-		updateJob.schedule();
+		fUpdateJob.schedule();
 	}
 }
