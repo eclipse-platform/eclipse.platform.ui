@@ -28,7 +28,6 @@ public class TestDecoratorContributor implements ILabelDecorator {
 	 * @see ILabelDecorator#decorateText(String, Object)
 	 */
 	public String decorateText(String text, Object element) {
-		contributor = this;
 		//Check that the element is adapted to IResource
 		Assert.isTrue(element instanceof IResource);
 		return text + DECORATOR_SUFFIX;
@@ -37,7 +36,6 @@ public class TestDecoratorContributor implements ILabelDecorator {
 	 * @see ILabelDecorator#decorateImage(Image, Object)
 	 */
 	public Image decorateImage(Image image, Object element) {
-		contributor = this;
 		Assert.isTrue(element instanceof IResource);
 		return image;
 	}

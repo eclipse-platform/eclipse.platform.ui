@@ -120,9 +120,6 @@ public class AdaptableDecoratorTestCase
 		updated = false;
 		definition.setEnabled(true);
 		getDecoratorManager().reset();
-		
-		//Wake it up by forcing a decoration
-		getDecoratorManager().decorateText("Fred",WorkbenchPlugin.getPluginWorkspace().getRoot());
 		TestDecoratorContributor.contributor.refreshListeners(testFile);
 		assertTrue("Got an update", updated);
 		updated = false;
