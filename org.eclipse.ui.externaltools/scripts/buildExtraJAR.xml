@@ -3,7 +3,7 @@
 
 	<target name="build" description="Cleans, builds and refreshes">
 		<antcall target="clean"/>
-		<antcall target="lib/antbuilderlib.jar"/>
+		<antcall target="lib/antrunnerlib.jar"/>
 		<antcall target="refresh"/>
 	</target>
 
@@ -27,7 +27,7 @@
 		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
 	</target>
 	
-	<target name="lib/antbuilderlib.jar" description= "Creates the antrunner.jar" depends="init">
+	<target name="lib/antrunnerlib.jar" description= "Creates the antrunner.jar" depends="init">
 		<property name="destdir" value="${temp.folder}/lib/antrunner.jar.bin"/>
 		<delete dir="${temp.folder}/lib/antrunner.jar.bin"/>
 		<mkdir dir="${temp.folder}/lib/antrunner.jar.bin"/>
@@ -49,8 +49,13 @@
 			 		${basedir}/../org.eclipse.text/text.jar;
 			 		${basedir}/../org.eclipse.ui.workbench/workbench.jar;
 			 		${basedir}/../org.eclipse.ant.core/bin;
+			 		${basedir}/../org.eclipse.core.resources/bin;
 			 		${basedir}/../org.eclipse.debug.core/bin;
-			 		${basedir}/../org.eclipse.debug.ui/bin">
+			 		${basedir}/../org.eclipse.debug.ui/bin;
+			 		${basedir}/../org.eclipse.jface/bin;
+			 		${basedir}/../org.eclipse.jface.text/bin;
+			 		${basedir}/../org.eclipse.text/bin;
+			 		${basedir}/../org.eclipse.ui.workbench/bin;">
 			<src path="Ant Runner Support/"/>
 		</javac>
 		<!-- copy necessary resources -->

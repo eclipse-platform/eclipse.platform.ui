@@ -8,7 +8,7 @@
 		<ant antfile="scripts/buildExtraJAR.xml" dir="../../org.eclipse.ant.core" target="lib/antsupportlib.jar"/>
 		<ant antfile="scripts/buildExtraJAR.xml" dir="../../org.eclipse.ant.core" target="refresh"/>
 		<ant antfile="scripts/buildExtraJAR.xml" dir="../../org.eclipse.ui.externaltools" target="clean"/>
-		<ant antfile="scripts/buildExtraJAR.xml" dir="../../org.eclipse.ui.externaltools" target="lib/antbuilderlib.jar"/>
+		<ant antfile="scripts/buildExtraJAR.xml" dir="../../org.eclipse.ui.externaltools" target="lib/antrunnerlib.jar"/>
 		<ant antfile="scripts/buildExtraJAR.xml" dir="../../org.eclipse.ui.externaltools" target="refresh"/>
 	</target>
 </project>
