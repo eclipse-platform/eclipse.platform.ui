@@ -131,6 +131,7 @@ public class UpdateManagerUtils {
 		if (!localFile.isDirectory()) {
 			OutputStream localContentReferenceStream = new FileOutputStream(localFile);
 			copy(sourceContentReferenceStream, localContentReferenceStream,monitor);
+			localContentReferenceStream.close();
 		}
 		result = localFile.toURL();
 
@@ -178,6 +179,13 @@ public class UpdateManagerUtils {
 	public static void removeFromFileSystem(File file) {
 		if (!file.exists())
 			return;
+			
+			
+		// FIXME debug only
+		if (file.getName().indexOf("org.eclipse.update.plugin1_1.1.1")!=-1){
+			System.out.println("ok");
+		}
+			
 		if (file.isDirectory()) {
 			String[] files = file.list();
 			if (files != null) // be careful since file.list() can return null
