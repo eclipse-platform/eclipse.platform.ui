@@ -5,6 +5,7 @@ package org.eclipse.core.internal.boot.update;
  */
 
 import java.io.File;import java.io.FileWriter;import java.io.IOException;import java.io.InputStream;import java.io.InputStreamReader;import java.io.LineNumberReader;import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;import java.net.URL;import java.net.URLConnection;import org.eclipse.core.internal.boot.Policy;
 /**
  * This class manages the loading, storing, parsing and creation of
@@ -34,6 +35,8 @@ public class XmlLiteStore {
 	protected XmlLiteAttribute             _parserTextAttributeCurrent = null;
 	protected int                          _iLine                = -1; // 0 based
 	protected int                          _iColumn              = -1; // 0 based
+	protected InputStream 				   _inputStream			 = null;
+	protected LineNumberReader 			   _lineReader			 = null;
 
 /**
  * LogModel constructor comment.
@@ -639,9 +642,32 @@ protected void handleUnknown()
 protected void handleXml()
 {
 //	Trace.functionEntry( this, "handleXml" );
+	
+	if ( _strLine.indexOf("UTF-8") > 0) {
+		int linesRead = _lineReader.getLineNumber();
+		// switch stream reader to UTF8.  Close and reopen the streams 
+		try {
+			InputStream newInputStream = null;
+			BaseURLHandler.Response response = BaseURLHandler.open(_url);
+			if( response.getResponseCode() == HttpURLConnection.HTTP_OK )
+				newInputStream = response.getInputStream();
+			
+			if (newInputStream != null) {
+				try{_inputStream.close();} catch(Exception x) {}				
+				_inputStream = newInputStream;
+				InputStreamReader reader = new InputStreamReader(_inputStream, "UTF-8");
+				_lineReader = new LineNumberReader(reader);			
+				for (int i = 0; i < linesRead; i++)
+					_lineReader.readLine();
+			}
+		} catch (UnsupportedEncodingException ex) {}
+		catch (IOException ex) {}
+
+	}
+
 		
 	int iIndex = _strLine.indexOf( "?>" );
-	
+		
 	if( iIndex > _iColumn )
 	{
 		_iColumn = iIndex + 2;
@@ -665,13 +691,13 @@ public boolean load(XmlLite lite, URL url) throws XmlLiteException {
 
 	// Obtain the content of the URL
 	//------------------------------
-	InputStream inputStream = null;
+	_inputStream = null;
 	Object objContent = null;
 
 	try {
 		BaseURLHandler.Response response = BaseURLHandler.open(url);
 		if( response.getResponseCode() == HttpURLConnection.HTTP_OK )
-			inputStream = response.getInputStream();
+			_inputStream = response.getInputStream();
 	}
 	catch (IOException ex) {
 
@@ -685,16 +711,16 @@ public boolean load(XmlLite lite, URL url) throws XmlLiteException {
 
 	// Read in the file
 	//-----------------
-	if (inputStream != null) {
+	if (_inputStream != null) {
 
-		InputStreamReader reader = new InputStreamReader(inputStream);
-		LineNumberReader lineReader = new LineNumberReader(reader);
+		InputStreamReader reader = new InputStreamReader(_inputStream);
+		_lineReader = new LineNumberReader(reader);
 
 		_iMode = MODE_UNKNOWN;
 
 		do {
 			try {
-				_strLine = lineReader.readLine();
+				_strLine = _lineReader.readLine();
 			}
 			catch (IOException ex) {
 				_strLine = null;
@@ -708,7 +734,7 @@ public boolean load(XmlLite lite, URL url) throws XmlLiteException {
 		if (_parserElementCurrent != null && _parserElementCurrent.getName().equals("root") == false) {
 			throw new XmlLiteException(Policy.bind("update.expectingEnd", _parserElementCurrent.getName()), _url.toString(), _strLine, _iLine, _iColumn);
 		}
-		try{inputStream.close();} catch(Exception x) {}
+		try{_inputStream.close();} catch(Exception x) {}
 		return true;
 	}
 
