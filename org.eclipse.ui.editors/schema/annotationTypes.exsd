@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.ui.editors">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui.editors" id="annotationTypes" name="annotationTypes"/>
+         <meta.schema plugin="org.eclipse.ui.editors" id="annotationTypes" name="Annotation Types"/>
       </appInfo>
       <documentation>
          [Enter description of this extension point.]
