@@ -364,8 +364,8 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		if (selection.size() == 1) {
 			Object element= selection.getFirstElement(); 
 			if (element instanceof ProjectNode) {
-				IFile buildFile= ((ProjectNode)element).getBuildFile();
-				if (buildFile != null) {
+				IFile buildFile= AntUtil.getFile(((ProjectNode)element).getBuildFileName());
+				if (buildFile != null && buildFile.exists()) {
 					menu.add(new Separator("group.open")); //$NON-NLS-1$
 					IMenuManager submenu= new MenuManager(AntViewMessages.getString("AntView.Open_With_3"));  //$NON-NLS-1$
 					
