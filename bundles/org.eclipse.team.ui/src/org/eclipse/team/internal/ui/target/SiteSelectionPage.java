@@ -74,7 +74,7 @@ public class SiteSelectionPage extends TargetWizardPage {
 		table.setLabelProvider(new WorkbenchLabelProvider() {
 			protected String decorateText(String input, Object element) {
 				if(element.equals(new SiteElement(initialSiteSelection))) {
-					return super.decorateText(input, element) + " (current location)";
+					return Policy.bind("SiteSelectionPage.currentLocation", super.decorateText(input, element)); //$NON-NLS-1$
 				}
 				return super.decorateText(input, element);
 			}

@@ -91,7 +91,7 @@ public class GetSyncAction extends TargetSyncAction {
 		Hashtable table = getTargetProviderMapping(resources);
 		Set keySet = table.keySet();
 		monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
-		monitor.setTaskName("Getting...");
+		monitor.setTaskName(Policy.bind("GetSyncAction.Getting..._1")); //$NON-NLS-1$
 		Iterator iterator = keySet.iterator();
 		while (iterator.hasNext()) {
 			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);

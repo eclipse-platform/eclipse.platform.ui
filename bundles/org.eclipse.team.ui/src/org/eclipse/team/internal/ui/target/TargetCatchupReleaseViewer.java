@@ -14,8 +14,8 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.sync.CatchupReleaseViewer;
-import org.eclipse.team.internal.ui.sync.SyncCompareInput;
 import org.eclipse.team.internal.ui.sync.SyncView;
 
 public class TargetCatchupReleaseViewer extends CatchupReleaseViewer {
@@ -32,8 +32,8 @@ public class TargetCatchupReleaseViewer extends CatchupReleaseViewer {
 	 */
 	private void initializeActions(final TargetSyncCompareInput diffModel) {
 		Shell shell = getControl().getShell();
-		getAction = new GetSyncAction(diffModel, this, "Get", shell);
-		putAction = new PutSyncAction(diffModel, this, "Put", shell);
+		getAction = new GetSyncAction(diffModel, this, Policy.bind("TargetCatchupReleaseViewer.Get_1"), shell); //$NON-NLS-1$
+		putAction = new PutSyncAction(diffModel, this, Policy.bind("TargetCatchupReleaseViewer.Put_2"), shell); //$NON-NLS-1$
 	}
 	protected void fillContextMenu(IMenuManager manager) {
 		super.fillContextMenu(manager);

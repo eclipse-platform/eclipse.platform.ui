@@ -35,7 +35,7 @@ public class GetAction extends TeamAction {	public void run(IAction action) {
 					Hashtable table = getTargetProviderMapping();
 					Set keySet = table.keySet();
 					monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
-					monitor.setTaskName(Policy.bind("GetAction.working")); 
+					monitor.setTaskName(Policy.bind("GetAction.working"));  //$NON-NLS-1$
 					Iterator iterator = keySet.iterator();
 					while (iterator.hasNext()) {					
 						IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
@@ -68,7 +68,7 @@ public class GetAction extends TeamAction {	public void run(IAction action) {
 				if(! provider.canPut(resource))
 					return false;	//if one can't don't allow for any
 			} catch (TeamException e) {
-				TeamPlugin.log(IStatus.ERROR, "Exception getting provider", e);
+				TeamPlugin.log(IStatus.ERROR, Policy.bind("GetAction.Exception_getting_provider_2"), e); //$NON-NLS-1$
 				return false;
 			}
 		}

@@ -103,14 +103,14 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 		TableLayout tlayout = new TableLayout();
 		
 		TableColumn tableColumn = new TableColumn(table, SWT.NULL);
-		tableColumn.setText("Name");
+		tableColumn.setText(Policy.bind("SiteExplorerView.Name_1")); //$NON-NLS-1$
 		tableColumn = new TableColumn(table, SWT.NULL);
-		tableColumn.setText("Size");
+		tableColumn.setText(Policy.bind("SiteExplorerView.Size_2")); //$NON-NLS-1$
 		tableColumn.setAlignment(SWT.RIGHT);
 		tableColumn = new TableColumn(table, SWT.NULL);
-		tableColumn.setText("Modified");
+		tableColumn.setText(Policy.bind("SiteExplorerView.Modified_3")); //$NON-NLS-1$
 		tableColumn = new TableColumn(table, SWT.NULL);
-		tableColumn.setText("URL");
+		tableColumn.setText(Policy.bind("SiteExplorerView.URL_4")); //$NON-NLS-1$
 		ColumnLayoutData cLayout = new ColumnPixelData(21);
 		tlayout.addColumnData(cLayout);
 		cLayout = new ColumnPixelData(20);

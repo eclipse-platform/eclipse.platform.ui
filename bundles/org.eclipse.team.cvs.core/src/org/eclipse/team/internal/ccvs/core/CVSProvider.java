@@ -656,12 +656,12 @@ public class CVSProvider implements ICVSProvider {
 	private String getRepositoryLocationFromOneO(IProject project) throws CVSException {
 		try {
 			byte[] syncBytes = ResourcesPlugin.getWorkspace().getSynchronizer().getSyncInfo(
-				new QualifiedName("org.eclipse.vcm.core", "Sharing"), project);
+				new QualifiedName("org.eclipse.vcm.core", "Sharing"), project); //$NON-NLS-1$ //$NON-NLS-2$
 			if (syncBytes != null) {
 				DataInputStream reader = new DataInputStream(new ByteArrayInputStream(syncBytes));
 				String repoType = reader.readUTF();
 				String repoLocation = reader.readUTF();
-				if (repoType.equals("CVS")) return repoLocation;
+				if (repoType.equals("CVS")) return repoLocation; //$NON-NLS-1$
 			}
 		} catch (CoreException ex) {
 			throw CVSException.wrapException(ex);

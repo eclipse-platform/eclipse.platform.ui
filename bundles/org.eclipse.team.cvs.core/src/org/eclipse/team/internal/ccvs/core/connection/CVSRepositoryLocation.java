@@ -277,7 +277,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			} catch (CVSException e) {
 			}
 		}
-		return user == null ? "" : user;
+		return user == null ? "" : user; //$NON-NLS-1$
 	}
 	
 	/*

@@ -14,5 +14,5 @@ public interface IHelpContextIds {
 	public static final String PREFIX = TeamUIPlugin.ID + "."; //$NON-NLS-1$
 
 	// Preference Pages
-	public static final String IGNORE_PREFERENCE_PAGE = PREFIX + "ignore_preference_page_context";
+	public static final String IGNORE_PREFERENCE_PAGE = PREFIX + "ignore_preference_page_context"; //$NON-NLS-1$
 }

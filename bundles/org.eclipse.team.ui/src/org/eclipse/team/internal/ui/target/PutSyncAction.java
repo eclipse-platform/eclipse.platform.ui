@@ -25,6 +25,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.target.TargetProvider;
+import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.sync.ITeamNode;
 import org.eclipse.team.internal.ui.sync.SyncSet;
 import org.eclipse.team.internal.ui.sync.SyncView;
@@ -87,7 +88,7 @@ public class PutSyncAction extends TargetSyncAction {
 		Hashtable table = getTargetProviderMapping(resources);
 		Set keySet = table.keySet();
 		monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
-		monitor.setTaskName("Putting...");
+		monitor.setTaskName(Policy.bind("PutSyncAction.Putting..._1")); //$NON-NLS-1$
 		Iterator iterator = keySet.iterator();
 		while (iterator.hasNext()) {
 			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);

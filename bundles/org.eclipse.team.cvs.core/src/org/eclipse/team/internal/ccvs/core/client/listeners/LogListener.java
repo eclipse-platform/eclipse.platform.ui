@@ -103,7 +103,7 @@ public class LogListener implements ICommandOutputListener {
 					int lastDot = tagRevision.lastIndexOf('.');
 					if (lastDot == -1) {
 						CVSProviderPlugin.log(new CVSStatus(IStatus.ERROR, 
-							Policy.bind("LogListener.invalidRevisionFormat", tagName, tagRevision)));
+							Policy.bind("LogListener.invalidRevisionFormat", tagName, tagRevision))); //$NON-NLS-1$
 					} else {
 						if (tagRevision.charAt(lastDot - 1) == '0' && tagRevision.charAt(lastDot - 2) == '.') {
 							lastDot = lastDot - 2;

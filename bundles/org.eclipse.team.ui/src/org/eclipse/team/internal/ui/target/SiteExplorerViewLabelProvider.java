@@ -14,6 +14,7 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class SiteExplorerViewLabelProvider extends WorkbenchLabelProvider implements ITableLabelProvider {
@@ -31,7 +32,7 @@ public class SiteExplorerViewLabelProvider extends WorkbenchLabelProvider implem
 					return super.getText(element);
 				case 1 :
 					if(element instanceof RemoteResourceElement) {
-						return new Integer(((RemoteResourceElement)element).getRemoteResource().getSize()).toString() + " Bytes";						
+						return Policy.bind("SiteExplorerViewLabelProvider.bytes", new Integer(((RemoteResourceElement)element).getRemoteResource().getSize()).toString()); //$NON-NLS-1$
 					}
 				case 2 :
 					if(element instanceof RemoteResourceElement) {
@@ -42,9 +43,9 @@ public class SiteExplorerViewLabelProvider extends WorkbenchLabelProvider implem
 						return ((RemoteResourceElement)element).getRemoteResource().getURL().toExternalForm();
 					}
 			}
-			return "";
+			return ""; //$NON-NLS-1$
 		} catch(TeamException e) {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 	}
 }

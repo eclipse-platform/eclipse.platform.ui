@@ -63,7 +63,7 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 		setWindowTitle(getWizardWindowTitle()); //$NON-NLS-1$
 	}
 	
-	public static final String MAPPING_PAGE_NAME = "mapping-page";
+	public static final String MAPPING_PAGE_NAME = "mapping-page"; //$NON-NLS-1$
 	
 	protected SiteSelectionPage siteSelectionPage = null;
 	protected IWizardPage firstTargetPage = null;
@@ -255,8 +255,8 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 				TargetProvider provider = TargetManager.getProvider(project);
 				if(provider != null) {
 					if(! MessageDialog.openQuestion(container.getShell(),
-						"Question",
-						"'" + project.getName() + "' is already mapped to '" + provider.getSite().getURL().toExternalForm() +"'. Are you sure you want to change to another location?")) {
+						Policy.bind("ConfigureTargetWizardQuestion_2"), //$NON-NLS-1$
+						Policy.bind("ConfigureTargetWizard.alreadyMapped", project.getName(), provider.getSite().getURL().toExternalForm()))) { //$NON-NLS-1$
 					return false;
 					}
 					TargetManager.unmap(project);
@@ -264,7 +264,7 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 				TargetManager.map(project, site, path);
 				return true;
 			} catch (TeamException e) {
-				ErrorDialog.openError(container.getShell(), "Error", "Error mapping the project with this site", e.getStatus());
+				ErrorDialog.openError(container.getShell(), Policy.bind("ConfigureTargetWizardError_6"), Policy.bind("ConfigureTargetWizardError_mapping_the_project_with_this_site_7"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
 				return false;
 			}
 		} else {
@@ -274,14 +274,14 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 	
 	public static boolean validateSite(final Site site, final IWizardContainer container) {
 		final boolean[] valid = new boolean[] {true};
-		final String[] message = new String[] {"URL doesn't exist on the server"};
+		final String[] message = new String[] {Policy.bind("ConfigureTargetWizardURL_doesn__t_exist_on_the_server_8")}; //$NON-NLS-1$
 		final int[] code = new int[] {-1};
 		try {
 			container.run(true, false, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
 						try {
-							monitor.beginTask("Validating connection to Site...", monitor.UNKNOWN);
+							monitor.beginTask(Policy.bind("ConfigureTargetWizardValidating_connection_to_Site..._9"), monitor.UNKNOWN); //$NON-NLS-1$
 							IRemoteTargetResource remote = site.getRemoteResource();
 							valid[0] = remote.exists();
 						} catch(TeamException e) {
@@ -301,8 +301,8 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 		}
 		if(! valid[0]) {
 			if(! MessageDialog.openQuestion(container.getShell(),
-				"Connection Error",
-				"An error occured connecting to '" + site.getURL().toExternalForm() + "'.\n\nCode: " + code[0] + "\nMessage: " + message[0] + "\n\nDo you still want to keep this connection?")) {
+				Policy.bind("ConfigureTargetWizardConnection_Error_10"), //$NON-NLS-1$
+				Policy.bind("ConfigureTargetWizard.errorOccurred", new Object[] {site.getURL().toExternalForm(), new Integer(code[0]), message[0]}))) { //$NON-NLS-1$
 					return false;
 			}
 		}
