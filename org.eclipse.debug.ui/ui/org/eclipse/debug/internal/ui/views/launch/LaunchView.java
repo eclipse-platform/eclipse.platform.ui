@@ -524,7 +524,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 
 	/**
 	 * Notifies this view to clean up for the given launches (they've been terminated,
-	 * removed, etc.). Wemove all context submissions associated with these launches.
+	 * removed, etc.). Remove all context submissions associated with these launches.
 	 * Clear the cache of the last stack frame that source was displayed for
 	 * if that launch is terminated.
 	 * 
