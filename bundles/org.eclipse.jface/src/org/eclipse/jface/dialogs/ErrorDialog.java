@@ -37,6 +37,12 @@ import org.eclipse.swt.widgets.*;
  * @see org.eclipse.core.runtime.IStatus
  */
 public class ErrorDialog extends IconAndMessageDialog {
+	
+	/**
+	 * Static to prevent opening of error dialogs for
+	 * automated testing.
+	 */
+	public static boolean NO_UI = false;
 
 	/**
 	 * Reserve room for this many list items.
@@ -399,6 +405,10 @@ public class ErrorDialog extends IconAndMessageDialog {
 	 * @see org.eclipse.core.runtime.IStatus#matches(int)
 	 */
 	protected static boolean shouldDisplay(IStatus status, int mask) {
+		
+		if(NO_UI)
+			return false;
+			
 		IStatus[] children = status.getChildren();
 		if (children == null || children.length == 0) {
 			return status.matches(mask);
