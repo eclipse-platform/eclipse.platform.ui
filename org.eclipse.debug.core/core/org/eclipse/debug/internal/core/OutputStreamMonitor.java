@@ -138,17 +138,15 @@ public class OutputStreamMonitor implements IStreamMonitor {
 				return;
 			}
 		}
+		try {
+			fStream.close();
+		} catch (IOException e) {
+			DebugPlugin.log(e);
+		}
 	}
 	
 	protected void kill() {
 		fKilled= true;
-		if (fStream != null) {
-			try {
-				fStream.close();
-			} catch(IOException e) {
-				DebugPlugin.log(e);
-			}
-		}
 	}
 
 	/**

@@ -91,7 +91,12 @@ public class InputStreamMonitor {
 	protected void write() {
 		while (fThread != null) {
 			writeNext();
-		}	
+		}
+		try {
+			fStream.close();
+		} catch (IOException e) {
+			DebugPlugin.log(e);
+		}
 	}
 	
 	/**
