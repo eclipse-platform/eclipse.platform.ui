@@ -69,4 +69,12 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
 	 */
 	public void schedule(Job job);
 	
+	/**
+	 * Show busy state if any job of the specified
+	 * family is running.
+	 * @param family Object
+	 * @see Job.belongsTo()
+	 */
+	public void showBusyForFamily(Object family);
+	
 }

@@ -9,6 +9,9 @@
  **********************************************************************/
 package org.eclipse.ui.internal.progress;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -17,29 +20,36 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.util.IPropertyChangeListener;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.util.IPropertyChangeListener;
+
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.part.WorkbenchPart;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
+
+import org.eclipse.ui.internal.PartSite;
 /**
  * The WorkbenchSiteProgressService is the concrete implementation of the
  * WorkbenchSiteProgressService used by the workbench components.
  */
-public class WorkbenchSiteProgressService implements IWorkbenchSiteProgressService {
+public class WorkbenchSiteProgressService implements IWorkbenchSiteProgressService, IJobBusyListener {
 	PartSite site;
+	private Collection busyJobs = Collections.synchronizedSet(new HashSet());
+	private Object busyLock = new Object();
 	IJobChangeListener listener;
 	IPropertyChangeListener[] changeListeners = new IPropertyChangeListener[0];
 	private Cursor waitCursor;
 	private SiteUpdateJob updateJob; 
+
 	
 	private class SiteUpdateJob extends WorkbenchJob {
 		private boolean busy;
@@ -121,6 +131,8 @@ public class WorkbenchSiteProgressService implements IWorkbenchSiteProgressServi
 			return;
 		waitCursor.dispose();
 		waitCursor = null;
+		
+		ProgressManager.getInstance().removeListener(this);
 	}
 	/*
 	 * (non-Javadoc)
@@ -168,6 +180,16 @@ public class WorkbenchSiteProgressService implements IWorkbenchSiteProgressServi
 	public void schedule(Job job) {
 		schedule(job, 0L, false);
 	}
+	
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.progress.IWorkbenchSiteProgressService#showBusyForFamily(java.lang.Object)
+     */
+    public void showBusyForFamily(Object family) {
+       ProgressManager.getInstance().addListenerToFamily(family,this);
+
+    }
+	
 	/**
 	 * Get the job change listener for this site.
 	 * 
@@ -187,12 +209,9 @@ public class WorkbenchSiteProgressService implements IWorkbenchSiteProgressServi
 				 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 				 */
 				public void aboutToRun(IJobChangeEvent event) {
-					if(PlatformUI.isWorkbenchRunning()){
-						updateJob.setBusy(true);
-						updateJob.schedule(100);
-					}
-					else
-						updateJob.cancel();
+				    
+				   incrementBusy(event.getJob());
+				   
 				}
 				/*
 				 * (non-Javadoc)
@@ -200,16 +219,54 @@ public class WorkbenchSiteProgressService implements IWorkbenchSiteProgressServi
 				 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 				 */
 				public void done(IJobChangeEvent event) {
-					if(PlatformUI.isWorkbenchRunning()){
-						updateJob.setBusy(false);
-						updateJob.schedule(100);
-					}
-					else
-						updateJob.cancel();
+					decrementBusy(event.getJob());
 				}
 			};
 		}
 		return listener;
 	}
 	
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.progress.IJobBusyListener#decrementBusy(org.eclipse.core.runtime.jobs.Job)
+     */
+    public void decrementBusy(Job job) {
+        
+        synchronized(busyLock){
+            busyJobs.remove(job);
+           
+            if(busyJobs.size() > 0)
+                return;           
+        }
+        
+        if(PlatformUI.isWorkbenchRunning()){
+			updateJob.setBusy(false);
+			updateJob.schedule(100);
+		}
+		else
+			updateJob.cancel();
+
+    }
+    
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.progress.IJobBusyListener#incrementBusy(org.eclipse.core.runtime.jobs.Job)
+     */
+    public void incrementBusy(Job job) {
+        
+        synchronized(busyLock){
+            busyJobs.add(job);
+            //If it is greater than one we already set busy
+            if(busyJobs.size() > 1)
+                return;           
+        }
+        
+        if(PlatformUI.isWorkbenchRunning()){
+			updateJob.setBusy(true);
+			updateJob.schedule(100);
+		}
+		else
+			updateJob.cancel();
+
+    }
 }

@@ -69,6 +69,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MarkerTransfer;
@@ -254,6 +255,8 @@ public abstract class MarkerView extends TableView {
 	 */
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
+		getProgressService().showBusyForFamily(ResourcesPlugin.FAMILY_MANUAL_BUILD);
+		getProgressService().showBusyForFamily(ResourcesPlugin.FAMILY_AUTO_BUILD);
 	}
 
 	/* (non-Javadoc)
@@ -741,5 +744,14 @@ public abstract class MarkerView extends TableView {
 			}
 		}
 	}
+	
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.part.ViewPart#init(org.eclipse.ui.IViewSite)
+     */
+    public void init(IViewSite site) throws PartInitException {
+        // XXX Auto-generated method stub
+        super.init(site);
+    }
 	
 }

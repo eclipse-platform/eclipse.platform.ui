@@ -69,6 +69,10 @@ public class ProgressManager extends ProgressProvider implements
     private static ProgressManager singleton;
 
     final private Map jobs = Collections.synchronizedMap(new HashMap());
+    
+    final private Map familyListeners = Collections.synchronizedMap(new HashMap());
+    
+    final Object familyKey = new Object();
 
     final private Collection listeners = Collections
             .synchronizedList(new ArrayList());
@@ -381,6 +385,12 @@ public class ProgressManager extends ProgressProvider implements
             public void aboutToRun(IJobChangeEvent event) {
                 JobInfo info = getJobInfo(event.getJob());
                 refreshJobInfo(info);
+                
+                Iterator startListeners = busyListenersForJob(event.getJob()).iterator();
+                while(startListeners.hasNext()){
+                    IJobBusyListener next = (IJobBusyListener) startListeners.next();
+                    next.incrementBusy(event.getJob());
+                }                
 
                 if (event.getJob().isUser()) {
                     boolean inDialog = WorkbenchPlugin
@@ -402,6 +412,13 @@ public class ProgressManager extends ProgressProvider implements
              */
             public void done(IJobChangeEvent event) {
                 if (!PlatformUI.isWorkbenchRunning()) return;
+                
+                Iterator startListeners = busyListenersForJob(event.getJob()).iterator();
+                while(startListeners.hasNext()){
+                    IJobBusyListener next = (IJobBusyListener) startListeners.next();
+                    next.decrementBusy(event.getJob());
+                }
+                
                 JobInfo info = getJobInfo(event.getJob());
                 if (event.getResult().getSeverity() == IStatus.ERROR) {
                     errorManager.addError(event.getResult(), event.getJob()
@@ -958,5 +975,74 @@ public class ProgressManager extends ProgressProvider implements
         }
         return monitor;
 
+    }
+    
+    /**
+     * Add the listener to the family.
+     * @param family
+     * @param listener
+     */
+    void addListenerToFamily(Object family, IJobBusyListener listener){
+        synchronized(familyKey){
+            Collection currentListeners = new HashSet();
+            if(familyListeners.containsKey(family))
+                currentListeners = (Collection) familyListeners.get(family);                
+            currentListeners.add(listener);
+            familyListeners.put(family,currentListeners);
+        }
+    }
+    
+    /**
+     * Remove the listener from all families.
+     * @param family
+     * @param listener
+     */
+    void removeListener(IJobBusyListener listener){
+        synchronized(familyKey){
+          
+            Collection keysToRemove = new HashSet();
+            Iterator families = familyListeners.keySet().iterator();
+            while(families.hasNext()){
+                Object next = families.next();
+                Collection currentListeners = (Collection) familyListeners.get(next);
+                if(currentListeners.contains(listener))
+                    currentListeners.remove(listener);
+                if(currentListeners.isEmpty())
+                    keysToRemove.add(next);
+                else
+                    familyListeners.put(next,currentListeners);
+            }
+            
+            //Remove any empty listeners
+            Iterator keysIterator = keysToRemove.iterator();
+            while(keysIterator.hasNext()){
+                familyListeners.remove(keysIterator.next());
+            }
+        }        
+    }
+    
+    /**
+     * Return the listeners for the job.
+     * @param job
+     * @return Collection of IJobBusyListener
+     */
+    private Collection busyListenersForJob(Job job){
+        
+        if(job.isSystem())
+            return new HashSet();
+        
+        synchronized(familyKey){
+            Collection returnValue = new HashSet();
+            Iterator families = familyListeners.keySet().iterator();
+            while(families.hasNext()){
+                Object next = families.next();
+                if(job.belongsTo(next)){
+                    Collection currentListeners = (Collection) familyListeners.get(next);
+                    returnValue.addAll(currentListeners);
+                }
+                   
+            }
+            return returnValue;
+        }        
     }
 }
