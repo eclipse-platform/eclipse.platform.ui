@@ -79,6 +79,7 @@ public class PageSite implements IPageSite {
 			}
 			menuExtenders = null;
 		}
+		subActionBars.dispose();
 	}
 
 	/**

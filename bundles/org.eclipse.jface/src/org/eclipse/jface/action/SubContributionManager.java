@@ -83,6 +83,19 @@ public abstract class SubContributionManager implements IContributionManager {
 		parentMgr.appendToGroup(groupName, wrap);
 		itemAdded(item, wrap);
 	}
+	
+	/**
+	 * Disposes this sub contribution manager, removing all its items
+	 * and cleaning up any other resources allocated by it.
+	 * This must leave no trace of this sub contribution manager
+	 * in the parent manager.  Subclasses may extend.
+	 * 
+	 * @since 3.0
+	 */
+	public void disposeManager() {
+	    removeAll();
+	}
+	
 	/* (non-Javadoc)
 	 * Method declared on IContributionManager.
 	 *

@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
 
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.ListenerList;
 
 /**
  * A <code>SubMenuManager</code> is used to define a set of contribution
@@ -40,6 +41,17 @@ public class SubMenuManager extends SubContributionManager implements IMenuManag
 	private Map mapMenuToWrapper;
 
 	/**
+	 * List of registered menu listeners (element type: <code>IMenuListener</code>).
+	 */
+	private ListenerList menuListeners = new ListenerList(1);
+	
+	/**
+	 * The menu listener added to the parent.  Lazily initialized
+	 * in addMenuListener.
+	 */
+	private IMenuListener menuListener;
+	
+	/**
 	 * Constructs a new manager.
 	 *
 	 * @param mgr the parent manager.  All contributions made to the 
@@ -54,7 +66,18 @@ public class SubMenuManager extends SubContributionManager implements IMenuManag
 	 * @see org.eclipse.jface.action.IMenuManager#addMenuListener(org.eclipse.jface.action.IMenuListener)
 	 */
 	public void addMenuListener(IMenuListener listener) {
-		getParentMenuManager().addMenuListener(listener);
+	    menuListeners.add(listener);
+	    if (menuListener == null) {
+	        menuListener = new IMenuListener() {
+                public void menuAboutToShow(IMenuManager manager) {
+            		Object[] listeners = menuListeners.getListeners();
+            		for (int i = 0; i < listeners.length; ++i) {
+            			((IMenuListener) listeners[i]).menuAboutToShow(SubMenuManager.this);
+            		}
+                }
+            };
+	    }
+		getParentMenuManager().addMenuListener(menuListener);
 	}
 
 	/**
@@ -62,8 +85,21 @@ public class SubMenuManager extends SubContributionManager implements IMenuManag
 	 * method does nothing. Subclasses may override.
 	 */
 	public void dispose() {
+	    // do nothing
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.action.SubContributionManager#disposeManager()
+     */
+    public void disposeManager() {
+        if (menuListener != null) {
+            getParentMenuManager().removeMenuListener(menuListener);
+            menuListener = null;
+            menuListeners.clear();
+        }
+        super.disposeManager();
+    }
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.Composite)
 	 */
@@ -76,7 +112,7 @@ public class SubMenuManager extends SubContributionManager implements IMenuManag
 	 * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.CoolBar, int)
 	 */
 	public void fill(CoolBar parent, int index) {
-
+	    // do nothing
 	}
 
 	/* (non-Javadoc)
@@ -256,13 +292,14 @@ public class SubMenuManager extends SubContributionManager implements IMenuManag
 	 * @see org.eclipse.jface.action.IMenuManager#removeMenuListener(org.eclipse.jface.action.IMenuListener)
 	 */
 	public void removeMenuListener(IMenuListener listener) {
-		getParentMenuManager().removeMenuListener(listener);
+	    menuListeners.remove(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IContributionItem#saveWidgetState()
 	 */
 	public void saveWidgetState() {
+	    // do nothing
 	}
 
 	/* (non-Javadoc)
