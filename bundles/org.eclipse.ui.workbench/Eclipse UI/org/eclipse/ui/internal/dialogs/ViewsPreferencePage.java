@@ -156,6 +156,7 @@ public class ViewsPreferencePage
 				
 		themeCombo = new Combo(composite, SWT.READ_ONLY);
         themeCombo.setLayoutData(data);
+        themeCombo.setFont(parent.getFont());
 		refreshThemeCombo();
 		
 		createShowTextOnPerspectiveBarPref(composite);
