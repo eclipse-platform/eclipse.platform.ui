@@ -34,6 +34,7 @@ import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IMutableCommandManager;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.NoSuchAttributeException;
+import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.handlers.HandlerProxy;
 import org.eclipse.ui.internal.Workbench;
@@ -163,35 +164,40 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
      */
     public WorkbenchCommandSupport(final Workbench workbenchToSupport) {
         workbench = workbenchToSupport;
-        mutableCommandManager = CommandManagerFactory.getMutableCommandManager();
+        mutableCommandManager = CommandManagerFactory
+                .getMutableCommandManager();
         KeyFormatterFactory.setDefault(SWTKeySupport
                 .getKeyFormatterForPlatform());
 
         // Attach a hook to latch on to the first workbench window to open.
         workbenchToSupport.getDisplay().addFilter(SWT.Activate,
                 activationListener);
-        
+
         final List submissions = new ArrayList();
         final MutableCommandManager commandManager = (MutableCommandManager) mutableCommandManager;
         final Set handlers = commandManager.getDefinedHandlers();
         final Iterator handlerItr = handlers.iterator();
-        
+
         while (handlerItr.hasNext()) {
             final HandlerProxy proxy = (HandlerProxy) handlerItr.next();
             try {
-                final String commandId = (String) proxy.getAttributeValue(HandlerProxy.ATTRIBUTE_ID);
-                final Integer priority = (Integer) proxy.getAttributeValue(HandlerProxy.ATTRIBUTE_PRIORITY);
-                final HandlerSubmission submission = new HandlerSubmission(null, null, commandId, proxy, priority.intValue());
+                final String commandId = (String) proxy
+                        .getAttributeValue(HandlerProxy.ATTRIBUTE_ID);
+                final Integer priority = (Integer) proxy
+                        .getAttributeValue(HandlerProxy.ATTRIBUTE_PRIORITY);
+                // TODO trace back and remove field 'priority'. no longer used..
+                final HandlerSubmission submission = new HandlerSubmission(
+                        null, null, null, commandId, proxy, Priority.LOW /*priority.intValue()*/);
                 submissions.add(submission);
             } catch (final NoSuchAttributeException e) {
-                // This submission can't be created.  Nothing to do.
+                // This submission can't be created. Nothing to do.
             }
         }
-        
+
         if (!submissions.isEmpty()) {
             addHandlerSubmissions(submissions);
         }
-        // TODO Should these be removed at shutdown?  Is life cycle important?
+        // TODO Should these be removed at shutdown? Is life cycle important?
     }
 
     /*
@@ -247,7 +253,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
     public void setActiveContextIds(Set activeContextIds) {
         mutableCommandManager.setActiveContextIds(activeContextIds);
     }
-    
+
     // TODO Remove this method -- deprecated.
     /*
      * (non-Javadoc)
@@ -266,8 +272,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
     /**
      * If you use this method, I will break your legs.
      * 
-     * TODO See WorkbenchKeyboard.  Switch to private when Bug 56231 is 
-     * resolved.
+     * TODO See WorkbenchKeyboard. Switch to private when Bug 56231 is resolved.
      */
     public void processHandlerSubmissions(boolean force,
             final Shell newActiveShell) {
@@ -293,8 +298,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 
             if (newWorkbenchWindow != null) {
                 newWorkbenchWindow.addPageListener(pageListener);
-                newWorkbenchWindow
-                        .addPerspectiveListener(perspectiveListener);
+                newWorkbenchWindow.addPerspectiveListener(perspectiveListener);
                 newWorkbenchWindow.getPartService().addPartListener(
                         partListener);
             }
@@ -304,7 +308,8 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
             update = true;
         }
 
-        if ((newWorkbenchWindow != null) && (newWorkbenchWindow.getShell() == newActiveShell)) {
+        if ((newWorkbenchWindow != null)
+                && (newWorkbenchWindow.getShell() == newActiveShell)) {
             IWorkbenchPage activeWorkbenchPage = newWorkbenchWindow
                     .getActivePage();
 
@@ -313,7 +318,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                         .getActivePart();
 
                 if (activeWorkbenchPart != null) {
-                        newWorkbenchSite = activeWorkbenchPart.getSite();
+                    newWorkbenchSite = activeWorkbenchPart.getSite();
                 }
             }
         } else {
@@ -338,7 +343,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                     HandlerSubmission handlerSubmission = (HandlerSubmission) submissionItr
                             .next();
                     IWorkbenchSite activeWorkbenchSite2 = handlerSubmission
-                            .getActiveWorkbenchSite();
+                            .getActiveWorkbenchPartSite();
 
                     if (activeWorkbenchSite2 != null
                             && activeWorkbenchSite2 != newWorkbenchSite)
@@ -353,15 +358,15 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 
                     Shell activeShell2 = handlerSubmission.getActiveShell();
 
-                    if (activeShell2 != null
-                            && activeShell2 != activeShell)
+                    if (activeShell2 != null && activeShell2 != activeShell)
                             continue;
-                    
+
                     if (bestHandlerSubmission == null)
                         bestHandlerSubmission = handlerSubmission;
                     else {
                         int compareTo = Util.compare(activeWorkbenchSite2,
-                                bestHandlerSubmission.getActiveWorkbenchSite());
+                                bestHandlerSubmission
+                                        .getActiveWorkbenchPartSite());
 
                         if (compareTo == 0) {
                             compareTo = Util.compare(activeWorkbenchWindow2,
@@ -369,15 +374,16 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                                             .getActiveWorkbenchWindow());
 
                             if (compareTo == 0)
-                                compareTo = Util.compare(activeShell2,
-                                        bestHandlerSubmission
-                                        	.getActiveShell());
-                            
+                                    compareTo = Util.compare(activeShell2,
+                                            bestHandlerSubmission
+                                                    .getActiveShell());
+
                             if (compareTo == 0)
-                                    compareTo = Util.compare(-handlerSubmission
-                                            .getPriority(),
-                                            -bestHandlerSubmission
-                                                    .getPriority());
+                                    compareTo = Util
+                                            .compare(handlerSubmission
+                                                    .getPriority(),
+                                                    bestHandlerSubmission
+                                                            .getPriority());
                         }
 
                         if (compareTo > 0) {

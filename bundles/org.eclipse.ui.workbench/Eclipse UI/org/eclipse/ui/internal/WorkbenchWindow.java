@@ -82,6 +82,7 @@ import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.commands.ActionHandler;
 import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.IHandler;
+import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dnd.DragUtil;
@@ -314,12 +315,15 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		handlersByCommandId.putAll(actionSetHandlersByCommandId);
 		handlersByCommandId.putAll(globalActionHandlersByCommandId);		
 		List newHandlerSubmissions = new ArrayList();
+        Shell shell = getShell();
+        
+        if (shell != null)
 		
 		for (Iterator iterator = handlersByCommandId.entrySet().iterator(); iterator.hasNext();) {
             Map.Entry entry = (Map.Entry) iterator.next();
             String commandId = (String) entry.getKey();
             IHandler handler = (IHandler) entry.getValue();
-            newHandlerSubmissions.add(new HandlerSubmission(null, this, commandId, handler, 5));
+            newHandlerSubmissions.add(new HandlerSubmission(null, shell, null, commandId, handler, Priority.LEGACY));
         }
 		
 		Workbench.getInstance().getCommandSupport().removeHandlerSubmissions(this.handlerSubmissions);

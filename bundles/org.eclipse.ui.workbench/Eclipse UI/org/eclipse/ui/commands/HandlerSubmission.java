@@ -11,6 +11,7 @@
 package org.eclipse.ui.commands;
 
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.util.Util;
@@ -21,11 +22,14 @@ public final class HandlerSubmission implements Comparable {
 
     private final static int HASH_INITIAL = HandlerSubmission.class.getName()
             .hashCode();
-    
-    private Shell activeShell;
-    
-    private IWorkbenchSite activeWorkbenchSite;
 
+    private String activePartId;
+
+    private Shell activeShell;
+
+    private IWorkbenchPartSite activeWorkbenchPartSite;
+
+    // TODO remove before 3.0
     private IWorkbenchWindow activeWorkbenchWindow;
 
     private String commandId;
@@ -36,12 +40,12 @@ public final class HandlerSubmission implements Comparable {
 
     private transient boolean hashCodeComputed;
 
-    private int priority;
+    private Priority priority;
 
     private transient String string;
 
     /**
-     * @deprecated
+     * @deprecated to be removed for 3.0
      * 
      * @param activeWorkbenchSite
      * @param activeWorkbenchWindow
@@ -54,20 +58,79 @@ public final class HandlerSubmission implements Comparable {
             IHandler handler, int priority) {
         if (commandId == null || handler == null)
                 throw new NullPointerException();
-        this.activeWorkbenchSite = activeWorkbenchSite;
+
+        if (activeWorkbenchSite instanceof IWorkbenchPartSite)
+                this.activeWorkbenchPartSite = (IWorkbenchPartSite) activeWorkbenchSite;
+
         this.activeWorkbenchWindow = activeWorkbenchWindow;
         this.commandId = commandId;
         this.handler = handler;
-        this.priority = priority;
+
+        switch (priority) {
+        case 0:
+        case 1:
+            this.priority = Priority.NORMAL;
+            break;
+        case 2:
+        case 3:
+        case 4:
+            this.priority = Priority.LOW;
+            break;
+        case 5:
+        default:
+            this.priority = Priority.LEGACY;
+            break;
+        }
     }
-    
+
+    /**
+     * @deprecated to be removed for 3.0
+     * 
+     * @param activeWorkbenchSite
+     * @param commandId
+     * @param handler
+     * @param priority
+     * @param activeShell
+     */
     public HandlerSubmission(IWorkbenchSite activeWorkbenchSite,
-            String commandId,
-            IHandler handler, int priority, Shell activeShell) {
+            String commandId, IHandler handler, int priority, Shell activeShell) {
         if (commandId == null || handler == null)
                 throw new NullPointerException();
+
         this.activeShell = activeShell;
-        this.activeWorkbenchSite = activeWorkbenchSite;
+
+        if (activeWorkbenchSite instanceof IWorkbenchPartSite)
+                this.activeWorkbenchPartSite = (IWorkbenchPartSite) activeWorkbenchSite;
+
+        this.commandId = commandId;
+        this.handler = handler;
+
+        switch (priority) {
+        case 0:
+        case 1:
+            this.priority = Priority.NORMAL;
+            break;
+        case 2:
+        case 3:
+        case 4:
+            this.priority = Priority.LOW;
+            break;
+        case 5:
+        default:
+            this.priority = Priority.LEGACY;
+            break;
+        }
+    }
+
+    public HandlerSubmission(String activePartId, Shell activeShell,
+            IWorkbenchPartSite activeWorkbenchPartSite, String commandId,
+            IHandler handler, Priority priority) {
+        if (commandId == null || handler == null)
+                throw new NullPointerException();
+
+        this.activePartId = activePartId;
+        this.activeShell = activeShell;
+        this.activeWorkbenchPartSite = activeWorkbenchPartSite;
         this.commandId = commandId;
         this.handler = handler;
         this.priority = priority;
@@ -75,36 +138,40 @@ public final class HandlerSubmission implements Comparable {
 
     public int compareTo(Object object) {
         HandlerSubmission castedObject = (HandlerSubmission) object;
-        int compareTo = Util.compare(activeWorkbenchSite,
-                castedObject.activeWorkbenchSite);
+        int compareTo = Util.compare(activeWorkbenchPartSite,
+                castedObject.activeWorkbenchPartSite);
 
         if (compareTo == 0) {
             compareTo = Util.compare(activeWorkbenchWindow,
                     castedObject.activeWorkbenchWindow);
 
             if (compareTo == 0) {
-                compareTo = Util.compare(activeShell,
-                        castedObject.activeShell);
+                compareTo = Util.compare(activeShell, castedObject.activeShell);
 
-	            if (compareTo == 0) {
-	                compareTo = Util.compare(-priority, -castedObject.priority);
-	
-	                if (compareTo == 0) {
-	                    compareTo = Util.compare(commandId, castedObject.commandId);
-	
-	                    if (compareTo == 0)
-	                            compareTo = Util.compare(handler,
-	                                    castedObject.handler);
-	                }
-	            }
+                if (compareTo == 0) {
+                    compareTo = Util.compare(priority, castedObject.priority);
+
+                    if (compareTo == 0) {
+                        compareTo = Util.compare(commandId,
+                                castedObject.commandId);
+
+                        if (compareTo == 0)
+                                compareTo = Util.compare(handler,
+                                        castedObject.handler);
+                    }
+                }
             }
         }
 
         return compareTo;
     }
 
-    public IWorkbenchSite getActiveWorkbenchSite() {
-        return activeWorkbenchSite;
+    public Shell getActiveShell() {
+        return activeShell;
+    }
+
+    public IWorkbenchPartSite getActiveWorkbenchPartSite() {
+        return activeWorkbenchPartSite;
     }
 
     public IWorkbenchWindow getActiveWorkbenchWindow() {
@@ -119,12 +186,8 @@ public final class HandlerSubmission implements Comparable {
         return handler;
     }
 
-    public int getPriority() {
+    public Priority getPriority() {
         return priority;
-    }
-    
-    public Shell getActiveShell() {
-        return activeShell;
     }
 
     public int hashCode() {
@@ -132,7 +195,7 @@ public final class HandlerSubmission implements Comparable {
             hashCode = HASH_INITIAL;
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(activeShell);
             hashCode = hashCode * HASH_FACTOR
-                    + Util.hashCode(activeWorkbenchSite);
+                    + Util.hashCode(activeWorkbenchPartSite);
             hashCode = hashCode * HASH_FACTOR
                     + Util.hashCode(activeWorkbenchWindow);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(commandId);
@@ -150,7 +213,7 @@ public final class HandlerSubmission implements Comparable {
             stringBuffer.append("[activeShell="); //$NON-NLS-1$
             stringBuffer.append(activeShell);
             stringBuffer.append(",activeWorkbenchSite="); //$NON-NLS-1$
-            stringBuffer.append(activeWorkbenchSite);
+            stringBuffer.append(activeWorkbenchPartSite);
             stringBuffer.append(",activeWorkbenchWindow="); //$NON-NLS-1$
             stringBuffer.append(activeWorkbenchWindow);
             stringBuffer.append(",commandId="); //$NON-NLS-1$

@@ -40,6 +40,7 @@ import org.eclipse.ui.commands.AbstractHandler;
 import org.eclipse.ui.commands.ExecutionException;
 import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.IHandler;
+import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.internal.ColorSchemeService;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchThemeConstants;
@@ -150,8 +151,8 @@ public class EditorPresentation extends BasicStackPresentation {
             }
         };
         openEditorDropDownHandlerSubmission = new HandlerSubmission(null,
-                "org.eclipse.ui.window.openEditorDropDown", //$NON-NLS-1$
-                openEditorDropDownHandler, 1, shell);
+                shell, null, "org.eclipse.ui.window.openEditorDropDown", //$NON-NLS-1$
+                openEditorDropDownHandler, Priority.NORMAL);
         PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmissions(
                 Collections.singletonList(openEditorDropDownHandlerSubmission));
     }

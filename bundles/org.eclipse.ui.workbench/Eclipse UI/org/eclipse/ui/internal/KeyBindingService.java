@@ -21,13 +21,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jface.action.IAction;
-
 import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.INestableKeyBindingService;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.commands.ActionHandler;
 import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.IHandler;
+import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.contexts.EnabledSubmission;
 
 /**
@@ -99,33 +100,33 @@ final class KeyBindingService implements INestableKeyBindingService {
      * The site within the workbench at which this service is provided. This
      * value should not be <code>null</code>.
      */
-    private IWorkbenchSite workbenchSite;
+    private IWorkbenchPartSite workbenchPartSite;
 
     /**
      * Constructs a new instance of <code>KeyBindingService</code> on a given
      * workbench site. This instance is not nested.
      * 
-     * @param workbenchSite
+     * @param workbenchPartSite
      *            The site for which this service will be responsible; should
      *            not be <code>null</code>.
      */
-    KeyBindingService(IWorkbenchSite workbenchSite) {
-        this(workbenchSite, null);
+    KeyBindingService(IWorkbenchPartSite workbenchPartSite) {
+        this(workbenchPartSite, null);
     }
 
     /**
      * Constructs a new instance of <code>KeyBindingService</code> on a given
      * workbench site.
      * 
-     * @param workbenchSite
+     * @param workbenchPartSite
      *            The site for which this service will be responsible; should
      *            not be <code>null</code>.
      * @param parent
      *            The parent key binding service, if any; <code>null</code>
      *            if none.
      */
-    KeyBindingService(IWorkbenchSite workbenchSite, KeyBindingService parent) {
-        this.workbenchSite = workbenchSite;
+    KeyBindingService(IWorkbenchPartSite workbenchPartSite, KeyBindingService parent) {
+        this.workbenchPartSite = workbenchPartSite;
         this.parent = parent;
     }
 
@@ -336,7 +337,12 @@ final class KeyBindingService implements INestableKeyBindingService {
         IKeyBindingService service = (IKeyBindingService) nestedServices
                 .get(nestedSite);
         if (service == null) {
-            service = new KeyBindingService(nestedSite, this);
+            // TODO the INestedKeyBindingService API should be based on IWorkbenchPartSite..
+            if (nestedSite instanceof IWorkbenchPartSite)
+                service = new KeyBindingService((IWorkbenchPartSite) nestedSite, this);
+            else 
+                service = new KeyBindingService(null, this);
+            
             nestedServices.put(nestedSite, service);
         }
 
@@ -385,10 +391,10 @@ final class KeyBindingService implements INestableKeyBindingService {
 
             if (submission instanceof EnabledSubmission) {
                 final EnabledSubmission enabledSubmission = (EnabledSubmission) submission;
-                if (!workbenchSite.equals(enabledSubmission
+                if (!workbenchPartSite.equals(enabledSubmission
                         .getActiveWorkbenchSite())) {
                     replacementSubmission = new EnabledSubmission(
-                            enabledSubmission.getActiveShell(), workbenchSite,
+                            enabledSubmission.getActiveShell(), workbenchPartSite,
                             enabledSubmission.getContextId());
                 } else {
                     replacementSubmission = enabledSubmission;
@@ -396,11 +402,13 @@ final class KeyBindingService implements INestableKeyBindingService {
 
             } else if (submission instanceof HandlerSubmission) {
                 final HandlerSubmission handlerSubmission = (HandlerSubmission) submission;
-                if (!workbenchSite.equals(handlerSubmission
-                        .getActiveWorkbenchSite())) {
+                if (!workbenchPartSite.equals(handlerSubmission
+                        .getActiveWorkbenchPartSite())) {
                     replacementSubmission = new HandlerSubmission(
-                            workbenchSite, handlerSubmission
-                                    .getActiveWorkbenchWindow(),
+                            null, 
+                            handlerSubmission
+                            .getActiveShell(),
+                            workbenchPartSite,                                                         
                             handlerSubmission.getCommandId(), handlerSubmission
                                     .getHandler(), handlerSubmission
                                     .getPriority());
@@ -435,8 +443,8 @@ final class KeyBindingService implements INestableKeyBindingService {
 
             // Create the new submission
             IHandler handler = new ActionHandler(action);
-            HandlerSubmission handlerSubmission = new HandlerSubmission(
-                    workbenchSite, null, commandId, handler, 4);
+            HandlerSubmission handlerSubmission = new HandlerSubmission(null, null,
+                    workbenchPartSite, commandId, handler, Priority.NORMAL);
             handlerSubmissionsByCommandId.put(commandId, handlerSubmission);
 
             // Either submit the new handler myself, or simply re-activate.
@@ -490,7 +498,7 @@ final class KeyBindingService implements INestableKeyBindingService {
         for (Iterator iterator = enabledContextIds.iterator(); iterator
                 .hasNext();) {
             String contextId = (String) iterator.next();
-            enabledSubmissions.add(new EnabledSubmission(null, workbenchSite,
+            enabledSubmissions.add(new EnabledSubmission(null, workbenchPartSite,
                     contextId));
         }
 
