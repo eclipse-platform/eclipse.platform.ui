@@ -149,6 +149,13 @@ public class PresentableViewPart implements IPresentablePart {
 		
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.presentations.IPresentablePart#getControl()
+	 */
+	public Control getControl() {
+		return pane.getControl();
+	}
 	
 	
 }

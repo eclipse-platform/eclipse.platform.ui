@@ -93,7 +93,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	 * @see org.eclipse.jface.window.Window#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite root) {
-		viewer = new ProgressViewer(root, SWT.NONE,5, 72) {
+		viewer = new ProgressViewer(root, SWT.NO_FOCUS,5, 72) {
 			/*
 			 * * (non-Javadoc)
 			 * 

@@ -60,7 +60,7 @@ public class ProgressRegion {
 		item.createControl(region);
 		Control itemControl = item.getControl();
 		
-		viewer = new ProgressViewer(region, SWT.NONE, 1,36);
+		viewer = new ProgressViewer(region, SWT.NO_FOCUS, 1,36);
 		viewer.setUseHashlookup(true);
 		Control viewerControl = viewer.getControl();
 		

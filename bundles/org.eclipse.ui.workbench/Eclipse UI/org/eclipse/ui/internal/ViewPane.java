@@ -131,8 +131,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 
 		super.createControl(parent);
 
-		setTabList();
-		
 		DragUtil.addDragSource(control, new AbstractDragSource() {
 			
 			public Object getDraggedItem(Point position) {
@@ -150,17 +148,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		});
 	}
 
-	/**
-	 * 
-	 */
-	private void setTabList() {
-		// Only include the ISV toolbar and the content in the tab list.
-		// All actions on the System toolbar should be accessible on the pane menu.
-		if (control.getContent() == null) {
-		} else {
-			control.setTabList(new Control[] {control.getContent()});
-		}
-	}
 	
 	protected void createChildControl() {
 		final IWorkbenchPart part[] = new IWorkbenchPart[] { partReference.getPart(false)};
@@ -326,7 +313,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 				isvToolBarMgr.add(isvItems[i]);
 			}
 		}
-		setTabList();
         // only do this once for the non-floating toolbar case.  Otherwise update colors
 		// whenever updating the tab colors
 		ColorSchemeService.setViewColors(parentControl);
@@ -405,8 +391,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		Control c = getControl();
 		if (getContainer() instanceof PartTabFolder) {
 			PartTabFolder tf = (PartTabFolder) getContainer();
-			Control f = tf.getControl();
-			return new Control[] { f, c };
+			return tf.getTabList(this);
 		}
 		return new Control[] { c };
 	}

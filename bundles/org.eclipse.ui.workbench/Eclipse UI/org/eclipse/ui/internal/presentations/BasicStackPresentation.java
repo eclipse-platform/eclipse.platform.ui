@@ -831,4 +831,22 @@ public class BasicStackPresentation extends StackPresentation {
 			showSystemMenu(part, location);
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.presentations.StackPresentation#getTabList(IPresentablePart)
+	 */
+	public Control[] getTabList(IPresentablePart part) {
+		ArrayList list = new ArrayList();
+		if (getTabPosition() == SWT.BOTTOM) {
+			if (part.getToolBar() != null) list.add(part.getToolBar());
+			if (part.getControl() != null) list.add(part.getControl());
+			if (getTabFolder() != null) list.add(getTabFolder());
+		}
+		else {
+			if (getTabFolder() != null) list.add(getTabFolder());
+			if (part.getToolBar() != null) list.add(part.getToolBar());
+			if (part.getControl() != null) list.add(part.getControl());
+		}
+		return (Control[]) list.toArray(new Control[list.size()]);
+	}
 }

@@ -12,6 +12,12 @@ package org.eclipse.ui.internal.progress;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.FontMetrics;
@@ -23,12 +29,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
-
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.StructuredViewer;
-
 import org.eclipse.ui.internal.misc.Assert;
 /**
  * The ProgressViewer is the viewer used by progress windows. It displays text
@@ -69,6 +69,22 @@ public class ProgressViewer extends StructuredViewer {
 		gc.dispose();
 		initializeListeners();
 	}
+	
+	/**
+	 * NE: Copied from ContentViewer.  We don't want the OpenStrategy hooked
+	 * in StructuredViewer.hookControl otherwise the canvas will take focus
+	 * since it has a key listener.  We don't want this included in the window's
+	 * tab traversal order.  Defeating it here is more self-contained then 
+	 * setting the tab list on the shell or other parent composite.
+	 */
+	protected void hookControl(Control control) {
+		control.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent event) {
+				handleDispose(event);
+			}
+		});
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

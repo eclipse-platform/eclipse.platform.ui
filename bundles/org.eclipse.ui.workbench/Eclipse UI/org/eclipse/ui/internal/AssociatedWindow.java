@@ -196,11 +196,6 @@ public class AssociatedWindow extends Window {
 		};
 		owner.addControlListener(controlListener);
 		getParentShell().addControlListener(controlListener);
-		Control[] c = getParentShell().getTabList();
-		Control[] newTab = new Control[c.length + 1];
-		System.arraycopy(c, 0, newTab, 0, c.length);
-		newTab[c.length] = floatingShell;
-		getParentShell().setTabList(newTab);
 	}
 	/*
 	 * (non-Javadoc)

@@ -184,4 +184,12 @@ public interface IPresentablePart {
 	 */
 	public IPartMenu getMenu();
 	
+	
+	/**
+	 * Returns the SWT control for this part
+	 * 
+	 * @return the part's control
+	 */
+	public Control getControl();
+	
 }

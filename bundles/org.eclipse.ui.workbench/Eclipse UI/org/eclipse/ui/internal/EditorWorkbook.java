@@ -1077,7 +1077,16 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
 	}
     
     public Control[] getTabList() {
-        return new Control[0];
+    	LayoutPart part = getVisiblePart();
+    	if (part != null) {
+            IPresentablePart presentablePart = part.getPresentablePart();
+            StackPresentation presentation = getPresentation();
+
+            if (presentablePart != null && presentation != null) {
+                return presentation.getTabList(presentablePart);
+            }
+    	}
+    	return new Control[0];
     }
 
     public void removeAll() {

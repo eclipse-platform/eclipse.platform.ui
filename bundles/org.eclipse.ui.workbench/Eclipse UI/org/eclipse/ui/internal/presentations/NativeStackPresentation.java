@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations;
 
+import java.util.ArrayList;
+
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -445,4 +447,16 @@ public class NativeStackPresentation extends StackPresentation {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.presentations.StackPresentation#getTabList(IPresentablePart)
+	 */
+	public Control[] getTabList(IPresentablePart part) {
+		ArrayList list = new ArrayList();
+		if (getControl() != null) list.add(getControl());
+		if (part.getToolBar() != null) list.add(part.getToolBar());
+		if (part.getControl() != null) list.add(part.getControl());
+		return (Control[]) list.toArray(new Control[list.size()]);
+	}
+	
 }

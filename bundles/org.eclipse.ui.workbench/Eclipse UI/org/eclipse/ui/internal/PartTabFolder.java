@@ -1016,4 +1016,21 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
 	public void showPaneMenu() {
 		getPresentation().showPaneMenu();
 	}
+
+	/**
+	 * @param pane
+	 * @return
+	 */
+	public Control[] getTabList(LayoutPart part) {
+		if (part != null) {
+            IPresentablePart presentablePart = part.getPresentablePart();
+            StackPresentation presentation = getPresentation();
+
+            if (presentablePart != null && presentation != null) {
+                return presentation.getTabList(presentablePart);
+            }
+        }
+		
+		return new Control[0];
+	}
 }

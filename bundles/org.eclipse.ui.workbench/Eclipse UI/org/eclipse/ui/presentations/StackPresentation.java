@@ -179,4 +179,12 @@ public abstract class StackPresentation {
 	 * 
 	 */
 	public abstract void showPaneMenu();
+
+	/**
+	 * Returns the tab-key traversal order for the given <code>IPresentablePart</code>.
+	 * 
+	 * @param part the part
+	 * @return the tab-key traversal order
+	 */
+	public abstract Control[] getTabList(IPresentablePart part);
 }

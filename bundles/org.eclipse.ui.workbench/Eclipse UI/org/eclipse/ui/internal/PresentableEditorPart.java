@@ -114,4 +114,11 @@ public class PresentableEditorPart implements IPresentablePart {
 	public IPartMenu getMenu() {
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.presentations.IPresentablePart#getControl()
+	 */
+	public Control getControl() {
+		return pane.getControl();
+	}
 }
