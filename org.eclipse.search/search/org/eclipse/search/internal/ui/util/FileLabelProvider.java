@@ -11,8 +11,9 @@ import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.swt.graphics.Image;
 
-import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.LabelProvider;
 
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -22,7 +23,7 @@ import org.eclipse.search.ui.ISearchResultViewEntry;
 import org.eclipse.search.internal.ui.SearchMessages;
 
 
-public class FileLabelProvider extends DecoratingLabelProvider {
+public class FileLabelProvider extends LabelProvider {
 		
 	public static final int SHOW_LABEL= 1;
 	public static final int SHOW_LABEL_PATH= 2;
@@ -31,11 +32,15 @@ public class FileLabelProvider extends DecoratingLabelProvider {
 	
 	private static final String fgSeparatorFormat= SearchMessages.getString("FileLabelProvider.dashSeparated"); //$NON-NLS-1$
 	
+	private WorkbenchLabelProvider fLabelProvider;
+	private ILabelDecorator fDecorator;
+		
 	private int fOrder;
 	private String[] fArgs= new String[2];
 
 	public FileLabelProvider(int orderFlag) {
-		super(new WorkbenchLabelProvider(), getDecoratorManager());
+		fDecorator= PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator();
+		fLabelProvider= new WorkbenchLabelProvider();
 		fOrder= orderFlag;
 	}
 
@@ -58,7 +63,7 @@ public class FileLabelProvider extends DecoratingLabelProvider {
 			if (path.getDevice() == null)
 				path= path.makeRelative();
 			if (fOrder == SHOW_LABEL || fOrder == SHOW_LABEL_PATH) {
-				text= getLabelProvider().getText(resource);
+				text= fLabelProvider.getText(resource);
 				if (path != null && fOrder == SHOW_LABEL_PATH) {
 					fArgs[0]= text;
 					fArgs[1]= path.toString();
@@ -71,17 +76,17 @@ public class FileLabelProvider extends DecoratingLabelProvider {
 					text= ""; //$NON-NLS-1$
 				if (fOrder == SHOW_PATH_LABEL) {
 					fArgs[0]= text;
-					fArgs[1]= getLabelProvider().getText(resource);
+					fArgs[1]= fLabelProvider.getText(resource);
 					text= MessageFormat.format(fgSeparatorFormat, fArgs);
 				}
 			}
 		}
 		
 		// Do the decoration
-		if (getLabelDecorator() != null) {
-			String decorated= getLabelDecorator().decorateText(text, element);
-		if (decorated != null)
-			return decorated;
+		if (fDecorator != null) {
+			String decoratedText= fDecorator.decorateText(text, resource);
+		if (decoratedText != null)
+			return decoratedText;
 		}
 		return text;
 	}
@@ -89,10 +94,33 @@ public class FileLabelProvider extends DecoratingLabelProvider {
 	public Image getImage(Object element) {
 		if (!(element instanceof ISearchResultViewEntry))
 			return null; //$NON-NLS-1$
-		return super.getImage(((ISearchResultViewEntry) element).getResource());
+
+		IResource resource= ((ISearchResultViewEntry) element).getResource();
+		Image image= fLabelProvider.getImage(resource);
+		if (fDecorator != null) {
+			Image decoratedImage= fDecorator.decorateImage(image, resource);
+			if (decoratedImage != null)
+				return decoratedImage;
+		}
+		return image;
 	}
 
-	private static ILabelDecorator getDecoratorManager() {
-		return PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator();
+	public void dispose() {
+		super.dispose();
+		fLabelProvider.dispose();
+	}
+
+	public boolean isLabelProperty(Object element, String property) {
+		return fLabelProvider.isLabelProperty(element, property);
+	}
+
+	public void removeListener(ILabelProviderListener listener) {
+		super.removeListener(listener);
+		fLabelProvider.removeListener(listener);
+	}
+
+	public void addListener(ILabelProviderListener listener) {
+		super.addListener(listener);
+		fLabelProvider.addListener(listener);
 	}
 }

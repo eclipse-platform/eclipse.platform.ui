@@ -25,6 +25,8 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.DecoratingLabelProvider;
+import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -91,7 +93,10 @@ public class SearchResultViewer extends TableViewer {
 		
 		setUseHashlookup(true);
 		setContentProvider(new SearchResultContentProvider());
-		setLabelProvider(new SearchResultLabelProvider(new FileLabelProvider(FileLabelProvider.SHOW_LABEL), PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
+
+		ILabelDecorator decorator= PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator();
+		ILabelProvider labelProvider= new SearchResultLabelProvider(new FileLabelProvider(FileLabelProvider.SHOW_LABEL));
+		setLabelProvider(new DecoratingLabelProvider(labelProvider, decorator));
 
 		boolean hasSearch= SearchManager.getDefault().getCurrentSearch() != null;
 
@@ -365,7 +370,7 @@ public class SearchResultViewer extends TableViewer {
 	}
 
 	void internalSetLabelProvider(ILabelProvider provider) {
-		setLabelProvider(new SearchResultLabelProvider(provider, PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
+		setLabelProvider(new DecoratingLabelProvider(new SearchResultLabelProvider(provider), PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
 	}
 
 	/**

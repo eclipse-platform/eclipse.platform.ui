@@ -6,42 +6,21 @@ package org.eclipse.search.internal.ui;
 
 import org.eclipse.swt.graphics.Image;
 
-import org.eclipse.jface.viewers.DecoratingLabelProvider;
-import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProvider;
 
 import org.eclipse.search.ui.ISearchResultViewEntry;
 
-class SearchResultLabelProvider extends DecoratingLabelProvider {
+class SearchResultLabelProvider extends LabelProvider {
 	
 	private static final String MATCHES_POSTFIX= " " + SearchMessages.getString("SearchResultView.matches") + ")"; //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$		
 
-	private static class MatchCountDecorator extends LabelProvider implements ILabelDecorator {
-		/*
-		 * @see ILabelDecorator#decorateImage(Image, Object)
-		 */
-		public Image decorateImage(Image image, Object element) {
-			return null;
-		}
+	private ILabelProvider fLabelProvider;
+
 	
-		/*
-		 * @see ILabelDecorator#decorateText(String, Object)
-		 */
-		public String decorateText(String text, Object element) {
-			StringBuffer buf= new StringBuffer(text);
-			int count= ((ISearchResultViewEntry)element).getMatchCount();
-			if (count > 1) {
-				buf.append(" ("); //$NON-NLS-1$
-				buf.append(count);
-				buf.append(MATCHES_POSTFIX);
-			}
-			return buf.toString();			
-		}
-	}
-	
-	SearchResultLabelProvider(ILabelProvider provider, ILabelDecorator decorator) {
-		super(provider, new MatchCountDecorator());
+	SearchResultLabelProvider(ILabelProvider provider) {
+		fLabelProvider= provider;
 	}
 
 	public String getText(Object element) {
@@ -55,7 +34,29 @@ class SearchResultLabelProvider extends DecoratingLabelProvider {
 		return buf.toString();			
 	}
 	
+	public Image getImage(Object element) {
+		return fLabelProvider.getImage(element);
+	}
+	
 	// Don't dispose since label providers are reused.
 	public void dispose() {
+	}
+
+	ILabelProvider getLabelProvider() {
+		return fLabelProvider;
+	}
+
+	public void addListener(ILabelProviderListener listener) {
+		super.addListener(listener);
+		fLabelProvider.addListener(listener);
+	}
+
+	public boolean isLabelProperty(Object element, String property) {
+		return fLabelProvider.isLabelProperty(element, property);
+	}
+
+	public void removeListener(ILabelProviderListener listener) {
+		super.removeListener(listener);
+		fLabelProvider.removeListener(listener);
 	}
 }
