@@ -13,6 +13,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.registry.*;
 
 /**
@@ -20,9 +21,7 @@ import org.eclipse.ui.internal.registry.*;
  * It implements a reference counting strategy so that one view can be shared
  * by more than one client.
  */
-public class ViewFactory
-{
-	static boolean DEBUG = false;
+public class ViewFactory {
 	private WorkbenchPage page;
 	private IViewRegistry viewReg;
 	private ReferenceCounter counter;
@@ -100,15 +99,17 @@ public IStatus busyRestoreView(final IViewReference ref) {
 					null);
 				return;
 			}
-
-			// Debugging
-			if (DEBUG)
-				System.out.println("Create " + desc.getLabel());//$NON-NLS-1$
 		
 			// Create the view.
 			IViewPart view = null;
+			String label = desc.getLabel();
 			try {
-				view = desc.createView();
+				try {
+					UIStats.start(UIStats.CREATE_PART,label);
+					view = desc.createView();
+				} finally {
+					UIStats.end(UIStats.CREATE_PART,label);
+				}
 				((ViewReference)ref).setPart(view);
 			} catch (CoreException e) {
 				PartPane pane = ((ViewReference)ref).getPane();
@@ -126,7 +127,12 @@ public IStatus busyRestoreView(final IViewReference ref) {
 			// Create site
 			ViewSite site = new ViewSite(view, page, desc);
 			try {
-				view.init(site,stateMem);
+				try {
+					UIStats.start(UIStats.INIT_PART,label);
+					view.init(site,stateMem);
+				} finally {
+					UIStats.end(UIStats.INIT_PART,label);
+				}
 			} catch (PartInitException e) {
 				releaseView(viewID);
 				result[0] = new Status(
@@ -219,10 +225,6 @@ public IStatus restoreState(IMemento memento) {
  */
 private void destroyView(IViewDescriptor desc, IViewPart view) 
 {
-	// Debugging
-	if (DEBUG)
-		System.out.println("Dispose " + desc.getLabel());//$NON-NLS-1$
-
 	// Free action bars, pane, etc.
 	PartSite site = (PartSite)view.getSite();
 	ViewActionBars actionBars = (ViewActionBars)site.getActionBars();

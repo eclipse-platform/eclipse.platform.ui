@@ -96,6 +96,8 @@ import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.fonts.FontDefinition;
 import org.eclipse.ui.internal.commands.keys.KeyManager;
 import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.internal.misc.Policy;
+import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
 import org.eclipse.update.core.SiteManager;
 
@@ -700,11 +702,16 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			}
 		}
 
-		int restoreCode = openPreviousWorkbenchState();
-		if (restoreCode == RESTORE_CODE_EXIT)
-			return false;
-		if (restoreCode == RESTORE_CODE_RESET)
-			openFirstTimeWindow();
+		try {
+			UIStats.start(UIStats.RESTORE_WORKBENCH, "Workbench"); //$NON-NLS-1$
+			int restoreCode = openPreviousWorkbenchState();
+			if (restoreCode == RESTORE_CODE_EXIT)
+				return false;
+			if (restoreCode == RESTORE_CODE_RESET)
+				openFirstTimeWindow();
+		} finally {
+			UIStats.end(UIStats.RESTORE_WORKBENCH, "Workbench"); //$NON-NLS-1$
+		}
 
 		forceOpenPerspective(commandLineArgs);
 		getConfigurationInfo().openWelcomeEditors();
@@ -1059,15 +1066,24 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		// Read perspective history.
 		// This must be done before we recreate the windows, because it is
 		// consulted during the recreation.
-		IMemento childMem = memento.getChild(IWorkbenchConstants.TAG_PERSPECTIVE_HISTORY);
-		if (childMem != null)
-			result.add(getPerspectiveHistory().restoreState(childMem));
-
-		IMemento mruMemento = memento.getChild(IWorkbenchConstants.TAG_MRU_LIST); //$NON-NLS-1$
-		if (mruMemento != null) {
-			result.add(getEditorHistory().restoreState(mruMemento));
+		IMemento childMem;
+		try {
+			UIStats.start(UIStats.RESTORE_WORKBENCH,"PerspectiveHistory"); //$NON-NLS-1$
+			childMem = memento.getChild(IWorkbenchConstants.TAG_PERSPECTIVE_HISTORY);
+			if (childMem != null)
+				result.add(getPerspectiveHistory().restoreState(childMem));
+		} finally {
+			UIStats.end(UIStats.RESTORE_WORKBENCH,"PerspectiveHistory"); //$NON-NLS-1$
 		}
-
+		try {
+			UIStats.start(UIStats.RESTORE_WORKBENCH,"MRUList"); //$NON-NLS-1$
+			IMemento mruMemento = memento.getChild(IWorkbenchConstants.TAG_MRU_LIST); //$NON-NLS-1$
+			if (mruMemento != null) {
+				result.add(getEditorHistory().restoreState(mruMemento));
+			}
+		} finally {
+			UIStats.end(UIStats.RESTORE_WORKBENCH,"MRUList"); //$NON-NLS-1$
+		}
 		// Get the child windows.
 		IMemento[] children = memento.getChildren(IWorkbenchConstants.TAG_WINDOW);
 		IPerspectiveRegistry reg = WorkbenchPlugin.getDefault().getPerspectiveRegistry();
@@ -1165,6 +1181,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * Runs the workbench.
 	 */
 	public Object run(Object arg) {
+		UIStats.start(UIStats.START_WORKBENCH,"Workbench"); //$NON-NLS-1$
 		String[] commandLineArgs = new String[0];
 		if (arg != null && arg instanceof String[])
 			commandLineArgs = (String[]) arg;
@@ -1174,7 +1191,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		if (appName != null)
 			Display.setAppName(appName);
 		Display display = null;
-		if ("true".equals(Platform.getDebugOption("org.eclipse.ui/trace/graphics"))) { //$NON-NLS-1$ //$NON-NLS-2$
+		if (Policy.DEBUG_SWT_GRAPHICS) {
 			DeviceData data = new DeviceData();
 			data.tracking = true;
 			display = new Display(data);
@@ -1198,6 +1215,11 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 				checkUpdates(commandLineArgs); // may trigger a close/restart
 			if (initOK && runEventLoop) {
 				startPlugins();
+				display.asyncExec(new Runnable() {
+					public void run() {
+						UIStats.end(UIStats.START_WORKBENCH,"Workbench"); //$NON-NLS-1$
+					}
+				});
 				runEventLoop(handler);
 			}
 			shutdown();

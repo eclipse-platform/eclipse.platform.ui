@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dialogs.InternalErrorDialog;
+import org.eclipse.ui.internal.misc.Policy;
 
 /**
  * Handles exceptions or errors caught in the event loop.
@@ -30,9 +31,7 @@ class ExceptionHandler implements Window.IExceptionHandler {
 	private Shell defaultParent = new Shell();
 	private boolean closing = false;
 	private Workbench workbench;
-	
-	private static boolean OPEN_DIALOG = "true".equals(Platform.getDebugOption("org.eclipse.ui/debug/internalerror/openDialog")); //$NON-NLS-1$
-	
+		
 	//Pre-load all Strings trying to run as light as possible in case of fatal errors.
 	private static String MSG_UNHANDLED_EXCEPTION = WorkbenchMessages.getString("Unhandled_exception"); //$NON-NLS-1$
 	private static String MSG_OutOfMemoryError = WorkbenchMessages.getString("FatalError_OutOfMemoryError"); //$NON-NLS-1$
@@ -168,7 +167,7 @@ private boolean openQuestionDialog(Throwable internalError) {
 			} else {
 				msg = WorkbenchMessages.format("InternalErrorOneArg", new Object[] {internalError.getMessage()}); //$NON-NLS-1$
 			}
-			if(OPEN_DIALOG) 
+			if(Policy.DEBUG_OPEN_ERROR_DIALOG) 
 				return openQuestion(null, WorkbenchMessages.getString("Internal_error"), msg,internalError,1); //$NON-NLS-1$
 			else
 				return false;
@@ -176,7 +175,7 @@ private boolean openQuestionDialog(Throwable internalError) {
 	    //Allways open the dialog in case of major error but does not show the detail button
 	    //if OPEN_DIALOG is false.
 	    Throwable detail = internalError;
-	    if(!OPEN_DIALOG)
+	    if(!Policy.DEBUG_OPEN_ERROR_DIALOG)
 	    	detail = null;
 		return InternalErrorDialog.openQuestion(null, WorkbenchMessages.getString("Internal_error"), msg + MSG_FATAL_ERROR,detail,1); //$NON-NLS-1$
 	} catch (Throwable th) {

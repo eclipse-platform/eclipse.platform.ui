@@ -20,6 +20,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.part.WorkbenchPart;
 
 
@@ -132,7 +133,12 @@ protected void createChildControl() {
 	String error = WorkbenchMessages.format("PartPane.unableToCreate", new Object[] {partReference.getTitle()}); //$NON-NLS-1$
 	Platform.run(new SafeRunnable(error) {
 		public void run() {
-			part[0].createPartControl(content);
+			try {
+				UIStats.start(UIStats.CREATE_PART_CONTROL,id);
+				part[0].createPartControl(content);
+			} finally {
+				UIStats.end(UIStats.CREATE_PART_CONTROL,id);
+			}
 		}
 		public void handleException(Throwable e) {
 			// Log error.

@@ -24,6 +24,7 @@ import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
 import org.eclipse.ui.internal.editorsupport.ComponentSupport;
 import org.eclipse.ui.internal.misc.ExternalEditor;
+import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.model.AdaptableList;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -568,7 +569,15 @@ public class EditorManager {
 	 */
 	private void createSite(final IEditorPart part, final EditorDescriptor desc, final IEditorInput input) throws PartInitException {
 		EditorSite site = new EditorSite(part, page, desc);
-		part.init(site, input);
+		final String label = part.getTitle();
+		try {
+			UIStats.start(UIStats.INIT_PART,label);
+			part.init(site, input);
+		} finally {
+			UIStats.end(UIStats.INIT_PART,label);
+		}
+		
+		
 		if (part.getSite() != site)
 			throw new PartInitException(WorkbenchMessages.format("EditorManager.siteIncorrect", new Object[] { desc.getId()})); //$NON-NLS-1$
 
@@ -616,7 +625,14 @@ public class EditorManager {
 	 */
 	private void openInternalEditor(IEditorReference ref,final EditorDescriptor desc, IEditorInput input, boolean setVisible) throws PartInitException {
 		// Create an editor instance.
-		final IEditorPart editor = createPart(desc);
+		final IEditorPart editor;
+		final String label = ref.getName() != null ? ref.getName() : desc.getLabel();
+		try {
+			UIStats.start(UIStats.CREATE_PART,label);
+			editor = createPart(desc);
+		} finally {
+			UIStats.end(UIStats.CREATE_PART,label);
+		}
 		// Open the instance.
 		createSite(editor, desc, input);
 		((Editor)ref).setPart(editor);
@@ -824,19 +840,26 @@ public class EditorManager {
 					result[0] = unableToCreateEditor(editorMem,null);
 					return;
 				}
-				IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryID);
-				if (factory == null) {
-					WorkbenchPlugin.log("Unable to restore editor - cannot instantiate input element factory: " + factoryID); //$NON-NLS-1$
-					result[0] = unableToCreateEditor(editorMem,null);
-					return;
-				}
-
-				// Get the input element.
-				IAdaptable input = factory.createElement(inputMem);
-				if (input == null) {
-					WorkbenchPlugin.log("Unable to restore editor - createElement returned null for input element factory: " + factoryID); //$NON-NLS-1$
-					result[0] = unableToCreateEditor(editorMem,null);
-					return;
+				IAdaptable input;
+				String label = ref.getName() != null ? ref.getName() : factoryID;
+				try {
+					UIStats.start(UIStats.CREATE_PART_INPUT,label);
+					IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryID);
+					if (factory == null) {
+						WorkbenchPlugin.log("Unable to restore editor - cannot instantiate input element factory: " + factoryID); //$NON-NLS-1$
+						result[0] = unableToCreateEditor(editorMem,null);
+						return;
+					}
+	
+					// Get the input element.
+					input = factory.createElement(inputMem);
+					if (input == null) {
+						WorkbenchPlugin.log("Unable to restore editor - createElement returned null for input element factory: " + factoryID); //$NON-NLS-1$
+						result[0] = unableToCreateEditor(editorMem,null);
+						return;
+					}
+				} finally {
+					UIStats.end(UIStats.CREATE_PART_INPUT,label);
 				}
 				if (!(input instanceof IEditorInput)) {
 					WorkbenchPlugin.log("Unable to restore editor - createElement result is not an IEditorInput for input element factory: " + factoryID); //$NON-NLS-1$

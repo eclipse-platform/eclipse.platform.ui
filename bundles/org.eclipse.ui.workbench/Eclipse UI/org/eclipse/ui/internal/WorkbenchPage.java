@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.internal.dialogs.*;
+import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.model.*;
 import org.eclipse.ui.part.*;
@@ -1537,8 +1538,6 @@ private void init(WorkbenchWindow w, String layoutID, IAdaptable input)
 		// Update MRU list.
 		Workbench wb = (Workbench)window.getWorkbench();
 		wb.getPerspectiveHistory().add(desc);
-		
-		updateVisibility(null,persp);
 	}
 }
 /**
@@ -1632,9 +1631,11 @@ protected void onActivate() {
 	}
 	composite.setVisible(true);
 	Perspective persp = getActivePerspective();
+	
 	if (persp != null) {
 		window.selectPerspectiveShortcut(persp.getDesc(), this, true);
 		persp.onActivate();
+		updateVisibility(null,persp);
 	}
 	if (activePart != null) {
 		activationList.setActive(activePart);
@@ -2040,95 +2041,102 @@ public void resetPerspective() {
 public IStatus restoreState(IMemento memento,IPerspectiveDescriptor activeDescritor) {
 	// Restore working set
 	String pageName = memento.getString(IWorkbenchConstants.TAG_LABEL);
-	if(pageName == null) pageName = "";
-	MultiStatus result = new MultiStatus(
-		PlatformUI.PLUGIN_ID,IStatus.OK,
-		WorkbenchMessages.format("WorkbenchPage.unableToRestorePerspective",new String[]{pageName}),
-		null);
-
-	String workingSetName = memento.getString(IWorkbenchConstants.TAG_WORKING_SET);
-	if (workingSetName != null) {
-		WorkingSetManager workingSetManager = (WorkingSetManager) getWorkbenchWindow().getWorkbench().getWorkingSetManager();
-		setWorkingSet(workingSetManager.getWorkingSet(workingSetName));
-	}
+	String label = pageName == null ? "" : "::" + pageName;
 	
-	// Restore editor manager.
-	IMemento childMem = memento.getChild(IWorkbenchConstants.TAG_EDITORS);
-	result.merge(getEditorManager().restoreState(childMem));
+	try {
+		UIStats.start(UIStats.RESTORE_WORKBENCH,"WorkbenchPage" + label);
+		if(pageName == null) pageName = "";
+		MultiStatus result = new MultiStatus(
+			PlatformUI.PLUGIN_ID,IStatus.OK,
+			WorkbenchMessages.format("WorkbenchPage.unableToRestorePerspective",new String[]{pageName}),
+			null);
 	
-	childMem = memento.getChild(IWorkbenchConstants.TAG_VIEWS);
-	if(childMem != null)
-		result.merge(getViewFactory().restoreState(childMem));
-
-	// Get persp block.
-	childMem = memento.getChild(IWorkbenchConstants.TAG_PERSPECTIVES);
-	String activePartID = childMem.getString(IWorkbenchConstants.TAG_ACTIVE_PART);
-	String activePerspectiveID = childMem.getString(IWorkbenchConstants.TAG_ACTIVE_PERSPECTIVE);
-	
-	// Restore perspectives.
-	IMemento perspMems[]  = childMem.getChildren(IWorkbenchConstants.TAG_PERSPECTIVE);
-	Perspective activePerspective = null;
-	for (int i = 0; i < perspMems.length; i++) {
-		try {
-			Perspective persp = new Perspective(null, this);
-			result.merge(persp.restoreState(perspMems[i]));
-			IPerspectiveDescriptor desc = persp.getDesc();
-			if (desc.equals(activeDescritor))
-				activePerspective = persp;
-			else if((activePerspective == null) && desc.getId().equals(activePerspectiveID))
-				activePerspective = persp;
-			perspList.add(persp);
-		} catch (WorkbenchException e) {
+		String workingSetName = memento.getString(IWorkbenchConstants.TAG_WORKING_SET);
+		if (workingSetName != null) {
+			WorkingSetManager workingSetManager = (WorkingSetManager) getWorkbenchWindow().getWorkbench().getWorkingSetManager();
+			setWorkingSet(workingSetManager.getWorkingSet(workingSetName));
 		}
-	}
-	boolean restoreActivePerspective = false;
-	if(activeDescritor == null)
-		restoreActivePerspective = true;
-	else if (activePerspective != null && activePerspective.getDesc().equals(activeDescritor)) {
-		restoreActivePerspective = true;
-	} else {
-		restoreActivePerspective = false;
-		activePerspective = createPerspective((PerspectiveDescriptor)activeDescritor);
-		if(activePerspective == null) {
-			result.merge(new Status(IStatus.ERROR,PlatformUI.PLUGIN_ID,0,
-				WorkbenchMessages.format("Workbench.showPerspectiveError",new String[]{activeDescritor.getId()}),
-				null));			
-		}
-	}
-			
-	perspList.setActive(activePerspective);
-	
-	// Make sure we have a valid perspective to work with,
-	// otherwise return.
-	activePerspective = perspList.getActive();
-	if (activePerspective == null) {
-		activePerspective = perspList.getNextActive();
-		perspList.setActive(activePerspective);
-		result.merge(activePerspective.restoreState());
-	}
-	if (activePerspective != null && restoreActivePerspective)
-		result.merge(activePerspective.restoreState());
-	
-	if (activePerspective != null) {	
-		window.firePerspectiveActivated(this, activePerspective.getDesc());
-	
-		// Restore active part.
-		if (activePartID != null) {
-			IViewReference ref = activePerspective.findView(activePartID);
-			IViewPart view = null;
-			if(ref != null)
-				view = ref.getView(true);
-			if (view != null)
-				activePart = view;
-		}
-	}
 		
-	childMem = memento.getChild(IWorkbenchConstants.TAG_NAVIGATION_HISTORY);
-	if(childMem != null)
-		navigationHistory.restoreState(childMem);
-	else if(getActiveEditor() != null)
-		navigationHistory.markEditor(getActiveEditor());
-	return result;
+		// Restore editor manager.
+		IMemento childMem = memento.getChild(IWorkbenchConstants.TAG_EDITORS);
+		result.merge(getEditorManager().restoreState(childMem));
+		
+		childMem = memento.getChild(IWorkbenchConstants.TAG_VIEWS);
+		if(childMem != null)
+			result.merge(getViewFactory().restoreState(childMem));
+	
+		// Get persp block.
+		childMem = memento.getChild(IWorkbenchConstants.TAG_PERSPECTIVES);
+		String activePartID = childMem.getString(IWorkbenchConstants.TAG_ACTIVE_PART);
+		String activePerspectiveID = childMem.getString(IWorkbenchConstants.TAG_ACTIVE_PERSPECTIVE);
+		
+		// Restore perspectives.
+		IMemento perspMems[]  = childMem.getChildren(IWorkbenchConstants.TAG_PERSPECTIVE);
+		Perspective activePerspective = null;
+		for (int i = 0; i < perspMems.length; i++) {
+			try {
+				Perspective persp = new Perspective(null, this);
+				result.merge(persp.restoreState(perspMems[i]));
+				IPerspectiveDescriptor desc = persp.getDesc();
+				if (desc.equals(activeDescritor))
+					activePerspective = persp;
+				else if((activePerspective == null) && desc.getId().equals(activePerspectiveID))
+					activePerspective = persp;
+				perspList.add(persp);
+			} catch (WorkbenchException e) {
+			}
+		}
+		boolean restoreActivePerspective = false;
+		if(activeDescritor == null)
+			restoreActivePerspective = true;
+		else if (activePerspective != null && activePerspective.getDesc().equals(activeDescritor)) {
+			restoreActivePerspective = true;
+		} else {
+			restoreActivePerspective = false;
+			activePerspective = createPerspective((PerspectiveDescriptor)activeDescritor);
+			if(activePerspective == null) {
+				result.merge(new Status(IStatus.ERROR,PlatformUI.PLUGIN_ID,0,
+					WorkbenchMessages.format("Workbench.showPerspectiveError",new String[]{activeDescritor.getId()}),
+					null));			
+			}
+		}
+				
+		perspList.setActive(activePerspective);
+		
+		// Make sure we have a valid perspective to work with,
+		// otherwise return.
+		activePerspective = perspList.getActive();
+		if (activePerspective == null) {
+			activePerspective = perspList.getNextActive();
+			perspList.setActive(activePerspective);
+			result.merge(activePerspective.restoreState());
+		}
+		if (activePerspective != null && restoreActivePerspective)
+			result.merge(activePerspective.restoreState());
+		
+		if (activePerspective != null) {	
+			window.firePerspectiveActivated(this, activePerspective.getDesc());
+		
+			// Restore active part.
+			if (activePartID != null) {
+				IViewReference ref = activePerspective.findView(activePartID);
+				IViewPart view = null;
+				if(ref != null)
+					view = ref.getView(true);
+				if (view != null)
+					activePart = view;
+			}
+		}
+			
+		childMem = memento.getChild(IWorkbenchConstants.TAG_NAVIGATION_HISTORY);
+		if(childMem != null)
+			navigationHistory.restoreState(childMem);
+		else if(getActiveEditor() != null)
+			navigationHistory.markEditor(getActiveEditor());
+		return result;
+	} finally {
+		UIStats.end(UIStats.RESTORE_WORKBENCH,"WorkbenchPage" + label);
+	}
 }
 /**
  * See IWorkbenchPage

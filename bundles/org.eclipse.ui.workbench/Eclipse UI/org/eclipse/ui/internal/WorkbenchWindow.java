@@ -77,6 +77,7 @@ import org.eclipse.ui.internal.commands.keys.KeyManager;
 import org.eclipse.ui.internal.commands.keys.KeySequence;
 import org.eclipse.ui.internal.commands.keys.KeyStroke;
 import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.registry.IActionSet;
 
 /**
@@ -1105,21 +1106,26 @@ public IStatus restoreState(IMemento memento, IPerspectiveDescriptor activeDescr
 			result.add(unableToRestorePage(pageMem));
 			continue;
 		}
-		IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryID);
-		if (factory == null) {
-			WorkbenchPlugin.log("Unable to restore pagee - cannot instantiate input factory: " + factoryID);//$NON-NLS-1$
-			result.add(unableToRestorePage(pageMem));
-			continue;
+		IAdaptable input;
+		try {
+			UIStats.start(UIStats.RESTORE_WORKBENCH,"WorkbenchPageFactory");
+			IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryID);
+			if (factory == null) {
+				WorkbenchPlugin.log("Unable to restore pagee - cannot instantiate input factory: " + factoryID);//$NON-NLS-1$
+				result.add(unableToRestorePage(pageMem));
+				continue;
+			}
+				
+			// Get the input element.
+			input = factory.createElement(inputMem);
+			if (input == null) {
+				WorkbenchPlugin.log("Unable to restore page - cannot instantiate input element: " + factoryID);//$NON-NLS-1$
+				result.add(unableToRestorePage(pageMem));
+				continue;
+			}
+		} finally {
+			UIStats.end(UIStats.RESTORE_WORKBENCH,"WorkbenchPageFactory");
 		}
-			
-		// Get the input element.
-		IAdaptable input = factory.createElement(inputMem);
-		if (input == null) {
-			WorkbenchPlugin.log("Unable to restore page - cannot instantiate input element: " + factoryID);//$NON-NLS-1$
-			result.add(unableToRestorePage(pageMem));
-			continue;
-		}
-
 		// Open the perspective.
 		WorkbenchPage newPage = null;
 		try {
