@@ -152,12 +152,6 @@ protected void fireSelection(final IWorkbenchPart part, final ISelection sel) {
 				public void run() {
 					l.selectionChanged(part, sel);
 				}
-				public void handleException(Throwable e) {
-					super.handleException(e);
-					// If an unexpected exception happens, remove the listener
-					// to make sure the workbench keeps running.
-					removeSelectionListener(l);
-				}
 			});
 		}
 	}
@@ -176,12 +170,6 @@ protected void firePostSelection(final IWorkbenchPart part, final ISelection sel
 			Platform.run(new SafeRunnable() {
 				public void run() {
 					l.selectionChanged(part, sel);
-				}
-				public void handleException(Throwable e) {
-					super.handleException(e);
-					// If an unexpected exception happens, remove the listener
-					// to make sure the workbench keeps running.
-					removePostSelectionListener(l);
 				}
 			});
 		}

@@ -44,12 +44,6 @@ public void firePageActivated(final IWorkbenchPage page) {
 			public void run() {
 				l.pageActivated(page);
 			}
-			public void handleException(Throwable e) {
-				super.handleException(e);
-				//If and unexpected exception happens, remove it
-				//to make sure the workbench keeps running.
-				removePageListener(l);
-			}
 		});
 	}
 }
@@ -64,12 +58,6 @@ public void firePageClosed(final IWorkbenchPage page) {
 			public void run() {
 				l.pageClosed(page);
 			}
-			public void handleException(Throwable e) {
-				super.handleException(e);
-				//If and unexpected exception happens, remove it
-				//to make sure the workbench keeps running.
-				removePageListener(l);
-			}
 		});
 	}
 }
@@ -83,12 +71,6 @@ public void firePageOpened(final IWorkbenchPage page) {
 		Platform.run(new SafeRunnable() {
 			public void run() {
 				l.pageOpened(page);
-			}
-			public void handleException(Throwable e) {
-				super.handleException(e);
-				//If and unexpected exception happens, remove it
-				//to make sure the workbench keeps running.
-				removePageListener(l);
 			}
 		});
 	}

@@ -44,12 +44,6 @@ public void firePartActivated(final IWorkbenchPartReference ref) {
 			public void run() {
 				l.partActivated(ref);
 			}
-			public void handleException(Throwable e) {
-				super.handleException(e);
-				//If and unexpected exception happens, remove it
-				//to make sure the workbench keeps running.
-				removePartListener(l);
-			}
 		});
 	}
 }
@@ -63,12 +57,6 @@ public void firePartBroughtToTop(final IWorkbenchPartReference ref) {
 		Platform.run(new SafeRunnable() {
 			public void run() {
 				l.partBroughtToTop(ref);
-			}
-			public void handleException(Throwable e) {
-				super.handleException(e);
-				//If and unexpected exception happens, remove it
-				//to make sure the workbench keeps running.
-				removePartListener(l);
 			}
 		});
 	}
@@ -84,12 +72,6 @@ public void firePartClosed(final IWorkbenchPartReference ref) {
 			public void run() {
 				l.partClosed(ref);
 			}
-			public void handleException(Throwable e) {
-				super.handleException(e);
-				//If and unexpected exception happens, remove it
-				//to make sure the workbench keeps running.
-				removePartListener(l);
-			}
 		});
 	}
 }
@@ -104,12 +86,6 @@ public void firePartDeactivated(final IWorkbenchPartReference ref) {
 			public void run() {
 				l.partDeactivated(ref);
 			}
-			public void handleException(Throwable e) {
-				super.handleException(e);
-				//If and unexpected exception happens, remove it
-				//to make sure the workbench keeps running.
-				removePartListener(l);
-			}
 		});
 	}
 }
@@ -123,12 +99,6 @@ public void firePartOpened(final IWorkbenchPartReference ref) {
 		Platform.run(new SafeRunnable() {
 			public void run() {
 				l.partOpened(ref);
-			}
-			public void handleException(Throwable e) {
-				super.handleException(e);
-				//If and unexpected exception happens, remove it
-				//to make sure the workbench keeps running.
-				removePartListener(l);
 			}
 		});
 	}
@@ -149,12 +119,6 @@ public void firePartHidden(final IWorkbenchPartReference ref) {
 			public void run() {
 				l.partHidden(ref);
 			}
-			public void handleException(Throwable e) {
-				super.handleException(e);
-				//If and unexpected exception happens, remove it
-				//to make sure the workbench keeps running.
-				removePartListener(l);
-			}
 		});
 	}
 }
@@ -174,12 +138,6 @@ public void firePartVisible(final IWorkbenchPartReference ref) {
 			public void run() {
 				l.partVisible(ref);
 			}
-			public void handleException(Throwable e) {
-				super.handleException(e);
-				//If and unexpected exception happens, remove it
-				//to make sure the workbench keeps running.
-				removePartListener(l);
-			}
 		});
 	}
 }
@@ -198,12 +156,6 @@ public void firePartInputChanged(final IWorkbenchPartReference ref) {
 		Platform.run(new SafeRunnable() {
 			public void run() {
 				l.partInputChanged(ref);
-			}
-			public void handleException(Throwable e) {
-				super.handleException(e);
-				//If and unexpected exception happens, remove it
-				//to make sure the workbench keeps running.
-				removePartListener(l);
 			}
 		});
 	}

@@ -289,12 +289,6 @@ protected void fireApplyEditorValue() {
 			public void run() {
 				l.applyEditorValue();
 			}
-			public void handleException(Throwable e) {
-				super.handleException(e);
-				//If and unexpected exception happens, remove it
-				//to make sure the workbench keeps running.
-				removeListener(l);
-			}
 		});
 	}	
 }
@@ -311,12 +305,6 @@ protected void fireCancelEditor() {
 		Platform.run(new SafeRunnable() {
 			public void run() {
 				l.cancelEditor();
-			}
-			public void handleException(Throwable e) {
-				super.handleException(e);
-				//If and unexpected exception happens, remove it
-				//to make sure the workbench keeps running.
-				removeListener(l);
 			}
 		});
 	}	
@@ -336,12 +324,6 @@ protected void fireEditorValueChanged(final boolean oldValidState, final boolean
 			public void run() {
 				l.editorValueChanged(oldValidState, newValidState);
 			}
-			public void handleException(Throwable e) {
-				super.handleException(e);
-				//If and unexpected exception happens, remove it
-				//to make sure the workbench keeps running.
-				removeListener(l);
-			}
 		});
 	}	
 }
@@ -358,12 +340,6 @@ protected void fireEnablementChanged(final String actionId) {
 		Platform.run(new SafeRunnable() {
 			public void run() {
 				l.propertyChange(new PropertyChangeEvent(this, actionId, null, null));
-			}
-			public void handleException(Throwable e) {
-				super.handleException(e);
-				//If and unexpected exception happens, remove it
-				//to make sure the workbench keeps running.
-				removePropertyChangeListener(l);
 			}
 		});
 	}	

@@ -299,12 +299,6 @@ protected void notifyCheckStateChangeListeners(final CheckStateChangedEvent even
 			public void run() {
 				l.checkStateChanged(event);
 			}
-			public void handleException(Throwable e) {
-				super.handleException(e);
-				//If and unexpected exception happens, remove it
-				//to make sure the workbench keeps running.
-				removeCheckStateListener(l);
-			}
 		});
 	}
 }

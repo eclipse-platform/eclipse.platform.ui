@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.SafeRunnable;
 
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.testing.TestableObject;
@@ -27,6 +28,8 @@ public class WorkbenchTestable extends TestableObject {
 	
 	private Display display;
 	private IWorkbench workbench;
+	private boolean oldAutomatedMode;
+	private boolean oldIgnoreErrors;
 	
 	/**
 	 * Constructs a new workbench testable object.
@@ -63,7 +66,10 @@ public class WorkbenchTestable extends TestableObject {
 	 */
 	public void testingStarting() {
 		Assert.isNotNull(workbench);
+		oldAutomatedMode = ErrorDialog.AUTOMATED_MODE; 
 		ErrorDialog.AUTOMATED_MODE = true;
+		oldIgnoreErrors = SafeRunnable.getIgnoreErrors();
+		SafeRunnable.setIgnoreErrors(true);
 	}
 	
 	/**
@@ -89,6 +95,7 @@ public class WorkbenchTestable extends TestableObject {
 				Assert.isTrue(workbench.close());
 			}
 		});
-		ErrorDialog.AUTOMATED_MODE = false;
+		ErrorDialog.AUTOMATED_MODE = oldAutomatedMode;
+		SafeRunnable.setIgnoreErrors(oldIgnoreErrors);
 	}
 }

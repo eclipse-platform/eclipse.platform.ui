@@ -44,12 +44,6 @@ public void firePerspectiveActivated(final IWorkbenchPage page, final IPerspecti
 			public void run() {
 				l.perspectiveActivated(page, perspective);
 			}
-			public void handleException(Throwable e) {
-				super.handleException(e);
-				//If and unexpected exception happens, remove it
-				//to make sure the workbench keeps running.
-				removePerspectiveListener(l);
-			}
 		});
 	}
 }
@@ -63,12 +57,6 @@ public void firePerspectiveChanged(final IWorkbenchPage page, final IPerspective
 		Platform.run(new SafeRunnable() {
 			public void run() {
 				l.perspectiveChanged(page, perspective, changeId);
-			}
-			public void handleException(Throwable e) {
-				super.handleException(e);
-				//If and unexpected exception happens, remove it
-				//to make sure the workbench keeps running.
-				removePerspectiveListener(l);
 			}
 		});
 	}
@@ -84,12 +72,6 @@ public void firePerspectiveClosed(final IWorkbenchPage page, final IPerspectiveD
 			public void run() {
 				l.perspectiveClosed(page, perspective);
 			}
-			public void handleException(Throwable e) {
-				super.handleException(e);
-				//If and unexpected exception happens, remove it
-				//to make sure the workbench keeps running.
-				removePerspectiveListener(l);
-			}
 		});
 	}
 }
@@ -103,12 +85,6 @@ public void firePerspectiveOpened(final IWorkbenchPage page, final IPerspectiveD
 		Platform.run(new SafeRunnable() {
 			public void run() {
 				l.perspectiveOpened(page, perspective);
-			}
-			public void handleException(Throwable e) {
-				super.handleException(e);
-				//If and unexpected exception happens, remove it
-				//to make sure the workbench keeps running.
-				removePerspectiveListener(l);
 			}
 		});
 	}

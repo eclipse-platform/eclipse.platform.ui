@@ -69,12 +69,6 @@ public void fireSelectionChanged(final SelectionChangedEvent event) {
 			public void run() {
 				l.selectionChanged(event);
 			}
-			public void handleException(Throwable e) {
-				super.handleException(e);
-				//If and unexpected exception happens, remove it
-				//to make sure the workbench keeps running.
-				removeSelectionChangedListener(l);
-			}
 		});		
 	}
 }

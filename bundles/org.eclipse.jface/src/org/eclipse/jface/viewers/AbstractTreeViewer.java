@@ -522,12 +522,6 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 				public void run() {
 					l.treeCollapsed(event);
 				}
-				public void handleException(Throwable e) {
-					super.handleException(e);
-					//If and unexpected exception happens, remove it
-					//to make sure the application keeps running.
-					removeTreeListener(l);
-				}
 			});
 		}
 	}
@@ -546,12 +540,6 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 			Platform.run(new SafeRunnable() {
 				public void run() {
 					l.treeExpanded(event);
-				}
-				public void handleException(Throwable e) {
-					super.handleException(e);
-					//If and unexpected exception happens, remove it
-					//to make sure the application keeps running.
-					removeTreeListener(l);
 				}
 			});
 		}

@@ -114,12 +114,6 @@ public abstract class AbstractPartSelectionTracker {
 					public void run() {
 						l.selectionChanged(part, sel);
 					}
-					public void handleException(Throwable e) {
-						super.handleException(e);
-						// If an unexpected exception happens, remove the listener
-						// to make sure the workbench keeps running.
-						removeSelectionListener(l);
-					}
 				});
 			}
 		}
@@ -139,12 +133,6 @@ public abstract class AbstractPartSelectionTracker {
 				Platform.run(new SafeRunnable() {
 					public void run() {
 						l.selectionChanged(part, sel);
-					}
-					public void handleException(Throwable e) {
-						super.handleException(e);
-						// If an unexpected exception happens, remove the listener
-						// to make sure the workbench keeps running.
-						removePostSelectionListener(l);
 					}
 				});
 			}

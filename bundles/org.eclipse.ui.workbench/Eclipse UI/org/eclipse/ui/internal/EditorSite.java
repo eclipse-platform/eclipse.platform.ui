@@ -106,12 +106,6 @@ private void firePropertyChange(final int propertyId) {
 			public void run() {
 				l.propertyChanged(EditorSite.this, propertyId);
 			}
-			public void handleException(Throwable e) {
-				super.handleException(e);
-				// if an unexpected exception happens, remove it
-				// to make sure the workbench keeps running.
-				propChangeListeners.remove(l);
-			}
 		});
 	}
 }

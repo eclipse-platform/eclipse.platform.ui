@@ -28,7 +28,9 @@ public abstract class SafeRunnable implements ISafeRunnable {
 /**
  * Creates a new instance of SafeRunnable with a default error message.
  */
-public SafeRunnable() {}
+public SafeRunnable() {
+    // do nothing
+}
 
 /**
  * Creates a new instance of SafeRunnable with the given error message.
@@ -53,8 +55,19 @@ public void handleException(Throwable e) {
 
 /**
  * Flag to avoid interactive error dialogs during automated testing.
+ * @deprecated use getIgnoreErrors()
  */
 public static boolean getIgnoreErrors(boolean flag) {
+	return ignoreErrors;
+}
+
+/**
+ * Flag to avoid interactive error dialogs during automated testing.
+ * @deprecated use getIgnoreErrors()
+ * 
+ * @since 3.0
+ */
+public static boolean getIgnoreErrors() {
 	return ignoreErrors;
 }
 

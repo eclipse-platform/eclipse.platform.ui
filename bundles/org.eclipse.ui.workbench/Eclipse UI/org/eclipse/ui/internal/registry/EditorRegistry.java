@@ -215,12 +215,6 @@ public class EditorRegistry implements IEditorRegistry {
 				public void run() {
 					l.propertyChanged(EditorRegistry.this, type);
 				}
-				public void handleException(Throwable e) {
-					super.handleException(e);
-					//If and unexpected exception happens, remove it
-					//to make sure the workbench keeps running.
-					propChangeListeners.remove(l);
-				}
 			});
 		}
 	}
