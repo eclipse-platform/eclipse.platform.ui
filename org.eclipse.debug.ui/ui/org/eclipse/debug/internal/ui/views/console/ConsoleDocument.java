@@ -20,16 +20,19 @@ import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.AbstractDocument;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.ITextStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 
-public class ConsoleDocument extends AbstractDocument implements IDebugEventSetListener {
+public class ConsoleDocument extends AbstractDocument implements IDebugEventSetListener, IPropertyChangeListener {
 
 	private boolean fClosed= false;
 	private boolean fKilled= false;
@@ -100,10 +103,25 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 	private boolean fPoll = false;
 	
 	/**
+	 * The length of the current line
+	 */
+	private int fLineLength = 0;
+	
+	/** 
+	 * Maximum line length before wrapping.
+	 */
+	private int fMaxLineLength = 80;
+	
+	/**
+	 * Whether using auto-wrap mode
+	 */
+	private boolean fWrap = false;
+	
+	/**
 	 * The base number of milliseconds to pause
 	 * between polls.
 	 */
-	private static final long BASE_DELAY= 50L;
+	private static final long BASE_DELAY= 100L;
 		
 	public static final int OUT= 0;
 	public static final int ERR= 1;
@@ -129,6 +147,10 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 	public ConsoleDocument(IProcess process) {
 		super();
 		fProcess= process;
+		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
+		fWrap = store.getBoolean(IDebugPreferenceConstants.CONSOLE_WRAP);
+		fMaxLineLength = store.getInt(IDebugPreferenceConstants.CONSOLE_WIDTH);
+		store.addPropertyChangeListener(this);
 		if (process != null) {
 			fProxy= process.getStreamsProxy();			
 			fTerminated = process.isTerminated();
@@ -148,6 +170,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 			fClosed= true;
 			stopReading();
 			DebugPlugin.getDefault().removeDebugEventListener(this);
+			DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 			fStyleRanges= Collections.EMPTY_LIST;
 			set(""); //$NON-NLS-1$
 		}
@@ -296,18 +319,46 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 			StreamEntry prev = null;
 			int processed = 0;
 			int amount = 0;
+			String[] lds = getLegalLineDelimiters();
 			while (!fKilled && processed < fQueue.size() && amount < 8096) {
 				StreamEntry entry = (StreamEntry)fQueue.get(processed);
-				if (prev == null) {
-					buffer = new StringBuffer(entry.getText());
-				} else {
-					if (prev.getKind() == entry.getKind()) {
-						buffer.append(entry.getText());
-					} else {
-						// only do one append per poll
-						break;
+				if (prev == null || prev.getKind() == entry.getKind()) {
+					String text = entry.getText();
+					if (buffer == null) {
+						buffer = new StringBuffer(text.length());
 					}
+					if (isWrap()) {
+						for (int i = 0; i < text.length(); i++) {
+							if (fLineLength >= fMaxLineLength) {
+								String d = getLineDelimiter(text, i, lds);
+								if (d == null) {
+									buffer.append(lds[0]);
+								} else {
+									buffer.append(d);
+									i = i + d.length();
+								}
+								fLineLength = 0;
+							}			
+							if (i < text.length()) {										
+								String lineDelimiter = getLineDelimiter(text, i, lds);				
+								if (lineDelimiter == null) { 
+									buffer.append(text.charAt(i));
+									fLineLength++;
+								} else {
+									buffer.append(lineDelimiter);
+									fLineLength = 0;
+									i = i + lineDelimiter.length() - 1;
+								}
+							}
+						} 
+					} else {
+						buffer.append(text);
+					}
+				} else {
+					// only do one append per poll
+					break;
 				}
+				
 				prev = entry;
 				processed++;
 				amount+= entry.getText().length();
@@ -321,6 +372,37 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 		}
 	}
 
+	/**
+	 * Returns the longest line delimiter at the given position in the given text,
+	 * or <code>null</code> if none.
+	 * 
+	 * @param text the text in which to look for a line delimiter
+	 * @param pos the position at which to look for a line delimiter
+	 * @param lineDelimiters the line delimiters to look for
+	 */
+	protected String getLineDelimiter(String text, int pos, String[] lineDelimiters) {
+		String ld = null;
+		for (int i = 0; i < lineDelimiters.length; i++) {					
+			if (text.regionMatches(pos, lineDelimiters[i], 0, lineDelimiters[i].length())) {
+				if (ld == null) {
+					ld = lineDelimiters[i];
+				} else {
+					if (ld.length() < lineDelimiters[i].length()) {
+						ld = lineDelimiters[i];
+					}
+				}
+			}
+		}	
+		return ld;	
+	}
+	
+	/**
+	 * Returns whether this console document is performing auto-wrap
+	 */
+	protected boolean isWrap() {
+		return fWrap;
+	}
+	
 	protected void stopReading() {
 		fPoll = false;
 		if (fProxy == null) {
@@ -579,4 +661,17 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 	protected boolean isAppendInProgress() {
 		return fAppending;
 	}
+	
+	/**
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(IDebugPreferenceConstants.CONSOLE_WRAP)) {
+			fWrap = DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugPreferenceConstants.CONSOLE_WRAP);
+		} else if (event.getProperty().equals(IDebugPreferenceConstants.CONSOLE_WIDTH)) {
+			fMaxLineLength = DebugUIPlugin.getDefault().getPreferenceStore().getInt(IDebugPreferenceConstants.CONSOLE_WIDTH);
+		}
+	}
+
+
 }

@@ -37,6 +37,11 @@ public interface IDebugPreferenceConstants {
 	public static final String CONSOLE_WRAP= "Console.wrap"; //$NON-NLS-1$
 	
 	/**
+	 * (int) The maximum console character width, if wrapping. 
+	 */ 
+	public static final String CONSOLE_WIDTH = "Console.width"; //$NON-NLS-1$
+	
+	/**
 	 * (boolean) Whether or not the console view is shown 
 	 * when there is program output.
   	 */

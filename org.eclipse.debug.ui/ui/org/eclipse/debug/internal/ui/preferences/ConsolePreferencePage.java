@@ -11,10 +11,15 @@ import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -25,6 +30,9 @@ import org.eclipse.ui.texteditor.WorkbenchChainedTextFontFieldEditor;
  * A page to set the preferences for the console
  */
 public class ConsolePreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+	
+	private BooleanFieldEditor2 fWrapEditor = null;
+	private IntegerFieldEditor fWidthEditor = null;
 	/**
 	 * Create the console page.
 	 */
@@ -49,7 +57,20 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	 */
 	public void createFieldEditors() {
 		
-		addField(new BooleanFieldEditor(IDebugPreferenceConstants.CONSOLE_WRAP, DebugPreferencesMessages.getString("ConsolePreferencePage.Wrap_text_1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
+		fWrapEditor = new BooleanFieldEditor2(IDebugPreferenceConstants.CONSOLE_WRAP, DebugPreferencesMessages.getString("ConsolePreferencePage.Wrap_text_1"), SWT.NONE, getFieldEditorParent()); //$NON-NLS-1$
+		addField(fWrapEditor);
+		
+		fWidthEditor = new IntegerFieldEditor(IDebugPreferenceConstants.CONSOLE_WIDTH, DebugPreferencesMessages.getString("ConsolePreferencePage.Console_width"), getFieldEditorParent()); //$NON-NLS-1$
+		addField(fWidthEditor);
+		fWidthEditor.setValidRange(1, Integer.MAX_VALUE);
+		
+		fWrapEditor.getChangeControl(getFieldEditorParent()).addSelectionListener(
+			new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					updateWidthEditor();
+				}
+			}
+		);
 		
 		addField(new BooleanFieldEditor(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT, DebugPreferencesMessages.getString("ConsolePreferencePage.Show_&Console_View_when_there_is_program_output_3"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		addField(new BooleanFieldEditor(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR, DebugPreferencesMessages.getString("ConsolePreferencePage.Show_&Console_View_when_there_is_program_error_3"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
@@ -86,6 +107,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	
 	public static void initDefaults(IPreferenceStore store) {
 		store.setDefault(IDebugPreferenceConstants.CONSOLE_WRAP, false);
+		store.setDefault(IDebugPreferenceConstants.CONSOLE_WIDTH, 80);
 		store.setDefault(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT, true);
 		store.setDefault(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR, true);
 		WorkbenchChainedTextFontFieldEditor.startPropagate(store, IDebugPreferenceConstants.CONSOLE_FONT);
@@ -103,5 +125,32 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		DebugUIPlugin.getDefault().savePluginPreferences();
 		return ok;
 	}
+
+	/**
+	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#initialize()
+	 */
+	protected void initialize() {
+		super.initialize();
+		updateWidthEditor();
+	}
+	
+	/**
+	 * Update enablement of width editor based on enablement of 'fixed width' editor.
+	 */
+	protected void updateWidthEditor() {
+		Button b = fWrapEditor.getChangeControl(getFieldEditorParent());
+		fWidthEditor.getTextControl(getFieldEditorParent()).setEnabled(b.getSelection());
+		fWidthEditor.getLabelControl(getFieldEditorParent()).setEnabled(b.getSelection());				
+	}
+
+
+	/**
+	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
+	 */
+	protected void performDefaults() {
+		super.performDefaults();
+		updateWidthEditor();
+	}
+
 
 }
