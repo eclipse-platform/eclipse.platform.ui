@@ -48,6 +48,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected long nextMarkerId = 0;
 	protected Synchronizer synchronizer;
 	protected IProject[] buildOrder = null;
+	protected boolean forceBuild = false;
 	protected IWorkspaceRoot defaultRoot = new WorkspaceRoot(Path.ROOT, this);
 
 	protected final HashSet lifecycleListeners = new HashSet(10);
@@ -1616,6 +1617,9 @@ public void setDescription(IWorkspaceDescription value) throws CoreException {
 	String[] newOrder = newDescription.getBuildOrder(false);
 	if (description.getBuildOrder(false) != null || newOrder != null)
 		buildOrder = null;
+	//if autobuild has just been turned on, indicate that a build is necessary
+	if (!description.isAutoBuilding() && newDescription.isAutoBuilding())
+		forceBuild = true;
 	description.copyFrom(newDescription);
 	Policy.setupAutoBuildProgress(description.isAutoBuilding());
 	ResourcesPlugin.getPlugin().savePluginPreferences();
@@ -1628,6 +1632,10 @@ public void setWorkspaceLock(WorkspaceLock lock) {
 }
 
 private boolean shouldBuild() throws CoreException {
+	if (forceBuild) {
+		forceBuild = false;
+		return true;
+	}
 	return getWorkManager().shouldBuild() && ElementTree.hasChanges(tree, operationTree, ResourceComparator.getComparator(false), true);
 }
 protected void shutdown(IProgressMonitor monitor) throws CoreException {
