@@ -32,7 +32,7 @@ public class EclipseProject extends Project {
 	private static String defaultEncoding = new java.io.InputStreamReader(new java.io.ByteArrayInputStream(new byte[0])).getEncoding();
 
 	/** instance of this library */
-	private static final String LIBRARY_NAME = "core203";
+	private static final String LIBRARY_NAME = "core_2_0_1";
 	private static boolean hasNatives = false;
 	
 	static {
