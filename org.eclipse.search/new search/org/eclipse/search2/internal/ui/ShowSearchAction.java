@@ -26,6 +26,9 @@ class ShowSearchAction extends Action {
 	public ShowSearchAction(SearchView view, ISearchResult search, String text, ImageDescriptor image, String tooltip) {
 		fSearch= search;
 		fView= view;
+		// fix for bug 38049
+		if (text.indexOf('@') >= 0)
+			text+= '@';
 		setText(text);
 		setImageDescriptor(image);
 		setToolTipText(tooltip);
