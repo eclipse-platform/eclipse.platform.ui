@@ -142,8 +142,9 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 			if (participant != null) {
 				run(participant);
 			}
+		} else {
+			synchronizeAction.run();
 		}
-		synchronizeAction.run();
 		actionProxy = action;
 		updateTooltipText();
 	}
