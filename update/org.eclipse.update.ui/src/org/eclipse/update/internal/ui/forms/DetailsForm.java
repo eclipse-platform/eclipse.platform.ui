@@ -232,15 +232,18 @@ public class DetailsForm extends PropertyWebForm {
 		super.initialize(modelObject);
 	}
 
-	private void configureSectionHandler(FormWidgetFactory factory, Display display) {
+	private void configureSectionHandler(
+		FormWidgetFactory factory,
+		Display display) {
 		sectionHandler.setHyperlinkUnderlineMode(
 			HyperlinkHandler.UNDERLINE_NEVER);
 		sectionHandler.setBackground(factory.getBackgroundColor());
 		sectionHandler.setForeground(UpdateColors.getTopicColor(display));
 	}
-	
+
 	protected void updateHeadings() {
-		sectionHandler.setForeground(UpdateColors.getTopicColor(getControl().getDisplay()));
+		sectionHandler.setForeground(
+			UpdateColors.getTopicColor(getControl().getDisplay()));
 		super.updateHeadings();
 	}
 
@@ -406,15 +409,17 @@ public class DetailsForm extends PropertyWebForm {
 					currentFeature = (IFeature) obj;
 					refresh();
 				} else if (obj instanceof IFeatureAdapter) {
-					IFeatureAdapter adapter = (IFeatureAdapter)obj;
+					IFeatureAdapter adapter = (IFeatureAdapter) obj;
 					try {
 						currentAdapter = adapter;
 						currentFeature = adapter.getFeature();
 					} catch (CoreException e) {
 						//UpdateUIPlugin.logException(e);
-						currentFeature = new MissingFeature(adapter.getSite(), adapter.getURL());
-					}
-					finally {
+						currentFeature =
+							new MissingFeature(
+								adapter.getSite(),
+								adapter.getURL());
+					} finally {
 						refresh();
 					}
 				} else {
@@ -536,14 +541,38 @@ public class DetailsForm extends PropertyWebForm {
 				return true;
 		}
 		// Random site feature
-		if (alreadyInstalled)
-			return false;
+		if (alreadyInstalled) {
+			return isBrokenFeatureUpdate();
+		}
 		// Not installed - check if there are other 
 		// features with this ID that are installed
 		// and that are newer than this one
 		if (installedFeatures.length > 0 && !newerVersion)
 			return false;
 		return true;
+	}
+
+	private boolean isBrokenFeatureUpdate() {
+		if (installedFeatures.length != 1)
+			return false;
+		IFeature installedFeature = installedFeatures[0];
+		if (installedFeature
+			.getVersionedIdentifier()
+			.equals(currentFeature.getVersionedIdentifier())) {
+			return isBroken(currentFeature);
+		}
+		return false;
+	}
+
+	private boolean isBroken(IFeature feature) {
+		try {
+			IStatus status =
+				SiteManager.getLocalSite().getFeatureStatus(feature);
+			if (status != null && status.getSeverity() == IStatus.ERROR)
+				return true;
+		} catch (CoreException e) {
+		}
+		return false;
 	}
 
 	private boolean getUninstallButtonVisibility() {

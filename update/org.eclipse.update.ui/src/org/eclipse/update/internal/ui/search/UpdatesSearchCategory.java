@@ -110,10 +110,20 @@ public class UpdatesSearchCategory extends SearchCategory {
 		public ISiteAdapter getSearchSite() {
 			return adapter;
 		}
+		private boolean isBroken() {
+			try {
+				IStatus status =
+					SiteManager.getLocalSite().getFeatureStatus(candidate);
+				return status.getSeverity() == IStatus.ERROR;
+			} catch (CoreException e) {
+				return false;
+			}
+		}
 		public IFeature[] getMatchingFeatures(
 			ISite site,
 			IProgressMonitor monitor) {
 			ArrayList hits = new ArrayList();
+			boolean broken = isBroken();
 			IFeatureReference[] refs = site.getFeatureReferences();
 			monitor.beginTask("", refs.length + 1);
 			for (int i = 0; i < refs.length; i++) {
@@ -122,11 +132,19 @@ public class UpdatesSearchCategory extends SearchCategory {
 					if (isNewerVersion(candidate.getVersionedIdentifier(),
 						ref.getVersionedIdentifier())) {
 						hits.add(new Hit(candidate, ref));
+					} else {
+						// accept the same feature if the installed
+						// feature is broken
+						if (broken
+							&& candidate.getVersionedIdentifier().equals(
+								ref.getVersionedIdentifier()))
+							hits.add(new Hit(candidate, ref));
 					}
 				} catch (CoreException e) {
 				}
 				monitor.worked(1);
-				if (monitor.isCanceled()) return new IFeature[0];
+				if (monitor.isCanceled())
+					return new IFeature[0];
 			}
 			IFeature[] result;
 			if (hits.size() == 0)
@@ -310,13 +328,15 @@ public class UpdatesSearchCategory extends SearchCategory {
 		map.put("unchecked", buf.toString());
 	}
 	private ArrayList getSelectedCandidates() {
-		if (tableViewer==null || tableViewer.getControl()==null ||
-			tableViewer.getControl().isDisposed()) {
-				return candidates;
+		if (tableViewer == null
+			|| tableViewer.getControl() == null
+			|| tableViewer.getControl().isDisposed()) {
+			return candidates;
 		}
 		ArrayList selected = new ArrayList();
-		Object [] sel = tableViewer.getCheckedElements();
-		for (int i=0; i<sel.length; i++) selected.add(sel[i]);
+		Object[] sel = tableViewer.getCheckedElements();
+		for (int i = 0; i < sel.length; i++)
+			selected.add(sel[i]);
 		return selected;
 	}
 }
