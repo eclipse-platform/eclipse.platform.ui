@@ -18,9 +18,10 @@ import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
+import org.eclipse.ant.internal.ui.model.AntProjectNode;
+import org.eclipse.ant.internal.ui.model.AntProjectNodeProxy;
 import org.eclipse.ant.internal.ui.preferences.FileSelectionDialog;
 import org.eclipse.ant.internal.ui.views.AntView;
-import org.eclipse.ant.internal.ui.views.elements.ProjectNode;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
@@ -68,7 +69,7 @@ public class AddBuildFilesAction extends Action {
 						Object file = result[i];
 						if (file instanceof IFile) {
 							String buildFileName= ((IFile)file).getFullPath().toString();
-							final ProjectNode project= new ProjectNode(buildFileName);
+							final AntProjectNode project= new AntProjectNodeProxy(buildFileName);
 							project.getName();
 							monitor.worked(1);
 							Display.getDefault().asyncExec(new Runnable() {
@@ -86,10 +87,10 @@ public class AddBuildFilesAction extends Action {
 	}
 
 	private List getBuildFiles() {
-		ProjectNode[] existingProjects= view.getProjects();
+		AntProjectNode[] existingProjects= view.getProjects();
 		List buildFiles= new ArrayList(existingProjects.length);
 		for (int j = 0; j < existingProjects.length; j++) {
-			ProjectNode existingProject = existingProjects[j];
+			AntProjectNode existingProject = existingProjects[j];
 			buildFiles.add(AntUtil.getFile(existingProject.getBuildFileName()));
 		}
 		return buildFiles;

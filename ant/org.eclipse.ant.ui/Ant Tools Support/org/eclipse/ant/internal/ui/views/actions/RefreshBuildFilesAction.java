@@ -19,9 +19,10 @@ import java.util.Set;
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
+import org.eclipse.ant.internal.ui.model.AntProjectNode;
+import org.eclipse.ant.internal.ui.model.AntProjectNodeProxy;
+import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.views.AntView;
-import org.eclipse.ant.internal.ui.views.elements.ProjectNode;
-import org.eclipse.ant.internal.ui.views.elements.TargetNode;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -57,7 +58,7 @@ public class RefreshBuildFilesAction extends Action implements IUpdate {
 		final Set projects= getSelectedProjects();
 		if (projects.isEmpty()) {
 			// If no selection, add all
-			ProjectNode allProjects[]= view.getProjects();
+			AntProjectNode[] allProjects= view.getProjects();
 			for (int i = 0; i < allProjects.length; i++) {
 				projects.add(allProjects[i]);
 			}
@@ -71,9 +72,9 @@ public class RefreshBuildFilesAction extends Action implements IUpdate {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) {
 					monitor.beginTask(AntViewActionMessages.getString("RefreshBuildFilesAction.Refreshing_buildfiles_3"), projects.size()); //$NON-NLS-1$
-					ProjectNode project;
+					AntProjectNodeProxy project;
 					while (iter.hasNext()) {
-						project= (ProjectNode) iter.next();
+						project= (AntProjectNodeProxy) iter.next();
 						monitor.subTask(MessageFormat.format(AntViewActionMessages.getString("RefreshBuildFilesAction.Refreshing_{0}_4"), new String[] {project.getBuildFileName()})); //$NON-NLS-1$
 						project.parseBuildFile();
 						monitor.worked(1);
@@ -83,7 +84,7 @@ public class RefreshBuildFilesAction extends Action implements IUpdate {
 		} catch (InvocationTargetException e) {
 		} catch (InterruptedException e) {
 		}
-		view.getProjectViewer().refresh();
+		view.getViewer().refresh();
 	}
 
 	/**
@@ -92,16 +93,16 @@ public class RefreshBuildFilesAction extends Action implements IUpdate {
 	 * @return Set the selected <code>ProjectNode</code>s to refresh.
 	 */
 	private Set getSelectedProjects() {
-		IStructuredSelection selection = (IStructuredSelection) view.getProjectViewer().getSelection();
+		IStructuredSelection selection = (IStructuredSelection) view.getViewer().getSelection();
 		HashSet set= new HashSet();
 		Iterator iter = selection.iterator();
 		Object data;
 		while (iter.hasNext()) {
 			data= iter.next();
-			if (data instanceof ProjectNode) {
+			if (data instanceof AntProjectNode) {
 				set.add(data);
-			} else if (data instanceof TargetNode) {
-				set.add(((TargetNode) data).getProject());
+			} else if (data instanceof AntTargetNode) {
+				set.add(((AntTargetNode) data).getProjectNode());
 			}
 		}
 		return set;

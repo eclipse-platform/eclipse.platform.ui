@@ -16,8 +16,8 @@ import java.util.List;
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
+import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.views.AntView;
-import org.eclipse.ant.internal.ui.views.elements.ProjectNode;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -41,13 +41,13 @@ public class RemoveProjectAction extends Action implements IUpdate {
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		IStructuredSelection selection= (IStructuredSelection) view.getProjectViewer().getSelection();
+		IStructuredSelection selection= (IStructuredSelection) view.getViewer().getSelection();
 		Iterator iter= selection.iterator();
 		Object element;
 		List projectNodes= new ArrayList();
 		while (iter.hasNext()) {
 			element= iter.next();
-			if (element instanceof ProjectNode) {
+			if (element instanceof AntProjectNode) {
 				projectNodes.add(element);
 			}
 		}
@@ -58,7 +58,7 @@ public class RemoveProjectAction extends Action implements IUpdate {
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
 	public void update() {
-		IStructuredSelection selection= (IStructuredSelection) view.getProjectViewer().getSelection();
+		IStructuredSelection selection= (IStructuredSelection) view.getViewer().getSelection();
 		if (selection.isEmpty()) {
 			setEnabled(false);
 			return;
@@ -67,7 +67,7 @@ public class RemoveProjectAction extends Action implements IUpdate {
 		Iterator iter= selection.iterator();
 		while (iter.hasNext()) {
 			element= iter.next();
-			if (!(element instanceof ProjectNode)) {
+			if (!(element instanceof AntProjectNode)) {
 				setEnabled(false);
 				return;
 			}

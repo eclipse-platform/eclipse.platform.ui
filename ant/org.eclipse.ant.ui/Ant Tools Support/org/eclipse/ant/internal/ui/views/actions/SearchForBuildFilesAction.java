@@ -15,8 +15,9 @@ import java.text.MessageFormat;
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
+import org.eclipse.ant.internal.ui.model.AntProjectNode;
+import org.eclipse.ant.internal.ui.model.AntProjectNodeProxy;
 import org.eclipse.ant.internal.ui.views.AntView;
-import org.eclipse.ant.internal.ui.views.elements.ProjectNode;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
@@ -49,7 +50,7 @@ public class SearchForBuildFilesAction extends Action {
 		if (dialog.open() != Window.CANCEL) {
 			final IFile[] files= dialog.getResults();
 			final boolean includeErrorNodes= dialog.getIncludeErrorResults();
-			final ProjectNode[] existingProjects= view.getProjects();
+			final AntProjectNode[] existingProjects= view.getProjects();
 			try {
 				PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
 					public void run(IProgressMonitor monitor) {
@@ -61,7 +62,7 @@ public class SearchForBuildFilesAction extends Action {
 								// Don't parse projects that have already been added.
 								continue;
 							}
-							final ProjectNode project= new ProjectNode(buildFileName);
+							final AntProjectNode project= new AntProjectNodeProxy(buildFileName);
 							// Force the project to be parsed so the error state is set.
 							project.getName();
 							monitor.worked(1);
@@ -80,7 +81,7 @@ public class SearchForBuildFilesAction extends Action {
 					 */
 					private boolean alreadyAdded(String buildFileName) {
 						for (int j = 0; j < existingProjects.length; j++) {
-							ProjectNode existingProject = existingProjects[j];
+							AntProjectNode existingProject = existingProjects[j];
 							if (existingProject.getBuildFileName().equals(buildFileName)) {
 								return true;
 							}
@@ -93,5 +94,4 @@ public class SearchForBuildFilesAction extends Action {
 			}
 		}
 	}
-
 }

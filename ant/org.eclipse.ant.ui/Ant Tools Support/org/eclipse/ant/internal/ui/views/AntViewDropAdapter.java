@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,8 @@
 package org.eclipse.ant.internal.ui.views;
 
 import org.eclipse.ant.internal.ui.AntUtil;
-import org.eclipse.ant.internal.ui.views.elements.ProjectNode;
+import org.eclipse.ant.internal.ui.model.AntProjectNode;
+import org.eclipse.ant.internal.ui.model.AntProjectNodeProxy;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.DropTargetAdapter;
@@ -63,15 +64,15 @@ public class AntViewDropAdapter extends DropTargetAdapter {
 			return;
 		}
 		buildFileName = buildFile.getFullPath().toString();
-		ProjectNode[] existingProjects = view.getProjects();
+		AntProjectNode[] existingProjects = view.getProjects();
 		for (int j = 0; j < existingProjects.length; j++) {
-			ProjectNode existingProject = existingProjects[j];
+			AntProjectNodeProxy existingProject = (AntProjectNodeProxy)existingProjects[j];
 			if (existingProject.getBuildFileName().equals(buildFileName)) {
 				// Don't parse projects that have already been added.
 				return;
 			}
 		}
-		ProjectNode project = new ProjectNode(buildFileName);
+		AntProjectNode project = new AntProjectNodeProxy(buildFileName);
 		view.addProject(project);
 	}
 }
