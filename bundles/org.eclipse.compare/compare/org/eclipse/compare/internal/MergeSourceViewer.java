@@ -68,6 +68,7 @@ public class MergeSourceViewer extends SourceViewer
 	private Position fRegion;
 	private boolean fEnabled= true;
 	private HashMap fActions= new HashMap();
+	private IDocument fRememberedDocument;
 	
 	private boolean fAddSaveAction= true;
 	
@@ -82,6 +83,17 @@ public class MergeSourceViewer extends SourceViewer
 		menu.addMenuListener(this);
 		StyledText te= getTextWidget();
 		te.setMenu(menu.createContextMenu(te));
+	}
+	
+	public void rememberDocument(IDocument doc) {
+//		if (doc != null && fRememberedDocument != null) {
+//			System.err.println("MergeSourceViewer.rememberDocument: fRememberedDocument != null: shouldn't happen"); //$NON-NLS-1$
+//		}
+		fRememberedDocument= doc;
+	}
+	
+	public IDocument getRememberedDocument() {
+		return fRememberedDocument;
 	}
 	
 	public void hideSaveAction() {

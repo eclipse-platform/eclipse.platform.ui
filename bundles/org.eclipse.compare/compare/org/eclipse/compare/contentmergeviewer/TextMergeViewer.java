@@ -2002,7 +2002,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				} else
 					tp.setDocument(newDoc);
 								
+				tp.rememberDocument(newDoc);
 				newDoc.addDocumentListener(fDocumentListener);
+				//LeakTester.add(newDoc);
 			}
 			
 		} else {	// same document but different range
@@ -2051,7 +2053,13 @@ public class TextMergeViewer extends ContentMergeViewer  {
 
 	private void unsetDocument(MergeSourceViewer tp) {
 		IDocument oldDoc= tp.getDocument();
+		if (oldDoc == null) {
+			oldDoc= tp.getRememberedDocument();
+//			if (oldDoc != null)
+//				System.err.println("TextMergeViewer.unsetDocument: would leak");
+		}
 		if (oldDoc != null) {
+			tp.rememberDocument(null);
 			// deinstall old positions
 			if (fPositionUpdater != null)
 				oldDoc.removePositionUpdater(fPositionUpdater);
@@ -2062,6 +2070,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			}
 			
 			oldDoc.removeDocumentListener(fDocumentListener);
+			//LeakTester.remove(oldDoc);
 		}
 	}
 	
