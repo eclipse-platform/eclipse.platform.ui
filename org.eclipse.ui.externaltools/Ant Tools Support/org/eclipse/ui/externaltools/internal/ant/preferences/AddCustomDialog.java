@@ -568,6 +568,10 @@ public class AddCustomDialog extends StatusDialog {
 		library= (URL)libraryUrls.get(sourceNameField.getSelectionIndex());
 		IStructuredSelection selection= this.selectionGroup.getListTableSelection();
 		MinimizedFileSystemElement element= (MinimizedFileSystemElement)selection.getFirstElement();
+		if (element == null) {
+			super.okPressed();
+			return;
+		}
 		Object file= element.getFileSystemObject();
 		if (file instanceof ZipEntry) {
 			className= ((ZipEntry)file).getName();
@@ -576,10 +580,9 @@ public class AddCustomDialog extends StatusDialog {
 			IPath classPath= new Path(className);
 			IPath libraryPath= new Path(library.getPath());
 			int matching= classPath.matchingFirstSegments(libraryPath);
-			classPath= classPath.removeFirstSegments(matching - 1);
+			classPath= classPath.removeFirstSegments(matching);
 			classPath= classPath.setDevice(null);
 			className= classPath.toString();
-			
 		}
 		int index= className.lastIndexOf('.');
 		className= className.substring(0, index);
