@@ -421,7 +421,6 @@ public class CommonTab implements ILaunchConfigurationTab {
 		Object[] results = dialog.getResult();		
 		if ((results != null) && (results.length > 0) && (results[0] instanceof IPath)) {
 			IPath path = (IPath)results[0];
-			IContainer container = (IContainer) getWorkspaceRoot().findMember(path);
 			String containerName = path.toOSString();
 			getSharedLocationText().setText(containerName);
 		}		
