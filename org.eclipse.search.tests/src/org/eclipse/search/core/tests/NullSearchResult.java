@@ -10,49 +10,15 @@
  *******************************************************************************/
 package org.eclipse.search.core.tests;
 
-import org.eclipse.core.resources.IFile;
-
 import org.eclipse.jface.resource.ImageDescriptor;
-
-import org.eclipse.ui.IEditorPart;
-
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
-import org.eclipse.search.ui.text.Match;
 
 /**
  * @author Thomas Mäder
  *
  */
 public class NullSearchResult extends AbstractTextSearchResult {
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.text.AbstractSearchResult#findContainedMatches(org.eclipse.search.ui.text.AbstractSearchResult, org.eclipse.core.resources.IFile)
-	 */
-	public Match[] findContainedMatches(IFile file) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.text.AbstractSearchResult#getFile(java.lang.Object)
-	 */
-	public IFile getFile(Object element) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.text.AbstractSearchResult#isShownInEditor(org.eclipse.search.ui.text.Match, org.eclipse.ui.IEditorPart)
-	 */
-	public boolean isShownInEditor(Match match, IEditorPart editor) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.text.AbstractSearchResult#findContainedMatches(org.eclipse.search.ui.text.AbstractSearchResult, org.eclipse.ui.IEditorPart)
-	 */
-	public Match[] findContainedMatches(IEditorPart editor) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.ISearchResult#getText(org.eclipse.search.ui.ISearchResult)
 	 */

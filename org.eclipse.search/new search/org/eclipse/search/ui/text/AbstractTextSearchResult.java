@@ -286,47 +286,15 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 			return fElementsToMatches.keySet().toArray();
 		}
 	}
+
+	public IEditorMatchAdapter getEditorMatchAdapter() {
+		return null;
+	}
+
+	public IFileMatchAdapter getFileMatchAdapter() {
+		return null;
+	}
 	
 		
-	/**
-	 * Returns an array with all matches contained in the given file. If the
-	 * matches are not contained within an <code>IFile</code>, this method
-	 * must return an empty array.
-	 * 
-	 * @param file The file to find matches in.
-	 * @return An array of matches (possibly empty).
-	 */
-	public abstract Match[] findContainedMatches(IFile file);
-	/**
-	 * Returns the file associated with the given element (usually the file
-	 * the element is contained in). If the element is not associated with a
-	 * file, this method should return <code>null</code>.
-	 * 
-	 * @param element An element associated with a match.
-	 * @return The file associated with the element or null.
-	 */
-	public abstract IFile getFile(Object element);
-	/**
-	 * Determines whether a match should be displayed in the given editor.
-	 * For example, if a match is reported in a file, This method should return 
-	 * <code>true</code>, if the given editor displays the file. 
-	 * 
-	 * @param match The match.
-	 * @param editor The editor that possibly contains the matches element.
-	 * @return
-	 */
-	public abstract boolean isShownInEditor(Match match, IEditorPart editor);
-	/**
-	 * Returns all matches that are contained in the element shown in the given
-	 * editor.
-	 * For example, if the editor shows a particular file, all matches in that file should
-	 * be returned.
-	 * 
-	 * @param editor The editor.
-	 * @return All matches that are contained in the element that is shown in
-	 *         the given editor.
-	 */
-	public abstract Match[] findContainedMatches(IEditorPart editor);
-	
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,22 +23,18 @@ import org.eclipse.ui.part.FileEditorInput;
 
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
+import org.eclipse.search.ui.text.IEditorMatchAdapter;
+import org.eclipse.search.ui.text.IFileMatchAdapter;
 import org.eclipse.search.ui.text.Match;
 
 import org.eclipse.search.internal.ui.SearchPluginImages;
 
 
-/**
- * @author Thomas Mäder
- *
- */
-public class FileSearchResult extends AbstractTextSearchResult {
+public class FileSearchResult extends AbstractTextSearchResult implements IEditorMatchAdapter, IFileMatchAdapter {
 	private final Match[] EMPTY_ARR= new Match[0];
 	
 	private FileSearchQuery fQuery;
-	/**
-	 * @param description
-	 */
+
 	public FileSearchResult(FileSearchQuery job) {
 		fQuery= job;
 	}
@@ -54,7 +50,7 @@ public class FileSearchResult extends AbstractTextSearchResult {
 		return getLabel();
 	}
 
-	public Match[] findContainedMatches(IFile file) {
+	public Match[] findContainedMatches(AbstractTextSearchResult result, IFile file) {
 		return getMatches(file);
 	}
 
@@ -73,7 +69,7 @@ public class FileSearchResult extends AbstractTextSearchResult {
 		return false;
 	}
 	
-	public Match[] findContainedMatches(IEditorPart editor) {
+	public Match[] findContainedMatches(AbstractTextSearchResult result, IEditorPart editor) {
 		IEditorInput ei= editor.getEditorInput();
 		if (ei instanceof IFileEditorInput) {
 			FileEditorInput fi= (FileEditorInput) ei;
@@ -84,5 +80,13 @@ public class FileSearchResult extends AbstractTextSearchResult {
 
 	public ISearchQuery getQuery() {
 		return fQuery;
+	}
+	
+	public IFileMatchAdapter getFileMatchAdapter() {
+		return this;
+	}
+	
+	public IEditorMatchAdapter getEditorMatchAdapter() {
+		return this;
 	}
 }

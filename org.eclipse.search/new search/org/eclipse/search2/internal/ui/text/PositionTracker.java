@@ -32,6 +32,7 @@ import org.eclipse.search.ui.ISearchResultListener;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.SearchResultEvent;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
+import org.eclipse.search.ui.text.IFileMatchAdapter;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.search.ui.text.MatchEvent;
 import org.eclipse.search.ui.text.RemoveAllEvent;
@@ -158,7 +159,10 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 	}
 	
 	private ITextFileBuffer getTrackedFileBuffer(AbstractTextSearchResult result, Object element) {
-		IFile file= result.getFile(element);
+		IFileMatchAdapter adapter= result.getFileMatchAdapter();
+		if (adapter == null)
+			return null;
+		IFile file= adapter.getFile(element);
 		if (file == null)
 			return null;
 		return FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getLocation());
@@ -186,13 +190,17 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 		if (file == null)
 			file= ws.getRoot().getFile(buffer.getLocation());
 		ISearchQuery[] queries= NewSearchUI.getQueries();
-		for (int i= 0; i < queries.length; i++) {
-			ISearchResult result= queries[i].getSearchResult();
+		for (int i = 0; i < queries.length; i++) {
+			ISearchResult result = queries[i].getSearchResult();
 			if (result instanceof AbstractTextSearchResult) {
-				Match[] matches= ((AbstractTextSearchResult)result).findContainedMatches(file);
-				for (int j= 0; j < matches.length; j++) {
-					trackCount[0]++;
-					trackPosition((AbstractTextSearchResult)result, (ITextFileBuffer) buffer, matches[j]);
+				AbstractTextSearchResult textResult = (AbstractTextSearchResult) result;
+				IFileMatchAdapter adapter = textResult.getFileMatchAdapter();
+				if (adapter != null) {
+					Match[] matches = adapter.findContainedMatches(textResult, file);
+					for (int j = 0; j < matches.length; j++) {
+						trackCount[0]++;
+						trackPosition((AbstractTextSearchResult) result, (ITextFileBuffer) buffer, matches[j]);
+					}
 				}
 			}
 		}

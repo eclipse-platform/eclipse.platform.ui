@@ -18,6 +18,7 @@ import org.eclipse.search.ui.ISearchResultListener;
 import org.eclipse.search.ui.SearchResultEvent;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
+import org.eclipse.search.ui.text.IEditorMatchAdapter;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.search.ui.text.MatchEvent;
 import org.eclipse.search.ui.text.RemoveAllEvent;
@@ -105,7 +106,8 @@ public class AnnotationManager implements ISearchResultListener, IPartListener {
 	}
 
 	private void updateMatch(Match match, int kind) {
-		if (fEditor != null && fResult.isShownInEditor(match, fEditor)) {
+		IEditorMatchAdapter adapter= fResult.getEditorMatchAdapter();
+		if (fEditor != null && adapter != null && adapter.isShownInEditor(match, fEditor)) {
 			if (kind == MatchEvent.ADDED) {
 				addAnnotations(fEditor, new Match[]{match});
 			} else {
@@ -127,7 +129,10 @@ public class AnnotationManager implements ISearchResultListener, IPartListener {
 	private void addAnnotations() {
 		if (fEditor == null || fResult == null)
 			return;
-		Match[] matches= fResult.findContainedMatches(fEditor);
+		IEditorMatchAdapter matchAdapter= fResult.getEditorMatchAdapter();
+		if (matchAdapter == null)
+			return;
+		Match[] matches= matchAdapter.findContainedMatches(fResult, fEditor);
 		if (matches == null)
 			return;
 		addAnnotations(fEditor, matches);

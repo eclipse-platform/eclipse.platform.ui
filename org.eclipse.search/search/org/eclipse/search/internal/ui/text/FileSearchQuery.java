@@ -11,24 +11,22 @@
 package org.eclipse.search.internal.ui.text;
 
 import java.text.MessageFormat;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.search.ui.ISearchQuery;
-import org.eclipse.search.ui.ISearchResult;
-import org.eclipse.search.ui.text.AbstractTextSearchResult;
-
 import org.eclipse.search.internal.core.SearchScope;
 import org.eclipse.search.internal.core.text.ITextSearchResultCollector;
 import org.eclipse.search.internal.core.text.MatchLocator;
 import org.eclipse.search.internal.core.text.TextSearchEngine;
 import org.eclipse.search.internal.core.text.TextSearchScope;
+import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.ISearchResult;
+import org.eclipse.search.ui.text.AbstractTextSearchResult;
 
 
 public class FileSearchQuery implements ISearchQuery {
@@ -77,7 +75,8 @@ public class FileSearchQuery implements ISearchQuery {
 	}
 
 	public String getLabel() {
-		return "Searching for occurrences of \""+fSearchString+"\"";
+		String format= SearchMessages.getString("FileSearchQuery.label"); //$NON-NLS-1$
+		return MessageFormat.format(format, new String[] { fSearchString });
 	}
 	
 	public String getSearchString() {
