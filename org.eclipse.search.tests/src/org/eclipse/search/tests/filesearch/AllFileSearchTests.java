@@ -23,6 +23,7 @@ public class AllFileSearchTests extends TestSuite {
 		addTest(AnnotationManagerTest.allTests());
 		addTest(SearchResultPageTest.allTests());
 		addTest(ResultUpdaterTest.allTests());
+		addTest(SortingTest.allTests());
 	}
 
 }
