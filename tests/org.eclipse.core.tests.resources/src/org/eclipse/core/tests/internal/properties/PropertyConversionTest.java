@@ -60,7 +60,7 @@ public class PropertyConversionTest extends ResourceTest {
 		}
 	}
 
-	public void _testConversion() {
+	public void testConversion() {
 		Bundle compatibility = Platform.getBundle("org.eclipse.core.resources.compatibility");
 		if (compatibility == null || compatibility.getState() != Bundle.RESOLVED)
 			// compatibility fragment not available
@@ -115,6 +115,9 @@ public class PropertyConversionTest extends ResourceTest {
 	}
 
 	public void testBug86363() {
+		File rootPropertiesFile = ((Workspace) getWorkspace()).getMetaArea().getPropertyStoreLocation(getWorkspace().getRoot()).toFile();
+		ensureDoesNotExistInFileSystem(rootPropertiesFile);
+		assertTrue("0.1", !rootPropertiesFile.exists());
 		Bundle compatibility = Platform.getBundle("org.eclipse.core.resources.compatibility");
 		if (compatibility == null || compatibility.getState() != Bundle.RESOLVED)
 			// compatibility fragment not available
@@ -122,7 +125,6 @@ public class PropertyConversionTest extends ResourceTest {
 		// do the conversion
 		createPropertyManager("0", true, true);
 		// make sure no .properties file got created
-		File rootPropertiesFile = ((Workspace) getWorkspace()).getMetaArea().getPropertyStoreLocation(getWorkspace().getRoot()).toFile();
 		assertTrue("1.0", !rootPropertiesFile.exists());
 	}
 
