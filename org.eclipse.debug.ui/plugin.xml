@@ -45,6 +45,13 @@
          class="org.eclipse.debug.internal.ui.LauncherPropertyPage"
          id="org.eclipse.debug.internal.ui.LauncherPropertyPage">
    </page>
+   <page
+         objectClass="org.eclipse.core.resources.IResource"
+         name="%LaunchConfigurationTypePropertyPage.name"
+         class="org.eclipse.debug.internal.ui.LaunchConfigurationTypePropertyPage"
+         id="org.eclipse.debug.internal.ui.LaunchConfigurationTypePropertyPage"
+         adaptable="true">
+   </page>
 </extension>
 <extension
       point="org.eclipse.ui.views">

@@ -281,12 +281,17 @@ public interface ILaunchManager {
 
 	/**
 	 * Returns the default launch configuration type for the specified resource, 
-	 * or <code>null</code> if there is none.
+	 * or <code>null</code> if there is none.  If boolean parameter is <code>true</code>, 
+	 * only the specified resource will be considered when looking for a default launch
+	 * configuration type, otherwise the resource's containment hierarchy will be checked
+	 * for a default launch configuration type, then the resource's file extension will be checked.
 	 * 
+	 * @param considerResourceOnly flag that indicates whether to consider only the specified
+	 *  resource or 
 	 * @param resource the resource whose default launch configuration type will be returned
 	 * @since 2.0
 	 */
-	public ILaunchConfigurationType getDefaultLaunchConfigurationType(IResource resource);
+	public ILaunchConfigurationType getDefaultLaunchConfigurationType(IResource resource, boolean considerResourceOnly);
 
 	/**
 	 * Returns the default launch configuration type for the specified file extension, 

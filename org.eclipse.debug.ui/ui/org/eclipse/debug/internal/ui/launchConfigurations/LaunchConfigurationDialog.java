@@ -386,7 +386,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		}
 		ILaunchConfigurationType type = null;
 		if (resource != null) {
-			type = getLaunchManager().getDefaultLaunchConfigurationType(resource);
+			type = getLaunchManager().getDefaultLaunchConfigurationType(resource, false);
 		}
 		return type;		
 	}
