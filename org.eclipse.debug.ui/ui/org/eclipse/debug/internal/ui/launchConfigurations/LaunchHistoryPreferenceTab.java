@@ -244,17 +244,15 @@ public abstract class LaunchHistoryPreferenceTab {
 			Object element = (Object) elements.next();
 			if(!first && favs.indexOf(element) == 0) {
 				first= true;
-			} else if (!last && favs.indexOf(element) == lastFav) {
-				last= true;
 			}
-			if (first && last) {
-				break;
+			if (!last && favs.indexOf(element) == lastFav) {
+				last= true;
 			}
 		}
 		
 		fRemoveFavoritesButton.setEnabled(notEmpty);
-		fMoveUpButton.setEnabled(notEmpty && !first);
-		fMoveDownButton.setEnabled(notEmpty && !last);
+		fMoveUpButton.setEnabled(notEmpty && !first && (first != last));
+		fMoveDownButton.setEnabled(notEmpty && !last && (first != last));
 	}
 	
 	/**
@@ -381,8 +379,7 @@ public abstract class LaunchHistoryPreferenceTab {
 			getFavorites().add(config);
 			getRecents().remove(config);
 		}
-		getFavoritesTable().refresh();
-		getRecentTable().refresh();
+		updateStatus();
 	}		
 
 	/**
