@@ -658,11 +658,9 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		fOverlayStore.load();
 		fOverlayStore.start();
 		
-		Font font= parent.getFont();
 		TabFolder folder= new TabFolder(parent, SWT.NONE);
 		folder.setLayout(new TabFolderLayout());	
 		folder.setLayoutData(new GridData(GridData.FILL_BOTH));
-		folder.setFont(font);
 		
 		TabItem item= new TabItem(folder, SWT.NONE);
 		item.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.general")); //$NON-NLS-1$
@@ -678,6 +676,7 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		
 		initialize();
 		
+		applyDialogFont(folder);
 		return folder;
 	}
 	
