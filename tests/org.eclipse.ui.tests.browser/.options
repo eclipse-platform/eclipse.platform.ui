@@ -1,0 +1,4 @@
+# Debugging options for the org.eclipse.ui.browser plugin.
+
+# Turn on debugging for the org.eclipse.ui.browser plugin.
+org.eclipse.ui.browser/debug=false
