@@ -104,7 +104,7 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
 		    if (fileEntries != null) {
 		        return (ILogEntry[]) fileEntries.values().toArray(new ILogEntry[fileEntries.size()]);
 		    }
-            return null;
+            return new ILogEntry[0];
 		}
 		
 		/*
