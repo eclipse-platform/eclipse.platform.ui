@@ -9,9 +9,7 @@
  * IBM - Initial API and implementation
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client;
- 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -883,85 +881,124 @@ public class Session {
 		sendFile(file, isBinary, monitor);
 	}
 	
-	/**
-	 * Sends a file to the remote CVS server, possibly translating line delimiters.
-	 * <p>
-	 * Line termination sequences are automatically converted to linefeeds only
-	 * (required by the CVS specification) when sending non-binary files.  This
-	 * may alter the actual size and contents of the file that is sent.
-	 * </p><p>
-	 * Note: Non-binary files must be small enough to fit in available memory.
-	 * </p>
-	 * @param file the file to be sent
-	 * @param isBinary is true if the file should be sent without translation
-	 * @param monitor the progress monitor
-	 */
-	public void sendFile(ICVSFile file, boolean isBinary, IProgressMonitor monitor) throws CVSException {
-		// check overrides
-		if (textTransferOverrideSet != null &&
-			textTransferOverrideSet.contains(file)) isBinary = false;
-
-		// update progress monitor
-		final String title = Policy.bind(getSendFileTitleKey(), new Object[]{ Util.toTruncatedPath(file, localRoot, 3) }); //$NON-NLS-1$
-		monitor.subTask(Policy.bind("Session.transferNoSize", title)); //$NON-NLS-1$
-		// obtain an input stream for the file and its size
-		long size = file.getSize();
-		OutputStream out = connection.getOutputStream();
-		try {
-			InputStream in = file.getContents();
+		/**
+		 * Sends a file to the remote CVS server, possibly translating line delimiters.
+		 * <p>
+		 * Line termination sequences are automatically converted to linefeeds only
+		 * (required by the CVS specification) when sending non-binary files.  This
+		 * may alter the actual size and contents of the file that is sent.
+		 * </p><p>
+		 * Note: Non-binary files must be small enough to fit in available memory.
+		 * </p>
+		 * @param file the file to be sent
+		 * @param isBinary is true if the file should be sent without translation
+		 * @param monitor the progress monitor
+		 */
+		public void sendFile(ICVSFile file, boolean isBinary, IProgressMonitor monitor) throws CVSException {
+			// check overrides
+			if (textTransferOverrideSet != null &&
+				textTransferOverrideSet.contains(file)) isBinary = false;
+	
+			// update progress monitor
+			final String title = Policy.bind(getSendFileTitleKey(), new Object[]{ Util.toTruncatedPath(file, localRoot, 3) }); //$NON-NLS-1$
+			monitor.subTask(Policy.bind("Session.transferNoSize", title)); //$NON-NLS-1$
 			try {
-				boolean compressed = false;
-				byte[] buffer = new byte[TRANSFER_BUFFER_SIZE];
-				if (! isBinary && IS_CRLF_PLATFORM || compressionLevel != 0) {
-					// this affects the file size, spool the converted copy to an in-memory buffer
-					ByteArrayOutputStream bout = new ByteArrayOutputStream();
-					try {
-						if (! isBinary && IS_CRLF_PLATFORM) in = new CRLFtoLFInputStream(in);
-						OutputStream zout;
-						if (compressionLevel != 0) {
+				InputStream in = null;
+				long length;
+				try {
+					if (compressionLevel == 0) {
+						in = file.getContents();
+						if (!isBinary && IS_CRLF_PLATFORM){
+							// uncompressed text
+							byte[] buffer = new byte[TRANSFER_BUFFER_SIZE];
+							in = new CRLFtoLFInputStream(in);
+							ByteCountOutputStream counter = new ByteCountOutputStream();
 							try {
-								zout = new GZIPOutputStream(bout); // apparently does not support specifying compression level
-								compressed = true;
-							} catch (IOException e) {
-								in.close();
-								throw CVSException.wrapException(e);
+								for (int count; (count = in.read(buffer)) != -1;) counter.write(buffer, 0, count);
+							} finally {
+								counter.close();
 							}
+							in.close();
+							length = counter.getSize();
+							in = new CRLFtoLFInputStream(file.getContents());
 						} else {
-							zout = bout;
+							// uncompressed binary
+							length = file.getSize();
 						}
+						in = new ProgressMonitorInputStream(in, length, TRANSFER_PROGRESS_INCREMENT, monitor) {
+							protected void updateMonitor(long bytesRead, long bytesTotal, IProgressMonitor monitor) {
+								if (bytesRead == 0) return;
+								Assert.isTrue(bytesRead <= bytesTotal);
+								monitor.subTask(Policy.bind("Session.transfer", //$NON-NLS-1$
+									new Object[] { title, Long.toString(bytesRead >> 10), Long.toString(bytesTotal >> 10) }));
+							}
+						};
+						sendUncompressedBytes(in, length);
+					} else {
+						monitor.subTask(Policy.bind("Session.calculatingCompressedSize", Util.toTruncatedPath(file, localRoot, 3))); //$NON-NLS-1$
+						in = file.getContents();
+						byte[] buffer = new byte[TRANSFER_BUFFER_SIZE];
+						ByteCountOutputStream counter = new ByteCountOutputStream();
+						OutputStream zout = new GZIPOutputStream(counter);
+						if (!isBinary && IS_CRLF_PLATFORM) in = new CRLFtoLFInputStream(in);
 						try {
 							for (int count; (count = in.read(buffer)) != -1;) zout.write(buffer, 0, count);
 						} finally {
 							zout.close();
 						}
-					} finally {
 						in.close();
+						in = file.getContents();
+						in = new ProgressMonitorInputStream(in, file.getSize(), TRANSFER_PROGRESS_INCREMENT, monitor) {
+							protected void updateMonitor(long bytesRead, long bytesTotal, IProgressMonitor monitor) {
+								if (bytesRead == 0) return;
+								Assert.isTrue(bytesRead <= bytesTotal);
+								monitor.subTask(Policy.bind("Session.transfer", //$NON-NLS-1$
+									new Object[] { title, Long.toString(bytesRead >> 10), Long.toString(bytesTotal >> 10) }));
+							}
+						};
+						if (!isBinary && IS_CRLF_PLATFORM) in = new CRLFtoLFInputStream(in);
+						sendCompressedBytes(in, counter.getSize());
 					}
-					byte[] contents = bout.toByteArray();
-					in = new ByteArrayInputStream(contents);
-					size = contents.length;
+				} finally {
+					in.close();
 				}
-				// setup progress monitoring
-				in = new ProgressMonitorInputStream(in, size, TRANSFER_PROGRESS_INCREMENT, monitor) {
-					protected void updateMonitor(long bytesRead, long bytesTotal, IProgressMonitor monitor) {
-						if (bytesRead == 0) return;
-						Assert.isTrue(bytesRead <= bytesTotal);
-						monitor.subTask(Policy.bind("Session.transfer", //$NON-NLS-1$
-							new Object[] { title, Long.toString(bytesRead >> 10), Long.toString(bytesTotal >> 10) }));
-					}
-				};
-				// send the file
-				String sizeLine = Long.toString(size);
-				if (compressed) sizeLine = "z" + sizeLine; //$NON-NLS-1$
-				writeLine(sizeLine);
-				for (int count; (count = in.read(buffer)) != -1;) out.write(buffer, 0, count);
-			} finally {
-				in.close();
+			} catch (IOException e) {
+				throw CVSException.wrapException(e);
 			}
-		} catch (IOException e) {
-			throw CVSException.wrapException(e);
 		}
+
+	/*
+	 * Send the contents of the input stream to CVS.
+	 * Length must equal the number of bytes that will be transferred
+	 * across the wire, that is, the compressed file size.
+	 */
+	private void sendCompressedBytes(InputStream in, long length) throws IOException, CVSException {
+		String sizeLine = "z" + Long.toString(length); //$NON-NLS-1$
+		writeLine(sizeLine);
+		OutputStream out = connection.getOutputStream();
+		GZIPOutputStream zo = new GZIPOutputStream(out);
+		byte[] buffer = new byte[TRANSFER_BUFFER_SIZE];
+		for (int count;
+		(count = in.read(buffer)) != -1;)
+		zo.write(buffer, 0, count);
+		zo.finish();
 	}
+
+	/*
+	 * Send the contents of the input stream to CVS.
+	 * Length must equal the number of bytes that will be transferred
+	 * across the wire.
+	 */
+	private void sendUncompressedBytes(InputStream in, long length) throws IOException, CVSException {
+		OutputStream out = connection.getOutputStream();
+		String sizeLine = Long.toString(length);
+		writeLine(sizeLine);
+		byte[] buffer = new byte[TRANSFER_BUFFER_SIZE];
+		for (int count; (count = in.read(buffer)) != -1;) out.write(buffer, 0, count);
+	}
+
+
+
 
 	/**
 	 * Receives a file from the remote CVS server, possibly translating line delimiters.
