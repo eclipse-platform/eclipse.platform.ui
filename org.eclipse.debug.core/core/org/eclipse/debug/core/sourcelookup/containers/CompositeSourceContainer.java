@@ -42,7 +42,30 @@ public abstract class CompositeSourceContainer extends AbstractSourceContainer {
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
 	 */
 	public Object[] findSourceElements(String name) throws CoreException {
-		ISourceContainer[] containers = getSourceContainers();
+		return findSourceElements(name, getSourceContainers());
+	}
+	
+	/**
+	 * Returns a collection of source elements in the given containers corresponding to
+	 * the given name. Returns an empty collection if no source elements are found.
+	 * This source container's source lookup director specifies if duplicate
+	 * source elements should be searched for, via <code>isFindDuplicates()</code>.
+	 * When <code>false</code> the returned collection should contain at most one
+	 * source element. If this is a composite container, the containers contained
+	 * by this container are also searched.
+	 * <p>
+	 * The format of the given name is implementation specific but generally conforms
+	 * to the format of a file name. If a source container does not recognize the
+	 * name format provided, an empty collection should be returned. A source container
+	 * may or may not require names to be fully qualified (i.e. be qualified with directory
+	 * names).
+	 * </p>
+	 * @param name the name of the source element to search for
+	 * @param containers the containers to search
+	 * @return a collection of source elements corresponding to the given name
+	 * @exception CoreException if an exception occurrs while searching for source elements
+	 */	
+	protected Object[] findSourceElements(String name, ISourceContainer[] containers) throws CoreException {
 		List results = null;
 		CoreException single = null;
 		MultiStatus multiStatus = null;
@@ -85,7 +108,7 @@ public abstract class CompositeSourceContainer extends AbstractSourceContainer {
 			return EMPTY;
 		}
 		return results.toArray();
-	}
+	}	
 	
 	/**
 	 * Creates the source containers in this composite container.
