@@ -174,9 +174,12 @@ public class AntCorePreferences {
 	public URL[] getDefaultAntURLs() {
 		if (defaultAntURLs == null) {
 			List result = new ArrayList(10);
-			IPluginDescriptor descriptor = Platform.getPlugin("org.apache.ant").getDescriptor(); //$NON-NLS-1$
-			addLibraries(descriptor, result);
-			descriptor = Platform.getPlugin("org.apache.xerces").getDescriptor(); //$NON-NLS-1$
+			Plugin antPlugin= Platform.getPlugin("org.apache.ant"); //$NON-NLS-1$
+			if (antPlugin != null) {
+				IPluginDescriptor descriptor = antPlugin.getDescriptor(); 
+				addLibraries(descriptor, result);
+			}
+			IPluginDescriptor descriptor = Platform.getPlugin("org.apache.xerces").getDescriptor(); //$NON-NLS-1$
 			addLibraries(descriptor, result);
 			URL toolsURL= getToolsJarURL();
 			if (toolsURL != null) {
