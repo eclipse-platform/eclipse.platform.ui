@@ -104,10 +104,11 @@
 				id="compareWithPatch"
 				label="%CompareWithPatchAction.label"
 				tooltip="%CompareWithPatchAction.tooltip"
-				menubarPath="compareWithMenu/compareWithGroup"
+				menubarPath="team.main/group1"
 				enablesFor="1"
 				class="org.eclipse.compare.internal.patch.CompareWithPatchAction">
 			</action>
+						
 		</objectContribution>
 		
 		<objectContribution
