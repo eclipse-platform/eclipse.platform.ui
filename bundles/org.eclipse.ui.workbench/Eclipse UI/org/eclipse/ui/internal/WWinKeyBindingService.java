@@ -205,7 +205,7 @@ final class WWinKeyBindingService {
 			}
 		}
 		else {
-			keyModeContributionItem.setText(KeySupport.formatSequence(childMode));
+			keyModeContributionItem.setText(KeySupport.formatSequence(childMode, true));
 			updateAccelerators();
 		}
 	}

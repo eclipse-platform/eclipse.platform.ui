@@ -46,7 +46,7 @@ public final class GestureSupport {
 	}
 
 	public static String formatStroke(Stroke stroke) {
-		return Util.ZERO_LENGTH_STRING; //TODO Action.convertAccelerator(stroke.getValue());
+		return Util.ZERO_LENGTH_STRING; //TODO
 	}
 	
 	public static Sequence parseSequence(String string)
@@ -68,12 +68,7 @@ public final class GestureSupport {
 		if (string == null)
 			throw new IllegalArgumentException();
 		
-		int value = 0; // TODO Action.convertAccelerator(string);
-		
-		//TODO uncomment
-		//if (value == 0)
-		//	throw new IllegalArgumentException();
-			
+		int value = 0; // TODO
 		return Stroke.create(value);
 	}
 

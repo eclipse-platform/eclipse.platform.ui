@@ -481,7 +481,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			
 			if (object instanceof Sequence) {
 				Sequence keySequence = (Sequence) object;
-				String name = KeySupport.formatSequence(keySequence);
+				String name = KeySupport.formatSequence(keySequence, false);
 				keySequencesByName.put(name, keySequence);
 			}
 		}		
@@ -1031,7 +1031,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		}
 
 		if (validKeySequence) {
-			String text = MessageFormat.format(Util.getString(resourceBundle, "labelCommandsForSequence.selection"), new Object[] { '\''+ KeySupport.formatSequence(keySequence) + '\''}); //$NON-NLS-1$
+			String text = MessageFormat.format(Util.getString(resourceBundle, "labelCommandsForSequence.selection"), new Object[] { '\''+ KeySupport.formatSequence(keySequence, true) + '\''}); //$NON-NLS-1$
 			labelCommandsForSequence.setText(text);
 		} else 
 			labelCommandsForSequence.setText(Util.getString(resourceBundle, "labelCommandsForSequence.noSelection")); //$NON-NLS-1$
@@ -1205,7 +1205,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			StringBuffer stringBuffer = new StringBuffer();
 
 			if (commandRecord.sequence != null)
-				stringBuffer.append(KeySupport.formatSequence(commandRecord.sequence));
+				stringBuffer.append(KeySupport.formatSequence(commandRecord.sequence, true));
 
 			if (commandConflict)
 				stringBuffer.append(SPACE + COMMAND_CONFLICT);
@@ -1431,7 +1431,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	}
 
 	private void setKeySequence(Sequence keySequence) {
-		comboSequence.setText(keySequence != null ? KeySupport.formatSequence(keySequence) : Util.ZERO_LENGTH_STRING);
+		comboSequence.setText(keySequence != null ? KeySupport.formatSequence(keySequence, false) : Util.ZERO_LENGTH_STRING);
 	}
 
 	private String getScopeId() {

@@ -65,7 +65,7 @@ public class Manager {
 		Sequence sequence = getKeyMachine().getFirstSequenceForCommand(command);
 		
 		if (sequence != null)
-			text = KeySupport.formatSequence(sequence);
+			text = KeySupport.formatSequence(sequence, true);
 			
 		return text != null ? text : Util.ZERO_LENGTH_STRING;
 	}
