@@ -15,7 +15,6 @@ import java.util.*;
 import java.util.List;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.progress.IPendingPlaceholder;
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -147,12 +146,6 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 
 				return;
 			}
-		}
-
-		Item[] currentItems = getChildren(widget);
-		if (currentItems.length == 1) {
-			if (currentItems[0].getData() instanceof IPendingPlaceholder)
-				remove(currentItems[0].getData());
 		}
 
 		if (childElements.length > 0) {

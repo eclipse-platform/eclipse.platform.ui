@@ -11,7 +11,6 @@
 package org.eclipse.ui.model;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.progress.IPendingPlaceholder;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.internal.progress.ProgressMessages;
 
@@ -20,7 +19,7 @@ import org.eclipse.ui.internal.progress.ProgressMessages;
  * by a WorkbenchContentProvider that wants to show a pending update.
  */
 public class PendingUpdateAdapter
-	implements IWorkbenchAdapter, IAdaptable, IPendingPlaceholder {
+	implements IWorkbenchAdapter, IAdaptable {
 
 	/**
 	 * Create a new instance of the receiver.
