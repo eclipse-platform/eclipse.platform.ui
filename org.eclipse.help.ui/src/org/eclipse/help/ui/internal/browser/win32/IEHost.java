@@ -153,8 +153,8 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 		h = store.getInt(BROWSER_HEIGTH);
 		if (w == 0 || h == 0) {
 			// first launch, use default size
-			w = 700;
-			h = 500;
+			w = 800;
+			h = 600;
 		} else {
 			// do not set location to 0,0 the first time
 			shell.setLocation(x, y);
