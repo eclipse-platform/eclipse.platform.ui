@@ -40,7 +40,10 @@ public class PlatformConfigurationTestCase extends TestCase {
 	}
 	
 	protected String getTempDirectoryName() {
-		return System.getProperty("java.io.tmpdir")+"eclipse"+File.separator+(new Date().getTime()+File.separator);
+		String tmp = System.getProperty("java.io.tmpdir");
+		if (!tmp.endsWith(File.separator))
+			tmp += File.separator;
+		return tmp+"eclipse"+File.separator+(new Date().getTime()+File.separator);
 	}
 	
 	protected void setupDirectory(String name) {
