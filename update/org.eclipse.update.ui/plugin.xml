@@ -21,15 +21,6 @@
 
 
 <extension
-      point="org.eclipse.ui.editors">
-   <editor
-         name="%editors.updateManager.name"
-         icon="icons/basic/obj16/comp_mf_obj.gif"
-         class="org.eclipse.update.internal.ui.manager.UpdateManager"
-         id="org.eclipse.update.ui.updateManager">
-   </editor>
-</extension>
-<extension
       point="org.eclipse.ui.actionSets">
    <actionSet
          label="%actionSets.softwareUpdates.label"
