@@ -5,9 +5,7 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
  
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.debug.core.*;
-import org.eclipse.jface.action.Action;
+import org.eclipse.core.runtime.MultiStatus;import org.eclipse.debug.core.*;import org.eclipse.jface.action.Action;import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Terminates all launches.
@@ -20,6 +18,9 @@ public class TerminateAllAction extends Action {
 
 	public TerminateAllAction() {
 		super(DebugUIUtils.getResourceString(PREFIX + TEXT));
+		WorkbenchHelp.setHelp(
+			this,
+			new Object[] { IDebugHelpContextIds.TERMINATE_ALL_ACTION });
 	}
 
 	/**

@@ -32,5 +32,9 @@ public class StepIntoActionDelegate extends StepActionDelegate {
 	protected String getPrefix() {
 		return PREFIX;
 	}
+	
+	protected String getHelpContextId() {
+		return IDebugHelpContextIds.STEP_INTO_ACTION;
+	}
 
 }

@@ -46,4 +46,8 @@ public class SuspendActionDelegate extends ControlActionDelegate {
 	protected String getPrefix() {
 		return PREFIX;
 	}
+	
+	protected String getHelpContextId() {
+		return IDebugHelpContextIds.SUSPEND_ACTION;
+	}
 }

@@ -52,4 +52,7 @@ public class ResumeActionDelegate extends ControlActionDelegate {
 		return PREFIX;
 	}
 
+	protected String getHelpContextId() {
+		return IDebugHelpContextIds.RESUME_ACTION;
+	}
 }

@@ -6,6 +6,7 @@ package org.eclipse.debug.internal.ui;
  */
 
 import org.eclipse.debug.core.model.IDebugElement;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.action.*;import org.eclipse.jface.viewers.*;import org.eclipse.swt.SWT;import org.eclipse.swt.widgets.Composite;import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * This view shows variables and their values for a particular stack frame
@@ -83,6 +84,9 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 	
 		setInitialContent();
 		setTitleToolTip(getTitleToolTipText(PREFIX));
+		WorkbenchHelp.setHelp(
+			parent,
+			new Object[] { IDebugHelpContextIds.VARIABLE_VIEW });
 	}
 
 	protected void setInitialContent() {

@@ -5,8 +5,7 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.core.ILaunchManager;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * An execution action that uses launchers in
@@ -20,6 +19,9 @@ public class DebugAction extends ExecutionAction {
 		setText(DebugUIUtils.getResourceString(PREFIX + TEXT));
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ACT_DEBUG));
 		setToolTipText(DebugUIUtils.getResourceString(PREFIX + TOOL_TIP_TEXT));
+		WorkbenchHelp.setHelp(
+			this,
+			new Object[] { IDebugHelpContextIds.DEBUG_ACTION });
 	}
 
 	/**

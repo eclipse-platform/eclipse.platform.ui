@@ -5,13 +5,7 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.debug.core.ILaunch;import org.eclipse.debug.core.ILaunchManager;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.action.Action;import org.eclipse.jface.resource.ImageDescriptor;import org.eclipse.swt.custom.BusyIndicator;import org.eclipse.swt.widgets.Display;import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Re-launches a previous launch.
@@ -37,6 +31,9 @@ public class RelaunchHistoryLaunchAction extends Action {
 		if (descriptor != null) {
 			setImageDescriptor(descriptor);
 		}
+		WorkbenchHelp.setHelp(
+			this,
+			new Object[] { IDebugHelpContextIds.RELAUNCH_HISTORY_ACTION });
 	}
 
 	/**

@@ -5,17 +5,7 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.core.*;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IMarkerDelta;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.ui.actions.SelectionProviderAction;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Display;
-import java.util.Iterator;
+import java.util.Iterator;import org.eclipse.core.resources.IMarker;import org.eclipse.core.resources.IMarkerDelta;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.MultiStatus;import org.eclipse.debug.core.*;import org.eclipse.jface.viewers.*;import org.eclipse.swt.widgets.Display;import org.eclipse.ui.actions.SelectionProviderAction;import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Enables or disables a breakpoint
@@ -33,6 +23,9 @@ public class EnableDisableBreakpointAction extends SelectionProviderAction imple
 	public EnableDisableBreakpointAction(ISelectionProvider selectionProvider) {
 		super(selectionProvider, DebugUIUtils.getResourceString(PREFIX + TEXT));
 		setEnabled(!getStructuredSelection().isEmpty());
+		WorkbenchHelp.setHelp(
+			this,
+			new Object[] { IDebugHelpContextIds.ENABLE_DISABLE_BREAKPOINT_ACTION });
 	}
 
 	/**

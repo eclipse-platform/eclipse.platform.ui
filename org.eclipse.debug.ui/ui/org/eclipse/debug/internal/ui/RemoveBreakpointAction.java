@@ -5,19 +5,7 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import java.util.Iterator;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointManager;
-import org.eclipse.debug.core.IDebugStatusConstants;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.actions.SelectionProviderAction;
+import java.util.Iterator;import org.eclipse.core.resources.*;import org.eclipse.core.runtime.*;import org.eclipse.debug.core.*;import org.eclipse.jface.viewers.ISelectionProvider;import org.eclipse.jface.viewers.IStructuredSelection;import org.eclipse.ui.actions.SelectionProviderAction;import org.eclipse.ui.help.WorkbenchHelp;
 
 public class RemoveBreakpointAction extends SelectionProviderAction {
 
@@ -29,6 +17,9 @@ public class RemoveBreakpointAction extends SelectionProviderAction {
 		super(provider, DebugUIUtils.getResourceString(PREFIX + TEXT));
 		setEnabled(!getStructuredSelection().isEmpty());
 		setToolTipText(DebugUIUtils.getResourceString(PREFIX + TOOL_TIP_TEXT));
+		WorkbenchHelp.setHelp(
+			this,
+			new Object[] { IDebugHelpContextIds.REMOVE_ACTION });
 	}
 
 	/**

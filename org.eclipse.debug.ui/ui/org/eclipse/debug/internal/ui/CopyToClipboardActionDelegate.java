@@ -85,4 +85,7 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 		return false;
 	}
 
+	protected String getHelpContextId() {
+		return IDebugHelpContextIds.COPY_TO_CLIPBOARD_ACTION;
+	}
 }

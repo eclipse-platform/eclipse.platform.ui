@@ -5,17 +5,7 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILauncher;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.*;
-import java.util.Iterator;
+import java.util.Iterator;import org.eclipse.core.resources.IProject;import org.eclipse.core.resources.IResource;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.IAdaptable;import org.eclipse.debug.core.*;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.viewers.IStructuredSelection;import org.eclipse.jface.wizard.*;import org.eclipse.swt.widgets.Composite;import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * This wizard is used when the debug or run button is pressed, and
@@ -88,6 +78,13 @@ public class LaunchWizard extends Wizard {
 		this(allLaunchers, selection, mode, true);
 	}
 
+	public void createPageControls(Composite pageContainer) {
+		super.createPageControls(pageContainer);
+		WorkbenchHelp.setHelp(
+			pageContainer,
+			new Object[] { IDebugHelpContextIds.LAUNCH_WIZARD });
+	}
+	
 	protected void initialize() {
 		setNeedsProgressMonitor(true);
 		setForcePreviousAndNextButtons(true);

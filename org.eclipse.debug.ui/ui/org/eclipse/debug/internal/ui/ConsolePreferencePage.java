@@ -5,7 +5,7 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.preference.*;import org.eclipse.swt.graphics.*;import org.eclipse.ui.IWorkbench;import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.jface.preference.*;import org.eclipse.swt.graphics.*;import org.eclipse.swt.widgets.Composite;import org.eclipse.ui.IWorkbench;import org.eclipse.ui.IWorkbenchPreferencePage;import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * A page to set the preferences for the console
@@ -29,6 +29,13 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		setPreferenceStore(store);
 	}
 
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		WorkbenchHelp.setHelp(
+			parent,
+			new Object[] { IDebugHelpContextIds.CONSOLE_PREFERENCE_PAGE });
+	}
+	
 	/**
 	 * Create all field editors for this page
 	 */

@@ -8,6 +8,7 @@ package org.eclipse.debug.internal.ui;
 import java.util.*;import org.eclipse.core.runtime.IAdaptable;import org.eclipse.debug.core.model.IProcess;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.action.*;import org.eclipse.jface.text.*;import org.eclipse.jface.viewers.ISelectionChangedListener;import org.eclipse.jface.viewers.SelectionChangedEvent;import org.eclipse.swt.graphics.Point;import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;import org.eclipse.ui.IActionBars;import org.eclipse.ui.IWorkbenchActionConstants;import org.eclipse.ui.part.ViewPart;import org.eclipse.ui.texteditor.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class ConsoleView extends ViewPart {
 	
@@ -43,6 +44,9 @@ public class ConsoleView extends ViewPart {
 		fConsoleViewer.addTextInputListener(getTextInputListener());
 		setViewerInput(DebugUIPlugin.getDefault().getCurrentProcess());
 		setTitleToolTip(DebugUIUtils.getResourceString(PREFIX + AbstractDebugView.TITLE_TOOLTIPTEXT));
+		WorkbenchHelp.setHelp(
+			parent,
+			new Object[] { IDebugHelpContextIds.CONSOLE_VIEW });
 	}
 
 	/**

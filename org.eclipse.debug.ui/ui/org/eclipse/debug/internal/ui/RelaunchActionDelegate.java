@@ -61,4 +61,8 @@ public class RelaunchActionDelegate extends ControlActionDelegate {
 	protected String getPrefix() {
 		return PREFIX;
 	}
+	
+	protected String getHelpContextId() {
+		return IDebugHelpContextIds.RELAUNCH_ACTION;
+	}
 }

@@ -5,7 +5,7 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.ui.IDebugModelPresentation;import org.eclipse.jface.action.Action;import org.eclipse.jface.viewers.ILabelProvider;import org.eclipse.jface.viewers.StructuredViewer;import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.debug.ui.IDebugModelPresentation;import org.eclipse.jface.action.Action;import org.eclipse.jface.viewers.ILabelProvider;import org.eclipse.jface.viewers.StructuredViewer;import org.eclipse.swt.custom.BusyIndicator;import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * An action that toggles the state of its viewer to
@@ -23,6 +23,9 @@ public class ShowQualifiedAction extends Action {
 		super(DebugUIUtils.getResourceString(SHOW));
 		fViewer= viewer;
 		setToolTipText(DebugUIUtils.getResourceString(SHOW));
+		WorkbenchHelp.setHelp(
+			this,
+			new Object[] { IDebugHelpContextIds.SHOW_QUALIFIED_NAMES_ACTION });
 	}
 
 	/**

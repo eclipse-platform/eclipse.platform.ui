@@ -5,12 +5,7 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
  
-import java.util.Iterator;
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import java.util.Iterator;import org.eclipse.debug.core.DebugException;import org.eclipse.debug.core.model.IVariable;import org.eclipse.debug.ui.DebugUITools;import org.eclipse.jface.viewers.ISelectionProvider;import org.eclipse.jface.viewers.IStructuredSelection;import org.eclipse.ui.help.WorkbenchHelp;
 
 public class AddToInspectorAction extends InspectorAction {
 
@@ -20,6 +15,9 @@ public class AddToInspectorAction extends InspectorAction {
 		super(sp, DebugUIUtils.getResourceString(PREFIX + TEXT));
 		setToolTipText(DebugUIUtils.getResourceString(PREFIX + TOOL_TIP_TEXT));
 		setEnabled(!getStructuredSelection().isEmpty());
+		WorkbenchHelp.setHelp(
+			this,
+			new Object[] { IDebugHelpContextIds.INSPECT_ACTION });
 	}
 
 	/**

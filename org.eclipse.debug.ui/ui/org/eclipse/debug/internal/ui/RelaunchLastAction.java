@@ -5,20 +5,19 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.debug.core.ILaunch;import org.eclipse.jface.action.Action;import org.eclipse.jface.action.IAction;import org.eclipse.jface.viewers.ISelection;import org.eclipse.swt.custom.BusyIndicator;import org.eclipse.swt.widgets.Display;import org.eclipse.ui.IWorkbenchWindow;import org.eclipse.ui.IWorkbenchWindowActionDelegate;import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Re-runs or re-debugs the last launch.
  */
 public class RelaunchLastAction extends Action implements IWorkbenchWindowActionDelegate {
+	
+	
+	public RelaunchLastAction() {
+		WorkbenchHelp.setHelp(
+			this,
+			new Object[] { IDebugHelpContextIds.RELAUNCH_LAST_ACTION });
+	}
 	
 	/**
 	 * @see IAction

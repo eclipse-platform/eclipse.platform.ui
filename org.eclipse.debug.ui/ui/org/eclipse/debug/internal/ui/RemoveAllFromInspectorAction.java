@@ -5,8 +5,7 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ISelectionProvider;import org.eclipse.jface.viewers.IStructuredSelection;import org.eclipse.ui.help.WorkbenchHelp;
 
 public class RemoveAllFromInspectorAction extends InspectorAction {
 	
@@ -15,6 +14,9 @@ public class RemoveAllFromInspectorAction extends InspectorAction {
 	public RemoveAllFromInspectorAction(ISelectionProvider provider) {
 		super(provider, DebugUIUtils.getResourceString(PREFIX + TEXT));
 		setToolTipText(DebugUIUtils.getResourceString(PREFIX + TOOL_TIP_TEXT));
+		WorkbenchHelp.setHelp(
+			this,
+			new Object[] { IDebugHelpContextIds.REMOVE_ALL_ACTION });
 	}
 
 	/**

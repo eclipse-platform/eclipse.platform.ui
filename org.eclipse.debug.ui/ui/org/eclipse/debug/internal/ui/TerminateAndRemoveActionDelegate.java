@@ -55,4 +55,8 @@ public class TerminateAndRemoveActionDelegate extends ControlActionDelegate {
 	protected String getPrefix() {
 		return PREFIX;
 	}
+	
+	protected String getHelpContextId() {
+		return IDebugHelpContextIds.TERMINATE_AND_REMOVE_ACTION;
+	}
 }

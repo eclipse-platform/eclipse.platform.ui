@@ -5,7 +5,7 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.core.DebugPlugin;import org.eclipse.debug.core.ILaunch;import org.eclipse.debug.core.model.IProcess;import org.eclipse.debug.core.model.IStackFrame;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.action.*;import org.eclipse.jface.viewers.*;import org.eclipse.swt.SWT;import org.eclipse.swt.events.KeyAdapter;import org.eclipse.swt.events.KeyEvent;import org.eclipse.swt.widgets.Composite;import org.eclipse.swt.widgets.Control;import org.eclipse.ui.IWorkbenchActionConstants;import org.eclipse.ui.actions.SelectionProviderAction;import org.eclipse.ui.dialogs.PropertyDialogAction;
+import org.eclipse.debug.core.DebugPlugin;import org.eclipse.debug.core.ILaunch;import org.eclipse.debug.core.model.IProcess;import org.eclipse.debug.core.model.IStackFrame;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.action.*;import org.eclipse.jface.viewers.*;import org.eclipse.swt.SWT;import org.eclipse.swt.events.KeyAdapter;import org.eclipse.swt.events.KeyEvent;import org.eclipse.swt.widgets.Composite;import org.eclipse.swt.widgets.Control;import org.eclipse.ui.IWorkbenchActionConstants;import org.eclipse.ui.actions.SelectionProviderAction;import org.eclipse.ui.dialogs.PropertyDialogAction;import org.eclipse.ui.help.WorkbenchHelp;
 
 public class LaunchesView extends AbstractDebugView implements ISelectionChangedListener, IDoubleClickListener {
 
@@ -95,6 +95,9 @@ public class LaunchesView extends AbstractDebugView implements ISelectionChanged
 			}
 		});
 		setTitleToolTip(getTitleToolTipText(getPrefix()));
+		WorkbenchHelp.setHelp(
+			parent,
+			new Object[] { IDebugHelpContextIds.PROCESS_VIEW });
 	}
 
 	/**

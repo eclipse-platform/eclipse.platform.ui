@@ -5,17 +5,7 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.IDebugStatusConstants;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Display;
-import java.util.Iterator;
+import java.util.Iterator;import org.eclipse.core.runtime.MultiStatus;import org.eclipse.debug.core.DebugException;import org.eclipse.debug.core.IDebugStatusConstants;import org.eclipse.jface.action.IAction;import org.eclipse.jface.viewers.ISelection;import org.eclipse.jface.viewers.IStructuredSelection;import org.eclipse.swt.custom.BusyIndicator;import org.eclipse.swt.widgets.Display;import org.eclipse.ui.IWorkbenchWindow;import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 public abstract class ControlActionDelegate implements IWorkbenchWindowActionDelegate {
 
@@ -141,5 +131,10 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	 * Returns whether this action will work for the given element
 	 */
 	public abstract boolean isEnabledFor(Object element);
+	
+	/**
+	 * Returns this action's help context id
+	 */
+	protected abstract String getHelpContextId();
 	
 }

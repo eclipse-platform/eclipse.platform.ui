@@ -5,13 +5,7 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.jface.preference.BooleanFieldEditor;
-import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.swt.SWT;
+import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.preference.*;import org.eclipse.swt.SWT;import org.eclipse.swt.widgets.Composite;import org.eclipse.ui.IWorkbench;import org.eclipse.ui.IWorkbenchPreferencePage;import org.eclipse.ui.help.WorkbenchHelp;
 
 /*
  * The page for setting the default debugger preferences.
@@ -30,6 +24,13 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 		setPreferenceStore(store);
 	}
 
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		WorkbenchHelp.setHelp(
+			parent,
+			new Object[] { IDebugHelpContextIds.DEBUG_PREFERENCE_PAGE });
+	}
+	
 	/**
 	 * @see FieldEditorPreferencePage#createFieldEditors
 	 */

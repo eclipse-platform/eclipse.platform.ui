@@ -21,6 +21,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Used to select the project that will be used as a launch context.
@@ -145,6 +146,9 @@ public class LaunchWizardProjectSelectionPage extends WizardPage {
 		setPageComplete(false);
 		setTitle(DebugUIUtils.getResourceString(PREFIX + "title"));
 		setControl(root);
+		WorkbenchHelp.setHelp(
+			ancestor,
+			new Object[] { IDebugHelpContextIds.PROJECT_SELECTION_WIZARD_PAGE });
 	}
 
 	public void createElementsGroup(Composite root) {

@@ -22,6 +22,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class LaunchWizardSelectionPage extends WizardSelectionPage {
 	
@@ -99,6 +100,9 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 		}
 		initializeSettings();
 		setControl(root);
+		WorkbenchHelp.setHelp(
+			ancestor,
+			new Object[] { IDebugHelpContextIds.LAUNCHER_SELECTION_WIZARD_PAGE });
 	}
 
 	public void createLaunchersGroup(Composite root) {

@@ -5,9 +5,7 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.ui.actions.SelectionProviderAction;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ISelectionProvider;import org.eclipse.jface.viewers.IStructuredSelection;import org.eclipse.ui.actions.SelectionProviderAction;import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Provides the common functionality of the control actions.
@@ -32,6 +30,9 @@ public class ControlAction extends SelectionProviderAction {
 		fDelegate.initializeForOwner(this);
 		setText(DebugUIUtils.getResourceString(fDelegate.getPrefix() + TEXT));
 		setToolTipText(DebugUIUtils.getResourceString(fDelegate.getPrefix() + TOOL_TIP_TEXT));		
+		WorkbenchHelp.setHelp(
+			this,
+			new Object[] { fDelegate.getHelpContextId() });
 	}
 
 	/**

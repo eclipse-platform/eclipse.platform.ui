@@ -5,16 +5,7 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.ILauncher;
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.debug.core.ILaunchManager;import org.eclipse.debug.core.ILauncher;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.action.Action;import org.eclipse.jface.resource.ImageDescriptor;import org.eclipse.jface.viewers.IStructuredSelection;import org.eclipse.jface.viewers.StructuredSelection;import org.eclipse.swt.custom.BusyIndicator;import org.eclipse.swt.widgets.Display;import org.eclipse.swt.widgets.Shell;import org.eclipse.ui.help.WorkbenchHelp;
 
 public class LaunchSelectionAction extends Action {
 
@@ -38,6 +29,10 @@ public class LaunchSelectionAction extends Action {
 		if (descriptor != null) {
 			setImageDescriptor(descriptor);
 		}
+		
+		WorkbenchHelp.setHelp(
+			this,
+			new Object[] { IDebugHelpContextIds.LAUNCH_SELECTION_ACTION });
 	}
 
 	/**
