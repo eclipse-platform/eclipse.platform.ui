@@ -34,8 +34,9 @@ java.net.URL url = new java.net.URL("file",null,"C:\\path"+java.io.File.separato
 url.getPath().endsWith("/");
 url
 
-java.net.URL url = new java.net.URL("file:C:\\path");
-url
+java.net.URL url = new java.net.URL("http://machine:8080/path space/file.abc#hello");
+java.net.URL url2 = new java.net.URL(url,"bye.cde");
+url2.getPath()
 
 java.lang.ClassLoader l = new java.net.URLClassLoader(new java.net.URL[] {new java.net.URL("file",null,"c:\\oti\\wsw205\\eclipse\\install\\features\\org.eclipse.help.feature_1.0.4/") }, null);
 java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("feature", java.util.Locale.getDefault(), l);

@@ -70,7 +70,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 		localSite.install(remoteFeature, null);
 
 		// verify
-		String site = localSite.getURL().getFile();
+		String site = TARGET_FILE_SITE.getFile();
 		IPluginEntry[] entries = remoteFeature.getPluginEntries();
 		assertTrue("no plugins entry", (entries != null && entries.length != 0));
 		String pluginName = entries[0].getVersionIdentifier().toString();
@@ -127,7 +127,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 
 
 		// check
-		String site = localSite.getURL().getFile();			
+		String site = TARGET_FILE_SITE.getFile();			
 		IPluginEntry[] entries = remoteFeature.getPluginEntries();
 		assertTrue("no plugins entry", (entries != null && entries.length != 0));
 

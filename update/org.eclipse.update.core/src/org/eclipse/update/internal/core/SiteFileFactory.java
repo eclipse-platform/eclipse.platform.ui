@@ -44,9 +44,10 @@ public class SiteFileFactory extends BaseSiteFactory {
 		public File getLocation() {
 			return location;
 		}
-		
-		public String toString(){
-			if (id!=null) return id.toString();
+
+		public String toString() {
+			if (id != null)
+				return id.toString();
 			return "";
 		}
 	}
@@ -54,31 +55,31 @@ public class SiteFileFactory extends BaseSiteFactory {
 	/*
 	 * @see ISiteFactory#createSite(URL,boolean)
 	 */
-	public ISite createSite(URL url, boolean forceCreation) throws CoreException, InvalidSiteTypeException {
+	public ISite createSite(URL url, boolean forceCreation) throws IOException, ParsingException, InvalidSiteTypeException {
 
 		Site site = null;
-		URL siteXML = null;
 		InputStream siteStream = null;
 		SiteModelFactory factory = (SiteModelFactory) this;
-		
+
 		try {
 			// remove site.xml from the URL
-			url = removeSiteXML(url);
 			SiteFileContentProvider contentProvider = new SiteFileContentProvider(url);
-
 			try {
-				
-				siteXML = new URL(contentProvider.getURL(), Site.SITE_XML);
-				
-				URL resolvedURL = URLEncoder.encode(siteXML);
-				siteStream = resolvedURL.openStream();
-				
-				site = (Site) factory.parseSite(siteStream);
-			} catch (IOException e) {
-				if (forceCreation)
+				// if pointing to a directory,
+				// we shoudl not attempt to open a stream
+				if (url.getFile().endsWith("/") && forceCreation) {
 					site = parseSite(url);
-				else
-					throw new InvalidSiteTypeException(null);
+				} else {
+
+					URL resolvedURL = URLEncoder.encode(url);
+					siteStream = resolvedURL.openStream();
+					site = (Site) factory.parseSite(siteStream);
+				}
+			} catch (IOException e) {
+				if (forceCreation) {
+					site = parseSite(url);
+				} else
+					throw e;
 			}
 
 			site.setSiteContentProvider(contentProvider);
@@ -86,26 +87,11 @@ public class SiteFileFactory extends BaseSiteFactory {
 			site.resolve(url, getResourceBundle(url));
 			site.markReadOnly();
 
-		} catch (IOException e) {
-
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "WARNING: cannot open site.xml in the site:" + url.toExternalForm(), e);
-			throw new CoreException(status);
-		} catch (Exception e) {
-
-			if (e instanceof SAXException) {
-				SAXException exception = (SAXException) e;
-				if (exception.getException() instanceof InvalidSiteTypeException) {
-					throw (InvalidSiteTypeException) exception.getException();
-				}
-			}
-
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "Error parsing site.xml in the site:" + url.toExternalForm()+"\r\n"+e.getLocalizedMessage(), e);
-			throw new CoreException(status);
 		} finally {
 			try {
-				if (siteStream!=null) siteStream.close();
+				// FIXME why do we need to check ???
+				if (siteStream != null)
+					siteStream.close();
 			} catch (Exception e) {
 			}
 		}
@@ -114,7 +100,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 	/**
 	 * Method parseSite.
 	 */
-	public Site parseSite(URL url) throws CoreException {
+	public Site parseSite(URL url) throws ParsingException {
 
 		this.url = url;
 		this.site = (Site) createSiteMapModel();
@@ -123,20 +109,25 @@ public class SiteFileFactory extends BaseSiteFactory {
 		String pluginPath = path + Site.DEFAULT_PLUGIN_PATH;
 		String fragmentPath = path + Site.DEFAULT_FRAGMENT_PATH;
 
-		// FIXME: fragments
-		//PACKAGED
-		parsePackagedFeature(); // in case it contains JAR files
+		try {
+			// FIXME: fragments
+			//PACKAGED
+			parsePackagedFeature(); // in case it contains JAR files
 
-		parsePackagedPlugins(pluginPath);
+			parsePackagedPlugins(pluginPath);
 
-		parsePackagedPlugins(fragmentPath);
+			parsePackagedPlugins(fragmentPath);
 
-		// EXECUTABLE	
-		parseExecutableFeature();
+			// EXECUTABLE	
+			parseExecutableFeature();
 
-		parseExecutablePlugin(pluginPath);
+			parseExecutablePlugin(pluginPath);
 
-		parseExecutablePlugin(fragmentPath);
+			parseExecutablePlugin(fragmentPath);
+
+		} catch (CoreException e) {
+			throw new ParsingException(e.getStatus().getException());
+		}
 
 		return (Site) site;
 
@@ -147,9 +138,15 @@ public class SiteFileFactory extends BaseSiteFactory {
 	 * @throws CoreException
 	 */
 	private void parseExecutableFeature() throws CoreException {
-
-		String path = this.url.getFile();
-		String featurePath = path + Site.INSTALL_FEATURE_PATH;
+		String featurePath=null;
+		try {
+			URL newURL = new URL(url, Site.INSTALL_FEATURE_PATH);
+			featurePath = newURL.getFile();
+		} catch (MalformedURLException e) {
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error creating feature path URL:"+url.toExternalForm(), e);
+			throw new CoreException(status);
+		}
 
 		File featureDir = new File(featurePath);
 		if (featureDir.exists()) {
@@ -329,7 +326,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 
 					if (ref != null) {
 						VersionedIdentifier identifier = new DefaultPluginParser().parse(ref.getInputStream());
-						plugin = new PluginIdentifier(identifier,file);
+						plugin = new PluginIdentifier(identifier, file);
 						addParsedPlugin(plugin);
 					} //ref!=null
 				} //for
@@ -363,22 +360,6 @@ public class SiteFileFactory extends BaseSiteFactory {
 	 */
 	public boolean canParseSiteType(String type) {
 		return (super.canParseSiteType(type) || SiteFileContentProvider.SITE_TYPE.equalsIgnoreCase(type));
-	}
-
-	/**
-	 * removes site.xml from the URL
-	 */
-	private URL removeSiteXML(URL url) throws MalformedURLException {
-		URL result = url;
-
-	if (url!=null && url.getFile().endsWith(Site.SITE_XML)){
-			String ref = url.getRef();
-			int index = url.getFile().lastIndexOf(Site.SITE_XML);
-			String newPath = url.getFile().substring(0, index);	
-			if (ref!=null) newPath += newPath+"#"+ref;
-			result = new URL(url.getProtocol(), url.getHost(), url.getPort(), newPath);
-		}
-		return result;
 	}
 
 }

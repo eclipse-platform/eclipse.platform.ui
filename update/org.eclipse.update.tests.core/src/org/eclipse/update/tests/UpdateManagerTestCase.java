@@ -47,7 +47,7 @@ public abstract class UpdateManagerTestCase extends TestCase {
 
 		IPluginDescriptor dataDesc = Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.update.tests.core");
 		URL resolvedURL = Platform.resolve(dataDesc.getInstallURL());
-		URL dataURL = UpdateManagerUtils.add(DATA_PATH,resolvedURL);
+		URL dataURL = new URL(resolvedURL,DATA_PATH);
 		dataPath = dataURL.getFile();
 		//URL dataURL = new URL(resolvedURL.getProtocol(), resolvedURL.getHost(), resolvedURL.getPort(),dataPath);
 		String homePath = (System.getProperty("user.home")).replace(File.separatorChar,'/');

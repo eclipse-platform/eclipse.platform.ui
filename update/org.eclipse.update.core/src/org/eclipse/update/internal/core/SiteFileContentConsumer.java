@@ -6,6 +6,8 @@ package org.eclipse.update.internal.core;
 import java.io.*;
 
 import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.FeatureModel;
@@ -30,38 +32,24 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 	 */
 	public void store(IPluginEntry pluginEntry, String contentKey, InputStream inStream) throws CoreException {
 
-		String path = getSite().getURL().getFile();
-		// FIXME: fragment code
-		String pluginPath = null;
-		if (pluginEntry.isFragment()) {
-			pluginPath = path + Site.DEFAULT_FRAGMENT_PATH + pluginEntry.getVersionIdentifier().toString();
-		} else {
-			pluginPath = path + Site.DEFAULT_PLUGIN_PATH + pluginEntry.getVersionIdentifier().toString();
-		}
-		pluginPath += pluginPath.endsWith(File.separator) ? contentKey : File.separator + contentKey;
-
-		try {
-			UpdateManagerUtils.copyToLocal(inStream, pluginPath, null);
-
-		} catch (IOException e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error creating file:" + pluginPath, e);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Should not be called", null);
 			throw new CoreException(status);
-		} finally {
-			try {
-				// close stream
-				inStream.close();
-			} catch (Exception e) {}
-		}
 	}
 
 	/**
- 	 * return tehepath in whichh the Feature will be installed
+ 	 * return the path in whichh the Feature will be installed
  	 */
-	private String getFeaturePath() {
+	private String getFeaturePath() throws CoreException {
+		String featurePath = null;
+		try {
 		VersionedIdentifier featureIdentifier = feature.getVersionIdentifier();
-		String path = getSite().getURL().getFile();
-		String featurePath = path + Site.INSTALL_FEATURE_PATH + featureIdentifier.toString() + File.separator;
+		String path = Site.INSTALL_FEATURE_PATH + featureIdentifier.toString() + File.separator;
+		URL newURL = new URL(getSite().getURL(),path);
+		featurePath = newURL.getFile();
+		} catch (MalformedURLException e){
+			throw newCoreException("Unable to create new URL :"+e.getMessage(),e);
+		}
 		return featurePath;
 	}
 	

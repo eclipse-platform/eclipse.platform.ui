@@ -5,7 +5,10 @@ package org.eclipse.update.core.model;
  * All Rights Reserved.
  */
  
+import java.io.IOException;
 import java.io.InputStream;
+
+import org.xml.sax.SAXException;
 
 /**
  * An object which can create install related model objects (typically when
@@ -36,10 +39,26 @@ public class SiteModelFactory {
 	 * Constructs a feature model from stream
 	 * 
 	 * @param stream feature stream
+	 * @exception ParsingException when a parsing error occured
+	 * @exception IOException when an IOException occured in the Stream
+	 * @exception InvalidSiteTypeException when the type of the site is different from the one expected
 	 */
-	public SiteMapModel parseSite(InputStream stream) throws Exception {
-		DefaultSiteParser parser = new DefaultSiteParser(this);
-		return parser.parse(stream);
+	public SiteMapModel parseSite(InputStream stream) throws ParsingException, IOException, InvalidSiteTypeException {
+		SiteMapModel result = null;
+		try {
+			DefaultSiteParser parser = new DefaultSiteParser(this);
+			result = parser.parse(stream);
+		} catch (SAXException e){
+			if (e instanceof SAXException){
+				SAXException exception = (SAXException) e;
+				if(exception.getException() instanceof InvalidSiteTypeException){
+					throw (InvalidSiteTypeException)exception.getException();
+				}
+			}
+			
+			throw new ParsingException(e);
+		}
+		return result;
 	}
 
 	/**

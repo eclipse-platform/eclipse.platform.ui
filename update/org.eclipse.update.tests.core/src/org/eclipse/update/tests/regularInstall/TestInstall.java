@@ -146,7 +146,8 @@ public class TestInstall extends UpdateManagerTestCase {
 	public void testInstall() throws Exception {
 		
 		// cleanup local files...
-		File localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocationURL(),SiteLocal.SITE_LOCAL_FILE).getFile());
+		URL localURL = ((SiteLocal)SiteManager.getLocalSite()).getLocationURL();
+		File localFile = new File(new URL(localURL,SiteLocal.SITE_LOCAL_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
 		
 

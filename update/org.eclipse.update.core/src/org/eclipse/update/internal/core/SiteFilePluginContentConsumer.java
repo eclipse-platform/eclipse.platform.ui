@@ -4,6 +4,7 @@ package org.eclipse.update.internal.core;
  * All Rights Reserved.
  */
 import java.io.*;
+import java.net.URL;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
@@ -19,7 +20,7 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 	/**
 	 * Constructor for FileSite
 	 */
-	public SiteFilePluginContentConsumer(IPluginEntry pluginEntry,ISite site){
+	public SiteFilePluginContentConsumer(IPluginEntry pluginEntry, ISite site) {
 		this.pluginEntry = pluginEntry;
 		this.site = site;
 	}
@@ -28,21 +29,22 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 	 * @see ISiteContentConsumer#store(ContentReference, IProgressMonitor)
 	 */
 	public void store(ContentReference contentReference, IProgressMonitor monitor) throws CoreException {
-		String path = site.getURL().getFile();
+		//String path = site.getURL().getFile();
 		InputStream inStream = null;
-
-		// FIXME: fragment code
-		String pluginPath = null;
-		if (pluginEntry.isFragment()) {
-			pluginPath = path + Site.DEFAULT_FRAGMENT_PATH + pluginEntry.getVersionIdentifier().toString();
-		} else {
-			pluginPath = path + Site.DEFAULT_PLUGIN_PATH + pluginEntry.getVersionIdentifier().toString();
-		}
-		String contentKey = contentReference.getIdentifier();
-		pluginPath += pluginPath.endsWith(File.separator) ? contentKey : File.separator + contentKey;
-		pluginPath = pluginPath.replace('/',File.separatorChar);
-
+		String pluginPath = null;		
+		
 		try {
+			// FIXME: fragment code
+			if (pluginEntry.isFragment()) {
+				URL newURL = new URL(site.getURL(), Site.DEFAULT_FRAGMENT_PATH + pluginEntry.getVersionIdentifier().toString());
+				pluginPath = newURL.getFile();
+			} else {
+				URL newURL = new URL(site.getURL(), Site.DEFAULT_PLUGIN_PATH + pluginEntry.getVersionIdentifier().toString());
+				pluginPath = newURL.getFile();
+			}
+			String contentKey = contentReference.getIdentifier();
+			pluginPath += pluginPath.endsWith(File.separator) ? contentKey : File.separator + contentKey;
+
 			inStream = contentReference.getInputStream();
 			UpdateManagerUtils.copyToLocal(inStream, pluginPath, null);
 		} catch (IOException e) {
@@ -53,7 +55,8 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 			try {
 				// close stream
 				inStream.close();
-			} catch (Exception e) {}
+			} catch (Exception e) {
+			}
 		}
 
 	}

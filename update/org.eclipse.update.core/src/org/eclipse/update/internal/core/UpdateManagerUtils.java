@@ -188,26 +188,7 @@ public class UpdateManagerUtils {
 		}
 	}
 	
-	/**
-	 * adds a path to the file of the URL
-	 */	
-	public static URL add(String path,URL url) throws MalformedURLException{
-		URL newURL = null;
-		if (path!=null && url != null){
-			String file = url.getFile();
-			String ref = url.getRef();
-			
-			String protocol = url.getProtocol();
-			String host = url.getHost();
-			int port = url.getPort();
-			
-			String newPath = file+path;
-			if (ref!=null) newPath += newPath+"#"+ref;
-			newURL = new URL(protocol,host,port,newPath);		
-		}
-		return newURL;
-	}	
-	
+		
 	/**
 	 * Copies specified input stream to the output stream.
 	 * 

@@ -74,7 +74,7 @@ public class SiteFileContentProvider extends SiteContentProvider {
 			// if there is no mapping in the site.xml
 			// for this archiveId, use the default one
 			if (contentURL==null) {
-				contentURL = UpdateManagerUtils.add(archiveId,getURL());
+				contentURL = new URL(getURL(),archiveId);
 			}
 			
 		} catch (MalformedURLException e){

@@ -91,7 +91,7 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 		
 		if (!(url.getFile().endsWith("/") || url.getFile().endsWith(File.separator))){
 			try {
-				url = UpdateManagerUtils.add("/",url);
+				url = new URL(url,"/");
 			} catch (MalformedURLException e){
 				throw newCoreException("Unable to create new URL for url"+url.toExternalForm(),e);				
 			}

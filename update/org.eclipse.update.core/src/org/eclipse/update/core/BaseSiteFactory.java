@@ -25,13 +25,13 @@ public abstract class BaseSiteFactory extends SiteModelFactory implements ISiteF
 	/*
 	 * @see ISiteFactory#createSite(URL, boolean)
 	 */
-	public abstract ISite createSite(URL url, boolean forceCreation) throws CoreException, InvalidSiteTypeException;
+	public abstract ISite createSite(URL url, boolean forceCreation) throws IOException, InvalidSiteTypeException, ParsingException;
 
 
 	/**
 	 * return the appropriate resource bundle for this feature
 	 */
-	protected ResourceBundle getResourceBundle(URL url) throws IOException, CoreException {
+	protected ResourceBundle getResourceBundle(URL url) {
 		ResourceBundle bundle = null;
 		try {
 			ClassLoader l = new URLClassLoader(new URL[] { url }, null);
