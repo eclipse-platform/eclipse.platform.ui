@@ -6,7 +6,7 @@
    version="1.0.0">
 
    <runtime>
-      <library name="newIntro1.jar">
+      <library name="oc.jar">
          <export name="*"/>
       </library>
    </runtime>
@@ -23,7 +23,7 @@
             id="org.eclipse.newOC1">
          <action
                label="org.eclipse.ui.tests.action1"
-               class="org.eclipse.ui.tests.util.MockObjectActionDelegate"
+               class="org.eclipse.ui.dynamic.MockObjectActionDelegate"
                id="org.eclipse.newOC1"/>
       </objectContribution>
       <viewerContribution
@@ -31,7 +31,7 @@
             id="org.eclipse.newOC2">
          <action
                label="org.eclipse.ui.tests.action1"
-               class="org.eclipse.ui.tests.api.MockViewActionDelegate"
+               class="org.eclipse.ui.dynamici.MockViewActionDelegate"
                menubarPath="oc"
                id="org.eclipse.newOC2"/>
       </viewerContribution>

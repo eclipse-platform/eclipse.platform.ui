@@ -7,7 +7,7 @@
    provider-name="">
 
    <runtime>
-      <library name="newView1.jar">
+      <library name="view.jar">
          <export name="*"/>
       </library>
    </runtime>
@@ -20,7 +20,7 @@
    <extension
          point="org.eclipse.ui.views" id="testDynamicViewAddition">
       <view
-            class="org.eclipse.ui.tests.api.MockViewPart"
+            class="org.eclipse.ui.dynamic.DynamicView"
             icon="anything.gif"
             category="org.eclipse.newView1.newCategory1"
             name="NewView1"

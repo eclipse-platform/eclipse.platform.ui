@@ -124,4 +124,9 @@ public class EditorTests extends DynamicTestCase {
         iFile.create(new ByteArrayInputStream(new byte[] { '\n' }), true, null);
         return iFile;
 	}	
+	
+	
+	protected String getMarkerClass() {
+		return "org.eclipse.ui.dynamic.DynamicEditor";
+	}
 }

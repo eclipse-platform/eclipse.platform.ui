@@ -6,7 +6,7 @@
    version="1.0.0">
 
    <runtime>
-      <library name="newIntro1.jar">
+      <library name="editor.jar">
          <export name="*"/>
       </library>
    </runtime>
@@ -19,7 +19,7 @@
          point="org.eclipse.ui.editors">
       <editor
             icon="anything.gif"
-            class="org.eclipse.ui.tests.api.MockEditorPart"
+            class="org.eclipse.ui.dynamic.DynamicEditor"
             default="false"
             name="org.eclipse.ui.tests.editor1"
             id="org.eclipse.newEditor1.newEditor1"/>

@@ -156,4 +156,11 @@ public class ObjectContributionTests extends DynamicTestCase {
 		assertNull(menu.find(OBJECT_ACTION_ID));
 		menu.removeAll();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getMarkerClass()
+	 */
+	protected String getMarkerClass() {
+		return "org.eclipse.ui.dynamic.MockObjectActionDelegate";
+	}
 }

@@ -187,5 +187,12 @@ public class ViewTests extends DynamicTestCase {
 	 */
 	protected String getInstallLocation() {
 		return "data/org.eclipse.newView1";
+	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getMarkerClass()
+	 */
+	protected String getMarkerClass() {
+		return "org.eclipse.ui.dynamic.DynamicView";
 	}
 }
