@@ -133,23 +133,11 @@ public class InstallServlet extends HttpServlet {
 	}
 
 	private boolean executeInstall(
-		PrintWriter writer,
-		URL siteURL,
-		VersionedIdentifier[] vids,
-		boolean needLicensePage) {
-		if (vids.length == 1) {
-			return executeInstall(writer, siteURL, vids[0], needLicensePage);
-		} else {
-			ServletsUtil.createError(writer, UpdateUI.getString("InstallServlet.multipleInstall"), null); //$NON-NLS-1$
-			return false;
-		}
-	}
-
-	private boolean executeInstall(
 		final PrintWriter writer,
 		final URL siteURL,
-		final VersionedIdentifier vid,
+		final VersionedIdentifier[] vids,
 		final boolean needLicensePage) {
+
 		Display display = SWTUtil.getStandardDisplay();
 		final boolean[] result = new boolean[] { false };
 
@@ -163,7 +151,7 @@ public class InstallServlet extends HttpServlet {
 								writer,
 								shell,
 								siteURL,
-								vid,
+								vids,
 								needLicensePage);
 					}
 				});
@@ -176,7 +164,7 @@ public class InstallServlet extends HttpServlet {
 		PrintWriter writer,
 		final Shell shell,
 		URL siteURL,
-		VersionedIdentifier vid,
+		VersionedIdentifier[] vids,
 		final boolean needLicensePage) {
 			
 		shell.forceActive();
@@ -192,7 +180,7 @@ public class InstallServlet extends HttpServlet {
 				new UnifiedSiteSearchCategory(),
 				searchScope);
 	
-		searchRequest.addFilter(new VersionedIdentifiersFilter(new VersionedIdentifier[]{vid}));
+		searchRequest.addFilter(new VersionedIdentifiersFilter(vids));
 		searchRequest.addFilter(new EnvironmentFilter());
 		searchRequest.addFilter(new BackLevelFilter());
 
