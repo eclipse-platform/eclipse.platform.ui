@@ -1145,7 +1145,7 @@ public String[] sortNatureSet(String[] natureIds);
  * <p>
  * The method calls <code>IFileModificationValidator.validateEdit</code> for
  * the file modification validator (if provided by the VCM plug-in). When there is no file modification
- * validator, this method returns a status with an <code>IResourceStatus.READ_ONLY</code> 
+ * validator, this method returns a status with an <code>IResourceStatus.READ_ONLY_LOCAL</code> 
  * code if one of the files is read-only, and a status with an <code>IStatus.OK</code> code otherwise.
  * </p>
  * 

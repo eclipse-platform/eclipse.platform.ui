@@ -154,7 +154,7 @@ public interface IResourceStatus extends IStatus {
 	 * Severity: error. Category: local file system.
 	 * @since 3.0
 	 */
-	public static final int READ_ONLY = 279;
+	public static final int READ_ONLY_LOCAL = 279;
 	
 	
 	// Workspace constants [300-398]
