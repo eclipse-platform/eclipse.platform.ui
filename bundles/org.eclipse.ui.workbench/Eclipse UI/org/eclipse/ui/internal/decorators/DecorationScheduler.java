@@ -45,6 +45,7 @@ public class DecorationScheduler {
 	private boolean scheduled = false;
 
 	Job decorationJob;
+	UIJob updateJob;
 
 	/**
 	 * Return a new instance of the receiver configured for
@@ -155,52 +156,23 @@ public class DecorationScheduler {
 	public void decorated() {
 
 		//Don't bother if we are shutdown now
-		if (!shutdown) {
+		if (shutdown || pendingUpdate.isEmpty())
+			return;
 
-			UIJob job = new UIJob(WorkbenchMessages.getString("DecorationScheduler.UpdateJobName")) { //$NON-NLS-1$
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-			
-					if (pendingUpdate.isEmpty())
-						return Status.OK_STATUS;
-					synchronized (resultLock) {
-						//Get the elements awaiting update and then
-						//clear the list
-						Object[] elements =
-							pendingUpdate.toArray(
-								new Object[pendingUpdate.size()]);
-						monitor.beginTask(WorkbenchMessages.getString("DecorationScheduler.UpdatingTask"),elements.length + 20); //$NON-NLS-1$
-						pendingUpdate.clear();
-						monitor.worked(20);
-						decoratorManager.fireListeners(
-							new LabelProviderChangedEvent(
-								decoratorManager,
-								elements));
-						monitor.worked(elements.length);
-						//Other decoration requests may have occured due to
-						//updates. Only clear the results if there are none pending.
-						if (awaitingDecoration.isEmpty())
-							resultCache.clear();
-						monitor.done();
-					}
-					return Status.OK_STATUS;
-				}
-			};
-
-			job.setPriority(Job.DECORATE);
-			job.schedule();
-
+		//Lazy initialize the job
+		if (updateJob == null) {
+			updateJob = getUpdateJob();
+			updateJob.setPriority(Job.DECORATE);
 		}
+		if (updateJob.getState() == Job.NONE)
+			updateJob.schedule();
 	}
 
 	/**
-	 * Shutdown the decoration thread.
+	 * Shutdown the decoration.
 	 */
 	void shutdown() {
 		shutdown = true;
-		// Wake the thread up if it is asleep.
-		synchronized (this) {
-			notifyAll();
-		}
 	}
 
 	/**
@@ -221,13 +193,13 @@ public class DecorationScheduler {
 	 * Create the Thread used for running decoration.
 	 */
 	private void createDecorationJob() {
-		decorationJob = new Job(WorkbenchMessages.getString("DecorationScheduler.CalculationJobName")) { //$NON-NLS-1$
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-			 */
+			decorationJob = new Job(WorkbenchMessages.getString("DecorationScheduler.CalculationJobName")) {//$NON-NLS-1$
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 			public IStatus run(IProgressMonitor monitor) {
-				monitor.beginTask(WorkbenchMessages.getString("DecorationScheduler.CalculatingTask"),100); //$NON-NLS-1$
-					//will block if there are no resources to be decorated
+				monitor.beginTask(WorkbenchMessages.getString("DecorationScheduler.CalculatingTask"), 100); //$NON-NLS-1$
+				//will block if there are no resources to be decorated
 				DecorationReference reference;
 				monitor.worked(20);
 				while ((reference = nextElement()) != null) {
@@ -317,8 +289,8 @@ public class DecorationScheduler {
 						scheduled = false;
 						decorated();
 					}
-				}	
-				monitor.worked(80);			
+				}
+				monitor.worked(80);
 				return Status.OK_STATUS;
 			};
 		};
@@ -336,5 +308,39 @@ public class DecorationScheduler {
 			resultCache.clear();
 		}
 
+	}
+
+	/**
+	 * Get the update UIJob.
+	 * @return UIJob
+	 */
+	private UIJob getUpdateJob() {
+		return new UIJob(WorkbenchMessages.getString("DecorationScheduler.UpdateJobName")) { //$NON-NLS-1$
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				//Check again in case someone has already cleared it out.
+				if (pendingUpdate.isEmpty())
+					return Status.OK_STATUS;
+				synchronized (resultLock) {
+					//Get the elements awaiting update and then
+					//clear the list
+					Object[] elements =
+						pendingUpdate.toArray(new Object[pendingUpdate.size()]);
+					monitor.beginTask(WorkbenchMessages.getString("DecorationScheduler.UpdatingTask"), elements.length + 20); //$NON-NLS-1$
+					pendingUpdate.clear();
+					monitor.worked(20);
+					decoratorManager.fireListeners(
+						new LabelProviderChangedEvent(
+							decoratorManager,
+							elements));
+					monitor.worked(elements.length);
+					//Other decoration requests may have occured due to
+					//updates. Only clear the results if there are none pending.
+					if (awaitingDecoration.isEmpty())
+						resultCache.clear();
+					monitor.done();
+				}
+				return Status.OK_STATUS;
+			}
+		};
 	}
 }
