@@ -69,10 +69,10 @@ XML Compare Plugin is updated as follows (update shown in bold):
 &lt;p&gt;
 &lt;pre&gt;
 &lt;extension 
-Â Â Â Â Â Â point=&quot;org.eclipse.compare.structureMergeViewers&quot;&gt; 
+ÊÊÊÊÊÊpoint=&quot;org.eclipse.compare.structureMergeViewers&quot;&gt; 
  &lt;structureMergeViewer 
-Â Â Â Â Â Â Â Â Â extensions=&quot;xml,classpath,cd&quot;
-Â Â Â Â Â Â Â Â Â class=&quot;org.eclipse.compare.xml.XMLStructureViewerCreator&quot;
+ÊÊÊÊÊÊÊÊÊextensions=&quot;xml,classpath,cd&quot;
+ÊÊÊÊÊÊÊÊÊclass=&quot;org.eclipse.compare.xml.XMLStructureViewerCreator&quot;
  /&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
@@ -199,11 +199,8 @@ The following example illustrates a case where the text of a child element is us
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         &lt;p&gt;
-&lt;a href=&quot;hglegal.htm&quot;&gt;
- &lt;img SRC=&quot;ngibmcpy.gif&quot; ALT=&quot;Copyright (c) 2000, 2003 IBM Corporation and others. All Rights Reserved.&quot; BORDER=0 height=14 width=324&gt;
-&lt;/a&gt;
-&lt;/p&gt;
+         Copyright (c) 2000, 2003 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 
