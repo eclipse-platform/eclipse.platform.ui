@@ -5,9 +5,9 @@
 package org.eclipse.help.internal.search;
 
 import java.io.*;
-import java.util.Iterator;
+import java.util.*;
 
-import org.apache.lucene.demo.html.HTMLParser;
+import org.apache.lucene.demo.html.*;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
@@ -30,9 +30,16 @@ public class SearchIndex {
 		"indexed_contributions";
 	public static final String INDEXED_DOCS_FILE = "indexed_docs";
 	private static final String ANALYZER_VERSION_FILENAME = "indexed_analyzer";
+	public static final String PREF_KEY_USE_DEFAULT_CHARSET =
+		"charset_UseDefault";
+	public static final String PREF_KEY_LOCALE_KEY_PREFIX = "charset_";
 	private File analyzerVersionFile;
 	private File inconsistencyFile;
-	
+	// Character set name in which docs are encoded
+	// set based on map of locales to charsets
+	// null indicates default encoding
+	private String docCharSet;
+
 	/**
 	 * Constructor.
 	 * @param locale the locale this index uses
@@ -42,17 +49,24 @@ public class SearchIndex {
 		super();
 		this.locale = locale;
 		analyzerDescriptor = analyzerDesc;
-		String helpStatePath = HelpPlugin.getDefault().getStateLocation().toOSString();
+		docCharSet = getCharset();
+		String helpStatePath =
+			HelpPlugin.getDefault().getStateLocation().toOSString();
 		String searchStatePath =
 			helpStatePath + File.separator + "nl" + File.separator + locale;
 		indexDir = new File(searchStatePath);
 		inconsistencyFile =
 			new File(indexDir.getParentFile(), locale + ".inconsistent");
 		analyzerVersionFile =
-			new File(searchStatePath + File.separator + ANALYZER_VERSION_FILENAME);
+			new File(
+				searchStatePath + File.separator + ANALYZER_VERSION_FILENAME);
 		indexedDocs =
 			new HelpProperties(
-				"nl" + File.separator + locale + File.separator + INDEXED_DOCS_FILE,
+				"nl"
+					+ File.separator
+					+ locale
+					+ File.separator
+					+ INDEXED_DOCS_FILE,
 				HelpPlugin.getDefault());
 	}
 	/**
@@ -66,10 +80,27 @@ public class SearchIndex {
 		try {
 			Document doc = new Document();
 			doc.add(Field.Keyword("name", name));
-			HTMLParser parser = new HTMLParser(stream);
-			
-			ParsedDocument parsed=new ParsedDocument(parser.getReader());
-			
+
+			Reader reader = null;
+			if (docCharSet != null) {
+				try {
+					reader = new InputStreamReader(stream, docCharSet);
+				} catch (UnsupportedEncodingException uee) {
+					Logger.logError(
+						Resources.getString("ES25", docCharSet),
+						uee);
+					// use default encoding next time too
+					docCharSet = null;
+				}
+			}
+			if (reader == null) {
+				reader = new InputStreamReader(stream);
+			}
+
+			HTMLParser parser = new HTMLParser(reader);
+
+			ParsedDocument parsed = new ParsedDocument(parser.getReader());
+
 			doc.add(Field.Text("contents", parsed.newContentReader()));
 			doc.add(Field.Text("exact_contents", parsed.newContentReader()));
 			String title = "";
@@ -85,7 +116,9 @@ public class SearchIndex {
 			indexedDocs.put(name, "0");
 			return true;
 		} catch (IOException e) {
-			Logger.logError(Resources.getString("ES16", indexDir.getAbsolutePath()), e);
+			Logger.logError(
+				Resources.getString("ES16", indexDir.getAbsolutePath()),
+				e);
 			return false;
 		}
 	}
@@ -107,7 +140,11 @@ public class SearchIndex {
 			}
 			indexedDocs.restore();
 			setInconsistent(true);
-			iw = new IndexWriter(indexDir, analyzerDescriptor.getAnalyzer(), create);
+			iw =
+				new IndexWriter(
+					indexDir,
+					analyzerDescriptor.getAnalyzer(),
+					create);
 			iw.mergeFactor = 20;
 			iw.maxFieldLength = 1000000;
 			return true;
@@ -216,23 +253,30 @@ public class SearchIndex {
 	 * @return - an array of document ids. 
 	 * Later, we can extend this to return more data (rank, # of occs, etc.)
 	 */
-	public void search(ISearchQuery searchQuery, ISearchHitCollector collector) {
+	public void search(
+		ISearchQuery searchQuery,
+		ISearchHitCollector collector) {
 		try {
 			QueryBuilder queryBuilder =
-				new QueryBuilder(searchQuery.getSearchWord(), analyzerDescriptor.getAnalyzer());
+				new QueryBuilder(
+					searchQuery.getSearchWord(),
+					analyzerDescriptor.getAnalyzer());
 			Query luceneQuery =
 				queryBuilder.getLuceneQuery(
 					searchQuery.getFieldNames(),
 					searchQuery.isFieldSearch());
 			String highlightTerms = queryBuilder.gethighlightTerms();
 			if (luceneQuery != null) {
-				Searcher searcher = new IndexSearcher(indexDir.getAbsolutePath());
+				Searcher searcher =
+					new IndexSearcher(indexDir.getAbsolutePath());
 				Hits hits = searcher.search(luceneQuery);
 				collector.addHits(hits, highlightTerms);
 				searcher.close();
 			}
 		} catch (Exception e) {
-			Logger.logError(Resources.getString("ES21", searchQuery.getSearchWord()), e);
+			Logger.logError(
+				Resources.getString("ES21", searchQuery.getSearchWord()),
+				e);
 		}
 	}
 	public String getLocale() {
@@ -267,7 +311,11 @@ public class SearchIndex {
 	public HelpProperties getIndexedDocs() {
 		HelpProperties indexedDocs =
 			new HelpProperties(
-				"nl" + File.separator + locale + File.separator + INDEXED_DOCS_FILE,
+				"nl"
+					+ File.separator
+					+ locale
+					+ File.separator
+					+ INDEXED_DOCS_FILE,
 				HelpPlugin.getDefault());
 		if (exists())
 			indexedDocs.restore();
@@ -326,4 +374,49 @@ public class SearchIndex {
 		} else
 			inconsistencyFile.delete();
 	}
+
+	/**
+	 * @return String name of the character set for reading
+	 * HTML documents,
+	 * or null if not character set not found in preferences.
+	 */
+	public String getCharset() {
+		if (HelpPlugin
+			.getDefault()
+			.getPluginPreferences()
+			.getBoolean(PREF_KEY_USE_DEFAULT_CHARSET)) {
+			// default specified
+			return null;
+		}
+		// find charset for variant
+		if (locale.length() > 5) {
+			String charset =
+				HelpPlugin.getDefault().getPluginPreferences().getString(
+					PREF_KEY_LOCALE_KEY_PREFIX + locale);
+			if (charset.length() > 0) {
+				return charset;
+			}
+		}
+		// find charset for country
+		if (locale.length() >= 5) {
+			String charset =
+				HelpPlugin.getDefault().getPluginPreferences().getString(
+					PREF_KEY_LOCALE_KEY_PREFIX + locale.substring(0, 5));
+			if (charset.length() > 0) {
+				return charset;
+			}
+		}
+		// find charset for language
+		if (locale.length() >= 2) {
+			String charset =
+				HelpPlugin.getDefault().getPluginPreferences().getString(
+					PREF_KEY_LOCALE_KEY_PREFIX + locale.substring(0, 2));
+			if (charset.length() > 0) {
+				return charset;
+			}
+		}
+		// charset not specified, use default
+		return null;
+	}
+
 }
