@@ -408,12 +408,12 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private void initializeAcceleratorConfiguration() {
 		//IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		//String id = store.getString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
-		String id = IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID;
+/*		String id = IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID;
 	 	id = "org.eclipse.ui.emacsAcceleratorConfiguration";
 		AcceleratorRegistry registry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();
 		acceleratorConfiguration = registry.getConfiguration(id);
 		acceleratorConfiguration.initializeScopes();
-	}
+*/	}
 	/**
 	 * Initialize the workbench fonts with the stored values.
 	 */
