@@ -200,10 +200,10 @@ public abstract class Binding {
 		}
 
 		this.commandId = commandId;
-		this.schemeId = schemeId;
-		this.contextId = contextId;
-		this.locale = locale;
-		this.platform = platform;
+		this.schemeId = schemeId.intern();
+		this.contextId = contextId.intern();
+		this.locale = (locale == null) ? null : locale.intern();
+		this.platform = (platform == null) ? null : platform.intern();
 		this.type = type;
 	}
 
