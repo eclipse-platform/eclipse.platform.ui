@@ -59,7 +59,7 @@ public final class BindingInteractionsTest extends UITestCase {
 			public TestTriggerSequence(final List myTriggers) {
 				super(myTriggers);
 			}
-			
+
 			public final String format() {
 				return toString();
 			}
@@ -107,7 +107,7 @@ public final class BindingInteractionsTest extends UITestCase {
 		public final TriggerSequence getTriggerSequence() {
 			return TRIGGER_SEQUENCE;
 		}
-		
+
 		public final String toString() {
 			return Util.ZERO_LENGTH_STRING;
 		}
@@ -290,6 +290,49 @@ public final class BindingInteractionsTest extends UITestCase {
 
 		assertEquals("The user should be able to remove bindings", null,
 				activeCommandId);
+	}
+
+	/**
+	 * <p>
+	 * Tests whether a system deletion for a different locale or platform
+	 * actually works. It shouldn't. Deletions should only work if they specify
+	 * a matching locale or platform.
+	 * </p>
+	 * 
+	 * @throws NotDefinedException
+	 *             If the scheme we try to activate is not defined.
+	 */
+	public void testDeletedBindingUnnecessarily() throws NotDefinedException {
+		final Context context = contextManager.getContext("na");
+		context.define("name", "description", null);
+
+		final Scheme scheme = bindingManager.getScheme("na");
+		scheme.define("name", "description", null);
+
+		bindingManager.setActiveScheme("na");
+		final Set activeContextIds = new HashSet();
+		activeContextIds.add("na");
+		contextManager.setActiveContextIds(activeContextIds);
+
+		final Binding binding1 = new TestBinding(null, "na", "na",
+				"not the current locale", null, Binding.SYSTEM);
+		final Binding binding2 = new TestBinding("system", "na", "na", null,
+				null, Binding.SYSTEM);
+		final Binding binding3 = new TestBinding(null, "na", "na", null,
+				"not the current platform", Binding.SYSTEM);
+		final Set bindings = new HashSet();
+		bindings.add(binding1);
+		bindings.add(binding2);
+		bindings.add(binding3);
+		bindingManager.setBindings(bindings);
+
+		final Map activeBindings = bindingManager.getActiveBindings();
+		final Object activeCommandId = activeBindings
+				.get(TestBinding.TRIGGER_SEQUENCE);
+
+		assertEquals(
+				"A binding should not cause a deletion if its locale or platform doesn't match",
+				binding2.getCommandId(), activeCommandId);
 	}
 
 	/**

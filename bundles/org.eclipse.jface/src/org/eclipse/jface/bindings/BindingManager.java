@@ -284,33 +284,13 @@ public final class BindingManager implements IContextManagerListener,
 			}
 
 			// Check the locale.
-			final String locale = binding.getLocale();
-			if (locale != null) {
-				found = false;
-				for (int i = 0; i < locales.length; i++) {
-					if (Util.equals(locale, locales[i])) {
-						found = true;
-						break;
-					}
-				}
-				if (!found) {
-					continue;
-				}
+			if (!localeMatches(binding)) {
+				continue;
 			}
 
 			// Check the platform.
-			final String platform = binding.getPlatform();
-			if (platform != null) {
-				found = false;
-				for (int i = 0; i < platforms.length; i++) {
-					if (Util.equals(platform, platforms[i])) {
-						found = true;
-						break;
-					}
-				}
-				if (!found) {
-					continue;
-				}
+			if (!platformMatches(binding)) {
+				continue;
 			}
 
 			// Check the scheme ids.
@@ -787,6 +767,60 @@ public final class BindingManager implements IContextManagerListener,
 	}
 
 	/**
+	 * Tests whether the locale for the binding matches one of the active
+	 * locales.
+	 * 
+	 * @param binding
+	 *            The binding with which to test; must not be <code>null</code>.
+	 * @return <code>true</code> if the binding's locale matches;
+	 *         <code>false</code> otherwise.
+	 */
+	private final boolean localeMatches(final Binding binding) {
+		boolean matches = false;
+		
+		final String locale = binding.getLocale();
+		if (locale == null) {
+			return true;  // shortcut a common case
+		}
+		
+		for (int i = 0; i < locales.length; i++) {
+			if (Util.equals(locales[i], locale)) {
+				matches = true;
+				break;
+			}
+		}
+
+		return matches;
+	}
+
+	/**
+	 * Tests whether the platform for the binding matches one of the active
+	 * platforms.
+	 * 
+	 * @param binding
+	 *            The binding with which to test; must not be <code>null</code>.
+	 * @return <code>true</code> if the binding's platform matches;
+	 *         <code>false</code> otherwise.
+	 */
+	private final boolean platformMatches(final Binding binding) {
+		boolean matches = false;
+
+		final String platform = binding.getPlatform();
+		if (platform == null) {
+			return true;  // shortcut a common case
+		}
+		
+		for (int i = 0; i < platforms.length; i++) {
+			if (Util.equals(platforms[i], platform)) {
+				matches = true;
+				break;
+			}
+		}
+
+		return matches;
+	}
+
+	/**
 	 * This recomputes the bindings based on changes to the state of the world.
 	 * This computation can be triggered by changes to contexts, the active
 	 * scheme, the locale, or the platform. This method tries to use the cache
@@ -925,7 +959,8 @@ public final class BindingManager implements IContextManagerListener,
 		Iterator bindingItr = bindings.iterator();
 		while (bindingItr.hasNext()) {
 			final Binding binding = (Binding) bindingItr.next();
-			if (binding.getCommandId() == null) {
+			if ((binding.getCommandId() == null) && (localeMatches(binding))
+					&& (platformMatches(binding))) {
 				deletions.add(binding);
 				bindingItr.remove();
 			}
