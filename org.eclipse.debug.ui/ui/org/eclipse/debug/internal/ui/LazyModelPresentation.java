@@ -112,14 +112,24 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	 * @see IDebugModelPresentation#getImage(Object)
 	 */
 	public Image getImage(Object element) {
-		return getPresentation().getImage(element);
+		try {
+			return getPresentation().getImage(element);
+		} catch (Throwable e) {
+			DebugUIPlugin.log(e);
+			return null;
+		}
 	}
 
 	/**
 	 * @see IDebugModelPresentation#getText(Object)
 	 */
 	public String getText(Object element) {
-		return getPresentation().getText(element);
+		try {
+			return getPresentation().getText(element);
+		} catch (Throwable e) {
+			DebugUIPlugin.log(e);
+			return null;
+		}
 	}
 	
 	/**
