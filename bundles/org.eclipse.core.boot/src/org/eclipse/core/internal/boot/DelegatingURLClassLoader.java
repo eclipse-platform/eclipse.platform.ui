@@ -350,19 +350,7 @@ protected String basicFindLibrary(String libName) {
 		debug("findLibrary(" + libName + ")");
 	if (base == null)
 		return null;
-
-	// wrap the last segment of the name with OS appropriate decorations
-	int i = libName.lastIndexOf('/');
-	String first = "";
-	String rest = "";
-	if (i == -1)
-		rest = libName;
-	else {	
-		first = libName.substring(0, i + 1);
-		rest = libName.substring(i + 1);
-	}
-	String osLibFileName = first + libPrefix + rest + libSuffix;
-
+	String osLibFileName = System.mapLibraryName(libName);
 	File libFile = null;
 	if (base.getProtocol().equals(PlatformURLHandler.FILE) || base.getProtocol().equals(PlatformURLHandler.VA)) {
 		// directly access library	
@@ -390,27 +378,19 @@ protected String basicFindLibrary(String libName) {
 protected String findLibrary(String libName) {
 	if (libName.length() == 0)
 		return null;
-	if (libName.charAt(0) != '$')
-		return basicFindLibrary(libName);
-	int i = libName.indexOf('/', 1);
-	String first = "";
-	String rest = "";
-	String result = null;
-	if (i == -1)
-		first = libName;
-	else {	
-		first = libName.substring(0, i);
-		rest = libName.substring(i);
-	}
-	if (first.equalsIgnoreCase("$ws$")) 
-		result = basicFindLibrary("ws/" + InternalBootLoader.getWS() + rest);
-	else 
-		if (first.equalsIgnoreCase("$os$"))
-			result = basicFindLibrary("os/" + InternalBootLoader.getOS() + rest);
-		else
-			if (first.equalsIgnoreCase("$nl$"))
-				result = findLibraryNL(rest);
-	return result != null ? result : basicFindLibrary(rest);
+	if (libName.charAt(0) == '/' || libName.charAt(0) == '\\')
+		libName = libName.substring(1);
+	String result;
+	result = basicFindLibrary(libName);
+	if (result != null)
+		return result;
+	result = basicFindLibrary("ws/" + InternalBootLoader.getWS() + "/" + libName);
+	if (result != null)
+		return result;
+	result = basicFindLibrary("os/" + InternalBootLoader.getOS() + "/" + libName);
+	if (result != null)
+		return result;
+	return findLibraryNL(libName);
 }
 
 /**
