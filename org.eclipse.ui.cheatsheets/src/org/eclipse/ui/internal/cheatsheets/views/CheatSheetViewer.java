@@ -8,13 +8,11 @@ import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.cheatsheets.*;
-import org.eclipse.ui.forms.widgets.ImageHyperlink;
+import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.data.*;
 import org.eclipse.ui.internal.cheatsheets.data.Item;
 import org.eclipse.ui.internal.cheatsheets.registry.*;
-import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
-import org.eclipse.ui.internal.forms.widgets.FormUtil;
 import org.osgi.framework.Bundle;
 
 public class CheatSheetViewer implements ICheatSheetViewer {
@@ -154,7 +152,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 				currentItem = nextItem;
 			}
 
-			FormUtil.ensureVisible(currentItem.getMainItemComposite());
+			FormToolkit.ensureVisible(currentItem.getMainItemComposite());
 		} else if (index == viewItemList.size()) {
 			saveCurrentSheet();
 			getViewItemArray()[0].setExpanded();
@@ -214,7 +212,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			return;
 		}
 
-		FormUtil.ensureVisible(currentItem.getMainItemComposite());
+		FormToolkit.ensureVisible(currentItem.getMainItemComposite());
 		saveCurrentSheet();
 	}
 
@@ -486,7 +484,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 //			fireManagerItemEvent(ICheatSheetItemEvent.ITEM_ACTIVATED, getViewItemArray()[0]);
 		}
 
-		FormUtil.ensureVisible(currentItem.getMainItemComposite());
+		FormToolkit.ensureVisible(currentItem.getMainItemComposite());
 		savedProps = null;
 	}
 

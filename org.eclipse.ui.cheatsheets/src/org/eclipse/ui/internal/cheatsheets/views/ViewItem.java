@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.cheatsheets.views;
 
 import java.net.URL;
 import java.util.ArrayList;
-
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.*;
@@ -28,7 +27,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.data.*;
 import org.eclipse.ui.internal.cheatsheets.data.Item;
-import org.eclipse.ui.internal.forms.widgets.FormUtil;
 import org.osgi.framework.Bundle;
 
 public abstract class ViewItem {
@@ -490,7 +488,7 @@ public abstract class ViewItem {
 			parent.layout(true);
 			mainItemComposite.layout(true);
 			bodyWrapperComposite.layout(true);
-			FormUtil.ensureVisible(getMainItemComposite());
+			FormToolkit.ensureVisible(getMainItemComposite());
 		}
 	}
 
@@ -508,7 +506,7 @@ public abstract class ViewItem {
 			mainItemComposite.layout(true);
 			bodyWrapperComposite.layout(true);
 
-			FormUtil.ensureVisible(getMainItemComposite());
+			FormToolkit.ensureVisible(getMainItemComposite());
 		}
 	}
 
@@ -541,7 +539,7 @@ public abstract class ViewItem {
 			parent.getParent().layout(true);
 			mainItemComposite.layout(true);
 			bodyWrapperComposite.layout(true);
-			FormUtil.ensureVisible(getMainItemComposite());
+			FormToolkit.ensureVisible(getMainItemComposite());
 		}
 	}
 
