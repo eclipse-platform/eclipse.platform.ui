@@ -75,7 +75,8 @@ public class ViewTests extends DynamicTestCase {
 			testViewProperties(desc);
 			fail();		
 		}
-		catch (RuntimeException e) {			
+		catch (RuntimeException e) {	
+			// no-op
 		}
 	}
 	
@@ -109,7 +110,8 @@ public class ViewTests extends DynamicTestCase {
 			testStickyViewProperties(desc);
 			fail();			
 		}
-		catch (RuntimeException e) {			
+		catch (RuntimeException e) {	
+			// no-op
 		}		
 	}
 	
@@ -144,7 +146,8 @@ public class ViewTests extends DynamicTestCase {
 			testCategoryProperties(category);
 			fail();
 		}
-		catch (RuntimeException e) {			
+		catch (RuntimeException e) {	
+			// no-op
 		}
 	
 	}	
@@ -155,6 +158,7 @@ public class ViewTests extends DynamicTestCase {
 	private void testCategoryProperties(Category desc) {
 		assertNotNull(desc.getId());
 		assertNotNull(desc.getLabel());
+		assertEquals(1, desc.getElements().size());
 	}
 
 	/**
