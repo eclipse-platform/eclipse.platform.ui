@@ -92,7 +92,7 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 	}
  
 	/*
-	 * @see ICVSFile#setTimeStamp(String)
+	 * @see ICVSFile#setTimeStamp(Date)
 	 */
 	public void setTimeStamp(Date date) throws CVSException {
 		long time;
@@ -102,9 +102,9 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 			time = date.getTime();
 		}
 		try {
-			getIFile().setLocalTimeStamp(time);
-		} catch (CoreException e) {
-			throw CVSException.wrapException(e);
+			EclipseSynchronizer.getInstance().setTimeStamp(getIFile(), time);
+		} finally {
+			handleModification(false /* not an addition */);
 		}
 	}
 

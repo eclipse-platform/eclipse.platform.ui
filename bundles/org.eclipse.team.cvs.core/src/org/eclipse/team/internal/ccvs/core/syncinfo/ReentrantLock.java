@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -263,7 +262,7 @@ public class ReentrantLock {
 		info.flush(monitor);
 	}
 
-	public boolean isWithinActiveOperationScope(IFile resource) {
+	public boolean isWithinActiveOperationScope(IResource resource) {
 		synchronized (infos) {
 			return getThreadInfo(resource) != null;
 		}

@@ -1467,10 +1467,26 @@ public class EclipseSynchronizer implements IFlushOperation {
 	 * @return
 	 */
 	public boolean isWithinActiveOperationScope(IResource resource) {
-		// TODO Auto-generated method stub
-		return false;
+		return resourceLock.isWithinActiveOperationScope(resource);
 	}
 	
-
+	public void setTimeStamp(IFile file, long time) throws CVSException {
+		try {
+			beginBatching(file);
+			try {
+				beginOperation();
+				try {
+					file.setLocalTimeStamp(time);
+				} catch (CoreException e) {
+					throw CVSException.wrapException(e);
+				}
+				resourceChanged(file);		
+			} finally {
+				endOperation();
+			}
+		} finally {
+			endBatching(file, null);
+		}
+	}
 	
 }
