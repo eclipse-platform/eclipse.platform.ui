@@ -357,20 +357,26 @@ private void derefPart(LayoutPart part) {
 		boolean hasChildren = (children != null) && (children.length > 0);
 		if (hasChildren) {
 			// make sure one is at least visible
-			boolean childVisible = false;
+			int childVisible = 0;
 			for (int i = 0; i < children.length; i++)
-				childVisible = childVisible || children[i].isVisible();
+				if(children[i].isVisible())
+					childVisible++;
 
 			// none visible, then reprarent and remove container
-			if (!childVisible && (oldContainer instanceof PartTabFolder)) {
+			if (oldContainer instanceof PartTabFolder) {
 				PartTabFolder folder = (PartTabFolder)oldContainer;
-				ILayoutContainer parentContainer = folder.getContainer();
-				for (int i = 0; i < children.length; i++) {
-					folder.remove(children[i]);
-					parentContainer.add(children[i]);
+				if(childVisible == 0) {
+					ILayoutContainer parentContainer = folder.getContainer();
+					for (int i = 0; i < children.length; i++) {
+						folder.remove(children[i]);
+						parentContainer.add(children[i]);
+					}	
+					hasChildren = false;
+				} else if(childVisible == 1) {
+					LayoutTree layout = mainLayout.getLayoutTree();
+					layout = layout.find(folder);
+					layout.setBounds(layout.getBounds());
 				}
-					
-				hasChildren = false;
 			}
 		}
 		
