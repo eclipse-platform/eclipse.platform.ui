@@ -185,10 +185,21 @@ public class InternalAntRunner {
 							new String[]{buildFile.getAbsolutePath()}));
 		}
 		
-		ProjectHelper helper = ProjectHelper.getProjectHelper();
-		project.addReference("ant.projectHelper", helper); //$NON-NLS-1$
-		helper.parse(project, buildFile);
-	}
+        if (!isVersionCompatible("1.5")) { //$NON-NLS-1$
+            parseBuildFile(project, buildFile);
+        } else {
+            ProjectHelper helper = ProjectHelper.getProjectHelper();
+            project.addReference("ant.projectHelper", helper); //$NON-NLS-1$
+            helper.parse(project, buildFile);
+        }
+    }
+    
+    /**
+     * @deprecated support for Ant older than 1.5
+     */
+    private void parseBuildFile(Project project, File buildFile) {
+        ProjectHelper.configureProject(project, buildFile);   
+    }
 
 	private void printArguments(Project project) {
 		if ((messageOutputLevel != Project.MSG_DEBUG) && (messageOutputLevel != Project.MSG_VERBOSE)) {
@@ -331,7 +342,7 @@ public class InternalAntRunner {
 			System.setErr(new PrintStream(new DemuxOutputStream(getCurrentProject(), true)));
 			
 			if (!projectHelp) {
-				getCurrentProject().fireBuildStarted();
+				fireBuildStarted(getCurrentProject());
 			}
             
             if (fEarlyErrorMessage != null) {
@@ -542,13 +553,39 @@ public class InternalAntRunner {
 		}
 
 		return buildLogger;
-	}
+    }
+    
+    /**
+     * Project.fireBuildStarted is protected in Ant earlier than 1.5.*.
+     * Provides backwards compatibility with old Ant installs.
+     */
+    private void fireBuildStarted(Project project) {
+        if (!isVersionCompatible("1.5")) { //$NON-NLS-1$
+            BuildEvent event = new BuildEvent(project);
+            for (Iterator iterator = project.getBuildListeners().iterator(); iterator.hasNext();) {
+                BuildListener listener = (BuildListener) iterator.next();
+                listener.buildStarted(event);
+            }
+        } else {
+            project.fireBuildStarted();
+        }
+    }
 
 	private void fireBuildFinished(Project project, Throwable error) {
 		if (error == null && scriptExecuted) {
 			logMessage(project, RemoteAntMessages.getString("InternalAntRunner.BUILD_SUCCESSFUL_1"), messageOutputLevel); //$NON-NLS-1$
 		}
-		project.fireBuildFinished(error);
+        if (!isVersionCompatible("1.5")) { //$NON-NLS-1$
+            BuildEvent event = new BuildEvent(project);
+            event.setException(error);
+            Iterator iter = project.getBuildListeners().iterator();
+            while (iter.hasNext()) {
+                BuildListener listener = (BuildListener) iter.next();
+                listener.buildFinished(event);
+            }   
+        } else {
+            project.fireBuildFinished(error);
+        }
 	}
 
 	private void logMessage(Project project, String message, int priority) {
@@ -662,9 +699,6 @@ public class InternalAntRunner {
 		
 		arg = getArgument(commands, "-inputhandler"); //$NON-NLS-1$
 		if (arg != null) {
-			if (!isVersionCompatible("1.5")) { //$NON-NLS-1$
-				throw new BuildException(RemoteAntMessages.getString("InternalAntRunner.Specifying_an_InputHandler_is_an_Ant_1.5.*_feature._Please_update_your_Ant_classpath_to_include_an_Ant_version_greater_than_this._2")); //$NON-NLS-1$
-			}
 			if (arg.length() == 0) {
 				throw new BuildException(RemoteAntMessages.getString("InternalAntRunner.You_must_specify_a_classname_when_using_the_-inputhandler_argument_1")); //$NON-NLS-1$
 			} 
