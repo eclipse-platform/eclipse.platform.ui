@@ -86,7 +86,7 @@ public class DeferredContentProvider implements ILazyContentProvider {
 		 * @see org.eclipse.jface.viewers.deferred.AbstractVirtualTable#getTopIndex()
 		 */
 		public int getTopIndex() {
-			return viewer.getTable().getTopIndex();
+			return Math.max(viewer.getTable().getTopIndex() - 1, 0);
 		}
 		
 		/* (non-Javadoc)
@@ -96,7 +96,7 @@ public class DeferredContentProvider implements ILazyContentProvider {
 			int start = getTopIndex();
 			int itemCount = getItemCount();
 			Table table = viewer.getTable();
-			return Math.min(table.getBounds().height / table.getItemHeight() + 1, 
+			return Math.min(table.getBounds().height / table.getItemHeight() + 2, 
 					itemCount - start);
 		}
 		
@@ -195,7 +195,7 @@ public class DeferredContentProvider implements ILazyContentProvider {
 	 */
 	public void updateElement(int element) {
 		if (provider != null) {
-			provider.checkVisibleRange();
+			provider.checkVisibleRange(element);
 		}
 	}
 	

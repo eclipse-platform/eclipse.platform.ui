@@ -438,8 +438,8 @@ import org.eclipse.swt.widgets.Display;
      * and resort if necessary. Must be called in the UI thread, typically
      * within a SWT.SetData callback.
      */
-    public void checkVisibleRange() {
-    	updator.checkVisibleRange();
+    public void checkVisibleRange(int includeIndex) {
+    	updator.checkVisibleRange(includeIndex);
 		ConcurrentTableUpdator.Range newRange = updator.getVisibleRange();
 		ConcurrentTableUpdator.Range oldRange = range;
 		

@@ -280,9 +280,9 @@ import org.eclipse.swt.widgets.Display;
      * Called in the UI thread by a SetData callback. Refreshes the
      * table if necessary. Returns true iff a refresh is needed.
      */
-    public void checkVisibleRange() {
-        int start = table.getTopIndex();
-        int length = table.getVisibleItemCount();
+    public void checkVisibleRange(int includeIndex) {
+        int start = Math.min(table.getTopIndex() - 1, includeIndex);
+        int length = Math.max(table.getVisibleItemCount(), includeIndex - start);
         Range r = lastRange;
 
     	if (start != r.start || length != r.length) {
@@ -309,10 +309,10 @@ import org.eclipse.swt.widgets.Display;
 	        }
 
 	        // Compute the currently visible range
-	        int start = table.getTopIndex();
-	        int length = table.getVisibleItemCount();
+	        int start = Math.min(table.getTopIndex(), knownObjects.length);
+	        int length = Math.min(table.getVisibleItemCount(), knownObjects.length - start);
 	        int itemCount = table.getItemCount();
-	        
+            
         	int oldStart = lastRange.start;
         	int oldLen = lastRange.length;
         	
