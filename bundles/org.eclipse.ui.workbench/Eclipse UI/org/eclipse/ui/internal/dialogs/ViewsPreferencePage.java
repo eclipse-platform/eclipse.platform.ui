@@ -235,7 +235,7 @@ public class ViewsPreferencePage
 		// If the value is still the default, this means the use has been using system colors
 		// Or has not set this particular color from the default.
 		if (store.isDefault(JFacePreferences.SCHEME_TAB_BACKGROUND)) {
-			PreferenceConverter.setValue(store, JFacePreferences.SCHEME_TAB_BACKGROUND, JFaceColors.getTabFolderSelectionBackground(composite.getDisplay()).getRGB());
+			PreferenceConverter.setValue(store, JFacePreferences.SCHEME_TAB_BACKGROUND, JFaceColors.getTabFolderBackground(composite.getDisplay()).getRGB());
 		}
 		colorSchemeTabBGColorEditor.load();
 		
@@ -244,7 +244,7 @@ public class ViewsPreferencePage
 		// If the value is still the default, this means the use has been using system colors
 		// Or has not set this particular color from the default.
 		if (store.isDefault(JFacePreferences.SCHEME_TAB_FOREGROUND)) {
-			PreferenceConverter.setValue(store, JFacePreferences.SCHEME_TAB_FOREGROUND, JFaceColors.getTabFolderSelectionBackground(composite.getDisplay()).getRGB());
+			PreferenceConverter.setValue(store, JFacePreferences.SCHEME_TAB_FOREGROUND, JFaceColors.getTabFolderForeground(composite.getDisplay()).getRGB());
 		}
 		colorSchemeTabFGColorEditor.load();
 		
@@ -286,7 +286,7 @@ public class ViewsPreferencePage
 			colorThemeDemo.setTabFGColor(JFaceColors.getDefaultColor(JFacePreferences.SCHEME_TAB_FOREGROUND));
 			colorThemeDemo.setTabSelectionBGColor(JFaceColors.getDefaultColor(JFacePreferences.SCHEME_TAB_SELECTION_BACKGROUND));
 			colorThemeDemo.setTabSelectionFGColor(JFaceColors.getDefaultColor(JFacePreferences.SCHEME_TAB_SELECTION_FOREGROUND));
-				colorThemeDemo.redraw();
+			colorThemeDemo.redraw();
 		}
 	}
 	

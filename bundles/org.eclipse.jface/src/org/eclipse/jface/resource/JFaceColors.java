@@ -53,10 +53,10 @@ public class JFaceColors {
 		JFaceDefaultColorMap = new Hashtable(origSize);
 		JFaceDefaultColorMap.put(SCHEME_BACKGROUND, d.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		JFaceDefaultColorMap.put(SCHEME_FOREGROUND, d.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
-		JFaceDefaultColorMap.put(SCHEME_TAB_BACKGROUND, d.getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND));
-		JFaceDefaultColorMap.put(SCHEME_TAB_FOREGROUND, d.getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND));
-		JFaceDefaultColorMap.put(SCHEME_TAB_SELECTION_BACKGROUND, d.getSystemColor(SWT.COLOR_TITLE_BACKGROUND));
-		JFaceDefaultColorMap.put(SCHEME_TAB_SELECTION_FOREGROUND, d.getSystemColor(SWT.COLOR_TITLE_FOREGROUND));
+		JFaceDefaultColorMap.put(SCHEME_TAB_BACKGROUND, d.getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND));
+		JFaceDefaultColorMap.put(SCHEME_TAB_FOREGROUND, d.getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND));
+		JFaceDefaultColorMap.put(SCHEME_TAB_SELECTION_BACKGROUND, d.getSystemColor(SWT.COLOR_TITLE_FOREGROUND));
+		JFaceDefaultColorMap.put(SCHEME_TAB_SELECTION_FOREGROUND, d.getSystemColor(SWT.COLOR_TITLE_BACKGROUND));
 		
 		UserColorMap = new Hashtable();
 		// If the user is not using the system settings, fill in a color map for all assignable
