@@ -349,52 +349,6 @@ protected void initSnap(IProgressMonitor monitor) throws CoreException {
 		throw new ResourceException(IResourceStatus.FAILED_DELETE_METADATA, null, message, null);
 	}
 }
-/**
- * Reads the markers which were originally saved
- * for the tree rooted by the given resource.
- */
-protected void internalRestoreMarkers(IResource resource, boolean generateDeltas, IProgressMonitor monitor) throws CoreException {
-	IPath sourceLocation = workspace.getMetaArea().getMarkersLocationFor(resource);
-	IPath tempLocation = workspace.getMetaArea().getBackupLocationFor(sourceLocation);
-	if (!sourceLocation.toFile().exists() && !tempLocation.toFile().exists())
-		return; // Ignore if no markers saved.
-	try {
-		DataInputStream input = null;
-		try {
-			input = new DataInputStream(new SafeFileInputStream(sourceLocation.toOSString(), tempLocation.toOSString()));
-			workspace.getMarkerManager().read(input, generateDeltas);
-		} finally {
-			if (input != null)
-				input.close();
-		}
-	} catch (IOException e) {
-		String msg = Policy.bind("readMeta", new String[] { sourceLocation.toString()});
-		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e);
-	}
-}
-/**
- * Reads the sync info which was originally saved
- * for the tree rooted by the given resource.
- */
-protected void internalRestoreSyncInfo(IResource resource, IProgressMonitor monitor) throws CoreException {
-	IPath sourceLocation = workspace.getMetaArea().getSyncInfoLocationFor(resource);
-	IPath tempLocation = workspace.getMetaArea().getBackupLocationFor(sourceLocation);
-	if (!sourceLocation.toFile().exists() && !tempLocation.toFile().exists())
-		return; // Ignore if no sync info saved.
-	try {
-		DataInputStream input = null;
-		try {
-			input = new DataInputStream(new SafeFileInputStream(sourceLocation.toOSString(), tempLocation.toOSString()));
-			((Synchronizer) workspace.getSynchronizer()).readSyncInfo(input);
-		} finally {
-			if (input != null)
-				input.close();
-		}
-	} catch (IOException e) {
-		String msg = Policy.bind("readMeta", new String[] { sourceLocation.toString()});
-		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e);
-	}
-}
 protected boolean isDeltaCleared(String pluginId) {
 	String clearDelta = masterTable.getProperty(CLEAR_DELTA_PREFIX + pluginId);
 	return clearDelta != null && clearDelta.equals("true");
@@ -591,6 +545,35 @@ protected void removeUnusedTreeFiles() {
 public void requestSnapshot() {
 	snapshotRequested = true;
 }
+/**
+ * Reset the snapshot mechanism for the non-workspace files. This
+ * includes the markers and sync info. 
+ */
+protected void resetSnapshots(IResource resource) throws CoreException {
+	Assert.isLegal(resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT);
+
+	// delete the snapshot file, if any
+	java.io.File file = workspace.getMetaArea().getMarkersSnapshotLocationFor(resource).toFile();
+	if (file.exists())
+		file.delete();
+	if (file.exists())
+		throw new ResourceException(IResourceStatus.FAILED_DELETE_METADATA, resource.getFullPath(), "Could not reset markers snapshot file.", null);
+
+	// delete the snapshot file, if any
+	file = workspace.getMetaArea().getSyncInfoSnapshotLocationFor(resource).toFile();
+	if (file.exists())
+		file.delete();
+	if (file.exists())
+		throw new ResourceException(IResourceStatus.FAILED_DELETE_METADATA, resource.getFullPath(), "Could not reset syncinfo snapshot file.", null);
+		
+	// if we have the workspace root then recursive over the projects.
+	// only do open projects since closed ones are saved elsewhere
+	if (resource.getType() == IResource.PROJECT)
+		return;
+	IProject[] projects = ((IWorkspaceRoot) resource).getProjects();
+	for (int i = 0; i < projects.length; i++)
+		resetSnapshots(projects[i]);
+}
 protected DataInputStream resetStream(DataInputStream input, IPath location, IPath tempLocation) throws IOException {
 	input.close();
 	return new DataInputStream(new SafeFileInputStream(location.toOSString(), tempLocation.toOSString()));
@@ -652,17 +635,18 @@ protected void restore(IProgressMonitor monitor) throws CoreException {
  */
 protected void restoreMarkers(IResource resource, boolean generateDeltas, IProgressMonitor monitor) throws CoreException {
 	Assert.isLegal(resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT);
+	MarkerManager markerManager = workspace.getMarkerManager();
 	// when restoring a project, only load markers if it is open
-	if (resource.getType() == IResource.PROJECT) {
-		if (resource.isAccessible())
-			internalRestoreMarkers(resource, generateDeltas, monitor);
+	if (resource.isAccessible())
+		markerManager.restore(resource, generateDeltas, monitor);
+
+	// if we have the workspace root then restore markers for its projects
+	if (resource.getType() == IResource.PROJECT)
 		return;
-	}
-	internalRestoreMarkers(resource, generateDeltas, monitor);
 	IProject[] projects = ((IWorkspaceRoot) resource).getProjects();
 	for (int i = 0; i < projects.length; i++)
 		if (projects[i].isAccessible())
-			internalRestoreMarkers(projects[i], generateDeltas, monitor);
+			markerManager.restore(projects[i], generateDeltas, monitor);
 }
 protected void restoreMasterTable() throws CoreException {
 	masterTable = new Properties();
@@ -774,17 +758,18 @@ protected void restoreSnapshots(IProgressMonitor monitor) throws CoreException {
  */
 protected void restoreSyncInfo(IResource resource, IProgressMonitor monitor) throws CoreException {
 	Assert.isLegal(resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT);
+	Synchronizer synchronizer = (Synchronizer) workspace.getSynchronizer();
 	// when restoring a project, only load sync info if it is open
-	if (resource.getType() == IResource.PROJECT) {
-		if (resource.isAccessible())
-			internalRestoreSyncInfo(resource, monitor);
+	if (resource.isAccessible())
+		synchronizer.restore(resource, monitor);
+	
+	// restore sync info for all projects if we were given the workspace root.
+	if (resource.getType() == IResource.PROJECT)
 		return;
-	}
-	internalRestoreSyncInfo(resource, monitor);
 	IProject[] projects = ((IWorkspaceRoot) resource).getProjects();
 	for (int i = 0; i < projects.length; i++)
 		if (projects[i].isAccessible())
-			internalRestoreSyncInfo(projects[i], monitor);
+			synchronizer.restore(projects[i], monitor);
 }
 /**
  * Restores the trees for the builders of this project from the local disk.
@@ -911,16 +896,24 @@ public IStatus save(int kind, Project project, IProgressMonitor monitor) throws 
 						saveTree(contexts, Policy.subMonitorFor(monitor, 1));
 						// reset the snapshot state.
 						initSnap(null);
+						// save all of the markers and all sync info in the workspace
+						visitAndSave(workspace.getRoot());
+						// reset the snap shot files
+						resetSnapshots(workspace.getRoot());
 						break;
 					case ISaveContext.SNAPSHOT :
 						snapTree(workspace.getElementTree(), Policy.subMonitorFor(monitor, 1));
+						// snapshot the markers and sync info for the workspace
+						visitAndSnap(workspace.getRoot());
 						collapseTrees();
 						clearSavedDelta();
 						break;
 					case ISaveContext.PROJECT_SAVE :
 						writeTree(project, IResource.DEPTH_INFINITE);
-						// save markers and sync info
-						visitAndWrite(project);
+						// save markers and sync info 
+						visitAndSave(project);
+						// reset the snapshot file
+						resetSnapshots(project);
 						saveMetaInfo(project, null);
 						monitor.worked(1);
 						break;
@@ -929,7 +922,6 @@ public IStatus save(int kind, Project project, IProgressMonitor monitor) throws 
 					// write out all metainfo (e.g., workspace/project descriptions) 
 					saveMetaInfo(workspace, Policy.subMonitorFor(monitor, 1));
 					// save all of the markers and all sync info in the workspace
-					visitAndWrite(workspace.getRoot());
 					monitor.worked(1);
 				} else {
 					monitor.worked(2);
@@ -1156,9 +1148,11 @@ public void startup(IProgressMonitor monitor) throws CoreException {
 }
 /**
  * Visit the given resource (to depth infinite) and write out extra information
- * like markers and sync info.
+ * like markers and sync info. To be called during a full save and project save.
+ * 
+ * This method is ugly. Fix it up and look at merging with #visitAndSnap
  */
-public void visitAndWrite(IResource root) throws CoreException {
+public void visitAndSave(IResource root) throws CoreException {
 	// Ensure we have either a project or the workspace root
 	Assert.isLegal(root.getType() == IResource.ROOT || root.getType() == IResource.PROJECT);
 	// only write out info for accessible resources
@@ -1201,10 +1195,12 @@ public void visitAndWrite(IResource root) throws CoreException {
 	IResourceVisitor visitor = new IResourceVisitor() {
 		public boolean visit(IResource resource) throws CoreException {
 			try {
-				markerManager.write(resource, markersOutput, writtenTypes);
+				// phantom resources don't have markers so skip them
+				if (!resource.isPhantom())
+					markerManager.save(resource, markersOutput, writtenTypes);
 				// if we have the workspace root then the output stream will be null
 				if (syncInfoOutput != null)
-					synchronizer.writeSyncInfo(resource, syncInfoOutput, writtenPartners);
+					synchronizer.saveSyncInfo(resource, syncInfoOutput, writtenPartners);
 			} catch (IOException e) {
 				throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, resource.getFullPath(), "Failed to write meta info for resource.", e);
 			}
@@ -1245,7 +1241,106 @@ public void visitAndWrite(IResource root) throws CoreException {
 		return;
 	IProject[] projects = ((IWorkspaceRoot) root).getProjects();
 	for (int i = 0; i < projects.length; i++)
-		visitAndWrite(projects[i]);
+		visitAndSave(projects[i]);
+}
+/**
+ * Visit the given resource (to depth infinite) and write out extra information
+ * like markers and sync info. To be called during a snapshot
+ * 
+ * This method is ugly. Fix it up and look at merging with #visitAndSnap
+ */
+public void visitAndSnap(IResource root) throws CoreException {
+	// Ensure we have either a project or the workspace root
+	Assert.isLegal(root.getType() == IResource.ROOT || root.getType() == IResource.PROJECT);
+	// only write out info for accessible resources
+	if (!root.isAccessible())
+		return;
+
+	// Setup vars
+	final Synchronizer synchronizer = (Synchronizer) workspace.getSynchronizer();
+	final MarkerManager markerManager = workspace.getMarkerManager();
+	IPath markersLocation = workspace.getMetaArea().getMarkersSnapshotLocationFor(root);
+	IPath syncInfoLocation = workspace.getMetaArea().getSyncInfoSnapshotLocationFor(root);
+	SafeChunkyOutputStream safeMarkerStream = null;
+	SafeChunkyOutputStream safeSyncInfoStream = null;
+	DataOutputStream o1 = null;
+	DataOutputStream o2 = null;
+
+	// Create the output streams
+	try {
+		safeMarkerStream = new SafeChunkyOutputStream(markersLocation.toFile());
+		o1 = new DataOutputStream(safeMarkerStream);
+		// we don't store the sync info for the workspace root so don't create
+		// an empty file
+		if (root.getType() != IResource.ROOT) {
+			safeSyncInfoStream = new SafeChunkyOutputStream(syncInfoLocation.toFile());
+			o2 = new DataOutputStream(safeSyncInfoStream);
+		}
+	} catch (IOException e) {
+		if (o1 != null)
+			try {
+				o1.close();
+			} catch (IOException e2) {
+			}
+		String msg = Policy.bind("writeMeta", new String[] { root.getFullPath().toString()});
+		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), msg, e);
+	}
+
+	final DataOutputStream markersOutput = o1;
+	final DataOutputStream syncInfoOutput = o2;
+	int markerFileSize = markersOutput.size();
+	int syncInfoFileSize = safeSyncInfoStream == null ? -1 : syncInfoOutput.size();
+	
+	// Create the visitor 
+	IResourceVisitor visitor = new IResourceVisitor() {
+		public boolean visit(IResource resource) throws CoreException {
+			try {
+				// phantom resources don't have markers so skip them
+				if (!resource.isPhantom())
+					markerManager.snap(resource, markersOutput);
+				// if we have the workspace root then the output stream will be null
+				if (syncInfoOutput != null)
+					synchronizer.snapSyncInfo(resource, syncInfoOutput);
+			} catch (IOException e) {
+				throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, resource.getFullPath(), "Failed to write meta info for resource.", e);
+			}
+			return true;
+		}
+	};
+
+	// Call the visitor
+	try {
+		int depth = root.getType() == IResource.ROOT ? IResource.DEPTH_ZERO : IResource.DEPTH_INFINITE;
+		root.accept(visitor, depth, true);
+		if (safeMarkerStream != null && markerFileSize != markersOutput.size())
+			safeMarkerStream.succeed();
+		if (safeSyncInfoStream != null && syncInfoFileSize != syncInfoOutput.size())
+			safeSyncInfoStream.succeed();
+	} catch (IOException e) {
+		String msg = Policy.bind("writeMeta", new String[] { root.getFullPath().toString()});
+		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), msg, e);
+	} catch (CoreException e) {
+		String msg = Policy.bind("writeMeta", new String[] { root.getFullPath().toString()});
+		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), msg, e);
+	} finally {
+		if (markersOutput != null)
+			try {
+				markersOutput.close();
+			} catch (IOException e) {
+			}
+		if (syncInfoOutput != null)
+			try {
+				syncInfoOutput.close();
+			} catch (IOException e) {
+			}
+	}
+
+	// recurse over the projects in the workspace if we were given the workspace root
+	if (root.getType() == IResource.PROJECT)
+		return;
+	IProject[] projects = ((IWorkspaceRoot) root).getProjects();
+	for (int i = 0; i < projects.length; i++)
+		visitAndSnap(projects[i]);
 }
 /**
  * @see IElementInfoFlattener#writeElement
@@ -1418,7 +1513,7 @@ protected void writeWorkspaceFields(DataOutputStream output, IProgressMonitor mo
 		// save the marker id counter
 		output.writeLong(workspace.nextMarkerId);
 		// save the registered sync partners in the synchronizer
-		 ((Synchronizer) workspace.getSynchronizer()).writePartners(output);
+		 ((Synchronizer) workspace.getSynchronizer()).savePartners(output);
 	} finally {
 		monitor.done();
 	}

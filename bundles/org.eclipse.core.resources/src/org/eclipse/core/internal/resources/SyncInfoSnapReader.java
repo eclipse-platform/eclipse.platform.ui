@@ -1,24 +1,19 @@
 package org.eclipse.core.internal.resources;
-
 /*
  * Licensed Materials - Property of IBM,
  * WebSphere Studio Workbench
  * (c) Copyright IBM Corp 2000
  */
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.runtime.*;
-import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.DataInputStream;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.internal.resources.*;
 import java.util.*;
-
-/**
- * This class is used to read sync info from disk. Subclasses implement
- * version specific reading code.
- */
-public class SyncInfoReader {
+public class SyncInfoSnapReader {
 	protected Workspace workspace;
 	protected Synchronizer synchronizer;
-public SyncInfoReader(Workspace workspace, Synchronizer synchronizer) {
+public SyncInfoSnapReader(Workspace workspace, Synchronizer synchronizer) {
 	super();
 	this.workspace = workspace;
 	this.synchronizer = synchronizer;
@@ -26,12 +21,10 @@ public SyncInfoReader(Workspace workspace, Synchronizer synchronizer) {
 /**
  * Returns the appropriate reader for the given version.
  */
-protected SyncInfoReader getReader(int formatVersion) throws IOException {
+protected SyncInfoSnapReader getReader(int formatVersion) throws IOException {
 	switch (formatVersion) {
 		case 2 :
-			return new SyncInfoReader_2(workspace, synchronizer);
-		case 3 :
-			return new SyncInfoReader_3(workspace, synchronizer);
+			return new SyncInfoSnapReader_1(workspace, synchronizer);
 		default :
 			throw new IOException("Unknown format");
 	}
@@ -54,7 +47,7 @@ public void readSyncInfo(DataInputStream input) throws IOException {
 	// dispatch to the appropriate reader depending
 	// on the version of the file
 	int formatVersion = readVersionNumber(input);
-	SyncInfoReader reader = getReader(formatVersion);
+	SyncInfoSnapReader reader = getReader(formatVersion);
 	reader.readSyncInfo(input);
 }
 protected static int readVersionNumber(DataInputStream input) throws IOException {

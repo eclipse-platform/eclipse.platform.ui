@@ -25,6 +25,7 @@ public class LocalMetaArea implements ICoreConstants {
 	/* package */ static final String F_ROOT = ".root";
 	/* package */ static final String F_SAFE_TABLE = ".safetable";
 	/* package */ static final String F_SNAP = ".snap";
+	/* package */ static final String F_SNAP_EXTENSION = "snap";
 	/* package */ static final String F_SYNCINFO = ".syncinfo";
 	/* package */ static final String F_TREE = ".tree";
 public LocalMetaArea() {
@@ -90,6 +91,14 @@ public IPath getMarkersLocationFor(IResource resource) {
 	Assert.isLegal(resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT);
 	return getLocationFor(resource).append(F_MARKERS);
 }
+/**
+ * Returns the path of the file in which to snapshot markers for the given resource.
+ * Should only be called for the workspace root and projects.
+ */
+public IPath getMarkersSnapshotLocationFor(IResource resource) {
+	return getMarkersLocationFor(resource).addFileExtension(F_SNAP_EXTENSION);
+}
+
 public IPath getPropertyStoreLocation(IResource resource) {
 	int type = resource.getType();
 	Assert.isTrue(type != IResource.FILE && type != IResource.FOLDER);
@@ -114,6 +123,13 @@ public IPath getSyncInfoLocationFor(IResource resource) {
 	Assert.isNotNull(resource);
 	Assert.isLegal(resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT);
 	return getLocationFor(resource).append(F_SYNCINFO);
+}
+/**
+ * Returns the path of the file in which to snapshot the sync information for the given resource.
+ * Should only be called for the workspace root and projects.
+ */
+public IPath getSyncInfoSnapshotLocationFor(IResource resource) {
+	return getSyncInfoLocationFor(resource).addFileExtension(F_SNAP_EXTENSION);
 }
 /**
  * Returns the local file system location of the tree file for the given resource. This

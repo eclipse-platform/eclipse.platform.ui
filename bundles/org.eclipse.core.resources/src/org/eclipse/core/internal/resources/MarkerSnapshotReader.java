@@ -1,40 +1,35 @@
 package org.eclipse.core.internal.resources;
-
 /*
  * Licensed Materials - Property of IBM,
  * WebSphere Studio Workbench
  * (c) Copyright IBM Corp 2000
  */
-import java.io.DataInputStream;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.resources.IResourceStatus;
 import java.io.IOException;
+import java.io.DataInputStream;
 
-/**
- * This class is used to read markers from disk. Subclasses implement
- * version specific reading code.
- */
-public class MarkerReader {
+public class MarkerSnapshotReader {
 	protected Workspace workspace;
-public MarkerReader(Workspace workspace) {
+public MarkerSnapshotReader(Workspace workspace) {
 	super();
 	this.workspace = workspace;
 }
 /**
  * Returns the appropriate reader for the given version.
  */
-protected MarkerReader getReader(int formatVersion) throws IOException {
+protected MarkerSnapshotReader getReader(int formatVersion) throws IOException {
 	switch (formatVersion) {
 		case 1 :
-			return new MarkerReader_1(workspace);
-		case 2 :
-			return new MarkerReader_2(workspace);
+			return new MarkerSnapshotReader_1(workspace);
 		default :
 			throw new IOException("Unknown format");
 	}
 }
-public void read(DataInputStream input, boolean generateDeltas) throws IOException {
+public void read(DataInputStream input) throws IOException {
 	int formatVersion = readVersionNumber(input);
-	MarkerReader reader = getReader(formatVersion);
-	reader.read(input, generateDeltas);
+	MarkerSnapshotReader reader = getReader(formatVersion);
+	reader.read(input);
 }
 protected static int readVersionNumber(DataInputStream input) throws IOException {
 	return input.readInt();

@@ -195,6 +195,7 @@ public void setAttribute(String attributeName, Object value) throws CoreExceptio
 		MarkerInfo info = getInfo();
 		checkInfo(info);
 		info.setAttribute(attributeName, value);
+		((Resource) resource).getResourceInfo(false, true).set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
 		IMarkerDelta[] change = new IMarkerDelta[] { new MarkerDelta(IResourceDelta.CHANGED, resource, info)};
 		getWorkspace().getMarkerManager().changedMarkers(resource, change);
 	} finally {
@@ -219,6 +220,7 @@ public void setAttributes(String[] attributeNames, Object[] values) throws CoreE
 		MarkerInfo info = getInfo();
 		checkInfo(info);
 		info.setAttributes(attributeNames, values);
+		((Resource) resource).getResourceInfo(false, true).set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
 		IMarkerDelta[] change = new IMarkerDelta[] { new MarkerDelta(IResourceDelta.CHANGED, resource, info)};
 		getWorkspace().getMarkerManager().changedMarkers(resource, change);
 	} finally {
@@ -235,6 +237,7 @@ public void setAttributes(Map values) throws CoreException {
 		MarkerInfo info = getInfo();
 		checkInfo(info);
 		info.setAttributes(values);
+		((Resource) resource).getResourceInfo(false, true).set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
 		IMarkerDelta[] change = new IMarkerDelta[] { new MarkerDelta(IResourceDelta.CHANGED, resource, info)};
 		getWorkspace().getMarkerManager().changedMarkers(resource, change);
 	} finally {

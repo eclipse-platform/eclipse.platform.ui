@@ -8,14 +8,16 @@ package org.eclipse.core.internal.resources;
 //
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.utils.Assert;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.localstore.*;
+import org.eclipse.core.internal.utils.*;
 //
 import java.io.*;
 import java.util.*;
 //
 public class Synchronizer implements ISynchronizer {
 	protected Workspace workspace;
+	protected SyncInfoWriter writer;
+	
 	// Registry of sync partners. Set of qualified names.
 	protected Set registry = new HashSet(5);
 
@@ -28,6 +30,7 @@ public class Synchronizer implements ISynchronizer {
 public Synchronizer(Workspace workspace) {
 	super();
 	this.workspace = workspace;
+	this.writer = new SyncInfoWriter(workspace, this);
 }
 /**
  * @see ISynchronizer#accept
@@ -89,6 +92,12 @@ public QualifiedName[] getPartners() {
 	return (QualifiedName[]) registry.toArray(new QualifiedName[registry.size()]);
 }
 /**
+ * For use by the serialization code.
+ */
+protected Set getRegistry() {
+	return registry;
+}
+/**
  * @see ISynchronizer#getSyncInfo
  */
 public byte[] getSyncInfo(QualifiedName partner, IResource resource) throws CoreException {
@@ -113,12 +122,48 @@ public void readPartners(DataInputStream input) throws CoreException {
 	SyncInfoReader reader = new SyncInfoReader(workspace, this);
 	reader.readPartners(input);
 }
-/**
- * @see #writeSyncInfo
- */
-public void readSyncInfo(DataInputStream input) throws CoreException {
-	SyncInfoReader reader = new SyncInfoReader(workspace, this);
-	reader.readSyncInfo(input);
+public void restore(IResource resource, IProgressMonitor monitor) throws CoreException {
+	// first restore from the last save and then apply any snapshots
+	restoreFromSave(resource);
+	restoreFromSnap(resource);
+}
+protected void restoreFromSave(IResource resource) throws CoreException {
+	IPath sourceLocation = workspace.getMetaArea().getSyncInfoLocationFor(resource);
+	IPath tempLocation = workspace.getMetaArea().getBackupLocationFor(sourceLocation);
+	try {
+		DataInputStream input = new DataInputStream(new SafeFileInputStream(sourceLocation.toOSString(), tempLocation.toOSString()));
+		try {
+			SyncInfoReader reader = new SyncInfoReader(workspace, this);
+			reader.readSyncInfo(input);
+		} finally {
+			input.close();
+		}
+	} catch (FileNotFoundException e) {
+		// ignore if no sync info saved
+	} catch (IOException e) {
+		String msg = Policy.bind("readMeta", new String[] { sourceLocation.toString()});
+		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e);
+	}
+}
+protected void restoreFromSnap(IResource resource) throws CoreException {
+	IPath sourceLocation = workspace.getMetaArea().getSyncInfoLocationFor(resource);
+	try {
+		DataInputStream input = new DataInputStream(new SafeChunkyInputStream(sourceLocation.toOSString()));
+		try {
+			SyncInfoSnapReader reader = new SyncInfoSnapReader(workspace, this);
+			while (true)
+				reader.readSyncInfo(input);
+		} catch (EOFException eof) {
+			// ignore end of file
+		} finally {
+			input.close();
+		}
+	} catch (FileNotFoundException e) {
+		// ignore if no sync info saved.
+	} catch (IOException e) {
+		String msg = Policy.bind("readMeta", new String[] { sourceLocation.toString()});
+		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e);
+	}
 }
 /**
  * @see ISynchronizer#remove
@@ -134,6 +179,12 @@ public void remove(QualifiedName partner) {
 			// XXX: flush needs to be more resilient and not throw exceptions all the time
 		}
 	}
+}
+public void savePartners(DataOutputStream output) throws IOException {
+	writer.savePartners(output);
+}
+public void saveSyncInfo(IResource resource, DataOutputStream output, List writtenPartners) throws IOException {
+	writer.saveSyncInfo(resource, output, writtenPartners);
 }
 protected void setRegistry(Set registry) {
 	this.registry = registry;
@@ -165,6 +216,7 @@ public void setSyncInfo(QualifiedName partner, IResource resource, byte[] info) 
 		resourceInfo = target.getResourceInfo(true, true);
 		resourceInfo.setSyncInfo(partner, info);
 		resourceInfo.incrementSyncInfoGenerationCount();
+		resourceInfo.set(ICoreConstants.M_SYNCINFO_SNAP_DIRTY);
 		flags = target.getFlags(resourceInfo);
 		if (target.isPhantom(flags) && resourceInfo.getSyncInfo(false) == null) {
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, Status.OK, "OK", null);
@@ -176,83 +228,7 @@ public void setSyncInfo(QualifiedName partner, IResource resource, byte[] info) 
 		workspace.endOperation(false, null);
 	}
 }
-/**
- * @see #readPartners
- */
-public void writePartners(DataOutputStream output) throws IOException {
-	output.writeInt(registry.size());
-	for (Iterator i = registry.iterator(); i.hasNext();) {
-		QualifiedName qname = (QualifiedName) i.next();
-		output.writeUTF(qname.getQualifier());
-		output.writeUTF(qname.getLocalName());
-	}
-}
-/**
-VERSION_ID
-RESOURCE[]
-
-VERSION_ID:
-	int (used for backwards compatibiliy)
-
-RESOURCE:
-	String - resource full path
-	int - sync info table size
-	SYNCINFO[]
-
-SYNCINFO:
-	CONST
-	(NAME | INT)
-	VALUE
-
-CONST:
-	INT_CONSTANT
-	QNAME_CONSTANT
-
-NAME:
-	String - qualifier
-	String - local
-
-INT:
-	Integer index into list of names which have already been written
-
-VALUE:
-	int - byte array length
-	byte[] - sync info bytes
-
- */
-public void writeSyncInfo(IResource target, DataOutputStream output, List writtenPartners) throws IOException {
-	Resource resource = (Resource) target;
-	ResourceInfo info = workspace.getResourceInfo(resource.getFullPath(), true, false);
-	if (info == null)
-		return;
-	HashMap table = info.getSyncInfo(false);
-	if (table == null)
-		return;
-	// if this is the first sync info that we have written, then
-	// write the version id for the file.
-	if (output.size() == 0)
-		output.writeInt(VERSION);
-	output.writeUTF(resource.getFullPath().toString());
-	output.writeInt(table.size());
-	for (Iterator i = table.entrySet().iterator(); i.hasNext();) {
-		Map.Entry entry = (Map.Entry) i.next();
-		QualifiedName name = (QualifiedName) entry.getKey();
-		// if we have already written the partner name once, then write an integer
-		// constant to represent it instead to remove duplication
-		int index = writtenPartners.indexOf(name);
-		if (index == -1) {
-			// FIXME: what to do about null qualifier?
-			output.writeInt(QNAME_CONSTANT);
-			output.writeUTF(name.getQualifier());
-			output.writeUTF(name.getLocalName());
-			writtenPartners.add(name);
-		} else {
-			output.writeInt(INT_CONSTANT);
-			output.writeInt(index);
-		}
-		byte[] bytes = (byte[]) entry.getValue();
-		output.writeInt(bytes.length);
-		output.write(bytes);
-	}
+public void snapSyncInfo(IResource resource, DataOutputStream output) throws IOException {
+	writer.snapSyncInfo(resource, output);
 }
 }

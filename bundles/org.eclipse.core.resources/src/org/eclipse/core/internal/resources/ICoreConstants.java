@@ -26,6 +26,8 @@ public interface ICoreConstants {
 	static final int M_USED = 0x10;
 	static final int M_TYPE = 0xF00;
 	static final int M_TYPE_START = 8;
+	static final int M_MARKERS_SNAP_DIRTY = 0x1000;
+	static final int M_SYNCINFO_SNAP_DIRTY = 0x2000;
 	static final int NULL_FLAG = -1;
 
 	// Internal status codes	
@@ -61,17 +63,4 @@ public interface ICoreConstants {
 	// persistence constants
 	// version numbers
 	public static final int WORKSPACE_VERSION = 67305985;
-	public static final int MARKERS_VERSION = 1;
-	public static final int SYNCINFO_VERSION = 2;
-
-	// for markes and sync info
-	public static final int INT_CONSTANT = 1;
-	public static final int QNAME_CONSTANT = 2;
-	public static final int TYPE_CONSTANT = 2;
-
-	// marker attribute types
-	public static final int ATTRIBUTE_NULL = -1;
-	public static final int ATTRIBUTE_BOOLEAN = 0;
-	public static final int ATTRIBUTE_INTEGER = 1;
-	public static final int ATTRIBUTE_STRING = 2;
 }

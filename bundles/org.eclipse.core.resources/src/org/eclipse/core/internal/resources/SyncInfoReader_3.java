@@ -16,30 +16,30 @@ import java.util.*;
 
 /**
  * This class is used to read sync info from disk. This is the implementation
- * for reading files with version number 2.
+ * for reading files with version number 3.
  */
-public class SyncInfoReader_2 extends SyncInfoReader {
+public class SyncInfoReader_3 extends SyncInfoReader {
 	
 	// version number
-	public static final int SYNCINFO_VERSION = 2;
+	public static final int SYNCINFO_VERSION = 3;
 
 	// for sync info
-	public static final int INDEX = 1;
-	public static final int QNAME = 2;
+	public static final byte INDEX = 1;
+	public static final byte QNAME = 2;
 
-public SyncInfoReader_2(Workspace workspace, Synchronizer synchronizer) {
+public SyncInfoReader_3(Workspace workspace, Synchronizer synchronizer) {
 	super(workspace, synchronizer);
 }
 /**
- * SAVE_FILE -> VERSION_ID RESOURCE*
+ * SAVE_FILE -> VERSION_ID RESOURCE+
  * VERSION_ID -> int
  * RESOURCE -> RESOURCE_PATH SIZE SYNCINFO*
  * RESOURCE_PATH -> String
  * SIZE -> int
  * SYNCINFO -> TYPE BYTES
  * TYPE -> INDEX | QNAME
- * INDEX -> int int
- * QNAME -> int String
+ * INDEX -> byte int
+ * QNAME -> byte String
  * BYTES -> byte[]
  * 
  */ 
@@ -62,7 +62,7 @@ private void readSyncInfo(Resource resource, DataInputStream input, List readPar
 	HashMap table = new HashMap(size);
 	for (int i = 0; i < size; i++) {
 		QualifiedName name = null;
-		int type = input.readInt();
+		byte type = input.readByte();
 		switch (type) {
 			case QNAME :
 				String qualifier = input.readUTF();

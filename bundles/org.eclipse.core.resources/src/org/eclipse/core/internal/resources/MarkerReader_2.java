@@ -16,42 +16,43 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * This class is used to read markers from disk. This is for version 1. 
+ * This class is used to read markers from disk. This is for version 2. Here
+ * is the file format:
  */
-public class MarkerReader_1 extends MarkerReader {
+public class MarkerReader_2 extends MarkerReader {
 
 	// type constants
-	public static final int INDEX = 1;
-	public static final int QNAME = 2;
+	public static final byte INDEX = 1;
+	public static final byte QNAME = 2;
 
 	// marker attribute types
-	public static final int ATTRIBUTE_NULL = -1;
-	public static final int ATTRIBUTE_BOOLEAN = 0;
-	public static final int ATTRIBUTE_INTEGER = 1;
-	public static final int ATTRIBUTE_STRING = 2;
+	public static final byte ATTRIBUTE_NULL = 0;
+	public static final byte ATTRIBUTE_BOOLEAN = 1;
+	public static final byte ATTRIBUTE_INTEGER = 2;
+	public static final byte ATTRIBUTE_STRING = 3;
 
-public MarkerReader_1(Workspace workspace) {
+public MarkerReader_2(Workspace workspace) {
 	super(workspace);
 }
 /**
  * SAVE_FILE -> VERSION_ID RESOURCE+
- * VERSION_ID -> 
- * RESOURCE -> RESOURCE_PATH MARKERS_SIZE MARKER*
+ * VERSION_ID -> int
+ * RESOURCE -> RESOURCE_PATH MARKERS_SIZE MARKER+
  * RESOURCE_PATH -> String
  * MARKERS_SIZE -> int
  * MARKER -> MARKER_ID TYPE ATTRIBUTES_SIZE ATTRIBUTE*
  * MARKER_ID -> long
  * TYPE -> INDEX | QNAME
- * INDEX -> int int
- * QNAME -> int String
- * ATTRIBUTES_SIZE -> int
+ * INDEX -> byte int
+ * QNAME -> byte String
+ * ATTRIBUTES_SIZE -> short
  * ATTRIBUTE -> ATTRIBUTE_KEY ATTRIBUTE_VALUE
  * ATTRIBUTE_KEY -> String
  * ATTRIBUTE_VALUE -> INTEGER_VALUE | BOOLEAN_VALUE | STRING_VALUE | NULL_VALUE
- * INTEGER_VALUE -> int int
- * BOOLEAN_VALUE -> int boolean
- * STRING_VALUE -> int String
- * NULL_VALUE -> int
+ * INTEGER_VALUE -> byte int
+ * BOOLEAN_VALUE -> byte boolean
+ * STRING_VALUE -> byte String
+ * NULL_VALUE -> byte
  */
 public void read(DataInputStream input, boolean generateDeltas) throws IOException {
 	try {
@@ -82,13 +83,13 @@ public void read(DataInputStream input, boolean generateDeltas) throws IOExcepti
 	}
 }
 private Map readAttributes(DataInputStream input) throws IOException {
-	int attributesSize = input.readInt();
+	int attributesSize = input.readShort();
 	if (attributesSize == 0)
 		return null;
 	Map result = new HashMap(attributesSize);
 	for (int j = 0; j < attributesSize; j++) {
 		String key = input.readUTF();
-		int type = input.readInt();
+		byte type = input.readByte();
 		Object value = null;
 		switch (type) {
 			case ATTRIBUTE_INTEGER :
@@ -112,7 +113,7 @@ private Map readAttributes(DataInputStream input) throws IOException {
 private MarkerInfo readMarkerInfo(DataInputStream input, List readTypes) throws IOException {
 	MarkerInfo info = new MarkerInfo();
 	info.setId(input.readLong());
-	int constant = input.readInt();
+	byte constant = input.readByte();
 	switch (constant) {
 		case QNAME :
 			String type = input.readUTF();

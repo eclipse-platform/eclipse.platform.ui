@@ -447,8 +447,14 @@ public ResourceInfo createResource(IResource resource, ResourceInfo info, boolea
 		if (!phantom && original.isSet(M_PHANTOM)) {
 			// copy over the sync info and flags from the old resource info
 			// since we are replacing a phantom with a real resource
+			// DO NOT set the sync info dirty flag because we want to
+			// preserve the old sync info so its not dirty
 			// XXX: must copy over the generic sync info from the old info to the new
+			// XXX: do we really need to clone the sync info here?
 			info.setSyncInfo(original.getSyncInfo(true));
+			// mark the markers bit as dirty so we snapshot an empty marker set for
+			// the new resource
+			info.set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
 			tree.setElementData(resource.getFullPath(), info);
 		} else {
 			String message = Policy.bind("mustNotExist", new String[] { resource.getFullPath().toString()});
