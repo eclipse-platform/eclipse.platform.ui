@@ -17,7 +17,7 @@ import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
- * Abstract baseclass for various JFace registries.
+ * Abstract base class for various JFace registries.
  * 
  * @since 3.0
  */

@@ -31,7 +31,7 @@ import org.eclipse.swt.dnd.Transfer;
  * <p>
  * NOTE: This API is experimental and subject to change including removal.
  * </p>
- * @since 2.2
+ * @since 3.0
  */
 public interface TransferDropTargetListener extends DropTargetListener {
     /**

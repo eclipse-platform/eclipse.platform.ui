@@ -24,7 +24,7 @@ import org.eclipse.jface.util.Util;
  * An abstract implementation of a key formatter that provides a lot of common
  * key formatting functionality. It is recommended that those people
  * implementing their own key formatters subclass from here, rather than
- * implementing <code>KeyFormatter</code> directly.
+ * implementing <code>IKeyFormatter</code> directly.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>. The commands architecture is currently under
