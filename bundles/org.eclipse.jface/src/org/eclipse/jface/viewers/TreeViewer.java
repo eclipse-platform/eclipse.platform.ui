@@ -81,7 +81,7 @@ protected void doUpdateItem(Item item, Object element) {
 	ILabelProvider provider = (ILabelProvider) getLabelProvider();
 	item.setText(provider.getText(element));
 	Image image = provider.getImage(element);
-	if (image != null) {
+	if (image != null || item.getImage() != null) {
 		item.setImage(image);
 	}
 }
