@@ -131,33 +131,21 @@ import org.eclipse.swt.widgets.Display;
      * if it matches the given one.
      * @param collectorToClear
      */
-    private void clearCollector(Collector collectorToClear) {
+    private synchronized void clearCollector(Collector collectorToClear) {
         // Check if the accumulator is still using the given collector.
         // If not, don't clear it.
-    	synchronized(this){
-    		if (this.collector == collectorToClear)
-    			this.collector = null;
-    	}
+        if (this.collector == collectorToClear)
+            this.collector = null;
     }
 
     /**
-     * Creates a collector object to accumulate work 
-     * if required and subtask calls. Return whether 
-     * or not this work was required.
-     * @param subTask String
+     *  Creates a collector object to accumulate work and subtask calls.
+     * @param subTask
      * @param work
-     * @return boolean <code>true</code> if a collector
-     * was created.
      */
-    private boolean createCollectorIfRequired(String subTask, double work) {
-    	synchronized (this) {
-    		if(collector != null)
-    			return false;
-    		collector = new Collector(subTask, work, getWrappedProgressMonitor());
-		}
-        
-    	display.asyncExec(collector);
-    	return true;
+    private void createCollector(String subTask, double work) {
+        collector = new Collector(subTask, work, getWrappedProgressMonitor());
+        display.asyncExec(collector);
     }
 
     /* (non-Javadoc)
@@ -177,13 +165,12 @@ import org.eclipse.swt.widgets.Display;
     /* (non-Javadoc)
      * Method declared on IProgressMonitor.
      */
-    public void internalWorked(final double work) {
-        if( createCollectorIfRequired(null, work))
-        	return;
-        synchronized (this) {
-        	collector.worked(work);
-		}
-        
+    public synchronized void internalWorked(final double work) {
+        if (collector == null) {
+            createCollector(null, work);
+        } else {
+            collector.worked(work);
+        }
     }
 
     /* (non-Javadoc)
@@ -204,18 +191,18 @@ import org.eclipse.swt.widgets.Display;
     /* (non-Javadoc)
      * Method declared on IProgressMonitor.
      */
-    public void subTask(final String name) {
-        if(createCollectorIfRequired(name, 0))
-        	return;
-        synchronized (this) {
-        	collector.subTask(name);
-		}        
+    public synchronized void subTask(final String name) {
+        if (collector == null) {
+            createCollector(name, 0);
+        } else {
+            collector.subTask(name);
+        }
     }
 
     /* (non-Javadoc)
      * Method declared on IProgressMonitor.
      */
-    public void worked(int work) {
+    public synchronized void worked(int work) {
         internalWorked(work);
     }
 
