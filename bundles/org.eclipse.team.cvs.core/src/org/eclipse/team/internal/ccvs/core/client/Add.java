@@ -65,15 +65,7 @@ public class Add extends Command {
 			if (resources[i].isFolder()) {
 				mFolder = (ICVSFolder) resources[i];
 				FolderSyncInfo info = mFolder.getParent().getFolderSyncInfo();
-				String repository;
-				if (info == null) {
-					// If the parent sync info is null, there may be some already with the folder itself
-					// This is special case handling to allow an add of a root folder to CVS
-					info = mFolder.getFolderSyncInfo();	
-					repository = mFolder.getName();
-				} else {
-					repository = info.getRepository() + "/" + mFolder.getName();
-				}			
+				String repository = info.getRepository() + "/" + mFolder.getName();		
 				mFolder.setFolderSyncInfo(new FolderSyncInfo(repository, info.getRoot(), info.getTag(), info.getIsStatic()));
 			}
 		}
