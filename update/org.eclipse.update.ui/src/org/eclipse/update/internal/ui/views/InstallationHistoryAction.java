@@ -28,7 +28,7 @@ public class InstallationHistoryAction extends Action {
 	private IPath path;
 	private static final String lightBlue = "#BBCCFF"; //$NON-NLS-1$
 	private static final String white = "#FFFFFF"; //$NON-NLS-1$
-	private static final String darkBlue = "#0080C0"; //$NON-NLS-1$
+	private static final String darkBlue = "#6699DD"; //$NON-NLS-1$
 
 	public InstallationHistoryAction(String text, ImageDescriptor desc) {
 		super(text, desc);
