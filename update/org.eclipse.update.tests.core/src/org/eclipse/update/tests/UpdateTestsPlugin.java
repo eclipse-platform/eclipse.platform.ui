@@ -12,6 +12,7 @@ package org.eclipse.update.tests;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.appserver.WebappManager;
 import org.eclipse.update.internal.core.UpdateCore;
+import org.osgi.framework.*;
 
 /**
  * manages the startuo and shutown of the 
@@ -22,31 +23,30 @@ public class UpdateTestsPlugin extends Plugin {
 	private static String appServerHost = null;
 	private static int appServerPort = 0;
 	private static UpdateTestsPlugin plugin;
+	private static BundleContext bundleContext;
 	private static boolean initialized=false;
-
-	public UpdateTestsPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
-		plugin = this;
-	}
 
 	public static UpdateTestsPlugin getPlugin() {
 		return plugin;
 	}
 
-	/**
-	 * Called by Platform after loading the plugin
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
-	public void startup() throws CoreException {
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		plugin = this;
+		bundleContext = context;
 	}
-
-	/**
-	 * Shuts down this plug-in and discards all plug-in state.
-	 * @exception CoreException if this method fails to shut down
-	 *   this plug-in 
+	
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
-	public void shutdown() throws CoreException {
+	public void stop(BundleContext context) throws Exception {
 		WebappManager.stop("org.eclipse.update.tests.core.updatetests");
-		super.shutdown();
+		plugin = null;
+		bundleContext = null;
+		super.stop(context);
 	}
 
 	/**
