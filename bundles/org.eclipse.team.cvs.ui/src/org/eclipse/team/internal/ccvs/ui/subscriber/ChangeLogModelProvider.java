@@ -215,7 +215,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 			return Policy.bind("ChangeLogModelProvider.5"); //$NON-NLS-1$
 		}		
 		public ImageDescriptor getImageDescriptor() {
-			return CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_DATE);
+			return CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_CHANGELOG);
 		}
 	};
 	private static final ChangeLogModelProviderDescriptor descriptor = new ChangeLogModelProviderDescriptor();
