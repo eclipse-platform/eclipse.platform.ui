@@ -151,17 +151,19 @@ public abstract class AbstractSectionForm extends AbstractForm {
 		int x = scompOrigin.x;
 		int y = scompOrigin.y;
 
-		if (controlOrigin.x < scompOrigin.x ) {
-			x = controlOrigin.x;
-		} else if (controlOrigin.x + controlSize.x > scompOrigin.x + area.width) {
+		if (controlOrigin.x + controlSize.x > scompOrigin.x + area.width) {
 			x = controlOrigin.x + controlSize.x - area.width;
-		}
-
-		if (controlOrigin.y < scompOrigin.y) {
-			y = controlOrigin.y;
-		} else if (controlOrigin.y + controlSize.y > scompOrigin.y + area.height) {
+		}		
+		if (controlOrigin.x < x ) {
+			 x = controlOrigin.x;
+		 }         
+		
+		if (controlOrigin.y + controlSize.y > scompOrigin.y + area.height) {
 			y = controlOrigin.y + controlSize.y - area.height;
 		}
+		if (controlOrigin.y < y ) {
+			 y = controlOrigin.y;
+		 }         
 		scomp.setOrigin(x, y);
 	}
 	
