@@ -893,7 +893,7 @@ public class KeysPreferencePage
 		checkBoxMultiKeyAssist.setSelection(
 			store.getDefaultBoolean(IPreferenceConstants.MULTI_KEY_ASSIST));
 		textMultiKeyAssistTime.setStringValue(
-			Float.toString(store.getDefaultFloat(IPreferenceConstants.MULTI_KEY_ASSIST_TIME)));
+			Integer.toString(store.getDefaultInt(IPreferenceConstants.MULTI_KEY_ASSIST_TIME)));
 		checkBoxMultiKeyRocker.setSelection(
 			store.getDefaultBoolean(IPreferenceConstants.MULTI_KEY_ROCKER));
 
