@@ -708,7 +708,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	
 	/**
 	 * Returns the entire set of URLs that define the Ant runtime classpath.
-	 * Includes the Ant URLs, the custom URLs and extra classpath URLs.
+	 * Includes the Ant URLs, the additional URLs and extra classpath URLs.
 	 * 
 	 * @return the entire runtime classpath of URLs
 	 */
@@ -1391,15 +1391,17 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 				result.add(entry.getEntryURL());
 			}
 		}
+		if (additionalEntries != null && additionalEntries.length > 0) {
+			for (int i = 0; i < additionalEntries.length; i++) {
+				IAntClasspathEntry entry = additionalEntries[i];
+				result.add(entry.getEntryURL());	
+			}
+		}
 		URL remote= getRemoteAntURL();
 		if (remote != null) {
 			result.add(remote);
 		}
 		
-		IAntClasspathEntry entry= getToolsJarEntry();
-		if (entry != null) {
-			result.add(entry.getEntryURL());
-		}
 		return (URL[]) result.toArray(new URL[result.size()]);
 	}
 }
