@@ -55,11 +55,10 @@ public class BuildFailedTracker implements IConsoleLineTracker {
 					fileStart = index + 5;
 					index = text.indexOf(' ', index); //$NON-NLS-1$
 					if (index > 0) {
-						int fileEnd = index-3;
-						int numberStart = index - 2;
-						index = text.indexOf(':', numberStart);
-						if (index > 0) {
-							int numberEnd = index;
+						int numberEnd= index - 1;
+						int numberStart = text.lastIndexOf(':', numberEnd - 1) + 1;
+						int fileEnd = text.lastIndexOf(':', numberStart);
+						if (numberStart > 0 && fileEnd > 0) {
 							fileName = text.substring(fileStart, fileEnd).trim();
 							lineNumber = text.substring(numberStart, numberEnd).trim();
 						}
@@ -72,7 +71,11 @@ public class BuildFailedTracker implements IConsoleLineTracker {
 					num = Integer.parseInt(lineNumber);
 				} catch (NumberFormatException e) {
 				}
-				IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(fileName));
+				IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(new Path(fileName));
+				IFile file= null;
+				if (files.length > 0) {
+					file= files[0];
+				}
 				if (file != null && file.exists()) {
 					FileLink link = new FileLink(file, null, -1, -1, num);
 					fConsole.addLink(link, lineOffset + fileStart, lineLength - fileStart);
