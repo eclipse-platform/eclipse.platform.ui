@@ -75,8 +75,6 @@ public interface IJobManager {
 	 * 	manager.endRule(rule);
 	 * }
 	 * </pre>
-	 * <p>
-	 * This API is experimental, and is subject to change or removal without notice.
 	 * 
 	 * @param rule the rule to begin applying in this thread, or <code>null</code>
 	 * @param monitor a progress monitor, or <code>null</code> if progress
