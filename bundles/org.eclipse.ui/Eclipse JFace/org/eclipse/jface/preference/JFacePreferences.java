@@ -20,6 +20,12 @@ public final class JFacePreferences {
 	private static IPreferenceStore preferenceStore;
 	
 	/**
+	 * Prevent construction.
+	 */
+	private JFacePreferences() {
+	}
+	
+	/**
 	 * Return the preference store for the receiver.
 	 * @return IPreferenceStore or null
 	 */
