@@ -101,6 +101,9 @@ public class CleanDialog extends MessageDialog {
         	return;
         //batching changes ensures that autobuild runs after cleaning
     	WorkspaceJob cleanJob = new WorkspaceJob(IDEWorkbenchMessages.getString("CleanDialog.taskName")) { //$NON-NLS-1$
+    		public boolean belongsTo(Object family) {
+    			return ResourcesPlugin.FAMILY_MANUAL_BUILD.equals(family);
+    		}
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
                 doClean(cleanAll, monitor);
                 //see if a build was requested
