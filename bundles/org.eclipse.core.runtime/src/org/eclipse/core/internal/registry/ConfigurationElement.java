@@ -14,6 +14,7 @@ import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.adaptor.BundleStopper;
 import org.osgi.framework.Bundle;
 
 /**
@@ -125,6 +126,12 @@ public class ConfigurationElement extends NestedRegistryModelObject implements I
 	}
 
 	public Object createExecutableExtension(Bundle bundle, String className, Object initData, IConfigurationElement cfig, String propertyName) throws CoreException {
+		BundleStopper stopper = InternalPlatform.getDefault().getBundleStopper();
+		if (stopper != null && stopper.isStopped(bundle.getSymbolicName())) {
+			String message = Policy.bind("plugin.pluginStopped", bundle.getSymbolicName()); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, PLUGIN_ERROR, message, null);
+			throw new CoreException(status);
+		}
 		// load the requested class from this plugin
 		Class classInstance = null;
 		try {
