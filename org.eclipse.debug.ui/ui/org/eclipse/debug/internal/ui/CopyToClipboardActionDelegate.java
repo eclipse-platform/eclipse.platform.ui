@@ -177,7 +177,7 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 	 * @see ControlActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage() {
-		return null;
+		return DebugUIMessages.getString("CopyToClipboardActionDelegate.Copy_failed"); //$NON-NLS-1$
 	}
 
 	/*

@@ -96,7 +96,7 @@ public class RelaunchActionDelegate extends ControlActionDelegate {
 	 * @see ControlActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage() {
-		return null;
+		return DebugUIMessages.getString("RelaunchActionDelegate.Launch_failed_2"); //$NON-NLS-1$
 	}
 
 	/*
