@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.antsupport.logger.debug;
 
+import java.io.File;
+
 import org.apache.tools.ant.Location;
 
 public class RemoteAntBreakpoint {
 	
+    private File fFile;
 	private int fLineNumber;
 	private String fFileName;
 	
@@ -22,11 +25,12 @@ public class RemoteAntBreakpoint {
 		String fileName= data[1];
 		String lineNumber= data[2];
 		fFileName= fileName;
+		fFile= new File(fileName);
 		fLineNumber= Integer.parseInt(lineNumber);
 	}
 
 	public boolean isAt(Location location) {
-		return fFileName.equals(location.getFileName()) && fLineNumber == location.getLineNumber();
+		return fLineNumber == location.getLineNumber() && fFile.equals(new File(location.getFileName()));
 	}
 	
 	public String toMarshallString() {
@@ -37,6 +41,7 @@ public class RemoteAntBreakpoint {
 		buffer.append(fLineNumber);
 		return buffer.toString();
 	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -45,7 +50,7 @@ public class RemoteAntBreakpoint {
 			return false;
 		}
 		RemoteAntBreakpoint other= (RemoteAntBreakpoint) obj;
-		return other.getFileName().equals(fFileName) && other.getLineNumber() == fLineNumber;
+		return other.getLineNumber() == fLineNumber && other.getFile().equals(fFile);
 	}
 	
 	/* (non-Javadoc)
@@ -58,11 +63,12 @@ public class RemoteAntBreakpoint {
 	public int getLineNumber() {
 		return fLineNumber;
 	}
-	
-	/**
-	 * @return Returns the fFileName.
-	 */
+
 	public String getFileName() {
 		return fFileName;
+	}
+	
+	public File getFile() {
+	    return fFile;
 	}
 }

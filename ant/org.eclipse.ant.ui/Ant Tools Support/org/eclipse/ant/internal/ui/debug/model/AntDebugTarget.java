@@ -215,6 +215,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 	 */
 	protected void suspended(int detail) {
 		fSuspended = true;
+		fThread.setStepping(false);
 		fThread.fireSuspendEvent(detail);
 	}	
 	
