@@ -166,6 +166,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	 * Handles the given resume event with the given source.
 	 */
 	protected void doHandleResumeEvent(DebugEvent event, Object source, Object data) {
+        fSelectedThread = false;
 		if (!event.isEvaluation()) {
 			clearSourceSelection(source);
 		}
@@ -185,8 +186,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 				selectAndReveal(data);
 				return;
 			}
-            fSelectedThread = false;
-			return;
+            selectAndReveal(source);
 		}
 	}
 	
