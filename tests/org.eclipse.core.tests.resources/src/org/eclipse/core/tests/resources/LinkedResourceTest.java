@@ -534,6 +534,33 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 		}
 	}
 	/**
+	 * Tests deleting and then recreating a project
+	 */
+	public void testDeleteProjectWithLinks() {
+		IFolder link = nonExistingFolderInExistingProject;
+		try {
+			link.createLink(existingLocation, IResource.NONE, getMonitor());
+			existingProject.delete(IResource.NEVER_DELETE_PROJECT_CONTENT, getMonitor());
+			existingProject.create(getMonitor());
+		} catch (CoreException e) {
+			fail("0.99", e);
+		}
+
+		//link should not exist until the project is open
+		assertTrue("1.0", !link.exists());
+
+		try {
+			existingProject.open(getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+
+		//link should now exist
+		assertTrue("2.0", link.exists());
+		assertTrue("2.1", link.isLinked());
+		assertEquals("2.2", resolvePath(existingLocation), link.getLocation());
+	}
+	/**
 	 * Automated test of IFile#createLink
 	 */
 	public void testLinkFile() {
