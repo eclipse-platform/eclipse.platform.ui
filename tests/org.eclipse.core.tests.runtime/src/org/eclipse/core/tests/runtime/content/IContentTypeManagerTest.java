@@ -29,9 +29,9 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 	private final static String XML_UTF_16LE = "<?xml version=\"1.0\" encoding=\"UTF-16LE\"?><org.eclipse.core.runtime.tests.root/>";
 	private final static String XML_ISO_8859_1 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><org.eclipse.core.runtime.tests.root/>";
 	private final static String XML_ROOT_ELEMENT_ISO_8859_1 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><org.eclipse.core.runtime.tests.root-element/>";
-	private final static String XML_ROOT_ELEMENT_EXTERNAL_ENTITY = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><!DOCTYPE project   [<!ENTITY someentity SYSTEM \"/someentity.xml\">]><org.eclipse.core.runtime.tests.root-element/>";
+	private final static String XML_ROOT_ELEMENT_EXTERNAL_ENTITY = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><!DOCTYPE project   [<!ENTITY someentity SYSTEM \"someentity.xml\">]><org.eclipse.core.runtime.tests.root-element/>";
 	private final static String XML_DTD_US_ASCII = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><!DOCTYPE sometype SYSTEM \"org.eclipse.core.runtime.tests.some.dtd\"><org.eclipse.core.runtime.tests.root/>";
-	private final static String XML_DTD_EXTERNAL_ENTITY = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><!DOCTYPE project  SYSTEM \"org.eclipse.core.runtime.tests.some.dtd\"  [<!ENTITY someentity SYSTEM \"file:/someentity.xml\">]><org.eclipse.core.runtime.tests.root/>";
+	private final static String XML_DTD_EXTERNAL_ENTITY = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><!DOCTYPE project  SYSTEM \"org.eclipse.core.runtime.tests.some.dtd\"  [<!ENTITY someentity SYSTEM \"someentity.xml\">]><org.eclipse.core.runtime.tests.root/>";
 	private final static String SAMPLE_BIN1_SIGNATURE = "\u0010\u0011\u0012\u0013";
 	private final static String SAMPLE_BIN1_OFFSET = "12345";
 	private final static String SAMPLE_BIN2_SIGNATURE = "\u0010\u0011\u0012\u0014";
