@@ -165,10 +165,7 @@ public class OleEditor extends EditorPart {
 
 	private void activateClient(IWorkbenchPart part) {
 		if (part == this) {
-			//Do a deactivation as some OLE controls will not update menus
-			if(clientSite != null)
-				clientSite.deactivateInPlaceClient();
-			setFocus();
+			oleActivate();
 			this.clientActive = true;
 		}
 	}
@@ -518,13 +515,7 @@ public class OleEditor extends EditorPart {
 	/**
 	 * Asks the part to take focus within the workbench.
 	 */
-	public void setFocus() {
-		//If there was an OLE Error or nothing has been created yet
-		if (clientFrame == null || clientFrame.isDisposed())
-			return;
-		oleActivate();
-		clientFrame.setFocus();
-	}
+	public void setFocus() {}
 	
 	/**
 	 * Make ole active so that the controls are rendered.
