@@ -1213,7 +1213,7 @@ public IPath getRawLocation();
  * by the given key, or <code>null</code> if this resource has no such property.
  *
  * @param key the qualified name of the property
- * @return the string value of the session property, 
+ * @return the value of the session property, 
  *     or <code>null</code> if this resource has no such property
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
