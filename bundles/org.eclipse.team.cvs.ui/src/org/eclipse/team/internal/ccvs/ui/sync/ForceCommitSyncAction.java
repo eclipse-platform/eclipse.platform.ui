@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
@@ -24,7 +23,8 @@ import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -37,6 +37,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -249,7 +250,13 @@ public class ForceCommitSyncAction extends MergeAction {
 					ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile)resource);
 					// If the file is still modified after the commit, it probably is a pseudo change
 					if (cvsFile.exists() && cvsFile.isModified()) {
-						cvsFile.setTimeStamp(cvsFile.getSyncInfo().getTimeStamp());
+						ResourceSyncInfo info = cvsFile.getSyncInfo();
+						if (info == null) {
+							// There should be sync info. Throw an exception indicating the problem
+							throw new CVSException(new Status(IStatus.WARNING, CVSUIPlugin.ID, 0, Policy.bind("ForceCommitSyncAction.syncInfoMissing", resource.getFullPath().toString()), null));
+						} else {
+							cvsFile.setTimeStamp(info.getTimeStamp());
+						}
 					}
 				}
 			}
