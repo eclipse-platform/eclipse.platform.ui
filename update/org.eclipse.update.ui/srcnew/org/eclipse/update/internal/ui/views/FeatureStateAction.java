@@ -31,71 +31,26 @@ public class FeatureStateAction extends Action {
 			feature = adapter.getFeature(null);
 			site = adapter.getConfiguredSite();
 			boolean isConfigured = adapter.isConfigured();
-			if (isConfigured) {
-				site.unconfigure(feature);
-			} else {
-				site.configure(feature);
-			}
-			IStatus status = UpdateManager.getValidator().validateCurrentState();
-			if (status != null) {
-				revert(isConfigured);
-				ErrorDialog.openError(
-					UpdateUI.getActiveWorkbenchShell(),
-					null,
-					null,
-					status);
-			} else {
-				// do a restart
-				try {
-					boolean restartNeeded = false;
-					if (isConfigured) {
-						restartNeeded =
-							addPendingChange(
-								PendingOperation.UNCONFIGURE,
-								PendingOperation.CONFIGURE);
-					} else {
-						restartNeeded =
-							addPendingChange(
-								PendingOperation.CONFIGURE,
-								PendingOperation.UNCONFIGURE);
-					}
-					
-					SiteManager.getLocalSite().save();
-					UpdateManager.getOperationsManager().fireObjectChanged(adapter, "");
-					
-					if (restartNeeded)
-						UpdateUI.informRestartNeeded();
 
-				} catch (CoreException e) {
-					revert(isConfigured);
-					UpdateUI.logException(e);
-				}
-			}
+			boolean restartNeeded =
+				UpdateManager.getOperationsManager().toggleFeatureState(
+					site,
+					feature,
+					isConfigured,
+					adapter);
+
+			if (restartNeeded)
+				UpdateUI.informRestartNeeded();
 
 		} catch (CoreException e) {
 			UpdateUI.logException(e);
+			ErrorDialog.openError(
+				UpdateUI.getActiveWorkbenchShell(),
+				null,
+				null,
+				e.getStatus());
 		}
 
-	}
-
-	private void revert(boolean originallyConfigured) throws CoreException {
-		if (originallyConfigured) {
-			site.configure(feature);
-		} else {
-			site.unconfigure(feature);
-		}
-	}
-
-	private boolean addPendingChange(int newJobType, int obsoleteJobType) {
-		OperationsManager opmgr = UpdateManager.getOperationsManager();
-		PendingOperation job = opmgr.findPendingChange(feature);
-		if (job != null && obsoleteJobType == job.getJobType()) {
-			opmgr.removePendingChange(job);
-			return false;
-		} else {
-			opmgr.addPendingChange(UpdateManager.getOperationsManager().createPendingChange(feature, newJobType));
-			return true;
-		}
 	}
 
 }
