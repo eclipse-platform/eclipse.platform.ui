@@ -30,9 +30,10 @@ import org.eclipse.ui.internal.registry.AcceleratorSet;
 
 public final class KeyBindingManager {
 
-	private final static String KEY_SEQUENCE_SEPARATOR = ", ";
-	private final static String KEY_STROKE_SEPARATOR = " ";
-	private final static String LOCALE_SEPARATOR = "_";
+	private final static String KEY_SEQUENCE_SEPARATOR = ", "; //$NON-NLS-1$
+	private final static String KEY_STROKE_SEPARATOR = " "; //$NON-NLS-1$
+	private final static String LOCALE_SEPARATOR = "_"; //$NON-NLS-1$
+	private final static String OR_SEPARATOR = "||"; //$NON-NLS-1$
 
 	private static KeyBindingManager instance;
 
@@ -183,62 +184,8 @@ public final class KeyBindingManager {
 		return pathForPlatform(SWT.getPlatform());
 	}
 
-
-
-
-	private static int[][] getAccelerators(String key) {
-		List accelerators = new ArrayList(1);
-		StringTokenizer orTokenizer = new StringTokenizer(key,"||"); //$NON-NLS-1$
-		
-		while (orTokenizer.hasMoreTokens()) {
-			List acc = new ArrayList(2);
-			StringTokenizer spaceTokenizer = new StringTokenizer(orTokenizer.nextToken());
-			
-			while (spaceTokenizer.hasMoreTokens()) {
-				int accelerator = org.eclipse.jface.action.Action.convertAccelerator(spaceTokenizer.nextToken());
-				acc.add(new Integer(accelerator));
-			}
-			
-			int result[] = new int[acc.size()];
-			
-			for (int i = 0; i < result.length; i++) {
-				result[i] = ((Integer)acc.get(i)).intValue();
-			}
-			
-			accelerators.add(result);		
-		}
-		
-		int result[][] = new int[accelerators.size()][];
-		accelerators.toArray(result);
-		return result;
-	}
-	
-
-
-	
-	private SortedMap configurationMap;
-	private SortedMap scopeMap;
-
-	private List bindings = new ArrayList();
-	private SortedMap tree = new TreeMap();
-	
-	private Path configuration = Path.create();
-	private Path locale = systemLocale();
-	private Path platform = systemPlatform();
-	private Path[] scopes = new Path[] { Path.create() };
-
-	private KeySequence mode = KeySequence.create();
-	private SortedMap actionKeySequenceSetMap;
-	private SortedMap keySequenceActionMap;
-	private SortedMap actionKeySequenceSetMapForMode;
-	private SortedMap keySequenceActionMapForMode;
-	private SortedSet keyStrokeSetForMode;
-
-	private KeyBindingManager() {
-		super();
-		configurationMap = Collections.unmodifiableSortedMap(buildConfigurationMap());
-		scopeMap = Collections.unmodifiableSortedMap(buildScopeMap());
-
+	private static SortedMap buildTree(Map configurationMap, Map scopeMap) {
+		SortedMap tree = new TreeMap();
 		AcceleratorRegistry acceleratorRegistry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();	
 		List acceleratorSets = acceleratorRegistry.getAcceleratorSets();
 		Iterator iterator = acceleratorSets.iterator();
@@ -274,9 +221,9 @@ public final class KeyBindingManager {
 					// this means explicit null action. should these be stripped?
 					continue;
 				
-				int[][] keySequences = getAccelerators(accelerator.getKey());
+				List keySequences = getKeySequences(accelerator.getKey());
 				
-				if (keySequences == null)
+				if (keySequences == null || keySequences.size() <= 0)
 					// this means explicit null key sequences. should these be stripped?
 					continue;
 				
@@ -292,25 +239,69 @@ public final class KeyBindingManager {
 
 				State state = State.create(configuration, locale, platform, scope);				
 				Action action = Action.create(id); 
-				Contributor contributor = Contributor.create(pluginId);
+				Contributor contributor = Contributor.create(pluginId);					
+				Iterator iterator3 = keySequences.iterator();
 											
-				for (int j = 0; j < keySequences.length; j++) {
-					int[] keyStrokes = keySequences[j];						
-					List strokes = new ArrayList();
-					
-					for (int k = 0; k < keyStrokes.length; k++) {
-						strokes.add(KeyStroke.create(keyStrokes[k]));	
-					}
-					
-					KeySequence sequence = KeySequence.create(strokes);
-					Node.addToTree(tree, KeyBinding.create(sequence, state, 
-						contributor, action));
-				}												
+				while (iterator3.hasNext())
+					Node.addToTree(tree, KeyBinding.create((KeySequence) iterator3.next(), state, contributor, action));
 			}			
-		}					
+		}
 		
-		// TBD: add all custom bindings here..
-		// don't forget to add them: Node.addToTree(tree, binding);
+		return tree;
+	}			
+
+	private static List getKeySequences(String keys) {
+		List keySequences = null;
+		
+		if (keys != null) {
+			keySequences = new ArrayList();
+			StringTokenizer orTokenizer = new StringTokenizer(keys, OR_SEPARATOR); 
+			
+			while (orTokenizer.hasMoreTokens()) {
+				List keyStrokes = new ArrayList();
+				StringTokenizer spaceTokenizer = new StringTokenizer(orTokenizer.nextToken());
+				
+				while (spaceTokenizer.hasMoreTokens()) {
+					int accelerator = org.eclipse.jface.action.Action.convertAccelerator(spaceTokenizer.nextToken());
+					
+					if (accelerator != 0)
+						keyStrokes.add(KeyStroke.create(accelerator));
+				}
+				
+				if (keyStrokes.size() >= 1)
+					keySequences.add(KeySequence.create(keyStrokes));		
+			}
+		}
+
+		return keySequences;
+	}
+
+	private SortedMap configurationMap;
+	private SortedMap scopeMap;
+	private SortedMap tree = new TreeMap();
+	
+	private Path configuration = Path.create();
+	private Path locale = systemLocale();
+	private Path platform = systemPlatform();
+	private Path[] scopes = new Path[] { Path.create() };
+
+	private KeySequence mode = KeySequence.create();
+	private SortedMap actionKeySequenceSetMap;
+	private SortedMap keySequenceActionMap;
+	private SortedMap actionKeySequenceSetMapForMode;
+	private SortedMap keySequenceActionMapForMode;
+	private SortedSet keyStrokeSetForMode;
+
+	private KeyBindingManager() {
+		super();
+		configurationMap = Collections.unmodifiableSortedMap(buildConfigurationMap());
+		scopeMap = Collections.unmodifiableSortedMap(buildScopeMap());
+		tree = buildTree(configurationMap, scopeMap);
+		
+		/*
+		TBD: add all custom bindings here..
+		don't forget to add them: Node.addToTree(tree, binding);
+		*/
 				
 		/*
 		try {
