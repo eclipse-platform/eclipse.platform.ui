@@ -198,6 +198,7 @@ public final class Workbench implements IWorkbench {
 		this.advisor = advisor;
 		this.display = display;
 		Workbench.instance = this;
+		keyboard = new WorkbenchKeyboard(this);
 	}
 
 	/**
@@ -297,7 +298,7 @@ public final class Workbench implements IWorkbench {
 	// TODO reduce visibility
 	public WorkbenchActivitiesCommandsAndRoles workbenchActivitiesCommandsAndRoles =
 		new WorkbenchActivitiesCommandsAndRoles(this);
-	private final WorkbenchKeyboard keyboard = new WorkbenchKeyboard(this);
+	private final WorkbenchKeyboard keyboard;
 	private WorkbenchActivityHelper activityHelper;
 
 	public IActivityManager getActivityManager() {
