@@ -118,7 +118,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 
 		});
 		
-		menuMgr.add(new Action("&Toggle Floating Window"){
+		menuMgr.add(new Action(ProgressMessages.getString("ProgressView.ToggleWindowMessage")){ //$NON-NLS-1$
 			/* (non-Javadoc)
 			 * @see org.eclipse.jface.action.Action#run()
 			 */
