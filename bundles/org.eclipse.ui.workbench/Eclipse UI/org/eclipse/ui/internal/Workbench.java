@@ -85,7 +85,6 @@ import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 import org.eclipse.ui.internal.commands.ws.CommandCallback;
 import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
-import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.misc.Assert;
