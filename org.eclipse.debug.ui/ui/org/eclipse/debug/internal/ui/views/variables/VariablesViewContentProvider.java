@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -31,12 +30,6 @@ import org.eclipse.jface.viewers.Viewer;
  * Provide the contents for a variables viewer.
  */
 public class VariablesViewContentProvider implements ITreeContentProvider {
-	
-	/**
-	 * The variables content provider used if one is not specified for 
-	 * a particular debug model.
-	 */
-	private IVariablesContentProvider fDefaultContentProvider;
 
 	/**
 	 * A table that maps children to their parent element
@@ -51,11 +44,6 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	 * Handler for exceptions as content is retrieved
 	 */
 	private IDebugExceptionHandler fExceptionHandler = null;
-	
-	/**
-	 * A mapping of debug model ids to 
-	 */
-	private Map fContentProviderMap;
 	
 	/**
 	 * Constructs a new provider
