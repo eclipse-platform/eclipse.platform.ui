@@ -151,7 +151,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 			}
 			// clean-up
 			fMonitor.stopMonitoring();
-			IStatus status = new Status(IStatus.ERROR, IDebugConstants.PLUGIN_ID, IDebugStatusConstants.TARGET_REQUEST_FAILED, TERMINATE_FAILED, null);		
+			IStatus status = new Status(IStatus.ERROR, IDebugConstants.PLUGIN_ID, IDebugStatusConstants.TARGET_REQUEST_FAILED, DebugCoreUtils.getResourceString(TERMINATE_FAILED), null);		
 			throw new DebugException(status);
 		}
 	}
