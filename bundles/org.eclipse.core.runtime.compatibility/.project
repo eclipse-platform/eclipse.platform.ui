@@ -6,6 +6,7 @@
 		<project>_org.eclipse.core.runtime</project>
 		<project>org.eclipse.core.runtime</project>
 		<project>org.eclipse.osgi</project>
+		<project>org.eclipse.osgi.services</project>
 		<project>org.eclipse.osgi.util</project>
 		<project>org.eclipse.update.configurator</project>
 	</projects>
