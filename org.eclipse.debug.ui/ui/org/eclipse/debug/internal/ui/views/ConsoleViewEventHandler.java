@@ -9,7 +9,6 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.AbstractDebugView;
-import org.eclipse.jface.viewers.Viewer;
 
 /**
  * Updates actions as the input to the view changes

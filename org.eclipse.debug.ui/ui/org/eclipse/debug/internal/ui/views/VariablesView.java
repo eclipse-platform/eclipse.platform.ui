@@ -748,10 +748,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	
 	protected boolean isDetailPaneVisible() {
 		IAction action = getAction("ShowDetailPane"); //$NON-NLS-1$
-		if (action != null) {
-			return action.isChecked();
-		}
-		return false;
+		return action != null && action.isChecked();
 	}
 	
 	/**

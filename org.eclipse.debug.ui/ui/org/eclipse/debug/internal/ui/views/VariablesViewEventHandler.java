@@ -6,10 +6,8 @@ package org.eclipse.debug.internal.ui.views;
  */
 
 import org.eclipse.debug.core.DebugEvent;
-import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.AbstractDebugView;
-import org.eclipse.jface.viewers.Viewer;
 
 /**
  * Updates the variables view
@@ -62,6 +60,5 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 	protected VariablesView getVariablesView() {
 		return (VariablesView)getView();
 	}
-	
 }
 
