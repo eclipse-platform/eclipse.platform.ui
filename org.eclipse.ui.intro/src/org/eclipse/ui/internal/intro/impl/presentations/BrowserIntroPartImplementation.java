@@ -41,6 +41,7 @@ import org.eclipse.ui.intro.config.IIntroContentProvider;
 import org.eclipse.ui.intro.config.IIntroContentProviderSite;
 import org.eclipse.ui.intro.config.IIntroXHTMLContentProvider;
 import org.w3c.dom.Document;
+import org.w3c.dom.DocumentType;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -56,7 +57,7 @@ public class BrowserIntroPartImplementation extends
     // the HTML generator used to generate dynamic content
     private IntroHTMLGenerator htmlGenerator = null;
 
-    //  cache model instance for reuse.
+    // cache model instance for reuse.
     private IntroModelRoot model = getModel();
 
     private BrowserIntroPartLocationListener urlListener = new BrowserIntroPartLocationListener(
@@ -239,11 +240,16 @@ public class BrowserIntroPartImplementation extends
     private Document resolveDynamicContent(AbstractIntroPage page,
             IIntroContentProviderSite site) {
         Document dom = page.getResolvedDocument();
+        DocumentType docType = dom.getDoctype();
+
         // work with cloned DOM and then discard.
         Document clonedDom = (Document) dom.cloneNode(true);
+       // clonedDom.importNode(docType);
+
         // get all content provider elements in DOM.
         NodeList contentProviders = clonedDom.getElementsByTagNameNS("*", //$NON-NLS-1$
             IntroContentProvider.TAG_CONTENT_PROVIDER);
+
         // get the array version of the nodelist to work around DOM api design.
         Node[] nodes = ModelUtil.getArray(contentProviders);
         for (int i = 0; i < nodes.length; i++) {
@@ -571,5 +577,10 @@ public class BrowserIntroPartImplementation extends
         else
             browser.setUrl(homePage.getUrl());
 
+    }
+
+
+    public Browser getBrowser() {
+        return browser;
     }
 }

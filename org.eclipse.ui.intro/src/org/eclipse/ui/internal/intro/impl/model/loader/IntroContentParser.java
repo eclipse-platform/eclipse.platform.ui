@@ -37,7 +37,7 @@ import org.xml.sax.SAXParseException;
 
 
 /**
- *  
+ * 
  */
 public class IntroContentParser {
 
@@ -58,23 +58,23 @@ public class IntroContentParser {
             dtdBaseLocation = ""; //$NON-NLS-1$
         String dtdLocation = dtdBaseLocation
                 + "/xhtml1-20020801/DTD/xhtml1-transitional.dtd"; //$NON-NLS-1$
-        //  String dtdLocation = BundleUtil.getResolvedBundleLocation(
-        //        "xhtml1-20020801/DTD/xhtml1-transitional.dtd",
-        //      IIntroConstants.PLUGIN_ID);
+        // String dtdLocation = BundleUtil.getResolvedBundleLocation(
+        // "xhtml1-20020801/DTD/xhtml1-transitional.dtd",
+        // IIntroConstants.PLUGIN_ID);
         dtdMap.put(XHTML1_TRANSITIONAL, dtdLocation);
 
         dtdLocation = dtdBaseLocation
                 + "/xhtml1-20020801/DTD/xhtml1-strict.dtd"; //$NON-NLS-1$
-        //    dtdLocation = BundleUtil.getResolvedBundleLocation(
-        //          "xhtml1-20020801/DTD/xhtml1-strict.dtd",
-        //          IIntroConstants.PLUGIN_ID);
+        // dtdLocation = BundleUtil.getResolvedBundleLocation(
+        // "xhtml1-20020801/DTD/xhtml1-strict.dtd",
+        // IIntroConstants.PLUGIN_ID);
         dtdMap.put(XHTML1_STRICT, dtdLocation);
 
         dtdLocation = dtdBaseLocation
                 + "/xhtml1-20020801/DTD/xhtml1-frameset.dtd"; //$NON-NLS-1$
-        //  dtdLocation = BundleUtil.getResolvedBundleLocation(
-        //           "xhtml1-20020801/DTD/xhtml1-frameset.dtd",
-        //          IIntroConstants.PLUGIN_ID);
+        // dtdLocation = BundleUtil.getResolvedBundleLocation(
+        // "xhtml1-20020801/DTD/xhtml1-frameset.dtd",
+        // IIntroConstants.PLUGIN_ID);
         dtdMap.put(XHTML1_FRAMESET, dtdLocation);
     }
 
@@ -96,15 +96,13 @@ public class IntroContentParser {
                 if (rootElement.getTagName().equals(TAG_INTRO_CONTENT)) {
                     // intro xml file.
                     hasXHTMLContent = false;
-                }
-                // rely on root element to detect if we have an XHTML file and
-                // not on doctype. We need to support xhtml files with no
-                // doctype.
-                else if (rootElement.getTagName().equals(TAG_HTML)) {
-                    // an XHTML content file.
+                } else if (rootElement.getTagName().equals(TAG_HTML)) {
+                    // rely on root element to detect if we have an XHTML file
+                    // and not on doctype. We need to support xhtml files with
+                    // no doctype.
                     hasXHTMLContent = true;
                 } else
-                    // not XML nor XHTML.
+                    // not intro XML nor XHTML.
                     document = null;
 
             }
@@ -118,8 +116,9 @@ public class IntroContentParser {
         Document document = null;
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory
-                    .newInstance();
+                .newInstance();
             docFactory.setValidating(false);
+            // if this is not set, Document.getElementsByTagNameNS() will fail.
             docFactory.setNamespaceAware(true);
             docFactory.setExpandEntityReferences(false);
             DocumentBuilder parser = docFactory.newDocumentBuilder();
@@ -127,16 +126,21 @@ public class IntroContentParser {
             parser.setEntityResolver(new EntityResolver() {
                 public InputSource resolveEntity(String publicId,
                         String systemId) throws SAXException, IOException {
+
                     if (systemId.equals(XHTML1_TRANSITIONAL)
                             || systemId.equals(XHTML1_STRICT)
-                            || systemId.equals(XHTML1_FRAMESET))
+                            || systemId.equals(XHTML1_FRAMESET)) {
+                        // InputStream in = new StringBufferInputStream(
+                        // "<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+                        // return new InputSource(in);
                         return new InputSource((String) dtdMap.get(systemId));
-
-                    else
+                    } else
                         return null;
+
                 }
             });
             document = parser.parse(fileURI);
+            DocumentType docType = document.getDoctype();
             return document;
 
         } catch (SAXParseException spe) {
@@ -205,11 +209,11 @@ public class IntroContentParser {
                 transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, value);
                 transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
                 transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
-                        "yes"); //$NON-NLS-1$
-                //transformer.setOutputProperty(OutputKeys.MEDIA_TYPE,
-                //        "text/html");
-                //transformer
-                //       .setOutputProperty(OutputKeys.ENCODING, "iso-8859-1");
+                    "yes"); //$NON-NLS-1$
+                // transformer.setOutputProperty(OutputKeys.MEDIA_TYPE,
+                // "text/html");
+                // transformer
+                // .setOutputProperty(OutputKeys.ENCODING, "iso-8859-1");
             }
             transformer.transform(source, result);
             return stringBuffer.toString();

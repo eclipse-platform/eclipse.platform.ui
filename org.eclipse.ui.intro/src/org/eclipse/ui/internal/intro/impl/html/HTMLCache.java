@@ -12,6 +12,8 @@ package org.eclipse.ui.internal.intro.impl.html;
 
 import java.util.Hashtable;
 
+import org.eclipse.ui.internal.intro.impl.util.Log;
+
 
 /**
  * Cache for all HTML pages displayed so far. The design is that every HTML page
@@ -61,7 +63,9 @@ public class HTMLCache {
         return cache.containsKey(pageId);
     }
 
+    public void clear() {
+        cache.clear();
+        Log.info("Cleared Intro model HTML cache."); //$NON-NLS-1$
+    }
+
 }
-
-
-

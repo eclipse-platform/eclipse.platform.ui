@@ -46,6 +46,10 @@ import org.eclipse.ui.intro.IIntroPart;
  * <li>HTMLHeadContent in this model class is the HEAD element under the picked
  * implementation element, only if the implementation element is a Browser
  * implmenetation.</li>
+ * <li>The UI model class, AbstractIntroPartImplementation, that represents the
+ * IntroPart implementation is cached here for quick access. It is used by intro
+ * url actions for manipulation of UI. INTRO:This really should be in a UI model
+ * class.
  * <ul>
  */
 public class IntroPartPresentation extends AbstractIntroElement {
@@ -88,7 +92,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
     private IMemento memento;
 
     /**
-     *  
+     * 
      */
     IntroPartPresentation(IConfigurationElement element) {
         super(element);
@@ -129,6 +133,10 @@ public class IntroPartPresentation extends AbstractIntroElement {
      */
     public String getImplementationKind() {
         return implementationKind;
+    }
+
+    public AbstractIntroPartImplementation getIntroParttImplementation() {
+        return implementation;
     }
 
 
@@ -321,7 +329,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
     /**
      * Util method that searches for the given value in a comma separated list
      * of values. The list is retrieved as an attribute value of OS, WS.
-     *  
+     * 
      */
     private boolean listValueHasValue(String stringValue, String value) {
         String[] attributeValues = stringValue.split(","); //$NON-NLS-1$
@@ -364,7 +372,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
      * Creates the actual implementation class. Returns null on failure. NOTE:
      * this method if not actually used now, but will be when we need to expose
      * class attribute on implmentation.
-     *  
+     * 
      */
     private AbstractIntroPartImplementation createIntroPartImplementation(
             IConfigurationElement configElement) {
@@ -383,7 +391,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
 
     /**
      * Creates the actual implementation class. Returns null on failure.
-     *  
+     * 
      */
     private AbstractIntroPartImplementation createIntroPartImplementation(
             String implementationType) {
@@ -520,6 +528,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
     public IntroHead getHead() {
         return head;
     }
+
 
 
 

@@ -44,12 +44,10 @@ public class BundleUtil {
                 Log.error("Intro tried accessing a NULL bundle.", null); //$NON-NLS-1$
             else {
                 String msg = StringUtil
-                        .concat(
-                                "Intro tried accessing Bundle: ", getBundleHeader( //$NON-NLS-1$
-                                        bundle, Constants.BUNDLE_NAME),
-                                " vendor: ", //$NON-NLS-1$
-                                getBundleHeader(bundle, Constants.BUNDLE_VENDOR),
-                                " bundle state: ", String.valueOf(bundle.getState())).toString(); //$NON-NLS-1$
+                    .concat("Intro tried accessing Bundle: ", getBundleHeader( //$NON-NLS-1$
+                        bundle, Constants.BUNDLE_NAME), " vendor: ", //$NON-NLS-1$
+                        getBundleHeader(bundle, Constants.BUNDLE_VENDOR),
+                        " bundle state: ", String.valueOf(bundle.getState())).toString(); //$NON-NLS-1$
                 Log.error(msg, null);
             }
             return false;
@@ -71,8 +69,8 @@ public class BundleUtil {
 
     /**
      * Returns the fully qualified location of the passed resource string from
-     * the declaring plugin. If the file could not be loaded from the plugin,
-     * the resource is returned as is.
+     * the declaring plugin. If the plugin is not defined, or file could not be
+     * loaded from the plugin, the resource is returned as is.
      * 
      * @param resource
      * @return
@@ -86,8 +84,11 @@ public class BundleUtil {
     public static String getResolvedBundleLocation(String resource,
             Bundle bundle) {
         // quick exits.
-        if (resource == null || !bundleHasValidState(bundle))
+        if (resource == null)
             return null;
+
+        if (bundle == null || !bundleHasValidState(bundle))
+            return resource;
 
         URL localLocation = null;
         try {
@@ -98,8 +99,8 @@ public class BundleUtil {
                 // be found relative to the plugin. log fact, return resource,
                 // as is.
                 String msg = StringUtil.concat("Could not find resource: ", //$NON-NLS-1$
-                        resource, " in ", getBundleHeader( //$NON-NLS-1$
-                                bundle, Constants.BUNDLE_NAME)).toString();
+                    resource, " in ", getBundleHeader( //$NON-NLS-1$
+                        bundle, Constants.BUNDLE_NAME)).toString();
                 Log.warning(msg);
                 return resource;
             }
@@ -107,8 +108,8 @@ public class BundleUtil {
             return localLocation.toExternalForm();
         } catch (Exception e) {
             String msg = StringUtil.concat("Failed to load resource: ", //$NON-NLS-1$
-                    resource, " from ", getBundleHeader(bundle, //$NON-NLS-1$
-                            Constants.BUNDLE_NAME)).toString();
+                resource, " from ", getBundleHeader(bundle, //$NON-NLS-1$
+                    Constants.BUNDLE_NAME)).toString();
             Log.error(msg, e);
             return resource;
         }

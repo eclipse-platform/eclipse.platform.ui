@@ -221,7 +221,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
 
     /**
      * Util method to add given styles to the list.
-     *  
+     * 
      */
     protected void addStyles(String[] styles) {
         for (int i = 0; i < styles.length; i++)
@@ -347,13 +347,14 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         String presentationStyle = model.getPresentation()
             .getImplementationKind();
         if (parser.hasXHTMLContent()) {
-            if (presentationStyle
-                .equals(IntroPartPresentation.BROWSER_IMPL_KIND))
-                loadXHTMLContent(dom);
-            else {
-                init(element, getBundle());
-                super.loadChildren();
-            }
+            // INTRO: commenting out degradation to UI forms for now.
+            // Presentatoin kind flag is not yet defined at this stage.
+            // if (presentationStyle
+            // .equals(IntroPartPresentation.BROWSER_IMPL_KIND))
+            loadXHTMLContent(dom);
+            // else {
+            // init(element, getBundle());
+            // super.loadChildren();}
         } else
             // load the first page with correct id, from content xml file.
             loadXMLContent(dom);
@@ -658,6 +659,3 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     }
 
 }
-
-
-

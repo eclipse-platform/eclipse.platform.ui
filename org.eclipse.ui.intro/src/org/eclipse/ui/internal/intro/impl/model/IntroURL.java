@@ -20,6 +20,7 @@ import java.util.Properties;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.Geometry;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
@@ -34,6 +35,7 @@ import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
 import org.eclipse.ui.internal.intro.impl.model.loader.ModelLoaderUtil;
 import org.eclipse.ui.internal.intro.impl.parts.StandbyPart;
+import org.eclipse.ui.internal.intro.impl.presentations.BrowserIntroPartImplementation;
 import org.eclipse.ui.internal.intro.impl.presentations.IntroLaunchBar;
 import org.eclipse.ui.internal.intro.impl.util.DialogUtil;
 import org.eclipse.ui.internal.intro.impl.util.Log;
@@ -68,9 +70,9 @@ public class IntroURL implements IIntroURL {
     public static final String SHOW_HELP_TOPIC = "showHelpTopic"; //$NON-NLS-1$
     public static final String SHOW_HELP = "showHelp"; //$NON-NLS-1$
     public static final String OPEN_BROWSER = "openBrowser"; //$NON-NLS-1$
+    public static final String OPEN_URL = "openURL"; //$NON-NLS-1$
     public static final String RUN_ACTION = "runAction"; //$NON-NLS-1$
     public static final String SHOW_PAGE = "showPage"; //$NON-NLS-1$
-    // public static final String SHOW_URL = "showURL"; //$NON-NLS-1$
     public static final String SHOW_MESSAGE = "showMessage"; //$NON-NLS-1$
     public static final String NAVIGATE = "navigate"; //$NON-NLS-1$
     public static final String SWITCH_TO_LAUNCH_BAR = "switchToLaunchBar"; //$NON-NLS-1$
@@ -87,12 +89,14 @@ public class IntroURL implements IIntroURL {
     public static final String KEY_MESSAGE = "message"; //$NON-NLS-1$
     public static final String KEY_URL = "url"; //$NON-NLS-1$
     public static final String KEY_DIRECTION = "direction"; //$NON-NLS-1$
-    public static final String KEY_EMBED = "embed"; //$NON-NLS-1$
 
 
     public static final String VALUE_BACKWARD = "backward"; //$NON-NLS-1$
     public static final String VALUE_FORWARD = "forward"; //$NON-NLS-1$
     public static final String VALUE_HOME = "home"; //$NON-NLS-1$
+    public static final String VALUE_TRUE = "true"; //$NON-NLS-1$
+    public static final String VALUE_FALSE = "false"; //$NON-NLS-1$
+
 
     private String action = null;
     private Properties parameters = null;
@@ -146,16 +150,16 @@ public class IntroURL implements IIntroURL {
         else if (action.equals(SHOW_HELP_TOPIC))
             // display a Help System Topic. It can be displayed in the Help
             // system window, or embedded as an intro page.
-            return showHelpTopic(getParameter(KEY_ID), getParameter(KEY_EMBED));
+            return showHelpTopic(getParameter(KEY_ID));
 
         else if (action.equals(OPEN_BROWSER))
             // display url in external browser
             return openBrowser(getParameter(KEY_URL),
                 getParameter(KEY_PLUGIN_ID));
 
-        // if (action.equals(SHOW_URL))
-        // display url in external browser
-        // return showURL(getParameter(KEY_ID), getParameter(KEY_PLUGIN_ID));
+        if (action.equals(OPEN_URL))
+            // display url embedded in intro browser.
+            return openURL(getParameter(KEY_URL), getParameter(KEY_PLUGIN_ID));
 
         else if (action.equals(RUN_ACTION))
             // run an Intro action. Get the pluginId and the class keys. Pass
@@ -200,7 +204,7 @@ public class IntroURL implements IIntroURL {
             introPart = (CustomizableIntroPart) IntroPlugin.showIntro(true);
         // store the flag to indicate that standbypart is needed.
         introPart.getControl().setData(IIntroConstants.SHOW_STANDBY_PART,
-            "true"); //$NON-NLS-1$
+            VALUE_TRUE); //$NON-NLS-1$
         IntroPlugin.setIntroStandby(true);
         StandbyPart standbyPart = (StandbyPart) introPart
             .getAdapter(StandbyPart.class);
@@ -224,7 +228,7 @@ public class IntroURL implements IIntroURL {
     private boolean setStandbyState(String state) {
         if (state == null)
             return false;
-        boolean standby = state.equals("true") ? true : false; //$NON-NLS-1$
+        boolean standby = state.equals(VALUE_TRUE) ? true : false; //$NON-NLS-1$
         IIntroPart introPart = IntroPlugin.showIntro(standby);
         if (introPart == null)
             return false;
@@ -280,11 +284,13 @@ public class IntroURL implements IIntroURL {
     /**
      * Open a help topic.
      */
-    private boolean showHelpTopic(String href, String embed) {
-        // WorkbenchHelp takes care of error handling.
+    private boolean showHelpTopic(String href) {
+        // show href in Help window. WorkbenchHelp takes care of error
+        // handling.
         PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(href);
         return true;
     }
+
 
     /**
      * Open the help system.
@@ -307,18 +313,31 @@ public class IntroURL implements IIntroURL {
 
 
     /**
-     * Launch external browser
+     * Show a URL in an intro page. This is the embedded version of the intro
+     * action openBrowser(). It is useful when trying to show an html file
+     * relative to another plugin. When the presentation is UI forms
+     * presentation, this call behaves exactly as the openBrowser intro action.
      */
-    /*
-     * private boolean showURL(String href, String pluginId) { // Resolve the
-     * url just in case we are trying to load a plugin relative // file. // href =
-     * ModelUtil.resolveURL(href, pluginId); InputStream stream =
-     * HelpSystem.getHelpContent(href); InputStreamReader isr = new
-     * InputStreamReader(stream); BufferedReader br = new BufferedReader(isr);
-     * StringBuffer buffer = new StringBuffer(); String line = null; try { while
-     * ((line = br.readLine()) != null) buffer.append(line); String test =
-     * buffer.toString(); } catch (Exception e) { return false; } return true; }
-     */
+
+    private boolean openURL(String url, String pluginId) {
+        IntroModelRoot model = IntroPlugin.getDefault().getIntroModelRoot();
+        String presentationStyle = model.getPresentation()
+            .getImplementationKind();
+
+        if (presentationStyle.equals(IntroPartPresentation.BROWSER_IMPL_KIND)) {
+            // HTML presentation
+            url = ModelUtil.resolveURL(url, pluginId);
+            BrowserIntroPartImplementation impl = (BrowserIntroPartImplementation) IntroPlugin
+                .getDefault().getIntroModelRoot().getPresentation()
+                .getIntroParttImplementation();
+            Browser browser = impl.getBrowser();
+            return browser.setUrl(url);
+        } else {
+            // SWT presentation.
+            return openBrowser(url, pluginId);
+        }
+    }
+
 
     private boolean showMessage(String message) {
         if (message == null)
@@ -339,7 +358,7 @@ public class IntroURL implements IIntroURL {
     /**
      * Display an Intro Page.
      * <p>
-     * REVISIT: revisit picking first page.
+     * INTRO: revisit picking first page.
      */
     private boolean showPage(String pageId, String standbyState) {
         // set the current page id in the model. This will triger appropriate
