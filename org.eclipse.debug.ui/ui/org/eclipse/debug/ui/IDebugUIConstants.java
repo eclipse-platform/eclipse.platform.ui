@@ -151,6 +151,7 @@ public interface IDebugUIConstants {
 	 * launching a program.
 	 */
 	public static final String PREF_AUTO_BUILD_BEFORE_LAUNCH= PLUGIN_ID + ".auto_build_before_launch"; //$NON-NLS-1$
+	public static final String PREF_AUTO_REMOVE_OLD_LAUNCHES= PLUGIN_ID + ".auto_remove_old_launches";
 		
 	// Debug views
 	

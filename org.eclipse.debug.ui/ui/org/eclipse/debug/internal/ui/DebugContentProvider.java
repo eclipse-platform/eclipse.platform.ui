@@ -19,6 +19,7 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -346,12 +347,22 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 	/**
 	 * @see ILaunchListener
 	 */
-	public void launchRegistered(final ILaunch launch) {
+	public void launchRegistered(final ILaunch newLaunch) {
 		Runnable r= new Runnable() {
 			public void run() {
-				if (!isDisposed() && launch.getLaunchMode().equals(ILaunchManager.DEBUG_MODE)) {
-					insert(launch);
-					((LaunchesViewer)fViewer).autoExpand(launch, false, true);
+				if (!isDisposed() && newLaunch.getLaunchMode().equals(ILaunchManager.DEBUG_MODE)) {			
+					if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES)) {
+						ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
+						Object[] launches= lManager.getLaunches();
+						for (int i= 0; i < launches.length; i++) {
+							ILaunch launch= (ILaunch)launches[i];
+							if (launch != newLaunch && launch.isTerminated()) {
+								lManager.deregisterLaunch(launch);
+							}
+						}
+					}
+					insert(newLaunch);
+					((LaunchesViewer)fViewer).autoExpand(newLaunch, false, true);
 				}
 			}
 		};
