@@ -872,8 +872,11 @@ public class OperationValidator implements IOperationValidator {
 		
 		// check for <includes> cycle
 		if (candidates.contains(feature)) {
-			IStatus status =
-			createStatus(feature, UpdateUtils.getString(KEY_CYCLE));
+			String msg = UpdateUtils.getFormattedMessage(
+					KEY_CYCLE, 
+					new String[] {feature.getLabel(), 
+							feature.getVersionedIdentifier().toString()});
+			IStatus status = createStatus(feature, msg);
 			throw new CoreException(status);
 		}
 
