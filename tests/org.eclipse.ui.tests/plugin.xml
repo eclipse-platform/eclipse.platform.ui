@@ -2120,4 +2120,55 @@
       </description>
     </transfer>
    </extension>
+   <extension
+         point="org.eclipse.ui.activities">
+      <category
+            id="org.eclipse.ui.tests.util.1"
+            name="Util Category 1"/>
+      <category
+            id="org.eclipse.ui.tests.util.2"
+            name="Util Category 2"/>
+      <category
+            id="org.eclipse.ui.tests.util.3"
+            name="Util Category 3"/>
+      <category
+            id="org.eclipse.ui.tests.util.4"
+            name="Util Category 4"/>
+      <category
+            id="org.eclipse.ui.tests.util.5"
+            name="Util Category 5"/>
+      <activity
+            id="org.eclipse.ui.tests.util.1"
+            name="Util Activity 1"/>
+      <activity
+            id="org.eclipse.ui.tests.util.2"
+            name="Util Activity 2"/>
+      <activity
+            id="org.eclipse.ui.tests.util.4"
+            name="Util Activity 4"/>
+      <activity
+            id="org.eclipse.ui.tests.util.5"
+            name="Util Activity 5"/>
+      <activityRequirementBinding
+            activityId="org.eclipse.ui.tests.util.2"
+            requiredActivityId="org.eclipse.ui.tests.util.1"/>
+      <categoryActivityBinding
+            activityId="org.eclipse.ui.tests.util.1"
+            categoryId="org.eclipse.ui.tests.util.1"/>
+      <categoryActivityBinding
+            activityId="org.eclipse.ui.tests.util.2"
+            categoryId="org.eclipse.ui.tests.util.2"/>
+      <categoryActivityBinding
+            activityId="org.eclipse.ui.tests.util.1"
+            categoryId="org.eclipse.ui.tests.util.3"/>
+      <categoryActivityBinding
+            activityId="org.eclipse.ui.tests.util.4"
+            categoryId="org.eclipse.ui.tests.util.4"/>
+      <categoryActivityBinding
+            activityId="org.eclipse.ui.tests.util.4"
+            categoryId="org.eclipse.ui.tests.util.5"/>
+      <categoryActivityBinding
+            activityId="org.eclipse.ui.tests.util.5"
+            categoryId="org.eclipse.ui.tests.util.5"/>
+   </extension>
 </plugin>            

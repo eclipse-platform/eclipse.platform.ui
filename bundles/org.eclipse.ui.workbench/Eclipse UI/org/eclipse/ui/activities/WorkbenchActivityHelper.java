@@ -11,7 +11,9 @@
 package org.eclipse.ui.activities;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.ui.IPluginContribution;
@@ -176,6 +178,156 @@ public final class WorkbenchActivityHelper {
                 .getActivityManager().getDefinedActivityIds().isEmpty();
     }
 
+	/**
+	 * Return a list of category ids that will become implicity enabled if the
+	 * given category becomes enabled  Note that the set returned by this set 
+	 * represents the delta of categories that would be enabled - if the category 
+	 * is already enabled then it is omitted.
+	 * 
+	 * @param categoryId
+	 *            the category to be enabled
+	 * @return a list of category ids that will become implicity enabled if the
+	 *         given category becomes enabled
+	 * @since 3.1
+	 */
+	public static Set getEnabledCategories(String categoryId) {
+		IActivityManager manager = PlatformUI.getWorkbench()
+				.getActivitySupport().getActivityManager();
+		ICategory category = manager.getCategory(categoryId);
+		if (!category.isDefined())
+			return Collections.EMPTY_SET;
+
+		Set activities = expandActivityDependencies(getActivityIdsForCategory(category));
+		Set otherEnabledCategories = new HashSet();
+		Set definedCategoryIds = manager.getDefinedCategoryIds();
+		for (Iterator i = definedCategoryIds.iterator(); i.hasNext();) {
+			String otherCategoryId = (String) i.next();
+			if (otherCategoryId.equals(categoryId))
+				continue;
+			ICategory otherCategory = manager.getCategory(otherCategoryId);
+			Set otherCategoryActivityIds = expandActivityDependencies(getActivityIdsForCategory(otherCategory));
+			if (manager.getEnabledActivityIds().containsAll(
+					otherCategoryActivityIds))
+				continue;
+			if (activities.containsAll(otherCategoryActivityIds))
+				otherEnabledCategories.add(otherCategoryId);
+
+		}
+		return otherEnabledCategories;
+	}
+	
+	/**
+	 * Return the expanded activities for the given activity set. This will
+	 * resolve all activity requirement bindings.
+	 * 
+	 * @param baseActivities
+	 *            the set of activities to expand
+	 * @return the expanded activities
+	 * @since 3.1
+	 */
+	private static Set expandActivityDependencies(Set baseActivities) {
+		Set extendedActivities = new HashSet();
+		for (Iterator i = baseActivities.iterator(); i.hasNext();) {
+			String activityId = (String) i.next();
+			Set requiredActivities = getRequiredActivityIds(activityId);
+			extendedActivities.addAll(requiredActivities);
+		}
+		extendedActivities.addAll(baseActivities);
+		return extendedActivities;
+	}
+
+	/**
+	 * Return the activities required for this activity.
+	 * 
+	 * @param activityId
+	 *            the activity id
+	 * @return the activities required for this activity
+	 * @since 3.1
+	 */
+	public static Set getRequiredActivityIds(String activityId) {
+		IActivityManager manager = PlatformUI.getWorkbench()
+				.getActivitySupport().getActivityManager();
+		IActivity activity = manager.getActivity(activityId);
+		if (!activity.isDefined())
+			return Collections.EMPTY_SET;
+		Set requirementBindings = activity.getActivityRequirementBindings();
+		if (requirementBindings.isEmpty())
+			return Collections.EMPTY_SET;
+
+		Set requiredActivities = new HashSet(3);
+		for (Iterator i = requirementBindings.iterator(); i.hasNext();) {
+			IActivityRequirementBinding binding = (IActivityRequirementBinding) i
+					.next();
+			requiredActivities.add(binding.getRequiredActivityId());
+			requiredActivities.addAll(getRequiredActivityIds(binding
+					.getRequiredActivityId()));
+		}
+		return requiredActivities;
+	}
+	
+	/**
+	 * Return the activities directly required by a given category.
+	 * 
+	 * @param category
+	 *            the category
+	 * @return the activities directly required by a given category
+	 * @since 3.1
+	 */
+	public static Set getActivityIdsForCategory(ICategory category) {
+		Set bindings = category.getCategoryActivityBindings();
+		Set activityIds = new HashSet();
+		for (Iterator i = bindings.iterator(); i.hasNext();) {
+			ICategoryActivityBinding binding = (ICategoryActivityBinding) i
+					.next();
+			activityIds.add(binding.getActivityId());
+		}
+		return activityIds;
+	}
+	
+	/**
+	 * Return a list of category ids that will become implicity disabled if the
+	 * given category becomes disabled Note that the set returned by this set
+	 * represents the delta of categories that would be enabled - if the
+	 * category is already enabled then it is omitted.
+	 * 
+	 * @param categoryId
+	 *            the category to be enabled
+	 * @return a list of category ids that will become implicity enabled if the
+	 *         given category becomes enabled
+	 * @since 3.1
+	 */
+	public static Set getDisabledCategories(String categoryId) {
+		IActivityManager manager = PlatformUI.getWorkbench()
+				.getActivitySupport().getActivityManager();
+		ICategory category = manager.getCategory(categoryId);
+		if (!category.isDefined())
+			return Collections.EMPTY_SET;
+
+		Set activities = expandActivityDependencies(getActivityIdsForCategory(category));
+		Set otherDisabledCategories = new HashSet();
+		Set definedCategoryIds = manager.getDefinedCategoryIds();
+		for (Iterator i = definedCategoryIds.iterator(); i.hasNext();) {
+			String otherCategoryId = (String) i.next();
+			if (otherCategoryId.equals(categoryId))
+				continue;
+			ICategory otherCategory = manager.getCategory(otherCategoryId);
+			Set otherCategoryActivityIds = expandActivityDependencies(getActivityIdsForCategory(otherCategory));
+			
+			// TODO: not sure if this line should be here.
+			if (otherCategoryActivityIds.isEmpty())
+				continue;
+			
+			if (!activities.containsAll(otherCategoryActivityIds))
+				continue;
+			
+			if (manager.getEnabledActivityIds().containsAll(
+					otherCategoryActivityIds))
+				otherDisabledCategories.add(otherCategoryId);
+
+		}
+		return otherDisabledCategories;
+	}
+	
     /**
      * Not intended to be instantiated.
      */
