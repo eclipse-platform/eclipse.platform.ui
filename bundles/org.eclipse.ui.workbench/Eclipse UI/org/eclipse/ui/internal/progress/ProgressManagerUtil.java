@@ -80,14 +80,17 @@ class ProgressManagerUtil {
 		if (page == null)
 			return;
 		try {
-			if(WorkbenchPlugin.getDefault()
-					.getPreferenceStore().getBoolean("USE_NEW_PROGRESS"))//$NON-NLS-1$
+			if (useNewProgress())
 				page.showView(NEW_PROGRESS_ID);
 			else
 				page.showView(PROGRESS_VIEW_ID);
 		} catch (PartInitException exception) {
 			logException(exception);
 		}
+	}
+	
+	static boolean useNewProgress() {
+		return WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean("USE_NEW_PROGRESS"); //$NON-NLS-1$
 	}
 	
 	/**
