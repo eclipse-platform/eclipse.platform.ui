@@ -44,6 +44,10 @@ public class TextModel implements ITextModel {
 	 */
 	public void parseTaggedText(String taggedText, boolean expandURLs)
 		throws CoreException {
+		if (taggedText==null) {
+			reset();
+			return;
+		}
 		try {
 			InputStream stream =
 				new ByteArrayInputStream(taggedText.getBytes("UTF8"));
@@ -277,6 +281,8 @@ public class TextModel implements ITextModel {
 	public void parseRegularText(String regularText, boolean convertURLs)
 		throws CoreException {
 		reset();
+		
+		if (regularText==null) return;
 
 		Paragraph p = new Paragraph(true);
 		paragraphs.add(p);
