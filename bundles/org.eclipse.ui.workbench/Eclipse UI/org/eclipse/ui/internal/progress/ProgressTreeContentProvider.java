@@ -26,6 +26,17 @@ public class ProgressTreeContentProvider
 		super();
 		viewer = mainViewer;
 	}
+	
+	/**
+	 * Create a new instance of the receiver with the supplied
+	 * viewer and debug flag.
+	 * @param mainViewer
+	 * @param noDebug If true do not show debug information
+	 */
+	public ProgressTreeContentProvider(ProgressTreeViewer mainViewer,boolean noDebug) {
+		super(noDebug);
+		viewer = mainViewer;
+	}
 
 	/*
 	 * (non-Javadoc)

@@ -101,7 +101,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 					return ((Comparable) e1).compareTo(e2);
 				}
 			});
-			IContentProvider provider = new ProgressTreeContentProvider(viewer);
+			IContentProvider provider = new ProgressTreeContentProvider(viewer,true);
 			viewer.setContentProvider(provider);
 			viewer.setInput(provider);
 			viewer.setLabelProvider(new ProgressLabelProvider());

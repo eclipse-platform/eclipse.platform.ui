@@ -242,7 +242,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 * @return ProgressTreeContentProvider
 	 */
 	private ProgressTreeContentProvider getContentProvider() {
-		return new ProgressTreeContentProvider(viewer) {
+		return new ProgressTreeContentProvider(viewer, true) {
 			/*
 			 * (non-Javadoc)
 			 * 

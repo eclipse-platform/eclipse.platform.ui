@@ -26,11 +26,22 @@ public class ProgressViewerContentProvider extends ProgressContentProvider
 	/**
 	 * Create a new instance of the receiver.
 	 * @param structured The Viewer we are providing content for
-	 * @param itemCount The number of items we will display.
 	 */
 	public ProgressViewerContentProvider(ProgressViewer structured) {
+		super();
 		progressViewer = structured;
 	}
+	
+	/**
+	 * Create a new instance of the receiver.
+	 * @param structured The Viewer we are providing content for
+	 * @param noDebug A flag to indicate if the debug flag is false.
+	 */
+	public ProgressViewerContentProvider(ProgressViewer structured,boolean noDebug) {
+		super(noDebug);
+		progressViewer = structured;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

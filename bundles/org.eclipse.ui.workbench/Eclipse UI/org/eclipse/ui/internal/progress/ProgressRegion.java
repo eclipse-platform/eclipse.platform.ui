@@ -90,7 +90,9 @@ public class ProgressRegion {
 				processDoubleClick();
 			}
 		});
-		IContentProvider provider = new ProgressViewerContentProvider(viewer);
+		
+		//Never show debug info
+		IContentProvider provider = new ProgressViewerContentProvider(viewer,true);
 		viewer.setContentProvider(provider);
 		viewer.setInput(provider);
 		viewer.setLabelProvider(new ProgressViewerLabelProvider(viewerControl));

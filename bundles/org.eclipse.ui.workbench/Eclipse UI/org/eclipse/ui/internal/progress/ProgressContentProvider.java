@@ -18,12 +18,25 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public abstract class ProgressContentProvider implements IProgressUpdateCollector {
 
+	private boolean filterDebug;
+	
 	/**
-	 * Create a new instance of the receiver.
-	 *  
+	 * Create a new instance of the receiver with all of the
+	 * default values.  
 	 */
 	public ProgressContentProvider() {
+		this(false);
+	}
+	
+	/**
+	 * Create a new instance of the receiver with a flag to 
+	 * indicate if there will be debug info shown or not.
+	 * @param noDebug If true debug information will be shown
+	 * if the debug flag in the ProgressManager is true.
+	 */
+	public ProgressContentProvider(boolean noDebug) {
 		ProgressViewUpdater.getSingleton().addCollector(this);
+		filterDebug = noDebug;
 	}
 
 	/*
@@ -34,7 +47,7 @@ public abstract class ProgressContentProvider implements IProgressUpdateCollecto
 	public Object[] getElements(Object inputElement) {
 
 		return ProgressManager.getInstance().getRootElements(
-			ProgressViewUpdater.getSingleton().debug);
+			showDebug());
 	}
 
 	/*
@@ -54,5 +67,25 @@ public abstract class ProgressContentProvider implements IProgressUpdateCollecto
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		//No change when input changes
+	}
+	
+	/**
+	 * Return whether or not this content provider shows debug
+	 * items
+	 * @return boolean
+	 */
+	private boolean showDebug(){
+		if(filterDebug)
+			return false;
+		else
+			return ProgressViewUpdater.getSingleton().debug;
+	}
+	/**
+	 * Set whether or not we always filter debug. Default is
+	 * <code>false</code>.
+	 * @param filterDebug The filterDebug to set.
+	 */
+	public void setFilterDebug(boolean filterDebug) {
+		this.filterDebug = filterDebug;
 	}
 }
