@@ -104,6 +104,9 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 	//---- Action Handling ------------------------------------------------
 	
 	public boolean performAction() {
+		
+		SearchUI.activateSearchResultView();
+		
 		SearchPatternData patternData= getPatternData();
 		if (patternData.pattern == null || patternData.pattern.length() == 0)
 			return true;

@@ -214,8 +214,6 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 	protected boolean performAction() {
 		if (fCurrentPage == null)
 			return true;
-					
-		SearchUI.activateSearchResultView();
 		
 		boolean isAutoBuilding= SearchPlugin.getWorkspace().isAutoBuilding();
 		if (isAutoBuilding)
@@ -254,7 +252,6 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 	}
 	
 	private void turnToPage(SelectionEvent event) {
-		// To do. Check if dialog must be resized.
 		final CTabItem item= (CTabItem)event.item;
 		if (item.getControl() == null) {
 			final SearchPageDescriptor descriptor= (SearchPageDescriptor)item.getData();
