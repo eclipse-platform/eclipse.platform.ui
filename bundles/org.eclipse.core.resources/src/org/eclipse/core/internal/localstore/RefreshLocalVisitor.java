@@ -211,9 +211,17 @@ public boolean visit(UnifiedTreeNode node) throws CoreException {
 		if (targetType == IResource.PROJECT)
 			return true;
 		if (node.existsInWorkspace() && node.existsInFileSystem()) {
-			/* we don't care about folder last modified */
-			if (node.isFolder() && targetType == IResource.FOLDER)
+			/* for folders we only care about updating local status */
+			if (node.isFolder() && targetType == IResource.FOLDER) {
+				// if not local, mark as local
+				if (!target.isLocal(IResource.DEPTH_ZERO)) {
+					ResourceInfo info = target.getResourceInfo(false, true);
+					if (info == null)
+						return true;
+					target.getLocalManager().updateLocalSync(info, node.getLastModified());					
+				}
 				return true;
+			} 
 			/* compare file last modified */
 			long lastModifed = target.getResourceInfo(false, false).getLocalSyncInfo();
 			if (lastModifed == node.getLastModified())
