@@ -242,41 +242,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		if (isViewVisible()) {
 			return;
 		}
-		for (int i = 0; i < events.length; i++) {
-			DebugEvent event = events[i];
-			if (event.getKind() == DebugEvent.SUSPEND) {
-				updateForSuspendEvent(event);
-			}
-		}
-	}
-	
-	/**
-	 * Updates the instruction pointer for suspend events when the view is not
-	 * visible
-	 */
-	private void updateForSuspendEvent(DebugEvent event) {
-		Object element= event.getSource();
-		IThread thread= getThread(element);
-		if (thread != null) {
-			fThreadTimer.stopTimer((IThread)element);
-		}
-
-		if (event.isEvaluation() || ((event.getDetail() & DebugEvent.EVALUATION_IMPLICIT) != 0)) {
-			// Don't update for evaluation completion.
-			return;
-		}
-		if (element instanceof IThread) {
-			try {
-				IStackFrame frame= ((IThread) element).getTopStackFrame();
-				if (frame != null) {
-					removeInstructionPointerAnnotations(element);
-					getLaunchView().clearSourceSelection();
-					getLaunchView().openEditorForStackFrame(frame);
-				}
-			} catch (DebugException e) {
-				DebugPlugin.log(e);
-			}
-		}
+		doHandleDebugEvents(events);
 	}
 	
 	/**
