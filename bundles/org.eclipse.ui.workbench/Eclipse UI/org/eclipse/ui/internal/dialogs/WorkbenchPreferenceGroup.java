@@ -13,11 +13,12 @@ package org.eclipse.ui.internal.dialogs;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.swt.graphics.Image;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.swt.graphics.Image;
 
 /**
  * WorkbenchPreferenceGroup is the representation of a category
@@ -27,9 +28,10 @@ public class WorkbenchPreferenceGroup {
 	
 	private String id;
 	private String name;
-	private String parentCategoryId;
-	private Collection childCategories = new ArrayList();
+	private String parentGroupId;
+	private Collection childGroups = new ArrayList();
 	private Collection pages = new ArrayList();
+	private String[] pageIds;
 	private ImageDescriptor imageDescriptor;
 	private Image image;
 
@@ -38,14 +40,16 @@ public class WorkbenchPreferenceGroup {
 	 * @param uniqueID The unique id. Must be unique and non null.
 	 * @param displayableName The human readable name
 	 * @param parentId The id of the parent category.
+	 * @param ids
 	 * @param icon The ImageDescriptor for the icon for the
 	 * receiver. May be <code>null</code>.
 	 */
-	public WorkbenchPreferenceGroup(String uniqueID, String displayableName, String parentId, ImageDescriptor icon) {
+	public WorkbenchPreferenceGroup(String uniqueID, String displayableName, String parentId, String[] ids, ImageDescriptor icon) {
 		id = uniqueID;
 		name = displayableName;
-		parentCategoryId = parentId;
+		parentGroupId = parentId;
 		imageDescriptor = icon;
+		pageIds = ids;
 	}
 
 	/**
@@ -53,7 +57,7 @@ public class WorkbenchPreferenceGroup {
 	 * @return String
 	 */
 	public String getParent() {
-		return parentCategoryId;
+		return parentGroupId;
 	}
 
 	/**
@@ -61,7 +65,7 @@ public class WorkbenchPreferenceGroup {
 	 * @param category
 	 */
 	public void addChild(WorkbenchPreferenceGroup category) {
-		childCategories.add(category);
+		childGroups.add(category);
 		
 	}
 
@@ -81,7 +85,7 @@ public class WorkbenchPreferenceGroup {
 		pages.add(node);
 		
 	}
-
+	
 	/**
 	 * Return the image for the receiver. Return a default
 	 * image if there isn't one.
@@ -122,6 +126,22 @@ public class WorkbenchPreferenceGroup {
 		IPreferenceNode[] nodes = new IPreferenceNode[pages.size()];
 		pages.toArray(nodes);
 		return nodes;
+	}
+
+	/**
+	 * Return the pageIds for the receiver.
+	 * @return String[]
+	 */
+	public String[] getPageIds() {
+		return pageIds;
+	}
+
+	/**
+	 * Return the children of the receiver.
+	 * @return Collection
+	 */
+	public Collection getChildren() {
+		return childGroups;
 	}
 
 }

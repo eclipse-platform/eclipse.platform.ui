@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal;
 
 import java.text.MessageFormat;
-import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -20,12 +19,15 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.swt.custom.BusyIndicator;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.util.Policy;
-import org.eclipse.swt.custom.BusyIndicator;
+
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IPerspectiveRegistry;
@@ -33,6 +35,9 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.presentations.AbstractPresentationFactory;
+
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceManager;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
@@ -53,8 +58,7 @@ import org.eclipse.ui.internal.themes.ThemeRegistry;
 import org.eclipse.ui.internal.themes.ThemeRegistryReader;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.internal.util.SWTResourceUtil;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.presentations.AbstractPresentationFactory;
+
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
@@ -466,10 +470,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
             //Get the pages from the registry
             PreferencePageRegistryReader registryReader = new PreferencePageRegistryReader(
                     getWorkbench());
-            List pageContributions = registryReader
-                    .getPreferenceContributions(Platform.getExtensionRegistry());
-
-           preferenceManager.addContributions(pageContributions);
+            registryReader
+                    .loadFromRegistry(Platform.getExtensionRegistry());
+            preferenceManager.addPagesAndGroups(registryReader.getTopLevelNodes(),registryReader.getTopLevelGroups());
+           
         }
         return preferenceManager;
     }

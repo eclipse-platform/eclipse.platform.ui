@@ -1,11 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others. All rights reserved.
- * This program and the accompanying materials are made available under the
- * terms of the Common Public License v1.0 which accompanies this distribution,
- * and is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors: IBM Corporation - initial API and implementation
- ******************************************************************************/
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
 import java.text.Collator;
@@ -21,24 +23,27 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
+
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.resource.ImageDescriptor;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceGroup;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
- * Instances access the registry that is provided at creation time in order to
- * determine the contributed preference pages
+ *  Instances access the registry that is provided at creation time in order
+ *  to determine the contributed preference pages
  */
 public class PreferencePageRegistryReader extends RegistryReader {
 	public static final String ATT_CATEGORY = "category"; //$NON-NLS-1$
-	
+
 	public static final String ATT_GROUP = "group"; //$NON-NLS-1$
 
 	public static final String ATT_CLASS = "class"; //$NON-NLS-1$
@@ -56,6 +61,8 @@ public class PreferencePageRegistryReader extends RegistryReader {
 	public static final String TAG_GROUP = "group"; //$NON-NLS-1$
 
 	public static final String ATT_PARENT_GROUP = "parent"; //$NON-NLS-1$
+	
+	public static final String ADVANCED_ID = "org.eclipse.ui.advanced"; //$NON-NLS-1$
 
 	private static final Comparator comparer = new Comparator() {
 		private Collator collator = Collator.getInstance();
@@ -69,13 +76,17 @@ public class PreferencePageRegistryReader extends RegistryReader {
 
 	private List nodes;
 
+	private List topLevelNodes;
+
+	private Collection topGroups;
+
 	private Hashtable groups;
 
 	private IWorkbench workbench;
 
 	/**
-	 * Internal class used to sort all the preference page nodes based on the
-	 * category.
+	 * Internal class used to sort all the preference page nodes
+	 * based on the category.
 	 */
 	class CategoryNode {
 		private WorkbenchPreferenceNode node;
@@ -109,8 +120,8 @@ public class PreferencePageRegistryReader extends RegistryReader {
 		}
 
 		/*
-		 * Initialize the flat category to include the parents' category names
-		 * and the current node's label
+		 * Initialize the flat category to include the parents'
+		 * category names and the current node's label
 		 */
 		private void initialize() {
 			String category = node.getCategory();
@@ -118,8 +129,7 @@ public class PreferencePageRegistryReader extends RegistryReader {
 				return;
 
 			StringBuffer sb = new StringBuffer();
-			StringTokenizer stok = new StringTokenizer(category,
-					PREFERENCE_SEPARATOR);
+			StringTokenizer stok = new StringTokenizer(category, PREFERENCE_SEPARATOR);
 			WorkbenchPreferenceNode immediateParent = null;
 			while (stok.hasMoreTokens()) {
 				String pathID = stok.nextToken();
@@ -150,8 +160,7 @@ public class PreferencePageRegistryReader extends RegistryReader {
 	 */
 	private WorkbenchPreferenceNode findNode(String id) {
 		for (int i = 0; i < nodes.size(); i++) {
-			WorkbenchPreferenceNode node = (WorkbenchPreferenceNode) nodes
-					.get(i);
+			WorkbenchPreferenceNode node = (WorkbenchPreferenceNode) nodes.get(i);
 			if (node.getId().equals(id))
 				return node;
 		}
@@ -159,11 +168,10 @@ public class PreferencePageRegistryReader extends RegistryReader {
 	}
 
 	/**
-	 * Searches for the child node with the given ID in the provided parent
-	 * node. If not found, null is returned.
+	 * Searches for the child node with the given ID in the provided parent node.
+	 * If not found, null is returned.
 	 */
-	private WorkbenchPreferenceNode findNode(WorkbenchPreferenceNode parent,
-			String id) {
+	private WorkbenchPreferenceNode findNode(WorkbenchPreferenceNode parent, String id) {
 		IPreferenceNode[] subNodes = parent.getSubNodes();
 		for (int i = 0; i < subNodes.length; i++) {
 			WorkbenchPreferenceNode node = (WorkbenchPreferenceNode) subNodes[i];
@@ -174,23 +182,33 @@ public class PreferencePageRegistryReader extends RegistryReader {
 	}
 
 	/**
-	 * Load the preference page contirbutions from the registry and organize
-	 * preference node contributions by category into hierarchies If there is no
-	 * page for a given node in the hierarchy then a blank page will be created.
-	 * If no category has been specified or category information is incorrect,
-	 * page will appear at the root level. workbench log entry will be created
-	 * for incorrect category information.
-	 * 
-	 * After the nodes are processed add the top level categories at the end.
-	 * 
-	 * @return List of WorkbenchPreferenceNode and WorkbenchCategoryNode
+	 * Load the preference page contirbutions from the registry and
+	 * organize preference node contributions by category into hierarchies
+	 * If there is no page for a given node in the hierarchy then a blank
+	 * page will be created.
+	 * If no category has been specified or category information
+	 * is incorrect, page will appear at the root level. workbench
+	 * log entry will be created for incorrect category information.
 	 */
-	public List getPreferenceContributions(IExtensionRegistry registry) {
-		loadNodesFromRegistry(registry); // all nodes keyed on category
-		List contributions = new ArrayList();
-		// root nodes (which contain subnodes)
+	public void loadFromRegistry(IExtensionRegistry registry) {
+		nodes = new ArrayList();
+		groups = new Hashtable();
 
-		// Add root nodes to the contributions vector
+		readRegistry(registry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_PREFERENCES);
+
+		processNodes();
+		processGroups();
+
+	}
+
+	/**
+	 * Process the preference page nodes.
+	 */
+	private void processNodes() {
+		topLevelNodes = new ArrayList();
+		//root nodes (which contain subnodes)
+
+		//Add root nodes to the contributions vector	
 		StringTokenizer tokenizer;
 		String currentToken;
 
@@ -201,23 +219,23 @@ public class PreferencePageRegistryReader extends RegistryReader {
 			favorite = findNode(favoriteId);
 		}
 		if (favorite != null) {
-			contributions.add(favorite);
+			topLevelNodes.add(favorite);
 		}
 
 		// Sort nodes based on flattened display path composed of
 		// actual labels of nodes referenced in category attribute.
 		Object[] sortedNodes = sortByCategories(nodes);
 		for (int i = 0; i < sortedNodes.length; i++) {
-			// Iterate through all the nodes
+			//Iterate through all the nodes
 			CategoryNode categoryNode = (CategoryNode) sortedNodes[i];
 			WorkbenchPreferenceNode node = categoryNode.getNode();
-			
+			if (node == favorite) {
+				// skip it - favorite already at the top of the list
+				continue;
+			}
 			String category = node.getCategory();
-			
-			searchGroups(node);
-				
 			if (category == null) {
-				contributions.add(node);
+				topLevelNodes.add(node);
 				continue;
 			}
 			// has category
@@ -239,81 +257,23 @@ public class PreferencePageRegistryReader extends RegistryReader {
 			}
 			if (parent != null) {
 				parent.add(node);
-			} 
-		}
-
-		// Add all of the categories
-		contributions.addAll(getOrganizedGroups());
-		return contributions;
-	}
-
-	/**
-	 * Search the defined categories for nodes category. If its category
-	 * is valid add it to the category and return <code>true</code>. 
-	 * If not then return <code>false</code>.
-	 * @param node
-	 * @return boolean
-	 */
-	private boolean searchGroups(WorkbenchPreferenceNode node) {
-		String group = node.getGroup();
-		if(group == null)
-			return false;
-		
-		if(groups.containsKey(group)){
-			WorkbenchPreferenceGroup groupNode = (WorkbenchPreferenceGroup) groups.get(group);
-			groupNode.addNode(node);
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Return the categories in sorted and in tree order.
-	 * 
-	 * @return
-	 */
-	private Collection getOrganizedGroups() {
-		Collection topGroups = new ArrayList();
-
-		Iterator allGroups = groups.values().iterator();
-
-		while (allGroups.hasNext()) {
-			WorkbenchPreferenceGroup group = (WorkbenchPreferenceGroup) allGroups
-					.next();
-			String parentId = group.getParent();
-			if (parentId == null)
-				topGroups.add(group);
-			else {
-				Object parent = groups.get(parentId);
-				if (parent == null) {
-					WorkbenchPlugin.log("Invalid category path: " + parentId); //$NON-NLS-1$
-					topGroups.add(group);
-				} else {
-					((WorkbenchPreferenceGroup) parent).addChild(group);
-				}
+			} else {
+				//Could not find the parent - log
+				WorkbenchPlugin
+						.log("Invalid preference page path: " + categoryNode.getFlatCategory()); //$NON-NLS-1$
+				topLevelNodes.add(node);
 			}
-
 		}
-		return topGroups;
-
-	}
-
-	/**
-	 * Get the preference nodes that are defined in the registry
-	 */
-	protected void loadNodesFromRegistry(IExtensionRegistry registry) {
-		nodes = new ArrayList();
-		groups = new Hashtable();
-		readRegistry(registry, PlatformUI.PLUGIN_ID,
-				IWorkbenchConstants.PL_PREFERENCES);
 	}
 
 	/**
 	 * Read preference page element.
 	 */
 	protected boolean readElement(IConfigurationElement element) {
+		if (element.getName().equals(TAG_GROUP) == true)
+			return readGroupElement(element);
 		if (element.getName().equals(TAG_PAGE) == false)
-			return checkForGroup(element);
+			return false;
 		WorkbenchPreferenceNode node = createNode(workbench, element);
 		if (node != null)
 			nodes.add(node);
@@ -322,31 +282,27 @@ public class PreferencePageRegistryReader extends RegistryReader {
 	}
 
 	/**
-	 * Check to see if there is a group defined here.
-	 * 
+	 * Read an element that is a group.
 	 * @param element
-	 * @return boolean <code>true</code> if there is a group.
+	 * @return boolean
 	 */
-	private boolean checkForGroup(IConfigurationElement element) {
-		if (element.getName().equals(TAG_GROUP) == false)
-			return false;
+	private boolean readGroupElement(IConfigurationElement element) {
 
 		String name = element.getAttribute(ATT_NAME);
 		String id = element.getAttribute(ATT_ID);
 		String icon = element.getAttribute(ATT_ICON);
 		String parent = element.getAttribute(ATT_PARENT_GROUP);
 
+		String[] pageIds = readPages(element);
+
 		ImageDescriptor descriptor = null;
 
 		if (icon != null) {
-			String contributingPluginId = element.getDeclaringExtension()
-					.getNamespace();
-			descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
-					contributingPluginId, icon);
+			String contributingPluginId = element.getDeclaringExtension().getNamespace();
+			descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(contributingPluginId, icon);
 		}
 
-		groups.put(id, new WorkbenchPreferenceGroup(id, name, parent,
-				descriptor));
+		groups.put(id, new WorkbenchPreferenceGroup(id, name, parent, pageIds, descriptor));
 		return true;
 	}
 
@@ -357,7 +313,7 @@ public class PreferencePageRegistryReader extends RegistryReader {
 		String category = element.getAttribute(ATT_CATEGORY);
 		String imageName = element.getAttribute(ATT_ICON);
 		String className = element.getAttribute(ATT_CLASS);
-		String groupId = element.getAttribute(ATT_GROUP);
+
 		if (name == null) {
 			logMissingAttribute(element, ATT_NAME);
 		}
@@ -372,32 +328,130 @@ public class PreferencePageRegistryReader extends RegistryReader {
 		}
 		ImageDescriptor image = null;
 		if (imageName != null) {
-			String contributingPluginId = element.getDeclaringExtension()
-					.getNamespace();
-			image = AbstractUIPlugin.imageDescriptorFromPlugin(
-					contributingPluginId, imageName);
+			String contributingPluginId = element.getDeclaringExtension().getNamespace();
+			image = AbstractUIPlugin.imageDescriptorFromPlugin(contributingPluginId, imageName);
 		}
-		WorkbenchPreferenceNode node = new WorkbenchPreferenceNode(id, name,
-				category, groupId, image, element, workbench);
+		WorkbenchPreferenceNode node = new WorkbenchPreferenceNode(id, name, category,
+				image, element, workbench);
 		return node;
 	}
 
 	/**
 	 * Sort the nodes based on full category + name. Category used for sorting
-	 * is created by substituting node IDs with labels of the referenced nodes.
-	 * workbench node is excluded from sorting because it always appears first
-	 * in the dialog.
+	 * is created by substituting node IDs with labels of the referenced
+	 * nodes. workbench node is excluded from sorting because it always
+	 * appears first in the dialog.
 	 */
 	private Object[] sortByCategories(List categoryNodes) {
-		// sort by categories
+		//sort by categories
 		CategoryNode[] nodeArray = new CategoryNode[categoryNodes.size()];
 
 		for (int i = 0; i < categoryNodes.size(); i++) {
-			nodeArray[i] = new CategoryNode(
-					(WorkbenchPreferenceNode) categoryNodes.get(i));
+			nodeArray[i] = new CategoryNode((WorkbenchPreferenceNode) categoryNodes.get(i));
 		}
 
 		Collections.sort(Arrays.asList(nodeArray), comparer);
 		return nodeArray;
+	}
+
+	/**
+	 * Read the pages for the receiver from element.
+	 * @param element
+	 * @return String[] the ids of the children
+	 */
+	private String[] readPages(IConfigurationElement element) {
+		IConfigurationElement[] pages = element.getChildren(TAG_PAGE);
+		ArrayList list = new ArrayList();
+		for (int i = 0; i < pages.length; i++) {
+			IConfigurationElement page = pages[i];
+			String id = page.getAttribute(ATT_ID);
+			if (id != null)
+				list.add(id);
+		}
+
+		String[] ids = new String[list.size()];
+		list.toArray(ids);
+		return ids;
+
+	}
+
+	/**
+	 * Post process all of the groups.
+	 * 
+	 */
+	private void processGroups() {
+
+		Hashtable nodeToGroupMapping = new Hashtable();
+
+		Iterator groupIterator = groups.values().iterator();
+
+		while (groupIterator.hasNext()) {
+			WorkbenchPreferenceGroup nextGroup = (WorkbenchPreferenceGroup) groupIterator.next();
+			String[] pages = nextGroup.getPageIds();
+			for (int i = 0; i < pages.length; i++) {
+				nodeToGroupMapping.put(pages[i], nextGroup);
+			}
+		}
+
+		Iterator nodeIterator = nodes.iterator();
+		WorkbenchPreferenceGroup advanced = (WorkbenchPreferenceGroup) groups.get(ADVANCED_ID);
+
+		while (nodeIterator.hasNext()) {
+			WorkbenchPreferenceNode node = (WorkbenchPreferenceNode) nodeIterator.next();
+			if (nodeToGroupMapping.containsKey(node.getId())) {
+				((WorkbenchPreferenceGroup) nodeToGroupMapping.get(node.getId())).addNode(node);
+			}
+			else if(advanced != null && topLevelNodes.contains(node))
+					advanced.addNode(node);
+				
+
+		}
+
+		organizeGroups();
+	}
+
+	/**
+	 * Return the groupd in sorted and in tree order.
+	 * 
+	 * @return Collection of Group
+	 */
+	private void organizeGroups() {
+		topGroups = new ArrayList();
+
+		Iterator allGroups = groups.values().iterator();
+
+		while (allGroups.hasNext()) {
+			WorkbenchPreferenceGroup group = (WorkbenchPreferenceGroup) allGroups.next();
+			String parentId = group.getParent();
+			if (parentId == null)
+				topGroups.add(group);
+			else {
+				Object parent = groups.get(parentId);
+				if (parent == null) {
+					WorkbenchPlugin.log("Invalid category path: " + parentId); //$NON-NLS-1$
+					topGroups.add(group);
+				} else {
+					((WorkbenchPreferenceGroup) parent).addChild(group);
+				}
+			}
+
+		}
+
+	}
+
+	/**
+	 * Return the top level groups.
+	 * @return Collection of WorkbenchPreferenceGroup.
+	 */
+	public Collection getTopLevelGroups() {
+		return topGroups;
+	}
+
+	/**
+	 * Return the top level IPreferenceNodes.
+	 * @return  Collection of IPreferenceNode.
+	 */
+	public Collection getTopLevelNodes() {
+		return topLevelNodes;
 	}
 }

@@ -63,7 +63,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	 * @see org.eclipse.jface.preference.PreferenceDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
-		if (getCategories().length > 0)
+		if (getGroups().length > 0)
 			return createCategorizedDialogArea(parent);
 		return super.createDialogArea(parent);
 	}
@@ -193,7 +193,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 			 * @see org.eclipse.ui.internal.dialogs.ListContentProvider#getElements(java.lang.Object)
 			 */
 			public Object[] getElements(Object input) {
-				return getCategories();
+				return getGroups();
 			}
 		};
 	}
@@ -206,7 +206,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	protected TreeViewer createTreeViewer(Composite parent) {
 		TreeViewer tree = super.createTreeViewer(parent);
 
-		if (hasCategories()) {
+		if (hasGroups()) {
 			tree.setContentProvider(new GroupedPreferenceContentProvider());
 			tree.setLabelProvider(new GroupedPreferenceLabelProvider());
 
@@ -236,7 +236,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	 * @see org.eclipse.jface.preference.PreferenceDialog#selectSavedItem()
 	 */
 	protected void selectSavedItem() {
-		if (hasCategories())
+		if (hasGroups())
 			return;
 		super.selectSavedItem();
 	}
@@ -245,9 +245,9 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	 * Return the categories in the receiver.
 	 * @return WorkbenchPreferenceGroup[]
 	 */
-	private WorkbenchPreferenceGroup[] getCategories() {
+	private WorkbenchPreferenceGroup[] getGroups() {
 		return ((WorkbenchPreferenceManager) WorkbenchPlugin.getDefault().getPreferenceManager())
-				.getCategories();
+				.getGroups();
 	}
 	
 	
@@ -256,8 +256,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	 * Return whether or not there are categories.
 	 * @return boolean
 	 */
-	private boolean hasCategories() {
-		return getCategories().length > 0;
+	private boolean hasGroups() {
+		return getGroups().length > 0;
 	}
 	
 	/* (non-Javadoc)

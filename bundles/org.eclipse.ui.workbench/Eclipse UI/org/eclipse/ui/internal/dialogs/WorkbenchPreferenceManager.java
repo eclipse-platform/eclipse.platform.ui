@@ -10,10 +10,10 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceManager;
@@ -24,7 +24,7 @@ import org.eclipse.jface.preference.PreferenceManager;
  */
 public class WorkbenchPreferenceManager extends PreferenceManager {
 
-	WorkbenchPreferenceGroup[] categories;
+	WorkbenchPreferenceGroup[] groups;
 
 	private final static String GENERAL_ID = "org.eclipse.ui.general";//$NON-NLS-1$
 
@@ -40,65 +40,48 @@ public class WorkbenchPreferenceManager extends PreferenceManager {
 	}
 
 	/**
-	 * Add the contributions to the manager.
-	 * 
-	 * @param pageContributions
+	 * Get a mapping from node id to the group that is looking
+	 * for it.
+	 * @return Hashtable 
 	 */
-	public void addContributions(List pageContributions) {
-
-		ArrayList collectedCategories = new ArrayList();
-		// Add the contributions to the manager
-		Iterator iterator = pageContributions.iterator();
-		while (iterator.hasNext()) {
-			Object next = iterator.next();
-			if (next instanceof IPreferenceNode)
-				addToRoot((IPreferenceNode) next);
-			else
-				collectedCategories.add(next);
+	private Hashtable getNodeMappings() {
+		Hashtable returnValue = new Hashtable();
+		for (int i = 0; i < groups.length; i++) {
+			addIds(groups[i],returnValue);
 		}
-		sortCategories(collectedCategories);
-		categorizePages();
+		return returnValue;
 	}
 
 	/**
-	 * Categorize all pages into thier specified categories
+	 * Add the page id to group mapping to the return value.
+	 * @param group
+	 * @param returnValue
 	 */
-	private void categorizePages() {
-		
-		if(categories.length == 0)
-			return;
-		
-		IPreferenceNode[] nodes = getRoot().getSubNodes();
-		Hashtable categoryTable = new Hashtable();
-		for (int i = 0; i < categories.length; i++) {
-			categoryTable.put(categories[i].getId(), categories[i]);
+	private void addIds(WorkbenchPreferenceGroup group, Hashtable returnValue) {
+		String [] pageIds = group.getPageIds();
+		for (int i = 0; i < pageIds.length; i++) {
+			String string = pageIds[i];
+			returnValue.put(string,group);
 		}
-
-		WorkbenchPreferenceGroup advanced = categories[categories.length - 1];
-		for (int i = 0; i < nodes.length; i++) {
-			WorkbenchPreferenceNode node = (WorkbenchPreferenceNode) nodes[i];
-			if (node.getGroup() == null)
-				advanced.addNode(node);
-			else {
-				if (categoryTable.contains(node.getGroup()))
-					((WorkbenchPreferenceGroup) categoryTable.get(node
-							.getGroup())).addNode(node);
-			}
+		
+		Iterator children = group.getChildren().iterator();
+		while(children.hasNext()){
+			addIds(((WorkbenchPreferenceGroup)children.next()),returnValue);
 		}
-
+		
 	}
 
 	/**
 	 * Sort the supplied categories and make them the categories for the
 	 * receiver.
 	 * 
-	 * @param collectedCategories
+	 * @param collectedGroups
 	 */
-	private void sortCategories(ArrayList collectedCategories) {
+	private void sortGroups(Collection collectedGroups) {
 
-		categories = new WorkbenchPreferenceGroup[collectedCategories.size()];
-		collectedCategories.toArray(categories);
-		Arrays.sort(categories, new Comparator() {
+		groups = new WorkbenchPreferenceGroup[collectedGroups.size()];
+		collectedGroups.toArray(groups);
+		Arrays.sort(groups, new Comparator() {
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -109,12 +92,10 @@ public class WorkbenchPreferenceManager extends PreferenceManager {
 				WorkbenchPreferenceGroup first = (WorkbenchPreferenceGroup) arg0;
 				WorkbenchPreferenceGroup second = (WorkbenchPreferenceGroup) arg1;
 
-				if (first.getId().equals(GENERAL_ID)
-						|| second.getId().equals(ADVANCED_ID))
+				if (first.getId().equals(GENERAL_ID) || second.getId().equals(ADVANCED_ID))
 					return -1;
 
-				if (first.getId().equals(ADVANCED_ID)
-						|| second.getId().equals(GENERAL_ID))
+				if (first.getId().equals(ADVANCED_ID) || second.getId().equals(GENERAL_ID))
 					return 1;
 
 				return first.getId().compareTo(second.getId());
@@ -127,7 +108,28 @@ public class WorkbenchPreferenceManager extends PreferenceManager {
 	 * Return the categories of the preference manager.
 	 * @return WorkbenchPreferenceGroup[]
 	 */
-	public WorkbenchPreferenceGroup[] getCategories() {
-		return categories;
+	public WorkbenchPreferenceGroup[] getGroups() {
+		return groups;
+	}
+
+	/**
+	 * Add the pages and the groups to the receiver.
+	 * @param pageContributions
+	 * @param newGroups
+	 */
+	public void addPagesAndGroups(Collection pageContributions, Collection newGroups) {
+
+		ArrayList collectedCategories = new ArrayList();
+		// Add the contributions to the manager
+		Iterator iterator = pageContributions.iterator();
+		while (iterator.hasNext()) {
+			Object next = iterator.next();
+			if (next instanceof IPreferenceNode)
+				addToRoot((IPreferenceNode) next);
+			else
+				collectedCategories.add(next);
+		}
+		sortGroups(newGroups);
+
 	}
 }
