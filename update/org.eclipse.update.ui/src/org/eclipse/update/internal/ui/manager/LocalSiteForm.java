@@ -70,10 +70,8 @@ protected void createContents(Composite parent) {
 	action.setStatusLineManager(bars.getStatusLineManager());
 	// text on the right
 	//Label label = factory.createLabel(parent, null, SWT.WRAP );
-	FormEngine engine = new FormEngine(parent, SWT.WRAP);
+	FormEngine engine = factory.createFormEngine(parent);
 	engine.registerTextObject(FormEngine.URL_HANDLER_ID, action);
-	engine.setForeground(factory.getForegroundColor());
-	engine.setBackground(factory.getBackgroundColor());
 	engine.setParagraphsSeparated(false);
 	engine.setHyperlinkSettings(factory.getHyperlinkHandler());
 	TableData data = new TableData();
@@ -91,9 +89,7 @@ protected void createContents(Composite parent) {
 	if (image!=null) factory.createLabel(parent, null);
 	
 	// text on the right
-	engine = new FormEngine(parent, SWT.WRAP);
-	engine.setForeground(factory.getForegroundColor());
-	engine.setBackground(factory.getBackgroundColor());
+	engine = factory.createFormEngine(parent);
 	engine.setParagraphsSeparated(false);
 	engine.setHyperlinkSettings(factory.getHyperlinkHandler());
 	engine.registerTextObject(FormEngine.URL_HANDLER_ID, action);

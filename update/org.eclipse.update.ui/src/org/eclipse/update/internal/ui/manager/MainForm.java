@@ -72,6 +72,9 @@ protected void createContents(Composite parent) {
 	Label topic;
 	FormEngine text;
 	HyperlinkAction action;
+	
+	String topicColorId = "mainPage.topicColor";
+	Color topicColor = factory.registerColor(topicColorId, 91, 120, 172);
 
 	action = new HyperlinkAction() {
 		public void linkActivated(IHyperlinkSegment link) {
@@ -84,6 +87,7 @@ protected void createContents(Composite parent) {
 	topicImage = factory.createLabel(parent, null);
 	topicImage.setImage(itemImage);
 	topic = factory.createHeadingLabel(parent, UpdateUIPlugin.getResourceString(KEY_UPDATES_TITLE), SWT.WRAP);
+	topic.setForeground(topicColor);
 	factory.createLabel(parent, null);	
 	text =factory.createFormEngine(parent);
 	text.load(UpdateUIPlugin.getResourceString(KEY_UPDATES_DESC), true, false);
@@ -93,6 +97,8 @@ protected void createContents(Composite parent) {
 	td.grabHorizontal=true;
 	text.setLayoutData(td);
 	
+	addSeparator(parent);
+	
 	action = new HyperlinkAction() {
 		public void linkActivated(IHyperlinkSegment link) {
 			showView(UpdatePerspective.ID_SITES);
@@ -101,6 +107,7 @@ protected void createContents(Composite parent) {
 	topicImage = factory.createLabel(parent, null);
 	topicImage.setImage(itemImage);
 	topic = factory.createHeadingLabel(parent, UpdateUIPlugin.getResourceString(KEY_INSTALLS_TITLE), SWT.WRAP);
+	topic.setForeground(topicColor);
 	factory.createLabel(parent, null);	
 	text = factory.createFormEngine(parent);
 	text.load(UpdateUIPlugin.getResourceString(KEY_INSTALLS_DESC), true, false);
@@ -109,6 +116,7 @@ protected void createContents(Composite parent) {
 	td = new TableData();
 	td.grabHorizontal=true;
 	text.setLayoutData(td);
+	addSeparator(parent);
 	
 	action = new HyperlinkAction() {
 		public void linkActivated(IHyperlinkSegment link) {
@@ -118,6 +126,7 @@ protected void createContents(Composite parent) {
 	topicImage = factory.createLabel(parent, null);
 	topicImage.setImage(itemImage);
 	topic = factory.createHeadingLabel(parent, UpdateUIPlugin.getResourceString(KEY_UNINSTALLS_TITLE), SWT.WRAP);
+	topic.setForeground(topicColor);
 	factory.createLabel(parent, null);		
 	text = factory.createFormEngine(parent);
 	text.load(UpdateUIPlugin.getResourceString(KEY_UNINSTALLS_DESC), true, false);
@@ -126,6 +135,8 @@ protected void createContents(Composite parent) {
 	td = new TableData();
 	td.grabHorizontal=true;
 	text.setLayoutData(td);
+	
+	addSeparator(parent);
 
 	action = new HyperlinkAction() {
 		public void linkActivated(IHyperlinkSegment link) {
@@ -135,6 +146,7 @@ protected void createContents(Composite parent) {
 	topicImage = factory.createLabel(parent, null);
 	topicImage.setImage(itemImage);
 	topic = factory.createHeadingLabel(parent, UpdateUIPlugin.getResourceString(KEY_HISTORY_TITLE), SWT.WRAP);
+	topic.setForeground(topicColor);
 	factory.createLabel(parent, null);	
 	text = factory.createFormEngine(parent);
 	text.load(UpdateUIPlugin.getResourceString(KEY_HISTORY_DESC), true, false);
@@ -143,6 +155,13 @@ protected void createContents(Composite parent) {
 	td = new TableData();
 	td.grabHorizontal=true;
 	text.setLayoutData(td);
+}
+
+private void addSeparator(Composite parent) {
+	Label label = new Label(parent, SWT.NULL);
+	TableData td = new TableData();
+	td.colspan = 2;
+	label.setLayoutData(td);
 }
 
 private IViewPart showView(String viewId) {
