@@ -21,33 +21,31 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.ant.internal.core.AntClasspathEntry;
 import org.eclipse.ant.internal.core.AntObject;
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.core.InternalCoreAntMessages;
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.ILibrary;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IPluginPrerequisite;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.ExportPackageDescription;
+import org.eclipse.osgi.util.ManifestElement;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
 
 
 /**
@@ -80,7 +78,21 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	private String antHome;
 	
 	private boolean runningHeadless= false;
-	
+
+	static private class Relation {
+		Object from;
+		Object to;
+
+		Relation(Object from, Object to) {
+			this.from = from;
+			this.to = to;
+		}
+
+		public String toString() {
+			return from.toString() + "->" + (to == null ? "" : to.toString()); //$NON-NLS-1$//$NON-NLS-2$
+		}
+	}
+
 	class WrappedClassLoader extends ClassLoader {
 		private Bundle bundle;
 		public WrappedClassLoader(Bundle bundle) {
@@ -120,6 +132,9 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		 */
 		public int hashCode() {
 			return bundle.hashCode();
+		}
+		public String toString() {
+			return "WrappedClassLoader(" + bundle.toString() + ")";  //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -396,12 +411,10 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	public IAntClasspathEntry[] getDefaultAntHomeEntries() {
 		if (defaultAntHomeEntries== null) {
 			List result = new ArrayList(29);
-			Plugin antPlugin= Platform.getPlugin("org.apache.ant"); //$NON-NLS-1$
-			if (antPlugin != null) {
-				IPluginDescriptor descriptor = antPlugin.getDescriptor(); 
-				addLibraries(descriptor, result);
+			Bundle bundle = Platform.getBundle("org.apache.ant"); //$NON-NLS-1$
+			if (bundle != null) {
+				addLibraries(bundle, result);
 			}
-			
 			defaultAntHomeEntries= (IAntClasspathEntry[]) result.toArray(new IAntClasspathEntry[result.size()]);
 		}
 		return defaultAntHomeEntries;
@@ -708,15 +721,22 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 
 	/*
-	 * TODO: Right now this is only called when dealing with the org.apache.ant plug-in which
-	 * we don't JAR. This might have to be changed if we JAR that plug-in in the future.
+	 * Add the libraries contributed by the Ant plug-in, to the classpath.
 	 */
-	private void addLibraries(IPluginDescriptor source, List destination) {
-		URL root = source.getInstallURL();
-		ILibrary[] libraries = source.getRuntimeLibraries();
+	private void addLibraries(Bundle source, List destination) {
+		ManifestElement[] libraries = null;
+		try {
+			libraries = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, (String) source.getHeaders("").get(Constants.BUNDLE_CLASSPATH)); //$NON-NLS-1$
+		} catch (BundleException e) {
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.0"), e); //$NON-NLS-1$
+			AntCorePlugin.getPlugin().getLog().log(status);
+			return;
+		}
+		if (libraries == null)
+			return;
 		for (int i = 0; i < libraries.length; i++) {
 			try {
-				URL url = new URL(root, libraries[i].getPath().toString());
+				URL url = Platform.asLocalURL(source.getEntry(libraries[i].getValue()));
 				destination.add(new AntClasspathEntry(Platform.asLocalURL(url)));
 			} catch (Exception e) {
 				// if the URL does not have a valid format, just log and ignore the exception
@@ -808,138 +828,165 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		if (orderedPluginClassLoaders == null) {
 			Iterator classLoaders= pluginClassLoaders.iterator();
 			Map idToLoader= new HashMap(pluginClassLoaders.size());
-			Bundle[] bundles= new Bundle[pluginClassLoaders.size()];
-			int i= 0;
+			List bundles = new ArrayList(pluginClassLoaders.size());
 			while (classLoaders.hasNext()) {
 				WrappedClassLoader loader = (WrappedClassLoader) classLoaders.next();
 				idToLoader.put(loader.bundle.getSymbolicName(), loader);
-				bundles[i]= loader.bundle;
-				i++;
+				bundles.add(Platform.getPlatformAdmin().getState(false).getBundle(loader.bundle.getBundleId()));
 			}
-			String[] ids= computePrerequisiteOrderPlugins(bundles);
-			orderedPluginClassLoaders= new ClassLoader[pluginClassLoaders.size()];
-			for (int j = 0; j < ids.length; j++) {
-				String id = ids[j];
-				orderedPluginClassLoaders[j]= (ClassLoader)idToLoader.get(id);
+			List descriptions = computePrerequisiteOrder(bundles);
+			List loaders = new ArrayList(descriptions.size());
+			for (Iterator iter = descriptions.iterator(); iter.hasNext(); ) {
+				String id =((BundleDescription) iter.next()).getSymbolicName();
+				loaders.add(idToLoader.get(id));
 			}
+			orderedPluginClassLoaders = (WrappedClassLoader[]) loaders.toArray(new WrappedClassLoader[loaders.size()]);
 		}
 		return orderedPluginClassLoaders;
 	}
-
+	
 	/*
 	 * Copied from org.eclipse.pde.internal.build.Utils
-	 * TODO: re-copy this code to get off the compatibility layer. (use bundles instead of plug-in descriptors)
 	 */
-	private String[] computePrerequisiteOrderPlugins(Bundle[] plugins) {
-		List prereqs = new ArrayList(9);
-		Set pluginList = new HashSet(plugins.length);
-		for (int i = 0; i < plugins.length; i++) {
-			pluginList.add(plugins[i].getSymbolicName());
-		}
+	private List computePrerequisiteOrder(List plugins) {
+		List prereqs = new ArrayList(plugins.size());
+		List fragments = new ArrayList();
+
 		// create a collection of directed edges from plugin to prereq
-		for (int i = 0; i < plugins.length; i++) {
-			IPluginDescriptor descriptor = Platform.getPluginRegistry().getPluginDescriptor(plugins[i].getSymbolicName());
-			boolean boot = false;
-			boolean runtime = false;
+		for (Iterator iter = plugins.iterator(); iter.hasNext();) {
+			BundleDescription current = (BundleDescription) iter.next();
+			if (current.getHost() != null) {
+				fragments.add(current);
+				continue;
+			}
 			boolean found = false;
-			IPluginPrerequisite[] prereqList = descriptor.getPluginPrerequisites();
-			if (prereqList != null) {
-				for (int j = 0; j < prereqList.length; j++) {
-					// ensure that we only include values from the original set.
-					String prereq = prereqList[j].getUniqueIdentifier();
-					boot = boot || prereq.equals(BootLoader.PI_BOOT);
-					runtime = runtime || prereq.equals(Platform.PI_RUNTIME);
-					if (pluginList.contains(prereq)) {
-						found = true;
-						prereqs.add(new String[] { plugins[i].getSymbolicName(), prereq });
-					}
+
+			BundleDescription[] prereqList = getDependentBundles(current);
+			for (int j = 0; j < prereqList.length; j++) {
+				// ensure that we only include values from the original set.
+				if (plugins.contains(prereqList[j])) {
+					found = true;
+					prereqs.add(new Relation(current, prereqList[j]));
 				}
 			}
 
 			// if we didn't find any prereqs for this plugin, add a null prereq
-			// to ensure the value is in the output	
+			// to ensure the value is in the output
 			if (!found) {
-				prereqs.add(new String[] { plugins[i].getSymbolicName(), null });
+				prereqs.add(new Relation(current, null));
+			}
+		}
+
+		//The fragments needs to added relatively to their host and to their
+		// own prerequisite (bug #43244)
+		for (Iterator iter = fragments.iterator(); iter.hasNext();) {
+			BundleDescription current = (BundleDescription) iter.next();
+
+			if (plugins.contains(current.getHost().getBundle())) {
+				prereqs.add(new Relation(current, current.getHost().getSupplier()));
+			} else {
+				AntCorePlugin.getPlugin().getLog().log(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, MessageFormat.format(InternalCoreAntMessages.getString("AntCorePreferences.1"), new String[] {current.getSymbolicName()}), null)); //$NON-NLS-1$
 			}
 
-			// if we didn't find the boot or runtime plugins as prereqs and they are in the list
-			// of plugins to build, add prereq relations for them.  This is required since the 
-			// boot and runtime are implicitly added to a plugin's requires list by the platform runtime.
-			// Note that we should skip the xerces plugin as this would cause a circularity.
-			if (plugins[i].getSymbolicName().equals("org.apache.xerces")) //$NON-NLS-1$
-				continue;
-			if (!boot && pluginList.contains(BootLoader.PI_BOOT) && !plugins[i].getSymbolicName().equals(BootLoader.PI_BOOT))
-				prereqs.add(new String[] { plugins[i].getSymbolicName(), BootLoader.PI_BOOT });
-			if (!runtime && pluginList.contains(Platform.PI_RUNTIME) && !plugins[i].getSymbolicName().equals(Platform.PI_RUNTIME) && !plugins[i].getSymbolicName().equals(BootLoader.PI_BOOT))
-				prereqs.add(new String[] { plugins[i].getSymbolicName(), Platform.PI_RUNTIME });
+			BundleDescription[] prereqList = getDependentBundles(current);
+			for (int j = 0; j < prereqList.length; j++) {
+				// ensure that we only include values from the original set.
+				if (plugins.contains(prereqList[j])) {
+					prereqs.add(new Relation(current, prereqList[j]));
+				}
+			}
 		}
 
 		// do a topological sort, insert the fragments into the sorted elements
-		String[][] prereqArray = (String[][]) prereqs.toArray(new String[prereqs.size()][]);
-		return computeNodeOrder(prereqArray);
+		return computeNodeOrder(prereqs);
 	}
-	
-	/*
-	 * Copied from org.eclipse.pde.internal.build.Utils
-	 */
-	private String[] computeNodeOrder(String[][] specs) {
-		Map counts = computeCounts(specs);
-		List nodes = new ArrayList(counts.size());
-		while (!counts.isEmpty()) {
-			List roots = findRootNodes(counts);
-			if (roots.isEmpty())
-				break;
-			for (Iterator i = roots.iterator(); i.hasNext();)
-				counts.remove(i.next());
-			nodes.addAll(roots);
-			removeArcs(specs, roots, counts);
-		}
-		String[] result = new String[nodes.size()];
-		nodes.toArray(result);
 
-		return result;
+	/*
+	 * Copied from org.eclipse.pde.internal.build.site.PDEState.
+	 */
+	private BundleDescription[] getDependentBundles(BundleDescription root) {
+		BundleDescription[] imported = getImportedBundles(root);
+		BundleDescription[] required = getRequiredBundles(root);
+		BundleDescription[] dependents = new BundleDescription[imported.length + required.length];
+		System.arraycopy(imported, 0, dependents, 0, imported.length);
+		System.arraycopy(required, 0, dependents, imported.length, required.length);
+		return dependents;
 	}
 	
 	/*
+	 * Copied from org.eclipse.pde.internal.build.site.PDEState.
+	 */
+	private BundleDescription[] getRequiredBundles(BundleDescription root) {
+		if (root == null) {
+			return new BundleDescription[0];
+		}
+		return root.getResolvedRequires();
+	}
+
+	/*
+	 * Copied from org.eclipse.pde.internal.build.site.PDEState.
+	 */
+	private BundleDescription[] getImportedBundles(BundleDescription root) {
+		if (root == null) {
+			return new BundleDescription[0];
+		}
+		ExportPackageDescription[] packages = root.getResolvedImports();
+		ArrayList resolvedImports = new ArrayList(packages.length);
+		for (int i = 0; i < packages.length; i++) {
+			if (!root.getLocation().equals(packages[i].getExporter().getLocation()) && !resolvedImports.contains(packages[i].getExporter())) {
+				resolvedImports.add(packages[i].getExporter());
+			}
+		}
+		return (BundleDescription[]) resolvedImports.toArray(new BundleDescription[resolvedImports.size()]);
+	}
+
+	/*
 	 * Copied from org.eclipse.pde.internal.build.Utils
 	 */
-	private void removeArcs(String[][] mappings, List roots, Map counts) {
+	private void removeArcs(List edges, List roots, Map counts) {
 		for (Iterator j = roots.iterator(); j.hasNext();) {
-			String root = (String) j.next();
-			for (int i = 0; i < mappings.length; i++) {
-				if (root.equals(mappings[i][1])) {
-					String input = mappings[i][0];
+			Object root = j.next();
+			for (int i = 0; i < edges.size(); i++) {
+				if (root.equals(((Relation) edges.get(i)).to)) {
+					Object input = ((Relation) edges.get(i)).from;
 					Integer count = (Integer) counts.get(input);
-					if (count != null)
+					if (count != null) {
 						counts.put(input, new Integer(count.intValue() - 1));
+					}
 				}
 			}
 		}
 	}
-	
+
 	/*
 	 * Copied from org.eclipse.pde.internal.build.Utils
 	 */
-	private List findRootNodes(Map counts) {
-		List result = new ArrayList(5);
-		for (Iterator i = counts.keySet().iterator(); i.hasNext();) {
-			String node = (String) i.next();
-			int count = ((Integer) counts.get(node)).intValue();
-			if (count == 0)
-				result.add(node);
+	private List computeNodeOrder(List edges) {
+		Map counts = computeCounts(edges);
+		List nodes = new ArrayList(counts.size());
+		while (!counts.isEmpty()) {
+			List roots = findRootNodes(counts);
+			if (roots.isEmpty()) {
+				break;
+			}
+			for (Iterator i = roots.iterator(); i.hasNext();) {
+				counts.remove(i.next());
+			}
+			nodes.addAll(roots);
+			removeArcs(edges, roots, counts);
 		}
-		return result;
+		return nodes;
 	}
-	
+
 	/*
 	 * Copied from org.eclipse.pde.internal.build.Utils
 	 */
-	private Map computeCounts(String[][] mappings) {
+	private Map computeCounts(List mappings) {
 		Map counts = new HashMap(5);
-		for (int i = 0; i < mappings.length; i++) {
-			String from = mappings[i][0];
+		for (int i = 0; i < mappings.size(); i++) {
+			Object from = ((Relation) mappings.get(i)).from;
 			Integer fromCount = (Integer) counts.get(from);
-			String to = mappings[i][1];
+			Object to = ((Relation) mappings.get(i)).to;
 			if (to == null)
 				counts.put(from, new Integer(0));
 			else {
@@ -950,6 +997,21 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			}
 		}
 		return counts;
+	}
+
+	/*
+	 * Copied from org.eclipse.pde.internal.build.Utils
+	 */
+	private List findRootNodes(Map counts) {
+		List result = new ArrayList(5);
+		for (Iterator i = counts.keySet().iterator(); i.hasNext();) {
+			Object node = i.next();
+			int count = ((Integer) counts.get(node)).intValue();
+			if (count == 0) {
+				result.add(node);
+			}
+		}
+		return result;
 	}
 	
 	private void initializePluginClassLoaders() {
