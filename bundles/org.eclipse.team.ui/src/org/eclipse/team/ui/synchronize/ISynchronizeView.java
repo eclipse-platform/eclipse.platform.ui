@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.ui.synchronize;
 
-import org.eclipse.team.internal.ui.synchronize.StructuredViewerAdvisor;
 import org.eclipse.ui.IViewPart;
 
 /**

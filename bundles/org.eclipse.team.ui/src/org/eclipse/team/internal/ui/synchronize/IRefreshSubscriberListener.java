@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.ui.actions.ActionFactory;
 
 /**

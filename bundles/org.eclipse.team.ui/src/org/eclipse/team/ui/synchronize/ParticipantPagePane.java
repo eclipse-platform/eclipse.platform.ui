@@ -11,7 +11,6 @@
 
 package org.eclipse.team.ui.synchronize;
 
-import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareViewerPane;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.*;

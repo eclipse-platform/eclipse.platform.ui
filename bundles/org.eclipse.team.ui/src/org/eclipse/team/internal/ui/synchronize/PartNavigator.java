@@ -16,7 +16,6 @@ import org.eclipse.compare.internal.IOpenable;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.team.internal.ui.synchronize.actions.NavigateAction;
 
 /**
  * A navigator that coordinates navigation between several navigable
