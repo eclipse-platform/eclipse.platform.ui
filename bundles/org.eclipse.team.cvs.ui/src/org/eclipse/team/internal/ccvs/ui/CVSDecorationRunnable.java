@@ -31,6 +31,7 @@ import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
@@ -172,13 +173,17 @@ public class CVSDecorationRunnable implements Runnable {
 						} else {
 							bindings.put(CVSDecoratorConfiguration.FILE_REVISION, fileInfo.getRevision());
 						}
-						bindings.put(CVSDecoratorConfiguration.FILE_KEYWORD, CVSDecorator.getFileTypeString(fileInfo.getName(), fileInfo.getKeywordMode()));
+						KSubstOption option = fileInfo.getKeywordMode() != null ?
+							KSubstOption.fromMode(fileInfo.getKeywordMode()) :
+							KSubstOption.fromPattern(fileInfo.getName());
+						bindings.put(CVSDecoratorConfiguration.FILE_KEYWORD, option.getShortDisplayText());
 						if (tag != null && (tag.getType() != CVSTag.HEAD)) {
 							bindings.put(CVSDecoratorConfiguration.RESOURCE_TAG, tag.getName());
 						}
 					} else {
 						// only show the type that cvs will use when comitting the file
-						bindings.put(CVSDecoratorConfiguration.FILE_KEYWORD, CVSDecorator.getFileTypeString(file.getName(), null));
+						KSubstOption option = KSubstOption.fromPattern(file.getName());
+						bindings.put(CVSDecoratorConfiguration.FILE_KEYWORD, option.getShortDisplayText());
 					}
 					break;
 			}			

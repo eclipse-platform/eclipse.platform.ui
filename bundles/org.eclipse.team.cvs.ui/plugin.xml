@@ -58,6 +58,12 @@
 			objectClass="org.eclipse.core.resources.IResource" adaptable="true"> 
 			<filter name="projectNature" value="org.eclipse.team.cvs.core.cvsnature"/>
 			<action 
+				id="org.eclipse.team.ccvs.ui.setKeywordSubstitution"
+				label="%SetKeywordSubstitutionAction.label"
+				tooltip="%SetKeywordSubstitutionAction.tooltip"
+				menubarPath="team.main/group2"
+				class="org.eclipse.team.internal.ccvs.ui.actions.SetKeywordSubstitutionAction"/>
+			<action 
 				id="org.eclipse.team.ccvs.ui.tag"
 				label="%TagAction.label"
 				tooltip="%TagAction.tooltip"

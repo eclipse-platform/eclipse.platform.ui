@@ -9,12 +9,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -34,7 +32,8 @@ import org.eclipse.team.core.IResourceStateChangeListener;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.ResourceDeltaVisitor;
 
@@ -351,28 +350,6 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		if(theDecorator!=null) {
 			theDecorator.dispose();
 		}
-	}
-	
-	public static String getFileTypeString(String name, String keyword) {
-		StringBuffer buffer = new StringBuffer();
-		boolean isBinary = false;
-		if(keyword!=null) {
-			if (keyword.equals("-kb")) { //$NON-NLS-1$
-				isBinary = true;
-			}
-		} else {
-			isBinary = !CVSProvider.isText(name);
-		}
-		
-		if(isBinary) {
-			buffer.append(Policy.bind("CVSFilePropertiesPage.binary")); 
-		} else {
-			buffer.append(Policy.bind("CVSFilePropertiesPage.text"));
-			if(keyword!=null && !keyword.equals("-ko") && !"".equals(keyword)) { //$NON-NLS-1$ //$NON-NLS-2$
-				buffer.append(" " + keyword); //$NON-NLS-1$
-			}
-		}		
-		return buffer.toString();
 	}
 	
 	/*

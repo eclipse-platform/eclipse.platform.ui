@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.ui.dialogs.PropertyPage;
@@ -62,16 +63,7 @@ public class CVSFilePropertiesPage extends PropertyPage {
 			
 			// Keyword Mode
 			createLabel(composite, Policy.bind("CVSFilePropertiesPage.keywordMode"));
-			String keywordMode = syncInfo.getKeywordMode();
-			if (keywordMode.equals("-kb")) {
-				createLabel(composite, Policy.bind("CVSFilePropertiesPage.binary")); 
-			} else if (keywordMode.equals("-ko")) {
-				createLabel(composite, Policy.bind("CVSFilePropertiesPage.textNoKeyword"));
-			} else if (keywordMode.equals("")) {
-				createLabel(composite, Policy.bind("CVSFilePropertiesPage.text"));
-			} else {
-				createLabel(composite, keywordMode);
-			}
+			createLabel(composite, KSubstOption.fromMode(syncInfo.getKeywordMode()).getLongDisplayText());
 			
 			// Tag
 			createLabel(composite, Policy.bind("CVSFilePropertiesPage.tag"));

@@ -30,9 +30,9 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.ui.CVSDecorator;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.HistoryView;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
@@ -172,13 +172,10 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 						try {
 							ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile) resource);
 							ResourceSyncInfo info = cvsFile.getSyncInfo();
-							String kw;
-							if (info!=null) {
-								kw = CVSDecorator.getFileTypeString(resource.getName(), info.getKeywordMode());
-							} else {
-								kw = CVSDecorator.getFileTypeString(resource.getName(), null);
-							}
-							postfix.append("(" + kw + ")");
+							KSubstOption option = info != null && info.getKeywordMode() != null ?
+								KSubstOption.fromMode(info.getKeywordMode()) :
+								KSubstOption.fromPattern(resource.getName());
+							postfix.append("(" + option.getShortDisplayText() + ")");
 						} catch(CVSException e) {
 							ErrorDialog.openError(getControl().getShell(), null, null, e.getStatus());
 						}
