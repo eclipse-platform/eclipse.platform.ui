@@ -24,13 +24,16 @@ import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.contentassist.SubjectControlContentAssistant;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultInformationControl;
@@ -70,7 +73,7 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contentassist.ContentAssistHandler;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.IDE;
@@ -79,14 +82,9 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 class ReplaceDialog2 extends ExtendedDialogWindow {
 		
-	private abstract static class ReplaceOperation extends WorkspaceModifyOperation {
-		ReplaceOperation(IResource lock) {
-			super(lock);
-		}
-		ReplaceOperation() {
-			super();
-		}
-		public void execute(IProgressMonitor monitor) throws InvocationTargetException {
+	private abstract static class ReplaceOperation implements IRunnableWithProgress {
+
+		public void run(IProgressMonitor monitor) throws InvocationTargetException {
 			try {
 				doReplace(monitor);
 			} catch (BadLocationException e) {
@@ -261,32 +259,30 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 					skipFile();
 					break;
 				case REPLACE :
-					run(false, true, new ReplaceOperation((IResource) getCurrentMarker().getElement()) {
-					protected void doReplace(IProgressMonitor pm) throws BadLocationException, CoreException {
-						replace(pm, replaceText);
-					}
-				});
+					run(new ReplaceOperation() {
+						protected void doReplace(IProgressMonitor pm) throws BadLocationException, CoreException {
+							replace(pm, replaceText);
+						}
+					}, (IResource) getCurrentMarker().getElement());
 					gotoCurrentMarker();
 					break;
 				case REPLACE_ALL_IN_FILE :
-					run(false, true, new ReplaceOperation((IResource) getCurrentMarker().getElement()) {
-					protected void doReplace(IProgressMonitor pm) throws BadLocationException, CoreException {
-						replaceInFile(pm, replaceText);
-						
-					}
-				});
+					run(new ReplaceOperation() {
+						protected void doReplace(IProgressMonitor pm) throws BadLocationException, CoreException {
+							replaceInFile(pm, replaceText);
+						}
+					}, (IResource) getCurrentMarker().getElement());
 					gotoCurrentMarker();
 					break;
 				case REPLACE_ALL :
-					run(false, true, new ReplaceOperation() {
-					protected void doReplace(IProgressMonitor pm) throws BadLocationException, CoreException {
-						replaceAll(pm, replaceText);
-					}
-				});
+					run(new ReplaceOperation() {
+						protected void doReplace(IProgressMonitor pm) throws BadLocationException, CoreException {
+							replaceAll(pm, replaceText);
+						}
+					}, ResourcesPlugin.getWorkspace().getRoot());
 					gotoCurrentMarker();
 					break;
-				default :
-					{
+				default : {
 					super.buttonPressed(buttonId);
 					return;
 				}
@@ -311,6 +307,11 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 		}
 	}
 	
+	private void run(ReplaceOperation operation, IResource resource) throws InvocationTargetException, InterruptedException {
+		ISchedulingRule rule= ResourcesPlugin.getWorkspace().getRuleFactory().modifyRule(resource);
+		PlatformUI.getWorkbench().getProgressService().runInUI(this, operation, rule);	
+	}
+
 	private Match getCurrentMarker() {
 		return (Match)fMarkers.get(0);
 	}
