@@ -183,7 +183,7 @@ class SearchResultViewer extends TableViewer {
 
 	//--- Contribution management -----------------------------------------------
 
-	protected boolean enableRemoveMenuItem() {
+	protected boolean enableRemoveMatchMenuItem() {
 		if (getSelectedEntriesCount() != 1)
 			return false;
 		Table table= getTable();
@@ -202,9 +202,9 @@ class SearchResultViewer extends TableViewer {
 		menu.add(new Separator());
 		if (!getSelection().isEmpty()) {
 			menu.add(fGotoMarkerAction);
-			if (enableRemoveMenuItem())
-				menu.add(new RemoveResultAction(this));				
-			menu.add(fRemoveMatchAction);
+			if (enableRemoveMatchMenuItem())
+				menu.add(fRemoveMatchAction);
+			menu.add(new RemoveResultAction(this));				
 			menu.add(new Separator());
 		}
 		// If we have elements

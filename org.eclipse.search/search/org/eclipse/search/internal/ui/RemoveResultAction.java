@@ -23,10 +23,16 @@ class RemoveResultAction extends Action {
 	private ISelectionProvider fSelectionProvider;
 
 	public RemoveResultAction(ISelectionProvider provider) {
-		super(SearchMessages.getString("SearchResultView.remove.text")); //$NON-NLS-1$
-		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_REM);
-		setToolTipText(SearchMessages.getString("SearchResultView.remove.tooltip")); //$NON-NLS-1$
 		fSelectionProvider= provider;
+		if (getSelectedEntriesCount() > 1) {
+			setText(SearchMessages.getString("SearchResultView.removeEntries.text")); //$NON-NLS-1$
+			setToolTipText(SearchMessages.getString("SearchResultView.removeEntries.tooltip")); //$NON-NLS-1$
+		}
+		else {
+			setText(SearchMessages.getString("SearchResultView.removeEntry.text")); //$NON-NLS-1$
+			setToolTipText(SearchMessages.getString("SearchResultView.removeEntry.tooltip")); //$NON-NLS-1$
+		}
+		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_REM);
 	}
 	
 	public void run() {
@@ -56,5 +62,13 @@ class RemoveResultAction extends Action {
 			markers.addAll(entry.getMarkers());
 		}
 		return (IMarker[])markers.toArray(new IMarker[markerCount]);
+	}
+
+	protected int getSelectedEntriesCount() {
+		ISelection s= fSelectionProvider.getSelection();
+		if (s == null || s.isEmpty() || !(s instanceof IStructuredSelection))
+			return 0;
+		IStructuredSelection selection= (IStructuredSelection)s;
+		return selection.size();
 	}
 }
