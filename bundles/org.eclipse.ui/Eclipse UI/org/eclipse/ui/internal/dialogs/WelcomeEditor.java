@@ -252,8 +252,9 @@ private Composite createInfoArea(Composite parent) {
 
 	// Get the background color for the title area
 	Display display = parent.getDisplay();
-	Color bg = JFaceColors.getBannerBackground(display);
-	infoArea.setBackground(bg);
+	Color background = JFaceColors.getBannerBackground(display);
+	Color foreground = JFaceColors.getBannerForeground(display);
+	infoArea.setBackground(background);
 
 	StyledText sampleStyledText = null;
 	// Create the intro item
@@ -263,7 +264,7 @@ private Composite createInfoArea(Composite parent) {
 		this.texts.add(styledText);
 		sampleStyledText = styledText;
 		styledText.setCursor(null);
-		styledText.setBackground(bg);
+		JFaceColors.setColors(styledText,foreground,background);
 		styledText.setText(getIntroItem().getText());
 		setBoldRanges(styledText, item.getBoldRanges());
 		setLinkRanges(styledText, item.getActionRanges());
@@ -276,7 +277,7 @@ private Composite createInfoArea(Composite parent) {
 		addListeners(styledText);
 	
 		Label spacer = new Label(infoArea, SWT.NONE);
-		spacer.setBackground(bg);
+		spacer.setBackground(background);
 		gd = new GridData(); 
 		gd.horizontalSpan = 2;
 		spacer.setLayoutData(gd);
@@ -286,7 +287,7 @@ private Composite createInfoArea(Composite parent) {
 	WelcomeItem[] items = getItems();
 	for (int i = 0; i < items.length; i++) {
 		Label image = new Label(infoArea, SWT.NONE);
-		image.setBackground(bg);
+		image.setBackground(background);
 		image.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_OBJS_WELCOME_ITEM));
 		GridData gd = new GridData(); 
 		gd.horizontalIndent = 20;
@@ -297,7 +298,7 @@ private Composite createInfoArea(Composite parent) {
 		this.texts.add(styledText);
 		sampleStyledText = styledText;
 		styledText.setCursor(null);
-		styledText.setBackground(bg);
+		JFaceColors.setColors(styledText,foreground,background);
 		styledText.setText(items[i].getText());
 		setBoldRanges(styledText, items[i].getBoldRanges());
 		setLinkRanges(styledText, items[i].getActionRanges());
@@ -310,7 +311,7 @@ private Composite createInfoArea(Composite parent) {
 		addListeners(styledText);
 			
 		Label spacer = new Label(infoArea, SWT.NONE);
-		spacer.setBackground(bg);
+		spacer.setBackground(background);
 		gd = new GridData(GridData.FILL_HORIZONTAL); 
 		gd.horizontalSpan = 2;
 		spacer.setLayoutData(gd);
@@ -422,7 +423,8 @@ public void createPartControl(Composite parent) {
 private Composite createTitleArea(Composite parent) {
 	// Get the background color for the title area
 	Display display = parent.getDisplay();
-	Color bg = JFaceColors.getBannerBackground(display);
+	Color background = JFaceColors.getBannerBackground(display);
+	Color foreground = JFaceColors.getBannerForeground(display);
 
 	// Create the title area which will contain
 	// a title, message, and image.
@@ -435,11 +437,11 @@ private Composite createTitleArea(Composite parent) {
 	layout.numColumns = 2;
 	titleArea.setLayout(layout);
 	titleArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	titleArea.setBackground(bg);
+	titleArea.setBackground(background);
 
 	// Message label
 	final CLabel messageLabel = new CLabel(titleArea, SWT.LEFT);
-	messageLabel.setBackground(bg);
+	JFaceColors.setColors(messageLabel,foreground,background);
 	messageLabel.setText(getBannerTitle());
 	messageLabel.setFont(JFaceResources.getHeaderFont());
 	
@@ -465,7 +467,7 @@ private Composite createTitleArea(Composite parent) {
 
 	// Title image
 	Label titleImage = new Label(titleArea, SWT.LEFT);
-	titleImage.setBackground(bg);
+	titleImage.setBackground(background);
 	titleImage.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_OBJS_WELCOME_BANNER));
 	gd = new GridData(); 
 	gd.horizontalAlignment = gd.END;

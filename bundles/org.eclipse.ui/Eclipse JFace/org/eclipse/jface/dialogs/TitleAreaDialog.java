@@ -238,25 +238,28 @@ private Composite createTitleArea(Composite parent) {
 
 	// Determine the background color of the title bar
 	Display display = parent.getDisplay();
-	Color bg;
+	Color background;
+	Color foreground;
 	if (titleAreaRGB != null) {
 		titleAreaColor = new Color(display, titleAreaRGB);
-		bg = titleAreaColor;
+		background = titleAreaColor;
+		foreground = null;
 	} else {
-		bg = JFaceColors.getBannerBackground(display);
+		background = JFaceColors.getBannerBackground(display);
+		foreground = JFaceColors.getBannerForeground(display);
 	}	
-	titleArea.setBackground(bg);
+	titleArea.setBackground(background);
 
 	// Title label @ top, left
 	titleLabel = new Label(titleArea, SWT.LEFT);
-	titleLabel.setBackground(bg);
+	JFaceColors.setColors(titleLabel,foreground,background);
 	titleLabel.setFont(JFaceResources.getBannerFont());
 	titleLabel.setText(" ");//$NON-NLS-1$
 
 	// Composite to hold message label & icon
 	// Need it to draw background color box when error msg
 	messageArea = new Composite(titleArea, SWT.NONE); 
-	messageArea.setBackground(bg);
+	messageArea.setBackground(background);
 
 	// Draw a border for the top and right side of the msg area
 	messageArea.addPaintListener(new PaintListener() {
@@ -276,18 +279,18 @@ private Composite createTitleArea(Composite parent) {
 	
 	// Message image @ bottom, left
 	messageImageLabel = new Label(messageArea, SWT.LEFT);
-	messageImageLabel.setBackground(bg);
+	messageImageLabel.setBackground(background);
 	messageImageLabel.setVisible(false);
 	
 	// Message label @ bottom, center
 	messageLabel = new Label(messageArea, SWT.WRAP);
-	messageLabel.setBackground(bg);
+	JFaceColors.setColors(messageLabel,foreground,background);
 	messageLabel.setText(" \n "); // two lines//$NON-NLS-1$
 	messageLabel.setFont(JFaceResources.getDialogFont());
 
 	// Dialog image @ right
 	titleImage = new Label(titleArea, SWT.CENTER);
-	titleImage.setBackground(bg);
+	titleImage.setBackground(background);
 	titleImage.setImage(JFaceResources.getImage(DLG_IMG_TITLE_BANNER));
 	GridData gd = new GridData(); 
 	gd.horizontalAlignment = gd.END;

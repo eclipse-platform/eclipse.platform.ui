@@ -342,12 +342,13 @@ private Composite createTitleArea(Composite parent) {
 	
 	// Get the background color for the title area
 	Display display = parent.getDisplay();
-	Color bg = JFaceColors.getBannerBackground(display);
+	Color background = JFaceColors.getBannerBackground(display);
+	Color foreground = JFaceColors.getBannerForeground(display);
 	
 	GridData layoutData = new GridData(GridData.FILL_BOTH);
 	titleArea.setLayout(layout);
 	titleArea.setLayoutData(layoutData);
-	titleArea.setBackground(bg);
+	titleArea.setBackground(background);
 
 	// Add a dispose listener
 	titleArea.addDisposeListener(new DisposeListener() {
@@ -362,7 +363,7 @@ private Composite createTitleArea(Composite parent) {
 
 	// Message label
 	messageLabel = new CLabel(titleArea, SWT.LEFT);
-	messageLabel.setBackground(bg);
+	JFaceColors.setColors(messageLabel,foreground,background);
 	messageLabel.setText(" ");//$NON-NLS-1$
 	messageLabel.setFont(JFaceResources.getBannerFont());
 	
@@ -389,7 +390,7 @@ private Composite createTitleArea(Composite parent) {
 
 	// Title image
 	titleImage = new Label(titleArea, SWT.LEFT);
-	titleImage.setBackground(bg);
+	titleImage.setBackground(background);
 	titleImage.setImage(JFaceResources.getImage(PREF_DLG_TITLE_IMG));
 	gd = new GridData(); 
 	gd.horizontalAlignment = gd.END;

@@ -5,6 +5,7 @@ import java.util.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -25,6 +26,14 @@ public class JFaceColors {
 
 	public static Color getBannerBackground(Display display) {
 		return display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+	}
+	
+	/**
+	 * Get the Color used for banner foregrounds
+	 */
+
+	public static Color getBannerForeground(Display display) {
+		return display.getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 	}
 
 	/**
@@ -133,4 +142,19 @@ public class JFaceColors {
 			((Color) colors.next()).dispose();
 		}
 	}
+	
+	/**
+	 * Set the foreground and background colors of the
+	 * control to the specified values. If the values are
+	 * null than ignore them.
+	 * @param foreground Color
+	 * @param background Color
+	 */
+	public static void setColors(Control control,Color foreground, Color background){
+		if(foreground != null)
+			control.setForeground(foreground);
+		if(background != null)
+			control.setBackground(background);
+	}
+		
 }
