@@ -48,6 +48,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteModule;
@@ -127,6 +128,7 @@ public class CVSProvider implements ICVSProvider {
 					// should be removed once nature support is added to the UI.
 					// delete children, keep project 
 					monitor.subTask(Policy.bind("CVSProvider.Scrubbing_local_project_1")); //$NON-NLS-1$
+					EclipseSynchronizer.getInstance().prepareForDeletion(project);
 					IResource[] children = project.members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
 					IProgressMonitor subMonitor = Policy.subMonitorFor(monitor, 80);
 					subMonitor.beginTask(null, children.length * 100);
