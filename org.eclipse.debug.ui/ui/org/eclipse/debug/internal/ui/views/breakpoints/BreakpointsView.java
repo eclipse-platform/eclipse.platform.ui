@@ -101,8 +101,8 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		    	IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints();
 		    	for (int i = 0; i < breakpoints.length; i++) {
 					IBreakpoint breakpoint= breakpoints[i];
-					Object parent = provider.getParent(breakpoint);
-					if (parent instanceof IBreakpointContainer && getExpandedState(parent)) {
+					Object breakpointParent = provider.getParent(breakpoint);
+					if (breakpointParent instanceof IBreakpointContainer && getExpandedState(breakpointParent)) {
 						expanded.add(breakpoint);
 					}
 				}
