@@ -261,7 +261,8 @@ public boolean doCopy(IProgressMonitor progressMonitor) {
 		try {
 			URLHandler.Response response = (URLHandler.Response)URLHandler.open(urlInput);
 			lContentLength = response.getContentLength();
-			streamInput = response.getInputStream();
+			if( response.getResponseCode() == HttpURLConnection.HTTP_OK )
+				streamInput = response.getInputStream();
 		}
 		catch (IOException ex) {
 			strErrorMessage = createMessageString(UpdateManagerStrings.getString("S_Unable_to_obtain_source_input_stream"), ex);
