@@ -17,6 +17,7 @@ import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
 import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchSite;
 
@@ -48,6 +49,22 @@ public class DefaultSynchronizePageActions extends SynchronizePageActionGroup {
 			// TODO: Add open menu action which opens in compare editor input
 		}
 	}
+	
+	/* (non-Javadoc)
+     * @see org.eclipse.team.ui.synchronize.SynchronizePageActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
+     */
+    public void fillActionBars(IActionBars actionBars) {
+        openWithActions.fillActionBars(actionBars);
+        refactorActions.fillActionBars(actionBars);
+    }
+	
+	/* (non-Javadoc)
+     * @see org.eclipse.ui.actions.ActionGroup#updateActionBars()
+     */
+    public void updateActionBars() {
+        openWithActions.updateActionBars();
+        refactorActions.updateActionBars();
+    }
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.IActionContribution#fillContextMenu(org.eclipse.jface.action.IMenuManager)
