@@ -52,8 +52,8 @@ public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
 			if (parent instanceof JobRoot) {
 				return ((JobRoot) parent).getElements();
 			}
-			if (parent instanceof FeatureHierarchyElement2) {
-				FeatureHierarchyElement2 fe = (FeatureHierarchyElement2) parent;
+			if (parent instanceof FeatureHierarchyElement) {
+				FeatureHierarchyElement fe = (FeatureHierarchyElement) parent;
 				Object root = fe.getRoot();
 				boolean oldFeature = false;
 				if (root instanceof JobRoot) {
@@ -89,8 +89,8 @@ public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
 					+ " " //$NON-NLS-1$
 					+ feature.getVersionedIdentifier().getVersion().toString();
 			}
-			if (obj instanceof FeatureHierarchyElement2) {
-				String name = ((FeatureHierarchyElement2) obj).getLabel();
+			if (obj instanceof FeatureHierarchyElement) {
+				String name = ((FeatureHierarchyElement) obj).getLabel();
 				if (name != null)
 					return name;
 			}
@@ -228,8 +228,8 @@ public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
 		ArrayList editable) {
 
 		for (int i = 0; i < elements.length; i++) {
-			FeatureHierarchyElement2 element =
-				(FeatureHierarchyElement2) elements[i];
+			FeatureHierarchyElement element =
+				(FeatureHierarchyElement) elements[i];
 			if (element.isChecked())
 				checked.add(element);
 			if (!element.isEditable())
@@ -247,7 +247,7 @@ public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
 			selected.add(job);
 			Object[] elements = jobRoots[i].getElements();
 			for (int j = 0; j < elements.length; j++) {
-				FeatureHierarchyElement2 element = (FeatureHierarchyElement2) elements[j];
+				FeatureHierarchyElement element = (FeatureHierarchyElement) elements[j];
 				selectAll(job.getOldFeature() != null, element, selected, value);
 			}
 		}
@@ -256,7 +256,7 @@ public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
 
 	private void selectAll(
 		boolean update,
-		FeatureHierarchyElement2 ref,
+		FeatureHierarchyElement ref,
 		ArrayList selected,
 		boolean value) {
 
@@ -273,7 +273,7 @@ public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
 		}
 		Object[] included = ref.getChildren();
 		for (int i = 0; i < included.length; i++) {
-			selectAll(update, (FeatureHierarchyElement2) included[i], selected, value);
+			selectAll(update, (FeatureHierarchyElement) included[i], selected, value);
 		}
 	}
 
@@ -282,7 +282,7 @@ public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
 			treeViewer.setChecked(element, !checked);
 			return;
 		}
-		FeatureHierarchyElement2 fe = (FeatureHierarchyElement2) element;
+		FeatureHierarchyElement fe = (FeatureHierarchyElement) element;
 
 		if (!fe.isEditable())
 			treeViewer.setChecked(element, !checked);
@@ -292,7 +292,7 @@ public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
 		}
 	}
 	
-	public FeatureHierarchyElement2[] getOptionalElements(IInstallFeatureOperation job) {
+	public FeatureHierarchyElement[] getOptionalElements(IInstallFeatureOperation job) {
 		for (int i = 0; i < jobRoots.length; i++) {
 			if (job.equals(jobRoots[i].getJob())) {
 				return jobRoots[i].getElements();
@@ -326,7 +326,7 @@ public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
 		IInstallFeatureOperation job = jobRoot.getJob();
 		boolean update = job.getOldFeature() != null;
 		boolean patch = UpdateUI.isPatch(job.getFeature());
-		FeatureHierarchyElement2[] elements = jobRoot.getElements();
+		FeatureHierarchyElement[] elements = jobRoot.getElements();
 		for (int i = 0; i < elements.length; i++) {
 			elements[i].addCheckedOptionalFeatures(update, patch, config, set);
 		}

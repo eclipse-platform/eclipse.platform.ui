@@ -216,7 +216,7 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 						// otherwise it is a broken feature that we 
 						// do not care about.
 						if (ref.isOptional()) {
-							return FeatureHierarchyElement2.hasOlderVersion(ref);
+							return FeatureHierarchyElement.hasOlderVersion(ref);
 						}
 					}
 				}

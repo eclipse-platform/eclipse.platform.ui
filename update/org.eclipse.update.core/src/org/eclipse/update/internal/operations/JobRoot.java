@@ -19,7 +19,7 @@ import org.eclipse.update.operations.*;
 public class JobRoot {
 	private IInstallConfiguration config;
 	private IInstallFeatureOperation job;
-	private FeatureHierarchyElement2[] elements;
+	private FeatureHierarchyElement[] elements;
 
 	public JobRoot(IInstallConfiguration config, IInstallFeatureOperation job) {
 		this.config = config;
@@ -30,7 +30,7 @@ public class JobRoot {
 		return job;
 	}
 
-	public FeatureHierarchyElement2[] getElements() {
+	public FeatureHierarchyElement[] getElements() {
 		if (elements == null)
 			computeElements();
 		return elements;
@@ -60,10 +60,10 @@ public class JobRoot {
 		ArrayList unconfiguredOptionalFeatures,
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,
-		FeatureHierarchyElement2[] optionalElements,
+		FeatureHierarchyElement[] optionalElements,
 		boolean isPatch) {
 		for (int i = 0; i < optionalElements.length; i++) {
-			FeatureHierarchyElement2[] children =
+			FeatureHierarchyElement[] children =
 				optionalElements[i].getChildren(true, isPatch, config);
 			getUnconfiguredOptionalFeatures(
 				unconfiguredOptionalFeatures,
@@ -82,14 +82,14 @@ public class JobRoot {
 		IFeature newFeature = job.getFeature();
 		ArrayList list = new ArrayList();
 		boolean patch = UpdateUtils.isPatch(newFeature);
-		FeatureHierarchyElement2.computeElements(
+		FeatureHierarchyElement.computeElements(
 			oldFeature,
 			newFeature,
 			oldFeature != null,
 			patch,
 			config,
 			list);
-		elements = new FeatureHierarchyElement2[list.size()];
+		elements = new FeatureHierarchyElement[list.size()];
 		list.toArray(elements);
 		for (int i = 0; i < elements.length; i++) {
 			elements[i].setRoot(this);

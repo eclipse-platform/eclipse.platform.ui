@@ -37,7 +37,7 @@ import org.eclipse.update.internal.core.*;
  * that the older feature with the same ID but lower
  * version was not found in the current configuration.
  */
-public class FeatureHierarchyElement2 {
+public class FeatureHierarchyElement {
 
 	private Object root;
 	private ArrayList children;
@@ -47,7 +47,7 @@ public class FeatureHierarchyElement2 {
 	private boolean optionalChildren;
 	private boolean nativeUpgrade = false;
 
-	public FeatureHierarchyElement2(
+	public FeatureHierarchyElement(
 		IFeatureReference oldRef,
 		IFeatureReference newRef) {
 		oldFeatureRef = oldRef;
@@ -194,26 +194,26 @@ public class FeatureHierarchyElement2 {
 	 * Computes children by linking matching features from the
 	 * old feature's and new feature's hierarchy.
 	 */
-	public FeatureHierarchyElement2[] getChildren(
+	public FeatureHierarchyElement[] getChildren(
 		boolean update,
 		boolean patch,
 		IInstallConfiguration config) {
 		computeChildren(update, patch, config);
-		FeatureHierarchyElement2[] array =
-			new FeatureHierarchyElement2[children.size()];
+		FeatureHierarchyElement[] array =
+			new FeatureHierarchyElement[children.size()];
 		children.toArray(array);
 		return array;
 	}
 
-	public FeatureHierarchyElement2[] getChildren() {
+	public FeatureHierarchyElement[] getChildren() {
 		if (children != null) {
-			FeatureHierarchyElement2[] array =
-				new FeatureHierarchyElement2[children.size()];
+			FeatureHierarchyElement[] array =
+				new FeatureHierarchyElement[children.size()];
 			children.toArray(array);
 			return array;
 		}
 
-		return new FeatureHierarchyElement2[0];
+		return new FeatureHierarchyElement[0];
 	}
 	/**
 	 * Computes children of this node.
@@ -240,8 +240,8 @@ public class FeatureHierarchyElement2 {
 						config,
 						children);
 				for (int i = 0; i < children.size(); i++) {
-					FeatureHierarchyElement2 element =
-						(FeatureHierarchyElement2) children.get(i);
+					FeatureHierarchyElement element =
+						(FeatureHierarchyElement) children.get(i);
 					element.setRoot(getRoot());
 				}
 			} catch (CoreException e) {
@@ -270,7 +270,7 @@ public class FeatureHierarchyElement2 {
 			if (!update || !isFalseUpdate())
 				set.add(newFeatureRef);
 		}
-		FeatureHierarchyElement2[] elements = getChildren(update, patch, config);
+		FeatureHierarchyElement[] elements = getChildren(update, patch, config);
 		for (int i = 0; i < elements.length; i++) {
 			elements[i].addCheckedOptionalFeatures(update, patch, config, set);
 		}
@@ -339,8 +339,8 @@ public class FeatureHierarchyElement2 {
 						oldRef = null;
 					}
 				}
-				FeatureHierarchyElement2 element =
-					new FeatureHierarchyElement2(oldRef, newRef);
+				FeatureHierarchyElement element =
+					new FeatureHierarchyElement(oldRef, newRef);
 				// If this is an update (old feature exists), 
 				// only check the new optional feature if the old exists.
 				// Otherwise, always check.
