@@ -60,6 +60,14 @@ protected void logError(IConfigurationElement element, String text) {
 protected void logMissingAttribute(IConfigurationElement element, String attributeName) {
 	logError(element, "Required attribute '"+attributeName+"' not defined");//$NON-NLS-2$//$NON-NLS-1$
 }
+
+/**
+ * Logs a very common registry error when a required child is missing.
+ */
+protected void logMissingElement(IConfigurationElement element, String elementName) {
+	logError(element, "Required sub element '"+elementName+"' not defined");//$NON-NLS-2$//$NON-NLS-1$
+}
+
 /**
  * Logs a registry error when the configuration element is unknown.
  */
