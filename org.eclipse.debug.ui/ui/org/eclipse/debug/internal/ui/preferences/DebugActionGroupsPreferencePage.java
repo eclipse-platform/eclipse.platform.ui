@@ -10,6 +10,7 @@ import java.util.List;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.preferences.DebugActionGroupsManager.DebugActionGroup;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -173,6 +174,8 @@ public class DebugActionGroupsPreferencePage extends PreferencePage implements I
 		Display disp = Display.getCurrent();
 		Color clr = disp.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 		actionViewer.getTable().setBackground(clr);
+		
+		Dialog.applyDialogFont(composite);
 		return composite;
 	}
 	
