@@ -19,7 +19,6 @@ import java.util.*;
 import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
-import org.eclipse.help.internal.appserver.*;
 import org.eclipse.help.internal.browser.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.*;
@@ -152,30 +151,6 @@ public class UpdateUI extends AbstractUIPlugin {
 			getPluginPreferences().getInt(UpdateCore.P_HISTORY_SIZE);
 		if (historyPref > 0) {
 			SiteLocalModel.DEFAULT_HISTORY = historyPref;
-		}
-	}
-
-	public void startWebApp() throws CoreException {
-
-		// configure web install handler
-		try {
-			WebappManager.start(WEB_APP_ID, PLUGIN_ID, new Path("webapp")); //$NON-NLS-1$
-		} catch (CoreException e) {
-			UpdateUI.logException(e);
-			return;
-		}
-
-		appServerHost = WebappManager.getHost();
-		appServerPort = WebappManager.getPort();
-	}
-
-	public void stopWebApp() throws CoreException {
-		try {
-			// unconfigure web install handler
-			WebappManager.stop(WEB_APP_ID);
-		} finally {
-			appServerHost = null;
-			appServerPort = 0;
 		}
 	}
 
