@@ -114,8 +114,6 @@ for (int i=0; i<views.length; i++) {
 %>
 	var <%=views[i].getName()%> = new Image();
 	<%=views[i].getName()%>.src = "<%=views[i].getOnImage()%>";
-	var e_<%=views[i].getName()%> = new Image();
-	e_<%=views[i].getName()%>.src = "<%=views[i].getImage()%>";
 <%
 }
 %>
@@ -128,11 +126,6 @@ function showTab(tab)
 { 	
 	if (tab == lastTab) 
 		return;
-		
-	//reset the image
-	var oldimg = "e_"+lastTab;
-	if (document.getElementById("img"+lastTab))
-		document.getElementById("img"+lastTab).src = eval(oldimg).src;
 	
 	lastTab = tab;
 	
@@ -160,8 +153,6 @@ function showTab(tab)
 					buttons[i+1].className = "separator";
 		}
  	 }
- 	 // set the image
-	document.getElementById("img"+tab).src = eval(tab).src;
 }
 
 /**
@@ -268,7 +259,7 @@ function getPreviousLink(currentLink){
 	         id="link<%=views[i].getName()%>">
 	         <img alt="<%=title%>" 
 	              title="<%=title%>" 
-	              src="<%=views[i].getImage()%>"
+	              src="<%=views[i].getOnImage()%>"
 	              id="img<%=views[i].getName()%>"
 	              height="16"
 	         >

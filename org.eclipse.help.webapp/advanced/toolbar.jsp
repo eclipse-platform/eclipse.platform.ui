@@ -126,8 +126,6 @@ for (int i=0; i<buttons.length; i++) {
 %>
 	var <%=buttons[i].getName()%> = new Image();
 	<%=buttons[i].getName()%>.src = "<%=buttons[i].getOnImage()%>";
-	var e_<%=buttons[i].getName()%> = new Image();
-	e_<%=buttons[i].getName()%>.src = "<%=buttons[i].getImage()%>";
 <%
 	}
 }
@@ -221,10 +219,10 @@ if(buttons.length > 0){
 %>
 						<td align="middle" class="button" height=18>
 							<a href="javascript:<%=buttons[i].getAction()%>('b<%=i%>');" 
-							   onmouseover="window.status='<%=buttons[i].getTooltip()%>';document.getElementById('<%=buttons[i].getName()%>').src=<%=buttons[i].getName()%>.src;return true;" 
-							   onmouseout="window.status='';document.getElementById('<%=buttons[i].getName()%>').src=e_<%=buttons[i].getName()%>.src;"
+							   onmouseover="window.status='<%=buttons[i].getTooltip()%>';return true;" 
+							   onmouseout="window.status='';"
 							   id="b<%=i%>">
-							   <img src="<%=buttons[i].getImage()%>" 
+							   <img src="<%=buttons[i].getOnImage()%>" 
 									alt='<%=buttons[i].getTooltip()%>' 
 									title='<%=buttons[i].getTooltip()%>' 
 									border="0"
