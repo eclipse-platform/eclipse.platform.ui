@@ -32,7 +32,26 @@ class DecorationResult {
 		ImageDescriptor[] imageDescriptors) {
 		prefixes = prefixList;
 		suffixes = suffixList;
-		descriptors = imageDescriptors;
+		
+		//Don't set the field if there are no entries
+		if(hasOverlays(imageDescriptors))
+			descriptors = imageDescriptors;
+	}
+
+
+	/**
+	 * Return whether or not any of the imageDescriptors
+	 * are non-null.
+	 * @param imageDescriptors
+	 * @return <code>true</code> if there are some non-null
+	 * overlays
+	 */
+	private boolean hasOverlays(ImageDescriptor[] imageDescriptors) {
+		for (int i = 0; i < imageDescriptors.length; i++) {
+			if(imageDescriptors[i] != null)
+				return true;
+		}
+		return false;
 	}
 
 
