@@ -24,10 +24,15 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
 
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
@@ -108,7 +113,7 @@ class WorkingSetDialog extends InputDialog {
 		fTree= new CheckboxTreeViewer(composite);
 		fTree.setUseHashlookup(true);
 		fTree.setContentProvider(new WorkbenchContentProvider());
-		fTree.setLabelProvider(new WorkbenchLabelProvider());
+		fTree.setLabelProvider(createLabelProvider());
 		fTree.setInput(SearchPlugin.getWorkspace().getRoot());
 		fTree.setSorter(new WorkbenchViewerSorter());
 
@@ -142,6 +147,20 @@ class WorkingSetDialog extends InputDialog {
 		disableClosedProjects();
 
 		return composite;
+	}
+
+	private ILabelProvider createLabelProvider() {
+		ILabelDecorator decorationMgr= null;
+		IWorkbenchPage page= SearchPlugin.getActivePage();
+		if (page != null) {
+			IWorkbenchPart part= page.getActivePart();
+			if (part != null)
+				decorationMgr= part.getSite().getDecoratorManager();
+		}
+		ILabelProvider labelProvider= new WorkbenchLabelProvider();
+		if (decorationMgr != null);
+			labelProvider= new DecoratingLabelProvider(labelProvider, decorationMgr);
+		return labelProvider;
 	}
 
 	private void disableClosedProjects() {
