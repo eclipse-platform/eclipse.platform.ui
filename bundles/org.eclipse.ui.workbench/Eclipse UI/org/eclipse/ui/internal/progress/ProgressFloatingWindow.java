@@ -45,7 +45,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	 */
 	ProgressFloatingWindow(Shell parent, Control associatedControl) {
 		super(parent, associatedControl);
-		setShellStyle(SWT.RESIZE | SWT.ON_TOP);
+		setShellStyle(SWT.RESIZE);
 	}
 
 	/*
