@@ -15,7 +15,7 @@
    <requires>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.help.ui"/>
+      <import plugin="org.eclipse.update.ui.forms"/>
    </requires>
 
 
@@ -29,9 +29,9 @@
                label="Open Home Page"
                icon="icons/sample.gif"
                tooltip="Open Home Page"
-               class="org.eclipse.welcome.internal.ShowBrowserAction"
+               class="org.eclipse.welcome.internal.ShowWelcomePageAction"
                menubarPath="help/helpEnd"
-               id="org.eclipse.welcome.internal.ShowBrowserAction">
+               id="org.eclipse.welcome.internal.ShowWelcomePageAction">
          </action>
       </actionSet>
    </extension>
@@ -47,18 +47,28 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            name="Welcome Portal"
+            name="Web Browser"
             icon="icons/sample.gif"
-            contributorClass="org.eclipse.welcome.internal.WebBrowserEditorContributor"
-            class="org.eclipse.welcome.internal.WebBrowserEditor"
+            contributorClass="org.eclipse.welcome.internal.webbrowser.WebBrowserEditorContributor"
+            class="org.eclipse.welcome.internal.webbrowser.WebBrowserEditor"
+            id="org.eclipse.welcome.webbrowser">
+      </editor>
+      <editor
+            name="Welcome Page"
+            icon="icons/sample.gif"
+            class="org.eclipse.welcome.internal.portal.WelcomePortalEditor"
             id="org.eclipse.welcome.portal">
       </editor>
    </extension>
    <extension
          point="org.eclipse.ui.elementFactories">
       <factory
-            class="org.eclipse.welcome.internal.WelcomeEditorInputFactory"
-            id="org.eclipse.welcome.internal.WelcomeEditorInputFactory">
+            class="org.eclipse.welcome.internal.webbrowser.WebBrowserEditorInputFactory"
+            id="org.eclipse.welcome.internal.webbrowser.WebBrowserEditorInputFactory">
+      </factory>
+      <factory
+            class="org.eclipse.welcome.internal.portal.WelcomePortalEditorInputFactory"
+            id="org.eclipse.welcome.internal.portal.WelcomePortalEditorInputFactory">
       </factory>
    </extension>
 

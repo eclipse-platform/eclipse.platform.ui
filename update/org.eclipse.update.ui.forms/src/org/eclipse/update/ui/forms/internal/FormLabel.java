@@ -24,8 +24,8 @@ import org.eclipse.swt.widgets.*;
  */
 public class FormLabel extends Canvas {
 	private String text = "";
-	int textMarginWidth = 5;
-	int textMarginHeight = 5;
+	protected int textMarginWidth = 5;
+	protected int textMarginHeight = 5;
 	private boolean underlined;
 
 	public FormLabel(Composite parent, int style) {
@@ -101,6 +101,7 @@ public class FormLabel extends Canvas {
 	}
 
 	public Point computeSize(int wHint, int hHint, boolean changed) {
+		checkWidget();
 		int innerWidth = wHint;
 		if (innerWidth != SWT.DEFAULT)
 			innerWidth -= textMarginWidth * 2;

@@ -8,23 +8,19 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.welcome.internal;
+package org.eclipse.welcome.internal.portal;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.*;
 /**
  * A simple editor input for the welcome editor
  */
-public class WelcomeEditorInput implements IEditorInput {
-	private final static String FACTORY_ID = "org.eclipse.welcome.internal.WelcomeEditorInputFactory"; //$NON-NLS-1$
-	private String url;
-	private String name;
+public class WelcomePortalEditorInput implements IEditorInput {
+	private final static String FACTORY_ID = "org.eclipse.welcome.internal.portal.WelcomePortalEditorInputFactory"; //$NON-NLS-1$
 	/**
 	 * WelcomeEditorInput constructor comment.
 	 */
-	public WelcomeEditorInput(String name, String url) {
-		this.name = name;
-		this.url = url;
+	public WelcomePortalEditorInput() {
 	}
 	public boolean exists() {
 		return false;
@@ -36,17 +32,14 @@ public class WelcomeEditorInput implements IEditorInput {
 		return null;
 	}
 	public String getName() {
-		return name;
-	}
-	public String getURL() {
-		return url;
+		return "Welcome";
 	}
 	public boolean equals(Object obj) {
 		if (obj==null) return false;
 		if (obj == this) return true;
-		if (obj instanceof WelcomeEditorInput) {
-			WelcomeEditorInput wobj = (WelcomeEditorInput)obj;
-			return wobj.getURL().equals(getURL());
+		if (obj instanceof WelcomePortalEditorInput) {
+			WelcomePortalEditorInput wobj = (WelcomePortalEditorInput)obj;
+			return true;
 		}
 		return false;
 	}
@@ -56,12 +49,10 @@ public class WelcomeEditorInput implements IEditorInput {
 				return FACTORY_ID;
 			}
 			public void saveState(IMemento memento) {
-				memento.putString("name", name);
-				memento.putString("url", url);
 			}
 		};
 	}
 	public String getToolTipText() {
-		return name;
+		return getName();
 	}
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.welcome.internal;
+package org.eclipse.welcome.internal.webbrowser;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -22,6 +22,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.EditorPart;
+import org.eclipse.welcome.internal.*;
 
 public class WebBrowserEditor extends EditorPart implements IEmbeddedWebBrowser {
 	// NL
@@ -69,7 +70,7 @@ public class WebBrowserEditor extends EditorPart implements IEmbeddedWebBrowser 
 	 */
 	public void init(IEditorSite site, IEditorInput input)
 		throws PartInitException {
-		if (!(input instanceof WelcomeEditorInput))
+		if (!(input instanceof WebBrowserEditorInput))
 			throw new PartInitException("Invalid Input: Must be WelcomeEditorInput");
 		setSite(site);
 		setInput(input);
@@ -137,7 +138,7 @@ public class WebBrowserEditor extends EditorPart implements IEmbeddedWebBrowser 
 			}
 		});
 		WorkbenchHelp.setHelp(container, "org.eclipse.update.ui.WebBrowserView");
-		WelcomeEditorInput input = (WelcomeEditorInput)getEditorInput();
+		WebBrowserEditorInput input = (WebBrowserEditorInput)getEditorInput();
 		openTo(input.getURL());
 	}
 

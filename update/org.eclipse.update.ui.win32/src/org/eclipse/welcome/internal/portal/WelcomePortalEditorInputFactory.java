@@ -1,4 +1,4 @@
-package org.eclipse.welcome.internal;
+package org.eclipse.welcome.internal.portal;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.*;
@@ -6,18 +6,16 @@ import org.eclipse.ui.IElementFactory;
 
 /**
  */
-public class WelcomeEditorInputFactory implements IElementFactory {
+public class WelcomePortalEditorInputFactory implements IElementFactory {
 	/**
 	 */
-	public WelcomeEditorInputFactory() {
+	public WelcomePortalEditorInputFactory() {
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IElementFactory#createElement(org.eclipse.ui.IMemento)
 	 */
 	public IAdaptable createElement(IMemento memento) {
-		String name = memento.getString("name");
-		String url = memento.getString("url");
-		return new WelcomeEditorInput(name, url);
+		return new WelcomePortalEditorInput();
 	}
 
 }

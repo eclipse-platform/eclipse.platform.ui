@@ -19,6 +19,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.welcome.internal.webbrowser.*;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -65,7 +66,7 @@ public class WelcomePortal extends AbstractUIPlugin implements IStartup {
 	private void openWelcomePage() {
 		try {
 			WelcomePortal.getActivePage().openEditor(
-				new WelcomeEditorInput("Getting Started", "http://www.eclipse.org"),
+				new WebBrowserEditorInput("Getting Started", "http://www.eclipse.org"),
 				"org.eclipse.welcome.portal");
 		} catch (PartInitException e) {
 			WelcomePortal.logException(e);

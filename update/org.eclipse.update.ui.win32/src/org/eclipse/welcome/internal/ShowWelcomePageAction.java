@@ -13,6 +13,7 @@ package org.eclipse.welcome.internal;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.*;
+import org.eclipse.welcome.internal.portal.WelcomePortalEditorInput;
 
 /**
  * Our sample action implements workbench action delegate.
@@ -22,12 +23,12 @@ import org.eclipse.ui.*;
  * delegated to it.
  * @see IWorkbenchWindowActionDelegate
  */
-public class ShowBrowserAction implements IWorkbenchWindowActionDelegate {
+public class ShowWelcomePageAction implements IWorkbenchWindowActionDelegate {
 	private IWorkbenchWindow window;
 	/**
 	 * The constructor.
 	 */
-	public ShowBrowserAction() {
+	public ShowWelcomePageAction() {
 	}
 
 	/**
@@ -39,7 +40,7 @@ public class ShowBrowserAction implements IWorkbenchWindowActionDelegate {
 	public void run(IAction action) {
 		try {
 			WelcomePortal.getActivePage().openEditor(
-				new WelcomeEditorInput("Getting Started", "http://www.eclipse.org"),
+				new WelcomePortalEditorInput(),
 				"org.eclipse.welcome.portal");
 		} catch (PartInitException e) {
 			WelcomePortal.logException(e);

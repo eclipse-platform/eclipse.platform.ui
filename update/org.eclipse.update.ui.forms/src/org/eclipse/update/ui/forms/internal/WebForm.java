@@ -137,7 +137,7 @@ public class WebForm extends AbstractSectionForm {
 		updatePageIncrement(scomp);
 	}
 
-	private int getHeadingHeight(Composite parent) {
+	public int getHeadingHeight(Composite parent) {
 		int width = parent.getSize().x;
 		int height = 0;
 		int imageHeight = 0;

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.welcome.internal;
+package org.eclipse.welcome.internal.webbrowser;
 
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.swt.ole.win32.*;

@@ -46,6 +46,10 @@ public class NoTabsWorkbook implements IFormWorkbook {
 			listener.formSelected(page, setFocus);
 		}
 	}
+	
+	public IFormPage [] getPages() {
+		return (IFormPage[])pages.toArray(new IFormPage[pages.size()]);
+	}
 
 	public Control getControl() {
 		return pageBook;

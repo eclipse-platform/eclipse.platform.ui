@@ -4,11 +4,12 @@
  * To change the template for this generated file go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-package org.eclipse.welcome.internal;
+package org.eclipse.welcome.internal.webbrowser;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.part.EditorActionBarContributor;
+import org.eclipse.welcome.internal.*;
 
 /**
  * @author dejan
@@ -44,7 +45,7 @@ public class WebBrowserEditorContributor
 	private void makeActions() {
 		homeAction = new Action() {
 			public void run() {
-				WelcomeEditorInput input = (WelcomeEditorInput)editor.getEditorInput();
+				WebBrowserEditorInput input = (WebBrowserEditorInput)editor.getEditorInput();
 				editor.openTo(input.getURL());
 			}
 		};
