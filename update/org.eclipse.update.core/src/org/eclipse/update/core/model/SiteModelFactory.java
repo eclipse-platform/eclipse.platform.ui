@@ -77,12 +77,9 @@ public class SiteModelFactory {
 				throw new CoreException(status);
 			}
 		} catch (SAXException e) {
-			if (e instanceof SAXException) {
-				SAXException exception = (SAXException) e;
-				// invalid Site type
-				if (exception.getException() instanceof InvalidSiteTypeException) {
-					throw (InvalidSiteTypeException) exception.getException();
-				}
+			// invalid Site type
+			if (e.getException() instanceof InvalidSiteTypeException) {
+				throw (InvalidSiteTypeException) e.getException();
 			}
 
 			throw Utilities.newCoreException(Policy.bind("SiteModelObject.ErrorParsingSiteStream"),e); //$NON-NLS-1$

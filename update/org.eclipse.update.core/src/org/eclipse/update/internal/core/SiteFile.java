@@ -182,7 +182,7 @@ public class SiteFile extends Site {
 						//$NON-NLS-1$
 					}
 				}
-				InstallRegistry.unregister("feature_"+feature.getVersionedIdentifier());
+				InstallRegistry.unregisterFeature(feature);
 			}
 
 			//finds the contentReferences for an IPluginEntry
@@ -381,7 +381,7 @@ public class SiteFile extends Site {
 				//$NON-NLS-1$
 			}
 		}
-		InstallRegistry.unregister("plugin_"+pluginEntry.getVersionedIdentifier());
+		InstallRegistry.unregisterPlugin(pluginEntry);
 	}
 
 	/*

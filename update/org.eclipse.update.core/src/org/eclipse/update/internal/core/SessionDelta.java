@@ -248,7 +248,7 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 				IConfiguredSite configSite = null;
 				IFeature featureToConfigure = null;
 				for (int i = 0; i < selected.length; i++) {
-					ref = (IFeatureReference) selected[i];
+					ref = selected[i];
 
 					try {
 						featureToConfigure = ref.getFeature(null);

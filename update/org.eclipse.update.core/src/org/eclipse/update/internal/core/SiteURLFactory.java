@@ -57,7 +57,7 @@ public class SiteURLFactory extends BaseSiteFactory implements ISiteFactoryExten
 			// the stream can be null if the user cancels the connection
 			if (siteStream==null) return null;
 
-			SiteModelFactory factory = (SiteModelFactory) this;
+			SiteModelFactory factory = this;
 			site = (Site) factory.parseSite(siteStream);
 	
 			site.setSiteContentProvider(contentProvider);

@@ -31,7 +31,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 	
 		Site site = null;
 		InputStream siteStream = null;
-		SiteModelFactory factory = (SiteModelFactory) this;
+		SiteModelFactory factory = this;
 	
 		try {
 			// if url points to a directory
@@ -123,7 +123,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 
 		parseInstalledPlugin(pluginPath);
 
-		return (Site) site;
+		return site;
 
 	}
 

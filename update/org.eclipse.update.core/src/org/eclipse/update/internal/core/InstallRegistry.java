@@ -14,9 +14,15 @@ import java.io.*;
 import java.util.*;
 
 import org.eclipse.core.boot.*;
+import org.eclipse.update.core.*;
 
 /**
- * Keeps track of all the features and plugins installed by Update mgr.
+ * Keeps track of all the features and plugins installed by Update mgr
+ * so they can be uninstalled later.
+ * The info is persisted in the .config/registry file and each entry has a key=key where
+ * for feature this key is feature_<id>_<version> and for plugins
+ * key is plugin_<id>_<version>. Normally, getVersionedIdentifier() will
+ * return <id>_<version>. Eg: feature_org.eclipse.platform_3.0.0
  */
 public class InstallRegistry extends Properties {
 	private File file = null;
@@ -99,26 +105,48 @@ public class InstallRegistry extends Properties {
 		}
 		return ret;
 	}
-
+	
 	/**
-	 * Registers an installed feature or plugin so it can be uninstalled later.
-	 * @param name: For feature this is feature_<id>_<version> and for plugins
-	 * it is plugin_<id>_<version>. Normally, getVersionedIdentifier() will
-	 * return <id>_<version>. Eg: feature_org.eclipse.platform_3.0.0
+	 * Registers an installed feature so it can be uninstalled later.
+	 * @param feature feature to register.
 	 */
-	public static synchronized void register(String name) {
+	public static synchronized void registerFeature(IFeature feature) {
+		String name = "feature_"+feature.getVersionedIdentifier();
 		if (InstallRegistry.getInstance().get(name) == null) {
 			InstallRegistry.getInstance().put(name, name);
 			// we save after each registration
 			InstallRegistry.getInstance().save();
 		}
 	}
-
+	
 	/**
-	 * Removes specified name from registry
+	 * Registers an installed feature so it can be uninstalled later.
+	 * @param feature feature to register.
+	 */
+	public static synchronized void registerPlugin(IPluginEntry pluginEntry) {
+		String name = "plugin_"+pluginEntry.getVersionedIdentifier();
+		if (InstallRegistry.getInstance().get(name) == null) {
+			InstallRegistry.getInstance().put(name, name);
+			// we save after each registration
+			InstallRegistry.getInstance().save();
+		}
+	}
+	
+	/**
+	 * Removes specified feature from registry
 	 *
 	 */
-	public static synchronized void unregister(String name) {
+	public static synchronized void unregisterFeature(IFeature feature) {
+		String name = "feature_"+feature.getVersionedIdentifier();
+		InstallRegistry.getInstance().remove(name);
+	}
+	
+	/**
+	 * Removes specified plugin from registry
+	 *
+	 */
+	public static synchronized void unregisterPlugin(IPluginEntry pluginEntry) {
+		String name = "plugin_"+pluginEntry.getVersionedIdentifier();
 		InstallRegistry.getInstance().remove(name);
 	}
 }

@@ -112,8 +112,7 @@ public class RevertConfigurationWizardPage extends WizardPage {
 			public void selectionChanged(SelectionChangedEvent e) {
 				IStructuredSelection ssel =
 					(IStructuredSelection) e.getSelection();
-				activitiesViewer.setInput(
-					((IInstallConfiguration) ssel.getFirstElement()));
+				activitiesViewer.setInput(( ssel.getFirstElement()));
 			}
 		});
 

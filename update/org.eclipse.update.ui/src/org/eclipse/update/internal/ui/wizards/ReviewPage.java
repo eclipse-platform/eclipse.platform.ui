@@ -459,7 +459,7 @@ public class ReviewPage
 	public void accept(final IFeature feature) {
 		getShell().getDisplay().syncExec(new Runnable() {
 			public void run() {
-				IInstallFeatureOperation job = (IInstallFeatureOperation)OperationsManager.getOperationFactory().createInstallOperation(null, null, feature,null, null, null);
+				IInstallFeatureOperation job = OperationsManager.getOperationFactory().createInstallOperation(null, null, feature,null, null, null);
 				ViewerFilter[] filters = tableViewer.getFilters();
 				boolean visible = true;
 

@@ -102,7 +102,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 
 			// obtain the list of plugins
 			IPlatformConfiguration runtimeConfiguration = BootLoader.getCurrentPlatformConfiguration();
-			ConfigurationPolicy configurationPolicy = (ConfigurationPolicy) configSite.getConfigurationPolicy();
+			ConfigurationPolicy configurationPolicy = configSite.getConfigurationPolicy();
 			String[] pluginPath = new String[0];
 			if (configurationPolicy.getPolicy() == IPlatformConfiguration.ISitePolicy.USER_INCLUDE)
 				pluginPath = configurationPolicy.getPluginPath(site, null);
@@ -148,7 +148,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 
 			// obtain the list of plugins
 			IPlatformConfiguration runtimeConfiguration = BootLoader.getCurrentPlatformConfiguration();
-			ConfigurationPolicy configurationPolicy = (ConfigurationPolicy) configSite.getConfigurationPolicy();
+			ConfigurationPolicy configurationPolicy = configSite.getConfigurationPolicy();
 			String[] pluginPath = new String[0];
 			if (configurationPolicy.getPolicy() == IPlatformConfiguration.ISitePolicy.USER_INCLUDE)
 				pluginPath = configurationPolicy.getPluginPath(site, null);

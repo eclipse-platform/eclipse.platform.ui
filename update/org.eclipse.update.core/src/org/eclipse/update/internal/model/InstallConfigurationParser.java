@@ -53,8 +53,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 		parser.setContentHandler(this);
 
 		this.siteStream = siteStream;
-		Assert.isTrue(config instanceof InstallConfigurationModel);
-		this.config = (InstallConfigurationModel) config;
+		this.config = config;
 
 		// DEBUG:		
 		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
@@ -181,11 +180,9 @@ public class InstallConfigurationParser extends DefaultHandler {
 			ref.setURL(url);
 			if (ref != null)
 				if (configured) {
-					(configSite.getConfigurationPolicyModel()).addConfiguredFeatureReference(
-						(FeatureReferenceModel) ref);
+					(configSite.getConfigurationPolicyModel()).addConfiguredFeatureReference(ref);
 				} else
-					(configSite.getConfigurationPolicyModel()).addUnconfiguredFeatureReference(
-						(FeatureReferenceModel) ref);
+					(configSite.getConfigurationPolicyModel()).addUnconfiguredFeatureReference(ref);
 
 			//updateURL
 			String updateURLString = attributes.getValue("updateURL"); //$NON-NLS-1$

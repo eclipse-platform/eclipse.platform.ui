@@ -174,9 +174,9 @@ public class JarVerificationResult implements IVerificationResult {
 			CertificatePair[] certs = getRootCertificates();
 			if (certs.length == 0)
 				return;
-			trustedCertificate = (CertificatePair) certs[0];
+			trustedCertificate = certs[0];
 		} else {
-			trustedCertificate = (CertificatePair) getFoundCertificate();
+			trustedCertificate = getFoundCertificate();
 		}
 		certRoot = (X509Certificate) trustedCertificate.getRoot();
 		certIssuer = (X509Certificate) trustedCertificate.getIssuer();

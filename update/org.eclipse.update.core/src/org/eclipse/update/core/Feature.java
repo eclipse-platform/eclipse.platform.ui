@@ -382,7 +382,7 @@ public class Feature extends FeatureModel implements IFeature {
 					pluginConsumer.store(references[j], subMonitor);
 				}
 
-				InstallRegistry.register("plugin_"+pluginsToInstall[i].getVersionedIdentifier());
+				InstallRegistry.registerPlugin(pluginsToInstall[i]);
 				if (monitor.isCanceled())
 						abort();
 			}
@@ -403,7 +403,7 @@ public class Feature extends FeatureModel implements IFeature {
 					setMonitorTaskName(subMonitor, msg + " " + references[i].getIdentifier());
 					consumer.store(references[i], subMonitor);
 				}
-				InstallRegistry.register("feature_"+getVersionedIdentifier());
+				InstallRegistry.registerFeature(this);
 			} else {
 				monitor.worked(1);
 			}
@@ -490,7 +490,7 @@ public class Feature extends FeatureModel implements IFeature {
 		if (all!=null){
 			for (int i = 0; i < all.length; i++) {
 				if (UpdateManagerUtils.isValidEnvironment(all[i]))
-					list.add((IPluginEntry)all[i]);
+					list.add(all[i]);
 			}
 		}
 		
@@ -955,7 +955,7 @@ public class Feature extends FeatureModel implements IFeature {
 		if (all!=null){
 			for (int i = 0; i < all.length; i++) {
 				if (UpdateManagerUtils.isValidEnvironment(all[i]))
-					list.add((INonPluginEntry)all[i]);
+					list.add(all[i]);
 			}
 		}
 		
@@ -992,7 +992,7 @@ public class Feature extends FeatureModel implements IFeature {
 		if (all!=null){
 			for (int i = 0; i < all.length; i++) {
 				if (UpdateManagerUtils.isValidEnvironment(all[i]))
-					list.add((IImport)all[i]);
+					list.add(all[i]);
 			}
 		}
 		

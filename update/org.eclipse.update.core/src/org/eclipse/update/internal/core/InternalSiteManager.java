@@ -193,11 +193,10 @@ public class InternalSiteManager {
 				//$NON-NLS-1$ //$NON-NLS-2$
 			}
 
-			InvalidSiteTypeException exception = (InvalidSiteTypeException) e;
 			try {
-				if (exception.getNewType() == null)
+				if (e.getNewType() == null)
 					throw e;
-				site = createSite(exception.getNewType(), siteURL, monitor);
+				site = createSite(e.getNewType(), siteURL, monitor);
 			} catch (InvalidSiteTypeException e1) {
 				throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToCreateSiteWithType", e.getNewType(), siteURL.toExternalForm()), e1);
 				//$NON-NLS-1$ //$NON-NLS-2$

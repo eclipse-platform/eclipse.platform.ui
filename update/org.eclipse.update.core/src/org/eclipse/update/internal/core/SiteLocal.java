@@ -445,7 +445,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			((InstallConfiguration) newConfiguration).saveConfigurationFile(isTransient());
 
 			// add to the list			
-			addPreservedInstallConfigurationModel((InstallConfigurationModel) newConfiguration);
+			addPreservedInstallConfigurationModel(newConfiguration);
 		}
 		return newConfiguration;
 	}
