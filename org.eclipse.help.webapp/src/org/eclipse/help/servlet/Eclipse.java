@@ -15,7 +15,8 @@ import javax.servlet.*;
  * Eclipse launcher
  */
 public class Eclipse {
-	private static final String HELP_APPLICATION = "org.eclipse.help.helpApplication";
+	private static final String HELP_APPLICATION =
+		"org.eclipse.help.helpApplication";
 	private static final String PI_BOOT = "org.eclipse.core.boot";
 	private static final String BOOTJAR = "boot.jar";
 	private static final String BOOTLOADER = "org.eclipse.core.boot.BootLoader";
@@ -70,8 +71,7 @@ public class Eclipse {
 	 */
 	private Class getBootLoader() throws Exception {
 		if (bootLoader == null) {
-			String installDirName =
-				context.getInitParameter("ECLIPSE_HOME");
+			String installDirName = context.getInitParameter("ECLIPSE_HOME");
 
 			File pluginsDir;
 			if (installDirName == null || "".equals(installDirName)) {
@@ -91,7 +91,9 @@ public class Eclipse {
 			//System.out.println("URL for bootloader:" + bootUrl);
 
 			bootLoader =
-				new URLClassLoader(new URL[] { bootUrl }, this.getClass().getClassLoader()).loadClass(
+				new URLClassLoader(
+					new URL[] { bootUrl },
+					this.getClass().getClassLoader()).loadClass(
 					BOOTLOADER);
 		}
 		return bootLoader;
@@ -120,12 +122,11 @@ public class Eclipse {
 						.getAttribute("javax.servlet.context.tempdir"))
 						.getAbsolutePath();
 
+				String[] args =
+					parseArguments(context.getInitParameter("ECLIPSE_ARGS"));
+
 				//System.out.println("starting eclipse");
-				mStartup
-					.invoke(
-						bootLoader,
-						new Object[] { null, work, new String[] { "-noupdate" }
-				});
+				mStartup.invoke(bootLoader, new Object[] { null, work, args });
 
 				Method mGetRunnable =
 					bootLoader.getMethod(
@@ -177,8 +178,8 @@ public class Eclipse {
 		//System.out.println("search boot in " + start);
 		FileFilter filter = new FileFilter() {
 			public boolean accept(File candidate) {
-				//System.out.println("candidate: " + candidate);
-				return candidate.isDirectory() && (candidate.getName().equals(PI_BOOT) || candidate.getName().startsWith(PI_BOOT + "_")); //$NON-NLS-1$
+					//System.out.println("candidate: " + candidate);
+	return candidate.isDirectory() && (candidate.getName().equals(PI_BOOT) || candidate.getName().startsWith(PI_BOOT + "_")); //$NON-NLS-1$
 			}
 		};
 		File[] boots = start.listFiles(filter); //$NON-NLS-1$
@@ -271,6 +272,48 @@ public class Eclipse {
 			}
 		}
 		return result;
+	}
+	/**
+	 * Parses arguments on one line, and returns as an array.
+	 * Quotes are removed, if any.
+	 */
+	private String[] parseArguments(String arguments) {
+		if (arguments == null || "".equals(arguments)) {
+			return new String[] {
+			};
+		}
+		List tokenList = new ArrayList();
+		//Divide along quotation marks
+		StringTokenizer tokenizer =
+			new StringTokenizer(arguments.trim(), "\"", true);
+		boolean withinQuotation = false;
+		String quotedString = "";
+		while (tokenizer.hasMoreTokens()) {
+			String curToken = tokenizer.nextToken();
+			if ("\"".equals(curToken)) {
+				if (withinQuotation) {
+					tokenList.add(quotedString);
+				} else {
+					quotedString = "";
+				}
+				withinQuotation = !withinQuotation;
+			} else if (withinQuotation) {
+				quotedString = curToken;
+			} else {
+				//divide unquoted strings along white space
+				StringTokenizer parser = new StringTokenizer(curToken.trim());
+				while (parser.hasMoreTokens()) {
+					tokenList.add(parser.nextToken());
+				}
+			}
+		}
+		String[] args = new String[tokenList.size()];
+		int i = 0;
+		for (Iterator it = tokenList.iterator(); it.hasNext();) {
+			args[i++] = (String) it.next();
+		}
+		return args;
+
 	}
 
 }

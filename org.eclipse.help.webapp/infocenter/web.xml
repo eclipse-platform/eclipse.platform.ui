@@ -13,6 +13,12 @@
 		<description>The directory where eclipse is installed.  For example, "d:/eclipse".  The parameter is required only when deployed help web application is not installed inside of Eclipse plugins directory.</description>
 	</context-param>
 
+	<context-param>
+		<param-name>ECLIPSE_ARGS</param-name>
+		<param-value>-noupdate</param-value>
+		<description>Arguments passed to Eclipse boot loader.  Arguments are separated by spaces.  If any arguments contains spaces, enclose it in double quotes.</description>
+	</context-param>
+      
     <servlet>
         <servlet-name>content</servlet-name>
         <servlet-class>org.eclipse.help.servlet.ContentServlet</servlet-class>
