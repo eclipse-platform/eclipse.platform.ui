@@ -12,14 +12,18 @@ package org.eclipse.ui.actions;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -174,5 +178,18 @@ public class RefreshAction extends WorkspaceAction {
         selectionChanged(StructuredSelection.EMPTY);
         run();
         selectionChanged(currentSelection);
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IAction; overrides method on WorkspaceAction.
+     */
+    public void run() {
+    	ISchedulingRule rule = null;
+    	IResourceRuleFactory factory = ResourcesPlugin.getWorkspace().getRuleFactory();
+        Iterator resources = getSelectedResources().iterator();
+        while (resources.hasNext()) {
+       		rule = MultiRule.combine(rule, factory.refreshRule((IResource)resources.next()));
+        }
+        runInBackground(rule);
     }
 }
