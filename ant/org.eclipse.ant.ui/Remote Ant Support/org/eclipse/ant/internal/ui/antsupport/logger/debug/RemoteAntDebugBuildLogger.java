@@ -178,7 +178,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
 	 */
-	public void buildStarted(BuildEvent event) {
+	public synchronized void buildStarted(BuildEvent event) {
 		super.buildStarted(event);
 		marshalMessage(-1, DebugMessageIds.BUILD_STARTED);
 		String requestPortProperty= event.getProject().getProperty("eclipse.connect.request_port"); //$NON-NLS-1$
