@@ -5,6 +5,7 @@ package org.eclipse.core.internal.utils;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import java.util.*;
 
@@ -31,9 +32,26 @@ public class Policy {
 	public static final long defaultMaxFileStateSize = 1024 * 1024l; // 1 Mb
 	public static final int defaultMaxFileStates = 50;
 
+	//debug constants
+	public static boolean DEBUG_BUILD_FAILURE = false;
+	public static boolean DEBUG_NEEDS_BUILD = false;
+	public static boolean DEBUG_BUILD_INVOKING = false;
+	public static boolean DEBUG_BUILD_DELTA = false;
+	public static boolean DEBUG_NATURES = false;
+
 	static {
 		setupAutoBuildProgress(defaultAutoBuild);
+		
+		//init debug options
+		if (ResourcesPlugin.getPlugin().isDebugging()) {
+			DEBUG_BUILD_FAILURE = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/failure"));
+			DEBUG_NEEDS_BUILD = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/needbuild"));
+			DEBUG_BUILD_INVOKING = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/invoking"));
+			DEBUG_BUILD_DELTA = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/delta"));
+			DEBUG_NATURES = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/natures"));
+		}
 	}
+	
 /**
  * Lookup the message with the given ID in this catalog 
  */

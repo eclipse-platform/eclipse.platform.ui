@@ -30,16 +30,6 @@ public class BuildManager implements ICoreConstants, IManager {
 	protected ElementTree lastBuiltTree;
 	protected InternalBuilder currentBuilder;
 	protected DeltaDataTree currentDelta;
-	
-	public static boolean DEBUG_BUILD_FAILURE = false;
-	public static boolean DEBUG_NEEDS_BUILD = false;
-	public static boolean DEBUG_BUILD_INVOKING = false;
-	public static boolean DEBUG_COMPUTE_DELTA = false;
-	public static final String OPTION_BUILD_FAILURE = ResourcesPlugin.PI_RESOURCES + "/build/failure";
-	public static final String OPTION_NEEDS_BUILD = ResourcesPlugin.PI_RESOURCES + "/build/needbuild";
-	public static final String OPTION_BUILD_INVOKING = ResourcesPlugin.PI_RESOURCES + "/build/invoking";
-	public static final String OPTION_COMPUTE_DELTA = ResourcesPlugin.PI_RESOURCES + "/build/delta";
-	
 	/**
 	 * Cache used to optimize the common case of an autobuild against
 	 * a workspace where only a single project has changed (and hence
@@ -100,12 +90,6 @@ public class BuildManager implements ICoreConstants, IManager {
 	
 public BuildManager(Workspace workspace) {
 	this.workspace = workspace;
-	if (ResourcesPlugin.getPlugin().isDebugging()) {
-		DEBUG_BUILD_FAILURE = "true".equalsIgnoreCase(Platform.getDebugOption(OPTION_BUILD_FAILURE));
-		DEBUG_NEEDS_BUILD = "true".equalsIgnoreCase(Platform.getDebugOption(OPTION_NEEDS_BUILD));
-		DEBUG_BUILD_INVOKING = "true".equalsIgnoreCase(Platform.getDebugOption(OPTION_BUILD_INVOKING));
-		DEBUG_COMPUTE_DELTA = "true".equalsIgnoreCase(Platform.getDebugOption(OPTION_COMPUTE_DELTA));
-	}
 }
 
 protected void basicBuild(int trigger, IncrementalProjectBuilder builder, Map args, MultiStatus status, IProgressMonitor monitor) {
@@ -121,10 +105,10 @@ protected void basicBuild(int trigger, IncrementalProjectBuilder builder, Map ar
 			//short-circuit if none of the projects this builder cares about have changed.
 			if (!fullBuild && !needsBuild(currentBuilder))
 				return;
-			if (DEBUG_BUILD_INVOKING) hookStartBuild(builder);
+			if (Policy.DEBUG_BUILD_INVOKING) hookStartBuild(builder);
 			Platform.run(getSafeRunnable(trigger, args, status, monitor));
 		} finally {
-			if (DEBUG_BUILD_INVOKING) hookEndBuild(builder);
+			if (Policy.DEBUG_BUILD_INVOKING) hookEndBuild(builder);
 			// Always remember the current state as the last built state.
 			// Be sure to clean up after ourselves.
 			ElementTree lastTree = workspace.getElementTree();
@@ -388,13 +372,13 @@ protected ISafeRunnable getSafeRunnable(final int trigger, final Map args, final
 }
 protected IResourceDelta getDelta(IProject project) {
 	if (currentTree == null) {
-		if (DEBUG_BUILD_FAILURE) 
+		if (Policy.DEBUG_BUILD_FAILURE) 
 			System.out.println("Build: no tree for delta " + debugBuilder() + " [" + debugProject() + "]");
 		return null;
 	}
 	//check if this builder has indicated it cares about this project
 	if (!isInterestingProject(project)) {
-		if (DEBUG_BUILD_FAILURE) 
+		if (Policy.DEBUG_BUILD_FAILURE) 
 			System.out.println("Build: project not interesting for this builder " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath());
 		return null;
 	}
@@ -409,15 +393,15 @@ protected IResourceDelta getDelta(IProject project) {
 		return result;
 
 	long startTime = 0L;
-	if (DEBUG_COMPUTE_DELTA) {
+	if (Policy.DEBUG_BUILD_DELTA) {
 		startTime = System.currentTimeMillis();
 		System.out.println("Computing delta for project: " + project.getName());
 	}
 	result = ResourceDeltaFactory.computeDelta(workspace, lastBuiltTree, currentTree, project.getFullPath(), false);
 	deltaCache.cache(project.getFullPath(), lastBuiltTree, currentTree, result);
-	if (DEBUG_BUILD_FAILURE && result == null) 
+	if (Policy.DEBUG_BUILD_FAILURE && result == null) 
 		System.out.println("Build: no delta " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath());
-	if (DEBUG_COMPUTE_DELTA)
+	if (Policy.DEBUG_BUILD_DELTA)
 		System.out.println("Finished computing delta, time: " + (System.currentTimeMillis()-startTime) + "ms");
 	return result;
 }
@@ -473,7 +457,7 @@ protected boolean needsBuild(InternalBuilder builder) {
 	
 	//search for the builder's project
 	if (currentDelta.findNodeAt(builder.getProject().getFullPath()) != null) {
-		if (DEBUG_NEEDS_BUILD)
+		if (Policy.DEBUG_NEEDS_BUILD)
 			System.out.println(toString(builder) + " needs building because of changes in: " + builder.getProject().getName());
 		return true;
 	}
@@ -482,7 +466,7 @@ protected boolean needsBuild(InternalBuilder builder) {
 	IProject[] projects = builder.getInterestingProjects();	
 	for (int i = 0; i < projects.length; i++) {
 		if (currentDelta.findNodeAt(projects[i].getFullPath()) != null) {
-			if (DEBUG_NEEDS_BUILD)
+			if (Policy.DEBUG_NEEDS_BUILD)
 				System.out.println(toString(builder) + " needs building because of changes in: " + projects[i].getName());
 			return true;
 		}

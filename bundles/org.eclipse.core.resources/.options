@@ -16,3 +16,6 @@ org.eclipse.core.resources/build/delta=true
 # For incremental builds, displays which builder is being run
 # and because of changes in which project.
 org.eclipse.core.resources/build/needbuild=false
+
+# Reports configuration and deconfiguration of project natures
+org.eclipse.core.resources/natures=false

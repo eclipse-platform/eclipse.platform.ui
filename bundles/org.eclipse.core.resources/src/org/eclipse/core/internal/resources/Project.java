@@ -229,6 +229,9 @@ protected void configureNature(final String natureID, final MultiStatus status) 
 				status.add(new ResourceStatus(IResourceStatus.INTERNAL_ERROR, getFullPath(), Policy.bind("resources.errorNature", natureID), exception));
 		}
 	};
+	if (Policy.DEBUG_NATURES) {
+		System.out.println("Configuring nature: " + natureID + " on project: " + getName());
+	}
 	Platform.run(code);
 }
 /**
@@ -374,6 +377,9 @@ protected void deconfigureNature(final String natureID, final MultiStatus status
 				status.add(new ResourceStatus(IResourceStatus.INTERNAL_ERROR, getFullPath(), Policy.bind("resources.natureDeconfig", natureID), exception));
 		}
 	};
+	if (Policy.DEBUG_NATURES) {
+		System.out.println("Deconfiguring nature: " + natureID + " on project: " + getName());
+	}
 	Platform.run(code);
 }
 /**
