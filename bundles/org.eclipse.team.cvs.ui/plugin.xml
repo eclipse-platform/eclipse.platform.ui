@@ -884,7 +884,7 @@
             label="%CVS"
             description="%CVSActionSet.description"
             visible="false"
-            id="cvs">
+            id="org.eclipse.team.cvs.ui.CVSActionSet">
          <action
                definitionId="org.eclipse.team.cvs.ui.checkout"
                label="%CVSActionSet.checkoutLabel"
