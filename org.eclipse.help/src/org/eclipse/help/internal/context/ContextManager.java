@@ -113,16 +113,17 @@ public class ContextManager {
 		if (getContext(contextId) != null)
 			return;
 		String plugin = contextId;
-
+		String id = contextId;
 		int dot = contextId.lastIndexOf('.');
 		if (dot != -1) {
 			plugin = contextId.substring(0, dot);
+			id = contextId.substring(dot + 1);
 		}
 		Map contexts = (Map) pluginsContexts.get(plugin);
 		if (contexts == null) {
 			contexts = new HashMap();
 			pluginsContexts.put(plugin, contexts);
 		}
-		contexts.put(contextId, context);
+		contexts.put(id, context);
 	}
 }
