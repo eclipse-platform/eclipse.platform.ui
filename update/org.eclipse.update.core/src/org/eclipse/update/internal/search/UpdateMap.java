@@ -17,7 +17,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
-import org.eclipse.update.search.*;
+import org.eclipse.update.search.IUpdateSiteAdapter;
 
 /**
  * 
@@ -28,6 +28,10 @@ import org.eclipse.update.search.*;
  */
 
 public class UpdateMap {
+	private static final String KEY_MAP = "url-map";
+	private static final String KEY_FALLBACK = "try-embedded";
+	private boolean fallbackAllowed = true;
+
 	private static class MapSite implements IUpdateSiteAdapter {
 		private URL url;
 		public MapSite(URL url) {
@@ -54,6 +58,9 @@ public class UpdateMap {
 		}
 		public boolean matches(String id) {
 			return id.startsWith(pattern);
+		}
+		public String getPattern() {
+			return pattern;
 		}
 	}
 
@@ -105,7 +112,7 @@ public class UpdateMap {
 			entries.clear();
 		for (Enumeration enum = mappings.keys(); enum.hasMoreElements();) {
 			String key = (String) enum.nextElement();
-			if (key.startsWith("urlMap.")) {
+			if (key.startsWith(KEY_MAP)) {
 				String pattern = key.substring(7);
 				String value = (String) mappings.get(key);
 				if (value != null && value.length() > 0) {
@@ -118,6 +125,8 @@ public class UpdateMap {
 				}
 			}
 		}
+		String fallback = mappings.getProperty(KEY_FALLBACK, "true");
+		fallbackAllowed = fallback.equalsIgnoreCase("true");
 	}
 
 	private void addEntry(String pattern, URL url) {
@@ -131,13 +140,35 @@ public class UpdateMap {
 	 * found in the mappings. This URL will be used INSTEAD of
 	 * the update URL encoded in the feature itself during the
 	 * new update search.
+	 * <p>In case of multiple matches (e.g. org.eclipse and org.eclipse.platform)
+	 * the URL for the longer pattern will be picked (i.e. org.eclipse.platform).
 	 */
 	public IUpdateSiteAdapter getMappedSite(String id) {
+		UpdateMapEntry lastEntry = null;
 		for (int i = 0; i < entries.size(); i++) {
 			UpdateMapEntry entry = (UpdateMapEntry) entries.get(i);
-			if (entry.matches(id))
-				return entry.getSite();
+			if (entry.matches(id)) {
+				if (lastEntry == null)
+					lastEntry = entry;
+				else {
+					// Choose the match with longer pattern.
+					// For example, if two matches are found:
+					// 'org.eclipse' and 'org.eclipse.platform',
+					// pick 'org.eclipse.platform'.
+					String pattern = entry.getPattern();
+					String lastPattern = lastEntry.getPattern();
+					if (pattern.length() > lastPattern.length())
+						lastEntry = entry;
+				}
+			}
 		}
-		return defaultSite;
+		if (lastEntry != null)
+			return lastEntry.getSite();
+		else
+			return defaultSite;
+	}
+
+	public boolean isFallbackAllowed() {
+		return fallbackAllowed;
 	}
 }

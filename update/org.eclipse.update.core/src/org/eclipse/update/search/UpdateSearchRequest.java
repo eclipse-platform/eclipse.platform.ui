@@ -257,8 +257,8 @@ public class UpdateSearchRequest {
 			IUpdateSiteAdapter mappedSite = map.getMappedSite(qsite.getMappingId());
 			if (mappedSite!=null) return mappedSite;
 		}
-		// no match - use original site
-		return qsite; 
+		// no match - use original site if fallback allowed, or nothing.
+		return map.isFallbackAllowed()? qsite : null;
 	}
 
 /*
