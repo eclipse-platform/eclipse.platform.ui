@@ -35,6 +35,18 @@ public class ScrolledPageBook extends SharedScrolledComposite {
 		pages = new Hashtable();
 		setExpandHorizontal(true);
 		setExpandVertical(true);
+		this.addListener(SWT.Traverse, new Listener() {
+			public void handleEvent(Event e) {
+				switch (e.detail) {
+					case SWT.TRAVERSE_ESCAPE:
+					case SWT.TRAVERSE_RETURN:
+					case SWT.TRAVERSE_TAB_NEXT:
+					case SWT.TRAVERSE_TAB_PREVIOUS:
+					e.doit = true;
+					break;
+				}
+			}
+		});
 	}
 	public Point computeSize (int wHint, int hHint, boolean changed) {
 		Rectangle trim = computeTrim (0, 0, 10, 10);
