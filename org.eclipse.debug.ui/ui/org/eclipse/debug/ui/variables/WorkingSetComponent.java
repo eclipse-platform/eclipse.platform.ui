@@ -65,7 +65,7 @@ public class WorkingSetComponent extends AbstractVariableComponent {
 		GridData data= new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		chooseButton.setLayoutData(data);
 		chooseButton.setFont(font);
-		chooseButton.setText("&Specify Resources...");
+		chooseButton.setText(LaunchConfigurationsMessages.getString("WorkingSetComponent.1")); //$NON-NLS-1$
 		chooseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleChooseButtonPressed();
@@ -81,7 +81,7 @@ public class WorkingSetComponent extends AbstractVariableComponent {
 		IWorkingSetManager workingSetManager= PlatformUI.getWorkbench().getWorkingSetManager();
 		
 		if (currentWorkingSet == null){
-			currentWorkingSet= workingSetManager.createWorkingSet("workingSet", new IAdaptable[0]);
+			currentWorkingSet= workingSetManager.createWorkingSet(LaunchConfigurationsMessages.getString("WorkingSetComponent.2"), new IAdaptable[0]); //$NON-NLS-1$
 		}
 		IWorkingSetEditWizard wizard= workingSetManager.createWorkingSetEditWizard(currentWorkingSet);
 		WizardDialog dialog = new WizardDialog(DebugUIPlugin.getStandardDisplay().getActiveShell(), wizard);
@@ -118,7 +118,7 @@ public class WorkingSetComponent extends AbstractVariableComponent {
 			}
 			return writer.toString();
 		}
-		getContainer().setErrorMessage("Working set resources need to be specified");
+		getContainer().setErrorMessage(LaunchConfigurationsMessages.getString("WorkingSetComponent.3")); //$NON-NLS-1$
 		return null;
 	}
 

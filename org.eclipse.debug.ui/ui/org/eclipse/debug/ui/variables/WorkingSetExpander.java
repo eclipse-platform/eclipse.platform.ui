@@ -53,20 +53,20 @@ public class WorkingSetExpander extends DefaultVariableExpander {
 		String factoryID = memento.getString(IVariableConstants.TAG_FACTORY_ID);
 
 		if (factoryID == null) {
-			DebugUIPlugin.logErrorMessage("Unable to restore working set - no factory ID.");
+			DebugUIPlugin.logErrorMessage(LaunchConfigurationsMessages.getString("WorkingSetExpander.2")); //$NON-NLS-1$
 			return null;
 		}
 		IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryID);
 		if (factory == null) {
-			DebugUIPlugin.logErrorMessage("Unable to restore working set - cannot instantiate factory: " + factoryID);
+			DebugUIPlugin.logErrorMessage(LaunchConfigurationsMessages.getString("WorkingSetExpander.3") + factoryID); //$NON-NLS-1$
 			return null;
 		}
 		IAdaptable adaptable = factory.createElement(memento);
 		if (adaptable == null) {
-			DebugUIPlugin.logErrorMessage("Unable to restore working set - cannot instantiate working set: " + factoryID);
+			DebugUIPlugin.logErrorMessage(LaunchConfigurationsMessages.getString("WorkingSetExpander.4") + factoryID); //$NON-NLS-1$
 		}
 		if ((adaptable instanceof IWorkingSet) == false) {
-			DebugUIPlugin.logErrorMessage("Unable to restore working set - element is not an IWorkingSet: " + factoryID);
+			DebugUIPlugin.logErrorMessage(LaunchConfigurationsMessages.getString("WorkingSetExpander.5") + factoryID); //$NON-NLS-1$
 			return null;
 		}
 			
