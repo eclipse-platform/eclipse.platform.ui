@@ -6,28 +6,36 @@ package org.eclipse.debug.internal.ui;
  */
 
 import java.text.MessageFormat;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.*;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.WizardSelectionPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class LaunchWizardSelectionPage extends WizardSelectionPage {
 	
-	private static final String PREFIX= "launch_wizard_page.";
-	private static final String LAUNCHER= PREFIX + "launcher";
-	private static final String UNKNOWN= PREFIX + "unknown";
-	private static final String DEFAULT_LAUNCHER= PREFIX + "default_launcher";
-	private static final String SELECT_ERROR_LAUNCHER= PREFIX + "select_error_launcher";
 	/**
 	 * Viewer for the launchers
 	 */
@@ -96,7 +104,7 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 	}
 	
 	public LaunchWizardSelectionPage(Object[] allLaunchers, String mode, ILauncher initialLauncher) {
-		super(DebugUIUtils.getResourceString(PREFIX + "title"));
+		super(DebugUIMessages.getString("LaunchWizardSelectionPage.Select_Launcher_1")); //$NON-NLS-1$
 		fLaunchers= allLaunchers;
 		fMode= mode;
 		fLauncher = initialLauncher;
@@ -109,7 +117,7 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 		root.setLayout(l);
 		createLaunchersGroup(root);
 		
-		setTitle(DebugUIUtils.getResourceString(PREFIX + "title"));
+		setTitle(DebugUIMessages.getString("LaunchWizardSelectionPage.Select_Launcher_2")); //$NON-NLS-1$
 		if (fMode.equals(ILaunchManager.DEBUG_MODE)) {
 			setImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_WIZBAN_DEBUG));
 		} else {
@@ -126,7 +134,7 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 		fSetAsDefaultLauncher= new Button(root, SWT.CHECK);
 
 		Label launchersLabel= new Label(root, SWT.NONE);
-		launchersLabel.setText(DebugUIUtils.getResourceString(LAUNCHER));
+		launchersLabel.setText(DebugUIMessages.getString("LaunchWizardSelectionPage.Select_a_launcher__3")); //$NON-NLS-1$
 
 		fLaunchersList= new TableViewer(new Table(root, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER)) {
 			protected void handleDoubleSelect(SelectionEvent event) {
@@ -204,7 +212,7 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 	protected void initializeSettings() {
 		
 		if (fLaunchers.length == 0) {
-			setErrorMessage(DebugUIUtils.getResourceString(SELECT_ERROR_LAUNCHER));
+			setErrorMessage(DebugUIMessages.getString("LaunchWizardSelectionPage.No_launchers_registered._4")); //$NON-NLS-1$
 		} else {
 			IStructuredSelection selection= (IStructuredSelection)fLaunchersList.getSelection();
 			if (selection.isEmpty()) {
@@ -257,7 +265,7 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 	
 	protected void updateDefaultProject() {
 		IProject project= ((LaunchWizard)getWizard()).getProject();
-		String projectName= "";
+		String projectName= ""; //$NON-NLS-1$
 		if (project != null) {
 			if (!project.equals(fProject)) {
 				fLaunchablesUpdateNeeded= true;
@@ -265,9 +273,9 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 			}
 			projectName= project.getName();
 		} else {
-			projectName= DebugUIUtils.getResourceString(UNKNOWN);
+			projectName= DebugUIMessages.getString("LaunchWizardSelectionPage.<unknown>_6"); //$NON-NLS-1$
 		}
-		fSetAsDefaultLauncher.setText(MessageFormat.format(DebugUIUtils.getResourceString(DEFAULT_LAUNCHER), new String[] {projectName}));
+		fSetAsDefaultLauncher.setText(MessageFormat.format(DebugUIMessages.getString("LaunchWizardSelectionPage.Set_as_&default_launcher_for_project___{0}___7"), new String[] {projectName})); //$NON-NLS-1$
 		fSetAsDefaultLauncher.pack();
 	}
 	

@@ -41,7 +41,7 @@ public class OpenMarkerAction extends SelectionProviderAction {
 		try {
 			page.openEditor((IMarker)object);
 		} catch (PartInitException e) {
-			DebugUIUtils.logError(e);
+			DebugUIPlugin.logError(e);
 		}
 	}
 

@@ -46,7 +46,7 @@ public class DebugUITools {
 				view= (InspectorView) p.showView(IDebugUIConstants.ID_INSPECTOR_VIEW);
 				p.activate(activePart);
 			} catch (PartInitException e) {
-				DebugUIUtils.logError(e);
+				DebugUIPlugin.logError(e);
 				return;
 			}
 		}

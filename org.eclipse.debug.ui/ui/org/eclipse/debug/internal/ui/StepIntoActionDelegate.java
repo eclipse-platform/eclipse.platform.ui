@@ -42,14 +42,14 @@ public class StepIntoActionDelegate extends StepActionDelegate {
 	 * @see ControlActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage() {
-		return "Step into failed";
+		return DebugUIMessages.getString("StepIntoActionDelegate.Step_into_failed_1"); //$NON-NLS-1$
 	}
 
 	/**
 	 * @see ControlActionDelegate#getErrorDialogMessage()
 	 */
 	protected String getErrorDialogMessage() {
-		return "Exceptions occurred attempting to step into the frame";
+		return DebugUIMessages.getString("StepIntoActionDelegate.Exceptions_occurred_attempting_to_step_into_the_frame_2"); //$NON-NLS-1$
 	}
 
 	/**
@@ -62,13 +62,13 @@ public class StepIntoActionDelegate extends StepActionDelegate {
 	 * @see ControlActionDelegate#getToolTipText()
 	 */
 	protected String getToolTipText() {
-		return "Step Into";
+		return DebugUIMessages.getString("StepIntoActionDelegate.Step_Into_3"); //$NON-NLS-1$
 	}
 
 	/**
 	 * @see ControlActionDelegate#getText()
 	 */
 	protected String getText() {
-		return "Step &Into";
+		return DebugUIMessages.getString("StepIntoActionDelegate.Step_&Into_4"); //$NON-NLS-1$
 	}
 }

@@ -14,11 +14,9 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 public class RemoveFromInspectorAction extends InspectorAction {
 
-	private static final String PREFIX= "remove_from_inspector_action.";
-
 	public RemoveFromInspectorAction(ISelectionProvider provider) {
-		super(provider, DebugUIUtils.getResourceString(PREFIX + TEXT));
-		setToolTipText(DebugUIUtils.getResourceString(PREFIX + TOOL_TIP_TEXT));
+		super(provider, DebugUIMessages.getString("RemoveFromInspectorAction.&Remove_1")); //$NON-NLS-1$
+		setToolTipText(DebugUIMessages.getString("RemoveFromInspectorAction.Remove_Selected_Variables_from_Inspector_2")); //$NON-NLS-1$
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE));
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE));

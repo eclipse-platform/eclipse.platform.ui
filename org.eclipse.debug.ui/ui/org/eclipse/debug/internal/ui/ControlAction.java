@@ -28,7 +28,7 @@ public class ControlAction extends SelectionProviderAction {
 	protected ControlActionDelegate fDelegate;
 
 	public ControlAction(ISelectionProvider selectionProvider, ControlActionDelegate delegate) {
-		super(selectionProvider, "");
+		super(selectionProvider, ""); //$NON-NLS-1$
 		fDelegate= delegate;
 		fDelegate.initializeForOwner(this);
 		setText(fDelegate.getText());

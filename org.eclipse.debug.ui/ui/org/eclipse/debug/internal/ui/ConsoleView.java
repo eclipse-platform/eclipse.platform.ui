@@ -63,7 +63,7 @@ public class ConsoleView extends ViewPart implements IDocumentListener {
 		initializeToolBar();
 
 		// create context menu
-		MenuManager menuMgr= new MenuManager("#PopUp", IDebugUIConstants.ID_CONSOLE_VIEW);
+		MenuManager menuMgr= new MenuManager("#PopUp", IDebugUIConstants.ID_CONSOLE_VIEW); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager mgr) {
@@ -77,16 +77,15 @@ public class ConsoleView extends ViewPart implements IDocumentListener {
 		
 		fConsoleViewer.getSelectionProvider().addSelectionChangedListener(getSelectionChangedListener());
 		fConsoleViewer.addTextInputListener(getTextInputListener());
-		getSite().setSelectionProvider(fConsoleViewer.getSelectionProvider());
 		setViewerInput(DebugUIPlugin.getDefault().getCurrentProcess());
-		setTitleToolTip("Program Output");
+		setTitleToolTip(DebugUIMessages.getString("ConsoleView.Program_Output_2")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(
 			parent,
 			new ViewContextComputer(this, IDebugHelpContextIds.CONSOLE_VIEW));
 	}
 
 	/**
-	 * @see IWorkbenchPart
+	 * @see IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
 		fConsoleViewer.getControl().setFocus();
@@ -133,17 +132,29 @@ public class ConsoleView extends ViewPart implements IDocumentListener {
 	private void initializeActions() {
 		fClearOutputAction= new ClearOutputAction(fConsoleViewer);
 		
-		ResourceBundle bundle= DebugUIUtils.getResourceBundle();
 		// In order for the clipboard actions to accessible via their shortcuts
 		// (e.g., Ctrl-C, Ctrl-V), we *must* set a global action handler for
 		// each action		
 		IActionBars actionBars= getViewSite().getActionBars();
-		setGlobalAction(actionBars, ITextEditorActionConstants.CUT, new ConsoleViewerAction(bundle, "cut_action.", fConsoleViewer, fConsoleViewer.CUT));
-		setGlobalAction(actionBars, ITextEditorActionConstants.COPY, new ConsoleViewerAction(bundle, "copy_action.", fConsoleViewer, fConsoleViewer.COPY));
-		setGlobalAction(actionBars, ITextEditorActionConstants.PASTE, new ConsoleViewerAction(bundle, "paste_action.", fConsoleViewer, fConsoleViewer.PASTE));
-		setGlobalAction(actionBars, ITextEditorActionConstants.SELECT_ALL, new ConsoleViewerAction(bundle, "select_all_action.", fConsoleViewer, fConsoleViewer.SELECT_ALL));
-		setGlobalAction(actionBars, ITextEditorActionConstants.FIND, new FindReplaceAction(bundle, "find_replace_action.", this));				
-		setGlobalAction(actionBars, ITextEditorActionConstants.GOTO_LINE, new ConsoleGotoLineAction(bundle, "goto_line_action.", fConsoleViewer));				
+		ConsoleViewerAction action= new ConsoleViewerAction(fConsoleViewer, fConsoleViewer.CUT);
+		action.configureAction(DebugUIMessages.getString("ConsoleView.Cu&t@Ctrl+X_3"), DebugUIMessages.getString("ConsoleView.Cut_4"), DebugUIMessages.getString("ConsoleView.Cut_5")); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
+		setGlobalAction(actionBars, ITextEditorActionConstants.CUT, action);
+		action= new ConsoleViewerAction(fConsoleViewer, fConsoleViewer.COPY);
+		action.configureAction(DebugUIMessages.getString("ConsoleView.&Copy@Ctrl+C_6"), DebugUIMessages.getString("ConsoleView.Copy_7"), DebugUIMessages.getString("ConsoleView.Copy_8")); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
+		setGlobalAction(actionBars, ITextEditorActionConstants.COPY, action);
+		action= new ConsoleViewerAction(fConsoleViewer, fConsoleViewer.PASTE);
+		action.configureAction(DebugUIMessages.getString("ConsoleView.&Paste@Ctrl+V_9"), DebugUIMessages.getString("ConsoleView.Paste_10"), DebugUIMessages.getString("ConsoleView.Paste_Clipboard_Text_11")); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
+		setGlobalAction(actionBars, ITextEditorActionConstants.PASTE, action);
+		action= new ConsoleViewerAction(fConsoleViewer, fConsoleViewer.SELECT_ALL);
+		action.configureAction(DebugUIMessages.getString("ConsoleView.Select_&All@Ctrl+A_12"), DebugUIMessages.getString("ConsoleView.Select_All_13"), DebugUIMessages.getString("ConsoleView.Select_All_14")); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
+		setGlobalAction(actionBars, ITextEditorActionConstants.SELECT_ALL, action);
+		
+		//XXX Still using "old" resource access
+		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.DebugUIMessages"); //$NON-NLS-1$
+		setGlobalAction(actionBars, ITextEditorActionConstants.FIND, new FindReplaceAction(bundle, "find_replace_action.", this));				 //$NON-NLS-1$
+	
+		action= new ConsoleGotoLineAction(fConsoleViewer);
+		setGlobalAction(actionBars, ITextEditorActionConstants.GOTO_LINE, action);				
 		actionBars.updateActionBars();
 		
 		fConsoleViewer.getTextWidget().addVerifyKeyListener(new VerifyKeyListener() {
@@ -194,7 +205,7 @@ public class ConsoleView extends ViewPart implements IDocumentListener {
 			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.SELECT_ALL));
 		}
 
-		menu.add(new Separator("FIND"));
+		menu.add(new Separator("FIND")); //$NON-NLS-1$
 		menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.FIND));
 		menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.GOTO_LINE));
 

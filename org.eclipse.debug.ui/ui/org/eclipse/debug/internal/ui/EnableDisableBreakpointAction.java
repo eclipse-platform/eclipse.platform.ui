@@ -28,7 +28,7 @@ public class EnableDisableBreakpointAction extends SelectionProviderAction imple
 	 * Creates the action to enable/disable breakpoints
 	 */
 	public EnableDisableBreakpointAction(ISelectionProvider selectionProvider) {
-		super(selectionProvider, "&Enable/Disable");
+		super(selectionProvider, DebugUIMessages.getString("EnableDisableBreakpointAction.&Enable/Disable_1")); //$NON-NLS-1$
 		setEnabled(!getStructuredSelection().isEmpty());
 		WorkbenchHelp.setHelp(
 			this,
@@ -46,7 +46,7 @@ public class EnableDisableBreakpointAction extends SelectionProviderAction imple
 			return;
 		}
 
-		MultiStatus ms= new MultiStatus(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), IDebugStatusConstants.REQUEST_FAILED, "Enable/Disable breakpoint(s) failed", null);
+		MultiStatus ms= new MultiStatus(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), IDebugStatusConstants.REQUEST_FAILED, DebugUIMessages.getString("EnableDisableBreakpointAction.Enable/Disable_breakpoint(s)_failed_2"), null); //$NON-NLS-1$
 		while (enum.hasNext()) {
 			IBreakpoint breakpoint = (IBreakpoint) enum.next();
 			try {
@@ -56,7 +56,7 @@ public class EnableDisableBreakpointAction extends SelectionProviderAction imple
 			}
 		}
 		if (!ms.isOK()) {
-			DebugUIUtils.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), "Enabling/disabling breakpoints", "Exceptions occurred enabling/disabling the breakpoint(s).", ms);
+			DebugUIPlugin.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), DebugUIMessages.getString("EnableDisableBreakpointAction.Enabling/disabling_breakpoints_3"), DebugUIMessages.getString("EnableDisableBreakpointAction.Exceptions_occurred_enabling/disabling_the_breakpoint(s)._4"), ms); //$NON-NLS-2$ //$NON-NLS-1$
 		}
 	}
 
@@ -75,16 +75,16 @@ public class EnableDisableBreakpointAction extends SelectionProviderAction imple
 			//single selection
 			try {
 				if (bp.isEnabled()) {
-					setText("&Disable");
+					setText(DebugUIMessages.getString("EnableDisableBreakpointAction.&Disable_5")); //$NON-NLS-1$
 				} else {
-					setText("&Enable");
+					setText(DebugUIMessages.getString("EnableDisableBreakpointAction.&Enable_6")); //$NON-NLS-1$
 				}
 			} catch (CoreException ce) {
-				DebugUIUtils.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), "Enabling/disabling breakpoints", "Exceptions occurred enabling/disabling the breakpoint(s).", ce.getStatus());
+				DebugUIPlugin.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), DebugUIMessages.getString("EnableDisableBreakpointAction.Enabling/disabling_breakpoints_7"), DebugUIMessages.getString("EnableDisableBreakpointAction.Exceptions_occurred_enabling/disabling_the_breakpoint(s)._8"), ce.getStatus()); //$NON-NLS-2$ //$NON-NLS-1$
 			}
 		} else {
 			// multi- selection
-			setText("&Enable/Disable");
+			setText(DebugUIMessages.getString("EnableDisableBreakpointAction.&Enable/Disable_9")); //$NON-NLS-1$
 		}
 		setEnabled(true);
 	}

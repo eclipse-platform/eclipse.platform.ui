@@ -7,11 +7,16 @@ package org.eclipse.debug.internal.ui;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.*;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.wizard.*;
+import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.IWizardNode;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -27,11 +32,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 public class LaunchWizard extends Wizard {
 	
-	//NLS
-	private static final String PREFIX = "launch_wizard.";
-	private static final String DEBUG = PREFIX + "title.debug";
-	private static final String RUN = PREFIX + "title.run";
-
 	/**
 	 * The collection of available launchers
 	 */
@@ -100,9 +100,9 @@ public class LaunchWizard extends Wizard {
 		setNeedsProgressMonitor(true);
 		setForcePreviousAndNextButtons(true);
 		if (fMode.equals(ILaunchManager.DEBUG_MODE)) {
-			setWindowTitle(DebugUIUtils.getResourceString(DEBUG));
+			setWindowTitle(DebugUIMessages.getString("LaunchWizard.Debug_1")); //$NON-NLS-1$
 		} else {
-			setWindowTitle(DebugUIUtils.getResourceString(RUN));
+			setWindowTitle(DebugUIMessages.getString("LaunchWizard.Run_2")); //$NON-NLS-1$
 		}
 		setDefaultPageImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_OBJS_LAUNCH_DEBUG));
 	}

@@ -5,17 +5,17 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.ui.IDebugModelPresentation;
+import java.util.HashMap;
+import java.util.Iterator;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
-import java.util.HashMap;
-import java.util.Iterator;
+import org.eclipse.ui.IEditorInput;
 
 /**
  * A proxy to an IDebugModelPresentation extension. Instantiates the extension
@@ -122,7 +122,7 @@ public class LazyModelPresentation implements IDebugModelPresentation {
 	protected IDebugModelPresentation getPresentation() {
 		if (fPresentation == null) {
 			try {
-				fPresentation= (IDebugModelPresentation) DebugUIPlugin.createExtension(fConfig, "class");
+				fPresentation= (IDebugModelPresentation) DebugUIPlugin.createExtension(fConfig, "class"); //$NON-NLS-1$
 				// configure it
 				if (fListeners != null) {
 					Object[] list = fListeners.getListeners();
@@ -136,7 +136,7 @@ public class LazyModelPresentation implements IDebugModelPresentation {
 					fPresentation.setAttribute(key, fAttributes.get(key));
 				}
 			} catch (CoreException e) {
-				DebugUIUtils.logError(e);
+				DebugUIPlugin.logError(e);
 			}
 		}
 		return fPresentation;

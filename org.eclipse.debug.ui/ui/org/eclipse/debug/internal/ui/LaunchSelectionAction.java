@@ -27,11 +27,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 public class LaunchSelectionAction extends Action {
 	
-	private static final String PREFIX= "launch_action.";
-	private static final String ERROR= PREFIX + "error.";
-	private static final String ERROR_TITLE= ERROR + "title";
-	private static final String ERROR_MESSAGE= ERROR + "message";
-
 	protected ILauncher fLauncher;
 	protected String fMode;
 	protected Object fElement;
@@ -69,9 +64,9 @@ public class LaunchSelectionAction extends Action {
 				if (fElement != null || !DebugUIPlugin.getDefault().hasWizard(fLauncher)) {
 					boolean ok= fLauncher.launch(new Object[] {fElement}, fMode);
 					if (!ok) {
-						String string= DebugUIUtils.getResourceString(ERROR_MESSAGE);
+						String string= DebugUIMessages.getString("LaunchSelectionAction.The_launcher,_{0},_failed_to_launch._1"); //$NON-NLS-1$
 						String message= MessageFormat.format(string, new String[] {fLauncher.getLabel()});
-						MessageDialog.openError(DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(), DebugUIUtils.getResourceString(ERROR_TITLE), message);	
+						MessageDialog.openError(DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(), DebugUIMessages.getString("LaunchSelectionAction.Launch_Failed_2"), message);	 //$NON-NLS-1$
 					}
 				} else {
 					Shell shell= DebugUIPlugin.getActiveWorkbenchWindow().getShell();

@@ -5,7 +5,30 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
  
-import java.util.Iterator;import org.eclipse.debug.core.DebugException;import org.eclipse.debug.core.model.IValueModification;import org.eclipse.debug.core.model.IVariable;import org.eclipse.jface.viewers.*;import org.eclipse.swt.SWT;import org.eclipse.swt.custom.TreeEditor;import org.eclipse.swt.events.*;import org.eclipse.swt.layout.GridData;import org.eclipse.swt.layout.GridLayout;import org.eclipse.swt.widgets.*;import org.eclipse.ui.actions.SelectionProviderAction;import org.eclipse.ui.help.WorkbenchHelp;
+import java.util.Iterator;
+
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IValueModification;
+import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.TreeEditor;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.actions.SelectionProviderAction;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Action for changing the value of primitives and <code>String</code> variables.
@@ -21,15 +44,9 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 	protected IVariable fVariable;
 	protected boolean fKeyReleased= false;
 	
-	private static final String PREFIX= "change_variable_value_action.";
-	private static final String ERROR= PREFIX + "error.";
-	private static final String DIALOG_TITLE= PREFIX + "dialog.title";
-	private static final String DIALOG_MESSAGE= PREFIX + "dialog.message";
-	private static final String DIALOG_INVALID= PREFIX + "dialog.invalid";
-	
 	public ChangeVariableValueAction(Viewer viewer) {
-		super(viewer, DebugUIUtils.getResourceString(PREFIX + TEXT));
-		setDescription(DebugUIUtils.getResourceString(PREFIX + DESCRIPTION));
+		super(viewer, DebugUIMessages.getString("ChangeVariableValue.title")); //$NON-NLS-1$
+		setDescription(DebugUIMessages.getString("ChangeVariableValue.toolTipText")); //$NON-NLS-1$
 		fTree= ((TreeViewer)viewer).getTree();
 		fTreeEditor= new TreeEditor(fTree);
 		WorkbenchHelp.setHelp(
@@ -63,11 +80,11 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 		fEditorLabel.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		fEditorText = new Text(fComposite, SWT.BORDER | SWT.SINGLE | SWT.LEFT);
 		fEditorText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
-		String valueString= "";
+		String valueString= ""; //$NON-NLS-1$
 		try {
 			valueString= fVariable.getValue().getValueString();
 		} catch (DebugException de) {
-			DebugUIUtils.errorDialog(activeShell,"Setting variable value","Setting the variable value failed.", de.getStatus());			
+			DebugUIPlugin.errorDialog(activeShell,DebugUIMessages.getString("ChangeVariableValue.errorDialogTitle"),DebugUIMessages.getString("ChangeVariableValue.errorDialogMessage"), de.getStatus());			 //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		TreeItem[] selectedItems = fTree.getSelection();
 		fTreeEditor.horizontalAlignment = SWT.LEFT;
@@ -76,12 +93,12 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 
 		// There is no API on the model presentation to get just the variable name, 
 		// so we have to make do with just calling IVariable.getName()
-		String varName = "";
+		String varName = ""; //$NON-NLS-1$
 		try {
 			varName = fVariable.getName();
 		} catch (DebugException de) {
 		}
-		fEditorLabel.setText(varName + "=");
+		fEditorLabel.setText(varName + "="); //$NON-NLS-1$
 
 		fEditorText.setText(valueString);
 		fEditorText.selectAll();
@@ -134,7 +151,7 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 			}
 			variable.setValue(newValue);
 		} catch (DebugException de) {
-			DebugUIUtils.errorDialog(shell, "Setting variable value","Setting the variable value failed.", de.getStatus());			
+			DebugUIPlugin.errorDialog(shell, DebugUIMessages.getString("ChangeVariableValue.errorDialogTitle"),DebugUIMessages.getString("ChangeVariableValue.errorDialogMessage"), de.getStatus());			 //$NON-NLS-2$ //$NON-NLS-1$
 		}
 		cleanup();		
 	}

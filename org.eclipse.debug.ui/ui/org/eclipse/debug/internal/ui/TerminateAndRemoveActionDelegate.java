@@ -75,14 +75,14 @@ public class TerminateAndRemoveActionDelegate extends ControlActionDelegate {
 	 * @see ControlActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage() {
-		return "Terminate and remove failed";
+		return DebugUIMessages.getString("TerminateAndRemoveActionDelegate.Terminate_and_remove_failed_1"); //$NON-NLS-1$
 	}
 
 	/**
 	 * @see ControlActionDelegate#getErrorDialogMessage()
 	 */
 	protected String getErrorDialogMessage() {
-		return "Exceptions occurred attempting to terminate and remove";
+		return DebugUIMessages.getString("TerminateAndRemoveActionDelegate.Exceptions_occurred_attempting_to_terminate_and_remove_2"); //$NON-NLS-1$
 	}
 
 	/**
@@ -95,13 +95,13 @@ public class TerminateAndRemoveActionDelegate extends ControlActionDelegate {
 	 * @see ControlActionDelegate#getToolTipText()
 	 */
 	protected String getToolTipText() {
-		return "Terminate and Remove;";
+		return DebugUIMessages.getString("TerminateAndRemoveActionDelegate.Terminate_and_Remove;_3"); //$NON-NLS-1$
 	}
 
 	/**
 	 * @see ControlActionDelegate#getText()
 	 */
 	protected String getText() {
-		return "Ter&minate and Remove";
+		return DebugUIMessages.getString("TerminateAndRemoveActionDelegate.Ter&minate_and_Remove_4"); //$NON-NLS-1$
 	}
 }

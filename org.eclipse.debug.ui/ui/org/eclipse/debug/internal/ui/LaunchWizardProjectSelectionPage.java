@@ -5,18 +5,35 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -24,13 +41,6 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * Used to select the project that will be used as a launch context.
  */
 public class LaunchWizardProjectSelectionPage extends WizardPage {
-
-	private static final String PREFIX= "launch_wizard_project_page.";
-	private static final String LAUNCHER= PREFIX + "launcher";
-	private static final String SELECT_ELEMENT= PREFIX + "select_element";
-	private static final String SELECT_ERROR_ELEMENT= PREFIX + "select_error_element";
-	private static final String PATTERN_LABEL= PREFIX + "pattern_label";
-
 	/**
 	 * Viewer for the projects to provide the context for the launch
 	 */
@@ -92,7 +102,7 @@ public class LaunchWizardProjectSelectionPage extends WizardPage {
 		}
 
 		public void setPattern(String pattern) {
-			fMatcher= new StringMatcher(pattern + "*", true, false);
+			fMatcher= new StringMatcher(pattern + "*", true, false); //$NON-NLS-1$
 		}
 
 		/**
@@ -120,7 +130,7 @@ public class LaunchWizardProjectSelectionPage extends WizardPage {
 	 * Constructs a this page for the given mode
 	 */
 	public LaunchWizardProjectSelectionPage(String mode, IProject initialSelection) {
-		super(DebugUIUtils.getResourceString(PREFIX + "title"));
+		super(DebugUIMessages.getString("LaunchWizardProjectSelectionPage.Select_Project_2")); //$NON-NLS-1$
 		// Set the image for the wizard based on the mode
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 			setImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_WIZBAN_DEBUG));
@@ -144,10 +154,10 @@ public class LaunchWizardProjectSelectionPage extends WizardPage {
 		
 		createElementsGroup(root);
 
-		setDescription(DebugUIUtils.getResourceString(PREFIX + "title"));
+		setDescription(DebugUIMessages.getString("LaunchWizardProjectSelectionPage.Select_Project_3")); //$NON-NLS-1$
 
 		setPageComplete(false);
-		setTitle(DebugUIUtils.getResourceString(PREFIX + "title"));
+		setTitle(DebugUIMessages.getString("LaunchWizardProjectSelectionPage.Select_Project_4")); //$NON-NLS-1$
 		setControl(root);
 		WorkbenchHelp.setHelp(
 			ancestor,
@@ -157,7 +167,7 @@ public class LaunchWizardProjectSelectionPage extends WizardPage {
 	public void createElementsGroup(Composite root) {
 		Label elementsLabel= new Label(root, SWT.NONE);
 		elementsLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-		elementsLabel.setText(DebugUIUtils.getResourceString(PATTERN_LABEL));
+		elementsLabel.setText(DebugUIMessages.getString("LaunchWizardProjectSelectionPage.Enter_a_pattern_to_select_a_range_of_projects_5")); //$NON-NLS-1$
 
 		fPatternText= new Text(root, SWT.BORDER);
 		fPatternText.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
@@ -187,11 +197,11 @@ public class LaunchWizardProjectSelectionPage extends WizardPage {
 				fElementsList.refresh();
 				if (fFilteredElements.length >= 1) {
 					fElementsList.setSelection(new StructuredSelection(fFilteredElements[0]), true);
-					setMessage(DebugUIUtils.getResourceString(SELECT_ELEMENT));						
+					setMessage(DebugUIMessages.getString("LaunchWizardProjectSelectionPage.Select_a_project_for_the_launch_context._6"));						 //$NON-NLS-1$
 						setPageComplete(true);
 						return;
 				} else {
-					setMessage(DebugUIUtils.getResourceString(SELECT_ERROR_ELEMENT));
+					setMessage(DebugUIMessages.getString("LaunchWizardProjectSelectionPage.No_projects_available._7")); //$NON-NLS-1$
 					setPageComplete(false);
 				}
 			}
@@ -199,7 +209,7 @@ public class LaunchWizardProjectSelectionPage extends WizardPage {
 
 		fElementsList.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
-				setMessage(DebugUIUtils.getResourceString(SELECT_ELEMENT));
+				setMessage(DebugUIMessages.getString("LaunchWizardProjectSelectionPage.Select_a_project_for_the_launch_context._8")); //$NON-NLS-1$
 				IStructuredSelection ss = null;
 				if (e.getSelection() instanceof IStructuredSelection) {
 					ss = (IStructuredSelection) e.getSelection();
@@ -264,17 +274,17 @@ public class LaunchWizardProjectSelectionPage extends WizardPage {
 		Object[] children= ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		if (children.length == 1) {
 			fElementsList.setSelection(new StructuredSelection(children[0]));
-			setMessage(DebugUIUtils.getResourceString(SELECT_ELEMENT));
+			setMessage(DebugUIMessages.getString("LaunchWizardProjectSelectionPage.Select_a_project_for_the_launch_context._9")); //$NON-NLS-1$
 			setPageComplete(true);
 		} else if (children.length > 0) {
-			setMessage(DebugUIUtils.getResourceString(SELECT_ELEMENT));
+			setMessage(DebugUIMessages.getString("LaunchWizardProjectSelectionPage.Select_a_project_for_the_launch_context._10")); //$NON-NLS-1$
 			if (fElementsList.getSelection().isEmpty()) {
 				fElementsList.setSelection(new StructuredSelection(children[0]));
 			}
 			setPageComplete(true);
 		} else {
 			// no elements to select
-			setErrorMessage(DebugUIUtils.getResourceString(SELECT_ERROR_ELEMENT));
+			setErrorMessage(DebugUIMessages.getString("LaunchWizardProjectSelectionPage.No_projects_available._11")); //$NON-NLS-1$
 			setPageComplete(false);
 		}
 		fPatternText.setFocus();

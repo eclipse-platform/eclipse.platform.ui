@@ -74,7 +74,7 @@ public class DebugView extends LaunchesView implements IPartListener {
 	 */
 	private IEditorPart fEditor;
 	private Integer fEditorMemento;
-	private static final String DEBUG_EDITOR= DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier() + ".DEBUG_EDITOR";
+	private static final String DEBUG_EDITOR= DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier() + ".DEBUG_EDITOR"; //$NON-NLS-1$
 	
 	
 	/**
@@ -84,7 +84,7 @@ public class DebugView extends LaunchesView implements IPartListener {
 		try {
 			fInstructionPointer = ResourcesPlugin.getWorkspace().getRoot().createMarker(IInternalDebugUIConstants.INSTRUCTION_POINTER);
 		} catch (CoreException e) {
-			DebugUIUtils.logError(e);
+			DebugUIPlugin.logError(e);
 		}
 	}
 	
@@ -97,7 +97,7 @@ public class DebugView extends LaunchesView implements IPartListener {
 	}
 	
 	protected void configureView(Composite parent) {
-		setTitleToolTip("Debug Sessions and Associated Program Stacks");
+		setTitleToolTip(DebugUIMessages.getString("DebugView.Debug_Sessions_and_Associated_Program_Stacks_2")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(
 			parent,
 			new ViewContextComputer(this, IDebugHelpContextIds.DEBUG_VIEW ));
@@ -134,7 +134,7 @@ public class DebugView extends LaunchesView implements IPartListener {
 		try {
 			workspace.run(runnable, null);
 		} catch (CoreException ce) {
-			DebugUIUtils.logError(ce);
+			DebugUIPlugin.logError(ce);
 		}
 		
 		return fInstructionPointer;
@@ -181,11 +181,11 @@ public class DebugView extends LaunchesView implements IPartListener {
 		tbm.add(fTerminateAction);
 		tbm.add(fDisconnectAction);
 		tbm.add(fRemoveTerminatedAction);
-		tbm.add(new Separator("#StepGroup"));
+		tbm.add(new Separator("#StepGroup")); //$NON-NLS-1$
 		tbm.add(fStepIntoAction);
 		tbm.add(fStepOverAction);
 		tbm.add(fStepReturnAction);
-		tbm.add(new Separator("#RenderGroup"));
+		tbm.add(new Separator("#RenderGroup")); //$NON-NLS-1$
 		tbm.add(fShowQualifiedAction);
 	}
 
@@ -207,7 +207,7 @@ public class DebugView extends LaunchesView implements IPartListener {
 		if (!fShowingMarker) {
 			try {
 				fShowingMarker = true;
-				ISelection selection= fViewer.getSelection();
+				ISelection selection= getViewer().getSelection();
 				Object obj= null;
 				if (selection instanceof IStructuredSelection) {
 					obj= ((IStructuredSelection) selection).getFirstElement();
@@ -311,7 +311,7 @@ public class DebugView extends LaunchesView implements IPartListener {
 				fEditor = editor;
 				page.activate(this);
 			} catch (PartInitException e) {
-				DebugUIUtils.logError(e);
+				DebugUIPlugin.logError(e);
 			}
 
 		} else {
@@ -384,7 +384,7 @@ public class DebugView extends LaunchesView implements IPartListener {
 				return startChar;
 			}
 			public String getText() {
-				return "";
+				return ""; //$NON-NLS-1$
 			}
 			public int getLength() {
 				return 0;
@@ -398,7 +398,7 @@ public class DebugView extends LaunchesView implements IPartListener {
 	 * Updates the enablement of the buttons/actions in the view
 	 */
 	protected void updateButtons() {
-		ISelection s= fViewer.getSelection();
+		ISelection s= getViewer().getSelection();
 		if (s instanceof IStructuredSelection) {
 			IStructuredSelection selection= (IStructuredSelection) s;
 			fTerminateAction.selectionChanged(selection);
@@ -480,7 +480,7 @@ public class DebugView extends LaunchesView implements IPartListener {
 					try {
 						children= dt.getThreads();
 					} catch (DebugException de) {
-						DebugUIUtils.logError(de);
+						DebugUIPlugin.logError(de);
 					}
 				}
 		}
@@ -488,12 +488,12 @@ public class DebugView extends LaunchesView implements IPartListener {
 		if (refreshNeeded) {
 			//ensures that the child item exists in the viewer widget
 			//set selection only works if the child exists
-			fViewer.refresh(element);
+			getViewer().refresh(element);
 		}
-		fViewer.setSelection(new StructuredSelection(selectee), true);
+		getViewer().setSelection(new StructuredSelection(selectee), true);
 		if (children != null && children.length > 0) {
 			//reveal the thread children of a debug target
-			fViewer.reveal(children[0]);
+			getViewer().reveal(children[0]);
 		}
 	}
 	

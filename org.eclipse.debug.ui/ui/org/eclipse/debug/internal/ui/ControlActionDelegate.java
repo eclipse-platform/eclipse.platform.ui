@@ -5,8 +5,20 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import java.util.Iterator;import org.eclipse.core.runtime.MultiStatus;import org.eclipse.debug.core.*;import org.eclipse.jface.action.IAction;import org.eclipse.jface.viewers.*;import org.eclipse.swt.custom.BusyIndicator;import org.eclipse.swt.widgets.Display;import org.eclipse.ui.IActionDelegate;
-import org.eclipse.ui.IWorkbenchWindow;import org.eclipse.ui.IWorkbenchWindowActionDelegate;import org.eclipse.ui.actions.SelectionProviderAction;
+import java.util.Iterator;
+
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.IDebugStatusConstants;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 public abstract class ControlActionDelegate implements IWorkbenchWindowActionDelegate {
 	
@@ -65,7 +77,7 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 			}
 		});
 		if (!ms.isOK()) {
-			DebugUIUtils.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), getErrorDialogTitle(), getErrorDialogMessage(), ms);
+			DebugUIPlugin.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), getErrorDialogTitle(), getErrorDialogMessage(), ms);
 		}		
 	}
 

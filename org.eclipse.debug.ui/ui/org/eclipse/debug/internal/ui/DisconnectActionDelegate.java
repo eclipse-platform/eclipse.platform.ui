@@ -43,33 +43,33 @@ public class DisconnectActionDelegate extends ControlActionDelegate {
 	 * @see ControlActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage() {
-		return "Disconnect failed";
+		return DebugUIMessages.getString("DisconnectActionDelegate.Disconnect_failed_1"); //$NON-NLS-1$
 	}
 
 	/*
 	 * @see ControlActionDelegate#getErrorDialogMessage()
 	 */
 	protected String getErrorDialogMessage() {
-		return "Exceptions occurred attempting to disconnect.";
+		return DebugUIMessages.getString("DisconnectActionDelegate.Exceptions_occurred_attempting_to_disconnect._2"); //$NON-NLS-1$
 	}
 
 	/*
 	 * @see ControlActionDelegate#getErrorDialogTitle()
 	 */
 	protected String getErrorDialogTitle() {
-		return "Disconnect";
+		return DebugUIMessages.getString("DisconnectActionDelegate.Disconnect_3"); //$NON-NLS-1$
 	}
 	/*
 	 * @see ControlActionDelegate#getToolTipText()
 	 */
 	protected String getToolTipText() {
-		return "&Disconnect";
+		return DebugUIMessages.getString("DisconnectActionDelegate.&Disconnect_4"); //$NON-NLS-1$
 	}
 
 	/*
 	 * @see ControlActionDelegate#getText()
 	 */
 	protected String getText() {
-		return "Disconnect";
+		return DebugUIMessages.getString("DisconnectActionDelegate.Disconnect_5"); //$NON-NLS-1$
 	}
 }

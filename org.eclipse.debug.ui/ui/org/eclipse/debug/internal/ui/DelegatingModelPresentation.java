@@ -74,7 +74,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 				IConfigurationElement[] configElements= extension.getConfigurationElements();
 				for (int j= 0; j < configElements.length; j++) {
 					IConfigurationElement elt= configElements[j];
-					String id= elt.getAttribute("id");
+					String id= elt.getAttribute("id"); //$NON-NLS-1$
 					if (id != null) {
 						IDebugModelPresentation lp= new LazyModelPresentation(elt);
 						getLabelProviders().put(id, lp);
@@ -204,23 +204,23 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 					case IDebugElement.VARIABLE:
 						return ((IVariable)element).getName();
 					default:
-						return "";
+						return ""; //$NON-NLS-1$
 				}
 			} catch (DebugException de) {
-				DebugUIUtils.logError(de);
+				DebugUIPlugin.logError(de);
 			}
 		} else
 			if (element instanceof IMarker) {
 				IMarker m= (IMarker) element;
 				try {
 					if (m.exists() && m.isSubtypeOf(IDebugConstants.BREAKPOINT_MARKER)) {
-						return "Breakpoint";
+						return DebugUIMessages.getString("DelegatingModelPresentation.Breakpoint_3"); //$NON-NLS-1$
 					}
 				} catch (CoreException e) {
-					DebugUIUtils.logError(e);
+					DebugUIPlugin.logError(e);
 				}
 			}
-		return "<unknown>";
+		return DebugUIMessages.getString("DelegatingModelPresentation.<unknown>_4"); //$NON-NLS-1$
 	}
 
 	/**
@@ -268,7 +268,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 									}
 								}
 							} catch (CoreException e) {
-								DebugUIUtils.logError(e);
+								DebugUIPlugin.logError(e);
 							}
 						}
 		return null;
@@ -301,7 +301,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 						buf.append(' ');
 					}
 					buf.append(var.getName());
-					buf.append(" = ");
+					buf.append(" = "); //$NON-NLS-1$
 					buf.append(value.getValueString());
 					return buf.toString();
 				} catch (DebugException de) {
@@ -325,7 +325,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 							InspectItem var= (InspectItem) item;
 							StringBuffer buf= new StringBuffer();
 							buf.append(var.getLabel());
-							buf.append(" = ");
+							buf.append(" = "); //$NON-NLS-1$
 							IValue value = var.getValue();
 							if (displayVariableTypes) {
 								buf.append(value.getReferenceTypeName());
@@ -341,7 +341,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 					}
 
 			if ((item instanceof ITerminate) && ((ITerminate) item).isTerminated()) {
-				label= "<terminated> " + label;
+				label= DebugUIMessages.getString("DelegatingModelPresentation.<terminated>__7") + label; //$NON-NLS-1$
 			}
 			return label;
 		}
@@ -366,7 +366,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 			}
 		}
 		if (valueString != null && valueString.length() > 0) {
-			buffer.append("= ");
+			buffer.append("= "); //$NON-NLS-1$
 			buffer.append(valueString);		
 		}
 		return buffer.toString();
@@ -392,7 +392,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 			}
 		}
 
-		return "<unknown>";
+		return DebugUIMessages.getString("DelegatingModelPresentation.<unknown>_9"); //$NON-NLS-1$
 	}
 
 	/**
@@ -461,9 +461,9 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 	 */
 	protected String getLaunchText(ILaunch launch) {
 		StringBuffer buff= new StringBuffer(getDesktopLabel(launch.getElement()));
-		buff.append(" [");
+		buff.append(" ["); //$NON-NLS-1$
 		buff.append(getText(launch.getLauncher()));
-		buff.append("]");
+		buff.append("]"); //$NON-NLS-1$
 		return buff.toString();
 	}
 	

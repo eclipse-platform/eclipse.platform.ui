@@ -61,14 +61,14 @@ public class ResumeActionDelegate extends ControlActionDelegate {
 	 * @see ControlActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage() {
-		return "Resume failed.";
+		return DebugUIMessages.getString("ResumeActionDelegate.Resume_failed._1"); //$NON-NLS-1$
 	}
 
 	/*
 	 * @see ControlActionDelegate#getErrorDialogMessage()
 	 */
 	protected String getErrorDialogMessage() {
-		return "Exceptions occurred attempting to resume.";
+		return DebugUIMessages.getString("ResumeActionDelegate.Exceptions_occurred_attempting_to_resume._2"); //$NON-NLS-1$
 	}
 
 	/*
@@ -82,13 +82,13 @@ public class ResumeActionDelegate extends ControlActionDelegate {
 	 * @see ControlActionDelegate#getToolTipText()
 	 */
 	protected String getToolTipText() {
-		return "Resume";
+		return DebugUIMessages.getString("ResumeActionDelegate.Resume_3"); //$NON-NLS-1$
 	}
 
 	/*
 	 * @see ControlActionDelegate#getText()
 	 */
 	protected String getText() {
-		return "&Resume";
+		return DebugUIMessages.getString("ResumeActionDelegate.&Resume_4"); //$NON-NLS-1$
 	}
 }

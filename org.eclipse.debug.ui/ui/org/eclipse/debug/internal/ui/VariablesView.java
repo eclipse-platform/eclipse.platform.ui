@@ -109,7 +109,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 		initializeToolBar();
 	
 		setInitialContent();
-		setTitleToolTip("Variables and their Values for a Selected Stack Frame");
+		setTitleToolTip(DebugUIMessages.getString("VariablesView.Variables_and_their_Values_for_a_Selected_Stack_Frame_1")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(parent,
 			new ViewContextComputer(this, IDebugHelpContextIds.VARIABLE_VIEW ));
 	}

@@ -20,20 +20,20 @@ public interface IDebugPreferenceConstants {
 	/**
 	 * RGB colors for displaying the content in the Console
 	 */
-	public static final String CONSOLE_SYS_ERR_RGB= "Console.stdErrColor";
-	public static final String CONSOLE_SYS_OUT_RGB= "Console.stdOutColor";
-	public static final String CONSOLE_SYS_IN_RGB= "Console.stdInColor";
+	public static final String CONSOLE_SYS_ERR_RGB= "Console.stdErrColor"; //$NON-NLS-1$
+	public static final String CONSOLE_SYS_OUT_RGB= "Console.stdOutColor"; //$NON-NLS-1$
+	public static final String CONSOLE_SYS_IN_RGB= "Console.stdInColor"; //$NON-NLS-1$
 			
 	/**
 	 * The name of the font to use for the Console
 	 **/
-	public static final String CONSOLE_FONT= "Console.font";
+	public static final String CONSOLE_FONT= "Console.font"; //$NON-NLS-1$
 	
 	/**
 	 * (boolean) Whether or not the console view is shown 
 	 * when there is program ouptut.
   	 */
-	public static final String CONSOLE_OPEN= "DEBUG.consoleOpen";
+	public static final String CONSOLE_OPEN= "DEBUG.consoleOpen"; //$NON-NLS-1$
 
 
 }

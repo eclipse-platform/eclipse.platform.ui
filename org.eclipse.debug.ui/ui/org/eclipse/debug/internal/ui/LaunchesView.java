@@ -5,7 +5,32 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.core.DebugPlugin;import org.eclipse.debug.core.ILaunch;import org.eclipse.debug.core.model.IProcess;import org.eclipse.debug.core.model.IStackFrame;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.action.*;import org.eclipse.jface.viewers.*;import org.eclipse.swt.SWT;import org.eclipse.swt.events.KeyAdapter;import org.eclipse.swt.events.KeyEvent;import org.eclipse.swt.widgets.Composite;import org.eclipse.swt.widgets.Control;import org.eclipse.ui.IWorkbenchActionConstants;import org.eclipse.ui.actions.SelectionProviderAction;import org.eclipse.ui.dialogs.PropertyDialogAction;import org.eclipse.ui.help.ViewContextComputer;import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.actions.SelectionProviderAction;
+import org.eclipse.ui.dialogs.PropertyDialogAction;
+import org.eclipse.ui.help.ViewContextComputer;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class LaunchesView extends AbstractDebugView implements ISelectionChangedListener, IDoubleClickListener {
 
@@ -22,7 +47,7 @@ public class LaunchesView extends AbstractDebugView implements ISelectionChanged
 	 * Updates the state of the buttons in the view
 	 */
 	protected void updateButtons() {
-		ISelection s= fViewer.getSelection();
+		ISelection s= getViewer().getSelection();
 		if (s instanceof IStructuredSelection) {
 			IStructuredSelection selection= (IStructuredSelection) s;
 			fTerminateAction.selectionChanged(selection);
@@ -62,24 +87,25 @@ public class LaunchesView extends AbstractDebugView implements ISelectionChanged
 	public void createPartControl(Composite parent) {
 		boolean showDebugTargets = getSite().getId().equals(IDebugUIConstants.ID_DEBUG_VIEW);
 		LaunchesViewer lv = new LaunchesViewer(parent, showDebugTargets, this);
-		fViewer= lv;
-		fViewer.addSelectionChangedListener(this);
-		fViewer.addDoubleClickListener(this);
-		fViewer.setContentProvider(getContentProvider());
-		fViewer.setLabelProvider(new DelegatingModelPresentation());
-		fViewer.setUseHashlookup(true);
+
+		lv.addSelectionChangedListener(this);
+		lv.addDoubleClickListener(this);
+		lv.setContentProvider(getContentProvider());
+		lv.setLabelProvider(new DelegatingModelPresentation());
+		lv.setUseHashlookup(true);
+		setViewer(lv);
 		// add my viewer as a selection provider, so selective re-launch works
-		getSite().setSelectionProvider(fViewer);
+		getSite().setSelectionProvider(lv);
 		initializeActions(lv);
 		// register this viewer as the debug UI selection provider
-		DebugUIPlugin.getDefault().addSelectionProvider(fViewer, this);
+		DebugUIPlugin.getDefault().addSelectionProvider(lv, this);
 
 		// create context menu
 		createContextMenu(lv.getTree());
 		initializeToolBar();
 		lv.expandToLevel(2);
-		fViewer.setInput(DebugPlugin.getDefault().getLaunchManager());
-		fViewer.getControl().addKeyListener(new KeyAdapter() {
+		lv.setInput(DebugPlugin.getDefault().getLaunchManager());
+		lv.getControl().addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				handleKeyPressed(e);
 			}
@@ -88,7 +114,7 @@ public class LaunchesView extends AbstractDebugView implements ISelectionChanged
 	}
 
 	protected void configureView(Composite parent) {
-		setTitleToolTip("System Processes");
+		setTitleToolTip(DebugUIMessages.getString("LaunchesView.System_Processes_1")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(
 			parent,
 			new ViewContextComputer(this, IDebugHelpContextIds.PROCESS_VIEW ));
@@ -107,12 +133,12 @@ public class LaunchesView extends AbstractDebugView implements ISelectionChanged
 	 * @see IWorkbenchPart
 	 */
 	public void setFocus() {
-		Control c = fViewer.getControl();
+		Control c = getViewer().getControl();
 		if (!c.isFocusControl()) {
 			c.setFocus();
 			//ensure that all downstream listeners
 			//know the current selection..switching from another view
-			DebugUIPlugin.getDefault().selectionChanged(new SelectionChangedEvent(fViewer, fViewer.getSelection()));
+			DebugUIPlugin.getDefault().selectionChanged(new SelectionChangedEvent(getViewer(), getViewer().getSelection()));
 		}
 	}
 	
@@ -143,10 +169,10 @@ public class LaunchesView extends AbstractDebugView implements ISelectionChanged
 	 * @see IWorkbenchPart
 	 */
 	public void dispose() {
-		if (fViewer != null) {
-			DebugUIPlugin.getDefault().removeSelectionProvider(fViewer, this);
-			fViewer.removeDoubleClickListener(this);
-			fViewer.removeSelectionChangedListener(this);
+		if (getViewer() != null) {
+			DebugUIPlugin.getDefault().removeSelectionProvider(getViewer(), this);
+			getViewer().removeDoubleClickListener(this);
+			getViewer().removeSelectionChangedListener(this);
 		}
 		super.dispose();
 	}
@@ -167,7 +193,7 @@ public class LaunchesView extends AbstractDebugView implements ISelectionChanged
 					selectee= ps[0];
 				}
 		}
-		fViewer.setSelection(new StructuredSelection(selectee), true);
+		getViewer().setSelection(new StructuredSelection(selectee), true);
 	}
 	
 	/**
@@ -209,10 +235,120 @@ public class LaunchesView extends AbstractDebugView implements ISelectionChanged
 		if (o instanceof IStackFrame) {
 			return;
 		} 
-		TreeViewer tViewer= (TreeViewer)fViewer;
+		TreeViewer tViewer= (TreeViewer)getViewer();
 		boolean expanded= tViewer.getExpandedState(o);
 		tViewer.setExpandedState(o, !expanded);
 	}
+	/**
+	 * Gets the disconnectAction.
+	 * @return Returns a SelectionProviderAction
+	 */
+	public SelectionProviderAction getDisconnectAction() {
+		return fDisconnectAction;
+	}
+
+	/**
+	 * Sets the disconnectAction.
+	 * @param disconnectAction The disconnectAction to set
+	 */
+	protected void setDisconnectAction(SelectionProviderAction disconnectAction) {
+		fDisconnectAction = disconnectAction;
+	}
+
+	/**
+	 * Gets the propertyDialogAction.
+	 * @return Returns a PropertyDialogAction
+	 */
+	protected PropertyDialogAction getPropertyDialogAction() {
+		return fPropertyDialogAction;
+	}
+
+	/**
+	 * Sets the propertyDialogAction.
+	 * @param propertyDialogAction The propertyDialogAction to set
+	 */
+	protected void setPropertyDialogAction(PropertyDialogAction propertyDialogAction) {
+		fPropertyDialogAction = propertyDialogAction;
+	}
+
+	/**
+	 * Gets the relaunchAction.
+	 * @return Returns a SelectionProviderAction
+	 */
+	protected SelectionProviderAction getRelaunchAction() {
+		return fRelaunchAction;
+	}
+
+	/**
+	 * Sets the relaunchAction.
+	 * @param relaunchAction The relaunchAction to set
+	 */
+	protected void setRelaunchAction(SelectionProviderAction relaunchAction) {
+		fRelaunchAction = relaunchAction;
+	}
+
+	/**
+	 * Gets the removeTerminatedAction.
+	 * @return Returns a RemoveTerminatedAction
+	 */
+	protected RemoveTerminatedAction getRemoveTerminatedAction() {
+		return fRemoveTerminatedAction;
+	}
+
+	/**
+	 * Sets the removeTerminatedAction.
+	 * @param removeTerminatedAction The removeTerminatedAction to set
+	 */
+	protected void setRemoveTerminatedAction(RemoveTerminatedAction removeTerminatedAction) {
+		fRemoveTerminatedAction = removeTerminatedAction;
+	}
+
+	/**
+	 * Gets the terminateAction.
+	 * @return Returns a SelectionProviderAction
+	 */
+	protected SelectionProviderAction getTerminateAction() {
+		return fTerminateAction;
+	}
+
+	/**
+	 * Sets the terminateAction.
+	 * @param terminateAction The terminateAction to set
+	 */
+	protected void setTerminateAction(SelectionProviderAction terminateAction) {
+		fTerminateAction = terminateAction;
+	}
+
+	/**
+	 * Gets the terminateAllAction.
+	 * @return Returns a TerminateAllAction
+	 */
+	protected TerminateAllAction getTerminateAllAction() {
+		return fTerminateAllAction;
+	}
+
+	/**
+	 * Sets the terminateAllAction.
+	 * @param terminateAllAction The terminateAllAction to set
+	 */
+	protected void setTerminateAllAction(TerminateAllAction terminateAllAction) {
+		fTerminateAllAction = terminateAllAction;
+	}
+
+	/**
+	 * Gets the terminateAndRemoveAction.
+	 * @return Returns a SelectionProviderAction
+	 */
+	protected SelectionProviderAction getTerminateAndRemoveAction() {
+		return fTerminateAndRemoveAction;
+	}
+
+	/**
+	 * Sets the terminateAndRemoveAction.
+	 * @param terminateAndRemoveAction The terminateAndRemoveAction to set
+	 */
+	protected void setTerminateAndRemoveAction(SelectionProviderAction terminateAndRemoveAction) {
+		fTerminateAndRemoveAction = terminateAndRemoveAction;
+	}
+
 }
-
-

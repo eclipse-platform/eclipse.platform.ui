@@ -21,16 +21,12 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class ShowTypesAction extends Action {
 
-	private static final String PREFIX= "show_types_action.";
-	private static final String SHOW= PREFIX + TOOL_TIP_TEXT + ".show";
-	private static final String HIDE= PREFIX + TOOL_TIP_TEXT + ".hide";
-
 	protected StructuredViewer fViewer;
 
 	public ShowTypesAction(StructuredViewer viewer) {
-		super(DebugUIUtils.getResourceString(SHOW));
+		super(DebugUIMessages.getString("ShowTypesAction.Show_&Type_Names_1")); //$NON-NLS-1$
 		fViewer= viewer;
-		setToolTipText(SHOW);
+		setToolTipText(DebugUIMessages.getString("ShowTypesAction.Show_&Type_Names_2")); //$NON-NLS-1$
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_TYPE_NAMES));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TYPE_NAMES));
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TYPE_NAMES));
@@ -40,7 +36,7 @@ public class ShowTypesAction extends Action {
 	}
 
 	/**
-	 * @see Action
+	 * @see Action#run()
 	 */
 	public void run() {
 		valueChanged(isChecked());
@@ -60,11 +56,11 @@ public class ShowTypesAction extends Action {
 				}
 			});
 		}
-		setToolTipText(on ? DebugUIUtils.getResourceString(HIDE) : DebugUIUtils.getResourceString(SHOW));
+		setToolTipText(on ? DebugUIMessages.getString("ShowTypesAction.Hide_&Type_Names_3") : DebugUIMessages.getString("ShowTypesAction.Show_&Type_Names_4")); //$NON-NLS-2$ //$NON-NLS-1$
 	}
 
 	/**
-	 * @see Action
+	 * @see Action#setChecked(boolean)
 	 */
 	public void setChecked(boolean value) {
 		super.setChecked(value);

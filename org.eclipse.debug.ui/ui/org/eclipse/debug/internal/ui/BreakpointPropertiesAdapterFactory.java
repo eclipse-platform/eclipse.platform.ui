@@ -28,7 +28,7 @@ import org.eclipse.ui.views.properties.IPropertySource;
 	 * Load the adapter extension map only once
 	 */
 	static {
-		IExtensionPoint ep= DebugUIPlugin.getDefault().getDescriptor().getExtensionPoint("breakpointPropertyAdapters");
+		IExtensionPoint ep= DebugUIPlugin.getDefault().getDescriptor().getExtensionPoint("breakpointPropertyAdapters"); //$NON-NLS-1$
 		IConfigurationElement[] elements = ep.getConfigurationElements();
 		for (int i= 0; i < elements.length; i++) {
 			fAdapterExtensions.put(elements[i].getAttribute(IDebugConstants.MARKER_TYPE), elements[i]);
@@ -52,15 +52,15 @@ import org.eclipse.ui.views.properties.IPropertySource;
 				if (marker.exists()) {
 					try {
 						IConfigurationElement config = (IConfigurationElement)fAdapterExtensions.get(marker.getType());
-						IPropertySource propertySource = (IPropertySource)config.createExecutableExtension("class");
+						IPropertySource propertySource = (IPropertySource)config.createExecutableExtension("class"); //$NON-NLS-1$
 						// If no adapter was specified, use the default adapter
 						if (propertySource == null) {
 							propertySource = new BreakpointPropertySource();
 						}
-						propertySource.setPropertyValue("breakpoint", breakpoint);
+						propertySource.setPropertyValue("breakpoint", breakpoint); //$NON-NLS-1$
 						return propertySource;
 					} catch (CoreException ce) {
-						DebugUIUtils.logError(ce);
+						DebugUIPlugin.logError(ce);
 						return null;
 					}
 				}

@@ -34,7 +34,7 @@ public abstract class InspectorAction extends SelectionProviderAction {
 			try {
 				view= (InspectorView) p.showView(IDebugUIConstants.ID_INSPECTOR_VIEW);
 			} catch (PartInitException e) {
-				DebugUIUtils.logError(e);
+				DebugUIPlugin.logError(e);
 				return;
 			}
 		}
@@ -42,7 +42,7 @@ public abstract class InspectorAction extends SelectionProviderAction {
 		try {
 			doAction(view);
 		} catch (DebugException de) {
-			DebugUIUtils.logError(de);
+			DebugUIPlugin.logError(de);
 		}
 	}
 

@@ -6,35 +6,42 @@ package org.eclipse.debug.internal.ui;
  */
 
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugStatusConstants;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * This is the debug action which appears in the desktop menu and toolbar.
  */
 public abstract class ExecutionAction extends Action {
-
-	private final static String PREFIX= "execution_action.";
-	private final static String ERROR= "error.";
-	private final static String STATUS= PREFIX + "status";
-	private static final String LAUNCH_PREFIX= "launch_action.";
-	private static final String LAUNCH_ERROR_TITLE= LAUNCH_PREFIX + ERROR + "title";
-	private static final String LAUNCH_ERROR_MESSAGE= LAUNCH_PREFIX + ERROR + "message";	
-
 	/**
-	 * @see Action
+	 * @see Action#run
 	 */
 	public void run() {
 
@@ -64,9 +71,9 @@ public abstract class ExecutionAction extends Action {
 					Object[] elements= selection.toArray();
 					boolean ok= launcher.launch(elements, getMode());
 					if (!ok) {
-						String string= DebugUIUtils.getResourceString(LAUNCH_ERROR_MESSAGE);
+						String string= DebugUIMessages.getString("The_launcher,_{0},_failed_to_launch_1"); //$NON-NLS-1$
 						String message= MessageFormat.format(string, new String[] {launcher.getLabel()});
-						MessageDialog.openError(DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(), DebugUIUtils.getResourceString(LAUNCH_ERROR_TITLE), message);	
+						MessageDialog.openError(DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(), DebugUIMessages.getString("Launch_Failed_2"), message);	 //$NON-NLS-1$
 					}					
 				} else {
 					// must choose a launcher
@@ -182,7 +189,7 @@ public abstract class ExecutionAction extends Action {
 		} else {
 			launchers= new ArrayList(2);
 
-			MultiStatus status= new MultiStatus(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), IDebugStatusConstants.REQUEST_FAILED, "Error occurred retrieving default launcher", null);
+			MultiStatus status= new MultiStatus(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), IDebugStatusConstants.REQUEST_FAILED, DebugUIMessages.getString("Error_occurred_retrieving_default_launcher_3"), null); //$NON-NLS-1$
 			for (int i = 0; i < projects.length; i++) {
 				IProject project= projects[i];
 				ILauncher defaultLauncher= null;
@@ -203,7 +210,7 @@ public abstract class ExecutionAction extends Action {
 				}
 			}
 			if (!status.isOK()) {
-				DebugUIUtils.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), "Error finding default launchers", "Exceptions occurred determining the default launcher(s).", status);
+				DebugUIPlugin.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), DebugUIMessages.getString("Error_finding_default_launchers_4"), DebugUIMessages.getString("Exceptions_occurred_determining_the_default_launcher(s)._5"), status); //$NON-NLS-2$ //$NON-NLS-1$
 			}
 			if (launchers.isEmpty()) {
 				launchers= Arrays.asList(getLaunchManager().getLaunchers(getMode()));
@@ -299,4 +306,3 @@ public abstract class ExecutionAction extends Action {
 		}
 	}
 }
-

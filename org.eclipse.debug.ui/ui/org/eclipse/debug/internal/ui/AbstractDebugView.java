@@ -27,7 +27,7 @@ import org.eclipse.ui.part.ViewPart;
 
 public abstract class AbstractDebugView extends ViewPart implements IDebugViewAdapter {
 	
-	protected StructuredViewer fViewer = null;
+	private StructuredViewer fViewer = null;
 
 	/**
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
@@ -61,7 +61,7 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	}
 	
 	protected void createContextMenu(Control menuControl) {
-		MenuManager menuMgr= new MenuManager("#PopUp");
+		MenuManager menuMgr= new MenuManager("#PopUp"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager mgr) {

@@ -44,14 +44,14 @@ public class TerminateActionDelegate extends ControlActionDelegate {
 	 * @see ControlActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage() {
-		return "Terminate failed.";
+		return DebugUIMessages.getString("TerminateActionDelegate.Terminate_failed._1"); //$NON-NLS-1$
 	}
 
 	/*
 	 * @see ControlActionDelegate#getErrorDialogMessage()
 	 */
 	protected String getErrorDialogMessage() {
-		return "Exceptions occurred attempting to terminate.";
+		return DebugUIMessages.getString("TerminateActionDelegate.Exceptions_occurred_attempting_to_terminate._2"); //$NON-NLS-1$
 
 	}
 
@@ -66,13 +66,13 @@ public class TerminateActionDelegate extends ControlActionDelegate {
 	 * @see ControlActionDelegate#getToolTipText()
 	 */
 	protected String getToolTipText() {
-		return "Terminate";
+		return DebugUIMessages.getString("TerminateActionDelegate.Terminate_3"); //$NON-NLS-1$
 	}
 
 	/*
 	 * @see ControlActionDelegate#getText()
 	 */
 	protected String getText() {
-		return "&Terminate";
+		return DebugUIMessages.getString("TerminateActionDelegate.&Terminate_4"); //$NON-NLS-1$
 	}
 }

@@ -63,7 +63,7 @@ public class InspectorContentProvider extends BasicContentProvider implements IT
 				}
 
 			} catch (DebugException de) {
-				DebugUIUtils.logError(de);
+				DebugUIPlugin.logError(de);
 			}
 		}
 		

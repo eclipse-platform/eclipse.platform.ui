@@ -5,22 +5,21 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
  
-import java.util.Iterator;
-import java.util.List;
-
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.*;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ContentViewer;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.TreeViewer;
 
 /**
  * Used to copy the values of variables to the clipboard from
  * the Variables and Inspector views.
  */
 public class CopyVariablesToClipboardActionDelegate extends CopyToClipboardActionDelegate {
-	
-	private static final String PREFIX= "copy_variables_to_clipboard_action.";
 
+	/**
+	 * @see ControlActionDelegate#getHelpContextId()
+	 */
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.COPY_VARIABLES_TO_CLIPBOARD_ACTION;
 	}
@@ -33,7 +32,7 @@ public class CopyVariablesToClipboardActionDelegate extends CopyToClipboardActio
 	}
 	
 	/**
-	 * @see ControlActionDelegate
+	 * @see ControlActionDelegate#initializeForOwner(ControlAction)
 	 */
 	public void initializeForOwner(ControlAction controlAction) {		
 		controlAction.setEnabled(!controlAction.getStructuredSelection().isEmpty());
@@ -41,21 +40,14 @@ public class CopyVariablesToClipboardActionDelegate extends CopyToClipboardActio
 	}
 	
 	/**
-	 * @see ControlActionDelegate
-	 */
-	protected String getPrefix() {
-		return PREFIX;
-	}
-	
-	/**
-	 * @see ControlActionDelegate
+	 * @see ControlActionDelegate#isEnabledFor(Object)
 	 */
 	public boolean isEnabledFor(Object element) {
 		return element instanceof IDebugElement || element instanceof InspectItem;
 	}
 	
 	/**
-	 * @see IActionDelegate
+	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection s) {
 		action.setEnabled(!s.isEmpty());
@@ -65,6 +57,6 @@ public class CopyVariablesToClipboardActionDelegate extends CopyToClipboardActio
 	 * @see ControlActionDelegate#getText()
 	 */
 	protected String getText() {
-		return "Copy &Variables";
+		return DebugUIMessages.getString("CopyVariablesToClipboardActionDelegate.Copy_&Variables_2"); //$NON-NLS-1$
 	}
 }

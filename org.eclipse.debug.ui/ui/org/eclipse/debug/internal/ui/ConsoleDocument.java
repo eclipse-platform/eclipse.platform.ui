@@ -68,7 +68,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 		fClosed= true;
 		fStyleRanges= Collections.EMPTY_LIST;
-		set("");
+		set(""); //$NON-NLS-1$
 	}
 
 	/**
@@ -96,7 +96,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 					fLastStreamWriteEnd= getLength();
 					return;
 				} catch (IOException ioe) {
-					DebugUIUtils.logError(ioe);
+					DebugUIPlugin.logError(ioe);
 				}
 			}
 		}
@@ -119,7 +119,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 		} else {
 			updateInputStyleRange(docLength);
 			//notify the viewer that the style ranges have changed.
-			fireDocumentChanged(new DocumentEvent(this, 0, 0, ""));
+			fireDocumentChanged(new DocumentEvent(this, 0, 0, "")); //$NON-NLS-1$
 		}
 	}
 	
@@ -131,7 +131,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 		try {		
 			super.replace(pos, replaceLength, text);
 		} catch (BadLocationException ble) {
-			DebugUIUtils.logError(ble);
+			DebugUIPlugin.logError(ble);
 		}
 		
 	}
@@ -335,7 +335,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 
 	protected void clearDocument() {
 		fStyleRanges= new ArrayList(2);
-		set("");
+		set(""); //$NON-NLS-1$
 	}
 	
 	/**

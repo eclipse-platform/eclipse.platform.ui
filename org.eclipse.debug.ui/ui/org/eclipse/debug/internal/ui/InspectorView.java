@@ -9,6 +9,8 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -21,39 +23,41 @@ import org.eclipse.ui.help.WorkbenchHelp;
 /**
  * A view that shows items that have been added to a inspector
  */
-public class InspectorView extends AbstractDebugView {
+public class InspectorView extends AbstractDebugView  implements IDoubleClickListener{
 
-	protected InspectorContentProvider fContentProvider= null;
-	protected ShowQualifiedAction fShowQualifiedAction;
-	protected ShowTypesAction fShowTypesAction;
-	protected InspectorViewAddToInspectorAction fAddToInspectorAction;
-	protected RemoveFromInspectorAction fRemoveFromInspectorAction;
-	protected RemoveAllFromInspectorAction fRemoveAllFromInspectorAction;
-	protected ChangeVariableValueAction fChangeVariableAction;
-	protected ControlAction fCopyToClipboardAction;
+	private InspectorContentProvider fContentProvider;
+	private ShowQualifiedAction fShowQualifiedAction;
+	private ShowTypesAction fShowTypesAction;
+	private InspectorViewAddToInspectorAction fAddToInspectorAction;
+	private RemoveFromInspectorAction fRemoveFromInspectorAction;
+	private RemoveAllFromInspectorAction fRemoveAllFromInspectorAction;
+	private ChangeVariableValueAction fChangeVariableAction;
+	private ControlAction fCopyToClipboardAction;
 	/**
-	 * @see IWorkbenchPart
+	 * @see IWorkbenchPart#createPartControl(Composite)
 	 */
 	public void createPartControl(Composite parent) {
 		TreeViewer vv = new TreeViewer(parent, SWT.MULTI);
-		fViewer= vv;
+		setViewer(vv);
 		initializeActions();
 		initializeToolBar();
-		fContentProvider= new InspectorContentProvider(fRemoveAllFromInspectorAction);
-		fViewer.setContentProvider(fContentProvider);
-		fViewer.setLabelProvider(new DelegatingModelPresentation());
-		fViewer.setUseHashlookup(true);
+		setContentProvider(new InspectorContentProvider(getRemoveAllFromInspectorAction()));
+		getViewer().setContentProvider(getContentProvider());
+		getViewer().setLabelProvider(new DelegatingModelPresentation());
+		getViewer().setUseHashlookup(true);
 
 		createContextMenu(vv.getTree());
 		
-		fViewer.setInput(fContentProvider.getInspectorList());
-		fViewer.getControl().addKeyListener(new KeyAdapter() {
+		getViewer().setInput(getContentProvider().getInspectorList());
+		getViewer().getControl().addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				handleKeyPressed(e);
 			}
 		});
+		
+		getViewer().addDoubleClickListener(this);
 
-		setTitleToolTip("Evaluated Expression");
+		setTitleToolTip(DebugUIMessages.getString("InspectorView.Evaluated_Expression_1")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(
 			parent,
 			new ViewContextComputer(this, IDebugHelpContextIds.INSPECTOR_VIEW ));
@@ -63,22 +67,22 @@ public class InspectorView extends AbstractDebugView {
 	 * Initializes the actions of this view.
 	 */
 	protected void initializeActions() {
-		fShowTypesAction= new ShowTypesAction(fViewer);
-		fShowTypesAction.setChecked(false);
+		setShowTypesAction(new ShowTypesAction(getViewer()));
+		getShowTypesAction().setChecked(false);
 		
-		fShowQualifiedAction= new ShowQualifiedAction(fViewer);
-		fShowQualifiedAction.setChecked(false);
+		setShowQualifiedAction(new ShowQualifiedAction(getViewer()));
+		getShowQualifiedAction().setChecked(false);
 				
-		fAddToInspectorAction = new InspectorViewAddToInspectorAction(fViewer);
+		setAddToInspectorAction(new InspectorViewAddToInspectorAction(getViewer()));
 
-		fRemoveFromInspectorAction= new RemoveFromInspectorAction(fViewer);
+		setRemoveFromInspectorAction(new RemoveFromInspectorAction(getViewer()));
 
-		fRemoveAllFromInspectorAction= new RemoveAllFromInspectorAction(fViewer);
+		setRemoveAllFromInspectorAction(new RemoveAllFromInspectorAction(getViewer()));
 		
-		fChangeVariableAction= new ChangeVariableValueAction(fViewer);
-		fChangeVariableAction.setEnabled(false);
+		setChangeVariableAction(new ChangeVariableValueAction(getViewer()));
+		getChangeVariableAction().setEnabled(false);
 		
-		fCopyToClipboardAction= new ControlAction(fViewer, new CopyVariablesToClipboardActionDelegate());
+		setCopyToClipboardAction(new ControlAction(getViewer(), new CopyVariablesToClipboardActionDelegate()));
 	}
 
 	/**
@@ -86,11 +90,11 @@ public class InspectorView extends AbstractDebugView {
 	 */
 	protected void configureToolBar(IToolBarManager tbm) {
 		tbm.add(new Separator(this.getClass().getName()));
-		tbm.add(fShowTypesAction);
-		tbm.add(fShowQualifiedAction);
+		tbm.add(getShowTypesAction());
+		tbm.add(getShowQualifiedAction());
 		tbm.add(new Separator(this.getClass().getName()));
-		tbm.add(fRemoveFromInspectorAction);
-		tbm.add(fRemoveAllFromInspectorAction);
+		tbm.add(getRemoveFromInspectorAction());
+		tbm.add(getRemoveAllFromInspectorAction());
 	}
 
 	/**
@@ -99,15 +103,15 @@ public class InspectorView extends AbstractDebugView {
 	protected void fillContextMenu(IMenuManager menu) {
 		menu.add(new Separator(IDebugUIConstants.EMPTY_EXPRESSION_GROUP));
 		menu.add(new Separator(IDebugUIConstants.EXPRESSION_GROUP));
-		menu.add(fAddToInspectorAction);
-		menu.add(fChangeVariableAction);
-		menu.add(fCopyToClipboardAction);
-		menu.add(fRemoveFromInspectorAction);
-		menu.add(fRemoveAllFromInspectorAction);
+		menu.add(getAddToInspectorAction());
+		menu.add(getChangeVariableAction());
+		menu.add(getCopyToClipboardAction());
+		menu.add(getRemoveFromInspectorAction());
+		menu.add(getRemoveAllFromInspectorAction());
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
 		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
-		menu.add(fShowTypesAction);
-		menu.add(fShowQualifiedAction);
+		menu.add(getShowTypesAction());
+		menu.add(getShowQualifiedAction());
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
@@ -116,7 +120,7 @@ public class InspectorView extends AbstractDebugView {
 	 * the first child or to the item if it has no children.
 	 */
 	public void addToInspector(InspectItem item) {
-		fContentProvider.addToInspector(item);
+		getContentProvider().addToInspector(item);
 	}
 
 	/**
@@ -125,10 +129,10 @@ public class InspectorView extends AbstractDebugView {
 	public void removeFromInspector(Object object) {
 		// first we have to get the root item to remove
 		while (! (object instanceof InspectItem && object != null)) {
-			object = fContentProvider.getParent(object);
+			object = getContentProvider().getParent(object);
 		}
 		if (object != null) {
-			fContentProvider.removeFromInspector((InspectItem)object);
+			getContentProvider().removeFromInspector((InspectItem)object);
 		}
 	}
 
@@ -136,7 +140,7 @@ public class InspectorView extends AbstractDebugView {
 	 * Removes all items from the list
 	 */
 	public void removeAllFromInspector() {
-		fContentProvider.removeAll();
+		getContentProvider().removeAll();
 	}
 	
 	/**
@@ -145,9 +149,81 @@ public class InspectorView extends AbstractDebugView {
 	 */
 	protected void handleKeyPressed(KeyEvent event) {
 		if (event.character == SWT.DEL && event.stateMask == 0 
-			&& fRemoveFromInspectorAction.isEnabled()) {
-				fRemoveFromInspectorAction.run();
+			&& getRemoveFromInspectorAction().isEnabled()) {
+				getRemoveFromInspectorAction().run();
 		}
 	}
-}
+	
+	/**
+	 * @see IDoubleClickListener#doubleClick(DoubleClickEvent)
+	 */
+	public void doubleClick(DoubleClickEvent event) {
+		if (getChangeVariableAction().isEnabled()) {
+			getChangeVariableAction().run();
+		}
+	}
+	
+	protected InspectorContentProvider getContentProvider() {
+		return fContentProvider;
+	}
 
+	protected void setContentProvider(InspectorContentProvider contentProvider) {
+		fContentProvider = contentProvider;
+	}
+
+	protected InspectorViewAddToInspectorAction getAddToInspectorAction() {
+		return fAddToInspectorAction;
+	}
+
+	protected void setAddToInspectorAction(InspectorViewAddToInspectorAction addToInspectorAction) {
+		fAddToInspectorAction = addToInspectorAction;
+	}
+
+	protected ChangeVariableValueAction getChangeVariableAction() {
+		return fChangeVariableAction;
+	}
+
+	protected void setChangeVariableAction(ChangeVariableValueAction changeVariableAction) {
+		fChangeVariableAction = changeVariableAction;
+	}
+
+	protected ControlAction getCopyToClipboardAction() {
+		return fCopyToClipboardAction;
+	}
+
+	protected void setCopyToClipboardAction(ControlAction copyToClipboardAction) {
+		fCopyToClipboardAction = copyToClipboardAction;
+	}
+
+	protected RemoveAllFromInspectorAction getRemoveAllFromInspectorAction() {
+		return fRemoveAllFromInspectorAction;
+	}
+
+	protected void setRemoveAllFromInspectorAction(RemoveAllFromInspectorAction removeAllFromInspectorAction) {
+		fRemoveAllFromInspectorAction = removeAllFromInspectorAction;
+	}
+
+	protected RemoveFromInspectorAction getRemoveFromInspectorAction() {
+		return fRemoveFromInspectorAction;
+	}
+
+	protected void setRemoveFromInspectorAction(RemoveFromInspectorAction removeFromInspectorAction) {
+		fRemoveFromInspectorAction = removeFromInspectorAction;
+	}
+
+	protected ShowQualifiedAction getShowQualifiedAction() {
+		return fShowQualifiedAction;
+	}
+
+	protected void setShowQualifiedAction(ShowQualifiedAction showQualifiedAction) {
+		fShowQualifiedAction = showQualifiedAction;
+	}
+
+	protected ShowTypesAction getShowTypesAction() {
+		return fShowTypesAction;
+	}
+
+	protected void setShowTypesAction(ShowTypesAction showTypesAction) {
+		fShowTypesAction = showTypesAction;
+	}
+}

@@ -5,9 +5,16 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
  
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.*;
+import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointListener;
+import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.IDebugStatusConstants;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
@@ -19,13 +26,9 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class RemoveAllBreakpointsAction extends Action implements IBreakpointListener {
 	
-	private static final String PREFIX= "remove_all_breakpoints_action.";
-	private static final String ERROR= "error.";
-	private static final String STATUS= PREFIX + "status";
-
 	public RemoveAllBreakpointsAction() {
-		super(DebugUIUtils.getResourceString(PREFIX + TEXT));
-		setToolTipText(DebugUIUtils.getResourceString(PREFIX + TOOL_TIP_TEXT));
+		super(DebugUIMessages.getString("RemoveAllBreakpointsAction.Remove_&All_1")); //$NON-NLS-1$
+		setToolTipText(DebugUIMessages.getString("RemoveAllBreakpointsAction.Remove_All_Breakpoints_2")); //$NON-NLS-1$
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE_ALL));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE_ALL));
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE_ALL));
@@ -40,7 +43,7 @@ public class RemoveAllBreakpointsAction extends Action implements IBreakpointLis
 	public void run() {
 		final IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
 		final IBreakpoint[] breakpoints= breakpointManager.getBreakpoints();
-		final MultiStatus ms= new MultiStatus(DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), IDebugStatusConstants.REQUEST_FAILED, "Breakpoint(s) removal failed", null);
+		final MultiStatus ms= new MultiStatus(DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), IDebugStatusConstants.REQUEST_FAILED, DebugUIMessages.getString("RemoveAllBreakpointsAction.Breakpoint(s)_removal_failed_3"), null); //$NON-NLS-1$
 		IWorkspaceRunnable r = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor pm) {
 				for (int i= 0; i < breakpoints.length; i++) {
@@ -58,7 +61,7 @@ public class RemoveAllBreakpointsAction extends Action implements IBreakpointLis
 			ms.merge(e.getStatus());
 		}
 		if (!ms.isOK()) {
-			DebugUIUtils.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), "Removing all breakpoints","Exceptions occurred removing breakpoints.", ms);
+			DebugUIPlugin.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), DebugUIMessages.getString("RemoveAllBreakpointsAction.Removing_all_breakpoints_4"),DebugUIMessages.getString("RemoveAllBreakpointsAction.Exceptions_occurred_removing_breakpoints._5"), ms); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	/**

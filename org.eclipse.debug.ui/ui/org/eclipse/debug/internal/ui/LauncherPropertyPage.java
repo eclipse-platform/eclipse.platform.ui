@@ -31,12 +31,12 @@ import java.util.ArrayList;
  */
 public class LauncherPropertyPage extends PropertyPage implements IWorkbenchPreferencePage {
 	
-	private static final String PREFIX= "launcher_preferences.";
+	/*private static final String PREFIX= "launcher_preferences.";
 	private static final String DESCRIPTION= PREFIX + "description";
 	private static final String RUN_DEBUG= PREFIX + "run_debug";
 	private static final String NONE= PREFIX + "none";
 	private static final String ERROR= PREFIX + "error.";
-	private static final String CLOSED_PROJECT= PREFIX + "closed_project";
+	private static final String CLOSED_PROJECT= PREFIX + "closed_project";*/
 
 	protected Combo fCombo;
 	
@@ -88,12 +88,12 @@ public class LauncherPropertyPage extends PropertyPage implements IWorkbenchPref
 		}
 		// Table to choose which tags are shown in the outliner
 		Composite pageComponent= createComposite(parent, 1);
-		createLabel(pageComponent, DebugUIUtils.getResourceString(DESCRIPTION));
+		createLabel(pageComponent, DebugUIMessages.getString("LauncherPropertyPage.Select_default_launcher_1")); //$NON-NLS-1$
 		ImageRegistry registry= DebugUIPlugin.getDefault().getImageRegistry();
 
 		ILauncher[] launchers= getLaunchManager().getLaunchers();
 		java.util.List list = new ArrayList(1);
-		list.add(DebugUIUtils.getResourceString(NONE));
+		list.add(DebugUIMessages.getString("LauncherPropertyPage.none_2")); //$NON-NLS-1$
 		for (int i = 0; i < launchers.length; i++) {
 			if (DebugUIPlugin.getDefault().isVisible(launchers[i]))
 				list.add(launchers[i].getLabel());
@@ -103,7 +103,7 @@ public class LauncherPropertyPage extends PropertyPage implements IWorkbenchPref
 
 		//Composite box= createComposite(pageComponent, 2);
 		Composite launcherComponent= createComposite(pageComponent, 2);
-		createLabel(launcherComponent, DebugUIUtils.getResourceString(RUN_DEBUG), registry.get(IDebugUIConstants.IMG_ACT_DEBUG));
+		createLabel(launcherComponent, DebugUIMessages.getString("LauncherPropertyPage.Run/Debug_3"), registry.get(IDebugUIConstants.IMG_ACT_DEBUG)); //$NON-NLS-1$
 		fCombo= createCombo(launcherComponent, items);
 
 		initializeValues();
@@ -112,7 +112,7 @@ public class LauncherPropertyPage extends PropertyPage implements IWorkbenchPref
 
 	private void createForClosedProject(Composite parent) {
 		Label label= new Label(parent, SWT.LEFT);
-		label.setText(DebugUIUtils.getResourceString(CLOSED_PROJECT));
+		label.setText(DebugUIMessages.getString("LauncherPropertyPage.Launcher_information_is_not_available_for_a_closed_project._4")); //$NON-NLS-1$
 		label.setFont(parent.getFont());
 		setControl(label);
 	}
@@ -223,7 +223,7 @@ public class LauncherPropertyPage extends PropertyPage implements IWorkbenchPref
 				}
 			} catch (CoreException ce) {
 				fCombo.select(0);
-				DebugUIUtils.logError(ce);
+				DebugUIPlugin.logError(ce);
 			}
 		}
 	}
@@ -243,7 +243,7 @@ public class LauncherPropertyPage extends PropertyPage implements IWorkbenchPref
 			}
 			getLaunchManager().setDefaultLauncher(project, null);
 		} catch (CoreException e) {
-			DebugUIUtils.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), "Launcher property page", "Exceptions occurred saving the launcher preferences", e.getStatus());
+			DebugUIPlugin.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), DebugUIMessages.getString("LauncherPropertyPage.Launcher_property_page_5"), DebugUIMessages.getString("LauncherPropertyPage.Exceptions_occurred_saving_the_launcher_preferences_6"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
 		}
 		return true;

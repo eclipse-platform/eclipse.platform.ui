@@ -20,9 +20,6 @@ import org.eclipse.swt.graphics.Point;
  */
 public class LaunchWizardNode implements IWizardNode {
 	
-	private static final String PREFIX= "launch_wizard_node.";
-	private static final String ERROR= PREFIX + "error.";
-	
 	protected IWizard fWizard;
 	protected IWizardPage fParentWizardPage;
 	protected ILauncher fLauncher;
@@ -44,7 +41,7 @@ public class LaunchWizardNode implements IWizardNode {
 	 */
 	public ILaunchWizard createWizard() throws CoreException {
 		IConfigurationElement config= fLauncher.getConfigurationElement();
-		ILaunchWizard wizard= (ILaunchWizard)DebugUIPlugin.getDefault().createExtension(config, "wizard");
+		ILaunchWizard wizard= (ILaunchWizard)DebugUIPlugin.getDefault().createExtension(config, "wizard"); //$NON-NLS-1$
 		wizard.init(fLauncher, fMode, ((LaunchWizard)fParentWizardPage.getWizard()).getSelection());
 		return wizard;
 	}
@@ -66,7 +63,7 @@ public class LaunchWizardNode implements IWizardNode {
 		try {
 			fWizard= createWizard(); // create instance of target wizard
 		} catch (CoreException e) {		
-			DebugUIUtils.errorDialog(fParentWizardPage.getControl().getShell(), "Problem Opening Wizard","The selected wizard could not be started." , e.getStatus());
+			DebugUIPlugin.errorDialog(fParentWizardPage.getControl().getShell(), DebugUIMessages.getString("LaunchWizardNode.Problem_Opening_Wizard_4"),DebugUIMessages.getString("LaunchWizardNode.The_selected_wizard_could_not_be_started._5") , e.getStatus()); //$NON-NLS-2$ //$NON-NLS-1$
 			return null;
 		}
 
@@ -94,9 +91,9 @@ public class LaunchWizardNode implements IWizardNode {
 	 */
 	public String getDescription() {
 		IConfigurationElement config= fLauncher.getConfigurationElement();
-		String description= config.getAttribute("description");
+		String description= config.getAttribute("description"); //$NON-NLS-1$
 		if (description == null) {
-			description= "";
+			description= ""; //$NON-NLS-1$
 		}
 		return description;
 	}

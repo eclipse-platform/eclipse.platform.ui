@@ -9,9 +9,6 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IMenuCreator;
@@ -21,6 +18,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * A cascading sub-menu that shows all launchers pertinent to this action's mode
@@ -28,11 +28,10 @@ import org.eclipse.swt.widgets.Menu;
  */
 public class LaunchWithAction extends Action implements IMenuCreator {
 	
-	private static final String PREFIX= "launch_with_action.";	
 	protected String fMode;
 
 	/**
-	 * @see IAction
+	 * @see IAction#run()
 	 */
 	public void run() {
 	}
@@ -40,7 +39,7 @@ public class LaunchWithAction extends Action implements IMenuCreator {
 	public LaunchWithAction(String mode) {
 		super();
 		fMode= mode;
-		String text= mode.equals(ILaunchManager.DEBUG_MODE) ? DebugUIUtils.getResourceString(PREFIX + TEXT + ".debug") : DebugUIUtils.getResourceString(PREFIX + TEXT + ".run");
+		String text= mode.equals(ILaunchManager.DEBUG_MODE) ? DebugUIMessages.getString("LaunchWithAction.Debug_1") : DebugUIMessages.getString("LaunchWithAction.Run_2"); //$NON-NLS-2$ //$NON-NLS-1$
 		setText(text);
 		ImageDescriptor descriptor= null;
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {

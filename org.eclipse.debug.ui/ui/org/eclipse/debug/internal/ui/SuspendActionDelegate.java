@@ -56,14 +56,14 @@ public class SuspendActionDelegate extends ControlActionDelegate {
 	 * @see ControlActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage() {
-		return "Suspend failed";
+		return DebugUIMessages.getString("SuspendActionDelegate.Suspend_failed_1"); //$NON-NLS-1$
 	}
 
 	/*
 	 * @see ControlActionDelegate#getErrorDialogMessage()
 	 */
 	protected String getErrorDialogMessage() {
-		return "Exceptions occurred attempting to suspend.";
+		return DebugUIMessages.getString("SuspendActionDelegate.Exceptions_occurred_attempting_to_suspend._2"); //$NON-NLS-1$
 	}
 
 	/*
@@ -76,13 +76,13 @@ public class SuspendActionDelegate extends ControlActionDelegate {
 	 * @see ControlActionDelegate#getToolTipText()
 	 */
 	protected String getToolTipText() {
-		return "Suspend";
+		return DebugUIMessages.getString("SuspendActionDelegate.Suspend_3"); //$NON-NLS-1$
 	}
 
 	/*
 	 * @see ControlActionDelegate#getText()
 	 */
 	protected String getText() {
-		return "&Suspend";
+		return DebugUIMessages.getString("SuspendActionDelegate.&Suspend_4"); //$NON-NLS-1$
 	}
 }

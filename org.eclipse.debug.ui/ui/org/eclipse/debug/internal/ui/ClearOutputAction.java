@@ -14,13 +14,12 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class ClearOutputAction extends Action {
 
-	private final static String PREFIX= "clear_output_action.";
 	private ConsoleViewer fConsoleViewer;
 
 	public ClearOutputAction(ConsoleViewer viewer) {
-		super(DebugUIUtils.getResourceString(PREFIX + TEXT));
+		super(DebugUIMessages.getString("ClearOutputAction.title")); //$NON-NLS-1$
 		fConsoleViewer= viewer;
-		setToolTipText(DebugUIUtils.getResourceString(PREFIX + TOOL_TIP_TEXT));
+		setToolTipText(DebugUIMessages.getString("ClearOutputAction.toolTipText")); //$NON-NLS-1$
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_CLEAR));		
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_CLEAR));
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_CLEAR));

@@ -53,99 +53,99 @@ public class DebugPluginImages {
 	}
 
 	// Use IPath and toOSString to build the names to ensure they have the slashes correct
-	private final static String CTOOL= "ctool16/"; //basic colors - size 16x16
-	private final static String LOCALTOOL= "clcl16/"; //basic colors - size 16x16
-	private final static String DLCL= "dlcl16/"; //disabled - size 16x16
-	private final static String ELCL= "elcl16/"; //enabled - size 16x16
-	private final static String OBJECT= "obj16/"; //basic colors - size 16x16
-	private final static String WIZBAN= "wizban/"; //basic colors - size 16x16
+	private final static String CTOOL= "ctool16/"; //basic colors - size 16x16 //$NON-NLS-1$
+	private final static String LOCALTOOL= "clcl16/"; //basic colors - size 16x16 //$NON-NLS-1$
+	private final static String DLCL= "dlcl16/"; //disabled - size 16x16 //$NON-NLS-1$
+	private final static String ELCL= "elcl16/"; //enabled - size 16x16 //$NON-NLS-1$
+	private final static String OBJECT= "obj16/"; //basic colors - size 16x16 //$NON-NLS-1$
+	private final static String WIZBAN= "wizban/"; //basic colors - size 16x16 //$NON-NLS-1$
 	
 	/**
 	 * Declare all images
 	 */
 	private static void declareImages() {
 		// Actions
-		declareRegistryImage(IDebugUIConstants.IMG_ACT_DEBUG, CTOOL + "debug_exc.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_ACT_RUN, CTOOL + "run_exc.gif");
+		declareRegistryImage(IDebugUIConstants.IMG_ACT_DEBUG, CTOOL + "debug_exc.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_ACT_RUN, CTOOL + "run_exc.gif"); //$NON-NLS-1$
 
 		//menus
 
 		//Local toolbars
-		declareRegistryImage(IDebugUIConstants.IMG_LCL_RESUME, LOCALTOOL + "resume_co.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_LCL_SUSPEND, LOCALTOOL + "suspend_co.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_LCL_TERMINATE, LOCALTOOL + "terminate_co.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_LCL_TERMINATE_ALL, LOCALTOOL + "terminate_all_co.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_LCL_TERMINATE_AND_REMOVE, LOCALTOOL + "terminate_rem_co.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_LCL_DISCONNECT, LOCALTOOL + "disconnect_co.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_LCL_STEPINTO, LOCALTOOL + "stepinto_co.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_LCL_STEPOVER, LOCALTOOL + "stepover_co.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_LCL_STEPRETURN, LOCALTOOL + "stepreturn_co.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_LCL_CLEAR, LOCALTOOL + "clear_co.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_LCL_REMOVE_TERMINATED, LOCALTOOL + "rem_all_co.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_LCL_QUALIFIED_NAMES, LOCALTOOL + "qnames_co.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_LCL_TYPE_NAMES, LOCALTOOL + "tnames_co.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_LCL_REMOVE, LOCALTOOL + "rem_co.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_LCL_REMOVE_ALL, LOCALTOOL + "rem_all_co.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_LCL_INSPECT, LOCALTOOL + "inspect_co.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_LCL_RELAUNCH, LOCALTOOL + "relaunch_co.gif");
+		declareRegistryImage(IDebugUIConstants.IMG_LCL_RESUME, LOCALTOOL + "resume_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_LCL_SUSPEND, LOCALTOOL + "suspend_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_LCL_TERMINATE, LOCALTOOL + "terminate_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_LCL_TERMINATE_ALL, LOCALTOOL + "terminate_all_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_LCL_TERMINATE_AND_REMOVE, LOCALTOOL + "terminate_rem_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_LCL_DISCONNECT, LOCALTOOL + "disconnect_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_LCL_STEPINTO, LOCALTOOL + "stepinto_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_LCL_STEPOVER, LOCALTOOL + "stepover_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_LCL_STEPRETURN, LOCALTOOL + "stepreturn_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_LCL_CLEAR, LOCALTOOL + "clear_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_LCL_REMOVE_TERMINATED, LOCALTOOL + "rem_all_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_LCL_QUALIFIED_NAMES, LOCALTOOL + "qnames_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_LCL_TYPE_NAMES, LOCALTOOL + "tnames_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_LCL_REMOVE, LOCALTOOL + "rem_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_LCL_REMOVE_ALL, LOCALTOOL + "rem_all_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_LCL_INSPECT, LOCALTOOL + "inspect_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_LCL_RELAUNCH, LOCALTOOL + "relaunch_co.gif"); //$NON-NLS-1$
 			
 		// disabled local toolbars
-		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_RESUME, DLCL + "resume_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_SUSPEND, DLCL + "suspend_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_TERMINATE, DLCL + "terminate_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_TERMINATE_ALL, DLCL + "terminate_all_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_TERMINATE_AND_REMOVE, DLCL + "terminate_rem_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_DISCONNECT, DLCL + "disconnect_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_STEPINTO, DLCL + "stepinto_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_STEPOVER, DLCL + "stepover_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_STEPRETURN, DLCL + "stepreturn_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_CLEAR, DLCL + "clear_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_REMOVE_TERMINATED, DLCL + "rem_all_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_QUALIFIED_NAMES, DLCL + "qnames_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_TYPE_NAMES, DLCL + "tnames_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_REMOVE, DLCL + "rem_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_REMOVE_ALL, DLCL + "rem_all_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_INSPECT, DLCL + "inpsect_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_RELAUNCH, DLCL + "relaunch_co.gif");
+		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_RESUME, DLCL + "resume_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_SUSPEND, DLCL + "suspend_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_TERMINATE, DLCL + "terminate_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_TERMINATE_ALL, DLCL + "terminate_all_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_TERMINATE_AND_REMOVE, DLCL + "terminate_rem_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_DISCONNECT, DLCL + "disconnect_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_STEPINTO, DLCL + "stepinto_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_STEPOVER, DLCL + "stepover_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_STEPRETURN, DLCL + "stepreturn_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_CLEAR, DLCL + "clear_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_REMOVE_TERMINATED, DLCL + "rem_all_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_QUALIFIED_NAMES, DLCL + "qnames_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_TYPE_NAMES, DLCL + "tnames_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_REMOVE, DLCL + "rem_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_REMOVE_ALL, DLCL + "rem_all_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_INSPECT, DLCL + "inpsect_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_RELAUNCH, DLCL + "relaunch_co.gif"); //$NON-NLS-1$
 
 		// enabled local toolbars
-		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_RESUME, ELCL + "resume_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_SUSPEND, ELCL + "suspend_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_TERMINATE, ELCL + "terminate_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_TERMINATE_ALL, ELCL + "terminate_all_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_TERMINATE_AND_REMOVE, ELCL + "terminate_rem_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_DISCONNECT, ELCL + "disconnect_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_STEPINTO, ELCL + "stepinto_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_STEPOVER, ELCL + "stepover_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_STEPRETURN, ELCL + "stepreturn_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_CLEAR, ELCL + "clear_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_REMOVE_TERMINATED, ELCL + "rem_all_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_QUALIFIED_NAMES, ELCL + "qnames_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_TYPE_NAMES, ELCL + "tnames_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_REMOVE, ELCL + "rem_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_REMOVE_ALL, ELCL + "rem_all_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_INSPECT, ELCL + "inpsect_co.gif");
-		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_RELAUNCH, ELCL + "relaunch_co.gif");
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_RESUME, ELCL + "resume_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_SUSPEND, ELCL + "suspend_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_TERMINATE, ELCL + "terminate_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_TERMINATE_ALL, ELCL + "terminate_all_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_TERMINATE_AND_REMOVE, ELCL + "terminate_rem_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_DISCONNECT, ELCL + "disconnect_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_STEPINTO, ELCL + "stepinto_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_STEPOVER, ELCL + "stepover_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_STEPRETURN, ELCL + "stepreturn_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_CLEAR, ELCL + "clear_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_REMOVE_TERMINATED, ELCL + "rem_all_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_QUALIFIED_NAMES, ELCL + "qnames_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_TYPE_NAMES, ELCL + "tnames_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_REMOVE, ELCL + "rem_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_REMOVE_ALL, ELCL + "rem_all_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_INSPECT, ELCL + "inpsect_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_RELAUNCH, ELCL + "relaunch_co.gif"); //$NON-NLS-1$
 
 
 		//Object
-		declareRegistryImage(IDebugUIConstants.IMG_OBJS_LAUNCH_DEBUG, OBJECT + "ldebug_obj.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_OBJS_LAUNCH_RUN, OBJECT + "lrun_obj.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_OBJS_DEBUG_TARGET, OBJECT + "debugt_obj.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_OBJS_DEBUG_TARGET_TERMINATED, OBJECT + "debugtt_obj.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING, OBJECT + "thread_obj.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED, OBJECT + "threads_obj.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_OBJS_THREAD_TERMINATED, OBJECT + "threadt_obj.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_OBJS_STACKFRAME, OBJECT + "stckframe_obj.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_OBJS_BREAKPOINT, OBJECT + "brkp_obj.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED, OBJECT + "brkpd_obj.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_OBJS_OS_PROCESS, OBJECT + "osprc_obj.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_OBJS_OS_PROCESS_TERMINATED, OBJECT + "osprct_obj.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_OBJS_EXPRESSION, OBJECT + "expression_obj.gif");
+		declareRegistryImage(IDebugUIConstants.IMG_OBJS_LAUNCH_DEBUG, OBJECT + "ldebug_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_OBJS_LAUNCH_RUN, OBJECT + "lrun_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_OBJS_DEBUG_TARGET, OBJECT + "debugt_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_OBJS_DEBUG_TARGET_TERMINATED, OBJECT + "debugtt_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING, OBJECT + "thread_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED, OBJECT + "threads_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_OBJS_THREAD_TERMINATED, OBJECT + "threadt_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_OBJS_STACKFRAME, OBJECT + "stckframe_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_OBJS_BREAKPOINT, OBJECT + "brkp_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED, OBJECT + "brkpd_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_OBJS_OS_PROCESS, OBJECT + "osprc_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_OBJS_OS_PROCESS_TERMINATED, OBJECT + "osprct_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_OBJS_EXPRESSION, OBJECT + "expression_obj.gif"); //$NON-NLS-1$
 		
 		//Wizard Banners
-		declareRegistryImage(IDebugUIConstants.IMG_WIZBAN_DEBUG, WIZBAN + "debug_wiz.gif");
-		declareRegistryImage(IDebugUIConstants.IMG_WIZBAN_RUN, WIZBAN + "run_wiz.gif");
+		declareRegistryImage(IDebugUIConstants.IMG_WIZBAN_DEBUG, WIZBAN + "debug_wiz.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_WIZBAN_RUN, WIZBAN + "run_wiz.gif"); //$NON-NLS-1$
 		
 		// launchers
 		ILauncher[] launchers = DebugPlugin.getDefault().getLaunchManager().getLaunchers();

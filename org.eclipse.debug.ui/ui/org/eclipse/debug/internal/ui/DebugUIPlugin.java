@@ -56,8 +56,10 @@ import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIEventFilter;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
@@ -479,7 +481,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 			}
 		} catch (PartInitException pie) {
 			IStatus status= new Status(IStatus.ERROR, getDescriptor().getUniqueIdentifier(), IDebugStatusConstants.INTERNAL_ERROR, pie.getMessage(), pie);
-			DebugUIUtils.errorDialog(getActiveWorkbenchWindow().getShell(), "Problem Switching to the Debug Perspective", "Exceptions occurred switching to the specified debug layout.", status);
+			errorDialog(getActiveWorkbenchWindow().getShell(), DebugUIMessages.getString("DebugUIPlugin.Problem_Switching_to_the_Debug_Perspective_1"), DebugUIMessages.getString("DebugUIPlugin.Exceptions_occurred_switching_to_the_specified_debug_layout._2"), status); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		switchContext.setDebuggerView(debugPart);
 	}
@@ -610,7 +612,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 				switchContext.setPageCreated(true);
 			} catch (WorkbenchException e) {
 				IStatus status= new Status(IStatus.ERROR, getDescriptor().getUniqueIdentifier(), IDebugStatusConstants.INTERNAL_ERROR, e.getMessage(), e);
-				DebugUIUtils.errorDialog(window.getShell(), "Problem Switching to the Debug Perspective", "Exceptions occurred switching to the specified debug layout.", status);
+				errorDialog(window.getShell(), DebugUIMessages.getString("DebugUIPlugin.Problem_Switching_to_the_Debug_Perspective_3"), DebugUIMessages.getString("DebugUIPlugin.Exceptions_occurred_switching_to_the_specified_debug_layout._4"), status); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			}
 			switchContext.setPage(page);
@@ -730,7 +732,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 		try {
 			persistLaunchHistory();
 		} catch (IOException e) {
-			DebugUIUtils.logError(e);
+			logError(e);
 		}
 	}
 
@@ -752,7 +754,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 		try {
 			restoreLaunchHistory();
 		} catch (IOException e) {
-			DebugUIUtils.logError(e);
+			logError(e);
 		}
 		for (int i = 0; i < launches.length; i++) {
 			launchRegistered(launches[i]);
@@ -877,7 +879,17 @@ public static Object createExtension(final IConfigurationElement element, final 
 
 		return new ConsoleDocument(null);
 	}
-
+	
+	/**
+	 * Returns the current document being displayed in the console
+	 * view. Never returns <code>null</code>.
+	 */
+	public static IDocument getCurrentConsoleDocument() {
+		DebugUIPlugin plugin = DebugUIPlugin.getDefault();
+		IProcess currentProcess = plugin.getCurrentProcess();
+		IDocument document = plugin.getConsoleDocument(currentProcess, true);
+		return document;
+	}
 	/**
 	 * Returns the color manager to use in the debug UI
 	 */
@@ -1028,7 +1040,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 								page.bringToTop(consoleView);
 							}
 						} catch (PartInitException pie) {
-							DebugUIUtils.logError(pie);
+							logError(pie);
 						}
 					}
 				}
@@ -1067,7 +1079,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 				}
 				delta.accept(fgDeletedVisitor, false);
 			} catch (CoreException ce) {
-				DebugUIUtils.logError(ce);
+				logError(ce);
 			}
 		}		
 	}
@@ -1306,7 +1318,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 	protected String getHistoryAsXML() throws IOException {
 
 		org.w3c.dom.Document doc = new DocumentImpl();
-		Element historyRootElement = doc.createElement("launchHistory");
+		Element historyRootElement = doc.createElement("launchHistory"); //$NON-NLS-1$
 		doc.appendChild(historyRootElement);
 		
 		List all = new ArrayList(fDebugHistory.size() + fRunHistory.size());
@@ -1338,28 +1350,28 @@ public static Object createExtension(final IConfigurationElement element, final 
 	}
 	
 	protected Element getHistoryEntryAsXMLElement(org.w3c.dom.Document doc, LaunchHistoryElement element) {
-		Element entry = doc.createElement("launch");
+		Element entry = doc.createElement("launch"); //$NON-NLS-1$
 		setAttributes(entry, element);
 		return entry;
 	}
 	
 	protected Element getRecentLaunchAsXMLElement(org.w3c.dom.Document doc, LaunchHistoryElement element) {
-		Element entry = doc.createElement("lastLaunch");
+		Element entry = doc.createElement("lastLaunch"); //$NON-NLS-1$
 		setAttributes(entry, element);
 		return entry;
 	}
 	
 	protected void setAttributes(Element entry, LaunchHistoryElement element) {
-		entry.setAttribute("launcherId", element.getLauncherIdentifier());
-		entry.setAttribute("elementMemento", element.getElementMemento());
-		entry.setAttribute("launchLabel", element.getLabel());
-		entry.setAttribute("mode", element.getMode());		
+		entry.setAttribute("launcherId", element.getLauncherIdentifier()); //$NON-NLS-1$
+		entry.setAttribute("elementMemento", element.getElementMemento()); //$NON-NLS-1$
+		entry.setAttribute("launchLabel", element.getLabel()); //$NON-NLS-1$
+		entry.setAttribute("mode", element.getMode());		 //$NON-NLS-1$
 	}
 	
 	
 	protected void persistLaunchHistory() throws IOException {
 		IPath path = getStateLocation();
-		path = path.append("launchHistory.xml");
+		path = path.append("launchHistory.xml"); //$NON-NLS-1$
 		String osPath = path.toOSString();
 		File file = new File(osPath);
 		file.createNewFile();
@@ -1370,7 +1382,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 	
 	protected void restoreLaunchHistory() throws IOException {
 		IPath path = getStateLocation();
-		path = path.append("launchHistory.xml");
+		path = path.append("launchHistory.xml"); //$NON-NLS-1$
 		String osPath = path.toOSString();
 		File file = new File(osPath);
 		
@@ -1386,15 +1398,15 @@ public static Object createExtension(final IConfigurationElement element, final 
 				DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			rootHistoryElement = parser.parse(new InputSource(stream)).getDocumentElement();
 		} catch (SAXException e) {
-			DebugUIUtils.logError(e);
+			logError(e);
 			return;
 		} catch (ParserConfigurationException e) {
-			DebugUIUtils.logError(e);
+			logError(e);
 			return;
 		} finally {
 			stream.close();
 		}
-		if (!rootHistoryElement.getNodeName().equalsIgnoreCase("launchHistory")) {
+		if (!rootHistoryElement.getNodeName().equalsIgnoreCase("launchHistory")) { //$NON-NLS-1$
 			return;
 		}
 		NodeList list = rootHistoryElement.getChildNodes();
@@ -1404,14 +1416,14 @@ public static Object createExtension(final IConfigurationElement element, final 
 			short type = node.getNodeType();
 			if (type == Node.ELEMENT_NODE) {
 				Element entry = (Element) node;
-				if (entry.getNodeName().equalsIgnoreCase("launch")) {
+				if (entry.getNodeName().equalsIgnoreCase("launch")) { //$NON-NLS-1$
 					LaunchHistoryElement item = createHistoryElement(entry);
 					if (item.getMode().equals(ILaunchManager.DEBUG_MODE)) {
 						fDebugHistory.add(item);
 					} else {
 						fRunHistory.add(item);
 					}
-				} else if (entry.getNodeName().equalsIgnoreCase("lastLaunch")) {
+				} else if (entry.getNodeName().equalsIgnoreCase("lastLaunch")) { //$NON-NLS-1$
 					fRecentLaunch = createHistoryElement(entry);
 				}
 			}
@@ -1419,10 +1431,10 @@ public static Object createExtension(final IConfigurationElement element, final 
 	}
 	
 	public LaunchHistoryElement createHistoryElement(Element entry) {
-		String launcherId = entry.getAttribute("launcherId");
-		String mode = entry.getAttribute("mode");
-		String memento = entry.getAttribute("elementMemento");
-		String label = entry.getAttribute("launchLabel");
+		String launcherId = entry.getAttribute("launcherId"); //$NON-NLS-1$
+		String mode = entry.getAttribute("mode"); //$NON-NLS-1$
+		String memento = entry.getAttribute("elementMemento"); //$NON-NLS-1$
+		String label = entry.getAttribute("launchLabel"); //$NON-NLS-1$
 		return new LaunchHistoryElement(launcherId, memento, mode, label);
 	}
 	
@@ -1452,8 +1464,8 @@ public static Object createExtension(final IConfigurationElement element, final 
 	 */
 	public boolean isVisible(ILauncher launcher) {
 		IConfigurationElement e = launcher.getConfigurationElement();
-		String publc=  e.getAttribute("public");
-		if (publc == null || publc.equals("true")) {
+		String publc=  e.getAttribute("public"); //$NON-NLS-1$
+		if (publc == null || publc.equals("true")) { //$NON-NLS-1$
 			return true;
 		}
 		return false;
@@ -1464,7 +1476,32 @@ public static Object createExtension(final IConfigurationElement element, final 
 	 */
 	public boolean hasWizard(ILauncher launcher) {
 		IConfigurationElement e = launcher.getConfigurationElement();
-		return e.getAttribute("wizard") != null;
+		return e.getAttribute("wizard") != null; //$NON-NLS-1$
+	}
+	
+	/**
+	 * Utility method with conventions
+	 */
+	public static void errorDialog(Shell shell, String title, String message, IStatus s) {
+		// if the 'message' resource string and the IStatus' message are the same,
+		// don't show both in the dialog
+		if (s != null && message.equals(s.getMessage())) {
+			message= null;
+		}
+		ErrorDialog.openError(shell, title, message, s);
+	}
+
+	/**
+	 * Convenience method to log internal UI errors
+	 */
+	public static void logError(Exception e) {
+		if (getDefault().isDebugging()) {
+			// this message is intentionally not internationalized, as an exception may
+			// be due to the resource bundle itself
+			System.out.println("Internal error logged from Debug UI: "); //$NON-NLS-1$
+			e.printStackTrace();
+			System.out.println();
+		}
 	}
 }
 

@@ -11,12 +11,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class RemoveAllFromInspectorAction extends InspectorAction {
-	
-	private static final String PREFIX= "remove_all_from_inspector_action.";
 
 	public RemoveAllFromInspectorAction(ISelectionProvider provider) {
-		super(provider, DebugUIUtils.getResourceString(PREFIX + TEXT));
-		setToolTipText(DebugUIUtils.getResourceString(PREFIX + TOOL_TIP_TEXT));
+		super(provider, DebugUIMessages.getString("RemoveAllFromInspectorAction.Remove_&All_1")); //$NON-NLS-1$
+		setToolTipText(DebugUIMessages.getString("RemoveAllFromInspectorAction.Remove_All_Variables_from_Inspector_2")); //$NON-NLS-1$
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE_ALL));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE_ALL));
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE_ALL));

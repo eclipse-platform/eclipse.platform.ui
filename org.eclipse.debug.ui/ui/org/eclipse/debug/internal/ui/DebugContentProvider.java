@@ -37,7 +37,7 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 				return ((IThread)parent).getStackFrames();
 			}			
 		} catch (DebugException e) {
-			DebugUIUtils.logError(e);
+			DebugUIPlugin.logError(e);
 		}
 		if (parent instanceof ILaunch) {
 			return ((ILaunch)parent).getChildren();
@@ -232,7 +232,7 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 								}
 							}						
 						} catch (DebugException de) {
-							DebugUIUtils.logError(de);
+							DebugUIPlugin.logError(de);
 						}
 						
 						((LaunchesViewer)fViewer).autoExpand(target.getLaunch(), false);

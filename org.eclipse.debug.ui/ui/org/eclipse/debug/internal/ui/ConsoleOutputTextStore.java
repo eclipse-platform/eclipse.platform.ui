@@ -41,7 +41,7 @@ public class ConsoleOutputTextStore implements ITextStore {
 	 */
 	 public void replace(int pos, int length, String text) {
 		if (text == null) {
-			text= "";
+			text= ""; //$NON-NLS-1$
 		}
 		fBuffer.replace(pos, pos + length, text);
 	}

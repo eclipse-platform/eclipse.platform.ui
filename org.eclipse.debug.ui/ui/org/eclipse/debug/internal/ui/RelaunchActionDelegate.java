@@ -36,9 +36,9 @@ public class RelaunchActionDelegate extends ControlActionDelegate {
 	public static void relaunch(ILauncher launcher, String mode, Object element) {
 		boolean ok= launcher.launch(new Object[]{element}, mode);
 		if (!ok) {
-			String string= "Launch attempt failed: {0}";
+			String string= DebugUIMessages.getString("RelaunchActionDelegate.Launch_attempt_failed__{0}_1"); //$NON-NLS-1$
 			String message= MessageFormat.format(string, new String[] {launcher.getLabel()});
-			MessageDialog.openError(DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(), "Launch failed", message);	
+			MessageDialog.openError(DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(), DebugUIMessages.getString("RelaunchActionDelegate.Launch_failed_2"), message);	 //$NON-NLS-1$
 		}				
 	}
 	
@@ -116,13 +116,13 @@ public class RelaunchActionDelegate extends ControlActionDelegate {
 	 * @see ControlActionDelegate#getToolTipText()
 	 */
 	protected String getToolTipText() {
-		return "Relaunch";
+		return DebugUIMessages.getString("RelaunchActionDelegate.Relaunch_3"); //$NON-NLS-1$
 	}
 
 	/*
 	 * @see ControlActionDelegate#getText()
 	 */
 	protected String getText() {
-		return "Re&launch";
+		return DebugUIMessages.getString("RelaunchActionDelegate.Re&launch_4"); //$NON-NLS-1$
 	}
 }

@@ -19,16 +19,12 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class ShowQualifiedAction extends Action {
 
-	private static final String PREFIX= "show_qualified_action.";
-	private static final String SHOW= PREFIX + TOOL_TIP_TEXT + ".show";
-	private static final String HIDE= PREFIX + TOOL_TIP_TEXT + ".hide";
-
 	protected StructuredViewer fViewer;
 
 	public ShowQualifiedAction(StructuredViewer viewer) {
-		super(DebugUIUtils.getResourceString(SHOW));
+		super(DebugUIMessages.getString("ShowQualifiedAction.Show_&Qualified_Names_1")); //$NON-NLS-1$
 		fViewer= viewer;
-		setToolTipText(DebugUIUtils.getResourceString(SHOW));
+		setToolTipText(DebugUIMessages.getString("ShowQualifiedAction.Show_&Qualified_Names_2")); //$NON-NLS-1$
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_QUALIFIED_NAMES));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_QUALIFIED_NAMES));
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_QUALIFIED_NAMES));
@@ -38,7 +34,7 @@ public class ShowQualifiedAction extends Action {
 	}
 
 	/**
-	 * @see Action
+	 * @see Action#run()
 	 */
 	public void run() {
 		valueChanged(isChecked());
@@ -58,12 +54,12 @@ public class ShowQualifiedAction extends Action {
 				}
 			});
 		}
-		setToolTipText(on ? DebugUIUtils.getResourceString(HIDE) : DebugUIUtils.getResourceString(SHOW));
+		setToolTipText(on ? DebugUIMessages.getString("ShowQualifiedAction.Hide_&Qualified_Names_3") : DebugUIMessages.getString("ShowQualifiedAction.Show_&Qualified_Names_4")); //$NON-NLS-2$ //$NON-NLS-1$
 
 	}
 
 	/**
-	 * @see Action
+	 * @see Action#setChecked(boolean)
 	 */
 	public void setChecked(boolean value) {
 		super.setChecked(value);

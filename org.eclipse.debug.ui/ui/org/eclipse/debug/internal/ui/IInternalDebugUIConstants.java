@@ -8,50 +8,50 @@ package org.eclipse.debug.internal.ui;
 public interface IInternalDebugUIConstants {
 	
 	//Folders
-	public static final String ID_NAVIGATOR_FOLDER_VIEW= "org.eclipse.debug.internal.ui.NavigatorFolderView";
-	public static final String ID_TOOLS_FOLDER_VIEW= "org.eclipse.debug.internal.ui.ToolsFolderView";
-	public static final String ID_CONSOLE_FOLDER_VIEW= "org.eclipse.debug.internal.ui.ConsoleFolderView";
-	public static final String ID_OUTLINE_FOLDER_VIEW= "org.eclipse.debug.internal.ui.OutlineFolderView";
+	public static final String ID_NAVIGATOR_FOLDER_VIEW= "org.eclipse.debug.internal.ui.NavigatorFolderView"; //$NON-NLS-1$
+	public static final String ID_TOOLS_FOLDER_VIEW= "org.eclipse.debug.internal.ui.ToolsFolderView"; //$NON-NLS-1$
+	public static final String ID_CONSOLE_FOLDER_VIEW= "org.eclipse.debug.internal.ui.ConsoleFolderView"; //$NON-NLS-1$
+	public static final String ID_OUTLINE_FOLDER_VIEW= "org.eclipse.debug.internal.ui.OutlineFolderView"; //$NON-NLS-1$
 
 	//Current stack frame instruction pointer
-	public static final String INSTRUCTION_POINTER= "org.eclipse.debug.ui.instructionPointer";
+	public static final String INSTRUCTION_POINTER= "org.eclipse.debug.ui.instructionPointer"; //$NON-NLS-1$
 	
 	
 	// disabled local tool images
-	public static final String IMG_DLCL_RESUME= "IMG_DLCL_RESUME";
-	public static final String IMG_DLCL_SUSPEND= "IMG_DLCL_SUSPEND";
-	public static final String IMG_DLCL_TERMINATE= "IMG_DLCL_TERMINATE";
-	public static final String IMG_DLCL_TERMINATE_ALL= "IMG_DLCL_TERMINATE_ALL";
-	public static final String IMG_DLCL_TERMINATE_AND_REMOVE= "IMG_DLCL_TERMINATE_AND_REMOVE";
-	public static final String IMG_DLCL_DISCONNECT= "IMG_DLCL_DISCONNECT";
-	public static final String IMG_DLCL_STEPINTO= "IMG_DLCL_STEPINTO";
-	public static final String IMG_DLCL_STEPOVER= "IMG_DLCL_STEPOVER";
-	public static final String IMG_DLCL_STEPRETURN= "IMG_DLCL_STEPRETURN";
-	public static final String IMG_DLCL_CLEAR= "IMG_DLCL_CLEAR";
-	public static final String IMG_DLCL_REMOVE_TERMINATED= "IMG_DLCL_REMOVE_TERMINATED";
-	public static final String IMG_DLCL_QUALIFIED_NAMES= "IMG_DLCL_QUALIFIED_NAMES";
-	public static final String IMG_DLCL_TYPE_NAMES= "IMG_DLCL_TYPE_NAMES";
-	public static final String IMG_DLCL_REMOVE= "IMG_DLCL_REMOVE";
-	public static final String IMG_DLCL_REMOVE_ALL= "IMG_DLCL_REMOVE_ALL";
-	public static final String IMG_DLCL_INSPECT= "IMG_DLCL_INSPECT";
-	public static final String IMG_DLCL_RELAUNCH= "IMG_DLCL_RELAUNCH";
+	public static final String IMG_DLCL_RESUME= "IMG_DLCL_RESUME"; //$NON-NLS-1$
+	public static final String IMG_DLCL_SUSPEND= "IMG_DLCL_SUSPEND"; //$NON-NLS-1$
+	public static final String IMG_DLCL_TERMINATE= "IMG_DLCL_TERMINATE"; //$NON-NLS-1$
+	public static final String IMG_DLCL_TERMINATE_ALL= "IMG_DLCL_TERMINATE_ALL"; //$NON-NLS-1$
+	public static final String IMG_DLCL_TERMINATE_AND_REMOVE= "IMG_DLCL_TERMINATE_AND_REMOVE"; //$NON-NLS-1$
+	public static final String IMG_DLCL_DISCONNECT= "IMG_DLCL_DISCONNECT"; //$NON-NLS-1$
+	public static final String IMG_DLCL_STEPINTO= "IMG_DLCL_STEPINTO"; //$NON-NLS-1$
+	public static final String IMG_DLCL_STEPOVER= "IMG_DLCL_STEPOVER"; //$NON-NLS-1$
+	public static final String IMG_DLCL_STEPRETURN= "IMG_DLCL_STEPRETURN"; //$NON-NLS-1$
+	public static final String IMG_DLCL_CLEAR= "IMG_DLCL_CLEAR"; //$NON-NLS-1$
+	public static final String IMG_DLCL_REMOVE_TERMINATED= "IMG_DLCL_REMOVE_TERMINATED"; //$NON-NLS-1$
+	public static final String IMG_DLCL_QUALIFIED_NAMES= "IMG_DLCL_QUALIFIED_NAMES"; //$NON-NLS-1$
+	public static final String IMG_DLCL_TYPE_NAMES= "IMG_DLCL_TYPE_NAMES"; //$NON-NLS-1$
+	public static final String IMG_DLCL_REMOVE= "IMG_DLCL_REMOVE"; //$NON-NLS-1$
+	public static final String IMG_DLCL_REMOVE_ALL= "IMG_DLCL_REMOVE_ALL"; //$NON-NLS-1$
+	public static final String IMG_DLCL_INSPECT= "IMG_DLCL_INSPECT"; //$NON-NLS-1$
+	public static final String IMG_DLCL_RELAUNCH= "IMG_DLCL_RELAUNCH"; //$NON-NLS-1$
 
 	// enabled local tool images
-	public static final String IMG_ELCL_RESUME= "IMG_ELCL_RESUME";
-	public static final String IMG_ELCL_SUSPEND= "IMG_ELCL_SUSPEND";
-	public static final String IMG_ELCL_TERMINATE= "IMG_ELCL_TERMINATE";
-	public static final String IMG_ELCL_TERMINATE_ALL= "IMG_ELCL_TERMINATE_ALL";
-	public static final String IMG_ELCL_TERMINATE_AND_REMOVE= "IMG_ELCL_TERMINATE_AND_REMOVE";
-	public static final String IMG_ELCL_DISCONNECT= "IMG_ELCL_DISCONNECT";
-	public static final String IMG_ELCL_STEPINTO= "IMG_ELCL_STEPINTO";
-	public static final String IMG_ELCL_STEPOVER= "IMG_ELCL_STEPOVER";
-	public static final String IMG_ELCL_STEPRETURN= "IMG_ELCL_STEPRETURN";
-	public static final String IMG_ELCL_CLEAR= "IMG_ELCL_CLEAR";
-	public static final String IMG_ELCL_REMOVE_TERMINATED= "IMG_ELCL_REMOVE_TERMINATED";
-	public static final String IMG_ELCL_QUALIFIED_NAMES= "IMG_ELCL_QUALIFIED_NAMES";
-	public static final String IMG_ELCL_TYPE_NAMES= "IMG_ELCL_TYPE_NAMES";
-	public static final String IMG_ELCL_REMOVE= "IMG_ELCL_REMOVE";
-	public static final String IMG_ELCL_REMOVE_ALL= "IMG_ELCL_REMOVE_ALL";
-	public static final String IMG_ELCL_INSPECT= "IMG_ELCL_INSPECT";
-	public static final String IMG_ELCL_RELAUNCH= "IMG_ELCL_RELAUNCH";
+	public static final String IMG_ELCL_RESUME= "IMG_ELCL_RESUME"; //$NON-NLS-1$
+	public static final String IMG_ELCL_SUSPEND= "IMG_ELCL_SUSPEND"; //$NON-NLS-1$
+	public static final String IMG_ELCL_TERMINATE= "IMG_ELCL_TERMINATE"; //$NON-NLS-1$
+	public static final String IMG_ELCL_TERMINATE_ALL= "IMG_ELCL_TERMINATE_ALL"; //$NON-NLS-1$
+	public static final String IMG_ELCL_TERMINATE_AND_REMOVE= "IMG_ELCL_TERMINATE_AND_REMOVE"; //$NON-NLS-1$
+	public static final String IMG_ELCL_DISCONNECT= "IMG_ELCL_DISCONNECT"; //$NON-NLS-1$
+	public static final String IMG_ELCL_STEPINTO= "IMG_ELCL_STEPINTO"; //$NON-NLS-1$
+	public static final String IMG_ELCL_STEPOVER= "IMG_ELCL_STEPOVER"; //$NON-NLS-1$
+	public static final String IMG_ELCL_STEPRETURN= "IMG_ELCL_STEPRETURN"; //$NON-NLS-1$
+	public static final String IMG_ELCL_CLEAR= "IMG_ELCL_CLEAR"; //$NON-NLS-1$
+	public static final String IMG_ELCL_REMOVE_TERMINATED= "IMG_ELCL_REMOVE_TERMINATED"; //$NON-NLS-1$
+	public static final String IMG_ELCL_QUALIFIED_NAMES= "IMG_ELCL_QUALIFIED_NAMES"; //$NON-NLS-1$
+	public static final String IMG_ELCL_TYPE_NAMES= "IMG_ELCL_TYPE_NAMES"; //$NON-NLS-1$
+	public static final String IMG_ELCL_REMOVE= "IMG_ELCL_REMOVE"; //$NON-NLS-1$
+	public static final String IMG_ELCL_REMOVE_ALL= "IMG_ELCL_REMOVE_ALL"; //$NON-NLS-1$
+	public static final String IMG_ELCL_INSPECT= "IMG_ELCL_INSPECT"; //$NON-NLS-1$
+	public static final String IMG_ELCL_RELAUNCH= "IMG_ELCL_RELAUNCH"; //$NON-NLS-1$
 }

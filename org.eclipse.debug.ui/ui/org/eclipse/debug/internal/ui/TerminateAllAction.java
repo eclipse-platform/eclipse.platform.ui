@@ -20,12 +20,9 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class TerminateAllAction extends Action {
 	
-	private static final String PREFIX= "terminate_all_action.";
-	private static final String STATUS= "status";
-	private static final String ERROR= "error.";
-
 	public TerminateAllAction() {
-		super(DebugUIUtils.getResourceString(PREFIX + TEXT));
+		super(DebugUIMessages.getString("TerminateAllAction.Termi&nate_All_1")); //$NON-NLS-1$
+		setToolTipText(DebugUIMessages.getString("TerminateAllAction.Terminate_All_2")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(
 			this,
 			new Object[] { IDebugHelpContextIds.TERMINATE_ALL_ACTION });
@@ -36,13 +33,13 @@ public class TerminateAllAction extends Action {
 	}
 
 	/**
-	 * @see Action
+	 * @see Action#run()
 	 */
 	public void run() {
 		ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
 		ILaunch[] launches= lManager.getLaunches();
 		MultiStatus ms = new MultiStatus(DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 
-			IDebugStatusConstants.REQUEST_FAILED, "Terminate all failed", null);
+			IDebugStatusConstants.REQUEST_FAILED, DebugUIMessages.getString("TerminateAllAction.Terminate_all_failed_3"), null); //$NON-NLS-1$
 		for (int i= 0; i < launches.length; i++) {
 			ILaunch launch= (ILaunch) launches[i];
 			if (!launch.isTerminated()) {
@@ -54,7 +51,7 @@ public class TerminateAllAction extends Action {
 			}
 		}
 		if (!ms.isOK()) {
-			DebugUIUtils.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), "Terminate all","Exceptions occurred attempting to terminate all." , ms);
+			DebugUIPlugin.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), DebugUIMessages.getString("TerminateAllAction.Terminate_all_4"),DebugUIMessages.getString("TerminateAllAction.Exceptions_occurred_attempting_to_terminate_all._5") , ms); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -74,4 +71,3 @@ public class TerminateAllAction extends Action {
 		setEnabled(false);
 	}
 }
-

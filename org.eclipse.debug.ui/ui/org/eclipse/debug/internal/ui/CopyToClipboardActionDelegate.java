@@ -67,7 +67,7 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 			buffer.append('\t');
 		}
 		buffer.append(lp.getText(e));
-		buffer.append(System.getProperty("line.separator"));
+		buffer.append(System.getProperty("line.separator")); //$NON-NLS-1$
 		if (shouldAppendChildren(e)) {
 			Object[] children= new Object[0];
 			children= getChildren(e);
@@ -193,13 +193,13 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 	 * @see ControlActionDelegate#getToolTipText()
 	 */
 	protected String getToolTipText() {
-		return "Copy to Clipboard";
+		return DebugUIMessages.getString("CopyToClipboardActionDelegate.Copy_to_Clipboard_2"); //$NON-NLS-1$
 	}
 
 	/*
 	 * @see ControlActionDelegate#getText()
 	 */
 	protected String getText() {
-		return "&Copy Stack";
+		return DebugUIMessages.getString("CopyToClipboardActionDelegate.&Copy_Stack_3"); //$NON-NLS-1$
 	}
 }

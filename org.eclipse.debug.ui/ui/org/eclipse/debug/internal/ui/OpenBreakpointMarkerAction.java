@@ -7,21 +7,24 @@ package org.eclipse.debug.internal.ui;
 
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class OpenBreakpointMarkerAction extends OpenMarkerAction {
 
-	private static final String PREFIX= "open_breakpoint_marker_action.";	
 	protected static DelegatingModelPresentation fgPresentation = new DelegatingModelPresentation();
 	
 	public OpenBreakpointMarkerAction(ISelectionProvider selectionProvider) {
-		super(selectionProvider, DebugUIUtils.getResourceString(PREFIX + TEXT));
-		setToolTipText(DebugUIUtils.getResourceString(PREFIX + TOOL_TIP_TEXT));
+		super(selectionProvider, DebugUIMessages.getString("OpenBreakpointMarkerAction.&Go_to_File_1")); //$NON-NLS-1$
+		setToolTipText(DebugUIMessages.getString("OpenBreakpointMarkerAction.Go_to_File_for_Breakpoint_2")); //$NON-NLS-1$
 		ISharedImages images= DebugUIPlugin.getDefault().getWorkbench().getSharedImages();
 		setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_OPEN_MARKER));
 		WorkbenchHelp.setHelp(
@@ -50,7 +53,7 @@ public class OpenBreakpointMarkerAction extends OpenMarkerAction {
 			try {
 				part= page.openEditor(input, editorId);
 			} catch (PartInitException e) {
-				DebugUIUtils.logError(e);
+				DebugUIPlugin.logError(e);
 			}
 		}
 		if (part != null) {

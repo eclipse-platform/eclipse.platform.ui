@@ -7,8 +7,12 @@ package org.eclipse.debug.internal.ui;
 
 import java.util.HashMap;
 
-import org.eclipse.debug.core.*;
-import org.eclipse.debug.core.model.*;
+import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventListener;
+import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 
 /**
@@ -42,7 +46,7 @@ public class VariablesContentProvider extends BasicContentProvider implements ID
 			}
 			return children;
 		} catch (DebugException de) {
-			DebugUIUtils.logError(de);
+			DebugUIPlugin.logError(de);
 		}
 		return new Object[0];
 	}

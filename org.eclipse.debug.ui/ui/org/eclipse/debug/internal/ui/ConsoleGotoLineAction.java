@@ -5,7 +5,6 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import java.util.ResourceBundle;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.text.BadLocationException;
@@ -26,33 +25,32 @@ public class ConsoleGotoLineAction extends ConsoleViewerAction {
 			try {
 				int i= Integer.parseInt(input);
 				if (i <= 0 || fLastLine < i)
-					return fBundle.getString(fPrefix + "dialog.invalid_range");
+					return DebugUIMessages.getString("ConsoleGotoLineAction.Line_number_out_of_range_1"); //$NON-NLS-1$
 
 			} catch (NumberFormatException x) {
-				return fBundle.getString(fPrefix + "dialog.invalid_input");
+				return DebugUIMessages.getString("ConsoleGotoLineAction.Not_a_number_2"); //$NON-NLS-1$
 			}
 
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 	};
 
 	protected int fLastLine;
-	protected ResourceBundle fBundle;
-	protected String fPrefix;
 	protected ConsoleViewer fConsoleViewer;
 	
 	/**
 	 * Constructs a goto line action for the console using the provided resource bundle
 	 */
-	public ConsoleGotoLineAction(ResourceBundle bundle, String prefix, ConsoleViewer viewer) {
-		super(bundle, prefix, viewer, -1);
-		fBundle= bundle;
-		fPrefix= prefix;
+	public ConsoleGotoLineAction(ConsoleViewer viewer) {
+		super(viewer, -1);
 		fConsoleViewer= viewer;
+		setText(DebugUIMessages.getString("ConsoleGotoLineAction.Go_to_&Line...@Ctrl+L_4")); //$NON-NLS-1$
+		setToolTipText(DebugUIMessages.getString("ConsoleGotoLineAction.Go_to_Line_5")); //$NON-NLS-1$
+		setDescription(DebugUIMessages.getString("ConsoleGotoLineAction.Go_to_Line_6"));		 //$NON-NLS-1$
 	}
-
+	
 	/**
-	 * @see TextEditorAction
+	 * @see ConsoleViewerAction#update()
 	 */
 	public void update() {
 	}
@@ -66,16 +64,15 @@ public class ConsoleGotoLineAction extends ConsoleViewerAction {
 		try {
 			int start= document.getLineOffset(line);
 			int length= document.getLineLength(line);
-
 			fConsoleViewer.getTextWidget().setSelection(start, start + length);
 			fConsoleViewer.revealRange(start, length);
 		} catch (BadLocationException x) {
-			// ignore
+			DebugUIPlugin.logError(x);
 		}
 	}
 
 	/**
-	 * @see Action
+	 * @see Action#run()
 	 */
 	public void run() {
 		try {
@@ -83,8 +80,8 @@ public class ConsoleGotoLineAction extends ConsoleViewerAction {
 			IDocument document= fConsoleViewer.getDocument();
 			fLastLine= document.getLineOfOffset(document.getLength()) + 1;
 			int startLine= selection == null ? 1 : fConsoleViewer.getTextWidget().getLineAtOffset(selection.x) + 1;
-			String title= fBundle.getString(fPrefix + "dialog.title");
-			String message= fBundle.getString(fPrefix + "dialog.message");
+			String title= DebugUIMessages.getString("ConsoleGotoLineAction.Go_to_Line_7"); //$NON-NLS-1$
+			String message= DebugUIMessages.getString("ConsoleGotoLineAction.Enter_line_number__8"); //$NON-NLS-1$
 			String value= Integer.toString(startLine);
 			Shell activeShell= DebugUIPlugin.getActiveWorkbenchWindow().getShell();
 			InputDialog d= new InputDialog(activeShell, title, message, value, new NumberValidator());
@@ -94,8 +91,10 @@ public class ConsoleGotoLineAction extends ConsoleViewerAction {
 				int line= Integer.parseInt(d.getValue());
 				gotoLine(line - 1);
 			} catch (NumberFormatException x) {
+				DebugUIPlugin.logError(x);
 			}
 		} catch (BadLocationException x) {
+			DebugUIPlugin.logError(x);
 			return;
 		}
 	}

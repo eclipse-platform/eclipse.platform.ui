@@ -27,7 +27,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	 */
 	public ConsolePreferencePage() {
 		super(GRID);
-		setDescription("Console text color settings.");
+		setDescription(DebugUIMessages.getString("ConsolePreferencePage.Console_text_color_settings._1")); //$NON-NLS-1$
 		setPreferenceStore(DebugUIPlugin.getDefault().getPreferenceStore());
 	}
 
@@ -45,12 +45,12 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 
 		// Note: first String value is the key for the preference bundle and second the
 		// second String value is the label displayed in front of the editor.
-		ColorFieldEditor sysout= new ColorFieldEditor(CONSOLE_SYS_OUT_RGB, "Standard Out:", getFieldEditorParent());
-		ColorFieldEditor syserr= new ColorFieldEditor(CONSOLE_SYS_ERR_RGB, "Standard Error:", getFieldEditorParent());
-		ColorFieldEditor sysin= new ColorFieldEditor(CONSOLE_SYS_IN_RGB, "Standard In:", getFieldEditorParent());
+		ColorFieldEditor sysout= new ColorFieldEditor(CONSOLE_SYS_OUT_RGB, DebugUIMessages.getString("ConsolePreferencePage.Standard_Out__2"), getFieldEditorParent()); //$NON-NLS-1$
+		ColorFieldEditor syserr= new ColorFieldEditor(CONSOLE_SYS_ERR_RGB, DebugUIMessages.getString("ConsolePreferencePage.Standard_Error__3"), getFieldEditorParent()); //$NON-NLS-1$
+		ColorFieldEditor sysin= new ColorFieldEditor(CONSOLE_SYS_IN_RGB, DebugUIMessages.getString("ConsolePreferencePage.Standard_In__4"), getFieldEditorParent()); //$NON-NLS-1$
 		
 		WorkbenchChainedTextFontFieldEditor editor= new WorkbenchChainedTextFontFieldEditor(CONSOLE_FONT,
-				"Console font setting: ", getFieldEditorParent());
+				DebugUIMessages.getString("ConsolePreferencePage.Console_font_setting___5"), getFieldEditorParent()); //$NON-NLS-1$
 		
 		addField(sysout);
 		addField(syserr);

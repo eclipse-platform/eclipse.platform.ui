@@ -45,14 +45,14 @@ public class StepReturnActionDelegate extends StepActionDelegate {
 	 * @see ControlActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage() {
-		return "Run to return failed.";
+		return DebugUIMessages.getString("StepReturnActionDelegate.Run_to_return_failed._1"); //$NON-NLS-1$
 	}
 
 	/**
 	 * @see ControlActionDelegate#getErrorDialogMessage()
 	 */
 	protected String getErrorDialogMessage() {
-		return "Exceptions occurred attempting to run to return of the frame.";
+		return DebugUIMessages.getString("StepReturnActionDelegate.Exceptions_occurred_attempting_to_run_to_return_of_the_frame._2"); //$NON-NLS-1$
 	}
 
 	/**
@@ -66,13 +66,13 @@ public class StepReturnActionDelegate extends StepActionDelegate {
 	 * @see ControlActionDelegate#getToolTipText()
 	 */
 	protected String getToolTipText() {
-		return "Run to Return";
+		return DebugUIMessages.getString("StepReturnActionDelegate.Run_to_Return_3"); //$NON-NLS-1$
 	}
 
 	/**
 	 * @see ControlActionDelegate#getText()
 	 */
 	protected String getText() {
-		return "R&un to return";
+		return DebugUIMessages.getString("StepReturnActionDelegate.R&un_to_return_4"); //$NON-NLS-1$
 	}
 }
