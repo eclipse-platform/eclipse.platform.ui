@@ -64,7 +64,7 @@
 	
 		<objectContribution
 			id="org.eclipse.compare.CompareAction"
-			objectClass="org.eclipse.core.resources.IResource">
+			objectClass="org.eclipse.core.resources.IResource" adaptable="true">
 			<menu
 				id="replaceWithMenu"
 				path="additions"
@@ -97,7 +97,13 @@
 		
 		<objectContribution
 			id="org.eclipse.compare.ReplaceWithEditionAction"
-			objectClass="org.eclipse.core.resources.IFile">
+			objectClass="org.eclipse.core.resources.IFile" adaptable="true">
+			<menu
+				id="replaceWithMenu"
+				path="additions"
+				label="%ReplaceWithMenu.label">
+				<separator name="replaceWithGroup"/>
+			</menu>
 			<action
 				id="replaceFromHistory"
 				label="%ReplaceFromHistoryAction.label"
@@ -110,7 +116,13 @@
 		
 		<objectContribution
 			id="org.eclipse.compare.CompareWithEditionAction"
-			objectClass="org.eclipse.core.resources.IFile">
+			objectClass="org.eclipse.core.resources.IFile" adaptable="true">
+			<menu
+				id="compareWithMenu"
+				path="additions"
+				label="%CompareWithMenu.label">
+				<separator name="compareWithGroup"/>
+			</menu>
 			<action
 				id="compareWithHistory"
 				label="%CompareWithHistoryAction.label"
