@@ -150,10 +150,10 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterManager#getAdapter(java.lang.Object, java.lang.Class)
 	 */
-	public synchronized Object getAdapter(Object adaptable, Class adapterType) {
+	public Object getAdapter(Object adaptable, Class adapterType) {
 		IAdapterFactory factory = getFactory(adaptable.getClass(), adapterType.getName());
 		Object result = null;
-		if (factory != null)
+		if (factory != null) 
 			result = factory.getAdapter(adaptable, adapterType);
 		if (result == null && adapterType.isInstance(adaptable))
 			return adaptable;
@@ -163,7 +163,7 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterManager#getAdapter(java.lang.Object, java.lang.Class)
 	 */
-	public synchronized Object getAdapter(Object adaptable, String adapterType) {
+	public Object getAdapter(Object adaptable, String adapterType) {
 		return getAdapter(adaptable, adapterType, false);
 	}
 
@@ -195,7 +195,7 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 	 * which defines adapters of type <code>adapter</code>. If no such factories
 	 * exists, returns null.
 	 */
-	private IAdapterFactory getFactory(Class adaptable, String adapterName) {
+	private synchronized IAdapterFactory getFactory(Class adaptable, String adapterName) {
 		Map table;
 		// check the cache first.
 		if (lookup != null) {
@@ -265,8 +265,10 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 		for (int i = 0; i < extensions.length; i++)
 			registerExtension(extensions[i]);
 	}
-
-	public void registryChanged(IRegistryChangeEvent event) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
+	 */
+	public synchronized void registryChanged(IRegistryChangeEvent event) {
 		//find the set of changed adapter extensions
 		HashSet toRemove = null;
 		IExtensionDelta[] deltas = event.getExtensionDeltas();

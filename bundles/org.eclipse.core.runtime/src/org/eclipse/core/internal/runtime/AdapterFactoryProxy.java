@@ -89,13 +89,15 @@ class AdapterFactoryProxy implements IAdapterFactory {
 	 * will occur.
 	 */
 	IAdapterFactory loadFactory(boolean force) {
-		if (factory != null || factoryLoaded)
-			return factory;
-		String bundleId = element.getDeclaringExtension().getNamespace();
-		if (!force && Platform.getBundle(bundleId).getState() != Bundle.ACTIVE)
-			return null;
-		//set to true to prevent repeated attempts to load a broken factory
-		factoryLoaded = true;
+		synchronized (this) {
+			if (factory != null || factoryLoaded)
+				return factory;
+			String bundleId = element.getDeclaringExtension().getNamespace();
+			if (!force && Platform.getBundle(bundleId).getState() != Bundle.ACTIVE)
+				return null;
+			//set to true to prevent repeated attempts to load a broken factory
+			factoryLoaded = true;
+		}
 		try {
 			factory = (IAdapterFactory) element.createExecutableExtension("class"); //$NON-NLS-1$
 		} catch (CoreException e) {
