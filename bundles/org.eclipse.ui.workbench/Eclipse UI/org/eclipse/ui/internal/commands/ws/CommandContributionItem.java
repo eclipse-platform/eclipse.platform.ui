@@ -17,8 +17,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.action.CommandResolver;
 import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.ExternalActionManager;
 import org.eclipse.jface.action.IContributionManagerOverrides;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
@@ -848,8 +848,8 @@ public class CommandContributionItem
 						String acceleratorText = null;
 						String name = null;
 
-						CommandResolver.ICallback callback =
-							CommandResolver.getInstance().getCommandResolver();
+						ExternalActionManager.ICallback callback =
+							ExternalActionManager.getInstance().getCallback();
 						if (callback != null) {
 							String commandId = currentCommand.getId();
 							if (commandId != null) {

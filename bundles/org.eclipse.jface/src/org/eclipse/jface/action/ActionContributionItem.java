@@ -202,15 +202,38 @@ public class ActionContributionItem extends ContributionItem {
 	private Widget widget = null;
 
 	/**
-	 * Creates a new contribution item from the given action.
-	 * The id of the action is used as the id of the item.
-	 *
-	 * @param action the action
-	 */
-	public ActionContributionItem(IAction action) {
-		super(action.getId());
-		this.action = action;
-	}
+     * Creates a new contribution item from the given action. The id of the
+     * action is used as the id of the item.
+     * 
+     * @param action
+     *            the action
+     */
+    public ActionContributionItem(IAction action) {
+        super(action.getId());
+        this.action = action;
+
+        if (action != null) {
+            String commandId = action.getActionDefinitionId();
+            ExternalActionManager.ICallback callback = ExternalActionManager.getInstance()
+                    .getCallback();
+
+            if ((callback != null) && (commandId != null)) {
+                callback.addActionTextListener(commandId,
+                        new ExternalActionManager.IActionTextListener() {
+
+                            /*
+                             * (non-Javadoc)
+                             * 
+                             * @see org.eclipse.jface.action.CommandResolver.IActionTextListener#textChanged()
+                             */
+                            public void textChanged() {
+                                update(IAction.TEXT);
+                            }
+                        });
+            }
+        }
+    }
+	
 	/**
 	 * Handles a property change event on the action (forwarded by nested listener).
 	 */
@@ -582,7 +605,7 @@ public class ActionContributionItem extends ContributionItem {
 
 		if (actionToCheck != null) {
 			String commandId = actionToCheck.getActionDefinitionId();
-			CommandResolver.ICallback callback = CommandResolver.getInstance().getCommandResolver();
+			ExternalActionManager.ICallback callback = ExternalActionManager.getInstance().getCallback();
 
 			if (callback != null)
 				return callback.isActive(commandId);
@@ -751,8 +774,8 @@ public class ActionContributionItem extends ContributionItem {
 					 * allowing these reserved accelerators to be placed on the
 					 * menu.  We will only do this for "Ctrl+Shift+[A-F]".
 					 */
-					CommandResolver.ICallback callback =
-						CommandResolver.getInstance().getCommandResolver();
+					ExternalActionManager.ICallback callback =
+						ExternalActionManager.getInstance().getCallback();
 					String commandId = updatedAction.getActionDefinitionId();
 					if (SWT.getPlatform().equals("gtk")) { //$NON-NLS-1$
 						if ((callback != null) && (commandId != null)) {

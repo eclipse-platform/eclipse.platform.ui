@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IExtension;
@@ -30,7 +29,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.CommandResolver;
+import org.eclipse.jface.action.ExternalActionManager;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -74,14 +73,13 @@ import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.commands.CommandManagerEvent;
-import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManagerListener;
-import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.ContextManagerEvent;
 import org.eclipse.ui.contexts.IContextManagerListener;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
+import org.eclipse.ui.internal.commands.ws.CommandCallback;
 import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
@@ -97,9 +95,6 @@ import org.eclipse.ui.internal.themes.FontDefinition;
 import org.eclipse.ui.internal.themes.ThemeElementHelper;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
 import org.eclipse.ui.intro.IIntroManager;
-import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.keys.SWTKeySupport;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.themes.IThemeManager;
 
@@ -828,86 +823,7 @@ public final class Workbench implements IWorkbench {
 	 * Establishes the relationship between JFace actions and the command manager.
 	 */
 	private void initializeCommandResolver() {
-        CommandResolver.getInstance().setCommandResolver(
-                new CommandResolver.ICallback() {
-
-                    public Integer getAccelerator(String commandId) {
-                        Integer accelerator = null;
-                        ICommand command = getCommandSupport()
-                                .getCommandManager().getCommand(commandId);
-
-                        if (command.isDefined()) {
-                            List keySequenceBindings = command
-                                    .getKeySequenceBindings();
-                            final int size = keySequenceBindings.size();
-
-                            for (int i = 0; i < size; i++) {
-                                IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) keySequenceBindings
-                                        .get(i);
-                                List keyStrokes = keySequenceBinding
-                                        .getKeySequence().getKeyStrokes();
-
-                                if (keyStrokes.size() == 1) {
-                                    KeyStroke keyStroke = (KeyStroke) keyStrokes
-                                            .get(0);
-                                    accelerator = new Integer(
-                                            SWTKeySupport
-                                                    .convertKeyStrokeToAccelerator(keyStroke));
-                                    break;
-                                }
-                            }
-                        }
-
-                        return accelerator;
-                    }
-
-                    public String getAcceleratorText(String commandId) {
-                        String acceleratorText = null;
-                        ICommand command = getCommandSupport()
-                                .getCommandManager().getCommand(commandId);
-
-                        if (command.isDefined()) {
-                            List keySequenceBindings = command
-                                    .getKeySequenceBindings();
-
-                            if (!keySequenceBindings.isEmpty()) {
-                                IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) keySequenceBindings
-                                        .get(0);
-                                acceleratorText = keySequenceBinding
-                                        .getKeySequence().format();
-                            }
-                        }
-
-                        return acceleratorText;
-                    }
-
-                    public boolean isAcceleratorInUse(int accelerator) {
-                        KeySequence keySequence = KeySequence
-                                .getInstance(SWTKeySupport
-                                        .convertAcceleratorToKeyStroke(accelerator));
-                        return getCommandSupport().getCommandManager()
-                                .isPerfectMatch(keySequence)
-                                || workbenchCommandSupport.getCommandManager()
-                                        .isPartialMatch(keySequence);
-                    }
-
-                    public final boolean isActive(final String commandId) {
-                        if (commandId != null) {
-                            final ICommand command = getCommandSupport()
-                                    .getCommandManager().getCommand(commandId);
-
-                            if (command != null)
-                                    return command.isDefined()
-                                            && getActivitySupport()
-                                                    .getActivityManager()
-                                                    .getIdentifier(
-                                                            command.getId())
-                                                    .isEnabled();
-                        }
-
-                        return true;
-                    }
-                });
+        ExternalActionManager.getInstance().setCallback(new CommandCallback(this));
     }
 
     /**

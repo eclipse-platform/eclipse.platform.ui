@@ -667,8 +667,8 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 				text = menuText;
 
 			if (text != null) {
-				CommandResolver.ICallback callback =
-					CommandResolver.getInstance().getCommandResolver();
+				ExternalActionManager.ICallback callback =
+					ExternalActionManager.getInstance().getCallback();
 
 				if (callback != null) {
 					int index = text.indexOf('&');
