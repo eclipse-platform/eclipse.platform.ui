@@ -6,7 +6,8 @@ package org.eclipse.core.internal.boot.update;
  * (c) Copyright IBM Corp 2001
  *
  */
-
+import org.eclipse.core.internal.boot.update.BaseURLHandler.Response;
+import org.eclipse.webdav.http.client.IStatusCodes;
 import org.eclipse.core.boot.*;
 import java.io.*;
 import java.net.*;
@@ -269,7 +270,10 @@ public static String[] getPathMembers(URL path) {
 		InputStream inputStream = null;
 
 		try {
-			inputStream = BaseURLHandler.open(url).getInputStream();
+			Response response = BaseURLHandler.open(url);
+			if( response.getResponseCode() == IStatusCodes.HTTP_OK ){
+				InputStream stream = response.getInputStream();
+			}
 		}
 		catch (IOException ex) {
 		}
