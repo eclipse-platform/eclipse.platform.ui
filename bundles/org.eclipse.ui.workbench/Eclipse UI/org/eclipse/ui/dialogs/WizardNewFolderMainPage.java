@@ -58,11 +58,9 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 	private ResourceAndContainerGroup resourceGroup;
 	private Button advancedButton;
 	private CreateLinkedResourceGroup linkedResourceGroup;
+	private Composite linkedResourceParent;
+	private Composite linkedResourceComposite;
 
-	/**
-	 * Whether or not the advanced widget group is currently visible.
-	 */
-	private boolean linkedResourceGroupVisible = false;
 	/**
 	 * Height of the "advanced" linked resource group. Set when the
 	 * advanced group is first made visible. 
@@ -96,8 +94,16 @@ protected void createAdvancedControls(Composite parent) {
 	Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
 	
 	if (preferences.getBoolean(ResourcesPlugin.PREF_DISABLE_LINKING) == false) {
-		advancedButton = new Button(parent, SWT.PUSH);
-		advancedButton.setFont(parent.getFont());
+		linkedResourceParent = new Composite(parent, SWT.NONE);
+		linkedResourceParent.setFont(parent.getFont());
+		linkedResourceParent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		linkedResourceParent.setLayout(layout);
+
+		advancedButton = new Button(linkedResourceParent, SWT.PUSH);
+		advancedButton.setFont(linkedResourceParent.getFont());
 		advancedButton.setText(WorkbenchMessages.getString("showAdvanced")); //$NON-NLS-1$
 		GridData data = setButtonLayoutData(advancedButton);
 		data.horizontalAlignment = GridData.BEGINNING;
@@ -278,18 +284,18 @@ protected void handleAdvancedButtonSelect() {
 	Point shellSize = shell.getSize();
 	Composite composite = (Composite) getControl();
 						
-	if (linkedResourceGroupHeight == -1) {
-		Composite linkedResourceComposite = linkedResourceGroup.createContents(composite);
-		Point groupSize = linkedResourceComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-		
-		linkedResourceGroupHeight = groupSize.y; 
-	}
-	if (linkedResourceGroupVisible) {
-		linkedResourceGroupVisible = false;
+	if (linkedResourceComposite != null) {
+		linkedResourceComposite.dispose();
+		linkedResourceComposite = null;
+		composite.layout();
 		shell.setSize(shellSize.x, shellSize.y - linkedResourceGroupHeight);
 		advancedButton.setText(WorkbenchMessages.getString("showAdvanced")); //$NON-NLS-1$
 	} else {
-		linkedResourceGroupVisible = true;		
+		linkedResourceComposite = linkedResourceGroup.createContents(linkedResourceParent);
+		if (linkedResourceGroupHeight == -1) {
+			Point groupSize = linkedResourceComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);		
+			linkedResourceGroupHeight = groupSize.y;
+		}
 		shell.setSize(shellSize.x, shellSize.y + linkedResourceGroupHeight);
 		composite.layout();
 		advancedButton.setText(WorkbenchMessages.getString("hideAdvanced")); //$NON-NLS-1$
