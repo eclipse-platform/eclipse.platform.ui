@@ -394,11 +394,7 @@
             class="org.eclipse.ui.ExtensionFactory:keysPreferencePage"
             id="org.eclipse.ui.preferencePages.Keys">
       </page>
-      <page
-            category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.performance.PerformancePrefererencePage"
-            id="org.eclipse.ui.ide.performance"
-            name="%PreferencePages.Performance"/>
+    
       <page
             class="org.eclipse.ui.internal.ide.dialogs.ContentTypesPreferencePage"
             id="org.eclipse.ui.preferencePages.ContentTypes"
