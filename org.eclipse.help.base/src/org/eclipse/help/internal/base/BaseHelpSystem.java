@@ -275,14 +275,13 @@ public final class BaseHelpSystem {
 					String defaultValue = elements[i]
 							.getAttribute(WEBAPP_DEFAULT_ATTRIBUTE);
 					if (defaultValue == null || defaultValue.equals("false")) { //$NON-NLS-1$
-						return elements[i].getDeclaringExtension()
-								.getNamespace();
+						return elements[i].getNamespace();
 					}
 				}
 				// if reached this point, then then pick the first (default)
 				// webapp
 				if (elements.length > 0)
-					return elements[0].getDeclaringExtension().getNamespace();
+					return elements[0].getNamespace();
 			}
 		}
 

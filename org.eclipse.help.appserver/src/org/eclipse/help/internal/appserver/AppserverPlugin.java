@@ -106,7 +106,7 @@ public class AppserverPlugin extends Plugin {
 					appServer = (IWebappServer) serverElement
 							.createExecutableExtension(APP_SERVER_CLASS_ATTRIBUTE);
 					contributingServerPlugin = serverElement
-							.getDeclaringExtension().getNamespace();
+							.getNamespace();
 				} catch (CoreException e) {
 					getLog().log(e.getStatus());
 					throw e;

@@ -106,8 +106,7 @@ public class AnalyzerDescriptor {
 				if (!(analyzer instanceof Analyzer))
 					continue;
 				else {
-					String pluginId = configElements[i].getDeclaringExtension()
-							.getNamespace();
+					String pluginId = configElements[i].getNamespace();
 					String pluginVersion = (String) Platform
 							.getBundle(pluginId).getHeaders().get(
 									Constants.BUNDLE_VERSION);

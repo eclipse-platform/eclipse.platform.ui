@@ -300,7 +300,7 @@ public class HelpURLConnection extends URLConnection {
 					//
 
 					appserverImplPluginId = serverElement
-							.getDeclaringExtension().getNamespace();
+							.getNamespace();
 
 				}
 			}

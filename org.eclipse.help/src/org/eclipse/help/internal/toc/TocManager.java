@@ -199,8 +199,7 @@ public class TocManager {
 					.getConfigurationElements();
 			for (int j = 0; j < configElements.length; j++)
 				if (configElements[j].getName().equals(TOC_XP_NAME)) {
-					String pluginId = configElements[j].getDeclaringExtension()
-							.getNamespace();
+					String pluginId = configElements[j].getNamespace();
 					String href = configElements[j].getAttribute("file"); //$NON-NLS-1$
 					boolean isPrimary = "true".equals( //$NON-NLS-1$
 							configElements[j].getAttribute("primary")); //$NON-NLS-1$
