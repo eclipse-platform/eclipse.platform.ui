@@ -158,7 +158,7 @@ public class ContextType {
 			if (variable.isResolved()) {
 				String value= variable.getDefaultValue();
 				
-				
+				// update buffer to reflect new value
 				for (int k= 0; k != oldOffsets.length; k++)
 					edits.add(new ReplaceEdit(oldOffsets[k], oldLength, value));
 			}
