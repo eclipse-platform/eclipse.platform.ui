@@ -26,5 +26,14 @@ public interface IInformationControlCreatorExtension {
 	 * @param control the information control to test
 	 * @return <code>true</code> if the control can be reused
 	 */
-	boolean canBeReused(IInformationControl control);
+	boolean canReuse(IInformationControl control);
+	
+	/**
+	 * Tests whether the given information provider can replace the given information provide. This is
+	 * the case if the two creators create the same kind of information controls.
+	 * 
+	 * @param creator the creator to be checked
+	 * @return <code>true</code> if the given creator can be replaced
+	 */
+	boolean canReplace(IInformationControlCreator creator);
 }

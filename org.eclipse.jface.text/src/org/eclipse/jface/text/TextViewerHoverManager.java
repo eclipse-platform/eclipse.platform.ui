@@ -13,8 +13,6 @@ package org.eclipse.jface.text;
 
 
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
@@ -42,16 +40,6 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	private Object fMutex= new Object();
 	/** The currently shown text hover. */
 	private volatile ITextHover fTextHover;
-	/**
-	 * The custom information control creator.
-	 * @since 3.0
-	 */
-	private volatile IInformationControlCreator fCustomInformationControlCreator;	
-	/**
-	 * Tells whether a custom information control is in use.
-	 * @since 3.0
-	 */
-	private boolean fIsCustomInformtionControl= false;
 	
 	/**
 	 * Creates a new text viewer hover manager specific for the given text viewer.
@@ -129,9 +117,11 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 							information= null;
 						}
 						
-						fCustomInformationControlCreator= null;
 						if (hover instanceof ITextHoverExtension)
-							fCustomInformationControlCreator= ((ITextHoverExtension) hover).getInformationControlCreator();	
+							setCustomInformationControlCreator(((ITextHoverExtension) hover).getInformationControlCreator());
+						else
+							setCustomInformationControlCreator(null);
+						
 						setInformation(information, area);
 						if (information != null && area != null)
 							fTextHover= hover;
@@ -331,41 +321,5 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	 */
 	protected ITextHover getCurrentTextHover() {
 		return fTextHover;
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.AbstractInformationControlManager#getInformationControl()
-	 * @since 3.0
-	 */
-	protected IInformationControl getInformationControl() {
-		
-		if (fCustomInformationControlCreator == null || fDisposed) {
-			if (fIsCustomInformtionControl) {
-				fInformationControl.dispose();
-				fInformationControl= null;
-			}
-			fIsCustomInformtionControl= false;
-			return super.getInformationControl();
-		}
-
-		if ((fCustomInformationControlCreator instanceof IInformationControlCreatorExtension)
-				&& ((IInformationControlCreatorExtension) fCustomInformationControlCreator).canBeReused(fInformationControl))
-			return fInformationControl;
-
-		if (fInformationControl != null)
-			fInformationControl.dispose();
-			
-		fInformationControl= fCustomInformationControlCreator.createInformationControl(getSubjectControl().getShell());
-		fIsCustomInformtionControl= true;
-		fInformationControl.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				handleInformationControlDisposed();
-			}
-		});
-			
-		if (fInformationControlCloser != null)
-			fInformationControlCloser.setInformationControl(fInformationControl);
-
-		return fInformationControl;
 	}
 }

@@ -165,6 +165,19 @@ abstract public class AbstractInformationControlManager {
 	 */
 	private Anchor[] fFallbackAnchors= ANCHORS;
 	
+	/**
+	 * The custom information control creator.
+	 * @since 3.0
+	 */
+	private volatile IInformationControlCreator fCustomInformationControlCreator;	
+
+	/**
+	 * Tells whether a custom information control is in use.
+	 * @since 3.0
+	 */
+	private boolean fIsCustomInformationControl= false;
+
+	
 	
 	/**
 	 * Creates a new information control manager using the given information control creator.
@@ -288,6 +301,21 @@ abstract public class AbstractInformationControlManager {
 	}
 	
 	/**
+	 * Sets the temporary custom control creator, overriding this manager's default information control creator.
+	 * 
+	 * @param informationControlCreator
+	 * @since 3.0
+	 */
+	protected void setCustomInformationControlCreator(IInformationControlCreator informationControlCreator)  {
+		if (fCustomInformationControlCreator  instanceof IInformationControlCreatorExtension) {
+			IInformationControlCreatorExtension extension= (IInformationControlCreatorExtension) fCustomInformationControlCreator;
+			if (extension.canReplace(informationControlCreator))
+				return;
+		}
+		fCustomInformationControlCreator= informationControlCreator;
+	}
+	
+	/**
 	 * Tells the manager whether it should set the focus to the information control when made visible.
 	 * 
 	 * @param takesFocus <code>true</code> if information control should take focus when made visible  
@@ -404,7 +432,7 @@ abstract public class AbstractInformationControlManager {
 			fInformationControlCloser.setInformationControl(null);
 			fInformationControlCloser.stop();
 		}
-	}	
+	}
 	
 	/**
 	 * Returns the information control. If the information control has not been created yet,
@@ -413,10 +441,41 @@ abstract public class AbstractInformationControlManager {
 	 * @return the information control
 	 */
 	protected IInformationControl getInformationControl() {
-		if (fInformationControl == null && !fDisposed) {
+		
+		IInformationControlCreator creator= null;
+		
+		if (fCustomInformationControlCreator == null || fDisposed) {
 			
-			fInformationControl= fInformationControlCreator.createInformationControl(fSubjectControl.getShell());
+			if (fIsCustomInformationControl) {
+				fInformationControl.dispose();
+				fInformationControl= null;
+				fIsCustomInformationControl= false;
+			}
 			
+			if (fDisposed)
+				return fInformationControl;
+				
+			creator= fInformationControlCreator;
+			
+		} else  {
+			
+			creator= fCustomInformationControlCreator;
+			if (creator instanceof IInformationControlCreatorExtension)  {
+				IInformationControlCreatorExtension extension= (IInformationControlCreatorExtension) creator;
+				if (extension.canReuse(fInformationControl))
+					return fInformationControl;
+			}
+			
+			if (fInformationControl != null)  {
+				fInformationControl.dispose();
+				fInformationControl= null;
+			}
+			
+			fIsCustomInformationControl= true;
+		}
+		
+		if (fInformationControl == null) {
+			fInformationControl= creator.createInformationControl(fSubjectControl.getShell());
 			fInformationControl.addDisposeListener(new DisposeListener() {
 				public void widgetDisposed(DisposeEvent e) {
 					handleInformationControlDisposed();
@@ -426,6 +485,7 @@ abstract public class AbstractInformationControlManager {
 			if (fInformationControlCloser != null)
 				fInformationControlCloser.setInformationControl(fInformationControl);
 		}
+		
 		return fInformationControl;
 	}
 	

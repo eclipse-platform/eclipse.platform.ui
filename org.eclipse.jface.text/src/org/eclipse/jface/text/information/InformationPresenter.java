@@ -16,8 +16,6 @@ import java.util.Map;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
@@ -36,7 +34,6 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.IInformationControlCreatorExtension;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension3;
@@ -44,7 +41,8 @@ import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.IWidgetTokenKeeper;
 import org.eclipse.jface.text.IWidgetTokenOwner;
 import org.eclipse.jface.text.Region;
- 
+
+
 /**
  * Standard implementation of <code>IInformationPresenter</code>.
  * This implementation extends <code>AbstractInformationControlManager</code>.
@@ -212,18 +210,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	/** The map of <code>IInformationProvider</code> objects */
 	private Map fProviders;
 	/** The offset to override selection. */
-	private int fOffset= -1;
-	/**
-	 * The custom information control creator.
-	 * @since 3.0
-	 */
-	private IInformationControlCreator fCustomInformationControlCreator;	
-	/**
-	 * Tells whether a custom information control is in use.
-	 * @since 3.0
-	 */
-	private boolean fIsCustomInformtionControl= false;
-	
+	private int fOffset= -1;	
 	
 	/**
 	 * Creates a new information presenter that uses the given information control creator.
@@ -307,9 +294,10 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		if (subject == null)
 			return;
 
-		fCustomInformationControlCreator= null;
 		if (provider instanceof IInformationProviderExtension2)
-			fCustomInformationControlCreator= ((IInformationProviderExtension2) provider).getInformationPresenterControlCreator();	
+			setCustomInformationControlCreator(((IInformationProviderExtension2) provider).getInformationPresenterControlCreator());
+		else
+			setCustomInformationControlCreator(null);
 
 		if (provider instanceof IInformationProviderExtension) {
 			IInformationProviderExtension extension= (IInformationProviderExtension) provider;
@@ -443,42 +431,6 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	 */
 	public boolean requestWidgetToken(IWidgetTokenOwner owner) {
 		return false;
-	}
-	
-	/*
-	 * @see org.eclipse.jface.text.AbstractInformationControlManager#getInformationControl()
-	 * @since 3.0
-	 */
-	protected IInformationControl getInformationControl() {
-		
-		if (fCustomInformationControlCreator == null || fDisposed) {
-			if (fIsCustomInformtionControl) {
-				fInformationControl.dispose();
-				fInformationControl= null;
-			}
-			fIsCustomInformtionControl= false;
-			return super.getInformationControl();
-		}
-
-		if ((fCustomInformationControlCreator instanceof IInformationControlCreatorExtension)
-				&& ((IInformationControlCreatorExtension) fCustomInformationControlCreator).canBeReused(fInformationControl))
-			return fInformationControl;
-
-		if (fInformationControl != null)
-			fInformationControl.dispose();
-			
-		fInformationControl= fCustomInformationControlCreator.createInformationControl(getSubjectControl().getShell());
-		fIsCustomInformtionControl= true;
-		fInformationControl.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				handleInformationControlDisposed();
-			}
-		});
-			
-		if (fInformationControlCloser != null)
-			fInformationControlCloser.setInformationControl(fInformationControl);
-
-		return fInformationControl;
 	}
 }
 

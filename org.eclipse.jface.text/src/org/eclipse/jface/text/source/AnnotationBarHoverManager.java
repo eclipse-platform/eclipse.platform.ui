@@ -13,17 +13,13 @@ package org.eclipse.jface.text.source;
 
 
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
 import org.eclipse.jface.text.AbstractHoverInformationControlManager;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.IInformationControlCreatorExtension;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewerExtension3;
 
@@ -42,18 +38,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	/** The vertical ruler the manager is registered with */
 	private IVerticalRulerInfo fVerticalRulerInfo;
 	/** The annotation hover the manager uses to retrieve the information to display */
-	private IAnnotationHover fAnnotationHover;
-	/**
-	 * The custom information control creator.
-	 * @since 3.0
-	 */
-	private volatile IInformationControlCreator fCustomInformationControlCreator;	
-	/**
-	 * Tells whether a custom information control is in use.
-	 * @since 3.0
-	 */
-	private boolean fIsCustomInformtionControl= false;
-	
+	private IAnnotationHover fAnnotationHover;	
 
 	/**
 	 * Creates an annotation hover manager with the given parameters. In addition,
@@ -98,9 +83,10 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	 */
 	protected void computeInformation() {
 
-		fCustomInformationControlCreator= null;
 		if (fAnnotationHover instanceof IAnnotationHoverExtension)
-			fCustomInformationControlCreator= ((IAnnotationHoverExtension) fAnnotationHover).getInformationControlCreator();	
+			setCustomInformationControlCreator(((IAnnotationHoverExtension) fAnnotationHover).getInformationControlCreator());
+		else
+			setCustomInformationControlCreator(null);
 		
 		Point location= getHoverEventLocation();
 		int line= fVerticalRulerInfo.toDocumentLineNumber(location.y);
@@ -171,42 +157,6 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	 */
 	protected IVerticalRulerInfo getVerticalRulerInfo() {
 		return fVerticalRulerInfo;
-	}
-	
-	/*
-	 * @see org.eclipse.jface.text.AbstractInformationControlManager#getInformationControl()
-	 * @since 3.0
-	 */
-	protected IInformationControl getInformationControl() {
-		
-		if (fCustomInformationControlCreator == null || fDisposed) {
-			if (fIsCustomInformtionControl) {
-				fInformationControl.dispose();
-				fInformationControl= null;
-			}
-			fIsCustomInformtionControl= false;
-			return super.getInformationControl();
-		}
-
-		if ((fCustomInformationControlCreator instanceof IInformationControlCreatorExtension)
-				&& ((IInformationControlCreatorExtension) fCustomInformationControlCreator).canBeReused(fInformationControl))
-			return fInformationControl;
-
-		if (fInformationControl != null)
-			fInformationControl.dispose();
-			
-		fInformationControl= fCustomInformationControlCreator.createInformationControl(getSubjectControl().getShell());
-		fIsCustomInformtionControl= true;
-		fInformationControl.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				handleInformationControlDisposed();
-			}
-		});
-			
-		if (fInformationControlCloser != null)
-			fInformationControlCloser.setInformationControl(fInformationControl);
-
-		return fInformationControl;
 	}
 }
 
