@@ -79,7 +79,8 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 	public static void main(String[] args) throws Throwable {
 		installURL = System.getProperty(SYS_PROPERTY_INSTALLURL);
 		if (installURL == null || installURL.length() <= 0) {
-			System.err.println("Property " + SYS_PROPERTY_INSTALLURL + " must be set.");
+			System.err.println(
+				"Property " + SYS_PROPERTY_INSTALLURL + " must be set.");
 			return;
 		}
 		productImageURL = System.getProperty(SYS_PROPERTY_PRODUCTIMAGEURL);
@@ -90,12 +91,14 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 		}
 		productName = System.getProperty(SYS_PROPERTY_PRODUCTNAME);
 		if (productName == null) {
-			System.err.println("Property " + SYS_PROPERTY_PRODUCTNAME + " must be set.");
+			System.err.println(
+				"Property " + SYS_PROPERTY_PRODUCTNAME + " must be set.");
 			return;
 		}
 		stateLocation = System.getProperty(SYS_PROPERTY_STATELOCATION);
 		if (stateLocation == null || stateLocation.length() <= 0) {
-			System.err.println("Property " + SYS_PROPERTY_STATELOCATION + " must be set.");
+			System.err.println(
+				"Property " + SYS_PROPERTY_STATELOCATION + " must be set.");
 			return;
 		}
 		IEHost ie = new IEHost();
@@ -107,10 +110,13 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 	private void createImages() {
 		try {
 			shellImg =
-				ImageDescriptor.createFromURL(new URL(productImageURL)).createImage();
+				ImageDescriptor
+					.createFromURL(new URL(productImageURL))
+					.createImage();
 		} catch (MalformedURLException mue) {
-			System.out.println(mue);
-			return;
+			if (!"".equals(productImageURL)) {
+				System.out.println("Invalid URL of product image.");
+			}
 		}
 		backImg =
 			ImageDescriptor
@@ -135,11 +141,19 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 				store.put(BROWSER_Y, Integer.toString(y));
 				store.put(BROWSER_WIDTH, Integer.toString(w));
 				store.put(BROWSER_HEIGTH, Integer.toString(h));
-				store.put(BROWSER_MAXIMIZED, (new Boolean(shell.getMaximized()).toString()));
+				store.put(
+					BROWSER_MAXIMIZED,
+					(new Boolean(shell.getMaximized()).toString()));
 				store.save();
-				shellImg.dispose();
-				backImg.dispose();
-				forwardImg.dispose();
+				if (shellImg != null) {
+					shellImg.dispose();
+				}
+				if (backImg != null) {
+					backImg.dispose();
+				}
+				if (forwardImg != null) {
+					forwardImg.dispose();
+				}
 				shell.close();
 			}
 		});
@@ -238,7 +252,8 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 			webBrowser.addCommandStateChangedListener(this);
 			webBrowser.navigate("about:blank");
 		} catch (HelpWorkbenchException hwe) {
-			System.err.println(ieResources.getString("WE027", hwe.getMessage()));
+			System.err.println(
+				ieResources.getString("WE027", hwe.getMessage()));
 		}
 		return composite;
 	}
@@ -252,7 +267,8 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 	 * Reads commands from standard input.
 	 */
 	public void run() {
-		BufferedReader reader = new BufferedReader((new InputStreamReader(System.in)));
+		BufferedReader reader =
+			new BufferedReader((new InputStreamReader(System.in)));
 		// Run command loop
 		String line;
 		try {
@@ -300,7 +316,9 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 			if (pars.length >= 2 && pars[0] != null && pars[1] != null) {
 				try {
 					display.syncExec(
-						new SetLocationCommand(Integer.parseInt(pars[0]), Integer.parseInt(pars[1])));
+						new SetLocationCommand(
+							Integer.parseInt(pars[0]),
+							Integer.parseInt(pars[1])));
 				} catch (NumberFormatException nfe) {
 				}
 			}
@@ -308,7 +326,9 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 			if (pars.length >= 2 && pars[0] != null && pars[1] != null) {
 				try {
 					display.syncExec(
-						new SetSizeCommand(Integer.parseInt(pars[0]), Integer.parseInt(pars[1])));
+						new SetSizeCommand(
+							Integer.parseInt(pars[0]),
+							Integer.parseInt(pars[1])));
 				} catch (NumberFormatException nfe) {
 				}
 			}
