@@ -136,11 +136,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	private Button fProgressMonitorCancelButton;
 	
 	/**
-	 * Flag indicating if the progress monitor part's Cancel button has been pressed.
-	 */
-	private boolean fCancelButtonPressed;
-	
-	/**
 	 * When this dialog is opened in <code>LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION</code>
 	 * mode, this specifies the selection that is initially shown in the dialog.
 	 */
@@ -701,11 +696,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		Button cancelButton = createButton(monitorComposite, ID_CANCEL_BUTTON, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Cancel_3"), true); //$NON-NLS-1$
 		setProgressMonitorCancelButton(cancelButton);
 		getProgressMonitorCancelButton().setFont(font);
-		getProgressMonitorCancelButton().addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				setCancelButtonPressed(true);
-			}
-		});
 		getProgressMonitorPart().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		getProgressMonitorPart().setFont(font);
 		monitorComposite.setVisible(false);
@@ -1216,7 +1206,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				
 			// Attach the progress monitor part to the cancel button
 			getProgressMonitorCancelButton().setEnabled(true);
-			setCancelButtonPressed(false);
 			getProgressMonitorPart().attachToCancelComponent(getProgressMonitorCancelButton());
 			getProgressMonitorPart().getParent().setVisible(true);
 			getProgressMonitorCancelButton().setFocus();
@@ -1338,14 +1327,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			if (b != null)
 				w.setEnabled(b.booleanValue());
 		}
-	}
-	
-	private void setCancelButtonPressed(boolean pressed) {
-		fCancelButtonPressed = pressed;
-	}
-	
-	private boolean cancelButtonPressed() {
-		return fCancelButtonPressed;
 	}
 
 	/**
