@@ -22,11 +22,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 public abstract class AbstractListenerActionDelegate extends AbstractDebugActionDelegate implements IDebugEventSetListener, IPartListener, IPageListener {
 
 	/**
-	 * The window associated with this action delegate
-	 */
-	private IWorkbenchWindow fWindow;
-
-	/**
 	 * @see IPartListener#partActivated(IWorkbenchPart)
 	 */
 	public void partActivated(IWorkbenchPart part) {
@@ -63,6 +58,7 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 	 * @see IWorkbenchWindowActionDelegate#dispose()
 	 */
 	public void dispose() {
+		super.dispose();
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 		getWindow().removePageListener(this);
 		if (getView() != null) {
@@ -109,14 +105,6 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 		}
 	}
 	
-	protected IWorkbenchWindow getWindow() {
-		return fWindow;
-	}
-
-	protected void setWindow(IWorkbenchWindow window) {
-		fWindow = window;
-	}
-	
 	/**
 	 * Default implementation to update on specific debug events.
 	 * Subclasses should override to handle events differently.
@@ -145,7 +133,6 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 	public void init(IWorkbenchWindow window){
 		super.init(window);
 		DebugPlugin.getDefault().addDebugEventListener(this);
-		setWindow(window);
 		window.addPageListener(this);
 	}
 

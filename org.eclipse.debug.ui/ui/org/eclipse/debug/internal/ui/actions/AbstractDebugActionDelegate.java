@@ -47,6 +47,12 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	private boolean fInitialized = false;
 	
 	/**
+	 * The window associated with this action delegate
+	 * May be <code>null</code>
+	 */
+	protected IWorkbenchWindow fWindow;
+	
+	/**
 	 * It's crucial that delegate actions have a zero-arg constructor so that
 	 * they can be reflected into existence when referenced in an action set
 	 * in the plugin's plugin.xml file.
@@ -58,7 +64,9 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	 * @see IWorkbenchWindowActionDelegate#dispose()
 	 */
 	public void dispose(){
-		DebugUIPlugin.getActiveWorkbenchWindow().getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
+		if (getWindow() != null) {
+			getWindow().getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
+		}
 	}
 
 	/**
@@ -66,6 +74,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	 */
 	public void init(IWorkbenchWindow window){
 		// listen to selection changes in the debug view
+		setWindow(window);
 		window.getSelectionService().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 	}
 
@@ -294,5 +303,13 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 
 	protected void setInitialized(boolean initialized) {
 		fInitialized = initialized;
+	}
+
+	protected IWorkbenchWindow getWindow() {
+		return fWindow;
+	}
+
+	protected void setWindow(IWorkbenchWindow window) {
+		fWindow = window;
 	}
 }
