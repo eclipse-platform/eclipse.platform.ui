@@ -42,6 +42,7 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.InstructionPointerManager;
 import org.eclipse.debug.internal.ui.actions.AddToFavoritesAction;
 import org.eclipse.debug.internal.ui.actions.EditLaunchConfigurationAction;
+import org.eclipse.debug.internal.ui.actions.AutoManageViewsAction;
 import org.eclipse.debug.internal.ui.sourcelookup.CommonSourceNotFoundEditorInput;
 import org.eclipse.debug.internal.ui.sourcelookup.EditSourceLookupPathAction;
 import org.eclipse.debug.internal.ui.sourcelookup.LookupSourceAction;
@@ -202,6 +203,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	protected void createActions() {
 		setAction("Properties", new PropertyDialogAction(getSite().getWorkbenchWindow().getShell(), getSite().getSelectionProvider())); //$NON-NLS-1$
+		setAction("AutoManageViews", new AutoManageViewsAction(this));
 		fEditConfigAction = new EditLaunchConfigurationAction();
 		fAddToFavoritesAction = new AddToFavoritesAction();
 		fEditSourceAction = new EditSourceLookupPathAction(this);
@@ -434,6 +436,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		tbm.add(new GroupMarker(IDebugUIConstants.STEP_RETURN_GROUP));
 		tbm.add(new GroupMarker(IDebugUIConstants.EMPTY_STEP_GROUP));
 		tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
+		tbm.add(getAction("AutoManageViews")); //$NON-NLS-1$
 	}	
 
 	/* (non-Javadoc)
@@ -930,6 +933,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		menu.add(new GroupMarker(IDebugUIConstants.STEP_OVER_GROUP));
 		menu.add(new GroupMarker(IDebugUIConstants.STEP_RETURN_GROUP));
 		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
+		menu.add(getAction("AutoManageViews")); //$NON-NLS-1$
 		menu.add(new Separator(IDebugUIConstants.EMPTY_THREAD_GROUP));
 		menu.add(new Separator(IDebugUIConstants.THREAD_GROUP));
 		menu.add(new Separator(IDebugUIConstants.EMPTY_LAUNCH_GROUP));

@@ -628,19 +628,7 @@
                   class="org.eclipse.debug.core.model.IStep">
             </selection>
          </action>
-<!-- Render Group -->         
-         <action
-               id="org.eclipse.debug.ui.debugview.toolbar.toggleAutoManageViews"
-               toolbarPath="renderGroup"
-               hoverIcon="icons/full/elcl16/synced.gif"
-               class="org.eclipse.debug.internal.ui.actions.ToggleAutoManageViewsActionDelegate"
-               icon="icons/full/elcl16/synced.gif"
-               label="%AutoManageViewsAction.label"
-               helpContextId="auto_manage_views_action"
-               tooltip="%AutoManageViewsAction.tooltip"
-               style="toggle"
-               state="true">
-         </action>
+<!-- Render Group -->
          <action
                id="org.eclipse.debug.ui.debugview.toolbar.toggleStepFilters"
                toolbarPath="renderGroup"
@@ -997,17 +985,7 @@
                   class="org.eclipse.debug.core.model.IStep">
             </selection>
          </action>
-<!-- Render Group -->   
-         <action
-               menubarPath="renderGroup"
-               id="org.eclipse.debug.ui.debugview.popupMenu.toggleAutoManageViews"
-               class="org.eclipse.debug.internal.ui.actions.ToggleAutoManageViewsActionDelegate"
-               icon="icons/full/elcl16/synced.gif"
-               label="%AutoManageViewsAction.label"
-               helpContextId="auto_manage_views_action"
-               style="toggle"
-               state="true">
-         </action>      
+<!-- Render Group -->  
          <action
                label="%StepWithFiltersAction.label"
                icon="icons/full/elcl16/stepbystep_co.gif"
