@@ -1842,6 +1842,8 @@ public class Main {
             this.policy = policy;
             this.urls = urls;
             allPermissions = new PermissionCollection() {
+                private static final long serialVersionUID = 3258131349494708277L;
+
                 // A simple PermissionCollection that only has AllPermission
                 public void add(Permission permission) {
                 }
