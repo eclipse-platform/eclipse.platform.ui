@@ -85,7 +85,7 @@ import org.eclipse.ui.part.MultiEditorInput;
  * </ol>
  */
 public class EditorManager { 
-	private EditorPresentation editorPresentation;
+	private EditorAreaHelper editorPresentation;
 	private WorkbenchWindow window;
 	private WorkbenchPage page;
 	private Map actionCache = new HashMap();
@@ -97,7 +97,7 @@ public class EditorManager {
 	/**
 	 * EditorManager constructor comment.
 	 */
-	public EditorManager(WorkbenchWindow window, WorkbenchPage workbenchPage, EditorPresentation pres) {
+	public EditorManager(WorkbenchWindow window, WorkbenchPage workbenchPage, EditorAreaHelper pres) {
 		this.window = window;
 		this.page = workbenchPage;
 		this.editorPresentation = pres;

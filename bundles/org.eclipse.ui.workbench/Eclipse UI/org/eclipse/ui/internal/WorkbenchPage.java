@@ -99,7 +99,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 	private ActivationList activationList = new ActivationList();
 	private IEditorPart lastActiveEditor;
 	private EditorManager editorMgr;
-	private EditorPresentation editorPresentation;
+	private EditorAreaHelper editorPresentation;
 	private PartListenerList partListeners = new PartListenerList();
 	private PartListenerList2 partListeners2 = new PartListenerList2();
 	private ListenerList propertyChangeListeners = new ListenerList();
@@ -1491,7 +1491,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 	/**
 	 * Answer the editor presentation.
 	 */
-	public EditorPresentation getEditorPresentation() {
+	public EditorAreaHelper getEditorPresentation() {
 		return editorPresentation;
 	}
 	/**
@@ -1841,7 +1841,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 
 		// Create presentation.
 		createClientComposite();
-		editorPresentation = new EditorPresentation(this);
+		editorPresentation = new EditorAreaHelper(this);
 		editorMgr = new EditorManager(window, this, editorPresentation);
 
 		// Get perspective descriptor.

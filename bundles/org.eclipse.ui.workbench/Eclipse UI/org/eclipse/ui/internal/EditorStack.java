@@ -232,7 +232,7 @@ public class EditorStack extends PartStack {
 	 * @see org.eclipse.ui.internal.PartStack#derefPart(org.eclipse.ui.internal.LayoutPart)
 	 */
 	protected void derefPart(LayoutPart toDeref) {
-		EditorPresentation.derefPart(toDeref);
+		EditorAreaHelper.derefPart(toDeref);
 	}
 
 	/* (non-Javadoc)

@@ -29,17 +29,17 @@ import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.part.MultiEditor;
 
 /**
- * EditorPresentation is a wrapper for PartTabworkbook.
+ * EditorAreaHelper is a wrapper for PartTabworkbook.
  */
-public class EditorPresentation {
+public class EditorAreaHelper {
 	private WorkbenchPage page;
 	private ArrayList editorTable = new ArrayList(4);
 	private EditorSashContainer editorArea;
 	private HandlerSubmission openEditorDropDownHandlerSubmission;
 	/**
-	 * Creates a new EditorPresentation.
+	 * Creates a new EditorAreaHelper.
 	 */
-	public EditorPresentation(WorkbenchPage page) {
+	public EditorAreaHelper(WorkbenchPage page) {
 
 		this.page = page;
 		this.editorArea = new EditorSashContainer(IPageLayout.ID_EDITOR_AREA, page);
