@@ -46,8 +46,7 @@ public class TestSiteType extends UpdateManagerTestCase {
 	 */
 	public void testFTPSiteType() throws Exception{ 
 		
-		String featurePath = dataPath+"SiteTypeExamples/site1/";
-		ISite site = SiteManager.getSite(new URL("ftp://theguest:theguest@eclipse3.torolab.ibm.com/"));
+		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE+"FTPLikeSite/"));
 		
 		// should not find the mapping
 		// but then should attempt to read the XML file

@@ -186,6 +186,8 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 		// ensure we have a temp directory
 		if (tmpDir == null) {		
 			String tmpName = System.getProperty("java.io.tmpdir");
+			// in Linux, return '/tmp', we must add '/'
+			if (!tmpName.endsWith(File.separator)) tmpName += File.separator;
 			tmpName += "eclipse" + File.separator + ".update" + File.separator + Long.toString((new Date()).getTime()) + File.separator;
 			tmpDir = new File(tmpName);
 			verifyPath(tmpDir, false);

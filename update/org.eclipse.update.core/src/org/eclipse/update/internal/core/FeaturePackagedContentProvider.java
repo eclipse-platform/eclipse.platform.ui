@@ -145,7 +145,8 @@ public class FeaturePackagedContentProvider  extends FeatureContentProvider {
 				currentReference = asLocalReference(currentReference, monitor);
 				references[0] = currentReference;
 		} catch (IOException e){
-			throw newCoreException("Error retrieving feature Entry Archive Reference :" + feature.getURL().toExternalForm(), e);
+			String urlString = (feature==null)?"NO FEATURE":""+feature.getURL();
+			throw newCoreException("Error retrieving feature Entry Archive Reference :" + urlString, e);
 		}
 		return references;
 	}
