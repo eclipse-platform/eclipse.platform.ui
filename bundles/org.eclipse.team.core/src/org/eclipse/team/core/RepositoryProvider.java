@@ -11,13 +11,11 @@
 package org.eclipse.team.core;
 
 import java.util.*;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ILock;
-import org.eclipse.team.internal.core.Policy;
-import org.eclipse.team.internal.core.TeamPlugin;
+import org.eclipse.team.internal.core.*;
 
 /**
  * A concrete subclass of <code>RepositoryProvider</code> is created for each
@@ -121,6 +119,8 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 				}	
 				
 				provider.configure();	//xxx not sure if needed since they control with wiz page and can configure all they want
+				
+				TeamHookDispatcher.setProviderRuleFactory(project, provider.getRuleFactory());
 	
 				//adding the nature would've caused project description delta, so trigger one
 				project.touch(null);
@@ -237,6 +237,8 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 				project.setPersistentProperty(PROVIDER_PROP_KEY, null);
 				
 				if (provider != null) provider.deconfigured();
+				
+				TeamHookDispatcher.setProviderRuleFactory(project, null);
 				
 				//removing the nature would've caused project description delta, so trigger one
 				project.touch(null);
@@ -631,5 +633,27 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	 */
 	public Object getAdapter(Class adapter) {		
 		return null;
+	}
+
+	/**
+	 * Return the resource rule factory for this provider. This factory
+	 * will be used to determine the scheduling rules that are to be obtained
+	 * when performing various resource operations (e.g. move, copy, delete, etc.)
+	 * on the resources in the project the provider is mapped to.
+	 * <p>
+	 * By default, the factory returned by this method is pessimistic and
+	 * obtains the workspace lock for all operations that could result in a 
+	 * callback to the provider (either through the <code>IMoveDeleteHook</code>
+	 * or <code>IFileModificationValidator</code>). This is done to ensure that
+	 * older providers are not broken. However, providers should override this
+	 * method and provide a subclass of {@link org.eclipse.core.resources.team.ResourceRuleFactory}
+	 * that provides rules of a more optimistic granularity (e.g. project
+	 * or lower).
+	 * @return the rule factory for this provider
+	 * @since 3.0
+	 * @see org.eclipse.core.resources.team.ResourceRuleFactory
+	 */
+	public IResourceRuleFactory getRuleFactory() {
+		return new PessimisticResourceRuleFactory();
 	}
 }	

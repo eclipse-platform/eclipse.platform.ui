@@ -12,12 +12,13 @@ package org.eclipse.team.internal.ccvs.core;
  
 import java.io.*;
 import java.util.*;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
+import org.eclipse.core.resources.team.ResourceRuleFactory;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.client.*;
@@ -63,6 +64,28 @@ import org.eclipse.team.internal.core.streams.LFtoCRLFInputStream;
  */
 public class CVSTeamProvider extends RepositoryProvider {
 
+	private static final ResourceRuleFactory RESOURCE_RULE_FACTORY = new ResourceRuleFactory() {
+		public ISchedulingRule validateEditRule(IResource[] resources) {
+			if (resources.length == 0)
+				return null;
+			//optimize rule for single file
+			if (resources.length == 1)
+				return resources[0].isReadOnly() ? parent(resources[0]) : null;
+			//need a lock on the parents of all read-only files
+			HashSet rules = new HashSet();
+			for (int i = 0; i < resources.length; i++)
+				if (resources[i].isReadOnly())
+					rules.add(parent(resources[i]));
+			if (rules.isEmpty())
+				return null;
+			if (rules.size() == 1)
+				return (ISchedulingRule) rules.iterator().next();
+			ISchedulingRule[] ruleArray = (ISchedulingRule[]) rules
+					.toArray(new ISchedulingRule[rules.size()]);
+			return new MultiRule(ruleArray);
+		}
+	};
+	
 	private static final boolean IS_CRLF_PLATFORM = Arrays.equals(
 		System.getProperty("line.separator").getBytes(), new byte[] { '\r', '\n' }); //$NON-NLS-1$
 	
@@ -1212,5 +1235,12 @@ public class CVSTeamProvider extends RepositoryProvider {
 		} catch (CoreException e) {
 			throw new CVSException(new CVSStatus(IStatus.ERROR, Policy.bind("CVSTeamProvider.errorSettingWatchEdit", project.getName()), e)); //$NON-NLS-1$
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.RepositoryProvider#getRuleFactory()
+	 */
+	public IResourceRuleFactory getRuleFactory() {
+		return RESOURCE_RULE_FACTORY;
 	}
 }

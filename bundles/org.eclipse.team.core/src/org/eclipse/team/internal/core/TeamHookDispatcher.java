@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.internal.core;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.team.ResourceRuleFactory;
 import org.eclipse.core.resources.team.TeamHook;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -22,6 +21,22 @@ import org.eclipse.team.core.RepositoryProvider;
  * This class forwards TeamHook callbacks to the proper RepositoryProvider
  */
 public class TeamHookDispatcher extends TeamHook {
+	
+	private static final ResourceRuleFactory defaultFactory = new ResourceRuleFactory() {};
+	private static TeamHookDispatcher instance;
+	
+	public static void setProviderRuleFactory(IProject project, IResourceRuleFactory factory) {
+		if (instance != null) {
+			if (factory == null) {
+				factory = defaultFactory;
+			}
+			instance.setRuleFactory(project, factory);
+		}
+	}
+	
+	public TeamHookDispatcher() {
+		instance = this;
+	}
 
 	/**
 	 * @see org.eclipse.core.resources.team.TeamHook#validateCreateLink(org.eclipse.core.resources.IFile, int, org.eclipse.core.runtime.IPath)
@@ -56,5 +71,17 @@ public class TeamHookDispatcher extends TeamHook {
 		return RepositoryProvider.getProvider(resource.getProject());
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.team.TeamHook#getRuleFactory(org.eclipse.core.resources.IProject)
+	 */
+	public IResourceRuleFactory getRuleFactory(IProject project) {
+		if (RepositoryProvider.isShared(project)) {
+			RepositoryProvider provider = getProvider(project);
+			return provider.getRuleFactory();
+		} else {
+			// Use the default provided by the superclass
+			return super.getRuleFactory(project);
+		} 
+	}
 	
 }
