@@ -598,6 +598,7 @@ public final class InternalPlatform implements IPlatform {
 
 		URLConverter urlConverter = getURLConverter();	//TODO no need to use the method the field is declared here
 		if (urlConverter == null) {
+			// TODO: what is this string? should use a meaningful developer-level message or an NL'd user-level message
 			throw new IOException("url.noaccess");
 		}
 		result = urlConverter.convertToLocalURL(result);
