@@ -2,15 +2,15 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.debug.core">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.debug.core" id="launchConfigurationTypes" name="Launch Configuration Types"/>
-   </appInfo>
-   <documentation>
-      This extension point provides a configurable mechanism for launching applications.
+      <appInfo>
+         <meta.schema plugin="org.eclipse.debug.core" id="launchConfigurationTypes" name="Launch Configuration Types"/>
+      </appInfo>
+      <documentation>
+         This extension point provides a configurable mechanism for launching applications.
 Each launch configuration type has a name, supports one or more modes (run and/or debug), and specifies a delegate
 responsible for the implementation of launching an application.
-   </documentation>
-</annotation>
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -34,7 +34,7 @@ responsible for the implementation of launching an application.
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                 an optional name of the extension instance
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -72,7 +72,7 @@ Launch configuration instances of this type will delegate to instances of this c
          <attribute name="modes" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies a comma-separated list of the modes this type of lauch configuration supports - "run" and/or "debug".
+                  specifies a comma-separated list of the modes this type of lauch configuration supports - &quot;run&quot; and/or &quot;debug&quot;.
                </documentation>
             </annotation>
          </attribute>
@@ -93,7 +93,7 @@ Launch configuration instances of this type will delegate to instances of this c
          <attribute name="category" type="string">
             <annotation>
                <documentation>
-                  an optional attribute that specifies this launch configuration type's category. The default value is unspecified (null). Categories are client defined. This attribute was added in the 2.1 release
+                  an optional attribute that specifies this launch configuration type&apos;s category. The default value is unspecified (null). Categories are client defined. This attribute was added in the 2.1 release.
                </documentation>
             </annotation>
          </attribute>
@@ -129,16 +129,16 @@ can be used for.
 
 &lt;p&gt;
 &lt;pre&gt;
-	&lt;extension point="org.eclipse.debug.core.launchConfigurationTypes"&gt;
-		&lt;launchConfigurationType
-			id="com.example.ExampleIdentifier"
-			delegate="com.example.ExampleLaunchConfigurationDelegate"
-			modes="run,debug"
-			name="Example Application"&gt;
-			&lt;fileExtension extension="txt" default="true"/&gt;
-			&lt;fileExtension extension="gif" default="false"/&gt;
-		&lt;/launchConfigurationType&gt;
-	&lt;/extension&gt;
+ &lt;extension point=&quot;org.eclipse.debug.core.launchConfigurationTypes&quot;&gt;
+  &lt;launchConfigurationType
+   id=&quot;com.example.ExampleIdentifier&quot;
+   delegate=&quot;com.example.ExampleLaunchConfigurationDelegate&quot;
+   modes=&quot;run,debug&quot;
+   name=&quot;Example Application&quot;&gt;
+   &lt;fileExtension extension=&quot;txt&quot; default=&quot;true&quot;/&gt;
+   &lt;fileExtension extension=&quot;gif&quot; default=&quot;false&quot;/&gt;
+  &lt;/launchConfigurationType&gt;
+ &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
 
@@ -161,7 +161,7 @@ The launch configuration is applicable to .txt and .gif files, and is the defaul
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-          &lt;a href="hglegal.htm"&gt;&lt;img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2003.  All Rights Reserved." BORDER=0 height=12 width=195&gt;&lt;/a&gt;
+         &lt;a href=&quot;hglegal.htm&quot;&gt;&lt;img SRC=&quot;ngibmcpy.gif&quot; ALT=&quot;Copyright IBM Corp. 2000, 2003.  All Rights Reserved.&quot; BORDER=0 height=12 width=195&gt;&lt;/a&gt;
       </documentation>
    </annotation>
 

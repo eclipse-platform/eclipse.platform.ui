@@ -2,13 +2,13 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.debug.core">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.debug.core" id="breakpoints" name="Breakpoints"/>
-   </appInfo>
-   <documentation>
-      This extension point defines a mechanism for defining new types of breakpoints.
-   </documentation>
-</annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.debug.core" id="breakpoints" name="Breakpoints"/>
+      </appInfo>
+      <documentation>
+         This extension point defines a mechanism for defining new types of breakpoints.
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -32,7 +32,7 @@
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                 an optional name of the extension instance
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -77,18 +77,18 @@
 
 &lt;p&gt;
 &lt;pre&gt;
- &lt;extension point="org.eclipse.debug.core.breakpoint"&gt;
+ &lt;extension point=&quot;org.eclipse.debug.core.breakpoints&quot;&gt;
   &lt;breakpoint
-   id="com.example.ExampleBreakpoint"
-   markerType="com.example.ExampleBreakpointMarker"
-   class="com.example.ExampleBreakpointImpl"&gt;
+   id=&quot;com.example.ExampleBreakpoint&quot;
+   markerType=&quot;com.example.ExampleBreakpointMarker&quot;
+   class=&quot;com.example.ExampleBreakpointImpl&quot;&gt;
   &lt;/breakpoint&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
 
-In the example above, the specified type of breakpoint is implemented by the class "com.example.BreakpointImpl".
-There is an associated marker definition for "com.example.ExampleBreakpointMarker", defining the attributes of this breakpoint.
+In the example above, the specified type of breakpoint is implemented by the class &quot;com.example.BreakpointImpl&quot;.
+There is an associated marker definition for &quot;com.example.ExampleBreakpointMarker&quot;, defining the attributes of this breakpoint.
       </documentation>
    </annotation>
 
@@ -106,7 +106,7 @@ There is an associated marker definition for "com.example.ExampleBreakpointMarke
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-          &lt;a href="hglegal.htm"&gt;&lt;img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2003.  All Rights Reserved." BORDER=0 height=12 width=195&gt;&lt;/a&gt;
+         &lt;a href=&quot;hglegal.htm&quot;&gt;&lt;img SRC=&quot;ngibmcpy.gif&quot; ALT=&quot;Copyright IBM Corp. 2000, 2003.  All Rights Reserved.&quot; BORDER=0 height=12 width=195&gt;&lt;/a&gt;
       </documentation>
    </annotation>
 

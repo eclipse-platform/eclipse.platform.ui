@@ -1,12 +1,19 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HEAD><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<STYLE type="text/css">
+div.dtd-fragment {
+	width: 100%;
+	border: none;
+	background-color: #eee;
+}
+</STYLE>
 </HEAD>
 <HTML>
 <BODY>
 <H1><CENTER>Breakpoints</CENTER></H1>
 <b><i>Identifier: </i></b>org.eclipse.debug.core.breakpoints<p>
 <b><i>Description: </i></b>This extension point defines a mechanism for defining new types of breakpoints.<p><b><i>Configuration Markup:</i></b><p>
-<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT extension (breakpoint*)&gt;</font></samp>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.extension">extension</a> (<a href="#e.breakpoint">breakpoint</a>*)&gt;</font></samp>
 <br><br><samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST extension</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;point&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
@@ -17,7 +24,7 @@
 <li><b>id</b> - an optional identifier of the extension instance</li>
 <li><b>name</b> - an optional name of the extension instance</li>
 </ul>
-<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT breakpoint EMPTY&gt;</font></samp>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.breakpoint">breakpoint</a> EMPTY&gt;</font></samp>
 <br><br><samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST breakpoint</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;markerType&nbsp;CDATA #REQUIRED</samp>
@@ -32,7 +39,7 @@
 
 <p>
 <pre>
- <font color="#000080">&lt;extension point=<font color="#008000">&quot;org.eclipse.debug.core.breakpoint&quot;</font>&gt;</font>
+ <font color="#000080">&lt;extension point=<font color="#008000">&quot;org.eclipse.debug.core.breakpoints&quot;</font>&gt;</font>
   <font color="#000080">&lt;breakpoint
    id=<font color="#008000">&quot;com.example.ExampleBreakpoint&quot;</font>
    markerType=<font color="#008000">&quot;com.example.ExampleBreakpointMarker&quot;</font>

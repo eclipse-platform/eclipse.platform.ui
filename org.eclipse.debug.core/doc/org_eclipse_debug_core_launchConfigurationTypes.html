@@ -1,5 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HEAD><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<STYLE type="text/css">
+div.dtd-fragment {
+	width: 100%;
+	border: none;
+	background-color: #eee;
+}
+</STYLE>
 </HEAD>
 <HTML>
 <BODY>
@@ -8,7 +15,7 @@
 <b><i>Description: </i></b>This extension point provides a configurable mechanism for launching applications.
 Each launch configuration type has a name, supports one or more modes (run and/or debug), and specifies a delegate
 responsible for the implementation of launching an application.<p><b><i>Configuration Markup:</i></b><p>
-<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT extension (launchConfigurationType*)&gt;</font></samp>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.extension">extension</a> (<a href="#e.launchConfigurationType">launchConfigurationType</a>*)&gt;</font></samp>
 <br><br><samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST extension</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;point&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
@@ -19,7 +26,7 @@ responsible for the implementation of launching an application.<p><b><i>Configur
 <li><b>id</b> - an optional identifier of the extension instance</li>
 <li><b>name</b> - an optional name of the extension instance</li>
 </ul>
-<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT launchConfigurationType (fileExtension+)&gt;</font></samp>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.launchConfigurationType">launchConfigurationType</a> (<a href="#e.fileExtension">fileExtension</a>+)&gt;</font></samp>
 <br><br><samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST launchConfigurationType</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delegate&nbsp;CDATA #REQUIRED</samp>
@@ -35,9 +42,9 @@ Launch configuration instances of this type will delegate to instances of this c
 <li><b>modes</b> - specifies a comma-separated list of the modes this type of lauch configuration supports - "run" and/or "debug".</li>
 <li><b>name</b> - specifies a human-readable name for this type of launch configuration.</li>
 <li><b>public</b> - specifies whether this launch configuration type is accessible by users.  Defaults to true if not specified.</li>
-<li><b>category</b> - an optional attribute that specifies this launch configuration type's category. The default value is unspecified (null). Categories are client defined. This attribute was added in the 2.1 release</li>
+<li><b>category</b> - an optional attribute that specifies this launch configuration type's category. The default value is unspecified (null). Categories are client defined. This attribute was added in the 2.1 release.</li>
 </ul>
-<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT fileExtension EMPTY&gt;</font></samp>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.fileExtension">fileExtension</a> EMPTY&gt;</font></samp>
 <br><br><samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST fileExtension</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;extension&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;default&nbsp;&nbsp;&nbsp;(true | false) </samp>
