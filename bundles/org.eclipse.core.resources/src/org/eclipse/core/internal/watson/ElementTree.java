@@ -634,6 +634,49 @@ public boolean hasAncestor(ElementTree oldTree) {
 	return false;
 }
 /**
+ * Returns true if there have been changes in the tree between the two
+ * given layers.  The two must be related and new must be newer than old.
+ * That is, new must be an ancestor of old.
+ */
+public static boolean hasChanges(ElementTree newLayer, ElementTree oldLayer, boolean inclusive) {
+	// if any of the layers are null, assume that things have changed
+	if (newLayer == null || oldLayer == null)
+		return true;
+
+	// The tree structure has the top layer(s) (i.e., tree) parentage pointing down to a complete
+	// layer whose parent is null.  The bottom layers (i.e., operationTree) point up to the 
+	// common complete layer whose parent is null.  The complete layer moves up as
+	// changes happen.  To see if any changes have happened, we should consider only
+	// layers whose parent is not null.  That is, skip the complete layer as it will clearly not be
+	// empty.
+	
+	// look down from the current layer (always inclusive) if the top layer is mutable
+	ElementTree stopLayer = null;
+	if (newLayer.isImmutable()) 
+		// if the newLayer is immutable, the tree structure all points up so ensure that
+		// when searching up, we stop at newLayer (inclusive)
+		stopLayer = newLayer.getParent();
+	else {
+		ElementTree layer = newLayer;
+		while (layer != null && layer.getParent() != null) {
+			if (!layer.getDataTree().isEmptyDelta())
+				return true;
+			layer = layer.getParent();
+		}
+	}
+
+	// look up from the layer at which we started to null or newLayer's parent (variably inclusive)
+	// depending on whether newLayer is mutable.
+	ElementTree layer = inclusive ? oldLayer : oldLayer.getParent();
+	while (layer != null && layer.getParent() != stopLayer) {
+		if (!layer.getDataTree().isEmptyDelta())
+			return true;
+		layer = layer.getParent();
+	}
+	// didn't find anything that changed
+	return false;
+}
+/**
  * Makes this tree immutable (read-only); ignored if it is already
  * immutable.
  */
@@ -730,10 +773,10 @@ public ElementTree mergeDeltaChain(IPath path, ElementTree[] trees) {
 			current.immutable();
 
 			/* replace the tree in the array */
+			/* we have to go through all trees because there may be duplicates */
 			for (int i = 0; i < trees.length; i++) {
 				if (trees[i] == toMerge) {
 					trees[i] = current;
-					break;
 				}
 			}
 			current = current.newEmptyDelta();
