@@ -20,6 +20,20 @@ public class XMLNavGenerator extends XMLGenerator {
 	protected Vector viewNames = new Vector();
 
 	protected static final String NAV_XML_FILENAME = "_nav.xml";
+	
+	// XML escape constants
+	protected static final int AMP			= '&';
+	protected static final int GT			= '>';
+	protected static final int LT			= '<';
+	protected static final int QUOT			= '\"';
+	protected static final int APOS			= '\'';
+	
+	protected static final String XML_AMP	= "&amp;";
+	protected static final String XML_GT	= "&gt;";
+	protected static final String XML_LT	= "&lt;";
+	protected static final String XML_QUOT	= "&quot;";
+	protected static final String XML_APOS	= "&apos;";
+
 
 	/**
 	 * @param viewSet com.ibm.itp.ua.view.ViewSet
@@ -168,24 +182,24 @@ public class XMLNavGenerator extends XMLGenerator {
 	// returns a String that is a valid XML string
 	public static String getValidXMLString (String aLabel) {
 		StringBuffer buffer = new StringBuffer(aLabel);
-		updateXMLBuffer(buffer, "&",  "&amp;");
-		updateXMLBuffer(buffer, ">",  "&gt;");
-		updateXMLBuffer(buffer, "<",  "&lt;");
-		updateXMLBuffer(buffer, "\'", "&apos;");
-		updateXMLBuffer(buffer, "\"", "&quot;");
+		updateXMLBuffer(buffer, AMP,  XML_AMP);
+		updateXMLBuffer(buffer, GT,  XML_GT);
+		updateXMLBuffer(buffer, LT,  XML_LT);
+		updateXMLBuffer(buffer, APOS, XML_APOS);
+		updateXMLBuffer(buffer, QUOT, XML_QUOT);
 		
 		return buffer.toString();
 	} 
 	
 	
-	private static void updateXMLBuffer(StringBuffer buffer, String invalidXMLString, String validXMLString ) {
+	private static void updateXMLBuffer(StringBuffer buffer, int invalidXMLChar, String validXMLString ) {
 		String label = buffer.toString();
-		int x = label.indexOf(invalidXMLString);
+		int x = label.indexOf(invalidXMLChar);
 		while (x != -1) {
 			buffer.deleteCharAt(x);
 			buffer.insert(x, validXMLString);
 			label = buffer.toString();
-			x = label.indexOf(invalidXMLString, x+1);
+			x = label.indexOf(invalidXMLChar, x+1);
 		}
 		
 		return;		
