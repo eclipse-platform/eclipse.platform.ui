@@ -25,8 +25,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 public class SelectLogicalStructureAction extends Action {
 	
 	private VariablesView fView;
-	private ILogicalStructureType[] fTypes;
-	private int fIndex;
+    private ILogicalStructureType fType;
 
 	/**
 	 * 
@@ -35,11 +34,10 @@ public class SelectLogicalStructureAction extends Action {
 	 * @param value the value for which logical structures are to be chosen
 	 * @param index the offset into the given group that this action enables
 	 */
-	public SelectLogicalStructureAction(VariablesView view, ILogicalStructureType[] group, IValue value, int index) {
-		super(group[index].getDescription(value), IAction.AS_CHECK_BOX);
+	public SelectLogicalStructureAction(VariablesView view, ILogicalStructureType type, IValue value) {
+		super(type.getDescription(value), IAction.AS_CHECK_BOX);
 		setView(view);
-		fTypes = group;
-		fIndex = index;
+		fType= type;
 	}
 
 	/* (non-Javadoc)
@@ -56,13 +54,8 @@ public class SelectLogicalStructureAction extends Action {
 		BusyIndicator.showWhile(getView().getViewer().getControl().getDisplay(), new Runnable() {
 			public void run() {
 				IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
-				for (int i = 0; i < fTypes.length; i++) {
-					if (i == fIndex && isChecked()) {
-						store.setValue(VariablesView.LOGICAL_STRUCTURE_TYPE_PREFIX + fTypes[i].getId(), 1);
-					} else {
-						store.setValue(VariablesView.LOGICAL_STRUCTURE_TYPE_PREFIX + fTypes[i].getId(), -1);
-					}
-				}
+                int value= isChecked() ? 1 : -1;
+				store.setValue(VariablesView.LOGICAL_STRUCTURE_TYPE_PREFIX + fType.getId(), value);
 				getView().getViewer().refresh();					
 			}
 		});			

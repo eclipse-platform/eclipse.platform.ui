@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.variables;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILogicalStructureType;
@@ -101,29 +104,40 @@ public class AvailableLogicalStructuresAction extends Action implements IMenuCre
 		Action firstAction = null;
 		String firstKey = null;
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
+        List enabled= new ArrayList();
 		if (types != null && types.length > 0) {
 			for (int i = 0; i < types.length; i++) {
-				Action action = new SelectLogicalStructureAction(getView(), types, getValue(), i);
-				StringBuffer label= new StringBuffer();
-				//add the numerical accelerator
-				if (i < 9) {
-					label.append('&');
-					label.append(i + 1);
-					label.append(' ');
-				}
-				label.append(action.getText());
-				action.setText(label.toString());
+                ILogicalStructureType type= types[i];
+				Action action = new SelectLogicalStructureAction(getView(), type, getValue());
 				String key = VariablesView.LOGICAL_STRUCTURE_TYPE_PREFIX + types[i].getId();
 				if (i == 0) {
 					firstAction = action;
 					firstKey = key;
 				}
+                StringBuffer label= new StringBuffer();
+                //add the numerical accelerator
+                if (i < 9) {
+                    label.append('&');
+                    label.append(i + 1);
+                    label.append(' ');
+                }
+                label.append(action.getText());
 				int value = store.getInt(key);
 				exist = exist || value != 0;
-				action.setChecked(value == 1);
+                if (value == 1) {
+                    action.setChecked(true);
+                    enabled.add(action);
+                }
+                action.setText(label.toString());
 				addActionToMenu(fMenu, action);
 			}
 		}
+        if (enabled.size() > 1) {
+            Action displayed= ((Action) enabled.get(0));
+            StringBuffer label= new StringBuffer(displayed.getText());
+            label.append(VariablesViewMessages.getString("AvailableLogicalStructuresAction.2")); //$NON-NLS-1$
+            displayed.setText(label.toString());
+        }
 		if (!exist && firstAction != null) {
 			firstAction.setChecked(true);
 			store.setValue(firstKey, 1);
