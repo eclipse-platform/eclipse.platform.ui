@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -173,9 +174,13 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 				case MERGED: // merging contents into a file that exists locally
 					// Ensure we don't leave the file in a partially written state
 					IFile tempFile = file.getParent().getFile(new Path(file.getName() + TEMP_FILE_EXTENSION));
-					tempFile.create(stream, true /*force*/, monitor);
-					file.delete(false, true, monitor);
-					tempFile.move(new Path(file.getName()), true /*force*/, false /*history*/, monitor);
+					monitor.beginTask(null, 100);
+					if (tempFile.exists()) 
+						tempFile.delete(true, Policy.subMonitorFor(monitor, 25));
+					tempFile.create(stream, true /*force*/, Policy.subMonitorFor(monitor, 25));
+					file.delete(false, true, Policy.subMonitorFor(monitor, 25));
+					tempFile.move(new Path(file.getName()), true /*force*/, false /*history*/, Policy.subMonitorFor(monitor, 25));
+					monitor.done();
 					break;
 				case UPDATE_EXISTING: // creating a new file so it should exist locally
 					file.setContents(stream, true /*force*/, true /*keep history*/, monitor);
