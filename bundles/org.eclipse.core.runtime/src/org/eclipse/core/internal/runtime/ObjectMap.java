@@ -8,15 +8,18 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.core.internal.jobs;
+package org.eclipse.core.internal.runtime;
 
 import java.util.*;
+import org.eclipse.core.internal.preferences.StringPool;
 
 /**
  * A specialized map implementation that is optimized for a small set of object
  * keys.
  * 
  * Implemented as a single array that alternates keys and values.
+ * 
+ * Note: This class is copied from org.eclipse.core.resources
  */
 public class ObjectMap implements Map {
 	// 8 attribute keys, 8 attribute values
@@ -24,6 +27,13 @@ public class ObjectMap implements Map {
 	protected static final int GROW_SIZE = 10;
 	protected int count = 0;
 	protected Object[] elements = null;
+	
+	/**
+	 * Creates a new object map.
+	 */
+	public ObjectMap() {
+		this(DEFAULT_SIZE);
+	}
 
 	/**
 	 * Creates a new object map.
@@ -161,6 +171,18 @@ public class ObjectMap implements Map {
 	}
 
 	/**
+	 * Returns all keys in this table as an array.
+	 */
+	public String[] keys() {
+		String[] result = new String[count];
+		int next = 0;
+		for (int i = 0; i < elements.length; i = i + 2)
+			if (elements[i] != null)
+				result[next++] = (String) elements[i];
+		return result;
+	}
+
+	/**
 	 * @see Map#keySet() 
 	 * 
 	 * Note: This implementation does not conform properly to the
@@ -176,7 +198,7 @@ public class ObjectMap implements Map {
 		}
 		return result;
 	}
-
+	
 	/**
 	 * @see Map#put(java.lang.Object, java.lang.Object)
 	 */
@@ -252,6 +274,21 @@ public class ObjectMap implements Map {
 			}
 		}
 		return null;
+	}
+
+	/* (non-Javadoc
+	 * Method declared on IStringPoolParticipant
+	 */
+	public void shareStrings(StringPool set) {
+		//copy elements for thread safety
+		Object[] array = elements;
+		if (array == null)
+			return;
+		for (int i = 0; i < array.length; i++) {
+			Object o = array[i];
+			if (o instanceof String)
+				array[i] = set.add((String) o);
+		}
 	}
 
 	/**
