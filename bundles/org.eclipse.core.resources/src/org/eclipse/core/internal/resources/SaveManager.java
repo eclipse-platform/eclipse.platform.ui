@@ -12,6 +12,7 @@ package org.eclipse.core.internal.resources;
 
 import java.io.*;
 import java.util.*;
+import org.eclipse.core.internal.events.*;
 import org.eclipse.core.internal.events.BuilderPersistentInfo;
 import org.eclipse.core.internal.events.ResourceComparator;
 import org.eclipse.core.internal.localstore.*;
@@ -70,6 +71,11 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 
 	protected boolean snapshotRequested;
 	protected Workspace workspace;
+	//declare debug messages as fields to get sharing
+	private static final String DEBUG_START = " starting..."; //$NON-NLS-1$
+	private static final String DEBUG_FULL_SAVE = "Full save on workspace: "; //$NON-NLS-1$
+	private static final String DEBUG_PROJECT_SAVE = "Save on project "; //$NON-NLS-1$
+	private static final String DEBUG_SNAPSHOT = "Snapshot: "; //$NON-NLS-1$
 
 	public SaveManager(Workspace workspace) {
 		this.workspace = workspace;
@@ -135,6 +141,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 						/* Remove entry for defective plug-in from this save operation */
 						it.remove();
 					}
+
 					public void run() throws Exception {
 						executeLifecycle(lifecycle, participant, context);
 					}
@@ -348,6 +355,53 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	protected Plugin[] getSaveParticipantPlugins() {
 		synchronized (saveParticipants) {
 			return (Plugin[]) saveParticipants.keySet().toArray(new Plugin[saveParticipants.size()]);
+		}
+	}
+
+	/**
+	 * Hooks the end of a save operation, for debugging and performance
+	 * monitoring purposes.
+	 */
+	private void hookEndSave(int kind, IProject project, long start) {
+		if (ResourceStats.TRACE_SNAPSHOT && kind == ISaveContext.SNAPSHOT)
+			ResourceStats.endSnapshot();
+		if (Policy.DEBUG_SAVE) {
+			String endMessage = null;
+			switch (kind) {
+				case ISaveContext.FULL_SAVE :
+					endMessage = DEBUG_FULL_SAVE; 
+					break;
+				case ISaveContext.SNAPSHOT :
+					endMessage = DEBUG_SNAPSHOT; 
+					break;
+				case ISaveContext.PROJECT_SAVE :
+					endMessage = DEBUG_PROJECT_SAVE + project.getFullPath() + ": "; //$NON-NLS-1$
+					break;
+			}
+			if (endMessage != null)
+				System.out.println(endMessage + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$
+		}
+	}
+
+	/**
+	 * Hooks the start of a save operation, for debugging and performance
+	 * monitoring purposes.
+	 */
+	private void hookStartSave(int kind, Project project) {
+		if (ResourceStats.TRACE_SNAPSHOT && kind == ISaveContext.SNAPSHOT)
+			ResourceStats.startSnapshot();
+		if (Policy.DEBUG_SAVE) {
+			switch (kind) {
+				case ISaveContext.FULL_SAVE :
+					System.out.println(DEBUG_FULL_SAVE + DEBUG_START ); //$NON-NLS-1$
+					break;
+				case ISaveContext.SNAPSHOT :
+					System.out.println(DEBUG_SNAPSHOT + DEBUG_START); //$NON-NLS-1$ 
+					break;
+				case ISaveContext.PROJECT_SAVE :
+					System.out.println(DEBUG_PROJECT_SAVE + project.getFullPath() + DEBUG_START); //$NON-NLS-1$ 
+					break;
+			}
 		}
 	}
 
@@ -868,24 +922,6 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	}
 
 	public IStatus save(int kind, Project project, IProgressMonitor monitor) throws CoreException {
-		String endMessage = null;
-		if (Policy.DEBUG_SAVE) {
-			switch (kind) {
-				case ISaveContext.FULL_SAVE :
-					System.out.println("Full save on workspace: starting..."); //$NON-NLS-1$
-					endMessage = "Full save on workspace: "; //$NON-NLS-1$
-					break;
-				case ISaveContext.SNAPSHOT :
-					System.out.println("Snapshot: starting..."); //$NON-NLS-1$
-					endMessage = "Snapshot: "; //$NON-NLS-1$
-					break;
-				case ISaveContext.PROJECT_SAVE :
-					System.out.println("Save on project " + project.getFullPath() + ": starting..."); //$NON-NLS-1$ //$NON-NLS-2$
-					endMessage = "Save on project " + project.getFullPath() + ": "; //$NON-NLS-1$ //$NON-NLS-2$
-					break;
-			}
-		}
-		long start = System.currentTimeMillis();
 		monitor = Policy.monitorFor(monitor);
 		try {
 			String message = Messages.resources_saving_0;
@@ -896,6 +932,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			try {
 				workspace.prepareOperation(rule, monitor);
 				workspace.beginOperation(false);
+				hookStartSave(kind, project);
+				long start = System.currentTimeMillis();
 				Map contexts = computeSaveContexts(getSaveParticipantPlugins(), kind, project);
 				broadcastLifecycle(PREPARE_TO_SAVE, contexts, warnings, Policy.subMonitorFor(monitor, 1));
 				try {
@@ -963,8 +1001,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 					//this must be done after commiting save contexts to update participant save numbers
 					saveMasterTable();
 					broadcastLifecycle(DONE_SAVING, contexts, warnings, Policy.subMonitorFor(monitor, 1));
-					if (Policy.DEBUG_SAVE && endMessage != null)
-						System.out.println(endMessage + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$
+					hookEndSave(kind, project, start);
 					return warnings;
 				} catch (CoreException e) {
 					broadcastLifecycle(ROLLBACK, contexts, warnings, Policy.subMonitorFor(monitor, 1));
@@ -1091,6 +1128,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	protected void setSaveNumber(String pluginId, int number) {
 		masterTable.setProperty(SAVE_NUMBER_PREFIX + pluginId, new Integer(number).toString());
 	}
+
 	/* (non-Javadoc)
 	 * Method declared on IStringPoolParticipant
 	 */
