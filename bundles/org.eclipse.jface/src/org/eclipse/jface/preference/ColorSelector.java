@@ -12,6 +12,9 @@ package org.eclipse.jface.preference;
 
 
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
@@ -30,7 +33,9 @@ public class ColorSelector {
 	RGB fColorValue;
 	Color fColor;
 	Button fButton;
-
+	private IPropertyChangeListener propertyChangeListener;
+	static String VALUE = "VALUE";
+	
 	/**
 	 * Create a new instance of the reciever and the
 	 * button that it wrappers in the supplied parent Composite
@@ -54,8 +59,10 @@ public class ColorSelector {
 				colorDialog.setRGB(fColorValue);
 				RGB newColor = colorDialog.open();
 				if (newColor != null) {
+					RGB oldColor = fColorValue;
 					fColorValue = newColor;
 					updateColorImage();
+					fireValueChanged(VALUE, oldColor, newColor);
 				}
 			}
 		});
@@ -157,4 +164,33 @@ public class ColorSelector {
 	public void setEnabled(boolean state) {
 		getButton().setEnabled(state);
 	}
+
+	/**
+	 * Sets or removes the property change listener for this field editor.
+	 * <p>
+	 * Note that field editors can support only a single listener.
+	 * </p>
+	 *
+	 * @param listener a property change listener, or <code>null</code>
+	 *  to remove
+	 */
+	public void setPropertyChangeListener(IPropertyChangeListener listener) {
+		propertyChangeListener = listener;
+	}
+	
+	/**
+	 * Informs this field editor's listener, if it has one, about a change to
+	 * one of this field editor's properties.
+	 *
+	 * @param property the field editor property name, 
+	 *   such as <code>VALUE</code> or <code>IS_VALID</code>
+	 * @param oldValue the old value object, or <code>null</code>
+	 * @param newValue the new value, or <code>null</code>
+	 */
+	protected void fireValueChanged(String property, Object oldValue, Object newValue) {
+		if (propertyChangeListener == null)
+			return;
+		propertyChangeListener.propertyChange(new PropertyChangeEvent(this, property, oldValue, newValue));
+	}
+	
 }

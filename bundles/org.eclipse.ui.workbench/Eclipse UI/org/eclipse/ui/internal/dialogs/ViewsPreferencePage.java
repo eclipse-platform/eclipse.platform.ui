@@ -16,7 +16,6 @@ import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.*;
@@ -256,10 +255,13 @@ public class ViewsPreferencePage
 		parentComposite.setEnabled(!defaultColor);
 		colorSchemeTabBGColorEditor.setEnabled(!defaultColor, parentComposite);
 		colorSchemeTabFGColorEditor.setEnabled(!defaultColor, parentComposite);
-		if (!defaultColor)
-			colorThemeDemo.setTabBGColor(new Color(parentComposite.getDisplay(), colorSchemeTabBGColorEditor.getColorSelector().getColorValue()));
-		else
-			colorThemeDemo.setTabBGColor(JFaceColors.getTabFolderBackground(parentComposite.getDisplay()));
+		if (!defaultColor) {
+			colorThemeDemo.setTabSelectionBGColor(new Color(parentComposite.getDisplay(), colorSchemeTabBGColorEditor.getColorSelector().getColorValue()));
+			colorThemeDemo.setTabSelectionFGColor(new Color(parentComposite.getDisplay(), colorSchemeTabFGColorEditor.getColorSelector().getColorValue()));
+		} else {
+			colorThemeDemo.setTabSelectionBGColor(JFaceColors.getDefaultColor(JFacePreferences.SCHEME_TAB_SELECTION_BACKGROUND));
+			colorThemeDemo.setTabSelectionFGColor(JFaceColors.getDefaultColor(JFacePreferences.SCHEME_TAB_SELECTION_FOREGROUND));
+		}
 	}
 	
 	/**
@@ -440,11 +442,8 @@ public class ViewsPreferencePage
 		hyperlinkColorEditor.store();
 		activeHyperlinkColorEditor.store();
 		useDefault.store();
-//		colorSchemeBGColorEditor.store();
-//		colorSchemeFGColorEditor.store();
-//		colorSchemeSelBGColorEditor.store();
-//		colorSchemeSelFGColorEditor.store();
-		
+		colorSchemeTabBGColorEditor.store();
+		colorSchemeTabFGColorEditor.store();
 		return true;
 	}
 }

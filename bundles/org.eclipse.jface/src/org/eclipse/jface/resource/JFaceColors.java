@@ -16,6 +16,7 @@ import java.util.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
@@ -58,8 +59,37 @@ public class JFaceColors {
 		JFaceDefaultColorMap.put(SCHEME_TAB_SELECTION_FOREGROUND, d.getSystemColor(SWT.COLOR_TITLE_FOREGROUND));
 		
 		UserColorMap = new Hashtable();
+		// If the user is not using the system settings, fill in a color map for all assignable
+		// user colors.  (See ViewsPreferencePage), for ones which have not been set this color 
+		// map returns null and the code should fall through to the default color map
+		if (!getUseDefaultTheme()) {
+			Color temp;
+			if ((temp = getUserColor(d, SCHEME_TAB_SELECTION_BACKGROUND)) != null)
+				UserColorMap.put(SCHEME_TAB_SELECTION_BACKGROUND, temp);
+			if ((temp = getUserColor(d, SCHEME_TAB_SELECTION_FOREGROUND)) != null)
+				UserColorMap.put(SCHEME_TAB_SELECTION_FOREGROUND, temp);
+		}
 	}
 	
+	/**
+	 * Answer the color saved in the preferences, or <code>null</code> if it was not set.
+	 * 
+	 * @param preferenceName
+	 * @param display
+	 * @return Color   the user color setting
+	 */
+	private static Color getUserColor(Display display, String preferenceName) {
+		IPreferenceStore store = JFacePreferences.getPreferenceStore();
+		if (store == null){
+			return null;
+		} else {
+			RGB rgb = PreferenceConverter.getColor(store, preferenceName);
+			if (rgb != PreferenceConverter.getDefaultColor(store, preferenceName))
+				return new Color(display, rgb);
+		}
+		return null;
+	}
+
 	/**
 	 * Get the Color used for banner backgrounds
 	 */
@@ -160,7 +190,7 @@ public class JFaceColors {
 	 * @param colorKey
 	 * @return Color   the color value mapped to the provided color key
 	 */
-	private static Color getDefaultColor(String colorKey) {
+	public static Color getDefaultColor(String colorKey) {
 		return (Color)JFaceDefaultColorMap.get(colorKey);
 	}
 
