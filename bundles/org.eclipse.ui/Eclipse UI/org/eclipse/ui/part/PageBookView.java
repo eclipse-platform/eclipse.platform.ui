@@ -117,6 +117,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				if (event.getProperty() == SubActionBars.P_ACTION_HANDLERS
+					&& activeRec != null
 					&& event.getSource() == activeRec.subActionBars) {
 					refreshGlobalActionHandlers(); 
 				}
@@ -533,7 +534,7 @@ public void partBroughtToTop(IWorkbenchPart part) {
  */
 public void partClosed(IWorkbenchPart part) {
 	// Update the active part.
-	if (activeRec.part == part) {
+	if (activeRec != null && activeRec.part == part) {
 		activeRec.subActionBars.dispose();
 		// remove our selection listener
 		ISelectionProvider provider = ((PageSite)mapPageToSite.get(activeRec.page)).getSelectionProvider();
