@@ -60,6 +60,7 @@ public final class InternalBootLoader {
 	private static final String EXPORT_PUBLIC = "public";
 	private static final String EXPORT_PROTECTED = "protected";
 	private static final String META_AREA = ".metadata";
+	private static final String WORKSPACE = "workspace";	
 	private static final String PLUGIN_PATH = ".plugin-path";
 	private static final String BOOTDIR = PLUGINSDIR + BOOTNAME + "/";
 	private static final String RUNTIMEDIR = PLUGINSDIR + RUNTIMENAME + "/";
@@ -92,6 +93,7 @@ public final class InternalBootLoader {
 	// command line arguments
 	private static final String DEBUG = "-debug";
 	private static final String PLATFORM = "-platform";
+	private static final String DATA = "-data";
 	private static final String PLUGINS = "-plugins";
 	private static final String APPLICATION = "-application";
 	private static final String DEV = "-dev";
@@ -520,16 +522,23 @@ private static String[] initialize(URL pluginPathLocation, String location, Stri
 	DelegatingURLClassLoader.devClassPath = devClassPath;
 	setupSystemContext();
 
-	// if a platform location was not found in the arguments, set it to user.dir.		
-	// In VAJ, set user.dir to be <code>eclipse</code> in the parent of the install 
-	// directory.  This typically makes the platform working directory:
-	//		.../ide/eclipse
+	// if a platform location was not found in the arguments, compute one.		
 	if (baseLocation == null) {
 		if (inVAJ || inVAME) {
+			// In VAJ, set user.dir to be <code>eclipse</code> in the parent of the install 
+			// directory.  This typically makes the platform working directory:
+			//		.../ide/eclipse
 			String dir = new File(new File(getInstallURL().getFile()).getParent(), "eclipse").getAbsolutePath();
 			System.setProperty("user.dir", dir);
+		} else {
+			// otherwise, use user.dir.  If user.dir overlaps with the install dir, then make the 
+			// location be a workspace subdir of the install location.
+			baseLocation = System.getProperty("user.dir");
+			URL installURL = resolve(getInstallURL());
+			String installLocation = new File(installURL.getFile()).getAbsolutePath();
+			if (baseLocation.equals(installLocation))
+				baseLocation = new File(installLocation, WORKSPACE).getAbsolutePath();
 		}
-		baseLocation = System.getProperty("user.dir");
 	}
 
 	// load any debug options
@@ -697,7 +706,7 @@ private static String[] processCommandLine(String[] args) throws Exception {
 		// look for the platform location.  Only set it if not already set. This 
 		// preserves the value set in the startup() parameter.  Be sure however
 		// to consume the command-line argument.
-		if (args[i - 1].equalsIgnoreCase(PLATFORM)) {
+		if (args[i - 1].equalsIgnoreCase(PLATFORM) || args[i - 1].equalsIgnoreCase(DATA)) {
 			found = true;
 			if (baseLocation == null)
 				baseLocation = arg;
