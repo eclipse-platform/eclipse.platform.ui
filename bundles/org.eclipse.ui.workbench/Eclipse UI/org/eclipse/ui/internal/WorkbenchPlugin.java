@@ -25,7 +25,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -689,7 +688,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     public void start(BundleContext context) throws Exception {
         super.start(context);
         bundleContext = context;
-        Policy.setLog(getLog());
+        
+        JFaceUtil.initializeJFace();
 		
 		 Window.setDefaultOrientation(getDefaultOrientation());
 

@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
@@ -487,7 +486,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
             }
 
             // update icon and label
-            Platform.run(new UpdateItemSafeRunnable(item, element));
+            SafeRunnable.run(new UpdateItemSafeRunnable(item, element));
         }
     }
 
@@ -539,7 +538,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         Object[] listeners = treeListeners.getListeners();
         for (int i = 0; i < listeners.length; ++i) {
             final ITreeViewerListener l = (ITreeViewerListener) listeners[i];
-            Platform.run(new SafeRunnable() {
+            SafeRunnable.run(new SafeRunnable() {
                 public void run() {
                     l.treeCollapsed(event);
                 }
@@ -559,7 +558,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         Object[] listeners = treeListeners.getListeners();
         for (int i = 0; i < listeners.length; ++i) {
             final ITreeViewerListener l = (ITreeViewerListener) listeners[i];
-            Platform.run(new SafeRunnable() {
+            SafeRunnable.run(new SafeRunnable() {
                 public void run() {
                     l.treeExpanded(event);
                 }

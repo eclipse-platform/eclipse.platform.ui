@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
@@ -158,7 +157,7 @@ public abstract class Viewer implements IInputSelectionProvider {
         Object[] listeners = selectionChangedListeners.getListeners();
         for (int i = 0; i < listeners.length; ++i) {
             final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
-            Platform.run(new SafeRunnable() {
+            SafeRunnable.run(new SafeRunnable() {
                 public void run() {
                     l.selectionChanged(event);
                 }

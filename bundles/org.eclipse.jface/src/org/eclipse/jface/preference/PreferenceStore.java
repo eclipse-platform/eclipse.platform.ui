@@ -21,10 +21,12 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
 
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.SafeRunnable;
 
 /**
  * A concrete preference store implementation based on an internal
@@ -129,18 +131,14 @@ public class PreferenceStore implements IPersistentPreferenceStore {
                 && (oldValue == null || !oldValue.equals(newValue))) {
             final PropertyChangeEvent pe = new PropertyChangeEvent(this, name,
                     oldValue, newValue);
-            //	FIXME: need to do this without dependency on
-            // org.eclipse.core.runtime
-            //		Platform.run(new
-            // SafeRunnable(JFaceResources.getString("PreferenceStore.changeError"))
-            // { //$NON-NLS-1$
-            //			public void run() {
             for (int i = 0; i < finalListeners.length; ++i) {
-                IPropertyChangeListener l = (IPropertyChangeListener) finalListeners[i];
-                l.propertyChange(pe);
+                final IPropertyChangeListener l = (IPropertyChangeListener) finalListeners[i];
+                SafeRunnable.run(new SafeRunnable(JFaceResources.getString("PreferenceStore.changeError")) { //$NON-NLS-1$
+                		public void run() {
+  			                l.propertyChange(pe);
+                		}
+                });
             }
-            //			}
-            //		});
         }
     }
 

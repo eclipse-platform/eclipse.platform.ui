@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,17 +7,16 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Chris Gross (schtoo@schtoo.com) - support for ILogger added
+ *       (bug 49497 [RCP] JFace dependency on org.eclipse.core.runtime enlarges standalone JFace applications)
  *******************************************************************************/
 package org.eclipse.jface.util;
 
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.osgi.framework.Bundle;
 
 /**
- * The Policy class is a class to handle debug flags within the JFace plug-in.
+ * The Policy class handles debug flags and logging within JFace.
+ * 
  * @since 3.0
  */
 public class Policy {
@@ -28,12 +27,11 @@ public class Policy {
     public static final boolean DEFAULT = false;
 
     /**
-     * Constant for the first segment of jface debug option
-     * names.
+     * The unique identifier of the JFace plug-in.
      */
     public static final String JFACE = "org.eclipse.jface";//$NON-NLS-1$
 
-    private static ILog log;
+    private static ILogger log;
 
     /**
      * A flag to indicate whether unparented dialogs should
@@ -57,81 +55,44 @@ public class Policy {
      */
 
     public static boolean TRACE_TOOLBAR = DEFAULT;
-    static {
-        if (getDebugOption("/debug")) { //$NON-NLS-1$
-            DEBUG_DIALOG_NO_PARENT = getDebugOption("/debug/dialog/noparent"); //$NON-NLS-1$
-            TRACE_ACTIONS = getDebugOption("/trace/actions"); //$NON-NLS-1$
-            TRACE_TOOLBAR = getDebugOption("/trace/toolbarDisposal"); //$NON-NLS-1$
-            SHOW_PREFERENCES_NEWLOOK = getDebugOption("/newlook/preferences/showNewLook");//$NON-NLS-1$
-        }
-    }
+
 
     /**
-     * Get the dummy log to use if none has been set
-     * @return ILog
+     * Returns the dummy log to use if none has been set
      */
-    private static ILog getDummyLog() {
-        return new ILog() {
-            /*
-             * (non-Javadoc)
-             * 
-             * @see org.eclipse.core.runtime.ILog#addLogListener(org.eclipse.core.runtime.ILogListener)
-             */
-            public void addLogListener(ILogListener listener) {
-                // Do nothing as this is a dummy placeholder
-            }
-
-            /*
-             * (non-Javadoc)
-             * 
-             * @see org.eclipse.core.runtime.ILog#getBundle()
-             */
-            public Bundle getBundle() {
-                //Do nothing as this is a dummy placeholder
-                return null;
-            }
-
-            /*
-             * (non-Javadoc)
-             * 
-             * @see org.eclipse.core.runtime.ILog#log(org.eclipse.core.runtime.IStatus)
-             */
+    private static ILogger getDummyLog() {
+        return new ILogger() {
             public void log(IStatus status) {
                 System.err.println(status.getMessage());
-            }
-
-            /*
-             * (non-Javadoc)
-             * 
-             * @see org.eclipse.core.runtime.ILog#removeLogListener(org.eclipse.core.runtime.ILogListener)
-             */
-            public void removeLogListener(ILogListener listener) {
-                //Do nothing as this is a dummy placeholder
             }
         };
     }
 
-    private static boolean getDebugOption(String option) {
-        if (Platform.isRunning())
-            return "true".equalsIgnoreCase(Platform.getDebugOption(JFACE + option)); //$NON-NLS-1$
-        return false;
+
+
+    /**
+     * Sets the logger used by JFace to log errors.
+     * 
+     * @param logger the logger to use, or <code>null</code> to use the default logger
+     * @since 3.1
+     */
+    public static void setLog(ILogger logger) {
+        log = logger;
     }
 
     /**
-     * Set the log to be forwarding log.
-     * @param forwardingLog
+     * Returns the logger used by JFace to log errors.
+     * <p>
+     * The default logger prints the status to <code>System.err</code>.
+     * </p>
+     * 
+     * @return the logger
+     * @since 3.1
      */
-    public static void setLog(ILog forwardingLog) {
-        log = forwardingLog;
-    }
-
-    /**
-     * Return the log the receiver is using.
-     * @return ILog
-     */
-    public static ILog getLog() {
+    public static ILogger getLog() {
         if (log == null)
             log = getDummyLog();
         return log;
     }
+
 }

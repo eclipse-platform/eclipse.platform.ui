@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.graphics.Image;
@@ -65,7 +64,7 @@ public class LabelProvider implements ILabelProvider {
         Object[] listeners = this.listeners.getListeners();
         for (int i = 0; i < listeners.length; ++i) {
             final ILabelProviderListener l = (ILabelProviderListener) listeners[i];
-            Platform.run(new SafeRunnable() {
+            SafeRunnable.run(new SafeRunnable() {
                 public void run() {
                     l.labelProviderChanged(event);
                 }

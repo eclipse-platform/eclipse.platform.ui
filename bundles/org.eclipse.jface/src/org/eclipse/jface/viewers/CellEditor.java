@@ -11,7 +11,6 @@
 
 package org.eclipse.jface.viewers;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
@@ -300,7 +299,7 @@ public abstract class CellEditor {
         Object[] array = listeners.getListeners();
         for (int i = 0; i < array.length; i++) {
             final ICellEditorListener l = (ICellEditorListener) array[i];
-            Platform.run(new SafeRunnable() {
+            SafeRunnable.run(new SafeRunnable() {
                 public void run() {
                     l.applyEditorValue();
                 }
@@ -318,7 +317,7 @@ public abstract class CellEditor {
         Object[] array = listeners.getListeners();
         for (int i = 0; i < array.length; i++) {
             final ICellEditorListener l = (ICellEditorListener) array[i];
-            Platform.run(new SafeRunnable() {
+            SafeRunnable.run(new SafeRunnable() {
                 public void run() {
                     l.cancelEditor();
                 }
@@ -338,7 +337,7 @@ public abstract class CellEditor {
         Object[] array = listeners.getListeners();
         for (int i = 0; i < array.length; i++) {
             final ICellEditorListener l = (ICellEditorListener) array[i];
-            Platform.run(new SafeRunnable() {
+            SafeRunnable.run(new SafeRunnable() {
                 public void run() {
                     l.editorValueChanged(oldValidState, newValidState);
                 }
@@ -356,7 +355,7 @@ public abstract class CellEditor {
         Object[] array = propertyChangeListeners.getListeners();
         for (int i = 0; i < array.length; i++) {
             final IPropertyChangeListener l = (IPropertyChangeListener) array[i];
-            Platform.run(new SafeRunnable() {
+            SafeRunnable.run(new SafeRunnable() {
                 public void run() {
                     l.propertyChange(new PropertyChangeEvent(this, actionId,
                             null, null));

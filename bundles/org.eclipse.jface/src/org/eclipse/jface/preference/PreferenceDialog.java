@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogMessageArea;
@@ -29,6 +28,7 @@ import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
@@ -242,7 +242,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		while (nodes.hasNext()) {
 			final IPreferenceNode node = (IPreferenceNode) nodes.next();
 			if (getPage(node) != null) {
-				Platform.run(new SafeRunnable() {
+				SafeRunnable.run(new SafeRunnable() {
 					public void run() {
 						if (!getPage(node).performCancel())
 							return;
@@ -830,7 +830,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 * save any state, and then calls <code>close</code> to close this dialog.
 	 */
 	protected void okPressed() {
-		Platform.run(new SafeRunnable() {
+		SafeRunnable.run(new SafeRunnable() {
 			private boolean errorOccurred;
 
 			/*
@@ -879,12 +879,9 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 			 */
 			public void handleException(Throwable e) {
 				errorOccurred = true;
-				if (Platform.isRunning()) {
-					String bundle = Platform.PI_RUNTIME;
-					Platform.getLog(Platform.getBundle(bundle)).log(
-							new Status(IStatus.ERROR, bundle, 0, e.toString(), e));
-				} else
-					e.printStackTrace();
+				
+				Policy.getLog().log(new Status(IStatus.ERROR, Policy.JFACE, 0, e.toString(), e));
+
 				clearSelectedNode();
 				String message = JFaceResources.getString("SafeRunnable.errorMessage"); //$NON-NLS-1$
 				MessageDialog.openError(getShell(), JFaceResources.getString("Error"), message); //$NON-NLS-1$
@@ -1123,7 +1120,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		// (this allows lazy page control creation)
 		if (currentPage.getControl() == null) {
 			final boolean[] failed = { false };
-			Platform.run(new ISafeRunnable() {
+			SafeRunnable.run(new ISafeRunnable() {
 				public void handleException(Throwable e) {
 					failed[0] = true;
 				}
@@ -1143,7 +1140,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		// label can be wrapped.
 		final Point[] size = new Point[1];
 		final Point failed = new Point(-1, -1);
-		Platform.run(new ISafeRunnable() {
+		SafeRunnable.run(new ISafeRunnable() {
 			public void handleException(Throwable e) {
 				size[0] = failed;
 			}

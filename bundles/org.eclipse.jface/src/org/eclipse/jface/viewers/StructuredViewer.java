@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IOpenEventListener;
 import org.eclipse.jface.util.ListenerList;
@@ -633,7 +632,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		Object[] listeners = doubleClickListeners.getListeners();
 		for (int i = 0; i < listeners.length; ++i) {
 			final IDoubleClickListener l = (IDoubleClickListener) listeners[i];
-			Platform.run(new SafeRunnable() {
+			SafeRunnable.run(new SafeRunnable() {
 				public void run() {
 					l.doubleClick(event);
 				}
@@ -654,7 +653,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		Object[] listeners = openListeners.getListeners();
 		for (int i = 0; i < listeners.length; ++i) {
 			final IOpenListener l = (IOpenListener) listeners[i];
-			Platform.run(new SafeRunnable() {
+			SafeRunnable.run(new SafeRunnable() {
 				public void run() {
 					l.open(event);
 				}
@@ -676,7 +675,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		Object[] listeners = postSelectionChangedListeners.getListeners();
 		for (int i = 0; i < listeners.length; ++i) {
 			final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
-			Platform.run(new SafeRunnable() {
+			SafeRunnable.run(new SafeRunnable() {
 				public void run() {
 					l.selectionChanged(event);
 				}
@@ -1210,10 +1209,12 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * this method.
 	 * </p>
 	 * @param widget
+     *            the widget
 	 * @param element
+     *            the element
 	 */
 	protected final void refreshItem(Widget widget, Object element) {
-		Platform.run(new UpdateItemSafeRunnable(widget, element, true));
+		SafeRunnable.run(new UpdateItemSafeRunnable(widget, element, true));
 	}
 
 	/**
@@ -1652,7 +1653,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 *            the element
 	 */
 	protected final void updateItem(Widget widget, Object element) {
-		Platform.run(new UpdateItemSafeRunnable(widget, element, true));
+		SafeRunnable.run(new UpdateItemSafeRunnable(widget, element, true));
 	}
 
 	/**

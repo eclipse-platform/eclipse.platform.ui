@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Chris Gross (schtoo@schtoo.com) - support for ISafeRunnableRunner added
+ *       (bug 49497 [RCP] JFace dependency on org.eclipse.core.runtime enlarges standalone JFace applications)
  *******************************************************************************/
 package org.eclipse.jface.util;
 
 import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
 
@@ -22,9 +25,12 @@ import org.eclipse.jface.resource.JFaceResources;
  *  be used outside of the UI Thread.</p>
  */
 public abstract class SafeRunnable implements ISafeRunnable {
-    private String message;
-
+    
     private static boolean ignoreErrors = false;
+    
+    private static ISafeRunnableRunner runner;
+    
+    private String message;
 
     /**
      * Creates a new instance of SafeRunnable with a default error message.
@@ -78,4 +84,68 @@ public abstract class SafeRunnable implements ISafeRunnable {
     public static void setIgnoreErrors(boolean flag) {
         ignoreErrors = flag;
     }
+    
+	/**
+     * Returns the safe runnable runner.
+     * 
+	 * @return the safe runnable runner
+	 * 
+	 * @since 3.1
+	 */
+	public static ISafeRunnableRunner getRunner() {
+        if (runner == null) {
+            runner = createDefaultRunner();
+        }
+		return runner;
+	}
+
+    /**
+     * Creates the default safe runnable runner.
+     * 
+     * @return the default safe runnable runner
+     * @since 3.1
+     */
+    private static ISafeRunnableRunner createDefaultRunner() {
+        return new ISafeRunnableRunner() {
+            public void run(ISafeRunnable code) {
+                try {
+                    code.run();
+                } catch (Exception e) {
+                    handleException(code, e);
+                } catch (LinkageError e) {
+                    handleException(code, e);
+                }
+            }
+
+            private void handleException(ISafeRunnable code, Throwable e) {
+                if (!(e instanceof OperationCanceledException)) {
+                    e.printStackTrace();
+                }
+                code.handleException(e);
+            }
+        };
+    }
+    
+	/**
+     * Sets the safe runnable runner.
+     *  
+	 * @param runner the runner to set, or <code>null</code> to reset to the default runner
+	 * @since 3.1
+	 */
+	public static void setRunner(ISafeRunnableRunner runner) {
+		SafeRunnable.runner = runner;
+	}
+
+    /**
+     * Runs the given safe runnable using the safe runnable runner.
+     * This is a convenience method, equivalent to:
+     * <code>SafeRunnable.getRunner().run(runnable)</code>.
+     * 
+     * @param runnable the runnable to run
+     * @since 3.1
+     */
+    public static void run(ISafeRunnable runnable) {
+        getRunner().run(runnable);
+    }
+    
 }

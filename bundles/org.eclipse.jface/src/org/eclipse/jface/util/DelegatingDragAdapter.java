@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
@@ -119,7 +118,7 @@ public class DelegatingDragAdapter implements DragSourceListener {
     public void dragFinished(final DragSourceEvent event) {
         //		if (Policy.DEBUG_DRAG_DROP)
         //			System.out.println("Drag Finished: " + toString()); //$NON-NLS-1$
-        Platform.run(new SafeRunnable() {
+        SafeRunnable.run(new SafeRunnable() {
             public void run() throws Exception {
                 if (currentListener != null) {
                     // there is a listener that can handle the drop, delegate the event
@@ -151,7 +150,7 @@ public class DelegatingDragAdapter implements DragSourceListener {
 
         updateCurrentListener(event); // find a listener that can provide the given data type
         if (currentListener != null) {
-            Platform.run(new SafeRunnable() {
+        	SafeRunnable.run(new SafeRunnable() {
                 public void run() throws Exception {
                     currentListener.dragSetData(event);
                 }
@@ -180,7 +179,7 @@ public class DelegatingDragAdapter implements DragSourceListener {
             final TransferDragSourceListener listener = (TransferDragSourceListener) listeners
                     .get(i);
             event.doit = true; // restore event.doit
-            Platform.run(new SafeRunnable() {
+            SafeRunnable.run(new SafeRunnable() {
                 public void run() throws Exception {
                     listener.dragStart(event);
                 }
