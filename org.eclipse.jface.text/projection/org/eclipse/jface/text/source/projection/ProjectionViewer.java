@@ -952,28 +952,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 						}
 						
 					} finally {
-						
-						if (selection.x != -1 && selection.y != -1) {
-							IRegion widgetRange= modelRange2WidgetRange(new Region(selection.x, selection.y));
-							if (widgetRange != null) {
-								setSelectedRange(selection.x, selection.y);
-							} else if (fInformationMapping != null) {
-								// selection got hidden by the folding operation
-								int line= getDocument().getLineOfOffset(selection.x);
-								int imageLine= fInformationMapping.toClosestImageLine(line);
-								int visibleModelLine= fInformationMapping.toOriginLine(imageLine);
-								if (visibleModelLine < line && getVisibleDocument().getNumberOfLines() > imageLine + 1)
-									visibleModelLine= fInformationMapping.toOriginLine(imageLine + 1);
-								int lineOffset= getDocument().getLineOffset(visibleModelLine);
-								setSelectedRange(lineOffset, 0);
-							}
-						}
-						
-						if (textWidget != null && !textWidget.isDisposed()) {
-							if (topIndex != -1)
-								setTopIndex(topIndex);
-							textWidget.setRedraw(true);
-						}
+						restoreSelection(selection);
+						restoreViewport(topIndex);
 					}
 				}
 				
@@ -981,7 +961,34 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			
 		}
 	}
+
+	private void restoreSelection(Point selection) throws BadLocationException {
+		if (selection.x != -1 && selection.y != -1) {
+			IRegion widgetRange= modelRange2WidgetRange(new Region(selection.x, selection.y));
+			if (widgetRange != null) {
+				setSelectedRange(selection.x, selection.y);
+			} else if (fInformationMapping != null) {
+				// selection got hidden by the folding operation
+				int line= getDocument().getLineOfOffset(selection.x);
+				int imageLine= fInformationMapping.toClosestImageLine(line);
+				int visibleModelLine= fInformationMapping.toOriginLine(imageLine);
+				if (visibleModelLine < line && getVisibleDocument().getNumberOfLines() > imageLine + 1)
+					visibleModelLine= fInformationMapping.toOriginLine(imageLine + 1);
+				int lineOffset= getDocument().getLineOffset(visibleModelLine);
+				setSelectedRange(lineOffset, 0);
+			}
+		}
+	}
 	
+	private void restoreViewport(int topIndex) {
+		StyledText textWidget= getTextWidget();
+		if (textWidget != null && !textWidget.isDisposed()) {
+			if (topIndex != -1)
+				setTopIndex(topIndex);
+			textWidget.setRedraw(true);
+		}
+	}
+
 	private boolean executeProjectionCommands(ProjectionCommandQueue commandQueue, boolean fireRedraw) throws BadLocationException {
 		
 		ProjectionCommand command;
