@@ -1004,11 +1004,6 @@ public IStatus saveState(IMemento memento) {
 	// Save the toolbar layout.
 	if (toolBarLayout != null) {
 		IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
-ArrayList list = toolBarLayout.rememberedPositions;
-System.out.println("remembered " + list.size());
-for (int i=0; i<list.size(); i++) {
-	System.out.println(((CoolItemPosition)list.get(i)).id);
-}
 		result.add(toolBarLayout.saveState(childMem));
 	}
 	return result;
