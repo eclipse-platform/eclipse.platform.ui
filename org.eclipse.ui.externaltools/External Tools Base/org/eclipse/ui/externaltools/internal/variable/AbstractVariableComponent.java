@@ -42,9 +42,6 @@ public abstract class AbstractVariableComponent implements IVariableComponent {
 		// main composite
 		mainGroup = new Group(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		layout.numColumns = 1;
 		GridData gridData = new GridData(GridData.FILL_BOTH);
 		mainGroup.setLayout(layout);
 		mainGroup.setLayoutData(gridData);

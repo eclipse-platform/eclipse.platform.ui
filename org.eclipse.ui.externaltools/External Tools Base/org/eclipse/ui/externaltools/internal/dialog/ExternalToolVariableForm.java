@@ -12,11 +12,9 @@ import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.ui.externaltools.internal.group.IGroupDialogPage;
@@ -92,7 +90,7 @@ public class ExternalToolVariableForm {
 		variableComposite.setLayoutData(data);
 		variableComposite.setFont(font);
 		
-		createVariableComponents(data);
+		createVariableComponents();
 		
 		populateVariableList();
 		
@@ -111,17 +109,11 @@ public class ExternalToolVariableForm {
 	 * and determine the initial size so the form
 	 * can be layout properly.
 	 */
-	private void createVariableComponents(GridData data) {
+	private void createVariableComponents() {
 		for (int i = 0; i < variables.length; i++) {
 			ExternalToolVariable var = variables[i];
 			components[i] = var.getComponent();
 			components[i].createContents(variableComposite, var.getTag(), page);
-			Control control = components[i].getControl();
-			if (control != null) {
-				Point newSize = control.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-				data.widthHint = Math.max(newSize.x, data.widthHint);
-				data.heightHint = Math.max(newSize.y, data.heightHint);
-			}
 		}
 	}
 	
@@ -203,6 +195,9 @@ public class ExternalToolVariableForm {
 	}
 	
 	private void updateVariableComposite(String value, boolean setValue) {
+		if (variableList.getSelectionIndex() == activeComponentIndex) {
+			return;
+		}
 		activeComponentIndex = variableList.getSelectionIndex();
 		setComponentVisible(activeComponentIndex);
 		if (activeComponentIndex != -1 && setValue) {
