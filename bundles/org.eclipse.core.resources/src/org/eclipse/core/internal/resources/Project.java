@@ -663,7 +663,7 @@ public void open(IProgressMonitor monitor) throws CoreException {
 		monitor.subTask(msg);
 		try {
 			workspace.prepareOperation();
-			ResourceInfo info = getResourceInfo(false, false);
+			ProjectInfo info = (ProjectInfo)getResourceInfo(false, false);
 			int flags = getFlags(info);
 			checkExists(flags, true);
 			if (isOpen(flags))
@@ -672,7 +672,7 @@ public void open(IProgressMonitor monitor) throws CoreException {
 			workspace.beginOperation(true);
 			// flush the build order early in case there is a problem
 			workspace.flushBuildOrder();
-			info = getResourceInfo(false, true);
+			info = (ProjectInfo)getResourceInfo(false, true);
 			info.set(M_OPEN);
 			// the M_USED flag is used to indicate the difference between opening a project
 			// for the first time and opening it from a previous close (restoring it from disk)
@@ -680,6 +680,8 @@ public void open(IProgressMonitor monitor) throws CoreException {
 				workspace.getSaveManager().restore(this, Policy.subMonitorFor(monitor, Policy.opWork * 30 / 100));
 			} else {
 				info.set(M_USED);
+				//reconcile any links in the project description
+				reconcileLinks(info.getDescription());
 				workspace.updateModificationStamp(info);
 			}
 			startup();
@@ -861,7 +863,9 @@ protected void updateDescription() throws CoreException {
 		return;
 	workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CHANGE, this));
 	ProjectDescription description = getLocalManager().read(this, false);
-	reconcileLinks(description);
+	//links can only be created if the project is open
+	if (isOpen())
+		reconcileLinks(description);
 	internalSetDescription(description, true);
 }
 /**
