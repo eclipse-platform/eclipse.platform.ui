@@ -519,8 +519,14 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 	}
 	public void dispose() {
 		getSite().getPage().getWorkbenchWindow().getSelectionService().removeSelectionListener(this);
-		branchImage.dispose();
-		versionImage.dispose();
+		if (branchImage != null) {
+			branchImage.dispose();
+			branchImage = null;
+		}
+		if (versionImage != null) {
+			versionImage.dispose();
+			versionImage = null;
+		}
 	}	
 	/**
 	 * Adds the listener that sets the sorter.
