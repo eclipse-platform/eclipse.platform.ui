@@ -94,7 +94,12 @@ class UpdatedHandler extends ResponseHandler {
 				// It is possible that we have a case variant.
 				localDir = session.getUniquePathForCaseSensitivePath(localDir, false);
 				mParent = session.getLocalRoot().getFolder(localDir);
-				Assert.isTrue(mParent.exists());
+				if (!mParent.exists()) {
+					// It is also possible that the path is invalid for this platform
+					localDir = session.getUniquePathForInvalidPath(localDir);
+					mParent = session.getLocalRoot().getFolder(localDir);
+					Assert.isTrue(mParent.exists());
+				}
 			}
 		}
 		ICVSFile mFile = mParent.getFile(fileName);

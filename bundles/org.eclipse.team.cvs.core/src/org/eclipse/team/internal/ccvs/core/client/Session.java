@@ -1155,5 +1155,23 @@ public class Session {
 	protected boolean isIgnoringLocalChanges() {
 		return ignoringLocalChanges;
 	}
+	
+	/**
+	 * Method getUniquePathForInvalidPath.
+	 * @param localDir
+	 * @return String
+	 */
+	public String getUniquePathForInvalidPath(String localDir) {
+		IPath oldPath = new Path(localDir);
+		int count = oldPath.segmentCount();
+		for (int i = 0; i < count; i++) {
+			String segment = oldPath.segment(i);
+			if (segment.endsWith(".")) {
+				segment =  segment + "dot";
+				oldPath = oldPath.removeLastSegments(count - i).append(segment).append(oldPath.removeFirstSegments(i + 1));
+			}
+		}
+		return oldPath.toString();
+	}
 
 }

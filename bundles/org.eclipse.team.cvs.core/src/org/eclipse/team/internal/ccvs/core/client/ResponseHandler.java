@@ -57,38 +57,61 @@ public abstract class ResponseHandler {
 	 * @param repositoryDir the remote path of the folder relative to the repository
 	 * @return the new folder
 	 */
-	protected static ICVSFolder createFolder(Session session,
-		String localDir, String repositoryDir) throws CVSException {
+	protected static ICVSFolder createFolder(
+			Session session,
+			String localDir, 
+			String repositoryDir) throws CVSException {
+		
 		ICVSFolder folder = session.getLocalRoot().getFolder(localDir);
 		if (! folder.exists()) {
 			try {
 				folder.mkdir();
 			} catch (CVSException original) {
 				boolean caseInvariant = false;
-				if (original.getStatus().getCode() == IResourceStatus.CASE_VARIANT_EXISTS) {
-					// We will try to create the mapped child below.
-					caseInvariant = true;
-				} else if (original.getStatus().getCode() == IResourceStatus.RESOURCE_NOT_FOUND) {
-					// The parent of the folder doesn't exist. It could be due to case invariance.
-					// Check if there is a case invariant mapping for the folder
-					String actualLocalDir = session.getUniquePathForCaseSensitivePath(localDir, false);
-					folder = session.getLocalRoot().getFolder(actualLocalDir);
-					try {
-						if (! folder.exists()) folder.mkdir();
-						// We succeed in creating the child of a mapped parent
-						// Since caseInvariant is false, we will fall through
-					} catch (CVSException ex) {
-						if (ex.getStatus().getCode() == IResourceStatus.CASE_VARIANT_EXISTS) {
-							// We will try to create he mapped child below.
-							caseInvariant = true;
-						} else {
-							// The atempt to get the mapped parent failed.
+				switch (original.getStatus().getCode()) {
+					case IResourceStatus.CASE_VARIANT_EXISTS :
+						// We will try to create the mapped child below.
+						caseInvariant = true;
+						break;
+
+					case IResourceStatus.RESOURCE_NOT_FOUND :
+						//	The parent of the folder doesn't exist. It could be due to case invariance.
+						// Check if there is a case invariant mapping for the folder
+						String actualLocalDir = session.getUniquePathForCaseSensitivePath(localDir, false);
+						folder = session.getLocalRoot().getFolder(actualLocalDir);
+						try {
+							if (! folder.exists()) folder.mkdir();
+							// We succeed in creating the child of a mapped parent
+							// Since caseInvariant is false, we will fall through
+						} catch (CVSException ex) {
+							if (ex.getStatus().getCode() == IResourceStatus.CASE_VARIANT_EXISTS) {
+								// We will try to create he mapped child below.
+								caseInvariant = true;
+							} else {
+								// The attempt to get the mapped parent failed.
+								// Throw the original exception
+								throw original;
+							}
+						}
+						break;
+						
+					case IResourceStatus.INVALID_VALUE :
+						// the folder name is not supported by the platform. Try to compensate.
+						String validLocalDir = session.getUniquePathForInvalidPath(localDir);
+						folder = session.getLocalRoot().getFolder(validLocalDir);
+						try {
+							if (! folder.exists()) folder.mkdir();
+							// We succeed in creating the child of a mapped parent
+							// Since caseInvariant is false, we will fall through
+						} catch (CVSException ex) {
+							// The attempt to get a unique path failed.
 							// Throw the original exception
 							throw original;
 						}
-					}
-				} else {
-					throw original;
+						break;
+					default :
+						throw original;
+						
 				}
 				if (caseInvariant) {
 					// Change the name (last segment) of the localDir to a unique name for the case invariant one
