@@ -420,7 +420,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				
 				int i= 0;
 				do {
-					if (i++ == 100) // TODO this is an arbitrary emergency exit in case a referenced document goes nuts
+					if (i++ == 100) // XXX this is an arbitrary emergency exit in case a referenced document goes nuts
 						return new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, QuickDiffMessages.getFormattedString("quickdiff.error.getting_document_content", new Object[] {left.getClass(), right.getClass()}), null); //$NON-NLS-1$
 					
 					// clear events
@@ -533,9 +533,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				// this is a temporary workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=56091
 				try {
 					return new Document(document.get());
-				} catch (NullPointerException x) {
-				} catch (ArrayStoreException x) {
-				} catch (IndexOutOfBoundsException x) {
+				} catch (NullPointerException e) {
+				} catch (ArrayStoreException e) {
+				} catch (IndexOutOfBoundsException e) {
 				} catch (ConcurrentModificationException e) {
 				}
 				return null;
@@ -562,9 +562,20 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		try {
 			handleAboutToBeChanged(event);
 		} catch (BadLocationException e) {
-			if (DEBUG)
-				System.err.println("reinitializing quickdiff:\n" + e.getLocalizedMessage() + "\n" + e.getStackTrace());  //$NON-NLS-1$//$NON-NLS-2$
-			initialize();
+			reinitOnError(e);
+			return;
+		} catch (NullPointerException e) {
+			reinitOnError(e);
+			return;
+		} catch (ArrayStoreException e) {
+			reinitOnError(e);
+			return;
+		} catch (IndexOutOfBoundsException e) {
+			reinitOnError(e);
+			return;
+		} catch (ConcurrentModificationException e) {
+			reinitOnError(e);
+			return;
 		}
 	}
 
@@ -603,9 +614,19 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		try {
 			handleChanged(event);
 		} catch (BadLocationException e) {
-			if (DEBUG)
-				System.err.println("reinitializing quickdiff:\n" + e.getLocalizedMessage() + "\n" + e.getStackTrace());  //$NON-NLS-1$//$NON-NLS-2$
-			initialize();
+			reinitOnError(e);
+			return;
+		} catch (NullPointerException e) {
+			reinitOnError(e);
+			return;
+		} catch (ArrayStoreException e) {
+			reinitOnError(e);
+			return;
+		} catch (IndexOutOfBoundsException e) {
+			reinitOnError(e);
+			return;
+		} catch (ConcurrentModificationException e) {
+			reinitOnError(e);
 			return;
 		}
 		
@@ -627,6 +648,18 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			fireModelChanged(ame);
 			fUpdateNeeded= false;
 		}
+	}
+
+	/**
+	 * Re-initializes the differ if an exception is thrown upon accessing the documents. This can 
+	 * happen if the documents get concurrently modified from a background thread.
+	 * 
+	 * @param e the exception thrown, which is logged in debug mode
+	 */
+	private void reinitOnError(Exception e) {
+		if (DEBUG)
+			System.err.println("reinitializing quickdiff:\n" + e.getLocalizedMessage() + "\n" + e.getStackTrace());  //$NON-NLS-1$//$NON-NLS-2$
+		initialize();
 	}
 
 	/**
