@@ -268,7 +268,7 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
     	if(useTarFormat) {
     		exporter = new TarFileExporter(destinationFilename, useCompression);
     	} else {
-        	exporter = new ZipFileExporter(destinationFilename, useCompression, false);
+        	exporter = new ZipFileExporter(destinationFilename, useCompression);
     	}
     }
 
