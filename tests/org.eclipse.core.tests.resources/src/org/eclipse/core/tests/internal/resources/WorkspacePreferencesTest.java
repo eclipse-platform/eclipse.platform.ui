@@ -52,14 +52,16 @@ public class WorkspacePreferencesTest extends EclipseWorkspaceTest {
 	/**
 	 * Tests properties state in a brand new workspace (must match defaults).
 	 */
-	public void _testDefaults() {
+	public void testDefaults() {
 		IWorkspaceDescription description = Workspace.defaultWorkspaceDescription();
 
 		assertEquals("1.0", description, preferences);
 
 		// ensures that all properties in the default workspace description
 		// appear as non-default-default properties in the property store  
-		String[] descriptionProperties = {ResourcesPlugin.PREF_AUTO_BUILDING, ResourcesPlugin.PREF_BUILD_ORDER, ResourcesPlugin.PREF_DEFAULT_BUILD_ORDER, ResourcesPlugin.PREF_FILE_STATE_LONGEVITY, ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS, ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE, ResourcesPlugin.PREF_MAX_FILE_STATES, ResourcesPlugin.PREF_SNAPSHOT_INTERVAL};
+		// Don't include the default build order here as it is equivalent to the 
+		// String default-default (ResourcesPlugin.PREF_BUILD_ORDER).
+		String[] descriptionProperties = {ResourcesPlugin.PREF_AUTO_BUILDING, ResourcesPlugin.PREF_DEFAULT_BUILD_ORDER, ResourcesPlugin.PREF_FILE_STATE_LONGEVITY, ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS, ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE, ResourcesPlugin.PREF_MAX_FILE_STATES, ResourcesPlugin.PREF_SNAPSHOT_INTERVAL};
 		List defaultPropertiesList = Arrays.asList(preferences.defaultPropertyNames());
 		for (int i = 0; i < descriptionProperties.length; i++) {
 			String property = descriptionProperties[i];
