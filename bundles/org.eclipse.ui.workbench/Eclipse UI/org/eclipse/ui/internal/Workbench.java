@@ -905,24 +905,28 @@ public final class Workbench implements IWorkbench {
 		//defaults in the preference store.
 		FontDefinition[] definitions = FontDefinition.getDefinitions();
 		ArrayList fontsToSet = new ArrayList();
+		
+		for (int i = 0; i < definitions.length; i++) {            
+			installFont(definitions[i].getId(), registry, store);
+		}
+        
+		// post-process the defaults to allow for out-of-order specification.  
 		for (int i = 0; i < definitions.length; i++) {
-			FontDefinition definition = definitions[i];
-			String fontKey = definition.getId();
-			installFont(fontKey, registry, store);
-			String defaultsTo = definitions[i].getDefaultsTo();
+			FontDefinition definition = definitions[i];            
+			String defaultsTo = definition.getDefaultsTo();            
 			if (defaultsTo != null){
 				PreferenceConverter.setDefault(
 					store,
 					definition.getId(),
 					PreferenceConverter.
 						getDefaultFontDataArray(store,defaultsTo));
-				
+                
 				//If there is no value in the registry pass though the mapping
-				if(!registry.hasValueFor(fontKey)) {
+				if(!registry.hasValueFor(definition.getId())) {
 					fontsToSet.add(definition);
 				}
-			}
-		}
+			}            
+		}		
 		
 		
 		/*
