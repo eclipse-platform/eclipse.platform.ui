@@ -1874,6 +1874,7 @@ public final class Workbench implements IWorkbench {
         WorkbenchThemeManager.getInstance().dispose();
         PropertyPageContributorManager.getManager().dispose();
         ObjectActionContributorManager.getManager().dispose();
+        tracker.dispose();
     }
 
     /*
@@ -2119,7 +2120,7 @@ public final class Workbench implements IWorkbench {
      * The descriptor for the intro extension that is valid for this workspace, <code>null</code> if none.
      */
     private IntroDescriptor introDescriptor;
-	private IConfigurationElementTracker tracker = new ConfigurationElementTracker();
+	private ConfigurationElementTracker tracker = new ConfigurationElementTracker();
 	private IRegistryChangeListener startupRegistryListener = new IRegistryChangeListener() {
 
 		/* (non-Javadoc)

@@ -330,7 +330,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
      */
     private int largeUpdates = 0;
 
-	private IConfigurationElementTracker tracker = new ConfigurationElementTracker();
+	private ConfigurationElementTracker tracker = new ConfigurationElementTracker();
 
     void registerActionSets(IActionSet[] actionSets) {
         
@@ -541,6 +541,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
             }
         }
 
+        if (windowClosed)
+        	tracker.dispose();
+        
         return windowClosed;
     }
 

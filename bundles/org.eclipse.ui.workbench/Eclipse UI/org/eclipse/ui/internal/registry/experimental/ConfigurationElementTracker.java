@@ -257,4 +257,11 @@ public class ConfigurationElementTracker implements IConfigurationElementTracker
 		}
 		return copy.toArray();		
 	}
+	
+	/**
+	 * Dispose of this tracker.
+	 */
+	public void dispose() {
+		Platform.getExtensionRegistry().removeRegistryChangeListener(this);
+	}
 }

@@ -51,6 +51,11 @@ public class DynamicSupportTests extends TestCase {
 		o2 = new WeakReference(o1); 
 	}
 	
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		((ConfigurationElementTracker)tracker).dispose();
+	}
+	
 	public void testConfigurationElementTracker1() {
 		tracker.registerObject(e1, o1, IConfigurationElementTracker.REF_WEAK);
 		Object [] results = tracker.getObjects(e1);

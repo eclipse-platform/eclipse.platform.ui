@@ -181,7 +181,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
     private ActionSwitcher actionSwitcher = new ActionSwitcher();
 
-	private IConfigurationElementTracker tracker = new ConfigurationElementTracker();
+	private ConfigurationElementTracker tracker = new ConfigurationElementTracker();
 
     /**
      * Manages editor contributions and action set part associations.
@@ -847,6 +847,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         BusyIndicator.showWhile(null, new Runnable() {
             public void run() {
                 ret[0] = window.closePage(WorkbenchPage.this, true);
+                if (ret[0])
+                	tracker.dispose();
             }
         });
         return ret[0];
