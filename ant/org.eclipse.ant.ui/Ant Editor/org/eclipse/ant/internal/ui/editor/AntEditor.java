@@ -1041,4 +1041,20 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		return getPreferenceStore();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#collectContextMenuPreferencePages()
+	 * @since 3.1
+	 */
+	protected String[] collectContextMenuPreferencePages() {
+		String[] ids= super.collectContextMenuPreferencePages();
+		String[] more= new String[ids.length + 6];
+		more[0]= "org.eclipse.ant.ui.AntEditorPreferencePage"; //$NON-NLS-1$
+		more[1]= "org.eclipse.ant.ui.AntCodeFormatterPreferencePage"; //$NON-NLS-1$
+		more[2]= "org.eclipse.ant.ui.AntCodeAssistPreferencePage"; //$NON-NLS-1$
+		more[3]= "org.eclipse.ant.ui.TemplatesPreferencePage"; //$NON-NLS-1$
+		more[4]= "org.eclipse.ant.ui.AntPreferencePage"; //$NON-NLS-1$
+		more[5]= "org.eclipse.ant.ui.AntRuntimePreferencePage"; //$NON-NLS-1$
+		System.arraycopy(ids, 0, more, 6, ids.length);
+		return more;
+	}
 }
