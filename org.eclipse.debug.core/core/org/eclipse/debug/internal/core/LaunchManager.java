@@ -553,6 +553,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @see ILaunchManager#getLaunchConfiguration(IFile)
 	 */
 	public ILaunchConfiguration getLaunchConfiguration(IFile file) {
+		getWorkspace().addResourceChangeListener(this);				
 		return new LaunchConfiguration(file.getLocation());
 	}
 	
@@ -560,6 +561,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @see ILaunchManager#getLaunchConfiguration(String)
 	 */
 	public ILaunchConfiguration getLaunchConfiguration(String memento) throws CoreException {
+		getWorkspace().addResourceChangeListener(this);
 		return new LaunchConfiguration(memento);
 	}
 	
@@ -587,6 +589,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	
 	private List getLaunchConfigurationTypeList() {
 		if (fLaunchConfigurationTypes == null) {
+			getWorkspace().addResourceChangeListener(this);
 			initializeLaunchConfigurationTypes();
 		}
 		return fLaunchConfigurationTypes;
