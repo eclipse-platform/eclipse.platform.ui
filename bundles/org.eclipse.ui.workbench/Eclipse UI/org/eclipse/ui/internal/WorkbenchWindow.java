@@ -128,6 +128,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	private CBanner topBar;
 	private CoolBar perspectiveCoolBar;
 	
+	// Previous shell size. Used to prevent the CBanner from triggering redundant layouts
+	private Point lastShellSize = new Point(0,0);
+	
 	/**
 	 * The composite under which workbench pages create their controls.
 	 * 
@@ -633,7 +636,21 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		
         coolBar.addListener(SWT.Resize, new Listener() {
             public void handleEvent(Event event) {
-                shell.layout();
+            	// If the user is dragging the sash then we will need to force
+            	// a resize. However, if the coolbar was resized programatically
+            	// then everything is already layed out correctly. There is no
+            	// direct way to tell the difference between these cases, however
+            	// we take advantage of the fact that dragging the sash does not
+            	// change the size of the shell, and only force another layout
+            	// if the shell size is unchanged. 
+            	Point newSize = shell.getSize();
+            	
+            	if (lastShellSize.equals(newSize)) {
+            		shell.layout();
+            	}
+            	
+        		lastShellSize.x = newSize.x;
+        		lastShellSize.y = newSize.y;
             }
         });
 

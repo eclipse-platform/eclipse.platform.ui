@@ -49,7 +49,7 @@ import org.eclipse.swt.widgets.Layout;
 public class TrimLayout extends Layout {
 
 	private static final TrimLayoutData defaultData = new TrimLayoutData();
-	private Control centerArea;
+	private SizeCache centerArea = new SizeCache();
 	
 	private List[] controls;
 	private int[] trimSizes;
@@ -142,34 +142,9 @@ public class TrimLayout extends Layout {
 	}
 	
 	/**
-	 * Returns the sum of the sizes of all controls in the list
-	 * 
-	 * @param controls list of controls
-	 * @param hint the known dimension (or SWT.DEFAULT if unknown). If width=true, 
-	 * this is a height. If width=false, this is a width.
-	 * @param width determines whether we're computing the sum of the control widths or the sum of the control
-	 * heights. 
-	 * @return returns the sum of the control widths if width=true, or the sum of the heights if width=false
-	 */
-	private int getFixedSize(List controls, int hint, boolean width) {
-		int sum = 0;
-		Iterator iter = controls.iterator();
-		
-		while (iter.hasNext()) {
-			Control next = (Control)iter.next();
-
-			TrimLayoutData data = getData(next);
-			
-			sum += getSize(next, hint, width);	
-		}
-		
-		return sum;
-	}
-	
-	/**
 	 * This method separates resizable controls from non-resizable controls.
 	 * 
-	 * @param input the list to filter
+	 * @param input the list of SizeCache to filter
 	 * @param resizable will contain resizable controls from the input list
 	 * @param nonResizable will contain non-resizable controls from the input list
 	 * @param width if true, we're interested in horizontally-resizable controls. Else we're interested in
@@ -178,9 +153,9 @@ public class TrimLayout extends Layout {
 	private static void filterResizable(List input, List resizable, List nonResizable, boolean width) {		
 		Iterator iter = input.iterator();
 		while (iter.hasNext()) {
-			Control next = (Control)iter.next();
+			SizeCache next = (SizeCache)iter.next();
 	
-			if (isResizable(next, width)) {
+			if (isResizable(next.getControl(), width)) {
 				resizable.add(next);
 			} else {
 				nonResizable.add(next);
@@ -211,8 +186,8 @@ public class TrimLayout extends Layout {
 		return data;
 	}
 	
-	private static Point computeSize(Control toCompute, int widthHint, int heightHint) {
-		TrimLayoutData data = getData(toCompute);
+	private static Point computeSize(SizeCache toCompute, int widthHint, int heightHint) {
+		TrimLayoutData data = getData(toCompute.getControl());
 		
 		if (widthHint == SWT.DEFAULT) {
 			widthHint = data.widthHint;
@@ -229,7 +204,7 @@ public class TrimLayout extends Layout {
 		return new Point(widthHint, heightHint);
 	}
 	
-	private static int getSize(Control toCompute, int hint, boolean width) {		
+	private static int getSize(SizeCache toCompute, int hint, boolean width) {		
 		if (width) {
 			return computeSize(toCompute, SWT.DEFAULT, hint).x;
 		} else {
@@ -240,7 +215,7 @@ public class TrimLayout extends Layout {
 	/**
 	 * Computes the maximum dimensions of controls in the given list
 	 * 
-	 * @param controls
+	 * @param controls a list of SizeCaches
 	 * @return
 	 */
 	private static int maxDimension(List controls, int hint, boolean width) {
@@ -250,7 +225,7 @@ public class TrimLayout extends Layout {
 			Iterator iter = controls.iterator();
 			
 			while (iter.hasNext()) {
-				Control next = (Control)iter.next();
+				SizeCache next = (SizeCache)iter.next();
 				
 				result = Math.max(getSize(next, SWT.DEFAULT, width), result);
 			}
@@ -269,7 +244,7 @@ public class TrimLayout extends Layout {
 		Iterator iter = nonResizable.iterator();
 		
 		while (iter.hasNext()) {
-			Control next = (Control)iter.next();
+			SizeCache next = (SizeCache)iter.next();
 
 			Point nextSize = computeSize(next, SWT.DEFAULT, SWT.DEFAULT);
 
@@ -288,7 +263,7 @@ public class TrimLayout extends Layout {
 			iter = resizable.iterator();
 			
 			while (iter.hasNext()) {
-				Control next = (Control)iter.next();
+				SizeCache next = (SizeCache)iter.next();
 
 				result = Math.max(result, getSize(next, individualHint, width));
 			}			
@@ -362,17 +337,46 @@ public class TrimLayout extends Layout {
 	/**
 	 * Inserts the given object into the list before the specified position.
 	 * If the given position is null, the object is inserted at the end of the list.
+	 * 
+	 * @param list a list of SizeCache
 	 */
-	private static void insertBefore(List list, Object toInsert, Object position) {
-		int insertIndex = -1;
+	private static void insertBefore(List list, Control toInsert, Control position) {
+		SizeCache cache = new SizeCache(toInsert);
+		
 		if (position != null) {
-			insertIndex = list.indexOf(position);
-		}
-		if (insertIndex != -1) {
-			list.add(insertIndex, toInsert);
+			int insertionPoint = 0;
+			
+			Iterator iter = list.iterator();
+			while (iter.hasNext()) {
+				SizeCache next = (SizeCache)iter.next();
+				
+				if (next.getControl() == position) {
+					break;	
+				}
+				
+				insertionPoint++;				
+			}
+			
+			list.add(insertionPoint, cache);
 		} else {
-			list.add(toInsert);
+			list.add(cache);
 		}
+	}
+	
+	private static void remove(List list, Control toRemove) {
+		SizeCache target = null;
+		
+		Iterator iter = list.iterator();
+		while (iter.hasNext()) {
+			SizeCache next = (SizeCache)iter.next();
+			
+			if (next.getControl() == toRemove) {
+				target = next;
+				break;	
+			}
+		}	
+		
+		list.remove(target);
 	}
 	
 	/**
@@ -390,7 +394,7 @@ public class TrimLayout extends Layout {
 			return;
 		}
 		
-		controls[idx].remove(toRemove);
+		remove(controls[idx], toRemove);
 		mapPartOntoPosition.remove(toRemove);
 	}
 	
@@ -422,9 +426,11 @@ public class TrimLayout extends Layout {
 				Iterator iter = ctrl.iterator();
 				
 				while (iter.hasNext()) {
-					Control next = (Control)iter.next();
+					SizeCache next = (SizeCache)iter.next();
 					
-					if (next.isDisposed() || getIndex(next) != idx) {
+					Control nextControl = next.getControl();
+					
+					if (nextControl.isDisposed() || getIndex(nextControl) != idx) {
 						iter.remove();
 					}
 				}
@@ -468,20 +474,19 @@ public class TrimLayout extends Layout {
 	 * @see org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite, int, int, boolean)
 	 */
 	protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
+		if (flushCache) {
+			flushCaches();
+		}
+		
 		Point result = new Point(wHint, hHint);
 		
 		int[] trimSize = getTrimSizes(wHint, hHint);
 		int horizontalTrim = trimSize[LEFT] + trimSize[RIGHT] + (2 * marginWidth) + leftSpacing + rightSpacing;
 		int verticalTrim = trimSize[TOP] + trimSize[BOTTOM] + (2 * marginHeight) + topSpacing + bottomSpacing;
 				
-		Point innerSize;
-		if (centerArea == null) {
-			innerSize = new Point(0,0);
-		} else {
-			innerSize = centerArea.computeSize(
+		Point innerSize = centerArea.computeSize(
 					wHint == SWT.DEFAULT ? wHint : wHint - horizontalTrim,
 					hHint == SWT.DEFAULT ? hHint: hHint - verticalTrim);
-		}
 		
 		if (wHint == SWT.DEFAULT) {
 			result.x = innerSize.x + horizontalTrim;
@@ -496,8 +501,11 @@ public class TrimLayout extends Layout {
 	 * @see org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite, boolean)
 	 */
 	protected void layout(Composite composite, boolean flushCache) {
-		
 		removeDisposed();
+
+		if (flushCache) {
+			flushCaches();
+		}
 		
 		Rectangle clientArea = composite.getClientArea();
 
@@ -523,16 +531,34 @@ public class TrimLayout extends Layout {
 		arrange(new Rectangle(leftOfLayout, topOfCenterPane, trimSize[LEFT], clientArea.height - trimSize[TOP]), controls[LEFT], false);
 		arrange(new Rectangle(rightOfCenterPane, topOfCenterPane, trimSize[RIGHT], clientArea.height - trimSize[TOP]), controls[RIGHT], false);
 		
-		if (centerArea != null) {
-			centerArea.setBounds(leftOfCenterPane, topOfCenterPane, widthOfCenterPane, heightOfCenterPane);
+		if (centerArea.getControl() != null) {
+			centerArea.getControl().setBounds(leftOfCenterPane, topOfCenterPane, widthOfCenterPane, heightOfCenterPane);
 		}
 	}
 
+	private void flushCaches() {
+		for (int idx = 0; idx < controls.length; idx++) {
+			List ctrl = controls[idx];
+			
+			if (ctrl != null) {
+				Iterator iter = ctrl.iterator();
+				
+				while (iter.hasNext()) {
+					SizeCache next = (SizeCache)iter.next();
+					
+					next.flush();
+				}
+			}
+		}
+		
+		centerArea.flush();
+	}
+	
 	/**
 	 * Arranges all the given controls in a horizontal row that fills the given rectangle.
 	 * 
 	 * @param area area to be filled by the controls
-	 * @param controls controls that will span the rectangle
+	 * @param controls a list of SizeCaches for controls that will span the rectangle
 	 */
 	private static void arrange(Rectangle area, List controls, boolean horizontally) {
 		Point currentPosition = new Point(area.x, area.y);
@@ -552,7 +578,7 @@ public class TrimLayout extends Layout {
 		Iterator iter = nonResizable.iterator();
 		
 		while (iter.hasNext()) {
-			Control next = (Control)iter.next();
+			SizeCache next = (SizeCache)iter.next();
 			
 			sizes[idx] = getSize(next, hint, horizontally);
 			used += sizes[idx];
@@ -566,10 +592,10 @@ public class TrimLayout extends Layout {
 		iter = controls.iterator();
 		
 		while (iter.hasNext()) {
-			Control next = (Control)iter.next();
+			SizeCache next = (SizeCache)iter.next();
 
 			int thisSize;
-			if (isResizable(next, horizontally)) {
+			if (isResizable(next.getControl(), horizontally)) {
 				thisSize = available / remainingResizable;
 				available -= thisSize;
 				remainingResizable--;
@@ -579,10 +605,10 @@ public class TrimLayout extends Layout {
 			}
 			
 			if (horizontally) {
-				next.setBounds(currentPosition.x, currentPosition.y, thisSize, hint);
+				next.getControl().setBounds(currentPosition.x, currentPosition.y, thisSize, hint);
 				currentPosition.x += thisSize;
 			} else {
-				next.setBounds(currentPosition.x, currentPosition.y, hint, thisSize);
+				next.getControl().setBounds(currentPosition.x, currentPosition.y, hint, thisSize);
 				currentPosition.y += thisSize;
 			}			
 		}
@@ -592,10 +618,10 @@ public class TrimLayout extends Layout {
 	 * Sets the widget that will occupy the central area of the layout. Typically,
 	 * this will be a composite that contains the main widgetry of the application.
 	 * 
-	 * @param composite control that will occupy the center of the layout.
+	 * @param composite control that will occupy the center of the layout, or null if none
 	 */
 	public void setCenterControl(Control center) {
-		centerArea = center;
+		centerArea.setControl(center);
 	}
 	
 	/**
@@ -604,6 +630,6 @@ public class TrimLayout extends Layout {
 	 * @return
 	 */
 	public Control getCenterControl() {
-		return centerArea;
+		return centerArea.getControl();
 	}
 }
