@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
@@ -79,10 +80,12 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	}
 	
 	private boolean buildScopeIndicatesBuild(IResource[] resources) {
-		IResourceDelta delta = getDelta(getProject());
-		if (delta != null) {
-			for (int i = 0; i < resources.length; i++) {
-				IResourceDelta change= delta.findMember(resources[i].getProjectRelativePath());
+		for (int i = 0; i < resources.length; i++) {
+			IResourceDelta delta = getDelta(resources[i].getProject());
+		
+			if (delta != null) {	
+				IPath path= resources[i].getProjectRelativePath();
+				IResourceDelta change= delta.findMember(path);
 				if (change != null) {
 					return true;
 				}
