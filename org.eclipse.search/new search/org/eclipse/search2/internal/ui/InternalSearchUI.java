@@ -33,6 +33,7 @@ import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search2.internal.ui.text.PositionTracker;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -161,16 +162,21 @@ public class InternalSearchUI {
 			jobRecord.fJob.setPriority(Job.BUILD);	
 		}
 		jobRecord.fJob.setUser(true);
-		getProgressService().schedule(jobRecord.fJob, 0, true);
+		IWorkbenchSiteProgressService service= getProgressService();
+		if (service != null)
+			service.schedule(jobRecord.fJob, 0, true);
+		else 
+			jobRecord.fJob.schedule();
 	}
 
 	public IWorkbenchSiteProgressService getProgressService() {
-		IWorkbenchSiteProgressService service = null;
-		Object siteService =
-			getSearchView().getSite().getAdapter(IWorkbenchSiteProgressService.class);
-		if(siteService != null)
-			service = (IWorkbenchSiteProgressService) siteService;
-		return service;
+		ISearchResultViewPart view= getSearchView();
+		if (view != null) {
+			IWorkbenchPartSite site= view.getSite();
+			if (site != null)
+				return (IWorkbenchSiteProgressService)view.getSite().getAdapter(IWorkbenchSiteProgressService.class);
+		}
+		return null;
 	}
 
 	public boolean runAgain(ISearchQuery job) {
@@ -290,6 +296,10 @@ public class InternalSearchUI {
 	}
 
 	public void removeAllQueries() {
+		for (Iterator queries= fSearchJobs.keySet().iterator(); queries.hasNext();) {
+			ISearchQuery query= (ISearchQuery) queries.next();
+			cancelSearch(query);
+		}
 		fSearchJobs.clear();
 		getSearchManager().removeAll();
 	}
