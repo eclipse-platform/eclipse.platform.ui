@@ -20,14 +20,18 @@ import org.eclipse.update.internal.model.InstallChangeParser;
  * This class manages the reconciliation.
  */
 
-public class SiteReconciler extends ModelObject {
+public class SiteReconciler extends ModelObject implements IWritable {
 
 	private SiteLocal siteLocal;
+	private List newFoundFeatures;
+	private Date date;
 	private static final String SIMPLE_EXTENSION_ID = "deltaHandler";
 	//$NON-NLS-1$
 	private static final String INSTALL_DELTA_HANDLER =
 		"org.eclipse.update.core.deltaHandler.display";
 	//$NON-NLS-1$
+	private static final String DEFAULT_INSTALL_CHANGE_NAME = "delta.xml";
+	//$NON-NLS-1$	
 
 	/**
 	 * 
@@ -66,6 +70,7 @@ public class SiteReconciler extends ModelObject {
 		IInstallConfiguration newDefaultConfiguration =
 			siteLocal.cloneConfigurationSite(null, null, null);
 		IConfiguredSite[] oldConfiguredSites = new IConfiguredSite[0];
+		newFoundFeatures = new ArrayList();
 
 		// sites from the current configuration
 		if (siteLocal.getCurrentConfiguration() != null)
@@ -117,6 +122,7 @@ public class SiteReconciler extends ModelObject {
 						(FeatureReferenceModel) newFeaturesRef[i];
 					configSite.getConfigurationPolicy().addConfiguredFeatureReference(
 						newFeatureRefModel);
+					newFoundFeatures.add(newFeatureRefModel);						
 				}
 
 				newDefaultConfiguration.addConfiguredSite(configSite);
@@ -139,6 +145,7 @@ public class SiteReconciler extends ModelObject {
 		// add the configuration as the currentConfig
 		siteLocal.addConfiguration(newDefaultConfiguration);
 		siteLocal.save();
+		saveNewFeatures();
 	}
 
 	/**
@@ -196,6 +203,8 @@ public class SiteReconciler extends ModelObject {
 			boolean newFeatureFound = false;
 			FeatureReferenceModel currentFeatureRefModel =
 				(FeatureReferenceModel) foundFeatures[i];
+
+			// is is a brand new feature ?	
 			for (int j = 0; j < oldConfiguredFeaturesRef.length; j++) {
 				IFeatureReference oldFeatureRef = oldConfiguredFeaturesRef[j];
 				if (oldFeatureRef != null && oldFeatureRef.equals(currentFeatureRefModel)) {
@@ -204,7 +213,7 @@ public class SiteReconciler extends ModelObject {
 				}
 			}
 
-			// new feature found: add as configured the policy is optimistic
+			// new feature found: add as configured if the policy is optimistic
 			if (!newFeatureFound) {
 				if (oldSitePolicy.getPolicy()
 					== IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
@@ -212,8 +221,8 @@ public class SiteReconciler extends ModelObject {
 				} else {
 					newSitePolicy.addUnconfiguredFeatureReference(currentFeatureRefModel);
 				}
-				// 
-
+				// New Feature found. add to list
+				newFoundFeatures.add(currentFeatureRefModel);
 			}
 		}
 
@@ -447,6 +456,48 @@ public class SiteReconciler extends ModelObject {
 	}
 
 	/*
+	 * 
+	 */
+	private IFeatureReference[] getFeatureReferences() {
+		if (newFoundFeatures == null || newFoundFeatures.size()==0)
+			return new IFeatureReference[0];
+
+		return (IFeatureReference[]) newFoundFeatures.toArray(
+			arrayTypeFor(newFoundFeatures));
+	}
+
+	/*
+	 * 
+	 */
+	private void saveNewFeatures() throws CoreException {
+		
+		if (newFoundFeatures==null || newFoundFeatures.size()==0)
+			return;
+				
+		date = new Date();
+		String fileName =
+			UpdateManagerUtils.getLocalRandomIdentifier(DEFAULT_INSTALL_CHANGE_NAME, date);
+		IPath path = UpdateManagerPlugin.getPlugin().getStateLocation();
+		IPath filePath = path.append(fileName);
+		File file = filePath.toFile();
+		// persist list of new features 
+		try {
+			Writer writer = new Writer(file, "UTF8");
+			writer.write(this);
+		} catch (UnsupportedEncodingException e) {
+			throw Utilities.newCoreException(
+				Policy.bind("SiteReconciler.UnableToEncodeConfiguration", file.getAbsolutePath()),
+				e);
+			//$NON-NLS-1$
+		} catch (FileNotFoundException e) {
+			throw Utilities.newCoreException(
+				Policy.bind("SiteReconciler.UnableToSaveStateIn", file.getAbsolutePath()),
+				e);
+			//$NON-NLS-1$
+		}
+	}
+
+	/*
 	 * @see ILocalSite#displayUpdateChange()
 	 */
 	public void displayUpdateChange() throws CoreException {
@@ -481,4 +532,55 @@ public class SiteReconciler extends ModelObject {
 		}
 	}
 
+	/*
+	 * @see IWritable#write(int, PrintWriter)
+	 */
+	public void write(int indent, PrintWriter w) {
+		String gap = ""; //$NON-NLS-1$
+		for (int i = 0; i < indent; i++)
+			gap += " "; //$NON-NLS-1$
+		String increment = ""; //$NON-NLS-1$
+		for (int i = 0; i < IWritable.INDENT; i++)
+			increment += " "; //$NON-NLS-1$		
+
+		// CHANGE tag
+		w.print(gap + "<" + InstallChangeParser.CHANGE + " ");
+		//$NON-NLS-1$ //$NON-NLS-2$
+		long time = (date != null) ? date.getTime() : 0L;
+		w.println("date=\"" + time + "\" >"); //$NON-NLS-1$ //$NON-NLS-2$
+
+		// NEW FEATURE
+		w.println(gap + increment +"<" + InstallChangeParser.NEW_FEATURE + " >");
+
+		// FEATURE REF
+		IFeatureReference[] references = getFeatureReferences();
+		String URLFeatureString = null;
+		String URLSiteString = null;
+		if (references != null) {
+			for (int index = 0; index < references.length; index++) {
+				IFeatureReference ref = references[index];
+				if (ref.getURL() != null) {
+					ISite featureSite = ref.getSite();
+					URLFeatureString =
+						UpdateManagerUtils.getURLAsString(featureSite.getURL(), ref.getURL());
+					URLSiteString = featureSite.getURL().toExternalForm();
+
+					w.print(gap + increment + increment+"<" + InstallChangeParser.REFERENCE + " ");
+					//$NON-NLS-1$
+					w.println("siteURL = \"" + Writer.xmlSafe(URLSiteString) + "\" ");
+					//$NON-NLS-1$ //$NON-NLS-2$
+					w.println(gap + increment + increment+increment+"featureURL=\"" + Writer.xmlSafe(URLFeatureString) + "\" />");
+					//$NON-NLS-1$ //$NON-NLS-2$
+				}
+				w.println(""); //$NON-NLS-1$
+			}
+		}
+
+		// END NEW FEATURE
+		w.println(gap + increment+ "</" + InstallChangeParser.NEW_FEATURE + " >");
+
+		// end
+		w.println(gap + "</" + InstallChangeParser.CHANGE + ">");
+		//$NON-NLS-1$ //$NON-NLS-2$
+	}
 }

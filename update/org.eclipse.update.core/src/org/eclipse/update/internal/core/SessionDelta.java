@@ -4,6 +4,7 @@ package org.eclipse.update.internal.core;
  * All Rights Reserved.
  */
 import java.io.File;
+import java.io.PrintWriter;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,6 +19,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.core.IFeatureReference;
 import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.core.model.ModelObject;
+import org.eclipse.update.internal.model.InstallChangeParser;
 
 /**
  *
@@ -119,4 +121,5 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 	public void setFile(File file) {
 		this.file = file;
 	}
-}
+	
+	}

@@ -22,7 +22,7 @@ public class TestSiteAPI extends UpdateManagerTestCase {
 	public void testURL() throws Exception {
 
 		ISite site = SiteManager.getSite(SOURCE_FILE_SITE);
-		assertEquals("/"+site.getURL().getFile(),SOURCE_FILE_SITE.getFile());
+		assertEquals(new File(site.getURL().getFile()),new File(SOURCE_FILE_SITE.getFile()));
 		
 		ISite site2 = SiteManager.getSite(SOURCE_HTTP_SITE);
 		assertEquals(site2.getURL(),new URL("http", getHttpHost(),getHttpPort(), bundle.getString("HTTP_PATH_1")+"site.xml"));

@@ -73,10 +73,12 @@ public class ConfiguredSite
 		String increment = ""; //$NON-NLS-1$
 		for (int i = 0; i < IWritable.INDENT; i++)
 			increment += " "; //$NON-NLS-1$
-		w.println(gap + "<" + InstallConfigurationParser.CONFIGURATION_SITE + " ");
+			
+		// CONFIGURATION SITE	
+		w.print(gap + "<" + InstallConfigurationParser.CONFIGURATION_SITE + " ");
 		//$NON-NLS-1$ //$NON-NLS-2$
 		w.println(
-			gap + increment + "url=\"" + getSite().getURL().toExternalForm() + "\"");
+			"url=\"" + getSite().getURL().toExternalForm() + "\"");
 		//$NON-NLS-1$ //$NON-NLS-2$
 		w.println(gap + increment + "platformURL=\"" + getPlatformURLString() + "\"");
 		//$NON-NLS-1$ //$NON-NLS-2$
@@ -92,7 +94,7 @@ public class ConfiguredSite
 		w.print(gap + increment + "install=\"" + install + "\" ");
 		//$NON-NLS-1$ //$NON-NLS-2$
 		w.println(">"); //$NON-NLS-1$
-		w.println(""); //$NON-NLS-1$
+		
 		// configured features ref
 		IFeatureReference[] featuresReferences = getConfiguredFeatures();
 		if (featuresReferences != null) {
@@ -114,6 +116,7 @@ public class ConfiguredSite
 				w.println("/>"); //$NON-NLS-1$
 			}
 		}
+		
 		// unconfigured features ref
 		featuresReferences =
 			((ConfigurationPolicy) getConfigurationPolicyModel()).getUnconfiguredFeatures();
@@ -136,9 +139,11 @@ public class ConfiguredSite
 				w.println("/>"); //$NON-NLS-1$
 			}
 		}
+		
 		// end
 		w.println(gap + "</" + InstallConfigurationParser.CONFIGURATION_SITE + ">");
 		//$NON-NLS-1$ //$NON-NLS-2$
+		w.println(""); //$NON-NLS-1$		
 	}
 
 	/*

@@ -285,18 +285,19 @@ public class SiteLocal
 		String increment = ""; //$NON-NLS-1$
 		for (int i = 0; i < IWritable.INDENT; i++)
 			increment += " "; //$NON-NLS-1$
-
+			
+        // SITE 
 		w.print(gap + "<" + SiteLocalParser.SITE + " "); //$NON-NLS-1$ //$NON-NLS-2$
 		if (getLabel() != null) {
-			w.print("label=\"" + Writer.xmlSafe(getLabel()) + "\" ");
+			w.print(gap +"label=\"" + Writer.xmlSafe(getLabel()) + "\" ");
 			//$NON-NLS-1$ //$NON-NLS-2$
 		}
-		w.print("history=\"" + getMaximumHistoryCount() + "\" ");
+		w.print(gap +"history=\"" + getMaximumHistoryCount() + "\" ");
 		//$NON-NLS-1$ //$NON-NLS-2$
-		w.print("stamp=\"" + changeStamp + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
-		w.println(">"); //$NON-NLS-1$
+		w.print(gap +"stamp=\"" + changeStamp + "\" >"); //$NON-NLS-1$ //$NON-NLS-2$
 		w.println(""); //$NON-NLS-1$
 
+		// CONFIGURATIONS
 		// the last one is the current configuration
 		InstallConfigurationModel[] configurations = getConfigurationHistoryModel();
 		for (int index = 0; index < configurations.length; index++) {
@@ -312,9 +313,10 @@ public class SiteLocal
 			(InstallConfigurationModel) getCurrentConfiguration());
 		w.println(""); //$NON-NLS-1$
 
-		if (getPreservedConfigurations() != null) {
+		// PRESERVED CONFIGURATIONS
+		if (getPreservedConfigurations() != null && getPreservedConfigurations().length!=0) {
 			// write preserved configurations
-			w.print(gap + increment + "<" + SiteLocalParser.PRESERVED_CONFIGURATIONS + ">");
+			w.println(gap + increment + "<" + SiteLocalParser.PRESERVED_CONFIGURATIONS + ">");
 			//$NON-NLS-1$ //$NON-NLS-2$
 
 			InstallConfigurationModel[] preservedConfig = getPreservedConfigurationsModel();
@@ -322,13 +324,12 @@ public class SiteLocal
 				InstallConfigurationModel element = preservedConfig[index];
 				writeConfig(gap + increment + increment, w, element);
 			}
-			w.println(""); //$NON-NLS-1$
-			w.print(
+			w.println(
 				gap + increment + "</" + SiteLocalParser.PRESERVED_CONFIGURATIONS + ">");
 			//$NON-NLS-1$ //$NON-NLS-2$
 		}
 		// end
-		w.println("</" + SiteLocalParser.SITE + ">"); //$NON-NLS-1$ //$NON-NLS-2$
+		w.println(gap+"</" + SiteLocalParser.SITE + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
 			UpdateManagerPlugin.getPlugin().debug("Saved change stamp:" + changeStamp);

@@ -4,6 +4,7 @@ package org.eclipse.update.tests.parser;
  * All Rights Reserved.
  */
 
+import java.io.File;
 import java.net.URL;
 
 import org.eclipse.update.core.*;
@@ -34,7 +35,7 @@ public class TestSiteParse extends UpdateManagerTestCase {
 
 		String path = remoteUrl.getFile();
 		String path2 = remoteSite.getDescription().getURL().getFile();
-		assertEquals(path + "index.html", "/"+path2);
+		assertEquals(new File(path + "index.html"), new File(path2));
 
 	}
 

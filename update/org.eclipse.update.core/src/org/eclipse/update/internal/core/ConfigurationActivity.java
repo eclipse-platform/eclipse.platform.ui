@@ -37,21 +37,23 @@ public class ConfigurationActivity
 		String increment= ""; //$NON-NLS-1$
 		for (int i= 0; i < IWritable.INDENT; i++)
 			increment += " "; //$NON-NLS-1$
+			
+		// ACTIVITY	
 		w.print(gap + "<" + InstallConfigurationParser.ACTIVITY + " ");
 		//$NON-NLS-1$ //$NON-NLS-2$
 		w.println("action=\"" + getAction() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
 		if (getLabel() != null) {
-			w.println(gap + "label=\"" + Writer.xmlSafe(getLabel()) + "\" ");
+			w.println(gap + increment+ "label=\"" + Writer.xmlSafe(getLabel()) + "\" ");
 			//$NON-NLS-1$ //$NON-NLS-2$
 		}
-		w.println("date=\"" + getDate().getTime() + "\" ");
+		w.println(gap + increment+"date=\"" + getDate().getTime() + "\" ");
 		//$NON-NLS-1$ //$NON-NLS-2$
-		w.print("status=\"" + getStatus() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		w.println(">"); //$NON-NLS-1$
-		w.println(""); //$NON-NLS-1$
+		w.println(gap + increment+"status=\"" + getStatus() + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
+
 		// end
 		w.println(gap + "</" + InstallConfigurationParser.ACTIVITY + ">");
 		//$NON-NLS-1$ //$NON-NLS-2$
+		w.println(""); //$NON-NLS-1$		
 	}
 	
 	/*

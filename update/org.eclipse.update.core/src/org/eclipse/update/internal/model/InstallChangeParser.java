@@ -29,12 +29,10 @@ public class InstallChangeParser extends DefaultHandler {
 	private SAXParser parser;
 	private SessionDelta change;
 	private File file;
-	private ISite currentSite;
 
-	private static final String CHANGE = "change"; //$NON-NLS-1$
-	private static final String NEW_FEATURE = "newFeatures"; //$NON-NLS-1$
-	private static final String REFERENCE = "reference"; //$NON-NLS-1$
-	private static final String SITE = "site"; //$NON-NLS-1$	
+	public static final String CHANGE = "change"; //$NON-NLS-1$
+	public static final String NEW_FEATURE = "newFeatures"; //$NON-NLS-1$
+	public static final String REFERENCE = "reference"; //$NON-NLS-1$
 
 	private ResourceBundle bundle;
 
@@ -96,11 +94,6 @@ public class InstallChangeParser extends DefaultHandler {
 				return;
 			}
 
-			if (tag.equalsIgnoreCase(SITE)) {
-				processSite(attributes);
-				return;
-			}
-
 			if (tag.equalsIgnoreCase(REFERENCE)) {
 				processFeatureReference(attributes);
 				return;
@@ -122,20 +115,25 @@ public class InstallChangeParser extends DefaultHandler {
 	private void processFeatureReference(Attributes attributes)
 		throws MalformedURLException, CoreException {
 
-		// url
-		String path = attributes.getValue("url"); //$NON-NLS-1$
-		URL url = new URL(path);
+		//site url
+		String siteUrlPath = attributes.getValue("siteURL"); //$NON-NLS-1$
+		URL siteURL = new URL(siteUrlPath);
+		ISite currentSite = SiteManager.getSite(siteURL);
 
-		if (url != null) {
+		// feature url
+		String featureUrlPath = attributes.getValue("featureURL"); //$NON-NLS-1$
+		URL featureURL = new URL(featureUrlPath);
+
+		if (featureURL != null) {
 			FeatureReference ref = new FeatureReference();
 			ref.setSite(currentSite);
-			ref.setURL(url);
+			ref.setURL(featureURL);
 			change.addReference(ref);
 			
 			// DEBUG:		
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
 				UpdateManagerPlugin.getPlugin().debug(
-					"End Processing Feature Reference: url:" + url.toExternalForm());
+					"End Processing Feature Reference: url:" + featureURL.toExternalForm());
 				//$NON-NLS-1$
 			}
 		} else {
@@ -150,24 +148,6 @@ public class InstallChangeParser extends DefaultHandler {
 					null);
 			//$NON-NLS-1$
 			UpdateManagerPlugin.getPlugin().getLog().log(status);
-		}
-	}
-
-	/*
-	 * process the Site info
-	 */
-	private void processSite(Attributes attributes) throws MalformedURLException, CoreException {
-
-		//site url
-		String urlString = attributes.getValue("url"); //$NON-NLS-1$
-		URL siteURL = new URL(urlString);
-		currentSite = SiteManager.getSite(siteURL);
-
-		// DEBUG:		
-		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.getPlugin().debug(
-				"End process config site url:" + urlString);
-			//$NON-NLS-1$
 		}
 	}
 

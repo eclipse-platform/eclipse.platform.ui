@@ -363,12 +363,14 @@ public class InstallConfiguration
 		String increment = ""; //$NON-NLS-1$
 		for (int i = 0; i < IWritable.INDENT; i++)
 			increment += " "; //$NON-NLS-1$
+			
+		//CONFIGURATION	
 		w.print(gap + "<" + InstallConfigurationParser.CONFIGURATION + " ");
 		//$NON-NLS-1$ //$NON-NLS-2$
 		long time = (getCreationDate() != null) ? getCreationDate().getTime() : 0L;
 		w.print("date=\"" + time + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
 		w.println(">"); //$NON-NLS-1$
-		w.println(""); //$NON-NLS-1$
+		
 		// site configurations
 		if (getConfigurationSitesModel() != null) {
 			ConfiguredSiteModel[] sites = getConfigurationSitesModel();
@@ -377,6 +379,7 @@ public class InstallConfiguration
 				((IWritable) element).write(indent + IWritable.INDENT, w);
 			}
 		}
+		
 		// activities
 		if (getActivityModel() != null) {
 			ConfigurationActivityModel[] activities = getActivityModel();
@@ -385,9 +388,11 @@ public class InstallConfiguration
 				((IWritable) element).write(indent + IWritable.INDENT, w);
 			}
 		}
+		
 		// end
 		w.println(gap + "</" + InstallConfigurationParser.CONFIGURATION + ">");
 		//$NON-NLS-1$ //$NON-NLS-2$
+		w.println(""); //$NON-NLS-1$		
 	}
 
 	/*

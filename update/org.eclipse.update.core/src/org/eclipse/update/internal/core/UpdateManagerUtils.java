@@ -213,7 +213,7 @@ public class UpdateManagerUtils {
 		if (dotIndex == -1)
 			dotIndex = remotePath.length();
 		// if I have a separator and no dot: /a/b/c -> c
-		// if my separator is the last /a/b/c/, fileIndex and dotIndex are the same, so it will return teh default temp name
+		// if my separator is the last /a/b/c/, fileIndex and dotIndex are the same, so it will return the default temp name
 		String name =
 			(fileIndex < dotIndex)
 				? remotePath.substring(fileIndex, dotIndex)
