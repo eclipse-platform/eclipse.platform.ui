@@ -137,7 +137,7 @@ public class TeamSubscriberParticipantPage implements IPageBookViewPage, IProper
 		
 		refreshAllAction = new RefreshAction(getSite().getPage(), getParticipant(), true /* refresh all */);
 		refreshSelectionAction = new RefreshAction(getSite().getPage(), getParticipant(), false /* refresh all */);
-		statusLine = new StatusLineContributionGroup(getParticipant());
+		statusLine = new StatusLineContributionGroup(getSite().getShell(), workingSetGroup, getParticipant());
 		
 		collapseAll = new Action() {
 			public void run() {

@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.actions;
 
-import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.action.IContributionManager;
-import org.eclipse.jface.action.StatusLineLayoutData;
+import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.GC;
@@ -31,14 +29,15 @@ public class StatusLineCLabelContribution extends ContributionItem {
 	private int widthHint = -1;
 
 	private Listener listener;
+	private int eventType;
+	private String tooltip;
 	
 	public StatusLineCLabelContribution(String id) {
-		this(id, DEFAULT_CHAR_WIDTH, null);
+		this(id, DEFAULT_CHAR_WIDTH);
 	}
 	
-	public StatusLineCLabelContribution(String id, int charWidth, Listener listener) {
+	public StatusLineCLabelContribution(String id, int charWidth) {
 		super(id);
-		this.listener = listener;
 		this.charWidth = charWidth;
 		setVisible(false); // no text to start with
 	}
@@ -59,8 +58,16 @@ public class StatusLineCLabelContribution extends ContributionItem {
 		label.setText(text);
 		label.setImage(image);
 		if(listener != null) {
-			label.addListener(SWT.MouseDown, listener);
+			label.addListener(eventType, listener);
 		}
+		if(tooltip != null) {
+			label.setToolTipText(tooltip);
+		}		
+	}
+	
+	public void addListener(int eventType, Listener listener) {
+		this.eventType = eventType;
+		this.listener = listener;
 	}
 	
 	public String getText() {
@@ -92,6 +99,17 @@ public class StatusLineCLabelContribution extends ContributionItem {
 				if (contributionManager != null)
 					contributionManager.update(true);
 			}
+		}
+	}
+	
+	public void setTooltip(String tooltip) {
+		if (tooltip == null)
+			throw new NullPointerException();
+		
+		this.tooltip = tooltip;
+		
+		if (label != null && !label.isDisposed()) {
+			label.setToolTipText(this.tooltip);	
 		}
 	}
 	
