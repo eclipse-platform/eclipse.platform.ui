@@ -379,14 +379,46 @@ public interface ILaunchManager {
 
 	/**
 	 * Returns the native system environment variables as a map of
-	 * variable names and values (Strings). On WIN32,
-	 * all keys (variable names) are returned in uppercase. Note
-	 * that WIN32's environment is not case sensitive.
+	 * variable names and values (Strings).
+	 * <p>
+	 * Note that WIN32 system environment preserves
+	 * the case of variable names but is otherwise case insensitive.
+	 * Depending on what you intend to do with the environment, the
+	 * lack of normalization may or may not be create problems. This
+	 * method returns mixed-case keys using the variable names 
+	 * recorded by the OS.
+	 * Use {@link #getNativeEnvironment()} instead to get a WIN32 system
+	 * environment where all keys have been normalized to uppercase.
+	 * </p>
 	 * 
-	 * @return the native system environment variables
+	 * @return the native system environment variables; on WIN32, mixed-case
+	 * variable names (keys) are returned without normalization
+	 * (key type: <code>String</code>; value type: <code>String</code>)
+	 * @since 3.1
+	 */	
+	public Map getNativeEnvironmentCasePreserved();
+
+	/**
+	 * Returns the native system environment variables as a map of
+	 * variable names and values (Strings).
+	 * <p>
+	 * Note that WIN32 system environment preserves
+	 * the case of variable names but is otherwise case insensitive.
+	 * Depending on what you intend to do with the environment, the
+	 * lack of normalization may or may not be create problems. On 
+	 * WIN32, this method normalizes mixed-case keys variable names
+	 * to uppercase. Use {@link #getNativeEnvironmentCasePreserved()}
+	 * instead to get a WIN32 system environment where the keys are
+	 * the mixed-case variable names recorded by the OS.
+	 * </p>
+	 * 
+	 * @return the native system environment variables; on WIN32, mixed-case
+	 * variable names (keys) have been normalized to uppercase
+	 * (key type: <code>String</code>; value type: <code>String</code>)
 	 * @since 3.0
 	 */	
 	public Map getNativeEnvironment();
+
 	
 	/**
 	 * Returns all registered source container type extensions.

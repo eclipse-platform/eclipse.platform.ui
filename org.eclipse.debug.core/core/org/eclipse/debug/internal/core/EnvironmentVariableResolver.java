@@ -11,6 +11,7 @@
 
 package org.eclipse.debug.internal.core;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -34,13 +35,21 @@ public class EnvironmentVariableResolver implements IDynamicVariableResolver {
 		if (argument == null) {
 			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), IStatus.ERROR, DebugCoreMessages.getString("EnvironmentVariableResolver.0"), null)); //$NON-NLS-1$
 		}
-		Map map= DebugPlugin.getDefault().getLaunchManager().getNativeEnvironment();
-		if (Platform.getOS().equals(Constants.OS_WIN32)) {
-			// On Win32, env variables are case insensitive, so we uppercase everything
-			// for map matches
-			argument= argument.toUpperCase();
+		Map map= DebugPlugin.getDefault().getLaunchManager().getNativeEnvironmentCasePreserved();
+        String value= (String) map.get(argument);
+		if (value == null && Platform.getOS().equals(Constants.OS_WIN32)) {
+			// On Win32, env variables are case insensitive, so we search the map
+            // for matches manually.
+            Iterator iter = map.entrySet().iterator();
+            while (iter.hasNext()) {
+                Map.Entry entry= ((Map.Entry) iter.next());
+                String key= (String) entry.getKey();
+                if (key.equalsIgnoreCase(argument)) {
+                    return (String) entry.getValue();
+                }
+            }
 		}
-		return (String) map.get(argument);
+		return value;
 	}
 
 }

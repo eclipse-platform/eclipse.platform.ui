@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
+import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -163,7 +164,8 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * The collection of native environment variables on the user's system. Cached
 	 * after being computed once as the environment cannot change.
 	 */
-	private static HashMap fgNativeEnv= null;	
+	private static HashMap fgNativeEnv= null;
+	private static HashMap fgNativeEnvCasePreserved= null;
 
 	/**
 	 * Collection of launches
@@ -1630,8 +1632,8 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * unable to resolve a variable in an environment variable's value
 	 */
 	public String[] getEnvironment(ILaunchConfiguration configuration) throws CoreException {
-		Map envMap = configuration.getAttribute(ATTR_ENVIRONMENT_VARIABLES, (Map) null);
-		if (envMap == null) {
+		Map configEnv = configuration.getAttribute(ATTR_ENVIRONMENT_VARIABLES, (Map) null);
+		if (configEnv == null) {
 			return null;
 		}
 		Map env = null;
@@ -1639,24 +1641,44 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		env= new HashMap();
 		boolean append= configuration.getAttribute(ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
 		if (append) {
-			env.putAll(getNativeEnvironment());
+			env.putAll(getNativeEnvironmentCasePreserved());
 		}
 		
 		// Add variables from config
-		Iterator iter= envMap.entrySet().iterator();
+		Iterator iter= configEnv.entrySet().iterator();
 		boolean win32= Platform.getOS().equals(Constants.OS_WIN32);
 		while (iter.hasNext()) {
 			Map.Entry entry= (Map.Entry) iter.next();
 			String key= (String) entry.getKey();
+            String value = (String) entry.getValue();
+            // translate any string substitution variables
+            value = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(value);
+            boolean added= false;
 			if (win32) {
-				// Win32 vars are case insensitive. Uppercase everything so
-				// that (for example) "pAtH" will correctly replace "PATH"
-				key= key.toUpperCase();
+                // First, check if the key is an exact match for an existing key.
+                Object nativeValue= env.get(key);
+                if (nativeValue != null) {
+                    // If an exact match is found, just replace the value
+                    env.put(key, value);
+                } else {
+                    // Win32 vars are case-insensitive. If an exact match isn't found, iterate to
+                    // check for a case-insensitive match. We maintain the key's case (see bug 86725),
+                    // but do a case-insensitive comparison (for example, "pAtH" will still override "PATH").
+                    Iterator envIter= env.entrySet().iterator();
+                    while (envIter.hasNext()) {
+                        Map.Entry nativeEntry = (Map.Entry) envIter.next();
+                        String nativeKey= (String) (nativeEntry).getKey();
+                        if (nativeKey.equalsIgnoreCase(key)) {
+                            nativeEntry.setValue(value);
+                            added= true;
+                            break;
+                        }
+                    }
+                }
 			}
-			String value = (String) entry.getValue();
-			// translate any string substitution variables
-			String translated = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(value);
-			env.put(key, translated);
+            if (!added) {
+                env.put(key, value);
+            }
 		}		
 		
 		iter= env.entrySet().iterator();
@@ -1670,26 +1692,46 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		return (String[]) strings.toArray(new String[strings.size()]);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchManager#getNativeEnvironment()
+	 */
+	public synchronized Map getNativeEnvironment() {
+		if (fgNativeEnv == null) {
+			Map casePreserved = getNativeEnvironmentCasePreserved();
+			if (Platform.getOS().equals(Constants.OS_WIN32)) {
+				fgNativeEnv= new HashMap();
+				Iterator entries = casePreserved.entrySet().iterator();
+				while (entries.hasNext()) {
+					Map.Entry entry = (Entry) entries.next();
+					String key = ((String)entry.getKey()).toUpperCase();
+					fgNativeEnv.put(key, entry.getValue());
+				}
+			} else {
+				fgNativeEnv = new HashMap(casePreserved);
+			}
+		}
+		return new HashMap(fgNativeEnv);
+	}
 	
 	/**
-	 * Returns a copy of the native system environment variables. On WIN32,
-	 * all keys (variable names) are returned in uppercase. Note
-	 * that WIN32's environment is not case sensitive.
-	 * 
-	 * @return the a copy of the native system environment variables
-	 */
-	public Map getNativeEnvironment() {
-		if (fgNativeEnv != null) {
-			return new HashMap(fgNativeEnv);
-		}
-		fgNativeEnv= new HashMap();
+	 * Computes and caches the native system environment variables as a map of
+	 * variable names and values (Strings) in the given map.
+	 * <p>
+	 * Note that WIN32 system environment preserves
+	 * the case of variable names but is otherwise case insensitive.
+	 * Depending on what you intend to do with the environment, the
+	 * lack of normalization may or may not be create problems. This
+	 * method preserves mixed-case keys using the variable names 
+	 * recorded by the OS.
+	 * </p>
+	 * @since 3.1
+	 */	
+	private void cacheNativeEnvironment(Map cache) {
 		try {
 			String nativeCommand= null;
-			boolean windowsOS= false;
 			boolean isWin9xME= false; //see bug 50567
 			String fileName= null;
 			if (Platform.getOS().equals(Constants.OS_WIN32)) {
-				windowsOS= true;
 				String osName= System.getProperty("os.name"); //$NON-NLS-1$
 				isWin9xME= osName != null && (osName.startsWith("Windows 9") || osName.startsWith("Windows ME")); //$NON-NLS-1$ //$NON-NLS-2$
 				if (isWin9xME) {
@@ -1706,7 +1748,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				nativeCommand= "printenv";		 //$NON-NLS-1$
 			}
 			if (nativeCommand == null) {
-				return fgNativeEnv;
+				return;
 			}
 			Process process= Runtime.getRuntime().exec(nativeCommand);
 			if (isWin9xME) {
@@ -1723,9 +1765,9 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 					// Win32's environment vars are case insensitive. Put everything
 					// to uppercase so that (for example) the "PATH" variable will match
 					// "pAtH" correctly on Windows.
-					String key= ((String) enumeration.nextElement()).toUpperCase();
+					String key= (String) enumeration.nextElement();
 					//no need to cast value
-					fgNativeEnv.put(key, p.get(key));
+					cache.put(key, p.get(key));
 				}
 			} else {
 				//read process directly on other platforms
@@ -1735,14 +1777,8 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 					int separator= line.indexOf('=');
 					if (separator > 0) {
 						String key= line.substring(0, separator);
-						if (windowsOS) {
-							// Win32's environment vars are case insensitive. Put everything
-							// to uppercase so that (for example) the "PATH" variable will match
-							// "pAtH" correctly on Windows.
-							key= key.toUpperCase();
-						}
 						String value= line.substring(separator + 1);
-						fgNativeEnv.put(key, value);
+						cache.put(key, value);
 					}
 					line= reader.readLine();
 				}
@@ -1752,8 +1788,18 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			// Native environment-fetching code failed.
 			// This can easily happen and is not useful to log.
 		}
-		return new HashMap(fgNativeEnv);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchManager#getNativeEnvironmentCasePreserved()
+	 */
+	public synchronized Map getNativeEnvironmentCasePreserved() {
+		if (fgNativeEnvCasePreserved == null) {
+			fgNativeEnvCasePreserved= new HashMap();
+			cacheNativeEnvironment(fgNativeEnvCasePreserved);
+		}
+		return new HashMap(fgNativeEnvCasePreserved);
+	}	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchManager#newSourcePathComputer(org.eclipse.debug.core.ILaunchConfiguration)
 	 */

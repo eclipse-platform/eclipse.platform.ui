@@ -496,7 +496,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * @return Map of name - EnvironmentVariable pairs based on native environment.
 	 */
 	private Map getNativeEnvironment() {
-		Map stringVars = DebugPlugin.getDefault().getLaunchManager().getNativeEnvironment();
+		Map stringVars = DebugPlugin.getDefault().getLaunchManager().getNativeEnvironmentCasePreserved();
 		HashMap vars = new HashMap();
 		for (Iterator i = stringVars.keySet().iterator(); i.hasNext(); ) {
 			String key = (String) i.next();
