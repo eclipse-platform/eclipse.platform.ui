@@ -51,9 +51,6 @@ public interface ISourceLookupParticipant {
 	 * in its source containers.
 	 * </p>
 	 * @param object the debug artifact for which source needs to be found (e.g., stack frame)
-	 * @param findDuplicates whether searching should continue after the first match is
-	 *  found, or if all source containers should be searched exhaustively for all potential
-	 *  source elements corresponding to the given debug artifact	
 	 * @return a collection of source elements corresponding to the given
 	 *  debug artifact, possibly empty
 	 * @exception CoreException if an exception occurrs while searching for source

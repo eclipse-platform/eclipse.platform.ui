@@ -99,10 +99,10 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	class SourceLookupQuery implements ISafeRunnable {
 		
 		private List fSourceElements = new ArrayList();
-		private IStackFrame fFrame = null;
+		private Object fElement = null;
 		
-		SourceLookupQuery(IStackFrame frame) {
-			fFrame = frame;
+		SourceLookupQuery(Object element) {
+			fElement = element;
 		}
 
 		/* (non-Javadoc)
@@ -119,7 +119,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 			for(int i=0; i < fParticipants.size(); i++) {
 				Object[] sourceArray;
 				try {
-					sourceArray = ((ISourceLookupParticipant)fParticipants.get(i)).findSourceElements(fFrame);
+					sourceArray = ((ISourceLookupParticipant)fParticipants.get(i)).findSourceElements(fElement);
 					if (sourceArray !=null && sourceArray.length > 0) {
 						if (isFindDuplicates()) {
 							for(int j=0; j<sourceArray.length; j++)
@@ -141,7 +141,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 		}
 
 		public void dispose() {
-			fFrame = null;
+			fElement = null;
 			fSourceElements = null;
 		}
 		
@@ -406,25 +406,18 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 * Would be better to accept Object so this can be used for breakpoints and other objects.
 	 */
 	public Object getSourceElement(IStackFrame stackFrame) {
-		List sources = doSourceLookup(stackFrame);
-		if(sources.size() == 1) {
-			return sources.get(0);
-		} else if(sources.size() > 1) {
-			return resolveSourceElement(stackFrame, sources);
-		} else { 
-			return null;
-		}
+		return getSourceElement((Object)stackFrame);
 	}
 	
 	/**
-	 * Performs a source lookup query for the given stack frame
-	 * returning the source elements associated with the frame.
+	 * Performs a source lookup query for the given element
+	 * returning the source elements associated with the element.
 	 * 
-	 * @param frame stack frame
+	 * @param element stack frame
 	 * @return list of associated source elements
 	 */
-	protected List doSourceLookup(IStackFrame frame) {
-		SourceLookupQuery query = new SourceLookupQuery(frame);
+	protected List doSourceLookup(Object element) {
+		SourceLookupQuery query = new SourceLookupQuery(element);
 		Platform.run(query);
 		List sources = query.getSourceElements();
 		query.dispose();
@@ -432,19 +425,19 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	}
 	
 	/**
-	 * Returns the source element to associate with the given stack frame.
+	 * Returns the source element to associate with the given element.
 	 * This method is called when more than one source element has been found
-	 * for a stack frame, and allows the source director to select a single
-	 * source element to associate with the stack frame.
+	 * for an element, and allows the source director to select a single
+	 * source element to associate with the element.
 	 * <p>
 	 * Subclasses should override this method as appropriate. For example,
 	 * to prompt the user to choose a source element.
 	 * </p>
-	 * @param frame the frame for which source is being searched for
-	 * @param sources the source elements found for the given stack frame
-	 * @return a single source element for the given stack frame
+	 * @param element the debug artifact for which source is being searched for
+	 * @param sources the source elements found for the given element
+	 * @return a single source element for the given element
 	 */
-	public Object resolveSourceElement(IStackFrame frame, List sources) {
+	public Object resolveSourceElement(Object element, List sources) {
 		// check the duplicates cache first
 		Iterator duplicates = sources.iterator();
 		while (duplicates.hasNext()) {
@@ -458,7 +451,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 		IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(fPromptStatus);
 		if (prompter != null) {
 			try {
-				Object result = prompter.handleStatus(fResolveDuplicatesStatus, new Object[]{frame, sources});
+				Object result = prompter.handleStatus(fResolveDuplicatesStatus, new Object[]{element, sources});
 				if (result != null) {
 					cacheResolvedElement(sources, result);
 					return result;
@@ -606,10 +599,10 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	}	
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#clearSourceElements(org.eclipse.debug.core.model.IStackFrame)
+	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#clearSourceElements(java.lang.Object)
 	 */
-	public void clearSourceElements(IStackFrame frame) {
-		List list = doSourceLookup(frame);
+	public void clearSourceElements(Object element) {
+		List list = doSourceLookup(element);
 		if (list.size() > 0) {
 			Iterator iterator = list.iterator();
 			while (iterator.hasNext()) {
@@ -659,5 +652,28 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 */
 	public void setSourcePathComputer(ISourcePathComputer computer) {
 		fComputer = computer;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupDirector#findSourceElements(java.lang.Object)
+	 */
+	public Object[] findSourceElements(Object object) throws CoreException {
+		SourceLookupQuery query = new SourceLookupQuery(object);
+		Platform.run(query);
+		List sources = query.getSourceElements();
+		query.dispose();
+		return sources.toArray();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceLookupDirector#getSourceElement(java.lang.Object)
+	 */
+	public Object getSourceElement(Object element) {
+		List sources = doSourceLookup(element);
+		if(sources.size() == 1) {
+			return sources.get(0);
+		} else if(sources.size() > 1) {
+			return resolveSourceElement(element, sources);
+		} else { 
+			return null;
+		}
 	}
 }

@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.core.sourcelookup;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.model.IStackFrame;
 
 /**
  * A source lookup director directs the source lookup process
@@ -97,12 +97,12 @@ public interface ISourceLookupDirector extends IPersistableSourceLocator2 {
 	
 	/**
 	 * Clears any source lookup results associated with the given
-	 * stack frame, such that a subsequent lookup will force a new search
+	 * debug artifact, such that a subsequent lookup will force a new search
 	 * to be performed.
 	 *  
-	 * @param frame stack frame to clear source lookup results for
+	 * @param element debug artifact to clear source lookup results for
 	 */
-	public void clearSourceElements(IStackFrame frame);
+	public void clearSourceElements(Object element);
 	
 	/**
 	 * Adds the given source lookup participants to this director.
@@ -147,5 +147,32 @@ public interface ISourceLookupDirector extends IPersistableSourceLocator2 {
 	 * @param computer source path computer or <code>null</code>
 	 */
 	public void setSourcePathComputer(ISourcePathComputer computer);
+	
+	/**
+	 * Returns a collection of source elements corresponding to the given debug
+	 * artifact (for example, a stack frame or breakpoint). Returns an empty
+	 * collection if no source elements are found.
+	 * This participant's source lookup director specifies if duplicate
+	 * source elements should be searched for, via <code>isFindDuplicates()</code>.
+	 * When <code>false</code> the returned collection should contain at most one
+	 * source element.
+	 * 
+	 * @param object the debug artifact for which source needs to be found (e.g., stack frame)
+	 * @return a collection of source elements corresponding to the given
+	 *  debug artifact, possibly empty
+	 * @exception CoreException if an exception occurrs while searching for source
+	 */
+	public Object[] findSourceElements(Object object) throws CoreException;	
+	
+	/**
+	 * Returns a source element that corresponds to the given debug artifact, or
+	 * <code>null</code> if a source element could not be located. This is a
+	 * generalization of <code>getSourceElement(IStackFrame)</code> to allow
+	 * source to be found for other types of elements.
+	 *
+	 * @param element the debug artifact for which to locate source
+	 * @return an object representing a source element. 
+	 */
+	 public Object getSourceElement(Object element);	
 	
 }
