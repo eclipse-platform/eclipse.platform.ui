@@ -42,7 +42,7 @@ class HelpLogListener implements ILogListener {
 
 			}
 		} catch (Exception e) {
-			// ** can not log anything.
+			//  can not log anything.
 			log = null;
 		}
 

@@ -42,15 +42,16 @@ public class Logger {
 			debug_level = HelpSystem.getDebugLevel();
 
 			// get unique pluging ID and cash it for later use.
-			Plugin workbenchPlugin = HelpPlugin.getDefault();//HelpSystem.getPlugin();
-			workbenchPluginID = workbenchPlugin.getDescriptor().getUniqueIdentifier();
-			helpSystemLog = workbenchPlugin.getLog();
+			Plugin helpPlugin = HelpPlugin.getDefault();
+			workbenchPluginID = helpPlugin.getDescriptor().getUniqueIdentifier();
+			helpSystemLog = helpPlugin.getLog();
 			if (helpLogListener == null)
 				helpLogListener = new HelpLogListener();
 			helpSystemLog.addLogListener(helpLogListener);
 
 		} catch (Exception e) {
 			// Errors occured during initialize, disable logging 
+			e.printStackTrace();
 			init_ok = false;
 		}
 	}
