@@ -54,8 +54,8 @@ abstract public class AbstractReconciler implements IReconciler {
 	 */
 	class BackgroundThread extends Thread {
 		
-		/** Has the reconciler been cancelled. */
-		private boolean fCancelled= false;
+		/** Has the reconciler been canceled. */
+		private boolean fCanceled= false;
 		/** Has the reconciler been reset. */
 		private boolean fReset= false;
 		/** Some changes need to be processed. */
@@ -97,7 +97,7 @@ abstract public class AbstractReconciler implements IReconciler {
 		 * Cancels the background thread.
 		 */
 		public void cancel() {
-			fCancelled= true;
+			fCanceled= true;
 			synchronized (fDirtyRegionQueue) {
 				fDirtyRegionQueue.notifyAll();
 			}
@@ -165,7 +165,7 @@ abstract public class AbstractReconciler implements IReconciler {
 			
 			initialProcess();
 			
-			while (!fCancelled) {
+			while (!fCanceled) {
 				
 				synchronized (fDirtyRegionQueue) {
 					try {
@@ -174,7 +174,7 @@ abstract public class AbstractReconciler implements IReconciler {
 					}
 				}
 					
-				if (fCancelled)
+				if (fCanceled)
 					break;
 					
 				if (!isDirty())
