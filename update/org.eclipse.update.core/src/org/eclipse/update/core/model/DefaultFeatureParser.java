@@ -515,10 +515,9 @@ public class DefaultFeatureParser extends DefaultHandler {
 	 * @since 2.0
 	 */
 	public void characters(char[] ch, int start, int length) {
-
 		String text = "";
-
-		// remove any \t \r\n and space
+		boolean valid = true;
+/*		// remove any \t \r\n and space
 		boolean valid = false;
 		for (int i = 0; i < ch.length; i++) {
 			if (!Character.isWhitespace(ch[i])) {
@@ -526,6 +525,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 				break;
 			}
 		}
+*/
 
 		if (valid) {
 			text = new String(ch, start, length).trim();
@@ -536,8 +536,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 		if (state == STATE_DESCRIPTION
 			|| state == STATE_COPYRIGHT
 			|| state == STATE_LICENSE)
-			objectStack.push(text);
-
+			objectStack.push(text+"\r\n");
 	}
 
 	/**
