@@ -46,6 +46,8 @@ public class IntroPartPresentation extends AbstractIntroElement {
 
     protected static final String TAG_PRESENTATION = "presentation"; //$NON-NLS-1$
     private static final String TAG_IMPLEMENTATION = "implementation"; //$NON-NLS-1$
+    private static final String TAG_LAUNCH_BAR = "launchBar"; //$NON-NLS-1$    
+    
 
     /*
      * type attribute can only be org.eclipse.platform.intro.FormsPresentation
@@ -57,7 +59,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
     private static final String ATT_WS = "ws"; //$NON-NLS-1$
     protected static final String ATT_HOME_PAGE_ID = "home-page-id"; //$NON-NLS-1$
     protected static final String ATT_STANDBY_PAGE_ID = "standby-page-id"; //$NON-NLS-1$
-
+    
     private static final String BROWSER_IMPL_KIND = "html"; //$NON-NLS-1$
     private static final String FORMS_IMPL_KIND = "swt"; //$NON-NLS-1$
     // this implementation kind if not public api. Only used internally for
@@ -76,6 +78,8 @@ public class IntroPartPresentation extends AbstractIntroElement {
     private IntroHead head;
 
     private AbstractIntroPartImplementation implementation;
+    
+    private LaunchBarElement launchBar;
 
     // CustomizableIntroPart and memento instances. Passed to the Implementation
     // classes.
@@ -150,6 +154,24 @@ public class IntroPartPresentation extends AbstractIntroElement {
             Util.handleException(e.getMessage(), e);
             return null;
         }
+    }
+    
+/**
+ * Returns the launch bar element if defined in this presentation,
+ * or <code>null</code> otherwise.
+ * 
+ * @since 3.1
+ * @return
+ */
+    
+    public LaunchBarElement getLaunchBar() {
+    	if (launchBar!=null)
+    		return launchBar;
+    	IConfigurationElement [] children = getCfgElement().getChildren(TAG_LAUNCH_BAR);
+    	if (children.length>0) {
+    		launchBar = new LaunchBarElement(children[0]);
+    	}
+    	return launchBar;
     }
 
     /**

@@ -11,18 +11,21 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
-import java.io.*;
-import java.net.*;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.*;
 
 import org.eclipse.jface.action.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.jface.util.Geometry;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.intro.impl.*;
 import org.eclipse.ui.internal.intro.impl.model.loader.*;
-import org.eclipse.ui.internal.intro.impl.parts.*;
+import org.eclipse.ui.internal.intro.impl.parts.StandbyPart;
+import org.eclipse.ui.internal.intro.impl.presentations.IntroLaunchBar;
 import org.eclipse.ui.internal.intro.impl.util.*;
 import org.eclipse.ui.intro.*;
 import org.eclipse.ui.intro.config.*;
@@ -54,6 +57,7 @@ public class IntroURL implements IIntroURL {
     public static final String SHOW_PAGE = "showPage"; //$NON-NLS-1$
     public static final String SHOW_MESSAGE = "showMessage"; //$NON-NLS-1$
     public static final String NAVIGATE = "navigate"; //$NON-NLS-1$
+    public static final String SWITCH_TO_LAUNCH_BAR = "switchToLaunchBar"; //$NON-NLS-1$
 
     /**
      * Constants that represent valid action keys.
@@ -148,6 +152,8 @@ public class IntroURL implements IIntroURL {
         else if (action.equals(NAVIGATE))
             return navigate(getParameter(KEY_DIRECTION));
 
+        else if (action.equals(SWITCH_TO_LAUNCH_BAR))
+        	return switchToLaunchBar();
         else
             return handleCustomAction();
     }
@@ -255,7 +261,7 @@ public class IntroURL implements IIntroURL {
      */
     private boolean showHelpTopic(String href) {
         // WorkbenchHelp takes care of error handling.
-        WorkbenchHelp.displayHelpResource(href);
+        PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(href);
         return true;
     }
 
@@ -263,7 +269,7 @@ public class IntroURL implements IIntroURL {
      * Open the help system.
      */
     private boolean showHelp() {
-        WorkbenchHelp.displayHelp();
+    	PlatformUI.getWorkbench().getHelpSystem().displayHelp();
         return true;
     }
 
@@ -490,5 +496,29 @@ public class IntroURL implements IIntroURL {
         return query.toString();
     }
 
-}
+    private boolean switchToLaunchBar() {
+		IIntroPart intro = PlatformUI.getWorkbench().getIntroManager().getIntro();
+		if (intro==null) return false;
+		
+		CustomizableIntroPart cpart = (CustomizableIntroPart)intro;
+		IntroModelRoot modelRoot = IntroPlugin.getDefault().getIntroModelRoot();
+		String pageId = modelRoot.getCurrentPageId();
+		Rectangle bounds = cpart.getControl().getBounds();
+		Rectangle startBounds = Geometry.toDisplay(cpart.getControl().getParent(), bounds);
+		closeIntro();
+		
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		WorkbenchWindow wwindow = (WorkbenchWindow)window;
+		LaunchBarElement launchBarElement = modelRoot.getPresentation().getLaunchBar();
+		IntroLaunchBar launchBar = new IntroLaunchBar(launchBarElement.getOrientation(), pageId, launchBarElement);
+		launchBar.createControl(window.getShell());
+		wwindow.addToTrim(launchBar.getControl(), launchBarElement.getLocation());
+		window.getShell().layout();
+		Rectangle endBounds = Geometry.toDisplay(launchBar.getControl().getParent(),
+				launchBar.getControl().getBounds());
 
+        RectangleAnimation animation = new RectangleAnimation(window.getShell(), startBounds, endBounds);
+        animation.schedule();
+    	return true;
+    }
+}

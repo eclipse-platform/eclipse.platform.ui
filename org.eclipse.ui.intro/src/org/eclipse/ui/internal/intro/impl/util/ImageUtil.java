@@ -35,6 +35,9 @@ public final class ImageUtil {
     // Standby images
     public static final String BACK = "back"; //$NON-NLS-1$
     public static final String HELP_TOPIC = "helpTopic"; //$NON-NLS-1$
+    
+    // Launch bar image
+    public static final String RESTORE_WELCOME = "restoreWelcome";
 
     // Viewer images
     public static final String INTRO_MODEL_LEAF = "leaf"; //$NON-NLS-1$

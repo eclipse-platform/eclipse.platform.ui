@@ -111,7 +111,7 @@ public final class CustomizableIntroPart extends IntroPart implements
     public void init(IIntroSite site, IMemento memento)
             throws PartInitException {
         super.init(site, memento);
-
+        IntroPlugin.getDefault().closeLaunchBar();
         // load the correct model based in the current Intro Part id. Set the
         // IntroPartId in the manager class.
         String introId = getConfigurationElement().getAttribute("id"); //$NON-NLS-1$

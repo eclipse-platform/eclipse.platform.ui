@@ -16,6 +16,7 @@ import java.util.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.intro.impl.model.*;
 import org.eclipse.ui.internal.intro.impl.model.loader.*;
+import org.eclipse.ui.internal.intro.impl.presentations.IntroLaunchBar;
 import org.eclipse.ui.internal.intro.impl.util.*;
 import org.eclipse.ui.intro.*;
 import org.eclipse.ui.plugin.*;
@@ -31,6 +32,10 @@ public class IntroPlugin extends AbstractUIPlugin {
 
     // There should always be a single instance of all these classes.
     private ResourceBundle resourceBundle;
+    
+    // We must keep track of the launch bar so that we can
+    // close it if intro is opened from the menu.
+    private IntroLaunchBar launchBar;
 
     // The intro resource bundle.
     private static String INTRO_RESOURCE_BUNDLE = "org.eclipse.ui.internal.intro.impl.IntroPluginResources"; //$NON-NLS-1$
@@ -63,6 +68,17 @@ public class IntroPlugin extends AbstractUIPlugin {
             // ok to return Key.
             return key;
         }
+    }
+    
+    public void closeLaunchBar() {
+    	if (launchBar!=null) {
+    		launchBar.close();
+    		launchBar = null;
+    	}
+    }
+    
+    public void setLaunchBar(IntroLaunchBar launchBar) {
+    	this.launchBar = launchBar;
     }
 
     /**

@@ -187,6 +187,20 @@ The content file is parsed at run time by the intro framework. Based on the sett
                </restriction>
             </simpleType>
          </attribute>
+         <attribute name="bg" type="string">
+            <annotation>
+               <documentation>
+                  background color that will be applied to the launch bar if specified. Expected format is hex, as in: #rrggbb (for example, #80a4a1).
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="fg" type="string">
+            <annotation>
+               <documentation>
+                  foreground color that will be used to paint the border of the launch bar if specified. Expected format is hex, as in: #rrggbb (for example, #80a4a1).
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

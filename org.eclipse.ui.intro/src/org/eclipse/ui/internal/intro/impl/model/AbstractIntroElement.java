@@ -122,6 +122,16 @@ public abstract class AbstractIntroElement implements Cloneable {
      * Type constant which identifies the IntroContentProvider element.
      */
     public static final int CONTENT_PROVIDER = 1 << 14;
+    
+    /**
+     * Type constant which identifies the LaunchBarElement.
+     */
+    public static final int LAUNCH_BAR = 1 << 15;    
+    
+    /**
+     * Type constant which identifies the launch bar shortcut.
+     */
+    public static final int LAUNCH_BAR_SHORTCUT = 1 << 16;    
 
     /**
      * Type constant which identifies the AbstractText element.
