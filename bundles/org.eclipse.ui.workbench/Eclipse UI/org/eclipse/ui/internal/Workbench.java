@@ -309,6 +309,10 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 
 	private void updateCommandsAndContexts() {
 		IWorkbenchWindow activeWorkbenchWindow = getActiveWorkbenchWindow();
+		
+		if (!(activeWorkbenchWindow instanceof WorkbenchWindow))
+			activeWorkbenchWindow = null;
+		
 		ICommandHandlerService activeWorkbenchWindowCommandHandlerService = activeWorkbenchWindow != null ? ((WorkbenchWindow) activeWorkbenchWindow).getCommandHandlerService() : null;
 		IContextActivationService activeWorkbenchWindowContextActivationService = activeWorkbenchWindow != null ? ((WorkbenchWindow) activeWorkbenchWindow).getContextActivationService() : null;
 		IWorkbenchPage activeWorkbenchPage = activeWorkbenchWindow != null ? activeWorkbenchWindow.getActivePage() : null;
