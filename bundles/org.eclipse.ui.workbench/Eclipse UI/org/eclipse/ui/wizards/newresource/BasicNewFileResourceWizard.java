@@ -60,7 +60,7 @@ public void addPages() {
 	
 	linkPage = new WizardNewLinkPage("newLinkPage", IResource.FILE);
 	linkPage.setTitle(ResourceMessages.getString("NewLink.pageTitle")); //$NON-NLS-1$
-	linkPage.setDescription(ResourceMessages.getString("NewLink.description")); //$NON-NLS-1$
+	linkPage.setDescription(ResourceMessages.getString("NewLink.fileDescription")); //$NON-NLS-1$
 	addPage(linkPage);
 }
 /**
