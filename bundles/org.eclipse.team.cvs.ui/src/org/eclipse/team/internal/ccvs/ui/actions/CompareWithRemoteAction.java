@@ -39,13 +39,10 @@ public class CompareWithRemoteAction extends WorkspaceAction {
 			private SyncInfoFilter contentCompare = new SyncInfoFilter.ContentComparisonSyncInfoFilter();
 			public boolean select(SyncInfo info, IProgressMonitor monitor) {
 				// Want to select infos whose contents do not match
-				boolean different = !contentCompare.select(info, monitor);
-				if(different) {
-					for (int i = 0; i < resources.length; i++) {
-						IResource resource = resources[i];
-						if (resource.getFullPath().isPrefixOf(info.getLocal().getFullPath())) {
-							return true;
-						}
+				for (int i = 0; i < resources.length; i++) {
+					IResource resource = resources[i];
+					if (resource.getFullPath().isPrefixOf(info.getLocal().getFullPath())) {
+						return !contentCompare.select(info, monitor);
 					}
 				}
 				return false;
