@@ -63,7 +63,9 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 	/** Indicates whether the display delay has been reset */
 	private boolean fIsReset= false;
 	/** Object to synchronize display thread and table selection changes */
-	private Object fMutex= new Object();
+	private final Object fMutex= new Object();
+	/** Thread access lock. */
+	private final Object fThreadAccess= new Object();
 	/** Object to synchronize initial display of additonal info */
 	private Object fStartSignal;
 	/** The table selection listener */
@@ -100,7 +102,11 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 		Assert.isTrue(control instanceof Table);
 		fProposalTable= (Table) control;
 		fProposalTable.addSelectionListener(fSelectionListener);
-		fThread= new Thread(this, JFaceTextMessages2.getString("InfoPopup.info_delay_timer_name")); //$NON-NLS-1$
+		synchronized (fThreadAccess) {
+	 		if (fThread != null)
+	 			fThread.interrupt();
+			fThread= new Thread(this, JFaceTextMessages2.getString("InfoPopup.info_delay_timer_name")); //$NON-NLS-1$
+		}
 		
 		fStartSignal= new Object();
 		synchronized (fStartSignal) {
@@ -118,10 +124,12 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 	 */	
 	 public void disposeInformationControl() {
 		
-		if (fThread != null) {
-			fThread.interrupt();
-			fThread= null;
-		}
+	 	synchronized (fThreadAccess) {
+	 		if (fThread != null) {
+	 			fThread.interrupt();
+	 			fThread= null;
+	 		}
+	 	}
 		
 		if (fProposalTable != null && !fProposalTable.isDisposed()) {
 			fProposalTable.removeSelectionListener(fSelectionListener);
@@ -172,7 +180,11 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 		} catch (InterruptedException e) {
 		}
 		
-		fThread= null;
+		synchronized (fThreadAccess) {
+			// only null fThread if it is us!
+			if (Thread.currentThread() == fThread)
+				fThread= null;
+		}
 	}
 	
 	/**
