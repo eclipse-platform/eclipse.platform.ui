@@ -36,6 +36,7 @@ public AboutAction(IWorkbenchWindow window) {
 	setText(WorkbenchMessages.format("AboutAction.text", new Object[] { productName })); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.format("AboutAction.toolTip", new Object[] { productName})); //$NON-NLS-1$
 	setId(IWorkbenchActionConstants.ABOUT);
+	setActionDefinitionId("org.eclipse.ui.help.aboutAction"); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(this, IHelpContextIds.ABOUT_ACTION);
 }
 

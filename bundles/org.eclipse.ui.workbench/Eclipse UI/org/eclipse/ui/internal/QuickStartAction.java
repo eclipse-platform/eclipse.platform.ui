@@ -53,6 +53,7 @@ public class QuickStartAction extends PartEventAction {
 		super(WorkbenchMessages.getString("QuickStart.text")); //$NON-NLS-1$
 		setToolTipText(WorkbenchMessages.getString("QuickStart.toolTip")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.QUICK_START_ACTION);
+		setActionDefinitionId("org.eclipse.ui.help.quickStartAction"); //$NON-NLS-1$
 		this.window = window;
 	}
 	/**

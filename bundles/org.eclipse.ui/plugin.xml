@@ -118,6 +118,24 @@
             id="org.eclipse.ui.category.textEditor">
       </category>     
       <command
+			category="org.eclipse.ui.category.help"
+            name="%command.quickStart.name"
+            description="%command.quickStart.description"
+            id="org.eclipse.ui.help.quickStartAction">
+      </command>
+     <command
+			category="org.eclipse.ui.category.help"
+            name="%command.tipsAndTricks.name"
+            description="%command.tipsAndTricks.description"
+            id="org.eclipse.ui.help.tipsAndTricksAction">
+      </command>
+     <command
+			category="org.eclipse.ui.category.help"
+            name="%command.aboutAction.name"
+            description="%command.aboutAction.description"
+            id="org.eclipse.ui.help.aboutAction">
+      </command>      
+      <command
 			category="org.eclipse.ui.category.file"
             name="%command.newWizard.name"
             description="%command.newWizard.description"

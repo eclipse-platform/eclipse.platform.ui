@@ -836,6 +836,7 @@ public class WorkbenchActionBuilder {
 		aboutAction.setImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD));
+		keyBindingService.registerGlobalAction(aboutAction);
 
 		openPreferencesAction = new OpenPreferencesAction(window);
 
@@ -868,6 +869,7 @@ public class WorkbenchActionBuilder {
 		for (int i = 0; i < infos.length; i++) {
 			if (infos[i].getWelcomePageURL() != null) {
 				quickStartAction = new QuickStartAction(window);
+				keyBindingService.registerGlobalAction(quickStartAction);
 				break;
 			}
 		}
@@ -875,6 +877,7 @@ public class WorkbenchActionBuilder {
 		for (int i = 0; i < infos.length; i++) {
 			if (infos[i].getTipsAndTricksHref() != null) {
 				tipsAndTricksAction = new TipsAndTricksAction(window);
+				keyBindingService.registerGlobalAction(tipsAndTricksAction);
 				break;
 			}
 		}

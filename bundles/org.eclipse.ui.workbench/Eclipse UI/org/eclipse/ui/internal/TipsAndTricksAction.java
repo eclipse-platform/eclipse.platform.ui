@@ -38,6 +38,7 @@ public class TipsAndTricksAction extends PartEventAction {
 		super(WorkbenchMessages.getString("TipsAndTricks.text")); //$NON-NLS-1$
 		setToolTipText(WorkbenchMessages.getString("TipsAndTricks.toolTip")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.TIPS_AND_TRICKS_ACTION);
+		setActionDefinitionId("org.eclipse.ui.help.tipsAndTricksAction"); //$NON-NLS-1$
 		this.window = window;
 	}
 
