@@ -309,12 +309,12 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 			public void widgetSelected(SelectionEvent e) {
 				// column selected - need to sort
 				int column = viewer.getTable().indexOf((TableColumn) e.widget);
-				HistorySorter oldSorter = (HistorySorter)viewer.getSorter();
+				VersionSorter oldSorter = (VersionSorter)viewer.getSorter();
 				if (oldSorter != null && column == oldSorter.getColumnNumber()) {
 					oldSorter.setReversed(!oldSorter.isReversed());
 					viewer.refresh();
 				} else {
-					viewer.setSorter(new HistorySorter(column));
+					viewer.setSorter(new VersionSorter(column));
 				}
 			}
 		};
