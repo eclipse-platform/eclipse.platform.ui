@@ -50,5 +50,8 @@ org.eclipse.ui/trace/handlers.verbose=false
 # Report UIJobs that take more than 100 ms.
 org.eclipse.ui/debug/uijob.longwarning=false
 
+#Report if a stale job was found
+org.eclipse.ui/debug/job.stale=false
+
 # Restrict the verbose information to a particular command
 org.eclipse.ui/trace/handlers.verbose.commandId=

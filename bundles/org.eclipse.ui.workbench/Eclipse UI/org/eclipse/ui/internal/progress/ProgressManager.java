@@ -58,6 +58,7 @@ import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
 import org.eclipse.ui.internal.dialogs.WorkbenchDialogBlockedHandler;
+import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.progress.IProgressService;
@@ -401,9 +402,9 @@ public class ProgressManager extends ProgressProvider
 				}
 				jobs.remove(event.getJob());
 				//Only refresh if we are showing it
-				removeJobInfo(info);
+				removeJobInfo(info);	
 				//If there are no more left then refresh all on the last
-				// displayed one
+				// displayed one.
 				if (hasNoRegularJobInfos()
 						&& !isNonDisplayableJob(event.getJob(), false))
 					refreshAll();
@@ -547,6 +548,7 @@ public class ProgressManager extends ProgressProvider
 	 */
 	public void refreshAll() {
 
+		pruneStaleJobs();
 		Object[] listenerArray = listeners.toArray();
 		for (int i = 0; i < listenerArray.length; i++) {
 			IJobProgressManagerListener listener = (IJobProgressManagerListener) listenerArray[i];
@@ -965,11 +967,16 @@ public class ProgressManager extends ProgressProvider
 
 		busyCursorWhile(runnable);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.progress.IProgressService#runInUI(org.eclipse.jface.operation.IRunnableWithProgress, org.eclipse.core.runtime.jobs.ISchedulingRule)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.progress.IProgressService#runInUI(org.eclipse.jface.operation.IRunnableWithProgress,
+	 *      org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 */
-	public void runInUI(final IRunnableWithProgress runnable, final ISchedulingRule rule) throws InvocationTargetException, InterruptedException {
-		final IJobManager manager= Platform.getJobManager();
+	public void runInUI(final IRunnableWithProgress runnable,
+			final ISchedulingRule rule) throws InvocationTargetException,
+			InterruptedException {
+		final IJobManager manager = Platform.getJobManager();
 		final InvocationTargetException[] exception = new InvocationTargetException[1];
 		final InterruptedException[] canceled = new InterruptedException[1];
 		BusyIndicator.showWhile(Display.getDefault(), new Runnable() {
@@ -1047,5 +1054,26 @@ public class ProgressManager extends ProgressProvider
 			IWorkbenchWindow window = windows[i];
 			window.getShell().setEnabled(active);
 		}
+	}
+
+	/**
+	 * Check to see if there are any stale jobs we have not cleared out.
+	 * 
+	 * @return <code>true</code> if anything was pruned
+	 */
+	private boolean pruneStaleJobs() {
+		Object[] jobsToCheck = jobs.keySet().toArray();
+		boolean pruned = false;
+		for (int i = 0; i < jobsToCheck.length; i++) {
+			Job job = (Job) jobsToCheck[i];
+			if (job.getState() == Job.NONE) {
+				if (Policy.DEBUG_STALE_JOBS)
+					WorkbenchPlugin.log("Stale Job " + job.getName()); //$NON-NLS-1$
+				removeJobInfo(getJobInfo(job));
+				pruned = true;
+			}
+		}
+
+		return pruned;
 	}
 }
