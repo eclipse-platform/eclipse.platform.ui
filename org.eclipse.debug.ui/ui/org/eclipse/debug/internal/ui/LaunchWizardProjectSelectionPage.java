@@ -11,6 +11,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -287,6 +288,10 @@ public class LaunchWizardProjectSelectionPage extends WizardPage {
 	 */
 	public boolean canFlipToNextPage() {
 		return isPageComplete();
+	}
+	
+	public IWizardContainer getContainer() {
+		return super.getContainer();
 	}
 }
 
