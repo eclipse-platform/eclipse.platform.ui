@@ -22,6 +22,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.*;
 import org.eclipse.update.core.ISite;
 import org.eclipse.update.internal.ui.search.*;
+import org.eclipse.update.internal.ui.wizards.*;
 import org.eclipse.update.internal.ui.wizards.NewUpdatesWizard;
 
 /**
@@ -112,8 +113,9 @@ public class NewUpdatesAction implements IWorkbenchWindowActionDelegate {
 
 	private void openNewUpdatesWizard() {
 		NewUpdatesWizard wizard = new NewUpdatesWizard(searchObject);
-		WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
+		WizardDialog dialog = new ResizableWizardDialog(window.getShell(), wizard);
 		dialog.create();
+		dialog.getShell().setText(UpdateUI.getString(KEY_TITLE));
 		dialog.getShell().setSize(600, 500);
 		dialog.open();
 		if (wizard.isSuccessfulInstall())
