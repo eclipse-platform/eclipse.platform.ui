@@ -12,6 +12,7 @@ import org.eclipse.compare.BufferedContent;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.IEditableContent;
 import org.eclipse.compare.ITypedElement;
+import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.structuremergeviewer.DiffContainer;
 import org.eclipse.compare.structuremergeviewer.DiffElement;
 import org.eclipse.compare.structuremergeviewer.DiffTreeViewer;
@@ -373,7 +374,8 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 			}
 		};
 		ignoreWhiteSpace.setId("team.ignoreWhiteSpace"); //$NON-NLS-1$
-		ignoreWhiteSpace.setChecked(false);
+		boolean ignore = CompareUIPlugin.getDefault().getPreferenceStore().getBoolean(CompareConfiguration.IGNORE_WHITESPACE);
+		ignoreWhiteSpace.setChecked(ignore);
 		
 		// Add a selection listener to set the left label
 		addSelectionChangedListener(this);
