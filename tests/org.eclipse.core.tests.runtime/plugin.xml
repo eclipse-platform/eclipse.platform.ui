@@ -18,6 +18,13 @@
     </library>
   </runtime>
 
+	<extension point="org.eclipse.core.runtime.urlHandlers">
+		<handler
+			class="org.eclipse.core.tests.runtime.stream.Handler"
+			protocol="stream">
+		</handler>
+	</extension>
+
   <extension point="org.eclipse.core.tests.harness.tests">
     <test id="runtime.AutomatedTests">
       <run class="org.eclipse.core.tests.runtime.AutomatedTests"/>
