@@ -113,10 +113,6 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 		return getSyncInfoSource().getSyncInfo(subscriber, resource);
 	}
 
-	/**
-	 * @param changes
-	 * @param resources
-	 */
 	protected void assertSyncChangesMatch(ISubscriberChangeEvent[] changes, IResource[] resources) {
 		// First, ensure that all the resources appear in the delta
 		for (int i = 0; i < resources.length; i++) {
@@ -190,11 +186,6 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 		return (IResource[]) affected.toArray(new IResource[affected.size()]);
 	}
 	
-	/**
-	 * @param resources
-	 * @param condition
-	 * @return
-	 */
 	protected IResource[] collectAncestors(IResource[] resources, ResourceCondition condition) throws CoreException, TeamException {
 		Set affected = new HashSet();
 		for (int i = 0; i < resources.length; i++) {

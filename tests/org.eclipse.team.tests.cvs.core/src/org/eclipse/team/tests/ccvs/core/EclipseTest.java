@@ -258,13 +258,18 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		return resources;
 	}
 	
+	protected void commitResources(IResource[] resources, int depth) throws TeamException, CoreException {
+		commitResources(resources, depth, "");
+	}
+	
 	/*
 	 * Commit the provided resources which must all be in the same project
 	 */
-	protected void commitResources(IResource[] resources, int depth) throws TeamException, CoreException {
+	protected void commitResources(IResource[] resources, int depth, String message) throws TeamException, CoreException {
 		if (resources.length == 0) return;
-		executeHeadless(new CommitOperation(null, resources, new Command.LocalOption[] { Commit.makeArgumentOption(Command.MESSAGE_OPTION, "") }));
+		executeHeadless(new CommitOperation(null, resources, new Command.LocalOption[] { Commit.makeArgumentOption(Command.MESSAGE_OPTION, message) }));
 	}
+	
 	/**
 	 * Commit the resources from an existing container to the CVS repository
 	 */

@@ -36,6 +36,7 @@ import org.eclipse.team.internal.ui.synchronize.SynchronizeView;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource;
 import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.team.ui.synchronize.ISynchronizeManager;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipantReference;
@@ -92,7 +93,7 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 		return info;
 	}
 	
-	private SubscriberParticipant getParticipant(Subscriber subscriber) {
+	public static SubscriberParticipant getParticipant(Subscriber subscriber) {
 		// show the sync view
 		ISynchronizeParticipantReference[] participants = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
 		for (int i = 0; i < participants.length; i++) {
@@ -111,7 +112,7 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 		return null;
 	}
 	
-	private SubscriberSyncInfoCollector getCollector(Subscriber subscriber) {
+	public static SubscriberSyncInfoCollector getCollector(Subscriber subscriber) {
 		SubscriberParticipant participant = getParticipant(subscriber);
 		if (participant == null) return null;
 		SubscriberSyncInfoCollector syncInfoCollector = participant.getSubscriberSyncInfoCollector();
@@ -246,5 +247,12 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 			throw new AssertionFailedError("Cannot show sync view in active page");
 		}
 		return null;
+	}
+	
+	public static ISynchronizePage getSyncViewPage(ISynchronizeParticipant participant) throws PartInitException {
+		IWorkbenchPage activePage = TeamUIPlugin.getActivePage();
+		ISynchronizeView view = (ISynchronizeView)activePage.showView(ISynchronizeView.VIEW_ID);
+		IPage page = ((SynchronizeView)view).getPage(participant);
+		return (ISynchronizePage)page;
 	}
 }
