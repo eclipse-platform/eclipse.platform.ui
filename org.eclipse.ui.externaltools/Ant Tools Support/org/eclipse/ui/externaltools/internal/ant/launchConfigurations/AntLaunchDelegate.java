@@ -166,7 +166,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 				refresher.startBackgroundRefresh();
 			}				
 		} else {
-			// run the script
+			// execute the build 
 			try {
 				runner.run(monitor);
 			} catch (CoreException e) {
