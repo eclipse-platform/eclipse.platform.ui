@@ -5,24 +5,22 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IOConsole;
 
 /**
  * Toggles console auto-scroll
  * 
- * This class is new and experimental. It will likely be subject to significant change before
- * it is finalized.
- * 
  * @since 3.1
- *
  */
 public class ScrollLockAction extends Action implements IPropertyChangeListener {
 
 	private IPreferenceStore prefStore = ConsolePlugin.getDefault().getPreferenceStore();
-    private IOConsoleViewer viewer;
+    private IOConsole fConsole;
 	
-	public ScrollLockAction(IOConsoleViewer viewer) {
+	public ScrollLockAction(IOConsole console) {
 		super(ConsoleMessages.getString("ScrollLockAction.0")); //$NON-NLS-1$
-		this.viewer = viewer;
+		fConsole = console;
+		
 		setToolTipText(ConsoleMessages.getString("ScrollLockAction.1"));  //$NON-NLS-1$
 		setHoverImageDescriptor(ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_LCL_LOCK));		
 		setDisabledImageDescriptor(ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_DLCL_LOCK));
@@ -30,7 +28,7 @@ public class ScrollLockAction extends Action implements IPropertyChangeListener 
 
 		boolean checked = prefStore.getBoolean(IInternalConsoleConstants.PREF_CONSOLE_SCROLL_LOCK); 
 		setChecked(checked);
-		viewer.setAutoScroll(!checked);
+		fConsole.setAutoScroll(!checked);
 		prefStore.addPropertyChangeListener(this);
 	}
 
@@ -38,6 +36,8 @@ public class ScrollLockAction extends Action implements IPropertyChangeListener 
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
+	    // There may be mulitple consoles open but scroll lock is considered global to all of them.
+	    // Need to fire the event so that all consoles have a chance to update their state.
 		prefStore.setValue(IInternalConsoleConstants.PREF_CONSOLE_SCROLL_LOCK, isChecked());
 	}
 	
@@ -52,7 +52,7 @@ public class ScrollLockAction extends Action implements IPropertyChangeListener 
 		if (event.getProperty().equals(IInternalConsoleConstants.PREF_CONSOLE_SCROLL_LOCK)) {
 		    boolean checked = prefStore.getBoolean(IInternalConsoleConstants.PREF_CONSOLE_SCROLL_LOCK);
 			setChecked(checked);
-			viewer.setAutoScroll(!checked);
+			fConsole.setAutoScroll(!checked);
 		}
 		
 	}

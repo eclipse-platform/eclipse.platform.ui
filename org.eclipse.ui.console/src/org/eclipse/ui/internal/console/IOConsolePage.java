@@ -257,7 +257,7 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 		
 		clearOutputAction = new ClearOutputAction(console);
 		
-		scrollLockAction = new ScrollLockAction(viewer);
+		scrollLockAction = new ScrollLockAction(console);
 		scrollLockAction.setChecked(!autoScroll);
 		viewer.setAutoScroll(autoScroll);
 		

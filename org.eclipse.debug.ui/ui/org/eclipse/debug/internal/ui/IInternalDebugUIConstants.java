@@ -196,11 +196,6 @@ public interface IInternalDebugUIConstants {
 	 */
 	public final static String FONT_NAME = IDebugUIConstants.PLUGIN_ID + ".MemoryViewTableFont"; //$NON-NLS-1$
 	
-	/**
-	 * Boolean preference for console scroll lock toggle state.
-	 */
-	public static final String PREF_CONSOLE_SCROLL_LOCK = IDebugUIConstants.PLUGIN_ID + ".console_scroll_lock"; //$NON-NLS-1$
-	
 	public final static int BYTES_PER_LINE = 16;	// number of bytes per line
 	public final static int CHAR_PER_BYTE = 2;		// number of characters to represent one byte
 	public final static int BYTE_PER_CELL = 4;		// number of bytes per cell

@@ -21,7 +21,6 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.core.model.IStreamsProxy2;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IMenuListener;
@@ -56,9 +55,6 @@ import org.eclipse.ui.part.ShowInContext;
  * @since 3.1
  */
 public class ProcessConsolePageParticipant implements IConsolePageParticipant, IShowInSource, IShowInTargetList, IDebugEventSetListener, ISelectionListener, IMenuListener {
-
-	// scroll lock
-	private boolean fIsLocked = DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_CONSOLE_SCROLL_LOCK);
 	
 	// actions
 	private ConsoleTerminateAction fTerminate;
@@ -100,7 +96,6 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
     public void init(IPageBookViewPage page, IConsole console) {
         fPage = page;
         fConsole = (ProcessConsole) console;
-        fConsole.setAutoScroll(!fIsLocked);
         
         fRemoveTerminated = new ConsoleRemoveAllTerminatedAction();
         fTerminate = new ConsoleTerminateAction(fConsole);
