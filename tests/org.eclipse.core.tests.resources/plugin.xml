@@ -183,6 +183,9 @@
 	<test id = "org.eclipse.core.tests.resources.session.FindDeletedMembersTest">
 		<run class="org.eclipse.core.tests.resources.session.FindDeletedMembersTest"/>
 	</test>
+	<test id = "org.eclipse.core.tests.resources.session.TestBug20127">
+		<run class="org.eclipse.core.tests.resources.session.TestBug20127"/>
+	</test>
   
     <test id="usecase.AllTests">
       <run class="org.eclipse.core.tests.resources.usecase.AllTests"/>
