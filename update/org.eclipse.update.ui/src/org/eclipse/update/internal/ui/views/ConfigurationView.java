@@ -158,6 +158,15 @@ public class ConfigurationView
 				return 2;
 			if (obj.equals(savedFolder))
 				return 3;
+			
+			// sites
+			if (obj instanceof IConfiguredSiteAdapter) {
+				IConfiguredSiteAdapter adapter = (IConfiguredSiteAdapter)obj;
+				IConfiguredSite csite = adapter.getConfiguredSite();
+				if (csite.isProductSite()) return 1;
+				if (csite.isExtensionSite()) return 2;
+				return 3;
+			}
 
 			return super.category(obj);
 		}

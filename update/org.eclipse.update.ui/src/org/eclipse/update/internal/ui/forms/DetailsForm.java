@@ -1253,14 +1253,18 @@ public class DetailsForm extends PropertyWebForm {
 				null,
 				null,
 				validationStatus);
+			inProgress = false;
 			return false;
 		}
-		if (!checkEnabledDuplicates(job))
+		if (!checkEnabledDuplicates(job)) {
+			inProgress = false;
 			return false;
+		}
 
 		if (job.getJobType() == PendingChange.UNCONFIGURE
 			&& job.getFeature().isPatch()) {
 			unconfigurePatch(shell, job.getFeature());
+			inProgress = false;
 			return false;
 		}
 		BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
