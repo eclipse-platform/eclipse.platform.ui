@@ -61,15 +61,15 @@ Natures also have the ability to disallow the creation of linked resources on pr
 
    <element name="extension">
       <complexType>
-		<sequence>
-		    <element ref="runtime"/>
-		    <choice minOccurs="0" maxOccurs="unbounded">
-		       <element ref="one-of-nature"/>
-		       <element ref="requires-nature"/>
-		       <element ref="builder"/>
-		   </choice>
-		   <element ref="options" minOccurs="0" maxOccurs="1"/>
-		</sequence>
+         <sequence>
+            <element ref="runtime"/>
+            <choice minOccurs="0" maxOccurs="unbounded">
+               <element ref="one-of-nature"/>
+               <element ref="requires-nature"/>
+               <element ref="builder"/>
+            </choice>
+            <element ref="options" minOccurs="0" maxOccurs="1"/>
+         </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
@@ -77,7 +77,7 @@ Natures also have the ability to disallow the creation of linked resources on pr
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="id" type="string">
+         <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
                   an optional identifier of the extension instance

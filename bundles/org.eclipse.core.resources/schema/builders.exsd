@@ -41,7 +41,7 @@ name is the id of the builder extension. When defining a builder extension, user
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="id" type="string">
+         <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
                   an optional identifier of the extension instance
