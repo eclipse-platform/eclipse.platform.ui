@@ -94,6 +94,13 @@ public class RemoteTreeViewer extends TreeViewer {
             }
         }
         
+        public void validate(Object object) {
+            if (element.equals(object) || parents.contains(object)) {
+                cancel();
+                fExpansionJob = null;
+            }
+        }
+        
     }
 
     class SelectionJob extends UIJob {
@@ -146,6 +153,12 @@ public class RemoteTreeViewer extends TreeViewer {
             }
         }
         
+        public void validate(Object object) {
+            if (element.equals(object) || parents.contains(object)) {
+                cancel();
+                fSelectionJob = null;
+            }
+        }
     }
     
     /**
@@ -166,6 +179,23 @@ public class RemoteTreeViewer extends TreeViewer {
     	if (fSelectionJob != null) {
     	    fSelectionJob.schedule();
     	}
+    }
+    
+    /**
+     * The given element is being removed from the tree. Cancel
+     * any deferred updates for the element.
+     * 
+     * @param element
+     */
+    protected void validateDeferredUpdates(Object element) {
+        if (element != null) {
+	        if (fExpansionJob != null) {
+	            fExpansionJob.validate(element);
+	        }
+	        if (fSelectionJob != null) {
+	            fSelectionJob.validate(element);
+	        }
+        }
     }
 
     /**
@@ -208,6 +238,7 @@ public class RemoteTreeViewer extends TreeViewer {
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#remove(java.lang.Object)
 	 */
 	public synchronized void remove(Object element) {
+	    validateDeferredUpdates(element);
 		super.remove(element);
 	}
 	
@@ -215,6 +246,9 @@ public class RemoteTreeViewer extends TreeViewer {
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#remove(java.lang.Object[])
 	 */
 	public synchronized void remove(Object[] elements) {
+	    for (int i = 0; i < elements.length; i++) {
+            validateDeferredUpdates(elements[i]);
+        }
 		super.remove(elements);
 	}    
 
@@ -339,6 +373,7 @@ public class RemoteTreeViewer extends TreeViewer {
                             Item item = currentChildren[pos];
                             Object data = item.getData();
                             if (!child.equals(data)) {
+                                validateDeferredUpdates(data);
                                 associate(child, item);
                                 internalRefresh(item, child, true, true);
                             } else {
