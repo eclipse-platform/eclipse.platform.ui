@@ -68,6 +68,20 @@ final class KeyBindingService implements INestableKeyBindingService {
     private Map handlerSubmissionsByCommandId = new HashMap();
 
     /**
+     * The context submissions from the currently active nested service.  This
+     * value is <code>null</code> if there is no currently active nested
+     * service.
+     */
+    private List nestedEnabledSubmissions = null;
+    
+    /**
+     * The handler submissions from the currently active nested service.  This
+     * value is <code>null</code> if there is no currently active handler
+     * service. 
+     */
+    private List nestedHandlerSubmissions = null;
+
+    /**
      * The map of workbench part sites to nested key binding services. This map
      * may be empty, but is never <code>null</code>.
      */
@@ -123,9 +137,12 @@ final class KeyBindingService implements INestableKeyBindingService {
     public boolean activateKeyBindingService(IWorkbenchSite nestedSite) {
         // Check if we should do a deactivation.
         if (nestedSite == null) {
+        	// We should do a deactivation, if there is one active.
             if (activeService == null) {
+            	// There is no active service.  Do no work.
                 return false;
             } else {
+            	// Deactivate the currently active nested service.
                 deactivateNestedService();
                 return true;
             }
@@ -136,14 +153,13 @@ final class KeyBindingService implements INestableKeyBindingService {
                 .get(nestedSite);
         if (service == null) { return false; }
 
-        if (parent != null) {
-            parent.activateNestedService(service);
-        }
-        activateNestedService(service);
-        if (parent != null) {
-            parent.deactivateNestedService();
+        if (service == activeService) {
+        	// The service is already active.
+        	return false;
         }
 
+        deactivateNestedService();
+        activateNestedService(service);
         return true;
     }
 
@@ -158,11 +174,16 @@ final class KeyBindingService implements INestableKeyBindingService {
      *            but nothing else happens.
      */
     private final void activateNestedService(final IKeyBindingService service) {
-        // Remove myself from the parent before continuing.
+        /* If I have a parent, and I'm the active service, then deactivate so
+    	 * that I can make changes.
+    	 */
         boolean active = false;
-        if ((parent != null) && (parent.activeService == this)) {
-            active = true;
-            parent.deactivateNestedService();
+        boolean haveParent = (parent != null);
+        if (haveParent) {
+        	active = (parent.activeService == this);
+        	if (active) {
+        		parent.deactivateNestedService();
+        	}
         }
 
         // Update the active service.
@@ -171,22 +192,23 @@ final class KeyBindingService implements INestableKeyBindingService {
         // Check to see that the service isn't null.
         if (service == null) { return; }
 
-        if (active) {
-            parent.activateNestedService(this);
+        if (haveParent) {
+        	if (active) {
+        		parent.activateNestedService(this);
+        	}
 
         } else if (activeService instanceof KeyBindingService) {
+        	// I have no parent, so I can make the changes myself.
             final KeyBindingService nestedService = (KeyBindingService) activeService;
 
             // Update the contexts.
-            final List nestedEnabledSubmissions = nestedService
-                    .getEnabledSubmissions();
+            nestedEnabledSubmissions = nestedService.getEnabledSubmissions();
             normalizeSites(nestedEnabledSubmissions);
             Workbench.getInstance().getContextSupport().addEnabledSubmissions(
                     nestedEnabledSubmissions);
 
             // Update the handlers.
-            final List nestedHandlerSubmissions = nestedService
-                    .getHandlerSubmissions();
+            nestedHandlerSubmissions = nestedService.getHandlerSubmissions();
             normalizeSites(nestedHandlerSubmissions);
             Workbench.getInstance().getCommandSupport().addHandlerSubmissions(
                     nestedHandlerSubmissions);
@@ -201,26 +223,25 @@ final class KeyBindingService implements INestableKeyBindingService {
         // Don't do anything if there is no active service.
         if (activeService == null) { return; }
 
-        // Remove myself from the parent before continuing.
+        // Check to see if there is a parent.
         boolean active = false;
-        if ((parent != null) && (parent.activeService == this)) {
-            active = true;
-            parent.deactivateNestedService();
+        if (parent != null) {
+        	// Check if I'm the active service.
+        	if (parent.activeService == this) {
+        		active = true;
+        		// Deactivate myself so I can make changes.
+        		parent.deactivateNestedService();
+        	}
 
         } else if (activeService instanceof KeyBindingService) {
+        	// There is no parent, so I can do all of the work.
             final KeyBindingService nestedService = (KeyBindingService) activeService;
 
             // Remove all the nested context ids.
-            final List nestedEnabledSubmissions = nestedService
-                    .getEnabledSubmissions();
-            normalizeSites(nestedEnabledSubmissions);
             Workbench.getInstance().getContextSupport()
                     .removeEnabledSubmissions(nestedEnabledSubmissions);
 
             // Remove all of the nested handler submissions.
-            final List nestedHandlerSubmissions = nestedService
-                    .getHandlerSubmissions();
-            normalizeSites(nestedHandlerSubmissions);
             Workbench.getInstance().getCommandSupport()
                     .removeHandlerSubmissions(nestedHandlerSubmissions);
 
@@ -229,7 +250,7 @@ final class KeyBindingService implements INestableKeyBindingService {
         // Clear our reference to the active service.
         activeService = null;
 
-        // If necessary, reactivate this nested service.
+        // If necessary, let my parent know that changes have occurred.
         if (active) {
             parent.activateNestedService(this);
         }
