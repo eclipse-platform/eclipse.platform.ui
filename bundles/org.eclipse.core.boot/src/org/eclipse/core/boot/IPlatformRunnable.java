@@ -16,6 +16,17 @@ package org.eclipse.core.boot;
  * </p>
  */
 public interface IPlatformRunnable {
+	
+/**
+ * Exit object indicating normal termination
+ */
+public static final Integer EXIT_OK = new Integer(0);
+
+/**
+ * Exit object requesting platform restart
+ */
+public static final Integer EXIT_RESTART = new Integer(23);
+	
 /**
  * Runs this runnable with the given args and returns a result.
  * The content of the args is unchecked and should conform to the expectations of

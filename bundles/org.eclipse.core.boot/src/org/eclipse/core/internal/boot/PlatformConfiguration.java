@@ -55,6 +55,9 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static String cmdFeature;
 	private static String cmdApplication;
 	private static URL cmdPlugins;
+	private static boolean cmdUpdate;
+	private static boolean cmdNoUpdate;
+	private static boolean cmdDev;
 
 	static boolean DEBUG = false;
 
@@ -115,6 +118,13 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static final String CMD_FEATURE = "-feature";
 	private static final String CMD_APPLICATION = "-application";
 	private static final String CMD_PLUGINS = "-plugins";
+	private static final String CMD_UPDATE = "-update";
+	private static final String CMD_NO_UPDATE = "-noupdate";
+	private static final String CMD_DEV = "-dev"; // triggers -noupdate
+	
+	private static final String RECONCILER_APP = "org.eclipse.update.core.reconciler";
+	
+	private static final char[] HEX = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 	
 	public class SiteEntry implements IPlatformConfiguration.ISiteEntry {
 
@@ -819,20 +829,34 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	 */
 	public String getApplicationIdentifier() {
 		
+		if (featuresChangeStamp != lastFeaturesChangeStamp) {
+			// we have detected feature changes ... see if we need to reconcile
+			boolean update = !(cmdNoUpdate || (cmdDev && !cmdUpdate));
+			if (update)
+				return RECONCILER_APP;
+		}
+
+		// "normal" startup ... run specified application
+		return getApplicationIdentifierInternal();
+	}
+	
+	private String getApplicationIdentifierInternal() {
+		
 		if (cmdApplication != null) // application was specified
 			return cmdApplication;
+		else {			
+			// if -feature was not specified use the default feature
+			String feature = cmdFeature;
+			if (feature == null)
+				feature = defaultFeature;
 			
-		// if -feature was not specified use the default feature
-		String feature = cmdFeature;
-		if (feature == null)
-			feature = defaultFeature;
-			
-		// lookup application for feature (specified or defaulted)
-		if (feature != null) {
-			IFeatureEntry fe = findConfiguredFeatureEntry(feature);
-			if (fe != null) {
-				if (fe.getFeatureApplication() != null)
-					return fe.getFeatureApplication();
+			// lookup application for feature (specified or defaulted)
+			if (feature != null) {
+				IFeatureEntry fe = findConfiguredFeatureEntry(feature);
+				if (fe != null) {
+					if (fe.getFeatureApplication() != null)
+						return fe.getFeatureApplication();
+				}
 			}
 		}
 		
@@ -1096,6 +1120,9 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		// create current configuration
 		if (currentPlatformConfiguration == null)
 			currentPlatformConfiguration = new PlatformConfiguration(cmdConfiguration);
+				
+		// check if we will be forcing reconciliation
+		passthruArgs = checkForFeatureChanges(passthruArgs, currentPlatformConfiguration);
 				
 		return passthruArgs;
 	}
@@ -1723,8 +1750,50 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	}
 	
 	private String escapedValue(String value) {
-		// FIXME: implement escaping for property file
-		return value;
+		// if required, escape property values as \\uXXXX		
+		StringBuffer buf = new StringBuffer(value.length()*2); // assume expansion by less than factor of 2
+		for (int i=0; i<value.length(); i++) {
+			char character = value.charAt(i);
+			if (character == '\\' 
+			 || character == '\t'
+			 || character == '\r'
+			 || character == '\n'
+			 || character == '\f') {
+			 	// handle characters requiring leading \
+				buf.append('\\');
+				buf.append(character);
+			} else if ((character < 0x0020) || (character > 0x007e)) {
+				// handle characters outside base range (encoded)
+				buf.append('\\');
+				buf.append('u');
+				buf.append(HEX[(character >> 12) & 0xF]);	// first nibble
+				buf.append(HEX[(character >> 8) & 0xF]);	// second nibble
+				buf.append(HEX[(character >> 4) & 0xF]);	// third nibble
+				buf.append(HEX[character & 0xF]);			// fourth nibble
+			} else {
+				// handle base characters
+				buf.append(character);
+			}
+		}
+		return buf.toString();
+	}
+	
+	private static String[] checkForFeatureChanges(String[] args, PlatformConfiguration cfg) {
+		String original = cfg.getApplicationIdentifierInternal();
+		String actual = cfg.getApplicationIdentifier();
+		
+		if (original.equals(actual))
+			// base startup of specified application
+			return args;
+		else {
+			// Will run reconciler.
+			// Re-insert -application argument with original app
+			String[] newArgs = new String[args.length+2];
+			newArgs[0] = CMD_APPLICATION;
+			newArgs[1] = original;
+			System.arraycopy(args,0,newArgs,2,args.length);
+			return newArgs;
+		}
 	}
 	
 	private static String[] processCommandLine(String[] args) throws Exception {
@@ -1735,9 +1804,25 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			boolean found = false;
 		
 			// check for args without parameters (i.e., a flag arg)
-		
-			// currently none defined for PlatformConfiguration
-		
+			
+			// look for the update flag
+			if (args[i].equalsIgnoreCase(CMD_UPDATE)) {
+				cmdUpdate = true;
+				found = true;
+			}
+			
+			// look for the no-update flag
+			if (args[i].equalsIgnoreCase(CMD_NO_UPDATE)) {
+				cmdNoUpdate = true;
+				found = true;
+			}
+
+			// look for the development mode flag ... triggers no-update
+			if (args[i].equalsIgnoreCase(CMD_DEV)) {
+				cmdDev = true;
+				continue; // do not remove from command line
+			}
+				
 			if (found) {
 				configArgs[configArgIndex++] = i;
 				continue;
