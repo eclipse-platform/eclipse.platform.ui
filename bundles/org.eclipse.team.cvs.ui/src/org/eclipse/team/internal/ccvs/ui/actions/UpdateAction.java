@@ -77,4 +77,11 @@ public class UpdateAction extends WorkspaceAction {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForNonExistantResources()
+	 */
+	protected boolean isEnabledForNonExistantResources() {
+		return true;
+	}
+	
 }

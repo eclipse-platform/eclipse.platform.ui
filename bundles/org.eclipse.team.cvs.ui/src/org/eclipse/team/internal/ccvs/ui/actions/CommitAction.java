@@ -182,4 +182,11 @@ public class CommitAction extends WorkspaceAction {
 	protected boolean isEnabledForUnmanagedResources() {
 		return true;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForNonExistantResources()
+	 */
+	protected boolean isEnabledForNonExistantResources() {
+		return true;
+	}
 }

@@ -315,6 +315,7 @@ public abstract class WorkspaceAction extends CVSAction {
 		if ( ! managed && ! isEnabledForUnmanagedResources()) return false;
 		if ( ignored && ! isEnabledForIgnoredResources()) return false;
 		if (added && ! isEnabledForAddedResources()) return false;
+		if ( ! cvsResource.exists() && ! isEnabledForNonExistantResources()) return false;
 		return true;
 	}
 	
@@ -356,6 +357,14 @@ public abstract class WorkspaceAction extends CVSAction {
 	 */
 	protected boolean isEnabledForMultipleResources() {
 		return true;
+	}
+	
+	/**
+	 * Method isEnabledForNonExistantResources.
+	 * @return boolean
+	 */
+	protected boolean isEnabledForNonExistantResources() {
+		return false;
 	}
 	
 	/**

@@ -44,4 +44,11 @@ public class CompareWithTagAction extends WorkspaceAction {
 			}
 		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForNonExistantResources()
+	 */
+	protected boolean isEnabledForNonExistantResources() {
+		return true;
+	}
 }

@@ -134,4 +134,11 @@ public class ReplaceWithTagAction extends WorkspaceAction {
 		return Policy.bind("ReplaceWithTagAction.replace"); //$NON-NLS-1$
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForNonExistantResources()
+	 */
+	protected boolean isEnabledForNonExistantResources() {
+		return true;
+	}
+	
 }
