@@ -10,11 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.runtime.*;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import java.util.*;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Represents the top level container.
@@ -178,5 +182,73 @@ public IStatus saveState(IMemento memento) {
  */
 public boolean allowsAutoFocus() {
 	return true;
+}
+
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.PartSashContainer#dropObject(org.eclipse.ui.internal.LayoutPart, org.eclipse.ui.internal.LayoutPart, int)
+ */
+protected void dropObject(LayoutPart sourcePart, LayoutPart targetPart, int side) {
+	super.dropObject(sourcePart, targetPart, side);
+}
+
+
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.PartSashContainer#getDockingRatio(org.eclipse.ui.internal.LayoutPart, org.eclipse.ui.internal.LayoutPart)
+ */
+protected float getDockingRatio(LayoutPart dragged, LayoutPart target) {
+	if (isStackType(target)) {
+		return super.getDockingRatio(dragged, target);
+	} else {
+		return 0.25f;
+	}
+}
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.PartSashContainer#isStackType(org.eclipse.ui.internal.LayoutPart)
+ */
+public boolean isStackType(LayoutPart toTest) {
+	if (!(toTest instanceof PartTabFolder)) { 
+		return false;
+	}
+	
+	PartTabFolder folder = (PartTabFolder)toTest;
+	
+	return folder.getParent() == getParent();  
+}
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.PartSashContainer#isPaneType(org.eclipse.ui.internal.LayoutPart)
+ */
+public boolean isPaneType(LayoutPart toTest) {
+	return (toTest instanceof ViewPane);
+}
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.PartSashContainer#createStack(org.eclipse.ui.internal.LayoutPart)
+ */
+protected LayoutPart createStack(LayoutPart sourcePart) {
+	PartTabFolder result = new PartTabFolder(page);
+	result.add(sourcePart);
+	return result;
+}
+
+
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.PartSashContainer#setVisiblePart(org.eclipse.ui.internal.ILayoutContainer, org.eclipse.ui.internal.LayoutPart)
+ */
+protected void setVisiblePart(ILayoutContainer container, LayoutPart visiblePart) {
+	PartTabFolder tabFolder = (PartTabFolder)container;
+	
+	tabFolder.setSelection(visiblePart);
+}
+
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.PartSashContainer#getVisiblePart(org.eclipse.ui.internal.ILayoutContainer)
+ */
+protected LayoutPart getVisiblePart(ILayoutContainer container) {
+	return ((PartTabFolder)container).getVisiblePart();
+}
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.PartSashContainer#derefPart(org.eclipse.ui.internal.LayoutPart)
+ */
+protected void derefPart(LayoutPart sourcePart) {
+	page.getActivePerspective().getPresentation().derefPart(sourcePart);
 }
 }
