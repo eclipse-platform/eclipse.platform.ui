@@ -170,7 +170,8 @@ public class VariableUtil {
 	 * @param argument the string whose variables should be expanded
 	 * @param context the context to use for expanding variables or
 	 * <code>null</code> if none.
-	 * @param status multi status to report any problems expanding variables
+	 * @param status multi status to report any problems expanding variables or
+	 * <code>null</code> if none.
 	 * @return the argument text with all variables expanded, or <code>null</code> if not possible
 	 */
 	public static String expandVariables(String argument, MultiStatus status, ExpandVariableContext context) {
@@ -180,7 +181,9 @@ public class VariableUtil {
 		while (varDef.start > -1) {
 			if (varDef.end == -1 || varDef.name == null || varDef.name.length() == 0) {
 				// Invalid variable format
-				status.merge(newErrorStatus(MessageFormat.format("Invalid variable format: {0}", new String[] {argument.substring(varDef.start)}), null));
+				if (status != null) {
+					status.merge(newErrorStatus(MessageFormat.format("Invalid variable format: {0}", new String[] {argument.substring(varDef.start)}), null));
+				}
 				return null;
 			}
 			// Copy text between start and variable.			
@@ -199,7 +202,9 @@ public class VariableUtil {
 				try {
 					text= contextVariable.getExpander().getText(varDef.name, varDef.argument, context);
 				} catch (CoreException exception) {
-					status.merge(exception.getStatus());
+					if (status != null) {
+						status.merge(exception.getStatus());
+					}
 					return null;
 				}
 				buffer.append(text);
@@ -207,7 +212,9 @@ public class VariableUtil {
 				// If no context variable found, look up a simple variable
 				ISimpleLaunchVariable simpleVariable= DebugPlugin.getDefault().getSimpleVariableRegistry().getVariable(varDef.name);
 				if (simpleVariable == null) {
-					status.merge(newErrorStatus(MessageFormat.format("The variable named \"{0}\" does not exist.", new Object[] {varDef.name}), null));
+					if (status != null) {
+						status.merge(newErrorStatus(MessageFormat.format("The variable named \"{0}\" does not exist.", new Object[] {varDef.name}), null));
+					}
 					return null;
 				}
 				buffer.append(simpleVariable.getText());
@@ -257,7 +264,8 @@ public class VariableUtil {
 	 * @param sourceString the source string with leading and trailing
 	 * 		spaces already removed.
 	 * @param context the context used to expand the variable(s)
-	 * @param status multi status to report any problems expanding variables
+	 * @param status multi status to report any problems expanding variables or
+	 * 		<code>null</code> if none.
 	 * @return the list of individual arguments where some elements in the
 	 * 		list maybe <code>null</code> if problems expanding variable(s).
 	 */
