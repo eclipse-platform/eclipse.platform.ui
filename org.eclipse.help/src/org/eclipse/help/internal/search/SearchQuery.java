@@ -28,9 +28,12 @@ public class SearchQuery implements ISearchQuery {
 	public List getScope() {
 		if (terms == null)
 			return null;
+		Object scopedSearch = terms.get("scopedSearch");
+		if (scopedSearch == null)
+			return null;
 		Object scope = terms.get("scope");
 		if (scope == null)
-			return null;
+			return new ArrayList(0);
 		if (scope instanceof List)
 			return (List) scope;
 		else {

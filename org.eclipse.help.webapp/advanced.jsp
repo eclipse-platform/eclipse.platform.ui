@@ -143,7 +143,7 @@ function doAdvancedSearch()
 		window.opener.saveSelectedBooks(getSelectedBooks());
 		
 		window.opener.document.forms["searchForm"].searchWord.value = searchWord;
-		var query = "<%=searchWordParName%>="+escape(searchWord)+"&maxHits="+maxHits + scope;
+		var query = "<%=searchWordParName%>="+escape(searchWord)+"&maxHits="+maxHits + "&scopedSearch=true" + scope;
 		window.opener.parent.doSearch(query);
 		window.opener.focus();
 		window.close();
