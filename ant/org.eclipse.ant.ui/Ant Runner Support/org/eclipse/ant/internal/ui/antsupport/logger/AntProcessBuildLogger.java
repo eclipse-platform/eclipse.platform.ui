@@ -217,8 +217,21 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		fHandledException= null;
 		fBuildFileParent= null;
 		logMessage(getTimeString(System.currentTimeMillis() - fStartTime), event, fMessageOutputLevel);
+		fireClosed();
 		fProcess= null;
 		event.getProject().removeBuildListener(this);
+	}
+	
+	/**
+	 * Notifies all stream monitors that they are closed.
+	 */
+	private void fireClosed() {
+		AntStreamsProxy proxy = (AntStreamsProxy)fProcess.getStreamsProxy();
+		((AntStreamMonitor) proxy.getDebugStreamMonitor()).close();
+		((AntStreamMonitor) proxy.getErrorStreamMonitor()).close();
+		((AntStreamMonitor) proxy.getOutputStreamMonitor()).close();
+		((AntStreamMonitor) proxy.getVerboseStreamMonitor()).close();
+		((AntStreamMonitor) proxy.getWarningStreamMonitor()).close();
 	}
 	
 	private String getTimeString(long milliseconds) {

@@ -139,6 +139,19 @@ public class RemoteAntBuildListener implements ILaunchesListener{
 			}
 		} catch(IOException e) {
 		}
+		fireClosed();
+	}
+	
+	/**
+	 * Notifies all stream monitors that they are closed.
+	 */
+	private void fireClosed() {
+		AntStreamsProxy proxy = (AntStreamsProxy)fProcess.getStreamsProxy();
+		((AntStreamMonitor) proxy.getDebugStreamMonitor()).close();
+		((AntStreamMonitor) proxy.getErrorStreamMonitor()).close();
+		((AntStreamMonitor) proxy.getOutputStreamMonitor()).close();
+		((AntStreamMonitor) proxy.getVerboseStreamMonitor()).close();
+		((AntStreamMonitor) proxy.getWarningStreamMonitor()).close();
 	}
 		
 	private void receiveMessage(String message) {

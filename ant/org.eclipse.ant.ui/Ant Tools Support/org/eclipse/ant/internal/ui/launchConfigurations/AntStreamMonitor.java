@@ -61,6 +61,16 @@ public class AntStreamMonitor implements IFlushableStreamMonitor {
 		}
 	}
 	/**
+	 * Notifies listeners that this stream is closed.
+	 */
+	public void close() {
+		Object[] listeners = fListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			IStreamListener listener = (IStreamListener)listeners[i];
+			listener.streamClosed(this);
+		}
+	}
+	/**
 	 * @see org.eclipse.debug.core.model.IFlushableStreamMonitor#flushContents()
 	 */
 	public void flushContents() {
