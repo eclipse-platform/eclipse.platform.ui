@@ -77,16 +77,16 @@ public class SchemaFactory implements DeclHandler {
 			attr = new Attribute(aName, element);
 			element.addAttribute(attr);
 			
-			String[] enum = null;
+			String[] enumeration = null;
 			if (fTypes.contains(type))
 				attr.setType(type);
 			else if (type.startsWith("NOTATION")) //$NON-NLS-1$
-				enum = parseValues(type.substring("NOTATION".length()+1), ','); //$NON-NLS-1$
+				enumeration = parseValues(type.substring("NOTATION".length()+1), ','); //$NON-NLS-1$
 			else {
 			    type = stripSurroundingParentheses(type);
-				enum = parseValues(type, '|');
+				enumeration = parseValues(type, '|');
 			}
-			attr.setEnum(enum);
+			attr.setEnum(enumeration);
 			
 			attr.setRequired(valueDefault == null || !valueDefault.equals("#IMPLIED")); //$NON-NLS-1$
 			attr.setFixed(valueDefault != null && valueDefault.equals("#FIXED")); //$NON-NLS-1$

@@ -89,11 +89,11 @@ public class Attribute extends Atom implements IAttribute {
 	}
 
 	/**
-	 * Sets the enum.
-	 * @param enum The enum to set
+	 * Sets the enumeration.
+	 * @param enumeration The enumeration to set
 	 */
-	public void setEnum(String[] enum) {
-		fEnum = enum;
+	public void setEnum(String[] enumeration) {
+		fEnum = enumeration;
 	}
 
 	/**
