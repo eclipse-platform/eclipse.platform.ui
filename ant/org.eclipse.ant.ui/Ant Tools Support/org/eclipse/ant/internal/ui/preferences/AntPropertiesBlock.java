@@ -221,18 +221,18 @@ public class AntPropertiesBlock {
 	 */
 	protected void addButtonsToButtonGroup(Composite parent) {
 		if (editButton == null) {
-			addButton= createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.addButton")); //$NON-NLS-1$
-			editButton= createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.editButton"));  //$NON-NLS-1$
-			removeButton= createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.removeButton"));  //$NON-NLS-1$
+			addButton= createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.1")); //$NON-NLS-1$
+			editButton= createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.2"));  //$NON-NLS-1$
+			removeButton= createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.3"));  //$NON-NLS-1$
 		} else {
 			if (showExternal) {
-				addFileButton= createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.addFileButton")); //$NON-NLS-1$
+				addFileButton= createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.4")); //$NON-NLS-1$
 			}
 			String label;
 			if (showExternal) {
 				label= AntPreferencesMessages.getString("AntPropertiesBlock.14"); //$NON-NLS-1$
 			} else {
-				label= AntPreferencesMessages.getString("AntPropertiesBlock.addFileButton"); //$NON-NLS-1$
+				label= AntPreferencesMessages.getString("AntPropertiesBlock.4"); //$NON-NLS-1$
 			}
 			addExternalFileButton= createPushButton(parent, label);
 			removeFileButton= createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.removeFileButton")); //$NON-NLS-1$
