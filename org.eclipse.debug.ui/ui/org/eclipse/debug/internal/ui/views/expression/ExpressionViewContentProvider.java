@@ -42,10 +42,6 @@ public class ExpressionViewContentProvider extends VariablesViewContentProvider 
 				return ((IExpressionManager)parent).getExpressions();
 			} else if (parent instanceof IExpression) {				
 				children = getModelSpecificExpressionChildren((IExpression)parent);
-//				IValue value= ((IExpression)parent).getValue();
-//				if (value != null) {
-//					children= value.getVariables();
-//				}
 			} else if (parent instanceof IVariable) {
 				children = getModelSpecificVariableChildren((IVariable)parent);
 			}
