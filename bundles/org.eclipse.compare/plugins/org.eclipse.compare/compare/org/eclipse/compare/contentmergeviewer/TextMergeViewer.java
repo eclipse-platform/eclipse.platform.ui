@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.custom.*;
 
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -50,6 +51,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 
 import org.eclipse.compare.*;
+import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.MergeSourceViewer;
 import org.eclipse.compare.internal.BufferedCanvas;
 import org.eclipse.compare.internal.Utilities;
@@ -252,13 +254,15 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private Canvas fScrollCanvas;
 	private ScrollBar fVScrollBar;
 	private Canvas fBirdsEyeCanvas;
-	private Canvas fSummaryCanvas;
+	private Label fSummaryCanvas;
 		
 	// SWT resources to be disposed
 	private Map fColors;
 	private Font fFont;
 	private Cursor fBirdsEyeCursor;
-					
+	private Image fOKImage;
+	private Image fNOTOKImage;
+				
 	// points for center curves
 	private double[] fBasicCenterCurve;
 	
@@ -483,15 +487,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			return false;
 		}
 		
-		private boolean isUnresolvedIncoming() {
-			if (fResolved)
-				return false;
-			return isIncoming();
-		}
-		
-		private boolean isUnresolvedIncomingOrConflicting() {
-			if (fResolved)
-				return false;
+		private boolean isIncomingOrConflicting() {
 			switch (fDirection) {
 			case RangeDifference.RIGHT:
 				if (fLeftIsLocal)
@@ -505,6 +501,18 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				return true;
 			}
 			return false;
+		}
+		
+		private boolean isUnresolvedIncoming() {
+			if (fResolved)
+				return false;
+			return isIncoming();
+		}
+		
+		private boolean isUnresolvedIncomingOrConflicting() {
+			if (fResolved)
+				return false;
+			return isIncomingOrConflicting();
 		}
 				
 		Position getPosition(MergeSourceViewer w) {
@@ -852,6 +860,15 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			fBirdsEyeCursor= null;
 		}
 		
+		if (fOKImage != null) {
+			fOKImage.dispose();
+			fOKImage= null;
+		}
+		if (fNOTOKImage != null) {
+			fNOTOKImage.dispose();
+			fNOTOKImage= null;
+		}
+		
 		super.handleDispose(event);
   	}
   	  	  				 		
@@ -884,7 +901,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		fAncestor= createPart(composite);
 		fAncestor.setEditable(false);
 		
-		fSummaryCanvas= new Canvas(composite, SWT.NONE);
+		fSummaryCanvas= new Label(composite, SWT.NONE);
+		/*
+		new Canvas(composite, SWT.NONE);
 		fSummaryCanvas.addPaintListener(
 			new PaintListener() {
 				public void paintControl(PaintEvent e) {
@@ -893,6 +912,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				}
 			}
 		);
+		*/
 		updateResolveStatus();
 				
 		// 2nd row
@@ -2546,15 +2566,15 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	}
 	
 	private void updateResolveStatus() {
-		Color c= null;
+		Image c= null;
 		if (showResolveUI()) {
-			boolean hasIncoming= false;	// we only show red or gree if there is at least one incoming change
+			boolean hasIncoming= false;	// we only show red or green if there is at least one incoming or conflicting change
 			boolean unresolved= false;
 			if (fChangeDiffs != null) {
 				Iterator e= fChangeDiffs.iterator();
 				while (e.hasNext()) {
 					Diff d= (Diff) e.next();
-					if (d.isIncoming()) {
+					if (d.isIncomingOrConflicting()) {
 						hasIncoming= true;
 						if (!d.fResolved) {
 							unresolved= true;
@@ -2564,14 +2584,24 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				}
 			}
 			if (hasIncoming) {
-				Display d= fSummaryCanvas.getDisplay();
-				if (unresolved)
-					c= d.getSystemColor(SWT.COLOR_RED);
-				else
-					c= d.getSystemColor(SWT.COLOR_GREEN);
+				if (unresolved) {
+					if (fNOTOKImage == null) {
+						ImageDescriptor id= CompareUIPlugin.getImageDescriptor("obj16/NOT_OK.gif");	//$NON-NLS-1$
+						if (id != null)
+							fNOTOKImage= id.createImage(fSummaryCanvas.getDisplay());
+					}
+					c= fNOTOKImage;
+				} else {
+					if (fOKImage == null) {
+						ImageDescriptor id= CompareUIPlugin.getImageDescriptor("obj16/OK.gif");	//$NON-NLS-1$
+						if (id != null)
+							fOKImage= id.createImage(fSummaryCanvas.getDisplay());
+					}
+					c= fOKImage;
+				}
 			}
 		}
-		fSummaryCanvas.setBackground(c);
+		fSummaryCanvas.setImage(c);
 	}
 
 	private void updateStatus(Diff diff) {
