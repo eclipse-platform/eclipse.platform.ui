@@ -14,10 +14,13 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareEditorInput;
+import org.eclipse.compare.IContentChangeListener;
+import org.eclipse.compare.IContentChangeNotifier;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.internal.ui.Policy;
 
@@ -35,8 +38,23 @@ public class SyncInfoCompareInput extends CompareEditorInput {
 		this.sync = sync;
 				
 		ITypedElement elements[] = SyncInfoDiffNode.getTypedElements(sync);
-		this.node = new SyncInfoDiffNode(elements[0], elements[1], elements[2], sync.getKind());
+		this.node = new SyncInfoDiffNode(elements[0] /* base */, elements[1] /* local */, elements[2] /* remote */, sync.getKind());
+		initializeContentChangeListeners();
 	}
+
+	private void initializeContentChangeListeners() {
+			ITypedElement te = node.getLeft();
+			if(te instanceof IContentChangeNotifier) {
+				((IContentChangeNotifier)te).addContentChangeListener(new IContentChangeListener() {
+					public void contentChanged(IContentChangeNotifier source) {
+						try {
+							saveChanges(new NullProgressMonitor());
+						} catch (CoreException e) {
+						}
+					}
+				});
+			}
+		}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.compare.CompareEditorInput#prepareInput(org.eclipse.core.runtime.IProgressMonitor)
@@ -84,7 +102,7 @@ public class SyncInfoCompareInput extends CompareEditorInput {
 			try {
 				commit(pm, (DiffNode) node);
 			} finally {
-				setDirty(false);
+				setDirty(false);	
 			}
 		}
 	}
