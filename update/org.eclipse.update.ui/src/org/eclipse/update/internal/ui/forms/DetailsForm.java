@@ -57,7 +57,7 @@ public class DetailsForm extends PropertyWebForm {
 	private static final String KEY_SIZE_VALUE = "FeaturePage.sizeValue";
 	private static final String KEY_ESTIMATE_VALUE =
 		"FeaturePage.estimateValue";
-	private static final String KEY_MINUTE_ESTIMATE_VALUE = 
+	private static final String KEY_MINUTE_ESTIMATE_VALUE =
 		"FeaturePage.minuteEstimateValue";
 	private static final String KEY_UNKNOWN_SIZE_VALUE =
 		"FeaturePage.unknownSizeValue";
@@ -503,11 +503,12 @@ public class DetailsForm extends PropertyWebForm {
 			}
 		});
 	}
-	
+
 	private boolean isConfigured(IFeature feature) {
 		ISite site = feature.getSite();
 		IConfiguredSite csite = site.getCurrentConfiguredSite();
-		if (csite==null) return false;
+		if (csite == null)
+			return false;
 		return csite.isConfigured(feature);
 	}
 
@@ -559,7 +560,7 @@ public class DetailsForm extends PropertyWebForm {
 			return;
 
 		installedFeatures = UpdateUI.getInstalledFeatures(feature);
-		if (installedFeatures.length==0)
+		if (installedFeatures.length == 0)
 			installedFeatures = UpdateUI.getInstalledFeatures(feature, false);
 
 		setHeadingText(feature.getLabel());
@@ -571,35 +572,15 @@ public class DetailsForm extends PropertyWebForm {
 			installedVersion = UpdateUI.getString(KEY_NOT_INSTALLED);
 		installedVersionLabel.setText(installedVersion);
 		long size = feature.getDownloadSize();
-		String format = null;
+		String sizeText;
 		if (size != -1) {
 			String stext = Long.toString(size);
-			format = UpdateUI.getFormattedMessage(KEY_SIZE_VALUE, stext);
+			sizeText = UpdateUI.getFormattedMessage(KEY_SIZE_VALUE, stext);
 		} else {
-			format = UpdateUI.getString(KEY_UNKNOWN_SIZE_VALUE);
+			sizeText = UpdateUI.getString(KEY_UNKNOWN_SIZE_VALUE);
 		}
-		sizeLabel.setText(format);
-		long estimate = SiteManager.getEstimatedTransferRate(feature.getURL());
-		String estimateFormat = null;
-		if (estimate >= 0 && size != -1) {
-			long nhours = estimate / 3600000;
-			long nminutes = estimate % 3600000;
-			
-			if (nhours ==0 && nminutes == 0) {
-				estimateFormat = UpdateUI.getString(KEY_MINUTE_ESTIMATE_VALUE);
-			} else {
-				String hours = Long.toString(nhours);
-				String minutes = Long.toString(nminutes);
-			
-				estimateFormat =
-					UpdateUI.getFormattedMessage(
-						KEY_ESTIMATE_VALUE,
-						new String[] { hours, minutes });
-			}
-		} else {
-			estimateFormat = UpdateUI.getString(KEY_UNKNOWN_ESTIMATE_VALUE);
-		}
-		estimatedTime.setText(estimateFormat);
+		sizeLabel.setText(sizeText);
+		estimatedTime.setText(getEstimatedTimeText(feature, size));
 
 		if (feature.getDescription() != null
 			&& feature.getDescription().getAnnotation() != null)
@@ -651,6 +632,30 @@ public class DetailsForm extends PropertyWebForm {
 		reflow();
 		updateSize();
 		((Composite) getControl()).redraw();
+	}
+
+	private String getEstimatedTimeText(IFeature feature, long size) {
+		long estimate = SiteManager.getEstimatedTransferRate(feature.getURL());
+		String estimateFormat = null;
+		if (estimate >= 0 && size != -1) {
+			long nhours = estimate / 3600000;
+			long nminutes = estimate % 3600000;
+
+			if (nhours == 0 && nminutes == 0) {
+				estimateFormat = UpdateUI.getString(KEY_MINUTE_ESTIMATE_VALUE);
+			} else {
+				String hours = Long.toString(nhours);
+				String minutes = Long.toString(nminutes);
+
+				estimateFormat =
+					UpdateUI.getFormattedMessage(
+						KEY_ESTIMATE_VALUE,
+						new String[] { hours, minutes });
+			}
+		} else {
+			estimateFormat = UpdateUI.getString(KEY_UNKNOWN_ESTIMATE_VALUE);
+		}
+		return estimateFormat;
 	}
 
 	private boolean getDoButtonVisibility(
