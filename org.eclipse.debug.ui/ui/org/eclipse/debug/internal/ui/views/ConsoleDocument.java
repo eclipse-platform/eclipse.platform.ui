@@ -194,7 +194,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 			//removed all of the user input text
 			fStyleRanges.remove(fStyleRanges.size() - 1);
 		} else {
-			updateInputStyleRange(docLength);
+			updateInputStyleRange(docLength, fNewStreamWriteEnd);
 			//notify the viewer that the style ranges have changed.
 			fireDocumentChanged(new DocumentEvent(this, 0, 0, "")); //$NON-NLS-1$
 		}
@@ -332,8 +332,8 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 			public void run() {
 				int appendedLength= text.length();
 				fNewStreamWriteEnd= fLastStreamWriteEnd + appendedLength;
+				updateOutputStyleRanges(source, getLength() + appendedLength, fLastStreamWriteEnd, fNewStreamWriteEnd);
 				replace0(fLastStreamWriteEnd, 0, text);
-				updateOutputStyleRanges(source);
 				fLastStreamWriteEnd= fNewStreamWriteEnd;
 				setAppendInProgress(false);
 			}
@@ -418,13 +418,10 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 	/**
 	 * Updates the current input style range.
 	 */
-	protected void updateInputStyleRange(int docLength) {
-		if (fClosed) {
-			return;
-		}
-		if (docLength != fNewStreamWriteEnd) {
+	protected void updateInputStyleRange(int docLength, int newWriteEnd) {
+		if (docLength != newWriteEnd) {
 			StyleRange input= 
-				new StyleRange(fNewStreamWriteEnd, docLength - fNewStreamWriteEnd, 
+				new StyleRange(newWriteEnd, docLength - newWriteEnd, 
 						DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_IN_RGB),
 						null);
 			if (!fStyleRanges.isEmpty()) {
@@ -438,29 +435,25 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 		}
 	}
 
-	protected void updateOutputStyleRanges(int sourceStream) {
-		if (fClosed) {
-			return;
-		}
-		int docLength= getLength();
+	protected void updateOutputStyleRanges(int sourceStream, int docLength, int prevWriteEnd, int newWriteEnd) {
 		if (docLength == 0) {
 			return;
 		}
 		
-		if ((fNewStreamWriteEnd == 0) && (0 == fLastStreamWriteEnd)) {
+		if ((newWriteEnd == 0) && (0 == prevWriteEnd)) {
 			return;
 		}
 		
-		if (fNewStreamWriteEnd == fLastStreamWriteEnd) {
+		if (newWriteEnd == prevWriteEnd) {
 			return;
 		}
 
 		Color newRangeColor= 
 			(sourceStream == ConsoleDocument.OUT) ? DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_OUT_RGB) : DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_ERR_RGB);
 
-		StyleRange newRange= new StyleRange(fLastStreamWriteEnd, fNewStreamWriteEnd - fLastStreamWriteEnd, newRangeColor, null);
+		StyleRange newRange= new StyleRange(prevWriteEnd, newWriteEnd - prevWriteEnd, newRangeColor, null);
 		if (!fStyleRanges.isEmpty()) {
-			if ((docLength != fNewStreamWriteEnd) && 
+			if ((docLength != newWriteEnd) && 
 				((StyleRange)fStyleRanges.get(fStyleRanges.size() - 1)).foreground ==
 				DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_IN_RGB)) {
 				//remove the top "input" range..it will get recalculated in updateInputStyleRanges
@@ -470,9 +463,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 		
 		addNewStyleRange(newRange);
 		coaleseRanges();
-		updateInputStyleRange(docLength);
-		//notify the viewer that the style ranges have changed.
-		fireDocumentChanged(new DocumentEvent(this, 0, 0, null));
+		updateInputStyleRange(docLength, newWriteEnd);
 	}	
 	
 	/**
