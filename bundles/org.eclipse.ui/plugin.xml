@@ -2452,21 +2452,14 @@
             id="org.eclipse.ui.internal.WorkingSetFactory">
       </factory>
    </extension>
-   <extension
-         point="org.eclipse.ui.markerUpdaters">
+   
+    <extension point="org.eclipse.ui.markerUpdaters">
       <updater
             class="org.eclipse.ui.texteditor.BasicMarkerUpdater"
             id="org.eclipse.ui.texteditor.BasicMarkerUpdater">
       </updater>
    </extension>
-   <extension
-         point="org.eclipse.ui.documentProviders">
-      <provider
-            class="org.eclipse.ui.editors.text.FileDocumentProvider"
-            inputTypes="org.eclipse.ui.IStorageEditorInput"
-            id="org.eclipse.ui.editors.text.FileDocumentProvider">
-      </provider>
-   </extension>
+   
    <extension
          point="org.eclipse.ui.resourceFilters">
       <filter
