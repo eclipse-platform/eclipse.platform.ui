@@ -616,6 +616,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	public void update(boolean force) {
 		if (isDirty() || force) {
 			if (coolBarExist()) {
+				boolean useRedraw = false;
 				
 				// remove CoolBarItemContributions that are empty
 				IContributionItem[] items = getItems();
@@ -626,40 +627,35 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 						cbItemsToRemove.add(cbItem);
 					}
 				}
+				
+				// remove non-visible CoolBarContributionItems
+				CoolItem[] coolItems = coolBar.getItems();
+				ArrayList coolItemsToRemove = new ArrayList(coolItems.length);
+				for (int i = 0; i < coolItems.length; i++) {
+					CoolItem coolItem = coolItems[i];
+					CoolBarContributionItem cbItem = (CoolBarContributionItem) coolItem.getData();
+					if (!cbItem.isVisible() && (!cbItemsToRemove.contains(cbItem))) {
+						coolItemsToRemove.add(coolItem);
+					}
+				}
+				if ((cbItemsToRemove.size() + coolItemsToRemove.size()) > 2) {
+					useRedraw = true;
+					coolBar.setRedraw(false);
+				}
+		
 				for (Iterator e = cbItemsToRemove.iterator(); e.hasNext();) {
 					CoolBarContributionItem cbItem = (CoolBarContributionItem) e.next();
 					dispose(cbItem);
 				}
-				
-				// remove obsolete CoolItems that do not have an associated CoolBarContributionItem
-				ArrayList contributionIds = getContributionIds();
-				CoolItem[] coolItems = coolBar.getItems();
-				for (int i = 0; i < coolItems.length; i++) {
-					CoolItem coolItem = coolItems[i];
-					CoolBarContributionItem cbItem = (CoolBarContributionItem) coolItem.getData();
-					if (cbItem == null) {
-						dispose(coolItem);
-					} else if (!contributionIds.contains(cbItem.getId())) {
-						dispose(cbItem);
-					}
-				}
-				
-				// remove non-visible CoolBarContributionItems
-				coolItems = coolBar.getItems();
-				for (int i = 0; i < coolItems.length; i++) {
-					CoolItem coolItem = coolItems[i];
-					CoolBarContributionItem cbItem = (CoolBarContributionItem) coolItem.getData();
-					if (!cbItem.isVisible()) {
-						// do not dispose of the ToolBar, just the CoolItem
-						ToolBar tBar = (ToolBar) coolItem.getControl();
-						tBar.setVisible(false);
-						dispose(coolItem);
-					}
+				for (Iterator e = coolItemsToRemove.iterator(); e.hasNext();) {
+					CoolItem coolItem = (CoolItem) e.next();
+					ToolBar tBar = (ToolBar) coolItem.getControl();
+					tBar.setVisible(false);
+					dispose(coolItem);
 				}
 
 				// create a CoolItem for each group of items that does not have a CoolItem 
 				ArrayList coolItemIds = getCoolItemIds();
-				ArrayList cbItemsToCreate = new ArrayList(3);
 				items = getItems();
 				boolean changed = false;
 				boolean relock = false;
@@ -688,6 +684,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 				if(relock) {
 					coolBar.setLocked(true);
 				}
+				if (useRedraw) coolBar.setRedraw(true);
 			}
 		}
 	}
