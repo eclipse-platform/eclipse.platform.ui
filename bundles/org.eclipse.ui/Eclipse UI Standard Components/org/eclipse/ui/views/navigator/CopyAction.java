@@ -13,11 +13,16 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWTError;
-import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.part.ResourceTransfer;
 
 /**
@@ -127,7 +132,7 @@ private void setClipboard(IResource[] resources, String[] fileNames, String name
 	} catch (SWTError e){
 		if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
 			throw e;
-		if (MessageDialog.openQuestion(shell, ResourceNavigatorMessages.getString("CopyToClipboardProblemDialog.title"), ResourceNavigatorMessages.getString("CopyToClipboardProblemDialog.message"))) //$NON-NLS-1$ //$NON-NLS-2$
+		if (MessageDialog.openQuestion(shell, WorkbenchMessages.getString("CopyToClipboardProblemDialog.title"), WorkbenchMessages.getString("CopyToClipboardProblemDialog.message"))) //$NON-NLS-1$ //$NON-NLS-2$
 			setClipboard(resources, fileNames, names);
 	}	
 }

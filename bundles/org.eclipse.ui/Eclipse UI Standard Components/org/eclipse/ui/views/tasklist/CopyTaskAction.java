@@ -8,16 +8,16 @@ package org.eclipse.ui.views.tasklist;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
-
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
-
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-
+import org.eclipse.swt.SWTError;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.part.MarkerTransfer;
-
 
 /**
  * Copies a task to the clipboard.
@@ -47,17 +47,30 @@ import org.eclipse.ui.part.MarkerTransfer;
 		IMarker[] markers = new IMarker[list.size()];
 		list.toArray(markers);
 
-		// Place the markers on the clipboard
-		Object[] data = new Object[] {
-			markers,
-			TaskList.createMarkerReport(markers)};				
-		Transfer[] transferTypes = new Transfer[] {
-			MarkerTransfer.getInstance(),
-			TextTransfer.getInstance()};
-		taskList.getClipboard().setContents(data, transferTypes);
-		
+		setClipboard(markers, TaskList.createMarkerReport(markers));
+
 		//Update paste enablement
 		taskList.updatePasteEnablement();
+	}
+
+	private void setClipboard(IMarker[] markers, String markerReport) {
+		try {
+			// Place the markers on the clipboard
+			Object[] data = new Object[] {
+				markers,
+				markerReport};				
+			Transfer[] transferTypes = new Transfer[] {
+				MarkerTransfer.getInstance(),
+				TextTransfer.getInstance()};
+			
+			// set the clipboard contents
+			getTaskList().getClipboard().setContents(data, transferTypes);
+		} catch (SWTError e){
+			if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
+				throw e;
+			if (MessageDialog.openQuestion(getShell(), WorkbenchMessages.getString("CopyToClipboardProblemDialog.title"), WorkbenchMessages.getString("CopyToClipboardProblemDialog.message"))) //$NON-NLS-1$ //$NON-NLS-2$
+				setClipboard(markers, markerReport);
+		}	
 	}
 }
 

@@ -5,13 +5,16 @@ package org.eclipse.ui.views.properties;
  * All Rights Reserved.
  */
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.help.WorkbenchHelp;
-
+import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * Copies a property to the clipboard.
@@ -48,9 +51,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 		buffer.append("\t"); //$NON-NLS-1$
 		buffer.append(entry.getValueAsString());
 		
-		Object[] data = new Object[] {buffer.toString()};				
-		Transfer[] transferTypes = new Transfer[] {TextTransfer.getInstance()};
-		clipboard.setContents(data, transferTypes);
+		setClipboard(buffer.toString());
 	}
 
 	/** 
@@ -58,6 +59,19 @@ import org.eclipse.ui.help.WorkbenchHelp;
 	 */
 	public void selectionChanged(IStructuredSelection sel) {
 		setEnabled(!sel.isEmpty());
+	}
+
+	private void setClipboard(String text) {
+		try {
+			Object[] data = new Object[] {text};				
+			Transfer[] transferTypes = new Transfer[] {TextTransfer.getInstance()};
+			clipboard.setContents(data, transferTypes);
+		} catch (SWTError e){
+			if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
+				throw e;
+			if (MessageDialog.openQuestion(getPropertySheet().getControl().getShell(), WorkbenchMessages.getString("CopyToClipboardProblemDialog.title"), WorkbenchMessages.getString("CopyToClipboardProblemDialog.message"))) //$NON-NLS-1$ //$NON-NLS-2$
+				setClipboard(text);
+		}	
 	}
 }
 

@@ -8,14 +8,18 @@ package org.eclipse.ui.views.bookmarkexplorer;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.part.MarkerTransfer;
 
 
@@ -61,13 +65,8 @@ import org.eclipse.ui.part.MarkerTransfer;
 				buffer.append(System.getProperty("line.separator")); //$NON-NLS-1$
 			buffer.append(provider.getText(markers[i]));
 		} 
-		Object[] data = new Object[] {
-			markers,
-			buffer.toString()};				
-		Transfer[] transferTypes = new Transfer[] {
-			MarkerTransfer.getInstance(),
-			TextTransfer.getInstance()};
-		clipboard.setContents(data, transferTypes);
+
+		setClipboard(markers, buffer.toString());
 	}
 
 	/** 
@@ -75,6 +74,26 @@ import org.eclipse.ui.part.MarkerTransfer;
 	 */
 	public void selectionChanged(IStructuredSelection sel) {
 		setEnabled(!sel.isEmpty());
+	}
+
+	private void setClipboard(IMarker[] markers, String markerReport) {
+		try {
+			// Place the markers on the clipboard
+			Object[] data = new Object[] {
+				markers,
+				markerReport};				
+			Transfer[] transferTypes = new Transfer[] {
+				MarkerTransfer.getInstance(),
+				TextTransfer.getInstance()};
+			
+			// set the clipboard contents
+			clipboard.setContents(data, transferTypes);
+		} catch (SWTError e){
+			if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
+				throw e;
+			if (MessageDialog.openQuestion(getView().getShell(), WorkbenchMessages.getString("CopyToClipboardProblemDialog.title"), WorkbenchMessages.getString("CopyToClipboardProblemDialog.message"))) //$NON-NLS-1$ //$NON-NLS-2$
+				setClipboard(markers, markerReport);
+		}	
 	}
 }
 
