@@ -768,10 +768,6 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		return null;
 	}
 	
-	private static IViewerDescriptor getContentViewerDescriptor2(String type) {
-		return (IViewerDescriptor) fgContentMergeViewerDescriptors.get(normalizeCase(type));
-	}
-	
 	private static String normalizeCase(String s) {
 		if (NORMALIZE_CASE && s != null)
 			return s.toUpperCase();

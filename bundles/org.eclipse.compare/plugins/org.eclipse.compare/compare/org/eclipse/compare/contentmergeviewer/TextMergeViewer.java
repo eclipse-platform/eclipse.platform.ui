@@ -136,9 +136,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		MergeSourceViewer.SELECT_ALL_ID,
 		MergeSourceViewer.SAVE_ID
 	};
-			
-	private static final String SYNC_SCROLLING= "SYNC_SCROLLING"; //$NON-NLS-1$
-		
+					
 	private static final String BUNDLE_NAME= "org.eclipse.compare.contentmergeviewer.TextMergeViewerResources"; //$NON-NLS-1$
 		
 	// constants
@@ -155,8 +153,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 
 	/** line width of change borders */
 	private static final int LW= 1;
-	/** Provide more merge controls in CompareViewerPane toolbar */
-	private static final boolean USE_MORE_CONTROLS= true;
 	/** Selects between smartTokenDiff and mergingTokenDiff */
 	private static final boolean USE_MERGING_TOKEN_DIFF= false;
 	/** When calculating differences show Progress after this timeout (in milliseconds) */
@@ -266,7 +262,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	// points for center curves
 	private double[] fBasicCenterCurve;
 	
-	private Menu fCenterMenu;
 	private Button fCenterButton;
 	private Diff fButtonDiff;
 					
@@ -473,19 +468,19 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			return fResolved;
 		}
 		
-		private boolean isIncoming() {
-			switch (fDirection) {
-			case RangeDifference.RIGHT:
-				if (fLeftIsLocal)
-					return true;
-				break;
-			case RangeDifference.LEFT:
-				if (!fLeftIsLocal)
-					return true;
-				break;
-			}
-			return false;
-		}
+//		private boolean isIncoming() {
+//			switch (fDirection) {
+//			case RangeDifference.RIGHT:
+//				if (fLeftIsLocal)
+//					return true;
+//				break;
+//			case RangeDifference.LEFT:
+//				if (!fLeftIsLocal)
+//					return true;
+//				break;
+//			}
+//			return false;
+//		}
 		
 		private boolean isIncomingOrConflicting() {
 			switch (fDirection) {
@@ -503,11 +498,11 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			return false;
 		}
 		
-		private boolean isUnresolvedIncoming() {
-			if (fResolved)
-				return false;
-			return isIncoming();
-		}
+//		private boolean isUnresolvedIncoming() {
+//			if (fResolved)
+//				return false;
+//			return isIncoming();
+//		}
 		
 		private boolean isUnresolvedIncomingOrConflicting() {
 			if (fResolved)
@@ -1055,7 +1050,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		int visibleHeight= fRight.getViewportHeight();
 
 		Point size= canvas.getSize();
-		int x= 0;
 		int w= size.x;
 
 		if (! fHiglightRanges)
@@ -1245,7 +1239,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					}
 				);
 				
-				fCenterButton= new Button(canvas, "carbon".equals(SWT.getPlatform()) ? SWT.FLAT : SWT.PUSH);
+				fCenterButton= new Button(canvas, "carbon".equals(SWT.getPlatform()) ? SWT.FLAT : SWT.PUSH);	//$NON-NLS-1$
 				fCenterButton.setText("<");	 //$NON-NLS-1$
 				fCenterButton.pack();
 				fCenterButton.setVisible(false);
@@ -1611,17 +1605,17 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		updateLines(doc);
 	}
 	
-	private static ITypedElement getLeg(ICompareInput input, char type) {
-		switch (type) {
-		case 'A':
-			return input.getAncestor();
-		case 'L':
-			return input.getLeft();
-		case 'R':
-			return input.getRight();
-		}
-		return null;			
-	}
+//	private static ITypedElement getLeg(ICompareInput input, char type) {
+//		switch (type) {
+//		case 'A':
+//			return input.getAncestor();
+//		case 'L':
+//			return input.getLeft();
+//		case 'R':
+//			return input.getRight();
+//		}
+//		return null;			
+//	}
 	
 	/**
 	 * This method is called if a range of text on one side is copied into an empty subdocument

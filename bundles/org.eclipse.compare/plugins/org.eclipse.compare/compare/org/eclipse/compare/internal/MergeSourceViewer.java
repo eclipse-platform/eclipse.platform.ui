@@ -63,7 +63,6 @@ public class MergeSourceViewer extends SourceViewer
 	private boolean fEnabled= true;
 	private HashMap fActions= new HashMap();
 	
-	private boolean fInitialized= true;
 	private boolean fAddSaveAction= true;
 	
 	

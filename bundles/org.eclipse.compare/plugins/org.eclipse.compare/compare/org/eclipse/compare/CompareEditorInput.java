@@ -108,7 +108,6 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	private CompareViewerSwitchingPane fContentInputPane;
 	private CompareViewerSwitchingPane fFocusPane;
 	private String fMessage;
-	private ISelection fSelection2;
 	private Object fInput;
 	private String fTitle;
 	private ListenerList fListenerList= new ListenerList();

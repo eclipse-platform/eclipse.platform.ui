@@ -132,49 +132,50 @@ public class Differencer {
 			}
 			return data;
 		}
-		private void dump(int level) {
-			String name= null;
-			if (fAncestor instanceof ITypedElement)
-				name= ((ITypedElement)fAncestor).getName();
-			if (name == null && fLeft instanceof ITypedElement)
-				name= ((ITypedElement)fLeft).getName();
-			if (name == null && fRight instanceof ITypedElement)
-				name= ((ITypedElement)fRight).getName();
-			if (name == null)
-				name= "???"; //$NON-NLS-1$
-			
-			for (int i= 0; i < level; i++)
-				System.out.print("  "); //$NON-NLS-1$
-			
-			System.out.println(getDiffType(fCode) + name);
-		}
-		private String getDiffType(int code) {
-			String dir= " "; //$NON-NLS-1$
-			switch (code & DIRECTION_MASK) {
-			case LEFT:
-				dir= ">"; //$NON-NLS-1$
-				break;
-			case RIGHT:
-				dir= "<"; //$NON-NLS-1$
-				break;
-			case CONFLICTING:
-				dir= "!"; //$NON-NLS-1$
-				break;
-			}
-			String change= "="; //$NON-NLS-1$
-			switch (code & CHANGE_TYPE_MASK) {
-			case ADDITION:
-				change= "+"; //$NON-NLS-1$
-				break;
-			case DELETION:
-				change= "-"; //$NON-NLS-1$
-				break;
-			case CHANGE:
-				change= "#"; //$NON-NLS-1$
-				break;
-			}
-			return dir + change + " "; //$NON-NLS-1$
-		}
+//		private void dump(int level) {
+//			String name= null;
+//			if (fAncestor instanceof ITypedElement)
+//				name= ((ITypedElement)fAncestor).getName();
+//			if (name == null && fLeft instanceof ITypedElement)
+//				name= ((ITypedElement)fLeft).getName();
+//			if (name == null && fRight instanceof ITypedElement)
+//				name= ((ITypedElement)fRight).getName();
+//			if (name == null)
+//				name= "???"; //$NON-NLS-1$
+//			
+//			for (int i= 0; i < level; i++)
+//				System.out.print("  "); //$NON-NLS-1$
+//			
+//			System.out.println(getDiffType(fCode) + name);
+//		}
+
+//		private String getDiffType(int code) {
+//			String dir= " "; //$NON-NLS-1$
+//			switch (code & DIRECTION_MASK) {
+//			case LEFT:
+//				dir= ">"; //$NON-NLS-1$
+//				break;
+//			case RIGHT:
+//				dir= "<"; //$NON-NLS-1$
+//				break;
+//			case CONFLICTING:
+//				dir= "!"; //$NON-NLS-1$
+//				break;
+//			}
+//			String change= "="; //$NON-NLS-1$
+//			switch (code & CHANGE_TYPE_MASK) {
+//			case ADDITION:
+//				change= "+"; //$NON-NLS-1$
+//				break;
+//			case DELETION:
+//				change= "-"; //$NON-NLS-1$
+//				break;
+//			case CHANGE:
+//				change= "#"; //$NON-NLS-1$
+//				break;
+//			}
+//			return dir + change + " "; //$NON-NLS-1$
+//		}
 	} 
 	
 	/**

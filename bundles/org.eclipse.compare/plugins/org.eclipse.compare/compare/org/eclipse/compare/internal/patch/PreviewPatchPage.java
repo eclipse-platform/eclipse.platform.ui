@@ -6,6 +6,7 @@ package org.eclipse.compare.internal.patch;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
@@ -287,7 +288,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 			fFuzzField.setLayoutData(gd);
 	
 			Button b= new Button(pair, SWT.PUSH);
-			b.setText("Guess");
+			b.setText(PatchMessages.getString("PreviewPatchPage.GuessFuzz.text"));	//$NON-NLS-1$
 			b.addSelectionListener(
 				new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
@@ -389,7 +390,9 @@ import org.eclipse.compare.structuremergeviewer.*;
 		}
 		
 		// do the "work"
-		pm.beginTask("Guessing Fuzz Factor...", work);
+		int[] fuzzRef= new int[1];
+		String format= PatchMessages.getString("PreviewPatchPage.GuessFuzzProgress.format");	//$NON-NLS-1$
+		pm.beginTask(PatchMessages.getString("PreviewPatchPage.GuessFuzzProgress.text"), work);	//$NON-NLS-1$
 		try {
 			int fuzz= 0;
 			for (int i= 0; i < diffs.length; i++) {
@@ -401,11 +404,10 @@ import org.eclipse.compare.structuremergeviewer.*;
 					Iterator iter= d.fHunks.iterator();
 					int shift= 0;
 					for (int hcnt= 1; iter.hasNext(); hcnt++) {
-						pm.subTask(name + " (hunk #" + hcnt + ")");
+						pm.subTask(MessageFormat.format(format, new String[] { name, Integer.toString(hcnt) } ));
 						Hunk h= (Hunk) iter.next();
-						patcher.fMaxFuzz= 0;
-						shift= patcher.getFuzz(h, lines, shift, pm);
-						int f= patcher.fMaxFuzz;
+						shift= patcher.calculateFuzz(h, lines, shift, pm, fuzzRef);
+						int f= fuzzRef[0];
 						if (f == -1)	// cancel
 							return -1;
 						if (f > fuzz)

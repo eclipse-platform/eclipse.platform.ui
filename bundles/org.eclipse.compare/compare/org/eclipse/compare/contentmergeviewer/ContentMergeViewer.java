@@ -23,14 +23,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.*;
-import org.eclipse.compare.contentmergeviewer.IMergeViewerContentProvider;
 import org.eclipse.compare.internal.*;
 
 /**
@@ -63,9 +61,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 					implements IPropertyChangeNotifier, ISavable {
 	
 	class SaveAction extends MergeViewerAction {
-		
-		private boolean fLeft;
-		
+				
 		SaveAction(boolean left) {
 			super(true, false, false);
 			Utilities.initAction(this, getResourceBundle(), "action.save."); //$NON-NLS-1$
@@ -838,12 +834,12 @@ public abstract class ContentMergeViewer extends ContentViewer
 		}
 	}
 	
-	private Image loadImage(String name) {
-		ImageDescriptor id= ImageDescriptor.createFromFile(ContentMergeViewer.class, name);
-		if (id != null)
-			return id.createImage();
-		return null;
-	}
+//	private Image loadImage(String name) {
+//		ImageDescriptor id= ImageDescriptor.createFromFile(ContentMergeViewer.class, name);
+//		if (id != null)
+//			return id.createImage();
+//		return null;
+//	}
 		
 	/**
 	 * Calculates the height of the header.

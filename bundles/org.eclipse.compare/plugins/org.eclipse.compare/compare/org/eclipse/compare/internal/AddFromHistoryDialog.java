@@ -105,7 +105,6 @@ public class AddFromHistoryDialog extends ResizableDialog {
 	private CompareViewerPane fEditionPane;
 	private Image fDateImage;
 	private Image fTimeImage;
-	private CompareViewerSwitchingPane fStructuredComparePane;
 
 
 	public AddFromHistoryDialog(Shell parent, ResourceBundle bundle) {

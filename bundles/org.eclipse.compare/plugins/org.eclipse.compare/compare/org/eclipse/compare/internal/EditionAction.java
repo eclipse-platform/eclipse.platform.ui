@@ -43,7 +43,6 @@ public class EditionAction implements IActionDelegate {
 	class DocumentBufferNode implements ITypedElement, IStreamContentAccessor {
 		
 		private IDocument fDocument;
-		private String type;
 		private IFile fFile;
 		
 		DocumentBufferNode(IDocument document, IFile file) {

@@ -28,10 +28,10 @@ public class Patcher {
 	private static final String MARKER_TYPE= "org.eclipse.compare.rejectedPatchMarker";	//$NON-NLS-1$
 
 	// diff formats
-	private static final int CONTEXT= 0;
-	private static final int ED= 1;
-	private static final int NORMAL= 2;
-	private static final int UNIFIED= 3;
+//	private static final int CONTEXT= 0;
+//	private static final int ED= 1;
+//	private static final int NORMAL= 2;
+//	private static final int UNIFIED= 3;
 	
 	// we recognize the following date/time formats
 	private static DateFormat[] DATE_FORMATS= new DateFormat[] {
@@ -42,7 +42,6 @@ public class Patcher {
 		
 	private String fName;
 	private Diff[] fDiffs;
-	int fMaxFuzz;
 	// patch options
 	private int fStripPrefixSegments;
 	private int fFuzz;
@@ -620,20 +619,20 @@ public class Patcher {
 			boolean found= false;
 			int oldShift= shift;
 			
-			for (int i= shift-1; i >= shift-fFuzz; i--) {
-				if (tryPatch(hunk, lines, i)) {
+			for (int i= 1; i <= fFuzz; i++) {
+				if (tryPatch(hunk, lines, shift-i)) {
 					if (fAdjustShift)
-						shift= i;
+						shift-= i;
 					found= true;
 					break;
 				}
 			}
 			
 			if (! found) {
-				for (int i= shift+1; i <= shift+fFuzz; i++) {
-					if (tryPatch(hunk, lines, i)) {
+				for (int i= 1; i <= fFuzz; i++) {
+					if (tryPatch(hunk, lines, shift+i)) {
 						if (fAdjustShift)
-							shift= i;
+							shift+= i;
 						found= true;
 						break;
 					}
@@ -660,7 +659,7 @@ public class Patcher {
 	 */
 	private boolean tryPatch(Hunk hunk, List lines, int shift) {
 		int pos= hunk.fOldStart + shift;
-		int contextMatches= 0;
+		//int contextMatches= 0;
 		int deleteMatches= 0;
 		for (int i= 0; i < hunk.fLines.length; i++) {
 			String s= hunk.fLines[i];
@@ -672,13 +671,13 @@ public class Patcher {
 					if (pos < 0 || pos >= lines.size())
 						return false;
 					if (linesMatch(line, (String) lines.get(pos))) {
-						contextMatches++;
+						//contextMatches++;
 						pos++;
 						break;
 					}
-					if (contextMatches <= 0)
+					//if (contextMatches <= 0)
 						return false;
-					pos++;
+					//pos++;
 				}
 			} else if (controlChar == '-') {
 				// deleted lines
@@ -1005,21 +1004,33 @@ public class Patcher {
 		return l;
 	}
 
-	int getFuzz(Hunk hunk, List lines, int shift, IProgressMonitor pm) {
+	int calculateFuzz(Hunk hunk, List lines, int shift, IProgressMonitor pm, int[] fuzz) {
+		
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		hunk.fMatches= false;
 		if (tryPatch(hunk, lines, shift)) {
 			shift+= doPatch(hunk, lines, shift);
-			fMaxFuzz= 0;
+			fuzz[0]= 0;
 		} else {
 			boolean found= false;
-			int oldShift= shift;
 			int hugeFuzz= lines.size();	// the maximum we need for this file
+			fuzz[0]= -2;	// not found
 			
-			for (int i= -1; i >= -hugeFuzz; i--) {
-				if (tryPatch(hunk, lines, i+shift)) {
-					fMaxFuzz= -i;
+			for (int i= 1; i <= hugeFuzz; i++) {
+				if (pm.isCanceled()) {
+					fuzz[0]= -1;
+					return 0;
+				}
+				if (tryPatch(hunk, lines, shift-i)) {
+					fuzz[0]= i;
 					if (fAdjustShift)
-						shift+= i;
+						shift-= i;
 					found= true;
 					break;
 				}
@@ -1027,8 +1038,12 @@ public class Patcher {
 			
 			if (! found) {
 				for (int i= 1; i <= hugeFuzz; i++) {
-					if (tryPatch(hunk, lines, i+shift)) {
-						fMaxFuzz= i;
+					if (pm.isCanceled()) {
+						fuzz[0]= -1;
+						return 0;
+					}
+					if (tryPatch(hunk, lines, shift+i)) {
+						fuzz[0]= i;
 						if (fAdjustShift)
 							shift+= i;
 						found= true;

@@ -30,12 +30,8 @@ import org.eclipse.core.runtime.*;
 	protected static final int SIZING_TEXT_FIELD_WIDTH= 250;
 	protected static final int COMBO_HISTORY_LENGTH= 5;
 	
-	private final static int SIZING_SELECTION_WIDGET_WIDTH= 400;
-	private final static int SIZING_SELECTION_WIDGET_HEIGHT= 150;
-
 	// dialog store id constants
 	private final static String PAGE_NAME= "PatchWizardPage1"; //$NON-NLS-1$
-	private final static String STORE_PATCH_FILE_ID= PAGE_NAME + ".PATCH_FILE";	//$NON-NLS-1$
 	private final static String STORE_PATCH_FILES_ID= PAGE_NAME + ".PATCH_FILES";	//$NON-NLS-1$
 	private final static String STORE_USE_CLIPBOARD_ID= PAGE_NAME + ".USE_CLIPBOARD";	//$NON-NLS-1$
 
@@ -186,30 +182,30 @@ import org.eclipse.core.runtime.*;
 		return 0;
 	}
 	
-	private int match(IPath path, ArrayList list) {
-		Iterator iter= list.iterator();
-		while (iter.hasNext()) {
-			IPath filePath= (IPath) iter.next();
-			int matches= matchTrailingSegments(path, filePath);
-			if (matches > 0)
-				return matches;
-		}
-		return 0;
-	}
+//	private int match(IPath path, ArrayList list) {
+//		Iterator iter= list.iterator();
+//		while (iter.hasNext()) {
+//			IPath filePath= (IPath) iter.next();
+//			int matches= matchTrailingSegments(path, filePath);
+//			if (matches > 0)
+//				return matches;
+//		}
+//		return 0;
+//	}
 	
-	private int matchTrailingSegments(IPath p1, IPath p2) {
-		int matches= 0;
-		int i1= p1.segmentCount()-1;
-		int i2= p2.segmentCount()-1;
-		for (; i1 >= 0 && i2 >= 0; i1--, i2--) {
-			String s1= p1.segment(i1);
-			String s2= p2.segment(i2);
-			if (!s1.equals(s2))
-				break;
-			matches++;
-		}
-		return matches;
-	}
+//	private int matchTrailingSegments(IPath p1, IPath p2) {
+//		int matches= 0;
+//		int i1= p1.segmentCount()-1;
+//		int i2= p2.segmentCount()-1;
+//		for (; i1 >= 0 && i2 >= 0; i1--, i2--) {
+//			String s1= p1.segment(i1);
+//			String s2= p2.segment(i2);
+//			if (!s1.equals(s2))
+//				break;
+//			matches++;
+//		}
+//		return matches;
+//	}
 	
 	private void addLeaf(ArrayList list, IContainer c) {
 		IResource[] rs= null;
@@ -356,26 +352,26 @@ import org.eclipse.core.runtime.*;
 	 * Returns a content provider for <code>IResource</code>s that returns 
 	 * only children of the given resource type.
 	 */
-	private ITreeContentProvider getResourceProvider(final int resourceType) {
-		return new WorkbenchContentProvider() {
-			public Object[] getChildren(Object o) {
-				if (o instanceof IContainer) {
-					try {
-						ArrayList results= new ArrayList();
-						IResource[] members= ((IContainer)o).members();
-						for (int i= 0; i < members.length; i++)
-							// filter out the desired resource types
-							if ((members[i].getType() & resourceType) != 0)
-								results.add(members[i]);
-						return results.toArray();
-					} catch (CoreException e) {
-					}
-				}
-				// just return an empty set of children
-				return new Object[0];
-			}
-		};
-	}
+//	private ITreeContentProvider getResourceProvider(final int resourceType) {
+//		return new WorkbenchContentProvider() {
+//			public Object[] getChildren(Object o) {
+//				if (o instanceof IContainer) {
+//					try {
+//						ArrayList results= new ArrayList();
+//						IResource[] members= ((IContainer)o).members();
+//						for (int i= 0; i < members.length; i++)
+//							// filter out the desired resource types
+//							if ((members[i].getType() & resourceType) != 0)
+//								results.add(members[i]);
+//						return results.toArray();
+//					} catch (CoreException e) {
+//					}
+//				}
+//				// just return an empty set of children
+//				return new Object[0];
+//			}
+//		};
+//	}
 	
 	/**
 	 * Updates the enable state of this page's controls.
@@ -586,15 +582,15 @@ import org.eclipse.core.runtime.*;
 	 * @param text the label text
 	 * @return the new label control
 	 */
-	private static Label buildPlainLabel(Composite parent, String text) {
-		Label label= new Label(parent, SWT.NONE);
-		label.setText(text);
-		GridData data= new GridData();
-		data.verticalAlignment= GridData.FILL;
-		data.horizontalAlignment= GridData.FILL;
-		label.setLayoutData(data);
-		return label;
-	}
+//	private static Label buildPlainLabel(Composite parent, String text) {
+//		Label label= new Label(parent, SWT.NONE);
+//		label.setText(text);
+//		GridData data= new GridData();
+//		data.verticalAlignment= GridData.FILL;
+//		data.horizontalAlignment= GridData.FILL;
+//		label.setLayoutData(data);
+//		return label;
+//	}
 
 	/**
 	 * Adds an entry to a history, while taking care of duplicate history items

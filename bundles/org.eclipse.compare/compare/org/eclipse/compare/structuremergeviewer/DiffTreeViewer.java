@@ -139,13 +139,10 @@ public class DiffTreeViewer extends TreeViewer {
 	private ResourceBundle fBundle;
 	private CompareConfiguration fCompareConfiguration;
 	/* package */ boolean fLeftIsLocal;
-	private ViewerFilter fViewerFilter;
 	private IPropertyChangeListener fPropertyChangeListener;
 
 	private Action fCopyLeftToRightAction;
 	private Action fCopyRightToLeftAction;
-	private Action fNextAction;
-	private Action fPreviousAction;
 	private Action fEmptyMenuAction;
 	private Action fExpandAllAction;
 		

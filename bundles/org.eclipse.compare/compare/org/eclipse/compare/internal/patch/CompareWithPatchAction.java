@@ -48,7 +48,6 @@ public class CompareWithPatchAction implements IActionDelegate {
 	
 	private ISelection fSelection;
 	private boolean fSavedFiles;
-	private boolean fAutobuildState;
 	
 
 	public void selectionChanged(IAction action, ISelection selection) {
