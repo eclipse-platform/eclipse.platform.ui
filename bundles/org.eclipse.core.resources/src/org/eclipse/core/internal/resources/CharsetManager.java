@@ -57,7 +57,7 @@ public class CharsetManager implements IManager {
 
 		protected IStatus run(IProgressMonitor monitor) {
 			IProject next;
-			MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, 0, Policy.bind("resources.updatingEncoding"), null); //$NON-NLS-1$
+			MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_SETTING_CHARSET, Policy.bind("resources.updatingEncoding"), null); //$NON-NLS-1$
 			while ((next = getNextChange()) != null)
 				try {
 					getPreferences(next).flush();
@@ -66,7 +66,7 @@ public class CharsetManager implements IManager {
 					String message = Policy.bind("resources.savingEncoding"); //$NON-NLS-1$
 					result.add(new ResourceStatus(IResourceStatus.FAILED_SETTING_CHARSET, next.getFullPath(), message, e));
 				}
-			return new Status(IStatus.OK, ResourcesPlugin.PI_RESOURCES, 0, "", null); //$NON-NLS-1$
+			return result; //$NON-NLS-1$
 		}
 
 		public boolean shouldRun() {
