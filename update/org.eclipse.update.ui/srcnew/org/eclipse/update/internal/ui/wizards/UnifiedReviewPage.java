@@ -38,10 +38,6 @@ public class UnifiedReviewPage
 	extends UnifiedBannerPage
 	implements IUpdateSearchResultCollector {
 	// NL keys
-	private static final String KEY_TITLE =
-		"MultiInstallWizard.MultiReviewPage.title";
-	private static final String KEY_DESC =
-		"MultiInstallWizard.MultiReviewPage.desc";
 	private static final String KEY_C_FEATURE =
 		"MultiInstallWizard.MultiReviewPage.c.feature";
 	private static final String KEY_C_VERSION =

@@ -28,8 +28,6 @@ public class InstallDeltaWizard
 	private static final String KEY_WTITLE = "InstallDeltaWizard.wtitle";
 	private static final String KEY_PROCESSING =
 		"InstallDeltaWizard.processing";
-	private static final String KEY_RESTART_MESSAGE =
-		"InstallDeltaWizard.restart.message";
 	private ISessionDelta[] deltas;
 	private InstallDeltaWizardPage page;
 	private int processed = 0;
