@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.team.ccvs.core;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
  
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -28,6 +33,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -102,6 +108,8 @@ public class CVSTeamProvider extends RepositoryProvider {
 	private CVSWorkspaceRoot workspaceRoot;
 	private IProject project;
 	private String comment = "";  //$NON-NLS-1$
+	
+	private static IMoveDeleteHook moveDeleteHook;
 		
 	/**
 	 * No-arg Constructor for IProjectNature conformance
@@ -442,47 +450,55 @@ public class CVSTeamProvider extends RepositoryProvider {
 		get(resources, depth, null, progress);
 	}
 	
-	public void get(IResource[] resources, final int depth, CVSTag tag, IProgressMonitor progress) throws TeamException {
+	public void get(final IResource[] resources, final int depth, CVSTag tag, IProgressMonitor progress) throws TeamException {
 		try {
 			progress.beginTask(null, 100);
-			final IProgressMonitor subProgress = Policy.infiniteSubMonitorFor(progress, 30);
 			
-			// Need to correct any outgoing additions and deletions so the remote contents will be retrieved properly
-			ICVSResourceVisitor visitor = new ICVSResourceVisitor() {
-				public void visitFile(ICVSFile file) throws CVSException {
-					ResourceSyncInfo info = file.getSyncInfo();
-					if (info == null || info.isAdded()) {
-						// Delete the file if it's unmanaged or doesn't exist remotely
-						file.delete();
-						file.unmanage(null);
-					} else if (info.isDeleted()) {
-						// If deleted, null the sync info so the file will be refetched
-						file.unmanage(null);
-					}
-					subProgress.worked(1);
-				}
-	
-				public void visitFolder(ICVSFolder folder) throws CVSException {
-					// Visit the children of the folder as appropriate
-					if (depth == IResource.DEPTH_INFINITE)
-						folder.acceptChildren(this);
-					else if (depth == IResource.DEPTH_ONE) {
-						ICVSFile[] files = folder.getFiles();
-						for (int i = 0; i < files.length; i++) {
-							files[i].accept(this);
+			workspaceRoot.getLocalRoot().run(new ICVSRunnable() {
+				public void run(IProgressMonitor monitor) throws CVSException {
+
+					monitor.beginTask(null, 100);
+					final IProgressMonitor subProgress = Policy.infiniteSubMonitorFor(monitor, 100);
+					
+					// Need to correct any outgoing additions and deletions so the remote contents will be retrieved properly
+					ICVSResourceVisitor visitor = new ICVSResourceVisitor() {
+						public void visitFile(ICVSFile file) throws CVSException {
+							ResourceSyncInfo info = file.getSyncInfo();
+							if (info == null || info.isAdded()) {
+								// Delete the file if it's unmanaged or doesn't exist remotely
+								file.delete();
+								file.unmanage(null);
+							} else if (info.isDeleted()) {
+								// If deleted, null the sync info so the file will be refetched
+								file.unmanage(null);
+							}
+							subProgress.worked(1);
 						}
-					}
-					subProgress.worked(1);
-				}
-			};
 			
-			subProgress.beginTask(null, 512);
-			for (int i = 0; i < resources.length; i++) {
-				subProgress.subTask(Policy.bind("CVSTeamProvider.scrubbingResource", resources[i].getFullPath().toString())); //$NON-NLS-1$
-				IResource resource = resources[i];
-				workspaceRoot.getLocalRoot().getChild(resource.getProjectRelativePath().toString()).accept(visitor);
-			}
-			subProgress.done();
+						public void visitFolder(ICVSFolder folder) throws CVSException {
+							// Visit the children of the folder as appropriate
+							if (depth == IResource.DEPTH_INFINITE)
+								folder.acceptChildren(this);
+							else if (depth == IResource.DEPTH_ONE) {
+								ICVSFile[] files = folder.getFiles();
+								for (int i = 0; i < files.length; i++) {
+									files[i].accept(this);
+								}
+							}
+							subProgress.worked(1);
+						}
+					};
+					
+					subProgress.beginTask(null, 512);
+					for (int i = 0; i < resources.length; i++) {
+						subProgress.subTask(Policy.bind("CVSTeamProvider.scrubbingResource", resources[i].getFullPath().toString())); //$NON-NLS-1$
+						IResource resource = resources[i];
+						workspaceRoot.getLocalRoot().getChild(resource.getProjectRelativePath().toString()).accept(visitor);
+					}
+					subProgress.done();
+				}
+
+			}, Policy.subMonitorFor(progress, 30));
 					
 			// Perform an update, ignoring any local file modifications
 			List options = new ArrayList();
@@ -1186,4 +1202,26 @@ public class CVSTeamProvider extends RepositoryProvider {
 	public String getID() {
 		return CVSProviderPlugin.getTypeId();
 	}
+	
+	/*
+	 * @see RepositoryProvider#getMoveDeleteHook()
+	 */
+	public IMoveDeleteHook getMoveDeleteHook() {
+		return moveDeleteHook;
+	}
+	
+	/*
+	 * Return the currently registered Move/Delete Hook
+	 */
+	public static IMoveDeleteHook getRegisteredMoveDeleteHook() {
+		return moveDeleteHook;
+	}
+	
+	/*
+	 * Set the Move/Delete hook of the CVS Team Provider. This is provided to allow the CVS UI to
+	 * register a hook that can perform prompting. It is not to be used by other clients
+	 */
+	 public static void setMoveDeleteHook(IMoveDeleteHook hook) {
+	 	moveDeleteHook = hook;
+	 }
 }

@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -48,6 +53,9 @@ public class CVSPreferencesPage
 	private Combo quietnessCombo;
 	private Button historyTracksSelectionButton;
 	private Button considerContentsInCompare;
+	private Button promptOnFileDelete;
+	private Button promptOnFolderDelete;
+	private Button showMarkers;
 	
 	/**
 	 * Utility method that creates a combo box
@@ -136,6 +144,15 @@ public class CVSPreferencesPage
 		considerContentsInCompare = createCheckBox(composite, Policy.bind("CVSPreferencePage.considerContentsInCompare"));
 		considerContentsInCompare.setToolTipText(Policy.bind("CVSPreferencePage.considerContentsInCompareTooltip"));
 		
+		promptOnFileDelete = createCheckBox(composite, Policy.bind("CVSPreferencePage.promptOnFileDelete"));
+		promptOnFileDelete.setToolTipText(Policy.bind("CVSPreferencePage.promptOnFileDeleteTooltip"));
+
+		promptOnFolderDelete = createCheckBox(composite, Policy.bind("CVSPreferencePage.promptOnFolderDelete"));
+		promptOnFolderDelete.setToolTipText(Policy.bind("CVSPreferencePage.promptOnFolderDeleteTooltip"));
+
+		showMarkers = createCheckBox(composite, Policy.bind("CVSPreferencePage.showAddRemoveMarkers"));
+		showMarkers.setToolTipText(Policy.bind("CVSPreferencePage.showAddRemoveMarkersTooltip"));
+		
 		initializeValues();
 		
 		quietnessCombo.addSelectionListener(new SelectionListener() {
@@ -193,6 +210,9 @@ public class CVSPreferencesPage
 		quietnessCombo.select(store.getInt(ICVSUIConstants.PREF_QUIETNESS));
 		historyTracksSelectionButton.setSelection(store.getBoolean(ICVSUIConstants.PREF_HISTORY_TRACKS_SELECTION));
 		considerContentsInCompare.setSelection(store.getBoolean(ICVSUIConstants.PREF_CONSIDER_CONTENTS));
+		promptOnFileDelete.setSelection(store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE));
+		promptOnFolderDelete.setSelection(store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE));
+		showMarkers.setSelection(store.getBoolean(ICVSUIConstants.PREF_SHOW_MARKERS));
 	}
 
 	/**
@@ -218,6 +238,9 @@ public class CVSPreferencesPage
 		store.setValue(ICVSUIConstants.PREF_QUIETNESS, quietnessCombo.getSelectionIndex());
 		store.setValue(ICVSUIConstants.PREF_HISTORY_TRACKS_SELECTION, historyTracksSelectionButton.getSelection());
 		store.setValue(ICVSUIConstants.PREF_CONSIDER_CONTENTS, considerContentsInCompare.getSelection());
+		store.setValue(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE, promptOnFileDelete.getSelection());
+		store.setValue(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE, promptOnFolderDelete.getSelection());
+		store.setValue(ICVSUIConstants.PREF_SHOW_MARKERS, showMarkers.getSelection());
 		
 		CVSProviderPlugin.getPlugin().setPruneEmptyDirectories(
 			store.getBoolean(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES));
@@ -225,6 +248,12 @@ public class CVSPreferencesPage
 			store.getInt(ICVSUIConstants.PREF_TIMEOUT));
 		CVSProviderPlugin.getPlugin().setQuietness(
 			getQuietnessOptionFor(store.getInt(ICVSUIConstants.PREF_QUIETNESS)));
+		CVSProviderPlugin.getPlugin().setPromptOnFileDelete(
+			store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE));
+		CVSProviderPlugin.getPlugin().setPromptOnFolderDelete(
+			store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE));
+		CVSProviderPlugin.getPlugin().setShowTasksOnAddAndDelete(
+			store.getBoolean(ICVSUIConstants.PREF_SHOW_MARKERS));
 
 		return true;
 	}
@@ -241,6 +270,9 @@ public class CVSPreferencesPage
 		timeoutValue.setText(new Integer(store.getDefaultInt(ICVSUIConstants.PREF_TIMEOUT)).toString());
 		quietnessCombo.select(store.getDefaultInt(ICVSUIConstants.PREF_QUIETNESS));
 		historyTracksSelectionButton.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_HISTORY_TRACKS_SELECTION));
+		promptOnFileDelete.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE));
+		promptOnFolderDelete.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE));
+		showMarkers.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_SHOW_MARKERS));
 	}
 
 	/**

@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.resources;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.io.File;
 import java.io.InputStream;
@@ -171,13 +176,11 @@ class EclipseFile extends EclipseResource implements ICVSFile {
 			} else if(responseType == UPDATE_EXISTING) {
 				file.setContents(stream, false /*force*/, keepLocalHistory /*keep history*/, monitor);
 			} else {
-				file.setContents(stream, false /*force*/, keepLocalHistory /*keep history*/, monitor);
-				
-	//			// Ensure we don't leave the file in a partially written state
-	//			IFile tempFile = file.getParent().getFile(new Path(file.getName() + TEMP_FILE_EXTENSION));
-	//			tempFile.create(new ByteArrayInputStream(toByteArray()), true /*force*/, null);
-	//			file.delete(false, true, null);
-	//			tempFile.move(new Path(file.getName()), true, true, null);
+				// Ensure we don't leave the file in a partially written state
+				IFile tempFile = file.getParent().getFile(new Path(file.getName() + TEMP_FILE_EXTENSION));
+				tempFile.create(stream, true /*force*/, null);
+				file.delete(false, true, null);
+				tempFile.move(new Path(file.getName()), true /*force*/, false /*history*/, null);
 			}
 		} catch(CoreException e) {
 			throw new CVSException(Policy.bind("EclipseFile_Problem_writing_resource", e.getMessage(), e.getStatus().getMessage())); //$NON-NLS-1$

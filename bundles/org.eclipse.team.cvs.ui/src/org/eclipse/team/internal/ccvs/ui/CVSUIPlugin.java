@@ -1,14 +1,18 @@
+/*******************************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Hashtable;
-import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
@@ -20,8 +24,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.team.ccvs.core.*;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
@@ -171,6 +175,9 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		store.setDefault(ICVSUIConstants.PREF_SHOW_MODULES, false);
 		store.setDefault(ICVSUIConstants.PREF_CONSIDER_CONTENTS, false);
 		store.setDefault(ICVSUIConstants.PREF_HISTORY_TRACKS_SELECTION, false);
+		store.setDefault(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE, true);
+		store.setDefault(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE, true);
+		store.setDefault(ICVSUIConstants.PREF_SHOW_MARKERS, true);
 		store.setDefault(ICVSUIConstants.PREF_CVS_RSH, CVSProviderPlugin.DEFAULT_CVS_RSH);
 		store.setDefault(ICVSUIConstants.PREF_CVS_SERVER, CVSProviderPlugin.DEFAULT_CVS_SERVER);
 		
@@ -194,6 +201,9 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		CVSProviderPlugin.getPlugin().setCvsRshCommand(store.getString(ICVSUIConstants.PREF_CVS_RSH));
 		CVSProviderPlugin.getPlugin().setCvsServer(store.getString(ICVSUIConstants.PREF_CVS_SERVER));
 		CVSProviderPlugin.getPlugin().setQuietness(CVSPreferencesPage.getQuietnessOptionFor(store.getInt(ICVSUIConstants.PREF_QUIETNESS)));
+		CVSProviderPlugin.getPlugin().setPromptOnFileDelete(store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE));
+		CVSProviderPlugin.getPlugin().setPromptOnFolderDelete(store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE));
+		CVSProviderPlugin.getPlugin().setShowTasksOnAddAndDelete(store.getBoolean(ICVSUIConstants.PREF_SHOW_MARKERS));
 	}
 
 	/**
@@ -239,6 +249,8 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		} catch (TeamException e) {
 			throw new CoreException(e.getStatus());
 		}
+		
+		CVSTeamProvider.setMoveDeleteHook(new CVSMoveDeleteHook());
 	}
 	
 	/**

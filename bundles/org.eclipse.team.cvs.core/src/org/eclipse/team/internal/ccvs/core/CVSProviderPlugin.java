@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.team.ccvs.core;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
  
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -54,11 +59,14 @@ public class CVSProviderPlugin extends Plugin {
 	private int communicationsTimeout = DEFAULT_TIMEOUT;
 	private boolean pruneEmptyDirectories = DEFAULT_PRUNE;
 	private boolean fetchAbsentDirectories = DEFAULT_FETCH;
+	private boolean promptOnFileDelete = true;
+	private boolean promptOnFolderDelete = true;
+	private boolean showTasksOnAddAndDelete = false;
 	private String cvsRshCommand = DEFAULT_CVS_RSH;
 	private String cvsServer = DEFAULT_CVS_SERVER;
 	
 	private static CVSProviderPlugin instance;
-	
+
 	/**
 	 * The identifier for the CVS nature
 	 * (value <code>"org.eclipse.team.cvs.core.nature"</code>).
@@ -268,11 +276,27 @@ public class CVSProviderPlugin extends Plugin {
 	}
 
 	/**
-	 * Sets the etchAbsentDirectories.
+	 * Sets the fetchAbsentDirectories.
 	 * @param etchAbsentDirectories The etchAbsentDirectories to set
 	 */
 	public void setFetchAbsentDirectories(boolean fetchAbsentDirectories) {
 		this.fetchAbsentDirectories = fetchAbsentDirectories;
+	}
+	
+	public boolean getPromptOnFileDelete() {
+		return promptOnFileDelete;
+	}
+	
+	public void setPromptOnFileDelete(boolean prompt) {
+		promptOnFileDelete = prompt;
+	}
+	
+	public boolean getPromptOnFolderDelete() {
+		return promptOnFolderDelete;
+	}
+	
+	public void setPromptOnFolderDelete(boolean prompt) {
+		promptOnFolderDelete = prompt;
 	}
 	
 	private static List listeners = new ArrayList();
@@ -308,5 +332,21 @@ public class CVSProviderPlugin extends Plugin {
 			Platform.run(code);
 		}
 	}
+	/**
+	 * Gets the showTasksOnAddAndDelete.
+	 * @return Returns a boolean
+	 */
+	public boolean getShowTasksOnAddAndDelete() {
+		return showTasksOnAddAndDelete;
+	}
+
+	/**
+	 * Sets the showTasksOnAddAndDelete.
+	 * @param showTasksOnAddAndDelete The showTasksOnAddAndDelete to set
+	 */
+	public void setShowTasksOnAddAndDelete(boolean showTasksOnAddAndDelete) {
+		this.showTasksOnAddAndDelete = showTasksOnAddAndDelete;
+	}
+
 }
 

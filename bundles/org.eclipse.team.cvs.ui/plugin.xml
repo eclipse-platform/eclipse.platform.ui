@@ -398,7 +398,7 @@
              objectClass="org.eclipse.core.resources.IResource"
              adaptable="true"> 
          </decorator> 
-	</extension>    
+	</extension>
 	
 	<!-- *************** View Actions **************** -->
    <extension point="org.eclipse.ui.viewActions"> 
@@ -415,5 +415,17 @@
          </action>
      </viewContribution>
    </extension> 
-	
+
+	<!-- **************** MARKERS ******************* -->
+	<extension point="org.eclipse.ui.markerResolution">
+		<markerResolutionGenerator
+			markerType="org.eclipse.team.cvs.core.cvsremove" 
+			class="org.eclipse.team.internal.ccvs.ui.CVSRemoveResolutionGenerator">
+		</markerResolutionGenerator>
+		<markerResolutionGenerator
+			markerType="org.eclipse.team.cvs.core.cvsadd" 
+			class="org.eclipse.team.internal.ccvs.ui.CVSAddResolutionGenerator">
+		</markerResolutionGenerator>
+	</extension>
+   </extension>
 </plugin>

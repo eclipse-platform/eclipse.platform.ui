@@ -1,12 +1,19 @@
+/*******************************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.util;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
  
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -16,9 +23,13 @@ import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.ccvs.core.ICVSFolder;
+import org.eclipse.team.ccvs.core.ICVSResource;
+import org.eclipse.team.ccvs.core.ICVSRunnable;
+import org.eclipse.team.ccvs.core.IResourceStateChangeListener;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
@@ -32,10 +43,76 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
  * Listen in IResourceChangeEvent.PRE_AUTO_BUILD so that other interested parties 
  * (most notably, the file synchronizer) will receive up to date notifications
  */
-public class ResourceDeltaSyncHandler implements IResourceDeltaVisitor {
+public class ResourceDeltaSyncHandler implements IResourceDeltaVisitor, IResourceStateChangeListener {
 
+	public static final String DELETION_MARKER = "org.eclipse.team.cvs.core.cvsremove";
+	public static final String ADDITION_MARKER = "org.eclipse.team.cvs.core.cvsadd";
+	
+	public static final String NAME_ATTRIBUTE = "name";
+	
 	private static IResourceChangeListener listener;
 	private static ResourceDeltaSyncHandler visitor;
+	
+	protected IMarker createDeleteMarker(IResource resource) {
+		if (! CVSProviderPlugin.getPlugin().getShowTasksOnAddAndDelete()) {
+			return null;
+		}
+		try {
+			IMarker marker = getDeletionMarker(resource);
+			if (marker != null) {
+				return marker;
+			}
+			marker = resource.getParent().createMarker(DELETION_MARKER);
+			marker.setAttribute("name", resource.getName());
+			marker.setAttribute(IMarker.MESSAGE, resource.getName() + " has been deleted locally");
+			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+			return marker;
+		} catch (CoreException e) {
+			Util.logError("Error creating deletion marker", e);
+		}
+		return null;
+	}
+	
+	protected IMarker createAdditonMarker(IResource resource) {
+		if (! CVSProviderPlugin.getPlugin().getShowTasksOnAddAndDelete()) {
+			return null;
+		}
+		try {
+			IMarker marker = getAdditionMarker(resource);
+			if (marker != null) {
+				return marker;
+			}
+			marker = resource.createMarker(ADDITION_MARKER);
+			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+			marker.setAttribute(IMarker.MESSAGE, resource.getName() + " is a local addition not under CVS control");
+			return marker;
+		} catch (CoreException e) {
+			Util.logError("Error creating addition marker", e);
+		}
+		return null;
+	}
+	
+	protected IMarker getAdditionMarker(IResource resource) throws CoreException {
+   		IMarker[] markers = resource.findMarkers(ADDITION_MARKER, false, IResource.DEPTH_ZERO);
+   		if (markers.length == 1) {
+   			return markers[0];
+   		}
+		return null;
+	}
+	
+	protected IMarker getDeletionMarker(IResource resource) throws CoreException {
+		if (resource.getParent().exists()) {
+			String name = resource.getName();
+	   		IMarker[] markers = resource.getParent().findMarkers(DELETION_MARKER, false, IResource.DEPTH_ZERO);
+	   		for (int i = 0; i < markers.length; i++) {
+				IMarker iMarker = markers[i];
+				String markerName = (String)iMarker.getAttribute(NAME_ATTRIBUTE);
+				if (markerName.equals(name))
+					return iMarker;
+			}
+		}
+		return null;
+	}
 	
 	public static IResource getResourceFor(IProject container, IResource destination, IPath originating) {
 		switch(destination.getType()) {
@@ -57,9 +134,10 @@ public class ResourceDeltaSyncHandler implements IResourceDeltaVisitor {
 		switch (delta.getKind()) {
 			case IResourceDelta.ADDED :
 				if (resource.getType() == IResource.FOLDER) {
-					return ! handleOrphanedSubtree((IContainer)resource);
+					handleOrphanedSubtree((IContainer)resource);
+					handleAddedFolder((IFolder) resource);
 				} else if (resource.getType() == IResource.FILE) {
-					handleReplacedDeletion((IFile)resource);
+					handleAddedFile((IFile)resource);
 				}
 				break;
 			case IResourceDelta.REMOVED :
@@ -69,6 +147,8 @@ public class ResourceDeltaSyncHandler implements IResourceDeltaVisitor {
 					if (movedTo) {
 						IPath target = delta.getMovedToPath();
 						if (target.segment(0).equals(project.getName())) {
+							//handleDeletedFile((IFile)resource);
+							// The line below resulted in 2 calls to handleAddedFile
 							handleMovedFile(project, (IFile)resource, project.getFile(target.removeFirstSegments(1)));
 						} else {
 							handleDeletedFile((IFile)resource);
@@ -110,7 +190,6 @@ public class ResourceDeltaSyncHandler implements IResourceDeltaVisitor {
 		return false;
 	}
 	
-	
 	/*
 	 * Mark deleted managed files as outgoing deletions
 	 */
@@ -122,33 +201,63 @@ public class ResourceDeltaSyncHandler implements IResourceDeltaVisitor {
 				if (info.isAdded()) {
 					mFile.unmanage(null);
 				} else {
+					createDeleteMarker(resource);
 					MutableResourceSyncInfo deletedInfo = info.cloneMutable();
 					deletedInfo.setDeleted(true);
 					mFile.setSyncInfo(deletedInfo);
 				}
+			}
+			// XXX If .cvsignore was deleted, we may have unmanaged additions in the same folder
+		} catch (CVSException e) {
+			CVSProviderPlugin.log(e);
+		}
+	}
+
+	/*
+	 * Handle the case where an added file has the same name as a "cvs removed" file
+	 * by restoring the sync info to what it was before the delete
+	 */
+	private void handleAddedFile(IFile resource) {
+		try {
+			ICVSFile mFile = CVSWorkspaceRoot.getCVSFileFor((IFile)resource);
+			if (mFile.isManaged()) {
+				ResourceSyncInfo info = mFile.getSyncInfo();
+				if (info.isDeleted()) {
+					// Handle a replaced deletion
+					MutableResourceSyncInfo undeletedInfo = info.cloneMutable();
+					undeletedInfo.setDeleted(false);
+					mFile.setSyncInfo(undeletedInfo);
+					try {
+						IMarker marker = getDeletionMarker(resource);
+						if (marker != null) marker.delete();
+					} catch (CoreException e) {
+						CVSProviderPlugin.log(e.getStatus());
+					}
+				} else if (info.isDirectory()) {
+					// XXX This is a gender change against the server! We should prevent this creation.
+					mFile.unmanage(null);
+					createAdditonMarker(resource);
+				}
+			} else if ( mFile.getParent().isCVSFolder() && ! mFile.isIgnored()) {
+				createAdditonMarker(resource);
 			}
 		} catch (CVSException e) {
 			CVSProviderPlugin.log(e);
 		}
 	}
 	
-	/*
-	 * Handle the case where an added file has the same name as a "cvs removed" file
-	 * by restoring the sync info to what it was before the delete
-	 */
-	private void handleReplacedDeletion(IFile resource) {
+	private void handleAddedFolder(IFolder resource) {
 		try {
-			ICVSFile mFile = CVSWorkspaceRoot.getCVSFileFor((IFile)resource);
-			if (mFile.isManaged()) {
-				ResourceSyncInfo info = mFile.getSyncInfo();
-				if (info.isDeleted()) {
-					MutableResourceSyncInfo undeletedInfo = info.cloneMutable();
-					undeletedInfo.setDeleted(false);
-					mFile.setSyncInfo(undeletedInfo);
-				} else if (info.isDirectory()) {
+			ICVSFolder mFolder = CVSWorkspaceRoot.getCVSFolderFor(resource);
+			if (mFolder.isManaged()) {
+				ResourceSyncInfo info = mFolder.getSyncInfo();
+				if ( ! info.isDirectory()) {
 					// XXX This is a gender change against the server! We should prevent this creation.
-					mFile.unmanage(null);
+					mFolder.unmanage(null);
+					createAdditonMarker(resource);
 				}
+			} else if ( mFolder.getParent().isCVSFolder() && ! mFolder.isIgnored()) {
+				createAdditonMarker(resource);
 			}
 		} catch (CVSException e) {
 			CVSProviderPlugin.log(e);
@@ -160,46 +269,11 @@ public class ResourceDeltaSyncHandler implements IResourceDeltaVisitor {
 	 * Also ensure that replaced deletions are handled.
 	 */
 	private void handleMovedFile(IProject project, IFile fromResource, IFile toResource) {
-		try {
-			
-			ResourceSyncInfo fromInfo = null;
-			ICVSFile fromFile = CVSWorkspaceRoot.getCVSFileFor(fromResource);
-			// If the from file was managed mark it as an outgoing deletion
-			if (fromFile.isManaged()) {
-				fromInfo = fromFile.getSyncInfo();
-				if (fromInfo.isAdded()) {
-					fromFile.unmanage(null);
-				} else {
-					MutableResourceSyncInfo deletedInfo = fromInfo.cloneMutable();
-					deletedInfo.setDeleted(true);
-					fromFile.setSyncInfo(deletedInfo);
-				}
-			}
-			
-			ICVSFile toFile = CVSWorkspaceRoot.getCVSFileFor(toResource);
-			// If the to file is not managed, mark it as an outgoing addition
-			if (toFile.isManaged()) {
-				ResourceSyncInfo info = toFile.getSyncInfo();
-				if (info.isDeleted()) {
-					MutableResourceSyncInfo undeletedInfo = info.cloneMutable();
-					undeletedInfo.setDeleted(false);
-					toFile.setSyncInfo(undeletedInfo);
-				}
-			} else if (fromInfo != null) {
-				MutableResourceSyncInfo newInfo = new MutableResourceSyncInfo(toFile.getName(), ResourceSyncInfo.ADDED_REVISION);
-				newInfo.setTimeStamp(ResourceSyncInfo.DUMMY_DATE);
-				newInfo.setPermissions(fromInfo.getPermissions());
-				newInfo.setKeywordMode(fromInfo.getKeywordMode());
-				newInfo.setTag(fromInfo.getTag());
-				toFile.setSyncInfo(newInfo);
-			}
-			
-		} catch (CVSException e) {
-			CVSProviderPlugin.log(e);
-		}
+		handleDeletedFile(fromResource);
+		handleAddedFile(toResource);
 	}
 	
-	public static void startup() {
+	public static void startup() {		
 		if (visitor == null)
 			visitor = new ResourceDeltaSyncHandler();
 		if (listener == null)
@@ -230,9 +304,85 @@ public class ResourceDeltaSyncHandler implements IResourceDeltaVisitor {
 				}
 			};
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.PRE_AUTO_BUILD);
+		CVSProviderPlugin.addResourceStateChangeListener(visitor);
 	}
 	
 	public static void shutdown() {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(listener);
+	}
+	
+	/*
+	 * @see IResourceStateChangeListener#resourceStateChanged(IResource[])
+	 */
+	public void resourceStateChanged(IResource[] changedResources) {
+		for (int i = 0; i < changedResources.length; i++) {
+			try {
+				final IResource resource = changedResources[i];
+				if (resource.getType() == IResource.FILE) {
+					ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+					if (cvsResource.isManaged() || cvsResource.isIgnored()) {
+						if (cvsResource.exists()) {
+							IMarker marker = getAdditionMarker(resource);
+							if (marker != null)
+								marker.delete();
+						}
+					} else if ( ! cvsResource.exists()) {
+						IMarker marker = getDeletionMarker(resource);
+						if (marker != null)
+							marker.delete();
+						cvsResource.getParent().run(new ICVSRunnable() {
+							public void run(IProgressMonitor monitor) throws CVSException {
+								pruneEmptyParents(resource);
+							}
+
+						}, Policy.monitorFor(null));
+					}
+				} else if (resource.getType() == IResource.FOLDER) {
+					ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+					if (cvsResource.isManaged()) {
+						IMarker marker = getAdditionMarker(resource);
+						if (marker != null) {
+							marker.delete();
+							// Check to see if there are unmanaged, unignored children
+							// If there are, mark them
+							IResource[] children = ((IFolder)resource).members();
+							for (int j = 0; j < children.length; j++) {
+								IResource iResource = children[j];
+								ICVSResource child = CVSWorkspaceRoot.getCVSResourceFor(iResource);
+								if ( ! child.isManaged() && ! child.isIgnored()) {
+									createAdditonMarker(iResource);
+								}
+							}
+						}
+					} 
+				}
+			} catch (CVSException e) {
+				Util.logError("Error updating marker state", e);
+			} catch (CoreException e) {
+				Util.logError("Error updating marker state", e);
+			}
+		}
+	}
+
+	private void pruneEmptyParents(IResource resource) throws CVSException {
+		// Don't prune if pruning is off
+		if ( ! CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) {
+			return;
+		}
+		// Make sure it's a folder and not the project or workspace root
+		IContainer parent = resource.getParent();
+		if (parent.getType() != IResource.FOLDER) {
+			return;
+		}
+		// XXX Could use members on IFolder once team-private works
+		ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(parent);
+		if (folder.exists() 
+				&& folder.isManaged()
+				&& folder.getFiles().length == 0 
+				&& folder.getFolders().length == 0) {
+			folder.delete();
+			folder.unmanage(null);
+			pruneEmptyParents(parent);
+		}
 	}
 }

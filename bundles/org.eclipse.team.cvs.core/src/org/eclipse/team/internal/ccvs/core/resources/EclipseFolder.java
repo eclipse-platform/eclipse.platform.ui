@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.resources;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +21,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSResource;
@@ -272,7 +279,10 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	 * @see ICVSFolder#run(ICVSRunnable, IProgressMonitor)
 	 */
 	public void run(final ICVSRunnable job, IProgressMonitor monitor) throws CVSException {
-		final CVSException[] error = new CVSException[1];		
+		final CVSException[] error = new CVSException[1];
+		// Remove the registered Move/Delete hook, assuming that the cvs runnable will keep sync info up-to-date
+		final IMoveDeleteHook oldHook = CVSTeamProvider.getRegisteredMoveDeleteHook();
+		CVSTeamProvider.setMoveDeleteHook(null);
 		try {
 			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
@@ -294,6 +304,8 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 			}, monitor);
 		} catch(CoreException e) {
 			throw CVSException.wrapException(e);
+		} finally {
+			CVSTeamProvider.setMoveDeleteHook(oldHook);
 		}
 		if(error[0]!=null) {
 			throw error[0];

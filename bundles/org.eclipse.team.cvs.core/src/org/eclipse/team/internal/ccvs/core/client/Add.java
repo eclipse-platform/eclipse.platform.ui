@@ -33,12 +33,8 @@ public class Add extends Command {
 		// Check that all the arguments can give you an
 		// repo that you will need while traversing the
 		// file-structure
-		try {
-			for (int i = 0; i < resources.length; i++) {
-				Assert.isNotNull(resources[i].getRemoteLocation(session.getLocalRoot()));
-			}
-		} catch (CVSException e) {
-			Assert.isTrue(false);
+		for (int i = 0; i < resources.length; i++) {
+			Assert.isNotNull(resources[i].getRemoteLocation(session.getLocalRoot()));
 		}
 		
 		// Get a vistor and use it on every resource we should

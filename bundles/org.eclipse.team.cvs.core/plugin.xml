@@ -61,4 +61,15 @@
 		<super type="org.eclipse.team.cvs.core.cvsmarker"/>
 		<persistent value="true"/>
 	</extension>
+	<extension id="cvsremove" point="org.eclipse.core.resources.markers" name="CVS Remove">
+		<super type="org.eclipse.core.resources.problemmarker"/>
+		<super type="org.eclipse.team.cvs.core.cvsmarker"/>
+		<attribute name="name"/>
+		<persistent value="true"/>
+	</extension>
+	<extension id="cvsadd" point="org.eclipse.core.resources.markers" name="CVS Add">
+		<super type="org.eclipse.core.resources.problemmarker"/>
+		<super type="org.eclipse.team.cvs.core.cvsmarker"/>
+		<persistent value="true"/>
+	</extension>
 </plugin>
