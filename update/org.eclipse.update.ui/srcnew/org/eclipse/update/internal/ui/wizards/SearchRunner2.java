@@ -6,18 +6,15 @@
  */
 package org.eclipse.update.internal.ui.wizards;
 
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.internal.operations.*;
-import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.update.internal.ui.search.*;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.update.core.ISite;
+import org.eclipse.update.internal.search.*;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 /**
  * @author dejan
@@ -29,6 +26,7 @@ public class SearchRunner2 {
 	private Shell shell;
 	private IRunnableContext context;
 	private ISearchProvider2 searchProvider;
+	private IUpdateSearchResultCollector collector;
 	private boolean newSearchNeeded;
 	
 	public SearchRunner2(Shell shell, IRunnableContext context) {
@@ -36,13 +34,18 @@ public class SearchRunner2 {
 		this.context = context;
 	}
 	
+	public void setResultCollector(IUpdateSearchResultCollector collector) {
+		this.collector = collector;
+	}
+	
 	public ISearchProvider2 getSearchProvider() {
 		return searchProvider;
 	}
 	
 	public void setSearchProvider(ISearchProvider2 searchProvider) {
+		if (this.searchProvider!=searchProvider)
+			newSearchNeeded = true;
 		this.searchProvider = searchProvider;
-		newSearchNeeded = true;
 	}
 	
 	public void setNewSearchNeeded(boolean value) {
@@ -53,15 +56,14 @@ public class SearchRunner2 {
 		return newSearchNeeded;
 	}
 
-	public PendingOperation [] runSearch() {
-		if (searchProvider==null) return new PendingOperation[0];
+	public void runSearch() {
+		if (searchProvider==null) return;
 		try {
-			context.run(true, true, getSearchOperation());
+			context.run(true, true, getSearchOperation(collector));
 			newSearchNeeded=false;
-			return createPendingChanges(searchProvider.getSearch());
 		} catch (InterruptedException e) {
 			UpdateUI.logException(e);
-			return null;
+			return;
 		} catch (InvocationTargetException e) {
 			Throwable t = e.getTargetException();
 			if (t instanceof CoreException) {
@@ -75,42 +77,30 @@ public class SearchRunner2 {
 						UpdateUI.getString("Connection Error"),
 						null, 
 						status);
-					return null;
+					return;
 				}
 			}
 			UpdateUI.logException(e);
-			return null;
+			return;
 		}
-	}
-	private PendingOperation [] createPendingChanges(SearchObject searchObject) {
-		ArrayList result = new ArrayList();
-		Object[] sites = searchObject.getChildren(null);
-		for (int i = 0; i < sites.length; i++) {
-			SearchResultSite site = (SearchResultSite) sites[i];
-			createPendingChanges(site, result);
-		}
-		return (PendingOperation[]) result.toArray(new PendingOperation[result.size()]);
 	}
 
-	private void createPendingChanges(
-		SearchResultSite site,
-		ArrayList result) {
-		Object[] candidates = site.getChildren(null);
-		for (int i = 0; i < candidates.length; i++) {
-			SimpleFeatureAdapter adapter = (SimpleFeatureAdapter) candidates[i];
-			try {
-				IFeature feature = adapter.getFeature(null);
-				PendingOperation change = new PendingOperation(feature);
-				result.add(change);
-			} catch (CoreException e) {
-				UpdateUI.logException(e);
+	private IRunnableWithProgress getSearchOperation(final IUpdateSearchResultCollector collector) {
+		final UpdateSearchRequest request = searchProvider.getSearchRequest();
+		
+		IRunnableWithProgress op = new IRunnableWithProgress () {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+				try {
+					request.performSearch(collector, monitor);
+				}
+				catch (CoreException e) {
+					throw new InvocationTargetException(e);
+				}
+				finally {
+					monitor.done();
+				}
 			}
-		}
-	}
-	
-	private IRunnableWithProgress getSearchOperation() {
-		return searchProvider.getSearch().getSearchOperation(
-			shell.getDisplay(),
-			searchProvider.getCategory().getQueries());
+		};
+		return op;
 	}
 }

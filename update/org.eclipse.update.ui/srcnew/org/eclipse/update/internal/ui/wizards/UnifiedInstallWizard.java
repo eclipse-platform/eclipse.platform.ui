@@ -132,6 +132,7 @@ public class UnifiedInstallWizard
 		sitePage = new UnifiedSitePage(searchRunner);
 		addPage(sitePage);
 		reviewPage = new UnifiedReviewPage(searchRunner);
+		searchRunner.setResultCollector(reviewPage);
 		addPage(reviewPage);
 
 		try {

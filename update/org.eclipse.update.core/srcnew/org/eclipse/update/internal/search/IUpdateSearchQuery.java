@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.update.internal.search;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.update.core.ISite;
 
 public interface IUpdateSearchQuery {
 /**
@@ -23,11 +23,7 @@ public interface IUpdateSearchQuery {
  * this query or <samp>null</samp> if a general scan 
  * should be used.
  */
-	public IUpdateSiteAdapter getSearchSite();
-	
-/**
- * Returns an array of features that match the search query
- * using the provided site as a source.
- */
-	public IFeature [] getMatchingFeatures(IUpdateSiteAdapter adapter, ISite site, IProgressMonitor monitor);
+	public IUpdateSiteAdapter getQuerySearchSite();
+
+	public void run(ISite site, String [] categoriesToSkip, IUpdateSearchResultCollector collector, IProgressMonitor monitor);
 }

@@ -13,17 +13,19 @@ package org.eclipse.update.internal.search;
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class UpdateSearchInput {
-	public UpdateSearchInput() {
-		super();
-		// TODO Auto-generated constructor stub
+	private IUpdateSearchCategory category;
+	private UpdateSearchScope scope;
+
+	public UpdateSearchInput(IUpdateSearchCategory category, UpdateSearchScope scope) {
+		this.category = category;
+		this.scope = scope;
 	}
-	
-/*
-	
-	public IUpdateSearchCategory getCategory() {
+
+	public IUpdateSearchCategory getSearchCategory() {
+		return category;
 	}
-	
-	public UpdateSearchScope getScope() {
+
+	public UpdateSearchScope getSearchScope() {
+		return scope;
 	}
-*/
 }

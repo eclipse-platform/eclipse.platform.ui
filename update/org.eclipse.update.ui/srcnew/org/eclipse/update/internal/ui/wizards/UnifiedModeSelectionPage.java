@@ -6,14 +6,14 @@
  */
 package org.eclipse.update.internal.ui.wizards;
 
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.update.internal.search.*;
 import org.eclipse.update.internal.ui.UpdateUI;
-import org.eclipse.update.internal.ui.search.*;
 
 /**
  * @author dejan
@@ -25,8 +25,7 @@ public class UnifiedModeSelectionPage extends UnifiedBannerPage implements ISear
 	private boolean updateMode=true;
 	private Button updatesButton;
 	private Button newFeaturesButton;
-	private SearchObject searchObject;
-	private ISearchCategory category;
+	private UpdateSearchRequest searchRequest;
 	private SearchRunner2 searchRunner;
 	private static final String SECTION_ID = "ModeSelectionPage";
 	private static final String P_NEW_FEATURES_MODE = "new-features-mode";
@@ -38,14 +37,9 @@ public class UnifiedModeSelectionPage extends UnifiedBannerPage implements ISear
 		this.searchRunner = searchRunner;
 	}
 	
-	public SearchObject getSearch() {
+	public UpdateSearchRequest getSearchRequest() {
 		initializeSearch();
-		return searchObject;
-	}
-	
-	public ISearchCategory getCategory() {
-		initializeSearch();
-		return category;
+		return searchRequest;
 	}
 	
 	private IDialogSettings getSettings() {
@@ -55,15 +49,14 @@ public class UnifiedModeSelectionPage extends UnifiedBannerPage implements ISear
 			section = master.addNewSection(SECTION_ID);
 		return section;
 	}
-	
+
 	private void initializeSearch() {
-		if (searchObject!=null) return;
-		searchObject = new DefaultUpdatesSearchObject();
-		String categoryId = searchObject.getCategoryId();
-		SearchCategoryDescriptor desc =
-			SearchCategoryRegistryReader.getDefault().getDescriptor(categoryId);
-		category = desc.createCategory();
+		if (searchRequest!=null) return;
+		UpdateSearchScope scope = new UpdateSearchScope();
+		UnifiedUpdatesSearchCategory category = new UnifiedUpdatesSearchCategory();
+		searchRequest = new UpdateSearchRequest(category, scope);
 	}
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.update.internal.ui.wizards.BannerPage#createContents(org.eclipse.swt.widgets.Composite)

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.search;
 
+
 public interface IUpdateSearchCategory {
 /**
  * Returns the unique identifier of this search category.
@@ -20,9 +21,6 @@ public interface IUpdateSearchCategory {
  * the registry reading.
  */
 	public void setId(String id);
-/**
- * Returns an array of queries that need to be executed
- * when search of this category is initiated.
- */
-	public IUpdateSearchQuery [] getQueries();
+	
+	IUpdateSearchQuery [] getQueries();
 }

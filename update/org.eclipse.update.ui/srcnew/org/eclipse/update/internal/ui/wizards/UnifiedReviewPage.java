@@ -9,29 +9,36 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
-import java.net.*;
+import java.net.URL;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.help.*;
+import org.eclipse.ui.dialogs.PropertyDialogAction;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
+import org.eclipse.update.internal.search.*;
+import org.eclipse.update.internal.search.IUpdateSearchResultCollector;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.SimpleFeatureAdapter;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.views.FeatureSorter;
 
-public class UnifiedReviewPage extends UnifiedBannerPage {
+public class UnifiedReviewPage
+	extends UnifiedBannerPage
+	implements IUpdateSearchResultCollector {
 	// NL keys
 	private static final String KEY_TITLE =
 		"MultiInstallWizard.MultiReviewPage.title";
@@ -48,7 +55,7 @@ public class UnifiedReviewPage extends UnifiedBannerPage {
 	private static final String KEY_FILTER_CHECK =
 		"MultiInstallWizard.MultiReviewPage.filterCheck";
 
-	private PendingOperation[] jobs;
+	private ArrayList jobs;
 	private Label counterLabel;
 	private CheckboxTableViewer tableViewer;
 	private IStatus validationStatus;
@@ -56,7 +63,6 @@ public class UnifiedReviewPage extends UnifiedBannerPage {
 	private Text descLabel;
 	private Button statusButton;
 	private Button moreInfoButton;
-	private Button propertiesButton;
 	private Button filterCheck;
 	private ContainmentFilter filter = new ContainmentFilter();
 	private SearchRunner2 searchRunner;
@@ -65,7 +71,7 @@ public class UnifiedReviewPage extends UnifiedBannerPage {
 		implements IStructuredContentProvider {
 
 		public Object[] getElements(Object inputElement) {
-			return jobs != null ? jobs : new Object[0];
+			return jobs.toArray();
 		}
 	}
 
@@ -112,11 +118,9 @@ public class UnifiedReviewPage extends UnifiedBannerPage {
 			if (job.getJobType() != PendingOperation.INSTALL)
 				return false;
 			VersionedIdentifier vid = job.getFeature().getVersionedIdentifier();
-			//Object[] selected = tableViewer.getCheckedElements();
-			if (jobs==null) return false;
-			Object [] selected = jobs;
-			for (int i = 0; i < selected.length; i++) {
-				PendingOperation candidate = (PendingOperation) selected[i];
+
+			for (int i = 0; i < jobs.size(); i++) {
+				PendingOperation candidate = (PendingOperation) jobs.get(i);
 				if (candidate.equals(job))
 					continue;
 				IFeature feature = candidate.getFeature();
@@ -147,19 +151,20 @@ public class UnifiedReviewPage extends UnifiedBannerPage {
 
 	class FeaturePropertyDialogAction extends PropertyDialogAction {
 		private IStructuredSelection selection;
-		
-		public FeaturePropertyDialogAction(Shell shell, ISelectionProvider provider) {
+
+		public FeaturePropertyDialogAction(
+			Shell shell,
+			ISelectionProvider provider) {
 			super(shell, provider);
 		}
 
 		public IStructuredSelection getStructuredSelection() {
 			return selection;
 		}
-		
+
 		public void selectionChanged(IStructuredSelection selection) {
 			this.selection = selection;
 		}
-
 
 	}
 	/**
@@ -172,6 +177,7 @@ public class UnifiedReviewPage extends UnifiedBannerPage {
 		UpdateUI.getDefault().getLabelProvider().connect(this);
 		this.searchRunner = searchRunner;
 		setBannerVisible(false);
+		jobs = new ArrayList();
 	}
 
 	public void dispose() {
@@ -182,12 +188,18 @@ public class UnifiedReviewPage extends UnifiedBannerPage {
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible && searchRunner.isNewSearchNeeded()) {
-			setJobs(searchRunner.runSearch());
+			jobs.clear();
+			tableViewer.refresh();
+			getShell().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					searchRunner.runSearch();
+					performPostSearchProcessing();
+				}
+			});
 		}
 	}
 
-	private void setJobs(PendingOperation[] jobs) {
-		this.jobs = jobs;
+	private void performPostSearchProcessing() {
 		if (tableViewer != null) {
 			tableViewer.refresh();
 			tableViewer.getTable().layout(true);
@@ -262,21 +274,6 @@ public class UnifiedReviewPage extends UnifiedBannerPage {
 			}
 		});
 		moreInfoButton.setEnabled(false);
-		
-		propertiesButton = new Button(buttonContainer, SWT.PUSH);
-		propertiesButton.setText("&Properties");
-		gd =
-			new GridData(
-				GridData.HORIZONTAL_ALIGN_FILL
-					| GridData.VERTICAL_ALIGN_BEGINNING);
-		propertiesButton.setLayoutData(gd);
-		SWTUtil.setButtonDimensionHint(propertiesButton);
-		propertiesButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleProperties();
-			}
-		});
-		propertiesButton.setEnabled(false);
 
 		statusButton = new Button(buttonContainer, SWT.PUSH);
 		statusButton.setText("&Show Status...");
@@ -322,9 +319,9 @@ public class UnifiedReviewPage extends UnifiedBannerPage {
 		pageChanged();
 
 		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.MultiReviewPage2");
-		
+
 		Dialog.applyDialogFont(parent);
-		
+
 		return client;
 	}
 
@@ -339,41 +336,45 @@ public class UnifiedReviewPage extends UnifiedBannerPage {
 		table.setLayoutData(gd);
 
 		table.setHeaderVisible(true);
-	
+
 		TableColumn column = new TableColumn(table, SWT.NULL);
 		column.setText(UpdateUI.getString(KEY_C_FEATURE));
-	
+
 		column = new TableColumn(table, SWT.NULL);
 		column.setText(UpdateUI.getString(KEY_C_VERSION));
-	
+
 		column = new TableColumn(table, SWT.NULL);
 		column.setText(UpdateUI.getString(KEY_C_PROVIDER));
-	
+
 		TableLayout layout = new TableLayout();
 		layout.addColumnData(new ColumnWeightData(80, 225, true));
 		layout.addColumnData(new ColumnWeightData(30, 80));
 		layout.addColumnData(new ColumnWeightData(100, 140, true));
-	
+
 		table.setLayout(layout);
-	
+
 		tableViewer.setContentProvider(new JobsContentProvider());
 		tableViewer.setLabelProvider(new JobsLabelProvider());
 		tableViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
-				tableViewer.getControl().getDisplay().asyncExec(new Runnable() {
+				tableViewer
+					.getControl()
+					.getDisplay()
+					.asyncExec(new Runnable() {
 					public void run() {
 						pageChanged();
 					}
 				});
 			}
 		});
-		
-		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+
+		tableViewer
+			.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
 				jobSelected((IStructuredSelection) e.getSelection());
 			}
 		});
-		
+
 		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				handleProperties();
@@ -381,17 +382,58 @@ public class UnifiedReviewPage extends UnifiedBannerPage {
 		});
 		tableViewer.setSorter(new FeatureSorter() {
 			public int category(Object obj) {
-				PendingOperation job = (PendingOperation)obj;
+				PendingOperation job = (PendingOperation) obj;
 				if (UpdateUI.isPatch(job.getFeature()))
 					return 1;
 				return 0;
 			}
 		});
+		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
+		menuMgr.setRemoveAllWhenShown(true);
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				fillContextMenu(manager);
+			}
+		});
+		table.setMenu(menuMgr.createContextMenu(table));
+		
 		tableViewer.setInput(UpdateUI.getDefault().getUpdateModel());
 		tableViewer.setAllChecked(true);
 		return table;
 	}
+	
+	private void fillContextMenu(IMenuManager manager) {
+		if (tableViewer.getSelection().isEmpty()) return;
+		Action action = new Action("&Properties") {
+			public void run() {
+				handleProperties();
+			}
+		};
+		manager.add(action);
+	}
 
+	public void accept(final IFeature feature) {
+		UpdateSearchRequest request = searchRunner.getSearchProvider().getSearchRequest();
+		if (!request.select(feature)) return;
+		getShell().getDisplay().syncExec(new Runnable() {
+			public void run() {
+				PendingOperation job = new PendingOperation(feature);
+				ViewerFilter[] filters = tableViewer.getFilters();
+				boolean visible = true;
+
+				for (int i = 0; i < filters.length; i++) {
+					ViewerFilter filter = filters[i];
+					if (!filter.select(tableViewer, null, job)) {
+						visible = false;
+						break;
+					}
+				}
+				if (visible)
+					tableViewer.add(job);
+				jobs.add(job);
+			}
+		});
+	}
 
 	private void jobSelected(IStructuredSelection selection) {
 		PendingOperation job = (PendingOperation) selection.getFirstElement();
@@ -403,8 +445,7 @@ public class UnifiedReviewPage extends UnifiedBannerPage {
 		if (desc == null)
 			desc = "";
 		descLabel.setText(desc);
-		propertiesButton.setEnabled(feature != null);
-		moreInfoButton.setEnabled(job!=null && getMoreInfoURL(job)!=null);
+		moreInfoButton.setEnabled(job != null && getMoreInfoURL(job) != null);
 	}
 
 	private void pageChanged() {
@@ -439,16 +480,21 @@ public class UnifiedReviewPage extends UnifiedBannerPage {
 	private void handleProperties() {
 		final IStructuredSelection selection =
 			(IStructuredSelection) tableViewer.getSelection();
-			
-		final PendingOperation job = (PendingOperation) selection.getFirstElement();
+
+		final PendingOperation job =
+			(PendingOperation) selection.getFirstElement();
 		if (propertiesAction == null) {
-			propertiesAction = new FeaturePropertyDialogAction(getShell(), tableViewer);
+			propertiesAction =
+				new FeaturePropertyDialogAction(getShell(), tableViewer);
 		}
 
-		BusyIndicator.showWhile(tableViewer.getControl().getDisplay(), new Runnable() {
+		BusyIndicator
+			.showWhile(tableViewer.getControl().getDisplay(), new Runnable() {
 			public void run() {
-				SimpleFeatureAdapter adapter = new SimpleFeatureAdapter(job.getFeature());
-				propertiesAction.selectionChanged(new StructuredSelection(adapter));
+				SimpleFeatureAdapter adapter =
+					new SimpleFeatureAdapter(job.getFeature());
+				propertiesAction.selectionChanged(
+					new StructuredSelection(adapter));
 				propertiesAction.run();
 			}
 		});
@@ -462,13 +508,14 @@ public class UnifiedReviewPage extends UnifiedBannerPage {
 		}
 		return null;
 	}
-	
+
 	private void handleMoreInfo() {
 		IStructuredSelection selection =
 			(IStructuredSelection) tableViewer.getSelection();
 		final PendingOperation selectedJob =
 			(PendingOperation) selection.getFirstElement();
-		BusyIndicator.showWhile(tableViewer.getControl().getDisplay(), new Runnable() {
+		BusyIndicator
+			.showWhile(tableViewer.getControl().getDisplay(), new Runnable() {
 			public void run() {
 				Program.launch(getMoreInfoURL(selectedJob));
 			}
@@ -478,18 +525,20 @@ public class UnifiedReviewPage extends UnifiedBannerPage {
 	public PendingOperation[] getSelectedJobs() {
 		Object[] selected = tableViewer.getCheckedElements();
 		PendingOperation[] result = new PendingOperation[selected.length];
-		System.arraycopy(selected,0,result,0,selected.length);
+		System.arraycopy(selected, 0, result, 0, selected.length);
 		return result;
 	}
 
 	public void validateSelection() {
 		PendingOperation[] jobs = getSelectedJobs();
-		validationStatus = UpdateManager.getValidator().validatePendingChanges(jobs);
+		validationStatus =
+			UpdateManager.getValidator().validatePendingChanges(jobs);
 		setPageComplete(validationStatus == null);
 		String errorMessage = null;
 
 		if (validationStatus != null) {
-			errorMessage = "Invalid combination - select \"Show Status...\" for details.";
+			errorMessage =
+				"Invalid combination - select \"Show Status...\" for details.";
 		}
 		setErrorMessage(errorMessage);
 	}

@@ -16,10 +16,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 
 public interface IUpdateSiteAdapter {
-	
 	public String getLabel();
 	public URL getURL();
 	public ISite getSite(IProgressMonitor monitor);
-
 }
-

@@ -3,9 +3,7 @@ package org.eclipse.update.internal.ui.wizards;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
@@ -15,10 +13,10 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.update.internal.search.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.internal.ui.search.*;
 
 public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvider2 {
 
@@ -106,8 +104,7 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 	private Button editButton;
 	private Button removeButton;
 	private SearchRunner2 searchRunner;
-	private UnifiedSearchCategory category;
-	private UnifiedSearchObject search;
+	private UpdateSearchRequest searchRequest;
 	private ModelListener modelListener;
 
 	/**
@@ -119,10 +116,8 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 		setDescription("Select update sites to visit while looking for new features.");
 		UpdateUI.getDefault().getLabelProvider().connect(this);
 		discoveryFolder = new DiscoveryFolder();
+		searchRequest = new UpdateSearchRequest(new UnifiedSearchCategory2(), new UpdateSearchScope());
 		this.searchRunner = searchRunner;
-		category = new UnifiedSearchCategory();
-		search = new UnifiedSearchObject();
-		search.setModel(UpdateUI.getDefault().getUpdateModel());
 		modelListener = new ModelListener();
 		UpdateUI.getDefault().getUpdateModel().addUpdateModelChangedListener(
 			modelListener);
@@ -237,7 +232,7 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 
 	private void initializeItems() {
 		checkItems();
-		updateSearchObject();
+		updateSearchRequest();
 	}
 
 	private void checkItems() {
@@ -285,7 +280,7 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 	private void handleSiteChecked(SiteBookmark bookmark, boolean checked) {
 		bookmark.setSelected(checked);
 		updateBookmarkGrayState(bookmark, checked);
-		updateSearchObject();
+		updateSearchRequest();
 	}
 
 	private void updateBookmarkGrayState(SiteBookmark bookmark, boolean checked) {
@@ -316,6 +311,7 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 				treeViewer.setChecked(category, checked);
 			}
 		}
+		searchRunner.setNewSearchNeeded(true);
 		updateBookmarkGrayState(bookmark, treeViewer.getChecked(bookmark));
 	}
 
@@ -323,6 +319,7 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 		SiteBookmark bookmark = category.getBookmark();
 		String[] ignored = bookmark.getIgnoredCategories();
 		ArrayList array = new ArrayList();
+
 		if (ignored != null) {
 			for (int i = 0; i < ignored.length; i++) {
 				array.add(ignored[i]);
@@ -341,6 +338,7 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 				: (String[]) array.toArray(new String[array.size()]));
 		searchRunner.setNewSearchNeeded(true);
 		updateBookmarkGrayState(bookmark, treeViewer.getChecked(bookmark));
+		updateSearchRequest();
 	}
 
 	private void handleSelectionChanged(IStructuredSelection ssel) {
@@ -354,28 +352,27 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 
 	}
 
-	private void updateSearchObject() {
+	private void updateSearchRequest() {
 		Object[] checked = treeViewer.getCheckedElements();
 		ArrayList barray = new ArrayList();
+		
+		UpdateSearchScope scope = new UpdateSearchScope();
+		int nsites=0;
 
 		for (int i = 0; i < checked.length; i++) {
 			if (checked[i] instanceof SiteBookmark) {
-				barray.add((SiteBookmark) checked[i]);
+				SiteBookmark bookmark = (SiteBookmark)checked[i];
+				scope.addSearchSite(bookmark.getLabel(), bookmark.getURL(), bookmark.getIgnoredCategories());
+				nsites++;
 			}
 		}
-		SiteBookmark[] bookmarks =
-			(SiteBookmark[]) barray.toArray(new SiteBookmark[barray.size()]);
-		search.setSelectedBookmarks(bookmarks);
+		searchRequest.setScope(scope);
 		searchRunner.setNewSearchNeeded(true);
-		setPageComplete(bookmarks.length > 0);
+		setPageComplete(nsites > 0);
 	}
 
-	public ISearchCategory getCategory() {
-		return category;
-	}
-
-	public SearchObject getSearch() {
-		return search;
+	public UpdateSearchRequest getSearchRequest() {
+		return searchRequest;
 	}
 
 	public void setVisible(boolean value) {

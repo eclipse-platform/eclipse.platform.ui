@@ -6,7 +6,7 @@
  */
 package org.eclipse.update.internal.ui.wizards;
 
-import org.eclipse.update.internal.ui.search.*;
+import org.eclipse.update.internal.search.UpdateSearchRequest;
 
 /**
  * @author dejan
@@ -15,6 +15,5 @@ import org.eclipse.update.internal.ui.search.*;
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public interface ISearchProvider2 {
-	ISearchCategory getCategory();
-	SearchObject getSearch(); 
+	UpdateSearchRequest getSearchRequest();
 }
