@@ -21,6 +21,7 @@ import org.eclipse.ant.tests.ui.editor.AntEditorContentOutlineTests;
 import org.eclipse.ant.tests.ui.editor.CodeCompletionTest;
 import org.eclipse.ant.tests.ui.editor.EnclosingTargetSearchingHandlerTest;
 import org.eclipse.ant.tests.ui.editor.TaskDescriptionProviderTest;
+import org.eclipse.ant.tests.ui.separateVM.SeparateVMTests;
 
 /**
  * Test suite for the Ant UI
@@ -33,8 +34,8 @@ public class AntUITests extends TestSuite {
         TestSuite suite= new AntUITests();
         suite.setName("Ant UI Unit Tests");
 		suite.addTest(new TestSuite(ProjectCreationDecorator.class));
-//		suite.addTest(new TestSuite(BuildTests.class));
-//		suite.addTest(new TestSuite(SeparateVMTests.class));
+		//suite.addTest(new TestSuite(BuildTests.class));
+		suite.addTest(new TestSuite(SeparateVMTests.class));
         suite.addTest(new TestSuite(CodeCompletionTest.class));
         suite.addTest(new TestSuite(TaskDescriptionProviderTest.class));
         suite.addTest(new TestSuite(AntEditorContentOutlineTests.class));

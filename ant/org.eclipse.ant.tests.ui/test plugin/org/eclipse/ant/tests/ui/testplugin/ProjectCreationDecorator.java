@@ -21,6 +21,7 @@ import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.AntUtil;
+import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.ant.internal.ui.model.IAntUIPreferenceConstants;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -29,6 +30,7 @@ import org.eclipse.core.runtime.ILibrary;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -81,6 +83,7 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, getJavaProject().getElementName());
 		config.setAttribute(IExternalToolConstants.ATTR_LOCATION, "${workspace_loc:/AntUITests/buildfiles/" + launchConfigName + ".xml}");
 		config.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, true);
+		config.setAttribute(DebugPlugin.ATTR_PROCESS_FACTORY_ID, IAntUIConstants.REMOTE_ANT_PROCESS_FACTORY_ID);
 		 
 		setVM(config);
 		setClasspath(config);		
