@@ -68,4 +68,12 @@ public class CheckoutSingleProjectOperation extends CheckoutProjectOperation {
 		return new IProject[] { targetProject };
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.operations.CheckoutProjectOperation#performScrubProjects()
+	 */
+	protected boolean performScrubProjects() {
+		// Do not scrub the projects if they were preconfigured.
+		return !isPreconfigured();
+	}
+
 }

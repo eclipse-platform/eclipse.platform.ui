@@ -275,15 +275,20 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 		// Prepare the target projects to receive resources
 		// TODO: Does this really need to be wrapped or is it done higher up?
 		final IStatus[] result = new IStatus[] { null };
-		session.getLocalRoot().run(new ICVSRunnable() {
-			public void run(IProgressMonitor monitor) throws CVSException {
-				try {
-					result[0] = scrubProjects(remoteFolder, targetProjects, monitor);
-				} catch (InterruptedException e) {
-					// The operation was cancelled. The result wiull be null
+		
+		if (performScrubProjects()) {
+			session.getLocalRoot().run(new ICVSRunnable() {
+				public void run(IProgressMonitor monitor) throws CVSException {
+					try {
+						result[0] = scrubProjects(remoteFolder, targetProjects, monitor);
+					} catch (InterruptedException e) {
+						// The operation was cancelled. The result wiull be null
+					}
 				}
-			}
-		}, Policy.subMonitorFor(pm, 50));
+			}, Policy.subMonitorFor(pm, 50));
+		} else {
+			result[0] = OK;
+		}
 		pm.done();
 		// return the target projects if the scrub succeeded
 		if (result[0] == null) {
@@ -294,6 +299,14 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 			signalFailure(result[0]);
 			return null;
 		}
+	}
+
+	/**
+	 * Return true if the target projects should be scrubbed before the checkout occurs.
+	 * Default is to scrub the projects. Can be overridden by subclasses.
+	 */
+	protected boolean performScrubProjects() {
+		return true;
 	}
 
 	/*

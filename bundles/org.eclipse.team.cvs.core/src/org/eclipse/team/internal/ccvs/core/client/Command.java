@@ -42,7 +42,7 @@ public abstract class Command extends Request {
 	public final static Add ADD = new Add();
 	public final static Admin ADMIN = new Admin();
 	public final static Annotate ANNOTATE = new Annotate();
-	public final static Checkout CHECKOUT = new Checkout();
+	public final static Checkout CHECKOUT = new CheckoutWithOverwrite();
 	public final static Commit COMMIT = new Commit();
 	public final static Diff DIFF = new Diff();
 	public final static Editors EDITORS = new Editors();
