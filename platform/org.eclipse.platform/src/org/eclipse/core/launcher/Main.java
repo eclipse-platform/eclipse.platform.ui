@@ -518,8 +518,8 @@ public static void main(String[] args) {
 	// If not, then return exit code "14" which will be recognized
 	// by the executable and an appropriate message will be displayed
 	// to the user.
-//	if (!isCompatible())
-//		System.exit(14);
+	if (!isCompatible())
+		System.exit(14);
 	Main launcher = new Main();
 	arguments = args;
 	try {
