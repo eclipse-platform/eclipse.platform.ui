@@ -9,21 +9,29 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.actions;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
-
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.StatusUtil;
+import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 /**
  * The abstract superclass for actions whose only role in life is to invoke 
  * core commands on a set of selected resources.
@@ -275,7 +283,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 					WorkspaceAction.this.execute(monitor);
 				}
 			};
-			new ProgressMonitorDialog(shell).run(true, true, op);
+			new ProgressMonitorJobsDialog(shell).run(true, true, op);
 		} catch (InterruptedException e) {
 			return;
 		} catch (InvocationTargetException e) {

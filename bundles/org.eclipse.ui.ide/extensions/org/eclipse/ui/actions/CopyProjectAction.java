@@ -10,19 +10,29 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ProjectLocationSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Shell;
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 
 /**
  * The CopyProjectAction is the action designed to copy projects specifically
@@ -167,7 +177,7 @@ boolean performCopy(
 	};
 
 	try {
-		new ProgressMonitorDialog(shell).run(true, true, op);
+		new ProgressMonitorJobsDialog(shell).run(true, true, op);
 	} catch (InterruptedException e) {
 		return false;
 	} catch (InvocationTargetException e) {

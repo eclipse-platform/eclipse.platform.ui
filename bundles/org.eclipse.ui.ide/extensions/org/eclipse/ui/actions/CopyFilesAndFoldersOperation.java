@@ -25,6 +25,7 @@ import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.StatusUtil;
+import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
@@ -461,7 +462,7 @@ public class CopyFilesAndFoldersOperation {
 		};
 
 		try {
-			new ProgressMonitorDialog(parentShell).run(true, true, op);
+			new ProgressMonitorJobsDialog(parentShell).run(true, true, op);
 		} catch (InterruptedException e) {
 			return copiedResources[0];
 		} catch (InvocationTargetException e) {
@@ -528,7 +529,7 @@ public class CopyFilesAndFoldersOperation {
 			}
 		};
 		try {
-			new ProgressMonitorDialog(parentShell).run(true, true, op);
+			new ProgressMonitorJobsDialog(parentShell).run(true, true, op);
 		} catch (InterruptedException e) {
 			return;
 		} catch (InvocationTargetException e) {

@@ -11,19 +11,25 @@
 package org.eclipse.ui.actions;
 
  
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ProjectLocationMoveDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.swt.widgets.Shell;
-import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
+import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 /**
  * The MoveProjectAction is the action designed to move projects specifically
  * as they have different semantics from other resources.
@@ -97,7 +103,7 @@ boolean performMove(
 	};
 
 	try {
-		new ProgressMonitorDialog(shell).run(true, true, op);
+		new ProgressMonitorJobsDialog(shell).run(true, true, op);
 	} catch (InterruptedException e) {
 		return false;
 	} catch (InvocationTargetException e) {

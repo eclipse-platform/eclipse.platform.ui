@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -401,7 +400,7 @@ public class EditorManager {
 			0);
 		int result = dialog.open();
 		if (result == 0) { //YES
-			ProgressMonitorDialog pmd = new ProgressMonitorDialog(dialog.getShell());
+			ProgressMonitorDialog pmd = new ProgressMonitorJobsDialog(dialog.getShell());
 			pmd.open();
 			dirtyEditor.getEditor(true).doSave(pmd.getProgressMonitor());
 			pmd.close();

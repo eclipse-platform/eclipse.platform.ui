@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.resources.IContainer;
@@ -76,6 +75,7 @@ import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.ide.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.ide.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.ide.model.WorkbenchAdapterBuilder;
+import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.part.EditorInputTransfer;
 import org.eclipse.ui.part.MarkerTransfer;
 import org.eclipse.ui.part.ResourceTransfer;
@@ -472,7 +472,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 				
 		IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
 		Shell shell = windows[windows.length - 1].getShell();
-		ProgressMonitorDialog dlg = new ProgressMonitorDialog(shell);
+		ProgressMonitorDialog dlg = new ProgressMonitorJobsDialog(shell);
 		final CoreException ex[] = new CoreException[1];
 		try {
 			dlg.run(true, true, new IRunnableWithProgress() {
@@ -516,7 +516,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			}
 		};
 		try {
-			new ProgressMonitorDialog(null).run(false, false, runnable);
+			new ProgressMonitorJobsDialog(null).run(false, false, runnable);
 		} catch (InvocationTargetException e) {
 			status.merge(new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.getString("InternalError"), e.getTargetException())); //$NON-NLS-1$
 		} catch (InterruptedException e) {

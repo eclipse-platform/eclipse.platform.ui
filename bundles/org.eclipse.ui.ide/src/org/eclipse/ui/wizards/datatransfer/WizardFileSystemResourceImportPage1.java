@@ -19,16 +19,28 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -43,8 +55,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.FileSystemElement;
 import org.eclipse.ui.dialogs.WizardResourceImportPage;
-import org.eclipse.ui.internal.ide.dialogs.IElementFilter;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.ide.dialogs.IElementFilter;
+import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 
 /**
@@ -761,7 +774,7 @@ protected void setSourceName(String path) {
  * Update the tree to only select those elements that match the selected types
  */
 protected void setupSelectionsBasedOnSelectedTypes() {
-	ProgressMonitorDialog dialog = new ProgressMonitorDialog(getContainer().getShell());	
+	ProgressMonitorDialog dialog = new ProgressMonitorJobsDialog(getContainer().getShell());	
 	final Map selectionMap = new Hashtable();
 	
 	final IElementFilter filter = new IElementFilter() {
