@@ -272,6 +272,10 @@ private void busySetPerspective(IPerspectiveDescriptor desc) {
 	setPerspective(newPersp);
 	window.firePerspectiveActivated(this, desc);
 	
+	// Update MRU list.
+	Workbench wb = (Workbench)window.getWorkbench();
+	wb.getPerspectiveHistory().add(desc);
+	
 	// Update shortcut
 	window.updateShortcut(this);
 	window.getShortcutBar().update(true);
@@ -864,6 +868,10 @@ private void init(WorkbenchWindow w, String layoutID, IAdaptable input)
 			throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
 		activePersp = createPerspective(desc);
 		window.firePerspectiveActivated(this, desc);
+		
+		// Update MRU list.
+		Workbench wb = (Workbench)window.getWorkbench();
+		wb.getPerspectiveHistory().add(desc);
 	}
 }
 /**

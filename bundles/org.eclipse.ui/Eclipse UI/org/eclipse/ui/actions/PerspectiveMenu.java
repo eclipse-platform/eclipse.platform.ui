@@ -135,7 +135,24 @@ public void fill(Menu menu, int index)
  * the the product perspectives (static).  For performance, we implement a
  * shortcut cache which is only updated if the default perspective changes.
  */
-protected ArrayList getShortcuts() 
+private ArrayList getShortcuts() 
+{
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+	boolean smart = 
+		store.getBoolean(IPreferenceConstants.REUSE_PERSPECTIVES);
+	if (smart)
+		return getGlobalShortcuts();
+	else
+		return getLocalShortcuts();
+}
+		
+/* (non-Javadoc)
+ * Returns the local shortcut perspectives.
+ * 
+ * The shortcut list is formed from the default perspective and
+ * the shortcuts on the active perspective.
+ */
+private ArrayList getLocalShortcuts() 
 {
 	ArrayList list = new ArrayList();
 
@@ -161,6 +178,19 @@ protected ArrayList getShortcuts()
 
 	return list;
 }
+
+/* (non-Javadoc)
+ * Returns the global shortcut perspectives.
+ *
+ * The shortcut list is formed from the global perspective history
+ * in the workbench.
+ */
+private ArrayList getGlobalShortcuts() 
+{
+	Workbench wb = (Workbench)WorkbenchPlugin.getDefault().getWorkbench();
+	return wb.getPerspectiveHistory().getItems();
+}	
+
 /**
  * Returns the window for this menu.
  *

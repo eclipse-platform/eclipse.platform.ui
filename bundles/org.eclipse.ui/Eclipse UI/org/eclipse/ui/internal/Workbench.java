@@ -45,6 +45,7 @@ public class Workbench implements IWorkbench,
 	private static final String DEFAULT_WORKBENCH_STATE_FILENAME = "workbench.xml";//$NON-NLS-1$
 	private WindowManager windowManager;
 	private EditorHistory editorHistory;
+	private PerspectiveHistory perspHistory;
 	private boolean runEventLoop;
 	private boolean isStarting = false;
 	private boolean isClosing = false;
@@ -237,6 +238,15 @@ public EditorHistory getEditorHistory() {
 		editorHistory = new EditorHistory();
 	}
 	return editorHistory;
+}
+/**
+ * Returns the perspective history.
+ */
+public PerspectiveHistory getPerspectiveHistory() {
+	if (perspHistory == null) {
+		perspHistory = new PerspectiveHistory(getPerspectiveRegistry());
+	}
+	return perspHistory;
 }
 /**
  * Returns the editor registry for the workbench.
@@ -672,6 +682,11 @@ public void restoreState(IMemento memento) {
 		windowManager.add(newWindow);
 		newWindow.open();
 	}
+	
+	// Read perspective history.
+	IMemento childMem = memento.getChild("perspHistory");
+	if (childMem != null)
+		getPerspectiveHistory().restoreState(childMem);
 }
 /**
  * Runs the workbench.
@@ -742,6 +757,9 @@ public void saveState(IMemento memento) {
 		IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_WINDOW);
 		window.saveState(childMem);
 	}
+	
+	// Save perspective history.
+	getPerspectiveHistory().saveState(memento.createChild("perspHistory"));
 }
 /**
  * Save the workbench UI in a persistence file.
