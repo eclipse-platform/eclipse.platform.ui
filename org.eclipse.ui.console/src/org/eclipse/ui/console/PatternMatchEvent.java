@@ -12,6 +12,14 @@ package org.eclipse.ui.console;
 
 import java.util.EventObject;
 
+/**
+ * An event describing a pattern match in a console. The source of the event
+ * is an <code>IOConsole</code>.
+ * 
+ * @see org.eclipse.ui.console.IPatternMatchListener
+ * @see org.eclipse.ui.console.IOConsole
+ * @since 3.1
+ */
 public class PatternMatchEvent extends EventObject {
     /*
      * required by EventObject for ObjectSerialization.
@@ -28,6 +36,13 @@ public class PatternMatchEvent extends EventObject {
      */
     private int length;
 
+    /**
+     * Constructs a new pattern match event.
+     * 
+     * @param console the console in which the match was found
+     * @param matchOffset the offset at which the match was found
+     * @param matchLength the length of the text that matched
+     */
     public PatternMatchEvent(IOConsole console, int matchOffset, int matchLength) {
         super(console);
         offset = matchOffset;
@@ -35,14 +50,18 @@ public class PatternMatchEvent extends EventObject {
     }
 
     /**
-     * @return Returns the length of the matched string.
+     * Returns the length of the matched string.
+     * 
+     * @return the length of the matched string
      */
     public int getLength() {
         return length;
     }
 
     /**
-     * @return Returns the offset of the match within the document.
+     * Returns the offset of the match within the document.
+     * 
+     * @return the offset of the match within the document
      */
     public int getOffset() {
         return offset;
