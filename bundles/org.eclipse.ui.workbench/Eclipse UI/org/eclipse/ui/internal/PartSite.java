@@ -29,10 +29,8 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
-import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.commands.IWorkbenchPartSiteCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchPartSiteContextSupport;
-import org.eclipse.ui.internal.commands.ActionService;
 import org.eclipse.ui.internal.commands.ws.WorkbenchPartSiteCommandSupport;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchPartSiteContextSupport;
 
@@ -80,15 +78,6 @@ public class PartSite implements IWorkbenchPartSite {
 		extensionName = "Unknown Name"; //$NON-NLS-1$
 		workbenchPartSiteCommandSupport = new WorkbenchPartSiteCommandSupport();
 		workbenchPartSiteContextSupport = new WorkbenchPartSiteContextSupport();
-	}
-	
-	private IActionService actionService;
-
-	public IActionService getActionService() {
-		if (actionService == null) 
-			actionService = new ActionService();
-		
-		return actionService;
 	}
 	
 	/**
@@ -259,7 +248,7 @@ public class PartSite implements IWorkbenchPartSite {
 	 */
 	public IKeyBindingService getKeyBindingService() {
 		if (keyBindingService == null) {
-			keyBindingService = new KeyBindingService(getActionService(), workbenchPartSiteContextSupport.getMutableContextActivationService());
+			keyBindingService = new KeyBindingService(workbenchPartSiteCommandSupport.getMutableCommandHandlerService(), workbenchPartSiteContextSupport.getMutableContextActivationService());
 			
 			if (this instanceof EditorSite) {
 				EditorActionBuilder.ExternalContributor contributor = (EditorActionBuilder.ExternalContributor) ((EditorSite) this).getExtensionActionBarContributor();

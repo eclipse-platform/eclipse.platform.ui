@@ -13,10 +13,10 @@ package org.eclipse.ui.internal;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
@@ -76,6 +76,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
+import org.eclipse.ui.commands.CommandHandlerServiceFactory;
+import org.eclipse.ui.commands.ICompoundCommandHandlerService;
+import org.eclipse.ui.commands.IMutableCommandHandlerService;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.IWorkbenchWindowCommandSupport;
 import org.eclipse.ui.contexts.ContextActivationServiceFactory;
@@ -104,7 +107,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	private PerspectiveListenerListOld perspectiveListeners = new PerspectiveListenerListOld();
 	private IPartDropListener partDropListener;
 	private WWinPerspectiveService perspectiveService = new WWinPerspectiveService(this);
-	private KeyBindingService keyBindingService;
 	private WWinPartService partService = new WWinPartService(this);
 	private ActionPresentation actionPresentation;
 	private WWinActionBars actionBars;
@@ -443,48 +445,50 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 		workbenchWindowCommandSupport = new WorkbenchWindowCommandSupport(this);
 		workbenchWindowContextSupport = new WorkbenchWindowContextSupport(this);
+		ICompoundCommandHandlerService compoundCommandHandlerService = getWorkbenchImpl().getCommandSupport().getCompoundCommandHandlerService();
+		compoundCommandHandlerService.addCommandHandlerService(actionSetAndGlobalActionCommandHandlerService);
 	}
 
-	private SortedMap actionsForActionSets = new TreeMap();
-	private SortedMap actionsForGlobalActions = new TreeMap();
-
-	SortedMap getActionsForActionSets() {
-		return actionsForActionSets;
-	}
-
-	SortedMap getActionsForGlobalActions() {
-		return actionsForGlobalActions;
-	}
-
+	private Map actionSetHandlersByCommandId = new HashMap();
+	private Map globalActionHandlersByCommandId = new HashMap();
+	private IMutableCommandHandlerService actionSetAndGlobalActionCommandHandlerService = CommandHandlerServiceFactory.getMutableCommandHandlerService();
+	
 	void registerActionSets(IActionSet[] actionSets) {
-		actionsForActionSets.clear();
-
-		for (int i = 0; i < actionSets.length; i++) {
+		actionSetHandlersByCommandId.clear();
+		
+		for (int i = 0; i < actionSets.length; i++)
 			if (actionSets[i] instanceof PluginActionSet) {
 				PluginActionSet pluginActionSet = (PluginActionSet) actionSets[i];
 				IAction[] pluginActions = pluginActionSet.getPluginActions();
 
 				for (int j = 0; j < pluginActions.length; j++) {
 					IAction pluginAction = pluginActions[j];
-					String command = pluginAction.getActionDefinitionId();
+					String commandId = pluginAction.getActionDefinitionId();
 
-					if (command != null)
-						actionsForActionSets.put(command, new ActionHandler(pluginAction));
+					if (commandId != null)			
+						actionSetHandlersByCommandId.put(commandId, new ActionHandler(pluginAction));
 				}
 			}
-		}
-
-		getWorkbenchImpl().workbenchCommandsAndContexts.updateActiveIds();
+			
+		setHandlersByCommandId();
 	}
 
-	void registerGlobalAction(IAction globalAction) {
-		String command = globalAction.getActionDefinitionId();
+	void registerGlobalAction(IAction globalAction) {		
+		String commandId = globalAction.getActionDefinitionId();
 
-		if (command != null)
-			actionsForGlobalActions.put(command, new ActionHandler(globalAction));
-		getWorkbenchImpl().workbenchCommandsAndContexts.updateActiveIds();
+		if (commandId != null)
+			globalActionHandlersByCommandId.put(commandId, new ActionHandler(globalAction));
+	
+		setHandlersByCommandId();
 	}
 
+	void setHandlersByCommandId() {
+		Map handlersByCommandId = new HashMap();
+		handlersByCommandId.putAll(actionSetHandlersByCommandId);
+		handlersByCommandId.putAll(globalActionHandlersByCommandId);		
+		actionSetAndGlobalActionCommandHandlerService.setHandlersByCommandId(handlersByCommandId);		
+	}	
+	
 	/*
 	 * Adds an listener to the part service.
 	 */
@@ -930,26 +934,30 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	public IPartService getPartService() {
 		return partService;
 	}
-	/**
-	 * Returns the key binding service in use.
-	 * 
-	 * @return the key binding service in use.
-	 * @since 2.0
-	 */
-	public KeyBindingService getKeyBindingService() {
+
+	/* TODO remove these methods:
+	private KeyBindingService getKeyBindingService() {
 		if (keyBindingService == null) {
+			IMutableCommandHandlerService mutableCommandHandlerService =
+				CommandHandlerServiceFactory.getMutableCommandHandlerService();
+			IWorkbenchCommandSupport workbenchCommandSupport =
+				(IWorkbenchCommandSupport) getWorkbenchImpl()
+					.getCommandSupport();
+			workbenchCommandSupport
+				.getCompoundCommandHandlerService()
+				.addCommandHandlerService(mutableCommandHandlerService);
 			IMutableContextActivationService mutableContextActivationService =
-				ContextActivationServiceFactory.getMutableContextActivationService();
+				ContextActivationServiceFactory
+					.getMutableContextActivationService();
 			IWorkbenchContextSupport workbenchContextSupport =
-				(IWorkbenchContextSupport) getWorkbenchImpl().getAdapter(
-					IWorkbenchContextSupport.class);
+				(IWorkbenchContextSupport) getWorkbenchImpl()
+					.getContextSupport();
 			workbenchContextSupport
 				.getCompoundContextActivationService()
-				.addContextActivationService(
-				mutableContextActivationService);
+				.addContextActivationService(mutableContextActivationService);
 			keyBindingService =
 				new KeyBindingService(
-					getWorkbenchImpl().workbenchCommandsAndContexts.getActionService(),
+					mutableCommandHandlerService,
 					mutableContextActivationService);
 			updateActiveActions();
 		}
@@ -957,9 +965,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		return keyBindingService;
 	}
 
-	/**
-	 * Re-register the action sets actions in the keybinding service.
-	 */
 	private void updateActiveActions() {
 		if (keyBindingService == null)
 			getKeyBindingService();
@@ -968,6 +973,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			registerActionSets(actionSets);
 		}
 	}
+	*/
 
 	/**
 	 * Returns the layout for the shell.
@@ -1850,7 +1856,11 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				+ IWorkbenchActionConstants.M_LAUNCH;
 		IMenuManager manager = getMenuBarManager().findMenuUsingPath(path);
 		IContributionItem item = getMenuBarManager().findUsingPath(path);
-		updateActiveActions();
+		
+		// TODO remove: updateActiveActions();
+		IActionSet actionSets[] = actionPresentation.getActionSets();
+		registerActionSets(actionSets);
+
 		if (manager == null || item == null)
 			return;
 		item.setVisible(manager.getItems().length >= 2);

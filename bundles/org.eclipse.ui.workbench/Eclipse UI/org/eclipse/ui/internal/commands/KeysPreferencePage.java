@@ -28,6 +28,13 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.preference.FieldEditor;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.IntegerFieldEditor;
+import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -56,15 +63,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.preference.FieldEditor;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.IntegerFieldEditor;
-import org.eclipse.jface.preference.StringFieldEditor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
@@ -75,15 +73,13 @@ import org.eclipse.ui.commands.IKeyConfiguration;
 import org.eclipse.ui.contexts.IContext;
 import org.eclipse.ui.contexts.IContextManager;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
-import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.keys.KeyStroke;
-
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.keys.KeySequenceText;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
 
 public class KeysPreferencePage
 	extends org.eclipse.jface.preference.PreferencePage
@@ -829,7 +825,7 @@ public class KeysPreferencePage
 	public void init(IWorkbench workbench) {
 		this.workbench = workbench;
 		IWorkbenchContextSupport workbenchContextSupport =
-			(IWorkbenchContextSupport) workbench.getAdapter(IWorkbenchContextSupport.class);
+			(IWorkbenchContextSupport) workbench.getContextSupport();
 		contextManager = workbenchContextSupport.getContextManager();
 		// TODO remove blind cast
 		commandManager = (CommandManager) workbench.getCommandManager();
@@ -920,19 +916,6 @@ public class KeysPreferencePage
 		store.setValue(
 			IPreferenceConstants.MULTI_KEY_ASSIST_TIME,
 			textMultiKeyAssistTime.getIntValue());
-
-		// TODO remove the dependancy on Workbench. have Workbench rely on
-		// events from CommandManager.
-		if (workbench instanceof Workbench) {
-			((Workbench) workbench).workbenchCommandsAndContexts.updateActiveContextIds();
-			(
-				(
-					Workbench) workbench)
-						.workbenchCommandsAndContexts
-						.updateActiveWorkbenchWindowMenuManager(
-				true);
-		}
-
 		return super.performOk();
 	}
 

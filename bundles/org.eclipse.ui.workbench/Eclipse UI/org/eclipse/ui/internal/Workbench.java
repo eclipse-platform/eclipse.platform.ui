@@ -816,9 +816,9 @@ public final class Workbench implements IWorkbench {
 			}
 		});
 
-		workbenchCommandsAndContexts.updateActiveContextIds();
 		addWindowListener(workbenchCommandsAndContexts.windowListener);
-		workbenchCommandsAndContexts.updateActiveIds();
+		workbenchCommandsAndContexts.commandHandlerServiceChanged();		
+		workbenchCommandsAndContexts.contextActivationServiceChanged();
 
 		// end the initialization of the activity, command, and context
 		// managers

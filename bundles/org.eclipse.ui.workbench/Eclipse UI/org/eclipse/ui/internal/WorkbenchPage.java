@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -38,7 +39,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.Window;
-import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ControlAdapter;
@@ -73,10 +73,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.commands.IWorkbenchPageCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchPageContextSupport;
-import org.eclipse.ui.internal.commands.ActionService;
 import org.eclipse.ui.internal.commands.ws.WorkbenchPageCommandSupport;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchPageContextSupport;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
@@ -421,15 +419,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 		throws WorkbenchException {
 		super();
 		init(w, null, input);
-	}
-
-	private IActionService actionService;
-
-	public IActionService getActionService() {
-		if (actionService == null)
-			actionService = new ActionService();
-
-		return actionService;
 	}
 
 	/**
