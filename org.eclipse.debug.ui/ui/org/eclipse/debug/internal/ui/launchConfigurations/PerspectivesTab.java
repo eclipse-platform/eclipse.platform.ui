@@ -26,12 +26,13 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.PixelConverter;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -175,10 +176,10 @@ public class PerspectivesTab extends AbstractLaunchConfigurationTab implements I
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
+		final Composite composite = new Composite(parent, SWT.NONE);
 		setControl(composite);
 		WorkbenchHelp.setHelp(getControl(), IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_PERSPECTIVE_TAB);
-		GridLayout layout = new GridLayout(2, false);
+		final GridLayout layout = new GridLayout(2, false);
 		composite.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		composite.setLayoutData(gd);
@@ -187,11 +188,16 @@ public class PerspectivesTab extends AbstractLaunchConfigurationTab implements I
 		Label label = new Label(composite, SWT.LEFT + SWT.WRAP);
 		label.setFont(parent.getFont());
 		label.setText(MessageFormat.format(LaunchConfigurationsMessages.getString("PerspectivesTab.0"), new String[]{getLaunchConfigurationType().getName()})); //$NON-NLS-1$
-		gd = new GridData();
-		PixelConverter converter = new PixelConverter(label);
-		gd.widthHint = converter.convertWidthInCharsToPixels(80);
-		gd.horizontalSpan = 2;
-		label.setLayoutData(gd);
+		final GridData finalGd = new GridData();
+		finalGd.horizontalSpan = 2;
+		label.setLayoutData(finalGd);
+		composite.addControlListener(new ControlAdapter(){
+			public void controlResized(ControlEvent e){
+				finalGd.widthHint = composite.getClientArea().width - 2*layout.marginWidth;
+				composite.layout(true);
+			}
+		});
+
 		
 		// init modes
 		ILaunchMode[] modes = DebugPlugin.getDefault().getLaunchManager().getLaunchModes();
