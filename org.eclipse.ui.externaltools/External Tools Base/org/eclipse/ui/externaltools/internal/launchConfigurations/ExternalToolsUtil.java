@@ -22,11 +22,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.ui.RefreshTab;
+import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 /**
@@ -36,13 +38,6 @@ import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
  * </p>
  */
 public class ExternalToolsUtil {
-
-	/**
-	 * Argument parsing constants
-	 */
-	private static final char ARG_DELIMITER = ' ';
-	private static final char ARG_DBL_QUOTE = '"';
-	private static final char ARG_BACKSLASH = '\\';
 
 	/**
 	 * Throws a core exception with an error status object built from
@@ -203,57 +198,106 @@ public class ExternalToolsUtil {
 		if (arguments == null || arguments.length() == 0) {
 			return new String[0];
 		}
+		ArgumentParser parser= new ArgumentParser(arguments);
+		String[] res= parser.parseArguments();
+		return res;		
+	}	
+	
+	private static class ArgumentParser {
+		private String fArgs;
+		private int fIndex= 0;
+		private int ch= -1;
 		
-		List list = new ArrayList(10);
-		boolean inQuotes = false;
-		int start = 0;
-		int end = arguments.length();
-		StringBuffer buffer = new StringBuffer(end);
+		public ArgumentParser(String args) {
+			fArgs= args;
+		}
 		
-		while (start < end) {
-			char ch = arguments.charAt(start);
-			start++;
+		public String[] parseArguments() {
+			List v= new ArrayList();
 			
-			switch (ch) {
-				case ARG_DELIMITER :
-					if (inQuotes) {
-						buffer.append(ch);
+			ch= getNext();
+			while (ch > 0) {
+				if (Character.isWhitespace((char)ch)) {
+					ch= getNext();	
+				} else {
+					if (ch == '"') {
+						v.add(parseString());
 					} else {
-						if (buffer.length() > 0) {
-							list.add(buffer.toString());
-							buffer.setLength(0);
+						v.add(parseToken());
+					}
+				}
+			}
+	
+			String[] result= new String[v.size()];
+			v.toArray(result);
+			return result;
+		}
+		
+		private int getNext() {
+			if (fIndex < fArgs.length())
+				return fArgs.charAt(fIndex++);
+			return -1;
+		}
+		
+		private String parseString() {
+			StringBuffer buf= new StringBuffer();
+			ch= getNext();
+			while (ch > 0 && ch != '"') {
+				if (ch == '\\') {
+					ch= getNext();
+					if (ch != '"') {           // Only escape double quotes
+						buf.append('\\');
+					} else {
+						if (Platform.getOS().equals(Constants.OS_WIN32)) {
+							// @see Bug 26870. Windows requires an extra escape for embedded strings
+							buf.append('\\');
 						}
 					}
-					break;
-					
-				case ARG_BACKSLASH:
-					if (start < end && (arguments.charAt(start) == ARG_DBL_QUOTE)) {
-						// Escaped double-quote
-						buffer.append('\"');
-						start++;
-					} else {
-						buffer.append(ch);
-					}
-					break;
-	
-				case ARG_DBL_QUOTE :
-					buffer.append(ch);
-					inQuotes = !inQuotes;
-					break;
-						
-				default :
-					buffer.append(ch);
-					break;
+				}
+				if (ch > 0) {
+					buf.append((char)ch);
+					ch= getNext();
+				}
 			}
+	
+			ch= getNext();
 			
+			return buf.toString();
 		}
 		
-		if (buffer.length() > 0) {
-			list.add(buffer.toString());
-		}
+		private String parseToken() {
+			StringBuffer buf= new StringBuffer();
 			
-		String[] results = new String[list.size()];
-		list.toArray(results);
-		return results;
+			while (ch > 0 && !Character.isWhitespace((char)ch)) {
+				if (ch == '\\') {
+					ch= getNext();
+					if (Character.isWhitespace((char)ch)) {
+						// end of token, don't lose trailing backslash
+						buf.append('\\');
+						return buf.toString();
+					}
+					if (ch > 0) {
+						if (ch != '"') {           // Only escape double quotes
+							buf.append('\\');
+						} else {
+							if (Platform.getOS().equals(Constants.OS_WIN32)) {
+								// @see Bug 26870. Windows requires an extra escape for embedded strings
+								buf.append('\\');
+							}
+						}
+						buf.append((char)ch);
+						ch= getNext();
+					} else if (ch == -1) {     // Don't lose a trailing backslash
+						buf.append('\\');
+					}
+				} else if (ch == '"') {
+					buf.append(parseString());
+				} else {
+					buf.append((char)ch);
+					ch= getNext();
+				}
+			}
+			return buf.toString();
+		}
 	}	
 }
