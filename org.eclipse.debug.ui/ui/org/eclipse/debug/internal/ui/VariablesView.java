@@ -35,6 +35,11 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 	 * @see ISelectionListener
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection sel) {
+		if (part instanceof LaunchesView) {
+			if (sel instanceof IStructuredSelection) {
+				setViewerInput((IStructuredSelection)sel);
+			}
+		}
 		if (!(part instanceof DebugView)) {
 			return;
 		}
