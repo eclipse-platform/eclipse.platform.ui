@@ -46,6 +46,7 @@ import org.eclipse.ui.actions.NewWizardMenu;
 import org.eclipse.ui.actions.OpenInNewWindowAction;
 import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.actions.ProjectPropertyDialogAction;
 
 /**
  * Adds actions to a workbench window.
@@ -72,6 +73,7 @@ public class WorkbenchActionBuilder {
 	private static final String rebuildAllActionDefId = "org.eclipse.ui.project.rebuildAll"; //$NON-NLS-1$
 	private static final String backwardHistoryActionDefId = "org.eclipse.ui.navigate.backwardHistory"; //$NON-NLS-1$
 	private static final String forwardHistoryActionDefId = "org.eclipse.ui.navigate.forwardHistory"; //$NON-NLS-1$
+	private static final String projectPropertyDialogActionDefId = "org.eclipse.ui.project.property"; //$NON-NLS-1$
 
 	/**
 	 * The window to which this is contributing.
@@ -153,6 +155,7 @@ public class WorkbenchActionBuilder {
 	private RetargetAction rebuildProjectAction;
 	private RetargetAction openProjectAction;
 	private RetargetAction closeProjectAction;
+	private ProjectPropertyDialogAction projectPropertyDialogAction;
 
 	private NavigationHistoryAction backwardHistoryAction;
 	private NavigationHistoryAction forwardHistoryAction;
@@ -189,6 +192,7 @@ public class WorkbenchActionBuilder {
 	 * Hooks listeners on the preference store and the window's page, perspective and selection services.
 	 */
 	private void hookListeners() {
+
 		// Listen for preference property changes to
 		// update the menubar and toolbar
 		IPreferenceStore store =
@@ -445,6 +449,8 @@ public class WorkbenchActionBuilder {
 
 		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 		menu.add(new GroupMarker(IWorkbenchActionConstants.PROJ_END));
+		menu.add(new Separator());
+		menu.add(projectPropertyDialogAction);
 		return menu;
 	}
 
@@ -978,6 +984,10 @@ public class WorkbenchActionBuilder {
 		rebuildProjectAction = createGlobalAction(IWorkbenchActionConstants.REBUILD_PROJECT, "project", false); //$NON-NLS-1$
 		openProjectAction = createGlobalAction(IWorkbenchActionConstants.OPEN_PROJECT, "project", false); //$NON-NLS-1$
 		closeProjectAction = createGlobalAction(IWorkbenchActionConstants.CLOSE_PROJECT, "project", false); //$NON-NLS-1$
+		projectPropertyDialogAction = new ProjectPropertyDialogAction(window);
+		projectPropertyDialogAction.setActionDefinitionId(projectPropertyDialogActionDefId);
+		partService.addPartListener(projectPropertyDialogAction);
+		keyBindingService.registerGlobalAction(projectPropertyDialogAction);
 	}
 
 	/**
