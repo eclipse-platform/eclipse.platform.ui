@@ -153,7 +153,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 				endOperation();
 			}
 		} finally {
-			endBatching(null);
+			endBatching(folder, null);
 		}
 	}
 	
@@ -207,7 +207,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 				endOperation();
 			}
 		} finally {
-			endBatching(null);
+			endBatching(folder, null);
 		}
 	}
 
@@ -246,7 +246,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 				endOperation();
 			}
 		} finally {
-			endBatching(null);
+			endBatching(resource, null);
 		}
 	}
 	
@@ -323,7 +323,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 				endOperation();
 			}
 		} finally {
-			endBatching(null);
+			endBatching(resource, null);
 		}
 	}
 		
@@ -351,7 +351,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 				endOperation();
 			}
 		} finally {
-			endBatching(null);
+			endBatching(resource, null);
 		}
 	}
 
@@ -424,7 +424,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 				endOperation();
 			}
 		} finally {
-			endBatching(null);
+			endBatching(folder, null);
 		}
 	}
 	
@@ -490,8 +490,8 @@ public class EclipseSynchronizer implements IFlushOperation {
 	 * @exception CVSException with a status with code <code>COMMITTING_SYNC_INFO_FAILED</code>
 	 * if all the CVS sync information could not be written to disk.
 	 */
-	public void endBatching(IProgressMonitor monitor) throws CVSException {
-		resourceLock.release(monitor);
+	public void endBatching(IResource resource, IProgressMonitor monitor) throws CVSException {
+		resourceLock.release(resource, monitor);
 	}
 	
 	/* (non-Javadoc)
@@ -567,7 +567,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 				endOperation();
 			}
 		} finally {
-			endBatching(Policy.subMonitorFor(monitor, 3));
+			endBatching(root, Policy.subMonitorFor(monitor, 3));
 			monitor.done();
 		}
 	}
@@ -584,7 +584,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 			// a line in the Entry file). As a result the folder is managed but is not a CVS folder.
 			synchronizerCache.purgeCache(project, true);
 		} finally {
-			endBatching(Policy.subMonitorFor(monitor, 20));
+			endBatching(project, Policy.subMonitorFor(monitor, 20));
 			monitor.done();
 		}
 	}
@@ -660,7 +660,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 				endOperation();
 			}
 		} finally {
-			endBatching(null);
+			endBatching(resource, null);
 		}
 	}
 	
@@ -1198,7 +1198,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 			SyncFileWriter.writeFileToBaseDirectory(file, monitor);
 			resourceChanged(file);
 		} finally {
-			endBatching(Policy.subMonitorFor(monitor, 20));
+			endBatching(file, Policy.subMonitorFor(monitor, 20));
 			monitor.done();
 		}
 	}
@@ -1215,7 +1215,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 			SyncFileWriter.restoreFileFromBaseDirectory(file, monitor);
 			resourceChanged(file);
 		} finally {
-			endBatching(Policy.subMonitorFor(monitor, 20));
+			endBatching(file, Policy.subMonitorFor(monitor, 20));
 			monitor.done();
 		}
 	}
@@ -1272,7 +1272,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 					endOperation();
 				}
 			} finally {
-				endBatching(null);
+				endBatching(parent, null);
 			}
 		}
 	}
@@ -1321,7 +1321,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 			beginBatching(rootResource);
 			job.run(Policy.subMonitorFor(monitor, 80));
 		} finally {
-			endBatching(Policy.subMonitorFor(monitor, 20));
+			endBatching(rootResource, Policy.subMonitorFor(monitor, 20));
 			monitor.done();
 		}
 	}
@@ -1471,7 +1471,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 	 * @param resource
 	 * @return
 	 */
-	public boolean isWithinOperationScope(IResource resource) {
+	public boolean isWithinScopeOfActiveOperation(IResource resource) {
 		return resourceLock.isWithinActiveThread(resource);
 	}
 
@@ -1501,5 +1501,42 @@ public class EclipseSynchronizer implements IFlushOperation {
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
 		}
+	}
+	
+	/**
+	 * Handle a change event on the given resource. If the resource has been changed
+	 * as part of a currently running CVS operation, then add the resource change to
+	 * the list of changed resources for the operation (if necessary) and return <code>true</code>.
+	 * Otherwise, return <code>false</code> (indicating that the client should handle the change).
+	 * @param resource
+	 * @return
+	 */
+	public boolean handleResourceChanged(IResource resource) {
+		try {
+			beginOperation();
+			if(isWithinScopeOfActiveOperation(resource)) {
+				// This resource is modified by an active CVS operation
+				// (i.e. this is an intermitant delta)
+				// Notification is not required (or possible) in this case
+				// as the operation will peform the necessary notifications
+				// when it completes
+				if (isIgnoreFile(resource)) {
+					// Add the ignore file to the current operation 
+					// so it is handled when the operation completes
+					handleIgnoreFileChange(resource);
+				}
+				// Indicate that we've handled the resource
+				return true;
+			}
+			// Indicate that the client shoudl handle the change
+			return false;
+		} finally {
+			endOperation();
+		}
+	}
+	
+	private boolean isIgnoreFile(IResource resource) {
+		return resource.getType() == IResource.FILE &&
+			resource.getName().equals(SyncFileWriter.IGNORE_FILE);
 	}
 }

@@ -74,15 +74,7 @@ public class ReentrantLock {
 		 */
 		public void pushRule(IResource resource) {
 			// The scheduling rule is either the project or the resource's parent
-			ISchedulingRule rule;
-			if (resource.getType() == IResource.ROOT) {
-				// Never lock the whole workspace
-				rule = NULL_SCHEDULING_RULE;
-			} else  if (resource.getType() == IResource.PROJECT) {
-				rule = resource;
-			} else {
-				rule = resource.getParent();
-			}
+			ISchedulingRule rule = getRuleForResoure(resource);
 			if (rule != NULL_SCHEDULING_RULE) {
 				Platform.getJobManager().beginRule(rule);
 			}
@@ -97,8 +89,10 @@ public class ReentrantLock {
 		 * @param monitor
 		 * @throws CVSException
 		 */
-		public void popRule(IProgressMonitor monitor) throws CVSException {
+		public void popRule(IResource resource, IProgressMonitor monitor) throws CVSException {
 			ISchedulingRule rule = removeRule();
+			ISchedulingRule compareRule = getRuleForResoure(resource);
+			Assert.isTrue(rule.equals(compareRule), "end for resource '" + resource + "' does not match stacked rule '" + rule + "'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			try {
 				if (isFlushRequired()) {
 					flush(monitor);
@@ -108,6 +102,18 @@ public class ReentrantLock {
 					Platform.getJobManager().endRule(rule);
 				}
 			}
+		}
+		private ISchedulingRule getRuleForResoure(IResource resource) {
+			ISchedulingRule rule;
+			if (resource.getType() == IResource.ROOT) {
+				// Never lock the whole workspace
+				rule = NULL_SCHEDULING_RULE;
+			} else  if (resource.getType() == IResource.PROJECT) {
+				rule = resource;
+			} else {
+				rule = resource.getParent();
+			}
+			return rule;
 		}
 		/**
 		 * Return <code>true</code> if we are still nested in
@@ -198,6 +204,16 @@ public class ReentrantLock {
 		return info;
 	}
 	
+	private ThreadInfo getThreadInfo(IResource resource) {
+		for (Iterator iter = infos.values().iterator(); iter.hasNext();) {
+			ThreadInfo info = (ThreadInfo) iter.next();
+			if (info.ruleContains(resource)) {
+				return info;
+			}
+		}
+		return null;
+	}
+	
 	public synchronized void acquire(IResource resource, IFlushOperation operation) {
 		ThreadInfo info = getThreadInfo();
 		if (info == null) {
@@ -215,11 +231,11 @@ public class ReentrantLock {
 	 * On exit, the scheduling rule is held by the lock until after the runnable
 	 * is run.
 	 */
-	public synchronized void release(IProgressMonitor monitor) throws CVSException {
+	public synchronized void release(IResource resource, IProgressMonitor monitor) throws CVSException {
 		ThreadInfo info = getThreadInfo();
 		Assert.isNotNull(info, "Unmatched acquire/release."); //$NON-NLS-1$
 		Assert.isTrue(info.isNested(), "Unmatched acquire/release."); //$NON-NLS-1$
-		info.popRule(monitor);
+		info.popRule(resource, monitor);
 		if (!info.isNested()) {
 			Thread thisThread = Thread.currentThread();
 			if(DEBUG) System.out.println("[" + thisThread.getName() + "] released CVS lock"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -255,9 +271,7 @@ public class ReentrantLock {
 	 * @return
 	 */
 	public synchronized boolean isWithinActiveThread(IResource resource) {
-		ThreadInfo info = getThreadInfo();
-		if (info == null) return false;
-		return info.ruleContains(resource);
+		return getThreadInfo(resource) != null;
 	}
 
 	/**
@@ -265,7 +279,7 @@ public class ReentrantLock {
 	 * @param resource
 	 */
 	public synchronized void recordIgnoreFileChange(IFile resource) {
-		ThreadInfo info = getThreadInfo();
+		ThreadInfo info = getThreadInfo(resource);
 		Assert.isNotNull(info);
 		info.addChangedIgnoreFile(resource);
 	}

@@ -121,22 +121,11 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 //						}
 					}
 					
-					if(isChangedByActiveCVSOperation(resource)) {
-						// This resource is modified by an active CVS operation
-						// (i.e. this is an intermitant delta)
-						// Notification is not required (or possible) in this case
-						// as the operation will peform the necessary notifications
-						// when it completes
-						if (resource.isTeamPrivateMember()) {
-							// No need to look at meta-files in this case
-							return false;
-						} else if (isIgnoreFile(resource)) {
-							// Add the ignore file to the current operation 
-							// so it is handled when the operation completes
-							addIgnoreFileChangeToCVSOperation(resource);
-						}
-						// Must visit children in case there is an ignore file changed
-						return true;
+					if (EclipseSynchronizer.getInstance().handleResourceChanged(resource)) {
+						// The resource change will be handled by the EclipseSynchronizer
+						// Still visit the children of non-team-private members so that 
+						// ignore file changes will be past on to the EclipseSynchronizer
+						return (!resource.isTeamPrivateMember());
 					} if(isMetaFile(resource)) {
 						toBeNotified = handleChangedMetaFile(resource, kind);
 					} else if(isIgnoreFile(resource)) {
@@ -165,21 +154,6 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 		} catch(CoreException e) {
 			CVSProviderPlugin.log(e);
 		}
-	}
-	
-	/**
-	 * @param resource
-	 */
-	protected void addIgnoreFileChangeToCVSOperation(IResource resource) {
-		EclipseSynchronizer.getInstance().handleIgnoreFileChange(resource);
-	}
-
-	/**
-	 * @param resource
-	 * @return
-	 */
-	protected boolean isChangedByActiveCVSOperation(IResource resource) {
-		return EclipseSynchronizer.getInstance().isWithinOperationScope(resource);
 	}
 
 	/**
