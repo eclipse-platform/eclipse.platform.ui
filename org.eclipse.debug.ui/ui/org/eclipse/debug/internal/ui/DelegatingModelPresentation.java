@@ -289,6 +289,15 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 			buffer.append("= "); //$NON-NLS-1$
 			buffer.append(valueString);		
 		}
+		if (showVariableTypeNames()) {
+			String typeName = null;
+			try {
+				typeName = value.getReferenceTypeName();
+				buffer.insert(0,' ');
+				buffer.insert(0,typeName);
+			} catch (DebugException de) {
+			}
+		}
 		return buffer.toString();
 	}	
 
