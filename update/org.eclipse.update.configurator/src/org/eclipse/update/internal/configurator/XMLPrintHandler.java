@@ -50,7 +50,7 @@ public class XMLPrintHandler {
 
 	public static void printComment(Writer xmlWriter, String comment)throws IOException {
 		StringBuffer temp = new StringBuffer(XML_COMMENT_BEGIN_TAG);
-		temp.append(encode(comment)).append(XML_COMMENT_END_TAG).append("\n");
+		temp.append(encode(comment).toString()).append(XML_COMMENT_END_TAG).append("\n");
 		xmlWriter.write(temp.toString());
 	}
 
@@ -63,7 +63,7 @@ public class XMLPrintHandler {
 	public static String wrapAttributeForPrint(String attribute, String value) throws IOException {
 		StringBuffer temp = new StringBuffer(XML_SPACE);
 		temp.append(attribute).append(XML_EQUAL).append(XML_DBL_QUOTES)
-				.append(encode(value)).append(XML_DBL_QUOTES);
+				.append(encode(value).toString()).append(XML_DBL_QUOTES);
 		return temp.toString();
 
 	}
