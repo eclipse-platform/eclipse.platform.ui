@@ -35,6 +35,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 
 /**
  * A model presentation that delegates to the appropriate extension. This
@@ -54,6 +55,31 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	 * A table of label providers keyed by debug model identifiers.
 	 */
 	private HashMap fLabelProviders= new HashMap(5);
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#decorateEditor(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
+	 */
+	public void decorateEditor(IEditorPart editorPart, IStackFrame frame) {
+		IDebugModelPresentation presentation = getConfiguredPresentation(frame);
+		if (presentation != null) {
+			if (presentation instanceof IDebugEditorPresentation) {
+				((IDebugEditorPresentation)presentation).decorateEditor(editorPart, frame);
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#selectAndReveal(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
+	 */
+	public boolean selectAndReveal(IEditorPart editorPart, IStackFrame frame) {
+		IDebugModelPresentation presentation = getConfiguredPresentation(frame);
+		if (presentation != null) {
+			if (presentation instanceof IDebugEditorPresentation) {
+				return ((IDebugEditorPresentation)presentation).selectAndReveal(editorPart, frame);
+			}
+		}
+		return false;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#getInstructionPointerImage(org.eclipse.debug.core.model.IStackFrame)

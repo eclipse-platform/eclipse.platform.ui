@@ -47,6 +47,7 @@ import org.eclipse.debug.internal.ui.InstructionPointerManager;
 import org.eclipse.debug.internal.ui.actions.EditLaunchConfigurationAction;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
+import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ISourcePresentation;
 import org.eclipse.jface.action.GroupMarker;
@@ -163,6 +164,11 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	private IResourceDeltaVisitor fVisitor = null;
 	
+	/**
+	 * Editor presentation or <code>null</code> if none
+	 */
+	private IDebugEditorPresentation fEditorPresentation = null;
+	
 	private EditLaunchConfigurationAction fEditConfigAction = null;
 	
 	/**
@@ -215,7 +221,9 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			}
 		});
 		lv.setContentProvider(createContentProvider());
-		lv.setLabelProvider(new DelegatingModelPresentation());
+		DelegatingModelPresentation presentation = new DelegatingModelPresentation();
+		lv.setLabelProvider(presentation);
+		fEditorPresentation = presentation;
 		// add my viewer as a selection provider, so selective re-launch works
 		getSite().setSelectionProvider(lv);
 		lv.setInput(DebugPlugin.getDefault().getLaunchManager());
@@ -663,25 +671,60 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			} catch (DebugException de) {
 				DebugUIPlugin.log(de);
 			}
-			if (lineNumber >= 0 || charStart >= 0) {
-				if (editor instanceof ITextEditor) {
-					selectAndReveal((ITextEditor)editor, lineNumber, charStart, charEnd);
-					InstructionPointerManager.getDefault().addAnnotation((ITextEditor)editor, stackFrame);
-				} else {
-					IMarker marker= getInstructionPointer(lineNumber, charStart, charEnd);
-					if (marker != null) {
-						editor.gotoMarker(marker);
+			if (!selectAndReveal(editor, stackFrame)) {
+				// perform the select and reveal ourselves
+				if (lineNumber >= 0 || charStart >= 0) {
+					if (editor instanceof ITextEditor) {
+						selectAndReveal((ITextEditor)editor, lineNumber, charStart, charEnd);
+					} else {
+						IMarker marker= getInstructionPointer(lineNumber, charStart, charEnd);
+						if (marker != null) {
+							editor.gotoMarker(marker);
+						}
 					}
 				}
-				fLastCharStart= charStart;
-				fLastCharEnd= charEnd;
-				fLastLine= lineNumber;
 			}
+			// add instruction pointer annotation (for text editors only)
+			if (editor instanceof ITextEditor) {
+				InstructionPointerManager.getDefault().addAnnotation((ITextEditor)editor, stackFrame);
+			}
+			// deocorate the editor
+			decorateEditor(editor, stackFrame);
+			fLastCharStart= charStart;
+			fLastCharEnd= charEnd;
+			fLastLine= lineNumber;			
 		} finally {
 			fShowingEditor= false;
 		}
 	}
 	
+	/**
+	 * Delegate to the model presentation to decorate the opened editor.
+	 * 
+	 * @param editor editor to decorate
+	 * @param stackFrame stack frame to decorate for
+	 */
+	private void decorateEditor(IEditorPart editor, IStackFrame stackFrame) {
+		if (fEditorPresentation != null) {
+			fEditorPresentation.decorateEditor(editor, stackFrame);
+		}
+	}
+
+	/**
+	 * Delegates to the model presentation to perform the select and reveal,
+	 * and returns whether the select and reveal was completed.
+	 * 
+	 * @param editor the editor to position 
+	 * @param stackFrame the stack frame to position for
+	 * @return whether the select and reveal is complete
+	 */
+	private boolean selectAndReveal(IEditorPart editor, IStackFrame stackFrame) {
+		if (fEditorPresentation != null) {
+			return fEditorPresentation.selectAndReveal(editor, stackFrame);
+		}
+		return false;
+	}
+
 	/**
 	 * Highlights the given line or character range in the given editor
 	 */

@@ -12,6 +12,7 @@ package org.eclipse.debug.ui;
 
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IEditorPart;
 
 /**
  * A debug model presentation may implement this interface to provide
@@ -32,5 +33,27 @@ public interface IDebugEditorPresentation {
 	 * default image should be used
 	 */
 	public Image getInstructionPointerImage(IStackFrame frame);
+	
+	/**
+	 * Provides this editor presentation with a chance to position the given editor to
+	 * the appropriate location for the given stack frame. Returns whether this 
+	 * editor presentation has performed the select and reveal. When <code>false</code>
+	 * is returned, the debugger will perform the select and reveal.
+	 *  
+	 * @param editorPart the editor the debugger has opened
+	 * @param frame the stack frame that corresponds to the editor
+	 * @return whether this presentation has performed the select and reveal
+	 */
+	public boolean selectAndReveal(IEditorPart editorPart, IStackFrame frame);
+	
+	/**
+	 * Provides this editor presentation with an opportunity to decorate the given
+	 * editor in the context of the given stack frame. This method is called after
+	 * <code>selectAndReveal</code>.
+	 * 
+	 * @param editorPart the editor the debugger has opened
+	 * @param frame the stack frame that corresponds to the editor
+	 */
+	public void decorateEditor(IEditorPart editorPart, IStackFrame frame);
 
 }

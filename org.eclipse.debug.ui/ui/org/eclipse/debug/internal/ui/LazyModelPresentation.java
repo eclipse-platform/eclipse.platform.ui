@@ -26,6 +26,7 @@ import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 
 /**
  * A proxy to an IDebugModelPresentation extension. Instantiates the extension
@@ -56,6 +57,27 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	 */
 	protected ListenerList fListeners= new ListenerList(5);	
 		
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#decorateEditor(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
+	 */
+	public void decorateEditor(IEditorPart editorPart, IStackFrame frame) {
+		IDebugModelPresentation presentation = getPresentation();
+		if (presentation instanceof IDebugEditorPresentation) {
+			((IDebugEditorPresentation)presentation).decorateEditor(editorPart, frame);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#selectAndReveal(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IStackFrame)
+	 */
+	public boolean selectAndReveal(IEditorPart editorPart, IStackFrame frame) {
+		IDebugModelPresentation presentation = getPresentation();
+		if (presentation instanceof IDebugEditorPresentation) {
+			return ((IDebugEditorPresentation)presentation).selectAndReveal(editorPart, frame);
+		}
+		return false;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#getInstructionPointerImage(org.eclipse.debug.core.model.IStackFrame)
 	 */
