@@ -71,8 +71,8 @@ public class IndexToolApplication
 	}
 
 	private void preindex(String outputDir, Locale locale) throws Exception {
-		File indexPath =
-			Platform.getConfigurationMetadataLocation().append(HelpBasePlugin.PLUGIN_ID+".ix").append(locale.toString()).toFile();
+		File indexPath = new File(HelpBasePlugin.getConfigurationDirectory(), "index/"+locale);
+
 		// clean
 		if (indexPath.exists()) {
 			delete(indexPath);

@@ -53,25 +53,11 @@ public class SearchIndex {
 	 * @param analyzerDesc the analyzer used to index
 	 */
 	public SearchIndex(String locale, AnalyzerDescriptor analyzerDesc) {
-		this(
-			locale,
-			analyzerDesc,
-			Platform.getConfigurationMetadataLocation().append(HelpBasePlugin.PLUGIN_ID+".ix").append(locale).toFile()
-			);
-	}
-	/**
-	 * Constructor.
-	 * @param locale the locale this index uses
-	 * @param analyzerDesc the analyzer used to index
-	 */
-	public SearchIndex(
-		String locale,
-		AnalyzerDescriptor analyzerDesc,
-		File indexDir) {
-		super();
 		this.locale = locale;
-		this.indexDir = indexDir;
 		this.analyzerDescriptor = analyzerDesc;
+
+		indexDir = new File(HelpBasePlugin.getConfigurationDirectory(), "index/"+locale);
+		
 		inconsistencyFile =
 			new File(indexDir.getParentFile(), locale + ".inconsistent");
 		parser = new HTMLDocParser();

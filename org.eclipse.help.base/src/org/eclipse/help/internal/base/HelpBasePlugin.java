@@ -9,7 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.base;
+import java.io.*;
+import java.net.*;
+
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.service.datalocation.*;
 /**
  * Help Base plug-in.
  * 
@@ -23,6 +27,8 @@ public class HelpBasePlugin extends Plugin {
 	public static boolean DEBUG_SEARCH = false;
 
 	protected static HelpBasePlugin plugin;
+	
+	private File configurationDirectory;
 
 	private IHelpActivitySupport helpActivitySupport =
 		new IHelpActivitySupport() {
@@ -148,7 +154,19 @@ public class HelpBasePlugin extends Plugin {
 		if (DEBUG) {
 			DEBUG_SEARCH = "true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID + "/debug/search")); //$NON-NLS-1$
 		}
-
+		
+		// determine configuration location for this plug-in
+		Location location = Platform.getConfigurationLocation();
+		if(location != null){
+			URL configURL = location.getURL();
+			if(configURL != null &configURL.getProtocol().startsWith("file")){
+				configurationDirectory = new File (configURL.getFile(), PLUGIN_ID);
+			}
+		}
+		if(configurationDirectory ==null){
+			configurationDirectory = getStateLocation().toFile();			
+		}
+		//
 		BaseHelpSystem.startup();
 	}
 
@@ -169,6 +187,14 @@ public class HelpBasePlugin extends Plugin {
 			prefs.setDefault("custom_browser_path", "mozilla %1");
 	}
 
+	/**
+	 * Used to obtain directory where configuration
+	 * (like help index) can be stored
+	 */
+	public static File getConfigurationDirectory() {
+		return getDefault().configurationDirectory;
+	}
+	
 	/**
 	 * Used to obtain help activity support
 	 * 
