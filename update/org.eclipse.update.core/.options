@@ -1,6 +1,6 @@
 org.eclipse.update.core/debug=true
 org.eclipse.update.core/debug/warning=false
-org.eclipse.update.core/debug/parsing=fasle
+org.eclipse.update.core/debug/parsing=false
 org.eclipse.update.core/debug/install=false
 org.eclipse.update.core/debug/configuration=false
 org.eclipse.update.core/debug/type=false

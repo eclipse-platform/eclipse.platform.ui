@@ -144,24 +144,24 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		throws CoreException {
 
 		if (featureReference == null){
-			//DEBUG
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
-				UpdateManagerPlugin.getPlugin().debug("The feature reference to unconfigure is null");
-			}
+			UpdateManagerPlugin.warn("The feature reference to unconfigure is null");
 			return false;
 		}
+		
 		IFeature feature = null;
 		try {
 			feature = featureReference.getFeature();
-		} catch (CoreException e){};
-		if (feature == null) {
-			//DEBUG
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
-				URL url = featureReference.getURL();
-				String urlString = (url!=null)?url.toExternalForm():"<no feature reference url>";
-				UpdateManagerPlugin.getPlugin().debug("The feature to unconfigure is null: feature reference is:"+urlString);
-			}
+		} catch (CoreException e){
+			URL url = featureReference.getURL();
+			String urlString = (url!=null)?url.toExternalForm():"<no feature reference url>";
+			UpdateManagerPlugin.warn("Error retrieving feature:"+urlString,e);
 			return false;
+		}
+
+		if (feature==null){
+			URL url = featureReference.getURL();
+			String urlString = (url!=null)?url.toExternalForm():"<no feature reference url>";
+			UpdateManagerPlugin.warn("The feature to unconfigure is null: feature reference is:"+urlString);			
 		}
 
 		// Setup optional install handler
