@@ -553,7 +553,15 @@ public class ProgressManager extends ProgressProvider
 	 */
 	public void removeJobInfo(JobInfo info) {
 		synchronized (listenerKey) {
-			jobs.remove(info.getJob());
+			
+			Job job = info.getJob();
+			jobs.remove(job);
+			
+			//If the job does not call done the 
+			//reference needs to cleared up.
+			if (runnableMonitors.containsKey(job))
+				runnableMonitors.remove(job);
+				
 			Iterator iterator = listeners.iterator();
 			while (iterator.hasNext()) {
 				IJobProgressManagerListener listener = (IJobProgressManagerListener) iterator
