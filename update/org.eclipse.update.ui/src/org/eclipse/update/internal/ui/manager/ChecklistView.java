@@ -212,6 +212,7 @@ private void updateStartButton() {
 }
 
 private void performStart() {
+/*
 	BusyIndicator.showWhile(startButton.getDisplay(), new Runnable() {
 		public void run() {
 			InstallWizard wizard = new InstallWizard();
@@ -221,6 +222,7 @@ private void performStart() {
 			dialog.open();
 		}
 	});
+*/
 }
 
 protected void makeActions() {

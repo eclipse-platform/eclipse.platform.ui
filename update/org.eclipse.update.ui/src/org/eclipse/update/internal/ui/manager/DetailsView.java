@@ -12,6 +12,8 @@ import org.eclipse.jface.action.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.swt.program.Program;
 import org.eclipse.ui.texteditor.IUpdate;
+import java.util.*;
+import java.io.*;
 
 /**
  * Insert the type's description here.
@@ -27,6 +29,7 @@ private Action homeAction;
 private UpdateAction backAction;
 private UpdateAction forwardAction;
 private DetailsHistory history = new DetailsHistory();
+private Vector tmpFiles;
 
 private boolean inHistory=false;
 
@@ -82,6 +85,35 @@ public void showURL(String url) {
 	}
 }
 
+public void showText(String text) {
+	try {
+		File file = File.createTempFile("FeatureLicense", ".txt");
+		OutputStream stream = new FileOutputStream(file);
+		PrintWriter writer = new PrintWriter(stream);
+		writer.println(text);
+		writer.flush();
+		stream.close();
+		if (tmpFiles==null) tmpFiles = new Vector();
+		tmpFiles.add(file.getAbsolutePath());
+		showURL("file:///"+file.getAbsolutePath());
+	}
+	catch (IOException e) {
+	}
+}
+
+
+public void dispose() {
+	if (tmpFiles!=null) {
+		for (int i=0; i<tmpFiles.size(); i++) {
+			String fileName = tmpFiles.get(i).toString();
+   			File file = new File(fileName);
+			file.delete();
+		}
+		tmpFiles = null;
+	}
+	super.dispose();
+}
+
 public void createPartControl(Composite parent) {
 	super.createPartControl(parent);
 	history.add(HOME_PAGE, null);
@@ -102,7 +134,8 @@ public void selectionChanged(IWorkbenchPart part, ISelection sel) {
 		IStructuredSelection ssel = (IStructuredSelection)sel;
 		if (ssel.size()==1) {
 			Object el = ssel.getFirstElement();
-			if (el instanceof IFeature || el instanceof ChecklistJob) {
+			if (el instanceof IFeature || el instanceof ChecklistJob ||
+			el instanceof CategorizedFeature) {
 				showPageWithInput(DETAILS_PAGE, el);
 				return;
 			}

@@ -18,6 +18,10 @@ public class SiteCategory {
 		return children.toArray();
 	}
 	
+	public int getChildCount() {
+		return children.size();
+	}
+	
 	public String getName() {
 		return name;
 	}

@@ -46,7 +46,11 @@ class SiteProvider extends DefaultContentProvider
 			return model.getBookmarks();
 		}
 		if (parent instanceof SiteBookmark) {
-			return getSiteFeatures((SiteBookmark)parent);
+			return getSiteCatalog((SiteBookmark)parent);
+		}
+		if (parent instanceof SiteCategory) {
+			SiteCategory category = (SiteCategory)parent;
+			return category.getChildren();
 		}
 		return new Object[0];
 	}
@@ -57,6 +61,9 @@ class SiteProvider extends DefaultContentProvider
 	public boolean hasChildren(Object parent) {
 		if (parent instanceof SiteBookmark)
 		   return true;
+		if (parent instanceof SiteCategory) {
+			return ((SiteCategory)parent).getChildCount()>0;
+		}
 		return false;
 	}
 	public Object[] getElements(Object obj) {
@@ -66,9 +73,16 @@ class SiteProvider extends DefaultContentProvider
 
 class SiteLabelProvider extends LabelProvider {
 	public String getText(Object obj) {
+		try {
 		if (obj instanceof IFeature) {
 			IFeature feature = (IFeature)obj;
 			return feature.getLabel();
+		}
+		if (obj instanceof CategorizedFeature) {
+			return ((CategorizedFeature)obj).getFeature().getLabel();
+		}
+		}
+		catch (CoreException e) {
 		}
 		return super.getText(obj);
 	}
@@ -76,7 +90,10 @@ class SiteLabelProvider extends LabelProvider {
 		if (obj instanceof SiteBookmark) {
 			return siteImage;
 		}
-		if (obj instanceof IFeature) {
+		if (obj instanceof SiteCategory) {
+			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
+		}
+		if (obj instanceof IFeature || obj instanceof CategorizedFeature) {
 			return featureImage;
 		}
 		return super.getImage(obj);
@@ -197,29 +214,29 @@ private void performRefresh() {
 	}
 }
 
-class FeatureBag {
-	IFeature [] features;
+class CatalogBag {
+	Object [] catalog;
 }
 
-private IFeature [] getSiteFeatures(final SiteBookmark bookmark) {
+private Object [] getSiteCatalog(final SiteBookmark bookmark) {
 	if (!bookmark.isSiteConnected()) {
-		final FeatureBag bag = new FeatureBag();
+		final CatalogBag bag = new CatalogBag();
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
 				try {
 					bookmark.connect();
-					bag.features = bookmark.getSite().getFeatures();
+					bag.catalog = bookmark.getCatalog();
 				}
 				catch (CoreException e) {
 				}
 			}
 		});
-		if (bag.features!=null) return bag.features;
+		if (bag.catalog!=null) return bag.catalog;
 	}
 	if (bookmark.getSite()!=null) {
-		return bookmark.getSite().getFeatures();
+		return bookmark.getCatalog();
 	}
-	return new IFeature[0];
+	return new Object[0];
 }
 
 public void objectAdded(Object parent, Object child) {

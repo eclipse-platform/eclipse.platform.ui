@@ -4,56 +4,93 @@ import org.eclipse.jface.wizard.*;
 import org.eclipse.update.ui.internal.model.*;
 import org.eclipse.update.internal.ui.*;
 import java.util.*;
+import org.eclipse.update.core.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.internal.ui.*;
+import org.eclipse.jface.operation.*;
+import java.lang.reflect.*;
 
 public class InstallWizard extends Wizard {
 	private ReviewPage reviewPage;
-	private Vector jobs = new Vector();
+	private ChecklistJob job;
 
-	/**
-	 * Constructor for InstallWizard
-	 */
-	public InstallWizard() {
-		this(null);
-	}
-	
 	public InstallWizard(ChecklistJob job) {
 		setDialogSettings(UpdateUIPlugin.getDefault().getDialogSettings());
 		setDefaultPageImageDescriptor(UpdateUIPluginImages.DESC_INSTALL_WIZ);
 		setForcePreviousAndNextButtons(true);
-		if (job!=null)
-		   jobs.add(job);
-		else
-		   createJobs();
+		setNeedsProgressMonitor(true);
+		this.job = job;
 	}
 	
-	private void createJobs() {
-		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
-		ChecklistJob [] jobArray = model.getJobs();
-		addJobs(jobArray, ChecklistJob.UNINSTALL);
-		addJobs(jobArray, ChecklistJob.INSTALL);
-	}
-	
-	private void addJobs(ChecklistJob [] jobArray, int jobType) {
-		for (int i=0; i<jobArray.length; i++) {
-			ChecklistJob job = jobArray[i];
-			if (job.getJobType()==jobType)
-			   jobs.add(job);
+	private boolean hasLicense() {
+		IFeature feature = job.getFeature();
+		try {
+			IInfo info = feature.getLicense();
+			return info!=null;
+		}
+		catch (CoreException e) {
+			return false;
 		}
 	}
-		
-	
 
+	
 	/**
 	 * @see Wizard#performFinish()
 	 */
 	public boolean performFinish() {
+		IRunnableWithProgress operation = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) {
+				try {
+					performInstall(monitor);
+				} catch (CoreException e) {
+					UpdateUIPlugin.logException(e);
+				} finally {
+					monitor.done();
+				}
+			}
+		};
+		try {
+			getContainer().run(false, true, operation);
+		} catch (InvocationTargetException e) {
+			UpdateUIPlugin.logException(e);
+			return false;
+		} catch (InterruptedException e) {
+			UpdateUIPlugin.logException(e);
+			return false;
+		}
 		return true;
 	}
 	
 	public void addPages() {
-		reviewPage = new ReviewPage(jobs);
+		reviewPage = new ReviewPage(job);
 		addPage(reviewPage);
+		if (hasLicense()) {
+			addPage(new LicensePage(job));
+		}
 	}
-
+	
+	public boolean canFinish() {
+		IWizardPage page = getContainer().getCurrentPage();
+		return page.getNextPage()==null && super.canFinish();
+	}
+	
+	public IWizardPage getPreviousPage(IWizardPage page) {
+		return super.getPreviousPage(page);
+	}
+	public IWizardPage getNextPage(IWizardPage page) {
+		return super.getNextPage(page);
+	}
+	private void performInstall(IProgressMonitor monitor) throws CoreException {
+		monitor.beginTask("Installing...", 5);
+		for (int i=0; i<5; i++) {
+			try {
+				Thread.currentThread().sleep(1000);
+			}
+			catch (InterruptedException e) {
+			}
+			monitor.subTask("File "+(i+1));
+			monitor.worked(1);
+		}
+	}
 }
 

@@ -10,17 +10,25 @@ public abstract class ExpandableGroup {
 	private String text;
 	private boolean expanded;
 	private Composite expansion;
-	private Label textLabel;
+	protected Label textLabel;
 	private Composite control;
 	private int style;
+	private boolean expandable=true;
 	
 class ExpandableLayout extends Layout {
 	protected void layout(Composite parent, boolean changed) {
 		Rectangle clientArea = parent.getClientArea();
 		Point size = textLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
-		int x = 8 + 8;
+		int x = 0;
+		
+		if (expandable) x = 8 + 8;
 		textLabel.setBounds(x, 0, size.x, size.y);
-		int y = Math.max(size.y, 8) + 2;
+		int y;
+		
+		if (expandable)
+		   y = Math.max(size.y, 8) + 2;
+		else
+		   y = size.y + 2;
 		if (expanded) {
 			size = expansion.computeSize(clientArea.width, SWT.DEFAULT, changed);
 			expansion.setBounds(x, y, size.x, size.y);
@@ -36,8 +44,10 @@ class ExpandableLayout extends Layout {
 			width = Math.max(width, size.x);
 			height += size.y;
 		}
-		height = Math.max(height, 8);
-		width += 8 + 8;
+		if (expandable) {
+			height = Math.max(height, 8);
+			width += 8 + 8;
+		}
 		return new Point(width, height);
 	}
 }
@@ -58,7 +68,7 @@ class ExpandableLayout extends Layout {
 		container.setLayout(new ExpandableLayout());
 		container.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
-				repaint(e);
+				if (expandable) repaint(e);
 			}
 		});
 		container.addMouseListener(new MouseAdapter() {
@@ -71,7 +81,8 @@ class ExpandableLayout extends Layout {
 		});
 		textLabel = factory.createHyperlinkLabel(container, null, new HyperlinkAdapter () {
 			public void linkActivated(Control link) {
-				setExpanded(!isExpanded());
+				ExpandableGroup.this.linkActivated();
+				if (expandable) setExpanded(!isExpanded());
 			}
 		});
 		if (text!=null) textLabel.setText(text);
@@ -94,6 +105,14 @@ class ExpandableLayout extends Layout {
 	
 	public boolean isExpanded() {
 		return expanded;
+	}
+	
+	public void setExpandable(boolean expandable) {
+		this.expandable = expandable;
+	}
+	
+	public boolean isExpandable() {
+		return expandable;
 	}
 	
 	public void setExpanded(boolean expanded) {
@@ -144,6 +163,10 @@ class ExpandableLayout extends Layout {
 		return new Rectangle(x, y, 8, 8);
 	}
 	
+	protected void updateLayout() {
+		control.layout();
+	}
+	
 	protected void aboutToExpand() {
 	}
 	
@@ -153,5 +176,7 @@ class ExpandableLayout extends Layout {
 	protected void expanded() {
 	}
 	protected void collapsed() {
+	}
+	protected void linkActivated() {
 	}
 }

@@ -14,6 +14,7 @@ import org.eclipse.update.ui.internal.model.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.ICategory;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IInfo;
 import org.eclipse.update.core.IInstallConfiguration;
@@ -119,7 +120,12 @@ public void initProviders() {
 }
 
 private Object [] openLocalSite() {
-	return fakeLocalSite.getFeatures();
+	try {
+		return fakeLocalSite.getFeatures();
+	}
+	catch (CoreException e) {
+		return new Object[0];
+	}
 }
 
 private Object [] checkForUpdates() {
@@ -337,6 +343,13 @@ class FakeFeature implements IFeature {
 	 * @see IFeature#getNL()
 	 */
 	public String getNL() {
+		return null;
+	}
+
+	/**
+	 * @see IFeature#getCategories()
+	 */
+	public ICategory[] getCategories() {
 		return null;
 	}
 

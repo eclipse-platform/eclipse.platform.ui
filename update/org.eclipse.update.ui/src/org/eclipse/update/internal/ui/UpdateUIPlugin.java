@@ -9,6 +9,8 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.internal.model.*;
 import org.eclipse.update.internal.ui.manager.*;
 import org.eclipse.update.core.*;
+import java.lang.reflect.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -109,5 +111,17 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 	
 	public UpdateModel getUpdateModel() {
 		return model;
+	}
+	
+	public static void logException(Throwable e) {
+		if (e instanceof InvocationTargetException) {
+			e = ((InvocationTargetException)e).getTargetException();
+		}
+		String message = e.getMessage();
+		if (message==null)
+	 		message = e.toString();
+		Status status = new Status(IStatus.ERROR, getPluginId(), IStatus.OK, message, e);
+		ErrorDialog.openError(getActiveWorkbenchShell(), null, null, status);
+		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
 }

@@ -77,14 +77,7 @@ public Control createControl(Composite parent) {
 	scrollComposite.setContent(form);
     scrollComposite.addListener (SWT.Resize,  new Listener () {
 		public void handleEvent (Event e) {
-			Rectangle ssize = scrollComposite.getClientArea();
-			int swidth = ssize.width;
-			WebFormLayout layout = (WebFormLayout)form.getLayout();
-			Point size = layout.computeSize(form, swidth, SWT.DEFAULT, true);
-			if (size.x < swidth) size.x = swidth;
-			Rectangle trim = form.computeTrim(0, 0, size.x, size.y);
-			size = new Point(trim.width, trim.height);
-			control.setSize(size);
+			updateSize();
 		}
 	});
 	WebFormLayout layout = new WebFormLayout();
@@ -148,6 +141,17 @@ public void propertyChange(PropertyChangeEvent event) {
 	if (control!=null) { 
 		control.layout();
 	}
+}
+
+public void updateSize() {
+	Rectangle ssize = scrollComposite.getClientArea();
+	int swidth = ssize.width;
+	WebFormLayout layout = (WebFormLayout)control.getLayout();
+	Point size = layout.computeSize(control, swidth, SWT.DEFAULT, true);
+	if (size.x < swidth) size.x = swidth;
+	Rectangle trim = control.computeTrim(0, 0, size.x, size.y);
+	size = new Point(trim.width, trim.height);
+	control.setSize(size);
 }
 
 private void paint(PaintEvent e) {

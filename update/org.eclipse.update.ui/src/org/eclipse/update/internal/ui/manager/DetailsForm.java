@@ -16,7 +16,8 @@ import org.eclipse.jface.action.*;
 import org.eclipse.ui.*;
 import org.eclipse.update.internal.ui.wizards.*;
 import org.eclipse.jface.wizard.*;
-import java.util.*;
+import java.util.*;
+import org.eclipse.core.runtime.CoreException;
 public class DetailsForm extends UpdateWebForm {
 private Label imageLabel;
 private Label providerLabel;
@@ -27,12 +28,10 @@ private Label wsLabel;
 private Label nlLabel;
 private Label descriptionText;
 private Composite control;
-private Label infoLinkLabel;
-private Label licenseLinkLabel;
-private Label copyrightLinkLabel;
 private URL infoLinkURL;
-private URL licenseLinkURL;
-private URL copyrightLinkURL;
+private Label infoLinkLabel;
+private InfoGroup licenseGroup;
+private InfoGroup copyrightGroup;
 private Image providerImage;
 private Button doButton;
 private IFeature currentFeature;
@@ -72,25 +71,39 @@ class ModelListener implements IUpdateModelChangedListener {
 
 
 abstract class LinkListener implements IHyperlinkListener {
-public abstract URL getURL();
-public void linkActivated(Control linkLabel) {
-	URL url = getURL();
-	if (url!=null) openURL(url.toString());
-}
-public void linkEntered(Control linkLabel) {
-	URL url = getURL();
-	if (url!=null)
-	   showStatus(url.toString());
-}
-public void linkExited(Control linkLabel) {
-	showStatus(null);
+	public abstract URL getURL();
+	public void linkActivated(Control linkLabel) {
+		URL url = getURL();
+		if (url!=null) openURL(url.toString());
+	}
+	public void linkEntered(Control linkLabel) {
+		URL url = getURL();
+		if (url!=null)
+	 	  showStatus(url.toString());
+	}
+	public void linkExited(Control linkLabel) {
+		showStatus(null);
+	}
+
+	private void showStatus(String text) {
+		IViewSite site = getPage().getView().getViewSite();
+		IStatusLineManager sm = site.getActionBars().getStatusLineManager();
+		sm.setMessage(text);
+	}
 }
 
-private void showStatus(String text) {
-	IViewSite site = getPage().getView().getViewSite();
-	IStatusLineManager sm = site.getActionBars().getStatusLineManager();
-	sm.setMessage(text);
-}
+class ReflowInfoGroup extends InfoGroup {
+	public ReflowInfoGroup(DetailsView view) {
+		super(view);
+	}
+	public void expanded() {
+		reflow();
+		updateSize();
+	}
+	public void collapsed() {
+		reflow();
+		updateSize();
+	}
 }
 
 public DetailsForm(UpdateFormPage page) {
@@ -167,24 +180,26 @@ public void createContents(Composite container) {
 	};
    	infoLinkLabel = factory.createHyperlinkLabel(footer,
    						"More Info", listener);
-	listener = new LinkListener() {
-		public URL getURL() { return licenseLinkURL; }
-	};
-   	licenseLinkLabel = factory.createHyperlinkLabel(footer,
-   						"License", listener);
-   	listener = new LinkListener() {
-   		public URL getURL() { return copyrightLinkURL; }
-   	};
-   	copyrightLinkLabel = factory.createHyperlinkLabel(footer,
-   						"Copyright", listener);
-	
+   	GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+   	infoLinkLabel.setLayoutData(gd);
+   	licenseGroup = new ReflowInfoGroup((DetailsView)getPage().getView());
+   	licenseGroup.setText("License");
+   	licenseGroup.createControl(footer, factory);
+    gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+   	licenseGroup.getControl().setLayoutData(gd);
+   	copyrightGroup = new ReflowInfoGroup((DetailsView)getPage().getView());
+   	copyrightGroup.setText("Copyright");
+   	copyrightGroup.createControl(footer, factory);
+   	gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+   	copyrightGroup.getControl().setLayoutData(gd);
+
   	doButton = factory.createButton(footer, "", SWT.PUSH);
   	doButton.addSelectionListener(new SelectionAdapter() {
   		public void widgetSelected(SelectionEvent e) {
   			doButtonSelected();
   		}
   	});
-  	GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
+  	gd = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.VERTICAL_ALIGN_BEGINNING);
   	gd.grabExcessHorizontalSpace = true;
   	doButton.setLayoutData(gd);
 }
@@ -210,6 +225,9 @@ public void expandTo(Object obj) {
 	if (obj instanceof IFeature) {
 		inputChanged((IFeature)obj);
 	}
+	else if (obj instanceof CategorizedFeature) {
+		inputChanged(((CategorizedFeature)obj).getFeature());
+	}
 	else if (obj instanceof ChecklistJob) {
 		inputChanged(((ChecklistJob)obj).getFeature());
 	}
@@ -233,6 +251,7 @@ private void inputChanged(IFeature feature) {
 	if (feature==null) feature = currentFeature;
 	if (feature==null) return;
 	
+	try {
 	setHeadingText(feature.getLabel());
 	providerLabel.setText(feature.getProvider());
 	versionLabel.setText(feature.getIdentifier().getVersion().toString());
@@ -253,15 +272,25 @@ private void inputChanged(IFeature feature) {
 	setOS(feature.getOS());
 	setWS(feature.getWS());
 	setNL(feature.getNL());
-	doButton.getParent().layout(true);
-	imageLabel.getParent().layout(true);
-	((Composite)getControl()).layout(true);
+	
+	licenseGroup.setInfo(feature.getLicense());
+	copyrightGroup.setInfo(feature.getCopyright());
+	reflow();
 	((Composite)getControl()).redraw();
 
 	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 	doButton.setEnabled(!model.checklistContains(feature));
 	doButton.setVisible(true);
+	}
+	catch (CoreException e) {
+	}
 	currentFeature = feature;
+}
+
+private void reflow() {
+	doButton.getParent().layout(true);
+	imageLabel.getParent().layout(true);
+	((Composite)getControl()).layout(true);
 }
 
 private void setOS(String os) {

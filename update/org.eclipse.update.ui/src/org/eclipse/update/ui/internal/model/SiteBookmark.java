@@ -7,7 +7,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.ui.model.*;
 import java.util.*;
-
+
 public class SiteBookmark extends ModelObject implements IWorkbenchAdapter {
 	private String name;
 	private URL url;
@@ -98,13 +98,25 @@ public class SiteBookmark extends ModelObject implements IWorkbenchAdapter {
 	private void createCatalog() {
 		catalog = new Vector();
 		// Add all the categories
-		ICategory [] categories = site.getCategories();
+		ICategory [] categories;
+		try {
+			categories = site.getCategories();
+		}
+		catch (CoreException e) {
+			categories = new ICategory[0];
+		}
 		for (int i=0; i<categories.length; i++) {
 			ICategory category = categories[i];
 			addCategoryToCatalog(category);
 		}
 		// Add features to categories
-		IFeature [] features = site.getFeatures();
+		IFeature [] features;
+		try {
+			features = site.getFeatures();
+		}
+		catch (CoreException e) {
+			features = new IFeature[0];
+		}
 		for (int i=0; i<features.length; i++) {
 			IFeature feature = features[i];
 			addFeatureToCatalog(feature);
@@ -113,7 +125,12 @@ public class SiteBookmark extends ModelObject implements IWorkbenchAdapter {
 
 	public Object [] getCatalog() {
 		if (catalog.size()>0) return catalog.toArray();
-		return site.getFeatures();
+		try {
+			return site.getFeatures();
+		}
+		catch (CoreException e) {
+			return new Object[0];
+		}
 	}
 	private void addCategoryToCatalog(ICategory category) {
 		String name = category.getName();
@@ -124,11 +141,32 @@ public class SiteBookmark extends ModelObject implements IWorkbenchAdapter {
 		}
 		else {
 			IPath path = new Path(name);
+			name = path.lastSegment().toString();
 			path = path.removeLastSegments(1);
 			SiteCategory parentCategory = findCategory(path, catalog.toArray());
+			if (parentCategory!=null) {
+				parentCategory.add(new SiteCategory(name, category));
+			}
 		}
 	}
 	private void addFeatureToCatalog(IFeature feature) {
+		ICategory [] categories;
+		try {
+			categories = feature.getCategories();
+		}
+		catch (CoreException e) {
+			return;
+		}
+		for (int i=0; i<categories.length; i++) {
+			ICategory category = categories[i];
+			String name = category.getName();
+			IPath path = new Path(name);
+			SiteCategory parentCategory = findCategory(path, catalog.toArray());
+			if (parentCategory!=null)
+			   parentCategory.add(new CategorizedFeature(feature));
+			else
+			   catalog.add(feature);
+		}
 	}
 	
 	private SiteCategory findCategory(IPath path, Object [] children) {
