@@ -26,11 +26,10 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.ide.IDEActionFactory;
-import org.eclipse.ui.internal.NewWizardShortcutAction;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
+import org.eclipse.ui.internal.ide.NewWizardShortcutAction;
 import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
 
 /**
@@ -79,7 +78,7 @@ public class NewWizardMenu extends ContributionItem {
 	public NewWizardMenu(IWorkbenchWindow window) {
 		super();
 		this.window = window;
-		showDlgAction = IDEActionFactory.NEW.create(window);
+		showDlgAction = ActionFactory.NEW.create(window);
 		newProjectAction = new NewProjectAction(window);
 		newExampleAction = new NewExampleAction(window);
 	}
@@ -98,7 +97,6 @@ public class NewWizardMenu extends ContributionItem {
 			List actions = null;
 			IWorkbenchPage page = window.getActivePage();
 			if (page != null) {
-				// @issue new wizards
 				actions = ((WorkbenchPage) page).getNewWizardActionIds();
 			}
 			if (actions != null) {

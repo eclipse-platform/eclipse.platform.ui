@@ -17,9 +17,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.ui.views.markers.internal.DialogTaskProperties;
 
 /**
@@ -46,11 +46,11 @@ public class AddTaskAction extends ResourceSelectionListenerAction {
  	 * @param shell shell to use to show any dialogs
  	 */
 	public AddTaskAction(Shell shell) {
-		super(WorkbenchMessages.getString("AddTaskLabel")); //$NON-NLS-1$		
+		super(IDEWorkbenchMessages.getString("AddTaskLabel")); //$NON-NLS-1$		
 		setId(ID);
 		this.shell = shell;
 		Assert.isNotNull(shell);
-		setToolTipText(WorkbenchMessages.getString("AddTaskToolTip")); //$NON-NLS-1$		
+		setToolTipText(IDEWorkbenchMessages.getString("AddTaskToolTip")); //$NON-NLS-1$		
 		WorkbenchHelp.setHelp(this, IHelpContextIds.ADD_TASK_ACTION);
 	}
 	private IResource getElement(IStructuredSelection selection) {

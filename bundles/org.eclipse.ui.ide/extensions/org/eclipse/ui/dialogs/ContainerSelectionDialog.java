@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.misc.ContainerSelectionGroup;
+import org.eclipse.ui.internal.ide.misc.ContainerSelectionGroup;
 
 /**
  * A standard selection dialog which solicits a container resource from the user.

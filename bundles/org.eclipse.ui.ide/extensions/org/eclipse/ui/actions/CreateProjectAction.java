@@ -21,15 +21,14 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.dialogs.MultiStepWizardDialog;
-import org.eclipse.ui.internal.dialogs.NewProjectWizard;
-import org.eclipse.ui.internal.registry.Capability;
-import org.eclipse.ui.internal.registry.CapabilityRegistry;
 import org.eclipse.ui.internal.ide.Category;
+import org.eclipse.ui.internal.ide.dialogs.MultiStepWizardDialog;
+import org.eclipse.ui.internal.ide.dialogs.NewProjectWizard;
+import org.eclipse.ui.internal.ide.registry.Capability;
+import org.eclipse.ui.internal.ide.registry.CapabilityRegistry;
 
 /**
  * Standard action for launching the new project creation
@@ -86,9 +85,9 @@ public class CreateProjectAction extends Action {
 		}
 		this.window = window;
 		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
-		setImageDescriptor(images.getImageDescriptor(IDE.SharedImages.IMG_TOOL_NEW_WIZARD));
-		setHoverImageDescriptor(images.getImageDescriptor(IDE.SharedImages.IMG_TOOL_NEW_WIZARD_HOVER));
-		setDisabledImageDescriptor(images.getImageDescriptor(IDE.SharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
+		setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
+		setHoverImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_HOVER));
+		setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
 		setToolTipText(IDEWorkbenchMessages.getString("CreateProjectAction.toolTip"));	 //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.NEW_ACTION);
 	}

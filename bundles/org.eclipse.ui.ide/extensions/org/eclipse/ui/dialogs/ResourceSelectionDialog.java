@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.ide.WorkbenchResourceContentProvider;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
-import org.eclipse.ui.internal.misc.CheckboxTreeAndListGroup;
+import org.eclipse.ui.internal.ide.misc.CheckboxTreeAndListGroup;
 import org.eclipse.ui.help.*;
 import org.eclipse.ui.model.*;
 import org.eclipse.jface.viewers.*;

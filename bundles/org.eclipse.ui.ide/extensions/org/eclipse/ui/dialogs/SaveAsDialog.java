@@ -24,7 +24,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
-import org.eclipse.ui.internal.misc.ResourceAndContainerGroup;
+import org.eclipse.ui.internal.ide.misc.ResourceAndContainerGroup;
 
 /**
  * A standard "Save As" dialog which solicits a path from the user. The

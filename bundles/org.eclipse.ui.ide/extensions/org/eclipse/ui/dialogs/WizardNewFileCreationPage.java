@@ -31,11 +31,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.dialogs.CreateLinkedResourceGroup;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
-import org.eclipse.ui.internal.misc.ResourceAndContainerGroup;
+import org.eclipse.ui.internal.ide.dialogs.CreateLinkedResourceGroup;
+import org.eclipse.ui.internal.ide.misc.ResourceAndContainerGroup;
 /**
  * Standard main page for a wizard that creates a file resource.
  * <p>
