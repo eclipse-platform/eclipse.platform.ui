@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.ant.ui.internal.dtd.IAtom;
 import org.eclipse.ant.ui.internal.dtd.ParseError;
 import org.eclipse.ant.ui.internal.dtd.util.SortedMap;
 import org.eclipse.ant.ui.internal.dtd.util.SortedMapFactory;
@@ -303,7 +302,7 @@ public class NfmParser {
 					n.dfm = nextdfm;
 				parseNext(mark, nextdfm, snext, accept);
 			}
-			Dfm dfm = Dfm.dfm((IAtom)start.symbol, nextdfm);
+			Dfm dfm = Dfm.dfm(start.symbol, nextdfm);
 			return dfm;
 		}
 		

@@ -105,7 +105,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			List tempChilds = tempParentElement.getChildNodes();
 			Object[] tempChildObjects = new Object[tempChilds.size()];
 			for(int i=0; i<tempChilds.size(); i++) {
-				tempChildObjects[i] = (Object)tempChilds.get(i);
+				tempChildObjects[i] = tempChilds.get(i);
 			}
 			return tempChildObjects;
 		}
@@ -442,7 +442,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			if (resource != null && resource.getType() == IResource.FILE && resource.exists()) {
 				menuManager.add(new Separator("group.open")); //$NON-NLS-1$
 				IMenuManager submenu= new MenuManager(AntOutlineMessages.getString("AntEditorContentOutlinePage.Open_With_1"));  //$NON-NLS-1$
-				openWithMenu.setFile((IFile)resource);
+				openWithMenu.setFile(resource);
 				submenu.add(openWithMenu);
 				menuManager.appendToGroup("group.open", submenu); //$NON-NLS-1$
 				
