@@ -160,26 +160,28 @@ public class ScopePart {
 		Assert.isNotNull(fUseSelection);
 		Assert.isNotNull(fUseWorkingSet);
 		Assert.isNotNull(fUseProject);
-		fScope= scope;
-		if (fScope == ISearchPageContainer.SELECTED_PROJECTS_SCOPE) {
+
+		if (scope == ISearchPageContainer.SELECTED_PROJECTS_SCOPE) {
 			if (!fCanSearchEnclosingProjects) {
 				SearchPlugin.log(new Status(IStatus.WARNING, NewSearchUI.PLUGIN_ID, IStatus.WARNING, "Enclosing projects scope set on search page that does not support it", null)); //$NON-NLS-1$
-				fScope= ISearchPageContainer.WORKSPACE_SCOPE;
+				scope= ISearchPageContainer.WORKSPACE_SCOPE;
 			} else if (!fUseProject.isEnabled()) {
-				fScope= ISearchPageContainer.WORKSPACE_SCOPE;
+				scope= ISearchPageContainer.WORKSPACE_SCOPE;
 			}
-		} else if (fScope == ISearchPageContainer.SELECTION_SCOPE) {
+		} else if (scope == ISearchPageContainer.SELECTION_SCOPE) {
 			if (!fUseSelection.isEnabled()) {
-				fScope= ISearchPageContainer.WORKSPACE_SCOPE;
+				scope= ISearchPageContainer.WORKSPACE_SCOPE;
 			}
 		}
+		fScope= scope;
+		
 		fUseWorkspace.setSelection(scope == ISearchPageContainer.WORKSPACE_SCOPE);
 		fUseSelection.setSelection(scope == ISearchPageContainer.SELECTION_SCOPE);
 		fUseProject.setSelection(scope == ISearchPageContainer.SELECTED_PROJECTS_SCOPE);
 		fUseWorkingSet.setSelection(scope == ISearchPageContainer.WORKING_SET_SCOPE);
 
 		updateSearchPageContainerActionPerformedEnablement();
-		fSettingsStore.put(STORE_SCOPE, fScope);
+		fSettingsStore.put(STORE_SCOPE, scope);
 		
 	}
 
