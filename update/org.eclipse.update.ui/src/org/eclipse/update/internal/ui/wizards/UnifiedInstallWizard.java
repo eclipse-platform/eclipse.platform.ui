@@ -31,7 +31,7 @@ public class UnifiedInstallWizard extends Wizard {
 	private static final String KEY_INSTALLING =
 		"MultiInstallWizard.installing";
 	private ModeSelectionPage modePage;
-	private SitePage sitePage;
+	private UnifiedSitePage sitePage;
 	private UnifiedReviewPage reviewPage;
 	private LicensePage licensePage;
 	private MultiOptionalFeaturesPage optionalFeaturesPage;
@@ -60,6 +60,8 @@ public class UnifiedInstallWizard extends Wizard {
 	public boolean performFinish() {
 		final PendingChange[] selectedJobs = reviewPage.getSelectedJobs();
 		installCount = 0;
+		
+		saveSettings();
 
 		if (targetPage != null) {
 			// Check for duplication conflicts
@@ -135,7 +137,7 @@ public class UnifiedInstallWizard extends Wizard {
 		searchRunner = new SearchRunner(getShell(), getContainer());
 		modePage = new ModeSelectionPage(searchRunner);
 		addPage(modePage);
-		sitePage = new SitePage(searchRunner);
+		sitePage = new UnifiedSitePage(searchRunner);
 		addPage(sitePage);
 		reviewPage = new UnifiedReviewPage(searchRunner);
 		addPage(reviewPage);
@@ -148,6 +150,10 @@ public class UnifiedInstallWizard extends Wizard {
 		addPage(optionalFeaturesPage);
 		targetPage = new MultiTargetPage(config);
 		addPage(targetPage);
+	}
+	
+	private void saveSettings() {
+		modePage.saveSettings();
 	}
 
 	private boolean isPageRequired(IWizardPage page) {

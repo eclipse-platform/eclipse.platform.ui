@@ -335,7 +335,7 @@ public class SearchObject extends NamedModelObject {
 		String text =
 			UpdateUI.getFormattedMessage(KEY_CONTACTING, siteAdapter.getLabel());
 		monitor.subTask(text);
-		monitor.beginTask("", 3);
+		monitor.beginTask("", 10);
 		URL siteURL = siteAdapter.getURL();
 
 		ISite site;
@@ -352,12 +352,12 @@ public class SearchObject extends NamedModelObject {
 			if (status == null
 				|| status.getCode() != ISite.SITE_ACCESS_EXCEPTION)
 				throw e;
-			monitor.worked(3);
+			monitor.worked(10);
 			return status;
 		}
 		// If frozen connection was canceled, there will be no site.
 		if (site==null) {
-			monitor.worked(2);
+			monitor.worked(9);
 			return null;
 		}
 
@@ -366,7 +366,7 @@ public class SearchObject extends NamedModelObject {
 		monitor.getWrappedProgressMonitor().subTask(text);
 
 		IFeature[] matches =
-			query.getMatchingFeatures(site, new SubProgressMonitor(monitor, 1));
+			query.getMatchingFeatures(site, new SubProgressMonitor(monitor, 9));
 
 		for (int i = 0; i < matches.length; i++) {
 			if (monitor.isCanceled())
@@ -386,7 +386,6 @@ public class SearchObject extends NamedModelObject {
 			searchSite.addCandidate(featureAdapter);
 			asyncFireObjectAdded(display, searchSite, featureAdapter);
 		}
-		monitor.worked(1);
 		return null;
 	}
 

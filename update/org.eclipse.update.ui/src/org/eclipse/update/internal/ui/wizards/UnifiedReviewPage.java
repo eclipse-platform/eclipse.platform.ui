@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
@@ -46,7 +47,7 @@ public class UnifiedReviewPage extends BannerPage {
 	private static final String KEY_FILTER_CHECK =
 		"MultiInstallWizard.MultiReviewPage.filterCheck";
 
-	private PendingChange [] jobs;
+	private PendingChange[] jobs;
 	private Label counterLabel;
 	private CheckboxTableViewer tableViewer;
 	private IStatus validationStatus;
@@ -63,7 +64,7 @@ public class UnifiedReviewPage extends BannerPage {
 		implements IStructuredContentProvider {
 
 		public Object[] getElements(Object inputElement) {
-			return jobs!=null?jobs : new Object[0];
+			return jobs != null ? jobs : new Object[0];
 		}
 	}
 
@@ -154,7 +155,7 @@ public class UnifiedReviewPage extends BannerPage {
 		moreInfoGenerator = new MoreInfoGenerator();
 		setBannerVisible(false);
 	}
-	
+
 	public void dispose() {
 		UpdateUI.getDefault().getLabelProvider().disconnect(this);
 		moreInfoGenerator.dispose();
@@ -167,16 +168,16 @@ public class UnifiedReviewPage extends BannerPage {
 			setJobs(searchRunner.runSearch());
 		}
 	}
-	
-	private void setJobs(PendingChange [] jobs) {
+
+	private void setJobs(PendingChange[] jobs) {
 		this.jobs = jobs;
-		if (tableViewer!=null) {
+		if (tableViewer != null) {
 			tableViewer.refresh();
 			tableViewer.getTable().layout(true);
 		}
 		pageChanged();
 	}
-	
+
 	/**
 	 * @see DialogPage#createControl(Composite)
 	 */
@@ -231,7 +232,7 @@ public class UnifiedReviewPage extends BannerPage {
 				handleSelectAll(false);
 			}
 		});
-		
+
 		moreInfoButton = new Button(buttonContainer, SWT.PUSH);
 		moreInfoButton.setText("&More Info");
 		gd =
@@ -260,7 +261,7 @@ public class UnifiedReviewPage extends BannerPage {
 				showStatus();
 			}
 		});
-		
+
 		descLabel = new Text(client, SWT.WRAP);
 		descLabel.setEditable(false);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -326,9 +327,15 @@ public class UnifiedReviewPage extends BannerPage {
 				pageChanged();
 			}
 		});
-		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		tableViewer
+			.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
-				jobSelected((IStructuredSelection)e.getSelection());
+				jobSelected((IStructuredSelection) e.getSelection());
+			}
+		});
+		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				handleMoreInfo();
 			}
 		});
 		tableViewer.setInput(UpdateUI.getDefault().getUpdateModel());
@@ -349,17 +356,18 @@ public class UnifiedReviewPage extends BannerPage {
 		}
 		return "?";
 	}
-	
+
 	private void jobSelected(IStructuredSelection selection) {
-		PendingChange job = (PendingChange)selection.getFirstElement();
-		IFeature feature = job!=null?job.getFeature():null;
-		IURLEntry descEntry = feature!=null?feature.getDescription():null;
+		PendingChange job = (PendingChange) selection.getFirstElement();
+		IFeature feature = job != null ? job.getFeature() : null;
+		IURLEntry descEntry = feature != null ? feature.getDescription() : null;
 		String desc = null;
-		if (descEntry!=null)
+		if (descEntry != null)
 			desc = descEntry.getAnnotation();
-		if (desc==null) desc = "";
+		if (desc == null)
+			desc = "";
 		descLabel.setText(desc);
-		moreInfoButton.setEnabled(feature!=null);
+		moreInfoButton.setEnabled(feature != null);
 	}
 
 	private void pageChanged() {
@@ -371,6 +379,7 @@ public class UnifiedReviewPage extends BannerPage {
 			UpdateUI.getFormattedMessage(
 				KEY_COUNTER,
 				new String[] { selected, total }));
+		counterLabel.getParent().layout();
 		if (checked.length > 0) {
 			validateSelection();
 		} else {
@@ -385,19 +394,26 @@ public class UnifiedReviewPage extends BannerPage {
 		tableViewer.setAllChecked(select);
 		pageChanged();
 	}
-	
+
 	private void handleMoreInfo() {
 		IStructuredSelection selection =
 			(IStructuredSelection) tableViewer.getSelection();
-		PendingChange selectedJob = (PendingChange) selection.getFirstElement();
-		if (selectedJob==null) return;
-		String tempURL = moreInfoGenerator.createURL(selectedJob);
-		DetailsView.showURL(tempURL, false);
+		final PendingChange selectedJob =
+			(PendingChange) selection.getFirstElement();
+		if (selectedJob == null)
+			return;
+		BusyIndicator
+			.showWhile(tableViewer.getControl().getDisplay(), new Runnable() {
+			public void run() {
+				String tempURL = moreInfoGenerator.createURL(selectedJob);
+				DetailsView.showURL(tempURL, false);
+			}
+		});
 	}
-	
-	PendingChange [] orderJobs(PendingChange [] jobs) {
+
+	PendingChange[] orderJobs(PendingChange[] jobs) {
 		ArrayList result = new ArrayList();
-		PendingChange [] input = new PendingChange [jobs.length];
+		PendingChange[] input = new PendingChange[jobs.length];
 		System.arraycopy(jobs, 0, input, 0, jobs.length);
 		//Add jobs to unconfigure.
 		addJobs(input, result, PendingChange.UNCONFIGURE, false);
@@ -409,22 +425,29 @@ public class UnifiedReviewPage extends BannerPage {
 		addJobs(input, result, PendingChange.INSTALL, true);
 		//Add the remainder (only uninstalls)
 		addJobs(input, result, -1, false);
-		return (PendingChange[])result.toArray(new PendingChange[result.size()]);
+		return (PendingChange[]) result.toArray(
+			new PendingChange[result.size()]);
 	}
-	
-	private void addJobs(PendingChange [] input, ArrayList result, int type, boolean patch) {
-		for (int i=0; i<input.length; i++) {
+
+	private void addJobs(
+		PendingChange[] input,
+		ArrayList result,
+		int type,
+		boolean patch) {
+		for (int i = 0; i < input.length; i++) {
 			PendingChange job = input[i];
-			if (job==null) continue;
-			boolean match=false;
-			if (type == -1) match = true;
+			if (job == null)
+				continue;
+			boolean match = false;
+			if (type == -1)
+				match = true;
 			else {
-				if (type==job.getJobType()) {
-					if (type==PendingChange.INSTALL) {
-						if (job.getFeature().isPatch()==patch)
-							match=true;
-					}
-					else match=true;
+				if (type == job.getJobType()) {
+					if (type == PendingChange.INSTALL) {
+						if (job.getFeature().isPatch() == patch)
+							match = true;
+					} else
+						match = true;
 				}
 			}
 			if (match) {

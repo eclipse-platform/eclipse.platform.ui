@@ -7,18 +7,18 @@
 package org.eclipse.update.internal.ui.wizards;
 
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.*;
 
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.update.internal.ui.model.SiteBookmark;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.search.*;
 
@@ -28,11 +28,11 @@ import org.eclipse.update.internal.ui.search.*;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public class SitePage extends BannerPage implements ISearchProvider {
+public class UnifiedSitePage extends BannerPage implements ISearchProvider {
 	static class SiteCandidate {
 		private SiteBookmark bookmark;
 		private boolean readOnly;
-		
+
 		public SiteCandidate(SiteBookmark bookmark, boolean readOnly) {
 			this.bookmark = bookmark;
 			this.readOnly = readOnly;
@@ -52,8 +52,14 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		public boolean isSelected() {
 			return bookmark.isSelected();
 		}
+		public boolean isReadOnly() {
+			return readOnly;
+		}
 		public void setSelected(boolean selected) {
 			bookmark.setSelected(selected);
+		}
+		public String toString() {
+			return getLabel();
 		}
 	}
 
@@ -66,20 +72,24 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		public Object[] getElements(Object parent) {
 			return computeElements();
 		}
-		
+
 		private Object[] computeElements() {
 			UpdateModel model = UpdateUI.getDefault().getUpdateModel();
-			Object [] bookmarks = model.getBookmarkLeafs();
-			Object [] sitesToVisit = discoveryFolder.getChildren(discoveryFolder);
+			Object[] bookmarks = model.getBookmarkLeafs();
+			Object[] sitesToVisit =
+				discoveryFolder.getChildren(discoveryFolder);
 			ArrayList candidates = new ArrayList();
 			createCandidates(sitesToVisit, candidates, false);
 			createCandidates(bookmarks, candidates, true);
 			return candidates.toArray();
 		}
 
-		private void createCandidates(Object[] bookmarks, ArrayList list, boolean readOnly) {
-			for (int i=0; i<bookmarks.length; i++) {
-				SiteBookmark bookmark = (SiteBookmark)bookmarks[i];
+		private void createCandidates(
+			Object[] bookmarks,
+			ArrayList list,
+			boolean readOnly) {
+			for (int i = 0; i < bookmarks.length; i++) {
+				SiteBookmark bookmark = (SiteBookmark) bookmarks[i];
 				list.add(new SiteCandidate(bookmark, readOnly));
 			}
 		}
@@ -93,9 +103,8 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		*/
 		public Image getColumnImage(Object obj, int col) {
 			if (obj instanceof SiteCandidate)
-				return UpdateUI
-					.getDefault()
-					.getLabelProvider().get(UpdateUIImages.DESC_SITE_OBJ);
+				return UpdateUI.getDefault().getLabelProvider().get(
+					UpdateUIImages.DESC_SITE_OBJ);
 			return null;
 		}
 
@@ -110,11 +119,11 @@ public class SitePage extends BannerPage implements ISearchProvider {
 			return null;
 		}
 	}
-	
+
 	class ModelListener implements IUpdateModelChangedListener {
-			/* (non-Javadoc)
-		 * @see org.eclipse.update.internal.ui.model.IUpdateModelChangedListener#objectChanged(java.lang.Object, java.lang.String)
-		 */
+		/* (non-Javadoc)
+		* @see org.eclipse.update.internal.ui.model.IUpdateModelChangedListener#objectChanged(java.lang.Object, java.lang.String)
+		*/
 		public void objectChanged(Object object, String property) {
 		}
 
@@ -122,18 +131,23 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		 * @see org.eclipse.update.internal.ui.model.IUpdateModelChangedListener#objectsAdded(java.lang.Object, java.lang.Object[])
 		 */
 		public void objectsAdded(Object parent, Object[] children) {
-			tableViewer.refresh();
+			if (parent==null && children[0] instanceof SiteBookmark) {
+				tableViewer.refresh();
+				checkItems();
+			}
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.update.internal.ui.model.IUpdateModelChangedListener#objectsRemoved(java.lang.Object, java.lang.Object[])
 		 */
 		public void objectsRemoved(Object parent, Object[] children) {
-			tableViewer.refresh();
+			if (parent==null && children[0] instanceof SiteBookmark) {
+				tableViewer.refresh();
+				checkItems();
+			}
 		}
 	}
-	
-	
+
 	private DiscoveryFolder discoveryFolder;
 	private CheckboxTableViewer tableViewer;
 	private Button addSiteButton;
@@ -147,8 +161,10 @@ public class SitePage extends BannerPage implements ISearchProvider {
 	/**
 	 * @param name
 	 */
-	public SitePage(SearchRunner searchRunner) {
+	public UnifiedSitePage(SearchRunner searchRunner) {
 		super("SitePage");
+		setTitle("Update sites to visit");
+		setDescription("Select update sites to visit while looking for new features.");
 		UpdateUI.getDefault().getLabelProvider().connect(this);
 		discoveryFolder = new DiscoveryFolder();
 		this.searchRunner = searchRunner;
@@ -156,12 +172,17 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		search = new UnifiedSearchObject();
 		search.setModel(UpdateUI.getDefault().getUpdateModel());
 		modelListener = new ModelListener();
-		UpdateUI.getDefault().getUpdateModel().addUpdateModelChangedListener(modelListener);
+		UpdateUI.getDefault().getUpdateModel().addUpdateModelChangedListener(
+			modelListener);
 	}
-	
+
 	public void dispose() {
 		UpdateUI.getDefault().getLabelProvider().disconnect(this);
-		UpdateUI.getDefault().getUpdateModel().removeUpdateModelChangedListener(modelListener);
+		UpdateUI
+			.getDefault()
+			.getUpdateModel()
+			.removeUpdateModelChangedListener(
+			modelListener);
 		super.dispose();
 	}
 
@@ -174,7 +195,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		layout.numColumns = 2;
 		client.setLayout(layout);
 		Label label = new Label(client, SWT.NULL);
-		label.setText("&Sites to search:");
+		label.setText("&Sites to include in search:");
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -186,10 +207,13 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		buttonContainer.setLayout(layout);
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
-	
+
 		addSiteButton = new Button(buttonContainer, SWT.PUSH);
 		addSiteButton.setText("Add &Update Site...");
-		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+		gd =
+			new GridData(
+				GridData.VERTICAL_ALIGN_BEGINNING
+					| GridData.HORIZONTAL_ALIGN_FILL);
 		addSiteButton.setLayoutData(gd);
 		SWTUtil.setButtonDimensionHint(addSiteButton);
 		addSiteButton.addSelectionListener(new SelectionAdapter() {
@@ -197,10 +221,13 @@ public class SitePage extends BannerPage implements ISearchProvider {
 				handleAddSite();
 			}
 		});
-		
+
 		addLocalButton = new Button(buttonContainer, SWT.PUSH);
 		addLocalButton.setText("Add &Local Site...");
-		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+		gd =
+			new GridData(
+				GridData.VERTICAL_ALIGN_BEGINNING
+					| GridData.HORIZONTAL_ALIGN_FILL);
 		addLocalButton.setLayoutData(gd);
 		SWTUtil.setButtonDimensionHint(addLocalButton);
 		addLocalButton.addSelectionListener(new SelectionAdapter() {
@@ -208,10 +235,14 @@ public class SitePage extends BannerPage implements ISearchProvider {
 				handleAddLocal();
 			}
 		});
-		
+
 		removeButton = new Button(buttonContainer, SWT.PUSH);
 		removeButton.setText("&Remove");
-		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+		removeButton.setEnabled(false);
+		gd =
+			new GridData(
+				GridData.VERTICAL_ALIGN_BEGINNING
+					| GridData.HORIZONTAL_ALIGN_FILL);
 		removeButton.setLayoutData(gd);
 		SWTUtil.setButtonDimensionHint(removeButton);
 		removeButton.addSelectionListener(new SelectionAdapter() {
@@ -224,18 +255,48 @@ public class SitePage extends BannerPage implements ISearchProvider {
 	}
 
 	private void createTableViewer(Composite parent) {
-		tableViewer = CheckboxTableViewer.newCheckList(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		tableViewer =
+			CheckboxTableViewer.newCheckList(
+				parent,
+				SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		Table table = tableViewer.getTable();
 		table.setLayoutData(gd);
 		tableViewer.setContentProvider(new TableContentProvider());
 		tableViewer.setLabelProvider(new TableLabelProvider());
+		tableViewer.setSorter(new ViewerSorter() {});
 		tableViewer.setInput(UpdateUI.getDefault().getUpdateModel());
+		initializeItems();
 		tableViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent e) {
-				handleSiteChecked((SiteCandidate)e.getElement(), e.getChecked());
+				handleSiteChecked(
+					(SiteCandidate) e.getElement(),
+					e.getChecked());
 			}
 		});
+		tableViewer
+			.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent e) {
+				handleSelectionChanged((IStructuredSelection) e.getSelection());
+			}
+		});
+	}
+	
+	private void initializeItems() {
+		checkItems();
+		updateSearchObject();
+	}
+	
+	private void checkItems() {
+		TableItem [] items = tableViewer.getTable().getItems();
+		ArrayList checked = new ArrayList();
+		for (int i=0; i<items.length; i++) {
+			SiteCandidate cand = (SiteCandidate)items[i].getData();
+			SiteBookmark bookmark = cand.getBookmark();
+			if (bookmark.isSelected())
+				checked.add(cand);
+		}
+		tableViewer.setCheckedElements(checked.toArray());
 	}
 
 	private void handleAddSite() {
@@ -247,29 +308,59 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		dialog.getShell().setText("New Site");
 		dialog.open();
 	}
-	
+
 	private void handleAddLocal() {
 	}
-	
+
 	private void handleRemove() {
+		BusyIndicator
+			.showWhile(tableViewer.getControl().getDisplay(), new Runnable() {
+			public void run() {
+				UpdateModel updateModel =
+					UpdateUI.getDefault().getUpdateModel();
+				IStructuredSelection ssel =
+					(IStructuredSelection) tableViewer.getSelection();
+				for (Iterator iter = ssel.iterator(); iter.hasNext();) {
+					SiteCandidate item = (SiteCandidate) iter.next();
+					if (item.isReadOnly())
+						continue;
+					updateModel.removeBookmark(item.getBookmark());
+				}
+			}
+		});
 	}
 
 	private void handleSiteChecked(SiteCandidate cand, boolean checked) {
 		cand.setSelected(checked);
 		updateSearchObject();
 	}
-	
+
+	private void handleSelectionChanged(IStructuredSelection ssel) {
+		boolean canDelete = false;
+
+		if (ssel.size() > 0) {
+			canDelete = true;
+			for (Iterator iter = ssel.iterator(); iter.hasNext();) {
+				SiteCandidate item = (SiteCandidate) iter.next();
+				if (item.isReadOnly())
+					canDelete = false;
+			}
+		}
+		removeButton.setEnabled(canDelete);
+	}
+
 	private void updateSearchObject() {
-		Object [] checked = tableViewer.getCheckedElements();
-		SiteBookmark [] bookmarks = new SiteBookmark[checked.length];
-		for (int i=0; i<checked.length; i++) {
-			SiteCandidate cand = (SiteCandidate)checked[i];
+		Object[] checked = tableViewer.getCheckedElements();
+		SiteBookmark[] bookmarks = new SiteBookmark[checked.length];
+		for (int i = 0; i < checked.length; i++) {
+			SiteCandidate cand = (SiteCandidate) checked[i];
 			bookmarks[i] = cand.getBookmark();
 		}
 		search.setSelectedBookmarks(bookmarks);
 		searchRunner.setNewSearchNeeded(true);
+		setPageComplete(checked.length>0);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.update.internal.ui.wizards.ISearchProvider#getCategory()
 	 */

@@ -6,10 +6,12 @@
  */
 package org.eclipse.update.internal.ui.wizards;
 
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.search.*;
 
 /**
@@ -25,6 +27,8 @@ public class ModeSelectionPage extends BannerPage implements ISearchProvider {
 	private SearchObject searchObject;
 	private ISearchCategory category;
 	private SearchRunner searchRunner;
+	private static final String SECTION_ID = "ModeSelectionPage";
+	private static final String P_NEW_FEATURES_MODE = "new-features-mode";
 	
 	public ModeSelectionPage(SearchRunner searchRunner) {
 		super("modeSelection");
@@ -41,6 +45,14 @@ public class ModeSelectionPage extends BannerPage implements ISearchProvider {
 	public ISearchCategory getCategory() {
 		initializeSearch();
 		return category;
+	}
+	
+	private IDialogSettings getSettings() {
+		IDialogSettings master = UpdateUI.getDefault().getDialogSettings();
+		IDialogSettings section = master.getSection(SECTION_ID);
+		if (section==null)
+			section = master.addNewSection(SECTION_ID);
+		return section;
 	}
 	
 	private void initializeSearch() {
@@ -61,14 +73,16 @@ public class ModeSelectionPage extends BannerPage implements ISearchProvider {
 		composite.setLayout(layout);
 		updatesButton = new Button(composite, SWT.RADIO);
 		updatesButton.setText("Search for updates of the currently installed features");
-		updatesButton.setSelection(true);
+		boolean newFeaturesMode = getSettings().getBoolean(P_NEW_FEATURES_MODE);;
+		updatesButton.setSelection(!newFeaturesMode);
 		updatesButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				switchMode();
 			}
 		});
 		newFeaturesButton = new Button(composite, SWT.RADIO);
-		newFeaturesButton.setText("Search for new features");
+		newFeaturesButton.setSelection(newFeaturesMode);
+		newFeaturesButton.setText("Search for new features to install");
 		newFeaturesButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				switchMode();
@@ -76,6 +90,11 @@ public class ModeSelectionPage extends BannerPage implements ISearchProvider {
 		});		
 		switchMode();
 		return composite;
+	}
+	
+	public void saveSettings() {
+		boolean updateMode = updatesButton.getSelection();
+		getSettings().put(P_NEW_FEATURES_MODE, !updateMode);
 	}
 	
 	private void switchMode() {
