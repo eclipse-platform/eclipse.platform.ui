@@ -17,6 +17,7 @@ import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 
+import org.eclipse.search.ui.SearchUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
@@ -72,8 +73,8 @@ public class XMLMarkerAnnotation extends MarkerAnnotation implements IXMLAnnotat
 							fType= AnnotationType.INFO;
 							break;
 					}
-//				} else if (marker.isSubtypeOf(SearchUI.SEARCH_MARKER)) { TODO: fix
-//					result= AnnotationType.SEARCH;
+				} else if (marker.isSubtypeOf(SearchUI.SEARCH_MARKER)) { 
+					fType= AnnotationType.SEARCH;
 				}
 			}
 		} catch (CoreException e) {

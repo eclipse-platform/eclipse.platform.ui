@@ -14,6 +14,7 @@ package org.eclipse.ant.ui.internal.preferences;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
 
 /**
  * Preference constants used in the default text editor preference store.
@@ -24,58 +25,12 @@ public class AntEditorPreferenceConstants {
 	}
 	
 	/**
-	 * A named preference that controls whether the current line highlighting is turned on or off.
-	 * <p>
-	 * Value is of type <code>Boolean</code>.
-	 * </p>
-	 */
-	public final static String EDITOR_CURRENT_LINE= "currentLine"; //$NON-NLS-1$
-
-	/**
-	 * A named preference that holds the color used to highlight the current line.
-	 * <p>
-	 * Value is of type <code>String</code>. A RGB color value encoded as a string
-	 * using class <code>PreferenceConverter</code>
-	 * </p>
-	 * 
-	 * @see org.eclipse.jface.resource.StringConverter
-	 * @see org.eclipse.jface.preference.PreferenceConverter
-	 */
-	public final static String EDITOR_CURRENT_LINE_COLOR= "currentLineColor"; //$NON-NLS-1$
-
-	/**
-	 * A named preference that controls whether the print margin is turned on or off.
-	 * <p>
-	 * Value is of type <code>Boolean</code>.
-	 * </p>
-	 */
-	public final static String EDITOR_PRINT_MARGIN= "printMargin"; //$NON-NLS-1$
-	
-	/**
-	 * A named preference that holds the color used to render the print margin.
-	 * <p>
-	 * Value is of type <code>String</code>. A RGB color value encoded as a string
-	 * using class <code>PreferenceConverter</code>
-	 * </p>
-	 * 
-	 * @see org.eclipse.jface.resource.StringConverter
-	 * @see org.eclipse.jface.preference.PreferenceConverter
-	 */
-	public final static String EDITOR_PRINT_MARGIN_COLOR= "printMarginColor"; //$NON-NLS-1$
-
-	/**
-	 * Print margin column. Int value.
-	 */
-	public final static String EDITOR_PRINT_MARGIN_COLUMN= "printMarginColumn"; //$NON-NLS-1$
-
-
-	/**
 	 * A named preference that controls whether the editor shows problem indicators in text (squiggly lines). 
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
 	 */
-	public final static String EDITOR_PROBLEM_INDICATION= "problemIndication"; //$NON-NLS-1$
+	public final static String EDITOR_PROBLEM_INDICATION= "errorIndication"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that holds the color used to render problem indicators.
@@ -88,7 +43,7 @@ public class AntEditorPreferenceConstants {
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 */
-	public final static String EDITOR_PROBLEM_INDICATION_COLOR= "problemIndicationColor"; //$NON-NLS-1$
+	public final static String EDITOR_PROBLEM_INDICATION_COLOR= "errorIndicationColor"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether the editor shows warning indicators in text (squiggly lines). 
@@ -334,7 +289,7 @@ public class AntEditorPreferenceConstants {
 	public final static String EDITOR_LINE_NUMBER_RULER_COLOR= "lineNumberColor"; //$NON-NLS-1$
 	
 	/**
-	 * A named preference that controls if the Java code assist gets auto activated.
+	 * A named preference that controls if the Ant Editor code assist gets auto activated.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
@@ -350,7 +305,7 @@ public class AntEditorPreferenceConstants {
 	public final static String CODEASSIST_AUTOACTIVATION_DELAY= "content_assist_autoactivation_delay"; //$NON-NLS-1$
 
 	/**
-	 * A named preference that controls if the Java code assist inserts a
+	 * A named preference that controls if the Ant editor code assist inserts a
 	 * proposal automatically if only one proposal is available.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
@@ -392,49 +347,8 @@ public class AntEditorPreferenceConstants {
 	public final static String CODEASSIST_PROPOSALS_FOREGROUND= "content_assist_proposals_foreground"; //$NON-NLS-1$
 
 	public static void initializeDefaultValues(IPreferenceStore store) {
-
-		store.setDefault(AntEditorPreferenceConstants.EDITOR_CURRENT_LINE, true);
-		PreferenceConverter.setDefault(store, AntEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, new RGB(225, 235, 224));
-
-		store.setDefault(AntEditorPreferenceConstants.EDITOR_PRINT_MARGIN, false);
-		store.setDefault(AntEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 80);
-		PreferenceConverter.setDefault(store, AntEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, new RGB(176, 180 , 185));
-
-		store.setDefault(AntEditorPreferenceConstants.EDITOR_PROBLEM_INDICATION, true);
-		PreferenceConverter.setDefault(store, AntEditorPreferenceConstants.EDITOR_PROBLEM_INDICATION_COLOR, new RGB(255, 0 , 128));
-		store.setDefault(AntEditorPreferenceConstants.EDITOR_ERROR_INDICATION_IN_OVERVIEW_RULER, true);
-
-		store.setDefault(AntEditorPreferenceConstants.EDITOR_WARNING_INDICATION, true);
-		PreferenceConverter.setDefault(store, AntEditorPreferenceConstants.EDITOR_WARNING_INDICATION_COLOR, new RGB(244, 200 , 45));
-		store.setDefault(AntEditorPreferenceConstants.EDITOR_WARNING_INDICATION_IN_OVERVIEW_RULER, true);
-
-		store.setDefault(AntEditorPreferenceConstants.EDITOR_INFO_INDICATION, true);
-		PreferenceConverter.setDefault(store, AntEditorPreferenceConstants.EDITOR_INFO_INDICATION_COLOR, new RGB(244, 200 , 45));
-		store.setDefault(AntEditorPreferenceConstants.EDITOR_INFO_INDICATION_IN_OVERVIEW_RULER, true);
-
-		store.setDefault(AntEditorPreferenceConstants.EDITOR_TASK_INDICATION, false);
-		PreferenceConverter.setDefault(store, AntEditorPreferenceConstants.EDITOR_TASK_INDICATION_COLOR, new RGB(0, 128, 255));
-		store.setDefault(AntEditorPreferenceConstants.EDITOR_TASK_INDICATION_IN_OVERVIEW_RULER, false);
-
-		store.setDefault(AntEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION, false);
-		PreferenceConverter.setDefault(store, AntEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION_COLOR, new RGB(34, 164, 99));
-		store.setDefault(AntEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION_IN_OVERVIEW_RULER, false);
-
-		store.setDefault(AntEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION, false);
-		PreferenceConverter.setDefault(store, AntEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION_COLOR, new RGB(192, 192, 192));
-		store.setDefault(AntEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION_IN_OVERVIEW_RULER, false);
-
-		store.setDefault(AntEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION, false);
-		PreferenceConverter.setDefault(store, AntEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_COLOR, new RGB(0, 0, 0));
-		store.setDefault(AntEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_IN_OVERVIEW_RULER, false);
-
-//		store.setDefault(AntEditorPreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS, true);
-
-		store.setDefault(AntEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, true);
-
-		store.setDefault(AntEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, false);
-		PreferenceConverter.setDefault(store, AntEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, new RGB(0, 0, 0));
-		
+		TextEditorPreferenceConstants.initializeDefaultValues(store);
+	
 		store.setDefault(AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT, true);
 		store.setDefault(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION, true);
 		store.setDefault(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY, 500);

@@ -18,5 +18,6 @@
     <classpathentry kind="src" path="Ant Editor"/>
     <classpathentry kind="src" path="/org.apache.ant"/>
     <classpathentry kind="src" path="/org.apache.xerces"/>
+    <classpathentry kind="src" path="/org.eclipse.search"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>

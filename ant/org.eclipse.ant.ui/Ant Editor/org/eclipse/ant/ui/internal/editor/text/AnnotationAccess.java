@@ -11,12 +11,20 @@
 package org.eclipse.ant.ui.internal.editor.text;
 
 import org.eclipse.jface.text.source.Annotation;
-import org.eclipse.jface.text.source.IAnnotationAccess;
+import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
+import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
 /**
  * AnnotationAccess.java
  */
-public class AnnotationAccess implements IAnnotationAccess {
+public class AnnotationAccess extends DefaultMarkerAnnotationAccess {
+
+	/**
+	 * @param markerAnnotationPreferences
+	 */
+	public AnnotationAccess(MarkerAnnotationPreferences markerAnnotationPreferences) {
+		super(markerAnnotationPreferences);
+	}
 
 	/*
 	 * @see org.eclipse.jface.text.source.IAnnotationAccess#getType(org.eclipse.jface.text.source.Annotation)
@@ -28,14 +36,8 @@ public class AnnotationAccess implements IAnnotationAccess {
 				return xmlAnnotation.getAnnotationType();
 			}
 		}
-		return null;
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationAccess#isMultiLine(org.eclipse.jface.text.source.Annotation)
-	 */
-	public boolean isMultiLine(Annotation annotation) {
-		return true;
+		
+		return super.getType(annotation);
 	}
 
 	/*
@@ -48,6 +50,6 @@ public class AnnotationAccess implements IAnnotationAccess {
 				return xmlAnnotation.isTemporary();
 			}
 		}
-		return false;
+		return super.isTemporary(annotation);
 	}
 }

@@ -14,6 +14,7 @@
 		<project>org.eclipse.jdt.core</project>
 		<project>org.eclipse.jdt.debug.ui</project>
 		<project>org.eclipse.jdt.launching</project>
+		<project>org.eclipse.search</project>
 		<project>org.eclipse.swt</project>
 		<project>org.eclipse.ui</project>
 		<project>org.eclipse.ui.externaltools</project>
