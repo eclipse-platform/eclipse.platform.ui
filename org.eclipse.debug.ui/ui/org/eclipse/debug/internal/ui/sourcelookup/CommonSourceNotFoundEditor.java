@@ -37,6 +37,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -200,8 +201,7 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 			new EditSourceLookupPathDialog(DebugUIPlugin.getShell(),(AbstractSourceLookupDirector) locator);
 		
 		int result = dialog.open();		
-		if(result == Dialog.OK)
-		{
+		if(result == Window.OK) {
 			resetEditor();				
 		}
 	}

@@ -17,6 +17,7 @@ import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.internal.core.sourcelookup.containers.FolderSourceContainer;
 import org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -35,7 +36,7 @@ public class FolderSourceContainerBrowser implements ISourceContainerBrowser {
 	public ISourceContainer[] createSourceContainers(Shell shell) {
 		Dialog dialog =new FolderSourceContainerDialog(shell,  new WorkbenchLabelProvider(), new WorkbenchContentProvider());
 		
-		if (dialog.open() == ElementTreeSelectionDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			Object[] selection= ((ElementTreeSelectionDialog)dialog).getResult();
 			ArrayList containers = new ArrayList();			
 			for (int i= 0; i < selection.length; i++) {

@@ -22,6 +22,7 @@ import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -42,7 +43,7 @@ public class ProjectSourceContainerBrowser implements ISourceContainerBrowser {
 		ILabelProvider labelProvider = new WorkbenchLabelProvider();
 		Dialog dialog = new ProjectSourceContainerDialog(shell,input, contentProvider, labelProvider,
 				SourceLookupUIMessages.getString("projectSelection.chooseLabel")); //$NON-NLS-1$
-		if(dialog.open() == ListSelectionDialog.OK){		
+		if(dialog.open() == Window.OK){		
 			Object[] elements= ((ListSelectionDialog)dialog).getResult();
 			ArrayList res= new ArrayList();
 			for (int i= 0; i < elements.length; i++) {
