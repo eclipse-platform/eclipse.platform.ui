@@ -92,6 +92,9 @@ public class AddToVersionControlDialog extends DetailsDialog {
 		
 		addUnaddedResourcesArea(composite);
 		
+		// set F1 help
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.ADD_TO_VERSION_CONTROL_DIALOG);
+		
 		return composite;
 	}
 
