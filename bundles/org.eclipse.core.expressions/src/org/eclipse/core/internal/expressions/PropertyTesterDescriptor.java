@@ -83,7 +83,7 @@ public class PropertyTesterDescriptor implements IPropertyTester {
 	}
 	
 	public boolean isDeclaringPluginActive() {
-		Bundle fBundle= Platform.getBundle(fConfigElement.getDeclaringExtension().getNamespace());
+		Bundle fBundle= Platform.getBundle(fConfigElement.getNamespace());
 		return fBundle.getState() == Bundle.ACTIVE;		
 	}
 	

@@ -102,7 +102,7 @@ public abstract class PropertyTester implements IPropertyTester {
 	 * {@inheritDoc}
 	 */
 	public boolean isDeclaringPluginActive() {
-		Bundle fBundle= Platform.getBundle(fConfigElement.getDeclaringExtension().getNamespace());
+		Bundle fBundle= Platform.getBundle(fConfigElement.getNamespace());
 		return fBundle.getState() == Bundle.ACTIVE;		
 	}
 	
