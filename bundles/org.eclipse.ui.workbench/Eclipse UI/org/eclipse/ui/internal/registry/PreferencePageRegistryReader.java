@@ -10,17 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
-import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -42,8 +37,7 @@ import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
  *  Instances access the registry that is provided at creation time in order
  *  to determine the contributed preference pages
  */
-public class PreferencePageRegistryReader extends RegistryReader {
-	public static final String ATT_CATEGORY = "category"; //$NON-NLS-1$
+public class PreferencePageRegistryReader extends CategorizedPageRegistryReader {
 
 	public static final String ATT_GROUP = "group"; //$NON-NLS-1$
 
@@ -57,27 +51,13 @@ public class PreferencePageRegistryReader extends RegistryReader {
 
 	public static final String ATT_ICON = "icon"; //$NON-NLS-1$
 
-	public static final String PREFERENCE_SEPARATOR = "/"; //$NON-NLS-1$
-
 	public static final String TAG_GROUP = "group"; //$NON-NLS-1$
 
 	public static final String ATT_PARENT_GROUP = "parent"; //$NON-NLS-1$
-	
+
 	public static final String ADVANCED_ID = "org.eclipse.ui.advanced"; //$NON-NLS-1$
 
-	private static final Comparator comparer = new Comparator() {
-		private Collator collator = Collator.getInstance();
-
-		public int compare(Object arg0, Object arg1) {
-			String s1 = ((CategoryNode) arg0).getFlatCategory();
-			String s2 = ((CategoryNode) arg1).getFlatCategory();
-			return collator.compare(s1, s2);
-		}
-	};
-
 	private List nodes;
-
-	private List topLevelNodes;
 
 	private Collection topGroups;
 
@@ -85,67 +65,40 @@ public class PreferencePageRegistryReader extends RegistryReader {
 
 	private IWorkbench workbench;
 
-	/**
-	 * Internal class used to sort all the preference page nodes
-	 * based on the category.
-	 */
-	class CategoryNode {
-		private WorkbenchPreferenceNode node;
+	class PreferencesCategoryNode extends CategoryNode {
 
-		private String flatCategory;
+		WorkbenchPreferenceNode node;
 
 		/**
-		 * Default constructor
+		 * Create a new instance of the receiver.
+		 * @param reader
+		 * @param nodeToCategorize
 		 */
-		public CategoryNode(WorkbenchPreferenceNode node) {
-			this.node = node;
+		public PreferencesCategoryNode(CategorizedPageRegistryReader reader,
+				WorkbenchPreferenceNode nodeToCategorize) {
+			super(reader);
+			this.node = nodeToCategorize;
 		}
-
-		/**
-		 * Return the preference node this category represents
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.internal.registry.CategorizedPageRegistryReader.CategoryNode#getLabelText()
 		 */
-		public WorkbenchPreferenceNode getNode() {
+		String getLabelText() {
+			return node.getLabelText();
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.internal.registry.CategorizedPageRegistryReader.CategoryNode#getLabelText(java.lang.Object)
+		 */
+		String getLabelText(Object element) {
+			return ((WorkbenchPreferenceNode) element).getLabelText();
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.internal.registry.CategorizedPageRegistryReader.CategoryNode#getNode()
+		 */
+		Object getNode() {
 			return node;
-		}
-
-		/**
-		 * Return the flatten category
-		 */
-		public String getFlatCategory() {
-			if (flatCategory == null) {
-				initialize();
-				if (flatCategory == null)
-					flatCategory = node.getLabelText();
-			}
-			return flatCategory;
-		}
-
-		/*
-		 * Initialize the flat category to include the parents'
-		 * category names and the current node's label
-		 */
-		private void initialize() {
-			String category = node.getCategory();
-			if (category == null)
-				return;
-
-			StringBuffer sb = new StringBuffer();
-			StringTokenizer stok = new StringTokenizer(category, PREFERENCE_SEPARATOR);
-			WorkbenchPreferenceNode immediateParent = null;
-			while (stok.hasMoreTokens()) {
-				String pathID = stok.nextToken();
-				immediateParent = findNode(pathID);
-				if (immediateParent == null)
-					return;
-				if (sb.length() > 0)
-					sb.append(PREFERENCE_SEPARATOR);
-				sb.append(immediateParent.getLabelText());
-			}
-
-			if (sb.length() > 0)
-				sb.append(PREFERENCE_SEPARATOR);
-			sb.append(node.getLabelText());
-			flatCategory = sb.toString();
 		}
 	}
 
@@ -156,10 +109,10 @@ public class PreferencePageRegistryReader extends RegistryReader {
 		workbench = newWorkbench;
 	}
 
-	/**
-	 * Searches for the top-level node with the given id.
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.CategorizedPageRegistryReader#findNode(java.lang.String)
 	 */
-	private WorkbenchPreferenceNode findNode(String id) {
+	Object findNode(String id) {
 		for (int i = 0; i < nodes.size(); i++) {
 			WorkbenchPreferenceNode node = (WorkbenchPreferenceNode) nodes.get(i);
 			if (node.getId().equals(id))
@@ -168,18 +121,45 @@ public class PreferencePageRegistryReader extends RegistryReader {
 		return null;
 	}
 
-	/**
-	 * Searches for the child node with the given ID in the provided parent node.
-	 * If not found, null is returned.
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.CategorizedPageRegistryReader#findNode(java.lang.Object, java.lang.String)
 	 */
-	private WorkbenchPreferenceNode findNode(WorkbenchPreferenceNode parent, String id) {
-		IPreferenceNode[] subNodes = parent.getSubNodes();
+	Object findNode(Object parent, String currentToken) {
+		IPreferenceNode[] subNodes = ((WorkbenchPreferenceNode) parent).getSubNodes();
 		for (int i = 0; i < subNodes.length; i++) {
 			WorkbenchPreferenceNode node = (WorkbenchPreferenceNode) subNodes[i];
-			if (node.getId().equals(id))
+			if (node.getId().equals(currentToken))
 				return node;
 		}
 		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.CategorizedPageRegistryReader#add(java.lang.Object, java.lang.Object)
+	 */
+	void add(Object parent, Object node) {
+		((IPreferenceNode) parent).add((IPreferenceNode) node);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.CategorizedPageRegistryReader#createCategoryNode(org.eclipse.ui.internal.registry.CategorizedPageRegistryReader, java.lang.Object)
+	 */
+	CategoryNode createCategoryNode(CategorizedPageRegistryReader reader, Object object) {
+		return new PreferencesCategoryNode(reader, (WorkbenchPreferenceNode) object);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.CategorizedPageRegistryReader#getCategory(java.lang.Object)
+	 */
+	String getCategory(Object node) {
+		return ((WorkbenchPreferenceNode) node).getCategory();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.CategorizedPageRegistryReader#getNodes()
+	 */
+	Collection getNodes() {
+		return nodes;
 	}
 
 	/**
@@ -200,71 +180,6 @@ public class PreferencePageRegistryReader extends RegistryReader {
 		processNodes();
 		processGroups();
 
-	}
-
-	/**
-	 * Process the preference page nodes.
-	 */
-	private void processNodes() {
-		topLevelNodes = new ArrayList();
-		//root nodes (which contain subnodes)
-
-		//Add root nodes to the contributions vector	
-		StringTokenizer tokenizer;
-		String currentToken;
-
-		// Make the advisor's favorite the first category
-		IPreferenceNode favorite = null;
-		String favoriteId = ((Workbench) workbench).getMainPreferencePageId();
-		if (favoriteId != null) {
-			favorite = findNode(favoriteId);
-		}
-		if (favorite != null) {
-			topLevelNodes.add(favorite);
-		}
-
-		// Sort nodes based on flattened display path composed of
-		// actual labels of nodes referenced in category attribute.
-		Object[] sortedNodes = sortByCategories(nodes);
-		for (int i = 0; i < sortedNodes.length; i++) {
-			//Iterate through all the nodes
-			CategoryNode categoryNode = (CategoryNode) sortedNodes[i];
-			WorkbenchPreferenceNode node = categoryNode.getNode();
-			if (node == favorite) {
-				// skip it - favorite already at the top of the list
-				continue;
-			}
-			String category = node.getCategory();
-			if (category == null) {
-				topLevelNodes.add(node);
-				continue;
-			}
-			// has category
-			tokenizer = new StringTokenizer(category, PREFERENCE_SEPARATOR);
-			WorkbenchPreferenceNode parent = null;
-			while (tokenizer.hasMoreElements()) {
-				currentToken = tokenizer.nextToken();
-				WorkbenchPreferenceNode child = null;
-				if (parent == null)
-					child = findNode(currentToken);
-				else
-					child = findNode(parent, currentToken);
-				if (child == null) {
-					parent = null;
-					break;
-				} else {
-					parent = child;
-				}
-			}
-			if (parent != null) {
-				parent.add(node);
-			} else {
-				//Could not find the parent - log
-				WorkbenchPlugin
-						.log("Invalid preference page path: " + categoryNode.getFlatCategory()); //$NON-NLS-1$
-				topLevelNodes.add(node);
-			}
-		}
 	}
 
 	/**
@@ -332,27 +247,9 @@ public class PreferencePageRegistryReader extends RegistryReader {
 			String contributingPluginId = element.getDeclaringExtension().getNamespace();
 			image = AbstractUIPlugin.imageDescriptorFromPlugin(contributingPluginId, imageName);
 		}
-		WorkbenchPreferenceNode node = new WorkbenchPreferenceNode(id, name, category,
-				image, element, workbench);
+		WorkbenchPreferenceNode node = new WorkbenchPreferenceNode(id, name, category, image,
+				element, workbench);
 		return node;
-	}
-
-	/**
-	 * Sort the nodes based on full category + name. Category used for sorting
-	 * is created by substituting node IDs with labels of the referenced
-	 * nodes. workbench node is excluded from sorting because it always
-	 * appears first in the dialog.
-	 */
-	private Object[] sortByCategories(List categoryNodes) {
-		//sort by categories
-		CategoryNode[] nodeArray = new CategoryNode[categoryNodes.size()];
-
-		for (int i = 0; i < categoryNodes.size(); i++) {
-			nodeArray[i] = new CategoryNode((WorkbenchPreferenceNode) categoryNodes.get(i));
-		}
-
-		Collections.sort(Arrays.asList(nodeArray), comparer);
-		return nodeArray;
 	}
 
 	/**
@@ -386,7 +283,7 @@ public class PreferencePageRegistryReader extends RegistryReader {
 		while (groupIterator.hasNext()) {
 			WorkbenchPreferenceGroup nextGroup = (WorkbenchPreferenceGroup) groupIterator.next();
 			Iterator pages = nextGroup.getPageIds().iterator();
-			while(pages.hasNext()){
+			while (pages.hasNext()) {
 				nodeToGroupMapping.put(pages.next(), nextGroup);
 			}
 		}
@@ -398,10 +295,8 @@ public class PreferencePageRegistryReader extends RegistryReader {
 			WorkbenchPreferenceNode node = (WorkbenchPreferenceNode) nodeIterator.next();
 			if (nodeToGroupMapping.containsKey(node.getId())) {
 				((WorkbenchPreferenceGroup) nodeToGroupMapping.get(node.getId())).addNode(node);
-			}
-			else if(advanced != null && topLevelNodes.contains(node))
-					advanced.addNode(node);
-				
+			} else if (advanced != null && topLevelNodes.contains(node))
+				advanced.addNode(node);
 
 		}
 
@@ -451,5 +346,12 @@ public class PreferencePageRegistryReader extends RegistryReader {
 	 */
 	public Collection getTopLevelNodes() {
 		return topLevelNodes;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.CategorizedPageRegistryReader#getFavoriteNodeId()
+	 */
+	String getFavoriteNodeId() {
+		return ((Workbench) workbench).getMainPreferencePageId();
 	}
 }

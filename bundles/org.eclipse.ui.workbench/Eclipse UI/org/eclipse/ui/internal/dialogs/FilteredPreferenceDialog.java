@@ -292,7 +292,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	 * Return the categories in the receiver.
 	 * @return WorkbenchPreferenceGroup[]
 	 */
-	private WorkbenchPreferenceGroup[] getGroups() {
+	protected WorkbenchPreferenceGroup[] getGroups() {
 		return ((WorkbenchPreferenceManager) WorkbenchPlugin.getDefault().getPreferenceManager())
 				.getGroups();
 	}

@@ -12,6 +12,8 @@ package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.jface.preference.PreferenceManager;
 
+import org.eclipse.ui.internal.WorkbenchPlugin;
+
 /**
  * This class is created to avoid mentioning preferences
  * in this context. Ideally, JFace preference classes should be
@@ -24,6 +26,6 @@ public class PropertyPageManager extends PreferenceManager {
      * The constructor.
      */
     public PropertyPageManager() {
-        super();
+        super(WorkbenchPlugin.PREFERENCE_PAGE_CATEGORY_SEPARATOR);
     }
 }

@@ -11,6 +11,8 @@
 package org.eclipse.ui.internal.dialogs;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -18,15 +20,18 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
+
 import org.eclipse.jface.resource.ImageDescriptor;
+
 import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.SelectionEnabler;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+
 import org.eclipse.ui.internal.LegacyResourceSupport;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;
-import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * This property page contributor is created from page entry
@@ -43,6 +48,14 @@ public class RegistryPageContributor implements IPropertyPageContributor {
     private String iconName;
 
     private String pageId;
+    
+    private String category;
+    
+    /**
+     * The list of subpages (immediate children) of this node (element type:
+     * <code>RegistryPageContributor</code>).
+     */
+    private Collection subPages = new ArrayList();
 
     private boolean isResourceContributor = false;
 
@@ -62,7 +75,8 @@ public class RegistryPageContributor implements IPropertyPageContributor {
      * PropertyPageContributor constructor.
      */
     public RegistryPageContributor(String pluginId, String pageId,
-            String pageName, String iconName, HashMap filterProperties,
+            String pageName, String iconName, String categoryName,
+			HashMap filterProperties,
             String objectClassName, boolean adaptable,
             IConfigurationElement pageElement) {
         this.pluginId = pluginId;
@@ -71,6 +85,7 @@ public class RegistryPageContributor implements IPropertyPageContributor {
         this.iconName = iconName;
         this.filterProperties = filterProperties;
         this.pageElement = pageElement;
+        this.category = categoryName;
 
         //Only adapt if explicitly allowed to do so
         if (adaptable)
@@ -84,7 +99,13 @@ public class RegistryPageContributor implements IPropertyPageContributor {
     public boolean contributePropertyPages(PropertyPageManager mng,
             IAdaptable element) {
         PropertyPageNode node = new PropertyPageNode(this, element);
-        mng.addToRoot(node);
+        
+        if(getCategory() == null){
+        	mng.addToRoot(node);
+        	return true;
+        }
+        mng.addTo(getCategory(),node);
+    
         return true;
     }
 
@@ -264,4 +285,42 @@ public class RegistryPageContributor implements IPropertyPageContributor {
         return isResourceContributor;
     }
 
+	/**
+	 * Get the id of the category.
+	 * @return String
+	 */
+	public String getCategory() {
+		return category;
+	}
+	/**
+	 * Return the children of the receiver.
+	 * @return Collection
+	 */
+	public Collection getSubPages() {
+		return subPages;
+	}
+	
+	
+	/**
+	 * Add child to the list of children.
+	 * @param child
+	 */
+	public void addSubPage(RegistryPageContributor child){
+		subPages.add(child);
+	}
+
+	/**
+	 * Get the child with the given id.
+	 * @param id
+	 * @return RegistryPageContributor
+	 */
+	public Object getChild(String id) {
+		Iterator iterator = subPages.iterator();
+		while(iterator.hasNext()){
+			RegistryPageContributor next = (RegistryPageContributor) iterator.next();
+			if(next.getPageId().equals(id))
+				return next;
+		}
+		return null;
+	}
 }

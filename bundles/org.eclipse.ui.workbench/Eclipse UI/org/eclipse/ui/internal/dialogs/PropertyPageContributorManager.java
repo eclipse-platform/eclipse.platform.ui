@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.ObjectContributorManager;
 import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;
@@ -54,6 +55,14 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
                 return 1;
             }
 
+            //If one is a child put it second
+            if(c2.getPageId().equals(c1.getCategory()))
+            		return -1;
+            	
+            //If one is a child put it second
+            if(c1.getPageId().equals(c2.getCategory()))
+            		return 1;
+            	
             // The other pages are sorted in alphabetical order			 
             String s1 = c1.getPageName();
             String s2 = c2.getPageName();

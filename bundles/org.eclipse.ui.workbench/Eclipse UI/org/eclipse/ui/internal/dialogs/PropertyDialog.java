@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.swt.widgets.Shell;
 
 /**
  * This dialog is created and shown when 'Properties' action is performed while
@@ -61,4 +62,12 @@ public class PropertyDialog extends FilteredPreferenceDialog {
     protected void setSelectedNodePreference(String pageId) {
         lastPropertyId = pageId;
     }
+    
+    /* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.dialogs.FilteredPreferenceDialog#getGroups()
+	 */
+	protected WorkbenchPreferenceGroup[] getGroups() {
+		//There is no grouping in properties
+		return new WorkbenchPreferenceGroup[0]; 
+	}
 }

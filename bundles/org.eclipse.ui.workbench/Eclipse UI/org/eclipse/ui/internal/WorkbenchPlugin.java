@@ -119,7 +119,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     /**
      * The character used to separate preference page category ids
      */
-    private static char PREFERENCE_PAGE_CATEGORY_SEPARATOR = '/';
+    public static char PREFERENCE_PAGE_CATEGORY_SEPARATOR = '/';
 
     // Other data.
     private WorkbenchPreferenceManager preferenceManager;
