@@ -1824,10 +1824,7 @@ public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation
 		// know that they have been created before and must have a description
 		IProjectDescription desc  = ((Project) project).internalGetDescription();
 		testLocation = desc.getLocation();
-		// if the project uses the default location then continue
-		if (testLocation == null)
-			continue;
-		if (isOverlapping(location, testLocation)) {
+		if (testLocation != null && isOverlapping(location, testLocation)) {
 			message = Policy.bind("links.overlappingResource", location.toString()); //$NON-NLS-1$
 			return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, null, message);
 		}
@@ -1845,7 +1842,7 @@ public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation
 		for (int j = 0; j < children.length; j++) {
 			if (children[j].isLinked()) {
 				testLocation = children[j].getLocation();
-				if (isOverlapping(location, testLocation)) {
+				if (testLocation != null && isOverlapping(location, testLocation)) {
 					message = Policy.bind("links.overlappingResource", location.toString()); //$NON-NLS-1$
 					return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, null, message);
 				}
