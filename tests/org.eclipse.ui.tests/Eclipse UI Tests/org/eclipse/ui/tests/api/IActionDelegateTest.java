@@ -26,10 +26,12 @@ public abstract class IActionDelegateTest extends UITestCase {
 	}
 	
 	public void testRun() throws Throwable {
-		// When an action delegate is run the
-		// selectionChanged and run methods should be called
-		// in that order.
-		addAndRunAction();
+		// Create the action.
+		Object obj = createActionWidget();
+		
+		// Run the action delegate.
+		// The selectionChanged and run methods should be called, in that order.
+		runAction(obj);
 		MockActionDelegate delegate = getDelegate();
 		assertNotNull(delegate);
 		assertTrue(delegate.callHistory.verifyOrder(
@@ -37,39 +39,48 @@ public abstract class IActionDelegateTest extends UITestCase {
 	}
 	
 	public void testSelectionChanged() throws Throwable {
-		// After an action has been created, if a selection
-		// occurs the selectionChanged method should be
-		// invoked.
-		
-		// Load the delegate by running it.
-		testRun();
+		// Create the delegate by running it.
+		Object obj = createActionWidget();
+		runAction(obj);
 		MockActionDelegate delegate = getDelegate();
 		assertNotNull(delegate);
 		
-		// Now fire a selection.
+		// Fire a selection.
+		// The selectionChanged method should be invoked.
 		delegate.callHistory.clear();		
-		fireSelection();
+		fireSelection(obj);
 		assertTrue(delegate.callHistory.contains("selectionChanged"));
 	}
 	
 	/**
-	 * Returns the last mock action delegate created.
+	 * Returns the last mock action delegate which was created.
 	 */
 	protected MockActionDelegate getDelegate() throws Throwable {
-		MockActionDelegate delegate = 
-			MockActionDelegate.lastDelegate;
+		MockActionDelegate delegate = MockActionDelegate.lastDelegate;
 		assertNotNull(delegate);
 		return delegate;
 	}
 
 	/**
-	 * Adds and runs the action delegate.  Subclasses should override
+	 * Creates the widget for an action, and adds the action.
+	 * 
+	 * @returns an object which will be passed to runAction and 
+	 * fireSelection.
 	 */
-	protected abstract void addAndRunAction() throws Throwable;
+	protected abstract Object createActionWidget() throws Throwable;
 	
 	/**
-	 * Fires a selection from the source.  Subclasses should override
+	 * Adds and runs the action delegate.  Subclasses should override.
+	 * 
+	 * @param obj the object returned from createActionWidget.
 	 */
-	protected abstract void fireSelection() throws Throwable;
+	protected abstract void runAction(Object widget) throws Throwable;
+	
+	/**
+	 * Fires a selection from the source.  Subclasses should override.
+	 * 
+	 * @param obj the object returned from createActionWidget.
+	 */
+	protected abstract void fireSelection(Object widget) throws Throwable;
 }
 

@@ -70,10 +70,15 @@
 	   class="org.eclipse.ui.tests.api.ListView"
 	   menuType="dynamic"/>
 	<view
-       id="org.eclipse.ui.tests.propertysheet.SelectionProviderView"
+       id="org.eclipse.ui.tests.SelectionProviderView"
 	   name="Selection Provider Test View"
        icon="icons\view.gif"
-	   class="org.eclipse.ui.tests.propertysheet.SelectionProviderView"/>
+	   class="org.eclipse.ui.tests.SelectionProviderView"/>
+	<view
+       id="org.eclipse.ui.tests.SelectionProviderView2"
+	   name="Selection Provider Test View 2"
+       icon="icons\view.gif"
+	   class="org.eclipse.ui.tests.SelectionProviderView"/>
 </extension>
 
 <extension

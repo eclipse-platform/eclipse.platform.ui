@@ -1,26 +1,14 @@
 package org.eclipse.ui.tests.propertysheet;
 
-import java.util.ArrayList;
-import java.util.Random;
-import junit.framework.TestCase;
-import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
+import java.util.*;
+
+import org.eclipse.jdt.junit.util.UITestCase;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.jdt.junit.util.UITestCase;
-import org.eclipse.ui.views.properties.ColorPropertyDescriptor;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.ui.views.properties.IPropertySource;
-import org.eclipse.ui.views.properties.PropertySheet;
-import org.eclipse.ui.views.properties.TextPropertyDescriptor;
+import org.eclipse.ui.*;
+import org.eclipse.ui.tests.SelectionProviderView;
+import org.eclipse.ui.views.properties.*;
 /**
  *  The class implements a test for the workbench's default
  * property sheet page. It does this by firing a sequence of 
@@ -203,7 +191,7 @@ public class PropertySheetAuto extends UITestCase {
 			
 	protected IWorkbenchPart createTestPart(IWorkbenchPage page) throws Throwable {
 		IViewPart view = page.showView("org.eclipse.ui.views.PropertySheet");
-		selectionProviderView = (SelectionProviderView)page.showView("org.eclipse.ui.tests.propertysheet.SelectionProviderView");
+		selectionProviderView = (SelectionProviderView)page.showView(SelectionProviderView.ID);
 		return view;
 		
 	}

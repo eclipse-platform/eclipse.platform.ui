@@ -34,10 +34,18 @@ public class IViewActionDelegateTest extends IActionDelegateTest {
 	}
 	
 	/**
+	 * @see IActionDelegateTest#createActionWidget()
+	 */
+	protected Object createActionWidget() throws Throwable {
+		MockViewPart view = (MockViewPart)fPage.showView(TEST_VIEW_ID);
+		return view;
+	}
+
+	/**
 	 * @see IActionDelegateTest#runAction()
 	 */
-	protected void addAndRunAction() throws Throwable {
-		MockViewPart view = (MockViewPart)fPage.showView(TEST_VIEW_ID);
+	protected void runAction(Object widget) throws Throwable {
+		MockViewPart view = (MockViewPart)widget;
 		IMenuManager mgr = view.getViewSite().getActionBars().getMenuManager();
 		ActionUtil.runActionWithLabel(this, mgr, "Mock Action");
 	}
@@ -45,8 +53,8 @@ public class IViewActionDelegateTest extends IActionDelegateTest {
 	/**
 	 * @see IActionDelegateTest#fireSelection()
 	 */
-	protected void fireSelection() throws Throwable {
-		MockViewPart view = (MockViewPart)fPage.showView(TEST_VIEW_ID);
+	protected void fireSelection(Object widget) throws Throwable {
+		MockViewPart view = (MockViewPart)widget;
 		view.fireSelection();
 	}
 }

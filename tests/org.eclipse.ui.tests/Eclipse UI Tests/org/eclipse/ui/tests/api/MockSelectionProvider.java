@@ -12,8 +12,14 @@ public class MockSelectionProvider implements ISelectionProvider {
 	 * Fires out a selection to all listeners.
 	 */
 	public void fireSelection() {
-		SelectionChangedEvent event = new SelectionChangedEvent(this,
-			StructuredSelection.EMPTY);
+		fireSelection(new SelectionChangedEvent(this,
+			StructuredSelection.EMPTY));
+	}
+		
+	/**
+	 * Fires out a selection to all listeners.
+	 */
+	public void fireSelection(SelectionChangedEvent event) {
 		Iterator iter = listeners.iterator();
 		while (iter.hasNext()) {
 			((ISelectionChangedListener)iter.next()).selectionChanged(event);

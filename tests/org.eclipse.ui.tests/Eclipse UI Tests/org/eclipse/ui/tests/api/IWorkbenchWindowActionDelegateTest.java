@@ -15,14 +15,12 @@ public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
 	}
 
 	public void testInit() throws Throwable {
-		// When an action delegate is run the
-		// init, selectionChanged, and run methods should
-		// be called, in that order.
-		
 		// Run the action.
 		testRun();
 		
 		// Verify lifecycle.
+		// The init, selectionChanged, and run methods should
+		// be called, in that order.
 		MockActionDelegate delegate = getDelegate();
 		assertNotNull(delegate);
 		assertTrue(delegate.callHistory.verifyOrder( 
@@ -30,45 +28,48 @@ public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
 	}
 	
 	public void testDispose() throws Throwable {
-		// When an action delegate is removed from the window
-		// the dispose method should be called.
-		
 		// Run the action.
 		testRun();
 		
 		// Get the action.
 		MockActionDelegate delegate = getDelegate();
 		assertNotNull(delegate);
-		delegate.callHistory.clear();
 		
 		// Dispose action.
+		// Verify that the dispose method is called.
+		delegate.callHistory.clear();
 		removeAction();
-		
-		// Verify lifecycle.
 		assertTrue(delegate.callHistory.contains("dispose"));
 	}
 	
 	/**
+	 * @see IActionDelegateTest#createActionWidget()
+	 */
+	protected Object createActionWidget() throws Throwable {
+		fPage.showActionSet("org.eclipse.ui.tests.api.MockActionSet");
+		return null;
+	}
+
+	/**
 	 * @see IActionDelegateTest#runAction()
 	 */
-	protected void addAndRunAction() throws Throwable {
-		fPage.showActionSet("org.eclipse.ui.tests.api.MockActionSet");
+	protected void runAction(Object widget) throws Throwable {
 		ActionUtil.runActionWithLabel(this, fWindow, "Mock Action");
 	}
 
+	/**
+	 * @see IActionDelegateTest#fireSelection()
+	 */
+	protected void fireSelection(Object widget) throws Throwable {
+		MockViewPart view = (MockViewPart)fPage.showView(MockViewPart.ID);
+		view.fireSelection();
+	}
+	
 	/**
 	 * Removes the action.
 	 */
 	protected void removeAction() {
 		fPage.hideActionSet("org.eclipse.ui.tests.api.MockActionSet");
-	}
-	
-	/**
-	 * @see IActionDelegateTest#fireSelection()
-	 */
-	protected void fireSelection() throws Throwable {
-		MockViewPart view = (MockViewPart)fPage.showView(MockViewPart.ID);
-		view.fireSelection();
 	}
 }
 

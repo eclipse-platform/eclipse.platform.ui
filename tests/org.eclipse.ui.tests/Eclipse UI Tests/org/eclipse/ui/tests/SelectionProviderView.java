@@ -1,4 +1,4 @@
-package org.eclipse.ui.tests.propertysheet;
+package org.eclipse.ui.tests;
 
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.ISelection;
@@ -19,12 +19,14 @@ import org.eclipse.ui.part.ViewPart;
 
 public class SelectionProviderView
 	extends ViewPart
-	implements ISelectionProvider {
+	implements ISelectionProvider 
+{
+	public final static String ID = "org.eclipse.ui.tests.SelectionProviderView";
+	public final static String ID_2 = "org.eclipse.ui.tests.SelectionProviderView2";
+		
 	private ListenerList selectionChangedListeners = new ListenerList();
-	private StructuredSelection selection = StructuredSelection.EMPTY;
+	private ISelection lastSelection = StructuredSelection.EMPTY;
 	
-	public final static String ID = "org.eclipse.ui.tests.propertysheet.SelectionProviderView";
-
 	private Text text;
 	public SelectionProviderView() {
 		super();
@@ -64,7 +66,7 @@ public class SelectionProviderView
 	 * @see ISelectionProvider#getSelection()
 	 */
 	public ISelection getSelection() {
-		return selection;
+		return lastSelection;
 	}
 	/**
 	 * @see ISelectionProvider#removeSelectionChangedListener(ISelectionChangedListener)
@@ -72,11 +74,19 @@ public class SelectionProviderView
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 		selectionChangedListeners.remove(listener);
 	}
-
+	/**
+	 * Sets the selection to a particular object.
+	 */
+	public void setSelection(Object obj) {
+		setSelection(new StructuredSelection(obj));
+	}	
+	
 	/**
 	 * @see ISelectionProvider#setSelection(ISelection)
 	 */
 	public void setSelection(ISelection selection) {
+		lastSelection = selection;
+		
 		// create an event
 		SelectionChangedEvent event = new SelectionChangedEvent(this, selection);
 

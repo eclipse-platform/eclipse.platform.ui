@@ -37,10 +37,18 @@ public class IEditorActionDelegateTest extends IActionDelegateTest {
 	}
 	
 	/**
+	 * @see IActionDelegateTest#createActionWidget()
+	 */
+	protected Object createActionWidget() throws Throwable {
+		editor = openEditor(fPage, "X");
+		return editor;
+	}
+
+	/**
 	 * @see IActionDelegateTest#runAction()
 	 */
-	protected void addAndRunAction() throws Throwable {
-		editor = openEditor(fPage, "X");
+	protected void runAction(Object widget) throws Throwable {
+		MockEditorPart editor = (MockEditorPart)widget;
 		MockEditorActionBarContributor contributor = 	
 			(MockEditorActionBarContributor)
 				editor.getEditorSite().getActionBarContributor();
@@ -48,6 +56,14 @@ public class IEditorActionDelegateTest extends IActionDelegateTest {
 		ActionUtil.runActionWithLabel(this, mgr, "Mock Action");
 	}
 
+	/**
+	 * @see IActionDelegateTest#fireSelection()
+	 */
+	protected void fireSelection(Object widget) throws Throwable {
+		MockEditorPart editor = (MockEditorPart)widget;
+		editor.fireSelection();
+	}
+	
 	protected MockEditorPart openEditor(IWorkbenchPage page, String suffix) 
 		throws Throwable 
 	{
@@ -56,11 +72,5 @@ public class IEditorActionDelegateTest extends IActionDelegateTest {
 		return (MockEditorPart)page.openEditor(file, EDITOR_ID);
 	}
 
-	/**
-	 * @see IActionDelegateTest#fireSelection()
-	 */
-	protected void fireSelection() throws Throwable {
-		editor.fireSelection();
-	}
 }
 
