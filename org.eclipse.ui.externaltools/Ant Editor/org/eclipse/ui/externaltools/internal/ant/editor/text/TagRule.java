@@ -1,23 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2002, 2003 GEBIT Gesellschaft fuer EDV-Beratung
+ * und Informatik-Technologien mbH, 
+ * Berlin, Duesseldorf, Frankfurt (Germany).
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     GEBIT Gesellschaft fuer EDV-Beratung und Informatik-Technologien mbH - initial API and implementation
+ * 	   IBM Corporation - bug 24108
  *******************************************************************************/
+
 package org.eclipse.ui.externaltools.internal.ant.editor.text;
-
-
-//
-// Copyright:
-// GEBIT Gesellschaft fuer EDV-Beratung
-// und Informatik-Technologien mbH, 
-// Berlin, Duesseldorf, Frankfurt (Germany) 2002
-// All rights reserved.
-// 
 
 /*
  * This file originates from an internal package of Eclipse's 
@@ -28,9 +23,6 @@ package org.eclipse.ui.externaltools.internal.ant.editor.text;
 
 import org.eclipse.jface.text.rules.*;
 
-/**
- * @version 22.10.2002
- */
 public class TagRule extends MultiLineRule {
 
     public TagRule(IToken token) {

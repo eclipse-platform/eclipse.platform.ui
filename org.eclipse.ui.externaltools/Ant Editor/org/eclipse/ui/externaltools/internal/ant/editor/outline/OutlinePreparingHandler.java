@@ -1,25 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2002, 2003 GEBIT Gesellschaft fuer EDV-Beratung
+ * und Informatik-Technologien mbH, 
+ * Berlin, Duesseldorf, Frankfurt (Germany).
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     GEBIT Gesellschaft fuer EDV-Beratung und Informatik-Technologien mbH - initial API and implementation
+ * 	   IBM Corporation - bug fixes
  *******************************************************************************/
-/**********************************************************************
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
-//
-// Copyright:
-// GEBIT Gesellschaft fuer EDV-Beratung
-// und Informatik-Technologien mbH, 
-// Berlin, Duesseldorf, Frankfurt (Germany) 2002
-// All rights reserved.
-//
+
 package org.eclipse.ui.externaltools.internal.ant.editor.outline;
 
 import java.io.File;
@@ -60,7 +52,6 @@ import org.xml.sax.helpers.DefaultHandler;
  * set at this point are only the ones that the locator gives us in 
  * <code>startElement()</code> and <code>endElement()</code>.
  * 
- * @author Alf Schiefelbein
  */
 public class OutlinePreparingHandler extends DefaultHandler implements LexicalHandler {
 
