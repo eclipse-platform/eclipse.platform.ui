@@ -1,12 +1,11 @@
 package org.eclipse.team.internal.ccvs.core.resources;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,18 +24,18 @@ import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.Client;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.client.Update;
+import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
+import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.internal.ccvs.core.client.listeners.IStatusListener;
+import org.eclipse.team.internal.ccvs.core.client.listeners.IUpdateMessageListener;
+import org.eclipse.team.internal.ccvs.core.client.listeners.StatusListener;
+import org.eclipse.team.internal.ccvs.core.client.listeners.UpdateListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
-import org.eclipse.team.internal.ccvs.core.connection.Connection;
-import org.eclipse.team.internal.ccvs.core.response.IResponseHandler;
-import org.eclipse.team.internal.ccvs.core.response.custom.IStatusListener;
-import org.eclipse.team.internal.ccvs.core.response.custom.IUpdateMessageListener;
-import org.eclipse.team.internal.ccvs.core.response.custom.StatusErrorHandler;
-import org.eclipse.team.internal.ccvs.core.response.custom.StatusMessageHandler;
-import org.eclipse.team.internal.ccvs.core.response.custom.UpdateErrorHandler;
-import org.eclipse.team.internal.ccvs.core.response.custom.UpdateMessageHandler;
 
 /**
  * This class provides the implementation of ICVSRemoteFolder
@@ -61,7 +60,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	}
 
 	// Get the file revisions for the given filenames
-	protected void updateFileRevisions(Connection connection, String[] fileNames, IProgressMonitor monitor) throws CVSException {
+	protected void updateFileRevisions(Session session, String[] fileNames, IProgressMonitor monitor) throws CVSException {
 		
 		final int[] count = new int[] {0};
 		
@@ -69,7 +68,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		final Map revisions = new HashMap();
 		IStatusListener listener = new IStatusListener() {
 			public void fileStatus(IPath path, String remoteRevision) {
-				if (remoteRevision == IStatusListener.FOLDER_RIVISION)
+				if (remoteRevision == IStatusListener.FOLDER_REVISION)
 					// Ignore any folders
 					return;
 				try {
@@ -81,18 +80,16 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 			}
 		};
 			
-		// Perform a "cvs status..." with a custom message handler
-		Client.execute(
-			Client.STATUS,
-			Client.EMPTY_ARGS_LIST, 
-				Client.EMPTY_ARGS_LIST,
+		// Perform a "cvs status..." with a listener
+		IStatus status = Command.STATUS.execute(session,
+			Command.NO_GLOBAL_OPTIONS,
+			Command.NO_LOCAL_OPTIONS,
 			fileNames,
-			this,
-			monitor,
-			getPrintStream(),
-			connection,
-				new IResponseHandler[] {new StatusMessageHandler(listener), new StatusErrorHandler(listener)},
-			false);
+			new StatusListener(listener),
+			monitor);
+		if (status.getCode() == CVSException.SERVER_ERROR) {
+			throw new CVSServerException(status);
+		}
 		
 		if (count[0] != fileNames.length)
 			throw new CVSException(Policy.bind("RemoteFolder.errorFetchingRevisions"));
@@ -138,38 +135,37 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		
 		// Build the local options
 		List localOptions = new ArrayList();
-		localOptions.add("-d");
-		if ((tag != null) && (tag.getType() != CVSTag.HEAD)) {
-			localOptions.add(Client.TAG_OPTION);
-			localOptions.add(tag.getName());
-		}
+		localOptions.add(Update.RETRIEVE_ABSENT_DIRECTORIES);
+		if (tag != null && tag.getType() != CVSTag.HEAD)
+			localOptions.add(Update.makeTagOption(tag));
 		
 		// Retrieve the children and any file revision numbers in a single connection
+		// Perform a "cvs -n update -d -r tagName folderName" with custom message and error handlers		
+		IStatus status;
+		Session s = new Session(getRepository(), this, false);
+		s.open(monitor);
 		try {
-			// Perform a "cvs -n update -d -r tagName folderName" with custom message and error handlers
-			Client.execute(
-				Client.UPDATE,
-				new String[]{Client.NOCHANGE_OPTION}, 
-				(String[])localOptions.toArray(new String[localOptions.size()]), 
-				new String[]{child.getName()}, 
-				this,
-				monitor,
-				getPrintStream(),
-				((CVSRepositoryLocation)getRepository()),
-				new IResponseHandler[]{new UpdateMessageHandler(listener), new UpdateErrorHandler(listener)});
-
-			return exists[0];
-			
-		} catch (CVSServerException e) {
+			status = Command.UPDATE.execute(s,
+			new GlobalOption[] { Command.DO_NOT_CHANGE },
+			(LocalOption[]) localOptions.toArray(new LocalOption[localOptions.size()]), 
+			new String[] { child.getName() },
+			new UpdateListener(listener),
+			monitor);
+		} finally {
+			s.close();
+		}
+		if (status.getCode() == CVSException.SERVER_ERROR) {
+			CVSServerException e = new CVSServerException(status);
 			if ( ! e.isNoTagException() || ! child.isContainer())
 				if (e.containsErrors())
 					throw e;
-				// we now know that this is an exception caused by a cvs bug.
-				// if the folder has no files in it (just subfolders) cvs does not respond with the subfolders...
-				// workaround: retry the request with no tag to get the directory names (if any)
+			// we now know that this is an exception caused by a cvs bug.
+			// if the folder has no files in it (just subfolders) cvs does not respond with the subfolders...
+			// workaround: retry the request with no tag to get the directory names (if any)
 			Policy.checkCanceled(progress);
 			return exists(child, null, progress);
 		}
+		return exists[0];
 	}
 
 	/**
@@ -222,31 +218,23 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		
 		// Build the local options
 		List localOptions = new ArrayList();
-		localOptions.add(Client.RETRIEVE_ABSENT_DIRECTORIES);
-		if (tag != null) {
-			String option = tag.getUpdateOption();
-			if (option != null) {
-				localOptions.add(option);
-				localOptions.add(tag.getName());
-			}
-		}
+		localOptions.add(Update.RETRIEVE_ABSENT_DIRECTORIES);
+		if (tag != null) localOptions.add(Update.makeTagOption(tag));
 		
 		// Retrieve the children and any file revision numbers in a single connection
-		Connection c = ((CVSRepositoryLocation)getRepository()).openConnection();
+		Session s = new Session(getRepository(), this, false);
+		s.open(monitor);
 		try {
-			// Perform a "cvs -n update -d -r tagName folderName" with custom message and error handlers
-			Client.execute(
-				Client.UPDATE,
-				new String[]{Client.NOCHANGE_OPTION}, 
-				(String[])localOptions.toArray(new String[localOptions.size()]), 
-				new String[]{"."}, 
-				this,
-				monitor,
-				getPrintStream(),
-				c,
-				new IResponseHandler[]{new UpdateMessageHandler(listener), new UpdateErrorHandler(listener)},
-				true);
-
+			// Perform a "cvs -n update -d -r tagName folderName"
+			IStatus status = Command.UPDATE.execute(s,
+				new GlobalOption[] { Command.DO_NOT_CHANGE },
+				(LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]),
+				new String[] { "." },
+				new UpdateListener(listener),
+				monitor);
+			if (status.getCode() == CVSException.SERVER_ERROR) {
+				throw new CVSServerException(status);
+			}
 			if (progress.isCanceled()) {
 				throw new OperationCanceledException();
 			}
@@ -262,7 +250,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 
 			// Get the revision numbers for the files
 			if (newRemoteFiles.size() > 0) {
-				updateFileRevisions(c, (String[])newRemoteFiles.toArray(new String[newRemoteFiles.size()]), monitor);
+				updateFileRevisions(s, (String[])newRemoteFiles.toArray(new String[newRemoteFiles.size()]), monitor);
 			}
 			
 		} catch (CVSServerException e) {
@@ -281,7 +269,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 				}
 			}
 		} finally {
-			c.close();
+			s.close();
 		}
 
 		// We need to remember the children that were fetched in order to support file
@@ -325,7 +313,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	 * @see ICVSFolder#getFolder(String)
 	 */
 	public ICVSFolder getFolder(String name) throws CVSException {
-		if (name.equals(Client.CURRENT_LOCAL_FOLDER) || name.equals(Client.CURRENT_LOCAL_FOLDER + Client.SERVER_SEPARATOR))
+		if (name.equals(Session.CURRENT_LOCAL_FOLDER) || name.equals(Session.CURRENT_LOCAL_FOLDER + Session.SERVER_SEPARATOR))
 			return this;
 		ICVSResource child = getChild(name);
 		if (child.isFolder())
@@ -407,12 +395,12 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	 * does not exist, an exception is thrown.
 	 */
 	public ICVSResource getChild(String path) throws CVSException {
-		if (path.equals(Client.CURRENT_LOCAL_FOLDER))
+		if (path.equals(Session.CURRENT_LOCAL_FOLDER))
 			return this;
 		ICVSRemoteResource[] children = getChildren();
 		if (children == null) 
 			throw new CVSException(Policy.bind("RemoteFolder.invalidChild", new Object[] {getName()}));
-		if (path.indexOf(Client.SERVER_SEPARATOR) == -1) {
+		if (path.indexOf(Session.SERVER_SEPARATOR) == -1) {
 			for (int i=0;i<children.length;i++) {
 				if (children[i].getName().equals(path))
 					return (ICVSResource)children[i];
@@ -448,7 +436,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	 * @see ICVSResource#getRemoteLocation(ICVSFolder)
 	 */
 	public String getRemoteLocation(ICVSFolder stopSearching) throws CVSException {
-		return getRepository().getRootDirectory() + Client.SERVER_SEPARATOR + getRemotePath();
+		return getRepository().getRootDirectory() + Session.SERVER_SEPARATOR + getRemotePath();
 	}
 	
 	/**
@@ -550,41 +538,27 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 			
 			// Build the local options
 			List localOptions = new ArrayList();
-			if ((tag != null) && (tag.getType() != CVSTag.HEAD)) {
-				localOptions.add(Client.TAG_OPTION);
-				localOptions.add(tag.getName());
-			}
+			if (tag != null && tag.getType() != CVSTag.HEAD)
+				localOptions.add(Update.makeTagOption(tag));
 			
 			// Retrieve the children and any file revision numbers in a single connection
-			Connection c = ((CVSRepositoryLocation)getRepository()).openConnection();
+			Session s = new Session(getRepository(), this, false);
+			s.open(monitor);
 			try {
 				// Perform a "cvs -n update -d -r tagName fileName" with custom message and error handlers
-				try {
-					Client.execute(
-						Client.UPDATE,
-						new String[]{Client.NOCHANGE_OPTION}, 
-						(String[])localOptions.toArray(new String[localOptions.size()]), 
-						new String[]{child.getName()}, 
-						this,
-						monitor,
-						getPrintStream(),
-						c,
-						new IResponseHandler[]{new UpdateMessageHandler(listener), new UpdateErrorHandler(listener)},
-						true);
-				} catch (CVSServerException e) {
-					if (e.containsErrors()) {
-						throw e;
-					}
-				}
+				IStatus status = Command.UPDATE.execute(s,
+					new GlobalOption[] { Command.DO_NOT_CHANGE },
+					(LocalOption[]) localOptions.toArray(new LocalOption[localOptions.size()]), 
+					new String[] { child.getName() },
+					new UpdateListener(listener),
+					monitor);
 	
-				if (!exists[0])
-					return false;
-					
-				updateFileRevisions(c, new String[] {child.getName()}, monitor);
+				if (!exists[0]) return false;		
+				updateFileRevisions(s, new String[] {child.getName()}, monitor);
 				return true;
 				
 			} finally {
-				c.close();
+				s.close();
 			}
 		} finally {
 			children = oldChildren;

@@ -9,9 +9,9 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -38,7 +38,6 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -47,7 +46,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.ccvs.core.CVSCommandOptions.DiffOption;
+import org.eclipse.team.internal.ccvs.core.client.Diff;
+import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkbench;
@@ -405,20 +405,20 @@ public class GenerateDiffFileWizard extends Wizard {
 		/**
 		 * Return the list of Diff command options configured on this page.
 		 */
-		public DiffOption[] getOptions() {
+		public LocalOption[] getOptions() {
 			List options = new ArrayList(5);
 			if(!dontIncludeNewFilesOptions.getSelection()) {
-				options.add(DiffOption.INCLUDE_NEWFILES);
+				options.add(Diff.INCLUDE_NEWFILES);
 			}
 			if(recurseOption.getSelection()) {
-				options.add(DiffOption.DONT_RECURSE);
+				options.add(Diff.DO_NOT_RECURSE);
 			}
 			if(unifiedDiffOption.getSelection()) {
-				options.add(DiffOption.UNIFIED_FORMAT);
+				options.add(Diff.UNIFIED_FORMAT);
 			} else if(contextDiffOption.getSelection()) {
-				options.add(DiffOption.CONTEXT_FORMAT);
+				options.add(Diff.CONTEXT_FORMAT);
 			}
-			return (DiffOption[]) options.toArray(new DiffOption[options.size()]);
+			return (LocalOption[]) options.toArray(new LocalOption[options.size()]);
 		}		
 	}
 	// end of PatchFileCreationOptionsPage

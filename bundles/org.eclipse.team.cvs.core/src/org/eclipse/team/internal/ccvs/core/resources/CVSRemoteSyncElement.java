@@ -1,7 +1,7 @@
 package org.eclipse.team.internal.ccvs.core.resources;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
@@ -15,7 +15,7 @@ import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.core.sync.RemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
-import org.eclipse.team.internal.ccvs.core.Client;
+import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
@@ -270,11 +270,11 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 			// No need to do anything
 		} else if (outgoing) {
 			// For now, just unmanage the local resource so the remote change can be loaded with an update
-			Client.getManagedResource(getLocal()).unmanage();
+			Session.getManagedResource(getLocal()).unmanage();
 			Synchronizer.getInstance().save(Policy.monitorFor(monitor));
 		} else {
 			// For now, just unmanage the local resource so the remote change can be loaded with an update
-			Client.getManagedResource(getLocal()).unmanage();
+			Session.getManagedResource(getLocal()).unmanage();
 			Synchronizer.getInstance().save(Policy.monitorFor(monitor));
 		}
 	}

@@ -1,7 +1,7 @@
 package org.eclipse.team.internal.ccvs.core.util;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
  
@@ -24,7 +24,6 @@ import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.Client;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 
@@ -248,4 +247,3 @@ public abstract class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 	protected abstract void handleChanged(IProject project,IResource resource);
 	
 }
-

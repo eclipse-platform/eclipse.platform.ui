@@ -128,13 +128,14 @@ public class Console extends ViewPart {
 		}
 		
 		if (message.length() == 0) return;
-		boolean appendCr = message.charAt(message.length() - 1) == '\n';
+		// XXX What was the purpose of this?
+//		boolean appendCr = message.charAt(message.length() - 1) == '\n';
 		Console[] consoles = Console.getInstances();
 		for (int i = 0; i < consoles.length; i++) {
 			consoles[i].append(message);
-			if (appendCr) {
-				consoles[i].append("\n");
-			}
+//			if (appendCr) {
+//				consoles[i].append("\n");
+//			}
 		}
 	}
 	

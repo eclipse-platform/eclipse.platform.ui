@@ -1,12 +1,9 @@
 package org.eclipse.team.internal.ccvs.core.connection;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-
-import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -63,13 +60,11 @@ public class CVSServerException extends CVSException {
 		}
 	}
 	
-	private CVSServerException(IStatus status) {
+	public CVSServerException(IStatus status) {
 		super(status);
 	}
 	
 	private CVSServerException(String message, IStatus[] children) {
 		super(new MultiStatus(CVSProviderPlugin.ID, SERVER_ERROR, children, message, null));
 	}
-	
-
 }

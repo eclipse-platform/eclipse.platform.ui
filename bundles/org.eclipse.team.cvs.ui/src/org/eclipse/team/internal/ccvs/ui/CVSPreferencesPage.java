@@ -20,7 +20,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.ccvs.core.CVSCommandOptions.QuietOption;
+import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -241,9 +242,9 @@ public class CVSPreferencesPage
 	
 	protected static QuietOption getQuietnessOptionFor(int option) {
 		switch (option) {
-			case 0: return null;
-			case 1: return QuietOption.PARTLY_QUIET;
-			case 2: return QuietOption.SILENT;
+			case 0: return Command.VERBOSE;
+			case 1: return Command.PARTLY_QUIET;
+			case 2: return Command.SILENT;
 		}
 		return null;
 	}

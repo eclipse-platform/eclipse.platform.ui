@@ -27,21 +27,27 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.team.ccvs.core.CVSCommandOptions.CommandOption;
-import org.eclipse.team.ccvs.core.CVSCommandOptions.DiffOption;
 import org.eclipse.team.core.IFileTypeRegistry;
 import org.eclipse.team.core.ITeamNature;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
-import org.eclipse.team.internal.ccvs.core.CVSDiffException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
-import org.eclipse.team.internal.ccvs.core.Client;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Commit;
+import org.eclipse.team.internal.ccvs.core.client.Diff;
+import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.client.Tag;
+import org.eclipse.team.internal.ccvs.core.client.Update;
+import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
+import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.internal.ccvs.core.client.listeners.DiffListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
@@ -55,9 +61,6 @@ import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.Synchronizer;
-import org.eclipse.team.internal.ccvs.core.response.IResponseHandler;
-import org.eclipse.team.internal.ccvs.core.response.custom.DiffErrorHandler;
-import org.eclipse.team.internal.ccvs.core.response.custom.DiffMessageHandler;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.RemoteFolderTreeBuilder;
 
@@ -143,7 +146,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	public void setProject(IProject project) {
 		this.project = project;
 		try {
-			this.managedProject = Client.getManagedFolder(project.getLocation().toFile());
+			this.managedProject = Session.getManagedFolder(project.getLocation().toFile());
 		} catch (CVSException e) {
 			// Log any problems creating the CVS managed resource
 			CVSProviderPlugin.log(e);
@@ -258,7 +261,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		final IFileTypeRegistry registry = TeamPlugin.getFileTypeRegistry();
 		final TeamException[] eHolder = new TeamException[1];
 		boolean addProject = false;
-		for (int i=0;i<resources.length;i++) {
+		for (int i=0; i<resources.length; i++) {
 			
 			// Throw an exception if the resource is not a child of the receiver
 			checkIsChild(resources[i]);
@@ -268,7 +271,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 				IContainer parent = resources[i].getParent();
 				// XXX Need to consider workspace root
 				
-				while (parent.getType() != IResource.ROOT && !isManaged(parent)) {
+				while (parent.getType() != IResource.ROOT && ! isManaged(parent)) {
 					folders.add(parent.getFullPath().removeFirstSegments(1).toString());
 					parent = parent.getParent();
 				}
@@ -308,50 +311,49 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		if (eHolder[0] != null)
 			throw eHolder[0];
 	
-		// We need to add the project then folders, followed by files!
-		if (addProject)
-			Client.execute(
-				Client.ADD,
-				getDefaultGlobalOptions(),
-				new String[0],
-				new String[] { managedProject.getFolderSyncInfo().getRepository() },
-				(ICVSFolder)Client.getManagedResource(project.getParent()),
-				progress,
-				getPrintStream(),
-				(CVSRepositoryLocation)CVSProviderPlugin.getProvider().getRepository(managedProject.getFolderSyncInfo().getRoot()),
-				null);
-		if (!folders.isEmpty())
-			Client.execute(
-				Client.ADD,
-				getDefaultGlobalOptions(),
-				new String[0],
-				(String[])folders.toArray(new String[folders.size()]),
-				managedProject,
-				progress,
-				getPrintStream());
-		if (!textfiles.isEmpty())
-			Client.execute(
-				Client.ADD,
-				getDefaultGlobalOptions(),
-				new String[0],
-				(String[])textfiles.toArray(new String[textfiles.size()]),
-				managedProject,
-				progress,
-				getPrintStream());
-		if (!binaryfiles.isEmpty()) {
-			// Build the local options
-			List localOptions = new ArrayList();
-			localOptions.add(Client.KB_OPTION);
-			// We should check if files are text or not!
-			Client.execute(
-				Client.ADD,
-				getDefaultGlobalOptions(),
-				(String[])localOptions.toArray(new String[localOptions.size()]),
-				(String[])binaryfiles.toArray(new String[binaryfiles.size()]),
-				managedProject,
-				progress,
-				getPrintStream());
+		// XXX Do we need to add the project 
+		
+		// Add the folders, followed by files!
+		IStatus status;
+		Session s = new Session(getRemoteRoot(), managedProject);
+		s.open(progress);
+		try {
+			if (!folders.isEmpty()) {
+				status = Command.ADD.execute(s,
+					getDefaultGlobalOptions(),
+					Command.NO_LOCAL_OPTIONS,
+					(String[])folders.toArray(new String[folders.size()]),
+					null,
+					progress);
+				if (status.getCode() == CVSException.SERVER_ERROR) {
+					throw new CVSServerException(status);
+				}
 			}
+			if (!textfiles.isEmpty()) {
+				status = Command.ADD.execute(s,
+					getDefaultGlobalOptions(),
+					Command.NO_LOCAL_OPTIONS,
+					(String[])textfiles.toArray(new String[textfiles.size()]),
+					null,
+					progress);
+				if (status.getCode() == CVSException.SERVER_ERROR) {
+					throw new CVSServerException(status);
+				}
+			}
+			if (!binaryfiles.isEmpty()) {
+				status = Command.ADD.execute(s,
+					getDefaultGlobalOptions(),
+					new LocalOption[] { Command.KSUBST_BINARY },
+					(String[])binaryfiles.toArray(new String[binaryfiles.size()]),
+					null,
+					progress);
+				if (status.getCode() == CVSException.SERVER_ERROR) {
+					throw new CVSServerException(status);
+				}
+			}
+		} finally {
+			s.close();
+		}
 	}
 	
 	/**
@@ -366,21 +368,29 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		
 		// Build the local options
 		List localOptions = new ArrayList();
-		localOptions.add(Client.MESSAGE_OPTION);
-		localOptions.add(comment);
+		localOptions.add(Commit.makeMessageOption(comment));
+
 		// If the depth is not infinite, we want the -l option
-		if (depth != IResource.DEPTH_INFINITE)
-			localOptions.add(Client.LOCAL_OPTION);
+		if (depth != IResource.DEPTH_INFINITE) {
+			localOptions.add(Commit.DO_NOT_RECURSE);
+		}
 			
 		// Commit the resources
-		Client.execute(
-			Client.COMMIT,
+		IStatus status;
+		Session s = new Session(getRemoteRoot(), managedProject);
+		s.open(progress);
+		try {
+			status = Command.COMMIT.execute(s,
 			getDefaultGlobalOptions(),
-			(String[])localOptions.toArray(new String[localOptions.size()]),
-			arguments,
-			managedProject,
-			progress,
-			getPrintStream());
+			(LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]),
+			arguments, null,
+			progress);
+		} finally {
+			s.close();
+		}
+		if (status.getCode() == CVSException.SERVER_ERROR) {
+			throw new CVSServerException(status);
+		}
 	}
 
 	/**
@@ -458,14 +468,22 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			throw eHolder[0];
 		
 		// Remove the files remotely
-		Client.execute(
-			Client.REMOVE,
+		IStatus status;
+		Session s = new Session(getRemoteRoot(), managedProject);
+		s.open(progress);
+		try {
+			status = Command.REMOVE.execute(s,
 			getDefaultGlobalOptions(),
-			new String[0],
+			Command.NO_LOCAL_OPTIONS,
 			(String[])files.toArray(new String[files.size()]),
-			managedProject,
-			progress,
-			getPrintStream());
+			null,
+			progress);
+		} finally {
+			s.close();
+		}
+		if (status.getCode() == CVSException.SERVER_ERROR) {
+			throw new CVSServerException(status);
+		}
 	}
 	
 	/** 
@@ -473,27 +491,29 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 * output to the provided PrintStream in a form that is usable
 	 * as a patch
 	 */
-	public void diff(IResource[] resources, DiffOption[] options, PrintStream stream, IProgressMonitor progress) throws TeamException {
-			
-		// Build the local options
-		List localOptions = createLocalOptionsFromCommandOptions(options);
+	public void diff(IResource[] resources, LocalOption[] options, PrintStream stream,
+		IProgressMonitor progress) throws TeamException {
 		
 		// Build the arguments list
-		String[] arguments = getValidArguments(resources, localOptions.contains(DiffOption.DONT_RECURSE) ? IResource.DEPTH_ONE : IResource.DEPTH_INFINITE, progress);
-						
+		String[] arguments = getValidArguments(resources, Diff.DO_NOT_RECURSE.isElementOf(options) ?
+			IResource.DEPTH_ONE : IResource.DEPTH_INFINITE, progress);
+
+		IStatus status;
+		Session s = new Session(getRemoteRoot(), managedProject);
+		s.open(progress);
 		try {
-			Client.execute(
-				Client.DIFF,
-				Client.EMPTY_ARGS_LIST,
-				(String[])localOptions.toArray(new String[localOptions.size()]),
+			status = Command.DIFF.execute(s,
+				Command.NO_GLOBAL_OPTIONS,
+				options,
 				arguments,
-				managedProject,
-				progress,
-				stream,
-				null,
-				new IResponseHandler[] {new DiffMessageHandler(), new DiffErrorHandler()});
-		} catch(CVSDiffException e) {
-			// Ignore this for now
+				new DiffListener(stream),
+				progress);
+		} finally {
+			s.close();
+		}
+		if (status.getCode() == CVSException.SERVER_ERROR) {
+			// XXX diff errors??
+			throw new CVSServerException(status);
 		}
 	}
 	
@@ -528,7 +548,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		return getRemoteRoot().getMethod().getName();
 	}
 	
-	private String[] getDefaultGlobalOptions() {
+	private GlobalOption[] getDefaultGlobalOptions() {
 		return CVSProvider.getDefaultGlobalOptions();
 	}
 	
@@ -670,7 +690,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			if ((depth != IResource.DEPTH_ZERO) || (resources[i].getType() == IResource.FILE)) {
 				IPath cvsPath = resources[i].getFullPath().removeFirstSegments(1);
 				if (cvsPath.segmentCount() == 0) {
-					arguments.add(".");
+					arguments.add(Session.CURRENT_LOCAL_FOLDER);
 				}
 				else
 					arguments.add(cvsPath.toString());
@@ -777,23 +797,8 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		// are independant as this is not the way CVS works!
 		
 		// Could implement a CVSProvider.MOVE!!!
-
-		Client.execute(
-			Client.REMOVE,
-			getDefaultGlobalOptions(),
-			new String[0], 
-			new String[] {source.removeFirstSegments(1).toString()},
-			managedProject,
-			progress,
-			getPrintStream());
-		Client.execute(
-			Client.ADD,
-			getDefaultGlobalOptions(),
-			new String[0], // We'll need to copy options from old entry
-			new String[] {resource.getFullPath().removeFirstSegments(1).toString()},
-			managedProject,
-			progress,
-			getPrintStream());
+		
+		// XXX ????
 	}
 
 	/**
@@ -840,8 +845,10 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			public void visitFile(ICVSFile file) throws CVSException {};
 			public void visitFolder(ICVSFolder folder) throws CVSException {
 				FolderSyncInfo info = folder.getFolderSyncInfo();
-				folder.setFolderSyncInfo(new FolderSyncInfo(info.getRepository(), root, info.getTag(), info.getIsStatic()));
-				folder.acceptChildren(this);
+				if (info != null) {
+					folder.setFolderSyncInfo(new FolderSyncInfo(info.getRepository(), root, info.getTag(), info.getIsStatic()));
+					folder.acceptChildren(this);
+				}
 			};
 		});
 		Synchronizer.getInstance().save(new NullProgressMonitor());
@@ -864,24 +871,34 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		List localOptions = new ArrayList();
 		// If the depth is not infinite, we want the -l option
 		if (depth != IResource.DEPTH_INFINITE)
-			localOptions.add(Client.LOCAL_OPTION);
+			localOptions.add(Tag.DO_NOT_RECURSE);
 		if (tag.getType() == CVSTag.BRANCH)
-			localOptions.add(Client.BRANCH_OPTION);
+			localOptions.add(Tag.CREATE_BRANCH);
 		
 		// The tag name is supposed to be the first argument
 		ArrayList args = new ArrayList();
 		args.add(tag.getName());
 		args.addAll(Arrays.asList(arguments));
 		arguments = (String[])args.toArray(new String[args.size()]);
-		
-		Client.execute(
-			Client.TAG,
+
+		IStatus status;
+		Session s = new Session(getRemoteRoot(), managedProject);
+		s.open(progress);
+		try {
+			status = Command.TAG.execute(s,
 			getDefaultGlobalOptions(),
-			(String[])localOptions.toArray(new String[localOptions.size()]),
+			(LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]),
+			// XXX We should pass the tag to the command
 			arguments,
-			managedProject,
-			progress,
-			getPrintStream());
+			null,
+			progress);
+		} finally {
+			s.close();
+		}
+		if (status.getCode() == CVSException.SERVER_ERROR) {
+			// XXX diff errors??
+			throw new CVSServerException(status);
+		}
 	}
 	
 	/**
@@ -909,39 +926,47 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		// Build the local options
 		List localOptions = new ArrayList();
 		if (ignoreLocalChanges) {
-			localOptions.add(Client.IGNORE_LOCAL_CHANGES);
+			localOptions.add(Update.IGNORE_LOCAL_CHANGES);
 		}
 		// Use the appropriate tag options
 		if (tag != null) {
 			if (tag.getType() == CVSTag.HEAD) {
-				localOptions.add(Client.CLEAR_STICKY);
+				localOptions.add(Update.CLEAR_STICKY);
 			} else {
-				localOptions.add(tag.getUpdateOption());
-				localOptions.add(tag.getName());
+				localOptions.add(Update.makeTagOption(tag));
 			}
 		}
 		// Always look for absent directories
-		localOptions.add(Client.RETRIEVE_ABSENT_DIRECTORIES);
+		localOptions.add(Update.RETRIEVE_ABSENT_DIRECTORIES);
 		// Prune empty directories if pruning is enabled
 		if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) {
-			localOptions.add(Client.PRUNE_OPTION);
+			localOptions.add(Update.PRUNE_EMPTY_DIRECTORIES);
 		}
 		// If depth = zero or 1, use -l
 		if (depth != IResource.DEPTH_INFINITE) {
-			localOptions.add(Client.LOCAL_OPTION);
+			localOptions.add(Update.DO_NOT_RECURSE);
 		}
 			
 		// Build the arguments list
 		String[] arguments = getValidArguments(resources, depth, progress);
-			
-		Client.execute(
-			Client.UPDATE,
+
+		IStatus status;
+		Session s = new Session(getRemoteRoot(), managedProject);
+		s.open(progress);
+		try {
+			status = Command.UPDATE.execute(s,
 			getDefaultGlobalOptions(),
-			(String[])localOptions.toArray(new String[localOptions.size()]),
+			(LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]),
 			arguments,
-			managedProject,
-			progress,
-			getPrintStream());
+			null,
+			progress);
+		} finally {
+			s.close();
+		}
+		if (status.getCode() == CVSException.SERVER_ERROR) {
+			// XXX diff errors??
+			throw new CVSServerException(status);
+		}
 	}
 
 	private static TeamException wrapException(CoreException e) {
@@ -1020,16 +1045,5 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	public boolean isDirty(IResource resource) {
 		Assert.isTrue(false);
 		return false;
-	}
-	
-	/**
-	 * Adds CVSCommandOptions to a returned array
-	 */
-	private List createLocalOptionsFromCommandOptions(CommandOption[] options) {
-		List ops = new ArrayList(5);
-		for (int i = 0; i < options.length; i++) {
-			ops.add(options[i].getOption());
-		}
-		return ops;
 	}
 }

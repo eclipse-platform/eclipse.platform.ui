@@ -1,7 +1,7 @@
 package org.eclipse.team.internal.ccvs.core.resources;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
@@ -24,10 +25,12 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
-import org.eclipse.team.internal.ccvs.core.Client;
-import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.response.IResponseHandler;
-import org.eclipse.team.internal.ccvs.core.response.custom.LogHandler;
+import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.client.Update;
+import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.internal.ccvs.core.client.listeners.LogListener;
+import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 /**
@@ -116,18 +119,24 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	public InputStream getContents(final IProgressMonitor monitor) {
 		
 		try {
-			if(contents==null) {
-				List localOptions = getLocalOptionsForTag();
-				Client.execute(
-					Client.UPDATE,
-					Client.EMPTY_ARGS_LIST, 
-					new String[]{"-r", info.getRevision(), "-C"},
-					new String[]{getName()}, 
-					parent,
-					monitor,
-					getPrintStream(),
-					(CVSRepositoryLocation)getRepository(),
-					null);
+			if (contents == null) {
+				IStatus status;
+				Session s = new Session(getRepository(), parent, false);
+				s.open(monitor);
+				try {
+					status = Command.UPDATE.execute(s,
+					Command.NO_GLOBAL_OPTIONS,
+					new LocalOption[] { Update.makeTagOption(new CVSTag(info.getRevision(), CVSTag.VERSION)),
+						Update.IGNORE_LOCAL_CHANGES },
+					new String[] { getName() },
+					null,
+					monitor);
+				} finally {
+					s.close();
+				}
+				if (status.getCode() == CVSException.SERVER_ERROR) {
+					throw new CVSServerException(status);
+				}
 			}
 			return new ByteArrayInputStream(contents);
 		} catch(CVSException e) {
@@ -142,16 +151,22 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 		
 		// Perform a "cvs log..." with a custom message handler
 		final List entries = new ArrayList();
-		Client.execute(
-			Client.LOG,
-			Client.EMPTY_ARGS_LIST, 
-			Client.EMPTY_ARGS_LIST,
-			new String[]{getName()}, 
-			parent,
-			monitor,
-			getPrintStream(),
-			(CVSRepositoryLocation)getRepository(),
-			new IResponseHandler[] {new LogHandler(this, entries)});
+		IStatus status;
+		Session s = new Session(getRepository(), parent, false);
+		s.open(monitor);
+		try {
+			status = Command.LOG.execute(s,
+			Command.NO_GLOBAL_OPTIONS,
+			Command.NO_LOCAL_OPTIONS,
+			new String[] { getName() },
+			new LogListener(this, entries),
+			monitor);
+		} finally {
+			s.close();
+		}
+		if (status.getCode() == CVSException.SERVER_ERROR) {
+			throw new CVSServerException(status);
+		}
 		return (ILogEntry[])entries.toArray(new ILogEntry[entries.size()]);
 	}
 	
@@ -201,7 +216,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 		if (result.length() == 0)
 			return getName();
 		else
-			return result + Client.SERVER_SEPARATOR + getName();
+			return result + Session.SERVER_SEPARATOR + getName();
 	}
 	
 	/**
@@ -215,7 +230,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	 * @see ICVSResource#getRemoteLocation(ICVSFolder)
 	 */
 	public String getRemoteLocation(ICVSFolder stopSearching) throws CVSException {
-		return parent.getRemoteLocation(stopSearching) + Client.SERVER_SEPARATOR + getName();
+		return parent.getRemoteLocation(stopSearching) + Session.SERVER_SEPARATOR + getName();
 	}
 	
 	/**
@@ -223,7 +238,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	 */
 	public String getRemotePath() {
 		String parentPath = parent.getRemotePath();
-		return parentPath + Client.SERVER_SEPARATOR + getName();
+		return parentPath + Session.SERVER_SEPARATOR + getName();
 	}
 	
 	/**
@@ -258,7 +273,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 		try {
 			String SERVER_NEWLINE = "\n";
 			// Send the size to the server and no contents
-			out.write(0);
+			out.write("0".getBytes());
 			out.write(SERVER_NEWLINE.getBytes());				
 		} catch(IOException e) {
 		}				
@@ -344,19 +359,6 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	
 	public boolean updateRevision(CVSTag tag, IProgressMonitor monitor) throws CVSException {
 		return parent.updateRevision(this, tag, monitor);
-	}
-	
-	/*
-	 * Get the local options for including a tag in a CVS command
-	 */
-	protected List getLocalOptionsForTag() {
-		List localOptions = new ArrayList();
-		CVSTag tag = info.getTag();
-		if ((tag != null) && (tag.getType() != tag.HEAD)) { 
-			localOptions.add(Client.TAG_OPTION);
-			localOptions.add(tag.getName()); 
-		}
-		return localOptions;
 	}
 }
 

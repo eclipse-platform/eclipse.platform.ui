@@ -5,13 +5,13 @@ package org.eclipse.team.internal.ccvs.ui;
  * All Rights Reserved.
  */
 
-import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Hashtable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -22,6 +22,9 @@ import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -177,7 +180,18 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	public void startup() throws CoreException {
 		super.startup();
 		Policy.localize("org.eclipse.team.internal.ccvs.ui.messages");
-		CVSProviderPlugin.getProvider().setPrintStream(new PrintStream(new ConsoleOutputStream()));
+		
+		// XXX This should be refactored!!!
+		Command.setConsoleListener(new ICommandOutputListener() {
+			public IStatus messageLine(String line, ICVSFolder commandRoot, IProgressMonitor monitor) {
+				Console.appendAll(line + '\n');
+				return OK;
+			}
+			public IStatus errorLine(String line, ICVSFolder commandRoot, IProgressMonitor monitor) {
+				Console.appendAll(line + '\n');
+				return OK;
+			}
+		});
 
 		CVSAdapterFactory factory = new CVSAdapterFactory();
 		Platform.getAdapterManager().registerAdapters(factory, ICVSRemoteFile.class);

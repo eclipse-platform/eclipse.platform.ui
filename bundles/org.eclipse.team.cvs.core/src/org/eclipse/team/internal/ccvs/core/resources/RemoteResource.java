@@ -1,7 +1,7 @@
 package org.eclipse.team.internal.ccvs.core.resources;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
  
@@ -97,10 +97,6 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 		throw new CVSException(Policy.bind("RemoteManagedResource.invalidOperation"));
 	}
 
-	protected PrintStream getPrintStream() {
-		return NullOutputStream.DEFAULT;
-	}
-	
 	/*
 	 * @see ICVSResource#getSyncInfo()
 	 */

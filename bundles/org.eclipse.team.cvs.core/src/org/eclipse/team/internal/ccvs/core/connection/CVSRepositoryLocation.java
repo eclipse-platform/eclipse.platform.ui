@@ -1,14 +1,14 @@
 package org.eclipse.team.internal.ccvs.core.connection;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
 import java.util.ArrayList;
 import java.util.List;
-
 import java.util.Properties;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -233,7 +233,8 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * password if one has not previously been provided or if the previously
 	 * supplied username and password are invalid.
 	 */
-	public Connection openConnection() throws CVSException {
+	public Connection openConnection(IProgressMonitor monitor) throws CVSException {
+		// FIXME! monitor is unused
 		String message = null;
 		
 		// If we have a username and password, don't authenticate unless we fail.
@@ -335,9 +336,9 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * information, the method returns. Otherwise, an exception
 	 * indicating the problem is throw.
 	 */
-	public void validateConnection() throws CVSException {
+	public void validateConnection(IProgressMonitor monitor) throws CVSException {
 		try {
-			openConnection().close();
+			openConnection(monitor).close();
 		} catch (CVSException e) {
 			// If the validation failed, dispose of any cached info
 			dispose();

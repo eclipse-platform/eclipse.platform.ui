@@ -1,13 +1,13 @@
 package org.eclipse.team.ccvs.core;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
-import org.eclipse.team.internal.ccvs.core.Client;
+import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
@@ -75,17 +75,5 @@ public class CVSTag {
 				return new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSTag.badCharName"));
 		}
 		return new CVSStatus(IStatus.OK, "ok");
-	}
-	
-	/**
-	 * Return the local option that is to proceed the tag name when used with a checkout or update
-	 */
-	public String getUpdateOption() {
-		if (getType() == BRANCH || getType() == VERSION)
-			return Client.TAG_OPTION;
-		else if (getType() == DATE)
-			return Client.DATE_TAG_OPTION;
-		else
-			return null;
 	}
 }

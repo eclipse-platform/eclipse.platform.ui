@@ -24,9 +24,9 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.ccvs.core.CVSCommandOptions.DiffOption;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 
@@ -40,10 +40,10 @@ public class GenerateDiffFileOperation implements IRunnableWithProgress {
 	private File outputFile;
 	private IResource[] resources;
 	private Shell shell;
-	private DiffOption[] options;
+	private LocalOption[] options;
 	private boolean toClipboard;
 
-	GenerateDiffFileOperation(IResource[] resources, File file, boolean toClipboard, DiffOption[] options, Shell shell) {
+	GenerateDiffFileOperation(IResource[] resources, File file, boolean toClipboard, LocalOption[] options, Shell shell) {
 		this.resources = resources;
 		this.outputFile = file;
 		this.shell = shell;

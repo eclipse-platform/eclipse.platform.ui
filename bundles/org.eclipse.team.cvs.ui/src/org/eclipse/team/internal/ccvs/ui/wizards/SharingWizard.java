@@ -22,7 +22,7 @@ import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
-import org.eclipse.team.internal.ccvs.core.Client;
+import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
@@ -120,7 +120,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 							}
 							
 							// Associate project with provider
-							ICVSFolder folder = (ICVSFolder)Client.getManagedResource(project);
+							ICVSFolder folder = (ICVSFolder)Session.getManagedResource(project);
 							FolderSyncInfo info = folder.getFolderSyncInfo();
 							if (info == null) {
 								// Error!
@@ -133,7 +133,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 							if (validate) {
 								// Do the validation right now
 								try {
-									location.validateConnection();
+									location.validateConnection(monitor);
 								} catch (TeamException e) {
 									if (created)
 										CVSProviderPlugin.getProvider().disposeRepository(location);
@@ -151,7 +151,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 							ICVSRepositoryLocation location = getLocation();
 							
 							try {
-								location.validateConnection();
+								location.validateConnection(monitor);
 								String moduleName = getModuleName();
 								ICVSRemoteFolder folder = location.getRemoteFolder(moduleName, null);
 								try {
@@ -256,7 +256,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 		// Determine if there is an existing CVS/ directory from which configuration
 		// information can be retrieved.
 		try {
-			ICVSFolder folder = (ICVSFolder)Client.getManagedResource(project);
+			ICVSFolder folder = (ICVSFolder)Session.getManagedResource(project);
 			FolderSyncInfo info = folder.getFolderSyncInfo();
 			return info != null;
 		} catch (TeamException e) {

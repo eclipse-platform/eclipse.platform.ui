@@ -1,7 +1,7 @@
 package org.eclipse.team.internal.ccvs.core.resources;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
  
@@ -32,9 +32,13 @@ public class ResourceSyncInfo {
 	public static final String BINARY_TAG = "-kb";
 	private static final String SEPERATOR = "/";
 	
+	// Timestamp constants used to identify special cases
+	public static final String DUMMY_TIMESTAMP = "dummy timestamp";
+	public static final String RESULT_OF_MERGE = "Result of merge+";
+	
 	// safe default permissions. Permissions are saved separatly so that the correct permissions
 	// can be sent back to the server on systems that don't save execute bits (e.g. windows).
-	private static final String DEFAULT_PERMISSIONS = "u=rw,g=rw,o=r";
+	public static final String DEFAULT_PERMISSIONS = "u=rw,g=rw,o=r";
 	
 	// file sync information can be associated with a local resource that has been deleted. This is
 	// noted by prefixing the revision with this character.

@@ -42,19 +42,24 @@ import org.eclipse.team.ccvs.core.ICVSProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.IConnectionMethod;
-import org.eclipse.team.ccvs.core.CVSCommandOptions.QuietOption;
 import org.eclipse.team.core.IFileTypeRegistry;
 import org.eclipse.team.core.ITeamManager;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.internal.ccvs.core.client.Checkout;
+import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Import;
+import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
+import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.Synchronizer;
-import org.eclipse.team.internal.ccvs.core.util.ProjectDescriptionManager;
-import org.eclipse.team.internal.ccvs.core.Policy;
 
 public class CVSProvider implements ICVSProvider {
 
@@ -140,53 +145,49 @@ public class CVSProvider implements ICVSProvider {
 		IProgressMonitor monitor)
 		throws TeamException {
 			
+		// Create the project if one wasn't passed.
+		// NOTE: This will need to be fixed for module alias support
+		if (project == null)
+			project = ResourcesPlugin.getWorkspace().getRoot().getProject(new Path(sourceModule).lastSegment());
+			
+		// Get the location of the workspace root
+		ICVSFolder root = Session.getManagedFolder(ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile());
+		
+		// Build the local options
+		List localOptions = new ArrayList();
+		// Add the option to load into a directory of a different name
+		String module = project.getName();
+		if (sourceModule != null) {
+			localOptions.add(Checkout.makeModuleNameOption(module));
+			module = sourceModule;
+		}
+		// Prune empty directories if pruning enabled
+		if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) 
+			localOptions.add(Checkout.PRUNE_EMPTY_DIRECTORIES);
+		// Add the options related to the CVSTag
+		if (tag != null && tag.getType() != CVSTag.HEAD) {
+			localOptions.add(Checkout.makeTagOption(tag));
+		}
+		
+		// Perform a checkout
+		IStatus status;
+		Session s = new Session(repository, root);
+		s.open(monitor);
 		try {
-			
-			// Create the project if one wasn't passed.
-			// NOTE: This will need to be fixed for module alias support
-			if (project == null)
-				project = ResourcesPlugin.getWorkspace().getRoot().getProject(new Path(sourceModule).lastSegment());
-				
-			// Get the location of the workspace root
-			ICVSFolder root = Client.getManagedFolder(ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile());
-			
-			// Build the local options
-			List localOptions = new ArrayList();
-			// Add the option to load into a directory of a different name
-			String module = project.getName();
-			if (sourceModule != null) {
-				localOptions.add("-d"); //$NON-NLS-1$
-				localOptions.add(module);
-				module = sourceModule;
-			}
-			// Prune empty directories if pruning enabled
-			if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) 
-				localOptions.add(Client.PRUNE_OPTION);
-			// Add the options related to the CVSTag
-			if (tag != null) {
-				String option = tag.getUpdateOption();
-				if (option != null) {
-					localOptions.add(option);
-					localOptions.add(tag.getName());
-				}
-			}
-			
-			monitor = Policy.monitorFor(monitor);
-			monitor.beginTask(null, 100);
-			
-			// Perform a checkout
-			// Checkout will take 93% of the time
-			Client.execute(
-					Client.CHECKOUT,
-					getDefaultGlobalOptions(),
-					(String[])localOptions.toArray(new String[localOptions.size()]),
-					new String[]{module},
-					root,
-					Policy.subMonitorFor(monitor, 93),
-					getPrintStream(),
-					(CVSRepositoryLocation)repository,
-					null);
-					
+			status = Command.CHECKOUT.execute(s,
+				getDefaultGlobalOptions(),
+				(LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]),
+				new String[]{module},
+				null,
+				monitor);
+		} finally {
+			s.close();
+		}
+		if (status.getCode() == CVSException.SERVER_ERROR) {
+			throw new CVSServerException(status);
+		}
+		
+		try {
 			// Create, open and/or refresh the project
 			if (!project.exists())
 				project.create(Policy.subMonitorFor(monitor, 1));
@@ -295,12 +296,12 @@ public class CVSProvider implements ICVSProvider {
 		return (String[])result.toArray(new String[result.size()]);
 	}
 	
-	public static String[] getDefaultGlobalOptions() {
+	public static GlobalOption[] getDefaultGlobalOptions() {
 		QuietOption option = CVSProviderPlugin.getPlugin().getQuietness();
 		if (option == null)
-			return Client.EMPTY_ARGS_LIST;
+			return Command.NO_GLOBAL_OPTIONS;
 		else
-			return new String[] {option.getOption()};
+			return new GlobalOption[] {option};
 	}
 	
 	/**
@@ -413,7 +414,7 @@ public class CVSProvider implements ICVSProvider {
 		throws TeamException {
 			
 			// Get the location of the workspace root
-			ICVSFolder root = Client.getManagedFolder(project.getLocation().toFile());
+			ICVSFolder root = Session.getManagedFolder(project.getLocation().toFile());
 	
 			// Get the message
 			String message = configuration.getProperty("message"); //$NON-NLS-1$
@@ -437,27 +438,33 @@ public class CVSProvider implements ICVSProvider {
 				
 			// Build the local options
 			List localOptions = new ArrayList();
-			localOptions.add(Client.MESSAGE_OPTION);
-			localOptions.add(message);
+			localOptions.add(Import.makeMessageOption(message));
+
 			// Create filters for all known text files
 			String[] patterns = getBinaryFilePatterns(project);
-			for (int i=0;i<patterns.length;i++) {
-				localOptions.add(Client.WRAPPER_OPTION);
-				localOptions.add(patterns[i] + " -k 'b'"); //$NON-NLS-1$
+			for (int i = 0; i < patterns.length ; i++) {
+				localOptions.add(Import.makeBinaryWrapperOption(patterns[i]));
 			}
-	
+
 			// Perform a import
-			Client.execute(
-					Client.IMPORT,
+			IStatus status;
+			Session s = new Session(location, root);
+			s.open(monitor);
+			try {
+				status = Command.IMPORT.execute(s,
 					getDefaultGlobalOptions(),
-					(String[])localOptions.toArray(new String[localOptions.size()]),
-					new String[]{module, vendor, tag},
-					root,
-					monitor,
-					getPrintStream(),
-					(CVSRepositoryLocation)location,
-					null);
-			
+					(LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]),
+					new String[] { module, vendor, tag },
+					null,
+					monitor);
+			} finally {
+				s.close();
+			}
+
+			if (status.getCode() == CVSException.SERVER_ERROR) {
+				throw new CVSServerException(status);
+			}
+
 			// NOTE: we should check to see the results of the import
 		}
 
@@ -505,7 +512,7 @@ public class CVSProvider implements ICVSProvider {
 		}
 		
 		// Set folder sync info
-		ICVSFolder folder = (ICVSFolder)Client.getManagedResource(project);
+		ICVSFolder folder = (ICVSFolder)Session.getManagedResource(project);
 		FolderSyncInfo info = folder.getFolderSyncInfo();
 		if (info == null) {
 			// Only set the info if there is none.
