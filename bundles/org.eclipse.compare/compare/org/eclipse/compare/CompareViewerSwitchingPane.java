@@ -66,7 +66,7 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 	 * @exception IllegalArgumentException <ul>
 	 *    <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
 	 * </ul>
-	 * @exception SWTException <ul>
+	 * @exception org.eclipse.swt.SWTException <ul>
 	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the parent</li>
 	 * </ul>
 	 */		
@@ -85,7 +85,7 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 	 * @exception IllegalArgumentException <ul>
 	 *    <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
 	 * </ul>
-	 * @exception SWTException <ul>
+	 * @exception org.eclipse.swt.SWTException <ul>
 	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the parent</li>
 	 * </ul>
 	 */		

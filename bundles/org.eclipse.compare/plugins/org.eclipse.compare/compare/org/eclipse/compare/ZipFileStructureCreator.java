@@ -54,7 +54,7 @@ public class ZipFileStructureCreator implements IStructureCreator {
 			return CompareUI.getImage(getType());
 		}
 
-		/**
+		/*
 		 * Returns true if other is ITypedElement and names are equal.
 		 * @see IComparator#equals
 		 */

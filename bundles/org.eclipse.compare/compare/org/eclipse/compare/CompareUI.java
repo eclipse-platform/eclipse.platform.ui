@@ -88,6 +88,7 @@ public final class CompareUI {
 	public static final String COMPARE_VIEWER_TITLE= "org.eclipse.compare.CompareUI.CompareViewerTitle"; //$NON-NLS-1$
 	
 	private CompareUI() {
+		// empty implementation
 	}
 	
 	public static AbstractUIPlugin getPlugin() {

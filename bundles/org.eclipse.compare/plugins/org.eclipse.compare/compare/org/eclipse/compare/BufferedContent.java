@@ -38,6 +38,7 @@ public abstract class BufferedContent implements IContentChangeNotifier, IStream
 	 * Creates a buffered stream content accessor.
 	 */
 	protected BufferedContent() {
+		// empty implementation
 	}
 		
 	/* (non-Javadoc)

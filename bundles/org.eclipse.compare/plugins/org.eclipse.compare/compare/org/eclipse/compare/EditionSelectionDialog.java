@@ -108,7 +108,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 			return fItem;
 		}
 		
-		/**
+		/*
 		 * The content is lazily loaded
 		 */
 		private String getContent() {
@@ -131,9 +131,6 @@ public class EditionSelectionDialog extends ResizableDialog {
 			return fContent;
 		}
 		
-		/**
-		 * Compares content of item.
-		 */
 		public boolean equals(Object other) {
 			if (other != null && other.getClass() == getClass()) {
 				if (getContent().equals(((Pair)other).getContent()))
@@ -626,6 +623,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 	 *
 	 * @param edition the edition for which a label must be returned
  	 * @param item if a path has been specified in <code>edition</code> a sub element of the given edition; otherwise the same as edition
+ 	 * @param date this date will be returned as part of the formatted string
  	 * @return a label of a node in the edition tree viewer
 	 * @since 2.0
 	 */
@@ -825,15 +823,15 @@ public class EditionSelectionDialog extends ResizableDialog {
 	 * @since 2.0
 	 */
 	protected void okPressed() {
-		if (fCompareMode)
-			;	// don't dismiss dialog
-		else
+		if (fCompareMode) {
+			// don't dismiss dialog
+		} else
 			super.okPressed();
 	}
 
 	//---- private stuff ----------------------------------------------------------------------------------------
 				
-	/**
+	/*
 	 * Asynchroneously sends a Pair (or null) to the UI thread.
 	 */
 	private void sendPair(final Pair pair) {		
@@ -878,7 +876,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 			internalSort(keys, left, original_right); 
 	}
 	
-	/**
+	/*
 	 * Adds the given Pair to the member editions.
 	 * If HIDE_IDENTICAL is true the new Pair is only added if its contents
 	 * is different from the preceeding Pair.
@@ -952,7 +950,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 			addEdition(pair);
 	}
 		
-	/**
+	/*
 	 * Returns the number of s since Jan 1st, 1970.
 	 * The given date is converted to GMT and daylight saving is taken into account too.
 	 */
@@ -965,7 +963,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 		return (date + localTimeOffset) / ONE_DAY_MS;
 	}
 	
-	/**
+	/*
 	 * Adds the given Pair to the edition tree.
 	 * It takes care of creating tree nodes for different dates.
 	 */
@@ -1046,7 +1044,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 			lastDay.setExpanded(true);
 	}
 						
-	/**
+	/*
 	 * Feeds selection from member viewer to edition viewer.
 	 */
 	private void handleMemberSelect(Widget w) {

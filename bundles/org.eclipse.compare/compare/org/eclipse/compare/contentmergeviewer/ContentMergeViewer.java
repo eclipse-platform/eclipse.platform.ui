@@ -282,7 +282,8 @@ public abstract class ContentMergeViewer extends ContentViewer
 	/**
 	 * Creates a new content merge viewer and initializes with a resource bundle and a
 	 * configuration.
-	 *
+	 * 
+	 * @param style SWT style bits
 	 * @param bundle the resource bundle
 	 * @param cc the configuration object
 	 */
@@ -376,6 +377,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	 * @param toolBarManager the toolbar manager to contribute to
 	 */
 	protected void createToolItems(ToolBarManager toolBarManager) {
+		// empty implementation
 	}
 
 	/**
@@ -431,6 +433,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	 * The <code>ContentMergeViewer</code> implementation of this 
 	 * <code>ContentViewer</code> method
 	 * checks to ensure that the content provider is an <code>IMergeViewerContentProvider</code>.
+	 * @param contentProvider the contentprovider to set. Must implement IMergeViewerContentProvider. 
 	 */
 	public void setContentProvider(IContentProvider contentProvider) {
 		Assert.isTrue(contentProvider instanceof IMergeViewerContentProvider);
@@ -458,6 +461,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	 * <code>Viewer</code> method does nothing. Subclasses may reimplement.
 	 */
 	public void setSelection(ISelection s, boolean reveal) {
+		// empty implementation
 	}
 
 	/* package */ void propertyChange(PropertyChangeEvent event) {
@@ -921,7 +925,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 //		return null;
 //	}
 		
-	/**
+	/*
 	 * Calculates the height of the header.
 	 */
 	/* package */ int getHeaderHeight() {
@@ -932,7 +936,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 
 	//---- merge direction
 	
-	/**
+	/*
 	 * Returns true if both sides are editable.
 	 */
 	/* package */ boolean canToggleMergeDirection() {
@@ -1008,7 +1012,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 		saveContent(getInput());
 	}
 	
-	/**
+	/*
 	 * Save modified content back to input elements via the content provider.
 	 */
 	/* package */ void saveContent(Object oldInput) {
