@@ -6,7 +6,8 @@ package org.eclipse.help.internal.toc;
 import java.util.*;
 
 import org.eclipse.help.*;
-import org.xml.sax.Attributes;
+import org.eclipse.help.internal.util.*;
+import org.xml.sax.*;
 /** 
  * Root of navigation TocFile
  * Can be linked with other Toc objects.
@@ -100,7 +101,7 @@ public class Toc extends TocNode implements IToc {
 		if (topicMap == null) {
 			// traverse TOC and fill in the topicMap
 			topicMap = new HashMap();
-			Stack stack = new Stack();
+			FastStack stack = new FastStack();
 			ITopic[] topics = getTopics();
 			for (int i = 0; i < topics.length; i++)
 				stack.push(topics[i]);

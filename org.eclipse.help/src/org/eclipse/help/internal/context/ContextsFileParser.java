@@ -4,18 +4,17 @@
  */
 package org.eclipse.help.internal.context;
 import java.io.*;
-import java.text.MessageFormat;
-import java.util.Stack;
+import java.text.*;
 
-import org.apache.xerces.parsers.SAXParser;
+import org.apache.xerces.parsers.*;
 import org.eclipse.help.internal.util.*;
 import org.xml.sax.*;
-import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.helpers.*;
 /**
  * Parser for xml file
  */
 public class ContextsFileParser extends DefaultHandler {
-	protected Stack stack = new Stack();
+	protected FastStack stack = new FastStack();
 	StringBuffer buffer = new StringBuffer();
 	boolean seenDescription = false;
 	ContextsFile contextsFile;
@@ -27,7 +26,8 @@ public class ContextsFileParser extends DefaultHandler {
 	/**
 	  * Receive notification of character data.
 	  */
-	public void characters(char ch[], int start, int length) throws SAXException {
+	public void characters(char ch[], int start, int length)
+		throws SAXException {
 		if (seenDescription)
 			buffer.append(ch, start, length);
 		if (Logger.DEBUG)
@@ -62,7 +62,9 @@ public class ContextsFileParser extends DefaultHandler {
 	public void error(SAXParseException ex) {
 		String message = getMessage("E001", ex);
 		Logger.logError(message, null);
-		RuntimeHelpStatus.getInstance().addParseError(message, ex.getSystemId());
+		RuntimeHelpStatus.getInstance().addParseError(
+			message,
+			ex.getSystemId());
 	}
 	/**
 	 * @see ErrorHandler#fatalError(SAXParseException)
@@ -70,7 +72,9 @@ public class ContextsFileParser extends DefaultHandler {
 	public void fatalError(SAXParseException ex) throws SAXException {
 		String message = getMessage("E002", ex);
 		Logger.logError(message, ex);
-		RuntimeHelpStatus.getInstance().addParseError(message, ex.getSystemId());
+		RuntimeHelpStatus.getInstance().addParseError(
+			message,
+			ex.getSystemId());
 	}
 	public String getMessage(String messageID, SAXParseException ex) {
 		String param0 = ex.getSystemId();
@@ -133,7 +137,10 @@ public class ContextsFileParser extends DefaultHandler {
 			return;
 		InputSource inputSource = new InputSource(is);
 		String file =
-			"/" + contextsFile.getDefiningPluginID() + "/" + contextsFile.getHref();
+			"/"
+				+ contextsFile.getDefiningPluginID()
+				+ "/"
+				+ contextsFile.getHref();
 		inputSource.setSystemId(file);
 		try {
 			SAXParser parser = new SAXParser();

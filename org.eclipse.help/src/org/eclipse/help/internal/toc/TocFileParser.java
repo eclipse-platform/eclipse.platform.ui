@@ -4,20 +4,19 @@
  */
 package org.eclipse.help.internal.toc;
 import java.io.*;
-import java.text.MessageFormat;
-import java.util.Stack;
+import java.text.*;
 
-import org.apache.xerces.parsers.SAXParser;
+import org.apache.xerces.parsers.*;
 import org.eclipse.help.internal.util.*;
 import org.xml.sax.*;
-import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.helpers.*;
 /**
  * Used to create TocFile's Toc object
  * from contributed toc xml file.
  */
 class TocFileParser extends DefaultHandler {
 	protected TocBuilder builder;
-	protected Stack elementStack;
+	protected FastStack elementStack;
 	protected TocFile tocFile;
 	/**
 	 * Constructor
@@ -33,7 +32,9 @@ class TocFileParser extends DefaultHandler {
 		String message = getMessage("E024", ex);
 		//Error parsing Table of Contents file, URL: %1 at Line:%2 Column:%3 %4
 		Logger.logError(message, null);
-		RuntimeHelpStatus.getInstance().addParseError(message, ex.getSystemId());
+		RuntimeHelpStatus.getInstance().addParseError(
+			message,
+			ex.getSystemId());
 	}
 	/**
 	 * @see ErrorHandler#fatalError(SAXParseException)
@@ -43,7 +44,9 @@ class TocFileParser extends DefaultHandler {
 		String message = getMessage("E025", ex);
 		//Failed to parse Table of Contents file, URL: %1 at Line:%2 Column:%3 %4
 		Logger.logError(message, ex);
-		RuntimeHelpStatus.getInstance().addParseError(message, ex.getSystemId());
+		RuntimeHelpStatus.getInstance().addParseError(
+			message,
+			ex.getSystemId());
 	}
 	protected String getMessage(String messageID, SAXParseException ex) {
 		String param0 = ex.getSystemId();
@@ -61,7 +64,7 @@ class TocFileParser extends DefaultHandler {
 	 */
 	public void parse(TocFile tocFile) {
 		this.tocFile = tocFile;
-		elementStack = new Stack();
+		elementStack = new FastStack();
 		InputStream is = tocFile.getInputStream();
 		if (is == null)
 			return;
@@ -120,7 +123,10 @@ class TocFileParser extends DefaultHandler {
 	/**
 	 * @see ContentHandler#endElement(String, String, String)
 	 */
-	public final void endElement(String namespaceURI, String localName, String qName)
+	public final void endElement(
+		String namespaceURI,
+		String localName,
+		String qName)
 		throws SAXException {
 		elementStack.pop();
 	}
