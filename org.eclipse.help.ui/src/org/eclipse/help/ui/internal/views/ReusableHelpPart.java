@@ -206,6 +206,13 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			}
 			return true;
 		}
+		
+		public void stop() {
+			for (int i=0; i<partRecs.size(); i++) {
+				PartRec rec =(PartRec)partRecs.get(i);
+				rec.part.stop();
+			}
+		}
 
 		public void setVisible(boolean visible) {
 			if (bars!=null) bars.clearGlobalActionHandlers();
@@ -481,6 +488,12 @@ public class ReusableHelpPart implements IHelpUIConstants {
 	}
 
 	private void doBack() {
+		String id = getCurrentPageId();
+		if (id.equals(IHelpUIConstants.HV_BROWSER_PAGE)) {
+			// stop the browser
+			BrowserPart part = (BrowserPart)findPart(IHelpUIConstants.HV_BROWSER);
+			part.stop();
+		}
 		HistoryEntry entry = history.prev();
 		if (entry!=null)
 			executeHistoryEntry(entry);
@@ -550,8 +563,10 @@ public class ReusableHelpPart implements IHelpUIConstants {
 	private boolean flipPages(HelpPartPage oldPage, HelpPartPage newPage) {
 		if (newPage.canOpen()==false)
 			return false;
-		if (oldPage!=null)
+		if (oldPage!=null) {
+			oldPage.stop();
 			oldPage.setVisible(false);
+		}
 		mform.getForm().setText(newPage.getText());			
 		newPage.setVisible(true);
 		toolBarManager.update(true);

@@ -173,15 +173,19 @@ public class EngineDescriptor implements IEngineDescriptor {
 	}
 
 	public void setLabel(String label) {
-		this.label = label;
-		if (manager!=null)
-			manager.notifyPropertyChange(this);
+		if (isUserDefined()) {
+			this.label = label;
+			if (manager!=null)
+				manager.notifyPropertyChange(this);
+		}
 	}
 
 	public void setDescription(String desc) {
-		this.desc = desc;
-		if (manager!=null)
-			manager.notifyPropertyChange(this);
+		if (isUserDefined()) {
+			this.desc = desc;
+			if (manager!=null)
+				manager.notifyPropertyChange(this);
+		}
 	}
 
 	public boolean isUserDefined() {

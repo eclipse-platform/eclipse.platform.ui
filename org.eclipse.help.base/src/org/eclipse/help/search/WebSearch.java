@@ -25,8 +25,8 @@ import org.eclipse.help.internal.base.HelpBaseResources;
  * <code>{expression}</code>.
  * <p>
  * This class is made public in order to be instantiated and parametrized
- * directly in the extentsions. Clients are required to supply the required URL
- * template as a parameter <code>url</code>.
+ * directly in the extensions. Clients are required to supply the URL
+ * template string as a parameter <code>url</code>.
  * 
  * <p>
  * This class is not expected to be subclassed or otherwise accessed

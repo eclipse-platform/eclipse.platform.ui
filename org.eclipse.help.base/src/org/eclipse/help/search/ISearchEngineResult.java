@@ -17,8 +17,10 @@ import org.eclipse.help.IHelpResource;
  * have direct access to the search servers are expected to
  * provide one search result object per each hit. Engines that
  * can only compose a search query that returns a document
- * with the results must create one serch result object whose
- * URL is the actual query.
+ * with the results must create one search result object whose
+ * URL is the actual query. This URL will then be presented
+ * in the Web browser.
+ * 
  * @since 3.1
  */
 public interface ISearchEngineResult {
@@ -33,7 +35,7 @@ public interface ISearchEngineResult {
 	 * typically composed of the document fragment in the
 	 * vicinity of the searched expression, or a combination
 	 * of several document fragments. Other search engines
-	 * may return couple of sententies at the beninning of the
+	 * may return a couple of sentencies at the beninning of the
 	 * document.
 	 * @return  a short description, or <code>null</code> if not
 	 * available.
@@ -43,7 +45,7 @@ public interface ISearchEngineResult {
 	 * Returns a category this search result belongs to. 
 	 * Engines can use this object to denote the origin of the hit
 	 * in the search domain. The usage of <code>IHelpResource</code>
-	 * allows result UI to create a link to the category.
+	 * allows search result UI to create a link to the category.
 	 * @return a hit category or <code>null</code> if not available. 
 	 */
 	IHelpResource getCategory();
@@ -86,15 +88,16 @@ public interface ISearchEngineResult {
 	 * shown embedded. Contributors should force external
 	 * window only if the link points at a web page that
 	 * cannot be displayed in a narrow view without 
-	 * distorsion. Text-only document typically reflow
+	 * distorsion. Text-only document typically reflows
 	 * well to fit the narrow view. Documents with tables and/or
 	 * images normally do not fit without showing the
 	 * horizontal scroll bar.
 	 * <p>
 	 * Note that returning <code>false</code> does not
-	 * prevent the link to be opened in the external window because
-	 * the user may configure the help system to always
-	 * open links in external windows.
+	 * prevent the link to be opened in the external window.
+	 * Instead, it indicates that the link should be
+	 * opened using the current user preferences, which 
+	 * may always force external window for URL rendering.
 	 * 
 	 * @return <code>true</code> if external window must
 	 * be used, <code>false</code> if the link opening mode
@@ -104,9 +107,9 @@ public interface ISearchEngineResult {
 	/**
 	 * Converts a relative href into absolute according to the
 	 * search engine base URL.
-	 * @param href the relative href to make absolute
+	 * @param href the relative href to convert into absolute
 	 * @param frames if <code>true</code>, the resulting href can 
-	 * contain frames in a form suitable for presentation in 
+	 * contain frames in a format suitable for presentation in 
 	 * a standalone web browser. Otherwise, the resulting href
 	 * should be without frames and suitable for presentation
 	 * in the embedded web browser inside the workbench. 

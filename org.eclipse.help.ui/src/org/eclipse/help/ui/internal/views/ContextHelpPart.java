@@ -382,4 +382,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 			return parent.getCopyAction();
 		return null;
 	}
+
+	public void stop() {
+	}
 }

@@ -23,4 +23,5 @@ public interface IHelpPart extends IFormPart {
 	boolean hasFocusControl(Control control);
 	boolean fillContextMenu(IMenuManager manager);
 	IAction getGlobalAction(String id);
+	void stop();
 }

@@ -319,4 +319,6 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 	FormToolkit getToolkit() {
 		return innerToolkit;
 	}
+	public void stop() {
+	}
 }

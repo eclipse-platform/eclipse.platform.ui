@@ -60,6 +60,11 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 				if (lastProgress == -1) {
 					lastProgress = 0;
 					monitor.beginTask("", e.total); //$NON-NLS-1$
+					BrowserPart.this.parent.getStatusLineManager().setCancelEnabled(true);
+				}
+				else if (monitor.isCanceled()) {
+					browser.stop();
+					return;
 				}
 				monitor.worked(e.current - lastProgress);
 				lastProgress = e.current;
@@ -68,6 +73,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 			public void completed(ProgressEvent e) {
 				IProgressMonitor monitor = BrowserPart.this.parent
 						.getStatusLineManager().getProgressMonitor();
+				BrowserPart.this.parent.getStatusLineManager().setCancelEnabled(false);				
 				monitor.done();
 				lastProgress = -1;
 			}
@@ -142,9 +148,6 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	 */
 	public void setVisible(boolean visible) {
 		if (browser != null) {
-			if (!visible) {
-				browser.stop();
-			}
 			browser.setVisible(visible);
 		}
 	}
@@ -163,6 +166,12 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 		if (browser != null && url != null) {
 			browser.setUrl(url);
 		}
+	}
+	
+	public void stop() {
+		if (browser!=null && !browser.isDisposed())
+			browser.stop();
+		
 	}
 	
 	private void doPrint() {

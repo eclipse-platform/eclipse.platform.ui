@@ -33,14 +33,18 @@ import org.xml.sax.*;
  * <p>
  * This class is made public in order to be instantiated and parametrized
  * directly in the extentsions. Clients are required to supply the required URL
- * as a parameter <code>url</code>. This class is not expected to be
- * subclassed or otherwise accessed programmatically.
+ * as a parameter <code>url</code>.
+ * 
+ * <p>
+ * This class is not expected to be subclassed or otherwise accessed
+ * programmatically.
  * 
  * @since 3.1
  */
 
 public final class InfoCenter implements ISearchEngine {
 	private Hashtable tocs;
+
 	public static class Scope implements ISearchScope {
 		String url;
 
@@ -48,7 +52,7 @@ public final class InfoCenter implements ISearchEngine {
 
 		String[] tocs;
 
-		public Scope(String url, boolean searchSelected, String [] tocs) {
+		public Scope(String url, boolean searchSelected, String[] tocs) {
 			this.url = url;
 			this.searchSelected = searchSelected;
 			this.tocs = tocs;
@@ -57,28 +61,30 @@ public final class InfoCenter implements ISearchEngine {
 
 	class InfoCenterResult implements ISearchEngineResult {
 		private IHelpResource category;
+
 		private Element node;
+
 		private String baseURL;
 
 		public InfoCenterResult(String baseURL, Element node) {
-			this.node = node;
 			this.baseURL = baseURL;
-			createCategory();
+			this.node = node;
+			createCategory(node);
 		}
 
-		private void createCategory() {
-			String href = node.getAttribute("toc"); //$NON-NLS-1$
-			String label = node.getAttribute("toclabel"); //$NON-NLS-1$
-			if (href!=null && label!=null) {
-				category = (IHelpResource)tocs.get(href);
-				if (category==null) {
+		private void createCategory(Element node) {
+			final String href = node.getAttribute("toc"); //$NON-NLS-1$
+			final String label = node.getAttribute("toclabel"); //$NON-NLS-1$
+			if (href != null && label != null) {
+				category = (IHelpResource) tocs.get(href);
+				if (category == null) {
 					category = new IHelpResource() {
-						public String getHref() {
-							return node.getAttribute("toc"); //$NON-NLS-1$
+						public String getLabel() {
+							return label;
 						}
 
-						public String getLabel() {
-							return node.getAttribute("toclabel"); //$NON-NLS-1$
+						public String getHref() {
+							return href;
 						}
 					};
 					tocs.put(href, category);
@@ -91,7 +97,7 @@ public final class InfoCenter implements ISearchEngine {
 		}
 
 		public String getDescription() {
-			return node.getAttribute("description"); //$NON-NLS-1$
+			return null;
 		}
 
 		public IHelpResource getCategory() {
@@ -103,8 +109,10 @@ public final class InfoCenter implements ISearchEngine {
 		}
 
 		public float getScore() {
-			String value = node.getAttribute("score"); //$NON-NLS-1$
-			return Float.parseFloat(value);
+			String value = node.getAttribute("score");
+			if (value != null)
+				return Float.parseFloat(value);
+			return (float) 0.0;
 		}
 
 		public boolean getForceExternalWindow() {
@@ -114,12 +122,11 @@ public final class InfoCenter implements ISearchEngine {
 		public String toAbsoluteHref(String href, boolean frames) {
 			String url = baseURL;
 			if (!url.endsWith("/")) //$NON-NLS-1$
-				url = url+"/"; //$NON-NLS-1$
+				url = url + "/"; //$NON-NLS-1$
 			if (frames) {
-				return url+"topic"+href; //$NON-NLS-1$
-			}
-			else
-				return url+"topic"+href + "&noframes=true"; //$NON-NLS-1$ //$NON-NLS-2$
+				return url + "topic" + href; //$NON-NLS-1$
+			} else
+				return url + "topic" + href + "&noframes=true"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -149,12 +156,14 @@ public final class InfoCenter implements ISearchEngine {
 			is = connection.getInputStream();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
 					is, "utf-8"));//$NON-NLS-1$
-			load(((Scope)scope).url, reader, collector, monitor);
+			load(((Scope) scope).url, reader, collector, monitor);
 			reader.close();
 		} catch (FileNotFoundException e) {
-			reportError(HelpBaseResources.getString("InfoCenter.fileNotFound"), e, collector); //$NON-NLS-1$
+			reportError(
+					HelpBaseResources.getString("InfoCenter.fileNotFound"), e, collector); //$NON-NLS-1$
 		} catch (IOException e) {
-			reportError(HelpBaseResources.getString("InfoCenter.io"), e, collector); //$NON-NLS-1$
+			reportError(
+					HelpBaseResources.getString("InfoCenter.io"), e, collector); //$NON-NLS-1$
 		} finally {
 			if (is != null) {
 				try {
@@ -164,15 +173,16 @@ public final class InfoCenter implements ISearchEngine {
 			}
 		}
 	}
-	
-	private void reportError(String message, IOException e, ISearchEngineResultCollector collector) {
+
+	private void reportError(String message, IOException e,
+			ISearchEngineResultCollector collector) {
 		Status status = new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID,
 				IStatus.OK, message, e);
 		collector.error(status);
 	}
 
-	private void load(String baseURL, Reader r, ISearchEngineResultCollector collector,
-			IProgressMonitor monitor) {
+	private void load(String baseURL, Reader r,
+			ISearchEngineResultCollector collector, IProgressMonitor monitor) {
 		Document document = null;
 		try {
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance()
@@ -223,14 +233,13 @@ public final class InfoCenter implements ISearchEngine {
 		}
 		buf.append("&locale="); //$NON-NLS-1$
 		buf.append(Platform.getNL());
-		if (scope.searchSelected && scope.tocs!=null) {
+		if (scope.searchSelected && scope.tocs != null) {
 			buf.append("&scopedSearch=true"); //$NON-NLS-1$
-			for (int i=0; i<scope.tocs.length; i++) {
+			for (int i = 0; i < scope.tocs.length; i++) {
 				String toc;
 				try {
 					toc = URLEncoder.encode(scope.tocs[i], "UTF-8"); //$NON-NLS-1$
-				}
-				catch (UnsupportedEncodingException e) {
+				} catch (UnsupportedEncodingException e) {
 					toc = scope.tocs[i];
 				}
 				buf.append("&scope="); //$NON-NLS-1$

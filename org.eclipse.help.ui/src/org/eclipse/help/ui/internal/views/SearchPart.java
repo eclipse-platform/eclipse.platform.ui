@@ -466,6 +466,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		if (activeSet != null)
 			activeSet.save();
 		Platform.getJobManager().removeJobChangeListener(jobListener);
+		stop();
 		super.dispose();
 	}
 
@@ -528,5 +529,9 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		if (id.equals(ActionFactory.COPY.getId()))
 			return parent.getCopyAction();
 		return null;
+	}
+	
+	public void stop() {
+		Platform.getJobManager().cancel(FederatedSearchJob.FAMILY);
 	}
 }

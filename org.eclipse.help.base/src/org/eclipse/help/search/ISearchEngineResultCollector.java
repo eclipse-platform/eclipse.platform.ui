@@ -40,13 +40,15 @@ public interface ISearchEngineResultCollector {
 	 * occured in the search engine. The kinds
 	 * of errors that are reported this way
 	 * are not abnormal problems or internal
-	 * errors that are reported to the job
-	 * manager itself. Instead, these errors
+	 * errors. Unexpected problems should be
+	 * left to the job manager to handle by 
+	 * throwing a <code>CoreException</code>.
+	 * Use this method to report errors that
 	 * are expected to occur from time to time
-	 * (for example, server down, server timeout,
+	 * (e.g., server down, server timeout,
 	 * incorrect URL etc.).
 	 * 
-	 * @param status the reporter error status
+	 * @param status the reported error status
 	 */
 	void error(IStatus status);
 }

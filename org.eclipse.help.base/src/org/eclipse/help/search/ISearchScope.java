@@ -13,7 +13,7 @@ package org.eclipse.help.search;
 /**
  * The generic search scope object. This is a tagging interface
  * since each search engine is expected to have its own non-overlapping
- * set of scopes that users can include or exclude from the search.
+ * set of scopes that users can include in or exclude from the search.
  * 
  * @since 3.1
  */

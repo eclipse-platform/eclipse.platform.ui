@@ -172,4 +172,6 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 			return parent.getCopyAction();
 		return null;
 	}
+	public void stop() {
+	}
 }

@@ -141,11 +141,15 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 
 	public void dispose() {
 		Platform.getJobManager().removeJobChangeListener(jobListener);
+		stop();
+		super.dispose();
+	}
+	
+	public void stop () {
 		if (runningJob!=null) {
 			runningJob.cancel();
 			runningJob=null;
-		}
-		super.dispose();
+		}		
 	}
 
 	/*

@@ -25,8 +25,8 @@ import org.eclipse.swt.widgets.*;
  * definition must extend this class and implement
  * <code>createScopeContents</code> method. The page will come preset with the
  * engine name, image and description, as well as the master switch that turns
- * the engine on or off. When the engins master switch is set to false, the
- * entire client composite will be disabled.
+ * the engine on or off. When the engine master switch is set to false, all the
+ * children in the client composite will be disabled.
  * 
  * @since 3.1
  */
@@ -43,7 +43,7 @@ public abstract class RootScopePage extends PreferencePage implements
 	private Text labelText;
 
 	private Text descText;
-	
+
 	private Hashtable disabledStates = new Hashtable();
 
 	/**
@@ -52,6 +52,11 @@ public abstract class RootScopePage extends PreferencePage implements
 	public RootScopePage() {
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see ISearchScopePage#init(IEngineDescriptor, String)
+	 */
 	public void init(IEngineDescriptor ed, String scopeSetName) {
 		this.ed = ed;
 		this.scopeSetName = scopeSetName;
@@ -74,7 +79,8 @@ public abstract class RootScopePage extends PreferencePage implements
 			layout.numColumns = 2;
 		container.setLayout(layout);
 		masterButton = new Button(container, SWT.CHECK);
-		masterButton.setText(HelpUIResources.getString("RootScopePage.masterButton")); //$NON-NLS-1$
+		masterButton.setText(HelpUIResources
+				.getString("RootScopePage.masterButton")); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalSpan = ed.isUserDefined() ? 2 : 1;
 		masterButton.setLayoutData(gd);
@@ -152,11 +158,11 @@ public abstract class RootScopePage extends PreferencePage implements
 			if (!enabled) {
 				disabledStates.put(child, new Boolean(child.isEnabled()));
 				child.setEnabled(false);
-			}
-			else {
-				Boolean savedState = (Boolean)disabledStates.get(child);
+			} else {
+				Boolean savedState = (Boolean) disabledStates.get(child);
 				if (!first)
-					child.setEnabled(savedState!=null?savedState.booleanValue():true);
+					child.setEnabled(savedState != null ? savedState
+							.booleanValue() : true);
 			}
 		}
 	}
@@ -204,7 +210,7 @@ public abstract class RootScopePage extends PreferencePage implements
 	public boolean performOk() {
 		getPreferenceStore().setValue(ScopeSet.getMasterKey(ed.getId()),
 				masterButton.getSelection());
-		if (labelText!=null) {
+		if (labelText != null) {
 			ed.setLabel(labelText.getText());
 			ed.setDescription(descText.getText());
 		}
@@ -214,7 +220,6 @@ public abstract class RootScopePage extends PreferencePage implements
 	/**
 	 * Sets the value of the master switch to the initial value from the
 	 * extension. Subclasses may override but must call 'super'.
-	 * 
 	 */
 	protected void performDefaults() {
 		getPreferenceStore().setToDefault(ScopeSet.getMasterKey(ed.getId()));
@@ -254,7 +259,15 @@ public abstract class RootScopePage extends PreferencePage implements
 
 	/**
 	 * Abstract method that subclasses must implement in order to provide root
-	 * page content.
+	 * page content. The parent uses <code>GridLayout</code> to position and
+	 * size the widgets. Widgets created in this method should use
+	 * <code>GridData</code> to configure the way they fit in the overall
+	 * page.
+	 * <p>
+	 * The common widgets created by this page will set number of columns they
+	 * need for themselves only. Clients that implement this method should
+	 * return the required number of columns so that the root page widgets can
+	 * be adjusted if more columns are needed than initially set.
 	 * 
 	 * @param parent
 	 *            the page parent

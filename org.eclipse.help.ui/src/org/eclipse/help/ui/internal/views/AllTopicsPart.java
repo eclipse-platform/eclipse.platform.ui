@@ -411,4 +411,9 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 			return parent.getCopyAction();
 		return null;
 	}
+
+	public void stop() {
+		// TODO Auto-generated method stub
+		
+	}
 }

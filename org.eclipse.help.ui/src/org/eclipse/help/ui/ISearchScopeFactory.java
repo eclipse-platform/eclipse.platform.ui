@@ -38,13 +38,13 @@ public interface ISearchScopeFactory {
 	 * 
 	 * @param store
 	 *            the preference store that holds the scope data
-	 * @param parameters
-	 *            configuration parameters provided in the engine extension
-	 *            point. They should be used as default values but preference
-	 *            store values should be given precedance.
 	 * @param engineId
 	 *            identifier of the engine instance that needs the scope object.
-	 * @return the new search scope object
+	 * @param parameters
+	 *            configuration parameters provided in the engine extension
+	 *            point. They should be used as default values and preference
+	 *            store values (if defined) should be given precedance.
+	 * @return a new search scope object
 	 */
 	ISearchScope createSearchScope(IPreferenceStore store, String engineId,
 			Dictionary parameters);
