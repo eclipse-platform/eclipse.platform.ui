@@ -36,6 +36,7 @@ public class ErrorRecoveryLog {
 	public static final String START_INSTALL_LOG = 	"START_INSTALL_LOG";
 	public static final String PLUGIN_ENTRY = 		"PLUGIN";
 	public static final String FRAGMENT_ENTRY = 		"FRAGMENT";	
+	public static final String BUNDLE_MANIFEST_ENTRY = 		"BUNDLE_MANIFEST";	
 	public static final String FEATURE_ENTRY = 		"FEATURE";
 	public static final String ALL_INSTALLED = 		"ALL_FEATURES_INSTALLED";
 	public static final String RENAME_ENTRY = 		"RENAME";
@@ -380,12 +381,13 @@ public class ErrorRecoveryLog {
 	  	if (val.startsWith(PLUGIN_ENTRY)){
 	  		index = PLUGIN_ENTRY.length();
 	  		newFileName= "plugin.xml";
-	  	}
-	  	if (val.startsWith(FRAGMENT_ENTRY)){
+	  	} else if (val.startsWith(BUNDLE_MANIFEST_ENTRY)){
+	  		index = BUNDLE_MANIFEST_ENTRY.length();
+	  		newFileName= "META-INF/MANIFEST.MF";
+	  	}else if (val.startsWith(FRAGMENT_ENTRY)){
 	  		index = FRAGMENT_ENTRY.length();
 	  		newFileName= "fragment.xml";
-	  	}
-	  	if (val.startsWith(FEATURE_ENTRY)){
+	  	} else if (val.startsWith(FEATURE_ENTRY)){
 	  		index = FEATURE_ENTRY.length();
 	  		newFileName= "feature.xml";
 	  	}

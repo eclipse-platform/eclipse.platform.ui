@@ -62,7 +62,15 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 			pluginPath += pluginPath.endsWith(File.separator) ? contentKey : File.separator + contentKey;
 
 			// error recovery
+			String logEntry=null;
 			if ("plugin.xml".equals(contentKey)) {
+				logEntry=ErrorRecoveryLog.PLUGIN_ENTRY;
+			} else if ("fragment.xml".equals(contentKey)) {
+				logEntry=ErrorRecoveryLog.FRAGMENT_ENTRY;
+			} else if ("META-INF/MANIFEST.MF".equals(contentKey)) {
+				logEntry=ErrorRecoveryLog.BUNDLE_MANIFEST_ENTRY;
+			}
+			if (logEntry!=null) {
 				oldPath = pluginPath.replace(File.separatorChar, '/');
 				File localFile = new File(oldPath);
 				if (localFile.exists()) {
@@ -70,18 +78,9 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 				}
 				pluginPath = ErrorRecoveryLog.getLocalRandomIdentifier(pluginPath);
 				newPath = pluginPath;
-				ErrorRecoveryLog.getLog().appendPath(ErrorRecoveryLog.PLUGIN_ENTRY, pluginPath);
+				ErrorRecoveryLog.getLog().appendPath(logEntry, pluginPath);
 			}
-			if ("fragment.xml".equals(contentKey)) {
-				oldPath = pluginPath.replace(File.separatorChar, '/');
-				File localFile = new File(oldPath);
-				if (localFile.exists()) {
-					throw Utilities.newCoreException(Policy.bind("UpdateManagerUtils.FileAlreadyExists", new Object[] { localFile }), null);
-				}
-				pluginPath = ErrorRecoveryLog.getLocalRandomIdentifier(pluginPath);
-				newPath = pluginPath;
-				ErrorRecoveryLog.getLog().appendPath(ErrorRecoveryLog.FRAGMENT_ENTRY, pluginPath);
-			}
+			//
 			UpdateManagerUtils.copyToLocal(inStream, pluginPath, null);
 			UpdateManagerUtils.checkPermissions(contentReference, pluginPath); // 20305
 			installedFiles.add(pluginPath);

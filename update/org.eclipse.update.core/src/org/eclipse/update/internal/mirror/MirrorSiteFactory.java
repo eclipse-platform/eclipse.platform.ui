@@ -129,16 +129,26 @@ public class MirrorSiteFactory extends BaseSiteFactory {
 					JarContentReference jarReference =
 						new JarContentReference(null, file);
 					ref = jarReference.peek("plugin.xml", null, null); //$NON-NLS-1$
-					if (ref == null)
+					if (ref == null){
 						ref = jarReference.peek("fragment.xml", null, null); //$NON-NLS-1$
+					}
 
 					if (ref != null) {
 						PluginEntry entry =
 							new DefaultPluginParser().parse(
 								ref.getInputStream());
 						site.addDownloadedPluginEntry(entry);
-
+						return;
 					}
+					
+					ref=jarReference.peek("META-INF/MANIFEST.MF", null, null); //$NON-NLS-1$
+					if (ref != null){
+						BundleManifest manifest=new BundleManifest(ref.getInputStream());
+						if(manifest.exists()){
+							site.addDownloadedPluginEntry(manifest.getPluginEntry());
+						}
+					}
+
 				}
 			}
 

@@ -246,6 +246,12 @@ public class SiteFileFactory extends BaseSiteFactory {
 						if (pluginFile != null && pluginFile.exists() && !pluginFile.isDirectory()) {
 							PluginEntry entry = parser.parse(new FileInputStream(pluginFile));
 							addParsedPlugin(entry,files[i]);
+						}else {
+							BundleManifest bundleManifest = new BundleManifest(new File(files[i], "META-INF/MANIFEST.MF"));
+							PluginEntry entry=bundleManifest.getPluginEntry();
+							if(entry!=null){
+								addParsedPlugin(entry, files[i]);
+							}
 						}
 					} // files[i] is a directory
 				}
@@ -317,16 +323,26 @@ public class SiteFileFactory extends BaseSiteFactory {
 					file = new File(pluginDir, dir[i]);
 					JarContentReference jarReference = new JarContentReference(null, file);
 					ref = jarReference.peek("plugin.xml", null, null); //$NON-NLS-1$
-					if (ref == null)
-						jarReference.peek("fragment.xml", null, null); //$NON-NLS-1$
+					if (ref == null){
+						ref = jarReference.peek("fragment.xml", null, null); //$NON-NLS-1$
+					}
 
 					refString = (ref == null) ? null : ref.asURL().toExternalForm();
 
 					if (ref != null) {
 						PluginEntry entry = new DefaultPluginParser().parse(ref.getInputStream());
 						addParsedPlugin(entry,file);
-					} //ref!=null
-				} //for
+						return;
+					}
+					
+					ref=jarReference.peek("META-INF/MANIFEST.MF", null, null); //$NON-NLS-1$
+					if (ref != null){
+						BundleManifest manifest=new BundleManifest(ref.getInputStream());
+						if(manifest.exists()){
+							addParsedPlugin(manifest.getPluginEntry(), file);
+						}
+					}
+				}
 			}
 
 		} catch (IOException e) {

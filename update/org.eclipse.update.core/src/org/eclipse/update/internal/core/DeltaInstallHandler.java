@@ -25,6 +25,7 @@ import org.eclipse.update.internal.operations.*;
 public class DeltaInstallHandler extends BaseInstallHandler {
 	private final static String PLUGIN_XML = "plugin.xml";
 	private final static String FRAGMENT_XML = "fragment.xml";
+	private final static String META_MANIFEST = "META-INF/MANIFEST.MF"; //$NON-NLS-1$
 
 	protected IFeature oldFeature;
 	protected ISiteContentConsumer contentConsumer;
@@ -120,7 +121,7 @@ public class DeltaInstallHandler extends BaseInstallHandler {
 					+ newPlugin.getVersionedIdentifier().toString());
 		String pluginPath = newURL.getFile();
 		for (int i = 0; i < oldReferences.length; i++) {
-			if (isPluginXml(oldReferences[i])
+			if (isPluginManifest(oldReferences[i])
 				|| referenceExists(newReferences, oldReferences[i]))
 				continue;
 
@@ -143,8 +144,8 @@ public class DeltaInstallHandler extends BaseInstallHandler {
 		}
 	}
 
-	protected boolean isPluginXml(ContentReference ref) {
+	protected boolean isPluginManifest(ContentReference ref) {
 		String id = ref.getIdentifier();
-		return PLUGIN_XML.equals(id) || FRAGMENT_XML.equals(id);
+		return PLUGIN_XML.equals(id) || FRAGMENT_XML.equals(id) || META_MANIFEST.equals(id);
 	}
 }
