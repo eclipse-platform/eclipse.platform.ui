@@ -69,11 +69,13 @@ private void applyValidationResult(String errorMsg) {
 
 	if (errorMsg == null) {
 		statusMessageLabel.setText("");//$NON-NLS-1$
+		statusMessageLabel.setToolTipText("");//$NON-NLS-1$
 		getOkButton().setEnabled(true);
 	} else {
 		statusMessageLabel.setForeground(
 			statusMessageLabel.getDisplay().getSystemColor(SWT.COLOR_RED));
 		statusMessageLabel.setText(errorMsg);
+		statusMessageLabel.setToolTipText(errorMsg);
 		getOkButton().setEnabled(false);
 	}
 }
