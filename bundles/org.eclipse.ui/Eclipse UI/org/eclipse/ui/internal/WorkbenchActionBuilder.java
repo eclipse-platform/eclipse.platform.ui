@@ -981,21 +981,21 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		// Allow manual incremental build only if the
 		// auto build setting is off.
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		if (event.getProperty() == IPreferenceConstants.AUTO_BUILD) {
+		if (event.getProperty().equals(IPreferenceConstants.AUTO_BUILD)) {
 			// Auto build is stored in core. It is not in the preference store.
 			boolean autoBuildOn = ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding();
 			if (autoBuildOn)
 				removeManualIncrementalBuildAction();
 			else
 				addManualIncrementalBuildAction();
-		} else if (event.getProperty() == IPreferenceConstants.REUSE_EDITORS_BOOLEAN) {
+		} else if (event.getProperty().equals(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
 			if(store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN))
 				addPinEditorAction();
 			else
 				removePinEditorAction();
-		} else if (event.getProperty() == IPreferenceConstants.REUSE_EDITORS) {
+		} else if (event.getProperty().equals(IPreferenceConstants.REUSE_EDITORS)) {
 			pinEditorAction.updateState();
-		} else if (event.getProperty() == IPreferenceConstants.RECENT_FILES) {
+		} else if (event.getProperty().equals(IPreferenceConstants.RECENT_FILES)) {
 			Workbench wb = (Workbench) (Workbench) window.getWorkbench();
 			int newValue = store.getInt(IPreferenceConstants.RECENT_FILES);
 			wb.getEditorHistory().reset(newValue);
@@ -1041,8 +1041,10 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		if (toolsMgr instanceof CoolBarManager) {
 			CoolBarManager cBarMgr = (CoolBarManager)toolsMgr;
 			CoolBarContributionItem coolBarItem = (CoolBarContributionItem)cBarMgr.find(pinEditorGroup); //$NON-NLS-1$
-			coolBarItem.dispose();
+			if (coolBarItem != null) 
+				coolBarItem.dispose();
 		} else {
+			
 			pinEditorAction.setVisible(false);
 			toolsMgr.remove(pinEditorAction.getId());
 		} 
