@@ -331,31 +331,19 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		IPreferenceStore store = getPreferenceStore();
 
 		// inform the workbench of whether it should do autobuilds or not
-		boolean newAutoBuildSetting = autoBuildButton.getSelection();
 		IWorkspaceDescription description = ResourcesPlugin.getWorkspace().getDescription();
 		boolean oldAutoBuildSetting = description.isAutoBuilding();
-		description.setAutoBuilding(newAutoBuildSetting);
+		boolean newAutoBuildSetting = autoBuildButton.getSelection();
 		
 		// store the auto build in the preference store so that we can enable import and export
 		store.setValue(IPreferenceConstants.AUTO_BUILD, newAutoBuildSetting);
 
-		try {
-			ResourcesPlugin.getWorkspace().setDescription(description);
-		} catch (CoreException e) {
-			WorkbenchPlugin.log("Error changing autobuild pref", e.getStatus());
-		}
 		if (oldAutoBuildSetting != newAutoBuildSetting) {
 			// fire off a property change notification so interested
 			// parties can know about the auto build setting change
 			// since it is not kept in the preference store.
 			store.firePropertyChangeEvent(IPreferenceConstants.AUTO_BUILD, new Boolean(oldAutoBuildSetting), new Boolean(newAutoBuildSetting));
 
-			// If auto build is turned on, then do a global incremental
-			// build on all the projects.
-			if (newAutoBuildSetting) {
-				GlobalBuildAction action = new GlobalBuildAction(this.workbench, getShell(), IncrementalProjectBuilder.INCREMENTAL_BUILD);
-				action.doBuild();
-			}
 		}
 
 		// store the save all prior to build setting

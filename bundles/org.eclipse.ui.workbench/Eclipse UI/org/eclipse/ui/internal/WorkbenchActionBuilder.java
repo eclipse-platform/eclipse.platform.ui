@@ -6,8 +6,10 @@ package org.eclipse.ui.internal;
  */
 import org.eclipse.swt.SWT;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -1002,12 +1004,32 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		// auto build setting is off.
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		if (event.getProperty().equals(IPreferenceConstants.AUTO_BUILD)) {
-			// Auto build is stored in core. It is not in the preference store.
-			boolean autoBuildOn = ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding();
-			if (autoBuildOn)
-				removeManualIncrementalBuildAction();
-			else
-				addManualIncrementalBuildAction();
+			// Auto build is stored in core. It is also in the preference store for use by import/export.
+			IWorkspaceDescription description = ResourcesPlugin.getWorkspace().getDescription();
+			boolean oldAutoBuildSetting = description.isAutoBuilding();
+			boolean newAutoBuildSetting = store.getBoolean(IPreferenceConstants.AUTO_BUILD);
+			
+			if(oldAutoBuildSetting != newAutoBuildSetting){
+				description.setAutoBuilding(newAutoBuildSetting);
+				try {
+					ResourcesPlugin.getWorkspace().setDescription(description);
+				} catch (CoreException e) {
+					WorkbenchPlugin.log("Error changing autobuild pref", e.getStatus());
+				}
+						
+				if (newAutoBuildSetting)
+					addManualIncrementalBuildAction();
+				else
+					removeManualIncrementalBuildAction();
+					
+				// If auto build is turned on, then do a global incremental
+				// build on all the projects.
+				if (newAutoBuildSetting) {
+					GlobalBuildAction action = new GlobalBuildAction(window,IncrementalProjectBuilder.INCREMENTAL_BUILD);
+					action.doBuild();
+				}								
+			}
+			
 		} else if (event.getProperty().equals(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
 			if(store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN))
 				addPinEditorAction();
