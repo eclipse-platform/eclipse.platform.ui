@@ -11,13 +11,10 @@
 package org.eclipse.ui.internal.dialogs;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.ToolBar;
+import java.util.Set;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -25,14 +22,17 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.ToolBarManager;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ActionHandler;
 import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.Priority;
-
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -68,7 +68,7 @@ class PreferencePageHistory {
 	/**
 	 * The handler submission for these controls.
 	 */
-	private HandlerSubmission submission;
+	private Set submissions = new HashSet();
 
 	/**
 	 * Creates a new history for the given dialog.
@@ -291,9 +291,10 @@ class PreferencePageHistory {
 	 */
 	private void registerKeybindings(IAction action) {
 		IHandler handler = new ActionHandler(action);
-		submission = new HandlerSubmission(null, dialog.getShell(), null,
+		HandlerSubmission submission = new HandlerSubmission(null, dialog.getShell(), null,
 				action.getActionDefinitionId(), handler, Priority.MEDIUM);
 		PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(submission);
+		submissions.add(submission);
 	}
 
 	/**
@@ -301,8 +302,13 @@ class PreferencePageHistory {
 	 *
 	 */
 	public void dispose() {
-		PlatformUI.getWorkbench().getCommandSupport().removeHandlerSubmission(
-				submission);
+		Iterator iterator = submissions.iterator();
+		while(iterator.hasNext()){
+			PlatformUI.getWorkbench().getCommandSupport().removeHandlerSubmission(
+					(HandlerSubmission) iterator.next());
+		}
+		submissions.clear();
+		
 	}
 
 	/**
