@@ -135,7 +135,7 @@ public interface IDebugUIConstants {
 	 * a debug session is launched, or when a debug session suspends
 	 * (value <code>"org.eclipse.debug.ui.auto_show_debug_view"</code>). When this
 	 * preference is <code>true</code> and a debug session is launched or suspends,
-	 * and a debug view is not present in the current perspective, a debug perspective
+	 * and a launch view is not present in the current perspective, a debug perspective
 	 * of the appropriate kind is created (or switched to if already created).
 	 */
 	public static final String PREF_AUTO_SHOW_DEBUG_VIEW= PLUGIN_ID + ".auto_show_debug_view"; //$NON-NLS-1$
@@ -144,7 +144,7 @@ public interface IDebugUIConstants {
 	 * Boolean preference controlling automatic change to debug perspective when
 	 * a program is launched in run mode (value <code>"org.eclipse.debug.ui.auto_show_process_view"</code>).
 	 * When this preference is <code>true</code>
-	 * and a program is launched, and a process view is not present in the current
+	 * and a program is launched, and a launch view is not present in the current
 	 * perspective, a debug perspective of the appropriate kind is created (or switched
 	 * to if already created).
 	 */
@@ -156,7 +156,7 @@ public interface IDebugUIConstants {
 	 */
 	public static final String PREF_AUTO_BUILD_BEFORE_LAUNCH= PLUGIN_ID + ".auto_build_before_launch"; //$NON-NLS-1$
 	/**
-	 * Boolean preference controlling automatic removal of launches
+	 * Boolean preference controlling automatic removal of terminated launches
 	 * when a new launch is registered.
 	 * @since 2.0
 	 */

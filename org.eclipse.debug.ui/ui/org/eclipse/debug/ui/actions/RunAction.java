@@ -1,4 +1,4 @@
-package org.eclipse.debug.ui;
+package org.eclipse.debug.ui.actions;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -6,12 +6,8 @@ package org.eclipse.debug.ui;
  */
 
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.internal.ui.DebugPluginImages;
-import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.actions.ExecutionAction;
-import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.ui.IViewActionDelegate;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Action to launch a program in run mode.
@@ -28,12 +24,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public final class RunAction extends ExecutionAction implements IViewActionDelegate {
 	
 	public RunAction() {
-		setText(DebugUIMessages.getString("RunAction.R&un@Alt+F9_1")); //$NON-NLS-1$
-		setToolTipText(DebugUIMessages.getString("RunAction.Run_2")); //$NON-NLS-1$
-		setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN));
-		WorkbenchHelp.setHelp(
-			this,
-			new Object[] { IDebugHelpContextIds.RUN_ACTION });
+		//only used as a delegate
 	}
 
 	/**

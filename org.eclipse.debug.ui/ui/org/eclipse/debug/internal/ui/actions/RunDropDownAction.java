@@ -8,7 +8,7 @@ package org.eclipse.debug.internal.ui.actions;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.LaunchHistoryElement;
-import org.eclipse.debug.ui.RunAction;
+import org.eclipse.debug.ui.actions.RunAction;
 
 public class RunDropDownAction extends LaunchDropDownAction {
 
