@@ -67,8 +67,10 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 			throw e;
 		} finally {
 			try {
-				if (input != null) 
+				if (input != null) { 
 					input.close();
+					input = null;
+				}
 			} catch (IOException e1) {
 				Utils.log(e1.getLocalizedMessage());
 			}
