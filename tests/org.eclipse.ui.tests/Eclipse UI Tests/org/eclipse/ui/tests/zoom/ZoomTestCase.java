@@ -10,6 +10,7 @@ import junit.framework.Assert;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.tests.api.MockEditorPart;
@@ -36,6 +37,8 @@ public class ZoomTestCase extends UITestCase {
 	public void setUp() {
 		window = (WorkbenchWindow)openTestWindow();
 		page = (WorkbenchPage)window.getActivePage();
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		store.setDefault(IPreferenceConstants.OPEN_VIEW_MODE, IPreferenceConstants.OVM_FAST);
 		try {
 			project = FileUtil.createProject("IEditorPartTest");
 			file1 = FileUtil.createFile("Test1.java", project);
