@@ -30,6 +30,20 @@ import org.eclipse.ui.IPropertyListener;
 public interface IPresentablePart {
 	
 	/**
+	 * Returns true iff this part can be closed
+	 * 
+	 * @return true iff this part can be closed
+	 */
+	public boolean isClosable();
+	
+	/**
+	 * Returns true iff this part can be moved
+	 * 
+	 * @return true iff this part can be moved
+	 */
+	public boolean isMovable();
+	
+	/**
 	 * Sets the bounds of this part.
 	 *  
 	 * @param bounds
