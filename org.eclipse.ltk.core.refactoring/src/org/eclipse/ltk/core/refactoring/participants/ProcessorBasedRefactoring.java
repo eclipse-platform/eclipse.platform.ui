@@ -203,7 +203,7 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 			final RefactoringParticipant participant= fParticipants[i];
 			try {
 				Change change= participant.createChange(new SubProgressMonitor(pm, 1));
-				if (change != null && !(change instanceof UsedSharedChange)) {
+				if (change != null) {
 					changes.add(change);
 					participantMap.put(change, participant);
 					addToTextChangeMap(change);

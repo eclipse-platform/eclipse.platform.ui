@@ -22,6 +22,9 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
  * A special change indicating that the participant has added
  * its modifications to a shared text change.
  * 
+ * @deprecated Class is no longer needed. Clients can return <code>null</code> instead. 
+ *  The class will be removed before milestone M5.
+ * 
  * @since 3.1
  */
 public final class UsedSharedChange extends Change {

@@ -36,7 +36,6 @@ import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 import org.eclipse.ltk.core.refactoring.participants.RenameProcessor;
 import org.eclipse.ltk.core.refactoring.participants.RenameRefactoring;
 import org.eclipse.ltk.core.refactoring.participants.SharableParticipants;
-import org.eclipse.ltk.core.refactoring.participants.UsedSharedChange;
 import org.eclipse.ltk.core.refactoring.tests.util.SimpleTestProject;
 
 public class SharedTextChangeTest extends TestCase {
@@ -58,7 +57,7 @@ public class SharedTextChangeTest extends TestCase {
 		public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 			TextChange change= getTextChange(fFile);
 			change.addEdit(new ReplaceEdit(20, 3, "four"));
-			return new UsedSharedChange();
+			return null;
 		}
 	}
 	

@@ -164,13 +164,15 @@ public abstract class RefactoringParticipant extends PlatformObject {
 	 * the participant manipulates a different region of the text resource).
 	 * The method must not return those changes in its change tree since the change 
 	 * is already part of another change tree. If the participant only manipulates 
-	 * shared changes then it has to return an instance of {@link UsedSharedChange} 
-	 * instead. A shared text change can be access via the method {@link #getTextChange(Object)}. 
+	 * shared changes then it can return <code>null</code> to indicate that it didn't
+	 * create own changes. A shared text change can be access via the method 
+	 * {@link #getTextChange(Object)}. 
 	 * </p>
 	 * 
 	 * @param pm a progress monitor to report progress
 	 * 
-	 * @return the change representing the workspace modifications
+	 * @return the change representing the workspace modifications or <code>null</code>
+	 *  if no changes are made
 	 * 
 	 * @throws CoreException if an error occurred while creating the change
 	 * 
