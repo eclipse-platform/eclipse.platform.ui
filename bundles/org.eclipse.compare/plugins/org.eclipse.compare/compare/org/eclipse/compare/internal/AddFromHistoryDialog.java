@@ -277,7 +277,9 @@ public class AddFromHistoryDialog extends ResizableDialog {
 	 * Feeds selection from member viewer to edition viewer.
 	 */
 	private void handleMemberSelect(Widget w) {
-		Object data= w.getData();
+		Object data= null;
+		if (w != null)
+			data= w.getData();
 		if (data instanceof FileHistory) {
 			
 			FileHistory h= (FileHistory) data;
