@@ -34,7 +34,12 @@ public class BookmarksData extends RequestData {
 			String title = request.getParameter("title");
 			Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
 			String bookmarks = prefs.getString(HelpSystem.BOOKMARKS);
+			
 			// separate the url and title by vertical bar
+			
+			// check for duplicates
+			if (bookmarks.indexOf(","+bookmarkURL + "|") != -1)
+				return;
 			bookmarks = bookmarks + "," + bookmarkURL + "|" + title;
 			prefs.setValue(HelpSystem.BOOKMARKS, bookmarks);
 			HelpPlugin.getDefault().savePluginPreferences();
