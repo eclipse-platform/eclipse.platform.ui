@@ -116,12 +116,15 @@ public class InternalAntRunner {
 	/**
 	 * The Ant logger class. There may be only one logger. It will have the
 	 * right to use the 'out' PrintStream. The class must implement the BuildLogger
-	 * interface.
+	 * interface.  An empty String indicates that no logger is to be used.  A <code>null</code>
+	 * name indicates that the org.apache.tools.ant.DefaultLogger will be used.
 	 */
 	protected String loggerClassname = null;
 
 	/** Extra arguments to be parsed as command line arguments. */
 	protected String[] extraArguments = null;
+	
+	protected boolean scriptExecuted= false;
 
 	private static final String PROPERTY_ECLIPSE_RUNNING = "eclipse.running"; //$NON-NLS-1$
 
@@ -404,14 +407,13 @@ public class InternalAntRunner {
 		PrintStream originalOut = System.out;
 		SecurityManager originalSM= System.getSecurityManager();
 		
-		boolean executeScript= true;
-		boolean canceled= false;
+		scriptExecuted= true;
 		try {
 			getCurrentProject().init();
 			if (argList != null) {
-				executeScript= preprocessCommandLine(argList);
+				scriptExecuted= preprocessCommandLine(argList);
 			
-				if (!executeScript) {
+				if (!scriptExecuted) {
 					return;
 				}
 				processProperties(argList);
@@ -424,15 +426,15 @@ public class InternalAntRunner {
 
 			fireBuildStarted(getCurrentProject());
 			
-			if (argList != null) {
+			if (argList != null && !argList.isEmpty()) {
 				try {
-					executeScript= processCommandLine(argList);
+					scriptExecuted= processCommandLine(argList);
 				} catch (BuildException e) {
-					executeScript= false;
+					scriptExecuted= false;
 					throw e;
 				}
 			}
-			if (!executeScript) {
+			if (!scriptExecuted) {
 				return;
 			}
 			
@@ -446,6 +448,7 @@ public class InternalAntRunner {
 			
 			if (projectHelp) {
 				printHelp(getCurrentProject());
+				scriptExecuted= false;
 				return;
 			}
 			
@@ -460,7 +463,7 @@ public class InternalAntRunner {
 				getCurrentProject().executeTarget(getCurrentProject().getDefaultTarget());
 			}
 		} catch (OperationCanceledException e) {
-			canceled= true;
+			scriptExecuted= false;
 			logMessage(getCurrentProject(), e.getMessage(), Project.MSG_INFO);
 			throw e;
 		} catch (AntSecurityException e) {
@@ -482,9 +485,8 @@ public class InternalAntRunner {
 			if (out != originalOut) {
 				out.close();
 			}
-			if (executeScript && !canceled) {
-				fireBuildFinished(getCurrentProject(), error);
-			}
+			
+			fireBuildFinished(getCurrentProject(), error);
 		}
 	}
 	
@@ -504,10 +506,12 @@ public class InternalAntRunner {
 	 * Creates and returns the default build logger for logging build events to the ant log.
 	 * 
 	 * @return the default build logger for logging build events to the ant log
-	 * 		Can return <code>null</code> if no logging is to occur.
+	 * 			can return <code>null</code> if no logging is to occur
 	 */
 	protected BuildLogger createLogger() {
-		if (loggerClassname != null) {
+		if (loggerClassname == null) {
+			buildLogger= new DefaultLogger();
+		} else if (!"".equals(loggerClassname)) {
 			try {
 				buildLogger = (BuildLogger) (Class.forName(loggerClassname).newInstance());
 			} catch (ClassCastException e) {
@@ -519,11 +523,14 @@ public class InternalAntRunner {
 				logMessage(null, message, Project.MSG_ERR);
 				throw new BuildException(message, e);
 			}
+		} 
+		
+		if (buildLogger != null) {
 			buildLogger.setMessageOutputLevel(messageOutputLevel);
 			buildLogger.setOutputPrintStream(out);
 			buildLogger.setErrorPrintStream(err);
 			buildLogger.setEmacsMode(emacsMode);
-		} 
+		}
 
 		return buildLogger;
 	}
@@ -561,7 +568,7 @@ public class InternalAntRunner {
 		
 			project.setProperty("XmlLogger.file", path.toOSString()); //$NON-NLS-1$
 		}
-		if (error == null) {
+		if (error == null && scriptExecuted) {
 			logMessage(project, InternalAntMessages.getString("InternalAntRunner.BUILD_SUCCESSFUL_1"), Project.MSG_INFO); //$NON-NLS-1$
 		} else {
 			event.setException(error);
