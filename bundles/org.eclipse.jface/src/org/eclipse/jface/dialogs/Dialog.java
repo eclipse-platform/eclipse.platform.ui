@@ -479,6 +479,45 @@ protected void configureShell(Shell newShell) {
 	newShell.setFont(JFaceResources.getDialogFont());
 }
 
+/*
+ * @see Window.initializeBounds()
+ */
+protected void initializeBounds() {
+	String platform= SWT.getPlatform();
+	if ("carbon".equals(platform)) {	//$NON-NLS-1$
+		// On Mac OS X the default button must be the right-most button
+		Shell shell= getShell();
+		if (shell != null) {
+			Button defaultButton= shell.getDefaultButton();
+			if (defaultButton != null && isContained(buttonBar, defaultButton)) {
+				Composite container= defaultButton.getParent();
+				defaultButton.moveBelow(null);
+			}
+		}
+	}
+	
+	super.initializeBounds();
+}
+
+/**
+ * Returns true if the given Control c is a direct or indirect child of
+ * container.
+ */
+private boolean isContained(Control container, Control c) {
+	if (container instanceof Composite) {
+		Composite composite= (Composite) container;
+		Control[] children= composite.getChildren();
+		if (children != null) {
+			for (int i= 0; i < children.length; i++) {
+				Control child= children[i];
+				if (child == c || isContained(child, c))
+					return true;
+			}
+		}
+	}
+	return false;
+}
+
 /**
  * The <code>Dialog</code> implementation of this <code>Window</code> method 
  * creates and lays out the top level composite for the dialog, and
