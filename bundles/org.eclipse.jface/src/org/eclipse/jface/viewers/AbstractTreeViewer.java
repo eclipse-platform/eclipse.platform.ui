@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TreeListener;
@@ -256,32 +257,33 @@ public void collapseToLevel(Object element, int level) {
  *
  * @param widget the widget
  */
-protected void createChildren(Widget widget) {
-	Item[] tis = getChildren(widget);
+protected void createChildren(final Widget widget) {
+	final Item[] tis = getChildren(widget);
 	if (tis != null && tis.length > 0) {
 		Object data = tis[0].getData();
 		if (data != null)
 			return; // children already there!
-
-		// dummies are identified by not having client data
-		// assert that there is only a single child!
-		//Assert.isTrue(tis.length == 1);
-		//
-		//tis[0].dispose(); // remove dummy
-
-		// fix for PR 1FW89L7:
-		// don't complain and remove all "dummies" ...
-		for (int i = 0; i < tis.length; i++)
-			tis[i].dispose();
 	}
-	Object d = widget.getData();
-	if (d != null) {
-		Object parentElement = d;
-		Object[] children = getSortedChildren(parentElement);
-		for (int i = 0; i < children.length; i++) {
-			createTreeItem(widget, children[i], -1);
+
+	BusyIndicator.showWhile(widget.getDisplay(), new Runnable() {
+		public void run() {
+			// fix for PR 1FW89L7:
+			// don't complain and remove all "dummies" ...
+			if (tis != null) {
+				for (int i = 0; i < tis.length; i++) {
+					tis[i].dispose();
+				}
+			}
+			Object d = widget.getData();
+			if (d != null) {
+				Object parentElement = d;
+				Object[] children = getSortedChildren(parentElement);
+				for (int i = 0; i < children.length; i++) {
+					createTreeItem(widget, children[i], -1);
+				}
+			}
 		}
-	}
+	});	
 }
 /**
  * Creates a single item for the given parent and synchronizes it with
