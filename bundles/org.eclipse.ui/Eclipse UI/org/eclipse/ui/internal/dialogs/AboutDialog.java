@@ -64,7 +64,7 @@ public class AboutDialog extends Dialog {
 	private 	Cursor handCursor;
 	private 	Cursor busyCursor;
 	private 	boolean webBrowserOpened;
-	
+
 /**
  * Create an instance of the AboutDialog
  */
@@ -266,8 +266,8 @@ protected Control createDialogArea(Composite parent) {
 		}
 	}
 	
-	// horizontal bar
-	bar =  new Label(outer, SWT.HORIZONTAL | SWT.SEPARATOR);
+	// spacer
+	bar =  new Label(outer, SWT.NONE);
 	data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
 	bar.setLayoutData(data);
@@ -286,7 +286,6 @@ protected Control createDialogArea(Composite parent) {
 	buttonComposite.setLayout(layout);
 	data = new GridData();
 	data.horizontalAlignment = GridData.BEGINNING;
-	bar.setLayoutData(data);
 	buttonComposite.setLayoutData(data);
 
 	Button button = new Button(buttonComposite, SWT.PUSH);
@@ -434,6 +433,7 @@ private void openLink(final String href) {
 private String getAboutText() {
 	return aboutInfo.getAboutText();
 }
+
 
 /**
  * Sets the styled text's bold ranges
