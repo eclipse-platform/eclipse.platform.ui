@@ -937,6 +937,12 @@
             id="org.eclipse.ui.preferencePages.Workbench">
       </page>
       <page
+            name="%PreferencePages.WorkbenchWorkInProgress"
+            category="org.eclipse.ui.preferencePages.Workbench"
+            class="org.eclipse.ui.internal.dialogs.WorkInProgressPreferencePage"
+            id="org.eclipse.ui.preferencePages.WorkbenchWorkInProgress">
+      </page>      
+      <page
             name="%PreferencePages.FileEditors"
             category="org.eclipse.ui.preferencePages.Workbench"
             class="org.eclipse.ui.internal.dialogs.FileEditorsPreferencePage"

@@ -37,9 +37,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	private Button linkButton;
 	private Combo accelConfigCombo;
 
-	// Temporary option to enable wizard for project capability
-	private Button capabilityButton;
-	
 	private Button reuseEditors;
 	private IntegerFieldEditor reuseEditorsThreshold;
 	private IntegerFieldEditor recentFilesEditor;
@@ -119,24 +116,14 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		createSpace(composite);
 		createProjectPerspectiveGroup(composite);
 		
-		createSpace(composite);
-		createAcceleratorConfigurationGroup(composite, WorkbenchMessages.getString("WorkbenchPreference.acceleratorConfiguration"));
-
-		// Temporary option to enable wizard for project capability work
-		createSpace(composite);
-		capabilityButton = new Button(composite, SWT.CHECK);
-		capabilityButton.setText("Enable new configurable project wizard (work in progress of project capabilities)"); //$NON-NLS-1$
-		Label label = new Label(composite, SWT.NONE);
-		label.setText("Note: The new configurable project option will only take effect after restarting.");
+//		createSpace(composite);
+//		createAcceleratorConfigurationGroup(composite, WorkbenchMessages.getString("WorkbenchPreference.acceleratorConfiguration"));
 
 		// set initial values
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		autoBuildButton.setSelection(ResourcesPlugin.getWorkspace().isAutoBuilding());
 		autoSaveAllButton.setSelection(store.getBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD));
 		linkButton.setSelection(store.getBoolean(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR));
-		
-		// Temporary option to enable wizard for project capability
-		capabilityButton.setSelection(store.getBoolean("ENABLE_CONFIGURABLE_PROJECT_WIZARD")); //$NON-NLS-1$
 
 		return composite;
 	}
@@ -144,7 +131,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	 * Creates a composite that contains a label and combo box specifying the active
 	 * accelerator configuration.
 	 */
-	private void createAcceleratorConfigurationGroup(Composite composite, String label) {
+	protected void createAcceleratorConfigurationGroup(Composite composite, String label) {
 		Composite groupComposite = new Composite(composite, SWT.LEFT);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -348,7 +335,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	 *
 	 * @param parent  the parent in which the tab should be created
 	 */
-	private void createSpace(Composite parent) {
+	protected void createSpace(Composite parent) {
 		Label vfiller = new Label(parent, SWT.LEFT);
 		GridData gridData = new GridData();
 		gridData = new GridData();
@@ -374,13 +361,16 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		this.newProjectPerspectiveSetting = store.getString(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE);
 
+//		acceleratorInit(aWorkbench);
+	}
+	protected void acceleratorInit(IWorkbench aWorkbench) {
 		namesToConfiguration = new Hashtable();
 		WorkbenchPlugin plugin = WorkbenchPlugin.getDefault();
 		AcceleratorRegistry registry = plugin.getAcceleratorRegistry();
 		AcceleratorConfiguration configs[] = registry.getConfigsWithSets();
 		for (int i = 0; i < configs.length; i++)
 			namesToConfiguration.put(configs[i].getName(), configs[i]);	
-
+		
 		AcceleratorConfiguration config = ((Workbench)aWorkbench).getActiveAcceleratorConfiguration();
 		if(config != null)
 			activeAcceleratorConfigurationName = config.getName();
@@ -394,23 +384,12 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		autoSaveAllButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD));
 		linkButton.setSelection(store.getDefaultBoolean(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR));
 
-		// Temporary option to enable wizard for project capability
-		capabilityButton.setSelection(store.getDefaultBoolean("ENABLE_CONFIGURABLE_PROJECT_WIZARD")); //$NON-NLS-1$
-
 		reuseEditors.setSelection(store.getDefaultBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
 		reuseEditorsThreshold.loadDefault();
 		
 		recentFilesEditor.loadDefault();
 		
-		// Sets the accelerator configuration selection to the default configuration
-		String id = store.getDefaultString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
-		AcceleratorRegistry registry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();
-		AcceleratorConfiguration config = registry.getConfiguration(id);
-		String name = null;
-		if(config != null) 
-			name = config.getName();
-		if((name != null) && (accelConfigCombo != null))
-			accelConfigCombo.select(accelConfigCombo.indexOf(name));
+//		acceleratorPerformDefaults(store);
 
 		//Project perspective preferences
 		String projectPreference = store.getDefaultString(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE);
@@ -421,6 +400,17 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		switchOnNewProjectButton.setSelection(projectPreference.equals(IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE));
 
 		super.performDefaults();
+	}
+	protected void acceleratorPerformDefaults(IPreferenceStore store) {
+		// Sets the accelerator configuration selection to the default configuration
+		String id = store.getDefaultString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
+		AcceleratorRegistry registry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();
+		AcceleratorConfiguration config = registry.getConfiguration(id);
+		String name = null;
+		if(config != null) 
+			name = config.getName();
+		if((name != null) && (accelConfigCombo != null))
+			accelConfigCombo.select(accelConfigCombo.indexOf(name));
 	}
 	/**
 	 *	The user has pressed Ok.  Store/apply this page's values appropriately.
@@ -458,9 +448,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		// store the link navigator to editor setting
 		store.setValue(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, linkButton.getSelection());
 
-		// Temporary option to enable wizard for project capability
-		store.setValue("ENABLE_CONFIGURABLE_PROJECT_WIZARD", capabilityButton.getSelection()); //$NON-NLS-1$
-
 		// store the reuse editors setting
 		store.setValue(IPreferenceConstants.REUSE_EDITORS_BOOLEAN,reuseEditors.getSelection());
 		reuseEditorsThreshold.store();
@@ -471,6 +458,11 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		// store the open new project perspective settings
 		store.setValue(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE, newProjectPerspectiveSetting);
 
+//		acceleratorPerformOk(store);
+		return true;
+	}
+	
+	protected void acceleratorPerformOk(IPreferenceStore store) {
 		// store the active accelerator configuration id
 		if(accelConfigCombo != null) {
 			String configName = accelConfigCombo.getText();
@@ -481,6 +473,5 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 				store.setValue(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID, config.getId());
 			}
 		}
-		return true;
 	}
 }
