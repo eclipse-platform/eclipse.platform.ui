@@ -33,7 +33,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * 
  * @since 3.1
  */
-public class WorkbenchBrowserSupport implements IWorkbenchBrowserSupport {
+public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
 	private static final String BROWSER_SUPPORT_EXTENSION_ID = "org.eclipse.ui.browserSupport"; //$NON-NLS-1$
 
 	private static final String EL_SUPPORT = "support"; //$NON-NLS-1$	
