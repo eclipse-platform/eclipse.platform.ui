@@ -85,7 +85,11 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 	private void fillToolBar(IToolBarManager tbm) {
 		fViewer.fillToolBar(tbm);
 	}	
-	
+
+	public ILabelProvider getLabelProvider() {
+		return fViewer.internalGetLabelProvider();
+	}
+
 	private void setLabelProvider(final ILabelProvider provider) {
 		// Make sure we are doing it in the right thread.
 		getDisplay().syncExec(new Runnable() {

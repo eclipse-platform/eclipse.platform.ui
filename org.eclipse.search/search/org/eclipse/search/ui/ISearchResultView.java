@@ -29,6 +29,7 @@ import org.eclipse.ui.IViewPart;
  * </p>
  */
 public interface ISearchResultView extends IViewPart {
+
 	/**
 	 * Returns the current selection of the search result view
 	 *
@@ -36,6 +37,7 @@ public interface ISearchResultView extends IViewPart {
 	 * @see	org.eclipse.jface.viewers.ISelectionProvider#getSelection
 	 */
 	public ISelection getSelection();
+
 	/**
 	 * Informs the view that a search has started.
 	 * Provides all necessary information to create an entry in the search result 
@@ -65,12 +67,14 @@ public interface ISearchResultView extends IViewPart {
 				IAction					gotoAction,
 				IGroupByKeyComputer		groupByKeyComputer,
 				IRunnableWithProgress	operation);
+
 	/**
 	 * Informs the view that the search has finished.
 	 * This method must also be called in case of the search
 	 * fails or has been canceled.
 	 */
 	public void searchFinished();
+
 	/**
 	 * Informs the view that a match has been found.
 	 * Provides all necessary information to create a search result entry in this
@@ -85,4 +89,11 @@ public interface ISearchResultView extends IViewPart {
 	 * @param	resource		the marker's resource passed for optimization
 	 */
 	public void addMatch(String description, Object groupByKey, IResource resource, IMarker marker);
+
+	/**
+	 * Returns the label provider of a search result view.
+	 *
+	 * @return	the label provider of a search result view or <code>null</code>
+	 */
+	public ILabelProvider getLabelProvider();
 }
