@@ -1,9 +1,11 @@
 package org.eclipse.debug.core;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -43,6 +45,23 @@ public interface IBreakpointManager {
 	 * @since 2.0
 	 */
 	public void addBreakpoint(IBreakpoint breakpoint) throws CoreException;
+	
+	/**
+	 * Adds the given breakpoints to the collection of registered breakpoints
+	 * in the workspace and notifies all registered listeners. Has no effect
+	 * on breakpoints that are already registered.
+	 *
+	 * @param breakpoints the breakpoints to add
+	 *
+	 * @exception DebugException if adding fails. Reasons include:<ul>
+	 * <li>CONFIGURATION_INVALID - the required <code>MODEL_IDENTIFIER</code> attribute
+	 * 	is not set on a breakpoint marker.</li>
+	 * <li>A <code>CoreException</code> occurred while verifying a <code>MODEL_IDENTIFIER</code>
+	 *	attribute.</li>
+	 * </ul>
+	 * @since 2.1
+	 */
+	public void addBreakpoints(IBreakpoint[] breakpoints) throws CoreException;	
 	
 	/**
 	 * Returns the breakpoint associated with the given marker or
@@ -106,7 +125,7 @@ public interface IBreakpointManager {
 	 * @since 2.0
 	 */
 	public void fireBreakpointChanged(IBreakpoint breakpoint);
-
+	
 	/**
 	 * Removes the given breakpoint from the breakpoint manager, deletes
 	 * the marker associated with the breakpoint if the <code>delete</code> flag
@@ -122,6 +141,22 @@ public interface IBreakpointManager {
 	 * @since 2.0
 	 */
 	public void removeBreakpoint(IBreakpoint breakpoint, boolean delete) throws CoreException;
+	
+	/**
+	 * Removes the given breakpoints from the breakpoint manager, deletes
+	 * the markers associated with the breakpoints if the <code>delete</code> flag
+	 * is <code>true</code>, and notifies all registered
+	 * listeners. Has no effect on breakpoints not currently
+	 * registered.
+	 *
+	 * @param breakpoints the breakpoints to remove
+	 * @param delete whether to delete the markers associated with the
+	 *  breakpoints
+	 * @exception CoreException if an exception occurs while deleting an
+	 * 	underlying marker.
+	 * @since 2.1
+	 */
+	public void removeBreakpoints(IBreakpoint[] breakpoints, boolean delete) throws CoreException;	
 
 	/**
 	 * Adds the given listener to the collection of registered breakpoint listeners.
@@ -138,6 +173,24 @@ public interface IBreakpointManager {
 	 * @param listener the listener to remove	
 	 */
 	public void removeBreakpointListener(IBreakpointListener listener);
+	
+	/**
+	 * Adds the given listener to the collection of registered breakpoint listeners.
+	 * Has no effect if an identical listener is already registered.
+	 *
+	 * @param listener the listener to add
+	 * @since 2.1
+	 */
+	public void addBreakpointListener(IBreakpointsListener listener);
+
+	/**
+	 * Removes the given listener from the collection of registered breakpoint listeners.
+	 * Has no effect if an identical listener is not already registered.
+	 *
+	 * @param listener the listener to remove	
+	 * @since 2.1
+	 */
+	public void removeBreakpointListener(IBreakpointsListener listener);	
 	
 }
 
