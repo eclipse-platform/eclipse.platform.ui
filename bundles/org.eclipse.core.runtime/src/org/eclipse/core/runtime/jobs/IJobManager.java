@@ -11,6 +11,7 @@
 package org.eclipse.core.runtime.jobs;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 
 /**
  * The job manager provides facilities for scheduling, querying, and maintaining jobs
@@ -153,9 +154,10 @@ public interface IJobManager {
 	 * @param monitor Progress monitor for reporting progress on how the
 	 * wait is progressing, or <code>null</code> if no progress monitoring is required.
 	 * @exception InterruptedException if this thread is interrupted while waiting
+	 * @exception OperationCanceledException if the progress monitor is canceled while waiting
 	 * @see Job#belongsTo(Object)
 	 */
-	public void wait(Object family, IProgressMonitor monitor) throws InterruptedException;
+	public void wait(Object family, IProgressMonitor monitor) throws InterruptedException, OperationCanceledException;
 	/**
 	 * Resumes scheduling of all sleeping jobs in the given family.  This method
 	 * has no effect on jobs in the family that are not currently sleeping.
