@@ -10,8 +10,6 @@
  **********************************************************************/
 package org.eclipse.core.tools;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -160,7 +158,7 @@ public abstract class AbstractTreeContentProvider implements ITreeContentProvide
 	 * @see 
 	 * org.eclipse.jface.viewers.IContentProvider#inputChanged(
 	 * org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-	 * @see #rebuild(Object)
+	 * @see #rebuild(Viewer, Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, final Object input) {
 		if (input == null) {

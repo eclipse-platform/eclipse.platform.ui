@@ -11,8 +11,6 @@
 package org.eclipse.core.tools.metadata;
 
 import java.io.File;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.tools.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
