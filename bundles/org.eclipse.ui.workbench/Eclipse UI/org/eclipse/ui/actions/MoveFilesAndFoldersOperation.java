@@ -6,6 +6,8 @@ package org.eclipse.ui.actions;
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  */
+import java.util.ArrayList;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.widgets.Shell;
@@ -44,10 +46,11 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 	 * called recursively to merge folders during folder move.
 	 * 
 	 * @param resources the resources to move
+	 * @param rejectedFiles files rejected for copy during validateEdit
 	 * @param destination destination to which resources will be moved
-	 * @param monitor a progress monitor for showing progress and for cancelation
+	 * @param subMonitor a progress monitor for showing progress and for cancelation
 	 */
-	protected void copy(IResource[] resources, IPath destination, IProgressMonitor subMonitor) throws CoreException {
+	protected void copy(IResource[] resources, ArrayList rejectedFiles, IPath destination, IProgressMonitor subMonitor) throws CoreException {
 		for (int i = 0; i < resources.length; i++) {
 			IResource source = resources[i];
 			IPath destinationPath = destination.append(source.getName());
@@ -59,16 +62,20 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 				// the resource is a folder and it exists in the destination, copy the
 				// children of the folder
 				IResource[] children = ((IContainer) source).members();
-				copy(children, destinationPath, subMonitor);
+				copy(children, rejectedFiles, destinationPath, subMonitor);
 				// need to explicitly delete the folder since we're not moving it
 				delete(source, subMonitor);
-			} else {
+			} else if (!rejectedFiles.contains(destinationPath)) {
 				// if we're merging folders, we could be overwriting an existing file
 				IResource existing = workspaceRoot.findMember(destinationPath);
 				boolean canMove = true;
 
 				if (existing != null) {
-					canMove = delete(existing, subMonitor);
+					canMove = !moveExisting(source, existing, subMonitor);
+					
+					if (canMove) { 	
+						canMove = delete(existing, subMonitor);
+					}
 				}
 				// was the resource deleted successfully or was there no existing resource to delete?
 				if (canMove) {
@@ -96,6 +103,32 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 	 */
 	protected String getProblemsTitle() {
 		return WorkbenchMessages.getString("MoveFilesAndFoldersOperation.moveFailedTitle"); //$NON-NLS-1$
+	}
+	/**
+	 * Sets the content of the existing file to the source file content.
+	 * Deletes the source file.
+	 * 
+	 * @param source source file to move
+	 * @param existing existing file to set the source content in
+	 * @param subMonitor a progress monitor for showing progress and for cancelation
+	 * @return boolean <code>true</code> if the source file was moved. 
+	 * 	<code>false</code> otherwise
+	 * @throws CoreException setContents failed
+	 */
+	private boolean moveExisting(IResource source, IResource existing, IProgressMonitor subMonitor) throws CoreException {
+		boolean moved = false;
+		IFile existingFile = getFile(existing);
+
+		if (existingFile != null) {
+			IFile sourceFile = getFile(source);
+
+			if (sourceFile != null) {
+				existingFile.setContents(sourceFile.getContents(), IResource.KEEP_HISTORY, new SubProgressMonitor(subMonitor, 0));
+				delete(sourceFile, subMonitor);
+				moved = true;
+			}
+		}
+		return moved;
 	}
 	/* (non-Javadoc)
 	 * Overrides method in CopyFilesAndFoldersOperation

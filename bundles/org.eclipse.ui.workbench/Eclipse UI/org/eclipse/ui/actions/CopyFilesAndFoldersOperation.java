@@ -184,15 +184,84 @@ public class CopyFilesAndFoldersOperation {
 		shell.getDisplay().syncExec(query);
 		return result[0];
 	}
+	private void collectExistingFiles(IPath destinationPath, File[] sourceFiles, ArrayList copyFiles) {
+		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+
+		for (int i = 0; i < sourceFiles.length; i++) {
+			File source = sourceFiles[i];
+			IPath newDestinationPath = destinationPath.append(source.getName());
+			IResource newDestination = workspaceRoot.findMember(newDestinationPath);
+			IFolder folder;
+						
+			if (newDestination == null) {
+				continue;
+			}
+			folder = getFolder(newDestination);
+			if (folder != null) {
+				if (source.isDirectory()) {
+					collectExistingFiles(newDestinationPath, source.listFiles(), copyFiles);
+				}
+			}			
+			else {
+				IFile file = getFile(newDestination);
+				
+				if (file != null) {
+					copyFiles.add(file);
+				}
+			}
+		}
+	}
+	/**
+	 * Recursively collects existing files in the specified destination path.
+	 * 
+	 * @param destinationPath destination path to check for existing files
+	 * @param copyResources resources that may exist in the destination
+	 * @param existing holds the collected existing files 
+	 */
+	private void collectExistingFiles(IPath destinationPath, IResource[] copyResources, ArrayList existing) {
+		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+
+		for (int i = 0; i < copyResources.length; i++) {
+			IResource source = copyResources[i];
+			IPath newDestinationPath = destinationPath.append(source.getName());
+			IResource newDestination = workspaceRoot.findMember(newDestinationPath);
+			IFolder folder;
+						
+			if (newDestination == null) {
+				continue;
+			}
+			folder = getFolder(newDestination);
+			if (folder != null) {
+				IFolder sourceFolder = getFolder(source);
+			
+				if (sourceFolder != null) {
+					try {
+						collectExistingFiles(newDestinationPath, sourceFolder.members(), existing);
+					}
+					catch (CoreException exception) {
+						recordError(exception); 
+					}
+				}
+			}			
+			else {
+				IFile file = getFile(newDestination);
+				
+				if (file != null) {
+					existing.add(file);
+				}
+			}
+		}
+	} 
 	/**
 	 * Copies the resources to the given destination.  This method is 
 	 * called recursively to merge folders during folder copy.
 	 * 
 	 * @param resources the resources to copy
+	 * @param rejectedFiles files rejected for copy during validateEdit
 	 * @param destination destination to which resources will be copied
-	 * @param monitor a progress monitor for showing progress and for cancelation
+	 * @param subMonitor a progress monitor for showing progress and for cancelation
 	 */
-	protected void copy(IResource[] resources, IPath destination, IProgressMonitor subMonitor) throws CoreException {
+	protected void copy(IResource[] resources, ArrayList rejectedFiles, IPath destination, IProgressMonitor subMonitor) throws CoreException {
 		for (int i = 0; i < resources.length; i++) {
 			IResource source = resources[i];
 			IPath destinationPath = destination.append(source.getName());
@@ -202,16 +271,19 @@ public class CopyFilesAndFoldersOperation {
 				// the resource is a folder and it exists in the destination, copy the
 				// children of the folder
 				IResource[] children = ((IContainer) source).members();
-				copy(children, destinationPath, subMonitor);
-			} else {
+				copy(children, rejectedFiles, destinationPath, subMonitor);
+			} else if (!rejectedFiles.contains(destinationPath)) {
 				// if we're merging folders, we could be overwriting an existing file
 				IResource existing = workspaceRoot.findMember(destinationPath);
 				boolean canCopy = true;
 				
-				if (existing != null) {
-					canCopy = delete(existing, subMonitor);
+				if (existing != null) {					
+					canCopy = !copyExisting(source, existing, subMonitor);
+					
+					if (canCopy) { 	
+						canCopy = delete(existing, subMonitor);
+					}
 				}
-				// was the resource deleted successfully or was there no existing resource to delete?
 				if (canCopy) {
 					source.copy(destinationPath, IResource.SHALLOW, new SubProgressMonitor(subMonitor, 0));
 				}
@@ -221,6 +293,30 @@ public class CopyFilesAndFoldersOperation {
 				}
 			}
 		}
+	}
+	/**
+	 * Sets the content of the existing file to the source file content.
+	 * 
+	 * @param source source file to copy
+	 * @param existing existing file to set the source content in
+	 * @param subMonitor a progress monitor for showing progress and for cancelation
+	 * @return boolean <code>true</code> if the source file was copied. 
+	 * 	<code>false</code> otherwise
+	 * @throws CoreException setContents failed
+	 */
+	private boolean copyExisting(IResource source, IResource existing, IProgressMonitor subMonitor) throws CoreException {
+		boolean copied = false;
+		IFile existingFile = getFile(existing);
+
+		if (existingFile != null) {
+			IFile sourceFile = getFile(source);
+
+			if (sourceFile != null) {
+				existingFile.setContents(sourceFile.getContents(), IResource.KEEP_HISTORY, new SubProgressMonitor(subMonitor, 0));
+				copied = true;
+			}
+		}
+		return copied;
 	}
 	/**
 	 * Copies the given resources to the destination. 
@@ -249,6 +345,7 @@ public class CopyFilesAndFoldersOperation {
 					monitor.worked(10); // show some initial progress
 				boolean copyWithAutoRename = false;
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+				ArrayList rejectedFiles = new ArrayList();
 				if (root.exists(destinationPath)) {
 					IContainer container = (IContainer) root.findMember(destinationPath);
 					// If we're copying to the source container then perform
@@ -265,6 +362,9 @@ public class CopyFilesAndFoldersOperation {
 							displayError(WorkbenchMessages.getString("CopyFilesAndFoldersOperation.nameCollision")); //$NON-NLS-1$
 							return;
 						}
+						rejectedFiles = validateEdit(container, copyResources);
+						if (canceled)
+							return;
 					}
 				}
 
@@ -273,7 +373,7 @@ public class CopyFilesAndFoldersOperation {
 					if (copyWithAutoRename)
 						performCopyWithAutoRename(copyResources, destinationPath, monitor);
 					else
-						performCopy(copyResources, destinationPath, monitor);
+						performCopy(copyResources, rejectedFiles, destinationPath, monitor);
 				}
 				copiedResources[0] = copyResources;
 			}
@@ -335,6 +435,11 @@ public class CopyFilesAndFoldersOperation {
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 				if (root.exists(destinationPath)) {
 					IContainer container = (IContainer) root.findMember(destinationPath);
+//					File[] files = getFiles(fileNames);
+//					ArrayList rejectedFiles = validateEdit(container, files);
+//					if (canceled)
+//						return;
+					
 					monitor.beginTask("", fileNames.length); //$NON-NLS-1$
 					for (int k = 0; k < fileNames.length && !canceled; k++)
 						performFileImport(fileNames[k], container, new SubProgressMonitor(monitor, 1));
@@ -410,6 +515,52 @@ public class CopyFilesAndFoldersOperation {
 		});
 	}
 	/**
+	 * Returns the resource either casted to or adapted to an IFile. 
+	 * 
+	 * @param resource resource to cast/adapt
+	 * @return the resource either casted to or adapted to an IFile.
+	 * 	<code>null</code> if the resource does not adapt to IFile 
+	 */
+	protected IFile getFile(IResource resource) {
+		if (resource instanceof IFile) {
+			return (IFile) resource;
+		}
+		if (resource instanceof IAdaptable) {
+			return (IFile) ((IAdaptable) resource).getAdapter(IFile.class);
+		}
+		return null;
+	}
+	/**
+	 * Returns java.io.File objects for the given file names.
+	 * 
+	 * @param fileNames files to return File object for.
+	 * @return java.io.File objects for the given file names.
+	 */
+	protected File[] getFiles(String[] fileNames) {
+		File[] files = new File[fileNames.length];
+		
+		for (int i = 0; i < fileNames.length; i++) {
+			files[i] = new File(fileNames[i]);
+		}
+		return files;
+	}
+	/**
+	 * Returns the resource either casted to or adapted to an IFolder. 
+	 * 
+	 * @param resource resource to cast/adapt
+	 * @return the resource either casted to or adapted to an IFolder.
+	 * 	<code>null</code> if the resource does not adapt to IFolder 
+	 */
+	protected IFolder getFolder(IResource resource) {
+		if (resource instanceof IFolder) {
+			return (IFolder) resource;
+		}
+		if (resource instanceof IAdaptable) {
+			return (IFolder) ((IAdaptable) resource).getAdapter(IFolder.class);
+		}
+		return null;
+	}
+	/**
 	 * Returns a new name for a copy of the resource at the given path in the 
 	 * given workspace.
 	 *
@@ -475,6 +626,24 @@ public class CopyFilesAndFoldersOperation {
 		return WorkbenchMessages.getString("CopyFilesAndFoldersOperation.copyFailedTitle"); //$NON-NLS-1$
 	}
 	/**
+	 * Returns the rejected files based on the given multi status.
+	 *  
+	 * @param multiStatus multi status to use to determine file rejection
+	 * @param files source files
+	 * @return list of rejected files as absolute paths. Object type IPath.
+	 */
+	private ArrayList getRejectedFiles(IStatus multiStatus, IFile[] files) {
+		ArrayList rejectedFiles = new ArrayList();
+
+		IStatus[] status = multiStatus.getChildren();
+		for (int i = 0; i < status.length; i++) {
+			if (status[i].isOK() == false) {
+				rejectedFiles.add(files[i].getFullPath());
+			}
+		}
+		return rejectedFiles;
+	}
+	/**
 	 * Returns whether the given resource is accessible.
 	 * Files and folders are always considered accessible and a project is 
 	 * accessible if it is open.
@@ -521,18 +690,19 @@ public class CopyFilesAndFoldersOperation {
 	 * </p>
 	 *
 	 * @param resources the resources to copy
+	 * @param rejectedFiles files rejected for copy during validateEdit
 	 * @param destination the path of the destination container
 	 * @param monitor a progress monitor for showing progress and for cancelation
 	 * @return <code>true</code> if the copy operation completed without 
 	 * 	errors
 	 */
-	private boolean performCopy(final IResource[] resources, final IPath destination, IProgressMonitor monitor) {
+	private boolean performCopy(IResource[] resources, ArrayList rejectedFiles, IPath destination, IProgressMonitor monitor) {
 		try {
 			monitor.subTask(WorkbenchMessages.getString("CopyFilesAndFoldersOperation.copying")); //$NON-NLS-1$
 			ContainerGenerator generator = new ContainerGenerator(destination);
 			generator.generateContainer(new SubProgressMonitor(monitor, 10));
 			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 75);
-			copy(resources, destination, subMonitor);
+			copy(resources, rejectedFiles, destination, subMonitor);
 		} catch (CoreException e) {
 			recordError(e); // log error
 			return false;
@@ -612,6 +782,8 @@ public class CopyFilesAndFoldersOperation {
 
 		IOverwriteQuery query = new IOverwriteQuery() {
 			public String queryOverwrite(String pathString) {
+//				if (rejectedFiles.contains(new Path(pathString).makeAbsolute()))
+//					return NO;
 				if (alwaysOverwrite)
 					return ALL;
 
@@ -733,6 +905,52 @@ public class CopyFilesAndFoldersOperation {
 			}
 		}
 		return null;
+	}
+	/**
+	 * Validates that the given source resources can be copied to the 
+	 * destination as decided by the VCM provider.
+	 * 
+	 * @param destination copy destination
+	 * @param sourceResources source resources
+	 * @return list of rejected files as absolute paths. Object type IPath.
+	 */
+	private ArrayList validateEdit(IContainer destination, IResource[] sourceResources) {
+		ArrayList copyFiles = new ArrayList();
+		ArrayList rejectedFiles = new ArrayList();
+		
+		collectExistingFiles(destination.getFullPath(), sourceResources, copyFiles);
+		if (copyFiles.size() > 0) {
+			IFile[] files = (IFile[]) copyFiles.toArray(new IFile[copyFiles.size()]);
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			IStatus status = workspace.validateEdit(files, parentShell);
+			
+			if (status.isMultiStatus()) {
+				rejectedFiles = getRejectedFiles(status, files);
+			}
+			else {
+				canceled = status.isOK() == false;
+			}
+		}
+		return rejectedFiles;
+	}
+	private ArrayList validateEdit(IContainer destination, File[] sourceFiles) {
+		ArrayList existingFiles = new ArrayList();
+		ArrayList rejectedFiles = new ArrayList();
+					
+		collectExistingFiles(destination.getFullPath(), sourceFiles, existingFiles);
+		if (existingFiles.size() > 0) {
+			IFile[] files = (IFile[]) existingFiles.toArray(new IFile[existingFiles.size()]);
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			IStatus status = workspace.validateEdit(files, parentShell);
+			
+			if (status.isMultiStatus()) {
+				rejectedFiles = getRejectedFiles(status, files);
+			}
+			else {
+				canceled = status.isOK() == false;
+			}
+		}
+		return rejectedFiles;
 	}
 	/**
 	 * Checks whether the destination is valid for copying the source 
