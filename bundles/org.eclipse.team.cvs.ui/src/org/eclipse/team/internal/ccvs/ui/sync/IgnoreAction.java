@@ -58,7 +58,7 @@ public class IgnoreAction extends Action {
 				return;
 			}
 			removeNodes(new SyncSet(selection).getChangedNodes());
-			diffModel.updateView();
+			diffModel.refresh();
 		}
 	}
 	/**
@@ -70,7 +70,20 @@ public class IgnoreAction extends Action {
 		if (nodes.length != 1) return false;
 		if (!(nodes[0] instanceof ITeamNode)) return false;
 		ITeamNode node = (ITeamNode)nodes[0];
-		return node.getKind() == (ITeamNode.OUTGOING | IRemoteSyncElement.ADDITION);
+		if (node.getKind() != (ITeamNode.OUTGOING | IRemoteSyncElement.ADDITION)) return false;
+		IResource resource = node.getResource();
+		ICVSResource cvsResource = null;
+		switch (resource.getType()) {
+			case IResource.FILE:
+				cvsResource = new LocalFile(resource.getLocation().toFile());
+				break;
+			case IResource.FOLDER:
+				cvsResource = new LocalFolder(resource.getLocation().toFile());
+				break;
+			default:
+				return false;
+		}
+		return !cvsResource.isManaged();
 	}
 	public void update() {
 		IStructuredSelection selection = (IStructuredSelection)selectionProvider.getSelection();
