@@ -2,28 +2,31 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.51 [en] (WinNT; U) [Netscape]">
+   <meta name="GENERATOR" content="Mozilla/4.79 [en] (Windows NT 5.0; U) [Netscape]">
    <title>Help System Extension Points</title>
 </head>
 <body text="#000000" bgcolor="#FFFFFF" link="#0000FF" vlink="#800080" alink="#FF0000">
-
+&nbsp;
 <table BORDER COLS=1 WIDTH="100%" >
 <tr>
-<td>
-<b>Note: The help system is still under development and can be expected to change somewhat before 
-reaching stability. It is being made available at this stage to solicit feedback from early adopters, on the 
-understanding that the details of the contribution mechanisms might change in breaking ways.</b>
-</td>
+<td><b>Note: The help system is still under development and can be expected
+to change somewhat before reaching stability. It is being made available
+at this stage to solicit feedback from early adopters, on the understanding
+that the details of the contribution mechanisms might change in breaking
+ways.</b></td>
 </tr>
 </table>
+
 <center>
 <h1>
 Help System</h1></center>
 The Help System plug-in, <tt>org.eclipse.help</tt>, defines two extension
 points (<tt>"contexts" </tt>and <tt>"toc"</tt>) which allow individual
 plug-ins to contribute context-sensitive help and online help for their
-components. A typical plug-in would make use of these extension points.
-<p>For more advanced applications, there is also an extension point&nbsp;
+components. A typical plug-in that provides documentation would make use
+of these extension points.
+<p>Other extension points serve extending capabilities of the help system.
+<br>For more advanced applications, there is also an extension point&nbsp;
 (<tt>"support"</tt>) for plugging in a a help system UI.
 <p>
 <hr WIDTH="100%">
@@ -35,11 +38,15 @@ The following extension points can be used to extend the help system:
 <a href="org_eclipse_help_contexts.html">org.eclipse.help.contexts</a></li>
 
 <li>
+<a href="org_eclipse_help_luceneAnalyzer.html">org.eclipse.help.luceneAnalyzer</a></li>
+
+<li>
 <a href="org_eclipse_help_support.html">org.eclipse.help.support</a></li>
 
 <li>
 <a href="org_eclipse_help_toc.html">org.eclipse.help.toc</a></li>
 </ul>
+
 <p><br><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
 </body>
 </html>
