@@ -61,7 +61,7 @@ public class Rules {
 			if (resources.length == 0)
 				return null;
 			if (resources.length == 1)
-				return resources[0];
+				return resources[0].isReadOnly() ? resources[0] : null;
 			return new MultiRule(resources);
 		}
 	}
