@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.internal.progress.BlockedJobsDialog;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 
 /**
@@ -37,7 +38,7 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper implements 
 	/**
 	 * The dialog that is shown when the operation is blocked
 	 */
-	private ProgressMonitorJobsDialog dialog;
+	private BlockedJobsDialog dialog;
 	
 	/**
 	 * The name of the task that is being executed
@@ -129,14 +130,10 @@ private void runEventLoop() {
 public void setBlocked(IStatus reason) {
 	//The UI operation has been blocked.  Open a progress dialog
 	//to report the situation and give the user an opportunity to cancel.
-	dialog = new ProgressMonitorJobsDialog(null);
+	dialog = new BlockedJobsDialog(null);
 	dialog.setBlockOnOpen(false);
-	dialog.setCancelable(true);
+	dialog.setStatus(reason);
 	dialog.open();
-	IProgressMonitor monitor = dialog.getProgressMonitor();
-	monitor.beginTask(taskName, IProgressMonitor.UNKNOWN);
-	if (monitor instanceof IProgressMonitorWithBlocking) 
-		((IProgressMonitorWithBlocking)monitor).setBlocked(reason);
 }
 /**
  * @see IProgressMonitor#setCanceled
