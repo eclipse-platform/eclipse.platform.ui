@@ -1,1 +1,237 @@
-<?xml version="1.0" encoding="UTF-8"?><project name="org.eclipse.help.webapp" default="build.jars" basedir=".">	<property name="bootclasspath" value=""/>	<property name="ws" value="win32"/>	<property name="os" value="win32"/>	<property name="arch" value="x86"/>	<target name="init" depends="properties">		<property name="plugin" value="org.eclipse.help.webapp"/>		<property name="version.suffix" value="_2.0.0"/>		<property name="full.name" value="${plugin}${version.suffix}"/>		<property name="temp.folder" value="${basedir}/temp.folder"/>		<property name="plugin.destination" value="${basedir}"/>		<property name="build.result.folder" value="${basedir}"/>	</target>	<target name="properties" if="eclipse.running">		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>	</target>	<target name="build.update.jar" depends="init">		<delete dir="${temp.folder}"/>		<mkdir dir="${temp.folder}"/>		<antcall target="build.jars"/>		<antcall target="gather.bin.parts">			<param name="destination" value="${temp.folder}/"/>		</antcall><!--		<delete>			<fileset dir="${base}" includes="WEB-INF/lib/*.bin.log"/>		</delete>-->		<zip zipfile="${plugin.destination}/${full.name}.jar" basedir="${temp.folder}/${full.name}" filesonly="false"/>		<delete dir="${temp.folder}"/>	</target>		<target name="gather.bin.parts" depends="init" if="destination">		<mkdir dir="${destination}/${full.name}"/>		<copy file="${build.result.folder}/WEB-INF/lib/webapp.jar" todir="${destination}/${full.name}"/>		<copy todir="${destination}/${full.name}">			<fileset dir="${basedir}" includes="images/,ns4/,infocenter/,WEB-INF/,*.css,*.html,*.js,*.jsp,plugin.properties,webapp.properties,plugin.xml" excludes="src/,WEB-INF/lib/*.bin.log,WEB-INF/lib/*src.zip,WEB-INF/classes/"/>		</copy>	</target>		<target name="WEB-INF/lib/webapp.jar" depends="init">		<property name="destdir" value="${basedir}/webapp.jar.bin"/>		<delete dir="${basedir}/webapp.jar.bin"/>		<mkdir dir="${basedir}/webapp.jar.bin"/>		<!-- compile the source code -->		<javac destdir="${basedir}/webapp.jar.bin" failonerror="false" verbose="true" debug="on" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="../org.eclipse.core.runtime/bin;../org.eclipse.core.runtime/runtime.jar;../org.eclipse.core.boot/bin;../org.eclipse.core.boot/boot.jar;../org.apache.xerces/bin;../org.apache.xerces/xercesImpl.jar;../org.apache.xerces/xmlParserAPIs.jar;../org.apache.xerces/xerces.jar;../org.eclipse.help/bin;../org.eclipse.help/help.jar;../org.eclipse.tomcat/servlet.jar">			<src path="src/"/>		</javac>				<!-- copy necessary resources -->		<copy todir="${basedir}/webapp.jar.bin">			<fileset dir="src/" excludes="**/*.java"/>		</copy>		<jar jarfile="${build.result.folder}/WEB-INF/lib/webapp.jar" basedir="${basedir}/webapp.jar.bin"/>		<delete dir="${basedir}/webapp.jar.bin"/> 	</target>	<target name="WEB-INF/lib/webappsrc.zip" depends="init">		<zip zipfile="${build.result.folder}/WEB-INF/lib/webappsrc.zip"  filesonly="false">			<fileset dir="src/" includes="**/*.java"/>		</zip>	</target>	<target name="build.jars" depends="WEB-INF/lib/webapp.jar" >		<delete file="${basedir}/WEB-INF/web.xml"/>		<delete file="${basedir}/WEB-INF/lib/jsp.jar"/>		<copy file="${basedir}/jsp.jar" todir="${basedir}/WEB-INF/lib"/>		<copy file="${basedir}/web.xml" todir="${basedir}/WEB-INF"/>	</target>	<target name="build.sources" depends="init,WEB-INF/lib/webappsrc.zip">	</target>		<target name="build.zips" depends="init">	</target>	<target name="gather.sources" depends="init" if="destination">		<mkdir dir="${destination}/${full.name}"/>		<copy file="${build.result.folder}/WEB-INF/lib/webappsrc.zip" todir="${destination}/${full.name}"/>	</target>			<target name="gather.logs" depends="init" if="destination">		<mkdir dir="${destination}/${full.name}"/>		<copy file="${temp.folder}/webapp.jar.bin.log" todir="${destination}/${full.name}/WEB-INF/lib"/>	</target>	<target name="clean" depends="init">		<delete file="${build.result.folder}/WEB-INF/lib/webapp.jar"/>		<delete file="${build.result.folder}/WEB-INF/lib/webapp.jar.bin.log"/>		<delete file="${build.result.folder}/WEB-INF/lib/webappsrc.zip"/>		<delete file="${plugin.destination}/${full.name}.jar"/>		<delete file="${plugin.destination}/${full.name}.zip"/>		<delete file="${basedir}/${full.name}.src.zip"/>		<delete file="${basedir}/${full.name}.log.zip"/>		<delete dir="${temp.folder}"/>	</target>				<target name="refresh" depends="init" if="eclipse.running">		<eclipse.refreshLocal resource="${plugin}" depth="infinite"/>	</target>			<target name="zip.plugin" depends="init">		<delete dir="${temp.folder}"/>		<mkdir dir="${temp.folder}"/>		<antcall target="build.jars"/>		<antcall target="build.sources"/>		<antcall target="gather.bin.parts">			<param name="destination" value="${temp.folder}/"/>		</antcall>		<antcall target="gather.sources">			<param name="destination" value="${temp.folder}/"/>		</antcall>		<delete>			<fileset dir="${temp.folder}" includes="**/*.bin.log"/>		</delete>		<zip zipfile="${plugin.destination}/${full.name}.zip" basedir="${temp.folder}" filesonly="false"/>		<delete dir="${temp.folder}"/>	</target>	  <!-- pass this in when running the script    <property name="tomcat.home" value="d:\programs\jakarta-tomcat-4.0.1"/>  -->	<path id="jasper.classpath" >  		<pathelement location="${basedir}/WEB-INF/classes"/>		<pathelement location="${basedir}/WEB-INF/lib/webapp.jar" />		<pathelement location="${tomcat.home}/common/lib/xerces.jar"/>		<pathelement location="${tomcat.home}/server/lib/catalina.jar" />		<pathelement location="${tomcat.home}/common/lib/servlet.jar" />		<pathelement location="${tomcat.home}/lib/jasper-compiler.jar" />		<pathelement location="${tomcat.home}/lib/jasper-runtime.jar" />		<pathelement location="${tomcat.home}/server/lib/tomcat_util.jar" />  	</path>	<target name="precompileJSP" depends="precompile.clean, precompile.default, precompile.ns4, precompile.jar">	</target>		<target name="precompile.clean">	    <delete dir="${basedir}/temp" />    </target>    	<target name="precompile.default">		<property name="workdir" value="${basedir}/temp/default"/>		<mkdir dir="${workdir}"/>		<mkdir dir="${workdir}/classes"/>		<copy todir="${workdir}/WEB-INF">			<fileset dir="WEB-INF"/>		</copy>		<copy todir="${workdir}" >			<fileset dir="${basedir}" includes="*.jsp" />		</copy>		<java			taskname="jasper"			classname="org.apache.jasper.JspC"			fork="true"			failonerror="true"			classpathref="jasper.classpath">			<arg value="-v3" />			<arg value="-dd" /><arg value="${workdir}" />			<arg value="-die" />			<arg value="-p" /><arg value="jsp"/>			<arg value="-webinc" /><arg value="${workdir}/temp_web.xml" />			<arg value="-webapp" /><arg value="${workdir}" />		</java>		<javac			srcdir="${workdir}"			destdir="${workdir}/classes"			debug="false"			deprecation="false"			optimize = "false"			includes="**/*.java">			<classpath refid="jasper.classpath" />		</javac>	</target>		<target name="precompile.ns4">		<property name="ns4workdir" value="${basedir}/temp/ns4"/>		<mkdir dir="${ns4workdir}"/>		<mkdir dir="${ns4workdir}/classes"/>		<copy todir="${ns4workdir}/WEB-INF">			<fileset dir="WEB-INF"/>		</copy>		<copy todir="${ns4workdir}" >			<fileset dir="${basedir}/ns4" includes="*.jsp" />		</copy>		<java			taskname="jasper"			classname="org.apache.jasper.JspC"			fork="true"			failonerror="true"			classpathref="jasper.classpath">			<arg value="-v3" />			<arg value="-dd" /><arg value="${ns4workdir}" />			<arg value="-die" />			<arg value="-p" /><arg value="jsp.ns4"/>			<arg value="-uriroot" /><arg value="${basedir}/temp"/>			<arg value="-webinc" /><arg value="${ns4workdir}/temp_web.xml" />			<arg value="-webapp" /><arg value="${ns4workdir}" />		</java>		<javac			srcdir="${ns4workdir}"			destdir="${ns4workdir}/classes"			debug="false"			deprecation="false"			optimize = "false"			includes="**/*.java">			<classpath refid="jasper.classpath" />		</javac>	</target>		<target name="precompile.jar">		<jar jarfile="${basedir}/jsp.jar"			basedir="${basedir}/temp/default/classes"			includes="**" />		<jar jarfile="${basedir}/jsp.jar"			basedir="${basedir}/temp/ns4/classes"			includes="**" 			update="yes"/>	</target></project>
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="org.eclipse.help.webapp" default="build.jars" basedir=".">
+
+	<property name="bootclasspath" value=""/>
+	<property name="ws" value="win32"/>
+	<property name="os" value="win32"/>
+	<property name="arch" value="x86"/>
+
+	<target name="init" depends="properties">
+		<property name="plugin" value="org.eclipse.help.webapp"/>
+		<property name="version.suffix" value="_2.0.0"/>
+		<property name="full.name" value="${plugin}${version.suffix}"/>
+		<property name="temp.folder" value="${basedir}/temp.folder"/>
+		<property name="plugin.destination" value="${basedir}"/>
+		<property name="build.result.folder" value="${basedir}"/>
+	</target>
+
+	<target name="properties" if="eclipse.running">
+		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+	</target>
+
+
+	<target name="build.update.jar" depends="init">
+		<delete dir="${temp.folder}"/>
+		<mkdir dir="${temp.folder}"/>
+		<antcall target="build.jars"/>
+		<antcall target="gather.bin.parts">
+			<param name="destination" value="${temp.folder}/"/>
+		</antcall>
+<!--
+		<delete>
+			<fileset dir="${base}" includes="WEB-INF/lib/*.bin.log"/>
+		</delete>
+-->
+
+		<zip zipfile="${plugin.destination}/${full.name}.jar" basedir="${temp.folder}/${full.name}" filesonly="false"/>
+		<delete dir="${temp.folder}"/>
+	</target>
+	
+	<target name="gather.bin.parts" depends="init" if="destination">
+		<mkdir dir="${destination}/${full.name}"/>
+		<copy file="${build.result.folder}/WEB-INF/lib/webapp.jar" todir="${destination}/${full.name}"/>
+		<copy todir="${destination}/${full.name}">
+			<fileset dir="${basedir}" includes="images/,ns4/,infocenter/,WEB-INF/,*.css,*.html,*.js,*.jsp,plugin.properties,webapp.properties,plugin.xml" excludes="src/,WEB-INF/lib/*.bin.log,WEB-INF/lib/*src.zip,WEB-INF/classes/"/>
+		</copy>
+	</target>
+	
+
+	<target name="WEB-INF/lib/webapp.jar" depends="init">
+
+		<property name="destdir" value="${basedir}/webapp.jar.bin"/>
+		<delete dir="${basedir}/webapp.jar.bin"/>
+		<mkdir dir="${basedir}/webapp.jar.bin"/>
+
+		<!-- compile the source code -->
+		<javac destdir="${basedir}/webapp.jar.bin" failonerror="false" verbose="true" debug="on" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="../org.eclipse.core.runtime/bin;../org.eclipse.core.runtime/runtime.jar;../org.eclipse.core.boot/bin;../org.eclipse.core.boot/boot.jar;../org.apache.xerces/bin;../org.apache.xerces/xercesImpl.jar;../org.apache.xerces/xmlParserAPIs.jar;../org.apache.xerces/xerces.jar;../org.eclipse.help/bin;../org.eclipse.help/help.jar;../org.eclipse.tomcat/servlet.jar">
+			<src path="src/"/>
+		</javac>
+		
+		<!-- copy necessary resources -->
+		<copy todir="${basedir}/webapp.jar.bin">
+			<fileset dir="src/" excludes="**/*.java"/>
+		</copy>
+		<jar jarfile="${build.result.folder}/WEB-INF/lib/webapp.jar" basedir="${basedir}/webapp.jar.bin"/>
+		<delete dir="${basedir}/webapp.jar.bin"/>
+ 	</target>
+
+
+	<target name="WEB-INF/lib/webappsrc.zip" depends="init">
+		<zip zipfile="${build.result.folder}/WEB-INF/lib/webappsrc.zip"  filesonly="false">
+			<fileset dir="src/" includes="**/*.java"/>
+		</zip>
+	</target>
+
+
+	<target name="build.jars" depends="WEB-INF/lib/webapp.jar" >
+		<delete file="${basedir}/WEB-INF/web.xml"/>
+		<delete file="${basedir}/WEB-INF/lib/jsp.jar"/>
+		<copy file="${basedir}/jsp.jar" todir="${basedir}/WEB-INF/lib"/>
+		<copy file="${basedir}/web.xml" todir="${basedir}/WEB-INF"/>
+	</target>
+
+	<target name="build.sources" depends="init,WEB-INF/lib/webappsrc.zip">
+	</target>
+	
+	<target name="build.zips" depends="init">
+	</target>
+
+	<target name="gather.sources" depends="init" if="destination">
+		<mkdir dir="${destination}/${full.name}"/>
+		<copy file="${build.result.folder}/WEB-INF/lib/webappsrc.zip" todir="${destination}/${full.name}"/>
+	</target>
+	
+	
+	<target name="gather.logs" depends="init" if="destination">
+		<mkdir dir="${destination}/${full.name}"/>
+		<copy file="${basedir}/webapp.jar.bin.log" todir="${destination}/${full.name}/WEB-INF/lib"/>
+	</target>
+
+	<target name="clean" depends="init">
+		<delete file="${build.result.folder}/WEB-INF/lib/webapp.jar"/>
+		<delete file="${build.result.folder}/WEB-INF/lib/webapp.jar.bin.log"/>
+		<delete file="${build.result.folder}/WEB-INF/lib/webappsrc.zip"/>
+		<delete file="${plugin.destination}/${full.name}.jar"/>
+		<delete file="${plugin.destination}/${full.name}.zip"/>
+		<delete file="${basedir}/${full.name}.src.zip"/>
+		<delete file="${basedir}/${full.name}.log.zip"/>
+		<delete dir="${temp.folder}"/>
+	</target>
+	
+		
+	<target name="refresh" depends="init" if="eclipse.running">
+		<eclipse.refreshLocal resource="${plugin}" depth="infinite"/>
+	</target>
+	
+	
+	<target name="zip.plugin" depends="init">
+		<delete dir="${temp.folder}"/>
+		<mkdir dir="${temp.folder}"/>
+		<antcall target="build.jars"/>
+		<antcall target="build.sources"/>
+		<antcall target="gather.bin.parts">
+			<param name="destination" value="${temp.folder}/"/>
+		</antcall>
+		<antcall target="gather.sources">
+			<param name="destination" value="${temp.folder}/"/>
+		</antcall>
+		<delete>
+			<fileset dir="${temp.folder}" includes="**/*.bin.log"/>
+		</delete>
+		<zip zipfile="${plugin.destination}/${full.name}.zip" basedir="${temp.folder}" filesonly="false"/>
+		<delete dir="${temp.folder}"/>
+	</target>
+	
+  <!-- pass this in when running the script 
+   <property name="tomcat.home" value="d:\programs\jakarta-tomcat-4.0.1"/>
+  -->
+	<path id="jasper.classpath" >  
+		<pathelement location="${basedir}/WEB-INF/classes"/>
+		<pathelement location="${basedir}/WEB-INF/lib/webapp.jar" />
+		<pathelement location="${tomcat.home}/common/lib/xerces.jar"/>
+		<pathelement location="${tomcat.home}/server/lib/catalina.jar" />
+		<pathelement location="${tomcat.home}/common/lib/servlet.jar" />
+		<pathelement location="${tomcat.home}/lib/jasper-compiler.jar" />
+		<pathelement location="${tomcat.home}/lib/jasper-runtime.jar" />
+		<pathelement location="${tomcat.home}/server/lib/tomcat_util.jar" />  
+	</path>
+
+	<target name="precompileJSP" depends="precompile.clean, precompile.default, precompile.ns4, precompile.jar">
+	</target>
+	
+	<target name="precompile.clean">
+	    <delete dir="${basedir}/temp" />
+    </target>
+    
+	<target name="precompile.default">
+		<property name="workdir" value="${basedir}/temp/default"/>
+		<mkdir dir="${workdir}"/>
+		<mkdir dir="${workdir}/classes"/>
+		<copy todir="${workdir}/WEB-INF">
+			<fileset dir="WEB-INF"/>
+		</copy>
+		<copy todir="${workdir}" >
+			<fileset dir="${basedir}" includes="*.jsp" />
+		</copy>
+		<java
+			taskname="jasper"
+			classname="org.apache.jasper.JspC"
+			fork="true"
+			failonerror="true"
+			classpathref="jasper.classpath">
+			<arg value="-v3" />
+			<arg value="-dd" /><arg value="${workdir}" />
+			<arg value="-die" />
+			<arg value="-p" /><arg value="jsp"/>
+			<arg value="-webinc" /><arg value="${workdir}/temp_web.xml" />
+			<arg value="-webapp" /><arg value="${workdir}" />
+		</java>
+		<javac
+			srcdir="${workdir}"
+			destdir="${workdir}/classes"
+			debug="false"
+			deprecation="false"
+			optimize = "false"
+			includes="**/*.java">
+			<classpath refid="jasper.classpath" />
+		</javac>
+	</target>
+	
+	<target name="precompile.ns4">
+		<property name="ns4workdir" value="${basedir}/temp/ns4"/>
+		<mkdir dir="${ns4workdir}"/>
+		<mkdir dir="${ns4workdir}/classes"/>
+		<copy todir="${ns4workdir}/WEB-INF">
+			<fileset dir="WEB-INF"/>
+		</copy>
+		<copy todir="${ns4workdir}" >
+			<fileset dir="${basedir}/ns4" includes="*.jsp" />
+		</copy>
+		<java
+			taskname="jasper"
+			classname="org.apache.jasper.JspC"
+			fork="true"
+			failonerror="true"
+			classpathref="jasper.classpath">
+			<arg value="-v3" />
+			<arg value="-dd" /><arg value="${ns4workdir}" />
+			<arg value="-die" />
+			<arg value="-p" /><arg value="jsp.ns4"/>
+			<arg value="-uriroot" /><arg value="${basedir}/temp"/>
+			<arg value="-webinc" /><arg value="${ns4workdir}/temp_web.xml" />
+			<arg value="-webapp" /><arg value="${ns4workdir}" />
+		</java>
+		<javac
+			srcdir="${ns4workdir}"
+			destdir="${ns4workdir}/classes"
+			debug="false"
+			deprecation="false"
+			optimize = "false"
+			includes="**/*.java">
+			<classpath refid="jasper.classpath" />
+		</javac>
+	</target>
+	
+	<target name="precompile.jar">
+		<jar jarfile="${basedir}/jsp.jar"
+			basedir="${basedir}/temp/default/classes"
+			includes="**" />
+		<jar jarfile="${basedir}/jsp.jar"
+			basedir="${basedir}/temp/ns4/classes"
+			includes="**" 
+			update="yes"/>
+	</target>
+
+</project>
+
