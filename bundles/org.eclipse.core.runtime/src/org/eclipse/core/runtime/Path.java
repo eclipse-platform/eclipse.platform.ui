@@ -376,10 +376,9 @@ private int computeSegmentCount(String path) {
 private String[] computeSegments(String path) {
 	// performance sensitive --- avoid creating garbage
 	int segmentCount = computeSegmentCount(path);
-	String[] newSegments = new String[segmentCount];
-	if (segmentCount == 0) {
+	if (segmentCount == 0)
 		return NO_SEGMENTS;
-	}
+	String[] newSegments = new String[segmentCount];
 	int len = path.length();
 	// check for initial slash
 	int firstPosition = (path.charAt(0) == SEPARATOR) ? 1 : 0;
