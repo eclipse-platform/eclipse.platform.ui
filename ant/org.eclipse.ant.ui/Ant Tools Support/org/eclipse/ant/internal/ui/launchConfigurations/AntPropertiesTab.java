@@ -11,8 +11,11 @@
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.eclipse.ant.core.AntCorePlugin;
+import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.Property;
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
@@ -26,6 +29,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -44,8 +48,9 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements IAntBlockContainer {
 	
-	private Button useDefaultButton;
-	private AntPropertiesBlock antPropertiesBlock= new AntPropertiesBlock(this);
+	private Button fUseDefaultButton;
+	private AntPropertiesBlock fAntPropertiesBlock= new AntPropertiesBlock(this);
+    private boolean fSeparateJRE= true;
 	
 	public void createControl(Composite parent) {
 		Composite top = new Composite(parent, SWT.NONE);
@@ -65,14 +70,14 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 		propertiesBlockComposite.setLayout(layout);
 		propertiesBlockComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		antPropertiesBlock.createControl(propertiesBlockComposite, AntLaunchConfigurationMessages.getString("AntPropertiesTab.&Properties__6"), AntLaunchConfigurationMessages.getString("AntPropertiesTab.Property_f&iles__7")); //$NON-NLS-1$ //$NON-NLS-2$
+		fAntPropertiesBlock.createControl(propertiesBlockComposite, AntLaunchConfigurationMessages.getString("AntPropertiesTab.&Properties__6"), AntLaunchConfigurationMessages.getString("AntPropertiesTab.Property_f&iles__7")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		Dialog.applyDialogFont(top);
 	}
 	
 	private void createChangeProperties(Composite top) {
-		useDefaultButton= createCheckButton(top, AntLaunchConfigurationMessages.getString("AntPropertiesTab.6")); //$NON-NLS-1$
-		useDefaultButton.addSelectionListener(new SelectionAdapter() {
+		fUseDefaultButton= createCheckButton(top, AntLaunchConfigurationMessages.getString("AntPropertiesTab.6")); //$NON-NLS-1$
+		fUseDefaultButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				toggleUseDefaultProperties();
 				updateLaunchConfigurationDialog();
@@ -81,8 +86,11 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 	}		
 		
 	private void toggleUseDefaultProperties() {
-		boolean enable= !useDefaultButton.getSelection();
-		antPropertiesBlock.setEnabled(enable);
+		boolean enable= !fUseDefaultButton.getSelection();
+		fAntPropertiesBlock.setEnabled(enable);
+        if (!enable) {
+            initializeAsGlobal(fSeparateJRE);
+        }
 	}
 	
 	/**
@@ -103,6 +111,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
+        fSeparateJRE= isSeparateJRE(configuration);
 		setErrorMessage(null);
 		setMessage(null);
 		Map properties= null;
@@ -120,31 +129,53 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 		}
 		
 		if (properties == null && propertyFiles == null) {
-			antPropertiesBlock.setTablesEnabled(false);
-			useDefaultButton.setSelection(true);
+		    initializeAsGlobal(fSeparateJRE);
 		} else {
-			useDefaultButton.setSelection(false);
-			antPropertiesBlock.populatePropertyViewer(properties);
+			fUseDefaultButton.setSelection(false);
+			fAntPropertiesBlock.populatePropertyViewer(properties);
 		
 			String[] files= AntUtil.parseString(propertyFiles, ","); //$NON-NLS-1$
-			antPropertiesBlock.setPropertyFilesInput(files);
+			fAntPropertiesBlock.setPropertyFilesInput(files);
 		}
 		
 		toggleUseDefaultProperties();
 	}
-	
+
+    private void initializeAsGlobal(boolean separateVM) {
+        AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
+        List prefProperties;
+        if (separateVM) {
+            prefProperties= prefs.getRemoteAntProperties();
+        } else {
+            prefProperties= prefs.getProperties();
+        }
+        fAntPropertiesBlock.setPropertiesInput((Property[]) prefProperties.toArray(new Property[prefProperties.size()]));
+        fAntPropertiesBlock.setPropertyFilesInput(AntCorePlugin.getPlugin().getPreferences().getCustomPropertyFiles(false));
+        fAntPropertiesBlock.setTablesEnabled(false);
+        fUseDefaultButton.setSelection(true);
+    }
+
+    private boolean isSeparateJRE(ILaunchConfiguration configuration) {
+        boolean separateVM= true;
+        try {
+            separateVM= (null != configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null));
+        } catch (CoreException ce) {
+            AntUIPlugin.log(AntLaunchConfigurationMessages.getString("AntPropertiesTab.Error_reading_configuration_9"), ce); //$NON-NLS-1$
+        }
+        return separateVM;
+    }
 	
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		if (useDefaultButton.getSelection()) {
+		if (fUseDefaultButton.getSelection()) {
 			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTIES, (Map)null);
 			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTY_FILES, (String)null);
 			return;
 		}
 				
-		Object[] items= antPropertiesBlock.getProperties();
+		Object[] items= fAntPropertiesBlock.getProperties();
 		Map properties= null;
 		if (items.length > 0) {
 			properties= new HashMap(items.length);
@@ -156,7 +187,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 		
 		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTIES, properties);
 		
-		items= antPropertiesBlock.getPropertyFiles();
+		items= fAntPropertiesBlock.getPropertyFiles();
 		String files= null;
 		if (items.length > 0) {
 			StringBuffer buff= new StringBuffer();
@@ -223,6 +254,10 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
+        if (fSeparateJRE != isSeparateJRE(workingCopy)) {
+            //update the properties if changed whether build is in separate JRE
+            initializeFrom(workingCopy);
+        }
 	}
 
 	/* (non-Javadoc)
