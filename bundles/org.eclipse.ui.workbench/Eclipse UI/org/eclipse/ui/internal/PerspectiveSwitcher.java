@@ -139,9 +139,9 @@ public class PerspectiveSwitcher {
 	    PerspectiveBarContributionItem item = new PerspectiveBarContributionItem(perspective, workbenchPage);
 	  	perspectiveBar.addItem(item);
 		setCoolItemSize(coolItem);
-		// SUPPORTING LARGE FONTS
-		/*if (perspectiveBar != null)
-			perspectiveBar.update(true);*/
+		// This is need to update the vertical size of the tool bar on GTK+ when using large fonts.
+		if (perspectiveBar != null)
+			perspectiveBar.update(true);
 	}
 	
 	public IContributionItem findPerspectiveShortcut(IPerspectiveDescriptor perspective, WorkbenchPage page) {
@@ -184,6 +184,10 @@ public class PerspectiveSwitcher {
 	    createControlForLocation(newLocation);
         currentLocation = newLocation;
         showPerspectiveBar();
+        
+        if ((newLocation == TOP_LEFT || newLocation == TOP_RIGHT)
+                && (currentLocation == TOP_LEFT || currentLocation == TOP_RIGHT))
+        	updatePerspectiveBar();
 	}
 
 	/**
@@ -453,14 +457,15 @@ public class PerspectiveSwitcher {
 		Rectangle area = perspectiveCoolBar.getClientArea();
 
 		int rowHeight = toolbar.getItem(0).getBounds().height;
-		// SUPPORTING LARGE FONTS
-		/*for (int i = 1; i < perspectiveBar.getControl().getItemCount(); i++) {
-			int height = perspectiveBar.getControl().getItem(i).getBounds().height;
-			if(height > rowHeight)
-				rowHeight = height;
+		
+		// This gets the height of the tallest item.
+		for (int i = 1; i < perspectiveBar.getControl().getItemCount(); i++) {
+			rowHeight = Math.max(rowHeight, perspectiveBar.getControl().getItem(i).getBounds().height);
 		}
 		
-		area.height = topBar.getLeft().getBounds().height;*/
+		// update the height in the case that we need to resize smaller.  In that 
+		// case the client area might be too high
+		area.height = topBar.getLeft().getBounds().height;
 		int rows = rowHeight <= 0 ? 1 : (int)Math.max(1, Math.floor(area.height / rowHeight));
 		if (rows == 1 || (toolbar.getStyle() & SWT.WRAP) == 0 || currentLocation == TOP_LEFT) {
 			Point p = toolbar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
