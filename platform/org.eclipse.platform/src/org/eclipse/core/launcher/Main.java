@@ -817,7 +817,7 @@ public class Main {
 			// look for the development mode and class path entries.  
 			if (args[i - 1].equalsIgnoreCase(DEV)) {
 				inDevelopmentMode = true;
-				devClassPath = arg;
+				devClassPath = processDevArg(arg);
 				continue;
 			}
 
@@ -881,6 +881,23 @@ public class Main {
 				passThruArgs[j++] = args[i];
 		}
 		return passThruArgs;
+	}
+	
+	private String processDevArg(String arg) {
+		if (arg == null)
+			return null;
+		try {
+			URL location = new URL(arg);
+			Properties props = load(location, null);
+			String result = props.getProperty("org.eclipse.osgi");
+			return result == null ? props.getProperty("*") : result;
+		} catch (MalformedURLException e) {
+			// the arg was not a URL so use it as is.
+			return arg;
+		} catch (IOException e) {
+			// TODO consider logging here
+			return null;
+		}
 	}
 
 	private String getConfigurationLocation() {
