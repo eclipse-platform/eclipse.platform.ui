@@ -47,6 +47,7 @@ import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.MessageConsole;
+import org.eclipse.ui.console.MessageConsoleStream;
 import org.eclipse.ui.console.actions.ClearOutputAction;
 import org.eclipse.ui.console.actions.TextViewerAction;
 import org.eclipse.ui.console.actions.TextViewerGotoLineAction;
@@ -146,8 +147,14 @@ public class MessageConsolePage implements IPageBookViewPage, IAdaptable, IPrope
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		Object source = event.getSource();
-		if (source.equals(getConsole()) && event.getProperty().equals(MessageConsole.P_FONT)) {
+		String property = event.getProperty();
+		if (source.equals(getConsole()) && MessageConsole.P_FONT.equals(property)) {
 			setFont(getConsole().getFont());	
+		} else if (MessageConsole.P_STREAM_COLOR.equals(property) && source instanceof MessageConsoleStream) {
+			MessageConsoleStream stream = (MessageConsoleStream)source;
+			if (stream.getConsole().equals(getConsole())) {
+				getViewer().getTextWidget().redraw();
+			}
 		}
 	}
 

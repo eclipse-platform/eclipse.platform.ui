@@ -82,4 +82,13 @@ public class MessageConsoleStream {
 	public Color getColor() {
 		return fColor;
 	}
+	
+	/**
+	 * Returns the console this stream is connected to.
+	 * 
+	 * @return the console this stream is connected to
+	 */
+	public MessageConsole getConsole() {
+		return fConsole;
+	}
 }
