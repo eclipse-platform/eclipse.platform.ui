@@ -469,10 +469,11 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	 */
 	public boolean updateMarker(IMarker marker, IDocument document, Position position) throws CoreException {
 		
-
+		if (fMarkerUpdaterSpecifications == null)
+			installMarkerUpdaters();
+			
 		if (!fMarkerUpdaterSpecifications.isEmpty())
 			checkMarkerUpdaters(marker);
-			
 			
 		boolean isOK= true;
 		
