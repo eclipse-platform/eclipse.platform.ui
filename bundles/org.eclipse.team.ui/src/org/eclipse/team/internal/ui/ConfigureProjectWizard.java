@@ -45,20 +45,24 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 		AdaptableList wizards = getAvailableWizards();
 		if (wizards.size() == 1) {
 			// If there is only one wizard, skip the first page.
+			// Only skip the first page if the one wizard has at least one page.
 			ConfigurationWizardElement element = (ConfigurationWizardElement)wizards.getChildren()[0];
 			try {
 				this.wizard = (IConfigurationWizard)element.createExecutableExtension();
 				wizard.init(workbench, project);
-				wizard.setContainer(getContainer());
 				wizard.addPages();
-				IWizardPage[] pages = wizard.getPages();
-				for (int i = 0; i < pages.length; i++) {
-					addPage(pages[i]);
+				if (wizard.getPageCount() > 0) {
+					wizard.setContainer(getContainer());
+					IWizardPage[] pages = wizard.getPages();
+					for (int i = 0; i < pages.length; i++) {
+						addPage(pages[i]);
+					}
+					return;
 				}
 			} catch (CoreException e) {
 				TeamUIPlugin.log(e.getStatus());
+				return;
 			}
-			return;
 		}
 		mainPage = new ConfigureProjectWizardMainPage("configurePage1", Policy.bind("ConfigureProjectWizard.configureProject"), null, wizards);
 		mainPage.setDescription(Policy.bind("ConfigureProjectWizard.description"));
@@ -67,8 +71,13 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 		addPage(mainPage);
 	}
 	public boolean canFinish() {
-		// If we are on the first page, never allow finish.
-		if (getContainer().getCurrentPage() == mainPage) return false;
+		// If we are on the first page, never allow finish unless the selected wizard has no pages.
+		if (getContainer().getCurrentPage() == mainPage) {
+			if (mainPage.getSelectedWizard() != null && mainPage.getNextPage() == null) {
+				return true;
+			}
+			return false;
+		}
 		return super.canFinish();
 	}
 	/*
@@ -77,6 +86,10 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	public boolean performFinish() {
 		if (wizard != null) {
 			return wizard.performFinish();
+		}
+		IConfigurationWizard selectedWizard = mainPage.getSelectedWizard();
+		if (selectedWizard != null) {
+			return selectedWizard.performFinish();
 		}
 		return true;
 	}

@@ -1,7 +1,7 @@
 package org.eclipse.team.internal.ui;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
@@ -42,7 +42,7 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 	private IWorkbench workbench;
 	private IProject project;
 	
-	private ConfigurationWizardElement selectedElement;
+	private IConfigurationWizard selectedWizard;
 	
 	/**
 	 * Create a new ConfigureProjectWizardMainPage
@@ -56,11 +56,14 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 		super(pageName, title, titleImage);
 		this.wizards = wizards;
 	}
+	public IConfigurationWizard getSelectedWizard() {
+		return selectedWizard;
+	}
 	/*
 	 * @see WizardPage#canFlipToNextPage
 	 */
 	public boolean canFlipToNextPage() {
-		return selectedElement != null;
+		return selectedWizard != null && selectedWizard.getPageCount() > 0;
 	}
 	/*
 	 * @see WizardPage#createControl
@@ -87,19 +90,30 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 		viewer.setLabelProvider(new WorkbenchLabelProvider());
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
+				// Initialize the wizard so we can tell whether to enable the Next button
 				ISelection selection = event.getSelection();
 				if (selection == null || !(selection instanceof IStructuredSelection)) {
-					selectedElement = null;
+					selectedWizard = null;
 					setPageComplete(false);
 					return;
 				}
 				IStructuredSelection ss = (IStructuredSelection)selection;
 				if (ss.size() != 1) {
-					selectedElement = null;
+					selectedWizard = null;
 					setPageComplete(false);
 					return;
 				}
-				selectedElement = (ConfigurationWizardElement)ss.getFirstElement();
+				ConfigurationWizardElement selectedElement = (ConfigurationWizardElement)ss.getFirstElement();
+				try {
+					selectedWizard = (IConfigurationWizard)selectedElement.createExecutableExtension();
+					selectedWizard.init(workbench, project);
+				} catch (CoreException e) {
+					System.out.println(Policy.bind("exceptionCreatingWizard"));
+					return;
+				}
+				selectedWizard.addPages();
+				
+				// Ask the container to update button enablement
 				setPageComplete(true);
 			}
 		});
@@ -118,16 +132,8 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 	 * @see WizardPage#getNextPage
 	 */
 	public IWizardPage getNextPage() {
-		IConfigurationWizard wizard;
-		try {
-			wizard = (IConfigurationWizard)selectedElement.createExecutableExtension();
-			wizard.init(workbench, project);
-		} catch (CoreException e) {
-			System.out.println(Policy.bind("exceptionCreatingWizard"));
-			return null;
-		}
-		wizard.addPages();			
-		return wizard.getStartingPage();
+		if (selectedWizard == null) return null;
+		return selectedWizard.getStartingPage();
 	}
 	/**
 	 * Set the workbench to the argument
