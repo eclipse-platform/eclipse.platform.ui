@@ -23,6 +23,7 @@ import org.eclipse.ui.WorkbenchException;
 
 import org.eclipse.search.ui.IQueryListener;
 import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.SearchUI;
 
 import org.eclipse.search.internal.ui.SearchPlugin;
@@ -123,8 +124,8 @@ public class InternalSearchUI {
 		return plugin;
 	}
 
-	public IViewPart getSearchView() {
-		return SearchPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(SEARCH_VIEW_ID);
+	public ISearchResultViewPart getSearchView() {
+		return (ISearchResultViewPart) SearchPlugin.getActivePage().findView(SEARCH_VIEW_ID);
 	}
 
 	public boolean runSearchInBackground(ISearchQuery query) {
@@ -145,16 +146,13 @@ public class InternalSearchUI {
 		return sjr != null && sjr.fIsRunning;
 	}
 
-	public boolean runSearchInForeground(IRunnableContext context, final ISearchQuery query) {
+	public IStatus runSearchInForeground(IRunnableContext context, final ISearchQuery query) {
 		Assert.isTrue(fSearchJobs.get(query) == null);
 		getSearchManager().addQuery(query);
-		if (isQueryRunning(query))
-			return false;
 		SearchJobRecord sjr= new SearchJobRecord(query, false);
 		fSearchJobs.put(query, sjr);
 		
-		doRunSearchInForeground(sjr, context);
-		return true;
+		return doRunSearchInForeground(sjr, context);
 	}
 	
 	private void doRunSearchInBackground(SearchJobRecord jobRecord) {
@@ -178,7 +176,8 @@ public class InternalSearchUI {
 		return true;
 	}
 	
-	private void doRunSearchInForeground(final SearchJobRecord rec, IRunnableContext context) {
+	private IStatus doRunSearchInForeground(final SearchJobRecord rec, IRunnableContext context) {
+		final IStatus[] temp= new IStatus[1];
 		if (context == null)
 			context= getContext();
 		try {
@@ -186,18 +185,18 @@ public class InternalSearchUI {
 				public void run(IProgressMonitor monitor) {
 					searchJobStarted(rec);
 					try {
-						rec.fQuery.run(monitor);
+						temp[0]= rec.fQuery.run(monitor);
 					} finally {
 						searchJobFinished(rec);
 					}
 				}
 			});
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// this will not happen.
 		} catch (InterruptedException e) {
-			// means we were cancelled.
+			// this will not happen
 		}
+		return temp[0];
 	}
 
 	/**
@@ -223,7 +222,7 @@ public class InternalSearchUI {
 			rec.fJob.cancel();
 	}
 
-	public void activateSearchView() {
+	public ISearchResultViewPart activateSearchView() {
 		String defaultPerspectiveId= SearchUI.getDefaultPerspectiveId();
 		if (defaultPerspectiveId != null) {
 			IWorkbenchWindow window= window= SearchPlugin.getActiveWorkbenchWindow();
@@ -237,13 +236,15 @@ public class InternalSearchUI {
 		}
 
 		try {
-			IViewPart viewPart= SearchPlugin.getActivePage().findView(SEARCH_VIEW_ID);
+			ISearchResultViewPart viewPart= (ISearchResultViewPart) SearchPlugin.getActivePage().findView(SEARCH_VIEW_ID);
 			if (viewPart == null || SearchPreferencePage.isViewBroughtToFront()) {
-				SearchPlugin.getActivePage().showView(SEARCH_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
+				viewPart= (ISearchResultViewPart) SearchPlugin.getActivePage().showView(SEARCH_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
 			}
+			return viewPart;
 		} catch (PartInitException ex) {
 			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.openResultView.title"), SearchMessages.getString("Search.Error.openResultView.message")); //$NON-NLS-2$ //$NON-NLS-1$
 		}	
+		return null;
 	}
 
 	public QueryManager getSearchManager() {

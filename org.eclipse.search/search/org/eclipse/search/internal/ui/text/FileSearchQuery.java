@@ -35,12 +35,10 @@ public class FileSearchQuery implements ISearchQuery {
 	private String fSearchString;
 	private String fSearchOptions;
 	private TextSearchScope fScope;
-	private String fName;
 	private FileSearchResult fResult;
 
-	public FileSearchQuery(TextSearchScope scope, String options, String searchString, String description) {
+	public FileSearchQuery(TextSearchScope scope, String options, String searchString) {
 		
-		fName= description;
 		fScope= scope;
 		fSearchOptions= options;
 		fSearchString= searchString;
@@ -75,12 +73,11 @@ public class FileSearchQuery implements ISearchQuery {
 				// do nothing
 			}
 		};
-		new TextSearchEngine().search(SearchPlugin.getWorkspace(), fScope, collector, new MatchLocator(fSearchString, fSearchOptions));
-		return new Status(IStatus.OK, SearchPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
+		return new TextSearchEngine().search(SearchPlugin.getWorkspace(), fScope, collector, new MatchLocator(fSearchString, fSearchOptions));
 	}
 
 	public String getLabel() {
-		return fName;
+		return "Searching for occurrences of \""+fSearchString+"\"";
 	}
 	
 	public String getSearchString() {

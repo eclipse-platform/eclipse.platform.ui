@@ -11,6 +11,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 
 import org.eclipse.jface.action.Action;
@@ -176,7 +177,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * a content provider and a label provider.
 	 * @param viewer The viewer to be configured
 	 */
-	protected abstract void configureTreeViewer(AbstractTreeViewer viewer);
+	protected abstract void configureTreeViewer(TreeViewer viewer);
 	/**
 	 * Configures the given viewer. Implementers have to set at least
 	 * a content provider and a label provider.
@@ -581,7 +582,12 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	private void asyncExec(Runnable runnable) {
 		Control control= getControl();
 		if (control != null && !control.isDisposed()) {
-			control.getDisplay().asyncExec(runnable);
+			Display currentDisplay= Display.getCurrent();
+			if (currentDisplay == null || !currentDisplay.equals(control.getDisplay()))
+				// meaning we're not executing on the display thread of the control
+				control.getDisplay().asyncExec(runnable);
+			else 
+				runnable.run();
 		}
 	}
 

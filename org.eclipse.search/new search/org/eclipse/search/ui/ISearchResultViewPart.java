@@ -25,4 +25,10 @@ public interface ISearchResultViewPart extends IViewPart {
 	 * @param menuManager
 	 */
 	void fillContextMenu(IMenuManager menuManager);
+	/**
+	 * Returns the <code>ISearchResultPage</code> currently shown in this 
+	 * search view. Returns <code>null</code> if no page is currently shown.
+	 * @return the active <code>ISearchResultPage</code> or <code>null</code>
+	 */
+	ISearchResultPage getActivePage();
 }

@@ -18,10 +18,10 @@ import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -51,16 +51,16 @@ public class FileSearchPage extends AbstractTextSearchViewPage {
 	private SortAction fCurrentSortAction;
 	private SortAction fSortByNameAction;
 	private SortAction fSortByPathAction;
-	private ReplaceAction2 fReplaceAction;
-	
+
+		
 	public FileSearchPage() {
 		fSortByNameAction= new SortAction(SearchMessages.getString("FileSearchPage.sort_name.label"), this, FileLabelProvider.SHOW_LABEL_PATH); //$NON-NLS-1$
 		fSortByPathAction= new SortAction(SearchMessages.getString("FileSearchPage.sort_path.label"), this, FileLabelProvider.SHOW_PATH_LABEL); //$NON-NLS-1$
 		fCurrentSortAction= fSortByNameAction;
 	}
 	
-	StructuredViewer internalGetViewer() {
-		return getViewer();
+	public StructuredViewer getViewer() {
+		return super.getViewer();
 	}
 
 	protected void configureTableViewer(TableViewer viewer) {
@@ -70,7 +70,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage {
 		fContentProvider= (FileContentProvider) viewer.getContentProvider();
 	}
 
-	protected void configureTreeViewer(AbstractTreeViewer viewer) {
+	protected void configureTreeViewer(TreeViewer viewer) {
 		viewer.setLabelProvider(new DelegatingLabelProvider(this, new FileLabelProvider(FileLabelProvider.SHOW_LABEL)));
 		viewer.setContentProvider(new FileTreeContentProvider(viewer));
 		fContentProvider= (FileContentProvider) viewer.getContentProvider();
@@ -106,8 +106,13 @@ public class FileSearchPage extends AbstractTextSearchViewPage {
 		addSortActions(mgr);
 		fActionGroup.setContext(new ActionContext(getSite().getSelectionProvider().getSelection()));
 		fActionGroup.fillContextMenu(mgr);
-		fReplaceAction= new ReplaceAction2(this, (IStructuredSelection) getViewer().getSelection());
-		mgr.add(fReplaceAction);
+		ReplaceAction2 replaceAction= new ReplaceAction2(this, (IStructuredSelection) getViewer().getSelection());
+		if (replaceAction.isEnabled())
+			mgr.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, replaceAction);
+				
+		ReplaceAction2 replaceAll= new ReplaceAction2(this);
+		if (replaceAll.isEnabled())
+			mgr.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, replaceAll);
 	}
 	
 	private void addSortActions(IMenuManager mgr) {

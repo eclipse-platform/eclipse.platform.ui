@@ -67,7 +67,9 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.search.ui.IReplacePage;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
+import org.eclipse.search.ui.ISearchResultPage;
 import org.eclipse.search.ui.ISearchResultViewEntry;
+import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.SearchUI;
 
@@ -130,7 +132,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	
 	public boolean performAction() {
 		if (WorkInProgressPreferencePage.useNewSearch())
-			return performNewSearch();
+			return performNewSearch(false);
 		else
 			return performOldSearch();
 	}
@@ -143,15 +145,8 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	}
 	
 	private boolean runOperation(final TextSearchOperation op) {
-		IRunnableContext context=  null;
-		context= getContainer().getRunnableContext();
-			
-		Shell shell= fPattern.getShell();
-		if (context == null)
-			context= new ProgressMonitorDialog(shell);
-
 		try {			
-			context.run(true, true, op);
+			getRunnableContext().run(true, true, op);
 		} catch (InvocationTargetException ex) {
 			if (ex.getTargetException() instanceof PatternSyntaxException)
 				showRegExSyntaxError((PatternSyntaxException)ex.getTargetException());
@@ -172,6 +167,16 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	}
 
 	
+	private IRunnableContext getRunnableContext() {
+		IRunnableContext context=  null;
+		context= getContainer().getRunnableContext();
+			
+		Shell shell= fPattern.getShell();
+		if (context == null)
+			context= new ProgressMonitorDialog(shell);
+		return context;
+	}
+
 	private TextSearchOperation createTextSearchOperation() {
 		
 		SearchPatternData patternData= getPatternData();
@@ -215,21 +220,42 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	 * @see org.eclipse.search.ui.IReplacePage#performReplace()
 	 */
 	public boolean performReplace() {
-		final TextSearchOperation op= createTextSearchOperation();
 		
-		if (!runOperation(op))
-			return false;
+		if (WorkInProgressPreferencePage.useNewSearch()) {
+			if (!performNewSearch(true))
+				return false;
+			Display.getCurrent().asyncExec(new Runnable() {
+				public void run() {
+					ISearchResultViewPart view= NewSearchUI.activateSearchResultView();
+					if (view != null) {
+						ISearchResultPage page= view.getActivePage();
+						if (page instanceof FileSearchPage) {
+							FileSearchPage filePage= (FileSearchPage) page;
+							Object[] elements= filePage.getInput().getElements();
+							IFile[] files= new IFile[elements.length];
+							System.arraycopy(elements, 0, files, 0, files.length);
+							new ReplaceAction2(filePage, files).run();
+						}
+					}
+				}
+			});
+	} else {
+			final TextSearchOperation op= createTextSearchOperation();
 		
-		Display.getCurrent().asyncExec(new Runnable() {
-			public void run() {
-				SearchResultView view= (SearchResultView) SearchPlugin.getSearchResultView();
-				new ReplaceDialog(SearchPlugin.getSearchResultView().getViewSite().getShell(), (List) view.getViewer().getInput(), op).open();
-			}
-		});
+			if (!runOperation(op))
+				return false;
+		
+			Display.getCurrent().asyncExec(new Runnable() {
+				public void run() {
+					SearchResultView view= (SearchResultView) SearchPlugin.getSearchResultView();
+					new ReplaceDialog(SearchPlugin.getSearchResultView().getViewSite().getShell(), (List) view.getViewer().getInput(), op).open();
+				}
+			});
+		}
 		return true;
 	}
 
-	private boolean performNewSearch() {
+	private boolean performNewSearch(boolean forground) {
 		org.eclipse.search.ui.NewSearchUI.activateSearchResultView();
 		
 		SearchPatternData patternData= getPatternData();
@@ -257,8 +283,12 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		}		
 		scope.addExtensions(patternData.fileNamePatterns);
 	
-		FileSearchQuery wsJob= new FileSearchQuery(scope, getSearchOptions(), patternData.textPattern, "Searching for "+patternData.textPattern);
-		NewSearchUI.runQuery(wsJob);
+		FileSearchQuery wsJob= new FileSearchQuery(scope, getSearchOptions(), patternData.textPattern);
+		if (forground) {
+			IStatus status= NewSearchUI.runQueryInForeground(getRunnableContext(), wsJob);
+			return status.isOK();
+		} else 
+			NewSearchUI.runQuery(wsJob);
 	
 		return true;
 	}

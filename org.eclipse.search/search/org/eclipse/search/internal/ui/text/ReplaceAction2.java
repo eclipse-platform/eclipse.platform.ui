@@ -12,10 +12,10 @@ package org.eclipse.search.internal.ui.text;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
@@ -27,6 +27,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 
+import org.eclipse.swt.widgets.Item;
+
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
@@ -37,6 +39,9 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -51,32 +56,75 @@ import org.eclipse.search.internal.ui.util.ExceptionHandler;
 /* package */ class ReplaceAction2 extends Action {
 	
 	private IWorkbenchSite fSite;
-	private Collection fElements;
+	private IFile[] fElements;
 	private FileSearchPage fPage;
 	
-	public ReplaceAction2(FileSearchPage page, List elements) {
+	private static class ItemIterator implements Iterator {
+		private Item[] fArray;
+		private int fNextPosition;
+		ItemIterator(Item[] array) {
+			fArray= array;
+			fNextPosition= 0;
+		}
+
+		public boolean hasNext() {
+			return fNextPosition < fArray.length;
+		}
+
+		public Object next() {
+			if (!hasNext())
+				throw new NoSuchElementException();
+			return fArray[fNextPosition++].getData();
+		}
+		
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+	}
+
+	public ReplaceAction2(FileSearchPage page, IFile[] elements) {
 		Assert.isNotNull(page);
 		fSite= page.getSite();
 		if (elements != null)
 			fElements= elements;
 		else
-			fElements= new ArrayList(0);
+			fElements= new IFile[0];
 		fPage= page;
+		
 		setText(SearchMessages.getString("ReplaceAction.label_all")); //$NON-NLS-1$
-		setEnabled(!fElements.isEmpty());
+		setEnabled(!(fElements.length == 0));
 	}
+	
+	public ReplaceAction2(FileSearchPage page) {
+		Assert.isNotNull(page);
+		fSite= page.getSite();
+		fPage= page;
+		
+		Item[] items= null;
+		StructuredViewer viewer= fPage.getViewer();
+		if (viewer instanceof TreeViewer) {
+			items= ((TreeViewer)viewer).getTree().getItems();
+		} else if (viewer instanceof TableViewer) {
+			items= ((TableViewer)viewer).getTable().getItems();
+		}
+		fElements= collectFiles(new ItemIterator(items));
+		
+		setText(SearchMessages.getString("ReplaceAction.label_all")); //$NON-NLS-1$
+		setEnabled(!(fElements.length == 0));
+	}
+
 	
 	public ReplaceAction2(FileSearchPage page, IStructuredSelection selection) {
 		fSite= page.getSite();
 		fPage= page;
 		setText(SearchMessages.getString("ReplaceAction.label_selected")); //$NON-NLS-1$
-		fElements= collectFiles(selection);
-		setEnabled(!fElements.isEmpty());
+		fElements= collectFiles(selection.iterator());
+		setEnabled(!(fElements.length == 0));
 	}
 	
-	private Collection collectFiles(IStructuredSelection selection) {
+	private IFile[] collectFiles(Iterator resources) {
 		final Set files= new HashSet();
-		for (Iterator resources= selection.iterator(); resources.hasNext();) {
+		while (resources.hasNext()) {
 			IResource resource= (IResource) resources.next();
 			try {
 				resource.accept(new IResourceProxyVisitor() {
@@ -94,7 +142,7 @@ import org.eclipse.search.internal.ui.util.ExceptionHandler;
 				SearchPlugin.getDefault().getLog().log(e.getStatus());
 			}
 		}
-		return files;
+		return (IFile[]) files.toArray(new IFile[files.size()]);
 	}
 
 	private AbstractTextSearchResult getResult() {
@@ -103,15 +151,15 @@ import org.eclipse.search.internal.ui.util.ExceptionHandler;
 	
 	public void run() {
 		if (validateResources((FileSearchQuery) getResult().getQuery())) {
-			ReplaceDialog2 dialog= new ReplaceDialog2(fSite.getShell(), fElements, fPage.internalGetViewer(), getResult());
+			ReplaceDialog2 dialog= new ReplaceDialog2(fSite.getShell(), fElements, fPage.getViewer(), getResult());
 			dialog.open();
 		}
 	}
 	
 	private boolean validateResources(final FileSearchQuery operation) {
 		final List outOfDateEntries= new ArrayList();
-		for (Iterator elements = fElements.iterator(); elements.hasNext();) {
-			IFile entry = (IFile) elements.next();
+		for (int j= 0; j < fElements.length; j++) {
+			IFile entry = fElements[j];
 			Match[] markers= getResult().getMatches(entry);
 			for (int i= 0; i < markers.length; i++) {
 				if (isOutOfDate((FileMatch)markers[i])) {
@@ -122,8 +170,8 @@ import org.eclipse.search.internal.ui.util.ExceptionHandler;
 		}
 	
 		final List outOfSyncEntries= new ArrayList();
-		for (Iterator elements = fElements.iterator(); elements.hasNext();) {
-			IFile entry = (IFile) elements.next();
+		for (int i= 0; i < fElements.length; i++) {
+			IFile entry = fElements[i];
 			if (isOutOfSync(entry)) {
 				outOfSyncEntries.add(entry);
 			}
@@ -162,7 +210,7 @@ import org.eclipse.search.internal.ui.util.ExceptionHandler;
 	}
 
 	private boolean askForResearch(List outOfDateEntries, List outOfSyncEntries) {
-		SearchAgainConfirmationDialog dialog= new SearchAgainConfirmationDialog(fSite.getShell(), (ILabelProvider) fPage.internalGetViewer().getLabelProvider(), outOfSyncEntries, outOfDateEntries);
+		SearchAgainConfirmationDialog dialog= new SearchAgainConfirmationDialog(fSite.getShell(), (ILabelProvider) fPage.getViewer().getLabelProvider(), outOfSyncEntries, outOfDateEntries);
 		return dialog.open() == IDialogConstants.OK_ID;
 	}
 	

@@ -345,6 +345,10 @@ public class SearchPlugin extends AbstractUIPlugin {
 	public static void log(Throwable e) {
 		log(new Status(IStatus.ERROR, SearchUI.PLUGIN_ID, INTERNAL_ERROR, SearchMessages.getString("SearchPlugin.internal_error"), e)); //$NON-NLS-1$
 	}
+	
+	public static String getID() {
+		return getDefault().getDescriptor().getUniqueIdentifier();
+	}
 
 	/**
 	 * Creates the Search plugin standard groups in a context menu.

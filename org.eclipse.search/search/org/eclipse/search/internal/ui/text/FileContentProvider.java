@@ -11,9 +11,11 @@
 package org.eclipse.search.internal.ui.text;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+
+import org.eclipse.search.ui.text.AbstractTextSearchResult;
 public abstract class FileContentProvider implements IStructuredContentProvider {
 	protected final Object[] EMPTY_ARR= new Object[0];
-	protected FileSearchResult fResult;
+	protected AbstractTextSearchResult fResult;
 	public void dispose() {
 		// nothing to do
 	}
@@ -22,7 +24,7 @@ public abstract class FileContentProvider implements IStructuredContentProvider 
 			initialize((FileSearchResult) newInput);
 		}
 	}
-	protected void initialize(FileSearchResult result) {
+	protected void initialize(AbstractTextSearchResult result) {
 		fResult= result;
 	}
 	

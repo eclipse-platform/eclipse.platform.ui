@@ -411,4 +411,11 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		else 
 			super.setFocus();
 	}
+	
+	public ISearchResultPage getActivePage() {
+		IPage page= getCurrentPage();
+		if (page instanceof ISearchResultPage)
+			return (ISearchResultPage) page;
+		return null;
+	}
 }

@@ -13,7 +13,6 @@ package org.eclipse.search.internal.ui.text;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -120,7 +119,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 	private AbstractTextSearchResult fSearchResult;
 	private StructuredViewer fViewer;
 	
-	protected ReplaceDialog2(Shell parentShell, Collection entries, StructuredViewer viewer, AbstractTextSearchResult result) {
+	protected ReplaceDialog2(Shell parentShell, IFile[] entries, StructuredViewer viewer, AbstractTextSearchResult result) {
 		super(parentShell);
 		Assert.isNotNull(entries);
 		Assert.isNotNull(result);
@@ -130,9 +129,10 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 		initializeMarkers(entries);
 	}
 	
-	private void initializeMarkers(Collection entries) {
-		for (Iterator elements= entries.iterator(); elements.hasNext(); ) {
-			Match[] matches= fSearchResult.getMatches(elements.next());
+	private void initializeMarkers(IFile[] entries) {
+		for (int j= 0; j < entries.length; j++) {
+			IFile entry = entries[j];
+			Match[] matches= fSearchResult.getMatches(entry);
 			for (int i= 0; i < matches.length; i++) {
 				fMarkers.add(matches[i]);
 			}

@@ -62,8 +62,8 @@ public class AnnotationManagerTest extends TestCase {
 		
 		TextSearchScope scope= TextSearchScope.newWorkspaceScope();
 		scope.addExtension("*.java");
-		fQuery1= new FileSearchQuery(scope,  "", "Test", "Query1");
-		fQuery2= new FileSearchQuery(scope, "", "TestCase", "Query2");
+		fQuery1= new FileSearchQuery(scope,  "", "Test");
+		fQuery2= new FileSearchQuery(scope, "", "TestCase");
 	}
 	
 	public void testAddAnnotation() throws Exception {

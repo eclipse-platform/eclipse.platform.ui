@@ -7,6 +7,8 @@
  * Contributors: IBM Corporation - initial API and implementation
  ******************************************************************************/
 package org.eclipse.search.ui;
+import org.eclipse.core.runtime.IStatus;
+
 import org.eclipse.jface.operation.IRunnableContext;
 
 import org.eclipse.search2.internal.ui.InternalSearchUI;
@@ -18,12 +20,18 @@ import org.eclipse.search2.internal.ui.InternalSearchUI;
  */
 public class NewSearchUI {
 	/**
-	 * Activates the search result view in the current perspective.
+	 * Activates a search result view in the current perspective.
 	 */
-	public static void activateSearchResultView() {
-		InternalSearchUI.getInstance().activateSearchView();
+	public static ISearchResultViewPart activateSearchResultView() {
+		return InternalSearchUI.getInstance().activateSearchView();
 	}
 	
+	/**
+	 * Gets the search result view shown in the current perspective.
+	 */
+	public static ISearchResultViewPart getSearchResultView() {
+		return InternalSearchUI.getInstance().getSearchView();
+	}
 	/**
 	 * Runs the given search query. This method may run the given query in a separate thread 
 	 * if <code>ISearchQuery#canRunInBackground()</code> returns <code>true</code>.
@@ -46,8 +54,8 @@ public class NewSearchUI {
 	 * @param context The runnable context to run the query in.
 	 * @param query The query to execute.
 	 */
-	public static void runQueryInForeground(IRunnableContext context, ISearchQuery query) {
-		InternalSearchUI.getInstance().runSearchInForeground(context, query);
+	public static IStatus runQueryInForeground(IRunnableContext context, ISearchQuery query) {
+		return InternalSearchUI.getInstance().runSearchInForeground(context, query);
 	}
 	
 	/**
