@@ -15,7 +15,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -57,8 +56,6 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 		data.horizontalAlignment = GridData.FILL;
 		intro.setLayoutData(data);
 		
-		new Label(composite, SWT.NULL); new Label(composite, SWT.NULL); new Label(composite, SWT.NULL); // spacer
-		
 		new Label(composite, SWT.LEFT).setText(Policy.bind("ExtMethodPreferencePage_CVS_RSH")); //$NON-NLS-1$
 		cvsRsh = new Text(composite, SWT.BORDER);
 		cvsRsh.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -82,19 +79,6 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 			}			
 		});
 		
-		Label l = new Label(composite, SWT.LEFT | SWT.BOLD);
-		l.setText(Policy.bind("ExtMethodPreferencePage_Note__5")); //$NON-NLS-1$
-		l.setFont(JFaceResources.getBannerFont());
-		
-		l = new Label(composite, SWT.LEFT);
-		l.setText(Policy.bind("ExtMethodPreferencePage_note_CVS_RSH")); //$NON-NLS-1$
-		data = new GridData();
-		data.horizontalSpan = 2;
-		data.horizontalAlignment = GridData.FILL;
-		l.setLayoutData(data);
-		
-		new Label(composite, SWT.NULL); new Label(composite, SWT.NULL); new Label(composite, SWT.NULL); // spacer
-		
 		new Label(composite, SWT.LEFT).setText(Policy.bind("ExtMethodPreferencePage_CVS_RSH_Parameters")); //$NON-NLS-1$
 		cvsRshParameters = new Text(composite, SWT.BORDER);
 		data = new GridData();
@@ -102,40 +86,18 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 		data.horizontalAlignment = GridData.FILL;
 		cvsRshParameters.setLayoutData(data);
 
-		l = new Label(composite, SWT.LEFT | SWT.BOLD);
-		l.setText(Policy.bind("ExtMethodPreferencePage_Note__5")); //$NON-NLS-1$
-		l.setFont(JFaceResources.getBannerFont());
-		
-		l = new Label(composite, SWT.LEFT);
-		l.setText(Policy.bind("ExtMethodPreferencePage_note_CVS_RSH_Parameters")); //$NON-NLS-1$
-		data = new GridData();
-		data.horizontalSpan = 2;
-		data.horizontalAlignment = GridData.FILL;
-		l.setLayoutData(data);
-						
-		new Label(composite, SWT.NULL); new Label(composite, SWT.NULL); new Label(composite, SWT.NULL); // spacer
-		
 		new Label(composite, SWT.LEFT).setText(Policy.bind("ExtMethodPreferencePage_CVS_SERVER__7")); //$NON-NLS-1$
 		cvsServer = new Text(composite, SWT.BORDER);
 		data = new GridData();
 		data.horizontalSpan = 2;
 		data.horizontalAlignment = GridData.FILL;
 		cvsServer.setLayoutData(data);
-
-		l = new Label(composite, SWT.LEFT | SWT.BOLD);
-		l.setText(Policy.bind("ExtMethodPreferencePage_Note__8")); //$NON-NLS-1$
-		l.setFont(JFaceResources.getBannerFont());
-		
-		l = new Label(composite, SWT.LEFT);
-		l.setText(Policy.bind("ExtMethodPreferencePage_NoteForCVS_SERVER")); //$NON-NLS-1$
-		data = new GridData();
-		data.horizontalSpan = 2;
-		data.horizontalAlignment = GridData.FILL;
-		l.setLayoutData(data);
-
 		
 		initializeDefaults();
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.EXT_PREFERENCE_PAGE);
+		WorkbenchHelp.setHelp(cvsRsh, IHelpContextIds.EXT_PREFERENCE_RSH);
+		WorkbenchHelp.setHelp(cvsRshParameters, IHelpContextIds.EXT_PREFERENCE_PARAM);
+		WorkbenchHelp.setHelp(cvsServer, IHelpContextIds.EXT_PREFERENCE_SERVER);
 		Dialog.applyDialogFont(parent);
 		return composite;
 	}
