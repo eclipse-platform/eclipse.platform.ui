@@ -6,6 +6,7 @@ package org.eclipse.debug.internal.ui.views.variables;
  */
 
 import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.debug.ui.AbstractDebugView;
@@ -33,6 +34,12 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 			switch (event.getKind()) {
 				case DebugEvent.SUSPEND:
 					if (event.getDetail() != DebugEvent.EVALUATION_IMPLICIT) {
+						if (event.getSource() instanceof ISuspendResume) {
+							if (!((ISuspendResume)event.getSource()).isSuspended()) {
+								// no longer suspended
+								return;
+							}
+						}						
 						// Don't refresh everytime an implicit evaluation finishes
 						refresh();
 						if (event.getDetail() == DebugEvent.STEP_END) {
