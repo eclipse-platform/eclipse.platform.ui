@@ -197,7 +197,6 @@ public class AntModel {
 		synchronized (this) {
 			if (fCore == null) {
 				// disposed
-				notifyAll();
 				return;
 			}
 			
@@ -214,7 +213,6 @@ public class AntModel {
 			} 
 	
 			fCore.notifyDocumentModelListeners(new DocumentModelChangeEvent(this));
-			notifyAll();
 		}
 	}
 
