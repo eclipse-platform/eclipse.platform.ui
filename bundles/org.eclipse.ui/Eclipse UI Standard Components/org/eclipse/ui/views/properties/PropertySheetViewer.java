@@ -186,7 +186,11 @@ private void addColumns() {
  * current cell editor value.
  */
 private void applyEditorValue() {
-	IPropertySheetEntry entry = (IPropertySheetEntry)tableTreeEditor.getItem().getData();
+	TableTreeItem treeItem = tableTreeEditor.getItem();
+	// treeItem can be null when view is opened
+	if (treeItem == null)
+		return;
+	IPropertySheetEntry entry = (IPropertySheetEntry)treeItem.getData();
 	entry.applyEditorValue();
 }
 /**
@@ -688,6 +692,8 @@ private void setErrorMessage(String errorMessage) {
  * @param input the input of this viewer, or <code>null</code> if none
  */
 public void setInput(Object newInput) {
+	// need to save any changed value when user clicks elsewhere
+	applyEditorValue();
 	// deactivate our cell editor
 	deactivateCellEditor();
 
