@@ -77,7 +77,7 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 	
 	protected void assertSyncEquals(String message, TeamSubscriber subscriber, IResource resource, int syncKind) throws TeamException {
 		int conflictTypeMask = 0x0F; // ignore manual and auto merge sync types for now.
-		SyncInfo info = subscriber.getSyncInfo(resource, DEFAULT_MONITOR);
+		SyncInfo info = getSyncInfo(subscriber, resource);
 		int kind;
 		int kindOther = syncKind & conflictTypeMask;
 		if (info == null) {
@@ -90,6 +90,10 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 				   RemoteSyncElement.kindToString(kind), kind == kindOther);
 	}
 	
+	protected SyncInfo getSyncInfo(TeamSubscriber subscriber, IResource resource) throws TeamException {
+		return subscriber.getSyncInfo(resource, DEFAULT_MONITOR);
+	}
+
 	/**
 	 * @param changes
 	 * @param resources

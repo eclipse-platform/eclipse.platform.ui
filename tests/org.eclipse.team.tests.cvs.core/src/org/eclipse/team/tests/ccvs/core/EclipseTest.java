@@ -632,7 +632,15 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	}
 	
 	protected void shareProject(IProject project) throws TeamException, CoreException {
+		mapNewProject(project);
+		commitNewProject(project);
+	}
+	
+	protected void mapNewProject(IProject project) throws TeamException {
 		CVSWorkspaceRoot.createModule(getRepository(), project, null, DEFAULT_MONITOR);
+	}
+	
+	protected void commitNewProject(IProject project) throws CoreException, CVSException, TeamException {
 		List resourcesToAdd = new ArrayList();
 		IResource[] members = project.members();
 		for (int i = 0; i < members.length; i++) {

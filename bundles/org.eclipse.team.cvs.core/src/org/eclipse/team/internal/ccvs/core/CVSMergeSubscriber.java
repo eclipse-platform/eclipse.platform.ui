@@ -54,7 +54,7 @@ import org.eclipse.team.internal.core.SaveContext;
  * TODO: Do certain operations (e.g. replace with) invalidate a merge subscriber?
  * TODO: How to ensure that sync info is flushed when merge roots are deleted?
  */
-public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResourceChangeListener, IResourceStateChangeListener {
+public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResourceChangeListener {
 
 	public static final String UNIQUE_ID_PREFIX = "merge-";
 	
@@ -296,18 +296,6 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 		} catch (CoreException e) {
 			CVSProviderPlugin.log(e.getStatus());
 		}
-	}
-
-	public void resourceSyncInfoChanged(IResource[] changedResources) {
-	}
-
-	public void resourceModified(IResource[] changedResources) {
-	}
-
-	public void projectConfigured(IProject project) {
-	}
-
-	public void projectDeconfigured(IProject project) {
 	}
 
 	public boolean isMerged(IResource resource) throws CVSException {

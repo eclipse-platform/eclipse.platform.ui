@@ -71,7 +71,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		}
 	}
 	
-	private TeamSubscriber getSubscriber() throws TeamException {
+	protected TeamSubscriber getSubscriber() throws TeamException {
 		return getWorkspaceSubscriber();
 	}
 	
@@ -88,12 +88,12 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		assertSyncEquals("Setting contents: ", file, SyncInfo.OUTGOING | SyncInfo.CHANGE);
 	}
 	
-	private void assertSyncEquals(String string, IProject project, String[] strings, boolean b, int[] is) throws CoreException, TeamException {
-		assertSyncEquals(string, getSubscriber(), project, strings, b, is);
+	private void assertSyncEquals(String string, IProject project, String[] strings, boolean refresh, int[] kinds) throws CoreException, TeamException {
+		assertSyncEquals(string, getSubscriber(), project, strings, refresh, kinds);
 	}
 	
-	private void assertSyncEquals(String message, IResource resource, int depth) throws TeamException {
-		assertSyncEquals(message, getSubscriber(), resource, depth);
+	private void assertSyncEquals(String message, IResource resource, int syncKind) throws TeamException {
+		assertSyncEquals(message, getSubscriber(), resource, syncKind);
 		
 	}
 
