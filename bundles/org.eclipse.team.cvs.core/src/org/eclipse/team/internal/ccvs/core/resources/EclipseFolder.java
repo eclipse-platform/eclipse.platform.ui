@@ -21,7 +21,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -35,8 +34,8 @@ import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
-import org.eclipse.team.internal.ccvs.core.syncinfo.NotifyInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.MoveDeleteHook;
 
 /**
  * Implements the ICVSFolder interface on top of an 
@@ -285,12 +284,13 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	public void run(final ICVSRunnable job, IProgressMonitor monitor) throws CVSException {
 		final CVSException[] error = new CVSException[1];
 		// Remove the registered Move/Delete hook, assuming that the cvs runnable will keep sync info up-to-date
-		final IMoveDeleteHook oldHook = CVSTeamProvider.getRegisteredMoveDeleteHook();
+		final MoveDeleteHook hook = CVSTeamProvider.getRegisteredMoveDeleteHook();
+		boolean oldSetting = hook.isRecordOutgoingDeletions();
 		try {
 			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
 					try {
-						CVSTeamProvider.setMoveDeleteHook(null);
+						hook.setRecordOutgoingDeletions(false);
 						internalRun(job, monitor);
 					} catch(CVSException e) {
 						error[0] = e; 
@@ -300,13 +300,20 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 		} catch(CoreException e) {
 			throw CVSException.wrapException(e);
 		} finally {
-			CVSTeamProvider.setMoveDeleteHook(oldHook);
+			hook.setRecordOutgoingDeletions(oldSetting);
 		}
 		if(error[0]!=null) {
 			throw error[0];
 		}
 	}
 	
+	/**
+	 * Running with a flag of READ_ONLY will still ensure that only one thread
+	 * is accessing the sync info but will not run inside a workspace runnable
+	 * in order to avoid doing a build.
+	 * 
+	 * @see org.eclipse.team.internal.ccvs.core.ICVSFolder#run(ICVSRunnable, int, IProgressMonitor)
+	 */
 	public void run(final ICVSRunnable job, int flags, IProgressMonitor monitor) throws CVSException {
 		if (flags == READ_ONLY)
 			internalRun(job, monitor);

@@ -64,6 +64,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
+import org.eclipse.team.internal.ccvs.core.util.MoveDeleteHook;
 import org.eclipse.team.internal.ccvs.core.util.PrepareForReplaceVisitor;
 import org.eclipse.team.internal.ccvs.core.util.ReplaceWithBaseVisitor;
 import org.eclipse.team.internal.core.streams.CRLFtoLFInputStream;
@@ -108,7 +109,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 	private IProject project;
 	private String comment = "";  //$NON-NLS-1$
 	
-	private static IMoveDeleteHook moveDeleteHook;
+	private static MoveDeleteHook moveDeleteHook= new MoveDeleteHook();
 	
 	// property used to indicate whether new directories should be discovered for the project
 	private final static QualifiedName FETCH_ABSENT_DIRECTORIES_PROP_KEY = 
@@ -357,7 +358,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 						resource.accept(new IResourceVisitor() {
 							public boolean visit(IResource resource) {
 								try {
-									ICVSResource cvsResource = workspaceRoot.getCVSResourceFor(resource);
+									ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
 									if (cvsResource.isManaged()) {
 										String name = resource.getProjectRelativePath().toString();
 										if (resource.getType() == IResource.FILE) {
@@ -1089,17 +1090,9 @@ public class CVSTeamProvider extends RepositoryProvider {
 	/*
 	 * Return the currently registered Move/Delete Hook
 	 */
-	public static IMoveDeleteHook getRegisteredMoveDeleteHook() {
+	public static MoveDeleteHook getRegisteredMoveDeleteHook() {
 		return moveDeleteHook;
 	}
-	
-	/*
-	 * Set the Move/Delete hook of the CVS Team Provider. This is for internal use by CVS only. 
-	 * It is not to be used by other clients
-	 */
-	 public static void setMoveDeleteHook(IMoveDeleteHook hook) {
-	 	moveDeleteHook = hook;
-	 }
 	 
 	/**
 	 * @see org.eclipse.team.core.RepositoryProvider#getFileModificationValidator()

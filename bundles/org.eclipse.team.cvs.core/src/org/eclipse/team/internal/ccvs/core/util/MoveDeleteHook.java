@@ -23,7 +23,6 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
@@ -36,11 +35,13 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
  */
 public class MoveDeleteHook implements IMoveDeleteHook {
 
+	private boolean recordOutgoingDeletions = true;
+	
 	/*
 	 * Delete the file and return true if an outgoing deletion will result
 	 * and the parent folder sync info needs to remain 
 	 */
-	private boolean makeFileOutgoingDeletion(IResourceTree tree, IFile source, IFile destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
+	private void makeFileOutgoingDeletion(IResourceTree tree, IFile source, IFile destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		// Delete or move the file
 		if (destination == null) {
 			tree.standardDeleteFile(source, updateFlags, monitor);
@@ -50,11 +51,9 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 		// Indicate whether the parent folder sync info must remain for outgoing deletions
 		// and update the file sync info to be a deletion
 		ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(source);
-		boolean mustRemain = false;
 		try {
 			ResourceSyncInfo info = cvsFile.getSyncInfo();
-			mustRemain = (info != null && ! info.isAdded());
-			if (mustRemain) {
+			if (recordOutgoingDeletions && info != null && ! info.isAdded()) {
 				MutableResourceSyncInfo newInfo = info.cloneMutable();
 				newInfo.setDeleted(true);
 				cvsFile.setSyncInfo(newInfo);
@@ -62,7 +61,6 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 		} catch (CVSException e) {
 			tree.failed(e.getStatus());
 		}
-		return mustRemain;
 	}
 	
 	/*
@@ -245,6 +243,22 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 			CVSProviderPlugin.log(e.getStatus());
 		}
 		return false;
+	}
+
+	/**
+	 * Returns the recordOutgoingDeletions.
+	 * @return boolean
+	 */
+	public boolean isRecordOutgoingDeletions() {
+		return recordOutgoingDeletions;
+	}
+
+	/**
+	 * Sets the recordOutgoingDeletions.
+	 * @param recordOutgoingDeletions The recordOutgoingDeletions to set
+	 */
+	public void setRecordOutgoingDeletions(boolean recordOutgoingDeletions) {
+		this.recordOutgoingDeletions = recordOutgoingDeletions;
 	}
 
 }

@@ -24,11 +24,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
@@ -38,7 +36,6 @@ import org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
-import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
@@ -92,6 +89,10 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 					// When folders are moved, purge the CVS folders
 					if (movedFrom)
 						return ! handleOrphanedSubtree((IContainer)resource);
+					if ((delta.getFlags() & IResourceDelta.REPLACED) > 0) {
+						handleAddedFolder((IFolder)resource);
+						return true;
+					}
 				}
 				handleChangedResource(resource);
 				break;
@@ -173,6 +174,7 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 	
 	private void handleAddedFolder(IFolder resource) {
 		try {
+			EclipseSynchronizer.getInstance().folderCreated(resource);			
 			ICVSFolder mFolder = CVSWorkspaceRoot.getCVSFolderFor(resource);
 			if (mFolder.isManaged()) {
 				ResourceSyncInfo info = mFolder.getSyncInfo();

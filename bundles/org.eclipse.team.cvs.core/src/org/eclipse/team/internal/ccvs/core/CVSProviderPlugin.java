@@ -51,7 +51,6 @@ import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.AddDeleteMoveListener;
-import org.eclipse.team.internal.ccvs.core.util.MoveDeleteHook;
 import org.eclipse.team.internal.ccvs.core.util.ProjectDescriptionManager;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileChangeListener;
 import org.eclipse.team.internal.ccvs.core.util.Util;
@@ -269,11 +268,9 @@ public class CVSProviderPlugin extends Plugin {
 		workspace.addResourceChangeListener(projectDescriptionListener, IResourceChangeEvent.PRE_AUTO_BUILD);
 		workspace.addResourceChangeListener(metaFileSyncListener, IResourceChangeEvent.PRE_AUTO_BUILD);
 		workspace.addResourceChangeListener(addDeleteMoveListener, IResourceChangeEvent.POST_AUTO_BUILD);
-		CVSProviderPlugin.getPlugin().addResourceStateChangeListener(addDeleteMoveListener);
+		CVSProviderPlugin.addResourceStateChangeListener(addDeleteMoveListener);
 		
 		createCacheDirectory();
-		
-		CVSTeamProvider.setMoveDeleteHook(new MoveDeleteHook());
 	}
 	
 	/**
