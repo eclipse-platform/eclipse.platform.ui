@@ -298,10 +298,10 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		Change change= input.getChange();
 		while (change != null && change instanceof CompositeChange) {
 			ChangeElement[] children= (ChangeElement[])provider.getElements(focus);
-			if (children != null && children.length > 0) {
-				focus= children[0];
-				change= focus.getChange();
-			}
+			if (children == null || children.length == 0)
+				return null;
+			focus= children[0];
+			change= focus.getChange();
 		}
 		return focus;
 	}
