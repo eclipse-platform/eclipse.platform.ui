@@ -23,7 +23,7 @@ import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.editors.text.ILocationProvider;
 
 /**
- * @since 3.0
+ * @since 3.1
  */
 public class NonExistingFileEditorInput implements IEditorInput, ILocationProvider {
 	

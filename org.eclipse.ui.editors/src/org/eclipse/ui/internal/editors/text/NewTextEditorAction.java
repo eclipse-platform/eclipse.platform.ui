@@ -26,7 +26,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.editors.text.EditorsUI;
 
 /**
- * @since 3.0
+ * @since 3.1
  */
 public class NewTextEditorAction extends Action implements IWorkbenchWindowActionDelegate {	
 	
