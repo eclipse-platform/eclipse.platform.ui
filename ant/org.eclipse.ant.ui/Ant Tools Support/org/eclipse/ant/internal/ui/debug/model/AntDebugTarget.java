@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointManagerListener;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -35,7 +36,7 @@ import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 /**
  * Ant Debug Target
  */
-public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDebugEventSetListener {
+public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDebugEventSetListener, IBreakpointManagerListener {
 	
 	// associated system process (Ant Build)
 	private IProcess fProcess;
@@ -78,7 +79,8 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 		
 		fThread = new AntThread(this);
 		fThreads = new IThread[] {fThread};
-		
+        
+        DebugPlugin.getDefault().getBreakpointManager().addBreakpointManagerListener(this);
 		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
         DebugPlugin.getDefault().addDebugEventListener(this);
 	}
@@ -323,6 +325,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 		fSuspended = false;
 		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
         DebugPlugin.getDefault().removeDebugEventListener(this);
+        DebugPlugin.getDefault().getBreakpointManager().removeBreakpointManagerListener(this);
 		if (!getProcess().isTerminated()) {
 		    try {
                 fProcess.terminate();
@@ -418,6 +421,22 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
             DebugEvent event = events[i];
             if (event.getKind() == DebugEvent.TERMINATE && event.getSource().equals(fProcess)) {
                 terminated();
+            }
+        }
+    }
+    
+    /**
+     * When the breakpoint manager disables, remove all registered breakpoints
+     * requests from the VM. When it enables, reinstall them.
+     */
+    public void breakpointManagerEnablementChanged(boolean enabled) {
+        IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(IAntDebugConstants.ID_ANT_DEBUG_MODEL);
+        for (int i = 0; i < breakpoints.length; i++) {
+            IBreakpoint breakpoint = breakpoints[i];
+            if (enabled) {
+                breakpointAdded(breakpoint);
+            } else {
+                breakpointRemoved(breakpoint, null);
             }
         }
     }
