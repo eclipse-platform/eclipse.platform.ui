@@ -1,9 +1,16 @@
 package org.eclipse.core.tests.resources.regression;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
-import junit.framework.*;
 /**
  * 1GALH44: ITPCORE:WINNT - SEVERE: Walkback saving workspace trees
  * 

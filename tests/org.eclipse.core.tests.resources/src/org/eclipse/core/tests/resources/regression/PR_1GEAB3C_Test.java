@@ -1,12 +1,16 @@
 package org.eclipse.core.tests.resources.regression;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.events.ResourceDelta;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.eclipse.core.tests.resources.ResourceDeltaVerifier;
-import junit.framework.*;
-import junit.textui.TestRunner;
 
 public class PR_1GEAB3C_Test extends EclipseWorkspaceTest {
 	ResourceDeltaVerifier verifier;

@@ -1,7 +1,11 @@
 package org.eclipse.core.tests.internal.indexing;
-
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import org.eclipse.core.internal.indexing.*;
-
+
 class TestObject extends StoredObject {
 
 	private static final int TYPE = 99;

@@ -1,5 +1,10 @@
 package org.eclipse.core.tests.internal.dtree;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import junit.framework.*;
 
 public class AllTests extends TestCase {

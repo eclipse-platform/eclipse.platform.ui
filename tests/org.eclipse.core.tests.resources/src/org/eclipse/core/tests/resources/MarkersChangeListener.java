@@ -1,10 +1,16 @@
 package org.eclipse.core.tests.resources;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
+import java.util.Hashtable;
+import java.util.Vector;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.internal.events.*;
-import java.util.*;
 
 /**
  * A support class for the marker tests.

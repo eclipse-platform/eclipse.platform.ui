@@ -1,11 +1,19 @@
 package org.eclipse.core.tests.internal.localstore;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
+import java.io.File;
+import java.util.Date;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
-import java.io.*;
-import java.util.*;
-import junit.framework.*;
 //
 public class RefreshLocalPerformanceTest extends EclipseWorkspaceTest {
 	/** big site default volume (windows) */

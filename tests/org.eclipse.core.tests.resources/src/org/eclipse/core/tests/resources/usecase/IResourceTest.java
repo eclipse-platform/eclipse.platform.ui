@@ -1,10 +1,14 @@
 package org.eclipse.core.tests.resources.usecase;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
-import java.io.OutputStream;
-import junit.framework.*;
 
 public abstract class IResourceTest extends EclipseWorkspaceTest {
 	public static QualifiedName Q_NAME_SESSION = new QualifiedName("prop", "session");

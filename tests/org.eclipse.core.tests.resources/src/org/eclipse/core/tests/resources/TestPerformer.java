@@ -1,8 +1,12 @@
 package org.eclipse.core.tests.resources;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import java.util.Random;
 
-import junit.framework.Assert;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.eclipse.core.tests.harness.FussyProgressMonitor;
 /**

@@ -1,11 +1,17 @@
 package org.eclipse.core.tests.resources.usecase;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
+import java.util.Hashtable;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.Comparator;
-import java.io.File;
-import java.util.Hashtable;
-import junit.framework.*;
 
 public class IProjectTest extends IResourceTest {
 	public static String LOCAL_LOCATION_PATH_STRING_0;

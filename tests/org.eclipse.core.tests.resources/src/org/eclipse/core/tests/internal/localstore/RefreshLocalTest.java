@@ -1,12 +1,18 @@
 package org.eclipse.core.tests.internal.localstore;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
+import java.io.File;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.internal.resources.*;
-import java.io.File;
-import java.util.Enumeration;
-import junit.framework.*;
 //
 public class RefreshLocalTest extends LocalStoreTest implements ICoreConstants {
 public RefreshLocalTest() {

@@ -1,12 +1,17 @@
 package org.eclipse.core.tests.resources;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
+import java.io.InputStream;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.*;
-import java.io.*;
-import java.util.*;
-import junit.framework.*;
-import junit.textui.TestRunner;
+import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 /**
  * This class should be refactored into the black box tests for

@@ -1,5 +1,10 @@
 package org.eclipse.core.tests.internal.watson;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.watson.IElementComparator;
 import org.eclipse.core.internal.dtree.NodeComparison;

@@ -1,5 +1,10 @@
 package org.eclipse.core.tests.internal.localstore;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -8,7 +13,7 @@ import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import java.io.*;
 import junit.framework.*;
-//
+
 public class SafeChunkyInputOutputStreamTest extends LocalStoreTest {
 	protected File temp;
 public SafeChunkyInputOutputStreamTest() {

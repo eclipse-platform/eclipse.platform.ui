@@ -1,12 +1,17 @@
 package org.eclipse.core.tests.internal.resources;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.resources.ResourceInfo;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import java.io.*;
-import java.util.*;
-import junit.framework.*;
+import java.util.Enumeration;
+import java.util.Hashtable;
+
+import org.eclipse.core.internal.resources.ResourceInfo;
+import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 public class ResourceInfoTest extends EclipseWorkspaceTest {
 /**

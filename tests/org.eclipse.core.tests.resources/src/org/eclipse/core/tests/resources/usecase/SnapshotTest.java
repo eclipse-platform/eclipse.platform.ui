@@ -1,5 +1,10 @@
 package org.eclipse.core.tests.resources.usecase;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 public abstract class SnapshotTest extends EclipseWorkspaceTest {

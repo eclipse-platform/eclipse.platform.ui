@@ -1,6 +1,9 @@
 package org.eclipse.core.tests.resources.regression;
 
-import java.io.InputStream;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import junit.framework.Test;
 import junit.framework.TestSuite;

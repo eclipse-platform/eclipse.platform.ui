@@ -1,17 +1,22 @@
 package org.eclipse.core.tests.internal.localstore;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.localstore.*;
-import org.eclipse.core.internal.resources.Workspace;
-import org.eclipse.core.internal.resources.FileState;
-import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import java.io.*;
-import java.util.*;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.eclipse.core.internal.localstore.HistoryStore;
+import org.eclipse.core.internal.resources.FileState;
+import org.eclipse.core.internal.resources.Workspace;
+import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 /**
  * This class defines all tests for the HistoryStore Class.

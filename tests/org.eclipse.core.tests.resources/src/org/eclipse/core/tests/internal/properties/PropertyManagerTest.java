@@ -1,17 +1,23 @@
 package org.eclipse.core.tests.internal.properties;
 
-import java.util.Hashtable;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import java.util.Enumeration;
-import org.eclipse.core.internal.properties.StoredProperty;
 import java.util.Vector;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.eclipse.core.internal.properties.PropertyManager;
+import org.eclipse.core.internal.properties.StoredProperty;
 import org.eclipse.core.internal.resources.Resource;
-import org.eclipse.core.internal.resources.ResourceInfo;
 import org.eclipse.core.internal.resources.Workspace;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.internal.localstore.LocalStoreTest;
-import junit.framework.*;
 
 public class PropertyManagerTest extends LocalStoreTest {
 public PropertyManagerTest() {

@@ -1,11 +1,16 @@
 package org.eclipse.core.tests.resources.regression;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 public class PR_1GH2B0N_Test extends EclipseWorkspaceTest {
 /**

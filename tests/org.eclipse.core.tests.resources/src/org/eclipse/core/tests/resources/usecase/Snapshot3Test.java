@@ -1,8 +1,15 @@
 package org.eclipse.core.tests.resources.usecase;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import junit.framework.*;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 /**
  * This session only performs a full save. The workspace should stay
  * the same.

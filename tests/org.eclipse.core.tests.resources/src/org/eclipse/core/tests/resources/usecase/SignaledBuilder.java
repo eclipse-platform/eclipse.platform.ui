@@ -1,9 +1,16 @@
 package org.eclipse.core.tests.resources.usecase;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.internal.resources.Workspace;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import java.util.*;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 public class SignaledBuilder extends IncrementalProjectBuilder {
 	protected boolean wasExecuted;

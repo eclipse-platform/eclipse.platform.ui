@@ -1,8 +1,14 @@
 package org.eclipse.core.tests.internal.utils;
 
-import org.eclipse.core.internal.utils.Queue;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import java.util.Enumeration;
+
 import junit.framework.*;
+import org.eclipse.core.internal.utils.Queue;
 
 public class QueueTest extends TestCase {
 public QueueTest() {

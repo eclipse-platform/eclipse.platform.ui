@@ -1,11 +1,15 @@
 package org.eclipse.core.tests.internal.builders;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import java.io.*;
 import java.util.Map;
 
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 
 /**

@@ -1,14 +1,17 @@
 package org.eclipse.core.tests.internal.localstore;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
+import java.io.*;
+
+import org.eclipse.core.internal.localstore.FileSystemResourceManager;
+import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.internal.localstore.*;
-import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
-import java.io.*;
-import java.util.*;
-import junit.framework.*;
 
 public abstract class LocalStoreTest extends EclipseWorkspaceTest {
 	// test configuration attributes

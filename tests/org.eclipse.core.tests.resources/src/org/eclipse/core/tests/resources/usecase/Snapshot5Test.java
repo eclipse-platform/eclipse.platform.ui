@@ -1,8 +1,14 @@
 package org.eclipse.core.tests.resources.usecase;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import junit.framework.*;
+import org.eclipse.core.runtime.CoreException;
 /**
  * Only verifies previous session.
  */

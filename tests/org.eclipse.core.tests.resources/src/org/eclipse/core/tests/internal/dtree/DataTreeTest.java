@@ -1,8 +1,14 @@
 package org.eclipse.core.tests.internal.dtree;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.dtree.*;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import junit.framework.*;
+import org.eclipse.core.internal.dtree.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  * Test class for complete data trees.

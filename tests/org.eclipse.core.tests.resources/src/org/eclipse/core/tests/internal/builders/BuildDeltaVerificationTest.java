@@ -1,13 +1,15 @@
 package org.eclipse.core.tests.internal.builders;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import java.io.ByteArrayInputStream;
 
 import junit.framework.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 /**
  * Tests that deltas supplied to the builder are accurate

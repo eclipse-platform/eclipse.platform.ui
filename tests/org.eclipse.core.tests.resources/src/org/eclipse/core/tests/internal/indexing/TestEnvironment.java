@@ -1,4 +1,10 @@
 package org.eclipse.core.tests.internal.indexing;
+
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 public interface TestEnvironment {
 	
 	/**

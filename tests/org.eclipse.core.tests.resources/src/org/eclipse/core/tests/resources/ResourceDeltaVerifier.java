@@ -1,10 +1,17 @@
 package org.eclipse.core.tests.resources;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Hashtable;
+
 import junit.framework.Assert;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  * Verifies the state of an <code>IResourceDelta</code> by comparing

@@ -1,5 +1,10 @@
 package org.eclipse.core.tests.internal.builders;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import java.util.Map;
 
 import org.eclipse.core.resources.*;

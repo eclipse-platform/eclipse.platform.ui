@@ -1,15 +1,20 @@
 package org.eclipse.core.tests.resources;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
+import java.io.*;
+import java.io.File;
+import java.util.*;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.*;
-import org.eclipse.core.internal.resources.MarkerManager;
-import org.eclipse.core.internal.resources.MarkerReader;
-import org.eclipse.core.internal.resources.Workspace;
-import java.util.*;
-import java.io.*;
-import junit.framework.*;
-import junit.textui.TestRunner;
+import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 public class MarkerTest extends EclipseWorkspaceTest {
 

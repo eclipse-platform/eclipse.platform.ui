@@ -1,14 +1,21 @@
 package org.eclipse.core.tests.internal.localstore;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.localstore.FileSystemStore;
 import org.eclipse.core.internal.resources.Workspace;
-
-import java.io.*;
-import java.util.Date;
-import junit.framework.*;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.*;
 
 //
 public class FileSystemStoreTest extends LocalStoreTest {

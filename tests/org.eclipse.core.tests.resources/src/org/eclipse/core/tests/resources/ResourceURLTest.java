@@ -1,14 +1,19 @@
 package org.eclipse.core.tests.resources;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.internal.resources.Resource;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.*;
-import java.io.*;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
+import java.io.IOException;
+import java.net.URL;
 import java.util.*;
-import java.net.*;
-import junit.framework.*;
-import junit.textui.TestRunner;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 public class ResourceURLTest extends EclipseWorkspaceTest {
 	static boolean noSideEffects = false;

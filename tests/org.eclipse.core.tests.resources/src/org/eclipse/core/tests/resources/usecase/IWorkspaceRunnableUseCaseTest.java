@@ -1,9 +1,15 @@
 package org.eclipse.core.tests.resources.usecase;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
-import junit.framework.*;
 
 public class IWorkspaceRunnableUseCaseTest extends EclipseWorkspaceTest {
 public IWorkspaceRunnableUseCaseTest() {

@@ -1,15 +1,17 @@
 package org.eclipse.core.tests.resources;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.*;
-import org.eclipse.core.internal.resources.MarkerInfo;
-import org.eclipse.core.internal.resources.IMarkerSetElement;
-import org.eclipse.core.internal.resources.MarkerSet;
-import java.util.*;
-import java.io.*;
-import junit.framework.*;
-import junit.textui.TestRunner;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
+import java.util.Arrays;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.eclipse.core.internal.resources.*;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 public class MarkerSetTest extends EclipseWorkspaceTest {
 

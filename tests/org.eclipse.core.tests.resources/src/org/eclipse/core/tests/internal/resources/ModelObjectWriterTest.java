@@ -1,14 +1,20 @@
 package org.eclipse.core.tests.internal.resources;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.events.*;
-import org.eclipse.core.internal.resources.*;
-import org.eclipse.core.internal.localstore.SafeFileOutputStream;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import java.io.FileInputStream;
-import java.util.*;
-import junit.framework.*;
+import java.util.Hashtable;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.eclipse.core.internal.localstore.SafeFileOutputStream;
+import org.eclipse.core.internal.resources.*;
+import org.eclipse.core.resources.ICommand;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 /**
  * 
  */
