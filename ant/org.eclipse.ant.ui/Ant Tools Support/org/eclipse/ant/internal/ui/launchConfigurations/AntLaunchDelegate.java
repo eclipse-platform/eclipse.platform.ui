@@ -300,15 +300,17 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		String[] files= prefs.getCustomPropertyFiles();
 		for (int i = 0; i < files.length; i++) {
 			String path = files[i];
-			commandLine.append(" -propertyfile "); //$NON-NLS-1$
+			commandLine.append(" -propertyfile \""); //$NON-NLS-1$
 			commandLine.append(path);
+			commandLine.append('\"');
 		}
 		//"local" configuration 
 		if (propertyFiles != null) {
 			for (int i = 0; i < propertyFiles.length; i++) {
 				String path = propertyFiles[i];
-				commandLine.append(" -propertyfile "); //$NON-NLS-1$
+				commandLine.append(" -propertyfile \""); //$NON-NLS-1$
 				commandLine.append(path);
+				commandLine.append('\"');
 			}
 		}
 		//"local" configuration
