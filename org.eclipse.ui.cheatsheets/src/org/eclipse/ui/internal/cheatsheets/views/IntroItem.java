@@ -14,7 +14,6 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -37,8 +36,8 @@ public class IntroItem extends ViewItem {
 	 * @param parent
 	 * @param contentItem
 	 */
-	public IntroItem(ScrolledForm form, Composite parent, Item contentItem, Color itemColor, CheatSheetView theview) {
-		super(form, parent, contentItem, itemColor, theview);
+	public IntroItem(FormToolkit toolkit, ScrolledForm form, Item contentItem, Color itemColor, CheatSheetView theview) {
+		super(toolkit, form, contentItem, itemColor, theview);
 
 	}
 
@@ -73,7 +72,7 @@ public class IntroItem extends ViewItem {
 	 * @see org.eclipse.ui.internal.cheatsheets.data.ViewItem#handleButtons(Composite)
 	 */
 	/*package*/ void handleButtons(Composite bodyWrapperComposite) {
-		buttonComposite = new Composite(bodyWrapperComposite, SWT.NONE);
+		buttonComposite = toolkit.createComposite(bodyWrapperComposite);
 		GridLayout buttonlayout = new GridLayout(4, false);
 		buttonlayout.marginHeight = 2;
 		buttonlayout.marginWidth = 2;
@@ -86,20 +85,14 @@ public class IntroItem extends ViewItem {
 		buttonComposite.setLayout(buttonlayout);
 		buttonComposite.setLayoutData(buttonData);
 		buttonComposite.setBackground(itemColor);
-		Label filllabel = new Label(buttonComposite, SWT.NULL);
+		Label filllabel = toolkit.createLabel(buttonComposite, null);
 		filllabel.setBackground(itemColor);
 		GridData filldata = new GridData();
 		filldata.widthHint = 16;
 		filllabel.setLayoutData(filldata);
 
-		startButton = new ImageHyperlink(buttonComposite, SWT.NULL);
-		startButton.setImage(startButtonImage);
-		startButton.setData(this);
-		startButton.setBackground(itemColor);
-		startButton.setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.START_CHEATSHEET_TOOLTIP));
-//		startButton.setFAccessibleName(startButton.getToolTipText());
-//		startButton.setFAccessibleDescription(bodyText.getText());
-		// addHandListener(startLabel);
+		startButton = createButton(buttonComposite, startButtonImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.START_CHEATSHEET_TOOLTIP));
+		toolkit.adapt(startButton, true, true);
 		startButton.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				theview.advanceIntroItem();
