@@ -67,6 +67,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
@@ -186,21 +187,23 @@ public class BookmarkNavigator extends ViewPart {
 	 * Adds this views contributions to the workbench.
 	 */
 	void addContributions() {
+		ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
+		
 		// Create the actions.
 		openAction = new OpenBookmarkAction(this);
 		openAction.setHoverImageDescriptor(getImageDescriptor("clcl16/gotoobj_tsk.gif"));//$NON-NLS-1$
 		openAction.setImageDescriptor(getImageDescriptor("elcl16/gotoobj_tsk.gif"));//$NON-NLS-1$
 	
 		copyAction = new CopyBookmarkAction(this);
-		copyAction.setImageDescriptor(getImageDescriptor("ctool16/copy_edit.gif"));//$NON-NLS-1$
+		copyAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_HOVER));
 		
 		pasteAction = new PasteBookmarkAction(this);
-		pasteAction.setImageDescriptor(getImageDescriptor("ctool16/paste_edit.gif"));//$NON-NLS-1$
+		pasteAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_HOVER));
 		
 		removeAction = new RemoveBookmarkAction(this);
-		removeAction.setHoverImageDescriptor(getImageDescriptor("clcl16/remtsk_tsk.gif"));//$NON-NLS-1$
-		removeAction.setImageDescriptor(getImageDescriptor("elcl16/remtsk_tsk.gif"));//$NON-NLS-1$
-		removeAction.setDisabledImageDescriptor(getImageDescriptor("dlcl16/remtsk_tsk.gif"));//$NON-NLS-1$
+		removeAction.setHoverImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_HOVER));
+		removeAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
+		removeAction.setDisabledImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
 		
 		editAction = new EditBookmarkAction(this);
 		

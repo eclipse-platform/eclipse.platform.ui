@@ -76,7 +76,6 @@ class MarkerUtil implements IMarkerConstants {
 	 * Creates the map of image descriptors.
 	 */
 	static void createImageDescriptors() {
-		String CTOOL = "ctool16/";//$NON-NLS-1$
 		String LOCAL = "clcl16/";//$NON-NLS-1$
 		String LOCAL_GREY = "elcl16/";//$NON-NLS-1$
 		String LOCAL_DISABLED = "dlcl16/";//$NON-NLS-1$
@@ -85,8 +84,6 @@ class MarkerUtil implements IMarkerConstants {
 		imageDescriptors = new HashMap(51);
 		imageDescriptors.put("header_complete", createImageDescriptor("obj16/header_complete.gif"));//$NON-NLS-2$//$NON-NLS-1$
 		imageDescriptors.put("header_priority", createImageDescriptor("obj16/header_priority.gif"));//$NON-NLS-2$//$NON-NLS-1$
-		imageDescriptors.put("copy", 			createImageDescriptor(CTOOL + "copy_edit.gif"));//$NON-NLS-2$//$NON-NLS-1$
-		imageDescriptors.put("paste", 			createImageDescriptor(CTOOL + "paste_edit.gif"));//$NON-NLS-2$//$NON-NLS-1$
 		imageDescriptors.put("task", 			createImageDescriptor(OBJ + "taskmrk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
 		imageDescriptors.put("error", 			createImageDescriptor(OBJ + "error_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
 		imageDescriptors.put("warn", 			createImageDescriptor(OBJ + "warn_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
@@ -100,9 +97,6 @@ class MarkerUtil implements IMarkerConstants {
 		imageDescriptors.put("addtsk", 			createImageDescriptor(LOCAL + "addtsk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
 		imageDescriptors.put("addtsk_grey", 	createImageDescriptor(LOCAL_GREY + "addtsk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
 		imageDescriptors.put("addtsk_disabled", createImageDescriptor(LOCAL_DISABLED + "addtsk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
-		imageDescriptors.put("remtsk", 			createImageDescriptor(LOCAL + "remtsk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
-		imageDescriptors.put("remtsk_grey", 	createImageDescriptor(LOCAL_GREY + "remtsk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
-		imageDescriptors.put("remtsk_disabled",	createImageDescriptor(LOCAL_DISABLED + "remtsk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
 		imageDescriptors.put("showcomplete", 	createImageDescriptor(LOCAL + "showcomplete_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
 		imageDescriptors.put("selected_mode", 	createImageDescriptor(LOCAL + "selected_mode.gif"));//$NON-NLS-2$//$NON-NLS-1$
 		imageDescriptors.put("selected_mode_grey", createImageDescriptor(LOCAL_GREY + "selected_mode.gif"));//$NON-NLS-2$//$NON-NLS-1$
@@ -116,7 +110,6 @@ class MarkerUtil implements IMarkerConstants {
 		imageDescriptors.put("showwarn_disabled", createImageDescriptor(LOCAL_DISABLED + "showwarn_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
 		imageDescriptors.put("showtsk_grey",	createImageDescriptor(LOCAL_GREY + "showtsk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
 		imageDescriptors.put("showtsk_disabled", createImageDescriptor(LOCAL_DISABLED + "showtsk_tsk.gif"));//$NON-NLS-2$//$NON-NLS-1$
-		imageDescriptors.put("delete_edit", 	createImageDescriptor(CTOOL + "delete_edit.gif"));//$NON-NLS-2$//$NON-NLS-1$
 		imageDescriptors.put("filter", 			createImageDescriptor(LOCAL + "filter_ps.gif"));//$NON-NLS-2$//$NON-NLS-1$
 	}
 

@@ -94,6 +94,7 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -998,6 +999,8 @@ public class TaskList extends ViewPart {
 	 * popup menu.
 	 */
 	void makeActions() {
+		ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
+		
 		// goto
 		gotoTaskAction = new GotoTaskAction(this, "gotoFile"); //$NON-NLS-1$
 		gotoTaskAction.setText(TaskListMessages.getString("GotoTask.text")); //$NON-NLS-1$
@@ -1018,23 +1021,23 @@ public class TaskList extends ViewPart {
 		copyTaskAction = new CopyTaskAction(this, "copy"); //$NON-NLS-1$
 		copyTaskAction.setText(TaskListMessages.getString("CopyTask.text")); //$NON-NLS-1$
 		copyTaskAction.setToolTipText(TaskListMessages.getString("CopyTask.tooltip")); //$NON-NLS-1$
-		copyTaskAction.setHoverImageDescriptor(MarkerUtil.getImageDescriptor("copy")); //$NON-NLS-1$
+		copyTaskAction.setHoverImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_HOVER));
 		copyTaskAction.setEnabled(false);
 
 		// paste task
 		pasteTaskAction = new PasteTaskAction(this, "paste"); //$NON-NLS-1$
 		pasteTaskAction.setText(TaskListMessages.getString("PasteTask.text")); //$NON-NLS-1$
 		pasteTaskAction.setToolTipText(TaskListMessages.getString("PasteTask.tooltip")); //$NON-NLS-1$
-		pasteTaskAction.setHoverImageDescriptor(MarkerUtil.getImageDescriptor("paste")); //$NON-NLS-1$
+		pasteTaskAction.setHoverImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_HOVER));
 		pasteTaskAction.setEnabled(false);
 
 		// remove task
 		removeTaskAction = new RemoveTaskAction(this, "delete"); //$NON-NLS-1$
 		removeTaskAction.setText(TaskListMessages.getString("RemoveTask.text")); //$NON-NLS-1$
 		removeTaskAction.setToolTipText(TaskListMessages.getString("RemoveTask.tooltip")); //$NON-NLS-1$
-		removeTaskAction.setHoverImageDescriptor(MarkerUtil.getImageDescriptor("remtsk")); //$NON-NLS-1$
-		removeTaskAction.setImageDescriptor(MarkerUtil.getImageDescriptor("remtsk_grey")); //$NON-NLS-1$
-		removeTaskAction.setDisabledImageDescriptor(MarkerUtil.getImageDescriptor("remtsk_disabled")); //$NON-NLS-1$
+		removeTaskAction.setHoverImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_HOVER));
+		removeTaskAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
+		removeTaskAction.setDisabledImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
 		removeTaskAction.setEnabled(false);
 
 		//mark completed task
@@ -1047,7 +1050,7 @@ public class TaskList extends ViewPart {
 		purgeCompletedAction = new PurgeCompletedAction(this, "deleteCompleted"); //$NON-NLS-1$
 		purgeCompletedAction.setText(TaskListMessages.getString("PurgeCompleted.text")); //$NON-NLS-1$
 		purgeCompletedAction.setToolTipText(TaskListMessages.getString("PurgeCompleted.tooltip")); //$NON-NLS-1$
-		purgeCompletedAction.setImageDescriptor(MarkerUtil.getImageDescriptor("delete_edit")); //$NON-NLS-1$
+		purgeCompletedAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_HOVER));
 		purgeCompletedAction.setEnabled(true);
 
 		// select all

@@ -43,6 +43,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.IContextComputer;
@@ -297,6 +298,8 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 	 * Make action objects.
 	 */
 	private void makeActions() {
+		ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
+		
 		// Restore Default Value
 		defaultsAction = new DefaultsAction(viewer, "defaults"); //$NON-NLS-1$
 		defaultsAction.setText(PropertiesMessages.getString("Defaults.text")); //$NON-NLS-1$
@@ -327,8 +330,8 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 		clipboard = new Clipboard(shell.getDisplay());
 		copyAction = new CopyPropertyAction(viewer, "copy", clipboard); //$NON-NLS-1$
 		copyAction.setText(PropertiesMessages.getString("CopyProperty.text")); //$NON-NLS-1$
-		copyAction.setImageDescriptor(getImageDescriptor("etool16/copy_edit.gif")); //$NON-NLS-1$
-		copyAction.setHoverImageDescriptor(getImageDescriptor("ctool16/copy_edit.gif")); //$NON-NLS-1$
+		copyAction.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+		copyAction.setHoverImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_HOVER));
 		
 		
 	}
