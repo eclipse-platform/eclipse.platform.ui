@@ -236,7 +236,11 @@ public class AntViewContentProvider implements IStructuredContentProvider, ITree
 			return new ProjectErrorNode(filename, ResourceMgr.getString("Tree.NoProjectElement"));
 		}
 
-		TreeNode projectNode = new ProjectNode(filename, project.getName());
+		String projectName= project.getName();
+		if (projectName == null) {
+			projectName= "(unnamed)";
+		}
+		TreeNode projectNode = new ProjectNode(filename, projectName);
 		Enumeration projTargets = project.getTargets().elements();
 		while (projTargets.hasMoreElements()) {
 			Target target = (Target) projTargets.nextElement();
