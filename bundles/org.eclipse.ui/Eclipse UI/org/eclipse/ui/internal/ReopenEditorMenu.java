@@ -26,7 +26,8 @@ public class ReopenEditorMenu extends ContributionItem {
 	private EditorHistory history;
 	private boolean showSeparator;
 
-	private static final int MAX_TEXT_LENGTH = 50;
+	// the maximum length for a file name; must be >= 4
+	private static final int MAX_TEXT_LENGTH = 40;
 	// only assign mnemonic to the first nine items 
 	private static final int MAX_MNEMONIC_SIZE = 9;
 	/**
@@ -65,7 +66,7 @@ public class ReopenEditorMenu extends ContributionItem {
 			fileName = item.getInput().getName();
 		}
 		
-		if ((fileName.length() + pathName.length()) <= MAX_TEXT_LENGTH) {
+		if ((fileName.length() + pathName.length()) <= (MAX_TEXT_LENGTH - 4)) {
 			// entire item name fits within maximum length
 			sb.append(fileName);
 			if (path.segmentCount() != 0) {
@@ -78,52 +79,51 @@ public class ReopenEditorMenu extends ContributionItem {
 			int length = fileName.length();
 			if (length > MAX_TEXT_LENGTH) {
 				// file name does not fit within length, truncate it
-				sb.append(fileName.substring(0, MAX_TEXT_LENGTH));
+				sb.append(fileName.substring(0, MAX_TEXT_LENGTH - 3));
 				sb.append("..."); //$NON-NLS-1$
 			} else {				
 				sb.append(fileName);
 				int segmentCount = path.segmentCount();
 				if (segmentCount > 0) {
+					length += 7;  // 7 chars are taken for "  [...]"
+
 					sb.append("  ["); //$NON-NLS-1$
-				}
-				// Add first n segments that fit
-				int i = 0;
-				while (i < segmentCount) {
-					String segment = path.segment(i);
-					length += segment.length();
-					if (length < MAX_TEXT_LENGTH) {
-						sb.append(segment);
-						sb.append(path.SEPARATOR);
-						i++;
-					} else if (i == 0) {
-						// append at least part of the first segment
-						sb.append(segment.substring(0, MAX_TEXT_LENGTH - (length - segment.length())));
-						i = segmentCount;
-						length = MAX_TEXT_LENGTH;
-					} else {
-						i = segmentCount;
-						length -= segment.length();
+
+					// Add first n segments that fit
+					int i = 0;
+					while (i < segmentCount) {
+						String segment = path.segment(i);
+						if (length + segment.length() < MAX_TEXT_LENGTH) {
+							sb.append(segment);
+							sb.append(path.SEPARATOR);
+							length += segment.length() + 1;
+							i++;
+						} else if (i == 0) {
+							// append at least part of the first segment
+							sb.append(segment.substring(0, MAX_TEXT_LENGTH - length));
+							length = MAX_TEXT_LENGTH;
+							break;
+						} else {
+							break;
+						}
 					}
-				}
-				if (segmentCount > 0) {
+
 					sb.append("...");	 //$NON-NLS-1$
-				}			
-				i = segmentCount - 1;
-				if (i > 0) {
+
+					i = segmentCount - 1;
 					// Add last n segments that fit
 					while (i > 0) {			
 						String segment = path.segment(i);
-						length += segment.length();
-						if (length < MAX_TEXT_LENGTH) {
+						if (length + segment.length() < MAX_TEXT_LENGTH) {
 							sb.append(path.SEPARATOR);
 							sb.append(segment);
+							length += segment.length() + 1;
 							i--;
 						} else {
-							i = 0;
+							break;
 						}
 					}
-				}
-				if (segmentCount > 0) {
+
 					sb.append("]"); //$NON-NLS-1$
 				}
 			}
