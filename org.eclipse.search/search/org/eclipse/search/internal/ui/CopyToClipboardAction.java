@@ -73,7 +73,7 @@ public class CopyToClipboardAction extends Action {
 			if (ex.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
 				throw ex;
 			String title= SearchMessages.getString("CopyToClipboardAction.error.title");  //$NON-NLS-1$
-			String message= SearchMessages.getString("CopyToClipboardAction.error.title"); //$NON-NLS-1$
+			String message= SearchMessages.getString("CopyToClipboardAction.error.message"); //$NON-NLS-1$
 			if (MessageDialog.openQuestion(shell, title, message))
 				copyToClipbard(clipboard, str, shell);
 		}	
