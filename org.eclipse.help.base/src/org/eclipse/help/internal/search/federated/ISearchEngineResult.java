@@ -15,6 +15,12 @@ package org.eclipse.help.internal.search.federated;
  */
 public interface ISearchEngineResult {
 	/**
+	 * Returns the identifier of the search engine that
+	 * produced the result.
+	 * @return the id of the search engine
+	 */
+	String getEngineId();
+	/**
 	 * Returns the label of the search result.
 	 * @return
 	 */
