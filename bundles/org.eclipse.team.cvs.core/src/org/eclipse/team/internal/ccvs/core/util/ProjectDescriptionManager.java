@@ -155,7 +155,6 @@ public class ProjectDescriptionManager {
 						// Other natures are still set
 						Util.logError(Policy.bind("ProjectDescriptionManager.unableToSetDescription"), ex);
 					}
-					writeProjectDescription(project, progress);
 				}
 			} catch(TeamException ex) {
 				Util.logError(Policy.bind("ProjectDescriptionManager.unableToReadDescription"), ex);

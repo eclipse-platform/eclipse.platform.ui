@@ -7,6 +7,8 @@ package org.eclipse.team.internal.ccvs.core.util;
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+
 import java.io.*;
 
 // NIK: Maybe we should make the Strings constants ?
@@ -68,7 +70,8 @@ public class ProjectDescriptionWriter {
 
 		String[] natures = desc.getNatureIds();
 		for (int i = 0; i < natures.length; i++) {
-			writer.println("\t<nature id=\"" + getEscaped(natures[i]) + "\"/>");
+			if ( ! natures[i].equals(CVSProviderPlugin.NATURE_ID))
+				writer.println("\t<nature id=\"" + getEscaped(natures[i]) + "\"/>");
 		}
 
 		IProject[] references = desc.getReferencedProjects();
