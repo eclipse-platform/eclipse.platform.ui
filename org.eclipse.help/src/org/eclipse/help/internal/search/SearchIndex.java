@@ -7,7 +7,6 @@ import java.io.*;
 import java.util.*;
 import org.apache.lucene.HTMLParser.HTMLParser;
 import org.apache.lucene.analysis.*;
-import org.apache.lucene.analysis.StopAnalyzer;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
@@ -206,10 +205,11 @@ public class SearchIndex {
 		try {
 			QueryBuilder queryBuilder = new QueryBuilder(searchWord, analyzer);
 			Query luceneQuery = queryBuilder.getLuceneQuery(fieldNames, fieldSearchOnly);
+			String analyzedWords = queryBuilder.getAnalyzedWords();
 			if (luceneQuery != null) {
 				Searcher searcher = new IndexSearcher(indexDir.getAbsolutePath());
 				Hits hits = searcher.search(luceneQuery);
-				searchResult.addHits(hits);
+				searchResult.addHits(hits, analyzedWords);
 				searcher.close();
 			}
 		} catch (Exception e) {

@@ -4,6 +4,7 @@ package org.eclipse.help.internal.search;
  * All Rights Reserved.
  */
 import java.io.*;
+import java.net.URLEncoder;
 import java.util.List;
 import org.apache.lucene.search.Hits;
 import org.apache.xerces.dom.DocumentImpl;
@@ -24,11 +25,9 @@ public class SearchResult {
 	private int maxHits;
 	/**
 	 * Constructor
-	 * @param query user query
 	 * @param scope list of books to search
 	 */
-	public SearchResult(String query, List scope, int maxHits) {
-		this.urlEncodedQuery = URLCoder.encode(query);
+	public SearchResult(List scope, int maxHits) {
 		this.scope = scope;
 		this.maxHits = maxHits;
 		// instantiate the xml factory and create the root element
@@ -39,8 +38,9 @@ public class SearchResult {
 	 * Adds hits to the result
 	 * @param Hits hits
 	 */
-	public void addHits(Hits hits) {
+	public void addHits(Hits hits, String analyzedWords) {
 		float scoreScale = 1.0f;
+		String urlEncodedWords=URLCoder.encode(analyzedWords);
 		for (int h = 0; h < hits.length() && h < maxHits; h++) {
 			org.apache.lucene.document.Document doc;
 			float score;
@@ -68,7 +68,7 @@ public class SearchResult {
 			// Set document score
 			e.setAttribute("score", Float.toString(score));
 			// Set document href
-			e.setAttribute(ITopic.HREF, href + "?resultof=" + urlEncodedQuery);
+			e.setAttribute(ITopic.HREF, href + "?resultof=" + urlEncodedWords);
 			// Set the document label
 			String label = doc.get("raw_title");
 			if ("".equals(label)) {

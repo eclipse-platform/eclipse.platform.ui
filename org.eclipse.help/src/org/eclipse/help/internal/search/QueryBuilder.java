@@ -5,6 +5,7 @@ package org.eclipse.help.internal.search;
  */
 import java.io.*;
 import java.util.*;
+
 import org.apache.lucene.analysis.*;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
@@ -289,5 +290,30 @@ public class QueryBuilder {
 			booleanQuery.add(phraseQueries[f], false, false);
 		}
 		return booleanQuery;
+	}
+	/**
+	 * Obtains analyzed words from query as one string.
+	 * Words are separated by space.
+	 * The analyzed words are needed for highlighting
+	 * word roots.
+	 */
+	public String getAnalyzedWords() {
+		StringBuffer buf = new StringBuffer();
+		for (Iterator it = analyzedTokens.iterator(); it.hasNext();) {
+			QueryWordsToken token = (QueryWordsToken) it.next();
+			if (token instanceof QueryWordsPhrase) {
+				List words = ((QueryWordsPhrase) token).getWords();
+				for (Iterator it2 = words.iterator(); it2.hasNext();) {
+					buf.append(' ');
+					buf.append((String) it2.next());
+				}
+			} else {
+				buf.append(' ');
+				buf.append(token.value);
+			}
+		}
+		if (buf.length() > 1 && buf.charAt(0) == ' ')
+			return buf.substring(1);
+		return buf.toString();
 	}
 }
