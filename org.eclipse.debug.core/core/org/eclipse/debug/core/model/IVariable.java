@@ -8,12 +8,9 @@ package org.eclipse.debug.core.model;
 import org.eclipse.debug.core.DebugException;
 
 /**
- * A variable represents a visible variable in a stack frame,
- * or the child of a value. A variable has a type of <code>VARIABLE</code>.
- * A variable's parent may be of type 
- * <code>STACK_FRAME</code> or <code>VALUE</code>.
- * Each variable has a value which may in turn
- * have children. A variable itself does not have children.
+ * A variable represents a visible data structure in a stack frame
+ * or value. A variable is of type <code>VARIABLE</code>.
+ * Each variable has a value which may in turn contain more variables.
  * A variable may support value modification.
  * <p>
  * An implementation may choose to re-use or discard
@@ -46,29 +43,35 @@ public interface IVariable extends IDebugElement, IValueModification {
 	/**
 	 * Returns the value of this variable.
 	 * 
-	 * @return variable value
-	 * @exception DebugException if unable to retrieve this variable's value
-	 *   from the target
+	 * @return this variable's value
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
 	 */
-	IValue getValue() throws DebugException;
+	public IValue getValue() throws DebugException;
 	/**
 	 * Returns the name of this variable. Name format is debug model
 	 * specific, and should be specified by a debug model.
 	 *
 	 * @return this variable's name
-	 * @exception DebugException if unable to retrieve this element's name from
-	 *    the target
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
 	 */
-	String getName() throws DebugException;	
+	public String getName() throws DebugException;	
 	/**
 	 * Returns a description of the type of data this variable is
 	 * declared to reference. Note that the declared type of a
 	 * variable and the concrete type of its value are not neccessarily
 	 * the same.
 	 *
-	 * @return declared type of variable
-	 * @exception DebugException if unable to retrieve this variables reference type
-	 *   name from the target
+	 * @return the declared type of this variable
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
 	 */
-	String getReferenceTypeName() throws DebugException;
+	public String getReferenceTypeName() throws DebugException;
 }

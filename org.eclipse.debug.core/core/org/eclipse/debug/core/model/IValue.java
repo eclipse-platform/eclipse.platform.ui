@@ -8,10 +8,9 @@ package org.eclipse.debug.core.model;
 import org.eclipse.debug.core.DebugException;
 
 /**
- * A value represents the value of a variable.
+ * A value represents the value of a variable.  A value is of element type <code>VALUE</code>.
  * A value does not have a parent - instead it has an associated variable.
- * A value representing a complex data structure has
- * children of type <code>VARIABLE</code>.
+ * A value representing a complex data structure contains variables.
  * <p>
  * An implementation may choose to re-use or discard
  * values on iterative thread suspensions. Clients
@@ -45,40 +44,47 @@ public interface IValue extends IDebugElement {
 	 * Returns a description of the type of data this value contains
 	 * or references.
 	 * 
-	 * @return reference type
-	 * @exception DebugException if unable to retrieve this value's reference type
-	 *    name from the target
+	 * @return the name of this value's reference type
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
 	 */
-	String getReferenceTypeName() throws DebugException;
+	public String getReferenceTypeName() throws DebugException;
 	
 	/**
 	 * Returns this value as a <code>String</code>.
 	 *
-	 * @return value
-	 * @exception DebugException if unable to retrieve this value's value description
-	 *   from the target
+	 * @return a String representation of this value
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
 	 */
-	String getValueString() throws DebugException;
+	public String getValueString() throws DebugException;
 		
 	/**
 	 * Returns whether this value is currently allocated.
 	 * <p>
 	 * For example, if this value represents
-	 * an object that has been garbage collected, <code>false</code> would
-	 * be returned.
+	 * an object that has been garbage collected, <code>false</code> is returned.
 	 * </p>
 	 * @return whether this value is currently allocated
-	 * @exception DebugException if unable to determine if this value is currently
-	 *   allocated on the target
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
 	 */
-	boolean isAllocated() throws DebugException;
+	public boolean isAllocated() throws DebugException;
 	/**
 	 * Returns the visible variables in this value. An empty
 	 * collection is returned if there are no visible variables.
 	 * 
-	 * @return collection of visible variables
-	 * @exception DebugException if unable to retrieve variables
-	 * 		from the target
+	 * @return an array of visible variables
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the VM.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
 	 */
-	IVariable[] getVariables() throws DebugException;
+	public IVariable[] getVariables() throws DebugException;
 }
