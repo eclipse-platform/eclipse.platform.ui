@@ -40,13 +40,13 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PerspectiveAdapter;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.application.ActionBarAdvisor;
@@ -192,16 +192,14 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
             }
         });
         configurer.getWindow().addPerspectiveListener(
-                new IPerspectiveListener() {
+                new PerspectiveAdapter() {
                     public void perspectiveActivated(IWorkbenchPage page,
                             IPerspectiveDescriptor perspective) {
                         updateTitle();
                     }
-
-                    public void perspectiveChanged(IWorkbenchPage page,
-                            IPerspectiveDescriptor perspective, String changeId) {
-                        // do nothing
-                    }
+					public void perspectiveSavedAs(IWorkbenchPage page,IPerspectiveDescriptor oldPerspective,IPerspectiveDescriptor newPerspective){
+						updateTitle();
+					}
                 });
         configurer.getWindow().getPartService().addPartListener(
                 new IPartListener2() {
@@ -220,7 +218,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
                     }
 
                     public void partClosed(IWorkbenchPartReference ref) {
-                        // do nothing
+						updateTitle();
                     }
 
                     public void partDeactivated(IWorkbenchPartReference ref) {
