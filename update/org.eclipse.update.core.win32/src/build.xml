@@ -8,7 +8,7 @@
   <!-- Set a meaningful default value for when it is not. -->
   <property name="eclipse-home" value="${basedir}/../.."/>
   <property name="jdk-path" value="${java.home}"/>  
-  <property name="destination" value="${eclipse-home}/org.eclipse.update.core.win32/os/win32/"/>
+  <property name="destination" value="${eclipse-home}/org.eclipse.update.core.win32/os/win32/x86/"/>
   <property name="obj-path" value="${eclipse-home}/org.eclipse.update.core.win32/src"/>
   <property name="src-path" value="${eclipse-home}/org.eclipse.update.core.win32/src/"/>  
   
