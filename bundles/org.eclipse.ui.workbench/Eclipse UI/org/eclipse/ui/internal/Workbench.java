@@ -95,6 +95,7 @@ import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
 import org.eclipse.ui.internal.themes.ThemeElementHelper;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.themes.IThemeManager;
@@ -763,9 +764,6 @@ public final class Workbench implements IWorkbench {
         
         // end the initialization of the activity, command, and context
         // managers
-
-		// allow the workbench configurer to initialize
-		getWorkbenchConfigurer().init();
 
 		initializeImages();
 		initializeFonts();
@@ -1894,10 +1892,8 @@ public final class Workbench implements IWorkbench {
      * @see IWorkbenchPreferenceConstants#PRESENTATION_FACTORY_ID
      */
     public String getPresentationId() {
-	    String factoryId = Platform.getPreferencesService().getString(
-                PlatformUI.PLUGIN_ID,
-                IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID, "", //$NON-NLS-1$
-                null);
+	    String factoryId = PrefUtil.getAPIPreferenceStore().getString(
+	            IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID);
 	    
         // Workaround for bug 58975 - New preference mechanism does not properly initialize defaults
         // Ensure that the UI plugin has started too.

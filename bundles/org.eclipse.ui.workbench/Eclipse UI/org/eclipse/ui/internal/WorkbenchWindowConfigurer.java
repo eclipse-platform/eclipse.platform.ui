@@ -19,7 +19,6 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetListener;
@@ -33,7 +32,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
-import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
@@ -95,14 +93,9 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	private boolean showMenuBar = true;
 	
 	/**
-	 * Whether the workbench window should have a title bar.
-	 */
-	private boolean showTitleBar = true;
-
-	/**
 	 * Whether the workbench window should have a progress indicator.
 	 */
-	private boolean showProgressIndicator = true;
+	private boolean showProgressIndicator = false;
 	
 	/**
 	 * Table to hold arbitrary key-data settings (key type: <code>String</code>,
@@ -210,21 +203,6 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 		this.window = window;
 	}
 
-	/**
-	 * Allows the configurer to initialize its state that
-	 * depends on a Display existing.
-	 */
-	/* package */ void init() {
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		showMenuBar = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_MENU_BAR);
-		showProgressIndicator = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_PROGRESS_INDICATOR);
-		showFastViewBars = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_FAST_VIEW_BARS);
-		showPerspectiveBar = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_PERSPECTIVE_BAR);
-		showStatusLine = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_STATUS_LINE);
-		showTitleBar = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_TITLE_BAR);
-		showToolBar = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_COOL_BAR);
-	}
-	
 	/* (non-javadoc)
 	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getWindow
 	 */
@@ -276,21 +254,6 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 		}
 	}
 	
-	/* (non-javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getShowTitleBar
-	 */
-	public boolean getShowTitleBar() {
-		return showTitleBar;
-	}
-
-	/* (non-javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#setShowTitleBar
-	 */
-	public void setShowTitleBar(boolean show) {
-		showTitleBar = show;
-		// @issue need to be able to reconfigure after window's controls created
-	}
-
 	/* (non-javadoc)
 	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getShowMenuBar
 	 */

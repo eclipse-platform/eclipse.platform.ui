@@ -50,6 +50,7 @@ import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
 import org.eclipse.ui.internal.layout.CellLayout;
 import org.eclipse.ui.internal.layout.Row;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.presentations.PresentationUtil;
 import org.osgi.framework.Bundle;
 
@@ -122,11 +123,8 @@ public class FastViewBar implements IWindowTrim {
 	 * than bottom. 
 	 */
 	private static int getInitialSide() {
-	    String loc = Platform.getPreferencesService().getString(
-                PlatformUI.PLUGIN_ID,
-                IWorkbenchPreferenceConstants.INITIAL_FAST_VIEW_BAR_LOCATION,
-                "", //$NON-NLS-1$
-                null);
+	    String loc = PrefUtil.getAPIPreferenceStore().getString(
+                IWorkbenchPreferenceConstants.INITIAL_FAST_VIEW_BAR_LOCATION);
 
         if (IWorkbenchPreferenceConstants.BOTTOM.equals(loc))
                 return SWT.BOTTOM;

@@ -18,11 +18,13 @@ import org.eclipse.swt.SWTError;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindowConfigurer;
+import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * Public base class for configuring the workbench.
@@ -449,8 +451,8 @@ public abstract class WorkbenchAdvisor {
 
         introOpened = true;
 
-	    boolean showIntro = WorkbenchPlugin.getDefault().getPluginPreferences().getBoolean(
-                IWorkbenchPreferences.SHOULD_SHOW_INTRO);
+	    boolean showIntro = PrefUtil.getAPIPreferenceStore().getBoolean(
+                IWorkbenchPreferenceConstants.SHOW_INTRO);
 	    
 	    if (!showIntro)
 	        return;
@@ -462,8 +464,8 @@ public abstract class WorkbenchAdvisor {
 		    	        configurer.getWindow(), 
 		    	        false);
 		    
-		    WorkbenchPlugin.getDefault().getPluginPreferences().setValue(IWorkbenchPreferences.SHOULD_SHOW_INTRO, false);
-		    WorkbenchPlugin.getDefault().savePluginPreferences();
+		    PrefUtil.getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.SHOW_INTRO, false);
+		    PrefUtil.saveAPIPrefs();
 		}
 	}
 

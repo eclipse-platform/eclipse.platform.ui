@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.util.ArrayList;
 
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -37,7 +36,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.IPreferenceConstants;
@@ -46,7 +44,7 @@ import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
-import org.osgi.service.prefs.BackingStoreException;
+import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * The Workbench / Perspectives preference page.
@@ -424,15 +422,9 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		// store the open perspective mode setting
 		store.setValue(IPreferenceConstants.OPEN_PERSP_MODE, openPerspMode);
 		
-		WorkbenchPlugin.getDefault().savePluginPreferences();
-		
-		// save the UI plugin's prefs, which are modified by PerspectiveRegistry.setDefaultPerspective 
-		try {
-            new InstanceScope().getNode(PlatformUI.PLUGIN_ID).flush();
-        } catch (BackingStoreException e) {
-            WorkbenchPlugin
-                    .log("Error saving UI preference store in PerspectivesPreferencePage.performOK(): " + e); //$NON-NLS-1$
-        }
+		// save both the API prefs and the internal prefs
+		// the API prefs are modified by PerspectiveRegistry.setDefaultPerspective 
+		PrefUtil.savePrefs();
 
 		return true;
 	}

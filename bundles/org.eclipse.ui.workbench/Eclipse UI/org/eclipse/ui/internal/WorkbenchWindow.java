@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -821,7 +820,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
  		}
  		perspectiveBar.getControl().getShell().layout();		
  	}
-
 
 	/**
 	 * Returns the shortcut for a page.
@@ -2213,7 +2211,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		if (windowConfigurer == null) {
 			// lazy initialize
 			windowConfigurer = new WorkbenchWindowConfigurer(this);
-			windowConfigurer.init();
 		}
 		return windowConfigurer;
 	}

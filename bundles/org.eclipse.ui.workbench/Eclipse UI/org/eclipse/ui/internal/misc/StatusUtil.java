@@ -19,12 +19,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  *
  * @private - This class is an internal implementation class and should
  * not be referenced or subclassed outside of the workbench
- *
- * <p>
- * [Issue: Implementation contains illegal references to
- *  org.eclipse.core.internal.resources.ResourceStatus,
- * ]
- * </p>
  */
 public class StatusUtil {
 /**

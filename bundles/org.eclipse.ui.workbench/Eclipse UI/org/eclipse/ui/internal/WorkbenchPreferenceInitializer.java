@@ -15,7 +15,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.swt.SWT;
-import org.eclipse.ui.application.IWorkbenchPreferences;
 
 /**
  * Implementation of the workbench plugin's preferences extension's customization element.
@@ -32,26 +31,9 @@ public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitialize
 		
 		JFacePreferences.setPreferenceStore(store);
 
-		// new generic workbench preferences (for RCP APIs in org.eclipse.ui.application)
-		store.setDefault(IWorkbenchPreferences.SHOULD_SAVE_WORKBENCH_STATE, false);
-		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_TITLE_BAR, true);
-		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_MENU_BAR, true);
-		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_COOL_BAR, true);
-		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_FAST_VIEW_BARS, false);
-		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_PERSPECTIVE_BAR, false);
-		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_STATUS_LINE, true);
-		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_PROGRESS_INDICATOR, false);			
-		// default to showing intro on startup
-		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_INTRO, true);
-
-
-		// workbench preferences that are API (but non-RCP)
-		// @issue these should probably be on org.eclipse.ui's preference store, 
-		//    not org.eclipse.ui.workbench
 		store.setDefault(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT, false);		
 		store.setDefault(IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT, true);
 		
-		// @issue some of these may be IDE-specific
 		store.setDefault(IPreferenceConstants.EDITORLIST_PULLDOWN_ACTIVE, false);
 		store.setDefault(IPreferenceConstants.EDITORLIST_DISPLAY_FULL_NAME, false);
 		store.setDefault(IPreferenceConstants.STICKY_CYCLE, false);

@@ -34,13 +34,9 @@ import org.eclipse.ui.presentations.AbstractPresentationFactory;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @see IWorkbenchConfigurer#getWorkbenchWindowConfigurer
+ * @see IWorkbenchConfigurer#getWindowConfigurer
  * @see WorkbenchAdvisor#preWindowOpen
  * @since 3.0
- * 
- * @issue having the defaults for setShow* come from the preference store
- *   seems over-engineered; the prefs will be ignored anyway if the app
- *   sets these itself
  */
 public interface IWorkbenchWindowConfigurer {
 	/**
@@ -74,45 +70,15 @@ public interface IWorkbenchWindowConfigurer {
 		
 	/**
 	 * Sets the title of the underlying workbench window.
-	 * <p>
-	 * Note that the window can have a title even if the window's title bar
-	 * is not visible.
-	 * </p>
 	 * 
 	 * @param title the window title
-	 * @see #showTitleBar
 	 */
 	public void setTitle(String title);
 	
 	/**
-	 * Returns whether the underlying workbench window has a title bar.
-	 * <p>
-	 * The initial value is controlled by the preference
-	 * {@link IWorkbenchPreferences#SHOULD_SHOW_TITLE_BAR IWorkbenchPreferences.SHOULD_SHOW_TITLE_BAR}
-	 * </p>
-	 * 
-	 * @return <code>true</code> for a title bar, and <code>false</code>
-	 * for no title bar
-	 * @deprecated whether a title is shown is controlled by the
-	 * <code>SWT.TITLE</code> shell style bit; see <code>getShellStyle</code>
-	 */
-	public boolean getShowTitleBar();
-
-	/**
-	 * Sets whether the underlying workbench window has a title bar.
-	 * 
-	 * @param show <code>true</code> for a title bar, and <code>false</code>
-	 * for no title bar
-	 * @deprecated whether a title is shown is controlled by the
-	 * <code>SWT.TITLE</code> shell style bit; see <code>setShellStyle(int)</code>
-	 */
-	public void setShowTitleBar(boolean show);
-
-	/**
 	 * Returns whether the underlying workbench window has a menu bar.
 	 * <p>
-	 * The initial value is controlled by the preference
-	 * {@link IWorkbenchPreferences#SHOULD_SHOW_MENU_BAR IWorkbenchPreferences.SHOULD_SHOW_MENU_BAR}
+	 * The initial value is <code>true</code>.
 	 * </p>
 	 * 
 	 * @return <code>true</code> for a menu bar, and <code>false</code>
@@ -131,8 +97,7 @@ public interface IWorkbenchWindowConfigurer {
 	/**
 	 * Returns whether the underlying workbench window has a cool bar.
 	 * <p>
-	 * The initial value is controlled by the preference
-	 * {@link IWorkbenchPreferences.SHOULD_SHOW_COOL_BAR SHOULD_SHOW_COOL_BAR}
+	 * The initial value is <code>true</code>.
 	 * </p>
 	 * 
 	 * @return <code>true</code> for a cool bar, and <code>false</code>
@@ -151,8 +116,7 @@ public interface IWorkbenchWindowConfigurer {
 	/**
 	 * Returns whether the underlying workbench window has a status line.
 	 * <p>
-	 * The initial value is controlled by the preference
-	 * {@link IWorkbenchPreferences.SHOULD_SHOW_STATUS_LINE SHOULD_SHOW_STATUS_LINE}
+	 * The initial value is <code>true</code>.
 	 * </p>
 	 * 
 	 * @return <code>true</code> for a status line, and <code>false</code>
@@ -172,8 +136,7 @@ public interface IWorkbenchWindowConfigurer {
 	 * Returns whether the underlying workbench window has a perspective bar (the
 	 * perspective bar provides buttons to quickly switch between perspectives).
 	 * <p>
-	 * The initial value is controlled by the preference
-	 * {@link IWorkbenchPreferences.SHOULD_SHOW_PERSPECTIVE_BAR SHOULD_SHOW_PERSPECTIVE_BAR}
+	 * The initial value is <code>false</code>.
 	 * </p>
 	 * 
 	 * @return <code>true</code> for a perspective bar, and <code>false</code>
@@ -193,8 +156,7 @@ public interface IWorkbenchWindowConfigurer {
 	/**
 	 * Returns whether the underlying workbench window has fast view bars.
 	 * <p>
-	 * The initial value is controlled by the preference
-	 * {@link IWorkbenchPreferences.SHOULD_SHOW_FAST_VIEW_BARS SHOULD_SHOW_FAST_VIEW_BARS}
+	 * The initial value is <code>false</code>.
 	 * </p>
 	 * 
 	 * @return <code>true</code> for fast view bars, and 
@@ -213,8 +175,7 @@ public interface IWorkbenchWindowConfigurer {
 	/**
 	 * Returns whether the underlying workbench window has a progress indicator.
 	 * <p>
-	 * The initial value is controlled by the preference
-	 * {@link IWorkbenchPreferences#SHOULD_SHOW_PROGRESS_INDICATOR IWorkbenchPreferences.SHOULD_SHOW_PROGRESS_INDICATOR}
+	 * The initial value is <code>false</code>.
 	 * </p>
 	 * 
 	 * @return <code>true</code> for a progress indicator, and <code>false</code>
@@ -244,7 +205,7 @@ public interface IWorkbenchWindowConfigurer {
 	 * That is, it must be called within the <code>preWindowOpen</code>
 	 * callback on <code>WorkbenchAdvisor</code>.
 	 *
-	 * @param newShellStyle the new shell style bits
+	 * @param shellStyle the shell style bits
 	 */
 	public void setShellStyle(int shellStyle);
 
@@ -305,7 +266,7 @@ public interface IWorkbenchWindowConfigurer {
 	 * @see #configureEditorAreaDropListener
 	 * @see org.eclipse.ui.part.EditorInputTransfer
 	 */
-	public void addEditorAreaTransfer(Transfer tranfer);
+	public void addEditorAreaTransfer(Transfer transfer);
 	
 	/**
 	 * Configures the drop target listener for the editor area of this workbench window.
@@ -375,7 +336,7 @@ public interface IWorkbenchWindowConfigurer {
      * <code>fillActionBars</code> method instead.
      * </p>
      * 
-     * @result the menu bar, suitable for setting in the shell
+     * @return the menu bar, suitable for setting in the shell
      */
     public Menu createMenuBar();
 
@@ -393,7 +354,7 @@ public interface IWorkbenchWindowConfigurer {
      * </p>
      * 
      * @param parent the parent composite
-     * @result the cool bar control, suitable for laying out in the parent 
+     * @return the cool bar control, suitable for laying out in the parent 
      */
     public Control createCoolBarControl(Composite parent);
 
@@ -411,7 +372,7 @@ public interface IWorkbenchWindowConfigurer {
      * </p>
      * 
      * @param parent the parent composite
-     * @result the status line control, suitable for laying out in the parent 
+     * @return the status line control, suitable for laying out in the parent 
      */
     public Control createStatusLineControl(Composite parent);
 
@@ -428,7 +389,7 @@ public interface IWorkbenchWindowConfigurer {
      * </p>
      * 
      * @param parent the parent composite
-     * @result the page composite, suitable for laying out in the parent 
+     * @return the page composite, suitable for laying out in the parent 
      */
     public Control createPageComposite(Composite parent);
 }

@@ -609,6 +609,11 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     public void start(BundleContext context) throws Exception {
     	super.start(context);
     	Policy.setLog(getLog());
+    	
+    	// Start the UI plugin so that it can install the callback in PrefUtil,
+    	// which needs to be done as early as possible, before the workbench
+    	// accesses any API preferences.
+    	Platform.getBundle(PlatformUI.PLUGIN_ID).start();
     }
     
 	/**

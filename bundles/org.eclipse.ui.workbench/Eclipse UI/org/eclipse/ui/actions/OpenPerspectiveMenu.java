@@ -12,12 +12,15 @@
 package org.eclipse.ui.actions;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * A menu for window creation in the workbench.  
@@ -82,24 +85,20 @@ public OpenPerspectiveMenu(IWorkbenchWindow window, IAdaptable input) {
 	this.pageInput = input;
 }
 /**
- * Return whether or not the menu can be run. Answer true unless the current perspective
+ * Return whether or not the menu can be run. Answer true unless the current mode
  * is replace and the replaceEnabled flag is false.
- * @return String
  */
 private boolean canRun() {
 	if (openPerspectiveSetting()
-		.equals(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE))
+		.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE))
 		return replaceEnabled;
 	return true;
 }
 /**
  * Return the current perspective setting.
- * @return String
  */
 private String openPerspectiveSetting() {
-    return Platform.getPreferencesService().getString(PlatformUI.PLUGIN_ID,
-            IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE, "", //$NON-NLS-1$
-            null);
+    return PrefUtil.getAPIPreferenceStore().getString(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
 }
 /**
  * Runs an action for a particular perspective. Opens the perspective supplied

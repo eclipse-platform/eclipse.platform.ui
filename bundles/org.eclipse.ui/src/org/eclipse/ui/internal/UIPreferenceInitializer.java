@@ -47,6 +47,9 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
                 IWorkbenchPreferenceConstants.INITIAL_FAST_VIEW_BAR_LOCATION,
                 IWorkbenchPreferenceConstants.BOTTOM);
 
+		// default to showing intro on startup
+		store.setDefault(IWorkbenchPreferenceConstants.SHOW_INTRO, true);
+		
 		store.addPropertyChangeListener(new PlatformUIPreferenceListener());
     }
 

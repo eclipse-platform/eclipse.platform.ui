@@ -20,7 +20,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
-import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 
 /**
@@ -46,7 +45,7 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
 	
 	/**
 	 * Indicates whether workbench state should be saved on close and 
-	 * restored on subsequence open.
+	 * restored on subsequent open.
 	 */
 	private boolean saveAndRestore = false;
 	
@@ -139,14 +138,6 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
 		} else {
 			extraData.remove(key);
 		}
-	}
-	
-	/**
-	 * Allows the configurer to initialize its state that
-	 * depends on a Display existing.
-	 */
-	/* package */ void init() {
-		saveAndRestore = WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IWorkbenchPreferences.SHOULD_SAVE_WORKBENCH_STATE);
 	}
 	
 	/* (non-Javadoc)

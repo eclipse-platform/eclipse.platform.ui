@@ -30,7 +30,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -43,7 +42,6 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.IPreferenceConstants;
@@ -51,6 +49,7 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * Perspective registry.
@@ -301,10 +300,8 @@ public class PerspectiveRegistry extends RegistryManager implements IPerspective
 			setDefaultPerspective(str);
 			dialogSettings.put(ID_DEF_PERSP, ""); //$NON-NLS-1$
 		} else {
-		    defaultPerspID = Platform.getPreferencesService().getString(
-                    PlatformUI.PLUGIN_ID,
-                    IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID, "", //$NON-NLS-1$
-                    null);
+		    defaultPerspID = PrefUtil.getAPIPreferenceStore().getString(
+                    IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID);
 		}
 		verifyDefaultPerspective();
 	}
@@ -447,8 +444,7 @@ public class PerspectiveRegistry extends RegistryManager implements IPerspective
 		IPerspectiveDescriptor desc = findPerspectiveWithId(id);
 		if (desc != null) {
 			defaultPerspID = id;
-		    Platform.getPreferencesService().getRootNode().node(
-                    InstanceScope.SCOPE).node(PlatformUI.PLUGIN_ID).put(
+			PrefUtil.getAPIPreferenceStore().setValue(
                     IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID, id);
 		}
 	}
@@ -474,10 +470,8 @@ public class PerspectiveRegistry extends RegistryManager implements IPerspective
 			return;
 
 		// Step 2. Read default value.
-	    defaultPerspID = Platform.getPreferencesService().getString(
-                PlatformUI.PLUGIN_ID,
-                IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID, "", //$NON-NLS-1$
-                null);
+	    defaultPerspID = PrefUtil.getAPIPreferenceStore().getString(
+                IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID);
 		if (defaultPerspID != null)
 			desc = findPerspectiveWithId(defaultPerspID);
 		if (desc != null)
