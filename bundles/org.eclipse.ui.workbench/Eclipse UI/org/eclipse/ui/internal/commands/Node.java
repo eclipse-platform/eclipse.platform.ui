@@ -43,7 +43,32 @@ final class Node {
 		}
 
 		if (node != null)
-			node.add(scopeConfiguration, new Integer(binding.getRank()), platformLocale, binding.getCommand());
+			add(node.scopeConfigurationMap, scopeConfiguration, new Integer(binding.getRank()), platformLocale, binding.getCommand());
+	}
+
+	static void add(SortedMap scopeConfigurationMap, State scopeConfiguration, Integer rank, State platformLocale, String command) {			
+		SortedMap rankMap = (SortedMap) scopeConfigurationMap.get(scopeConfiguration);
+		
+		if (rankMap == null) {
+			rankMap = new TreeMap();	
+			scopeConfigurationMap.put(scopeConfiguration, rankMap);
+		}
+
+		SortedMap platformLocaleMap = (SortedMap) rankMap.get(rank);
+
+		if (platformLocaleMap == null) {
+			platformLocaleMap = new TreeMap();	
+			rankMap.put(rank, platformLocaleMap);
+		}
+
+		Set commandSet = (Set) platformLocaleMap.get(platformLocale);
+
+		if (commandSet == null) {
+			commandSet = new HashSet();	
+			platformLocaleMap.put(platformLocale, commandSet);
+		}
+
+		commandSet.add(command);		
 	}
 
 	static SortedMap find(SortedMap tree, Sequence prefix) {	
@@ -77,7 +102,34 @@ final class Node {
 		}
 
 		if (node != null)
-			node.remove(scopeConfiguration, new Integer(binding.getRank()), platformLocale, binding.getCommand());
+			remove(node.scopeConfigurationMap, scopeConfiguration, new Integer(binding.getRank()), platformLocale, binding.getCommand());
+	}
+
+	static void remove(SortedMap scopeConfigurationMap, State scopeConfiguration, Integer rank, State platformLocale, String command) {
+		SortedMap rankMap = (SortedMap) scopeConfigurationMap.get(scopeConfiguration);
+
+		if (rankMap != null) {
+			SortedMap platformLocaleMap = (SortedMap) rankMap.get(rank);
+			
+			if (platformLocaleMap != null) {
+				Set commandSet = (Set) platformLocaleMap.get(platformLocale);
+				
+				if (commandSet != null) {
+					commandSet.remove(command);	
+						
+					if (commandSet.isEmpty()) {
+						platformLocaleMap.remove(platformLocale);
+								
+						if (platformLocaleMap.isEmpty()) {
+							rankMap.remove(rank);
+							
+							if (rankMap.isEmpty())
+								scopeConfigurationMap.remove(scopeConfiguration);
+						}
+					}					
+				}
+			}			
+		}
 	}
 
 	static void solve(SortedMap tree, State[] scopeConfigurations, State[] platformLocales) {
@@ -240,63 +292,11 @@ final class Node {
 		return sequenceMap;
 	}
 
-	SortedMap childMap = new TreeMap();	
-	String command = null;
-	SortedMap scopeConfigurationMap = new TreeMap();
+	private SortedMap childMap = new TreeMap();	
+	private String command = null;
+	private SortedMap scopeConfigurationMap = new TreeMap();
 	
 	private Node() {
 		super();
-	}
-
-	void add(State scopeConfiguration, Integer rank, State platformLocale, String command) {			
-		SortedMap rankMap = (SortedMap) scopeConfigurationMap.get(scopeConfiguration);
-		
-		if (rankMap == null) {
-			rankMap = new TreeMap();	
-			scopeConfigurationMap.put(scopeConfiguration, rankMap);
-		}
-
-		SortedMap platformLocaleMap = (SortedMap) rankMap.get(rank);
-
-		if (platformLocaleMap == null) {
-			platformLocaleMap = new TreeMap();	
-			rankMap.put(rank, platformLocaleMap);
-		}
-
-		Set commandSet = (Set) platformLocaleMap.get(platformLocale);
-
-		if (commandSet == null) {
-			commandSet = new HashSet();	
-			platformLocaleMap.put(platformLocale, commandSet);
-		}
-
-		commandSet.add(command);		
-	}
-
-	void remove(State scopeConfiguration, Integer rank, State platformLocale, String command) {
-		SortedMap rankMap = (SortedMap) scopeConfigurationMap.get(scopeConfiguration);
-
-		if (rankMap != null) {
-			SortedMap platformLocaleMap = (SortedMap) rankMap.get(rank);
-			
-			if (platformLocaleMap != null) {
-				Set commandSet = (Set) platformLocaleMap.get(platformLocale);
-				
-				if (commandSet != null) {
-					commandSet.remove(command);	
-						
-					if (commandSet.isEmpty()) {
-						platformLocaleMap.remove(platformLocale);
-								
-						if (platformLocaleMap.isEmpty()) {
-							rankMap.remove(rank);
-							
-							if (rankMap.isEmpty())
-								scopeConfigurationMap.remove(scopeConfiguration);
-						}
-					}					
-				}
-			}			
-		}
 	}
 }
