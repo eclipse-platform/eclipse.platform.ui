@@ -1,9 +1,9 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  * IBM - Initial API and implementation
@@ -12,7 +12,6 @@ package org.eclipse.core.internal.resources;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.eclipse.core.internal.localstore.*;
 import org.eclipse.core.internal.properties.PropertyManager;
 import org.eclipse.core.internal.utils.Assert;
@@ -390,6 +389,7 @@ public IMarker createMarker(String type) throws CoreException {
 		workspace.beginOperation(true);
 		MarkerInfo info = new MarkerInfo();
 		info.setType(type);
+		info.setCreationTime(System.currentTimeMillis());
 		workspace.getMarkerManager().add(this, new MarkerInfo[] { info });
 		return new Marker(this, info.getId());
 	} finally {

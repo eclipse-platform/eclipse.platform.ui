@@ -486,6 +486,24 @@ public void testCreateMarker() {
 	// cleanup
 	getWorkspace().removeResourceChangeListener(listener);
 }
+public void testCreationTime() {
+
+	for (int i=0; i<resources.length; i++) {
+		IMarker marker = null;
+		try {
+			marker = resources[i].createMarker(IMarker.PROBLEM);
+		} catch (CoreException e) {
+			fail("0.0", e);
+		}
+		
+		// make sure the marker has a non-zero creation time
+		try {
+			assertTrue("1.0." + i, 0 != marker.getCreationTime());
+		} catch (CoreException e) {
+			fail("1.1", e);
+		}
+	}
+}
 public void testDeleteMarker() {
 	log("TestDeleteMarker");
 	IMarker marker = null;

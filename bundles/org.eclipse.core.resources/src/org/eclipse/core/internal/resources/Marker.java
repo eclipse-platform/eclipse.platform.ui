@@ -146,6 +146,14 @@ public Object[] getAttributes(String[] attributeNames) throws CoreException {
 	return info.getAttributes(attributeNames);
 }
 /**
+ * @see IMarker#getCreationTime
+ */
+public long getCreationTime() throws CoreException {
+	MarkerInfo info = getInfo();
+	checkInfo(info);
+	return info.getCreationTime();
+}
+/**
  * @see IMarker#getId
  */
 public long getId() {

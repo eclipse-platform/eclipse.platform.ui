@@ -337,6 +337,19 @@ public Map getAttributes() throws CoreException;
  */
 public Object[] getAttributes(String[] attributeNames) throws CoreException;
 /**
+ * Returns the time at which this marker was created.
+ *
+ * @return the difference, measured in milliseconds, between the time at which
+ *    this marker was created and midnight, January 1, 1970 UTC, or <code>0L</code>
+ *    if the creation time is not known (this can occur in workspaces created using v2.0 or earlier).
+ * @exception CoreException if this method fails. Reasons include:
+ * <ul>
+ * <li> This marker does not exist.</li>
+ * </ul>
+ * @since 2.1
+ */
+public long getCreationTime() throws CoreException;
+/**
  * Returns the id of the marker.  The id of a marker is unique
  * relative to the resource with which the marker is associated.
  * Marker ids are not globally unique.

@@ -35,6 +35,8 @@ protected MarkerReader getReader(int formatVersion) throws IOException {
 			return new MarkerReader_1(workspace);
 		case 2 :
 			return new MarkerReader_2(workspace);
+		case 3 :
+			return new MarkerReader_3(workspace);
 		default :
 			throw new IOException(Policy.bind("resources.format")); //$NON-NLS-1$
 	}

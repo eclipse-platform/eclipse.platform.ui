@@ -27,6 +27,10 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable {
 
 	/** The store of attributes for this marker. */
 	protected Map attributes = null;
+	
+	/** The creation time for this marker. */
+	protected long creationTime=0;
+	
 public Object getAttribute(String attributeName) {
 	return attributes == null ? null : attributes.get(attributeName);
 }
@@ -57,6 +61,9 @@ public Map getAttributes(boolean makeCopy) {
 	if (attributes == null)
 		return null;
 	return makeCopy ? new MarkerAttributeMap(attributes) : attributes;
+}
+public long getCreationTime() {
+	return creationTime;
 }
 public long getId() {
 	return id;
@@ -104,6 +111,9 @@ public void setAttributes(Map map) {
 		attributes = null;
 	else
 		attributes = new MarkerAttributeMap(map);
+}
+public void setCreationTime(long value) {
+	creationTime = value;
 }
 public void setId(long value) {
 	id = value;

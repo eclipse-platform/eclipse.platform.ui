@@ -29,6 +29,8 @@ protected MarkerSnapshotReader getReader(int formatVersion) throws IOException {
 	switch (formatVersion) {
 		case 1 :
 			return new MarkerSnapshotReader_1(workspace);
+		case 2 :
+			return new MarkerSnapshotReader_2(workspace);
 		default :
 			throw new IOException(Policy.bind("resources.format")); //$NON-NLS-1$
 	}
