@@ -12,8 +12,8 @@ Configuration Wizards</h1></center>
 <b><i>Identifier: </i></b>org.eclipse.team.ui.configurationWizards
 <p><b><i>Description: </i></b>This extension point is used to register
 a method for configuration of a project. Configuration involves the association
-of a project with a team provider, including all information necessary to
-initialize that team provider, including such things as username, password, and
+of a project with a repository provider, including all information necessary to
+initialize that repository provider, including such things as username, password, and
 any relevant information necessary to locate the provider.
 <p>Providers may provide an extension for this extension point, and an
 implementation of <code>org.eclipse.team.ui.IConfigurationWizard</code> which
@@ -32,7 +32,7 @@ CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
 
 <ul>
-<li><b>name -</b> the name of the configuration type, as it should appear in the configuration wizard. Examples are "CVS", "WebDAV".</li>
+<li><b>name -</b> the name of the configuration type, as it should appear in the configuration wizard. One examples is "CVS".</li>
 <li><b>icon -</b> the icon to present in the configuration wizard next to the name.</li>
 <li><b>class -</b> a fully qualified name of the Java class implementing <tt>org.eclipse.team.ui.IConfigurationWizard</tt>.</li>
 <li><b>id - </b> a unique identifier for this extension.</li>
@@ -42,10 +42,10 @@ CDATA #REQUIRED</tt>
 <p>Following is an example of a configuration wizard extension:
 <p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.team.ui.configurationWizard"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;wizard</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name="WebDAV"</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon="webdav.gif"</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class="com.xyz.DAVDecorator"</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id="com.xyz.dav"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name="CVS"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon="icons/full/wizards/newconnect_wiz.gif"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class="org.eclipse.team.internal.ccvs.ui.wizards.SharingWizard"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id="org.eclipse.team.ccvs.ui.SharingWizard"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/wizard></tt>
 <br><tt>&nbsp;&nbsp; &lt;/extension></tt>
 
@@ -53,9 +53,9 @@ CDATA #REQUIRED</tt>
 must represent a class that implements <tt>org.eclipse.team.ui.IConfigurationWizard</tt>.
 This interface supports configuration of a wizard given a workbench and a project.
 
-<p><b><i>Supplied Implementation: </i></b>The plug-in org.eclipse.team.provider.examples.ui contains
-sample implementations of IConfigurationWizard for the WebDAV and filesystem provider types.
+<p><b><i>Supplied Implementation: </i></b>The plug-in org.eclipse.team.examples.filesystem contains a
+sample implementation of IConfigurationWizard for a filesystem based repository provider.
 
-<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
+<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2002.  All Rights Reserved." BORDER=0></a>
 </body>
 </html>
