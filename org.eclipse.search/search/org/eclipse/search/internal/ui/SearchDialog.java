@@ -9,6 +9,7 @@ import java.util.List;
 import org.eclipse.core.resources.IWorkspace;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.DisposeEvent;
@@ -139,9 +140,14 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 			return label;
 		}
 		
-		int pageIndex= getPreferredPageIndex();
+		final int pageIndex= getPreferredPageIndex();
+
+		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+			public void run() {
+				fCurrentPage= getDescriptorAt(pageIndex).createObject();
+			}
+		});
 		
-		fCurrentPage= getDescriptorAt(pageIndex).createObject();
 		fCurrentPage.setContainer(this);
 
 		fScopePart= new ScopePart(this);
@@ -245,12 +251,19 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 	
 	private void turnToPage(SelectionEvent event) {
 		// To do. Check if dialog must be resized.
-		CTabItem item= (CTabItem)event.item;
+		final CTabItem item= (CTabItem)event.item;
 		if (item.getControl() == null) {
-			SearchPageDescriptor descriptor= (SearchPageDescriptor)item.getData();
-			ISearchPage page= descriptor.createObject();
+			final SearchPageDescriptor descriptor= (SearchPageDescriptor)item.getData();
+
+			BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+				public void run() {
+					item.setData(descriptor.createObject());
+				}
+			});
+			
+			ISearchPage page= (ISearchPage)item.getData();
 			page.setContainer(this);
-			item.setData(page);
+			
 			Control newControl= getControl(page, (Composite)event.widget);
 			item.setControl(newControl);
 			resizeDialogIfNeeded(newControl);
