@@ -70,6 +70,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	private Button repositoriesAreBinary;
 	private Button determineVersionEnabled;
 	private Button confirmMoveTag;
+	private Button debugProtocol;
 	
 	private Button never;
 	private Button prompt;
@@ -181,6 +182,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		repositoriesAreBinary = createCheckBox(composite, Policy.bind("CVSPreferencePage.repositoriesAreBinary")); //$NON-NLS-1$
 		determineVersionEnabled = createCheckBox(composite, Policy.bind("CVSPreferencePage.determineVersionEnabled")); //$NON-NLS-1$
 		confirmMoveTag = createCheckBox(composite, Policy.bind("CVSPreferencePage.confirmMoveTag")); //$NON-NLS-1$
+		debugProtocol = createCheckBox(composite, Policy.bind("CVSPreferencePage.debugProtocol")); //$NON-NLS-1$
 			
 		createLabel(composite, ""); createLabel(composite, ""); //$NON-NLS-1$ //$NON-NLS-2$
 		
@@ -306,7 +308,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		replaceUnmanaged.setSelection(store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
 		determineVersionEnabled.setSelection(store.getBoolean(ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION));
 		confirmMoveTag.setSelection(store.getBoolean(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG));
-	
+		debugProtocol.setSelection(store.getBoolean(ICVSUIConstants.PREF_DEBUG_PROTOCOL));
 		
 		initializeSaveRadios(store.getInt(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS));		
 	}
@@ -349,6 +351,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		store.setValue(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY, repositoriesAreBinary.getSelection());
 		store.setValue(ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION, determineVersionEnabled.getSelection());
 		store.setValue(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG, confirmMoveTag.getSelection());
+		store.setValue(ICVSUIConstants.PREF_DEBUG_PROTOCOL, debugProtocol.getSelection());
 		
 		CVSProviderPlugin.getPlugin().setReplaceUnmanaged(
 			store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
@@ -360,6 +363,8 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 			getQuietnessOptionFor(store.getInt(ICVSUIConstants.PREF_QUIETNESS)));
 		CVSProviderPlugin.getPlugin().setCompressionLevel(
 			store.getInt(ICVSUIConstants.PREF_COMPRESSION_LEVEL));
+		CVSProviderPlugin.getPlugin().setDebugProtocol(
+					store.getBoolean(ICVSUIConstants.PREF_DEBUG_PROTOCOL));
 		CVSProviderPlugin.getPlugin().setRepositoriesAreBinary(store.getBoolean(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY));
 		KSubstOption oldKSubst = CVSProviderPlugin.getPlugin().getDefaultTextKSubstOption();
 		KSubstOption newKSubst = KSubstOption.fromMode(store.getString(ICVSUIConstants.PREF_TEXT_KSUBST));
@@ -392,6 +397,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		initializeSaveRadios(store.getDefaultInt(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS));
 		repositoriesAreBinary.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY));
 		confirmMoveTag.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG));
+		debugProtocol.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_DEBUG_PROTOCOL));
 	}
 
    private void createSaveCombo(Composite composite) {

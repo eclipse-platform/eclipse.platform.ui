@@ -959,4 +959,7 @@ public class CVSProviderPlugin extends Plugin {
 		return getPluginPreferences().getBoolean(CVSProviderPlugin.READ_ONLY);
 	}
 
+	public void setDebugProtocol(boolean value) {
+		Policy.DEBUG_CVS_PROTOCOL = value;		
+	}
 }
