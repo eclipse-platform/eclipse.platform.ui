@@ -74,6 +74,13 @@ public interface ISearchPageContainer {
 	public void setSelectedScope(int scope);
 
 	/**
+	 * Tells whether a valid scope is selected.
+	 * 
+	 * @return a <code>true</code> if a valid scope is selected in this search page container
+	 */
+	public boolean hasValidScope();
+
+	/**
 	 * Returns the selected working set of this container.
 	 * <p>
 	 * This method is for internal use only due to issue below. Once

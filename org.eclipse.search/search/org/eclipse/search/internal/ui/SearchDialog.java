@@ -315,6 +315,13 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 	/*
 	 * Implements method from ISearchPageContainer
 	 */
+	public boolean hasValidScope() {
+		return getSelectedScope() != WORKING_SET_SCOPE || getSelectedWorkingSet() != null;
+	}
+	
+	/*
+	 * Implements method from ISearchPageContainer
+	 */
 	public void setSelectedWorkingSet(IWorkingSet workingSet) {
 		fScopePart.setSelectedWorkingSet(workingSet);
 	}

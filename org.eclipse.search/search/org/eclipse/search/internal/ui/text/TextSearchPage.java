@@ -220,7 +220,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 				initializePatternControl();
 			}
 			fPattern.setFocus();
-			getContainer().setPerformActionEnabled(fPattern.getText().length() > 0);
+			getContainer().setPerformActionEnabled(fPattern.getText().length() > 0 && getContainer().hasValidScope());
 		}
 		super.setVisible(visible);
 	}
@@ -258,7 +258,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		});
 		fPattern.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				getContainer().setPerformActionEnabled(getPattern().length() > 0);
+				getContainer().setPerformActionEnabled(getPattern().length() > 0 && getContainer().hasValidScope());
 			}
 		});
 		
