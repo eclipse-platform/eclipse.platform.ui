@@ -60,12 +60,7 @@ public class PageStoreException extends Exception {
 	}
 
 	private static String bind(String name) {
-		String message = name;
-		try {
-			message = Policy.bind(name);
-		} catch (NoClassDefFoundError e) {
-		}
-		return message;
+		return Policy.bind(name);
 	}
 
 }

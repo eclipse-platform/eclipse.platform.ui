@@ -155,7 +155,7 @@ protected void restoreFromSnap(IResource resource) {
 			while (true)
 				reader.readSyncInfo(input);
 		} catch (EOFException eof) {
-			// ignore end of file
+			// ignore end of file -- proceed with what we successfully read
 		} finally {
 			input.close();
 		}
@@ -179,6 +179,7 @@ public void remove(QualifiedName partner) {
 			registry.remove(partner);
 		} catch (CoreException e) {
 			// XXX: flush needs to be more resilient and not throw exceptions all the time
+			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
 		}
 	}
 }

@@ -87,6 +87,7 @@ public class ObjectStore implements Observer {
 		try {
 			pageStore.close();
 		} catch (Exception e) {
+			//ignore failure to close
 		}
 		acquiredObjects = null;
 		modifiedObjects = null;

@@ -40,15 +40,15 @@ private static final Map registry = new HashMap();
 		return (IndexAnchor) acquireObject(address);
 	}
 	/**
-	 * Acquires a context.
+	 * Acquires a context.  Returns null if the context could not be acquired.
 	 */
 	IndexedStoreContext acquireContext(ObjectAddress address) {
-		IndexedStoreContext context = null;
 		try {
-			context = (IndexedStoreContext) acquireObject(address);
+			return (IndexedStoreContext) acquireObject(address);
 		} catch (IndexedStoreException e) {
+			//context couldn't be acquired - return null
+			return null;
 		}
-		return context;
 	}
 	/**
 	 * Acquire an index node.
@@ -107,6 +107,7 @@ private static final Map registry = new HashMap();
 			try {
 				objectStore.close();
 			} catch (ObjectStoreException e2) {
+				//ignore this and rethrow the underlying exception
 			}
 			throw e;
 		}
@@ -161,6 +162,7 @@ private static final Map registry = new HashMap();
 			try {
 				store.close();
 			} catch (ObjectStoreException e2) {
+				//real exception thrown below
 			}
 			ObjectStore.delete(name);
 			throw new IndexedStoreException(IndexedStoreException.StoreNotCreated);
@@ -220,6 +222,7 @@ private static final Map registry = new HashMap();
 		try {
 			close();
 		} catch (Exception e) {
+			//unsafe to throw exceptions from a finalize
 		}
 	}
 	/**
@@ -272,6 +275,8 @@ private Buffer getMetadataArea(int i) throws IndexedStoreException {
 	 */
 	private ObjectID getNextObjectID() throws IndexedStoreException {
 		IndexedStoreContext context = acquireContext(contextAddress);
+		if (context == null)
+			throw new IndexedStoreException(IndexedStoreException.ContextNotAvailable);
 		long objectNumber = context.getNextObjectNumber();
 		context.release();
 		return new ObjectID(objectNumber);

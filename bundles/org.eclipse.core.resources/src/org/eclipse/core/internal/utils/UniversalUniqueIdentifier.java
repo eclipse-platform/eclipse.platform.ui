@@ -174,6 +174,7 @@ private static byte[] computeNodeAddress() {
 		out.write(objectId);
 		out.close();
 	} catch (IOException exc) {
+		//ignore the failure, we're just trying to come up with a random seed
 	}
 	byte[] rand = byteOut.toByteArray();
 	
@@ -214,7 +215,8 @@ protected static byte[] getIPAddress() {
 	try {
 		return InetAddress.getLocalHost().getAddress();
 	} catch (UnknownHostException e) {
-//		Assert.isTrue(false, Policy.bind("utils.address"));
+		//valid for this to be thrown be a machine with no IP connection
+		//It is VERY important NOT to throw this exception
 		return null;
 	}
 }

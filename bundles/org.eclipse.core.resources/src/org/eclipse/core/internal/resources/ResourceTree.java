@@ -246,7 +246,7 @@ public boolean movedProjectSubtree(IProject project, IProjectDescription destDes
 			try {
 				workspace.getMetaArea().writeLocation(destination);
 			} catch (CoreException e) {
-				// FIXME
+				failed(e.getStatus());
 			}
 		}
 	} else {
@@ -254,7 +254,7 @@ public boolean movedProjectSubtree(IProject project, IProjectDescription destDes
 			try {
 				workspace.getMetaArea().writeLocation(destination);
 			} catch(CoreException e) {
-				// FIXME
+				failed(e.getStatus());
 			}
 		}
 	}
