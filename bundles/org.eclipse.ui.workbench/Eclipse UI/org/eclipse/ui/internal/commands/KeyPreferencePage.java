@@ -658,7 +658,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		labelName.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		labelName.setText(Util.getString(resourceBundle, "labelName")); //$NON-NLS-1$
 
-		textName = new Text(compositeAssignmentTitle, SWT.LEFT | SWT.READ_ONLY);
+		textName = new Text(compositeAssignmentTitle, SWT.BORDER | SWT.LEFT | SWT.READ_ONLY);
 		textName.setFont(compositeAssignmentTitle.getFont());
 		textName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
@@ -667,7 +667,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		labelDescription.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		labelDescription.setText(Util.getString(resourceBundle, "labelDescription")); //$NON-NLS-1$
 
-		textDescription = new Text(compositeAssignmentTitle, SWT.LEFT | SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
+		textDescription = new Text(compositeAssignmentTitle, SWT.BORDER | SWT.LEFT | SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
 		textDescription.setFont(compositeAssignmentTitle.getFont());
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.heightHint = 30;

@@ -1035,7 +1035,7 @@ public boolean getShowToolBar() {
  *   this window does not have a status line
  * @see #addStatusLine
  */
-protected StatusLineManager getStatusLineManager() {
+public StatusLineManager getStatusLineManager() {
 	return super.getStatusLineManager();
 }
 
