@@ -390,7 +390,7 @@
 			name="Tests top-level element recognition" 	
 			base-type="org.eclipse.core.runtime.xml"
 			priority="high">
-			<describer class="org.eclipse.core.internal.content.XMLRootElementContentDescriber:project"/>
+			<describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber:project"/>
 		</content-type>
    </extension>
    		
