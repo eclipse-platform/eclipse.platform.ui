@@ -57,7 +57,7 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 		getShell().setText(AntLaunchConfigurationMessages.getString("TargetOrderDialog.Order_Targets_1")); //$NON-NLS-1$
 		
 		Composite comp = (Composite)super.createDialogArea(parent);
-		
+		((GridLayout)comp.getLayout()).numColumns= 2;
 		Label label = new Label(comp, SWT.NONE);
 		label.setText(AntLaunchConfigurationMessages.getString("TargetOrderDialog.&Specify_target_execution_order__2")); //$NON-NLS-1$
 		label.setFont(comp.getFont());
