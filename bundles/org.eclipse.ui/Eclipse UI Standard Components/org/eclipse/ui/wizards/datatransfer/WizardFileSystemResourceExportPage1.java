@@ -29,8 +29,8 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 	// widgets
 	private Combo				destinationNameField;
 	private Button				destinationBrowseButton;
-	private Button				overwriteExistingFilesCheckbox;
-	private Button				createDirectoryStructureCheckbox;
+	protected Button				overwriteExistingFilesCheckbox;
+	protected Button				createDirectoryStructureCheckbox;
 
 	// constants
 	private static final int	SIZING_TEXT_FIELD_WIDTH = 250;
@@ -123,15 +123,24 @@ protected void createOptionsGroup(Composite parent) {
 	optionsGroup.setText(WorkbenchMessages.getString("WizardExportPage.options")); //$NON-NLS-1$
 	
 
+	createOptionsGroupButtons(optionsGroup);
+	
+}
+
+/**
+ * Create the buttons in the options group.
+ */
+
+protected void createOptionsGroupButtons(Group optionsGroup) {
 	// overwrite... checkbox
 	overwriteExistingFilesCheckbox = new Button(optionsGroup,SWT.CHECK|SWT.LEFT);
 	overwriteExistingFilesCheckbox.setText(DataTransferMessages.getString("ExportFile.overwriteExisting")); //$NON-NLS-1$
-
+	
 	// create directory structure checkbox
 	createDirectoryStructureCheckbox = new Button(optionsGroup,SWT.CHECK|SWT.LEFT);
 	createDirectoryStructureCheckbox.setText(DataTransferMessages.getString("FileExport.createDirectoryStructure")); //$NON-NLS-1$
 	createDirectoryStructureCheckbox.addListener(SWT.Selection,this);
-
+	
 		// initial setup
 	createDirectoryStructureCheckbox.setSelection(false);
 }

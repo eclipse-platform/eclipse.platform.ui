@@ -31,8 +31,6 @@ class WizardZipFileResourceExportPage1
 	extends WizardFileSystemResourceExportPage1 {
 
 	// widgets
-	protected Button overwriteExistingFileCheckbox;
-	protected Button createDirectoryStructureCheckbox;
 	protected Button compressContentsCheckbox;
 
 	// constants
@@ -75,22 +73,9 @@ public void createControl(Composite parent) {
  *	Create the export options specification widgets.
  *
  */
-protected void createOptionsGroup(Composite parent) {
-	// options group
-	Group optionsGroup = new Group(parent, SWT.NONE);
-	GridLayout layout = new GridLayout();
-	optionsGroup.setLayout(layout);
-	optionsGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
-	optionsGroup.setText(WorkbenchMessages.getString("WizardExportPage.options")); //$NON-NLS-1$
+protected void createOptionsGroupButtons(Group optionsGroup) {
 
-	// overwrite... checkbox
-	overwriteExistingFileCheckbox = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
-	overwriteExistingFileCheckbox.setText(DataTransferMessages.getString("ZipExport.overwriteFile")); //$NON-NLS-1$
-
-	// create directory structure checkbox
-	createDirectoryStructureCheckbox = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
-	createDirectoryStructureCheckbox.setText(DataTransferMessages.getString("ExportFile.createDirectoryStructure")); //$NON-NLS-1$
-
+	super.createOptionsGroupButtons(optionsGroup);
 	// compress... checkbox
 	compressContentsCheckbox = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
 	compressContentsCheckbox.setText(DataTransferMessages.getString("ZipExport.compressContents")); //$NON-NLS-1$
@@ -123,7 +108,7 @@ protected boolean ensureTargetFileIsValid(File targetFile) {
 	}
 
 	if (targetFile.exists()) {
-		if (!overwriteExistingFileCheckbox.getSelection() && targetFile.canWrite()) {
+		if (!overwriteExistingFilesCheckbox.getSelection() && targetFile.canWrite()) {
 			if (!queryYesNoQuestion(DataTransferMessages.getString("ZipExport.alreadyExists"))) //$NON-NLS-1$
 				return false;
 		}
@@ -279,7 +264,7 @@ protected void internalSaveWidgetValues() {
 		// options
 		settings.put(
 			STORE_OVERWRITE_EXISTING_FILE_ID,
-			overwriteExistingFileCheckbox.getSelection());
+			overwriteExistingFilesCheckbox.getSelection());
 
 		settings.put(
 			STORE_CREATE_STRUCTURE_ID,
@@ -307,7 +292,7 @@ protected void restoreWidgetValues() {
 			addDestinationItem(directoryNames[i]);
 
 		// options
-		overwriteExistingFileCheckbox.setSelection(
+		overwriteExistingFilesCheckbox.setSelection(
 			settings.getBoolean(STORE_OVERWRITE_EXISTING_FILE_ID));
 
 		createDirectoryStructureCheckbox.setSelection(
