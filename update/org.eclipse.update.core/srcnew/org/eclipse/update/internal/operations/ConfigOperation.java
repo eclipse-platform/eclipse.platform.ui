@@ -19,7 +19,7 @@ import org.eclipse.update.operations.*;
  * Configure a feature.
  * ConfigOperation
  */
-public class ConfigOperation extends SingleOperation implements IConfigFeatureOperation {
+public class ConfigOperation extends FeatureOperation implements IConfigFeatureOperation {
 	
 	public ConfigOperation(IInstallConfiguration config, IConfiguredSite site, IFeature feature) {
 		super(config, site, feature);

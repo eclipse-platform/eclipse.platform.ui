@@ -12,21 +12,16 @@ package org.eclipse.update.internal.operations;
 
 import java.util.*;
 
-import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.operations.*;
 
-public class OperationsManager implements IAdaptable, IOperationFactory {
+public class OperationsManager implements IOperationFactory {
 
 	private Vector listeners = new Vector();
 	private Vector pendingOperations = new Vector();
 
 	public OperationsManager() {
-	}
-
-	public Object getAdapter(Class key) {
-		return null;
 	}
 
 	public IOperation createConfigOperation(

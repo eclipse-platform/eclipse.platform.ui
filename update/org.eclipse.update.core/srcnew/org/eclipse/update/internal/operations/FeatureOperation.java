@@ -18,7 +18,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.operations.*;
 
 
-public abstract class SingleOperation extends Operation implements IFeatureOperation {
+public abstract class FeatureOperation extends Operation implements IFeatureOperation {
 	
 	protected IFeature feature;
 	protected IFeature oldFeature;
@@ -28,7 +28,7 @@ public abstract class SingleOperation extends Operation implements IFeatureOpera
 //	private boolean optionalDelta;
 	
 	
-	public SingleOperation(IInstallConfiguration config, IConfiguredSite targetSite, IFeature feature) {
+	public FeatureOperation(IInstallConfiguration config, IConfiguredSite targetSite, IFeature feature) {
 		super();
 		this.feature = feature;
 		this.config = config;

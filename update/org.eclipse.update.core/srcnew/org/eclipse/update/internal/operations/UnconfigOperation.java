@@ -19,7 +19,7 @@ import org.eclipse.update.operations.*;
  * Unconfigure a feature.
  * UnconfigOperation
  */
-public class UnconfigOperation extends SingleOperation implements IUnconfigFeatureOperation {
+public class UnconfigOperation extends FeatureOperation implements IUnconfigFeatureOperation {
 	
 	public UnconfigOperation(IInstallConfiguration config, IConfiguredSite site, IFeature feature) {
 		super(config, site, feature);

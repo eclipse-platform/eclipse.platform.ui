@@ -20,7 +20,7 @@ import org.eclipse.update.operations.*;
  * ConfigOperation
  */
 public class InstallOperation
-	extends SingleOperation
+	extends FeatureOperation
 	implements IInstallFeatureOperation {
 	private static final String KEY_OLD = "OperationsManager.error.old";
 
