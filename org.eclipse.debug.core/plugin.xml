@@ -2,7 +2,7 @@
 <plugin
    id="org.eclipse.debug.core"
    name="%pluginName"
-   version="2.1.0"
+   version="3.0.0"
    provider-name="%providerName"
    class="org.eclipse.debug.core.DebugPlugin">
 
@@ -77,20 +77,20 @@
    <extension
          point="org.eclipse.debug.core.launchModes">
       <launchMode
-            mode="run"
-            label="%run">
+            label="%run"
+            mode="run">
       </launchMode>
       <launchMode
-            mode="debug"
-            label="%debug">
+            label="%debug"
+            mode="debug">
       </launchMode>
       <launchMode
-            mode="profile"
-            label="%profile">
+            label="%profile"
+            mode="profile">
       </launchMode>
    </extension>
    <extension
-   		point="org.eclipse.debug.core.contextLaunchVariables">
+         point="org.eclipse.debug.core.contextLaunchVariables">
       <variable
             name="workspace_loc"
             expanderClass="org.eclipse.debug.internal.core.variables.WorkspaceExpander"
@@ -141,6 +141,6 @@
             expanderClass="org.eclipse.debug.internal.core.variables.ContainerNameExpander"
             description="%container_name.description">
       </variable>
-	</extension>
+   </extension>
 
 </plugin>
