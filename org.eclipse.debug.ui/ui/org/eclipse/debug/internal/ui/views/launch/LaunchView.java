@@ -85,12 +85,13 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
+import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-public class LaunchView extends AbstractDebugEventHandlerView implements ISelectionChangedListener, IPerspectiveListener, IPageListener, IPropertyChangeListener, IResourceChangeListener, IShowInTarget {
+public class LaunchView extends AbstractDebugEventHandlerView implements ISelectionChangedListener, IPerspectiveListener, IPageListener, IPropertyChangeListener, IResourceChangeListener, IShowInTarget, IShowInSource {
 	
 	/**
 	 * A marker for the source selection and icon for an
@@ -134,6 +135,11 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * Editor to reuse
 	 */
 	private IEditorPart fEditor = null;
+	
+	/**
+	 * The source element corresponding to the selected stack frame
+	 */
+	private Object fSourceElement = null;
 	
 	/**
 	 * The restored editor index of the editor to re-use
@@ -564,6 +570,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	private void lookupEditorInput() {
 		setEditorId(null);
 		setEditorInput(null);
+		setSourceElement(null);
 		Object sourceElement= null;
 		IStackFrame stackFrame= getStackFrame();
 		ILaunch launch = stackFrame.getLaunch();
@@ -597,6 +604,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		}
 		setEditorInput(editorInput);
 		setEditorId(editorId);
+		setSourceElement(sourceElement);
 	}
 	
 	/**
@@ -1063,6 +1071,24 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	}	
 	
 	/**
+	 * Sets the current source element, possibly <code>null</code>
+	 * 
+	 * @param sourceElement
+	 */
+	private void setSourceElement(Object sourceElement) {
+		fSourceElement = sourceElement;
+	}
+	
+	/**
+	 * Returns the current source element, possibly <code>null</code>
+	 * 
+	 * @return Object
+	 */
+	protected Object getSourceElement() {
+		return fSourceElement;
+	}
+	
+	/**
 	 * Sets whether this view is in the active page of a
 	 * perspective. Since a page can have more than one
 	 * perspective, this view only show's source when in
@@ -1212,4 +1238,16 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		return false;
 	}
 
+	/**
+	 * @see IShowInSource#getShowInContext()
+	 */
+	public ShowInContext getShowInContext() {
+		if (isActive()) { 
+			IStructuredSelection selection = (IStructuredSelection)getViewer().getSelection();
+			if (selection != null && !selection.isEmpty()) { 
+				return new ShowInContext(null, new StructuredSelection(getSourceElement()));
+			}
+		}
+		return null;
+	}
 }
