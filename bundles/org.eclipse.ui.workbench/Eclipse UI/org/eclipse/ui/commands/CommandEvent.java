@@ -38,6 +38,8 @@ public final class CommandEvent {
 
     private boolean descriptionChanged;
 
+    private boolean handledChanged;
+
     private boolean imageBindingsChanged;
 
     private boolean keySequenceBindingsChanged;
@@ -63,6 +65,8 @@ public final class CommandEvent {
      *            true, iff the defined property changed.
      * @param descriptionChanged
      *            true, iff the description property changed.
+     * @param handledChanged
+     *            true, iff the handled property changed.
      * @param imageBindingsChanged
      *            true, iff the imageBindings property changed.
      * @param keySequenceBindingsChanged
@@ -80,7 +84,7 @@ public final class CommandEvent {
     public CommandEvent(ICommand command, boolean attributeValuesByNameChanged,
             boolean categoryIdChanged, boolean contextBindingsChanged,
             boolean definedChanged, boolean descriptionChanged,
-            boolean imageBindingsChanged, boolean keySequenceBindingsChanged,
+            boolean handledChanged, boolean imageBindingsChanged, boolean keySequenceBindingsChanged,
             boolean nameChanged, Map previousAttributeValuesByName) {
         if (command == null) throw new NullPointerException();
 
@@ -99,6 +103,7 @@ public final class CommandEvent {
         this.contextBindingsChanged = contextBindingsChanged;
         this.definedChanged = definedChanged;
         this.descriptionChanged = descriptionChanged;
+        this.handledChanged = handledChanged;
         this.imageBindingsChanged = imageBindingsChanged;
         this.keySequenceBindingsChanged = keySequenceBindingsChanged;
         this.nameChanged = nameChanged;
@@ -156,6 +161,15 @@ public final class CommandEvent {
         return descriptionChanged;
     }
 
+    /**
+     * Returns whether or not the handled property changed.
+     * 
+     * @return true, iff the handled property changed.
+     */
+    public boolean hasHandledChanged() {
+        return handledChanged;
+    }
+    
     /**
      * Returns whether or not the name property changed.
      * 

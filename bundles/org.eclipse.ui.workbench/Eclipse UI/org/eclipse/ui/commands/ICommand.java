@@ -91,6 +91,23 @@ public interface ICommand extends Comparable {
 
     /**
      * <p>
+     * Returns the identifier of the category of the command represented by this
+     * handle.
+     * </p>
+     * <p>
+     * Notification is sent to all registered listeners if this attribute
+     * changes.
+     * </p>
+     * 
+     * @return the identifier of the category of the command represented by this
+     *         handle. May be <code>null</code>.
+     * @throws NotDefinedException
+     *             if the command represented by this handle is not defined.
+     */
+    String getCategoryId() throws NotDefinedException;
+
+    /**
+     * <p>
      * Returns the list of activity bindings for this handle. This method will
      * return all activity bindings for this handle's identifier, whether or not
      * the command represented by this handle is defined.
@@ -106,23 +123,6 @@ public interface ICommand extends Comparable {
      *         <code>IActivityBinding</code>.
      */
     List getContextBindings();
-
-    /**
-     * <p>
-     * Returns the identifier of the category of the command represented by this
-     * handle.
-     * </p>
-     * <p>
-     * Notification is sent to all registered listeners if this attribute
-     * changes.
-     * </p>
-     * 
-     * @return the identifier of the category of the command represented by this
-     *         handle. May be <code>null</code>.
-     * @throws NotDefinedException
-     *             if the command represented by this handle is not defined.
-     */
-    String getCategoryId() throws NotDefinedException;
 
     /**
      * <p>
