@@ -441,26 +441,26 @@ public static void run(ISafeRunnable runnable) {
  * to receive notifications until is removed. 
  * </p>
  * 
- * @param listener the listener
+ * @param listener the listener to add
  * @see IPluginListener
  * @see IPluginEvent
  * @see #removePluginListener(IPluginListener)
  * @since 3.0
  */
-public static void addPluginListener(IPluginListener pluginListener) {
-	InternalPlatform.addPluginListener(pluginListener);
+public static void addPluginListener(IPluginListener listener) {
+	InternalPlatform.addPluginListener(listener);
 }
 /** 
  * Removes the given plugiin listener from the platform.
  * Has no effect if an identical listener is not registered.
  *
- * @param listener the listener
+ * @param listener the listener to remove
  * @see IPluginListener
  * @see #addPluginListener(IPluginListener)
  * @since 3.0
  */
-public static void removePluginListener(IPluginListener pluginListener) {
-	InternalPlatform.removePluginListener(pluginListener);
+public static void removePluginListener(IPluginListener listener) {
+	InternalPlatform.removePluginListener(listener);
 }
 /**
  * Installs any plug-ins and fragments found in the given URLs.
