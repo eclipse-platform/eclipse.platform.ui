@@ -62,17 +62,16 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 			return;
 		}
 		
-		AntStreamMonitor monitor = getMonitor(priority);
-		
 		StringBuffer fullMessage= new StringBuffer(System.getProperty("line.separator")); //$NON-NLS-1$
 		
-		if (event.getTask() != null && !fEmacsMode) {
+		if (event.getException() == null && event.getTask() != null && !fEmacsMode) {
 			adornMessage(event, fullMessage);
 		} else {
 			fullMessage.append(message);
 		}
 		message= fullMessage.toString();
 		
+		AntStreamMonitor monitor = getMonitor(priority);
 		monitor.append(message);
 		logMessageToLogFile(message, priority);
 	}
@@ -253,6 +252,8 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 				result.append(milliseconds);
 				result.append(AntSupportMessages.getString("AntProcessBuildLogger._milliseconds_6"));		 //$NON-NLS-1$
 			}
+			
+			result.append(System.getProperty("line.separator")); //$NON-NLS-1$
 			return result.toString();
 		}
 	
