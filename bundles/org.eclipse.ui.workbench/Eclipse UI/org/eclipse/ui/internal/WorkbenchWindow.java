@@ -894,6 +894,12 @@ public IActionBars getActionBars() {
 	return actionBars;
 }
 /**
+ * Returns the action builder for this window.
+ */
+/*package*/ final WorkbenchActionBuilder getActionBuilder() {
+	return actionBuilder;
+}
+/**
  * Returns the active page.
  *
  * @return the active page
@@ -1779,7 +1785,7 @@ public void updateTitle() {
 	}
 	if (workspaceLocation != null)
 		title = WorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] {workspaceLocation,title}); //$NON-NLS-1$
-		
+	
 	WorkbenchPage currentPage = getActiveWorkbenchPage();
 	if (currentPage != null) {
 		IEditorPart editor = currentPage.getActiveEditor();

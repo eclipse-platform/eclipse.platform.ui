@@ -30,6 +30,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IWorkspaceDescription;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -60,8 +62,10 @@ import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.OpenStrategy;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
@@ -95,6 +99,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.fonts.FontDefinition;
@@ -120,6 +125,12 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private WorkbenchConfigurationInfo configurationInfo;
 	private ListenerList windowListeners = new ListenerList();
 	private String[] commandLineArgs;
+	private final IPropertyChangeListener propertyChangeListener =
+		new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				handlePropertyChange(event);
+			}
+	};
 
 	private static final String VERSION_STRING[] = { "0.046", "2.0" }; //$NON-NLS-1$ //$NON-NLS-2$
 	private static final String DEFAULT_WORKBENCH_STATE_FILENAME = "workbench.xml"; //$NON-NLS-1$
@@ -692,6 +703,50 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	}
 		
 	/**
+	 * Listener for preference changes.
+	 */
+	private void handlePropertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(IPreferenceConstants.AUTO_BUILD)) {
+			// Auto build is stored in core. It is also in the preference 
+			// store for use by import/export.
+			IWorkspaceDescription description =	ResourcesPlugin.getWorkspace().getDescription();
+			boolean autoBuildSetting = description.isAutoBuilding();
+			boolean newAutoBuildSetting = getPreferenceStore().getBoolean(IPreferenceConstants.AUTO_BUILD);
+
+			if (autoBuildSetting != newAutoBuildSetting) {
+				// Update the core setting.
+				description.setAutoBuilding(newAutoBuildSetting);
+				autoBuildSetting = newAutoBuildSetting;
+				try {
+					ResourcesPlugin.getWorkspace().setDescription(description);
+				} catch (CoreException e) {
+					WorkbenchPlugin.log("Error changing auto build preference setting.", e.getStatus()); //$NON-NLS-1$
+				}
+
+				// If auto build is turned on, then do a global incremental
+				// build on all the projects.
+				if (newAutoBuildSetting) {
+					GlobalBuildAction action = new GlobalBuildAction(
+						getActiveWorkbenchWindow(),
+						IncrementalProjectBuilder.INCREMENTAL_BUILD);
+					action.doBuild();
+				}
+
+				// Update the menu/tool bars for each window.
+				Window[] wins = windowManager.getWindows();
+				for (int i = 0; i < wins.length; i++) {
+					if (autoBuildSetting) {
+						((WorkbenchWindow)wins[i]).getActionBuilder().removeManualIncrementalBuildAction();
+					} else {
+						((WorkbenchWindow)wins[i]).getActionBuilder().addManualIncrementalBuildAction();
+					}
+				}
+			}
+		}
+	}
+		
+
+	/**
 	 * Initializes the workbench.
 	 *
 	 * @return true if init succeeded.
@@ -742,6 +797,9 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		} finally {
 			UIStats.end(UIStats.RESTORE_WORKBENCH, "Workbench"); //$NON-NLS-1$
 		}
+
+		// Listen for auto build property change events
+		getPreferenceStore().addPropertyChangeListener(propertyChangeListener);
 
 		forceOpenPerspective(commandLineArgs);
 		getConfigurationInfo().openWelcomeEditors(getActiveWorkbenchWindow());

@@ -11,10 +11,8 @@ Contributors:
 
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionItem;
@@ -191,7 +189,6 @@ public class WorkbenchActionBuilder {
 	 * Hooks listeners on the preference store and the window's page, perspective and selection services.
 	 */
 	private void hookListeners() {
-
 		// Listen for preference property changes to
 		// update the menubar and toolbar
 		IPreferenceStore store =
@@ -1034,54 +1031,16 @@ public class WorkbenchActionBuilder {
 	 * Updates the menubar and toolbar when changes are made to the preferences.
 	 */
 	private void handlePropertyChange(PropertyChangeEvent event) {
-		// Allow manual incremental build only if the
-		// auto build setting is off.
 		IPreferenceStore store =
 			WorkbenchPlugin.getDefault().getPreferenceStore();
-		if (event.getProperty().equals(IPreferenceConstants.AUTO_BUILD)) {
-			// Auto build is stored in core. It is also in the preference store for use by import/export.
-			IWorkspaceDescription description =
-				ResourcesPlugin.getWorkspace().getDescription();
-			boolean autoBuildSetting = description.isAutoBuilding();
-			boolean newAutoBuildSetting =
-				store.getBoolean(IPreferenceConstants.AUTO_BUILD);
-
-			if (autoBuildSetting != newAutoBuildSetting) {
-				description.setAutoBuilding(newAutoBuildSetting);
-				autoBuildSetting = newAutoBuildSetting;
-				try {
-					ResourcesPlugin.getWorkspace().setDescription(description);
-				} catch (CoreException e) {
-					WorkbenchPlugin.log("Error changing autobuild pref", e.getStatus()); //$NON-NLS-1$
-				}
-
-				// If auto build is turned on, then do a global incremental
-				// build on all the projects.
-				if (newAutoBuildSetting) {
-					GlobalBuildAction action =
-						new GlobalBuildAction(
-							window,
-							IncrementalProjectBuilder.INCREMENTAL_BUILD);
-					action.doBuild();
-				}
-
-				if (autoBuildSetting)
-					removeManualIncrementalBuildAction();
-				else
-					addManualIncrementalBuildAction();
-			}
-		} else if (
-			event.getProperty().equals(
-				IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
+		if (event.getProperty().equals(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
 			if (store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN))
 				addPinEditorAction();
 			else
 				removePinEditorAction();
-		} else if (
-			event.getProperty().equals(IPreferenceConstants.REUSE_EDITORS)) {
+		} else if (event.getProperty().equals(IPreferenceConstants.REUSE_EDITORS)) {
 			pinEditorAction.updateState();
-		} else if (
-			event.getProperty().equals(IPreferenceConstants.RECENT_FILES)) {
+		} else if (event.getProperty().equals(IPreferenceConstants.RECENT_FILES)) {
 			Workbench wb = (Workbench) (Workbench) getWindow().getWorkbench();
 			int newValue = store.getInt(IPreferenceConstants.RECENT_FILES);
 			wb.getEditorHistory().reset(newValue);
@@ -1153,7 +1112,7 @@ public class WorkbenchActionBuilder {
 	 * Add the manual incremental build action
 	 * to both the menu bar and the tool bar.
 	 */
-	private void addManualIncrementalBuildAction() {
+	protected void addManualIncrementalBuildAction() {
 		MenuManager menubar = getWindow().getMenuBarManager();
 		IMenuManager manager =
 			menubar.findMenuUsingPath(IWorkbenchActionConstants.M_PROJECT);
@@ -1171,7 +1130,7 @@ public class WorkbenchActionBuilder {
 		}
 		addManualIncrementalBuildToolAction();
 	}
-	private void addManualIncrementalBuildToolAction() {
+	protected void addManualIncrementalBuildToolAction() {
 		IContributionManager cBarMgr = getWindow().getCoolBarManager();
 		CoolBarContributionItem coolBarItem = (CoolBarContributionItem) cBarMgr.find(IWorkbenchActionConstants.TOOLBAR_FILE);
 		if (coolBarItem == null) {
