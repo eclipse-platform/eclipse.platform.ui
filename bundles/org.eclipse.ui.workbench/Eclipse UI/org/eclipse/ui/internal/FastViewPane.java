@@ -52,7 +52,7 @@ public class FastViewPane {
 	//private Sash fastViewSash;
 	private ViewPane currentPane;
 	private Composite clientComposite;
-	private static final int SASH_SIZE = 5;
+	private static final int SASH_SIZE = 3;
 	private static final int MIN_FASTVIEW_SIZE = 10;
 	private int size;
 	//private WidgetHider hider;
