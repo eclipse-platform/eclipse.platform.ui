@@ -758,7 +758,7 @@ public final class Workbench implements IWorkbench {
 		}		
 		
         // begin the initialization of the activity, command, and context
-        // mangers
+        // managers
 
 		workbenchActivitySupport = new WorkbenchActivitySupport();
         workbenchCommandSupport = new WorkbenchCommandSupport(this);
