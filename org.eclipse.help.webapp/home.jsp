@@ -5,20 +5,6 @@
 	application.getRequestDispatcher("/servlet/org.eclipse.help.servlet.InitServlet").include(request,response);
 	
 %>
-<%
-	String title = WebappResources.getString("Bookshelf", request);
-	Tocs tocs = (Tocs)application.getAttribute("org.eclipse.help.tocs");
-	if (tocs == null)
-		return;
-	String tocHref = request.getParameter("toc");
-	Element selectedTOC = tocs.getToc(tocHref, request);
-	if (selectedTOC != null)
-	{
-		String label = selectedTOC.getAttribute("label");
-		if(label!=null && !"".equals(label))
-			title=label;
-	}
-%>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
@@ -48,7 +34,7 @@
 <body>
 
 <div id="bannerTitle" style="background:ActiveBorder; width:100%; position:absolute; left:10; top:20; font: 14pt Tahoma;">
-	<%=title%>
+	<%=request.getParameter("title") != null ?request.getParameter("title") : WebappResources.getString("Bookshelf", request)%>
 </div>
 </body>
 </html>

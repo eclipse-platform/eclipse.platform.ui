@@ -155,20 +155,20 @@ function doAdvancedSearch()
  <div id="booksContainer" >
  		<div style="height:20px; margin-top:-5px; padding-top:10px; padding-bottom:5px; "><%=WebappResources.getString("Select", request)%></div>
   		
- <% 
-	Tocs tocs = (Tocs)application.getAttribute("org.eclipse.help.tocs");
-	if (tocs == null)
-		return;
-	
-	Element[] tocNodes = tocs.getTocs(request);
-	for (int i=0; i<tocNodes.length; i++)
-	{
-		String label = tocNodes[i].getAttribute("label");
-		String id = tocNodes[i].getAttribute("href");
+<% 
+ContentUtil content = new ContentUtil(application, request);
+Element tocsElement = content.loadTocs();
+if (tocsElement == null) return;
+NodeList tocs = tocsElement.getElementsByTagName("toc");
+for (int i=0; i<tocs.getLength(); i++)
+{
+	Element toc = (Element)tocs.item(i);
+	String label = toc.getAttribute("label");
+	String id = toc.getAttribute("href");
 %>
 		<div class='book'><input class="checkbox" type="checkbox" name="<%=id%>" ><%=label%></div>
 <%
-	}		
+}		
 %>
  </div>
   				

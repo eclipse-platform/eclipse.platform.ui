@@ -263,6 +263,10 @@ function onloadHandler(toc, title)
 {
 	tocTitle = title;
 	parent.parent.setToolbarTitle(title);
+	
+	// clear the content page
+	parent.parent.MainFrame.location="home.jsp?title="+title;
+
 }
 
 

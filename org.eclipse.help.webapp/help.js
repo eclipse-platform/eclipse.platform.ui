@@ -140,7 +140,7 @@ function showBookshelf()
 function loadTOC(tocId)
 {
 	// clear the content page
-	MainFrame.location="home.jsp?toc="+tocId;
+	//MainFrame.location="home.jsp?toc="+tocId;
 	
 	// navigate to this toc
 	NavFrame.toc.window.location.replace("toc.jsp?toc="+tocId);
