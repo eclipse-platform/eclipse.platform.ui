@@ -14,7 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -113,9 +112,6 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 			}
 			endOperation();
 		} catch (CVSException e) {
-			// TODO: errors may not be empty
-			throw new InvocationTargetException(e);
-		} catch (CoreException e) {
 			// TODO: errors may not be empty
 			throw new InvocationTargetException(e);
 		}
