@@ -98,13 +98,14 @@ public class EngineDescriptor {
 			String eclass = config.getAttribute(IHelpUIConstants.ATT_CLASS);
 			if (eclass!=null) {
 				try {
-					Object obj = config.createExecutableExtension(eclass);
+					Object obj = config.createExecutableExtension(IHelpUIConstants.ATT_CLASS);
 					if (obj instanceof ISearchEngine) {
 						engine = (ISearchEngine)obj;
 					}
 				}
 				catch (CoreException e) {
 					// Handle this
+                    e.printStackTrace();
 				}
 			}
 		}
