@@ -176,6 +176,11 @@ public abstract class Request {
 					if (consoleListener != null) consoleListener.messageLineReceived(argument);
 				}
 			} else if (response.equals("E")) { //$NON-NLS-1$
+				if (listener == null) {
+					// we need to report the error properly (bug 20729)
+					CVSProviderPlugin.log(new CVSStatus(IStatus.ERROR, "Valid requests operation failed: " + argument)); //$NON-NLS-1$
+					throw new CVSException(new CVSStatus(IStatus.ERROR, Policy.bind("CVSProvider.exception"))); //$NON-NLS-1$
+				}
 				IStatus status = listener.errorLine(argument, session.getLocalRoot(), monitor);
 				if (status != ICommandOutputListener.OK) accumulatedStatus.add(status);
 				if (session.isOutputToConsole()) {
