@@ -442,6 +442,7 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 		tableViewer.addDropSupport(ops, transfers, new HistoryDropAdapter(tableViewer, this));
 	}
 	private void fillTableMenu(IMenuManager manager) {
+		if (tableViewer.getInput() == null) return;
 		// file actions go first (view file)
 		manager.add(new Separator(IWorkbenchActionConstants.GROUP_FILE));
 		if (file != null) {

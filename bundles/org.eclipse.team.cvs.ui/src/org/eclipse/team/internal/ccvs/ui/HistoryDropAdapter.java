@@ -55,28 +55,7 @@ public class HistoryDropAdapter extends ViewerDropAdapter {
 		if (sources.length == 0) return false;
 		IResource resource = sources[0];
 		if (!(resource instanceof IFile)) return false;
-		try {
-			ITeamProvider teamProvider = TeamPlugin.getManager().getProvider(resource);
-			if (teamProvider == null) return false;
-			if (!(teamProvider instanceof CVSTeamProvider)) return false;
-			CVSTeamProvider cvsProvider = (CVSTeamProvider)teamProvider;
-			ICVSRemoteFile file = (ICVSRemoteFile)cvsProvider.getRemoteResource(resource);
-			if (file == null) return false;
-			view.showHistory(file);
-		} catch (TeamException e) {
-			return false;
-		}
-/*		try {
-			IVersionHistory history = getHistory(resource);
-			if (history == null) {
-				MessageDialog.openInformation(getViewer().getControl().getShell(), WorkbenchVCMPlugin.getResourceString("BrowseHistoryAction.noHistoryShort"), WorkbenchVCMPlugin.getResourceString("BrowseHistoryAction.noHistoryLong"));
-				return false;
-			}
-			view.showHistory(history);
-		} catch (CoreException e) {
-			// Log this error
-			return false;
-		}*/
+		view.showHistory(resource);
 		return true;
 	}
 	public boolean validateDrop(Object target, int operation, TransferData transferType) {
