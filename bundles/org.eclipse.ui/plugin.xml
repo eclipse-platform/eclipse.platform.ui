@@ -19,8 +19,10 @@
       <import plugin="org.eclipse.swt" export="true"/>
       <import plugin="org.eclipse.text" export="true"/>
       <import plugin="org.eclipse.jface" export="true"/>
+      <import plugin="org.eclipse.jface.text" export="true"/>
       <import plugin="org.eclipse.ui.views" export="true"/>
       <import plugin="org.eclipse.ui.workbench" export="true"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor" export="true"/>
       <import plugin="org.eclipse.ui.editors" export="true"/>
    </requires>
 

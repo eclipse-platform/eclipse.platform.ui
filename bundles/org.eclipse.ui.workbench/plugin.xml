@@ -17,6 +17,7 @@
       <import plugin="org.eclipse.update.core"/>
       <import plugin="org.eclipse.help"/>
       <import plugin="org.eclipse.jface"/>
+      <import plugin="org.eclipse.jface.text"/>
    </requires>
 
 
