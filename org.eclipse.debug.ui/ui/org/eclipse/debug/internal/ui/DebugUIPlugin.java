@@ -836,9 +836,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		protected void buttonPressed(int id) {
 			if (id == 2) { // Always
 				fResult= AlwaysNeverDialog.ALWAYS;
+			} else if (id == 3) {
+				fResult = AlwaysNeverDialog.NEVER;
 			} else {
 				fResult= AlwaysNeverDialog.PROMPT;
-			}
+			} 
+				
 			
 			if (fStore != null && fPreferenceKey != null) {
 				fStore.setValue(fPreferenceKey, fResult);
