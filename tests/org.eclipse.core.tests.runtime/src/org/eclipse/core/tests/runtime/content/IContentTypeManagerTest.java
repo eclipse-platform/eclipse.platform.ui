@@ -371,6 +371,7 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		TestRegistryChangeListener listener = new TestRegistryChangeListener(Platform.PI_RUNTIME, ContentTypeBuilder.PT_CONTENTTYPES, null, null);
 		registerListener(listener, Platform.PI_RUNTIME);
 		Bundle installed = installBundle("content/bundle01");
+		assertEquals("1.4", Bundle.INSTALLED, installed.getState());
 		refreshPackages(new Bundle[] {installed});
 		try {
 			IRegistryChangeEvent event = listener.getEvent(10000);

@@ -30,6 +30,7 @@ public class PluginCompatibilityTests extends DynamicPluginTest {
 		Bundle installed = null;
 		assertNull("0.0", getBundles("bundle01", "1.0"));
 		installed = installBundle("compatibility/bundle01");
+		assertEquals("0.5", Bundle.INSTALLED, installed.getState());		
 		refreshPackages(new Bundle[] {installed});
 		try {
 			assertEquals("1.0", "bundle01", installed.getSymbolicName());
