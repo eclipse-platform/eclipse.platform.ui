@@ -5,7 +5,9 @@
 package org.eclipse.help.servlet;
 import java.io.*;
 
-public class URLCoder {
+import javax.servlet.http.HttpServletRequest;
+
+public class UrlUtil {
 	public static String encode(String s) {
 		try {
 			return urlEncode(s.getBytes("UTF8"));
@@ -113,5 +115,22 @@ public class URLCoder {
 
 		}
 		return buf.toString();
+	}
+	/**
+	 * Obtains parameter from request.
+	 * request.getParameter() returns incorrect string
+	 * for non ASCII queries encoded from UTF-8 bytes
+	 */
+	public static String getRequestParameter(HttpServletRequest request, String parameterName){
+		String query=request.getQueryString();
+		if(query==null)
+			return null;
+		int start=query.indexOf(parameterName+"=")+parameterName.length()+1;
+		if(start<0)
+			return null;
+		int end=query.indexOf("&", start);
+		if(end<=0)
+			end=query.length();
+		return UrlUtil.decode(query.substring(start, end));
 	}
 }

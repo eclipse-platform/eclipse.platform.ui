@@ -166,17 +166,17 @@ public class EclipseConnector {
 		// we only insert css for ie
 		if (ie) {
 			if (uri != null && (uri.endsWith("html") || uri.endsWith("htm"))) {
-				if (req.getParameter("resultof") != null)
+				if (UrlUtil.getRequestParameter(req, "resultof") != null)
 					return new IFilter[] {
 						cssFilter,
-						new HighlightFilter(req.getParameter("resultof"))};
+						new HighlightFilter(UrlUtil.getRequestParameter(req, "resultof"))};
 				else
 					return basicFilters;
 			} else
 				return noFilters;
 		} else {
-			if (req.getParameter("resultof") != null)
-				return new IFilter[] { new HighlightFilter(req.getParameter("resultof"))};
+			if (UrlUtil.getRequestParameter(req, "resultof") != null)
+				return new IFilter[] { new HighlightFilter(UrlUtil.getRequestParameter(req, "resultof"))};
 			else
 				return noFilters;
 		}
