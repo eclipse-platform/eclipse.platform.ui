@@ -6,35 +6,39 @@ package org.eclipse.search.internal.ui;
 import java.util.Collections;
 import java.util.Iterator;
 
-import org.eclipse.search.ui.SearchUI;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
-import org.eclipse.ui.IViewActionDelegate;
-import org.eclipse.ui.IViewPart;
+public class CopyToClipboardAction extends Action {
 
-public class CopyToClipboardActionDelegate implements IViewActionDelegate {
+	SearchResultLabelProvider fLabelProvider;
+	SearchResultViewer fViewer;
 	
-	public CopyToClipboardActionDelegate() {
+	public CopyToClipboardAction(SearchResultViewer viewer) {
+		Assert.isNotNull(viewer);
+		Assert.isTrue(viewer.getLabelProvider() instanceof SearchResultLabelProvider);
+		fLabelProvider= (SearchResultLabelProvider)viewer.getLabelProvider();
+		fViewer= viewer;
+		setText(SearchMessages.getString("CopyToClipboardAction.label")); //$NON-NLS-1$
+		setToolTipText(SearchMessages.getString("CopyToClipboardAction.tooltip")); //$NON-NLS-1$
 	}
 
 	/*
-	 * Implements method from IActionDelegate
+	 * Implements method from IAction
 	 */	
-	public void run(IAction action) {
+	public void run() {
 		Shell shell= SearchPlugin.getActiveWorkbenchShell();
 		if (shell == null)
 			return;
 		
-		ILabelProvider labelProvider= SearchUI.getSearchResultView().getLabelProvider();
 		String lineDelim= System.getProperty("line.separator"); //$NON-NLS-1$
 		StringBuffer buf= new StringBuffer();
 		Iterator iter= getSelection();
@@ -42,31 +46,17 @@ public class CopyToClipboardActionDelegate implements IViewActionDelegate {
 			if (buf.length() > 0) {
 				buf.append(lineDelim);
 			}
-			buf.append(labelProvider.getText(iter.next()));
+			buf.append(fLabelProvider.getText(iter.next()));
 		}
 		
 		if (buf.length() > 0)
 			copyToClipbard(shell.getDisplay(), buf.toString());
 	}
 
-	/*
-	 * Implements method from IViewActionDelegate
-	 */
-	public void init(IViewPart view) {
-	}
-
-	/*
-	 * Implements method from IActionDelegate
-	 */
-	public void selectionChanged(IAction action, ISelection selection) {
-	}
-	
 	private Iterator getSelection() {
-		if (SearchPlugin.getActivePage() != null) {
-			ISelection s= SearchPlugin.getActivePage().getSelection();
-			if (s instanceof IStructuredSelection)
-				return ((IStructuredSelection)s).iterator();
-		}
+		ISelection s= fViewer.getSelection();
+		if (s instanceof IStructuredSelection)
+			return ((IStructuredSelection)s).iterator();
 		return Collections.EMPTY_LIST.iterator();
 	}
 

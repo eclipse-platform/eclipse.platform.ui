@@ -59,6 +59,7 @@ class SearchResultViewer extends TableViewer {
 	private RemoveMatchAction fRemoveMatchAction;
 	private SortDropDownAction fSortDropDownAction;
 	private SearchDropDownAction fSearchDropDownAction;
+	private CopyToClipboardAction fCopyToClipboardAction;
 	private int fMarkerToShow;
 	
 	/*
@@ -97,6 +98,7 @@ class SearchResultViewer extends TableViewer {
 		fSortDropDownAction.setEnabled(getItemCount() > 0);
 		fSearchDropDownAction= new SearchDropDownAction(this);
 		fSearchDropDownAction.setEnabled(hasSearch);
+		fCopyToClipboardAction= new CopyToClipboardAction(this);
 
 		addSelectionChangedListener(
 			new ISelectionChangedListener() {
@@ -213,6 +215,7 @@ class SearchResultViewer extends TableViewer {
 			fgContextMenuContributor.fill(menu, this);
 		
 		if (!getSelection().isEmpty()) {
+			menu.appendToGroup(IContextMenuConstants.GROUP_ADDITIONS, fCopyToClipboardAction);
 			menu.appendToGroup(IContextMenuConstants.GROUP_GOTO, fGotoMarkerAction);
 			if (enableRemoveMatchMenuItem())
 				menu.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, fRemoveMatchAction);

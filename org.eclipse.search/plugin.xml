@@ -70,20 +70,6 @@
 	</view>
 </extension>
 
-<extension point="org.eclipse.ui.popupMenus">
-	<viewerContribution
-		id="org.eclipse.search.CopyToClipboardActionContribution"
-		targetID="org.eclipse.search.SearchResultView">
-		<action 	id="org.eclipse.search.CopyToClipboardAction"
-			menubarPath="additions"
-			label="%CopyToClipboardAction.label"
-			tooltip="%CopyToClipboardAction.tooltip"
-			class="org.eclipse.search.internal.ui.CopyToClipboardActionDelegate"
-			enablesFor="+">
-		</action>
-	</viewerContribution>
-</extension>
-
 <extension point="org.eclipse.search.searchPages">
 	<page
 		id="org.eclipse.search.internal.ui.text.TextSearchPage"

@@ -229,7 +229,7 @@ public class ScopePart {
 		} else {
 			// test if selected working set has been removed
 			if (!Arrays.asList(WorkingSet.getWorkingSets()).contains(fWorkingSet)) {
-				fWorkingSetText.setText("");
+				fWorkingSetText.setText(""); //$NON-NLS-1$
 				fWorkingSet= null;
 			}
 		}

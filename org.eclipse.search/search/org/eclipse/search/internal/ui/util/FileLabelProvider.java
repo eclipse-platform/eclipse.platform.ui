@@ -25,7 +25,7 @@ public class FileLabelProvider extends LabelProvider {
 	public static final int SHOW_PATH_LABEL= 3;
 	public static final int SHOW_PATH= 4;
 	
-	private static final String fgSeparatorFormat= SearchMessages.getString("FileLabelProvider.dashSeparated");
+	private static final String fgSeparatorFormat= SearchMessages.getString("FileLabelProvider.dashSeparated"); //$NON-NLS-1$
 	
 	private int fOrder;
 	private String[] fArgs= new String[2];
@@ -65,7 +65,7 @@ public class FileLabelProvider extends LabelProvider {
 			if (path != null)
 				pathString= path.toString();
 			else
-				pathString= "";
+				pathString= ""; //$NON-NLS-1$
 			if (fOrder == SHOW_PATH_LABEL) {
 				fArgs[0]= pathString;
 				fArgs[1]= fWorkbenchLabelProvider.getText(resource);
