@@ -128,6 +128,7 @@ public class ContextAndHandlerManager implements IContextResolver {
 	private IHandlerService workbenchWindowHandlerService;
 	private Map contextsByCommand;
 	private IContextManager contextManager;
+	private boolean start = false;
 
 	public ContextAndHandlerManager(WorkbenchWindow workbenchWindow) {
 		super();
@@ -191,11 +192,13 @@ public class ContextAndHandlerManager implements IContextResolver {
 			if (this.activeWorkbenchPartHandlerService != null)
 				this.activeWorkbenchPartHandlerService.addHandlerServiceListener(handlerServiceListener);
 				
+			start = true;
 			update();				
 		}
 	}
 
 	private void shellEvent() {
+		start = true;
 		update();
 	}
 
@@ -302,7 +305,10 @@ public class ContextAndHandlerManager implements IContextResolver {
 		while (iterator.hasNext())
 			accelerators[i++] = ((Stroke) iterator.next()).getValue();
 		
-		if ((acceleratorMenu == null || acceleratorMenu.isDisposed()) && workbenchWindow != null && workbenchWindow.getShell() != null && workbenchWindow.getShell().getMenuBar() != null) {		
+		if (!start)
+			return;
+		
+		if (acceleratorMenu == null || acceleratorMenu.isDisposed()) {		
 			Menu parent = workbenchWindow.getShell().getMenuBar();
 			
 			if (parent == null || parent.getItemCount() < 1)
@@ -310,10 +316,7 @@ public class ContextAndHandlerManager implements IContextResolver {
 			
 			MenuItem parentItem = parent.getItem(parent.getItemCount() - 1);
 			parent = parentItem.getMenu();
-			
-			if (parent == null)
-				return;
-			
+				
 			if (acceleratorMenu != null)
 				acceleratorMenu.dispose();
 			
@@ -339,25 +342,18 @@ public class ContextAndHandlerManager implements IContextResolver {
 			});
 		}
 
-		if (acceleratorMenu != null) {
-			acceleratorMenu.setAccelerators(accelerators);		
+		acceleratorMenu.setAccelerators(accelerators);		
 	
-			if (size == 0)
-				acceleratorMenu.removeVerifyListener(verifyListener);
-			else
-				acceleratorMenu.addVerifyListener(verifyListener);
-		}
+		if (size == 0)
+			acceleratorMenu.removeVerifyListener(verifyListener);
+		else
+			acceleratorMenu.addVerifyListener(verifyListener);
 
 		ContextResolver.getInstance().setContextResolver(this);
-		
-		if (workbenchWindow != null) {
-			MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();
-		
-			if (menuManager != null)
-				menuManager.update(IAction.TEXT);
-		}
+		MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();
+		menuManager.update(IAction.TEXT);
 
-		/* TODO: coolbars are weird. make this work like it does for menus
+		/* TODO make this work like it does for menus
 		CoolBarManager coolBarManager = ((WorkbenchWindow) workbenchWindow).getCoolBarManager();
 		
 		if (coolBarManager != null)
