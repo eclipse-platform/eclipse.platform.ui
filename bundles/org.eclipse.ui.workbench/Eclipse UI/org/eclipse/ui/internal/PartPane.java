@@ -17,7 +17,6 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
@@ -54,7 +53,7 @@ public abstract class PartPane extends LayoutPart
 	private MenuManager paneMenuManager;
 	protected IWorkbenchPartReference partReference;
 	protected WorkbenchPage page;
-	protected ViewForm control;
+	protected Composite control;
 	
 	public static class Sashes {
 		public Sash left;
@@ -80,7 +79,7 @@ protected void createChildControl() {
 	if(part[0] == null)
 		return;
 
-	if(control == null || control.getContent() != null)
+	if(control == null)
 		return;
 	
 	final Composite content = new Composite(control, SWT.NONE);
@@ -116,7 +115,6 @@ protected void createChildControl() {
 			part[0] = newPart;
 		}
 	});
-	control.setContent(content);
 	page.addPart(partReference);
 	page.firePartOpened(part[0]);	
 }
@@ -138,14 +136,12 @@ public void createControl(Composite parent) {
 		return;
 
 	// Create view form.	
-	control = new ViewForm(parent, getStyle());
-//	ColorSchemeService.setControlColors(control);
+	control = new Composite(parent, SWT.NONE);
+	control.setLayout(new FillLayout());
 	// the part should never be visible by default.  It will be made visible 
 	// by activation.  This allows us to have views appear in tabs without 
 	// becoming active by default.
 	control.setVisible(false);
-	control.marginWidth = 0;
-	control.marginHeight = 0;
 
 	// Create a title bar.
 	createTitleBar();
@@ -211,57 +207,17 @@ public int getMinimumHeight() {
 	if (control == null || control.isDisposed())
 		return super.getMinimumHeight();
 	
-	/* compute title bar height; this should be done by computeTrim 
-	 * to correctly handle seperate top center.
-	 */
-	int leftHeight = 0;
-	if (control.getTopLeft() != null && !control.getTopLeft().isDisposed()) {
-		leftHeight = control.getTopLeft().computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-	}
-	int centerHeight = 0;
-	if (control.getTopCenter() != null && !control.getTopCenter().isDisposed()) {
-		centerHeight = control.getTopCenter().computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-	}
-	int rightHeight = 0;
-	if (control.getTopRight() != null && !control.getTopRight().isDisposed()) {
-		rightHeight = control.getTopRight().computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-	}
-	
-	int topHeight = Math.max(leftHeight, Math.max(centerHeight, rightHeight));
-	
 	// account for the borders
-	topHeight = control.computeTrim(0, 0, 0, topHeight).height;
-	
-	return topHeight;
+	return control.computeTrim(0, 0, 0, 0).height;
 }
 
-/**
- * Returns the top level SWT Canvas of this Pane. 
- */
-protected ViewForm getPane() {
-	return control;
-}
 /**
  * Answer the part child.
  */
 public IWorkbenchPartReference getPartReference() {
 	return partReference;
 }
-/**
- * Answer the SWT widget style.
- */
-int getStyle() {
-	if (hasBorder())
-		return SWT.BORDER;
-	else
-		return SWT.NONE;
-}
-/**
- * Get the view form.
- */
-protected ViewForm getViewForm() {
-	return control;
-}
+
 /**
  * @see Listener
  */
@@ -294,12 +250,6 @@ protected void requestActivation() {
  */
 public void setContainer(ILayoutContainer container) {
 	super.setContainer(container);
-	if (control != null)
-		control.setBorderVisible(hasBorder());
-}
-
-protected boolean hasBorder() {
-	return container != null && container.allowsBorder();
 }
 
 /**

@@ -136,7 +136,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		if (part[0] == null)
 			return;
 
-		if (control == null || control.getContent() != null)
+		if (control == null)
 			return;
 
 		super.createChildControl();
