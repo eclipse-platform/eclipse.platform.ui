@@ -34,6 +34,38 @@ protected void tearDown() throws Exception {
 	ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
 	super.tearDown();
 }
+public void testChangeCase() {
+	IProject project = getWorkspace().getRoot().getProject("Project");
+	IFolder before = project.getFolder("folder");
+	IFolder after = project.getFolder("Folder");
+	IFile beforeFile = before.getFile("file");
+	IFile afterFile= after.getFile("file");
+
+	// create the resources and set some content in a file that will be moved.
+	ensureExistsInWorkspace(before, true);
+	try {
+		beforeFile.create(getRandomContents(), false, getMonitor());
+	} catch (CoreException e) {
+		fail("0.99", e);
+	}
+
+	// Be sure the resources exist and then move them.
+	assertExistsInWorkspace("1.0", before);
+	assertExistsInWorkspace("1.1", beforeFile);
+	assertDoesNotExistInWorkspace("1.2", after);
+	assertDoesNotExistInWorkspace("1.3", afterFile);
+	try {
+		before.move(after.getFullPath(), IResource.NONE, getMonitor());
+	} catch (CoreException e) {
+		fail("1.99", e);
+	}
+	
+	assertDoesNotExistInWorkspace("1.2", before);
+	assertDoesNotExistInWorkspace("1.3", beforeFile);
+	assertExistsInWorkspace("1.0", after);
+	assertExistsInWorkspace("1.1", afterFile);
+
+}
 public void testFolderCreation() throws Exception {
 	// basic folder creation
 	IProject project = getWorkspace().getRoot().getProject("Project");
