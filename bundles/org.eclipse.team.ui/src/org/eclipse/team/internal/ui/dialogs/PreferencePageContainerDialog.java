@@ -149,12 +149,9 @@ public class PreferencePageContainerDialog extends Dialog implements IPreference
 	/**
 	 * @see Dialog#createDialogArea(Composite)
 	 */
-	protected Control createDialogArea(Composite parent) {
-		Font font = parent.getFont();
-		
+	protected Control createDialogArea(Composite parent) {		
 		Composite composite = (Composite)super.createDialogArea(parent);
 		((GridLayout) composite.getLayout()).numColumns = 1;
-		composite.setFont(font);
 		
 		// Build the title area and separator line
 		Composite titleComposite = new Composite(composite, SWT.NONE);
@@ -165,7 +162,6 @@ public class PreferencePageContainerDialog extends Dialog implements IPreference
 		layout.horizontalSpacing = 0;
 		titleComposite.setLayout(layout);
 		titleComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		titleComposite.setFont(font);
 		
 		createTitleArea(titleComposite);
 	
@@ -187,7 +183,7 @@ public class PreferencePageContainerDialog extends Dialog implements IPreference
 		gd.horizontalSpan = 2;
 		separator.setLayoutData(gd);
 	
-		applyDialogFont(composite);
+		applyDialogFont(parent);
 		return composite;
 	}
 	
@@ -218,7 +214,6 @@ public class PreferencePageContainerDialog extends Dialog implements IPreference
 		GridData layoutData = new GridData(GridData.FILL_BOTH);
 		fTitleArea.setLayout(layout);
 		fTitleArea.setLayoutData(layoutData);
-		fTitleArea.setFont(font);
 		fTitleArea.setBackground(bg);
 	
 		// Message label
@@ -265,7 +260,6 @@ public class PreferencePageContainerDialog extends Dialog implements IPreference
 	private Composite createPageContainer(Composite parent) {
 		Composite result = new Composite(parent, SWT.NULL);
 		result.setLayout(new PageLayout());
-		result.setFont(parent.getFont());
 		return result;
 	}
 

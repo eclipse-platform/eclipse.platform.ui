@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ui.wizards;
 
 import java.io.File;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
@@ -104,6 +105,7 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 		createWorkinSetCreationArea(inner, 3);
 		setControl(composite);
 		updateEnablement();
+        Dialog.applyDialogFont(parent);
 	}
 
 	/**

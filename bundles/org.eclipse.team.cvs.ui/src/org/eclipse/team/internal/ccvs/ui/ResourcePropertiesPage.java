@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -67,6 +68,7 @@ public class ResourcePropertiesPage extends PropertyPage {
 		} catch (TeamException e) {
 			createPair(composite, Policy.bind("ResourcePropertiesPage.error"), e.getMessage()); //$NON-NLS-1$
 		}
+        Dialog.applyDialogFont(parent);
 		return composite;
 	}
 

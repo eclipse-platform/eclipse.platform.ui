@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ui.target;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -146,6 +147,7 @@ public class SiteSelectionPage extends TargetWizardPage {
 
 		setControl(composite);
 		initializeValues();
+        Dialog.applyDialogFont(parent);
 	}
 
 	/**

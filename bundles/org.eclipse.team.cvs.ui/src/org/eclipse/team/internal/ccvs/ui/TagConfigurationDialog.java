@@ -160,6 +160,8 @@ public class TagConfigurationDialog extends Dialog {
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
 		gridLayout.makeColumnsEqualWidth = true;
+        gridLayout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+        gridLayout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);        
 		shell.setLayout (gridLayout);
 		
 		Composite comp = new Composite(shell, SWT.NULL);
@@ -424,6 +426,7 @@ public class TagConfigurationDialog extends Dialog {
 		WorkbenchHelp.setHelp(shell, IHelpContextIds.TAG_CONFIGURATION_OVERVIEW);
 
 		updateEnablements();
+        Dialog.applyDialogFont(parent);
 		return shell;
 	}
 	
@@ -686,8 +689,9 @@ public class TagConfigurationDialog extends Dialog {
 		data = new GridData();
 		if(hHint!=0 && wHint!=0) {
 			data.heightHint = hHint;
-			int widthHint = wHint;
-			data.widthHint = Math.max(widthHint, refreshButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+			//don't crop labels with large font
+			//int widthHint = wHint;
+			//data.widthHint = Math.max(widthHint, refreshButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		}
 		data.horizontalAlignment = GridData.END;
 		data.horizontalSpan = 1;
@@ -698,8 +702,9 @@ public class TagConfigurationDialog extends Dialog {
 		data = new GridData ();
 		if(hHint!=0 && wHint!=0) {
 			data.heightHint = hHint;
-			int widthHint = wHint;
-			data.widthHint = Math.max(widthHint, addButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+			//don't crop labels with large font
+			//int widthHint = wHint;
+			//data.widthHint = Math.max(widthHint, addButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		}
 		data.horizontalAlignment = GridData.END;
 		data.horizontalSpan = 1;
@@ -761,8 +766,9 @@ public class TagConfigurationDialog extends Dialog {
 	private GridData getStandardButtonData(Button button) {
 		GridData data = new GridData();
 		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+        //don't crop labels with large font
+		//int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		//data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		return data;
 	}
 

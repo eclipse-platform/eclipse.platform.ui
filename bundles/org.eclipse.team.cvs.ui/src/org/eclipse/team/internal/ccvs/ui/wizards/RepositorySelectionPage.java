@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -113,6 +114,7 @@ public class RepositorySelectionPage extends CVSWizardPage {
 		setControl(composite);
 
 		initializeValues();
+        Dialog.applyDialogFont(parent);
 	}
 	/**
 	 * Initializes states of the controls.

@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ui.target;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
@@ -77,7 +78,7 @@ public class ProjectTargetMappingPropertiesPage extends PropertyPage {
 				refreshInfo();
 			}
 		});
-
+        Dialog.applyDialogFont(parent);
 		return container;
 	}
 

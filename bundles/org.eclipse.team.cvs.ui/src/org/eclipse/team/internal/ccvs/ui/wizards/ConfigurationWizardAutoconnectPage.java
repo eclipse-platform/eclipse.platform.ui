@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
 
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -102,6 +103,7 @@ public class ConfigurationWizardAutoconnectPage extends CVSWizardPage {
 			}
 		});
 		check.setSelection(true);		
+		Dialog.applyDialogFont(parent);	
 	}
 	
 	public FolderSyncInfo getFolderSyncInfo() {

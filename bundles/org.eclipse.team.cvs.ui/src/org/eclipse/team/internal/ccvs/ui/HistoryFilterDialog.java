@@ -60,6 +60,8 @@ public class HistoryFilterDialog extends Dialog {
 		Composite topLevel = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
+        layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+        layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
 		topLevel.setLayout(layout);
 		
 		//"and" and "or" search radio buttons
@@ -158,7 +160,7 @@ public class HistoryFilterDialog extends Dialog {
 		
 		// set F1 help
 		WorkbenchHelp.setHelp(topLevel, IHelpContextIds.HISTORY_FILTER_DIALOG);
-		
+        Dialog.applyDialogFont(parent);
 		return topLevel;
 	}
 	void initializeValues() {

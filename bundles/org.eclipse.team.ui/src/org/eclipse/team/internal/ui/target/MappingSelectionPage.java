@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -123,6 +124,7 @@ public class MappingSelectionPage extends TargetWizardPage {
 		setViewerInput();
 		setControl(composite);
 		setPageComplete(true);
+        Dialog.applyDialogFont(p);
 	}
 	
 	private IRemoteTargetResource getSelectedRemoteFolder(IStructuredSelection selection) {		

@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -128,6 +129,7 @@ public class KSubstWizardSelectionPage extends CVSWizardPage {
 			}
 		}
 		updateEnablements();
+        Dialog.applyDialogFont(parent);
 	}
 	
 	/**

@@ -42,7 +42,6 @@ public class EditorsDialog extends Dialog {
 	public EditorsDialog(Shell shell, EditorsInfo[] infos) {
 		super(shell);
 		editorsInfo = infos;
-		
 	}
 
 	protected Control createDialogArea(Composite container) {
@@ -59,6 +58,8 @@ public class EditorsDialog extends Dialog {
 		// set F1 help
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.EDITORS_DIALOG);
 		
+		Dialog.applyDialogFont(parent);
+
 		return parent;
 	}
 	/**
@@ -67,9 +68,7 @@ public class EditorsDialog extends Dialog {
 	 */
 	private void createMessageArea(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
-		label.setText(Policy.bind("EditorsDialog.question")); //$NON-NLS-1$
-		label.setFont(parent.getFont());
-		
+		label.setText(Policy.bind("EditorsDialog.question")); //$NON-NLS-1$		
 	}
 	
 }

@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -38,5 +39,6 @@ public class SharingWizardFinishPage extends CVSWizardPage {
 		data.widthHint = 350;
 		label.setLayoutData(data);
 		setControl(composite);
+        Dialog.applyDialogFont(parent);
 	}
 }

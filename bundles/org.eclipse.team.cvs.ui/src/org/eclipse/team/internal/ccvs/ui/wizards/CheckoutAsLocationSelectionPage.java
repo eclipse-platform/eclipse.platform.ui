@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -126,6 +127,7 @@ public class CheckoutAsLocationSelectionPage extends CVSWizardPage {
 			}
 		};
 		useDefaultsButton.addSelectionListener(listener);
+        Dialog.applyDialogFont(parent);
 	}
 	
 	/**

@@ -16,6 +16,7 @@ import java.util.Date;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -100,6 +101,7 @@ public class CVSFilePropertiesPage extends CVSPropertiesPage {
 			createLabel(composite, ""); //$NON-NLS-1$
 		}
 		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.FILE_PROPERTY_PAGE);
+        Dialog.applyDialogFont(parent);
 		return composite;
 	}
 	/**

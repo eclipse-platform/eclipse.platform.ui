@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -111,6 +112,7 @@ public class CVSFolderPropertiesPage extends CVSPropertiesPage {
 			createLabel(composite, Policy.bind("CVSFilePropertiesPage.error"), 2); //$NON-NLS-1$
 		}
 		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.FOLDER_PROPERTY_PAGE);
+        Dialog.applyDialogFont(parent);
 		return composite;
 	}
 

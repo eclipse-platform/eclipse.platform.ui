@@ -17,7 +17,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -25,7 +24,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
@@ -36,7 +34,6 @@ public class AlternateUserValidationDialog extends Dialog {
 	String user;
 	String password = ""; //$NON-NLS-1$
 	List numXs = new ArrayList();
-	Font font;
 	Label icon1;
 	Label icon2;
 	Label icon3;
@@ -90,7 +87,6 @@ public class AlternateUserValidationDialog extends Dialog {
 		data.widthHint = 250;
 		passwordText.setLayoutData(data);
 		
-		passwordText.setFont(font);
 		passwordText.addVerifyListener(new VerifyListener() {
 			public void verifyText(VerifyEvent e) {
 				if (inUpdate) return;
@@ -160,13 +156,12 @@ public class AlternateUserValidationDialog extends Dialog {
 				cancelPressed();
 			}
 		});
-		
+        Dialog.applyDialogFont(parent);
 		return main;
 	}
 
 	public boolean close() {
 		boolean result = super.close();
-		if (font != null) font.dispose();
 		if (images != null) {
 			for (int i = 0; i < images.length; i++) {
 				images[i].dispose();
@@ -207,7 +202,6 @@ public class AlternateUserValidationDialog extends Dialog {
 		if (System.getProperty("os.name").indexOf("Windows") != -1) { //$NON-NLS-1$ //$NON-NLS-2$
 			fd.setName("Microsoft Sans Serif"); //$NON-NLS-1$
 		}
-		font = new Font(Display.getDefault(), fd);
 	}
 	void updateImages() {
 		icon1.setImage(getImage());

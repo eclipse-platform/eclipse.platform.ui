@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -152,6 +153,7 @@ public class CheckoutAsProjectSelectionPage extends CVSWizardPage {
 		initializeValues();
 		updateWidgetEnablements();
 		tree.getControl().setFocus();
+        Dialog.applyDialogFont(parent);
 	}
 
 	/**

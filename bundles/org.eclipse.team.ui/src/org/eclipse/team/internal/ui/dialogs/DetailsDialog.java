@@ -143,7 +143,6 @@ abstract public class DetailsDialog extends Dialog {
 			layout.numColumns = 2;
 			top.setLayout(layout);
 			top.setLayoutData(new GridData(GridData.FILL_BOTH));
-			top.setFont(parent.getFont());
 		
 			// add the image to the left of the composite
 			Label label = new Label(top, 0);
@@ -162,7 +161,6 @@ abstract public class DetailsDialog extends Dialog {
 			layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 			right.setLayout(layout);
 			right.setLayoutData(new GridData(GridData.FILL_BOTH));
-			right.setFont(parent.getFont());
 			createMainDialogArea(right);
 		} else {
 			createMainDialogArea(composite);
@@ -172,9 +170,9 @@ abstract public class DetailsDialog extends Dialog {
 		errorMessageLabel.setLayoutData(new GridData(
 			GridData.GRAB_HORIZONTAL |
 			GridData.HORIZONTAL_ALIGN_FILL));
-		errorMessageLabel.setFont(parent.getFont());
 		errorMessageLabel.setForeground(getShell().getDisplay().getSystemColor(SWT.COLOR_RED));
 		
+        Dialog.applyDialogFont(parent);
 		return composite;
 	}
 	
@@ -210,7 +208,7 @@ abstract public class DetailsDialog extends Dialog {
 			detailsCreated = true;
 			detailsButton.setText(IDialogConstants.HIDE_DETAILS_LABEL);
 		}
-	
+        Dialog.applyDialogFont(getContents());
 		Point newSize = getContents().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 	
 		getShell().setSize(new Point(windowSize.x, windowSize.y + (newSize.y - oldSize.y)));
@@ -283,7 +281,6 @@ abstract public class DetailsDialog extends Dialog {
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		composite.setFont(parent.getFont());
 		return composite;
 	}
 	

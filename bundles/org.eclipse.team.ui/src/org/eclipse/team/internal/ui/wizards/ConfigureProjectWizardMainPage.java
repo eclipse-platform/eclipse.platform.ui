@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ui.wizards;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -150,6 +151,7 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 			}
 		});
 		viewer.setInput(wizards);
+        Dialog.applyDialogFont(parent);
 	}
 	/**
 	 * The <code>WizardSelectionPage</code> implementation of 

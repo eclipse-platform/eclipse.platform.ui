@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -81,7 +82,6 @@ public class BranchPromptDialog extends DetailsDialog {
 			GridData.VERTICAL_ALIGN_CENTER);
 		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);;
 		label.setLayoutData(data);
-		label.setFont(composite.getFont());
 		
 		CVSWizardPage.createLabel(composite, Policy.bind("BranchWizardPage.branchName")); //$NON-NLS-1$
 		branchText = CVSWizardPage.createTextField(composite);
@@ -129,7 +129,7 @@ public class BranchPromptDialog extends DetailsDialog {
 
 		// F1 Help
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.BRANCH_DIALOG);
-		
+		Dialog.applyDialogFont(composite);
 		branchText.setFocus();
 	}
 
@@ -156,7 +156,6 @@ public class BranchPromptDialog extends DetailsDialog {
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		composite.setFont(parent.getFont());
 		
 		Label label = new Label(composite, SWT.WRAP);
 		label.setText(Policy.bind("BranchWizardPage.existingVersionsAndBranches")); //$NON-NLS-1$
@@ -167,7 +166,6 @@ public class BranchPromptDialog extends DetailsDialog {
 			GridData.VERTICAL_ALIGN_CENTER);
 		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);;
 		label.setLayoutData(data);
-		label.setFont(composite.getFont());
 		
 		tagTree = createTree(composite);
 		tagTree.setInput(new ProjectElement(folder, ProjectElement.INCLUDE_BRANCHES | ProjectElement.INCLUDE_VERSIONS));
@@ -184,6 +182,7 @@ public class BranchPromptDialog extends DetailsDialog {
 														  convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT), 
 														  convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH),
 														  refresh, refresh);
+		Dialog.applyDialogFont(parent);
 		return composite;
 	}
 	

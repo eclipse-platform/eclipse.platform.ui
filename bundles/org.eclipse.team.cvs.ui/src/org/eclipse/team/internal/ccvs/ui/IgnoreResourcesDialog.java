@@ -168,7 +168,7 @@ public class IgnoreResourcesDialog extends Dialog {
 		customEntryText.addListener(SWT.Modify, modifyListener);
 
 		statusMessageLabel = createIndentedLabel(top, "", 0); //$NON-NLS-1$
-		statusMessageLabel.setFont(parent.getFont());
+        Dialog.applyDialogFont(parent);
 		return top;
 	}
 

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.TableLayout;
@@ -137,6 +138,7 @@ public class ExportTargetSiteMainPage extends TeamWizardPage {
 		initializeSites();
 		setControl(composite);
 		updateEnablement();
+        Dialog.applyDialogFont(parent);
 	}
 
 	public void setSelectedSites(Site[] selectedSites) {

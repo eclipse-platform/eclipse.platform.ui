@@ -76,6 +76,7 @@ public class ListSelectionArea extends DialogArea {
 	 * @see org.eclipse.team.internal.ccvs.ui.DialogArea#createArea(org.eclipse.swt.widgets.Composite)
 	 */
 	public Control createArea(Composite parent) {
+        Dialog.applyDialogFont(parent);
 		Composite composite = createComposite(parent, 1);
 		initializeDialogUnits(composite);
 
@@ -90,7 +91,6 @@ public class ListSelectionArea extends DialogArea {
 
 		listViewer.setLabelProvider(labelProvider);
 		listViewer.setContentProvider(contentProvider);
-		listViewer.getControl().setFont(composite.getFont());
 		
 		listViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
@@ -135,7 +135,6 @@ public class ListSelectionArea extends DialogArea {
 	 */
 	private void addSelectionButtons(Composite composite) {
 		Composite buttonComposite = new Composite(composite, SWT.RIGHT);
-		buttonComposite.setFont(composite.getFont());
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		buttonComposite.setLayout(layout);

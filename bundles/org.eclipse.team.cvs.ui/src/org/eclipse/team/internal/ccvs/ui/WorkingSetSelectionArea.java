@@ -99,6 +99,7 @@ public class WorkingSetSelectionArea extends DialogArea {
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
 	 */
 	public Control createArea(Composite parent) {
+        Dialog.applyDialogFont(parent);
 		Composite composite = createComposite(parent, 2);
 		initializeDialogUnits(composite);
 		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
@@ -129,7 +130,6 @@ public class WorkingSetSelectionArea extends DialogArea {
 		data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
 		data.horizontalIndent=15;
 		mruList.setLayoutData(data);
-		mruList.setFont(composite.getFont());
 
 		selectButton = createButton(composite, Policy.bind("WorkingSetSelectionArea.workingSetOther"), GridData.HORIZONTAL_ALIGN_FILL); //$NON-NLS-1$
 		selectButton.addSelectionListener(new SelectionAdapter() {
@@ -146,7 +146,7 @@ public class WorkingSetSelectionArea extends DialogArea {
 				handleMruSelection();
 			}
 		});
-
+		
 		return composite;
 	}
 

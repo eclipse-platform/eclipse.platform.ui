@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.SWT;
@@ -63,6 +64,7 @@ public class KSubstWizardDirtyFilesPage extends CVSWizardPage {
 		createSeparator(top, SPACER_HEIGHT);
 		listViewer = createFileListViewer(top,
 			Policy.bind("KSubstWizardDirtyFilesPage.dirtyFilesViewer.title"), LIST_HEIGHT_HINT); //$NON-NLS-1$
+        Dialog.applyDialogFont(parent);
 	}
 	
 	public boolean includeDirtyFiles() {

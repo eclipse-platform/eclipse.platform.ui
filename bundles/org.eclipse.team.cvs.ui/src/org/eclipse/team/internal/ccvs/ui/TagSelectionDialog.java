@@ -225,7 +225,8 @@ public class TagSelectionDialog extends Dialog {
 		seperator.setLayoutData(data);
 
 		updateEnablement();
-		
+        Dialog.applyDialogFont(parent);
+        
 		return top;
 	}
 	

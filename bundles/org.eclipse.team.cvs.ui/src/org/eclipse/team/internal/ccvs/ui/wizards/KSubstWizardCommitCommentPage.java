@@ -51,6 +51,7 @@ public class KSubstWizardCommitCommentPage extends CVSWizardPage {
 		// set F1 help
 		WorkbenchHelp.setHelp(top, IHelpContextIds.KEYWORD_SUBSTITUTION_COMMIT_COMMENT_PAGE);
 		commitCommentArea.createArea(top);
+        Dialog.applyDialogFont(parent);
 	}
 
 	/**

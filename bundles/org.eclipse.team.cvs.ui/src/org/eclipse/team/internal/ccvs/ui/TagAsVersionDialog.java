@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -89,7 +90,6 @@ public class TagAsVersionDialog extends DetailsDialog {
 			GridData.VERTICAL_ALIGN_CENTER);
 		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);;
 		label.setLayoutData(data);
-		label.setFont(parent.getFont());
 
 		tagText = new Text(parent, SWT.SINGLE | SWT.BORDER);
 		tagText.setLayoutData(new GridData(
@@ -120,6 +120,7 @@ public class TagAsVersionDialog extends DetailsDialog {
 		
 		// Add F1 help
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.TAG_AS_VERSION_DIALOG);
+		Dialog.applyDialogFont(parent);
 	}
 
 	public boolean shouldMoveTag()  {
@@ -152,7 +153,6 @@ public class TagAsVersionDialog extends DetailsDialog {
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		composite.setFont(parent.getFont());
 		
 		Label label = new Label(composite, SWT.WRAP);
 		label.setText(Policy.bind("TagAction.existingVersions")); //$NON-NLS-1$
@@ -163,7 +163,6 @@ public class TagAsVersionDialog extends DetailsDialog {
 			GridData.VERTICAL_ALIGN_CENTER);
 		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);;
 		label.setLayoutData(data);
-		label.setFont(composite.getFont());
 		
 		existingVersionTable = createTable(composite);
 		existingVersionTable.setContentProvider(new WorkbenchContentProvider());
@@ -215,7 +214,7 @@ public class TagAsVersionDialog extends DetailsDialog {
 														  afterRefresh, afterConfigure);
 		
 		existingVersionTable.setInput(new TagRootElement(folder, CVSTag.VERSION));
-		
+		Dialog.applyDialogFont(parent);
 		return composite;
 	}
 	

@@ -114,6 +114,8 @@ public class UserValidationDialog extends Dialog {
 		createUsernameFields(main);
 		createPasswordFields(main);
 	
+        Dialog.applyDialogFont(parent);
+        
 		return main;
 	}
 	/**

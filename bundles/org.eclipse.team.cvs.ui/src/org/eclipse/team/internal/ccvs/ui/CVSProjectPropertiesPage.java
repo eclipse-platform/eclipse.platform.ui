@@ -241,6 +241,7 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 		
 		initializeValues(oldLocation);
 		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.PROJECT_PROPERTY_PAGE);
+        Dialog.applyDialogFont(parent);
 		return composite;
 	}
 	/**

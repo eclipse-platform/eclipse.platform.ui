@@ -63,7 +63,8 @@ public class ReleaseCommentDialog extends Dialog {
 		
 		// set F1 help
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.RELEASE_COMMENT_DIALOG);	
-		
+        Dialog.applyDialogFont(parent);
+        
 		return composite;
 	}
 

@@ -16,6 +16,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -108,6 +109,7 @@ public class KSubstWizardSummaryPage extends CVSWizardPage {
 			Policy.bind("KSubstWizardSummaryPage.summaryViewer.fileHeader"), //$NON-NLS-1$
 			Policy.bind("KSubstWizardSummaryPage.summaryViewer.ksubstHeader"), //$NON-NLS-1$
 			LIST_HEIGHT_HINT);
+        Dialog.applyDialogFont(parent);
 	}
 	
 	/**

@@ -63,6 +63,7 @@ public class CommitCommentArea extends DialogArea {
 	 * @see org.eclipse.team.internal.ccvs.ui.DialogArea#createArea(org.eclipse.swt.widgets.Composite)
 	 */
 	public Control createArea(Composite parent) {
+        Dialog.applyDialogFont(parent);
 		Composite composite = createGrabbingComposite(parent, 1);
 		initializeDialogUnits(composite);
 						

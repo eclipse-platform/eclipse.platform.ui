@@ -61,7 +61,6 @@ public class DetailsDialogWithProjects extends DetailsDialog {
 			GridData.VERTICAL_ALIGN_CENTER);
 		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
 		label.setLayoutData(data);
-		label.setFont(composite.getFont());
 		updateEnablements();
 	}
 
@@ -78,7 +77,6 @@ public class DetailsDialogWithProjects extends DetailsDialog {
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		composite.setFont(parent.getFont());
 		
 		detailsList = new org.eclipse.swt.widgets.List(composite, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);	 
 		GridData data = new GridData ();		

@@ -70,9 +70,6 @@ public class SynchronizeProjectsDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		// page group
 		Composite composite = (Composite)super.createDialogArea(parent);
-	
-		Font font = parent.getFont();
-		composite.setFont(font);
 					
 		workingSetArea = new WorkingSetSelectionArea(this, Policy.bind("SynchronizeProjectsDialog.allSharedProjects"), Policy.bind("SynchronizeProjectsDialog.sharedWorkingSetProjects"), settings); //$NON-NLS-1$ //$NON-NLS-2$
 		setWorkingSet(workingSet);
@@ -97,7 +94,8 @@ public class SynchronizeProjectsDialog extends Dialog {
 		
 		// F1 Help
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.SYNCHRONIZE_PROJECTS_DIALOG);
-		
+        Dialog.applyDialogFont(parent);
+        
 		return composite;
 	}
 
@@ -152,7 +150,6 @@ public class SynchronizeProjectsDialog extends Dialog {
 	protected Button createCheckbox(Composite parent, String label) {
 		Button button = new Button(parent, SWT.CHECK | SWT.LEFT);
 		button.setText(label);
-		button.setFont(parent.getFont());
 		GridData data = new GridData();
 		button.setLayoutData(data);
 		return button;
@@ -163,7 +160,6 @@ public class SynchronizeProjectsDialog extends Dialog {
 		if (text != null) {
 			label.setText(text);
 		} 
-		label.setFont(composite.getFont());
 		return label;
 	}
 	

@@ -87,7 +87,6 @@ public class AddToVersionControlDialog extends DetailsDialog {
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		composite.setFont(parent.getFont());
 		
 		addUnaddedResourcesArea(composite);
 		

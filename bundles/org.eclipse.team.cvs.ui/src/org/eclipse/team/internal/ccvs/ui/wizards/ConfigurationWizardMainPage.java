@@ -19,6 +19,7 @@ import java.util.Properties;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -218,6 +219,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		hostCombo.setFocus();
 		
 		setControl(composite);
+        Dialog.applyDialogFont(parent);
 	}
 	/**
 	 * Utility method to create an editable combo box

@@ -123,6 +123,7 @@ public class RefreshRemoteProjectSelectionPage extends CVSWizardPage {
 			}
 		});
 		workingSetArea.createArea(composite);
+        Dialog.applyDialogFont(parent);
 	}
 
 	/**

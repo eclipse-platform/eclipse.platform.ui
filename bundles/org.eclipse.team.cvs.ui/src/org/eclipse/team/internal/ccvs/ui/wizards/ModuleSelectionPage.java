@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
@@ -78,6 +79,7 @@ public class ModuleSelectionPage extends CVSWizardPage {
 		useProjectNameButton.setSelection(true);
 		setControl(composite);
 		setPageComplete(true);
+        Dialog.applyDialogFont(parent);
 	}	
 	public String getModuleName() {
 		return result;

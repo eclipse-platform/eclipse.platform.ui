@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -137,6 +138,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		initializeProjects();
 		setControl(composite);
 		updateEnablement();
+        Dialog.applyDialogFont(parent);
 	}
 
 	private void initializeProjects() {

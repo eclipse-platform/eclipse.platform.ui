@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -134,6 +135,7 @@ public class CVSWorkingSetPage extends CVSWizardPage implements IWorkingSetPage 
 		initializeValues();
 		updateWidgetEnablements();
 		nameField.setFocus();
+        Dialog.applyDialogFont(parent);
 	}
 	/**
 	 * Method handleExpansion.
