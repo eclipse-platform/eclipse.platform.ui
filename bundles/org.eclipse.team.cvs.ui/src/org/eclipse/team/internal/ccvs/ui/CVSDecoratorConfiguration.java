@@ -91,8 +91,12 @@ public class CVSDecoratorConfiguration {
 			}
 		}
 		
-		decoration.addPrefix(prefix.toString());
-		decoration.addSuffix(suffix.toString());
+		if (prefix.length() != 0) {
+			decoration.addPrefix(prefix.toString());
+		}
+		if (suffix.length() != 0) {
+			decoration.addSuffix(suffix.toString());
+		}
 	}
 
 //todo: leaving the old bind method in until senders can be fixed
