@@ -61,10 +61,9 @@ public TreeViewer(Composite parent) {
  * The tree control is created using the given SWT style bits.
  * The viewer has no input, no content provider, a default label provider, 
  * no sorter, and no filters.
- * The tree control has the MULTI, H_SCROLL, V_SCROLL and BORDER style bits set.
  *
  * @param parent the parent control
- * @param style the SWT style bits
+ * @param style the SWT style bits used to create the tree.
  */
 public TreeViewer(Composite parent, int style) {
 	this(new Tree(parent, style));
