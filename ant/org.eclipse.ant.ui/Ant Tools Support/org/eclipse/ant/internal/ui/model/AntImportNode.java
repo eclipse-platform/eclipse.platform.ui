@@ -16,6 +16,7 @@ import org.apache.tools.ant.Task;
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
+import org.eclipse.ant.internal.ui.editor.AntEditorCompletionProcessor;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -80,5 +81,19 @@ public class AntImportNode extends AntTaskNode {
 			file= AntUtil.getFileForLocation(path, getAntModel().getEditedFile().getParentFile());
 		}
 		return file;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getReferencedElement(int)
+	 */
+	public String getReferencedElement(int offset) {
+		if (fFile != null) {
+			String textToSearch= getAntModel().getText(getOffset(), offset - getOffset());
+			String attributeString = AntEditorCompletionProcessor.getAttributeStringFromDocumentStringToPrefix(textToSearch);
+			if ("file".equals(attributeString)) {  //$NON-NLS-1$//$NON-NLS-2$
+				return fFile;
+			}
+        }
+        return null;
 	}
 }
