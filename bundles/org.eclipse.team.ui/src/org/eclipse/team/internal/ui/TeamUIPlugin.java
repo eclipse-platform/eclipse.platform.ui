@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
@@ -197,6 +198,10 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 					TeamCapabilityHelper.getInstance();
 					getPreferenceStore().setValue(IPreferenceIds.PREF_WORKSPACE_FIRST_TIME, false);
 					return Status.OK_STATUS;
+				}
+				public boolean shouldRun() {
+				    // Only initialize the capability helper if the UI is running (bug 76348)
+				    return PlatformUI.isWorkbenchRunning();
 				}
 			};
 			capabilityInitializer.setSystem(true);
