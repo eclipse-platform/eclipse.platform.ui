@@ -16,7 +16,7 @@ public class Log extends AbstractMessageCommand {
 	/*** Local options: specific to log ***/
 	
 	public static LocalOption makeRevisionOption(String revision) {
-		return new LocalOption("-r" + revision, null);
+		return new LocalOption("-r" + revision, null); //$NON-NLS-1$
 	}
 	
 	protected Log() { }

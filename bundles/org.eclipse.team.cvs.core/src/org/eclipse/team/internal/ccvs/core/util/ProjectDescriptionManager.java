@@ -49,7 +49,7 @@ public class ProjectDescriptionManager implements IResourceChangeListener {
 	public final static IPath CORE_PROJECT_DESCRIPTION_PATH = new Path(".project"); //$NON-NLS-1$
 	public final static boolean UPDATE_PROJECT_DESCRIPTION_ON_LOAD = true;
 
-	public static final String VCMMETA_MARKER = "org.eclipse.team.cvs.core.vcmmeta";
+	public static final String VCMMETA_MARKER = "org.eclipse.team.cvs.core.vcmmeta";  //$NON-NLS-1$
 	
 	/*
 	 * Read the project meta file into the provider description
@@ -140,13 +140,13 @@ public class ProjectDescriptionManager implements IResourceChangeListener {
 			ICVSFile coreDescResource = CVSWorkspaceRoot.getCVSFileFor(project.getFile(CORE_PROJECT_DESCRIPTION_PATH));
 			if (coreDescResource.exists() && coreDescResource.isManaged()) {
 				createVCMMetaMarker(descResource);
-				Util.logError(".vcm_meta file ignored for project " + project.getName(), null);
+				Util.logError(Policy.bind("ProjectDescriptionManager.vcmmetaIgnored", project.getName()), null); //$NON-NLS-1$
 				return;
 			} else {
 				ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(project);
 				if (! folder.isCVSFolder()) {
 					createVCMMetaMarker(descResource);
-					Util.logError(".vcm_meta file ignored for project " + project.getName(), null);
+					Util.logError(Policy.bind("ProjectDescriptionManager.vcmmetaIgnored", project.getName()), null); //$NON-NLS-1$
 					return;
 				}
 			}
@@ -232,9 +232,9 @@ public class ProjectDescriptionManager implements IResourceChangeListener {
 				if (resource.getType() == IResource.PROJECT) {
 					IProject project = (IProject)resource;
 					RepositoryProvider provider = RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId());
-					if (provider!=null) continue;
+					if (provider == null) continue;
 					// First, check if the .vcm_meta file for the project is in the delta.
-					IResourceDelta[] children = delta.getAffectedChildren(IResourceDelta.REMOVED | IResourceDelta.ADDED | IResourceDelta.CHANGED);
+					IResourceDelta[] children = delta.getAffectedChildren(IResourceDelta.ADDED);
 					boolean inSync = false;
 					for (int j = 0; j < children.length; j++) {
 						IResourceDelta childDelta = children[j];
@@ -259,9 +259,9 @@ public class ProjectDescriptionManager implements IResourceChangeListener {
 				}
 			}	
 		} catch (CVSException ex) {
-			Util.logError("Cannot update project description", ex);
+			Util.logError(Policy.bind("ProjectDescriptionManager.cannotUpdateDesc"), ex); //$NON-NLS-1$
 		} catch (CoreException ex) {
-			Util.logError("Cannot update project description", ex);
+			Util.logError(Policy.bind("ProjectDescriptionManager.cannotUpdateDesc"), ex); //$NON-NLS-1$
 		} 
 	}
 	
@@ -272,10 +272,10 @@ public class ProjectDescriptionManager implements IResourceChangeListener {
    				return markers[0];
    			}
 			IMarker marker = resource.createMarker(VCMMETA_MARKER);
-			marker.setAttribute(IMarker.MESSAGE, resource.getName() + " file exists in " + resource.getProject().getName() + " but is no longer required and can be deleted");
+			marker.setAttribute(IMarker.MESSAGE, Policy.bind("ProjectDescriptionManager.vcmmetaMarker" , resource.getName(), resource.getProject().getName()));  //$NON-NLS-1$
 			return marker;
 		} catch (CoreException e) {
-			Util.logError("Error creating deletion marker", e);
+			Util.logError(Policy.bind("ProjectDescriptionManager.markerError"), e); //$NON-NLS-1$
 		}
 		return null;
 	}

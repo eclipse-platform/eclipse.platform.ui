@@ -34,7 +34,7 @@ public class CVSDateFormatter {
 	}
 
 	static public String dateToServerStamp(Date date) {
-		serverFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+		serverFormat.setTimeZone(TimeZone.getTimeZone("GMT"));//$NON-NLS-1$
 		return serverFormat.format(date) + " -0000"; //$NON-NLS-1$
 	}	
 	
@@ -53,22 +53,22 @@ public class CVSDateFormatter {
 	 */
 	static private TimeZone getTimeZone(String dateFromServer) {
 		String tz = null;
-		StringBuffer resultTz = new StringBuffer("GMT");
-		if (dateFromServer.indexOf("-") != -1) {
-			resultTz.append("-");
-			tz = dateFromServer.substring(dateFromServer.indexOf("-"));
-		} else if (dateFromServer.indexOf("+") != -1) {
+		StringBuffer resultTz = new StringBuffer("GMT");//$NON-NLS-1$
+		if (dateFromServer.indexOf("-") != -1) {//$NON-NLS-1$
+			resultTz.append("-");//$NON-NLS-1$
+			tz = dateFromServer.substring(dateFromServer.indexOf("-"));//$NON-NLS-1$
+		} else if (dateFromServer.indexOf("+") != -1) {//$NON-NLS-1$
 			resultTz.append('+');
-			tz = dateFromServer.substring(dateFromServer.indexOf("+"));
+			tz = dateFromServer.substring(dateFromServer.indexOf("+"));//$NON-NLS-1$
 		}
 		try {
 			if(tz!=null) {
-				resultTz.append(tz.substring(1, 3) /*hours*/ + ":" + tz.substring(3, 5) /*minutes*/);
+				resultTz.append(tz.substring(1, 3) /*hours*/ + ":" + tz.substring(3, 5) /*minutes*/);//$NON-NLS-1$
 				return TimeZone.getTimeZone(resultTz.toString());
 			}
 		} catch(IndexOutOfBoundsException e) {
-			return TimeZone.getTimeZone("GMT");
+			return TimeZone.getTimeZone("GMT");//$NON-NLS-1$
 		}
-		return TimeZone.getTimeZone("GMT");
+		return TimeZone.getTimeZone("GMT");//$NON-NLS-1$
 	}
 }

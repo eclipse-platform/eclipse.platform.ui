@@ -27,8 +27,8 @@ public class Policy {
 	static {
 		//init debug options
 		if (CVSProviderPlugin.getPlugin().isDebugging()) {
-			DEBUG_METAFILE_CHANGES = "true".equalsIgnoreCase(Platform.getDebugOption(CVSProviderPlugin.ID + "/metafiles"));
-			DEBUG_CVS_PROTOCOL = "true".equalsIgnoreCase(Platform.getDebugOption(CVSProviderPlugin.ID + "/cvsprotocol"));
+			DEBUG_METAFILE_CHANGES = "true".equalsIgnoreCase(Platform.getDebugOption(CVSProviderPlugin.ID + "/metafiles"));//$NON-NLS-1$ //$NON-NLS-2$
+			DEBUG_CVS_PROTOCOL = "true".equalsIgnoreCase(Platform.getDebugOption(CVSProviderPlugin.ID + "/cvsprotocol"));//$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 

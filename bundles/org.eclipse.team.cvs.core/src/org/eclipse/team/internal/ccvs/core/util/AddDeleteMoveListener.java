@@ -37,10 +37,10 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
  */
 public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceChangeListener, IResourceStateChangeListener {
 
-	public static final String DELETION_MARKER = "org.eclipse.team.cvs.core.cvsremove";
-	public static final String ADDITION_MARKER = "org.eclipse.team.cvs.core.cvsadd";
+	public static final String DELETION_MARKER = "org.eclipse.team.cvs.core.cvsremove";//$NON-NLS-1$
+	public static final String ADDITION_MARKER = "org.eclipse.team.cvs.core.cvsadd";//$NON-NLS-1$
 	
-	public static final String NAME_ATTRIBUTE = "name";
+	public static final String NAME_ATTRIBUTE = "name";//$NON-NLS-1$
 	
 	protected IMarker createDeleteMarker(IResource resource) {
 		if (! CVSProviderPlugin.getPlugin().getShowTasksOnAddAndDelete()) {
@@ -52,12 +52,12 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 				return marker;
 			}
 			marker = resource.getParent().createMarker(DELETION_MARKER);
-			marker.setAttribute("name", resource.getName());
-			marker.setAttribute(IMarker.MESSAGE, resource.getName() + " has been deleted locally");
+			marker.setAttribute("name", resource.getName());//$NON-NLS-1$
+			marker.setAttribute(IMarker.MESSAGE, Policy.bind("AddDeleteMoveListener.deletedResource", resource.getName()));//$NON-NLS-1$
 			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
 			return marker;
 		} catch (CoreException e) {
-			Util.logError("Error creating deletion marker", e);
+			Util.logError(Policy.bind("AddDeleteMoveListener.Error_creating_deletion_marker_1"), e); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -73,10 +73,10 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 			}
 			marker = resource.createMarker(ADDITION_MARKER);
 			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
-			marker.setAttribute(IMarker.MESSAGE, "Local addition not under CVS control");
+			marker.setAttribute(IMarker.MESSAGE, Policy.bind("AddDeleteMoveListener.Local_addition_not_under_CVS_control_2")); //$NON-NLS-1$
 			return marker;
 		} catch (CoreException e) {
-			Util.logError("Error creating addition marker", e);
+			Util.logError(Policy.bind("AddDeleteMoveListener.Error_creating_addition_marker_3"), e); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -320,9 +320,9 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 					} 
 				}
 			} catch (CVSException e) {
-				Util.logError("Error updating marker state", e);
+				Util.logError(Policy.bind("AddDeleteMoveListener.Error_updating_marker_state_4"), e); //$NON-NLS-1$
 			} catch (CoreException e) {
-				Util.logError("Error updating marker state", e);
+				Util.logError(Policy.bind("AddDeleteMoveListener.Error_updating_marker_state_4"), e); //$NON-NLS-1$
 			}
 		}
 	}

@@ -448,7 +448,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 			progress.beginTask(null, 100);
 			
 			// Prepare for the replace (special handling for "cvs added" and "cvs removed" resources
-			new PrepareForReplaceVisitor().visitResources(getProject(), resources, "CVSTeamProvider.scrubbingResource", depth, Policy.subMonitorFor(progress, 30));
+			new PrepareForReplaceVisitor().visitResources(getProject(), resources, "CVSTeamProvider.scrubbingResource", depth, Policy.subMonitorFor(progress, 30)); //$NON-NLS-1$
 						
 			// Perform an update, ignoring any local file modifications
 			List options = new ArrayList();
@@ -997,7 +997,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 				}
 				if (totalWork != 0) {
 					Session s = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot());
-					monitor.beginTask(Policy.bind("CVSTeamProvider.settingKSubst"), 5 + totalWork);
+					monitor.beginTask(Policy.bind("CVSTeamProvider.settingKSubst"), 5 + totalWork); //$NON-NLS-1$
 					try {
 						s.open(Policy.subMonitorFor(monitor, 5));
 						

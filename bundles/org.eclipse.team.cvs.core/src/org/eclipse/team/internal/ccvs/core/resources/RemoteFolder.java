@@ -296,7 +296,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 				throw new OperationCanceledException();
 			}
 			if (! exists[0]) {
-				throw new CVSException(new CVSStatus(CVSStatus.ERROR, CVSStatus.DOES_NOT_EXIST, Policy.bind("RemoteFolder.doesNotExist", getRepositoryRelativePath())));
+				throw new CVSException(new CVSStatus(CVSStatus.ERROR, CVSStatus.DOES_NOT_EXIST, Policy.bind("RemoteFolder.doesNotExist", getRepositoryRelativePath()))); //$NON-NLS-1$
 			}
 			
 			// Convert the file and folder names to IManagedResources

@@ -79,8 +79,8 @@ public class FileModificationValidatorManager implements IFileModificationValida
 			(IStatus[])returnStati.toArray(new IStatus[returnStati.size()]),
 			Policy.bind(
 				allOK
-					? "FileModificationValidator.ok"
-					: "FileModificationValidator.editFailed"),
+					? "FileModificationValidator.ok"  //$NON-NLS-1$
+					: "FileModificationValidator.editFailed"),  //$NON-NLS-1$
 			null); //$NON-NLS-1$
 	}
 

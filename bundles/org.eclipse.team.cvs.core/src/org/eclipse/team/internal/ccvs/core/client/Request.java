@@ -132,12 +132,12 @@ public abstract class Request {
 			// handle completion responses
 			if (response.equals("ok")) {  //$NON-NLS-1$
 				break;
-			} else if (response.equals("error") || (isCVSNT && response.equals(""))) {  //$NON-NLS-1$
+			} else if (response.equals("error") || (isCVSNT && response.equals(""))) {  //$NON-NLS-1$ //$NON-NLS-2$
 				if (argument.trim().length() == 0) {
 					argument = Policy.bind("Command.serverError", Policy.bind("Command." + getRequestId()));  //$NON-NLS-1$  //$NON-NLS-2$
 				}
 				if (accumulatedStatus.isEmpty()) {
-					accumulatedStatus.add(new CVSStatus(CVSStatus.ERROR, CVSStatus.SERVER_ERROR, Policy.bind("Command.noMoreInfoAvailable")));
+					accumulatedStatus.add(new CVSStatus(CVSStatus.ERROR, CVSStatus.SERVER_ERROR, Policy.bind("Command.noMoreInfoAvailable")));//$NON-NLS-1$
 				}
 				return new MultiStatus(CVSProviderPlugin.ID, CVSStatus.SERVER_ERROR, 
 					(IStatus[]) accumulatedStatus.toArray(new IStatus[accumulatedStatus.size()]),

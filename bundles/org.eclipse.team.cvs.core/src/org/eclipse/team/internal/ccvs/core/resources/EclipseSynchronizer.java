@@ -50,7 +50,7 @@ public class EclipseSynchronizer {
 	private static final String[] NULL_IGNORES = new String[0];
 	private static final FolderSyncInfo NULL_FOLDER_SYNC_INFO = new FolderSyncInfo("", "", null, false); //$NON-NLS-1$ //$NON-NLS-2$
 	
-	private static final IStatus STATUS_OK = new Status(IStatus.OK, CVSProviderPlugin.ID, 0, Policy.bind("ok"), null);
+	private static final IStatus STATUS_OK = new Status(IStatus.OK, CVSProviderPlugin.ID, 0, Policy.bind("ok"), null); //$NON-NLS-1$
 	
 	// the cvs eclipse synchronizer is a singleton
 	private static EclipseSynchronizer instance;
@@ -472,7 +472,7 @@ public class EclipseSynchronizer {
 			changedResources.clear();
 			changedFolders.clear();
 			if ( ! errors.isEmpty()) {
-				MultiStatus status = new MultiStatus(CVSProviderPlugin.ID, CVSStatus.DELETION_FAILED, Policy.bind("EclipseSynchronizer.ErrorDeletingFolderSync"), null);
+				MultiStatus status = new MultiStatus(CVSProviderPlugin.ID, CVSStatus.DELETION_FAILED, Policy.bind("EclipseSynchronizer.ErrorDeletingFolderSync"), null);//$NON-NLS-1$
 				for (int i = 0; i < errors.size(); i++) {
 					status.merge((IStatus)errors.get(i));
 				}

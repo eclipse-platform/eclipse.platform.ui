@@ -12,17 +12,17 @@ import java.text.ParseException;import java.text.SimpleDateFormat;import java.
  */
 public class DateUtil {
 
-	private static final String ENTRY_TIMESTAMP_FORMAT= "EEE MMM dd HH:mm:ss yyyy";
-	private static final String ENTRY_TIMESTAMP_TIME_ZONE= "GMT";
+	private static final String ENTRY_TIMESTAMP_FORMAT= "EEE MMM dd HH:mm:ss yyyy";//$NON-NLS-1$
+	private static final String ENTRY_TIMESTAMP_TIME_ZONE= "GMT";//$NON-NLS-1$
 	private static final Locale ENTRY_TIMESTAMP_LOCALE= Locale.US;
 	
-	private static final String MODTIME_TIMESTAMP_FORMAT= "dd MMM yyyy HH:mm:ss zz";
+	private static final String MODTIME_TIMESTAMP_FORMAT= "dd MMM yyyy HH:mm:ss zz";//$NON-NLS-1$
 	private static final Locale MODTIME_TIMESTAMP_LOCALE= Locale.US;
 	
-	private static final String LOG_TIMESTAMP_FORMAT= "yyyy/MM/dd HH:mm:ss zzz";
+	private static final String LOG_TIMESTAMP_FORMAT= "yyyy/MM/dd HH:mm:ss zzz";//$NON-NLS-1$
 	private static final Locale LOG_TIMESTAMP_LOCALE= Locale.US;
 	
-	private static final String HISTORY_TIMESTAMP_FORMAT= "yyyy-MM-dd HH:mm zzzz";
+	private static final String HISTORY_TIMESTAMP_FORMAT= "yyyy-MM-dd HH:mm zzzz";//$NON-NLS-1$
 	private static final Locale HISTORY_TIMESTAMP_LOCALE= Locale.US;
 	
 	/**

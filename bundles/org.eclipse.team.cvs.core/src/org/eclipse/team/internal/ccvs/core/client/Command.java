@@ -309,7 +309,7 @@ public abstract class Command extends Request {
 						IConsoleListener consoleListener = CVSProviderPlugin.getPlugin().getConsoleListener();
 						if (consoleListener != null) consoleListener.commandInvoked(line);
 					}
-					if (Policy.DEBUG_CVS_PROTOCOL) System.out.println("CMD> " + line);
+					if (Policy.DEBUG_CVS_PROTOCOL) System.out.println("CMD> " + line); //$NON-NLS-1$
 				}
 				
 				// run the command
@@ -335,8 +335,8 @@ public abstract class Command extends Request {
 			if (consoleListener != null) consoleListener.commandCompleted(status, exception);
 		}
 		if (Policy.DEBUG_CVS_PROTOCOL) {
-			if (status != null) System.out.println("RESULT> " + status.toString());
-			else System.out.println("RESULT> " + exception.toString());
+			if (status != null) System.out.println("RESULT> " + status.toString()); //$NON-NLS-1$
+			else System.out.println("RESULT> " + exception.toString()); //$NON-NLS-1$
 		}
 	}
 
@@ -420,9 +420,9 @@ public abstract class Command extends Request {
 		}
 		for (int i = 0; i < arguments.length; ++i) {
 			if (arguments[i].length() == 0) continue;
-			commandLine.append(" \"");
+			commandLine.append(" \""); //$NON-NLS-1$
 			commandLine.append(arguments[i]);
-			commandLine.append('"');
+			commandLine.append('"'); //$NON-NLS-1$
 		}
 		return commandLine.toString();
 	}	

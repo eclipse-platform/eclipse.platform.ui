@@ -142,7 +142,7 @@ public class CVSProvider implements ICVSProvider {
 					subMonitor.beginTask(null, children.length * 100);
 					try {
 						for (int j = 0; j < children.length; j++) {
-							if ( ! children[j].getName().equals(".project")) {
+							if ( ! children[j].getName().equals(".project")) {//$NON-NLS-1$
 								children[j].delete(true /*force*/, Policy.subMonitorFor(subMonitor, 100));
 							}
 						}
