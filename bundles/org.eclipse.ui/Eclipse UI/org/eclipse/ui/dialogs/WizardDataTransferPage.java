@@ -214,11 +214,12 @@ public String queryOverwrite(String pathString) {
 			MessageDialog.QUESTION, 
 			new String[] {
 				IDialogConstants.YES_LABEL, 
-				IDialogConstants.NO_LABEL, 
 				IDialogConstants.YES_TO_ALL_LABEL, 
+				IDialogConstants.NO_LABEL, 
+				IDialogConstants.NO_TO_ALL_LABEL, 
 				IDialogConstants.CANCEL_LABEL}, 
 			0); 
-	String[] response = new String[] {YES, NO, ALL, CANCEL};
+	String[] response = new String[] {YES, ALL, NO, NO_ALL, CANCEL};
 	//run in syncExec because callback is from an operation,
 	//which is probably not running in the UI thread.
 	getControl().getDisplay().syncExec(

@@ -33,8 +33,13 @@ public class ImportOperation extends WorkspaceModifyOperation {
 	private IProgressMonitor	monitor;
 	protected IOverwriteQuery overwriteCallback;
 	private List errorTable = new ArrayList();
-	private boolean overwriteResources = false;
 	private boolean createContainerStructure = true;
+	
+	//The constants for the overwrite 3 state
+	private static final int OVERWRITE_NOT_SET = 0;
+	private static final int OVERWRITE_NONE = 1;	
+	private static final int OVERWRITE_ALL = 2;	
+	private int overwriteState = OVERWRITE_NOT_SET;
 /**
  * Creates a new operation that recursively imports the entire contents of the
  * specified root file system object.
@@ -216,9 +221,15 @@ void deleteResource(IResource resource) {
  */
 boolean ensureTargetDoesNotExist(IResource targetResource, int policy) {
 	if (targetResource.exists()) {
-		if (policy != POLICY_FORCE_OVERWRITE && !overwriteResources && !queryOverwrite(targetResource.getFullPath()))
-			return false;
-
+		
+		//If force overwrite is on don't bother
+		if (policy != POLICY_FORCE_OVERWRITE){
+			if(this.overwriteState == OVERWRITE_NOT_SET && 
+				!queryOverwrite(targetResource.getFullPath()))
+					return false;
+			if(this.overwriteState == OVERWRITE_NONE)
+				return false;	
+		}
 		deleteResource(targetResource);
 	}
 
@@ -449,9 +460,8 @@ int importFolder(Object folderObject, int policy) {
 		return policy;
 
 	if (workspace.getRoot().exists(resourcePath)) {
-		if (policy != POLICY_FORCE_OVERWRITE
-			&& !overwriteResources
-			&& !queryOverwrite(resourcePath)) {
+		if (policy != POLICY_FORCE_OVERWRITE){			
+			if(this.overwriteState == OVERWRITE_NONE || !queryOverwrite(resourcePath))
 			// Do not add an error status because the user
 			// has explicitely said no overwrite. Do not
 			// update the monitor as it was done in queryOverwrite.
@@ -513,9 +523,14 @@ boolean queryOverwrite(IPath resourcePath) throws OperationCanceledException {
 	if (overwriteAnswer.equals(IOverwriteQuery.NO)) {
 		return false;
 	}
+	
+	if (overwriteAnswer.equals(IOverwriteQuery.NO_ALL)){
+		this.overwriteState = OVERWRITE_NONE;
+		return false;
+	}
 			
 	if (overwriteAnswer.equals(IOverwriteQuery.ALL))
-		overwriteResources = true;
+		this.overwriteState = OVERWRITE_ALL;
 
 	return true;
 }
@@ -546,6 +561,7 @@ public void setFilesToImport(List filesToImport) {
  *   <code>false</code> otherwise
  */
 public void setOverwriteResources(boolean value) {
-	overwriteResources = value;
+	if(value)
+		this.overwriteState = OVERWRITE_ALL;
 }
 }

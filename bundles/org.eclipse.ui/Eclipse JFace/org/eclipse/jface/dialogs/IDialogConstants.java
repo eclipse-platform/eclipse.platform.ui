@@ -162,6 +162,7 @@ public interface IDialogConstants {
 	public String CANCEL_LABEL = JFaceResources.getString("cancel"); //$NON-NLS-1$
 	public String YES_LABEL = JFaceResources.getString("yes"); //$NON-NLS-1$
 	public String NO_LABEL = JFaceResources.getString("no"); //$NON-NLS-1$
+	public String NO_TO_ALL_LABEL = JFaceResources.getString("notoall"); //$NON-NLS-1$
 	public String YES_TO_ALL_LABEL = JFaceResources.getString("yestoall"); //$NON-NLS-1$
 	public String SKIP_LABEL = JFaceResources.getString("skip"); //$NON-NLS-1$
 	public String STOP_LABEL = JFaceResources.getString("stop"); //$NON-NLS-1$

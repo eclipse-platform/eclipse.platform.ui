@@ -32,6 +32,12 @@ public interface IOverwriteQuery {
 	 * and all subsequent entities should be overwritten without prompting.
 	 */
 	public static final String ALL = "ALL"; //$NON-NLS-1$
+	
+	/**
+	 * Return code indicating the entity should not be overwritten, 
+	 * and all subsequent entities should not be overwritten without prompting.
+	 */
+	public static final String NO_ALL = "NOALL"; //$NON-NLS-1$
 /**
  * Returns one of the return code constants declared on this interface,
  * indicating whether the entity represented by the passed String should be overwritten.
