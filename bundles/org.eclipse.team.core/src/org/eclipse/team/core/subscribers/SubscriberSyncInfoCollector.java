@@ -170,7 +170,7 @@ public final class SubscriberSyncInfoCollector implements IResourceChangeListene
 	 * 
 	 * @param delta the resource delta to analyse
 	 */
-	private void processDelta(IResourceDelta delta) {
+	private void processDelta(IResourceDelta delta, IResource[] roots) {
 		IResource resource = delta.getResource();
 		int kind = delta.getKind();
 
@@ -186,7 +186,7 @@ public final class SubscriberSyncInfoCollector implements IResourceChangeListene
 				return;
 			}
 			// Only interested in projects mapped to the provider
-			if (!isAncestorOfRoot(resource)) {
+			if (!isAncestorOfRoot(resource, roots)) {
 				// If the project has any entries in the sync set, remove them
 				if (getSyncInfoTree().hasMembers(resource)) {
 					eventHandler.remove(resource);
@@ -196,7 +196,7 @@ public final class SubscriberSyncInfoCollector implements IResourceChangeListene
 		}
 
 		boolean visitChildren = false;
-		if (isDescendantOfRoot(resource)) {
+		if (isDescendantOfRoot(resource, roots)) {
 			visitChildren = true;
 			// If the resource has changed type, remove the old resource handle
 			// and add the new one
@@ -219,18 +219,17 @@ public final class SubscriberSyncInfoCollector implements IResourceChangeListene
 		}
 
 		// Handle changed children
-		if (visitChildren || isAncestorOfRoot(resource)) {
+		if (visitChildren || isAncestorOfRoot(resource, roots)) {
 			IResourceDelta[] affectedChildren = delta.getAffectedChildren(IResourceDelta.CHANGED | IResourceDelta.REMOVED | IResourceDelta.ADDED);
 			for (int i = 0; i < affectedChildren.length; i++) {
-				processDelta(affectedChildren[i]);
+				processDelta(affectedChildren[i], roots);
 			}
 		}
 	}
 
-	private boolean isAncestorOfRoot(IResource parent) {
+	private boolean isAncestorOfRoot(IResource parent, IResource[] roots) {
 		// Always traverse into projects in case a root was removed
 		if (parent.getType() == IResource.ROOT) return true;
-		IResource[] roots = getRoots();
 		for (int i = 0; i < roots.length; i++) {
 			IResource resource = roots[i];
 			if (parent.getFullPath().isPrefixOf(resource.getFullPath())) {
@@ -240,8 +239,7 @@ public final class SubscriberSyncInfoCollector implements IResourceChangeListene
 		return false;
 	}
 
-	private boolean isDescendantOfRoot(IResource resource) {
-		IResource[] roots = getRoots();
+	private boolean isDescendantOfRoot(IResource resource, IResource[] roots) {
 		for (int i = 0; i < roots.length; i++) {
 			IResource root = roots[i];
 			if (root.getFullPath().isPrefixOf(resource.getFullPath())) {
@@ -281,7 +279,7 @@ public final class SubscriberSyncInfoCollector implements IResourceChangeListene
 	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
-		processDelta(event.getDelta());
+		processDelta(event.getDelta(), getRoots());
 	}
 
 	/*
@@ -290,10 +288,11 @@ public final class SubscriberSyncInfoCollector implements IResourceChangeListene
 	 * @see org.eclipse.team.core.sync.ITeamResourceChangeListener#teamResourceChanged(org.eclipse.team.core.sync.TeamDelta[])
 	 */
 	public void subscriberResourceChanged(ISubscriberChangeEvent[] deltas) {
+		IResource[] roots = getRoots();
 		for (int i = 0; i < deltas.length; i++) {
 			switch (deltas[i].getFlags()) {
 				case ISubscriberChangeEvent.SYNC_CHANGED :
-					if (isAllRootsIncluded() || isDescendantOfRoot(deltas[i].getResource())) {
+					if (isAllRootsIncluded() || isDescendantOfRoot(deltas[i].getResource(), roots)) {
 						eventHandler.change(deltas[i].getResource(), IResource.DEPTH_ZERO);
 					}
 					break;
@@ -301,7 +300,7 @@ public final class SubscriberSyncInfoCollector implements IResourceChangeListene
 					eventHandler.remove(deltas[i].getResource());
 					break;
 				case ISubscriberChangeEvent.ROOT_ADDED :
-					if (isAllRootsIncluded() || isDescendantOfRoot(deltas[i].getResource())) {
+					if (isAllRootsIncluded() || isDescendantOfRoot(deltas[i].getResource(), roots)) {
 						eventHandler.change(deltas[i].getResource(), IResource.DEPTH_INFINITE);
 					}
 					break;

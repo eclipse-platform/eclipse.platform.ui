@@ -448,15 +448,19 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	final public static RepositoryProvider getProvider(IProject project, String id) {
 		try {
 			if(project.isAccessible()) {
-				String existingID = project.getPersistentProperty(PROVIDER_PROP_KEY);
-
-				if(id.equals(existingID)) {
-					//if the IDs are the same then they were previously mapped
-					//see if we already instantiated one
-					RepositoryProvider provider = lookupProviderProp(project);  //throws core, we will reuse the catching already here
-					if(provider != null)
+				// Look for an existing provider first to avoid accessing persistant properties
+				RepositoryProvider provider = lookupProviderProp(project);  //throws core, we will reuse the catching already here
+				if(provider != null) {
+					if (provider.getID().equals(id)) {
 						return provider;
-					//otherwise instantiate and map a new one					
+					} else {
+						return null;
+					}
+				}
+				// There isn't one so check the persistant property
+				String existingID = project.getPersistentProperty(PROVIDER_PROP_KEY);
+				if(id.equals(existingID)) {
+					// The ids are equal so instantiate and return					
 					RepositoryProvider newProvider = mapExistingProvider(project, id);
 					if (newProvider!= null && newProvider.getID().equals(id)) {
 						return newProvider;
