@@ -32,13 +32,17 @@ import org.eclipse.ui.IContributorResourceAdapter;
  * @see IObjectContributorManager
  */
 public abstract class ObjectContributorManager {
+	// Empty list that is immutable
+	private static final List EMPTY_LIST = Arrays.asList(new Object[0]);
 
 	/** Table of contributors. */
 	protected Map contributors;
 
 	/** Cache of contributor search paths; <code>null</code> if none. */
 	protected Map lookup;
-/** Constructs a new contributor manager.
+
+/** 
+ * Constructs a new contributor manager.
  */
 public ObjectContributorManager() {
 	contributors = new Hashtable(5);
@@ -51,12 +55,8 @@ private void addContributorsFor(List types, List result) {
 	for (Iterator classes = types.iterator(); classes.hasNext();) {
 		Class clazz = (Class) classes.next();
 		List contributorList = (List) contributors.get(clazz.getName());
-		if (contributorList == null)
-			continue;
-		for (Iterator list = contributorList.iterator(); list.hasNext();) {
-			Object contributor = list.next();
-			result.add(contributor);
-		}
+		if (contributorList != null)
+			result.addAll(contributorList);
 	}	
 }
 /**
@@ -87,7 +87,6 @@ private List computeInterfaceOrder(List classList) {
 	return result;
 }
 
-
 /**
  * Flushes the cache of contributor search paths.  This is generally required
  * whenever a contributor is added or removed.  
@@ -103,33 +102,32 @@ public void flushLookup() {
  * the given object class.
  */
 protected List getContributors(Class objectClass) {
+
+	List objectList = null;
 	
-	// If there's a cache look for the object class.
-	if (lookup!=null) {
-		List result = (ArrayList) lookup.get(objectClass);
-		if (result != null)
-		   return result;
+	// Lookup the results in the cache first
+	if (lookup != null) {
+		objectList = (List) lookup.get(objectClass);
 	}
 	
-	// Class not found.  Build the result set for classes and interfaces.
-	
-	List result = addContributorsFor(objectClass);
-	
-	if (result.size()==0) 
-		return null;
+	// If not in cache, build it
+	if (objectList == null) {
+		objectList = addContributorsFor(objectClass);
+		if (objectList.size() == 0)
+			objectList = EMPTY_LIST;
+			
+		// Store the contribution list into the cache.
+		if (lookup == null)
+		   lookup = new HashMap();
+		lookup.put(objectClass, objectList);
+	}
 
-	// Store the result set in the cache.
-	if (lookup==null)
-	   lookup = new HashMap();
-	lookup.put(objectClass, result);
-	
-	return result;
+	return objectList;
 }
 
 /**
- * Return the list of contributors for the supplied classList.
+ * Return the list of contributors for the supplied class.
  */
-
 protected List addContributorsFor(Class objectClass){
 	
 	List classList = computeClassOrder(objectClass);
@@ -143,28 +141,43 @@ protected List addContributorsFor(Class objectClass){
 /**
  * Get the contributors for object including those it adapts
  * to.
- * @return List or null if there are none.
+ * 
+ * @return The list of contributors, empty if none.
  */
-
 protected List getContributors(Object object){
+
+	List objectList = null;
+	List adaptedList = null;
+	Class adaptedClass = null;
 	
-	List contributors = null;
 	Class objectClass = object.getClass();
-	
-	//No need for adapted checks if there is already a lookup
-	if(lookup != null)
-		 contributors = (List) lookup.get(objectClass);
-		
-	//Nothing is found or no lookup so do the search
-	if(contributors == null){
-		IResource adapted = getAdaptedResource(object);
-		if(adapted == null)
-			return getContributors(objectClass);
-		else
-			return  getContributors(objectClass, adapted.getClass());
+	IResource adapted = getAdaptedResource(object);
+	if (adapted != null)
+		adaptedClass = adapted.getClass();
+
+	// Lookup the results in the cache first
+	if (lookup != null) {
+		objectList = (List) lookup.get(objectClass);
+		if (adaptedClass != null)
+			adaptedList = (List) lookup.get(adaptedClass);		
 	}
-	else
-		return contributors;
+	
+	// If not in cache, build it
+	if (objectList == null) {
+		objectList = getContributors(objectClass);
+	}
+	if (adaptedList == null) {
+		if (adaptedClass == null)
+			adaptedList = EMPTY_LIST;
+		else
+			adaptedList = getContributors(adaptedClass);
+	}
+	
+	// Collect the contribution lists into one result
+	ArrayList results = new ArrayList(objectList.size() + adaptedList.size());
+	results.addAll(objectList);
+	results.addAll(adaptedList);
+	return results;
 }
 
 /**
@@ -174,15 +187,13 @@ protected List getContributors(Object object){
 public boolean hasContributorsFor(Object object) {
 	
 	List contributors = getContributors(object);	
-	
-	return (contributors != null && contributors.size()>0);
+	return contributors.size() > 0;
 }
 /**
  * Add interface Class objects to the result list based
  * on the class hierarchy. Interfaces will be searched
  * based on their position in the result list.
  */
-
 private void internalComputeInterfaceOrder(Class[] interfaces, List result, Map seen) {
 	List newInterfaces = new ArrayList(seen.size());
 	for (int i = 0; i < interfaces.length; i++) {
@@ -261,35 +272,46 @@ public void unregisterContributors(String targetType) {
  * it has an Adaptable for.
  */
 protected List getContributors(Class objectClass, Class resourceClass) {
-	
-	// If there's a cache look for the object class.
-	if (lookup!=null) {
-		List result = (ArrayList) lookup.get(objectClass);
-		if (result != null)
-		   return result;
-	}
-	
-	// Class not found.  Build the result set for classes and interfaces.
-	List result = addContributorsFor(objectClass);
-	
-	
-	//Get the resource actions. 
-	Iterator resourceContributors = addContributorsFor(resourceClass).iterator();
-	while(resourceContributors.hasNext()){
-		IObjectContributor contributor = (IObjectContributor) resourceContributors.next();
-		if(contributor.canAdapt())
-			result.add(contributor);
-	}
-	
-	if (result.size()==0) 
-		return null;
 
-	// Store the result set in the cache.
-	if (lookup==null)
-	   lookup = new HashMap();
-	lookup.put(objectClass, result);
+	List objectList = null;
+	List resourceList = null;
 	
-	return result;
+	// Lookup the results in the cache first
+	if (lookup != null) {
+		objectList = (List) lookup.get(objectClass);
+		resourceList = (List) lookup.get(resourceClass);		
+	}
+	
+	// If not in cache, build it
+	if (objectList == null) {
+		objectList = addContributorsFor(objectClass);
+		if (objectList.size() == 0)
+			objectList = EMPTY_LIST;
+	}
+	if (resourceList == null) {
+		List contributors = addContributorsFor(resourceClass);
+		resourceList = new ArrayList(contributors.size());
+		Iterator enum = contributors.iterator();
+		while (enum.hasNext()){
+			IObjectContributor contributor = (IObjectContributor)enum.next();
+			if (contributor.canAdapt())
+				resourceList.add(contributor);
+		}
+		if (resourceList.size() == 0)
+			resourceList = EMPTY_LIST;
+	}
+
+	// Store the contribution lists into the cache.
+	if (lookup == null)
+	   lookup = new HashMap();
+	lookup.put(objectClass, objectList);
+	lookup.put(resourceClass, resourceList);
+	
+	// Collect the contribution lists into one result
+	ArrayList results = new ArrayList(objectList.size() + resourceList.size());
+	results.addAll(objectList);
+	results.addAll(resourceList);
+	return results;
 }	
 
 /**
