@@ -343,14 +343,14 @@ public final class InternalPlatform implements IPlatform {
 			return metaArea;
 		
 		metaArea = new DataArea();
-		try {
-			metaArea.createLockFile();
-		} catch (CoreException e) {
-			throw new IllegalStateException(e.getStatus().getMessage());
-		} catch (IllegalStateException e) {
-			// do nothing.  This happens when there is no instance area
-			// or it has not been defined yet.
-		}
+//		try {
+//			metaArea.createLockFile();
+//		} catch (CoreException e) {
+//			throw new IllegalStateException(e.getStatus().getMessage());
+//		} catch (IllegalStateException e) {
+//			// do nothing.  This happens when there is no instance area
+//			// or it has not been defined yet.
+//		}
 		metaArea.setKeyringFile(keyringFile);
 		metaArea.setPassword(password);			
 		return metaArea;
