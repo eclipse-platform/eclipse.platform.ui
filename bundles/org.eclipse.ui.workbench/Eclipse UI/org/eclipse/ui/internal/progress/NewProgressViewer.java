@@ -1167,6 +1167,8 @@ public class NewProgressViewer extends TreeViewer implements FinishedJobs.KeptJo
 					smallerFont.dispose();
 				
 				darkColor.dispose();
+				
+				NewProgressViewer.this.handleDispose(null);
 			}			
 		});
 
@@ -1250,7 +1252,7 @@ public class NewProgressViewer extends TreeViewer implements FinishedJobs.KeptJo
 	public void remove(Object[] elements) {
  	    if (list.isDisposed())
  	        return;
- 	    if (DEBUG) System.err.println("remove"); //$NON-NLS-1$
+ 	    if (DEBUG || true) System.err.println("remove"); //$NON-NLS-1$
 		boolean changed= false;
 		for (int i= 0; i < elements.length; i++) {
 			JobTreeItem ji= findJobItem(elements[i], false);
