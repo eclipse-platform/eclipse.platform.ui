@@ -20,6 +20,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.registry.PreferencePageRegistryReader;
 
 /**
  * A proxy for a preference page to avoid creation of preference page
@@ -81,4 +82,19 @@ public IConfigurationElement getConfigurationElement() {
 	return configurationElement;
 }
 
+/**
+ * 
+ * @return the (local) id attribute used in the extension that defined this page.
+ */
+public String getExtensionLocalId() {
+    return getConfigurationElement().getAttribute(PreferencePageRegistryReader.ATT_ID);
+}
+
+/**
+ * 
+ * @return the plugin identifier of the plugin that contributed this page.
+ */
+public String getPluginId() {
+    return getConfigurationElement().getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
+}
 }

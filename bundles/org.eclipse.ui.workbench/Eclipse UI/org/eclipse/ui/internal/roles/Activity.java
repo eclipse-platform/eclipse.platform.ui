@@ -77,11 +77,19 @@ public class Activity {
 	}
 
 	/**
-	 * Set the enabled state of this activity.
+	 * Set the enabled state of this activity.  If this activity has a parent 
+     * and the enabled state is true then the parent is also activated.  
+     * TBD:  how should we do this?  Turning off enablement of a child shouldn't
+     * effect the parent so this behaviour is lopsided. 
 	 * @param enabled
 	 */
 	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
+		this.enabled = enabled;        
+        if (enabled && parent != null) {
+            Activity parentActivity = RoleManager.getInstance().getActivity(parent);
+            if (parentActivity != null) {
+                parentActivity.setEnabled(enabled);
+            }
+        }
 	}
-
 }

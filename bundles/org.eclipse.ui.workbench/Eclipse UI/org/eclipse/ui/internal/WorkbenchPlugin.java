@@ -28,6 +28,12 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.RGB;
+
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.JFacePreferences;
@@ -37,10 +43,7 @@ import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.OpenStrategy;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.RGB;
+
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IPerspectiveRegistry;
@@ -49,6 +52,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
+import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.CapabilityRegistry;
@@ -63,6 +67,9 @@ import org.eclipse.ui.internal.registry.ProjectImageRegistry;
 import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.eclipse.ui.internal.registry.ViewRegistryReader;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
+import org.eclipse.ui.internal.roles.ObjectActivityManager;
+import org.eclipse.ui.internal.roles.ObjectContributionRecord;
+import org.eclipse.ui.internal.roles.RoleManager;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -341,12 +348,25 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			//Get the pages from the registry
 			PreferencePageRegistryReader registryReader = new PreferencePageRegistryReader(getWorkbench());
 			List pageContributions = registryReader.getPreferenceContributions(Platform.getPluginRegistry());
-
+            
 			//Add the contributions to the manager
 			Iterator enum = pageContributions.iterator();
 			while (enum.hasNext()) {
 				preferenceManager.addToRoot((IPreferenceNode) enum.next());
 			}
+                        
+            //add all WorkbenchPreferenceNodes to the manager
+            ObjectActivityManager fPrefManager = ObjectActivityManager.getManager(IWorkbenchConstants.PL_PREFERENCES, true);
+            for (Iterator i = preferenceManager.getElements(PreferenceManager.PRE_ORDER).iterator(); i.hasNext(); ) {
+                IPreferenceNode node = (IPreferenceNode) i.next();
+                if (node instanceof WorkbenchPreferenceNode) {
+                    WorkbenchPreferenceNode workbenchNode = ((WorkbenchPreferenceNode)node);
+                    ObjectContributionRecord record = new ObjectContributionRecord(workbenchNode.getPluginId(), workbenchNode.getExtensionLocalId());
+                    fPrefManager.addObject(record, node);  
+                }            
+            }
+            // and then apply the default bindings
+            RoleManager.getInstance().applyPatternBindings(fPrefManager);          
 		}
 		return preferenceManager;
 	}

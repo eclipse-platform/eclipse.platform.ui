@@ -19,6 +19,8 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
@@ -59,6 +61,32 @@ public class RoleManager {
 		return singleton;
 
 	}
+
+    /**
+     * Apply default pattern bindings to the objects governed by the given 
+     * manager.
+     * 
+     * @param manager
+     */
+    public void applyPatternBindings(ObjectActivityManager manager) {
+        Set keys = manager.getObjectIds();
+        for (Iterator i = keys.iterator(); i.hasNext();) {            
+            ObjectContributionRecord record = (ObjectContributionRecord) i.next();
+            String objectKey = record.toString();
+            for (Iterator j = patternBindings.entrySet().iterator(); j.hasNext(); ) {
+                Map.Entry patternEntry = (Map.Entry)j.next();
+                if (objectKey.matches((String)patternEntry.getKey())) {
+                    Collection activityIds = (Collection) patternEntry.getValue();
+                    for (Iterator k = activityIds.iterator(); k.hasNext(); ) {
+                        String activityId = (String) k.next();
+                        if (getActivity(activityId) != null) {
+                           manager.addActivityBinding(record, activityId);                       
+                        }
+                    }
+                }
+            }            
+        }            
+    }    
 
 	/**
 	 * Read the roles from the primary feature. If there is no
@@ -168,6 +196,7 @@ public class RoleManager {
 	 * Return whether or not the id is enabled. If there is a role
 	 * whose pattern matches the id return whether or not the role is
 	 * enabled. If there is no match return true;
+     * TODO:  replace with usage of ObjectActivityManager.getActiveObjects()
 	 * @param id
 	 * @return boolean. 
 	 */
@@ -235,6 +264,7 @@ public class RoleManager {
 	/** 
 	 * Enable any activity for which there is a pattern
 	 * binding that matches id.
+     * TODO: replace with usage of ObjectActivityManager.setEnablementFor(bool)
 	 * @param id
 	 */
 	public void enableActivities(String id) {
@@ -255,5 +285,12 @@ public class RoleManager {
 			}
 		}
 
+	}
+
+	/**
+	 * @return the set of Activity objects.
+	 */
+	Collection getActivities() {		
+		return activities.values();
 	}
 }
