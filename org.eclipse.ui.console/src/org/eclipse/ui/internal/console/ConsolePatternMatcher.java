@@ -42,6 +42,8 @@ public class ConsolePatternMatcher implements IDocumentListener {
 
     private boolean fFinalMatch;
 
+	private boolean fScheduleFinal;
+
     public ConsolePatternMatcher(TextConsole console) {
         fConsole = console;
         fMatchJob.setRule(fConsole.getSchedulingRule());
@@ -146,11 +148,15 @@ public class ConsolePatternMatcher implements IDocumentListener {
                     }
                     prevBaseOffset = baseOffset;
                 }
-
             }
+            
             if (fFinalMatch) {
                 fConsole.matcherFinished();
+            } else if (fScheduleFinal) {
+            	fFinalMatch = true;
+            	schedule();
             }
+            
 
             return Status.OK_STATUS;
         }
@@ -283,8 +289,8 @@ public class ConsolePatternMatcher implements IDocumentListener {
     }
     
     public void forceFinalMatching() {
-        fFinalMatch = true;
-        fMatchJob.schedule();
+    	fScheduleFinal = true;
+    	fMatchJob.schedule();
     }
 
 }
