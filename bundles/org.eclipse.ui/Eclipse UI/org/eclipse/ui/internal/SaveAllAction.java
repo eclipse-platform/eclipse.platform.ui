@@ -33,8 +33,7 @@ public class SaveAllAction extends PartEventAction
  * The default constructor.
  */
 public SaveAllAction(WorkbenchWindow window) {
-	super("saveAll");//$NON-NLS-1$
-	setText(WorkbenchMessages.getString("SaveAll.text")); //$NON-NLS-1$
+	super(WorkbenchMessages.getString("SaveAll.text"));//$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("SaveAll.toolTip")); //$NON-NLS-1$
 	setId(IWorkbenchActionConstants.SAVE_ALL);
 	setAccelerator(SWT.CTRL | SWT.SHIFT |'s');
