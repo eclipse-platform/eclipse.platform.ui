@@ -26,8 +26,10 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 
 public class ConsoleDocumentManager implements ILaunchListener {
 
@@ -129,8 +131,6 @@ public class ConsoleDocumentManager implements ILaunchListener {
 				notifyConsoleViews();
 			}
 		});
-		
-		
 	}
 
 	/**
@@ -138,7 +138,8 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	 * Must be called in the UI thread.
 	 */
 	private void notifyConsoleViews() {		
-		IWorkbenchWindow[] windows= DebugUIPlugin.getActiveWorkbenchWindow().getWorkbench().getWorkbenchWindows();
+		IWorkbench workbench= PlatformUI.getWorkbench();
+		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
 		for (int i = 0; i < windows.length; i++) {
 			IWorkbenchWindow iWorkbenchWindow = windows[i];
 			IWorkbenchPage[] pages= iWorkbenchWindow.getPages();
