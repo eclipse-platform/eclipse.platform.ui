@@ -2423,9 +2423,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			childMem = memento.getChild(IWorkbenchConstants.TAG_PERSPECTIVES);
 			String activePartID =
 				childMem.getString(IWorkbenchConstants.TAG_ACTIVE_PART);
-			String activePartSecondaryID = ViewFactory.extractSecondaryId(activePartID);
-			if (activePartSecondaryID != null) {
-			    activePartID = ViewFactory.extractPrimaryId(activePartID);
+			String activePartSecondaryID = null;
+			if (activePartID != null) {
+				activePartSecondaryID = ViewFactory.extractSecondaryId(activePartID);
+				if (activePartSecondaryID != null) {
+				    activePartID = ViewFactory.extractPrimaryId(activePartID);
+				}
 			}
 			String activePerspectiveID =
 				childMem.getString(IWorkbenchConstants.TAG_ACTIVE_PERSPECTIVE);
