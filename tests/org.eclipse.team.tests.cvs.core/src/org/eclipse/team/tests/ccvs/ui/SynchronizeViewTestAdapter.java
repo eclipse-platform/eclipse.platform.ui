@@ -131,5 +131,7 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 				TeamUI.getSynchronizeManager().removeSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
 			}
 		}
+		// Process all async events that may have been generated above
+		while (Display.getCurrent().readAndDispatch()) {};
 	}
 }
