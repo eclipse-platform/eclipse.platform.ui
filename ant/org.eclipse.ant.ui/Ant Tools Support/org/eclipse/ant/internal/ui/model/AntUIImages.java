@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49380, 49445
+ *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49380, 49445, 53547
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.model;
 
@@ -76,6 +76,7 @@ public class AntUIImages {
 		declareRegistryImage(IAntUIConstants.IMG_RUN, LOCALTOOL + "run_tool.gif"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_SEARCH, LOCALTOOL + "search.gif"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_FILTER_INTERNAL_TARGETS, LOCALTOOL + "filter_internal_targets.gif"); //$NON-NLS-1$
+		declareRegistryImage(IAntUIConstants.IMG_FILTER_IMPORTED_ELEMENTS, LOCALTOOL + "filter_imported_elements.gif"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_FILTER_PROPERTIES, LOCALTOOL + "filter_properties.gif"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_SORT_OUTLINE, LOCALTOOL + "alpha_mode.gif"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_REFRESH, LOCALTOOL + "refresh.gif"); //$NON-NLS-1$

@@ -10,7 +10,7 @@
  * Contributors:
  *     GEBIT Gesellschaft fuer EDV-Beratung und Informatik-Technologien mbH - initial API and implementation
  * 	   IBM Corporation - bug fixes
- *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49380, bug 34548
+ *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49380, bug 34548, bug 53547
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.editor.outline;
@@ -78,7 +78,9 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	private ListenerList fPostSelectionChangedListeners= new ListenerList();
 	private boolean fIsModelEmpty= true;
 	private boolean fFilterInternalTargets;
-	private InternalTargetFilter fInternalTargetFilter= null;
+    private InternalTargetFilter fInternalTargetFilter= null;
+    private boolean fFilterImportedElements;
+    private ImportedElementsFilter fImportedElementsFilter= null;   
 	private boolean fFilterProperties;
 	private PropertiesFilter fPropertiesFilter= null;
 	private boolean fSort;
@@ -101,6 +103,29 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			if (element instanceof AntTargetNode) {
 				Target target= ((AntTargetNode)element).getTarget();
 				return target.getDescription() != null || ((AntTargetNode)element).isDefaultTarget();
+			} 
+			return true;
+		}
+	}
+	
+	/**
+	 * A viewer filter that removes imported elements except an imported default target
+	 */
+	private class ImportedElementsFilter extends ViewerFilter {
+		
+		/**
+		 * Returns whether the given {@link AntElementNode} is imported from
+		 * another file.
+		 */
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (element instanceof AntElementNode) {
+			    AntElementNode node = (AntElementNode) element; 			    
+				if (node.getImportNode() !=  null || node.isExternal()) {
+					if (node instanceof AntTargetNode && ((AntTargetNode)node).isDefaultTarget()) {
+						return true;
+					}
+					return false;
+				}
 			} 
 			return true;
 		}
@@ -229,15 +254,29 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	 */
 	protected void setFilterInternalTargets(boolean filter) {
 		fFilterInternalTargets= filter;
-		if (filter) {
-			getTreeViewer().addFilter(getInternalTargetsFilter());
-		} else {
-			getTreeViewer().removeFilter(getInternalTargetsFilter());
-		}
-		AntUIPlugin.getDefault().getPreferenceStore().setValue(IAntUIPreferenceConstants.ANTEDITOR_FILTER_INTERNAL_TARGETS, filter);
-		getTreeViewer().refresh();
+		setFilter(filter, getInternalTargetsFilter(), IAntUIPreferenceConstants.ANTEDITOR_FILTER_INTERNAL_TARGETS);   
 	}
 	
+	/**
+	 * Sets whether imported elements should be filtered out of the outline.
+	 * 
+	 * @param filter whether or not imported elements should be filtered out
+	 */
+    protected void setFilterImportedElements(boolean filter) {
+		fFilterImportedElements= filter;
+		setFilter(filter, getImportedElementsFilter(), IAntUIPreferenceConstants.ANTEDITOR_FILTER_IMPORTED_ELEMENTS);        
+    }
+
+	private void setFilter(boolean filter, ViewerFilter viewerFilter, String name) {
+		if (filter) {
+			getTreeViewer().addFilter(viewerFilter);
+		} else {
+			getTreeViewer().removeFilter(viewerFilter);
+		}
+		AntUIPlugin.getDefault().getPreferenceStore().setValue(name, filter);
+		getTreeViewer().refresh();
+	}
+
 	/**
 	 * Sets whether internal targets should be filtered out of the outline.
 	 * 
@@ -245,13 +284,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	 */
 	protected void setFilterProperties(boolean filter) {
 		fFilterProperties= filter;
-		if (filter) {
-			getTreeViewer().addFilter(getPropertiesFilter());
-		} else {
-			getTreeViewer().removeFilter(getPropertiesFilter());
-		}
-		AntUIPlugin.getDefault().getPreferenceStore().setValue(IAntUIPreferenceConstants.ANTEDITOR_FILTER_PROPERTIES, filter);
-		getTreeViewer().refresh();
+		setFilter(filter, getPropertiesFilter(), IAntUIPreferenceConstants.ANTEDITOR_FILTER_PROPERTIES);     
 	}
 	
 	private ViewerFilter getInternalTargetsFilter() {
@@ -260,6 +293,13 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		}
 		return fInternalTargetFilter;
 	}
+	
+    private ViewerFilter getImportedElementsFilter() {
+		if (fImportedElementsFilter == null) {
+		    fImportedElementsFilter= new ImportedElementsFilter();
+		}
+		return fImportedElementsFilter;
+    }
 	
 	private ViewerFilter getPropertiesFilter() {
 		if (fPropertiesFilter == null) {
@@ -278,6 +318,16 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		return fFilterInternalTargets;
 	}
 	
+	/**
+	 * Returns whether imported elements are currently being filtered out of
+	 * the outline.
+	 * 
+	 * @return whether or not imported elements are being filtered out
+	 */
+	protected boolean filterImportedElements() {
+		return fFilterImportedElements;
+	}
+
 	/**
 	 * Returns whether properties are currently being filtered out of
 	 * the outline.
@@ -322,6 +372,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		super();
 		fCore= core;
 		fFilterInternalTargets= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANTEDITOR_FILTER_INTERNAL_TARGETS);
+		fFilterImportedElements= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANTEDITOR_FILTER_IMPORTED_ELEMENTS);
 		fFilterProperties= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANTEDITOR_FILTER_PROPERTIES);
 		fSort= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANTEDITOR_SORT);
 	}
@@ -383,6 +434,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		tbm.add(new ToggleSortAntOutlineAction(this));
 		tbm.add(new FilterInternalTargetsAction(this));
 		tbm.add(new FilterPropertiesAction(this));
+		tbm.add(new FilterImportedElementsAction(this));
 		
 		openWithMenu= new AntOpenWithMenu(this.getSite().getPage());
 		
@@ -395,6 +447,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		runTargetImmediately = new AntRunTargetAction(this, AntRunTargetAction.MODE_IMMEDIATE_EXECUTE);
 		runAnt = new AntRunTargetAction(this, AntRunTargetAction.MODE_DISPLAY_DIALOG);
 		setFilterInternalTargets(fFilterInternalTargets);
+		setFilterImportedElements(fFilterImportedElements);
 		setFilterProperties(fFilterProperties);
 	}
 	

@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49380, 49445
+ *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49380, 49445, bug 53547
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.model;
 
@@ -71,6 +71,7 @@ public interface IAntUIConstants {
 	public static final String IMG_RUN= PLUGIN_ID + ".run"; //$NON-NLS-1$
 	public static final String IMG_SEARCH= PLUGIN_ID + ".search"; //$NON-NLS-1$
 	public static final String IMG_FILTER_INTERNAL_TARGETS= PLUGIN_ID + ".filterInternalTargets"; //$NON-NLS-1$
+	public static final String IMG_FILTER_IMPORTED_ELEMENTS= PLUGIN_ID + ".filterImportedElements"; //$NON-NLS-1$
 	public static final String IMG_FILTER_PROPERTIES= PLUGIN_ID + ".filterProperties"; //$NON-NLS-1$
 	public static final String IMG_SORT_OUTLINE= PLUGIN_ID + ".sortOutline"; //$NON-NLS-1$
 	public static final String IMG_REFRESH = PLUGIN_ID + ".IMG_REFRESH"; //$NON-NLS-1$
