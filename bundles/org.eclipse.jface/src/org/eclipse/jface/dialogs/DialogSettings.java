@@ -363,7 +363,7 @@ private void save(Document document,Node parent) {
 		String key = (String)i.next();
 		Element child = document.createElement(TAG_ITEM);
 		root.appendChild(child);
-		child.setAttribute(TAG_KEY, key);
+		child.setAttribute(TAG_KEY, key == null ? "" : key); //$NON-NLS-1$
 		String string = (String)items.get(key);
         child.setAttribute(TAG_VALUE, string == null ? "" : string); //$NON-NLS-1$        
 	}
@@ -372,7 +372,7 @@ private void save(Document document,Node parent) {
 		String key = (String)i.next();
 		Element child = document.createElement(TAG_LIST);
 		root.appendChild(child);
-		child.setAttribute(TAG_KEY, key);
+		child.setAttribute(TAG_KEY, key == null ? "" : key);
 		String[] value = (String[])arrayItems.get(key);
 		for (int index = 0; index < value.length; index++){
 			Element c = document.createElement(TAG_ITEM);
