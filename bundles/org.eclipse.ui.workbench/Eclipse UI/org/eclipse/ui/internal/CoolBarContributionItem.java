@@ -11,8 +11,10 @@
 package org.eclipse.ui.internal;
 
 
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.part.CoolItemGroupMarker;
 
 /**
  * A CoolBarContributionItem is an item which realizes itself and its items
@@ -155,7 +157,11 @@ public class CoolBarContributionItem extends ContributionItem {
 		IContributionItem[] items = toolBarManager.getItems();
 		for (int i=0; i<items.length; i++) {
 			IContributionItem item = items[i];
-			if (item.isSeparator() || item.isGroupMarker()) continue;
+			if (item.isSeparator()) continue;
+			// see 37537 - do not get rid of empty coolbar contribution items
+			// for editor contributions that are split into multiple coolitems
+			if (item instanceof CoolItemGroupMarker) return false;
+			if (item.isGroupMarker()) continue;
 			return false;
 		}
 		return true;
