@@ -61,7 +61,6 @@ public class UpdateManagerReconciler implements IPlatformRunnable {
 	 */
 	public Object run(Object args) throws Exception {
 
-new Exception().printStackTrace();
 		// get debug setting and process command line arguments
 		DEBUG = UpdateCore.DEBUG_SHOW_RECONCILER;
 		processCommandLine((String[]) args);
