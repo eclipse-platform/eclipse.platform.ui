@@ -200,6 +200,19 @@
          </selection>
       </action>
       <action
+            label="%TerminateAction.label"
+            icon="icons/full/clcl16/terminate_co.gif"
+            helpContextId="terminate_action_context"
+            tooltip="%TerminateAction.tooltip"
+            class="org.eclipse.debug.internal.ui.TerminateActionDelegate"
+            menubarPath="org.eclipse.debug.ui.DebugMenu/stepGroup"
+            enablesFor="+"
+            id="org.eclipse.debug.internal.ui.TerminateActionDelegate">
+         <selection
+               class="org.eclipse.debug.core.model.ITerminate">
+         </selection>
+      </action>
+      <action
             label="%SuspendAction.label"
             icon="icons/full/clcl16/suspend_co.gif"
             helpContextId="suspend_action_context"
