@@ -27,11 +27,11 @@ import org.eclipse.help.internal.workingset.*;
 public final class HelpSystem {
 	protected static final HelpSystem instance = new HelpSystem();
 
-	private final static String WEBAPP_EXTENSION_ID = "org.eclipse.help.webapp";
+	private final static String WEBAPP_EXTENSION_ID = HelpBasePlugin.PLUGIN_ID+".webapp";
 	private static final String WEBAPP_DEFAULT_ATTRIBUTE = "default";
 
 	private static final String HELP_SUPPORT_EXTENSION_ID =
-		"org.eclipse.help.support";
+		HelpPlugin.PLUGIN_ID+".support";
 	private static final String HELP_SUPPORT_CLASS_ATTRIBUTE = "class";
 
 	public final static String BOOKMARKS = "bookmarks";

@@ -14,20 +14,20 @@ import org.eclipse.core.runtime.*;
 /**
  */
 public class AppserverPlugin extends Plugin {
+	public final static String PLUGIN_ID = "org.eclipse.help.appserver";
 	public final static String HOST_KEY = "host";
 	public final static String PORT_KEY = "port";
 
-	private final static String APP_SERVER_EXTENSION_ID =
-		"org.eclipse.help.appserver.server";
+	private final static String APP_SERVER_EXTENSION_ID = PLUGIN_ID + ".server";
 	private static final String APP_SERVER_CLASS_ATTRIBUTE = "class";
 	private static final String APP_SERVER_DEFAULT_ATTRIBUTE = "default";
 
 	// singleton object
 	private static AppserverPlugin plugin;
-	
-	private  IWebappServer appServer;
-	private  IPluginDescriptor contributingServerPlugin;
-	private  boolean initialized = false;
+
+	private IWebappServer appServer;
+	private IPluginDescriptor contributingServerPlugin;
+	private boolean initialized = false;
 
 	private String hostAddress;
 	private int port;
@@ -86,7 +86,7 @@ public class AppserverPlugin extends Plugin {
 	public IPluginDescriptor getContributingServerPlugin() {
 		return contributingServerPlugin;
 	}
-	
+
 	private void createWebappServer() throws CoreException {
 		initialized = true;
 		// Initializes the app server by getting an instance via
@@ -124,7 +124,10 @@ public class AppserverPlugin extends Plugin {
 							IWebappServer) serverElement
 								.createExecutableExtension(
 							APP_SERVER_CLASS_ATTRIBUTE);
-					contributingServerPlugin = serverElement.getDeclaringExtension().getDeclaringPluginDescriptor();
+					contributingServerPlugin =
+						serverElement
+							.getDeclaringExtension()
+							.getDeclaringPluginDescriptor();
 				} catch (CoreException e) {
 					getLog().log(e.getStatus());
 					throw e;
@@ -167,7 +170,7 @@ public class AppserverPlugin extends Plugin {
 					IStatus.OK,
 					AppserverResources.getString("Appserver.start"),
 					null));
-					
+
 		appServer.start(port, hostAddress);
 	}
 }

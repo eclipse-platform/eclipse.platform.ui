@@ -59,27 +59,27 @@ public class BrowserManager {
 					setDefaultBrowserID("org.eclipse.help.ui.systembrowser");
 				}
 				if (defaultBrowserDesc == null) {
-					setDefaultBrowserID("org.eclipse.help.custombrowser");
+					setDefaultBrowserID("org.eclipse.help.base.custombrowser");
 				}
 
 			} else if (System.getProperty("os.name").startsWith("Linux")) {
-				setDefaultBrowserID("org.eclipse.help.mozillaLinux");
+				setDefaultBrowserID("org.eclipse.help.base.mozillaLinux");
 				if (defaultBrowserDesc == null) {
-					setDefaultBrowserID("org.eclipse.help.netscapeLinux");
+					setDefaultBrowserID("org.eclipse.help.base.netscapeLinux");
 				}
 
 			} else if (System.getProperty("os.name").startsWith("SunOS")) {
-				setDefaultBrowserID("org.eclipse.help.netscapeSolaris");
+				setDefaultBrowserID("org.eclipse.help.base.netscapeSolaris");
 			} else if (System.getProperty("os.name").startsWith("AIX")) {
-				setDefaultBrowserID("org.eclipse.help.netscapeAIX");
+				setDefaultBrowserID("org.eclipse.help.base.netscapeAIX");
 			} else if (
 				System.getProperty("os.name").toLowerCase().startsWith("hp")) {
-				setDefaultBrowserID("org.eclipse.help.mozillaHPUX");
+				setDefaultBrowserID("org.eclipse.help.base.mozillaHPUX");
 				if (defaultBrowserDesc == null) {
-					setDefaultBrowserID("org.eclipse.help.netscapeHPUX");
+					setDefaultBrowserID("org.eclipse.help.base.netscapeHPUX");
 				}
 			} else {
-				setDefaultBrowserID("org.eclipse.help.mozillaLinux");
+				setDefaultBrowserID("org.eclipse.help.base.mozillaLinux");
 			}
 		}
 		if (defaultBrowserDesc == null) {

@@ -65,7 +65,7 @@
    </extension>
 <!-- Text Analyzers for search -->
    <extension
-         id="org.eclipse.help.Analyzer_en"
+         id="org.eclipse.help.base.Analyzer_en"
          point="org.eclipse.help.base.luceneAnalyzer">
       <analyzer
             locale="en"
@@ -73,7 +73,7 @@
       </analyzer>
    </extension>
    <extension
-         id="org.eclipse.help.Analyzer_de"
+         id="org.eclipse.help.base.Analyzer_de"
          point="org.eclipse.help.base.luceneAnalyzer">
       <analyzer
             locale="de"
@@ -85,7 +85,7 @@
          point="org.eclipse.help.base.browser">
       <browser
             name="%mozilla_adapter"
-            id="org.eclipse.help.mozillaLinux">
+            id="org.eclipse.help.base.mozillaLinux">
          <factoryclass
                class="org.eclipse.help.internal.browser.MozillaFactory">
             <parameter
@@ -104,7 +104,7 @@
       </browser>
       <browser
             name="%netscape_adapter"
-            id="org.eclipse.help.netscapeLinux">
+            id="org.eclipse.help.base.netscapeLinux">
          <factoryclass
                class="org.eclipse.help.internal.browser.MozillaFactory">
             <parameter
@@ -123,7 +123,7 @@
       </browser>
       <browser
             name="%netscape_adapter"
-            id="org.eclipse.help.netscapeAIX">
+            id="org.eclipse.help.base.netscapeAIX">
          <factoryclass
                class="org.eclipse.help.internal.browser.MozillaFactory">
             <parameter
@@ -142,7 +142,7 @@
       </browser>
       <browser
             name="%mozilla_adapter"
-            id="org.eclipse.help.mozillaHPUX">
+            id="org.eclipse.help.base.mozillaHPUX">
          <factoryclass
                class="org.eclipse.help.internal.browser.MozillaFactory">
             <parameter
@@ -161,7 +161,7 @@
       </browser>
       <browser
             name="%netscape_adapter"
-            id="org.eclipse.help.netscapeHPUX">
+            id="org.eclipse.help.base.netscapeHPUX">
          <factoryclass
                class="org.eclipse.help.internal.browser.MozillaFactory">
             <parameter
@@ -180,7 +180,7 @@
       </browser>
       <browser
             name="%netscape_adapter"
-            id="org.eclipse.help.netscapeSolaris">
+            id="org.eclipse.help.base.netscapeSolaris">
          <factoryclass
                class="org.eclipse.help.internal.browser.MozillaFactory">
             <parameter
@@ -200,12 +200,12 @@
       <browser
             factoryclass="org.eclipse.help.internal.browser.macosx.DefaultBrowserFactory"
             name="%defaultBrowser"
-            id="org.eclipse.help.defaultBrowserMacOSX">
+            id="org.eclipse.help.base.defaultBrowserMacOSX">
       </browser>
       <browser
             factoryclass="org.eclipse.help.internal.browser.CustomBrowserFactory"
             name="%custom_browser"
-            id="org.eclipse.help.custombrowser">
+            id="org.eclipse.help.base.custombrowser">
       </browser>
    </extension>
 
