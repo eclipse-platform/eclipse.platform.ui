@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -197,7 +198,15 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 			valid= antClasspathBlock.validateToolsJAR();
 		}
 		if (valid) {
-			valid= antClasspathBlock.validateXerces();
+			String vmTypeID= null;
+			try {
+				vmTypeID = launchConfig.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
+			} catch (CoreException ce) {		
+			}
+			if (vmTypeID == null) {
+				//running in the same VM
+				valid= antClasspathBlock.validateXerces();
+			}
 		}
 
 		if (valid) {
