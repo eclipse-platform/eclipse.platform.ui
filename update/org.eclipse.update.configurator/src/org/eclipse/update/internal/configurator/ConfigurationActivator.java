@@ -212,7 +212,9 @@ public class ConfigurationActivator implements BundleActivator {
 
 	private Bundle[] getBundlesToUninstall(Bundle[] cachedBundles, URL[] newPlugins) {
 		ArrayList bundlesToUninstall = new ArrayList();
-		for (int i=1; i<cachedBundles.length; i++) {
+		for (int i=0; i<cachedBundles.length; i++) {
+			if (cachedBundles[i].getBundleId() == 0)
+				continue; // skip the system bundle
 			String location1 = cachedBundles[i].getLocation();
 			boolean found = false;
 			for (int j=0; !found && j<newPlugins.length; j++) {
