@@ -417,7 +417,6 @@ public class KeysPreferencePage
 		checkBoxMultiKeyAssist = new Button(composite, SWT.CHECK);
 		checkBoxMultiKeyAssist.setText(Util.translateString(RESOURCE_BUNDLE, "checkBoxMultiKeyAssist.Text")); //$NON-NLS-1$
 		checkBoxMultiKeyAssist.setToolTipText(Util.translateString(RESOURCE_BUNDLE, "checkBoxMultiKeyAssist.ToolTipText")); //$NON-NLS-1$
-		checkBoxMultiKeyAssist.setFont(composite.getFont());
 		checkBoxMultiKeyAssist.setSelection(
 			getPreferenceStore().getBoolean(IPreferenceConstants.MULTI_KEY_ASSIST));
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
@@ -758,7 +757,6 @@ public class KeysPreferencePage
 
 		// TODO WorkbenchHelp.setHelp(parent,
 		// IHelpContextIds.WORKBENCH_KEY_PREFERENCE_PAGE);
-		applyDialogFont(composite);
 		return composite;
 	}
 
@@ -774,7 +772,8 @@ public class KeysPreferencePage
 		final TabItem advancedTab = new TabItem(tabFolder, SWT.NULL);
 		advancedTab.setText(Util.translateString(RESOURCE_BUNDLE, "advancedTab.Text")); //$NON-NLS-1$
 		advancedTab.setControl(createAdvancedTab(tabFolder));
-
+		
+		applyDialogFont(tabFolder);
 		return tabFolder;
 	}
 
