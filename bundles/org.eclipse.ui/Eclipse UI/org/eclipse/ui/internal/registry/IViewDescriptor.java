@@ -25,7 +25,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  */
 public interface IViewDescriptor {
 /**
- * Create an instance of the view defined in the descriptor.
+ * Creates an instance of the view defined in the descriptor.
  */
 public IViewPart createView() throws CoreException;
 /**
@@ -37,19 +37,26 @@ public IViewPart createView() throws CoreException;
  */
 public String[] getCategoryPath();
 /**
- * Return the configuration element which contributed this view.
+ * Returns the configuration element which contributed this view.
  */
 public IConfigurationElement getConfigurationElement();
 /**
- * Return the id of the view.
+ * Returns the id of the view.
  */
 public String getID() ;
 /**
- * Return the descriptor for the icon to show for this view.
+ * Returns the descriptor for the icon to show for this view.
  */
 public ImageDescriptor getImageDescriptor();
 /**
- * Return the label to show for this view.
+ * Returns the label to show for this view.
  */
 public String getLabel() ;
+
+/**
+ * Returns the text of the accelerator to use for this view.
+ */
+public String getAccelerator();
+
+
 }
