@@ -75,10 +75,10 @@ public abstract class ResourceAction extends Action {
  	 *			and <code>IAction.AS_RADIO_BUTTON</code>.
 	 *
 	 * @see ResourceAction#ResourceAction
-	 * @see IAction#AS_CHECK_BOX
-	 * @see IAction#AS_DROP_DOWN_MENU
-	 * @see IAction#AS_PUSH_BUTTON
-	 * @see IAction#AS_RADIO_BUTTON
+	 * @see org.eclipse.jface.action.IAction#AS_CHECK_BOX
+	 * @see org.eclipse.jface.action.IAction#AS_DROP_DOWN_MENU
+	 * @see org.eclipse.jface.action.IAction#AS_PUSH_BUTTON
+	 * @see org.eclipse.jface.action.IAction#AS_RADIO_BUTTON
 	 * @since 2.1
 	 */
 	public ResourceAction(ResourceBundle bundle, String prefix, int style) {
