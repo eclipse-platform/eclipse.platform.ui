@@ -9,7 +9,7 @@
 <plugin
    name = "%help_plugin_name"
    id = "org.eclipse.help"
-   version = "0.9"
+   version = "1.0"
    provider-name = "International Business Machines Corp."
    class="org.eclipse.help.internal.HelpPlugin">
 
