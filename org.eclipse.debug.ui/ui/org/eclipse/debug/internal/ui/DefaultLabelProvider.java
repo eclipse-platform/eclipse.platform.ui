@@ -14,7 +14,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -97,8 +96,6 @@ public class DefaultLabelProvider implements ILabelProvider {
 				} else {
 					return IDebugUIConstants.IMG_OBJS_OS_PROCESS;
 				}
-			} else if (element instanceof ILauncher) {
-				return ((ILauncher)element).getIdentifier();
 			} else if (element instanceof ILaunch) {
 				if (((ILaunch)element).getLaunchMode().equals(ILaunchManager.DEBUG_MODE)) {
 					return IDebugUIConstants.IMG_ACT_DEBUG;
@@ -149,8 +146,6 @@ public class DefaultLabelProvider implements ILabelProvider {
 					label.append(((ILaunchConfiguration)element).getName());
 				} else if (element instanceof ILaunchConfigurationType) {
 					label.append(((ILaunchConfigurationType)element).getName());
-				} else if (element instanceof ILauncher) {
-					label.append(((ILauncher)element).getLabel());
 				} else {
 					label.append(getAdapterLabel(element));
 				}
@@ -186,12 +181,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 	 */
 	protected String getLaunchText(ILaunch launch) {
 		if (launch.getLaunchConfiguration() == null) {
-			// old launcher
-			StringBuffer buff= new StringBuffer(getAdapterLabel(launch.getElement()));
-			buff.append(" ["); //$NON-NLS-1$
-			buff.append(getText(launch.getLauncher()));
-			buff.append("]"); //$NON-NLS-1$
-			return buff.toString();
+			return "<unknown>";
 		} else {
 			// new launch configuration
 			ILaunchConfiguration config = launch.getLaunchConfiguration();

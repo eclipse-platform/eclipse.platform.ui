@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -28,11 +27,6 @@ import org.apache.xml.serialize.Method;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.Serializer;
 import org.apache.xml.serialize.SerializerFactory;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -52,7 +46,6 @@ import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
@@ -69,8 +62,6 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Color;
@@ -95,8 +86,6 @@ import org.xml.sax.SAXException;
  *
  */
 public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
-															   IResourceChangeListener, 
-															   IPropertyChangeListener, 
 															   ILaunchConfigurationListener {															   
 															   	
 
@@ -165,39 +154,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	private boolean fTrace = false;	
 	
 	/**
-	 * The visitor used to traverse resource deltas and keep the run & debug
-	 * histories in synch with resource deletions.
-	 */
-	protected static ResourceDeletedVisitor fgDeletedVisitor;
-	
-	/**
 	 * The mapping of launch configuration type IDs to lists of perspectives.
 	 * A shortcut for bringing up the launch configuration dialog initialized to
 	 * the specified config type will appear in each specified perspective.
 	 */
 	protected Map fLaunchConfigurationShortcuts;
-	
-	/**
-	 * Visitor for handling resource deltas
-	 */
-	class ResourceDeletedVisitor implements IResourceDeltaVisitor {
 		
-		/**
-		 * @see IResourceDeltaVisitor#visit(IResourceDelta)
-		 */
-		public boolean visit(IResourceDelta delta) {
-			if (delta == null) {
-				return false;
-			}
-			if (delta.getKind() != IResourceDelta.REMOVED) {
-				return true;
-			}
-			// check for deletions in launch history
-			removeDeletedHistories();
-			return false;
-		}
-	}
-	
 	/**
 	 * The names of the files used to persist the launch history.
 	 */
@@ -244,32 +206,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	}		
 	protected ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
-	}
-		
-	/**
-	 * Returns the launcher perspective specified in the launcher
-	 * associated with the source of a <code>DebugEvent</code>
-	 */
-	protected String getLauncherPerspective(Object eventSource) {
-		ILaunch launch= null;
-		if (eventSource instanceof IDebugElement) {
-			launch= ((IDebugElement) eventSource).getLaunch();
-		} else
-			if (eventSource instanceof ILaunch) {
-				launch= (ILaunch) eventSource;
-			}
-		String perspectiveID= null;
-		if (launch != null) {
-			if (launch.getLauncher() != null) {
-				perspectiveID= launch.getLauncher().getPerspectiveIdentifier();
-			}
-		} 
-		if (perspectiveID == null) {
-			perspectiveID = IDebugUIConstants.ID_DEBUG_PERSPECTIVE;
-		}
-		return perspectiveID;
-	}
-
+	}
 	/**
 	 * Returns the singleton instance of the debug plugin.
 	 */
@@ -362,8 +299,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		launchManager.removeLaunchListener(this);
 		launchManager.removeLaunchConfigurationListener(this);
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
-		getPreferenceStore().removePropertyChangeListener(this);
 		fColorManager.dispose();
 		Iterator docs= fConsoleDocuments.values().iterator();
 		while (docs.hasNext()) {
@@ -390,8 +325,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		launchManager.addLaunchListener(this);	
 		launchManager.addLaunchConfigurationListener(this);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
-		getPreferenceStore().addPropertyChangeListener(this);
 		//set up the docs for launches already registered
 		ILaunch[] launches= launchManager.getLaunches();
 		try {
@@ -572,29 +505,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	private void setCurrentProcess(IProcess process) {
 		fCurrentProcess= process;
 	}
-	
-	/**
-	 * @see IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
-	 */
-	public void resourceChanged(IResourceChangeEvent event) {
-		// only traverse the delta if using old launchers
-		if (usingConfigurationStyleLaunching()) {
-			return;
-		}
 		
-		IResourceDelta delta= event.getDelta();
-		if (delta != null) {
-			try {
-				if (fgDeletedVisitor == null) {
-					fgDeletedVisitor= new ResourceDeletedVisitor();
-				}
-				delta.accept(fgDeletedVisitor, false);
-			} catch (CoreException ce) {
-				log(ce);
-			}
-		}		
-	}
-	
 	/**
 	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */
@@ -809,55 +720,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	public LaunchConfigurationHistoryElement getLastLaunch() {
 		return fRecentLaunch;
 	}
-	
-	/**
-	 * Adjust all histories, removing deleted launches.
-	 */
-	protected void removeDeletedHistories() {
-		Runnable r = new Runnable() {
-			public void run() {
-				removeDeletedHistories(fDebugHistory);
-				removeDeletedHistories(fRunHistory);
-			}
-		};
-		getStandardDisplay().asyncExec(r);
-	}	
-	
-	/**
-	 * Update the given history, removing launches with no element.
-	 */
-	protected void removeDeletedHistories(Vector history) {
-		List remove = null;
-		Iterator iter = history.iterator();
-		while (iter.hasNext()) {
-			LaunchConfigurationHistoryElement element = (LaunchConfigurationHistoryElement)iter.next();
-			if (element.getLaunchElement() == null) {
-				if (remove == null) {
-					remove = new ArrayList(1);
-				}
-				remove.add(element);
-			}
-		}
-		if (remove != null) {
-			iter = remove.iterator();
-			while (iter.hasNext()) {
-				history.remove(iter.next());
-			}
-		}
-	}
-	
-	/**
-	 * Return whether the preference is currently set to use configuration-style launching.
-	 */
-	public boolean usingConfigurationStyleLaunching() {
-		String launchingStyle = getPreferenceStore().getString(IDebugPreferenceConstants.LAUNCHING_STYLE);
-		if (IDebugPreferenceConstants.LAUNCHING_STYLE_CONFIGURATIONS.equals(launchingStyle)) {
-			return true;
-		} else {
-			return false;
-		}		
-	}
-	
+		
 	/**
 	 * Erase both (run & debug) launch histories.
 	 */
@@ -873,11 +736,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	 * Given a launch, try to add it to both of the run & debug histories.
 	 */
 	protected void updateHistories(ILaunch launch) {
-		if (usingConfigurationStyleLaunching()) {
-			updateNewHistories(launch);
-		} else {
-			updateOldHistories(launch);
-		}
+		updateNewHistories(launch);
 	}
 
 	/**
@@ -893,19 +752,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 		//}
 	}
 	
-	/**
-	 * Update both history lists when they contain launcher ids & launched element mementos (old style)
-	 */
-	protected void updateOldHistories(ILaunch launch) {
-		if (isVisible(launch.getLauncher())) {
-			String elementMemento = launch.getLauncher().getDelegate().getLaunchMemento(launch.getElement());
-			if (elementMemento == null) {
-				return;
-			}
-			updateOldHistory(ILaunchManager.DEBUG_MODE, fDebugHistory, launch, elementMemento);
-			updateOldHistory(ILaunchManager.RUN_MODE, fRunHistory, launch, elementMemento);
-		}		
-	}
 	
 	/**
 	 * Add the given launch to the specified history if the launcher supports the mode.  
@@ -1146,11 +992,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	}
 	
 	protected void setAttributes(Element entry, LaunchConfigurationHistoryElement element) throws CoreException {
-		if (usingConfigurationStyleLaunching()) {
-			setNewAttributes(entry, element);
-		} else {
-			setOldAttributes(entry, element);
-		}
+		setNewAttributes(entry, element);
 	}
 	
 	protected void setNewAttributes(Element entry, LaunchConfigurationHistoryElement element) throws CoreException {
@@ -1163,22 +1005,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 		entry.setAttribute(HISTORY_MODE_ATT, element.getMode());		
 		entry.setAttribute(HISTORY_LABEL_ATT, element.getLabel());		 
 	}
-	
-	protected void setOldAttributes(Element entry, LaunchConfigurationHistoryElement element) {
-		entry.setAttribute("launcherId", element.getLauncherIdentifier()); //$NON-NLS-1$
-		entry.setAttribute("elementMemento", element.getElementMemento()); //$NON-NLS-1$
-		entry.setAttribute(HISTORY_LABEL_ATT, element.getLabel()); 
-		entry.setAttribute(HISTORY_MODE_ATT, element.getMode());
-	}
-		
+			
 	protected IPath getHistoryFilePath() {
-		IPath historyPath = getStateLocation();
-		if (usingConfigurationStyleLaunching()) {
-			historyPath = historyPath.append(LAUNCH_CONFIGURATION_HISTORY_FILENAME); 
-		} else {
-			historyPath = historyPath.append(LAUNCH_OLD_HISTORY_FILENAME); 			
-		}
-		return historyPath;		
+		return getStateLocation().append(LAUNCH_CONFIGURATION_HISTORY_FILENAME); 
 	}
 
 	/**
@@ -1270,11 +1099,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	 * the specified XML element.
 	 */
 	protected LaunchConfigurationHistoryElement createHistoryElement(Element entry) {
-		if (usingConfigurationStyleLaunching()) {
-			return createNewHistoryElement(entry);
-		} else {
-			return createOldHistoryElement(entry);
-		}
+		return createNewHistoryElement(entry);
 	}
 	
 	protected LaunchConfigurationHistoryElement createNewHistoryElement(Element entry) {
@@ -1300,75 +1125,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 		String label = entry.getAttribute(HISTORY_LABEL_ATT); 
 		return new LaunchConfigurationHistoryElement(launcherId, memento, mode, label);		
 	}
-	
-	/**
-	 * Add the given launch to the debug history if the
-	 * launcher supports the debug mode.  
-	 */
-	protected void updateOldHistory(String mode, Vector history, ILaunch launch, String memento) {
-		
-		// First make sure the launcher used supports the mode of the history list
-		ILauncher launcher= launch.getLauncher();
-		Set supportedLauncherModes= launcher.getModes();
-		if (!supportedLauncherModes.contains(mode)) {
-			return;
-		}
-		
-		// create new history item
-		LaunchConfigurationHistoryElement item= new LaunchConfigurationHistoryElement(launcher.getIdentifier(), memento, mode, getModelPresentation().getText(launch));
-		
-		// update the most recent launch
-		if (launch.getLaunchMode().equals(mode)) {
-			fRecentLaunch = item;
-		}
-		
-		// Look for an equivalent launch in the history list
-		int index;
-		
-		index = history.indexOf(item);
-		
-		//It's already listed as the most recent launch, so nothing to do
-		if (index == 0) {
-			return;
-		}
-		
-		// It's in the history, but not the most recent, so make it the most recent
-		if (index > 0) {
-			history.remove(item);
-		} 			
-		history.add(0, item);
-		if (history.size() > MAX_HISTORY_SIZE) {
-			history.remove(history.size() - 1);
-		}	
-	}	
-		
-	/**
-	 * Returns whether the given launcher should be visible in the UI.
-	 * If a launcher is not visible, it will not appear
-	 * in the UI - i.e. not as a default launcher, not in the run/debug
-	 * drop downs, and not in the launch history.
-	 * Based on the public attribute.
-	 */
-	public boolean isVisible(ILauncher launcher) {
-		if (launcher == null) {
-			return false;
-		}
-		IConfigurationElement e = launcher.getConfigurationElement();
-		String publc=  e.getAttribute("public"); //$NON-NLS-1$
-		if (publc == null || publc.equals("true")) { //$NON-NLS-1$
-			return true;
-		}
-		return false;
-	}
-	
-	/**
-	 * Returns whether the given launcher specifies a wizard.
-	 */
-	public boolean hasWizard(ILauncher launcher) {
-		IConfigurationElement e = launcher.getConfigurationElement();
-		return e.getAttribute("wizard") != null; //$NON-NLS-1$
-	}
-	
+				
 	/**
 	 * Utility method with conventions
 	 */
@@ -1527,18 +1284,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 		if (display == null)
 			display= Display.getDefault();
 		return display;		
-	}	
-
-	/**
-	 * If the 'launching style' preference changes, wipe out both launch histories.
-	 * 
-	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
-	 */
-	public void propertyChange(PropertyChangeEvent event) {
-		String propertyName= event.getProperty();
-		if (propertyName.equals(IDebugPreferenceConstants.LAUNCHING_STYLE)) {
-			setEmptyLaunchHistories();
-		}
 	}	
 	
 	/**

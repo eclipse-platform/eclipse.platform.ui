@@ -42,12 +42,6 @@
 <extension
       point="org.eclipse.ui.propertyPages">
    <page
-         objectClass="org.eclipse.core.resources.IProject"
-         name="%LauncherPropertyPage.name"
-         class="org.eclipse.debug.internal.ui.LauncherPropertyPage"
-         id="org.eclipse.debug.internal.ui.LauncherPropertyPage">
-   </page>
-   <page
          objectClass="org.eclipse.core.resources.IResource"
          name="%LaunchConfigurationTypePropertyPage.name"
          class="org.eclipse.debug.internal.ui.LaunchConfigurationTypePropertyPage"
@@ -268,18 +262,6 @@
             class="org.eclipse.debug.internal.ui.actions.DebugHistoryMenuAction"
     		menubarPath="org.eclipse.debug.ui.DebugMenu/menuGroup"
             id="org.eclipse.debug.internal.ui.actions.DebugHistoryMenuAction">
-      </action>
-       <action
-            label="%RunWithAction.label"
-            class="org.eclipse.debug.internal.ui.actions.RunWithAction"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/menuGroup"
-            id="org.eclipse.debug.internal.ui.actions.RunWithAction">
-      </action>
-      <action
-            label="%DebugWithAction.label"
-            class="org.eclipse.debug.internal.ui.actions.DebugWithAction"
-    		menubarPath="org.eclipse.debug.ui.DebugMenu/menuGroup"
-            id="org.eclipse.debug.internal.ui.actions.DebugWithAction">
       </action>
       </actionSet>
 </extension>

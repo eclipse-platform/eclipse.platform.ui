@@ -9,24 +9,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
-
-/********************************************************************************
- * 								IMPORTANT
- * This class must support TWO styles of launch history, the 'old' style, that used
- * an ILauncher ID and the memento of the launched element, and the 'new' style
- * that simply uses launch configurations.  Eventually, the old support will be
- * removed, but it must be present for some transitional period to allow launcher
- * contributors time to switch over.  All code in this class that is for old
- * style support is bracketed as follows:
- * // TXN
- * . . . code . . .
- * // End of TXN
- * Such code can simply be removed when old-style support is removed.
- * 
- ********************************************************************************/
 
 /**
  * A wrapper for entries in a launch history list.  
@@ -164,22 +148,13 @@ public class LaunchConfigurationHistoryElement {
 		return false;
 	}
 	
-	// TXN
 	/**
 	 * @see Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object o) {
 		if (o instanceof LaunchConfigurationHistoryElement) {
 			LaunchConfigurationHistoryElement e= (LaunchConfigurationHistoryElement)o;
-			if (isConfigurationBased()) {
-				return getLaunchConfiguration().equals(e.getLaunchConfiguration());
-			}
-			else {	
-				return
-					getLauncherIdentifier().equals(e.getLauncherIdentifier()) &&
-					getElementMemento().equals(e.getElementMemento()) &&
-					getMode().equals(getMode());
-			}
+			return getLaunchConfiguration().equals(e.getLaunchConfiguration());
 		}
 		return false;
 	}
@@ -188,40 +163,9 @@ public class LaunchConfigurationHistoryElement {
 	 * @see Object#hashCode()
 	 */
 	public int hashCode() {
-		if (isConfigurationBased()) {
-			return getLaunchConfiguration().hashCode();
-		} else {
-			return getElementMemento().hashCode();
-		}
+		return getLaunchConfiguration().hashCode();
 	}
 		
-	/**
-	 * Returns the launcher that this history element represents.
-	 * Returns null if no launcher is currently registered with the launch 
-	 * manager that matches the launch identifier of this history element.
-	 */
-	public ILauncher getLauncher() {
-		ILauncher[] launchers = DebugPlugin.getDefault().getLaunchManager().getLaunchers();
-		for (int i = 0; i < launchers.length; i++) {
-			if (launchers[i].getIdentifier().equals(getLauncherIdentifier())) {
-				return launchers[i];
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * Returns the launch element as decribed by the element's memento.
-	 * 
-	 * @see org.eclipse.debug.core.model.ILauncherDelegate#getLaunchObject(String)
-	 */
-	public Object getLaunchElement() {
-		ILauncher launcher = getLauncher();
-		if (launcher != null) {
-			return launcher.getDelegate().getLaunchObject(getElementMemento());
-		}
-		return null;
-	}	
 	
 	/**
 	 * Return whether this history element is based on a launch configuration.  
@@ -229,6 +173,5 @@ public class LaunchConfigurationHistoryElement {
 	public boolean isConfigurationBased() {
 		return fConfigurationBased;
 	}
-	// End of TXN
 
 }

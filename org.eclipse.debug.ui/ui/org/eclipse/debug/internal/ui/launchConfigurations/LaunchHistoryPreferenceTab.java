@@ -109,8 +109,7 @@ public abstract class LaunchHistoryPreferenceTab {
 			}
 		});
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
-		addFav.setLayoutData(gd);
-		addFav.setEnabled(DebugUIPlugin.getDefault().usingConfigurationStyleLaunching());		
+		addFav.setLayoutData(gd);		
 		
 		fRemoveFavoritesButton = new Button(buttonComp, SWT.PUSH);
 		fRemoveFavoritesButton.setText("Re&move");

@@ -170,19 +170,19 @@ public class LaunchWithConfigurationAction extends Action implements IMenuCreato
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 		if (action instanceof Action) {
-			((Action)action).setMenuCreator(this);
-			List items= getActionItems();
-			if (items != null) {
-				Object element= null;
-				if (!items.isEmpty()) {
-					element= resolveSelectedElement(DebugUIPlugin.getActiveWorkbenchWindow());
-				}
-				Iterator actionItems= items.iterator();
-				while (actionItems.hasNext()) {
-					ActionContributionItem item = (ActionContributionItem) actionItems.next();
-					((LaunchSelectionAction)item.getAction()).setElement(element);
-				}
-			}                
+//			((Action)action).setMenuCreator(this);
+//			List items= getActionItems();
+//			if (items != null) {
+//				Object element= null;
+//				if (!items.isEmpty()) {
+//					element= resolveSelectedElement(DebugUIPlugin.getActiveWorkbenchWindow());
+//				}
+//				Iterator actionItems= items.iterator();
+//				while (actionItems.hasNext()) {
+//					ActionContributionItem item = (ActionContributionItem) actionItems.next();
+//					((LaunchSelectionAction)item.getAction()).setElement(element);
+//				}
+//			}                
 		} else {
 			action.setEnabled(false);
 		}

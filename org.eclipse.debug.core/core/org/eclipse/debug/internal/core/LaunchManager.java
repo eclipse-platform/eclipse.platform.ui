@@ -57,7 +57,6 @@ import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IProcess;
@@ -194,14 +193,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		}
 		return fLaunchConfigurationIndex;
 	}
-	
-	/**
-	 * @see ILaunchManager#deregisterLaunch(ILaunch)
-	 */
-	public void deregisterLaunch(ILaunch launch) {
-		removeLaunch(launch);
-	}
-	
+		
 	/**
 	 * @see ILaunchManager#removeLaunch(ILaunch)
 	 */
@@ -212,42 +204,6 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		fLaunches.remove(launch);
 		fireUpdate(launch, REMOVED);
 	}	
-
-	/**
-	 * @see ILaunchManager#findLaunch(IProcess)
-	 */
-	public ILaunch findLaunch(IProcess process) {
-		synchronized (fLaunches) {
-			for (int i= 0; i < fLaunches.size(); i++) {
-				ILaunch l= (ILaunch) fLaunches.elementAt(i);
-				IProcess[] ps= l.getProcesses();
-				for (int j= 0; j < ps.length; j++) {
-					if (ps[j].equals(process)) {
-							return l;
-					}
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * @see ILaunchManager#findLaunch(IDebugTarget)
-	 */
-	public ILaunch findLaunch(IDebugTarget target) {
-		synchronized (fLaunches) {
-			for (int i= 0; i < fLaunches.size(); i++) {
-				ILaunch l= (ILaunch) fLaunches.elementAt(i);
-				IDebugTarget[] targets = l.getDebugTargets();
-				for (int j = 0; j < targets.length; j++) {
-					if (target.equals(targets[j])) {
-						return l;
-					}
-				}
-			}
-		}
-		return null;
-	}
 
 	/**
 	 * Fires notification to the listeners that a launch has been (de)registered.
@@ -285,20 +241,6 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			}
 		}
 		return (IDebugTarget[])allTargets.toArray(new IDebugTarget[allTargets.size()]);
-	}
-
-	/**
-	 * @see ILaunchManager#getDefaultLauncher(IProject)
-	 */
-	public ILauncher getDefaultLauncher(IProject project) throws CoreException {
-		ILauncher launcher= null;
-		if ((project != null) && project.isOpen()) {
-			String launcherID = project.getPersistentProperty(new QualifiedName(DebugPlugin.PLUGIN_ID, DEFAULT_LAUNCHER));
-			if (launcherID != null) {
-				launcher= getLauncher(launcherID);
-			}
-		}
-		return launcher;
 	}
 	
 	/**
@@ -368,40 +310,6 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	}
 		
 	/**
-	 * Returns the launcher with the given id, or <code>null</code>.
-	 */
-	public ILauncher getLauncher(String id) {
-		ILauncher[] launchers= getLaunchers();
-		for (int i= 0; i < launchers.length; i++) {
-			if (launchers[i].getIdentifier().equals(id)) {
-				return launchers[i];
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * @see ILaunchManager#getLaunchers()
-	 */
-	public ILauncher[] getLaunchers() {
-		return DebugPlugin.getDefault().getLaunchers();
-	}
-	
-	/**
-	 * @see ILaunchManager#getLaunchers(String)
-	 */
-	public ILauncher[] getLaunchers(String mode) {
-		ILauncher[] launchers = getLaunchers();
-		ArrayList list = new ArrayList();
-		for (int i = 0; i < launchers.length; i++) {
-			if (launchers[i].getModes().contains(mode)) {
-				list.add(launchers[i]);
-			}
-		}
-		return (ILauncher[])list.toArray(new ILauncher[list.size()]);
-	}
-
-	/**
 	 * @see ILaunchManager#getLaunches()
 	 */
 	public ILaunch[] getLaunches() {
@@ -422,13 +330,6 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		}
 		return (IProcess[])allProcesses.toArray(new IProcess[allProcesses.size()]);
 	}
-
-	/**
-	 * @see ILaunchManager#registerLaunch(ILaunch)
-	 */
-	public void registerLaunch(ILaunch launch) {
-		addLaunch(launch);
-	}
 	
 	/**
 	 * @see ILaunchManager#addLaunch(ILaunch)
@@ -447,17 +348,6 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 */
 	public void removeLaunchListener(ILaunchListener listener) {
 		fListeners.remove(listener);
-	}
-
-	/**
-	 * @see ILaunchManager#setDefaultLauncher(IProject, ILauncher)
-	 */
-	public void setDefaultLauncher(IProject resource, ILauncher launcher) throws CoreException {
-		String id = null;
-		if (launcher != null) {
-			id = launcher.getIdentifier();
-		}
-		resource.setPersistentProperty(new QualifiedName(DebugPlugin.PLUGIN_ID, DEFAULT_LAUNCHER), id);
 	}
 	
 	/**

@@ -51,14 +51,6 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 	 * @see FieldEditorPreferencePage#createFieldEditors
 	 */
 	protected void createFieldEditors() {
-		addField(new RadioGroupFieldEditor(IDebugPreferenceConstants.LAUNCHING_STYLE,
-											"Launching style", 
-											1,
-											new String[][] {
-												{"Launc&her-based", IDebugPreferenceConstants.LAUNCHING_STYLE_LAUNCHERS}, 
-												{"C&onfiguration-based", IDebugPreferenceConstants.LAUNCHING_STYLE_CONFIGURATIONS} 
-											},
-											getFieldEditorParent()));
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_SINGLE_CLICK_LAUNCHING, DebugUIMessages.getString("DebugPreferencePage.Enable_&single-click_launching_1"), SWT.NONE, getFieldEditorParent()));  //$NON-NLS-1$
 		createSaveBeforeLaunchEditors(getFieldEditorParent());
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH, DebugUIMessages.getString("DebugPreferencePage.auto_build_before_launch"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$		
@@ -84,7 +76,6 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 	}
 	
 	protected static void initDefaults(IPreferenceStore store) {
-		store.setDefault(IDebugPreferenceConstants.LAUNCHING_STYLE, IDebugPreferenceConstants.LAUNCHING_STYLE_CONFIGURATIONS);
 		store.setDefault(IDebugUIConstants.PREF_SINGLE_CLICK_LAUNCHING, false);
 		
 		

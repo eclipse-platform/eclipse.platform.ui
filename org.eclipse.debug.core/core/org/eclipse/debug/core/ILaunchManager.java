@@ -5,14 +5,12 @@ package org.eclipse.debug.core;
  * All Rights Reserved.
  */
  
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * The launch manager manages the set of registered launches, maintaining
@@ -42,14 +40,6 @@ public interface ILaunchManager {
 	 */
 	public void addLaunchListener(ILaunchListener listener);
 	/**
-	 * Deregisters the specified launch and notifies listeners. Has no effect
-	 * if an identical launch is not already registered.
-	 *
-	 * @param launch the launch to deregister
-	 * @deprecated use removeLaunch(ILaunch)
-	 */
-	public void deregisterLaunch(ILaunch launch);
-	/**
 	 * Removes the specified launch and notifies listeners.
 	 * Has no effect if an identical launch is not already
 	 * registered.
@@ -59,61 +49,12 @@ public interface ILaunchManager {
 	 */
 	public void removeLaunch(ILaunch launch);	
 	/**
-	 * Returns the launch the given process is contained in, or <code>null</code>
-	 * if no registered launches contains the process.
-	 *
-	 * @param process the process for which to find a launch
-	 * @return the launch containing the process, or <code>null</code> if none
-	 * @deprecated debug elements should have a hard link to their launch
-	 */
-	public ILaunch findLaunch(IProcess process);
-	/**
-	 * Returns the launch the given debug target is contained
-	 * in, or <code>null</code> if no registered launches contain the debug target.
-	 *
-	 * @param target the debug target for which to find a launch
-	 * @return the launch containing the debug target, or <code>null</code> if none	 
-	 * @deprecated debug elements should have a hard link to their launch
-	 */
-	public ILaunch findLaunch(IDebugTarget target);
-	/**
 	 * Returns the collection of debug targets currently registered with this
 	 * launch manager.
 	 *
 	 * @return an array of debug targets
 	 */
 	public IDebugTarget[] getDebugTargets();
-	/**
-	 * Returns the default launcher for the given project,
-	 * or <code>null</code> if no default launcher has been set.
-	 * The default launcher is stored as a persistent property
-	 * with a project.
-	 *
-	 * @param project the project for which to retrieve a default launcher
-	 * @return the default launcher, or <code>null</code> if none has
-	 *   been set for the project
-	 * @exception CoreException if an error occurs accessing the
-	 *   persistent property
-	 * @deprecated to be removed
-	 */
-	public ILauncher getDefaultLauncher(IProject project) throws CoreException;
-	
-	/**
-	 * Returns the collection of registered launchers that can operate in the
-	 * specified mode - run or debug.
-	 *
-	 * @return an array of launchers
-	 * @deprecated to be removed
-	 */
-	public ILauncher[] getLaunchers(String mode);
-	
-	/**
-	 * Returns the collection of registered launchers.
-	 *
-	 * @return an array of launchers
-	 * @deprecated to be removed
-	 */
-	public ILauncher[] getLaunchers();
 	/**
 	 * Returns the collection of launches currently registered
 	 * with this launch manager.
@@ -129,15 +70,6 @@ public interface ILaunchManager {
 	 */
 	public IProcess[] getProcesses();
 	/**
-	 * Registers the specified launch with this launch manager
-	 * and notifies listeners. Has no effect if an identical
-	 * launch is already registered.
-	 * 
-	 * @param launch the launch to register
-	 * @deprecated use addLaunch(ILaunch)
-	 */
-	public void registerLaunch(ILaunch launch);
-	/**
 	 * Adds the specified launch and notifies listeners. Has no
 	 * effect if an identical launch is already registered.
 	 * 
@@ -152,16 +84,6 @@ public interface ILaunchManager {
 	 * @param listener the listener to deregister
 	 */
 	public void removeLaunchListener(ILaunchListener listener);
-	/**
-	 * Sets the default launcher for the given project as a persistent property.
-	 *
-	 * @param project the project for which to set the preference
-	 * @param launcher the default launcher preference
-	 * @exception CoreException if an error occurs setting the persistent property
-	 * @deprecated to be removed
-	 */
-	public void setDefaultLauncher(IProject project, ILauncher launcher) throws CoreException;
-	
 	/**
 	 * Returns all launch configurations defined in the workspace.
 	 * 

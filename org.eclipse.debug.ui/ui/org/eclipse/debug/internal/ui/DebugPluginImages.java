@@ -13,7 +13,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -145,26 +144,7 @@ public class DebugPluginImages {
 		//Wizard Banners
 		declareRegistryImage(IDebugUIConstants.IMG_WIZBAN_DEBUG, WIZBAN + "debug_wiz.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_WIZBAN_RUN, WIZBAN + "run_wiz.gif"); //$NON-NLS-1$
-		
-		// launchers
-		ILauncher[] launchers = DebugPlugin.getDefault().getLaunchManager().getLaunchers();
-		for (int i = 0; i < launchers.length; i++) {
-			ILauncher launcher = launchers[i];
-			String iconPath = launcher.getIconPath();
-			if (iconPath != null) {
-				URL iconURL = launcher.getConfigurationElement().getDeclaringExtension().getDeclaringPluginDescriptor().getInstallURL();
-				ImageDescriptor desc = ImageDescriptor.getMissingImageDescriptor();
-				try {
-					iconURL = new URL(iconURL, iconPath);			
-					desc= ImageDescriptor.createFromURL(iconURL);
-				} catch (MalformedURLException e) {
-					DebugUIPlugin.log(e);
-				} 
-				imageRegistry.put(launcher.getIdentifier(), desc);				
-				imageDescriptors.put(launcher.getIdentifier(), desc);
-			}
-		}
-		
+				
 		// launch configuration types
 		IPluginDescriptor pluginDescriptor = DebugUIPlugin.getDefault().getDescriptor();
 		IExtensionPoint extensionPoint= pluginDescriptor.getExtensionPoint(IDebugUIConstants.EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPE_IMAGES);

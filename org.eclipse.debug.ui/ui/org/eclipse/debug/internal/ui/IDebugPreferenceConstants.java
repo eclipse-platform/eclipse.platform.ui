@@ -54,13 +54,6 @@ public interface IDebugPreferenceConstants {
 	 * The RGB for the color to be used to indicate changed variables
 	 */
 	public static final String CHANGED_VARIABLE_RGB= "Changed.Variable.RGB";
-
-	/**
-	 * The type of launching to perform
-	 */
-	public static final String LAUNCHING_STYLE = "Launching.style"; //$NON-NLS-1$
-	public static final String LAUNCHING_STYLE_LAUNCHERS = "Launching.style.launchers"; //$NON-NLS-1$
-	public static final String LAUNCHING_STYLE_CONFIGURATIONS = "Launching.style.configurations"; //$NON-NLS-1$
 	
 	/**
 	 * Memento for the last selected launch config in the

@@ -8,7 +8,6 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
@@ -16,12 +15,10 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewPart;
@@ -263,31 +260,10 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 		ILaunchConfiguration config = launch.getLaunchConfiguration();
 		String perspectiveId = null;
 		String mode = launch.getLaunchMode();
-		if (config == null) {
-			// use the launcher's perspective id if specified
-			ILauncher launcher = launch.getLauncher();
-			if (launcher != null) {
-				perspectiveId = launcher.getPerspectiveIdentifier();
-			}
-			if (perspectiveId == null) {
-				// use the global peference to switch perspectives
-				IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
-				boolean showDebug = false;
-				if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-					showDebug = store.getBoolean(IDebugUIConstants.PREF_AUTO_SHOW_DEBUG_VIEW);
-				} else {
-					showDebug = store.getBoolean(IDebugUIConstants.PREF_AUTO_SHOW_PROCESS_VIEW);
-				}
-				if (showDebug) {
-					perspectiveId = IDebugUIConstants.ID_DEBUG_PERSPECTIVE;
-				}
-			}
+		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
+			perspectiveId = config.getAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, (String)null);
 		} else {
-			if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-				perspectiveId = config.getAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, (String)null);
-			} else {
-				perspectiveId = config.getAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, (String)null);
-			}
+			perspectiveId = config.getAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, (String)null);
 		}
 		return perspectiveId;
 	}

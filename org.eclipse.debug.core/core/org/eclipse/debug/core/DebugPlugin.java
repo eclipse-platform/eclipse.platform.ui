@@ -6,7 +6,6 @@ package org.eclipse.debug.core;
  */
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -21,7 +20,6 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.core.BreakpointManager;
 import org.eclipse.debug.internal.core.ExpressionManager;
 import org.eclipse.debug.internal.core.LaunchManager;
-import org.eclipse.debug.internal.core.Launcher;
 import org.eclipse.debug.internal.core.ListenerList;
 import org.eclipse.debug.internal.core.RuntimeProcess;
 
@@ -47,15 +45,7 @@ public class DebugPlugin extends Plugin {
 	 * (value <code>"org.eclipse.debug.core"</code>).
 	 */
 	public static final String PLUGIN_ID = "org.eclipse.debug.core"; //$NON-NLS-1$
-	
-	/**
-	 * Simple identifier constant (value <code>"launchers"</code>) for the
-	 * launchers extension point.
-	 * 
-	 * @deprecated replaced with launch configurations
-	 */
-	public static final String EXTENSION_POINT_LAUNCHER= "launchers"; //$NON-NLS-1$
-	
+		
 	/**
 	 * Simple identifier constant (value <code>"launchConfigurationTypes"</code>)
 	 * for the launch configuration types extension point.
@@ -97,11 +87,6 @@ public class DebugPlugin extends Plugin {
 	 * The singleton debug plug-in instance.
 	 */
 	private static DebugPlugin fgDebugPlugin= null;
-
-	/**
-	 * The collection of launcher extensions.
-	 */
-	private Launcher[] fLaunchers= new Launcher[0];
 
 	/**
 	 * The singleton breakpoint manager.
@@ -273,20 +258,6 @@ public class DebugPlugin extends Plugin {
 	public IBreakpointManager getBreakpointManager() {
 		return fBreakpointManager;
 	}
-
-	/**
-	 * Returns a collection of launchers. Launchers represent
-	 * and provide access to launcher extensions, delaying
-	 * instantiation of the underlying delegate until
-	 * required.
-	 *
-	 * @return an array of launchers
-	 * @see org.eclipse.debug.core.model.ILauncherDelegate
-	 * @deprecated to be removed
-	 */
-	public ILauncher[] getLaunchers() {
-		return fLaunchers;
-	}
 	
 	/**
 	 * Returns the launch manager.
@@ -328,22 +299,6 @@ public class DebugPlugin extends Plugin {
 	 */
 	public IExpressionManager getExpressionManager() {
 		return fExpressionManager;
-	}	
-
-	/**
-	 * Creates proxy launchers for all launcher delegates
-	 * defined in launcher extensions.
-	 *
-	 * @exception CoreException if creation of a launcher extension fails
-	 */
-	private void createLaunchers() throws CoreException {
-		IPluginDescriptor descriptor= getDescriptor();
-		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(EXTENSION_POINT_LAUNCHER);
-		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
-		fLaunchers= new Launcher[infos.length];
-		for (int i= 0; i < infos.length; i++) {
-			fLaunchers[i]= new Launcher(infos[i]);
-		}
 	}	
 
 	/**
@@ -407,7 +362,6 @@ public class DebugPlugin extends Plugin {
 		fLaunchManager= new LaunchManager();
 		fBreakpointManager= new BreakpointManager();
 		fExpressionManager = new ExpressionManager();
-		createLaunchers();	
 		fBreakpointManager.startup();
 		fLaunchManager.startup();
 		initializeStatusHandlers();

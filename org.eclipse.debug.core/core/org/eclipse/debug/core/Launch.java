@@ -48,14 +48,9 @@ public class Launch extends PlatformObject implements ILaunch {
 	private List fTargets= new ArrayList();
 
 	/**
-	 * The element that was launched.
+	 * The configuration that was launched, or null.
 	 */
-	private Object fElement= null;
-
-	/**
-	 * The launcher that was used.
-	 */
-	private ILauncher fLauncher= null;
+	private ILaunchConfiguration fConfiguration= null;
 
 	/**
 	 * The system processes associated with
@@ -85,58 +80,7 @@ public class Launch extends PlatformObject implements ILaunch {
 	 * launch has been initialzied.
 	 */
 	private boolean fSuppressChange = true;
-	
-	/**
-	 * Constructs a launch with the specified attributes. A launch must
-	 * have at least one of a process or debug target.
-	 *
-	 * @param launcher the launcher that created this launch
-	 * @param mode the mode of this launch - run or debug (constants
-	 *  defined by <code>ILaunchManager</code>)
-	 * @param launchedElement the element that was launched
-	 * @param locator the source locator to use for this debug session, or
-	 * 	<code>null</code> if not supported
-	 * @param processes the processes created by this launch, empty
-	 *    or <code>null</code> if none
-	 * @param target the debug target created by this launch, or <code>null</code>
-	 *	if none 
-	 * @deprecated to be removed
-	 */
-	public Launch(ILauncher launcher, String mode, Object launchedElement, ISourceLocator locator, IProcess[] processes, IDebugTarget target) {
-		setLauncher(launcher);			
-		setElement(launchedElement);
-		setSourceLocator(locator);
-		addProcesses(processes);
-		addDebugTarget(target);
-		setLaunchMode(mode);
-		fSuppressChange = false;
-	}
-	
-	/**
-	 * Constructs a launch with the specified attributes.
-	 *
-	 * @param launchConfiguration the configuration that was launched
-	 * @param mode the mode of this launch - run or debug (constants
-	 *  defined by <code>ILaunchManager</code>)
-	 * @param launchedElement the element that was launched
-	 * @param locator the source locator to use for this debug session, or
-	 * 	<code>null</code> if not supported
-	 * @param processes the processes created by this launch, empty
-	 *    or <code>null</code> if none
-	 * @param target the debug target created by this launch, or <code>null</code>
-	 *	if none 
-	 * @deprecated to be removed
-	 */
-	public Launch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator, IProcess[] processes, IDebugTarget target) {
-		setLauncher(null);			
-		setElement(launchConfiguration);
-		setSourceLocator(locator);
-		addProcesses(processes);
-		addDebugTarget(target);
-		setLaunchMode(mode);
-		fSuppressChange = false;
-	}	
-	
+		
 	/**
 	 * Constructs a launch with the specified attributes.
 	 *
@@ -146,9 +90,8 @@ public class Launch extends PlatformObject implements ILaunch {
 	 * @param locator the source locator to use for this debug session, or
 	 * 	<code>null</code> if not supported
 	 */
-	public Launch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {
-		setLauncher(null);			
-		setElement(launchConfiguration);
+	public Launch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {		
+		setLaunchConfiguration(launchConfiguration);
 		setSourceLocator(locator);
 		setLaunchMode(mode);
 		fSuppressChange = false;
@@ -179,39 +122,14 @@ public class Launch extends PlatformObject implements ILaunch {
 		}
 		return null;
 	}
-	
+		
 	/**
-	 * @see ILaunch#getElement()
-	 */
-	public final Object getElement() {
-		return fElement;
-	}
-	
-	/**
-	 * Sets the object that was launched
+	 * Sets the configuration that was launched
 	 * 
-	 * @param element the object that was launched
+	 * @param configuration the configuration that was launched
 	 */
-	private void setElement(Object element) {
-		fElement = element;
-	}	
-
-	/**
-	 * @see ILaunch#getLauncher()
-	 */
-	public final ILauncher getLauncher() {
-		return fLauncher;
-	}
-	
-	/**
-	 * Sets the launcher that created
-	 * this launch.
-	 * 
-	 * @param launcher the launcher that created
-	 *  this launch
-	 */
-	private void setLauncher(ILauncher launcher) {
-		fLauncher = launcher;
+	private void setLaunchConfiguration(ILaunchConfiguration configuration) {
+		fConfiguration = configuration;
 	}	
 
 	/**
@@ -347,10 +265,7 @@ public class Launch extends PlatformObject implements ILaunch {
 	 * @see ILaunch#getLaunchConfiguration()
 	 */
 	public ILaunchConfiguration getLaunchConfiguration() {
-		if (getElement() instanceof ILaunchConfiguration) {
-			return (ILaunchConfiguration)getElement();
-		}
-		return null;
+		return fConfiguration;
 	}
 
 	/**

@@ -5,8 +5,11 @@ package org.eclipse.debug.core;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.core.model.*;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.ISourceLocator;
+import org.eclipse.debug.core.model.ITerminate;
 
 /**
  * A launch is the result of launching a debug session
@@ -36,23 +39,7 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * @return the primary debug target associated with this launch, or <code>null</code>
 	 */
 	public IDebugTarget getDebugTarget();
-	/**
-	 * Returns the object that was launched. Cannot return <code>null</code>.
-	 * 
-	 * @return the launched object
-	 * @deprecated to be removed
-	 */
-	public Object getElement();
-	/**
-	 * Returns the launcher that was used to launch.
-	 * Returns <code>null</code> if this launch was 
-	 * the result of a launch configuration being
-	 * launched.
-	 *
-	 * @return the launcher, or <code>null</code>
-	 * @deprecated to be removed
-	 */
-	public ILauncher getLauncher();
+
 	/**
 	 * Returns the processes that were launched,
 	 * or an empty collection if no processes were launched.

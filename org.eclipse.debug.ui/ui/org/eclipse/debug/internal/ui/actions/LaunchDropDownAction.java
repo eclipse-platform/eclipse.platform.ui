@@ -79,12 +79,8 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	/**
 	 * Create the drop-down menu based on whether the config style pref is set
 	 */
-	protected Menu createMenu(Menu menu) {		
-		if (DebugUIPlugin.getDefault().usingConfigurationStyleLaunching()) {	
-			return createConfigStyleMenu(menu);
-		} else {
-			return createLauncherStyleMenu(menu);
-		}				
+	protected Menu createMenu(Menu menu) {			
+		return createConfigStyleMenu(menu);
 	}
 	
 	/**
@@ -134,35 +130,6 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 				action = new OpenRunConfigurations();
 			}
 			createMenuForAction(menu, action, -1);
-		}
-
-		return menu;		
-	}
-	
-	/**
-	 * Create a launcher-style drop-down menu.  This support will be removed in the future.
-	 */
-	protected Menu createLauncherStyleMenu(Menu menu) {
-		
-		// Add history launches next
-		int total = 0;
-		LaunchConfigurationHistoryElement[] historyList= getHistory();
-		for (int i = 0; i < historyList.length; i++) {
-			LaunchConfigurationHistoryElement launch= historyList[i];
-			RelaunchHistoryLaunchAction newAction= new RelaunchHistoryLaunchAction(launch);
-			createMenuForAction(menu, newAction, total+1);
-			total++;
-		}
-		
-		// Add the actions to bring up the dialog 
-		if (getLaunchAction() != null) {
-			//used in the tool bar drop down for the cascade launch with menu
-			if (historyList.length > 0 || (historyList.length == 0 && (total > 0))) {
-				new MenuItem(menu, SWT.SEPARATOR);
-			}
-		
-			// Old-style launcher support
-			createMenuForAction(menu, new LaunchWithAction(getMode()), -1);			
 		}
 
 		return menu;		
