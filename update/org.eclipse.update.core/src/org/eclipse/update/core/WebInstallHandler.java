@@ -1,10 +1,10 @@
 package org.eclipse.update.core;
-
-import org.eclipse.update.internal.core.UpdateManagerPlugin;
 /*
- * (c) Copyright 2001 MyCorporation.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
+
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
 /**
  * This is a utility class used find information about the update

@@ -244,6 +244,6 @@ public class BuildZipFeatureContentProvider extends FeatureContentProvider imple
 	}
 	
 	private CoreException newCoreException(String s, Throwable e) throws CoreException {
-		return new CoreException(new Status(IStatus.ERROR,"org.eclipse.update.examples.buildzip",0,s,e));
+		return new CoreException(new Status(IStatus.ERROR,"org.eclipse.update.examples",0,s,e));
 	}
 }
