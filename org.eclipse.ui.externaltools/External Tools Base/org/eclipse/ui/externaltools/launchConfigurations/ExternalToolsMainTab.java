@@ -110,12 +110,10 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		
 		Label label = new Label(composite, SWT.NONE);
 		label.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.&Location___2")); //$NON-NLS-1$
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		label.setLayoutData(data);
 		label.setFont(font);
 		
 		locationField = new Text(composite, SWT.BORDER);
-		data = new GridData(GridData.FILL_HORIZONTAL);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		locationField.setLayoutData(data);
 		locationField.setFont(font);
@@ -125,7 +123,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		layout.numColumns = 1;
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		buttonComposite.setLayout(layout);
 		buttonComposite.setLayoutData(gridData);
 		buttonComposite.setFont(font);
@@ -166,12 +164,10 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		
 		Label label = new Label(composite, SWT.NONE);
 		label.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Working_&Directory__5")); //$NON-NLS-1$
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		label.setLayoutData(data);
 		label.setFont(font);
 		
 		workDirectoryField = new Text(composite, SWT.BORDER);
-		data = new GridData(GridData.FILL_HORIZONTAL);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		workDirectoryField.setLayoutData(data);
 		workDirectoryField.setFont(font);
@@ -181,7 +177,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		layout.numColumns = 1;
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		buttonComposite.setLayout(layout);
 		buttonComposite.setLayoutData(gridData);
 		buttonComposite.setFont(font);
@@ -210,24 +206,14 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 	protected void createArgumentComponent(Composite parent) {
 		Font font = parent.getFont();
 
-		Composite comp = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		layout.numColumns = 2;
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		comp.setLayout(layout);
-		comp.setLayoutData(data);
-		comp.setFont(font);
-
-		Label label = new Label(comp, SWT.NONE);
+		Label label = new Label(parent, SWT.NONE);
 		label.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsOptionTab.&Arguments___1")); //$NON-NLS-1$
-		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
 		label.setFont(font);
 
-		argumentField = new Text(comp, SWT.BORDER);
+		argumentField = new Text(parent, SWT.BORDER);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		argumentField.setLayoutData(data);
@@ -238,7 +224,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 
-		variableButton= createPushButton(comp, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsOptionTab.Varia&bles..._2"), null); //$NON-NLS-1$
+		variableButton= createPushButton(parent, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsOptionTab.Varia&bles..._2"), null); //$NON-NLS-1$
 		variableButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				VariableSelectionDialog dialog= new VariableSelectionDialog(getShell());
@@ -248,7 +234,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 
-		Label instruction = new Label(comp, SWT.NONE);
+		Label instruction = new Label(parent, SWT.NONE);
 		instruction.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsOptionTab.Note__Enclose_an_argument_containing_spaces_using_double-quotes_(__)._Not_applicable_for_variables._3")); //$NON-NLS-1$
 		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.horizontalSpan = 2;
