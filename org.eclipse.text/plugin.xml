@@ -12,5 +12,9 @@
 		<packages prefixes="org.eclipse.jface.text,org.eclipse.text.edits"/>
       </library>
    </runtime>
+   
+   <requires>
+      <import plugin="org.eclipse.core.runtime.compatibility" optional="true"/>
+   </requires>
 
 </plugin>

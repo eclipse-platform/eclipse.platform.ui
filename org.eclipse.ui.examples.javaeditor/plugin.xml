@@ -13,6 +13,7 @@
       </library>
    </runtime>
    <requires>
+      <import plugin="org.eclipse.core.runtime.compatibility" optional="true"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.filebuffers"/>
       <import plugin="org.eclipse.jface.text"/>
