@@ -627,12 +627,26 @@ public class ActionContributionItem extends ContributionItem {
 
 			if (widget instanceof ToolItem) {
 				ToolItem ti = (ToolItem) widget;
+				boolean rightStyle = (ti.getParent().getStyle() & SWT.RIGHT) != 0;
 
 				if (textChanged) {
 					String text = action.getText();
-					if (text != null && !hasImages(action)) {
-						text = Action.removeAcceleratorText(text);
-						ti.setText(text);
+					if (rightStyle) {
+						// always set text if using SWT.RIGHT
+						if (text == null) {
+							// workaround for bug 50151: Using SWT.RIGHT on a ToolBar leaves blank space 
+							ti.setText(""); //$NON-NLS-1$
+						}
+						else {
+							text = Action.removeAcceleratorText(text);
+							ti.setText(text);
+						}
+					}
+					else {
+						if (text != null && !hasImages(action)) {
+							text = Action.removeAcceleratorText(text);
+							ti.setText(text);
+						}
 					}
 				}
 
