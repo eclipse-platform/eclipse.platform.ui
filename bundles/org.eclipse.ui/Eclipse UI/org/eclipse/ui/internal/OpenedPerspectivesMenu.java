@@ -12,6 +12,8 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+
+import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 
 /**
@@ -73,13 +75,18 @@ public class OpenedPerspectivesMenu extends ContributionItem {
 		Iterator enum = page.getOpenedPerspectives();
 		int count = 1;
 		while (enum.hasNext()) {
-			final Perspective persp = (Perspective) enum.next();
+			Perspective persp = (Perspective) enum.next();
 			MenuItem mi = new MenuItem(menu, SWT.RADIO, index);
 			mi.setSelection(persp == activePersp);
 			mi.setText(calcText(count, persp));
+			final IPerspectiveDescriptor desc = persp.getDesc();
+			// avoid hanging onto page or perspective directly in menu
 			mi.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					page.setPerspective(persp.getDesc());
+					WorkbenchPage page = window.getActiveWorkbenchPage();
+					if (page != null) {
+						page.setPerspective(desc);
+					}
 				}
 			});
 		

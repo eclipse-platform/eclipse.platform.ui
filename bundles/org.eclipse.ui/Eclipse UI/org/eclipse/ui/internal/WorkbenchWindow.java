@@ -56,6 +56,7 @@ public class WorkbenchWindow extends ApplicationWindow
 	private boolean closing = false;
 	private boolean shellActivated = false;
 	private String workspaceLocation;
+	private Menu shortcutBarMenu;
 	
 	final private String TAG_INPUT = "input";//$NON-NLS-1$
 	final private String TAG_LAYOUT = "layout";//$NON-NLS-1$
@@ -979,8 +980,8 @@ public void setActivePage(final IWorkbenchPage in) {
 private void showShortcutBarPopup(MouseEvent e) {
 	// Get the tool item under the mouse.
 	Point pt = new Point(e.x, e.y);
-	ToolBar tb = shortcutBar.getControl();
-	ToolItem toolItem = tb.getItem(pt);
+	ToolBar toolBar = shortcutBar.getControl();
+	ToolItem toolItem = toolBar.getItem(pt);
 	if (toolItem == null)
 		return;
 
@@ -989,36 +990,52 @@ private void showShortcutBarPopup(MouseEvent e) {
 	if (!(data instanceof ActionContributionItem))
 		return;
 	IAction action = ((ActionContributionItem) data).getAction();
-	
-	// Build popup menu if applicable
-	Menu menu = null;
 	if (action instanceof SetPagePerspectiveAction) {
-		SetPagePerspectiveAction sp = (SetPagePerspectiveAction) action;
-		final WorkbenchPage page = sp.getPage();
-		final Perspective persp = sp.getPerspective();
-
-		menu = new Menu(tb);
-		MenuItem menuItem = new MenuItem(menu, 0);
-		menuItem.setText(WorkbenchMessages.getString("WorkbenchWindow.close")); //$NON-NLS-1$
-		menuItem.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				page.closePerspective(persp, true);
-			}
-		});
-		menuItem = new MenuItem(menu, 0);
-		menuItem.setText(WorkbenchMessages.getString("WorkbenchWindow.closeAll")); //$NON-NLS-1$
-		menuItem.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				page.closeAllPerspectives(true);
-			}
-		});
+		// The shortcut bar menu is created lazily here.
+		// Its data is set (each time) to the tool item, which refers to the SetPagePerspectiveAction
+		// which in turn refers to the page and perspective.
+		// It is important not to refer to the action, the page or the perspective directly
+		// since otherwise the menu hangs on to them after they are closed.
+		// By hanging onto the tool item instead, these references are cleared when the
+		// corresponding page or perspective is closed.
+		// See bug 11282 for more details on why it is done this way.
+		if (shortcutBarMenu == null) {
+			Menu menu = new Menu(toolBar);
+			MenuItem menuItem = new MenuItem(menu, SWT.NONE);
+			menuItem.setText(WorkbenchMessages.getString("WorkbenchWindow.close")); //$NON-NLS-1$
+			menuItem.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					ToolItem toolItem = (ToolItem) shortcutBarMenu.getData();
+					if (toolItem != null && !toolItem.isDisposed()) {
+						ActionContributionItem item = (ActionContributionItem) toolItem.getData();
+						SetPagePerspectiveAction action = (SetPagePerspectiveAction) item.getAction();
+						action.getPage().closePerspective(action.getPerspective(), true);
+					}
+				}
+			});
+			menuItem = new MenuItem(menu, SWT.NONE);
+			menuItem.setText(WorkbenchMessages.getString("WorkbenchWindow.closeAll")); //$NON-NLS-1$
+			menuItem.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					ToolItem toolItem = (ToolItem) shortcutBarMenu.getData();
+					if (toolItem != null && !toolItem.isDisposed()) {
+						ActionContributionItem item = (ActionContributionItem) toolItem.getData();
+						SetPagePerspectiveAction action = (SetPagePerspectiveAction) item.getAction();
+						action.getPage().closeAllPerspectives(true);
+					}
+				}
+			});
+			shortcutBarMenu = menu;
+		}
+		shortcutBarMenu.setData(toolItem);
 	}
 	
+	
 	// Show popup menu.
-	if (menu != null) {
-		pt = tb.toDisplay(pt);
-		menu.setLocation(pt.x, pt.y);
-		menu.setVisible(true);
+	if (shortcutBarMenu != null) {
+		pt = toolBar.toDisplay(pt);
+		shortcutBarMenu.setLocation(pt.x, pt.y);
+		shortcutBarMenu.setVisible(true);
 	}
 }
 /**
