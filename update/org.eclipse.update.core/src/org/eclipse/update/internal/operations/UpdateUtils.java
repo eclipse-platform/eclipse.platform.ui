@@ -522,49 +522,6 @@ public class UpdateUtils {
 		return null;
 	}
 	
-	/*
-	 * Returns the list of sessions deltas found on the file system
-	 * 
-	 * Do not cache, calculate everytime
-	 * because we delete the file in SessionDelta when the session
-	 * has been seen by the user
-	 * 
-	 * So the shared state is the file system itself
-	 */
-	public static ISessionDelta[] getSessionDeltas() {
-		List sessionDeltas = new ArrayList();
-		IPath path = UpdateCore.getPlugin().getStateLocation();
-		InstallChangeParser parser;
-
-		File file = path.toFile();
-		if (file.isDirectory()) {
-			File[] allFiles = file.listFiles();
-			for (int i = 0; i < allFiles.length; i++) {
-				try {
-					if (!allFiles[i].getName().endsWith(".xml"))
-						continue;
-					// TRACE
-					if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
-						UpdateCore.debug("Found delta change:" + allFiles[i]);
-					}
-					parser = new InstallChangeParser(allFiles[i]);
-					ISessionDelta change = parser.getInstallChange();
-					if (change != null) {
-						sessionDeltas.add(change);
-					}
-				} catch (Exception e) {
-					if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
-						UpdateCore.log("Unable to parse install change:" + allFiles[i], e);
-					}
-				}
-			}
-		}
-
-		if (sessionDeltas.size() == 0)
-			return new ISessionDelta[0];
-
-		return (ISessionDelta[]) sessionDeltas.toArray(arrayTypeFor(sessionDeltas));
-	}
 	
 	/*
 	 * Returns a concrete array type for the elements of the specified
