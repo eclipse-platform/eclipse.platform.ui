@@ -29,7 +29,6 @@ import org.eclipse.ui.part.intro.*;
 public class CustomizableIntroPart extends IntroPart {
 
     private IntroModelRoot model;
-    private IIntroSite introSite;
     private IntroPartPresentation presentation;
     private StandbyPart standbyPart;
     private Composite container;
@@ -48,7 +47,7 @@ public class CustomizableIntroPart extends IntroPart {
      * @see org.eclipse.ui.internal.temp.IIntroPart#init(org.eclipse.ui.internal.temp.IIntroSite)
      */
     public void init(IIntroSite site) throws PartInitException {
-        this.introSite = site;
+        setSite(site);
 
         // load the correct model based in the current Intro Part id. Set the
         // IntroPartId in the manager class.
@@ -89,15 +88,6 @@ public class CustomizableIntroPart extends IntroPart {
 			throws PartInitException {
 		init(site);
 	}
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.internal.temp.IIntroPart#getIntroSite()
-     */
-    public IIntroSite getIntroSite() {
-        return introSite;
-    }
 
     /**
      * Creates the UI based on how the InroPart has been configured.
