@@ -86,7 +86,9 @@ public class LaunchWizard extends Wizard {
 	}
 	
 	public LaunchWizard(Object[] allLaunchers, IStructuredSelection selection, String mode) {
-		this(allLaunchers, selection, mode, true);
+		this(allLaunchers, selection, mode, allLaunchers.length != 1);
+		// If there is only launcher, we do not show the launcher selection
+		// page. If there are 0 or > 1 launchers we show the page.
 	}
 
 	protected void initialize() {
@@ -194,16 +196,37 @@ public class LaunchWizard extends Wizard {
 	}
 	
 	/**
+	 * This method is only called if this wizard has a
+	 * project selection page. Otherwise, the
+	 * <code>LaunchWizardSelectionPage.nextPage()</code>
+	 * method is called.
+	 * 
 	 * @see IWizard#getNextPage(IWizardPage)
 	 */
 	public IWizardPage getNextPage(IWizardPage page) {
 		if (!fSelectLauncher) {
-			IWizardNode node= new LaunchWizardNode(page, (ILauncher)fLaunchers[0], fMode);			
-			IWizard wizard = node.getWizard();
-			wizard.addPages();
-			return wizard.getStartingPage();
+			return getDelegateWizard().getStartingPage();
 		}
 		return super.getNextPage(page);
+	}
+	
+	/**
+	 * @see IWizard#getStartingPage()
+	 */
+	public IWizardPage getStartingPage() {
+		// if there is no need to select a project or launcher
+		// return the launcher's wizard
+		if (getPages().length == 0 && !fSelectLauncher) {
+			return getDelegateWizard().getStartingPage(); 
+		}
+		return super.getStartingPage();
+	}
+	
+	protected IWizard getDelegateWizard() {
+		IWizardNode node= new LaunchWizardNode(this, (ILauncher)fLaunchers[0], fMode);			
+		IWizard wizard = node.getWizard();
+		wizard.addPages();
+		return wizard;
 	}
 	
 	/**

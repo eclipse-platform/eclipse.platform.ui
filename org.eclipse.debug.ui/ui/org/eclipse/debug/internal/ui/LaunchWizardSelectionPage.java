@@ -146,7 +146,7 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 	 * Updates the elements list for the given launcher
 	 */
 	protected void launcherSelected(ILauncher launcher) {
-		LaunchWizardNode node= new LaunchWizardNode(this, launcher, fMode);
+		LaunchWizardNode node= new LaunchWizardNode((LaunchWizard)getWizard(), launcher, fMode);
 		setSelectedNode(node);
 		setMessage(null);
 		updateDefaultLauncherButton(launcher);

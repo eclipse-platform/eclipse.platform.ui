@@ -5,14 +5,7 @@ package org.eclipse.debug.internal.ui;
  * WebSphere Studio Workbench
  * (c) Copyright IBM Corp 2000
  */
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.debug.core.ILauncher;
-import org.eclipse.debug.ui.ILaunchWizard;
-import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.jface.wizard.IWizardNode;
-import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.swt.graphics.Point;
+import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.IConfigurationElement;import org.eclipse.debug.core.ILauncher;import org.eclipse.debug.ui.ILaunchWizard;import org.eclipse.jface.wizard.IWizard;import org.eclipse.jface.wizard.IWizardNode;import org.eclipse.swt.graphics.Point;
 
 /**
  * A wizard node represents a "potential" wizard. Wizard nodes
@@ -24,7 +17,7 @@ public class LaunchWizardNode implements IWizardNode {
 	private static final String ERROR= PREFIX + "error.";
 	
 	protected IWizard fWizard;
-	protected IWizardPage fParentWizardPage;
+	protected LaunchWizard fLaunchWizard;
 	protected ILauncher fLauncher;
 	
 	protected String fMode;
@@ -33,8 +26,8 @@ public class LaunchWizardNode implements IWizardNode {
 	 * The wizard element provides information on how to create
 	 * the wizard supplied by the ISV's extension.
 	 */
-	public LaunchWizardNode(IWizardPage aWizardPage, ILauncher launcher, String mode) {
-		fParentWizardPage= aWizardPage;
+	public LaunchWizardNode(LaunchWizard launchWizard, ILauncher launcher, String mode) {
+		fLaunchWizard= launchWizard;
 		fLauncher= launcher;
 		fMode= mode;
 	}
@@ -45,7 +38,7 @@ public class LaunchWizardNode implements IWizardNode {
 	public ILaunchWizard createWizard() throws CoreException {
 		IConfigurationElement config= fLauncher.getConfigurationElement();
 		ILaunchWizard wizard= (ILaunchWizard)DebugUIPlugin.getDefault().createExtension(config, "wizard");
-		wizard.init(fLauncher, fMode, ((LaunchWizard)fParentWizardPage.getWizard()).getSelection());
+		wizard.init(fLauncher, fMode, fLaunchWizard.getSelection());
 		return wizard;
 	}
 	
@@ -66,7 +59,7 @@ public class LaunchWizardNode implements IWizardNode {
 		try {
 			fWizard= createWizard(); // create instance of target wizard
 		} catch (CoreException e) {			
-			DebugUIUtils.errorDialog(fParentWizardPage.getControl().getShell(), ERROR, e.getStatus());
+			DebugUIUtils.errorDialog(fLaunchWizard.getShell(), ERROR, e.getStatus());
 			return null;
 		}
 
