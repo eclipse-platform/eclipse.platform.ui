@@ -7,10 +7,17 @@ package org.eclipse.ui.part;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.ui.internal.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * Implements a simple web style navigation metaphor for a <code>TreeViewer</code>.  
@@ -132,9 +139,8 @@ private void createActions() {
 		}
 	};
 	homeAction.setToolTipText(WorkbenchMessages.getString("GoHome.toolTip")); //$NON-NLS-1$
-	ImageDescriptor image = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_HOME_NAV);
-	homeAction.setImageDescriptor(image);
-	homeAction.setHoverImageDescriptor(image);
+	homeAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_HOME_NAV));
+	homeAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_HOME_NAV_HOVER));
 
 	// Back.
 	backAction = new Action(WorkbenchMessages.getString("GoBack.text")) { //$NON-NLS-1$
@@ -143,9 +149,8 @@ private void createActions() {
 		}
 	};
 	backAction.setToolTipText(WorkbenchMessages.getString("GoBack.toolTip")); //$NON-NLS-1$
-	image = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BACKWARD_NAV);
-	backAction.setImageDescriptor(image);
-	backAction.setHoverImageDescriptor(image);
+	backAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BACKWARD_NAV));
+	backAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BACKWARD_NAV_HOVER));
 
 	// Forward.
 	forwardAction = new Action(WorkbenchMessages.getString("GoInto.text")) { //$NON-NLS-1$
@@ -154,9 +159,8 @@ private void createActions() {
 		}
 	};
 	forwardAction.setToolTipText(WorkbenchMessages.getString("GoInto.toolTip")); //$NON-NLS-1$
-	image = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_FORWARD_NAV);
-	forwardAction.setImageDescriptor(image);
-	forwardAction.setHoverImageDescriptor(image);
+	forwardAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_FORWARD_NAV));
+	forwardAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_FORWARD_NAV_HOVER));
 
 	// Update the buttons when a selection change occurs.
 	fChildTree.addSelectionChangedListener(this);
