@@ -118,7 +118,7 @@ public class KeyStroke implements Comparable {
 	 * @param nonModifierKey
 	 * @return
 	 */		
-	public static KeyStroke getInstance(NonModifierKey nonModifierKey) {
+	public static KeyStroke getInstance(NaturalKey nonModifierKey) {
 		return new KeyStroke(Util.EMPTY_SORTED_SET, nonModifierKey);
 	}
 
@@ -129,7 +129,7 @@ public class KeyStroke implements Comparable {
 	 * @param nonModifierKey
 	 * @return
 	 */
-	public static KeyStroke getInstance(ModifierKey modifierKey, NonModifierKey nonModifierKey) {
+	public static KeyStroke getInstance(ModifierKey modifierKey, NaturalKey nonModifierKey) {
 		if (modifierKey == null)
 			throw new NullPointerException();
 
@@ -143,7 +143,7 @@ public class KeyStroke implements Comparable {
 	 * @param nonModifierKey
 	 * @return
 	 */
-	public static KeyStroke getInstance(ModifierKey[] modifierKeys, NonModifierKey nonModifierKey) {
+	public static KeyStroke getInstance(ModifierKey[] modifierKeys, NaturalKey nonModifierKey) {
 		Util.assertInstance(modifierKeys, ModifierKey.class);		
 		return new KeyStroke(new TreeSet(Arrays.asList(modifierKeys)), nonModifierKey);
 	}
@@ -155,7 +155,7 @@ public class KeyStroke implements Comparable {
 	 * @param nonModifierKey
 	 * @return
 	 */
-	public static KeyStroke getInstance(SortedSet modifierKeys, NonModifierKey nonModifierKey) {
+	public static KeyStroke getInstance(SortedSet modifierKeys, NaturalKey nonModifierKey) {
 		return new KeyStroke(modifierKeys, nonModifierKey);
 	}
 
@@ -172,7 +172,7 @@ public class KeyStroke implements Comparable {
 			throw new NullPointerException();
 
 		SortedSet modifierKeys = new TreeSet();
-		NonModifierKey nonModifierKey = null;
+		NaturalKey nonModifierKey = null;
 		StringTokenizer stringTokenizer = new StringTokenizer(string, KEY_DELIMITERS);
 		
 		while (stringTokenizer.hasMoreTokens()) {
@@ -189,10 +189,10 @@ public class KeyStroke implements Comparable {
 				break;
 			} else {
 				name = name.toUpperCase();
-				nonModifierKey = (NonModifierKey) escapeKeyLookup.get(name);
+				nonModifierKey = (NaturalKey) escapeKeyLookup.get(name);
 				
 				if (nonModifierKey == null)
-					nonModifierKey = (NonModifierKey) specialKeyLookup.get(name);
+					nonModifierKey = (NaturalKey) specialKeyLookup.get(name);
 
 				if (nonModifierKey == null)
 					throw new ParseException();
@@ -205,12 +205,13 @@ public class KeyStroke implements Comparable {
 	}
 
 	private SortedSet modifierKeys;
-	private NonModifierKey nonModifierKey;
+	private NaturalKey nonModifierKey;
 
 	private transient ModifierKey[] modifierKeysAsArray;
 	
-	private KeyStroke(SortedSet modifierKeys, NonModifierKey nonModifierKey) {
+	private KeyStroke(SortedSet modifierKeys, NaturalKey nonModifierKey) {
 		super();
+
 		if (nonModifierKey == null)
 			throw new NullPointerException();
 
@@ -251,7 +252,7 @@ public class KeyStroke implements Comparable {
 	 * 
 	 * @return
 	 */
-	public NonModifierKey getNonModifierKey() {
+	public NaturalKey getNonModifierKey() {
 		return nonModifierKey;
 	}
 

@@ -21,7 +21,7 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public class SpecialKey extends NonModifierKey {
+public class SpecialKey extends NaturalKey {
 
 	public final static SpecialKey ARROW_DOWN = new SpecialKey("ARROW_DOWN"); 
 	public final static SpecialKey ARROW_LEFT = new SpecialKey("ARROW_LEFT"); 

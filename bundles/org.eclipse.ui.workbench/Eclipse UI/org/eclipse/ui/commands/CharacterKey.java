@@ -21,7 +21,7 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public class CharacterKey extends NonModifierKey {
+public class CharacterKey extends NaturalKey {
 
 	private static CharacterKey[] cache = new CharacterKey[256];
 

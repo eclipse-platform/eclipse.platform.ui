@@ -21,21 +21,48 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public class Gesture {
+public class Gesture implements Comparable {
 
 	public final static Gesture EAST = new Gesture("EAST"); 
 	public final static Gesture NORTH = new Gesture("NORTH"); 
 	public final static Gesture SOUTH = new Gesture("SOUTH"); 
 	public final static Gesture WEST = new Gesture("WEST"); 
-
-	private String direction;
 	
-	private Gesture(String direction) {
+	private final static int HASH_FACTOR = 89;
+	private final static int HASH_INITIAL = Gesture.class.getName().hashCode();
+
+	private String name;
+
+	private Gesture(String name) {
 		super();
-		this.direction = direction;
+		
+		if (name == null)
+			throw new NullPointerException();
+		
+		this.name = name;
 	}
 
-	public String toString() {
-		return direction;
+	public int compareTo(Object object) {
+		Gesture gesture = (Gesture) object;
+		int compareTo = name.compareTo(gesture.name);
+		return compareTo;
 	}
+
+	public boolean equals(Object object) {
+		if (!(object instanceof Gesture))
+			return false;
+
+		Gesture gesture = (Gesture) object;
+		return name.equals(gesture.name);
+	}
+
+	public int hashCode() {
+		int result = HASH_INITIAL;
+		result = result * HASH_FACTOR + name.hashCode();
+		return result;
+	}
+	
+	public String toString() {
+		return name;
+	}	
 }

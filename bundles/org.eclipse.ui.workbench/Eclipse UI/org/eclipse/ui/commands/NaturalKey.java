@@ -21,9 +21,9 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public abstract class NonModifierKey extends Key {
+public abstract class NaturalKey extends Key {
 
-	NonModifierKey(String name) {
+	NaturalKey(String name) {
 		super(name);
 	}
 }

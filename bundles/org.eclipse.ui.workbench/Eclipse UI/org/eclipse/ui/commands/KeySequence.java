@@ -32,8 +32,8 @@ import org.eclipse.ui.internal.util.Util;
  */
 public class KeySequence implements Comparable {
 
-	private final static char KEYSTROKE_DELIMITER = ' '; //$NON-NLS-1$
-	private final static String KEYSTROKE_DELIMITERS = KEYSTROKE_DELIMITER + "\b\t\r\u001b\u007F"; //$NON-NLS-1$
+	private final static char KEY_STROKE_DELIMITER = ' '; //$NON-NLS-1$
+	private final static String KEY_STROKE_DELIMITERS = KEY_STROKE_DELIMITER + "\b\t\r\u001b\u007F"; //$NON-NLS-1$
 
 	/**
 	 * JAVADOC
@@ -87,7 +87,7 @@ public class KeySequence implements Comparable {
 			throw new NullPointerException();
 
 		List keyStrokes = new ArrayList();
-		StringTokenizer stringTokenizer = new StringTokenizer(string, KEYSTROKE_DELIMITERS);
+		StringTokenizer stringTokenizer = new StringTokenizer(string, KEY_STROKE_DELIMITERS);
 				
 		while (stringTokenizer.hasMoreTokens())
 			keyStrokes.add(KeyStroke.parse(stringTokenizer.nextToken()));
@@ -144,7 +144,7 @@ public class KeySequence implements Comparable {
 			
 		while (iterator.hasNext()) {
 			if (i != 0)
-				stringBuffer.append(KEYSTROKE_DELIMITER);
+				stringBuffer.append(KEY_STROKE_DELIMITER);
 	
 			stringBuffer.append(((KeyStroke) iterator.next()).toString());
 			i++;
