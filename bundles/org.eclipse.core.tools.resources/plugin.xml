@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
+   <extension-point id="metadataDumpers" name="Metadata Dumpers"/>
+   
+   <extension point="org.eclipse.core.tools.resources.metadataDumpers">
+    	<dumper file-name=".markers" class="org.eclipse.core.tools.metadata.MarkersDumper"/>
+    	<dumper file-name=".markers.snap" class="org.eclipse.core.tools.metadata.MarkersSnapshotDumper"/>
+    	<dumper file-name=".syncinfo" class="org.eclipse.core.tools.metadata.SyncInfoDumper"/>
+    	<dumper file-name=".syncinfo.snap" class="org.eclipse.core.tools.metadata.SyncInfoSnapshotDumper"/>
+    	<dumper file-name=".properties" class="org.eclipse.core.tools.metadata.PropertiesDumper"/>
+    	<dumper file-name=".location" class="org.eclipse.core.tools.metadata.LocationDumper"/>    	    	    	    	    	
+   </extension>
 <!--  Actions -->
    <extension
          point="org.eclipse.ui.actionSets">
