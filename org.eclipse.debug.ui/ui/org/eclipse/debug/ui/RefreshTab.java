@@ -566,17 +566,15 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 			set = NO_WORKING_SET;
 		} else {
 			XMLMemento workingSetMemento = XMLMemento.createWriteRoot(TAG_LAUNCH_CONFIGURATION_WORKING_SET);
-			if (workingSet != null) {
-				workingSetMemento.putString(RefreshTab.TAG_FACTORY_ID, workingSet.getFactoryId());
-				workingSet.saveState(workingSetMemento);
-				StringWriter writer= new StringWriter();
-				try {
-					workingSetMemento.save(writer);
-				} catch (IOException e) {
-					DebugUIPlugin.log(e);
-				}
-				set = writer.toString();
+			workingSetMemento.putString(RefreshTab.TAG_FACTORY_ID, workingSet.getFactoryId());
+			workingSet.saveState(workingSetMemento);
+			StringWriter writer= new StringWriter();
+			try {
+				workingSetMemento.save(writer);
+			} catch (IOException e) {
+				DebugUIPlugin.log(e);
 			}
+			set = writer.toString();
 		}
 		if (set != null) {
 			StringBuffer memento = new StringBuffer();
