@@ -1,0 +1,36 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <title>Workbench Extension Points</title>
+</head>
+<body link="#0000FF" vlink="#800080">
+
+<center>
+<h1>Move/Delete Hook</h1></center>
+<br><b><i>Identifier: </i></b>org.eclipse.core.resources.moveDeleteHook<p><b><i>Description:</i></b> For providing an implementation of an
+IMoveDeleteHook
+to be used in the IResource.move and IResource.delete mechanism. This extension
+point tolerates at most one extension.
+<p>This extension point was added in Eclipse 2.0.</p>
+<p><b><i>Configuration Markup:</i></b>
+<p><tt>&nbsp;&nbsp; &lt;!ELEMENT moveDeleteHook EMPTY></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST moveDeleteHook class CDATA
+#REQUIRED></tt>
+<ul>
+<li>
+<b>class</b> - a fully qualified name of a class which implements <tt>org.eclipse.core.resources.IMoveDeleteHook</tt>.</li>
+</ul>
+<b><i>Examples:</i></b>
+<p>The following is an example of using the <tt>moveDeleteHook </tt>extension point.
+<p>(in file <tt>plugin.xml</tt>)
+<p><tt>&nbsp;&nbsp; &lt;extension point=&quot;org.eclipse.core.resources.moveDeleteHook&quot;&gt;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;moveDeleteHook class=&quot;org.eclipse.team.internal.MoveDeleteHook&quot;/&gt;</tt>
+<br><tt>&nbsp;&nbsp; &lt;/extension></tt>
+<p><b><i>API Information</i>: </b>The value of the <tt>class</tt> attribute
+must represent an implementation of <tt>org.eclipse.core.resources.IMoveDeleteHook</tt>.
+<p><b><i>Supplied Implementation:</i></b> The Team component will generally provide the implementation of the
+move/delete hook.  The extension point should not be used by any other clients.
+<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
+</body>
+</html>

@@ -19,19 +19,20 @@ point tolerates at most one extension.
 #REQUIRED></tt>
 <ul>
 <li>
-<b>class</b> - a fully qualified name of a class which implements <tt>org.eclipse.core.resource.IFileModificationValidator</tt>.</li>
+<b>class</b> - a fully qualified name of a class which implements <tt>org.eclipse.core.resources.IFileModificationValidator</tt>.</li>
 </ul>
 <b><i>Examples:</i></b>
 <p>The following is an example of using the <tt>fileModificationValidator
 </tt>extension point.
 <p>(in file <tt>plugin.xml</tt>)
 <p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.core.resources.fileModificationValidator"></tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;fileModificationValidator class="org.eclipse.vcm.internal.VCMFileModificationValidator"/></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;fileModificationValidator
+class=&quot;org.eclipse.team.internal.VCMFileModificationValidator&quot;/&gt;</tt>
 <br><tt>&nbsp;&nbsp; &lt;/extension></tt>
 <p><b><i>API Information</i>: </b>The value of the <tt>class</tt> attribute
-must represent an implementation of <tt>org.eclipse.core.resource.IFileModificationValidator</tt>.
-<p><b><i>Supplied Implementation:</i></b> The VCM component will generally provide the implementation of the 
-file modification validator.  The extension point should be used by any other clients.
+must represent an implementation of <tt>org.eclipse.core.resources.IFileModificationValidator</tt>.
+<p><b><i>Supplied Implementation:</i></b> The Team component will generally provide the implementation of the 
+file modification validator.  The extension point should not be used by any other clients.
 <p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
 </body>
 </html>
