@@ -9,11 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
+
 import java.io.*;
 import java.util.*;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.viewers.*;
@@ -32,30 +31,21 @@ import org.eclipse.update.operations.*;
 
 public class TargetPage extends BannerPage implements IDynamicPage {
 	private TableViewer jobViewer;
-	private TableViewer siteViewer;
 	private IInstallConfiguration config;
 	private ConfigListener configListener;
 	private Label requiredSpaceLabel;
 	private Label availableSpaceLabel;
 	private IInstallFeatureOperation[] jobs;
-	private Button addButton;
-	private Button deleteButton;
-	private HashSet added;
+    private IInstallFeatureOperation currentJob;
+    private Label installLocation;
+    private Button changeLocation;
+    static HashSet added;
 
 	class JobsContentProvider
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
 			return jobs;
-		}
-	}
-
-	class SitesContentProvider
-		extends DefaultContentProvider
-		implements IStructuredContentProvider {
-
-		public Object[] getElements(Object parent) {
-			return config.getConfiguredSites();
 		}
 	}
 
@@ -88,30 +78,8 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		}
 	}
 	
-	class SitesLabelProvider
-	extends LabelProvider
-	implements ITableLabelProvider {
-		
-		public Image getColumnImage(Object obj, int col) {
-			UpdateLabelProvider provider = UpdateUI.getDefault().getLabelProvider();
-			return provider.getLocalSiteImage((IConfiguredSite) obj);
-		}
-	
-		public String getColumnText(Object obj, int col) {
-			if (col == 0) {
-				ISite site = ((IConfiguredSite) obj).getSite();
-				return new File(site.getURL().getFile()).toString();
-			}
-			return null;
-		}
-	}
-
 	class ConfigListener implements IInstallConfigurationChangedListener {
 		public void installSiteAdded(IConfiguredSite csite) {
-			siteViewer.add(csite);
-			if (added == null)
-				added = new HashSet();
-			added.add(csite);
 			
 			// set the site as target for all jobs without a target
 			for (int i=0; jobs != null && i<jobs.length; i++)
@@ -120,16 +88,9 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 				}
 
 			jobViewer.refresh();
-			
-			siteViewer.setSelection(new StructuredSelection(csite));
-			siteViewer.getControl().setFocus();
 		}
 
 		public void installSiteRemoved(IConfiguredSite csite) {
-			siteViewer.remove(csite);
-			if (added != null)
-				added.remove(csite);
-			
 			// remove the target site for all jobs that use it
 			// set the site as target for all jobs without a target
 			boolean refreshJobs = false;
@@ -144,8 +105,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 			jobViewer.refresh();
 			if (refreshJobs) {
 				jobViewer.getControl().setFocus();
-			} else
-				siteViewer.getControl().setFocus();
+			}
 		}
 	}
 
@@ -167,7 +127,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 
 	public void dispose() {
 		UpdateUI.getDefault().getLabelProvider().disconnect(this);
-		config.removeInstallConfigurationChangedListener(configListener);
+//		config.removeInstallConfigurationChangedListener(configListener);
 		super.dispose();
 	}
 
@@ -177,74 +137,49 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		layout.numColumns = 3;
 		layout.marginWidth = layout.marginHeight = 0;
 		client.setLayout(layout);
-		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		Composite leftPanel = new Composite(client, SWT.NULL);
-		GridLayout leftLayout = new GridLayout();
-		leftLayout.numColumns = 1;
-		leftLayout.marginWidth = leftLayout.marginHeight = 0;
-		leftPanel.setLayout(leftLayout);
-		leftPanel.setLayoutData(new GridData(GridData.FILL_BOTH));
+		client.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		Label label = new Label(leftPanel, SWT.NULL);
+		Label label = new Label(client, SWT.NULL);
 		label.setText(UpdateUI.getString("InstallWizard.TargetPage.jobsLabel")); //$NON-NLS-1$
-		createJobViewer(leftPanel);
+		createJobViewer(client);
 
-		Composite centerPanel = new Composite(client, SWT.NULL);
-		GridLayout centerLayout = new GridLayout();
-		centerLayout.numColumns = 1;
-		centerLayout.marginWidth = centerLayout.marginHeight = 0;
-		centerPanel.setLayout(centerLayout);
-		centerPanel.setLayoutData(new GridData(GridData.FILL_BOTH));
+		label = new Label(client, SWT.NULL);
+		label.setText(UpdateUI.getString("InstallWizard.TargetPage.location")); //$NON-NLS-1$
+        GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+        label.setLayoutData(gd);
 
-		label = new Label(centerPanel, SWT.NULL);
-		label.setText(UpdateUI.getString("InstallWizard.TargetPage.siteLabel")); //$NON-NLS-1$
-		createSiteViewer(centerPanel);
+		installLocation = new Label(client, SWT.NULL);
+        installLocation.setText("foo");
+        gd = new GridData(GridData.FILL_HORIZONTAL);
+        installLocation.setLayoutData(gd);
+        
+        changeLocation = new Button(client, SWT.PUSH);
+        changeLocation.setText(UpdateUI.getString("InstallWizard.TargetPage.location.change")); //$NON-NLS-1$
+        changeLocation.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                IStructuredSelection selection = (IStructuredSelection) jobViewer.getSelection();
+                if (selection == null)
+                    return;
+                IInstallFeatureOperation job = (IInstallFeatureOperation) selection.getFirstElement();
+                if (job == null) 
+                    return;
+                
+                TargetSiteDialog dialog = new TargetSiteDialog(getShell(), config, job, configListener);
+                dialog.create();
 
-		Composite rightPanel = new Composite(client, SWT.NULL);
-		GridLayout rightLayout = new GridLayout();
-		rightLayout.numColumns = 1;
-		rightLayout.marginWidth = rightLayout.marginHeight = 0;
-		rightPanel.setLayout(rightLayout);
-		rightPanel.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-
-		new Label(rightPanel, SWT.NULL);
-		Composite buttonContainer = new Composite(rightPanel, SWT.NULL);
-		GridLayout blayout = new GridLayout();
-		blayout.marginWidth = blayout.marginHeight = 0;
-		buttonContainer.setLayout(blayout);
-		buttonContainer.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-		
-		addButton = new Button(buttonContainer, SWT.PUSH);
-		addButton.setText(UpdateUI.getString("InstallWizard.TargetPage.new")); //$NON-NLS-1$
-		addButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				addTargetLocation();
-			}
-		});
-		addButton.setEnabled(false);
-		addButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-		SWTUtil.setButtonDimensionHint(addButton);
-		
-		deleteButton = new Button(buttonContainer, SWT.PUSH);
-		deleteButton.setText(UpdateUI.getString("InstallWizard.TargetPage.delete")); //$NON-NLS-1$
-		deleteButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				try {
-					removeSelection();
-				}
-				catch (CoreException ex) {
-					UpdateUI.logException(ex);
-				}
-			}
-		});
-		deleteButton.setEnabled(false);
-		deleteButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-		SWTUtil.setButtonDimensionHint(deleteButton);		
-		
-				
+                SWTUtil.setDialogSize(dialog, 400, 300);
+                
+                dialog.getShell().setText(UpdateUI.getString("SitePage.new")); //$NON-NLS-1$
+                dialog.open();
+                setTargetLocation(job);
+                pageChanged();
+                jobViewer.refresh();
+                updateStatus(job.getTargetSite());
+            }
+        });
+			
 		Composite status = new Composite(client, SWT.NULL);
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 3;
 		status.setLayoutData(gd);
 		layout = new GridLayout();
@@ -269,6 +204,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 	private void createJobViewer(Composite parent) {
 		jobViewer = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_BOTH);
+        gd.horizontalSpan = 3;
 		gd.widthHint = 150;
 		jobViewer.getTable().setLayoutData(gd);
 		jobViewer.setContentProvider(new JobsContentProvider());
@@ -278,56 +214,9 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 				IInstallFeatureOperation job = (IInstallFeatureOperation) selection.getFirstElement();
-				if (job != null) {
-					siteViewer.setInput(job);
-					//IConfiguredSite affinitySite = UpdateUtils.getAffinitySite(config, job.getFeature());
-					IConfiguredSite affinitySite = UpdateUtils.getDefaultTargetSite(config, job, true);
-					addButton.setEnabled(affinitySite == null);
-					if (job.getTargetSite() != null) {
-						siteViewer.setSelection(new StructuredSelection(job.getTargetSite()));
-					}
-				}
+				setTargetLocation(job);
 			}
 		});
-	}
-
-	private void createSiteViewer(Composite parent) {
-		siteViewer = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.widthHint = 200;
-		siteViewer.getTable().setLayoutData(gd);
-		siteViewer.setContentProvider(new SitesContentProvider());
-		siteViewer.setLabelProvider(new SitesLabelProvider());
-		siteViewer.addFilter(new ViewerFilter() {
-			public boolean select(Viewer v, Object parent, Object obj) {
-				IInstallFeatureOperation job = (IInstallFeatureOperation) siteViewer.getInput();
-				return getSiteVisibility((IConfiguredSite) obj, job);
-			}
-		});
-		siteViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
-				selectTargetSite(ssel);
-				jobViewer.refresh();
-				updateDeleteButton(ssel);
-			}
-		});
-
-		if (config != null)
-			config.addInstallConfigurationChangedListener(configListener);
-	}
-	
-	private void updateDeleteButton(IStructuredSelection selection) {
-		boolean enable = added != null && !added.isEmpty();
-		if (enable) {
-			for (Iterator iter = selection.iterator(); iter.hasNext();) {
-				if (!added.contains(iter.next())) {
-					enable = false;
-					break;
-				}
-			}
-		}
-		deleteButton.setEnabled(enable);
 	}
 
 	public void setVisible(boolean visible) {
@@ -349,54 +238,6 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		setPageComplete(!empty);
 	}
 
-	private void selectTargetSite(IStructuredSelection selection) {
-		IConfiguredSite site = (IConfiguredSite) selection.getFirstElement();
-		IInstallFeatureOperation job = (IInstallFeatureOperation) siteViewer.getInput();
-		if (job != null) {
-			if (site != null)
-				job.setTargetSite(site);
-			pageChanged();
-		}
-		updateStatus(site);
-	}
-
-	private void addTargetLocation() {
-		DirectoryDialog dd = new DirectoryDialog(getContainer().getShell());
-		dd.setMessage(UpdateUI.getString("InstallWizard.TargetPage.location.message")); //$NON-NLS-1$
-		String path = dd.open();
-		if (path != null) {
-			addConfiguredSite(getContainer().getShell(), config, new File(path));
-		}
-	}
-	
-	private void removeSelection() throws CoreException {
-		IStructuredSelection selection = (IStructuredSelection) siteViewer.getSelection();
-		for (Iterator iter = selection.iterator(); iter.hasNext();) {
-			IConfiguredSite targetSite = (IConfiguredSite) iter.next();
-			config.removeConfiguredSite(targetSite);
-		}
-	}
-
-	private IConfiguredSite addConfiguredSite(
-		Shell shell,
-		IInstallConfiguration config,
-		File file) {
-		try {
-			IConfiguredSite csite = config.createConfiguredSite(file);
-			IStatus status = csite.verifyUpdatableStatus();
-			if (status.isOK())
-				config.addConfiguredSite(csite);
-			else 
-				throw new CoreException(status);
-			
-			return csite;
-		} catch (CoreException e) {
-			String title = UpdateUI.getString("InstallWizard.TargetPage.location.error.title"); //$NON-NLS-1$
-			ErrorDialog.openError(shell, title, null, e.getStatus());
-			UpdateUI.logException(e,false);
-			return null;
-		}
-	}
 
 	private void updateStatus(Object element) {
 		if (element == null) {
@@ -480,16 +321,6 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		verifyNotEmpty(empty);
 	}
 	
-	void removeAddedSites() {
-		if (added != null) {
-			while (!added.isEmpty()) {
-				Iterator it = added.iterator(); 
-				if (it.hasNext())
-					config.removeConfiguredSite((IConfiguredSite) it.next());
-			}
-		}
-			
-	}
 	
 	private  boolean getSiteVisibility(IConfiguredSite site, IInstallFeatureOperation job) {
 		// Do not allow installing into a non-updateable site
@@ -556,7 +387,17 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		}
 		return null;
 	}
+  
     
+    void removeAddedSites() {
+        if (added != null) {
+            while (!added.isEmpty()) {
+                Iterator it = added.iterator(); 
+                if (it.hasNext())
+                    config.removeConfiguredSite((IConfiguredSite) it.next());
+            }
+        }           
+    }
     
     /* (non-Javadoc)
      * @see org.eclipse.jface.wizard.IWizardPage#isPageComplete()
@@ -568,5 +409,15 @@ public class TargetPage extends BannerPage implements IDynamicPage {
                 return false;
         }
         return super.isPageComplete();
+    }
+
+    /**
+     * @param job
+     */
+    private void setTargetLocation(IInstallFeatureOperation job) {
+        if (job != null && job.getTargetSite() != null) {
+            installLocation.setText(new File(job.getTargetSite().getSite().getURL().getFile()).toString());
+            updateStatus(job.getTargetSite());
+        }
     }
 }
