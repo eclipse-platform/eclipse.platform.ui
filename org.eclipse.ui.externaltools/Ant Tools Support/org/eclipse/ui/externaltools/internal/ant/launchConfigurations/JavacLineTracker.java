@@ -15,7 +15,6 @@ import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleLineTracker;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.ui.externaltools.internal.ant.view.actions.StringMatcher;
 
 /**
  * Generates hyperlinks for javac output
