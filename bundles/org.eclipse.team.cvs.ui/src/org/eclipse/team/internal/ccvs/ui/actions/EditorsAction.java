@@ -70,8 +70,14 @@ public class EditorsAction implements IProviderAction, IRunnableWithProgress {
 		if (!isPerformEdit()) return true;
 		
 		if (f_editorsInfo.length > 0) {
-			EditorsDialog view = new EditorsDialog(shell, f_editorsInfo);
-			view.open();
+			final EditorsDialog view = new EditorsDialog(shell, f_editorsInfo);
+			// Open the dialog using a sync exec (there are no guarentees that we
+			// were called from the UI thread
+			CVSUIPlugin.openDialog(shell, new CVSUIPlugin.IOpenableInShell() {
+				public void open(Shell shell) {
+					view.open();
+				}
+			}, CVSUIPlugin.PERFORM_SYNC_EXEC);
 			return (view.getReturnCode() == EditorsDialog.OK);
 		}
 		return true;

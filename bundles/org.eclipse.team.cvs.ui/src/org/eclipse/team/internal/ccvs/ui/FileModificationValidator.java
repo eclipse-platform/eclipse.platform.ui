@@ -156,7 +156,9 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 		
 		EditorsAction editors = new EditorsAction(getProvider(files),files);
 		if (editors.isPerformEdit()) {
+			// determine if there are any editors of the file registered on the server
 			run(shell, editors);
+			// prompt if there are
 			return editors.promptToEdit(shell);
 		} else {
 			// Allow the files to be edited without notifying the server
