@@ -166,16 +166,6 @@ public interface IDebugUIConstants {
 	public static final String PREF_AUTO_REMOVE_OLD_LAUNCHES= PLUGIN_ID + ".auto_remove_old_launches"; //$NON-NLS-1$
 		
 	/**
-	 * Boolean preference controlling the appearance of the launch configuration dialog
-	 * in situations where the the context for launching is sufficient to generate a
-	 * launch configuration that is ready to launch with no additional input from the user.
-	 * If this preference is <code>true</code>, the launch configuration dialog will not
-	 * appear in such situations, if <code>false</code> it will.
-	 * @since 2.0
-	 */
-	public static final String PREF_SINGLE_CLICK_LAUNCHING = PLUGIN_ID + ".single_click_launching"; //$NON-NLS-1$
-	
-	/**
 	 * Boolean preference controlling whether the debugger re-uses non-dirty editors
 	 * that it opens when displaying source. When <code>true</code> the debugger
 	 * re-uses the same editor when showing source for a selected stack frame (unless

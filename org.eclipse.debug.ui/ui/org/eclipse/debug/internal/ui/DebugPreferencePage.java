@@ -52,7 +52,6 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 	 * @see FieldEditorPreferencePage#createFieldEditors
 	 */
 	protected void createFieldEditors() {
-		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_SINGLE_CLICK_LAUNCHING, DebugUIMessages.getString("DebugPreferencePage.&Single-click_launching_2"), SWT.NONE, getFieldEditorParent()));  //$NON-NLS-1$
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH, DebugUIMessages.getString("DebugPreferencePage.auto_build_before_launch"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$		
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, DebugUIMessages.getString("DebugPreferencePage.Remove_terminated_launches_when_a_new_launch_is_created_1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_REUSE_EDITOR, DebugUIMessages.getString("DebugPreferencePage.Reuse_editor_when_displa&ying_source_code_1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
@@ -81,9 +80,6 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 	}
 	
 	protected static void initDefaults(IPreferenceStore store) {
-		store.setDefault(IDebugUIConstants.PREF_SINGLE_CLICK_LAUNCHING, false);
-		
-		
 		store.setDefault(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH, true);	
 		store.setDefault(IDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH_RADIO, IDebugUIConstants.PREF_PROMPT_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH);
 		store.setDefault(IDebugUIConstants.PREF_SHOW_DEBUG_PERSPECTIVE_DEFAULT, IDebugUIConstants.ID_DEBUG_PERSPECTIVE);
