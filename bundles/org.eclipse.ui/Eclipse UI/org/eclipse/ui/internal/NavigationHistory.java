@@ -2,6 +2,7 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.ui.*;
 import org.eclipse.ui.IEditorPart;
 
 /**
@@ -23,7 +24,7 @@ public class NavigationHistory {
 	private NavigationHistoryAction forwardAction;
 	private WorkbenchPage page;
 	boolean ignoreEntries = false;
-	
+		
 	/**
 	 * Constructor for NavigationHistory.
 	 */
@@ -35,17 +36,30 @@ public class NavigationHistory {
 	public void forward() {
 		if(index < (size - 1)) {
 			index++;	
-			gotoEntry();
+			gotoEntry(getEntry());
 			enableActions();
 		}
 	}
 	
+	private void reset() {
+		index = -1; 
+		size = 0;
+		history = new NavigationHistoryEntry[NavigationHistoryCapacity];
+	}
+	
 	public void backward() {
-		if(index > 0) {
+		//If the editor is deactivated the back button should re-activate the editor.
+		IEditorPart editor = page.getActiveEditor();
+		boolean activateEditor = editor != null && editor != page.getActivePart();
+		if(activateEditor) {
+			NavigationHistoryEntry e = new NavigationHistoryEntry();
+			e.part = editor;
+			gotoEntry(e);
+		} else if(index > 0) {
 			index--;			
-			gotoEntry();
-			enableActions();
+			gotoEntry(getEntry());
 		}
+		enableActions();
 	}
 	
 	public void setForwardAction(NavigationHistoryAction action) {
@@ -63,22 +77,24 @@ public class NavigationHistory {
 	}
 	
 	public void add(IEditorPart part) {
-		
 		NavigationHistoryEntry e= getEntry();
 		if (e != null && samePart(e, part))
 			return;
-		
-		e = new NavigationHistoryEntry();
-		e.part = part;
-		add(e);
+			
+		if(part != null) {
+			e = new NavigationHistoryEntry();
+			e.part = (IEditorPart)part;
+			add(e);
+		} else {
+			enableActions();
+		}
 	}
 	
 	public void add(ISelection selection) {
-		
-		if (selection == null)
+		if (selection == null || ignoreEntries)
 			return;
-		
-		IEditorPart part= page.getActiveEditor();
+
+		IEditorPart part= page.getActiveEditor();			
 		
 		NavigationHistoryEntry e= getEntry();
 		if (e != null && samePart(e, part)) {
@@ -117,11 +133,11 @@ public class NavigationHistory {
 		enableActions();
 	}
 	
-	private void gotoEntry() {
+	private void gotoEntry(NavigationHistoryEntry entry) {
 		printEntries();
 		try {
 			ignoreEntries = true;
-			history[index].gotoEntry(page);
+			entry.gotoEntry(page);
 		} finally {
 			ignoreEntries = false;
 		}
@@ -141,7 +157,8 @@ public class NavigationHistory {
 	}
 	
 	private void enableActions() {
-		boolean backward = index > 0;
+		IEditorPart editor = page.getActiveEditor();
+		boolean backward = index > 0 || (editor != null && editor != page.getActivePart());
 		boolean forward = index < (size - 1);
 		if(backwardAction != null)
 			backwardAction.setEnabled(backward);
@@ -161,7 +178,7 @@ public class NavigationHistory {
 				page.activate(part);
 				
 				if(selection != null) {
-					ISelectionProvider prov = part.getEditorSite().getSelectionProvider();
+					ISelectionProvider prov = part.getSite().getSelectionProvider();
 					prov.setSelection(selection);
 				}
 			}
