@@ -29,6 +29,9 @@ public class KeysTestSuite extends TestSuite {
 	 * Construct the test suite.
 	 */
 	public KeysTestSuite() {
+//		TODO This test is broken until JDT fixes Bug 44148
+//		addTest(new TestSuite(Bug36537Test.class));
+		addTest(new TestSuite(Bug40023Test.class));
 		addTest(new TestSuite(Bug42024Test.class));
 		addTest(new TestSuite(Bug42627Test.class));
 		addTest(new TestSuite(Bug43168Test.class));
