@@ -52,7 +52,7 @@ public final class PresentationRegistryPopulator {
 		FontData [] prefFont = store != null ? PreferenceConverter.getFontDataArray(store, id) : null;
 		FontData [] defaultFont = null;
 		if (definition.getValue() != null)
-		    defaultFont = new FontData [] {StringConverter.asFontData(definition.getValue(), null)};
+		        defaultFont = new FontData [] {StringConverter.asFontData(definition.getValue(), PreferenceConverter.FONTDATA_DEFAULT_DEFAULT)};
 		else if (definition.getDefaultsTo() != null)
 		    defaultFont = registry.getFontData(definition.getDefaultsTo());
 		else
