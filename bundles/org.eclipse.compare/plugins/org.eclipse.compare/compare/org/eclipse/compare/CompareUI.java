@@ -19,6 +19,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.content.IContentType;
 
 import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.IWorkbenchPage;
@@ -205,6 +206,31 @@ public final class CompareUI {
 		return CompareUIPlugin.getImage(adaptable);
 	}
 		
+	
+	/**
+	 * Creates a stream merger for the given content type.
+	 * If no stream merger is registered for the given content type <code>null</code> is returned.
+	 *
+	 * @param type the type for which to find a stream merger
+	 * @return a stream merger for the given type, or <code>null</code> if no
+	 *   stream merger has been registered
+	 */
+	public static IStreamMerger createStreamMerger(IContentType type) {
+	    return CompareUIPlugin.createStreamMerger(type);
+	}
+
+	/**
+	 * Creates a stream merger for the given file extension.
+	 * If no stream merger is registered for the file extension <code>null</code> is returned.
+	 *
+	 * @param type the type for which to find a stream merger
+	 * @return a stream merger for the given type, or <code>null</code> if no
+	 *   stream merger has been registered
+	 */
+	public static IStreamMerger createStreamMerger(String type) {
+	    return CompareUIPlugin.createStreamMerger(type);
+	}
+
 	/**
 	 * Returns a structure compare viewer based on an old viewer and an input object.
 	 * If the old viewer is suitable for showing the input, the old viewer
