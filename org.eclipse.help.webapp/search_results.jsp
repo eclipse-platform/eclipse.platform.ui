@@ -15,26 +15,6 @@
     <link rel="stylesheet" TYPE="text/css" HREF="search.css" TITLE="sea">
 	<base target="MainFrame">
 	<script language="JavaScript" src="toc.js"></script>
-	
-<script language="JavaScript">
-function mouseover(img)
-{
-	img.className="hover";
-	window.event.cancelBubble = true;
-}
-function mouseout(img)
-{
-	img.className="normal";
-	window.event.cancelBubble = true;
-}
-
-function refresh() 
-{ 
-	parent.QueryFrame.document.forms[0].submit(); 
-}
-
-</script>
-
 </head>
 
 
