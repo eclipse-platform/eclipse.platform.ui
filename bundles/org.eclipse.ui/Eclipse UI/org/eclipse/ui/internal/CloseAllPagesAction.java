@@ -23,7 +23,7 @@ public class CloseAllPagesAction  extends Action {
 public CloseAllPagesAction(IWorkbenchWindow window) {
 	super(WorkbenchMessages.getString("CloseAllPages.text")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("CloseAllPages.toolTip")); //$NON-NLS-1$
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.CLOSE_ALL_PAGES_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_ALL_PAGES_ACTION);
 	setEnabled(false);
 	this.window = window;
 }

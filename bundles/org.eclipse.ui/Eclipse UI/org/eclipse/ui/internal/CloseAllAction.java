@@ -27,7 +27,7 @@ public CloseAllAction(IWorkbenchWindow aWorkbench) {
 	setId(IWorkbenchActionConstants.CLOSE_ALL);
 	updateState();
 	aWorkbench.addPageListener(this);
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.CLOSE_ALL_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_ALL_ACTION);
 	setAccelerator(SWT.CTRL | SWT.SHIFT | SWT.F4);
 }
 /**

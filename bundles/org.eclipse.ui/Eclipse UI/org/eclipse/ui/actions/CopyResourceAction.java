@@ -61,7 +61,7 @@ public class CopyResourceAction extends SelectionListenerAction
  */
 public CopyResourceAction(Shell shell) {
 	this(shell, WorkbenchMessages.getString("CopyResourceAction.title")); //$NON-NLS-1$
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.COPY_RESOURCE_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.COPY_RESOURCE_ACTION);
 }
 /**
  * Creates a new action with the given text.

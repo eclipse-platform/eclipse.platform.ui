@@ -17,7 +17,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.WizardExportResourcesPage;
-import org.eclipse.ui.help.DialogPageContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -75,7 +74,7 @@ protected void addDestinationItem(String value) {
 public void createControl(Composite parent) {
 	super.createControl(parent);
 	giveFocusToDestination();
-	WorkbenchHelp.setHelp(getControl(), new DialogPageContextComputer(this, IDataTransferHelpContextIds.FILE_SYSTEM_EXPORT_WIZARD_PAGE));
+	WorkbenchHelp.setHelp(getControl(), IDataTransferHelpContextIds.FILE_SYSTEM_EXPORT_WIZARD_PAGE);
 }
 /**
  *	Create the export destination specification widgets

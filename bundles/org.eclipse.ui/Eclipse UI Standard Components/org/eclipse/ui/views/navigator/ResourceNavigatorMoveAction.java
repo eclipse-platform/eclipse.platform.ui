@@ -30,7 +30,7 @@ public class ResourceNavigatorMoveAction extends MoveResourceAction {
  */
 public ResourceNavigatorMoveAction(Shell shell, StructuredViewer structureViewer) {
 	super(shell);
-	WorkbenchHelp.setHelp(this, new Object[] {INavigatorHelpContextIds.RESOURCE_NAVIGATOR_MOVE_ACTION});
+	WorkbenchHelp.setHelp(this, INavigatorHelpContextIds.RESOURCE_NAVIGATOR_MOVE_ACTION);
 	this.viewer = structureViewer;
 }
 /* (non-Javadoc)

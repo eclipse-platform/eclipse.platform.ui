@@ -38,7 +38,7 @@ import org.eclipse.ui.part.MarkerTransfer;
  */
 public PasteTaskAction(TaskList tasklist, String id) {
 	super(tasklist, id);
-	WorkbenchHelp.setHelp(this, new Object[] {ITaskListHelpContextIds.PASTE_TASK_ACTION});
+	WorkbenchHelp.setHelp(this, ITaskListHelpContextIds.PASTE_TASK_ACTION);
 }
 /**
  * Implementation of method defined on <code>IAction</code>.

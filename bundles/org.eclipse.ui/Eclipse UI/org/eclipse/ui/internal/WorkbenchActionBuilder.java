@@ -537,7 +537,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		deleteAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_DELETE_EDIT_HOVER));
 		deleteAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_DELETE_EDIT_DISABLED));
 		deleteAction.enableAccelerator(false);
-		WorkbenchHelp.setHelp(deleteAction, new Object[] { IHelpContextIds.DELETE_RETARGET_ACTION });
+		WorkbenchHelp.setHelp(deleteAction, IHelpContextIds.DELETE_RETARGET_ACTION);
 		partService.addPartListener(deleteAction);
 
 		// See if a welcome page is specified

@@ -114,7 +114,7 @@ public boolean close() {
  */
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
-	WorkbenchHelp.setHelp(shell, new Object[] {INavigatorHelpContextIds.GOTO_RESOURCE_DIALOG});
+	WorkbenchHelp.setHelp(shell, INavigatorHelpContextIds.GOTO_RESOURCE_DIALOG);
 }
 public void create() {
 	super.create();

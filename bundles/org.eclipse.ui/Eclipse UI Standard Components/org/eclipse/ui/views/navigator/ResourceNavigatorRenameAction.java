@@ -34,7 +34,7 @@ public class ResourceNavigatorRenameAction extends RenameResourceAction {
 		super(shell, treeViewer.getTree());
 		WorkbenchHelp.setHelp(
 			this,
-			new Object[] { INavigatorHelpContextIds.RESOURCE_NAVIGATOR_RENAME_ACTION });
+			INavigatorHelpContextIds.RESOURCE_NAVIGATOR_RENAME_ACTION);
 		this.viewer = treeViewer;
 	}
 	/* (non-Javadoc)

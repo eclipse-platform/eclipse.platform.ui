@@ -50,7 +50,6 @@ public class WorkbenchHelp {
 	 * @see org.eclipse.swt.Widget.getData(java.lang.String)
 	 */	
 	private static final String HELP_KEY = "org.eclipse.ui.help";//$NON-NLS-1$
-
 	private static final String HELP_SYSTEM_EXTENSION_ID = "org.eclipse.help.support";//$NON-NLS-1$
 	private static final String HELP_SYSTEM_CLASS_ATTRIBUTE = "class";//$NON-NLS-1$
 	private static IHelp helpSupport;
@@ -65,32 +64,65 @@ private WorkbenchHelp() {
  * Determines the location for the help popup shell given
  * the widget which orginated the request for help.
  *
- * @param widget the which fired the help callback
+ * @param display the display where the help will appear
  */
-private static Point computePopUpLocation(Widget widget) {
-	Point point = widget.getDisplay().getCursorLocation();
+private static Point computePopUpLocation(Display display) {
+	Point point = display.getCursorLocation();
 	return new Point(point.x + 15, point.y);
 }
 /**
- * Calls the help support system to displays the given help context
- * 
+ * Calls the help support system to display the given help context
  *
- * @param helpContexts the contexts to display a mixed-type
- *   array of context ids (type <code>String</code>) and/or help contexts (type
- *   <code>IContext</code>)
- * @param point the location for point to help popup
+ * @param helpContext the id of the context to display
+ * @param point the location for the help popup
  */
-private static void displayHelp(Object[] helpContexts, Point point) {
-	if (getHelpSupport() == null)
+private static void displayHelp(String helpContext, Point point) {
+	IHelp helpSupport = getHelpSupport();
+	if (helpSupport == null)
 		return;
+
+	helpSupport.displayHelp(helpContext, point.x, point.y);
+}
+/**
+ * Calls the help support system to display the given help context
+ *
+ * @param helpContext the context to display
+ * @param point the location for the help popup
+ */
+private static void displayHelp(IContext helpContext, Point point) {
+	IHelp helpSupport = getHelpSupport();
+	if (helpSupport == null)
+		return;
+
+	helpSupport.displayHelp(helpContext, point.x, point.y);
+}
+/**
+ * Calls the help support system to display the given help context id.
+ * <p>
+ * May only be called from a UI thread.
+ * <p>
+ *
+ * @param contextId the id of the context to display
+ * @since 2.0
+ */
+public static void displayHelp(String contextId) {
+	Point point = computePopUpLocation(Display.getCurrent());
 	
-	// Since 2.0 the help support system no longer provides
-	// API for an array of help contexts.
-	// Therefore we only use the first context in the array.
-	if (helpContexts[0] instanceof IContext) 
-		getHelpSupport().displayHelp((IContext)helpContexts[0], point.x, point.y);
-	else
-		getHelpSupport().displayHelp((String)helpContexts[0], point.x, point.y);
+	displayHelp(contextId, point);
+}
+/**
+ * Calls the help support system to display the given help context.
+ * <p>
+ * May only be called from a UI thread.
+ * <p>
+ *
+ * @param context the context to display
+ * @since 2.0
+ */
+public static void displayHelp(IContext context) {
+	Point point = computePopUpLocation(Display.getCurrent());
+	
+	displayHelp(context, point);
 }
 /**
  * Returns the help contexts on the given control.
@@ -104,6 +136,7 @@ private static void displayHelp(Object[] helpContexts, Point point) {
  *   array of context ids (type <code>String</code>) and/or help contexts (type
  *   <code>IContext</code>) or an <code>IContextComputer</code> or
  *   <code>null</code> if no contexts have been set.
+ * @deprecated as context computers are no longer supported
  */
 public static Object getHelp(Control control) {
 	return control.getData(HELP_KEY);
@@ -120,6 +153,7 @@ public static Object getHelp(Control control) {
  *   array of context ids (type <code>String</code>) and/or help contexts (type
  *   <code>IContext</code>) or an <code>IContextComputer</code> or
  *   <code>null</code> if no contexts have been set.
+ * @deprecated as context computers are no longer supported
  */
 public static Object getHelp(Menu menu) {
 	return menu.getData(HELP_KEY);
@@ -136,11 +170,12 @@ public static Object getHelp(Menu menu) {
  *   array of context ids (type <code>String</code>) and/or help contexts (type
  *   <code>IContext</code>) or an <code>IContextComputer</code> or
  *   <code>null</code> if no contexts have been set.
+ * @deprecated as context computers are no longer supported
  */
 public static Object getHelp(MenuItem menuItem) {
 	return menuItem.getData(HELP_KEY);
 }
-/*
+/**
  * Returns the help listener which activates the help support system.
  *
  * @return the help listener
@@ -150,7 +185,7 @@ private static HelpListener getHelpListener() {
 		initializeHelpListener();
 	return helpListener;
 }
-/*
+/**
  * Returns the help support system for the platform, if available.
  *
  * @return the help support system, or <code>null</code> if none
@@ -168,25 +203,39 @@ public static IHelp getHelpSupport() {
 private static void initializeHelpListener() {
 	helpListener = new HelpListener() {
 		public void helpRequested(HelpEvent event) {
-			// get the help context from the widget
-			Object object = event.widget.getData(HELP_KEY);
-			Object[] helpContext = null;
-
-			if (object instanceof IContextComputer) 
-				// if it is a computed context, compute it now
-				helpContext = ((IContextComputer)object).computeContexts(event);
-			else if (object instanceof Object[])
-				helpContext = (Object[])object;
-
-			if (helpContext != null && getHelpSupport() != null) {	
+			// get the help context id from the widget
+			String contextId = (String)event.widget.getData(HELP_KEY);
+			if (contextId != null && getHelpSupport() != null) {	
 				// determine a location in the upper right corner of the widget
-				Point point = computePopUpLocation(event.widget);
+				Point point = computePopUpLocation(event.widget.getDisplay());
 				
 				// display the help
-				displayHelp(helpContext, point);
+				displayHelp(contextId, point);
 			}
 		}
 	};
+}
+
+/**
+ * Calls the help support system to display the given help context
+ * 
+ * @param helpContexts the contexts to display a mixed-type
+ *   array of context ids (type <code>String</code>) and/or help contexts (type
+ *   <code>IContext</code>)
+ * @param point the location for point to help popup
+ * @deprecated
+ */
+private static void displayHelp(Object[] helpContexts, Point point) {
+	if (getHelpSupport() == null)
+		return;
+	
+	// Since 2.0 the help support system no longer provides
+	// API for an array of help contexts.
+	// Therefore we only use the first context in the array.
+	if (helpContexts[0] instanceof IContext) 
+		getHelpSupport().displayHelp((IContext)helpContexts[0], point.x, point.y);
+	else
+		getHelpSupport().displayHelp((String)helpContexts[0], point.x, point.y);
 }
 /**
  * Initializes the help support system by getting an instance via the extension
@@ -201,11 +250,9 @@ private static void initializeHelpSupport() {
 			if (point == null) return;
 			IExtension[] extensions = point.getExtensions();
 			if (extensions.length == 0) return;
-
 			// There should only be one extension/config element so we just take the first
 			IConfigurationElement[] elements = extensions[0].getConfigurationElements();
 			if (elements.length == 0) return;
-
 			// Instantiate the help support system
 			try {
 				helpSupport = (IHelp)WorkbenchPlugin.createExtension(elements[0],
@@ -228,24 +275,24 @@ private static void initializeHelpSupport() {
  * @param contexts the contexts to use when F1 help is invoked; a mixed-type
  *   array of context ids (type <code>String</code>) and/or help contexts (type
  *   <code>IContext</code>)
+ * @deprecated use setHelp with a single context id parameter
  */
-public static void setHelp(IAction action, Object[] contexts) {
+public static void setHelp(IAction action, final Object[] contexts) {
 	for (int i = 0; i < contexts.length; i++)
 		Assert.isTrue(contexts[i] instanceof String || contexts[i] instanceof IContext);
-
-	final Object[] innerContexts = contexts;
 	action.setHelpListener(new HelpListener() {
 		public void helpRequested(HelpEvent event) {
 			if (getHelpSupport() != null) {
 				// determine a location in the upper right corner of the widget
-				Point point = computePopUpLocation(event.widget);
+				Point point = computePopUpLocation(event.widget.getDisplay());
 	
 				// display the help	
-				displayHelp(innerContexts, point);
+				displayHelp(contexts, point);
 			}
 		}
 	});
 }
+
 /**
  * Sets the given help context computer on the given action.
  * <p>
@@ -257,16 +304,16 @@ public static void setHelp(IAction action, Object[] contexts) {
  * @param action the action on which to register the computer
  * @param computer the computer to determine the help contexts for the control
  *    when F1 help is invoked
+ * @deprecated context computers are no longer supported, clients should implement
+ *  their own help listener
  */
-public static void setHelp(IAction action, IContextComputer computer) {
-	final IContextComputer innerComputer = computer;
+public static void setHelp(IAction action, final IContextComputer computer) {
 	action.setHelpListener(new HelpListener() {
 		public void helpRequested(HelpEvent event) {
-			Object[] helpContext = innerComputer.computeContexts(event);
-
+			Object[] helpContext = computer.computeContexts(event);
 			if (helpContext != null && getHelpSupport() != null) {
 				// determine a location in the upper right corner of the widget
-				Point point = computePopUpLocation(event.widget);
+				Point point = computePopUpLocation(event.widget.getDisplay());
 	
 				// display the help	
 				displayHelp(helpContext, point);
@@ -286,6 +333,7 @@ public static void setHelp(IAction action, IContextComputer computer) {
  * @param contexts the contexts to use when F1 help is invoked; a mixed-type
  *   array of context ids (type <code>String</code>) and/or help contexts (type
  *   <code>IContext</code>)
+ * @deprecated use setHelp with single context id parameter
  */
 public static void setHelp(Control control, Object[] contexts) {
 	for (int i = 0; i < contexts.length; i++)
@@ -295,7 +343,7 @@ public static void setHelp(Control control, Object[] contexts) {
 	// ensure that the listener is only registered once
 	control.removeHelpListener(getHelpListener());
 	control.addHelpListener(getHelpListener());
-} 
+}
 /**
  * Sets the given help context computer on the given control.
  * <p>
@@ -307,6 +355,8 @@ public static void setHelp(Control control, Object[] contexts) {
  * @param control the control on which to register the computer
  * @param computer the computer to determine the help contexts for the control
  *    when F1 help is invoked
+ * @deprecated context computers are no longer supported, clients should implement
+ *  their own help listener
  */
 public static void setHelp(Control control, IContextComputer computer) {
 	control.setData(HELP_KEY, computer);
@@ -326,11 +376,11 @@ public static void setHelp(Control control, IContextComputer computer) {
  * @param contexts the contexts to use when F1 help is invoked; a mixed-type
  *   array of context ids (type <code>String</code>) and/or help contexts (type
  *   <code>IContext</code>)
+ * @deprecated use setHelp with single context id parameter
  */
 public static void setHelp(Menu menu, Object[] contexts) {
 	for (int i = 0; i < contexts.length; i++)
 		Assert.isTrue(contexts[i] instanceof String || contexts[i] instanceof IContext);
-
 	menu.setData(HELP_KEY, contexts);
 	// ensure that the listener is only registered once
 	menu.removeHelpListener(getHelpListener());
@@ -347,6 +397,8 @@ public static void setHelp(Menu menu, Object[] contexts) {
  * @param menu the menu on which to register the computer
  * @param computer the computer to determine the help contexts for the control
  *    when F1 help is invoked
+ * @deprecated context computers are no longer supported, clients should implement
+ *  their own help listener
  */
 public static void setHelp(Menu menu, IContextComputer computer) {
 	menu.setData(HELP_KEY, computer);
@@ -366,11 +418,11 @@ public static void setHelp(Menu menu, IContextComputer computer) {
  * @param contexts the contexts to use when F1 help is invoked; a mixed-type
  *   array of context ids (type <code>String</code>) and/or help contexts (type
  *   <code>IContext</code>)
+ * @deprecated use setHelp with single context id parameter
  */
 public static void setHelp(MenuItem item, Object[] contexts) {
 	for (int i = 0; i < contexts.length; i++)
 		Assert.isTrue(contexts[i] instanceof String || contexts[i] instanceof IContext);
-
 	item.setData(HELP_KEY, contexts);
 	// ensure that the listener is only registered once
 	item.removeHelpListener(getHelpListener());
@@ -387,9 +439,70 @@ public static void setHelp(MenuItem item, Object[] contexts) {
  * @param item the menu item on which to register the computer
  * @param computer the computer to determine the help contexts for the control
  *    when F1 help is invoked
+ * @deprecated context computers are no longer supported, clients should implement
+ *  their own help listener
  */
 public static void setHelp(MenuItem item, IContextComputer computer) {
 	item.setData(HELP_KEY, computer);
+	// ensure that the listener is only registered once
+	item.removeHelpListener(getHelpListener());
+	item.addHelpListener(getHelpListener());
+}
+/**
+ * Sets the given help context id on the given action.
+ *
+ * @param action the action on which to register the context id
+ * @param contextId the context id to use when F1 help is invoked
+ * @since 2.0
+ */
+public static void setHelp(IAction action, final String contextId) {
+	action.setHelpListener(new HelpListener() {
+		public void helpRequested(HelpEvent event) {
+			if (getHelpSupport() != null) {
+				// determine a location in the upper right corner of the widget
+				Point point = computePopUpLocation(event.widget.getDisplay());
+	
+				// display the help	
+				displayHelp(contextId, point);
+			}
+		}
+	});
+}
+/**
+ * Sets the given help context id on the given control.
+ *
+ * @param control the control on which to register the context id
+ * @param contextId the context id to use when F1 help is invoked
+ * @since 2.0
+ */
+public static void setHelp(Control control, String contextId) {
+	control.setData(HELP_KEY, contextId);
+	// ensure that the listener is only registered once
+	control.removeHelpListener(getHelpListener());
+	control.addHelpListener(getHelpListener());
+}
+/**
+ * Sets the given help context id on the given menu.
+ *
+ * @param menu the menu on which to register the context id
+ * @param contextId the context id to use when F1 help is invoked
+ * @since 2.0
+ */
+public static void setHelp(Menu menu, String contextId) {
+	menu.setData(HELP_KEY, contextId);
+	// ensure that the listener is only registered once
+	menu.removeHelpListener(getHelpListener());
+	menu.addHelpListener(getHelpListener());
+}
+/**
+ * Sets the given help context id on the given menu item.
+ *
+ * @param item the menu item on which to register the context id
+ * @param contextId the context id to use when F1 help is invoked
+ * @since 2.0
+ */
+public static void setHelp(MenuItem item, String contextId) {
+	item.setData(HELP_KEY, contextId);
 	// ensure that the listener is only registered once
 	item.removeHelpListener(getHelpListener());
 	item.addHelpListener(getHelpListener());

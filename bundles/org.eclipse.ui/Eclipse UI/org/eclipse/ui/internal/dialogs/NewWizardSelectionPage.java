@@ -53,7 +53,7 @@ public void createControl(Composite parent) {
 	newResourcePage.setDialogSettings(settings);
 
 	Control control = newResourcePage.createControl(parent);
-	WorkbenchHelp.setHelp(control, new DialogPageContextComputer(this, IHelpContextIds.NEW_WIZARD_SELECTION_WIZARD_PAGE));
+	WorkbenchHelp.setHelp(control, IHelpContextIds.NEW_WIZARD_SELECTION_WIZARD_PAGE);
 	setControl(control);
 }
 /**

@@ -45,7 +45,7 @@ public RefreshAction(Shell shell) {
 	super(shell, WorkbenchMessages.getString("RefreshAction.text")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("RefreshAction.toolTip")); //$NON-NLS-1$
 	setId(ID);
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.REFRESH_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.REFRESH_ACTION);
 }
 /**
  * Checks whether the given project's location has been deleted.

@@ -39,7 +39,7 @@ public class FileExtensionDialog extends TitleAreaDialog {
 		//$NON-NLS-1$
 		WorkbenchHelp.setHelp(
 			shell,
-			new Object[] { IHelpContextIds.FILE_EXTENSION_DIALOG });
+			IHelpContextIds.FILE_EXTENSION_DIALOG);
 	}
 	/**
 	 * Creates and returns the contents of the upper part 

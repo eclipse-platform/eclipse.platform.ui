@@ -22,7 +22,7 @@ public ClonePerspectiveAction(IWorkbenchWindow window) {
 	super(WorkbenchMessages.getString("ClonePerspective.text")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("ClonePerspective.toolTip")); //$NON-NLS-1$
 	this.workbenchWindow = window;
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.ABOUT_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.ABOUT_ACTION);
 }
 /**
  * Perform the action: show about dialog.

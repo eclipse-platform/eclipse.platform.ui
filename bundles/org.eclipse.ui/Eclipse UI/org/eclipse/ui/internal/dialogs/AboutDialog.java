@@ -46,7 +46,7 @@ public boolean close() {
 protected void configureShell(Shell newShell) {
 	super.configureShell(newShell);
 	newShell.setText(WorkbenchMessages.format("AboutDialog.shellTitle", new Object[] {productInfo.getName()})); //$NON-NLS-1$
-	WorkbenchHelp.setHelp(newShell, new Object[] {IHelpContextIds.ABOUT_DIALOG});
+	WorkbenchHelp.setHelp(newShell, IHelpContextIds.ABOUT_DIALOG);
 }
 /**
  * Add buttons to the dialog's button bar.

@@ -45,7 +45,7 @@ protected void buttonPressed(int buttonId) {
  */
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
-	WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.YES_NO_CANCEL_LIST_SELECTION_DIALOG});
+	WorkbenchHelp.setHelp(shell, IHelpContextIds.YES_NO_CANCEL_LIST_SELECTION_DIALOG);
 }
 /* (non-Javadoc)
  * Method declared on Dialog.

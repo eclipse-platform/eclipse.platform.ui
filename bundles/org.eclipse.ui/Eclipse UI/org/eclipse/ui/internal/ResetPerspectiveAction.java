@@ -27,7 +27,7 @@ public ResetPerspectiveAction(IWorkbenchWindow window) {
 	super(WorkbenchMessages.getString("ResetPerspective.text")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("ResetPerspective.toolTip")); //$NON-NLS-1$
 	setEnabled(false);
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.RESET_PERSPECTIVE_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.RESET_PERSPECTIVE_ACTION);
 	this.window = window;
 }
 /**

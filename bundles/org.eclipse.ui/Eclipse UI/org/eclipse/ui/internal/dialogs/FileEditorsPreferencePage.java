@@ -227,7 +227,7 @@ protected Control createContents(Composite parent) {
 	fillEditorTable();
 	updateEnabledState();
 
-	WorkbenchHelp.setHelp(parent, new DialogPageContextComputer(this, IHelpContextIds.FILE_EDITORS_PREFERENCE_PAGE));
+	WorkbenchHelp.setHelp(parent, IHelpContextIds.FILE_EDITORS_PREFERENCE_PAGE);
 	
 	return pageComponent;
 }

@@ -20,7 +20,7 @@ public SaveAction(IWorkbenchWindow window) {
 	super(WorkbenchMessages.getString("SaveAction.text"), window); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("SaveAction.toolTip")); //$NON-NLS-1$
 	setId(IWorkbenchActionConstants.SAVE);
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.SAVE_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.SAVE_ACTION);
 	setAccelerator(SWT.CTRL |'s');
 }
 /**

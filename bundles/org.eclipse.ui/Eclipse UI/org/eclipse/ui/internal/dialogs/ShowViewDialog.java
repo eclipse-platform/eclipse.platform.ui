@@ -63,7 +63,7 @@ protected void cancelPressed() {
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
 	shell.setText(WorkbenchMessages.getString("ShowView.shellTitle")); //$NON-NLS-1$
-	WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.SHOW_VIEW_DIALOG});
+	WorkbenchHelp.setHelp(shell, IHelpContextIds.SHOW_VIEW_DIALOG);
 }
 /**
  * Adds buttons to this dialog's button bar.

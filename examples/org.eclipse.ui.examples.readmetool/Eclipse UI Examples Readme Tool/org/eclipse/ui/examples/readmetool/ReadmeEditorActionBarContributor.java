@@ -60,21 +60,21 @@ public ReadmeEditorActionBarContributor() {
 	action1.setDisabledImageDescriptor(ReadmeImages.EDITOR_ACTION1_IMAGE_DISABLE);
 	action1.setImageDescriptor(ReadmeImages.EDITOR_ACTION1_IMAGE_ENABLE);
 	action1.setHoverImageDescriptor(ReadmeImages.EDITOR_ACTION1_IMAGE);
-	WorkbenchHelp.setHelp(action1, new String[] {IReadmeConstants.EDITOR_ACTION1_CONTEXT});
+	WorkbenchHelp.setHelp(action1, IReadmeConstants.EDITOR_ACTION1_CONTEXT);
 	
 	action2 = new EditorAction(MessageUtil.getString("Editor_Action2")); //$NON-NLS-1$
 	action2.setToolTipText(MessageUtil.getString("Readme_Editor_Action2")); //$NON-NLS-1$
 	action2.setDisabledImageDescriptor(ReadmeImages.EDITOR_ACTION2_IMAGE_DISABLE);
 	action2.setImageDescriptor(ReadmeImages.EDITOR_ACTION2_IMAGE_ENABLE);
 	action2.setHoverImageDescriptor(ReadmeImages.EDITOR_ACTION2_IMAGE);
-	WorkbenchHelp.setHelp(action2, new String[] {IReadmeConstants.EDITOR_ACTION2_CONTEXT});
+	WorkbenchHelp.setHelp(action2, IReadmeConstants.EDITOR_ACTION2_CONTEXT);
 	
 	action3 = new EditorAction(MessageUtil.getString("Editor_Action3")); //$NON-NLS-1$
 	action3.setToolTipText(MessageUtil.getString("Readme_Editor_Action3")); //$NON-NLS-1$
 	action3.setDisabledImageDescriptor(ReadmeImages.EDITOR_ACTION3_IMAGE_DISABLE);
 	action3.setImageDescriptor(ReadmeImages.EDITOR_ACTION3_IMAGE_ENABLE);
 	action3.setHoverImageDescriptor(ReadmeImages.EDITOR_ACTION3_IMAGE);
-	WorkbenchHelp.setHelp(action3, new String[] {IReadmeConstants.EDITOR_ACTION3_CONTEXT});
+	WorkbenchHelp.setHelp(action3, IReadmeConstants.EDITOR_ACTION3_CONTEXT);
 
 	dirtyStateContribution = new DirtyStateContribution();
 }

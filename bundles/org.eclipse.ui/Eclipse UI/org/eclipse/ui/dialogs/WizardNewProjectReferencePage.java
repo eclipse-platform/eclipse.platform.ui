@@ -55,7 +55,7 @@ public void createControl(Composite parent) {
 	composite.setLayout(new GridLayout());
 	composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-	WorkbenchHelp.setHelp(composite, new DialogPageContextComputer(this, IHelpContextIds.NEW_PROJECT_REFERENCE_WIZARD_PAGE));
+	WorkbenchHelp.setHelp(composite, IHelpContextIds.NEW_PROJECT_REFERENCE_WIZARD_PAGE);
 	
 	Label referenceLabel = new Label(composite, SWT.NONE);
 	referenceLabel.setText(REFERENCED_PROJECTS_TITLE);

@@ -125,7 +125,7 @@ private String checkValidLocation() {
  */
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
-	WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.PROJECT_LOCATION_SELECTION_DIALOG});
+	WorkbenchHelp.setHelp(shell, IHelpContextIds.PROJECT_LOCATION_SELECTION_DIALOG);
 }
 /* (non-Javadoc)
  * Method declared on Dialog.

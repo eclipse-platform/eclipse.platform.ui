@@ -18,7 +18,7 @@ import java.util.*;
 public RemoveBookmarkAction(BookmarkNavigator view) {
 	super(view, BookmarkMessages.getString("RemoveBookmark.text")); //$NON-NLS-1$
 	setToolTipText(BookmarkMessages.getString("RemoveBookmark.toolTip")); //$NON-NLS-1$
-	WorkbenchHelp.setHelp(this, new Object[] {IBookmarkHelpContextIds.REMOVE_BOOKMARK_ACTION});
+	WorkbenchHelp.setHelp(this, IBookmarkHelpContextIds.REMOVE_BOOKMARK_ACTION);
 	setEnabled(false);
 }
 /**

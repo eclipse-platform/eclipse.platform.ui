@@ -29,7 +29,7 @@ public ReadmeSectionsView() {
 public void createPartControl(Composite parent) {
 	viewer = new ListViewer(parent);
 
-	WorkbenchHelp.setHelp(viewer.getControl(), new ViewContextComputer(this, IReadmeConstants.SECTIONS_VIEW_CONTEXT));
+	WorkbenchHelp.setHelp(viewer.getControl(), IReadmeConstants.SECTIONS_VIEW_CONTEXT);
 
 	// if the objects in the viewer implement the IDesktopElement adapter,
 	// these generic content and label providers can be used.

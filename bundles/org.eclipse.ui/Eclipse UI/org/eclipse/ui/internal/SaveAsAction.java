@@ -19,7 +19,7 @@ public SaveAsAction(IWorkbenchWindow window) {
 	super(WorkbenchMessages.getString("SaveAs.text"), window); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("SaveAs.toolTip")); //$NON-NLS-1$
 	setId(IWorkbenchActionConstants.SAVE_AS);
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.SAVE_AS_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.SAVE_AS_ACTION);
 }
 /**
  * Performs a save as action.

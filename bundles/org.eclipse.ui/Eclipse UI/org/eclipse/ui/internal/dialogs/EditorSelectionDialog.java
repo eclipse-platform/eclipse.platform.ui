@@ -91,7 +91,7 @@ public boolean close() {
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
 	shell.setText(WorkbenchMessages.getString("EditorSelection.title")); //$NON-NLS-1$
-	WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.EDITOR_SELECTION_DIALOG});
+	WorkbenchHelp.setHelp(shell, IHelpContextIds.EDITOR_SELECTION_DIALOG);
 }
 /**
  * Creates and returns the contents of the upper part 

@@ -126,7 +126,7 @@ private void createBuildOrderList(Composite composite, boolean enabled) {
  */
 protected Control createContents(Composite parent) {
 
-	WorkbenchHelp.setHelp(parent, new DialogPageContextComputer(this, IHelpContextIds.BUILD_ORDER_PREFERENCE_PAGE));
+	WorkbenchHelp.setHelp(parent, IHelpContextIds.BUILD_ORDER_PREFERENCE_PAGE);
 
 	//The main composite
 	Composite composite = new Composite(parent, SWT.NULL);

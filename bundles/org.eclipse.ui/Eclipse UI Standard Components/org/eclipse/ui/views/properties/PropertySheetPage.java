@@ -7,16 +7,20 @@ package org.eclipse.ui.views.properties;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.swt.events.HelpEvent;
+import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import org.eclipse.core.runtime.Platform;
 
+import org.eclipse.help.IContext;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.IContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.part.Page;
@@ -98,8 +102,50 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 			}
 		});
 
-		// add a help listener
-		WorkbenchHelp.setHelp(viewer.getControl(), new PropertySheetPageContextComputer(viewer, HELP_CONTEXT_PROPERTY_SHEET_PAGE));
+		// Set help on the viewer 
+		viewer.getControl().addHelpListener(new HelpListener() {
+			/*
+			 * @see HelpListener#helpRequested(HelpEvent)
+			 */
+			public void helpRequested(HelpEvent e) {
+				String contextId = null;
+
+				// Get the context for the selected item
+				IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
+				if (!selection.isEmpty()) {
+					IPropertySheetEntry entry = (IPropertySheetEntry)selection.getFirstElement();
+					Object helpContextId = entry.getHelpContextIds();
+					if (helpContextId != null) {
+						if (helpContextId instanceof String) {
+							WorkbenchHelp.displayHelp((String)helpContextId);
+							return;
+						}
+
+						// Since 2.0 the only valid type for helpContextIds
+						// is a String (a single id).
+						// However for backward compatibility we have to handle
+						// and array of contexts (Strings and/or IContexts) 
+						// or a context computer.
+						Object[] contexts = null;
+						if (helpContextId instanceof IContextComputer) {
+							// get local contexts
+							contexts = ((IContextComputer)helpContextId).getLocalContexts(e);
+						} else {
+							contexts = (Object[])helpContextId;
+						}
+						// Ignore all but the first element in the array
+						if (contexts[0] instanceof IContext) 
+							WorkbenchHelp.displayHelp((IContext)contexts[0]);
+						else
+							WorkbenchHelp.displayHelp((String)contexts[0]);
+						return;
+					}
+				}
+				
+				// No help for the selection so show page help
+				WorkbenchHelp.displayHelp(HELP_CONTEXT_PROPERTY_SHEET_PAGE);
+			}
+		});
 	}
 	/**
 	 * The <code>PropertySheetPage</code> implementation of this <code>IPage</code> method 

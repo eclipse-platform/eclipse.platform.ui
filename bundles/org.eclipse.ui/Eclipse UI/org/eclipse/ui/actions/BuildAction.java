@@ -62,13 +62,13 @@ public BuildAction(Shell shell, int type) {
 		setText(WorkbenchMessages.getString("BuildAction.text")); //$NON-NLS-1$
 		setToolTipText(WorkbenchMessages.getString("BuildAction.toolTip")); //$NON-NLS-1$
 		setId(ID_BUILD);
-		WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.INCREMENTAL_BUILD_ACTION});
+		WorkbenchHelp.setHelp(this, IHelpContextIds.INCREMENTAL_BUILD_ACTION);
 	}
 	else {
 		setText(WorkbenchMessages.getString("RebuildAction.text")); //$NON-NLS-1$
 		setToolTipText(WorkbenchMessages.getString("RebuildAction.tooltip")); //$NON-NLS-1$
 		setId(ID_REBUILD_ALL);
-		WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.FULL_BUILD_ACTION});
+		WorkbenchHelp.setHelp(this, IHelpContextIds.FULL_BUILD_ACTION);
 	}
 		
 	this.buildType = type;

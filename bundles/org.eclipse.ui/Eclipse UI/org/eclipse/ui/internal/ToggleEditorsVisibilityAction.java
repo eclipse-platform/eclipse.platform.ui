@@ -20,7 +20,7 @@ public class ToggleEditorsVisibilityAction extends Action {
 public ToggleEditorsVisibilityAction(IWorkbenchWindow window) {
 	super(WorkbenchMessages.getString("ToggleEditor.hideEditors")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("ToggleEditor.toolTip")); //$NON-NLS-1$
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.TOGGLE_EDITORS_VISIBILITY_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.TOGGLE_EDITORS_VISIBILITY_ACTION);
 	setEnabled(false);
 	this.workbenchWindow = window;
 

@@ -38,7 +38,7 @@ public class PerspectivesPreferencePage extends PreferencePage
  */
 protected Control createContents(Composite parent) {
 
-	WorkbenchHelp.setHelp(parent, new DialogPageContextComputer(this, IHelpContextIds.PERSPECTIVES_PREFERENCE_PAGE));
+	WorkbenchHelp.setHelp(parent, IHelpContextIds.PERSPECTIVES_PREFERENCE_PAGE);
 
 	noDefaultAndApplyButton();
 	

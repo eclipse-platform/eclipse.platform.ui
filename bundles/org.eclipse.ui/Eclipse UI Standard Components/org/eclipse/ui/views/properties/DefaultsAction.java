@@ -20,7 +20,7 @@ import org.eclipse.ui.help.*;
 public DefaultsAction(PropertySheetViewer viewer, String name) {
 	super(viewer, name);
 	setToolTipText(PropertiesMessages.getString("DefaultAction.toolTip")); //$NON-NLS-1$
-	WorkbenchHelp.setHelp(this, new Object[] {IPropertiesHelpContextIds.DEFAULTS_ACTION});
+	WorkbenchHelp.setHelp(this, IPropertiesHelpContextIds.DEFAULTS_ACTION);
 }
 /**
  * Reset the properties to their default values.

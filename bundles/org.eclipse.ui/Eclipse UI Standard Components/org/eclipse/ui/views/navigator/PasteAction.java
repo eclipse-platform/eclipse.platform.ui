@@ -61,7 +61,7 @@ public PasteAction(Shell shell, Clipboard clipboard) {
 	this.clipboard = clipboard;
 	setToolTipText(ResourceNavigatorMessages.getString("PasteAction.toolTip")); //$NON-NLS-1$
 	setId(PasteAction.ID);
-	WorkbenchHelp.setHelp(this, new Object[] {INavigatorHelpContextIds.PASTE_ACTION});
+	WorkbenchHelp.setHelp(this, INavigatorHelpContextIds.PASTE_ACTION);
 }
 /**
  * Implementation of method defined on <code>IAction</code>.

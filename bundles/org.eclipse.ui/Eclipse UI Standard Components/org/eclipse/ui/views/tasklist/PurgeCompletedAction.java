@@ -22,7 +22,7 @@ import java.util.*;
  */
 public PurgeCompletedAction(TaskList tasklist, String id) {
 	super(tasklist, id);
-	WorkbenchHelp.setHelp(this, new Object[] {ITaskListHelpContextIds.PURGE_COMPLETED_TASK_ACTION});
+	WorkbenchHelp.setHelp(this, ITaskListHelpContextIds.PURGE_COMPLETED_TASK_ACTION);
 }
 /**
  * Fetches all the completed tasks in the workspace and deletes them.

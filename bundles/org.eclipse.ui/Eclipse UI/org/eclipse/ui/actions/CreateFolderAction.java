@@ -54,7 +54,7 @@ public CreateFolderAction(Shell shell) {
 	setImageDescriptor(WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER));
 	setToolTipText(WorkbenchMessages.getString("CreateFolderAction.toolTip")); //$NON-NLS-1$
 	setId(ID);
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.CREATE_FOLDER_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.CREATE_FOLDER_ACTION);
 }
 /**
  * The <code>CreateFolderAction</code> implementation of this
@@ -68,7 +68,7 @@ public void run() {
 	WizardDialog dialog = new WizardDialog(shell, wizard);
 	dialog.create();
 	dialog.getShell().setText(WorkbenchMessages.getString("CreateFolderAction.title")); //$NON-NLS-1$
-	WorkbenchHelp.setHelp(dialog.getShell(), new Object[]{IHelpContextIds.NEW_FOLDER_WIZARD});
+	WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.NEW_FOLDER_WIZARD);
 	dialog.open();
 
 }

@@ -77,7 +77,7 @@ public RenameResourceAction(Shell shell) {
 	super(shell, WorkbenchMessages.getString("RenameResourceAction.text")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("RenameResourceAction.toolTip")); //$NON-NLS-1$
 	setId(ID);
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.RENAME_RESOURCE_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.RENAME_RESOURCE_ACTION);
 }
 /**
  * Creates a new action.

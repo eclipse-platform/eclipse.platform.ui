@@ -22,7 +22,7 @@ public class GotoResourceAction extends ResourceNavigatorAction {
  */
 public GotoResourceAction(IResourceNavigatorPart navigator, String label) {
 	super(navigator, label);
-	WorkbenchHelp.setHelp(this, new Object[] {INavigatorHelpContextIds.GOTO_RESOURCE_ACTION});
+	WorkbenchHelp.setHelp(this, INavigatorHelpContextIds.GOTO_RESOURCE_ACTION);
 }
 /**
  * Collect all resources in the workbench and add them to the <code>resources</code>

@@ -17,7 +17,6 @@ import org.eclipse.jface.preference.*;
 
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.GlobalBuildAction;
-import org.eclipse.ui.help.DialogPageContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
 
@@ -95,7 +94,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	 */
 	protected Control createContents(Composite parent) {
 
-		WorkbenchHelp.setHelp(parent, new DialogPageContextComputer(this, IHelpContextIds.WORKBENCH_PREFERENCE_PAGE));
+		WorkbenchHelp.setHelp(parent, IHelpContextIds.WORKBENCH_PREFERENCE_PAGE);
 
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());

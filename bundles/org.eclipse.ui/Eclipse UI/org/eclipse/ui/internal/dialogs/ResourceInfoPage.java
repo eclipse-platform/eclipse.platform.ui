@@ -19,7 +19,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.PropertyPage;
-import org.eclipse.ui.help.DialogPageContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -112,7 +111,7 @@ private Composite createBasicInfoGroup(Composite parent, IResource resource) {
 }
 protected Control createContents(Composite parent) {
 
-	WorkbenchHelp.setHelp(parent, new DialogPageContextComputer(this, IHelpContextIds.RESOURCE_INFO_PROPERTY_PAGE));
+	WorkbenchHelp.setHelp(parent, IHelpContextIds.RESOURCE_INFO_PROPERTY_PAGE);
 
 	// layout the page
 	IResource resource = (IResource) getElement();

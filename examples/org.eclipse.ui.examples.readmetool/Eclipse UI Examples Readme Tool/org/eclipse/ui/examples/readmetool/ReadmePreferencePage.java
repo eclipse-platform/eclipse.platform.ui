@@ -72,7 +72,7 @@ private Composite createComposite(Composite parent, int numColumns) {
  */
 protected Control createContents(Composite parent)
 {
-	WorkbenchHelp.setHelp(parent, new DialogPageContextComputer(this, IReadmeConstants.PREFERENCE_PAGE_CONTEXT));
+	WorkbenchHelp.setHelp(parent, IReadmeConstants.PREFERENCE_PAGE_CONTEXT);
 	
 	//composite_textField << parent
 	Composite composite_textField = createComposite(parent, 2);

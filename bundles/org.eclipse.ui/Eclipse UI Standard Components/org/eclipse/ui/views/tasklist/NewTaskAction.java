@@ -35,7 +35,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
  */
 public NewTaskAction(TaskList tasklist, String id) {
 	super(tasklist, id);
-	WorkbenchHelp.setHelp(this, new Object[] {ITaskListHelpContextIds.NEW_TASK_ACTION});
+	WorkbenchHelp.setHelp(this, ITaskListHelpContextIds.NEW_TASK_ACTION);
 }
 /**
  * Creates a new task marker, sets its priority to LOW,

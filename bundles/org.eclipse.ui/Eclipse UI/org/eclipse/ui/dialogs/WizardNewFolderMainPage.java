@@ -67,7 +67,7 @@ public void createControl(Composite parent) {
 	composite.setLayoutData(new GridData(
 		GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
-	WorkbenchHelp.setHelp(composite, new DialogPageContextComputer(this, IHelpContextIds.NEW_FOLDER_WIZARD_PAGE));
+	WorkbenchHelp.setHelp(composite, IHelpContextIds.NEW_FOLDER_WIZARD_PAGE);
 
 	resourceGroup = new ResourceAndContainerGroup(composite,this,WorkbenchMessages.getString("WizardNewFolderMainPage.folderName"), WorkbenchMessages.getString("WizardNewFolderMainPage.folderLabel"), false); //$NON-NLS-2$ //$NON-NLS-1$
 	resourceGroup.setAllowExistingResources(false);

@@ -53,7 +53,7 @@ public void createControl(Composite parent) {
 	super.createControl(parent);
 	Composite composite = (Composite)getControl();
 	
-	WorkbenchHelp.setHelp(composite, new String[] {IReadmeConstants.CREATION_WIZARD_PAGE_CONTEXT});
+	WorkbenchHelp.setHelp(composite, IReadmeConstants.CREATION_WIZARD_PAGE_CONTEXT);
 	
 	GridData data = (GridData)composite.getLayoutData();
 	this.setFileName("sample" + nameCounter + ".readme"); //$NON-NLS-1$ //$NON-NLS-2$

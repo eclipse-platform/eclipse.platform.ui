@@ -79,7 +79,7 @@ public class AboutPluginsDialog extends Dialog {
 				new Object[] { productInfo.getName()}));
 		WorkbenchHelp.setHelp(
 			newShell,
-			new Object[] { IHelpContextIds.ABOUT_PLUGINS_DIALOG });
+			IHelpContextIds.ABOUT_PLUGINS_DIALOG);
 	}
 	/**
 	 * Add buttons to the dialog's button bar.

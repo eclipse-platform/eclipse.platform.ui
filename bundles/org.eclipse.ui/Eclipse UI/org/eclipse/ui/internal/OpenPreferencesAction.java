@@ -32,7 +32,7 @@ public OpenPreferencesAction(IWorkbenchWindow window) {
 	super(WorkbenchMessages.getString("OpenPreferences.text")); //$NON-NLS-1$
 	this.window = window;
 	setToolTipText(WorkbenchMessages.getString("OpenPreferences.toolTip")); //$NON-NLS-1$
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.OPEN_PREFERENCES_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.OPEN_PREFERENCES_ACTION);
 }
 /**
  * Perform the action: open the preference dialog.
@@ -43,7 +43,7 @@ public void run() {
 	if (pm != null) {
 		PreferenceDialog d = new PreferenceDialog(window.getShell(), pm);
 		d.create();
-		WorkbenchHelp.setHelp(d.getShell(), new Object[]{IHelpContextIds.PREFERENCE_DIALOG});
+		WorkbenchHelp.setHelp(d.getShell(), IHelpContextIds.PREFERENCE_DIALOG);
 		d.open();	
 	}
 }

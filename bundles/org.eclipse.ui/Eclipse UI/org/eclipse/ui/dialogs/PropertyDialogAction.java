@@ -61,7 +61,7 @@ public PropertyDialogAction(Shell shell, ISelectionProvider provider) {
 	Assert.isNotNull(shell);
 	this.shell = shell;
 	setToolTipText(WorkbenchMessages.getString("PropertyDialog.toolTip")); //$NON-NLS-1$
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.PROPERTY_DIALOG_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.PROPERTY_DIALOG_ACTION);
 }
 /**
  * Returns the name of the given element.
@@ -146,7 +146,7 @@ public void run() {
 	PropertyDialog propertyDialog = new PropertyDialog(shell, pageManager, getStructuredSelection()); 
 	propertyDialog.create();
 	propertyDialog.getShell().setText(title);
-	WorkbenchHelp.setHelp(propertyDialog.getShell(), new Object[]{IHelpContextIds.PROPERTY_DIALOG});
+	WorkbenchHelp.setHelp(propertyDialog.getShell(), IHelpContextIds.PROPERTY_DIALOG);
 	propertyDialog.open();
 }
 /**

@@ -28,7 +28,7 @@ public class FilterSelectionAction extends ResourceNavigatorAction {
 public FilterSelectionAction(IResourceNavigatorPart navigator, String label) {
 	super(navigator, label);
 	setToolTipText(FILTER_TOOL_TIP);
-	WorkbenchHelp.setHelp(this, new Object[] {INavigatorHelpContextIds.FILTER_SELECTION_ACTION});
+	WorkbenchHelp.setHelp(this, INavigatorHelpContextIds.FILTER_SELECTION_ACTION);
 	setEnabled(true);
 }
 /**

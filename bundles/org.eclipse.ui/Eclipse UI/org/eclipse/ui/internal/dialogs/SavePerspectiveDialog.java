@@ -50,7 +50,7 @@ public SavePerspectiveDialog(Shell parentShell, PerspectiveRegistry perspReg) {
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
 	shell.setText(WorkbenchMessages.getString("SavePerspective.shellTitle")); //$NON-NLS-1$
-	WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.SAVE_PERSPECTIVE_DIALOG});
+	WorkbenchHelp.setHelp(shell, IHelpContextIds.SAVE_PERSPECTIVE_DIALOG);
 }
 /**
  * Add buttons to the dialog's button bar.

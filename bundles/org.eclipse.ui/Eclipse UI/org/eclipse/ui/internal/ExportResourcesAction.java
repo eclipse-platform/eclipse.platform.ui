@@ -30,7 +30,7 @@ public ExportResourcesAction(IWorkbench aWorkbench) {
 	super(WorkbenchMessages.getString("ExportResourcesAction.text")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("ExportResourcesAction.toolTip")); //$NON-NLS-1$
 	setId(IWorkbenchActionConstants.EXPORT);
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.EXPORT_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.EXPORT_ACTION);
 	this.workbench = aWorkbench;
 }
 /**
@@ -58,7 +58,7 @@ public void run() {
 	WizardDialog dialog = new WizardDialog(parent, wizard);
 	dialog.create();
 	dialog.getShell().setSize( Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x), SIZING_WIZARD_HEIGHT );
-	WorkbenchHelp.setHelp(dialog.getShell(), new Object[]{IHelpContextIds.EXPORT_WIZARD});
+	WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.EXPORT_WIZARD);
 	dialog.open();
 }
 }

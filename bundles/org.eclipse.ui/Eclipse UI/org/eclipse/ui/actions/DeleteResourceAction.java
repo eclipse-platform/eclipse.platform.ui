@@ -136,7 +136,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
 public DeleteResourceAction(Shell shell) {
 	super(WorkbenchMessages.getString("DeleteResourceAction.text")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("DeleteResourceAction.toolTip")); //$NON-NLS-1$
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.DELETE_RESOURCE_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.DELETE_RESOURCE_ACTION);
 	setId(ID);
 	Assert.isNotNull(shell);
 	this.shell = shell;

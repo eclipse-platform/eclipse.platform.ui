@@ -26,7 +26,7 @@ protected ShowViewAction(IWorkbenchWindow window, IViewDescriptor desc) {
 	setText(accel == null ? label : label + "@" + accel);
 	setImageDescriptor(desc.getImageDescriptor());
 	setToolTipText(label);
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.SHOW_VIEW_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.SHOW_VIEW_ACTION);
 	this.window = window;
 	this.desc = desc;
 }

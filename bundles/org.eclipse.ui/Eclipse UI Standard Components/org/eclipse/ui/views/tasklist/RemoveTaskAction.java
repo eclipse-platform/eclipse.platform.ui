@@ -27,7 +27,7 @@ import java.util.List;
  */
 public RemoveTaskAction(TaskList tasklist, String id) {
 	super(tasklist, id);
-	WorkbenchHelp.setHelp(this, new Object[] {ITaskListHelpContextIds.REMOVE_TASK_ACTION});
+	WorkbenchHelp.setHelp(this, ITaskListHelpContextIds.REMOVE_TASK_ACTION);
 }
 /**
  * Removes all the tasks in the current selection from the task list.

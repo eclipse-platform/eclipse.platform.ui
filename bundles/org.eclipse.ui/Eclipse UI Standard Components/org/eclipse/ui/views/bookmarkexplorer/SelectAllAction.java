@@ -17,7 +17,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public SelectAllAction(BookmarkNavigator view) {
 	super(view, BookmarkMessages.getString("SelectAll.text")); //$NON-NLS-1$
 	setToolTipText(BookmarkMessages.getString("SelectAll.toolTip")); //$NON-NLS-1$
-	WorkbenchHelp.setHelp(this, new Object[] {IBookmarkHelpContextIds.SELECT_ALL_BOOKMARK_ACTION});
+	WorkbenchHelp.setHelp(this, IBookmarkHelpContextIds.SELECT_ALL_BOOKMARK_ACTION);
 	setEnabled(true);
 }
 public void run() {

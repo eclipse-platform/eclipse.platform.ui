@@ -30,6 +30,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import java.net.MalformedURLException;
@@ -384,7 +385,25 @@ public void createPartControl(Composite parent) {
 	memento = null;
 	
 	// Set help on the view itself
-	WorkbenchHelp.setHelp(viewer.getControl(), new TaskListContextComputer(this, ITaskListHelpContextIds.TASK_LIST_VIEW));
+	viewer.getControl().addHelpListener(new HelpListener() {
+		/*
+		 * @see HelpListener#helpRequested(HelpEvent)
+		 */
+		public void helpRequested(HelpEvent e) {
+			String contextId = null;
+			// See if there is a context registered for the current selection
+			IMarker marker = (IMarker)((IStructuredSelection)getSelection()).getFirstElement();
+			if (marker != null) {
+				IWorkbench workbench = getViewSite().getWorkbenchWindow().getWorkbench();
+				contextId = workbench.getMarkerHelpRegistry().getHelp(marker);
+			}
+			
+			if (contextId == null) 
+				contextId = ITaskListHelpContextIds.TASK_LIST_VIEW;
+
+			WorkbenchHelp.displayHelp(contextId);
+		}
+	});
 
 	// Prime the status line and title.
 	updateStatusMessage();

@@ -25,7 +25,7 @@ import org.eclipse.ui.part.MarkerTransfer;
 	 */
 	public CopyTaskAction(TaskList tasklist, String id) {
 		super(tasklist, id);
-		WorkbenchHelp.setHelp(this, new Object[] {ITaskListHelpContextIds.COPY_TASK_ACTION});
+		WorkbenchHelp.setHelp(this, ITaskListHelpContextIds.COPY_TASK_ACTION);
 	}
 	
 	/**

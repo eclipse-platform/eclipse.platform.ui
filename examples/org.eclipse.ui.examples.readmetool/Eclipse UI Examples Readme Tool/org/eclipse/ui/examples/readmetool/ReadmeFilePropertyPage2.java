@@ -62,7 +62,7 @@ public Control createContents(Composite parent) {
 	noDefaultAndApplyButton();
 	Composite panel = createComposite(parent, 2);
 
-	WorkbenchHelp.setHelp(panel, new DialogPageContextComputer(this, IReadmeConstants.PROPERTY_PAGE2_CONTEXT));
+	WorkbenchHelp.setHelp(panel, IReadmeConstants.PROPERTY_PAGE2_CONTEXT);
 
 	// layout the page
 	int page = getPageIndex();

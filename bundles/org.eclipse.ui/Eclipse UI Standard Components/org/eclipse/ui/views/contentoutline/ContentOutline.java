@@ -89,7 +89,7 @@ protected IPage createDefaultPage(PageBook book) {
  */
 public void createPartControl(Composite parent) {
 	super.createPartControl(parent);
-	WorkbenchHelp.setHelp(getPageBook(), new Object[] {CONTENT_OUTLINE_VIEW_HELP_CONTEXT_ID});
+	WorkbenchHelp.setHelp(getPageBook(), CONTENT_OUTLINE_VIEW_HELP_CONTEXT_ID);
 }
 /* (non-Javadoc)
  * Method declared on PageBookView.

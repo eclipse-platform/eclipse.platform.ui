@@ -23,7 +23,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  */
 public GotoTaskAction(TaskList tasklist, String id) {
 	super(tasklist, id);
-	WorkbenchHelp.setHelp(this, new Object[] {ITaskListHelpContextIds.GOTO_TASK_ACTION});
+	WorkbenchHelp.setHelp(this, ITaskListHelpContextIds.GOTO_TASK_ACTION);
 }
 /**
  * Performs this action. This action works only for single selection.

@@ -38,14 +38,14 @@ public GlobalBuildAction(IWorkbench aWorkbench, int type) {
 		setText(WorkbenchMessages.getString("GlobalBuildAction.text")); //$NON-NLS-1$
 		setToolTipText(WorkbenchMessages.getString("GlobalBuildAction.toolTip")); //$NON-NLS-1$
 		setId(IWorkbenchActionConstants.BUILD);
-		WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.GLOBAL_INCREMENTAL_BUILD_ACTION});
+		WorkbenchHelp.setHelp(this, IHelpContextIds.GLOBAL_INCREMENTAL_BUILD_ACTION);
 		setAccelerator(SWT.CTRL | 'b');
 	}
 	else {
 		setText(WorkbenchMessages.getString("GlobalBuildAction.rebuildText")); //$NON-NLS-1$
 		setToolTipText(WorkbenchMessages.getString("GlobalBuildAction.rebuildToolTip")); //$NON-NLS-1$
 		setId(IWorkbenchActionConstants.REBUILD_ALL);
-		WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.GLOBAL_FULL_BUILD_ACTION});
+		WorkbenchHelp.setHelp(this, IHelpContextIds.GLOBAL_FULL_BUILD_ACTION);
 	}
 		
 	this.workbench = aWorkbench;

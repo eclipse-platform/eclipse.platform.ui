@@ -67,7 +67,7 @@ public WizardZipFileResourceExportPage1(IStructuredSelection selection) {
  */
 public void createControl(Composite parent) {
 	super.createControl(parent);
-	WorkbenchHelp.setHelp(getControl(), new DialogPageContextComputer(this, IDataTransferHelpContextIds.ZIP_FILE_EXPORT_WIZARD_PAGE));
+	WorkbenchHelp.setHelp(getControl(), IDataTransferHelpContextIds.ZIP_FILE_EXPORT_WIZARD_PAGE);
 }
 /**
  *	Create the export options specification widgets.

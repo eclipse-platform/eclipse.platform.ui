@@ -35,7 +35,7 @@ public EditActionSetsAction(IWorkbenchWindow window) {
 	setToolTipText(WorkbenchMessages.getString("EditorActionSetsAction.toolTip")); //$NON-NLS-1$
 	setEnabled(false);
 	this.window = window;
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.EDIT_ACTION_SETS_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.EDIT_ACTION_SETS_ACTION);
 }
 /**
  * Open the selected resource in the default page.

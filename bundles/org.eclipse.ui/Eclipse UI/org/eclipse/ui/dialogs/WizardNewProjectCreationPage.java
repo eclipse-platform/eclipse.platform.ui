@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.help.DialogPageContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -98,7 +97,7 @@ public WizardNewProjectCreationPage(String pageName) {
 public void createControl(Composite parent) {
 	Composite composite = new Composite(parent, SWT.NULL);
 
-	WorkbenchHelp.setHelp(composite, new DialogPageContextComputer(this, IHelpContextIds.NEW_PROJECT_WIZARD_PAGE));
+	WorkbenchHelp.setHelp(composite, IHelpContextIds.NEW_PROJECT_WIZARD_PAGE);
 	
 	composite.setLayout(new GridLayout());
 	composite.setLayoutData(new GridData(GridData.FILL_BOTH));

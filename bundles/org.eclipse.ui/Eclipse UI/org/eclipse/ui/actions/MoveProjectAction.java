@@ -43,7 +43,7 @@ public MoveProjectAction(Shell shell) {
 	super(shell,MOVE_TITLE);
 	setToolTipText(MOVE_TOOL_TIP);
 	setId(MoveProjectAction.ID);
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.MOVE_PROJECT_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.MOVE_PROJECT_ACTION);
 }
 /**
  * Return the title of the errors dialog.

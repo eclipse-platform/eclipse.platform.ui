@@ -25,7 +25,7 @@ public SavePerspectiveAction(IWorkbenchWindow window) {
 	setToolTipText(WorkbenchMessages.getString("SavePerspective.toolTip")); //$NON-NLS-1$
 	setEnabled(false);
 	this.window = window;
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.SAVE_PERSPECTIVE_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.SAVE_PERSPECTIVE_ACTION);
 }
 /**
  *	The user has invoked this action

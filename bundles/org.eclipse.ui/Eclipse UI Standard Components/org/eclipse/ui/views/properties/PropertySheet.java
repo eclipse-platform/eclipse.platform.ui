@@ -88,7 +88,7 @@ protected IPage createDefaultPage(PageBook book) {
  */
 public void createPartControl(Composite parent) {
 	super.createPartControl(parent);
-	WorkbenchHelp.setHelp(getPageBook(), new Object[] {IPropertiesHelpContextIds.PROPERTY_SHEET_VIEW});
+	WorkbenchHelp.setHelp(getPageBook(), IPropertiesHelpContextIds.PROPERTY_SHEET_VIEW);
 }
 /* (non-Javadoc)
  * Method declared on IWorkbenchPart.

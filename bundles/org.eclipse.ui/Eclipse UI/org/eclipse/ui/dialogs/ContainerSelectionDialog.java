@@ -89,7 +89,7 @@ public ContainerSelectionDialog(Shell parentShell, IContainer initialRoot, boole
  */
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
-	WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.CONTAINER_SELECTION_DIALOG});
+	WorkbenchHelp.setHelp(shell, IHelpContextIds.CONTAINER_SELECTION_DIALOG);
 }
 /* (non-Javadoc)
  * Method declared on Dialog.

@@ -23,7 +23,7 @@ public SetPageAction(WorkbenchPage page) {
 	setChecked(false);
 	this.page = page;
 	update();
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.SET_PAGE_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.SET_PAGE_ACTION);
 }
 /**
  * Returns the target page.

@@ -86,7 +86,7 @@ private Composite createButtonGroup(Composite composite) {
  */
 protected Control createContents(Composite parent) {
 
-	WorkbenchHelp.setHelp(parent, new DialogPageContextComputer(this, IHelpContextIds.VIEWS_PREFERENCE_PAGE));
+	WorkbenchHelp.setHelp(parent, IHelpContextIds.VIEWS_PREFERENCE_PAGE);
 
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 	editorAlignment = store.getInt(IPreferenceConstants.EDITOR_TAB_POSITION);

@@ -47,7 +47,7 @@ public OpenSystemEditorAction(IWorkbenchPage page) {
 	super(WorkbenchMessages.getString("OpenSystemEditorAction.text")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("OpenSystemEditorAction.toolTip")); //$NON-NLS-1$
 	setId(ID);
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.OPEN_SYSTEM_EDITOR_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.OPEN_SYSTEM_EDITOR_ACTION);
 	Assert.isNotNull(page);
 	this.workbenchPage = page;
 }

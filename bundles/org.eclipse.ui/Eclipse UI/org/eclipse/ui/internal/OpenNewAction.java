@@ -24,7 +24,7 @@ public class OpenNewAction extends Action {
 public OpenNewAction(IWorkbenchWindow workbenchWindow) {
 	super(WorkbenchMessages.getString("Open")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("OpenNewAction.toolTip")); //$NON-NLS-1$
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.OPEN_NEW_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.OPEN_NEW_ACTION);
 	setImageDescriptor(
 		WorkbenchImages.getImageDescriptor(
 			IWorkbenchGraphicConstants.IMG_CTOOL_NEW_PAGE));

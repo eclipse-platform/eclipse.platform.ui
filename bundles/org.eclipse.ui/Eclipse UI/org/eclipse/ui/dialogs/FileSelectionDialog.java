@@ -118,7 +118,7 @@ private void checkInitialSelections() {
  */
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
-	WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.FILE_SELECTION_DIALOG});
+	WorkbenchHelp.setHelp(shell, IHelpContextIds.FILE_SELECTION_DIALOG);
 }
 public void create() {
 	super.create();

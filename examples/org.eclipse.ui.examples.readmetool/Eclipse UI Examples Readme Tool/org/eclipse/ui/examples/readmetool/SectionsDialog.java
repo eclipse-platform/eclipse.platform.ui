@@ -32,7 +32,7 @@ public SectionsDialog(Shell parentShell, IAdaptable input) {
 protected void configureShell(Shell newShell) {
 	super.configureShell(newShell);
 	newShell.setText(MessageUtil.getString("Readme_Sections")); //$NON-NLS-1$
-	WorkbenchHelp.setHelp(newShell, new String[] {IReadmeConstants.SECTIONS_DIALOG_CONTEXT});
+	WorkbenchHelp.setHelp(newShell, IReadmeConstants.SECTIONS_DIALOG_CONTEXT);
 }
 /* (non-Javadoc)
  * Method declared on Dialog

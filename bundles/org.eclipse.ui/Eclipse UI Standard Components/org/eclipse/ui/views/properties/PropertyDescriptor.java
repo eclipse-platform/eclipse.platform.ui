@@ -273,20 +273,21 @@ public void setFilterFlags(String value[]) {
 	filterFlags = value;
 }
 /**
- * Sets the help context ids for this property descriptor.
+ * Sets the help context id for this property descriptor.
  *
- * The value can be either
- * 1) a mixed-type array of context ids (type <code>String</code>) and/or 
- * 	help contexts (type <code>IContext</code>) or
- * 2) an instance of <code>IContextComputer</code>
+ * NOTE: Help support system API's changed since 2.0 and arrays
+ * of contexts are no longer supported.
  * </p>
  * <p>
- * Use an <code>IContextComputer</code> when the help contexts cannot be 
- * computed in advance, use return an array.
+ * Thus the only valid parameter type for this method
+ * is a <code>String</code> representing a context id. 
+ * The previously valid parameter types are deprecated. 
+ * The plural name for this method is unfortunate.
+ * </p>
  * 
- * @param contextIds the help context ids, or <code>null</code> if none
+ * @param contextId the help context id, or <code>null</code> if none
  * @see #getHelpContextIds
-  */
+ */
 public void setHelpContextIds(Object contextIds) {
 	helpIds = contextIds;
 }

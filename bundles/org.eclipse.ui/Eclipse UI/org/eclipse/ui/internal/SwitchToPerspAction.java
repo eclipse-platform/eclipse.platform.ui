@@ -23,7 +23,7 @@ public SwitchToPerspAction(IWorkbenchWindow window) {
 	super(WorkbenchMessages.getString("ReplacePerspective.text")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("ReplacePerspective.toolTip")); //$NON-NLS-1$
 	setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_PAGE));
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.SWITCH_TO_PERSPECTIVE_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.SWITCH_TO_PERSPECTIVE_ACTION);
 	this.window = window;
 }
 /**

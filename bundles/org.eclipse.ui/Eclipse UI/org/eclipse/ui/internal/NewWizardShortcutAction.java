@@ -75,7 +75,7 @@ public void run() {
 	Shell parent = workbench.getActiveWorkbenchWindow().getShell();
 	WizardDialog dialog = new WizardDialog(parent, wizard);
 	dialog.create();
-	WorkbenchHelp.setHelp(dialog.getShell(), new Object[]{IHelpContextIds.NEW_WIZARD_SHORTCUT});
+	WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.NEW_WIZARD_SHORTCUT);
 	dialog.open();
 }
 }

@@ -138,7 +138,7 @@ public void createPartControl(Composite parent) {
 	if(memento != null) restoreState(memento);
 	memento = null;
 
-	WorkbenchHelp.setHelp(viewer.getControl(), new ViewContextComputer(this, IBookmarkHelpContextIds.BOOKMARK_VIEW));
+	WorkbenchHelp.setHelp(viewer.getControl(), IBookmarkHelpContextIds.BOOKMARK_VIEW);
 }
 /**
  * Notifies this listener that the menu is about to be shown by

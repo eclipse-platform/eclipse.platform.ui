@@ -100,38 +100,38 @@ public class UserElement extends OrganizationElement {
 		///
 		propertyDescriptor = new TextPropertyDescriptor(P_ID_PHONENUMBER, P_PHONENUMBER);
 		propertyDescriptor.setCategory(P_CONTACTINFO);
-		propertyDescriptor.setHelpContextIds(new Object[] {PHONE_NUMBER_CONTEXT});
+		propertyDescriptor.setHelpContextIds(PHONE_NUMBER_CONTEXT);
 		descriptors.addElement(propertyDescriptor);
 
 		///
 		propertyDescriptor = new PropertyDescriptor(P_ID_ADDRESS, P_ADDRESS);
 		propertyDescriptor.setCategory(P_CONTACTINFO);
-		propertyDescriptor.setHelpContextIds(new Object[] {ADDRESS_CONTEXT});
+		propertyDescriptor.setHelpContextIds(ADDRESS_CONTEXT);
 		descriptors.addElement(propertyDescriptor);
 
 		///
 		propertyDescriptor = new TextPropertyDescriptor(P_ID_EMAIL, P_EMAIL);
 		propertyDescriptor.setCategory(P_CONTACTINFO);
-		propertyDescriptor.setHelpContextIds(new Object[] {EMAIL_CONTEXT});
+		propertyDescriptor.setHelpContextIds(EMAIL_CONTEXT);
 		propertyDescriptor.setValidator(new EmailAddressValidator());
 		descriptors.addElement(propertyDescriptor);
 
 		///
 		propertyDescriptor = new TextPropertyDescriptor(P_ID_FULLNAME, P_FULLNAME);
 		propertyDescriptor.setCategory(P_PERSONELINFO);
-		propertyDescriptor.setHelpContextIds(new Object[] {FULL_NAME_CONTEXT});
+		propertyDescriptor.setHelpContextIds(FULL_NAME_CONTEXT);
 		descriptors.addElement(propertyDescriptor);
 
 		///
 		propertyDescriptor = new PropertyDescriptor(P_ID_BDAY, P_BDAY);
 		propertyDescriptor.setCategory(P_PERSONELINFO);
-		propertyDescriptor.setHelpContextIds(new Object[] {BIRTHDAY_CONTEXT});
+		propertyDescriptor.setHelpContextIds(BIRTHDAY_CONTEXT);
 		descriptors.addElement(propertyDescriptor);
 
 		///
 		propertyDescriptor = new ComboBoxPropertyDescriptor(P_ID_COOP, P_COOP, new String[] {P_VALUE_TRUE_LABEL, P_VALUE_FALSE_LABEL});
 		propertyDescriptor.setCategory(P_PERSONELINFO);
-		propertyDescriptor.setHelpContextIds(new Object[] {COOP_CONTEXT});
+		propertyDescriptor.setHelpContextIds(COOP_CONTEXT);
 		propertyDescriptor.setLabelProvider(new BooleanLabelProvider());
 		descriptors.addElement(propertyDescriptor);
 
@@ -164,13 +164,13 @@ public class UserElement extends OrganizationElement {
 		/// HairColor
 		propertyDescriptor = new ColorPropertyDescriptor(P_ID_HAIRCOLOR, P_HAIRCOLOR);
 		propertyDescriptor.setCategory(P_PERSONALINFO);
-		propertyDescriptor.setHelpContextIds(new Object[] {HAIR_COLOR__CONTEXT});
+		propertyDescriptor.setHelpContextIds(HAIR_COLOR__CONTEXT);
 		descriptors.addElement(propertyDescriptor);
 		
 		/// EyeColor
 		propertyDescriptor = new ColorPropertyDescriptor(P_ID_EYECOLOR, P_EYECOLOR);
 		propertyDescriptor.setCategory(P_PERSONALINFO);
-		propertyDescriptor.setHelpContextIds(new Object[] {EYE_COLOR_CONTEXT});
+		propertyDescriptor.setHelpContextIds(EYE_COLOR_CONTEXT);
 		descriptors.addElement(propertyDescriptor);
 
 		//gets descriptors from parent, warning name-space collision may occur

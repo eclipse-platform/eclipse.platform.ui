@@ -39,7 +39,7 @@ public class OpenResourceAction extends WorkspaceAction {
  */
 public OpenResourceAction(Shell shell) {
 	super(shell, WorkbenchMessages.getString("OpenResourceAction.text")); //$NON-NLS-1$
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.OPEN_RESOURCE_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.OPEN_RESOURCE_ACTION);
 	setToolTipText(WorkbenchMessages.getString("OpenResourceAction.toolTip")); //$NON-NLS-1$
 	setId(ID);
 }

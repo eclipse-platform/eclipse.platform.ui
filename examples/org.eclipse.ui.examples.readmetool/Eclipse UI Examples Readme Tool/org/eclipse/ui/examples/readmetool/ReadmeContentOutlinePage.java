@@ -39,7 +39,7 @@ public ReadmeContentOutlinePage(IFile input) {
 public void createControl(Composite parent) {
 	super.createControl(parent);
 
-	WorkbenchHelp.setHelp(getControl(), new String[] {IReadmeConstants.CONTENT_OUTLINE_PAGE_CONTEXT});
+	WorkbenchHelp.setHelp(getControl(), IReadmeConstants.CONTENT_OUTLINE_PAGE_CONTEXT);
 
 	TreeViewer viewer = getTreeViewer();
 	viewer.setContentProvider(new WorkbenchContentProvider());

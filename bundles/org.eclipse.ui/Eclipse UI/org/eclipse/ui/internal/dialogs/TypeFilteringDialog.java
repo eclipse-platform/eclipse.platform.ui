@@ -153,7 +153,7 @@ private void checkInitialSelections() {
  */
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
-	WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.TYPE_FILTERING_DIALOG});
+	WorkbenchHelp.setHelp(shell, IHelpContextIds.TYPE_FILTERING_DIALOG);
 }
 /* (non-Javadoc)
  * Method declared on Dialog.

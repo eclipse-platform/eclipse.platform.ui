@@ -252,7 +252,7 @@ public void createPartControl(Composite parent) {
 
 	createInfoArea(editorComposite);
 
-	WorkbenchHelp.setHelp(editorComposite, new String[] {IHelpContextIds.WELCOME_EDITOR});
+	WorkbenchHelp.setHelp(editorComposite, IHelpContextIds.WELCOME_EDITOR);
 }
 /**
  * Creates the wizard's title area.

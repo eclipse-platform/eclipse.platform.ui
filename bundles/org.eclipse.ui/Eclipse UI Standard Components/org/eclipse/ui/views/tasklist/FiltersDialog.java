@@ -224,7 +224,7 @@ public void checkStateChanged(CheckStateChangedEvent event) {
 protected void configureShell(Shell newShell) {
 	super.configureShell(newShell);
 	newShell.setText(TaskListMessages.getString("TaskList.filter")); //$NON-NLS-1$
-	WorkbenchHelp.setHelp(newShell, new Object[] {ITaskListHelpContextIds.FILTERS_DIALOG});
+	WorkbenchHelp.setHelp(newShell, ITaskListHelpContextIds.FILTERS_DIALOG);
 }
 /**
  * Creates the area showing filtering criteria on attribute values.

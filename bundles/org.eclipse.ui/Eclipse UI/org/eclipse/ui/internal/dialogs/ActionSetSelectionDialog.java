@@ -97,7 +97,7 @@ private void checkInitialSelections() {
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
 	shell.setText(WorkbenchMessages.getString("ActionSetSelection.customize")); //$NON-NLS-1$
-	WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.ACTION_SET_SELECTION_DIALOG});
+	WorkbenchHelp.setHelp(shell, IHelpContextIds.ACTION_SET_SELECTION_DIALOG);
 }
 /* (non-Javadoc)
  * Method declared on Dialog.

@@ -383,7 +383,7 @@ protected void configureShell(Shell shell) {
 	createShortcutBar(shell);
 	separator3 = new Label(shell, SWT.SEPARATOR | SWT.VERTICAL);
 
-	WorkbenchHelp.setHelp(shell, new String[] {IHelpContextIds.WORKBENCH_WINDOW});
+	WorkbenchHelp.setHelp(shell, IHelpContextIds.WORKBENCH_WINDOW);
 
 	trackShellActivation(shell);
 	

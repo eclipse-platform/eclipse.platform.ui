@@ -59,7 +59,7 @@ public MoveResourceAction(Shell shell) {
 	super(shell, WorkbenchMessages.getString("MoveResourceAction.text")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("MoveResourceAction.toolTip")); //$NON-NLS-1$
 	setId(MoveResourceAction.ID);
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.MOVE_RESOURCE_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.MOVE_RESOURCE_ACTION);
 }
 /**
  * The <code>MoveResourceAction</code> implementation of this 

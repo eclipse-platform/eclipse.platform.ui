@@ -88,19 +88,20 @@ public String getDisplayName();
  */
 public String[] getFilterFlags();
 /**
- * Returns the help context ids for this property.
+ * Returns the help context id for this property or 
+ * <code>null</code> if this property has no help context id.
  * <p>
- * The return value can be either
- * 1) a mixed-type array of context ids (type <code>String</code>) and/or 
- * 	help contexts (type <code>IContext</code>) or
- * 2) an instance of <code>IContextComputer</code>
+ * NOTE: Help support system API's changed since 2.0 and arrays
+ * of contexts are no longer supported.
  * </p>
  * <p>
- * Return an <code>IContextComputer</code> when the help contexts cannot be 
- * computed in advance, otherwise return an array.
- *
- * @return the help context ids, or <code>null</code> if this property has no
- *   help contexts
+ * Thus the only valid non-<code>null</code> return type for this method
+ * is a <code>String</code> representing a context id. The previously
+ * valid return types are deprecated. The plural name for this method
+ * is unfortunate.
+ * </p>
+ * 
+ * @return the help context id for this entry
  */
 public Object getHelpContextIds();
 /**

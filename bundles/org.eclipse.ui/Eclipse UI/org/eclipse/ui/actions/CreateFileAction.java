@@ -54,7 +54,7 @@ public CreateFileAction(Shell shell) {
 	setToolTipText(WorkbenchMessages.getString("CreateFileAction.toolTip")); //$NON-NLS-1$
 	setImageDescriptor(WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FILE));
 	setId(ID);
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.CREATE_FILE_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.CREATE_FILE_ACTION);
 }
 /**
  * The <code>CreateFileAction</code> implementation of this
@@ -68,7 +68,7 @@ public void run() {
 	WizardDialog dialog = new WizardDialog(shell, wizard);
 	dialog.create();
 	dialog.getShell().setText(WorkbenchMessages.getString("CreateFileAction.title")); //$NON-NLS-1$
-	WorkbenchHelp.setHelp(dialog.getShell(), new Object[]{IHelpContextIds.NEW_FILE_WIZARD});
+	WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.NEW_FILE_WIZARD);
 	dialog.open();
 }
 /**

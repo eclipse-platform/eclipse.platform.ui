@@ -91,7 +91,7 @@ public void checkStateChanged(CheckStateChangedEvent event) {
  */
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
-	WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.RESOURCE_SELECTION_DIALOG});
+	WorkbenchHelp.setHelp(shell, IHelpContextIds.RESOURCE_SELECTION_DIALOG);
 }
 public void create() {
 	super.create();

@@ -31,7 +31,7 @@ public class ImportWizard extends Wizard {
 		}
 		public void createControl(Composite parent) {
 			super.createControl(parent);
-			WorkbenchHelp.setHelp(getControl(), new DialogPageContextComputer(this, IHelpContextIds.IMPORT_WIZARD_SELECTION_WIZARD_PAGE));
+			WorkbenchHelp.setHelp(getControl(), IHelpContextIds.IMPORT_WIZARD_SELECTION_WIZARD_PAGE);
 		}
 		public IWizardNode createWizardNode(WorkbenchWizardElement element) {
 			return new WorkbenchWizardNode(this, element) {

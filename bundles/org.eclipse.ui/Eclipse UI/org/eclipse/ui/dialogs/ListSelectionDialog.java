@@ -132,7 +132,7 @@ private void checkInitialSelections() {
  */
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
-	WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.LIST_SELECTION_DIALOG});
+	WorkbenchHelp.setHelp(shell, IHelpContextIds.LIST_SELECTION_DIALOG);
 }
 
 /* (non-Javadoc)

@@ -43,7 +43,7 @@ public class CloseResourceAction extends WorkspaceAction {
 		super(shell, WorkbenchMessages.getString("CloseResourceAction.text")); //$NON-NLS-1$
 		setId(ID);
 		setToolTipText(WorkbenchMessages.getString("CloseResourceAction.toolTip")); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(this, new Object[] { IHelpContextIds.CLOSE_RESOURCE_ACTION });
+		WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_RESOURCE_ACTION);
 	}
 	/**
 	 * Return a list of dirty editors associated with the given projects.  Return

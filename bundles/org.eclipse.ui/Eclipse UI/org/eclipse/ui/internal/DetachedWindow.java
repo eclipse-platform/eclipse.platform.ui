@@ -97,7 +97,7 @@ protected void configureShell(Shell shell) {
 		}
 	});
 
-	WorkbenchHelp.setHelp(shell, new String[] {IHelpContextIds.DETACHED_WINDOW});
+	WorkbenchHelp.setHelp(shell, IHelpContextIds.DETACHED_WINDOW);
 }
 /**
  * Override this method to create the widget tree that is used as the window's contents.

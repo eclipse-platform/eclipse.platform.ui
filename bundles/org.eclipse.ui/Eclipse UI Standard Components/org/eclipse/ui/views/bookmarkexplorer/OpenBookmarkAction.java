@@ -22,7 +22,7 @@ import java.util.*;
 public OpenBookmarkAction(BookmarkNavigator view) {
 	super(view, BookmarkMessages.getString("OpenBookmark.text")); //$NON-NLS-1$
 	setToolTipText(BookmarkMessages.getString("OpenBookmark.toolTip")); //$NON-NLS-1$
-	WorkbenchHelp.setHelp(this, new Object[] {IBookmarkHelpContextIds.OPEN_BOOKMARK_ACTION});
+	WorkbenchHelp.setHelp(this, IBookmarkHelpContextIds.OPEN_BOOKMARK_ACTION);
 	setEnabled(false);
 }
 public void run() {

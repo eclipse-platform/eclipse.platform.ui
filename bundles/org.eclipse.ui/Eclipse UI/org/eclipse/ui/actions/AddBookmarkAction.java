@@ -48,7 +48,7 @@ public AddBookmarkAction(Shell shell) {
 	Assert.isNotNull(shell);
 	this.shell = shell;
 	setToolTipText(WorkbenchMessages.getString("AddBookmarkToolTip")); //$NON-NLS-1$
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.ADD_BOOKMARK_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.ADD_BOOKMARK_ACTION);
 }
 /**
  * Creates a marker of the given type on each of the files in the

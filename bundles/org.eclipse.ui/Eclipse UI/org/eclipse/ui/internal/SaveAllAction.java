@@ -41,7 +41,7 @@ public SaveAllAction(WorkbenchWindow window) {
 	setEnabled(false);
 	this.window = window;
 	window.addPageListener(this);
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.SAVE_ALL_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.SAVE_ALL_ACTION);
 }
 /**
  * Notifies the listener that a page has been activated.

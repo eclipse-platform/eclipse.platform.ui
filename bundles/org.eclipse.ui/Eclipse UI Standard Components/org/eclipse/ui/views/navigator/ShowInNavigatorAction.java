@@ -38,7 +38,7 @@ public class ShowInNavigatorAction extends SelectionProviderAction {
 		Assert.isNotNull(page);
 		this.page = page;
 		setDescription(ResourceNavigatorMessages.getString("ShowInNavigator.toolTip")); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(this, new Object[] {INavigatorHelpContextIds.SHOW_IN_NAVIGATOR_ACTION});
+		WorkbenchHelp.setHelp(this, INavigatorHelpContextIds.SHOW_IN_NAVIGATOR_ACTION);
 	}
 /**
  * Returns the resources in the given selection.

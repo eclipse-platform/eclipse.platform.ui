@@ -27,7 +27,7 @@ public SortViewAction(IResourceNavigatorPart navigator, boolean sortByType) {
 	}
 	setEnabled(true);
 	this.sort = sortByType;
-	WorkbenchHelp.setHelp(this, new Object[] {INavigatorHelpContextIds.SORT_VIEW_ACTION});
+	WorkbenchHelp.setHelp(this, INavigatorHelpContextIds.SORT_VIEW_ACTION);
 }
 public void run() {
 	if (sort)

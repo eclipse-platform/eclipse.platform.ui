@@ -55,7 +55,7 @@ public OpenFileAction(IWorkbenchPage page) {
 public OpenFileAction(IWorkbenchPage page, IEditorDescriptor descriptor) {
 	super(page);
 	setText(descriptor == null ? WorkbenchMessages.getString("OpenFileAction.text") : descriptor.getLabel()); //$NON-NLS-1$
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.OPEN_FILE_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.OPEN_FILE_ACTION);
 	setToolTipText(WorkbenchMessages.getString("OpenFileAction.toolTip")); //$NON-NLS-1$
 	setId(ID);
 	this.editorDescriptor = descriptor;

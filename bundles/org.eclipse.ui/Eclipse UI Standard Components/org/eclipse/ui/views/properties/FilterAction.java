@@ -17,7 +17,7 @@ import org.eclipse.ui.help.*;
 public FilterAction(PropertySheetViewer viewer, String name) {
 	super(viewer, name);
 	setToolTipText(PropertiesMessages.getString("Filter.toolTip")); //$NON-NLS-1$
-	WorkbenchHelp.setHelp(this, new Object[] {IPropertiesHelpContextIds.FILTER_ACTION});
+	WorkbenchHelp.setHelp(this, IPropertiesHelpContextIds.FILTER_ACTION);
 }
 /**
  * Toggle the display of expert properties.

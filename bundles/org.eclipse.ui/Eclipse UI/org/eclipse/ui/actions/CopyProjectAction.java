@@ -58,7 +58,7 @@ public class CopyProjectAction extends SelectionListenerAction {
  */
 public CopyProjectAction(Shell shell) {
 	this(shell,COPY_TITLE);
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.COPY_PROJECT_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.COPY_PROJECT_ACTION);
 }
 /**
  * Creates a new project copy action with the given text.

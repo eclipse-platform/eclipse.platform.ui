@@ -32,7 +32,7 @@ public class QuickStartAction extends PartEventAction {
 public QuickStartAction(IWorkbench aWorkbench) {
 	super(WorkbenchMessages.getString("QuickStart.text")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("QuickStart.toolTip")); //$NON-NLS-1$
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.QUICK_START_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.QUICK_START_ACTION);
 	this.workbench = aWorkbench;
 }
 /**

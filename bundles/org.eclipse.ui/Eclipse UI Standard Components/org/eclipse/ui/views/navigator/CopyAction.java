@@ -60,7 +60,7 @@ public CopyAction(Shell shell, Clipboard clipboard) {
 	this.clipboard = clipboard;
 	setToolTipText(ResourceNavigatorMessages.getString("CopyAction.toolTip")); //$NON-NLS-1$
 	setId(CopyAction.ID);
-	WorkbenchHelp.setHelp(this, new Object[] {INavigatorHelpContextIds.COPY_ACTION});
+	WorkbenchHelp.setHelp(this, INavigatorHelpContextIds.COPY_ACTION);
 }
 /**
  * The <code>CopyAction</code> implementation of this method defined 

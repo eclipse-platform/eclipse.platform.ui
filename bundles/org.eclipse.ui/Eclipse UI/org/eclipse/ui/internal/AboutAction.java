@@ -26,7 +26,7 @@ public AboutAction(IWorkbenchWindow window) {
 	setToolTipText(WorkbenchMessages.format("AboutAction.toolTip", new Object[] {((Workbench)PlatformUI.getWorkbench()).getProductInfo().getName()})); //$NON-NLS-1$
 	setId(IWorkbenchActionConstants.ABOUT);
 	this.workbenchWindow = window;
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.ABOUT_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.ABOUT_ACTION);
 }
 /**
  * Perform the action: show about dialog.

@@ -46,7 +46,7 @@ public ProjectReferencePage() {
  */
 protected Control createContents(Composite parent) {
 
-	WorkbenchHelp.setHelp(parent, new DialogPageContextComputer(this, IHelpContextIds.PROJECT_REFERENCE_PROPERTY_PAGE));
+	WorkbenchHelp.setHelp(parent, IHelpContextIds.PROJECT_REFERENCE_PROPERTY_PAGE);
 
 	Composite composite = new Composite(parent, SWT.NONE);
 	composite.setLayout(new GridLayout());

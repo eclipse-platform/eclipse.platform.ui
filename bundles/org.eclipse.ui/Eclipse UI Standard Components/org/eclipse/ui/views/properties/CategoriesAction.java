@@ -16,7 +16,7 @@ import org.eclipse.ui.help.*;
  */
 public CategoriesAction(PropertySheetViewer viewer, String name) {
 	super(viewer, name);
-	WorkbenchHelp.setHelp(this, new Object[] {IPropertiesHelpContextIds.CATEGORIES_ACTION});
+	WorkbenchHelp.setHelp(this, IPropertiesHelpContextIds.CATEGORIES_ACTION);
 }
 /**
  * Toggles the display of categories for the properties.

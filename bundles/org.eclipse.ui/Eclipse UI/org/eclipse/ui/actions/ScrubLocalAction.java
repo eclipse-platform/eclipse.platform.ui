@@ -35,7 +35,7 @@ public ScrubLocalAction(Shell shell) {
 	super(shell, WorkbenchMessages.getString("ScrubLocalAction.text")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("ScrubLocalAction.toolTip")); //$NON-NLS-1$
 	setId(ID);
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.SCRUB_LOCAL_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.SCRUB_LOCAL_ACTION);
 }
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.

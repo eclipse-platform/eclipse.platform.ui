@@ -110,7 +110,7 @@ private void checkState() {
 
 protected Control createContents(Composite parent) {
 
-	WorkbenchHelp.setHelp(parent, new DialogPageContextComputer(this, IHelpContextIds.FILE_STATES_PREFERENCE_PAGE));
+	WorkbenchHelp.setHelp(parent, IHelpContextIds.FILE_STATES_PREFERENCE_PAGE);
 
 	// button group
 	Composite composite = new Composite(parent, SWT.NONE);

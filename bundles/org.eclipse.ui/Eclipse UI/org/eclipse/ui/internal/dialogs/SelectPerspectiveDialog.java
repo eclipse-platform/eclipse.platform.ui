@@ -51,7 +51,7 @@ protected void cancelPressed() {
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
 	shell.setText(WorkbenchMessages.getString("SelectPerspective.shellTitle")); //$NON-NLS-1$
-	WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.SELECT_PERSPECTIVE_DIALOG});
+	WorkbenchHelp.setHelp(shell, IHelpContextIds.SELECT_PERSPECTIVE_DIALOG);
 }
 /**
  * Adds buttons to this dialog's button bar.

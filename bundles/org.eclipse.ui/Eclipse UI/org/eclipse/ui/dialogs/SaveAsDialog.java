@@ -63,7 +63,7 @@ public SaveAsDialog(Shell parentShell) {
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
 	shell.setText(WorkbenchMessages.getString("SaveAsDialog.text")); //$NON-NLS-1$
-	WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.SAVE_AS_DIALOG});
+	WorkbenchHelp.setHelp(shell, IHelpContextIds.SAVE_AS_DIALOG);
 }
 /* (non-Javadoc)
  * Method declared in Window.

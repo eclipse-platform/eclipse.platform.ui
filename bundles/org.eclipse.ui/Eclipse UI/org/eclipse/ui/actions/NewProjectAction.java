@@ -62,7 +62,7 @@ public NewProjectAction(IWorkbenchWindow window) {
 	setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ_HOVER));
 	setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ_DISABLED));
 	setToolTipText(WorkbenchMessages.getString("NewProjectAction.toolTip"));	 //$NON-NLS-1$
-	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.NEW_ACTION});
+	WorkbenchHelp.setHelp(this, IHelpContextIds.NEW_ACTION);
 }
 
 /* (non-Javadoc)
@@ -90,7 +90,7 @@ public void run() {
 	WizardDialog dialog = new WizardDialog(parent, wizard);
 	dialog.create();
 	dialog.getShell().setSize( Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x), SIZING_WIZARD_HEIGHT );
-	WorkbenchHelp.setHelp(dialog.getShell(), new Object[]{IHelpContextIds.NEW_PROJECT_WIZARD});
+	WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.NEW_PROJECT_WIZARD);
 
 	// Open wizard.
 	dialog.open();

@@ -96,7 +96,7 @@ protected boolean closeZipFile(ZipFile file) {
  */
 public void createControl(Composite parent) {
 	super.createControl(parent);
-	WorkbenchHelp.setHelp(getControl(), new DialogPageContextComputer(this, IDataTransferHelpContextIds.ZIP_FILE_IMPORT_WIZARD_PAGE));
+	WorkbenchHelp.setHelp(getControl(), IDataTransferHelpContextIds.ZIP_FILE_IMPORT_WIZARD_PAGE);
 }
 /**
  *	Create the options specification widgets. There is only one
