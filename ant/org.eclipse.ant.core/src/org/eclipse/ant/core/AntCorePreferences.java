@@ -410,7 +410,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		String eclipseRuntime= element.getAttribute(AntCorePlugin.ECLIPSE_RUNTIME);
 		boolean eclipseRuntimeRequired= true;
 		if (eclipseRuntime != null) {
-			eclipseRuntimeRequired= Boolean.getBoolean(eclipseRuntime);
+			eclipseRuntimeRequired= Boolean.valueOf(eclipseRuntime).booleanValue();
 		}
 		Iterator itr= extraClasspathURLs.iterator();
 		while (itr.hasNext()) {
