@@ -134,7 +134,7 @@ protected void setUp() throws Exception {
 	}
 }
 protected void tearDown() throws Exception {
-	getWorkspace().delete(getWorkspace().getRoot().getProjects(), true, getMonitor());
+	getWorkspace().getRoot().delete(true, true, getMonitor());
 	super.tearDown();
 }
 	/**
