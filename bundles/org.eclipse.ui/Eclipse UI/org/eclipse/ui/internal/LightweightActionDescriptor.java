@@ -32,7 +32,9 @@ public LightweightActionDescriptor(IConfigurationElement actionElement) {
 	this.description = actionElement.getAttribute(ActionDescriptor.ATT_DESCRIPTION);
 
 	String iconName = actionElement.getAttribute(ActionDescriptor.ATT_ICON);
-	this.image = WorkbenchImages.getImageDescriptorFromExtension(actionElement.getDeclaringExtension(), iconName);
+	if (iconName != null) {
+		this.image = WorkbenchImages.getImageDescriptorFromExtension(actionElement.getDeclaringExtension(), iconName);
+	}
 }
 /**
  * Returns an object which is an instance of the given class

@@ -375,6 +375,8 @@ public static ImageDescriptor getImageDescriptor(String symbolicName) {
  * plugins installation directory.
  */
 public static ImageDescriptor getImageDescriptorFromExtension(IExtension extension, String subdirectoryAndFilename) {
+	Assert.isNotNull(extension);
+	Assert.isNotNull(subdirectoryAndFilename);
 	return getImageDescriptorFromPlugin(extension.getDeclaringPluginDescriptor(),subdirectoryAndFilename);
 }
 /**
@@ -399,6 +401,8 @@ public static ImageDescriptor getImageDescriptorFromExtension(IExtension extensi
  * plugins installation directory or one of its fragments.
  */
 public static ImageDescriptor getImageDescriptorFromPlugin(IPluginDescriptor pluginDescriptor, String subdirectoryAndFilename) {
+	Assert.isNotNull(pluginDescriptor);
+	Assert.isNotNull(subdirectoryAndFilename);
 	URL fullPathString = pluginDescriptor.find(new Path(subdirectoryAndFilename));
 	if (fullPathString != null) {
 		return ImageDescriptor.createFromURL(fullPathString);
@@ -432,9 +436,11 @@ public static ImageDescriptor getImageDescriptorFromPlugin(IPluginDescriptor plu
  * all requested images are assumed to be in a directory below and relative to that
  * plugins installation directory.
  */
-public static ImageDescriptor getImageDescriptorFromPluginID(String pluginID, String subdirectoryAndFilename) {
+public static ImageDescriptor getImageDescriptorFromPluginID(String pluginId, String subdirectoryAndFilename) {
+	Assert.isNotNull(pluginId);
+	Assert.isNotNull(subdirectoryAndFilename);
 	return getImageDescriptorFromPlugin(
-				Platform.getPluginRegistry().getPluginDescriptor(pluginID),
+				Platform.getPluginRegistry().getPluginDescriptor(pluginId),
 				subdirectoryAndFilename);
 }
 /**
@@ -454,7 +460,8 @@ public static ImageDescriptor getImageDescriptorFromPluginID(String pluginID, St
  */
 
 public static ImageDescriptor getImageDescriptorFromProgram(String filename, int offset) {
-	String key = filename + "*" + Integer.toString(offset); //use * as it is not a valid filename character//$NON-NLS-1$
+	Assert.isNotNull(filename);
+	String key = filename + "*" + offset; //use * as it is not a valid filename character//$NON-NLS-1$
 	ImageDescriptor desc = getImageDescriptor(key);
 	if (desc == null) {
 		desc = new ProgramImageDescriptor(filename,offset);
