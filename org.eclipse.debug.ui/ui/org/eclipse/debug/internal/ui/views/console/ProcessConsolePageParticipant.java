@@ -205,7 +205,7 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
     }
     
     protected IProcess getProcess() {
-        return fConsole.getProcess();
+        return fConsole != null ? fConsole.getProcess() : null;
     }
 
     /* (non-Javadoc)
