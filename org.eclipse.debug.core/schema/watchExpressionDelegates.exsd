@@ -54,7 +54,7 @@
                   specifies a Java class which implements &lt;samp&gt;org.eclipse.debug.core.model.IWatchExpressionDelegate&lt;/samp&gt;, which is used to evaluate the value of an expression.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.debug.core.variables.IVariableExpander"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.debug.core.model.IWatchExpressionDelegate"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -86,6 +86,15 @@ The following is the definition of a watch expression delegate for the com.examp
       </documentation>
    </annotation>
 
+	<annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Value of the attribute &lt;b&gt;delegateClass&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.core.model.IWatchExpressionDelegate&lt;/b&gt;.
+      </documentation>
+   </annotation>
+   
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
