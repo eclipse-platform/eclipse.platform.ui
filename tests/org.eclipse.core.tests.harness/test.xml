@@ -5,7 +5,8 @@
   <!-- sets the properties eclipse-home, and library-file -->
   <property name="eclipse-home" value="${basedir}/../../"/>
   <property name="library-file" value="${eclipse-home}/plugins/org.eclipse.test/library.xml"/>
-  <property name="location" value="${eclipse-home}/core_sniff_folder"/>
+  <property name="runtime_location" value="${eclipse-home}/core_runtime_sniff_folder"/>
+  <property name="resources_location" value="${eclipse-home}/core_resources_sniff_folder"/>
 
   <!-- This target holds all initialization code that needs to be done for -->
   <!-- all tests that are to be run. Initialization for individual tests -->
@@ -17,7 +18,8 @@
   <!-- This target holds code to cleanup the testing environment after the tests -->
   <!-- have been run. You can use this to delete temporary files that are created. -->
   <target name="cleanup">
-    <delete dir="${location}" quiet="true"/>
+    <delete dir="${runtime_location}" quiet="true"/>
+    <delete dir="${resources_location}" quiet="true"/>
   </target>
 
   <!-- This target runs the test suite. Any actions that need to happen after all -->
@@ -31,7 +33,7 @@
 
   <target name="ResourcesTests" depends="init,cleanup">
     <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
-      <property name="data-dir" value="${location}"/>
+      <property name="data-dir" value="${resources_location}"/>
       <property name="plugin-name" value="org.eclipse.core.tests.resources"/>
       <property name="classname" value="org.eclipse.core.tests.resources.AutomatedTests"/>
     </ant>
@@ -116,7 +118,7 @@
 
   <target name="RuntimeTests" depends="init,cleanup">
     <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
-      <property name="data-dir" value="${location}"/>
+      <property name="data-dir" value="${runtime_location}"/>
       <property name="plugin-name" value="org.eclipse.core.tests.runtime"/>
       <property name="classname" value="org.eclipse.core.tests.runtime.AutomatedTests"/>
     </ant>
