@@ -26,9 +26,8 @@ public class UpdateUIImages {
 	 */
 	
 	private static final String PATH_OBJ= ICONS_PATH+"obj16/"; //$NON-NLS-1$
-	private static final String PATH_VIEW = ICONS_PATH+"cview16/"; //$NON-NLS-1$
+	private static final String PATH_VIEW = ICONS_PATH+"eview16/"; //$NON-NLS-1$
 	private static final String PATH_LCL= ICONS_PATH+"elcl16/"; //$NON-NLS-1$
-	private static final String PATH_LCL_HOVER= ICONS_PATH+"clcl16/"; //$NON-NLS-1$
 	private static final String PATH_LCL_DISABLED= ICONS_PATH+"dlcl16/"; //$NON-NLS-1$
 	private static final String PATH_OVR = ICONS_PATH + "ovr16/"; //$NON-NLS-1$
 	private static final String PATH_WIZBAN = ICONS_PATH + "wizban/"; //$NON-NLS-1$
@@ -90,7 +89,6 @@ public class UpdateUIImages {
 //	public static final ImageDescriptor DESC_SHOW_UNCONF_D = create(PATH_LCL_DISABLED, "show_unconf.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_COLLAPSE_ALL = create(PATH_LCL, "collapseall.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_SHOW_HIERARCHY = create(PATH_LCL, "hierarchicalLayout.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_SHOW_HIERARCHY_H = create(PATH_LCL_HOVER, "hierarchicalLayout.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_SHOW_HIERARCHY_D = create(PATH_LCL_DISABLED, "hierarchicalLayout.gif"); //$NON-NLS-1$
 
 	/**
