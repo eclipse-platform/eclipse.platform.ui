@@ -275,6 +275,36 @@ public URL find(IPath path);
  * Returns a URL for the given path.  Returns <code>null</code> if the URL
  * could not be computed or created.
  * 
+ * find will look for this path under the directory structure for this plugin
+ * and any of its fragments.  If this path will yield a result outside the
+ * scope of this plugin, <code>null</code> will be returned.  Note that
+ * there is no specific order to the fragments.
+ * 
+ * The following arguments may also be used
+ * 
+ *  $nl$ - for language specific information
+ *  $os$ - for operating system specific information
+ *  $ws$ - for windowing system specific information
+ * 
+ * A path of $nl$/about.properties in an environment with a default 
+ * locale of en_CA will return a URL corresponding to the first place
+ * about.properties is found according to the following order:
+ *   plugin root/nl/en/CA/about.properties
+ *   fragment1 root/nl/en/CA/about.properties
+ *   fragment2 root/nl/en/CA/about.properties
+ *   ...
+ *   plugin root/nl/en/about.properties
+ *   fragment1 root/nl/en/about.properties
+ *   fragment2 root/nl/en/about.properties
+ *   ...
+ *   plugin root/about.properties
+ *   fragment1 root/about.properties
+ *   fragment2 root/about.properties
+ *   ...
+ * 
+ * If a locale other than the default locale is desired, use 
+ * public URL find(IPath path, Map override)
+ * 
  * @param path file path relative to plug-in installation location
  * @param override map of override substitution arguments to be used for
  * any $arg$ path elements. The map keys correspond to the substitution
