@@ -39,8 +39,7 @@ public void run() {
 	if (marker.exists() && resource instanceof IFile) {
 		IWorkbenchPage page = getTaskList().getSite().getPage();
 		try {
-			boolean activate = OpenStrategy.getOpenMethod() == OpenStrategy.DOUBLE_CLICK;
-			page.openEditor(marker,activate);
+			page.openEditor(marker,OpenStrategy.activateOnOpen());
 		} catch (PartInitException e) {
 			DialogUtil.openError(
 				page.getWorkbenchWindow().getShell(),

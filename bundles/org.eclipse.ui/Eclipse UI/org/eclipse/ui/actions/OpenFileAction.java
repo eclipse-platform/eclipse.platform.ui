@@ -86,7 +86,7 @@ void openFile(IFile file) {
 		return;
 	}
 	try {
-		boolean activate = OpenStrategy.getOpenMethod() == OpenStrategy.DOUBLE_CLICK;
+		boolean activate = OpenStrategy.activateOnOpen();
 		if (editorDescriptor == null)
 			getWorkbenchPage().openEditor(file,null,activate);
 		else {

@@ -31,8 +31,7 @@ public void run() {
 	for (Iterator i = getStructuredSelection().iterator(); i.hasNext();) {
 		IMarker marker = (IMarker) i.next();
 		try {
-			boolean activate = OpenStrategy.getOpenMethod() == OpenStrategy.DOUBLE_CLICK;
-			page.openEditor(marker,activate);
+			page.openEditor(marker,OpenStrategy.activateOnOpen());
 		} catch (PartInitException e) {
 			// Open an error style dialog for PartInitException by
 			// including any extra information from the nested

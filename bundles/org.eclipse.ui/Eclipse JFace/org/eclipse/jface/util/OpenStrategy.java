@@ -96,6 +96,12 @@ public class OpenStrategy {
 				return;
 		}
 	}
+	/**
+	 * Return true if editors should be activated when opened.
+	 */
+	public static boolean activateOnOpen() {
+		return getOpenMethod() == DOUBLE_CLICK;
+	}
 	/*
 	 * Adds all needed listener to the control in order to implement
 	 * single-click/double-click strategies.
