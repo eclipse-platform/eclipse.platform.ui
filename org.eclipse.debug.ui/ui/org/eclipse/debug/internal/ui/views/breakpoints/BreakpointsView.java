@@ -64,6 +64,7 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
@@ -682,14 +683,9 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
                 Object object = objects[i];
                 if (object instanceof IBreakpoint) {
                     IBreakpoint breakpoint = (IBreakpoint) object;
-                    BreakpointContainer[] containers = fContentProvider.getLeafContainers(breakpoint);
-                    if (containers != null) {
-                        for (int j = 0; j < containers.length; j++) {
-                            BreakpointContainer container = containers[j];
-                            if (!container.getOrganizer().canRemove(breakpoint, container.getCategory())) {
-                                return false;
-                            }
-                        }
+                    BreakpointContainer[] containers = getMovedFromContainers(breakpoint);
+                    if (containers == null || containers.length == 0) {
+                        return false;
                     }
                 } else {
                     return false;
@@ -744,23 +740,6 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
         }
     }
     
-    public BreakpointContainer[] getSourceContainers(ISelection s) {
-        List list = new ArrayList();
-        if (s instanceof IStructuredSelection) {
-            // remove from source on move operation
-            IStructuredSelection selection = (IStructuredSelection) s;
-            Object[] breakpoints = selection.toArray();
-            for (int i = 0; i < breakpoints.length; i++) {
-                IBreakpoint breakpoint = (IBreakpoint) breakpoints[i];
-                BreakpointContainer[] leafContainers = fContentProvider.getLeafContainers(breakpoint);
-                for (int j = 0; j < leafContainers.length; j++) {
-                    list.add(leafContainers[j]);
-                }
-            }
-        }        
-        return (BreakpointContainer[]) list.toArray(new BreakpointContainer[list.size()]);
-    }
-    
     /** 
      * Pastes the selection into the given target
      * 
@@ -778,5 +757,72 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
             return true;
         }
         return false;
+    }    
+    
+    /**
+     * Returns the root containers containing the given breakpoint, or <code>null</code>
+     * if none
+     * 
+     * @param breakpoint
+     * @return root containers containing the given breakpoint or <code>null</code>
+     */
+    public BreakpointContainer[] getRoots(IBreakpoint breakpoint) {
+        return fContentProvider.getRoots(breakpoint);
+    }    
+    
+    public BreakpointContainer[] getMovedFromContainers(ISelection selection) {
+        List list = new ArrayList();
+        if (selection instanceof IStructuredSelection) {
+            IStructuredSelection ss = (IStructuredSelection) selection;
+            Object[] objects = ss.toArray();
+            for (int i = 0; i < objects.length; i++) {
+                if (objects[i] instanceof IBreakpoint) {
+                    IBreakpoint breakpoint = (IBreakpoint) objects[i];
+                    BreakpointContainer[] containers = getMovedFromContainers(breakpoint);
+                    for (int j = 0; j < containers.length; j++) {
+                        list.add(containers[j]);
+                    }
+                }
+                
+            }
+        }
+        return (BreakpointContainer[]) list.toArray(new BreakpointContainer[list.size()]);
+    }
+    /**
+     * Returns the parent of the given breakpoint that allows the breakpoint
+     * to be removed. Only parents of selected breakpoints are considered.
+     * 
+     * @param breakpoint candidate for removal
+     * @return containers that the breakpoint should be removed from
+     */
+    public BreakpointContainer[] getMovedFromContainers(IBreakpoint breakpoint) {
+        BreakpointsViewer viewer = (BreakpointsViewer) getViewer();
+        Item[] items = viewer.getSelectedItems();    
+        List list = new ArrayList();
+        for (int i = 0; i < items.length; i++) {
+            TreeItem item = (TreeItem) items[i];
+            if (breakpoint.equals(item.getData())) {
+                BreakpointContainer parent = getRemoveableParent(item, breakpoint);
+                if (parent != null) {
+                    list.add(parent);
+                }
+            }
+        }
+        return (BreakpointContainer[]) list.toArray(new BreakpointContainer[list.size()]);
+    }
+        
+    private BreakpointContainer getRemoveableParent(TreeItem item, IBreakpoint breakpoint) {
+        TreeItem parentItem = item.getParentItem();
+        if (parentItem != null) {
+            Object data = parentItem.getData();
+            if (data instanceof BreakpointContainer) {
+                BreakpointContainer container = (BreakpointContainer) data;
+                if (container.getOrganizer().canRemove(breakpoint, container.getCategory())) {
+                    return container;
+                }
+            }
+            return getRemoveableParent(parentItem, breakpoint);
+        }
+        return null;
     }    
 }

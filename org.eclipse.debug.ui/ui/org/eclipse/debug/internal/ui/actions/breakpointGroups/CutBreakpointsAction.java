@@ -11,17 +11,20 @@
 package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
-import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * CutBreakpointsAction
@@ -50,41 +53,34 @@ public class CutBreakpointsAction extends CopyBreakpointsAction {
         IStructuredSelection selection = getStructuredSelection();
         // only cut from selected containers, not all
         Object[] objects = selection.toArray();
-        BreakpointsViewer viewer = (BreakpointsViewer) breakpointsView.getViewer();
-        Item[] items = viewer.getSelectedItems();
+        List removeFromManager = new ArrayList();
+        Map removeFromContainers = new HashMap();
         for (int i = 0; i < objects.length; i++) {
             IBreakpoint breakpoint = (IBreakpoint) objects[i];
-            BreakpointContainer[] containers = getSourceContainers(breakpoint, items);
+            BreakpointContainer[] containers = breakpointsView.getMovedFromContainers(breakpoint);
+            BreakpointContainer[] roots = breakpointsView.getRoots(breakpoint);
+            if (roots != null && containers != null && roots.length == 1 && containers.length == 1) {
+                removeFromManager.add(breakpoint);
+            } else {
+                removeFromContainers.put(breakpoint, containers);
+            }
+        }
+        Iterator iterator = removeFromManager.iterator();
+        while (iterator.hasNext()) {
+            IBreakpoint breakpoint = (IBreakpoint) iterator.next();
+            // TODO: dispose of orphaned breakpoints
+            try {
+                DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpoint, false);
+            } catch (CoreException e) {
+                DebugUIPlugin.log(e);
+            }
+        }
+        iterator = removeFromContainers.keySet().iterator();
+        while (iterator.hasNext()) {
+            IBreakpoint breakpoint = (IBreakpoint) iterator.next();
+            BreakpointContainer[] containers = (BreakpointContainer[]) removeFromContainers.get(breakpoint);
             breakpointsView.performRemove(containers, new StructuredSelection(breakpoint));
         }
     }
     
-    private BreakpointContainer[] getSourceContainers(IBreakpoint breakpoint, Item[] items) {
-        List list = new ArrayList();
-        for (int i = 0; i < items.length; i++) {
-            TreeItem item = (TreeItem) items[i];
-            if (!item.isDisposed() && breakpoint.equals(item.getData())) {
-                BreakpointContainer parent = getRemoveableParent(item, breakpoint);
-                if (parent != null) {
-                    list.add(parent);
-                }
-            }
-        }
-        return (BreakpointContainer[]) list.toArray(new BreakpointContainer[list.size()]);
-    }
-    
-    private BreakpointContainer getRemoveableParent(TreeItem item, IBreakpoint breakpoint) {
-        TreeItem parentItem = item.getParentItem();
-        if (parentItem != null) {
-            Object data = parentItem.getData();
-            if (data instanceof BreakpointContainer) {
-                BreakpointContainer container = (BreakpointContainer) data;
-                if (container.getOrganizer().canRemove(breakpoint, container.getCategory())) {
-                    return container;
-                }
-            }
-            return getRemoveableParent(parentItem, breakpoint);
-        }
-        return null;
-    }
 }

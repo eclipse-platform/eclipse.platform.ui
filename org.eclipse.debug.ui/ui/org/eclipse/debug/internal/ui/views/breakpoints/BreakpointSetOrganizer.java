@@ -36,6 +36,8 @@ import org.eclipse.ui.PlatformUI;
  */
 public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate implements IPropertyChangeListener, IBreakpointsListener {
     
+    private static int fgIgnoreAdd = 0;
+    
     /**
      * Constructs a working set breakpoint organizer. Listens for changes in
      * working sets and fires property change notification.
@@ -106,13 +108,23 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
      * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsAdded(org.eclipse.debug.core.model.IBreakpoint[])
      */
     public void breakpointsAdded(IBreakpoint[] breakpoints) {
-        IWorkingSet set = getDefaultWorkingSet();
-        if (set != null) {
-            IAdaptable[] elements = set.getElements();
-            IAdaptable[] newElements = new IAdaptable[elements.length + breakpoints.length];
-            System.arraycopy(elements, 0, newElements, 0, elements.length);
-            System.arraycopy(breakpoints, 0, newElements, elements.length, breakpoints.length);
-            set.setElements(newElements);
+        if (fgIgnoreAdd == 0) {
+            IWorkingSet set = getDefaultWorkingSet();
+            if (set != null) {
+                IAdaptable[] elements = set.getElements();
+                IAdaptable[] newElements = new IAdaptable[elements.length + breakpoints.length];
+                System.arraycopy(elements, 0, newElements, 0, elements.length);
+                System.arraycopy(breakpoints, 0, newElements, elements.length, breakpoints.length);
+                set.setElements(newElements);
+            }
+        }
+    }
+    
+    public static void setAddToDefault(boolean add) {
+        if (!add) {
+            fgIgnoreAdd++;
+        } else {
+            fgIgnoreAdd--;
         }
     }
 

@@ -59,7 +59,7 @@ public class BreakpointsDragAdapter extends DragSourceAdapter implements Transfe
      */
     protected boolean isDragable(ISelection selection) {
         if (fView.canMove(selection)) {
-            fContainers = fView.getSourceContainers(selection);
+            fContainers = fView.getMovedFromContainers(selection);
             return true;
         }
         return false;

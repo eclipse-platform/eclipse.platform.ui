@@ -12,7 +12,13 @@ package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer;
+import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointSetOrganizer;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelection;
@@ -81,7 +87,27 @@ public class PasteBreakpointsAction extends SelectionListenerAction {
      * Implementation of method defined on <code>IAction</code>.
      */
     public void run() {
-        breakpointsView.performPaste(getTarget(), LocalSelectionTransfer.getInstance().getSelection());
+        ISelection selection = LocalSelectionTransfer.getInstance().getSelection();
+        Object target = getTarget();
+        if (selection instanceof IStructuredSelection) {
+            IStructuredSelection ss = (IStructuredSelection) selection;
+            Object[] objects = ss.toArray();
+            IBreakpointManager breakpointManager = DebugPlugin.getDefault().getBreakpointManager();
+            for (int i = 0; i < objects.length; i++) {
+                if (objects[i] instanceof IBreakpoint) {
+                    IBreakpoint breakpoint = (IBreakpoint) objects[i];
+                    try {
+                        BreakpointSetOrganizer.setAddToDefault(false);
+                        breakpointManager.addBreakpoint(breakpoint);
+                    } catch (CoreException e) {
+                        DebugUIPlugin.log(e);
+                    } finally {
+                        BreakpointSetOrganizer.setAddToDefault(true);
+                    }
+                }
+            }
+        }
+        breakpointsView.performPaste(target, selection);
     }
 
     /**
