@@ -499,7 +499,7 @@ public abstract class ResourceState {
 	
 	private ResourceState getResourceStateFor(IResource resource) throws TeamException {
 		TargetProvider provider = TargetManager.getProvider(resource.getProject());
-		return ((SynchronizedTargetProvider)provider).newState(resource);
+		return ((SynchronizedTargetProvider)provider).getState(resource);
 	}
 	
 	/**
