@@ -34,6 +34,7 @@ public class AllTests extends TestSuite {
 	public static Test suite() throws Exception {
 		TestSuite suite = new TestSuite();
 		suite.setName("All Update Manager Tests");
+		suite.addTest(AllMirrorTests.suite());	
 		suite.addTest(AllSiteValidationTests.suite());
 		suite.addTest(AllPlatformConfigurationTests.suite());
 		suite.addTest(AllRegularInstallTests.suite());
@@ -46,7 +47,6 @@ public class AllTests extends TestSuite {
 		suite.addTest(AllNestedTests.suite());	
 		suite.addTest(AllReconciliationTests.suite());					
 		suite.addTest(AllModelTests.suite());	
-		suite.addTest(AllMirrorTests.suite());	
 		//suite.addTest(AllStandaloneTests.suite());
 		return suite;
 	}
