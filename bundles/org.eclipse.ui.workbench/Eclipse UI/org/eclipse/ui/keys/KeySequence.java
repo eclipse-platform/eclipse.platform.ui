@@ -23,7 +23,26 @@ import org.eclipse.ui.internal.util.Util;
 
 /**
  * <p>
- * JAVADOC
+ * A <code>KeySequence</code> is defined a set of zero or more 
+ * <code>KeyStrokes</code>, with the stipulation that all <code>KeyStroke</code>
+ * objects must be complete, save for the last one, whose completeness is 
+ * optional. A <code>KeySequence</code> is said to be complete if all of its
+ * <code>KeyStroke</code> objects are complete.
+ * </p>
+ * <p>
+ * All <code>KeySequence</code> objects have a formal string representation 
+ * available via the <code>toString()</code> method. There are a number of 
+ * methods to get instances of <code>KeySequence</code> objects, including one 
+ * which can parse this formal string representation. 
+ * </p>
+ * <p>
+ * All <code>KeySequence</code> objects, via the <code>format()</code> method, 
+ * provide a version of their formal string representation translated by 
+ * platform and locale, suitable for display to a user.
+ * </p>
+ * <p>
+ * <code>KeySequence</code> objects are immutable. It is not permitted to extend 
+ * this class.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>

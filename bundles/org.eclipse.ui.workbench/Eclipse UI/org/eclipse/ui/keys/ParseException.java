@@ -13,10 +13,8 @@ package org.eclipse.ui.keys;
 
 /**
  * <p>
- * JAVADOC
- * </p>
- * <p>
- * This class is not intended to be extended by clients.
+ * This class represents the exception caused due to errors parsing of KeyStroke 
+ * and KeySequence objects from strings.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -24,20 +22,22 @@ package org.eclipse.ui.keys;
  * 
  * @since 3.0
  */
-public class ParseException extends Exception {
+public final class ParseException extends Exception {
 
 	/**
-	 * JAVADOC
+	 * Constructs a <code>ParseException</code> with no specified detail 
+	 * message. 
 	 */	
 	public ParseException() {
 	}
 
 	/**
-	 * JAVADOC
+	 * Constructs a <code>ParseException</code> with the specified detail 
+	 * message. 
 	 *
-	 * @param s
+	 * @param s	the detail message.
 	 */	
-	public ParseException(String s) {
+	public ParseException(final String s) {
 		super(s);
 	}
 }

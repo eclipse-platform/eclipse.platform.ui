@@ -28,7 +28,24 @@ import org.eclipse.ui.internal.util.Util;
 
 /**
  * <p>
- * JAVADOC
+ * A <code>KeyStroke</code> is defined as an optional set of modifier keys 
+ * followed optionally by a natural key. A <code>KeyStroke</code> is said to be
+ * complete if it contains a natural key.
+ * </p>
+ * <p>
+ * All <code>KeyStroke</code> objects have a formal string representation 
+ * available via the <code>toString()</code> method. There are a number of 
+ * methods to get instances of <code>KeyStroke</code> objects, including one 
+ * which can parse this formal string representation. 
+ * </p>
+ * <p>
+ * All <code>KeyStroke</code> objects, via the <code>format()</code> method, 
+ * provide a version of their formal string representation translated by 
+ * platform and locale, suitable for display to a user.
+ * </p>
+ * <p>
+ * <code>KeyStroke</code> objects are immutable. It is not permitted to extend 
+ * this class.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
