@@ -24,7 +24,9 @@ import org.eclipse.core.runtime.*;
  */
 public class InstallAbortedException extends CoreException {
 
-	/**
+    private static final long serialVersionUID = 1L;
+
+    /**
 	 * Construct the exception indicating enclosing CoreException
 	 * 
 	 * @since 2.0

@@ -18,7 +18,10 @@ import org.eclipse.core.runtime.*;
  * @since 3.0
  */
 public class FeatureDownloadException extends CoreException {
-	/**
+
+    private static final long serialVersionUID = 1L;
+
+    /**
 	 * Construct the exception indicating enclosing CoreException
 	 * 
 	 * @since 3.0

@@ -26,7 +26,9 @@ import org.eclipse.update.core.*;
  * 
  */
 public class InstallRegistry extends Properties {
-	private File file = null;
+
+    private static final long serialVersionUID = 1L;
+    private File file = null;
 	private final static String REGISTRY = "registry"; //$NON-NLS-1$
 	private static InstallRegistry instance;
 	

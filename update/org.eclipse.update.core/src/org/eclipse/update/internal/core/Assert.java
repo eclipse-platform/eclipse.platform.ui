@@ -36,7 +36,9 @@ public final class Assert {
 	 */
 	private static class AssertionFailedException extends RuntimeException {
 
-		/**
+        private static final long serialVersionUID = 1L;
+
+        /**
 		 * Constructs a new exception.
 		 */
 		public AssertionFailedException() {

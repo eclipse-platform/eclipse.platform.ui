@@ -26,7 +26,8 @@ package org.eclipse.update.core.model;
 
 public class InvalidSiteTypeException extends Exception {
 
-	private String newSiteType;
+    private static final long serialVersionUID = 1L;
+    private String newSiteType;
 
 	/**
 	 * Construct the exception indicating the detected site type

@@ -21,7 +21,9 @@ import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.search.*;
 
 public class DiscoveryFolder extends BookmarkFolder {
-	UpdatePolicy updatePolicy = new UpdatePolicy();
+
+    private static final long serialVersionUID = 1L;
+    UpdatePolicy updatePolicy = new UpdatePolicy();
 	
 	public DiscoveryFolder() {
 		super(UpdateUI.getString("DiscoveryFolder.name")); //$NON-NLS-1$

@@ -29,7 +29,10 @@ public class PluginParser extends DefaultHandler implements IConfigurationConsta
 	private PluginEntry pluginEntry;
 
 	private class ParseCompleteException extends SAXException {
-		public ParseCompleteException(String arg0) {
+		
+        private static final long serialVersionUID = 1L;
+
+        public ParseCompleteException(String arg0) {
 			super(arg0);
 		}
 	}

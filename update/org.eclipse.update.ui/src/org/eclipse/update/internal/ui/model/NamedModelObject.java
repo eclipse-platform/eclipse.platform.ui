@@ -18,7 +18,9 @@ import org.eclipse.ui.model.*;
 
 public class NamedModelObject extends UIModelObject 
 							implements IWorkbenchAdapter, Serializable  {
-	private String name;
+
+    private static final long serialVersionUID = 1L;
+    private String name;
 	transient private NamedModelObject parent;
 	
 	public static final String P_NAME="p_name"; //$NON-NLS-1$

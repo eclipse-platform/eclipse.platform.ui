@@ -174,10 +174,10 @@ public class LocalSiteSelector {
 
 				boolean hasFeatures = false;
 				boolean hasPlugins = false;
-				for (Enumeration enum = siteZip.entries();
-					enum.hasMoreElements();
+				for (Enumeration iterator = siteZip.entries();
+					iterator.hasMoreElements();
 					) {
-					ZipEntry zEntry = (ZipEntry) enum.nextElement();
+					ZipEntry zEntry = (ZipEntry) iterator.nextElement();
 					if (!hasFeatures
 						&& zEntry.getName().startsWith("features")) { //$NON-NLS-1$
 						hasFeatures = true;

@@ -19,7 +19,9 @@ import org.eclipse.update.internal.ui.*;
 
 public class SiteBookmark extends NamedModelObject 
 							implements ISiteAdapter {
-	public static final String P_URL="p_url"; //$NON-NLS-1$
+
+    private static final long serialVersionUID = 1L;
+    public static final String P_URL="p_url"; //$NON-NLS-1$
 	public static final String P_TYPE="p_type"; //$NON-NLS-1$
 	
 	private URL url;

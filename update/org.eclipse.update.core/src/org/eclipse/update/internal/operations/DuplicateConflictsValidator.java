@@ -100,10 +100,10 @@ public class DuplicateConflictsValidator  {
 
 	private static ArrayList computeConflicts(Hashtable featureTable) {
 		ArrayList result = null;
-		for (Enumeration enum = featureTable.elements();
-			enum.hasMoreElements();
+		for (Enumeration iterator = featureTable.elements();
+			iterator.hasMoreElements();
 			) {
-			ArrayList candidate = (ArrayList) enum.nextElement();
+			ArrayList candidate = (ArrayList) iterator.nextElement();
 			if (candidate.size() == 1)
 				continue;
 			ArrayList conflict = checkForConflict(candidate);

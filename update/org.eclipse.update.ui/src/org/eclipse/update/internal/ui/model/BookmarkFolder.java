@@ -13,7 +13,9 @@ package org.eclipse.update.internal.ui.model;
 import java.util.*;
 
 public class BookmarkFolder extends NamedModelObject {
-	protected ArrayList children= new ArrayList();
+
+    private static final long serialVersionUID = 1L;
+    protected ArrayList children= new ArrayList();
 	public BookmarkFolder() {
 	}
 	

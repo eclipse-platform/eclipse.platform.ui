@@ -35,7 +35,10 @@ public class DefaultPluginParser extends DefaultHandler {
 	private static final String FRAGMENT = "fragment"; //$NON-NLS-1$
 
 	private class ParseCompleteException extends SAXException {
-		public ParseCompleteException(String arg0) {
+
+        private static final long serialVersionUID = 1L;
+
+        public ParseCompleteException(String arg0) {
 			super(arg0);
 		}
 	}

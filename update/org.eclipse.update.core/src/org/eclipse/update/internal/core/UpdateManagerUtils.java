@@ -883,7 +883,9 @@ public static class Writer {
 	}
 
 	public static class CopyException extends Exception {
-		Exception rootException;
+        
+        private static final long serialVersionUID = 1L;
+        Exception rootException;
 		int bytesCopied;
 
 		/**

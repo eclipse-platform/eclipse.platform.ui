@@ -61,8 +61,8 @@ public class SharedLabelProvider
 	}
 
 	private void reset() {
-		for (Enumeration enum = images.elements(); enum.hasMoreElements();) {
-			Image image = (Image) enum.nextElement();
+		for (Enumeration iterator = images.elements(); iterator.hasMoreElements();) {
+			Image image = (Image) iterator.nextElement();
 			image.dispose();
 		}
 		images.clear();
