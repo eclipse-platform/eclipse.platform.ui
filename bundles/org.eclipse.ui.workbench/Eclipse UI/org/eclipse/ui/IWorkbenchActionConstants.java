@@ -22,8 +22,6 @@ package org.eclipse.ui;
  * <ul>
  *   <li>File menu (<code>M_FILE</code>)</li>
  *   <li>Edit menu (<code>M_EDIT</code>)</li>
- *   <li>View menu (<code>M_VIEW</code>)</li>
- *   <li>Workbench menu (<code>M_WORKBENCH</code>)</li>
  *   <li>Window menu (<code>M_WINDOW</code>)</li>
  *   <li>Help menu (<code>M_HELP</code>)</li>
  * </ul>
