@@ -77,6 +77,11 @@ public class WWinPluginAction extends PluginAction implements IActionSetContribu
 						if (val instanceof Boolean) {
 							setEnabled(((Boolean) val).booleanValue());
 						}
+					} else if (event.getProperty().equals(Action.CHECKED)) {
+						Object val = event.getNewValue();
+						if (val instanceof Boolean) {
+							setChecked(((Boolean) val).booleanValue());
+						}
 					} else if (event.getProperty().equals(Action.TEXT)) {
 						Object val = event.getNewValue();
 						if (val instanceof String) {
@@ -224,6 +229,18 @@ public class WWinPluginAction extends PluginAction implements IActionSetContribu
 	 */
 	public void setHelpListener(HelpListener listener) {
 		localHelpListener = listener;
+	}
+
+	/* (non-Javadoc)
+	 * Method declared on IAction.
+	 */
+	public void setChecked(boolean checked) {
+		super.setChecked(checked);
+		// This call may come from the SWT control event handler
+		// itself, so notify the retarget action to keep things
+		// in sync.
+		if (retargetAction != null)
+			retargetAction.setChecked(checked);
 	}
 
 	/**
