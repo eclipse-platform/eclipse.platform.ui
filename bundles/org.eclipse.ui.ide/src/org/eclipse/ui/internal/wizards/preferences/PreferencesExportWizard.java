@@ -121,7 +121,7 @@ public class PreferencesExportWizard extends Wizard implements IExportWizard {
 //            }
 //        }
 
-        setWindowTitle(PreferencesMessages.getString("PreferencesExportWizard.export")); //$NON-NLS-1$
+        setWindowTitle(PreferencesMessages.PreferencesExportWizard_export);
         setDefaultPageImageDescriptor(getImageDescriptor("wizban/exportdir_wiz.gif"));//$NON-NLS-1$
         setNeedsProgressMonitor(true);
     }

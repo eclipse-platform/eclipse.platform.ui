@@ -81,10 +81,9 @@ class PropertySheetViewer extends Viewer {
     private TreeEditor treeEditor;
 
     private static String[] columnLabels = {
-            PropertiesMessages.getString("PropertyViewer.property"), PropertiesMessages.getString("PropertyViewer.value") }; //$NON-NLS-2$ //$NON-NLS-1$
+            PropertiesMessages.PropertyViewer_property, PropertiesMessages.PropertyViewer_value };
 
-    private static String MISCELLANEOUS_CATEGORY_NAME = PropertiesMessages
-            .getString("PropertyViewer.misc"); //$NON-NLS-1$
+    private static String MISCELLANEOUS_CATEGORY_NAME = PropertiesMessages.PropertyViewer_misc;
 
     // Cell editor support.
     private int columnToEdit = 1;

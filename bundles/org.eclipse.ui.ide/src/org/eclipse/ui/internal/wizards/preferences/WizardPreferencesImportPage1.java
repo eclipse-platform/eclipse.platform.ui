@@ -38,10 +38,8 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
      */
     protected WizardPreferencesImportPage1(String pageName) {
         super(pageName);
-        setTitle(PreferencesMessages
-                .getString("WizardPreferencesImportPage1.importTitle")); //$NON-NLS-1$
-        setDescription(PreferencesMessages
-                .getString("WizardPreferencesImportPage1.importDescription")); //$NON-NLS-1$
+        setTitle(PreferencesMessages.WizardPreferencesImportPage1_importTitle);
+        setDescription(PreferencesMessages.WizardPreferencesImportPage1_importDescription);
     }
 
     /**
@@ -52,13 +50,11 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
     }
 
     protected String getAllButtonText() {
-        return PreferencesMessages
-                .getString("WizardPreferencesImportPage1.all"); //$NON-NLS-1$
+        return PreferencesMessages.WizardPreferencesImportPage1_all;
     }
 
     protected String getChooseButtonText() {
-        return PreferencesMessages
-                .getString("WizardPreferencesImportPage1.choose"); // //$NON-NLS-1$
+        return PreferencesMessages.WizardPreferencesImportPage1_choose;
     }
 
     /*
@@ -133,8 +129,7 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
      * @return java.lang.String
      */
     protected String getDestinationLabel() {
-        return PreferencesMessages
-                .getString("WizardPreferencesImportPage1.file"); //$NON-NLS-1$
+        return PreferencesMessages.WizardPreferencesImportPage1_file;
     }
 
     /**

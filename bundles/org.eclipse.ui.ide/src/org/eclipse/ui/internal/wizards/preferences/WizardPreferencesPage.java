@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.wizards.preferences;
 
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -26,6 +25,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -184,8 +184,7 @@ public abstract class WizardPreferencesPage extends WizardDataTransferPage {
     protected final boolean validateDestinationGroup() {
         File file = new File(getDestinationValue());
         if (file.getPath().length() <= 0 || file.isDirectory()) {
-            setMessage(PreferencesMessages
-                    .getString("WizardPreferencesExportPage1.noPrefFile")); //$NON-NLS-1$
+            setMessage(PreferencesMessages.WizardPreferencesExportPage1_noPrefFile);
             return false;
         }
 
@@ -257,8 +256,7 @@ public abstract class WizardPreferencesPage extends WizardDataTransferPage {
 		chooseImportsButton.setText(getChooseButtonText());
 
         group = new Group(composite, SWT.NONE);
-        group.setText(PreferencesMessages
-                .getString("WizardPreferencesExportPage1.preferences")); //$NON-NLS-1$
+        group.setText(PreferencesMessages.WizardPreferencesExportPage1_preferences);
         GridData data = new GridData(GridData.FILL_BOTH);
         data.horizontalSpan = 2;
         group.setLayoutData(data);
@@ -390,8 +388,7 @@ public abstract class WizardPreferencesPage extends WizardDataTransferPage {
         // destination browse button
         destinationBrowseButton = new Button(destinationSelectionGroup,
                 SWT.PUSH);
-        destinationBrowseButton.setText(PreferencesMessages
-                .getString("PreferencesExport.browse")); //$NON-NLS-1$
+        destinationBrowseButton.setText(PreferencesMessages.PreferencesExport_browse);
         destinationBrowseButton.setLayoutData(new GridData(
                 GridData.HORIZONTAL_ALIGN_FILL));
         destinationBrowseButton.addListener(SWT.Selection, this);
@@ -417,8 +414,7 @@ public abstract class WizardPreferencesPage extends WizardDataTransferPage {
         // overwrite... checkbox
         overwriteExistingFilesCheckbox = new Button(optionsGroup, SWT.CHECK
                 | SWT.LEFT);
-        overwriteExistingFilesCheckbox.setText(PreferencesMessages
-                .getString("ExportFile.overwriteExisting")); //$NON-NLS-1$
+        overwriteExistingFilesCheckbox.setText(PreferencesMessages.ExportFile_overwriteExisting);
     }
 
     /**
@@ -431,18 +427,15 @@ public abstract class WizardPreferencesPage extends WizardDataTransferPage {
      */
     protected boolean ensureDirectoryExists(File directory) {
         if (!directory.exists()) {
-            if (!queryYesNoQuestion(PreferencesMessages
-                    .getString("PreferencesExport.createTargetDirectory"))) //$NON-NLS-1$
+            if (!queryYesNoQuestion(PreferencesMessages.PreferencesExport_createTargetDirectory))
                 return false;
 
             if (!directory.mkdirs()) {
                 MessageDialog
                         .openError(
                                 getContainer().getShell(),
-                                PreferencesMessages
-                                        .getString("PreferencesExport.error"), //$NON-NLS-1$
-                                PreferencesMessages
-                                        .getString("PreferencesExport.directoryCreationError"));//$NON-NLS-1$
+                                PreferencesMessages.PreferencesExport_error,
+                                PreferencesMessages.PreferencesExport_directoryCreationError);
                 return false;
             }
         }
@@ -459,10 +452,7 @@ public abstract class WizardPreferencesPage extends WizardDataTransferPage {
     protected boolean ensureTargetIsValid(File file) {
         if (file.exists()) {
             if (!getOverwriteExisting()) {
-                String msg = MessageFormat
-                        .format(
-                                PreferencesMessages
-                                        .getString("WizardPreferencesExportPage1.overwrite"), new String[] { file.getAbsolutePath() }); // //$NON-NLS-1$
+                String msg = NLS.bind(PreferencesMessages.WizardPreferencesExportPage1_overwrite, file.getAbsolutePath());
                 if (!queryYesNoQuestion(msg))
                     return false;
             }
@@ -621,8 +611,7 @@ public abstract class WizardPreferencesPage extends WizardDataTransferPage {
      */
     protected void handleDestinationBrowseButtonPressed() {
         FileDialog dialog = new FileDialog(getContainer().getShell(), SWT.SAVE);
-        dialog.setText(PreferencesMessages
-                .getString("WizardPreferencesExportPage1.saveAs")); //$NON-NLS-1$
+        dialog.setText(PreferencesMessages.WizardPreferencesExportPage1_saveAs);
         dialog.setFilterPath(getDestinationValue());
         dialog.setFilterExtensions(new String[] { "*.epf" }); //$NON-NLS-1$
         String selectedFileName = dialog.open();

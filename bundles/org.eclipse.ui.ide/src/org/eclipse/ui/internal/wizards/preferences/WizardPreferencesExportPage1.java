@@ -41,10 +41,8 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage
      */
     protected WizardPreferencesExportPage1(String name) {
         super(name);
-        setTitle(PreferencesMessages
-                .getString("WizardPreferencesExportPage1.exportTitle")); //$NON-NLS-1$
-        setDescription(PreferencesMessages
-                .getString("WizardPreferencesExportPage1.exportDescription")); //$NON-NLS-1$
+        setTitle(PreferencesMessages.WizardPreferencesExportPage1_exportTitle);
+        setDescription(PreferencesMessages.WizardPreferencesExportPage1_exportDescription);
     }
 
     /**
@@ -56,13 +54,11 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage
     }
 
     protected String getAllButtonText() {
-        return PreferencesMessages
-                .getString("WizardPreferencesExportPage1.all"); //$NON-NLS-1$
+        return PreferencesMessages.WizardPreferencesExportPage1_all;
     }
 
     protected String getChooseButtonText() {
-        return PreferencesMessages
-                .getString("WizardPreferencesExportPage1.choose"); // //$NON-NLS-1$
+        return PreferencesMessages.WizardPreferencesExportPage1_choose;
     }
 
     /**
@@ -81,8 +77,7 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage
      * @return java.lang.String
      */
     protected String getDestinationLabel() {
-        return PreferencesMessages
-                .getString("WizardPreferencesExportPage1.file"); //$NON-NLS-1$
+        return PreferencesMessages.WizardPreferencesExportPage1_file;
     }
 
     /**

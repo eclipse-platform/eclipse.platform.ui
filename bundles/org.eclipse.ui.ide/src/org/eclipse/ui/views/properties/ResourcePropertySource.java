@@ -23,24 +23,19 @@ import org.eclipse.jface.viewers.IBasicPropertyConstants;
  * A Resource property source.
  */
 public class ResourcePropertySource implements IPropertySource {
-    protected static String NOT_LOCAL_TEXT = IDEPropertiesMessages
-            .getString("PropertySource.notLocal"); //$NON-NLS-1$
+    protected static String NOT_LOCAL_TEXT = IDEPropertiesMessages.PropertySource_notLocal;
 
-    protected static String FILE_NOT_FOUND = IDEPropertiesMessages
-            .getString("PropertySource.notFound"); //$NON-NLS-1$
+    protected static String FILE_NOT_FOUND = IDEPropertiesMessages.PropertySource_notFound;
 
-    protected static String UNDEFINED_PATH_VARIABLE = IDEPropertiesMessages
-            .getString("PropertySource.undefinedPathVariable"); //$NON-NLS-1$
+    protected static String UNDEFINED_PATH_VARIABLE = IDEPropertiesMessages.PropertySource_undefinedPathVariable;
 
-    protected static String FILE_NOT_EXIST_TEXT = IDEPropertiesMessages
-            .getString("PropertySource.fileNotExist"); //$NON-NLS-1$
+    protected static String FILE_NOT_EXIST_TEXT = IDEPropertiesMessages.PropertySource_fileNotExist;
 
     // The element for the property source
     protected IResource element;
 
     // Error message when setting a property incorrectly
-    protected String errorMessage = IDEPropertiesMessages
-            .getString("PropertySource.readOnly"); //$NON-NLS-1$
+    protected String errorMessage = IDEPropertiesMessages.PropertySource_readOnly;
 
     // Property Descriptors
     static protected IPropertyDescriptor[] propertyDescriptors = new IPropertyDescriptor[7];
@@ -249,10 +244,9 @@ public class ResourcePropertySource implements IPropertySource {
         }
         if (name.equals(IResourcePropertyConstants.P_EDITABLE_RES)) {
             if (element.isReadOnly())
-                return IDEPropertiesMessages
-                        .getString("ResourceProperty.false"); //$NON-NLS-1$
+                return IDEPropertiesMessages.ResourceProperty_false;
             else
-                return IDEPropertiesMessages.getString("ResourceProperty.true"); //$NON-NLS-1$
+                return IDEPropertiesMessages.ResourceProperty_true;
         }
         if (name.equals(IResourcePropertyConstants.P_DERIVED_RES)) {
             return String.valueOf(element.isDerived());

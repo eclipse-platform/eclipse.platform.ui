@@ -85,10 +85,8 @@ import org.eclipse.ui.PlatformUI;
             if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
                 throw e;
             if (MessageDialog.openQuestion(getPropertySheet().getControl()
-                    .getShell(), PropertiesMessages
-                    .getString("CopyToClipboardProblemDialog.title"), //$NON-NLS-1$
-                    PropertiesMessages
-                            .getString("CopyToClipboardProblemDialog.message"))) //$NON-NLS-1$
+                    .getShell(), PropertiesMessages.CopyToClipboardProblemDialog_title,
+                    PropertiesMessages.CopyToClipboardProblemDialog_message))
                 setClipboard(text);
         }
     }

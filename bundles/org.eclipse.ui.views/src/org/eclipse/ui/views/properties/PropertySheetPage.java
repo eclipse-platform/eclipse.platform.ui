@@ -327,9 +327,8 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 
         // Restore Default Value
         defaultsAction = new DefaultsAction(viewer, "defaults"); //$NON-NLS-1$
-        defaultsAction.setText(PropertiesMessages.getString("Defaults.text")); //$NON-NLS-1$
-        defaultsAction.setToolTipText(PropertiesMessages
-                .getString("Defaults.toolTip")); //$NON-NLS-1$
+        defaultsAction.setText(PropertiesMessages.Defaults_text);
+        defaultsAction.setToolTipText(PropertiesMessages.Defaults_toolTip);
         defaultsAction
                 .setImageDescriptor(getImageDescriptor("elcl16/defaults_ps.gif")); //$NON-NLS-1$
         defaultsAction
@@ -338,19 +337,16 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 
         // Show Advanced Properties
         filterAction = new FilterAction(viewer, "filter"); //$NON-NLS-1$
-        filterAction.setText(PropertiesMessages.getString("Filter.text")); //$NON-NLS-1$
-        filterAction.setToolTipText(PropertiesMessages
-                .getString("Filter.toolTip")); //$NON-NLS-1$
+        filterAction.setText(PropertiesMessages.Filter_text);
+        filterAction.setToolTipText(PropertiesMessages.Filter_toolTip);
         filterAction
                 .setImageDescriptor(getImageDescriptor("elcl16/filter_ps.gif")); //$NON-NLS-1$
         filterAction.setChecked(false);
 
         // Show Categories
         categoriesAction = new CategoriesAction(viewer, "categories"); //$NON-NLS-1$
-        categoriesAction.setText(PropertiesMessages
-                .getString("Categories.text")); //$NON-NLS-1$
-        categoriesAction.setToolTipText(PropertiesMessages
-                .getString("Categories.toolTip")); //$NON-NLS-1$
+        categoriesAction.setText(PropertiesMessages.Categories_text);
+        categoriesAction.setToolTipText(PropertiesMessages.Categories_toolTip);
         categoriesAction
                 .setImageDescriptor(getImageDescriptor("elcl16/tree_mode.gif")); //$NON-NLS-1$
         categoriesAction.setChecked(true);
@@ -359,7 +355,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
         Shell shell = viewer.getControl().getShell();
         clipboard = new Clipboard(shell.getDisplay());
         copyAction = new CopyPropertyAction(viewer, "copy", clipboard); //$NON-NLS-1$
-        copyAction.setText(PropertiesMessages.getString("CopyProperty.text")); //$NON-NLS-1$
+        copyAction.setText(PropertiesMessages.CopyProperty_text);
         copyAction.setImageDescriptor(sharedImages
                 .getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
     }

@@ -1,58 +1,45 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
-
+/**********************************************************************
+ * Copyright (c) 2005 IBM Corporation and others. All rights reserved.   This
+ * program and the accompanying materials are made available under the terms of
+ * the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.ui.views.properties;
 
-import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.eclipse.osgi.util.NLS;
 
-/**
- * Utility class which helps manage messages.
- */
-class PropertiesMessages {
-    private static final String RESOURCE_BUNDLE = "org.eclipse.ui.views.properties.messages";//$NON-NLS-1$
+public class PropertiesMessages extends NLS {
+	private static final String BUNDLE_NAME = "org.eclipse.ui.views.properties.messages";//$NON-NLS-1$
 
-    private static ResourceBundle bundle = ResourceBundle
-            .getBundle(RESOURCE_BUNDLE);
+	// package: org.eclipse.ui.views.properties
 
-    private PropertiesMessages() {
-        // prevent instantiation of class
-    }
+	// ==============================================================================
+	// Properties View
+	// ==============================================================================
 
-    /**
-     * Returns the formatted message for the given key in
-     * the resource bundle. 
-     *
-     * @param key the resource name
-     * @param args the message arguments
-     * @return the string
-     */
-    public static String format(String key, Object[] args) {
-        return MessageFormat.format(getString(key), args);
-    }
+	public static String Categories_text;
+	public static String Categories_toolTip;
 
-    /**
-     * Returns the resource object with the given key in
-     * the resource bundle. If there isn't any value under
-     * the given key, the key is returned.
-     *
-     * @param key the resource name
-     * @return the string
-     */
-    public static String getString(String key) {
-        try {
-            return bundle.getString(key);
-        } catch (MissingResourceException e) {
-            return key;
-        }
-    }
+	public static String CopyProperty_text;
+
+	public static String Defaults_text;
+	public static String Defaults_toolTip;
+
+	public static String Filter_text;
+	public static String Filter_toolTip;
+
+	public static String PropertyViewer_property;
+	public static String PropertyViewer_value;
+	public static String PropertyViewer_misc;
+
+	public static String CopyToClipboardProblemDialog_title;
+	public static String CopyToClipboardProblemDialog_message;
+
+	static {
+		// load message values from bundle file
+		NLS.initializeMessages(BUNDLE_NAME, PropertiesMessages.class);
+	}
 }
