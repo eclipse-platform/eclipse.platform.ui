@@ -98,12 +98,9 @@ public class ContextHelpDialog {
 		x = x >= 0 ? x : 0;
 		y = y >= 0 ? y : 0;
 		// check upper boundaries
-		int margin = 0;
-		if (System.getProperty("os.name").startsWith("Win"))
-			margin = 28; // for the Windows task bar in the ussual place;
 		Rectangle screen = display.getClientArea();
 		x = x + width <= screen.width ? x : screen.width - width;
-		y = y + height <= screen.height - margin ? y : screen.height - margin - height;
+		y = y + height <= screen.height ? y : screen.height - height;
 		shell.setLocation(x, y);
 	}
 	public synchronized void close() {
