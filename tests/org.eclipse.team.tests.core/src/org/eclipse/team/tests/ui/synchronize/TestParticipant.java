@@ -14,6 +14,7 @@ import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 public class TestParticipant extends AbstractSynchronizeParticipant {
@@ -49,6 +50,14 @@ public class TestParticipant extends AbstractSynchronizeParticipant {
 		// Noop
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#run(org.eclipse.ui.IWorkbenchPart)
+	 */
+	public void run(IWorkbenchPart part) {
+		// TODO Auto-generated method stub
+
+	}
+	
 	/**
 	 * 
 	 */
