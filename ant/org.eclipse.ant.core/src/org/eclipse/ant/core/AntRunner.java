@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002 IBM Corporation and others.
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.util.*;
 import org.eclipse.ant.internal.core.*;
 import org.eclipse.ant.internal.core.AntClassLoader;
 import org.eclipse.ant.internal.core.AntCorePreferences;
+import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.runtime.*;
 /**
@@ -163,6 +164,19 @@ public void run() throws CoreException {
  * @exception execution exceptions
  */
 public Object run(Object argArray) throws Exception {
+	// Add debug information if necessary - fix for bug 5672.
+	// Since the platform parses the -debug command line arg
+	// and removes it from the args passed to the applications,
+	// we have to check if Eclipse is in debug mode in order to
+	// forward the -debug argument to Ant.
+	if (BootLoader.inDebugMode()) {
+		String[] args = (String[]) argArray;
+		String[] newArgs = new String[args.length + 1];
+		for (int i = 0; i < args.length; i++)
+			newArgs[i] = args[i];
+		newArgs[args.length] = "-debug";
+		argArray = newArgs;
+	}
 	ClassLoader loader = getClassLoader();
 	Class classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner");
 	Object runner = classInternalAntRunner.newInstance();
