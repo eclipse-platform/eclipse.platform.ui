@@ -658,6 +658,15 @@ public class InternalAntRunner {
 			getCurrentProject().setUserProperty("ant.file", buildFileLocation); //$NON-NLS-1$
 		}
 	}
+	
+	/**
+	 * Sets the input handler class name.
+	 * 
+	 * @param inputHandlerClassname the name of the class to use for the input handler
+	 */
+	public void setInputHandler(String inputHandlerClassname) {
+		this.inputHandlerClassname= inputHandlerClassname;
+	}
 
 	protected String getBuildFileLocation() {
 		if (buildFileLocation == null) {

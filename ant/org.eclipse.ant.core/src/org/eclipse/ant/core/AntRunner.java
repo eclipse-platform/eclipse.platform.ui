@@ -29,6 +29,7 @@ public class AntRunner implements IPlatformRunnable {
 	protected Map userProperties;
 	protected int messageOutputLevel = 2; // Project.MSG_INFO
 	protected String buildLoggerClassName;
+	protected String inputHandlerClassName;
 	protected String[] arguments;
 
 	/** 
@@ -154,11 +155,13 @@ public class AntRunner implements IPlatformRunnable {
 	}
 
 	/**
-	 * Adds a build logger. The parameter <code>className</code>
+	 * Sets the build logger. The parameter <code>className</code>
 	 * is the class name of a <code>org.apache.tools.ant.BuildLogger</code>
 	 * implementation. The class will be instantiated at runtime and the
 	 * logger will be called on build events
-	 * (<code>org.apache.tools.ant.BuildEvent</code>).
+	 * (<code>org.apache.tools.ant.BuildEvent</code>).  
+	 * Only one build logger is permitted for any build.
+	 * 
 	 *
 	 * @param className a build logger class name
 	 */
@@ -269,6 +272,12 @@ public class AntRunner implements IPlatformRunnable {
 			// add build logger
 			Method addBuildLogger = classInternalAntRunner.getMethod("addBuildLogger", new Class[] { String.class }); //$NON-NLS-1$
 			addBuildLogger.invoke(runner, new Object[] { buildLoggerClassName });
+			
+			if (inputHandlerClassName != null) {	
+				// add the input handler
+				Method setInputHandler = classInternalAntRunner.getMethod("setInputHandler", new Class[] { String.class }); //$NON-NLS-1$
+				setInputHandler.invoke(runner, new Object[] { inputHandlerClassName });
+			}
 			
 			// add progress monitor
 			if (monitor != null) {
@@ -392,5 +401,19 @@ public class AntRunner implements IPlatformRunnable {
 		Method run = classInternalAntRunner.getMethod("run", new Class[] { Object.class }); //$NON-NLS-1$
 		run.invoke(runner, new Object[] { argArray });
 		return null;
+	}
+	
+	/**
+	 * Sets the input handler. The parameter <code>className</code>
+	 * is the class name of a <code>org.apache.tools.ant.input.InputHandler</code>
+	 * implementation. The class will be instantiated at runtime and the
+	 * input handler will be used to respond to <input> requests
+	 * Only one input handler is permitted for any build.
+	 * 
+	 *
+	 * @param className an input handler class name
+	 */
+	public void setInputHandler(String className) {
+		inputHandlerClassName= className;
 	}
 }
