@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.update.internal.search;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.ISite;
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.core.*;
 
 public interface IUpdateSearchQuery {
 /**

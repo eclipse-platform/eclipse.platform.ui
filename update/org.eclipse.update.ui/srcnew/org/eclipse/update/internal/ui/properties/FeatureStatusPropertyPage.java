@@ -57,7 +57,7 @@ public class FeatureStatusPropertyPage
 			ConfiguredFeatureAdapter adapter = (ConfiguredFeatureAdapter) getElement();
 			IFeature feature = adapter.getFeature(null);
 			
-			if (UpdateManager.getOperationsManager().findPendingChange(feature) != null) {
+			if (UpdateManager.getOperationsManager().findPendingOperation(feature) != null) {
 				message.setText("The feature has pending changes.  Therefore, its status cannot be determined until you restart the workbench.");
 				return composite;
 			}

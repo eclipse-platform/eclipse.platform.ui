@@ -13,23 +13,17 @@ package org.eclipse.update.internal.operations;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.operations.*;
 
 /**
  * Configure a feature.
  * ConfigOperation
  */
-public class UninstallOperation extends PendingOperation {
+public class UninstallOperation extends SingleOperation implements IUninstallOperation{
 	private static final String KEY_OLD = "OperationsManager.error.old";
 
-	private IFeatureReference[] optionalFeatures;
-	private IVerificationListener verifier;
-
-	public UninstallOperation(IFeature feature) {
-		super(feature, INSTALL);
-
-		IFeature[] installed = UpdateManager.getInstalledFeatures(feature);
-		if (installed.length > 0)
-			this.oldFeature = installed[0];
+	public UninstallOperation(IInstallConfiguration config, IConfiguredSite site, IFeature feature, IOperationListener listener) {
+		super(config, site, feature, listener);
 	}
 
 	public void setInstallConfiguration(IInstallConfiguration config) {
@@ -38,14 +32,6 @@ public class UninstallOperation extends PendingOperation {
 
 	public void setTargetSite(IConfiguredSite targetSite) {
 		this.targetSite = targetSite;
-	}
-
-	public void setOptionalFeatures(IFeatureReference[] optionalFeatures) {
-		this.optionalFeatures = optionalFeatures;
-	}
-
-	public void setVerificationListener(IVerificationListener verifier) {
-		this.verifier = verifier;
 	}
 
 	public boolean execute(IProgressMonitor pm) throws CoreException {
@@ -77,6 +63,4 @@ public class UninstallOperation extends PendingOperation {
 		return true;
 	}
 
-	public void undo() throws CoreException {
-	}
 }

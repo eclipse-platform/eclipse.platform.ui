@@ -22,10 +22,11 @@ import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.security.*;
+import org.eclipse.update.operations.*;
 
 public class UnifiedInstallWizard
 	extends Wizard
-	implements IUpdateModelChangedListener {
+	implements IOperationListener {
 	private UnifiedModeSelectionPage modePage;
 	private UnifiedSitePage sitePage;
 	private UnifiedReviewPage reviewPage;
@@ -42,20 +43,12 @@ public class UnifiedInstallWizard
 		setForcePreviousAndNextButtons(true);
 		setNeedsProgressMonitor(true);
 		setWindowTitle(UpdateUI.getString("MultiInstallWizard.wtitle"));
-
-		UpdateManager.getOperationsManager().addUpdateModelChangedListener(
-			this);
 	}
 
 	public boolean isSuccessfulInstall() {
-		return installCount > 0;
+		return installCount > 0; // or == selectedJobs.length
 	}
 
-	public boolean performCancel() {
-		UpdateManager.getOperationsManager().removeUpdateModelChangedListener(this);
-		return super.performCancel();
-	}
-	
 	/**
 	 * @see Wizard#performFinish()
 	 */
@@ -82,30 +75,35 @@ public class UnifiedInstallWizard
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException {
 				// setup jobs with the correct environment
+				IInstallOperation[] operations =
+				new IInstallOperation[selectedJobs.length];
 				for (int i = 0; i < selectedJobs.length; i++) {
-					InstallOperation installJob =
-						(InstallOperation) selectedJobs[i];
-					installJob.setInstallConfiguration(config);
-					installJob.setTargetSite(
-						targetPage.getTargetSite(installJob));
-					installJob.setVerificationListener(
-						getVerificationListener());
-
+					PendingOperation job = selectedJobs[i];
+					FeatureHierarchyElement2[] optionalElements = null;
+					IFeatureReference[] optionalFeatures = null;
 					if (optionalFeaturesPage != null) {
-						installJob.setOptionalElements(
-							optionalFeaturesPage.getOptionalElements(
-								installJob));
-						installJob.setOptionalFeatures(
+						optionalElements =
+							optionalFeaturesPage.getOptionalElements(job);
+						optionalFeatures =
 							optionalFeaturesPage.getCheckedOptionalFeatures(
-								installJob));
+								job);
 					}
+					IInstallOperation op = (IInstallOperation)UpdateManager
+						.getOperationsManager()
+						.createInstallOperation(
+							config,
+								targetPage.getTargetSite(job),
+								job.getFeature(),
+								optionalElements,
+								optionalFeatures,
+								new JarVerificationService(
+									UnifiedInstallWizard.this.getShell()),
+									UnifiedInstallWizard.this);
+					operations[i] = op;
 				}
+				IOperation installOperation = UpdateManager.getOperationsManager().createBatchInstallOperation(operations);
 				try {
-
-					UpdateManager.getOperationsManager().installFeatures(
-						selectedJobs,
-						UnifiedInstallWizard.this,
-						monitor);
+					installOperation.execute(monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				}
@@ -123,10 +121,7 @@ public class UnifiedInstallWizard
 			return false;
 		} catch (InterruptedException e) {
 			return false;
-		}
-		finally {
-			UpdateManager.getOperationsManager().removeUpdateModelChangedListener(this);
-		}
+		} 
 		return true;
 	}
 
@@ -278,34 +273,29 @@ public class UnifiedInstallWizard
 		}
 	}
 
-	private IVerificationListener getVerificationListener() {
-		return new JarVerificationService(this.getShell());
-	}
-
 	/* (non-Javadoc)
-	 * @see org.eclipse.update.internal.operations.IUpdateModelChangedListener#objectChanged(java.lang.Object, java.lang.String)
+	 * @see org.eclipse.update.operations.IOperationListener#afterExecute(org.eclipse.update.operations.IOperation)
 	 */
-	public void objectChanged(Object object, String property) {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.update.internal.operations.IUpdateModelChangedListener#objectsAdded(java.lang.Object, java.lang.Object[])
-	 */
-	public void objectsAdded(Object parent, Object[] children) {
-		if (!(parent instanceof InstallOperation))
-			return;
-		InstallOperation job = (InstallOperation)parent;
+	public boolean afterExecute(IOperation operation) {
+		if (!(operation instanceof IInstallOperation))
+			return true;
+		IInstallOperation job = (IInstallOperation) operation;
 		IFeature oldFeature = job.getOldFeature();
-		if (oldFeature == null && job.getOptionalFeatures() != null) 
-			preserveOriginatingURLs(job.getFeature(), job.getOptionalFeatures());
-			
-		installCount++; 
+		if (oldFeature == null && job.getOptionalFeatures() != null)
+			preserveOriginatingURLs(
+				job.getFeature(),
+				job.getOptionalFeatures());
+
+		installCount++;
+		return true;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.update.internal.operations.IUpdateModelChangedListener#objectsRemoved(java.lang.Object, java.lang.Object[])
+	 * @see org.eclipse.update.operations.IOperationListener#beforeExecute(org.eclipse.update.operations.IOperation)
 	 */
-	public void objectsRemoved(Object parent, Object[] children) {
+	public boolean beforeExecute(IOperation operation) {
+		// TODO Auto-generated method stub
+		return true;
 	}
 
 }

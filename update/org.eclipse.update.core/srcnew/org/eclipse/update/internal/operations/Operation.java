@@ -8,18 +8,30 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.internal.search;
+package org.eclipse.update.internal.operations;
 
-import java.net.*;
+import org.eclipse.update.operations.*;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.*;
 
-public interface IUpdateSiteAdapter {
+public abstract class Operation implements IOperation {
 	
-	public String getLabel();
-	public URL getURL();
-	public ISite getSite(IProgressMonitor monitor);
-
+	protected IOperationListener listener;
+	private boolean processed;
+	
+	
+	public Operation(IOperationListener listener) {
+		this.listener = listener;
+	}
+	
+	public IOperationListener getOperationListener() {
+		return listener;
+	}
+	
+	public boolean isProcessed() {
+		return processed;
+	}
+	
+	public void markProcessed() {
+		processed = true;
+	}
 }
-

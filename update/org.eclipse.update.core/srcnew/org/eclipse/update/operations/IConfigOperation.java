@@ -7,19 +7,11 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
-package org.eclipse.update.internal.search;
+ */
+package org.eclipse.update.operations;
 
-import java.net.*;
-
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.*;
-
-public interface IUpdateSiteAdapter {
-	
-	public String getLabel();
-	public URL getURL();
-	public ISite getSite(IProgressMonitor monitor);
-
+/**
+ * IConfigOperation
+ */
+public interface IConfigOperation extends ISingleOperation {
 }
-

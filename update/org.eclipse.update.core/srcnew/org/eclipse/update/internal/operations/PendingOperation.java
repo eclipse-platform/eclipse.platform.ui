@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.update.internal.operations;
 
-import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 
 
-public abstract class PendingOperation {
+public class PendingOperation {
 	public static final int INSTALL = 0x1;
 	public static final int UNINSTALL = 0x2;
 	public static final int CONFIGURE = 0x3;
@@ -30,7 +29,11 @@ public abstract class PendingOperation {
 	private boolean optionalDelta;
 	private boolean processed;
 	
-	protected PendingOperation(IFeature feature, int jobType) {
+	public PendingOperation(IFeature feature) {
+		this(feature, INSTALL);
+	}
+	
+	public PendingOperation(IFeature feature, int jobType) {
 		this(null, null, feature, jobType);
 	}
 	
@@ -82,16 +85,5 @@ public abstract class PendingOperation {
 	public void enable(boolean enable) {
 		// this should register with the operation manager
 		// used to be called setModel
-	}
-	
-	/**
-	 * Returns true if restart is needed
-	 * @param pm
-	 * @return
-	 * @throws CoreException
-	 */
-	public abstract boolean execute(IProgressMonitor pm) throws CoreException;
-	
-	public void undo()  throws CoreException{
 	}
 }

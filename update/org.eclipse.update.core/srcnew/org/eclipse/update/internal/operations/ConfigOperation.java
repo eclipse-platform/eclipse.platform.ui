@@ -13,22 +13,56 @@ package org.eclipse.update.internal.operations;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.operations.*;
 
 
 /**
  * Configure a feature.
  * ConfigOperation
  */
-public class ConfigOperation extends PendingOperation {
+public class ConfigOperation extends SingleOperation implements IConfigOperation {
 	
-	public ConfigOperation(IInstallConfiguration config, IConfiguredSite site, IFeature feature) {
-		super(config, site, feature, CONFIGURE);
+	public ConfigOperation(IInstallConfiguration config, IConfiguredSite site, IFeature feature, IOperationListener listener) {
+		super(config, site, feature, listener);
 	}
 	
 	public boolean execute(IProgressMonitor pm) throws CoreException {
 		targetSite.configure(feature);
-		UpdateManager.getOperationsManager().ensureUnique(config, feature, targetSite);
-		return true;
+		ensureUnique();
+		
+		IStatus status = UpdateManager.getValidator().validateCurrentState();
+		if (status != null) {
+			undo();
+			throw new CoreException(status);
+		} else {
+			try {
+				// Restart not needed
+				boolean restartNeeded = false;
+
+				// Check if this operation is cancelling one that's already pending
+				IOperation pendingOperation = UpdateManager.getOperationsManager().findPendingOperation(feature);
+
+				if (pendingOperation instanceof IUnconfigOperation) {
+					// no need to do either pending change
+					UpdateManager.getOperationsManager().removePendingOperation(pendingOperation);
+				} else {
+					UpdateManager.getOperationsManager().addPendingOperation(this);
+					restartNeeded = true;
+				}
+
+				markProcessed();
+				if (listener != null)
+					listener.afterExecute(this);
+
+				SiteManager.getLocalSite().save();
+
+				return restartNeeded;
+			} catch (CoreException e) {
+				undo();
+				UpdateManager.logException(e);
+				throw e;
+			}
+		}
 	}
 	
 	public void undo() throws CoreException{

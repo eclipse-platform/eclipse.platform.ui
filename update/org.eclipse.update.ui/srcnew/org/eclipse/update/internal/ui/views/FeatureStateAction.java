@@ -1,11 +1,14 @@
 package org.eclipse.update.internal.ui.views;
 
+import java.lang.reflect.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.update.operations.*;
 
 public class FeatureStateAction extends Action {
 	private ConfiguredFeatureAdapter adapter;
@@ -23,15 +26,28 @@ public class FeatureStateAction extends Action {
 		try {
 			if (adapter == null || !confirm(adapter.isConfigured()))
 				return;
-				
-			boolean restartNeeded =
-				UpdateManager.getOperationsManager().toggleFeatureState(
-					adapter.getInstallConfiguration(),
-					adapter.getConfiguredSite(),
-					adapter.getFeature(null),
-					adapter.isConfigured(),
-					adapter);
 
+			boolean isConfigured = adapter.isConfigured();
+			IOperation toggleOperation =
+				isConfigured
+					? UpdateManager
+						.getOperationsManager()
+						.createUnconfigOperation(
+						adapter.getInstallConfiguration(),
+						adapter.getConfiguredSite(),
+						adapter.getFeature(null),
+						null)
+					: UpdateManager.getOperationsManager().createConfigOperation(
+						adapter.getInstallConfiguration(),
+						adapter.getConfiguredSite(),
+						adapter.getFeature(null),
+						null);
+
+			boolean restartNeeded = toggleOperation.execute(null);
+			
+			// notify the view
+			UpdateManager.getOperationsManager().fireObjectChanged(adapter.getFeature(null), null);
+			
 			if (restartNeeded)
 				UpdateUI.informRestartNeeded();
 
@@ -41,13 +57,21 @@ public class FeatureStateAction extends Action {
 				null,
 				null,
 				e.getStatus());
+		} catch (InvocationTargetException e) {
+			// This should not happen
+			UpdateManager.logException(e.getTargetException());
 		}
 	}
-	
-	private boolean confirm(boolean isConfigured) {
-		String message = isConfigured ? "Do you want to disable this feature?" : "Do you want to enable this feature?";
-		return MessageDialog.openConfirm(UpdateUI.getActiveWorkbenchShell(), "Update Manager", message); 
-	}
 
+	private boolean confirm(boolean isConfigured) {
+		String message =
+			isConfigured
+				? "Do you want to disable this feature?"
+				: "Do you want to enable this feature?";
+		return MessageDialog.openConfirm(
+			UpdateUI.getActiveWorkbenchShell(),
+			"Update Manager",
+			message);
+	}
 
 }

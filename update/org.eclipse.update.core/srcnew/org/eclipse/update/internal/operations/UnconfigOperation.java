@@ -13,24 +13,57 @@ package org.eclipse.update.internal.operations;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.operations.*;
 
 /**
  * Unconfigure a feature.
  * UnconfigOperation
  */
-public class UnconfigOperation extends PendingOperation {
+public class UnconfigOperation extends SingleOperation implements IUnconfigOperation {
 	
-	public UnconfigOperation(IInstallConfiguration config, IConfiguredSite site, IFeature feature) {
-		super(config, site, feature, UNCONFIGURE);
+	public UnconfigOperation(IInstallConfiguration config, IConfiguredSite site, IFeature feature, IOperationListener listener) {
+		super(config, site, feature, listener);
 	}
 	
 	public boolean execute(IProgressMonitor pm) throws CoreException {
+		
 		PatchCleaner2 cleaner = new PatchCleaner2(targetSite, feature);
-		boolean result = targetSite.unconfigure(feature);
+		targetSite.unconfigure(feature);
 		cleaner.dispose();
 		
-		return result;
-		// should we throw an exception when result == false ?
+		IStatus status = UpdateManager.getValidator().validateCurrentState();
+		if (status != null) {
+			undo();
+			throw new CoreException(status);
+		} else {
+			try {
+				// Restart not needed
+				boolean restartNeeded = false;
+
+				// Check if this operation is cancelling one that's already pending
+				IOperation pendingOperation = UpdateManager.getOperationsManager().findPendingOperation(feature);
+
+				if (pendingOperation instanceof IConfigOperation) {
+					// no need to do either pending change
+					UpdateManager.getOperationsManager().removePendingOperation(pendingOperation);
+				} else {
+					UpdateManager.getOperationsManager().addPendingOperation(this);
+					restartNeeded = true;
+				}
+
+				markProcessed();
+				if (listener != null)
+					listener.afterExecute(this);
+
+				SiteManager.getLocalSite().save();
+
+				return restartNeeded;
+			} catch (CoreException e) {
+				undo();
+				UpdateManager.logException(e);
+				throw e;
+			}
+		}
 	}
 	
 	public void undo() throws CoreException{

@@ -12,8 +12,8 @@ package org.eclipse.update.internal.operations;
 
 
 import java.lang.reflect.*;
-import java.util.*;
 import java.text.*;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;

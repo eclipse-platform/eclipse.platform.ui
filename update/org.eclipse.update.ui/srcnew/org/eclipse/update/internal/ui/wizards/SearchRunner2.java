@@ -100,7 +100,7 @@ public class SearchRunner2 {
 			SimpleFeatureAdapter adapter = (SimpleFeatureAdapter) candidates[i];
 			try {
 				IFeature feature = adapter.getFeature(null);
-				PendingOperation change = new InstallOperation(feature);
+				PendingOperation change = new PendingOperation(feature);
 				result.add(change);
 			} catch (CoreException e) {
 				UpdateUI.logException(e);

@@ -205,7 +205,7 @@ public class NewConfigurationView
 					String pending = "";
 					if (UpdateManager
 						.getOperationsManager()
-						.findPendingChange(feature)
+						.findPendingOperation(feature)
 						!= null)
 						pending = " (pending changes)";
 					return feature.getLabel() + " " + version + pending;
@@ -268,7 +268,7 @@ public class NewConfigurationView
 					flags |= UpdateLabelProvider.F_UNCONFIGURED;
 				if (UpdateManager
 					.getOperationsManager()
-					.findPendingChange(feature)
+					.findPendingOperation(feature)
 					== null) {
 
 					int code =

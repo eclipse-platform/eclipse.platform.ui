@@ -11,25 +11,29 @@
 package org.eclipse.update.internal.operations;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.operations.*;
 
 /**
  * Configure a feature.
  * ConfigOperation
  */
-public class InstallOperation extends PendingOperation {
+public class InstallOperation extends SingleOperation implements IInstallOperation {
 	private static final String KEY_OLD = "OperationsManager.error.old";
 
 	private IFeatureReference[] optionalFeatures;
 	private FeatureHierarchyElement2[] optionalElements;
 	private IVerificationListener verifier;
 
-	public InstallOperation(IFeature feature) {
-		super(feature, INSTALL);
-
+	public InstallOperation(IInstallConfiguration config, IConfiguredSite site, IFeature feature, FeatureHierarchyElement2[] optionalElements,IFeatureReference[] optionalFeatures, IVerificationListener verifier, IOperationListener listener) {
+		super(config, site, feature, listener);
 		IFeature[] installed = UpdateManager.getInstalledFeatures(feature);
-		if (installed.length > 0)
-			this.oldFeature = installed[0];
+				if (installed.length > 0)
+					this.oldFeature = installed[0];
+		this.optionalElements = optionalElements;
+		this.optionalFeatures = optionalFeatures;
+		this.verifier = verifier;
 	}
 
 	public FeatureHierarchyElement2[] getOptionalElements() {
@@ -39,18 +43,6 @@ public class InstallOperation extends PendingOperation {
 	public IFeatureReference[] getOptionalFeatures() {
 		return optionalFeatures;
 	}
-	
-	public void setOptionalFeatures(IFeatureReference[] optionalFeatures) {
-		this.optionalFeatures = optionalFeatures;
-	}
-
-	public void setOptionalElements(FeatureHierarchyElement2[] optionalElements) {
-		this.optionalElements = optionalElements;
-	}
-	
-	public void setVerificationListener(IVerificationListener verifier) {
-		this.verifier = verifier;
-	}
 
 	public boolean execute(IProgressMonitor pm) throws CoreException {
 
@@ -59,8 +51,8 @@ public class InstallOperation extends PendingOperation {
 		else
 			targetSite.install(feature, optionalFeatures, verifier, pm);
 
-		if (oldFeature != null && isOptionalDelta()) {
-			boolean oldSuccess = UpdateManager.getOperationsManager().unconfigure(config, oldFeature);
+		if (oldFeature != null ){ //&& isOptionalDelta()) {
+			boolean oldSuccess = unconfigure(config, oldFeature);
 			if (!oldSuccess) {
 				if (!UpdateManager.isNestedChild(config, oldFeature)) {
 					// "eat" the error if nested child
@@ -80,12 +72,10 @@ public class InstallOperation extends PendingOperation {
 			}
 		}
 		if (oldFeature == null) {
-			UpdateManager.getOperationsManager().ensureUnique(config, feature, targetSite);
+			ensureUnique();
 		}
 		
 		return true;
 	}
 
-	public void undo() throws CoreException {
-	}
 }

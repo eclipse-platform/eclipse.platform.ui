@@ -19,7 +19,6 @@ import org.eclipse.update.core.IFeatureReference;
 import org.eclipse.update.core.ISite;
 import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.core.VersionedIdentifier;
-import org.eclipse.update.internal.operations.InstallOperation;
 import org.eclipse.update.internal.operations.PendingOperation;
 import org.eclipse.update.internal.operations.UpdateManager;
 import org.eclipse.update.internal.ui.UpdateUI;
@@ -57,9 +56,9 @@ public class InstallOptionalFeatureAction extends Action {
 
 		if (feature != null) {
 			IFeature parent = missingFeature.getParent();
-			InstallOperation op = new InstallOperation(feature);
+			PendingOperation op = new PendingOperation(feature);
 			op.setTargetSite((parent == null) ? null : parent.getSite().getCurrentConfiguredSite());
-			op.setVerificationListener(new JarVerificationService(UpdateUI.getActiveWorkbenchShell()));
+//			op.setVerificationListener(new JarVerificationService(UpdateUI.getActiveWorkbenchShell()));
 			executeJob(
 				UpdateUI.getActiveWorkbenchShell(),
 				op,
