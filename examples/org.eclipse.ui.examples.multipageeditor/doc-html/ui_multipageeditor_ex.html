@@ -36,11 +36,11 @@ The&nbsp; Multi Page Editor Example demonstrates how to create an multi
 page editor with a custom page contributor.
 <p>The Multi Page Editor Example is constructed with two extensions – a
 document contributor (MultiPageContributor) and an editor (MultiPageEditor).
-The document contributor is a subclass of <font face="Courier New,Courier"><font size=-1>org.eclipse.ui.part.MultiPageEditorActionBarContributor</font></font>
-and defines the actions that are added to an editor when the <font face="Courier New,Courier"><font size=-1>setActivePage</font></font>
-method is called. The editor is an <font face="Courier New,Courier"><font size=-1>org.eclipse.ui.part.MultiPageEditorPart</font></font>
-that creates 3 pages whose activation is handled by the <font face="Courier New,Courier"><font size=-1>pageChange</font></font>
-method that in turn sends <font face="Courier New,Courier"><font size=-1>setActivePage</font></font>
+The document contributor is a subclass of <tt>org.eclipse.ui.part.MultiPageEditorActionBarContributor</tt>
+and defines the actions that are added to an editor when the <tt>setActivePage</tt>
+method is called. The editor is an <tt>org.eclipse.ui.part.MultiPageEditorPart</tt>
+that creates 3 pages whose activation is handled by the <tt>pageChange</tt>
+method that in turn sends <tt>setActivePage</tt>
 to the contributor. These two classes do not refer to each other directly
 – the contributor for the editor is set using the contributorClass tag
 in the plugin.xml
