@@ -213,11 +213,10 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
         if (fOrganizers == null) {
             fElements = breakpoints;
         } else {
-            IBreakpointOrganizer organizer = null;
+            IBreakpointOrganizer organizer = fOrganizers[0];
             Map categoriesToContainers = new HashMap();
             for (int i = 0; i < breakpoints.length; i++) {
                 IBreakpoint breakpoint = breakpoints[i];
-                organizer = fOrganizers[0];
                 IAdaptable[] categories = organizer.getCategories(breakpoint);
                 if (categories == null || categories.length == 0) {
                 	categories = OtherBreakpointCategory.getCategories(organizer);
@@ -235,6 +234,18 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
                         categoriesToContainers.put(category, container);
                     }
                     container.addBreakpoint(breakpoint);
+                }
+            }
+            // add empty categories
+            IAdaptable[] emptyCategories = organizer.getEmptyCategories();
+            if (emptyCategories != null) {
+                for (int i = 0; i < emptyCategories.length; i++) {
+                    IAdaptable category = emptyCategories[i];
+                    BreakpointContainer container = (BreakpointContainer) categoriesToContainers.get(category);
+                    if (container == null) {
+                        container = new BreakpointContainer(category, organizer, null);
+                        categoriesToContainers.put(category, container);
+                    }
                 }
             }
             fElements = categoriesToContainers.values().toArray();

@@ -15,14 +15,14 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.ui.AbstractBreakpointOrganizer;
+import org.eclipse.debug.ui.AbstractBreakpointOrganizerDelegate;
 
 /**
  * Breakpoint organizers for files.
  * 
  * @since 3.1
  */
-public class FileBreakpointOrganizer extends AbstractBreakpointOrganizer {
+public class FileBreakpointOrganizer extends AbstractBreakpointOrganizerDelegate {
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#getCategories(org.eclipse.debug.core.model.IBreakpoint)

@@ -117,6 +117,15 @@ public interface IBreakpointOrganizerDelegate {
     public boolean canRemove(IBreakpoint breakpoint, IAdaptable category);
     
     /**
+     * Returns any empty categories owned by this organizer, or <code>null</code>
+     * if none. This allows the breakpoints view to display empty categories
+     * that breakpoints can be recategorized into.
+     *  
+     * @return empty categories owned by this organizer, or <code>null</code>
+     */
+    public IAdaptable[] getEmptyCategories();
+    
+    /**
      * Disposes this breakpoint organizer.
      */
     public void dispose();

@@ -21,7 +21,7 @@ import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.ui.AbstractBreakpointOrganizer;
+import org.eclipse.debug.ui.AbstractBreakpointOrganizerDelegate;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -34,7 +34,7 @@ import org.eclipse.ui.PlatformUI;
  * 
  * @since 3.1
  */
-public class BreakpointSetOrganizer extends AbstractBreakpointOrganizer implements IPropertyChangeListener, IBreakpointsListener {
+public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate implements IPropertyChangeListener, IBreakpointsListener {
     
     /**
      * Constructs a working set breakpoint organizer. Listens for changes in
@@ -251,5 +251,20 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizer implemen
             }
             workingSet.setElements((IAdaptable[]) list.toArray(new IAdaptable[list.size()]));
         }
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#getEmptyCategories()
+     */
+    public IAdaptable[] getEmptyCategories() {
+        IWorkingSet[] workingSets = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets();
+        List empty = new ArrayList();
+        for (int i = 0; i < workingSets.length; i++) {
+            IWorkingSet set = workingSets[i];
+            if (IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(set.getId()) && set.getElements().length == 0) {
+                empty.add(new WorkingSetCategory(set));
+            }
+        }
+        return (IAdaptable[]) empty.toArray(new IAdaptable[empty.size()]);
     }
 }

@@ -169,4 +169,10 @@ public class BreakpointOrganizerExtension implements IBreakpointOrganizer {
         return attribute;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#getEmptyCategories()
+     */
+    public IAdaptable[] getEmptyCategories() {
+        return getOrganizer().getEmptyCategories();
+    }
 }

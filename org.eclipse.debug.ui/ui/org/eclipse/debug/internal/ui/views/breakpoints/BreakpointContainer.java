@@ -45,6 +45,20 @@ public class BreakpointContainer extends PlatformObject    {
         fBreakpoints = new ArrayList();
         fNesting = nesting;
         fCategoriesToContainers = new HashMap();
+        // seed with empty nested categories
+        if (nesting != null && nesting.length > 0) {
+            IAdaptable[] emptyCategories = nesting[0].getEmptyCategories();
+            if (emptyCategories != null) {
+                for (int i = 0; i < emptyCategories.length; i++) {
+                    IAdaptable empty = emptyCategories[i];
+                    BreakpointContainer container = (BreakpointContainer) fCategoriesToContainers.get(empty);
+                    if (container == null) {
+                        container = new BreakpointContainer(empty, nesting[0], null);
+                        fCategoriesToContainers.put(empty, container);
+                    }
+                }
+            }
+        }
     }
     
     /**
@@ -172,8 +186,10 @@ public class BreakpointContainer extends PlatformObject    {
             for (int i = 0; i < containers.length; i++) {
                 BreakpointContainer container = containers[i];
                 BreakpointContainer[] subcontainers = container.getContainers(breakpoint);
-                for (int j = 0; j < subcontainers.length; j++) {
-                    list.add(subcontainers[j]);
+                if (subcontainers != null) {
+                    for (int j = 0; j < subcontainers.length; j++) {
+                        list.add(subcontainers[j]);
+                    }
                 }
             }
             return (BreakpointContainer[]) list.toArray(new BreakpointContainer[list.size()]);

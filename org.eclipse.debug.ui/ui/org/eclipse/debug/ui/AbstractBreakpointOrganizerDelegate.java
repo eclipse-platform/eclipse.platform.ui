@@ -27,7 +27,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * </p>
  * @since 3.1
  */
-public abstract class AbstractBreakpointOrganizer implements IBreakpointOrganizerDelegate {
+public abstract class AbstractBreakpointOrganizerDelegate implements IBreakpointOrganizerDelegate {
     
     // property change listeners
     private ListenerList fListeners = new ListenerList();
@@ -112,5 +112,12 @@ public abstract class AbstractBreakpointOrganizer implements IBreakpointOrganize
             };
             Platform.run(runnable);
         }
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#getEmptyCategories()
+     */
+    public IAdaptable[] getEmptyCategories() {
+        return null;
     }
 }

@@ -16,7 +16,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.ui.AbstractBreakpointOrganizer;
+import org.eclipse.debug.ui.AbstractBreakpointOrganizerDelegate;
 import org.eclipse.debug.ui.BreakpointTypeCategory;
 import org.eclipse.debug.ui.IBreakpointTypeCategory;
 
@@ -25,7 +25,7 @@ import org.eclipse.debug.ui.IBreakpointTypeCategory;
  * 
  * @since 3.1
  */
-public class BreakpointTypeOrganizer extends AbstractBreakpointOrganizer {
+public class BreakpointTypeOrganizer extends AbstractBreakpointOrganizerDelegate {
 	
 	private Map fTypes = new HashMap();
 

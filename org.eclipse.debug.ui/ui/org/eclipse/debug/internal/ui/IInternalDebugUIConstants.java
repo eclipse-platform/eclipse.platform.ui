@@ -195,6 +195,14 @@ public interface IInternalDebugUIConstants {
 	 */
 	public static final String PREF_WAIT_FOR_BUILD= IDebugUIConstants.PLUGIN_ID + ".wait_for_build"; //$NON-NLS-1$
 	
+    /**
+     * Boolean preference controlling whether empty groups are displayed in
+     * the breakpoints view.
+     * 
+     * @since 3.1
+     */
+    public static final String PREF_SHOW_EMPTY_GROUPS = IDebugUIConstants.PLUGIN_ID + ".show_empty_breakpoint_groups"; //$NON-NLS-1$
+    
 	/**
 	 * Font for Memory View
 	 * 

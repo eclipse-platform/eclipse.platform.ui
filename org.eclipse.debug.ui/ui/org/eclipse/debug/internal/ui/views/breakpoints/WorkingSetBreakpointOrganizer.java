@@ -17,7 +17,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.ui.AbstractBreakpointOrganizer;
+import org.eclipse.debug.ui.AbstractBreakpointOrganizerDelegate;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IWorkingSet;
@@ -29,7 +29,7 @@ import org.eclipse.ui.PlatformUI;
  * 
  * @since 3.1
  */
-public class WorkingSetBreakpointOrganizer extends AbstractBreakpointOrganizer implements IPropertyChangeListener {
+public class WorkingSetBreakpointOrganizer extends AbstractBreakpointOrganizerDelegate implements IPropertyChangeListener {
     
     /**
      * Constructs a working set breakpoint organizer. Listens for changes in
