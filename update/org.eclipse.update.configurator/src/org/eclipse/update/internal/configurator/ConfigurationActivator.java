@@ -22,7 +22,6 @@ import org.eclipse.update.configurator.*;
 import org.osgi.framework.*;
 import org.osgi.service.packageadmin.*;
 import org.osgi.service.startlevel.*;
-import org.osgi.service.url.*;
 import org.osgi.util.tracker.*;
 
 public class ConfigurationActivator implements BundleActivator, IBundleGroupProvider, IConfigurationConstants {
@@ -31,6 +30,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	public static final String INSTALL_LOCATION = "osgi.installLocation";
 	public static final String LAST_CONFIG_STAMP = "last.config.stamp";
 	public static final String NAME_SPACE = "org.eclipse.update";
+	public static final String UPDATE_PREFIX = "update@";
 	
 	// debug options
 	public static String OPTION_DEBUG = PI_CONFIGURATOR + "/debug";
@@ -65,7 +65,6 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		context = ctx;
 		loadOptions();
 		acquireFrameworkLogService();
-		registerUpdateProtocol();
 		initialize();
 		
 		//Short cut, if the configuration has not changed
@@ -180,18 +179,17 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 				try {
 					if (DEBUG)
 						Utils.debug("Installing " + bundlesToInstall[i]);
-					URL updateURL = new URL(UpdateURLHandler.PROTOCOL, "", bundlesToInstall[i]);
+					URL bundleURL = new URL("reference:file:"+bundlesToInstall[i]);
 					//Bundle target = context.installBundle(bundlesToInstall[i]);
-					Bundle target = context.installBundle(updateURL.toExternalForm(), updateURL.openStream());
+					Bundle target = context.installBundle(UPDATE_PREFIX+bundlesToInstall[i], bundleURL.openStream());
 					// any new bundle should be refreshed as well
 					toRefresh.add(target);
 					if (start != null)
 						start.setBundleStartLevel(target, 4);
 				
 				} catch (Exception e) {
-					if ( bundlesToInstall[i].indexOf("org.eclipse.osgi") == -1) {
-						Utils.log(Utils.newStatus("Could not install bundle: " + bundlesToInstall[i], e));
-					}
+					if (!Utils.isAutomaticallyStartedBundle(bundlesToInstall[i]))
+						Utils.log("Could not install bundle " + bundlesToInstall[i] + "\nReason: " + e.getMessage());
 				}
 			}
 			context.ungetService(reference);
@@ -224,22 +222,16 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	private String[] getBundlesToInstall(Bundle[] cachedBundles, URL[] newPlugins) {
 		// First, create a map of the cached bundles, for faster lookup
 		HashSet cachedBundlesSet = new HashSet(cachedBundles.length);
-		int offset = UpdateURLHandler.PROTOCOL.length()+1;
+		int offset = UPDATE_PREFIX.length();
 		for (int i=0; i<cachedBundles.length; i++) {
 			if (cachedBundles[i].getBundleId() == 0)
 				continue; // skip the system bundle
 			String bundleLocation = cachedBundles[i].getLocation();
-			// If bundle was installed by us, remove the protocol.
-			// Else, we still need to consider it, so we don't try to re-install it
-			// when at the same location
-			if (bundleLocation.startsWith(UpdateURLHandler.PROTOCOL))
-				bundleLocation = bundleLocation.substring(offset);
-			// TODO fix this when the platform correctly resolves local file urls:
-			// test if the url starts with reference:file:/ and if not, insert the / after reference:file:
-			if (isWindows && 
-					bundleLocation.startsWith("reference:file:") && 
-					!bundleLocation.startsWith(":/", 14))
-				bundleLocation = "reference:file:/"+bundleLocation.substring(15);
+			// Ignore bundles not installed by us
+			if (!bundleLocation.startsWith(UPDATE_PREFIX))
+				continue;
+			
+			bundleLocation = bundleLocation.substring(offset);
 			cachedBundlesSet.add(bundleLocation);
 			// On windows, we will be doing case insensitive search as well, so lower it now
 			if (isWindows)
@@ -248,8 +240,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		
 		ArrayList bundlesToInstall = new ArrayList(newPlugins.length);
 		for (int i = 0; i < newPlugins.length; i++) {
-			String location = newPlugins[i].toExternalForm();
-			location = "reference:" + location;
+			String location = newPlugins[i].getFile();
 			// check if already installed
 			if (cachedBundlesSet.contains(location))
 				continue;
@@ -267,7 +258,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		HashSet newPluginsSet = new HashSet(newPlugins.length);
 		for (int i=0; i<newPlugins.length; i++) {
 			
-			String pluginLocation = "reference:" + newPlugins[i].toExternalForm();
+			String pluginLocation = newPlugins[i].getFile();
 			newPluginsSet.add(pluginLocation);
 			// On windows, we will be doing case insensitive search as well, so lower it now
 			if (isWindows)
@@ -275,21 +266,16 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		}
 		
 		ArrayList bundlesToUninstall = new ArrayList();
-		int offset = UpdateURLHandler.PROTOCOL.length() + 1;
+		int offset = UPDATE_PREFIX.length();
 		for (int i=0; i<cachedBundles.length; i++) {
 			if (cachedBundles[i].getBundleId() == 0)
 				continue; // skip the system bundle
 			String cachedBundleLocation = cachedBundles[i].getLocation();
 			// Only worry about bundles we installed
-			if (!cachedBundleLocation.startsWith(UpdateURLHandler.PROTOCOL))
+			if (!cachedBundleLocation.startsWith(UPDATE_PREFIX))
 				continue;
 			cachedBundleLocation = cachedBundleLocation.substring(offset);
-			// TODO fix this when the platform correctly resolves local file urls
-			if (isWindows && 
-					!cachedBundleLocation.startsWith("reference:file:/") && 
-					cachedBundleLocation.startsWith("reference:file:"))
-				cachedBundleLocation = "reference:file:/"+cachedBundleLocation.substring(15);
-			
+
 			if (newPluginsSet.contains(cachedBundleLocation))
 				continue;
 			if (isWindows && newPluginsSet.contains(cachedBundleLocation.toLowerCase()))
@@ -469,12 +455,5 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		if (logServiceReference == null)
 			return;
 		Utils.log  = (FrameworkLog) context.getService(logServiceReference);
-	}
-	
-	private void registerUpdateProtocol() {
-	    Hashtable properties = new Hashtable(1);
-	    properties.put(URLConstants.URL_HANDLER_PROTOCOL, new String[] {UpdateURLHandler.PROTOCOL});
-	    String serviceClass = URLStreamHandlerService.class.getName();
-	    context.registerService(serviceClass, new UpdateURLHandler(), properties);
 	}
 }

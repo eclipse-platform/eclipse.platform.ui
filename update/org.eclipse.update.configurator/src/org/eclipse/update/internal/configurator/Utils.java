@@ -236,4 +236,20 @@ public class Utils {
 		}
 	}
 
+	public static boolean isAutomaticallyStartedBundle(String bundleURL) {
+		if (bundleURL.indexOf("org.eclipse.osgi") != -1)
+			return true;
+		
+		String osgiBundles = System.getProperty("osgi.bundles");
+		StringTokenizer st = new StringTokenizer(osgiBundles, ",");
+		while (st.hasMoreTokens()) {
+			String token = st.nextToken().trim();
+			int index = token.indexOf('@');
+			if (index != -1)
+				token = token.substring(0,index);
+			if (bundleURL.indexOf(token) != -1)
+				return true;
+		}
+		return false;
+	}
 }

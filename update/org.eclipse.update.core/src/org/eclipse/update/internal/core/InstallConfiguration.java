@@ -808,7 +808,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		HashSet newPluginsSet = new HashSet(newBundlePaths.length);
 		for (int i=0; i<newBundlePaths.length; i++) {
 			
-			String pluginLocation = "reference:" + newBundlePaths[i].toExternalForm();
+			String pluginLocation = newBundlePaths[i].getFile();
 			newPluginsSet.add(pluginLocation);
 			// On windows, we will be doing case insensitive search as well, so lower it now
 			if (isWindows)
@@ -819,20 +819,15 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		State state = platformAdmin.getState();
 		BundleDescription[] oldBundles = state.getBundles();
 
-		int offset = UpdateURLHandler.PROTOCOL.length() + 1;
+		int offset = ConfigurationActivator.UPDATE_PREFIX.length();
 		for (int i=0; i<oldBundles.length; i++) {
 			if (oldBundles[i].getBundleId() == 0)
 				continue; // skip the system bundle
 			String oldBundleLocation = oldBundles[i].getLocation();
 			// Don't worry about bundles we did not install
-			if (!oldBundleLocation.startsWith(UpdateURLHandler.PROTOCOL))
+			if (!oldBundleLocation.startsWith(ConfigurationActivator.UPDATE_PREFIX))
 				continue;
 			oldBundleLocation = oldBundleLocation.substring(offset);
-			// TODO fix this when the platform correctly resolves local file urls
-			if (isWindows && 
-					!oldBundleLocation.startsWith("reference:file:/") && 
-					oldBundleLocation.startsWith("reference:file:"))
-				oldBundleLocation = "reference:file:/"+oldBundleLocation.substring(15);
 			
 			if (newPluginsSet.contains(oldBundleLocation))
 				continue;
