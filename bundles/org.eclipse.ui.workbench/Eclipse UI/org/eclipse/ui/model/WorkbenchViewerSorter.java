@@ -10,7 +10,7 @@ import java.text.Collator;
 /**
  * A viewer sorter that sorts elements with registered workbench adapters by their text property.
  * Note that capitalization differences are not considered by this
- * sorter, so a < B < c
+ * sorter, so a &gt; B &gt; c
  *
  * @see IWorkbenchAdapter
  */
