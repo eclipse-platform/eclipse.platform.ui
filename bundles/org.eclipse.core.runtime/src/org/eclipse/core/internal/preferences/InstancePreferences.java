@@ -201,10 +201,6 @@ public class InstancePreferences extends EclipsePreferences {
 		return loadLevel;
 	}
 
-	private boolean isLoadLevel() {
-		return getLoadLevel() == this;
-	}
-
 	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent, String nodeName) {
 		return new InstancePreferences(nodeParent, nodeName);
 	}
