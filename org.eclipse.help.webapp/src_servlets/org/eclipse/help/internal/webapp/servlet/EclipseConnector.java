@@ -18,6 +18,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.*;
 
 import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.webapp.data.*;
 
 /**
  * Performs transfer of data from eclipse to a jsp/servlet

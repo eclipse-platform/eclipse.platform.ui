@@ -17,7 +17,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.webapp.servlet.ServletResources;
 import org.eclipse.help.internal.workingset.*;
 
 /**

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
-import org.eclipse.help.internal.webapp.servlet.UrlUtil;
 
 public class Topic {
 	private String label;

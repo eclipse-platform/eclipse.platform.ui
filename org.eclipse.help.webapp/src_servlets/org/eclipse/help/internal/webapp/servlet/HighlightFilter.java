@@ -16,6 +16,8 @@ import java.util.*;
 
 import javax.servlet.http.*;
 
+import org.eclipse.help.internal.webapp.data.*;
+
 public class HighlightFilter implements IFilter {
 	private static final String scriptPart1 =
 		"\n<script language=\"JavaScript\">\n<!--\nvar keywords = new Array (";

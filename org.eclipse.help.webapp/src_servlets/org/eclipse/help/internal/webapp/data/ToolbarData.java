@@ -14,7 +14,6 @@ package org.eclipse.help.internal.webapp.data;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
-import org.eclipse.help.internal.webapp.servlet.ServletResources;
 
 
 /**

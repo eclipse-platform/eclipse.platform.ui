@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.help.internal.webapp.servlet;
+package org.eclipse.help.internal.webapp.data;
 
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.internal.HelpPlugin;

@@ -17,6 +17,7 @@ import javax.servlet.http.*;
 
 import org.eclipse.help.IHelp;
 import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.webapp.data.*;
 /**
  * Servlet to control Eclipse helpApplication from standalone application.
  * Accepts the following paramters:

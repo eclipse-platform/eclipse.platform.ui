@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.help.internal.webapp.servlet;
+package org.eclipse.help.internal.webapp.data;
 import java.io.*;
 import java.net.InetAddress;
 import java.util.*;

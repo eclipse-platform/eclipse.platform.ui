@@ -18,6 +18,7 @@ import javax.servlet.http.*;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.toc.*;
+import org.eclipse.help.internal.webapp.data.*;
 /**
  * URL-like description of help table of contents. 
  * <ul>

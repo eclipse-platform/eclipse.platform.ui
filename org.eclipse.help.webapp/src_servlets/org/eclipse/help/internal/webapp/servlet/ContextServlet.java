@@ -17,6 +17,7 @@ import javax.servlet.http.*;
 
 import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.webapp.data.*;
 
 /**
  * Returns context sensitive help information.

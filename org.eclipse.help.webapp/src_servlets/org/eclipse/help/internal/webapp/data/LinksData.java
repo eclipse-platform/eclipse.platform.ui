@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.webapp.servlet.UrlUtil;
 
 /**
  * Helper class for linksView.jsp initialization
