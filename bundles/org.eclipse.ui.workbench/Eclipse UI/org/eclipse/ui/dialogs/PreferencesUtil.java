@@ -17,6 +17,8 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+
+import org.eclipse.ui.internal.dialogs.PropertyDialog;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
 
 /**
@@ -49,8 +51,8 @@ public final class PreferencesUtil {
 	 * @return a preference dialog.
 	 * @since 3.1
 	 */
-	public static final PreferenceDialog createPreferenceDialogOn(
-			String preferencePageId, String[] displayedIds, Object data) {
+	public static final PreferenceDialog createPreferenceDialogOn(String preferencePageId,
+			String[] displayedIds, Object data) {
 		WorkbenchPreferenceDialog dialog = WorkbenchPreferenceDialog
 				.createDialogOn(preferencePageId);
 		dialog.setPageData(data);
@@ -81,6 +83,10 @@ public final class PreferencesUtil {
 	 * @param selection
 	 *            ISelection A selection that holds the object the properties
 	 *            are being shown for.
+	 * @param displayedIds
+	 *            The ids of the other pages to be displayed using the same
+	 *            filtering criterea as search. If this is <code>null</code>,
+	 *            then the all preference pages are shown.
 	 * @param data
 	 *            Data that will be passed to all of the preference pages to be
 	 *            applied as specified within the page as they are created. If
@@ -90,19 +96,20 @@ public final class PreferencesUtil {
 	 *         <code>null</code> if it could not be created.
 	 * @since 3.1
 	 */
-	public static final PreferenceDialog createPropertyDialogOn(
-			String propertyPageId, ISelectionProvider selection, Object data) {
+	public static final PreferenceDialog createPropertyDialogOn(ISelectionProvider selection,
+			String propertyPageId, String[] displayedIds, Object data) {
 
-		IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
+		IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		Shell parentShell = null;
-		if (workbenchWindow != null) 
+		if (workbenchWindow != null)
 			parentShell = workbenchWindow.getShell();
 
-		PropertyDialogAction action = new PropertyDialogAction(parentShell,
-				selection);
+		PropertyDialogAction action = new PropertyDialogAction(parentShell, selection);
 		action.select(propertyPageId, data);
-		return action.createDialog();
+		PropertyDialog dialog = (PropertyDialog) action.createDialog();
+		if (displayedIds != null)
+			dialog.setSearchResults(displayedIds);
+		return dialog;
 
 	}
 }

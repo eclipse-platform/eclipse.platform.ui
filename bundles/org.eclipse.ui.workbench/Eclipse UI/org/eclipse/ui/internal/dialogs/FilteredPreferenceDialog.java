@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2004 IBM Corporation and others.
+ * Copyright (c) 2003, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.PreferenceContentProvider;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceLabelProvider;
 import org.eclipse.jface.preference.PreferenceManager;
@@ -21,13 +29,9 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
+
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
@@ -93,6 +97,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 
 		setContentAndLabelProviders(tree);
 		tree.setInput(getPreferenceManager());
+		tree.addFilter(new CapabilityFilter());
 
 		tree.addSelectionChangedListener(new ISelectionChangedListener() {
 			/*
@@ -116,7 +121,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	 */
 	protected void setContentAndLabelProviders(TreeViewer treeViewer) {
 		treeViewer.setLabelProvider(new PreferenceLabelProvider());
-		treeViewer.setContentProvider(new FilteredPreferenceContentProvider());
+		treeViewer.setContentProvider(new PreferenceContentProvider());
 	}
 
 	/**
@@ -150,6 +155,15 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		layoutTreeAreaControl(leftArea);
 
 		return leftArea;
+	}
+	
+	/**
+	 * Set the search results of the receiver to be filteredIds.
+	 * 
+	 * @param filteredIds
+	 */
+	public void setSearchResults(String[] filteredIds) {
+
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.PreferenceContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -22,7 +24,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * The GroupedPreferenceContentProvider is the content provider
  * for showing preferences using groups instead of just categories.
  */
-public class GroupedPreferenceContentProvider extends FilteredPreferenceContentProvider {
+public class GroupedPreferenceContentProvider extends PreferenceContentProvider {
 
 	Collection groupedIds;
 
@@ -77,7 +79,7 @@ public class GroupedPreferenceContentProvider extends FilteredPreferenceContentP
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.dialogs.FilteredPreferenceContentProvider#getChildren(java.lang.Object)
+	 * @see org.eclipse.jface.preference.PreferenceContentProvider#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object parentElement) {
 
@@ -88,8 +90,8 @@ public class GroupedPreferenceContentProvider extends FilteredPreferenceContentP
 		
 		ArrayList returnValue = new ArrayList();
 		for (int i = 0; i < children.length; i++) {
-			if (children[i] instanceof WorkbenchPreferenceNode) {
-				WorkbenchPreferenceNode node = (WorkbenchPreferenceNode) children[i];
+			if (children[i] instanceof IPreferenceNode) {
+				IPreferenceNode node = (IPreferenceNode) children[i];
 				if (!groupedIds.contains(node.getId()))
 					returnValue.add(node);
 			} else

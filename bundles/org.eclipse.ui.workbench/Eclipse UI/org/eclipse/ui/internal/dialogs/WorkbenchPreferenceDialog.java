@@ -919,18 +919,22 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		this.pageData = pageData;
 	}
 
-	/**
-	 * Set the search results of the receiver to be filteredIds.
-	 * 
-	 * @param filteredIds
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.dialogs.FilteredPreferenceDialog#setSearchResults(java.lang.String[])
 	 */
 	public void setSearchResults(String[] filteredIds) {
 
 		WorkbenchPreferenceGroup[] groups = getGroups();
+		
+		if(groups.length == 0){
+			super.setSearchResults(filteredIds);
+			return;
+		}
 		for (int i = 0; i < groups.length; i++) {
 			WorkbenchPreferenceGroup group = groups[i];
 			group.highlightIds(filteredIds);
 		}
+		
 	}
 
 	/**
