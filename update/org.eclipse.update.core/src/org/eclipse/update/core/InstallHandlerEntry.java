@@ -7,6 +7,13 @@ package org.eclipse.update.core;
 import org.eclipse.update.core.model.InstallHandlerEntryModel;
 
 /**
+ * Convenience implementation of an install handler entry.
+ * <p>
+ * This class may be instantiated or subclassed by clients.
+ * </p> 
+ * @see org.eclipse.update.core.IInstallHandlerEntry
+ * @see org.eclipse.update.core.model.InstallHandlerEntryModel
+ * @see org.eclipse.update.core.IInstallHandler
  * @since 2.0
  */
 public class InstallHandlerEntry
@@ -15,6 +22,7 @@ public class InstallHandlerEntry
 
 	/**
 	 * Constructor for InstallHandlerEntry.
+	 * @since 2.0
 	 */
 	public InstallHandlerEntry() {
 		super();

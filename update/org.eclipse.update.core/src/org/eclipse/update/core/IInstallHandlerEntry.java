@@ -22,7 +22,7 @@ import java.net.URL;
 public interface IInstallHandlerEntry {
 
 	/**
-	 * Optional URL used for browser-triggered installation handling.
+	 * Returns optional URL used for browser-triggered installation handling.
 	 * 
 	 * @return url
 	 * @since 2.0 
@@ -30,7 +30,7 @@ public interface IInstallHandlerEntry {
 	URL getURL();
 
 	/**
-	 * Optional name of a library containing the install
+	 * Returns optional name of a library containing the install
 	 * handler classes. If specified, the referenced library
 	 * must be contained in the feature archive.
 	 * 
@@ -40,7 +40,7 @@ public interface IInstallHandlerEntry {
 	String getLibrary();
 
 	/**
-	 * Install handler name.
+	 * Returns install handler name.
 	 * It is interpreted depending on the value of the library
 	 * specification. If library is not specified, the name
 	 * is intepreted as an identifier of a "global" install
