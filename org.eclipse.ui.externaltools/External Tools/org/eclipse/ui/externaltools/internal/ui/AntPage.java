@@ -97,8 +97,8 @@ public abstract class AntPage extends Object {
 		Label separator = new Label(parent, SWT.NONE);
 		separator.setVisible(false);
 		GridData gd = new GridData();
-		gd.horizontalAlignment = gd.FILL;
-		gd.verticalAlignment = gd.BEGINNING;
+		gd.horizontalAlignment = GridData.FILL;
+		gd.verticalAlignment = GridData.BEGINNING;
 		gd.heightHint = 4;
 		separator.setLayoutData(gd);
 		return separator;

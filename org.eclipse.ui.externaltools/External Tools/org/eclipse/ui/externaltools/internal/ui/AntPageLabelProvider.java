@@ -12,7 +12,6 @@ Contributors:
 import java.net.URL;
 
 import org.eclipse.ant.core.*;
-import org.eclipse.ant.internal.core.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.*;

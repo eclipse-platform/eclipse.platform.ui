@@ -26,7 +26,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.externaltools.internal.core.*;
-import org.eclipse.ui.externaltools.internal.core.ToolUtil.VariableDefinition;
 
 /**
  * Dialog box to enter the required information for running
@@ -510,9 +509,9 @@ public class EditDialog extends TitleAreaDialog {
 		String command = locationField.getText().trim();
 		String value = ToolUtil.getLocationFromText(command);
 		if (value != null && value.endsWith(".xml")) //$NON-NLS-1$
-			tool.setType(tool.TOOL_TYPE_ANT);
+			tool.setType(ExternalTool.TOOL_TYPE_ANT);
 		else
-			tool.setType(tool.TOOL_TYPE_PROGRAM);
+			tool.setType(ExternalTool.TOOL_TYPE_PROGRAM);
 		tool.setName(nameField.getText().trim());
 		tool.setLocation(command);
 		tool.setArguments(argumentsField.getText().trim());
@@ -529,28 +528,28 @@ public class EditDialog extends TitleAreaDialog {
 	private void updateRefreshField() {
 		ToolUtil.VariableDefinition result = ToolUtil.extractVariableTag(refreshScope, 0);
 		if (result.name == null) {
-			refreshScope = ToolUtil.buildVariableTag(tool.REFRESH_SCOPE_NONE, null);
-			result.name = tool.REFRESH_SCOPE_NONE;
+			refreshScope = ToolUtil.buildVariableTag(ExternalTool.REFRESH_SCOPE_NONE, null);
+			result.name = ExternalTool.REFRESH_SCOPE_NONE;
 		}
 		
-		if (tool.REFRESH_SCOPE_NONE.equals(result.name)) {
+		if (ExternalTool.REFRESH_SCOPE_NONE.equals(result.name)) {
 			refreshField.setText(ToolMessages.getString("EditDialog.refreshScopeNone")); //$NON-NLS-1$
 			return;
 		}
-		if (tool.REFRESH_SCOPE_WORKSPACE.equals(result.name)) {
+		if (ExternalTool.REFRESH_SCOPE_WORKSPACE.equals(result.name)) {
 			refreshField.setText(ToolMessages.getString("EditDialog.refreshScopeWorkspace")); //$NON-NLS-1$
 			return;
 		}
-		if (tool.REFRESH_SCOPE_PROJECT.equals(result.name)) {
+		if (ExternalTool.REFRESH_SCOPE_PROJECT.equals(result.name)) {
 			if (result.argument == null)
 				refreshField.setText(ToolMessages.getString("EditDialog.refreshScopeProject")); //$NON-NLS-1$
 			else
 				refreshField.setText(ToolMessages.format("EditDialog.refreshScopeProjectX", new Object[] {result.argument})); //$NON-NLS-1$
 			return;
 		}
-		if (tool.REFRESH_SCOPE_WORKING_SET.equals(result.name)) {
+		if (ExternalTool.REFRESH_SCOPE_WORKING_SET.equals(result.name)) {
 			if (result.argument == null) {
-				refreshScope = ToolUtil.buildVariableTag(tool.REFRESH_SCOPE_NONE, null);
+				refreshScope = ToolUtil.buildVariableTag(ExternalTool.REFRESH_SCOPE_NONE, null);
 				refreshField.setText(ToolMessages.getString("EditDialog.refreshScopeNone")); //$NON-NLS-1$
 			}
 			else

@@ -9,9 +9,12 @@ http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
 **********************************************************************/
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.externaltools.internal.ui.LogConsoleDocument;
 
 /**
@@ -36,7 +39,7 @@ public class ProgramRunner extends ExternalToolsRunner {
 			File workingDir = null;
 			if (runnerContext.getExpandedWorkingDirectory().length() > 0)
 				workingDir = new File(runnerContext.getExpandedWorkingDirectory());
-			startMonitor(monitor, runnerContext, monitor.UNKNOWN);
+			startMonitor(monitor, runnerContext, IProgressMonitor.UNKNOWN);
 			boolean[] finished = new boolean[1];
 			
 			finished[0] = false;
@@ -56,7 +59,7 @@ public class ProgramRunner extends ExternalToolsRunner {
 			// necessary with short programs that execute quickly. If
 			// finished[0] is set to true before the threads run,
 			// nothing will be read from the input and error streams.
-			Thread.currentThread().sleep(200);
+			Thread.sleep(200);
 				
 			finished[0] = true;
 		} catch (IOException e) {
@@ -87,7 +90,7 @@ public class ProgramRunner extends ExternalToolsRunner {
 						if (showLog)
 							document.append(sb.toString(), severity);
 						try {
-							Thread.currentThread().sleep(100);
+							Thread.sleep(100);
 						} catch (InterruptedException e) {
 						}
 					}

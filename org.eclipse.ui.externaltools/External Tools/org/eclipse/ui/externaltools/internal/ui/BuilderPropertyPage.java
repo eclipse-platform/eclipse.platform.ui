@@ -14,10 +14,8 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.program.Program;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -192,7 +190,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		newButton = createButton(buttonArea, ToolMessages.getString("BuilderPropertyPage.newButton")); //$NON-NLS-1$
 		editButton = createButton(buttonArea, ToolMessages.getString("BuilderPropertyPage.editButton")); //$NON-NLS-1$
 		removeButton = createButton(buttonArea, ToolMessages.getString("BuilderPropertyPage.removeButton")); //$NON-NLS-1$
-		Label buttonSpacer = new Label(buttonArea, SWT.LEFT);
+		new Label(buttonArea, SWT.LEFT);
 		upButton = createButton(buttonArea, ToolMessages.getString("BuilderPropertyPage.upButton")); //$NON-NLS-1$
 		downButton = createButton(buttonArea, ToolMessages.getString("BuilderPropertyPage.downButton")); //$NON-NLS-1$
 	
@@ -383,7 +381,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 				return;
 			}
 			item.setText(tool.getName());
-			if (tool.TOOL_TYPE_ANT.equals(tool.getType())) {
+			if (ExternalTool.TOOL_TYPE_ANT.equals(tool.getType())) {
 				item.setImage(antImage);
 			} else {
 				item.setImage(externalToolImage);

@@ -153,17 +153,17 @@ public final class DefaultRunnerContext implements IRunnerContext {
 	 * Expands the variable
 	 */
 	private void expandVariable(ToolUtil.VariableDefinition varDef, StringBuffer buf, boolean addQuotes) {
-		if (tool.VAR_BUILD_TYPE.equals(varDef.name)) {
+		if (ExternalTool.VAR_BUILD_TYPE.equals(varDef.name)) {
 			appendVariable(buildType, buf, addQuotes);	
 		}
 
-		if (tool.VAR_ANT_TARGET.equals(varDef.name)) {
+		if (ExternalTool.VAR_ANT_TARGET.equals(varDef.name)) {
 			if (varDef.argument != null && varDef.argument.length() > 0)
 				antTargets.add(varDef.argument);
 			return;
 		}
 		
-		if (tool.VAR_WORKSPACE_LOC.equals(varDef.name)) {
+		if (ExternalTool.VAR_WORKSPACE_LOC.equals(varDef.name)) {
 			String location = null;
 			if (varDef.argument != null && varDef.argument.length() > 0)
 				location = ToolUtil.getLocationFromFullPath(varDef.argument);
@@ -173,7 +173,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 			return;
 		}
 		
-		if (tool.VAR_PROJECT_LOC.equals(varDef.name)) {
+		if (ExternalTool.VAR_PROJECT_LOC.equals(varDef.name)) {
 			String location = null;
 			if (varDef.argument != null && varDef.argument.length() > 0) {
 				IResource member = ResourcesPlugin.getWorkspace().getRoot().findMember(varDef.argument);
@@ -187,7 +187,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 			return;
 		}
 		
-		if (tool.VAR_RESOURCE_LOC.equals(varDef.name)) {
+		if (ExternalTool.VAR_RESOURCE_LOC.equals(varDef.name)) {
 			String location = null;
 			if (varDef.argument != null && varDef.argument.length() > 0) {
 				location = ToolUtil.getLocationFromFullPath(varDef.argument);
@@ -199,7 +199,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 			return;			
 		}
 		
-		if (tool.VAR_CONTAINER_LOC.equals(varDef.name)) {
+		if (ExternalTool.VAR_CONTAINER_LOC.equals(varDef.name)) {
 			String location = null;
 			if (varDef.argument != null && varDef.argument.length() > 0) {
 				IResource member = ResourcesPlugin.getWorkspace().getRoot().findMember(varDef.argument);
@@ -213,7 +213,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 			return;			
 		}
 		
-		if (tool.VAR_PROJECT_PATH.equals(varDef.name)) {
+		if (ExternalTool.VAR_PROJECT_PATH.equals(varDef.name)) {
 			String fullPath = null;
 			if (varDef.argument != null && varDef.argument.length() > 0) {
 				IResource member = ResourcesPlugin.getWorkspace().getRoot().findMember(varDef.argument);
@@ -227,7 +227,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 			return;
 		}
 		
-		if (tool.VAR_RESOURCE_PATH.equals(varDef.name)) {
+		if (ExternalTool.VAR_RESOURCE_PATH.equals(varDef.name)) {
 			String fullPath = null;
 			if (varDef.argument != null && varDef.argument.length() > 0) {
 				IResource member = ResourcesPlugin.getWorkspace().getRoot().findMember(varDef.argument);
@@ -241,7 +241,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 			return;			
 		}
 		
-		if (tool.VAR_CONTAINER_PATH.equals(varDef.name)) {
+		if (ExternalTool.VAR_CONTAINER_PATH.equals(varDef.name)) {
 			String fullPath = null;
 			if (varDef.argument != null && varDef.argument.length() > 0) {
 				IResource member = ResourcesPlugin.getWorkspace().getRoot().findMember(varDef.argument);
@@ -255,7 +255,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 			return;			
 		}
 		
-		if (tool.VAR_PROJECT_NAME.equals(varDef.name)) {
+		if (ExternalTool.VAR_PROJECT_NAME.equals(varDef.name)) {
 			String name = null;
 			if (varDef.argument != null && varDef.argument.length() > 0) {
 				IResource member = ResourcesPlugin.getWorkspace().getRoot().findMember(varDef.argument);
@@ -269,7 +269,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 			return;
 		}
 		
-		if (tool.VAR_RESOURCE_NAME.equals(varDef.name)) {
+		if (ExternalTool.VAR_RESOURCE_NAME.equals(varDef.name)) {
 			String name = null;
 			if (varDef.argument != null && varDef.argument.length() > 0) {
 				IResource member = ResourcesPlugin.getWorkspace().getRoot().findMember(varDef.argument);
@@ -283,7 +283,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 			return;			
 		}
 		
-		if (tool.VAR_CONTAINER_NAME.equals(varDef.name)) {
+		if (ExternalTool.VAR_CONTAINER_NAME.equals(varDef.name)) {
 			String name = null;
 			if (varDef.argument != null && varDef.argument.length() > 0) {
 				IResource member = ResourcesPlugin.getWorkspace().getRoot().findMember(varDef.argument);
@@ -330,7 +330,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 			ToolUtil.VariableDefinition scope = ToolUtil.extractVariableTag(tool.getRefreshScope(), 0);
 			ExternalToolsRunner runner = ToolUtil.getRunner(tool.getType());
 			if (runner != null) {
-				if (scope.name == null || tool.REFRESH_SCOPE_NONE.equals(scope.name)) {
+				if (scope.name == null || ExternalTool.REFRESH_SCOPE_NONE.equals(scope.name)) {
 					runner.execute(monitor, this);
 				} else {
 					monitor.beginTask(ToolMessages.getString("DefaultRunnerContext.runningExternalTool"), 100); //$NON-NLS-1$
@@ -400,12 +400,12 @@ public final class DefaultRunnerContext implements IRunnerContext {
 	 * Causes the specified resources to be refreshed.
 	 */
 	private void refreshResources(IProgressMonitor monitor, String scope, String argument) throws CoreException {
-		if (tool.REFRESH_SCOPE_WORKSPACE.equals(scope)) {
+		if (ExternalTool.REFRESH_SCOPE_WORKSPACE.equals(scope)) {
 			ResourcesPlugin.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 			return;
 		}
 		
-		if (tool.REFRESH_SCOPE_PROJECT.equals(scope)) {
+		if (ExternalTool.REFRESH_SCOPE_PROJECT.equals(scope)) {
 			IProject container = null;
 			if (argument == null) {
 				container = currentProject;
@@ -417,7 +417,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 			return;
 		}
 		
-		if (tool.REFRESH_SCOPE_WORKING_SET.equals(scope)) {
+		if (ExternalTool.REFRESH_SCOPE_WORKING_SET.equals(scope)) {
 			if (argument == null)
 				return;
 			IWorkingSet set = workingSetManager.getWorkingSet(argument);
