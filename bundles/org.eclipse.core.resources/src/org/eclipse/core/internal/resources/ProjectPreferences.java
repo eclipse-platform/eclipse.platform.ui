@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import java.util.Iterator;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.utils.Policy;
@@ -111,6 +112,18 @@ public class ProjectPreferences extends EclipsePreferences {
 	 * @see org.osgi.service.prefs.Preferences#flush()
 	 */
 	public void flush() throws BackingStoreException {
+		super.flush();
+		if (!dirty)
+			return;
+		// TODO move this to superclass?
+		if (!isLoadLevel()) {
+			// flush children
+			for (Iterator i = children.values().iterator(); i.hasNext();) {
+				IEclipsePreferences child = (IEclipsePreferences) i.next();
+				child.flush();
+			}
+			return;
+		}
 		// get the root of the project prefs
 		IPath location = getLocation();
 		if (location == null) {

@@ -11,7 +11,9 @@
 package org.eclipse.core.resources;
 
 import org.eclipse.core.internal.resources.*;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.runtime.*;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * The plug-in runtime class for the Resources plug-in.  This is
@@ -290,7 +292,16 @@ public void shutdown() throws CoreException {
 	if (workspace == null) {
 		return;
 	}
+	// save the preferences for this plug-in
 	getPlugin().savePluginPreferences();
+	// save all our project preferences
+	try {
+		Platform.getPreferencesService().getRootNode().node(ProjectScope.SCOPE).flush();
+	} catch (BackingStoreException e) {
+		String message = Policy.bind("preferences.saveProblems", e.getMessage()); //$NON-NLS-1$
+		IStatus status = new Status(IStatus.ERROR, PI_RESOURCES, IStatus.ERROR, message, e);
+		getPlugin().getLog().log(status);
+	}
 	workspace.close(null);
 	
 	/* Forget workspace only if successfully closed, to
