@@ -330,7 +330,6 @@ public class TagSelectionDialog extends Dialog{
 	protected void updateEnablement() {
 		selection = (IStructuredSelection)tagTree.getSelection();		
 		if(okButton!=null) {
-		
 			if (selection.isEmpty() || selection.size() != 1 || !(selection.getFirstElement() instanceof TagElement)) {
 				okButton.setEnabled(false);
 			} else {
@@ -374,7 +373,7 @@ public class TagSelectionDialog extends Dialog{
 		ArrayList dateTagElements = null;
 		if (selection!=null && !selection.isEmpty()) {
 			dateTagElements = new ArrayList();
-			Iterator elements = ((IStructuredSelection) selection).iterator();
+			Iterator elements = selection.iterator();
 			while (elements.hasNext()) {
 				Object next = CVSAction.getAdapter(elements.next(), TagElement.class);
 				if (next instanceof TagElement) {
@@ -398,7 +397,23 @@ public class TagSelectionDialog extends Dialog{
 		if(!dateTags.contains( tag)){
 			CVSUIPlugin.getPlugin().getRepositoryManager().addDateTag(getLocation(),tag);
 		}
-		tagTree.refresh();
+		try {
+			tagTree.getControl().setRedraw(false);
+			tagTree.refresh();
+			// TODO: Hack to instantiate the model before revealing the selection
+			Object[] expanded = tagTree.getExpandedElements();
+			tagTree.expandToLevel(2);
+			tagTree.collapseAll();
+			for (int i = 0; i < expanded.length; i++) {
+				Object object = expanded[i];
+				tagTree.expandToLevel(object, 1);
+			}
+			// Reveal the selection
+			tagTree.reveal(new TagElement(tag));
+			tagTree.setSelection(new StructuredSelection(new TagElement(tag)));
+		} finally {
+			tagTree.getControl().setRedraw(true);
+		}
 		updateEnablement();
 	}
 	private void addMenuItemActions(IMenuManager manager) {
