@@ -50,14 +50,16 @@ public final class ContextManagerEvent {
      *            the set of identifiers to previously defined contexts. This
      *            set may be empty. If this set is not empty, it must only
      *            contain instances of <code>String</code>. This set must be
-     *            <code>null</code> if definedContextIds is <code>false</code>
-     *            and must not be null if definedContextIds is <code>true</code>.
+     *            <code>null</code> if definedContextIdsChanged is
+     *            <code>false</code> and must not be null if
+     *            definedContextIdsChanged is <code>true</code>.
      * @param previouslyEnabledContextIds
      *            the set of identifiers to previously enabled contexts. This
      *            set may be empty. If this set is not empty, it must only
      *            contain instances of <code>String</code>. This set must be
-     *            <code>null</code> if enabledContextIds is <code>false</code>
-     *            and must not be null if enabledContextIds is <code>true</code>.
+     *            <code>null</code> if enabledContextIdsChanged is
+     *            <code>false</code> and must not be null if
+     *            enabledContextIdsChanged is <code>true</code>.
      */
     public ContextManagerEvent(IContextManager contextManager,
             boolean definedContextIdsChanged, boolean enabledContextIdsChanged,
@@ -99,9 +101,10 @@ public final class ContextManagerEvent {
      * @return the set of identifiers to previously defined contexts. This set
      *         may be empty. If this set is not empty, it is guaranteed to only
      *         contain instances of <code>String</code>. This set is
-     *         guaranteed to be <code>null</code> if definedContextIds is
-     *         <code>false</code> and is guaranteed to not be null if
-     *         definedContextIds is <code>true</code>.
+     *         guaranteed to be <code>null</code> if
+     *         haveDefinedContextIdsChanged() is <code>false</code> and is
+     *         guaranteed to not be null if haveDefinedContextIdsChanged() is
+     *         <code>true</code>.
      */
     public Set getPreviouslyDefinedContextIds() {
         return previouslyDefinedContextIds;
@@ -113,9 +116,10 @@ public final class ContextManagerEvent {
      * @return the set of identifiers to previously enabled contexts. This set
      *         may be empty. If this set is not empty, it is guaranteed to only
      *         contain instances of <code>String</code>. This set is
-     *         guaranteed to be <code>null</code> if enabledContextIds is
-     *         <code>false</code> and is guaranteed to not be null if
-     *         enabledContextIds is <code>true</code>.
+     *         guaranteed to be <code>null</code> if
+     *         haveEnabledContextIdsChanged() is <code>false</code> and is
+     *         guaranteed to not be null if haveEnabledContextIdsChanged() is
+     *         <code>true</code>.
      */
     public Set getPreviouslyEnabledContextIds() {
         return previouslyEnabledContextIds;

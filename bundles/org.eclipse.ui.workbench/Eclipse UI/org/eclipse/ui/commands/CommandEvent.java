@@ -15,7 +15,8 @@ import java.util.Set;
 import org.eclipse.ui.internal.util.Util;
 
 /**
- * An instance of this class describes changes to an instance of <code>ICommand</code>.
+ * An instance of this class describes changes to an instance of
+ * <code>ICommand</code>.
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
@@ -24,8 +25,6 @@ import org.eclipse.ui.internal.util.Util;
  * @see ICommandListener#commandChanged
  */
 public final class CommandEvent {
-
-    private Set attributeNames;
 
     private boolean categoryIdChanged;
 
@@ -45,16 +44,13 @@ public final class CommandEvent {
 
     private boolean nameChanged;
 
+    private Set previouslyDefinedAttributeNames;
+
     /**
      * Creates a new instance of this class.
      * 
      * @param command
      *            the instance of the interface that changed.
-     * @param attributeNames
-     *            the set of names of attributes whose values have changed.
-     *            This set may be empty, but it must not be <code>null</code>.
-     *            If this set is not empty, it must only contain instances of
-     *            <code>String</code>.
      * @param categoryIdChanged
      *            true, iff the categoryId property changed.
      * @param contextBindingsChanged
@@ -71,16 +67,31 @@ public final class CommandEvent {
      *            true, iff the keySequenceBindings property changed.
      * @param nameChanged
      *            true, iff the name property changed.
+     * @param previouslyAttributeNames
+     *            the set of previously defined attribute names. This set may be
+     *            empty. If this set is not empty, it must only contain
+     *            instances of <code>String</code>. This set must be
+     *            <code>null</code> if definedAttributeNamesChanged is
+     *            <code>false</code> and must not be null if
+     *            definedAttributeNamesChanged is <code>true</code>.
      */
-    public CommandEvent(ICommand command, Set attributeNames,
-            boolean categoryIdChanged, boolean contextBindingsChanged,
+    public CommandEvent(ICommand command, boolean categoryIdChanged,
+            boolean contextBindingsChanged,
             boolean definedAttributeNamesChanged, boolean definedChanged,
             boolean descriptionChanged, boolean imageBindingsChanged,
-            boolean keySequenceBindingsChanged, boolean nameChanged) {
+            boolean keySequenceBindingsChanged, boolean nameChanged,
+            Set previouslyDefinedAttributeNames) {
         if (command == null) throw new NullPointerException();
 
+        if (!definedAttributeNamesChanged
+                && previouslyDefinedAttributeNames != null)
+                throw new IllegalArgumentException();
+
+        if (definedAttributeNamesChanged)
+                this.previouslyDefinedAttributeNames = Util.safeCopy(
+                        previouslyDefinedAttributeNames, String.class);
+
         this.command = command;
-        this.attributeNames = Util.safeCopy(attributeNames, String.class);
         this.categoryIdChanged = categoryIdChanged;
         this.contextBindingsChanged = contextBindingsChanged;
         this.definedAttributeNamesChanged = definedAttributeNamesChanged;
@@ -92,22 +103,6 @@ public final class CommandEvent {
     }
 
     /**
-     * Returns the set of names of attributes whose values have changed.
-     * <p>
-     * Notification is sent to all registered listeners if this property
-     * changes.
-     * </p>
-     * 
-     * @return the set of names of attributes whose values have changed. This
-     *         set may be empty, but is guaranteed not to be <code>null</code>.
-     *         If this set is not empty, it is guaranteed to only contain
-     *         instances of <code>String</code>.
-     */
-    public Set getAttributeNames() {
-        return attributeNames;
-    }
-
-    /**
      * Returns the instance of the interface that changed.
      * 
      * @return the instance of the interface that changed. Guaranteed not to be
@@ -115,6 +110,20 @@ public final class CommandEvent {
      */
     public ICommand getCommand() {
         return command;
+    }
+
+    /**
+     * Returns the set of previously defined attribute names.
+     * 
+     * @return the set of previously defined attribute names. This set may be
+     *         empty. If this set is not empty, it is guaranteed to only contain
+     *         instances of <code>String</code>. This set is guaranteed to be
+     *         <code>null</code> if haveDefinedAttributeNamesChanged() is
+     *         <code>false</code> and is guaranteed to not be null if
+     *         haveDefinedAttributeNamesChanged() is <code>true</code>.
+     */
+    public Set getPreviouslyDefinedAttributeNames() {
+        return previouslyDefinedAttributeNames;
     }
 
     /**

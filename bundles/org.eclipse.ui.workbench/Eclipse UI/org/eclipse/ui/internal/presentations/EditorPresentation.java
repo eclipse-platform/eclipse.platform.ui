@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.presentations;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 
 import org.eclipse.jface.preference.IPreferenceStore;

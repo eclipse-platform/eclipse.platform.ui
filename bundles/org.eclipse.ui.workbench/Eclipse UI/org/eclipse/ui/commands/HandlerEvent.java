@@ -15,7 +15,8 @@ import java.util.Set;
 import org.eclipse.ui.internal.util.Util;
 
 /**
- * An instance of this class describes changes to an instance of <code>IHandler</code>.
+ * An instance of this class describes changes to an instance of
+ * <code>IHandler</code>.
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
@@ -25,31 +26,40 @@ import org.eclipse.ui.internal.util.Util;
  */
 public final class HandlerEvent {
 
+    private boolean definedAttributeNamesChanged;
+
     private IHandler handler;
 
-    private Set attributeNames;
-
-    private boolean definedAttributeNamesChanged;
+    private Set previouslyDefinedAttributeNames;
 
     /**
      * Creates a new instance of this class.
      * 
      * @param handler
      *            the instance of the interface that changed.
-     * @param attributeNames
-     *            the set of names of attributes whose values have changed.
-     *            This set may be empty, but it must not be <code>null</code>.
-     *            If this set is not empty, it must only contain instances of
-     *            <code>String</code>.
      * @param definedAttributeNamesChanged
      *            true, iff the definedAttributeNames property changed.
+     * @param previouslyAttributeNames
+     *            the set of previously defined attribute names. This set may be
+     *            empty. If this set is not empty, it must only contain
+     *            instances of <code>String</code>. This set must be
+     *            <code>null</code> if definedAttributeNamesChanged is
+     *            <code>false</code> and must not be null if
+     *            definedAttributeNamesChanged is <code>true</code>.
      */
-    public HandlerEvent(IHandler handler, Set attributeNames,
-            boolean definedAttributeNamesChanged) {
+    public HandlerEvent(IHandler handler, boolean definedAttributeNamesChanged,
+            Set previouslyDefinedAttributeNames) {
         if (handler == null) throw new NullPointerException();
 
+        if (!definedAttributeNamesChanged
+                && previouslyDefinedAttributeNames != null)
+                throw new IllegalArgumentException();
+
+        if (definedAttributeNamesChanged)
+                this.previouslyDefinedAttributeNames = Util.safeCopy(
+                        previouslyDefinedAttributeNames, String.class);
+
         this.handler = handler;
-        this.attributeNames = Util.safeCopy(attributeNames, String.class);
         this.definedAttributeNamesChanged = definedAttributeNamesChanged;
     }
 
@@ -64,19 +74,17 @@ public final class HandlerEvent {
     }
 
     /**
-     * Returns the set of names of attributes whose values have changed.
-     * <p>
-     * Notification is sent to all registered listeners if this property
-     * changes.
-     * </p>
+     * Returns the set of previously defined attribute names.
      * 
-     * @return the set of names of attributes whose values have changed. This
-     *         set may be empty, but is guaranteed not to be <code>null</code>.
-     *         If this set is not empty, it is guaranteed to only contain
-     *         instances of <code>String</code>.
+     * @return the set of previously defined attribute names. This set may be
+     *         empty. If this set is not empty, it is guaranteed to only contain
+     *         instances of <code>String</code>. This set is guaranteed to be
+     *         <code>null</code> if haveDefinedAttributeNamesChanged() is
+     *         <code>false</code> and is guaranteed to not be null if
+     *         haveDefinedAttributeNamesChanged() is <code>true</code>.
      */
-    public Set getAttributeNames() {
-        return attributeNames;
+    public Set getPreviouslyDefinedAttributeNames() {
+        return previouslyDefinedAttributeNames;
     }
 
     /**

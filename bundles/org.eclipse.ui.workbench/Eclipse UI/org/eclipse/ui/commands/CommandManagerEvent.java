@@ -73,22 +73,24 @@ public final class CommandManagerEvent {
      *            the set of identifiers to previously defined categories. This
      *            set may be empty. If this set is not empty, it must only
      *            contain instances of <code>String</code>. This set must be
-     *            <code>null</code> if definedCategoryIds is
+     *            <code>null</code> if definedCategoryIdsChanged is
      *            <code>false</code> and must not be null if
-     *            definedCategoryIds is <code>true</code>.
+     *            definedCategoryIdsChanged is <code>true</code>.
      * @param previouslyDefinedContextIds
      *            the set of identifiers to previously defined contexts. This
      *            set may be empty. If this set is not empty, it must only
      *            contain instances of <code>String</code>. This set must be
-     *            <code>null</code> if definedContextIds is <code>false</code>
-     *            and must not be null if definedContextIds is <code>true</code>.
+     *            <code>null</code> if definedContextIdsChanged is
+     *            <code>false</code> and must not be null if
+     *            definedContextIdsChanged is <code>true</code>.
      * @param previouslyDefinedKeyConfigurationIds
      *            the set of identifiers to previously defined key
      *            configurations. This set may be empty. If this set is not
      *            empty, it must only contain instances of <code>String</code>.
      *            This set must be <code>null</code> if
-     *            definedKeyConfigurationIds is <code>false</code> and must
-     *            not be null if definedKeyConfigurationIds is <code>true</code>.
+     *            definedKeyConfigurationIdsChanged is <code>false</code> and
+     *            must not be null if definedKeyConfigurationIdsChanged is
+     *            <code>true</code>.
      */
     public CommandManagerEvent(ICommandManager commandManager,
             boolean activeContextIdsChanged,
@@ -149,9 +151,10 @@ public final class CommandManagerEvent {
      * @return the set of identifiers to previously defined categories. This set
      *         may be empty. If this set is not empty, it is guaranteed to only
      *         contain instances of <code>String</code>. This set is
-     *         guaranteed to be <code>null</code> if definedCategoryIds is
-     *         <code>false</code> and is guaranteed to not be null if
-     *         definedCategoryIds is <code>true</code>.
+     *         guaranteed to be <code>null</code> if
+     *         haveDefinedCategoryIdsChanged() is <code>false</code> and is
+     *         guaranteed to not be null if haveDefinedCategoryIdsChanged() is
+     *         <code>true</code>.
      */
     public Set getPreviouslyDefinedCategoryIds() {
         return previouslyDefinedCategoryIds;
@@ -163,9 +166,10 @@ public final class CommandManagerEvent {
      * @return the set of identifiers to previously defined commands. This set
      *         may be empty. If this set is not empty, it is guaranteed to only
      *         contain instances of <code>String</code>. This set is
-     *         guaranteed to be <code>null</code> if definedCommandIds is
-     *         <code>false</code> and is guaranteed to not be null if
-     *         definedCommandIds is <code>true</code>.
+     *         guaranteed to be <code>null</code> if
+     *         haveDefinedCommandIdsChanged() is <code>false</code> and is
+     *         guaranteed to not be null if haveDefinedCommandIdsChanged() is
+     *         <code>true</code>.
      */
     public Set getPreviouslyDefinedCommandIds() {
         return previouslyDefinedCommandIds;
@@ -178,21 +182,12 @@ public final class CommandManagerEvent {
      *         This set may be empty. If this set is not empty, it is guaranteed
      *         to only contain instances of <code>String</code>. This set is
      *         guaranteed to be <code>null</code> if
-     *         definedKeyConfigurationIds is <code>false</code> and is
-     *         guaranteed to not be null if definedKeyConfigurationIds is
-     *         <code>true</code>.
+     *         haveDefinedKeyConfigurationIdsChanged() is <code>false</code>
+     *         and is guaranteed to not be null if
+     *         haveDefinedKeyConfigurationIdsChanged() is <code>true</code>.
      */
     public Set getPreviouslyDefinedKeyConfigurationIds() {
         return previouslyDefinedKeyConfigurationIds;
-    }
-
-    /**
-     * Returns whether or not the activeContextIds property changed.
-     * 
-     * @return true, iff the activeContextIds property changed.
-     */
-    public boolean haveActiveContextIdsChanged() {
-        return activeContextIdsChanged;
     }
 
     /**
@@ -220,6 +215,15 @@ public final class CommandManagerEvent {
      */
     public boolean hasActivePlatformChanged() {
         return activePlatformChanged;
+    }
+
+    /**
+     * Returns whether or not the activeContextIds property changed.
+     * 
+     * @return true, iff the activeContextIds property changed.
+     */
+    public boolean haveActiveContextIdsChanged() {
+        return activeContextIdsChanged;
     }
 
     /**

@@ -12,101 +12,97 @@
 package org.eclipse.ui.commands;
 
 /**
- * <p>
- * An instance of <code>KeyConfigurationEvent</code> describes changes to an
- * instance of <code>IKeyConfiguration</code>.
- * </p>
+ * An instance of this class describes changes to an instance of
+ * <code>IKeyConfiguration</code>.
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
- * </p>
  * 
  * @since 3.0
- * @see IKeyConfiguration
- * @see IKeyConfigurationListener#commandChanged
+ * @see IKeyConfigurationListener#keyConfigurationChanged
  */
 public final class KeyConfigurationEvent {
 
-	private boolean activeChanged;
-	private boolean definedChanged;
-	private boolean descriptionChanged;
-	private IKeyConfiguration keyConfiguration;
-	private boolean nameChanged;
-	private boolean parentIdChanged;
+    private boolean activeChanged;
 
-	/**
-	 * TODO javadoc
-	 * 
-	 * @param keyConfiguration
-	 * @param activeChanged
-	 * @param definedChanged
-	 * @param descriptionChanged
-	 * @param nameChanged
-	 * @param parentIdChanged
-	 */
-	public KeyConfigurationEvent(
-		IKeyConfiguration keyConfiguration,
-		boolean activeChanged,
-		boolean definedChanged,
-		boolean descriptionChanged,
-		boolean nameChanged,
-		boolean parentIdChanged) {
-		if (keyConfiguration == null)
-			throw new NullPointerException();
+    private boolean definedChanged;
 
-		this.keyConfiguration = keyConfiguration;
-		this.activeChanged = activeChanged;
-		this.definedChanged = definedChanged;
-		this.descriptionChanged = descriptionChanged;
-		this.nameChanged = nameChanged;
-		this.parentIdChanged = parentIdChanged;
-	}
+    private IKeyConfiguration keyConfiguration;
 
-	/**
-	 * Returns the instance of <code>IKeyConfiguration</code> that has
-	 * changed.
-	 * 
-	 * @return the instance of <code>IKeyConfiguration</code> that has
-	 *         changed. Guaranteed not to be <code>null</code>.
-	 */
-	public IKeyConfiguration getKeyConfiguration() {
-		return keyConfiguration;
-	}
+    private boolean nameChanged;
 
-	/**
-	 * TODO javadoc
-	 */
-	public boolean hasActiveChanged() {
-		return activeChanged;
-	}
+    private boolean parentIdChanged;
 
-	/**
-	 * TODO javadoc
-	 */
-	public boolean hasDefinedChanged() {
-		return definedChanged;
-	}
+    /**
+     * Creates a new instance of this class.
+     * 
+     * @param keyConfiguration
+     *            the instance of the interface that changed.
+     * @param activeChanged
+     *            true, iff the active property changed.
+     * @param definedChanged
+     *            true, iff the defined property changed.
+     * @param nameChanged
+     *            true, iff the name property changed.
+     * @param parentIdChanged
+     *            true, iff the parentId property changed.
+     */
+    public KeyConfigurationEvent(IKeyConfiguration keyConfiguration,
+            boolean activeChanged, boolean definedChanged,
+            boolean descriptionChanged, boolean nameChanged,
+            boolean parentIdChanged) {
+        if (keyConfiguration == null) throw new NullPointerException();
 
-	/**
-	 * TODO javadoc
-	 */
-	public boolean hasDescriptionChanged() {
-		return descriptionChanged;
-	}
+        this.keyConfiguration = keyConfiguration;
+        this.activeChanged = activeChanged;
+        this.definedChanged = definedChanged;
+        this.nameChanged = nameChanged;
+        this.parentIdChanged = parentIdChanged;
+    }
 
-	/**
-	 * TODO javadoc
-	 */
-	public boolean hasNameChanged() {
-		return nameChanged;
-	}
+    /**
+     * Returns the instance of the interface that changed.
+     * 
+     * @return the instance of the interface that changed. Guaranteed not to be
+     *         <code>null</code>.
+     */
+    public IKeyConfiguration getKeyConfiguration() {
+        return keyConfiguration;
+    }
 
-	/**
-	 * TODO javadoc
-	 */
-	public boolean hasParentIdChanged() {
-		return parentIdChanged;
-	}
+    /**
+     * Returns whether or not the active property changed.
+     * 
+     * @return true, iff the active property changed.
+     */
+    public boolean hasActiveChanged() {
+        return activeChanged;
+    }
+
+    /**
+     * Returns whether or not the defined property changed.
+     * 
+     * @return true, iff the defined property changed.
+     */
+    public boolean hasDefinedChanged() {
+        return definedChanged;
+    }
+
+    /**
+     * Returns whether or not the name property changed.
+     * 
+     * @return true, iff the name property changed.
+     */
+    public boolean hasNameChanged() {
+        return nameChanged;
+    }
+
+    /**
+     * Returns whether or not the parentId property changed.
+     * 
+     * @return true, iff the parentId property changed.
+     */
+    public boolean hasParentIdChanged() {
+        return parentIdChanged;
+    }
 }
