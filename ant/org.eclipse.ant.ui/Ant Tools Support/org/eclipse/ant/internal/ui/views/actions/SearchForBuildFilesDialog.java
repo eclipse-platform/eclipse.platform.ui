@@ -261,15 +261,13 @@ public class SearchForBuildFilesDialog extends InputDialog {
 				error= AntViewActionMessages.getString("SearchForBuildFilesDialog.No_searchable"); //$NON-NLS-1$
 			}
 			if (error != null) {
-				getErrorMessageLabel().setText(error);
-				getErrorMessageLabel().getParent().update();
+				setErrorMessage(error);
 				getOkButton().setEnabled(false);
 				return;
 			}
 		}
 		getOkButton().setEnabled(true);
-		getErrorMessageLabel().setText(""); //$NON-NLS-1$
-		getErrorMessageLabel().getParent().update();
+		setErrorMessage(""); //$NON-NLS-1$
 	}
 
 	/**
