@@ -90,11 +90,6 @@ public class HelpURL {
 		}
 		return null;
 	}
-	public String getPath() {
-		// The stored url starts with plugin id.
-		// We need to return /pluginid/filename
-		return "/" + url;
-	}
 	/**
 	 * 
 	 */

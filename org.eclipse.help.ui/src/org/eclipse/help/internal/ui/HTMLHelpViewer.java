@@ -8,6 +8,7 @@ import java.util.Locale;
 
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.contributions1_0.Contribution;
+import org.eclipse.help.internal.contributions1_0.InfoView;
 import org.eclipse.help.internal.ui.util.*;
 import org.eclipse.help.topics.*;
 import org.eclipse.jface.viewers.*;
@@ -75,7 +76,7 @@ public class HTMLHelpViewer implements ISelectionChangedListener {
 			return;
 		// use the client locale to load the correct document
 		String locale = Locale.getDefault().toString();
-		if (input instanceof ITopic || input instanceof String) {
+		if (input instanceof ITopic && !(input instanceof InfoView) || input instanceof String) {
 			String url;
 			if(input instanceof ITopic){
 				ITopic topicElement = (ITopic) input;
