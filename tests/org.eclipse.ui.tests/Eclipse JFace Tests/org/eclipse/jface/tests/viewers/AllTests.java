@@ -26,6 +26,7 @@ public class AllTests {
         TestSuite suite = new TestSuite();
         suite.addTest(new TestSuite(TreeViewerTest.class));
         suite.addTest(new TestSuite(TableViewerTest.class));
+        suite.addTest(new TestSuite(VirtualTableViewerTest.class));
         suite.addTest(new TestSuite(TableTreeViewerTest.class));
         suite.addTest(new TestSuite(TableColorProviderTest.class));
         suite.addTest(new TestSuite(TableFontProviderTest.class));

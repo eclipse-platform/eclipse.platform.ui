@@ -53,7 +53,7 @@ public class TableViewerTest extends StructuredItemViewerTest {
      * Creates the viewer used by this test, under the given parent widget.
      */
     protected StructuredViewer createViewer(Composite parent) {
-        TableViewer viewer = new TableViewer(parent);
+        TableViewer viewer = createTableViewer(parent);
         viewer.setContentProvider(new TestModelContentProvider());
         viewer.setLabelProvider(new TableTestLabelProvider());
         viewer.getTable().setLinesVisible(true);
@@ -79,7 +79,16 @@ public class TableViewerTest extends StructuredItemViewerTest {
         return viewer;
     }
 
-    protected int getItemCount() {
+    /**
+     * Create the table viewer for the test
+	 * @param parent
+	 * @return
+	 */
+	protected TableViewer createTableViewer(Composite parent) {
+		return new TableViewer(parent);
+	}
+
+	protected int getItemCount() {
         TestElement first = fRootElement.getFirstChild();
         TableItem ti = (TableItem) fViewer.testFindItem(first);
         Table table = ti.getParent();

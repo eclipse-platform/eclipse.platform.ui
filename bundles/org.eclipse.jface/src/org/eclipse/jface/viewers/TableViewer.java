@@ -12,6 +12,7 @@
 package org.eclipse.jface.viewers;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.eclipse.jface.util.Assert;
@@ -23,7 +24,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
@@ -41,8 +44,107 @@ import org.eclipse.swt.widgets.Widget;
  * <code>ITableLabelProvider</code> or the <code>ILabelProvider</code>
  * interface (see <code>TableViewer.setLabelProvider</code> for more details).
  * </p>
+ * <p>
+ * As of 3.1 the TableViewer now supports the SWT.VIRTUAL
+ * flag. It is important to note that if SWT.VIRTUAL is in use
+ * that the Widget based APIs will return null in both the
+ * cases where either the element is not specified or not
+ * created yet. 
+ * </p>
+ * <p>
+ * Users of SWT.VIRTUAL should also avoid using getItems()
+ * from the Table within the TreeViewer as this does not
+ * necessarily generate a callback for the TreeViewer 
+ * to populate the items. It also has the side effect of
+ * creating all of the items thereby eliminating the
+ * performance improvements of SWT.VIRTUAL.
+ * </p>
+ * @see SWT#VIRTUAL
+ * @see #doFindItem(Object)
+ * @see #internalRefresh(Object, boolean)
  */
 public class TableViewer extends StructuredViewer {
+	
+	private class VirtualManager{
+		
+		private int currentVisibleIndex = -1;
+		private Hashtable virtualElements = new Hashtable();
+		
+		public VirtualManager(){
+			addTableListener();
+		}
+		
+		/**
+		 * Return whether or not index is visible.
+		 * @return <code>true</code> if the item has already
+		 * been created.
+		 */
+		public boolean isVisible(int index) {
+			return index <= currentVisibleIndex;
+		}
+		
+		
+		/**
+		 * Add the listener for SetData on he table
+		 * @param virtualTable - the table to listen to
+		 */
+		private void addTableListener() {
+			table.addListener(SWT.SetData,new Listener(){
+				/* (non-Javadoc)
+				 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+				 */
+				public void handleEvent(Event event) {
+					TableItem item = (TableItem) event.item;
+					int index = table.indexOf(item);					
+					Object element = findVirtualElement(index);
+					if(element == null)
+						throw new NullPointerException();
+					associate(element,item);
+					updateItem(item,element);
+					if(index > currentVisibleIndex)
+						currentVisibleIndex = index;
+				}
+
+				/**
+				 * Find the virtualElement at index.
+				 * @param index
+				 * @return Object 
+				 */
+				private Object findVirtualElement(int index) {
+					Integer key = new Integer(index);
+					Object element = virtualElements.get(key);
+					virtualElements.remove(key);
+					return element;
+				}
+			});
+
+		}
+		
+		/**
+		 * A non visible item has been added.
+		 * @param element
+		 * @param index
+		 */
+		public void notVisibleAdded(Object element, int index) {
+			
+			int requiredCount = index + 1;
+			if(requiredCount > getTable().getItemCount())
+				getTable().setItemCount(10);
+			Integer key = new Integer(index);
+			virtualElements.put(key,element);
+		}
+		
+		/**
+		 * Return the index of the last know visible item.
+		 *
+		 */
+		public int getVisibleIndex(){
+			return currentVisibleIndex;
+		}
+		
+	}
+	
+	private VirtualManager virtualManager;
 
 	/**
 	 * TableColorAndFontCollector is an helper class for color and font
@@ -142,7 +244,7 @@ public class TableViewer extends StructuredViewer {
 	 *            SWT style bits
 	 */
 	public TableViewer(Composite parent, int style) {
-		this(new Table(parent, style));
+		this(new Table(parent, style));			
 	}
 
 	/**
@@ -158,6 +260,20 @@ public class TableViewer extends StructuredViewer {
 		hookControl(table);
 		tableEditor = new TableEditor(table);
 		initTableViewerImpl();
+		initializeVirtualManager(table.getStyle());
+	}
+	
+	/**
+	 * Initialize the virtual manager to manage the virtual state
+	 * if the table is VIRTUAL. If not use the default no-op
+	 * version.
+	 * @param style
+	 */
+	private void initializeVirtualManager(int style) {
+		if((style & SWT.VIRTUAL) == 0)
+			return;
+			
+		virtualManager = new VirtualManager();	
 	}
 
 	/**
@@ -176,11 +292,24 @@ public class TableViewer extends StructuredViewer {
 	public void add(Object[] elements) {
 		assertElementsNotNull(elements);
 		Object[] filtered = filter(elements);
+		
 		for (int i = 0; i < filtered.length; i++) {
 			Object element = filtered[i];
 			int index = indexForElement(element);
-			updateItem(new TableItem(getTable(), SWT.NONE, index), element);
+			createItem(element, index);
 		}
+	}
+
+	/**
+	 * Create a new TableItem at index if required.
+	 * @param element
+	 * @param index
+	 */
+	private void createItem(Object element, int index) {
+		if(virtualManager == null || virtualManager.isVisible(index))
+			updateItem(new TableItem(getTable(), SWT.NONE, index), element);
+		else
+			virtualManager.notVisibleAdded(element,index);
 	}
 
 	/**
@@ -225,7 +354,10 @@ public class TableViewer extends StructuredViewer {
 	 * @see org.eclipse.jface.viewers.StructuredViewer#doFindItem(java.lang.Object)
 	 */
 	protected Widget doFindItem(Object element) {
-		TableItem[] children = table.getItems();
+		//Only iterate through the created items
+		//if the table is VIRTUAL so as to avoid
+		//item creation.
+		TableItem[] children = getCreatedItems();
 		for (int i = 0; i < children.length; i++) {
 			TableItem item = children[i];
 			Object data = item.getData();
@@ -234,6 +366,23 @@ public class TableViewer extends StructuredViewer {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Get the collection of currently visible table items.
+	 * @return TableItem[]
+	 */
+	private TableItem[] getCreatedItems() {
+		if(virtualManager == null)
+			return table.getItems();
+		if(virtualManager.currentVisibleIndex < 0)//Anything shown yet?
+			return new TableItem[0];
+		
+		TableItem[] visible = new TableItem[virtualManager.currentVisibleIndex];
+		for (int i = 0; i < visible.length; i++) {
+			visible[i] = table.getItem(i);
+		}
+		return visible;
 	}
 
 	/*
@@ -545,7 +694,8 @@ public class TableViewer extends StructuredViewer {
 		}
 		if (position == -1)
 			position = table.getItemCount();
-		updateItem(new TableItem(table, SWT.NONE, position), element);
+		
+		createItem(element,position);
 	}
 
 	/*
@@ -573,7 +723,9 @@ public class TableViewer extends StructuredViewer {
 			// the associate of b to item 0.
 
 			Object[] children = getSortedChildren(getRoot());
-			TableItem[] items = table.getItems();
+			//If the receiver is SWT.VIRTUAL only update
+			//those items that have been created
+			TableItem[] items = getCreatedItems();
 			int min = Math.min(children.length, items.length);
 			for (int i = 0; i < min; ++i) {
 				// if the element is unchanged, update its label if appropriate
@@ -622,7 +774,7 @@ public class TableViewer extends StructuredViewer {
 
 			// add any remaining elements
 			for (int i = min; i < children.length; ++i) {
-				updateItem(new TableItem(table, SWT.NONE, i), children[i]);
+				createItem(children[i],i);
 			}
 		} else {
 			Widget w = findItem(element);

@@ -320,7 +320,15 @@
             class="org.eclipse.ui.tests.decorators.DecoratorTableTreeView"
             category="org.eclipse.ui.tests.decoratorCategory"
             name="Table Tree Test"
-            id="org.eclipse.ui.tests.decorator.TableTreeTest"/>      
+            id="org.eclipse.ui.tests.decorator.TableTreeTest"/>
+      <view
+            class="org.eclipse.jface.tests.viewers.interactive.VirtualTableView"
+            category="org.eclipse.ui.tests.tableViewerViews"
+            name="Virtual Table View test"
+            id="org.eclipse.ui.tests.view1"/>
+      <category
+            name="Table Viewer Tests"
+            id="org.eclipse.ui.tests.tableViewerViews"/>      
             
    </extension>
    <extension
