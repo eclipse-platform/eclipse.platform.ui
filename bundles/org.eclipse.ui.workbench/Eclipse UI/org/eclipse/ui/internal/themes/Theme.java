@@ -25,6 +25,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
@@ -52,7 +53,7 @@ public class Theme implements ITheme {
     public Theme(IThemeDescriptor descriptor) {
         themeRegistry = ((ThemeRegistry)WorkbenchPlugin.getDefault().getThemeRegistry());
         this.descriptor = descriptor;
-        IWorkbench workbench = WorkbenchPlugin.getDefault().getWorkbench();
+        IWorkbench workbench = PlatformUI.getWorkbench();
         if (descriptor != null) {            
             
 	        ColorDefinition [] definitions = this.descriptor.getColors();
@@ -218,8 +219,7 @@ public class Theme implements ITheme {
             themeFontRegistry.removeListener(themeListener);
             themeFontRegistry.dispose();
         }
-        WorkbenchPlugin
-        	.getDefault()
+        PlatformUI
         	.getWorkbench()
         	.getPreferenceStore()
         	.removePropertyChangeListener(getPropertyListener());

@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.IPreferenceConstants;
@@ -279,7 +280,7 @@ public class ViewsPreferencePage
      */
     private void refreshThemeCombo() {
         themeCombo.removeAll();
-        ITheme currentTheme = WorkbenchPlugin.getDefault().getWorkbench().getThemeManager().getCurrentTheme();
+        ITheme currentTheme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
 		
 		IThemeDescriptor [] descs = WorkbenchPlugin.getDefault().getThemeRegistry().getThemes();
 		int selection = 0;

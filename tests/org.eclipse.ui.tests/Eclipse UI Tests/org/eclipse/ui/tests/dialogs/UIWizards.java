@@ -12,8 +12,6 @@ package org.eclipse.ui.tests.dialogs;
 
 import junit.framework.TestCase;
 
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ISelection;
@@ -21,7 +19,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardDialog;
-
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.WizardNewProjectReferencePage;
@@ -51,7 +49,7 @@ public class UIWizards extends TestCase {
 		return DialogCheck.getShell();
 	}
 	private IWorkbench getWorkbench() {
-		return WorkbenchPlugin.getDefault().getWorkbench();
+		return PlatformUI.getWorkbench();
 	}
 	private WizardDialog exportWizard(IWizardPage page) {
 		ExportWizard wizard = new ExportWizard();
