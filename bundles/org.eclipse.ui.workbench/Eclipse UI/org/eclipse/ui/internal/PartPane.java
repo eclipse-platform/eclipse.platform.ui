@@ -333,6 +333,14 @@ public void setContainer(ILayoutContainer container) {
 		control.setBorderVisible(container.allowsBorder());
 }
 /**
+ * Shows the receiver if <code>visible</code> is true otherwise hide it.
+ */
+public void setVisible(boolean makeVisible) {
+	super.setVisible(makeVisible);
+	if(makeVisible) //Make sure that the part is restored.
+		partReference.getPart(true);
+}
+/**
  * Sets focus to this part.
  */
 public void setFocus() {

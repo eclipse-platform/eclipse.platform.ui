@@ -261,8 +261,11 @@ private LayoutPart createView(String partID)
 		return editorFolder;
 	} else {
 		WorkbenchPartReference ref = (WorkbenchPartReference)viewFactory.createView(partID);
-		ViewPane newPart = new ViewPane((IViewReference)ref,(WorkbenchPage)ref.getPage());
-		ref.setPane(newPart);
+		ViewPane newPart = (ViewPane)ref.getPane();
+		if(newPart == null) {
+			newPart = new ViewPane((IViewReference)ref,(WorkbenchPage)ref.getPage());
+			ref.setPane(newPart);
+		}
 		return newPart;
 	}
 }

@@ -65,8 +65,11 @@ public void addView(String viewId) {
 	try {
 		// Create the part.
 		WorkbenchPartReference ref = (WorkbenchPartReference)viewFactory.createView(viewId);
-		ViewPane newPart = new ViewPane((IViewReference)ref,(WorkbenchPage)ref.getPage());
-		ref.setPane(newPart);
+		ViewPane newPart = (ViewPane)ref.getPane();
+		if(newPart == null) {
+			newPart = new ViewPane((IViewReference)ref,(WorkbenchPage)ref.getPage());
+			ref.setPane(newPart);
+		}
 		linkPartToPageLayout(viewId, newPart);
 		folder.add(newPart);
 	} catch (PartInitException e) {
