@@ -13,6 +13,7 @@ import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.Map;
 import java.net.*;
 import java.io.*;
 
@@ -199,6 +200,22 @@ public Plugin(IPluginDescriptor descriptor) {
  * @return a URL for the given path or <code>null</code>
  */
 public final URL find(IPath path) {
+	return find(path, null);
+}
+/**
+ * Returns a URL for the given path.  Returns <code>null</code> if the URL
+ * could not be computed or created.
+ * 
+ * @param path file path relative to plug-in installation location
+ * @param override map of override substitution arguments to be used for
+ * any $arg$ path elements. The map keys correspond to the substitution
+ * arguments (eg. "$nl$" or "$os$"). The resulting
+ * values must be of type java.lang.String. If the map is <code>null</code>,
+ * or does not contain the required substitution argument, the default
+ * is used.
+ * @return a URL for the given path or <code>null</code>
+ */
+public final URL find(IPath path, Map override) {
 	URL install = getDescriptor().getInstallURL();
 	String first = path.segment(0);
 	if (first.charAt(0) != '$') {		
@@ -209,34 +226,57 @@ public final URL find(IPath path) {
 	}
 	IPath rest = path.removeFirstSegments(1);
 	if (first.equalsIgnoreCase("$nl$"))
-		return findNL(install, rest);
+		return findNL(install, rest, override);
 	if (first.equalsIgnoreCase("$os$"))
-		return findOS(install, rest);
+		return findOS(install, rest, override);
 	if (first.equalsIgnoreCase("$ws$"))
-		return findWS(install, rest);
+		return findWS(install, rest, override);
 	if (first.equalsIgnoreCase("$files$"))
 		return null;
 	return null;
 }
 
-private URL findOS(URL install, IPath path) {
-	String filePath = "os/" + BootLoader.getOS() + "/" + path.toString();	
+private URL findOS(URL install, IPath path, Map override) {
+	String os = null;
+	if (override != null)
+		try { // check for override
+			os = (String) override.get("$os$");
+		} catch (ClassCastException e) {
+		}
+	if (os == null)
+		os = BootLoader.getOS(); // use default
+	String filePath = "os/" + os + "/" + path.toString();	
 	URL result = findInPlugin(install, filePath);
 	if (result != null)
 		return result;	
 	return findInFragments(filePath);
 }
 
-private URL findWS(URL install, IPath path) {
-	String filePath = "ws/" + BootLoader.getWS() + "/" + path.toString();	
+private URL findWS(URL install, IPath path, Map override) {
+	String ws = null;
+	if (override != null)
+		try { // check for override
+			ws = (String) override.get("$ws$");
+		} catch (ClassCastException e) {
+		}
+	if (ws == null)
+		ws = BootLoader.getWS(); // use default
+	String filePath = "ws/" + ws + "/" + path.toString();	
 	URL result = findInPlugin(install, filePath);
 	if (result != null)
 		return result;	
 	return findInFragments(filePath);
 }
 
-private URL findNL(URL install, IPath path) {
-	String nl = BootLoader.getNL();
+private URL findNL(URL install, IPath path, Map override) {
+	String nl = null;
+	if (override != null)
+		try { // check for override
+			nl = (String) override.get("$nl$");
+		} catch (ClassCastException e) {
+		}
+	if (nl == null)
+		nl = BootLoader.getNL(); // use default
 	URL result = null;
 	boolean done = false;
 	

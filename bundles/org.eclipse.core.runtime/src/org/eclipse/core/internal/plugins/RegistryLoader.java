@@ -8,6 +8,7 @@ package org.eclipse.core.internal.plugins;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Properties;
 
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
@@ -124,6 +125,7 @@ private boolean processPluginPathFile(PluginRegistryModel registry, URL location
 	PluginModel entry = processManifestFile(location);
 	if (entry == null)
 		return false;
+	entry.setVersion(getQualifiedVersion(entry, location)); // check for version qualifier
 	if (entry instanceof PluginDescriptorModel) {
 		if (entry.getId() == null || entry.getVersion() == null) {
 			return parseProblem(Policy.bind("parse.nullPluginIdentifier", location.toString()));
@@ -149,5 +151,34 @@ private boolean processPluginPathFile(PluginRegistryModel registry, URL location
 	entry.setLocation(url);
 	InternalPlatform.addLastModifiedTime(location.getFile(), new File(location.getFile()).lastModified());
 	return true;
+}
+private String getQualifiedVersion(PluginModel entry, URL base) {
+	if (entry == null || entry.getVersion() == null || entry.getId() == null)
+		return null;
+		
+	InputStream is = null;
+	try {		
+		// check to see if we have buildmanifest.properties for this plugin
+		URL manifest = null;
+		manifest = new URL(base, "buildmanifest.properties");
+		Properties props = new Properties();
+		is = manifest.openStream();
+		props.load(is);
+	
+		// lookup qualifier for this plugin and "morph" the identifier if needed
+		String key = "plugin@"+entry.getId();
+		String qualifier = props.getProperty(key);
+		if (qualifier == null)
+			return entry.getVersion();
+		PluginVersionIdentifier v = new PluginVersionIdentifier(entry.getVersion());
+		if (!v.getQualifierComponent().equals(""))
+			return entry.getVersion();
+		else 
+			return (new PluginVersionIdentifier(v.getMajorComponent(), v.getMinorComponent(), v.getServiceComponent(), qualifier)).toString();
+	} catch(Exception e) {
+		return entry.getVersion();
+	} finally {		
+		if (is != null) try { is.close(); } catch(IOException e) {}
+	}
 }
 }
