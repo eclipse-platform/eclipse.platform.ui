@@ -11,7 +11,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.configuration.IConfiguredSite;
 import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.URLKey;
 import org.eclipse.update.internal.core.*;
 
 /**
