@@ -22,8 +22,8 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.widgets.Composite;
@@ -135,8 +135,7 @@ private void checkSelection() {
  */
 protected Control createControl(Composite parent) {
 	text = new Text(parent, getStyle());
-    text.addSelectionListener(new SelectionListener() {
-            public void widgetSelected(SelectionEvent e) {}
+    text.addSelectionListener(new SelectionAdapter() {
             public void widgetDefaultSelected(SelectionEvent e) {
                 // same with enter-key handling code in keyReleaseOccured(e);
                 fireApplyEditorValue();
