@@ -1080,7 +1080,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		if (checkWrongCase)
 			prefix= wrongCasePrefix;
 		else
-			prefix= new String();
+			prefix= "";  //$NON-NLS-1$
 		
 		CharSequence postfix;
 		if (checkWrongCase)
