@@ -1,9 +1,12 @@
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+**********************************************************************/
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -263,7 +266,7 @@ public void addPerspectiveListener(org.eclipse.ui.IPerspectiveListener l) {
 /**
  * add a shortcut for the page.
  */
-/* package */ void addPerspectiveShortcut(Perspective perspective, WorkbenchPage page) {
+/* package */ void addPerspectiveShortcut(IPerspectiveDescriptor perspective, WorkbenchPage page) {
 	SetPagePerspectiveAction action = new SetPagePerspectiveAction(perspective, page);
 	shortcutBar.appendToGroup(GRP_PERSPECTIVES, action);
 	shortcutBar.update(false);
@@ -558,7 +561,7 @@ protected Control createToolBarControl(Shell shell) {
 /**
  * Returns the shortcut for a page.
  */
-/* protected */ IContributionItem findPerspectiveShortcut(Perspective perspective, WorkbenchPage page) {
+/* protected */ IContributionItem findPerspectiveShortcut(IPerspectiveDescriptor perspective, WorkbenchPage page) {
 	IContributionItem[] array = shortcutBar.getItems();
 	int length = array.length;
 	for (int i = 0; i < length; i++) {
@@ -878,7 +881,7 @@ public void removePerspectiveListener(org.eclipse.ui.IPerspectiveListener l) {
 /**
  * Remove the shortcut for a page.
  */
-/* package */ void removePerspectiveShortcut(Perspective perspective, WorkbenchPage page) {
+/* package */ void removePerspectiveShortcut(IPerspectiveDescriptor perspective, WorkbenchPage page) {
 	IContributionItem item = findPerspectiveShortcut(perspective, page);
 	if (item != null) {
 		shortcutBar.remove(item);
@@ -1035,7 +1038,7 @@ public void saveState(IMemento memento) {
 /**
  * Select the shortcut for a perspective.
  */
-/* package */ void selectPerspectiveShortcut(Perspective perspective, WorkbenchPage page, boolean selected) {
+/* package */ void selectPerspectiveShortcut(IPerspectiveDescriptor perspective, WorkbenchPage page, boolean selected) {
 	IContributionItem item = findPerspectiveShortcut(perspective, page);
 	if (item != null) {
 		IAction action = ((ActionContributionItem)item).getAction();
@@ -1245,7 +1248,7 @@ public void updateActionSets() {
 /**
  * Updates the shorcut item
  */
-/* package */ void updatePerspectiveShortcut(Perspective perspective, WorkbenchPage page) {
+/* package */ void updatePerspectiveShortcut(IPerspectiveDescriptor perspective, WorkbenchPage page) {
 	if(updateDisabled)
 		return;
 		

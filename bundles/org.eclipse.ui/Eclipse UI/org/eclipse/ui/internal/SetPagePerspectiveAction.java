@@ -16,12 +16,12 @@ import org.eclipse.jface.resource.*;
  */
 public class SetPagePerspectiveAction extends Action {
 	private WorkbenchPage page;
-	private Perspective persp;
+	private IPerspectiveDescriptor persp;
 	
 	/**
 	 *	Create an instance of this class
 	 */
-	public SetPagePerspectiveAction(Perspective perspective, WorkbenchPage workbenchPage) {
+	public SetPagePerspectiveAction(IPerspectiveDescriptor perspective, WorkbenchPage workbenchPage) {
 		super(WorkbenchMessages.getString("SetPagePerspectiveAction.text")); //$NON-NLS-1$
 		setChecked(false);
 		persp = perspective;
@@ -40,7 +40,7 @@ public class SetPagePerspectiveAction extends Action {
 	/**
 	 * Returns the perspective this action applies to
 	 */
-	/* package */ Perspective getPerspective() {
+	/* package */ IPerspectiveDescriptor getPerspective() {
 		return persp;
 	}
 	
@@ -48,14 +48,14 @@ public class SetPagePerspectiveAction extends Action {
 	 * Returns whether this action handles the specified
 	 * workbench page and perspective.
 	 */
-	public boolean handles(Perspective perspective, WorkbenchPage workbenchPage) {
+	public boolean handles(IPerspectiveDescriptor perspective, WorkbenchPage workbenchPage) {
 		return persp == perspective && page == workbenchPage;
 	}
 	
 	/**
 	 * Replaces the perspective used
 	 */
-	public void setPerspective(Perspective newPerspective) {
+	public void setPerspective(IPerspectiveDescriptor newPerspective) {
 		persp = newPerspective;
 	}
 	
@@ -63,18 +63,17 @@ public class SetPagePerspectiveAction extends Action {
 	 * The user has invoked this action
 	 */
 	public void run() {
-		page.setPerspective(persp.getDesc());
+		page.setPerspective(persp);
 		// Force the button into proper checked state
-		setChecked(page.getActivePerspective() == persp);
+		setChecked(page.getPerspective() == persp);
 	}
 	
 	/**
 	 *	Update the action.
 	 */
 	public void update() {
-		IPerspectiveDescriptor desc = persp.getDesc();
-		setToolTipText(desc.getLabel());
-		ImageDescriptor image = desc.getImageDescriptor();
+		setToolTipText(persp.getLabel());
+		ImageDescriptor image = persp.getImageDescriptor();
 		if (image != null) {
 			setImageDescriptor(image);
 			setHoverImageDescriptor(null);

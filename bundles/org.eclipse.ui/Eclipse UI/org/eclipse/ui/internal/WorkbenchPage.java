@@ -476,9 +476,9 @@ private void busyResetPerspective() {
 
 	// Update the perspective list and shortcut
 	perspList.swap(oldPersp, newPersp);
-	IContributionItem item = window.findPerspectiveShortcut(oldPersp, this);
+	IContributionItem item = window.findPerspectiveShortcut(oldPersp.getDesc(), this);
 	SetPagePerspectiveAction action = (SetPagePerspectiveAction) ((ActionContributionItem)item).getAction();
-	action.setPerspective(newPersp);
+	action.setPerspective(newPersp.getDesc());
 
 	// Install new persp.
 	setPerspective(newPersp);
@@ -512,7 +512,7 @@ private void busySetPerspective(IPerspectiveDescriptor desc) {
 	Perspective newPersp = findPerspective(realDesc);
 	if (newPersp == null) {
 		newPersp = createPerspective(realDesc);
-		window.addPerspectiveShortcut(newPersp, this);
+		window.addPerspectiveShortcut(realDesc, this);
 		if (newPersp == null)
 			return;
 	}
@@ -700,6 +700,19 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
  * Closes the specified perspective. If last perspective, then
  * entire page is closed.
  * 
+ * @param desc the descriptor of the perspective to be closed
+ * @param save whether the page's editors should be save if last perspective
+ */
+/* package */ void closePerspective(IPerspectiveDescriptor desc, boolean save) {
+	Perspective persp = findPerspective(desc);
+	if(persp != null)
+		closePerspective(persp,save);
+}
+
+/**
+ * Closes the specified perspective. If last perspective, then
+ * entire page is closed.
+ * 
  * @param persp the perspective to be closed
  * @param save whether the page's editors should be save if last perspective
  */
@@ -718,7 +731,7 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	
 	// Dispose of the perspective
 	boolean isActive = (perspList.getActive() == persp);
-	window.removePerspectiveShortcut(persp, this);
+	window.removePerspectiveShortcut(persp.getDesc(), this);
 	if (isActive)
 		setPerspective(perspList.getNextActive());
 	disposePerspective(persp);
@@ -824,7 +837,7 @@ public void dispose() {
 	Iterator enum = perspList.iterator();
 	while (enum.hasNext()) {
 		Perspective perspective = (Perspective) enum.next();
-		window.removePerspectiveShortcut(perspective, this);
+		window.removePerspectiveShortcut(perspective.getDesc(), this);
 		window.firePerspectiveClosed(this, perspective.getDesc());
 		perspective.dispose();
 	}
@@ -1077,12 +1090,6 @@ public ArrayList getNewWizardActions() {
 		return persp.getNewWizardActions();
 	else
 		return new ArrayList();
-}
-/**
- * Returns an iterator over the opened perspectives
- */
-/* package */ Iterator getOpenedPerspectives() {
-	return perspList.iterator();
 }
 /**
  * Returns the perspective.
@@ -1401,12 +1408,12 @@ protected void onActivate() {
 	Iterator enum = perspList.iterator();
 	while (enum.hasNext()) {
 		Perspective perspective = (Perspective) enum.next();
-		window.addPerspectiveShortcut(perspective, this);
+		window.addPerspectiveShortcut(perspective.getDesc(), this);
 	}
 	composite.setVisible(true);
 	Perspective persp = getActivePerspective();
 	if (persp != null) {
-		window.selectPerspectiveShortcut(persp, this, true);
+		window.selectPerspectiveShortcut(persp.getDesc(), this, true);
 		persp.onActivate();
 	}
 	if (activePart != null) {
@@ -1440,7 +1447,7 @@ protected void onDeactivate() {
 	Iterator enum = perspList.iterator();
 	while (enum.hasNext()) {
 		Perspective perspective = (Perspective) enum.next();
-		window.removePerspectiveShortcut(perspective, this);
+		window.removePerspectiveShortcut(perspective.getDesc(), this);
 	}
 }
 /**
@@ -1729,6 +1736,7 @@ private void restoreState(IMemento memento) {
 		}
 	}
 	perspList.setActive(activePerspective);
+	activePerspective.restoreState();
 	
 	// Make sure we have a valid perspective to work with,
 	// otherwise return.
@@ -1802,7 +1810,7 @@ public void savePerspectiveAs(IPerspectiveDescriptor desc) {
 
 	persp.saveDescAs(desc);
 	
-	window.updatePerspectiveShortcut(persp, this);
+	window.updatePerspectiveShortcut(persp.getDesc(), this);
 	
 	// Update MRU list.
 	Workbench wb = (Workbench)window.getWorkbench();
@@ -1924,6 +1932,9 @@ private void setPerspective(Perspective newPersp) {
 	Perspective oldPersp = getActivePerspective();
 	if (oldPersp == newPersp)
 		return;
+	if(newPersp != null)
+		newPersp.restoreState();
+	
 	// Save the toolbar layout for the perspective before the
 	// active part is closed, so that any editor-related tool
 	// items are saved as part of the layout.
@@ -1942,7 +1953,7 @@ private void setPerspective(Perspective newPersp) {
 	// Deactivate the old layout
 	if (oldPersp != null) {
 		oldPersp.onDeactivate();
-		window.selectPerspectiveShortcut(oldPersp, this, false);
+		window.selectPerspectiveShortcut(oldPersp.getDesc(), this, false);
 	}
 	
 	// Activate the new layout
@@ -1958,7 +1969,7 @@ private void setPerspective(Perspective newPersp) {
 		wb.getPerspectiveHistory().add(newPersp.getDesc());
 	
 		// Update the shortcut	
-		window.selectPerspectiveShortcut(newPersp, this, true);
+		window.selectPerspectiveShortcut(newPersp.getDesc(), this, true);
 	} else {
 		// No need to remember old active part since there
 		// is no new active perspective to activate it in.
@@ -2210,6 +2221,17 @@ public IEditorPart[] getSortedEditors() {
 	IEditorPart[] result = new IEditorPart[editors.size()];
 	return (IEditorPart[])editors.toArray(result);
 }
+/**
+ * Returns an iterator over the opened perspectives
+ */
+protected IPerspectiveDescriptor[] getOpenedPerspectives() {
+	Perspective opened[] = perspList.getOpenedPerspectives();
+	IPerspectiveDescriptor[] result = new IPerspectiveDescriptor[opened.length];
+	for (int i = 0; i < result.length; i++) {
+		result[i] = opened[i].getDesc();
+	}
+	return result;
+}
 /*
  * Returns the parts in activation order (oldest first).
  */
@@ -2373,7 +2395,7 @@ class ActivationList {
 	 * Helper class to keep track of all opened perspective.
 	 * Both the opened and used order is kept.
 	 */
-	class PerspectiveList {
+	private class PerspectiveList {
 		/**
 		 * List of perspectives in the order they were opened;
 		 */
@@ -2398,7 +2420,6 @@ class ActivationList {
 			openedList = new ArrayList(15);
 	 		usedList = new ArrayList(15);
 		}
-		
 		/**
 		 * Adds a perspective to the list. No check is done
 		 * for a duplicate when adding.
@@ -2416,7 +2437,6 @@ class ActivationList {
 		public Iterator iterator() {
 			return openedList.iterator();
 		}
-		
 		/**
 		 * Checks if the specified perspective exists in the
 		 * list already.
@@ -2425,6 +2445,13 @@ class ActivationList {
 			return openedList.contains(perspective);
 		}
 		
+		/**
+		 * Returns an array with all opened perspectives
+		 */
+		public Perspective[] getOpenedPerspectives() {
+			Perspective[] result = new Perspective[openedList.size()];
+			return (Perspective[])openedList.toArray(result);
+		}
 		/**
 		 * Removes a perspective from the list.
 		 */

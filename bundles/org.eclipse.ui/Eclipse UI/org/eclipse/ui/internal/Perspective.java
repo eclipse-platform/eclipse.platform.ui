@@ -1,9 +1,12 @@
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+**********************************************************************/
 import java.io.*;
 import java.util.*;
 
@@ -37,6 +40,7 @@ public class Perspective
 	private ArrayList perspectiveActions;
 	private ArrayList fastViews;
 	private IViewPart activeFastView;
+	private IMemento memento;
 	protected PerspectivePresentation presentation;
 	final static private String VERSION_STRING = "0.016";//$NON-NLS-1$
 	
@@ -222,6 +226,9 @@ private void createPresentation(PerspectiveDescriptor persp)
  */
 public void dispose() {
 	// Get rid of presentation.
+	if(presentation == null)
+		return;
+		
 	presentation.deactivate();
 	presentation.disposeSashes();
 	
@@ -357,6 +364,9 @@ public void openTracker(ViewPane pane) {
  */
 public IViewPart [] getViews() {
 	// Get normal views.
+	if(presentation == null)
+		return new IViewPart[0];
+	
 	List resVector = new ArrayList(5);
 	presentation.collectViewPanes(resVector);
 
@@ -480,6 +490,7 @@ private void loadCustomPersp(PerspectiveDescriptor persp)
 		// Restore the layout state.
 		IMemento memento = XMLMemento.createReadRoot(reader);
 		restoreState(memento);
+		restoreState();
 		reader.close();
 	} catch (IOException e) {
 		persp.deleteCustomFile();
@@ -619,6 +630,19 @@ public void restoreState(IMemento memento) {
 		.getDefault().getPerspectiveRegistry().findPerspectiveWithId(descriptor.getId());
 	if (desc != null)
 		descriptor = desc;
+	this.memento = memento;
+}
+
+/**
+ * Fills a presentation with layout data.
+ * Note: This method should not modify the current state of the perspective.
+ */
+public void restoreState() {
+	if(this.memento == null)
+		return;
+		
+	IMemento memento = this.memento;
+	this.memento = null;
 	
 	IMemento boundsMem = memento.getChild(IWorkbenchConstants.TAG_WINDOW);
 	if(boundsMem != null) {
@@ -840,6 +864,11 @@ public void saveState(IMemento memento)
 private void saveState(IMemento memento, PerspectiveDescriptor p,
 	boolean saveInnerViewState)
 {
+	if(this.memento != null) {
+		memento.putMemento(this.memento);
+		return;
+	}
+		
 	// Save the version number.
 	memento.putString(IWorkbenchConstants.TAG_VERSION, VERSION_STRING);
 	p.saveState(memento);
