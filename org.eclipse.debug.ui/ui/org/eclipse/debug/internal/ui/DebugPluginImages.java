@@ -35,8 +35,8 @@ public class DebugPluginImages {
 	 */
 	private static HashMap imageDescriptors;
 
-	private static final String ATTR_LAUNCH_CONFIG_TYPE_ICON = "icon";
-	private static final String ATTR_LAUNCH_CONFIG_TYPE_ID = "configTypeID";
+	private static final String ATTR_LAUNCH_CONFIG_TYPE_ICON = "icon"; //$NON-NLS-1$
+	private static final String ATTR_LAUNCH_CONFIG_TYPE_ID = "configTypeID"; //$NON-NLS-1$
 	
 	/* Declare Common paths */
 	private static URL ICON_BASE_URL= null;

@@ -202,7 +202,7 @@ public interface IDebugUIConstants {
 	/**
 	 * Extension point for launch configuration type images.
 	 */
-	public static final String EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPE_IMAGES = "launchConfigurationTypeImages";
+	public static final String EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPE_IMAGES = "launchConfigurationTypeImages"; //$NON-NLS-1$
 	
 	// Debug Action images
 	
