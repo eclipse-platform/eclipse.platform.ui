@@ -120,6 +120,15 @@ protected void basicBuild(int trigger, IncrementalProjectBuilder builder, Map ar
 			else
 				message = Policy.bind("events.invoking.1", builder.getProject().getFullPath().toString()); //$NON-NLS-1$
 			monitor.subTask(message);
+			// check to see if the user cancelled the build before we actually call the builder
+			if (monitor.isCanceled()) {
+				try {
+					workspace.getWorkManager().operationCanceled();
+				} catch (CoreException e) {
+					// ignore. only happens if the workspace is shutdown
+				}
+				throw new OperationCanceledException();
+			}
 			hookStartBuild(builder, trigger);
 			//do the build
 			Platform.run(getSafeRunnable(trigger, args, status, monitor));
