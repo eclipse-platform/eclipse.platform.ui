@@ -12,9 +12,6 @@ package org.eclipse.ant.tests.ui.testplugin;
 
 
 import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
@@ -27,10 +24,6 @@ import org.eclipse.ant.internal.ui.model.IAntUIPreferenceConstants;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.ILibrary;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -129,31 +122,13 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 			IAntClasspathEntry entry = entries[i];
 			
 			urlString.append(entry.getLabel());
-			urlString.append(AntUtil.ATTRIBUTE_SEPARATOR);
+			if (i < (entries.length -1)) {
+				urlString.append(AntUtil.ATTRIBUTE_SEPARATOR);
+			}
 			
 		}
-		
-		IPluginDescriptor descriptor = Platform.getPlugin("org.apache.xerces").getDescriptor(); //$NON-NLS-1$
-		addXercesLibraries(descriptor, urlString);
-		
+				
 		config.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, urlString.substring(0, urlString.length() - 1));
 	}
 	
-	private void addXercesLibraries(IPluginDescriptor xercesPlugin, StringBuffer urlString) {
-		URL root = xercesPlugin.getInstallURL();
-		ILibrary[] libraries = xercesPlugin.getRuntimeLibraries();
-	
-		for (int i = 0; i < libraries.length; i++) {
-			try {
-				IPath path= libraries[i].getPath(); 
-				URL url = new URL(root, path.toString());
-				urlString.append(Platform.asLocalURL(url).getFile());
-				urlString.append(AntUtil.ATTRIBUTE_SEPARATOR);
-			} catch (MalformedURLException e1) {
-				continue;
-			} catch (IOException e2) {
-				continue;
-			}
-		}
-	}
 }
