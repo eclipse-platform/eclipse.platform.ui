@@ -14,8 +14,8 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -111,14 +111,11 @@ public class DefaultTabFolder extends AbstractTabFolder {
 	        pullDownButton.setDisabledImage(hoverImage);
 	        pullDownButton.setImage(hoverImage);
 	        pullDownButton.setToolTipText(WorkbenchMessages.getString("Menu")); //$NON-NLS-1$
-            actualToolBar.addMouseListener(new MouseAdapter() {
-                /* (non-Javadoc)
-                 * @see org.eclipse.swt.events.MouseAdapter#mouseDown(org.eclipse.swt.events.MouseEvent)
-                 */
-                public void mouseDown(MouseEvent e) {
-                    fireEvent(TabFolderEvent.EVENT_PANE_MENU, getSelection(), getPaneMenuLocation());
-                }
-            });
+	        pullDownButton.addSelectionListener(new SelectionAdapter() {
+	            public void widgetSelected(SelectionEvent e) {   
+	                fireEvent(TabFolderEvent.EVENT_PANE_MENU, getSelection(), getPaneMenuLocation());
+	            }
+	        });
         }
         
         // Initialize content description label
