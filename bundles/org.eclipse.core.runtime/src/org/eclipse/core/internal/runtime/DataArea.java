@@ -79,8 +79,10 @@ public class DataArea {
 		if (!isInstanceDataLocationInitiliazed()) {
 			return getTemporaryLogLocation();
 		}
-		if (tmpLog != null)
+		if (tmpLog != null) {
 			copyOldLog(getTemporaryLogLocation(), getMetadataLocation().append(F_LOG));
+			tmpLog = null;
+		}
 		return getMetadataLocation().append(F_LOG);
 	}
 	protected IPath getTemporaryLogLocation() {
@@ -285,7 +287,7 @@ public class DataArea {
 		keyringTimeStamp = new File(keyringFile).lastModified();
 	}
 	public void setKeyringFile(String keyringFile) {
-		if (keyringFile != null)
+		if (this.keyringFile != null)
 			throw new IllegalStateException(Policy.bind("meta.keyringFileAlreadySpecified", this.keyringFile));
 		this.keyringFile = keyringFile;
 	}
