@@ -492,8 +492,12 @@ public class PathVariablesGroup {
 			variableLabel.setEnabled(enabled);
 			variableTable.setEnabled(enabled);
 			addButton.setEnabled(enabled);
-			editButton.setEnabled(enabled);
-			removeButton.setEnabled(enabled);
+			if (enabled)
+				updateEnabledState();
+			else {
+				editButton.setEnabled(enabled);
+				removeButton.setEnabled(enabled);
+			}
 		}
 	}
 	/**
