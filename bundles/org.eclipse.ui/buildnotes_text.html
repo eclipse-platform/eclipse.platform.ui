@@ -14,7 +14,66 @@ Eclipse Platform Build Notes</h1>
 <h1>
 Text Editor Support (including JFace Text)</h1>
 
-<p><br>Eclipse SDK Build 20020517
+<p><br>Eclipse SDK Build 20020601
+<h2>
+Breaking API changes</h2>
+
+<h2>
+Other highlights</h2>
+
+<ul>
+<li>
+Introduced the concept of setRedraw(boolean) on text viewers. See ITextViewerExtension.setRedraw(boolean).
+This allows to avoid any UI updating while manipulating the viewer's document.
+While redraw == false, the viewer selection is still available, i.e. setSelectedRange
+and getSelectedRange can be used and always refer to the actual state of
+the viewer's document. However, no selection change event and no view port
+changes are sent out. TextEvent (See ITextListener) has been extented to
+carry the viewer's redraw flag.</li>
+
+<li>
+Introduced the concept of&nbsp; a "sequential rewrite mode" on documents.
+See IDocumentExtension. This informs a document about an upcoming sequence
+of non-overlapping consecutive replace commands. If capable the document
+can use this information to operate on an optimized text store. In JFace
+Text, Document operates on a SequentialRewriteTextStore during this period.</li>
+
+<li>
+Reworked text shifting, line delimiter conversion, and find/replace to
+use the newly introduced concepts.</li>
+
+<li>
+Reworked the reactivation behavior of text hovers.</li>
+
+<li>
+Pushed text hover information computation in a background thread.</li>
+
+<li>
+Reactivated and extended the concept of widget token management. See IWidgetTokenOwner,
+IWidgetTokenKeeper.</li>
+
+<li>
+Extended text operations so that they can externally be enabled/disabled.
+See ITextOperationTargetExtension. Currently, this is only used for content
+assist in the source viewer. All other text operations ignore the enable
+flag.</li>
+
+<li>
+Improved incremental search behavior.</li>
+
+<li>
+Further code cleanup.</li>
+</ul>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports closed</h2>
+See bugzilla.
+<p>
+<hr WIDTH="100%">
+<br>Eclipse SDK Build 20020517
 <h2>
 Breaking API changes</h2>
 
@@ -801,8 +860,7 @@ and creates the IInformationControl instance when needed. So clients can
 set an IInformationControlCreator on a TextViewer and a SourceViewer. They&nbsp;
 use it&nbsp; to create the text hover window and the annotation bar hover
 window respectively. DefaultInformationControl&nbsp; is a StyledText-based
-default
-implementation of IInformationControl. Clients may implement IInformationControl
+default implementation of IInformationControl. Clients may implement IInformationControl
 directly and inject their custom information control creator.</li>
 
 <li>
