@@ -17,6 +17,8 @@ import org.eclipse.swt.graphics.*;
  */
 
 public abstract class AbstractSectionForm extends AbstractForm {
+	private static final int H_SCROLL_INCREMENT = 5;
+	private static final int V_SCROLL_INCREMENT = 64;
 	protected Vector sections = null;
 
 	public void registerSection(FormSection section) {
@@ -157,16 +159,16 @@ public abstract class AbstractSectionForm extends AbstractForm {
 	}
 	
 	public static void scrollVertical(ScrolledComposite scomp, boolean up) {
-		scroll(scomp, 0, up?-30:30);
+		scroll(scomp, 0, up?-V_SCROLL_INCREMENT:V_SCROLL_INCREMENT);
 	}
 	public static void scrollHorizontal(ScrolledComposite scomp, boolean left) {
-		scroll(scomp, left?-30:30, 0);
+		scroll(scomp, left?-H_SCROLL_INCREMENT:H_SCROLL_INCREMENT, 0);
 	}
 	public static void scrollPage(ScrolledComposite scomp, boolean up) {
 		Point origin = scomp.getOrigin();
 		Rectangle clientArea = scomp.getClientArea();
 		int increment = up ?  -clientArea.height : clientArea.height;
-		scroll(scomp, origin.x, origin.y + increment);
+		scroll(scomp, 0, increment);
 	}
 	private static void scroll(ScrolledComposite scomp, int xoffset, int yoffset) {
 		Point origin = scomp.getOrigin();
