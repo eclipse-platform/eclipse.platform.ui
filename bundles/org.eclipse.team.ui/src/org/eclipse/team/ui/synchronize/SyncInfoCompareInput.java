@@ -11,8 +11,6 @@
 package org.eclipse.team.ui.synchronize;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
@@ -20,8 +18,8 @@ import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.core.Assert;
@@ -29,7 +27,8 @@ import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.ui.ISharedImages;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -80,7 +79,6 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 		this.resource = sync.getLocal();
 		this.node = new MyDiffNode(null, sync);
 		initializeContentChangeListeners();
-		initializeResourceChangeListeners();
 	}
 	
 	private static CompareConfiguration getDefaultCompareConfiguration() {
@@ -103,10 +101,10 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 		}
 	}
 	
-	private void initializeResourceChangeListeners() {
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
-	}	
-	
+	/**
+	 * Note that until the compare editor inputs can be part of the compare editors lifecycle we
+	 * can't register as a listener because there is no dispose() method to remove the listener.
+	 */
 	public void resourceChanged(IResourceChangeEvent event) {
 		IResourceDelta delta = event.getDelta();
 		if (delta != null) {
@@ -125,60 +123,19 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 			}
 		}
 	}
-
-	/**
-	 * We have to hook into the editors lifecycle in order to register/un-register resource
-	 * change listeners. CompareEditorInputs aren't aware of the lifecycle of its containing
-	 * editor
-	 * <p>
-	 * The side effect of not calling this method is that the input will not keep in sync with changes 
-	 * to the workspace resource.
-	 * </p>
-	 *  @param editor the editor showing this input
-	 */
-	public void setCompareEditor(IEditorPart editor) {
-		Assert.isNotNull(editor);
-		this.editor = editor;
-		editor.getSite().getPage().addPartListener(new IPartListener() {
-			public void partActivated(IWorkbenchPart part) {
-			}
-			public void partBroughtToTop(IWorkbenchPart part) {
-			}
-			public void partClosed(IWorkbenchPart part) {
-				getCompareEditor().getSite().getPage().removePartListener(this);
-				dispose();
-				SyncInfoCompareInput.this.editor = null;
-			}
-			public void partDeactivated(IWorkbenchPart part) {
-			}
-			public void partOpened(IWorkbenchPart part) {
-			}
-		});
-		initializeResourceChangeListeners();
-	}
-	
-	public IEditorPart getCompareEditor() {
-		return this.editor;
-	}
-	
-	protected void dispose() {
-		if(inputImage != null) {
-			inputImage.dispose();
-		}
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
-	}
 	
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.compare.CompareEditorInput#getTitleImage()
 	 */
 	public Image getTitleImage() {
-		ImageDescriptor d = calculateEditorImage();
-		if(inputImage != null) {
-			inputImage.dispose();
+		ImageRegistry reg = TeamUIPlugin.getPlugin().getImageRegistry();
+		Image image = reg.get(ISharedImages.IMG_SYNC_VIEW);
+		if (image == null) {
+			image = getImageDescriptor().createImage();
+			reg.put(ISharedImages.IMG_SYNC_VIEW, image);
 		}
-		inputImage = d.createImage();
-		return inputImage;
+		return image;
 	}
 
 	/*
@@ -211,7 +168,7 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 	 * @see org.eclipse.ui.IEditorInput#getImageDescriptor()
 	 */
 	public ImageDescriptor getImageDescriptor() {
-		return calculateEditorImage();
+		return TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_VIEW);
 	}
 
 	/*
@@ -263,46 +220,5 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 
 	public SyncInfo getSyncInfo() {
 		return node.getSyncInfo();
-	}
-	
-	protected ImageDescriptor calculateEditorImage() {
-		ImageDescriptor base = TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_VIEW);
-		try {
-			if(resource != null) {
-				IMarker[] markers = resource.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
-				boolean error = false;
-				boolean warning = false;
-				for (int i = 0; i < markers.length; i++) {
-					IMarker marker = markers[i];
-					Integer severity = (Integer)marker.getAttribute(IMarker.SEVERITY);
-					if(severity.intValue() == IMarker.SEVERITY_ERROR) {
-						error = true; 
-						break;
-					} else if(severity.intValue() == IMarker.SEVERITY_WARNING) {
-						warning = true;
-					}
-				}
-				List overlays = new ArrayList();
-				List locations = new ArrayList();
-					if(error) {
-						overlays.add(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_ERROR_OVR));
-						locations.add(new Integer(OverlayIcon.BOTTOM_LEFT));
-					} else if(warning) {
-						overlays.add(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_WARNING_OVR));
-						locations.add(new Integer(OverlayIcon.BOTTOM_LEFT));
-					}
-					if(! overlays.isEmpty()) {
-						ImageDescriptor[] overlayImages = (ImageDescriptor[]) overlays.toArray(new ImageDescriptor[overlays.size()]);
-						int[] locationInts = new int[locations.size()];
-						for (int i = 0; i < locations.size(); i++) {
-								locationInts[i] =((Integer) locations.get(i)).intValue();
-						}
-						return new OverlayIcon(base, overlayImages, locationInts, new Point(OverlayIcon.DEFAULT_WIDTH, OverlayIcon.DEFAULT_HEIGHT));
-					}				
-			}
-		} catch (CoreException e) {
-			return base;
-		}
-		return base;
 	}
 }

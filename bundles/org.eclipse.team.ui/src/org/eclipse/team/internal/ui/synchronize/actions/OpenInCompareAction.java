@@ -77,10 +77,6 @@ public class OpenInCompareAction extends Action {
 				editor = page.getSite().getPage().getActiveEditor();
 			}
 			
-			if(editor != null) {
-				input.setCompareEditor(editor);
-			}
-			
 			if(keepFocus) {
 				wpage.activate(page);
 			}
