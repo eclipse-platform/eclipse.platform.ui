@@ -88,7 +88,9 @@ public class FolderLayout implements IFolderLayout {
 
 				ViewPane newPart = LayoutHelper.createView(
 						pageLayout.getViewFactory(),
-						viewId);
+						viewId,
+						// @issue view should refer to current perspective for theme setting
+						pageLayout.getTheme());
 				linkPartToPageLayout(viewId, newPart);
 				folder.add(newPart);
 			}

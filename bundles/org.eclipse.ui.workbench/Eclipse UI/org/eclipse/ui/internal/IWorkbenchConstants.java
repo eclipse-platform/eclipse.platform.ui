@@ -38,6 +38,7 @@ public interface IWorkbenchConstants {
 	public static final String PL_DROP_ACTIONS ="dropActions"; //$NON-NLS-1$
 	public static final String PL_WORKINGSETS = "workingSets"; //$NON-NLS-1$	
 	public static final String PL_STARTUP ="startup"; //$NON-NLS-1$
+	public static final String PL_THEMES ="themes"; //$NON-NLS-1$
 		
 	/**
 	 * @deprecated
@@ -170,7 +171,8 @@ public interface IWorkbenchConstants {
 	public static final String TAG_HISTORY_LABEL = "historyLabel";//$NON-NLS-1$
 	public static final String TAG_LOCKED = "locked";//$NON-NLS-1$
 	public static final String TAG_OPEN_MODE = "openMode"; //$NON-NLS-1$
-	public static final String TAG_STARTUP = "startup"; //$NON-NLS-1$
+	public static final String TAG_STARTUP = "startup";//$NON-NLS-1$
+	public static final String TAG_THEME = "theme";//$NON-NLS-1$	
 	
 	//Progress indicator
 	public static final String SHOW_PROGRESS_INDICATOR = "showProgressIndicator";	 //$NON-NLS-1$

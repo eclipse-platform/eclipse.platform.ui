@@ -68,6 +68,9 @@ import org.eclipse.ui.internal.registry.PreferencePageRegistryReader;
 import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.eclipse.ui.internal.registry.ViewRegistryReader;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
+import org.eclipse.ui.internal.themes.IThemeRegistry;
+import org.eclipse.ui.internal.themes.ThemeRegistry;
+import org.eclipse.ui.internal.themes.ThemeRegistryReader;
 
 /**
  * This class represents the TOP of the workbench UI world
@@ -95,6 +98,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private EditorRegistry editorRegistry;
 	// Manager for the DecoratorManager
 	private DecoratorManager decoratorManager;
+	// Theme registry
+	private ThemeRegistry themeRegistry;
 	// Manager for working sets (IWorkingSet)
 	private WorkingSetManager workingSetManager;
 	// Working set registry, stores working set dialogs
@@ -355,6 +360,26 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			sharedImages = new SharedImages();
 		return sharedImages;
 	}
+
+	/**
+	 * Returns the theme registry for the workbench.
+	 * 
+	 * @return the theme registry
+	 */
+	public IThemeRegistry getThemeRegistry() {
+		if (themeRegistry == null) {
+			try {
+				themeRegistry = new ThemeRegistry();
+				ThemeRegistryReader reader = new ThemeRegistryReader();
+				reader.readThemes(Platform.getPluginRegistry(), themeRegistry);
+			} catch (CoreException e) {
+				// cannot safely show a dialog so log it
+				WorkbenchPlugin.log("Unable to read theme registry.", e.getStatus()); //$NON-NLS-1$
+			}
+		}
+		return themeRegistry;
+	}
+	
 	/**
 	 * Answer the view registry.
 	 */
@@ -487,7 +512,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 */
 
 	public static void log(String message) {
-		getDefault().getLog().log(StatusUtil.newStatus(Status.ERROR, message, null));
+		getDefault().getLog().log(StatusUtil.newStatus(IStatus.ERROR, message, null));
 		System.err.println(message);
 		//1FTTJKV: ITPCORE:ALL - log(status) does not allow plugin information to be recorded
 	}

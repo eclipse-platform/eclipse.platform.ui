@@ -27,6 +27,9 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.part.WorkbenchPart;
 
+import org.eclipse.ui.internal.themes.IThemeDescriptor;
+import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
+
 
 /**
  * Provides support for a title bar where the
@@ -57,6 +60,7 @@ public class ViewPane extends PartPane
 	 * Indicates whether a toolbar button is shown for the view local menu.
 	 */
 	private boolean showMenuButton = false;
+	private String theme;
 	
 	//Created in o.e.ui.Perspective, disposed there.
 	private Sash fastViewSash;
@@ -179,6 +183,18 @@ public ViewPane(IViewReference ref, WorkbenchPage page) {
 	super(ref, page);
 	fast = ref.isFastView();
 }
+
+/**
+ * Constructs a view pane for a view part with a theme id.
+ * 
+ * @issue the theme should be obtained from the current perspective as needed, 
+ *   not bound to the view, since the view may be shared across multiple perspectives
+ */
+public ViewPane(IViewReference ref, WorkbenchPage page, String theme) {
+	this(ref, page);
+	this.theme = theme;
+}
+
 /**
  * Create control. Add the title bar.
  */
@@ -299,8 +315,13 @@ protected void createTitleBar() {
 
 	// Title.   
 	titleLabel = new CLabel(control, SWT.SHADOW_NONE);
+	if (getTitleFont() != null)
+		titleLabel.setFont(getTitleFont());
 	titleLabel.setAlignment(SWT.LEFT);
-	titleLabel.setBackground(null, null);
+	titleLabel.setBackground(getNormalGradient(), getNormalGradientPercents());
+//  @issue should not overload setAlignment;  new method: setGradientDirection(int)?
+//	titleLabel.setAlignment(getGradientDirection());
+	titleLabel.setForeground(getNormalForeground());
 	titleLabel.addMouseListener(new MouseAdapter() {
 		public void mouseDown(MouseEvent e) {
 			if ((e.button == 1) && overImage(e.x))
@@ -401,17 +422,23 @@ protected void doDock() {
 
 	if (showFocus) {
 		if (getShellActivated()) {
-			titleLabel.setBackground(WorkbenchColors.getActiveViewGradient(), WorkbenchColors.getActiveViewGradientPercents());
-			titleLabel.setForeground(WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_FOREGROUND));
+			titleLabel.setBackground(getActiveGradient(), getActiveGradientPercents());
+			titleLabel.setForeground(getActiveForeground());
+// see issue above
+//			titleLabel.setAlignment(getGradientDirection());
 		}
 		else {
-			titleLabel.setBackground(WorkbenchColors.getDeactivatedViewGradient(), WorkbenchColors.getDeactivatedViewGradientPercents());
-			titleLabel.setForeground(WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND));
+			titleLabel.setBackground(getDeactivatedGradient(), getDeactivatedGradientPercents());
+			titleLabel.setForeground(getDeactivatedForeground());
+// see issue above
+//			titleLabel.setAlignment(getGradientDirection());
 		}
 	}
 	else {
-		titleLabel.setBackground(null, null);
-		titleLabel.setForeground(null);
+		titleLabel.setBackground(getNormalGradient(), getNormalGradientPercents());
+		titleLabel.setForeground(getNormalForeground());
+// see issue above
+//		titleLabel.setAlignment(getGradientDirection());
 	}
 
 	titleLabel.update();
@@ -724,4 +751,115 @@ public void updateTitles() {
 		}
 	}
 }
+
+private Color[] getNormalGradient() {
+	if (theme != null) {
+		return WorkbenchThemeManager.getInstance().getViewGradientColors(theme,
+				IThemeDescriptor.VIEW_TITLE_GRADIENT_COLOR_NORMAL);
+	}
+	return null;
+}
+
+private int[] getNormalGradientPercents() {
+	if (theme != null) {
+		return WorkbenchThemeManager.getInstance().getViewGradientPercents(theme,
+				IThemeDescriptor.VIEW_TITLE_GRADIENT_PERCENTS_NORMAL);
+	}
+	return null;
+}
+
+private Color getNormalForeground() {
+	if (theme != null) {
+		return WorkbenchThemeManager.getInstance().getViewColor(theme,
+				IThemeDescriptor.VIEW_TITLE_TEXT_COLOR_NORMAL);
+	}
+	return null;
+}
+
+private Color[] getActiveGradient() {
+	if (theme != null) {
+		return WorkbenchThemeManager.getInstance().getViewGradientColors(theme,
+				IThemeDescriptor.VIEW_TITLE_GRADIENT_COLOR_ACTIVE);
+	}
+	return WorkbenchColors.getActiveViewGradient();
+}
+
+private int[] getActiveGradientPercents() {
+	if (theme != null)
+		return WorkbenchThemeManager.getInstance().getViewGradientPercents(theme,
+				IThemeDescriptor.VIEW_TITLE_GRADIENT_PERCENTS_ACTIVE);
+	else
+		return WorkbenchColors.getActiveViewGradientPercents();
+}
+
+private Color getActiveForeground() {
+	if (theme != null) {
+		return WorkbenchThemeManager.getInstance().getViewColor(theme,
+				IThemeDescriptor.VIEW_TITLE_TEXT_COLOR_ACTIVE);
+	}
+	return WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_FOREGROUND);
+}
+
+private Color[] getDeactivatedGradient() {
+	if (theme != null) {
+		return WorkbenchThemeManager.getInstance().getViewGradientColors(theme,
+				IThemeDescriptor.VIEW_TITLE_GRADIENT_COLOR_DEACTIVATED);
+	}
+	return WorkbenchColors.getDeactivatedViewGradient();
+}
+
+private int[] getDeactivatedGradientPercents() {
+	if (theme != null) {
+		return WorkbenchThemeManager.getInstance().getViewGradientPercents(theme,
+				IThemeDescriptor.VIEW_TITLE_GRADIENT_PERCENTS_DEACTIVATED);
+	}
+	return WorkbenchColors.getDeactivatedViewGradientPercents();
+}
+
+private Color getDeactivatedForeground() {
+	if (theme != null) {
+		return WorkbenchThemeManager.getInstance().getViewColor(theme,
+				IThemeDescriptor.VIEW_TITLE_TEXT_COLOR_DEACTIVATED);
+	}
+	return WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
+}
+
+private int getGradientDirection() {
+	if (theme != null) {
+		return WorkbenchThemeManager.getInstance().getViewGradientDirection(theme,
+				IThemeDescriptor.VIEW_TITLE_GRADIENT_DIRECTION);
+	}
+	return SWT.HORIZONTAL;
+}
+
+private Font getTitleFont() {
+	if (theme != null) {
+		return WorkbenchThemeManager.getInstance().getViewFont(theme,
+				IThemeDescriptor.VIEW_TITLE_FONT);
+	}
+	return null;
+}
+
+/**
+ * Answer the SWT widget style.
+ */
+int getStyle() {
+	if (theme == null) {
+		return super.getStyle();
+	}
+	// @issue even if there is a style, it may still be a function of whether the
+	//   container allows a border
+	return WorkbenchThemeManager.getInstance().getViewBorderStyle(theme,
+			IThemeDescriptor.VIEW_BORDER_STYLE);
+}
+
+/**
+ * Sets the theme.
+ * 
+ * @param theme the theme id
+ */
+void setTheme (String theme) {
+	this.theme = theme;
+}
+
 }

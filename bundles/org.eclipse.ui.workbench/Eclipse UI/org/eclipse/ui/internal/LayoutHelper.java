@@ -164,10 +164,37 @@ class LayoutHelper {
 				viewId);
 		ViewPane newPart = (ViewPane) ref.getPane();
 		if (newPart == null) {
-			newPart =
-				new ViewPane(
-					(IViewReference) ref,
-					(WorkbenchPage) ref.getPage());
+			WorkbenchPage page = (WorkbenchPage) ref.getPage();
+			newPart = new ViewPane((IViewReference)ref, page);
+			ref.setPane(newPart);
+		}
+		return newPart;
+	}
+	
+	/**
+	 * Create the view with a specified theme.  
+	 * If it's already been been created in the provided 
+	 * factory, return the shared instance.
+	 * 
+	 * @param factory the <code>ViewFactory</code> to use.
+	 * @param viewID the view id to use.
+	 * @return the new <code>ViewPane</code>.
+	 * @throws PartInitException thrown if there is a problem creating the view.
+	 *
+	 * @issue view should refer to current perspective for theme setting
+	 */
+	public static final ViewPane createView(
+			ViewFactory factory,
+			String viewId, 
+			String theme)
+	throws PartInitException {
+		WorkbenchPartReference ref =
+		(WorkbenchPartReference) factory.createView(
+				viewId);
+		ViewPane newPart = (ViewPane) ref.getPane();
+		if (newPart == null) {
+			WorkbenchPage page = (WorkbenchPage) ref.getPage();
+			newPart = new ViewPane((IViewReference)ref, page, theme);
 			ref.setPane(newPart);
 		}
 		return newPart;

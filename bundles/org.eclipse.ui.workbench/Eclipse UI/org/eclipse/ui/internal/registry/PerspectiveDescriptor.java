@@ -48,6 +48,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor, IPluginCon
 	private String className;
 	private String description;
 	private boolean singleton;
+	private String theme;
 	private ImageDescriptor image;
 	private IConfigurationElement configElement;
 	
@@ -57,6 +58,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor, IPluginCon
 	private static final String ATT_ICON="icon";//$NON-NLS-1$
 	private static final String ATT_CLASS="class";//$NON-NLS-1$
 	private static final String ATT_SINGLETON="singleton";//$NON-NLS-1$
+	private static final String ATT_THEME="theme";//$NON-NLS-1$
 	
 /**
  * Create a new empty descriptor.
@@ -83,6 +85,7 @@ public PerspectiveDescriptor(IConfigurationElement configElement, String desc)
 	label = configElement.getAttribute(ATT_NAME);
 	className = configElement.getAttribute(ATT_CLASS);
 	singleton = (configElement.getAttributeAsIs(ATT_SINGLETON) != null);
+	theme = configElement.getAttribute(ATT_THEME);
 	description = desc;
 
 	// Sanity check.
@@ -157,6 +160,12 @@ public String getOriginalId() {
 	return originalId;
 }
 /**
+ * Returns the theme id.
+ */
+public String getTheme() {
+	return theme;
+}
+/**
  * Returns true if this perspective has a custom file.
  */
 public boolean hasCustomDefinition() {
@@ -197,6 +206,7 @@ public IStatus restoreState(IMemento memento) {
 		label = childMem.getString(IWorkbenchConstants.TAG_LABEL);
 		className = childMem.getString(IWorkbenchConstants.TAG_CLASS);
 		singleton = (childMem.getInteger(IWorkbenchConstants.TAG_SINGLETON) != null);
+		theme = childMem.getString(IWorkbenchConstants.TAG_THEME);		
 	
 		//Find a descriptor in the registry.
 		PerspectiveDescriptor descriptor = (PerspectiveDescriptor)WorkbenchPlugin.getDefault().
@@ -228,6 +238,8 @@ public IStatus saveState(IMemento memento) {
 	childMem.putString(IWorkbenchConstants.TAG_CLASS,className);
 	if (singleton)
 		childMem.putInteger(IWorkbenchConstants.TAG_SINGLETON, 1);
+	if (theme != null)
+		childMem.putString(IWorkbenchConstants.TAG_THEME,theme);	
 	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null); //$NON-NLS-1$
 }
 

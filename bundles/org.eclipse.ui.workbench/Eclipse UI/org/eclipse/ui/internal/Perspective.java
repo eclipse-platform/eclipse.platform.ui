@@ -664,6 +664,7 @@ private void loadPredefinedPersp(
 	// Create layout factory.
 	RootLayoutContainer container = new RootLayoutContainer(page);
 	PageLayout layout = new PageLayout(container, getViewFactory(), editorArea, descriptor);
+	layout.setTheme(getDesc().getTheme());
 
 	// Run layout engine.
 	factory.createInitialLayout(layout);
@@ -902,7 +903,9 @@ public IStatus restoreState() {
 			continue;
 		}
 		if(ref.getPane() == null) {
-			ref.setPane(new ViewPane((IViewReference)ref,page));
+			ViewPane vp = new ViewPane((IViewReference)ref,page);
+			vp.setTheme(getDesc().getTheme());
+			ref.setPane(vp);
 		}
 		page.addPart(ref);
 		if(pres.willPartBeVisible(ref.getId())) {

@@ -23,10 +23,13 @@ import org.eclipse.core.runtime.Status;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabFolderEvent;
+import org.eclipse.swt.custom.CTabFolderListener;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -39,15 +42,22 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.Window;
 
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
+import org.eclipse.ui.internal.themes.ITabThemeDescriptor;
+import org.eclipse.ui.internal.themes.IThemeDescriptor;
+import org.eclipse.ui.internal.themes.TabThemeDescriptor;
+import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
 
 public class PartTabFolder extends LayoutPart
-	implements ILayoutContainer
+	implements ILayoutContainer, IPropertyListener
 {
 	private static int tabLocation = -1;	// Initialized in constructor.
 	
@@ -82,8 +92,17 @@ public class PartTabFolder extends LayoutPart
 	private class TabInfo {
 		private String tabText;
 		private LayoutPart part;
+		private Image partImage;
 	}
-	TabInfo[] invisibleChildren;
+	
+	private TabInfo[] invisibleChildren;
+	
+	// Themes
+	private String themeid;
+	private ITabThemeDescriptor tabThemeDescriptor;
+	private int tabPosition = -1;
+
+	
 /**
  * PartTabFolder constructor comment.
  */
@@ -103,12 +122,16 @@ public PartTabFolder() {
 public void add(String name, int index, LayoutPart part)
 {
 	if (active && !(part instanceof PartPlaceholder)) {
-		CTabItem tab = createPartTab(part, name, index);
+		CTabItem tab = createPartTab(part, name, null, index);
 		index = tabFolder.indexOf(tab);
 		setSelection(index);
 	}
 	else {
 		TabInfo info = new TabInfo();
+		if (part instanceof PartPane) {
+			WorkbenchPartReference ref = (WorkbenchPartReference)((PartPane)part).getPartReference();
+			info.partImage = ref.getTitleImage();
+		}
 		info.tabText = name;
 		info.part = part;
 		invisibleChildren = arrayAdd(invisibleChildren, info, index);
@@ -116,17 +139,47 @@ public void add(String name, int index, LayoutPart part)
 			part.setContainer(this);
 	}
 }
+
+/**
+ * Add a part at an index. Also use Image
+ */
+public void add(String name, int index, LayoutPart part, Image partImage)
+{
+	if (active && !(part instanceof PartPlaceholder)) {
+		CTabItem tab = createPartTab(part, name, partImage, index);
+		index = tabFolder.indexOf(tab);
+		setSelection(index);
+	}
+	else {
+		TabInfo info = new TabInfo();
+		if (partImage != null)
+			info.partImage = partImage;
+		else if (part instanceof PartPane) {
+			WorkbenchPartReference ref = (WorkbenchPartReference)((PartPane)part).getPartReference();
+			info.partImage = ref.getTitleImage();
+			}
+		info.tabText = name;
+		info.part = part;
+		invisibleChildren = arrayAdd(invisibleChildren, info, index);
+		if (active)
+			part.setContainer(this);
+	}	
+}
+
+
 /**
  * See IVisualContainer#add
  */
 public void add(LayoutPart child) {
 	int index = getItemCount();
 	String label = "";//$NON-NLS-1$
+	Image partimage = null;
 	if (child instanceof PartPane) {
 		WorkbenchPartReference ref = (WorkbenchPartReference)((PartPane)child).getPartReference();
 		label = ref.getRegisteredName();
+		partimage = ref.getTitleImage();
 	}
-	add(label, index, child);
+	add(label, index, child, partimage);
 }
 /**
  * See ILayoutContainer::allowBorder
@@ -135,6 +188,13 @@ public void add(LayoutPart child) {
  * folder so no need for one from the parts.
  */
 public boolean allowsBorder() {
+	// @issue need to support old look even if a theme is set (i.e. show border
+	//   even when only one item) -- separate theme attribute, or derive this
+	//   from existing attributes?
+	// @issue this says to show the border only if there are no items, but 
+	//   in this case the folder should not be visible anyway
+	if (tabThemeDescriptor != null)
+		return (mapTabToPart.size() < 1);
 	return mapTabToPart.size() <= 1;
 }
 private TabInfo[] arrayAdd(TabInfo[] array, TabInfo item, int index) {
@@ -198,8 +258,20 @@ public void createControl(Composite parent) {
 
 	// Create control.	
 	this.parent = parent;
-	tabFolder = new CTabFolder(parent, tabLocation | SWT.BORDER);
+	
+	if (tabPosition == -1) {
+		if (tabThemeDescriptor != null)
+			tabPosition = tabThemeDescriptor.getTabPosition();
+		else
+			tabPosition = tabLocation;
+	}
 
+	tabFolder = new CTabFolder(parent, tabPosition | SWT.BORDER);
+
+	if (tabThemeDescriptor != null) {
+		useThemeInfo();		
+	}
+	
 	// listener to switch between visible tabItems
 	tabFolder.addListener(SWT.Selection, new Listener(){
 		public void handleEvent(Event e){
@@ -239,7 +311,13 @@ public void createControl(Composite parent) {
 				stillInactive = newStillInactive;
 			}
 			else {
-				createPartTab(invisibleChildren[i].part, invisibleChildren[i].tabText, tabCount);
+				if (invisibleChildren[i].partImage == null){
+					if (invisibleChildren[i].part instanceof PartPane) {
+						WorkbenchPartReference ref = (WorkbenchPartReference)((PartPane)invisibleChildren[i].part).getPartReference();
+						invisibleChildren[i].partImage = ref.getTitleImage();
+						}				
+				}				
+				createPartTab(invisibleChildren[i].part, invisibleChildren[i].tabText, invisibleChildren[i].partImage, tabCount);
 				++ tabCount;
 			}
 		}
@@ -256,14 +334,29 @@ public void createControl(Composite parent) {
 		setSelection(newPage);
 	}
 }
-private CTabItem createPartTab(LayoutPart part, String tabName, int tabIndex) {
+private CTabItem createPartTab(LayoutPart part, String tabName, Image tabImage, int tabIndex) {
 	CTabItem tabItem;
 
 	if (tabIndex < 0)
 		tabItem = new CTabItem(this.tabFolder, SWT.NONE);
 	else
 		tabItem = new CTabItem(this.tabFolder, SWT.NONE, tabIndex);
-	tabItem.setText(tabName);
+
+	if (tabThemeDescriptor != null) {
+		int showInTab = tabThemeDescriptor.getShowInTab();
+		
+//		tabItem.setItemMargins(tabThemeDescriptor.getItemMargins());
+		if (tabThemeDescriptor.isShowTooltip())
+			tabItem.setToolTipText(tabName);		
+
+		if ((tabImage != null) && (showInTab != TabThemeDescriptor.TABLOOKSHOWTEXTONLY))
+			tabItem.setImage(tabImage);
+		if (showInTab != TabThemeDescriptor.TABLOOKSHOWICONSONLY)		
+			tabItem.setText(tabName);
+	}
+	else {
+		tabItem.setText(tabName);
+	}
 
 	mapTabToPart.put(tabItem, part);
 
@@ -277,6 +370,11 @@ private CTabItem createPartTab(LayoutPart part, String tabName, int tabIndex) {
 		Iterator parts = mapTabToPart.values().iterator();
 		((LayoutPart)parts.next()).setContainer(this);
 		((LayoutPart)parts.next()).setContainer(this);
+	}
+	
+	if (part instanceof PartPane) {
+		WorkbenchPartReference ref = (WorkbenchPartReference)((PartPane)part).getPartReference();
+		ref.addPropertyListener(this);
 	}
 	
 	return tabItem;
@@ -514,9 +612,14 @@ public void remove(LayoutPart child) {
 private void removeTab(CTabItem tab) {
 	// disable any d&d based on this tab
 	LayoutPart part = (LayoutPart)mapTabToPart.get(tab);
-	if (part != null)
+	if (part != null) {
 		disableDrag(part);
-
+		if (part instanceof PartPane) {
+			WorkbenchPartReference ref = (WorkbenchPartReference)((PartPane)part).getPartReference();
+			ref.removePropertyListener(this);
+		}		
+	}
+	
 	// remove the tab now
 	// Note, that disposing of the tab causes the
 	// tab folder to select the next tab and fires
@@ -602,13 +705,25 @@ private void reorderTab(ViewPane pane, CTabItem sourceTab, int newIndex) {
 
 	// dispose of the old tab and remove it
 	String sourceLabel = sourceTab.getText();
+	Image partImage = sourceTab.getImage();	
+	
 	mapTabToPart.remove(sourceTab);
 	assignFocusOnSelection = false;
 	sourceTab.dispose();
 	assignFocusOnSelection = true;
 
 	// update the new tab's title and visibility
-	newTab.setText(sourceLabel);
+	if (tabThemeDescriptor != null) {
+		int showInTab = tabThemeDescriptor.getShowInTab();
+
+		if ((partImage != null) && (showInTab != TabThemeDescriptor.TABLOOKSHOWTEXTONLY))
+			newTab.setImage(partImage);
+		if (showInTab != TabThemeDescriptor.TABLOOKSHOWICONSONLY)		
+			newTab.setText(sourceLabel);
+	}
+	else {
+		newTab.setText(sourceLabel);
+	}
 	if (wasVisible) {
 		tabFolder.setSelection(newTab);
 		setSelection(pane);
@@ -699,7 +814,7 @@ private void replaceChild(PartPlaceholder oldChild, LayoutPart newChild) {
 					WorkbenchPartReference ref = (WorkbenchPartReference)((PartPane)newChild).getPartReference();
 					info.tabText = ref.getRegisteredName();
 				}
-				CTabItem item = createPartTab(newChild, info.tabText, -1);
+				CTabItem item = createPartTab(newChild, info.tabText, info.partImage, -1);
 				int index = tabFolder.indexOf(item);
 				setSelection(index);
 			} else {
@@ -734,8 +849,8 @@ public IStatus restoreState(IMemento memento)
 			String partID = childMem.getString(IWorkbenchConstants.TAG_CONTENT);
 			String tabText = childMem.getString(IWorkbenchConstants.TAG_LABEL);
 
-			IViewDescriptor descriptor = (IViewDescriptor)WorkbenchPlugin.getDefault().
-				getViewRegistry().find(partID);
+			IViewDescriptor descriptor = 
+				WorkbenchPlugin.getDefault().getViewRegistry().find(partID);
 			
 			if(descriptor != null) {
 				if (descriptor.getId().equals(IIntroConstants.INTRO_VIEW_ID)) 
@@ -828,7 +943,8 @@ private void setControlSize() {
 	if (current == null || tabFolder == null) 
 		return;
 	Rectangle bounds;
-	if (mapTabToPart.size() > 1)
+	// @issue as above, the mere presence of a theme should not change the behaviour
+	if ((mapTabToPart.size() > 1) || ((tabThemeDescriptor != null) && (mapTabToPart.size() >= 1)))
 		bounds = calculatePageBounds(tabFolder);
 	else
 		bounds = tabFolder.getBounds();
@@ -923,6 +1039,150 @@ public void showBusy(PartPane partPane) {
  */
 public void clearBusy(PartPane partPane) {
 	updateTab(partPane,partPane.getPartReference().getTitleImage());
+}
+
+private void useThemeInfo() {
+	
+//	if (tabThemeDescriptor.getSelectedImageDesc() != null)
+//		tabFolder.setSelectedTabImage(tabThemeDescriptor.getSelectedImageDesc().createImage());
+//	if (tabThemeDescriptor.getUnselectedImageDesc() != null)
+//		tabFolder.setUnselectedTabImage(tabThemeDescriptor.getUnselectedImageDesc().createImage());
+	
+	if (tabThemeDescriptor.getTabMarginSize(SWT.DEFAULT) != -1) {
+//		tabFolder.setUseSameMarginAllSides(true);		
+//		tabFolder.setMarginHeight(tabThemeDescriptor.getTabMarginSize(SWT.DEFAULT));
+//		tabFolder.setBorderMarginHeightColor(tabThemeDescriptor.getTabMarginColor(SWT.DEFAULT));
+	}
+	else if (tabThemeDescriptor.getTabMarginSize(tabPosition) != -1) {		
+//		tabFolder.setMarginHeight(tabThemeDescriptor.getTabMarginSize(tabPosition));
+//		tabFolder.setBorderMarginHeightColor(tabThemeDescriptor.getTabMarginColor(tabPosition));
+	}
+
+	if (tabThemeDescriptor.getTabFixedHeight() > 0){
+		tabFolder.setTabHeight(tabThemeDescriptor.getTabFixedHeight());
+	}
+	if (tabThemeDescriptor.getTabFixedWidth() > 0){
+//		tabFolder.setTabWidth(tabThemeDescriptor.getTabFixedWidth());
+	}
+	if (tabThemeDescriptor.getBorderStyle() == SWT.NONE){
+		tabFolder.setBorderVisible(false);
+	}
+
+//	setTabDragInFolder(tabThemeDescriptor.isDragInFolder());
+
+	/* get the font */
+	if (themeid != null) {
+		Font tabfont = WorkbenchThemeManager.getInstance().
+			getTabFont(themeid, IThemeDescriptor.TAB_TITLE_FONT);
+		tabFolder.setFont(tabfont);
+		
+//		tabFolder.setHoverForeground(WorkbenchThemeManager.getInstance().
+//					getTabColor(themeid, IThemeDescriptor.TAB_TITLE_TEXT_COLOR_HOVER));
+		tabFolder.setSelectionForeground(WorkbenchThemeManager.getInstance().
+					getTabColor(themeid, IThemeDescriptor.TAB_TITLE_TEXT_COLOR_ACTIVE));
+//		tabFolder.setInactiveForeground(WorkbenchThemeManager.getInstance().
+//					getTabColor(themeid, IThemeDescriptor.TAB_TITLE_TEXT_COLOR_DEACTIVATED));										
+	}	
+	if (tabThemeDescriptor.isShowClose()) {
+		
+//		if (tabThemeDescriptor.getCloseActiveImageDesc() != null)
+//			tabFolder.setCloseActiveImage(tabThemeDescriptor.getCloseActiveImageDesc().createImage());
+//		if (tabThemeDescriptor.getCloseInactiveImageDesc() != null)
+//			tabFolder.setCloseInactiveImage(tabThemeDescriptor.getCloseInactiveImageDesc().createImage());
+		
+		// listener to close the view
+		tabFolder.addCTabFolderListener(new CTabFolderListener() {
+			public void itemClosed(CTabFolderEvent e) {
+				LayoutPart item = (LayoutPart)mapTabToPart.get(e.item);
+				// Item can be null when tab is just created but not map yet.
+				if (item != null) {
+					if (item instanceof ViewPane) {
+						ViewPane pane = (ViewPane) item;
+						pane.doHide();
+					}
+					else
+						remove(item);
+				}
+	//			e.doit = false; // otherwise tab is auto disposed on return
+			}
+		});
+
+		// listener to close the view
+//		tabFolder.addCTabFolderThemeListener(new CTabFolderThemeListener() {
+//			public boolean showClosebar(CTabFolderEvent e) {
+//				LayoutPart item = (LayoutPart)mapTabToPart.get(e.item);
+//				boolean showClosebar = true;
+//				// Item can be null when tab is just created but not map yet.
+//				if (item != null) {
+//					if (item instanceof PartPane) {
+//						WorkbenchPartReference ref = (WorkbenchPartReference)((PartPane)item).getPartReference();
+//						if (ref instanceof IViewReference) {
+//							IViewReference viewref = (IViewReference)ref;
+//							if (viewref.getHideCloseButton())
+//								showClosebar = false;
+//						}
+//					}
+//	
+//				}
+//	//			e.doit = false; // otherwise tab is auto disposed on return
+//				return showClosebar;
+//			}		
+//		});
+	}
+}
+
+/**
+ * Listen for notifications from the view part
+ * that its title has change or it's dirty, and
+ * update the corresponding tab
+ *
+ * @see IPropertyListener
+ */
+public void propertyChanged(Object source, int property) {
+	if (property == IWorkbenchPart.PROP_TITLE) {
+		if (source instanceof IViewPart) {
+			IViewPart part = (IViewPart) source;
+			PartPane pane = ((ViewSite)part.getSite()).getPane();
+			CTabItem sourceTab = getTab(pane);
+			String title = part.getTitle();
+			Image newImage = part.getTitleImage();
+			
+			// @issue need to handle backwards compatibility: tab text is always
+			//   registry name -- for now, only update tab if there's a theme set
+			if (tabThemeDescriptor != null) {
+				// @issue need to take theme settings into account - may not
+				//   want to show text or image
+				if ((title != null) && (title.length() != 0))				
+					sourceTab.setText(title);
+					
+				if (newImage != sourceTab.getImage())
+					sourceTab.setImage(newImage);
+				
+				// @issue what about tooltip?
+			}
+		}
+	}
+}
+
+/**
+ * Returns the theme id.
+ *
+ * @return the theme id.
+ */
+public String getTheme() {
+	return themeid;
+}
+
+/**
+ * Sets the theme id.
+ *
+ * @param theme the theme id to set.
+ */
+public void setTheme(String theme) {
+	if ((theme != null) && (theme.length() > 0)) {
+		this.themeid = theme;
+		tabThemeDescriptor = WorkbenchThemeManager.getInstance().getTabThemeDescriptor(theme);
+	}
 }
 
 }

@@ -70,6 +70,7 @@ public class PageLayout implements IPageLayout {
 	private ArrayList showInPartIds = new ArrayList(3);
 	private ArrayList showViewActionIds = new ArrayList(3);
 	private ViewFactory viewFactory;
+	private String theme;
 
 	/**
 	 * Constructs a new PageLayout for other purposes.
@@ -307,6 +308,8 @@ public class PageLayout implements IPageLayout {
 		// Create the folder.
 		PartTabFolder folder = new PartTabFolder();
 		folder.setID(folderId);
+		// @issue should the folder capture the current theme?
+		folder.setTheme(theme);
 		addPart(folder, folderId, relationship, ratio, refId);
 
 		// Create a wrapper.
@@ -354,7 +357,8 @@ public class PageLayout implements IPageLayout {
 				viewFactory.getViewRegistry().find(partID);
 			if (WorkbenchActivityHelper.filterItem(viewDescriptor))
 				return null;
-			return LayoutHelper.createView(getViewFactory(), partID);
+			// @issue view should refer to current perspective for theme setting
+			return LayoutHelper.createView(getViewFactory(), partID, theme);
 		}
 	}
 
@@ -645,5 +649,13 @@ public class PageLayout implements IPageLayout {
 		} catch (PartInitException e) {
 			WorkbenchPlugin.log(e.getMessage());
 		}
+	}
+	
+	void setTheme(String theme) {
+		this.theme = theme;
+	}
+	
+	String getTheme() {
+		return this.theme;
 	}
 }

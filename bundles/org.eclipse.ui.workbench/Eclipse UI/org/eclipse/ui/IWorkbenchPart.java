@@ -93,7 +93,8 @@ import org.eclipse.swt.graphics.Image;
 public interface IWorkbenchPart extends IAdaptable {
 	
 	/**
-	 * The property id for <code>getTitle</code> and <code>getTitleImage</code>.
+	 * The property id for <code>getTitle</code>, <code>getTitleImage</code>
+	 * and <code>getTitleToolTip</code>.
 	 */
 	public static final int PROP_TITLE = 0x01;
 /**
