@@ -12,60 +12,59 @@ package org.eclipse.ui.tests.api;
 
 import junit.framework.TestCase;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.tests.util.ArrayUtil;
 
 public class IPerspectiveDescriptorTest extends TestCase {
 
-    private IPerspectiveDescriptor fPer;
+    private IPerspectiveDescriptor[] fPerspectives;
 
     public IPerspectiveDescriptorTest(String testName) {
         super(testName);
     }
 
     public void setUp() {
-        fPer = (IPerspectiveDescriptor) ArrayUtil.pickRandom(PlatformUI
-                .getWorkbench().getPerspectiveRegistry().getPerspectives());
-        //fPer.
+        fPerspectives = PlatformUI
+                .getWorkbench().getPerspectiveRegistry().getPerspectives();
     }
 
+    /**
+     * Tests that the ids for all perspective descriptors are non-null and non-empty.
+     */
     public void testGetId() {
-        assertNotNull(fPer.getId());
+        for (int i = 0; i < fPerspectives.length; i++) {
+            String id = fPerspectives[i].getId();
+            assertNotNull(id);
+            assertTrue(id.length() > 0);
+        }
     }
 
+    /**
+     * Tests that the labels for all perspective descriptors are non-null and non-empty.
+     */
     public void testGetLabel() {
-        assertNotNull(fPer.getLabel());
+        for (int i = 0; i < fPerspectives.length; i++) {
+            String label = fPerspectives[i].getLabel();
+            assertNotNull(label);
+            assertTrue(label.length() > 0);
+        }
     }
 
-    //	This always fails
+    /**
+     * Tests that the image descriptors for all perspective descriptors are non-null.
+     * <p>
+     * Note that some perspective extensions in the test suite do not specify an icon
+     * attribute.  getImageDescriptor should return a default image descriptor in this
+     * case.  This is a regression test for bug 68325.
+     * </p>
+     */
     public void testGetImageDescriptor() {
-        /*		IWorkbench wb = PlatformUI.getWorkbench();
-         
-         IPerspectiveDescriptor[] pers = wb.getPerspectiveRegistry().getPerspectives();
-         IWorkbenchPage page = wb.getActiveWorkbenchWindow().getActivePage();
-         
-         for( int i = 0; i < pers.length; i ++ )
-         if( pers[ i ] != page.getPerspective() ){
-         page.setPerspective( pers[ i ] );
-         break;
-         }
-
-         System.out.println( "active page pers: " + page.getPerspective().getLabel() );
-         System.out.println( "active pers image: " + page.getPerspective().getImageDescriptor() );
-
-         for( int i = 0; i < pers.length; i ++ )
-         if( pers[ i ].getLabel().equals( "Resource" ) ){
-         System.out.println( "resource image: " + pers[ i ].getImageDescriptor() );
-         break;
-         }
-         for( int i = 0; i < pers.length; i ++ ){
-         assertNotNull( pers[ i ].getImageDescriptor() );
-         }*/
+        for (int i = 0; i < fPerspectives.length; i++) {
+            ImageDescriptor image = fPerspectives[i].getImageDescriptor();
+            assertNotNull(image);
+        }
     }
-
-    public void testThis() {
-        //		opne
-    }
+    
 }
 
