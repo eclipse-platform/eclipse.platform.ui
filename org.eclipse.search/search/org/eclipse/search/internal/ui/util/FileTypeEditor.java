@@ -111,13 +111,15 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener,
 	public void setFileTypes(Set types) {
 		StringBuffer result= new StringBuffer();
 		Iterator typesIter= types.iterator();
-
+		boolean first= true;
 		while (typesIter.hasNext()) {
+			if (!first) {
+				result.append(TYPE_DELIMITER);
+				result.append(" "); //$NON-NLS-1$
+			} else
+				first= false;
 			result.append(typesIter.next());
-			result.append(TYPE_DELIMITER);
-			result.append(" "); //$NON-NLS-1$
 		}
-
 		fTextField.setText(result.toString());
 	}
 
