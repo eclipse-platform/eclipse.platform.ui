@@ -13,13 +13,14 @@ package org.eclipse.core.filebuffers;
 import org.eclipse.jface.text.IDocument;
 
 /**
- * Participates in the setup of a document.
+ * Participates in the setup of a text file buffer document.
+ * 
  * @since 3.0
  */
 public interface IDocumentSetupParticipant {
 	
 	/**
-	 * Sets up the document to be ready for usage.
+	 * Sets up the document to be ready for use by a text file buffer.
 	 * 
 	 * @param document the document to be set up
 	 */

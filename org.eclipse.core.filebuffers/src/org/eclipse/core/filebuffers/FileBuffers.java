@@ -13,14 +13,25 @@ package org.eclipse.core.filebuffers;
 import org.eclipse.core.internal.filebuffers.FileBuffersPlugin;
 
 /**
- *
+ * Facade for the file buffers plug-in. Provides access to the
+ * text file buffer manager.
+ * 
+ * @since 3.0
  */
 public final class FileBuffers {
 	
+	/**
+	 * Cannot be instantiated.
+	 */
 	private FileBuffers()  {
 	}
 
+	/**
+	 * Returns the text file buffer manager.
+	 * 
+	 * @return the text file buffer manager
+	 */
 	public static ITextFileBufferManager getTextFileBufferManager()  {
-		return FileBuffersPlugin.getDefault().getBufferedFileManager();
+		return FileBuffersPlugin.getDefault().getFileBufferManager();
 	}
 }

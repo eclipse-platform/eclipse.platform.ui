@@ -13,12 +13,36 @@ package org.eclipse.core.filebuffers;
 
 import org.eclipse.jface.text.IDocument;
 
-
+/**
+ * A text file buffer is a file buffer for text files.  The contents of a text file buffe is
+ * given in the form of a document. Also, the text file buffer provides methods to
+ * manage the character encoding used to read and write the buffer's underlying
+ * text file.
+ * 
+ * @since 3.0
+ */
 public interface ITextFileBuffer extends IFileBuffer {
 	
+	/**
+	 * Returns the document of this text file buffer.
+	 * 
+	 * @return the document of this text file buffer
+	 */
 	IDocument getDocument();
-			
+	
+	/**
+	 * Returns the character encoding to be used for reading and writing the
+	 * buffer's underlying file.
+	 * 
+	 * @return the character encoding
+	 */
 	String getEncoding();
 	
+	/**
+	 * Sets the character encoding to be used for reading and writing the buffer's
+	 * underlyning file.
+	 * 
+	 * @param encoding the encoding
+	 */
 	void setEncoding(String encoding);
 }

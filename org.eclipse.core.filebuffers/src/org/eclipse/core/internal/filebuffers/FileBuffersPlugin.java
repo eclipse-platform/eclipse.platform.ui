@@ -31,7 +31,7 @@ public class FileBuffersPlugin extends Plugin {
 		super(descriptor);
 		fgPlugin = this;
 		try {
-			fResourceBundle= ResourceBundle.getBundle("org.eclipse.core.buffer.internal,text.TextBufferPluginResources");  //$NON-NLS-1$
+			fResourceBundle= ResourceBundle.getBundle("org.eclipse.core.internal.filebuffers.FileBuffersPlugin");  //$NON-NLS-1$
 		} catch (MissingResourceException x) {
 			fResourceBundle = null;
 		}
@@ -76,7 +76,7 @@ public class FileBuffersPlugin extends Plugin {
 	 * 
 	 * @return the text file buffer manager of this plug-in
 	 */
-	public ITextFileBufferManager getBufferedFileManager()  {
+	public ITextFileBufferManager getFileBufferManager()  {
 		if (fTextFileBufferManager == null)
 			fTextFileBufferManager= new TextFileBufferManager();
 		return fTextFileBufferManager;

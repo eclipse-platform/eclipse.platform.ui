@@ -13,7 +13,10 @@ package org.eclipse.core.filebuffers;
 import org.eclipse.jface.text.IDocument;
 
 /**
- * Factory for documents.
+ * Factory for text file buffer documents. Used by the text file buffer
+ * manager to create the document for a new text file buffer.
+ * 
+ * @since 3.0
  */
 public interface IDocumentFactory {
 	
