@@ -277,7 +277,6 @@ public class CVSProviderPlugin extends Plugin {
 		workspace.addResourceChangeListener(addDeleteMoveListener, IResourceChangeEvent.POST_BUILD);
 		workspace.addResourceChangeListener(metaFileSyncListener, IResourceChangeEvent.POST_CHANGE);
 		workspace.addResourceChangeListener(fileModificationManager, IResourceChangeEvent.POST_CHANGE);
-		fileModificationManager.registerSaveParticipant();
 		
 		getCVSWorkspaceSubscriber();
 	}

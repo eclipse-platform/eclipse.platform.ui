@@ -13,24 +13,11 @@ package org.eclipse.team.internal.ccvs.core.resources;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.ISaveContext;
-import org.eclipse.core.resources.ISaveParticipant;
-import org.eclipse.core.resources.ISavedState;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.util.ResourceStateChangeListeners;
 
 /**
@@ -41,7 +28,7 @@ import org.eclipse.team.internal.ccvs.core.util.ResourceStateChangeListeners;
  * missed. Secondly, it listens for CVS resource state change events and uses
  * these to properly mark files and folders as modified.
  */
-public class FileModificationManager implements IResourceChangeListener, ISaveParticipant {
+public class FileModificationManager implements IResourceChangeListener {
 	
 	private static final QualifiedName UPDATE_TIMESTAMP = new QualifiedName(CVSProviderPlugin.ID, "update-timestamp"); //$NON-NLS-1$
 	
@@ -108,47 +95,7 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 		}
 
 	}
-	
-	/**
-	 * We register a save participant so we can get the delta from workbench
-	 * startup to plugin startup.
-	 * @throws CoreException
-	 */
-	public void registerSaveParticipant() throws CoreException {
-		IWorkspace ws = ResourcesPlugin.getWorkspace();
-		ISavedState ss = ws.addSaveParticipant(CVSProviderPlugin.getPlugin(), this);
-		if (ss != null) {
-			ss.processResourceChangeEvents(this);
-		}
-		ws.removeSaveParticipant(CVSProviderPlugin.getPlugin());
-	}
-	
-	/**
-	 * @see org.eclipse.core.resources.ISaveParticipant#doneSaving(org.eclipse.core.resources.ISaveContext)
-	 */
-	public void doneSaving(ISaveContext context) {
-		// Do nothing
-	}
-	/**
-	 * @see org.eclipse.core.resources.ISaveParticipant#prepareToSave(org.eclipse.core.resources.ISaveContext)
-	 */
-	public void prepareToSave(ISaveContext context) {
-		// Do nothing
-	}
-	/**
-	 * @see org.eclipse.core.resources.ISaveParticipant#rollback(org.eclipse.core.resources.ISaveContext)
-	 */
-	public void rollback(ISaveContext context) {
-		// Do nothing
-	}
-	/**
-	 * @see org.eclipse.core.resources.ISaveParticipant#saving(org.eclipse.core.resources.ISaveContext)
-	 */
-	public void saving(ISaveContext context) {
-		// Do nothing
-	}
 
-	
 	/**
 	 * Method updated flags the objetc as having been modfied by the updated
 	 * handler. This flag is read during the resource delta to determine whether
