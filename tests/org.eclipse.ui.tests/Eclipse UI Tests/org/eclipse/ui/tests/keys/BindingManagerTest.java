@@ -23,6 +23,9 @@ import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.BindingManagerEvent;
 import org.eclipse.jface.bindings.IBindingManagerListener;
 import org.eclipse.jface.bindings.Scheme;
+import org.eclipse.jface.bindings.keys.KeyBinding;
+import org.eclipse.jface.bindings.keys.KeySequence;
+import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
@@ -323,8 +326,65 @@ public final class BindingManagerTest extends UITestCase {
 				.getLocale());
 	}
 
-	public final void testGetPartialMatches() {
-		// TODO Implement this test case.
+	/**
+	 * Tests that this method returns the expected list of sequences for a
+	 * couple of scenarios. In the first scenario, there is one perfect match
+	 * bindings and a partial match binding. In the second scenario, there are
+	 * two partial match bindings.
+	 * 
+	 * @throws NotDefinedException
+	 *             If the scheme we try to activate is not defined.
+	 * @throws ParseException
+	 *             If the hard-coded strings aren't constructed properly.
+	 */
+	public final void testGetPartialMatches() throws NotDefinedException,
+			ParseException {
+		// GENERAL SET-UP
+		final Context context = contextManager.getContext("na");
+		context.define("name", "description", null);
+		final Scheme scheme = bindingManager.getScheme("na");
+		scheme.define("name", "description", null);
+		bindingManager.setActiveScheme("na");
+		final Set activeContextIds = new HashSet();
+		activeContextIds.add("na");
+		contextManager.setActiveContextIds(activeContextIds);
+
+		// SCENARIO 1
+		final KeySequence perfectMatch = KeySequence
+				.getInstance("CTRL+F CTRL+F");
+		final Binding perfectMatchBinding = new KeyBinding(perfectMatch,
+				"perfect", "na", "na", null, null, null, Binding.SYSTEM);
+		final KeySequence partialMatch1 = KeySequence
+				.getInstance("CTRL+F CTRL+F CTRL+F");
+		final Binding partialMatchBinding1 = new KeyBinding(partialMatch1,
+				"partial1", "na", "na", null, null, null, Binding.SYSTEM);
+		final Set bindings = new HashSet();
+		bindings.add(perfectMatchBinding);
+		bindings.add(partialMatchBinding1);
+		bindingManager.setBindings(bindings);
+		Map partialMatches = bindingManager.getPartialMatches(perfectMatch);
+		assertTrue(
+				"If one bindings matches perfectly, there can be no partial matches",
+				partialMatches.isEmpty());
+
+		// SCENARIO 2
+		final KeySequence partialMatch2 = KeySequence
+				.getInstance("CTRL+F CTRL+F CTRL+F CTRL+F");
+		final Binding partialMatchBinding2 = new KeyBinding(partialMatch2,
+				"partial", "na", "na", null, null, null, Binding.SYSTEM);
+		bindings.clear();
+		bindings.add(partialMatchBinding1);
+		bindings.add(partialMatchBinding2);
+		bindingManager.setBindings(bindings);
+		partialMatches = bindingManager.getPartialMatches(perfectMatch);
+		assertEquals("There should be two partial matches", 2, partialMatches
+				.size());
+		assertSame("The partial match should be the one defined",
+				partialMatchBinding1.getCommandId(), partialMatches
+						.get(partialMatch1));
+		assertSame("The partial match should be the one defined",
+				partialMatchBinding2.getCommandId(), partialMatches
+						.get(partialMatch2));
 	}
 
 	public final void testGetPerfectMatch() {

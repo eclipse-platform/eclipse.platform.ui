@@ -327,8 +327,8 @@ public final class BindingManager implements IContextManagerListener,
 			while (prefixItr.hasNext()) {
 				final TriggerSequence prefix = (TriggerSequence) prefixItr
 						.next();
-				final Object value = prefixTable.get(prefix);
 				if (prefixTable.containsKey(prefix)) {
+					final Object value = prefixTable.get(prefix);
 					if (value instanceof Map) {
 						((Map) value).put(triggerSequence, commandId);
 					}
@@ -1677,7 +1677,7 @@ public final class BindingManager implements IContextManagerListener,
 		if ((bindings == null) || (bindings.isEmpty())) {
 			this.bindings = null;
 		} else {
-			this.bindings = bindings;
+			this.bindings = new HashSet(bindings); // copied for my protection
 		}
 		clearCache();
 	}

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.bindings;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -72,7 +73,7 @@ public abstract class TriggerSequence {
 			}
 		}
 
-		this.triggers = triggers;
+		this.triggers = new ArrayList(triggers); // copied for my protection
 
 	}
 
