@@ -21,9 +21,13 @@ public class MessageResourceBundle {
 
 	private static final String EXTENSION = ".properties"; //$NON-NLS-1$
 
+	/*
+	 * Load the given resource bundle using the specified class loader. 
+	 */
 	public static Properties load(String bundleName, ClassLoader loader) {
 		Properties result = new Properties();
 		String[] variants = buildVariants(bundleName);
+		// search the dirs in reverse order so the cascading defaults is set correctly
 		for (int i = variants.length - 1; i > -1; i--) {
 			String name = variants[i];
 			InputStream input = loader.getResourceAsStream(name);
@@ -46,6 +50,9 @@ public class MessageResourceBundle {
 		return result;
 	}
 
+	/*
+	 * Build an array of directories to search
+	 */
 	private static String[] buildVariants(String root) {
 		String nl = Locale.getDefault().toString();
 		ArrayList result = new ArrayList();
