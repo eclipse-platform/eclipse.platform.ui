@@ -119,7 +119,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	private ShortcutBarPartDragDrop fastViewDND;
 	private Menu fastViewBarMenu;
 
-	private ToolBarManager perspectiveBar;
+	private PerspectiveBarManager perspectiveBar;
 	private Menu perspectiveBarMenu;
 	
 	private static final int MAX_PERSPECTIVES = 4;
@@ -392,7 +392,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 */
 	protected void addPerspectiveBar(int style) {
 		if ((getShell() == null) && (perspectiveBar == null)) {
-			perspectiveBar = new ToolBarManager(style);
+			perspectiveBar = new PerspectiveBarManager(style);
 		}
 	}
 
@@ -1969,7 +1969,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	/**
 	 * Returns the perspective bar.
 	 */
-	public ToolBarManager getPerspectiveBar() {
+	public PerspectiveBarManager getPerspectiveBar() {
 		return perspectiveBar;
 	}
 
