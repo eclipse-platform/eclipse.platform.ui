@@ -708,7 +708,7 @@ protected IStatus saveMetaInfo(Project project, IProgressMonitor monitor) throws
 		workspace.getFileSystemManager().writeSilently(project);
 		String msg = Policy.bind("resources.missingProjectMetaRepaired", project.getName());
 		//FIXME: Should just return an INFO status here.
-		return new ResourceStatus(IResourceStatus.FAILED_WRITE_METADATA, project.getFullPath(), msg);
+		return new ResourceStatus(IResourceStatus.MISSING_DESCRIPTION_REPAIRED, project.getFullPath(), msg);
 	}
 	return ResourceStatus.OK_STATUS;
 }

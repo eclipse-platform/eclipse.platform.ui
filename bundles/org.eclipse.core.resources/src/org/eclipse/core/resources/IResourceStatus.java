@@ -60,6 +60,12 @@ public interface IResourceStatus extends IStatus {
 
 	// Warnings [233-265]
 
+	/** Status code constant (value 234) indicating that a project
+	 * description file (.project), was missing but it has been repaired.
+ 	 * Severity: warning. Category: local file system.
+ 	 */
+	public static final int MISSING_DESCRIPTION_REPAIRED = 234;
+
 	// Errors [266-298]
 	
 	/** Status code constant (value 268) indicating a resource unexpectedly 

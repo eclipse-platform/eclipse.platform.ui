@@ -665,7 +665,7 @@ public void setDescription(IProjectDescription description, int updateFlags, IPr
 			workspace.updateModificationStamp(info);
 			if (!hadSavedDescription) {
 				String msg = Policy.bind("resources.missingProjectMetaRepaired", getName());
-				status.merge(new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, getFullPath(), msg));
+				status.merge(new ResourceStatus(IResourceStatus.MISSING_DESCRIPTION_REPAIRED, getFullPath(), msg));
 			}
 			if (!status.isOK())
 				throw new CoreException(status);
