@@ -61,6 +61,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.keys.KeySequenceText;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
 
 public class KeysPreferencePage extends org.eclipse.jface.preference.PreferencePage
 	implements IWorkbenchPreferencePage {
@@ -148,6 +149,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	private IActivityManager activityManager;
 	private Map assignmentsByActivityIdByKeySequence;
 	private Button buttonAdd;
+	private Button buttonAddKey;
 	private Button buttonRemove;
 	private Button buttonRestore;
 	private Map categoryDefinitionsById;
@@ -157,6 +159,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	private Combo comboCommand;	
 	private Combo comboActivity;
 	private Combo comboKeyConfiguration;
+	private Combo comboTrappedKeys;
 	private Set commandAssignments;	
 	private Map commandDefinitionsById;
 	private Map commandIdsByCategoryId;
@@ -695,7 +698,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 		groupKeySequence = new Group(composite, SWT.SHADOW_NONE);
 		gridLayout = new GridLayout();
-		gridLayout.numColumns = 3;
+		gridLayout.numColumns = 5;
 		groupKeySequence.setLayout(gridLayout);	
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		groupKeySequence.setLayoutData(gridData);
@@ -716,6 +719,32 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 				modifiedTextKeySequence();
 			}
 		});
+		
+		// Button for adding trapped key strokes
+		buttonAddKey = new Button(groupKeySequence, SWT.CENTER | SWT.PUSH);
+		gridData = new GridData();
+		gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		buttonAddKey.setText(Util.translateString(resourceBundle, "buttonAddKey")); //$NON-NLS-1$
+		gridData.widthHint = Math.max(widthHint, buttonAdd.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
+		buttonAddKey.setLayoutData(gridData);
+		buttonAddKey.addSelectionAdapter() {
+			public void widgetSelected(SelectionEvent selectionEvent) {
+				selectedButtonAddKey();
+			}	
+		});
+		
+		// Combo box containing all of the trapped keys.
+		comboTrappedKeys = new Combo(groupKeySequence, SWT.READ_ONLY);
+		Iterator trappedKeyItr = KeySequenceText.TRAPPED_KEYS.iterator();
+		int index = 0;
+		String[] items = new String[KeySequenceText.TRAPPED_KEYS.size()];
+		while (trappedKeyItr.hasNext()) {
+			KeyStroke keyStroke = (KeyStroke) trappedKeyItr.next();
+			items[index++] = keyStroke.format(); 
+		}
+		comboTrappedKeys.setItems(items);
+		
 
 		labelAssignmentsForKeySequence = new Label(groupKeySequence, SWT.LEFT);
 		gridData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
@@ -725,7 +754,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		tableAssignmentsForKeySequence.setHeaderVisible(true);
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = 60;
-		gridData.horizontalSpan = 2;
+		gridData.horizontalSpan = 4;
 		gridData.widthHint = "carbon".equals(SWT.getPlatform()) ? 520 : 420;
 		tableAssignmentsForKeySequence.setLayoutData(gridData);		
 		tableColumnDelta = new TableColumn(tableAssignmentsForKeySequence, SWT.NULL, 0);
@@ -788,7 +817,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		buttonAdd = new Button(compositeButton, SWT.CENTER | SWT.PUSH);
 		gridData = new GridData();
 		gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		buttonAdd.setText(Util.translateString(resourceBundle, "buttonAdd")); //$NON-NLS-1$
 		gridData.widthHint = Math.max(widthHint, buttonAdd.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
 		buttonAdd.setLayoutData(gridData);		
@@ -1146,6 +1175,11 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		List preferenceKeySequenceBindingDefinitions = new ArrayList();
 		KeySequenceBindingNode.getKeySequenceBindingDefinitions(tree, KeySequence.getInstance(), 0, preferenceKeySequenceBindingDefinitions);		
 		update();
+	}
+
+	private void selectedButtonAddKey() {
+		String item = comboTrappedKeys.getItem(comboTrappedKeys.getSelectionIndex());
+		textKeySequence.insert(item);
 	}
 
 	private void selectedButtonRemove() {
