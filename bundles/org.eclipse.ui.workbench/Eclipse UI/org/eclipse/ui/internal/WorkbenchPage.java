@@ -1785,6 +1785,17 @@ protected void onActivate() {
 		persp.onActivate();
 		updateVisibility(null,persp);
 	}
+	if (activePart == null) {
+		IViewReference refs[] = persp.getViewReferences();
+		for (int i = 0; i < refs.length; i++) {
+			IViewReference ref = refs[i];
+			if(ref != null) {
+				activePart = ref.getPart(false);
+				if(activePart != null)
+					break;
+			}			
+		}
+	}
 	if (activePart != null) {
 		activationList.setActive(activePart);
 		
@@ -2655,9 +2666,7 @@ public void setPerspective(final IPerspectiveDescriptor desc) {
 	// Going from multiple to single rows can make the coolbar
 	// and its adjacent views appear jumpy as perspectives are
 	// switched.  Turn off redraw to help with this.
-	boolean useRedraw = false;
 	CoolBarManager mgr = window.getCoolBarManager();
-	useRedraw = true;
 	mgr.getControl().setRedraw(false);
 	// Run op in busy cursor.
 	BusyIndicator.showWhile(null, new Runnable() {
@@ -2665,9 +2674,7 @@ public void setPerspective(final IPerspectiveDescriptor desc) {
 			busySetPerspective(desc);
 		}
 	});
-	if (useRedraw) {
-		mgr.getControl().setRedraw(true);
-	}
+	mgr.getControl().setRedraw(true);
 }
 /**
  * Restore the toolbar layout for the active perspective.
