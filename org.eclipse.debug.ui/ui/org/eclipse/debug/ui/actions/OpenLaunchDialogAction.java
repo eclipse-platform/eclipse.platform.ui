@@ -49,7 +49,7 @@ public class OpenLaunchDialogAction extends Action implements IWorkbenchWindowAc
 	private IAction fAction;	
 	
 	/**
-	 * Constucts an action that opens the launch configuration dialog in
+	 * Constructs an action that opens the launch configuration dialog in
 	 * the context of the specified launch group.
 	 * 
 	 * @param identifier unique identifier of a launch group extension
