@@ -205,6 +205,7 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor implements IPrope
 	 * @see org.eclipse.team.ui.synchronize.viewers.StructuredViewerAdvisor#initializeListeners(org.eclipse.jface.viewers.StructuredViewer)
 	 */
 	protected void initializeListeners(StructuredViewer viewer) {
+		super.initializeListeners(viewer);
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				handleDoubleClick(getViewer(), event);

@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.widgets.Control;
@@ -86,8 +87,8 @@ public abstract class StructuredViewerAdvisor {
 	
 	/**
 	 * Create an advisor that will allow viewer contributions with the given <code>targetID</code>. This
-	 * advisor will provide a presentation model based on the given sync info set. Note that it's important
-	 * to call {@link #dispose()} when finished with an advisor.
+	 * advisor will provide a presentation model based on the given sync info set. The model is disposed
+	 * when the viewer is disposed.
 	 * 
 	 * @param targetID the targetID defined in the viewer contributions in a plugin.xml file.
 	 * @param site the workbench site with which to register the menuId. Can be <code>null</code> in which
@@ -307,6 +308,11 @@ public abstract class StructuredViewerAdvisor {
 	 * @param viewer the viewer being initialize
 	 */
 	protected void initializeListeners(final StructuredViewer viewer) {
+		viewer.getControl().addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				StructuredViewerAdvisor.this.dispose();
+			}
+		});
 	}
 	
 	/**

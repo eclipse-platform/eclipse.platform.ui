@@ -176,7 +176,6 @@ public final class SubscriberParticipantPage implements IPageBookViewPage, IProp
 	public void dispose() {
 		statusLine.dispose();
 		changesSection.dispose();
-		viewerAdvisor.dispose();
 		TeamUIPlugin.getPlugin().getPreferenceStore().removePropertyChangeListener(this);
 		participant.removePropertyChangeListener(this);
 	}
