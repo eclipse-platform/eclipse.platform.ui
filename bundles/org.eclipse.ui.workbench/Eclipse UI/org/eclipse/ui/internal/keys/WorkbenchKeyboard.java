@@ -120,7 +120,7 @@ public class WorkbenchKeyboard {
 	 *         but may be empty.
 	 */
 	public static List generatePossibleKeyStrokes(Event event) {
-		List keyStrokes = new ArrayList();
+		final List keyStrokes = new ArrayList(3);
 
 		/*
 		 * If this is not a keyboard event, then there are no key strokes. This
@@ -131,22 +131,17 @@ public class WorkbenchKeyboard {
 		}
 
 		// Add each unique key stroke to the list for consideration.
-		KeyStroke keyStroke;
-		keyStrokes.add(
-			SWTKeySupport.convertAcceleratorToKeyStroke(
-				SWTKeySupport.convertEventToUnmodifiedAccelerator(event)));
-		keyStroke =
-			SWTKeySupport.convertAcceleratorToKeyStroke(
-				SWTKeySupport.convertEventToUnshiftedModifiedAccelerator(event));
-		if (!keyStrokes.contains(keyStroke)) {
-			keyStrokes.add(keyStroke);
+		final int firstAccelerator = SWTKeySupport.convertEventToUnmodifiedAccelerator(event);
+		keyStrokes.add(SWTKeySupport.convertAcceleratorToKeyStroke(firstAccelerator));
+		final int secondAccelerator = SWTKeySupport.convertEventToUnshiftedModifiedAccelerator(event);
+		if (secondAccelerator != firstAccelerator) {
+			keyStrokes.add(SWTKeySupport.convertAcceleratorToKeyStroke(secondAccelerator));
 		}
-		keyStroke =
-			SWTKeySupport.convertAcceleratorToKeyStroke(
-				SWTKeySupport.convertEventToModifiedAccelerator(event));
-		if (!keyStrokes.contains(keyStroke)) {
-			keyStrokes.add(keyStroke);
+		final int thirdAccelerator = SWTKeySupport.convertEventToModifiedAccelerator(event);
+		if ((thirdAccelerator != secondAccelerator) && (thirdAccelerator != firstAccelerator)) {
+			keyStrokes.add(SWTKeySupport.convertAcceleratorToKeyStroke(thirdAccelerator));
 		}
+		
 		return keyStrokes;
 	}
 
