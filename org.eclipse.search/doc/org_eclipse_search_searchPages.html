@@ -1,0 +1,104 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <title>Search Infrastructure Extension Points</title>
+</head>
+<body link="#0000FF" vlink="#800080">
+
+<center>
+<h1>
+Search Pages</h1></center>
+<b><i>Identifier: </i></b>org.eclipse.search.searchPages
+<p><b><i>Description</i>: </b>This extension point allows a plug-in to register
+search pages for specialized searches. When the search action is performed on
+a resource, the search infrastructure locates the most specific registered search
+page for it.
+
+<p><b><i>Configuration Markup:</i></b>
+<p><tt>&nbsp;&nbsp; &lt;!ELEMENT page EMPTY></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST page</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #IMPLIED</font></tt>
+<br><tt><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sizeHint&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</font></tt>
+<br><tt><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tabPosition&nbsp;
+CDATA #IMPLIED</font></tt>
+<br><tt><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; extensions&nbsp;&nbsp;
+CDATA #IMPLIED</font></tt>
+<ul>
+<li>
+<b>id</b> - a unique name that will be used to identify this search page</li>
+
+<li>
+<b>label</b> - a translatable label that will be used in the search page tab</li>
+
+<li>
+<b>class</b> - a name of the class that implements <org.eclipse.jface.dialogs.IDialogPage</tt>.
+We recommend subclassing <tt>org.eclipse.jface.dialogs.DialogPage</tt>.
+</li>
+
+<li>
+<b>icon</b> - a relative name of the image that will be used for all resources
+that match the specified extensions. If omitted, the
+search page's tab will only contain a label.</li>
+
+<li>
+<b>sizeHint</b> - a hint for the initial size of the page. This is a string
+containing the width and height separated by comma (e.g. "50, 60"). In the case
+this hint is omitted the page will be no larger than the other pages.</li>
+
+<li>
+<b>tabPosition</b> - an integer defining where the page is placed in the page book. The value does not define the absolute position but the position relative to the other pages. The ordering of pages is as follows:
+	<ol>
+	<li>if neither page defines the tab position then they are ordered alphabetically according to their labels</li>
+	<li>if both pages have the tab position specified then the page with the lower value comes first. If the values are equal then the pages are treated as if the values would not exist (see 1.)</li>
+	<li>if only one page has the value specified then this page comes first
+	</ol>
+</li>
+
+<li>
+<b>extensions</b> - a comma separated list with file extensions on which the
+search page can operate. Each extension must also include a weight (0 meaning
+lowest weight) which enables the search infrastructure to find the best fitting
+page. The weight is separated from the extension by a colon.
+If a search page can search all possible resources then "*" can be used.</li>
+
+</ul>
+<b><i>Examples:</i></b>
+<p>The following is an example of a search page extension definition:
+<extension point="org.eclipse.search.searchPages">
+   <page id="org.eclipse.search.ui.text.TextSearchPage"
+   		icon="icons/full/obj16/tsearch_pref.gif"
+   		label="Text Search"
+		sizeHint="250,160"
+		tabPosition="1"
+		extensions="*:1"
+		class="org.eclipse.search.ui.text.TextSearchPage">
+   </page>
+</extension>
+
+<p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.search.searchPages"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;page</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id="org.eclipse.search.ui.text.TextSearchPage"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label="Text Search"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon="icons/full/obj16/tsearch_pref.gif"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sizeHint="250,160"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tabPosition="1"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; extensions="*:1"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class="org.eclipse.search.ui.text.TextSearchPage"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/page></tt>
+<br><tt>&nbsp;&nbsp; &lt;/extension></tt>
+<p><b><i>API Information:</i> </b>
+
+<p><b><i>Supplied Implementation: </i></b>The search infrastructure provides
+ a search page for full-text search.
+<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corporation 2000" BORDER=0 height=12 width=195></a>
+</body>
+</html>

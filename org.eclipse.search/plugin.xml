@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+
+<!-- ======================================================================= -->
+<!-- Search Plugin                                                           -->
+<!-- ======================================================================= -->
+<plugin
+	name= "Search"
+	id= "org.eclipse.search"
+	version= "0.0 001"
+	vendor-name= "OTI"
+	class= "org.eclipse.search.internal.ui.SearchPlugin">
+
+<requires>
+  <import plugin="org.apache.xerces"/>
+  <import plugin="org.eclipse.core.resources"/>
+  <import plugin="org.eclipse.ui"/>
+</requires>
+
+<runtime>
+	<library name="search.jar" >
+		<export name = "*"/>
+	</library>
+</runtime>
+
+
+<!-- Search extension point definitions -->
+
+<extension-point name="Search Pages" id="searchPages"/>
+<extension-point name="Search Result Sorters" id="searchResultSorters"/>
+
+
+<!-- Extensions -->
+
+<extension id="searchmarker" point="org.eclipse.core.resources.markers">
+	<super type="org.eclipse.core.resources.textmarker"/>
+	<attribute name="line"/>
+</extension>
+
+<extension point="org.eclipse.ui.actionSets">
+	<actionSet
+		id="org.eclipse.search.searchActionSet"
+        label="%search"
+		visible="true">
+		<action id="org.eclipse.search.ui.OpenSearchDialogAction"
+			menubarPath="edit/find"
+			toolbarPath="Normal/Search"			
+			label="%OpenSearchDialogAction.label"
+			tooltip="%OpenSearchDialogAction.tooltip"
+			icon="icons/full/ctool16/search.gif"
+			class="org.eclipse.search.internal.ui.OpenSearchDialogAction"/>
+     </actionSet>
+</extension>
+
+<extension point="org.eclipse.ui.views">
+	<view
+	   id="org.eclipse.search.SearchResultView"
+	   name="%searchResults"
+	   category="org.eclipse.ui"
+	   class="org.eclipse.search.internal.ui.SearchResultView"
+	   icon="icons/full/view16/searchres.gif">
+	</view>
+</extension>
+
+<extension point="org.eclipse.search.searchPages">
+	<page
+		id="org.eclipse.search.internal.ui.text.TextSearchPage"
+		label="%textSearch"
+		icon="icons/full/obj16/tsearch_obj.gif"
+		sizeHint="250,160"
+		tabPosition="1"
+		extensions="*:1"
+		class="org.eclipse.search.internal.ui.text.TextSearchPage">
+	</page>
+</extension>
+
+<extension point="org.eclipse.search.searchResultSorters">
+	<sorter
+		id="org.eclipse.search.internal.ui.MatchSorter"
+		pageId="*"
+		label="%MatchSorter.label"
+		tooltip="%MatchSorter.tooltip"
+		icon="icons/full/ecl16/search_sort.gif"
+		class="org.eclipse.search.internal.ui.MatchSorter">
+	</sorter>
+	<sorter
+		id="org.eclipse.search.internal.ui.ResourcenameSorter"
+		pageId="*"
+		label="%ResourcenameSorter.label"
+		tooltip="%ResourcenameSorter.tooltip"
+		icon="icons/full/ecl16/search_sort.gif"
+		class="org.eclipse.search.internal.ui.ResourcenameSorter">
+	</sorter>
+	<sorter
+		id="org.eclipse.search.internal.ui.ResourcePathSorter"
+		pageId="*"
+		label="%ResourcePathSorter.label"
+		tooltip="%ResourcePathSorter.tooltip"
+		icon="icons/full/ecl16/search_sort.gif"
+		class="org.eclipse.search.internal.ui.ResourcePathSorter">
+	</sorter>
+</extension>
+
+</plugin>

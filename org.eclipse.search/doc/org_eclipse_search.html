@@ -1,0 +1,34 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <title>Search Infrastructure Extension Points</title>
+</head>
+<body link="#0000FF" vlink="#800080">
+
+<center>
+<h1>
+IBM Eclipse Platform Search</h1></center>
+This document lists all of the extension points that the search plug-in makes 
+available to tool developers.
+<p>All XML sub-elements defined in the individual extension point documents
+may appear more than once inside an extension element. For example, a <tt>org.eclipse.search.searchPages</tt>
+extension may contain several instances of <tt>page</tt> elements. Although
+making one extension per sub-element is not technically incorrect, we recommend
+grouping for consistent style. It can also improve platform startup time
+because there will be fewer extensions to process.
+<br>
+<hr WIDTH="100%">
+<h1>
+Extension Points</h1>
+The following extension points can be used to extend the capabilities
+of the search infrastructure:
+<ul>
+<li>
+<a href="org_eclipse_search_searchPages.html">org.eclipse.search.searchPages</a></li>
+<br>
+<a href="org_eclipse_search_searchResultSorters.html">org.eclipse.search.searchResultSorters</a></li>
+</ul>
+<a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corporation 2000" BORDER=0 height=12 width=195></a>
+</body>
+</html>
