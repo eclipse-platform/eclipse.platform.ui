@@ -33,19 +33,24 @@ public abstract class InternalBuilder {
 	private ElementTree oldState;
 	private IPluginDescriptor pluginDescriptor;
 	private IProject[] interestingProjects = ICoreConstants.EMPTY_PROJECT_ARRAY;
+	private boolean forgetStateRequested = false;
 	
 /**
  * 
  */
 protected abstract IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException;
 /**
- * Requests that this builder forget any state it may be retaining regarding
- * previously built states.  Typically this means that the next time the
- * builder runs, it will have to do a full build since it does not have
- * any state upon which to base an incremental build.
+ * Clears the request to forget last built states.
+ */
+void clearForgetLastBuiltState() {
+	forgetStateRequested = false;
+}
+/**
+ * @see IncrementalProjectBuilder#forgetLastBuiltState
  */
 protected void forgetLastBuiltState() {
 	oldState = null;
+	forgetStateRequested = true;
 }
 protected IResourceDelta getDelta(IProject project) {
 	return ((Workspace) project.getWorkspace()).getBuildManager().getDelta(project);
@@ -101,4 +106,11 @@ protected IProject getProject() {
 	project = value;
 }
 protected abstract void startupOnInitialize();
+/**
+ * Returns true if the builder requested that its last built state be forgetten,
+ * and false otherwise.
+ */
+boolean wasForgetStateRequested() {
+	return forgetStateRequested;
+}
 }

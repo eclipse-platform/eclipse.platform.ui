@@ -97,11 +97,12 @@ public BuildManager(Workspace workspace) {
 protected void basicBuild(int trigger, IncrementalProjectBuilder builder, Map args, MultiStatus status, IProgressMonitor monitor) {
 	try {
 		currentBuilder = (InternalBuilder) builder;
+		//clear any old requests to forget built state
+		currentBuilder.clearForgetLastBuiltState();
 		// Figure out which trees are involved based on the trigger and tree availabilty.
 		lastBuiltTree = currentBuilder.getLastBuiltTree();
 		boolean fullBuild = (trigger == IncrementalProjectBuilder.FULL_BUILD) || (lastBuiltTree == null);
 		// Grab a pointer to the current state before computing the delta
-		// as this will be the last built state of the builder when we are done.
 		currentTree = fullBuild ? null : workspace.getElementTree();
 		try {
 			//short-circuit if none of the projects this builder cares about have changed.
@@ -119,11 +120,13 @@ protected void basicBuild(int trigger, IncrementalProjectBuilder builder, Map ar
 			Platform.run(getSafeRunnable(trigger, args, status, monitor));
 		} finally {
 			if (Policy.DEBUG_BUILD_INVOKING) hookEndBuild(builder);
-			// Always remember the current state as the last built state.
 			// Be sure to clean up after ourselves.
 			ElementTree lastTree = workspace.getElementTree();
 			lastTree.immutable();
-			currentBuilder.setLastBuiltTree(lastTree);
+			if (!currentBuilder.wasForgetStateRequested()) {
+				// remember the current state as the last built state.
+				currentBuilder.setLastBuiltTree(lastTree);
+			}
 		}
 	} finally {
 		currentBuilder = null;
