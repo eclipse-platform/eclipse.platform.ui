@@ -19,9 +19,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jface.util.Assert;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * A color registry maintains a mapping between symbolic color names and SWT 
@@ -113,6 +115,23 @@ public class ColorRegistry extends ResourceRegistry {
 	}
 
 	/**
+	 * Returns the default color (SWT.COLOR_WIDGET_BACKGROUND).
+	 */
+    Color defaultColor() {
+		if (display == null) {
+			Shell shell = new Shell();
+			Color color = new Color(null, shell.getBackground().getRGB());
+			shell.dispose();
+			return color;
+		} else
+			return new Color(
+			        display, 
+			        display
+			        	.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND)
+			        		.getRGB());
+    }
+
+	/**
 	 * Dispose of all of the <code>Color</code>s in this iterator.
 	 * 
 	 * @param Iterator over <code>Collection</code> of <code>Color</code>
@@ -126,7 +145,7 @@ public class ColorRegistry extends ResourceRegistry {
 
 	/**
 	 * Returns the <code>color</code> associated with the given symbolic color 
-	 * name, or <code>null</code> if no such definition exists.
+	 * name, or a default valeu if no such definition exists.
 	 * 
 	 * @param symbolicName symbolic color name.
 	 * @return the <code>Color</code>.
@@ -138,21 +157,20 @@ public class ColorRegistry extends ResourceRegistry {
 		if (result != null)
 			return (Color) result;
 
+		Color color = null;
+		
 		result = stringToRGB.get(symbolicName);
 		if (result == null)
-			return null;
-
-		// Create the color and update the mapping so it can
-		// be shared.
-		Color color = createColor(symbolicName, (RGB) result);
-
-		if (color != null)
-			stringToColor.put(symbolicName, color);
+		    color = defaultColor();
+		else 
+			color = createColor(symbolicName, (RGB) result);
+		
+		stringToColor.put(symbolicName, color);
 
 		return color;
 	}
-	
-	/* (non-Javadoc)
+	    
+    /* (non-Javadoc)
 	 * @see org.eclipse.jface.resource.ResourceRegistry#getKeySet()
 	 */	
 	public Set getKeySet() {	    

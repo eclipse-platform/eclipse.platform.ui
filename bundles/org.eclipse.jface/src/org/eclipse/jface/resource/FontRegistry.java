@@ -293,17 +293,17 @@ public class FontRegistry extends ResourceRegistry {
 	}
 	
 	/**
-	 * Returns the default font.  Creates it if necessary.
+	 * Returns the default font.
 	 */
 	Font defaultFont() {
 		Display current = Display.getCurrent();
 		if (current == null) {
 			Shell shell = new Shell();
-			Font font = shell.getFont();
+			Font font = new Font(null, shell.getFont().getFontData());
 			shell.dispose();
 			return font;
 		} else
-			return current.getSystemFont();
+			return new Font(current, current.getSystemFont().getFontData());
 	}
 	
 	/**
@@ -346,21 +346,16 @@ public class FontRegistry extends ResourceRegistry {
 		if (result != null)
 			return (Font) result;
 
+		Font font = null;
 		result = stringToFontData.get(symbolicName);
 		if (result == null)
-			return defaultFont();
-
-		// Create the font and update the mapping so it can 
-		// be shared.
-		Font font = createFont(symbolicName, (FontData[]) result);
-
-		// Note, the font may be null if the create() failed. Put a mapping
-		// in for this font to prevent repeated attempts to allocate the
-		// same font. 
-
-		if (font == null)
-			return defaultFont();
+			font = defaultFont();
+		else 
+		    font = createFont(symbolicName, (FontData[]) result);
 			
+		if (font == null) // create may have failed.  Ensure we have a valid font.
+		    font = defaultFont();
+		
 		stringToFont.put(symbolicName, font);
 
 		return font;
@@ -372,8 +367,7 @@ public class FontRegistry extends ResourceRegistry {
 	 */
 	public Set getKeySet() {
 	    return Collections.unmodifiableSet(stringToFontData.keySet());
-	}
-	
+	}	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.resource.ResourceRegistry#hasValueFor(java.lang.String)

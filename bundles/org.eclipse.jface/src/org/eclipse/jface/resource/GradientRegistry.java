@@ -19,7 +19,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jface.util.Assert;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * A gradient registry maintains a mapping between symbolic gradient names and SWT 
@@ -107,6 +110,31 @@ public class GradientRegistry extends ResourceRegistry{
 	private Gradient createGradient(String symbolicName, GradientData data) {
 		return new Gradient(display, data);
 	}
+	
+	/**
+	 * Returns the default gradient (SWT.COLOR_WIDGET_BACKGROUND).
+	 */	
+	Gradient defaultGradient() {
+		if (display == null) {		    
+			Shell shell = new Shell();
+			GradientData data = new GradientData(
+			        new RGB [] {
+			                shell.getBackground().getRGB()}, 
+			                new int [0], 
+			                SWT.VERTICAL);
+			shell.dispose();
+			return new Gradient(null, data);
+		} else {
+		    GradientData data = new GradientData(
+			        new RGB [] {
+			                display
+				        		.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND)
+				        			.getRGB()}, 
+			                new int [0], 
+			                SWT.VERTICAL);		    
+		    return new Gradient(display, data);
+		}
+    }	
 
 	/**
 	 * Dispose of all of the <code>Gradient</code>s in this iterator.
@@ -134,16 +162,14 @@ public class GradientRegistry extends ResourceRegistry{
 		if (result != null)
 			return (Gradient) result;
 
+		Gradient gradient = null;
 		result = stringToGradientData.get(symbolicName);
 		if (result == null)
-			return null;
-
-		// Create the gradient and update the mapping so it can
-		// be shared.
-		Gradient gradient = createGradient(symbolicName, (GradientData) result);
-
-		if (gradient != null)
-			stringToGradient.put(symbolicName, gradient);
+		    gradient = defaultGradient();
+		else 
+		    gradient = createGradient(symbolicName, (GradientData) result);
+		
+		stringToGradient.put(symbolicName, gradient);
 
 		return gradient;
 	}
