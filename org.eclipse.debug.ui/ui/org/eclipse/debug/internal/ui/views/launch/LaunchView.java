@@ -380,7 +380,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 					}
 				}
 			} catch (DebugException e) {
-				DebugUIPlugin.log(e);
 			}
 		}
 		return null;
