@@ -134,10 +134,9 @@ public void startup() throws CoreException {
 	if (!new LocalMetaArea().hasSavedWorkspace()) {
 		constructWorkspace();
 	}
-
-	/* Remember workspace before opening, to
-	 * make it easier to debug cases where open() is failing.
-	 */
+	Workspace.DEBUG = ResourcesPlugin.getPlugin().isDebugging();
+	// Remember workspace before opening, to
+	// make it easier to debug cases where open() is failing.
 	workspace = new Workspace();
 	workspace.open(null);
 }

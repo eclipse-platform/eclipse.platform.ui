@@ -13,6 +13,8 @@ import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.*;
 import java.io.*;
 import java.util.*;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 public abstract class Resource extends PlatformObject implements IResource, ICoreConstants, Cloneable {
 	/* package */ IPath path;
@@ -506,6 +508,20 @@ public IPath getLocation() {
 	if (project != null && !project.exists())
 		return null;
 	return getLocalManager().locationFor(this);
+}
+
+/**
+ * @see IResource#getLocationURL
+ */
+public URL getLocationURL() {
+	IProject project = getProject();
+	if (project != null && !project.exists())
+		return null;
+	try {
+		return new URL("platform:/resource/" + getFullPath());
+	} catch (MalformedURLException e) {
+		return null;
+	}
 }
 /**
  * @see IResource

@@ -777,7 +777,18 @@ public IStatus save(boolean full, IProgressMonitor monitor) throws CoreException
  * </ul>
  */
 public void setDescription(IWorkspaceDescription description) throws CoreException;
+
+/**
+ * Sets the lock to use for controlling write access to this workspace. 
+ * The lock must only be set once.
+ * <p>
+ * This method is for internal use by the platform-related plug-ins.  
+ * Clients should not call this method.
+ * </p>
+ * @param lock the lock to install on this workspace.
+ */
 public void setWorkspaceLock(WorkspaceLock lock);
+
 /**
  * Validates the given string as the name of a resource
  * valid for one of the given types.

@@ -46,17 +46,6 @@ public interface ICoreConstants {
 	// invalid chars for resource names
 	public static final char[] invalidResourceNameChars = {':', ';', '*', '?', '"', '\'', '<', '>', '|', '/', '\\'};
 
-	/* debug constants */
-	public static final int DEBUG_LOCAL_STORE 		= 0x1;
-	public static final int DEBUG_TREE				= 0x2;
-	public static final int DEBUG_BUILDERS			= 0x4;
-	public static final int DEBUG_MARKERS			= 0x8;
-	public static final int DEBUG_PROPERTY_STORE	= 0x10;
-	public static final int DEBUG_SNAPSHOT			= 0x20;
-	public static final int DEBUG_SERVER_STORE	 	= 0x40;
-	public static final int DEBUG_SYNCHRONIZER		= 0x80;
-
-	//
 	public static final int PROJECT_SEGMENT_LENGTH = 1;
 	public static final int MINIMUM_FOLDER_SEGMENT_LENGTH = 2;
 	public static final int MINIMUM_FILE_SEGMENT_LENGTH = 2;

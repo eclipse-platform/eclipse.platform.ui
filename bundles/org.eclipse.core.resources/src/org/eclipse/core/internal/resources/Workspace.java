@@ -34,6 +34,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected IProject[] buildOrder = null;
 
 	protected static final String REFRESH_ON_STARTUP = "-refresh";
+	// whether the resources plugin is in debug mode.
+	public static boolean DEBUG = false;
 
 	/**
 		This field is used to control the access to the workspace tree
