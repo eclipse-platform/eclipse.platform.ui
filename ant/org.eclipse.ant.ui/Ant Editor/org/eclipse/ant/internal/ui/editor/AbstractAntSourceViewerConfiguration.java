@@ -70,10 +70,10 @@ public abstract class AbstractAntSourceViewerConfiguration extends SourceViewerC
 	    IPreferenceStore store= AntUIPlugin.getDefault().getPreferenceStore();
 	    int style= SWT.NORMAL;
 	    if (store.getBoolean(IAntEditorColorConstants.XML_COMMENT_COLOR + AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX)) {
-	    	style= style | SWT.BOLD;
+	    	style |= SWT.BOLD;
 	    }
 	    if (store.getBoolean(IAntEditorColorConstants.XML_COMMENT_COLOR + AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX)) {
-	    	style= style | SWT.ITALIC;
+	    	style |= SWT.ITALIC;
 	    }
 		
 	    xmlCommentAttribute=  new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.XML_COMMENT_COLOR), null, style);
