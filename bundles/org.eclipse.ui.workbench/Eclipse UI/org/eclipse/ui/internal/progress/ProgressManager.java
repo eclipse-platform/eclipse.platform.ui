@@ -25,7 +25,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.core.runtime.IStatus;
@@ -42,6 +41,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.core.runtime.jobs.ProgressProvider;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -973,7 +973,7 @@ public class ProgressManager extends ProgressProvider
 	 * @see org.eclipse.ui.progress.IProgressService#runInUI(org.eclipse.jface.operation.IRunnableWithProgress,
 	 *      org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 */
-	public void runInUI(final IRunnableWithProgress runnable,
+	public void runInUI(final IRunnableContext context, final IRunnableWithProgress runnable,
 			final ISchedulingRule rule) throws InvocationTargetException,
 			InterruptedException {
 		final IJobManager manager = Platform.getJobManager();
@@ -983,7 +983,7 @@ public class ProgressManager extends ProgressProvider
 			public void run() {
 				try {
 					manager.beginRule(rule, null);
-					runnable.run(new NullProgressMonitor());
+					context.run(false,false,runnable);
 				} catch (InvocationTargetException e) {
 					exception[0] = e;
 				} catch (InterruptedException e) {

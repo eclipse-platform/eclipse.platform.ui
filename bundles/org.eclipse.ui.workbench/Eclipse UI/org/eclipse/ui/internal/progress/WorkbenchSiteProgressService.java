@@ -12,7 +12,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -21,6 +20,7 @@ import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -290,8 +290,13 @@ public class WorkbenchSiteProgressService
 			InterruptedException {
 		getWorkbenchProgressService().run(fork, cancelable, runnable);
 	}
-	public void runInUI(IRunnableWithProgress runnable, ISchedulingRule rule) throws InvocationTargetException, InterruptedException {
-		getWorkbenchProgressService().runInUI(runnable, rule);
+	
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.progress.IProgressService#runInUI(org.eclipse.jface.operation.IRunnableContext, org.eclipse.jface.operation.IRunnableWithProgress, org.eclipse.core.runtime.jobs.ISchedulingRule)
+	 */
+	public void runInUI(IRunnableContext context, IRunnableWithProgress runnable, ISchedulingRule rule) throws InvocationTargetException, InterruptedException {
+		getWorkbenchProgressService().runInUI(context, runnable, rule);
 	}
 	
 	/* (non-Javadoc)
