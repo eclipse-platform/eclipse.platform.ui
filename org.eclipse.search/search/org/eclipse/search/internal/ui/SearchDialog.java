@@ -139,7 +139,6 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		shell.setText(SearchMessages.getString("SearchDialog.title")); //$NON-NLS-1$
-		shell.setImage(SearchPluginImages.get(SearchPluginImages.IMG_TOOL_SEARCH));
 		WorkbenchHelp.setHelp(shell, ISearchHelpContextIds.SEARCH_DIALOG);
 	}
 
