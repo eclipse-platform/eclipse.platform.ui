@@ -18,7 +18,6 @@ public class EclipseConnector {
 	private ServletContext context;
 	private static IFilter[] noFilters = new IFilter[0];
 	private static CSSFilter cssFilter = new CSSFilter();
-	private static IFilter[] basicFilters = new IFilter[] { cssFilter };
 	private static final String errorPageBegin =
 		"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n"
 			+ "<html><head>\n"
@@ -194,24 +193,30 @@ public class EclipseConnector {
 		String uri = req.getRequestURI();
 		String agent = req.getHeader("User-Agent").toLowerCase(Locale.US);
 		boolean ie = (agent.indexOf("msie") != -1);
+	
 		// we only insert css for ie
 		if (ie) {
 			if (uri != null && (uri.endsWith("html") || uri.endsWith("htm"))) {
 				if (UrlUtil.getRequestParameter(req, "resultof") != null)
 					return new IFilter[] {
+						new FramesetFilter(req),
 						cssFilter,
 						new HighlightFilter(
 							UrlUtil.getRequestParameter(req, "resultof"))};
 				else
-					return basicFilters;
+					return new IFilter[] { new FramesetFilter(req), cssFilter};
 			} else
 				return noFilters;
 		} else {
-			if (UrlUtil.getRequestParameter(req, "resultof") != null)
-				return new IFilter[] {
-					new HighlightFilter(
-						UrlUtil.getRequestParameter(req, "resultof"))};
-			else
+			if (uri != null && (uri.endsWith("html") || uri.endsWith("htm"))) {
+				if (UrlUtil.getRequestParameter(req, "resultof") != null)
+					return new IFilter[] {
+						new FramesetFilter(req),
+						new HighlightFilter(
+							UrlUtil.getRequestParameter(req, "resultof"))};
+				else
+					return new IFilter[] { new FramesetFilter(req) };
+			} else
 				return noFilters;
 		}
 	}
