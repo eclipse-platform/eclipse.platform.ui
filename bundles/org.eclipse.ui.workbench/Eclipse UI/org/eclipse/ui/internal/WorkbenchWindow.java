@@ -1282,7 +1282,10 @@ public IStatus restoreState(IMemento memento, IPerspectiveDescriptor activeDescr
 	IMemento [] pageArray = memento.getChildren(IWorkbenchConstants.TAG_PAGE);
 	for (int i = 0; i < pageArray.length; i ++) {
 		IMemento pageMem = pageArray[i];
-
+		String strFocus = pageMem.getString(IWorkbenchConstants.TAG_FOCUS);
+		if (strFocus == null || strFocus.length() == 0)
+			continue;
+			
 		// Get the input factory.
 		IMemento inputMem = pageMem.getChild(IWorkbenchConstants.TAG_INPUT);
 		String factoryID = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
@@ -1324,8 +1327,6 @@ public IStatus restoreState(IMemento memento, IPerspectiveDescriptor activeDescr
 			continue;
 		}
 
-		// Check for focus.
-		String strFocus = pageMem.getString(IWorkbenchConstants.TAG_FOCUS);
 		if (strFocus != null && strFocus.length() > 0)
 			newActivePage = newPage;
 	}
