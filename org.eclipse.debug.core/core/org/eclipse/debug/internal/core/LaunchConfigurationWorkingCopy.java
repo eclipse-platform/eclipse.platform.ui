@@ -20,6 +20,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -224,6 +225,13 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 				file.create(stream, false, null);
 				//getLaunchManager().launchConfigurationAdded(new LaunchConfiguration(getLocation()));
 			} else {
+				// validate edit
+				if (file.isReadOnly()) {
+					IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] {file}, null);
+					if (!status.isOK()) {
+						throw new CoreException(status);
+					}
+				}				
 				file.setContents(stream, false, false, null);
 				//getLaunchManager().launchConfigurationChanged(new LaunchConfiguration(getLocation()));
 			}

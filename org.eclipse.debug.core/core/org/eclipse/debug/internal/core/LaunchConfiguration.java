@@ -19,7 +19,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -320,8 +319,15 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			} else {
 				// delete the resource using IFile API such that
 				// resource deltas are fired.
-				IResource file = getFile();
+				IFile file = getFile();
 				if (file != null) {
+					// validate edit
+					if (file.isReadOnly()) {
+						IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] {file}, null);
+						if (!status.isOK()) {
+							throw new CoreException(status);
+						}
+					}
 					file.delete(true, null);
 				} else {
 					// Error - the exists test passed, but could not locate file 
