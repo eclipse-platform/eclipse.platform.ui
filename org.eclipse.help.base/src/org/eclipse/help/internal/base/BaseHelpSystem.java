@@ -182,6 +182,7 @@ public final class BaseHelpSystem {
 				WebappManager.start("help", webappPlugin, Path.EMPTY);
 			} catch (CoreException e) {
 				HelpBasePlugin.logError(HelpBaseResources.getString("E043"), e);
+				BaseHelpSystem.getDefaultErrorUtil().displayError(HelpBaseResources.getString("E043"));
 				return false;
 			}
 			getInstance().webappRunning = true;
