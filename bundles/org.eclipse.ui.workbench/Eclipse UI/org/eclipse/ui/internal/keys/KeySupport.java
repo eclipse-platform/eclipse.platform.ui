@@ -35,12 +35,6 @@ public final class KeySupport {
 			key = event.keyCode;
 		else {
 			if (0 <= key && key <= 0x1F) {
-				/* Some special packing of information might have occurred.  If
-				 * CTRL is down, and the key code equals the character, then the
-				 * character should be interpreted literally.  Otherwise, the
-				 * character needs to be reinterpreted with respect to the CTRL
-				 * mask (i.e., by adding 0x40 to the value).
-				 */
 				if ((event.stateMask & SWT.CTRL) != 0 && event.keyCode != event.character)
 					key += 0x40;
 			} else {
@@ -222,7 +216,7 @@ public final class KeySupport {
 
 		for (int i = 0; i < keyStrokes.size(); i++) {
 			if (i >= 1)
-				stringBuffer.append(' ');
+				stringBuffer.append(',');
 
 			KeyStroke keyStroke = (KeyStroke) keyStrokes.get(i);
 			stringBuffer.append(formatCarbon(keyStroke));
@@ -247,8 +241,37 @@ public final class KeySupport {
 		if (modifierKeys.contains(ModifierKey.COMMAND))
 			stringBuffer.append('\u2318');
 
-		keyStroke = KeyStroke.getInstance(keyStroke.getNaturalKey());
-		stringBuffer.append(keyStroke.format());
+		NaturalKey naturalKey = keyStroke.getNaturalKey();
+		
+		if (CharacterKey.getInstance('\b').equals(naturalKey))
+			stringBuffer.append('\u232B');
+		else if (CharacterKey.getInstance('\r').equals(naturalKey))
+			stringBuffer.append('\u21A9');
+		else if (CharacterKey.getInstance('\u007F').equals(naturalKey))
+			stringBuffer.append('\u2326');		
+		else if (SpecialKey.ARROW_DOWN.equals(naturalKey))
+			stringBuffer.append('\u2193');
+		else if (SpecialKey.ARROW_LEFT.equals(naturalKey))
+			stringBuffer.append('\u2190');
+		else if (SpecialKey.ARROW_RIGHT.equals(naturalKey))
+			stringBuffer.append('\u2192');
+		else if (SpecialKey.ARROW_UP.equals(naturalKey))
+			stringBuffer.append('\u2191');
+		else if (SpecialKey.END.equals(naturalKey))
+			stringBuffer.append('\u2198');
+		/* TODO SWT does not distinguish the enter key from the return key
+		else if (SpecialKey.ENTER.equals(naturalKey))
+			stringBuffer.append('\u2324');
+		*/
+		else if (SpecialKey.HOME.equals(naturalKey))
+			stringBuffer.append('\u2196');
+		else if (SpecialKey.PAGE_DOWN.equals(naturalKey))
+			stringBuffer.append('\u21DF');
+		else if (SpecialKey.PAGE_UP.equals(naturalKey))
+			stringBuffer.append('\u21DE');
+		else 
+			stringBuffer.append(KeyStroke.getInstance(naturalKey).format());
+					
 		return stringBuffer.toString();
 	}
 

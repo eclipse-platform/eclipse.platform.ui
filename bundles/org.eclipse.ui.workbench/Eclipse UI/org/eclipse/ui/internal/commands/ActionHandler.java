@@ -12,7 +12,7 @@
 package org.eclipse.ui.internal.commands;
 
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.ui.internal.commands.api.*;
+import org.eclipse.ui.internal.commands.api.XIPropertyListener;
 
 public class ActionHandler implements org.eclipse.ui.commands.IAction {
 
