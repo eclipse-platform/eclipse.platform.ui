@@ -34,8 +34,9 @@ public final class ProxyContextManager extends AbstractContextManager {
 				ContextManagerEvent proxyContextManagerEvent =
 					new ContextManagerEvent(
 						ProxyContextManager.this,
-						contextManagerEvent.haveDefinedContextIdsChanged(),
-						contextManagerEvent.haveEnabledContextIdsChanged());
+						contextManagerEvent.getEnabledContexts(),
+						contextManagerEvent.getDisabledContexts(),
+						contextManagerEvent.getDefinedContexts());
 				fireContextManagerChanged(proxyContextManagerEvent);
 			}
 		});

@@ -226,31 +226,35 @@ public final class MutableContextManager
 		this.contextContextBindingsByParentContextId =
 			contextContextBindingsByParentContextId;
 		this.contextDefinitionsById = contextDefinitionsById;
-		boolean definedContextIdsChanged = false;
 		Set definedContextIds = new HashSet(contextDefinitionsById.keySet());
+		Set contextsDefined = new HashSet(this.definedContextIds);
+		contextsDefined.removeAll(definedContextIds);  
 
 		if (!definedContextIds.equals(this.definedContextIds)) {
 			this.definedContextIds = definedContextIds;
-			definedContextIdsChanged = true;
 		}
 
 		Set enabledContextIds = new HashSet(this.enabledContextIds);
 		getRequiredContextIds(this.enabledContextIds, enabledContextIds);
-		boolean enabledContextIdsChanged = false;
+		
+		Set contextsEnabled= new HashSet(enabledContextIds);
+		contextsEnabled.removeAll(this.enabledContextIds);
+		
+		Set contextsDisabled= new HashSet(this.enabledContextIds);
+		contextsDisabled.removeAll(enabledContextIds);
 
 		if (!this.enabledContextIds.equals(enabledContextIds)) {
 			this.enabledContextIds = enabledContextIds;
-			enabledContextIdsChanged = true;
 		}
 
 		Map contextEventsByContextId = updateContexts(contextsById.keySet());
 
-		if (definedContextIdsChanged || enabledContextIdsChanged)
-			fireContextManagerChanged(
-				new ContextManagerEvent(
-					this,
-					definedContextIdsChanged,
-					enabledContextIdsChanged));
+		if (!contextsEnabled.isEmpty() || !contextsDisabled.isEmpty() || !contextsDefined.isEmpty()) {
+			fireContextManagerChanged(new ContextManagerEvent(this,
+				(String[]) contextsEnabled.toArray(new String[contextsEnabled.size()]),
+				(String[]) contextsDisabled.toArray(new String[contextsDisabled.size()]),
+				(String[]) contextsDefined.toArray(new String[contextsDefined.size()])));
+		}
 
 		if (contextEventsByContextId != null)
 			notifyContexts(contextEventsByContextId);
@@ -261,21 +265,28 @@ public final class MutableContextManager
 		Set requiredContextIds = new HashSet(enabledContextIds);
 		getRequiredContextIds(enabledContextIds, requiredContextIds);
 		enabledContextIds = requiredContextIds;
-		boolean contextManagerChanged = false;
 		Map contextEventsByContextId = null;
+		
+		Set contextsEnabled= new HashSet(enabledContextIds);
+		contextsEnabled.removeAll(this.enabledContextIds);
+		
+		Set contextsDisabled= new HashSet(this.enabledContextIds);
+		contextsDisabled.removeAll(enabledContextIds);
 
 		if (!this.enabledContextIds.equals(enabledContextIds)) {
 			this.enabledContextIds = enabledContextIds;
-			contextManagerChanged = true;
 			contextEventsByContextId = updateContexts(contextsById.keySet());
 		}
 
 		if (contextEventsByContextId != null)
 			notifyContexts(contextEventsByContextId);
 		
-		if (contextManagerChanged)
-			fireContextManagerChanged(
-				new ContextManagerEvent(this, false, true));		
+		if (!contextsEnabled.isEmpty() || !contextsDisabled.isEmpty()) {
+			fireContextManagerChanged(new ContextManagerEvent(this,
+				(String[]) contextsEnabled.toArray(new String[contextsEnabled.size()]),
+				(String[]) contextsDisabled.toArray(new String[contextsDisabled.size()]),
+				null));
+		}
 	}
 
 	private ContextEvent updateContext(Context context) {
