@@ -19,6 +19,8 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -46,7 +48,6 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 
 	String promptArgLabel= null;
 	
-	protected Button captureOutputButton;
 	protected Button runBackgroundButton;
 	protected Button openPerspButton;
 	protected Combo openPerspNameField;
@@ -55,6 +56,8 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 	protected Button showInMenuButton;
 	protected Button saveModifiedButton;
 	private Button variableButton;
+	
+	private SelectionAdapter selectionAdapter;
 	
 	private IPerspectiveDescriptor[] perspectives;
 	
@@ -71,7 +74,6 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 		
 		createVerticalSpacer(mainComposite, 1);
 		createRunBackgroundComponent(mainComposite);
-		createCaptureOutputComponent(mainComposite);
 		createOpenPerspComponent(mainComposite);
 		createShowInMenuComponent(mainComposite);
 		createSaveDirtyEditorsComponent(mainComposite);
@@ -106,12 +108,20 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		argumentField.setLayoutData(data);
+		argumentField.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
 
 		variableButton= createPushButton(comp, "Variables...", null);
 		variableButton.setText("Variables...");
 		variableButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				handleButtonPressed((Button)e.getSource());
+				VariableSelectionDialog dialog= new VariableSelectionDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+				if (dialog.open() == SelectionDialog.OK) {
+					argumentField.append(dialog.getForm().getSelectedVariable());
+				}
 			}
 		});
 
@@ -120,28 +130,6 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.horizontalSpan = 2;
 		instruction.setLayoutData(data);
-	}
-	
-	private void handleButtonPressed(Button button) {
-		if (button == variableButton) {
-			VariableSelectionDialog dialog= new VariableSelectionDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
-			if (dialog.open() == SelectionDialog.OK) {
-				argumentField.append(dialog.getForm().getSelectedVariable());
-			}
-		}
-	}
-	
-	/**
-	 * Creates the controls needed to edit the show console
-	 * attribute of an external tool
-	 * 
-	 * @param parent the composite to create the controls in
-	 */
-	protected void createCaptureOutputComponent(Composite parent) {
-		captureOutputButton = new Button(parent, SWT.CHECK);
-		captureOutputButton.setText("Capture output messages from running tool");
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		captureOutputButton.setLayoutData(data);
 	}
 	
 	/**
@@ -164,11 +152,10 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 		openPerspButton.setText("Open perspective when tool is run:");
 		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		openPerspButton.setLayoutData(data);
-		openPerspButton.addSelectionListener(new SelectionListener() {
+		openPerspButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				openPerspNameField.setEnabled(openPerspButton.getSelection());
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
+				updateLaunchConfigurationDialog();
 			}
 		});
 
@@ -176,6 +163,11 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 		openPerspNameField.setItems(getOpenPerspectiveNames());
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		openPerspNameField.setLayoutData(data);
+		openPerspNameField.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
 	}
 	
 	/**
@@ -227,7 +219,8 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 			promptArgButton.setText("Prompt for arguments before running tool"); //$NON-NLS-1$
 		}
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		promptArgButton.setLayoutData(data);		
+		promptArgButton.setLayoutData(data);
+		promptArgButton.addSelectionListener(getSelectionAdapter());
 	}
 	
 	/**
@@ -241,6 +234,7 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 		runBackgroundButton.setText("Run tool in background");
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		runBackgroundButton.setLayoutData(data);
+		runBackgroundButton.addSelectionListener(getSelectionAdapter());
 	}
 	
 	/**
@@ -253,7 +247,8 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 		saveModifiedButton= new Button(parent, SWT.CHECK);
 		saveModifiedButton.setText("Save all modified resources automatically before running tool");
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		saveModifiedButton.setLayoutData(data);		
+		saveModifiedButton.setLayoutData(data);
+		saveModifiedButton.addSelectionListener(getSelectionAdapter());
 	}
 	
 	/**
@@ -267,13 +262,27 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 		showInMenuButton.setText("Show in Run->External Tools menu");
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		showInMenuButton.setLayoutData(data);
+		showInMenuButton.addSelectionListener(getSelectionAdapter());	
+	}
+	/**
+	 * Method getSelectionAdapter.
+	 * @return SelectionListener
+	 */
+	private SelectionListener getSelectionAdapter() {
+		if (selectionAdapter == null) {
+			selectionAdapter= new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					updateLaunchConfigurationDialog();
+				}
+			};
+		}
+		return selectionAdapter;
 	}
 	
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, true);
 		configuration.setAttribute(IExternalToolConstants.ATTR_PROMPT_FOR_ARGUMENTS, false);
 		configuration.setAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, true);
 		configuration.setAttribute(IExternalToolConstants.ATTR_SAVE_DIRTY_EDITORS, false);
@@ -285,17 +294,13 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		updateArgument(configuration);
-		updateCaptureOutput(configuration);
 		updateOpenPrespective(configuration);
 		updatePromptForArgument(configuration);
 		updateRunBackground(configuration);
 		updateSaveModified(configuration);
 		updateShowInMenu(configuration);
 	}
-	/**
-	 * Method updateShowInMenu.
-	 * @param configuration
-	 */
+	
 	private void updateShowInMenu(ILaunchConfiguration configuration) {
 		boolean  show= true;
 		try {
@@ -307,10 +312,6 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 		showInMenuButton.setSelection(show);
 	}
 
-	/**
-	 * Method updateSaveModified.
-	 * @param configuration
-	 */
 	private void updateSaveModified(ILaunchConfiguration configuration) {
 		boolean  save= false;
 		try {
@@ -320,10 +321,7 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 		}
 		saveModifiedButton.setSelection(save);
 	}
-	/**
-	 * Method udpatePromptForArgument.
-	 * @param configuration
-	 */
+	
 	private void updatePromptForArgument(ILaunchConfiguration configuration) {
 		boolean  prompt= false;
 		try {
@@ -333,10 +331,7 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 		}
 		promptArgButton.setSelection(prompt);
 	}
-	/**
-	 * Method updateOpenPrespective.
-	 * @param configuration
-	 */
+	
 	private void updateOpenPrespective(ILaunchConfiguration configuration) {
 		String perspective= null;
 		try {
@@ -372,24 +367,6 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 		return -1;
 	}
 	
-	/**
-	 * Method updateCaptureOutput.
-	 * @param configuration
-	 */
-	private void updateCaptureOutput(ILaunchConfiguration configuration) {
-		boolean  capture= true;
-		try {
-			capture= configuration.getAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, true);
-		} catch (CoreException ce) {
-			ExternalToolsPlugin.getDefault().log("Error reading configuration", ce);
-		}
-		
-		captureOutputButton.setSelection(capture);
-	}
-	/**
-	 * Method updateArgument.
-	 * @param configuration
-	 */
 	private void updateArgument(ILaunchConfiguration configuration) {
 		String arguments= "";
 		try {
@@ -414,7 +391,6 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, captureOutputButton.getSelection());
 		configuration.setAttribute(IExternalToolConstants.ATTR_PROMPT_FOR_ARGUMENTS, promptArgButton.getSelection());
 		configuration.setAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, runBackgroundButton.getSelection());
 		configuration.setAttribute(IExternalToolConstants.ATTR_SAVE_DIRTY_EDITORS, saveModifiedButton.getSelection());
