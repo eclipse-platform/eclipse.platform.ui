@@ -19,17 +19,15 @@ import org.eclipse.ui.texteditor.AbstractDocumentProvider;
  * Default document provider for the processes. By default a document is created
  * which is contected to the streams proxy of the associated process.
  */
-public class DefaultConsoleDocumentProvider extends AbstractDocumentProvider {
+public class ConsoleDocumentProvider extends AbstractDocumentProvider {
 
 	/**
-	 * TODO: allow for custom content providers.
-	 * 
 	 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider#createDocument(java.lang.Object)
 	 */
 	protected IDocument createDocument(Object element) throws CoreException {
 		if (element instanceof IProcess) {
 			IProcess process = (IProcess)element;
-			IConsoleDocumentContentProvider contentProvider = new DefaultConsoleDocumentContentProvider();
+			IConsoleDocumentContentProvider contentProvider = getContentProvider(process);
 			ConsoleDocument doc= new ConsoleDocument(contentProvider);
 			IDocumentPartitioner partitioner = new ConsoleDocumentPartitioner(process, contentProvider);
 			partitioner.connect(doc);
@@ -66,4 +64,18 @@ public class DefaultConsoleDocumentProvider extends AbstractDocumentProvider {
 		super.disposeElementInfo(element, info);
 	}
 
+	/**
+	 * Returns a content provider for the given process.
+	 *  	 * @param process	 * @return IConsoleDocumentContentProvider	 */
+	protected IConsoleDocumentContentProvider getContentProvider(IProcess process) {
+		String identifier = process.getAttribute(IConsoleDocumentContentProvider.ATTR_CONSOLE_DOCUMENT_CONTENT_PROVIDER);
+		IConsoleDocumentContentProvider contentProvider = null;
+		if (identifier != null) {
+			contentProvider = ConsoleDocumentManager.getDefault().getContentProvider(identifier);
+		}
+		if (contentProvider == null) {
+			contentProvider = new DefaultConsoleDocumentContentProvider();
+		}
+		return contentProvider;
+	}
 }

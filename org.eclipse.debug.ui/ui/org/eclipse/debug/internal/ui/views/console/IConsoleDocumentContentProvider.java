@@ -8,10 +8,36 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.swt.graphics.Color;
 
 /**
- * Provides content for a console document.
+ * Provides content for a console document. When a process is added to a registered
+ * launch the debug plug-in creates a console document for the process. By default,
+ * a document is created which is contected to the standard input, output, and error
+ * streams associated with the process. A client may override the default behavior by
+ * specifying a custom content providier for a process, via the process attribute
+ * <code>ATTR_CONSOLE_DOCUMENT_CONTENT_PROVIDER</code>, which refers to a console
+ * document content provider extension.
+ * <p>
+ * A console document content provider extension is defined in <code>plugin.xml</code>.
+ * Following is an example definition of a console document content provider
+ * extension.
+ * <pre>
+ * &lt;extension point="org.eclipse.debug.ui.consoleDocumentContentProviders"&gt;
+ *   &lt;consoleDocumentContentProvider 
+ *      id="com.example.ExampleConsoleDocumentContentProvider"
+ *      class="com.example.ExampleConsoleDocumentContentProviderClass"&gt;
+ *   &lt;/consoleDocumentContentProvider&gt;
+ * &lt;/extension&gt;
+ * </pre>
+ * The attributes are specified as follows:
+ * <ul>
+ * <li><code>id</code> specifies a unique identifier for this content provider.</li>
+ * <li><code>class</code> specifies a fully qualified name of a Java class
+ *  that implements <code>IConsoleDocumentContentProvider</code>.</li>
+ * </ul>
+ * </p> 
  * <p>
  * Clients may implement this interface.
  * </p>
@@ -19,6 +45,15 @@ import org.eclipse.swt.graphics.Color;
  */
 
 public interface IConsoleDocumentContentProvider {
+	
+	/**
+	 * Process attribute identifying the console document content
+	 * provider to use for a process. When this value is set as a process
+	 * attribute, the value refers to the identifier of a console
+	 * document content provider extension. When this attribute is
+	 * not specified, a default console document content provider
+	 * is used. 	 */
+	public static final String ATTR_CONSOLE_DOCUMENT_CONTENT_PROVIDER = DebugUIPlugin.getUniqueIdentifier() + ".CONSOLE_DOCUMENT_CONTENT_PROVIDER"; //$NON-NLS-1$
 
 	/**
 	 * Returns whether the console associated with this content provider's

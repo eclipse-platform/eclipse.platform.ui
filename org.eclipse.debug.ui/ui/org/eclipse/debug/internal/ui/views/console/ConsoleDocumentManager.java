@@ -7,7 +7,15 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
+import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
@@ -17,6 +25,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ISelection;
@@ -46,8 +55,12 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	private IProcess fCurrentProcess= null;
 	
 	/**
+	 * Console document content provider extensions, keyed by extension id	 */
+	private Map fContentProviders;
+	
+	/**
 	 * Default document provider.	 */
-	protected IDocumentProvider fDefaultDocumentProvider = new DefaultConsoleDocumentProvider();
+	protected IDocumentProvider fDefaultDocumentProvider = new ConsoleDocumentProvider();
 	
 	public static ConsoleDocumentManager getDefault() {
 		if (fgConsoleDocumentManager == null) {
@@ -289,4 +302,38 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	protected IDocumentProvider getDocumentProvider(IProcess process) {
 		return fDefaultDocumentProvider;
 	}
+	
+	/**
+	 * Returns a new console document content provider extension with the
+	 * given identifier, or <code>null</code> if none.
+	 * 	 * @param identifier	 * @return IConsoleDocumentContentProvider	 */
+	public IConsoleDocumentContentProvider getContentProvider(String identifier) {
+		if (fContentProviders == null) {
+			fContentProviders = new HashMap();
+			IPluginDescriptor descriptor = DebugUIPlugin.getDefault().getDescriptor();
+			IExtensionPoint extensionPoint = descriptor.getExtensionPoint(IDebugUIConstants.EXTENSION_POINT_CONSOLE_DOCUMENT_CONTENT_PROVIDERS);
+			IExtension[] extensions = extensionPoint.getExtensions();
+			for (int i = 0; i < extensions.length; i++) {
+				IExtension extension = extensions[i];
+				fContentProviders.put(extension.getUniqueIdentifier(), extension);
+			}
+		}
+		IExtension extension = (IExtension)fContentProviders.get(identifier);
+		if (extension != null) {
+			IConfigurationElement[] elements = extension.getConfigurationElements();
+			if (elements.length > 0) {
+				try {
+					Object contentProvider = elements[0].createExecutableExtension("class"); //$NON-NLS-1$
+					if (contentProvider instanceof IConsoleDocumentContentProvider) {
+						return (IConsoleDocumentContentProvider)contentProvider;
+					} else {
+						DebugUIPlugin.logErrorMessage(MessageFormat.format(DebugUIViewsMessages.getString("ConsoleDocumentManager.Invalid_extension_{0}_-_class_must_be_an_instance_of_IConsoleDocumentContentProvider._1"),new String[]{extension.getUniqueIdentifier()} )); //$NON-NLS-1$
+					}
+				} catch (CoreException e) {
+					DebugUIPlugin.log(e);
+				}
+			}
+		}
+		return null;
+	} 
 }

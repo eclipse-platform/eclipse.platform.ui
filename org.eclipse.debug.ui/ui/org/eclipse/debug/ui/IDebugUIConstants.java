@@ -639,5 +639,14 @@ public interface IDebugUIConstants {
 	 * 
 	 * @since 2.0
 	 */
-	public static final String EXTENSION_POINT_LAUNCH_SHORTCUTS= "launchShortcuts";	 //$NON-NLS-1$	
+	public static final String EXTENSION_POINT_LAUNCH_SHORTCUTS= "launchShortcuts";	 //$NON-NLS-1$
+	
+	/**
+	 * Console document content provider extension point identifier
+	 * (value <code>"consoleDocumentContentProviders"</code>).
+	 * 
+	 * @since 2.1
+	 */
+	public static final String EXTENSION_POINT_CONSOLE_DOCUMENT_CONTENT_PROVIDERS = "consoleDocumentContentProviders";	 //$NON-NLS-1$
+		
 }
