@@ -68,7 +68,7 @@ public class IResourceChangeListenerTest extends EclipseWorkspaceTest {
 						long start = System.currentTimeMillis();
 						IResourceDelta delta = event.getDelta();
 						delta.accept(new IResourceDeltaVisitor() {
-							public boolean visit(IResourceDelta delta) throws CoreException {
+							public boolean visit(IResourceDelta delta2) throws CoreException {
 								fCounter++;
 								return true;
 							}
@@ -157,8 +157,8 @@ public class IResourceChangeListenerTest extends EclipseWorkspaceTest {
 	void assertNotDeltaVisits(final String message, IResourceDelta delta, final IResource[] resources) {
 		try {
 			delta.accept(new IResourceDeltaVisitor() {
-				public boolean visit(IResourceDelta delta) throws CoreException {
-					IResource deltaResource = delta.getResource();
+				public boolean visit(IResourceDelta delta2) throws CoreException {
+					IResource deltaResource = delta2.getResource();
 					for (int i = 0; i < resources.length; i++) {
 						assertTrue(message, !deltaResource.equals(resources[i]));
 					}
@@ -234,8 +234,8 @@ public class IResourceChangeListenerTest extends EclipseWorkspaceTest {
 				try {
 					IWorkspaceRunnable body = new IWorkspaceRunnable() {
 						public void run(IProgressMonitor monitor) throws CoreException {
-								// modify the tree.
-	IResourceDeltaVisitor visitor = new IResourceDeltaVisitor() {
+							// modify the tree.
+							IResourceDeltaVisitor visitor = new IResourceDeltaVisitor() {
 								public boolean visit(IResourceDelta delta) throws CoreException {
 									IResource resource = delta.getResource();
 									try {
@@ -260,8 +260,68 @@ public class IResourceChangeListenerTest extends EclipseWorkspaceTest {
 		getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_AUTO_BUILD);
 		try {
 			IWorkspaceRunnable body = new IWorkspaceRunnable() {
-					// cause a delta by touching all resources
-	final IResourceVisitor visitor = new IResourceVisitor() {
+				// cause a delta by touching all resources
+				final IResourceVisitor visitor = new IResourceVisitor() {
+					public boolean visit(IResource resource) throws CoreException {
+						resource.touch(getMonitor());
+						return true;
+					}
+				};
+				public void run(IProgressMonitor monitor) throws CoreException {
+					getWorkspace().getRoot().accept(visitor);
+				}
+			};
+			getWorkspace().run(body, getMonitor());
+		} catch (CoreException e) {
+			fail("2.0", e);
+		} finally {
+			// cleanup: ensure that the listener is removed
+			getWorkspace().removeResourceChangeListener(listener);
+		}
+	}
+	/*
+	 * Create a resource change listener and register it for POST_CHANGE events.
+	 * Ensure that you are NOT able to modify the workspace tree.
+	 */
+	public void testBug45996() {
+		// create the resource change listener
+		IResourceChangeListener listener = new IResourceChangeListener() {
+			public void resourceChanged(final IResourceChangeEvent event) {
+				boolean failed = false;
+				try {
+					IWorkspaceRunnable body = new IWorkspaceRunnable() {
+						public void run(IProgressMonitor monitor) throws CoreException {
+							// modify the tree.
+							IResourceDeltaVisitor visitor = new IResourceDeltaVisitor() {
+								public boolean visit(IResourceDelta delta) throws CoreException {
+									IResource resource = delta.getResource();
+									try {
+										resource.touch(getMonitor());
+									} catch (RuntimeException e) {
+										throw e;
+									}
+									resource.createMarker(IMarker.PROBLEM);
+									return true;
+								}
+							};
+							event.getDelta().accept(visitor);
+						}
+					};
+					getWorkspace().run(body, getMonitor());
+				} catch (CoreException e) {
+					//should fail
+					failed = true;
+				}
+				assertTrue("1.0", failed);
+				
+			}
+		};
+		// register the listener with the workspace.
+		getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE);
+		try {
+			IWorkspaceRunnable body = new IWorkspaceRunnable() {
+				// cause a delta by touching all resources
+				final IResourceVisitor visitor = new IResourceVisitor() {
 					public boolean visit(IResource resource) throws CoreException {
 						resource.touch(getMonitor());
 						return true;

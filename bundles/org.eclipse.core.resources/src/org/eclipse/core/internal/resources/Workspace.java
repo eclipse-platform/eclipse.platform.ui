@@ -132,10 +132,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		workManager.incrementNestedOperations();
 		if (!workManager.isBalanced())
 			Assert.isTrue(false, "Operation was not prepared."); //$NON-NLS-1$
-		if (isTreeLocked() && createNewTree) {
-			String message = Policy.bind("resources.cannotModify"); //$NON-NLS-1$
-			throw new ResourceException(IResourceStatus.WORKSPACE_LOCKED, null, message, null);
-		}
 		if (workManager.getPreparedOperationDepth() > 1) {
 			if (createNewTree && tree.isImmutable())
 				newWorkingTree();
@@ -1516,7 +1512,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public void prepareOperation(ISchedulingRule rule, IProgressMonitor monitor) throws CoreException {
 		//if this operation needs to lock resources, ask the autobuild to interrupt
 		if (rule != null)
-			buildManager.interrupt();
+		buildManager.interrupt();
 		getWorkManager().checkIn(rule, monitor);
 		if (!isOpen()) {
 			String message = Policy.bind("resources.workspaceClosed"); //$NON-NLS-1$

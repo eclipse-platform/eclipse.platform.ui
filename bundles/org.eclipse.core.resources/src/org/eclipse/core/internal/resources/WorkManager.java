@@ -12,6 +12,7 @@ package org.eclipse.core.internal.resources;
 
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 
@@ -42,7 +43,13 @@ class WorkManager implements IManager {
 		}
 	}
 	/**
-	 * Indicates whether any operations have run that may require a build. */
+	 * Indicates that the last checkIn failed due to the tree being locked.  Checkout
+	 * must not be done in this case
+	 */
+	private boolean checkInFailed = false;
+	/**
+	 * Indicates whether any operations have run that may require a build. 
+	 */
 	private boolean hasBuildChanges = false;
 	private IJobManager jobManager;
 	private final ILock lock;
@@ -50,8 +57,10 @@ class WorkManager implements IManager {
 	protected NotifyRule notifyRule = new NotifyRule();
 	private boolean operationCanceled = false;
 	private int preparedOperations = 0;
+	private Workspace workspace;
 
 	public WorkManager(Workspace workspace) {
+		this.workspace = workspace;
 		this.jobManager = Platform.getJobManager();
 		this.lock = jobManager.newLock();
 	}
@@ -89,18 +98,27 @@ class WorkManager implements IManager {
 	 * An operation calls this method and it only returns when the operation is
 	 * free to run.
 	 */
-	public void checkIn(ISchedulingRule rule, IProgressMonitor monitor) {
+	public void checkIn(ISchedulingRule rule, IProgressMonitor monitor) throws CoreException {
+		boolean shouldBeginRule = !workspace.isTreeLocked();
 		try {
-			jobManager.beginRule(rule, monitor);
+			if (shouldBeginRule)
+				jobManager.beginRule(rule, monitor);
 		} finally {
 			//must increment regardless of failure because checkOut is always
 			// in finally
 			lock.acquire();
 			incrementPreparedOperations();
+			//don't modify checkInFailed until this thread has the workspace lock
+			if (!shouldBeginRule) {
+				checkInFailed = true;
+				String message = Policy.bind("resources.cannotModify"); //$NON-NLS-1$
+				throw new ResourceException(IResourceStatus.WORKSPACE_LOCKED, null, message, null);
+			}
 		}
 	}
 	/**
-	 * Inform that an operation has finished. */
+	 * Inform that an operation has finished. 
+	 */
 	public synchronized void checkOut(ISchedulingRule rule) throws CoreException {
 		decrementPreparedOperations();
 		rebalanceNestedOperations();
@@ -109,8 +127,13 @@ class WorkManager implements IManager {
 			operationCanceled = false;
 			hasBuildChanges = false;
 		}
+		//clear checkInFailed flag before releasing lock
+		boolean shouldEndRule = !checkInFailed;
+		checkInFailed = false;
 		lock.release();
-		jobManager.endRule(rule);
+		//don't release rule if check in failed
+		if (shouldEndRule) 
+			jobManager.endRule(rule);
 	}
 	/**
 	 * This method can only be safelly called from inside a workspace

@@ -165,7 +165,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		entries = new ResourceChangeListenerList.ListenerEntry[] { new ResourceChangeListenerList.ListenerEntry(listener, type)};
 		notify(entries, new ResourceChangeEvent(workspace, type, delta), false);
 	}
-	
+
 	public void endAvoidNotify() {
 		avoidNotify.remove(Thread.currentThread());
 	}
@@ -230,17 +230,17 @@ public class NotificationManager implements IManager, ILifecycleListener {
 				break;
 		}
 	}
-	private void notify(ResourceChangeListenerList.ListenerEntry[] resourceListeners, final IResourceChangeEvent event, boolean lockTree) {
+	private void notify(ResourceChangeListenerList.ListenerEntry[] resourceListeners, final IResourceChangeEvent event, final boolean lockTree) {
 		int type = event.getType();
-		for (int i = 0; i < resourceListeners.length; i++) {
-			if ((type & resourceListeners[i].eventMask) != 0) {
-				final IResourceChangeListener listener = resourceListeners[i].listener;
-				if (Policy.MONITOR_LISTENERS)
-					EventStats.startNotify(listener);
-				boolean oldLock = workspace.isTreeLocked();
-				if (lockTree)
-					workspace.setTreeLocked(true);
-				try {
+		boolean oldLock = workspace.isTreeLocked();
+		if (lockTree)
+			workspace.setTreeLocked(true);
+		try {
+			for (int i = 0; i < resourceListeners.length; i++) {
+				if ((type & resourceListeners[i].eventMask) != 0) {
+					final IResourceChangeListener listener = resourceListeners[i].listener;
+					if (Policy.MONITOR_LISTENERS)
+						EventStats.startNotify(listener);
 					Platform.run(new ISafeRunnable() {
 						public void handleException(Throwable e) {
 							//ResourceStats.notifyException(e);
@@ -251,14 +251,13 @@ public class NotificationManager implements IManager, ILifecycleListener {
 							listener.resourceChanged(event);
 						}
 					});
-				} finally {
-					if (lockTree)
-						workspace.setTreeLocked(oldLock);
+					if (Policy.MONITOR_LISTENERS)
+						EventStats.endNotify();
 				}
-
-				if (Policy.MONITOR_LISTENERS)
-					EventStats.endNotify();
 			}
+		} finally {
+			if (lockTree)
+				workspace.setTreeLocked(oldLock);
 		}
 	}
 	public void removeListener(IResourceChangeListener listener) {
