@@ -62,6 +62,7 @@ protected Control createContents(Composite parent) {
 
 	listViewer.setLabelProvider(new WorkbenchLabelProvider());
 	listViewer.setContentProvider(getContentProvider(project));
+	listViewer.setSorter(new ViewerSorter() {});
 	listViewer.setInput(project.getWorkspace());
 	try {
 		listViewer.setCheckedElements(project.getReferencedProjects());
