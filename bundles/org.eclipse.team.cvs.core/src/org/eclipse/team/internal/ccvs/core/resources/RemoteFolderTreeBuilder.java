@@ -374,7 +374,9 @@ public class RemoteFolderTreeBuilder {
 		Policy.checkCanceled(monitor);
 					
 		// Create a remote folder tree corresponding to the local resource
-		RemoteFolderTree remote = new RemoteFolderTree(parent, local.getName(), repository, local.getFolderSyncInfo().getRepository(), local.getFolderSyncInfo().getTag());
+		FolderSyncInfo folderSyncInfo = local.getFolderSyncInfo();
+		if (folderSyncInfo == null) return null;
+        RemoteFolderTree remote = new RemoteFolderTree(parent, local.getName(), repository, folderSyncInfo.getRepository(), folderSyncInfo.getTag());
 
 		// Create a List to contain the created children
 		List children = new ArrayList();
@@ -385,7 +387,9 @@ public class RemoteFolderTreeBuilder {
 			ICVSFolder folder = (ICVSFolder)folders[i];
 			if (folder.isManaged() && folder.isCVSFolder()) {
 				monitor.worked(1);
-				children.add(buildBaseTree(remote, folder, monitor));
+				RemoteFolderTree tree = buildBaseTree(remote, folder, monitor);
+				if (tree != null)
+				    children.add(tree);
 			}
 		}
 		
