@@ -21,9 +21,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 /**
- * Application providing embeded Internet Explorer The controlling commands are
- * read from standard input Commands and their parameters are separated using
- * spaced and should be provided one command per line.
+ * Help browser employing SWT Browser widget
  */
 public class EmbeddedBrowser {
 	private static final String BROWSER_X = "browser.x";
@@ -31,26 +29,159 @@ public class EmbeddedBrowser {
 	private static final String BROWSER_WIDTH = "browser.w";
 	private static final String BROWSER_HEIGTH = "browser.h";
 	private static final String BROWSER_MAXIMIZED = "browser.maximized";
-	private String windowTitle;
-	private Image[] shellImages;
-	Shell shell;
-	Browser webBrowser;
 	private Preferences store;
-	int x, y, w, h;
-	boolean firstopenning = true;
+	private static String initialTitle = getWindowTitle();
+	private Shell shell;
+	private Browser browser;
+	private int x, y, w, h;
 	/**
-	 * Constructor
+	 * Constructor for main help window intance
 	 */
 	public EmbeddedBrowser() {
 		store = HelpUIPlugin.getDefault().getPluginPreferences();
-		windowTitle = getWindowTitle();
-		shellImages = createImages();
-		createShell();
+		shell = new Shell();
+		initializeShell(shell);
+		shell.addControlListener(new ControlListener() {
+			public void controlMoved(ControlEvent e) {
+				if (!shell.getMaximized()) {
+					Point location = shell.getLocation();
+					x = location.x;
+					y = location.y;
+				}
+			}
+			public void controlResized(ControlEvent e) {
+				if (!shell.getMaximized()) {
+					Point size = shell.getSize();
+					w = size.x;
+					h = size.y;
+				}
+			}
+		});
+		shell.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				// save position
+				store.setValue(BROWSER_X, Integer
+						.toString(shell.getLocation().x));
+				store.setValue(BROWSER_Y, Integer
+						.toString(shell.getLocation().y));
+				store.setValue(BROWSER_WIDTH, Integer
+						.toString(shell.getSize().x));
+				store.setValue(BROWSER_HEIGTH, Integer
+						.toString(shell.getSize().y));
+				store.setValue(BROWSER_MAXIMIZED, (new Boolean(shell
+						.getMaximized()).toString()));
+			}
+		});
+		browser = new Browser(shell, SWT.NONE);
+		initialize(shell.getDisplay(), browser);
+		// use saved location and size
+		x = store.getInt(BROWSER_X);
+		y = store.getInt(BROWSER_Y);
+		w = store.getInt(BROWSER_WIDTH);
+		h = store.getInt(BROWSER_HEIGTH);
+		if (w == 0 || h == 0) {
+			// first launch, use default size
+			w = 1024;
+			h = 768;
+			x = shell.getLocation().x;
+			y = shell.getLocation().y;
+		}
+		setSafeBounds(shell, x, y, w, h);
+		if (store.getBoolean(BROWSER_MAXIMIZED))
+			shell.setMaximized(true);
+		//
+		shell.open();
+		browser.setUrl("about:blank");
+	}
+	/**
+	 * Constructor for derived help window It is either secondary browser or a
+	 * help dialog
+	 * 
+	 * @param event
+	 * @param parent
+	 *            Shell or null
+	 */
+	public EmbeddedBrowser(WindowEvent event) {
+		Shell shell = new Shell();
+		initializeShell(shell);
+		Browser browser = new Browser(shell, SWT.NONE);
+		initialize(shell.getDisplay(), browser);
+		event.browser = browser;
+	}
+	private static void initializeShell(Shell s) {
+		s.setText(initialTitle);
+		Image[] shellImages = createImages();
+		if (shellImages != null)
+			s.setImages(shellImages);
+		s.setLayout(new FillLayout());
+	}
+	private void initialize(final Display display, Browser browser) {
+		browser.addOpenWindowListener(new OpenWindowListener() {
+			public void open(WindowEvent event) {
+				new EmbeddedBrowser(event);
+			}
+		});
+		browser.addVisibilityWindowListener(new VisibilityWindowListener() {
+			public void hide(WindowEvent event) {
+				Browser browser = (Browser) event.widget;
+				Shell shell = browser.getShell();
+				shell.setVisible(false);
+			}
+			public void show(WindowEvent event) {
+				Browser browser = (Browser) event.widget;
+				Shell shell = browser.getShell();
+				if (event.location != null)
+					shell.setLocation(event.location);
+				if (event.size != null) {
+					Point size = event.size;
+					shell.setSize(shell.computeSize(size.x, size.y));
+				}
+				shell.open();
+			}
+		});
+		browser.addCloseWindowListener(new CloseWindowListener() {
+			public void close(WindowEvent event) {
+				Browser browser = (Browser) event.widget;
+				Shell shell = browser.getShell();
+				shell.close();
+			}
+		});
+		browser.addTitleListener(new TitleListener() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.browser.TitleListener#changed(org.eclipse.swt.browser.TitleEvent)
+			 */
+			public void changed(TitleEvent event) {
+				if (event.title != null && event.title.length() > 0) {
+					Browser browser = (Browser) event.widget;
+					Shell shell = browser.getShell();
+					shell.setText(event.title);
+				}
+			}
+		});
+	}
+	public void displayUrl(String url) {
+		browser.setUrl(url);
+		shell.setMinimized(false);
+		shell.forceActive();
+	}
+	public boolean isDisposed() {
+		return shell.isDisposed();
+	}
+	private static String getWindowTitle() {
+		if ("true".equalsIgnoreCase(HelpBasePlugin.getDefault()
+				.getPluginPreferences().getString("windowTitlePrefix"))) {
+			return HelpUIResources.getString("browserTitle", BaseHelpSystem
+					.getProductName());
+		} else {
+			return BaseHelpSystem.getProductName();
+		}
 	}
 	/**
 	 * Create shell image
 	 */
-	private Image[] createImages() {
+	private static Image[] createImages() {
 		String[] productImageURLs = getProductImageURLs();
 		if (productImageURLs != null) {
 			Image[] shellImgs = new Image[productImageURLs.length];
@@ -69,141 +200,11 @@ public class EmbeddedBrowser {
 		return new Image[0];
 	}
 	/**
-	 * Creates hosting shell.
-	 */
-	private void createShell() {
-		shell = new Shell();
-		if (shellImages != null)
-			shell.setImages(shellImages);
-		shell.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				// save position
-				store.setValue(BROWSER_X, Integer.toString(x));
-				store.setValue(BROWSER_Y, Integer.toString(y));
-				store.setValue(BROWSER_WIDTH, Integer.toString(w));
-				store.setValue(BROWSER_HEIGTH, Integer.toString(h));
-				store.setValue(BROWSER_MAXIMIZED, (new Boolean(shell
-						.getMaximized()).toString()));
-			}
-		});
-		shell.addControlListener(new ControlListener() {
-			public void controlMoved(ControlEvent e) {
-				if (!shell.getMaximized()) {
-					Point location = shell.getLocation();
-					x = location.x;
-					y = location.y;
-				}
-			}
-			public void controlResized(ControlEvent e) {
-				if (!shell.getMaximized()) {
-					Point size = shell.getSize();
-					w = size.x;
-					h = size.y;
-				}
-			}
-		});
-		shell.setText(windowTitle);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		layout.horizontalSpacing = 0;
-		layout.verticalSpacing = 0;
-		shell.setLayout(layout);
-		webBrowser = new Browser(shell, SWT.NONE);
-		GridData data = new GridData(GridData.FILL_BOTH);
-		data.grabExcessHorizontalSpace = true;
-		data.grabExcessVerticalSpace = true;
-		webBrowser.setLayoutData(data);
-		webBrowser.setUrl("about:blank");
-		// use saved location and size
-		x = store.getInt(BROWSER_X);
-		y = store.getInt(BROWSER_Y);
-		w = store.getInt(BROWSER_WIDTH);
-		h = store.getInt(BROWSER_HEIGTH);
-		if (w == 0 || h == 0) {
-			// first launch, use default size
-			w = 1024;
-			h = 768;
-			x = shell.getLocation().x;
-			y = shell.getLocation().y;
-		}
-		setSize(w, h);
-		setLocation(x, y);
-		if (store.getBoolean(BROWSER_MAXIMIZED))
-			shell.setMaximized(true);
-		webBrowser.addOpenWindowListener(new OpenWindowListener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.browser.NewWindowListener#newWindow(org.eclipse.swt.browser.NewWindowEvent)
-			 */
-			public void open(WindowEvent event) {
-				EmbeddedBrowserDialog dialog = new EmbeddedBrowserDialog(shell,
-						windowTitle, createImages());
-				event.browser = dialog.getBrowser();
-			}
-		});
-		shell.open();
-	}
-	public void setLocation(int x, int y) {
-		Rectangle clientArea = shell.getDisplay().getClientArea();
-		Point shellSize = shell.getSize();
-		x = Math.min(x + shellSize.x, clientArea.x + clientArea.width)
-				- shellSize.x;
-		y = Math.min(y + shellSize.y, clientArea.y + clientArea.height)
-				- shellSize.y;
-		x = Math.max(x, clientArea.x);
-		y = Math.max(y, clientArea.y);
-		this.x = x;
-		this.y = y;
-		shell.setLocation(x, y);
-	}
-	public void setSize(int width, int height) {
-		Rectangle clientArea = shell.getDisplay().getClientArea();
-		w = Math.min(clientArea.width, width);
-		h = Math.min(clientArea.height, height);
-		shell.setSize(w, h);
-	}
-	/**
-	 * Closes the browser.
-	 */
-	public void close() {
-		shell.dispose();
-	}
-	public void displayUrl(String url) {
-		webBrowser.setUrl(url);
-		makeVisible();
-	}
-	private void makeVisible() {
-		if (firstopenning) {
-			firstopenning = false;
-		} else {
-			shell.setVisible(false);
-			shell.setMinimized(true);
-		}
-		shell.setVisible(true);
-		shell.setMinimized(false);
-		shell.moveAbove(null);
-		shell.forceActive();
-	}
-	public boolean isDisposed() {
-		return shell.isDisposed();
-	}
-	private String getWindowTitle() {
-		if ("true".equalsIgnoreCase(HelpBasePlugin.getDefault()
-				.getPluginPreferences().getString("windowTitlePrefix"))) {
-			return HelpUIResources.getString("browserTitle", BaseHelpSystem
-					.getProductName());
-		} else {
-			return BaseHelpSystem.getProductName();
-		}
-	}
-	/**
 	 * Obtains URL to product image
 	 * 
 	 * @return URL as String or null
 	 */
-	private String[] getProductImageURLs() {
+	private static String[] getProductImageURLs() {
 		IProduct product = Platform.getProduct();
 		if (product != null) {
 			String url = product.getProperty("windowImages");
@@ -216,5 +217,29 @@ public class EmbeddedBrowser {
 			}
 		}
 		return null;
+	}
+	/**
+	 * Closes the browser.
+	 */
+	public void close() {
+		if (!shell.isDisposed())
+			shell.dispose();
+	}
+	private static void setSafeBounds(Shell s, int x, int y, int width,
+			int height) {
+		Rectangle clientArea = s.getDisplay().getClientArea();
+		width = Math.min(clientArea.width, width);
+		height = Math.min(clientArea.height, height);
+		x = Math.min(x + width, clientArea.x + clientArea.width) - width;
+		y = Math.min(y + height, clientArea.y + clientArea.height) - height;
+		x = Math.max(x, clientArea.x);
+		y = Math.max(y, clientArea.y);
+		s.setBounds(x, y, width, height);
+	}
+	public void setLocation(int x, int y) {
+		shell.setLocation(x, y);
+	}
+	public void setSize(int width, int height) {
+		shell.setSize(w, h);
 	}
 }
