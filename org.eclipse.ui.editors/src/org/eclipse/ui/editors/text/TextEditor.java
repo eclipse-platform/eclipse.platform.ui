@@ -147,6 +147,7 @@ public class TextEditor extends StatusTextEditor {
 	 */
 	public TextEditor() {
 		super();
+		initializeKeyBindingScopes();
 		initializeEditor();
 		fAnnotationPreferences= new MarkerAnnotationPreferences();
 	}
@@ -160,6 +161,12 @@ public class TextEditor extends StatusTextEditor {
 		setRulerContextMenuId("#TextRulerContext"); //$NON-NLS-1$
 		setHelpContextId(ITextEditorHelpContextIds.TEXT_EDITOR);
 		setPreferenceStore(EditorsPlugin.getDefault().getPreferenceStore());
+	}
+
+	/**
+	 * Initializes the key binding scopes of this editor.
+	 */
+	protected void initializeKeyBindingScopes() {
 		setKeyBindingScopes(new String[] { "org.eclipse.ui.textEditorScope" });  //$NON-NLS-1$
 	}
 	
