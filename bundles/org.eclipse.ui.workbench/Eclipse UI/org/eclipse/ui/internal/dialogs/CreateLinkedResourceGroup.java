@@ -180,10 +180,12 @@ private void createLinkLocationGroup(Composite locationGroup, boolean enabled) {
 
 	resolvedPathLabelText = new Label(resolvedPathGroup, SWT.SINGLE);
 	resolvedPathLabelText.setText(WorkbenchMessages.getString("CreateLinkedResourceGroup.resolvedPathLabel")); //$NON-NLS-1$
+	resolvedPathLabelText.setVisible(false);
 
 	resolvedPathLabelData = new Label(resolvedPathGroup, SWT.SINGLE);
 	data = new GridData(GridData.FILL_HORIZONTAL);
 	resolvedPathLabelData.setLayoutData(data);
+	resolvedPathLabelData.setVisible(false);
 }
 /**
  * Returns a new status object with the given severity and message.
