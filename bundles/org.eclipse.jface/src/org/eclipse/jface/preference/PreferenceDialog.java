@@ -1277,24 +1277,29 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 				titleImage.getParent().layout();
 			}
 		}
-		messageArea.updateText(getShortenedString(message), messageType);
+		messageArea.updateText(getShortenedString(message,titleArea), messageType);
 	}
 
-	private final String ellipsis = "..."; //$NON-NLS-1$
+	private static final String ellipsis = "..."; //$NON-NLS-1$
 
 	/**
 	 * Shortened the message if too long.
 	 * 
 	 * @param textValue
 	 *            The messgae value.
+	 * @param control
+	 * 			  The control that the resulting String will be
+	 * 			   displayed on.
 	 * @return The shortened string.
 	 */
-	private String getShortenedString(String textValue) {
+	static String getShortenedString(String textValue, Control control) {
 		if (textValue == null)
 			return null;
-		Display display = titleArea.getDisplay();
+		Display display = control.getDisplay();
 		GC gc = new GC(display);
-		int maxWidth = titleArea.getBounds().width - 28;
+		
+		//Add in 5 pixels for readability
+		int maxWidth = control.getBounds().width - 5;
 		if (gc.textExtent(textValue).x < maxWidth) {
 			gc.dispose();
 			return textValue;

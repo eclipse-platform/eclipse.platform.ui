@@ -12,27 +12,6 @@
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -42,6 +21,24 @@ import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * Abstract base implementation for all preference page implementations.
@@ -278,7 +275,7 @@ public abstract class PreferencePage extends DialogPage implements
     /**
      * Description label.
      * 
-     * @see #createDescriptionLabel.
+     * @see #createDescriptionLabel(Composite)
      */
     private Label descriptionLabel;
 
@@ -293,8 +290,6 @@ public abstract class PreferencePage extends DialogPage implements
      * to the parent.
      */
 	private MessageRegion messageArea;
-
-	private final String ellipsis = "..."; //$NON-NLS-1$
     /**
      * Creates a new preference page with an empty title and no image.
      */
@@ -692,7 +687,9 @@ public abstract class PreferencePage extends DialogPage implements
         		getContainer().updateMessage();
         }
         else 
-        	messageArea.updateText(getShortenedString(newMessage),IMessageProvider.ERROR);
+        	messageArea.updateText(
+					PreferenceDialog.getShortenedString(
+							newMessage,messageArea.messageText),IMessageProvider.ERROR);
     }
 
     /**
@@ -709,46 +706,7 @@ public abstract class PreferencePage extends DialogPage implements
         	messageArea.updateText(newMessage, IMessageProvider.NONE);
     }
 
-    /**
-	 * Shortened the message if too long.
-	 * 
-	 * @param textValue
-	 *            The messgae value.
-	 * @return The shortened string.
-	 */
-	private String getShortenedString(String textValue) {
-		if (textValue == null)
-			return null;
-		Display display = messageArea.messageComposite.getDisplay();
-		GC gc = new GC(display);
-		int maxWidth = messageArea.messageComposite.getBounds().width - 28;
-		if (gc.textExtent(textValue).x < maxWidth) {
-			gc.dispose();
-			return textValue;
-		}
-		int length = textValue.length();
-		int ellipsisWidth = gc.textExtent(ellipsis).x;
-		int pivot = length / 2;
-		int start = pivot;
-		int end = pivot + 1;
-		while (start >= 0 && end < length) {
-			String s1 = textValue.substring(0, start);
-			String s2 = textValue.substring(end, length);
-			int l1 = gc.textExtent(s1).x;
-			int l2 = gc.textExtent(s2).x;
-			if (l1 + ellipsisWidth + l2 < maxWidth) {
-				gc.dispose();
-				return s1 + ellipsis + s2;
-			}
-			start--;
-			end++;
-		}
-		gc.dispose();
-		return textValue;
-	}
-
-    
-    
+ 
     /**
      * Sets the preference store for this preference page.
      * <p>
