@@ -422,10 +422,6 @@ public final class CommandManagerWrapper implements ICommandManager,
 		return new SchemeWrapper(scheme, bindingManager);
 	}
 
-	IMutableCommandRegistry getMutableCommandRegistry() {
-		return mutableCommandRegistry;
-	}
-
 	public Map getPartialMatches(KeySequence keySequence) {
 		try {
 			final org.eclipse.jface.bindings.keys.KeySequence sequence = org.eclipse.jface.bindings.keys.KeySequence
@@ -647,27 +643,6 @@ public final class CommandManagerWrapper implements ICommandManager,
 			throw new NullPointerException();
 		if (commandManagerListeners != null)
 			commandManagerListeners.remove(commandManagerListener);
-	}
-
-	public void setActiveContextIds(Map activeContextIds) {
-		contextManager.setActiveContextIds(activeContextIds.keySet());
-	}
-
-	public void setActiveKeyConfigurationId(String activeKeyConfigurationId) {
-		try {
-			bindingManager.setActiveScheme(bindingManager
-					.getScheme(activeKeyConfigurationId));
-		} catch (final NotDefinedException e) {
-			// The key configuration is not defined, so do nothing.
-		}
-	}
-
-	public void setActiveLocale(String activeLocale) {
-		bindingManager.setLocale(activeLocale);
-	}
-
-	public void setActivePlatform(String activePlatform) {
-		bindingManager.setPlatform(activePlatform);
 	}
 
 	/**

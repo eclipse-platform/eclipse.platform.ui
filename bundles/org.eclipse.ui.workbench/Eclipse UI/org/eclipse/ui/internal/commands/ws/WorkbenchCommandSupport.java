@@ -687,20 +687,6 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
     }
 
     /**
-     * Sets the active context identifiers on the mutable command manager this
-     * class interacts with.
-     * 
-     * @param activeContextIds
-     *            The new map of active context identifiers -- representing the
-     *            hierarchy of active contexts. This should be a map of string
-     *            values. It may be empty, but it should never be
-     *            <code>null</code>.
-     */
-    public void setActiveContextIds(Map activeContextIds) {
-        commandManagerWrapper.setActiveContextIds(activeContextIds);
-    }
-
-    /**
      * Sets whether the workbench's command support should process handler
      * submissions. The workbench should not allow the event loop to spin unless
      * this value is set to <code>true</code>. If the value changes from
