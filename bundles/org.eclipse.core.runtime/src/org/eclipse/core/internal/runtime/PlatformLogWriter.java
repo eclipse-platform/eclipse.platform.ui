@@ -50,7 +50,7 @@ public PlatformLogWriter(File file) {
  * This constructor should only be used to pass System.out .
  */
 public PlatformLogWriter(OutputStream out) {
-	log = new PrintWriter(out);
+	log = new OutputStreamWriter(out);
 }
 protected static void appendEscapedChar(StringBuffer buffer, char c) {
 	String replacement = getReplacement(c);
@@ -140,15 +140,16 @@ public synchronized void logging(IStatus status, String plugin) {
 		}			
 	} catch (Exception e) {
 		System.err.println("An exception occurred while writing to the platform log:");
-		e.printStackTrace(System.err);
+		System.err.println(e.getClass().getName() + ": " + e.getMessage());
+		System.err.println("Logging to the console instead.");
 		//we failed to write, so dump log entry to console instead
 		try {
-			log = new PrintWriter(System.err);
+			log = new OutputStreamWriter(System.err);
 			writeLogEntry(status);
 			log.flush();
 		} catch (Exception e2) {
 			System.err.println("An exception occurred while logging to the console:");
-			e2.printStackTrace();
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 		}
 	} finally {
 			log = null;
@@ -157,7 +158,7 @@ public synchronized void logging(IStatus status, String plugin) {
 protected void openLogFile() {
 	try {
 		boolean newLog = !logFile.exists();
-		log = new PrintWriter(new BufferedWriter(new FileWriter(logFile.getAbsolutePath(), true)));
+		log =new BufferedWriter(new FileWriter(logFile.getAbsolutePath(), true));
 		if (newLog) {
 			println(XML_VERSION);
 			startTag(ELEMENT_LOG, null);
