@@ -85,6 +85,7 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 		
 		fDocument= document;
 		fOffset= offset;
+		fColumn= UNDEFINED;
 		fRangeEnd= Math.min(fDocument.getLength(), offset + length);
 		
 		String[] delimiters= fDocument.getLegalLineDelimiters();
@@ -182,6 +183,7 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 		
 		} finally {
 			++ fOffset;
+			fColumn= UNDEFINED;
 		}
 	}
 	
