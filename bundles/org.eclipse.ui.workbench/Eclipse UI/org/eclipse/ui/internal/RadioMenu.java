@@ -98,8 +98,10 @@ public class RadioMenu implements IChangeListener {
 		while (iter.hasNext()) {
 			MenuItem next = (MenuItem)iter.next();
 			
-			next.removeSelectionListener(selectionAdapter);
-			next.dispose();
+			if (!next.isDisposed()) {
+				next.removeSelectionListener(selectionAdapter);
+				next.dispose();
+			}
 		}
 		
 		items.clear();
@@ -113,7 +115,9 @@ public class RadioMenu implements IChangeListener {
 		while (iter.hasNext()) {
 			MenuItem next = (MenuItem)iter.next();
 
-			next.setSelection(isEqual(data.getState(), next.getData()));
+			if (!next.isDisposed()) {
+				next.setSelection(isEqual(data.getState(), next.getData()));
+			}
 		}		
 	}
 	
