@@ -34,8 +34,6 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -43,6 +41,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.ToolBar;
@@ -81,9 +80,54 @@ public class NewProgressViewer extends ProgressTreeViewer {
 	private Color taskColor;
 	private Color selectedColor;
 	private Cursor handCursor;
+	private Cursor normalCursor;
 	private Font defaultFont= JFaceResources.getDefaultFont();
 	private HashMap map= new HashMap();
 
+	
+	class ListLayout extends Layout {
+		boolean refreshBackgrounds;
+		
+		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {		
+			int w= 0, h= 0;
+			Control[] cs= composite.getChildren();
+			for (int i= 0; i < cs.length; i++) {
+				Control c= cs[i];
+				Point e= c.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
+				w= Math.max(w, e.x);
+				h+= e.y;
+			}
+			return new Point(w, h);
+		}
+		
+		protected void layout(Composite composite, boolean flushCache) {
+			int x= 0, y= 0;
+			Point e= composite.getSize();
+			Control[] cs= composite.getChildren();
+			// sort
+			ViewerSorter vs= getSorter();
+			if (vs != null) {
+				JobTreeElement[] elements= new JobTreeElement[cs.length];
+				for (int i= 0; i < cs.length; i++)
+					elements[i]= ((JobItem)cs[i]).jobTreeElement;
+				vs.sort(NewProgressViewer.this, elements);
+				for (int i= 0; i < cs.length; i++)
+					cs[i]= findJobItem(elements[i], false);
+			}
+			// sort
+			boolean dark= (cs.length % 2) == 1;
+			for (int i= 0; i < cs.length; i++) {
+				Control c= cs[i];
+				Point s= c.computeSize(e.x, SWT.DEFAULT, flushCache);
+				c.setBounds(x, y, s.x, s.y);
+				y+= s.y;
+				if (refreshBackgrounds && c instanceof JobItem) {
+					((JobItem)c).updateBackground(dark);
+					dark= !dark;
+				}
+			}
+		}
+	}
 	
 	abstract class JobTreeItem extends Canvas implements Listener {
 		JobTreeElement jobTreeElement;
@@ -244,14 +288,18 @@ public class NewProgressViewer extends ProgressTreeViewer {
 	    	if (result != null) {
 	    		String message= result.getMessage().trim();
 	    		if (message.length() > 0) {
-	    			lColor= errorColor;
-	    			lColor2= errorColor2;
-	    			setText("Error: " + message);
-	    			setAction(new Action() {
-	    				public void run() {
-	    					ErrorDialog.openError(getShell(), "Title", "Error", result);
-	    				}
-	    			});
+	    			if (r.getSeverity() == IStatus.ERROR) {
+	    				lColor= errorColor;
+	    				lColor2= errorColor2;
+		    			setText("Error: " + message);
+		    			setAction(new Action() {
+		    				public void run() {
+		    					ErrorDialog.openError(getShell(), "Title", "Error", result);
+		    				}
+		    			});
+	    			} else {
+		    			setText(message);
+	    			}
 	    		}
 	    	}
 		}
@@ -391,8 +439,6 @@ public class NewProgressViewer extends ProgressTreeViewer {
 				}
 			};
 			
-			setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
 			iconItem= new Label(this, SWT.NONE);
 			iconItem.addMouseListener(ml);
 			
@@ -401,6 +447,7 @@ public class NewProgressViewer extends ProgressTreeViewer {
 			nameItem.addMouseListener(ml);
 			
 			actionBar= new ToolBar(this, SWT.FLAT);
+			actionBar.setCursor(normalCursor);	// set cursor to overwrite any busy cursor we might have
 			actionButton= new ToolItem(actionBar, SWT.NONE);
 			actionButton.setImage(getImage(parent.getDisplay(), "newprogress_cancel.gif")); //$NON-NLS-1$
 			actionButton.setToolTipText(ProgressMessages.getString("NewProgressView.CancelJobToolTip")); //$NON-NLS-1$
@@ -730,6 +777,7 @@ public class NewProgressViewer extends ProgressTreeViewer {
 		
 		Display display= parent.getDisplay();
 		handCursor= new Cursor(display, SWT.CURSOR_HAND);
+		normalCursor= new Cursor(display, SWT.CURSOR_ARROW);
 
 		boolean carbon= "carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
 		whiteColor= display.getSystemColor(SWT.COLOR_WHITE);
@@ -744,7 +792,7 @@ public class NewProgressViewer extends ProgressTreeViewer {
 		errorColor= display.getSystemColor(SWT.COLOR_DARK_RED);
 		errorColor2= display.getSystemColor(SWT.COLOR_RED);
 				
-		scroller= new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL);
+		scroller= new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL | flags);
 		int height= defaultFont.getFontData()[0].getHeight();
 		scroller.getVerticalBar().setIncrement(height * 2);
 		scroller.setExpandHorizontal(true);
@@ -753,17 +801,17 @@ public class NewProgressViewer extends ProgressTreeViewer {
 		list= new Composite(scroller, SWT.NONE);
 		list.setFont(defaultFont);
 		list.setBackground(whiteColor);
+		list.setLayout(new ListLayout());
 		
 		scroller.setContent(list);
 		
-		GridLayout layout= new GridLayout();
-		layout.numColumns= 1;
-		layout.marginHeight= 1;
-		layout.marginWidth= layout.verticalSpacing= 0;
-		list.setLayout(layout);
 				
 		// refresh UI
 		refresh(true);
+		
+		Point e= parent.getSize();
+		System.out.println("size: " + e);
+		scroller.setSize(e);
     }
 
     protected void handleDispose(DisposeEvent event) {
@@ -823,14 +871,11 @@ public class NewProgressViewer extends ProgressTreeViewer {
 		HashSet modelJobs= new HashSet();
 		for (int z= 0; z < roots.length; z++)
 			modelJobs.add(roots[z]);
-		
-		HashSet shownJobs= new HashSet();
-		
+				
 		// find all removed
 		Control[] children= list.getChildren();
 		for (int i= 0; i < children.length; i++) {
 			JobItem ji= (JobItem)children[i];
-			shownJobs.add(ji.jobTreeElement);
 			if (modelJobs.contains(ji.jobTreeElement))
 				changed |= ji.refresh();
 			else {
@@ -842,12 +887,12 @@ public class NewProgressViewer extends ProgressTreeViewer {
 		// find all added
 		for (int i= 0; i < roots.length; i++) {
 			Object element= roots[i];
-			if (!shownJobs.contains(element)) {
+			if (findJobItem(element, false) == null) {
 			    lastAdded= createItem(element);
 				changed= added= true;
 			}
 		}
-				
+		
 		relayout(changed, added);
 		if (lastAdded != null)
 			reveal(lastAdded);
@@ -889,19 +934,11 @@ public class NewProgressViewer extends ProgressTreeViewer {
 	 */
 	private void relayout(boolean layout, boolean refreshBackgrounds) {
 		if (layout) {
+			ListLayout l= (ListLayout) list.getLayout();
+			l.refreshBackgrounds= refreshBackgrounds;
 			Point size= list.computeSize(list.getClientArea().x, SWT.DEFAULT);
 			list.setSize(size);
 			scroller.setMinSize(size);	
-		}
-		
-		if (refreshBackgrounds) {
-			Control[] children= list.getChildren();
-			boolean dark= (children.length % 2) == 1;
-			for (int i= 0; i < children.length; i++) {
-				JobItem ji= (JobItem) children[i];
-				ji.updateBackground(dark);
-				dark= !dark;
-			}			
 		}
 	}
 	
@@ -992,9 +1029,6 @@ public class NewProgressViewer extends ProgressTreeViewer {
     public void setUseHashlookup(boolean b) {
     }
 
-    public void setSorter(ViewerSorter sorter) {
-    }
-
     public void setInput(IContentProvider provider) {
     }
 
@@ -1065,6 +1099,7 @@ public class NewProgressViewer extends ProgressTreeViewer {
     }
     
 	protected void createChildren(Widget widget) {
+		refresh(true);
 	}
 	
 	protected void internalRefresh(Object element, boolean updateLabels) {
