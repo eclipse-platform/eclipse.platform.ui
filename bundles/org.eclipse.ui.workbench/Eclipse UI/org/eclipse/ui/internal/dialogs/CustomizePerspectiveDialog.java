@@ -1239,13 +1239,15 @@ private void popUp(String description) {
 		public void focusLost(FocusEvent e)  {
 			descShell.dispose();
 		}
-		public void focusGained(FocusEvent e) {}
+		public void focusGained(FocusEvent e) {
+		}
 	});
 	insetComposite.addKeyListener(new KeyListener() {
 		public void keyPressed(KeyEvent e)  {
 			descShell.dispose();
 		}
-		public void keyReleased(KeyEvent e) {}
+		public void keyReleased(KeyEvent e) {
+		}
 	});
 		
 	StyledText descText = new StyledText(insetComposite, SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
@@ -1270,7 +1272,7 @@ private void popUp(String description) {
 	}
 	descShell.setLocation(location);
 	descShell.setVisible(true);
-	descShell.setFocus();
+	descShell.setActive();
 }
 String removeShortcut(String label) {
 	if (label == null) return label;
