@@ -5,11 +5,11 @@ import org.eclipse.ui.junit.util.*;
 
 
 /**
- * Tests the lifecycle for a window action delegate.
+ * Tests the lifecycle for a view action delegate.
  */
 public class IViewActionDelegateTest extends IActionDelegateTest {
 	
-	public static String TEST_VIEW_ID = "org.eclipse.ui.tests.api.ActionExtensionTestView";
+	public static String TEST_VIEW_ID = "org.eclipse.ui.tests.api.IViewActionDelegateTest";
 
 	/**
 	 * Constructor for IWorkbenchWindowActionDelegateTest
@@ -19,7 +19,9 @@ public class IViewActionDelegateTest extends IActionDelegateTest {
 	}
 
 	public void testInit() throws Throwable {
-		// From Javadoc: "Initializes this action delegate"
+		// When an action delegate is run the
+		// init, selectionChanged, and run methods should
+		// be called, in that order.
 		
 		// Run the action.
 		testRun();
@@ -34,18 +36,10 @@ public class IViewActionDelegateTest extends IActionDelegateTest {
 	/**
 	 * @see IActionDelegateTest#runAction()
 	 */
-	protected void runAction() throws Throwable {
+	protected void addAndRunAction() throws Throwable {
 		MockViewPart view = (MockViewPart)fPage.showView(TEST_VIEW_ID);
 		IMenuManager mgr = view.getViewSite().getActionBars().getMenuManager();
 		ActionUtil.runActionWithLabel(this, mgr, "Mock Action");
-	}
-
-	/**
-	 * @see IActionDelegateTest#addAction()
-	 */
-	protected void addAction() throws Throwable {
-		// Open up a view with the specific view action extension.
-		fPage.showView(TEST_VIEW_ID);
 	}
 
 	/**
@@ -55,16 +49,5 @@ public class IViewActionDelegateTest extends IActionDelegateTest {
 		MockViewPart view = (MockViewPart)fPage.showView(TEST_VIEW_ID);
 		view.fireSelection();
 	}
-
-	/**
-	 * @see IActionDelegateTest#getDelegate()
-	 */
-	protected MockActionDelegate getDelegate() throws Throwable {
-		MockViewActionDelegate delegate = 
-			MockViewActionDelegate.lastDelegate;
-		assertNotNull(delegate);
-		return delegate;
-	}
-
 }
 

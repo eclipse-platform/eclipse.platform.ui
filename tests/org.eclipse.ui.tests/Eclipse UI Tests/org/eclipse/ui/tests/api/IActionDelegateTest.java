@@ -26,18 +26,20 @@ public abstract class IActionDelegateTest extends UITestCase {
 	}
 	
 	public void testRun() throws Throwable {
-		// From Javadoc: "This method is called when the delegating 
-		// action has been triggered."
-		addAction();
-		runAction();
+		// When an action delegate is run the
+		// selectionChanged and run methods should be called
+		// in that order.
+		addAndRunAction();
 		MockActionDelegate delegate = getDelegate();
 		assertNotNull(delegate);
-		assertTrue(delegate.callHistory.contains("run"));
+		assertTrue(delegate.callHistory.verifyOrder(
+			new String[] {"selectionChanged", "run" } ));
 	}
 	
 	public void testSelectionChanged() throws Throwable {
-		// From Javadoc: "Notifies this action delegate that the selection 
-		// in the workbench has changed".
+		// After an action has been created, if a selection
+		// occurs the selectionChanged method should be
+		// invoked.
 		
 		// Load the delegate by running it.
 		testRun();
@@ -51,23 +53,23 @@ public abstract class IActionDelegateTest extends UITestCase {
 	}
 	
 	/**
-	 * Adds the action delegate.  Subclasses should override
+	 * Returns the last mock action delegate created.
 	 */
-	protected abstract void addAction() throws Throwable;
-	
+	protected MockActionDelegate getDelegate() throws Throwable {
+		MockActionDelegate delegate = 
+			MockActionDelegate.lastDelegate;
+		assertNotNull(delegate);
+		return delegate;
+	}
+
 	/**
-	 * Runs the action delegate.  Subclasses should override
+	 * Adds and runs the action delegate.  Subclasses should override
 	 */
-	protected abstract void runAction() throws Throwable;
+	protected abstract void addAndRunAction() throws Throwable;
 	
 	/**
 	 * Fires a selection from the source.  Subclasses should override
 	 */
 	protected abstract void fireSelection() throws Throwable;
-	
-	/**
-	 * Returns the action delegate.  Subclasses should override.
-	 */
-	protected abstract MockActionDelegate getDelegate() throws Throwable;
 }
 

@@ -7,12 +7,13 @@ import org.eclipse.ui.junit.util.*;
 
 public class MockActionDelegate implements IActionDelegate {
 
-	public static final String ACTION_SET_ID = "org.eclipse.ui.tests.api.MockActionSet";
-	
 	public CallHistory callHistory;
+	public static final String ACTION_SET_ID = "org.eclipse.ui.tests.api.MockActionSet";
+	public static MockActionDelegate lastDelegate;
 	
 	public MockActionDelegate() {
 		callHistory = new CallHistory(this);
+		lastDelegate = this;
 	}
 	
 	/**

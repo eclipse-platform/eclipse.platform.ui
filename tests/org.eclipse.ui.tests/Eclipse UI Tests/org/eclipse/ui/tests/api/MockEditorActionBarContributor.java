@@ -7,6 +7,7 @@ public class MockEditorActionBarContributor
 	implements IEditorActionBarContributor 
 {
 	protected CallHistory callHistory;
+	protected IActionBars bars;
 	protected IEditorPart target;
 
 	/**
@@ -26,6 +27,7 @@ public class MockEditorActionBarContributor
 	 */
 	public void init(IActionBars bars) {
 		callHistory.add("init");
+		this.bars = bars;
 	}
 
 	/**
@@ -36,8 +38,18 @@ public class MockEditorActionBarContributor
 		target = targetEditor;
 	}
 	
+	/**
+	 * Returns the active editor.
+	 */
 	public IEditorPart getActiveEditor() {
 		return target;
+	}
+	
+	/**
+	 * Returns the action bars.
+	 */
+	public IActionBars getActionBars() {
+		return bars;
 	}
 
 }

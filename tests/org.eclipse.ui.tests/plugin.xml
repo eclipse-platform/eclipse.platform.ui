@@ -52,8 +52,8 @@
        icon="icons\view.gif"
 	   class="org.eclipse.ui.tests.api.SessionView"/>
 	<view
-       id="org.eclipse.ui.tests.api.ActionExtensionTestView"
-	   name="Action Extension Test View"
+       id="org.eclipse.ui.tests.api.IViewActionDelegateTest"
+	   name="IViewActionDelegateTest View"
        icon="icons\view.gif"
 	   class="org.eclipse.ui.tests.api.MockViewPart"/>
 	<view
@@ -89,6 +89,13 @@
       class="org.eclipse.ui.tests.api.MockEditorPart"
       contributorClass="org.eclipse.ui.tests.api.MockEditorActionBarContributor">
     </editor>
+    <editor id ="org.eclipse.ui.tests.api.IEditorActionDelegateTest"
+      name="IEditorActionDelegateTest"
+      extensions="mock3"
+      icon="icons\mockeditorpart2.gif"
+      class="org.eclipse.ui.tests.api.MockEditorPart"
+      contributorClass="org.eclipse.ui.tests.api.MockEditorActionBarContributor">
+    </editor>
 </extension>
 
 <extension point = "org.eclipse.ui.actionSets"> 
@@ -104,14 +111,26 @@
 
 <extension point="org.eclipse.ui.viewActions"> 
 	<viewContribution 
-		id="org.eclipse.ui.tests.api.viewAction.1" 
-  		targetID="org.eclipse.ui.tests.api.ActionExtensionTestView"> 
-		<action id="com.xyz.runXYZ" 
+		id="va1" 
+  		targetID="org.eclipse.ui.tests.api.IViewActionDelegateTest"> 
+		<action id="a1" 
               label="Mock Action" 
               menubarPath="additions" 
               class="org.eclipse.ui.tests.api.MockViewActionDelegate"> 
 		</action> 
 	</viewContribution> 
+</extension> 
+
+<extension point="org.eclipse.ui.editorActions">
+	<editorContribution 
+		id="ea1" 
+  		targetID="org.eclipse.ui.tests.api.IEditorActionDelegateTest"> 
+		<action id="a1" 
+              label="Mock Action" 
+              menubarPath="additions" 
+              class="org.eclipse.ui.tests.api.MockEditorActionDelegate"> 
+		</action> 
+	</editorContribution> 
 </extension> 
 
 <extension point="org.eclipse.ui.popupMenus"> 

@@ -15,7 +15,9 @@ public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
 	}
 
 	public void testInit() throws Throwable {
-		// From Javadoc: "Initializes this action delegate"
+		// When an action delegate is run the
+		// init, selectionChanged, and run methods should
+		// be called, in that order.
 		
 		// Run the action.
 		testRun();
@@ -28,7 +30,8 @@ public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
 	}
 	
 	public void testDispose() throws Throwable {
-		// From Javadoc: "Disposes this action delegate."
+		// When an action delegate is removed from the window
+		// the dispose method should be called.
 		
 		// Run the action.
 		testRun();
@@ -48,15 +51,9 @@ public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
 	/**
 	 * @see IActionDelegateTest#runAction()
 	 */
-	protected void runAction() throws Throwable {
-		ActionUtil.runActionWithLabel(this, fWindow, "Mock Action");
-	}
-
-	/**
-	 * @see IActionDelegateTest#addAction()
-	 */
-	protected void addAction() throws Throwable {
+	protected void addAndRunAction() throws Throwable {
 		fPage.showActionSet("org.eclipse.ui.tests.api.MockActionSet");
+		ActionUtil.runActionWithLabel(this, fWindow, "Mock Action");
 	}
 
 	/**
@@ -73,16 +70,5 @@ public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
 		MockViewPart view = (MockViewPart)fPage.showView(MockViewPart.ID);
 		view.fireSelection();
 	}
-
-	/**
-	 * @see IActionDelegateTest#getDelegate()
-	 */
-	protected MockActionDelegate getDelegate() throws Throwable {
-		MockWorkbenchWindowActionDelegate delegate = 
-			MockWorkbenchWindowActionDelegate.lastDelegate;
-		assertNotNull(delegate);
-		return delegate;
-	}
-
 }
 

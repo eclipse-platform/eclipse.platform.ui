@@ -9,14 +9,11 @@ import org.eclipse.ui.IViewPart;
 public class MockViewActionDelegate extends MockActionDelegate 
 	implements IViewActionDelegate
 {
-	public static MockViewActionDelegate lastDelegate;
-
 	/**
 	 * Constructor for MockWorkbenchWindowActionDelegate
 	 */
 	public MockViewActionDelegate() {
 		super();
-		lastDelegate = this;
 	}
 
 	/**
