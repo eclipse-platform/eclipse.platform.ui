@@ -75,7 +75,6 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 
 	private static final String SLEEPING_JOB = "sleeping.gif"; //$NON-NLS-1$
 	private static final String WAITING_JOB = "waiting.gif"; //$NON-NLS-1$
-	private static final String RUNNING_JOB = "runstate.gif"; //$NON-NLS-1$
 	private static final String ERROR_JOB = "errorstate.gif"; //$NON-NLS-1$
 	private static final String BLOCKED_JOB = "lockedstate.gif"; //$NON-NLS-1$
 
@@ -87,7 +86,6 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 
 	private static final String SLEEPING_JOB_KEY = "SLEEPING_JOB"; //$NON-NLS-1$
 	private static final String WAITING_JOB_KEY = "WAITING_JOB"; //$NON-NLS-1$
-	private static final String RUNNING_JOB_KEY = "RUNNING_JOB"; //$NON-NLS-1$
 	private static final String ERROR_JOB_KEY = "ERROR_JOB"; //$NON-NLS-1$
 	private static final String BLOCKED_JOB_KEY = "LOCKED_JOB"; //$NON-NLS-1$
 
@@ -253,7 +251,6 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 			setUpImage(iconsRoot, PROGRESS_80, PROGRESS_80_KEY);
 			setUpImage(iconsRoot, PROGRESS_100, PROGRESS_100_KEY);
 
-			setUpImage(iconsRoot, RUNNING_JOB, RUNNING_JOB_KEY);
 			setUpImage(iconsRoot, SLEEPING_JOB, SLEEPING_JOB_KEY);
 			setUpImage(iconsRoot, WAITING_JOB, WAITING_JOB_KEY);
 			setUpImage(iconsRoot, ERROR_JOB, ERROR_JOB_KEY);
@@ -717,7 +714,9 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 					return JFaceResources.getImage(SLEEPING_JOB_KEY);
 				if (state == Job.WAITING)
 					return JFaceResources.getImage(WAITING_JOB_KEY);
-				return JFaceResources.getImage(RUNNING_JOB_KEY);
+				
+				//By default return the 0 progress image
+				return JFaceResources.getImage(keys[0]);
 			}
 		}
 		return null;
