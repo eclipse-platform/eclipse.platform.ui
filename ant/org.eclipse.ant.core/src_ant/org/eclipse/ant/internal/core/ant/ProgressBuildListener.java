@@ -135,6 +135,13 @@ public class ProgressBuildListener implements BuildListener {
 	public void buildFinished(BuildEvent event) {
 		ProjectMonitors monitors = (ProjectMonitors) projects.get(mainProject);
 		monitors.getMainMonitor().done();
+		Set keys= projects.keySet();
+		Iterator itr= keys.iterator();
+		while (itr.hasNext()) {
+			Project project = (Project) itr.next();
+			project.removeBuildListener(this);
+			project.getReferences().remove(AntCorePlugin.ECLIPSE_PROGRESS_MONITOR);
+		}
 	}
 
 	/**
