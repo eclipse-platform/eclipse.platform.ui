@@ -106,7 +106,7 @@ public interface ICommand extends Comparable {
 	 * 
 	 * @return
 	 */	
-	// TODO: remove: boolean isActive();
+	boolean isActive();
 
 	/**
 	 * JAVADOC

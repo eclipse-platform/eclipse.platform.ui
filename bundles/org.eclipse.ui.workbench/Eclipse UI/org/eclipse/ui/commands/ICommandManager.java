@@ -41,7 +41,7 @@ public interface ICommandManager {
 	 *
 	 * @return
 	 */
-	// TODO: remove, keybindings should not distinguish between inactive and active commands: SortedSet getActiveCommandIds();
+	SortedSet getActiveCommandIds();
 
 	/**
 	 * JAVADOC
