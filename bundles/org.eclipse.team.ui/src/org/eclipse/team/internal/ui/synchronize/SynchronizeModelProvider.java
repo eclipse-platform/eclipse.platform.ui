@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
@@ -45,8 +47,9 @@ import org.eclipse.ui.progress.WorkbenchJob;
  */
 public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeListener, ISynchronizeModelProvider, IResourceChangeListener {
 
-	// Flasg to indicate if tree control should be updated while
-	// building the model.
+	private static boolean DEBUG = false;
+	
+	// Flags to indicate if tree control should be updated while building the model.
 	private boolean refreshViewer;
 	
 	protected Map resourceMap = Collections.synchronizedMap(new HashMap());
@@ -207,25 +210,27 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	}
 
 	public void syncInfoChanged(final ISyncInfoSetChangeEvent event, IProgressMonitor monitor) {
-		if (! (event instanceof ISyncInfoTreeChangeEvent)) {
-			reset();
-		} else {
-			final Control ctrl = getViewer().getControl();
-			if (ctrl != null && !ctrl.isDisposed()) {
-				ctrl.getDisplay().syncExec(new Runnable() {
-					public void run() {
-						if (!ctrl.isDisposed()) {
-							BusyIndicator.showWhile(ctrl.getDisplay(), new Runnable() {
-								public void run() {
-									handleChanges((ISyncInfoTreeChangeEvent)event);
-									ISynchronizeModelElement root = getModelRoot();
-									if(root instanceof SynchronizeModelElement)
-										((SynchronizeModelElement)root).fireChanges();
-								}
-							});
+		synchronized(this) {
+			if (! (event instanceof ISyncInfoTreeChangeEvent)) {
+				reset();
+			} else {
+				final Control ctrl = getViewer().getControl();
+				if (ctrl != null && !ctrl.isDisposed()) {
+					ctrl.getDisplay().syncExec(new Runnable() {
+						public void run() {
+							if (!ctrl.isDisposed()) {
+								BusyIndicator.showWhile(ctrl.getDisplay(), new Runnable() {
+									public void run() {
+										handleChanges((ISyncInfoTreeChangeEvent)event);
+										ISynchronizeModelElement root = getModelRoot();
+										if(root instanceof SynchronizeModelElement)
+											((SynchronizeModelElement)root).fireChanges();
+									}
+								});
+							}
 						}
-					}
-				});
+					});
+				}
 			}
 		}
 	}
@@ -543,34 +548,48 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */
 	public void resourceChanged(final IResourceChangeEvent event) {
-		final Control ctrl = getViewer().getControl();
-		if (ctrl != null && !ctrl.isDisposed()) {
-			ctrl.getDisplay().syncExec(new Runnable() {
-				public void run() {
-					if (!ctrl.isDisposed()) {
-						BusyIndicator.showWhile(ctrl.getDisplay(), new Runnable() {
-							public void run() {
-								String[] markerTypes = getMarkerTypes();
-								boolean refreshNeeded = false;
-								for (int idx = 0; idx < markerTypes.length; idx++) {
-									IMarkerDelta[] markerDeltas = event.findMarkerDeltas(null, true);
-									List changes = new ArrayList(markerDeltas.length);
-									for (int i = 0; i < markerDeltas.length; i++) {
-										IMarkerDelta delta = markerDeltas[i];
-										int kind = delta.getKind();
-										ISynchronizeModelElement element = getClosestExistingParent(delta.getResource());
-										if(element != null) {
-											calculateProperties(element, false);
-										}
-									}
-								}
-								firePendingLabelUpdates();
+			String[] markerTypes = getMarkerTypes();
+			boolean refreshNeeded = false;
+			Map changes = new HashMap();
+			long start = System.currentTimeMillis();
+			// Accumulate all distinct resources that have had problem marker
+			// changes
+			for (int idx = 0; idx < markerTypes.length; idx++) {
+				IMarkerDelta[] markerDeltas = event.findMarkerDeltas(null, true);
+					for (int i = 0; i < markerDeltas.length; i++) {
+						IMarkerDelta delta = markerDeltas[i];
+						int kind = delta.getKind();
+						IResource resource = delta.getResource();
+						if(! changes.containsKey(resource)) {								
+							ISynchronizeModelElement element = getClosestExistingParent(delta.getResource());
+							if(element != null) {
+								changes.put(resource, element);
 							}
-						});
+						}
 					}
 				}
-			});
-		}
+				
+			synchronized(this) {
+				// Changes contains all resources with marker changes
+				for (Iterator it = changes.values().iterator(); it.hasNext();) {
+					ISynchronizeModelElement element = (ISynchronizeModelElement) it.next();
+					calculateProperties(element, false);
+				}
+			}
+					
+			if(DEBUG) {
+			long time = System.currentTimeMillis() - start;
+				DateFormat TIME_FORMAT = new SimpleDateFormat("m:ss.SSS"); //$NON-NLS-1$
+				String took = TIME_FORMAT.format(new Date(time));
+				System.out.println(took + " for " + changes.size() + " files");  //$NON-NLS-1$//$NON-NLS-2$
+			}
+				
+			// Fire label changed
+			asyncExec(new Runnable() {
+				public void run() {
+					firePendingLabelUpdates();
+				}
+			});		
 	}
 	
 	protected ISynchronizeModelElement getClosestExistingParent(IResource resource) {
@@ -591,4 +610,17 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	protected String[] getMarkerTypes() {
 		return new String[] {IMarker.PROBLEM};
 	}
+	
+	private void asyncExec(final Runnable r) {
+		final Control ctrl = getViewer().getControl();
+		if (ctrl != null && !ctrl.isDisposed()) {
+			ctrl.getDisplay().syncExec(new Runnable() {
+				public void run() {
+					if (!ctrl.isDisposed()) {
+						BusyIndicator.showWhile(ctrl.getDisplay(), r);
+						}
+					}
+				});
+			}
+		}
 }
