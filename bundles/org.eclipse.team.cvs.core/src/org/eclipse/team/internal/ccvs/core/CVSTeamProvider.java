@@ -65,6 +65,7 @@ import org.eclipse.team.internal.ccvs.core.streams.LFtoCRLFInputStream;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.AddDeleteMoveListener;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.PrepareForReplaceVisitor;
 
@@ -126,6 +127,8 @@ public class CVSTeamProvider extends RepositoryProvider {
 			EclipseSynchronizer.getInstance().flush(getProject(), true, true /*flush deep*/, null);
 		} catch(CVSException e) {
 			throw new CoreException(e.getStatus());
+		} finally {
+			CVSProviderPlugin.broadcastProjectDeconfigured(getProject());
 		}
 	}
 	
@@ -921,6 +924,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 	}
 	
 	public void configureProject() throws CoreException {
+		CVSProviderPlugin.broadcastProjectConfigured(getProject());
 	}
 	/**
 	 * Sets the keyword substitution mode for the specified resources.

@@ -7,6 +7,7 @@ package org.eclipse.team.internal.ccvs.core;
 
 import java.util.EventListener;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 
 /**
@@ -35,5 +36,30 @@ public interface IResourceStateChangeListener extends EventListener{
 	 * resources new team state.]
 	 */
 	public void resourceStateChanged(IResource[] changedResources);
+	
+	/**
+	 * Notifies this listener that the project has just been configured
+	 * to be a CVS project (i.e has the CVS nature).
+	 * <p>
+	 * Note: This method is called by team core; it is not intended to be called 
+	 * directly by clients.
+	 * </p>
+	 *
+	 * @param project The project that has just been configured
+	 */
+	public void projectConfigured(IProject project);
+	
+	/**
+	 * Notifies this listener that the project has just been deconfigured
+	 * and no longer has the CVS nature.
+	 * <p>
+	 * Note: This method is called by team core; it is not intended to be called 
+	 * directly by clients.
+	 * </p>
+	 *
+	 * @param project The project that has just been configured
+	 */
+	public void projectDeconfigured(IProject project);
+	
 }
 

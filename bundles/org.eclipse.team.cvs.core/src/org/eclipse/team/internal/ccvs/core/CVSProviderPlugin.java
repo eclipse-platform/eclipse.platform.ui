@@ -383,6 +383,36 @@ public class CVSProviderPlugin extends Plugin {
 			Platform.run(code);
 		}
 	}
+	
+	protected static void broadcastProjectConfigured(final IProject project) {
+		for(Iterator it=listeners.iterator(); it.hasNext();) {
+			final IResourceStateChangeListener listener = (IResourceStateChangeListener)it.next();
+			ISafeRunnable code = new ISafeRunnable() {
+				public void run() throws Exception {
+					listener.projectConfigured(project);
+				}
+				public void handleException(Throwable e) {
+					// don't log the exception....it is already being logged in Platform#run
+				}
+			};
+			Platform.run(code);
+		}
+	}
+	protected static void broadcastProjectDeconfigured(final IProject project) {
+		for(Iterator it=listeners.iterator(); it.hasNext();) {
+			final IResourceStateChangeListener listener = (IResourceStateChangeListener)it.next();
+			ISafeRunnable code = new ISafeRunnable() {
+				public void run() throws Exception {
+					listener.projectDeconfigured(project);
+				}
+				public void handleException(Throwable e) {
+					// don't log the exception....it is already being logged in Platform#run
+				}
+			};
+			Platform.run(code);
+		}
+	}
+	
 	/**
 	 * Gets the showTasksOnAddAndDelete.
 	 * @return Returns a boolean
