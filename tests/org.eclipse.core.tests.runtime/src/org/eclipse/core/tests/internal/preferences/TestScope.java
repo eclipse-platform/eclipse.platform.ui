@@ -12,8 +12,8 @@ package org.eclipse.core.tests.internal.preferences;
 
 import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.preferences.*;
-import org.osgi.service.prefs.BackingStoreException;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 
 /**
  * @since 3.0
