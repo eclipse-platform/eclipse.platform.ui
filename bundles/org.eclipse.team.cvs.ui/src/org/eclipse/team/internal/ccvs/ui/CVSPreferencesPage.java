@@ -239,7 +239,6 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 			}
 		});
 
-		WorkbenchHelp.setHelp(repositoriesAreBinary, IHelpContextIds.PREF_REPOSITORIES_ARE_BINARY);
 		WorkbenchHelp.setHelp(pruneEmptyDirectoriesField, IHelpContextIds.PREF_PRUNE);
 		WorkbenchHelp.setHelp(compressionLevelCombo, IHelpContextIds.PREF_COMPRESSION);
 		WorkbenchHelp.setHelp(quietnessCombo, IHelpContextIds.PREF_QUIET);

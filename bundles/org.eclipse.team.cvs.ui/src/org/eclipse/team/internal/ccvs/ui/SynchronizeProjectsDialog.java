@@ -106,7 +106,6 @@ public class SynchronizeProjectsDialog extends Dialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		WorkbenchHelp.setHelp(newShell, IHelpContextIds.PROJECT_SELECTION_DIALOG);
 		newShell.setText(Policy.bind("SynchronizeProjectsDialog.title")); //$NON-NLS-1$
 	}
 	/**
