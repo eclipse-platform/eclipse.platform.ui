@@ -176,12 +176,13 @@ public class CheckoutToRemoteFolderOperation extends CheckoutOperation {
 				tag = CVSTag.DEFAULT;
 			}
 			localOptions.add(Update.makeTagOption(tag));
+			localOptions.add(Checkout.makeDirectoryNameOption(resource.getName()));
 			
 			// Perform the checkout
 			IStatus status = new SandboxCheckout().execute(session,
 					Command.NO_GLOBAL_OPTIONS,
 					(LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]),
-					new String[]{resource.getName()},
+					new String[]{resource.getRepositoryRelativePath()},
 					null,
 					Policy.subMonitorFor(pm, 90));
 			if (status.getCode() == CVSStatus.SERVER_ERROR) {
