@@ -51,7 +51,7 @@ class AnnotationBarHoverManager extends AbstractHoverInformationControlManager {
 		fVerticalRuler= ruler;
 		fAnnotationHover= annotationHover;
 		
-		setAnker(ANKER_RIGHT);
+		setAnchor(ANCHOR_RIGHT);
 		setMargins(5, 0);
 	}	
 	

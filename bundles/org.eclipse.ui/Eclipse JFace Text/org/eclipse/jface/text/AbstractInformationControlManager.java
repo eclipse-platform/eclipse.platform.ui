@@ -21,7 +21,11 @@ import org.eclipse.jface.util.Assert;
  * This manager can be installed on and uninstalled from a control, refered to as the subject control, i.e.
  * the one from which the subject of the information to be shown is retrieved. Also a manager can 
  * be enabled or disabled. An installed and enabled manager can be forced to show information in 
- * its information control using <code>showInformation</code>.
+ * its information control using <code>showInformation</code>.  An information control
+ * manager uses an <code>IInformationControlCloser</code> to define the behavior when
+ * a presented information control must be closed. The disposal of the subject and the information
+ * control are internally handled by the information control manager and are not the responsibility
+ * of the information control closer.
  */
 abstract public class AbstractInformationControlManager {
 	
@@ -71,23 +75,23 @@ abstract public class AbstractInformationControlManager {
 	
 	
 	/**
-	 * Constitues entities to enumerate ankers for the layout of the information control.
+	 * Constitues entities to enumerate anchors for the layout of the information control.
 	 */
-	public static final class Anker {
-		private Anker() {
+	public static final class Anchor {
+		private Anchor() {
 		};
 	};
 	
-	private final static Anker[] ANKERS= { new Anker(), new Anker(), new Anker(), new Anker() };
+	private final static Anchor[] ANCHORS= { new Anchor(), new Anchor(), new Anchor(), new Anchor() };
 	
-	/** Anker representing the top of the information area */
-	public final static Anker ANKER_TOP=  ANKERS[0];
-	/** Anker representing the bottom of the information area */
-	public final static Anker ANKER_BOTTOM=  ANKERS[1];
-	/** Anker representing the left side of the information area */
-	public final static Anker ANKER_LEFT=  ANKERS[2];
-	/** Anker representing the right side of the information area */
-	public final static Anker ANKER_RIGHT= ANKERS[3];
+	/** Anchor representing the top of the information area */
+	public final static Anchor ANCHOR_TOP=  ANCHORS[0];
+	/** Anchor representing the bottom of the information area */
+	public final static Anchor ANCHOR_BOTTOM=  ANCHORS[1];
+	/** Anchor representing the left side of the information area */
+	public final static Anchor ANCHOR_LEFT=  ANCHORS[2];
+	/** Anchor representing the right side of the information area */
+	public final static Anchor ANCHOR_RIGHT= ANCHORS[3];
 	
 	
 	
@@ -136,14 +140,14 @@ abstract public class AbstractInformationControlManager {
 	/** Indicates whether the size constraints should be enforced as maximal control size */
 	private boolean fEnforceAsMaximalSize= false;
 	
-	/** The anker for laying out the information control in relation to the subject control */
-	private Anker fAnker= ANKER_BOTTOM;
+	/** The anchor for laying out the information control in relation to the subject control */
+	private Anchor fAnchor= ANCHOR_BOTTOM;
 	
 	/** 
-	 * A list of ankers used to layout the information control if the original anker can not 
+	 * A list of anchors used to layout the information control if the original anchor can not 
 	 * be used because the information control would not fit in the display client area.
 	 */
-	private Anker[] fFallbackAnkers= ANKERS;
+	private Anchor[] fFallbackAnchors= ANCHORS;
 	
 	
 	/**
@@ -157,8 +161,8 @@ abstract public class AbstractInformationControlManager {
 	 * <li> height constraint == 6 characters
 	 * <li> enforce constraints as minimal size == false
 	 * <li> enforece constraints as maximal size == false
-	 * <li> layout anker == ANKER_BOTTOM
-	 * <li> fallback ankers == { ANKER_TOP, ANKER_BOTTOM, ANKER_LEFT, ANKER_RIGHT }
+	 * <li> layout anchor == ANCHOR_BOTTOM
+	 * <li> fallback anchors == { ANCHOR_TOP, ANCHOR_BOTTOM, ANCHOR_LEFT, ANCHOR_RIGHT }
 	 * </ul>
 	 *
 	 * @param creator the information control creator
@@ -224,26 +228,35 @@ abstract public class AbstractInformationControlManager {
 	}
 	
 	/**
-	 * Sets the anker used for laying out the information control relative to the
-	 * subject control. E.g, using <code>ANKER_TOP</code> indicates that the
+	 * Sets the anchor used for laying out the information control relative to the
+	 * subject control. E.g, using <code>ANCHOR_TOP</code> indicates that the
 	 * information control is position above the area for which the information to
 	 * be displayed is valid.
 	 * 
-	 * @param anker the layout anker
+	 * @param anchor the layout anchor
 	 */
-	public void setAnker(Anker anker) {
-		fAnker= anker;
+	public void setAnchor(Anchor anchor) {
+		fAnchor= anchor;
 	}
 	
 	/**
-	 * Sets the sequence of ankers along which the information control is tried to 
+	 * Sets the sequence of anchors along which the information control is tried to 
 	 * be laid out until it is fully visible. This fallback is initiated when the information
 	 * control does not fit into the client area of the subject control's display.
 	 * 
-	 * @param fallbackAnkers the list of ankers to be tried
+	 * @param fallbackAnchors the list of anchors to be tried
 	 */
-	public void setFallbackAnkers(Anker[] fallbackAnkers) {
-		fFallbackAnkers= fallbackAnkers;
+	public void setFallbackAnchors(Anchor[] fallbackAnchors) {
+		fFallbackAnchors= fallbackAnchors;
+	}
+	
+	/**
+	 * Handles the disposal of the subject control. By default, the information control
+	 * is disposed by calling <code>disposeInformationControl</code>. Maybe 
+	 * extended by subclasses.
+	 */
+	protected void handleSubjectControlDisposed() {
+		disposeInformationControl();
 	}
 	
 	/**
@@ -255,8 +268,18 @@ abstract public class AbstractInformationControlManager {
 	 */
 	public void install(Control subjectControl) {
 		fSubjectControl= subjectControl;
+		
+		if (fSubjectControl != null) {
+			fSubjectControl.addDisposeListener(new DisposeListener() {
+				public void widgetDisposed(DisposeEvent e) {
+					handleSubjectControlDisposed();
+				}
+			});
+		}
+		
 		if (fInformationControlCloser != null)
 			fInformationControlCloser.setSubjectControl(subjectControl);
+		
 		setEnabled(true);
 	}
 	
@@ -316,7 +339,8 @@ abstract public class AbstractInformationControlManager {
 	}
 	
 	/**
-	 * Handles the disposal of the information control.
+	 * Handles the disposal of the information control. By default, the information
+	 * control closer is stopped.
 	 */
 	protected void handleInformationControlDisposed() {
 		fInformationControl= null;
@@ -351,29 +375,29 @@ abstract public class AbstractInformationControlManager {
 	
 	/**
 	 * Computes the display location of the information control. The location is computed 
-	 * considering the given subject area, the anker at the subject area, and the
+	 * considering the given subject area, the anchor at the subject area, and the
 	 * size of the information control. This method does not care about whether the information
 	 * control would be completely visible when placed at the result location.
 	 * 
 	 * @param subjectArea the subject area
 	 * @param controlSize the size of the information control
-	 * @param anker the anker at the subject area
+	 * @param anchor the anchor at the subject area
 	 */
-	protected Point computeLocation(Rectangle subjectArea, Point controlSize, Anker anker) {
+	protected Point computeLocation(Rectangle subjectArea, Point controlSize, Anchor anchor) {
 		
 		int xShift= 0;
 		int yShift= 0;
 				
-		if (ANKER_BOTTOM == anker) {
+		if (ANCHOR_BOTTOM == anchor) {
 			xShift= fMarginX;
 			yShift= subjectArea.height + fMarginY;
-		} else if (ANKER_RIGHT == anker) {
+		} else if (ANCHOR_RIGHT == anchor) {
 			xShift= fMarginX + subjectArea.width;
 			yShift= fMarginY;
-		} else if (ANKER_TOP == anker) {
+		} else if (ANCHOR_TOP == anchor) {
 			xShift= fMarginX;
 			yShift= -controlSize.y - fMarginY;
-		} else if (ANKER_LEFT == anker) {
+		} else if (ANCHOR_LEFT == anchor) {
 			xShift= -controlSize.x - fMarginX;
 			yShift= fMarginY;
 		}
@@ -383,8 +407,8 @@ abstract public class AbstractInformationControlManager {
 	
 	/**
 	 * Checks whether a control of the given size at the given location would be completely visible
-	 * in the given display area when laid out by using the given anker. If not, this method tries 
-	 * to shift the control orthogonal to the direction given by the anker to make it visible. If possible
+	 * in the given display area when laid out by using the given anchor. If not, this method tries 
+	 * to shift the control orthogonal to the direction given by the anchor to make it visible. If possible
 	 * it updates the location.<p>
 	 * This method returns <code>true</code> if the potentially updated position results in a
 	 * completely visible control, or <code>false</code> otherwise.
@@ -393,19 +417,19 @@ abstract public class AbstractInformationControlManager {
 	 * @param location the location of the control
 	 * @param size the size of the control
 	 * @param displayArea the display area in which the control should be visible
-	 * @param anker anker for alying out the control
+	 * @param anchor anchor for alying out the control
 	 * @return <code>true</code>if the updated location is useful
 	 */
-	protected boolean updateLocation(Point location, Point size, Rectangle displayArea, Anker anker) {
+	protected boolean updateLocation(Point location, Point size, Rectangle displayArea, Anchor anchor) {
 		
 		int displayLowerRightX= displayArea.x + displayArea.width;
 		int displayLowerRightY= displayArea.y + displayArea.height;
 		int lowerRightX= location.x + size.x;
 		int lowerRightY= location.y + size.y;
 		
-		if (ANKER_BOTTOM == anker || ANKER_TOP == anker) {
+		if (ANCHOR_BOTTOM == anchor || ANCHOR_TOP == anchor) {
 			
-			if (ANKER_BOTTOM == anker) {
+			if (ANCHOR_BOTTOM == anchor) {
 				if (lowerRightY > displayLowerRightY)
 					return false;
 			} else {
@@ -417,9 +441,9 @@ abstract public class AbstractInformationControlManager {
 				location.x= location.x - (lowerRightX - displayLowerRightX);
 			return true;
 			
-		} else if (ANKER_RIGHT == anker || ANKER_LEFT == anker) {
+		} else if (ANCHOR_RIGHT == anchor || ANCHOR_LEFT == anchor) {
 			
-			if (ANKER_RIGHT == anker) {
+			if (ANCHOR_RIGHT == anchor) {
 				if (lowerRightX > displayLowerRightX)
 					return false;
 			} else {
@@ -436,20 +460,20 @@ abstract public class AbstractInformationControlManager {
 	}
 	
 	/**
-	 * Returns the next fallback anker from this manager's list of fallback ankers.
-	 * If no more fallback anker is available <code>null</code> is returned.
+	 * Returns the next fallback anchor from this manager's list of fallback anchors.
+	 * If no more fallback anchor is available <code>null</code> is returned.
 	 * 
-	 * @param anker the current anker
-	 * @return the next fallback anker or <code>null</code> if no more anker is available
+	 * @param anchor the current anchor
+	 * @return the next fallback anchor or <code>null</code> if no more anchor is available
 	 */
-	protected Anker getNextFallbackAnker(Anker anker) {
+	protected Anchor getNextFallbackAnchor(Anchor anchor) {
 		
-		if (anker == null || fFallbackAnkers == null)
+		if (anchor == null || fFallbackAnchors == null)
 			return null;
 			
-		for (int i= 0; i < fFallbackAnkers.length; i++) {
-			if (fFallbackAnkers[i] == anker) 
-				return fFallbackAnkers[i + 1 == fFallbackAnkers.length ? 0 : i + 1];
+		for (int i= 0; i < fFallbackAnchors.length; i++) {
+			if (fFallbackAnchors[i] == anchor) 
+				return fFallbackAnchors[i + 1 == fFallbackAnchors.length ? 0 : i + 1];
 		}
 		
 		return null;
@@ -459,8 +483,8 @@ abstract public class AbstractInformationControlManager {
 	 * Computes the location of the information control depending on the 
 	 * subject area and the size of the information control. This method attempts
 	 * to find a location at which the information control lies completely in the display's
-	 * client area honoring the manager's default anker. If this isn't possible using the
-	 * default anker, the fallback ankers are tried out.
+	 * client area honoring the manager's default anchor. If this isn't possible using the
+	 * default anchor, the fallback anchors are tried out.
 	 * 
 	 * @param subjectArea the information area
 	 * @param controlSize the size of the information control
@@ -471,15 +495,15 @@ abstract public class AbstractInformationControlManager {
 		Rectangle displayBounds= fSubjectControl.getDisplay().getClientArea();
 		
 		Point upperLeft;
-		Anker testAnker= fAnker;		
+		Anchor testAnchor= fAnchor;		
 		do {
 			
-			upperLeft= computeLocation(subjectArea, controlSize, testAnker);			
-			if (updateLocation(upperLeft, controlSize, displayBounds, testAnker))
+			upperLeft= computeLocation(subjectArea, controlSize, testAnchor);			
+			if (updateLocation(upperLeft, controlSize, displayBounds, testAnchor))
 				break;
-			testAnker= getNextFallbackAnker(testAnker);
+			testAnchor= getNextFallbackAnchor(testAnchor);
 			
-		} while (testAnker != fAnker && testAnker != null);
+		} while (testAnchor != fAnchor && testAnchor != null);
 		
 		return upperLeft;
 	}

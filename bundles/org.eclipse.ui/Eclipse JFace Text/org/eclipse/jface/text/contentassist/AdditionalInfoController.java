@@ -46,46 +46,7 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 		}
 	};
 	
-	/**
-	 * Information control closer that closes the information control only
-	 * when it's subject control is disposed.
-	 */
-	private class InfoControlCloser implements IInformationControlCloser {
 		
-		/** The subject control */
-		private Control fSubjectControl;
-		
-		/*
-		 * @see IInformationControlCloser#setSubjectControl(Control)
-		 */
-		public void setSubjectControl(Control control) {
-			fSubjectControl= control;
-		}
-
-		/*
-		 * @see IInformationControlCloser#setInformationControl(IInformationControl)
-		 */
-		public void setInformationControl(IInformationControl control) {
-		}		
-		
-		/*
-		 * @see IInformationControlCloser#start(Rectangle)
-		 */
-		public void start(Rectangle informationArea) {
-			fSubjectControl.addDisposeListener(new DisposeListener() {
-				public void widgetDisposed(DisposeEvent e) {
-					disposeInformationControl();
-				}
-			});
-		}
-		
-		/*
-		 * @see IInformationControlCloser#stop()
-		 */
-		public void stop() {
-		}
-	};
-	
 	private Table fProposalTable;
 	private Thread fThread;
 	private boolean fIsReset= false;
@@ -101,9 +62,8 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 	AdditionalInfoController(IInformationControlCreator creator, int delay) {
 		super(creator);
 		fDelay= delay;
-		setCloser(new InfoControlCloser());
-		setAnker(ANKER_RIGHT);
-		setFallbackAnkers(new Anker[] { ANKER_LEFT, ANKER_BOTTOM, ANKER_RIGHT });
+		setAnchor(ANCHOR_RIGHT);
+		setFallbackAnchors(new Anchor[] { ANCHOR_LEFT, ANCHOR_BOTTOM, ANCHOR_RIGHT });
 		setSizeConstraints(50, 10, true, false);
 	}
 	
@@ -139,7 +99,7 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 			fThread= null;
 		}
 		
-		if (fProposalTable != null) {
+		if (fProposalTable != null && !fProposalTable.isDisposed()) {
 			fProposalTable.removeSelectionListener(fSelectionListener);
 			fProposalTable= null;
 		}

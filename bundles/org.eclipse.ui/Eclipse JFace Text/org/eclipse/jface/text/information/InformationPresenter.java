@@ -49,7 +49,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	 * and closes the information control when necessary.
 	 */
 	class Closer implements IInformationControlCloser, ControlListener, MouseListener, 
-							FocusListener, DisposeListener, IViewportListener, KeyListener {
+							FocusListener, IViewportListener, KeyListener {
 		
 		/** The subject control */
 		private Control fSubjectControl;
@@ -79,7 +79,6 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 				fSubjectControl.addMouseListener(this);
 				fSubjectControl.addFocusListener(this);
 				fSubjectControl.addKeyListener(this);
-				fSubjectControl.addDisposeListener(this);
 			}
 			
 			fTextViewer.addViewportListener(this);			
@@ -97,7 +96,6 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 				fSubjectControl.removeMouseListener(this);
 				fSubjectControl.removeFocusListener(this);
 				fSubjectControl.removeKeyListener(this);
-				fSubjectControl.removeDisposeListener(this);
 			}
 			
 			fTextViewer.removeViewportListener(this);			
@@ -154,13 +152,6 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 						stop();
 				}
 			});
-		}
-		
-		/*
-		 * @see DisposeListener#widgetDisposed(DisposeEvent)
-		 */
-		public void widgetDisposed(DisposeEvent e) {
-			stop();
 		}
 		
 		/*
