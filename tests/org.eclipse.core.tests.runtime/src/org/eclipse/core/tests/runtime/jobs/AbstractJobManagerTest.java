@@ -52,6 +52,7 @@ public class AbstractJobManagerTest extends TestCase {
 			try {
 				output.write("\t".getBytes());
 			} catch (IOException e) {
+				//ignore
 			}
 	}
 
