@@ -23,7 +23,8 @@ import org.eclipse.jface.text.source.IAnnotationModel;
  * access to the document or the annotation model of the editor. Since an editor might use 
  * multiple documents and/or annotation models, the match is passed in when asking the editor. 
  * The editor is then expected to return the proper annotation model or document for the given 
- * match.
+ * match.</p>
+ * <p>
  * This interface is intended to be implemented by clients.
  * </p>
  * @since 3.0
@@ -31,13 +32,13 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 public interface ISearchEditorAccess {
 	/**
 	 * Finds the document displaying the match.
-	 * @param match
+	 * @param match the match
 	 * @return the document displaying the given match.
 	 */
 	IDocument getDocument(Match match);
 	/**
 	 * Finds the annotation model for the given match
-	 * @param match
+	 * @param match the match
 	 * @return the annotation model displaying the given match.
 	 */
 	IAnnotationModel getAnnotationModel(Match match);
