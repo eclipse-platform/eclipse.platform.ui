@@ -46,7 +46,7 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSys
  * Method:    internalCopyAttributes
  * Signature: ([B[BZ)Z
  */
-JNIEXPORT jboolean JNICALL Java_org_eclipse_ant_core_EclipseProject_internalCopyAttributes
+JNIEXPORT jboolean JNICALL Java_org_eclipse_ant_core_EclipseFileUtils_internalCopyAttributes
    (JNIEnv *, jclass, jbyteArray, jbyteArray, jboolean);
 
 #ifdef __cplusplus

@@ -42,7 +42,7 @@ public abstract class CoreFileSystemLibrary {
 	// The name convention is to get the plugin version at the time
 	// the library is changed. Remember that ant.core uses the same
 	// library.
-	private static final String LIBRARY_NAME = "core_2_0_1";
+	private static final String LIBRARY_NAME = "core_2_0_5";
 	private static boolean hasNatives = false;
 	
 	static {
