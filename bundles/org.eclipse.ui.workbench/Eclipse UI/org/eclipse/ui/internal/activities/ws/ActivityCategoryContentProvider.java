@@ -76,8 +76,10 @@ public class ActivityCategoryContentProvider implements ITreeContentProvider {
 			ArrayList categories = new ArrayList(categoryIds.size());
 			for (Iterator i = categoryIds.iterator(); i.hasNext();) {
 				String categoryId = (String) i.next();
-				categories.add(manager.getCategory(categoryId));
-			}
+                ICategory category = manager.getCategory(categoryId);
+				if (getCategoryActivities(category).length > 0)
+                	categories.add(category); 
+            }
 			return categories.toArray();
 		} else if (parentElement instanceof ICategory) {
 			return getCategoryActivities((ICategory) parentElement);
