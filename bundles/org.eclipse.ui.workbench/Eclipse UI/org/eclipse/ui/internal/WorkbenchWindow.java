@@ -1032,8 +1032,12 @@ public class WorkbenchWindow extends ApplicationWindow implements
      */
     void firePerspectiveChanged(IWorkbenchPage page,
             IPerspectiveDescriptor perspective, String changeId) {
-        perspectiveListeners.firePerspectiveChanged(page, perspective,
+        // Some callers call this even when there is no active perspective.
+        // Just ignore this case.
+        if (perspective != null) {
+            perspectiveListeners.firePerspectiveChanged(page, perspective,
                     changeId);
+        }
     }
 
     /**
@@ -1042,8 +1046,12 @@ public class WorkbenchWindow extends ApplicationWindow implements
     void firePerspectiveChanged(IWorkbenchPage page,
             IPerspectiveDescriptor perspective,
             IWorkbenchPartReference partRef, String changeId) {
-    	perspectiveListeners.firePerspectiveChanged(page, perspective,
+        // Some callers call this even when there is no active perspective.
+        // Just ignore this case.
+        if (perspective != null) {
+            perspectiveListeners.firePerspectiveChanged(page, perspective,
                     partRef, changeId);
+        }
     }
 
     /**

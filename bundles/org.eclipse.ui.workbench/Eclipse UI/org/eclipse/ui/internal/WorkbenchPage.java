@@ -971,6 +971,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * See IWorkbenchPage
      */
     public boolean closeEditors(IEditorReference[] editorRefs, boolean save) {
+        if (editorRefs.length == 0) {
+            return true;
+        }
         if (save) {
             // Intersect the dirty editors with the editors that are closing
             IEditorPart[] dirty = getDirtyEditors();
