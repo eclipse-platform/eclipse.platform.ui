@@ -459,12 +459,4 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 		});
 		return result[0];
 	}
-
-	/*	
-	 * HACK until Compare fixes dirtyness PR#14378
-	 */
-	public void saveChanges(IProgressMonitor monitor) throws CoreException {
-		super.saveChanges(monitor);
-		setDirty(false);
-	}
 }
