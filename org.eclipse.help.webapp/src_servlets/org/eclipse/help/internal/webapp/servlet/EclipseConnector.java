@@ -61,8 +61,7 @@ public class EclipseConnector {
 					|| !UrlUtil.isLocalRequest(req)) {
 					return;
 				}
-			}
-			if (!url.startsWith("help:"))
+			} else
 				url = "help:" + url;
 
 			URLConnection con = openConnection(url, req);
