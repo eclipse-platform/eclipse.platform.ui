@@ -92,7 +92,7 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 			
 			event.getDelta().accept(new IResourceDeltaVisitor() {
 
-				public boolean visit(IResourceDelta delta) throws CoreException {
+				public boolean visit(IResourceDelta delta) {
 					IResource resource = delta.getResource();
 					
 					if(resource.getType()==IResource.ROOT) {
@@ -127,7 +127,7 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 					}
 					
 					if(isMetaFile(resource)) {
-						IResource[] toBeNotified = handleChangedMetaFile(resource, kind);
+						IResource[] toBeNotified = handleChangedMetaFile(resource);
 						if(toBeNotified.length>0 && isModifiedBy3rdParty(resource)) {
 							for (int i = 0; i < toBeNotified.length; i++) {
 								changedContainers.add(toBeNotified[i]);							
@@ -137,7 +137,7 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 							}
 							return false; /*don't visit any children we have all the information we need*/
 						}
-					} else if(isIgnoreFile(resource)) {
+					} else if(isIgnoreFile(resource) && isModifiedBy3rdParty(resource)) {
 						deferredHandler.ignoreFileChanged((IFile)resource);
 					} else if (isExternalDeletion(resource, kind)) {
 						externalDeletions.add(resource);
@@ -245,21 +245,8 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 	 * may have their CVS sync state changed. If the 'folder' is deleted than no notification is
 	 * required.
 	 */
-	protected IContainer[] handleChangedMetaFile(IResource resource, int kind) {		
+	protected IContainer[] handleChangedMetaFile(IResource resource) {		
 		IContainer changedContainer = resource.getParent().getParent();
-		if(changedContainer.exists()) {
-			return new IContainer[] {changedContainer};
-		} else {
-			return new IContainer[0];
-		}
-	}
-
-	/*
-	 * This is an ignore file (e.g. folder/.cvsignore), notify that 'folder' and it's immediate children 
-	 *  may have their CVS sync state changed.
-	 */
-	protected IContainer[] handleChangedIgnoreFile(IResource resource, int kind) {
-		IContainer changedContainer = resource.getParent();
 		if(changedContainer.exists()) {
 			return new IContainer[] {changedContainer};
 		} else {

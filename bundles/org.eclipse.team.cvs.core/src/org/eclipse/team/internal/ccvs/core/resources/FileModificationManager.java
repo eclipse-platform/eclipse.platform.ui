@@ -45,7 +45,7 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 	
 	private static final QualifiedName UPDATE_TIMESTAMP = new QualifiedName(CVSProviderPlugin.ID, "update-timestamp"); //$NON-NLS-1$
 	
-	private Set modifiedResources = new HashSet();
+	/* private */Set modifiedResources = new HashSet();
 
 	// consider the following changes types and ignore the others (e.g. marker and description changes are ignored)
 	protected int INTERESTING_CHANGES = 	IResourceDelta.CONTENT | 
@@ -127,21 +127,25 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 	 * @see org.eclipse.core.resources.ISaveParticipant#doneSaving(org.eclipse.core.resources.ISaveContext)
 	 */
 	public void doneSaving(ISaveContext context) {
+		// Do nothing
 	}
 	/**
 	 * @see org.eclipse.core.resources.ISaveParticipant#prepareToSave(org.eclipse.core.resources.ISaveContext)
 	 */
-	public void prepareToSave(ISaveContext context) throws CoreException {
+	public void prepareToSave(ISaveContext context) {
+		// Do nothing
 	}
 	/**
 	 * @see org.eclipse.core.resources.ISaveParticipant#rollback(org.eclipse.core.resources.ISaveContext)
 	 */
 	public void rollback(ISaveContext context) {
+		// Do nothing
 	}
 	/**
 	 * @see org.eclipse.core.resources.ISaveParticipant#saving(org.eclipse.core.resources.ISaveContext)
 	 */
-	public void saving(ISaveContext context) throws CoreException {
+	public void saving(ISaveContext context) {
+		// Do nothing
 	}
 
 	
@@ -169,12 +173,14 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 	 * Handle added and changed resources by signaling the change to the corresponding
 	 * CVS resource and recording the change for broadcast to interested listeners.
 	 */
-	private void resourceChanged(IResource resource, boolean addition) throws CoreException {
+	/* private */void resourceChanged(IResource resource, boolean addition) throws CoreException {
 		if (isCleanUpdate(resource)) return;
 		try {
 			EclipseResource cvsResource = (EclipseResource)CVSWorkspaceRoot.getCVSResourceFor(resource);
-			cvsResource.handleModification(addition);
-			modifiedResources.add(resource);
+			if (!cvsResource.isIgnored()) {
+				cvsResource.handleModification(addition);
+				modifiedResources.add(resource);
+			}
 		} catch (CVSException e) {
 			throw e.toCoreException();
 		}
