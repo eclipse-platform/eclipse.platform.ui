@@ -11,6 +11,7 @@
 package org.eclipse.search.internal.ui.text;
 
 import java.util.HashMap;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -22,14 +23,12 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.search.internal.ui.SearchMessages;
-import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
@@ -48,6 +47,8 @@ public class FileSearchPage extends AbstractTextSearchViewPage {
 	private SortAction fCurrentSortAction;
 	private SortAction fSortByNameAction;
 	private SortAction fSortByPathAction;
+	
+	private EditorOpener fEditorOpener= new EditorOpener();
 
 		
 	public FileSearchPage() {
@@ -77,8 +78,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage {
 
 	protected void showMatch(Match match, int offset, int length) throws PartInitException {
 		IFile file= (IFile) match.getElement();
-		IWorkbenchPage page= SearchPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		IEditorPart editor= IDE.openEditor(page, file, false);
+		IEditorPart editor= fEditorOpener.open(match);
 		if (editor instanceof ITextEditor) {
 			ITextEditor textEditor= (ITextEditor) editor;
 			textEditor.selectAndReveal(offset, length);
