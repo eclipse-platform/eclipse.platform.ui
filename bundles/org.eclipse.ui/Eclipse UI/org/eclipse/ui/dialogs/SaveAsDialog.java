@@ -154,6 +154,13 @@ protected void okPressed() {
 	// Get new path.
 	IPath path = resourceGroup.getContainerFullPath().append(resourceGroup.getResource());
 
+	
+	//If the user does not supply a file extension and if the save 
+	//as dialog was provided a default file name append the extension 
+	//of the default filename to the new name
+	if(path.getFileExtension() == null && originalFile != null && originalFile.getFileExtension() != null)
+		path = path.addFileExtension(originalFile.getFileExtension());
+
 	// If the path already exists then confirm overwrite.
 	IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 	if (file.exists()) {
