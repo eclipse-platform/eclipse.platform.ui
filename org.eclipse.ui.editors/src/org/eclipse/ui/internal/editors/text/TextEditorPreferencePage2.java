@@ -147,6 +147,8 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE));
 		
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH));
+
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN));
@@ -279,7 +281,10 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 		GridLayout layout= new GridLayout(); layout.numColumns= 2;
 		appearanceComposite.setLayout(layout);
 
-		String label= TextEditorMessages.getString("TextEditorPreferencePage.printMarginColumn"); //$NON-NLS-1$
+		String label= TextEditorMessages.getString("TextEditorPreferencePage.displayedTabWidth"); //$NON-NLS-1$
+		addTextField(appearanceComposite, label, ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH, 3, 0, true);
+
+		label= TextEditorMessages.getString("TextEditorPreferencePage.printMarginColumn"); //$NON-NLS-1$
 		addTextField(appearanceComposite, label, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 3, 0, true);
 				
 		label= TextEditorMessages.getString("TextEditorPreferencePage.showOverviewRuler"); //$NON-NLS-1$
