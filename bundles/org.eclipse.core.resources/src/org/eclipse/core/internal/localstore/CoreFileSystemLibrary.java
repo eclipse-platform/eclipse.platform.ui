@@ -37,7 +37,7 @@ public abstract class CoreFileSystemLibrary {
 	 * The following masks are used to represent the bits
 	 * returned by the getStat() and internalGetStat() methods.
 	 * The idea is to save JNI calls. So internalGetStat() is a native
-	 * that grabs as many important information as it cans and put in
+	 * that grabs as much important information as it can and puts it in
 	 * a long variable.
 	 * The lower bits represent the last modified timestamp of the
 	 * given file and the higher bits represent some relevant flags.
@@ -54,8 +54,6 @@ public abstract class CoreFileSystemLibrary {
 	private static final long STAT_VALID = 0x4000000000000000l;
 	/** used to extract the last modified timestamp */
 	private static final long STAT_LASTMODIFIED = ~(STAT_RESERVED | STAT_VALID | STAT_FOLDER | STAT_READ_ONLY);
-
-
 
 	static {
 		try {
