@@ -839,12 +839,12 @@ public class EditorManager implements IExtensionChangeHandler {
 				throw new PartInitException(
 						NLS.bind(WorkbenchMessages.EditorManager_siteIncorrect,  desc.getId() ));
             
-            // Sanity-check the editor input
-            IEditorInput actualInput = part.getEditorInput();
-            
-            if (actualInput != input)
-                throw new PartInitException(
-                        NLS.bind(WorkbenchMessages.EditorManager_editorInputIncorrect, input.getName(), actualInput.getName() ));
+//            // Sanity-check the editor input
+//            IEditorInput actualInput = part.getEditorInput();
+//            
+//            if (actualInput != input)
+//                throw new PartInitException(
+//                        NLS.bind(WorkbenchMessages.EditorManager_editorInputIncorrect, input.getName(), actualInput.getName() ));
             
 		} catch (Exception e) {
 			disposeEditorActionBars((EditorActionBars) site.getActionBars());
