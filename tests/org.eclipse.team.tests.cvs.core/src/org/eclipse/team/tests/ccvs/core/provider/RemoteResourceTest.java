@@ -28,6 +28,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
@@ -49,7 +50,7 @@ public class RemoteResourceTest extends EclipseTest {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(RemoteResourceTest.class);
 		return new CVSTestSetup(suite);
-		//return new CVSTestSetup(new RemoteResourceTest("testExists"));
+		//return new CVSTestSetup(new RemoteResourceTest("testBuildRemoteTree"));
 	}
 	
 	protected void assertRemoteMatchesLocal(String message, RemoteFolder remote, IContainer container) throws CVSException, IOException, CoreException {
@@ -293,6 +294,23 @@ public class RemoteResourceTest extends EclipseTest {
 	 		CVSTestSetup.executeRemoteCommand(getRepository(), "rm -rf " + ((ICVSFolder)resource2).getFolderSyncInfo().getRemoteLocation());
 	 		assertTrue( ! resource2.exists(DEFAULT_MONITOR));
 	 	}
+	 }
+	 
+	 /**
+	  * Test building a sync tree using the RemoteFolderTreeBuilder using a remote resource as the
+	  * starting point instead of a local one.
+	  */
+	 public void testBuildRemoteTree() throws TeamException, CoreException, IOException, InterruptedException {
+	 	// Create a project and then delete it locally
+	 	IProject project = createProject("testBuildRemoteTree", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder2/", "folder2/a.txt", "folder2/folder3/", "folder2/folder3/b.txt", "folder2/folder3/c.txt"});
+	 	String name = project.getName();
+	 	project.delete(true, false, DEFAULT_MONITOR);
+	 	// Create a remote resource for the project and build a sync tree from it
+	 	RemoteFolder folder = new RemoteFolder(null, getRepository(), new Path(name), null);
+	 	RemoteFolderTree tree = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)folder.getRepository(), folder, null, DEFAULT_MONITOR);
+		// Reload the project from the repository and ensure that the tree and project are equal.
+		checkoutProject(project, name, null);
+		assertEquals(Path.EMPTY, CVSWorkspaceRoot.getCVSResourceFor(project), tree, false, true);
 	 }
 }
 
