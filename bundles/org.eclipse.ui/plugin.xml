@@ -173,14 +173,29 @@
             id="org.eclipse.ui.edit.text.delete.line">
       </command>
       <command
+            name="%command.cutLine.name"
+            description="%command.cutLine.description"
+            id="org.eclipse.ui.edit.text.cut.line">
+      </command>
+      <command
             name="%command.deleteLineBeginning.name"
             description="%command.deleteLineBeginning.description"
             id="org.eclipse.ui.edit.text.delete.line.to.beginning">
+      </command>
+       <command
+            name="%command.cutLineBeginning.name"
+            description="%command.cutLineBeginning.description"
+            id="org.eclipse.ui.edit.text.cut.line.to.beginning">
       </command>
       <command
             name="%command.deleteLineEnd.name"
             description="%command.deleteLineEnd.description"
             id="org.eclipse.ui.edit.text.delete.line.to.end">
+      </command>
+      <command
+            name="%command.cutLineEnd.name"
+            description="%command.cutLineEnd.description"
+            id="org.eclipse.ui.edit.text.cut.line.to.end">
       </command>
       <command
             name="%command.move.name"
@@ -1585,19 +1600,19 @@
       <keyBinding
             string="Alt+0 Ctrl+K"
             scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.ui.edit.text.delete.line.to.beginning"
+            command="org.eclipse.ui.edit.text.cut.line.to.beginning"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Esc 0 Ctrl+K"
             scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.ui.edit.text.delete.line.to.beginning"
+            command="org.eclipse.ui.edit.text.cut.line.to.beginning"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Ctrl+K"
             scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.ui.edit.text.delete.line.to.end"
+            command="org.eclipse.ui.edit.text.cut.line.to.end"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
