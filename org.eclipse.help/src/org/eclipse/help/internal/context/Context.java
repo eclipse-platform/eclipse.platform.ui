@@ -17,7 +17,7 @@ import org.xml.sax.*;
 /**
  * Context object, as defined in the map.xml
  */
-public class Context extends ContextsNode implements IStyledContext {
+public class Context extends ContextsNode implements IContext2 {
 	private String text;
 	protected String pluginID;
 	protected String shortID;
@@ -127,5 +127,11 @@ public class Context extends ContextsNode implements IStyledContext {
 	 */
 	public void setChildren(List children) {
 		this.children = children;
+	}
+	
+	public String getCategory(IHelpResource topic) {
+		// For backward compatibility, all the topics
+		// will continue to belong to the default category
+		return null;
 	}
 }

@@ -13,10 +13,8 @@ package org.eclipse.help.ui.internal.views;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.internal.context.IStyledContext;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -337,8 +335,8 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	 */
 	private String decodeContextBoldTags(IContext context) {
 		String styledText;
-		if (context instanceof IStyledContext) {
-			styledText = ((IStyledContext) context).getStyledText();
+		if (context instanceof IContext2) {
+			styledText = ((IContext2) context).getStyledText();
 		} else {
 			styledText = context.getText();
 		}
