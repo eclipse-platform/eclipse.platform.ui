@@ -129,9 +129,10 @@ public abstract class ResourceVariantTreeSubscriber extends Subscriber {
 			monitor.done();
 		} 
 		if (!errors.isEmpty()) {
+			int numSuccess = resources.length - errors.size();
 			throw new TeamException(new MultiStatus(TeamPlugin.ID, 0, 
 					(IStatus[]) errors.toArray(new IStatus[errors.size()]), 
-					Policy.bind("ResourceVariantTreeSubscriber.1", getName()), null)); //$NON-NLS-1$
+					Policy.bind("ResourceVariantTreeSubscriber.1", new Object[] {getName(), Integer.toString(numSuccess), Integer.toString(resources.length)}), null)); //$NON-NLS-1$
 		}
 	}
 	
