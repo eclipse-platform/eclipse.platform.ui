@@ -71,7 +71,6 @@ public class ViewsPreferencePage
 	int editorAlignment;
 	int viewAlignment;
 
-	private static final String COLOUR_ICONS_TITLE = WorkbenchMessages.getString("ViewsPreference.colorIcons"); //$NON-NLS-1$
 	static final String EDITORS_TITLE = WorkbenchMessages.getString("ViewsPreference.editors"); //$NON-NLS-1$
 	private static final String EDITORS_TOP_TITLE = WorkbenchMessages.getString("ViewsPreference.editors.top"); //$NON-NLS-1$
 	private static final String EDITORS_BOTTOM_TITLE = WorkbenchMessages.getString("ViewsPreference.editors.bottom"); //$NON-NLS-1$
@@ -84,8 +83,6 @@ public class ViewsPreferencePage
 	 */
 
     private Combo themeCombo;
-
-    private Button colorIcons;
 
 	/**
 	 * Create a composite that for creating the tab toggle buttons.
@@ -164,10 +161,6 @@ public class ViewsPreferencePage
 		createShowTextOnPerspectiveBarPref(composite);
 
 		createShowTraditionalStyleTabsPref(composite);
-		
-		createNoteComposite(font, composite, WorkbenchMessages.getString("Preference.note"), WorkbenchMessages.getString("ViewsPreference.applyMessage")); //$NON-NLS-1$ //$NON-NLS-2$
-
-		createColorIconsPref(composite);
 		
 		return composite;
 	}
@@ -325,17 +318,6 @@ public class ViewsPreferencePage
 	}
 	
 	/**
-     * @param composite
-     */
-    private void createColorIconsPref(Composite composite) {
-		colorIcons = new Button(composite, SWT.CHECK);
-		colorIcons.setText(WorkbenchMessages.getString("ViewsPreference.colorIcons")); //$NON-NLS-1$
-		colorIcons.setFont(composite.getFont());
-		colorIcons.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.COLOR_ICONS));
-		setButtonLayoutData(colorIcons);
-    }	
-
-	/**
 	 * Returns preference store that belongs to the our plugin.
 	 *
 	 * @return the preference store for this plugin
@@ -364,7 +346,6 @@ public class ViewsPreferencePage
 
 		showTextOnPerspectiveBar.setSelection(store.getDefaultBoolean(IPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR));
 		showTraditionalStyleTabs.setSelection(store.getDefaultBoolean(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
-		colorIcons.setSelection(store.getDefaultBoolean(IPreferenceConstants.COLOR_ICONS));
 
 		int editorTopValue =
 			store.getDefaultInt(IPreferenceConstants.EDITOR_TAB_POSITION);
@@ -394,7 +375,6 @@ public class ViewsPreferencePage
 
 		store.setValue(IPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR, showTextOnPerspectiveBar.getSelection());
 		store.setValue(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, showTraditionalStyleTabs.getSelection());
-		store.setValue(IPreferenceConstants.COLOR_ICONS, colorIcons.getSelection());		
 		
 		// store the editor tab value to setting
 		store.setValue(
