@@ -4,6 +4,9 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.*;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -13,6 +16,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.pages.UpdateFormPage;
+import org.eclipse.update.internal.ui.preferences.UpdateColors;
 import org.eclipse.update.internal.ui.search.*;
 import org.eclipse.update.internal.ui.views.*;
 import org.eclipse.update.ui.forms.internal.*;
@@ -44,6 +48,13 @@ public class SearchResultSection {
 	public SearchResultSection(UpdateFormPage page) {
 		this.page = page;
 		featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
+		IPreferenceStore pstore = UpdateUIPlugin.getDefault().getPreferenceStore();
+		pstore.addPropertyChangeListener(new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent e) {
+				if (e.getProperty().equals(UpdateColors.P_TOPIC_COLOR))
+					updateHeaderColor();
+			}
+		});
 	}
 
 	public void setSearchString(String text) {
@@ -57,6 +68,10 @@ public class SearchResultSection {
 			text += ": " + searchString;
 		header.setText(text);
 	}
+	
+	private void updateHeaderColor() {
+		header.setForeground(UpdateColors.getTopicColor(header.getDisplay()));
+	}
 
 	public Composite createControl(Composite parent, FormWidgetFactory factory) {
 		HTMLTableLayout layout = new HTMLTableLayout();
@@ -69,7 +84,8 @@ public class SearchResultSection {
 
 		header =
 			factory.createHeadingLabel(parent, UpdateUIPlugin.getResourceString(KEY_TITLE));
-		header.setForeground(factory.getColor(factory.COLOR_COMPOSITE_SEPARATOR));
+		//header.setForeground(factory.getColor(factory.COLOR_COMPOSITE_SEPARATOR));
+		updateHeaderColor();
 		TableData td = new TableData();
 		td.align = TableData.FILL;
 		td.colspan = 2;

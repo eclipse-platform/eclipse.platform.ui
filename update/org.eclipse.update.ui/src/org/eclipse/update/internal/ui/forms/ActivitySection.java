@@ -53,7 +53,8 @@ public class ActivitySection extends UpdateSection {
 	public Composite createClient(Composite parent, FormWidgetFactory factory) {
 		GridLayout layout = new GridLayout();
 		this.factory = factory;
-		header.setForeground(factory.getColor(factory.COLOR_COMPOSITE_SEPARATOR));
+		//header.setForeground(factory.getColor(factory.COLOR_COMPOSITE_SEPARATOR));
+		updateHeaderColor();
 		layout.marginWidth = 0;
 		layout.horizontalSpacing = 10;
 		container = factory.createComposite(parent);

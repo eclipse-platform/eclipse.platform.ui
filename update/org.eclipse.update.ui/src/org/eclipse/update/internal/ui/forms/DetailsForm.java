@@ -25,6 +25,7 @@ import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.pages.UpdateFormPage;
 import org.eclipse.update.internal.ui.parts.SWTUtil;
+import org.eclipse.update.internal.ui.preferences.UpdateColors;
 import org.eclipse.update.internal.ui.search.*;
 import org.eclipse.update.internal.ui.views.DetailsView;
 import org.eclipse.update.internal.ui.wizards.*;
@@ -231,12 +232,16 @@ public class DetailsForm extends PropertyWebForm {
 		super.initialize(modelObject);
 	}
 
-	private void configureSectionHandler(FormWidgetFactory factory) {
+	private void configureSectionHandler(FormWidgetFactory factory, Display display) {
 		sectionHandler.setHyperlinkUnderlineMode(
 			HyperlinkHandler.UNDERLINE_NEVER);
 		sectionHandler.setBackground(factory.getBackgroundColor());
-		sectionHandler.setForeground(
-			factory.getColor(factory.COLOR_COMPOSITE_SEPARATOR));
+		sectionHandler.setForeground(UpdateColors.getTopicColor(display));
+	}
+	
+	protected void updateHeadings() {
+		sectionHandler.setForeground(UpdateColors.getTopicColor(getControl().getDisplay()));
+		super.updateHeadings();
 	}
 
 	public void createContents(Composite container) {
@@ -246,7 +251,7 @@ public class DetailsForm extends PropertyWebForm {
 		layout.rightMargin = 0;
 		GridData gd;
 
-		configureSectionHandler(factory);
+		configureSectionHandler(factory, container.getDisplay());
 
 		GridLayout glayout = new GridLayout();
 		Composite properties = factory.createComposite(container);

@@ -50,7 +50,8 @@ private static final String KEY_DIALOG_MESSAGE="InstallConfigurationPage.RevertS
 	public Composite createClient(Composite parent, FormWidgetFactory factory) {
 		HTMLTableLayout layout = new HTMLTableLayout();
 		this.factory = factory;
-		header.setForeground(factory.getColor(factory.COLOR_COMPOSITE_SEPARATOR));
+		//header.setForeground(factory.getColor(factory.COLOR_COMPOSITE_SEPARATOR));
+		updateHeaderColor();
 		layout.leftMargin = layout.rightMargin = 0;
 		layout.horizontalSpacing = 0;
 		container = factory.createComposite(parent);
