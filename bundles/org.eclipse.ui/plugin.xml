@@ -31,23 +31,23 @@
 <!-- Workbench extension point definitions -->
 
 <extension-point name="%ExtPoint.perspectives" id="perspectives"/>
-<extension-point name="%ExtPoint.PerspectiveExtensions" id="perspectiveExtensions"/>
-<extension-point name="%ExtPoint.PreferencePages" id="preferencePages"/>
-<extension-point name="%ExtPoint.PropertyPages" id="propertyPages"/>
-<extension-point name="%ExtPoint.Editors" id="editors"/>
-<extension-point name="%ExtPoint.Views" id="views"/>
-<extension-point name="%ExtPoint.ActionSets" id="actionSets"/>
-<extension-point name="%ExtPoint.ViewMenus" id="viewActions"/>
-<extension-point name="%ExtPoint.EditorMenus " id="editorActions"/>
-<extension-point name="%ExtPoint.PopupMenus " id="popupMenus"/>
-<extension-point name="%ExtPoint.ImportWizards" id="importWizards"/>
-<extension-point name="%ExtPoint.ExportWizards" id="exportWizards"/>
-<extension-point name="%ExtPoint.ResourceCreationWizards" id="newWizards"/>
-<extension-point name="%ExtPoint.ElementFactories" id="elementFactories"/>
-<extension-point name="%ExtPoint.DropActions" id="dropActions"/>
-<extension-point name="%ExtPoint.ResourceFilters" id="resourceFilters"/>
-<extension-point name="%ExtPoint.MarkerImage" id="markerImageProviders"/>
-<extension-point name="%ExtPoint.ProjectImages " id="projectNatureImages"/>
+<extension-point name="%ExtPoint.perspectiveExtensions" id="perspectiveExtensions"/>
+<extension-point name="%ExtPoint.preferencePages" id="preferencePages"/>
+<extension-point name="%ExtPoint.propertyPages" id="propertyPages"/>
+<extension-point name="%ExtPoint.editors" id="editors"/>
+<extension-point name="%ExtPoint.views" id="views"/>
+<extension-point name="%ExtPoint.actionSets" id="actionSets"/>
+<extension-point name="%ExtPoint.viewMenus" id="viewActions"/>
+<extension-point name="%ExtPoint.editorMenus " id="editorActions"/>
+<extension-point name="%ExtPoint.popupMenus " id="popupMenus"/>
+<extension-point name="%ExtPoint.importWizards" id="importWizards"/>
+<extension-point name="%ExtPoint.exportWizards" id="exportWizards"/>
+<extension-point name="%ExtPoint.newWizards" id="newWizards"/>
+<extension-point name="%ExtPoint.elementFactories" id="elementFactories"/>
+<extension-point name="%ExtPoint.dropActions" id="dropActions"/>
+<extension-point name="%ExtPoint.resourceFilters" id="resourceFilters"/>
+<extension-point name="%ExtPoint.markerImageProviders" id="markerImageProviders"/>
+<extension-point name="%ExtPoint.projectNatureImages " id="projectNatureImages"/>
 
 <!-- Extensions -->
 
@@ -55,7 +55,7 @@
 	point="org.eclipse.ui.perspectives">
 	<perspective
 		id="org.eclipse.ui.resourcePerspective"
-		name="%Perspective.resource"
+		name="%Perspective.resourcePerspective"
 		class="org.eclipse.ui.internal.ResourcePerspective">
 	</perspective>
 </extension>
@@ -64,7 +64,7 @@
 	point="org.eclipse.ui.importWizards">
 	<wizard 
 	   id="org.eclipse.ui.wizards.import.FileSystem"
-	   name="%ImportWizards.fileSystem"
+	   name="%ImportWizards.FileSystem"
 	   class="org.eclipse.ui.wizards.datatransfer.FileSystemImportWizard"
 	   icon="icons/basic/ctool16/importdir_wiz.gif">
 	   <description>Import resources from the local file system</description>
@@ -72,7 +72,7 @@
 	</wizard>
 	<wizard
 	   id="org.eclipse.ui.wizards.import.ZipFile"
-	   name="%ImportWizards.zipFile"
+	   name="%ImportWizards.ZipFile"
 	   class="org.eclipse.ui.wizards.datatransfer.ZipFileImportWizard"
 	   icon="icons/basic/ctool16/importzip_wiz.gif">
 	   <description>Import resources from a Zip or Jar file on the local file system</description>
@@ -84,7 +84,7 @@
 	point="org.eclipse.ui.exportWizards">
 	<wizard
 	   id="org.eclipse.ui.wizards.export.FileSystem"
-	   name="%ExportWizards.fileSystem"
+	   name="%ExportWizards.FileSystem"
 	   class="org.eclipse.ui.wizards.datatransfer.FileSystemExportWizard"
 	   icon="icons/basic/ctool16/exportdir_wiz.gif">
 	   <description>Export resources to the local file system</description>
@@ -92,7 +92,7 @@
 	</wizard>
 	<wizard
 	   id="org.eclipse.ui.wizards.export.ZipFile"
-	   name="%ExportWizards.zipFile"
+	   name="%ExportWizards.ZipFile"
 	   class="org.eclipse.ui.wizards.datatransfer.ZipFileExportWizard"
 	   icon="icons/basic/ctool16/exportzip_wiz.gif">
 	   <description>Export resources to a Zip file on the local file system</description>
@@ -104,39 +104,39 @@
 	point="org.eclipse.ui.views">
 	<category 
 	   id="org.eclipse.ui"
-	   name="%Views.Category.basic">
+	   name="%Views.Category.Basic">
 	</category>
 	<view
        id="org.eclipse.ui.views.ResourceNavigator"
-	   name="%Views.navigator"
+	   name="%Views.ResourceNavigator"
 	   category="org.eclipse.ui"
 	   class="org.eclipse.ui.views.navigator.ResourceNavigator"
 	   icon="icons/basic/cview16/filenav_nav.gif">
 	</view>
 	<view
        id="org.eclipse.ui.views.BookmarkNavigator"
-	   name="%Views.bookmarks"
+	   name="%Views.BookmarkNavigator"
 	   category="org.eclipse.ui"
 	   class="org.eclipse.ui.views.bookmarkexplorer.BookmarkNavigator"
 	   icon="icons/basic/cview16/bkmrk_nav.gif">
 	</view>
 	<view
        id="org.eclipse.ui.views.PropertySheet"
-	   name="%Views.properties"
+	   name="%Views.PropertySheet"
 	   category="org.eclipse.ui"
 	   class="org.eclipse.ui.views.properties.PropertySheet"
 	   icon="icons/basic/cview16/prop_ps.gif">
 	</view>
 	<view
 	   id="org.eclipse.ui.views.ContentOutline"
-	   name="%Views.outline"
+	   name="%Views.ContentOutline"
 	   category="org.eclipse.ui"
 	   class="org.eclipse.ui.views.contentoutline.ContentOutline"
 	   icon="icons/basic/cview16/outline_co.gif">
 	</view>
 	<view
 	   id="org.eclipse.ui.views.TaskList"
-	   name="%Views.tasks"
+	   name="%Views.TaskList"
 	   category="org.eclipse.ui"
 	   class="org.eclipse.ui.views.tasklist.TaskList"
 	   icon="icons/basic/cview16/tasks_tsk.gif">
@@ -161,7 +161,7 @@
 	point="org.eclipse.ui.newWizards">
 	<category
 	   id="org.eclipse.ui.Basic"
-	   name="%NewWizards.Category.simple">
+	   name="%NewWizards.Category.Basic">
 	</category>
 	<wizard 
 	   id="org.eclipse.ui.wizards.new.project"
@@ -197,28 +197,28 @@
 <extension 
 	point="org.eclipse.ui.preferencePages">
    	<page id="org.eclipse.ui.preferencePages.Workbench"
-              name="%PreferencePages.workbench"
-              class="org.eclipse.ui.internal.dialogs.WorkbenchPreferencePage">
+          name="%PreferencePages.Workbench"
+          class="org.eclipse.ui.internal.dialogs.WorkbenchPreferencePage">
    	</page>
-   	<page name="%PreferencePages.fileEditors"
-              id="org.eclipse.ui.preferencePages.FileEditors"
+   	<page id="org.eclipse.ui.preferencePages.FileEditors"
+   	      name="%PreferencePages.FileEditors"
 	      class="org.eclipse.ui.internal.dialogs.FileEditorsPreferencePage"
 	      category="org.eclipse.ui.preferencePages.Workbench">
    	</page>
 	<page id="org.eclipse.ui.preferencePages.FileStates"
-	      class="org.eclipse.ui.internal.dialogs.FileStatesPage"
-            name="%PreferencePages.localHistory"
-		category="org.eclipse.ui.preferencePages.Workbench">
+	      name="%PreferencePages.FileStates"
+	      class="org.eclipse.ui.internal.dialogs.FileStatesPage"            
+	      category="org.eclipse.ui.preferencePages.Workbench">
        </page>
 	<page id="org.eclipse.ui.preferencePages.Perspectives"
+	      name="%PreferencePages.Perspectives"
 	      class="org.eclipse.ui.internal.dialogs.PerspectivesPreferencePage"
-            name="%PreferencePages.perspectives"
-		category="org.eclipse.ui.preferencePages.Workbench">
+          category="org.eclipse.ui.preferencePages.Workbench">
        </page>
 	<page id="org.eclipse.ui.preferencePages.Views"
+	      name="%PreferencePages.Views"
 	      class="org.eclipse.ui.internal.dialogs.ViewsPreferencePage"
-            name="%PreferencePages.appearance"
-		category="org.eclipse.ui.preferencePages.Workbench">
+       	  category="org.eclipse.ui.preferencePages.Workbench">
        </page>
 
 </extension>
@@ -226,37 +226,37 @@
 <extension 
 	point="org.eclipse.ui.preferencePages">
    	<page id="org.eclipse.ui.preferencePages.BuildOrder"
-              name="%PreferencePages.buildOrder"
+              name="%PreferencePages.BuildOrder"
               class="org.eclipse.ui.internal.dialogs.BuildOrderPreferencePage">
    	</page>
 </extension>
 
 <extension
 	point="org.eclipse.ui.propertyPages">
-   	<page name="%PropertyPages.projectReferences"
-  	   id="org.eclipse.ui.propertypages.project.reference"
-           objectClass="org.eclipse.core.resources.IProject"
-           class="org.eclipse.ui.internal.dialogs.ProjectReferencePage">
+   	<page id="org.eclipse.ui.propertypages.project.reference"
+   	      name="%PropertyPages.project.reference"
+          objectClass="org.eclipse.core.resources.IProject"
+          class="org.eclipse.ui.internal.dialogs.ProjectReferencePage">
    	</page>
-   	<page name="%PropertyPages.info"
-  	   id="org.eclipse.ui.propertypages.info.file"
-           objectClass="org.eclipse.core.resources.IResource"
-           class="org.eclipse.ui.internal.dialogs.ResourceInfoPage">
+   	<page id="org.eclipse.ui.propertypages.info.file"
+   	      name="%PropertyPages.info.file"
+          objectClass="org.eclipse.core.resources.IResource"
+          class="org.eclipse.ui.internal.dialogs.ResourceInfoPage">
    	</page>
 </extension>
 
 <extension
     point = "org.eclipse.ui.editors">
     <editor id ="org.eclipse.ui.DefaultTextEditor"
+      name="%Editors.DefaultTextEditor"
       icon="icons/basic/obj16/file_obj.gif"
-      name="%Editors.defaultTextEditor"
       extensions="txt"
       class="org.eclipse.ui.editors.text.TextEditor"
       contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor">     
     </editor>
 
     <editor id="org.eclipse.ui.internal.dialogs.WelcomeEditor"
-      name="%Editors.welcome"
+      name="%Editors.WelcomeEditor"
       icon="icons/basic/obj16/welcome_editor.gif"
       class="org.eclipse.ui.internal.dialogs.WelcomeEditor">
     </editor>
@@ -305,8 +305,8 @@
 <extension 
 	point="org.eclipse.ui.preferencePages">
 	<page id="org.eclipse.ui.preferencePages.TextEditor"
-	      class="org.eclipse.ui.editors.text.TextEditorPreferencePage"
-          name="%PreferencePages.defaultTextEditor"
+	      name="%PreferencePages.TextEditor"
+	      class="org.eclipse.ui.editors.text.TextEditorPreferencePage"          
 	      category="org.eclipse.ui.preferencePages.Workbench">
     	</page>
 </extension>
