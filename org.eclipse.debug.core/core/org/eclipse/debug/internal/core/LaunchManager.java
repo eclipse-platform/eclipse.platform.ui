@@ -35,7 +35,6 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -377,22 +376,22 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				} catch (FileNotFoundException e) {
 					throw new DebugException(
 						new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
-						 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading launch configuration file.", new String[]{e.toString()}), e)
+						 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_while_reading_launch_configuration_file._1"), new String[]{e.toString()}), e) //$NON-NLS-1$
 					);					
 				} catch (SAXException e) {
 					throw new DebugException(
 						new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
-						 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading launch configuration file.", new String[]{e.toString()}), e)
+						 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_while_reading_launch_configuration_file._1"), new String[]{e.toString()}), e) //$NON-NLS-1$
 					);
 				} catch (ParserConfigurationException e) {
 					throw new DebugException(
 						new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
-						 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading launch configuration file.", new String[]{e.toString()}), e)
+						 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_while_reading_launch_configuration_file._1"), new String[]{e.toString()}), e) //$NON-NLS-1$
 					);		
 				} catch (IOException e) {
 					throw new DebugException(
 						new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
-						 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading launch configuration file.", new String[]{e.toString()}), e)
+						 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_while_reading_launch_configuration_file._1"), new String[]{e.toString()}), e) //$NON-NLS-1$
 					);										
 				} finally {
 					if (stream != null) {
@@ -401,7 +400,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 						} catch (IOException e) {
 							throw new DebugException(
 								new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
-								 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading launch configuration file.", new String[]{e.toString()}), e)
+								 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_while_reading_launch_configuration_file._1"), new String[]{e.toString()}), e) //$NON-NLS-1$
 							);																	
 						}
 					}
@@ -411,7 +410,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				throw new DebugException(
 					new Status(
 					 Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-					 DebugException.REQUEST_FAILED, "Launch configuration does not exist.", null
+					 DebugException.REQUEST_FAILED, DebugCoreMessages.getString("LaunchManager.Launch_configuration_does_not_exist._6"), null //$NON-NLS-1$
 					)
 				);
 			}
@@ -546,13 +545,13 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			throw new DebugException(
 				new Status(
 				 Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-				 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred generating launch configuration index.", new String[]{e.toString()}), null
+				 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_generating_launch_configuration_index._7"), new String[]{e.toString()}), null //$NON-NLS-1$
 				)
 			);					
 		}
 		
 		IPath path = project.getPluginWorkingLocation(DebugPlugin.getDefault().getDescriptor());
-		path = path.append(".launchindex");
+		path = path.append(".launchindex"); //$NON-NLS-1$
 		try {
 			File file = path.toFile();
 			if (!file.exists()) {
@@ -565,7 +564,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			throw new DebugException(
 				new Status(
 				 Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-				 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred generating launch configuration index.", new String[]{e.toString()}), null
+				 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_generating_launch_configuration_index._7"), new String[]{e.toString()}), null //$NON-NLS-1$
 				)
 			);				
 		}
@@ -584,7 +583,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		InputStream stream = null;
 		try {
 			IPath path = project.getPluginWorkingLocation(DebugPlugin.getDefault().getDescriptor());
-			path = path.append(".launchindex");
+			path = path.append(".launchindex"); //$NON-NLS-1$
 			File file = path.toFile();
 			if (!file.exists()) {
 				// no index to restore
@@ -600,22 +599,22 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		} catch (FileNotFoundException e) {
 			throw new DebugException(
 				new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
-				 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading launch configuration index.", new String[]{e.toString()}), e)
+				 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_while_reading_launch_configuration_index._11"), new String[]{e.toString()}), e) //$NON-NLS-1$
 			);					
 		} catch (SAXException e) {
 			throw new DebugException(
 				new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
-				 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading launch configuration index.", new String[]{e.toString()}), e)
+				 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_while_reading_launch_configuration_index._11"), new String[]{e.toString()}), e) //$NON-NLS-1$
 			);
 		} catch (ParserConfigurationException e) {
 			throw new DebugException(
 				new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
-				 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading launch configuration index.", new String[]{e.toString()}), e)
+				 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_while_reading_launch_configuration_index._11"), new String[]{e.toString()}), e) //$NON-NLS-1$
 			);		
 		} catch (IOException e) {
 			throw new DebugException(
 				new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
-				 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading launch configuration index.", new String[]{e.toString()}), e)
+				 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_while_reading_launch_configuration_index._11"), new String[]{e.toString()}), e) //$NON-NLS-1$
 			);										
 		} finally {
 			if (stream != null) {
@@ -624,7 +623,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				} catch (IOException e) {
 					throw new DebugException(
 						new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
-						 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading launch configuration index.", new String[]{e.toString()}), e)
+						 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_while_reading_launch_configuration_index._11"), new String[]{e.toString()}), e) //$NON-NLS-1$
 					);																	
 				}
 			}
@@ -668,8 +667,8 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		for (int i = 0; i < configs.length; i++) {
 			ILaunchConfiguration lc = configs[i];
 			String memento = lc.getMemento();
-			Element element = doc.createElement("launchConfiguration");
-			element.setAttribute("memento", memento);
+			Element element = doc.createElement("launchConfiguration"); //$NON-NLS-1$
+			element.setAttribute("memento", memento); //$NON-NLS-1$
 			configRootElement.appendChild(element);
 		}
 
@@ -699,7 +698,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			new DebugException(
 				new Status(
 				 Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-				 DebugException.REQUEST_FAILED, "Invalid launch configuration index.", null
+				 DebugException.REQUEST_FAILED, DebugCoreMessages.getString("Invalid_launch_configuration_index._18"), null //$NON-NLS-1$
 				)
 			);		
 			
@@ -717,10 +716,10 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			if (type == Node.ELEMENT_NODE) {
 				Element entry = (Element) node;
 				String nodeName = entry.getNodeName();
-				if (!nodeName.equals("launchConfiguration")) {
+				if (!nodeName.equals("launchConfiguration")) { //$NON-NLS-1$
 					throw invalidFormat;
 				}
-				String memento = entry.getAttribute("memento");
+				String memento = entry.getAttribute("memento"); //$NON-NLS-1$
 				if (memento == null) {
 					throw invalidFormat;
 				}

@@ -99,14 +99,14 @@ public class LaunchConfigurationType implements ILaunchConfigurationType {
 	 * @see ILaunchConfigurationType#getName()
 	 */
 	public String getName() {
-		return getConfigurationElement().getAttribute("name");
+		return getConfigurationElement().getAttribute("name"); //$NON-NLS-1$
 	}
 
 	/**
 	 * @see ILaunchConfigurationType#getIdentifier()
 	 */
 	public String getIdentifier() {
-		return getConfigurationElement().getAttribute("id");
+		return getConfigurationElement().getAttribute("id"); //$NON-NLS-1$
 	}
 
 	/*
@@ -131,7 +131,7 @@ public class LaunchConfigurationType implements ILaunchConfigurationType {
 	 */
 	protected ILaunchConfigurationDelegate getDelegate() throws CoreException {
 		if (fDelegate == null) {
-			fDelegate = (ILaunchConfigurationDelegate)getConfigurationElement().createExecutableExtension("delegate");
+			fDelegate = (ILaunchConfigurationDelegate)getConfigurationElement().createExecutableExtension("delegate"); //$NON-NLS-1$
 		}
 		return fDelegate;
 	}

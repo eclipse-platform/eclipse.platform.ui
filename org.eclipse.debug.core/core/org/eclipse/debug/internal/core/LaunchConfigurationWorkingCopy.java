@@ -146,7 +146,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 			throw new DebugException(
 				new Status(
 				 Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-				 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred generating launch configuration XML.", new String[]{e.toString()}), null
+				 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationWorkingCopy.{0}_occurred_generating_launch_configuration_XML._1"), new String[]{e.toString()}), null //$NON-NLS-1$
 				)
 			);					
 		}
@@ -174,7 +174,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 				throw new DebugException(
 					new Status(
 					 Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-					 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred generating launch configuration XML.", new String[]{e.toString()}), null
+					 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationWorkingCopy.{0}_occurred_generating_launch_configuration_XML._1"), new String[]{e.toString()}), null //$NON-NLS-1$
 					)
 				);				
 			}
@@ -391,8 +391,8 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 			} else {
 				path = getProject().getLocation();
 			}
-			path = path.append(".launches");
-			path = path.append(getName() + "." + LAUNCH_CONFIGURATION_FILE_EXTENSION);
+			path = path.append(".launches"); //$NON-NLS-1$
+			path = path.append(getName() + "." + LAUNCH_CONFIGURATION_FILE_EXTENSION); //$NON-NLS-1$
 			return path;
 		} else {
 			return getOriginal().getLocation();

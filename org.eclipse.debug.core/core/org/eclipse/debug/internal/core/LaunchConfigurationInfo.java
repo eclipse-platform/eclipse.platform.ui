@@ -88,7 +88,7 @@ public class LaunchConfigurationInfo {
 				throw new DebugException(
 					new Status(
 					 Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-					 DebugException.REQUEST_FAILED, MessageFormat.format("Attribute {0} is not of type java.lang.String.", new String[] {key}), null
+					 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationInfo.Attribute_{0}_is_not_of_type_java.lang.String._1"), new String[] {key}), null //$NON-NLS-1$
 					)
 				);
 			}
@@ -114,7 +114,7 @@ public class LaunchConfigurationInfo {
 				throw new DebugException(
 					new Status(
 					 Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-					 DebugException.REQUEST_FAILED, MessageFormat.format("Attribute {0} is not of type int.", new String[] {key}), null
+					 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationInfo.Attribute_{0}_is_not_of_type_int._2"), new String[] {key}), null //$NON-NLS-1$
 					)
 				);
 			}
@@ -140,7 +140,7 @@ public class LaunchConfigurationInfo {
 				throw new DebugException(
 					new Status(
 					 Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-					 DebugException.REQUEST_FAILED, MessageFormat.format("Attribute {0} is not of type boolean.", new String[] {key}), null
+					 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchConfigurationInfo.Attribute_{0}_is_not_of_type_boolean._3"), new String[] {key}), null //$NON-NLS-1$
 					)
 				);
 			}
@@ -202,7 +202,7 @@ public class LaunchConfigurationInfo {
 		Element configRootElement = doc.createElement("launchConfiguration"); //$NON-NLS-1$
 		doc.appendChild(configRootElement);
 		
-		configRootElement.setAttribute("type", getType().getIdentifier());
+		configRootElement.setAttribute("type", getType().getIdentifier()); //$NON-NLS-1$
 		
 		Iterator keys = getAttributeTable().keySet().iterator();
 		while (keys.hasNext()) {
@@ -212,16 +212,16 @@ public class LaunchConfigurationInfo {
 			String valueString = null;
 			if (value instanceof String) {
 				valueString = (String)value;
-				element = doc.createElement("stringAttribute");
+				element = doc.createElement("stringAttribute"); //$NON-NLS-1$
 			} else if (value instanceof Integer) {
 				valueString = ((Integer)value).toString();
-				element = doc.createElement("intAttribute");
+				element = doc.createElement("intAttribute"); //$NON-NLS-1$
 			} else if (value instanceof Boolean) {
 				valueString = ((Boolean)value).toString();
-				element = doc.createElement("booleanAttribute");
+				element = doc.createElement("booleanAttribute"); //$NON-NLS-1$
 			}
-			element.setAttribute("key", key);
-			element.setAttribute("value", valueString);
+			element.setAttribute("key", key); //$NON-NLS-1$
+			element.setAttribute("value", valueString); //$NON-NLS-1$
 			configRootElement.appendChild(element);
 		}
 
@@ -243,7 +243,7 @@ public class LaunchConfigurationInfo {
 			new DebugException(
 				new Status(
 				 Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-				 DebugException.REQUEST_FAILED, "Invalid launch configuration XML.", null
+				 DebugException.REQUEST_FAILED, DebugCoreMessages.getString("LaunchConfigurationInfo.Invalid_launch_configuration_XML._10"), null //$NON-NLS-1$
 				)
 			);		
 			
@@ -252,7 +252,7 @@ public class LaunchConfigurationInfo {
 		}
 		
 		// read type
-		String id = root.getAttribute("type");
+		String id = root.getAttribute("type"); //$NON-NLS-1$
 		if (id == null) {
 			throw invalidFormat;
 		} else {
@@ -271,11 +271,11 @@ public class LaunchConfigurationInfo {
 			if (type == Node.ELEMENT_NODE) {
 				Element entry = (Element) node;
 				String nodeName = entry.getNodeName();
-				String key = entry.getAttribute("key");
+				String key = entry.getAttribute("key"); //$NON-NLS-1$
 				if (key == null) {
 					throw invalidFormat;
 				}
-				String value = entry.getAttribute("value");
+				String value = entry.getAttribute("value"); //$NON-NLS-1$
 				if (value == null) {
 					throw invalidFormat;
 				}

@@ -57,13 +57,13 @@ public interface IBreakpoint extends IAdaptable {
 	 * Root breakpoint marker type	
 	 * (value <code>"org.eclipse.debug.core.breakpoint"</code>).
 	 */
-	public static final String BREAKPOINT_MARKER = DebugPlugin.PLUGIN_ID + ".breakpointMarker";
+	public static final String BREAKPOINT_MARKER = DebugPlugin.PLUGIN_ID + ".breakpointMarker"; //$NON-NLS-1$
 	
 	/**
 	 * Line breakpoint marker type.
 	 * (value <code>"org.eclipse.debug.core.lineBreakpoint"</code>).
 	 */
-	public static final String LINE_BREAKPOINT_MARKER = DebugPlugin.PLUGIN_ID + ".lineBreakpointMarker";
+	public static final String LINE_BREAKPOINT_MARKER = DebugPlugin.PLUGIN_ID + ".lineBreakpointMarker"; //$NON-NLS-1$
 			
 	/**
 	 * Enabled breakpoint marker attribute (value <code>"enabled"</code>).
@@ -72,7 +72,7 @@ public interface IBreakpoint extends IAdaptable {
 	 *
 	 * @see org.eclipse.core.resources.IMarker#getAttribute(String, boolean)
 	 */
-	public static final String ENABLED= "enabled";
+	public static final String ENABLED= "enabled"; //$NON-NLS-1$
 	
 	/**
 	 * Breakpoint marker attribute (value <code>"id"</code>).
@@ -80,13 +80,13 @@ public interface IBreakpoint extends IAdaptable {
 	 * identifier of the debug model a breakpoint is
 	 * associated with.
 	 */
-	public static final String ID= "id";
+	public static final String ID= "id"; //$NON-NLS-1$
 	
 	/**
 	 * Attribute name for the <code>"markerType"</code> attribute of
 	 * a breakpoint extension.
 	 */
-	public static final String MARKER_TYPE= "markerType";	
+	public static final String MARKER_TYPE= "markerType";	 //$NON-NLS-1$
 
 	/**
 	 * Deletes this breakpoint's underlying marker, and removes

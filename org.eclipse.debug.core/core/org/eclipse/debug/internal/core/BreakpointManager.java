@@ -54,7 +54,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	/**
 	 * String constants corresponding to XML extension keys
 	 */
-	private final static String CLASS = "class";
+	private final static String CLASS = "class"; //$NON-NLS-1$
 
 	/**
 	 * A collection of breakpoint registered with this manager.

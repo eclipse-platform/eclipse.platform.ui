@@ -190,7 +190,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 				if (!(getLocation().toFile().delete())) {
 					throw new DebugException(
 						new Status(Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-						 DebugException.REQUEST_FAILED, "Failed to delete launch configuration.", null)
+						 DebugException.REQUEST_FAILED, DebugCoreMessages.getString("LaunchConfiguration.Failed_to_delete_launch_configuration._1"), null) //$NON-NLS-1$
 					);
 				}
 				// manually update the launch manager cache since there
