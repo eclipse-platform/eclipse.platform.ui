@@ -52,12 +52,7 @@ public ILayoutContainer getContainer() {
  * Get the part control.  This method may return null.
  */
 abstract public Control getControl();
-/**
- * Gets the font for this part.
- */
-public Font getFont() {
-	return JFaceResources.getDefaultFont();
-}
+
 /**
  * Gets the ID for this part.
  */

@@ -316,14 +316,7 @@ static private void removeInstance() {
 	    }
 	}
 }
-	/**
-	 * Sets the widget's font to the given value and forces
-	 * a redraw of the widget.
-	 */
-	public void setFont(Font font) {
-		super.setFont(font);
-		redraw();
-	}
+
 	/**
 	 * Set the SmartLabel's Image.
 	 * The value <code>null</code> clears it.

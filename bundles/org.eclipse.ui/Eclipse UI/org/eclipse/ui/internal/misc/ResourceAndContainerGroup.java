@@ -101,7 +101,6 @@ protected void createContents(Composite parent,String resourceLabelString) {
 
 	Label label = new Label(nameGroup,SWT.NONE);
 	label.setText(resourceLabelString);
-	label.setFont(parent.getFont());
 
 	// resource name entry field
 	resourceNameField = new Text(nameGroup,SWT.BORDER);

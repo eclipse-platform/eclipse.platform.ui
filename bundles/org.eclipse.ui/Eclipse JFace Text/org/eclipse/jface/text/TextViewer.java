@@ -644,7 +644,6 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			}
 		);
 		
-		fTextWidget.setFont(parent.getFont());
 		fTextWidget.setDoubleClickEnabled(false);
 		
 		// where does the first line start

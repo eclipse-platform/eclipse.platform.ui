@@ -116,7 +116,6 @@ protected Control createDialogArea(Composite parent) {
 	GridData data = new GridData();
 	data.horizontalSpan = 2;
 	textLabel.setLayoutData(data);
-	textLabel.setFont(parent.getFont());
 
 	internalButton = new Button(contents, SWT.RADIO | SWT.LEFT);
 	internalButton.setText(WorkbenchMessages.getString("EditorSelection.internal")); //$NON-NLS-1$
@@ -124,7 +123,6 @@ protected Control createDialogArea(Composite parent) {
 	data = new GridData();
 	data.horizontalSpan = 1;
 	internalButton.setLayoutData(data);
-	internalButton.setFont(parent.getFont());
 
 	externalButton = new Button(contents, SWT.RADIO | SWT.LEFT);
 	externalButton.setText(WorkbenchMessages.getString("EditorSelection.external")); //$NON-NLS-1$
@@ -132,7 +130,6 @@ protected Control createDialogArea(Composite parent) {
 	data = new GridData();
 	data.horizontalSpan = 1;
 	externalButton.setLayoutData(data);
-	externalButton.setFont(parent.getFont());
 		
 	editorTable = new Table(contents, SWT.SINGLE | SWT.BORDER);
 	editorTable.addListener(SWT.Selection, this);
@@ -154,7 +151,6 @@ protected Control createDialogArea(Composite parent) {
 	int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 	data.widthHint = Math.max(widthHint, browseExternalEditorsButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	browseExternalEditorsButton.setLayoutData(data);
-	browseExternalEditorsButton.setFont(parent.getFont());
 	
 	restoreWidgetValues();  // Place buttons to the appropriate state
 	

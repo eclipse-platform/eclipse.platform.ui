@@ -344,8 +344,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		String fontKey,
 		FontRegistry registry,
 		IPreferenceStore store) {
+			
 		FontData[] fontData = registry.getFontData(fontKey);
-
 		PreferenceConverter.setDefault(
 			store,
 			fontKey,
