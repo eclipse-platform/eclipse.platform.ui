@@ -91,21 +91,21 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 		IAnnotationModel model= sourceViewer.getAnnotationModel();
 		
 		if (model != null) {
-			Iterator e= model.getAnnotationIterator();
-			while (e.hasNext()) {
-				Annotation a= (Annotation) e.next();
-				Position p= model.getPosition(a);
-				if (p.overlapsWith(hoverRegion.getOffset(), hoverRegion.getLength())) {
-					String msg= a.getText();
-					if (msg != null && msg.trim().length() > 0)
-						return formatMessage(msg);
-				}
+			String message= getAnnotationModelHoverMessage(model, hoverRegion);
+			if (message != null) {
+				return message;
 			}
 		}
 		AntModel antModel= fEditor.getAntModel();
 		if (antModel == null) { //the ant model has not been created yet
 			return null;
 		}
+		
+		return getAntModelHoverMessage(antModel, hoverRegion, textViewer);
+		
+	}
+	
+	private String getAntModelHoverMessage(AntModel antModel, IRegion hoverRegion, ITextViewer textViewer){
 		try {
 			IDocument document= textViewer.getDocument();
 			int offset= hoverRegion.getOffset();
@@ -134,9 +134,26 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 				}
 			}
 		} catch (BadLocationException e) {
-			
 		} catch (BuildException be) {
 			antModel.handleBuildException(be, null);
+		}
+		
+		return null;
+	}
+	
+	private String getAnnotationModelHoverMessage(IAnnotationModel model, IRegion hoverRegion) {
+		Iterator e= model.getAnnotationIterator();
+		while (e.hasNext()) {
+			Annotation a= (Annotation) e.next();
+			if (a instanceof XMLProblemAnnotation) {
+				Position p= model.getPosition(a);
+				if (p.overlapsWith(hoverRegion.getOffset(), hoverRegion.getLength())) {
+					String msg= a.getText();
+					if (msg != null && msg.trim().length() > 0) {
+						return formatMessage(msg);
+					}
+				}
+			}
 		}
 		return null;
 	}
