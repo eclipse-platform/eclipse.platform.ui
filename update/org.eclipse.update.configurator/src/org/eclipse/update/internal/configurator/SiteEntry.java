@@ -542,11 +542,8 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 	}
 	
 	public FeatureEntry[] getFeatureEntries() {
-		// PDE generated config, don't detect anything.
-		if (config != null && config.isTransient())
-			return new FeatureEntry[0];
-		
-		if (featureEntries == null)
+//		if	 PDE generated config, don't detect anything.
+		if (featureEntries == null && (config == null || !config.isTransient()))
 			detectFeatures();
 		return (FeatureEntry[])featureEntries.values().toArray(new FeatureEntry[featureEntries.size()]);
 	}
