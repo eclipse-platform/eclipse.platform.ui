@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.*;
 /**
  * A simple input dialog for soliciting an input string from the user.
  * <p>
- * This concete dialog class can be instantiated as is, or further subclassed as
+ * This concrete dialog class can be instantiated as is, or further subclassed as
  * required.
  * </p>
  */
@@ -215,11 +215,12 @@ public class InputDialog extends Dialog {
 		setErrorMessage(errorMessage);
 	}
 	/**
-	 * Set the errorMessage to errorMessage.If errorMessage is not null then
-	 * disable the OK button.
+	 * Sets or clears the error message.
+	 * If not <code>null</code>, the OK button is disabled.
 	 * 
 	 * @param errorMessage
-	 *            The String with the error or <code>null</code>
+	 *            the error message, or <code>null</code> to clear
+	 * @since 3.0
 	 */
 	public void setErrorMessage(String errorMessage) {
 		errorMessageText.setText(errorMessage == null ? "" : errorMessage); //$NON-NLS-1$
