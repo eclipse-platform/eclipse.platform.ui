@@ -301,4 +301,12 @@ public class ErrorNotificationDialog extends Dialog {
 			}
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#close()
+	 */
+	public boolean close() {
+		getManager().clearAllErrors();
+		return super.close();
+	}
 }
