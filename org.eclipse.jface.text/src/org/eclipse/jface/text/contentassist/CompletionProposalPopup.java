@@ -38,7 +38,9 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITextViewerExtension;
 
 
 
@@ -288,9 +290,19 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private void insertProposal(ICompletionProposal p, char trigger, int stateMask, int offset) {
 			
 		fInserting= true;
+		IRewriteTarget target= null;
 		
 		try {
+			
 			IDocument document= fViewer.getDocument();
+			
+			if (fViewer instanceof ITextViewerExtension) {
+				ITextViewerExtension extension= (ITextViewerExtension) fViewer;
+				target= extension.getRewriteTarget();
+			}
+			
+			if (target != null)
+				target.beginCompoundChange();
 			
 			if (p instanceof ICompletionProposalExtension2) {
 				ICompletionProposalExtension2 e= (ICompletionProposalExtension2) p;
@@ -325,9 +337,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 			}
 		
 		} finally {
+			if (target != null)
+				target.endCompoundChange();
 			fInserting= false;
 		}
-
 	}
 	
 	/**
