@@ -169,7 +169,7 @@ public abstract class AbstractAntEditorPreferencePage extends PreferencePage imp
 		return checkBox;
 	}
 	
-	protected Control addTextField(Composite composite, String labelText, String key, int textLimit, int indentation, String[] errorMessages) {
+	protected Text addTextField(Composite composite, String labelText, String key, int textLimit, int indentation, String[] errorMessages) {
 		Font font= composite.getFont();
 		
 		Label label= new Label(composite, SWT.NONE);
