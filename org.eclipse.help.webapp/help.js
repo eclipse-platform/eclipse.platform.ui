@@ -166,8 +166,11 @@ function saveNavigation()
 			tempActive = NavFrame.toc.oldActive;
 		// on mozilla, we will not preserve selection, the object is no longer valid.
 		// in the future, we could look up the topic, but this should suffice for now
-		if (isMozilla)
+		// Note: need newer mozilla version
+		if (isMozilla){
 			tempActive.className ="";
+			tempActive=null;
+		}
 			
 		if (isIE)
 			temp = NavFrame.toc.document.body.innerHTML;
@@ -176,6 +179,7 @@ function saveNavigation()
 	} else {
 		temp = null;
 	}
+	alert(temp)
 }
 
 function restoreNavigation()
@@ -187,6 +191,7 @@ function restoreNavigation()
 	
 	if (temp){
 		// Restore old navigation
+		alert("load " +temp)
 		if (isIE)
 			NavFrame.toc.document.body.innerHTML = temp;
 		else if (isMozilla)
