@@ -127,11 +127,15 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 				} catch (TeamException e) {
 					continue;
 				}
-				IResource[] roots = p.getResources();
-				Arrays.sort(resources, Utils.resourceComparator);
-				Arrays.sort(roots, Utils.resourceComparator);
-				if (Arrays.equals(resources, roots) && p.getTag().equals(tag)) {
-					return p;
+				CVSTag existingTag = p.getTag();
+				// The tag can be null if the compare participant has a different tag for each root
+				if (existingTag != null) {
+					IResource[] roots = p.getResources();
+					Arrays.sort(resources, Utils.resourceComparator);
+					Arrays.sort(roots, Utils.resourceComparator);
+					if (Arrays.equals(resources, roots) && existingTag.equals(tag)) {
+						return p;
+					}
 				}
 			}
 		}
