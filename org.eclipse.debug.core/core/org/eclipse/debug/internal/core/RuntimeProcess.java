@@ -59,7 +59,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	 * The monitor which listens for this runtime process' system process
 	 * to terminate.
 	 */
-	private ProcessMonitor fMonitor;
+	private ProcessMonitorJob fMonitor;
 	
 	/**
 	 * The streams proxy for this process
@@ -98,7 +98,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 			fTerminated= false;
 		}
 		fStreamsProxy = new StreamsProxy(this);
-		fMonitor = new ProcessMonitor(this);
+		fMonitor = new ProcessMonitorJob(this);
 		launch.addProcess(this);
 		fireCreationEvent();
 	}
@@ -194,7 +194,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 				attempts++;
 			}
 			// clean-up
-			fMonitor.killMonitoring();
+			fMonitor.killJob();
 			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, DebugCoreMessages.getString("RuntimeProcess.terminate_failed"), null);		 //$NON-NLS-1$
 			throw new DebugException(status);
 		}

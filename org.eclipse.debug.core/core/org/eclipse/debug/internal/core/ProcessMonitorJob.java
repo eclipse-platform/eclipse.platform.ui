@@ -10,12 +10,17 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+
  
 /**
  * Monitors a system process, wiating for it to terminate, and
  * then notifies the associated runtime process.
  */
-public class ProcessMonitor {
+public class ProcessMonitorJob extends Job {
 	/**
 	 * The underlying <code>java.lang.Process</code> being monitored.
 	 */
@@ -30,22 +35,12 @@ public class ProcessMonitor {
 	 * The <code>Thread</code> which is monitoring the underlying process.
 	 */
 	protected Thread fThread;
-	/**
-	 * Creates a new process monitor and starts monitoring the process
-	 * for termination.
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public ProcessMonitor(RuntimeProcess process) {
-		fProcess= process;
-		fOSProcess= process.getSystemProcess();
-		startMonitoring();
-	}
-
-	/**
-	 * Monitors the underlying process for termination. When the underlying
-	 * process terminates (or if the monitoring thread is interrupted),
-	 * inform the <code>IProcess</code> that it has terminated.
-	 */
-	private void monitorProcess() {
+	public IStatus run(IProgressMonitor monitor) {
+		fThread = Thread.currentThread();
 		while (fOSProcess != null) {
 			try {
 				fOSProcess.waitFor();
@@ -55,23 +50,19 @@ public class ProcessMonitor {
 				fProcess.terminated();
 			}
 		}
+		return Status.OK_STATUS;
 	}
 
 	/**
-	 * Starts monitoring the underlying process to determine
-	 * if it has terminated.
+	 * Creates a new process monitor and starts monitoring the process
+	 * for termination.
 	 */
-	private void startMonitoring() {
-		if (fThread == null) {
-			fThread= new Thread(new Runnable() {
-				public void run() {
-					monitorProcess();
-				}
-			}, DebugCoreMessages.getString("ProcessMonitor.label")); //$NON-NLS-1$
-			fThread.start();
-		}
+	public ProcessMonitorJob(RuntimeProcess process) {
+		fProcess= process;
+		fOSProcess= process.getSystemProcess();
+		schedule();
 	}
-	
+
 	/**
 	 * Kills the monitoring thread.
 	 * 
@@ -79,7 +70,11 @@ public class ProcessMonitor {
 	 * case of an underlying process which has not informed this
 	 * monitor of its termination.
 	 */
-	protected void killMonitoring() {
-		fThread.interrupt();
+	protected void killJob() {
+		if (fThread == null) {
+			cancel();
+		} else {
+			fThread.interrupt();
+		}
 	}
 }
