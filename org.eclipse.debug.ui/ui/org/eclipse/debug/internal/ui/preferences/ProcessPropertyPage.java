@@ -11,7 +11,7 @@
 package org.eclipse.debug.internal.ui.preferences;
 
 
-import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.swt.SWT;
@@ -67,8 +67,8 @@ public class ProcessPropertyPage extends PropertyPage {
 	
 	private void initCommandLineLabel(Text l) {
 		Object o= getElement();
-		if (o instanceof IDebugTarget)
-			o= ((IDebugTarget)o).getProcess();
+		if (o instanceof IDebugElement)
+			o= ((IDebugElement)o).getDebugTarget().getProcess();
 		if (o instanceof IProcess) {
 			IProcess process= (IProcess)o;
 			String cmdLine= process.getAttribute(IProcess.ATTR_CMDLINE);

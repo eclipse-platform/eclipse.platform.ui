@@ -1408,7 +1408,7 @@
             id="org.eclipse.debug.ui.properties.process">
       </page>
       <page
-            objectClass="org.eclipse.debug.core.model.IDebugTarget"
+            objectClass="org.eclipse.debug.core.model.IDebugElement"
             name="%processPropertyPageName"
             class="org.eclipse.debug.internal.ui.preferences.ProcessPropertyPage"
             id="org.eclipse.debug.ui.properties.process">
