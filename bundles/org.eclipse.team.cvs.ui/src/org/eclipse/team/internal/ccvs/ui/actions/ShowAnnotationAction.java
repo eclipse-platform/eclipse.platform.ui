@@ -37,6 +37,10 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.AnnotateView;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 
 public class ShowAnnotationAction extends CVSAction {
 
@@ -71,18 +75,26 @@ public class ShowAnnotationAction extends CVSAction {
 			} 
 		}, true, PROGRESS_DIALOG);
 
-		// Open the view
-		AnnotateView view = AnnotateView.openInActivePerspective();
-		if (view == null) {
-			return;
-		}
-
-		// Populate the view.
 		
 		if (listener.hasError()) {
-			throw new InvocationTargetException(new CVSException("Unexpected response from CVS Server: " + listener.getError()));
-		} else {		
+			throw new InvocationTargetException(new CVSException(Policy.bind("ShowAnnotationAction.1", listener.getError()))); //$NON-NLS-1$
+		}
+		
+		// Open the view
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window != null) {
+			try {
+				PlatformUI.getWorkbench().showPerspective("org.eclipse.team.cvs.ui.cvsPerspective", window); //$NON-NLS-1$
+			} catch (WorkbenchException e1) {
+				// If this does not work we will just open the view in the curren perspective.
+			}
+		}
+		
+		try {
+			AnnotateView view = AnnotateView.openInActivePerspective();
 			view.showAnnotations(cvsResource, listener.getCvsAnnotateBlocks(), listener.getContents());
+		} catch (PartInitException e1) {
+			handle(e1);
 		}
 	}
 

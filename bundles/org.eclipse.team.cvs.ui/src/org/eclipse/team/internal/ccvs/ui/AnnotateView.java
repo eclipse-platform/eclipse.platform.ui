@@ -169,12 +169,8 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 	 * isn't a view registered <code>null</code> is returned.
 	 * Otherwise the opened view part is returned.
 	 */
-	public static AnnotateView openInActivePerspective() {
-		try {
-			return (AnnotateView) CVSUIPlugin.getActivePage().showView(VIEW_ID);
-		} catch (PartInitException pe) {
-			return null;
-		}
+	public static AnnotateView openInActivePerspective() throws PartInitException {
+		return (AnnotateView) CVSUIPlugin.getActivePage().showView(VIEW_ID);
 	}
 
 	/**
