@@ -2,7 +2,7 @@
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.ui.examples.multipageeditor;
+package org.eclipse.ui.examples.readmetool;
 
 import java.text.MessageFormat;
 import java.util.MissingResourceException;
@@ -13,7 +13,7 @@ import java.util.ResourceBundle;
  */
 /* package */ class MessageUtil {
 
-	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.examples.multipageeditor.messages";//$NON-NLS-1$
+	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.examples.readmetool.messages";//$NON-NLS-1$
 
 	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
 
