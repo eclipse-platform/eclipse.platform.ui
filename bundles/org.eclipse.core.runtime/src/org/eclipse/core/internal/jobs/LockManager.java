@@ -96,8 +96,8 @@ public class LockManager {
 		synchronized (locks) {
 			locks.lockWaitStart(thread, lock);
 			if (locks.isDeadlocked()) {
-				locks.reportDeadlock(thread, lock);
 				Thread candidate = locks.resolutionCandidate(thread, lock);
+				locks.reportDeadlock(thread, lock, candidate);
 				ISchedulingRule[] toSuspend = locks.contestedLocksForThread(candidate);
 				LockState[] suspended = new LockState[toSuspend.length];
 				for (int i = 0; i < toSuspend.length; i++) {

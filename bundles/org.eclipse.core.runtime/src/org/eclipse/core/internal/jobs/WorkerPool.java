@@ -228,9 +228,9 @@ class WorkerPool {
 			incrementBusyThreads();
 			//if this job has a rule, then we are essentially acquiring a lock
 			if((job.getRule() != null) && !(job instanceof ImplicitJobs.ThreadJob)) {
+				//don't need to reaquire locks because it was not recorded in the graph
+				//that this thread waited to get this rule
 				manager.getLockManager().addLockThread(Thread.currentThread(), job.getRule());
-				//need to reaquire any locks that were suspended while this thread was waiting to get the rule
-				manager.getLockManager().resumeSuspendedLocks(Thread.currentThread());
 			}
 			//see if we need to wake another worker
 			if (manager.sleepHint() <= 0)

@@ -377,7 +377,7 @@ class DeadlockDetector {
 	/**
 	 * Adds a 'deadlock detected' message to the log with a stack trace.
 	 */
-	void reportDeadlock(Thread thread, ISchedulingRule lock) {
+	void reportDeadlock(Thread thread, ISchedulingRule lock, Thread toSuspend) {
 		ArrayList deadlockedThreads = new ArrayList(2);
 		deadlockedThreads.add(thread);
 		Thread owner = getThreadOwningLock(lock);
@@ -386,19 +386,22 @@ class DeadlockDetector {
 			ISchedulingRule waitingLock = (ISchedulingRule)getWaitingLock(owner);
 			owner = getThreadOwningLock(waitingLock);
 		}
-		String msg = "Deadlock was detected between several processes.";
+		String msg = "Deadlock detected. All locks owned by thread " + toSuspend.getName() + " will be suspended.";
 		MultiStatus main = new MultiStatus(Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, msg, new IllegalStateException("Deadlock detected."));
 		for(int i = 0; i < deadlockedThreads.size(); i++) {
 			Thread current = (Thread)deadlockedThreads.get(i);
 			Object[] ownedLocks = getOwnedLocks(current);
 			Object waitLock = getWaitingLock(current);
-			String state = "Thread " + current.getName() + " has locks: ";
+			StringBuffer buf = new StringBuffer("Thread");
+			buf.append(current.getName());
+			buf.append(" has locks: ");
 			for(int j = 0; j < ownedLocks.length; j++) {
-				state += ownedLocks[j];
-				state += (j < ownedLocks.length - 1) ? ", " : " ";
+				buf.append(ownedLocks[j]);
+				buf.append((j < ownedLocks.length - 1) ? ", " : " ");
 			}
-			state += "and is waiting for lock " + waitLock;
-			Status child = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, state, null);
+			buf.append("and is waiting for lock ");
+			buf.append(waitLock);
+			Status child = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, buf.toString(), null);
 			main.add(child);
 		}
 		InternalPlatform.log(main);
