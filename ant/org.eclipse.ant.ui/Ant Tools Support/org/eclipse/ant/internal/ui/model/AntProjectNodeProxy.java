@@ -51,7 +51,6 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		if (fParsed && !force) {
 			return;
 		}
-		fName= null;
 		fChildNodes= null;
 		fParsed= true;
 		AntTargetNode[] nodes = null;
@@ -76,6 +75,8 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		
 		fModel= projectNode.getAntModel();
 		fProject= (AntModelProject)projectNode.getProject();
+		fLabel= null;
+		fName= null;
 	}
 	
 	public void parseBuildFile() {

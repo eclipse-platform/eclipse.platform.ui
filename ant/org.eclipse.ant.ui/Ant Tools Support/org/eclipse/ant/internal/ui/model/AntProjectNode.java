@@ -26,7 +26,7 @@ public class AntProjectNode extends AntElementNode {
 	protected AntModelProject fProject;
 	protected IAntModel fModel;
 	private Map fNameToDefiningNodeMap;
-	private String fLabel;
+	protected String fLabel;
 	
 	public AntProjectNode(AntModelProject project, IAntModel antModel) {
 		super("project"); //$NON-NLS-1$
