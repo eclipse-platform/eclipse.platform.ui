@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
+import org.eclipse.core.runtime.content.IContentTypeManager.IRelatedRegistry;
 
 public class ContentTypeCatalog {
 	private Map aliases = new HashMap();
@@ -238,6 +239,31 @@ public class ContentTypeCatalog {
 		if (policy != null)
 			selected = applyPolicy(policy, selected, true, false);
 		return selected;
+	}
+
+	public Object[] findRelatedObjects(IContentType type, String fileName, IRelatedRegistry registry) {
+		List allRelated = new ArrayList();
+		// first add any objects directly related to the content type
+		Object[] related = registry.getRelatedObjects(type);
+		for (int i = 0; i < related.length; i++)
+			allRelated.add(related[i]);
+		// backward compatibility requested - add any objects related to the file name
+		if (fileName != null) {
+			related = registry.getRelatedObjects(fileName);
+			for (int i = 0; i < related.length; i++)
+				if (!allRelated.contains(related[i]))
+					// we don't want to return duplicates
+					allRelated.add(related[i]);
+		}
+		// now add any indirectly related objects, walking up the content type hierarchy 
+		while ((type = type.getBaseType()) != null) {
+			related = registry.getRelatedObjects(type);
+			for (int i = 0; i < related.length; i++)
+				if (!allRelated.contains(related[i]))
+					// we don't want to return duplicates					
+					allRelated.add(related[i]);
+		}
+		return allRelated.toArray();
 	}
 
 	public ContentType getAliasTarget(ContentType alias) {

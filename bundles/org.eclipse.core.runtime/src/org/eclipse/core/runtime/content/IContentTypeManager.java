@@ -84,6 +84,44 @@ public interface IContentTypeManager extends IContentTypeMatcher {
 	}
 
 	/**
+	 * A client-provided registry containing objects that are related to content types. Implementations
+	 * of this interface collaborate with the content type infrastructure in order to support lookup 
+	 * of content type related objects. 
+	 * <p>
+	 * Clients may implement this interface.
+	 * </p>
+	 * 
+	 * @see IContentTypeManager#findRelatedObjects(IContentType, String, IRelatedRegistry)
+	 * @since 3.1
+	 */
+	public interface IRelatedRegistry {
+		/**
+		 * Returns all objects in this client-provided registry that are directly related to the given
+		 * content type.
+		 * 
+		 * @param type a content type
+		 * @return an array containing all objects directly related to the given content type
+		 */
+		Object[] getRelatedObjects(IContentType type);
+
+		/**
+		 * Returns all objects in this client-provided registry that are directly related to the given
+		 * file name.
+		 * <p>
+		 * This method is optional. It only has to be implemented if this registry supports 
+		 * file name based association in addition to content type based association. 
+		 * Otherwise, it can throw <code>UnsupportedOperationException</code>.
+		 * </p>
+		 * 
+		 * @param fileName a file name
+		 * @return an array containing all objects directly related to the given file name
+		 * @throws UnsupportedOperationException if this registry does not support file
+		 * name based association
+		 */
+		Object[] getRelatedObjects(String fileName);
+	}
+
+	/**
 	 * A policy for refining the set of content types that
 	 * should be accepted during content type matching operations.
 	 * <p>
@@ -142,6 +180,25 @@ public interface IContentTypeManager extends IContentTypeMatcher {
 	 * @see IContentTypeManager.IContentTypeChangeListener
 	 */
 	public void addContentTypeChangeListener(IContentTypeChangeListener listener);
+
+	/**
+	 * Returns all objects in the given content type-related registry  that are 
+	 * related to the content type and file name specified. This method will walk 
+	 * the content type hierarchy tree up to a root content type, collecting all related
+	 * objects from the given registry. 
+	 * <p>
+	 * The file name is optional, and <em>has</em> to be omitted if the given registry 
+	 * does not support file name based associations.  
+	 * </p>
+	 * 
+	 * @param type a content type
+	 * @param fileName the name of the file, or <code>null</code> 
+	 * @param registry a related registry
+	 * @return all objects in the related registry that are associated to the given
+	 * content type
+	 * @since 3.1
+	 */
+	public Object[] findRelatedObjects(IContentType type, String fileName, IRelatedRegistry registry);
 
 	/**
 	 * Returns all content types known by the platform. 
