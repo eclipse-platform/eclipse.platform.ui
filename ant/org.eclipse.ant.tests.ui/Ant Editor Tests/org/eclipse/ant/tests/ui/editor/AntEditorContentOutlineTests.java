@@ -63,32 +63,32 @@ public class AntEditorContentOutlineTests extends AbstractAntUITest {
 		assertEquals(3, getStartingRow(element));
 		assertEquals(3, getStartingColumn(element)); // with tab in file
 		assertEquals(3, getEndingRow(element));
-		assertEquals(40, getEndingColumn(element));  // with tab in file
+		assertEquals(39, getEndingColumn(element));  // with tab in file
 
         offset = wholeDocumentString.indexOf("property");
         assertEquals(offset, element.getOffset());
         int length = "<property name=\"propD\" value=\"valD\" />".length();
-        assertEquals(length, element.getLength());
+        assertEquals(length- 1, element.getLength()); //we do not include the first '<'
 		
 		// <property file="buildtest1.properties">
 		element = (AntElementNode)children.get(1);
 		assertEquals(4, getStartingRow(element));
 		assertEquals(6, getStartingColumn(element)); // no tab
 		assertEquals(4, getEndingRow(element));
-		assertEquals(46, getEndingColumn(element));
+		assertEquals(45, getEndingColumn(element));
 
 		// <property name="propV">
 		element = (AntElementNode)children.get(2);
 		assertEquals(5, getStartingRow(element));
 		assertEquals(6, getStartingColumn(element));
 		assertEquals(5, getEndingRow(element));
-		assertEquals(43, getEndingColumn(element));
+		assertEquals(42, getEndingColumn(element));
 		
 		// <target name="main">
 		element = (AntElementNode)children.get(3);
 		assertEquals(6, getStartingRow(element));
 		assertEquals(6, getStartingColumn(element));
-		//assertEquals(8, getEndingRow(element));
+		assertEquals(9, getEndingRow(element));
 		assertEquals(13, getEndingColumn(element));
 		
 		// <property name="property_in_target">
@@ -96,7 +96,7 @@ public class AntEditorContentOutlineTests extends AbstractAntUITest {
 		assertEquals(7, getStartingRow(element));
 		assertEquals(10, getStartingColumn(element));
 		assertEquals(7, getEndingRow(element));
-		assertEquals(58, getEndingColumn(element));
+		assertEquals(57, getEndingColumn(element));
         offset = wholeDocumentString.indexOf("property name=\"property_in_target\"");
         assertEquals(offset, element.getOffset());
 		
@@ -143,7 +143,7 @@ public class AntEditorContentOutlineTests extends AbstractAntUITest {
 		assertEquals(5, getStartingRow(element));
 		assertEquals(3, getStartingColumn(element)); // with tab in file
 		assertEquals(5, getEndingRow(element));
-		//assertEquals(43, getEndingColumn(element));
+		//main has no ending column as the element is not closed
         int offset = getCurrentDocument().get().indexOf("target name=\"main\"");
         assertEquals(offset, element.getOffset()); 
     }

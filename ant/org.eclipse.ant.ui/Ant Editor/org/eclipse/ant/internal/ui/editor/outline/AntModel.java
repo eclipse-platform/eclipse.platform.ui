@@ -41,10 +41,8 @@ import org.eclipse.ant.internal.ui.editor.text.PartiallySynchronizedDocument;
 import org.eclipse.ant.internal.ui.editor.utils.ProjectHelper;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
-import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
@@ -85,11 +83,6 @@ public class AntModel {
 	
 	//TODO Bug 50302
 	private boolean fValidateFully= false; //AntUIPlugin.getDefault().getPreferenceStore().getBoolean(AntEditorPreferenceConstants.VALIDATE_BUILDFILES);
-	
-	/**
-     * The find replace adapter for the document
-     */
-    private FindReplaceDocumentAdapter fFindReplaceAdapter;
     
     //TODO bug 37180
 	//private static final String BUILDFILE_PROBLEM_MARKER = AntUIPlugin.PI_ANTUI + ".problem"; //$NON-NLS-1$
@@ -100,7 +93,6 @@ public class AntModel {
 		if (document instanceof PartiallySynchronizedDocument) {
 			((PartiallySynchronizedDocument)document).setAntModel(this);
 		}
-		fFindReplaceAdapter= new FindReplaceDocumentAdapter(document);
 		fProblemRequestor= problemRequestor;
 		fLocationProvider= locationProvider;
 	}
@@ -661,36 +653,32 @@ public class AntModel {
 		if (element.isExternal()) {
 			return;
 		}
-		
 		try {
 			int length;
-				int offset;
-				if (column <= 0) {
-					int lineOffset= getOffset(line, 1);
-					StringBuffer searchString= new StringBuffer("</"); //$NON-NLS-1$
-					searchString.append(element.getName());
-					searchString.append('>'); 
-					IRegion result= fFindReplaceAdapter.search(lineOffset, searchString.toString(), true, true, false, false); //$NON-NLS-1$
-					if (result == null) {
-						result= fFindReplaceAdapter.search(lineOffset, "/>", true, true, false, false); //$NON-NLS-1$
-						if (result == null) {
-							offset= -1;
-						} else {
-							offset= result.getOffset() + 2;
-						}
+			int offset;
+			if (column <= 0) {
+				column= getLastCharColumn(line);
+				String lineText= fDocument.get(fDocument.getLineOffset(line - 1), column);
+				StringBuffer searchString= new StringBuffer("</"); //$NON-NLS-1$
+				searchString.append(element.getName());
+				searchString.append('>'); 
+				int index= lineText.indexOf(searchString.toString());
+				if (index == -1) {
+					index= lineText.indexOf("/>"); //$NON-NLS-1$
+					if (index == -1 ) {
+						index= column; //set to the end of line 
 					} else {
-						offset= result.getOffset() + searchString.length() - 1;
-					}
-					if (offset < 0 || getLine(offset) != line) {
-						offset= lineOffset;
-					} else {
-						offset++;
+						index= index + 3;
 					}
 				} else {
-					offset= getOffset(line, column);
+					index= index + searchString.length() + 1;
 				}
-				
-				length= offset - element.getOffset();
+				offset= getOffset(line, index);
+			} else {
+				offset= getOffset(line, column);
+			}
+			
+			length= offset - element.getOffset();
 			element.setLength(length);
 		} catch (BadLocationException e) {
 			//ignore as the parser may be out of sync with the document during reconciliation
@@ -701,26 +689,16 @@ public class AntModel {
 		if (element.isExternal()) {
 			return;
 		}
-		
 		try {
 			int offset;
 				String prefix= "<"; //$NON-NLS-1$
 				if (column <= 0) {
 					offset= getOffset(line, 0);
 					int lastCharColumn= getLastCharColumn(line);
-					String lineText= fDocument.get(fDocument.getLineOffset(line - 1), lastCharColumn);
-					int lastIndex= lineText.indexOf(prefix + element.getName());
-					if (lastIndex > -1) {
-						offset+= lastIndex + 1;
-					} else {
-						offset= getOffset(line, lastCharColumn);
-						IRegion result= fFindReplaceAdapter.search(offset - 1, prefix, false, false, false, false);
-						offset= result.getOffset();
-					}
+					offset= computeOffsetUsingPrefix(element, line, offset, prefix, lastCharColumn);
 				} else {
 					offset= getOffset(line, column);
-					IRegion result= fFindReplaceAdapter.search(offset - 1, prefix, false, false, false, false);
-					offset= result.getOffset();
+					offset= computeOffsetUsingPrefix(element, line, offset, prefix, column);
 				}
  			
 			element.setOffset(offset + 1);
@@ -730,6 +708,20 @@ public class AntModel {
 		}
 	}
 	
+	private int computeOffsetUsingPrefix(AntElementNode element, int line, int offset, String prefix, int column) throws BadLocationException {
+		String lineText= fDocument.get(fDocument.getLineOffset(line - 1), column);
+		int lastIndex= lineText.indexOf(prefix + element.getName());
+		if (lastIndex > -1) {
+			offset= getOffset(line, lastIndex + 1);
+		} else {
+			//offset= getOffset(line, column);
+			//IRegion result= fFindReplaceAdapter.search(offset - 1, prefix, false, false, false, false);
+			//offset= result.getOffset();
+			return computeOffsetUsingPrefix(element, line - 1, offset, prefix, getLastCharColumn(line - 1));
+		}
+		return offset;
+	}
+
 	public int getOffset(int line, int column) throws BadLocationException {
 		return fDocument.getLineOffset(line - 1) + column - 1;
 	}
