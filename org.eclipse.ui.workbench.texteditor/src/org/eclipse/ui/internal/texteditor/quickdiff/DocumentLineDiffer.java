@@ -424,8 +424,8 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					
 					// access documents unsynched:
 					// get an exclusive copy of the actual document
-					reference= new Document(left.get());
-					actual= new Document(right.get());
+					reference= createCopy(left);
+					actual= createCopy(right);
 					
 					synchronized (DocumentLineDiffer.this) {
 						if (fStoredEvents.size() == 0)
@@ -510,6 +510,22 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				fDifferences.clear();
 			}
 			
+			private IDocument createCopy(IDocument document) {
+				Assert.isNotNull(document);
+				// TODO needs for sure a safer synchronization method
+				// this is a temporary workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=56091
+				int count= 0;
+				while (count < 100) {
+					try {
+						return new Document(document.get());
+					} catch (NullPointerException x) {
+					} catch (ArrayStoreException x) {
+					} catch (IndexOutOfBoundsException x) {
+					}
+					++ count;
+				}
+				return new Document();
+			}
 		};
 		
 		fInitializationJob.setSystem(true);
