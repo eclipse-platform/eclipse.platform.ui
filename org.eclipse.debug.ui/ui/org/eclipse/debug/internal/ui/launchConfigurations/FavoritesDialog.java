@@ -20,7 +20,6 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.preferences.DebugPreferencesMessages;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.Dialog;
@@ -50,9 +49,6 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 /**
  * Dialog for organizing favorite launch configurations
- * 
- * TODO: this is a work in progress, and not yet used.
- * - still require a way to set the max launch history size
  */
 public class FavoritesDialog extends Dialog {
 	
@@ -188,7 +184,7 @@ public class FavoritesDialog extends Dialog {
 		
 		ListSelectionDialog dialog = new ListSelectionDialog(fFavoritesTable.getControl().getShell(),
 			getMode(), new LaunchConfigurationContentProvider(), DebugUITools.newDebugModelPresentation(),
-			DebugPreferencesMessages.getString("LaunchHistoryPreferenceTab.Select_Launch_Configurations_7")); //$NON-NLS-1$
+			LaunchConfigurationsMessages.getString("FavoritesDialog.7")); //$NON-NLS-1$
 		dialog.open();
 		Object[] selection = dialog.getResult();
 		if (selection != null) {

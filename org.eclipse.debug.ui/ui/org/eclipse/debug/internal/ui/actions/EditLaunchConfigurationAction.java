@@ -11,6 +11,8 @@
 package org.eclipse.debug.internal.ui.actions;
 
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.ILaunch;
@@ -72,7 +74,7 @@ public class EditLaunchConfigurationAction extends SelectionListenerAction {
 				if (configuration != null) {
 					setLaunchConfiguration(configuration);
 					setMode(launch.getLaunchMode());
-					setText(configuration.getName() + "..."); //$NON-NLS-1$
+					setText(MessageFormat.format(ActionMessages.getString("EditLaunchConfigurationAction.1"), new String[]{configuration.getName()})); //$NON-NLS-1$
 					ImageDescriptor descriptor = null;
 					try {
 						descriptor = DebugPluginImages.getImageDescriptor(configuration.getType().getIdentifier());

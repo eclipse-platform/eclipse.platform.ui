@@ -11,14 +11,21 @@
 package org.eclipse.debug.internal.ui.preferences;
 
 
+import java.text.MessageFormat;
+
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ColorFieldEditor;
+import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
+import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -66,6 +73,20 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 		createSpacer(getFieldEditorParent(), 2);
 		
 		addField(new ColorFieldEditor(IDebugPreferenceConstants.CHANGED_VARIABLE_RGB, DebugPreferencesMessages.getString("DebugPreferencePage.1"), getFieldEditorParent())); //$NON-NLS-1$
+		
+		final IntegerFieldEditor editor = new IntegerFieldEditor(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, DebugPreferencesMessages.getString("DebugPreferencePage.10"), getFieldEditorParent()); //$NON-NLS-1$
+		int historyMax = IDebugPreferenceConstants.MAX_LAUNCH_HISTORY_SIZE;
+		editor.setTextLimit(Integer.toString(historyMax).length());
+		editor.setErrorMessage(MessageFormat.format(DebugPreferencesMessages.getString("DebugPreferencePage.11"), new Object[] { new Integer(1), new Integer(historyMax)})); //$NON-NLS-1$
+		editor.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
+		editor.setValidRange(1, historyMax);		
+		editor.setPropertyChangeListener(new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty().equals(FieldEditor.IS_VALID)) 
+					setValid(editor.isValid());
+			}
+		});
+		addField(editor);
 		
 	}
 
