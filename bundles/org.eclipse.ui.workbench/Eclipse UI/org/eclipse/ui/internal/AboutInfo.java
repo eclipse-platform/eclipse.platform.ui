@@ -14,12 +14,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Hashtable;
 import java.util.zip.CRC32;
 
+import org.eclipse.core.runtime.IBundleGroup;
+import org.eclipse.core.runtime.IBundleGroupProvider;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
 
@@ -32,10 +34,6 @@ import org.eclipse.jface.util.Assert;
  * </p>
  */
 public final class AboutInfo {
-	private final static String INI_FILENAME = "about.ini"; //$NON-NLS-1$
-	private final static String PROPERTIES_FILENAME = "about.properties"; //$NON-NLS-1$
-	private final static String MAPPINGS_FILENAME = "about.mappings"; //$NON-NLS-1$
-	
 	private final static int BYTE_ARRAY_SIZE = 2048;
 
 	private String featureId;
@@ -75,34 +73,41 @@ public final class AboutInfo {
 		Assert.isNotNull(featureId);
 		Assert.isNotNull(versionId);
 		Assert.isNotNull(pluginId);
-		IniFileReader reader = new IniFileReader(featureId, pluginId, INI_FILENAME, PROPERTIES_FILENAME, MAPPINGS_FILENAME);
-		IStatus status = reader.load();
-		if (!status.isOK()) {
-			return null;
-		}
 
 		AboutInfo info = new AboutInfo(featureId);
-		Hashtable runtimeMappings  = new Hashtable();
-		runtimeMappings.put("{featureVersion}", versionId); //$NON-NLS-1$
 		info.versionId = versionId;
-		info.featurePluginLabel = reader.getFeaturePluginLabel();
-		info.providerName = reader.getProviderName();
-		info.appName = reader.getString("appName", true, runtimeMappings); //$NON-NLS-1$
-		info.aboutText = reader.getString("aboutText", true, runtimeMappings); //$NON-NLS-1$
 
-		// look for the newer array, but if its not there then use the older,
-		// single image definition
-		info.windowImages = reader.getImages("windowImages"); //$NON-NLS-1$
-		if (info.windowImages == null)
-			info.windowImages = reader.getImages("windowImage"); //$NON-NLS-1$
+		IProduct product = Platform.getProduct();
+		info.appName = ProductProperties.getAppName(product);
+		info.aboutText = ProductProperties.getAboutText(product);
+		info.aboutImage = ProductProperties.getAboutImage(product);
+		info.windowImages = ProductProperties.getWindowImages(product);
 
-		info.aboutImage = reader.getImage("aboutImage"); //$NON-NLS-1$
-		info.featureImage = reader.getImage("featureImage"); //$NON-NLS-1$
-		info.featureImageURL = reader.getURL("featureImage"); //$NON-NLS-1$
-		info.welcomePageURL = reader.getURL("welcomePage"); //$NON-NLS-1$
-		info.welcomePerspective = reader.getString("welcomePerspective", false, runtimeMappings); //$NON-NLS-1$
-		info.tipsAndTricksHref = reader.getString("tipsAndTricksHref", false, runtimeMappings); //$NON-NLS-1$
+		IBundleGroup bundleGroup = getBundleGroup(featureId);
+		info.featurePluginLabel = bundleGroup.getName();
+		info.providerName = bundleGroup.getProviderName();
+		info.featureImage = BundleGroupProperties.getFeatureImage(bundleGroup);
+		info.featureImageURL = BundleGroupProperties.getFeatureImageUrl(bundleGroup);
+		info.welcomePageURL = BundleGroupProperties.getWelcomePageUrl(bundleGroup);
+		info.welcomePerspective = BundleGroupProperties.getWelcomePerspective(bundleGroup);
+		info.tipsAndTricksHref = BundleGroupProperties.getTipsAndTricksHref(bundleGroup);
+
 		return info;
+	}
+	
+	private static IBundleGroup getBundleGroup(String id) {
+	    if(id == null)
+	        return null;
+
+	    IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
+	    for(int p = 0; p < providers.length; ++p) {
+	        IBundleGroup[] groups = providers[p].getBundleGroups();
+	        for(int g = 0; g < groups.length; ++g)
+	            if(id.equals(groups[g].getIdentifier()))
+	                return groups[g];
+	    }
+	    
+	    return null;
 	}
 	
 	/**
