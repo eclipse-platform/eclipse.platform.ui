@@ -195,10 +195,8 @@ public class HelpWorkingSetSynchronizer
 			getEclipseWorkingSetManager().createWorkingSet(
 				ws.getName(),
 				ws.getElements());
-		if (w instanceof org.eclipse.ui.internal.WorkingSet)
 			// the id of the workingSet extension point in plugin.xml
-			((org.eclipse.ui.internal.WorkingSet) w).setEditPageId(
-				"org.eclipse.help.ui.HelpWorkingSetPage");
+			w.setId("org.eclipse.help.ui.HelpWorkingSetPage");
 		return w;
 	}
 

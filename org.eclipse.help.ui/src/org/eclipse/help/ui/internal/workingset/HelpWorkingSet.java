@@ -35,8 +35,7 @@ public class HelpWorkingSet{
 		this.workingSet = ws;
 		this.iworkingSet = PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSet(ws.getName(), ws.getElements());
 		// TODO: change this when API available
-		if (iworkingSet instanceof org.eclipse.ui.internal.WorkingSet)
-			((org.eclipse.ui.internal.WorkingSet)iworkingSet).setEditPageId(HelpWorkingSetPage.PAGE_ID);
+		iworkingSet.setId(HelpWorkingSetPage.PAGE_ID);
 		
 		//HelpSystem.getWorkingSetManager().addWorkingSet(workingSet);
 		//PlatformUI.getWorkbench().getWorkingSetManager().addWorkingSet(iworkingSet);
