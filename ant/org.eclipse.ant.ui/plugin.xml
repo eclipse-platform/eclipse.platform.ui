@@ -631,7 +631,7 @@ M4 = Platform-specific fourth key -->
    <extension
          point="org.eclipse.debug.core.sourceLocators">
       <sourceLocator
-            name="Ant Source Lookup Director"
+            name="%antSourceLookupDirector.name"
             class="org.eclipse.ant.internal.ui.debug.AntSourceLookupDirector"
             id="org.eclipse.ant.ui.debug.sourceLookupDirector">
       </sourceLocator>
