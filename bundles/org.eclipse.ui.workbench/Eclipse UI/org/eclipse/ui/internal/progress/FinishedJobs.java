@@ -60,8 +60,10 @@ class FinishedJobs {
             public void refreshAll() {
             }
             public void removeJob(JobInfo info) {
-                if (keep(info))
+                if (keep(info)) {
+                	checkForDuplicates(info);
                     add(info);
+                }
             }
             public void removeGroup(GroupInfo group) {
             }

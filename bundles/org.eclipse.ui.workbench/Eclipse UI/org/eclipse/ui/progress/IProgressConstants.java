@@ -43,8 +43,8 @@ public interface IProgressConstants {
 	/** 
 	 * The KEEPONE_PROPERTY is an extension to the KEEP_PROPERTY, that provides a hint
 	 * to the progress UI to ensure that only a single Job of a Job family is kept in the
-	 * set of kept Jobs. That is, whenever a Job finishes (and becomes kept), all other
-	 * kept Jobs of the same family are removed first.
+	 * set of kept Jobs. That is, whenever a Job that has the KEEPONE_PROPERTY starts or finishes,
+	 * all other kept Jobs of the same family are removed first.
 	 * <p>
 	 * Membership to family is established by implementing a Job's <code>belongsTo</code>
 	 * method and returning <code>true</code>.
