@@ -61,6 +61,12 @@ public class ActionExpression {
 		} else if (tag.equals("objectClass")) { //$NON-NLS-1$
 			childExpr = new ObjectClassExpression();
 			childExpr.readFrom(element);
+		} else if (tag.equals("pluginState")) { //$NON-NLS-1$
+			childExpr = new PluginStateExpression();
+			childExpr.readFrom(element);
+		} else if (tag.equals("systemProperty")) { //$NON-NLS-1$
+			childExpr = new SystemPropertyExpression();
+			childExpr.readFrom(element);
 		} else {
 			throw new IllegalStateException("Unreconized element: " + tag); //$NON-NLS-1$
 		}
@@ -223,5 +229,49 @@ public class ActionExpression {
 			return match;
 		}
 	}
+
+	protected class PluginStateExpression extends AbstractExpression {
+		private String id, value;
+		public void readFrom(IConfigurationElement element) 
+			throws IllegalStateException
+		{
+			id = element.getAttribute("id");//$NON-NLS-1$
+			value = element.getAttribute("value");//$NON-NLS-1$
+			if (id == null || value == null)
+				throw new IllegalStateException();
+		}
+		public boolean isEnabledFor(Object object) {
+			IPluginRegistry reg = Platform.getPluginRegistry();
+			IPluginDescriptor desc = reg.getPluginDescriptor(id);
+			if (desc == null)
+				return false;
+			if (value.equals("installed")) //$NON-NLS-1$
+				return true;
+			else if (value.equals("activated")) //$NON-NLS-1$
+				return desc.isPluginActivated();
+			else 
+				return false;
+		}
+	}
+
+	protected class SystemPropertyExpression extends AbstractExpression {
+		private String name, value;
+		public void readFrom(IConfigurationElement element) 
+			throws IllegalStateException
+		{
+			name = element.getAttribute("name");//$NON-NLS-1$
+			value = element.getAttribute("value");//$NON-NLS-1$
+			if (name == null || value == null)
+				throw new IllegalStateException();
+		}
+		public boolean isEnabledFor(Object object) {
+			String str = System.getProperty(name);
+			if (str == null)
+				return false;
+			boolean b = value.equals(str);
+			return b;
+		}
+	}
+
 }
 

@@ -193,6 +193,9 @@
 </extension> 
 
 <extension point = "org.eclipse.ui.actionSets"> 
+
+	<!-- ActionSetExpressionTest -->
+	
     <actionSet id="org.eclipse.ui.tests.internal.ListElementActions" 
         label="List Element">
         <menu id="org.eclipse.ui.tests.internal.ListElementMenu" 
@@ -278,12 +281,57 @@
     	        </and>
             </enablement>
         </action> 
+        <action id="org.eclipse.ui.tests.internal.ac7" 
+            label="pluginNotInstalledAction_v2" 
+            menubarPath="org.eclipse.ui.tests.internal.ListElementMenu/group1" 
+            class="org.eclipse.ui.tests.api.MockActionDelegate" 
+            enablesFor="1"> 
+            <enablement>
+            	<pluginState id="7777xxf" value="installed"/>
+            </enablement>
+        </action> 
+        <action id="org.eclipse.ui.tests.internal.ac8" 
+            label="pluginInstalledAction_v2" 
+            menubarPath="org.eclipse.ui.tests.internal.ListElementMenu/group1" 
+            class="org.eclipse.ui.tests.api.MockActionDelegate"
+            enablesFor="1"> 
+            <enablement>
+            	<pluginState id="org.eclipse.ui" value="installed"/>
+            </enablement>
+        </action> 
+        <action id="org.eclipse.ui.tests.internal.ac9" 
+            label="pluginNotActivatedAction_v2" 
+            menubarPath="org.eclipse.ui.tests.internal.ListElementMenu/group1" 
+            class="org.eclipse.ui.tests.api.MockActionDelegate"
+            enablesFor="1"> 
+            <enablement>
+            	<pluginState id="org.eclipse.update" value="activated"/>
+            </enablement>
+        </action> 
+        <action id="org.eclipse.ui.tests.internal.ac10" 
+            label="pluginActivatedAction_v2" 
+            menubarPath="org.eclipse.ui.tests.internal.ListElementMenu/group1" 
+            class="org.eclipse.ui.tests.api.MockActionDelegate" 
+            enablesFor="1"> 
+            <enablement>
+            	<pluginState id="org.eclipse.ui" value="activated"/>
+            </enablement>
+        </action> 
+        <action id="org.eclipse.ui.tests.internal.ac11" 
+            label="systemPropertyAction_v2" 
+            menubarPath="org.eclipse.ui.tests.internal.ListElementMenu/group1" 
+            class="org.eclipse.ui.tests.api.MockActionDelegate" 
+            enablesFor="1"> 
+            <enablement>
+            	<systemProperty name="ActionExpressionVar" value="bubba"/>
+            </enablement>
+        </action> 
     </actionSet> 
 </extension> 
 
 <extension point="org.eclipse.ui.popupMenus"> 
 
-	<!-- Tests for popup menu enablement with v 2.0 format -->
+	<!-- PopupMenuExpressionTest -->
 	
 	<objectContribution id="oc1"
 		objectClass="org.eclipse.ui.tests.api.ListElement">  
@@ -336,6 +384,46 @@
        	    </and>
 		</visibility>
         <action id="oc4" label="redAndTrueAction_v2"
+			class="org.eclipse.ui.tests.api.MockActionDelegate"/>
+    </objectContribution> 
+    <objectContribution id="oc7"
+		objectClass="org.eclipse.ui.tests.api.ListElement">
+		<visibility>
+           	<pluginState id="7777xxf" value="installed"/>
+		</visibility>
+        <action id="oc4" label="pluginNotInstalledAction_v2"
+			class="org.eclipse.ui.tests.api.MockActionDelegate"/>
+    </objectContribution> 
+    <objectContribution id="oc8"
+		objectClass="org.eclipse.ui.tests.api.ListElement">
+		<visibility>
+           	<pluginState id="org.eclipse.ui" value="installed"/>
+		</visibility>
+        <action id="oc4" label="pluginInstalledAction_v2"
+			class="org.eclipse.ui.tests.api.MockActionDelegate"/>
+    </objectContribution> 
+    <objectContribution id="oc9"
+		objectClass="org.eclipse.ui.tests.api.ListElement">
+		<visibility>
+           	<pluginState id="org.eclipse.update" value="activated"/>
+		</visibility>
+        <action id="oc4" label="pluginNotActivatedAction_v2"
+			class="org.eclipse.ui.tests.api.MockActionDelegate"/>
+    </objectContribution> 
+    <objectContribution id="oc10"
+		objectClass="org.eclipse.ui.tests.api.ListElement">
+		<visibility>
+           	<pluginState id="org.eclipse.ui" value="activated"/>
+		</visibility>
+        <action id="oc4" label="pluginActivatedAction_v2"
+			class="org.eclipse.ui.tests.api.MockActionDelegate"/>
+    </objectContribution> 
+    <objectContribution id="oc11"
+		objectClass="org.eclipse.ui.tests.api.ListElement">
+		<visibility>
+           	<systemProperty name="ActionExpressionVar" value="bubba"/>
+		</visibility>
+        <action id="oc4" label="systemPropertyAction_v2"
 			class="org.eclipse.ui.tests.api.MockActionDelegate"/>
     </objectContribution> 
 </extension> 

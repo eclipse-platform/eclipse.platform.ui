@@ -98,6 +98,7 @@ public class ListView extends MockViewPart
 	public void addElement(ListElement el) {
 		input.add(el);
 		viewer.refresh();
+		viewer.getControl().update();
 	}
 	
 	public void selectElement(ListElement el) {

@@ -166,6 +166,37 @@ public abstract class ActionExpressionTest extends UITestCase {
 		testAction(mgr, "redAndTrueAction_v2", true);
  	}
 		
+	public void testPluginStateActions() throws Throwable 
+	{
+		// Setup.
+		ListView view = showListView();
+		MenuManager mgr = getActionMenuManager(view);
+		
+		// Clear selection and test actions.
+		selectAndUpdateMenu(view, red, mgr);
+		testAction(mgr, "pluginNotInstalledAction_v2", false);
+		testAction(mgr, "pluginInstalledAction_v2", true);
+		testAction(mgr, "pluginNotActivatedAction_v2", false);
+		testAction(mgr, "pluginActivatedAction_v2", true);
+	}
+		
+	public void testSystemPropertyAction() throws Throwable 
+	{
+		// Setup.
+		ListView view = showListView();
+		MenuManager mgr = getActionMenuManager(view);
+	
+		// Clear the system property and test the action.
+		System.setProperty("ActionExpressionVar", "");
+		selectAndUpdateMenu(view, red, mgr);
+		testAction(mgr, "systemPropertyAction_v2", false);
+		
+		// Set the system property and test the action.
+		System.setProperty("ActionExpressionVar", "bubba");
+		selectAndUpdateMenu(view, blue, mgr);
+		testAction(mgr, "systemPropertyAction_v2", true);
+	}
+		
 	/**
 	 * Creates the list view.
 	 */
