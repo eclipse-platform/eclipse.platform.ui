@@ -19,7 +19,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class ActionDescriptor {
 	private PluginAction action;
-	private String toolbarPath;
+	private String toolbarId;
 	private String menuPath;
 	private String id;
 	private String menuGroup;
@@ -113,7 +113,7 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
 	}
 	menuPath = mpath;
 	menuGroup = mgroup;
-	toolbarPath = tpath;
+	toolbarId = tpath;
 	toolbarGroup = tgroup;
 
 	// Create action.
@@ -229,11 +229,11 @@ public String getToolbarGroup() {
 	return toolbarGroup;
 }
 /**
- * Returns path in the tool bar where this action should be added.
+ * Returns id of the tool bar where this action should be added.
  * If null, action will not be added to the tool bar.
  */
-public String getToolbarPath() {
-	return toolbarPath;
+public String getToolbarId() {
+	return toolbarId;
 }
 /**
  * For debugging only.

@@ -359,7 +359,7 @@ public abstract class PluginActionBuilder extends RegistryReader {
 		 */
 		protected void contributeToolbarAction(ActionDescriptor ad, IToolBarManager toolbar, boolean appendIfMissing) {
 			// Get config data.
-			String tpath = ad.getToolbarPath();
+			String tpath = ad.getToolbarId();
 			String tgroup = ad.getToolbarGroup();
 			if (tpath == null && tgroup == null)
 				return;
