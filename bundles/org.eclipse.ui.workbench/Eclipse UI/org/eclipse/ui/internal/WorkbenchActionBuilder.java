@@ -94,7 +94,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private CloseAllPerspectivesAction closeAllPerspsAction;
 	private PinEditorAction pinEditorAction;
 	
-	/* removed keyboard shortcuts menu
 	private ShowViewMenuAction showViewMenuAction;
 	private ShowPartPaneMenuAction showPartPaneMenuAction;
 	private CyclePartAction nextPartAction;
@@ -104,7 +103,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private CyclePerspectiveAction nextPerspectiveAction;
 	private CyclePerspectiveAction prevPerspectiveAction;
 	private ActivateEditorAction activateEditorAction;
-	*/
 	
 	private WorkbenchEditorsAction workbenchEditorsAction;
 	
@@ -876,7 +874,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		}
 
 		// Actions for invisible accelerators
-		/*
 		showViewMenuAction = new ShowViewMenuAction(window);
 		showViewMenuAction.setActionDefinitionId(showViewMenuActionDefId);
 		keyBindingService.registerGlobalAction(showViewMenuAction);
@@ -912,7 +909,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		activateEditorAction = new ActivateEditorAction(window);
 		activateEditorAction.setActionDefinitionId(activateEditorActionDefId);
 		keyBindingService.registerGlobalAction(activateEditorAction);
-		*/
 		
 		workbenchEditorsAction = new WorkbenchEditorsAction(window);
 		workbenchEditorsAction.setActionDefinitionId(workbenchEditorsActionDefId);

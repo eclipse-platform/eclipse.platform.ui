@@ -8,7 +8,11 @@ package org.eclipse.ui.internal;
  */
 
 import org.eclipse.swt.SWT;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -16,13 +20,14 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class ActivateEditorAction extends PageEventAction {
 
+	private int accelerator;
+	
 /**
  * Creates an ActivateEditorAction.
  */
 protected ActivateEditorAction(IWorkbenchWindow window) {
 	super(WorkbenchMessages.getString("ActivateEditorAction.text"), window); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("ActivateEditorAction.toolTip")); //$NON-NLS-1$
-	setAccelerator(SWT.F12);
 	window.getPartService().addPartListener(this);
 	updateState();
 	WorkbenchHelp.setHelp(this, IHelpContextIds.ACTIVATE_EDITOR_ACTION);
@@ -55,7 +60,8 @@ public void partClosed(IWorkbenchPart part) {
 /**
  * @see Action#run()
  */
-public void run() {
+public void runWithEvent(Event e) {
+	accelerator = e.detail;
 	IWorkbenchPage page = getActivePage();
 	if (page != null) {
 		IEditorPart editor = page.getActiveEditor(); // may not actually be active
@@ -76,6 +82,13 @@ public void updateState() {
 	}
 	setEnabled(page.getSortedEditors().length >= 1);
 }
- 
+
+public int getAccelerator() {
+	int accelerator = this.accelerator;
+	accelerator = accelerator & ~ SWT.CTRL;
+	accelerator = accelerator & ~ SWT.SHIFT;
+	accelerator = accelerator & ~ SWT.ALT;
+	return accelerator;
+}
 }
 

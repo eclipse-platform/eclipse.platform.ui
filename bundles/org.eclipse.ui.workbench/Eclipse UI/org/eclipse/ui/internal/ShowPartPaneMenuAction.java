@@ -3,6 +3,8 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.PartEventAction;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -12,6 +14,8 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * view or editor label.
  */
 public class ShowPartPaneMenuAction extends PartEventAction {
+
+	private int accelerator;
 
 /**
  * Constructor for ShowPartPaneMenuAction.
@@ -45,7 +49,8 @@ protected void updateState() {
 /**
  * See Action
  */
-public void run() {
+public void runWithEvent(Event e) {
+	accelerator = e.detail;
 	IWorkbenchPart part = getActivePart();
 	if(part != null)
 		showMenu(((PartSite)part.getSite()).getPane());
@@ -77,6 +82,14 @@ public void partActivated(IWorkbenchPart part) {
 public void partDeactivated(IWorkbenchPart part) {
 	super.partDeactivated(part);
 	updateState();
+}
+
+public int getAccelerator() {
+	int accelerator = this.accelerator;
+	accelerator = accelerator & ~ SWT.CTRL;
+	accelerator = accelerator & ~ SWT.SHIFT;
+	accelerator = accelerator & ~ SWT.ALT;
+	return accelerator;
 }
 }
 

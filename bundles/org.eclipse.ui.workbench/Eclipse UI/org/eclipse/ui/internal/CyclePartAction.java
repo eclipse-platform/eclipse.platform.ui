@@ -4,12 +4,27 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.HelpEvent;
+import org.eclipse.swt.events.HelpListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.*;
-
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -19,6 +34,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class CyclePartAction extends PageEventAction {
 	boolean forward;
 	private Object selection;
+	private int accelerator;	
 	
 /**
  * Creates a CyclePartAction.
@@ -100,7 +116,8 @@ protected void updateState() {
 /**
  * @see Action#run()
  */
-public void run() {
+public void runWithEvent(Event e) {
+	accelerator = e.detail;
 	boolean direction = forward;
 	try {
 		IWorkbenchPage page = getActivePage();
@@ -299,17 +316,13 @@ private void addMouseListener(final Table table,final Shell dialog) {
 		}
 	});
 }
-/* 
- * If the acelarator is CTRL+ALT+SHIFT+F6
- * or any combination of CTRL ALT SHIFT
- * return F6
- */
+
 private int getAcceleratorKey() {
-	int acelaratorKey = getAccelerator();
-	acelaratorKey = acelaratorKey & ~ SWT.CTRL;
-	acelaratorKey = acelaratorKey & ~ SWT.SHIFT;
-	acelaratorKey = acelaratorKey & ~ SWT.ALT;
-	return acelaratorKey;
+	int accelerator = this.accelerator;
+	accelerator = accelerator & ~ SWT.CTRL;
+	accelerator = accelerator & ~ SWT.SHIFT;
+	accelerator = accelerator & ~ SWT.ALT;
+	return accelerator;
 }
 }
 
