@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+   id="org.eclipse.team.examples.filesystem"
+   name="%pluginName"
+   version="2.0.0"
+   provider-name="Object Technology International, Inc."
+   class="org.eclipse.team.examples.filesystem.FileSystemPlugin">
+
+   <runtime>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.team.core"/>
+      <import plugin="org.apache.xerces"/>
+      <import plugin="org.eclipse.webdav"/>
+      <import plugin="org.eclipse.team.ui"/>
+      <import plugin="org.eclipse.ui"/>
+   </requires>
+
+<!-- *************** Repository Provider **************** -->
+   <extension
+         point="org.eclipse.team.core.repository">
+      <repository
+            class="org.eclipse.team.examples.filesystem.FileSystemProvider"
+            id="org.eclipse.team.examples.filesystem.FileSystemProvider">
+      </repository>
+   </extension>
+
+<!-- *************** POPUP MENUS **************** -->
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IResource"
+            adaptable="true"
+            id="org.eclipse.team.examples.filesystem.ResourceContributions">
+         <filter
+               name="projectPersistentProperty"
+               value="org.eclipse.team.core.repository=org.eclipse.team.examples.filesystem.FileSystemProvider">
+         </filter>
+         <action
+               label="%Get.name"
+               tooltip="%Get.tooltip"
+               class="org.eclipse.team.examples.filesystem.ui.GetAction"
+               menubarPath="team.main/group1"
+               id="org.eclipse.team.examples.filesystem.get">
+         </action>
+         <action
+               label="%Put.name"
+               tooltip="%Put.tooltip"
+               class="org.eclipse.team.examples.filesystem.ui.PutAction"
+               menubarPath="team.main/group1"
+               id="org.eclipse.team.examples.filesystem.put">
+         </action>
+      </objectContribution>
+      
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            id="org.eclipse.team.examples.filesystem.ProjectContributions">
+         <filter
+               name="projectPersistentProperty"
+               value="org.eclipse.team.core.repository=org.eclipse.team.examples.filesystem.FileSystemProvider">
+         </filter>
+         <action
+               label="%Unmanage.name"
+               tooltip="%Unmanage.tooltip"
+               class="org.eclipse.team.examples.filesystem.ui.DisconnectAction"
+               menubarPath="team.main/group2"
+               id="org.eclipse.team.examples.filesystem.unmanage">
+         </action>
+      </objectContribution>
+   </extension>
+   
+<!-- *************** CONFIGURATION WIZARD **************** -->
+   <extension
+         point="org.eclipse.team.ui.configurationWizards">
+      <wizard
+            name="%fswizard.name"
+            icon="icons/full/wizards/fsicon_wiz.gif"
+            category="org.eclipse.team.ui"
+            class="org.eclipse.team.examples.filesystem.ui.ConfigurationWizard"
+            id="org.eclipse.team.examples.filesystem.ui.ConfigurationWizard">
+         <description>
+            %fswizard.description
+         </description>
+      </wizard>
+   </extension>
+
+   
+<!-- *************** PROPERTY PAGES **************** -->
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            objectClass="org.eclipse.core.resources.IResource"
+            adaptable="true"
+            name="%fspropertypage.name"
+            class="org.eclipse.team.examples.filesystem.ui.FileSystemPropertiesPage"
+            id="org.eclipse.team.examples.filesystem.ui.FileSystemPropertiesPage">
+         <filter
+               name="projectPersistentProperty"
+               value="org.eclipse.team.core.repository=org.eclipse.team.examples.filesystem.FileSystemProvider">
+         </filter>
+      </page>
+   </extension>
+   
+</plugin>
