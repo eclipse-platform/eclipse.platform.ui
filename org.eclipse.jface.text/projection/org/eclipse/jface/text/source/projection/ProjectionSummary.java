@@ -276,6 +276,8 @@ class ProjectionSummary {
 			return;
 		
 		IAnnotationModel model= fProjectionViewer.getAnnotationModel();
+		if (model == null)
+			return;
 		Iterator e= model.getAnnotationIterator();
 		while (e.hasNext()) {
 			Annotation annotation= (Annotation) e.next();
