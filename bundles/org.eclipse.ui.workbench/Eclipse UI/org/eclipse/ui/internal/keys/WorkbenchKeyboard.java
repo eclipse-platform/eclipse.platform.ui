@@ -22,6 +22,8 @@ import org.eclipse.core.runtime.Status;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -329,6 +331,45 @@ public class WorkbenchKeyboard {
 	}
 
 	/**
+	 * Performs the actual execution of the command by looking up the current
+	 * handler from the command manager. If there is a handler and it is
+	 * enabled, then it tries the actual execution. Execution failures are
+	 * logged. When this method completes, the key binding state is reset.
+	 * 
+	 * @param commandId
+	 *            The identifier for the command that should be executed;
+	 *            should not be <code>null</code>.
+	 * @param event
+	 *            The event triggering the execution. This is needed for
+	 *            backwards compatability and might be removed in the future.
+	 *            This value should not be <code>null</code>.
+	 * @return <code>true</code> if there was a handler; <code>false</code>
+	 *         otherwise.
+	 */
+	private boolean executeCommand(String commandId, Event event) {
+		// Reset the key binding state (close window, clear status line, etc.)
+		resetState();
+		
+		// Dispatch to the handler.
+		Map actionsById = ((CommandManager) workbench.getCommandManager()).getActionsById();
+		org.eclipse.ui.commands.IAction action =
+			(org.eclipse.ui.commands.IAction) actionsById.get(commandId);
+
+		if (action != null && action.isEnabled()) {
+			try {
+				action.execute(event);
+			} catch (Exception e) {
+				String message = "Action for command '" + commandId + "' failed to execute properly."; //$NON-NLS-1$ //$NON-NLS-2$
+				WorkbenchPlugin.log(
+					message,
+					new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, message, e));
+			}
+		}
+
+		return (action != null);
+	}
+
+	/**
 	 * <p>
 	 * Launches the command matching a the typed key. This filter an incoming
 	 * <code>SWT.KeyDown</code> or <code>SWT.Traverse</code> event at the
@@ -534,7 +575,8 @@ public class WorkbenchKeyboard {
 			noMatchesLabel.setText(Util.translateString(RESOURCE_BUNDLE, "NoMatches.Message")); //$NON-NLS-1$
 			noMatchesLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
 		} else {
-			Table completionsTable = new Table(multiKeyAssistShell, SWT.SINGLE);
+			final Table completionsTable = new Table(multiKeyAssistShell, SWT.SINGLE);
+			final List commands = new ArrayList();
 			completionsTable.setLayoutData(new GridData(GridData.FILL_BOTH));
 			new TableColumn(completionsTable, SWT.LEFT);
 			new TableColumn(completionsTable, SWT.LEFT);
@@ -548,10 +590,27 @@ public class WorkbenchKeyboard {
 					String[] text = { sequence.format(), command.getName()};
 					TableItem item = new TableItem(completionsTable, SWT.NULL);
 					item.setText(text);
+					commands.add(command);
 				} catch (NotDefinedException e) {
 					// Not much to do, but this shouldn't really happen.
 				}
 			}
+
+			// If you double-click on the table, it should go to the select
+			// key.
+			completionsTable.addSelectionListener(new SelectionListener() {
+
+				public void widgetDefaultSelected(SelectionEvent e) {
+					int selectionIndex = completionsTable.getSelectionIndex();
+					if (selectionIndex >= 0) {
+						ICommand command = (ICommand) commands.get(selectionIndex);
+						executeCommand(command.getId(), new Event());
+					}
+				}
+				public void widgetSelected(SelectionEvent e) {
+					// Do nothing
+				}
+			});
 		}
 
 		// Size the shell.
@@ -582,6 +641,14 @@ public class WorkbenchKeyboard {
 			assistShellLocation.y = displayBottomEdge - assistShellSize.y;
 		}
 		multiKeyAssistShell.setLocation(assistShellLocation);
+
+		// If the shell loses focus, it should be closed.
+		multiKeyAssistShell.addListener(SWT.Deactivate, new Listener() {
+			public void handleEvent(Event event) {
+				multiKeyAssistShell.close();
+				multiKeyAssistShell = null;
+			}
+		});
 
 		// Open the shell.
 		multiKeyAssistShell.open();
@@ -616,24 +683,7 @@ public class WorkbenchKeyboard {
 
 			} else if (isPerfectMatch(sequenceAfterKeyStroke)) {
 				String commandId = getPerfectMatch(sequenceAfterKeyStroke);
-				Map actionsById = ((CommandManager) workbench.getCommandManager()).getActionsById();
-				org.eclipse.ui.commands.IAction action =
-					(org.eclipse.ui.commands.IAction) actionsById.get(commandId);
-
-				if (action != null && action.isEnabled()) {
-					try {
-						action.execute(event);
-					} catch (Exception e) {
-						String message = "Action for command '" + commandId + "' failed to execute properly."; //$NON-NLS-1$ //$NON-NLS-2$
-						WorkbenchPlugin.log(
-							message,
-							new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, message, e));
-					}
-				}
-
-				resetState();
-				return action != null || sequenceBeforeKeyStroke.isEmpty();
-
+				return (executeCommand(commandId, event) || sequenceBeforeKeyStroke.isEmpty());
 			}
 		}
 
