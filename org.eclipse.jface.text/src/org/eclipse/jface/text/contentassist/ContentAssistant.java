@@ -154,15 +154,20 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 		 * @see FocusListener#focusLost(FocusEvent)
 		 */
 		public void focusLost(FocusEvent e) {
-			Control control= fViewer.getTextWidget();
-			Display d= control.getDisplay();
-			d.asyncExec(new Runnable() {
-				public void run() {
-					if (!fProposalPopup.hasFocus() && !fContextInfoPopup.hasFocus()) {
-						hide();
+			if (fViewer != null) {
+				Control control= fViewer.getTextWidget();
+				if (control != null) {
+					Display d= control.getDisplay();
+					if (d != null) {
+						d.asyncExec(new Runnable() {
+							public void run() {
+								if (!fProposalPopup.hasFocus() && !fContextInfoPopup.hasFocus())
+									hide();
+							}
+						});
 					}
 				}
-			});
+			}
 		}
 		
 		/*
@@ -978,8 +983,13 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 			
 		if (fContextInfoPopup != null)
 			fContextInfoPopup.hide();
-		
+			
 		manageAutoActivation(false);
+		
+		if (fCloser != null) {
+			fCloser.uninstall();
+			fCloser= null;
+		}
 		
 		fViewer= null;
 	}
