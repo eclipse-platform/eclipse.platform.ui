@@ -1,9 +1,11 @@
 package org.eclipse.debug.internal.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
  
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -167,8 +169,12 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 		
 		// Separator between favorites and history
 		if (favoriteList.length > 0) {
-			new MenuItem(menu, SWT.SEPARATOR);
-		}		
+			if (historyList.length > 0) {
+				new MenuItem(menu, SWT.SEPARATOR);
+			} else {
+				createTopSeparator(menu);
+			}
+		}
 		
 		// Add history launches next
 		for (int i = 0; i < historyList.length; i++) {
@@ -180,7 +186,7 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 		
 		// Separator between history and common actions
 		if (historyList.length > 0) {
-			new MenuItem(menu, SWT.SEPARATOR);
+			createTopSeparator(menu);
 		}
 
 		// Add the actions to bring up the dialog 
