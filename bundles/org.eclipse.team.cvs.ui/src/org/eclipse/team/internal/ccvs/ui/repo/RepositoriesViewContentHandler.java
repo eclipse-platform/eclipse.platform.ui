@@ -53,7 +53,6 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 	private RepositoryManager manager;
 	private StringBuffer buffer = new StringBuffer();
 	private Stack tagStack = new Stack();
-	private Stack dateTagStack = new Stack();
 	private RepositoryRoot currentRepositoryRoot;
 	private String currentRemotePath;
 	private List tags;

@@ -54,7 +54,7 @@ public class RepositoryRoot extends PlatformObject {
 	 * @param tag
 	 * @return ICVSRemoteFolder
 	 */
-	public ICVSRemoteFolder getRemoteFolder(String path, CVSTag tag, IProgressMonitor monitor) throws CVSException {
+	public ICVSRemoteFolder getRemoteFolder(String path, CVSTag tag, IProgressMonitor monitor) {
 		if (isDefinedModuleName(path)) {
 			return getDefinedModule(getDefinedModuleName(path), tag, monitor);
 		} else {
@@ -81,7 +81,7 @@ public class RepositoryRoot extends PlatformObject {
 	 * @param monitor
 	 * @return ICVSRemoteFolder
 	 */
-	private ICVSRemoteFolder getDefinedModule(String path, CVSTag tag, IProgressMonitor monitor) throws CVSException {
+	private ICVSRemoteFolder getDefinedModule(String path, CVSTag tag, IProgressMonitor monitor) {
 		Map cache = getDefinedModulesCache(tag, monitor);
 		ICVSRemoteFolder folder = (ICVSRemoteFolder)cache.get(path);
 		if (folder != null) {
@@ -90,7 +90,7 @@ public class RepositoryRoot extends PlatformObject {
 		return folder;
 	}
 	
-	private Map getDefinedModulesCache(CVSTag tag, IProgressMonitor monitor) throws CVSException {
+	private Map getDefinedModulesCache(CVSTag tag, IProgressMonitor monitor) {
 		if (modulesCache == null) {
 			modulesCache = new HashMap();
 			synchronized(modulesCache) {
@@ -109,7 +109,7 @@ public class RepositoryRoot extends PlatformObject {
 		return modulesCache;
 	}
 	
-	public ICVSRemoteResource[] getDefinedModules(CVSTag tag, IProgressMonitor monitor) throws CVSException {
+	public ICVSRemoteResource[] getDefinedModules(CVSTag tag, IProgressMonitor monitor) {
 		Map cache = getDefinedModulesCache(tag, monitor);
 		return (ICVSRemoteResource[]) cache.values().toArray(new ICVSRemoteResource[cache.size()]);
 	}
@@ -419,6 +419,7 @@ public class RepositoryRoot extends PlatformObject {
 	private void writeATag(XMLWriter writer, HashMap attributes, CVSTag tag, String s) {
 		attributes.clear();
 		attributes.put(RepositoriesViewContentHandler.NAME_ATTRIBUTE, tag.getName());
+		attributes.put(RepositoriesViewContentHandler.TYPE_ATTRIBUTE, RepositoriesViewContentHandler.TAG_TYPES[tag.getType()]);
 		writer.startAndEndTag(s, attributes, true);
 	}
 
