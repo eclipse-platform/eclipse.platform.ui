@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -66,26 +65,6 @@ public class ProjectHelper {
 		
 		return folder;
 		
-	}
-
-	private static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {
-		IProjectDescription description = proj.getDescription();
-		String[] prevNatures= description.getNatureIds();
-		String[] newNatures= new String[prevNatures.length + 1];
-		System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
-		newNatures[prevNatures.length]= natureId;
-		description.setNatureIds(newNatures);
-		proj.setDescription(description, monitor);
-	}
-	
-	private static void importFilesFromZip(ZipFile srcZipFile, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException {		
-		ZipFileStructureProvider structureProvider=	new ZipFileStructureProvider(srcZipFile);
-		try {
-			ImportOperation op= new ImportOperation(destPath, structureProvider.getRoot(), structureProvider, new ImportOverwriteQuery());
-			op.run(monitor);
-		} catch (InterruptedException e) {
-			// should not happen
-		}
 	}
 	
 	public static void importFilesFromDirectory(File rootDir, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException, IOException {		

@@ -592,39 +592,6 @@ public class InternalAntRunner {
 		this.buildAntHome= antHome;
 	}
 	
-	private String getTimeString(long milliseconds) {
-		long seconds = milliseconds / 1000;
-		long minutes = seconds / 60;
-		seconds= seconds % 60;
-		
-		StringBuffer result= new StringBuffer(InternalAntMessages.getString("InternalAntRunner.Total_time")); //$NON-NLS-1$
-		if (minutes > 0) {
-			result.append(minutes);
-			if (minutes > 1) {
-				result.append(InternalAntMessages.getString("InternalAntRunner._minutes_2")); //$NON-NLS-1$
-			} else {
-				result.append(InternalAntMessages.getString("InternalAntRunner._minute_3")); //$NON-NLS-1$
-			}
-		}
-		if (seconds > 0) {
-			if (minutes > 0) {
-				result.append(' ');
-			}
-			result.append(seconds);
-			
-			if (seconds > 1) {
-				result.append(InternalAntMessages.getString("InternalAntRunner._seconds_4")); //$NON-NLS-1$
-			} else {
-				result.append(InternalAntMessages.getString("InternalAntRunner._second_5")); //$NON-NLS-1$
-			} 
-		}
-		if (seconds == 0 && minutes == 0) {
-			result.append(milliseconds);
-			result.append(InternalAntMessages.getString("InternalAntRunner._milliseconds_6"));		 //$NON-NLS-1$
-		}
-		return result.toString();
-	}
-	
 	private void validateDefaultTarget() {
 		defaultTarget = getCurrentProject().getDefaultTarget();
 		
