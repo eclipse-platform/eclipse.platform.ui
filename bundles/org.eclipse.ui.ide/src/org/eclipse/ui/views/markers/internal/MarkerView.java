@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResource;
@@ -58,7 +59,6 @@ import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISelectionListener;
@@ -70,7 +70,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.internal.ide.ResourceUtil;
 import org.eclipse.ui.part.MarkerTransfer;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.progress.WorkbenchJob;
@@ -574,9 +574,10 @@ public abstract class MarkerView extends TableView {
 
         List resources = new ArrayList();
         if (part instanceof IEditorPart) {
-            IEditorInput input = ((IEditorPart) part).getEditorInput();
-            if (input instanceof FileEditorInput) {
-                resources.add(((FileEditorInput) input).getFile());
+            IEditorPart editor = (IEditorPart) part;
+            IFile file = ResourceUtil.getFile(editor.getEditorInput());
+            if (file != null) {
+                resources.add(file);
             }
         } else {
             if (selection instanceof IStructuredSelection) {

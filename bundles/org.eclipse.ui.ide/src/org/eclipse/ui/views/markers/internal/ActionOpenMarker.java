@@ -22,11 +22,11 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.ide.ResourceUtil;
 
 /**
  * Action to open an editor on the selected bookmarks.
@@ -63,8 +63,8 @@ public class ActionOpenMarker extends SelectionProviderAction {
         IEditorPart editor = part.getSite().getPage().getActiveEditor();
         if (editor != null) {
             IEditorInput input = editor.getEditorInput();
-            if (input instanceof IFileEditorInput) {
-                IFile file = ((IFileEditorInput) input).getFile();
+            IFile file = ResourceUtil.getFile(input);
+            if (file != null) {
                 if (marker.getResource().equals(file)) {
                     part.getSite().getPage().activate(editor);
                 }

@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -29,9 +30,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -39,6 +38,7 @@ import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
+import org.eclipse.ui.internal.ide.ResourceUtil;
 import org.eclipse.ui.internal.ide.actions.BuildUtilities;
 
 /**
@@ -298,9 +298,8 @@ public class BuildAction extends WorkspaceAction {
                 IEditorPart[] editors = page.getDirtyEditors();
                 for (int k = 0; k < editors.length; k++) {
                     IEditorPart editor = editors[k];
-                    IEditorInput input = editor.getEditorInput();
-                    if (input instanceof IFileEditorInput) {
-                        IFile inputFile = ((IFileEditorInput) input).getFile();
+                    IFile inputFile = ResourceUtil.getFile(editor.getEditorInput());
+                    if (inputFile != null) {
                         if (projects.contains(inputFile.getProject())) {
                             page.saveEditor(editor, false);
                         }

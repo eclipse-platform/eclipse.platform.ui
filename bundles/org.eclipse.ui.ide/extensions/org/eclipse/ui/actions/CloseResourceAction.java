@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -31,15 +32,14 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
+import org.eclipse.ui.internal.ide.ResourceUtil;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchPartLabelProvider;
@@ -88,13 +88,10 @@ public class CloseResourceAction extends WorkspaceAction implements
                 IEditorPart[] editors = page.getDirtyEditors();
                 for (int k = 0; k < editors.length; k++) {
                     IEditorPart editor = editors[k];
-                    IEditorInput input = editor.getEditorInput();
-                    if (input instanceof IFileEditorInput) {
-                        IFile inputFile = ((IFileEditorInput) input).getFile();
+                    IFile inputFile = ResourceUtil.getFile(editor.getEditorInput());
+                    if (inputFile != null) {
                         if (projects.contains(inputFile.getProject())) {
-                            if (editor.isDirty()) {
-                                dirtyEditors.add(editor);
-                            }
+                            dirtyEditors.add(editor);
                         }
                     }
                 }
@@ -121,13 +118,14 @@ public class CloseResourceAction extends WorkspaceAction implements
         Iterator iter = dirtyEditors.iterator();
         while (iter.hasNext()) {
             IEditorPart editor = (IEditorPart) iter.next();
-            IEditorInput input = editor.getEditorInput();
-            IFile inputFile = ((IFileEditorInput) input).getFile();
-            // if the same file is open in multiple perspectives,
-            // we don't want to count it as dirty multiple times
-            if (!dirtyInputs.contains(inputFile)) {
-                dirtyInputs.add(inputFile);
-                saveEditors.add(editor);
+            IFile inputFile = ResourceUtil.getFile(editor.getEditorInput());
+            if (inputFile != null) {
+                // if the same file is open in multiple perspectives,
+                // we don't want to count it as dirty multiple times
+                if (!dirtyInputs.contains(inputFile)) {
+                    dirtyInputs.add(inputFile);
+                    saveEditors.add(editor);
+                }
             }
         }
         AdaptableList input = new AdaptableList(saveEditors);

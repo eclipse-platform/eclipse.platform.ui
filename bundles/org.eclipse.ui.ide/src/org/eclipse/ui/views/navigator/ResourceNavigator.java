@@ -62,9 +62,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IViewSite;
@@ -79,12 +77,12 @@ import org.eclipse.ui.ResourceWorkingSetFilter;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.ResourceUtil;
 import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.operations.RedoActionHandler;
 import org.eclipse.ui.operations.UndoActionHandler;
-import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTarget;
@@ -456,10 +454,8 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
             return;
         }
 
-        IEditorInput input = editor.getEditorInput();
-        if (input instanceof IFileEditorInput) {
-            IFileEditorInput fileInput = (IFileEditorInput) input;
-            IFile file = fileInput.getFile();
+        IFile file = ResourceUtil.getFile(editor.getEditorInput());
+        if (file != null) {
             ISelection newSelection = new StructuredSelection(file);
             if (getTreeViewer().getSelection().equals(newSelection)) {
                 getTreeViewer().getTree().showSelection();
@@ -821,7 +817,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
     }
 
     /**
-     * Activates the editor if the selected resource is open.
+     * Brings the corresponding editor to top if the selected resource is open.
      * 
      * @since 2.0
      */
@@ -830,7 +826,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         if (obj instanceof IFile && selection.size() == 1) {
             IFile file = (IFile) obj;
             IWorkbenchPage page = getSite().getPage();
-            IEditorPart editor = page.findEditor(new FileEditorInput(file));
+            IEditorPart editor = ResourceUtil.findEditor(page, file);
             if (editor != null) {
                 page.bringToTop(editor);
                 return;

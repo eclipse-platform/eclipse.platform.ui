@@ -16,12 +16,11 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.ide.ResourceUtil;
 
 public class ActionRevealMarker extends SelectionProviderAction {
 
@@ -45,9 +44,8 @@ public class ActionRevealMarker extends SelectionProviderAction {
         IEditorPart editor = part.getSite().getPage().getActiveEditor();
         if (editor == null)
             return;
-        IEditorInput input = editor.getEditorInput();
-        if (input instanceof IFileEditorInput) {
-            IFile file = ((IFileEditorInput) input).getFile();
+        IFile file = ResourceUtil.getFile(editor.getEditorInput());
+        if (file != null) {
             if (marker.getResource().equals(file)) {
                 try {
                     IDE.openEditor(part.getSite().getPage(), marker, false);

@@ -48,7 +48,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -59,6 +58,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.ResourceUtil;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 
@@ -221,9 +221,9 @@ public class OleEditor extends EditorPart {
         initializeWorkbenchMenus();
 
         // Set the input file.
-        IEditorInput input = getEditorInput();
-        if (input instanceof IFileEditorInput) {
-            setResource(((IFileEditorInput) input).getFile());
+        IFile file = ResourceUtil.getFile(getEditorInput());
+        if (file != null) {
+            setResource(file);
             resource.getWorkspace().addResourceChangeListener(resourceListener);
         }
 
@@ -434,11 +434,10 @@ public class OleEditor extends EditorPart {
     public void init(IEditorSite site, IEditorInput input)
             throws PartInitException {
         // Check input.
-        if (!(input instanceof IFileEditorInput))
+        IFile file = ResourceUtil.getFile(input);
+        if (file == null)
             throw new PartInitException(OleMessages.format(
                     "OleEditor.invalidInput", new Object[] { input })); //$NON-NLS-1$
-
-        IFile file = (((IFileEditorInput) input).getFile());
 
         //Cannot create this with a file and no physical location
         if (file.getLocation() == null
@@ -574,34 +573,35 @@ public class OleEditor extends EditorPart {
             public void execute(final IProgressMonitor monitor)
                     throws CoreException {
                 SaveAsDialog dialog = new SaveAsDialog(clientFrame.getShell());
-                IFileEditorInput input = (IFileEditorInput) getEditorInput();
-                IFile sFile = input.getFile();
-                dialog.setOriginalFile(sFile);
-                dialog.open();
-
-                IPath newPath = dialog.getResult();
-                if (newPath == null)
-                    return;
-
-                if (dialog.getReturnCode() == Window.OK) {
-                    String projectName = newPath.segment(0);
-                    newPath = newPath.removeFirstSegments(1);
-                    IProject project = resource.getWorkspace().getRoot()
-                            .getProject(projectName);
-                    newPath = project.getLocation().append(newPath);
-                    File newFile = newPath.toFile();
-                    if (saveFile(newFile)) {
-                        IFile newResource = resource.getWorkspace().getRoot()
-                                .getFileForLocation(newPath);
-                        if (newResource != null) {
-                            sourceChanged(newResource);
-                            newResource.refreshLocal(IResource.DEPTH_ZERO,
-                                    monitor);
-                        }
-                    } else {
-                        displayErrorDialog(SAVE_ERROR_TITLE, SAVE_ERROR_MESSAGE
-                                + newFile.getName());
+                IFile sFile = ResourceUtil.getFile(getEditorInput());
+                if (sFile != null) {
+                    dialog.setOriginalFile(sFile);
+                    dialog.open();
+    
+                    IPath newPath = dialog.getResult();
+                    if (newPath == null)
                         return;
+    
+                    if (dialog.getReturnCode() == Window.OK) {
+                        String projectName = newPath.segment(0);
+                        newPath = newPath.removeFirstSegments(1);
+                        IProject project = resource.getWorkspace().getRoot()
+                                .getProject(projectName);
+                        newPath = project.getLocation().append(newPath);
+                        File newFile = newPath.toFile();
+                        if (saveFile(newFile)) {
+                            IFile newResource = resource.getWorkspace().getRoot()
+                                    .getFileForLocation(newPath);
+                            if (newResource != null) {
+                                sourceChanged(newResource);
+                                newResource.refreshLocal(IResource.DEPTH_ZERO,
+                                        monitor);
+                            }
+                        } else {
+                            displayErrorDialog(SAVE_ERROR_TITLE, SAVE_ERROR_MESSAGE
+                                    + newFile.getName());
+                            return;
+                        }
                     }
                 }
             }

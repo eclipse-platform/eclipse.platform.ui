@@ -37,6 +37,7 @@ import org.eclipse.ui.internal.EditorManager;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.ResourceUtil;
 import org.eclipse.ui.internal.ide.registry.MarkerHelpRegistry;
 import org.eclipse.ui.internal.ide.registry.MarkerHelpRegistryReader;
 import org.eclipse.ui.part.FileEditorInput;
@@ -642,8 +643,7 @@ public final class IDE {
                                 IEditorPart[] dirty = page.getDirtyEditors();
                                 for (int k = 0; k < dirty.length; k++) {
                                     IEditorPart part = dirty[k];
-                                    IFile file = (IFile) part.getEditorInput()
-                                            .getAdapter(IFile.class);
+                                    IFile file = ResourceUtil.getFile(part.getEditorInput());
                                     if (file != null) {
                                         for (int l = 0; l < finalResources.length; l++) {
                                             IResource resource = finalResources[l];

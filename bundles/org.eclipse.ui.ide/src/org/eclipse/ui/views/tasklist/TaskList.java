@@ -90,7 +90,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPartListener;
@@ -102,6 +101,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.ide.ResourceUtil;
 import org.eclipse.ui.internal.views.tasklist.TaskListMessages;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.part.IShowInSource;
@@ -1411,9 +1411,8 @@ public class TaskList extends ViewPart {
         if (canJump) {
             IEditorPart editor = getSite().getPage().getActiveEditor();
             if (editor != null) {
-                IEditorInput input = editor.getEditorInput();
-                if (input instanceof IFileEditorInput) {
-                    IFile file = ((IFileEditorInput) input).getFile();
+                IFile file = ResourceUtil.getFile(editor.getEditorInput());
+                if (file != null) {
                     if (selectedMarker.getResource().equals(file)) {
                         IDE.gotoMarker(editor, selectedMarker);
                     }
@@ -1588,22 +1587,10 @@ public class TaskList extends ViewPart {
 
         if (list.size() == 0 && focusPart instanceof IEditorPart) {
             IEditorInput input = ((IEditorPart) focusPart).getEditorInput();
-
             if (input != null) {
-                if (input instanceof IFileEditorInput) {
-                    IFile file = ((IFileEditorInput) input).getFile();
-                    if (file != null) {
-                        list.add(file);
-                    }
-                } else {
-                    IResource resource = (IResource) input
-                            .getAdapter(IResource.class);
-                    if (resource == null) {
-                        resource = (IFile) input.getAdapter(IFile.class);
-                    }
-                    if (resource != null) {
-                        list.add(resource);
-                    }
+                IResource resource = ResourceUtil.getResource(input);
+                if (resource != null) {
+                    list.add(resource);
                 }
             }
         }

@@ -11,7 +11,9 @@
 package org.eclipse.ui.internal.ide.actions;
 
 import java.util.HashSet;
+
 import org.eclipse.core.resources.ICommand;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -21,11 +23,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.ide.ResourceUtil;
 
 /**
  * This class contains convenience methods used by the various build commands
@@ -73,9 +74,11 @@ public class BuildUtilities {
 			//see if we can extract a selected project from the active editor
 			IWorkbenchPart part = window.getPartService().getActivePart();
 			if (part instanceof IEditorPart) {
-				IEditorInput input = ((IEditorPart) part).getEditorInput();
-				if (input instanceof IFileEditorInput)
-					selected = new IProject[] {((IFileEditorInput) input).getFile().getProject()};
+                IEditorPart editor = (IEditorPart) part; 
+                IFile file = ResourceUtil.getFile(editor.getEditorInput());
+				if (file != null) {
+					selected = new IProject[] { file.getProject() };
+                }
 			}
 		}
 		if (selected == null)
