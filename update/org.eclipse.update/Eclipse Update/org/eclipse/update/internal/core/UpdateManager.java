@@ -1,15 +1,6 @@
 package org.eclipse.update.internal.core;
 
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.internal.boot.LaunchInfo;
-import org.eclipse.update.internal.ui.*;
-import org.eclipse.core.internal.boot.update.*;
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.*;
-import java.util.*;
-import java.util.jar.*;
+import java.io.File;import java.net.MalformedURLException;import java.net.URL;import java.util.TreeSet;import org.eclipse.core.internal.boot.LaunchInfo;import org.eclipse.core.internal.boot.LaunchInfo.VersionedIdentifier;import org.eclipse.core.internal.boot.update.IComponentDescriptor;import org.eclipse.core.internal.boot.update.IComponentEntryDescriptor;import org.eclipse.core.internal.boot.update.IFragmentEntryDescriptor;import org.eclipse.core.internal.boot.update.IInstallable;import org.eclipse.core.internal.boot.update.IPluginEntryDescriptor;import org.eclipse.core.internal.boot.update.IProductDescriptor;import org.eclipse.core.internal.boot.update.IUMRegistry;import org.eclipse.core.internal.boot.update.IURLNamePair;import org.eclipse.core.internal.boot.update.LogStoreException;import org.eclipse.core.internal.boot.update.UMEclipseTree;import org.eclipse.core.internal.boot.update.UMRegistryManager;import org.eclipse.core.internal.boot.update.UpdateManagerConstants;import org.eclipse.core.runtime.IProgressMonitor;import org.eclipse.swt.widgets.Shell;import org.eclipse.update.internal.ui.JarVerificationService;
 
 /**
  * Update Manager updates a workstation in one of three modes:
@@ -69,7 +60,6 @@ public UpdateManager( Shell shell ) {
 }
 /**
  * Deletes all files in the staging area.
- * Creation date: (2001-03-25 02:28:37 PM)
  */
 public void cleanup() {
 	String strStagingDirectory = UMEclipseTree.getFileInPlatformString(UMEclipseTree.getStagingArea());
@@ -88,8 +78,6 @@ public void cleanup() {
 	}
 }
 /**
- * Deletes all files in the staging area.
- * Creation date: (2001-03-25 02:28:37 PM)
  */
 public static void cleanupDirectory(File fileDirectory) {
 
@@ -108,6 +96,10 @@ public static void cleanupDirectory(File fileDirectory) {
 /**
  */
 public UMSessionManagerSession createSession(IInstallable[] descriptors, boolean bVerifyJars) throws UpdateManagerException {
+
+	// WARNING! TEMPORARY OVERRIDE - DO NOT DO JAR VERIFICATION
+	//---------------------------------------------------------
+	bVerifyJars = false;
 
 	// Create a new update session
 	//----------------------------
@@ -209,9 +201,6 @@ public UMSessionManagerSession executeSessionUndo( UMSessionManagerSession sessi
 	return session;
 }
 /**
- * Insert the method's description here.
- * Creation date: (2001/04/16 15:25:01)
- * @return org.eclipse.update.internal.core.UpdateManager
  */
 public static UpdateManager getCurrentInstance() {
 	return _updateManagerInstance;
@@ -373,9 +362,6 @@ public IUMRegistry getRegistryAt(URL url) {
 	return _registryManager.getRegistryAt( url );
 }
 /**
- * Insert the method's description here.
- * Creation date: (2001/03/13 11:02:20)
- * @return june2001.UMRegistryManager
  */
 public UMRegistryManager getRegistryManager() {
 	return _registryManager;
@@ -481,7 +467,6 @@ public void removeProduct(IProductDescriptor productDescriptor) {
 }
 /**
  * Sets the URL for the history log.  This property is persistent.
- * @param strURL java.lang.String
  */
 public void setHistoryLogURL(String strURL) throws UpdateManagerException {
 
@@ -500,7 +485,6 @@ public void setHistoryLogURL(String strURL) throws UpdateManagerException {
 }
 /**
  * Sets the URL for the update log.  This property is persistent.
- * @param strURL java.lang.String
  */
 public void setUpdateLogURL(String strURL) throws UpdateManagerException {
 	
