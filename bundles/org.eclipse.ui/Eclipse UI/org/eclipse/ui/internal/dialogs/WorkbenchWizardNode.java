@@ -96,7 +96,7 @@ public IWizard getWizard() {
 						new Status(
 							IStatus.ERROR, 
 							wizardElement.getConfigurationElement().getDeclaringExtension().getUniqueIdentifier(),
-		  					IStatus.ERROR, 
+		  					IStatus.OK, 
 		  					e.getMessage(), 
 		  					e);	
 				}
