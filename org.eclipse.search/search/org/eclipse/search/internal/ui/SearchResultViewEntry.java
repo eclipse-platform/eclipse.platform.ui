@@ -195,4 +195,15 @@ public class SearchResultViewEntry extends PlatformObject implements ISearchResu
 		if (i == 0)
 			fMarker= marker;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		Object adapted= super.getAdapter(adapter);
+		if (adapted == null) {
+			return getResource().getAdapter(adapter);
+		}
+		return adapted;
+	}
 }
