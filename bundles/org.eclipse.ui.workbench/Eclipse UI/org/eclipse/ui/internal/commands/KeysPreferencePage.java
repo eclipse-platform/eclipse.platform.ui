@@ -1170,7 +1170,11 @@ public class KeysPreferencePage
 		String commandId = getCommandId();
 		Set commandIds = (Set) commandIdsByCategoryId.get(categoryId);
 		Map commandIdsByUniqueName = new HashMap(this.commandIdsByUniqueName);
-		commandIdsByUniqueName.values().retainAll(commandIds);
+		if (commandIds == null) {
+			commandIdsByUniqueName = new HashMap();
+		} else {
+			commandIdsByUniqueName.values().retainAll(commandIds);
+		}
 		List commandNames = new ArrayList(commandIdsByUniqueName.keySet());
 		Collections.sort(commandNames, Collator.getInstance());
 		comboCommand.setItems((String[]) commandNames.toArray(new String[commandNames.size()]));
