@@ -8,7 +8,7 @@ import java.util.*;
 import org.eclipse.help.internal.toc.Toc;
 import org.eclipse.help.internal.util.URLCoder;
 /**
- * Help Search Query.
+ * Help Search Query Data.
  */
 public class SearchQueryData {
 	/** 

@@ -23,7 +23,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 /**
- * Help Search Query.
+ * Help Search Operation.
  */
 public class SearchOperation extends WorkspaceModifyOperation {
 	// Images
@@ -39,8 +39,8 @@ public class SearchOperation extends WorkspaceModifyOperation {
 	private static ImageRegistry imgRegistry = null;
 	private SearchQueryData queryData = null;
 	/**
-	 * HelpSearchQuery constructor.
-	 * @param key java.lang.String
+	 * SearchOperation constructor.
+	 * @param data SearchQueryData
 	 */
 	public SearchOperation(SearchQueryData data) {
 		if (imgRegistry == null) {
