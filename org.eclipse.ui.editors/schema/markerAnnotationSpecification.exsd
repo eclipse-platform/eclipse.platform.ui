@@ -223,7 +223,7 @@ since: 3.0
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         
+         3.0 (originally named org.eclipse.ui.workbench.texteditor.markerAnnotationSpecification)
       </documentation>
    </annotation>
 
