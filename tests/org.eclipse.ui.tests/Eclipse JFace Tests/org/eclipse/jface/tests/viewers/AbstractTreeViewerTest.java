@@ -6,6 +6,9 @@ package org.eclipse.jface.tests.viewers;
  * (c) Copyright IBM Corp 1999, 2000
  */
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
 
@@ -152,6 +155,29 @@ public void testExpandElement() {
 		fRootElement.addChild(newElement, new TestModelChange(TestModelChange.STRUCTURE_CHANGE, fRootElement));
 		assertNotNull("new sibling is visible", fViewer.testFindItem(newElement));
 	}
+	
+	/**
+	 * Regression test for Bug 3840 [Viewers] free expansion of jar happening when deleting projects (1GEV2FL)
+	 * Problem was:
+	 *   - node has children A and B 
+	 *   - A is expanded, B is not
+	 *   - A gets deleted
+	 *   - B gets expanded because it reused A's item
+	 */
+	public void testRefreshWithReusedItems() {
+        TestElement a= fRootElement.getFirstChild();
+        TestElement aa= a.getChildAt(0);
+        TestElement ab= a.getChildAt(1);
+        fTreeViewer.expandToLevel(aa, 1);
+		List expandedBefore = Arrays.asList(fTreeViewer.getExpandedElements());
+		assertTrue(expandedBefore.contains(a));
+		assertTrue(expandedBefore.contains(aa));
+		assertFalse(expandedBefore.contains(ab));
+        a.deleteChild(aa, new TestModelChange(TestModelChange.STRUCTURE_CHANGE, a));
+        List expandedAfter = Arrays.asList(fTreeViewer.getExpandedElements());
+        assertFalse(expandedAfter.contains(ab));
+	}
+
 	public void testRenameChildElement() {
 		TestElement first= fRootElement.getFirstChild();
 		TestElement first2= first.getFirstChild();
