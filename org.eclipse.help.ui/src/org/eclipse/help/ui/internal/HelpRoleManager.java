@@ -23,11 +23,12 @@ import org.eclipse.ui.commands.*;
  */
 public class HelpRoleManager implements IHelpRoleManager {
 	private IWorkbench workbench;
-	private IActivityManager activityManager;
+	private IWorkbenchActivitySupport activitySupport;
 	private ICommandManager commandManager;
 	public HelpRoleManager(IWorkbench workbench) {
 		this.workbench = workbench;
-		activityManager = workbench.getActivityManager();
+		
+		activitySupport = (IWorkbenchActivitySupport) workbench.getAdapter(IWorkbenchActivitySupport.class);
 		commandManager = workbench.getCommandManager();
 	}
 	/*
@@ -36,7 +37,7 @@ public class HelpRoleManager implements IHelpRoleManager {
 	 * @see org.eclipse.help.internal.IHelpRoleManager#isEnabled()
 	 */
 	public boolean isEnabled(String href) {
-		if (activityManager == null) {
+		if (activitySupport == null) {
 			return true;
 		}
 
@@ -48,7 +49,7 @@ public class HelpRoleManager implements IHelpRoleManager {
 			href = href.substring(0, i);
 
         
-        return activityManager.getIdentifier(href).isEnabled();
+        return activitySupport.getActivityManager().getIdentifier(href).isEnabled();
 	}
 
 	/*
@@ -57,7 +58,7 @@ public class HelpRoleManager implements IHelpRoleManager {
 	 * @see org.eclipse.help.internal.IHelpRoleManager#enabledActivities(java.lang.String)
 	 */
 	public void enabledActivities(String href) {
-		if (activityManager == null) {
+		if (activitySupport == null) {
 			return;
 		}
 
@@ -69,13 +70,13 @@ public class HelpRoleManager implements IHelpRoleManager {
 			href = href.substring(0, i);
 
         
-        IIdentifier identifier = activityManager.getIdentifier(href);
+        IIdentifier identifier = activitySupport.getActivityManager().getIdentifier(href);
         Set activitityIds = identifier.getActivityIds();
         if (activitityIds.isEmpty()) { // if there are no activities that match this identifier, do nothing.
             return;
         }
         
-        Set enabledIds = new HashSet(activityManager.getEnabledActivityIds());
+        Set enabledIds = new HashSet(activitySupport.getActivityManager().getEnabledActivityIds());
         enabledIds.addAll(activitityIds);
         workbench.setEnabledActivityIds(enabledIds);
 	}
