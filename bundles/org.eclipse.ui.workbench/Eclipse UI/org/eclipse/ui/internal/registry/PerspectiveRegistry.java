@@ -452,9 +452,9 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 		if (desc != null)
 			return;
 
-	// Step 3. Use application-specific default
-	defaultPerspID = Workbench.getInstance().getDefaultPerspectiveId();
-}
+		// Step 3. Use application-specific default
+		defaultPerspID = Workbench.getInstance().getDefaultPerspectiveId();
+	}
 	
 	private ArrayList getChildren(){
 		if(RoleManager.getInstance().isFiltering()){
