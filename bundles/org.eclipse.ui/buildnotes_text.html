@@ -14,7 +14,38 @@ Eclipse Platform Build Notes</h1>
 <h1>
 Text Editor Support (including JFace Text)</h1>
 
-<p><br>Eclipse SDK Build 20020514
+<p><br>Eclipse SDK Build 20020517
+<h2>
+Breaking API changes</h2>
+
+<h2>
+Other highlights</h2>
+
+<ul>
+<li>
+The ruler context menu action are initialized correctly when invoked over
+keyboard shortcut. (Ctrl+W)</li>
+
+<li>
+Added delete line actions ([Esc 0] Ctrl+K with emacs key bindings) to text
+editor</li>
+
+<li>
+Added support for setting/clearing/swapping a mark (emacs style selection)</li>
+
+<li>
+Code Cleanup</li>
+</ul>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports closed</h2>
+See bugzilla.
+<p>
+<hr WIDTH="100%">
+<p>Eclipse SDK Build 20020514
 <h2>
 Breaking API changes</h2>
 IVerticalRulerInfo.addMouseListener/removeMouseListener have been removed
@@ -36,7 +67,7 @@ text editor. File can be viewed using different encodings. Save always
 uses the workbench's encoding setting. Custom editors can leverage the
 support by including the EncodingActionGroup into their menus. The encoding
 support uses the newly introduced status text editor.
-<p>Text hover timeout when typing has been imporved. It's now always 1500ms.
+<p>Text hover timeout when typing has been improved. It's now always 1500ms.
 <h2>
 Known deficiencies</h2>
 
@@ -770,7 +801,8 @@ and creates the IInformationControl instance when needed. So clients can
 set an IInformationControlCreator on a TextViewer and a SourceViewer. They&nbsp;
 use it&nbsp; to create the text hover window and the annotation bar hover
 window respectively. DefaultInformationControl&nbsp; is a StyledText-based
-default implementation of IInformationControl. Clients may implement IInformationControl
+default
+implementation of IInformationControl. Clients may implement IInformationControl
 directly and inject their custom information control creator.</li>
 
 <li>
