@@ -1069,6 +1069,11 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 						continue;
 					}
 					String id = contributionMem.getString(IWorkbenchConstants.TAG_ID);
+					
+					// Prevent duplicate items from being read back in.
+					if (coolBarMgr.find(id) != null) {
+					    continue;
+					}
 					IContributionItem newItem = null;
 					if (type.equals(IWorkbenchConstants.TAG_TYPE_SEPARATOR)) {
 						if (id != null) {
