@@ -56,6 +56,14 @@ public int getMaxFileStates();
  */
 public long getMaxFileStateSize();
 /**
+ * Returns the interval between automatic workspace snapshots.
+ *
+ * @return the amount of time in milliseconds between automatic workspace snapshots
+ * @see #setSnapshotInterval
+ * @since 2.0
+ */
+public long getSnapshotInterval();
+/**
  * Returns whether this workspace performs auto-builds.
  *
  * @return <code>true</code> if auto-building is on, otherwise
@@ -151,6 +159,7 @@ public void setMaxFileStateSize(long size);
  *
  * @param delay the amount of time in milliseconds between automatic workspace snapshots
  * @see IWorkspace#setDescription
+ * @see #getSnapshotInterval
  * @since 2.0
  */
 public void setSnapshotInterval(long delay);
