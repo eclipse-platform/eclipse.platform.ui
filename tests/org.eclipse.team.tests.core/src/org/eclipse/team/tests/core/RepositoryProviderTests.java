@@ -72,6 +72,11 @@ public class RepositoryProviderTests extends TeamTest {
 			assertTrue(provider1 != null && provider1.getID().equals(RepositoryProviderBic.NATURE_ID));
 		}
 		
+		// adding another non-team provider should be ok but should not be returned as a provider
+		RepositoryProvider.addNatureToProject(project2, RepositoryProviderOtherSport.NATURE_ID, null);
+		provider2 = RepositoryProvider.getProvider(project2);
+		assertTrue(provider2 != null && provider2.getID().equals(RepositoryProviderNaish.NATURE_ID));
+		
 		// closed or non-existant projects cannot be associated with a provider
 		IProject closedProject = getUniqueTestProject("testGetProviderGenericClosed");
 		IProject nonExistantProject = ResourcesPlugin.getWorkspace().getRoot().getProject("nonExistant");
@@ -292,6 +297,7 @@ public class RepositoryProviderTests extends TeamTest {
 			}
 		});
 		
+		// test that moving files/folders between two projects with providers calls the destination
 		IResource[] resources = buildResources(projectA, new String[] {"moveFile.txt", "moveFolder/"});
 		ensureExistsInWorkspace(resources, true);
 		resources[0].move(projectB.getFullPath().append("moveFile_new.txt"), false, null);
