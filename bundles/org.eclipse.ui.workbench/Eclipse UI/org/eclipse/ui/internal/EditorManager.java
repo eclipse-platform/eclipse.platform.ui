@@ -741,7 +741,9 @@ public class EditorManager {
 				String editorID = editorMem.getString(IWorkbenchConstants.TAG_ID);
 				boolean pinned = "true".equals(editorMem.getString(IWorkbenchConstants.TAG_PINNED)); //$NON-NLS-1$
 				IMemento inputMem = editorMem.getChild(IWorkbenchConstants.TAG_INPUT);
-				String factoryID = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
+				String factoryID = null;
+				if(inputMem != null)
+					factoryID = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
 				if (factoryID == null)
 					WorkbenchPlugin.log("Unable to restore editor - no input factory ID."); //$NON-NLS-1$
 					
@@ -834,7 +836,9 @@ public class EditorManager {
 			public void run() {
 				// Get the input factory.
 				IMemento inputMem = editorMem.getChild(IWorkbenchConstants.TAG_INPUT);
-				String factoryID = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
+				String factoryID = null;
+				if(inputMem != null)
+					factoryID = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
 				if (factoryID == null) {
 					WorkbenchPlugin.log("Unable to restore editor - no input factory ID."); //$NON-NLS-1$
 					result[0] = unableToCreateEditor(editorMem,null);
