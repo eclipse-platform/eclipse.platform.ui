@@ -346,7 +346,7 @@ public class ErrorDialog extends IconAndMessageDialog {
      * @param listToPopulate The list to fill.
      */
     private void populateList(List listToPopulate) {
-        populateList(listToPopulate, status, 0, shouldIncludeTopLevelErrorInDetails);
+        populateList(listToPopulate, status, 0, shouldIncludeTopLevelErrorInDetails, null);
     }
 
     /**
@@ -360,19 +360,21 @@ public class ErrorDialog extends IconAndMessageDialog {
      * just its children
      */
     private void populateList(List listToPopulate, IStatus buildingStatus,
-            int nesting, boolean includeStatus) {
+            int nesting, boolean includeStatus, String parentMessage) {
         
         if (!buildingStatus.matches(displayMask)) {
             return;
         }
         
         int childNesting = nesting;
+        String message = null;
         if (includeStatus) {
 	        StringBuffer sb = new StringBuffer();
 	        for (int i = 0; i < nesting; i++) {
 	            sb.append(NESTING_INDENT); //$NON-NLS-1$
 	        }
-	        sb.append(buildingStatus.getMessage());
+	        message = buildingStatus.getMessage();
+            sb.append(message);
 	        listToPopulate.add(sb.toString());
 	        childNesting++;
         }
@@ -381,13 +383,17 @@ public class ErrorDialog extends IconAndMessageDialog {
         Throwable t = buildingStatus.getException();
         if (t instanceof CoreException) {
             CoreException ce = (CoreException)t;
-            populateList(listToPopulate, ce.getStatus(), childNesting, true);
+            IStatus eStatus = ce.getStatus();
+            // Only print the exception message if it is not contained in the parent message
+            if (message == null || message.indexOf(eStatus.getMessage()) == -1) {
+                populateList(listToPopulate, eStatus, childNesting, true, message);
+            }
         }
         
         // Look for child status
         IStatus[] children = buildingStatus.getChildren();
         for (int i = 0; i < children.length; i++) {
-            populateList(listToPopulate, children[i], childNesting, true);
+            populateList(listToPopulate, children[i], childNesting, true, message);
         }
     }
 
