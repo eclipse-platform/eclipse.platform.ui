@@ -207,7 +207,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	}
 
 	/**
-	 * Creates the controls needed to edit the run in background
+	 * Creates the controls needed to edit the launch in background
 	 * attribute of an external tool
 	 *
 	 * @param parent the composite to create the controls in

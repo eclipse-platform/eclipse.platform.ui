@@ -285,13 +285,21 @@ public final class ExternalToolMigration {
 		return name;
 	}
 	
+	/**
+	 * Migrate the old RUN_IN_BACKGROUND launch config attribute to the new
+	 * LAUNCH_IN_BACKGROUND attribute provided by the debug ui plugin.
+	 * 
+	 * @param config the config to migrate
+	 * @return the migrated config
+	 */
 	public static ILaunchConfiguration migrateRunInBackground(ILaunchConfiguration config) {
 		String noValueFlag= "NoValue"; //$NON-NLS-1$
 		String attr= null;
 		try {
 			attr = config.getAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, noValueFlag);
 		} catch (CoreException e) {
-			// Exception will occur if the attribute is set because the attribute is actually a boolean.
+			// Exception will occur if the attribute is already set because the attribute is actually a boolean.
+			// No migration necessary.
 			return config;
 		}
 		if (noValueFlag.equals(attr)) {
