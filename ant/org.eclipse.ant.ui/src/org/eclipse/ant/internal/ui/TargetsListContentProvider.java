@@ -1,5 +1,10 @@
 package org.eclipse.ant.internal.ui;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 //import javax.xml.parsers.SAXParserFactory;
 import java.io.File;import org.apache.tools.ant.ProjectHelper;import org.eclipse.ant.core.EclipseProject;import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IStatus;import org.eclipse.core.runtime.Status;import org.eclipse.jface.dialogs.ErrorDialog;import org.eclipse.jface.viewers.*;

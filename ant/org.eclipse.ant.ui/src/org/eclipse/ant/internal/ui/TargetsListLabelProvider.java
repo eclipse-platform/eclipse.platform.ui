@@ -1,4 +1,4 @@
-package org.eclipse.ant.internal.ui;import java.util.Vector;import org.apache.tools.ant.Target;import org.eclipse.jface.viewers.LabelProvider;
+package org.eclipse.ant.internal.ui;/* * (c) Copyright IBM Corp. 2000, 2001. * All Rights Reserved. */import java.util.Vector;import org.apache.tools.ant.Target;import org.eclipse.jface.viewers.LabelProvider;
 
 public class TargetsListLabelProvider extends LabelProvider {
 	

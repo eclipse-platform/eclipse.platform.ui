@@ -1,4 +1,4 @@
-package org.eclipse.ant.internal.ui;import org.eclipse.jface.wizard.WizardPage;
+package org.eclipse.ant.internal.ui;/* * (c) Copyright IBM Corp. 2000, 2001. * All Rights Reserved. */import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.Listener;
 import java.util.*;import org.apache.tools.ant.Target;import org.eclipse.ant.core.EclipseProject;import org.eclipse.core.resources.IFile;

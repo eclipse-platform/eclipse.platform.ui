@@ -1,4 +1,4 @@
-package org.eclipse.ant.internal.ui;import java.util.Vector;import org.apache.tools.ant.Target;import org.eclipse.ant.core.AntRunner;import org.eclipse.ant.core.EclipseProject;import org.eclipse.core.resources.IFile;import org.eclipse.core.runtime.IProgressMonitor;import org.eclipse.jface.operation.IRunnableWithProgress;import org.eclipse.jface.wizard.Wizard;
+package org.eclipse.ant.internal.ui;/* * (c) Copyright IBM Corp. 2000, 2001. * All Rights Reserved. */import java.lang.reflect.InvocationTargetException;import java.util.*;import org.apache.tools.ant.Target;import org.eclipse.ant.core.*;import org.eclipse.core.resources.IFile;import org.eclipse.core.runtime.IProgressMonitor;import org.eclipse.jface.operation.IRunnableWithProgress;import org.eclipse.jface.wizard.Wizard;
 
 public class AntLaunchWizard extends Wizard {
 	
@@ -15,11 +15,8 @@ public class AntLaunchWizard extends Wizard {
 	public boolean performFinish() {
 		Vector targetVect = page1.getSelectedTargets();
 
-		// Build Listener - TEST
-		//project.addBuildListener(new UIBuildListener(new ProgressMonitorDialog(AntUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow().getShell()).getProgressMonitor(), antFile));
-		
-		// and then ask the project to execute them
-		project.executeTargets(targetVect);
+		// and then ask the project to execute them -- SEEMS TO CRASH
+		// project.executeTargets(targetVect);		String[] args = new String[targetVect.size()+2];		args[0] = "-buildfile";		args[1] = antFile.getLocation().toOSString();		Iterator argsIterator = targetVect.iterator();		int index = 2;		while (argsIterator.hasNext())			args[index++] = ((Target) argsIterator.next()).getName();					//monitor.beginTask("Running Ant", IProgressMonitor.UNKNOWN);		try {			//TBD: should remove the build listener somehow			new AntRunner().run(args/*, new UIBuildListener(monitor, antFile)*/);		} 		catch (BuildCanceledException e) {			// build was canceled don't propagate exception			return false;		}		catch (Exception e) {			return false;		}					
 /*		
 		this.getContainer().run(true,true,new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
