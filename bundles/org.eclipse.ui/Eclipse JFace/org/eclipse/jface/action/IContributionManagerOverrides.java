@@ -9,6 +9,10 @@ package org.eclipse.jface.action;
  * This interface is used by instances of <code>IContributionItem</code>
  * to determine if the values for certain properties have been overriden
  * by their manager.
+ * <p>
+ * This interface is internal to the framework; it should not be implemented outside
+ * the framework.
+ * </p>
  * 
  * @since 2.0
  */
