@@ -68,6 +68,10 @@ public class ProgressManager extends ProgressProvider
 	//The property for whether or not the job is running in the
 	//dialog.
 	private static final String IN_DIALOG = "inDialog"; //$NON-NLS-1$
+
+	/**
+	 * A property to determine if the job was run in the dialog.
+	 */
 	public static final QualifiedName PROPERTY_IN_DIALOG = new QualifiedName(
 			IProgressConstants.PROPERTY_PREFIX, IN_DIALOG);
 	private static ProgressManager singleton;
@@ -90,24 +94,31 @@ public class ProgressManager extends ProgressProvider
 	private static final String SLEEPING_JOB = "sleeping.gif"; //$NON-NLS-1$
 	private static final String WAITING_JOB = "waiting.gif"; //$NON-NLS-1$
 	private static final String BLOCKED_JOB = "lockedstate.gif"; //$NON-NLS-1$
-	private static final String BUSY_OVERLAY = "progressspin.gif"; //$NON-NLS-1$
-	private static final String MAXIMIZE = "maximize.gif"; //$NON-NLS-1$
-	private static final String MINIMIZE = "minimize.gif"; //$NON-NLS-1$
 	private static final String PROGRESS_20_KEY = "PROGRESS_20"; //$NON-NLS-1$
 	private static final String PROGRESS_40_KEY = "PROGRESS_40"; //$NON-NLS-1$
 	private static final String PROGRESS_60_KEY = "PROGRESS_60"; //$NON-NLS-1$
 	private static final String PROGRESS_80_KEY = "PROGRESS_80"; //$NON-NLS-1$
 	private static final String PROGRESS_100_KEY = "PROGRESS_100"; //$NON-NLS-1$
+
+	/**
+	 * The key for the sleeping job icon.
+	 */
 	public static final String SLEEPING_JOB_KEY = "SLEEPING_JOB"; //$NON-NLS-1$
+	/**
+	 * The key for the waiting job icon.
+	 */
 	public static final String WAITING_JOB_KEY = "WAITING_JOB"; //$NON-NLS-1$
+
+	/**
+	 * The key for the locked job icon.
+	 */
 	public static final String BLOCKED_JOB_KEY = "LOCKED_JOB"; //$NON-NLS-1$
-	public static final String BUSY_OVERLAY_KEY = "BUSY_OVERLAY"; //$NON-NLS-1$
-	public static final String MINIMIZE_KEY = "MINIMIZE_FLOATING"; //$NON-NLS-1$
-	public static final String MAXIMIZE_KEY = "MAXIMIZE_FLOATING"; //$NON-NLS-1$
+
 	//A list of keys for looking up the images in the image registry
 	final static String[] keys = new String[]{PROGRESS_20_KEY, PROGRESS_40_KEY,
 			PROGRESS_60_KEY, PROGRESS_80_KEY, PROGRESS_100_KEY};
 	final Map runnableMonitors = Collections.synchronizedMap(new HashMap());
+	final Object monitorKey = new Object();
 	//A table that maps families to keys in the Jface image
 	//table
 	private Hashtable imageKeyTable = new Hashtable();
@@ -312,9 +323,6 @@ public class ProgressManager extends ProgressProvider
 			setUpImage(iconsRoot, SLEEPING_JOB, SLEEPING_JOB_KEY);
 			setUpImage(iconsRoot, WAITING_JOB, WAITING_JOB_KEY);
 			setUpImage(iconsRoot, BLOCKED_JOB, BLOCKED_JOB_KEY);
-			setUpImage(iconsRoot, BUSY_OVERLAY, BUSY_OVERLAY_KEY);
-			setUpImage(iconsRoot, MAXIMIZE, MAXIMIZE_KEY);
-			setUpImage(iconsRoot, MINIMIZE, MINIMIZE_KEY);
 			//Let the error manager set up its own icons
 			errorManager.setUpImages(iconsRoot);
 		} catch (MalformedURLException e) {
@@ -322,9 +330,7 @@ public class ProgressManager extends ProgressProvider
 		}
 	}
 	/**
-	 * Return the IJobChangeListener registered with the Job manager.
-	 * 
-	 * @return IJobChangeListener
+	 * Create the IJobChangeListener registered with the Job manager.
 	 */
 	private void createChangeListener() {
 		changeListener = new JobChangeAdapter() {
@@ -461,13 +467,16 @@ public class ProgressManager extends ProgressProvider
 	 * @return IProgressMonitor
 	 */
 	public JobMonitor progressFor(Job job) {
-		if (runnableMonitors.containsKey(job)) {
-			return (JobMonitor) runnableMonitors.get(job);
-		} else {
+
+		synchronized(monitorKey){
+			if (runnableMonitors.containsKey(job))
+				return (JobMonitor) runnableMonitors.get(job);
 			JobMonitor monitor = new JobMonitor(job);
 			runnableMonitors.put(job, monitor);
 			return monitor;
 		}
+		
+
 	}
 	/**
 	 * Add an IJobProgressManagerListener to listen to the changes.
@@ -541,8 +550,6 @@ public class ProgressManager extends ProgressProvider
 	/**
 	 * Refresh all the IJobProgressManagerListener as a result of a change in
 	 * the whole model.
-	 * 
-	 * @param info
 	 */
 	public void refreshAll() {
 		synchronized (listenerKey) {
@@ -561,13 +568,19 @@ public class ProgressManager extends ProgressProvider
 	 *            JobInfo
 	 */
 	public void removeJobInfo(JobInfo info) {
-		synchronized (listenerKey) {
-			Job job = info.getJob();
-			jobs.remove(job);
-			//If the job does not call done the
-			//reference needs to cleared up.
+		
+		Job job = info.getJob();
+		jobs.remove(job);
+		synchronized(monitorKey){
 			if (runnableMonitors.containsKey(job))
 				runnableMonitors.remove(job);
+		}
+		
+		synchronized (listenerKey) {			
+			
+			//If the job does not call done the
+			//reference needs to cleared up.		
+			
 			Iterator iterator = listeners.iterator();
 			while (iterator.hasNext()) {
 				IJobProgressManagerListener listener = (IJobProgressManagerListener) iterator
@@ -641,8 +654,7 @@ public class ProgressManager extends ProgressProvider
 			return true;
 		if (debug) //Always display in debug mode
 			return false;
-		else
-			return job.isSystem() || job.getState() == Job.SLEEPING;
+		return job.isSystem() || job.getState() == Job.SLEEPING;
 	}
 	/**
 	 * Return whether or not this job is ever displayable.
@@ -790,11 +802,11 @@ public class ProgressManager extends ProgressProvider
 			}
 		};
 		busyCursorWhile(dialogWaitRunnable, dialog);
-		if (invokes[0] != null){
+		if (invokes[0] != null) {
 			setUserInterfaceActive(true);
-			throw invokes[0];			
+			throw invokes[0];
 		}
-		if (interrupt[0] != null){
+		if (interrupt[0] != null) {
 			setUserInterfaceActive(true);
 			throw interrupt[0];
 		}
@@ -818,6 +830,9 @@ public class ProgressManager extends ProgressProvider
 	}
 	/**
 	 * Schedule the job that will open the progress monitor dialog
+	 * 
+	 * @param dialog
+	 *            the dialog to open
 	 */
 	private void scheduleProgressMonitorJob(
 			final ProgressMonitorJobsDialog dialog) {
@@ -830,7 +845,7 @@ public class ProgressManager extends ProgressProvider
 			 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				setUserInterfaceActive(true);
-				
+
 				if (ProgressManagerUtil.rescheduleIfModalShellOpen(this))
 					return Status.CANCEL_STATUS;
 				dialog.open();
@@ -893,7 +908,6 @@ public class ProgressManager extends ProgressProvider
 	/**
 	 * Remove the listener from all families.
 	 * 
-	 * @param family
 	 * @param listener
 	 */
 	void removeListener(IJobBusyListener listener) {
@@ -952,15 +966,7 @@ public class ProgressManager extends ProgressProvider
 				shell);
 		dialog.show(job);
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.progress.IProgressService#showInDialog(org.eclipse.swt.widgets.Shell,
-	 *      org.eclipse.core.runtime.jobs.Job, boolean)
-	 */
-	public void showInDialog(Shell shell, Job job, boolean runImmediately) {
-		showInDialog(shell, job);
-	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -977,7 +983,7 @@ public class ProgressManager extends ProgressProvider
 			dialog.run(fork, cancelable, runnable);
 			return;
 		}
-		
+
 		busyCursorWhile(runnable);
 	}
 	/*
@@ -998,11 +1004,11 @@ public class ProgressManager extends ProgressProvider
 		String key = IMAGE_KEY + String.valueOf(imageKeyTable.size());
 		imageKeyTable.put(family, key);
 		ImageRegistry registry = JFaceResources.getImageRegistry();
-		
+
 		//Avoid registering twice
-		if(registry.getDescriptor(key) == null)
+		if (registry.getDescriptor(key) == null)
 			registry.put(key, icon);
-		
+
 	}
 	/*
 	 * (non-Javadoc)
@@ -1019,14 +1025,17 @@ public class ProgressManager extends ProgressProvider
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Iterate through all of the windows and set them to
-	 * be disabled or enabled as appropriate.'
-	 * @param active The set the windows will be set to.
+	 * Iterate through all of the windows and set them to be disabled or enabled
+	 * as appropriate.'
+	 * 
+	 * @param active
+	 *            The set the windows will be set to.
 	 */
-	private void setUserInterfaceActive(boolean active){
-		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+	private void setUserInterfaceActive(boolean active) {
+		IWorkbenchWindow[] windows = PlatformUI.getWorkbench()
+				.getWorkbenchWindows();
 		for (int i = 0; i < windows.length; i++) {
 			IWorkbenchWindow window = windows[i];
 			window.getShell().setEnabled(active);
