@@ -502,7 +502,7 @@ private void showMessage(String newMessage, Image newImage) {
 
 	if (!showingError) {
 		// we are not showing an error
-		updateMessage(newMessage);
+		updateMessage(message);
 		messageImageLabel.setImage(messageImage);
 		setImageLabelVisible(messageImage != null);
 		messageLabel.setToolTipText(message);
