@@ -19,14 +19,16 @@ public class FederatedSearchEntry {
 	private String engineId;
 	private ISearchScope scope;
 	private ISearchEngine engine;
+	private ISearchEngineResultCollector collector;
 
 	/**
 	 * 
 	 */
-	public FederatedSearchEntry(String engineId, ISearchScope scope, ISearchEngine engine) {
+	public FederatedSearchEntry(String engineId, ISearchScope scope, ISearchEngine engine, ISearchEngineResultCollector collector) {
 		this.engineId = engineId;
 		this.scope = scope;
 		this.engine = engine;
+		this.collector = collector;
 	}
 	
 	public String getEngineId() {
@@ -38,5 +40,8 @@ public class FederatedSearchEntry {
 	}
 	public ISearchScope getScope() {
 		return scope;
+	}
+	public ISearchEngineResultCollector getResultCollector() {
+		return collector;
 	}
 }

@@ -137,6 +137,7 @@ public class SearchPart extends SectionPart implements IHelpPart {
 		if (currentPhrase.equals(phrase))
 			return;
 		phraseText.setText(phrase);
+		phraseText.selectAll();
 		if (getSection().isExpanded())
 			startInPlaceSearch(phrase);
 	}

@@ -87,6 +87,9 @@ public class SearchHit implements ISearchEngineResult {
      * @see org.eclipse.help.internal.search.federated.ISearchEngineResult#getDescription()
      */
     public String getDescription() {
-        return getLabel();
+        return null;
     }
+    public IHelpResource getCategory() {
+    	return toc;
+     }
 }

@@ -26,35 +26,46 @@ import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
+	private static final String CANCEL_HREF = "__cancel__";
+
+	private static final String MORE_HREF = "__more__";
+
 	private ReusableHelpPart parent;
 
 	private FormText searchResults;
 
-	//private SorterByScore resultSorter;
+	private SorterByScore resultSorter;
 
 	private String id;
 
 	private String phrase;
+
 	private Job runningJob;
+
 	private JobListener jobListener;
-	
+
 	class JobListener implements IJobChangeListener {
 		public void aboutToRun(IJobChangeEvent event) {
 		}
+
 		public void awake(IJobChangeEvent event) {
 		}
+
 		public void done(IJobChangeEvent event) {
-			if (event.getJob()==runningJob) {
+			if (event.getJob() == runningJob) {
 				runningJob = null;
 			}
 		}
+
 		public void running(IJobChangeEvent event) {
 		}
+
 		public void scheduled(IJobChangeEvent event) {
 		}
+
 		public void sleeping(IJobChangeEvent event) {
 		}
-	}	
+	}
 
 	/**
 	 * @param parent
@@ -64,7 +75,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 	public SearchResultsPart(Composite parent, FormToolkit toolkit) {
 		// stext = new ScrolledFormText(parent, false);
 		// toolkit.adapt(stext);
-		//resultSorter = new SorterByScore();
+		resultSorter = new SorterByScore();
 		searchResults = toolkit.createFormText(parent, true);
 		searchResults.marginWidth = 10;
 		// stext.setFormText(searchResults);
@@ -80,13 +91,14 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		searchResults.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				Object href = e.getHref();
-				if (href.toString().equals("_cancel")) { //$NON-NLS-1$
-					if (runningJob!=null) {
+				if (href.equals(CANCEL_HREF)) { //$NON-NLS-1$
+					if (runningJob != null) {
 						runningJob.cancel();
-						runningJob=null;
+						runningJob = null;
 					}
-				}
-				else
+				} else if (href.equals(MORE_HREF)) {
+					doMore();
+				} else
 					doOpenLink(e.getHref());
 			}
 		});
@@ -94,9 +106,9 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		jobListener = new JobListener();
 		Platform.getJobManager().addJobChangeListener(jobListener);
 	}
-	
+
 	public void dispose() {
-		Platform.getJobManager().removeJobChangeListener(jobListener);		
+		Platform.getJobManager().removeJobChangeListener(jobListener);
 		super.dispose();
 	}
 
@@ -133,16 +145,16 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 	}
 
 	void clearResults() {
-		if (runningJob!=null) {
+		if (runningJob != null) {
 			runningJob.cancel();
 			runningJob = null;
 		}
 		searchResults.setText("", false, false); //$NON-NLS-1$
 		parent.reflow();
 	}
-	
+
 	void startNewSearch(Job job) {
-		if (runningJob!=null) {
+		if (runningJob != null) {
 			runningJob.cancel();
 		}
 		StringBuffer buff = new StringBuffer();
@@ -152,7 +164,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		buff.append("\">"); //$NON-NLS-1$
 		buff.append(HelpUIResources.getString("SearchResultsPart.progress")); //$NON-NLS-1$
 		buff.append("</span>"); //$NON-NLS-1$
-		buff.append("<a href=\"cancel\">"); //$NON-NLS-1$
+		buff.append("<a href=\"_cancel\">"); //$NON-NLS-1$
 		buff.append(HelpUIResources.getString("SearchResultsPart.cancel")); //$NON-NLS-1$
 		buff.append("</a></p>"); //$NON-NLS-1$
 		buff.append("</form>"); //$NON-NLS-1$
@@ -162,9 +174,8 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		job.schedule();
 	}
 
-	void updateResults(String phrase, StringBuffer buff,
-			SearchHit [] hits) {
-		if (runningJob!=null) {
+	void updateResults(String phrase, StringBuffer buff, SearchHit[] hits) {
+		if (runningJob != null) {
 			runningJob.cancel();
 		}
 		this.phrase = phrase;
@@ -176,8 +187,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 			buff.append("\">"); //$NON-NLS-1$
 			buff.append(HelpUIResources.getString("SearchResultsPart.label")); //$NON-NLS-1$
 			buff.append("</span></p>"); //$NON-NLS-1$
-			//Object[] elements = hresult.getElements();
-			//resultSorter.sort(null, elements);
+			resultSorter.sort(null, hits);
 
 			for (int i = 0; i < hits.length; i++) {
 				SearchHit hit = hits[i];
@@ -186,27 +196,33 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 				buff.append("\">"); //$NON-NLS-1$
 				buff.append("<a href=\""); //$NON-NLS-1$
 				buff.append(hit.getHref());
+				buff.append("\" alt=\"");
+				buff.append(hit.getToc().getLabel());
 				buff.append("\">"); //$NON-NLS-1$
 				buff.append(hit.getLabel());
 				buff.append("</a>"); //$NON-NLS-1$
-				buff.append(" <a href=\""); //$NON-NLS-1$
-				buff.append("nw:"); //$NON-NLS-1$
-				buff.append(hit.getHref());
-				buff.append("\"><img href=\""); //$NON-NLS-1$
-				buff.append(IHelpUIConstants.IMAGE_NW);
-				buff.append("\" alt=\""); //$NON-NLS-1$
-				buff.append(HelpUIResources.getString("SearchResultsPart.nwtooltip")); //$NON-NLS-1$
-				buff.append("\""); //$NON-NLS-1$
-				buff.append("/>"); //$NON-NLS-1$
-				buff.append("</a>"); //$NON-NLS-1$
+				/*
+				 * buff.append(" <a href=\""); //$NON-NLS-1$ buff.append("nw:");
+				 * //$NON-NLS-1$ buff.append(hit.getHref()); buff.append("\">
+				 * <img href=\""); //$NON-NLS-1$
+				 * buff.append(IHelpUIConstants.IMAGE_NW); buff.append("\"
+				 * alt=\""); //$NON-NLS-1$
+				 * buff.append(HelpUIResources.getString("SearchResultsPart.nwtooltip"));
+				 * //$NON-NLS-1$ buff.append("\""); //$NON-NLS-1$
+				 * buff.append("/>"); //$NON-NLS-1$ buff.append(" </a>");
+				 * //$NON-NLS-1$
+				 */
 				buff.append("</li>"); //$NON-NLS-1$
 			}
 			if (hits.length > 0) {
 				buff.append("<p><img href=\"");
 				buff.append(IHelpUIConstants.IMAGE_HELP_SEARCH);
 				buff.append("\"/>");
-				buff.append(" <a href=\"_more\">"); //$NON-NLS-1$
-				buff.append(HelpUIResources.getString("SearchResultsPart.moreResults")); //$NON-NLS-1$
+				buff.append(" <a href=\"");
+				buff.append(MORE_HREF);
+				buff.append("\">"); //$NON-NLS-1$
+				buff.append(HelpUIResources
+						.getString("SearchResultsPart.moreResults")); //$NON-NLS-1$
 				buff.append("</a></p>"); //$NON-NLS-1$
 			}
 			buff.append("</form>"); //$NON-NLS-1$
@@ -216,7 +232,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		parent.reflow();
 	}
 
-	private void doExternalSearch(String phrase) {
+	private void doMore() {
 		try {
 			String ephrase = URLEncoder.encode(phrase, "UTF-8"); //$NON-NLS-1$
 			String query = "tab=search&searchWord=" + ephrase; //$NON-NLS-1$

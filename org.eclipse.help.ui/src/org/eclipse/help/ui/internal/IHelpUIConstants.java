@@ -46,6 +46,7 @@ public interface IHelpUIConstants {
 	//Help view pages
 	public static final String HV_SEARCH_PAGE = "search-page";
 	public static final String HV_FSEARCH_PAGE = "fsearch-page";
+	public static final String HV_FSEARCH_RESULT_PAGE = "fsearch-result-page";
 	public static final String HV_ALL_TOPICS_PAGE = "all-topics-page";
 	public static final String HV_BROWSER_PAGE = "browser-page";
 	public static final String HV_CONTEXT_HELP_PAGE = "context-help-page";

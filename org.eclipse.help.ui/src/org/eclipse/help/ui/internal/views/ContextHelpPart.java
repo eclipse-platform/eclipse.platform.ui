@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.*;
+import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.context.IStyledContext;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.help.ui.internal.HelpUIResources;
@@ -278,6 +280,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	}
 
 	private String formatHelpContext(IContext context) {
+		String locale = Platform.getNL();
 		StringBuffer sbuf = new StringBuffer();
 		sbuf.append("<form>"); //$NON-NLS-1$
 		sbuf.append("<p>"); //$NON-NLS-1$
@@ -297,6 +300,8 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 				sbuf.append("\" indent=\"21\">"); //$NON-NLS-1$
 				sbuf.append("<a href=\""); //$NON-NLS-1$
 				sbuf.append(link.getHref());
+				sbuf.append("\" alt=\"");
+				sbuf.append(getTopicCategory(link.getHref(), locale));
 				sbuf.append("\">"); //$NON-NLS-1$
 				sbuf.append(link.getLabel());
 				sbuf.append("</a>"); //$NON-NLS-1$
@@ -305,6 +310,16 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		}
 		sbuf.append("</form>"); //$NON-NLS-1$
 		return sbuf.toString();
+	}
+
+	private String getTopicCategory(String href, String locale) {
+		IToc[] tocs = HelpPlugin.getTocManager().getTocs(locale);
+		for (int i = 0; i < tocs.length; i++) {
+			ITopic topic = tocs[i].getTopic(href);
+			if (topic != null)
+				return tocs[i].getLabel();
+		}
+		return null;
 	}
 
 	/**

@@ -10,21 +10,32 @@
  *******************************************************************************/
 package org.eclipse.help.internal.search.federated;
 
+import org.eclipse.help.IHelpResource;
+
 /**
  * A search result in the federated search.
+ * @since 3.1
  */
 public interface ISearchEngineResult {
 	/**
 	 * Returns the label of the search result.
-	 * @return
+	 * @return the search result label
 	 */
 	String getLabel();
 	/**
-	 * Returns the short description of the search result (if available), or 
-	 * <code>null</code> otherwise.
-	 * @return
+	 * Returns the short description of the search result.
+	 * @return  a short description, or <code>null</code> if not
+	 * available.
 	 */
 	String getDescription();
+	/**
+	 * Returns a category this search result belongs to. 
+	 * Engines can use this object to denote the origin of the hit
+	 * in the search domain. The usage of <code>IHelpResource</code>
+	 * allows result UI to create a link to the category.
+	 * @return a hit category or <code>null</code> if not available. 
+	 */
+	IHelpResource getCategory();
 	/**
 	 * Returns the URL (as a string) associated with this help resource.
 	 * 

@@ -307,10 +307,12 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		pages = new ArrayList();
 		// federated search page
 		HelpPartPage page = new HelpPartPage(HV_FSEARCH_PAGE, HelpUIResources.getString("ReusableHelpPart.searchPage.name")); //$NON-NLS-1$
+		page.setVerticalSpacing(0);		
 		page.addPart(HV_FSEARCH, false);
-		page.addPart(HV_FSEARCH_RESULT, false, true);
+		page.addPart(HV_FSEARCH_RESULT, true);
 		page.addPart(HV_SEE_ALSO, false);
 		pages.add(page);
+		
 		// all topics page
 		page = new HelpPartPage(HV_ALL_TOPICS_PAGE, HelpUIResources.getString("ReusableHelpPart.allTopicsPage.name")); //$NON-NLS-1$
 		page.setVerticalSpacing(0);

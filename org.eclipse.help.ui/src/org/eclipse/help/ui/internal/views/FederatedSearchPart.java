@@ -243,13 +243,22 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart,
 	private void doSearch(String text) {
 		ScopeSet set = scopeSetManager.getActiveSet();
 		ArrayList entries = new ArrayList();
+		final FederatedSearchResultsPart results = (FederatedSearchResultsPart) parent
+		.findPart(IHelpUIConstants.HV_FSEARCH_RESULT);
 		for (int i = 0; i < engineDescriptors.size(); i++) {
-			EngineDescriptor ed = (EngineDescriptor) engineDescriptors.get(i);
+			final EngineDescriptor ed = (EngineDescriptor) engineDescriptors.get(i);
 			if (set.getEngineEnabled(ed) && ed.getEngine() != null) {
 				ISearchScope scope = ed.createSearchScope(set
 						.getPreferenceStore());
 				FederatedSearchEntry entry = new FederatedSearchEntry(ed
-						.getId(), scope, ed.getEngine());
+						.getId(), scope, ed.getEngine(), new ISearchEngineResultCollector() {
+							public void add(ISearchEngineResult searchResult) {
+								results.add(ed, searchResult);
+							}
+							public void add(ISearchEngineResult[] searchResults) {
+								results.add(ed, searchResults);
+							}
+						} );
 				entries.add(entry);
 			}
 		}
@@ -257,13 +266,11 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart,
 			return;
 		FederatedSearchEntry[] array = (FederatedSearchEntry[]) entries
 				.toArray(new FederatedSearchEntry[entries.size()]);
-		FederatedSearchResultsPart results = (FederatedSearchResultsPart) parent
-				.findPart(IHelpUIConstants.HV_FSEARCH_RESULT);
 		if (scopeSection.isExpanded()) {
 			scopeSection.setExpanded(false);
 			parent.reflow();
 		}
-		BaseHelpSystem.getSearchManager().search(text, array, results);
+		BaseHelpSystem.getSearchManager().search(text, array);
 		results.startNewSearch(text);
 	}
 

@@ -20,16 +20,14 @@ public class FederatedSearchJob extends Job {
 	public static final String FAMILY = "org.eclipse.help.base.searchEngine";
 	private String expression;
 	private FederatedSearchEntry entry;
-	private ISearchEngineResultCollector collector;
 
 	/**
 	 * @param name
 	 */
-	public FederatedSearchJob(String expression, FederatedSearchEntry entry, ISearchEngineResultCollector collector) {
+	public FederatedSearchJob(String expression, FederatedSearchEntry entry) {
 		super(entry.getEngineId());
 		this.expression = expression;
 		this.entry = entry;
-		this.collector = collector;
 	}
 
 	/* (non-Javadoc)
@@ -37,7 +35,7 @@ public class FederatedSearchJob extends Job {
 	 */
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
-			entry.getEngine().run(expression, entry.getScope(), collector, monitor);
+			entry.getEngine().run(expression, entry.getScope(), entry.getResultCollector(), monitor);
 			return Status.OK_STATUS;
 		}
 		catch (CoreException e) {
