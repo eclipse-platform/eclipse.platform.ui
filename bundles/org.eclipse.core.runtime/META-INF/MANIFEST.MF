@@ -18,6 +18,6 @@ Export-Package:
  org.eclipse.core.runtime.jobs,
  org.eclipse.core.runtime.content,
  org.eclipse.core.runtime,
- org.eclipse.core.runtime.dynamicHelpers
+ org.eclipse.core.runtime.dynamichelpers
 Require-Bundle: 
  org.eclipse.osgi; reprovide=true
