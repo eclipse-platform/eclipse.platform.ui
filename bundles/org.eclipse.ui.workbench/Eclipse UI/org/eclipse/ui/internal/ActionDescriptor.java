@@ -176,7 +176,7 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
  * subclasses of this class may be created.
  */
 private PluginAction createAction(int targetType, IConfigurationElement actionElement, Object target, String defId, String style) {
-	int actionStyle = IAction.AS_PUSH_BUTTON;
+	int actionStyle = IAction.AS_UNSPECIFIED;
 	if (style != null) {
 		if (style.equals(STYLE_RADIO)) {
 			actionStyle = IAction.AS_RADIO_BUTTON;
@@ -184,6 +184,8 @@ private PluginAction createAction(int targetType, IConfigurationElement actionEl
 			actionStyle = IAction.AS_CHECK_BOX;
 		} else if (style.equals(STYLE_PULLDOWN)) {
 			actionStyle = IAction.AS_DROP_DOWN_MENU;
+		} else if (style.equals(STYLE_PUSH)) {
+			actionStyle = IAction.AS_PUSH_BUTTON;
 		}
 	}
 	

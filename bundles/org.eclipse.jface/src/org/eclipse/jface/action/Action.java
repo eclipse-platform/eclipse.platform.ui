@@ -203,22 +203,23 @@ public abstract class Action implements IAction {
 	 * 
 	 * @param text the action's text, or <code>null</code> if there is no text
 	 * @param style one of <code>AS_PUSH_BUTTON</code>, <code>AS_CHECK_BOX</code>,
-	 * 		<code>AS_DROP_DOWN_MENU</code>, and <code>AS_RADIO_BUTTON</code>.
+	 * 		<code>AS_DROP_DOWN_MENU</code>, <code>AS_RADIO_BUTTON</code>, and
+	 * 		<code>AS_UNSPECIFIED</code>.
 	 */
 	protected Action(String text, int style) {
 		this(text);
 		switch (style) {
+			case AS_PUSH_BUTTON :
+				value = VAL_PUSH_BTN;
+				break;
 			case AS_CHECK_BOX :
 				value = VAL_TOGGLE_BTN_OFF;
-				break;
-			case AS_RADIO_BUTTON :
-				value = VAL_RADIO_BTN_OFF;
 				break;
 			case AS_DROP_DOWN_MENU :
 				value = VAL_DROP_DOWN_MENU;
 				break;
-			case AS_PUSH_BUTTON :
-				value = VAL_PUSH_BTN;
+			case AS_RADIO_BUTTON :
+				value = VAL_RADIO_BTN_OFF;
 				break;
 		}
 	}
