@@ -58,24 +58,30 @@ public abstract class AbstractViewerState {
 		TreeItem[] selection = viewer.getTree().getSelection();
 		fSelection = new IPath[selection.length];
 		try {
-			for (int i = 0; i < selection.length; i++) {
-				fSelection[i] = encodeElement(selection[i]);
-			}
+		    for (int i = 0; i < selection.length; i++) {
+		        fSelection[i] = encodeElement(selection[i]);
+		        if (fSelection[i] == null) {
+		            fSelection = null;
+		            return;
+		        }
+		    }
 		} catch (DebugException e) {
-			fSelection = null;
+		    fSelection = null;
 		}
 	}
 
-	protected void collectExpandedItems(TreeItem item, List expanded)
-			throws DebugException {
-		if (item.getExpanded()) {
-			expanded.add(encodeElement(item));
-			TreeItem[] items = item.getItems();
-			for (int i = 0; i < items.length; i++) {
-				collectExpandedItems(items[i], expanded);
-			}
-		}
-	}
+	protected void collectExpandedItems(TreeItem item, List expanded) throws DebugException {
+        if (item.getExpanded()) {
+            IPath path = encodeElement(item);
+            if (path != null) {
+                expanded.add(path);
+                TreeItem[] items = item.getItems();
+                for (int i = 0; i < items.length; i++) {
+                    collectExpandedItems(items[i], expanded);
+                }
+            }
+        }
+    }
 
 	/**
 	 * Constructs a path representing the given tree item. The segments in the

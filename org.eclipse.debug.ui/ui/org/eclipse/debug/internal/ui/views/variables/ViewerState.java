@@ -39,15 +39,20 @@ public class ViewerState extends AbstractViewerState {
 	 * @see org.eclipse.debug.internal.ui.views.AbstractViewerState#encodeElement(org.eclipse.swt.widgets.TreeItem)
 	 */
 	protected IPath encodeElement(TreeItem item) throws DebugException {
-		IVariable variable = (IVariable)item.getData();
-		IPath path = new Path(variable.getName());
-		TreeItem parent = item.getParentItem();
-		while (parent != null) {
-			variable = (IVariable)parent.getData();
-			path = new Path(variable.getName()).append(path);
-			parent = parent.getParentItem();
-		}
-		return path;
+	    Object data = item.getData();
+	    if (data instanceof IVariable) {
+	        IVariable variable = (IVariable)data;
+	        IPath path = new Path(variable.getName());
+	        TreeItem parent = item.getParentItem();
+	        while (parent != null) {
+	            variable = (IVariable)parent.getData();
+	            path = new Path(variable.getName()).append(path);
+	            parent = parent.getParentItem();
+	        }
+	        return path;
+	    }
+	    
+        return null;
 	}
 
 	/**
