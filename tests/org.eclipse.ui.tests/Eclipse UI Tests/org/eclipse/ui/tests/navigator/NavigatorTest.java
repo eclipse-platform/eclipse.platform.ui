@@ -13,64 +13,10 @@ import org.eclipse.ui.views.navigator.ResourceNavigator;
 /**
  * Tests the Resource Navigator view.
  */
-public class NavigatorTest extends UITestCase {
+public class NavigatorTest extends AbstractNavigatorTest {
 
-	private static final String NAVIGATOR_VIEW_ID = "org.eclipse.ui.views.ResourceNavigator";
-	
-	private IProject testProject;
-	private IFolder testFolder;
-	private IFile testFile;
-	private ResourceNavigator navigator;
-	
 	public NavigatorTest(String testName) {
 		super(testName);
-	}
-
-	private void createTestProject() throws CoreException {
-		if (testProject == null) {
-			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			testProject = workspace.getRoot().getProject("TestProject");
-			testProject.create(null);
-			testProject.open(null);
-		}
-	}
-	
-	private void createTestFolder() throws CoreException {
-		if (testFolder == null) {
-			createTestProject();
-			testFolder = testProject.getFolder("TestFolder");
-			testFolder.create(false, false, null);
-		}
-	}
-
-	private void createTestFile() throws CoreException {
-		if (testFile == null) {
-			createTestFolder();
-			testFile = testFolder.getFile("Foo.txt");
-			testFile.create(new ByteArrayInputStream("Some content.".getBytes()), false, null);
-		}
-	}
-
-	/** Shows the Navigator in a new test window. */
-	private void showNav() throws PartInitException {
-		IWorkbenchWindow window = openTestWindow();
-		navigator = (ResourceNavigator) window.getActivePage().showView(NAVIGATOR_VIEW_ID);
-	}
-	
-	public void tearDown() throws Exception {
-		if (testProject != null) {
-			try {
-				testProject.delete(true, null);
-			}
-			catch (CoreException e) {
-				fail(e.toString());
-			}
-			testProject = null;
-			testFolder = null;
-			testFile = null;
-		}
-		super.tearDown();
-		navigator = null;
 	}
 	
 	/**
