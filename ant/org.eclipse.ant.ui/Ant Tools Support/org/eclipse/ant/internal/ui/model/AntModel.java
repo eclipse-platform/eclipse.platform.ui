@@ -40,9 +40,11 @@ import org.apache.tools.ant.TaskAdapter;
 import org.apache.tools.ant.UnknownElement;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
+import org.eclipse.ant.core.AntSecurityException;
 import org.eclipse.ant.core.Property;
 import org.eclipse.ant.core.Type;
 import org.eclipse.ant.internal.core.AntCoreUtil;
+import org.eclipse.ant.internal.core.AntSecurityManager;
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.editor.DecayCodeCompletionDataStructuresThread;
@@ -289,12 +291,21 @@ public class AntModel implements IAntModel {
     	} catch(BuildException e) {
 			handleBuildException(e, null);
     	} finally {
-            processAntHome(true);
     		Thread.currentThread().setContextClassLoader(originalClassLoader);
-    		if (parsed) {
-    			resolveBuildfile();
-    			endReporting();
-    			project.fireBuildFinished(null); //cleanup (IntrospectionHelper)
+    		if (parsed) {		
+    			SecurityManager origSM= System.getSecurityManager();
+    			processAntHome(true);
+    			try {
+					//set a security manager to disallow system exit and system property setting
+					System.setSecurityManager(new AntSecurityManager(origSM, Thread.currentThread()));
+					resolveBuildfile();
+					endReporting();
+				} catch (AntSecurityException e) {
+        		
+				} finally {
+					System.setSecurityManager(origSM);
+					project.fireBuildFinished(null); //cleanup (IntrospectionHelper)
+				}
     		}
     	}
 	}

@@ -13,6 +13,7 @@ package org.eclipse.ant.internal.ui.model;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.eclipse.ant.core.AntSecurityException;
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
@@ -71,6 +72,9 @@ public class AntImportNode extends AntTaskNode {
 			return true;
 		} catch (BuildException be) {
 			handleBuildException(be, AntEditorPreferenceConstants.PROBLEM_IMPORTS);
+		} catch (AntSecurityException se) {
+			//either a system exit or setting of system property was attempted
+            handleBuildException(new BuildException("Security exception"), AntEditorPreferenceConstants.PROBLEM_IMPORTS);
 		}
 		return false;
 	}

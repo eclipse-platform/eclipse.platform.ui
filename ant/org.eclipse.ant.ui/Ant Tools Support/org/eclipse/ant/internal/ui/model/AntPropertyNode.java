@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.eclipse.ant.core.AntSecurityException;
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.editor.AntEditorCompletionProcessor;
@@ -99,7 +100,10 @@ public class AntPropertyNode extends AntTaskNode {
             //BCEL JAR. Currently it is not possible to set these types of properties within the Ant Editor.
             //see bug 71888
             handleBuildException(new BuildException(AntModelMessages.getString("AntPropertyNode.0")), AntEditorPreferenceConstants.PROBLEM_PROPERTIES); //$NON-NLS-1$
-        } finally {
+        } catch (AntSecurityException se) {
+			//either a system exit or setting of system property was attempted
+            handleBuildException(new BuildException("Security exception"), AntEditorPreferenceConstants.PROBLEM_PROPERTIES);
+		} finally {
 			getProjectNode().setCurrentConfiguringProperty(null);
 		}
 		return false;

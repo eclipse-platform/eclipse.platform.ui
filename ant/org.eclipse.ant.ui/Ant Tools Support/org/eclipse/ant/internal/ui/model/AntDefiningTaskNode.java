@@ -25,6 +25,7 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.UnknownElement;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
+import org.eclipse.ant.core.AntSecurityException;
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
@@ -103,7 +104,11 @@ public class AntDefiningTaskNode extends AntTaskNode {
                 //classloaders. See bug 71888
                 ((AntModel)getAntModel()).removeDefiningTaskNodeInfo(this);
                 handleBuildException(new BuildException(AntModelMessages.getString("AntDefiningTaskNode.0")), AntEditorPreferenceConstants.PROBLEM_CLASSPATH); //$NON-NLS-1$
-            } 
+            } catch (AntSecurityException se) {
+				//either a system exit or setting of system property was attempted
+            	((AntModel)getAntModel()).removeDefiningTaskNodeInfo(this);
+                handleBuildException(new BuildException("Security exception"), AntEditorPreferenceConstants.PROBLEM_CLASSPATH);
+			}
 		}
 		return false;
 	}
