@@ -218,6 +218,5 @@ protected void writeLog(IStatus[] statuses) {
 	for (int i = 0; i < statuses.length; i++) {
 		writer.logging(statuses[i], "org.eclipse.core.tests.runtime");
 	}
-	writer.shutdown();
 }
 }

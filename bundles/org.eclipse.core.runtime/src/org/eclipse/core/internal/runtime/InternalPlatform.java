@@ -19,6 +19,7 @@ import org.eclipse.core.internal.registry.BundleModel;
 import org.eclipse.core.internal.registry.ExtensionRegistry;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.osgi.framework.log.FrameworkLog;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
@@ -43,6 +44,7 @@ public final class InternalPlatform implements IPlatform {
 	static ServiceRegistration platformRegistration;
 	static EnvironmentInfo infoService;
 	static URLConverter urlConverter;
+	static FrameworkLog frameworkLog;
 
 	// registry index - used to store last modified times for
 	// registry caching
@@ -481,8 +483,7 @@ public final class InternalPlatform implements IPlatform {
 		platformLog = new PlatformLogWriter();
 		addLogListener(platformLog);
 		if ("true".equals(System.getProperty("eclipse.consoleLog"))) {
-			consoleLog = new PlatformLogWriter(System.out);
-			addLogListener(consoleLog);
+			getFrameworkLog().setConsoleLog(true);
 		}
 		platformRegistration = context.registerService(IPlatform.class.getName(), this, null);
 	}	
@@ -549,8 +550,6 @@ public final class InternalPlatform implements IPlatform {
 		debugTracker.close();
 		if (writeVersion)
 			writeVersion();
-		if (platformLog != null)
-			platformLog.shutdown();
 		initialized = false;
 	}
 
@@ -1095,6 +1094,10 @@ public final class InternalPlatform implements IPlatform {
 
 	public URLConverter getURLConverter(){
 		return urlConverter;
+	}
+
+	public FrameworkLog getFrameworkLog(){
+		return frameworkLog;
 	}
 
 	public boolean isRunning() {

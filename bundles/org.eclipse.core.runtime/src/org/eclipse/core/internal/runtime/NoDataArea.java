@@ -20,15 +20,12 @@ public class NoDataArea extends DataArea {
 		return true;
 	}
 	public IPath getMetadataLocation() throws IllegalStateException {
-		throw new IllegalStateException(Policy.bind("meta.noDataModeSpecified"));
-	}
-	public IPath getLogLocation() throws IllegalStateException {
-		return getTemporaryLogLocation();
+		throw new IllegalStateException(Policy.bind("meta.noDataModeSpecified")); //$NON-NLS-1$
 	}
 	public void setInstanceDataLocation(IPath location) throws IllegalStateException {
-		throw new IllegalStateException(Policy.bind("meta.noDataModeSpecified")); 
+		throw new IllegalStateException(Policy.bind("meta.noDataModeSpecified"));  //$NON-NLS-1$
 	}
 	public IPath getInstanceDataLocation() throws IllegalStateException {
-		throw new IllegalStateException(Policy.bind("meta.noDataModeSpecified"));
+		throw new IllegalStateException(Policy.bind("meta.noDataModeSpecified")); //$NON-NLS-1$
 	}	
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.core.internal.boot.PlatformURLBaseConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
 import org.eclipse.core.internal.registry.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.framework.log.FrameworkLog;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.eclipse.osgi.service.urlconversion.URLConverter;
 import org.osgi.framework.*;
@@ -31,7 +32,8 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 	private ExtensionRegistry registry;
 	private ServiceReference environmentServiceReference;
 	private ServiceReference urlServiceReference;
-	private static File cacheFile = InternalPlatform.getDefault().getConfigurationLocation().append(".registry").toFile();
+	private ServiceReference logServiceReference;
+	private static File cacheFile = InternalPlatform.getDefault().getConfigurationLocation().append(".registry").toFile(); //$NON-NLS-1$
 
 	public static BundleContext getContext() {
 		return context;
@@ -42,6 +44,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 			PlatformActivator.context = context;
 			acquireInfoService();
 			acquireURLConverterService();
+			acquireFrameworkLogService();
 			startInternalPlatform();
 			startRegistry(context);
 			installPlatformURLSupport();
@@ -80,7 +83,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 
 	private void startRegistry(BundleContext context) {
 		boolean fromCache = true;
-		if (!"true".equals(System.getProperty(InternalPlatform.PROP_NO_REGISTRY_CACHE))) {
+		if (!"true".equals(System.getProperty(InternalPlatform.PROP_NO_REGISTRY_CACHE))) { //$NON-NLS-1$
 			// Try to read the registry from the cache first. If that fails, create a new registry
 			MultiStatus problems = new MultiStatus(IPlatform.PI_RUNTIME, ExtensionsParser.PARSE_PROBLEM, "Registry cache problems", null); //$NON-NLS-1$
 			Factory factory = new Factory(problems);
@@ -125,6 +128,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		stopRegistry(context);
 		environmentInfoServiceReleased(environmentServiceReference);
 		urlServiceReleased(urlServiceReference);
+		logServiceReleased(logServiceReference);
 		// Stop the platform orderly.		
 		InternalPlatform.getDefault().stop(context);
 		InternalPlatform.getDefault().setRuntimeInstance(null);
@@ -152,6 +156,13 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		InternalPlatform.urlConverter  = (URLConverter) context.getService(urlServiceReference);
 	}
 
+	private void acquireFrameworkLogService() throws Exception{
+		logServiceReference = context.getServiceReference(FrameworkLog.class.getName());
+		if (logServiceReference == null)
+			return;
+		InternalPlatform.frameworkLog  = (FrameworkLog) context.getService(logServiceReference);
+	}
+
 	private void startInternalPlatform() {
 		InternalPlatform.getDefault().start(context);	
 	}
@@ -176,6 +187,17 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		InternalPlatform.urlConverter = null;
 		context.ungetService(urlServiceReference);
 		urlServiceReference = null;
+	}
+
+	private void logServiceReleased(ServiceReference reference) {
+		if (logServiceReference == null)
+			return;
+		if (logServiceReference != reference)
+			return;
+
+		InternalPlatform.frameworkLog = null;
+		context.ungetService(logServiceReference);
+		logServiceReference = null;
 	}
 
 //	public void serviceChanged(ServiceEvent event) {

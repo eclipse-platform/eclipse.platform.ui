@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.core.internal.runtime;
-import java.io.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.core.runtime.*;
 import org.osgi.framework.Bundle;
+
 public class DataArea {
 	/* package */static final String F_DESCRIPTION = ".platform"; //$NON-NLS-1$
 	/* package */static final String F_META_AREA = ".metadata"; //$NON-NLS-1$
@@ -34,7 +35,6 @@ public class DataArea {
 	
 	private IPath location; //The location of the instance data
 	private boolean locationCreated = false;
-	private IPath tmpLog; //The name of the temporary log file
 	private PlatformMetaAreaLock metaAreaLock = null;
 	
 	//Authorization related informations
@@ -76,62 +76,7 @@ public class DataArea {
 		return location;
 	}
 	public IPath getLogLocation() throws IllegalStateException {
-		if (!isInstanceDataLocationInitiliazed()) {
-			return getTemporaryLogLocation();
-		}
-		if (tmpLog != null) {
-			copyOldLog(getTemporaryLogLocation(), getMetadataLocation().append(F_LOG));
-			tmpLog = null;
-		}
-		return getMetadataLocation().append(F_LOG);
-	}
-	protected IPath getTemporaryLogLocation() {
-		if (tmpLog == null)
-			tmpLog = InternalPlatform.getDefault().getConfigurationLocation().append(Long.toString(System.currentTimeMillis()) + F_LOG);
-		return tmpLog;
-	}
-	private void copyOldLog(IPath from, IPath to) {
-		File source = from.toFile();
-		if (!source.exists())
-			return;
-		InputStream input = null;
-		OutputStream output = null;
-		try {
-			input = new FileInputStream(source);
-			output = new FileOutputStream(to.toFile(), true);
-			transferStreams(input, output);
-		} catch (IOException e) {
-		} finally {
-			try {
-			if (input != null)
-				input.close();
-			if (output != null)
-				output.close();
-			} catch(IOException e) {
-			}
-		}		
-	}
-	private void transferStreams(InputStream source, OutputStream destination) throws IOException {
-		source = new BufferedInputStream(source);
-		destination = new BufferedOutputStream(destination);
-		try {
-			byte[] buffer = new byte[8192];
-			while (true) {
-				int bytesRead = -1;
-				if ((bytesRead = source.read(buffer)) == -1)
-					break;
-				destination.write(buffer, 0, bytesRead);
-			}
-		} finally {
-			try {
-				source.close();
-			} catch (IOException e) {
-			}
-			try {
-				destination.close();
-			} catch (IOException e) {
-			}
-		}
+		return new Path(InternalPlatform.getDefault().getFrameworkLog().getFile().getAbsolutePath());
 	}
 	
 	/**
@@ -160,7 +105,7 @@ public class DataArea {
 	}
 	public void setInstanceDataLocation(IPath loc) throws IllegalStateException {
 		if (isInstanceDataLocationInitiliazed())
-			throw new IllegalStateException(Policy.bind("meta.instanceDataAlreadySpecified", loc.toOSString()));
+			throw new IllegalStateException(Policy.bind("meta.instanceDataAlreadySpecified", loc.toOSString())); //$NON-NLS-1$
 		location = loc;
 	}
 	protected void initializeLocation() throws CoreException {
@@ -177,8 +122,7 @@ public class DataArea {
 		}
 		//try infer the device if there isn't one (windows)
 		if (location.getDevice() == null)
-			location = new Path(location.toFile().getAbsolutePath());
-		
+			location = new Path(location.toFile().getAbsolutePath());		
 		initialized = true;
 	}
 	private void createLocation() throws CoreException {
@@ -194,6 +138,13 @@ public class DataArea {
 			throw new CoreException(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IPlatform.FAILED_WRITE_METADATA, message, null));
 		}
 		locationCreated = true;
+		// set the log file location now that we created the data area
+		IPath path = getMetadataLocation().append(F_LOG);
+		try {
+			InternalPlatform.getDefault().getFrameworkLog().setFile(path.toFile(),true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	/**
 	 * Creates a lock file in the meta-area that indicates the meta-area is in use, preventing other eclipse instances from concurrently using the same meta-area.
@@ -288,7 +239,7 @@ public class DataArea {
 	}
 	public void setKeyringFile(String keyringFile) {
 		if (this.keyringFile != null)
-			throw new IllegalStateException(Policy.bind("meta.keyringFileAlreadySpecified", this.keyringFile));
+			throw new IllegalStateException(Policy.bind("meta.keyringFileAlreadySpecified", this.keyringFile)); //$NON-NLS-1$
 		this.keyringFile = keyringFile;
 	}
 	public void setPasswork(String password) {
