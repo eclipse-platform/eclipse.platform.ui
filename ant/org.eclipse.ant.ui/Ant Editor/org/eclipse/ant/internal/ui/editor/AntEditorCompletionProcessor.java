@@ -51,6 +51,7 @@ import org.eclipse.ant.internal.ui.dtd.ParseError;
 import org.eclipse.ant.internal.ui.dtd.Parser;
 import org.eclipse.ant.internal.ui.editor.templates.AntContext;
 import org.eclipse.ant.internal.ui.editor.templates.AntTemplateAccess;
+import org.eclipse.ant.internal.ui.editor.templates.AntTemplateInformationControlCreator;
 import org.eclipse.ant.internal.ui.editor.templates.AntTemplateProposal;
 import org.eclipse.ant.internal.ui.editor.templates.BuildFileContextType;
 import org.eclipse.ant.internal.ui.editor.templates.TaskContextType;
@@ -1554,7 +1555,9 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	 * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#createProposal(org.eclipse.jface.text.templates.Template, org.eclipse.jface.text.templates.TemplateContext, org.eclipse.jface.text.Region, int)
 	 */
 	protected ICompletionProposal createProposal(Template template,TemplateContext context, IRegion region, int relevance) {
-		return new AntTemplateProposal(template, context, region, getImage(template), relevance);
+		AntTemplateProposal proposal= new AntTemplateProposal(template, context, region, getImage(template), relevance);
+		proposal.setInformationControlCreator(new AntTemplateInformationControlCreator());
+		return proposal;
 	}
 
 	protected ISchema getDtd() {

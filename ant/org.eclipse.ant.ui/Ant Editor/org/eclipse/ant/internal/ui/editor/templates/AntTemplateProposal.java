@@ -11,7 +11,9 @@
 
 package org.eclipse.ant.internal.ui.editor.templates;
 
-import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateContext;
@@ -20,18 +22,26 @@ import org.eclipse.swt.graphics.Image;
 
 public class AntTemplateProposal extends TemplateProposal {
 	
-	public AntTemplateProposal(Template template, TemplateContext context,IRegion region, Image image) {
-		super(template, context, region, image);
-	}
-	
 	public AntTemplateProposal(Template template, TemplateContext context, IRegion region, Image image, int relevance) {
 		super(template, context, region, image, relevance);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getInformationControlCreator()
-	 */
-	public IInformationControlCreator getInformationControlCreator() {
-		return new AntTemplateInformationControlCreator();
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#validate(org.eclipse.jface.text.IDocument, int, org.eclipse.jface.text.DocumentEvent)
+     */
+    public boolean validate(IDocument document, int offset, DocumentEvent event) {
+        try {
+			int replaceOffset= getReplaceOffset();
+			if (offset >= replaceOffset) {
+				String content= document.get(replaceOffset, offset - replaceOffset);
+				if (content.charAt(0) == '<') {
+				    content= content.substring(1);
+				}
+				return getTemplate().getName().toLowerCase().startsWith(content.toLowerCase());
+			}
+		} catch (BadLocationException e) {
+			// concurrent modification - ignore
+		}
+		return false;
+    }
 }
