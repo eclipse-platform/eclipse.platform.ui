@@ -37,8 +37,13 @@ import org.eclipse.ui.activities.IMutableActivityManager;
 import org.eclipse.ui.activities.IdentifierEvent;
 import org.eclipse.ui.internal.util.Util;
 
+/**
+ * An activity registry that may be altered.
+ * 
+ * @since 3.0
+ */
 public final class MutableActivityManager extends AbstractActivityManager
-        implements IMutableActivityManager {
+        implements IMutableActivityManager, Cloneable {
 
     private Map activitiesById = new WeakHashMap();
 
@@ -64,10 +69,25 @@ public final class MutableActivityManager extends AbstractActivityManager
 
     private Map identifiersById = new WeakHashMap();
 
+    private final IActivityRegistryListener activityRegistryListener = new IActivityRegistryListener() {
+                public void activityRegistryChanged(
+                        ActivityRegistryEvent activityRegistryEvent) {
+                    readRegistry(false);
+                }
+            };
+
+    /**
+     * Create a new instance of this class using the platform extension registry.
+     */
     public MutableActivityManager() {
         this(new ExtensionActivityRegistry(Platform.getExtensionRegistry()));
     }
 
+    /**
+     * Create a new instance of this class using the provided registry.
+     * 
+     * @param activityRegistry the activity registry
+     */
     public MutableActivityManager(IActivityRegistry activityRegistry) {
         if (activityRegistry == null)
             throw new NullPointerException();
@@ -75,12 +95,7 @@ public final class MutableActivityManager extends AbstractActivityManager
         this.activityRegistry = activityRegistry;
 
         this.activityRegistry
-                .addActivityRegistryListener(new IActivityRegistryListener() {
-                    public void activityRegistryChanged(
-                            ActivityRegistryEvent activityRegistryEvent) {
-                        readRegistry(false);
-                    }
-                });
+                .addActivityRegistryListener(activityRegistryListener);
 
         readRegistry(true);
     }
@@ -524,8 +539,8 @@ public final class MutableActivityManager extends AbstractActivityManager
                     activityRequirementBindingsChanged,
                     activityPatternBindingsChanged, definedChanged,
                     descriptionChanged, enabledChanged, nameChanged, defaultEnabledChanged);
-        else
-            return null;
+        
+        return null;
     }
 
     private Map updateCategories(Collection categoryIds) {
@@ -567,8 +582,8 @@ public final class MutableActivityManager extends AbstractActivityManager
                 || descriptionChanged)
             return new CategoryEvent(category, categoryActivityBindingsChanged,
                     definedChanged, descriptionChanged, nameChanged);
-        else
-            return null;
+        
+        return null;
     }
 
     private IdentifierEvent updateIdentifier(Identifier identifier) {
@@ -593,8 +608,8 @@ public final class MutableActivityManager extends AbstractActivityManager
         if (activityIdsChanged || enabledChanged)
             return new IdentifierEvent(identifier, activityIdsChanged,
                     enabledChanged);
-        else
-            return null;
+        
+        return null;
     }
 
     private Map updateIdentifiers(Collection identifierIds) {
@@ -615,5 +630,23 @@ public final class MutableActivityManager extends AbstractActivityManager
         }
 
         return identifierEventsByIdentifierId;
+    }
+    
+    /**
+     * Unhook this manager from its registry.
+     *
+     * @since 3.1
+     */
+    public void unhookRegistryListeners() {
+        activityRegistry.removeActivityRegistryListener(activityRegistryListener);
+    }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#clone()
+     */
+    public Object clone() {
+        MutableActivityManager clone = new MutableActivityManager(activityRegistry);
+        clone.setEnabledActivityIds(getEnabledActivityIds());
+        return clone;
     }
 }

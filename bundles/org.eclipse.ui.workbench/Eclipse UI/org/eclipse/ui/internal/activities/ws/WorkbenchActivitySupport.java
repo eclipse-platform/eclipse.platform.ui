@@ -53,6 +53,7 @@ import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.activities.ActivityManagerFactory;
+import org.eclipse.ui.internal.activities.MutableActivityManager;
 import org.eclipse.ui.internal.activities.ProxyActivityManager;
 import org.eclipse.ui.internal.misc.StatusUtil;
 
@@ -62,7 +63,7 @@ import org.eclipse.ui.internal.misc.StatusUtil;
  */
 public class WorkbenchActivitySupport implements IWorkbenchActivitySupport,
 		IExtensionAdditionHandler, IExtensionRemovalHandler {
-    private IMutableActivityManager mutableActivityManager;
+    private MutableActivityManager mutableActivityManager;
 
     private ProxyActivityManager proxyActivityManager;
 
@@ -460,4 +461,13 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport,
 			}
 		}
 	}
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.activities.IWorkbenchActivitySupport#createWorkingCopy()
+     */
+    public IMutableActivityManager createWorkingCopy() {
+        MutableActivityManager clone = (MutableActivityManager) mutableActivityManager.clone();
+        clone.unhookRegistryListeners();
+        return clone;
+    }
 }

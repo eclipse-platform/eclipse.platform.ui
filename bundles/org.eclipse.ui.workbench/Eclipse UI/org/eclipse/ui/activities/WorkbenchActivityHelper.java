@@ -183,30 +183,29 @@ public final class WorkbenchActivityHelper {
 	 * given category becomes enabled  Note that the set returned by this set 
 	 * represents the delta of categories that would be enabled - if the category 
 	 * is already enabled then it is omitted.
-	 * 
+     * 
+	 * @param activityManager the activity manager to test against 
 	 * @param categoryId
 	 *            the category to be enabled
 	 * @return a list of category ids that will become implicity enabled if the
 	 *         given category becomes enabled
 	 * @since 3.1
 	 */
-	public static Set getEnabledCategories(String categoryId) {
-		IActivityManager manager = PlatformUI.getWorkbench()
-				.getActivitySupport().getActivityManager();
-		ICategory category = manager.getCategory(categoryId);
+	public static Set getEnabledCategories(IActivityManager activityManager, String categoryId) {
+		ICategory category = activityManager.getCategory(categoryId);
 		if (!category.isDefined())
 			return Collections.EMPTY_SET;
 
 		Set activities = expandActivityDependencies(getActivityIdsForCategory(category));
 		Set otherEnabledCategories = new HashSet();
-		Set definedCategoryIds = manager.getDefinedCategoryIds();
+		Set definedCategoryIds = activityManager.getDefinedCategoryIds();
 		for (Iterator i = definedCategoryIds.iterator(); i.hasNext();) {
 			String otherCategoryId = (String) i.next();
 			if (otherCategoryId.equals(categoryId))
 				continue;
-			ICategory otherCategory = manager.getCategory(otherCategoryId);
+			ICategory otherCategory = activityManager.getCategory(otherCategoryId);
 			Set otherCategoryActivityIds = expandActivityDependencies(getActivityIdsForCategory(otherCategory));
-			if (manager.getEnabledActivityIds().containsAll(
+			if (activityManager.getEnabledActivityIds().containsAll(
 					otherCategoryActivityIds))
 				continue;
 			if (activities.containsAll(otherCategoryActivityIds))
@@ -225,7 +224,7 @@ public final class WorkbenchActivityHelper {
 	 * @return the expanded activities
 	 * @since 3.1
 	 */
-	private static Set expandActivityDependencies(Set baseActivities) {
+	public static Set expandActivityDependencies(Set baseActivities) {
 		Set extendedActivities = new HashSet();
 		for (Iterator i = baseActivities.iterator(); i.hasNext();) {
 			String activityId = (String) i.next();
@@ -267,7 +266,7 @@ public final class WorkbenchActivityHelper {
 	
 	/**
 	 * Return the activities directly required by a given category.
-	 * 
+     *
 	 * @param category
 	 *            the category
 	 * @return the activities directly required by a given category
@@ -289,28 +288,27 @@ public final class WorkbenchActivityHelper {
 	 * given category becomes disabled Note that the set returned by this set
 	 * represents the delta of categories that would be enabled - if the
 	 * category is already enabled then it is omitted.
-	 * 
+     * 
+	 * @param activityManager the activity manager to test against	 * 
 	 * @param categoryId
 	 *            the category to be enabled
 	 * @return a list of category ids that will become implicity enabled if the
 	 *         given category becomes enabled
 	 * @since 3.1
 	 */
-	public static Set getDisabledCategories(String categoryId) {
-		IActivityManager manager = PlatformUI.getWorkbench()
-				.getActivitySupport().getActivityManager();
-		ICategory category = manager.getCategory(categoryId);
+	public static Set getDisabledCategories(IActivityManager activityManager, String categoryId) {
+		ICategory category = activityManager.getCategory(categoryId);
 		if (!category.isDefined())
 			return Collections.EMPTY_SET;
 
 		Set activities = expandActivityDependencies(getActivityIdsForCategory(category));
 		Set otherDisabledCategories = new HashSet();
-		Set definedCategoryIds = manager.getDefinedCategoryIds();
+		Set definedCategoryIds = activityManager.getDefinedCategoryIds();
 		for (Iterator i = definedCategoryIds.iterator(); i.hasNext();) {
 			String otherCategoryId = (String) i.next();
 			if (otherCategoryId.equals(categoryId))
 				continue;
-			ICategory otherCategory = manager.getCategory(otherCategoryId);
+			ICategory otherCategory = activityManager.getCategory(otherCategoryId);
 			Set otherCategoryActivityIds = expandActivityDependencies(getActivityIdsForCategory(otherCategory));
 			
 			// TODO: not sure if this line should be here.
@@ -320,7 +318,7 @@ public final class WorkbenchActivityHelper {
 			if (!activities.containsAll(otherCategoryActivityIds))
 				continue;
 			
-			if (manager.getEnabledActivityIds().containsAll(
+			if (activityManager.getEnabledActivityIds().containsAll(
 					otherCategoryActivityIds))
 				otherDisabledCategories.add(otherCategoryId);
 
@@ -329,24 +327,58 @@ public final class WorkbenchActivityHelper {
 	}
 	
 	/**
+	 * Return a list of category ids that are implicitly contained within the
+	 * given category.
+     * 
+	 * @param activityManager the activity manager to test agaisnt 
+	 * @param categoryId
+	 *            the category to be enabled
+	 * @return a list of category ids that will become implicity enabled if the
+	 *         given category becomes enabled
+	 * @since 3.1
+	 */	
+	public static final Set getContainedCategories(IActivityManager activityManager, String categoryId) {
+		ICategory category = activityManager.getCategory(categoryId);
+		if (!category.isDefined())
+			return Collections.EMPTY_SET;
+
+		Set activities = expandActivityDependencies(getActivityIdsForCategory(category));
+		Set containedCategories = new HashSet();
+		Set definedCategoryIds = activityManager.getDefinedCategoryIds();
+		for (Iterator i = definedCategoryIds.iterator(); i.hasNext();) {
+			String otherCategoryId = (String) i.next();
+			if (otherCategoryId.equals(categoryId))
+				continue;
+			ICategory otherCategory = activityManager.getCategory(otherCategoryId);
+			Set otherCategoryActivityIds = expandActivityDependencies(getActivityIdsForCategory(otherCategory));
+
+			// TODO: not sure if this line should be here.
+			if (otherCategoryActivityIds.isEmpty())
+				continue;
+			
+			if (activities.containsAll(otherCategoryActivityIds))
+				containedCategories.add(otherCategoryId);
+
+		}
+		return containedCategories;
+
+	}
+	
+	/**
 	 * Return the set of enabled categories. An enabled category is one in which
 	 * all contained activities are enabled.
 	 * 
+     * @param activityManager the activity manager to test against
 	 * @return the set of enabled categories.
 	 * @since 3.1
 	 */
-	public static Set getEnabledCategories() {
-		IActivityManager manager = PlatformUI.getWorkbench()
-				.getActivitySupport().getActivityManager();
+	public static Set getEnabledCategories(IActivityManager activityManager) {
 
-		Set enabledActivities = manager.getEnabledActivityIds();
-		Set definedCategoryIds = manager.getDefinedCategoryIds();
+        Set definedCategoryIds = activityManager.getDefinedCategoryIds();
 		Set enabledCategories = new HashSet();
 		for (Iterator i = definedCategoryIds.iterator(); i.hasNext();) {
 			String categoryId = (String) i.next();
-			Set activityIds = getActivityIdsForCategory(manager
-					.getCategory(categoryId));
-			if (enabledActivities.containsAll(activityIds))
+			if (isEnabled(activityManager, categoryId))
 				enabledCategories.add(categoryId);
 		}
 		return enabledCategories;
@@ -354,26 +386,63 @@ public final class WorkbenchActivityHelper {
 	
 	/**
 	 * Return the number of enabled categories that this activity belongs to.
-	 * 
+     * 
+	 * @param activityManager the activity manager to test against	 * 
 	 * @param activityId
 	 *            the activity id to query on
 	 * @return the set of enabled category ids that this activity belongs to
 	 * @since 3.1
 	 */
-	public static Set getEnabledCategoriesForActivity(String activityId) {
-		IActivityManager manager = PlatformUI.getWorkbench()
-				.getActivitySupport().getActivityManager();
-
+	public static Set getEnabledCategoriesForActivity(IActivityManager activityManager, String activityId) {
 		Set enabledCategoriesForActivity = new HashSet();
-		Set enabledCategories = getEnabledCategories();
+		Set enabledCategories = getEnabledCategories(activityManager);
 		for (Iterator i = enabledCategories.iterator(); i.hasNext();) {
 			String categoryId = (String) i.next();
-			if (getActivityIdsForCategory(manager.getCategory(categoryId))
+			if (getActivityIdsForCategory(activityManager.getCategory(categoryId))
 					.contains(activityId))
 				enabledCategoriesForActivity.add(categoryId);
 		}
 		return enabledCategoriesForActivity;
 	}
+	
+	/**
+	 * Returns whether the given category is enabled. A category is enabled if
+	 * all of its activities are enabled.
+     * 
+	 * @param activityManager the activity manager to test against
+	 * @param categoryId
+	 *            the category id
+	 * @return whether the category is enabled
+	 * @since 3.1
+	 */
+	public static boolean isEnabled(IActivityManager activityManager, String categoryId) {
+
+		Set activityIds = getActivityIdsForCategory(activityManager
+				.getCategory(categoryId));
+		if (activityManager.getEnabledActivityIds().containsAll(activityIds))
+			return true;
+
+		return false;
+	}	
+
+	/**
+	 * Resolve the collection of category ids to an array of <code>ICategory</code> objects.
+     * 
+	 * @param activityManager the activity manager to test against
+	 * @param categoryIds the category ids
+	 * @return the array of category ids resolved to <code>ICategory</code> objects
+	 * @since 3.1
+	 */
+	public static ICategory[] resolveCategories(IMutableActivityManager activityManager, Set categoryIds) {
+		ICategory  [] categories = new ICategory[categoryIds.size()];
+		String [] categoryIdArray = (String[]) categoryIds
+				.toArray(new String[categoryIds.size()]);
+		for (int i = 0; i < categoryIdArray.length; i++) {
+			categories[i] = activityManager.getCategory(categoryIdArray[i]);
+		}
+		return categories;
+	}
+
 	
     /**
      * Not intended to be instantiated.
