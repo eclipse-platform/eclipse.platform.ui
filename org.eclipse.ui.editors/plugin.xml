@@ -447,7 +447,7 @@
             colorPreferenceValue="188,188,222"
             isGoToPreviousNavigationTarget="false"
             isGoToPreviousNavigationTargetKey="isAdditionGoToPreviousNavigationTarget"
-            showInNextPrevDropdownToolbarAction="false"
+            showInNextPrevDropdownToolbarAction="true"
             isGoToNextNavigationTarget="false"
             isGoToNextNavigationTargetKey="isAdditionGoToNextNavigationTarget"
             colorPreferenceKey="additionIndicationColor"
