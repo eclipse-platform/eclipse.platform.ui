@@ -148,7 +148,7 @@ A.book {
  <script language="JavaScript">
  var extraStyle = "";
   if (isMozilla)
-  	 extraStyle = "<style type='text/css'>#root{ margin-left:-15px; } LI { margin-top:3px; } A { padding-top:2px; } NOBR { margin-left:20px;  }</style>";
+  	 extraStyle = "<style type='text/css'>#root{ margin-left:-15px; margin-top:5px;} LI { margin-top:3px; } A { padding-top:2px; } NOBR { margin-left:20px;  }</style>";
   else if (isIE)
  	extraStyle =  "<style type='text/css'>A {	height:18px; } </style>";
  	

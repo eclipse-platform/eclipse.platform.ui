@@ -70,6 +70,14 @@ DIV.active {
 
 </style>
   
+<script language="JavaScript">
+ var isMozilla = navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
+ var extraStyle = "";
+  if (isMozilla)
+  	 extraStyle = "<style type='text/css'>DIV { padding-top:2px; padding-bottom:2px; }</style>";	
+ document.write(extraStyle);
+</script>
+
 </head>
 
 <body >
