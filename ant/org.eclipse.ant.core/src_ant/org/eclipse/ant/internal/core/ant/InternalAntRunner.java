@@ -135,7 +135,7 @@ public class InternalAntRunner {
     
     /** 
      * Indicates whether to execute all targets that 
-     * do not depend on failed targets(s)
+     * do not depend on failed targets
      * @since Ant 1.6.0
      */
     private boolean keepGoing= false;
