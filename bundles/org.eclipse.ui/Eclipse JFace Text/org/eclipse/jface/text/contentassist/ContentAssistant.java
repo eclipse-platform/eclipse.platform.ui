@@ -48,8 +48,6 @@ import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.IWidgetTokenKeeper;
 import org.eclipse.jface.text.IWidgetTokenOwner;
 
-import org.eclipse.ui.texteditor.ITextEditorExtension;
-
 import org.eclipse.jface.util.Assert;
 
 
@@ -226,7 +224,8 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 			try {
 				while (true) {
 					synchronized (fMutex) {
-						fMutex.wait(fAutoActivationDelay);
+						if (fAutoActivationDelay != 0)
+							fMutex.wait(fAutoActivationDelay);
 						if (fIsReset) {
 							fIsReset= false;
 							continue;
