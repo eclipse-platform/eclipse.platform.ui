@@ -152,11 +152,11 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private static final boolean DEAD_STEP= false;
 	/** Maximum time to wait for the document compare (in milliseconds) */
 	private static final int TIMEOUT= 20000;
-	
-	private static final boolean IS_MOTIF= false;
-	
+		
 	// determines whether a change between left and right is considered incoming or outgoing
 	private boolean fLeftIsLocal;
+	private int fMarginWidth= MARGIN_WIDTH;
+	private int fTopInset;
 	
 	// Colors to use
 	private static final RGB INCOMING= new RGB(100, 100, 200);
@@ -210,12 +210,13 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	private boolean fSubDoc= true;
 	private IPositionUpdater fPositionUpdater;
-	
+	private boolean fIsMotif;	
 
 	// SWT widgets
 	private BufferedCanvas fAncestorCanvas;
 	private BufferedCanvas fLeftCanvas;
 	private BufferedCanvas fRightCanvas;
+	private Canvas fScrollCanvas;
 	private ScrollBar fVScrollBar;
 		
 	// SWT resources to be disposed
@@ -268,7 +269,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				try {
 					p= new Position(start, l);
 				} catch (RuntimeException ex) {
-					System.out.println("Diff.createPosition: " + start + " " + l);
+					//System.out.println("Diff.createPosition: " + start + " " + l);
 				}
 				
 				try {
@@ -371,6 +372,12 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	 */
 	public TextMergeViewer(Composite parent, int style, CompareConfiguration configuration) {
 		super(style, ResourceBundle.getBundle(BUNDLE_NAME), configuration);
+		
+		String platform= SWT.getPlatform();
+		fIsMotif= "motif".equals(platform);
+		
+		if (fIsMotif)
+			fMarginWidth= 0;
 				
 		IPreferenceStore ps= CompareUIPlugin.getDefault().getPreferenceStore();
 		if (ps != null) {
@@ -525,21 +532,25 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	protected void createControls(Composite composite) {
 		
 		// 1st row
-		fAncestorCanvas= new BufferedCanvas(composite, SWT.NONE) {
-			public void doPaint(GC gc) {
-				paintSides(gc, fAncestor, fAncestorCanvas, false);
-			}
-		};
+		if (fMarginWidth > 0) {
+			fAncestorCanvas= new BufferedCanvas(composite, SWT.NONE) {
+				public void doPaint(GC gc) {
+					paintSides(gc, fAncestor, fAncestorCanvas, false);
+				}
+			};
+		}
 									
 		fAncestor= createPart(composite);
 		fAncestor.setEditable(false);
 		
 		// 2nd row
-		fLeftCanvas= new BufferedCanvas(composite, SWT.NONE) {
-			public void doPaint(GC gc) {
-				paintSides(gc, fLeft, fLeftCanvas, false);
-			}
-		};
+		if (fMarginWidth > 0) {
+			fLeftCanvas= new BufferedCanvas(composite, SWT.NONE) {
+				public void doPaint(GC gc) {
+					paintSides(gc, fLeft, fLeftCanvas, false);
+				}
+			};
+		}
 		
 		fLeft= createPart(composite);
 		fLeft.getTextWidget().getVerticalBar().setVisible(!fSynchronizedScrolling);
@@ -549,13 +560,19 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		fRight.getTextWidget().getVerticalBar().setVisible(!fSynchronizedScrolling);
 		fRight.addAction(MergeSourceViewer.SAVE_ID, fRightSaveAction);
 		
-		fRightCanvas= new BufferedCanvas(composite, SWT.V_SCROLL) {
-			public void doPaint(GC gc) {
-				paintSides(gc, fRight, fRightCanvas, fSynchronizedScrolling);
-			}
-		};
-				
-		fVScrollBar= fRightCanvas.getVerticalBar();
+		if (fMarginWidth > 0) {
+			fRightCanvas= new BufferedCanvas(composite, SWT.NONE) {
+				public void doPaint(GC gc) {
+					paintSides(gc, fRight, fRightCanvas, fSynchronizedScrolling);
+				}
+			};
+		}
+		
+		fScrollCanvas= new Canvas(composite, SWT.V_SCROLL);
+		Rectangle trim= fScrollCanvas.computeTrim(0, 0, 0, 0);
+		fTopInset= trim.y;
+		
+		fVScrollBar= fScrollCanvas.getVerticalBar();
 		fVScrollBar.setIncrement(1);
 		fVScrollBar.setVisible(true);
 		fVScrollBar.addListener(SWT.Selection,
@@ -568,7 +585,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	}
 	
 	/* package */ boolean internalSetFocus() {
-		//System.out.println("internalSetFocus: ");
 		if (fFocusPart != null) {
 			StyledText st= fFocusPart.getTextWidget();
 			if (st != null)
@@ -684,6 +700,10 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	 */
 	protected void updateContent(Object ancestor, Object left, Object right) {
 		
+		boolean emptyInput= (ancestor == null && left == null && right == null);
+
+		//System.out.println("updateContent: " + emptyInput);
+
 		// clear stuff
 		fCurrentDiff= null;
 	 	fChangeDiffs= null;
@@ -715,7 +735,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		invalidateLines();
 		updateVScrollBar();
 		
-		if (ancestor != null || left != null || right != null)
+		if (!emptyInput)
 			selectFirstDiff();
 	}
 	
@@ -925,20 +945,24 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				fAncestorCanvas.setVisible(true);
 			if (fAncestor.isControlOkToUse())
 				fAncestor.getTextWidget().setVisible(true);
-			fAncestorCanvas.setBounds(x, y, MARGIN_WIDTH, height-scrollbarHeight);
-			fAncestor.getTextWidget().setBounds(x+MARGIN_WIDTH, y, width-MARGIN_WIDTH, height);
-		} else {
-			if (Utilities.okToUse(fAncestorCanvas)) {
-				fAncestorCanvas.setVisible(false);
-				if (fFocusPart == fAncestor) {
-					fFocusPart= fLeft;
-					fFocusPart.getTextWidget().setFocus();
-				}
+			
+			if (fAncestorCanvas != null) {
+				fAncestorCanvas.setBounds(x, y, fMarginWidth, height-scrollbarHeight);
+				x+= fMarginWidth;
+				width-= fMarginWidth;
 			}
+			fAncestor.getTextWidget().setBounds(x, y, width, height);
+		} else {
+			if (Utilities.okToUse(fAncestorCanvas))
+				fAncestorCanvas.setVisible(false);
 			if (fAncestor.isControlOkToUse()) {
 				StyledText t= fAncestor.getTextWidget();
 				t.setVisible(false);
 				t.setBounds(0, 0, 0, 0);
+				if (fFocusPart == fAncestor) {
+					fFocusPart= fLeft;
+					fFocusPart.getTextWidget().setFocus();
+				}
 			}
 		}
 	}
@@ -948,22 +972,16 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	 */
   	protected final void handleResizeLeftRight(int x, int y, int width1, int centerWidth, int width2,  int height) {
   				
-		// determine some minimal sizes
-		int scrollbarWidth= 0;
-		if (fSynchronizedScrolling && fRightCanvas != null)
-			scrollbarWidth= fRightCanvas.computeTrim(0, 0, 0, 0).width;
-		
 		Rectangle trim= fLeft.getTextWidget().computeTrim(0, 0, 0, 0);
 		int scrollbarHeight= trim.height;
-		
-		// determine some derived sizes
 		Composite composite= (Composite) getControl();
 
-		int leftTextWidth= width1-MARGIN_WIDTH;
-		int rightTextWidth= width2-MARGIN_WIDTH-scrollbarWidth;		
-				
-		fLeftCanvas.setBounds(x, y, MARGIN_WIDTH, height-scrollbarHeight);
-		x+= MARGIN_WIDTH;
+		int leftTextWidth= width1;
+		if (fLeftCanvas != null) {
+			fLeftCanvas.setBounds(x, y, fMarginWidth, height-scrollbarHeight);
+			x+= fMarginWidth;
+			leftTextWidth-= fMarginWidth;
+		}
 		
 		fLeft.getTextWidget().setBounds(x, y, leftTextWidth, height);
 		x+= leftTextWidth;
@@ -973,20 +991,30 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		fCenter.setBounds(x, y, centerWidth, height-scrollbarHeight);
 		x+= centerWidth;
 		
-		if (!fSynchronizedScrolling) {
+		if (!fSynchronizedScrolling) {	// canvas is to the left of text
 			if (fRightCanvas != null) {
-				fRightCanvas.setBounds(x, y, MARGIN_WIDTH, height-scrollbarHeight);
+				fRightCanvas.setBounds(x, y, fMarginWidth, height-scrollbarHeight);
 				fRightCanvas.redraw();
+				x+= fMarginWidth;
 			}
 			// we draw the canvas to the left of the text widget
-			x+= MARGIN_WIDTH;
 		}
 		
+		int scrollbarWidth= 0;
+		if (fSynchronizedScrolling && fScrollCanvas != null)
+			scrollbarWidth= fScrollCanvas.computeTrim(0, 0, 0, 0).width;
+		int rightTextWidth= width2-scrollbarWidth;
+		if (fRightCanvas != null)
+			rightTextWidth-= fMarginWidth;
 		fRight.getTextWidget().setBounds(x, y, rightTextWidth, height);
 		x+= rightTextWidth;
 			
-		if (fSynchronizedScrolling && fRightCanvas != null)
-			fRightCanvas.setBounds(x, y, scrollbarWidth+MARGIN_WIDTH, height-scrollbarHeight);
+		if (fSynchronizedScrolling) {
+			if (fRightCanvas != null)	// canvas is to the right of the text
+				fRightCanvas.setBounds(x, y, fMarginWidth, height-scrollbarHeight);
+			if (fScrollCanvas != null)
+				fScrollCanvas.setBounds(x, y, scrollbarWidth, height-scrollbarHeight);
+		}
 		
 		// doesn't work since TextEditors don't have their correct size yet.
 		updateVScrollBar(); 
@@ -1711,9 +1739,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		g.setBackground(canvas.getBackground());
 		g.fillRectangle(x+1, 0, w-2, size.y);
 		
-		if (!IS_MOTIF) {
+		if (!fIsMotif) {
 			// draw thin line between center ruler and both texts
-			g.setBackground(fLeftCanvas.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+			g.setBackground(canvas.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
 			g.fillRectangle(0, 0, 1, size.y);
 			g.fillRectangle(w-1, 0, 1, size.y);
 		}
@@ -1764,12 +1792,12 @@ public class TextMergeViewer extends ContentMergeViewer  {
 
 		Point size= canvas.getSize();
 		int x= 0;
-		int w= MARGIN_WIDTH;
+		int w= fMarginWidth;
 			
 		g.setBackground(canvas.getBackground());
 		g.fillRectangle(x, 0, w, size.y);
 
-		if (!IS_MOTIF) {
+		if (!fIsMotif) {
 			// draw thin line between ruler and text
 			g.setBackground(canvas.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
 			if (right)
@@ -1829,6 +1857,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		int w= canvas.getSize().x;
 		int shift= tp.getVerticalScrollOffset() + (2-LW);
 		int maxh= event.y+event.height; 	// visibleHeight
+		
+		//if (fIsMotif)
+			shift+= fTopInset;
 				
 		Point range= new Point(0, 0);
 				
@@ -2408,24 +2439,26 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			
 			fInScrolling= false;
 			
-			if (isThreeWay())
+			if (isThreeWay() && fAncestorCanvas != null)
 				fAncestorCanvas.repaint();
-				
-			fLeftCanvas.repaint();
+			
+			if (fLeftCanvas != null)
+				fLeftCanvas.repaint();
 			
 			Control center= getCenter();
 			if (center instanceof BufferedCanvas)
 				((BufferedCanvas)center).repaint();
-				
-			fRightCanvas.repaint();
+			
+			if (fRightCanvas != null)
+				fRightCanvas.repaint();
 		} else {
-			if (allBut == fAncestor && isThreeWay())
+			if (allBut == fAncestor && fAncestorCanvas != null && isThreeWay())
 				fAncestorCanvas.repaint();
 		
-			if (allBut == fLeft)
+			if (allBut == fLeft && fLeftCanvas != null)
 				fLeftCanvas.repaint();
 			
-			if (allBut == fRight)
+			if (allBut == fRight && fRightCanvas != null)
 				fRightCanvas.repaint();
 		}
 	}
@@ -2455,16 +2488,16 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	 */
 	private void updateVScrollBar() {
 		
-		if (Utilities.okToUse(fVScrollBar) && fVScrollBar.isVisible()) {
+		if (Utilities.okToUse(fVScrollBar) && fSynchronizedScrolling /* && fVScrollBar.isVisible() */) {
 			int virtualHeight= getVirtualHeight();
 			int viewPortHeight= getViewportHeight();
 			fVScrollBar.setPageIncrement(viewPortHeight-1);
-			fVScrollBar.setMaximum(virtualHeight);
+			fVScrollBar.setMaximum(virtualHeight);	// XXX: sometimes the last line isn't visible
 			if (viewPortHeight > virtualHeight)
 				fVScrollBar.setThumb(virtualHeight);
 			else
 				fVScrollBar.setThumb(viewPortHeight);				
-		}
+		}			
 	}
 	
 	/**
