@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.swt.widgets.Composite;
@@ -158,7 +157,7 @@ public class ResourceEncodingFieldEditor extends AbstractEncodingFieldEditor {
 			}
 			if (defaultCharset != null && defaultCharset.length() > 0)
 				return defaultCharset;
-			
+
 			//Query up the whole hierarchy
 			defaultCharset = resource.getParent().getDefaultCharset(true);
 
@@ -182,18 +181,12 @@ public class ResourceEncodingFieldEditor extends AbstractEncodingFieldEditor {
 		if (resource instanceof IFile) {
 
 			try {
-				String charset = null;
-				//If it is a file it either has one from the description or is derived.
-				IContentDescription content = ((IFile) resource).getContentDescription();
-				if (content != null)
-					charset = content.getCharset();
-
 				//If we can find a charset then derive from that
-				if (charset != null && charset.length() > 0)
-					return IDEWorkbenchMessages.format("ResourceInfo.fileContentEncodingFormat", //$NON-NLS-1$
-							new String[] {charset});
-
-				return IDEWorkbenchMessages.format("ResourceInfo.fileContainerEncodingFormat", //$NON-NLS-1$
+				if (((IFile) resource).getContentDescription() == null)
+					return IDEWorkbenchMessages.format("ResourceInfo.fileContainerEncodingFormat", //$NON-NLS-1$
+							new String[] { getDefaultEnc() });
+				
+				return IDEWorkbenchMessages.format("ResourceInfo.fileContentEncodingFormat", //$NON-NLS-1$
 						new String[] { getDefaultEnc() });
 
 			} catch (CoreException exception) {
