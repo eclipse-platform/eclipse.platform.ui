@@ -318,11 +318,11 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 	}
 	
 	/**
-	 * Responds to a selection changed event in the environment table
+	 * Responds to a selection changed event in the variable table
 	 * @param event the selection change event
 	 */
 	protected void handleTableSelectionChanged(SelectionChangedEvent event) {
-		int size = ((IStructuredSelection)variableTable.getSelection()).size();
+		int size = ((IStructuredSelection)event.getSelection()).size();
 		envEditButton.setEnabled(size == 1);
 		envRemoveButton.setEnabled(size > 0);
 	}
@@ -386,7 +386,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 			discardChanges();
 			if (viewer instanceof TableViewer){
 				((TableViewer)viewer).setSorter(new ViewerSorter() {
-					public int compare(Viewer viewer, Object e1, Object e2) {
+					public int compare(Viewer iViewer, Object e1, Object e2) {
 						if (e1 == null) {
 							return -1;
 						} else if (e2 == null) {
