@@ -13,6 +13,8 @@ import org.eclipse.update.internal.core.UpdateManagerPlugin;
  */
 public class UpdateTestsPlugin extends Plugin {
 
+	private static String appServerHost = null;
+	private static int appServerPort = 0;
 	private static UpdateTestsPlugin plugin;
 
 	public UpdateTestsPlugin(IPluginDescriptor descriptor) {
@@ -30,6 +32,8 @@ public class UpdateTestsPlugin extends Plugin {
 	public void startup() throws CoreException {
 		IAppServer localAppServer = UpdateManagerPlugin.getWebAppServer();
 		localAppServer.add("updatetests", "org.eclipse.update.tests.core", "webserver");		
+		appServerHost = localAppServer.getHost();
+		appServerPort = localAppServer.getPort();
 	}
 
 	/**
@@ -41,6 +45,20 @@ public class UpdateTestsPlugin extends Plugin {
 		IAppServer localAppServer = UpdateManagerPlugin.getWebAppServer();
 		localAppServer.remove("updatetests", "org.eclipse.update.tests.core");				
 		super.shutdown();		
+	}
+
+	/**
+	 * Returns the host identifier for the web app server
+	 */
+	public static String getWebAppServerHost() {
+		return appServerHost;
+	}
+
+	/**
+	 * Returns the port identifier for the web app server
+	 */
+	public static int getWebAppServerPort() {
+		return appServerPort;
 	}
 
 }

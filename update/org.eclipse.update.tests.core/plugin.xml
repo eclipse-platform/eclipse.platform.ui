@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin
    id="org.eclipse.update.tests.core"
-   name="Tests"
+   name="%name"
    version="0.0.1"
+   provider-name="%provider-name"
    class="org.eclipse.update.tests.UpdateTestsPlugin">
 
 <runtime>

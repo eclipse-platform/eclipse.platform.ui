@@ -33,8 +33,8 @@ public class UpdateManagerPlugin extends Plugin {
 
 	// web install
 	private static IAppServer appServer = null;
-	private static String appServerHost = "127.0.0.1";
-	private static int appServerPort = 1333;
+	private static String appServerHost =null;
+	private static int appServerPort = 0;
 
 	/**
 	 * The constructor.

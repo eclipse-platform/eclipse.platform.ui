@@ -110,11 +110,11 @@ public abstract class UpdateManagerTestCase extends TestCase {
 	}
 
 	protected static String getHttpHost(){
-		return UpdateManagerPlugin.getWebAppServerHost();
+		return UpdateTestsPlugin.getWebAppServerHost();
 	}
 
 	protected static int getHttpPort(){
-		return UpdateManagerPlugin.getWebAppServerPort();
+		return UpdateTestsPlugin.getWebAppServerPort();
 	}
 
 }
