@@ -177,9 +177,10 @@ public class PagePartSelectionTracker extends AbstractPartSelectionTracker imple
 			ISelectionProvider sp = fPart.getSite().getSelectionProvider();
 			if (sp != null) {
 				sp.removeSelectionChangedListener(selectionListener);
-				if(sp instanceof StructuredViewer) {
+				if(sp instanceof StructuredViewer)
 					((StructuredViewer)sp).removePostSelectionChangedListener(postSelectionListener);	
-				}
+				else
+					sp.removeSelectionChangedListener(postSelectionListener);
 			}			
 		}
 		fPart = part;
@@ -188,9 +189,10 @@ public class PagePartSelectionTracker extends AbstractPartSelectionTracker imple
 			ISelectionProvider sp = part.getSite().getSelectionProvider();
 			if (sp != null) {
 				sp.addSelectionChangedListener(selectionListener);
-				if(sp instanceof StructuredViewer) {
+				if(sp instanceof StructuredViewer)
 					((StructuredViewer)sp).addPostSelectionChangedListener(postSelectionListener);	
-				}
+				else
+					sp.addSelectionChangedListener(postSelectionListener);
 				if (notify) {
 					// get the selection to send below
 					sel = sp.getSelection();

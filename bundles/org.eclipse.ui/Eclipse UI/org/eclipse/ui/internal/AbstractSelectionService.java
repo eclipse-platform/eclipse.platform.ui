@@ -233,12 +233,14 @@ public void partActivated(IWorkbenchPart newPart) {
 		activeProvider = activePart.getSite().getSelectionProvider();
 		if (activeProvider != null) {
 			// Fire an event if there's an active provider
-			activeProvider.addSelectionChangedListener(selListener);			
-			fireSelection(newPart, activeProvider.getSelection());
-			if(activeProvider instanceof StructuredViewer) {
+			activeProvider.addSelectionChangedListener(selListener);
+			ISelection sel = activeProvider.getSelection();		
+			fireSelection(newPart, sel);
+			if(activeProvider instanceof StructuredViewer)
 				((StructuredViewer)activeProvider).addPostSelectionChangedListener(postSelListener);			
-				firePostSelection(newPart, activeProvider.getSelection());
-			}
+			else
+				activeProvider.addSelectionChangedListener(postSelListener);
+			firePostSelection(newPart, sel);
 		} else {
 			//Reset active part. activeProvider may not be null next time this method is called.
 			activePart = null;
@@ -289,12 +291,13 @@ public void partOpened(IWorkbenchPart part) {
 public void reset() {
 	if (activePart != null) {
 		fireSelection(null, null);
+		firePostSelection(null,null);
 		if (activeProvider != null) {
 			activeProvider.removeSelectionChangedListener(selListener);
-			if(activeProvider instanceof StructuredViewer) {
-				firePostSelection(null,null);
+			if(activeProvider instanceof StructuredViewer)
 				((StructuredViewer)activeProvider).removePostSelectionChangedListener(postSelListener);
-			}
+			else
+				activeProvider.removeSelectionChangedListener(postSelListener);
 			activeProvider = null;
 		}
 		activePart = null;
