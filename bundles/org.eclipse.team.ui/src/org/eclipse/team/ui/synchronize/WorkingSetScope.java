@@ -45,8 +45,7 @@ public class WorkingSetScope extends AbstractSynchronizeScope implements IProper
 	 * @param set the working set that defines this scope
 	 */
 	public WorkingSetScope(IWorkingSet[] sets) {
-		this.sets = sets;
-		PlatformUI.getWorkbench().getWorkingSetManager().addPropertyChangeListener(this);
+		setWorkingSets(sets);
 	}
 	
 	/**
@@ -57,6 +56,16 @@ public class WorkingSetScope extends AbstractSynchronizeScope implements IProper
 	 */
 	protected WorkingSetScope(IMemento memento) {
 		super(memento);
+	}
+	
+	/**
+	 * Initialize this working set scope with the provided working sets.
+	 * 
+	 * @since 3.1
+	 */
+	protected void setWorkingSets(IWorkingSet[] sets) {
+		this.sets = sets;
+		PlatformUI.getWorkbench().getWorkingSetManager().addPropertyChangeListener(this);
 	}
 	
 	/* (non-Javadoc)
@@ -133,6 +142,8 @@ public class WorkingSetScope extends AbstractSynchronizeScope implements IProper
 					return;
 				}
 			}
+		} else if(event.getProperty() == IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE) {
+			firePropertyChangedEvent(new PropertyChangeEvent(this, NAME, null, event.getNewValue()));
 		}
 	}
 	
@@ -173,7 +184,7 @@ public class WorkingSetScope extends AbstractSynchronizeScope implements IProper
 					sets.add(set);
 				}
 			}
-			this.sets = (IWorkingSet[]) sets.toArray(new IWorkingSet[sets.size()]);
+			setWorkingSets((IWorkingSet[]) sets.toArray(new IWorkingSet[sets.size()]));
 		}
 	}
 }

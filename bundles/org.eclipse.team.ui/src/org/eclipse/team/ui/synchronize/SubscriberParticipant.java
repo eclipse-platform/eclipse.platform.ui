@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
@@ -255,6 +256,11 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		}
 		if (event.getProperty().equals(ISynchronizeScope.ROOTS)) {
 			setResources(scope.getRoots());
+		}
+		if (event.getProperty().equals(ISynchronizeScope.NAME)) {
+			// Force a name change event, which will cause this classes getName to be called
+			// and updated with the correct working set name.
+			firePropertyChange(this, IBasicPropertyConstants.P_TEXT, null, getName());
 		}
 	}
 	

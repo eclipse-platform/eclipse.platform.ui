@@ -30,6 +30,11 @@ public interface ISynchronizeScope {
 	public static final String ROOTS = "prop_roots"; //$NON-NLS-1$
 	
 	/**
+	 * Property used to indicate when the name of the scope has changed.
+	 */
+	public static final String NAME = "prop_name"; //$NON-NLS-1$
+	
+	/**
 	 * Return the name of the scope
 	 * 
 	 * @return the name of the scope

@@ -192,6 +192,11 @@ public class SynchronizeManager implements ISynchronizeManager {
 		 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipantReference#getDisplayName()
 		 */
 		public String getDisplayName() {
+			String key = Utils.getKey(descriptor.getId(), getSecondaryId());
+			ISynchronizeParticipant participant = (ISynchronizeParticipant) counter.get(key);
+			if(participant != null) {
+				return participant.getName();
+			}
 			return displayName != null ? displayName : descriptor.getName();
 		}
 		
