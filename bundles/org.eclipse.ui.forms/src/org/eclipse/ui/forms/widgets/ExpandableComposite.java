@@ -77,7 +77,7 @@ public class ExpandableComposite extends Composite {
 	 * 0).
 	 */
 	public int marginHeight = 0;
-	private int GAP = 4;
+	protected int GAP = 4;
 	private int VSPACE = 3;
 	private int SEPARATOR_HEIGHT = 2;
 	private int expansionStyle = TWISTIE | FOCUS_TITLE | EXPANDED;
@@ -134,7 +134,7 @@ public class ExpandableComposite extends Composite {
 			}
 			textLabel.setBounds(x, y, size.x, size.y);
 			if (textClient!=null) {
-				int tcx = clientArea.width - tcsize.x;
+				int tcx = clientArea.width - tcsize.x-thmargin;
 				textClient.setBounds(tcx, y, tcsize.x, tcsize.y);
 			}
 			y += size.y;
@@ -150,8 +150,8 @@ public class ExpandableComposite extends Composite {
 					y += VSPACE;
 			}
 			if (expanded) {
-				int areaWidth = clientArea.width - marginWidth - marginWidth;
-				int cx = marginWidth;
+				int areaWidth = clientArea.width - marginWidth - marginWidth - thmargin-thmargin;
+				int cx = marginWidth + thmargin;
 				if ((expansionStyle & CLIENT_INDENT) != 0) {
 					cx = x;
 					areaWidth -= x;
@@ -165,8 +165,9 @@ public class ExpandableComposite extends Composite {
 						desc.setBounds(cx, y, dsize.x, dsize.y);
 						y += dsize.y + VSPACE;
 					}
-					int cwidth = clientArea.width - marginWidth - marginWidth
-							- cx;
+					//int cwidth = clientArea.width - marginWidth - marginWidth
+							//- cx;
+					int cwidth = areaWidth;
 					int cheight = clientArea.height - marginHeight
 							- marginHeight - y;
 					client.setBounds(cx, y, cwidth, cheight);
@@ -364,7 +365,7 @@ public class ExpandableComposite extends Composite {
 		if ((expansionStyle & TITLE_BAR) != 0) {
 			this.addPaintListener(new PaintListener() {
 				public void paintControl(PaintEvent e) {
-					doPaint(e);
+					onPaint(e);
 				}
 			});
 		}
@@ -588,32 +589,7 @@ public class ExpandableComposite extends Composite {
 		internalSetExpanded(!isExpanded());
 		fireExpanding(newState, false);
 	}
-	private void doPaint(PaintEvent e) {
-		Rectangle bounds = getClientArea();
-		Point tsize = null;
-		Point tcsize = null;
-		if (toggle != null)
-			tsize = toggle.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-		int twidth = bounds.width - marginWidth - marginWidth;
-		if (tsize != null)
-			twidth -= tsize.x + GAP;
-		if (textClient !=null)
-			tcsize = textClient.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-		if (tcsize!=null)
-			twidth -= tcsize.x + GAP;
-		Point size = textLabel.computeSize(twidth, SWT.DEFAULT, true);
-
-		int tvmargin = GAP;
-		int theight = 0;
-		if (tsize!=null)
-			theight += Math.max(theight, tsize.y);
-		if (tcsize!=null)
-			theight = Math.max(theight, tcsize.y);
-		theight = Math.max(theight, size.y);
-		theight += tvmargin + tvmargin;
-		GC gc = e.gc;
-		gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
-		gc.fillRectangle(marginWidth, marginHeight, bounds.width-1-marginWidth-marginWidth, theight-1);
+	protected void onPaint(PaintEvent e) {
 	}
 	private void fireExpanding(boolean state, boolean before) {
 		int size = listeners.size();

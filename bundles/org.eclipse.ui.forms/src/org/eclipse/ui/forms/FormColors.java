@@ -80,7 +80,8 @@ public class FormColors {
 	protected void initializeColorTable() {
 		createColor(BORDER, 195, 191, 179);
 		createColor(SEPARATOR, 152, 170, 203);
-		createColor(TITLE, 102, 120, 153);
+		//createColor(TITLE, 102, 120, 153);
+		createColor(TITLE, 100, 135, 220);
 	}
 	/**
 	 * Creates the color for the specified key using the provided RGB object.
