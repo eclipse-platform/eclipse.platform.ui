@@ -4,16 +4,23 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.jface.wizard.WizardSelectionPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.WizardStepGroup;
 
 /**
@@ -30,10 +37,10 @@ import org.eclipse.ui.internal.misc.WizardStepGroup;
  * </p>
  */
 public class MultiStepConfigureWizardPage extends WizardPage {
+	private MultiStepWizardDialog wizardDialog;
 	private Composite pageSite;
 	private WizardStepGroup stepGroup;
-	private int stepIndex = 0;
-	private IWizard stepWizard;
+	private WizardStepContainer stepContainer = new WizardStepContainer();
 	
 	/**
 	 * Creates a new multi-step wizard page.
@@ -48,8 +55,7 @@ public class MultiStepConfigureWizardPage extends WizardPage {
 	 * Method declared on IWizardPage
 	 */
 	public boolean canFlipToNextPage() {
-		// Already know there is a next page...
-		return isPageComplete();
+		return stepContainer.canFlipToNextPage();
 	}
 
 	/* (non-Javadoc)
@@ -88,13 +94,31 @@ public class MultiStepConfigureWizardPage extends WizardPage {
 		stepGroup = new WizardStepGroup(convertWidthInCharsToPixels(2));
 		stepGroup.createContents(parent);
 	}
+
+	/**
+	 * Returns the container handler for the pages
+	 * of the step's wizard.
+	 */
+	/* package */ WizardStepContainer getStepContainer() {
+		return stepContainer;
+	}
 	
+	/* (non-Javadoc)
+	 * Method declared on IDialogPage.
+	 */
+	public String getMessage() {
+		String msg = stepContainer.getMessage();
+		if (msg == null || msg.length() == 0)
+			msg = super.getMessage();
+		return msg;
+	}
+
 	/* (non-Javadoc)
 	 * Method declared on IWizardPage.
 	 */
 	public void setPreviousPage(IWizardPage page) {
 		// Do not allow to go back
-		super.setPreviousPage(null);
+		super.setPreviousPage(this);
 	}
 
 	/**
@@ -108,28 +132,249 @@ public class MultiStepConfigureWizardPage extends WizardPage {
 			stepGroup.setSteps(steps);
 	}
 	
+	/**
+	 * Sets the multi-step wizard dialog processing this
+	 * page.
+	 */
+	/* package */ void setWizardDialog(MultiStepWizardDialog dialog) {
+		wizardDialog = dialog;
+	}
+	
 	/* (non-Javadoc)
 	 * Method declared on IDialogPage.
 	 */
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
-		getControl().getParent().update();
 		
-		WizardStep[] steps = stepGroup.getSteps();
-		while (true) {
-			WizardStep step = steps[stepIndex];
-			stepWizard = step.getWizard();
-			if (stepWizard.getPageCount() > 0)
-				return;
-			else {
-				stepWizard.setContainer(getContainer());
-				stepWizard.performFinish();
-				stepWizard.dispose();
-				stepWizard.setContainer(null);
+		getControl().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				stepContainer.processCurrentStep();
 			}
-			stepIndex++;
-			if (stepIndex >= steps.length)
+		});
+	}
+	
+	/**
+	 * Support for handling pages from the step's wizard
+	 */
+	/* package */ class WizardStepContainer implements IWizardContainer {
+		private int stepIndex = 0;
+		private IWizard wizard;
+		private IWizardPage currentPage;
+
+		/* (non-Javadoc)
+		 * Method declared on IRunnableContext.
+		 */
+		public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
+			getContainer().run(fork, cancelable, runnable);
+		}
+		
+		/* (non-Javadoc)
+		 * Method declared on IWizardContainer.
+		 */
+		public IWizardPage getCurrentPage() {
+			return currentPage;
+		}
+		 
+		/* (non-Javadoc)
+		 * Method declared on IWizardContainer.
+		 */
+		public Shell getShell() {
+			return getContainer().getShell();
+		}
+		
+		/* (non-Javadoc)
+		 * Method declared on IWizardContainer.
+		 */
+		public void showPage(IWizardPage page) {
+			showPage(page, false);
+		}
+
+		/* (non-Javadoc)
+		 * Method declared on IWizardContainer.
+		 */
+		public void updateButtons() {
+			getContainer().updateButtons();
+		}
+		
+		/* (non-Javadoc)
+		 * Method declared on IWizardContainer.
+		 */
+		public void updateMessage() {
+			getContainer().updateMessage();
+		}
+		
+		/* (non-Javadoc)
+		 * Method declared on IWizardContainer.
+		 */
+		public void updateTitleBar() {
+			getContainer().updateTitleBar();
+		}
+		
+		/* (non-Javadoc)
+		 * Method declared on IWizardContainer.
+		 */
+		public void updateWindowTitle() {
+			getContainer().updateWindowTitle();
+		}
+		
+		/**
+		 * Handles the back button pressed
+		 */
+		public void backPressed() {
+			showPage(currentPage.getPreviousPage(), true);
+		}
+		
+		/**
+		 * Handles the next button pressed
+		 */
+		public void nextPressed() {
+			showPage(currentPage.getNextPage(), false);
+		}
+		
+		/**
+		 * Handles the help button pressed
+		 */
+		public void helpPressed() {
+			if (currentPage != null)
+				currentPage.performHelp();
+		}
+		
+		/**
+		 * Handles close request
+		 */
+		public final boolean performCancel() {
+			if (wizard != null)
+				return wizard.performCancel();
+			else
+				return true;
+		}
+
+		/**
+		 * Handles finish request
+		 */
+		public final boolean performFinish() {
+			if (wizard != null) {
+				if (wizard.performFinish()) {
+					wizard.dispose();
+					wizard.setContainer(null);
+					stepGroup.markStepAsDone();
+					stepIndex++;
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return true;
+			}
+		}
+
+		/**
+		 * Process the current step's wizard.
+		 */
+		public void processCurrentStep() {
+			WizardStep[] steps = stepGroup.getSteps();
+			while (stepIndex < steps.length) {
+				WizardStep step = steps[stepIndex];
+				stepGroup.setCurrentStep(step);
+				IWizard stepWizard = step.getWizard();
+				setWizard(stepWizard);
+				if (stepWizard.getPageCount() > 0)
+					return;
+				else
+					performFinish();
+			}
+			
+			wizardDialog.forceClose();
+		}
+		
+		/**
+		 * Sets the current wizard
+		 */
+		public void setWizard(IWizard newWizard) {
+			wizard = newWizard;
+			
+			// Allow the wizard pages to precreate their page controls
+			// This allows the wizard to open to the correct size
+			wizard.createPageControls(pageSite);
+				
+			// Ensure that all of the created pages are initially not visible
+			IWizardPage[] pages = wizard.getPages();
+			for (int i = 0; i < pages.length; i++) {
+				IWizardPage page = (IWizardPage)pages[i];
+				if (page.getControl() != null) 
+					page.getControl().setVisible(false);
+			}
+				
+			// Ensure the dialog is large enough for the wizard
+			//updateSizeForWizard(wizard);
+			//pageContainer.layout(true);
+				
+			wizard.setContainer(this);
+			showPage(wizard.getStartingPage(), false);
+		}
+		
+		/**
+		 * Show the requested page
+		 */
+		public void showPage(IWizardPage page, boolean backingUp) {
+			if (page == null || page == currentPage)
 				return;
+			
+			if (!backingUp && currentPage != null)
+				page.setPreviousPage(currentPage);
+				
+			if (wizard != page.getWizard())
+				Assert.isTrue(false);
+			
+			// ensure that page control has been created
+			// (this allows lazy page control creation)
+			if (page.getControl() == null) {
+				page.createControl(pageSite);
+				// ensure the dialog is large enough for this page
+				//updateSizeForPage(page);
+				//pageContainerLayout.layoutPage(page.getControl());
+			}
+		
+			// make the new page visible
+			IWizardPage oldPage = currentPage;
+			currentPage = page;
+			currentPage.setVisible(true);
+			if (oldPage != null)
+				oldPage.setVisible(false);
+		
+			// update the dialog controls
+			wizardDialog.updateAll();
+		}
+		
+		/**
+		 * Returns whether the current wizard can finish
+		 */
+		public boolean canWizardFinish() {
+			if (wizard != null)
+				return wizard.canFinish();
+			else
+				return false;
+		}
+
+		/**
+		 * Returns whether the current page can flip to
+		 * the next page
+		 */
+		public boolean canFlipToNextPage() {
+			if (currentPage != null)
+				return currentPage.canFlipToNextPage();
+			else
+				return false;
+		}
+		
+		/**
+		 * Returns the current page's message
+		 */
+		public String getMessage() {
+			if (currentPage != null)
+				return currentPage.getMessage();
+			else
+				return null;
 		}
 	}
 }

@@ -68,7 +68,7 @@ public abstract class WizardStep {
 	/**
 	 * Sets the step as being done
 	 */
-	/* package */ void markAsDone() {
+	public void markAsDone() {
 		done = true;
 	}
 }

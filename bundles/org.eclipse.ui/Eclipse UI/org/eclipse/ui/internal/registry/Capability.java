@@ -14,8 +14,10 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.ui.ICapabilityWizard;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -142,10 +144,20 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 		return element.getAttribute(ATT_CATEGORY);
 	}
 	
-	public IWizard getInstallWizard() {
+	/**
+	 * Returns a new instance of the capability install
+	 * wizard. Caller is responsible for calling the init
+	 * method. If the wizard cannot be created, <code>null</code>
+	 * is returned
+	 * 
+	 * @return the none initialized capability wizard or
+	 * 		<code>null</code> if the wizard cannot be created.
+	 */
+	public ICapabilityWizard getInstallWizard() {
 		try {
-			return (IWizard)element.createExecutableExtension(ATT_INSTALL_WIZARD);
+			return (ICapabilityWizard)element.createExecutableExtension(ATT_INSTALL_WIZARD);
 		} catch (CoreException e) {
+			WorkbenchPlugin.log("Could not create capability wizard.", e.getStatus()); //$NON-NLS-1$
 			return null;
 		}
 	}

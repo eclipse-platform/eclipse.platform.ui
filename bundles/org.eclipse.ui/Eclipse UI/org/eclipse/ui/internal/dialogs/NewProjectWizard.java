@@ -90,7 +90,7 @@ public class NewProjectWizard extends MultiStepWizard implements INewWizard {
 			WizardStep[] steps = new WizardStep[results.length + 1];
 			steps[0] = new CreateProjectStep(1, creationPage, this);
 			for (int i = 0; i < results.length; i++)
-				steps[i+1] = new InstallCapabilityStep(i+2, results[i]);
+				steps[i+1] = new InstallCapabilityStep(i+2, results[i], workbench, this);
 			setSteps(steps);
 		} else {
 		}

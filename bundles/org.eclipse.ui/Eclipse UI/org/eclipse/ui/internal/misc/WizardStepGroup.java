@@ -4,6 +4,10 @@ package org.eclipse.ui.internal.misc;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.IContentProvider;
@@ -13,6 +17,8 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -22,6 +28,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.WizardStep;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 
@@ -30,6 +37,8 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
  * wizard steps to be done.
  */
 public class WizardStepGroup {
+	private Image doneImage;
+	private Image currentImage;
 	private int numberColWidth = 8;
 	private WizardStep currentStep;
 	private TableViewer stepViewer;
@@ -54,6 +63,18 @@ public class WizardStepGroup {
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		composite.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				if (doneImage != null) {
+					doneImage.dispose();
+					doneImage = null;
+				}
+				if (currentImage != null) {
+					currentImage.dispose();
+					currentImage = null;
+				}
+			}
+		});
 		
 		// Add a label to identify the step list field
 		Label label = new Label(composite, SWT.LEFT);
@@ -87,6 +108,43 @@ public class WizardStepGroup {
 	}
 
 	/**
+	 * Creates an image descriptor.
+	 */
+	private Image createImage(String iconFileName) {
+		String iconPath = "icons/full/clcl16/"; //$NON-NLS-1$
+		ImageDescriptor desc = null;
+		try {
+			URL url_basic = WorkbenchPlugin.getDefault().getDescriptor().getInstallURL();
+			URL url = new URL(url_basic, iconPath + iconFileName);
+			desc = ImageDescriptor.createFromURL(url);
+		} catch (MalformedURLException e) {
+			return null;
+		}
+		
+		return desc.createImage();
+	}
+
+	/**
+	 * Return the image indicating a step is current
+	 */
+	private Image getCurrentImage() {
+		if (currentImage == null) {
+			currentImage = createImage("step_current.gif"); //$NON-NLS-1$
+		}
+		return currentImage;
+	}
+	
+	/**
+	 * Return the image indicating a step is done
+	 */
+	private Image getDoneImage() {
+		if (doneImage == null) {
+			doneImage = createImage("step_done.gif"); //$NON-NLS-1$
+		}
+		return doneImage;
+	}
+	
+	/**
 	 * Returns the content provider for the step viewer
 	 */
 	private IContentProvider getStepProvider() {
@@ -112,6 +170,14 @@ public class WizardStepGroup {
 		}
 		
 		return new WizardStep[0];
+	}
+	
+	/**
+	 * Marks the current step as being done
+	 */
+	public void markStepAsDone() {
+		if (currentStep != null)
+			currentStep.markAsDone();
 	}
 	
 	/**
@@ -206,9 +272,9 @@ public class WizardStepGroup {
 				switch (columnIndex) {
 					case 0 :	// Done image column
 						if (step.isDone())
-							image = null;
+							image = getDoneImage();
 						else if (step == currentStep)
-							image = null;
+							image = getCurrentImage();
 						break;
 					case 1 :	// Step number column
 						break;

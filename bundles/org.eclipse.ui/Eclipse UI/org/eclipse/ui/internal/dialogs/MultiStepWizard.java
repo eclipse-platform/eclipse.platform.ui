@@ -6,6 +6,7 @@ package org.eclipse.ui.internal.dialogs;
  */
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.ui.internal.dialogs.MultiStepConfigureWizardPage.WizardStepContainer;
 
 /**
  * Standard workbench wizard to handle a multi-step page. The
@@ -21,6 +22,7 @@ import org.eclipse.jface.wizard.Wizard;
  * </p>
  */
 public abstract class MultiStepWizard extends Wizard {
+	private MultiStepWizardDialog wizardDialog;
 	private MultiStepReviewWizardPage reviewPage;
 	private MultiStepConfigureWizardPage configPage;
 	
@@ -54,6 +56,7 @@ public abstract class MultiStepWizard extends Wizard {
 		configPage = new MultiStepConfigureWizardPage("multiStepConfigureWizardPage");//$NON-NLS-1$
 		configPage.setTitle(getConfigurePageTitle()); //$NON-NLS-1$
 		configPage.setDescription(getConfigurePageDescription()); //$NON-NLS-1$
+		configPage.setWizardDialog(wizardDialog);
 		this.addPage(configPage);
 	}
 
@@ -61,7 +64,18 @@ public abstract class MultiStepWizard extends Wizard {
 	 * Method declared on IWizard.
 	 */
 	public boolean canFinish() {
-		return getContainer().getCurrentPage() == configPage;
+		if (isConfigureStepMode())
+			return getStepContainer().canWizardFinish();
+		else
+			return false;
+	}
+
+	/* (non-Javadoc)
+	 * Method declared on IWizard.
+	 */
+	public void dispose() {
+		super.dispose();
+		wizardDialog = null;
 	}
 
 	/**
@@ -97,6 +111,31 @@ public abstract class MultiStepWizard extends Wizard {
 	 * page.
 	 */
 	protected abstract String getReviewPageDescription();
+
+	/**
+	 * Returns the container handler for the pages
+	 * of the step's wizard.
+	 */
+	/* package */ WizardStepContainer getStepContainer() {
+		return configPage.getStepContainer();
+	}
+	
+	/**
+	 * Returns whether the wizard is configuring steps
+	 */
+	/* package */ boolean isConfigureStepMode() {
+		return getContainer().getCurrentPage() == configPage;
+	}
+		
+	/* (non-Javadoc)
+	 * Method declared on IWizard.
+	 */
+	public final boolean performCancel() {
+		if (isConfigureStepMode())
+			return getStepContainer().performCancel();
+		else
+			return true;
+	}
 	
 	/* (non-Javadoc)
 	 * Method declared on IWizard.
@@ -118,5 +157,15 @@ public abstract class MultiStepWizard extends Wizard {
 			reviewPage.setSteps(steps);
 		if (configPage != null)
 			configPage.setSteps(steps);
+	}
+	
+	/**
+	 * Sets the multi-step wizard dialog processing this
+	 * wizard.
+	 */
+	/* package */ void setWizardDialog(MultiStepWizardDialog dialog) {
+		wizardDialog = dialog;
+		if (configPage != null)
+			configPage.setWizardDialog(wizardDialog);
 	}
 }

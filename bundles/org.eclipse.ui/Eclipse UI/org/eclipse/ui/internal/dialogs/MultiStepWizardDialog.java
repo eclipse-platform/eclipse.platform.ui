@@ -39,6 +39,63 @@ public class MultiStepWizardDialog extends WizardDialog {
 	public MultiStepWizardDialog(Shell parentShell, MultiStepWizard newWizard) {
 		super(parentShell, newWizard);
 		multiStepWizard = newWizard;
+		multiStepWizard.setWizardDialog(this);
 	}
 
+	/**
+	 * Forces the wizard dialog to close
+	 */
+	/* package */ void forceClose() {
+		super.finishPressed();
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on WizardDialog.
+	 */
+	protected void backPressed() {
+		if (multiStepWizard.isConfigureStepMode())
+			multiStepWizard.getStepContainer().backPressed();
+		else
+			super.backPressed();
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on WizardDialog.
+	 */
+	protected void finishPressed() {
+		if (multiStepWizard.isConfigureStepMode()) {
+			boolean success = multiStepWizard.getStepContainer().performFinish();
+			if (success)
+				multiStepWizard.getStepContainer().processCurrentStep();
+		} else {
+			super.finishPressed();
+		}
+	}	
+
+	/* (non-Javadoc)
+	 * Method declared on WizardDialog.
+	 */
+	protected void helpPressed() {
+		if (multiStepWizard.isConfigureStepMode())
+			multiStepWizard.getStepContainer().helpPressed();
+		else
+			super.helpPressed();
+	}
+
+	/* (non-Javadoc)
+	 * Method declared on WizardDialog.
+	 */
+	protected void nextPressed() {
+		if (multiStepWizard.isConfigureStepMode())
+			multiStepWizard.getStepContainer().nextPressed();
+		else
+			super.nextPressed();
+	}
+	
+	/**
+	 * Updates everything in the dialog
+	 */
+	/* package */ void updateAll() {
+		super.update();
+	}
 }
