@@ -16,19 +16,16 @@ import java.util.Iterator;
 import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.search.ui.SearchUI;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.text.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.text.Assert;
-
+import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
+import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
 public class XMLMarkerAnnotation extends MarkerAnnotation implements IXMLAnnotation {
-	
 	private static final int NO_IMAGE= 0;
 	private static final int ORIGINAL_MARKER_IMAGE= 1;
 	private static final int OVERLAY_IMAGE= 4;
@@ -38,8 +35,14 @@ public class XMLMarkerAnnotation extends MarkerAnnotation implements IXMLAnnotat
 	
 	private IXMLAnnotation fOverlay;
 	private boolean fNotRelevant= false;
-	private AnnotationType fType;
+	private String fType;
 	private int fImageType;
+	
+	/**
+	 * The marker annotation preferences.
+	 * @since 3.0
+	 */
+	private MarkerAnnotationPreferences fMarkerAnnotationPreferences;
 	
 	public XMLMarkerAnnotation(IMarker marker) {
 		super(marker);
@@ -53,36 +56,38 @@ public class XMLMarkerAnnotation extends MarkerAnnotation implements IXMLAnnotat
 		fImageType= NO_IMAGE;
 		IMarker marker= getMarker();
 		
-		fType= AnnotationType.UNKNOWN;
-		try {
-			if (marker != null && marker.exists()) {
-				if (marker.isSubtypeOf(IMarker.BOOKMARK)) {
-					fType= AnnotationType.BOOKMARK;
-				} else if (marker.isSubtypeOf(IMarker.TASK)) {
-					fType= AnnotationType.TASK;
-				} else if (marker.isSubtypeOf(IMarker.PROBLEM)) {
-					int severity= marker.getAttribute(IMarker.SEVERITY, -1);
-					switch (severity) {
-						case IMarker.SEVERITY_ERROR:
-							fType= AnnotationType.ERROR;
-							break;
-						case IMarker.SEVERITY_WARNING:
-							fType= AnnotationType.WARNING;
-							break;
-						case IMarker.SEVERITY_INFO:
-							fType= AnnotationType.INFO;
-							break;
-					}
-				} else if (marker.isSubtypeOf(SearchUI.SEARCH_MARKER)) { 
-					fType= AnnotationType.SEARCH;
-				}
-			}
-		} catch (CoreException e) {
-			AntUIPlugin.log(e);
-		}
+		fMarkerAnnotationPreferences= new MarkerAnnotationPreferences();
+		fType= findAnnotationTypeForMarker(marker);
 		super.initialize();
 	}
 	
+	/**
+	 * Finds the annotation type for the given marker.
+	 * 
+	 * @param marker the marker
+	 * @return the annotation type or <code>null</code> if none was found
+	 * @since 3.0
+	 */
+	private String findAnnotationTypeForMarker(IMarker marker) {
+		Iterator e= fMarkerAnnotationPreferences.getAnnotationPreferences().iterator();
+		while (e.hasNext()) {
+			AnnotationPreference annotationPreference= (AnnotationPreference) e.next();
+			boolean isSubtype;
+			Integer severity;
+			try {
+				isSubtype= marker.isSubtypeOf(annotationPreference.getMarkerType());
+				severity= (Integer)marker.getAttribute(IMarker.SEVERITY);
+			} catch (CoreException ex) {
+				AntUIPlugin.log(ex);
+				return null;
+			}
+			if (isSubtype && (severity == null || severity.intValue() == annotationPreference.getSeverity())) {
+				return (String)annotationPreference.getAnnotationType();
+			}
+		}
+		return null;
+	}
+		
 	/*
 	 * @see IXMLAnnotation#getMessage()
 	 */
@@ -105,7 +110,7 @@ public class XMLMarkerAnnotation extends MarkerAnnotation implements IXMLAnnotat
 	 * @see IXMLAnnotation#isProblem()
 	 */
 	public boolean isProblem() {
-		return fType == AnnotationType.WARNING || fType == AnnotationType.ERROR;
+		return WARNING_ANNOTATION_TYPE.equals(fType) || ERROR_ANNOTATION_TYPE.equals(fType);
 	}
 	
 	/*
@@ -144,16 +149,18 @@ public class XMLMarkerAnnotation extends MarkerAnnotation implements IXMLAnnotat
 	public Image getImage(Display display) {
 		int newImageType= NO_IMAGE;
 
-		if (hasOverlay())
+		if (hasOverlay()) {
 			newImageType= OVERLAY_IMAGE;
-		else if (isRelevant())
+		} else if (isRelevant()) {
 			newImageType= ORIGINAL_MARKER_IMAGE; 
-		else
+		} else {
 			newImageType= GRAY_IMAGE;
+		}
 
-		if (fImageType == newImageType && newImageType != OVERLAY_IMAGE)
+		if (fImageType == newImageType && newImageType != OVERLAY_IMAGE) {
 			// Nothing changed - simply return the current image
 			return super.getImage(display);
+		}
 
 		Image newImage= null;
 		switch (newImageType) {
@@ -164,8 +171,9 @@ public class XMLMarkerAnnotation extends MarkerAnnotation implements IXMLAnnotat
 				newImage= fOverlay.getImage(display);
 				break;
 			case GRAY_IMAGE:
-				if (fImageType != ORIGINAL_MARKER_IMAGE)
+				if (fImageType != ORIGINAL_MARKER_IMAGE) {
 					setImage(null);
+				}
 				Image originalImage= super.getImage(display);
 				if (originalImage != null) {
 					ImageRegistry imageRegistry= getGrayMarkerImageRegistry(display);
@@ -190,8 +198,9 @@ public class XMLMarkerAnnotation extends MarkerAnnotation implements IXMLAnnotat
 	}
 	
 	private ImageRegistry getGrayMarkerImageRegistry(Display display) {
-		if (fgGrayMarkersImageRegistry == null)
+		if (fgGrayMarkersImageRegistry == null) {
 			fgGrayMarkersImageRegistry= new ImageRegistry(display);
+		}
 		return fgGrayMarkersImageRegistry;
 	}
 	
@@ -217,10 +226,10 @@ public class XMLMarkerAnnotation extends MarkerAnnotation implements IXMLAnnotat
 		return null;
 	}
 	
-	/*
-	 * @see org.eclipse.jdt.internal.ui.javaeditor.IXMLAnnotation#getAnnotationType()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.ui.internal.editor.text.IXMLAnnotation#getAnnotationType()
 	 */
-	public AnnotationType getAnnotationType() {
+	public String getAnnotationType() {
 		return fType;
 	}
 }

@@ -20,7 +20,6 @@ import org.eclipse.ant.ui.internal.editor.outline.AntEditorContentOutlinePage;
 import org.eclipse.ant.ui.internal.editor.outline.AntModel;
 import org.eclipse.ant.ui.internal.editor.outline.XMLCore;
 import org.eclipse.ant.ui.internal.editor.text.AnnotationAccess;
-import org.eclipse.ant.ui.internal.editor.text.AnnotationType;
 import org.eclipse.ant.ui.internal.editor.text.AntEditorDocumentProvider;
 import org.eclipse.ant.ui.internal.editor.text.IAntEditorColorConstants;
 import org.eclipse.ant.ui.internal.editor.xml.IAntEditorConstants;
@@ -28,7 +27,6 @@ import org.eclipse.ant.ui.internal.editor.xml.XmlAttribute;
 import org.eclipse.ant.ui.internal.editor.xml.XmlElement;
 import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.ant.ui.internal.model.IAntUIHelpContextIds;
-import org.eclipse.ant.ui.internal.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -45,7 +43,6 @@ import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
-import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 /**
@@ -83,9 +80,8 @@ public class AntEditor extends TextEditor {
     }
 
 
-    /** The <code>AntEditor</code> implementation of this 
-     * <code>AbstractTextEditor</code> method extend the 
-     * actions to add those specific to the receiver
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.texteditor.AbstractTextEditor#createActions()
      */
     protected void createActions() {
         super.createActions();
@@ -155,7 +151,7 @@ public class AntEditor extends TextEditor {
         return part != null && part.equals(this);
     }
     
-    protected void setSelection(XmlElement reference, boolean moveCursor) {
+    private void setSelection(XmlElement reference, boolean moveCursor) {
         if (reference != null) {
         	if (reference.isExternal()) {
         		while (!reference.isRootExternal() || (reference.getParentNode() != null && reference.getParentNode().isExternal())) {
@@ -268,18 +264,10 @@ public class AntEditor extends TextEditor {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.ExtendedTextEditor#createAnnotationAccess()
+	 */
 	protected IAnnotationAccess createAnnotationAccess() {
 		return new AnnotationAccess(getAnnotationPreferences());
-	}
-
-	protected void configureSourceViewerDecorationSupport(SourceViewerDecorationSupport support) {
-		super.configureSourceViewerDecorationSupport(support);
-
-		support.setAnnotationPainterPreferenceKeys(AnnotationType.BOOKMARK, AntEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION, AntEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION_IN_OVERVIEW_RULER, 1);
-		support.setAnnotationPainterPreferenceKeys(AnnotationType.TASK, AntEditorPreferenceConstants.EDITOR_TASK_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_TASK_INDICATION, AntEditorPreferenceConstants.EDITOR_TASK_INDICATION_IN_OVERVIEW_RULER, 2);
-		support.setAnnotationPainterPreferenceKeys(AnnotationType.SEARCH, AntEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION, AntEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION_IN_OVERVIEW_RULER, 3);
-		support.setAnnotationPainterPreferenceKeys(AnnotationType.INFO, AntEditorPreferenceConstants.EDITOR_INFO_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_INFO_INDICATION, AntEditorPreferenceConstants.EDITOR_INFO_INDICATION_IN_OVERVIEW_RULER, 4);
-		support.setAnnotationPainterPreferenceKeys(AnnotationType.WARNING, AntEditorPreferenceConstants.EDITOR_WARNING_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_WARNING_INDICATION, AntEditorPreferenceConstants.EDITOR_WARNING_INDICATION_IN_OVERVIEW_RULER, 5);
-		support.setAnnotationPainterPreferenceKeys(AnnotationType.ERROR, AntEditorPreferenceConstants.EDITOR_PROBLEM_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_PROBLEM_INDICATION, AntEditorPreferenceConstants.EDITOR_ERROR_INDICATION_IN_OVERVIEW_RULER, 6);
 	}
 }

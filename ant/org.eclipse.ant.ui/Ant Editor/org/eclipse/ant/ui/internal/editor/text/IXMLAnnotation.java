@@ -23,14 +23,38 @@ import org.eclipse.swt.widgets.Display;
  * @see org.eclipse.jdt.core.compiler.IProblem
  */
 public interface IXMLAnnotation {
+	public static final String ERROR_ANNOTATION_TYPE= "org.eclipse.ui.workbench.texteditor.error"; //$NON-NLS-1$
+	public static final String WARNING_ANNOTATION_TYPE= "org.eclipse.ui.workbench.texteditor.warning"; //$NON-NLS-1$
+	public static final String INFO_ANNOTATION_TYPE= "org.eclipse.ui.workbench.texteditor.info"; //$NON-NLS-1$
 	
-	AnnotationType getAnnotationType();
+	/**
+	 * Returns the type of this annotation.
+	 *
+	 * @return the type of the annotation or <code>null</code> if it has none.
+	 */
+	public String getAnnotationType();
 	
-	boolean isTemporary();
+	/**
+	 * Returns whether this annotation is temporary rather than persistent.
+	 * 
+	 * @return <code>true</code> if temporary <code>false</code> otherwise
+	 */
+	public boolean isTemporary();
 	
-	String getMessage();
+	/**
+	 * Returns the message assocaited with this annotation.
+	 * 
+	 * @return the message for this annotation
+	 */
+	public String getMessage();
 	
-	Image getImage(Display display);
+	/**
+	 * Returns an image for this annotation.
+	 * 
+	 * @param display the display for which the image is requested
+	 * @return the image for this annotation
+	 */
+	public Image getImage(Display display);
 	
 	/**
 	 * Returns whether this annotation is relavant.
@@ -44,14 +68,14 @@ public interface IXMLAnnotation {
 	 * @return <code>true</code> if relevant
 	 * @see #hasOverlay()
 	 */
-	boolean isRelevant();
+	public boolean isRelevant();
 	
 	/**
 	 * Returns whether this annotation is overlaid.
 	 * 
 	 * @return <code>true</code> if overlaid
 	 */
-	boolean hasOverlay();
+	public boolean hasOverlay();
 	
 	/**
 	 * Returns an iterator for iterating over the
@@ -59,7 +83,7 @@ public interface IXMLAnnotation {
 	 * 
 	 * @return an iterator over the overlaid annotaions
 	 */
-	Iterator getOverlaidIterator();
+	public Iterator getOverlaidIterator();
 	
 	/**
 	 * Adds the given annotation to the list of
@@ -67,7 +91,7 @@ public interface IXMLAnnotation {
 	 *  
 	 * @param annotation	the problem annoation
 	 */
-	void addOverlaid(IXMLAnnotation annotation);
+	public void addOverlaid(IXMLAnnotation annotation);
 	
 	/**
 	 * Removes the given annotation from the list of
@@ -75,7 +99,7 @@ public interface IXMLAnnotation {
 	 *  
 	 * @param annotation	the problem annoation
 	 */
-	void removeOverlaid(IXMLAnnotation annotation);
+	public void removeOverlaid(IXMLAnnotation annotation);
 	
 	/**
 	 * Tells whether this annotation is a problem
@@ -83,5 +107,5 @@ public interface IXMLAnnotation {
 	 * 
 	 * @return <code>true</code> if it is a problem annotation
 	 */
-	boolean isProblem();
+	public boolean isProblem();
 }
