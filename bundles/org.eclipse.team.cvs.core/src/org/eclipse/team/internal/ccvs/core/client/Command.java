@@ -556,7 +556,7 @@ public abstract class Command extends Request {
 		 * @return an instance for that mode
 		 */
 		public static KSubstOption fromFile(IFile file) {
-			if (CVSProvider.isText(file)) return KSUBST_TEXT_EXPAND; // XXX should this be KSUBST_TEXT?
+			if (CVSProvider.isText(file)) return KSUBST_TEXT;
 			return KSUBST_BINARY;
 		}
 		/**

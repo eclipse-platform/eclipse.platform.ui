@@ -32,7 +32,7 @@ public class CVSDecoratorConfiguration {
 	public static final String DEFAULT_ADDED_FLAG = "*"; //$NON-NLS-1$
 	
 	// default text decoration formats
-	public static final String DEFAULT_FILETEXTFORMAT = "{dirty_flag}{name}  {revision} {tag}"; //$NON-NLS-1$
+	public static final String DEFAULT_FILETEXTFORMAT = "{dirty_flag}{name}  {revision} {tag} ({keyword})"; //$NON-NLS-1$
 	public static final String DEFAULT_FOLDERTEXTFORMAT = "{dirty_flag}{name}  {tag}"; //$NON-NLS-1$
 	public static final String DEFAULT_PROJECTTEXTFORMAT = "{dirty_flag}{name}  {tag} [{host}]"; //$NON-NLS-1$
 
