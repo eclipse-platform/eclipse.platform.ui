@@ -13,6 +13,8 @@ package org.eclipse.debug.ui.variables;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -101,8 +103,54 @@ public class LaunchConfigurationVariableForm {
 			}
 		});
 		
+		variableList.addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent e) {
+				cycleSelection(e);
+			}
+		});
+		
 		setEnabled(true);
 		return mainComposite;
+	}
+	
+	private void cycleSelection(KeyEvent e) {
+		String selection= variableList.getSelection()[0];
+		int startingIndex= variableList.getSelectionIndex();
+		if (selection.charAt(2) > e.character) {
+			startingIndex= 0;
+		}
+		String[] vars= variableList.getItems();
+		for (int i = startingIndex; i < vars.length; i++) {
+			//look for the first real char eg. after ${
+			if (vars[i].charAt(2) == e.character) {
+				if (variableList.getSelectionIndex() == i) {
+					//this item already selected
+					i++;
+					if (i < vars.length && vars[i].charAt(2) == e.character) {
+						//select the next item that starts with the same char
+						variableList.select(i);
+						variableList.showSelection();
+						updateVariableComposite(null, false);
+						return;
+					} else {
+						if (i-2 > 0 && vars[i-2].charAt(2) == e.character) {
+							//more than one item that starts with this char
+							//loop back to the beginning as we are at the last one
+							i = 0;
+							continue;
+						}
+						//the only entry matching this char is already selected
+						variableList.showSelection();
+						return;
+					}
+				}
+				//select the matching variable
+				variableList.select(i);
+				variableList.showSelection();
+				updateVariableComposite(null, false);
+				return;
+			}
+		}
 	}
 	
 	/**
