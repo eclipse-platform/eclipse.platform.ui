@@ -23,6 +23,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.RefreshTab;
+import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsBuilderTab;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.ui.ExternalToolsUIMessages;
@@ -359,8 +360,12 @@ public final class ExternalToolMigration {
 			}
 			ILaunchConfigurationWorkingCopy workingCopy;
 			try {
-				workingCopy = config.getWorkingCopy();
-				workingCopy.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, runInBackground);
+				workingCopy= config.getWorkingCopy();
+				if (runInBackground != ExternalToolsBuilderTab.DEFAULT_LAUNCH_IN_BACKGROUND) {
+					// Only store the config value if it is not the default. This is
+					// to be consistent with the way the UI stores attributes.
+					workingCopy.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, runInBackground);
+				}
 				config= workingCopy.doSave();
 			} catch (CoreException e) {
 				ExternalToolsPlugin.getDefault().log(ExternalToolsUIMessages.getString("ExternalToolMigration.38"), e); //$NON-NLS-1$

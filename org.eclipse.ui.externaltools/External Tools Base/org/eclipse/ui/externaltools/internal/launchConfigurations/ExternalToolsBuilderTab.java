@@ -43,6 +43,12 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.IDE;
 
 public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
+	
+	/**
+	 * The default value of the LAUNCH_IN_BACKGROUND attribute for external
+	 * tool builders.
+	 */
+	public static final boolean DEFAULT_LAUNCH_IN_BACKGROUND= false;
 
 	private Button fullBuildButton;
 	private Button autoBuildButton;
@@ -236,7 +242,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		} else {
 			configuration.setAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, (String)null);
 		}
-		setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, configuration, fLaunchInBackgroundButton.getSelection(), false);
+		setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, configuration, fLaunchInBackgroundButton.getSelection(), DEFAULT_LAUNCH_IN_BACKGROUND);
 	}
 
 	/* (non-Javadoc)
