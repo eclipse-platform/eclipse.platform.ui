@@ -680,7 +680,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	protected ILaunchConfiguration createConfigOfType(ILaunchConfigurationType configType) {		
 		ILaunchConfigurationWorkingCopy workingCopy = null;
 		try {
-			workingCopy = configType.newInstance(null, generateUniqueNameFrom(DEFAULT_NEW_CONFIG_NAME));
+			workingCopy = configType.newInstance(null, getLaunchManager().generateUniqueLaunchConfigurationNameFrom(DEFAULT_NEW_CONFIG_NAME));
 		} catch (CoreException ce) {
 			DebugUIPlugin.log(ce);
 			return null;
@@ -1954,7 +1954,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		
 		// Duplicate the selected config and select the dupe in the tree
 		ILaunchConfiguration copyFromConfig = (ILaunchConfiguration) selectedElement;
-		String newName = generateUniqueNameFrom(copyFromConfig.getName());
+		String newName = getLaunchManager().generateUniqueLaunchConfigurationNameFrom(copyFromConfig.getName());
 		try {
 			ILaunchConfigurationWorkingCopy newWorkingCopy = copyFromConfig.copy(newName);
 			setLaunchConfiguration(newWorkingCopy, false);
@@ -1977,7 +1977,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * Make a copy of the specified configuration and select it in the tree.
 	 */
 	protected void doHandleCopyConfiguration(ILaunchConfiguration copyFromConfig) {
-		String newName = generateUniqueNameFrom(copyFromConfig.getName());
+		String newName = getLaunchManager().generateUniqueLaunchConfigurationNameFrom(copyFromConfig.getName());
 		try {
 			ILaunchConfigurationWorkingCopy newWorkingCopy = copyFromConfig.copy(newName);
 			setLaunchConfiguration(newWorkingCopy, false);
@@ -1996,7 +1996,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	protected void constructNewConfig(ILaunchConfigurationType configType) {	
 		try {
-			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, generateUniqueNameFrom(DEFAULT_NEW_CONFIG_NAME));
+			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, getLaunchManager().generateUniqueLaunchConfigurationNameFrom(DEFAULT_NEW_CONFIG_NAME));
 			setLastSavedName(null);
 			setLaunchConfiguration(wc, true);
 			doSave();
@@ -2080,38 +2080,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		}
 		getTreeViewer().setSelection(newSelection);
 	}	
-	
-	/**
-	 * Construct a new config name using the name of the given config as a starting point.
-	 * The new name is guaranteed not to collide with any existing config name.
-	 */
-	protected String generateUniqueNameFrom(String startingName) {
-		int index = 1;
-		String baseName = startingName;
-		int copyIndex = baseName.lastIndexOf(" (");
-		if (copyIndex > -1) {
-			String trailer = baseName.substring(copyIndex + 1);
-			try {
-				index = Integer.parseInt(trailer);
-				baseName = startingName.substring(0, copyIndex);
-			} catch (NumberFormatException nfe) {
-			}
-		} 
-		String newName = baseName;
-		try {
-			while (getLaunchManager().isExistingLaunchConfigurationName(newName)) {
-				StringBuffer buffer = new StringBuffer(baseName);
-				buffer.append(" (");
-				buffer.append(String.valueOf(index));
-				index++;
-				buffer.append(')');
-				newName = buffer.toString();		
-			}		
-		} catch (CoreException e) {
-			DebugUIPlugin.log(e);
-		}
-		return newName;
-	}
 	
 	/**
 	 * Notification the 'Close' button has been pressed.
@@ -2842,7 +2810,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		if (name == null) {
 			name = ""; //$NON-NLS-1$
 		}
-		return generateUniqueNameFrom(name);
+		return getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name);
 	}
 
 	/**

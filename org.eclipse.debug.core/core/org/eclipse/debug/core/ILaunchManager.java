@@ -182,6 +182,19 @@ public interface ILaunchManager {
 	public boolean isExistingLaunchConfigurationName(String name) throws CoreException;
 
 	/**
+	 * Return a String that can be used as the name of a launch configuration.  The name
+	 * is guaranteed to be unique (no existing launch configurations will have this name).
+	 * The name that is returned uses the <code>namePrefix</code> as a starting point.  If 
+	 * there is no existing launch configuration with this name, then <code>namePrefix</code>
+	 * is returned.  Otherwise, the value returned consists of the specified prefix plus
+	 * some suffix that guarantees uniqueness.
+	 * 
+	 * @param namePrefix the String that the returned name must begin with
+	 * @since 2.0
+	 */
+	public String generateUniqueLaunchConfigurationNameFrom(String namePrefix);
+
+	/**
 	 * Creates and returns a new source locator of the specified
 	 * type.
 	 * 

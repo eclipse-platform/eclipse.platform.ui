@@ -671,6 +671,37 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	}
 	
 	/**
+	 * @see org.eclipse.debug.core.ILaunchManager#generateUniqueLaunchConfigurationNameFrom(String)
+	 */
+	public String generateUniqueLaunchConfigurationNameFrom(String namePrefix) {
+		int index = 1;
+		String baseName = namePrefix;
+		int copyIndex = baseName.lastIndexOf(" (");
+		if (copyIndex > -1) {
+			String trailer = baseName.substring(copyIndex + 1);
+			try {
+				index = Integer.parseInt(trailer);
+				baseName = namePrefix.substring(0, copyIndex);
+			} catch (NumberFormatException nfe) {
+			}
+		} 
+		String newName = baseName;
+		try {
+			while (isExistingLaunchConfigurationName(newName)) {
+				StringBuffer buffer = new StringBuffer(baseName);
+				buffer.append(" (");
+				buffer.append(String.valueOf(index));
+				index++;
+				buffer.append(')');
+				newName = buffer.toString();		
+			}		
+		} catch (CoreException e) {
+			DebugPlugin.log(e);
+		}
+		return newName;
+	}
+	
+	/**
 	 * Return a sorted array of the names of all <code>ILaunchConfiguration</code>s in 
 	 * the workspace.  These are cached, and cache is cleared when a new config is added,
 	 * deleted or changed.
