@@ -21,9 +21,6 @@ import org.eclipse.ui.internal.misc.Assert;
  */
 public class KeyBindingService implements IKeyBindingService {
 	
-	private IPartListener partListener;
-	private ShellListener shellListener;
-	
 	/* Maps action definition id to action. */
 	private HashMap defIdToAction = new HashMap();
 	
@@ -52,26 +49,8 @@ public class KeyBindingService implements IKeyBindingService {
 	 * it with its parent.
 	 */		
 	public KeyBindingService(WWinKeyBindingService service,PartSite site) {
-		partListener = new IPartListener() {
-			public void partActivated(IWorkbenchPart part) {}
-			public void partBroughtToTop(IWorkbenchPart part) {}
-			public void partClosed(IWorkbenchPart part) {}
-			public void partDeactivated(IWorkbenchPart part) {
-				parent.clear();
-			}
-			public void partOpened(IWorkbenchPart part) {}
-		};
-		
-		shellListener = new ShellAdapter() {
-			public void shellDeactivated(ShellEvent e) {
-				parent.clear();
-			}
-		};
-		
 		parent = service;
 		parentUpdateNumber = parent.getUpdateNumber() - 1;
-		service.getWindow().getPartService().addPartListener(partListener);
-		service.getWindow().getShell().addShellListener(shellListener);
 		
 		if(site instanceof EditorSite) {
 			EditorActionBuilder.ExternalContributor contributor = (EditorActionBuilder.ExternalContributor)((EditorSite)site).getExtensionActionBarContributor();
@@ -147,8 +126,6 @@ public class KeyBindingService implements IKeyBindingService {
 	 * Remove the part listener when the editor site is disposed.
 	 */
 	public void dispose() {
-		parent.getWindow().getPartService().removePartListener(partListener);
-		parent.getWindow().getShell().removeShellListener(shellListener);
 	}
 	
     /**

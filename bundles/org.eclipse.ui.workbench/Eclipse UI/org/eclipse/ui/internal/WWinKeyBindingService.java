@@ -17,6 +17,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.VerifyEvent;
@@ -151,9 +152,16 @@ public class WWinKeyBindingService {
 			}
 			public void partBroughtToTop(IWorkbenchPart part) {}
 			public void partClosed(IWorkbenchPart part) {}
-			public void partDeactivated(IWorkbenchPart part) {}
+			public void partDeactivated(IWorkbenchPart part) {
+				clear();
+			}
 			public void partOpened(IWorkbenchPart part) {}
 		};
+		final ShellListener shellListener = new ShellAdapter() {
+			public void shellDeactivated(ShellEvent e) {
+				clear();
+			}
+		};		
 		for(int i=0; i<pages.length;i++) {
 			pages[i].addPartListener(partListener);
 		}
@@ -163,6 +171,8 @@ public class WWinKeyBindingService {
 			public void pageOpened(IWorkbenchPage page){
 				page.addPartListener(partListener);
 				partListener.partActivated(page.getActivePart());
+				window.getShell().removeShellListener(shellListener);				
+				window.getShell().addShellListener(shellListener);				
 			}
 		});
 		propertyListener = new IPropertyChangeListener() {
