@@ -243,6 +243,7 @@ protected void configureShell(Shell shell) {
 		waitCursor = new Cursor(shell.getDisplay(),SWT.CURSOR_WAIT);
 	shell.setCursor(waitCursor);
 }
+
 /* (non-Javadoc)
  * Method declared on Dialog.
  */
@@ -262,19 +263,45 @@ protected void createButtonsForButtonBar(Composite parent) {
 	);
 	setOperationCancelButtonEnabled(enableCancelButton);
 }
+/*
+ * @see Dialog.createContents(Composite)
+ */
+protected Control createContents(Composite parent) {
+	
+	// initialize the dialog units
+	initializeDialogUnits(parent);
+	
+	GridLayout layout = new GridLayout();
+	layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+	layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+	layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+	layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+	layout.makeColumnsEqualWidth = false;
+	layout.numColumns = 2;
+	parent.setLayout(layout);
+	parent.setLayoutData(new GridData(GridData.FILL_BOTH));
+	
+	// create the dialog area and button bar
+	dialogArea = createDialogArea(parent);
+	buttonBar = createButtonBar(parent);
+	
+	GridData barData = (GridData) buttonBar.getLayoutData();
+	barData.horizontalSpan = 2;
+	buttonBar.setLayoutData(barData);
+	
+	return parent;
+}
+	
 /* (non-Javadoc)
  * Method declared on Dialog.
  */
 protected Control createDialogArea(Composite parent) {
 
-		Composite c = (Composite)super.createDialogArea(parent);
-		((GridLayout)c.getLayout()).numColumns = 2;
-
 		// icon
-		Label iconLabel= new Label(c, SWT.LEFT);
-		GridData gd= new GridData();
-		iconLabel.setLayoutData(gd);
-		iconLabel.setFont(parent.getFont());
+		Label iconLabel= new Label(parent, SWT.LEFT);
+		iconLabel.setLayoutData(new GridData(
+			GridData.HORIZONTAL_ALIGN_CENTER |
+			GridData.VERTICAL_ALIGN_BEGINNING));
 		Image i= JFaceResources.getImageRegistry().get(Dialog.DLG_IMG_INFO);
 		if (i != null)
 			iconLabel.setImage(i);
@@ -283,15 +310,19 @@ protected Control createDialogArea(Composite parent) {
 		}
 
 		// label on right hand side of icon
-		taskLabel = new Label(c, SWT.LEFT | SWT.WRAP);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		taskLabel = new Label(parent, SWT.LEFT | SWT.WRAP);
+		GridData gd = new GridData(
+			GridData.GRAB_HORIZONTAL |
+			GridData.GRAB_VERTICAL |
+			GridData.HORIZONTAL_ALIGN_FILL |
+			GridData.VERTICAL_ALIGN_CENTER);
 		gd.heightHint= 35;
 		taskLabel.setLayoutData(gd);
 		taskLabel.setText(DEFAULT_TASKNAME);
 		taskLabel.setFont(parent.getFont());
 
 		// progress indicator
-		progressIndicator= new ProgressIndicator(c);
+		progressIndicator= new ProgressIndicator(parent);
 		gd= new GridData();
 		gd.heightHint= 15;
 		gd.horizontalAlignment= gd.FILL;
@@ -300,14 +331,14 @@ protected Control createDialogArea(Composite parent) {
 		progressIndicator.setLayoutData(gd);
 
 		// label showing current task
-		subTaskLabel= new Label(c, SWT.LEFT | SWT.WRAP);
+		subTaskLabel= new Label(parent, SWT.LEFT | SWT.WRAP);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint= 35;	
 		gd.horizontalSpan= 2;
 		subTaskLabel.setLayoutData(gd);
 		subTaskLabel.setFont(parent.getFont());
 
-		return c;
+		return parent;
 	}
 /* (non-Javadoc)
  * Method declared in Window.
