@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.team.cvs.core" id="connectionmethods" name="ConnectionMethods"/>
       </appInfo>
       <documentation>
-         This extension point allows additional CVS connection methods to be pluged in.
+         This extension point allows additional CVS connection methods to be pluged in. It is for internal use.
       </documentation>
    </annotation>
 
@@ -120,7 +120,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         
+         This extension point is internal use only
       </documentation>
    </annotation>
 
