@@ -18,6 +18,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
@@ -317,11 +318,7 @@ public class ReviewPage
 			}
 		});
 
-		descLabel = new Text(client, SWT.WRAP);
-		descLabel.setEditable(false);
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = 2;
-		descLabel.setLayoutData(gd);
+		//new Label(client, SWT.NULL);
 
 		counterLabel = new Label(client, SWT.NULL);
 		gd = new GridData();
@@ -353,15 +350,16 @@ public class ReviewPage
 		return client;
 	}
 
-	private Control createTable(Composite parent) {
+	private void createTable(Composite parent) {
+		SashForm sform = new SashForm(parent, SWT.VERTICAL);
 		tableViewer =
 			CheckboxTableViewer.newCheckList(
-				parent,
+				sform,
 				SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
 		Table table = tableViewer.getTable();
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 250;
-		table.setLayoutData(gd);
+		sform.setLayoutData(gd);
 
 		table.setHeaderVisible(true);
 
@@ -408,9 +406,13 @@ public class ReviewPage
 		});
 
 		TableLayout layout = new TableLayout();
-		layout.addColumnData(new ColumnWeightData(80, 225, true));
-		layout.addColumnData(new ColumnWeightData(30, 80));
-		layout.addColumnData(new ColumnWeightData(100, 140, true));
+		//layout.addColumnData(new ColumnWeightData(80, 225, true));
+		//layout.addColumnData(new ColumnWeightData(30, 80));
+		//layout.addColumnData(new ColumnWeightData(100, 140, true));
+
+		layout.addColumnData(new ColumnPixelData(225, true));
+		layout.addColumnData(new ColumnPixelData(80, true));
+		layout.addColumnData(new ColumnPixelData(140, true));
 
 		table.setLayout(layout);
 
@@ -453,7 +455,11 @@ public class ReviewPage
 		
 		tableViewer.setInput(UpdateUI.getDefault().getUpdateModel());
 		tableViewer.setAllChecked(true);
-		return table;
+		
+		descLabel = new Text(sform, SWT.BORDER|SWT.WRAP|SWT.MULTI|SWT.V_SCROLL);
+		descLabel.setEditable(false);
+		
+		sform.setWeights(new int[] {10, 2});
 	}
 	
 	private void fillContextMenu(IMenuManager manager) {
