@@ -32,7 +32,7 @@ import org.eclipse.ui.tests.util.UITestCase;
 public final class Bug74990Test extends UITestCase {
 
     /**
-     * Constructs a new instance of <code>Bug70503Test</code>.
+     * Constructs a new instance of <code>Bug74990Test</code>.
      * 
      * @param name
      *            The name of the test
