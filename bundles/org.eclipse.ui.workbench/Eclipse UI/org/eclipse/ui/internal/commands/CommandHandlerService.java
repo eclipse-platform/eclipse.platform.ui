@@ -48,30 +48,6 @@ public final class CommandHandlerService implements ICommandHandlerService {
 		}
 	}
 
-	// TODO temporary
-
-	public boolean addCommandHandlerNoEvent(String commandId, ICommandHandler commandHandler)
-		throws IllegalArgumentException {
-		if (commandId == null)
-			throw new IllegalArgumentException();
-
-		if (commandHandlersById == null)
-			commandHandlersById = new TreeMap();
-			
-		if (commandHandlersById.get(commandId) != commandHandler) {
-			commandHandlersById.put(commandId, commandHandler);
-			return true;
-		}
-		
-		return false;
-	}
-	
-	// TODO temporary
-	
-	public void fireEvent() {
-		fireCommandHandlerServiceChanged();
-	}
-	
 	public void addCommandHandlerServiceListener(ICommandHandlerServiceListener commandHandlerServiceListener)
 		throws IllegalArgumentException {
 		if (commandHandlerServiceListener == null)

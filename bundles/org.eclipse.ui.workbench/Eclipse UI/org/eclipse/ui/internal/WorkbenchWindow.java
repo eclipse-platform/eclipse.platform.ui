@@ -16,7 +16,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -79,17 +81,13 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.commands.ICommandHandlerService;
-import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.commands.CommandHandlerService;
 import org.eclipse.ui.internal.commands.old.ActionHandler;
 import org.eclipse.ui.internal.commands.old.ContextAndHandlerManager;
 import org.eclipse.ui.internal.commands.old.Manager;
 import org.eclipse.ui.internal.commands.old.SequenceMachine;
 import org.eclipse.ui.internal.commands.util.old.Sequence;
 import org.eclipse.ui.internal.commands.util.old.Stroke;
-import org.eclipse.ui.internal.contexts.ContextActivationService;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -418,22 +416,15 @@ public class WorkbenchWindow
 		};
 	}
 
-	private ICommandHandlerService commandHandlerService;
+	private SortedMap commandHandlersForActionSets = new TreeMap();
+	private SortedMap commandHandlersForGlobalActions = new TreeMap(); 
 
-	public ICommandHandlerService getCommandHandlerService() {
-		if (commandHandlerService == null) 
-			commandHandlerService = new CommandHandlerService();
-		
-		return commandHandlerService;
+	SortedMap getCommandHandlersForActionSets() {
+		return commandHandlersForActionSets;
 	}
-
-	private IContextActivationService contextActivationService;
-
-	public IContextActivationService getContextActivationService() {
-		if (contextActivationService == null) 
-			contextActivationService = new ContextActivationService();
-		
-		return contextActivationService;
+	
+	SortedMap getCommandHandlersForGlobalActions() {
+		return commandHandlersForGlobalActions;
 	}
 
 	void updateContextAndHandlerManager() {
@@ -442,7 +433,7 @@ public class WorkbenchWindow
 	}
 
 	void registerActionSets(IActionSet[] actionSets) {
-		boolean change = false;
+		commandHandlersForActionSets.clear();
 		
 		for (int i = 0; i < actionSets.length; i++) {
 			if (actionSets[i] instanceof PluginActionSet) {
@@ -455,20 +446,21 @@ public class WorkbenchWindow
 					String command = pluginAction.getActionDefinitionId();
 
 					if (command != null)
-						change |= ((CommandHandlerService) getCommandHandlerService()).addCommandHandlerNoEvent(command, new ActionHandler(pluginAction));
+						commandHandlersForActionSets.put(command, new ActionHandler(pluginAction));
 				}
 			}
 		}
 
-		if (change)
-			((CommandHandlerService) getCommandHandlerService()).fireEvent();
+		workbench.updateCommandsAndContexts();
 	}
 
 	void registerGlobalAction(IAction globalAction) {
 		String command = globalAction.getActionDefinitionId();
 
 		if (command != null)
-			getCommandHandlerService().addCommandHandler(command, new ActionHandler(globalAction));
+			commandHandlersForGlobalActions.put(command, new ActionHandler(globalAction));
+
+		workbench.updateCommandsAndContexts();
 	}
 
 	/*
