@@ -166,18 +166,6 @@
 			class="org.eclipse.ui.externaltools.internal.ant.preferences.AntRuntimePreferencePage"
 			category="org.eclipse.ui.externaltools.AntPreferencePage">
 		</page>
-		<page 
-			id="org.eclipse.ui.externaltools.AntConsolePreferencePage" 
-			name="%PreferencePage.antConsolePreferences"
-			class="org.eclipse.ui.externaltools.internal.ant.preferences.AntConsolePreferencePage"
-			category="org.eclipse.ui.externaltools.AntPreferencePage">
-		</page>
-	    <page
-		    id="org.eclipse.ui.externaltools.internal.ant.editor.internal.ColoringPreferencePage"
-    	    name="%PreferencePage.antEditor"
-            class="org.eclipse.ui.externaltools.internal.ant.editor.text.PlantyPreferencePage"
-            category="org.eclipse.ui.externaltools.AntPreferencePage">
-	    </page>
 	</extension>
 	
 	<extension point="org.eclipse.ui.popupMenus">
