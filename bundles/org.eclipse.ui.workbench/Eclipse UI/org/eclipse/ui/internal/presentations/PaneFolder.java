@@ -135,7 +135,7 @@ public final class PaneFolder {
 		}
 		
 		public void mouseDoubleClick(MouseEvent e) {
-		}		
+		}
 	};
 	
 	/**

@@ -810,6 +810,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 					// Would it be possible to fit the toolbar in this space if we wrapped it? 
 					Rectangle area = perspectiveCoolBar.getClientArea();
 
+					// Determine the difference in size betwen the coolitem's client area and the coolbar's bounds
 					Point offset = coolItem.computeSize(0,0);
 					
 					Point wrappedSize = toolbarWrapper.getControl().computeSize(area.width - offset.x, SWT.DEFAULT);
@@ -819,9 +820,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 						return;
 					}
 					
-					// Otherwise, leave the toolbar at its preferred size and show a chevron
-					Point toolbarSize = toolbarWrapper.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT);
-					coolItem.setSize(toolbarSize.x + offset.x, toolbarSize.y + offset.y);
+					// Set the cool item to be 1 pixel larger than the coolbar, in order to force a chevron
+					// to appear
+					coolItem.setSize(wrappedSize.x + offset.x + 1, area.height + offset.y);
  				}
 
 			});
