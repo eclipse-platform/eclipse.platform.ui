@@ -21,6 +21,7 @@ public class AntTaskNode extends AntElementNode {
 
 	private Task fTask= null;
 	private String fLabel= null;
+	private String fId= null;
 	
 	public AntTaskNode(Task task) {
 		super(task.getTaskName());
@@ -37,7 +38,11 @@ public class AntTaskNode extends AntElementNode {
 		if (fLabel != null) {
 			return fLabel;
 		}
+		if (fId != null) {
+			return fId;
+		}
 		return fTask.getTaskName();
+		
 	}
 	
 	public void setLabel(String label) {
@@ -62,6 +67,18 @@ public class AntTaskNode extends AntElementNode {
 			return AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_IMPORT);
 		}
 		
+		if (fId != null) {
+			return AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_TYPE);
+		}
+		
 		return super.getBaseImageDescriptor();
+	}
+
+	/**
+	 * The reference id for this task
+	 * @param id The reference id for this task
+	 */
+	public void setId(String id) {
+		fId= id;
 	}
 }
