@@ -10,6 +10,7 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -28,6 +29,10 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	
 	private BooleanFieldEditor2 fWrapEditor = null;
 	private IntegerFieldEditor fWidthEditor = null;
+	
+	private BooleanFieldEditor2 fUseBufferSize = null;
+	private IntegerFieldEditor fBufferSizeEditor = null;
+	
 	/**
 	 * Create the console page.
 	 */
@@ -57,12 +62,28 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		
 		fWidthEditor = new IntegerFieldEditor(IDebugPreferenceConstants.CONSOLE_WIDTH, DebugPreferencesMessages.getString("ConsolePreferencePage.Console_width"), getFieldEditorParent()); //$NON-NLS-1$
 		addField(fWidthEditor);
-		fWidthEditor.setValidRange(1, Integer.MAX_VALUE);
+		fWidthEditor.setValidRange(80, Integer.MAX_VALUE - 1);
 		
 		fWrapEditor.getChangeControl(getFieldEditorParent()).addSelectionListener(
 			new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					updateWidthEditor();
+				}
+			}
+		);
+		
+		fUseBufferSize = new BooleanFieldEditor2(IDebugPreferenceConstants.CONSOLE_LIMIT_CONSOLE_OUTPUT, DebugPreferencesMessages.getString("ConsolePreferencePage.Limit_console_output_1"), SWT.NONE, getFieldEditorParent()); //$NON-NLS-1$
+		addField(fUseBufferSize);
+		
+		fBufferSizeEditor = new IntegerFieldEditor(IDebugPreferenceConstants.CONSOLE_LOW_WATER_MARK, DebugPreferencesMessages.getString("ConsolePreferencePage.Console_buffer_size_(characters)__2"), getFieldEditorParent()); //$NON-NLS-1$
+		addField(fBufferSizeEditor);
+		fBufferSizeEditor.setValidRange(1000, Integer.MAX_VALUE);
+		fBufferSizeEditor.setErrorMessage(DebugPreferencesMessages.getString("ConsolePreferencePage.The_console_buffer_size_must_be_at_least_1000_characters._1")); //$NON-NLS-1$
+		
+		fUseBufferSize.getChangeControl(getFieldEditorParent()).addSelectionListener(
+			new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					updateBufferSizeEditor();
 				}
 			}
 		);
@@ -84,7 +105,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		addField(sysin);
 		addField(editor);
 	}
-
+	
 	/**
 	 * @see IWorkbenchPreferencePage#init(IWorkbench)
 	 */
@@ -96,6 +117,11 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	 */
 	public boolean performOk() {
 		boolean ok= super.performOk();
+		// update high water mark to be (about) 100 lines (100 * 80 chars) greater than low water mark
+		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
+		int low = store.getInt(IDebugPreferenceConstants.CONSOLE_LOW_WATER_MARK);
+		int high = low + 8000;
+		store.setValue(IDebugPreferenceConstants.CONSOLE_HIGH_WATER_MARK, high);
 		DebugUIPlugin.getDefault().savePluginPreferences();
 		return ok;
 	}
@@ -106,6 +132,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	protected void initialize() {
 		super.initialize();
 		updateWidthEditor();
+		updateBufferSizeEditor();
 	}
 	
 	/**
@@ -118,10 +145,21 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	}
 
 	/**
+	 * Update enablement of buffer size editor based on enablement of 'limit
+	 * console output' editor.
+	 */
+	protected void updateBufferSizeEditor() {
+		Button b = fUseBufferSize.getChangeControl(getFieldEditorParent());
+		fBufferSizeEditor.getTextControl(getFieldEditorParent()).setEnabled(b.getSelection());
+		fBufferSizeEditor.getLabelControl(getFieldEditorParent()).setEnabled(b.getSelection());
+	}
+	
+	/**
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
 		super.performDefaults();
 		updateWidthEditor();
 	}
+	
 }

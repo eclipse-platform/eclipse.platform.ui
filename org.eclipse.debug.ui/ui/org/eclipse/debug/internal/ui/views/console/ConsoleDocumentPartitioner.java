@@ -58,6 +58,11 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	
 	private String[] fSortedLineDelimiters;
 	
+	// high and low water marks for buffering output
+	private boolean fUpdatingBuffer = false;
+	private int fLowWaterMark;
+	private int fHighWaterMark;
+	
 	class StreamEntry {
 		/**
 		 * Identifier of the stream written to.
@@ -299,6 +304,9 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension#documentChanged2(org.eclipse.jface.text.DocumentEvent)
 	 */
 	public IRegion documentChanged2(DocumentEvent event) {
+		if (fUpdatingBuffer) {
+			return new Region(0, fDocument.getLength());
+		}
 		addPendingLinks();
 		String text = event.getText();
 		if (isAppendInProgress()) {
@@ -436,6 +444,15 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	public ConsoleDocumentPartitioner(IProcess process, IConsoleColorProvider contentProvider) {
 		fProcess= process;
 		fContentProvider = contentProvider;
+		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
+		boolean limit = store.getBoolean(IDebugPreferenceConstants.CONSOLE_LIMIT_CONSOLE_OUTPUT);
+		if (limit) {
+			fLowWaterMark = store.getInt(IDebugPreferenceConstants.CONSOLE_LOW_WATER_MARK);
+			fHighWaterMark = store.getInt(IDebugPreferenceConstants.CONSOLE_HIGH_WATER_MARK);
+		} else {
+			fLowWaterMark = -1;
+			fHighWaterMark = -1;
+		}
 	}
 
 	public void close() {
@@ -607,11 +624,102 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 				} catch (BadLocationException e) {
 				}
 				setAppendInProgress(false);
+				checkOverflow();
 			}
 		};
 		Display display = DebugUIPlugin.getStandardDisplay();
 		if (display != null) {
 			display.asyncExec(r);
+		}
+	}
+	
+	/**
+	 * Checks to see if the console buffer has overflowed, and empties the
+	 * overflow if needed, updating partitions and hyperlink positions.
+	 */
+	protected void checkOverflow() {
+		if (fHighWaterMark >= 0) {
+			if (fDocument.getLength() > fHighWaterMark) {
+				int lineDifference = 0;
+				if (fLineNotifier != null) {
+					int processed = fLineNotifier.getLinesProcessed();
+					int numLines = fDocument.getNumberOfLines();
+					lineDifference = numLines - processed;
+				}
+				int overflow = fDocument.getLength() - fLowWaterMark; 
+				fUpdatingBuffer = true;
+				try {
+					// update partitions
+					List newParitions = new ArrayList(fPartitions.size());
+					Iterator partitions = fPartitions.iterator();
+					while (partitions.hasNext()) {
+						ITypedRegion region = (ITypedRegion)partitions.next();
+						if (region instanceof StreamPartition) {
+							StreamPartition streamPartition = (StreamPartition)region;
+							ITypedRegion newPartition = null;
+							int offset = region.getOffset();
+							if (offset < overflow) {
+								int endOffset = offset + region.getLength();
+								if (endOffset < overflow) {
+									// remove partition
+								} else {
+									// split partition
+									int length = endOffset - overflow;
+									newPartition = streamPartition.createNewPartition(streamPartition.getStreamIdentifier(), 0, length);
+								}
+							} else {
+								// modify parition offset
+								newPartition = streamPartition.createNewPartition(streamPartition.getStreamIdentifier(), streamPartition.getOffset() - overflow, streamPartition.getLength());
+							}
+							if (newPartition != null) {
+								newParitions.add(newPartition);
+							}
+						}
+					}
+					fPartitions = newParitions;
+					// update hyperlinks
+					try {
+						Position[] hyperlinks = fDocument.getPositions(HyperlinkPosition.HYPER_LINK_CATEGORY);
+						for (int i = 0; i < hyperlinks.length; i++) {
+							HyperlinkPosition position = (HyperlinkPosition)hyperlinks[i];
+							// remove old the position
+							fDocument.removePosition(HyperlinkPosition.HYPER_LINK_CATEGORY, position);
+							if (position.getOffset() >= overflow) {
+								// add new poisition
+								try {
+									fDocument.addPosition(HyperlinkPosition.HYPER_LINK_CATEGORY, new HyperlinkPosition(position.getHyperLink(), position.getOffset() - overflow, position.getLength()));
+								} catch (BadLocationException e) {
+								}
+							}
+						}
+					} catch (BadPositionCategoryException e) {
+					}
+					
+					// update pending hyperlinks
+					Vector newPendingLinks = new Vector(fPendingLinks.size());
+					Iterator pendingLinks = fPendingLinks.iterator();
+					while (pendingLinks.hasNext()) {
+						HyperlinkPosition position = (HyperlinkPosition)pendingLinks.next();
+						if (position.getOffset() >= overflow) {
+							newPendingLinks.add(new HyperlinkPosition(position.getHyperLink(), position.getOffset() - overflow, position.getLength()));
+						}
+					}
+					fPendingLinks = newPendingLinks;
+					
+					// remove overflow text
+					try {
+						fDocument.replace(0, overflow, "");
+					} catch (BadLocationException e) {
+						DebugUIPlugin.log(e);
+					}
+				} finally {
+					// update number of lines processed
+					if (fLineNotifier != null) {
+						fLineNotifier.setLinesProcessed(fDocument.getNumberOfLines() - lineDifference);
+					}
+					fUpdatingBuffer = false;
+				}
+			}
 		}
 	}
 	

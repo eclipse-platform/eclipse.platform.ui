@@ -108,5 +108,12 @@ public class ConsoleLineNotifier {
 	public void addConsoleListener(IConsoleLineTracker listener) {
 		fListeners.add(listener);
 	}
+	
+	protected void setLinesProcessed(int linesProcessed) {
+		fLinesProcessed = linesProcessed;
+	}
 
+	protected int getLinesProcessed() {
+		return fLinesProcessed;
+	}
 }
