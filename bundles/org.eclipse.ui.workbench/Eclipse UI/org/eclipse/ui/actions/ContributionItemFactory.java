@@ -82,7 +82,7 @@ public abstract class ContributionItemFactory {
 
 	/**
 	 * Workbench contribution item: An list of windows currently open
-	 * in the workbench. Selecting one of the windows gives it focus.
+	 * in the workbench. Selecting one of the items makes it the active window.
 	 * This action dynamically maintains the list of windows.
 	 */
 	public static final ContributionItemFactory OPEN_WINDOWS = new ContributionItemFactory("openWindows") { //$NON-NLS-1$
@@ -100,6 +100,8 @@ public abstract class ContributionItemFactory {
 	 * Workbench contribution item: An list of views available to be opened
 	 * in the window. Selecting one of the views opens that view in the window.
 	 * This action dynamically maintains the list of views.
+	 * 
+	 * @issue views_shortlist
 	 */
 	public static final ContributionItemFactory OPEN_VIEWS = new ContributionItemFactory("openViews") { //$NON-NLS-1$
 		/* (non-javadoc) method declared on ContributionItemFactory */
@@ -116,6 +118,8 @@ public abstract class ContributionItemFactory {
 	 * Workbench contribution item: An list of fast views available to be opened
 	 * in the window. Selecting one of the fast views opens it.
 	 * This action dynamically maintains the list of fast views.
+	 * 
+	 * @issue remove
 	 */
 	public static final ContributionItemFactory FAST_VIEWS = new ContributionItemFactory("fastViews") { //$NON-NLS-1$
 		/* (non-javadoc) method declared on ContributionItemFactory */
@@ -132,6 +136,8 @@ public abstract class ContributionItemFactory {
 	 * Workbench contribution item: An list of recent editors available to be opened
 	 * in the window. Selecting one of the fast views opens it.
 	 * This action dynamically maintains the list of editors.
+	 * 
+	 * @issue fix comment - ref to fast views
 	 */
 	public static final ContributionItemFactory REOPEN_EDITORS = new ContributionItemFactory("reopenEditors") { //$NON-NLS-1$
 		/* (non-javadoc) method declared on ContributionItemFactory */
@@ -149,6 +155,8 @@ public abstract class ContributionItemFactory {
 	 * the perspectives changes the perspective of the current window, or
 	 * opens a new window set to that perspective.
 	 * This action dynamically maintains the list of perspectives.
+	 * 
+	 * @issue perspectives_shortlist
 	 */
 	public static final ContributionItemFactory PERSPECTIVES = new ContributionItemFactory("perspective") { //$NON-NLS-1$
 		/* (non-javadoc) method declared on ContributionItemFactory */
