@@ -3,10 +3,10 @@
 <schema targetNamespace="org.eclipse.debug.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.debug.core" id="simpleLaunchVariables" name="Simple Launch Variables"/>
+         <meta.schema plugin="org.eclipse.debug.core" id="valueVariables" name="Value Variables"/>
       </appInfo>
       <documentation>
-         This extension point provides a mechanism for defining simple launch configuration variables. A simple launch variable is a key/value pair (of strings) that can be used as an attribute value in a launch configuration which supports variable expansion.
+         This extension point provides a mechanism for defining variables used for string substitution. A value variable has a static value.
       </documentation>
    </annotation>
 
@@ -58,7 +58,7 @@
          <attribute name="initializerClass" type="string">
             <annotation>
                <documentation>
-                  specifies the fully qualified name of the Java class that implements &lt;samp&gt;org.eclipse.debug.core.variables.ILaunchVariableInitializer&lt;/samp&gt;. When specified, an &lt;samp&gt;initialValue&lt;/samp&gt; attribute must not be specified.
+                  specifies the fully qualified name of the Java class that implements &lt;samp&gt;org.eclipse.debug.core.stringsubstitution.IValueVariableInitializer&lt;/samp&gt;. When specified, an &lt;samp&gt;initialValue&lt;/samp&gt; attribute must not be specified.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.core.variables.ILaunchVariableInitializer"/>
@@ -68,7 +68,7 @@
          <attribute name="description" type="string">
             <annotation>
                <documentation>
-                  specifies a human-readable description of this variable
+                  specifies a human-readable description of this variable.
                </documentation>
             </annotation>
          </attribute>
@@ -89,11 +89,11 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of a launch configuration variable extension point with an initial value:
+         The following is an example of a value variable contribution with an initial value:
 
 &lt;p&gt;
 &lt;pre&gt;
- &lt;extension point=&quot;org.eclipse.debug.core.simpleLaunchVariables&quot;&gt;
+ &lt;extension point=&quot;org.eclipse.debug.core.valueVariables&quot;&gt;
   &lt;variable
    name=&quot;FOO_HOME&quot;
    initialValue=&quot;/usr/local/foo&quot;&gt;
@@ -104,10 +104,10 @@
 
 In the example above, the specified variable is created with the initial value &quot;/usr/local/foo&quot;.
 
-         The following is an example of a launch configuration variable extension point with an initializer class:
+         The following is an example of a value variable contribution with an initializer class:
 &lt;p&gt;
 &lt;pre&gt;
- &lt;extension point=&quot;org.eclipse.debug.core.simpleLaunchVariables&quot;&gt;
+ &lt;extension point=&quot;org.eclipse.debug.core.valueVariables&quot;&gt;
   &lt;variable
    name=&quot;FOO_HOME&quot;
    initializerClass=&quot;com.example.FooLocator&quot;&gt;
@@ -126,7 +126,7 @@ used to initialize the value the first time it&apos;s requested.
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         Value of the attribute &lt;b&gt;initializerClass&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.core.variables.IVariableInitializer&lt;/b&gt;.
+         Value of the attribute &lt;b&gt;initializerClass&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.core.stringSubstitution.IValueVariableInitializer&lt;/b&gt;.
       </documentation>
    </annotation>
 

@@ -68,14 +68,16 @@ public class StringSubstitutionEngine {
 	/**
 	 * Performs recursive string substitution and returns the resulting string.
 	 * 
+	 * @param expression expression to resolve
+	 * @param reportUndefinedVariables whether to report undefined variables as an error
 	 * @return the resulting string with all variables recursively
 	 *  substituted
 	 * @exception CoreException if unable to resolve a referenced variable
 	 */
-	public String performStringSubstitution(String expression) throws CoreException {
-		substitute(expression);
+	public String performStringSubstitution(String expression, boolean reportUndefinedVariables) throws CoreException {
+		substitute(expression, reportUndefinedVariables);
 		while (fSubs) {
-			substitute(fResult.toString());
+			substitute(fResult.toString(), reportUndefinedVariables);
 		}
 		return fResult.toString();
 	}
@@ -87,7 +89,7 @@ public class StringSubstitutionEngine {
 	 * @param expression source expression
 	 * @exception CoreException if unable to resolve a variable
 	 */
-	private void substitute(String expression) throws CoreException {
+	private void substitute(String expression, boolean reportUndefinedVariables) throws CoreException {
 		fResult = new StringBuffer(expression.length());
 		fStack = new Stack();
 		fSubs = false;
@@ -136,7 +138,7 @@ public class StringSubstitutionEngine {
 							VariableReference tos = (VariableReference)fStack.pop();
 							tos.append(expression.substring(pos, end));
 							pos = end + 1;
-							String value = resolve(tos);
+							String value = resolve(tos, reportUndefinedVariables);
 							if (value == null) {
 								value = ""; //$NON-NLS-1$
 							}
@@ -173,10 +175,12 @@ public class StringSubstitutionEngine {
 	 * possibly <code>null</code>. 
 	 * 
 	 * @param var
+	 * @param reportUndefinedVariables whether to report undefined variables as
+	 *  an error
 	 * @return variable value, possibly <code>null</code>
 	 * @exception CoreException if unable to resolve a value
 	 */
-	private String resolve(VariableReference var) throws CoreException {
+	private String resolve(VariableReference var, boolean reportUndefinedVariables) throws CoreException {
 		String text = var.getText();
 		int pos = text.indexOf(VARIABLE_ARG);
 		String name = null;
@@ -195,11 +199,16 @@ public class StringSubstitutionEngine {
 		if (valueVariable == null) {
 			IContextVariable contextVariable = manager.getContextVariable(name);
 			if (contextVariable == null) {
-				// no variables with the given name - leave as is
-				StringBuffer res = new StringBuffer(var.getText());
-				res.insert(0, VARIABLE_START);
-				res.append(VARIABLE_END);
-				return res.toString();
+				// no variables with the given name
+				if (reportUndefinedVariables) {
+					throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format(StringSubstitutionMessages.getString("StringSubstitutionEngine.3"), new String[]{name}), null)); //$NON-NLS-1$
+				} else {
+					// leave as is
+					StringBuffer res = new StringBuffer(var.getText());
+					res.insert(0, VARIABLE_START);
+					res.append(VARIABLE_END);
+					return res.toString();
+				}
 			} else {
 				fSubs = true;
 				return contextVariable.getValue(arg);

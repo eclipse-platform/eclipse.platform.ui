@@ -8,20 +8,34 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.core.variables;
+package org.eclipse.debug.internal.core.stringsubstitution;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-public class LaunchVariableMessages {
+/**
+ * StringSubstitutionMessages
+ */
+public class StringSubstitutionMessages {
 
-	private static final String BUNDLE_NAME = "org.eclipse.debug.internal.core.variables.LaunchVariableMessages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.debug.internal.core.stringsubstitution.StringSubstitutionMessages"; //$NON-NLS-1$
 
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
+	private static final ResourceBundle RESOURCE_BUNDLE =
+		ResourceBundle.getBundle(BUNDLE_NAME);
 
-	private LaunchVariableMessages() {
+	/**
+	 * 
+	 */
+	private StringSubstitutionMessages() {
+
+		// TODO Auto-generated constructor stub
 	}
+	/**
+	 * @param key
+	 * @return
+	 */
 	public static String getString(String key) {
+		// TODO Auto-generated method stub
 		try {
 			return RESOURCE_BUNDLE.getString(key);
 		} catch (MissingResourceException e) {

@@ -13,8 +13,6 @@ package org.eclipse.ui.externaltools.internal.program.launchConfigurations;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.debug.core.variables.ILaunchVariableManager;
-import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsMainTab;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
@@ -36,7 +34,11 @@ public class ProgramMainTab extends ExternalToolsMainTab {
 		if (file == null) {
 			return;
 		}
-		locationField.setText(LaunchVariableUtil.newVariableExpression(ILaunchVariableManager.VAR_WORKSPACE_LOC, file.getFullPath().toString()));
+		StringBuffer expression = new StringBuffer();
+		expression.append("${workspace_loc:"); //$NON-NLS-1$
+		expression.append(file.getFullPath().toString());
+		expression.append("}"); //$NON-NLS-1$
+		locationField.setText(expression.toString());
 	}
 	
 	

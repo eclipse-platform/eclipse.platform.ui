@@ -12,7 +12,6 @@ package org.eclipse.ui.externaltools.internal.launchConfigurations;
 
 
 import java.io.File;
-import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -21,10 +20,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.variables.ILaunchVariableManager;
-import org.eclipse.debug.core.variables.LaunchVariableUtil;
+import org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager;
+import org.eclipse.debug.internal.ui.stringsubstitution.StringVariableSelectionDialog;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
-import org.eclipse.debug.ui.launchVariables.LaunchVariableSelectionDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -231,9 +229,9 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		variableButton.setLayoutData(gridData);
 		variableButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				LaunchVariableSelectionDialog dialog= new LaunchVariableSelectionDialog(getShell());
+				StringVariableSelectionDialog dialog= new StringVariableSelectionDialog(getShell());
 				if (dialog.open() == Window.OK) {
-					argumentField.insert(dialog.getForm().getSelectedVariable());
+					argumentField.insert(dialog.getVariableExpression());
 				}
 			}
 		});
@@ -333,24 +331,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
 		setMessage(null);
-		return validateLocation() && validateWorkDirectory() && validateArguments();
-	}
-	
-	/**
-	 * Validates the content of the arguments field
-	 */
-	protected boolean validateArguments() {
-		String value= argumentField.getText().trim();
-		// Check if variables exist
-		if (!containsVariable(value)) {
-			return true;
-		}
-		String variableError= validateVariables(value);
-		if (variableError != null) {
-			setErrorMessage(variableError);
-			return false;
-		}
-		return true;
+		return validateLocation() && validateWorkDirectory();
 	}
 	
 	/**
@@ -363,18 +344,17 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 			setMessage(null);
 			return false;
 		}
-
-		// Check if variables exist
-		if (containsVariable(value)) {
-			String variableError= validateVariables(value);
-			if (variableError != null) {
-				setErrorMessage(variableError);
-				return false;
-			}
-			return true;
+		
+		String location = null;
+		try {
+			location= getValue(value);
+		} catch (CoreException e) {
+			setErrorMessage(e.getMessage());
+			return false;
 		}
 		
-		File file = new File(value);
+		
+		File file = new File(location);
 		if (!file.exists()) { // The file does not exist.
 			setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.External_tool_location_does_not_exist_19")); //$NON-NLS-1$
 			return false;
@@ -387,32 +367,15 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	}
 	
 	/**
-	 * Returns an error string to be displayed to the user if any variable
-	 * errors are found in the given string or <code>null</code> if no errors
-	 * are found.
+	 * Returns the value of the given string with all variables substituted (if any).
+	 * 
+	 * @param expression expression with variables
+	 * @return resolved value of expression
+	 * @exception CoreException if variable substitution fails
 	 */
-	private String validateVariables(String value) {
-		int start= 0;
-		LaunchVariableUtil.VariableDefinition variable = LaunchVariableUtil.extractVariableDefinition(value, start);
-		while (variable.start != -1) {
-			if (variable.end == -1) {
-				return ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Invalid_Expected_closing_}"); //$NON-NLS-1$
-			}
-			if (variable.name == null || variable.name.length() == 0) {
-				return ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.No_variable_specified"); //$NON-NLS-1$
-			}
-			ILaunchVariableManager manager= DebugPlugin.getDefault().getLaunchVariableManager();
-			if (manager.getContextVariable(variable.name) == null && manager.getSimpleVariable(variable.name) == null) {
-				return MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Unknown_variable"), new String[] {variable.name}); //$NON-NLS-1$
-			}
-			start= variable.end;
-			variable = LaunchVariableUtil.extractVariableDefinition(value, start);
-		}
-		return null;
-	}
-	
-	private boolean containsVariable(String value) {
-		return LaunchVariableUtil.extractVariableDefinition(value, 0).start != -1;
+	private String getValue(String expression) throws CoreException {
+		IStringVariableManager manager = DebugPlugin.getDefault().getStringVariableManager();
+		return manager.performStringSubstitution(expression);
 	}
 
 	/**
@@ -424,17 +387,16 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		if (value.length() <= 0) {
 			return true;
 		}
-		// Check if variables exist
-		if (containsVariable(value)) {
-			String variableError= validateVariables(value);
-			if (variableError != null) {
-				setErrorMessage(variableError);
-				return false;
-			}
-			return true;
+
+		String dir = null;
+		try {
+			dir= getValue(value);
+		} catch (CoreException e) {
+			setErrorMessage(e.getMessage());
+			return false;
 		}
 			
-		File file = new File(value);
+		File file = new File(dir);
 		if (!file.exists()) { // The directory does not exist.
 			setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.External_tool_working_directory_does_not_exist_or_is_invalid_21")); //$NON-NLS-1$
 			return false;
@@ -469,7 +431,11 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 			return;
 		}
 		IResource resource = (IResource)results[0];
-		locationField.setText(LaunchVariableUtil.newVariableExpression(ILaunchVariableManager.VAR_WORKSPACE_LOC, resource.getFullPath().toString()));
+		locationField.setText(newVariableExpression("workspace_loc", resource.getFullPath().toString())); //$NON-NLS-1$
+	}
+	
+	protected String newVariableExpression(String varName, String arg) {
+		return DebugPlugin.getDefault().getStringVariableManager().generateVariableExpression(varName, arg);
 	}
 	
 	/**
@@ -488,7 +454,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		Object[] resource = containerDialog.getResult();
 		String text= null;
 		if (resource != null && resource.length > 0) {
-			text= LaunchVariableUtil.newVariableExpression(ILaunchVariableManager.VAR_WORKSPACE_LOC, ((IPath)resource[0]).toString());
+			text= newVariableExpression("workspace_loc", ((IPath)resource[0]).toString()); //$NON-NLS-1$
 		}
 		if (text != null) {
 			workDirectoryField.setText(text);

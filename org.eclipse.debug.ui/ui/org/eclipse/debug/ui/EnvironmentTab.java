@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.variables.LaunchVariableUtil;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
@@ -99,7 +99,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			ILaunchConfiguration config = (ILaunchConfiguration) inputElement;
 			Map m;
 			try {
-				m = config.getAttribute(LaunchVariableUtil.ATTR_ENVIRONMENT_VARIABLES, (Map) null);
+				m = config.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, (Map) null);
 			} catch (CoreException e) {
 				DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, "Error reading configuration", e)); //$NON-NLS-1$
 				return elements;
@@ -426,7 +426,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		boolean append= true;
 		try {
-			append = configuration.getAttribute(LaunchVariableUtil.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
+			append = configuration.getAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
 		} catch (CoreException e) {
 			DebugUIPlugin.log(e.getStatus());
 		}
@@ -454,11 +454,11 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			map.put(var.getName(), var.getValue());
 		} 
 		if (map.size() == 0) {
-			configuration.setAttribute(LaunchVariableUtil.ATTR_ENVIRONMENT_VARIABLES, (Map) null);
+			configuration.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, (Map) null);
 		} else {
-			configuration.setAttribute(LaunchVariableUtil.ATTR_ENVIRONMENT_VARIABLES, map);
+			configuration.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, map);
 		}
-		configuration.setAttribute(LaunchVariableUtil.ATTR_APPEND_ENVIRONMENT_VARIABLES, appendEnvironment.getSelection());
+		configuration.setAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, appendEnvironment.getSelection());
 	}
 
 	/* (non-Javadoc)

@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.core;
 
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,6 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -36,6 +38,7 @@ import org.apache.xml.serialize.Method;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.Serializer;
 import org.apache.xml.serialize.SerializerFactory;
+import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -135,6 +138,12 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	public static final int ADDED = 0;
 	public static final int REMOVED= 1;
 	public static final int CHANGED= 2;
+	
+	/**
+	 * The collection of native environment variables on the user's system. Cached
+	 * after being computed once as the environment cannot change.
+	 */
+	private static HashMap fgNativeEnv= null;	
 
 	/**
 	 * Collection of launches
@@ -1519,5 +1528,96 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	public String getLaunchModeLabel(String mode) {
 		getLaunchModes();
 		return (String)fLaunchModeLabels.get(mode);
+	}
+	
+	/** 
+	 * Returns an array of environment variables to be used when
+	 * launching the given configuration or <code>null</code> if unspecified.
+	 * 
+	 * @param configuration launch configuration
+	 * @throws CoreException if unable to access associated attribute or if
+	 * unable to resolve a variable in an environment variable's value
+	 */
+	public String[] getEnvironment(ILaunchConfiguration configuration) throws CoreException {
+		Map envMap = configuration.getAttribute(ATTR_ENVIRONMENT_VARIABLES, (Map) null);
+		if (envMap == null) {
+			return null;
+		}
+		Map env = null;
+		// build base environment
+		boolean append= configuration.getAttribute(ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
+		if (append) {
+			env= getNativeEnvironment();
+		} else {
+			env= new HashMap();
+		}
+		
+		// Add variables from config
+		Iterator iter= envMap.entrySet().iterator();
+		while (iter.hasNext()) {
+			Map.Entry entry= (Map.Entry) iter.next();
+			String value = (String) entry.getValue();
+			// translate any string substitution variables
+			String translated = DebugPlugin.getDefault().getStringVariableManager().performStringSubstitution(value);
+			env.put(entry.getKey(), translated);
+		}		
+		
+		iter= env.entrySet().iterator();
+		List strings= new ArrayList(env.size());
+		while (iter.hasNext()) {
+			Map.Entry entry = (Map.Entry) iter.next();
+			StringBuffer buffer= new StringBuffer((String) entry.getKey());
+			buffer.append('=').append((String) entry.getValue());
+			strings.add(buffer.toString());
+		}
+		return (String[]) strings.toArray(new String[strings.size()]);
+	}
+	
+	
+	/**
+	 * Returns the native system environment variables.
+	 * 
+	 * @return the native system environment variables
+	 */
+	private static HashMap getNativeEnvironment() {
+		if (fgNativeEnv != null) {
+			return fgNativeEnv;
+		}
+		fgNativeEnv= new HashMap();
+		try {
+			String nativeCommand= null;
+			if (BootLoader.getOS().equals(BootLoader.OS_WIN32)) {
+				String osName= System.getProperty("os.name"); //$NON-NLS-1$
+				if (osName != null && (osName.startsWith("Windows 9") || osName.startsWith("Windows ME"))) { //$NON-NLS-1$ //$NON-NLS-2$
+					// Win 95, 98, and ME
+					nativeCommand= "command.com /C set"; //$NON-NLS-1$
+				} else {
+					// Win NT, 2K, XP
+					nativeCommand= "cmd.exe /C set"; //$NON-NLS-1$
+				}
+			} else if (!BootLoader.getOS().equals(BootLoader.OS_UNKNOWN)){
+				nativeCommand= "printenv";		 //$NON-NLS-1$
+			}
+			if (nativeCommand == null) {
+				return fgNativeEnv;
+			}
+			Process process= Runtime.getRuntime().exec(nativeCommand);
+			BufferedReader reader= new BufferedReader(new InputStreamReader(process.getInputStream()));
+			String line= reader.readLine();
+			while (line != null) {
+				int separator= line.indexOf('=');
+				if (separator > 0) {
+					String key= line.substring(0, separator);
+					String value= line.substring(separator + 1);
+					fgNativeEnv.put(key, value);
+				}
+				line= reader.readLine();
+			}
+			reader.close();
+		} catch (IOException e) {
+			// Native environment-fetching code failed.
+			// This can easily happen and is not useful to log.
+		}
+		return fgNativeEnv;
 	}
 }

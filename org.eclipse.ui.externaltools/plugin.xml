@@ -191,15 +191,6 @@
             resolver="org.eclipse.ui.externaltools.internal.variables.BuildTypeResolver"
             description="%build_type.description">
       </variable>   
-    </extension>
-<!-- Variable Extensions -->
-   <extension
-         point="org.eclipse.debug.core.contextLaunchVariables">
-      <variable
-            name="build_type"
-            expanderClass="org.eclipse.ui.externaltools.internal.variables.BuildTypeExpander"
-            description="%build_type.description">
-      </variable>
    </extension>
    <extension
          point="org.eclipse.debug.core.launchConfigurationComparators">

@@ -3,10 +3,10 @@
 <schema targetNamespace="org.eclipse.debug.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.debug.core" id="contextLaunchVariables" name="Context Launch Variables"/>
+         <meta.schema plugin="org.eclipse.debug.core" id="contextVariables" name="Context Variables"/>
       </appInfo>
       <documentation>
-         This extension point provides a mechanism for defining context sensitive launch configuration variables. Context launch variables derive their value dynamically based on a client defined context (for example, the selected resource). Context launch variables can be used as attribute values in launch configurations that support variable expansion.
+         This extension point provides a mechanism for defining dynamic variables used in string substitution. The value of a context variable is resolved dynamically by a delegate (resolver), which can accept an argument.
       </documentation>
    </annotation>
 
@@ -48,10 +48,10 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="expanderClass" type="string" use="required">
+         <attribute name="resolver" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies a Java class which implements &lt;samp&gt;org.eclipse.debug.core.variables.IVariableExpander&lt;/samp&gt;, which is used to determine the value of the variable
+                  specifies a Java class which implements &lt;samp&gt;org.eclipse.debug.core.stringsubstitution.IContextVariableResolver&lt;/samp&gt;, which is used to determine the value of the variable
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.core.variables.IVariableExpander"/>
@@ -82,9 +82,9 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is a definition of a context launch variable that expands to the name of the selected resource:
+         The following is a definition of a context variable that resolves to the name of the selected resource:
 &lt;pre&gt;
- &lt;extension point=&quot;org.eclipse.debug.core.contextLaunchVariables&quot;&gt;
+ &lt;extension point=&quot;org.eclipse.debug.core.contextVariables&quot;&gt;
    &lt;variable 
       name=&quot;resource_name&quot;
       expanderClass=&quot;com.example.ResourceNameExpander&quot;

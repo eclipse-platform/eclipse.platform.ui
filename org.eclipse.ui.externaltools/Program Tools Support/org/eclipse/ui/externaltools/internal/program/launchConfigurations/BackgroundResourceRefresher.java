@@ -21,7 +21,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.ui.launchVariables.RefreshTab;
+import org.eclipse.debug.ui.RefreshTab;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 
 /**

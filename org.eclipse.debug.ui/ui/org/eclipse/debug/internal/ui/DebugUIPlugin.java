@@ -43,7 +43,6 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
-import org.eclipse.debug.internal.ui.launchVariables.ContextVariableComponentManager;
 import org.eclipse.debug.internal.ui.preferences.DebugActionGroupsManager;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
@@ -51,8 +50,6 @@ import org.eclipse.debug.internal.ui.views.console.ConsoleDocumentManager;
 import org.eclipse.debug.internal.ui.views.variables.ObjectBrowserManager;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.launchVariables.ILaunchVariableComponentManager;
-import org.eclipse.debug.ui.launchVariables.LaunchVariableContextManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -123,8 +120,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 */
 	private ObjectBrowserManager fObjectBrowserManager;
 	
-	private ContextVariableComponentManager fVariableComponentManager;
-	
 	/**
 	 * Returns whether the debug UI plug-in is in trace
 	 * mode.
@@ -165,13 +160,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			fObjectBrowserManager = new ObjectBrowserManager();
 		}
 		return fObjectBrowserManager;
-	}
-	
-	public ILaunchVariableComponentManager getVariableComponentManager() {
-		if (fVariableComponentManager == null) {
-			fVariableComponentManager = new ContextVariableComponentManager();
-		}
-		return fVariableComponentManager;
 	}
 	
 	/**
@@ -326,8 +314,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		getStandardDisplay().asyncExec(
 			new Runnable() {
 				public void run() {
-					//initialize the variable context manager
-					LaunchVariableContextManager.getDefault();
+					//initialize the selected resource manager
 					SelectedResourceManager.getDefault();
 				}
 			});	

@@ -106,10 +106,10 @@
             id="org.eclipse.debug.ui.DebugActionGroupsPreferencePage">
       </page>
       <page
-            name="%SimpleVariablePreferencePage.name"
+            name="%StringVariablePreferencePage.name"
             category="org.eclipse.debug.ui.DebugPreferencePage"
-            class="org.eclipse.debug.internal.ui.preferences.SimpleLaunchVariablePreferencePage"
-            id="org.eclipse.debug.ui.SimpleVariablePreferencePage">
+            class="org.eclipse.debug.internal.ui.preferences.StringVariablePreferencePage"
+            id="org.eclipse.debug.ui.StringVariablePreferencePage">
       </page>
    </extension>
    <extension
@@ -1270,45 +1270,6 @@
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
    </extension>
-<!-- Context Variable Extensions -->
-   <extension
-         point="org.eclipse.debug.core.contextLaunchVariables">
-      <variable
-            name="string_prompt"
-            expanderClass="org.eclipse.debug.internal.ui.launchVariables.StringPromptExpander"
-            description="%string_prompt.description">
-      </variable>
-      <variable
-            name="file_prompt"
-            expanderClass="org.eclipse.debug.internal.ui.launchVariables.FilePromptExpander"
-            description="%file_prompt.description">
-      </variable>
-      <variable
-            name="folder_prompt"
-            expanderClass="org.eclipse.debug.internal.ui.launchVariables.FolderPromptExpander"
-            description="%folder_prompt.description">
-      </variable>
-   </extension>
-<!-- Variable Components -->
-   <extension
-         point="org.eclipse.debug.ui.launchVariableComponents">
-      <component
-            componentClass="org.eclipse.debug.internal.ui.launchVariables.ResourceComponent"
-            variableName="resource_path">
-      </component>
-      <component
-            componentClass="org.eclipse.debug.internal.ui.launchVariables.ResourceComponent"
-            variableName="resource_loc">
-      </component>
-      <component
-            componentClass="org.eclipse.debug.internal.ui.launchVariables.ResourceComponent"
-            variableName="resource_name">
-      </component>
-      <component
-            componentClass="org.eclipse.debug.internal.ui.launchVariables.ResourceComponent"
-            variableName="resource">
-      </component>
-   </extension>
    
    <extension
 	     point="org.eclipse.ui.workbench.texteditor.markerAnnotationSpecification">
@@ -1398,6 +1359,23 @@
       </variable>      
    </extension>	
 
+<!-- String Variable Presentations -->
+   <extension
+         point="org.eclipse.debug.ui.stringVariablePresentations">
+      <variablePresentation
+            argumentSelector="org.eclipse.debug.internal.ui.stringsubstitution.ResourceSelector"
+            variableName="resource_path">
+      </variablePresentation>
+      <variablePresentation
+            argumentSelector="org.eclipse.debug.internal.ui.stringsubstitution.ResourceSelector"
+            variableName="resource_loc">
+      </variablePresentation>
+      <variablePresentation
+            argumentSelector="org.eclipse.debug.internal.ui.stringsubstitution.ResourceSelector"
+            variableName="resource_name">
+      </variablePresentation>      
+   </extension>
+   
 <!-- Launch Config Comparators -->	   
    <extension
          point="org.eclipse.debug.core.launchConfigurationComparators">

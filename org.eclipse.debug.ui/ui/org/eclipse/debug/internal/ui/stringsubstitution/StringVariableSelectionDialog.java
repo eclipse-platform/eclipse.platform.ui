@@ -114,12 +114,22 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		gd.horizontalSpan = 2;
 		desc.setLayoutData(gd);		
 		
-		fArgumentText = new Text(container, SWT.BORDER);
+		Composite args = new Composite(container, SWT.NONE);
+		layout = new GridLayout(2, false);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		args.setLayout(layout);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		args.setLayoutData(gd);
+		args.setFont(container.getFont());
+		
+		fArgumentText = new Text(args, SWT.BORDER);
 		fArgumentText.setFont(container.getFont());
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fArgumentText.setLayoutData(gd);		
 		
-		fArgumentButton = new Button(container, SWT.PUSH);
+		fArgumentButton = new Button(args, SWT.PUSH);
 		fArgumentButton.setFont(parent.getFont());
 		fArgumentButton.setText(StringSubstitutionMessages.getString("StringVariableSelectionDialog.7")); //$NON-NLS-1$
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);

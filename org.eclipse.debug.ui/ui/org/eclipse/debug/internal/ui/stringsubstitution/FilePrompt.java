@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.FileDialog;
 /**
  * Prompts the user to choose a file and expands the selection
  */
-public class FilePromptExpander extends PromptingResolver {
+public class FilePrompt extends PromptingResolver {
 
 	/**
 	 * Prompts the user to choose a file

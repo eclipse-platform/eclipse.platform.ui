@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.ui.launchVariables;
+package org.eclipse.debug.ui;
 
 
 import java.io.IOException;
@@ -33,10 +33,8 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.launchVariables.LaunchVariableMessages;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
-import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
-import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.internal.ui.stringsubstitution.StringSubstitutionMessages;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
@@ -100,6 +98,17 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	
 	// Working set
 	private IWorkingSet fWorkingSet;
+
+	/**
+	 * XML tag used to designate the root of the persisted IWorkingSet
+	 */
+	private static final String TAG_LAUNCH_CONFIGURATION_WORKING_SET= "launchConfigurationWorkingSet"; //$NON-NLS-1$
+
+	/**
+	 * XML tag used for setting / getting the factory ID of the persisted IWorkingSet
+	 * Bug 37143
+	 */	
+	private static final String TAG_FACTORY_ID = "factoryID"; //$NON-NLS-1$
 	
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -119,7 +128,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 		
 		fRefreshButton = new Button(mainComposite, SWT.CHECK);
 		fRefreshButton.setFont(mainComposite.getFont());
-		fRefreshButton.setText(LaunchVariableMessages.getString("RefreshTab.31")); //$NON-NLS-1$
+		fRefreshButton.setText(StringSubstitutionMessages.getString("RefreshTab.31")); //$NON-NLS-1$
 		gd = new GridData(GridData.BEGINNING);
 		fRefreshButton.setLayoutData(gd);
 		fRefreshButton.addSelectionListener(new SelectionAdapter() {
@@ -139,27 +148,27 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 		gd.horizontalSpan = 2;
 		fGroup.setLayoutData(gd);
 
-		fWorkspaceButton = createRadioButton(fGroup, LaunchVariableMessages.getString("RefreshTab.32")); //$NON-NLS-1$
+		fWorkspaceButton = createRadioButton(fGroup, StringSubstitutionMessages.getString("RefreshTab.32")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fWorkspaceButton.setLayoutData(gd);
 
-		fResourceButton = createRadioButton(fGroup, LaunchVariableMessages.getString("RefreshTab.33")); //$NON-NLS-1$
+		fResourceButton = createRadioButton(fGroup, StringSubstitutionMessages.getString("RefreshTab.33")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fResourceButton.setLayoutData(gd);
 
-		fProjectButton = createRadioButton(fGroup, LaunchVariableMessages.getString("RefreshTab.34")); //$NON-NLS-1$
+		fProjectButton = createRadioButton(fGroup, StringSubstitutionMessages.getString("RefreshTab.34")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fProjectButton.setLayoutData(gd);		
 
-		fContainerButton = createRadioButton(fGroup, LaunchVariableMessages.getString("RefreshTab.35")); //$NON-NLS-1$
+		fContainerButton = createRadioButton(fGroup, StringSubstitutionMessages.getString("RefreshTab.35")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fContainerButton.setLayoutData(gd);
 				
-		fWorkingSetButton = createRadioButton(fGroup, LaunchVariableMessages.getString("RefreshTab.36")); //$NON-NLS-1$
+		fWorkingSetButton = createRadioButton(fGroup, StringSubstitutionMessages.getString("RefreshTab.36")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 1;
 		fWorkingSetButton.setLayoutData(gd);
@@ -170,7 +179,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 			}
 		});		
 		
-		fSelectButton = createPushButton(fGroup, LaunchVariableMessages.getString("RefreshTab.37"), null); //$NON-NLS-1$
+		fSelectButton = createPushButton(fGroup, StringSubstitutionMessages.getString("RefreshTab.37"), null); //$NON-NLS-1$
 		gd = (GridData)fSelectButton.getLayoutData();
 		gd.horizontalAlignment = GridData.HORIZONTAL_ALIGN_END;
 		fSelectButton.addSelectionListener(new SelectionAdapter() {
@@ -190,7 +199,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 		IWorkingSetManager workingSetManager= PlatformUI.getWorkbench().getWorkingSetManager();
 		
 		if (fWorkingSet == null){
-			fWorkingSet = workingSetManager.createWorkingSet(LaunchVariableMessages.getString("RefreshTab.40"), new IAdaptable[0]); //$NON-NLS-1$
+			fWorkingSet = workingSetManager.createWorkingSet(StringSubstitutionMessages.getString("RefreshTab.40"), new IAdaptable[0]); //$NON-NLS-1$
 		}
 		IWorkingSetEditWizard wizard= workingSetManager.createWorkingSetEditWizard(fWorkingSet);
 		WizardDialog dialog = new WizardDialog(DebugUIPlugin.getStandardDisplay().getActiveShell(), wizard);
@@ -211,7 +220,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	 */
 	private void createRecursiveComponent(Composite parent) {
 		fRecursiveButton = new Button(parent, SWT.CHECK);
-		fRecursiveButton.setText(LaunchVariableMessages.getString("RefreshTab.0")); //$NON-NLS-1$
+		fRecursiveButton.setText(StringSubstitutionMessages.getString("RefreshTab.0")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.horizontalSpan = 2;
 		fRecursiveButton.setLayoutData(data);
@@ -271,7 +280,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 				try {
 					IResource[] resources = getRefreshResources(scope, null);
 					IWorkingSetManager workingSetManager= PlatformUI.getWorkbench().getWorkingSetManager();
-					fWorkingSet = workingSetManager.createWorkingSet(LaunchVariableMessages.getString("RefreshTab.40"), resources);					 //$NON-NLS-1$
+					fWorkingSet = workingSetManager.createWorkingSet(StringSubstitutionMessages.getString("RefreshTab.40"), resources);					 //$NON-NLS-1$
 				} catch (CoreException e) {
 					fWorkingSet = null;
 				}
@@ -353,7 +362,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return LaunchVariableMessages.getString("RefreshTab.6"); //$NON-NLS-1$
+		return StringSubstitutionMessages.getString("RefreshTab.6"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -385,7 +394,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 		setErrorMessage(null);
 		setMessage(null);
 		if (fWorkingSetButton.getSelection() && fWorkingSet == null) {
-			setErrorMessage(LaunchVariableMessages.getString("RefreshTab.42")); //$NON-NLS-1$
+			setErrorMessage(StringSubstitutionMessages.getString("RefreshTab.42")); //$NON-NLS-1$
 			return false;
 		}
 		return true;
@@ -419,10 +428,10 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 			return;
 		}
 	
-		monitor.beginTask(LaunchVariableMessages.getString("RefreshTab.7"), //$NON-NLS-1$
+		monitor.beginTask(StringSubstitutionMessages.getString("RefreshTab.7"), //$NON-NLS-1$
 			resources.length);
 	
-		MultiStatus status = new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), 0, LaunchVariableMessages.getString("RefreshTab.8"), null); //$NON-NLS-1$
+		MultiStatus status = new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), 0, StringSubstitutionMessages.getString("RefreshTab.8"), null); //$NON-NLS-1$
 		for (int i = 0; i < resources.length; i++) {
 			if (monitor.isCanceled())
 				break;
@@ -457,14 +466,14 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 			Path path = new Path(pathString);
 			IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 			if (resource == null) {
-				throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, MessageFormat.format(LaunchVariableMessages.getString("RefreshTab.38"), new String[]{pathString}), null)); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, MessageFormat.format(StringSubstitutionMessages.getString("RefreshTab.38"), new String[]{pathString}), null)); //$NON-NLS-1$
 			} else {
 				return new IResource[]{resource};
 			}
 		} else if (scope.startsWith("${working_set:")) { //$NON-NLS-1$
 			IWorkingSet workingSet =  getWorkingSet(scope);
 			if (workingSet == null) {
-				throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, LaunchVariableMessages.getString("RefreshTab.39"), null)); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, StringSubstitutionMessages.getString("RefreshTab.39"), null)); //$NON-NLS-1$
 			} else {
 				IAdaptable[] elements = workingSet.getElements();
 				IResource[] resources = new IResource[elements.length];
@@ -516,23 +525,23 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 			return null;
 		}
 
-		String factoryID = memento.getString(IVariableConstants.TAG_FACTORY_ID);
+		String factoryID = memento.getString(TAG_FACTORY_ID);
 
 		if (factoryID == null) {
-			DebugUIPlugin.logErrorMessage(LaunchVariableMessages.getString("RefreshTab.2")); //$NON-NLS-1$
+			DebugUIPlugin.logErrorMessage(StringSubstitutionMessages.getString("RefreshTab.2")); //$NON-NLS-1$
 			return null;
 		}
 		IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryID);
 		if (factory == null) {
-			DebugUIPlugin.logErrorMessage(LaunchVariableMessages.getString("RefreshTab.3") + factoryID); //$NON-NLS-1$
+			DebugUIPlugin.logErrorMessage(StringSubstitutionMessages.getString("RefreshTab.3") + factoryID); //$NON-NLS-1$
 			return null;
 		}
 		IAdaptable adaptable = factory.createElement(memento);
 		if (adaptable == null) {
-			DebugUIPlugin.logErrorMessage(LaunchVariableMessages.getString("RefreshTab.4") + factoryID); //$NON-NLS-1$
+			DebugUIPlugin.logErrorMessage(StringSubstitutionMessages.getString("RefreshTab.4") + factoryID); //$NON-NLS-1$
 		}
 		if ((adaptable instanceof IWorkingSet) == false) {
-			DebugUIPlugin.logErrorMessage(LaunchVariableMessages.getString("RefreshTab.5") + factoryID); //$NON-NLS-1$
+			DebugUIPlugin.logErrorMessage(StringSubstitutionMessages.getString("RefreshTab.5") + factoryID); //$NON-NLS-1$
 			return null;
 		}
 			
@@ -575,7 +584,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 		if (workingSet == null || workingSet.getElements().length == 0) {
 			return null;
 		}
-		XMLMemento workingSetMemento = XMLMemento.createWriteRoot(IVariableConstants.TAG_LAUNCH_CONFIGURATION_WORKING_SET);
+		XMLMemento workingSetMemento = XMLMemento.createWriteRoot(TAG_LAUNCH_CONFIGURATION_WORKING_SET);
 		IPersistableElement persistable = null;
 		if (workingSet instanceof IPersistableElement) {
 			persistable = (IPersistableElement) workingSet;
@@ -583,7 +592,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 			persistable = (IPersistableElement) ((IAdaptable) workingSet).getAdapter(IPersistableElement.class);
 		}
 		if (persistable != null) {
-			workingSetMemento.putString(IVariableConstants.TAG_FACTORY_ID, persistable.getFactoryId());
+			workingSetMemento.putString(RefreshTab.TAG_FACTORY_ID, persistable.getFactoryId());
 			persistable.saveState(workingSetMemento);
 			StringWriter writer= new StringWriter();
 			try {

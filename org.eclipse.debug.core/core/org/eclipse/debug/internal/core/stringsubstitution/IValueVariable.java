@@ -20,7 +20,7 @@ package org.eclipse.debug.internal.core.stringsubstitution;
 public interface IValueVariable extends IStringVariable {
 
 	/**
-	 * Sets the value of this variable to the given String. A value of
+	 * Sets the value of this variable to the given value. A value of
 	 * <code>null</code> indicates the value of this variable is undefined.
 	 * 
 	 * @param value variable value, possibly <code>null</code>
@@ -40,4 +40,11 @@ public interface IValueVariable extends IStringVariable {
 	 * @return whether this variable was contributed by an extension
 	 */
 	public boolean isContributed();
+	
+	/**
+	 * Sets the description of this variable to the given value.
+	 * 
+	 * @param description variable description, possibly <code>null</code>
+	 */
+	public void setDescription(String description);	
 }

@@ -15,9 +15,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.variables.ILaunchVariableManager;
-import org.eclipse.debug.core.variables.ISimpleLaunchVariable;
+import org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager;
+import org.eclipse.debug.internal.core.stringsubstitution.IValueVariable;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -62,10 +64,10 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * Preference page for creating and configuring simple
  * launch variables.
  * 
- * @see org.eclipse.debug.core.variables.ISimpleLaunchVariable
+ * @see org.eclipse.debug.core.variables.IValueVariable
  * @see org.eclipse.debug.core.variables.ISimpleVariableRegistry
  */
-public class SimpleLaunchVariablePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+public class StringVariablePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	
 	private TableViewer variableTable;
 	protected Button envAddButton;
@@ -94,7 +96,7 @@ public class SimpleLaunchVariablePreferencePage extends PreferencePage implement
 		new ColumnWeightData(34)
 	};
 	
-	public SimpleLaunchVariablePreferencePage() {
+	public StringVariablePreferencePage() {
 		setDescription(DebugPreferencesMessages.getString("SimpleVariablePreferencePage.6")); //$NON-NLS-1$
 	}
 
@@ -152,6 +154,18 @@ public class SimpleLaunchVariablePreferencePage extends PreferencePage implement
 		variableTable.getControl().setLayoutData(gridData);
 		variableTable.setContentProvider(variableContentProvider);
 		variableTable.setColumnProperties(variableTableColumnProperties);
+		variableTable.setSorter(new ViewerSorter() {
+			public int compare(Viewer iViewer, Object e1, Object e2) {
+				if (e1 == null) {
+					return -1;
+				} else if (e2 == null) {
+					return 1;
+				} else {
+					return ((IValueVariable)e1).getName().compareToIgnoreCase(((IValueVariable)e2).getName());
+				}
+			}
+		});
+		
 		variableTable.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleTableSelectionChanged(event);
@@ -232,9 +246,9 @@ public class SimpleLaunchVariablePreferencePage extends PreferencePage implement
 		}
 		String name= dialog.getValue(NAME_LABEL).trim();
 		if (name != null && name.length() > 0) {
-			String value= dialog.getValue(VALUE_LABEL);
 			String description= dialog.getValue(DESCRIPTION_LABEL);
-			ISimpleLaunchVariable variable= DebugPlugin.getDefault().getLaunchVariableManager().newSimpleVariable(name, value, description, false);
+			IValueVariable variable= getVariableManager().newValueVariable(name, description);
+			variable.setValue(dialog.getValue(VALUE_LABEL));	
 			addVariable(variable);
 		}
 	}
@@ -246,30 +260,30 @@ public class SimpleLaunchVariablePreferencePage extends PreferencePage implement
 	 * @param variable the variable to add
 	 * @return whether the variable was added
 	 */
-	public boolean addVariable(ISimpleLaunchVariable variable) {
+	public boolean addVariable(IValueVariable variable) {
 		String name= variable.getName();
-		List editedVariables= variableContentProvider.getEditedVariables();
+		List editedVariables= variableContentProvider.getVariables();
 		Iterator iter= editedVariables.iterator();
 		while (iter.hasNext()) {
-			ISimpleLaunchVariable currentVariable = (ISimpleLaunchVariable) iter.next();
+			IValueVariable currentVariable = (IValueVariable) iter.next();
 			String variableName = currentVariable.getName();
 			if (variableName.equals(name)) {
 				boolean overWrite= MessageDialog.openQuestion(getShell(), DebugPreferencesMessages.getString("SimpleVariablePreferencePage.15"), MessageFormat.format(DebugPreferencesMessages.getString("SimpleVariablePreferencePage.16"), new String[] {name}));  //$NON-NLS-1$ //$NON-NLS-2$
 				if (!overWrite) {
 					return false;
 				}
-				variableContentProvider.removeVariable(currentVariable);
+				variableContentProvider.removeVariables(new IValueVariable[]{currentVariable});
 				break;
 			}
 		}
-		variableContentProvider.addVariable(variable);
+		variableContentProvider.addVariables(new IValueVariable[]{variable});
 		variableTable.refresh();
 		return true;
 	}
 	
 	private void handleEditButtonPressed() {
 		IStructuredSelection selection= (IStructuredSelection) variableTable.getSelection();
-		ISimpleLaunchVariable variable= (ISimpleLaunchVariable) selection.getFirstElement();
+		IValueVariable variable= (IValueVariable) selection.getFirstElement();
 		if (variable == null) {
 			return;
 		}
@@ -288,8 +302,8 @@ public class SimpleLaunchVariablePreferencePage extends PreferencePage implement
 			value= dialog.getValue(VALUE_LABEL);
 			description= dialog.getValue(DESCRIPTION_LABEL);
 			if (!name.equals(originalName)) {
-				if (addVariable(DebugPlugin.getDefault().getLaunchVariableManager().newSimpleVariable(name, value, description, false))) {
-					variableContentProvider.removeVariable(variable);
+				if (addVariable(getVariableManager().newValueVariable(name, description))) {
+					variableContentProvider.removeVariables(new IValueVariable[]{variable});
 					variableTable.refresh();
 				}
 			} else {
@@ -313,7 +327,7 @@ public class SimpleLaunchVariablePreferencePage extends PreferencePage implement
 		StringBuffer contributedVariablesToRemove= new StringBuffer();
 		Iterator iter= variablesToRemove.iterator();
 		while (iter.hasNext()) {
-			ISimpleLaunchVariable variable = (ISimpleLaunchVariable) iter.next();
+			IValueVariable variable = (IValueVariable) iter.next();
 			if (variable.isContributed()) {
 				contributedVariablesToRemove.append('\t').append(variable.getName()).append('\n');
 			}
@@ -324,7 +338,7 @@ public class SimpleLaunchVariablePreferencePage extends PreferencePage implement
 				return;
 			}
 		}
-		ISimpleLaunchVariable[] variables= (ISimpleLaunchVariable[]) variablesToRemove.toArray(new ISimpleLaunchVariable[0]);
+		IValueVariable[] variables= (IValueVariable[]) variablesToRemove.toArray(new IValueVariable[0]);
 		variableContentProvider.removeVariables(variables); 
 		variableTable.refresh();
 	}
@@ -340,14 +354,6 @@ public class SimpleLaunchVariablePreferencePage extends PreferencePage implement
 	}
 
 	public void init(IWorkbench workbench) {
-	}
-
-	/**
-	 * Revert to the previously saved state.
-	 */
-	public boolean performCancel() {
-		variableContentProvider.discardChanges();
-		return super.performCancel();
 	}
 
 	/**
@@ -372,8 +378,8 @@ public class SimpleLaunchVariablePreferencePage extends PreferencePage implement
 	 * launch variable manager
 	 * @return the singleton instance of the simple variable registry.
 	 */
-	private ILaunchVariableManager getVariableManager() {
-		return DebugPlugin.getDefault().getLaunchVariableManager();
+	private IStringVariableManager getVariableManager() {
+		return DebugPlugin.getDefault().getStringVariableManager();
 	}
 	
 	private class SimpleVariableContentProvider implements IStructuredContentProvider {
@@ -382,72 +388,78 @@ public class SimpleLaunchVariablePreferencePage extends PreferencePage implement
 		 * The edited variables are saved to the launch manager when saveChanges()
 		 * is called.
 		 */
-		private List editedVariables= new ArrayList();
-		private ILaunchVariableManager variableManager;
+		private List fVariables = new ArrayList();
 		
 		public Object[] getElements(Object inputElement) {
-			return editedVariables.toArray();
+			return fVariables.toArray();
 		}
+		
+		/**
+		 * Removes the given variables from the 'copied list'
+		 * 
+		 * @param variables variables to remove
+		 */
+		public void removeVariables(IValueVariable[] variables) {
+			for (int i = 0; i < variables.length; i++) {
+				fVariables.remove(variables[i]);
+			}			
+		}
+		
+		/**
+		 * Adds the given variables to the 'copied list'
+		 * 
+		 * @param variables variables to add
+		 */
+		public void addVariables(IValueVariable[] variables) {
+			for (int i = 0; i < variables.length; i++) {
+				fVariables.add(variables[i]);
+			}			
+		}		
+
 		public void dispose() {
 		}
+		
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			if (newInput == null || !(newInput instanceof ILaunchVariableManager)){
+			if (newInput == null || !(newInput instanceof IStringVariableManager)){
 				return;
 			}
-			variableManager= (ILaunchVariableManager) newInput;
 			discardChanges();
-			if (viewer instanceof TableViewer){
-				((TableViewer)viewer).setSorter(new ViewerSorter() {
-					public int compare(Viewer iViewer, Object e1, Object e2) {
-						if (e1 == null) {
-							return -1;
-						} else if (e2 == null) {
-							return 1;
-						} else {
-							return ((ISimpleLaunchVariable)e1).getName().compareToIgnoreCase(((ISimpleLaunchVariable)e2).getName());
-						}
-					}
-				});
-			}
 		}
-		public void addVariable(ISimpleLaunchVariable variable) {
-			editedVariables.add(variable);
-		}
-		public void removeVariables(ISimpleLaunchVariable[] variables) {
-			for (int i= 0; i < variables.length; i++) {
-				removeVariable(variables[i]);
-			}
-		}
-		public void removeVariable(ISimpleLaunchVariable variable) {
-			editedVariables.remove(variable);
-		}
-		public List getEditedVariables() {
-			return editedVariables;
-		}
-		/**
-		 * Discards the edited variable state and restores the variables from the
-		 * variable manager.
-		 */
-		public void discardChanges() {
-			if (variableManager == null) {
-				return;
-			}
-			editedVariables.clear();
-			ISimpleLaunchVariable[] simpleVariables= variableManager.getSimpleVariables();
-			for (int i = 0; i < simpleVariables.length; i++) {
-				ISimpleLaunchVariable variable= simpleVariables[i];
-				editedVariables.add(variableManager.newSimpleVariable(variable.getName(), variable.getValue(), variable.getDescription(), variable.isContributed()));
-			}
-		}
+
 		/**
 		 * Saves the edited variable state to the variable manager.
 		 */
 		public void saveChanges() {
-			if (variableManager == null) {
-				return;
+			IStringVariableManager manager = getVariableManager();
+			manager.removeVariables(manager.getValueVariables());
+			try {
+				manager.addVariables((IValueVariable[]) fVariables.toArray(new IValueVariable[0]));
+			} catch (CoreException e) {
+				DebugUIPlugin.errorDialog(getShell(), "Error", "Unable to save changes", e.getStatus());
 			}
-			variableManager.removeSimpleVariables(variableManager.getSimpleVariables());
-			variableManager.addSimpleVariables((ISimpleLaunchVariable[]) editedVariables.toArray(new ISimpleLaunchVariable[0]));
+		}
+		
+		/**
+		 * Re-initializes to the variables currently stored in the manager.
+		 */
+		public void discardChanges() {
+			IStringVariableManager manager = getVariableManager();
+			IValueVariable[] variables = manager.getValueVariables();
+			for (int i = 0; i < variables.length; i++) {
+				IValueVariable variable = variables[i];
+				IValueVariable copy = manager.newValueVariable(variable.getName(), variable.getDescription());
+				copy.setValue(variable.getValue());
+				fVariables.add(copy);
+			}			
+		}
+		
+		/**
+		 * Returns the 'working set' of variables
+		 * 
+		 * @return the working set of variables (not yet saved)
+		 */
+		public List getVariables() {
+			return fVariables;
 		}
 	}
 	
@@ -456,8 +468,8 @@ public class SimpleLaunchVariablePreferencePage extends PreferencePage implement
 			return null;
 		}
 		public String getColumnText(Object element, int columnIndex) {
-			if (element instanceof ISimpleLaunchVariable) {
-				ISimpleLaunchVariable variable= (ISimpleLaunchVariable) element;
+			if (element instanceof IValueVariable) {
+				IValueVariable variable= (IValueVariable) element;
 				switch (columnIndex) {
 					case 0 :
 						StringBuffer buffer= new StringBuffer(variable.getName());
@@ -485,8 +497,8 @@ public class SimpleLaunchVariablePreferencePage extends PreferencePage implement
 			return null;
 		}
 		public Color getBackground(Object element) {
-			if (element instanceof ISimpleLaunchVariable) {
-				if (((ISimpleLaunchVariable) element).isContributed()) {
+			if (element instanceof IValueVariable) {
+				if (((IValueVariable) element).isContributed()) {
 					Display display= Display.getCurrent();
 					return display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);		
 				}

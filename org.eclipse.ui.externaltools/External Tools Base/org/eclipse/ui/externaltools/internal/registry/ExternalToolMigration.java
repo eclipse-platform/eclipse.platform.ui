@@ -21,10 +21,8 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.variables.ILaunchVariableManager;
-import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.launchVariables.RefreshTab;
+import org.eclipse.debug.ui.RefreshTab;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.ui.ExternalToolsUIMessages;
@@ -37,6 +35,54 @@ public final class ExternalToolMigration {
 	/*
 	 * Ant tags
 	 */
+	
+	/**
+	 * Structure to represent a variable definition within a
+	 * source string.
+	 */
+	public static final class VariableDefinition {
+		/**
+		 * Index in the source text where the variable started
+		 * or <code>-1</code> if no valid variable start tag 
+		 * identifier found.
+		 */
+		public int start = -1;
+		
+		/**
+		 * Index in the source text of the character following
+		 * the end of the variable or <code>-1</code> if no 
+		 * valid variable end tag found.
+		 */
+		public int end = -1;
+		
+		/**
+		 * The variable's name found in the source text, or
+		 * <code>null</code> if no valid variable found.
+		 */
+		public String name = null;
+		
+		/**
+		 * The variable's argument found in the source text, or
+		 * <code>null</code> if no valid variable found or if
+		 * the variable did not specify an argument
+		 */
+		public String argument = null;
+		
+		/**
+		 * Create an initialized variable definition.
+		 */
+		private VariableDefinition() {
+			super();
+		}
+	}
+	
+	/**
+	 * Variable tag indentifiers
+	 */
+	private static final String VAR_TAG_START = "${"; //$NON-NLS-1$
+	private static final String VAR_TAG_END = "}"; //$NON-NLS-1$
+	private static final String VAR_TAG_SEP = ":"; //$NON-NLS-1$	
+	
 	/**
 	 * External tool type for Ant build files (value <code>antBuildType</code>).
 	 */
@@ -64,7 +110,7 @@ public final class ExternalToolMigration {
 	 */
 	private static final String TAG_TOOL_TYPE = "!{tool_type}"; //$NON-NLS-1$
 	private static final String TAG_TOOL_NAME = "!{tool_name}"; //$NON-NLS-1$
-	private static final String TAG_TOOL_LOCATION = "!{tool_loc}"; //$NON-NLS-1$
+	//private static final String TAG_TOOL_LOCATION = "!{tool_loc}"; //$NON-NLS-1$
 	private static final String TAG_TOOL_ARGUMENTS = "!{tool_args}"; //$NON-NLS-1$
 	private static final String TAG_TOOL_DIRECTORY = "!{tool_dir}"; //$NON-NLS-1$
 	private static final String TAG_TOOL_REFRESH = "!{tool_refresh}"; //$NON-NLS-1$
@@ -182,20 +228,10 @@ public final class ExternalToolMigration {
 			return null;
 		}
 
-		// Update the location...
-		String location = (String) args.get(TAG_TOOL_LOCATION);
-		if (location != null) {
-			LaunchVariableUtil.VariableDefinition varDef = LaunchVariableUtil.extractVariableDefinition(location, 0);
-			if (ILaunchVariableManager.VAR_WORKSPACE_LOC.equals(varDef.name)) {
-				location = LaunchVariableUtil.newVariableExpression(ILaunchVariableManager.VAR_RESOURCE_LOC, varDef.argument);
-			}
-			config.setAttribute(IExternalToolConstants.ATTR_LOCATION, location);
-		}
-
 		// Update the refresh scope...
 		String refresh = (String) args.get(TAG_TOOL_REFRESH);
 		if (refresh != null) {
-			LaunchVariableUtil.VariableDefinition varDef = LaunchVariableUtil.extractVariableDefinition(refresh, 0);
+			VariableDefinition varDef = extractVariableDefinition(refresh, 0);
 			if ("none".equals(varDef.name)) { //$NON-NLS-1$
 				refresh = null;
 			}
@@ -209,7 +245,7 @@ public final class ExternalToolMigration {
 			int start = 0;
 			ArrayList targets = new ArrayList();
 			StringBuffer buffer = new StringBuffer();
-			LaunchVariableUtil.VariableDefinition varDef = LaunchVariableUtil.extractVariableDefinition(arguments, start);
+			VariableDefinition varDef = extractVariableDefinition(arguments, start);
 			while (varDef.end != -1) {
 				if ("ant_target".equals(varDef.name) && varDef.argument != null) { //$NON-NLS-1$
 					targets.add(varDef.argument);
@@ -218,7 +254,7 @@ public final class ExternalToolMigration {
 					buffer.append(arguments.substring(start, varDef.end));
 				}
 				start = varDef.end;
-				varDef = LaunchVariableUtil.extractVariableDefinition(arguments, start);
+				varDef = extractVariableDefinition(arguments, start);
 			}
 			buffer.append(arguments.substring(start, arguments.length()));
 			arguments = buffer.toString();
@@ -323,4 +359,45 @@ public final class ExternalToolMigration {
 		}
 		return config;
 	}
+	
+	/**
+	 * Extracts a variable name and argument from the given string.
+	 * 
+	 * @param text the source text to parse for a variable tag
+	 * @param start the index in the string to start the search
+	 * @return the variable definition
+	 */
+	public static VariableDefinition extractVariableDefinition(String text, int start) {
+		VariableDefinition varDef = new VariableDefinition();
+		
+		varDef.start = text.indexOf(VAR_TAG_START, start);
+		if (varDef.start < 0){
+			return varDef;
+		}
+		start = varDef.start + VAR_TAG_START.length();
+		
+		int end = text.indexOf(VAR_TAG_END, start);
+		if (end < 0) {
+			return varDef;
+		}
+		varDef.end = end + VAR_TAG_END.length();
+		if (end == start) {
+			return varDef;
+		}
+	
+		int mid = text.indexOf(VAR_TAG_SEP, start);
+		if (mid < 0 || mid > end) {
+			varDef.name = text.substring(start, end);
+		} else {
+			if (mid > start) {
+				varDef.name = text.substring(start, mid);
+			}
+			mid = mid + VAR_TAG_SEP.length();
+			if (mid < end) {
+				varDef.argument = text.substring(mid, end);
+			}
+		}
+		
+		return varDef;
+	}	
 }

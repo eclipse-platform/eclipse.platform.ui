@@ -43,6 +43,26 @@ public interface ILaunchManager {
 	public static final String PROFILE_MODE= "profile"; //$NON-NLS-1$	
 	
 	/**
+	 * Launch configuration attribute name. The value is a map of environment
+	 * variables passed into Runtime.exec(...) when a launch configuration is launched.
+	 * Default value is <code>null</code> which indicates the default environment
+	 * should be used. 
+	 * 
+	 * @since 3.0
+	 */
+	public static final String ATTR_ENVIRONMENT_VARIABLES = DebugPlugin.getUniqueIdentifier() + ".environmentVariables"; //$NON-NLS-1$
+	
+	/**
+	 * Launch configuration attribute name. The value is a boolean value specifying
+	 * whether the environment variables in a launch configuration
+	 * should be appended to the native environment (i.e. when <code>true</code>),
+	 * or if they should replace the environment (i.e. <code>false</code>).
+	 * 
+	 * @since 3.0 
+	 */
+	public static final String ATTR_APPEND_ENVIRONMENT_VARIABLES = DebugPlugin.getUniqueIdentifier() + ".appendEnvironmentVariables"; //$NON-NLS-1$	
+	
+	/**
 	 * Adds the given listener to the collection of registered launch listeners.
 	 * Has no effect if an identical listener is already registerd.
 	 *
@@ -313,6 +333,18 @@ public interface ILaunchManager {
 	 * @since 3.0
 	 */
 	public String getLaunchModeLabel(String mode);	
+	
+	/** 
+	 * Returns an array of environment variables to be used when
+	 * launching the given configuration or <code>null</code> if unspecified.
+	 * 
+	 * @param configuration launch configuration
+	 * @throws CoreException if unable to access associated attribute or if
+	 * unable to resolve a variable in an environment variable's value
+	 * @since 3.0
+	 */
+	public String[] getEnvironment(ILaunchConfiguration configuration) throws CoreException;
+	
 }
 
 

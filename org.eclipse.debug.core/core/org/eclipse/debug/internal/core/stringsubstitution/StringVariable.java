@@ -67,5 +67,13 @@ public abstract class StringVariable implements IStringVariable {
 	protected IConfigurationElement getConfigurationElement() {
 		return fConfigurationElement;
 	}
+	
+	/**
+	 * @see IValueVariable#setDescription(String)
+	 * @param description
+	 */
+	public void setDescription(String description) {
+		fDescription = description;
+	}
 
 }

@@ -14,6 +14,7 @@ package org.eclipse.debug.ui;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -46,7 +47,7 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationMan
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
-import org.eclipse.debug.ui.launchVariables.ILaunchVariableComponentManager;
+import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -136,16 +137,6 @@ public class DebugUITools {
 	}
 	
 	/**
-	 * Returns the variable component manager for the debug UI plugin.
-	 * 
-	 * @return variable component manager
-	 * @since 3.0
-	 */
-	public static ILaunchVariableComponentManager getVariableComponentManager() {
-		return DebugUIPlugin.getDefault().getVariableComponentManager();
-	}
-	
-	/**
 	 * Returns a new debug model presentation that delegates to
 	 * appropriate debug models.
 	 * <p>
@@ -232,6 +223,18 @@ public class DebugUITools {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Returns the currently selected resource in the active workbench window,
+	 * or <code>null</code> if none. If an editor is active, the resource adapater
+	 * assocaited with the editor is returned, if any.
+	 * 
+	 * @return selected resource or <code>null</code>
+	 * @since 3.0
+	 */
+	public static IResource getSelectedResource() {
+		return SelectedResourceManager.getDefault().getSelectedResource();
 	}
 			
 	/**

@@ -85,7 +85,10 @@ public class StringVariableManager implements IStringVariableManager {
 	 * @since 3.0
 	 * TODO: this should be public API
 	 */
-	public static final String EXTENSION_POINT_VALUE_VARIABLES = "valueVariables"; //$NON-NLS-1$	
+	public static final String EXTENSION_POINT_VALUE_VARIABLES = "valueVariables"; //$NON-NLS-1$
+	
+	// true during initialization code - supress change notification
+	private boolean fInitializing = false;
 	
 	// Variable extension point constants
 	private static final String ATTR_NAME= "name"; //$NON-NLS-1$
@@ -186,18 +189,21 @@ public class StringVariableManager implements IStringVariableManager {
 	 */
 	private StringVariableManager() {
 		fListeners = new ListenerList(5);
-		fContextVariables = new HashMap(5);
-		fValueVariables = new HashMap(5);
-		initialize();
 	}	
 
 	/**
 	 * Load contributed variables and persisted variables
 	 */
 	private void initialize() {
-		loadPersistedValueVariables();
-		loadContributedValueVariables();
-		loadContextVariables();
+		if (fContextVariables == null) {
+			fInitializing = true;
+			fContextVariables = new HashMap(5);
+			fValueVariables = new HashMap(5);
+			loadPersistedValueVariables();
+			loadContributedValueVariables();
+			loadContextVariables();
+			fInitializing = false;
+		}
 	}
 	
 	/**
@@ -298,6 +304,7 @@ public class StringVariableManager implements IStringVariableManager {
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#getVariables()
 	 */
 	public IStringVariable[] getVariables() {
+		initialize();
 		List list = new ArrayList(fContextVariables.size() + fValueVariables.size());
 		list.addAll(fContextVariables.values());
 		list.addAll(fValueVariables.values());
@@ -308,6 +315,7 @@ public class StringVariableManager implements IStringVariableManager {
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#getValueVariables()
 	 */
 	public IValueVariable[] getValueVariables() {
+		initialize();
 		return (IValueVariable[]) fValueVariables.values().toArray(new IValueVariable[fValueVariables.size()]);
 	}
 
@@ -315,6 +323,7 @@ public class StringVariableManager implements IStringVariableManager {
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#getContextVariables()
 	 */
 	public IContextVariable[] getContextVariables() {
+		initialize();
 		return (IContextVariable[]) fContextVariables.values().toArray(new IContextVariable[fContextVariables.size()]);
 	}
 
@@ -322,25 +331,31 @@ public class StringVariableManager implements IStringVariableManager {
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#performStringSubstitution(java.lang.String)
 	 */
 	public String performStringSubstitution(String expression) throws CoreException {
-		return new StringSubstitutionEngine().performStringSubstitution(expression);
+		return performStringSubstitution(expression, true);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#newValueVariable(java.lang.String, java.lang.String)
 	 */
-	public IValueVariable newValueVariable(String name, String description) throws CoreException {
-		return new ValueVariable(name, description, null);
+	public IValueVariable newValueVariable(String name, String description) {
+		IConfigurationElement element = null;
+		ValueVariable existing = (ValueVariable)getValueVariable(name);
+		if (existing != null && existing.isContributed()) {
+			element = existing.getConfigurationElement();
+		}
+		return new ValueVariable(name, description, element);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#addVariables(org.eclipse.debug.internal.core.stringsubstitution.IValueVariable[])
 	 */
 	public void addVariables(IValueVariable[] variables) throws CoreException {
-		MultiStatus status = new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Variables with the specified names are already registered.", null); //$NON-NLS-1$
+		initialize();
+		MultiStatus status = new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, StringSubstitutionMessages.getString("StringVariableManager.26"), null); //$NON-NLS-1$
 		for (int i = 0; i < variables.length; i++) {
 			IValueVariable variable = variables[i];
 			if (getValueVariable(variable.getName()) != null) {
-				status.add(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format("Variable named {0} already registered", new String[]{variable.getName()}), null)); //$NON-NLS-1$
+				status.add(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format(StringSubstitutionMessages.getString("StringVariableManager.27"), new String[]{variable.getName()}), null)); //$NON-NLS-1$
 			}			
 		}
 		if (status.isOK()) {
@@ -360,6 +375,7 @@ public class StringVariableManager implements IStringVariableManager {
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#removeVariables(org.eclipse.debug.internal.core.stringsubstitution.IValueVariable[])
 	 */
 	public void removeVariables(IValueVariable[] variables) {
+		initialize();
 		List removed = new ArrayList(variables.length);
 		for (int i = 0; i < variables.length; i++) {
 			IValueVariable variable = variables[i];
@@ -376,6 +392,7 @@ public class StringVariableManager implements IStringVariableManager {
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#getContextVariable(java.lang.String)
 	 */
 	public IContextVariable getContextVariable(String name) {
+		initialize();
 		return (IContextVariable) fContextVariables.get(name);
 	}
 
@@ -383,6 +400,7 @@ public class StringVariableManager implements IStringVariableManager {
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#getValueVariable(java.lang.String)
 	 */
 	public IValueVariable getValueVariable(String name) {
+		initialize();
 		return (IValueVariable) fValueVariables.get(name);
 	}
 
@@ -450,7 +468,34 @@ public class StringVariableManager implements IStringVariableManager {
 	 * @param variable the variable that has changed
 	 */
 	protected void notifyChanged(ValueVariable variable) {
-		getNotifier().notify(new IValueVariable[]{variable}, CHANGED);
+		if (!fInitializing) {
+			IValueVariable existing = getValueVariable(variable.getName());
+			if (existing.equals(variable)) {
+				// do not do change notification for unregistered variables
+				getNotifier().notify(new IValueVariable[]{variable}, CHANGED);
+			}
+		}
 	}	
+
+	/**
+	 * @see IStringVariableManager#newVariableExpression(String, String)
+	 */
+	public String generateVariableExpression(String varName, String arg) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("${"); //$NON-NLS-1$
+		buffer.append(varName);
+		if (arg != null) {
+			buffer.append(":"); //$NON-NLS-1$
+			buffer.append(arg);
+		}
+		buffer.append("}"); //$NON-NLS-1$
+		return buffer.toString();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#performStringSubstitution(java.lang.String, boolean)
+	 */
+	public String performStringSubstitution(String expression,	boolean reportUndefinedVariables) throws CoreException {
+		return new StringSubstitutionEngine().performStringSubstitution(expression, reportUndefinedVariables);
+	}
 
 }

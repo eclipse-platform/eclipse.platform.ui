@@ -62,13 +62,29 @@ public interface IStringVariableManager {
 	
 	/**
 	 * Recursively resolves and replaces all variable references in the given
-	 * expression with their corresponding values.
+	 * expression with their corresponding values. Reports errors for references
+	 * to undefined variables (equivalent to calling
+	 * <code>performStringSubstitution(expression, true)</code>).
 	 * 
 	 * @param expression expression referencing variables
 	 * @return expression with variable references replaced with variable values
 	 * @throws CoreException if unable to resolve the value of one or more variables
 	 */
 	public String performStringSubstitution(String expression) throws CoreException;
+	
+	/**
+	 * Recursively resolves and replaces all variable references in the given
+	 * expression with their corresponding values. Allows the client to control
+	 * whether references to undefeind variables are reported as an error (i.e.
+	 * an exception is thrown).  
+	 * 
+	 * @param expression expression referencing variables
+	 * @param reportUndefinedVariables whether a reference to an undefined variable
+	 *  is to be considered an error (i.e. throw an exception)
+	 * @return expression with variable references replaced with variable values
+	 * @throws CoreException if unable to resolve the value of one or more variables
+	 */
+	public String performStringSubstitution(String expression, boolean reportUndefinedVariables) throws CoreException;	
 	
 	/**
 	 * Returns a new value variable with the given name and description.
@@ -78,7 +94,7 @@ public interface IStringVariableManager {
 	 * @return a new variable
 	 * @exception CoreException if a variable already exists with the given name
 	 */
-	public IValueVariable newValueVariable(String name, String description) throws CoreException;
+	public IValueVariable newValueVariable(String name, String description);
 	
 	/**
 	 * Adds the given variables to the variable registry.
@@ -112,5 +128,16 @@ public interface IStringVariableManager {
 	 * @param listener value variable listener to remove
 	 */
 	public void removeValueVariableListener(IValueVariableListener listener);
+	
+	/**
+	 * Returns an expression referencing the given variable and
+	 * optional argument.
+	 * 
+	 * @param varName variable name
+	 * @param arg argument text or <code>null</code>
+	 * @return an expression referencing the given variable and
+	 *  optional argument
+	 */
+	public String generateVariableExpression(String varName, String arg);
 	
 }
