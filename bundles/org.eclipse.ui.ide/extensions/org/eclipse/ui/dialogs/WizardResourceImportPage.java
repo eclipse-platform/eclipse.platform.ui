@@ -327,8 +327,14 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
     protected IContainer getSpecifiedContainer() {
         IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
         IPath path = getContainerFullPath();
-        if (workspace.getRoot().exists(path))
-            return (IContainer) workspace.getRoot().findMember(path);
+        if (workspace.getRoot().exists(path)){
+        	IResource resource = workspace.getRoot().findMember(path);
+        	if(resource.getType() == IResource.FILE)
+        		return null;
+        	return (IContainer) resource;
+        	
+        }
+            
 
         return null;
     }
@@ -478,6 +484,10 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
         // If the container exist, validate it
         IContainer container = getSpecifiedContainer();
         if (container == null) {
+        	//If it exists but is not valid then abort
+        	if(IDEWorkbenchPlugin.getPluginWorkspace().getRoot().exists(getContainerFullPath()))
+        		return false;
+        	
             //if it is does not exist be sure the project does
             IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
             IPath projectPath = containerPath.removeLastSegments(containerPath
@@ -485,27 +495,25 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
 
             if (workspace.getRoot().exists(projectPath))
                 return true;
-            else {
-                setErrorMessage(IDEWorkbenchMessages
+            setErrorMessage(IDEWorkbenchMessages
                         .getString("WizardImportPage.projectNotExist")); //$NON-NLS-1$
-                return false;
-            }
-        } else {
-            if (!container.isAccessible()) {
-                setErrorMessage(INACCESSABLE_FOLDER_MESSAGE);
-                return false;
-            }
-            if (container.getLocation() == null) {
-                if (container.isLinked()) {
-                    setErrorMessage(IDEWorkbenchMessages
-                            .getString("WizardImportPage.undefinedPathVariable")); //$NON-NLS-1$	
-                } else {
-                    setErrorMessage(IDEWorkbenchMessages
-                            .getString("WizardImportPage.containerNotExist")); //$NON-NLS-1$
-                }
-                return false;
-            }
+            return false;
+        } 
+        if (!container.isAccessible()) {
+             setErrorMessage(INACCESSABLE_FOLDER_MESSAGE);
+             return false;
         }
+        if (container.getLocation() == null) {
+          if (container.isLinked()) {
+               setErrorMessage(IDEWorkbenchMessages
+                       .getString("WizardImportPage.undefinedPathVariable")); //$NON-NLS-1$	
+          } else {
+               setErrorMessage(IDEWorkbenchMessages
+                       .getString("WizardImportPage.containerNotExist")); //$NON-NLS-1$
+          }
+         return false;
+        }
+        
 
         if (sourceConflictsWithDestination(containerPath)) {
             setErrorMessage(getSourceConflictMessage());
