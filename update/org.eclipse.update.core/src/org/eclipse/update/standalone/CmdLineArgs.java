@@ -29,8 +29,8 @@ import org.eclipse.update.internal.mirror.*;
 public class CmdLineArgs {
 	private HashMap options = new HashMap();
 	public CmdLineArgs(String[] args) {
-		// default command
-		options.put("-command", "install");
+//		// default command
+//		options.put("-command", "install");
 
 		for (int i = 0; i < args.length - 1; i++) {
 			if ("-command".equals(args[i])) {
