@@ -72,7 +72,7 @@ public class SearchResultViewer extends TableViewer {
 	private int fMarkerToShow;
 	private boolean fHandleSelectionChangedEvents= true;
 	private boolean fCurrentMatchRemoved= false;
-	private Color fPotentialMatchBgColor;
+	private Color fPotentialMatchFgColor;
 	private ActionGroup fActionGroup;
 	
 	/*
@@ -89,7 +89,7 @@ public class SearchResultViewer extends TableViewer {
 		fOuterPart= outerPart;
 		Assert.isNotNull(fOuterPart);
 
-		fPotentialMatchBgColor= new Color(SearchPlugin.getDefault().getActiveWorkbenchShell().getDisplay(), SearchPreferencePage.getPotentialMatchBackgroundColor());
+		fPotentialMatchFgColor= new Color(SearchPlugin.getDefault().getActiveWorkbenchShell().getDisplay(), SearchPreferencePage.getPotentialMatchBackgroundColor());
 		
 		setUseHashlookup(true);
 		setContentProvider(new SearchResultContentProvider());
@@ -153,7 +153,7 @@ public class SearchResultViewer extends TableViewer {
 		super.doUpdateItem(item, element, fullMap);
 		if (((SearchResultViewEntry)element).isPotentialMatch()) {
 		    TableItem ti = (TableItem) item;
-		    ti.setBackground(fPotentialMatchBgColor);
+		    ti.setForeground(fPotentialMatchFgColor);
 		}
 	}
 
@@ -482,8 +482,8 @@ public class SearchResultViewer extends TableViewer {
 	 * Updates the background color for potential matches.
 	 */
 	void updatedPotentialMatchBgColor() {
-		fPotentialMatchBgColor.dispose();
-		fPotentialMatchBgColor= new Color(SearchPlugin.getDefault().getActiveWorkbenchShell().getDisplay(), SearchPreferencePage.getPotentialMatchBackgroundColor());
+		fPotentialMatchFgColor.dispose();
+		fPotentialMatchFgColor= new Color(SearchPlugin.getDefault().getActiveWorkbenchShell().getDisplay(), SearchPreferencePage.getPotentialMatchBackgroundColor());
 		refresh();
 	}
 
@@ -524,7 +524,7 @@ public class SearchResultViewer extends TableViewer {
 		Menu menu= getTable().getMenu();
 		if (menu != null)
 			menu.dispose();
-		fPotentialMatchBgColor.dispose();
+		fPotentialMatchFgColor.dispose();
 		super.handleDispose(event);
 	}
 
