@@ -368,18 +368,6 @@ protected List extractNonLocalResources(List originalList) {
 	return result;
 }
 /**
- * Get the number of characters in the largest button.
- * @return int
- */
-private int getLargestButtonWidth() {
-	int largest = SELECT_ALL_TITLE.length();
-	if (SELECT_TYPES_TITLE.length() > largest)
-		largest = SELECT_TYPES_TITLE.length();
-	if (DESELECT_ALL_TITLE.length() > largest)
-		largest = DESELECT_ALL_TITLE.length();
-	return largest;
-}
-/**
  * Returns a content provider for <code>IResource</code>s that returns 
  * only children of the given resource type.
  */
