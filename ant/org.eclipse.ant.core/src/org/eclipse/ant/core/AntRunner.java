@@ -34,6 +34,9 @@ public class AntRunner implements IPlatformRunnable, IAntCoreConstants {
 	protected String buildLoggerClassName;
 	protected String arguments;
 
+/** 
+ * Constructs an instance of this class.
+ */
 public AntRunner() {
 	buildListeners = new ArrayList(5);
 }
@@ -46,7 +49,7 @@ protected ClassLoader getClassLoader() {
 }
 
 /**
- * Sets the buildFileLocation.
+ * Sets the build file location on the file system.
  * 
  * @param buildFileLocation the file system location of the build file
  */
@@ -58,24 +61,36 @@ public void setBuildFileLocation(String buildFileLocation) {
 }
 
 /**
+ * Set the message output level.
+ * <p>
+ * Valid values are:
+ * <ul>
+ * <li><code>org.apache.tools.ant.Project.ERR</code>, 
+ * <li><code>org.apache.tools.ant.Project.WARN</code>,
+ * <li><code>org.apache.tools.ant.Project.INFO</code>,
+ * <li><code>org.apache.tools.ant.Project.VERBOSE</code> or
+ * <li><code>org.apache.tools.ant.Project.DEBUG</code>
+ * </ul>
  * 
- * 
- * @param 
+ * @param level the message output level
  */
 public void setMessageOutputLevel(int level) {
 	this.messageOutputLevel = level;
 }
 
 /**
+ * Sets the arguments to be passed to the script (e.g. -Dos=win32 -Dws=win32 -verbose).
  * 
+ * @param arguments the arguments to be passed to the script
  */
 public void setArguments(String arguments) {
 	this.arguments = arguments;
 }
 
 /**
- * Sets the executionTargets in the order they need to run.
+ * Sets the targets and execution order.
  * 
+ * @param executionTargets which targets should be run and in which order
  */
 public void setExecutionTargets(String[] executionTargets) {
 	targets = new Vector(10);
@@ -84,9 +99,13 @@ public void setExecutionTargets(String[] executionTargets) {
 }
 
 /**
- * Adds a build listener.
- * 
- * @param buildListener a build listener
+ * Adds a build listener. The parameter <code>className</code>
+ * is the class name of a <code>org.apache.tools.ant.BuildListener</code>
+ * implementation. The class will be instantiated at runtime and the
+ * listener will be called on build events
+ * (<code>org.apache.tools.ant.BuildEvent</code>).
+ *
+ * @param className a build listener class name
  */
 public void addBuildListener(String className) {
 	if (className == null)
@@ -95,23 +114,37 @@ public void addBuildListener(String className) {
 }
 
 /**
- * Adds a build logger.
- * 
- * @param className a BuildLogger class name
+ * Adds a build logger. The parameter <code>className</code>
+ * is the class name of a <code>org.apache.tools.ant.BuildLogger</code>
+ * implementation. The class will be instantiated at runtime and the
+ * logger will be called on build events
+ * (<code>org.apache.tools.ant.BuildEvent</code>).
+ *
+ * @param className a build logger class name
  */
 public void addBuildLogger(String className) {
 	this.buildLoggerClassName = className;
 }
 
 /**
- * Adds user properties.
+ * Adds user-defined properties. Keys and values must be String objects.
+ * 
+ * @param properties a Map of user-defined properties
  */
 public void addUserProperties(Map properties) {
 	this.userProperties = properties;
 }
 
 /**
- * Runs the build script.
+ * Runs the build script. If a progress monitor is specified it will
+ * be available during the script execution as a reference in the
+ * Ant Project (<code>org.apache.tools.ant.Project.getReferences()</code>).
+ * A long-running task could, for example, get the monitor during its
+ * execution and check for cancellation. The key value to retrieve the
+ * progress monitor instance is <code>AntCorePlugin.ECLIPSE_PROGRESS_MONITOR</code>.
+ * 
+ * @param monitor a progress monitor, or <code>null</code> if progress
+ *    reporting and cancellation are not desired
  */
 public void run(IProgressMonitor monitor) throws CoreException {
 	try {
@@ -174,10 +207,11 @@ public void run() throws CoreException {
 
 /**
  * Invokes the building of a project object and executes a build using either a given
- * target or the default target.
+ * target or the default target. This method is called when running Eclipse headless
+ * and specifying <code>org.eclipse.ant.core.antRunner</code> as the application.
  *
  * @param argArray the command line arguments
- * @exception execution exceptions
+ * @exception Exception if a problem occurred during the script execution
  */
 public Object run(Object argArray) throws Exception {
 	// Add debug information if necessary - fix for bug 5672.

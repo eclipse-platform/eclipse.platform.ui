@@ -90,9 +90,9 @@ public class AntCorePlugin extends Plugin implements IAntCoreConstants {
 
 	/**
 	 * Key to access the <code>IProgressMonitor</code> reference. When a
-	 * progress monitor is passed to the AntRunner.run(IProgressMonitor)
+	 * progress monitor is passed to the <code>AntRunner.run(IProgressMonitor)</code>
 	 * method, the object is available as a reference for the current
-	 * project.
+	 * Ant project.
 	 */
 	public static final String ECLIPSE_PROGRESS_MONITOR = "eclipse.progress.monitor"; //$NON-NLS-1$
 
@@ -148,6 +148,13 @@ private Map extractExtensions(String point, String key) {
 	return result;
 }
 
+/**
+ * Returns an object representing this plug-in's preferences.
+ * <p>
+ * This method is for internal use by the platform-related plug-ins.  
+ * Clients should not call this method.
+ * </p>
+ */
 public AntCorePreferences getPreferences() {
 	if (preferences == null)
 		preferences = new AntCorePreferences(taskExtensions, extraClasspathExtensions, typeExtensions);
@@ -155,7 +162,7 @@ public AntCorePreferences getPreferences() {
 }
 
 /**
- * Returns this plug-in.
+ * Returns this plug-in instance.
  *
  * @return the single instance of this plug-in runtime class
  */
