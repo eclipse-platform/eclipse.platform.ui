@@ -280,7 +280,7 @@ public static boolean copyAttributes(String source, String destination, boolean 
 }
 private static void logMissingNativeLibrary(UnsatisfiedLinkError e) {
 	String libName = System.mapLibraryName(LIBRARY_NAME);
-	String message = Policy.bind("localstore.couldNotLoadLibrary", libName);
+	String message = Policy.bind("info.couldNotLoadLibrary", libName);
 	IStatus status = new Status(IStatus.INFO, AntPlugin.PI_ANT, IStatus.INFO, message, e);
 	AntPlugin.getPlugin().getLog().log(status);
 }
