@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 	// an id->element mapping
 	private Map elements = new HashMap(11);
 	// all registry change listeners
-	private transient Map listeners = new HashMap(11);
+	private transient ListenerList listeners = new ListenerList(10);
 	// deltas not broadcasted yet
 	private transient Map deltas = new HashMap(11);
 	// extensions without extension point
@@ -38,7 +38,22 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 	private transient IExtensionLinker linker;
 	private transient RegistryCacheReader reader = null;
 	private transient boolean isDirty = false;
-
+	
+	class ListenerInfo {
+		IRegistryChangeListener listener;
+		String filter;
+		public ListenerInfo(IRegistryChangeListener listener, String filter) {
+			this.listener = listener;
+			this.filter = filter;
+		}
+		/**
+		 * Used by ListenerList to ensure uniqueness.
+		 */
+		public boolean equals(Object another) {
+			return another instanceof ListenerInfo && ((ListenerInfo) another).listener == this.listener;
+		}
+	}
+	
 	public void add(IRegistryElement[] elements) {
 		synchronized (this) {
 			isDirty = true;
@@ -177,23 +192,23 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 	 * Adds the given listener for registry change events on the given plug-in.
 	 */
 	public void addRegistryChangeListener(IRegistryChangeListener listener, String filter) {
-		this.listeners.put(listener, filter);
+		this.listeners.add(new ListenerInfo(listener, filter));
 	}
 	/**
 	 * Adds the given listener for registry change events.
 	 */
 	public void addRegistryChangeListener(IRegistryChangeListener listener) {
-		this.listeners.put(listener, null);
+		addRegistryChangeListener(listener, null);
 	}
 	/**
-	 * Broadcasts the event to all interested parties.
+	 * Broadcasts (asynchronously) the event to all interested parties.
 	 */
 	private void fireRegistryChangeEvent() {
 		// if there is nothing to say, just bail out
 		if (deltas.isEmpty() || listeners.isEmpty())
 			return;
 		// for thread safety, create tmp collections
-		Map tmpListeners = new HashMap(listeners);
+		Object[] tmpListeners = listeners.getListeners();
 		Map tmpDeltas = new HashMap(this.deltas);
 		// the deltas have been saved for notification - we can clear them now
 		deltas.clear();
@@ -438,7 +453,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 	 * plug-in's extension points.
 	 */
 	public void removeRegistryChangeListener(IRegistryChangeListener listener) {
-		this.listeners.remove(listener);
+		this.listeners.remove(new ListenerInfo(listener, null));
 	}
 
 	public ExtensionRegistry(IExtensionLinker extensionLinker) {
@@ -463,25 +478,23 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 				return rule == this;
 			}			
 		};		
-		private Map listeners;
+		private Object[] listenerInfos;
 		private Map deltas;
-		public ExtensionEventDispatcherJob(Map listeners, Map deltas) {
+		public ExtensionEventDispatcherJob(Object[] listenerInfos, Map deltas) {
 			super("RegistryChangeEventDispatcherJob"); //$NON-NLS-1$
-			this.listeners = listeners;
+			this.listenerInfos = listenerInfos;
 			this.deltas = deltas;
 			// all extension event dispatching jobs use this rule
 			setRule(EXTENSION_EVENT_RULE);
 		}
 		public IStatus run(IProgressMonitor monitor) {
 			MultiStatus result = new MultiStatus(IPlatform.PI_RUNTIME, IStatus.OK, Policy.bind("plugin.eventListenerError"), null); //$NON-NLS-1$			
-			for (Iterator iter = listeners.entrySet().iterator(); iter.hasNext();) {
-				Map.Entry entry = (Map.Entry) iter.next();
-				IRegistryChangeListener listener = (IRegistryChangeListener) entry.getKey();
-				String filter = (String) entry.getValue();
-				if (filter != null && !deltas.containsKey(filter))
+			for (int i = 0; i < listenerInfos.length; i++) {
+				ListenerInfo listenerInfo = (ListenerInfo) listenerInfos[i];
+				if (listenerInfo.filter != null && !deltas.containsKey(listenerInfo.filter))
 					continue;
 				try {
-					listener.registryChanged(new RegistryChangeEvent(deltas, filter));
+					listenerInfo.listener.registryChanged(new RegistryChangeEvent(deltas, listenerInfo.filter));
 				} catch (RuntimeException re) {
 					String message = re.getMessage() == null ? "" : re.getMessage(); //$NON-NLS-1$
 					result.add(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IStatus.OK, message, re));
