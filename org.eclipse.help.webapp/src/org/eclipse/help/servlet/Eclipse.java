@@ -9,6 +9,7 @@ import java.net.*;
 import java.util.ResourceBundle;
 
 import javax.servlet.*;
+import org.eclipse.help.internal.proxy.protocol.ProxyHandler;
 
 /**
  * Eclipse launcher
@@ -89,6 +90,9 @@ public class Eclipse {
 	private synchronized void init() throws ServletException {
 
 		try {
+			// need to handle conflicts on setting url stream handlers
+			ProxyHandler.initialize();
+			
 			if (context.getAttribute("platformRunnable") == null) {
 				//System.out.println("getting boot loader");
 				bootLoader = getBootLoader();
