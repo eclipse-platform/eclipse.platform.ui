@@ -12,7 +12,15 @@ Contributors:
 package org.eclipse.jface.text;
 
  
-import java.util.ArrayList;import java.util.Iterator;import java.util.List;import org.eclipse.swt.SWT;import org.eclipse.swt.custom.TextChangeListener;import org.eclipse.swt.custom.TextChangedEvent;import org.eclipse.swt.custom.TextChangingEvent;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.TextChangeListener;
+import org.eclipse.swt.custom.TextChangedEvent;
+import org.eclipse.swt.custom.TextChangingEvent;
+
 
 /**
  * Adapts an <code>IDocument</code> to the <code>StyledTextContent</code> interface.
@@ -35,16 +43,21 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentA
 	 * @since 2.0
 	 */
 	private boolean fIsForwarding= true;
-	/** 
-	 * Indicates whether the current document event describes a complete replace.
-	 * @since 2.0
+	/**
+	 * Length of document at receipt of <code>documentAboutToBeChanged</code>
+	 * @since 2.1
 	 */
-	private boolean fDocumentContentReplaced= false;
-	/** 
-	 * Indicates that the line delimiter cache is flushed
-	 * @since 2.0
+	private int fRememberedLengthOfDocument;
+	/**
+	 * Length of first document line at receipt of <code>documentAboutToBeChanged</code>
+	 * @since 2.1
 	 */
-	private boolean fInvalidateLineDelimiter;
+	private int fRememberedLengthOfFirstLine;
+	/**
+	 * The data of the event at receipt of <code>documentAboutToBeChanged</code>
+	 * @since 2.1
+	 */
+	private  DocumentEvent fOriginalEvent= new DocumentEvent();
 	
 	
 	/**
@@ -211,20 +224,17 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentA
 	 */
 	public void documentChanged(DocumentEvent event) {
 		// check whether the given event is the one which was remembered
-		if (fEvent != null && event == fEvent) {
+		if (fEvent == null || event != fEvent)
+			return;
 			
-			// http://dev.eclipse.org/bugs/show_bug.cgi?id=15159
-			if (fDocumentContentReplaced) {
-				fDocumentContentReplaced= false;
-				fireTextSet();
-			} else
-				fireTextChanged();
-			
-			if (fInvalidateLineDelimiter) {
+		if (isPatchedEvent(event) || (event.getOffset() == 0 && event.getLength() == fRememberedLengthOfDocument)) {
+			fLineDelimiter= null;
+			fireTextSet();
+		} else {
+			if (event.getOffset() < fRememberedLengthOfFirstLine)
 				fLineDelimiter= null;
-				fInvalidateLineDelimiter= false;
-			}
-		}			
+			fireTextChanged();			
+		}
 	}
 	
 	/*
@@ -232,25 +242,26 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentA
 	 */
 	public void documentAboutToBeChanged(DocumentEvent event) {
 		
-		if (event.getOffset() == 0 && event.getLength() == fDocument.getLength()) {
-			// http://dev.eclipse.org/bugs/show_bug.cgi?id=15159
-			fEvent= event;
-			fInvalidateLineDelimiter= true;
-			fDocumentContentReplaced= true;
-		
-		} else {
-		
-			try {
-				// invalidate cached line delimiter if first line of document was changed
-				if (event.getOffset() < fDocument.getLineLength(0))
-					fInvalidateLineDelimiter= true;
-			} catch (BadLocationException e) {
-			}
-	
-			// Remember the given event
-		    fEvent= event;
-			fireTextChanging();
+		fRememberedLengthOfDocument= fDocument.getLength();
+		try {
+			fRememberedLengthOfFirstLine= fDocument.getLineLength(0);
+		} catch (BadLocationException e) {
+			fRememberedLengthOfFirstLine= -1;
 		}
+		
+		fEvent= event;
+		rememberEventData(fEvent);
+		fireTextChanging();
+	}
+	
+	private boolean isPatchedEvent(DocumentEvent event) {
+		return fOriginalEvent.fOffset != event.fOffset || fOriginalEvent.fLength != event.fLength || fOriginalEvent.fText != event.fText;
+	}
+	
+	private void rememberEventData(DocumentEvent event) {
+		fOriginalEvent.fOffset= event.fOffset;
+		fOriginalEvent.fLength= event.fLength;
+		fOriginalEvent.fText= event.fText;
 	}
 	
 	/**
