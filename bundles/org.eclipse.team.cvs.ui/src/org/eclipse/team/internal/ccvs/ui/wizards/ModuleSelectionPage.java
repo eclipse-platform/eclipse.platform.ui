@@ -64,7 +64,7 @@ public class ModuleSelectionPage extends CVSWizardPage {
 		
 		Listener listener = new Listener() {
 			public void handleEvent(Event event) {
-				updateEnablements();
+				updateEnablements(false);
 			}
 		};
 		
@@ -90,7 +90,7 @@ public class ModuleSelectionPage extends CVSWizardPage {
 			useSpecifiedNameButton.setSelection(true);
 		}
 		selectModuleButton.setSelection(false);
-		updateEnablements();
+		updateEnablements(false);
 		setControl(composite);
         Dialog.applyDialogFont(parent);
 	}
@@ -108,7 +108,7 @@ public class ModuleSelectionPage extends CVSWizardPage {
 		}
 	}
 	
-	protected void updateEnablements() {
+	protected void updateEnablements(boolean updateModulesList) {
 		if (useProjectNameButton != null && useProjectNameButton.getSelection()) {
 			text.setEnabled(false);
 			moduleList.getControl().setEnabled(false);
@@ -128,7 +128,7 @@ public class ModuleSelectionPage extends CVSWizardPage {
 			text.setEnabled(false);
 			moduleList.getControl().setEnabled(true);
 			moduleName = null;
-			if (moduleList.getInput() == null) {
+			if (moduleList.getInput() == null || updateModulesList) {
 				// The input is set after the page is shown to avoid
 				// fetching if the user wants to specify the name manually
 				try {
@@ -234,7 +234,7 @@ public class ModuleSelectionPage extends CVSWizardPage {
 		});
 		result.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				updateEnablements();
+				updateEnablements(false);
 				ICVSRemoteFolder selectedModule = getSelectedModule();
 				if (selectedModule == null) return;
 				String repositoryRelativePath = selectedModule.getRepositoryRelativePath();
@@ -264,10 +264,11 @@ public class ModuleSelectionPage extends CVSWizardPage {
 	}
 	
 	public void setLocation(ICVSRepositoryLocation location) {
+		boolean refresh = location != null && !location.equals(this.location);
 		this.location = location;
 		badLocation = false;
 		if (moduleList != null) {
-			updateEnablements();
+			updateEnablements(refresh);
 		}
 	}
 
