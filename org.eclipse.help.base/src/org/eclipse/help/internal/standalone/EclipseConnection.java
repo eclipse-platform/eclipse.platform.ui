@@ -20,30 +20,12 @@ import java.util.Properties;
  * It should be launched from command line.
  */
 public class EclipseConnection {
-	// timout for .hostport file to apper since starting eclipse [ms]
-	// 0 if no waiting for file should occur
-	int startupTimeout;
-	// number of retries to connectect to webapp
-	int connectionRetries;
-	// time between retries to connectect to webapp [ms]
-	int connectionRetryInterval;
 	// help server host
 	private String host;
 	// help server port
 	private String port;
 
 	public EclipseConnection() {
-		this(0, 0, 5 * 1000);
-	}
-
-	public EclipseConnection(
-		int startupTimeout,
-		int connectionRetries,
-		int connectionRetryInterval) {
-
-		this.startupTimeout = startupTimeout;
-		this.connectionRetries = connectionRetries;
-		this.connectionRetryInterval = connectionRetryInterval;
 	}
 
 	public String getPort() {
@@ -64,34 +46,28 @@ public class EclipseConnection {
 	}
 
 	public void connect(URL url) throws InterruptedException, Exception {
-		for (int i = 0; i <= connectionRetries; i++) {
-			try {
-				HttpURLConnection connection =
-					(HttpURLConnection) url.openConnection();
-				if (Options.isDebug()) {
-					System.out.println(
-						"Connection  to control servlet created.");
-				}
-				connection.connect();
-				if (Options.isDebug()) {
-					System.out.println(
-						"Connection  to control servlet connected.");
-				}
-				int code = connection.getResponseCode();
-				if (Options.isDebug()) {
-					System.out.println(
-						"Response code from control servlet=" + code);
-				}
-				connection.disconnect();
-				return;
-			} catch (IOException ioe) {
-				if (Options.isDebug()) {
-					ioe.printStackTrace();
-				}
+		try {
+			HttpURLConnection connection =
+				(HttpURLConnection) url.openConnection();
+			if (Options.isDebug()) {
+				System.out.println("Connection  to control servlet created.");
 			}
-			Thread.sleep(connectionRetryInterval);
+			connection.connect();
+			if (Options.isDebug()) {
+				System.out.println("Connection  to control servlet connected.");
+			}
+			int code = connection.getResponseCode();
+			if (Options.isDebug()) {
+				System.out.println(
+					"Response code from control servlet=" + code);
+			}
+			connection.disconnect();
+			return;
+		} catch (IOException ioe) {
+			if (Options.isDebug()) {
+				ioe.printStackTrace();
+			}
 		}
-		throw new Exception("Connection to Help System timed out.");
 	}
 
 	/**
@@ -100,28 +76,6 @@ public class EclipseConnection {
 	 * and help might be starting up.
 	 */
 	public void renew() throws Exception {
-		long time1 = System.currentTimeMillis();
-		while (!Options.getConnectionFile().exists()) {
-			// wait for .hostport file to appear
-			if (Options.isDebug()) {
-				System.out.println(
-					"File "
-						+ Options.getConnectionFile()
-						+ " does not exist, at the moment.");
-			}
-			// timeout
-			if (System.currentTimeMillis() - time1 >= startupTimeout) {
-				if (Options.isDebug()) {
-					System.out.println(
-						"Timeout waiting for file "
-							+ Options.getConnectionFile()+"\nEclipse is not running.");
-				}
-				throw new Exception(
-					"Timeout waiting for file " + Options.getConnectionFile()+"\nEclipse is not running.");
-			}
-			// wait more
-			Thread.sleep(2000);
-		}
 		Properties p = new Properties();
 		FileInputStream is = null;
 		try {
@@ -129,7 +83,7 @@ public class EclipseConnection {
 			p.load(is);
 			is.close();
 		} catch (IOException ioe) {
-			// it ok, eclipse might have just exited
+			// it is ok, eclipse might have just exited
 			throw ioe;
 		} finally {
 			if (is != null) {

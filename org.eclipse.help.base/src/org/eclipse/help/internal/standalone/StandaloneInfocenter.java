@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.help.internal.standalone;
 
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.*;
 
 /**
  * This program is used to start or stop Eclipse

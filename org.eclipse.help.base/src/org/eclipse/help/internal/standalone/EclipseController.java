@@ -10,14 +10,16 @@
  *******************************************************************************/
 package org.eclipse.help.internal.standalone;
 
+import java.io.*;
 import java.net.*;
+import java.nio.channels.*;
 
 /**
  * This program is used to start or stop Eclipse
  * Infocenter application.
  * It should be launched from command line.
  */
-public class EclipseController {
+public class EclipseController implements EclipseLifeCycleListener {
 
 	// control servlet path
 	private static final String CONTROL_SERVLET_PATH =
@@ -29,7 +31,10 @@ public class EclipseController {
 	// Eclipse connection params
 	protected EclipseConnection connection;
 
-	private Eclipse eclipse = null;
+	public Eclipse eclipse = null;
+	// Inter process lock
+	private FileLock lock;
+	private boolean eclipseEnded = false;
 	/**
 	 * Constructs help system
 	 * @param applicationID ID of Eclipse help application
@@ -44,36 +49,35 @@ public class EclipseController {
 
 		this.applicationId = applicationId;
 		Options.init(applicationId, args);
-		connection = initConnection();
-	}
-
-	/**
-	 * Creates a connection to Eclipse. May need to override this to pass retry parameters.
-	 */
-	protected EclipseConnection initConnection() {
-		return new EclipseConnection();
+		connection = new EclipseConnection();
 	}
 
 	/**
 	 * @see org.eclipse.help.standalone.Help#shutdown()
 	 */
-	public void shutdown() throws Exception {
+	public final synchronized void shutdown() throws Exception {
 		try {
-			sendHelpCommand("shutdown", new String[0]);
+			obtainLock();
+			sendHelpCommandInternal("shutdown", new String[0]);
 		} catch (MalformedURLException mue) {
 			mue.printStackTrace();
 		} catch (InterruptedException ie) {
+		} finally {
+			releaseLock();
 		}
-
-		connection.reset();
 	}
 
 	/**
 	 * @see org.eclipse.help.standalone.Help#start()
 	 */
-	public void start() throws Exception {
-		connection.reset();
-		startEclipse();
+	public final synchronized void start() throws Exception {
+		try {
+			obtainLock();
+			startEclipse();
+		} finally {
+			releaseLock();
+		}
+
 	}
 
 	/**
@@ -82,20 +86,91 @@ public class EclipseController {
 	 * If connection fails, retries several times,
 	 * in case webapp is starting up.
 	 */
-	protected void sendHelpCommand(String command, String[] parameters)
+	protected final synchronized void sendHelpCommand(
+		String command,
+		String[] parameters)
+		throws Exception {
+		try {
+			obtainLock();
+			sendHelpCommandInternal(command, parameters);
+		} finally {
+			releaseLock();
+		}
+
+	}
+
+	/**
+	 * Starts Eclipse if not yet running.
+	 */
+	private void startEclipse() throws Exception {
+		boolean fullyRunning = isApplicationRunning();
+		if (fullyRunning) {
+			return;
+		}
+		if (Options.isDebug()) {
+			System.out.println(
+				"Using workspace " + Options.getWorkspace().getAbsolutePath());
+		}
+		// delete old connection file
+		Options.getConnectionFile().delete();
+		connection.reset();
+
+		if (Options.isDebug()) {
+			System.out.println(
+				"Ensured old .connection file is deleted.  Launching Eclipse.");
+		}
+		eclipseEnded = false;
+		eclipse = new Eclipse(this);
+		eclipse.start();
+		fullyRunning = isApplicationRunning();
+		while (!eclipseEnded && !fullyRunning) {
+			try {
+				Thread.sleep(250);
+			} catch (InterruptedException ie) {
+			}
+			fullyRunning = isApplicationRunning();
+		}
+		if (eclipseEnded) {
+			if (eclipse.getStatus() == Eclipse.STATUS_ERROR) {
+				throw eclipse.getException();
+			}
+			return;
+		}
+		if (Options.isDebug()) {
+			System.out.println("Eclipse launched");
+		}
+		// in case controller is killed
+		Runtime.getRuntime().addShutdownHook(new EclipseCleaner());
+	}
+	private void sendHelpCommandInternal(String command, String[] parameters)
 		throws Exception {
 		if (!"shutdown".equalsIgnoreCase(command)) {
-			if (eclipse == null || !eclipse.isAlive()) {
-				startEclipse();
-			}
+			startEclipse();
+		}
+		if (!isApplicationRunning()) {
+			return;
 		}
 		if (!connection.isValid()) {
 			connection.renew();
 		}
-
 		try {
 			URL url = createCommandURL(command, parameters);
-			connection.connect(url);
+			if ("shutdown".equalsIgnoreCase(command)
+				&& Options.getConnectionFile().exists()) {
+				connection.connect(url);
+				long timeLimit = System.currentTimeMillis() + 60 * 1000;
+				while (Options.getConnectionFile().exists()) {
+					Thread.sleep(200);
+					if (System.currentTimeMillis() > timeLimit) {
+						System.out.println(
+							"Shutting down is taking too long.  Will not wait.");
+						break;
+					}
+				}
+
+			} else {
+				connection.connect(url);
+			}
 		} catch (MalformedURLException mue) {
 			mue.printStackTrace();
 		} catch (InterruptedException ie) {
@@ -128,92 +203,72 @@ public class EclipseController {
 		return new URL(urlStr.toString());
 	}
 
-	/**
-	 * Starts Eclipse if not yet running.
-	 */
-	private void startEclipse() throws Exception {
-		if (Options.isDebug()) {
-			System.out.println(
-				"Using workspace " + Options.getWorkspace().getAbsolutePath());
-			System.out.println(
-				"Checking if file " + Options.getLockFile() + " exists.");
-		}
-		if (isAnotherRunning()) {
+	public void eclipseEnded() {
+		connection.reset();
+	}
+	private void obtainLock() throws IOException {
+		if (lock != null) {
+			// we already have lock
 			return;
 		}
-		// delete old connection file
-		Options.getConnectionFile().delete();
-
-		if (Options.isDebug()) {
-			System.out.println(
-				"Ensured old .connection file is deleted.  Launching Eclipse.");
-		}
-		eclipse = new Eclipse();
-		eclipse.start();
-		while (eclipse.getStatus() == Eclipse.STATUS_INIT) {
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException ie) {
-			}
-		}
-		if (eclipse.getStatus() == Eclipse.STATUS_ERROR) {
-			throw eclipse.getException();
-		}
-		if (Options.isDebug()) {
-			System.out.println("Eclipse launched");
-		}
-	}
-
-	/**
-	 * @return true if eclipse is already running in another process
-	 */
-	private boolean isAnotherRunning() {
 		if (!Options.getLockFile().exists()) {
-			if (Options.isDebug()) {
-				System.out.println(
-					"File "
-						+ Options.getLockFile()
-						+ " does not exist.  Eclipse needs to be started.");
-			}
-			return false;
+			Options.getLockFile().getParentFile().mkdirs();
 		}
-
-		if (System.getProperty("os.name").startsWith("Win")) {
-			// if file cannot be deleted, Eclipse is running
-			if (!Options.getLockFile().delete()) {
-				if (Options.isDebug()) {
-					System.out.println(
-						"File "
-							+ Options.getLockFile()
-							+ " is locked.  Eclipse is already running.");
-				}
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			// if connection to control servlet can be made, Eclipse is running
-			try {
-				connection.renew();
-				if (connection.getHost() != null
-					&& connection.getPort() != null) {
-					URL url = createCommandURL("test", new String[0]);
-					connection.connect(url);
-					if (Options.isDebug()) {
-						System.out.println(
-							"Test connection to Eclipse established.  No need to start new Eclipse instance.");
-					}
-					return true;
-				}
-			} catch (Exception e) {
-			}
-			if (Options.isDebug()) {
-				System.out.println(
-					"Test connection to Eclipse could not be established.  Eclipse instance needs to be started.");
-			}
-			connection.reset();
-			return false;
+		RandomAccessFile raf =
+			new RandomAccessFile(Options.getLockFile(), "rw");
+		lock = raf.getChannel().lock();
+		if (Options.isDebug()) {
+			System.out.println("Lock obtained.");
 		}
 	}
-
+	private void releaseLock() {
+		if (lock != null) {
+			try {
+				lock.channel().close();
+				if (Options.isDebug()) {
+					System.out.println("Lock released.");
+				}
+				lock = null;
+			} catch (IOException ioe) {
+			}
+		}
+	}
+	/** Tests whether HelpApplication is running
+	 * by testing if .applicationlock is locked
+	 */
+	private boolean isApplicationRunning() {
+		File applicationLockFile =
+			new File(Options.getLockFile().getParentFile(), ".applicationlock");
+		RandomAccessFile randomAccessFile = null;
+		FileLock applicationLock = null;
+		try {
+			randomAccessFile = new RandomAccessFile(applicationLockFile, "rw");
+			applicationLock = randomAccessFile.getChannel().tryLock();
+		} finally {
+			if (applicationLock != null) {
+				try {
+					applicationLock.release();
+				} catch (IOException ioe) {
+				}
+			}
+			if (randomAccessFile != null) {
+				try {
+					randomAccessFile.close();
+				} catch (IOException ioe) {
+				}
+			}
+			if (Options.isDebug()) {
+				System.out.println(
+					"isApplicationRunning? " + (applicationLock == null));
+			}
+			return applicationLock == null;
+		}
+	}
+	public class EclipseCleaner extends Thread {
+		public void run() {
+			if (eclipse != null) {
+				eclipse.killProcess();
+			}
+		}
+	}
 }
