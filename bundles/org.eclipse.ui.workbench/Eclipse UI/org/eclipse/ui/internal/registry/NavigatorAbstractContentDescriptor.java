@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.ui.INavigatorTreeContentProvider;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -32,6 +32,7 @@ public class NavigatorAbstractContentDescriptor {
 	private String className;
 	private IConfigurationElement configElement;
 	private ArrayList subContentDescriptors = new ArrayList();
+	private INavigatorTreeContentProvider contentProvider = null;
 	
 	/**
 	 * Creates a descriptor from a configuration element.
@@ -46,16 +47,16 @@ public class NavigatorAbstractContentDescriptor {
 	protected void addSubContentDescriptor(NavigatorContentDescriptor descriptor) {
 		subContentDescriptors.add(descriptor);
 	}
-	public ITreeContentProvider createContentProvider() {
-		Object contentProvider = null;
+	public INavigatorTreeContentProvider createContentProvider() {
+		if  (contentProvider != null) return contentProvider;
 
 		try {
-			contentProvider = WorkbenchPlugin.createExtension(configElement, ATT_CLASS);
+			contentProvider = (INavigatorTreeContentProvider)WorkbenchPlugin.createExtension(configElement, ATT_CLASS);
 		} catch (CoreException exception) {
 			WorkbenchPlugin.log("Unable to create content provider: " + //$NON-NLS-1$
 				className, exception.getStatus());
 		}
-		return (ITreeContentProvider) contentProvider;		
+		return contentProvider;		
 	}
 	/**
 	 */

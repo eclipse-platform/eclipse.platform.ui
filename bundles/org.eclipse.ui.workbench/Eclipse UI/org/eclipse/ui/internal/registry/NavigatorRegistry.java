@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.ui.INavigatorTreeContentProvider;
 
 /**
  */
@@ -47,27 +50,30 @@ private NavigatorAbstractContentDescriptor findContentDescriptor(String viewTarg
 	if (rootDescriptor != null) return rootDescriptor.findContentDescriptor(contentProviderId);
 	return null;
 }
-public ITreeContentProvider getRootContentProvider(String partId) {
+public NavigatorRootContentDescriptor getRootContentDescriptor(String partId) {
+	return (NavigatorRootContentDescriptor) rootContentDescriptors.get(partId);
+}
+public INavigatorTreeContentProvider getRootContentProvider(String partId) {
 	NavigatorRootContentDescriptor rootDescriptor = (NavigatorRootContentDescriptor) rootContentDescriptors.get(partId);
 	if (rootDescriptor != null)
 		return rootDescriptor.createContentProvider();
 		
 	return null;
 }
-public ITreeContentProvider[] getSubContentProviders(String viewTargetId, String contentProviderId) {
+public INavigatorTreeContentProvider[] getSubContentProviders(String viewTargetId, String contentProviderId) {
 	NavigatorAbstractContentDescriptor contentDescriptor = findContentDescriptor(viewTargetId, contentProviderId);
 	return getSubContentProviders(contentDescriptor);
 }
-public ITreeContentProvider[] getSubContentProviders(String viewTargetId) {
+public INavigatorTreeContentProvider[] getSubContentProviders(String viewTargetId) {
 	NavigatorAbstractContentDescriptor rootContentDescriptor = (NavigatorAbstractContentDescriptor)rootContentDescriptors.get(viewTargetId);
 	return getSubContentProviders(rootContentDescriptor);
 }
-protected ITreeContentProvider[] getSubContentProviders(NavigatorAbstractContentDescriptor contentDescriptor) {
+protected INavigatorTreeContentProvider[] getSubContentProviders(NavigatorAbstractContentDescriptor contentDescriptor) {
 	ArrayList list = contentDescriptor.getSubContentDescriptors();
-	ITreeContentProvider[] providers = new ITreeContentProvider[list.size()];
+	INavigatorTreeContentProvider[] providers = new INavigatorTreeContentProvider[list.size()];
 	for (int i=0; i<list.size(); i++) {
 		NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor)list.get(i);
-		ITreeContentProvider provider = descriptor.createContentProvider();
+		INavigatorTreeContentProvider provider = descriptor.createContentProvider();
 		providers[i] = provider;
 	}
 	return providers;

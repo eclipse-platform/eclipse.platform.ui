@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.views.navigator;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.core.internal.resources.WorkspaceRoot;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.ui.INavigatorTreeContentProvider;
 import org.eclipse.ui.internal.ActionExpression;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.NavigatorContentDescriptor;
@@ -34,44 +36,34 @@ public NavigatorContentProvider(Navigator navigator) {
 	partId = navigator.getSite().getId();
 	this.navigator = navigator;
 }
-public Object[] getChildren(Object element) {
+protected IWorkbenchAdapter getAdapter(Object o) {
+	if (!(o instanceof IAdaptable)) {
+		return null;
+	}
+	return (IWorkbenchAdapter)((IAdaptable)o).getAdapter(IWorkbenchAdapter.class);
+}
+protected INavigatorTreeContentProvider getContentProvider(Object element) {
 	NavigatorContentDescriptor[] descriptors = registry.getDescriptors(partId);
-	Object[] elements = new Object[0];
-	NavigatorContentDescriptor defaultContentDescriptor = null;
-	NavigatorContentDescriptor contentDescriptor = null;
-	int priority = 0;
-	
 	for (int i = 0; i < descriptors.length; i++) {
 		NavigatorContentDescriptor descriptor = descriptors[i];
 		ActionExpression enablement = descriptor.getEnableExpression(); 
-		
-		if (enablement == null)
-			defaultContentDescriptor = descriptor;
-		else
-		if (enablement.isEnabledFor(element) && descriptor.getPriority() > priority) {
-			priority = descriptor.getPriority();
-			contentDescriptor = descriptor;
+		if (enablement != null) {
+			if (enablement.isEnabledFor(element)) {
+				NavigatorContentDescriptor contentDescriptor = descriptor;
+				return contentDescriptor.createContentProvider();
+			}
 		}
 	}
-	if (contentDescriptor == null)
-		contentDescriptor = defaultContentDescriptor;
-		
-	if (contentDescriptor != null) {
-		elements = contentDescriptor.createContentProvider().getChildren(element);
-		setContentName(element, contentDescriptor.getName());
+	Object parentElement = getParent(element);
+	if (parentElement instanceof WorkspaceRoot) {
+		return new ProjectContentProvider();
+	} else {
+		return getContentProvider(parentElement);
 	}
-	return elements;	
 }
-private IProject getProject(Object element) {
-	IProject project = null;
-	if (element instanceof IProject) {
-		project = (IProject) element;
-	}
-	else 
-	if (element instanceof IAdaptable) {
-		project = (IProject) ((IAdaptable) element).getAdapter(IProject.class);
-	}	
-	return project;
+public Object[] getChildren(Object element) {
+	INavigatorTreeContentProvider contentProvider = getContentProvider(element);
+	return contentProvider.getChildren(element);
 }
 private IResource getResource(Object element) {
 	IResource resource = null;
@@ -88,16 +80,32 @@ private IResource getResource(Object element) {
  * Method declared on IStructuredContentProvider.
  */
 public Object[] getElements(Object element) {
-	ITreeContentProvider contentProvider = registry.getRootContentProvider(partId);
+	INavigatorTreeContentProvider contentProvider = registry.getRootContentProvider(partId);
 	Object[] elements = contentProvider.getElements(element);
-	ITreeContentProvider[] subContentProviders = registry.getSubContentProviders(partId);
-	for (int i=0; i<subContentProviders.length; i++) {
-		ITreeContentProvider subContentProvider = subContentProviders[i];
-		// if delete enabled
-		// if replace enabled
-		// if add enabled
+
+	Object[] newElements = new Object[elements.length];
+	NavigatorContentDescriptor[] descriptors = registry.getDescriptors(partId);
+	for (int i=0; i<elements.length; i++) {
+		Object childElement = elements[i];
+		setContentName(childElement, registry.getRootContentDescriptor(partId).getName());
+		newElements[i] = childElement;
+		for (int j = 0; j < descriptors.length; j++) {
+			NavigatorContentDescriptor descriptor = descriptors[j];
+			ActionExpression enablement = descriptor.getEnableExpression(); 
+			if (enablement != null) {
+				if (enablement.isEnabledFor(childElement)) {
+					NavigatorContentDescriptor contentDescriptor = descriptor;
+					Object replacementElement = contentDescriptor.createContentProvider().getReplacementElement(element, childElement);
+					if (replacementElement != null) {
+						setContentName(replacementElement, contentDescriptor.getName());
+						newElements[i]=replacementElement;
+					}
+				}
+			}
+		}
 	}
-	return elements;
+
+	return newElements;
 }
 public Object getParent(Object element) {
 	IWorkbenchAdapter adapter = getAdapter(element);

@@ -11,7 +11,7 @@
 package org.eclipse.ui.internal.registry;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.ui.INavigatorTreeContentProvider;
 import org.eclipse.ui.WorkbenchException;
 
 /**
@@ -46,7 +46,7 @@ public NavigatorContentDescriptor getContentDescriptor() {
 public NavigatorRootContentDescriptor getRootContentDescriptor() {
 	return rootContentDescriptor;
 }
-public ITreeContentProvider getContentProvider() {
+public INavigatorTreeContentProvider getContentProvider() {
 	return contentDescriptor.createContentProvider();
 }
 /**

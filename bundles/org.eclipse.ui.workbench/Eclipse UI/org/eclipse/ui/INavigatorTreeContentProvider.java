@@ -8,20 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.views.navigator;
+package org.eclipse.ui;
 
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.INavigatorTreeContentProvider;
-import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 
 /**
- * Provides tree contents for objects that have the IWorkbenchAdapter
- * adapter registered. 
  */
-public class ProjectContentProvider extends WorkbenchContentProvider implements INavigatorTreeContentProvider {
-	protected Viewer viewer;
-
-public Object getReplacementElement(Object parentElement, Object element) {
-	return null;
-}
+public interface INavigatorTreeContentProvider extends ITreeContentProvider {
+	public Object getReplacementElement(Object parentElement, Object element);
 }
