@@ -9,9 +9,9 @@ Contributors:
 	IBM - Initial implementation
 ************************************************************************/
 
-package org.eclipse.ui.internal.commands.gestures;
+package org.eclipse.ui.internal.commands;
 
 public interface CaptureListener {
 
-	void gesture(Gesture gesture);
+	void capture(CaptureEvent captureEvent);
 }

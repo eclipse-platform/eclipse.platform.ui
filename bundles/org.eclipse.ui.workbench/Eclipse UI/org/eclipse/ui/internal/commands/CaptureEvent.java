@@ -9,27 +9,25 @@ Contributors:
 	IBM - Initial implementation
 ************************************************************************/
 
-package org.eclipse.ui.internal.commands.gestures;
+package org.eclipse.ui.internal.commands;
 
 import java.util.Arrays;
 
-import org.eclipse.ui.internal.commands.*;
-
-public final class Gesture implements Comparable {
+public final class CaptureEvent implements Comparable {
 
 	private final static int HASH_INITIAL = 27;
 	private final static int HASH_FACTOR = 37;
 
-	public static Gesture create(int data, int pen, Point[] points)
+	public static CaptureEvent create(int data, int pen, Point[] points)
 		throws IllegalArgumentException {
-		return new Gesture(data, pen, points);
+		return new CaptureEvent(data, pen, points);
 	}
 
 	private int data;
 	private int pen;
 	private Point[] points;
 
-	private Gesture(int data, int pen, Point[] points)
+	private CaptureEvent(int data, int pen, Point[] points)
 		throws IllegalArgumentException {
 		super();
 		this.data = data;
@@ -48,25 +46,25 @@ public final class Gesture implements Comparable {
 	}
 
 	public int compareTo(Object object) {
-		Gesture gesture = (Gesture) object;
-		int compareTo = data - gesture.data;
+		CaptureEvent captureEvent = (CaptureEvent) object;
+		int compareTo = data - captureEvent.data;
 
 		if (compareTo == 0) {
-			compareTo = pen - gesture.pen;
+			compareTo = pen - captureEvent.pen;
 
 			if (compareTo == 0)
-				compareTo = org.eclipse.ui.internal.commands.Util.compare(points, gesture.points);
+				compareTo = Util.compare(points, captureEvent.points);
 		}
 
 		return compareTo;
 	}
 
 	public boolean equals(Object object) {
-		if (!(object instanceof Gesture))
+		if (!(object instanceof CaptureEvent))
 			return false;
 
-		Gesture gesture = (Gesture) object;
-		return data == gesture.data && pen == gesture.pen && Arrays.equals(points, gesture.points);
+		CaptureEvent captureEvent = (CaptureEvent) object;
+		return data == captureEvent.data && pen == captureEvent.pen && Arrays.equals(points, captureEvent.points);
 	}
 
 	public int getData() {

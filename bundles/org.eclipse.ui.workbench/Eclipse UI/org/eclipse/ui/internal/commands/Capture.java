@@ -9,7 +9,7 @@ Contributors:
 	IBM - Initial implementation
 ************************************************************************/
 
-package org.eclipse.ui.internal.commands.gestures;
+package org.eclipse.ui.internal.commands;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -19,7 +19,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.internal.commands.*;
 
 public final class Capture {
 
@@ -59,7 +58,7 @@ public final class Capture {
 				if (capturing && mouseEvent.button == pen) {
 					control.removeMouseMoveListener(mouseMoveListener);
 					points.add(Point.create(mouseEvent.x, mouseEvent.y));
-					Gesture gesture = Gesture.create(data, pen, (Point[]) points.toArray(new Point[points.size()]));
+					CaptureEvent captureEvent = CaptureEvent.create(data, pen, (Point[]) points.toArray(new Point[points.size()]));
 					capturing = false;
 					data = 0;
 					pen = 0;
@@ -67,7 +66,7 @@ public final class Capture {
 					Iterator iterator = captureListeners.iterator();
 
 					while (iterator.hasNext())
-						((CaptureListener) iterator.next()).gesture(gesture);
+						((CaptureListener) iterator.next()).capture(captureEvent);
 				}
 			}
 		};
