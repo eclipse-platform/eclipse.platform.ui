@@ -528,7 +528,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 					// there's another wrap row, set the wrap to the next
 					// visual item as long as it isn't on the next row
 					int nextWrapIndex = layout.itemWrapIndices[i+1];
-					if (visualIndex < nextWrapIndex) {
+					if ((visualIndex < nextWrapIndex) && (visualIndex < itemSizes.length)) {
 						wrapIndices[j] = visualIndex;
 						j++;
 					}
