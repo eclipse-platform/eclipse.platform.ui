@@ -66,6 +66,7 @@ public class ShowViewDialog extends Dialog implements
     public ShowViewDialog(Shell parentShell, IViewRegistry viewReg) {
         super(parentShell);
         this.viewReg = viewReg;
+        setShellStyle(getShellStyle() | SWT.RESIZE);
     }
 
     /**
