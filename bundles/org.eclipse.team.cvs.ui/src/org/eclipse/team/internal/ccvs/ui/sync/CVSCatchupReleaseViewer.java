@@ -35,6 +35,7 @@ import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.HistoryView;
@@ -184,10 +185,13 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 								postfix.append("(" + option.getShortDisplayText() + ")");
 							} else if (resource instanceof IContainer) {
 								ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor((IContainer)resource);
-								CVSTag tag = cvsFolder.getFolderSyncInfo().getTag();
-								if (tag != null) {
-									postfix.append(" ");
-									postfix.append(tag.getName());
+								FolderSyncInfo info = cvsFolder.getFolderSyncInfo();
+								if (info != null) {
+									CVSTag tag = info.getTag();
+									if (tag != null) {
+										postfix.append(" ");
+										postfix.append(tag.getName());
+									}
 								}
 							}
 						} catch (CVSException e) {
