@@ -16,7 +16,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
@@ -32,8 +32,7 @@ public class CompileErrorPromptStatusHandler implements IStatusHandler {
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
 		if (source instanceof ILaunchConfiguration) {
 			ILaunchConfiguration config = (ILaunchConfiguration)source;
-			boolean privateConfig = config.getAttribute(IDebugUIConstants.ATTR_PRIVATE, false);
-			if (privateConfig) {
+			if (DebugUITools.isPrivate(config)) {
 				return new Boolean(true);
 			}
 		}
