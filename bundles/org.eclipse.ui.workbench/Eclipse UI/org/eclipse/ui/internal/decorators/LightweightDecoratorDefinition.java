@@ -10,17 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
-import org.eclipse.jface.viewers.IDecoration;
-import org.eclipse.jface.viewers.ILightweightLabelDecorator;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.internal.ActionExpression;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 
