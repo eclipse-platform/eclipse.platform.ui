@@ -17,12 +17,12 @@
 
 <title><%=WebappResources.getString("Content", request)%></title>
 
-<style type="text/css" >
-
+<style type="text/css">
 BODY {
 	background-color: Window;
 	font: icon;
 	margin-top:5px;
+	margin-left:5px;
 	padding:0;
 	border:0;
 	cursor:default;
@@ -37,39 +37,68 @@ BODY {
 A {
 	text-decoration:none; 
 	color:WindowText; 
-	height:100%;
 	padding:0px;
-	padding-left:2px;
-	/* this works in ie5.5, but not in ie5.0  */
 	white-space: nowrap;
 }
 
-DIV {
-	xpadding-left:20px;
-	padding-top:5px;
+A:hover {
+	text-decoration:underline; 
+}
+
+IMG {
+	border:0px;
+	margin:0px;
+	padding:0px;
+	margin-right:4px;
+}
+
+TABLE {
+	background-color: Window;
+	font: icon;
+	width:100%;
+}
+
+.list {
+	background-color: Window;
+	padding:2px;
 }
      
-DIV.active { 
+.active { 
 	background:ButtonFace;
+	width:100%;
+	height:100%;
+}
+
+.label {
+	margin-left:4px;
 }
 
 </style>
-  
-<script language="JavaScript">
-var isMozilla = navigator.userAgent.indexOf('Mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
-var isIE50 = navigator.userAgent.indexOf('MSIE 5.0') != -1;
 
+<script language="JavaScript" src="list.js"></script>
+<script language="JavaScript">		
 var extraStyle = "";
 if (isMozilla)
-	extraStyle = "<style type='text/css'>DIV { padding-top:2px; padding-bottom:2px; }</style>";	
-else if (isIE50)
- 	 extraStyle = "<style type='text/css'>A{ height:10px;} </style>";
+	extraStyle = "<style type='text/css'>.active, A.active:hover {background:WindowText;color:Window;} </style>";
+ 
 document.write(extraStyle);
+
+// remove the even listeners
+if (isMozilla) {
+  document.removeEventListener('click', mouseClickHandler, true);
+}
+else if (isIE){
+  document.onclick = null;
+}
+
 </script>
+
 
 </head>
 
 <body >
+
+<table id='list'  cellspacing='0' >
 
 <% 
 ContentUtil content = new ContentUtil(application, request);
@@ -82,10 +111,17 @@ for (int i=0; i<tocs.getLength(); i++)
 	String label = toc.getAttribute("label");
 	String id = toc.getAttribute("href");
 %>
-		<div class='list'><a  href='javascript:parent.parent.loadTOC("<%=id%>");' onmouseover='window.status="<%=UrlUtil.JavaScriptEncode(label)%>";return true;' title="<%=UrlUtil.htmlEncode(label)%>"><nobr><img src="images/toc_obj.gif" border=0> <%=UrlUtil.htmlEncode(label)%> </nobr> </a></div>
+
+<tr class='list' id='r<%=i%>'>
+	<td align='left' class='label' nowrap>
+		<a id='a<%=i%>' href='javascript:parent.parent.loadTOC("<%=id%>");' onmouseout='window.status=" ";' onmouseover='window.status="<%=UrlUtil.JavaScriptEncode(label)%>";return true;' title="<%=UrlUtil.htmlEncode(label)%>"><img src="images/toc_obj.gif" border=0> <%=UrlUtil.htmlEncode(label)%></a>
+	</td>
+</tr>
 <%		
 }
 %>
+
+</table>
 
 </body>
 </html>

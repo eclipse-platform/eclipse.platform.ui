@@ -135,9 +135,9 @@ if(request.getParameter("contextId")!=null)
 			href = "about:blank";
 %>
 
-<tr class='list'>
+<tr class='list' id='r<%=i%>'>
 	<td align='left' class='label' nowrap>
-		<a href='<%=href%>' onclick='parent.parent.setToolbarTitle("<%=UrlUtil.JavaScriptEncode(tocLabel)%>")' title="<%=UrlUtil.htmlEncode(label)%>"><img src="images/topic.gif"><%=UrlUtil.htmlEncode(label)%></a>
+		<a id='a<%=i%>' href='<%=href%>' onclick='parent.parent.setToolbarTitle("<%=UrlUtil.JavaScriptEncode(tocLabel)%>")' title="<%=UrlUtil.htmlEncode(label)%>"><img src="images/topic.gif"><%=UrlUtil.htmlEncode(label)%></a>
 	</td>
 </tr>
 

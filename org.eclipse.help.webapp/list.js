@@ -47,55 +47,8 @@ function getTRNode(node) {
  */
 function getAnchorNode(tr)
 {
-	var a = tr.getElementsByTagName("A");
-	if (a != null) 
-		return a.item(0);
-}
-
-/**
- * Returns the next sibling element
- */
-function getNextSibling(node) 
-{
-	if (!node) return null;
-	var sib = node.nextSibling;
-	while (sib && sib.nodeType == 3) // text node
-		sib = sib.nextSibling;
-	return sib;
-}
-
-/**
- * Returns the next sibling element
- */
-function getPrevSibling(node) 
-{
-	if (!node) return null;
-	var sib = node.previousSibling;
-	while (sib && sib.nodeType == 3) // text node
-		sib = sib.previousSibling;
-	return sib;
-}
-
-/**
- * Returns the descendat node with specified tag (depth-first searches)
- */
-function getDescendantNode(parent, childTag)
-{	
-	if (parent.tagName == childTag)
-		return parent;
-		
-	var list = parent.childNodes;
-	if (list == null) return null;
-	for (var i=0; i<list.length; i++) {
-		var child = list.item(i);
-		if(child.tagName == childTag)
-			return child;
-		
-		child = getDescendantNode(child, childTag);
-		if (child != null)
-			return child;
-	}
-	return null;
+	var id = tr.id.substring(1);
+	return document.getElementById("a"+id);
 }
 
 
@@ -105,11 +58,11 @@ function getDescendantNode(parent, childTag)
 function getNextDown(node)
 {
 	var tr = getTRNode(node);
-	tr = getNextSibling(tr);
-	if (tr == null) 
-		return null;
-	else
-		return getDescendantNode(tr, "A");
+	if (tr == null) return null;
+	
+	var id = tr.id.substring(1);
+	var next = 1 + eval(id);
+	return document.getElementById("a"+next);
 }
 
 /**
@@ -118,11 +71,14 @@ function getNextDown(node)
 function getNextUp(node)
 {
 	var tr = getTRNode(node);
-	tr = getPrevSibling(tr);
-	if (tr == null) 
-		return null;
+	if (tr == null) return null;
+	
+	var id = tr.id.substring(1);
+	var next = eval(id) - 1;
+	if (next >= 0)
+		return document.getElementById("a"+next);
 	else
-		return getDescendantNode(tr, "A");
+		return null;
 }
 
 
@@ -150,7 +106,8 @@ function highlightTopic(topic)
   		{
   			a.className = "active";
   			// set toolbar title
-  			a.onclick();
+  			if (a.onclick)
+  				a.onclick();
   			//if (isIE)
   			//	a.hideFocus = "true";
    		}
@@ -237,15 +194,21 @@ function mouseMoveHandler(e) {
 	 
 	  if (isMozilla)
 	     e.cancelBubble = false;
-	     
-	  window.status = getAnchorNode(overNode).innerHTML;
+	   
+	  if (isIE)  
+		  window.status = getAnchorNode(overNode).innerText;
+	  else if (isMozilla)
+	  	  window.status = getAnchorNode(overNode).lastChild.nodeValue;
 	}catch(e){}
+	
+	return true;
 }
 
 /**
  * handler for clicking on a node
  */
 function mouseClickHandler(e) {
+
   var clickedNode;
   if (isMozilla)
   	clickedNode = e.target;
@@ -317,17 +280,16 @@ function keyDownHandler(e)
   	return false;
 }
 
-
-// listen for clicks
+// listen for events
 if (isMozilla) {
   document.addEventListener('click', mouseClickHandler, true);
-  document.addEventListener('mousemove', mouseMoveHandler, true);
+  document.addEventListener('mouseover', mouseMoveHandler, true);
   document.addEventListener('keydown', keyDownHandler, true);
   //document.addEventListener("focus", focusHandler, true);
 }
 else if (isIE){
   document.onclick = mouseClickHandler;
-  document.onmousemove = mouseMoveHandler;
+  document.onmouseover = mouseMoveHandler;
   document.onkeydown = keyDownHandler;
   window.onfocus = focusHandler;
 }
