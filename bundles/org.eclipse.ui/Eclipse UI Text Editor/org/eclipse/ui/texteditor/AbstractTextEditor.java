@@ -122,7 +122,6 @@ import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.texteditor.AbstractTextEditor.ElementStateListener.Validator;
 
 
 
@@ -3037,7 +3036,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (IncrementalFindTarget.class.equals(required)) {
 			if (fIncrementalFindTarget == null) {
 				IStatusLineManager manager= getStatusLineManager();				
-				fIncrementalFindTarget= (fSourceViewer == null ? null : new IncrementalFindTarget(fSourceViewer, manager));
+				if (manager != null)
+					fIncrementalFindTarget= (fSourceViewer == null ? null : new IncrementalFindTarget(fSourceViewer, manager));
 			}
 			return fIncrementalFindTarget;
 		}
