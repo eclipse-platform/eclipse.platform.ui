@@ -81,6 +81,10 @@ public class InternalSiteManager {
 			return site;
 		}
 
+		//flush the JarFile we may hold on to
+		// we keep the temp not to create them again
+		JarContentReference.shutdown(); // make sure we are not leaving jars open
+
 		// consider file protocol also if the URL points to a directory
 		// and no site.xml exist
 		// if the user points to a file, consider DEFAULT_SITE_TYPE
