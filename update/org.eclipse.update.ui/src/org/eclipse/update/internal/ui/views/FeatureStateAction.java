@@ -34,10 +34,24 @@ public class FeatureStateAction extends Action {
 
 	public void run() {
 		try {
-			if (adapter == null || !confirm(adapter.isConfigured()))
+			if (adapter == null)
+				return;
+			
+			boolean isConfigured = adapter.isConfigured();
+			// Ask user to confirm the operation
+			String message =
+				isConfigured
+					? UpdateUI.getString("FeatureStateAction.disableQuestion") //$NON-NLS-1$
+					: UpdateUI.getString("FeatureStateAction.EnableQuestion"); //$NON-NLS-1$
+
+			if (!confirm(message))
 				return;
 
-			boolean isConfigured = adapter.isConfigured();
+			// If current config is broken, confirm with the user to continue
+			if (OperationsManager.getValidator().validateCurrentState() != null &&
+					!confirm(UpdateUI.getString("Actions.brokenConfigQuestion")))
+				return;
+			
 			IOperation toggleOperation =
 				isConfigured
 					? (IOperation)OperationsManager
@@ -69,11 +83,7 @@ public class FeatureStateAction extends Action {
 		}
 	}
 
-	private boolean confirm(boolean isConfigured) {
-		String message =
-			isConfigured
-				? UpdateUI.getString("FeatureStateAction.disableQuestion") //$NON-NLS-1$
-				: UpdateUI.getString("FeatureStateAction.EnableQuestion"); //$NON-NLS-1$
+	private boolean confirm(String message) {
 		return MessageDialog.openConfirm(
 			UpdateUI.getActiveWorkbenchShell(),
 			UpdateUI.getString("FeatureStateAction.dialogTitle"), //$NON-NLS-1$

@@ -11,6 +11,7 @@
 package org.eclipse.update.internal.ui.views;
 
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.widgets.*;
@@ -18,6 +19,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.wizards.*;
+import org.eclipse.update.operations.*;
 import org.eclipse.update.search.*;
 
 public class FindUpdatesAction extends Action {
@@ -35,6 +37,13 @@ public class FindUpdatesAction extends Action {
 	}
 
 	public void run() {
+		
+		// If current config is broken, confirm with the user to continue
+		if (OperationsManager.getValidator().validateCurrentState() != null &&
+				!confirm(UpdateUI.getString("Actions.brokenConfigQuestion")))
+			return;
+			
+		
 		IFeature [] features=null;
 		if (feature!=null)
 			features = new IFeature[] { feature };
@@ -52,5 +61,12 @@ public class FindUpdatesAction extends Action {
 					UpdateUI.requestRestart();				
 			}
 		});
+	}
+	
+	private boolean confirm(String message) {
+		return MessageDialog.openConfirm(
+			UpdateUI.getActiveWorkbenchShell(),
+			UpdateUI.getString("FeatureStateAction.dialogTitle"), //$NON-NLS-1$
+			message);
 	}
 }

@@ -241,7 +241,7 @@ public class OperationValidator implements IOperationValidator{
 
 		// check proposed change
 		ArrayList status = new ArrayList();
-		validatePendingChanges(jobs, status);
+		validatePendingChanges(jobs, status, beforeStatus);
 
 		// report status
 		return createCombinedReportStatus(beforeStatus, status);
@@ -404,7 +404,8 @@ public class OperationValidator implements IOperationValidator{
 	 */
 	private static void validatePendingChanges(
 		IInstallFeatureOperation[] jobs,
-		ArrayList status) {
+		ArrayList status,
+		ArrayList beforeStatus) {
 		try {
 			ArrayList features = computeFeatures();
 			ArrayList savedFeatures = features;
@@ -452,7 +453,7 @@ public class OperationValidator implements IOperationValidator{
 						oldFeature);
 					
 				checkConstraints(features, status);
-				if (status.size() > 0) {
+				if (status.size() > 0 && !isBetterStatus(beforeStatus, status)) {
 					IStatus conflict =
 						createStatus(
 							newFeature,
@@ -942,24 +943,27 @@ public class OperationValidator implements IOperationValidator{
 
 			if (fos.size() > 0) {
 				if (!fos.contains(os)) {
-					status.add(
-						createStatus(feature, UpdateUtils.getString(KEY_OS)));
+					IStatus s = createStatus(feature, UpdateUtils.getString(KEY_OS));
+					if (!status.contains(s))
+						status.add(s);
 					continue;
 				}
 			}
 
 			if (fws.size() > 0) {
 				if (!fws.contains(ws)) {
-					status.add(
-						createStatus(feature, UpdateUtils.getString(KEY_WS)));
+					IStatus s = createStatus(feature, UpdateUtils.getString(KEY_WS));
+					if (!status.contains(s))
+						status.add(s);
 					continue;
 				}
 			}
 
 			if (farch.size() > 0) {
 				if (!farch.contains(arch)) {
-					status.add(
-						createStatus(feature, UpdateUtils.getString(KEY_ARCH)));
+					IStatus s = createStatus(feature, UpdateUtils.getString(KEY_ARCH));
+					if (!status.contains(s))
+						status.add(s);
 					continue;
 				}
 			}
@@ -990,8 +994,10 @@ public class OperationValidator implements IOperationValidator{
 				}
 			}
 			if (!found) {
-				status.add(
-					createStatus(null, UpdateUtils.getString(KEY_PLATFORM)));
+				IStatus s = createStatus(null, UpdateUtils.getString(KEY_PLATFORM));
+				if (!status.contains(s))
+					status.add(s);
+	
 				return;
 			}
 		}
@@ -1016,7 +1022,9 @@ public class OperationValidator implements IOperationValidator{
 				return;
 		}
 
-		status.add(createStatus(null, UpdateUtils.getString(KEY_PRIMARY)));
+		IStatus s = createStatus(null, UpdateUtils.getString(KEY_PRIMARY));
+		if (!status.contains(s))
+			status.add(s);
 	}
 
 	/*
@@ -1140,7 +1148,9 @@ public class OperationValidator implements IOperationValidator{
 										id,
 										version.toString()});
 					}
-					status.add(createStatus(feature, msg));
+					IStatus s = createStatus(feature, msg);
+					if (!status.contains(s))
+						status.add(s);
 				}
 			}
 		}
@@ -1333,14 +1343,10 @@ public class OperationValidator implements IOperationValidator{
 	private static IStatus createReportStatus(ArrayList beforeStatus, ArrayList status) {
 		// report status
 		if (status.size() > 0) {
-			if (beforeStatus.size() > 0){
-				ArrayList combined = new ArrayList();
-				combined.add(createMultiStatus("ActivityConstraints.beforeMessage", beforeStatus));
-				combined.add(createMultiStatus("ActivityConstraints.afterMessage", status));
-				return createMultiStatus(KEY_ROOT_MESSAGE_INIT, combined);
-			} else {
+			if (beforeStatus.size() > 0)
+				return createMultiStatus(KEY_ROOT_MESSAGE_INIT, beforeStatus);
+			else
 				return createMultiStatus(KEY_ROOT_MESSAGE, status);
-			}
 		}
 		return null;
 	}

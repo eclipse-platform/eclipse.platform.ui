@@ -15,6 +15,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.wizards.ReplaceFeatureVersionWizard;
+import org.eclipse.update.operations.*;
 
 public class ReplaceVersionAction extends Action {
 	
@@ -36,6 +37,7 @@ public class ReplaceVersionAction extends Action {
 	public void run() {
 		if (currentFeature == null || features == null || features.length < 2)
 			return;
+			
 		ReplaceFeatureVersionWizard wizard = new ReplaceFeatureVersionWizard(currentFeature, features);
 		WizardDialog dialog = new WizardDialog(UpdateUI.getActiveWorkbenchShell(), wizard);
 		dialog.create();

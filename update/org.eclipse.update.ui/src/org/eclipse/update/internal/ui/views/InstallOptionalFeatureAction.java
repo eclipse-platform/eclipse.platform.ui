@@ -13,6 +13,7 @@ package org.eclipse.update.internal.ui.views;
 import java.net.*;
 
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.widgets.*;
@@ -21,11 +22,10 @@ import org.eclipse.update.internal.search.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.wizards.*;
+import org.eclipse.update.operations.*;
 import org.eclipse.update.search.*;
 
-/**
- * @author wassimm
- */
+
 public class InstallOptionalFeatureAction extends Action {
 	private static final String KEY_OPTIONAL_INSTALL_TITLE = "FeaturePage.optionalInstall.title"; //$NON-NLS-1$
 
@@ -44,6 +44,13 @@ public class InstallOptionalFeatureAction extends Action {
 	public void run() {
 		if (missingFeature == null)
 			return;
+		
+		// If current config is broken, confirm with the user to continue
+		if (OperationsManager.getValidator().validateCurrentState() != null &&
+				!confirm(UpdateUI.getString("Actions.brokenConfigQuestion")))
+			return;
+			
+		
 		VersionedIdentifier vid = missingFeature.getVersionedIdentifier();
 		URL originatingURL = missingFeature.getOriginatingSiteURL();
 
@@ -71,5 +78,12 @@ public class InstallOptionalFeatureAction extends Action {
 		dialog.open();
 		if (wizard.isSuccessfulInstall())
 			UpdateUI.requestRestart();
+	}
+	
+	private boolean confirm(String message) {
+		return MessageDialog.openConfirm(
+			UpdateUI.getActiveWorkbenchShell(),
+			UpdateUI.getString("FeatureStateAction.dialogTitle"), //$NON-NLS-1$
+			message);
 	}
 }
