@@ -84,7 +84,7 @@ public class HighlightFilter implements IFilter {
 	 */
 	private Collection getWords(HttpServletRequest req) {
 		// Collect words to hash set to eliminate duplcates
-		Collection tokens = new HashSet();
+		Collection tokens = new ArrayList();
 
 		String searchWord = req.getParameter("resultof");
 		if (searchWord == null) {
