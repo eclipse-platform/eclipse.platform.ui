@@ -276,7 +276,7 @@ protected void initializeDefaultPreferences(IPreferenceStore store) {
  * @return ImageRegistry the resulting registry.
  * @see #getImageRegistry
  */
-protected final void initializeImageRegistry(ImageRegistry reg) {
+protected void initializeImageRegistry(ImageRegistry reg) {
 }
 /**
  * Sets default preferences defined in the plugin directory.
