@@ -32,7 +32,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -138,7 +137,8 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 
 		if (configuration != null) {
 			if (fShowDialog) {
-				DebugUITools.openLaunchConfigurationDialogOnGroup(ExternalToolsPlugin.getActiveWorkbenchWindow().getShell(), new StructuredSelection(configuration), IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP);
+				IStatus status = new Status(IStatus.INFO, IExternalToolConstants.PLUGIN_ID, IExternalToolConstants.STATUS_INIT_RUN_ANT, "", null);
+				DebugUITools.openLaunchConfigurationDialog(ExternalToolsPlugin.getActiveWorkbenchWindow().getShell(), configuration, IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP, status);
 			} else {
 				if (targetAttribute != null) {
 					String newName= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(configuration.getName());

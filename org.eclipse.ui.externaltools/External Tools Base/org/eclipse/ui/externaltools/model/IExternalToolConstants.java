@@ -370,5 +370,13 @@ public interface IExternalToolConstants {
 	 * set as the value for the <code>IProcess.ATTR_PROCESS_TYPE</code>
 	 * attribute in processes create by the ant launch delegate.
 	 */
-	public static final String ID_ANT_PROCESS_TYPE = "ant"; //$NON-NLS-1$									
+	public static final String ID_ANT_PROCESS_TYPE = "ant"; //$NON-NLS-1$	
+	
+	// -------- Status Codes -------------
+	
+	/**
+	 * Status code used by the 'Run Ant' status handler which is invoked when
+	 * the launch dialog is opened by the 'Run Ant' action.
+	 */
+	public static final int STATUS_INIT_RUN_ANT = 1000;								
 }

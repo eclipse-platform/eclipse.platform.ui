@@ -391,5 +391,14 @@
 			expanderClass="org.eclipse.ui.externaltools.variable.WorkingSetExpander">
 		</variable>
 	</extension>
+	
+	<extension point = "org.eclipse.debug.core.statusHandlers">
+		<statusHandler
+			id="org.eclipse.ui.externaltools.statusHandler.runAntInit"
+			class="org.eclipse.ui.externaltools.internal.ant.launchConfigurations.RunAntStatusHandler"
+			plugin ="org.eclipse.ui.externaltools"
+			code="1000">
+		</statusHandler>	
+	</extension>	
 
 </plugin>
