@@ -52,10 +52,11 @@ public void run() {
 	}
 	
 	super.run();
-	if (!getDestinations().isEmpty()) {
+	List destinations = getDestinations();
+	if (destinations != null && destinations.isEmpty() == false) {
 		IWorkspaceRoot root = WorkbenchPlugin.getPluginWorkspace().getRoot();
 		List resources = new ArrayList();
-		Iterator iterator = getDestinations().iterator();
+		Iterator iterator = destinations.iterator();
 	
 		while (iterator.hasNext()) {
 			IResource newResource = root.findMember((IPath) iterator.next());
