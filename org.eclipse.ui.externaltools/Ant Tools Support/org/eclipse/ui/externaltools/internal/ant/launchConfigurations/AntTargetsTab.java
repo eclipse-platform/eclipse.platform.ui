@@ -189,50 +189,52 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	private TargetInfo[] getTargets() {
 		if (allTargets == null) {
 			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
-				String expandedLocation = ToolUtil.expandFileLocation(location, ExpandVariableContext.EMPTY_CONTEXT, status);
-				if (expandedLocation != null && status.isOK()) {
-					try {
-						allTargets = AntUtil.getTargets(expandedLocation);
-					} catch (CoreException ce) {
-						ExternalToolsPlugin.getDefault().log("Problems retrieving Ant Targets", ce);
-						setErrorMessage(ce.getMessage());
-						allTargets= null;
-						return allTargets;
-					}
-					java.util.List targetNameList = new ArrayList();
-					java.util.List subTargets = new ArrayList();
-					for (int i=0; i < allTargets.length; i++) {
-						if (! AntUtil.isInternalTarget(allTargets[i])) {
-							// Add the target to the map of target names to target infos.
-							targetNamesToTargetInfos.put(allTargets[i].getName(), allTargets[i]);
-	
-							if (allTargets[i].isDefault()) {
-								defaultTarget = allTargets[i];
-								runDefaultTargetButton.setText(MessageFormat.format("Run default target ({0})", new Object[] {allTargets[i].getName()})); //NON-NLS-1$
-							}
-							
-							if (AntUtil.isSubTarget(allTargets[i])) {
-								subTargets.add(allTargets[i].getName());
-							} else {
-								targetNameList.add(allTargets[i].getName());
-							}
+			String expandedLocation = ToolUtil.expandFileLocation(location, ExpandVariableContext.EMPTY_CONTEXT, status);
+			if (expandedLocation != null && status.isOK()) {
+				try {
+					allTargets = AntUtil.getTargets(expandedLocation);
+				} catch (CoreException ce) {
+					ExternalToolsPlugin.getDefault().log("Problems retrieving Ant Targets", ce);
+					setErrorMessage(ce.getMessage());
+					allTargets= null;
+					return allTargets;
+				}
+				List targetNameList = new ArrayList();
+				List subTargets = new ArrayList();
+				for (int i=0; i < allTargets.length; i++) {
+					if (! AntUtil.isInternalTarget(allTargets[i])) {
+						// Add the target to the map of target names to target infos.
+						targetNamesToTargetInfos.put(allTargets[i].getName(), allTargets[i]);
+
+						if (allTargets[i].isDefault()) {
+							defaultTarget = allTargets[i];
+							runDefaultTargetButton.setText(MessageFormat.format("Run default target ({0})", new Object[] {allTargets[i].getName()})); //NON-NLS-1$
+						}
+						
+						if (AntUtil.isSubTarget(allTargets[i])) {
+							subTargets.add(allTargets[i].getName());
+						} else {
+							targetNameList.add(allTargets[i].getName());
 						}
 					}
-					//if (showSubTargetsButton.getSelection()) {
-						targetNameList.addAll(subTargets);
-					//}
 				}
+				//if (showSubTargetsButton.getSelection()) {
+					targetNameList.addAll(subTargets);
+				//}
+			}
 				
+			if (allTargets != null) {
 				Arrays.sort(allTargets, new Comparator() {
-				public int compare(Object o1, Object o2) {
-					TargetInfo t1= (TargetInfo)o1;
-					TargetInfo t2= (TargetInfo)o2;
-					return t1.getName().compareTo(t2.getName());
-				}
-				public boolean equals(Object obj) {
-					return false;
-				}
-			});
+					public int compare(Object o1, Object o2) {
+						TargetInfo t1= (TargetInfo)o1;
+						TargetInfo t2= (TargetInfo)o2;
+						return t1.getName().compareTo(t2.getName());
+					}
+					public boolean equals(Object obj) {
+						return false;
+					}
+				});
+			}
 		}
 		return allTargets;
 	}
