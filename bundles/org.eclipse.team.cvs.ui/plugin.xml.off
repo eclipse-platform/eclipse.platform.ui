@@ -47,7 +47,7 @@
 		<page name="%CVS" id="org.eclipse.team.ccvs.ui.propertyPages.CVSPropertiesPage"
 			objectClass="org.eclipse.core.resources.IProject"
 			class="org.eclipse.team.internal.ccvs.ui.CVSPropertiesPage" adaptable="true">
-			<filter name="nature" value="org.eclipse.team.cvs.core.cvsnature"/> 
+			<filter name="projectNature" value="org.eclipse.team.cvs.core.cvsnature"/> 
 		</page>
 	</extension>
   
