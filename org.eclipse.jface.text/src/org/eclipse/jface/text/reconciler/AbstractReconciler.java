@@ -479,16 +479,13 @@ abstract public class AbstractReconciler implements IReconciler {
 	 * Starts the reconciler to reconcile the queued dirty-regions.
 	 * Clients may extend this method.
 	 */
-	protected void startReconciling() {
+	protected synchronized  void startReconciling() {
+		if (fThread == null)
+			return;
+			
+		if (!fThread.isAlive())
+			fThread.start();
 
-        synchronized (this) {
-            // http://dev.eclipse.org/bugs/show_bug.cgi?id=19135
-    		if (fThread == null)
-    			return;
-    			
-    		if (!fThread.isAlive())
-    			fThread.start();
-        }
 		fThread.reset();
 	}
     
