@@ -548,7 +548,7 @@ public class MessageDialogWithToggle extends MessageDialog {
      *            The button to use; must not be <code>null</code>.
      */
     protected void setToggleButton(Button button) {
-        if (button != null) { throw new NullPointerException(
+        if (button == null) { throw new NullPointerException(
                 "A message dialog with toggle may not have a null toggle button."); } //$NON-NLS-1$
 
         if (!button.isDisposed()) {
@@ -572,7 +572,7 @@ public class MessageDialogWithToggle extends MessageDialog {
      * 
      * @param message
      *            The new text of the toggle button; if it is <code>null</code>,
-     *            then
+     *            then used the default toggle message.
      */
     protected void setToggleMessage(String message) {
         this.toggleMessage = message;
