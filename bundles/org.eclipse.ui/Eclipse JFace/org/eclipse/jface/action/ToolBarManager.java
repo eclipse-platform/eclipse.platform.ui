@@ -179,7 +179,12 @@ public void update(boolean force) {
 
 			// remove obsolete items
 			for (int i = toRemove.size(); --i >= 0;) {
-				Item item = (Item) toRemove.get(i);
+				ToolItem item = (ToolItem) toRemove.get(i);
+				Control ctrl = item.getControl();
+				if (ctrl != null) {
+					item.setControl(null);
+					ctrl.dispose();
+				}
 				item.dispose();
 			}
 
@@ -221,14 +226,15 @@ public void update(boolean force) {
 
 			setDirty(false);
 			
-			int newCount= toolBar.getItemCount();
-			relayout(toolBar, oldCount, newCount);
-
 			// turn redraw back on if we turned it off above
 			if (useRedraw) {
 				toolBar.setRedraw(true);
 			}
+			
+			int newCount= toolBar.getItemCount();
+			relayout(toolBar, oldCount, newCount);
 		}
+
 	}
 	
 //	if (DEBUG) {
