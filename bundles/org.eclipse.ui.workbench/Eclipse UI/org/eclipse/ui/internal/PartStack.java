@@ -229,9 +229,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     				Assert.isTrue(getActive() == StackPresentation.AS_ACTIVE_FOCUS);
     			}
     		}
-    	} else {
-    		// Ensure that we have the inactive appearance if we don't have any children
-    		Assert.isTrue(getActive() == StackPresentation.AS_INACTIVE);
     	}
     }
     
@@ -693,9 +690,12 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
             child.setContainer(null);
         }
         
-        if (child == current) {
-        	updateContainerVisibleTab();
-        }
+        //TODO: Temporarily rolled back a fix -- we should only update the selection when the *selected*
+        // part is removed, not all parts. However, it seems that this is covering up another selection
+        // bug, so the following is commented out temporarily while the real problem can be investigated.
+        //if (child == current) {
+        updateContainerVisibleTab();
+        //}
     }
 
     /**
