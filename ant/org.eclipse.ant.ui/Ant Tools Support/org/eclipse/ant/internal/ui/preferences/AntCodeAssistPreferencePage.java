@@ -134,7 +134,7 @@ public class AntCodeAssistPreferencePage extends AbstractAntEditorPreferencePage
 		stylesComposite.setFont(font);
 		
 		label= new Label(stylesComposite, SWT.LEFT);
-		label.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.Col&or__6")); //$NON-NLS-1$
+		label.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.6")); //$NON-NLS-1$
 		label.setFont(font);
 		gd= new GridData();
 		gd.horizontalAlignment= GridData.BEGINNING;
