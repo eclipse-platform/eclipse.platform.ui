@@ -54,11 +54,6 @@ import org.xml.sax.SAXException;
 
 public class LaunchConfigurationManager implements ILaunchListener {
 	/**
-	 * The singleton instance of the launch configuration manager
-	 */
-	private static LaunchConfigurationManager fgLaunchConfigurationManager;
-	
-	/**
 	 * Launch group extensions, keyed by launch group identifier.
 	 */
 	protected Map fLaunchGroups;
