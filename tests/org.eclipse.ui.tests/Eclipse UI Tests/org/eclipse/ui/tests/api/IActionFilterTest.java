@@ -9,12 +9,22 @@ import org.eclipse.ui.junit.util.*;
  * 
  * From Javadoc: "An IActionFilter returns whether the specific attribute
  * 		matches the state of the target object."
+ * 
+ * Setup: The plugin.xml contains a number of popup menu action 
+ * targetted to ListElements 
+ * 
+ * 		redAction -> (name = red)
+ * 		blueAction -> (name = blue)
+ * 		trueAction -> (flag = true)
+ * 		falseAction -> (flag = false)
+ * 		redTrueAction -> (name = red) (flag = true)
  */
 public class IActionFilterTest extends UITestCase {
 
 	protected IWorkbenchWindow fWindow;
 	protected IWorkbenchPage fPage;
-	protected String VIEW_ID = "org.eclipse.ui.tests.api.ActionFilterTestView";
+	protected String STATIC_MENU_VIEW_ID = "org.eclipse.ui.tests.api.IActionFilterTest1";
+	protected String DYNAMIC_MENU_VIEW_ID = "org.eclipse.ui.tests.api.IActionFilterTest2";
 		
 	public IActionFilterTest(String testName) {
 		super(testName);
@@ -25,22 +35,55 @@ public class IActionFilterTest extends UITestCase {
 		fPage = fWindow.getActivePage();
 	}
 	
+	public void testStaticLifecycle() throws Throwable {
+		testLifecycle(STATIC_MENU_VIEW_ID);
+	}
+	
+	public void testDynamicLifecycle() throws Throwable {
+		testLifecycle(DYNAMIC_MENU_VIEW_ID);
+	}
+
+	/**
+	 * Select a list element, popup the menu, and verify that the 
+	 * action filter is called.
+	 * 
+	 * See Setup above.
+	 */	
+	private void testLifecycle(String viewId) throws Throwable {
+		// Create a list view.  
+		ListView view = (ListView)fPage.showView(viewId);
+
+		// Create the test objects.
+		ListElement red = new ListElement("red");
+		view.addElement(red);
+		view.selectElement(red);
+		
+		// Get action filter.
+		ListElementActionFilter	filter = ListElementActionFilter.getSingleton();
+
+		// Open menu.  Verify that action filter is called.			
+		MenuManager menuMgr = view.getMenuManager();
+		ActionUtil.fireAboutToShow(menuMgr);
+		assertTrue(filter.getCalled());
+	}
+	
+	public void testDynamicMenuContribution() throws Throwable {
+		testMenu(DYNAMIC_MENU_VIEW_ID);
+	}
+	
+	public void testStaticMenuContribution() throws Throwable {
+		testMenu(STATIC_MENU_VIEW_ID);
+	}
+	
 	/**
 	 * Select a ListElement, popup a menu and verify that the 
 	 * ListElementActionFilter.testAttribute method is invoked.  
 	 * Then verify that the correct actions are added to the
 	 * popup menu.
 	 * 
-	 * Setup: The plugin.xml contains a number of popup menu action 
-	 * targetted to ListElements 
-	 * 
-	 * redAction -> (name = red)
-	 * blueAction -> (name = blue)
-	 * trueAction -> (flag = true)
-	 * falseAction -> (flag = false)
-	 * redTrueAction -> (name = red) (flag = true)
+	 * See Setup above.
 	 */
-	public void testAttribute() throws Throwable {
+	private void testMenu(String viewId) throws Throwable {
 		// Create the test objects.
 		ListElement red = new ListElement("red");
 		ListElement blue = new ListElement("blue");
@@ -48,7 +91,7 @@ public class IActionFilterTest extends UITestCase {
 		ListElement redTrue = new ListElement("red", true);
 		
 		// Create a list view.  
-		ListView view = (ListView)fPage.showView(VIEW_ID);
+		ListView view = (ListView)fPage.showView(viewId);
 		MenuManager menuMgr = view.getMenuManager();
 		view.addElement(red);
 		view.addElement(blue);
@@ -67,6 +110,7 @@ public class IActionFilterTest extends UITestCase {
 		assertNull(ActionUtil.getActionWithLabel(menuMgr, "trueAction"));
 		assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "falseAction"));
 		assertNull(ActionUtil.getActionWithLabel(menuMgr, "redTrueAction"));
+		view.verifyActions(this, menuMgr);
 		
 		// Select blue, verify popup.
 		filter.clearCalled();
@@ -78,6 +122,7 @@ public class IActionFilterTest extends UITestCase {
 		assertNull(ActionUtil.getActionWithLabel(menuMgr, "trueAction"));
 		assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "falseAction"));
 		assertNull(ActionUtil.getActionWithLabel(menuMgr, "redTrueAction"));
+		view.verifyActions(this, menuMgr);
 		
 		// Select green, verify popup.
 		filter.clearCalled();
@@ -89,6 +134,7 @@ public class IActionFilterTest extends UITestCase {
 		assertNull(ActionUtil.getActionWithLabel(menuMgr, "trueAction"));
 		assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "falseAction"));
 		assertNull(ActionUtil.getActionWithLabel(menuMgr, "redTrueAction"));
+		view.verifyActions(this, menuMgr);
 		
 		// Select redTrue, verify popup.
 		filter.clearCalled();
@@ -100,5 +146,18 @@ public class IActionFilterTest extends UITestCase {
 		assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "trueAction"));
 		assertNull(ActionUtil.getActionWithLabel(menuMgr, "falseAction"));
 		assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "redTrueAction"));
+		view.verifyActions(this, menuMgr);
+
+		// Select nothing, verify popup.
+		filter.clearCalled();
+		view.selectElement(null);
+		ActionUtil.fireAboutToShow(menuMgr);
+		assertTrue(!filter.getCalled());
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "redAction"));
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "blueAction"));
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "trueAction"));
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "falseAction"));
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "redTrueAction"));
+		view.verifyActions(this, menuMgr);
  	}	
 }

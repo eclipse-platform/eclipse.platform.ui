@@ -46,7 +46,7 @@ private List computeCombinedOrder(Class inputClass) {
  * Contributes submenus and/or actions applicable to the selection in the
  * provided viewer into the provided popup menu.
  */
-public boolean contributeObjectActions(IWorkbenchPart part, MenuManager popupMenu, 
+public boolean contributeObjectActions(IWorkbenchPart part, IMenuManager popupMenu, 
 	ISelectionProvider selProv) 
 {
 	// Get a structured selection.	

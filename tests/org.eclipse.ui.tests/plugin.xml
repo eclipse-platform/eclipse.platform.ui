@@ -57,10 +57,17 @@
        icon="icons\view.gif"
 	   class="org.eclipse.ui.tests.api.MockViewPart"/>
 	<view
-       id="org.eclipse.ui.tests.api.ActionFilterTestView"
-	   name="Action Filter Test View"
+       id="org.eclipse.ui.tests.api.IActionFilterTest1"
+	   name="Action Filter Test View 1"
        icon="icons\view.gif"
-	   class="org.eclipse.ui.tests.api.ListView"/>
+	   class="org.eclipse.ui.tests.api.ListView"
+	   menuType="static"/>
+	<view
+       id="org.eclipse.ui.tests.api.IActionFilterTest2"
+	   name="Action Filter Test View 2"
+       icon="icons\view.gif"
+	   class="org.eclipse.ui.tests.api.ListView"
+	   menuType="dynamic"/>
 	<view
        id="org.eclipse.ui.tests.propertysheet.SelectionProviderView"
 	   name="Selection Provider Test View"

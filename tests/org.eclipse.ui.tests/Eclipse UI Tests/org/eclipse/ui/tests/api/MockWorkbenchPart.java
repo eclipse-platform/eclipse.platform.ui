@@ -18,6 +18,7 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	private IWorkbenchPartSite site;
 	private String title;
 	private MockSelectionProvider selectionProvider;
+	private IConfigurationElement config;
 	
 	public MockWorkbenchPart() {		
 		callTrace = new CallHistory(this);
@@ -34,9 +35,14 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	}
 	
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
+		this.config = config;
 		title = (String)config.getAttribute("name");
 	}
-	
+
+	public IConfigurationElement getConfig() {
+		return config;
+	}
+		
 	public void setSite(IWorkbenchPartSite site) {
 		this.site = site;
 		site.setSelectionProvider(selectionProvider);
