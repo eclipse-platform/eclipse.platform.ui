@@ -23,11 +23,9 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
-
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.PlatformUI;
@@ -90,6 +88,25 @@ public class WorkbenchActivityHelper {
         WorkbenchPlugin.getPluginWorkspace().addResourceChangeListener(listener);
         loadEnabledStates();
         
+        // TODO start enables all activities by default unless command line parameter -activities is specified 
+        
+        Workbench workbench = (Workbench) PlatformUI.getWorkbench();
+        String[] commandLineArgs = workbench.getCommandLineArgs();
+        boolean activities = false;
+        
+		for (int i = 0; i < commandLineArgs.length; i++)
+			if (commandLineArgs[i].equalsIgnoreCase("-activities")) { //$NON-NLS-1$
+				activities = true;
+				break;
+			}  
+        
+        if (!activities) {
+        	IActivityManager activityManager = workbench.getActivityManager();
+			activityManager.setEnabledActivityIds(activityManager.getDefinedActivityIds());
+        }
+        
+		// TODO end enables all activities by default unless command line parameter -activities is specified 
+        	
         createPreferenceMappings();
         createNewWizardMappings();
         createPerspectiveMappings();
