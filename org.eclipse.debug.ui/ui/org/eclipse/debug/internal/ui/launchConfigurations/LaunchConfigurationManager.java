@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -23,12 +22,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -53,8 +50,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -155,17 +152,16 @@ public class LaunchConfigurationManager implements ILaunchListener {
 		}
 
 		List filteredConfigs= new ArrayList();
-		IActivityManager activityManager= activitySupport.getActivityManager();
 		for (int i = 0; i < configurations.length; i++) {
 			ILaunchConfiguration configuration= configurations[i];
 			ILaunchConfigurationType type= null;
 			try {
 				type= configuration.getType();
+				LaunchConfigurationTypeContribution contribution = new LaunchConfigurationTypeContribution(type);				
+				if (!WorkbenchActivityHelper.filterItem(contribution))
+					filteredConfigs.add(configuration);
 			} catch (CoreException e) {
 				DebugUIPlugin.log(e.getStatus());
-			}
-			if (type != null && activityManager.getIdentifier(type.getIdentifier()).isEnabled()) {
-				filteredConfigs.add(configuration);
 			}
 		}
 		return (ILaunchConfiguration[]) filteredConfigs.toArray(new ILaunchConfiguration[filteredConfigs.size()]);

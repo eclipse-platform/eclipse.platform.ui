@@ -17,6 +17,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 /**
  * Displays launch configurations for a specific launch group
@@ -63,7 +64,7 @@ public class LaunchGroupFilter extends ViewerFilter {
 				}
 			}
 			if (type != null) {
-				return !priv && type.supportsMode(fGroup.getMode()) && equalCategories(type.getCategory(), fGroup.getCategory());
+				return !priv && type.supportsMode(fGroup.getMode()) && equalCategories(type.getCategory(), fGroup.getCategory()) && !WorkbenchActivityHelper.filterItem(new LaunchConfigurationTypeContribution(type));
 			}
 			return false;
 	}

@@ -13,7 +13,6 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
  
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -21,10 +20,11 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 /**
@@ -206,28 +206,5 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 	 */
 	private Shell getShell() {
 		return fShell;
-	}
-	
-	private static class LaunchConfigurationTypeContribution implements IPluginContribution {
-		protected ILaunchConfigurationType type;
-		
-		public LaunchConfigurationTypeContribution(ILaunchConfigurationType type) {
-			this.type= type;
-		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.IPluginContribution#getLocalId()
-		 */
-		public String getLocalId() {
-			return type.getIdentifier();
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.IPluginContribution#getPluginId()
-		 */
-		public String getPluginId() {
-			return type.getPluginIdentifier();
-		}
-		
 	}
 }
