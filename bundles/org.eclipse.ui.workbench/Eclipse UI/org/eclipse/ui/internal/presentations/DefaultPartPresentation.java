@@ -982,6 +982,10 @@ public class DefaultPartPresentation extends StackPresentation {
                     break;
 
                 lruPart = getPartForTab(lruItem);
+                
+                if (lruPart == current) {
+                	break;
+                }
                 // do not update the activation order of the part that will
                 // be removed and added after the new item
                 try {
