@@ -215,9 +215,9 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 						}
 					}
 				}
-				if (showSubTargetsButton.getSelection()) {
+				//if (showSubTargetsButton.getSelection()) {
 					targetNameList.addAll(subTargets);
-				}
+				//}
 			}
 			return targets;
 	}
