@@ -125,7 +125,7 @@
 			fork="true"
 			failonerror="false"
 			classpathref="jasper.classpath"
-			output="${temp.folder}/jsp.jar.bin.log">
+			output="${temp.folder}/WEB-INF/lib/jsp.jar.bin.log">
 			<arg value="-v3" />
 			<arg value="-d" /><arg value="${temp.folder}/jsp.jar.src" />
 			<arg value="-die" />
