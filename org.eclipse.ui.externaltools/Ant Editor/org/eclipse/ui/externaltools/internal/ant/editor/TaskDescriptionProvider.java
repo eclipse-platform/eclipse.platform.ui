@@ -1,5 +1,9 @@
-//
-// TaskDescriptionProvider.java
+/**********************************************************************
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 //
 // Copyright:
 // GEBIT Gesellschaft fuer EDV-Beratung
@@ -12,6 +16,7 @@ package org.eclipse.ui.externaltools.internal.ant.editor;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -37,7 +42,6 @@ import org.xml.sax.SAXException;
  * <P>
  * Check out the documentation for the public methods of this class. 
  * 
- * @version 22.10.2002
  * @author Alf Schiefelbein
  * @author HJ
  */
@@ -62,7 +66,7 @@ public class TaskDescriptionProvider {
     public static String XML_ATTRIBUTE_REQUIRED = "required"; //$NON-NLS-1$
     
 
-    protected HashMap taskNodes = new HashMap();;
+    protected Map taskNodes = new HashMap();
     
 
     /**
