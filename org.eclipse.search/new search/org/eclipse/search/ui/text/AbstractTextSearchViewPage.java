@@ -119,10 +119,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 */
 	protected AbstractTextSearchViewPage(int supportedLayouts) {
 		fSupportedLayouts= supportedLayouts;
-		if (supportsFlatLayout())
-			fCurrentLayout= FLAG_LAYOUT_FLAT;
-		else 
-			fCurrentLayout= FLAG_LAYOUT_TREE;
+		initLayout();
 		
 		fRemoveAllResultsAction= new RemoveAllResultsAction(this);
 		fRemoveResultsAction= new RemoveMatchAction(this);
@@ -140,6 +137,17 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 	
 	
+	/**
+	 * 
+	 */
+	private void initLayout() {
+		if (supportsFlatLayout())
+			fCurrentLayout= FLAG_LAYOUT_FLAT;
+		else 
+			fCurrentLayout= FLAG_LAYOUT_TREE;
+	}
+
+
 	/**
 	 * Constructs this page with the default layout flags.
 	 * @see #AbstractTextSearchViewPage(int)
@@ -742,6 +750,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		if (countBits(fSupportedLayouts) > 1) {
 			try {
 				fCurrentLayout= getSettings().getInt(KEY_LAYOUT);
+				// workaround because the saved value may be 0
+				if (fCurrentLayout == 0)
+					initLayout();
 			} catch (NumberFormatException e) {
 				// ignore, signals no value stored.
 			}
@@ -749,6 +760,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 				Integer layout= memento.getInteger(KEY_LAYOUT);
 				if (layout != null) {
 					fCurrentLayout= layout.intValue();
+					// workaround because the saved value may be 0
+					if (fCurrentLayout == 0)
+						initLayout();
 				} 
 			}
 		}
