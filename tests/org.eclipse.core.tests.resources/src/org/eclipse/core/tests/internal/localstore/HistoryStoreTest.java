@@ -31,6 +31,10 @@ import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 public class HistoryStoreTest extends EclipseWorkspaceTest {
 
 	class VerificationFailedException extends Exception {
+		/**
+		 * All serializable objects should have a stable serialVersionUID
+		 */
+		private static final long serialVersionUID = 1L;
 		VerificationFailedException(String message) {
 			super(message);
 		}
