@@ -35,13 +35,12 @@
 		<mkdir dir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
 		<copy file="${build.result.folder}/WEB-INF/lib/webapp.jar" todir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
 		<copy todir="${destination.temp.folder}/${full.name}">
-			<fileset dir="${basedir}" includes="images/,infocenter/,ns4/,WEB-INF/,*.css,*.html,*.js,*.jsp,plugin.properties,plugin.xml,webapp.properties" excludes="WEB-INF/classes/"/>
+			<fileset dir="${basedir}" includes="images/,ns4/,WEB-INF/,*.css,*.html,*.js,*.jsp,plugin.properties,plugin.xml,webapp.properties" excludes="WEB-INF/classes/"/>
 		</copy>
 		<!-- custom addition begin -->
 		<copy file="${basedir}/web.xml" todir="${destination.temp.folder}/${full.name}/WEB-INF" overwrite="true"/>
 		<copy file="${basedir}/jsp.jar" todir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
-		<mkdir dir="${destination.temp.folder}/${full.name}/infocenter"/>
-		<copy file="${build.result.folder}/infocenter/eclipseurl.jar" todir="${destination.temp.folder}/${full.name}/infocenter"/>
+		<copy file="${build.result.folder}/eclipseurl.jar" todir="${destination.temp.folder}/${full.name}"/>
 		<!-- custom end -->
 	</target>
 
@@ -68,7 +67,7 @@
 		<jar jarfile="${build.result.folder}/WEB-INF/lib/webapp.jar" basedir="${temp.folder}/WEB-INF/lib/webapp.jar.bin"/>
 		-->
 		<jar jarfile="${build.result.folder}/WEB-INF/lib/webapp.jar" basedir="${temp.folder}/WEB-INF/lib/webapp.jar.bin" excludes="org/eclipse/help/internal/proxy/**"/>
-		<jar jarfile="${build.result.folder}/infocenter/eclipseurl.jar" basedir="${temp.folder}/WEB-INF/lib/webapp.jar.bin" includes="org/eclipse/help/internal/proxy/**"/>
+		<jar jarfile="${build.result.folder}/eclipseurl.jar" basedir="${temp.folder}/WEB-INF/lib/webapp.jar.bin" includes="org/eclipse/help/internal/proxy/**"/>
 		<!-- custom end -->
 		<delete dir="${temp.folder}/WEB-INF/lib/webapp.jar.bin"/>
 	</target>
