@@ -170,7 +170,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			return;
 		}
 		if (element instanceof IThread) {
-			doHandleSuspendThreadEvent((IThread)element, event);
+			doHandleSuspendThreadEvent((IThread)element, event, wasTimedOut);
 			return;
 		}
 		refresh(element);
@@ -189,7 +189,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	/**
 	 * Updates the given thread for the given suspend event.
 	 */
-	protected void doHandleSuspendThreadEvent(IThread thread, DebugEvent event) {
+	protected void doHandleSuspendThreadEvent(IThread thread, DebugEvent event, boolean wasTimedOut) {
 		// if the thread has already resumed, do nothing
 		if (!thread.isSuspended()) {
 			return;
@@ -198,15 +198,23 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		// do not update source selection for evaluation events
 		boolean evaluationEvent = event.isEvaluation();
 		
-		// if the top frame is the same, only update labels, and re-select
+		// if the top frame is the same, only update labels and images, and re-select
 		// the frame to display source
 		try {
 			IStackFrame frame = thread.getTopStackFrame();
 			if (frame != null && frame.equals(fLastStackFrame)) {
-				getLaunchViewer().update(new Object[]{thread, frame}, new String[] {IBasicPropertyConstants.P_IMAGE, IBasicPropertyConstants.P_TEXT});
+				Object[] objectsToUpdate= null;
+				if (wasTimedOut) {
+					getLaunchViewer().updateStackFrameIcons(thread);
+					objectsToUpdate= new Object[]{thread};
+				} else {
+					objectsToUpdate= new Object[]{thread, frame};
+				}
+				getLaunchViewer().update(objectsToUpdate, new String[] {IBasicPropertyConstants.P_IMAGE, IBasicPropertyConstants.P_TEXT});
 				if (!evaluationEvent) {
 					getLaunchViewer().setSelection(new StructuredSelection(frame));
 				}
+				
 				return;
 			}
 		} catch (DebugException e) {
