@@ -285,7 +285,8 @@ public interface IPreferencesService {
 	 * @param output the stream to write to
 	 * @param excludesList a list of path prefixes to exclude from the export
 	 * @return a status object describing success or detailing failure reasons
-	 * @exception CoreException if there was a problem exporting the preferences
+	 * @throws CoreException if there was a problem exporting the preferences
+	 * @throws IllegalArgumentException if the node or stream is <code>null</code>
 	 * @see #importPreferences(java.io.OutputStream)
 	 * @see #readPreferences(InputStream)
 	 */
@@ -293,8 +294,8 @@ public interface IPreferencesService {
 
 	/**
 	 * Loads preferences from the given file and stores them in the preferences store.
-	 * Existing values are over-ridden by those from the stream. The stream is closed
-	 * upon return from this method.
+	 * Existing values are over-ridden by those from the stream. The stream must not be
+	 * <code>null</code> and is closed upon return from this method.
 	 * <p>
 	 * This file must have been written by the <code>exportPreferences</code> 
 	 * method.
@@ -304,7 +305,8 @@ public interface IPreferencesService {
 	 * </p>
 	 * @param input the stream to load the preferences from
 	 * @return a status object describing success or detailing failure reasons
-	 * @exception CoreException if there are problems importing the preferences
+	 * @throws CoreException if there are problems importing the preferences
+	 * @throws IllegalArgumentException if the stream is <code>null</code>
 	 * @see exportPreferences(org.eclipse.core.runtime.preferences.IEclipsePreferences, java.io.OutputStream, java.lang.String[])
 	 */
 	public IStatus importPreferences(InputStream input) throws CoreException;

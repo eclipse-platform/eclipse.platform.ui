@@ -394,6 +394,8 @@ public class PreferencesService implements IPreferencesService {
 	 * @see org.eclipse.core.runtime.preferences.IPreferencesService#exportPreferences(org.eclipse.core.runtime.preferences.IEclipsePreferences, java.io.OutputStream, java.lang.String[])
 	 */
 	public IStatus exportPreferences(IEclipsePreferences node, OutputStream output, String[] excludesList) throws CoreException {
+		if (node == null || output == null)
+			throw new IllegalArgumentException();
 		Properties properties = null;
 		if (excludesList == null)
 			excludesList = new String[0];
