@@ -965,10 +965,10 @@ public class ConfigurationView
 					installOptFeatureAction.setFeature(mf);
 					uninstallFeatureAction.setEnabled(false);
 				} else {
-					uninstallFeatureAction.setEnabled(
-						enable && !adapter.isConfigured());
-					uninstallFeatureAction.setFeature(adapter);
 					installOptFeatureAction.setEnabled(false);
+					uninstallFeatureAction.setFeature(adapter);
+					uninstallFeatureAction.setEnabled(
+						enable && uninstallFeatureAction.canUninstall());
 				}
 			} catch (CoreException ex) {
 				UpdateUI.logException(ex);

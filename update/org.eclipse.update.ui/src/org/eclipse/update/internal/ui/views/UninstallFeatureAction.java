@@ -15,6 +15,7 @@ import java.lang.reflect.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
@@ -29,7 +30,7 @@ public class UninstallFeatureAction extends Action {
 
 	public void run() {
 		try {
-			if (adapter == null || !confirm(adapter.isConfigured()))
+			if (adapter == null || !confirm())
 				return;
 
 			IOperation uninstallOperation =
@@ -56,7 +57,7 @@ public class UninstallFeatureAction extends Action {
 		}
 	}
 
-	private boolean confirm(boolean isConfigured) {
+	private boolean confirm() {
 		return MessageDialog.openConfirm(UpdateUI.getActiveWorkbenchShell(), UpdateUI.getString("FeatureUninstallAction.dialogTitle"), //$NON-NLS-1$
 		UpdateUI.getString("FeatureUninstallAction.uninstallQuestion")); //$NON-NLS-1$
 	}
@@ -66,4 +67,20 @@ public class UninstallFeatureAction extends Action {
 		setText(UpdateUI.getString("FeatureUninstallAction.uninstall")); //$NON-NLS-1$
 	}
 
+	public boolean canUninstall() {
+		if (adapter == null)
+			return false;
+		
+		if (adapter.isConfigured())
+			return false;
+			
+		try {
+			if (InstallRegistry.getInstance().get("feature_"+adapter.getFeature(null).getVersionedIdentifier()) == null)
+				return false;
+		} catch (CoreException e) {
+			return false;
+		}
+				
+		return true;	
+	}
 }

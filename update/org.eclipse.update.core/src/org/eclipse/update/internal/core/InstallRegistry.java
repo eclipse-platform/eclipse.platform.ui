@@ -103,7 +103,8 @@ public class InstallRegistry extends Properties {
 	/**
 	 * Registers an installed feature or plugin so it can be uninstalled later.
 	 * @param name: For feature this is feature_<id>_<version> and for plugins
-	 * it is plugin_<id>_<version>. Eg: feature_org.eclipse.platform_3.0.0
+	 * it is plugin_<id>_<version>. Normally, getVersionedIdentifier() will
+	 * return <id>_<version>. Eg: feature_org.eclipse.platform_3.0.0
 	 */
 	public static synchronized void register(String name) {
 		if (InstallRegistry.getInstance().get(name) == null) {
