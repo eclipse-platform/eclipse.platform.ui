@@ -11,9 +11,15 @@
 package org.eclipse.debug.internal.core;
 
  
+import java.io.IOException;
+
 import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
-import java.io.IOException;
+
+/**
+ * Standard implementation of a streams proxy for s 
+ * StreamsProxy
+ */
 
 public class StreamsProxy implements IStreamsProxy {
 	/**
@@ -35,9 +41,9 @@ public class StreamsProxy implements IStreamsProxy {
 	private boolean fClosed= false;
 	/**
 	 * Creates a <code>StreamsProxy</code> on the streams
-	 * of the given <code>IProcess</code>.
+	 * of the given system process.
 	 */
-	public StreamsProxy(RuntimeProcess process) {
+	public StreamsProxy(Process process) {
 		if (process == null) {
 			return;
 		}
@@ -55,7 +61,7 @@ public class StreamsProxy implements IStreamsProxy {
 	 * underlying streams after all remaining data
 	 * in the streams is read.
 	 */
-	protected void close() {
+	public void close() {
 		if (!fClosed) {
 			fClosed= true;
 			fOutputMonitor.close();
@@ -70,7 +76,7 @@ public class StreamsProxy implements IStreamsProxy {
 	 * underlying streams immediately.
 	 * Data remaining in the streams is lost.
 	 */	
-	protected void kill() {
+	public void kill() {
 		fClosed= true;
 		fOutputMonitor.kill();
 		fErrorMonitor.kill();

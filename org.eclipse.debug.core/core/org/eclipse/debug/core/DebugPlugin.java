@@ -32,13 +32,13 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.RuntimeProcess;
 import org.eclipse.debug.core.variables.ILaunchVariableManager;
 import org.eclipse.debug.internal.core.BreakpointManager;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.debug.internal.core.ExpressionManager;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.core.ListenerList;
-import org.eclipse.debug.internal.core.RuntimeProcess;
 import org.eclipse.debug.internal.core.variables.LaunchVariableManager;
 
 /**
