@@ -33,6 +33,7 @@ public class CompatibleTestSetup extends CVSTestSetup {
 	 */
 	public void setUp() throws CVSException {
 		CVSProviderPlugin.getPlugin().setPruneEmptyDirectories(false);
+		CVSProviderPlugin.getPlugin().setFetchAbsentDirectories(false);
 		if ((referenceClientRepository != null) && (eclipseClientRepository != null))
 			return;
 		referenceClientRepository = setupRepository(REFERENCE_CLIENT_REPOSITORY);
@@ -41,5 +42,6 @@ public class CompatibleTestSetup extends CVSTestSetup {
 	
 	public void tearDown() throws CVSException {
 		CVSProviderPlugin.getPlugin().setPruneEmptyDirectories(true);
+		CVSProviderPlugin.getPlugin().setFetchAbsentDirectories(true);
 	}
 }
