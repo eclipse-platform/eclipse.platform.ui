@@ -17,7 +17,6 @@ import org.eclipse.ant.core.*;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -55,10 +54,6 @@ public class AntPreferencePage extends PreferencePage implements IWorkbenchPrefe
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.ANT_PREFERENCE_PAGE);
 
 		TabFolder folder = new TabFolder(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		folder.setLayout(layout);
 		folder.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		classpathPage = new AntClasspathPage(this);
