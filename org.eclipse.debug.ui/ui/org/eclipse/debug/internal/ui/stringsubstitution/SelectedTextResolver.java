@@ -28,7 +28,7 @@ public class SelectedTextResolver implements IDynamicVariableResolver {
 	public String resolveValue(IDynamicVariable variable, String argument) {
 		ITextSelection selection = selectedResourceManager.getSelectedText();
 		String selectedText = argument;
-		if (selection != null && !selection.getText().equals("")) { //$NON-NLS-1$
+		if (selection != null && selection.getLength() > 0) {
 			selectedText = selection.getText();
 		}
 		return selectedText;
