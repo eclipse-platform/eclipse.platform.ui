@@ -52,6 +52,10 @@
 
  	<context id="sharing_new_repository_page_context">
    		<description>Enter the information that identifies the repository you would like to share with and the user and connection information required to access this repository.</description>
+   		<topic label="New Repository Location Wizard" href="reference/ref-40.htm"/>
+		<topic label="CVS Repositories" href="concepts/concepts-27c.htm"/>
+		<topic label="Creating a CVS repository location" href="tasks/tasks-92.htm"/>
+	   	<topic label="Discarding a CVS repository location" href="tasks/tasks-94.htm"/>
    	</context>
 
  	<context id="sharing_module_page_context">
@@ -138,6 +142,7 @@
 
  	<context id="team_set_keyword_mode_action_context">
    		<description>Sets the keyword substitution mode of the selected resources.</description>
+   		<topic label="Setting the content type of a file extension" href="tasks/tasks-team-1.htm"/>
    	</context>
 
  	<context id="team_disconnect_action_context">
@@ -338,6 +343,7 @@
    	</context>
    	<context  id="resource_history_view_context" >
       <description>This view shows the revision history of a file under CVS control.</description>
+      <topic label="Viewing a File's Revision History" href="tasks/tasks-119.htm"/>
    	</context>
    	<context  id="catchup_release_viewer_context" >
       <description>This view shows the incoming, outgoing and conflicting changes.</description>
