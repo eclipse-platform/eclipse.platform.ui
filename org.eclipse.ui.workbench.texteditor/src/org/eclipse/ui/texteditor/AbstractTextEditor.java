@@ -1659,10 +1659,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fCursorListener= new ICursorListener() {
 				
 				public void keyPressed(KeyEvent e) {
+					handleCursorPositionChanged();
 				}
 				
 				public void keyReleased(KeyEvent e) {
-					handleCursorPositionChanged();
 				}
 				
 				public void mouseDoubleClick(MouseEvent e) {
