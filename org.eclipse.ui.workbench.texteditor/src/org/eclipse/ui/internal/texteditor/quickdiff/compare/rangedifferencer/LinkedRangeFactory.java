@@ -19,9 +19,22 @@ public class LinkedRangeFactory {
 	
 	/**
 	 * Exception that is thrown after the minimal allowed free memory is reached.
+	 * <p>
+	 * This class is not intended to be serialized.
+	 * </p>
+	 * 
 	 */
 	public static class LowMemoryException extends Exception {
 		
+		/**
+		 * Serial version UID for this class.
+		 * <p>
+		 * Note: This class is not intended to be serialized.
+		 * </p>
+		 * @since 3.1
+		 */
+		private static final long serialVersionUID= 3977582493823939894L;
+
 		/**
 		 * Initialize without detail message.
 		 */

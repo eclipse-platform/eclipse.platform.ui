@@ -17,10 +17,22 @@ package org.eclipse.jface.text.templates;
  * <p>
  * Clients may instantiate this class.
  * </p>
+ * <p>
+ * This class is not intended to be serialized.
+ * </p>
  * 
  * @since 3.0
  */
 public class TemplateException extends Exception {
+
+	/**
+	 * Serial version UID for this class.
+	 * <p>
+	 * Note: This class is not intended to be serialized.
+	 * </p>
+	 * @since 3.1
+	 */
+	private static final long serialVersionUID= 3906362710416699442L;
 
 	/**
 	 * Creates a new template exception.

@@ -12,12 +12,24 @@ package org.eclipse.jface.text;
 
 /**
  * Represents the attempt to refer to a non-existing document partitioning.
+ * <p>
+ * This class is not intended to be serialized.
+ * </p>
  *
  * @see org.eclipse.jface.text.IDocument
  * @see org.eclipse.jface.text.IDocumentExtension3
  * @since 3.0
  */
 public class BadPartitioningException extends Exception {
+
+	/**
+	 * Serial version UID for this class.
+	 * <p>
+	 * Note: This class is not intended to be serialized.
+	 * </p>
+	 * @since 3.1
+	 */
+	private static final long serialVersionUID= 3256439205327876408L;
 
 	/**
 	 * Creates a new bad partitioning exception.

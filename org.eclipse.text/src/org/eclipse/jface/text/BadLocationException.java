@@ -15,9 +15,21 @@ package org.eclipse.jface.text;
 /**
  * Indicates the attempt to access a non-existing position. The attempt has been
  * performed on a text store such as a document or string.
+ * <p>
+ * This class is not intended to be serialized.
+ * </p>
  */
 public class BadLocationException extends Exception {
 	
+	/**
+	 * Serial version UID for this class.
+	 * <p>
+	 * Note: This class is not intended to be serialized.
+	 * </p>
+	 * @since 3.1
+	 */
+	private static final long serialVersionUID= 3257281452776370224L;
+
 	/**
 	 * Creates a new bad location exception.
 	 */

@@ -17,10 +17,23 @@ import org.eclipse.core.runtime.IStatus;
 
 /**
  * Formerly thrown by <code>AbstractDocumentProvider.doValidateState(Object, Object)</code>.
+ * <p>
+ * This class is not intended to be serialized.
+ * </p>
+ * 
  * @deprecated
  * @since 2.1
  */
 public class ValidateStateException extends CoreException {
+
+	/**
+	 * Serial version UID for this class.
+	 * <p>
+	 * Note: This class is not intended to be serialized.
+	 * </p>
+	 * @since 3.1
+	 */
+	private static final long serialVersionUID= 3834309544406233910L;
 
 	/*
 	 * @see CoreException#CoreException(org.eclipse.core.runtime.IStatus)

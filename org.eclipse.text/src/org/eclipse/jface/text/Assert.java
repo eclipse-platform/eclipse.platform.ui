@@ -38,9 +38,21 @@ public final class Assert {
 		 * or otherwise depend on assertion failures are susceptible to unexpected
 		 * breakage when assertions in the code are added or removed.
 		 * </p>
+		 * <p>
+		 * This class is not intended to be serialized.
+		 * </p>
 		 */
 		private static class AssertionFailedException extends RuntimeException {
 	
+			/**
+			 * Serial version UID for this class.
+			 * <p>
+			 * Note: This class is not intended to be serialized.
+			 * </p>
+			 * @since 3.1
+			 */
+			private static final long serialVersionUID= 3689918374733886002L;
+
 			/**
 			 * Constructs a new exception.
 			 */
