@@ -41,9 +41,16 @@ public class ScopePart {
 
 	// Settings store
 	private static final String DIALOG_SETTINGS_KEY= "SearchDialog.ScopePart"; //$NON-NLS-1$
+	private static final String STORE_SCOPE= "scope"; //$NON-NLS-1$
 	private static final String STORE_LRU_WORKING_SET_NAME= "lastUsedWorkingSetName"; //$NON-NLS-1$
 	private static final String STORE_LRU_WORKING_SET_NAMES= "lastUsedWorkingSetNames"; //$NON-NLS-1$
 	private static IDialogSettings fgSettingsStore;
+
+	static  {
+		fgSettingsStore= SearchPlugin.getDefault().getDialogSettings().getSection(DIALOG_SETTINGS_KEY);
+		if (fgSettingsStore == null)
+			fgSettingsStore= SearchPlugin.getDefault().getDialogSettings().addNewSection(DIALOG_SETTINGS_KEY);
+	}
 
 	private Group fPart;
 
@@ -53,7 +60,7 @@ public class ScopePart {
 	private Button fUseWorkingSet;
 
 
-	private int			fScope;
+	private int				fScope;
 	private Text			fWorkingSetText;
 	private IWorkingSet[]	fWorkingSets;
 
@@ -73,8 +80,20 @@ public class ScopePart {
 	 * The part is not yet created.
 	 */
 	public ScopePart(ISearchPageContainer searchPageContainer) {
-		this(WORKSPACE_SCOPE);
+		this(getStoredScope());
 		fSearchPageContainer= searchPageContainer;
+	}
+
+	private static int getStoredScope() {
+		int scope;
+		try {
+			scope= fgSettingsStore.getInt(STORE_SCOPE);
+		} catch (NumberFormatException ex) {
+			scope= WORKSPACE_SCOPE;
+		}
+		if (scope != WORKING_SET_SCOPE && scope != SELECTION_SCOPE && scope != WORKSPACE_SCOPE)
+			scope= WORKSPACE_SCOPE;
+		return scope;
 	}
 
 	/**
@@ -91,9 +110,6 @@ public class ScopePart {
 	}
 
 	private void restoreState() {
-		fgSettingsStore= SearchPlugin.getDefault().getDialogSettings().getSection(DIALOG_SETTINGS_KEY);
-		if (fgSettingsStore == null)
-			fgSettingsStore= SearchPlugin.getDefault().getDialogSettings().addNewSection(DIALOG_SETTINGS_KEY);
 		String[] lruWorkingSetNames= fgSettingsStore.getArray(STORE_LRU_WORKING_SET_NAMES);
 		if (lruWorkingSetNames != null) {
 			Set existingWorkingSets= new HashSet(lruWorkingSetNames.length);
@@ -172,6 +188,7 @@ public class ScopePart {
 		}
 
 		updateSearchPageContainerActionPerformedEnablement();
+		fgSettingsStore.put(STORE_SCOPE, fScope);
 	}
 
 	private void updateSearchPageContainerActionPerformedEnablement() {
