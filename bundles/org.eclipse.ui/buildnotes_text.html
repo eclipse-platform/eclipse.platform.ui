@@ -14,7 +14,58 @@ Eclipse Platform Build Notes</h1>
 <h1>
 Text Editor Support (including JFace Text)</h1>
 
-<p><br>Eclipse SDK Build 20020402
+<p><br>Eclipse SDK Build 20020409
+<h2>
+Breaking API changes</h2>
+
+<h2>
+Other highlights</h2>
+
+<ul>
+<li>
+Added support for external contribution of ruler actions. I.e. plugins
+can contribute actions to the context menu of an editor's vertical ruler&nbsp;
+by specifying those actions in their plugin.xml file.</li>
+
+<li>
+In the default key binding Ctrl+ArrowUp and Ctrl+ArrowDown are bound to
+scroll a single line without moving the cursor.</li>
+
+<li>
+AnnotationModel is be used from several threads.</li>
+
+<li>
+TextViewer implements ITextViewerExtensions which supports the stacking
+of VerifyKeyListeners. A listener that is prepended to the list of verify
+key listeners can take over the control over all key strokes not bound
+as menu item accelerators.</li>
+
+<li>
+The scheme according to which an editor calls Workspace.validateEdit has
+been reworked.</li>
+
+<li>
+The editor hooks to the Revert action in the File menu.</li>
+
+<li>
+AbstractTextEditor supports property dependent actions similar to selection
+or content dependent actions.</li>
+</ul>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports closed</h2>
+#11215 Editor task creation actions should use TaskPropertiesDialog
+<br># 9761 Line has to be selected from beginning when using the 'Tab'
+<br>#10806 call validateEdit() again before any further changes
+<br>#11480 READ/WRITE not updated on focus change
+<br>#12901 P2 Find/Replace should keep last selection highlighted
+<p>
+<hr WIDTH="100%">
+<br>&nbsp;
+<p>Eclipse SDK Build 20020402
 <h2>
 Breaking API changes</h2>
 
