@@ -80,6 +80,14 @@ public class AntProjectNode extends AntElementNode {
 		if (fNameToDefiningNodeMap == null) {
 			fNameToDefiningNodeMap= new HashMap();
 		}
+		String label= node.getLabel();
+		if (label.equalsIgnoreCase("macrodef") //$NON-NLS-1$
+        		|| label.equalsIgnoreCase("presetdef") //$NON-NLS-1$
+				|| label.equalsIgnoreCase("typedef") //$NON-NLS-1$
+				|| label.equalsIgnoreCase("taskdef")) { //$NON-NLS-1$
+			//only add user defined names
+			return;
+		}
 		fNameToDefiningNodeMap.put(node.getLabel(), node);
 	}
 	
