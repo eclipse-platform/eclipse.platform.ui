@@ -523,7 +523,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 							throw new CVSException(status);
 						}
 					}
-				}, null, monitor);
+				}, null, 0 /* no flags */, monitor);
 			} catch (CoreException e) {
 				throw CVSException.wrapException(e);
 			} finally {
