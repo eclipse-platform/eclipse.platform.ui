@@ -205,7 +205,7 @@ public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 			leftover.removeAll(Arrays.asList(ordered));
 			unordered = (IProject[]) leftover.toArray(new IProject[leftover.size()]);
 			int num = ordered.length + unordered.length;
-			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("events.errors"), null); //$NON-NLS-1$
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.BUILD_FAILED, Policy.bind("events.errors"), null); //$NON-NLS-1$
 			for (int i = 0; i < ordered.length; i++)
 				if (ordered[i].isAccessible())
 					basicBuild(ordered[i], trigger, status, Policy.subMonitorFor(monitor, Policy.totalWork / num));
