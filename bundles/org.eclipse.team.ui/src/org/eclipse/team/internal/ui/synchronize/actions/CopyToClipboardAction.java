@@ -111,8 +111,7 @@ class CopyToClipboardAction extends SelectionListenerAction {
             return false;
 
         if (getSelectedNonResources().size() > 0)
-//            return false;
-            return true;
+            return false;
 
         List selectedResources = getSelectedResources();
         if (selectedResources.size() == 0)

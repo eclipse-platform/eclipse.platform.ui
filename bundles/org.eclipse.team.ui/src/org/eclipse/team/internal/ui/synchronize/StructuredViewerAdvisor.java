@@ -173,14 +173,18 @@ public abstract class StructuredViewerAdvisor implements IAdaptable {
 		
 		final DragSourceListener listener = new DragSourceListener() {
 
-            public void dragStart(DragSourceEvent event) {}
+            public void dragStart(DragSourceEvent event) {
+                final IStructuredSelection selection= (IStructuredSelection)viewer.getSelection();
+                final Object [] array= selection.toArray();
+                event.doit= Utils.getResources(array).length > 0;
+            }
 
             public void dragSetData(DragSourceEvent event) {
                 
                 if (ResourceTransfer.getInstance().isSupportedType(event.dataType)) {
                     final IStructuredSelection selection= (IStructuredSelection)viewer.getSelection();
                     final Object [] array= selection.toArray();
-                    event.data = Utils.getResources(array);
+                    event.data= Utils.getResources(array);
                 }
             }
 

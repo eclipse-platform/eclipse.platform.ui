@@ -20,6 +20,7 @@ import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.actions.ActionContext;
 
 /**
  * General synchronize page actions
@@ -70,13 +71,17 @@ public class DefaultSynchronizePageActions extends SynchronizePageActionGroup {
 	 * @see org.eclipse.team.ui.synchronize.IActionContribution#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
 	public void fillContextMenu(IMenuManager manager) {
-		IContributionItem group = findGroup(manager, ISynchronizePageConfiguration.FILE_GROUP);
-		if (openWithActions != null && group != null) {
-			openWithActions.fillContextMenu(manager, group.getId());
+	    
+        final IContributionItem fileGroup = findGroup(manager, ISynchronizePageConfiguration.FILE_GROUP);
+        
+		if (openWithActions != null && fileGroup != null) {
+			openWithActions.fillContextMenu(manager, fileGroup.getId());
 		}
-		group = findGroup(manager, ISynchronizePageConfiguration.EDIT_GROUP);
-		if (refactorActions != null && group != null) {
-			refactorActions.fillContextMenu(manager, group.getId());
+		
+		final IContributionItem editGroup = findGroup(manager, ISynchronizePageConfiguration.EDIT_GROUP);
+		
+		if (refactorActions != null && editGroup != null) {
+			refactorActions.fillContextMenu(manager, editGroup.getId());
 		}
 	}
 	
@@ -88,4 +93,12 @@ public class DefaultSynchronizePageActions extends SynchronizePageActionGroup {
 		if (openWithActions != null) openWithActions.dispose();
 		super.dispose();
 	}
+	
+	/* (non-Javadoc)
+     * @see org.eclipse.ui.actions.ActionGroup#setContext(org.eclipse.ui.actions.ActionContext)
+     */
+    public void setContext(ActionContext context) {
+        openWithActions.setContext(context);
+        refactorActions.setContext(context);
+    }
 }

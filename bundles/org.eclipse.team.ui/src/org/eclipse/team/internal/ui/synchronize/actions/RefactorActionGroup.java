@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.actions;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -18,6 +17,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
@@ -53,31 +53,26 @@ public class RefactorActionGroup extends ActionGroup {
 
 	public void fillContextMenu(IMenuManager parentMenu, String groupId) {
 
-	    final IStructuredSelection selection = getSelection();
-		
-		if (selection == null) 
-		    return;
-		
+		final MenuManager menu = new MenuManager(Policy.bind("RefactorActionGroup.0")); //$NON-NLS-1$
+
+		final IStructuredSelection selection= getSelection();
 		final boolean anyResourceSelected =	!selection.isEmpty() && allResourcesAreOfType(selection, IResource.PROJECT | IResource.FOLDER | IResource.FILE);
 
-		final MenuManager menu = new MenuManager(Policy.bind("RefactorActionGroup.0")); //$NON-NLS-1$
-		final IStructuredSelection convertedSelection = convertSelection(selection);
-		
- 		if (anyResourceSelected) {
-		    copyAction.selectionChanged(convertedSelection);
-		    menu.add(copyAction);
-			deleteAction.selectionChanged(convertedSelection);
+		if (anyResourceSelected) {
+		    copyAction.selectionChanged(selection);
+			deleteAction.selectionChanged(selection);
+			moveAction.selectionChanged(selection);
+			renameAction.selectionChanged(selection);
+
+			menu.add(copyAction);
 			menu.add(deleteAction);
-			moveAction.selectionChanged(convertedSelection);
 			menu.add(moveAction);
-			renameAction.selectionChanged(convertedSelection);
 			menu.add(renameAction);
 		}
 		parentMenu.appendToGroup(groupId, menu);
 	}
 
- 
-	public void fillActionBars(IActionBars actionBars) {
+ 	public void fillActionBars(IActionBars actionBars) {
     	actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), copyAction);
     	actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(), deleteAction);
     	actionBars.setGlobalActionHandler(ActionFactory.RENAME.getId(), renameAction);
@@ -85,11 +80,11 @@ public class RefactorActionGroup extends ActionGroup {
     }
 
     public void updateActionBars() {
-    	final IStructuredSelection selection = getSelection();
-    	copyAction.selectionChanged(selection);
-    	deleteAction.selectionChanged(selection);
-    	moveAction.selectionChanged(selection);
-    	renameAction.selectionChanged(selection);
+        final IStructuredSelection structuredSelection= getSelection();
+    	copyAction.selectionChanged(structuredSelection);
+    	deleteAction.selectionChanged(structuredSelection);
+    	moveAction.selectionChanged(structuredSelection);
+    	renameAction.selectionChanged(structuredSelection);
     }
 
     protected void makeActions() {
@@ -102,7 +97,7 @@ public class RefactorActionGroup extends ActionGroup {
         renameAction= new RenameResourceAction(shell);
         deleteAction = new DeleteResourceAction(shell) {
             protected List getSelectedResources() {
-                return Arrays.asList(Utils.getResources(getSelection().toArray()));
+                return getSelection().toList();//Arrays.asList(Utils.getResources(getSelection().toArray()));
             }
         };
         
@@ -113,12 +108,13 @@ public class RefactorActionGroup extends ActionGroup {
         deleteAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
     }
     
-    private IStructuredSelection convertSelection(IStructuredSelection selection) {
-		return new StructuredSelection(Utils.getResources(selection.toArray()));
-	}
-
     private IStructuredSelection getSelection() {
-		return (IStructuredSelection)site.getSelectionProvider().getSelection();
+        final ISelection selection= getContext().getSelection();
+
+        if (!(selection instanceof IStructuredSelection)) 
+            return new StructuredSelection();
+
+    	return new StructuredSelection(Utils.getResources(((IStructuredSelection)selection).toArray()));
 	}
 
 	private boolean allResourcesAreOfType(IStructuredSelection selection, int resourceMask) {
