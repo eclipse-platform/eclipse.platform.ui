@@ -19,10 +19,16 @@ import org.eclipse.swt.widgets.Control;
  * <p>
  * Clients call {@link CheatSheetViewerFactory#createCheatSheetView()} to create
  * a cheat sheet viewer instance, and then call the viewer's 
- * <code>createPartControl</code> method to have it create the viewer's controls
- * under the specified SWT composite. The <code>setInput</code> methods are used
- * to set (or clear) the cheat sheet shown in the viewer, either before or after
- * the viewer's controls have been created.
+ * <code>createPartControl</code> method to have it create the viewer's control
+ * under the specified SWT composite. The viewer's control can then be retrieved
+ * using <code>getControl</code> to arrange layout. The <code>setInput</code>
+ * methods are used to set (or clear) the cheat sheet shown in the viewer,
+ * and can be called either before or after the viewer's controls have been
+ * created and laid out.
+ * </p>
+ * <p>
+ * The execution states of open cheat sheets are maintained and persisted
+ * globally using the cheat sheet id as the key.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
@@ -53,7 +59,6 @@ public interface ICheatSheetViewer {
 	 * content, or <code>null</code> if this viewer's controls
 	 * have not yet been created.
 	 */
-	// TODO - is this method needed in API?
 	public Control getControl();
 
 	/**
