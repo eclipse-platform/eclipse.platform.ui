@@ -499,6 +499,9 @@ public class Main {
                 // if the string is a file: URL then *carefully* construct the
                 // URL. Otherwisejust try to build a URL. In either case, if we fail, use
                 // string as something to tack on the end of the base.
+            	
+            	if (string.equals(".")) //Temporary fix to allow . in the eclipse.properties
+            		continue;
                 URL url = null;
                 if (string.startsWith(FILE_SCHEME)) //$NON-NLS-1$
                     url = new File(string.substring(5)).toURL();
