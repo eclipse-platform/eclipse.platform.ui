@@ -77,12 +77,14 @@ public interface IDocumentExtension {
 	 * <code>stopSequentialRewrite</code> has not been called.
 	 * 
 	 * @param normalize <code>true</code> if performed from the start to the end of the document
+	 * @deprecated since 3.1. Use {@link IDocumentExtension4#startRewriteSession(DocumentRewriteSessionType)} instead.
 	 */
 	void startSequentialRewrite(boolean normalize);
 	
 	/**
 	 * Tells the document that the sequential rewrite has been finished. This method
 	 * has only any effect if <code>startSequentialRewrite</code> has been called before.
+	 * @deprecated since 3.1. Use {@link IDocumentExtension4#stopRewriteSession(DocumentRewriteSession)} instead.
 	 */
 	void stopSequentialRewrite();
 }

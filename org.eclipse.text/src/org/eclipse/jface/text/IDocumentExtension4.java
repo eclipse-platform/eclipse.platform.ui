@@ -22,25 +22,37 @@ package org.eclipse.jface.text;
 public interface IDocumentExtension4 {
 	
 	/**
-	 * Tells the document that it is about to be rewritten. That is a sequence
+	 * Tells the document that it is about to be rewritten. That is, a sequence
 	 * of replace operations that form a semantic unit will be performed on this
-	 * document.
+	 * document. A specification of the nature of the operation sequence is
+	 * given in form of the session type.
 	 * <p>
 	 * The document is considered being in rewrite mode as long as
 	 * <code>stopRewriteSession</code> has not been called.
 	 * 
-	 * @param sessionId the session id
+	 * @param sessionType the session type
+	 * @return the started rewrite session
+	 * @throws IllegalStateException in case there is already an active rewrite session
 	 */
-	void startRewriteSession(Object sessionId);
+	DocumentRewriteSession startRewriteSession(DocumentRewriteSessionType sessionType) throws IllegalStateException;
 
 	/**
-	 * Tells the document that the rewrite mode has been finished. This method
-	 * has only any effect if <code>startRewriteSession</code> has been called
-	 * before.
+	 * Tells the document to stop the rewrite session. This method has only any
+	 * effect if <code>startRewriteSession</code> has been called before.
+	 * <p>
+	 * This method does not have any effect if the given session is not the
+	 * active rewrite session.
 	 * 
-	 * @param sessionId the session id
+	 * @param session the session to stop
 	 */
-	void stopRewriteSession(Object sessionId);
+	void stopRewriteSession(DocumentRewriteSession session);
+	
+	/**
+	 * Returns the active rewrite session of this document or <code>null</code>.
+	 * 
+	 * @return the active rewrite session or <code>null</code>
+	 */
+	DocumentRewriteSession getActiveRewriteSession();
 	
 	/**
 	 * Registers the document rewrite session listener with the document. After

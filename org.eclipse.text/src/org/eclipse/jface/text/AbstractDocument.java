@@ -133,6 +133,11 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @since 3.0
 	 */
 	private FindReplaceDocumentAdapter fFindReplaceDocumentAdapter;
+	/**
+	 * The active document rewrite session.
+	 * @since 3.1
+	 */
+	private DocumentRewriteSession fDocumentRewriteSession;
 	/** 
 	 * The registered document rewrite session listeners.
 	 * @since 3.1
@@ -1333,29 +1338,58 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 	
 	/*
-	 * @see org.eclipse.jface.text.IDocumentExtension4#startRewriteSession(java.lang.Object)
-	 * @since 3.1
+	 * @see org.eclipse.jface.text.IDocumentExtension4#getActiveRewriteSession()
 	 */
-	public void startRewriteSession(Object sessionId) {
-		fireRewriteSessionChanged(new DocumentRewriteSessionEvent(this, sessionId, true));
-		ILineTracker tracker= getTracker();
-		if (tracker instanceof ILineTrackerExtension) {
-			ILineTrackerExtension extension= (ILineTrackerExtension) tracker;
-			extension.startRewriteSession(sessionId);
-		}
+	public final DocumentRewriteSession getActiveRewriteSession() {
+		return fDocumentRewriteSession;
 	}
 	
 	/*
-	 * @see org.eclipse.jface.text.IDocumentExtension4#stopRewriteSession(java.lang.Object)
+	 * @see org.eclipse.jface.text.IDocumentExtension4#startRewriteSession(org.eclipse.jface.text.DocumentRewriteSessionType)
 	 * @since 3.1
 	 */
-	public void stopRewriteSession(Object sessionId) {
+	public DocumentRewriteSession startRewriteSession(DocumentRewriteSessionType sessionType) {
+		
+		if (getActiveRewriteSession() != null)
+			throw new IllegalStateException();
+		
+		fDocumentRewriteSession= new DocumentRewriteSession(sessionType);
+		fireRewriteSessionChanged(new DocumentRewriteSessionEvent(this, fDocumentRewriteSession, DocumentRewriteSessionEvent.SESSION_START));
+		
+		if (DocumentRewriteSessionType.SEQUENTIAL == sessionType)
+			startSequentialRewrite(false);
+		else if (DocumentRewriteSessionType.STRICTLY_SEQUENTIAL == sessionType)
+			startSequentialRewrite(true);
+		
 		ILineTracker tracker= getTracker();
 		if (tracker instanceof ILineTrackerExtension) {
 			ILineTrackerExtension extension= (ILineTrackerExtension) tracker;
-			extension.stopRewriteSession(sessionId, get());
+			extension.startRewriteSession(fDocumentRewriteSession);
 		}
-		fireRewriteSessionChanged(new DocumentRewriteSessionEvent(this, sessionId, false));
+
+		return fDocumentRewriteSession;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IDocumentExtension4#stopRewriteSession(org.eclipse.jface.text.DocumentRewriteSession)
+	 * @since 3.1
+	 */
+	public void stopRewriteSession(DocumentRewriteSession session) {
+		if (fDocumentRewriteSession == session) {
+			
+			ILineTracker tracker= getTracker();
+			if (tracker instanceof ILineTrackerExtension) {
+				ILineTrackerExtension extension= (ILineTrackerExtension) tracker;
+				extension.stopRewriteSession(session, get());
+			}
+			
+			DocumentRewriteSessionType sessionType= session.getSessionType();
+			if (DocumentRewriteSessionType.SEQUENTIAL == sessionType || DocumentRewriteSessionType.STRICTLY_SEQUENTIAL == sessionType)
+				stopSequentialRewrite();
+			
+			fDocumentRewriteSession= null;
+			fireRewriteSessionChanged(new DocumentRewriteSessionEvent(this, session, DocumentRewriteSessionEvent.SESSION_STOP));
+		}
 	}
 	
 	/*

@@ -28,25 +28,27 @@ public class DocumentRewriteSessionEvent {
 	
 	/** The changed document */
 	public IDocument fDocument;
-	/** The session id */
-	public Object fSessionId;
+	/** The session */
+	public DocumentRewriteSession fSession;
 	/** The change type */
 	public Object fChangeType;
 	
 	/**
 	 * Creates a new document event.
-	 *
+	 * 
 	 * @param doc the changed document
-	 * @param sessionId the session id
-	 * @param isStartEvent <code>true</code> if this event is a start event, <code>false</code> otherwise
+	 * @param session the session
+	 * @param changeType the change type. This is either
+	 *            {@link DocumentRewriteSessionEvent#SESSION_START} or
+	 *            {@link DocumentRewriteSessionEvent#SESSION_STOP}.
 	 */
-	public DocumentRewriteSessionEvent(IDocument doc, Object sessionId, boolean isStartEvent) {
+	public DocumentRewriteSessionEvent(IDocument doc, DocumentRewriteSession session, Object changeType) {
 		Assert.isNotNull(doc);
-		Assert.isNotNull(sessionId);
+		Assert.isNotNull(session);
 		
 		fDocument= doc;
-		fSessionId= sessionId;
-		fChangeType= isStartEvent ? SESSION_START : SESSION_STOP;
+		fSession= session;
+		fChangeType= changeType;
 	}
 	
 	/**
@@ -59,7 +61,9 @@ public class DocumentRewriteSessionEvent {
 	}
 
 	/**
-	 * Returns the change type of this event. This is {@link #START_STOP}.
+	 * Returns the change type of this event. This is either
+	 * {@link DocumentRewriteSessionEvent#SESSION_START}or
+	 * {@link DocumentRewriteSessionEvent#SESSION_STOP}.
 	 * 
 	 * @return the change type of this event
 	 */
@@ -68,11 +72,11 @@ public class DocumentRewriteSessionEvent {
 	}
 	
 	/**
-	 * Returns the id of the rewrite session.
+	 * Returns the rewrite session.
 	 * 
-	 * @return the offset of the change
+	 * @return the rewrite session
 	 */
-	public Object getSessionId() {
-		return fSessionId;
-	}			
+	public DocumentRewriteSession getSession() {
+		return fSession;
+	}
 }
