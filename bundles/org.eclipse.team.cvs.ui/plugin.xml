@@ -9,6 +9,7 @@
    <runtime>
       <library name="teamcvsui.jar">
          <export name="*"/>
+         <packages prefixes="org.eclipse.team.internal.ccvs.ui"/>
       </library>
    </runtime>
    <requires>

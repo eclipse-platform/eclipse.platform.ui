@@ -16,6 +16,7 @@
   <runtime>
     <library name="teamcvsssh.jar">
       <export name="*"/>
+      <packages prefixes="org.eclipse.team.internal.ccvs.ssh"/>
     </library>
   </runtime>
 

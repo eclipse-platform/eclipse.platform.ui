@@ -15,6 +15,7 @@
 	<runtime>
 		<library name="cvs.jar">
 			<export name="*"/>
+			<packages prefixes="org.eclipse.team.internal.ccvs.core"/>
 		</library>
 	</runtime>
 

@@ -9,6 +9,7 @@
    <runtime>
       <library name="teamtests.jar">
          <export name="*"/>
+         <packages prefixes="org.eclipse.team.tests.core"/>
       </library>
    </runtime>
    <requires>
