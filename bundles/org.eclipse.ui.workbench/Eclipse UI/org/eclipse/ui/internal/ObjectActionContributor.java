@@ -11,6 +11,8 @@ Contributors:
 	IBM - Initial implementation
 ************************************************************************/
 
+import java.util.List;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.IMenuManager;
@@ -48,10 +50,29 @@ public class ObjectActionContributor extends PluginActionBuilder implements IObj
 		return adaptable;
 	}
 	
+	
+	/* (non-Javadoc)
+	 * Method declared on IObjectActionContributor.
+	 */
+	public void contributeObjectActionIdOverrides(List actionIdOverrides) {
+		if (!configRead)
+			readConfigElement();
+
+		// Easy case out if no actions
+		if (currentContribution.actions != null) {
+			for (int i = 0; i < currentContribution.actions.size(); i++) {
+				ActionDescriptor ad = (ActionDescriptor)currentContribution.actions.get(i);
+				String id = ad.getAction().getOverrideActionId();
+				if (id != null)
+					actionIdOverrides.add(id);
+			}
+		}
+	}
+
 	/**
 	 * Contributes actions applicable for the current selection.
 	 */
-	public boolean contributeObjectActions(IWorkbenchPart part, IMenuManager menu, ISelectionProvider selProv) {
+	public boolean contributeObjectActions(IWorkbenchPart part, IMenuManager menu, ISelectionProvider selProv, List actionIdOverrides) {
 		if (!configRead)
 			readConfigElement();
 
@@ -68,12 +89,14 @@ public class ObjectActionContributor extends PluginActionBuilder implements IObj
 		// Generate menu.
 		for (int i = 0; i < currentContribution.actions.size(); i++) {
 			ActionDescriptor ad = (ActionDescriptor)currentContribution.actions.get(i);
-			currentContribution.contributeMenuAction(ad, menu, true);
-			// Update action for the current selection and part.
-			if (ad.getAction() instanceof ObjectPluginAction) {
-				ObjectPluginAction action = (ObjectPluginAction) ad.getAction();
-				action.setActivePart(part);
-				action.selectionChanged(selection);
+			if (!actionIdOverrides.contains(ad.getId())) {
+				currentContribution.contributeMenuAction(ad, menu, true);
+				// Update action for the current selection and part.
+				if (ad.getAction() instanceof ObjectPluginAction) {
+					ObjectPluginAction action = (ObjectPluginAction) ad.getAction();
+					action.setActivePart(part);
+					action.selectionChanged(selection);
+				}
 			}
 		}
 		return true;

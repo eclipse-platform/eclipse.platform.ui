@@ -313,4 +313,14 @@ public abstract class PluginAction extends Action
 			return sel;
 		}
 	}
+
+	/**
+	 * Returns the action identifier this action overrides.
+	 * Default implementation returns <code>null</code>.
+	 * 
+	 * @return the action identifier to override or <code>null</code>
+	 */
+	public String getOverrideActionId() {
+		return null;
+	}
 }

@@ -24,6 +24,9 @@ import org.eclipse.ui.IWorkbenchPart;
  * </p>
  */
 public class ObjectPluginAction extends PluginAction {
+	public static final String ATT_OVERRIDE_ACTION_ID = "overrideActionId";//$NON-NLS-1$
+
+	private String overrideActionId;
 	private IWorkbenchPart activePart;
 	
 	/**
@@ -31,6 +34,7 @@ public class ObjectPluginAction extends PluginAction {
 	 */
 	public ObjectPluginAction(IConfigurationElement actionElement, String runAttribute, String definitionId, int style) {
 		super(actionElement, runAttribute, definitionId, style);
+		overrideActionId = actionElement.getAttribute(ATT_OVERRIDE_ACTION_ID);
 	}
 
 	/* (non-Javadoc)
@@ -57,5 +61,14 @@ public class ObjectPluginAction extends PluginAction {
 		IActionDelegate delegate = getDelegate();
 		if (delegate != null && delegate instanceof IObjectActionDelegate)
 			 ((IObjectActionDelegate) delegate).setActivePart(this, activePart);
+	}
+
+	/**
+	 * Returns the action identifier this action overrides.
+	 * 
+	 * @return the action identifier to override or <code>null</code>
+	 */
+	public String getOverrideActionId() {
+		return overrideActionId;
 	}
 }

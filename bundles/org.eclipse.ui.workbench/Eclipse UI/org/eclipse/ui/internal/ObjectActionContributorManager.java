@@ -117,18 +117,20 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
 
 		// Do the contributions.  Add menus first, then actions
 		boolean actualContributions = false;
+		ArrayList overrides = new ArrayList(4);
 		for (int i = 0; i < contributors.size(); i++) {
 			IObjectActionContributor contributor = (IObjectActionContributor) contributors.get(i);
 			if (!isApplicableTo(elements, contributor))
 				continue;
 			if (contributor.contributeObjectMenus(popupMenu, selProv))
 				actualContributions = true;
+			contributor.contributeObjectActionIdOverrides(overrides);
 		}
 		for (int i = 0; i < contributors.size(); i++) {
 			IObjectActionContributor contributor = (IObjectActionContributor) contributors.get(i);
 			if (!isApplicableTo(elements, contributor))
 				continue;
-			if (contributor.contributeObjectActions(part, popupMenu, selProv))
+			if (contributor.contributeObjectActions(part, popupMenu, selProv, overrides))
 				actualContributions = true;
 		}
 		return actualContributions;
