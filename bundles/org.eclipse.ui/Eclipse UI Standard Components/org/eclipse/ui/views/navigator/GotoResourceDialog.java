@@ -258,7 +258,7 @@ private void startNewThread() {
  */
 private void textChanged() {
 	String oldPattern = patternString;
-	patternString = pattern.getText();
+	patternString = pattern.getText().trim();
 	if(!patternString.endsWith("*"))//$NON-NLS-1$
 		patternString = patternString + "*";//$NON-NLS-1$
 	if(patternString.equals(oldPattern))
