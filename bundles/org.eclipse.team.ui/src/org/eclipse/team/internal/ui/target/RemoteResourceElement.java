@@ -18,15 +18,15 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class RemoteResourceElement implements IWorkbenchAdapter, IAdaptable {
 	IRemoteTargetResource remote;
-	boolean showOnlyFolder = false;
+	boolean showFiles = true;
 	
 	public RemoteResourceElement(IRemoteTargetResource remote) {
 		this.remote = remote;
 	}
 	
-	public RemoteResourceElement(IRemoteTargetResource remote, boolean showOnlyFolders) {
+	public RemoteResourceElement(IRemoteTargetResource remote, boolean showFiles) {
 		this.remote = remote;
-		this.showOnlyFolder = showOnlyFolders;
+		this.showFiles = showFiles;
 	}
 
 	public IRemoteTargetResource getRemoteResource() {
@@ -49,8 +49,8 @@ public class RemoteResourceElement implements IWorkbenchAdapter, IAdaptable {
 						int n = 0;
 						for (int i = 0; i < children.length; i++) {
 							IRemoteTargetResource child = (IRemoteTargetResource)children[i];
-							if(!child.isContainer() || !showOnlyFolder) {
-								remoteElements.add(new RemoteResourceElement(child, showOnlyFolder));
+							if(child.isContainer() || showFiles) {
+								remoteElements.add(new RemoteResourceElement(child, showFiles));
 							}
 						}
 						result[0] = (RemoteResourceElement[])remoteElements.toArray(new RemoteResourceElement[remoteElements.size()]);

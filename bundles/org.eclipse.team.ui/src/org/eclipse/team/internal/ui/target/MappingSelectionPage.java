@@ -11,6 +11,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
@@ -41,14 +42,19 @@ public class MappingSelectionPage extends TargetWizardPage {
 		this.site = site;
 	}
 	
+	public Site getSite() {
+		return site;
+	}
+	
 	public void createControl(Composite p) {
 		Composite composite = createComposite(p, 1);
-		viewer = new TreeViewer(composite, SWT.BORDER | SWT.MULTI);
+		
+		createLabel(composite, Policy.bind("MappingSelectionPage.label")); //$NON-NLS-1$
+		
+		viewer = new TreeViewer(composite, SWT.BORDER | SWT.SINGLE);
 		
 		GridData data = new GridData (GridData.FILL_BOTH);
 		viewer.getTree().setLayoutData(data);
-
-		
 		viewer.setContentProvider(new SiteLazyContentProvider());
 		viewer.setLabelProvider(new WorkbenchLabelProvider());
 		viewer.setSorter(new SiteViewSorter());
@@ -58,15 +64,6 @@ public class MappingSelectionPage extends TargetWizardPage {
 			}
 		});
 		setViewerInput();
-				
-		textPath = createTextField(composite);
-		
-		textPath.addListener(SWT.Modify, new Listener() {
-			public void handleEvent(Event e) {
-				MappingSelectionPage.this.path = new Path(textPath.getText());
-			}
-		});
-
 		setControl(composite);
 		setPageComplete(true);
 	}
@@ -90,11 +87,9 @@ public class MappingSelectionPage extends TargetWizardPage {
 							TeamUIPlugin.handle(e);
 							return;
 						}
-						
 						this.path = UrlUtil.getTrailingPath(
 							remoteResourceURL,
 							this.site.getURL());
-						textPath.setText(this.path.toString());
 					return;
 				}
 			}
@@ -104,14 +99,6 @@ public class MappingSelectionPage extends TargetWizardPage {
 	public IPath getMapping() {
 		return this.path;
 	}
-	/**
-	 * @see IWizardPage#setPreviousPage(IWizardPage)
-	 */
-	public void setPreviousPage(IWizardPage page) {
-		if(viewer!=null) {
-			setViewerInput();
-		}
-	}
 	
 	/*
 	 * Attempt to set the viewer input.
@@ -119,13 +106,19 @@ public class MappingSelectionPage extends TargetWizardPage {
 	 */
 	 
 	private void setViewerInput() {
-		if(this.site == null)
+		if(this.site == null || viewer == null)
 			return;
-		try {
-			viewer.setInput(new RemoteResourceElement(this.site.getRemoteResource(), false));
-		} catch (TeamException e) {
-			TeamUIPlugin.log(e.getStatus());
-		}
+		viewer.setInput(new SiteRootsElement(new Site[] {site}, false /* show only folders */));
 	}
 
+	/**
+	 * @see IDialogPage#setVisible(boolean)
+	 */
+	public void setVisible(boolean visible) {
+		if(visible) {
+			setViewerInput();
+			viewer.setSelection(new StructuredSelection(new SiteElement(site)));
+		}
+		super.setVisible(visible);
+	}
 }

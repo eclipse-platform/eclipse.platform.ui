@@ -16,10 +16,16 @@ import org.eclipse.team.ui.TeamImages;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class SiteElement implements IWorkbenchAdapter, IAdaptable {
-	Site site;
+	private Site site;
+	private boolean showFiles = true;
 	
 	public SiteElement(Site site) {
 		this.site = site;
+	}
+
+	public SiteElement(Site site, boolean showFiles) {
+		this.site = site;
+		this.showFiles = showFiles;
 	}
 
 	public Site getSite() {
@@ -37,7 +43,7 @@ public class SiteElement implements IWorkbenchAdapter, IAdaptable {
 
 	public Object[] getChildren(Object o) {
 		try {
-			return new RemoteResourceElement(site.getRemoteResource()).getChildren(this);
+			return new RemoteResourceElement(site.getRemoteResource(), showFiles).getChildren(this);
 		} catch (TeamException e) {
 			TeamUIPlugin.handle(e);
 			return new Object[0];

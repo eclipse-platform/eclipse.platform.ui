@@ -1,10 +1,16 @@
 package org.eclipse.team.internal.ui.target;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.target.IRemoteTargetResource;
 import org.eclipse.team.core.target.Site;
 import org.eclipse.team.core.target.TargetManager;
 import org.eclipse.team.internal.ui.ConfigurationWizardElement;
@@ -19,8 +25,9 @@ import org.eclipse.ui.internal.model.AdaptableList;
 
 public class ConfigureTargetWizard extends ConfigureProjectWizard {
 	
+	public static final String MAPPING_PAGE_NAME = "mapping-page";
+	
 	protected SiteSelectionPage siteSelectionPage = null;
-	protected MappingSelectionPage mappingSelectionPage = null;
 	protected IWizardPage firstTargetPage = null;
 	
 	public ConfigureTargetWizard() {
@@ -67,9 +74,8 @@ public class ConfigureTargetWizard extends ConfigureProjectWizard {
 		AdaptableList wizards = getAvailableWizards();
 		setWindowTitle(getWizardWindowTitle());
 		
-		mappingSelectionPage = new MappingSelectionPage("mapping1", Policy.bind("TargetSiteCreationWizard.mappingPageTitle"), TeamImages.getImageDescriptor(UIConstants.IMG_WIZBAN_SHARE)); //$NON-NLS-1$ //$NON-NLS-2$
 		if(sites.length > 0 && project != null) {
-			siteSelectionPage = new SiteSelectionPage("mapping2", Policy.bind("TargetSiteCreationWizard.siteSelectionPage"), TeamImages.getImageDescriptor(UIConstants.IMG_WIZBAN_SHARE)); //$NON-NLS-1$ //$NON-NLS-2$
+			siteSelectionPage = new SiteSelectionPage("site-selection-page", Policy.bind("TargetSiteCreationWizard.siteSelectionPage"), TeamImages.getImageDescriptor(UIConstants.IMG_WIZBAN_SHARE)); //$NON-NLS-1$ //$NON-NLS-2$
 			addPage(siteSelectionPage);
 		}
 		
@@ -84,13 +90,10 @@ public class ConfigureTargetWizard extends ConfigureProjectWizard {
 					IWizardPage[] pages = wizard.getPages();
 					for (int i = 0; i < pages.length; i++) {
 						addPage(pages[i]);
-						if(i == 0) {
-							firstTargetPage = pages[i];
-						}
 					}
 				}
 			} else {
-				mainPage = new ConfigureProjectWizardMainPage("configurePage1", getWizardLabel(), TeamImages.getImageDescriptor(UIConstants.IMG_WIZBAN_SHARE), wizards); //$NON-NLS-1$
+				mainPage = new ConfigureProjectWizardMainPage("target-selection-page", getWizardLabel(), TeamImages.getImageDescriptor(UIConstants.IMG_WIZBAN_SHARE), wizards); //$NON-NLS-1$
 				mainPage.setDescription(getWizardDescription());
 				mainPage.setProject(project);
 				mainPage.setWorkbench(workbench);
@@ -103,18 +106,45 @@ public class ConfigureTargetWizard extends ConfigureProjectWizard {
 	}
 	
 	public IWizardPage getNextPage(IWizardPage page) {
+		// This is what we really want to do, but will have to rework the 
+		// target wizards first.
+		//		if(getPage(page.getName()) != null) {
+		//			// this is one of our pages
+		//			// 1. site selection 
+		//			// 2. target selection
+		//			// 3. mapping
+		//		} else {
+		//			// not one of our pages, is a target specific page
+		//			IWizardPage nextPage;
+		//			if(wizard != null) {
+		//				nextPage = wizard.getNextPage(page);
+		//			} else {
+		//				nextPage = mainPage.getSelectedWizard().getNextPage(page);
+		//			}
+		//			if(nextPage != null) {
+		//				return nextPage;
+		//			} else {
+		//				MappingSelectionPage mappingPage = getMappingPage();
+		//				mappingPage.setPreviousPage(page);
+		//			}
+		//		}		
 		if(page == siteSelectionPage) {
 			if(siteSelectionPage.getSite() != null) {
-				mappingSelectionPage.setSite(siteSelectionPage.getSite());
-				addPage(mappingSelectionPage);				
-				return mappingSelectionPage;
+				MappingSelectionPage mappingPage = getMappingPage();
+				mappingPage.setSite(siteSelectionPage.getSite());
+				mappingPage.setPreviousPage(page);
+				return mappingPage;
 			} else if(mainPage != null) {
 				return mainPage;
-			} else if(firstTargetPage != null) {
-				return firstTargetPage;
+			} else if(wizard != null) {
+				return wizard.getStartingPage();
 			}
 		}
 		return super.getNextPage(page);
+	}
+	
+	private MappingSelectionPage getMappingPage() {
+		return (MappingSelectionPage)getPage(MAPPING_PAGE_NAME);
 	}
 	
 	public boolean canFinish() {
@@ -127,8 +157,11 @@ public class ConfigureTargetWizard extends ConfigureProjectWizard {
 			return false;
 		} else if(currentPage == siteSelectionPage) {
 			return false;
-		} else if(currentPage == mappingSelectionPage) {
-			return mappingSelectionPage.isPageComplete();
+		}
+		
+		MappingSelectionPage mappingPage = getMappingPage();
+		if(mappingPage != null && currentPage == mappingPage) {
+			return mappingPage.isPageComplete();
 		}
 			
 		if (wizard != null) {
@@ -142,19 +175,27 @@ public class ConfigureTargetWizard extends ConfigureProjectWizard {
 	 */
 	public boolean performFinish() {
 		IWizardPage currentPage = getContainer().getCurrentPage();
-		if(currentPage == mappingSelectionPage) {
-			IPath path = mappingSelectionPage.getMapping();
-			Site site = siteSelectionPage.getSite();
-			try {
-				if(TargetManager.getProvider(project) != null) {
-					TargetManager.unmap(project);
+		MappingSelectionPage mappingPage = getMappingPage();
+		// set mapping
+		if(mappingPage != null && currentPage == mappingPage) {
+			Site currentSite = mappingPage.getSite();			
+			if(validateSite(currentSite, getContainer())) {				
+				if(TargetManager.getSite(currentSite.getType(), currentSite.getURL()) ==null) {
+					TargetManager.addSite(currentSite);
 				}
-				TargetManager.map(project, site, path);
-			} catch (TeamException e) {
-				ErrorDialog.openError(getContainer().getShell(), "Error", "Error associating project with target location", e.getStatus());
+				try {				
+					TargetManager.map(project, currentSite, mappingPage.getMapping());
+					return true;
+				} catch (TeamException e) {
+					ErrorDialog.openError(getShell(), "Error", "Error mapping the project with this site", e.getStatus());
+					return false;
+				}
+			} else {
 				return false;
 			}
-		} else if (wizard != null) {
+		}
+		// allow target wizard to finish
+		if (wizard != null) {
 			return wizard.performFinish();
 		}
 		return true;
@@ -165,5 +206,39 @@ public class ConfigureTargetWizard extends ConfigureProjectWizard {
 	 */
 	public IWizardPage getPreviousPage(IWizardPage page) {
 		return super.getPreviousPage(page);
+	}
+	
+	public static boolean validateSite(final Site site, final IWizardContainer container) {
+		final boolean[] valid = new boolean[] {true};
+		final String[] message = new String[] {"ok"};
+		final int[] code = new int[] {-1};
+		try {
+			container.run(true, false, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor)
+					throws InvocationTargetException, InterruptedException {
+						try {
+							monitor.beginTask("Validating connection to Site...", monitor.UNKNOWN);
+							IRemoteTargetResource remote = site.getRemoteResource();
+						} catch(TeamException e) {
+							message[0] = e.getStatus().getMessage();
+							code[0] = e.getStatus().getCode();
+							valid[0] = false;
+						}
+				}
+			});
+		} catch (InvocationTargetException e) {
+			valid[0] = false;
+			message[0] = e.getTargetException().getMessage();
+		} catch (InterruptedException e) {
+			return false;
+		}
+		if(! valid[0]) {
+			if(! MessageDialog.openQuestion(container.getShell(),
+				"Error connecting to Site",
+				"An error occured connecting to '" + site.getURL().toExternalForm() + "'.\n\nCode: " + code[0] + "\nMessage: " + message[0] + "\n\nDo you still want to keep this connection?")) {
+					return false;
+			}
+		}
+		return true;		
 	}
 }
