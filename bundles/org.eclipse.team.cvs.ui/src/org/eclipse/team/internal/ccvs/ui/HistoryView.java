@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
@@ -35,7 +36,6 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.ITextOperationTarget;
@@ -135,6 +135,8 @@ public class HistoryView extends ViewPart {
 	
 	private IPreferenceStore settings;
 	
+	private FetchLogEntriesJob fetchLogEntriesJob;
+	
 	public static final String VIEW_ID = "org.eclipse.team.ccvs.ui.HistoryView"; //$NON-NLS-1$
 	
 	private IPartListener partListener = new IPartListener() {
@@ -152,6 +154,33 @@ public class HistoryView extends ViewPart {
 		}
 	};
 
+	private class FetchLogEntriesJob extends Job {
+		public ICVSRemoteFile remoteFile;
+		public FetchLogEntriesJob() {
+			super(Policy.bind("HistoryView.fetchHistoryJob"));  //$NON-NLS-1$;
+		}
+		public void setRemoteFile(ICVSRemoteFile file) {
+			this.remoteFile = file;
+		}
+		public IStatus run(IProgressMonitor monitor) {
+			try {
+				entries = remoteFile.getLogEntries(monitor);
+				final String revisionId = remoteFile.getRevision();
+				tableViewer.getTable().getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						if(tableViewer != null && ! tableViewer.getTable().isDisposed()) {
+							tableViewer.add(entries);
+								selectRevision(revisionId);
+						}
+					}
+				});
+				return Status.OK_STATUS;
+			} catch (TeamException e) {
+				return e.getStatus();
+			}
+		}
+	};
+	
 	/**
 	 * Adds the action contributions for this view.
 	 */
@@ -406,24 +435,20 @@ public class HistoryView extends ViewPart {
 				if (!(inputElement instanceof ICVSRemoteFile)) return null;
 				final ICVSRemoteFile remoteFile = (ICVSRemoteFile)inputElement;
 				final Object[][] result = new Object[1][];
-				try {
-					new ProgressMonitorDialog(getViewer().getTable().getShell()).run(true, true, new IRunnableWithProgress() {
-						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-							try {
-								entries = remoteFile.getLogEntries(monitor);
-								result[0] = entries;
-							} catch (TeamException e) {
-								throw new InvocationTargetException(e);
-							}
-						}
-					});
-				} catch (InterruptedException e) { // ignore cancellation
-					result[0] = new Object[0];
-				} catch (InvocationTargetException e) {
-					CVSUIPlugin.openError(getViewSite().getShell(), null, null, e);
-					result[0] = new Object[0];
+				if(fetchLogEntriesJob == null) {
+					fetchLogEntriesJob = new FetchLogEntriesJob();
 				}
-				return result[0];				
+				if(fetchLogEntriesJob.getState() != Job.NONE) {
+					fetchLogEntriesJob.cancel();
+					try {
+						fetchLogEntriesJob.join();
+					} catch (InterruptedException e) {
+						//
+					}
+				}
+				fetchLogEntriesJob.setRemoteFile(remoteFile);
+				fetchLogEntriesJob.schedule();
+				return new Object[0];
 			}
 			public void dispose() {
 			}
@@ -614,8 +639,8 @@ public class HistoryView extends ViewPart {
 	}
 	
 	/**
-	 * An editor has been activated.  Sets the selection in this navigator
-	 * to be the editor's input, if linking is enabled.
+	 * An editor has been activated.  Sets the selection in this navigator to be the editor's input, if 
+	 * linking is enabled.
 	 * 
 	 * @param editor the active editor
 	 * @since 2.0
@@ -637,6 +662,11 @@ public class HistoryView extends ViewPart {
 					showHistory(base);
 				}
 			}
+		} else if(input instanceof RemoteAnnotationEditorInput) {
+			ICVSRemoteFile remote = ((RemoteAnnotationEditorInput)input).getCVSRemoteFile();
+			if(remote != null) {
+				showHistory(remote);
+			}
 		}
 	}
 	
@@ -656,7 +686,6 @@ public class HistoryView extends ViewPart {
 			historyTableProvider.setFile(remoteFile);
 			tableViewer.setInput(remoteFile);
 			setTitle(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
-			selectRevision(remoteFile.getRevision());
 		} catch (TeamException e) {
 			CVSUIPlugin.openError(getViewSite().getShell(), null, null, e);
 		} 

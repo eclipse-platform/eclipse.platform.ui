@@ -192,4 +192,13 @@ public class RemoteFileEditorInput implements IWorkbenchAdapter, IStorageEditorI
 	public String getToolTipText() {
 		return getFullPath();
 	}
+	
+	/**
+	 * Returns the remote CVS file shown in this editor input.
+	 * @return the remote file handle.
+	 */
+	public ICVSRemoteFile getCVSRemoteFile() {
+		return file;
+	}
+
 }
