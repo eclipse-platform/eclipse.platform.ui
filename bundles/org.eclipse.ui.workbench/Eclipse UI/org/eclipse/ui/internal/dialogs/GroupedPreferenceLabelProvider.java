@@ -51,7 +51,7 @@ public class GroupedPreferenceLabelProvider extends PreferenceLabelProvider impl
 		boolean highlight = false;
 		if(element instanceof WorkbenchPreferenceNode)
 			highlight = ((WorkbenchPreferenceNode)element).isHighlighted();
-		else
+		if(element instanceof WorkbenchPreferenceGroup)
 			highlight = ((WorkbenchPreferenceGroup)element).isHighlighted();
 		
 		if(highlight)
