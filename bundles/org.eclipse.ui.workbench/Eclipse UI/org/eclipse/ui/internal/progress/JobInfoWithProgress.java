@@ -1,12 +1,12 @@
 package org.eclipse.ui.internal.progress;
 
-import org.eclipse.jface.dialogs.ProgressIndicator;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.ProgressBar;
 
 public class JobInfoWithProgress extends JobInfo {
 	int multiplier;
 	int preWork = 0;
-	ProgressIndicator indicator;
+	ProgressBar indicator;
 	Label label;
 
 	JobInfoWithProgress(String taskName, int total) {
@@ -16,20 +16,28 @@ public class JobInfoWithProgress extends JobInfo {
 
 	void addWork(double workIncrement) {
 		int newWork = (int) (multiplier * workIncrement);
-		if (indicator != null)
-			indicator.worked(newWork);
-		else
-			preWork += newWork;
+		preWork += newWork;
+		if (indicator == null || indicator.isDisposed())
+			return;
+		indicator.getDisplay().asyncExec(new Runnable() {
+			/* (non-Javadoc)
+			 * @see java.lang.Runnable#run()
+			 */
+			public void run() {
+				indicator.setSelection(preWork);
+			}
+		});
+
 	}
 
 	/**
 	 * Set the progress indicator to use for this job info.
 	 * @param indicator
 	 */
-	public void setProgressIndicator(ProgressIndicator anIndicator) {
+	public void setProgressBar(ProgressBar anIndicator) {
 		this.indicator = anIndicator;
-		this.indicator.beginTask(10000);
-		this.indicator.worked(preWork);
+		this.indicator.setMaximum(10000);
+		this.indicator.setSelection(preWork);
 	}
 
 	/**
@@ -40,7 +48,7 @@ public class JobInfoWithProgress extends JobInfo {
 		label = newLabel;
 	}
 
-	public ProgressIndicator getProgressIndicator() {
+	public ProgressBar getProgressBar() {
 		return indicator;
 	}
 

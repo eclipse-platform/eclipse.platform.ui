@@ -6,11 +6,11 @@
  */
 package org.eclipse.ui.views.progress;
 
-import org.eclipse.jface.dialogs.ProgressIndicator;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.internal.progress.JobInfoWithProgress;
@@ -60,10 +60,9 @@ public class ProgressTreeViewer extends TreeViewer {
 
 		JobInfoWithProgress job = (JobInfoWithProgress) element;
 		
-		if(job.getProgressIndicator() == null)
+		if(job.getProgressBar() == null)
 			createTreeEditor(item, finalItem, job, getTree());
-		else
-			job.getLabel().setText(item.getText());
+		
 	}
 
 	/**
@@ -102,10 +101,10 @@ public class ProgressTreeViewer extends TreeViewer {
 		data.bottom = new FormAttachment(100, 0);
 		displayLabel.setLayoutData(data);
 		
-		final ProgressIndicator indicator =
-			new ProgressIndicator(editorComposite);
+		final ProgressBar indicator =
+			new ProgressBar(editorComposite,SWT.HORIZONTAL);
 		indicator.setBackground(getTree().getBackground());
-		job.setProgressIndicator(indicator);
+		job.setProgressBar(indicator);
 		
 		data = new FormData();
 		data.top = new FormAttachment(0, 0);
@@ -115,30 +114,14 @@ public class ProgressTreeViewer extends TreeViewer {
 		
 		indicator.setLayoutData(data);
 		
-		final FocusListener listener = new FocusListener() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.events.FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
-			 */
-			public void focusGained(FocusEvent e) {
-				displayLabel.setText(finalItem.getText());
-				editor.setEditor(editorComposite, finalItem);
-			}
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
-			 */
-			public void focusLost(FocusEvent e) {
-			}
-		
-		};
-		getTree().addFocusListener(listener);
+		displayLabel.setText(finalItem.getText());
+		editor.setEditor(editorComposite, finalItem);
 		
 		item.addDisposeListener(new DisposeListener() {
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
 			 */
 			public void widgetDisposed(DisposeEvent e) {
-				getTree().removeFocusListener(listener);
-				indicator.done();
 				editor.dispose();
 				indicator.dispose();
 				displayLabel.dispose();
