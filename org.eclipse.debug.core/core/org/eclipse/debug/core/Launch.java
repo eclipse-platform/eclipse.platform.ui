@@ -1,9 +1,11 @@
 package org.eclipse.debug.core;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -198,9 +200,9 @@ public class Launch extends PlatformObject implements ILaunch {
 			new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, DebugCoreMessages.getString("Launch.terminate_failed"), null); //$NON-NLS-1$
 		
 		// terminate the system processes
-		Iterator processes = getProcesses0().iterator();
-		while (processes.hasNext()) {
-			IProcess process = (IProcess)processes.next();
+		IProcess[] processes = getProcesses();
+		for (int i = 0; i < processes.length; i++) {
+			IProcess process = processes[i];
 			if (process.canTerminate()) {
 				try {
 					process.terminate();
@@ -211,9 +213,9 @@ public class Launch extends PlatformObject implements ILaunch {
 		}
 		
 		// terminate or disconnect debug target if it is still alive
-		Iterator targets = getDebugTargets0().iterator();
-		while (targets.hasNext()) {
-			IDebugTarget target= (IDebugTarget)targets.next();
+		IDebugTarget[] targets = getDebugTargets();
+		for (int i = 0; i < targets.length; i++) {
+			IDebugTarget target= targets[i];
 			if (target != null) {
 				if (target.canTerminate()) {
 					try {
@@ -232,8 +234,9 @@ public class Launch extends PlatformObject implements ILaunch {
 				}
 			}
 		}
-		if (status.isOK())
+		if (status.isOK()) {
 			return;
+		}
 		IStatus[] children= status.getChildren();
 		if (children.length == 1) {
 			throw new DebugException(children[0]);
@@ -382,7 +385,4 @@ public class Launch extends PlatformObject implements ILaunch {
 	public boolean hasChildren() {
 		return getProcesses0().size() > 0 || (getDebugTargets0().size() > 0);
 	}
-
 }
-
-
