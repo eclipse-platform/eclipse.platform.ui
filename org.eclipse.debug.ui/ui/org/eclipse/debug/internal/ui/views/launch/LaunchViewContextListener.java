@@ -162,9 +162,42 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 	 * Loads the extensions which map debug model identifiers
 	 * to context ids. This information is used to activate the
 	 * appropriate context when a debug element is selected.
+	 * 
+	 * When a context associated with a debug model is enabled, we
+	 * also activate all parent contexts. Since the context manager
+	 * does not do this automatically, we cache all parent context
+	 * identifiers in the modelToContexts map as well
 	 */
 	private void loadDebugModelContextExtensions() {
 		loadDebugModelExtensions(ID_DEBUG_MODEL_CONTEXT_BINDINGS, ATTR_CONTEXT_ID, modelsToContexts);
+		// add parent contexts
+		Iterator modelIds = modelsToContexts.keySet().iterator();
+		IContextManager manager = PlatformUI.getWorkbench().getContextSupport().getContextManager();
+		while (modelIds.hasNext()) {
+			String modelId = (String) modelIds.next();
+			List contexts = (List) modelsToContexts.get(modelId);
+			Set allContexts = new HashSet(contexts.size());
+			Iterator iterator = contexts.iterator();
+			while (iterator.hasNext()) {
+				String contextId = (String) iterator.next();
+				IContext context = manager.getContext(contextId);
+				while (context != null && context.isDefined()) {
+					allContexts.add(contextId);
+					try {
+						contextId = context.getParentId();
+						context = null;
+						if (contextId != null) {
+							context = manager.getContext(contextId);
+						}
+					} catch (NotDefinedException e) {
+						context = null;
+					}
+				}
+			}
+			List list = new ArrayList(allContexts.size());
+			list.addAll(allContexts);
+			modelsToContexts.put(modelId, list);
+		}
 	}
 	
 	/**
@@ -579,9 +612,13 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 		List contextIds= new ArrayList();
 		for (int i = 0; i < modelIds.length; i++) {
 			List ids= (List) modelsToContexts.get(modelIds[i]);
-			if (ids != null) {
-				contextIds.addAll(ids);
+			if (ids == null) {
+				// seed with base debug context
+				ids = new ArrayList();
+				ids.add("org.eclipse.debug.ui.debugging"); //$NON-NLS-1$
+				modelsToContexts.put(modelIds[i], ids);
 			}
+			contextIds.addAll(ids);
 		}
 		return contextIds;
 	}
