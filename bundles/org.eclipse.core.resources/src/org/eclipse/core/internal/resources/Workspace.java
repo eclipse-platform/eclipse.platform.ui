@@ -282,48 +282,6 @@ protected void closing(IProject project) throws CoreException {
 	markerManager.closing(project);
 }
 
-/*
- * TODO: Delete this method once computePrerequisiteOrder0 is deleted
- */
-private static HashMap computeCounts(String[][] mappings) {
-	HashMap counts = new HashMap(5);
-	for (int i = 0; i < mappings.length; i++) {
-		String from = mappings[i][0];
-		Integer fromCount = (Integer) counts.get(from);
-		String to = mappings[i][1];
-		if (to == null)
-			counts.put(from, new Integer(0));
-		else {
-			if (((Integer) counts.get(to)) == null)
-				counts.put(to, new Integer(0));
-			fromCount = fromCount == null ? new Integer(1) : new Integer(fromCount.intValue() + 1);
-			counts.put(from, fromCount);
-		}
-	}
-	return counts;
-}
-
-/*
- * TODO: Delete this method once computePrerequisiteOrder0 is deleted
- */
-public static String[][] computeNodeOrder(String[][] specs) {
-	HashMap counts = computeCounts(specs);
-	List nodes = new ArrayList(counts.size());
-	while (!counts.isEmpty()) {
-		List roots = findRootNodes(counts);
-		if (roots.isEmpty())
-			break;
-		for (Iterator i = roots.iterator(); i.hasNext();)
-			counts.remove(i.next());
-		nodes.addAll(roots);
-		removeArcs(specs, roots, counts);
-	}
-	String[][] result = new String[2][];
-	result[0] = (String[]) nodes.toArray(new String[nodes.size()]);
-	result[1] = (String[]) counts.keySet().toArray(new String[counts.size()]);
-	return result;
-}
-
 /**
  * Implementation of API method declared on IWorkspace.
  * 
@@ -333,51 +291,6 @@ public static String[][] computeNodeOrder(String[][] specs) {
  */
 public IProject[][] computePrerequisiteOrder(IProject[] targets) {
 	return computePrerequisiteOrder1(targets);
-}
-
-/*
- * TODO: Delete this method once it is captured in version history
- * 
- * Original (pre 2.1) implementation of IWorkspace.computePrerequisiteOrder
- * @since 2.1
- */
-private IProject[][] computePrerequisiteOrder0(IProject[] targets) {
-	List prereqs = new ArrayList(6);
-	IProject[] projects = getRoot().getProjects();
-	for (int i = 0; i < projects.length; i++) {
-		prereqs.add(new String[] { projects[i].getName(), null });
-		try {
-			IProject[] prereqList = projects[i].getReferencedProjects();
-			for (int j = 0; j < prereqList.length; j++)
-				prereqs.add(new String[] { projects[i].getName(), prereqList[j].getName()});
-		} catch (CoreException e) {
-			// ignore closed and non-existant projects
-		}
-	}
-	String[][] prereqArray = (String[][]) prereqs.toArray(new String[prereqs.size()][]);
-	String[][] ordered = computeNodeOrder(prereqArray);
-	HashSet filter = new HashSet(Arrays.asList(targets));
-	IProject[][] result = new IProject[2][];
-	// build the result list for the ordered projects.  Trim off any projects which
-	// were not requested.
-	ArrayList list = new ArrayList(ordered[0].length);
-	for (int i = 0; i < ordered[0].length; i++) {
-		IProject project = getRoot().getProject(ordered[0][i]);
-		if (filter.contains(project))
-			list.add(project);
-	}
-	result[0] = (IProject[])list.toArray(new IProject[list.size()]);
-
-	// build the result list for the ordered projects.  Trim off any projects which
-	// were not requested.
-	list = new ArrayList(ordered[0].length);
-	for (int i = 0; i < ordered[1].length; i++) {
-		IProject project = getRoot().getProject(ordered[1][i]);
-		if (filter.contains(project))
-			list.add(project);
-	}
-	result[1] = (IProject[])list.toArray(new IProject[list.size()]);
-	return result;
 }
 
 /*
@@ -975,19 +888,6 @@ public void endOperation(boolean build, IProgressMonitor monitor) throws CoreExc
 	}
 }
 
-/*
- * TODO: Delete this method once computePrerequisiteOrder0 is deleted
- */
-private static List findRootNodes(HashMap counts) {
-	List result = new ArrayList(5);
-	for (Iterator i = counts.keySet().iterator(); i.hasNext();) {
-		String node = (String) i.next();
-		int count = ((Integer) counts.get(node)).intValue();
-		if (count == 0)
-			result.add(node);
-	}
-	return result;
-}
 /**
  * Flush the build order cache for the workspace.  Only needed if the
  * description does not already have a build order.  That is, if this
@@ -1632,23 +1532,6 @@ protected boolean refreshRequested() {
 		if (args[i].equalsIgnoreCase(REFRESH_ON_STARTUP))
 			return true;
 	return false;
-}
-
-/*
- * TODO: Delete this method once computePrerequisiteOrder0 is deleted
- */
-private static void removeArcs(String[][] mappings, List roots, HashMap counts) {
-	for (Iterator j = roots.iterator(); j.hasNext();) {
-		String root = (String) j.next();
-		for (int i = 0; i < mappings.length; i++) {
-			if (root.equals(mappings[i][1])) {
-				String input = mappings[i][0];
-				Integer count = (Integer) counts.get(input);
-				if (count != null)
-					counts.put(input, new Integer(count.intValue() - 1));
-			}
-		}
-	}
 }
 /**
  * @see IWorkspace
