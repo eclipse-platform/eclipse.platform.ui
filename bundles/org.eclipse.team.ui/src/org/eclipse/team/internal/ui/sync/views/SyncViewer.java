@@ -22,12 +22,9 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -426,41 +423,14 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		initializeSubscriberInput(input);
 	}
 	
-	public void initializeSubscriberInput(SubscriberInput input) {
-		Assert.isNotNull(input);
-		new ActivateSubscriberJob(input).schedule();
-	}
-	
-	private class ActivateSubscriberJob extends Job {
-		private SubscriberInput input;
-		public ActivateSubscriberJob(SubscriberInput input) {
-			super("Activating Team subscriber: " + input.getSubscriber().getName());
-			this.input = input;
-		}
-		public IStatus run(IProgressMonitor monitor) {
-			try {
-				input.prepareInput(monitor);
-				SyncViewer.this.activateSubscriberInput(input);
-			} catch (TeamException e) {
-				IStatus status = e.getStatus();
-				return new Status(status.getSeverity(), status.getPlugin(), status.getCode(), "Could not activate Team subscriber: " + input.getSubscriber().getName(), e);
-			}
-			return Status.OK_STATUS;
-		}
-		public boolean shouldRun() {
-			return input != null;
-		}
-	}
-	
 	/*
-	 * This method is invoked from the ActivateSubscriberJob job
-	 * after the input has been initialized. It is synchronized
-	 * to ensure that two jobs do not activate an input at the
-	 * same time.
+	 * This method is synchronized to ensure that all internal state is not corrupted
 	 */
-	protected synchronized void activateSubscriberInput(SubscriberInput in) {
+	public synchronized void initializeSubscriberInput(final SubscriberInput input) {
+		Assert.isNotNull(input);
+		
 		this.lastInput = this.input;
-		this.input = in;
+		this.input = input;
 		
 		if(lastInput != null) {
 			lastInput.getFilteredSyncSet().removeSyncSetChangedListener(this);
@@ -470,12 +440,25 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		input.getFilteredSyncSet().addSyncSetChangedListener(this);
 		input.getSubscriberSyncSet().addSyncSetChangedListener(this);
 
-		ActionContext context = new ActionContext(null);
-		context.setInput(input);					
-		actions.setContext(context);
-		
+		final IRunnableWithProgress runnable = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				try {
+					ActionContext context = new ActionContext(null);
+					context.setInput(input);					
+					input.prepareInput(monitor);
+					// important to set the context after the input has been initialized. There
+					// are some actions that depend on the sync set to be initialized.
+					actions.setContext(context);
+				} catch (TeamException e) {
+					throw new InvocationTargetException(e);
+				}
+			}
+		};
+
 		Display.getDefault().asyncExec(new Runnable() {
-			public void run() {			
+			public void run() {
+				if (!hasRunnableContext()) return;				
+				SyncViewer.this.run(runnable);
 				viewer.setInput(input.getFilteredSyncSet());
 				RefreshSubscriberInputJob refreshJob = TeamUIPlugin.getPlugin().getRefreshJob();
 				refreshJob.setSubscriberInput(input);
@@ -627,7 +610,6 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		ActionContext context = new ActionContext(null);
 		context.setInput(si);
 		actions.addContext(context);
-		initializeSubscriberInput(si);
 	}
 	
 	private void removeSubscriber(TeamSubscriber s) {
@@ -641,8 +623,8 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		subscriberInputs.remove(s.getId());
 		
 		if (si == input && lastInput != null) {
-		// show last input
-		initializeSubscriberInput(lastInput);
+			// show last input
+			initializeSubscriberInput(lastInput);
 		}
 	}
 	
