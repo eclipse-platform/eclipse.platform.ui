@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
-import org.eclipse.core.commands.operations.DefaultOperationHistory;
 import org.eclipse.core.commands.operations.IOperationApprover;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
@@ -205,7 +204,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 				selectAndReveal(fStart, fPreservedText == null ? 0 : fPreservedText.length());
 				return Status.OK_STATUS;
 			}
-			return DefaultOperationHistory.OPERATION_INVALID_STATUS;
+			return IOperationHistory.OPERATION_INVALID_STATUS;
 		}
 		
 		/**
@@ -234,7 +233,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 				selectAndReveal(fStart, fText == null ? 0 : fText.length());
 				return Status.OK_STATUS;
 			}
-			return DefaultOperationHistory.OPERATION_INVALID_STATUS;
+			return IOperationHistory.OPERATION_INVALID_STATUS;
 		}
 				
 		/**
