@@ -44,7 +44,7 @@ public class Product implements IProduct {
 				attributes[i].equalsIgnoreCase(ATTR_ID) ||
 				attributes[i].equalsIgnoreCase(ATTR_NAME) ||
 				attributes[i].equalsIgnoreCase(ATTR_APPLICATION))
-				break;
+				continue;
 			properties.put(attributes[i], element.getAttribute(attributes[i]));
 		}
 	}
