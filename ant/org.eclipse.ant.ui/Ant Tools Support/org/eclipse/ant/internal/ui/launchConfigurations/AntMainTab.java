@@ -19,6 +19,8 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -82,7 +84,11 @@ public class AntMainTab extends ExternalToolsMainTab {
 		data.horizontalSpan = 2;
 		captureOutputButton.setLayoutData(data);
 		captureOutputButton.setFont(parent.getFont());
-		captureOutputButton.addSelectionListener(getSelectionAdapter());
+		captureOutputButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
 	}
 	
 	protected void updateCaptureOutput(ILaunchConfiguration configuration) {
