@@ -4,28 +4,28 @@ package org.eclipse.ui.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
+import java.util.ArrayList;
+import java.util.Map;
+
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.dialogs.WizardDataTransferPage;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.ResourceTreeAndListGroup;
 import org.eclipse.ui.internal.dialogs.TypeFilteringDialog;
-import org.eclipse.ui.model.*;
-
-import java.util.*;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 /**
  * The abstract superclass for a typical import wizard's main page.
@@ -395,8 +395,15 @@ protected void setupSelectionsBasedOnSelectedTypes() {
  * Update the selections with those in map .
  * @param map Map - key tree elements, values Lists of list elements
  */
-protected void updateSelections(Map map) {
-	selectionGroup.updateSelections(map);
+protected void updateSelections(final Map map) {
+	
+	Runnable runnable  = new Runnable() {
+		public void run(){
+			selectionGroup.updateSelections(map);
+		}
+	};
+		
+	BusyIndicator.showWhile(getShell().getDisplay(),runnable);
 }
 /**
  * Check if widgets are enabled or disabled by a change in the dialog.

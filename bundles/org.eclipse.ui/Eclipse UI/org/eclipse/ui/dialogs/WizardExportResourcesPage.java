@@ -4,32 +4,35 @@ package org.eclipse.ui.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IFileEditorMapping;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.dialogs.TypeFilteringDialog;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.ResourceTreeAndListGroup;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.internal.misc.*;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.internal.dialogs.TypeFilteringDialog;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.model.WorkbenchContentProvider;
-import java.util.*;
-import java.util.List; // disambiguate from SWT
-import java.lang.reflect.InvocationTargetException;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * Abstract superclass for a typical export wizard's main page.
@@ -558,13 +561,19 @@ protected void setupBasedOnInitialSelections() {
  * Update the tree to only select those elements that match the selected types
  */
 private void setupSelectionsBasedOnSelectedTypes() {
-
-	Map selectionMap = new Hashtable();
-	IProject[] resources = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-	for (int i = 0; i < resources.length; i++) {
-		setupSelectionsBasedOnSelectedTypes(selectionMap, resources[i]);
-	}
-	this.resourceGroup.updateSelections(selectionMap);
+	
+	Runnable runnable  = new Runnable() {
+		public void run(){
+			Map selectionMap = new Hashtable();
+			IProject[] resources = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+			for (int i = 0; i < resources.length; i++) {
+				setupSelectionsBasedOnSelectedTypes(selectionMap, resources[i]);
+			}
+			resourceGroup.updateSelections(selectionMap);
+		}
+	};
+		
+	BusyIndicator.showWhile(getShell().getDisplay(),runnable);
 
 }
 /**
