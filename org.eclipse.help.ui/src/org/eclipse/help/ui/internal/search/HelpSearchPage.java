@@ -50,15 +50,10 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		control.setLayoutData(gd);
 		// Search Expression
-		Group group = new Group(control, SWT.NONE);
-		layout = new GridLayout();
-		group.setLayout(layout);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		group.setLayoutData(gd);
-		group.setText(WorkbenchResources.getString("expression"));
+		Label expressionLabel= new Label(control, SWT.LEFT);
+		expressionLabel.setText(WorkbenchResources.getString("expression"));
 		// Pattern combo
-		searchWordCombo = new Combo(group, SWT.SINGLE | SWT.BORDER);
+		searchWordCombo = new Combo(control, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = convertWidthInCharsToPixels(30);
 		searchWordCombo.setLayoutData(gd);
@@ -83,9 +78,12 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 				scontainer.setPerformActionEnabled(searchWordCombo.getText().length() > 0);
 			}
 		});
+		// Space
+		Label space = new Label(control, SWT.NONE);
 		// Syntax description
-		Label label = new Label(group, SWT.LEFT);
+		Label label = new Label(control, SWT.LEFT);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 1;
 		label.setLayoutData(gd);
 		label.setText(WorkbenchResources.getString("expression_label"));
 		// Headings only button
