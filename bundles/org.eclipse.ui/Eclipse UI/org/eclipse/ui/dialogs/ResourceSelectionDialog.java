@@ -62,7 +62,7 @@ public ResourceSelectionDialog(Shell parentShell, IAdaptable rootElement, String
 		setMessage(message);
 	else
 		setMessage(WorkbenchMessages.getString("ResourceSelectionDialog.message")); //$NON-NLS-1$
-	setShellStyle(SWT.RESIZE);
+	setShellStyle(getShellStyle() | SWT.RESIZE);
 }
 /**
  * Visually checks the previously-specified elements in the container (left)
@@ -110,20 +110,20 @@ protected Control createDialogArea(Composite parent) {
 	input.add(root);
 
 	createMessageArea(composite);
-		selectionGroup =
-			new CheckboxTreeAndListGroup(
-				composite,
-				input,
-				getResourceProvider(IResource.FOLDER | IResource.PROJECT | IResource.ROOT),
-				new WorkbenchLabelProvider(),
-				getResourceProvider(IResource.FILE),
-				new WorkbenchLabelProvider(),
-				SWT.NONE,
-				SIZING_SELECTION_WIDGET_WIDTH,
-	// since this page has no other significantly-sized
-	SIZING_SELECTION_WIDGET_HEIGHT);
-	// widgets we need to hardcode the combined widget's
-	// size, otherwise it will open too small
+	selectionGroup =
+		new CheckboxTreeAndListGroup(
+			composite,
+			input,
+			getResourceProvider(IResource.FOLDER | IResource.PROJECT | IResource.ROOT),
+			new WorkbenchLabelProvider(),
+			getResourceProvider(IResource.FILE),
+			new WorkbenchLabelProvider(),
+			SWT.NONE,
+			// since this page has no other significantly-sized
+			// widgets we need to hardcode the combined widget's
+			// size, otherwise it will open too small
+			SIZING_SELECTION_WIDGET_WIDTH,
+			SIZING_SELECTION_WIDGET_HEIGHT);
 
 	composite.addControlListener(new ControlListener() {
 		public void controlMoved(ControlEvent e) {};
