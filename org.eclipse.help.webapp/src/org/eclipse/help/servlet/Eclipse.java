@@ -1,6 +1,6 @@
 package org.eclipse.help.servlet;
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 import java.io.File;
