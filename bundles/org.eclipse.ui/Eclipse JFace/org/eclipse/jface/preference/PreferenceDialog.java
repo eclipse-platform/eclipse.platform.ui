@@ -15,6 +15,9 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+
 import java.util.*;
 import java.util.List; // disambiguate from SWT List
 
@@ -30,6 +33,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 */
 	public static final String PREF_DLG_TITLE_IMG = "preference_dialog_title_image";//$NON-NLS-1$
 	public static final String PREF_DLG_IMG_TITLE_ERROR = "preference_dialog_title_error_image";//$NON-NLS-1$
+	public static final String PREF_DLG_LAST_SELECTION = "preference_dialog_last_selection";//$NON-NLS-1$
 	static {
 		ImageRegistry reg = JFaceResources.getImageRegistry();
 		reg.put(PREF_DLG_TITLE_IMG, ImageDescriptor.createFromFile(PreferenceDialog.class, "images/pref_dialog_title.gif"));//$NON-NLS-1$
@@ -239,7 +243,7 @@ protected Control createContents(Composite parent) {
 	Control control = super.createContents(parent);
 
 	// Add the first page
-	selectFirstItem();
+	selectSavedItem();
 
 	return control;
 }
@@ -534,25 +538,95 @@ private void selectCurrentPageAgain() {
 	currentPage.setVisible(true);
 }
 /**
- * Selects the first item in the tree of preference pages.
+ * Selects the saved item in the tree of preference pages.
+ * If it cannot do this it saves the first one.
  */
-protected void selectFirstItem() {
+protected void selectSavedItem() {
 	if (tree != null) {
 		int count = tree.getItemCount();
 		if (count > 0) {
-			TreeItem[] items = tree.getItems();
-			Object data = items[0].getData();
+			TreeItem selectedItem = getLastSelectedNode(tree.getItems());
+			Object data = selectedItem.getData();
 			if (data instanceof IPreferenceNode) {
-				tree.setSelection(new TreeItem[] { items[0] });
-				currentTreeItem = items[0];
+				tree.setSelection(new TreeItem[] { selectedItem });
+				currentTreeItem = selectedItem;
 				showPage((IPreferenceNode) data);
 				
 				// Keep focus in tree.  See bugs 2692, 2621, and 6775.
 				tree.setFocus();
 			}
 		}
+		//Now clear the selection in case of error
+		clearSelectedNode();
 	}
 }
+
+/**
+ * Get the node that was last selected in the dialog store.
+ * If there is no match then return the first one,
+ */
+private TreeItem getLastSelectedNode(TreeItem[] items){
+	String lastSelectedNode = 
+		WorkbenchPlugin.getDefault().getDialogSettings().get(PREF_DLG_LAST_SELECTION);
+		
+	if(lastSelectedNode == null)
+		return items[0];
+	
+	TreeItem selectedItem = findNodeMatching(items, lastSelectedNode);
+	if(selectedItem == null)	
+		return items[0];
+	else
+		return selectedItem;
+}
+
+/**
+ * Find the TreeItem that has data the same id as the nodeId.
+ * Search the children recursively.
+ * @return TreeItem or null if not found.
+ */ 
+private TreeItem findNodeMatching(TreeItem[] items, String nodeId){
+	
+	for(int i = 0; i < items.length; i++){
+		Object data = items[i].getData();
+		if (data instanceof IPreferenceNode) {
+			if(((IPreferenceNode) data).getId().equals(nodeId))
+				return items[i];
+			else{
+				TreeItem selectedChild = findNodeMatching(items[i].getItems(), nodeId);
+				if(selectedChild != null)
+					return selectedChild;
+			}
+		}
+	}
+	return null;
+}
+	
+
+/**
+ * Clear the last selected node. This is so that we not chache
+ * the last selection in case of an error.
+ */
+private void clearSelectedNode(){
+	WorkbenchPlugin.getDefault().getDialogSettings().put(PREF_DLG_LAST_SELECTION,"");
+}
+
+/**
+ * Save the currently selected node. 
+ */
+private void setSelectedNode(){
+	
+	String storeValue = "";
+	
+	if(tree.getSelectionCount() == 1){
+		TreeItem currentSelection = tree.getSelection()[0];
+		Object data = currentSelection.getData();
+		if(currentSelection.getData() instanceof IPreferenceNode)
+			storeValue = ((IPreferenceNode) data).getId();
+	}
+	
+	WorkbenchPlugin.getDefault().getDialogSettings().put(PREF_DLG_LAST_SELECTION,storeValue);
+}
+		
 /**
  * Display the given error message. The currently displayed message
  * is saved and will be redisplayed when the error message is set
@@ -766,6 +840,9 @@ protected void update(){
 
 	// Update the buttons
 	updateButtons();
+	
+	//Saved the selected node in the preferences
+	setSelectedNode();
 }
 /* (non-Javadoc)
  * Method declared on IPreferenceContainer
