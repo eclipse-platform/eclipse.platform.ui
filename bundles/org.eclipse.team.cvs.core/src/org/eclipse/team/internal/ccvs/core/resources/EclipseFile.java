@@ -425,8 +425,8 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 			// (modified = false) a committed file is no longer modified
 			
 		}
-		setModified(modified);
 		if (newInfo != null) setSyncInfo(newInfo);
+		setModified(modified);
 		clearCachedBase();
 	}
 	
