@@ -128,6 +128,11 @@ public class TextEditor extends StatusTextEditor {
 		dialog.create();
 			
 		IDocumentProvider provider= getDocumentProvider();
+		if (provider == null) {
+			// editor has programatically been  closed while the dialog was open
+			return;
+		}
+		
 		if (provider.isDeleted(input) && original != null) {
 			String message= MessageFormat.format(TextEditorMessages.getString("Editor.warning.save.delete"), new Object[] { original.getName() });
 			dialog.setErrorMessage(null);
@@ -160,7 +165,7 @@ public class TextEditor extends StatusTextEditor {
 		boolean success= false;
 		try {
 			
-			getDocumentProvider().aboutToChange(newInput);
+			provider.aboutToChange(newInput);
 			new ProgressMonitorDialog(shell).run(false, true, op);
 			success= true;
 			
@@ -192,7 +197,7 @@ public class TextEditor extends StatusTextEditor {
 			}
 						
 		} finally {
-			getDocumentProvider().changed(newInput);
+			provider.changed(newInput);
 			if (success)
 				setInput(newInput);
 		}

@@ -3141,16 +3141,16 @@ public class TextViewer extends Viewer implements
 		
 		} else {
 			
-			Iterator e= presentation.getAllStyleRangeIterator();
-			
-			// use optimized StyledText
-			StyleRange[] ranges= new StyleRange[presentation.getDenumerableRanges()];
-			for (int i= 0; i < ranges.length; i++)
-				ranges[i]= (StyleRange) e.next();
-				
-			IRegion region= presentation.getCoverage();
-			fTextWidget.replaceStyleRanges(region.getOffset(), region.getLength(), ranges);
-		}	
+			IRegion coverage= presentation.getCoverage();
+			if (coverage != null) {
+				Iterator e= presentation.getAllStyleRangeIterator();
+				StyleRange[] ranges= new StyleRange[presentation.getDenumerableRanges()];
+				for (int i= 0; i < ranges.length; i++)
+					ranges[i]= (StyleRange) e.next();
+					
+				fTextWidget.replaceStyleRanges(coverage.getOffset(), coverage.getLength(), ranges);
+			}
+		}
 	}
 	
 	/**
