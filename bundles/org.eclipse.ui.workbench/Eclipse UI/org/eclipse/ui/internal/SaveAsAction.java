@@ -33,12 +33,12 @@ public class SaveAsAction extends BaseSaveAction {
 		setImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_SAVEAS_EDIT));
-		setHoverImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_SAVEAS_EDIT_HOVER));
-		setDisabledImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_SAVEAS_EDIT_DISABLED));
+//		setHoverImageDescriptor(
+//			WorkbenchImages.getImageDescriptor(
+//				IWorkbenchGraphicConstants.IMG_CTOOL_SAVEAS_EDIT_HOVER));
+//		setDisabledImageDescriptor(
+//			WorkbenchImages.getImageDescriptor(
+//				IWorkbenchGraphicConstants.IMG_CTOOL_SAVEAS_EDIT_DISABLED));
 	}
 	
 	/* (non-Javadoc)

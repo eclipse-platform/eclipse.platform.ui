@@ -177,7 +177,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 				//				Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU);
 				Image hoverImage =
 					WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU_HOVER);
-				pullDownButton.setDisabledImage(hoverImage);
+				pullDownButton.setDisabledImage(hoverImage); // TODO: comment this out?
 				// PR#1GE56QT - Avoid creation of unnecessary image.
 				pullDownButton.setImage(hoverImage);
 				//				pullDownButton.setHotImage(hoverImage);

@@ -103,12 +103,12 @@ public class ExportResourcesAction
 		setImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ));
-		setHoverImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ_HOVER));
-		setDisabledImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ_DISABLED));
+//		setHoverImageDescriptor(
+//			WorkbenchImages.getImageDescriptor(
+//				IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ_HOVER));
+//		setDisabledImageDescriptor(
+//			WorkbenchImages.getImageDescriptor(
+//				IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ_DISABLED));
 	}
 
 	/**

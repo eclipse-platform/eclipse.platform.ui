@@ -45,9 +45,9 @@ public class PerspectiveBarNewContributionItem extends ContributionItem {
             toolItem.setImage(WorkbenchImages.getImageDescriptor(
                     IWorkbenchGraphicConstants.IMG_CTOOL_NEW_PAGE)
                     .createImage());
-            toolItem.setHotImage(WorkbenchImages.getImageDescriptor(
-                    IWorkbenchGraphicConstants.IMG_CTOOL_NEW_PAGE_HOVER)
-                    .createImage());
+//            toolItem.setHotImage(WorkbenchImages.getImageDescriptor(
+//                    IWorkbenchGraphicConstants.IMG_CTOOL_NEW_PAGE_HOVER)
+//                    .createImage());
             toolItem.setText(""); //$NON-NLS-1$
             toolItem.setToolTipText(WorkbenchMessages
                     .getString("PerspectiveBarNewContributionItem.toolTip")); //$NON-NLS-1$

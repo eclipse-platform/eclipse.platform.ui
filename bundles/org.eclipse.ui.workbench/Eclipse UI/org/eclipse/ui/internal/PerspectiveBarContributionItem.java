@@ -71,16 +71,16 @@ public class PerspectiveBarContributionItem extends ContributionItem {
             ImageDescriptor imageDescriptor = perspective.getImageDescriptor();
             if (imageDescriptor != null) {
                 toolItem.setImage(imageDescriptor.createImage());
-                toolItem.setHotImage(null);
+                //toolItem.setHotImage(null);
             } else {
                 toolItem.setImage(WorkbenchImages.getImageDescriptor(
                         IWorkbenchGraphicConstants.IMG_CTOOL_DEF_PERSPECTIVE)
                         .createImage());
-                toolItem
-                        .setHotImage(WorkbenchImages
-                                .getImageDescriptor(
-                                        IWorkbenchGraphicConstants.IMG_CTOOL_DEF_PERSPECTIVE_HOVER)
-                                .createImage());
+//                toolItem
+//                        .setHotImage(WorkbenchImages
+//                                .getImageDescriptor(
+//                                        IWorkbenchGraphicConstants.IMG_CTOOL_DEF_PERSPECTIVE_HOVER)
+//                                .createImage());
             }
             toolItem.setToolTipText(WorkbenchMessages.format(
                     "PerspectiveBarContributionItem.toolTip", //$NON-NLS-1$
@@ -119,16 +119,16 @@ public class PerspectiveBarContributionItem extends ContributionItem {
             ImageDescriptor imageDescriptor = perspective.getImageDescriptor();
             if (imageDescriptor != null) {
                 toolItem.setImage(imageDescriptor.createImage());
-                toolItem.setHotImage(null);
+//                toolItem.setHotImage(null);
             } else {
                 toolItem.setImage(WorkbenchImages.getImageDescriptor(
                         IWorkbenchGraphicConstants.IMG_CTOOL_DEF_PERSPECTIVE)
                         .createImage());
-                toolItem
-                        .setHotImage(WorkbenchImages
-                                .getImageDescriptor(
-                                        IWorkbenchGraphicConstants.IMG_CTOOL_DEF_PERSPECTIVE_HOVER)
-                                .createImage());
+//                toolItem
+//                        .setHotImage(WorkbenchImages
+//                                .getImageDescriptor(
+//                                        IWorkbenchGraphicConstants.IMG_CTOOL_DEF_PERSPECTIVE_HOVER)
+//                                .createImage());
             }
             toolItem.setToolTipText(WorkbenchMessages.format(
                     "PerspectiveBarContributionItem.toolTip", //$NON-NLS-1$

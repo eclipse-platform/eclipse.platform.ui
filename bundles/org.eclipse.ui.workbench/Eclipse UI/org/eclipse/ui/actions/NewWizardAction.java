@@ -87,8 +87,8 @@ public class NewWizardAction
 		// @issues should be IDE-specific images
 		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
 		setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
-		setHoverImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_HOVER));
-		setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
+//		setHoverImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_HOVER));
+//		setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
 		setToolTipText(WorkbenchMessages.getString("NewWizardAction.toolTip")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.NEW_ACTION);
 		setActionDefinitionId("org.eclipse.ui.newWizard"); //$NON-NLS-1$

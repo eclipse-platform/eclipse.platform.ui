@@ -264,10 +264,10 @@ public abstract class ActionFactory {
 			action.setActionDefinitionId("org.eclipse.ui.edit.copy"); //$NON-NLS-1$
 			ISharedImages sharedImages = window.getWorkbench().getSharedImages();
 			action.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
-			action.setHoverImageDescriptor(
-				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_HOVER));
-			action.setDisabledImageDescriptor(
-				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
+//			action.setHoverImageDescriptor(
+//				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_HOVER));
+//			action.setDisabledImageDescriptor(
+//				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
 			return action;
 		}
 	};
@@ -289,10 +289,10 @@ public abstract class ActionFactory {
 			action.setActionDefinitionId("org.eclipse.ui.edit.cut"); //$NON-NLS-1$
 			ISharedImages sharedImages = window.getWorkbench().getSharedImages();
 			action.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT));
-			action.setHoverImageDescriptor(
-				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT_HOVER));
-			action.setDisabledImageDescriptor(
-				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT_DISABLED));
+//			action.setHoverImageDescriptor(
+//				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT_HOVER));
+//			action.setDisabledImageDescriptor(
+//				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT_DISABLED));
 			return action;
 		}
 	};
@@ -317,10 +317,10 @@ public abstract class ActionFactory {
 			ISharedImages sharedImages = window.getWorkbench().getSharedImages();
 			action.setImageDescriptor(
 				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
-			action.setHoverImageDescriptor(
-				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_HOVER));
-			action.setDisabledImageDescriptor(
-				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
+//			action.setHoverImageDescriptor(
+//				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_HOVER));
+//			action.setDisabledImageDescriptor(
+//				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
 			return action;
 		}
 	};
@@ -639,10 +639,10 @@ public abstract class ActionFactory {
 			ISharedImages sharedImages = window.getWorkbench().getSharedImages();
 			action.setImageDescriptor(
 				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
-			action.setHoverImageDescriptor(
-				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_HOVER));
-			action.setDisabledImageDescriptor(
-				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
+//			action.setHoverImageDescriptor(
+//				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_HOVER));
+//			action.setDisabledImageDescriptor(
+//				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
 			return action;
 		}
 	};
@@ -766,12 +766,12 @@ public abstract class ActionFactory {
 			action.setImageDescriptor(
 				WorkbenchImages.getImageDescriptor(
 					IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT));
-			action.setHoverImageDescriptor(
-				WorkbenchImages.getImageDescriptor(
-					IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT_HOVER));
-			action.setDisabledImageDescriptor(
-				WorkbenchImages.getImageDescriptor(
-					IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT_DISABLED));
+//			action.setHoverImageDescriptor(
+//				WorkbenchImages.getImageDescriptor(
+//					IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT_HOVER));
+//			action.setDisabledImageDescriptor(
+//				WorkbenchImages.getImageDescriptor(
+//					IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT_DISABLED));
 			return action;
 		}
 	};
@@ -828,10 +828,10 @@ public abstract class ActionFactory {
 			action.setActionDefinitionId("org.eclipse.ui.edit.redo"); //$NON-NLS-1$
 			ISharedImages sharedImages = window.getWorkbench().getSharedImages();
 			action.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
-			action.setHoverImageDescriptor(
-				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_REDO_HOVER));
-			action.setDisabledImageDescriptor(
-				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_REDO_DISABLED));
+//			action.setHoverImageDescriptor(
+//				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_REDO_HOVER));
+//			action.setDisabledImageDescriptor(
+//				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_REDO_DISABLED));
 			return action;
 		}
 	};
@@ -1073,10 +1073,10 @@ public abstract class ActionFactory {
 			action.setActionDefinitionId("org.eclipse.ui.edit.undo"); //$NON-NLS-1$
 			ISharedImages sharedImages = window.getWorkbench().getSharedImages();
 			action.setImageDescriptor(sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_UNDO));
-			action.setHoverImageDescriptor(
-				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_UNDO_HOVER));
-			action.setDisabledImageDescriptor(
-				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_UNDO_DISABLED));
+//			action.setHoverImageDescriptor(
+//				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_UNDO_HOVER));
+//			action.setDisabledImageDescriptor(
+//				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_UNDO_DISABLED));
 			return action;
 		}
 	};

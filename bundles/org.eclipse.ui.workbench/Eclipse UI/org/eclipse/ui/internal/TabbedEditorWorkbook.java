@@ -431,7 +431,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 		//	Image image = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU);
 		Image hotImage =
 			WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU_HOVER);
-		pullDownButton.setDisabledImage(hotImage);
+		pullDownButton.setDisabledImage(hotImage); // TODO: comment this out?
 		pullDownButton.setImage(hotImage);
 		//	pullDownButton.setHotImage(hotImage);
 		pullDownButton.setToolTipText(WorkbenchMessages.getString("EditorList.button.toolTip")); //$NON-NLS-1$
@@ -838,7 +838,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 				Image disableImage = tab.getDisabledImage();
 				if (disableImage != null) {
 					disableImage.dispose();
-					tab.setDisabledImage(null);
+					tab.setDisabledImage(null); // TODO: comment this out?
 				}
 			}
 		} else if (!image.equals(tab.getImage())) {
@@ -850,7 +850,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 				if (disableImage != null)
 					disableImage.dispose();
 				disableImage = new Image(tab.getDisplay(), image, SWT.IMAGE_DISABLE);
-				tab.setDisabledImage(disableImage);
+				tab.setDisabledImage(disableImage); // TODO: comment this out?
 			}
 		}
 

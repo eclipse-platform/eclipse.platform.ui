@@ -114,11 +114,13 @@ public interface ISharedImages {
 
 	/**
 	 * Identifies the new wizard image in the hover (colored) state.
+	 * @deprecated
 	 */
 	public final static String IMG_TOOL_NEW_WIZARD_HOVER = "IMG_TOOL_NEW_WIZARD_HOVER"; //$NON-NLS-1$
 
 	/**
 	 * Identifies the new wizard image in the disabled state.
+	 * @deprecated
 	 */
 	public final static String IMG_TOOL_NEW_WIZARD_DISABLED = "IMG_TOOL_NEW_WIZARD_DISABLED"; //$NON-NLS-1$
 	
@@ -129,11 +131,13 @@ public interface ISharedImages {
 
 	/**
 	 * Identifies the undo image in the hover (colored) state.
+	 * @deprecated
 	 */
 	public final static String IMG_TOOL_UNDO_HOVER = "IMG_TOOL_UNDO_HOVER" ; //$NON-NLS-1$
 	
 	/**
 	 * Identifies the undo image in the disabled state.
+	 * @deprecated
 	 */
 	public final static String IMG_TOOL_UNDO_DISABLED = "IMG_TOOL_UNDO_DISABLED" ; //$NON-NLS-1$
 
@@ -144,11 +148,13 @@ public interface ISharedImages {
 
 	/**
 	 * Identifies the redo image in the hover (colored) state.
+	 * @deprecated
 	 */
 	public final static String IMG_TOOL_REDO_HOVER = "IMG_TOOL_REDO_HOVER" ; //$NON-NLS-1$
 
 	/**
 	 * Identifies the redo image in the disabled state.
+	 * @deprecated
 	 */
 	public final static String IMG_TOOL_REDO_DISABLED= "IMG_TOOL_REDO_DISABLED" ; //$NON-NLS-1$
 
@@ -159,11 +165,13 @@ public interface ISharedImages {
 
 	/**
 	 * Identifies the cut image in the hover (colored) state.
+	 * @deprecated
 	 */
 	public final static String IMG_TOOL_CUT_HOVER = "IMG_TOOL_CUT_HOVER" ; //$NON-NLS-1$
 
 	/**
 	 * Identifies the cut image in the disabled state.
+	 * @deprecated
 	 */
 	public final static String IMG_TOOL_CUT_DISABLED = "IMG_TOOL_CUT_DISABLED" ; //$NON-NLS-1$
 
@@ -174,11 +182,13 @@ public interface ISharedImages {
 
 	/**
 	 * Identifies the copy image in the hover (colored) state.
+	 * @deprecated
 	 */
 	public final static String IMG_TOOL_COPY_HOVER = "IMG_TOOL_COPY_HOVER" ; //$NON-NLS-1$
 
 	/**
 	 * Identifies the copy image in the disabled state.
+	 * @deprecated
 	 */
 	public final static String IMG_TOOL_COPY_DISABLED = "IMG_TOOL_COPY_DISABLED" ; //$NON-NLS-1$
 
@@ -189,11 +199,13 @@ public interface ISharedImages {
 
 	/**
 	 * Identifies the paste image in the hover (colored) state.
+	 * @deprecated
 	 */
 	public final static String IMG_TOOL_PASTE_HOVER = "IMG_TOOL_PASTE_HOVER" ; //$NON-NLS-1$
 
 	/**
 	 * Identifies the paste image in the disabled state.
+	 * @deprecated
 	 */
 	public final static String IMG_TOOL_PASTE_DISABLED= "IMG_TOOL_PASTE_DISABLED" ; //$NON-NLS-1$
 
@@ -204,11 +216,13 @@ public interface ISharedImages {
 
 	/**
 	 * Identifies the delete image in the hover (colored) state.
+	 * @deprecated
 	 */
 	public final static String IMG_TOOL_DELETE_HOVER = "IMG_TOOL_DELETE_HOVER" ; //$NON-NLS-1$
 
 	/**
 	 * Identifies the delete image in the disabled state.
+	 * @deprecated
 	 */
 	public final static String IMG_TOOL_DELETE_DISABLED = "IMG_TOOL_DELETE_DISABLED" ; //$NON-NLS-1$
 	
@@ -219,11 +233,13 @@ public interface ISharedImages {
 
 	/**
 	 * Identifies the forward image in the hover (colored) state.
+	 * @deprecated
 	 */
 	public final static String IMG_TOOL_FORWARD_HOVER = "IMG_TOOL_FORWARD_HOVER"; //$NON-NLS-1$
 
 	/**
 	 * Identifies the forward image in the disabled state.
+	 * @deprecated
 	 */
 	public final static String IMG_TOOL_FORWARD_DISABLED = "IMG_TOOL_FORWARD_DISABLED"; //$NON-NLS-1$
 
@@ -234,11 +250,13 @@ public interface ISharedImages {
 
 	/**
 	 * Identifies the back image in the hover (colored) state.
+	 * @deprecated
 	 */
 	public final static String IMG_TOOL_BACK_HOVER = "IMG_TOOL_BACK_HOVER"; //$NON-NLS-1$
 
 	/**
 	 * Identifies the back image in the disabled state.
+	 * @deprecated
 	 */
 	public final static String IMG_TOOL_BACK_DISABLED = "IMG_TOOL_BACK_DISABLED"; //$NON-NLS-1$
 
@@ -249,11 +267,13 @@ public interface ISharedImages {
 
 	/**
 	 * Identifies the up image in the hover (colored) state.
+	 * @deprecated
 	 */
 	public final static String IMG_TOOL_UP_HOVER = "IMG_TOOL_UP_HOVER"; //$NON-NLS-1$
 
 	/**
 	 * Identifies the up image in the disabled state.
+	 * @deprecated
 	 */
 	public final static String IMG_TOOL_UP_DISABLED = "IMG_TOOL_UP_DISABLED"; //$NON-NLS-1$
 	
