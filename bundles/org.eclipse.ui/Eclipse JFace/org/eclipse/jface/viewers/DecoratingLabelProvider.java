@@ -5,6 +5,7 @@ package org.eclipse.jface.viewers;
  * All Rights Reserved.
  */
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.ListenerList;
 
@@ -29,6 +30,17 @@ public DecoratingLabelProvider(ILabelProvider provider, ILabelDecorator decorato
 	Assert.isNotNull(provider);
 	this.provider = provider;
 	this.decorator = decorator;
+}
+
+/**
+ * Creates a decorating label provider which uses the given label decorator
+ * to decorate labels provided by the given label provider.
+ *
+ * @param provider the nested label provider
+ * @param decoratorManager the decorator manager to get the decorator from
+ */
+public DecoratingLabelProvider(ILabelProvider provider, IDecoratorManager decoratorManager) {
+	this(provider,decoratorManager.getLabelDecorator());
 }
 /**
  * The <code>DecoratingLabelProvider</code> implementation of this <code>IBaseLabelProvider</code> method
