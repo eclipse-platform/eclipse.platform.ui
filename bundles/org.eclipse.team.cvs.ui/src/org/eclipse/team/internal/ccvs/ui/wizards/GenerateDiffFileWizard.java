@@ -462,14 +462,13 @@ public class GenerateDiffFileWizard extends Wizard {
 	protected void initializeDefaultPageImageDescriptor() {
 		String iconPath;
 		if (Display.getCurrent().getIconDepth() > 4) {
-			iconPath = "icons/full/"; 
+			iconPath = "icons/full/"; //$NON-NLS-1$
 		} else {
-			iconPath = "icons/basic/";
+			iconPath = "icons/basic/"; //$NON-NLS-1$
 		}
 		try {
 			URL installURL = CVSUIPlugin.getPlugin().getDescriptor().getInstallURL();
-			URL url = new URL(installURL, iconPath + "wizban/newconnect_wizban.gif");
-			//$NON-NLS-1$
+			URL url = new URL(installURL, iconPath + "wizards/newconnect_wiz.gif");	//$NON-NLS-1$
 			ImageDescriptor desc = ImageDescriptor.createFromURL(url);
 			setDefaultPageImageDescriptor(desc);
 		} catch (MalformedURLException e) {
