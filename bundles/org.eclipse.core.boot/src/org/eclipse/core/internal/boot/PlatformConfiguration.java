@@ -106,7 +106,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 
 	private static final String CFG_VERSION = "version"; //$NON-NLS-1$
 	private static final String CFG_TRANSIENT = "transient"; //$NON-NLS-1$
-	private static final String VERSION = "1.0"; //$NON-NLS-1$
+	private static final String VERSION = "2.1"; //$NON-NLS-1$
 	private static final String EOF = "eof"; //$NON-NLS-1$
 	private static final int CFG_LIST_LENGTH = 10;
 
@@ -1934,7 +1934,10 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 
 		// check version
 		String v = props.getProperty(CFG_VERSION);
-		if (!VERSION.equals(v)) {
+		if (!VERSION.equals(v)) {	
+			// the state is invalid, delete any files under the directory
+			// bug 33493
+			resetUpdateManagerState(url);	
 			throw new IOException(Policy.bind("cfig.badVersion", v)); //$NON-NLS-1$
 		}
 
@@ -2896,4 +2899,31 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static void debug(String s) {
 		System.out.println("PlatformConfig: " + s); //$NON-NLS-1$
 	}
+	
+	private void resetUpdateManagerState(URL url) throws IOException {
+		// [20111]
+		if (!supportsDetection(url))
+			return; // can't do ...
+		
+		// find directory where the platform configuration file is	
+		URL resolved = resolvePlatformURL(url);
+		File initCfg = new File(resolved.getFile().replace('/',File.separatorChar));
+		File initDir = initCfg.getParentFile();
+		
+		// Find the Update Manager State directory
+		if (initDir == null || !initDir.exists() || !initDir.isDirectory())
+			return;
+		String temp = initCfg.getName()+".metadata";		
+		File UMDir = new File(initDir,temp+'/');
+	
+		// Attempt to rename it
+		if (UMDir == null || !UMDir.exists() || !UMDir.isDirectory())
+		return;
+		Date now = new Date();
+		boolean renamed = UMDir.renameTo(new File(initDir,temp+now.getTime()+'/'));
+		
+		if (!renamed)
+			resetInitializationLocation(UMDir);
+	}	
+		
 }
