@@ -102,7 +102,10 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		// link the process to its build logger via a timestamp
 		long timeStamp = System.currentTimeMillis();
 		String idStamp = Long.toString(timeStamp);
-		String idProperty = "-D" + AntProcess.ATTR_ANT_PROCESS_ID + "=" + idStamp; //$NON-NLS-1$ //$NON-NLS-2$
+		StringBuffer idProperty = new StringBuffer("-D"); //$NON-NLS-1$
+		idProperty.append(AntProcess.ATTR_ANT_PROCESS_ID);
+		idProperty.append('=');
+		idProperty.append(idStamp);
 		
 		// resolve arguments
 		String[] arguments = ExternalToolsUtil.getArguments(configuration);
@@ -120,7 +123,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		if (baseDir != null && baseDir.length() > 0) {
 			runnerArgs[runnerArgs.length - 2] = BASE_DIR_PREFIX + baseDir;
 		}
-		runnerArgs[runnerArgs.length -1] = idProperty;
+		runnerArgs[runnerArgs.length -1] = idProperty.toString();
 		
 		Map userProperties= AntUtil.getProperties(configuration);
 		String[] propertyFiles= AntUtil.getPropertyFiles(configuration);
@@ -299,8 +302,9 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		
 		if (targets != null) {
 			for (int i = 0; i < targets.length; i++) {
-				commandLine.append(" "); //$NON-NLS-1$
+				commandLine.append(" \""); //$NON-NLS-1$
 				commandLine.append(targets[i]);
+				commandLine.append("\""); //$NON-NLS-1$
 			}
 		}
 		return commandLine;
