@@ -8,6 +8,7 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -113,13 +114,13 @@ public class ShortcutBarPart extends LayoutPart {
 			Object itemData = currentDropTarget.getData(ShowFastViewContribution.FAST_VIEW);
 
 			if (itemData != null) {
-				IViewPart view = (IViewPart) itemData;
+				IViewReference ref = (IViewReference) itemData;
 				WorkbenchPage page = (WorkbenchPage) getWorkbenchWindow().getActivePage();
 
 				if (deactivatedPart == null) {
 					deactivatedPart = page.getActivePart();
 				}
-				lastFastView = view;
+				lastFastView = (IViewPart)ref.getPart(true);
 				page.activate(lastFastView);
 			}
 		}

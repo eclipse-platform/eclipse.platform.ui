@@ -4,25 +4,20 @@ package org.eclipse.jface.wizard;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.dialogs.Dialog;  // disambiguate from SWT Dialog
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-import java.util.List; // disabiguate from SWT List
-
 /**
  * A dialog to show a wizard to the end user. 
  * <p>
@@ -52,9 +47,6 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 
 	// The wizard the dialog is currently showing.
 	private IWizard wizard;
-	
-	//The Table of Contents
-	private WizardTableOfContentsHeader tableOfContents;
 
 	// Wizards to dispose
 	private ArrayList createdWizards = new ArrayList();
@@ -64,8 +56,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 	
 	// The currently displayed page.
 	private IWizardPage currentPage = null;
-
-		private long activeRunningOperations = 0;
+	
+	// The number of long running operation executed from the dialog.	
+	private long activeRunningOperations = 0;
 	private boolean operationCancelableState;
 	
 	// Do I have a help button or not
@@ -81,6 +74,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 	private Cursor waitCursor;
 	private Cursor arrowCursor;
 	private MessageDialog windowClosingDialog;
+	
+	//Table of contents
+	WizardTableOfContentsHeader tableOfContents;
 	
 	// Navigation buttons
 	private Button backButton;
@@ -1120,12 +1116,20 @@ public void updateWindowTitle() {
 	getShell().setText(title);	
 }
 
-/** 
- * @see org.eclipse.jface.dialogs.TitleAreaDialog#initializeHeader() */
-protected void initializeHeader() {
-		this.tableOfContents = new WizardTableOfContentsHeader(this);
-		this.tableOfContents.addWizard(getWizard());
-		this.header = this.tableOfContents;
-	}
-	
+/**
+ * @see org.eclipse.jface.dialogs.TitleAreaDialog#createTitleArea(org.eclipse.swt.widgets.Composite)
+ */
+protected Control createTitleArea(Composite parent) {
+	Control bottomWidget = super.createTitleArea(parent);
+	WizardTableOfContentsHeader header = new WizardTableOfContentsHeader(this);
+	Control headerControl = header.createTableOfContentsControl(parent);
+	FormData headerData = new FormData();
+	headerData.top = new FormAttachment(bottomWidget);
+	headerData.left = new FormAttachment(0,0);
+	headerData.right = new FormAttachment(100,0);
+	headerControl.setLayoutData(headerData);
+	this.tableOfContents = header;
+	return headerControl;	
+}
+
 }

@@ -4,11 +4,11 @@ package org.eclipse.ui.internal.registry;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
 import org.eclipse.jface.resource.ImageDescriptor;
-import java.util.*;
 /**
  * Registry to hold mappings from project natures to images
  */

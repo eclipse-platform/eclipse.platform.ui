@@ -6,14 +6,13 @@ package org.eclipse.ui.internal.dialogs;
  */
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.ui.IWorkbenchPropertyPage;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.preference.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchPropertyPage;
+import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * Property page node allows us to achive presence in the property page dialog
@@ -57,7 +56,11 @@ public void createPage() {
  * Method declared on IPreferenceNode.
  */
 public void disposeResources() {
-	page = null;
+	
+	if (page != null) {
+		page.dispose();
+		page = null;
+	}
 	if (icon != null) {
 		icon.dispose();
 		icon = null;

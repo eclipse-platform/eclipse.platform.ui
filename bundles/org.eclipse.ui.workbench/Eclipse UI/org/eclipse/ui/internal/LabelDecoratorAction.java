@@ -5,9 +5,6 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.internal.DecoratorDefinition;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * The LabelDecoratorAction is an action that toggles the 

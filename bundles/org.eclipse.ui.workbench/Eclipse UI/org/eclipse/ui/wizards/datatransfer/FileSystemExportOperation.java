@@ -4,14 +4,16 @@ package org.eclipse.ui.wizards.datatransfer;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
-import org.eclipse.jface.operation.*;
-import org.eclipse.swt.*;
-import java.io.*;
-import java.util.*;
 
 /**
  *	Operation for exporting the contents of a resource to the local file system.

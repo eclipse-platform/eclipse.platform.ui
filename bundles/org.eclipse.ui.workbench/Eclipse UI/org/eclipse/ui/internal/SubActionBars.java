@@ -4,16 +4,13 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.*;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.widgets.*;
-import java.util.*;
+import org.eclipse.jface.util.*;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * <code>PartActionBars</code> is the general implementation for an
@@ -120,6 +117,7 @@ public void dispose() {
 		statusLineMgr.removeAll();
 	if (toolBarMgr != null)
 		toolBarMgr.removeAll();
+	propertyChangeListeners.clear();
 }
 /**
  * Notifies any property change listeners that a property has changed.
@@ -258,6 +256,10 @@ public void setGlobalActionHandler(String actionID, IAction handler) {
  * menu, status line, or toolbar.
  */
 public void updateActionBars() {
+	IToolBarManager mgr = getToolBarManager();
+	if (mgr instanceof CoolItemToolBarManager) {
+		mgr.update(false);
+	} 
 	parent.updateActionBars();
 	fireActionHandlersChanged();
 }

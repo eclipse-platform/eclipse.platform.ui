@@ -4,17 +4,12 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.part.EditorPart;
-import org.eclipse.ui.part.MultiEditor;
-
 import java.util.*;
-import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.ui.*;
+import org.eclipse.ui.part.MultiEditor;
 
 /**
  * EditorPresentation is a wrapper for PartTabworkbook.
@@ -158,7 +153,7 @@ public IEditorReference getVisibleEditor() {
 		IEditorReference result = pane.getEditorReference();
 		IEditorPart editorPart = (IEditorPart)result.getPart(false);
 		if((editorPart != null) && (editorPart instanceof MultiEditor)) {
-			editorPart = ((MultiEditor)result.getPart(true)).getActiveEditor();
+			editorPart = ((MultiEditor)editorPart).getActiveEditor();
 			EditorSite site = (EditorSite)editorPart.getSite();
 			result = (IEditorReference)site.getPane().getPartReference();
 		}
@@ -390,7 +385,9 @@ public boolean setVisibleEditor(IEditorReference ref, boolean setFocus) {
 	IEditorReference visibleEditor = getVisibleEditor();
 	if (ref != visibleEditor) {
 		IEditorPart part = (IEditorPart)ref.getPart(true);
-		EditorPane pane = (EditorPane)((PartSite)part.getEditorSite()).getPane();
+		EditorPane pane = null;
+		if(part != null)
+			pane = (EditorPane)((PartSite)part.getEditorSite()).getPane();
 		if (pane != null) {
 			if(pane instanceof MultiEditorInnerPane) {
 				EditorPane parentPane = ((MultiEditorInnerPane)pane).getParentPane();
@@ -437,5 +434,12 @@ private void stackEditor(EditorPane newPart, EditorWorkbook refPart) {
 	// Reparent part and add it to the workbook
 	newPart.reparent(refPart.getParent());
 	refPart.add(newPart);
+}
+/**
+ * Method getWorkbooks.
+ * @return ArrayList
+ */
+public ArrayList getWorkbooks() {
+	return editorArea.getEditorWorkbooks();
 }
 }

@@ -7,8 +7,6 @@ package org.eclipse.ui.dialogs;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridLayout;
@@ -155,8 +153,10 @@ protected Control createDialogArea(Composite parent) {
 	createProjectLocationGroup(composite);
 
 	//Add in a label for status messages if required
-	statusMessageLabel = new Label(composite, SWT.NONE);
+	statusMessageLabel = new Label(composite, SWT.WRAP);
 	statusMessageLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
+	//Make it two lines.
+	statusMessageLabel.setText(" \n ");
 
 	return composite;
 }

@@ -7,8 +7,6 @@ package org.eclipse.ui.internal.model;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import java.util.Arrays;
-import java.util.Iterator;
 
 /**
  * An IWorkbenchAdapter implementation for IWorkspaceRoot objects.

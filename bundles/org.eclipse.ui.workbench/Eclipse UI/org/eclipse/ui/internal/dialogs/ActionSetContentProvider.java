@@ -4,11 +4,12 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.registry.*;
-import org.eclipse.jface.viewers.*;
-import java.util.*;
+import java.util.ArrayList;
+
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.internal.registry.ActionSetCategory;
+import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 
 public class ActionSetContentProvider implements ITreeContentProvider {
 	private ActionSetDialogInput input;

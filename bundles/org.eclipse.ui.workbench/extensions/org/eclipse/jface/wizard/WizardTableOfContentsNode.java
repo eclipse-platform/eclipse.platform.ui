@@ -1,37 +1,28 @@
 package org.eclipse.jface.wizard;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * The WizardTableOfContentsNode is the class that represents 
  * each node in the table of contents.
  */
-public class WizardTableOfContentsNode implements ITableOfContentsNode {
+public class WizardTableOfContentsNode {
 
 	/**
-	 * Image registry key for decision image (value <code>"toc_decision_image"</code>).
-	 */
-	private static final String TOC_IMG_DECISION = "toc_decision_image"; //$NON-NLS-1$
-
-	/**
-	 * Image registry key for last page image (value <code>"toc_disabled_image"</code>).
-	 */
+	* Image registry key for last page image (value <code>"toc_disabled_image"</code>).
+	*/
 	private static final String TOC_IMG_DISABLED = "toc_disabled_image"; //$NON-NLS-1$
 
 	/**
@@ -49,9 +40,11 @@ public class WizardTableOfContentsNode implements ITableOfContentsNode {
 
 	static {
 		ImageRegistry reg = JFaceResources.getImageRegistry();
-		reg.put(TOC_IMG_DISABLED, ImageDescriptor.createFromFile(WizardTableOfContentsNode.class, "images/disabled.gif")); //$NON-NLS-1$
-		reg.put(TOC_IMG_NEXT, ImageDescriptor.createFromFile(WizardTableOfContentsNode.class, "images/next.gif")); //$NON-NLS-1$
-		reg.put(TOC_IMG_DECISION, ImageDescriptor.createFromFile(WizardTableOfContentsNode.class, "images/decision.gif")); //$NON-NLS-1$
+		try {
+			reg.put(TOC_IMG_DISABLED, ImageDescriptor.createFromURL(new URL(WorkbenchPlugin.getDefault().getDescriptor().getInstallURL(), "icons/full/dtoc/pageknown_toc"))); //$NON-NLS-1$
+			reg.put(TOC_IMG_NEXT, ImageDescriptor.createFromURL(new URL(WorkbenchPlugin.getDefault().getDescriptor().getInstallURL(), "full/ftoc/pageknown_toc"))); //$NON-NLS-1$
+		} catch (MalformedURLException exception) {
+		}
 
 	}
 
@@ -87,27 +80,19 @@ public class WizardTableOfContentsNode implements ITableOfContentsNode {
 	/*
 	 * @see ITableOfContentsNode.createWidgets(Composite)
 	 */
-	public void createWidgets(
-		Composite parentComposite,
-		Color foreground,
-		Color background) {
+	public void createWidgets(Composite parentComposite) {
 
 		initializeDialogUnits(parentComposite);
 		Image image = getImage(true);
 
 		innerComposite = new Composite(parentComposite, SWT.BORDER);
 
-		innerComposite.setForeground(foreground);
-		innerComposite.setBackground(background);
 		int width =
 			Dialog.convertWidthInCharsToPixels(
 				fontMetrics,
 				Math.min(this.page.getTitle().length() + 7, 20));
 
-
 		imageLabel = new Label(innerComposite, SWT.NULL);
-		imageLabel.setForeground(foreground);
-		imageLabel.setBackground(background);
 		imageLabel.setImage(image);
 		GridData imageData =
 			new GridData(
@@ -118,8 +103,7 @@ public class WizardTableOfContentsNode implements ITableOfContentsNode {
 		titleLabel = new Label(innerComposite, SWT.WRAP | SWT.CENTER);
 		titleLabel.setText(this.page.getTitle());
 		titleLabel.setFont(JFaceResources.getFont(JFaceResources.BANNER_FONT));
-		titleLabel.setForeground(foreground);
-		titleLabel.setBackground(background);
+
 		GridData titleData =
 			new GridData(
 				GridData.FILL_BOTH
@@ -127,11 +111,12 @@ public class WizardTableOfContentsNode implements ITableOfContentsNode {
 					| GridData.GRAB_VERTICAL
 					| GridData.HORIZONTAL_ALIGN_CENTER);
 		titleLabel.setLayoutData(titleData);
-		
+
 		GridLayout innerLayout = new GridLayout();
 		innerComposite.setLayout(innerLayout);
-		Point defaultSize = innerComposite.computeSize(SWT.DEFAULT,SWT.DEFAULT);
-		innerComposite.setSize(defaultSize.x,defaultSize.y);
+		Point defaultSize =
+			innerComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		innerComposite.setSize(defaultSize.x, defaultSize.y);
 
 		MouseListener clickListener = new MouseListener() {
 			public void mouseDoubleClick(MouseEvent e) {
@@ -191,14 +176,11 @@ public class WizardTableOfContentsNode implements ITableOfContentsNode {
 	 * @return Image
 	 */
 	private Image getImage(boolean enabled) {
-		if (getPage() instanceof IDecisionPage)
-			return JFaceResources.getImage(TOC_IMG_DECISION);
-		else {
-			if (enabled)
-				return JFaceResources.getImage(TOC_IMG_NEXT);
-			else
-				return JFaceResources.getImage(TOC_IMG_DISABLED);
-		}
+		if (enabled)
+			return JFaceResources.getImage(TOC_IMG_NEXT);
+		else
+			return JFaceResources.getImage(TOC_IMG_DISABLED);
+
 	}
 
 }

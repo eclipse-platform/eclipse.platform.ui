@@ -5,14 +5,12 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
 /**
@@ -22,6 +20,13 @@ public class ReopenEditorMenu extends ContributionItem {
 	private WorkbenchWindow fWindow;
 	private EditorHistory history;
 	private boolean showSeparator;
+	private boolean dirty = true;
+	private IMenuListener menuListener = new IMenuListener() {
+		public void menuAboutToShow(IMenuManager manager) {
+			manager.markDirty();
+			dirty = true;
+		}
+	};
 
 	// the maximum length for a file name; must be >= 4
 	private static final int MAX_TEXT_LENGTH = 40;
@@ -138,6 +143,12 @@ public class ReopenEditorMenu extends ContributionItem {
 			|| fWindow.getActivePage().getPerspective() == null)
 			return;
 
+		if(getParent() instanceof MenuManager)
+			((MenuManager)getParent()).addMenuListener(menuListener);
+				
+		if(!dirty)
+			return;
+			
 		// Get items.
 		EditorHistoryItem[] array = history.getItems();
 
@@ -176,7 +187,14 @@ public class ReopenEditorMenu extends ContributionItem {
 				}
 			});
 		}
+		dirty = false;
 	}
+	/**
+	 * Overridden to always return true and force dynamic menu building.
+	 */
+	public boolean isDirty() {
+		return dirty;
+	}	
 	/**
 	 * Overridden to always return true and force dynamic menu building.
 	 */

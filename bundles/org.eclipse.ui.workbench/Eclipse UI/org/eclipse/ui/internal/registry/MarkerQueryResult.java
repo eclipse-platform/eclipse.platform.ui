@@ -5,7 +5,6 @@ package org.eclipse.ui.internal.registry;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.internal.misc.Assert;
 
 /**

@@ -4,11 +4,11 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.io.*;
+
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.resources.*;
-import java.io.*;
-import java.util.*;
 
 /**
  * Helper class for exporting resources to the file system.

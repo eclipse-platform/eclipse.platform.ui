@@ -4,12 +4,11 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.Iterator;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.model.AdaptableList;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.jface.*;
-import org.eclipse.ui.part.*;
-import java.util.*;
 /**
  * Instances of this class are a collection of WizardCollectionElements,
  * thereby facilitating the definition of tree structures composed of 

@@ -4,17 +4,17 @@ package org.eclipse.ui.wizards.newresource;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.*;
-import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.ITableOfContentsWizard;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.swt.widgets.Display;
-import java.net.*;
-import java.util.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.part.ISetSelectionTarget;
 
 /**
  * Abstract base implementation of the standard workbench wizards
@@ -23,7 +23,7 @@ import java.util.*;
  * This class is not intended to be subclassed outside this package.
  * </p>
  */
-public abstract class BasicNewResourceWizard extends Wizard implements INewWizard, ITableOfContentsWizard{
+public abstract class BasicNewResourceWizard extends Wizard implements INewWizard {
 
 	/**
 	 * The workbench.
@@ -122,8 +122,13 @@ public static void selectAndReveal(IResource resource, IWorkbenchWindow window) 
 
 	// get all the view and editor parts
 	List parts = new ArrayList();
-	parts.addAll(Arrays.asList(page.getViews()));
-	IEditorReference refs[] = page.getEditorReferences();
+	IWorkbenchPartReference refs[] = page.getViewReferences();
+	for (int i = 0; i < refs.length; i++) {
+		IWorkbenchPart part = refs[i].getPart(false);
+		if(part != null)
+			parts.add(part);
+	}	
+	refs = page.getEditorReferences();
 	for (int i = 0; i < refs.length; i++) {
 		if(refs[i].getPart(false) != null)
 			parts.add(refs[i].getPart(false));

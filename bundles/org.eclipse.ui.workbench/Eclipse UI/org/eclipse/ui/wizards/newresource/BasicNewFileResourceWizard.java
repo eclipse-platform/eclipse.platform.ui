@@ -4,17 +4,16 @@ package org.eclipse.ui.wizards.newresource;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.internal.dialogs.DialogUtil;
-import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
-import org.eclipse.ui.*;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.swt.widgets.Display;
-import java.net.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
+import org.eclipse.ui.internal.dialogs.DialogUtil;
 
 /**
  * Standard workbench wizard that create a new file resource in the workspace.

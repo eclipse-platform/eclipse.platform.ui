@@ -57,7 +57,7 @@ public IStatusLineManager getStatusLineManager() {
  * @return the tool bar manager
  */
 public IToolBarManager getToolBarManager() {
-	return window.getToolsManager();
+	return window.getCoolBarManager();
 }
 /**
  * Add a handler for a window action.

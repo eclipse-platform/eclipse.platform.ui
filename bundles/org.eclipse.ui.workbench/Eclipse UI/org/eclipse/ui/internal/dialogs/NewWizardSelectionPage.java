@@ -4,27 +4,21 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.dialogs.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.misc.*;
-import org.eclipse.jface.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.widgets.*;
-import java.util.*;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
 /**
  *	New wizard selection tab that allows the user to either select a
  *	registered 'New' wizard to be launched, or to select a solution or
  *	projects to be retrieved from an available server.  This page
  *	contains two visual tabs that allow the user to perform these tasks.
  */
-class NewWizardSelectionPage extends WorkbenchWizardSelectionPage implements IDecisionPage {
+class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
 	private WizardCollectionElement	wizardCategories;
 	
 	// widgets

@@ -4,12 +4,10 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.jface.preference.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.dialogs.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.dialogs.PropertyPage;
 
 /*
  * A page used as a filler for nodes in the property page dialog

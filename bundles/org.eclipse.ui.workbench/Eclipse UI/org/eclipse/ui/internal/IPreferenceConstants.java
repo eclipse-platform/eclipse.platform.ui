@@ -36,10 +36,17 @@ public interface IPreferenceConstants {
 
 	//Do we show tabs up or down for editors
 	public static final String EDITOR_TAB_POSITION = "EDITOR_TAB_POSITION"; //$NON-NLS-1$
+	
+	//mappings for type/extension to an editor
+	public final static String EDITORS = "editors"; //$NON-NLS-1$
+	public final static String RESOURCES = "resourcetypes"; //$NON-NLS-1$
 
 	// (int) If > 0, an editor will be reused once 'N' editors are opened.
 	public static final String REUSE_EDITORS = "REUSE_OPEN_EDITORS"; //$NON-NLS-1$
-	//On/Off option for the preceding option.
+	//Boolean:	true = replace dirty editor if no other editors to reuse (prompt for save); 
+	//			false = open a new editor if no other editors to resuse
+	public static final String REUSE_DIRTY_EDITORS = "REUSE_DIRTY_EDITORS"; //$NON-NLS-1$
+	//On/Off option for the two preceding options.
 	public static final String REUSE_EDITORS_BOOLEAN = "REUSE_OPEN_EDITORS_BOOLEAN"; //$NON-NLS-1$
 	
 	// (int) N recently viewed files will be listed in the File->Open Recent menu.
@@ -64,6 +71,10 @@ public interface IPreferenceConstants {
 	//Boolean: true = refresh workspace on startup if the command line does 
 	//not have the -refresh option
 	public static final String REFRESH_WORKSPACE_ON_STARTUP = "REFRESH_WORKSPACE_ON_STARTUP"; //$NON-NLS-1$
+	
+	//Boolean: true = close all editors before saving the workbench state when exiting
+	//Eclipse.  Will improve startup time for editors that have a long open time.
+	public static final String CLOSE_EDITORS_ON_EXIT = "CLOSE_EDITORS_ON_EXIT"; //$NON-NLS-1$
 	
 	//List of plugins but that extends "startup" extension point but are overriden by the user.
 	//String of plugin unique ids separated by ";"

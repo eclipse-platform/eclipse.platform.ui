@@ -4,24 +4,15 @@
  */
 package org.eclipse.ui.internal.dialogs;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Collections;
-
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Preferences;
-
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.OpenStrategy;
-
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * @version 	1.0

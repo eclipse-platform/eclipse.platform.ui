@@ -5,8 +5,9 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.jface.action.*;
+
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.CoolItemToolBarManager;
+import org.eclipse.ui.actions.RetargetAction;
 
 /**
  * The action bars for an editor.
@@ -18,6 +19,27 @@ public class EditorActionBars extends SubActionBars
 	private IEditorActionBarContributor editorContributor;
 	private IEditorActionBarContributor extensionContributor;
 	private CoolItemMultiToolBarManager coolItemToolBarMgr;
+	private boolean enabledAllowed = true;
+
+	private class Overrides implements IContributionManagerOverrides {
+		public Boolean getEnabled(IContributionItem item) {
+			if (((item instanceof ActionContributionItem)
+				&& (((ActionContributionItem) item).getAction() instanceof RetargetAction))
+				|| enabledAllowed)
+				return null;
+			else
+				return Boolean.FALSE;
+		}
+		public Integer getAccelerator(IContributionItem item) {
+			return null;
+		}
+		public String getAcceleratorText(IContributionItem item) {
+			return null;
+		}
+		public String getText(IContributionItem item) {
+			return null;
+		}
+	}
 
 /**
  * Constructs the EditorActionBars for an editor.  
@@ -48,7 +70,8 @@ protected SubMenuManager createSubMenuManager(IMenuManager parent) {
  * Method declared on SubActionBars.
  */
 protected SubToolBarManager createSubToolBarManager(IToolBarManager parent) {
-	return new EditorToolBarManager(parent);
+	// return null, editor actions are managed by CoolItemToolBarManagers
+	return null;
 }
 /**
  * Deactivate the contributions.
@@ -73,6 +96,12 @@ public IEditorActionBarContributor getEditorContributor() {
 	return editorContributor;
 }
 /**
+ * Gets the extension contributor
+ */
+public IEditorActionBarContributor getExtensionContributor() {
+	return extensionContributor;
+}
+/**
  * Returns the editor type.
  */
 public String getEditorType() {
@@ -87,27 +116,36 @@ public String getEditorType() {
  */
 public IToolBarManager getToolBarManager() {
 	IToolBarManager parentMgr = parent.getToolBarManager();
-	if (parentMgr instanceof ToolBarManager) {
-		return super.getToolBarManager();
-	} else if (parentMgr instanceof CoolBarManager) {
-		if (coolItemToolBarMgr == null) {
-			// Create a CoolItem manager for this action bar.  The CoolBarContributionItem(s)
-			// will be created when the EditorActionBar is initialized.
-			CoolBarManager cBarMgr = ((CoolBarManager)parentMgr);
-			coolItemToolBarMgr = new CoolItemMultiToolBarManager(cBarMgr, type, active);
-			coolItemToolBarMgr.setParentMgr(cBarMgr);
-			toolBarMgr = createSubToolBarManager(coolItemToolBarMgr);
-			coolItemToolBarMgr.setOverrides(toolBarMgr.getOverrides());
-		}
-		return coolItemToolBarMgr;
+	if (parentMgr == null) {
+		return null;
 	}
-	return null;
+	if (coolItemToolBarMgr == null) {
+		// Create a CoolItem manager for this action bar.  The CoolBarContributionItem(s)
+		// will be created when the EditorActionBar is initialized.
+		CoolBarManager cBarMgr = ((CoolBarManager)parentMgr);
+		coolItemToolBarMgr = new CoolItemMultiToolBarManager(cBarMgr, type, active);
+		coolItemToolBarMgr.setParentMgr(cBarMgr);
+		coolItemToolBarMgr.setOverrides(new Overrides());
+	}
+	return coolItemToolBarMgr;
 }
 /**
  * Returns the reference count.
  */
 public int getRef() {
 	return refCount;
+}
+/**
+ * Returns whether the contribution list is visible.
+ * If the visibility is <code>true</code> then each item within the manager 
+ * appears within the parent manager.  Otherwise, the items are not visible.
+ *
+ * @return <code>true</code> if the manager is visible
+ */
+private boolean isVisible() {
+	if (coolItemToolBarMgr != null)
+		return coolItemToolBarMgr.isVisible();
+	return false;
 }
 /**
  * Sets the target part for the action bars.
@@ -146,11 +184,7 @@ private void setActive(boolean set, boolean forceVisibility) {
 	if (statusLineMgr != null)
 		statusLineMgr.setVisible(set);
 		
-	if (toolBarMgr != null)
-		((EditorToolBarManager)toolBarMgr).setVisible(set, forceVisibility);
-
-	if (coolItemToolBarMgr != null)
-		coolItemToolBarMgr.setVisible(set, forceVisibility);
+	setVisible(set, forceVisibility);
 }
 /**
  * Sets the editor contributor
@@ -163,5 +197,72 @@ public void setEditorContributor(IEditorActionBarContributor c) {
  */
 public void setExtensionContributor(IEditorActionBarContributor c) {
 	extensionContributor = c;
+}
+/**
+ * Sets the visibility of the manager.  If the visibility is <code>true</code>
+ * then each item within the manager appears within the parent manager.
+ * Otherwise, the items are not visible.
+ *
+ * @param visible the new visibility
+ */
+private void setVisible(boolean visible) {
+	if (coolItemToolBarMgr != null)
+		coolItemToolBarMgr.setVisible(visible);
+}
+/**
+ * Sets the visibility of the manager. If the visibility is <code>true</code>
+ * then each item within the manager appears within the parent manager.
+ * Otherwise, the items are not visible if force visibility is
+ * <code>true</code>, or grayed out if force visibility is <code>false</code>
+ * <p>
+ * This is a workaround for the layout flashing when editors contribute
+ * large amounts of items.</p>
+ *
+ * @param visible the new visibility
+ * @param forceVisibility whether to change the visibility or just the
+ * 		enablement state. This parameter is ignored if visible is 
+ * 		<code>true</code>.
+ */
+private void setVisible(boolean visible, boolean forceVisibility) {
+	if (visible) {
+		if (forceVisibility) {
+			// Make the items visible 
+			if (!enabledAllowed) 
+				setEnabledAllowed(true);
+		} else {
+			if (enabledAllowed) 
+				setEnabledAllowed(false);
+		}
+		if (!isVisible())
+			setVisible(true);
+	}
+	else {
+		if (forceVisibility)
+			// Remove the editor tool bar items
+			setVisible(false);
+		else
+			// Disabled the tool bar items.
+			setEnabledAllowed(false);
+	}
+	if (coolItemToolBarMgr != null)
+		coolItemToolBarMgr.setVisible(visible, forceVisibility);
+}
+/**
+ * Sets the enablement ability of all the items contributed by the editor.
+ * 
+ * @param enabledAllowed <code>true</code> if the items may enable
+ * @since 2.0
+ */
+private void setEnabledAllowed(boolean enabledAllowed) {
+	if (this.enabledAllowed == enabledAllowed)
+		return;
+	this.enabledAllowed = enabledAllowed;
+	if (coolItemToolBarMgr != null) {
+		IContributionItem[] items = coolItemToolBarMgr.getItems();
+		for (int i = 0; i < items.length; i++) {
+			IContributionItem item = items[i];
+			item.update(IContributionManagerOverrides.P_ENABLED);
+		}
+	}
 }
 }

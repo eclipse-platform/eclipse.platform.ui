@@ -4,13 +4,12 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.util.*;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.ui.*;
-import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * A working set holds a number of IAdaptable elements. 

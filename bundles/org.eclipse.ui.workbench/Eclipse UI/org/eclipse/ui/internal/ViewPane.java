@@ -23,7 +23,6 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.PartPane.Sashes;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.part.WorkbenchPart;
 
@@ -189,12 +188,29 @@ public void createControl(Composite parent) {
 	else {
 		control.setTabList(new Control[] { isvToolBar, viewToolBar, control.getContent() });
 	}
+}
+
+protected void createChildControl() {
+	final IWorkbenchPart part[] = new IWorkbenchPart[]{partReference.getPart(false)};
+	if(part[0] == null)
+		return;
+
+	if(control == null || control.getContent() != null)
+		return;
+		
+	super.createChildControl();
 	
 	Platform.run(new SafeRunnable() {
 		public void run() { 
 			// Install the part's tools and menu
 			ViewActionBuilder builder = new ViewActionBuilder();
-			builder.readActionExtensions((IViewPart)getViewReference().getPart(true));
+			IViewPart part = (IViewPart)getViewReference().getPart(true);
+			if(part != null) {
+				builder.readActionExtensions(part);
+				ActionDescriptor[] extendedActions = builder.getExtendedActions();
+				KeyBindingService keyBindingService = (KeyBindingService)part.getSite().getKeyBindingService();
+				keyBindingService.registerExtendedActions(extendedActions);
+			}
 			updateActionBars();
 		}
 		public void handleException(Throwable e) {
@@ -305,25 +321,25 @@ protected void createTitleBar() {
  * @see PartPane#doHide
  */
 public void doHide() {
-	getPage().hideView((IViewPart)getViewReference().getPart(true));
+	getPage().hideView(getViewReference());
 }
 /**
  * Make this view pane a fast view
  */
 protected void doMakeFast() {
-	getPage().addFastView((IViewPart)getViewReference().getPart(true));
+	getPage().addFastView(getViewReference());
 }
 /**
  * Hide the fast view
  */
 protected void doMinimize() {
-	getPage().toggleFastView((IViewPart)getViewReference().getPart(true));
+	getPage().toggleFastView(getViewReference());
 }
 /**
  * Pin the view.
  */
 protected void doDock() {
-	getPage().removeFastView((IViewPart)getViewReference().getPart(true));
+	getPage().removeFastView(getViewReference());
 }
 
 /**
@@ -461,7 +477,7 @@ public void showFocus(boolean inFocus) {
  */
 public void showPaneMenu() {
 	// If this is a fast view, it may have been minimized. Do nothing in this case.
-	if(isFastView() && (page.getActiveFastView() != getViewReference().getPart(true)))
+	if(isFastView() && (page.getActiveFastView() != getViewReference()))
 		return;
 	Rectangle bounds = titleLabel.getBounds();
 	showPaneMenu(titleLabel,new Point(0,bounds.height));
@@ -470,7 +486,7 @@ public void showPaneMenu() {
  * Return true if this view is a fast view.
  */
 private boolean isFastView() {
-	return page.isFastView((IViewPart)getViewReference().getPart(true));
+	return page.isFastView(getViewReference());
 }
 /**
  * Finds and return the sashes around this part.
@@ -577,7 +593,7 @@ public void showViewMenu() {
 		return;
 		
 	// If this is a fast view, it may have been minimized. Do nothing in this case.
-	if(isFastView() && (page.getActiveFastView() != getViewReference().getPart(true)))
+	if(isFastView() && (page.getActiveFastView() != getViewReference()))
 		return;
 				
 	Menu aMenu = isvMenuMgr.createContextMenu(getControl());
@@ -626,23 +642,23 @@ public void updateActionBars() {
  * Update the title attributes.
  */
 public void updateTitles() {
-	IViewPart view = (IViewPart)getViewReference().getPart(true);
-	String text = view.getTitle();
+	IViewReference ref = getViewReference();
+	String text = ref.getTitle();
 	if (text == null)
 		text = "";//$NON-NLS-1$
-	Image image = view.getTitleImage();
+	Image image = ref.getTitleImage();
 	// only update and relayout if text or image has changed
 	if (!text.equals(titleLabel.getText()) || image != titleLabel.getImage()) {
 		titleLabel.setText(text);
 		titleLabel.setImage(image);
 		((Composite) getControl()).layout();
 	}
-	titleLabel.setToolTipText(view.getTitleToolTip());
+	titleLabel.setToolTipText(ref.getTitleToolTip());
 	// XXX: Workaround for 1GCGA89: SWT:ALL - CLabel tool tip does not always update properly
 	titleLabel.update();
 
 	// notify the page that this view's title has changed
 	// in case it needs to update its fast view button
-	page.updateTitle(view);
+	page.updateTitle(ref);
 }
 }

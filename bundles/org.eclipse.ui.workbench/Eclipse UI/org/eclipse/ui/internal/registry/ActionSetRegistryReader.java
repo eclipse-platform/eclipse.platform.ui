@@ -5,8 +5,9 @@ package org.eclipse.ui.internal.registry;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.misc.*;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * A strategy to read view extensions from the registry.
@@ -44,7 +45,7 @@ protected boolean readElement(IConfigurationElement element) {
 public void readRegistry(IPluginRegistry in, ActionSetRegistry out)
 {
 	registry = out;
-	readRegistry(in, IWorkbenchConstants.PLUGIN_ID, IWorkbenchConstants.PL_ACTION_SETS);
+	readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_ACTION_SETS);
 	out.mapActionSetsToCategories();
 }
 }

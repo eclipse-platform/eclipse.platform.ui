@@ -5,8 +5,6 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.jface.action.*;
-import org.eclipse.ui.*;
-import java.util.*;
 
 /**
  * An <code>EditorMenuManager</code> is used to sort the contributions

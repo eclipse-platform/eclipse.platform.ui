@@ -19,8 +19,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.WizardExportResourcesPage;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.EditorManager;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  *	Page 1 of the base resource export-to-file-system Wizard

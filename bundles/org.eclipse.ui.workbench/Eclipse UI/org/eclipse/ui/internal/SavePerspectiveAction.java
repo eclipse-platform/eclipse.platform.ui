@@ -5,12 +5,13 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.SavePerspectiveDialog;
-import org.eclipse.ui.internal.registry.*;
+import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
+import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 
 /**
  * Reset the layout within the active perspective.

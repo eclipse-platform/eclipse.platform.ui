@@ -4,18 +4,16 @@ package org.eclipse.ui.wizards.datatransfer;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IExportWizard;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.swt.widgets.Display;
-import java.net.MalformedURLException;
-import java.net.URL;
+import org.eclipse.ui.*;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 
 /**

@@ -4,11 +4,13 @@ package org.eclipse.ui.internal.registry;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.HashMap;
+
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.misc.*;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.*;
-import java.util.*;
 
 /**
  * This class loads property pages from the registry.
@@ -144,6 +146,6 @@ private void registerContributor(String objectClassName, IPropertyPageContributo
  *	Reads all occurances of propertyPages extension in the registry.
  */
 public void registerPropertyPages(IPluginRegistry registry) {
-	readRegistry(registry, IWorkbenchConstants.PLUGIN_ID, IWorkbenchConstants.PL_PROPERTY_PAGES);
+	readRegistry(registry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_PROPERTY_PAGES);
 }
 }

@@ -224,7 +224,7 @@ public List getPreferenceContributions(IPluginRegistry registry) {
  */
 protected void loadNodesFromRegistry(IPluginRegistry registry) {
 	nodes = new ArrayList();
-	readRegistry(registry, IWorkbenchConstants.PLUGIN_ID, IWorkbenchConstants.PL_PREFERENCES);
+	readRegistry(registry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_PREFERENCES);
 }
 /**
  * Read preference page element.

@@ -71,7 +71,6 @@ public ContainerSelectionDialog(Shell parentShell, IContainer initialRoot, boole
 	super(parentShell);
 	setTitle(WorkbenchMessages.getString("ContainerSelectionDialog.title")); //$NON-NLS-1$
 	this.initialSelection = initialRoot;
-	this.validator = validator;
 	this.allowNewContainerName = allowNewContainerName;
 	if (message != null)
 		setMessage(message);

@@ -9,7 +9,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * The ResourceFactory is used to save and recreate an IResource object.

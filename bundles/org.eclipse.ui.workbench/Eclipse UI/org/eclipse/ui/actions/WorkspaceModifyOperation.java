@@ -5,7 +5,6 @@ package org.eclipse.ui.actions;
  * All Rights Reserved.
  */
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -46,7 +45,9 @@ protected WorkspaceModifyOperation() {
  * @exception InvocationTargetException if the operation fails due to an exception other than CoreException
  * @exception InterruptedException if the operation detects a request to cancel, 
  *  using <code>IProgressMonitor.isCanceled()</code>, it should exit by throwing 
- *  <code>InterruptedException</code>
+ *  <code>InterruptedException</code>.  It is also possible to throw 
+ *  <code>OperationCanceledException</code>, which gets mapped to <code>InterruptedException</code>
+ *  by the <code>run</code> method.
  */
 protected abstract void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException;
 /**

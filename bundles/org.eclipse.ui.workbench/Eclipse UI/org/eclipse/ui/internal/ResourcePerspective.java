@@ -4,11 +4,7 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.swt.SWT;
 
 /**
  */
@@ -51,6 +47,8 @@ public void defineActions(IPageLayout layout) {
 	layout.addShowViewShortcut(IPageLayout.ID_OUTLINE);
 	layout.addShowViewShortcut(IPageLayout.ID_PROP_SHEET);
 	layout.addShowViewShortcut(IPageLayout.ID_TASK_LIST);
+	
+	layout.addActionSet(IPageLayout.ID_NAVIGATE_ACTION_SET);	
 }
 /**
  * Defines the initial layout for a page.  

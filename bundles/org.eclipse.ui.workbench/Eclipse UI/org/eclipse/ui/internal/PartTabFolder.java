@@ -12,18 +12,20 @@ Contributors:
     - Fix for bug 10025 - Resizing views should not use height ratios
 **********************************************************************/
 
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.registry.IViewDescriptor;
-import org.eclipse.ui.internal.registry.IViewRegistry;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.window.Window;
 import java.util.*;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.registry.IViewDescriptor;
 
 public class PartTabFolder extends LayoutPart
 	implements ILayoutContainer
@@ -450,6 +452,8 @@ private CTabItem getTab(LayoutPart child) {
  * Returns the visible child.
  */
 public LayoutPart getVisiblePart() {
+	if(current == null)
+		return inactiveCurrent;
 	return current;
 }
 public int indexOf (LayoutPart item) {

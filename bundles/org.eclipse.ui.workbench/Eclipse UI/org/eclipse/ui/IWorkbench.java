@@ -7,8 +7,6 @@ package org.eclipse.ui;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.viewers.ILabelDecorator;
-import org.eclipse.ui.internal.DecoratorManager;
 
 /**
  * A workbench is the root object for the Eclipse Platform user interface.
@@ -301,5 +299,11 @@ public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow win
  * </p>
  */
 public IDecoratorManager getDecoratorManager();
-
+/**
+ * Save all dirty editors in the workbench. Opens
+ * a dialog to prompt the user if <code>confirm</code> is 
+ * true. Return true if successful. Return false if the
+ * user has cancelled the command.
+ *  * @param confirm prompt the user if true * @return boolean false if the operation was cancelled. */
+public boolean saveAllEditors(boolean confirm);
 }

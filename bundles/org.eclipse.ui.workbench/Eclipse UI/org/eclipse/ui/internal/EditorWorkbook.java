@@ -21,8 +21,6 @@ import java.util.*;
 import java.util.List;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.*;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.window.Window;
 
 
 /**
@@ -297,7 +295,7 @@ public void dispose() {
 private void doZoom() {
 	if (visibleEditor == null)
 		return;
-	((WorkbenchPage)(getWorkbenchWindow().getActivePage())).toggleZoom(visibleEditor.getPartReference().getPart(true));
+	visibleEditor.getPage().toggleZoom(visibleEditor.getPartReference());
 }
 /**
  * Draws the applicable gradient on the active tab
@@ -905,5 +903,15 @@ public void zoomOut() {
 	Iterator iterator = editors.iterator();
 	while (iterator.hasNext())
 		((EditorPane) iterator.next()).setZoomed(false);
+}
+/**
+ * Method getEditors.
+ * @return EditorPane
+ */
+public EditorPane [] getEditors() {
+	int nSize = editors.size();
+	EditorPane [] children = new EditorPane[nSize];
+	editors.toArray(children);
+	return children;
 }
 }

@@ -4,7 +4,6 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.core.resources.IMarker;
 /**
  * Clients should implement this interface when creating an

@@ -15,7 +15,7 @@ import org.eclipse.ui.*;
  */
 public interface IWorkbenchPartReference {
 	/**
-	 * Returns the IEditorPart referenced by this object.
+	 * Returns the IWorkbenchPart referenced by this object.
 	 * Returns <code>null</code> if the editors was not instantiated or
 	 * it failed to be restored. Tries to restore the editor
 	 * if <code>restore</code> is true.
@@ -51,4 +51,8 @@ public interface IWorkbenchPartReference {
 	 * @see IWorkbenchPart#removePropertyListener
 	 */
 	public void removePropertyListener(IPropertyListener listener);
+	/**
+	 * Returns the workbench page that contains this part
+	 */
+	public IWorkbenchPage getPage();
 }

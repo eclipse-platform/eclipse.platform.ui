@@ -4,10 +4,10 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.*;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IWorkbenchPart;
 
 public class WorkbenchPartLabelProvider extends LabelProvider implements ITableLabelProvider {
 /**

@@ -6,7 +6,6 @@ package org.eclipse.ui.internal.model;
  */
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
-import java.util.*;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**

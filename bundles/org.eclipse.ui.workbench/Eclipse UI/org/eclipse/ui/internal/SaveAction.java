@@ -7,8 +7,6 @@ package org.eclipse.ui.internal;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.jface.dialogs.*;
 
 /**
  */

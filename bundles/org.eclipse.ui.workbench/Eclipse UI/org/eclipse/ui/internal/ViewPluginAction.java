@@ -20,8 +20,8 @@ public final class ViewPluginAction extends PartPluginAction {
  * This class adds the requirement that action delegates
  * loaded on demand implement IViewActionDelegate
  */
-public ViewPluginAction(IConfigurationElement actionElement, String runAttribute, IViewPart viewPart) {
-	super(actionElement, runAttribute);
+public ViewPluginAction(IConfigurationElement actionElement, String runAttribute, IViewPart viewPart,String definitionId) {
+	super(actionElement, runAttribute,definitionId);
 	this.viewPart = viewPart;
 	registerSelectionListener(viewPart);
 }

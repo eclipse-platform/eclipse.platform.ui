@@ -4,10 +4,6 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.internal.ViewPane;
 import java.util.*;
 
 /**

@@ -4,23 +4,17 @@ package org.eclipse.ui.part;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.SubActionBars;
-import org.eclipse.ui.part.PageSite;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.jface.action.*;
+import java.util.*;
+
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.*;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.FocusEvent;
-import java.util.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.internal.SubActionBars;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * Abstract superclass of all multi-page workbench views.
@@ -535,13 +529,6 @@ public void partBroughtToTop(IWorkbenchPart part) {
 public void partClosed(IWorkbenchPart part) {
 	// Update the active part.
 	if (activeRec != null && activeRec.part == part) {
-		activeRec.subActionBars.dispose();
-		// remove our selection listener
-		ISelectionProvider provider = ((PageSite)mapPageToSite.get(activeRec.page)).getSelectionProvider();
-		if (provider != null) 
-			provider.removeSelectionChangedListener(selectionChangedListener);
-
-		activeRec = null;
 		showPageRec(defaultPageRec);
 	}
 	
@@ -589,6 +576,10 @@ private void refreshGlobalActionHandlers() {
 private void removePage(PageRec rec) {
 	mapPageToSite.remove(rec.page);
 	mapPartToRec.remove(rec.part);
+
+	if (rec.subActionBars != null) {
+		rec.subActionBars.dispose();
+	}
 
 	Control control = rec.page.getControl();
 	if (control != null && !control.isDisposed()) {

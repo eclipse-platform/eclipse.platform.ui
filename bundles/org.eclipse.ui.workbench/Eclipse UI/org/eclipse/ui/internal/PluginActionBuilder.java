@@ -4,12 +4,13 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.part.*;
-import java.util.*;
-import org.eclipse.ui.internal.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.registry.RegistryReader;
 
 /**
@@ -283,7 +284,7 @@ protected void readContributions(String id, String tag, String extensionPoint) {
 	targetID = id;
 	targetContributionTag = tag;
 	IPluginRegistry registry = Platform.getPluginRegistry();
-	readRegistry(registry, IWorkbenchConstants.PLUGIN_ID, extensionPoint);
+	readRegistry(registry, PlatformUI.PLUGIN_ID, extensionPoint);
 }
 /**
  * Implements abstract method to handle the provided XML element

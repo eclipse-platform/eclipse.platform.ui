@@ -4,21 +4,21 @@ package org.eclipse.ui.internal.misc;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.misc.*;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.part.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import java.util.*;
-import java.util.List;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.part.DrillDownComposite;
 
 /**
  * Workbench-level composite for choosing a container.

@@ -5,7 +5,6 @@ package org.eclipse.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**

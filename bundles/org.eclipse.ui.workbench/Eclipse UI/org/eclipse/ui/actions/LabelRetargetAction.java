@@ -66,7 +66,12 @@ protected void setActionHandler(IAction handler) {
 		super.setText(defaultText);
 		super.setToolTipText(defaultToolTipText);
 	} else {
-		super.setText(appendAccelerator(handler.getText()));
+		// If no text is specified by the handler, use the default text.  Fixes 22529.
+		String handlerText = handler.getText();
+		if (handlerText == null || handlerText.length() == 0) {
+			handlerText = defaultText;
+		}
+		super.setText(appendAccelerator(handlerText));
 		super.setToolTipText(handler.getToolTipText());
 	}
 	updateImages(handler);

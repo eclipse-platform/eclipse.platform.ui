@@ -12,12 +12,10 @@ Contributors:
     - Fix for bug 10025 - Resizing views should not use height ratios
 **********************************************************************/
 
-import org.eclipse.ui.IPageLayout;
-import org.eclipse.swt.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.*;
-import java.util.*;
 
 class LayoutPartSash extends LayoutPart {
 

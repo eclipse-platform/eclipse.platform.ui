@@ -9,7 +9,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ProjectLocationSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.plugin.AbstractUIPlugin;

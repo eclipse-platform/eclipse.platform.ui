@@ -4,13 +4,13 @@ package org.eclipse.ui.wizards.datatransfer;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.io.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.zip.*;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.dialogs.*;
-import java.io.*;
-import java.security.*;
-import java.util.zip.*;
 
 /**
  *	Exports resources to a .zip file

@@ -6,7 +6,6 @@ package org.eclipse.ui.internal;
  */
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.swt.widgets.Display;
 /**
  * Implementation of IMarkerImageProvider to provide the image
  * path names for problem markers.

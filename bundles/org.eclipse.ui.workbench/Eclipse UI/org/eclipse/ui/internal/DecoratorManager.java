@@ -6,12 +6,8 @@ package org.eclipse.ui.internal;
  */
 import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.viewers.ILabelDecorator;
-import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IContributorResourceAdapter;
 import org.eclipse.ui.IDecoratorManager;
@@ -23,22 +19,20 @@ import org.eclipse.ui.IDecoratorManager;
  * @since 2.0
  */
 public class DecoratorManager
-	implements
-		ILabelDecorator,
-		ILabelProviderListener,
-		IDecoratorManager {
+	implements ILabelDecorator, ILabelProviderListener, IDecoratorManager {
+
+	private LightweightDecoratorManager lightweightManager;
 
 	//Hold onto the list of listeners to be told if a change has occured
 	private HashSet listeners = new HashSet();
 
-	//The cachedDecorators are a 1-many mapping of type to decorator.
-	private HashMap cachedDecorators = new HashMap();
+	//The cachedDecorators are a 1-many mapping of type to full decorator.
+	private HashMap cachedFullDecorators = new HashMap();
+	//The full definitions read from the registry
+	private FullDecoratorDefinition[] fullDefinitions;
 
-	//The definitions are definitions read from the registry
-	private DecoratorDefinition[] definitions;
-
-	private static final DecoratorDefinition[] EMPTY_DEF =
-		new DecoratorDefinition[0];
+	private static final FullDecoratorDefinition[] EMPTY_FULL_DEF =
+		new FullDecoratorDefinition[0];
 
 	private final String PREFERENCE_SEPARATOR = ","; //$NON-NLS-1$
 	private final String VALUE_SEPARATOR = ":"; //$NON-NLS-1$
@@ -52,8 +46,59 @@ public class DecoratorManager
 	public DecoratorManager() {
 		DecoratorRegistryReader reader = new DecoratorRegistryReader();
 		Collection values = reader.readRegistry(Platform.getPluginRegistry());
-		definitions = new DecoratorDefinition[values.size()];
-		values.toArray(definitions);
+
+		ArrayList full = new ArrayList();
+		ArrayList lightweight = new ArrayList();
+		Iterator allDefinitions = values.iterator();
+		while (allDefinitions.hasNext()) {
+			DecoratorDefinition nextDefinition =
+				(DecoratorDefinition) allDefinitions.next();
+			if (nextDefinition.isFull())
+				full.add(nextDefinition);
+			else
+				lightweight.add(nextDefinition);
+		}
+
+		fullDefinitions = new FullDecoratorDefinition[full.size()];
+		full.toArray(fullDefinitions);
+
+		LightweightDecoratorDefinition[] lightweightDefinitions =
+			new LightweightDecoratorDefinition[lightweight.size()];
+		lightweight.toArray(lightweightDefinitions);
+
+		lightweightManager =
+			new LightweightDecoratorManager(lightweightDefinitions);
+	}
+
+	/**
+	 * See if the supplied decorator cache has a value for the
+	 * element. If not calculate it from the enabledDefinitions and
+	 * update the cache.
+	 * @return Collection of DecoratorDefinition.
+	 * @param element. The element being tested.
+	 * @param cachedDecorators. The cache for decorator lookup.
+	 * @param enabledDefinitions. The definitions currently defined for this decorator.
+	 */
+
+	static Collection getDecoratorsFor(
+		Object element,
+		DecoratorDefinition[] enabledDefinitions) {
+
+		String className = element.getClass().getName();
+
+		ArrayList decorators = new ArrayList();
+
+		for (int i = 0; i < enabledDefinitions.length; i++) {
+			if (enabledDefinitions[i]
+				.getEnablement()
+				.isEnabledForExpression(
+					element,
+					ActionExpression.ATT_OBJECT_CLASS))
+				decorators.add(enabledDefinitions[i]);
+		}
+
+		return decorators;
+
 	}
 
 	/**
@@ -64,10 +109,10 @@ public class DecoratorManager
 
 	public void restoreListeners() {
 		applyDecoratorsPreference();
-		for (int i = 0; i < definitions.length; i++) {
+		for (int i = 0; i < fullDefinitions.length; i++) {
 			//Add a listener if it is an enabled option
-			if (definitions[i].isEnabled())
-				definitions[i].addListener(this);
+			if (fullDefinitions[i].isEnabled())
+				fullDefinitions[i].addListener(this);
 		}
 	}
 
@@ -91,7 +136,8 @@ public class DecoratorManager
 	private void fireListeners(LabelProviderChangedEvent event) {
 		Iterator iterator = listeners.iterator();
 		while (iterator.hasNext()) {
-			ILabelProviderListener listener = (ILabelProviderListener) iterator.next();
+			ILabelProviderListener listener =
+				(ILabelProviderListener) iterator.next();
 			listener.labelProviderChanged(event);
 		}
 	}
@@ -105,28 +151,32 @@ public class DecoratorManager
 	 * @param Object
 	 */
 	public String decorateText(String text, Object element) {
-		
-		DecoratorDefinition[] decorators = getDecoratorsFor(element);
-		String result = text;
-		for (int i = 0; i < decorators.length; i++) {
-			String newResult = decorators[i].decorateText(result, element);
-			if (newResult != null)
-				result = newResult;
-		}
 
 		//Get any adaptions to IResource
 		Object adapted = getResourceAdapter(element);
-		if (adapted != null){
-			DecoratorDefinition[] adaptedDecorators = getDecoratorsFor(adapted);
-			for (int i = 0; i < adaptedDecorators.length; i++) {
-				if(adaptedDecorators[i].isAdaptable()){
-					String newResult = adaptedDecorators[i].decorateText(result, adapted);
+		String result = lightweightManager.decorateWithText(text, element, adapted);
+		FullDecoratorDefinition[] decorators = getDecoratorsFor(element);
+		for (int i = 0; i < decorators.length; i++) {
+			if (decorators[i].getEnablement().isEnabledFor(element)) {
+				String newResult = decorators[i].decorateText(result, element);
+				if (newResult != null)
+					result = newResult;
+			}
+		}
+
+		if (adapted != null) {
+			decorators = getDecoratorsFor(adapted);
+			for (int i = 0; i < decorators.length; i++) {
+				if (decorators[i].isAdaptable()
+					&& decorators[i].getEnablement().isEnabledFor(adapted)) {
+					String newResult =
+						decorators[i].decorateText(result, adapted);
 					if (newResult != null)
 						result = newResult;
 				}
 			}
 		}
-		
+
 		return result;
 	}
 
@@ -139,28 +189,34 @@ public class DecoratorManager
 	 * @param Object
 	 */
 	public Image decorateImage(Image image, Object element) {
-		
-		DecoratorDefinition[] decorators = getDecoratorsFor(element);
-		Image result = image;
+
+		Object adapted = getResourceAdapter(element);
+		Image result = lightweightManager.decorateWithOverlays(image, element, adapted);
+		FullDecoratorDefinition[] decorators = getDecoratorsFor(element);
+
 		for (int i = 0; i < decorators.length; i++) {
-			Image newResult = decorators[i].decorateImage(result, element);
-			if (newResult != null)
-				result = newResult;
+			if (decorators[i].getEnablement().isEnabledFor(element)) {
+				Image newResult = decorators[i].decorateImage(result, element);
+				if (newResult != null)
+					result = newResult;
+			}
 		}
 
 		//Get any adaptions to IResource
-		Object adapted = getResourceAdapter(element);
-		if (adapted != null){
-			DecoratorDefinition[] adaptedDecorators = getDecoratorsFor(adapted);
-			for (int i = 0; i < adaptedDecorators.length; i++) {
-				if(adaptedDecorators[i].isAdaptable()){
-					Image newResult = adaptedDecorators[i].decorateImage(result, adapted);
+
+		if (adapted != null) {
+			decorators = getDecoratorsFor(adapted);
+			for (int i = 0; i < decorators.length; i++) {
+				if (decorators[i].isAdaptable()
+					&& decorators[i].getEnablement().isEnabledFor(adapted)) {
+					Image newResult =
+						decorators[i].decorateImage(result, adapted);
 					if (newResult != null)
 						result = newResult;
 				}
 			}
 		}
-		
+
 		return result;
 	}
 
@@ -176,71 +232,19 @@ public class DecoratorManager
 			Object resourceAdapter =
 				adaptable.getAdapter(IContributorResourceAdapter.class);
 			if (resourceAdapter == null)
-				resourceAdapter = DefaultContributorResourceAdapter.getDefault();
+				resourceAdapter =
+					DefaultContributorResourceAdapter.getDefault();
 
 			Object adapted =
-				((IContributorResourceAdapter) resourceAdapter).getAdaptedResource(adaptable);
+				(
+					(
+						IContributorResourceAdapter) resourceAdapter)
+							.getAdaptedResource(
+					adaptable);
 			if (adapted != element)
 				return adapted; //Avoid applying decorator twice
 		}
 		return null;
-	}
-
-	/**
-	 * Get the decoratordefinitionss registered for elements of this type.
-	 * If there is one return it. If not search for one first
-	 * via superclasses and then via interfaces.
-	 * If still nothing is found then add in a decorator that
-	 * does nothing.
-	 */
-	private DecoratorDefinition[] getDecoratorsFor(Object element) {
-
-		if (element == null)
-			return EMPTY_DEF;
-
-		Class elementClass = element.getClass();
-		String className = elementClass.getName();
-		DecoratorDefinition[] decoratorArray =
-			(DecoratorDefinition[]) cachedDecorators.get(className);
-		if (decoratorArray != null) {
-			return decoratorArray;
-		}
-
-		List allClasses = computeClassOrder(elementClass);
-		ArrayList decorators = new ArrayList();
-		DecoratorDefinition[] enabledDefinitions = enabledDefinitions();
-
-		findDecorators(allClasses, enabledDefinitions, decorators);
-
-		findDecorators(
-			computeInterfaceOrder(allClasses),
-			enabledDefinitions,
-			decorators);
-
-		decoratorArray = new DecoratorDefinition[decorators.size()];
-		decorators.toArray(decoratorArray);
-		cachedDecorators.put(element.getClass().getName(), decoratorArray);
-		return decoratorArray;
-	}
-
-	/** 
-	 * Find a defined decorators that have a type that is the same
-	 * as one of the classes. 
-	 */
-	private void findDecorators(
-		Collection classList,
-		DecoratorDefinition[] enabledDefinitions,
-		ArrayList result) {
-
-		Iterator classes = classList.iterator();
-		while (classes.hasNext()) {
-			String className = ((Class) classes.next()).getName();
-			for (int i = 0; i < enabledDefinitions.length; i++) {
-				if (className.equals(enabledDefinitions[i].getObjectClass()))
-					result.add(enabledDefinitions[i]);
-			}
-		}
-
 	}
 
 	/**
@@ -260,19 +264,51 @@ public class DecoratorManager
 		Object element,
 		String property,
 		boolean checkAdapted) {
-		DecoratorDefinition[] decorators = getDecoratorsFor(element);
-		for (int i = 0; i < decorators.length; i++) {
-			if (decorators[i].isLabelProperty(element, property))
-				return true;
-		}
+		boolean fullCheck =
+			isLabelProperty(element, property, getDecoratorsFor(element));
+
+		if (fullCheck)
+			return fullCheck;
+
+		boolean lightweightCheck =
+			isLabelProperty(
+				element,
+				property,
+				lightweightManager.getDecoratorsFor(element));
+
+		if (lightweightCheck)
+			return true;
 
 		if (checkAdapted) {
 			//Get any adaptions to IResource
 			Object adapted = getResourceAdapter(element);
-			if (adapted != null && adapted != element) {
-				if (isLabelProperty(adapted, property, false))
-					return true;
-			}
+			if (adapted == null || adapted == element)
+				return false;
+
+			fullCheck =
+				isLabelProperty(
+					adapted,
+					property,
+					getDecoratorsFor(adapted));
+			if (fullCheck)
+				return fullCheck;
+
+			return isLabelProperty(
+				adapted,
+				property,
+				lightweightManager.getDecoratorsFor(adapted));
+		}
+		return false;
+	}
+
+	private boolean isLabelProperty(
+		Object element,
+		String property,
+		DecoratorDefinition[] decorators) {
+		for (int i = 0; i < decorators.length; i++) {
+			if (decorators[i].getEnablement().isEnabledFor(element)
+				&& decorators[i].isLabelProperty(element, property))
+				return true;
 		}
 
 		return false;
@@ -332,18 +368,21 @@ public class DecoratorManager
 	}
 
 	/**
-	 * Return the enabled decorator definitions
+	 * Return the enabled full decorator definitions.
+	 * @return FullDecoratorDefinition[]
 	 */
-	private DecoratorDefinition[] enabledDefinitions() {
+	private FullDecoratorDefinition[] enabledFullDefinitions() {
 		ArrayList result = new ArrayList();
-		for (int i = 0; i < definitions.length; i++) {
-			if (definitions[i].isEnabled())
-				result.add(definitions[i]);
+		for (int i = 0; i < fullDefinitions.length; i++) {
+			if (fullDefinitions[i].isEnabled())
+				result.add(fullDefinitions[i]);
 		}
-		DecoratorDefinition[] returnArray = new DecoratorDefinition[result.size()];
+		FullDecoratorDefinition[] returnArray =
+			new FullDecoratorDefinition[result.size()];
 		result.toArray(returnArray);
 		return returnArray;
 	}
+
 	/*
 	 * @see IBaseLabelProvider#dispose()
 	 */
@@ -355,7 +394,8 @@ public class DecoratorManager
 	 * @see IDecoratorManager.reset()
 	 */
 	public void reset() {
-		cachedDecorators = new HashMap();
+		cachedFullDecorators = new HashMap();
+		lightweightManager.reset();
 		fireListeners(new LabelProviderChangedEvent(this));
 		writeDecoratorsPreference();
 	}
@@ -363,8 +403,25 @@ public class DecoratorManager
 	/**
 	 * Get the DecoratorDefinitions defined on the receiver.
 	 */
-	public DecoratorDefinition[] getDecoratorDefinitions() {
-		return definitions;
+	public DecoratorDefinition[] getAllDecoratorDefinitions() {
+		LightweightDecoratorDefinition[] lightweightDefinitions =
+			lightweightManager.getDefinitions();
+		DecoratorDefinition[] returnValue =
+			new DecoratorDefinition[fullDefinitions.length
+				+ lightweightDefinitions.length];
+		System.arraycopy(
+			fullDefinitions,
+			0,
+			returnValue,
+			0,
+			fullDefinitions.length);
+		System.arraycopy(
+			lightweightDefinitions,
+			0,
+			returnValue,
+			fullDefinitions.length,
+			lightweightDefinitions.length);
+		return returnValue;
 	}
 
 	/*
@@ -380,6 +437,19 @@ public class DecoratorManager
 	 */
 	private void writeDecoratorsPreference() {
 		StringBuffer enabledIds = new StringBuffer();
+		writeDecoratorsPreference(enabledIds, fullDefinitions);
+		writeDecoratorsPreference(
+			enabledIds,
+			lightweightManager.getDefinitions());
+
+		WorkbenchPlugin.getDefault().getPreferenceStore().setValue(
+			IPreferenceConstants.ENABLED_DECORATORS,
+			enabledIds.toString());
+	}
+
+	private void writeDecoratorsPreference(
+		StringBuffer enabledIds,
+		DecoratorDefinition[] definitions) {
 		for (int i = 0; i < definitions.length; i++) {
 			enabledIds.append(definitions[i].getId());
 			enabledIds.append(VALUE_SEPARATOR);
@@ -390,10 +460,6 @@ public class DecoratorManager
 
 			enabledIds.append(PREFERENCE_SEPARATOR);
 		}
-
-		WorkbenchPlugin.getDefault().getPreferenceStore().setValue(
-			IPreferenceConstants.ENABLED_DECORATORS,
-			enabledIds.toString());
 	}
 
 	/**
@@ -415,20 +481,36 @@ public class DecoratorManager
 			String nextValuePair = tokenizer.nextToken();
 
 			//Strip out the true or false to get the id
-			String id = nextValuePair.substring(0, nextValuePair.indexOf(VALUE_SEPARATOR));
+			String id =
+				nextValuePair.substring(
+					0,
+					nextValuePair.indexOf(VALUE_SEPARATOR));
 			if (nextValuePair.endsWith(P_TRUE))
 				enabledIds.add(id);
 			else
 				disabledIds.add(id);
 		}
 
-		for (int i = 0; i < definitions.length; i++) {
-			String id = definitions[i].getId();
+		for (int i = 0; i < fullDefinitions.length; i++) {
+			String id = fullDefinitions[i].getId();
 			if (enabledIds.contains(id))
-				definitions[i].setEnabledWithErrorHandling(true);
+				fullDefinitions[i].setEnabledWithErrorHandling(true);
 			else {
 				if (disabledIds.contains(id))
-					definitions[i].setEnabledWithErrorHandling(false);
+					fullDefinitions[i].setEnabledWithErrorHandling(false);
+			}
+		}
+
+		LightweightDecoratorDefinition[] lightweightDefinitions =
+			lightweightManager.getDefinitions();
+		for (int i = 0; i < lightweightDefinitions.length; i++) {
+			String id = lightweightDefinitions[i].getId();
+			if (enabledIds.contains(id))
+				lightweightDefinitions[i].setEnabledWithErrorHandling(true);
+			else {
+				if (disabledIds.contains(id))
+					lightweightDefinitions[i].setEnabledWithErrorHandling(
+						false);
 			}
 		}
 
@@ -442,10 +524,11 @@ public class DecoratorManager
 	public void shutdown() {
 		//Disable all fo the enabled decorators 
 		//so as to force a dispose of thier decorators
-		for (int i = 0; i < definitions.length; i++) {
-			if (definitions[i].isEnabled())
-				definitions[i].setEnabledWithErrorHandling(false);
+		for (int i = 0; i < fullDefinitions.length; i++) {
+			if (fullDefinitions[i].isEnabled())
+				fullDefinitions[i].setEnabledWithErrorHandling(false);
 		}
+		lightweightManager.shutdown();
 	}
 	/**
 	 * @see IDecoratorManager#getEnabled(String)
@@ -468,25 +551,25 @@ public class DecoratorManager
 	/**
 	 * @see IDecoratorManager#setEnabled(String, boolean)
 	 */
-	public void setEnabled(String decoratorId, boolean enabled) throws CoreException{
+	public void setEnabled(String decoratorId, boolean enabled)
+		throws CoreException {
 		DecoratorDefinition definition = getDecoratorDefinition(decoratorId);
 		if (definition != null)
 			definition.setEnabled(enabled);
 	}
-	
+
 	/**
 	 * @see IDecoratorManager#getLabelDecorator(String)
 	 */
 	public ILabelDecorator getLabelDecorator(String decoratorId) {
-		DecoratorDefinition definition = 
-			getDecoratorDefinition(decoratorId);
-			
+		FullDecoratorDefinition definition =
+			getFullDecoratorDefinition(decoratorId);
+
 		//Do not return for a disabled decorator
-		if(definition.isEnabled()){
-			try{
+		if (definition.isEnabled()) {
+			try {
 				return definition.getDecorator();
-			}
-			catch (CoreException exception){
+			} catch (CoreException exception) {
 				//Cannot be thrown - remove when API is updated
 			}
 		}
@@ -499,10 +582,55 @@ public class DecoratorManager
 	 * @param decoratorId String
 	 */
 	private DecoratorDefinition getDecoratorDefinition(String decoratorId) {
-		for (int i = 0; i < definitions.length; i++) {
-			if (definitions[i].getId().equals(decoratorId))
-				return definitions[i];
+		DecoratorDefinition returnValue =
+			getFullDecoratorDefinition(decoratorId);
+		if (returnValue == null)
+			return lightweightManager.getDecoratorDefinition(decoratorId);
+		else
+			return returnValue;
+	}
+
+	/**
+	 * Get the FullDecoratorDefinition with the supplied id
+	 * @return FullDecoratorDefinition or <code>null</code> if it is not found
+	 * @param decoratorId String
+	 */
+	private FullDecoratorDefinition getFullDecoratorDefinition(String decoratorId) {
+		for (int i = 0; i < fullDefinitions.length; i++) {
+			if (fullDefinitions[i].getId().equals(decoratorId))
+				return fullDefinitions[i];
 		}
 		return null;
 	}
+
+	/**
+	 * Get the full decorator definitions registered for elements of this type.
+	 */
+	private FullDecoratorDefinition[] getDecoratorsFor(Object element) {
+
+		if (element == null)
+			return EMPTY_FULL_DEF;
+
+		String className = element.getClass().getName();
+		FullDecoratorDefinition[] decoratorArray =
+			(FullDecoratorDefinition[]) cachedFullDecorators.get(className);
+		if (decoratorArray != null) {
+			return decoratorArray;
+		}
+
+		Collection decorators =
+			getDecoratorsFor(element, enabledFullDefinitions());
+
+		if (decorators.size() == 0)
+			decoratorArray = EMPTY_FULL_DEF;
+		else {
+			decoratorArray = new FullDecoratorDefinition[decorators.size()];
+			decorators.toArray(decoratorArray);
+		}
+
+		cachedFullDecorators.put(className, decoratorArray);
+		return decoratorArray;
+	}
+
+	
 }

@@ -5,6 +5,7 @@ package org.eclipse.ui.part;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -73,7 +74,7 @@ protected static IDropActionDelegate getPluginAdapter(PluginTransferData data) t
 	IPluginRegistry registry = Platform.getPluginRegistry();
 	String adapterName = data.getExtensionId();
 	IExtensionPoint xpt =
-		registry.getExtensionPoint(IWorkbenchConstants.PLUGIN_ID, IWorkbenchConstants.PL_DROP_ACTIONS);
+		registry.getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_DROP_ACTIONS);
 	IExtension[] extensions = xpt.getExtensions();
 	for (int i = 0; i < extensions.length; i++) {
 		IConfigurationElement[] configs = extensions[i].getConfigurationElements();

@@ -180,14 +180,18 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 				closeItems(editorsTable.getSelection());
 			}
 		});
+		setButtonLayoutData(closeSelected);
+		
 		//Save editors button
 		saveSelected = new Button(selectionButtons,SWT.PUSH);
 		saveSelected.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.saveSelected")); //$NON-NLS-1$
 		saveSelected.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				saveItems(editorsTable.getItems(),null);
+				saveItems(editorsTable.getSelection(),null);
 			}
 		});
+		setButtonLayoutData(saveSelected);
+		
 		//Select clean editors button
 		selectClean = new Button(selectionButtons,SWT.PUSH);
 		selectClean.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.selectClean")); //$NON-NLS-1$
@@ -197,6 +201,8 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 				updateButtons();
 			}
 		});
+		setButtonLayoutData(selectClean);
+		
 		//Invert selection button
 		invertSelection = new Button(selectionButtons,SWT.PUSH);
 		invertSelection.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.invertSelection")); //$NON-NLS-1$
@@ -206,6 +212,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 				updateButtons();
 			}
 		});
+		setButtonLayoutData(invertSelection);
 		
 		//Show only active perspective button
 		final Button showAllPerspButton = new Button(dialogArea,SWT.CHECK);
@@ -486,7 +493,9 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		void save(IProgressMonitor monitor) {
 			if(editorRef == null)
 				return;
-			((IEditorPart)editorRef.getPart(true)).doSave(monitor);
+			IEditorPart editor = (IEditorPart)editorRef.getPart(true);
+			if(editor != null)
+				editor.doSave(monitor);
 		}
 		String[] getText() {
 			if(text != null)

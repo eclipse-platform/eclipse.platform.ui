@@ -6,8 +6,10 @@ package org.eclipse.ui.internal;
  */
 import org.eclipse.swt.SWT;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -51,7 +53,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private static final String prevPerspectiveActionDefId = "org.eclipse.ui.window.previousPerspective"; //$NON-NLS-1$
 	private static final String activateEditorActionDefId = "org.eclipse.ui.window.activateEditor"; //$NON-NLS-1$
 	private static final String workbenchEditorsActionDefId = "org.eclipse.ui.window.switchToEditor";	 //$NON-NLS-1$
-	private static final String buildActionDefId = "org.eclipse.ui.project.buildProject";	 //$NON-NLS-1$
+	private static final String buildAllActionDefId = "org.eclipse.ui.project.buildAll";	 //$NON-NLS-1$
+	private static final String rebuildAllActionDefId = "org.eclipse.ui.project.rebuildAll";	 //$NON-NLS-1$
 	private static final String backwardHistoryActionDefId = "org.eclipse.ui.navigate.backwardHistory";	 //$NON-NLS-1$
 	private static final String forwardHistoryActionDefId = "org.eclipse.ui.navigate.forwardHistory";	 //$NON-NLS-1$
 
@@ -76,7 +79,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private ImportResourcesAction importResourcesAction;
 	private ExportResourcesAction exportResourcesAction;
 	private GlobalBuildAction rebuildAllAction; // Full build
-	private GlobalBuildAction buildAction; // Incremental build
+	private GlobalBuildAction buildAllAction; // Incremental build
 	private SaveAction saveAction;
 	private SaveAllAction saveAllAction;
 	private AboutAction aboutAction;
@@ -89,7 +92,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private EditActionSetsAction editActionSetAction;
 	private ClosePerspectiveAction closePerspAction;
 	private LockToolBarAction lockToolBarAction;
-	private ResetToolBarAction resetToolBarAction;
 	private CloseAllPerspectivesAction closeAllPerspsAction;
 	private PinEditorAction pinEditorAction;
 	private ShowViewMenuAction showViewMenuAction;
@@ -114,6 +116,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private RetargetAction findAction;
 	private RetargetAction addBookmarkAction;
 	private RetargetAction addTaskAction;
+	private RetargetAction syncWithEditorAction;
 	private RetargetAction printAction;
 	
 // menu reorg
@@ -137,7 +140,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private RetargetAction openProjectAction;
 	private RetargetAction closeProjectAction;
 	
-	private KeyBindingMenu keyBindingMenu;
 	private NavigationHistoryAction backwardHistoryAction;
 	private NavigationHistoryAction forwardHistoryAction;
 // end menu reorg	
@@ -159,7 +161,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			if (manager != null) {
 				try {
 					manager.insertBefore(IWorkbenchActionConstants.REBUILD_PROJECT, buildProjectAction);
-					manager.insertBefore(IWorkbenchActionConstants.REBUILD_ALL, buildAction);
+					manager.insertBefore(IWorkbenchActionConstants.REBUILD_ALL, buildAllAction);
 				} catch (IllegalArgumentException e) {
 					// action not found!
 				}
@@ -169,19 +171,16 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			IMenuManager manager = menubar.findMenuUsingPath(IWorkbenchActionConstants.M_WORKBENCH);
 			if (manager != null) {
 				try {
-					manager.insertBefore(IWorkbenchActionConstants.REBUILD_ALL, buildAction);
+					manager.insertBefore(IWorkbenchActionConstants.REBUILD_ALL, buildAllAction);
 				} catch (IllegalArgumentException e) {
 					// action not found!
 				}
 			}
 		}
-		IContributionManager toolsManager = window.getToolsManager();
-		IContributionManager tBarMgr = toolsManager;
-		if (toolsManager instanceof CoolBarManager) {
-			CoolBarContributionItem groupItem = (CoolBarContributionItem)toolsManager.find(workbenchToolGroupId);
-			tBarMgr = groupItem.getToolBarManager();
-		} 
-		tBarMgr.appendToGroup(IWorkbenchActionConstants.BUILD_EXT, buildAction);
+		IContributionManager cBarMgr =  window.getCoolBarManager();
+		CoolBarContributionItem groupItem = (CoolBarContributionItem)cBarMgr.find(workbenchToolGroupId);
+		IContributionManager tBarMgr = groupItem.getToolBarManager();
+		tBarMgr.appendToGroup(IWorkbenchActionConstants.BUILD_EXT, buildAllAction);
 		tBarMgr.update(true);
 	}
 	
@@ -255,7 +254,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		hideShowEditorAction.setEnabled(value);
 		savePerspectiveAction.setEnabled(value);
 		lockToolBarAction.setEnabled(value);
-		resetToolBarAction.setEnabled(value);
 		resetPerspectiveAction.setEnabled(value);
 		editActionSetAction.setEnabled(value);
 		closePerspAction.setEnabled(value);
@@ -299,10 +297,12 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.file"), IWorkbenchActionConstants.M_FILE); //$NON-NLS-1$
 		menu.add(new GroupMarker(IWorkbenchActionConstants.FILE_START));
 		{
+			this.newWizardMenu = new NewWizardMenu(window);
 			MenuManager newMenu = new MenuManager(WorkbenchMessages.getString("Workbench.new")); //$NON-NLS-1$
+			newMenu.add(this.newWizardMenu);
 			menu.add(newMenu);
-			this.newWizardMenu = new NewWizardMenu(newMenu, window, true);
 		}
+
 		menu.add(new GroupMarker(IWorkbenchActionConstants.NEW_EXT));
 		menu.add(new Separator());
 		
@@ -397,12 +397,13 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		goToSubMenu.add(forwardAction);
 		goToSubMenu.add(upAction);
 		goToSubMenu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-
+		
 		menu.add(new Separator(IWorkbenchActionConstants.OPEN_EXT));
 		for (int i = 2; i < 5; ++i) {
 			menu.add(new Separator(IWorkbenchActionConstants.OPEN_EXT + i));
 		}
 		menu.add(new Separator(IWorkbenchActionConstants.SHOW_EXT));
+		menu.add(syncWithEditorAction);
 		for (int i = 2; i < 5; ++i) {
 			menu.add(new Separator(IWorkbenchActionConstants.SHOW_EXT + i));
 		}
@@ -439,7 +440,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			menu.add(buildProjectAction);
 		menu.add(rebuildProjectAction);
 		if (!autoBuild) {
-			menu.add(buildAction);
+			menu.add(buildAllAction);
 		}
 		menu.add(rebuildAllAction);
 		menu.add(new GroupMarker(IWorkbenchActionConstants.BUILD_EXT));
@@ -468,17 +469,15 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			menu.add(changePerspMenuMgr);
 		}
 		{
-			MenuManager subMenu = new MenuManager(WorkbenchMessages.getString("Workbench.showView")); //$NON-NLS-1$
-			menu.add(subMenu);
-			new ShowViewMenu(subMenu, window, true);
+			MenuManager showViewMenuMgr = new MenuManager(WorkbenchMessages.getString("Workbench.showView")); //$NON-NLS-1$
+			ShowViewMenu showViewMenu = new ShowViewMenu(window);
+			showViewMenuMgr.add(showViewMenu);
+			menu.add(showViewMenuMgr);			
 		}
-		IContributionManager manager = window.getToolsManager();
+		IContributionManager manager = window.getCoolBarManager();
 		if (usingMenuReorg) {
 			menu.add(hideShowEditorAction);
-			if (manager instanceof CoolBarManager) {
-				menu.add(lockToolBarAction);	
-				menu.add(resetToolBarAction);	
-			}
+			menu.add(lockToolBarAction);	
 			menu.add(new Separator());
 			menu.add(editActionSetAction);
 			menu.add(savePerspectiveAction);
@@ -491,10 +490,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			menu.add(new Separator());
 			menu.add(savePerspectiveAction);
 			menu.add(editActionSetAction);
-			if (manager instanceof CoolBarManager) {
-				menu.add(lockToolBarAction);	
-				menu.add(resetToolBarAction);	
-			}
+			menu.add(lockToolBarAction);	
 			menu.add(resetPerspectiveAction);
 			menu.add(new Separator());
 			menu.add(closePerspAction);
@@ -519,7 +515,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		menu.add(new GroupMarker(IWorkbenchActionConstants.WB_START));
 		// Only add the manual incremental build if auto build off
 		if (!ResourcesPlugin.getWorkspace().isAutoBuilding())
-			menu.add(buildAction);
+			menu.add(buildAllAction);
 		menu.add(rebuildAllAction);
 		menu.add(new GroupMarker(IWorkbenchActionConstants.WB_END));
 		menu.add(new Separator());
@@ -599,7 +595,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		// about should always be at the bottom
 		menu.add(new Separator());
 		menu.add(aboutAction);
-		menu.add(keyBindingMenu = new KeyBindingMenu(window));
 		return menu;
 	}
 	
@@ -619,23 +614,15 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	 * and invariant (static) menus and menu items, as defined in MenuConstants interface.
 	 */
 	private void createToolBar() {
-		IContributionManager manager = window.getToolsManager();
-		IContributionManager toolsManager;
-		if (manager instanceof ToolBarManager) {
-			toolsManager = manager;
-		} else if (manager instanceof CoolBarManager) {
-			// Create a CoolBar item for the workbench
-			CoolBarManager cBarMgr = (CoolBarManager)manager;
-			CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, workbenchToolGroupId); //$NON-NLS-1$
-			cBarMgr.add(coolBarItem);
-			coolBarItem.setVisible(true);
-			toolsManager = (IContributionManager)coolBarItem.getToolBarManager();
-			cBarMgr.addToMenu(new ActionContributionItem(lockToolBarAction));
-			cBarMgr.addToMenu(new ActionContributionItem(resetToolBarAction));
-			cBarMgr.addToMenu(new ActionContributionItem(editActionSetAction));
-		} else {
-			toolsManager = manager;
-		}
+		// Create a CoolBar item for the workbench
+		CoolBarManager cBarMgr =  window.getCoolBarManager();
+		CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, workbenchToolGroupId); //$NON-NLS-1$
+		cBarMgr.add(coolBarItem);
+		coolBarItem.setVisible(true);
+		IContributionManager toolsManager = (IContributionManager)coolBarItem.getToolBarManager();
+		cBarMgr.addToMenu(new ActionContributionItem(lockToolBarAction));
+		cBarMgr.addToMenu(new ActionContributionItem(editActionSetAction));
+
 		toolsManager.add(newWizardDropDownAction);
 		toolsManager.add(new GroupMarker(IWorkbenchActionConstants.NEW_EXT));
 		toolsManager.add(new Separator());
@@ -648,7 +635,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		toolsManager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		// Only add the manual incremental build if auto build off
 		if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
-			toolsManager.appendToGroup(IWorkbenchActionConstants.BUILD_EXT, buildAction);
+			toolsManager.appendToGroup(IWorkbenchActionConstants.BUILD_EXT, buildAllAction);
 		}
 		if(WorkInProgressPreferencePage.useNavigationHistory())
 			addHistoryActions();
@@ -720,12 +707,13 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		//	rebuildAllAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC));
 		//	rebuildAllAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_HOVER));
 		//	rebuildAllAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_DISABLED));
+		rebuildAllAction.setActionDefinitionId(rebuildAllActionDefId);
 
-		buildAction = new GlobalBuildAction(window, IncrementalProjectBuilder.INCREMENTAL_BUILD);
-		buildAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC));
-		buildAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_HOVER));
-		buildAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_DISABLED));
-		buildAction.setActionDefinitionId(buildActionDefId);
+		buildAllAction = new GlobalBuildAction(window, IncrementalProjectBuilder.INCREMENTAL_BUILD);
+		buildAllAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC));
+		buildAllAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_HOVER));
+		buildAllAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_DISABLED));
+		buildAllAction.setActionDefinitionId(buildAllActionDefId);
 		
 		saveAction = new SaveAction(window);
 		saveAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT));
@@ -863,6 +851,9 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 
 		addTaskAction = createGlobalAction(IWorkbenchActionConstants.ADD_TASK, "edit", false); //$NON-NLS-1$
 
+		syncWithEditorAction = createGlobalAction(IWorkbenchActionConstants.SYNC_EDITOR, "navigate", false); //$NON-NLS-1$
+		syncWithEditorAction.setEnabled(false);
+		
 		deleteAction = new RetargetAction(IWorkbenchActionConstants.DELETE, WorkbenchMessages.getString("Workbench.delete")); //$NON-NLS-1$
 		deleteAction.setToolTipText(WorkbenchMessages.getString("Workbench.deleteToolTip")); //$NON-NLS-1$
 		deleteAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_DELETE_EDIT));
@@ -928,7 +919,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		savePerspectiveAction = new SavePerspectiveAction(window);
 		editActionSetAction = new EditActionSetsAction(window);
 		lockToolBarAction = new LockToolBarAction(window);
-		resetToolBarAction = new ResetToolBarAction(window);
 		resetPerspectiveAction = new ResetPerspectiveAction(window);
 		closePerspAction = new ClosePerspectiveAction(window);
 		closeAllPerspsAction = new CloseAllPerspectivesAction(window);
@@ -971,16 +961,16 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			savePerspectiveAction.setText(WorkbenchMessages.getString("Workbench.savePerspectiveAs")); //$NON-NLS-1$
 			editActionSetAction.setText(WorkbenchMessages.getString("Workbench.customizePerspective")); //$NON-NLS-1$
 			lockToolBarAction.setText(WorkbenchMessages.getString("Workbench.lockPerspectiveToolBar")); //$NON-NLS-1$
-			resetToolBarAction.setText(WorkbenchMessages.getString("Workbench.resetPerspectiveToolBar")); //$NON-NLS-1$
 			resetPerspectiveAction.setText(WorkbenchMessages.getString("Workbench.resetPerspective")); //$NON-NLS-1$
 			closePerspAction.setText(WorkbenchMessages.getString("Workbench.closePerspective")); //$NON-NLS-1$
 			closeAllPerspsAction.setText(WorkbenchMessages.getString("Workbench.closeAllPerspectives")); //$NON-NLS-1$
-			buildAction.setText(WorkbenchMessages.getString("Workbench.buildAll")); //$NON-NLS-1$
-			buildAction.setToolTipText(WorkbenchMessages.getString("Workbench.buildAllToolTip")); //$NON-NLS-1$
-			buildAction.setAccelerator(SWT.CTRL | 'B');
-			keyBindingService.registerGlobalAction(buildAction);
+			buildAllAction.setText(WorkbenchMessages.getString("Workbench.buildAll")); //$NON-NLS-1$
+			buildAllAction.setToolTipText(WorkbenchMessages.getString("Workbench.buildAllToolTip")); //$NON-NLS-1$
+			buildAllAction.setAccelerator(SWT.CTRL | 'B');
+			keyBindingService.registerGlobalAction(buildAllAction);
 			rebuildAllAction.setText(WorkbenchMessages.getString("Workbench.rebuildAll")); //$NON-NLS-1$
 			rebuildAllAction.setToolTipText(WorkbenchMessages.getString("Workbench.rebuildAllToolTip")); //$NON-NLS-1$
+			keyBindingService.registerGlobalAction(rebuildAllAction);
 		}
 		// end menu reorg
 	}
@@ -1011,12 +1001,34 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		// auto build setting is off.
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		if (event.getProperty().equals(IPreferenceConstants.AUTO_BUILD)) {
-			// Auto build is stored in core. It is not in the preference store.
-			boolean autoBuildOn = ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding();
-			if (autoBuildOn)
+			// Auto build is stored in core. It is also in the preference store for use by import/export.
+			IWorkspaceDescription description = ResourcesPlugin.getWorkspace().getDescription();
+			boolean autoBuildSetting = description.isAutoBuilding();
+			boolean newAutoBuildSetting = store.getBoolean(IPreferenceConstants.AUTO_BUILD);
+			
+			if(autoBuildSetting != newAutoBuildSetting){
+				description.setAutoBuilding(newAutoBuildSetting);
+				autoBuildSetting = newAutoBuildSetting;
+				try {
+					ResourcesPlugin.getWorkspace().setDescription(description);
+				} catch (CoreException e) {
+					WorkbenchPlugin.log("Error changing autobuild pref", e.getStatus());
+				}
+									
+				// If auto build is turned on, then do a global incremental
+				// build on all the projects.
+				if (newAutoBuildSetting) {
+					GlobalBuildAction action = new GlobalBuildAction(window,IncrementalProjectBuilder.INCREMENTAL_BUILD);
+					action.doBuild();
+				}								
+			}
+			
+					
+			if (autoBuildSetting)
 				removeManualIncrementalBuildAction();
 			else
 				addManualIncrementalBuildAction();
+			
 		} else if (event.getProperty().equals(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
 			if(store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN))
 				addPinEditorAction();
@@ -1038,73 +1050,52 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	 * Adds the pin action to the toolbar.
 	 */
 	private void addHistoryActions() {
-		IToolBarManager toolsMgr = window.getToolsManager();
-		if (toolsMgr instanceof CoolBarManager) {
-			CoolBarManager cBarMgr = (CoolBarManager)toolsMgr;
-			CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, historyGroup); //$NON-NLS-1$
-			// we want to add the history cool item before the editor cool item (if it exists)
-			IContributionItem refItem = cBarMgr.findSubId(IWorkbenchActionConstants.GROUP_EDITOR);
-			if (refItem == null) {
-				cBarMgr.add(coolBarItem);
-			} else {
-				cBarMgr.insertBefore(refItem.getId(), coolBarItem);
-			}
-			coolBarItem.setVisible(true);
-			IToolBarManager tBarMgr = (IToolBarManager)coolBarItem.getToolBarManager();
-			tBarMgr.add(new GroupMarker(historyGroup));
-			tBarMgr.insertAfter(historyGroup,forwardHistoryAction);
-			tBarMgr.insertAfter(historyGroup,backwardHistoryAction);			
+		CoolBarManager cBarMgr =  window.getCoolBarManager();
+		CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, historyGroup); //$NON-NLS-1$
+		// we want to add the history cool item before the editor cool item (if it exists)
+		IContributionItem refItem = cBarMgr.findSubId(IWorkbenchActionConstants.GROUP_EDITOR);
+		if (refItem == null) {
+			cBarMgr.add(coolBarItem);
 		} else {
-			toolsMgr.add(new GroupMarker(historyGroup));
-			toolsMgr.insertAfter(historyGroup,forwardHistoryAction);
-			toolsMgr.insertAfter(historyGroup,backwardHistoryAction);
+			cBarMgr.insertBefore(refItem.getId(), coolBarItem);
 		}
-		toolsMgr.update(true);
+		coolBarItem.setVisible(true);
+		IToolBarManager tBarMgr = (IToolBarManager)coolBarItem.getToolBarManager();
+		tBarMgr.add(new GroupMarker(historyGroup));
+		tBarMgr.insertAfter(historyGroup,forwardHistoryAction);
+		tBarMgr.insertAfter(historyGroup,backwardHistoryAction);			
+		cBarMgr.update(true);
 	}	
 	/*
 	 * Adds the pin action to the toolbar.
 	 */
 	private void addPinEditorAction() {
-		IToolBarManager toolsMgr = window.getToolsManager();
-		if (toolsMgr instanceof CoolBarManager) {
-			CoolBarManager cBarMgr = (CoolBarManager)toolsMgr;
-			CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, pinEditorGroup); //$NON-NLS-1$
-			// we want to add the pin editor cool item before the editor cool item (if
-			// it exists)
-			IContributionItem refItem = cBarMgr.findSubId(IWorkbenchActionConstants.GROUP_EDITOR);
-			if (refItem == null) {
-				cBarMgr.add(coolBarItem);
-			} else {
-				cBarMgr.insertBefore(refItem.getId(), coolBarItem);
-			}
-			coolBarItem.setVisible(true);
-			IToolBarManager tBarMgr = (IToolBarManager)coolBarItem.getToolBarManager();
-			tBarMgr.add(new GroupMarker(pinEditorGroup));
-			pinEditorAction.setVisible(true);
-			tBarMgr.insertAfter(pinEditorGroup,pinEditorAction);
+		CoolBarManager cBarMgr =  window.getCoolBarManager();
+		CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, pinEditorGroup); //$NON-NLS-1$
+		// we want to add the pin editor cool item before the editor cool item (if
+		// it exists)
+		IContributionItem refItem = cBarMgr.findSubId(IWorkbenchActionConstants.GROUP_EDITOR);
+		if (refItem == null) {
+			cBarMgr.add(coolBarItem);
 		} else {
-			toolsMgr.add(new GroupMarker(pinEditorGroup));
-			pinEditorAction.setVisible(true);
-			toolsMgr.insertAfter(pinEditorGroup,pinEditorAction);
+			cBarMgr.insertBefore(refItem.getId(), coolBarItem);
 		}
-		toolsMgr.update(true);
+		coolBarItem.setVisible(true);
+		IToolBarManager tBarMgr = (IToolBarManager)coolBarItem.getToolBarManager();
+		tBarMgr.add(new GroupMarker(pinEditorGroup));
+		pinEditorAction.setVisible(true);
+		tBarMgr.insertAfter(pinEditorGroup,pinEditorAction);
+		cBarMgr.update(true);
 	}
 	/*
 	 * Removes the pin action from the toolbar.
 	 */	
 	private void removePinEditorAction() {
-		IToolBarManager toolsMgr = window.getToolsManager();
-		if (toolsMgr instanceof CoolBarManager) {
-			CoolBarManager cBarMgr = (CoolBarManager)toolsMgr;
-			CoolBarContributionItem coolBarItem = (CoolBarContributionItem)cBarMgr.find(pinEditorGroup); //$NON-NLS-1$
-			if (coolBarItem != null) 
-				coolBarItem.dispose();
-		} else {
-			
-			pinEditorAction.setVisible(false);
-			toolsMgr.remove(pinEditorAction.getId());
-		} 
-		toolsMgr.update(true);
+		CoolBarManager cBarMgr = window.getCoolBarManager();
+		CoolBarContributionItem coolBarItem = (CoolBarContributionItem)cBarMgr.find(pinEditorGroup); //$NON-NLS-1$
+		if (coolBarItem != null) 
+			coolBarItem.dispose();
+		cBarMgr.update(true);
 	}		
 	/**
 	 * Remove the manual incremental build action
@@ -1133,12 +1124,9 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 				}
 			}
 		}
-		IContributionManager toolsManager = window.getToolsManager();
-		IContributionManager tBarMgr = toolsManager;
-		if (toolsManager instanceof CoolBarManager) {
-			CoolBarContributionItem groupItem = (CoolBarContributionItem)toolsManager.find(workbenchToolGroupId);
-			tBarMgr = groupItem.getToolBarManager();
-		} 
+		CoolBarManager cBarMgr = window.getCoolBarManager();
+		CoolBarContributionItem groupItem = (CoolBarContributionItem)cBarMgr.find(workbenchToolGroupId);
+		IContributionManager tBarMgr = groupItem.getToolBarManager();
 		tBarMgr.remove(IWorkbenchActionConstants.BUILD);
 		tBarMgr.update(true);
 	}

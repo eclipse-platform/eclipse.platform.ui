@@ -5,7 +5,6 @@ package org.eclipse.ui.part;
  * All Rights Reserved.
  */
 import java.util.List;
-import org.eclipse.core.runtime.IAdaptable;
 
 /* (non-Javadoc)
  * A <code>DrillFrame</code> is used to record the input element and

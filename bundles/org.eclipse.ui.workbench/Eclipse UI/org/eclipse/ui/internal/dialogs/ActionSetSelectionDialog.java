@@ -4,19 +4,19 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.internal.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.model.*;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * Dialog to display the available action sets, and

@@ -4,8 +4,6 @@ package org.eclipse.ui.internal.registry;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.*;
-import org.eclipse.ui.*;
 import java.util.*;
 
 /**
@@ -26,7 +24,9 @@ public ViewRegistry() {
  * Add a category to the registry.
  */
 public void add(ICategory desc) {
-	categories.add(desc);
+	/* fix for 1877 */
+	if (findCategory(desc.getId()) == null)
+		categories.add(desc);
 }
 /**
  * Add a descriptor to the registry.

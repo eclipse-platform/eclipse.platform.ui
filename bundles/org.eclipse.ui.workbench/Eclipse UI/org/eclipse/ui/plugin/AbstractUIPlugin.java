@@ -13,19 +13,15 @@ package org.eclipse.ui.plugin;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Iterator;
-
-import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.core.runtime.*;
-
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.*;
-
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.Workbench;
@@ -626,7 +622,7 @@ protected void initializeDefaultPluginPreferences() {
 
 /** 
  * Initializes an image registry with images which are frequently used by the 
- * plugin-in.
+ * plugin.
  * <p>
  * The image registry contains the images used by this plug-in that are very
  * frequently used and so need to be globally shared within the plug-in. Since
@@ -642,7 +638,6 @@ protected void initializeDefaultPluginPreferences() {
  * Subclasses may override this method to fill the image registry.
  * </p>
  *
- * @return ImageRegistry the resulting registry.
  * @see #getImageRegistry
  */
 protected void initializeImageRegistry(ImageRegistry reg) {

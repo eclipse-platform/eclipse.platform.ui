@@ -4,16 +4,13 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.boot.*;
-import org.eclipse.ui.*;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
-import java.net.MalformedURLException;
-import java.util.*;
+import java.util.Properties;
+import java.util.PropertyResourceBundle;
+
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * The platform info class;

@@ -20,7 +20,6 @@ public class NewWizardDropDownAction extends Action implements IMenuCreator, IWo
 	private IWorkbench workbench;
 	private NewWizardAction newWizardAction;
 	private MenuManager dropDownMenuMgr;
-	private NewWizardMenu newWizardMenu;
 /**
  *	Create a new instance of this class
  */
@@ -38,9 +37,7 @@ public NewWizardDropDownAction(IWorkbench aWorkbench, NewWizardAction newWizardA
 protected void createDropDownMenuMgr() {
 	if (dropDownMenuMgr == null) {
 		dropDownMenuMgr = new MenuManager();
-		newWizardMenu = new NewWizardMenu(dropDownMenuMgr, 
-			workbench.getActiveWorkbenchWindow(),
-			false);
+		dropDownMenuMgr.add(new NewWizardMenu(workbench.getActiveWorkbenchWindow()));
 	}
 }
 /**
@@ -57,7 +54,6 @@ public void dispose() {
  */
 public Menu getMenu(Control parent) {
 	createDropDownMenuMgr();
-	newWizardMenu.updateMenu();
 	return dropDownMenuMgr.createContextMenu(parent);
 }
 /**
@@ -66,7 +62,6 @@ public Menu getMenu(Control parent) {
  */
 public Menu getMenu(Menu parent) {
 	createDropDownMenuMgr();
-	newWizardMenu.updateMenu();
 	Menu menu= new Menu(parent);
 	IContributionItem[] items = dropDownMenuMgr.getItems();
 	for (int i=0; i<items.length; i++) {

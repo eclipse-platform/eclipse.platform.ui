@@ -5,19 +5,15 @@ package org.eclipse.ui.part;
  * All Rights Reserved. 
  */
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.SubActionBars;
 import org.eclipse.ui.internal.misc.Assert;
-import org.eclipse.ui.part.PageBookView;
-import org.eclipse.ui.internal.*;
 /**
- * This implemetation of <code>IPageSite</code> provides
- * a site for a page within a <code>PageBookView</code>. 
- * Most methods are forwarded to the view's site.
+ * This implementation of <code>IPageSite</code> provides a site for a page
+ * within a <code>PageBookView</code>. Most methods are forwarded to the view's
+ * site.
  */
 public class PageSite implements IPageSite {
 	/**

@@ -4,16 +4,17 @@ package org.eclipse.jface.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.Arrays;
+import java.util.Iterator;
+
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.List; // disambiguate between swt and java util
-import org.eclipse.swt.events.*;
-import java.util.*;
 
 /**
  * A dialog to display one or more errors to the user, as contained in an
@@ -134,37 +135,62 @@ protected void createButtonsForButtonBar(Composite parent) {
 }
 
 
-/*
- * @see Dialog.createContents(Composite)
+/**
+ * This implementation of the <code>Dialog</code> framework 
+ * method creates and lays out a composite and calls 
+ * <code>createMessageArea</code> and <code>createCustomArea</code>
+ * to populate it. Subclasses should override <code>createCustomArea</code>
+ * to add contents below the message.
  */
-protected Control createContents(Composite parent) {
+protected Control createDialogArea(Composite parent) {
 	
-	// initialize the dialog units
-	initializeDialogUnits(parent);
-	
+	 createMessageArea(parent);
+	 
+	// create a composite with standard margins and spacing
+	Composite composite = new Composite(parent, SWT.NONE);
 	GridLayout layout = new GridLayout();
-	layout.numColumns = 2;
 	layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
 	layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
 	layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
 	layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-	layout.makeColumnsEqualWidth = false;
-	parent.setLayout(layout);
-	parent.setLayoutData(new GridData(GridData.FILL_BOTH));
-	
-	// create the dialog area and button bar
-	dialogArea = createMessageArea(parent);
-	buttonBar = createButtonBar(parent);
-	
-	
-	return parent;
+	layout.numColumns = 2;
+	composite.setLayout(layout);
+	GridData childData = new GridData(GridData.FILL_BOTH);
+	childData.horizontalSpan = 2;
+	composite.setLayoutData(childData);
+	composite.setFont(parent.getFont());
+	return composite;
+
 }
 
+/*
+ * @see IconAndMessageDialog#createDialogAndButtonArea(Composite)
+ */
+
+protected void createDialogAndButtonArea(Composite parent) {
+	
+	super.createDialogAndButtonArea(parent);
+	if(this.dialogArea instanceof Composite){
+		//Create a label if there are no children to force a smaller layout
+		Composite dialogComposite = (Composite) dialogArea;
+		if(dialogComposite.getChildren().length == 0)
+			new Label(dialogComposite,SWT.NULL);
+	}
+}
 
 /*
  * @see IconAndMessageDialog#getImage()
  */
 protected Image getImage() {
+	
+	if(status != null){
+		if(status.getSeverity() == IStatus.WARNING)
+			return JFaceResources.getImageRegistry().get(DLG_IMG_WARNING);
+		if(status.getSeverity() == IStatus.INFO)
+			return JFaceResources.getImageRegistry().get(DLG_IMG_INFO);
+	}
+	
+	//If it was not a warning or an error then return the error image
 	return JFaceResources.getImageRegistry().get(DLG_IMG_ERROR);
 }
 

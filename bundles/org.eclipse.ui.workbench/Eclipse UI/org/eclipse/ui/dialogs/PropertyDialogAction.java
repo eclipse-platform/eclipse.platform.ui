@@ -11,7 +11,6 @@ import org.eclipse.ui.internal.dialogs.PropertyDialog;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.*;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.jface.viewers.ISelectionProvider;

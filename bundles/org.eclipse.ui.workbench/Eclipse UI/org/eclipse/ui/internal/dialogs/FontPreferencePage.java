@@ -11,8 +11,6 @@ import java.text.Collator;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Set;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
@@ -32,7 +30,6 @@ import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Sorter;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class FontPreferencePage
 	extends PreferencePage
@@ -75,9 +72,9 @@ public class FontPreferencePage
 			if (font != null)
 				font.dispose();
 				
-			FontData bestData = 
+			FontData[] bestData = 
 				JFaceResources.getFontRegistry().
-					bestData(fontData,text.getDisplay());
+					bestDataArray(fontData,text.getDisplay());
 					
 			//If there are no specified values then return.
 			if(bestData == null)
@@ -395,24 +392,20 @@ public class FontPreferencePage
 				
 			//Now we have the defaults ask the registry which to use of these
 			//values.
-			FontData bestChoice = 
+			FontData[] bestChoice = 
 				JFaceResources.getFontRegistry().
-					bestData(defaultData,valueControl.getDisplay());
+					bestDataArray(defaultData,valueControl.getDisplay());
 					
 			//The default data was empty so use the system default
 			if(bestChoice == null)
-				defaultData =
+				bestChoice =
 					valueControl.getDisplay().
 						getSystemFont().getFontData();
-			else{
-				defaultData = new FontData[1];
-				defaultData[0] = bestChoice;
-			}
 						
-			idsToFontData.put(preferenceName, defaultData);
+			idsToFontData.put(preferenceName, bestChoice);
 			
 			if (preferenceName.equals(currentSelection))
-				updateForFont(defaultData);
+				updateForFont(bestChoice);
 		}
 		super.performDefaults();
 	}

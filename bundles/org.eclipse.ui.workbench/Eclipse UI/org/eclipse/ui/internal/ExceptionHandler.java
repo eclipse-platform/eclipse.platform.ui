@@ -4,21 +4,15 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.dialogs.InternalErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.SWTError;
-import org.eclipse.swt.SWTException;
+import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.dialogs.InternalErrorDialog;
 
 /**
  * Handles exceptions or errors caught in the event loop.
@@ -128,7 +122,7 @@ private void log(Throwable t) {
 	try {
 		// For the status object, use the exception's message, or the exception name if no message.
 		String msg = t.getMessage() == null ? t.toString() : t.getMessage();
-		WorkbenchPlugin.log(MSG_UNHANDLED_EXCEPTION, new Status(IStatus.ERROR, IWorkbenchConstants.PLUGIN_ID, 0, msg, t));
+		WorkbenchPlugin.log(MSG_UNHANDLED_EXCEPTION, new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, msg, t));
 	
 		// special case for SWTException and SWTError to handle workaround for bug 6312
 		Throwable nested = null;
@@ -138,7 +132,7 @@ private void log(Throwable t) {
 			nested = ((SWTError)t).throwable;	
 		if (nested != null) {
 			msg = nested.getMessage() == null ? nested.toString() : nested.getMessage();
-			WorkbenchPlugin.log("\n*** Stack trace of contained exception ***", new Status(IStatus.ERROR, IWorkbenchConstants.PLUGIN_ID, 0, msg, nested)); //$NON-NLS-1$
+			WorkbenchPlugin.log("\n*** Stack trace of contained exception ***", new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, msg, nested)); //$NON-NLS-1$
 		}
 		if (WorkbenchPlugin.DEBUG) {
 			t.printStackTrace();

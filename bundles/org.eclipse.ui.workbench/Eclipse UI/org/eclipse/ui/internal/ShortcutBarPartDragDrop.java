@@ -10,20 +10,19 @@ http://www.eclipse.org/legal/cpl-v05.html
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewReference;
 
-public class ShortcutBarPartDragDrop extends PartDragDrop implements MouseListener, MouseMoveListener{
+public class ShortcutBarPartDragDrop extends PartDragDrop {
 	// The item that is being dragged by this PartDragDrop.
 	private ToolItem draggedItem;
 
 	public ShortcutBarPartDragDrop(LayoutPart itemPart, Control shortcutBar) {
 		super(itemPart, shortcutBar);
 	}
-	
-	public void mouseDown(MouseEvent e) {
-		if (e.button != 1) return;
+	/**	 * @see org.eclipse.ui.internal.PartDragDrop#isDragAllowed(Point)	 */	
+	protected void isDragAllowed(Point position) {
 		ToolBar toolBar = getToolBar();
-		draggedItem = toolBar.getItem(new Point(e.x, e.y));
+		draggedItem = toolBar.getItem(position);
 		if (draggedItem == null) {
 			// Avoid drag from the borders.
 			return;
@@ -32,7 +31,7 @@ public class ShortcutBarPartDragDrop extends PartDragDrop implements MouseListen
 			// Avoid drag from non-fast view icons.
 			return;
 		}
-		super.mouseDown(e);
+		super.isDragAllowed(position);
 	}
 	
 	// Returns the shortcut bar.
@@ -48,10 +47,10 @@ public class ShortcutBarPartDragDrop extends PartDragDrop implements MouseListen
 	 * represented by the icon being dragged.
 	 */
 	protected Rectangle getSourceBounds() {
-		IViewPart part = (IViewPart) draggedItem.getData(ShowFastViewContribution.FAST_VIEW);
-		WorkbenchPage page = (WorkbenchPage) part.getSite().getPage();
+		IViewReference ref = (IViewReference) draggedItem.getData(ShowFastViewContribution.FAST_VIEW);
+		WorkbenchPage page = (WorkbenchPage)ref.getPage();
 		Perspective persp = page.getActivePerspective();
-		Rectangle rect =  persp.getFastViewBounds(part);
+		Rectangle rect = persp.getFastViewBounds(ref);
 		return rect;
 	}
 	/*

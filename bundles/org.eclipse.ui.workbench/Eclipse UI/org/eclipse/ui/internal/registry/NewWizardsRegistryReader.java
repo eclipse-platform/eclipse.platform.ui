@@ -4,16 +4,16 @@ package org.eclipse.ui.internal.registry;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.text.Collator;
+import java.util.*;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
+import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
+import org.eclipse.ui.internal.misc.Sorter;
 import org.eclipse.ui.internal.model.AdaptableList;
-import org.eclipse.ui.internal.misc.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.ui.internal.dialogs.*;
-import org.eclipse.ui.internal.registry.*;
-import java.text.Collator;
-import java.util.*;
 
 /**
  *	Instances of this class provide a simple API to the workbench for

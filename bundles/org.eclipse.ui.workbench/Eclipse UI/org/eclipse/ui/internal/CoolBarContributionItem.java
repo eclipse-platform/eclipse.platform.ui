@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.*;
  * in as a CoolItem in a CoolBar control.  CoolItems map to ToolBars within a
  * CoolBar.
  */
-public class CoolBarContributionItem extends ContributionItem implements IContributionItem {
+public class CoolBarContributionItem extends ContributionItem {
 	/**
 	 * The visibility of the item,
 	 */

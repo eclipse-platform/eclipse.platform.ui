@@ -5,9 +5,9 @@ package org.eclipse.ui.wizards.datatransfer;
  * All Rights Reserved.
  */
 import java.util.*;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.ModalContext;
-import org.eclipse.ui.dialogs.FileSystemElement;
 
 /**
  * The PopulateElementOperation has a MinimizedFileSystemElement as an object as this is

@@ -4,47 +4,23 @@ package org.eclipse.ui.internal.dialogs;
  * All Rights Reserved.
  */
 import java.io.UnsupportedEncodingException;
-import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Hashtable;
+import java.util.*;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.jface.preference.FieldEditor;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.IntegerFieldEditor;
-import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.preference.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.IPreferenceConstants;
-import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.registry.AcceleratorConfiguration;
-import org.eclipse.ui.internal.registry.AcceleratorRegistry;
+import org.eclipse.ui.internal.*;
 
 public class EditorsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	private IWorkbench workbench;
@@ -55,12 +31,19 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	private Button otherEncodingButton;
 	private Combo encodingCombo;
 
-	private Combo accelConfigCombo;
 
-	private Button reuseEditors;
-	private IntegerFieldEditor reuseEditorsThreshold;
 	private Composite editorReuseGroup;
+	private Button reuseEditors;
+	private Button closeEditorsOnExit;
+	private Composite editorReuseIndentGroup;
+	private Composite editorReuseThresholdGroup;
+	private IntegerFieldEditor reuseEditorsThreshold;	
+	private Group dirtyEditorReuseGroup;		
+	private Button openNewEditor;
+	private Button promptToReuseEditor;
 	
+	private static final int REUSE_INDENT = 10;
+
 	private IntegerFieldEditor recentFilesEditor;
 
 	// hashtable mapping accelerator configuration names to accelerator configuration
@@ -82,11 +65,16 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		WorkbenchPreferencePage.createSpace(composite);
 		createEditorReuseGroup(composite);
 				
-		WorkbenchPreferencePage.createSpace(composite);
-		createAcceleratorConfigurationGroup(composite, WorkbenchMessages.getString("WorkbenchPreference.acceleratorConfiguration"));
+		closeEditorsOnExit = new Button(composite, SWT.CHECK);
+		closeEditorsOnExit.setText(WorkbenchMessages.getString("WorkbenchPreference.closeEditorsButton")); //$NON-NLS-1$
+		closeEditorsOnExit.setFont(composite.getFont());
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		closeEditorsOnExit.setSelection(store.getBoolean(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT));
+		setButtonLayoutData(closeEditorsOnExit);
 
 		WorkbenchPreferencePage.createSpace(composite);
 		createEncodingGroup(composite);
+
 		validCheck();
 		
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.WORKBENCH_EDITOR_PREFERENCE_PAGE);
@@ -96,17 +84,21 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	
 	public void init(IWorkbench aWorkbench) {
 		workbench = aWorkbench;
-		acceleratorInit(workbench);
 	}
 	
 	protected void performDefaults() {
 		IPreferenceStore store = getPreferenceStore();
 		updateEncodingState(true);
-		acceleratorPerformDefaults(store);
+		closeEditorsOnExit.setSelection(store.getDefaultBoolean(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT));
 		reuseEditors.setSelection(store.getDefaultBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
+		dirtyEditorReuseGroup.setEnabled(reuseEditors.getSelection());
+		openNewEditor.setSelection(!store.getDefaultBoolean(IPreferenceConstants.REUSE_DIRTY_EDITORS));
+		openNewEditor.setEnabled(reuseEditors.getSelection());
+		promptToReuseEditor.setSelection(store.getDefaultBoolean(IPreferenceConstants.REUSE_DIRTY_EDITORS));
+		promptToReuseEditor.setEnabled(reuseEditors.getSelection());
 		reuseEditorsThreshold.loadDefault();
-		reuseEditorsThreshold.getLabelControl(editorReuseGroup).setEnabled(reuseEditors.getSelection());
-		reuseEditorsThreshold.getTextControl(editorReuseGroup).setEnabled(reuseEditors.getSelection());
+		reuseEditorsThreshold.getLabelControl(editorReuseThresholdGroup).setEnabled(reuseEditors.getSelection());
+		reuseEditorsThreshold.getTextControl(editorReuseThresholdGroup).setEnabled(reuseEditors.getSelection());
 		recentFilesEditor.loadDefault();
 	}
 	
@@ -123,10 +115,11 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		
 		ResourcesPlugin.getPlugin().savePluginPreferences();
 
-		acceleratorPerformOk(store);		
-		
+		store.setValue(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT,closeEditorsOnExit.getSelection());
+
 		// store the reuse editors setting
 		store.setValue(IPreferenceConstants.REUSE_EDITORS_BOOLEAN,reuseEditors.getSelection());
+		store.setValue(IPreferenceConstants.REUSE_DIRTY_EDITORS,promptToReuseEditor.getSelection());
 		reuseEditorsThreshold.store();
 
 		// store the recent files setting
@@ -252,78 +245,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		encodingCombo.setEnabled(!useDefault);
 		setErrorMessage(null);
 		setValid(true);
-	}
-	
-		/**
-	 * Creates a composite that contains a label and combo box specifying the active
-	 * accelerator configuration.
-	 */
-	protected void createAcceleratorConfigurationGroup(Composite composite, String label) {
-		
-		Font font = composite.getFont();
-		
-		Composite groupComposite = new Composite(composite, SWT.LEFT);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		groupComposite.setLayout(layout);
-		GridData gd = new GridData();
-		gd.horizontalAlignment = GridData.FILL;
-		gd.grabExcessHorizontalSpace = true;
-		groupComposite.setLayoutData(gd);
-		groupComposite.setFont(font);
-		
-		WorkbenchPreferencePage.createLabel(groupComposite, label);
-		accelConfigCombo = WorkbenchPreferencePage.createCombo(groupComposite);
-
-		if(namesToConfiguration.size() > 0) { 
-			String[] comboItems = new String[namesToConfiguration.size()];
-			namesToConfiguration.keySet().toArray(comboItems);
-			Arrays.sort(comboItems,Collator.getInstance());
-			accelConfigCombo.setItems(comboItems);
-		
-			if(activeAcceleratorConfigurationName != null)
-				accelConfigCombo.select(accelConfigCombo.indexOf(activeAcceleratorConfigurationName));
-		} else {
-			accelConfigCombo.setEnabled(false);
-		}	
-	}
-	protected void acceleratorInit(IWorkbench aWorkbench) {
-		namesToConfiguration = new Hashtable();
-		WorkbenchPlugin plugin = WorkbenchPlugin.getDefault();
-		AcceleratorRegistry registry = plugin.getAcceleratorRegistry();
-		AcceleratorConfiguration configs[] = registry.getConfigsWithSets();
-		for (int i = 0; i < configs.length; i++)
-			namesToConfiguration.put(configs[i].getName(), configs[i]);	
-		
-		AcceleratorConfiguration config = ((Workbench)aWorkbench).getActiveAcceleratorConfiguration();
-		if(config != null)
-			activeAcceleratorConfigurationName = config.getName();
-	}	
-	protected void acceleratorPerformDefaults(IPreferenceStore store) {
-		// Sets the accelerator configuration selection to the default configuration
-		String id = store.getDefaultString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
-		AcceleratorRegistry registry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();
-		AcceleratorConfiguration config = registry.getConfiguration(id);
-		String name = null;
-		if(config != null) 
-			name = config.getName();
-		if((name != null) && (accelConfigCombo != null))
-			accelConfigCombo.select(accelConfigCombo.indexOf(name));
-	}	
-	protected void acceleratorPerformOk(IPreferenceStore store) {
-		// store the active accelerator configuration id
-		if(accelConfigCombo != null) {
-			String configName = accelConfigCombo.getText();
-			AcceleratorConfiguration config = (AcceleratorConfiguration)namesToConfiguration.get(configName);
-			if(config != null) {
-				Workbench workbench = (Workbench)PlatformUI.getWorkbench();
-				workbench.setActiveAcceleratorConfiguration(config);
-				store.setValue(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID, config.getId());
-			}
-		}
-	}	
+	}		
 	/**
 	 * Create a composite that contains entry fields specifying editor reuse preferences.
 	 */
@@ -333,31 +255,41 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		
 		editorReuseGroup = new Composite(composite, SWT.LEFT);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+		// Line up with other entries in preference page
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
 		editorReuseGroup.setLayout(layout);
-		GridData gd = new GridData();
-		gd.horizontalAlignment = GridData.FILL;
-		gd.grabExcessHorizontalSpace = true;
-		editorReuseGroup.setLayoutData(gd);	
+		editorReuseGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));	
 		editorReuseGroup.setFont(font);	
 		
 		reuseEditors = new Button(editorReuseGroup, SWT.CHECK);
 		reuseEditors.setText(WorkbenchMessages.getString("WorkbenchPreference.reuseEditors")); //$NON-NLS-1$
-		GridData reuseEditorsData = new GridData();
-		reuseEditorsData.horizontalSpan = layout.numColumns;
-		reuseEditors.setLayoutData(reuseEditorsData);
+		reuseEditors.setLayoutData(new GridData());
 		reuseEditors.setFont(font);
 		
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		reuseEditors.setSelection(store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
 		reuseEditors.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e){
-				reuseEditorsThreshold.getLabelControl(editorReuseGroup).setEnabled(reuseEditors.getSelection());
-				reuseEditorsThreshold.getTextControl(editorReuseGroup).setEnabled(reuseEditors.getSelection());
+				reuseEditorsThreshold.getLabelControl(editorReuseThresholdGroup).setEnabled(reuseEditors.getSelection());
+				reuseEditorsThreshold.getTextControl(editorReuseThresholdGroup).setEnabled(reuseEditors.getSelection());
+				dirtyEditorReuseGroup.setEnabled(reuseEditors.getSelection());
+				openNewEditor.setEnabled(reuseEditors.getSelection());
+				promptToReuseEditor.setEnabled(reuseEditors.getSelection());
 			}
 		});
 		
-		reuseEditorsThreshold = new IntegerFieldEditor(IPreferenceConstants.REUSE_EDITORS, WorkbenchMessages.getString("WorkbenchPreference.reuseEditorsThreshold"), editorReuseGroup); //$NON-NLS-1$
+		editorReuseIndentGroup = new Composite(editorReuseGroup, SWT.LEFT);
+		GridLayout indentLayout = new GridLayout();
+		indentLayout.marginWidth = REUSE_INDENT;
+		editorReuseIndentGroup.setLayout(indentLayout);
+		editorReuseIndentGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));	
+		
+		editorReuseThresholdGroup = new Composite(editorReuseIndentGroup, SWT.LEFT);
+		editorReuseThresholdGroup.setLayout(new GridLayout());
+		editorReuseThresholdGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));	
+		
+		reuseEditorsThreshold = new IntegerFieldEditor(IPreferenceConstants.REUSE_EDITORS, WorkbenchMessages.getString("WorkbenchPreference.reuseEditorsThreshold"), editorReuseThresholdGroup); //$NON-NLS-1$
 		
 		reuseEditorsThreshold.setPreferenceStore(WorkbenchPlugin.getDefault().getPreferenceStore());
 		reuseEditorsThreshold.setPreferencePage(this);
@@ -366,14 +298,34 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		reuseEditorsThreshold.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
 		reuseEditorsThreshold.setValidRange(1, 99);
 		reuseEditorsThreshold.load();
-		reuseEditorsThreshold.getLabelControl(editorReuseGroup).setEnabled(reuseEditors.getSelection());
-		reuseEditorsThreshold.getTextControl(editorReuseGroup).setEnabled(reuseEditors.getSelection());
+		reuseEditorsThreshold.getLabelControl(editorReuseThresholdGroup).setEnabled(reuseEditors.getSelection());
+		reuseEditorsThreshold.getTextControl(editorReuseThresholdGroup).setEnabled(reuseEditors.getSelection());
 		reuseEditorsThreshold.setPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				if (event.getProperty().equals(FieldEditor.IS_VALID)) 
 					setValid(reuseEditorsThreshold.isValid());
 			}
-		});
+		});		
+		
+		dirtyEditorReuseGroup = new Group(editorReuseIndentGroup, SWT.NONE);
+		dirtyEditorReuseGroup.setLayout(new GridLayout());		
+		dirtyEditorReuseGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		dirtyEditorReuseGroup.setText(WorkbenchMessages.getString("WorkbenchPreference.reuseDirtyEditorGroupTitle")); //$NON-NLS-1$
+		dirtyEditorReuseGroup.setFont(font);
+		dirtyEditorReuseGroup.setEnabled(reuseEditors.getSelection());
+		
+		promptToReuseEditor = new Button(dirtyEditorReuseGroup, SWT.RADIO);
+		promptToReuseEditor.setText(WorkbenchMessages.getString("WorkbenchPreference.promptToReuseEditor")); //$NON-NLS-1$
+		promptToReuseEditor.setFont(font);	
+		promptToReuseEditor.setSelection(store.getBoolean(IPreferenceConstants.REUSE_DIRTY_EDITORS));
+		promptToReuseEditor.setEnabled(reuseEditors.getSelection());	
+
+		openNewEditor = new Button(dirtyEditorReuseGroup, SWT.RADIO);
+		openNewEditor.setText(WorkbenchMessages.getString("WorkbenchPreference.openNewEditor")); //$NON-NLS-1$
+		openNewEditor.setFont(font);	
+		openNewEditor.setSelection(!store.getBoolean(IPreferenceConstants.REUSE_DIRTY_EDITORS));
+		openNewEditor.setEnabled(reuseEditors.getSelection());		
+
 	}
 	/**
 	 * Create a composite that contains entry fields specifying editor history preferences.

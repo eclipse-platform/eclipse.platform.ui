@@ -11,6 +11,6 @@ public interface ITableOfContentsWizard extends IWizard {
 	 * Get the table of contents nodes for the initial
 	 * pages
 	 */
-	public ITableOfContentsNode[] getInitialNodes();
+	public WizardTableOfContentsNode[] getInitialNodes();
 
 }

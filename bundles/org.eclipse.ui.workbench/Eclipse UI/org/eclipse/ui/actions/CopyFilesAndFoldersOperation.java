@@ -112,6 +112,27 @@ public class CopyFilesAndFoldersOperation {
 		return true;
 	}
 	/**
+	 * Checks whether the files with the given names exist. 
+	 *
+	 * @param names path to the file. must not be null.
+	 * 	If the path is not valid it will not be tested. 
+	 * @return error message if one of the files does not exist.
+	 * 	null if all files specified in names exist.
+	 */
+	String checkExist(String[] names) {
+		for (int i = 0; i < names.length; i++) {
+			IPath path = new Path(names[i]);
+			File file = path.toFile();
+			
+			if (file != null && file.exists() == false) {
+				return WorkbenchMessages.format(
+					"CopyFilesAndFoldersOperation.resourceDeleted",	//$NON-NLS-1$
+					new Object[] {file.getName()});				
+			}
+		}
+		return null;		
+	}
+	/**
 	 * Check if the user wishes to overwrite the supplied resource or 
 	 * all resources.
 	 * 
@@ -295,7 +316,13 @@ public class CopyFilesAndFoldersOperation {
 	public void copyFiles(final String[] fileNames, IContainer destination) {
 		alwaysOverwrite = false;
 
-		String errorMsg = validateImportDestination(destination, fileNames);
+		// test files for existence separate from validate API 
+		// because an external file may not exist until the copy actually 
+		// takes place (e.g., WinZip contents).
+		String errorMsg = checkExist(fileNames);
+		if (errorMsg == null) {
+			errorMsg = validateImportDestination(destination, fileNames);
+		}
 		if (errorMsg != null) {
 			displayError(errorMsg);
 			return;
@@ -681,19 +708,28 @@ public class CopyFilesAndFoldersOperation {
 		if (!isAccessible(destination)) {
 			return WorkbenchMessages.getString("CopyFilesAndFoldersOperation.destinationAccessError"); //$NON-NLS-1$
 		}
-		IPath destinationPath = destination.getFullPath();
+		IPath destinationLocation = destination.getLocation();
 		for (int i = 0; i < sourceResources.length; i++) {
 			IResource sourceResource = sourceResources[i];
-			IPath sourcePath = sourceResource.getFullPath();
+			IPath sourceLocation = sourceResource.getLocation();
 
-			if (sourcePath.equals(destinationPath)) {
+			if (sourceResource.exists() == false) {
 				return WorkbenchMessages.format(
-					"CopyFilesAndFoldersOperation.sameSourceAndDest", //$NON-NLS-1$
-					new Object[] { sourceResource.getName()});
+					"CopyFilesAndFoldersOperation.resourceDeleted",		//$NON-NLS-1$
+					new Object[] {sourceResource.getName()});				
 			}
-			// is the source a parent of the destination path?
-			if (sourcePath.isPrefixOf(destinationPath)) {
+			if (sourceLocation.equals(destinationLocation)) {
+				return WorkbenchMessages.format(
+					"CopyFilesAndFoldersOperation.sameSourceAndDest", 	//$NON-NLS-1$
+					new Object[] {sourceResource.getName()});
+			}
+			// is the source a parent of the destination?
+			if (sourceLocation.isPrefixOf(destinationLocation)) {
 				return WorkbenchMessages.getString("CopyFilesAndFoldersOperation.destinationDescendentError"); //$NON-NLS-1$
+			}
+			String linkedResourceMessage = validateLinkedResource(destination, sourceResource);
+			if (linkedResourceMessage != null) {
+				return linkedResourceMessage;
 			}
 		}
 		return null;
@@ -735,6 +771,39 @@ public class CopyFilesAndFoldersOperation {
 					}
 					destinationParent = destinationParent.removeLastSegments(1);
 				}
+			}
+		}
+		return null;
+	}
+	/**
+	 * Check if the destination is valid for the given source resource. 
+	 * 
+	 * @param destination destination container of the operation
+	 * @param source source resource
+	 * @return String error message or null if the destination is valid
+	 */
+	private String validateLinkedResource(IContainer destination, IResource source) {
+		if (source.isLinked() && destination.getType() != IResource.PROJECT) {
+			return WorkbenchMessages.format(
+				"CopyFilesAndFoldersOperation.linkCopyToNonProject", //$NON-NLS-1$
+				new Object[] {source.getName()});				
+		}
+		if (source.getProject().equals(destination.getProject()) == false) {
+			try {
+				IResource[] members = destination.members();
+				IPath sourceLocation = source.getLocation();
+				for (int j = 0; j < members.length; j++) {
+					if (sourceLocation.equals(members[j].getLocation())) {
+						return WorkbenchMessages.format(
+							"CopyFilesAndFoldersOperation.sameSourceAndDest", //$NON-NLS-1$
+							new Object[] {source.getName()});
+					}
+				}
+			}
+			catch (CoreException exception) {
+				displayError(WorkbenchMessages.format(
+					"CopyFilesAndFoldersOperation.internalError", 				//$NON-NLS-1$
+					new Object[] {exception.getMessage()}));
 			}
 		}
 		return null;

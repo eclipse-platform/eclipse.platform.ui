@@ -5,10 +5,8 @@ package org.eclipse.ui.part;
  * All Rights Reserved.
  */
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.*;
-import org.eclipse.jface.util.Assert;
 
 /**
  * Abstract base implementation of all workbench editors.

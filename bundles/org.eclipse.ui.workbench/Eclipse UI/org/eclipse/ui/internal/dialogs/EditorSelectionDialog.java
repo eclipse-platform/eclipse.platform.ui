@@ -4,7 +4,7 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.program.*;
+
 import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -301,7 +301,7 @@ public void handleEvent(Event event) {
 	updateEnableState();
 }
 protected void promptForExternalEditor() {
-	FileDialog dialog = new FileDialog(getShell());
+	FileDialog dialog = new FileDialog(getShell(), SWT.OPEN | SWT.PRIMARY_MODAL);
 	dialog.setFilterExtensions(Executable_Filters);
 	String result = dialog.open();
 	if (result != null) {

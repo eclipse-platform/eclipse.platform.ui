@@ -12,6 +12,7 @@ import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
@@ -55,151 +56,140 @@ public class WelcomeEditor extends EditorPart {
 	
 	private ArrayList hyperlinkRanges = new ArrayList();
 	private ArrayList texts = new ArrayList();
-	private StyledText lastNavigatedText = null;
 	private ScrolledComposite scrolledComposite;
 	
 	private IPropertyChangeListener colorListener;
 	private boolean mouseDown = false;
 	private boolean dragEvent = false;
 	
-	/**
-	 * The keyListener innerClass for the welcome editor
-	 * navigation
-	 */
+	private StyledText firstText, lastText;
+	private StyledText lastNavigatedText, currentText;
+	private boolean nextTabAbortTraversal, previousTabAbortTraversal = false;
 	
-	private KeyListener welcomeListener = new KeyListener(){
-		
-		public void keyReleased(KeyEvent e){
-			//Ignore a key release
-		}
-		public void keyPressed (KeyEvent event){
-			
-			StyledText text = lastNavigatedText;
-			if(event.character == '\t' && event.stateMask == SWT.NULL){
-				StyleRange nextRange = findStartRange(text,false);
-				if(nextRange == null){
-					if(text != null)
-						text.setSelection(0,0);
-					focusOn(nextText(text));
-				}
-				else{
-					text.setSelection(nextRange.start,nextRange.start + nextRange.length);
-					text.setFocus();					
-				}
-				return;
-			}
-			if(event.character == ' ' || event.character == SWT.CR){
-				if(text != null) {
-					WelcomeItem item = (WelcomeItem)text.getData();
-	
-					//Be sure we are in the selection
-					int offset = text.getSelection().x + 1;
-				
-					if (item.isLinkAt(offset)) {	
-						text.setCursor(busyCursor);
-						item.triggerLinkAt(offset);
-						text.setCursor(null);
-					}
-				}
-				return;
-			}	
-			
-			// When page down is pressed, move the cursor to the next item in the 
-			// welcome page.   Note that this operation wraps (pages to the top item
-			// when the last item is reached).
-			if(event.keyCode == SWT.PAGE_DOWN){
-				focusOn(nextText(text));
-				return;
-			}
-			
-			// When page up is pressed, move the cursor to the previous item in the 
-			// welcome page.  Note that this operation wraps (pages to the bottom item
-			// when the first item is reached).
-			if(event.keyCode == SWT.PAGE_UP){
-				focusOn(previousText(text));
-				return;
-			}
-			
-		}
-		
-		/**
-		 * Update the welcome page to start at the
-		 * beginning of the text.
-		 */
-		private void focusOn(StyledText newText){
-			if(newText == null)
-				return;
-			newText.setFocus();
-			newText.setCaretOffset(0);
-			scrolledComposite.setOrigin(0,newText.getLocation().y);
-			lastNavigatedText = newText;
-		}
-		
-		/**
-		 * Find the next text 
-		 */		
-		private StyledText nextText(StyledText text){
-			int index = 0;
-			if(text == null)
-				return (StyledText) texts.get(0);
-			else
-				index = texts.indexOf(text);
-				
-			//If we are not at the end....
-			if(index < texts.size() - 1)
-				return (StyledText) texts.get(index + 1);
-			else
-				return (StyledText)  texts.get(0);						
-		}
-		
-		/**
-		 * Find the previous text 
-		 */		
-		private StyledText previousText(StyledText text){
-			int index = 0;
-			if(text == null)
-				return (StyledText) texts.get(0);
-			else
-				index = texts.indexOf(text);
-				
-			//If we are not at the end....
-			if(index == 0)
-				return (StyledText) texts.get(texts.size() - 1);
-			else
-				return (StyledText)  texts.get(index - 1);						
-		}
-	
-		/**
-		 * Find the next range after the current 
-		 * selection.
-		 */
-		private StyleRange findStartRange(StyledText text, boolean returnDefault){
-	
-			if(text == null)
-				return null;
-				
-			StyleRange[] ranges = text.getStyleRanges();
-			int currentSelectionStart = text.getSelection().x;
-	
-			for (int i = 0; i < ranges.length; i++) {
-				if(ranges[i].start > currentSelectionStart)
-					return ranges[i];
-			}
-	
-			//If the default one is good then return it
-			if(ranges.length > 0 && returnDefault)
-				return ranges[0];
-			else
-				return null;
-		}
-	};
+	private WelcomeEditorCopyAction copyAction;
 	
 /**
  * Create a new instance of the welcome editor
  */
 public WelcomeEditor() {
 	super();
-	setTitle(WorkbenchMessages.getString("WelcomeEditor.title")); //$NON-NLS-1$	
+	setTitle(WorkbenchMessages.getString("WelcomeEditor.title")); //$NON-NLS-1$
+	copyAction = new WelcomeEditorCopyAction(this);
+	copyAction.setEnabled(false);	
+}
+
+/**
+ * Update the welcome page to start at the
+ * beginning of the text.
+ */
+private void focusOn(StyledText newText, int caretOffset){
+	if(newText == null)
+		return;
+	newText.setFocus();
+	newText.setCaretOffset(caretOffset);
+	scrolledComposite.setOrigin(0,newText.getLocation().y);
+}
+
+/**
+ * Finds the next text 
+ */		
+private StyledText nextText(StyledText text){
+	int index = 0;
+	if(text == null)
+		return (StyledText) texts.get(0);
+	else
+		index = texts.indexOf(text);
+		
+	//If we are not at the end....
+	if(index < texts.size() - 1)
+		return (StyledText) texts.get(index + 1);
+	else
+		return (StyledText)  texts.get(0);						
+}
+
+/**
+ * Finds the previous text 
+ */		
+private StyledText previousText(StyledText text){
+	int index = 0;
+	if(text == null)
+		return (StyledText) texts.get(0);
+	else
+		index = texts.indexOf(text);
+		
+	//If we are at the beginning....
+	if(index == 0)
+		return (StyledText) texts.get(texts.size() - 1);
+	else
+		return (StyledText)  texts.get(index - 1);						
+}
+
+/**
+ * Returns the current text. */
+protected StyledText getCurrentText() {
+	return currentText;
+}
+
+/**
+ * Returns the copy action. 
+ */
+protected WelcomeEditorCopyAction getCopyAction() {
+	return copyAction;
+}
+
+/**
+ * Finds the next link after the current selection.
+ */
+private StyleRange findNextLink(StyledText text) {
+	if(text == null)
+		return null;
+		
+	WelcomeItem item = (WelcomeItem)text.getData();		
+	StyleRange[] ranges = text.getStyleRanges();
+	int currentSelectionEnd = text.getSelection().y;
+
+	for (int i = 0; i < ranges.length; i++) {
+		if(ranges[i].start >= currentSelectionEnd)
+			if (item.isLinkAt(ranges[i].start))
+				return ranges[i];
+	}
+	return null;
+}
+
+/**
+ * Finds the previous link before the current selection.
+ */
+private StyleRange findPreviousLink(StyledText text) {
+	if(text == null)
+		return null;
+		
+	WelcomeItem item = (WelcomeItem)text.getData();
+	StyleRange[] ranges = text.getStyleRanges();
+	int currentSelectionStart = text.getSelection().x;
+
+	for (int i = ranges.length - 1; i > -1; i--) {
+		if((ranges[i].start + ranges[i].length) < currentSelectionStart)
+			if (item.isLinkAt(ranges[i].start + ranges[i].length - 1))
+				return ranges[i];
+	}
+	return null;
+}
+
+/**
+ * Finds the current link of the current selection.
+ */
+protected StyleRange getCurrentLink(StyledText text){
+	StyleRange[] ranges = text.getStyleRanges();
+	int currentSelectionEnd = text.getSelection().y;
+	int currentSelectionStart = text.getSelection().x;
+	
+	for (int i = 0; i < ranges.length; i++) {
+		if((currentSelectionStart >= ranges[i].start) && 
+			(currentSelectionEnd <= (ranges[i].start + ranges[i].length))) {
+			return ranges[i];
+		}
+	}
+	return null;
 }
 /**
  * Adds listeners to the given styled text
@@ -224,11 +214,16 @@ private void addListeners(StyledText styledText) {
 				}
 			} else if (item.isLinkAt(offset)) {	
 				text.setCursor(busyCursor);
-				item.triggerLinkAt(offset);
-				text.setCursor(null);
+				if (e.button == 1) {
+					item.triggerLinkAt(offset);
+					StyleRange selectionRange = getCurrentLink(text);
+					text.setSelectionRange(selectionRange.start, selectionRange.length);
+					text.setCursor(null);
+				}
 			}
 		}
 	});
+	
 	styledText.addMouseMoveListener(new MouseMoveListener() {
 		public void mouseMove(MouseEvent e) {
 			// Do not change cursor on drag events
@@ -257,8 +252,164 @@ private void addListeners(StyledText styledText) {
 		}
 	});
 	
-	//Listen for Tab and Space to allow keyboard navigation
-	styledText.addKeyListener(welcomeListener);
+	styledText.addTraverseListener(new TraverseListener() {
+		public void keyTraversed(TraverseEvent e) {
+			StyledText text = (StyledText)e.widget;
+			
+			switch (e.detail) {
+			case SWT.TRAVERSE_ESCAPE:
+				e.doit = true;
+				break;
+			case SWT.TRAVERSE_TAB_NEXT:
+				// Handle Ctrl-Tab
+				if ((e.stateMask & SWT.CTRL) != 0) {
+					if (e.widget == lastText)
+						return;
+					else {
+						e.doit = false;
+						nextTabAbortTraversal = true;
+						lastText.traverse(SWT.TRAVERSE_TAB_NEXT);
+						return;
+					}
+				}
+				if (nextTabAbortTraversal) {
+					nextTabAbortTraversal = false;
+					return;
+				}
+				// Find the next link in current widget, if applicable
+				// Stop at top of widget
+				StyleRange nextLink = findNextLink(text);
+				if (nextLink == null) {
+					// go to the next widget, focus at beginning
+					StyledText nextText = nextText(text);
+					nextText.setSelection(0);
+					focusOn(nextText,0);
+				}
+				else {
+					// focusOn: allow none tab traversals to align
+					focusOn(text, text.getSelection().x);
+					text.setSelectionRange(nextLink.start, nextLink.length);
+				}
+				e.detail = SWT.TRAVERSE_NONE;
+				e.doit = true;
+				break;
+			case SWT.TRAVERSE_TAB_PREVIOUS:
+				// Handle Ctrl-Shift-Tab
+				if ((e.stateMask & SWT.CTRL) != 0) {
+					if (e.widget == firstText)
+						return;
+					else {
+						e.doit = false;
+						previousTabAbortTraversal = true;
+						firstText.traverse(SWT.TRAVERSE_TAB_PREVIOUS);
+						return;
+					}
+				}
+				if (previousTabAbortTraversal) {
+					previousTabAbortTraversal = false;
+					return;
+				}
+				// Find the previous link in current widget, if applicable
+				// Stop at top of widget also
+				StyleRange previousLink = findPreviousLink(text);
+				if (previousLink == null) {
+					if (text.getSelection().x == 0) {
+						// go to the previous widget, focus at end
+						StyledText previousText = previousText(text);
+						previousText.setSelection(previousText.getCharCount());
+						previousLink = findPreviousLink(previousText);
+						if (previousLink == null)	
+							focusOn(previousText,0);
+						else {
+							focusOn(previousText, previousText.getSelection().x);
+							previousText.setSelectionRange(previousLink.start, previousLink.length);
+						}
+					}
+					else {
+						// stay at top of this widget
+						focusOn(text, 0);
+					}
+				}
+				else {
+					// focusOn: allow none tab traversals to align
+					focusOn(text, text.getSelection().x);
+					text.setSelectionRange(previousLink.start, previousLink.length);
+				}
+				e.detail = SWT.TRAVERSE_NONE;
+				e.doit = true;
+				break;
+			default:
+				break;
+			}
+		}
+	});
+	
+	styledText.addKeyListener(new KeyListener() {
+		public void keyReleased(KeyEvent e){
+			//Ignore a key release
+		}
+		public void keyPressed (KeyEvent event){
+			StyledText text = (StyledText)event.widget;
+			if(event.character == ' ' || event.character == SWT.CR){
+				if(text != null) {
+					WelcomeItem item = (WelcomeItem)text.getData();
+	
+					//Be sure we are in the selection
+					int offset = text.getSelection().x + 1;
+				
+					if (item.isLinkAt(offset)) {	
+						text.setCursor(busyCursor);
+						item.triggerLinkAt(offset);
+						StyleRange selectionRange = getCurrentLink(text);
+						text.setSelectionRange(selectionRange.start, selectionRange.length);
+						text.setCursor(null);
+					}
+				}
+				return;
+			}	
+			
+			// When page down is pressed, move the cursor to the next item in the 
+			// welcome page.   Note that this operation wraps (pages to the top item
+			// when the last item is reached).
+			if(event.keyCode == SWT.PAGE_DOWN){
+				focusOn(nextText(text),0);
+				return;
+			}
+			
+			// When page up is pressed, move the cursor to the previous item in the 
+			// welcome page.  Note that this operation wraps (pages to the bottom item
+			// when the first item is reached).
+			if(event.keyCode == SWT.PAGE_UP){
+				focusOn(previousText(text),0);
+				return;
+			}	
+		}
+	});
+	
+	styledText.addFocusListener(new FocusAdapter() {
+		public void focusLost(FocusEvent e) {
+			// Remember current text widget
+			lastNavigatedText = (StyledText)e.widget;
+		}
+		public void focusGained(FocusEvent e) {
+			currentText = (StyledText)e.widget;
+			
+			// Remove highlighted selection if text widget has changed
+			if ((currentText != lastNavigatedText) && (lastNavigatedText != null))
+				lastNavigatedText.setSelection(lastNavigatedText.getSelection().x);
+				
+			// enable/disable copy action
+			copyAction.setEnabled(currentText.getSelectionCount()>0);
+		}
+	});
+	
+	styledText.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			// enable/disable copy action			
+			StyledText text = (StyledText)e.widget;
+			copyAction.setEnabled(text.getSelectionCount()>0);
+		}
+	});
 }
 
 /**
@@ -329,6 +480,7 @@ private Composite createInfoArea(Composite parent) {
 		gd.horizontalSpan = 2;
 		spacer.setLayoutData(gd);
 	}
+	firstText = sampleStyledText;
 
 	// Create the welcome items
 	WelcomeItem[] items = getItems();
@@ -362,7 +514,14 @@ private Composite createInfoArea(Composite parent) {
 		gd = new GridData(GridData.FILL_HORIZONTAL); 
 		gd.horizontalSpan = 2;
 		spacer.setLayoutData(gd);
+
+		// create context menu
+		MenuManager menuMgr = new MenuManager("#PopUp"); //$NON-NLS-1$
+		menuMgr.add(copyAction);
+		styledText.setMenu(menuMgr.createContextMenu(styledText));
 	}
+
+	lastText = sampleStyledText;
 	this.scrolledComposite.setContent(infoArea);
 	Point p = infoArea.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 	this.scrolledComposite.setMinHeight(p.y);
@@ -468,7 +627,7 @@ private Composite createTitleArea(Composite parent) {
 
 	// Create the title area which will contain
 	// a title, message, and image.
-	Composite titleArea = new Composite(parent, SWT.NONE);
+	Composite titleArea = new Composite(parent, SWT.NONE | SWT.NO_FOCUS);
 	GridLayout layout = new GridLayout();
 	layout.marginHeight = 0;
 	layout.marginWidth = 0;
@@ -683,9 +842,8 @@ private void setBoldRanges(StyledText styledText, int[][] boldRanges) {
  * </p>
  */
 public void setFocus() {
-	if (editorComposite != null) {
+	if ((editorComposite != null) && (lastNavigatedText == null) && (currentText == null))
 		editorComposite.setFocus();
-	}
 }
 /**
  * Sets the styled text's link (blue) ranges

@@ -4,10 +4,9 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.registry.*;
-import java.util.*;
+import org.eclipse.ui.internal.registry.IViewDescriptor;
+import org.eclipse.ui.internal.registry.IViewRegistry;
 
 /**
  * This layout is used to define the initial set of views and placeholders
@@ -67,12 +66,14 @@ public void addView(String viewId) {
 		// Create the part.
 		IViewReference ref = viewFactory.createView(viewId);
 		IViewPart view = (IViewPart)ref.getPart(true);
-		ViewSite site = (ViewSite)view.getSite();
-		LayoutPart newPart = site.getPane();		
-		linkPartToPageLayout(viewId, newPart);
+		if(view != null) {
+			ViewSite site = (ViewSite)view.getSite();
+			LayoutPart newPart = site.getPane();		
+			linkPartToPageLayout(viewId, newPart);
 
-		// Add it to the folder.
-		folder.add(newPart);
+			// Add it to the folder.
+			folder.add(newPart);
+		}
 	} catch (PartInitException e) {
 		// cannot safely open the dialog so log the problem
 		WorkbenchPlugin.log(e.getMessage()) ;

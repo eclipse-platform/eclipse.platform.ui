@@ -3,24 +3,38 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
-import org.eclipse.jface.action.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.IPropertyListener;
-import org.eclipse.ui.internal.registry.Accelerator;
-import org.eclipse.ui.internal.registry.AcceleratorConfiguration;
-import org.eclipse.ui.internal.registry.AcceleratorRegistry;
-import org.eclipse.ui.internal.registry.AcceleratorScope;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.ui.IPageListener;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.actions.Util;
+import org.eclipse.ui.internal.actions.keybindings.KeyMachine;
+import org.eclipse.ui.internal.actions.keybindings.KeyManager;
+import org.eclipse.ui.internal.actions.keybindings.KeySequence;
+import org.eclipse.ui.internal.actions.keybindings.KeyStroke;
+import org.eclipse.ui.internal.actions.keybindings.Match;
 import org.eclipse.ui.internal.registry.IActionSet;
 
 /**
@@ -45,9 +59,86 @@ public class WWinKeyBindingService {
 	private KeyBindingService activeService;
 	/* The window this service is managing the accelerators for.*/
 	private WorkbenchWindow window;
-	/* The contribution item added to a menu. Is does not appear to 
-	 * the user. One this menu will have accelerators */
-	private KeyBindingMenu acceleratorsMenu;
+
+	private AcceleratorMenu accMenu;
+
+	private VerifyListener verifyListener = new VerifyListener() {
+		public void verifyText(VerifyEvent event) {
+			event.doit = false;
+			clear();
+		}
+	};
+
+	private void setStatusLineMessage(KeySequence keySequence) {
+		StringBuffer stringBuffer = new StringBuffer();
+		
+		if (keySequence != null) {
+			Iterator iterator = keySequence.getKeyStrokes().iterator();
+			int i = 0;
+			
+			while (iterator.hasNext()) {					
+				if (i != 0)
+					stringBuffer.append(' ');
+	
+				KeyStroke keyStroke = (KeyStroke) iterator.next();
+				int accelerator = keyStroke.getAccelerator();
+				stringBuffer.append(
+					org.eclipse.jface.action.Action.convertAccelerator(
+					accelerator));					
+				i++;
+			}		
+		}
+	
+		window.getActionBars().getStatusLineManager().setMessage(stringBuffer.toString());
+	}
+
+	public void clear() {		
+		KeyManager keyManager = KeyManager.getInstance();
+		KeyMachine keyMachine = keyManager.getKeyMachine();
+		
+		/*if (*/keyMachine.setMode(KeySequence.create());//) {
+			setStatusLineMessage(null);	
+			updateAccelerators();
+		//}
+	}
+	
+	public void pressed(KeyStroke keyStroke, Event event) { 
+		//System.out.println("pressed(" + keyStroke.getAccelerator() + ")");
+		KeyManager keyManager = KeyManager.getInstance();
+		KeyMachine keyMachine = keyManager.getKeyMachine();
+		Map keySequenceMapForMode = keyMachine.getKeySequenceMapForMode();
+		KeySequence mode = keyMachine.getMode();
+		List keyStrokes = new ArrayList(mode.getKeyStrokes());
+		keyStrokes.add(keyStroke);
+		KeySequence keySequence = KeySequence.create(keyStrokes);
+		SortedSet matchSet = (SortedSet) keySequenceMapForMode.get(keySequence);
+		
+		if (matchSet != null && matchSet.size() == 1) {
+			clear();
+			Match match = (Match) matchSet.iterator().next();				
+			invoke(match.getBinding().getAction(), event);					
+		} else {
+			keyMachine.setMode(keySequence);
+			setStatusLineMessage(keySequence);
+			keySequenceMapForMode = keyMachine.getKeySequenceMapForMode();
+			
+			if (keySequenceMapForMode.isEmpty())
+				clear();	
+			else
+				updateAccelerators();
+		}
+	}
+
+	public void invoke(String action, Event event) {		
+		//System.out.println("invoke(" + action + ")");
+		if (activeService != null) {
+			IAction a = activeService.getAction(action);
+			
+			if (a != null && a.isEnabled())
+				a.runWithEvent(event);
+		}
+	}
+
 	/**
 	 * Create an instance of WWinKeyBindingService and initializes it.
 	 */			
@@ -113,40 +204,24 @@ public class WWinKeyBindingService {
 	public void registerActionSets(IActionSet sets[]) {
 		updateNumber++;
 		actionSetDefIdToAction.clear();
-		AcceleratorRegistry registry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();
-		registry.clearFakeAccelerators();
-		boolean reinitScopes = false;
-		for(int i=0; i<sets.length; i++) {
-			if(sets[i] instanceof PluginActionSet) {
+		
+		for (int i=0; i<sets.length; i++) {
+			if (sets[i] instanceof PluginActionSet) {
 				PluginActionSet set = (PluginActionSet)sets[i];
 				IAction actions[] = set.getPluginActions();
+				
 				for (int j = 0; j < actions.length; j++) {
 					Action action = (Action)actions[j];
 					String defId = action.getActionDefinitionId();
-					String fake = "org.eclipse.ui.fakeDefinitionId"; //$NON-NLS-1$
-					if(defId != null && !defId.startsWith(fake)) {
+					
+					if (defId != null) {
 						actionSetDefIdToAction.put(action.getActionDefinitionId(),action);
-					} else if(action.getAccelerator() != 0) {
-						reinitScopes = true;
-						fake = fake + action.getId() + action.getAccelerator(); 
-						action.setActionDefinitionId(fake);
-						actionSetDefIdToAction.put(fake,action);
-						registry.addFakeAccelerator(fake,action.getAccelerator());
 					}
 				}
 			}
 		}
-		if(reinitScopes) {
-			Workbench w = (Workbench)PlatformUI.getWorkbench();
-			if (w.getActiveAcceleratorConfiguration() != null) {
-				w.getActiveAcceleratorConfiguration().initializeScopes();
-			}
-			if(activeService != null) {
-				AcceleratorScope.resetMode(activeService);
-				updateAccelerators(true);
-			}
-		}
 	}
+
 	/**
 	 * Return the update number used to keep children and parent in sync.
 	 */
@@ -170,23 +245,37 @@ public class WWinKeyBindingService {
 	/**
 	 * Remove or restore the accelerators in the menus.
 	 */
-   	private void update(IWorkbenchPart part,boolean force) {
-   		if(part==null)
+   	public void update(IWorkbenchPart part, boolean force) {
+   		if (part == null)
    			return;
-   	
-   		AcceleratorScope oldScope = null;
-   		if(activeService != null)
-   			oldScope = activeService.getActiveAcceleratorScope();
+   		
+		String[] oldScopeIds = new String[0];
+   		
+   		if (activeService != null)
+   			oldScopeIds = activeService.getScopeIds();
    			
-    	activeService = (KeyBindingService)part.getSite().getKeyBindingService();
-    	AcceleratorScope.resetMode(activeService);
-		updateAccelerators(true);
+    	activeService = (KeyBindingService) part.getSite().getKeyBindingService();
+		clear();
 
-   		AcceleratorScope newScope = null;
-   		if(activeService != null)
-   			newScope = activeService.getActiveAcceleratorScope();
+   		String[] newScopeIds = new String[0];
+  		
+   		if (activeService != null)
+   			newScopeIds = activeService.getScopeIds();
 
-    	if(force || (oldScope != newScope)) {
+    	if (force || Util.compare(oldScopeIds, newScopeIds) != 0) {
+			KeyManager keyManager = KeyManager.getInstance();
+			KeyMachine keyMachine = keyManager.getKeyMachine();
+	    	
+	    	// TBD: remove this later
+	    	if (newScopeIds == null || newScopeIds.length == 0)
+	    		newScopeIds = new String[] { "org.eclipse.ui.globalScope" };
+	    	
+	    	try {
+	    		keyMachine.setScopes(newScopeIds);
+	    	} catch (IllegalArgumentException eIllegalArgument) {
+	    		System.err.println(eIllegalArgument);
+	    	}
+	    			    	   	
 	    	WorkbenchWindow w = (WorkbenchWindow) getWindow();
    	 		MenuManager menuManager = w.getMenuManager();
  			menuManager.update(IAction.TEXT);
@@ -195,69 +284,92 @@ public class WWinKeyBindingService {
     /**
      * Returns the definition id for <code>accelerator</code>
      */
-    public String getDefinitionId(int accelerator[]) {
-    	if(activeService == null) return null;
-    	AcceleratorScope scope = activeService.getActiveAcceleratorScope();
-    	if(scope == null) return null;
-    	return scope.getDefinitionId(accelerator);
+    public String getDefinitionId(int accelerator) {
+    	if (activeService == null) 
+    		return null;
+
+		KeyManager keyManager = KeyManager.getInstance();
+		KeyMachine keyMachine = keyManager.getKeyMachine();        
+		KeySequence mode = keyMachine.getMode();
+		List keyStrokes = new ArrayList(mode.getKeyStrokes());
+		keyStrokes.add(KeyStroke.create(accelerator));
+    	KeySequence keySequence = KeySequence.create(keyStrokes);    		
+		Map keySequenceMapForMode = keyMachine.getKeySequenceMapForMode();
+		SortedSet matchSet = (SortedSet) keySequenceMapForMode.get(keySequence);
+
+		if (matchSet != null && matchSet.size() == 1) {
+			Match match = (Match) matchSet.iterator().next();				
+			return match.getBinding().getAction();
+		}
+		
+		return null;
     }
-    /**
-     * Returns the accelerator text which can be shown in the 
-     * menu item's label.
-     */
-    public String getAcceleratorText(String definitionId) {
-    	if(activeService == null) return null;
-    	AcceleratorScope scope = activeService.getActiveAcceleratorScope();
-    	if(scope == null) return null;
-    	Accelerator acc = scope.getAccelerator(definitionId);
-		if(acc == null)
-			return null;
-		String result = acc.getText();
-		if(result.length() == 0)
-			return null;
-    	return result;
-    }
-    /**
-     * Returns the accelerator for the specified action definition id
-     */
-    public int[][] getAccelerators(String definitionId) {
-    	if(activeService == null) return null;
-    	AcceleratorScope scope = activeService.getActiveAcceleratorScope();
-    	if(scope == null) return null;
-    	Accelerator acc = scope.getAccelerator(definitionId);
-		if(acc == null)
-			return null;
-		return acc.getAccelerators();
-    }
-    /** 
-     * Set the <code>acceleratorsMenu</code> which is used to
-     * add items for all accelerators in the current mode.
-     */
-    public void setAcceleratorsMenu(KeyBindingMenu acceleratorsMenu) {
-    	this.acceleratorsMenu = acceleratorsMenu;
-    }
+
 	/**
 	 * Update the KeyBindingMenu with the current set of accelerators.
 	 */
-	public void updateAccelerators(boolean defaultMode) {
-	   	AcceleratorScope scope = activeService.getActiveAcceleratorScope();
-	   	int[] accs;
-	   	if(defaultMode) {
-	   		int[] scopeAccs = scope.getAccelerators();
-	   		int[] editorAccs = activeService.getEditorActions();
-	   		if(editorAccs.length == 0) {
-	   			accs = scopeAccs;
-	   		} else if(scopeAccs.length == 0) {
-	   			accs = editorAccs;
-	   		} else {
-		   		accs = new int[scopeAccs.length + editorAccs.length];
-		   		System.arraycopy(scopeAccs,0,accs,0,scopeAccs.length);
-	   			System.arraycopy(editorAccs,0,accs,scopeAccs.length,editorAccs.length);
-		 	}
-	   	} else {
-	   		accs = scope.getAccelerators();
+	public void updateAccelerators() {
+		KeyManager keyManager = KeyManager.getInstance();
+		KeyMachine keyMachine = keyManager.getKeyMachine();      		
+		KeySequence mode = keyMachine.getMode();
+		List keyStrokes = mode.getKeyStrokes();
+		int size = keyStrokes.size();
+		
+		Map keySequenceMapForMode = keyMachine.getKeySequenceMapForMode();
+		SortedSet keyStrokeSetForMode = new TreeSet();
+		Iterator iterator = keySequenceMapForMode.keySet().iterator();
+
+		while (iterator.hasNext()) {
+			KeySequence keySequence = (KeySequence) iterator.next();
+			
+			if (keySequence.isChildOf(mode))
+				keyStrokeSetForMode.add(keySequence.getKeyStrokes().get(size));	
+		}
+
+	   	iterator = keyStrokeSetForMode.iterator();
+	   	int[] accelerators = new int[keyStrokeSetForMode.size()];
+		int i = 0;
+			   	
+	   	while (iterator.hasNext()) {
+	   		KeyStroke keyStroke = (KeyStroke) iterator.next();
+	   		accelerators[i++] = keyStroke.getAccelerator();	   		
 	   	}
-		acceleratorsMenu.setAccelerators(accs,scope,activeService,defaultMode);
-	}
-    
+
+		if (accMenu == null || accMenu.isDisposed()) {		
+			Menu parent = window.getShell().getMenuBar();
+			if (parent == null || parent.getItemCount() < 1)
+				return;
+			MenuItem parentItem = parent.getItem(parent.getItemCount() - 1);
+			parent = parentItem.getMenu();
+			accMenu = new AcceleratorMenu(parent);
+		}
+		
+		if (accMenu == null)
+			return;
+		
+		accMenu.setAccelerators(accelerators);		
+		accMenu.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent selectionEvent) {
+				Event event = new Event();
+				event.item = selectionEvent.item;
+				event.detail = selectionEvent.detail;
+				event.x = selectionEvent.x;
+				event.y = selectionEvent.y;
+				event.width = selectionEvent.width;
+				event.height = selectionEvent.height;
+				event.stateMask = selectionEvent.stateMask;
+				event.doit = selectionEvent.doit;
+				event.data = selectionEvent.data;
+				event.display = selectionEvent.display;
+				event.time = selectionEvent.time;
+				event.widget = selectionEvent.widget;
+				pressed(KeyStroke.create(selectionEvent.detail), event);
+			}
+		});
+
+		if (mode.getKeyStrokes().size() == 0)
+			accMenu.removeVerifyListener(verifyListener);
+		else
+			accMenu.addVerifyListener(verifyListener);
+	}    
 }

@@ -13,20 +13,16 @@ Contributors:
 **********************************************************************/
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.misc.ResourceAndContainerGroup;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.internal.*;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.dialogs.Dialog; // disambiguate from SWT
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.graphics.Image;
-import java.util.*;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.misc.ResourceAndContainerGroup;
 
 /**
  * A standard "Save As" dialog which solicits a path from the user. The

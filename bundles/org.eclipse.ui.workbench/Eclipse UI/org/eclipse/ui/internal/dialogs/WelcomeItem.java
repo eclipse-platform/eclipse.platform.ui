@@ -4,12 +4,13 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.internal.*;
-import org.eclipse.help.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.IHelp;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 /**
  * Holds the information for an item appearing in the welcome editor
  */
@@ -74,14 +75,14 @@ public String getText() {
 public boolean isLinkAt(int offset) {
 	// Check if there is a link at the offset
 	for (int i = 0; i < helpRanges.length; i++){
-		if (offset > helpRanges[i][0] && offset <= helpRanges[i][0] + helpRanges[i][1]) {
+		if (offset >= helpRanges[i][0] && offset < helpRanges[i][0] + helpRanges[i][1]) {
 			return true;
 		}
 	}
 
 	// Check if there is an action link at the offset
 	for (int i = 0; i < actionRanges.length; i++){
-		if (offset > actionRanges[i][0] && offset <= actionRanges[i][0] + actionRanges[i][1]) {
+		if (offset >= actionRanges[i][0] && offset < actionRanges[i][0] + actionRanges[i][1]) {
 			return true;
 		}
 	}
@@ -100,9 +101,9 @@ private void openHelpTopic(String topic, String href) {
 	IHelp helpSupport = WorkbenchHelp.getHelpSupport();
 	if (helpSupport != null) {
 		if (href != null) 
-			helpSupport.displayHelp(topic, href);
+			helpSupport.displayHelpResource(href);
 		else
-			helpSupport.displayHelp(topic);
+			helpSupport.displayHelpResource(topic);
 	}
 }
 /**
@@ -142,7 +143,7 @@ private void runAction(String pluginId, String className) {
 public void triggerLinkAt(int offset) {
 	// Check if there is a help link at the offset
 	for (int i = 0; i < helpRanges.length; i++){
-		if (offset > helpRanges[i][0] && offset <= helpRanges[i][0] + helpRanges[i][1]) {
+		if (offset >= helpRanges[i][0] && offset < helpRanges[i][0] + helpRanges[i][1]) {
 			// trigger the link
 			openHelpTopic(helpIds[i], helpHrefs[i]);
 			return;
@@ -151,7 +152,7 @@ public void triggerLinkAt(int offset) {
 
 	// Check if there is an action link at the offset
 	for (int i = 0; i < actionRanges.length; i++){
-		if (offset > actionRanges[i][0] && offset <= actionRanges[i][0] + actionRanges[i][1]) {
+		if (offset >= actionRanges[i][0] && offset < actionRanges[i][0] + actionRanges[i][1]) {
 			// trigger the link
 			runAction(actionPluginIds[i], actionClasses[i]);
 			return;

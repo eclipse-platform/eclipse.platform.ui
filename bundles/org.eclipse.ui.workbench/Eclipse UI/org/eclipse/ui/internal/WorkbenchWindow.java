@@ -7,35 +7,77 @@ are made available under the terms of the Common Public License v0.5
 which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v05.html
 **********************************************************************/
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.internal.dialogs.*;
-import org.eclipse.ui.internal.misc.*;
-import org.eclipse.ui.internal.model.WorkbenchAdapter;
-import org.eclipse.ui.internal.misc.Assert;
-import org.eclipse.ui.actions.OpenNewWindowMenu;
-import org.eclipse.ui.actions.OpenNewPageMenu;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.window.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.events.*;
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IContributionManager;
+import org.eclipse.jface.action.IContributionManagerOverrides;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.StatusLineManager;
+import org.eclipse.jface.action.SubMenuManager;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.window.ApplicationWindow;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.CoolBar;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IElementFactory;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPageListener;
+import org.eclipse.ui.IPartService;
+import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.actions.keybindings.KeyManager;
+import org.eclipse.ui.internal.actions.keybindings.KeySequence;
+import org.eclipse.ui.internal.actions.keybindings.KeyStroke;
+import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.internal.registry.IActionSet;
 
 /**
  * A window within the workbench.
@@ -68,8 +110,7 @@ public class WorkbenchWindow extends ApplicationWindow
 	private Menu perspectiveBarMenu;
 	private Menu fastViewBarMenu;
 	private MenuItem restoreItem;
-	// temporary, work in progress for CoolBars
-	private CoolBarManager coolBarManager;
+	private CoolBarManager coolBarManager = new CoolBarManager();
 	
 	final private String TAG_INPUT = "input";//$NON-NLS-1$
 	final private String TAG_LAYOUT = "layout";//$NON-NLS-1$
@@ -84,19 +125,6 @@ public class WorkbenchWindow extends ApplicationWindow
 	static final int CLIENT_INSET = 3;
 	static final int BAR_SIZE = 23;
 
-	/**
-	 * The window toolbar must relayout whenever an update occurs, as items are
-	 * added and removed dynamically.
-	 */
-	class WindowToolBarManager extends ToolBarManager {
-		public WindowToolBarManager(int style) {
-			super(style);
-		}
-		protected void relayout(ToolBar toolBar, int oldCount, int newCount) {
-			Composite parent= toolBar.getParent();
-			parent.layout();
-		} 
-	}      
 	/**
 	 * This vertical layout supports a fixed size Toolbar area, a separator line,
 	 * the variable size content area,
@@ -213,13 +241,8 @@ public WorkbenchWindow(Workbench workbench, int number) {
 	this.number = number;
 	
 	// Setup window.
-	addMenuBar();
-	
-	//IPreferenceStore store = workbench.getPreferenceStore();
-//	if(store.getBoolean("ENABLE_COOL_BARS")) //$NON-NLS-1$
-		addCoolBar(SWT.FLAT);
-//	else
-//		addToolBar(SWT.FLAT | SWT.WRAP);
+	addMenuBar();	
+	addToolBar(SWT.FLAT);
 		
 	addStatusLine();
 	addShortcutBar(SWT.FLAT | SWT.WRAP | SWT.VERTICAL);
@@ -254,16 +277,6 @@ public WorkbenchWindow(Workbench workbench, int number) {
 		};
 	};
 }
-/**
- * Configures this window to have a cool bar.
- * Does nothing if it already has one.
- * This method must be called before this window's shell is created.
- */
-protected void addCoolBar(int style) {
-	if ((getShell() == null) && (coolBarManager == null)) {
-		coolBarManager = createCoolBarManager(style);
-	}
-}
 /*
  * Adds an listener to the part service.
  */
@@ -294,6 +307,15 @@ public void addPerspectiveListener(org.eclipse.ui.IPerspectiveListener l) {
 protected void addShortcutBar(int style) {
 	if ((getShell() == null) && (shortcutBar == null)) {
 		shortcutBar = new ToolBarManager(style);
+	}
+}
+/**
+ * Configures this window to have a cool bar.
+ * This method must be called before this window's shell is created.
+ */
+protected void addToolBar(int style) {
+	if (getShell() == null)  {
+		coolBarManager = new CoolBarManager(style);
 	}
 }
 /**
@@ -367,15 +389,10 @@ private boolean isClosing() {
 	return closing || workbench.isClosing();
 }
 /**
- * Return whether or not the toolbar layout is locked.
+ * Return whether or not the coolbar layout is locked.
  */
 protected boolean isToolBarLocked() {
-	IToolBarManager toolsMgr = getToolsManager();
-	if (toolsMgr instanceof CoolBarManager) {
-		CoolBarManager coolBarMgr = (CoolBarManager)toolsMgr;
-		return coolBarMgr.isLayoutLocked();
-	}
-	return false;
+	return getCoolBarManager().isLayoutLocked();
 }
 
 /**
@@ -512,42 +529,84 @@ private void createShortcutBar(Shell shell) {
 		}
 	});
 }
+/**
+ * Creates the control for the cool bar control.  
+ * </p>
+ * @return a Control
+ */
+protected Control createToolBarControl(Shell shell) {
+	CoolBarManager manager = getCoolBarManager();
+	return manager.createControl(shell);
+}
+/**
+ *  Do not create a toolbarmanager.  WorkbenchWindow uses CoolBarManager.  
+ * </p>
+ * @return a Control
+ */
+protected ToolBarManager createToolBarManager(int style) {
+	return null;
+}
 /* (non-Javadoc)
  * Method declared on ApplicationWindow.
  */
 protected MenuManager createMenuManager() {
 	final MenuManager result = super.createMenuManager();
 	result.setOverrides(new IContributionManagerOverrides() {
+		
 		public Integer getAccelerator(IContributionItem item) {
-			return new Integer(0);
-		}
-		public String getAcceleratorText(IContributionItem item) {
-			if(!(item instanceof ActionContributionItem))
-				return null;
+			if (!(item instanceof ActionContributionItem))
+				return null;	
+						
 			ActionContributionItem aci = (ActionContributionItem)item;
 			String defId = aci.getAction().getActionDefinitionId();
-			if(defId == null) {
-				String registeredAction = null;
-				int acc[] = new int[]{aci.getAction().getAccelerator()};
-				if(acc[0] != 0)
-					registeredAction = getKeyBindingService().getDefinitionId(acc);
-				if(registeredAction == null)
-					return null;
-				else
-					return ""; //$NON-NLS-1$
-			} else {
-				String registeredAction = null;
-				int acc[][] = getKeyBindingService().getAccelerators(defId);
-				if(acc == null)
-					return null;
-				for (int i = 0; i < acc.length; i++) {
-					registeredAction = getKeyBindingService().getDefinitionId(acc[i]);
-					if(!defId.equals(registeredAction))
-						return ""; //$NON-NLS-1$
+
+			if (defId == null) {
+				int accelerator = aci.getAction().getAccelerator();
+				
+				if (accelerator != 0) {				
+					KeySequence keySequence = KeySequence.create(KeyStroke.create(accelerator));						
+					KeyManager keyManager = KeyManager.getInstance();
+					Map keySequenceMapForMode = keyManager.getKeyMachine().getKeySequenceMapForMode();
+
+					if (keySequenceMapForMode.get(keySequence) == null)
+						return null;
 				}
-			}
-			return getKeyBindingService().getAcceleratorText(defId);
+
+				return new Integer(0);
+			} 
+
+			return new Integer(0);
+			//TBD: later we can move the accelerator from the hidden menu to here:
+			//String acceleratorText = KeyBindingManager.getInstance().getAcceleratorTextForAction(defId);			
+			//return (acceleratorText != null ? acceleratorText : new Integer(0));	
 		}
+		
+		public String getAcceleratorText(IContributionItem item) {
+			if (!(item instanceof ActionContributionItem))
+				return null;	
+						
+			ActionContributionItem aci = (ActionContributionItem)item;
+			String defId = aci.getAction().getActionDefinitionId();
+
+			if (defId == null) {
+				int accelerator = aci.getAction().getAccelerator();
+				
+				if (accelerator != 0) {				
+					KeySequence keySequence = KeySequence.create(KeyStroke.create(accelerator));						
+					KeyManager keyManager = KeyManager.getInstance();
+					Map keySequenceMapForMode = keyManager.getKeyMachine().getKeySequenceMapForMode();
+
+					if (keySequenceMapForMode.get(keySequence) == null)
+						return null;
+				}
+
+				return "";
+			} 
+
+			String acceleratorText = KeyManager.getInstance().getTextForAction(defId);			
+			return (acceleratorText != null ? acceleratorText : "");			
+		}
+		
 		public String getText(IContributionItem item) {
 			if(!(item instanceof MenuManager))
 				return null;
@@ -568,8 +627,8 @@ protected MenuManager createMenuManager() {
 			if (index < 0 || index == (text.length() -1))
 				return text;
 				
-			char altChar = 	Character.toUpperCase(text.charAt(index + 1));
-			String defId = keyBindingService.getDefinitionId(new int[]{SWT.ALT | altChar});
+			char altChar = Character.toUpperCase(text.charAt(index + 1));
+			String defId = keyBindingService.getDefinitionId(SWT.ALT | altChar);
 			if(defId == null)
 				return text;
 				
@@ -577,40 +636,12 @@ protected MenuManager createMenuManager() {
 				return text.substring(1);
 			return text.substring(0, index) + text.substring(index + 1);
 		}
+		
 		public Boolean getEnabled(IContributionItem item) {
 			return null;
 		}
 	});
 	return result;
-}
-/* (non-Javadoc)
- * Method declared on ApplicationWindow.
- */
-protected ToolBarManager createToolBarManager(int style) {
-	return new WindowToolBarManager(style);
-}
-/**
- * Creates the cool bar manager.
- * </p>
- * @return a CoolBarManager
- */
-protected CoolBarManager createCoolBarManager(int style) {
-	return new CoolBarManager(style);
-}
-/**
- * Creates the control for the tool bar manager.  Overridden
- * to support CoolBars.
- * </p>
- * @return a Control
- */
-protected Control createToolBarControl(Shell shell) {
-	IToolBarManager manager = getToolsManager();
-	if (manager instanceof ToolBarManager) {
-		return ((ToolBarManager)manager).createControl(shell);
-	} else if (manager instanceof CoolBarManager) {
-		return ((CoolBarManager)manager).createControl(shell);
-	}
-	return null;
 }
 /**
  * Enables fast view icons to be dragged and dropped using the given IPartDropListener.
@@ -714,6 +745,25 @@ public IWorkbenchPage getActivePage() {
  */
 /* package */ WorkbenchPage getActiveWorkbenchPage() {
 	return pageList.getActive();
+}
+/**
+ * Returns cool bar control for the window. Overridden
+ * to support CoolBars.
+ * </p>
+ * @return a Control
+ */
+protected CoolBar getCoolBarControl() {
+	return getCoolBarManager().getControl();
+}
+/**
+ * Returns the CoolBarManager for this window.
+ * 
+ * @return theCoolBarManager, or <code>null</code> if
+ *   this window does not have a CoolBar.
+ * @see  #addCoolBar
+ */
+public CoolBarManager getCoolBarManager() {
+	return coolBarManager;
 }
 /**
  * Get the workbench client area.
@@ -826,26 +876,15 @@ protected StatusLineManager getStatusLineManager() {
  * @return a Control
  */
 protected Control getToolBarControl() {
-	IToolBarManager manager = getToolsManager();
-	if (manager instanceof ToolBarManager) {
-		return ((ToolBarManager)manager).getControl();
-	}
-	if (manager instanceof CoolBarManager) {
-		return ((CoolBarManager)manager).getControl();
-	}
-	return null;
+	return getCoolBarControl();
 }
 /**
- * Returns the tool bar manager for this window (if it has one).
- * Introduced to support different types of IToolBarManagers.
- * 
- * @return the IToolBarManager, or <code>null</code> if
- *   this window does not have a ToolBar or CoolBar.
- * @see #addToolBar, #addCoolBar
+ * WorkbenchWindow uses CoolBarManager, so return null here.
+ * </p>
+ * @return a Control
  */
-public IToolBarManager getToolsManager() {
-	if (coolBarManager != null) return coolBarManager;
-	return getToolBarManager();
+public ToolBarManager getToolBarManager() {
+	return null;
 }
 /**
  * @see IWorkbenchWindow
@@ -881,11 +920,7 @@ public boolean isApplicationMenu(String menuID) {
  * @param lock whether the CoolBar should be locked or unlocked
  */
 /* package */ void lockToolBar(boolean lock) {
-	IToolBarManager toolsMgr = getToolsManager();
-	if (toolsMgr instanceof CoolBarManager) {
-		CoolBarManager coolBarMgr = (CoolBarManager)toolsMgr;
-		coolBarMgr.lockLayout(lock);
-	}
+	getCoolBarManager().lockLayout(lock);
 }
 /**
  * Called when this window is about to be closed.
@@ -975,17 +1010,6 @@ public void removePerspectiveListener(org.eclipse.ui.IPerspectiveListener l) {
 		shortcutBar.update(false);
 	}
 }
-/**
- * Relayout the CoolBar for the workbench so that all items
- * are visible, wrapping items when necessary.
- */
-protected void resetToolBar() {
-	IToolBarManager toolsMgr = getToolsManager();
-	if (toolsMgr instanceof CoolBarManager) {
-		CoolBarManager coolBarMgr = (CoolBarManager)toolsMgr;
-		coolBarMgr.redoLayout();
-	}
-}
 private IStatus unableToRestorePage(IMemento pageMem) {
 	String pageName = pageMem.getString(IWorkbenchConstants.TAG_LABEL);
 	if(pageName == null)
@@ -998,7 +1022,7 @@ private IStatus unableToRestorePage(IMemento pageMem) {
 /**
  * @see IPersistable.
  */
-public IStatus restoreState(IMemento memento) {
+public IStatus restoreState(IMemento memento, IPerspectiveDescriptor activeDescriptor) {
 	Assert.isNotNull(getShell());
 
 	MultiStatus result = new MultiStatus(
@@ -1060,7 +1084,7 @@ public IStatus restoreState(IMemento memento) {
 		WorkbenchPage newPage = null;
 		try {
 			newPage = new WorkbenchPage(this, input);
-			result.add(newPage.restoreState(pageMem));
+			result.add(newPage.restoreState(pageMem,activeDescriptor));
 			pageList.add(newPage);
 			firePageOpened(newPage);
 		} catch (WorkbenchException e) {
@@ -1097,7 +1121,12 @@ public IStatus restoreState(IMemento memento) {
 	// Set active page.
 	if (newActivePage == null)
 		newActivePage = (IWorkbenchPage)pageList.getNextActive();
+		
 	setActivePage(newActivePage);
+	IWorkbenchPart part = newActivePage.getActivePart();
+	if(part != null)
+		getKeyBindingService().update(part,true);
+		
 	return result;
 }
 /* (non-Javadoc)
@@ -1269,8 +1298,8 @@ private void showShortcutBarPopup(MouseEvent e) {
 				public void widgetSelected(SelectionEvent e) {
 					ToolItem toolItem = (ToolItem) fastViewBarMenu.getData();
 					if (toolItem != null && !toolItem.isDisposed()) {
-						IViewPart view = (IViewPart)toolItem.getData(ShowFastViewContribution.FAST_VIEW);
-						getActiveWorkbenchPage().hideView(view);
+						IViewReference ref = (IViewReference)toolItem.getData(ShowFastViewContribution.FAST_VIEW);
+						getActiveWorkbenchPage().hideView(ref);
 					}
 				}
 			});
@@ -1280,8 +1309,8 @@ private void showShortcutBarPopup(MouseEvent e) {
 				public void widgetSelected(SelectionEvent e) {
 					ToolItem toolItem = (ToolItem) fastViewBarMenu.getData();
 					if (toolItem != null && !toolItem.isDisposed()) {
-						IViewPart view = (IViewPart)toolItem.getData(ShowFastViewContribution.FAST_VIEW);
-						getActiveWorkbenchPage().removeFastView(view);
+						IViewReference ref = (IViewReference)toolItem.getData(ShowFastViewContribution.FAST_VIEW);
+						getActiveWorkbenchPage().removeFastView(ref);
 					}
 				}
 			});
@@ -1351,20 +1380,14 @@ private void showShortcutBarPopup(MouseEvent e) {
 	}
 }
 /**
- * Answer whether or not children exist for the Application WIndow's
- * toolbar control.  Overridden to support CoolBars.
+ * Returns whether or not children exist for the Window's toolbar control.
+ * Overridden for coolbar support.
  * <p>
  * @return boolean true if children exist, false otherwise
  */
 protected boolean toolBarChildrenExist() {
-	Control toolControl = getToolBarControl();
-	if (toolControl instanceof ToolBar) {
-		return ((ToolBar)toolControl).getItemCount() > 0;
-	}
-	if (toolControl instanceof CoolBar) {
-		return ((CoolBar)toolControl).getItemCount() > 0;
-	}
-	return false;
+	CoolBar coolBarControl = getCoolBarControl();
+	return coolBarControl.getItemCount() > 0;
 }
 /**
  * Hooks a listener to track the activation and
@@ -1417,7 +1440,7 @@ public void updateActionBars() {
 		return;
 	// updateAll required in order to enable accelerators on pull-down menus
 	getMenuBarManager().updateAll(false);
-	getToolsManager().update(false);
+	getCoolBarManager().update(false);
 	getStatusLineManager().update(false);
 }
 /**

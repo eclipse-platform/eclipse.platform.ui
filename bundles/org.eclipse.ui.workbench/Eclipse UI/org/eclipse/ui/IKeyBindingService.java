@@ -23,19 +23,62 @@ import org.eclipse.swt.events.KeyEvent;
  * @since 2.0
  */
 public interface IKeyBindingService {
+	
+	/**
+	 * Returns the active accelerator scope ids.
+	 * 
+	 * @return the active accelerator scope ids.
+	 */
+	String[] getScopeIds();
+	
+	/**
+	 * Sets the active accelerator scope ids.
+	 *
+	 * @param ids the active accelerator scope ids.
+	 */	
+	void setScopeIds(String[] scopeIds)
+		throws IllegalArgumentException;
+
+	/**
+	 * Registers an action with the key binding service.
+	 * 
+	 * @param action the action to be registered with the key binding service.
+	 */
+	void registerAction(IAction action)
+		throws IllegalArgumentException;
+			
+	/**
+	 * Unregisters an action with the key binding service. 
+	 * 
+	 * @param action the action to be unregistered with the key binding service.
+	 */	
+	void unregisterAction(IAction action)
+		throws IllegalArgumentException;
+		
 	/**
 	 * Returns the id of the active accelerator configuration.
 	 * 
 	 * @return the id of the active accelerator configuration
+	 * @deprecated
 	 */
-	public String getActiveAcceleratorConfigurationId();
+	String getActiveAcceleratorConfigurationId();
 	
 	/**
 	 * Returns the id of the active accelerator scope.
 	 * 
 	 * @return the id of the active accelerator scope
+	 * @deprecated
 	 */
-	public String getActiveAcceleratorScopeId();
+	String getActiveAcceleratorScopeId();	
+
+	/**
+	 * Sets the active accelerator scope id.
+	 * 
+	 * @param scopeId the new accelerator scope id
+	 * @deprecated
+	 */
+	void setActiveAcceleratorScopeId(String scopeId)
+		throws IllegalArgumentException;
 	
 	/**
 	 * To be called by an editor upon receiving a key event from its SWT
@@ -49,27 +92,15 @@ public interface IKeyBindingService {
 	 * @param event The key to be processed
 	 * @return true if the key was consumed by the key binding service,
 	 * false if the editor is free to consume the key
+	 * @deprecated
 	 */
-	public boolean processKey(KeyEvent event);
+	boolean processKey(KeyEvent event);
 	
-	/**
-	 * Registers an action with the key binding service. Thereafter, if the 
-	 * accelerator key sequence associated with the action is pressed, the
-	 * action is executed.
-	 * 
-	 * @param action the action to be registered with the key binding service
-	 */
-	public void registerAction(IAction action);
-	
-	/**
-	 * Sets the active accelerator scope id.
-	 * 
-	 * @param scopeId the new accelerator scope id
-	 */
-	public void setActiveAcceleratorScopeId(String scopeId);
 	/**
 	 * Enables or Disables this service. The default is false. Registered accelerators
 	 * have no efect until the service is enabled;
+	 * 
+	 * @deprecated
 	 */	
-	public void enable(boolean enable);
+	void enable(boolean enable);
 }

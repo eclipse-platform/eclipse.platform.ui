@@ -6,19 +6,20 @@ package org.eclipse.ui.internal.dialogs;
  */
 import java.util.StringTokenizer;
 
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.internal.misc.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.*;
+import org.eclipse.jface.wizard.ITableOfContentsWizard;
+import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
 
 /**
  * The new wizard is responsible for allowing the user to choose which
  * new (nested) wizard to run. The set of available new wizards comes
  * from the new extension point.
  */
-public class NewWizard extends Wizard {
+public class NewWizard extends Wizard implements ITableOfContentsWizard{
 	private static final String CATEGORY_SEPARATOR = "/"; //$NON-NLS-1$
 
 	private IWorkbench workbench;
@@ -109,6 +110,15 @@ public boolean performFinish() {
  */
 public void setProjectsOnly(boolean b) {
 	projectsOnly = b;
+}
+
+/**
+ * @see org.eclipse.jface.wizard.ITableOfContentsWizard#getInitialNodes()
+ */
+public WizardTableOfContentsNode[] getInitialNodes() {
+	WizardTableOfContentsNode[] nodes = new WizardTableOfContentsNode[1];
+	nodes[0] = new WizardTableOfContentsNode(mainPage);
+	return nodes;
 }
 
 }

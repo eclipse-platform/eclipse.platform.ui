@@ -195,6 +195,9 @@ public void dispose() {
  * @return the active nested editor, or <code>null</code> if none
  */
 protected IEditorPart getActiveEditor() {
+	/* fix for 21988 */
+	if (container.isDisposed())
+		return null;
 	int index = getActivePage();
 	if (index != -1)
 		return getEditor(index);

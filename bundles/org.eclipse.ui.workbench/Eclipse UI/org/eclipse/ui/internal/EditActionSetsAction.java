@@ -4,17 +4,10 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.dialogs.*;
-import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.model.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import java.util.*;
 
 /**
  * Edit the action sets.

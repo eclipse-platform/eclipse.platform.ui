@@ -496,11 +496,17 @@ private boolean loadAssociations() {
 
 	//Get the editors and validate each one
 	Map editorTable = new HashMap();
-	InputStreamReader reader = null;
+	Reader reader = null;
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 
 	try {
-		FileInputStream stream = new FileInputStream(workbenchStatePath.append(IWorkbenchConstants.EDITOR_FILE_NAME).toOSString());
-	 	reader = new InputStreamReader(stream, "utf-8"); //$NON-NLS-1$
+		String xmlString = store.getString(IPreferenceConstants.EDITORS);
+		if(xmlString == null || xmlString.length() == 0) {
+			FileInputStream stream = new FileInputStream(workbenchStatePath.append(IWorkbenchConstants.EDITOR_FILE_NAME).toOSString());
+			reader = new InputStreamReader(stream, "utf-8"); //$NON-NLS-1$
+		} else {
+			reader = new StringReader(xmlString);
+		}
 		XMLMemento memento = XMLMemento.createReadRoot(reader);
 		EditorDescriptor editor;
 		IMemento[] edMementos = memento.getChildren(IWorkbenchConstants.TAG_DESCRIPTOR);
@@ -548,11 +554,16 @@ private boolean loadAssociations() {
 	//Get the resource types
 	reader = null;
 	try {
-		FileInputStream stream = new FileInputStream(
-			workbenchStatePath
-				.append(IWorkbenchConstants.RESOURCE_TYPE_FILE_NAME)
-				.toOSString());
-	 	reader = new InputStreamReader(stream, "utf-8"); //$NON-NLS-1$
+		String xmlString = store.getString(IPreferenceConstants.RESOURCES);
+		if(xmlString == null || xmlString.length() == 0) {
+			FileInputStream stream = new FileInputStream(
+				workbenchStatePath
+					.append(IWorkbenchConstants.RESOURCE_TYPE_FILE_NAME)
+					.toOSString());
+		 	reader = new InputStreamReader(stream, "utf-8"); //$NON-NLS-1$
+		} else {
+			reader = new StringReader(xmlString);
+		}
 		XMLMemento memento = XMLMemento.createReadRoot(reader);
 		IMemento[] extMementos = memento.getChildren(IWorkbenchConstants.TAG_INFO);
 		for (int i = 0; i < extMementos.length; i++) {
@@ -684,6 +695,7 @@ public void saveAssociations () {
 	IPath workbenchStatePath = WorkbenchPlugin.getDefault().getStateLocation();
 	//Save the resource type descriptions
 	List editors = new ArrayList();
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 	
 	XMLMemento memento = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_EDITORS);
 	FileEditorMapping maps[] = typeEditorMappings.userMappings();
@@ -711,12 +723,12 @@ public void saveAssociations () {
 			idMemento.putString(IWorkbenchConstants.TAG_ID,editorArray[i].getId());
 		}
 	}
-	OutputStreamWriter writer = null;
+	Writer writer = null;
 	try {
-		FileOutputStream stream = new FileOutputStream(workbenchStatePath.append(IWorkbenchConstants.RESOURCE_TYPE_FILE_NAME).toOSString());
-	 	writer = new OutputStreamWriter(stream, "utf-8"); //$NON-NLS-1$
+		writer = new StringWriter();
 		memento.save(writer);
 		writer.close();
+		store.setValue(IPreferenceConstants.RESOURCES,writer.toString());
 	} catch(IOException e) {
 		try{
 			if(writer != null) writer.close();
@@ -737,10 +749,10 @@ public void saveAssociations () {
 	}
 	writer = null;
 	try {
-		FileOutputStream stream = new FileOutputStream(workbenchStatePath.append(IWorkbenchConstants.EDITOR_FILE_NAME).toOSString());
-	 	writer = new OutputStreamWriter(stream, "utf-8"); //$NON-NLS-1$
+		writer = new StringWriter();
 		memento.save(writer);
 		writer.close();
+		store.setValue(IPreferenceConstants.EDITORS,writer.toString());	
 	} catch(IOException e) {
 		try{
 			if(writer != null) writer.close();
@@ -765,6 +777,7 @@ public void setDefaultEditor(IFile file, String editorID) {
  * Each mapping goes from an extension to the collection of editors that work on it.
  */
 public void setFileEditorMappings(FileEditorMapping[] newResourceTypes) {
+	typeEditorMappings = new EditorMap();
 	for (int i = 0;i < newResourceTypes.length;i++) {
 		FileEditorMapping mapping = newResourceTypes[i];
 		typeEditorMappings.put(mappingKeyFor(mapping), mapping);
@@ -772,6 +785,17 @@ public void setFileEditorMappings(FileEditorMapping[] newResourceTypes) {
 	extensionImages = new HashMap();
 	rebuildEditorMap();
 	firePropertyChange(PROP_CONTENTS);
+}
+/* (non-Javadoc)
+ * Method declared on IEditorRegistry.
+ */
+public void setDefaultEditor(String fileName, String editorId) {
+	EditorDescriptor desc = (EditorDescriptor)findEditor(editorId);
+	FileEditorMapping[] mapping = getMappingForFilename(fileName);
+	if (mapping[0] != null)
+		mapping[0].setDefaultEditor(desc);
+	if (mapping[1] != null)
+		mapping[1].setDefaultEditor(desc);		
 }
 /**
  * Alphabetically sort the internal editors

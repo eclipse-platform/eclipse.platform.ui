@@ -11,7 +11,6 @@
 package org.eclipse.ui.dialogs;
 
 import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkingSet;
 
 /**

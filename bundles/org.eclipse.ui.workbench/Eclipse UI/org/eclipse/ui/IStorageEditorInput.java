@@ -4,7 +4,7 @@ package org.eclipse.ui;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.io.InputStream;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.resources.IStorage;
 

@@ -3,22 +3,14 @@ package org.eclipse.ui.part;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.*;
-
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.EditorSite;
-import org.eclipse.ui.internal.WorkbenchPage;
-import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**
  * A MultiEditor is a composite of editors.

@@ -5,8 +5,7 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.misc.*;
-import java.util.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.registry.RegistryReader;
 
 /**
@@ -53,6 +52,6 @@ protected boolean readElement(IConfigurationElement element) {
 public void readPopupContributors(ObjectActionContributorManager mng) {
 	manager = mng;
 	IPluginRegistry registry = Platform.getPluginRegistry();
-	readRegistry(registry, IWorkbenchConstants.PLUGIN_ID, IWorkbenchConstants.PL_POPUP_MENU);
+	readRegistry(registry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_POPUP_MENU);
 }
 }

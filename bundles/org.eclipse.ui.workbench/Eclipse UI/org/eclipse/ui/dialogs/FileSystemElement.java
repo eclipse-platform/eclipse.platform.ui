@@ -12,11 +12,6 @@ import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.DisposeEvent;
-import java.util.*;
 
 /**
  *  Instances of this class represent files or file-like entities (eg.- zip

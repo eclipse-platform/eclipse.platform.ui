@@ -4,13 +4,12 @@ package org.eclipse.ui.internal.registry;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.*;
+
 import org.eclipse.core.runtime.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.misc.*;
-import org.eclipse.jface.resource.ImageDescriptor;
-
-import java.util.*;
 
 /**
  * This class is used to read resource editor registry descriptors from
@@ -45,7 +44,7 @@ public class EditorRegistryReader extends RegistryReader {
 protected void addEditors(boolean readAll, EditorRegistry registry) {
 	IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
 	this.editorRegistry = registry;
-	readRegistry(pluginRegistry, IWorkbenchConstants.PLUGIN_ID, IWorkbenchConstants.PL_EDITOR);
+	readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_EDITOR);
 }
 /**
  * Implementation of the abstract method that

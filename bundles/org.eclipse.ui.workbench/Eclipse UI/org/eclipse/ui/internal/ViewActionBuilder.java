@@ -4,10 +4,11 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.ui.*;
-import org.eclipse.ui.part.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IViewPart;
 
 /**
  *
@@ -34,6 +35,20 @@ protected void contributeToPart(IViewPart part) {
  */
 protected ActionDescriptor createActionDescriptor(org.eclipse.core.runtime.IConfigurationElement element) {
 	return new ActionDescriptor(element, ActionDescriptor.T_VIEW, targetPart);
+}
+/**
+ * Return all extendedn actions. */
+public ActionDescriptor[] getExtendedActions() {
+	if(cache == null)
+		return new ActionDescriptor[0];
+	ArrayList result = new ArrayList(cache.size());
+	for (Iterator iter = cache.iterator(); iter.hasNext();) {
+		Object element = (Object) iter.next();
+		if (element instanceof ActionDescriptor) {
+			result.add(element);
+		}
+	}
+	return (ActionDescriptor[])result.toArray(new ActionDescriptor[result.size()]);
 }
 /**
  *

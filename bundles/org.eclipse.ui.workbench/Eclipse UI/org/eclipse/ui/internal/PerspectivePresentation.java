@@ -9,10 +9,8 @@ http://www.eclipse.org/legal/cpl-v05.html
 **********************************************************************/
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.part.ViewPart;
 
 import java.util.*;
 import java.util.List;
@@ -32,7 +30,7 @@ public class PerspectivePresentation {
 	private WorkbenchPage page;
 	private Composite parentWidget;
 	private RootLayoutContainer mainLayout;
-	private IWorkbenchPart zoomPart;
+	private IWorkbenchPartReference zoomPart;
 	/*
 	 * Detached window no longer supported - remove when confirmed
 	 *
@@ -227,6 +225,26 @@ public boolean bringPartToTop(LayoutPart part) {
 	}
 	return false;
 }
+/**
+ * Returns true is not in a tab folder or if it is the top one in
+ * a tab folder. */
+public boolean isPartVisible(String partId) {
+	LayoutPart part = findPart(partId);
+	if(part == null)
+		return false;
+	ILayoutContainer container = part.getContainer();
+	if (container != null && container instanceof ContainerPlaceholder)
+		container = (ILayoutContainer)((ContainerPlaceholder)container).getRealContainer();
+			
+	if (container != null && container instanceof PartTabFolder) {
+		PartTabFolder folder = (PartTabFolder)container;
+		if(folder.getVisiblePart() == null)
+			return false;
+		return part.getID().equals(folder.getVisiblePart().getID());
+	}
+	return true;
+}
+
 /**
  * Answer a list of the view panes.
  */
@@ -793,18 +811,18 @@ public boolean hasPlaceholder(String id) {
 public RootLayoutContainer getLayout() {
 	return mainLayout;
 }
-/**
- * Returns the zoomed part.
- * <p>
- * If the zoomed part is an editor, it will be the 
- * editor which caused the workbook it is in to be zoomed. It may not be the
- * visible editor. The zoomed part will always be an editor in the zoomed
- * workbench.
- * </p>
- */
-/*package*/ IWorkbenchPart getZoomPart() {
-	return zoomPart;
-}
+///**
+// * Returns the zoomed part.
+// * <p>
+// * If the zoomed part is an editor, it will be the 
+// * editor which caused the workbook it is in to be zoomed. It may not be the
+// * visible editor. The zoomed part will always be an editor in the zoomed
+// * workbench.
+// * </p>
+// */
+///*package*/ IWorkbenchPart getZoomPart() {
+//	return zoomPart;
+//}
 /**
  * Gets the active state.
  */
@@ -814,10 +832,10 @@ public boolean isActive() {
 /**
  * Returns whether the part is a fast view or not
  */
-private boolean isFastView(IWorkbenchPart part) {
-	if (part instanceof IViewPart) {
-		WorkbenchPage page = (WorkbenchPage) part.getSite().getPage();
-		return page.isFastView((IViewPart)part);
+private boolean isFastView(IWorkbenchPartReference ref) {
+	if (ref instanceof IViewReference) {
+		WorkbenchPage page = (WorkbenchPage)ref.getPage();
+		return page.isFastView((IViewReference)ref);
 	}
 	return false;
 }
@@ -835,11 +853,11 @@ private void makeFast(LayoutPart part) {
 		LayoutPart[] children = ((PartTabFolder)part).getChildren();
 		for (int i = 0; i < children.length; i++) {
 			if (children[i] instanceof ViewPane)
-				page.addFastView((IViewPart)((ViewPane)children[i]).getViewReference().getPart(true));
+				page.addFastView(((ViewPane)children[i]).getViewReference());
 		}
 	}
 	else {
-		page.addFastView((IViewPart)((ViewPane)part).getViewReference().getPart(true));
+		page.addFastView(((ViewPane)part).getViewReference());
 	}
 }
 /**
@@ -927,8 +945,8 @@ private void movePart(LayoutPart part, int position, LayoutPart relativePart) {
 	Perspective persp = page.getActivePerspective();
 	if (persp.getActiveFastView() != null) {
 		if (e.dragSource instanceof ViewPane) {
-			IViewPart part = (IViewPart)((ViewPane)e.dragSource).getPartReference().getPart(true);
-			if (part == persp.getActiveFastView()) {
+			IViewReference ref = (IViewReference)((ViewPane)e.dragSource).getPartReference();
+			if (ref == persp.getActiveFastView()) {
 				persp.setActiveFastView(null, 0);
 			}
 		} 
@@ -936,11 +954,11 @@ private void movePart(LayoutPart part, int position, LayoutPart relativePart) {
 			if (persp.getActiveFastView() != null) {
 				WorkbenchWindow window = (WorkbenchWindow)page.getWorkbenchWindow();
 				ToolItem icon = window.getShortcutDND().getDraggedItem();
-				IViewPart view = (IViewPart)icon.getData(ShowFastViewContribution.FAST_VIEW);
+				IViewReference ref = (IViewReference)icon.getData(ShowFastViewContribution.FAST_VIEW);
 				// If the dragged element is an icon for the active 
 				// fast view, remove it instantly. It will be reactivated
 				// if the icon is dropped somewhere invalid.
-				if (view == persp.getActiveFastView())
+				if (ref == persp.getActiveFastView())
 					persp.setActiveFastView(null, 0);
 				// If the dragged element is an icon for a different
 				// fast view, scroll the active fast view off the page,
@@ -989,8 +1007,8 @@ private void movePart(LayoutPart part, int position, LayoutPart relativePart) {
 		// If the drag source is a fast view, the shortcut bar is
 		// invalid drop target.
 		if (e.dragSource instanceof ViewPane) {
-			IViewPart part = (ViewPart)((ViewPane)e.dragSource).getPartReference().getPart(true);
-			if (isFastView(part)) {
+			IViewReference ref = (IViewReference)((ViewPane)e.dragSource).getPartReference();
+			if (isFastView(ref)) {
 				e.dropTarget = null;
 				e.relativePosition = PartDragDrop.INVALID;
 				return;
@@ -1174,19 +1192,19 @@ private void onFastViewIconDrag(PartDropEvent e) {
 	if (e.relativePosition == PartDragDrop.INVALID) {
 		Perspective persp = page.getActivePerspective();
 		if (e.dragSource instanceof ViewPane) {
-			IViewPart view = (IViewPart)((ViewPane)(e.dragSource)).getPartReference().getPart(true);
+			IViewReference ref = (IViewReference)((ViewPane)(e.dragSource)).getPartReference();
 			// If the view is a fast view, then it must have been the active fast view.
 			// Make it the active fast view again if it is dropped somewhere invalid.
-			if (isFastView(view)) 
-				persp.setActiveFastView(view);
+			if (isFastView(ref)) 
+				persp.setActiveFastView(ref);
 		} else if (e.dragSource instanceof ShortcutBarPart) {
 			WorkbenchWindow window = (WorkbenchWindow)page.getWorkbenchWindow();
 			ToolItem icon = window.getShortcutDND().getDraggedItem();
-			IViewPart view = (IViewPart)icon.getData(ShowFastViewContribution.FAST_VIEW);
+			IViewReference ref = (IViewReference)icon.getData(ShowFastViewContribution.FAST_VIEW);
 			// If the icon being dropped is the icon for a fast view that was active when
 			// the drag began, reactivate the fast view when the icon is dropped somewhere invalid.
-			if (view == persp.getPreviousActiveFastView() && wasFastViewActive)
-				persp.setActiveFastView(view);
+			if (ref == persp.getPreviousActiveFastView() && wasFastViewActive)
+				persp.setActiveFastView(ref);
 		}
 		// Reset the flag that determines if a fast view was active when the drag began			
 		wasFastViewActive = false;	
@@ -1199,9 +1217,9 @@ private void onFastViewIconDrag(PartDropEvent e) {
 	// If the drag source is a fast view, make it a regular view
 	// when it is dropped somewhere valid.
 	if (e.dragSource instanceof ViewPane) {
-		IViewPart view = (IViewPart)((ViewPane)(e.dragSource)).getPartReference().getPart(true);
-		if (isFastView(view)) {
-			page.removeFastView(view);
+		IViewReference ref = (IViewReference)((ViewPane)(e.dragSource)).getPartReference();
+		if (isFastView(ref)) {
+			page.removeFastView(ref);
 		}
 	}
 	
@@ -1211,9 +1229,9 @@ private void onFastViewIconDrag(PartDropEvent e) {
 	if (e.dragSource instanceof ShortcutBarPart) {
 		WorkbenchWindow window = (WorkbenchWindow)page.getWorkbenchWindow();
 		ToolItem icon = window.getShortcutDND().getDraggedItem();
-		IViewPart view = (IViewPart)icon.getData(ShowFastViewContribution.FAST_VIEW);
-		e.dragSource = ((ViewSite)view.getSite()).getPane();
-		page.removeFastView(view);		
+		IViewReference ref = (IViewReference)icon.getData(ShowFastViewContribution.FAST_VIEW);
+		e.dragSource = ((WorkbenchPartReference)ref).getPane();
+		page.removeFastView(ref);		
 	}
 		
 	switch (e.relativePosition) {
@@ -1291,10 +1309,10 @@ public boolean partChangeAffectsZoom(PartPane pane) {
 		return false;
 	if (pane.isZoomed())
 		return false;
-	if(isFastView(pane.getPartReference().getPart(true)))
+	if(isFastView(pane.getPartReference()))
 		return false;
 
-	PartPane zoomPane = ((PartSite)zoomPart.getSite()).getPane();
+	PartPane zoomPane = (PartPane)((WorkbenchPartReference)zoomPart).getPane();
 	if(pane instanceof EditorPane && zoomPane instanceof EditorPane) {
 		if(((EditorPane)pane).getWorkbook().equals(((EditorPane)zoomPane).getWorkbook()))
 			return false;
@@ -1538,7 +1556,7 @@ private void updateContainerVisibleTab(ILayoutContainer container) {
 	if (parts.length < 1)
 		return;
 		
-	LayoutPart selPart = null;
+	PartPane selPart = null;
 	int topIndex = 0;
 	IWorkbenchPartReference sortedPartsArray[] = ((WorkbenchPage)page).getSortedParts();
 	List sortedParts = Arrays.asList(sortedPartsArray);
@@ -1548,12 +1566,15 @@ private void updateContainerVisibleTab(ILayoutContainer container) {
 			int index = sortedParts.indexOf(part);
 			if (index >= topIndex) {
 				topIndex = index;
-				selPart = parts[i];
+				selPart = (PartPane)parts[i];
 			}
 		}
 	}
-
+	
 	if (selPart != null) {
+		//Make sure the new visible part is restored.
+		//If part can't be restored an error part is created.
+		selPart.getPartReference().getPart(true);		
 		int selIndex = folder.indexOf(selPart);
 		if (folder.getSelection() != selIndex)
 			folder.setSelection(selIndex);
@@ -1562,17 +1583,17 @@ private void updateContainerVisibleTab(ILayoutContainer container) {
 /**
  * Zoom in on a particular layout part.
  */
-public void zoomIn(IWorkbenchPart part) {
-	PartPane pane = ((PartSite)(part.getSite())).getPane();
+public void zoomIn(IWorkbenchPartReference ref) {
+	PartPane pane = ((WorkbenchPartReference)ref).getPane();
 
 	// Save zoom part.
-	zoomPart = part;
+	zoomPart = ref;
 
 	// If view ..
 	if (pane instanceof ViewPane) {
 		parentWidget.setRedraw(false);
 		Perspective persp = page.getActivePerspective();
-		if (persp != null && part instanceof IViewPart && page.isFastView((IViewPart)part)) {
+		if (persp != null && ref instanceof IViewReference && page.isFastView((IViewReference)ref)) {
 			persp.hideFastViewSash();
 		}
 		mainLayout.zoomIn(pane);
@@ -1606,15 +1627,15 @@ public void zoomOut() {
 	if (zoomPart == null)
 		return;
 
-	PartPane pane = ((PartSite)(zoomPart.getSite())).getPane();
+	PartPane pane = ((WorkbenchPartReference)zoomPart).getPane();
 	// If view ..
 	if (pane instanceof ViewPane) {
 		parentWidget.setRedraw(false);
 		mainLayout.zoomOut();
 		pane.setZoomed(false);
 		Perspective persp = page.getActivePerspective();
-		if (persp != null && zoomPart instanceof IViewPart && page.isFastView((IViewPart)zoomPart)) {
-			persp.showFastView((IViewPart)zoomPart);
+		if (persp != null && zoomPart instanceof IViewReference && page.isFastView((IViewReference)zoomPart)) {
+			persp.showFastView((IViewReference)zoomPart);
 		}
 		parentWidget.setRedraw(true);
 	}

@@ -21,6 +21,16 @@ import org.eclipse.ui.IActionFilter;
 public class ActionExpression {
 
 	private SingleExpression root;
+	final static String ATT_OR = "or";  //$NON-NLS-1$
+	final static String ATT_AND ="and";  //$NON-NLS-1$
+	final static String ATT_NOT = "not"; //$NON-NLS-1$
+	final static String ATT_OBJECT_STATE = "objectState"; //$NON-NLS-1$
+	final static String ATT_OBJECT_CLASS = "objectClass"; //$NON-NLS-1$
+	final static String ATT_PLUG_IN_STATE = "pluginState"; //$NON-NLS-1$
+	final static String ATT_SYSTEM_PROPERTY = "systemProperty"; //$NON-NLS-1$	
+	
+	final static String ID_PERSISTENT_PROPERTY = "persistentProperty"; //$NON-NLS-1$
+	final static String ID_SESSION_PROPERTY = "sessionProperty"; //$NON-NLS-1$
 	
 	public ActionExpression(IConfigurationElement element) {
 		try {
@@ -32,10 +42,34 @@ public class ActionExpression {
 		}
 	}
 	
+	/**
+	 * Create an instance of the receiver with the correct
+	 * expression type for the value sent.	 * 
+	 * Currently the only supported value is OBJECT_CLASS	 * @param element	 */
+	public ActionExpression(String expressionType, String expressionValue) {
+		root = new SingleExpression();
+		if(expressionType.equals(ATT_OBJECT_CLASS)){
+			ObjectClassExpression expression = new ObjectClassExpression();
+			expression.className = expressionValue;
+			root.child = expression;
+		}
+	}
+	
+	
 	public boolean isEnabledFor(Object object) {
 		if (root == null)
 			return false;
 		return root.isEnabledFor(object);
+	}
+	
+	/**
+	 * Return whether or not the receiver is potentially enabled
+	 * for the object via just the extensionType.
+	 * Currently the only choice is OBJECT_CLASS.	 * @param object	 * @return boolean	 */
+	public boolean isEnabledForExpression(Object object, String expressionType) {
+		if (root == null)
+			return false;
+		return root.isEnabledForExpression(object,expressionType);
 	}
 	
 	public boolean isEnabledFor(IStructuredSelection ssel) {
@@ -59,29 +93,29 @@ public class ActionExpression {
 	{
 		AbstractExpression childExpr = null;
 		String tag = element.getName();
-		if (tag.equals("or")) { //$NON-NLS-1$
+		if (tag.equals(ATT_OR)) { 
 			childExpr = new OrExpression();
 			childExpr.readFrom(element);
-		} else if (tag.equals("and")) { //$NON-NLS-1$
+		} else if (tag.equals(ATT_AND)) { 
 			childExpr = new AndExpression();
 			childExpr.readFrom(element);
-		} else if (tag.equals("not")) { //$NON-NLS-1$
+		} else if (tag.equals(ATT_NOT)) { 
 			childExpr = new NotExpression();
 			childExpr.readFrom(element);
-		} else if (tag.equals("objectState")) { //$NON-NLS-1$
+		} else if (tag.equals(ATT_OBJECT_STATE)) { 
 			childExpr = new ObjectStateExpression();
 			childExpr.readFrom(element);
-		} else if (tag.equals("objectClass")) { //$NON-NLS-1$
+		} else if (tag.equals(ATT_OBJECT_CLASS)) { 
 			childExpr = new ObjectClassExpression();
 			childExpr.readFrom(element);
-		} else if (tag.equals("pluginState")) { //$NON-NLS-1$
+		} else if (tag.equals(ATT_PLUG_IN_STATE)) { 
 			childExpr = new PluginStateExpression();
 			childExpr.readFrom(element);
-		} else if (tag.equals("systemProperty")) { //$NON-NLS-1$
+		} else if (tag.equals(ATT_SYSTEM_PROPERTY)) { 
 			childExpr = new SystemPropertyExpression();
 			childExpr.readFrom(element);
 		} else {
-			throw new IllegalStateException("Unreconized element: " + tag); //$NON-NLS-1$
+			throw new IllegalStateException("Unrecognized element: " + tag); //$NON-NLS-1$
 		}
 		return childExpr;
 	}
@@ -90,6 +124,10 @@ public class ActionExpression {
 		public abstract void readFrom(IConfigurationElement element) 
 			throws IllegalStateException;
 		public abstract boolean isEnabledFor(Object obj);
+		public boolean isEnabledForExpression(Object object, String expressionType){
+			//False by default
+			return false;
+		}
 	}
 	
 	protected abstract class CompositeExpression extends AbstractExpression {
@@ -117,6 +155,17 @@ public class ActionExpression {
 			list.add(0, expr);
 			list.trimToSize();
 		}
+		
+		public boolean isEnabledForExpression(Object object, String expressionType){
+			
+			Iterator iterator = list.iterator();
+			while(iterator.hasNext()){
+				AbstractExpression next = (AbstractExpression) iterator.next(); 
+				if(next.isEnabledForExpression(object,expressionType))
+					return true;
+			}
+			return false;
+		}
 	}
 	
 	protected class SingleExpression extends AbstractExpression {
@@ -129,9 +178,15 @@ public class ActionExpression {
 				throw new IllegalStateException("Expression must have 1 child"); //$NON-NLS-1$
 			child = createExpression(children[0]);
 		}
+		
 		public boolean isEnabledFor(Object obj) {
 			return child.isEnabledFor(obj);
 		}
+		
+		public boolean isEnabledForExpression(Object object, String expressionType){
+			return child.isEnabledForExpression(object,expressionType);
+		}
+	
 	}
 	
 	protected class NotExpression extends SingleExpression {
@@ -163,7 +218,7 @@ public class ActionExpression {
 			return true;
 		}
 	}
-
+	
 	protected class ObjectStateExpression extends AbstractExpression {
 		private String name, value;
 		public void readFrom(IConfigurationElement element) 
@@ -243,6 +298,13 @@ public class ActionExpression {
 				clazz = clazz.getSuperclass();
 			}
 			return match;
+		}
+		
+		public boolean isEnabledForExpression(Object object, String expressionType){
+			if(expressionType.equals(ATT_OBJECT_CLASS))
+				return isEnabledFor(object);
+			else
+				return false;
 		}
 	}
 

@@ -5,8 +5,9 @@ package org.eclipse.ui.internal.registry;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.misc.*;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * A strategy to read view extensions from the registry.
@@ -70,7 +71,7 @@ public void readViews(IPluginRegistry in, ViewRegistry out)
 	throws CoreException {
 	// this does not seem to really ever be throwing an the exception
 	viewRegistry = out;
-	readRegistry(in, IWorkbenchConstants.PLUGIN_ID, IWorkbenchConstants.PL_VIEWS);
+	readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_VIEWS);
 	out.mapViewsToCategories();
 }
 }

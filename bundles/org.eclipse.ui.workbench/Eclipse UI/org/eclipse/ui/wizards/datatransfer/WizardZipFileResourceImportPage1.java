@@ -4,22 +4,20 @@ package org.eclipse.ui.wizards.datatransfer;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.ui.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.model.WorkbenchContentProvider;
-import org.eclipse.ui.wizards.datatransfer.*;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
-import java.util.zip.*;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
+
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.model.WorkbenchContentProvider;
 
 /**
  *	Page 1 of the base resource import-from-zip Wizard.

@@ -10,7 +10,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IResourceActionFilter;
 import org.eclipse.ui.actions.SimpleWildcardTester;
-import java.util.Iterator;
 
 /**
  * An IWorkbenchAdapter that represents IResources.

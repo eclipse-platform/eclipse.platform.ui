@@ -4,15 +4,14 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.*;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.actions.SimpleWildcardTester;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.*;
-
-import java.util.*;
+import org.eclipse.ui.actions.SimpleWildcardTester;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * This is a helper class that works with PluginAction

@@ -14,18 +14,8 @@ import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -39,9 +29,9 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 public abstract class ProductInfoDialog extends Dialog{
 	private static final String ATT_HTTP = "http://"; //$NON-NLS-1$
 	private AboutItem item;
-	private 	boolean webBrowserOpened;
-	private 	Cursor handCursor;
-	private 	Cursor busyCursor;
+	private boolean webBrowserOpened;
+	private Cursor handCursor;
+	private Cursor busyCursor;
 	private boolean mouseDown = false;
 	private boolean dragEvent = false;
 	
@@ -76,10 +66,13 @@ protected void addListeners(StyledText styledText) {
 			} else if (item != null && item.isLinkAt(offset)) {	
 				text.setCursor(busyCursor);
 				openLink(item.getLinkAt(offset));
+				StyleRange selectionRange = getCurrentRange(text);
+				text.setSelectionRange(selectionRange.start, selectionRange.length);
 				text.setCursor(null);
 			}
 		}
 	});
+	
 	styledText.addMouseMoveListener(new MouseMoveListener() {
 		public void mouseMove(MouseEvent e) {
 			// Do not change cursor on drag events
@@ -106,39 +99,55 @@ protected void addListeners(StyledText styledText) {
 				text.setCursor(null);
 		}
 	});
-	
+
 	styledText.addTraverseListener(new TraverseListener() {
 		public void keyTraversed(TraverseEvent e) {
 			StyledText text = (StyledText)e.widget;
-			if (e.detail == SWT.TRAVERSE_ESCAPE) {
+			switch (e.detail) {
+			case SWT.TRAVERSE_ESCAPE:
 				e.doit = true;
-			} else if (e.detail == SWT.TRAVERSE_TAB_NEXT) {
-				StyleRange range = findNextRange(text);
-				if (range == null) {
-					text.setSelection(0,0);
+				break;
+			case SWT.TRAVERSE_TAB_NEXT:
+				//Previously traverse out in the backward direction?
+				Point nextSelection = text.getSelection();
+				int charCount = text.getCharCount();
+				if ((nextSelection.x == charCount) && (nextSelection.y == charCount)){
+					text.setSelection(0);
+				}
+				StyleRange nextRange  = findNextRange(text);
+				if (nextRange == null) {
+					// Next time in start at beginning, also used by 
+					// TRAVERSE_TAB_PREVIOUS to indicate we traversed out
+					// in the forward direction
+					text.setSelection(0);
 					e.doit = true;
 				} else {
-					e.doit = false;
-				}
-			} else if (e.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
-				StyleRange range = findPreviousRange(text);
-				if (range == null) {
-					text.setSelection(0,0);
+					text.setSelectionRange(nextRange.start, nextRange.length);
 					e.doit = true;
-				} else {
-					e.doit = false;
+					e.detail = SWT.TRAVERSE_NONE;
 				}
-			}
-		}
-	});
-	
-	styledText.addFocusListener(new FocusAdapter() {
-		public void focusGained(FocusEvent e) {
-			StyledText text = (StyledText)e.widget;
-			text.setSelection(0,0);
-			StyleRange nextRange = findNextRange(text);
-			if(nextRange != null) {
-				text.setSelection(nextRange.start,nextRange.start + nextRange.length);
+				break;
+			case SWT.TRAVERSE_TAB_PREVIOUS:
+				//Previously traverse out in the forward direction?
+				Point previousSelection = text.getSelection();
+				if ((previousSelection.x == 0) && (previousSelection.y == 0))
+					text.setSelection(text.getCharCount());
+				StyleRange previousRange = findPreviousRange(text);
+				if (previousRange == null) {
+					// Next time in start at the end, also used by 
+					// TRAVERSE_TAB_NEXT to indicate we traversed out
+					// in the backward direction
+					text.setSelection(text.getCharCount());
+					e.doit = true;
+				}
+				else {
+					text.setSelectionRange(previousRange.start, previousRange.length);
+					e.doit = true;
+					e.detail = SWT.TRAVERSE_NONE;
+				}
+				break;
+			default:
+				break;
 			}
 		}
 	});
@@ -147,21 +156,6 @@ protected void addListeners(StyledText styledText) {
 	styledText.addKeyListener(new KeyAdapter() {
 		public void keyPressed (KeyEvent event){
 			StyledText text = (StyledText)event.widget;
-
-			if(event.character == '\t') {
-				StyleRange range = null;
-				if (event.stateMask == SWT.SHIFT) {
-					range = findPreviousRange(text);
-				} else {
-					range = findNextRange(text);
-				}
-				if(range == null){
-					text.setSelection(0,0);
-				} else{
-					text.setSelection(range.start, range.start + range.length);
-				}
-				return;
-			}
 			if(event.character == ' ' || event.character == SWT.CR){
 				if(item != null){
 					//Be sure we are in the selection
@@ -170,6 +164,8 @@ protected void addListeners(StyledText styledText) {
 					if (item.isLinkAt(offset)) {	
 						text.setCursor(busyCursor);
 						openLink(item.getLinkAt(offset));
+						StyleRange selectionRange = getCurrentRange(text);
+						text.setSelectionRange(selectionRange.start, selectionRange.length);
 						text.setCursor(null);
 					}
 				}
@@ -228,6 +224,23 @@ protected void setItem(AboutItem item) {
 }
 
 /**
+ * Find the range of the current selection.
+ */
+protected StyleRange getCurrentRange(StyledText text){
+	StyleRange[] ranges = text.getStyleRanges();
+	int currentSelectionEnd = text.getSelection().y;
+	int currentSelectionStart = text.getSelection().x;
+	
+	for (int i = 0; i < ranges.length; i++) {
+		if((currentSelectionStart >= ranges[i].start) && 
+			(currentSelectionEnd <= (ranges[i].start + ranges[i].length))) {
+			return ranges[i];
+		}
+	}
+	return null;
+}
+
+/**
  * Find the next range after the current 
  * selection.
  */
@@ -242,8 +255,6 @@ protected StyleRange findNextRange(StyledText text){
 	return null;
 }
 
-
-
 /**
  * Find the previous range before the current selection.
  */
@@ -252,13 +263,11 @@ protected StyleRange findPreviousRange(StyledText text){
 	int currentSelectionStart = text.getSelection().x;
 
 	for (int i = ranges.length - 1; i > -1; i--) {
-		if((ranges[i].start + ranges[i].length) < currentSelectionStart)
+		if((ranges[i].start + ranges[i].length - 1) < currentSelectionStart)
 			return ranges[i];
 	}
 	return null;
 }
-
-
 
 /**
  * Open a link
@@ -314,7 +323,6 @@ protected void setBoldRanges(StyledText styledText, int[][] boldRanges) {
 	}
 }
 
-
 /**
  * Sets the styled text's link (blue) ranges
  */
@@ -342,6 +350,7 @@ protected AboutItem scan(String s) {
 		while (!found && i < max) {
 			found = Character.isWhitespace(s.charAt(i++));
 		}
+		if (i!=max) i--;
 		linkRanges.add(new int[] {start, i - start});
 		links.add(s.substring(start, i));
 		i = s.indexOf(ATT_HTTP, i);
@@ -351,13 +360,5 @@ protected AboutItem scan(String s) {
 			(int[][])linkRanges.toArray(new int[linkRanges.size()][2]),
 			(String[])links.toArray(new String[links.size()]));
 }
-
-
-
-
-
-
-
-
 
 }
