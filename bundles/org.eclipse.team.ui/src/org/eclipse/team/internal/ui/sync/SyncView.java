@@ -7,6 +7,7 @@ package org.eclipse.team.internal.ui.sync;
  
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.compare.NavigationAction;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.runtime.CoreException;
@@ -35,6 +36,7 @@ import org.eclipse.team.ui.TeamImages;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
@@ -54,7 +56,7 @@ public class SyncView extends ViewPart {
 	private SyncCompareInput input;
 	private TreeViewer viewer;
 	private Composite top;
-	
+
 	// The possible sync modes
 	public static final int SYNC_NONE = 0;
 	public static final int SYNC_INCOMING = 1;
@@ -88,7 +90,9 @@ public class SyncView extends ViewPart {
 	private SyncModeAction incomingMode;
 	private SyncModeAction outgoingMode;
 	private SyncModeAction freeMode;
-
+	private	NavigationAction next;
+	private NavigationAction previous;
+	
 	private class PartListener implements IPartListener {
 		public void partActivated(IWorkbenchPart part) {
 		}
@@ -191,6 +195,16 @@ public class SyncView extends ViewPart {
 			SYNC_BOTH);
 		freeMode.setToolTipText(Policy.bind("SyncView.freeModeToolTip")); //$NON-NLS-1$
 		freeMode.setChecked(false);
+		
+		// Set up global actions for next and previous
+		next = new NavigationAction(true);
+		previous = new NavigationAction(false);
+		IActionBars actionBars = getViewSite().getActionBars();
+		if (actionBars != null) {
+			actionBars.setGlobalActionHandler(IWorkbenchActionConstants.NEXT, next);
+			actionBars.setGlobalActionHandler(IWorkbenchActionConstants.PREVIOUS, previous);
+			actionBars.updateActionBars();
+		}
 	}
 	
 	private boolean isEmpty(DiffNode node) {
@@ -294,6 +308,11 @@ public class SyncView extends ViewPart {
 	 * Shows synchronization information for the given resources in the sync view.
 	 */
 	public void showSync(SyncCompareInput input) {
+		next.setCompareEditorInput(input);
+		previous.setCompareEditorInput(input);
+		IActionBars actionBars = getViewSite().getActionBars();
+		actionBars.updateActionBars();
+
 		input.setViewSite(getViewSite());
 		this.input = input;
 		currentSyncMode = SYNC_NONE;
