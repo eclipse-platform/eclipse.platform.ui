@@ -1358,7 +1358,10 @@ public class Main {
 				if (newSession) {
 					log.write(SESSION);
 					log.write(' ');
-					for (int i = SESSION.length(); i < 78; i++)
+					String timestamp = new Date().toString();
+					log.write(timestamp);
+					log.write(' ');
+					for (int i = SESSION.length() + timestamp.length(); i < 78; i++)
 						log.write('-');
 					log.newLine();
 					newSession = false;
