@@ -414,35 +414,38 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * Internal text listener for updating all content dependent
 	 * actions. The updating is done asynchronously.
 	 */
-	class TextListener implements ITextListener {
+	class TextListener implements ITextListener, ITextInputListener {
 		
 		/** The posted updater code. */
 		private Runnable fRunnable= new Runnable() {
 			public void run() {
-				
-				TextEvent textEvent= (TextEvent) fTextEventQueue.remove(0);
+				fIsRunnablePosted= false;
 				
 				if (fSourceViewer != null) {
-					// check whether editor has not been disposed yet
-					if (fTextEventQueue.isEmpty())
-						updateContentDependentActions();
+					updateContentDependentActions();
 						
 					// remember the last edit position
-					if (isDirty() && (textEvent.getDocumentEvent() != null)) {
+					if (isDirty() && fUpdateLastEditPosition) {
+						fUpdateLastEditPosition= false;
 						ISelection sel= getSelectionProvider().getSelection();
 						IEditorInput input= getEditorInput();
-						Position pos= null;
-						if (sel instanceof ITextSelection) {
-							int offset= ((ITextSelection) sel).getOffset();
-							int length= ((ITextSelection) sel).getLength();
-							pos= new Position(offset, length);
+						IDocument document= getDocumentProvider().getDocument(input);
+						
+						if (fLocalLastEditPosition != null) {
+							document.removePosition(fLocalLastEditPosition);
+							fLocalLastEditPosition= null;
+						}
+						
+						if (sel instanceof ITextSelection && !sel.isEmpty()) {
+							ITextSelection s= (ITextSelection) sel;
+							fLocalLastEditPosition= new Position(s.getOffset(), s.getLength());
 							try {
-								getDocumentProvider().getDocument(input).addPosition(pos);
+								document.addPosition(fLocalLastEditPosition);
 							} catch (BadLocationException ex) {
-								// pos is null
+								fLocalLastEditPosition= null;
 							}
 						}
-						TextEditorPlugin.getDefault().setLastEditPosition(new EditPosition(input, getEditorSite().getId(), getSelectionProvider().getSelection(), pos));
+						TextEditorPlugin.getDefault().setLastEditPosition(new EditPosition(input, getEditorSite().getId(), getSelectionProvider().getSelection(), fLocalLastEditPosition));
 					}
 				}
 			}
@@ -451,10 +454,20 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		/** Display used for posting the updater code. */
 		private Display fDisplay;
 		/**
-		 * Display used for posting the updater code.
-		 * @since 2.1
+		 * The editor's last edit position
+		 * @since 3.0
 		 */
-		private ArrayList fTextEventQueue= new ArrayList(5);
+		private Position fLocalLastEditPosition;
+		/**
+		 * Has the runnable been posted?
+		 * @since 3.0
+		 */
+		private boolean fIsRunnablePosted= false;
+		/**
+		 * Should the last edit position be updated?
+		 * @since 3.0
+		 */
+		private boolean fUpdateLastEditPosition= false;
 		
 		/*
 		 * @see ITextListener#textChanged(TextEvent)
@@ -470,8 +483,29 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (fDisplay == null)
 				fDisplay= getSite().getShell().getDisplay();
 
-			fTextEventQueue.add(event);
-			fDisplay.asyncExec(fRunnable);
+			if (event.getDocumentEvent() != null)
+				fUpdateLastEditPosition= true;
+			
+			if (!fIsRunnablePosted) {
+				fIsRunnablePosted= true;
+				fDisplay.asyncExec(fRunnable);
+			}
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentAboutToBeChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
+		 */
+		public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
+			if (oldInput != null && fLocalLastEditPosition != null) {
+				oldInput.removePosition(fLocalLastEditPosition);
+				fLocalLastEditPosition= null;
+			}
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
+		 */
+		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
 		}
 	}
 	
@@ -1572,7 +1606,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	private TextInputListener fTextInputListener= new TextInputListener();
 	/** The editor's text listener. */
-	private ITextListener fTextListener= new TextListener();
+	private TextListener fTextListener= new TextListener();
 	/** The editor's property change listener. */
 	private IPropertyChangeListener fPropertyChangeListener= new PropertyChangeListener();
 	/**
@@ -2249,6 +2283,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fSourceViewer.setRangeIndicator(fRangeIndicator);
 		
 		fSourceViewer.addTextListener(fTextListener);
+		fSourceViewer.addTextInputListener(fTextListener);
 		getSelectionProvider().addSelectionChangedListener(getSelectionChangedListener());
 				
 		initializeViewerFont(fSourceViewer);
@@ -2857,6 +2892,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			
 			if (fTextListener != null) {
 				fSourceViewer.removeTextListener(fTextListener);
+				fSourceViewer.removeTextInputListener(fTextListener);
 				fTextListener= null;
 			}
 			
