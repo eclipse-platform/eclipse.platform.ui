@@ -138,6 +138,7 @@ public class ProjectPreferences extends EclipsePreferences {
 			return;
 		}
 		node.save(location);
+		makeClean();
 	}
 
 	/*
