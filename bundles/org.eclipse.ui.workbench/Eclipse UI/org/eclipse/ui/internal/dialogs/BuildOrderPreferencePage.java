@@ -418,6 +418,9 @@ public class BuildOrderPreferencePage
 	private void defaultsButtonSelected(boolean selected) {
 		if (selected) {
 			setBuildOrderWidgetsEnablement(false);
+			//Cache the current value as the custom order
+			customBuildOrder = buildList.getItems(); 
+			buildList.setItems(getDefaultProjectOrder());
 
 		} else {
 			setBuildOrderWidgetsEnablement(true);
@@ -566,8 +569,7 @@ public class BuildOrderPreferencePage
 			if (ResourcesPlugin.getWorkspace().isAutoBuilding()) {
 				GlobalBuildAction action =
 					new GlobalBuildAction(
-						workbench,
-						getShell(),
+						workbench.getActiveWorkbenchWindow(),
 						IncrementalProjectBuilder.INCREMENTAL_BUILD);
 				action.doBuild();
 			}
