@@ -110,11 +110,11 @@ public class PluginDependencyView extends SpyView implements ISelectionListener 
 			// Cycle through the prerequisites
 			BundleSpecification[] requires = descriptor.getRequiredBundles();
 			for (int j = 0; j < requires.length; j++) {
-				BundleDescription childDesc = requires[j].getSupplier();
+				BundleDescription childDesc = (BundleDescription) requires[j].getSupplier();
 				// if the child doesn't exist then move to the next child
 				if (childDesc == null)
 					continue;
-
+				
 				// if the child entry is not in the table yet then add it
 				PluginDependencyGraphNode childNode = (PluginDependencyGraphNode) dependencyGraph.get(new Long(childDesc.getBundleId()));
 				if (childNode == null) {

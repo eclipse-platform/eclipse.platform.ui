@@ -56,7 +56,7 @@ public class StateDumper extends AbstractDumper {
 		contents.append(" - Version: "); //$NON-NLS-1$
 		contents.append(required.getVersionRange());
 		contents.append(" ("); //$NON-NLS-1$
-		contents.append(required.isResolved() ? ("actual: "+ required.getActualVersion().toString()) : "unresolved"); //$NON-NLS-1$ //$NON-NLS-2$
+		contents.append(required.isResolved() ? ("actual: "+ required.getSupplier().getVersion().toString()) : "unresolved"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (required.isOptional())
 			contents.append(", optional"); //$NON-NLS-1$
 		contents.append(')');		
@@ -69,7 +69,7 @@ public class StateDumper extends AbstractDumper {
 		contents.append(" - Version: "); //$NON-NLS-1$
 		contents.append(host.getVersionRange());
 		contents.append(" ("); //$NON-NLS-1$
-		contents.append(host.isResolved() ? ("actual: "+ host.getActualVersion().toString()) : "unresolved");		 //$NON-NLS-1$ //$NON-NLS-2$
+		contents.append(host.isResolved() ? ("actual: "+ host.getSupplier().getVersion().toString()) : "unresolved");		 //$NON-NLS-1$ //$NON-NLS-2$
 		contents.append(')');
 		contents.append('\n');
 	}
