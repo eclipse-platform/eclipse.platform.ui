@@ -19,6 +19,22 @@ To see which bugs have been addressed in one of the builds simply open the <a hr
 <br>
 <br>
 <br>
+========== Eclipse Build Input September 21 2004 ==========<br>
+<pre>
+- javadoc bug fixing
+
+LinkedMode:
+- LinkedModeModel: document changes outside of linked positions
+  are now tolerated, as well as changes that do not lie completely inside a 
+  position. Linked mode is still left if any disjointness constraints are violated
+  by a change (changes to LinkedModeModel and LinkedPositionGroup)
+- LinkedModeUI now controls the entire exit behavior, so all the exit logic
+  is at one point. The UI includes a document listener now and exits the same
+  way as LinkedModeModel did before
+-> no binary changes, no functional changes for any clients that use LinkedModeUI and LinkedModeModel together.
+</pre>
+<br>
+<br>
 ========== Eclipse Build Input July 2004 ==========<br>
 <pre>
 - bug fixing
