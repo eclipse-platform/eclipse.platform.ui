@@ -113,7 +113,7 @@ public interface IParserTags {
 	public static final String CONFIRM = "confirm"; //$NON-NLS-1$
 
 	/*
-	 * <!ELEMENT perform-when (action)>
+	 * <!ELEMENT perform-when (action+)>
 	 * <!ATTLIST perform-when
 	 *   condition               CDATA #REQUIRED
 	 * >
