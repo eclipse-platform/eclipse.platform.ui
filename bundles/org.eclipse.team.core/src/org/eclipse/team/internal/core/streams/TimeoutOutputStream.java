@@ -250,6 +250,8 @@ public class TimeoutOutputStream extends FilterOutputStream {
 					bytesUntilFlush = length;
 				}
 			}
+			
+			// If there are bytes to be written, write them
 			if (len != 0) {
 				// write out all remaining bytes from the buffer before flushing
 				try {
@@ -259,12 +261,9 @@ public class TimeoutOutputStream extends FilterOutputStream {
 				} catch (InterruptedIOException e) {
 					len = e.bytesTransferred;
 				}
-				synchronized (this) {
-					head = (head + len) % iobuffer.length;
-					length -= len;
-					notify();
-				}
 			}
+			
+			// If there was a pending flush, do it
 			if (bytesUntilFlush >= 0) {
 				bytesUntilFlush -= len;
 				if (bytesUntilFlush <= 0) {
@@ -274,6 +273,15 @@ public class TimeoutOutputStream extends FilterOutputStream {
 					} catch (InterruptedIOException e) {
 					}
 					bytesUntilFlush = -1; // might have been 0
+				}
+			}
+			
+			// If bytes were written, update the circular buffer
+			if (len != 0) {
+				synchronized (this) {
+					head = (head + len) % iobuffer.length;
+					length -= len;
+					notify();
 				}
 			}
 		}
