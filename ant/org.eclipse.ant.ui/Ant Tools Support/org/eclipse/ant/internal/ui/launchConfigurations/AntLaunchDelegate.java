@@ -319,8 +319,9 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		}
 		
 		if (antHome != null) {
-			commandLine.append(" -Dant.home="); //$NON-NLS-1$
+			commandLine.append(" \"-Dant.home="); //$NON-NLS-1$
 			commandLine.append(antHome);
+			commandLine.append('\"');
 		}
 		
 		if (separateVM) { 
@@ -336,7 +337,8 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			commandLine.append(ANT_LOGGER_CLASS);
 		}
 		commandLine.append(" -buildfile \""); //$NON-NLS-1$
-		commandLine.append(location.toOSString() + '\"');
+		commandLine.append(location.toOSString());
+		commandLine.append('\"');
 		
 		if (targets != null) {
 			for (int i = 0; i < targets.length; i++) {
