@@ -20,6 +20,7 @@ import org.eclipse.update.configurator.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.model.*;
+import org.eclipse.update.internal.operations.*;
 import org.eclipse.core.boot.IPlatformConfiguration;
 
 /**
@@ -91,6 +92,8 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 */
 	public IConfiguredSite createConfiguredSite(File file) throws CoreException {
 
+		if (isDuplicateSite(file))
+			throw Utilities.newCoreException(UpdateUtils.getFormattedMessage("InstallConfiguration.location.exists", file.getPath()),null);
 		ISite site = InternalSiteManager.createSite(file);
 
 		//create a config site around the site
@@ -127,7 +130,9 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 * The policy is from <code> org.eclipse.core.boot.IPlatformConfiguration</code>
 	 */
 	public IConfiguredSite createLinkedConfiguredSite(File file) throws CoreException {
-
+		if (isDuplicateSite(file))
+			throw Utilities.newCoreException(UpdateUtils.getFormattedMessage("InstallConfiguration.location.exists", file.getPath()),null);
+		
 		ISite site = InternalSiteManager.createSite(file);
 
 		//create a config site around the site
@@ -797,5 +802,21 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			}
 		}
 		return url;
+	}
+	
+	private boolean isDuplicateSite(File siteDirectory) {
+		IConfiguredSite[] sites = getConfiguredSites();
+		URL fileURL;
+		try {
+			fileURL = new URL("file:" + siteDirectory.getPath()); //$NON-NLS-1$
+		} catch (MalformedURLException e) {
+			return false;
+		}
+		for (int i = 0; i < sites.length; i++) {
+			URL url = sites[i].getSite().getURL();
+			if (UpdateManagerUtils.sameURL(fileURL, url))
+				return true;
+		}
+		return false;
 	}
 }

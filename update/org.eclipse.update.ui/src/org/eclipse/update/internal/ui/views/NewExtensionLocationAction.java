@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.wizards.*;
 
 public class NewExtensionLocationAction extends Action {
 
@@ -63,19 +62,16 @@ public class NewExtensionLocationAction extends Action {
 	private void addExtensionLocation(File dir) {
 		try {
 			IInstallConfiguration config =
-				UpdateUtils.createInstallConfiguration();
-			if (TargetPage
-				.addConfiguredSite(
-					UpdateUI.getActiveWorkbenchShell(),
-					config,
-					dir,
-					true)
-				!= null) {
-				UpdateUtils.makeConfigurationCurrent(config, null);
-				UpdateUtils.saveLocalSite();
-				UpdateUI.requestRestart();
-			}
+			UpdateUtils.createInstallConfiguration();
+			IConfiguredSite csite = config.createLinkedConfiguredSite(dir);
+			config.addConfiguredSite(csite);
+			UpdateUtils.makeConfigurationCurrent(config, null);
+			UpdateUtils.saveLocalSite();
+			UpdateUI.requestRestart();
+			
 		} catch (CoreException e) {
+			String title = UpdateUI.getString("InstallWizard.TargetPage.location.error.title"); //$NON-NLS-1$
+			ErrorDialog.openError(UpdateUI.getActiveWorkbenchShell(), title, null, e.getStatus());
 			UpdateUI.logException(e);
 		}
 	}

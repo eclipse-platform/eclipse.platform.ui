@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
 import java.io.*;
-import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
@@ -26,7 +25,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.parts.*;
@@ -331,7 +329,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		dd.setMessage(UpdateUI.getString("InstallWizard.TargetPage.location.message")); //$NON-NLS-1$
 		String path = dd.open();
 		if (path != null) {
-			addConfiguredSite(getContainer().getShell(), config, new File(path), false);
+			addConfiguredSite(getContainer().getShell(), config, new File(path));
 		}
 	}
 	
@@ -342,45 +340,22 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		}
 	}
 
-	public static IConfiguredSite addConfiguredSite(
+	private IConfiguredSite addConfiguredSite(
 		Shell shell,
 		IInstallConfiguration config,
-		File file,
-		boolean linked) {
+		File file) {
 		try {
-			IConfiguredSite csite = null;
-			if (linked) {
-				csite = config.createLinkedConfiguredSite(file);
+			IConfiguredSite csite = config.createConfiguredSite(file);
+			IStatus status = csite.verifyUpdatableStatus();
+			if (status.isOK())
 				config.addConfiguredSite(csite);
-			} else {
-				if (!ensureUnique(file, config)) {
-					String title = UpdateUI.getString("InstallWizard.TargetPage.location.error.title"); //$NON-NLS-1$
-					String message =
-						UpdateUI.getFormattedMessage("InstallWizard.TargetPage.location.exists", file.getPath()); //$NON-NLS-1$
-					MessageDialog.openError(shell, title, message);
-					return null;
-				}
-				csite = config.createConfiguredSite(file);
-				IStatus status = csite.verifyUpdatableStatus();
-				if (status.isOK())
-					config.addConfiguredSite(csite);
-				else {
-					String title = UpdateUI.getString("InstallWizard.TargetPage.location.error.title"); //$NON-NLS-1$
-					String message =
-						UpdateUI.getFormattedMessage(
-							"InstallWizard.TargetPage.location.error.message", //$NON-NLS-1$
-							file.getPath());
-					String message2 =
-						UpdateUI.getFormattedMessage(
-							"InstallWizard.TargetPage.location.error.reason", //$NON-NLS-1$
-							status.getMessage());
-					message += System.getProperty("line.separator") + message2; //$NON-NLS-1$
-					ErrorDialog.openError(shell, title, message, status);
-					return null;
-				}
-			}
+			else 
+				throw new CoreException(status);
+			
 			return csite;
 		} catch (CoreException e) {
+			String title = UpdateUI.getString("InstallWizard.TargetPage.location.error.title"); //$NON-NLS-1$
+			ErrorDialog.openError(shell, title, null, e.getStatus());
 			UpdateUI.logException(e);
 			return null;
 		}
@@ -451,22 +426,6 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 			}
 		}
 		verifyNotEmpty(empty);
-	}
-	
-	private static boolean ensureUnique(File file, IInstallConfiguration config) {
-		IConfiguredSite[] sites = config.getConfiguredSites();
-		URL fileURL;
-		try {
-			fileURL = new URL("file:" + file.getPath()); //$NON-NLS-1$
-		} catch (MalformedURLException e) {
-			return true;
-		}
-		for (int i = 0; i < sites.length; i++) {
-			URL url = sites[i].getSite().getURL();
-			if (UpdateManagerUtils.sameURL(fileURL, url))
-				return false;
-		}
-		return true;
 	}
 	
 	public IConfiguredSite getTargetSite(IInstallFeatureOperation job) {
