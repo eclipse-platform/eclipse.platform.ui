@@ -602,7 +602,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 			int offset;
  			
 			if (isTopLevelRootExternal) {
-				String source= "&" + element.getName() + ";";  //$NON-NLS-1$
+				String source= "&" + element.getName() + ";";  //$NON-NLS-1$ //$NON-NLS-2$
 				offset= document.search(lastExternalEntityOffset + 1, source, true, true, false);
 				lastExternalEntityOffset= offset;
 			} else {

@@ -140,7 +140,7 @@ public class AntModel {
 		SAXParser tempParser;
 		try {
 			tempParser = new SAXParser();
-			tempParser.setFeature("http://xml.org/sax/features/namespaces", false);
+			tempParser.setFeature("http://xml.org/sax/features/namespaces", false); //$NON-NLS-1$
 		} catch (SAXException e) {
 			ExternalToolsPlugin.getDefault().log(e);
 			return null;
