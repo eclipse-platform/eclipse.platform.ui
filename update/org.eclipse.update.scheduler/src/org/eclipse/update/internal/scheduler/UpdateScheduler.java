@@ -20,11 +20,13 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * searches for new plug-ins.
  */
 public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
+	// Preferences
+	public static final String P_MASTER = "enabled";
 	//The shared instance.
 	private static UpdateScheduler plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
-
+	
 	/**
 	 * The constructor.
 	 */
@@ -141,6 +143,12 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 	
 	public void startup() throws CoreException {
 		super.startup();
+		initializeDefaultPreferences();
+	}
+	
+	private void initializeDefaultPreferences() {
+		Preferences pref = getPluginPreferences();
+		pref.setDefault(P_MASTER, false);
 	}
 	
 	public void shutdown() throws CoreException {
