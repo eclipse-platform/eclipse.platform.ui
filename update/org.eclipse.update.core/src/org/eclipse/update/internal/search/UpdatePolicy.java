@@ -12,12 +12,15 @@ package org.eclipse.update.internal.search;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
+import java.util.ArrayList;
 
+import org.apache.xerces.parsers.DOMParser;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.search.IUpdateSiteAdapter;
+import org.w3c.dom.*;
+import org.xml.sax.*;
 
 /**
  * 
@@ -27,10 +30,14 @@ import org.eclipse.update.search.IUpdateSiteAdapter;
  * when the redirection pattern matches.
  */
 
-public class UpdateMap {
+public class UpdatePolicy {
 	private static final String KEY_MAP = "url-map";
 	private static final String KEY_FALLBACK = "try-embedded";
 	private boolean fallbackAllowed = true;
+	private static final String TAG_POLICY = "update-policy";
+	private static final String TAG_URL_MAP = "url-map";
+	private static final String ATT_URL = "url";
+	private static final String ATT_PATTERN = "pattern";
 
 	private static class MapSite implements IUpdateSiteAdapter {
 		private URL url;
@@ -68,23 +75,24 @@ public class UpdateMap {
 	private IUpdateSiteAdapter defaultSite;
 	private boolean loaded = false;
 
-	public UpdateMap() {
+	public UpdatePolicy() {
 		entries = new ArrayList();
 	}
 
 	public void load(URL mapFile, IProgressMonitor monitor)
 		throws CoreException {
-		InputStream mapStream = null;
+		InputStream policyStream = null;
 		try {
 			Response response = UpdateCore.getPlugin().get(mapFile);
 			UpdateManagerUtils.checkConnectionResult(response, mapFile);
-			mapStream = response.getInputStream(monitor);
+			policyStream = response.getInputStream(monitor);
 			// the stream can be null if the user cancels the connection
-			if (mapStream == null)
+			if (policyStream == null)
 				return;
-			Properties mappings = new Properties();
-			mappings.load(mapStream);
-			processMappings(mappings);
+			DOMParser parser = new DOMParser();
+			parser.parse(new InputSource(policyStream));
+			Document doc = parser.getDocument();
+			processUpdatePolicy(doc);
 			loaded = true;
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
@@ -93,10 +101,16 @@ public class UpdateMap {
 					mapFile == null ? "" : mapFile.toExternalForm()),
 				ISite.SITE_ACCESS_EXCEPTION,
 				e);
+		} catch (SAXException e) {
+			throw Utilities.newCoreException(
+				"Errors while parsing update policy",
+				0,
+				e);
+
 		} finally {
-			if (mapStream != null) {
+			if (policyStream != null) {
 				try {
-					mapStream.close();
+					policyStream.close();
 				} catch (IOException e) {
 				}
 			}
@@ -106,35 +120,7 @@ public class UpdateMap {
 	public boolean isLoaded() {
 		return loaded;
 	}
-
-	private void processMappings(Properties mappings) {
-		if (entries.isEmpty() == false)
-			entries.clear();
-		for (Enumeration enum = mappings.keys(); enum.hasMoreElements();) {
-			String key = (String) enum.nextElement();
-			if (key.startsWith(KEY_MAP)) {
-				String pattern = key.substring(7);
-				String value = (String) mappings.get(key);
-				if (value != null && value.length() > 0) {
-					String decodedValue = URLDecoder.decode(value);
-					try {
-						URL url = new URL(decodedValue);
-						addEntry(pattern, url);
-					} catch (MalformedURLException e) {
-					}
-				}
-			}
-		}
-		String fallback = mappings.getProperty(KEY_FALLBACK, "true");
-		fallbackAllowed = fallback.equalsIgnoreCase("true");
-	}
-
-	private void addEntry(String pattern, URL url) {
-		if (pattern.equalsIgnoreCase("*"))
-			defaultSite = new MapSite(url);
-		else
-			entries.add(new UpdateMapEntry(pattern, url));
-	}
+	
 	/*
 	 * Given the feature ID, returns the mapped update URL if
 	 * found in the mappings. This URL will be used INSTEAD of
@@ -170,5 +156,68 @@ public class UpdateMap {
 
 	public boolean isFallbackAllowed() {
 		return fallbackAllowed;
+	}
+	
+	private void reset() {
+		if (entries.isEmpty() == false)
+			entries.clear();
+	}
+
+	private void processUpdatePolicy(Document document) throws CoreException {
+		Node root = document.getDocumentElement();
+		reset();
+		
+		if (root.getNodeName().equals(TAG_POLICY)==false)
+			throwCoreException("'"+TAG_POLICY+"' is expected.", null);
+				
+		NodeList nodes = root.getChildNodes();
+		
+		for (int i=0; i<nodes.getLength(); i++) {
+			Node child = nodes.item(i);
+			if (child.getNodeType() != Node.ELEMENT_NODE)
+				continue;
+			String tag = child.getNodeName();
+			if (tag.equals(TAG_URL_MAP))
+				processMapNode(child);
+		}
+	}
+	private void processMapNode(Node node) throws CoreException {
+		String pattern = getAttribute(node, ATT_PATTERN);
+		String urlName = getAttribute(node, ATT_URL);
+		
+		assertNotNull(ATT_PATTERN, pattern);
+		assertNotNull(ATT_URL, urlName);
+		
+		String decodedValue = URLDecoder.decode(urlName);
+		try {
+			URL url = new URL(decodedValue);
+			addEntry(pattern, url);
+		} catch (MalformedURLException e) {
+			throwCoreException("invalid URL - "+urlName, null);
+		}
+	}
+	
+	private void assertNotNull(String name, String value) throws CoreException {
+		if (value==null)
+			throwCoreException(name+" cannot be null.", null);
+	}
+	
+	private String getAttribute(Node node, String name) {
+		NamedNodeMap attMap = node.getAttributes();
+		Node att = attMap.getNamedItem(name);
+		if (att==null) return null;
+		return att.getNodeValue();
+	}
+
+	private void addEntry(String pattern, URL url) {
+		if (pattern.equalsIgnoreCase("*"))
+			defaultSite = new MapSite(url);
+		else
+			entries.add(new UpdateMapEntry(pattern, url));
+	}
+	
+	private void throwCoreException(String message, Throwable e) throws CoreException {
+		String fullMessage = "Update Policy: "+message;
+		throw Utilities.newCoreException(fullMessage, 0, e);
 	}
 }

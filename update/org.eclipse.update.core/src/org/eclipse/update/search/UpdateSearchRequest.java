@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.update.search;
 
-import java.net.*;
-import java.util.*;
+import java.net.URL;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.search.*;
+import org.eclipse.update.internal.search.UpdatePolicy;
 
 /**
  * This class is central to update search. The search pattern
@@ -159,10 +159,10 @@ public class UpdateSearchRequest {
 			monitor.beginTask("Searching...", ntasks);
 
 			try {
-				UpdateMap updateMap=null;
+				UpdatePolicy updatePolicy=null;
 				if (updateMapURL!=null) {
-					updateMap = new UpdateMap();
-					IStatus status =loadUpdateMap(updateMap, updateMapURL, new SubProgressMonitor(monitor, 1));
+					updatePolicy = new UpdatePolicy();
+					IStatus status =loadUpdatePolicy(updatePolicy, updateMapURL, new SubProgressMonitor(monitor, 1));
 					if (status != null)
 						statusList.add(status);
 				}
@@ -171,7 +171,7 @@ public class UpdateSearchRequest {
 					IQueryUpdateSiteAdapter qsite = query.getQuerySearchSite();
 					if (qsite != null) {
 						// check for mapping
-						IUpdateSiteAdapter mappedSite = getMappedSite(updateMap, qsite);
+						IUpdateSiteAdapter mappedSite = getMappedSite(updatePolicy, qsite);
 						SubProgressMonitor subMonitor =
 							new SubProgressMonitor(monitor, 1);
 						IStatus status =
@@ -232,8 +232,8 @@ public class UpdateSearchRequest {
 /*
  * Load the update map using the map URL found in the scope.
  */	
-	private IStatus loadUpdateMap(UpdateMap map, URL url, IProgressMonitor monitor) throws CoreException {
-		monitor.subTask("Loading update map from "+url.toString());
+	private IStatus loadUpdatePolicy(UpdatePolicy map, URL url, IProgressMonitor monitor) throws CoreException {
+		monitor.subTask("Loading update policy from "+url.toString());
 		try {
 			map.load(url, monitor);
 			monitor.worked(1);
@@ -252,13 +252,14 @@ public class UpdateSearchRequest {
  * See if this query site adapter is mapped in the map file
  * to a different URL.
  */
-	private IUpdateSiteAdapter getMappedSite(UpdateMap map, IQueryUpdateSiteAdapter qsite) {
-		if (map!=null && map.isLoaded()) {
-			IUpdateSiteAdapter mappedSite = map.getMappedSite(qsite.getMappingId());
+	private IUpdateSiteAdapter getMappedSite(UpdatePolicy policy, IQueryUpdateSiteAdapter qsite) {
+		if (policy!=null && policy.isLoaded()) {
+			IUpdateSiteAdapter mappedSite = policy.getMappedSite(qsite.getMappingId());
 			if (mappedSite!=null) return mappedSite;
+			// no match - use original site if fallback allowed, or nothing.
+			return policy.isFallbackAllowed()? qsite : null;
 		}
-		// no match - use original site if fallback allowed, or nothing.
-		return map.isFallbackAllowed()? qsite : null;
+		return qsite;
 	}
 
 /*

@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.preferences;
 
+import java.net.*;
+import java.net.MalformedURLException;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
@@ -23,6 +26,8 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.help.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
+import org.eclipse.update.internal.model.SiteLocalModel;
+import org.eclipse.update.internal.operations.UpdateUtils;
 import org.eclipse.update.internal.ui.*;
 
 /**
@@ -115,10 +120,33 @@ public class MainPreferencePage
 		compatibleButton = new Button(group, SWT.RADIO);
 		compatibleButton.setText(
 			UpdateUI.getString("MainPreferencePage.updateVersions.compatible")); //$NON-NLS-1$
+			
+		createSpacer(mainComposite, 2);
+		
+		group = new Group(mainComposite, SWT.NONE);
+		group.setText(UpdateUI.getString("MainPreferencePage.updatePolicy")); //$NON-NLS-1$
+		layout = new GridLayout();
+		layout.numColumns = 2;
+		group.setLayout(layout);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		group.setLayoutData(gd);
+			
+		Label label = new Label(group, SWT.NULL);
+		label.setText(UpdateUI.getString("MainPreferencePage.updatePolicyURL")); //$NON-NLS-1$
+		updatePolicyText = new Text(group, SWT.SINGLE | SWT.BORDER);
+
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		updatePolicyText.setLayoutData(gd);
 
 		createSpacer(mainComposite, 2);
 		createHttpProxy(mainComposite, 2);
-		performDefaults();
+		initialize();
+		updatePolicyText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				textChanged();
+			}
+		});
 		return mainComposite;
 	}
 
@@ -206,6 +234,8 @@ public class MainPreferencePage
 		prefs.setValue(
 			UpdateCore.P_UPDATE_VERSIONS,
 			equivalentButton.getSelection() ? EQUIVALENT_VALUE : COMPATIBLE_VALUE);
+		prefs.setValue(UpdateUtils.P_UPDATE_POLICY_URL,
+			updatePolicyText.getText());
 
 		UpdateCore.getPlugin().savePluginPreferences();
 		return super.performOk();
@@ -232,13 +262,13 @@ public class MainPreferencePage
 			equivalentButton.getSelection()
 				? EQUIVALENT_VALUE
 				: COMPATIBLE_VALUE);
+		prefs.setValue(UpdateUtils.P_UPDATE_POLICY_URL,
+			updatePolicyText.getText());
 				
 		UpdateCore.getPlugin().savePluginPreferences();
 	}
-	
-	public void performDefaults() {
-		super.performDefaults();
 
+	private void initialize() {
 		enableHttpProxy.setSelection(SiteManager.isHttpProxyEnable());
 		String serverValue = SiteManager.getHttpProxyServer();
 		if (serverValue != null)
@@ -255,12 +285,52 @@ public class MainPreferencePage
 		Preferences prefs = UpdateCore.getPlugin().getPluginPreferences();
 		checkSignatureCheckbox.setSelection(
 			prefs.getBoolean(UpdateCore.P_CHECK_SIGNATURE));
+
 		historySizeText.setText(prefs.getString(UpdateCore.P_HISTORY_SIZE));
+
 		boolean isCompatible =
 			UpdateCore.COMPATIBLE_VALUE.equals(
 				prefs.getString(UpdateCore.P_UPDATE_VERSIONS));
 		equivalentButton.setSelection(!isCompatible);
 		compatibleButton.setSelection(isCompatible);
+
+		String text = prefs.getString(UpdateUtils.P_UPDATE_POLICY_URL);
+		updatePolicyText.setText(text);
+	}
+
+	private void textChanged() {
+		String text = updatePolicyText.getText();
+		if (text.length() > 0) {
+			try {
+				new URL(text);
+			} catch (MalformedURLException e) {
+				setValid(false);
+				setErrorMessage(UpdateUI.getString("UpdateSettingsPreferencePage.invalid")); //$NON-NLS-1$
+				return;
+			}
+		}
+		setValid(true);
+		setErrorMessage(null);
+	}
+	
+	public void performDefaults() {
+		super.performDefaults();
+
+		enableHttpProxy.setSelection(false);
+		httpProxyHostText.setText("");
+		httpProxyPortText.setText("");
+		httpProxyPortLabel.setEnabled(false);
+		httpProxyHostLabel.setEnabled(false);
+		httpProxyPortText.setEnabled(false);
+		httpProxyHostText.setEnabled(false);
+		
+		updatePolicyText.setText("");
+
+		checkSignatureCheckbox.setSelection(true);
+		int defaultHistory = SiteLocalModel.DEFAULT_HISTORY;
+		historySizeText.setText(Integer.toString(defaultHistory));
+		equivalentButton.setSelection(true);
+		compatibleButton.setSelection(false);
 	}
 
 	private void warnSignatureCheck(Shell shell) {

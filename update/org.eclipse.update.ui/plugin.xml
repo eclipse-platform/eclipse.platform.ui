@@ -123,12 +123,6 @@
             class="org.eclipse.update.internal.ui.preferences.MainPreferencePage"
             id="org.eclipse.update.internal.ui.preferences.MainPreferencePage">
       </page>
-      <page
-            name="%updateSettingsPreference.name"
-            category="org.eclipse.update.internal.ui.preferences.MainPreferencePage"
-            class="org.eclipse.update.internal.ui.preferences.UpdateSettingsPreferencePage"
-            id="org.eclipse.update.internal.ui.preferences.UpdateSettingsPreferencePage">
-      </page>
    </extension>
    <extension
          point="org.eclipse.update.core.deltaHandler">

@@ -37,7 +37,7 @@ public class UpdateUtils {
 	private static IOperationValidator validator;
 	
 	private static final String PREFIX = UpdateCore.getPlugin().getDescriptor().getUniqueIdentifier();
-	public static final String P_MAPPINGS_FILE = PREFIX + ".mappingsFile";
+	public static final String P_UPDATE_POLICY_URL = PREFIX + ".updatePolicyURL";
 
 	static {
 		bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE);
@@ -539,7 +539,7 @@ public class UpdateUtils {
 	
 	public static URL getUpdateMapURL() {
 		Preferences pref = UpdateCore.getPlugin().getPluginPreferences();
-		String mapFile = pref.getString(UpdateUtils.P_MAPPINGS_FILE);
+		String mapFile = pref.getString(UpdateUtils.P_UPDATE_POLICY_URL);
 		if (mapFile!=null && mapFile.length()>0) {
 			try {
 				String decodedFile = URLDecoder.decode(mapFile);

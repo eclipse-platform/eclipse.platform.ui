@@ -70,7 +70,7 @@ public class UpdateSettingsPreferencePage
 
 	private void initialize() {
 		Preferences pref = UpdateCore.getPlugin().getPluginPreferences();
-		String text = pref.getString(UpdateUtils.P_MAPPINGS_FILE);
+		String text = pref.getString(UpdateUtils.P_UPDATE_POLICY_URL);
 		mappingsFile.setText(text);
 		textChanged();
 	}
@@ -94,9 +94,9 @@ public class UpdateSettingsPreferencePage
 		Preferences pref = UpdateCore.getPlugin().getPluginPreferences();
 		String text = mappingsFile.getText();
 		if (text.length() > 0)
-			pref.setValue(UpdateUtils.P_MAPPINGS_FILE, text);
+			pref.setValue(UpdateUtils.P_UPDATE_POLICY_URL, text);
 		else
-			pref.setToDefault(UpdateUtils.P_MAPPINGS_FILE);
+			pref.setToDefault(UpdateUtils.P_UPDATE_POLICY_URL);
 		UpdateCore.getPlugin().savePluginPreferences();
 		return true;
 	}
