@@ -18,9 +18,7 @@ import java.util.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -602,8 +600,11 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		PreferenceConverter.setDefault(store, ICVSUIConstants.PREF_CONSOLE_COMMAND_COLOR, new RGB(0, 0, 0));
 		PreferenceConverter.setDefault(store, ICVSUIConstants.PREF_CONSOLE_MESSAGE_COLOR, new RGB(0, 0, 255));
 		PreferenceConverter.setDefault(store, ICVSUIConstants.PREF_CONSOLE_ERROR_COLOR, new RGB(255, 0, 0));
-		store.setDefault(ICVSUIConstants.PREF_CONSOLE_SHOW_ON_ERROR, false);
 		store.setDefault(ICVSUIConstants.PREF_CONSOLE_SHOW_ON_MESSAGE, false);
+		store.setDefault(ICVSUIConstants.PREF_CONSOLE_LIMIT_OUTPUT, true);	
+		store.setDefault(ICVSUIConstants.PREF_CONSOLE_HIGH_WATER_MARK, 500000);	
+		store.setDefault(ICVSUIConstants.PREF_CONSOLE_WRAP, false);	
+		store.setDefault(ICVSUIConstants.PREF_CONSOLE_WIDTH, 80);
 			
 		store.setDefault(ICVSUIConstants.PREF_FILETEXT_DECORATION, CVSDecoratorConfiguration.DEFAULT_FILETEXTFORMAT);
 		store.setDefault(ICVSUIConstants.PREF_FOLDERTEXT_DECORATION, CVSDecoratorConfiguration.DEFAULT_FOLDERTEXTFORMAT);
@@ -711,6 +712,13 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		} finally {
 			super.stop(context);
 		}
+	}
+	
+	/**
+	 * @return the CVS console
+	 */
+	public CVSOutputConsole getConsole() {
+		return console;
 	}
 	
 	/**

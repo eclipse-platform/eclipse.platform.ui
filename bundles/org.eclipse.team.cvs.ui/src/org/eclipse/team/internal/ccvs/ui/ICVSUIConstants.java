@@ -45,10 +45,12 @@ public interface ICVSUIConstants {
 	public final String IMG_CLEAR = "elcl16/clear_co.gif"; //$NON-NLS-1$
 	public final String IMG_COLLAPSE_ALL = "elcl16/collapseall.gif"; //$NON-NLS-1$
 	public final String IMG_LINK_WITH_EDITOR = "elcl16/synced.gif"; //$NON-NLS-1$
+	public final String IMG_REMOVE_CONSOLE = "elcl16/console_rem.gif"; //$NON-NLS-1$
 	
 	// toolbar (disabled)
 	public final String IMG_REFRESH_DISABLED = "dlcl16/refresh.gif"; //$NON-NLS-1$
 	public final String IMG_CLEAR_DISABLED = "dlcl16/clear_co.gif"; //$NON-NLS-1$
+	public final String IMG_REMOVE_CONSOLE_DISABLED = "dlcl16/console_rem.gif"; //$NON-NLS-1$
 		
 	// toolbar (enabled)
 	public final String IMG_REFRESH_ENABLED = "elcl16/refresh.gif"; //$NON-NLS-1$
@@ -95,9 +97,11 @@ public interface ICVSUIConstants {
 	public final String PREF_CONSOLE_MESSAGE_COLOR = "pref_console_message_color"; //$NON-NLS-1$
 	public final String PREF_CONSOLE_ERROR_COLOR = "pref_console_error_color"; //$NON-NLS-1$
 	public final String PREF_CONSOLE_FONT = "pref_console_font"; //$NON-NLS-1$
-	public final String PREF_CONSOLE_SHOW_ON_MESSAGE = "pref_console_show_on_error"; //$NON-NLS-1$
-	public final String PREF_CONSOLE_SHOW_ON_ERROR = "pref_console_show_on_message"; //$NON-NLS-1$
-	
+	public final String PREF_CONSOLE_SHOW_ON_MESSAGE = "pref_console_show_on_message"; //$NON-NLS-1$	
+	public final String PREF_CONSOLE_LIMIT_OUTPUT = "pref_console_limit_output"; //$NON-NLS-1$
+	public final String PREF_CONSOLE_HIGH_WATER_MARK = "pref_console_high_water_mark"; //$NON-NLS-1$
+	public final String PREF_CONSOLE_WRAP = "pref_console_wrap"; //$NON-NLS-1$
+	public final String PREF_CONSOLE_WIDTH = "pref_console_width"; //$NON-NLS-1$
 		
 	// decorator preferences
 	public final String PREF_FILETEXT_DECORATION = "pref_filetext_decoration"; //$NON-NLS-1$

@@ -40,6 +40,25 @@
             id="org.eclipse.team.ccvs.ui.SynchronizeWizard">
       </wizard>
    </extension>
+<!-- *************** Console Factory **************** -->
+   <extension
+         point="org.eclipse.ui.console.consoleFactories">
+      <consoleFactory
+            label="CVS"
+            icon="icons/full/eview16/console_view.gif"
+            class="org.eclipse.team.internal.ccvs.ui.console.CVSConsoleFactory"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.console.consolePageParticipants">
+      <consolePageParticipant
+            class="org.eclipse.team.internal.ccvs.ui.console.CVSConsolePageParticipant"
+            id="org.eclipse.team.internal.ccvs.ui.console.CVSConsolePageParticipant">
+         <enablement>
+            <instanceof value="org.eclipse.team.internal.ccvs.ui.console.CVSOutputConsole"/>
+         </enablement>
+      </consolePageParticipant>
+   </extension>
+   
 <!-- *************** Synchronize View Participant **************** -->
    <extension
          point="org.eclipse.team.ui.synchronizeParticipants">
@@ -1038,5 +1057,6 @@
           </description>
       </wizard>
    </extension>
+   
    
 </plugin>

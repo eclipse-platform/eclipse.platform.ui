@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui.console;
 
 import org.eclipse.jface.preference.*;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -30,11 +31,41 @@ public class ConsolePreferencesPage extends FieldEditorPreferencePage implements
 	private ColorFieldEditor messageColorEditor;
 	private ColorFieldEditor errorColorEditor;
 	private BooleanFieldEditor showOnMessage;
+	private BooleanFieldEditor restrictOutput;
+	private BooleanFieldEditor wrap;
+	private IntegerFieldEditor highWaterMark;
+	private IntegerFieldEditor width;
 
 	protected void createFieldEditors() {
-		Composite composite = getFieldEditorParent();
+		final Composite composite = getFieldEditorParent();
+		createLabel(composite, Policy.bind("ConsolePreferencesPage.9")); //$NON-NLS-1$
+		IPreferenceStore store = getPreferenceStore();
+		
+		// ** WRAP
+		wrap = new BooleanFieldEditor(ICVSUIConstants.PREF_CONSOLE_WRAP, Policy.bind("ConsolePreferencesPage.6"), composite); //$NON-NLS-1$
+		addField(wrap);
+		
+		width = new IntegerFieldEditor(ICVSUIConstants.PREF_CONSOLE_WIDTH, Policy.bind("ConsolePreferencesPage.7"), composite); //$NON-NLS-1$)
+		width.setValidRange(80, Integer.MAX_VALUE - 1);
+		addField(width);
+		width.setEnabled(store.getBoolean(ICVSUIConstants.PREF_CONSOLE_WRAP), composite);
+		
+		// ** RESTRICT OUTPUT
+		restrictOutput = new BooleanFieldEditor(ICVSUIConstants.PREF_CONSOLE_LIMIT_OUTPUT, Policy.bind("ConsolePreferencesPage.5"), composite); //$NON-NLS-1$
+		addField(restrictOutput);
+		
+		highWaterMark = new IntegerFieldEditor(ICVSUIConstants.PREF_CONSOLE_HIGH_WATER_MARK, Policy.bind("ConsolePreferencesPage.8"), composite); //$NON-NLS-1$)
+		highWaterMark.setValidRange(1000, Integer.MAX_VALUE - 1);
+		addField(highWaterMark);
+		highWaterMark.setEnabled(store.getBoolean(ICVSUIConstants.PREF_CONSOLE_LIMIT_OUTPUT), composite);
+		
+		// ** SHOW AUTOMATICALLY
+		showOnMessage = new BooleanFieldEditor(ICVSUIConstants.PREF_CONSOLE_SHOW_ON_MESSAGE, Policy.bind("ConsolePreferencesPage.4"), composite); //$NON-NLS-1$
+		addField(showOnMessage);
+		
 		createLabel(composite, Policy.bind("ConsolePreferencePage.consoleColorSettings")); //$NON-NLS-1$
-				
+		
+		//	** COLORS AND FONTS
 		commandColorEditor = createColorFieldEditor(ICVSUIConstants.PREF_CONSOLE_COMMAND_COLOR,
 			Policy.bind("ConsolePreferencePage.commandColor"), composite); //$NON-NLS-1$
 		addField(commandColorEditor);
@@ -47,10 +78,14 @@ public class ConsolePreferencesPage extends FieldEditorPreferencePage implements
 			Policy.bind("ConsolePreferencePage.errorColor"), composite); //$NON-NLS-1$
 		addField(errorColorEditor);
 		
-		showOnMessage = new BooleanFieldEditor(ICVSUIConstants.PREF_CONSOLE_SHOW_ON_MESSAGE, Policy.bind("ConsolePreferencesPage.4"), composite); //$NON-NLS-1$
-		addField(showOnMessage);
-		
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.CONSOLE_PREFERENCE_PAGE);
+	}
+	
+	
+	public void propertyChange(PropertyChangeEvent event) {
+		super.propertyChange(event);
+		highWaterMark.setEnabled(restrictOutput.getBooleanValue(), getFieldEditorParent());
+		width.setEnabled(wrap.getBooleanValue(), getFieldEditorParent());
 	}
 
 	/**

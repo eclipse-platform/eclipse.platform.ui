@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.JFaceResources;
@@ -37,6 +38,7 @@ import org.eclipse.ui.console.*;
  * @since 3.0 
  */
 public class CVSOutputConsole extends MessageConsole implements IConsoleListener, IPropertyChangeListener {
+	
 	// created colors for each line type - must be disposed at shutdown
 	private Color commandColor;
 	private Color messageColor;
@@ -54,6 +56,7 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 	private boolean showOnMessage;
 	
 	private ConsoleDocument document;
+	private IConsoleManager consoleManager;
 	
 	// format for timings printed to console
 	private static final DateFormat TIME_FORMAT = new SimpleDateFormat(Policy.bind("Console.resultTimeFormat")); //$NON-NLS-1$
@@ -67,7 +70,7 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 	 * Used to notify this console of lifecycle methods <code>init()</code>
 	 * and <code>dispose()</code>.
 	 */
-	class MyLifecycle implements org.eclipse.ui.console.IConsoleListener {
+	public class MyLifecycle implements org.eclipse.ui.console.IConsoleListener {
 		public void consolesAdded(IConsole[] consoles) {
 			for (int i = 0; i < consoles.length; i++) {
 				IConsole console = consoles[i];
@@ -94,13 +97,11 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 	 */
 	public CVSOutputConsole() {
 		super("CVS", CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_CVS_CONSOLE)); //$NON-NLS-1$
-		// setup console showing preferences
 		showOnMessage = CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_CONSOLE_SHOW_ON_MESSAGE);
-		// showOnError = CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_CONSOLE_SHOW_ON_ERROR);	
 		document = new ConsoleDocument();
+		consoleManager = ConsolePlugin.getDefault().getConsoleManager();
 		CVSProviderPlugin.getPlugin().setConsoleListener(CVSOutputConsole.this);
 		CVSUIPlugin.getPlugin().getPreferenceStore().addPropertyChangeListener(CVSOutputConsole.this);
-		showConsole(false);
 	}
 	
 	/* (non-Javadoc)
@@ -109,6 +110,10 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 	protected void init() {
 		// Called when console is added to the console view
 		super.init();	
+		
+		initLimitOutput();
+		initWrapSetting();
+		
 		//	Ensure that initialization occurs in the ui thread
 		CVSUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 			public void run() {
@@ -117,6 +122,24 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 				dump();
 			}
 		});
+	}
+	
+	private void initWrapSetting() {
+		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
+		if(store.getBoolean(ICVSUIConstants.PREF_CONSOLE_WRAP)) {
+			setConsoleWidth(store.getInt(ICVSUIConstants.PREF_CONSOLE_WIDTH));
+		} else {
+			setConsoleWidth(-1);
+		}
+	}
+	
+	private void initLimitOutput() {
+		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
+		if(store.getBoolean(ICVSUIConstants.PREF_CONSOLE_LIMIT_OUTPUT)) {
+			setWaterMarks(1000, store.getInt(ICVSUIConstants.PREF_CONSOLE_HIGH_WATER_MARK));
+		} else {
+			setWaterMarks(-1, -1);
+		}
 	}
 	
 	/*
@@ -157,6 +180,7 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 	}
 	
 	private void appendLine(int type, String line) {
+		showConsole();
 		synchronized(document) {
 			if(visible) {
 				switch(type) {
@@ -176,16 +200,13 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 		}
 	}
 	
-	private void showConsole(boolean show) {
+	private void showConsole() {
 		if(showOnMessage) {
-			IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
-			if(! visible) {
-				manager.addConsoles(new IConsole[] {this});
-			}
-			if (show) {
-				manager.showConsoleView(this);
-			}
-		} 
+			if(!visible)
+				CVSConsoleFactory.showConsole();
+			else
+				consoleManager.showConsoleView(this);
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -290,7 +311,7 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		String property = event.getProperty();		
+		String property = event.getProperty();
 		// colors
 		if (visible) {
 			if (property.equals(ICVSUIConstants.PREF_CONSOLE_COMMAND_COLOR)) {
@@ -310,32 +331,29 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 				errorColor = newColor;
 				// font
 			} else if (property.equals(ICVSUIConstants.PREF_CONSOLE_FONT)) {
-				setFont(((FontRegistry)event.getSource()).get(ICVSUIConstants.PREF_CONSOLE_FONT));
+				setFont(((FontRegistry) event.getSource()).get(ICVSUIConstants.PREF_CONSOLE_FONT));
 			}
 		}
-		// show preferences
-		if(property.equals(ICVSUIConstants.PREF_CONSOLE_SHOW_ON_MESSAGE)) {
+		if (property.equals(ICVSUIConstants.PREF_CONSOLE_SHOW_ON_MESSAGE)) {
 			Object value = event.getNewValue();
-			if(value instanceof String) {
-				showOnMessage = Boolean.getBoolean((String)event.getNewValue());
+			if (value instanceof String) {
+				showOnMessage = Boolean.valueOf((String) value).booleanValue();
 			} else {
-				showOnMessage = ((Boolean)value).booleanValue();
+				showOnMessage = ((Boolean) value).booleanValue();
 			}
-			if(showOnMessage) {
-				showConsole(true);
-			} else {
-				IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
-				manager.removeConsoles(new IConsole[] {this});
-				ConsolePlugin.getDefault().getConsoleManager().addConsoleListener(new MyLifecycle());
-			}
+		} else if(property.equals(ICVSUIConstants.PREF_CONSOLE_LIMIT_OUTPUT)) {
+			initLimitOutput();
+		} else if(property.equals(ICVSUIConstants.PREF_CONSOLE_WRAP)) {
+			initWrapSetting();
 		}
 	}
 	
 	/**
 	 * Returns the NLSd message based on the status returned from the CVS
 	 * command.
-	 * @param status an NLSd message based on the status returned from the
-	 * CVS command.
+	 * 
+	 * @param status an NLSd message based on the status returned from the CVS
+	 * command.
 	 */
 	private String messageLineForStatus(IStatus status) {
 		if (status.getSeverity() == IStatus.ERROR) {
