@@ -617,17 +617,17 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	    PassphrasePrompt prompt=null;
 	    while(_kpair.isEncrypted()){
 	      if(prompt==null){
-		prompt=new PassphrasePrompt(Policy.bind("CVSSSH2PreferencePage.126")+pkey);   //$NON-NLS-1$
+		prompt=new PassphrasePrompt(Policy.bind("CVSSSH2PreferencePage.126", pkey));   //$NON-NLS-1$
 	      }
 	      Display.getDefault().syncExec(prompt);
 	      String passphrase=prompt.getPassphrase();
 	      if(passphrase==null) break;
 	      if(_kpair.decrypt(passphrase)){
-		break;
+	      	break;
 	      }
 	      MessageDialog.openError(getShell(),
 				      Policy.bind("CVSSSH2PreferencePage.error"),  //$NON-NLS-1$
-				      Policy.bind("CVSSSH2PreferencePage.129")+pkey);  //$NON-NLS-1$
+				      Policy.bind("CVSSSH2PreferencePage.129", pkey));  //$NON-NLS-1$
 	    }
 	    if(_kpair.isEncrypted()){
 	      return;
@@ -699,7 +699,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	  if(user.length()==0 || 
 	     host.length()==0 ||
 	     port==-1){
-	    setErrorMessage(target[0]+Policy.bind("CVSSSH2PreferencePage.108")); //$NON-NLS-1$
+	    setErrorMessage(Policy.bind("CVSSSH2PreferencePage.108", target[0])); //$NON-NLS-1$
 	    return;
 	  }
 
@@ -753,7 +753,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	  if(!_home.exists()){
 	    if(!MessageDialog.openConfirm(getShell(),
 					  Policy.bind("CVSSSH2PreferencePage.confirmation"), //$NON-NLS-1$
-					  home+Policy.bind("CVSSSH2PreferencePage.50") //$NON-NLS-1$
+					  Policy.bind("CVSSSH2PreferencePage.50",home) //$NON-NLS-1$
 					  )){
 	      return ;
 	    }
@@ -775,7 +775,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	  if(new File(file).exists()){
 	    if(!MessageDialog.openConfirm(getShell(),
 					  Policy.bind("CVSSSH2PreferencePage.confirmation"), //$NON-NLS-1$ 
-					  file+Policy.bind("CVSSSH2PreferencePage.53") //$NON-NLS-1$
+					  Policy.bind("CVSSSH2PreferencePage.53", file) //$NON-NLS-1$
 					  )){
 	      return;
 	    }
@@ -978,7 +978,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
       if(!_home.exists()){
 	if(MessageDialog.openQuestion(getShell(),
 				      Policy.bind("CVSSSH2PreferencePage.question"), //$NON-NLS-1$
-				      home+Policy.bind("CVSSSH2PreferencePage.99") //$NON-NLS-1$
+				      Policy.bind("CVSSSH2PreferencePage.99", home) //$NON-NLS-1$
 				      )){
 	  if(!(_home.mkdirs())){
 	    setErrorMessage(Policy.bind("CVSSSH2PreferencePage.100")+home); //$NON-NLS-1$
@@ -1036,7 +1036,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     if(!_home.exists()){
       if(MessageDialog.openQuestion(getShell(),
 				    Policy.bind("CVSSSH2PreferencePage.question"), //$NON-NLS-1$
-				    home+Policy.bind("CVSSSH2PreferencePage.101") //$NON-NLS-1$
+				    Policy.bind("CVSSSH2PreferencePage.101", home) //$NON-NLS-1$
 				      )){
 	if(!(_home.mkdirs())){
 	  setErrorMessage(Policy.bind("CVSSSH2PreferencePage.102")+home); //$NON-NLS-1$
