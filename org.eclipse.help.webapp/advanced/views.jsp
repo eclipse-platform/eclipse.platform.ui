@@ -106,10 +106,10 @@ function showAll(){
 		window.frames.search.searchToolbarFrame.setButtonState("show_all", true);
 	}catch(ex) {}
 	try{
-		window.frames.toc.tocViewFrame.location.replace(window.frames.toc.frames[1].location.href.replace(re, "")+"&showAll=on");
+		window.frames.toc.tocViewFrame.location.replace(window.frames.toc.tocViewFrame.location.href.replace(re, "")+"&showAll=on");
 	}catch(ex) {}
 	try{
-		window.frames.search.searchViewFrame.location.replace(window.frames.search.frames[1].location.href.replace(re, "")+"&showAll=on");
+		window.frames.search.searchViewFrame.location.replace(window.frames.search.search.searchViewFrame.location.href.replace(re, "")+"&showAll=on");
 	}catch(ex) {}
 }
 
