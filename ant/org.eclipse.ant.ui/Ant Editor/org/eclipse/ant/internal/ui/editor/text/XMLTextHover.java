@@ -67,10 +67,10 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 	private String formatPathMessage(String[] list) {
 		StringBuffer buffer= new StringBuffer();
 		HTMLPrinter.addPageProlog(buffer);
-		HTMLPrinter.addSmallHeader(buffer, "Path Elements:");
+		HTMLPrinter.addSmallHeader(buffer, AntEditorTextMessages.getString("XMLTextHover.4")); //$NON-NLS-1$
 		HTMLPrinter.startBulletList(buffer);
 		for (int i = 0; i < list.length; i++) {
-			HTMLPrinter.addBullet(buffer, "<t>" + list[i]);
+			HTMLPrinter.addBullet(buffer, list[i]);
 		}
 		HTMLPrinter.endBulletList(buffer);
 		HTMLPrinter.addPageEpilog(buffer);
@@ -164,7 +164,7 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 		StringBuffer buffer= new StringBuffer();
 		HTMLPrinter.addPageProlog(buffer);
 		if (includes != null && includes.length > 0) {
-			HTMLPrinter.addSmallHeader(buffer, "Includes: ");
+			HTMLPrinter.addSmallHeader(buffer, AntEditorTextMessages.getString("XMLTextHover.5")); //$NON-NLS-1$
 			for (int i = 0; i < includes.length; i++) {
 				HTMLPrinter.addBullet(buffer, includes[i]);
 			}
@@ -172,7 +172,7 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 		HTMLPrinter.addParagraph(buffer, ""); //$NON-NLS-1$
 		HTMLPrinter.addParagraph(buffer, ""); //$NON-NLS-1$
 		if (excludes != null && excludes.length > 0) {
-			HTMLPrinter.addSmallHeader(buffer, "Excludes: ");
+			HTMLPrinter.addSmallHeader(buffer, AntEditorTextMessages.getString("XMLTextHover.6")); //$NON-NLS-1$
 			for (int i = 0; i < excludes.length; i++) {
 				HTMLPrinter.addBullet(buffer, excludes[i]);
 			}
@@ -234,16 +234,15 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 	 * @see org.eclipse.jface.text.ITextHoverExtension#getInformationControlCreator()
 	 */
 	public IInformationControlCreator getInformationControlCreator() {
-		if (Platform.getPlugin("org.eclipse.jdt.ui").getPluginPreferences().getBoolean("PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE")) { //$NON-NLS-1$
+		if (Platform.getPlugin("org.eclipse.jdt.ui").getPluginPreferences().getBoolean("PreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE")) { //$NON-NLS-1$ //$NON-NLS-2$
 			return new IInformationControlCreator() {
 				public IInformationControl createInformationControl(Shell parent) {
 	  				return new DefaultInformationControl(parent, SWT.NONE, 
 	  					new HTMLTextPresenter(true),
-				   		"Press F2 for focus");
+				   		AntEditorTextMessages.getString("XMLTextHover.7")); //$NON-NLS-1$
 			 	}
   			};
 		}
 		return null;
 	}
-	
 }
