@@ -1101,7 +1101,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		
 		int numberOfLines = height/lineHeight;
 		
-		if (numberOfLines < 0)
+		if (numberOfLines <= 0)
 			return 20;
 	
 		return numberOfLines;		
@@ -2403,25 +2403,6 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		TableItem tableItem = getTableViewer().getTable().getItem(row);
 		
 		return tableItem.getText(col);	
-	}
-	
-	public void activated() {
-		super.activated();
-		
-		// When the rendering is resized, the rendering does not handle
-		// any resize event to figure out if more memory should be loaded.
-		// Instead the rendering checks to see if the table has enough memory
-		// to display when it becomes activated.  
-		// This is to ensure that the refresh does not interfere with the
-		// resize event due to limitation to Linux GTK.  The display event loop
-		// in linuxWorkAround will cause the resize to fail sometimes.
-		BigInteger lastAddress = fTopRowAddress.add(BigInteger.valueOf((getNumberOfVisibleLines()-3) * getBytesPerLine() + getBytesPerLine()));
-		
-		// force a reload if the last address is out of buffer range
-		if (isAddressOutOfRange(lastAddress))
-		{
-			refresh();
-		}
 	}
 	
 	/**
