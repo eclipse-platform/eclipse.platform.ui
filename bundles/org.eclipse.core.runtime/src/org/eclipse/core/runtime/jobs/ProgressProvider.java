@@ -28,12 +28,12 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 public abstract class ProgressProvider {
 	/**
 	 * Provides a new progress monitor instance to be used by the given job.
-	 * The job might already have a monitor installed, but the progress
-	 * provider may decide to return a different one. 
+	 * This method is called prior to running any job that does not belong to a
+	 * progress group. The returned monitor will be supplied to the job's
+	 * <code>run</code> metohd.
 	 * 
 	 * @see #createProgressGroup
-	 * @see Job#getProgressMonitor
-	 * @see Job#setProgressMonitor
+	 * @see Job#setProgressGroup
 	 * @param job the job to create a progress monitor for
 	 * @return a progress monitor, or <code>null</code> if no progress monitoring 
 	 * is needed.
