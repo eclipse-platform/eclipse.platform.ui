@@ -59,7 +59,7 @@ public interface IIntroHTMLConstants {
 	String LINK_STYLE = "text/css"; //$NON-NLS-1$
 	String OBJECT_TYPE = "text/html"; //$NON-NLS-1$
 
-	String DIV_ID_PRESENTATION_HEADER = "presentation-header"; //$NON-NLS-1$
+	//String DIV_ID_PRESENTATION_HEADER = "presentation-header"; //$NON-NLS-1$
 	String DIV_ID_PAGE = "page"; //$NON-NLS-1$
 	String DIV_CLASS_INLINE_HTML = "inline-html"; //$NON-NLS-1$
 	String DIV_CLASS_PROVIDED_CONTENT = "provided-content"; //$NON-NLS-1$

@@ -83,7 +83,7 @@ public class IntroModelLabelProvider extends LabelProvider {
                     + ((IntroInclude) introElement).getPath();
             break;
         case AbstractIntroElement.PAGE:
-            label = "PAGE: " + ((AbstractIntroPage) introElement).getTitle(); //$NON-NLS-1$
+            label = "PAGE: " + ((AbstractIntroPage) introElement).getId(); //$NON-NLS-1$
             break;
         case AbstractIntroElement.HOME_PAGE:
             label = "HOME PAGE: " //$NON-NLS-1$

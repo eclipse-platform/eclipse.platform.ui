@@ -28,17 +28,17 @@ import org.eclipse.ui.part.*;
  * A re-usable intro part that the Eclipse platform uses for its Out of the Box
  * Experience. It is a customizable intro part where both its presentation, and
  * its content can be customized based on a configuration. Both are contributed
- * using the org.eclipse.ui.intro.intro.config extension point. There are two
- * two presentation: an SWT browser based presentatin, and a UI forms
+ * using the org.eclipse.ui.intro.config extension point. There are two
+ * presentations: an SWT browser based presentation, and a UI forms
  * presentation. Based on the configuration, one is chosen on startup. If a
- * Browser based prsentation is selected, and the intro is being loaded on a
+ * Browser based presentation is selected, and the intro is being loaded on a
  * platform that does not support the SWT Browser control, the default behavior
- * is to degrade to UI forms prsentation. Content displayed in this intro part
+ * is to degrade to UI forms presentation. Content displayed in this intro part
  * can be static or dynamic. Static is html files, dynamic is markup in content
- * files. Again, both of whch can be specified using the above extension point.
+ * files. Again, both of which can be specified using the above extension point.
  * <p>
  * Memento Support: This intro part tries to restore its presvious state when
- * posible. The state of the intro page is remembered, along with which standby
+ * possible. The state of the intro page is remembered, along with which standby
  * content content part was opened. IStandbyContent parts are passed the Intro's
  * memento shortly after construction, and are expected to restore there own
  * state based on the momento. The customizable intro part handles there initial
@@ -74,7 +74,6 @@ public final class CustomizableIntroPart extends IntroPart implements
     // the set to false when the standby part is first created.
     private boolean restoreStandby;
 
-
     // Adapter factory to abstract out the StandbyPart implementation from APIs.
     IAdapterFactory factory = new IAdapterFactory() {
 
@@ -102,8 +101,6 @@ public final class CustomizableIntroPart extends IntroPart implements
         // model can not be loaded here because the configElement of this part
         // is still not loaded here.
     }
-
-
 
     /*
      * (non-Javadoc)
@@ -167,7 +164,6 @@ public final class CustomizableIntroPart extends IntroPart implements
             // do not create the standby part here for performance.
         }
     }
-
 
     /**
      * Determine if we need to recreate a standby part. Return true if we have a
@@ -241,7 +237,6 @@ public final class CustomizableIntroPart extends IntroPart implements
         return container.getData(SHOW_STANDBY_PART) == null ? false : true;
     }
 
-
     /*
      * Create standby part. Called only when really needed. We reset the restore
      * falg, but we need to tag the intro part as needing standby.
@@ -253,7 +248,6 @@ public final class CustomizableIntroPart extends IntroPart implements
         restoreStandby = false;
         container.setData(SHOW_STANDBY_PART, "true"); //$NON-NLS-1$
     }
-
 
     private void handleSetFocus(boolean standby) {
         if (standby) {
@@ -298,7 +292,6 @@ public final class CustomizableIntroPart extends IntroPart implements
         return presentation;
     }
 
-
     /*
      * (non-Javadoc)
      * 
@@ -339,13 +332,11 @@ public final class CustomizableIntroPart extends IntroPart implements
         return container;
     }
 
-
     public void saveState(IMemento memento) {
         // give presentation and standby part there own children to create a
         // name space for each. But save either the presentation or the standby
         // part as needing to be restored. This way if we close with a standby
         // mode, we dont get the cached standby part.
-
 
         // Find out if presentation or standby is at the top and restore
         // them. Container has stack layout. safe to cast.
@@ -412,6 +403,4 @@ public final class CustomizableIntroPart extends IntroPart implements
 
     }
 }
-
-
 

@@ -53,7 +53,7 @@ import org.w3c.dom.*;
  * children of the atrget configuration, and so any includes they may have will
  * be resolved correctly.</li>
  * <li>An infinite loop can occur if page A includes from page B and page B in
- * turn includes from page A. iue: cyclic includes. For performnace, accept.
+ * turn includes from page A. ie: cyclic includes. For performnace, accept.
  * </li>
  * <li>When resolving includes, if the target is a container, it must be
  * resolved to resolve its includes correctly. Otherwise, included includes will
