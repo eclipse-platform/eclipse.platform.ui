@@ -470,7 +470,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 
 				Annotation annotation= (Annotation) iter.next();
 				
-				if (fAnnotationAccess != null && skip(annotation))
+				if (skip(annotation))
 					continue;
 				
 				int lay= IAnnotationAccessExtension.DEFAULT_LAYER;
@@ -615,7 +615,10 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 	 * @since 3.0
 	 */
 	private boolean skip(Annotation annotation) {
-		Object annotationType= fAnnotationAccess.getType(annotation);
+		if (annotation == null)
+			return true;
+		
+		Object annotationType= annotation.getType();
 		if (fAllowedAnnotationTypes.contains(annotationType))
 			return false;
 		
