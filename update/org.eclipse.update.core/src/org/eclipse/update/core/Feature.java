@@ -3,16 +3,15 @@ package org.eclipse.update.core;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Stack;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.update.core.model.FeatureModel;
 import org.eclipse.update.core.model.ImportModel;
@@ -62,7 +61,8 @@ public class Feature extends FeatureModel implements IFeature {
 	 */
 	static {
 		//	in case we throw a cancel exception
-		String pluginId = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+		Plugin um = UpdateManagerPlugin.getPlugin();
+		String pluginId = um==null ? "undefined" : um.getDescriptor().getUniqueIdentifier();
 		IStatus cancelStatus = new Status(IStatus.ERROR, pluginId, IStatus.OK, "Install has been Cancelled", null);
 		//		IStatus cancelStatus = new Status(IStatus.ERROR, "org.eclipse.update", IStatus.OK, "Install has been Cancelled", null);
 		CANCEL_EXCEPTION = new CoreException(cancelStatus);

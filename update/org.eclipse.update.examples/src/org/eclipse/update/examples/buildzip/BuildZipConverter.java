@@ -59,7 +59,9 @@ public class BuildZipConverter {
 				jarFile = new File(pluginsDir,plugins[i].getVersionIdentifier()+".jar");
 				System.out.println("writing plugin archive: "+plugins[i].getVersionIdentifier()+".jar");
 				writeJar(jarFile, refs, feature, plugins[i].getVersionIdentifier().getIdentifier(), manifest);
-			}	
+			}
+			
+			writeSiteManifest(site, feature);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -115,6 +117,16 @@ public class BuildZipConverter {
 			else if (os != null)
 				try {os.close();} catch(IOException e) {}
 		}		
+	}
+	
+	public static void writeSiteManifest(File site, IFeature feature) throws IOException {
+		File manifest = new File(site, "site.xml");
+		FileOutputStream os = new FileOutputStream(manifest);
+		String siteXML = "<site>\n   <feature url=\"features/"+feature.getVersionIdentifier().toString()+".jar\"/>\n</site>";
+		StringBufferInputStream sbis = new StringBufferInputStream(siteXML);
+		UpdateManagerUtils.copy(sbis,os,null);
+		os.close();
+		sbis.close();
 	}
 	
 	public static Properties getBuildManifest(JarContentReference jar) throws IOException {

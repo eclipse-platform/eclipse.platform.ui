@@ -122,7 +122,7 @@ public class BuildZipFeatureParser {
 		// add description
 		URLEntryModel description = factory.createURLEntryModel();
 		description.setURLString("readme/readme.html");
-		description.setAnnotation("");
+		description.setAnnotation("x");
 		feature.setDescriptionModel(description);
 		
 		// add license
@@ -134,7 +134,7 @@ public class BuildZipFeatureParser {
 		// add copyright
 		URLEntryModel copyright = factory.createURLEntryModel();
 		copyright.setURLString("notice.html");
-		copyright.setAnnotation("");
+		copyright.setAnnotation("x");
 		feature.setCopyrightModel(copyright);
 	}	
 	
