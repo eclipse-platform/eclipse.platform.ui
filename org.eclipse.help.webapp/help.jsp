@@ -89,6 +89,9 @@
 <title>Help</title>
 
 <script language="Javascript">
+	// Identifier
+	var EclipseHelpSystem = true;
+	
 	// Global var for the webapp address
 	var contextPath = "<%=request.getContextPath()%>";
 	

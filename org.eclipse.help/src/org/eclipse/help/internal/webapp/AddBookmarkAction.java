@@ -19,14 +19,13 @@ public class AddBookmarkAction implements ILiveHelpAction {
 	 */
 	public void setInitializationString(String data) {
 		bookmark = data;
-		System.out.println(data);
 	}
 
 	/**
 	 * @see Runnable#run()
 	 */
 	public void run() {
-		System.out.println(bookmark);
+		System.out.println("add bookmark:" +bookmark);
 		// add this bookmark to help preferences
 		Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
 		String bookmarks = prefs.getString(HelpSystem.BOOKMARKS);

@@ -185,6 +185,11 @@
         <url-pattern>/livehelp/*</url-pattern>
     </servlet-mapping>
     
+    <servlet-mapping>
+        <servlet-name>livehelp</servlet-name>
+        <url-pattern>/ns4/livehelp/*</url-pattern>
+    </servlet-mapping>
+    
     <!-- **** begin precompiled JSP config ***** -->
 
 	<servlet-mapping>
