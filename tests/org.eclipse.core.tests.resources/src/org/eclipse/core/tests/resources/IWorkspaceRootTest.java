@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.tests.resources;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -100,6 +105,22 @@ public void testPersistentPropertyInRunnable() {
 		assertEquals("3.0", null, storedValue[0]);
 	} catch (CoreException e) {
 		fail("3.1", e);
+	}
+}
+public void testRefreshLocal() {
+	IWorkspaceRoot root = getWorkspace().getRoot();
+	IProject project = root.getProject("Project");
+	ensureExistsInWorkspace(project, true);
+	try {
+		project.close(getMonitor());
+	} catch(CoreException e) {
+		fail("1.0", e);
+	}
+	//refreshing the root shouldn't fail
+	try {
+		root.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+	} catch(CoreException e) {
+		fail("1.1", e);
 	}
 }
 }
