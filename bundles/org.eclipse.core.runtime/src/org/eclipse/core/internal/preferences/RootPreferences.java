@@ -54,7 +54,7 @@ public class RootPreferences extends EclipsePreferences {
 	/*
 	 * @see EclipsePreferences#getChild(String, Plugin)
 	 */
-	protected synchronized IEclipsePreferences getChild(String key, Plugin context, boolean create) {
+	protected synchronized IEclipsePreferences getChild(String key, Plugin context) {
 		Object value = null;
 		IEclipsePreferences child = null;
 		if (children != null)
@@ -62,9 +62,6 @@ public class RootPreferences extends EclipsePreferences {
 		if (value != null) {
 			if (value instanceof IEclipsePreferences)
 				return (IEclipsePreferences) value;
-			// if we aren't supposed to create this node, then just return null
-			if (!create)
-				return null;
 			//lazy initialization
 			child = ((PreferencesService) Platform.getPreferencesService()).createNode(key);
 			addChild(key, child);
@@ -75,12 +72,12 @@ public class RootPreferences extends EclipsePreferences {
 	/*
 	 * @see EclipsePreferences#getChildren()
 	 */
-	protected synchronized IEclipsePreferences[] getChildren(boolean create) {
+	protected synchronized IEclipsePreferences[] getChildren() {
 		//must perform lazy initialization of child nodes
 		String[] childNames = childrenNames();
 		IEclipsePreferences[] childNodes = new IEclipsePreferences[childNames.length];
 		for (int i = 0; i < childNames.length; i++)
-			childNodes[i] = getChild(childNames[i], null, create);
+			childNodes[i] = getChild(childNames[i], null);
 		return childNodes;
 	}
 
@@ -93,7 +90,7 @@ public class RootPreferences extends EclipsePreferences {
 		int startIndex = path.charAt(0) == IPath.SEPARATOR ? 1 : 0;
 		int endIndex = path.indexOf(IPath.SEPARATOR, startIndex + 1);
 		String scope = path.substring(startIndex, endIndex == -1 ? path.length() : endIndex);
-		IEclipsePreferences child = getChild(scope, null, false);
+		IEclipsePreferences child = getChild(scope, null);
 		if (child == null) {
 			child = new EclipsePreferences(this, scope);
 			addChild(scope, child);
