@@ -206,7 +206,13 @@
             name="build_project"
             resolver="org.eclipse.ui.externaltools.internal.variables.BuildProjectResolver"
             description="%build_project.description">
-      </variable>   
+      </variable>
+       <variable
+            name="system_path"
+            resolver="org.eclipse.ui.externaltools.internal.variables.SystemPathResolver"
+            description="%system_path.description"
+            supportsArgument="true">
+      </variable>
    </extension>
    
    <extension
