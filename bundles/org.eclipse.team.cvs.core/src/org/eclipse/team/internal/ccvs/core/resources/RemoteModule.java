@@ -73,6 +73,10 @@ public class RemoteModule extends RemoteFolder {
 			// Read the module name
 			StringTokenizer tokenizer = new StringTokenizer(moduleDefinitionStrings[i]);
 			String moduleName = tokenizer.nextToken();
+			if ( ! tokenizer.hasMoreTokens()) {
+				// If it only has a name and no tokens, skip it.
+				continue;
+			}
 			
 			// Read the options associated with the module
 			List localOptionsList = new ArrayList();
