@@ -98,5 +98,39 @@ public class IAdapterManagerTest extends TestCase {
 		} finally {
 			manager.unregisterAdapters(fac, TestAdaptable.class);
 		}
+	}	/**
+	 * Tests API method IAdapterManager.loadAdapter.
+	 */
+	public void testLoadAdapter() {
+		TestAdaptable adaptable = new TestAdaptable();
+		//request non-existing adaptable
+		assertNull("1.0", manager.loadAdapter("", NON_EXISTING));
+		
+		//request adapter that is in XML but has no registered factory
+		Object result = manager.loadAdapter(adaptable, TEST_ADAPTER);
+		assertTrue("1.1", result instanceof TestAdapter);
+
+		//request adapter that is not in XML
+		assertNull("1.2", manager.loadAdapter(adaptable, "java.lang.String"));
+		
+		//register an adapter factory that maps adaptables to strings
+		IAdapterFactory fac = new IAdapterFactory() {
+			public Object getAdapter(Object adaptableObject, Class adapterType) {
+				if (adapterType == String.class)
+					return adaptableObject.toString();
+				return null;
+			}
+			public Class[] getAdapterList() {
+				return new Class[] {String.class};
+			}
+		};
+		manager.registerAdapters(fac, TestAdaptable.class);
+		try {
+			//request adapter for factory that we've just added
+			result = manager.loadAdapter(adaptable, "java.lang.String");
+			assertTrue("1.3", result instanceof String);
+		} finally {
+			manager.unregisterAdapters(fac, TestAdaptable.class);
+		}
 	}
 }
