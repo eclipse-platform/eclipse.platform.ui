@@ -330,7 +330,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 	
 	/**
-	 * The laypout manager layouts the various
+	 * The layout manager layouts the various
 	 * windows associated with the content assistant based on the
 	 * settings of the content assistant.
 	 */
@@ -1251,7 +1251,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @param listener the listener to unregister
 	 * @param type the type of listener
 	 *
-	 * @see #addContentAssistListener
+	 * @see #addContentAssistListener(IContentAssistListener, int)
 	 */
 	void removeContentAssistListener(IContentAssistListener listener, int type) {
 		fListeners[type]= null;
@@ -1415,11 +1415,11 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * the specified document position. The position is used to 
 	 * determine the appropriate content assist processor to invoke.
 	 *
-	 * @param contentAssistSubject the content assit subject
+	 * @param contentAssistSubject the content assist subject
 	 * @param position a document position
 	 * @return an array of completion proposals
 	 *
-	 * @see IContentAssistProcessor#computeCompletionProposals
+	 * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
 	 */
 	ICompletionProposal[] computeCompletionProposals(IContentAssistSubject contentAssistSubject, int position) {
 		fLastErrorMessage= null;
@@ -1440,11 +1440,11 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * the specified document position. The position is used to 
 	 * determine the appropriate content assist processor to invoke.
 	 *
-	 * @param viewer the viewer for which to compute the prosposals
+	 * @param viewer the viewer for which to compute the proposals
 	 * @param position a document position
 	 * @return an array of completion proposals
 	 *
-	 * @see IContentAssistProcessor#computeCompletionProposals
+	 * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
 	 */
 	ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int position) {
 		fLastErrorMessage= null;
@@ -1469,7 +1469,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @param position a document position
 	 * @return an array of context information objects
 	 *
-	 * @see IContentAssistProcessor#computeContextInformation
+	 * @see IContentAssistProcessor#computeContextInformation(ITextViewer, int)
 	 */
 	IContextInformation[] computeContextInformation(ITextViewer viewer, int position) {
 		fLastErrorMessage= null;
@@ -1490,11 +1490,11 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * on the specified document position. The position is used to determine 
 	 * the appropriate content assist processor to invoke.
 	 *
-	 * @param contentAssistSubject the content assit subject
+	 * @param contentAssistSubject the content assist subject
 	 * @param position a document position
 	 * @return an array of context information objects
 	 *
-	 * @see IContentAssistProcessor#computeContextInformation
+	 * @see IContentAssistProcessor#computeContextInformation(ITextViewer, int)
 	 */
 	IContextInformation[] computeContextInformation(IContentAssistSubject contentAssistSubject, int position) {
 		fLastErrorMessage= null;
@@ -1520,7 +1520,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @param offset a document offset
 	 * @return an validator
 	 *
-	 * @see IContentAssistProcessor#getContextInformationValidator
+	 * @see IContentAssistProcessor#getContextInformationValidator()
 	 */
 	IContextInformationValidator getContextInformationValidator(ITextViewer viewer, int offset) {
 		IContentAssistProcessor p= getProcessor(viewer, offset);
@@ -1536,7 +1536,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @param contentAssistSubject the content assist subject
 	 * @param offset a document offset
 	 * @return an validator
-	 * @see IContentAssistProcessor#getContextInformationValidator
+	 * @see IContentAssistProcessor#getContextInformationValidator()
 	 * @since 3.0
 	 */
 	IContextInformationValidator getContextInformationValidator(IContentAssistSubject contentAssistSubject, int offset) {
@@ -1586,7 +1586,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @param contentAssistSubject the content assist subject
 	 * @param offset a document offset
 	 * @return the auto activation characters
-	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters
+	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
 	 * @since 3.0
 	 */
 	char[] getCompletionProposalAutoActivationCharacters(IContentAssistSubject contentAssistSubject, int offset) {
@@ -1603,7 +1603,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @param offset a document offset
 	 * @return the auto activation characters
 	 *
-	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters
+	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
 	 */
 	char[] getCompletionProposalAutoActivationCharacters(ITextViewer viewer, int offset) {
 		IContentAssistProcessor p= getProcessor(viewer, offset);
@@ -1619,7 +1619,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @param offset a document offset
 	 * @return the auto activation characters
 	 *
-	 * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters
+	 * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters()
 	 */
 	char[] getContextInformationAutoActivationCharacters(ITextViewer viewer, int offset) {
 		IContentAssistProcessor p= getProcessor(viewer, offset);
@@ -1635,7 +1635,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @param offset a document offset
 	 * @return the auto activation characters
 	 *
-	 * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters
+	 * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters()
 	 */
 	char[] getContextInformationAutoActivationCharacters(IContentAssistSubject contentAssistSubject, int offset) {
 		IContentAssistProcessor p= getProcessor(contentAssistSubject, offset);

@@ -26,7 +26,7 @@ import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.contentassist.ContextInformationPopup.ContextFrame;
 
 /**
- * This content assist adapter delegates the calles either to
+ * This content assist adapter delegates the calls either to
  * a text viewer or to a content assist subject.
  * 
  * @since 3.0
@@ -268,7 +268,7 @@ final class ContentAssistSubjectAdapter implements IContentAssistSubject {
 	 * @param contentAssistant the content assistant
 	 * @param offset a document offset
 	 * @return the auto activation characters
-	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters
+	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
 	 */
 	public char[] getCompletionProposalAutoActivationCharacters(ContentAssistant contentAssistant, int offset) {
 		if (fContentAssistSubject != null)
@@ -286,7 +286,7 @@ final class ContentAssistSubjectAdapter implements IContentAssistSubject {
 	 * @param offset a document offset
 	 * @return the auto activation characters
 	 *
-	 * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters
+	 * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters()
 	 */
 	char[] getContextInformationAutoActivationCharacters(ContentAssistant contentAssistant, int offset) {
 		if (fContentAssistSubject != null)

@@ -115,7 +115,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private int fFilterOffset;
 	/** The default line delimiter of the viewer's widget */
 	private String fLineDelimiter;
-	/** The most recently selected proposal. */
+	/**
+	 * The most recently selected proposal.
+	 * @since 3.0
+	 */
 	private ICompletionProposal fLastProposal;
 	/**
 	 * The content assist subject.
@@ -453,6 +456,11 @@ class CompletionProposalPopup implements IContentAssistListener {
 		}
 	}
 	
+	/**
+	 * Unregister this completion proposal popup.
+	 * 
+	 * @since 3.0
+	 */
 	private void unregister() {
 		if (fDocumentListener != null) {
 			IDocument document= fContentAssistSubjectAdapter.getDocument();
@@ -545,6 +553,12 @@ class CompletionProposalPopup implements IContentAssistListener {
 		return p;
 	}
 	
+	/**
+	 * Returns the size of this completion proposal popup.
+	 * 
+	 * @return a Point containing the size
+	 * @since 3.0
+	 */
 	Point getSize() {
 		return fSize;
 	}
@@ -795,7 +809,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @param offset the offset
 	 * @param event the merged document event
 	 * @return the set of filtered proposals
-	 * @since 2.0
+	 * @since 3.0
 	 */
 	private ICompletionProposal[] computeFilteredProposals(int offset, DocumentEvent event) {
 		
@@ -1058,6 +1072,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * 
 	 * @param proposal the proposal to extract the offset from
 	 * @return the proposals completion offset, or <code>fInvocationOffset</code>
+	 * @since 3.0
 	 */
 	private int getReplacementOffset(ICompletionProposal proposal) {
 		if (proposal instanceof ICompletionProposalExtension3)

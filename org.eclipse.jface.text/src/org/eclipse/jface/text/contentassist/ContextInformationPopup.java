@@ -40,8 +40,8 @@ import org.eclipse.jface.text.TextPresentation;
  * If multiple contexts are valid at the current cursor location, 
  * a list is presented from which the user may choose one context. 
  * Once the user makes their choice, or if there was only a single 
- * possible context, the context information is shown in a tooltip like popup. <p>
- * If the tooltip is visible and the user wants to see context information of 
+ * possible context, the context information is shown in a tool tip like popup. <p>
+ * If the tool tip is visible and the user wants to see context information of 
  * a context embedded into the one for which context information is displayed,
  * context information for the embedded context is shown. As soon as the 
  * cursor leaves the embedded context area, the context information for
@@ -245,7 +245,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	/**
 	 * Displays the given context information for the given offset.
 	 * 
-	 * @param frame the context frame tod display, or <code>null</code>
+	 * @param frame the context frame to display, or <code>null</code>
 	 * @since 3.0
 	 */
 	private void internalShowContextInfo(ContextFrame frame) {
@@ -260,8 +260,9 @@ class ContextInformationPopup implements IContentAssistListener {
 	/**
 	 * Creates a context frame for the given offset.
 	 * 
-	 * @param info the context information
-	 * @param position the offset
+	 * @param information the context information
+	 * @param offset the offset
+	 * @return the created context frame
 	 * @since 3.0
 	 */
 	private ContextFrame createContextFrame(IContextInformation information, int offset) {
@@ -315,7 +316,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	/**
 	 * Shows the given context frame.
 	 * 
-	 * @param frame the frane to display
+	 * @param frame the frame to display
 	 * @param initial <code>true</code> if this is the first frame to be displayed
 	 * @since 2.0
 	 */
@@ -378,7 +379,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	}
 
 	/**
-	 * Creates the context information popup. This is the tooltip like overlay window.
+	 * Creates the context information popup. This is the tool tip like overlay window.
 	 */
 	private void createContextInfoPopup() {
 		if (Helper.okToUse(fContextInfoPopup))
@@ -552,7 +553,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	}
 
 	/**
-	 * Hodes the context selector.
+	 * Hides the context selector.
 	 */
 	private void hideContextSelector() {
 		if (Helper.okToUse(fContextSelectorShell)) {
@@ -571,7 +572,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	/**
 	 *Returns whether the context selector has the focus.
 	 *
-	 * @return <code>true</code> if teh context selector has the focus
+	 * @return <code>true</code> if the context selector has the focus
 	 */
 	public boolean hasFocus() {
 		if (Helper.okToUse(fContextSelectorShell))
@@ -751,7 +752,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	private void validateContextInformation() {
 		/*
 		 * Post the code in the event queue in order to ensure that the
-		 * action described by this verify key event has already beed executed.
+		 * action described by this verify key event has already been executed.
 		 * Otherwise, we'd validate the context information based on the 
 		 * pre-key-stroke state.
 		 */

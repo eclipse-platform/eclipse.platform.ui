@@ -63,7 +63,10 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 	private boolean fIsReset= false;
 	/** Object to synchronize display thread and table selection changes */
 	private final Object fMutex= new Object();
-	/** Thread access lock. */
+	/**
+	 * Thread access lock.
+	 * since 3.0
+	 */
 	private final Object fThreadAccess= new Object();
 	/** Object to synchronize initial display of additonal info */
 	private Object fStartSignal;
