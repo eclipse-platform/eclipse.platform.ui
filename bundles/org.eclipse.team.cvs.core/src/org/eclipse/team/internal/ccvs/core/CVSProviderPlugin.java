@@ -29,9 +29,10 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener;
-import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.util.AddDeleteMoveListener;
 import org.eclipse.team.internal.ccvs.core.util.ProjectDescriptionManager;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileChangeListener;
@@ -51,6 +52,8 @@ public class CVSProviderPlugin extends Plugin {
 	public static final int DEFAULT_TIMEOUT = 60;
 	// file transfer compression level (0 - 9)
 	public static final int DEFAULT_COMPRESSION_LEVEL = 0;
+	// default text keyword substitution mode
+	public static final KSubstOption DEFAULT_TEXT_KSUBST_OPTION = Command.KSUBST_TEXT;
 
 	// cvs plugin extension points and ids
 	public static final String ID = "org.eclipse.team.cvs.core"; //$NON-NLS-1$
@@ -59,6 +62,7 @@ public class CVSProviderPlugin extends Plugin {
 	
 	private QuietOption quietness;
 	private int compressionLevel = DEFAULT_COMPRESSION_LEVEL;
+	private KSubstOption defaultTextKSubstOption = DEFAULT_TEXT_KSUBST_OPTION;
 	private int communicationsTimeout = DEFAULT_TIMEOUT;
 	private boolean pruneEmptyDirectories = DEFAULT_PRUNE;
 	private boolean fetchAbsentDirectories = DEFAULT_FETCH;
@@ -144,6 +148,21 @@ public class CVSProviderPlugin extends Plugin {
 	 */
 	public int getCompressionLevel() {
 		return compressionLevel;
+	}
+	
+	/**
+	 * Sets the default keyword substitution mode for text files.
+	 */
+	public void setDefaultTextKSubstOption(KSubstOption ksubst) {
+		defaultTextKSubstOption = ksubst;
+	}
+
+
+	/**
+	 * Gets the default keyword substitution mode for text files.
+	 */
+	public KSubstOption getDefaultTextKSubstOption() {
+		return defaultTextKSubstOption;
 	}
 
 	/**

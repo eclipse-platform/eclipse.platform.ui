@@ -519,17 +519,13 @@ public abstract class Command extends Request {
 	 * Options subtype for keyword substitution options.
 	 */
 	public static class KSubstOption extends LocalOption {
-		private String shortDisplayText;
-		private String longDisplayText;
-		
+		private boolean isUnknownMode;
 		private KSubstOption(String option) {
-			this(option, Policy.bind("KSubstOption." + option + ".short"), //$NON-NLS-1$ //$NON-NLS-2$
-				Policy.bind("KSubstOption." + option + ".long")); //$NON-NLS-1$ //$NON-NLS-2$
+			this(option, false);
 		}
-		private KSubstOption(String option, String shortDisplayText, String longDisplayText) {
+		private KSubstOption(String option, boolean isUnknownMode) {
 			super(option);
-			this.shortDisplayText = shortDisplayText;
-			this.longDisplayText = longDisplayText;
+			this.isUnknownMode = isUnknownMode;
 			ksubstOptionMap.put(option, this);
 		}
 		/**
@@ -541,12 +537,7 @@ public abstract class Command extends Request {
 		public static KSubstOption fromMode(String mode) {
 			if (mode.length() == 0) mode = "-kkv"; // use default //$NON-NLS-1$
 			KSubstOption option = (KSubstOption) ksubstOptionMap.get(mode);
-			if (option == null) {
-				option = new KSubstOption(mode,
-					Policy.bind("KSubstOption.unknown.short", mode), //$NON-NLS-1$
-					Policy.bind("KSubstOption.unknown.long", mode)); //$NON-NLS-1$
-				ksubstOptionMap.put(mode, option);
-			}
+			if (option == null) option = new KSubstOption(mode, true);
 			return option;
 		}
 		/**
@@ -556,7 +547,8 @@ public abstract class Command extends Request {
 		 * @return an instance for that mode
 		 */
 		public static KSubstOption fromFile(IFile file) {
-			if (CVSProvider.isText(file)) return KSUBST_TEXT;
+			if (CVSProvider.isText(file))
+				return CVSProviderPlugin.getPlugin().getDefaultTextKSubstOption();
 			return KSUBST_BINARY;
 		}
 		/**
@@ -583,13 +575,15 @@ public abstract class Command extends Request {
 		 * Returns a short localized text string describing this mode.
 		 */
 		public String getShortDisplayText() {
-			return shortDisplayText;
+			if (isUnknownMode) return Policy.bind("KSubstOption.unknown.short", option); //$NON-NLS-1$
+			return Policy.bind("KSubstOption." + option + ".short"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		/**
 		 * Returns a long localized text string describing this mode.
 		 */
 		public String getLongDisplayText() {
-			return longDisplayText;
+			if (isUnknownMode) return Policy.bind("KSubstOption.unknown.long", option); //$NON-NLS-1$
+			return Policy.bind("KSubstOption." + option + ".long"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 

@@ -11,6 +11,12 @@
 
 package org.eclipse.team.internal.ccvs.ui;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -30,6 +36,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -53,13 +60,34 @@ public class CVSPreferencesPage
 	private Text timeoutValue;
 	private Combo quietnessCombo;
 	private Combo compressionLevelCombo;
+	private Combo ksubstCombo;
+	private List ksubstOptions;
 	private Button historyTracksSelectionButton;
 	private Button considerContentsInCompare;
 	private Button promptOnFileDelete;
 	private Button promptOnFolderDelete;
 	private Button showMarkers;
 	private Button replaceUnmanaged;
-	
+
+	public CVSPreferencesPage() {
+		// sort the options by display text
+		KSubstOption[] options = KSubstOption.getAllKSubstOptions();
+		this.ksubstOptions = new ArrayList();
+		for (int i = 0; i < options.length; i++) {
+			KSubstOption option = options[i];
+			if (! option.isBinary()) {
+				ksubstOptions.add(option);
+			}
+		}
+		Collections.sort(ksubstOptions, new Comparator() {
+			public int compare(Object a, Object b) {
+				String aKey = ((KSubstOption) a).getLongDisplayText();
+				String bKey = ((KSubstOption) b).getLongDisplayText();
+				return aKey.compareTo(bKey);
+			}
+		});
+	}
+
 	/**
 	 * Utility method that creates a combo box
 	 *
@@ -145,6 +173,9 @@ public class CVSPreferencesPage
 		createLabel(composite, Policy.bind("CVSPreferencePage.compressionLevel")); //$NON-NLS-1$
 		compressionLevelCombo = createCombo(composite);
 		
+		createLabel(composite, Policy.bind("CVSPreferencePage.defaultTextKSubst")); //$NON-NLS-1$
+		ksubstCombo = createCombo(composite);
+		
 		historyTracksSelectionButton = createCheckBox(composite, Policy.bind("CVSPreferencePage.historyTracksSelection")); //$NON-NLS-1$
 		
 		considerContentsInCompare = createCheckBox(composite, Policy.bind("CVSPreferencePage.considerContentsInCompare")); //$NON-NLS-1$
@@ -221,6 +252,11 @@ public class CVSPreferencesPage
 			compressionLevelCombo.add(Policy.bind("CVSPreferencePage.level" + i)); //$NON-NLS-1$
 		}
 		compressionLevelCombo.select(store.getInt(ICVSUIConstants.PREF_COMPRESSION_LEVEL));
+		for (Iterator it = ksubstOptions.iterator(); it.hasNext();) {
+			KSubstOption option = (KSubstOption) it.next();
+			ksubstCombo.add(option.getLongDisplayText());
+		}
+		ksubstCombo.select(getKSubstComboIndexFor(store.getString(ICVSUIConstants.PREF_TEXT_KSUBST)));
 		historyTracksSelectionButton.setSelection(store.getBoolean(ICVSUIConstants.PREF_HISTORY_TRACKS_SELECTION));
 		considerContentsInCompare.setSelection(store.getBoolean(ICVSUIConstants.PREF_CONSIDER_CONTENTS));
 		promptOnFileDelete.setSelection(store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE));
@@ -244,13 +280,14 @@ public class CVSPreferencesPage
 		
 		// Parse the timeout value
 		int timeout = Integer.parseInt(timeoutValue.getText());
-		
+
 		IPreferenceStore store = getPreferenceStore();
 		
 		store.setValue(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES, pruneEmptyDirectoriesField.getSelection());
 		store.setValue(ICVSUIConstants.PREF_TIMEOUT, timeout);
 		store.setValue(ICVSUIConstants.PREF_QUIETNESS, quietnessCombo.getSelectionIndex());
 		store.setValue(ICVSUIConstants.PREF_COMPRESSION_LEVEL, compressionLevelCombo.getSelectionIndex());
+		store.setValue(ICVSUIConstants.PREF_TEXT_KSUBST, ((KSubstOption) ksubstOptions.get(ksubstCombo.getSelectionIndex())).toMode());
 		store.setValue(ICVSUIConstants.PREF_HISTORY_TRACKS_SELECTION, historyTracksSelectionButton.getSelection());
 		store.setValue(ICVSUIConstants.PREF_CONSIDER_CONTENTS, considerContentsInCompare.getSelection());
 		store.setValue(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE, promptOnFileDelete.getSelection());
@@ -266,6 +303,9 @@ public class CVSPreferencesPage
 			getQuietnessOptionFor(store.getInt(ICVSUIConstants.PREF_QUIETNESS)));
 		CVSProviderPlugin.getPlugin().setCompressionLevel(
 			store.getInt(ICVSUIConstants.PREF_COMPRESSION_LEVEL));
+		KSubstOption oldKSubst = CVSProviderPlugin.getPlugin().getDefaultTextKSubstOption();
+		KSubstOption newKSubst = KSubstOption.fromMode(store.getString(ICVSUIConstants.PREF_TEXT_KSUBST));
+		CVSProviderPlugin.getPlugin().setDefaultTextKSubstOption(newKSubst);
 		CVSProviderPlugin.getPlugin().setPromptOnFileDelete(
 			store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE));
 		CVSProviderPlugin.getPlugin().setPromptOnFolderDelete(
@@ -274,6 +314,10 @@ public class CVSPreferencesPage
 			store.getBoolean(ICVSUIConstants.PREF_SHOW_MARKERS));
 		CVSProviderPlugin.getPlugin().setReplaceUnmanaged(
 			store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
+
+		// changing the default keyword substitution mode for text files may affect
+		// information displayed in the decorators
+		if (! oldKSubst.equals(newKSubst)) CVSDecorator.refresh();
 
 		return true;
 	}
@@ -290,6 +334,7 @@ public class CVSPreferencesPage
 		timeoutValue.setText(new Integer(store.getDefaultInt(ICVSUIConstants.PREF_TIMEOUT)).toString());
 		quietnessCombo.select(store.getDefaultInt(ICVSUIConstants.PREF_QUIETNESS));
 		compressionLevelCombo.select(store.getDefaultInt(ICVSUIConstants.PREF_COMPRESSION_LEVEL));
+		ksubstCombo.select(getKSubstComboIndexFor(store.getDefaultString(ICVSUIConstants.PREF_TEXT_KSUBST)));
 		historyTracksSelectionButton.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_HISTORY_TRACKS_SELECTION));
 		promptOnFileDelete.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE));
 		promptOnFolderDelete.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE));
@@ -315,5 +360,19 @@ public class CVSPreferencesPage
 			case 2: return Command.SILENT;
 		}
 		return null;
+	}
+	
+	protected int getKSubstComboIndexFor(String mode) {
+		KSubstOption ksubst = KSubstOption.fromMode(mode);
+		int i = 0;
+		for (Iterator it = ksubstOptions.iterator(); it.hasNext();) {
+			KSubstOption option = (KSubstOption) it.next();
+			if (ksubst.equals(option)) return i;
+			i++;
+		}
+		// unknown option, add it to the list
+		ksubstOptions.add(ksubst);
+		ksubstCombo.add(ksubst.getLongDisplayText());
+		return i;
 	}
 }

@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -72,7 +73,10 @@ public class KSubstWizardSelectionPage extends CVSWizardPage {
 		automaticRadioButton = createRadioButton(top, Policy.bind("KSubstWizardSelectionPage.automaticButton"), 1); //$NON-NLS-1$
 		automaticRadioButton.addListener(SWT.Selection, selectionListener);
 		automaticRadioButton.setSelection(ksubst == null);
-		createWrappingLabel(top, Policy.bind("KSubstWizardSelectionPage.automaticLabel"), LABEL_INDENT_WIDTH, LABEL_WIDTH_HINT); //$NON-NLS-1$
+		createWrappingLabel(top, Policy.bind("KSubstWizardSelectionPage.automaticLabel", //$NON-NLS-1$
+			Command.KSUBST_BINARY.getLongDisplayText(),
+			CVSProviderPlugin.getPlugin().getDefaultTextKSubstOption().getLongDisplayText()),
+			LABEL_INDENT_WIDTH, LABEL_WIDTH_HINT);
 
 		// Binary
 		binaryRadioButton = createRadioButton(top, Policy.bind("KSubstWizardSelectionPage.binaryButton"), 1); //$NON-NLS-1$
