@@ -1052,68 +1052,83 @@ public class EditorManager implements IExtensionRemovalHandler {
         if (ref.getPart(false) != null)
             return Status.OK_STATUS;
 
-        PartInitException exception = null;
-        
-        // Try to restore the editor -- this does the real work of restoring the editor
-        //
-        try {
-            busyRestoreEditorHelper(ref);
-        } catch (PartInitException e2) {
-            exception = e2;
+        if (ref.creationInProgress) {
+            IStatus result = WorkbenchPlugin.getStatus(
+                    new PartInitException(NLS.bind("Warning: Detected recursive attempt by editor {0} to create itself (this is probably, but not necessarily, a bug)",  //$NON-NLS-1$
+                            ref.getId())));
+            WorkbenchPlugin.log(result);
+            return result;
         }
-        
-        // If unable to create the part, create an error part instead
-        if (exception != null) {
-            
-            IStatus originalStatus = exception.getStatus();
-            IStatus logStatus = StatusUtil.newStatus(originalStatus, 
-                    NLS.bind("Unable to create editor ID {0}: {1}",  //$NON-NLS-1$
-                            ref.getId(), originalStatus.getMessage()));
-            WorkbenchPlugin.log(logStatus);
-            
-            IStatus displayStatus = StatusUtil.newStatus(originalStatus,
-                    NLS.bind(WorkbenchMessages.EditorManager_unableToCreateEditor,
-                            originalStatus.getMessage()));
-            
-            ErrorEditorPart part = new ErrorEditorPart(displayStatus);
-            
-            IEditorInput input;
-            try {
-                input = ref.getRestoredInput();
-            } catch (PartInitException e1) {
-                input = new NullEditorInput();
-            }
-            
-            EditorPane pane = (EditorPane)ref.getPane();
-            
-            pane.createControl((Composite) page.getEditorPresentation().getLayoutPart().getControl());
-            
-            EditorDescriptor descr = ref.getDescriptor();
-            EditorSite site = new EditorSite(ref, part, page, descr);
-            
-            site.setActionBars(new EditorActionBars(new NullActionBars(), ref.getId()));
-            try {
-                part.init(site, input);
-            } catch (PartInitException e) {
-                return e.getStatus();
-            }
 
-            Composite parent = (Composite)pane.getControl();
-            Composite content = new Composite(parent, SWT.NONE);
-            content.setLayout(new FillLayout());
+        try {
+            ref.creationInProgress = true;
             
+            PartInitException exception = null;
+            
+            // Try to restore the editor -- this does the real work of restoring the editor
+            //
             try {
-                part.createPartControl(content);
-            } catch (Exception e) {
-                content.dispose();
-                return exception.getStatus();
+                busyRestoreEditorHelper(ref);
+            } catch (PartInitException e2) {
+                exception = e2;
             }
             
-            ref.setPart(part);
-            ref.refreshFromPart();
-            page.addPart(ref);
-            page.firePartOpened(part);
+            // If unable to create the part, create an error part instead
+            if (exception != null) {
+                
+                IStatus originalStatus = exception.getStatus();
+                IStatus logStatus = StatusUtil.newStatus(originalStatus, 
+                        NLS.bind("Unable to create editor ID {0}: {1}",  //$NON-NLS-1$
+                                ref.getId(), originalStatus.getMessage()));
+                WorkbenchPlugin.log(logStatus);
+                
+                IStatus displayStatus = StatusUtil.newStatus(originalStatus,
+                        NLS.bind(WorkbenchMessages.EditorManager_unableToCreateEditor,
+                                originalStatus.getMessage()));
+                
+                ErrorEditorPart part = new ErrorEditorPart(displayStatus);
+                
+                IEditorInput input;
+                try {
+                    input = ref.getRestoredInput();
+                } catch (PartInitException e1) {
+                    input = new NullEditorInput();
+                }
+                
+                EditorPane pane = (EditorPane)ref.getPane();
+                
+                pane.createControl((Composite) page.getEditorPresentation().getLayoutPart().getControl());
+                
+                EditorDescriptor descr = ref.getDescriptor();
+                EditorSite site = new EditorSite(ref, part, page, descr);
+                
+                site.setActionBars(new EditorActionBars(new NullActionBars(), ref.getId()));
+                try {
+                    part.init(site, input);
+                } catch (PartInitException e) {
+                    return e.getStatus();
+                }
+
+                Composite parent = (Composite)pane.getControl();
+                Composite content = new Composite(parent, SWT.NONE);
+                content.setLayout(new FillLayout());
+                
+                try {
+                    part.createPartControl(content);
+                } catch (Exception e) {
+                    content.dispose();
+                    return exception.getStatus();
+                }
+                
+                ref.setPart(part);
+                ref.refreshFromPart();
+                page.addPart(ref);
+                page.firePartOpened(part);
+            }
+        } finally {
+            ref.creationInProgress = false;
         }
+        
         
         return Status.OK_STATUS;
     }
@@ -1435,6 +1450,8 @@ public class EditorManager implements IExtensionRemovalHandler {
         private boolean pinned = false;
 
         private IEditorInput restoredInput;
+        
+        private boolean creationInProgress = false;
 
         Editor(IEditorInput input, EditorDescriptor desc) {
             initListenersAndHandlers();

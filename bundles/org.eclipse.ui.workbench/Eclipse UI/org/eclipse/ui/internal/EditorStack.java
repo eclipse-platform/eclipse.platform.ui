@@ -113,8 +113,8 @@ public class EditorStack extends PartStack {
         }
     }
 
-    protected void updateActions() {
-        EditorPane pane = (EditorPane) getVisiblePart();
+    protected void updateActions(LayoutPart current) {
+        EditorPane pane = (EditorPane) current;
 
         sizeItem.setPane(pane);
         pinEditorItem.setPane(pane);

@@ -59,6 +59,8 @@ import org.eclipse.ui.views.IViewRegistry;
 
         private boolean create = true;
         
+        private boolean creationInProgress = false;
+        
         public ViewReference(String id, IMemento memento) {
             this(id, null, memento);
         }
@@ -281,49 +283,63 @@ import org.eclipse.ui.views.IViewRegistry;
         if (ref.getPart(false) != null)
             return Status.OK_STATUS;
         
-        // Try to restore the view -- this does the real work of restoring the view
-        //
-        partStatus = busyRestoreViewHelper(ref);
-        
-        // If unable to create the part, create an error part instead
-        if (ref.getPart(false) == null) {
-            IStatus displayStatus = StatusUtil.newStatus(partStatus,
-                    NLS.bind(WorkbenchMessages.ViewFactory_initException, partStatus.getMessage()));
-            
-            IStatus logStatus = StatusUtil.newStatus(partStatus,
-                    NLS.bind("Unable to create view ID {0}: {1}", ref.getId(), partStatus.getMessage()));  //$NON-NLS-1$
-            WorkbenchPlugin.log(logStatus);
-            
-            ErrorViewPart part = new ErrorViewPart(displayStatus);
-            String label = ref_.getId();
-            IViewDescriptor desc = viewReg.find(ref.getId());
-            if (desc != null) {
-                label = desc.getLabel();
-            }
-            PartPane pane = ref.getPane();
-            ViewSite site = new ViewSite(ref, part, page, ref_.getId(), PlatformUI.PLUGIN_ID, label);
-            site.setActionBars(new ViewActionBars(page.getActionBars(),
-                    (ViewPane) pane));
-            try {
-                part.init(site);
-            } catch (PartInitException e) {
-                return e.getStatus();
-            }
-
-            Composite parent = (Composite)pane.getControl();
-            Composite content = new Composite(parent, SWT.NONE);
-            content.setLayout(new FillLayout());
-            
-            try {
-                part.createPartControl(content);
-            } catch (Exception e) {
-                content.dispose();
-                return partStatus;
-            }
-            
-            ref.setPart(part);
+        if (ref.creationInProgress) {
+            IStatus result = WorkbenchPlugin.getStatus(
+                    new PartInitException(NLS.bind("Warning: Detected attempt by view {0} to create itself recursively (this is probably, but not necessarily, a bug)",  //$NON-NLS-1$
+                            ref.getId())));
+            WorkbenchPlugin.log(result);
+            return result;
         }
-        
+
+        try {
+            ref.creationInProgress = true;    
+            
+            // Try to restore the view -- this does the real work of restoring the view
+            //
+            partStatus = busyRestoreViewHelper(ref);
+            
+            // If unable to create the part, create an error part instead
+            if (ref.getPart(false) == null) {
+                IStatus displayStatus = StatusUtil.newStatus(partStatus,
+                        NLS.bind(WorkbenchMessages.ViewFactory_initException, partStatus.getMessage()));
+                
+                IStatus logStatus = StatusUtil.newStatus(partStatus,
+                        NLS.bind("Unable to create view ID {0}: {1}", ref.getId(), partStatus.getMessage()));  //$NON-NLS-1$
+                WorkbenchPlugin.log(logStatus);
+                
+                ErrorViewPart part = new ErrorViewPart(displayStatus);
+                String label = ref_.getId();
+                IViewDescriptor desc = viewReg.find(ref.getId());
+                if (desc != null) {
+                    label = desc.getLabel();
+                }
+                PartPane pane = ref.getPane();
+                ViewSite site = new ViewSite(ref, part, page, ref_.getId(), PlatformUI.PLUGIN_ID, label);
+                site.setActionBars(new ViewActionBars(page.getActionBars(),
+                        (ViewPane) pane));
+                try {
+                    part.init(site);
+                } catch (PartInitException e) {
+                    return e.getStatus();
+                }
+    
+                Composite parent = (Composite)pane.getControl();
+                Composite content = new Composite(parent, SWT.NONE);
+                content.setLayout(new FillLayout());
+                
+                try {
+                    part.createPartControl(content);
+                } catch (Exception e) {
+                    content.dispose();
+                    return partStatus;
+                }
+                
+                ref.setPart(part);
+            }
+        } finally {
+            ref.creationInProgress = false;
+        }
+            
         return Status.OK_STATUS;
     }
     

@@ -91,12 +91,11 @@ public class ViewStack extends PartStack {
         return !perspective.isFixedLayout();
     }
 
-    protected void updateActions() {
+    protected void updateActions(LayoutPart current) {
         ViewPane pane = null;
-        PartPane part = getVisiblePart();
 
-        if (part instanceof ViewPane) {
-            pane = (ViewPane) part;
+        if (current instanceof ViewPane) {
+            pane = (ViewPane) current;
         }
 
         fastViewAction.setPane(pane);

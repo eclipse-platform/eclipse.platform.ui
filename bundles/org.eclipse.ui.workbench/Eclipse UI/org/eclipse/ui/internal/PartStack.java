@@ -57,12 +57,34 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
     protected int appearance = PresentationFactoryUtil.ROLE_VIEW;
 
-    // inactiveCurrent is only used when restoring the persisted state of
-    // perspective on startup.
+    /**
+     * Stores the last value passed to setSelection. If UI updates are being deferred,
+     * this may be significantly different from the other current pointers. Once UI updates
+     * are re-enabled, the stack will update the presentation selection to match the requested
+     * current pointer.
+     */ 
+    private LayoutPart requestedCurrent;
+    
+    /**
+     * Stores the current part for the stack. Whenever the outside world asks a PartStack
+     * for the current part, this is what gets returned. This pointer is only updated after
+     * the presentation selection has been restored and the stack has finished updating its
+     * internal state. If the stack is still in the process of updating the presentation,
+     * it will still point to the previous part until the presentation is up-to-date.
+     */
     private LayoutPart current;
+    
+    /**
+     * Stores the presentable part sent to the presentation. Whenever the presentation
+     * asks for the current part, this is what gets returned. This is updated before sending
+     * the part to the presentation, and it is not updated while UI updates are disabled.
+     * When UI updates are enabled, the stack first makes presentationCurrent match 
+     * requestedCurrent. Once the presentation is displaying the correct part, the "current"
+     * pointer on PartStack is updated.
+     */
+    private LayoutPart presentationCurrent;
 
     private boolean ignoreSelectionChanges = false;
-    private boolean selectionChangeDeferred = false;
 
     protected IMemento savedPresentationState = null;
 
@@ -229,11 +251,11 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      * @return
      */
     protected IPresentablePart getSelectedPart() {
-        if (current == null) {
+        if (presentationCurrent == null) {
             return null;
         }
-
-        return current.getPresentablePart();
+        
+        return presentationCurrent.getPresentablePart();
     }
 
     protected IStackPresentationSite getPresentationSite() {
@@ -363,7 +385,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
                     buf.append(", "); //$NON-NLS-1$
                 }
 
-                if (next == current) {
+                if (next == requestedCurrent) {
                     buf.append("*"); //$NON-NLS-1$
                 }
 
@@ -525,11 +547,11 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
         ctrl.setData(this);
 
-        updateActions();
+//        updateActions(presentationCurrent);
 
         // We should not have a placeholder selected once we've created the widgetry
-        if (current instanceof PartPlaceholder) {
-            current = null;
+        if (requestedCurrent instanceof PartPlaceholder) {
+            requestedCurrent = null;
             updateContainerVisibleTab();
         }
 
@@ -583,6 +605,9 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
             next.setContainer(null);
         }
+        
+        presentationCurrent = null;
+        current = null;
     }
 
     public void findSashes(LayoutPart part, PartPane.Sashes sashes) {
@@ -700,6 +725,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
     /**
      * Returns the visible child.
+     * @return the currently visible part, or null if none
      */
     public PartPane getVisiblePart() {
         if (current instanceof PartPane) {
@@ -718,7 +744,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         // This method should only be called on objects that are already in the layout
         Assert.isNotNull(newPart);
 
-        if (newPart == current) {
+        if (newPart == requestedCurrent) {
             return;
         }
 
@@ -728,11 +754,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
             newPart.setFocus();
         }
 
-        // set the title of the detached window to reflect the active tab
-//        Window window = getWindow();
-//        if (window instanceof DetachedWindow) {
-//            window.getShell().setText(newSelection.getTitle());
-//        }
     }
 
     /**
@@ -758,7 +779,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
             child.setContainer(null);
         }
 
-        if (child == current) {
+        if (child == requestedCurrent) {
             updateContainerVisibleTab();
         }
     }
@@ -787,15 +808,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      * See IVisualContainer#replace
      */
     public void replace(LayoutPart oldChild, LayoutPart newChild) {
-        // commented out but left for future reference - we're using this
-        // as the cookie for the part presentation but this will
-        // almost always be null (oldChilds being PartPlaceholders)
-        // even if they aren't null, we don't handle 
-        // IPresentableParts as cookies
-        //
-        // IPresentablePart oldPart = oldChild.getPresentablePart();
-        IPresentablePart newPart = newChild.getPresentablePart();
-
         int idx = children.indexOf(oldChild);
         int numPlaceholders = 0;
         //subtract the number of placeholders still existing in the list 
@@ -809,7 +821,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
         showPart(newChild, cookie);
 
-        if (oldChild == current && !(newChild instanceof PartPlaceholder)) {
+        if (oldChild == requestedCurrent && !(newChild instanceof PartPlaceholder)) {
             setSelection(newChild);
         }
 
@@ -864,8 +876,9 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
                 //1FUN70C: ITPUI:WIN - Shouldn't set Container when not active
                 //part.setContainer(this);
                 if (partID.equals(activeTabID)) {
+                    setSelection(part);
                     // Mark this as the active part.
-                    current = part;
+                    //current = part;
                 }
             }
         }
@@ -918,8 +931,8 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     public IStatus saveState(IMemento memento) {
 
         // Save the active tab.
-        if (current != null)
-            memento.putString(IWorkbenchConstants.TAG_ACTIVE_PAGE_ID, current
+        if (requestedCurrent != null)
+            memento.putString(IWorkbenchConstants.TAG_ACTIVE_PAGE_ID, requestedCurrent
                     .getCompoundId());
 
         Iterator iter = children.iterator();
@@ -997,15 +1010,12 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     }
 
     public void setSelection(LayoutPart part) {
-        if (current == part) {
+        if (part == requestedCurrent) {
             return;
         }
 
-        current = part;
-
-        if (!isDisposed()) {
-            updateActions();
-        }
+        requestedCurrent = part;
+        
         refreshPresentationSelection();
     }
 
@@ -1013,9 +1023,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      * Subclasses should override this method to update the enablement state of their
      * actions
      */
-    protected void updateActions() {
-
-    }
+    protected abstract void updateActions(LayoutPart current);
 
     /* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.LayoutPart#handleDeferredEvents()
@@ -1023,33 +1031,48 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 	protected void handleDeferredEvents() {
 		super.handleDeferredEvents();
 		
-		if (selectionChangeDeferred) {
-			refreshPresentationSelection();
-		}
+		refreshPresentationSelection();
 	}
     
-    private void refreshPresentationSelection() {
+    private void refreshPresentationSelection() {        
+        // If deferring UI updates, exit.
     	if (isDeferred()) {
-    		selectionChangeDeferred = true;
     		return;
     	}
-    	
-        if (current != null) {
-            IPresentablePart presentablePart = current.getPresentablePart();
-            StackPresentation presentation = getPresentation();
+        
+        // If the presentation is already displaying the desired part, then there's nothing
+        // to do.
+        if (current == requestedCurrent) {
+            return;
+        }
 
-            if (presentablePart != null && presentation != null) {
-
-                current.createControl(getParent());
-                if (current.getControl().getParent() != getControl()
-                        .getParent()) {
-                    current.reparent(getControl().getParent());
-                }
-
-                current.moveAbove(getPresentation().getControl());
-
-                presentation.selectPart(presentablePart);
+        StackPresentation presentation = getPresentation();
+        if (presentation != null) {
+        
+            presentationCurrent = requestedCurrent;
+            
+            if (!isDisposed()) {
+                updateActions(presentationCurrent);
             }
+            
+            if (presentationCurrent != null) {
+                IPresentablePart presentablePart = requestedCurrent.getPresentablePart();
+                    
+                if (presentablePart != null && presentation != null) {
+                    requestedCurrent.createControl(getParent());
+                    if (requestedCurrent.getControl().getParent() != getControl()
+                            .getParent()) {
+                        requestedCurrent.reparent(getControl().getParent());
+                    }
+    
+                    requestedCurrent.moveAbove(getPresentation().getControl());
+                    
+                    presentation.selectPart(presentationCurrent.getPresentablePart());                    
+                }
+            }
+        
+            // Update the return value of getVisiblePart
+            current = requestedCurrent;
         }
     }
 
@@ -1196,7 +1219,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
         presentationSite.getPresentation().addPart(presentablePart, cookie);
 
-        if (current == null) {
+        if (requestedCurrent == null) {
             setSelection(part);
         }
     }
