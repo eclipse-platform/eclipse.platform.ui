@@ -13,6 +13,7 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.ui.IActionDelegate2;
+import org.eclipse.ui.internal.roles.RoleManager;
 
 /**
  * Contribution item for actions provided by plugins via workbench
@@ -42,5 +43,16 @@ public class PluginActionContributionItem extends ActionContributionItem {
 				((IActionDelegate2)proxy.getDelegate()).dispose();
 			}
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.ActionContributionItem#isVisible()
+	 */
+	public boolean isVisible() {
+		if(RoleManager.getInstance().isFiltering()){
+			if(!RoleManager.getInstance().isEnabledId(getId()))
+				return false;
+		}
+		return super.isVisible();
 	}
 }
