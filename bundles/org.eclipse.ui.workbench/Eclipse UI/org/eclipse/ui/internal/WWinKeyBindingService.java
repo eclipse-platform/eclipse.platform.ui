@@ -173,7 +173,7 @@ public class WWinKeyBindingService {
 		});
 		propertyListener = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty().equals(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID)) {
+				if (event.getProperty().equals("org.eclipse.ui.commands")) { //$NON-NLS-1$
 					IWorkbenchPage page = window.getActivePage();
 					if(page != null) {
 						IWorkbenchPart part = page.getActivePart();

@@ -191,7 +191,7 @@ final class DialogCustomize extends Dialog {
 		keyMachine = keyManager.getKeyMachine();
 
 		SortedMap commandMap = new TreeMap();
-		List commands = org.eclipse.ui.internal.commands.CoreRegistry.getInstance().getCommands();
+		List commands = CoreRegistry.getInstance().getCommands();
 		iterator = commands.iterator();
 		Command command;
 		

@@ -16,6 +16,7 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -116,17 +117,6 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	public void init(IWorkbench workbench) {
 		this.workbench = workbench;
 		keyManager = KeyManager.getInstance();
-		preferenceStore = getPreferenceStore();
-		
-		String configurationString = preferenceStore.getString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
-		
-		if (configurationString == null || configurationString.length() == 0)
-			configurationString = preferenceStore.getDefaultString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
-
-		if (configurationString == null)
-			configurationString = ZERO_LENGTH_STRING;
-		
-		configurationId = configurationString;		
 
 		List pathItems = new ArrayList();
 		pathItems.add(KeyManager.systemPlatform());
@@ -136,6 +126,18 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		CoreRegistry coreRegistry = CoreRegistry.getInstance();
 		LocalRegistry localRegistry = LocalRegistry.getInstance();
 		PreferenceRegistry preferenceRegistry = PreferenceRegistry.getInstance();
+
+		List registryActiveKeyConfigurations = new ArrayList();
+		registryActiveKeyConfigurations.addAll(coreRegistry.getActiveKeyConfigurations());
+		registryActiveKeyConfigurations.addAll(localRegistry.getActiveKeyConfigurations());
+		registryActiveKeyConfigurations.addAll(preferenceRegistry.getActiveKeyConfigurations());
+		
+		if (registryActiveKeyConfigurations.size() == 0)
+			configurationId = ZERO_LENGTH_STRING;
+		else {
+			ActiveKeyConfiguration activeKeyConfiguration = (ActiveKeyConfiguration) registryActiveKeyConfigurations.get(registryActiveKeyConfigurations.size() - 1);
+			configurationId = activeKeyConfiguration.getValue();
+		}
 
 		SortedSet coreRegistryKeyBindingSet = new TreeSet();
 		coreRegistryKeyBindingSet.addAll(coreRegistry.getKeyBindings());	
@@ -152,6 +154,14 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		SortedSet preferenceRegistryKeyBindingSet = new TreeSet();
 		preferenceRegistryKeyBindingSet.addAll(preferenceRegistry.getKeyBindings());	
 	
+		registryBindingSet = new TreeSet();		
+		registryBindingSet.addAll(coreRegistryKeyBindingSet);
+		registryBindingSet.addAll(localRegistryKeyBindingSet);
+
+		preferenceBindingSet = new TreeSet();
+		preferenceBindingSet.addAll(preferenceRegistryKeyBindingSet);
+
+
 		List registryKeyConfigurations = new ArrayList();
 		registryKeyConfigurations.addAll(coreRegistry.getKeyConfigurations());
 		registryKeyConfigurations.addAll(localRegistry.getKeyConfigurations());
@@ -164,12 +174,6 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		registryScopes.addAll(preferenceRegistry.getScopes());
 		registryScopeMap = Scope.sortedMap(registryScopes);
 
-		registryBindingSet = new TreeSet();		
-		registryBindingSet.addAll(coreRegistryKeyBindingSet);
-		registryBindingSet.addAll(localRegistryKeyBindingSet);
-
-		preferenceBindingSet = new TreeSet();
-		preferenceBindingSet.addAll(preferenceRegistryKeyBindingSet);
 
 		nameToConfigurationMap = new HashMap();	
 		Collection configurations = registryConfigurationMap.values();
@@ -198,7 +202,21 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			if (comboConfiguration != null && comboConfiguration.isEnabled()) {
 				comboConfiguration.clearSelection();
 				comboConfiguration.deselectAll();
-				configurationId = preferenceStore.getDefaultString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
+				
+				CoreRegistry coreRegistry = CoreRegistry.getInstance();
+				LocalRegistry localRegistry = LocalRegistry.getInstance();
+
+				List registryActiveKeyConfigurations = new ArrayList();
+				registryActiveKeyConfigurations.addAll(coreRegistry.getActiveKeyConfigurations());
+				registryActiveKeyConfigurations.addAll(localRegistry.getActiveKeyConfigurations());
+		
+				if (registryActiveKeyConfigurations.size() == 0)
+					configurationId = ""; //$NON-NLS-1$
+				else {
+					ActiveKeyConfiguration activeKeyConfiguration = (ActiveKeyConfiguration) registryActiveKeyConfigurations.get(registryActiveKeyConfigurations.size() - 1);
+					configurationId = activeKeyConfiguration.getValue();
+				}			
+				
 				KeyConfiguration configuration = (KeyConfiguration) registryConfigurationMap.get(configurationId);
 
 				if (configuration != null)
@@ -211,7 +229,6 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	
 	public boolean performOk() {
 		PreferenceRegistry preferenceRegistry = PreferenceRegistry.getInstance();
-		List preferenceActiveKeyConfigurations = new ArrayList();
 		
 		if (comboConfiguration != null && comboConfiguration.isEnabled()) {
 			int i = comboConfiguration.getSelectionIndex();
@@ -224,14 +241,10 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 					
 					if (configuration != null) {
 						configurationId = configuration.getId();
-						
-						preferenceActiveKeyConfigurations.add(ActiveKeyConfiguration.create(null, configurationId));
-
-						preferenceStore.setValue(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID, configurationId);
+						preferenceRegistry.setActiveKeyConfigurations(Collections.singletonList(ActiveKeyConfiguration.create(null, configurationId)));
 												
 						List preferenceKeyBindings = new ArrayList();
 						preferenceKeyBindings.addAll(preferenceBindingSet);
-
 						preferenceRegistry.setKeyBindings(preferenceKeyBindings);
 
 						try {

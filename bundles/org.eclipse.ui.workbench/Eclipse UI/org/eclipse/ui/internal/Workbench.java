@@ -14,6 +14,7 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.resources.IContainer;
@@ -90,8 +91,12 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.internal.commands.ActiveKeyConfiguration;
+import org.eclipse.ui.internal.commands.CoreRegistry;
 import org.eclipse.ui.internal.commands.KeyConfiguration;
 import org.eclipse.ui.internal.commands.KeyManager;
+import org.eclipse.ui.internal.commands.LocalRegistry;
+import org.eclipse.ui.internal.commands.PreferenceRegistry;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.fonts.FontDefinition;
 import org.eclipse.ui.internal.misc.Assert;
@@ -802,18 +807,39 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	}
 
 	private void initializeConfiguration() {
-		IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();
-		String configuration = preferenceStore.getString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
+		String configurationId;
+		
+		CoreRegistry coreRegistry = CoreRegistry.getInstance();
+		LocalRegistry localRegistry = LocalRegistry.getInstance();
+		PreferenceRegistry preferenceRegistry = PreferenceRegistry.getInstance();
 
-		if (configuration == null || configuration.length() == 0)
-			configuration = preferenceStore.getDefaultString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
-
-		if (configuration == null)
-			configuration = ""; //$NON-NLS-1$
+		List registryActiveKeyConfigurations = new ArrayList();
+		registryActiveKeyConfigurations.addAll(coreRegistry.getActiveKeyConfigurations());
+		registryActiveKeyConfigurations.addAll(localRegistry.getActiveKeyConfigurations());
+		registryActiveKeyConfigurations.addAll(preferenceRegistry.getActiveKeyConfigurations());
+		
+		if (registryActiveKeyConfigurations.size() == 0)
+			configurationId = ""; //$NON-NLS-1$
+		else {
+			ActiveKeyConfiguration activeKeyConfiguration = (ActiveKeyConfiguration) registryActiveKeyConfigurations.get(registryActiveKeyConfigurations.size() - 1);
+			configurationId = activeKeyConfiguration.getValue();
+		}
 
 		KeyManager keyManager = KeyManager.getInstance();
-		keyManager.getKeyMachine().setKeyConfiguration(configuration);
+		keyManager.getKeyMachine().setKeyConfiguration(configurationId);
 		keyManager.update();
+
+		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
+
+		if (workbenchWindow != null && workbenchWindow instanceof WorkbenchWindow) {
+			WWinKeyBindingService wWinKeyBindingService = ((WorkbenchWindow) workbenchWindow).getKeyBindingService();
+
+			if (wWinKeyBindingService != null)
+				wWinKeyBindingService.clear();
+
+			MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();
+			menuManager.update(IAction.TEXT);
+		}
 	}
 	/**
 	 * Initialize the workbench fonts with the stored values.

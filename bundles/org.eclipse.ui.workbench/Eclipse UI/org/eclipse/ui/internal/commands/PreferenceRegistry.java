@@ -29,12 +29,13 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 
 public final class PreferenceRegistry extends AbstractMutableRegistry {
 
+	private final static String DEPRECATED_KEY_ACTIVE_KEY_CONFIGURATION = "acceleratorConfigurationId"; //$NON-NLS-1$
+	private final static String DEPRECATED_KEY_KEY_BINDINGS = "org.eclipse.ui.keybindings"; //$NON-NLS-1$
 	private final static String DEPRECATED_TAG_BINDING = "binding"; //$NON-NLS-1$
 	private final static String DEPRECATED_TAG_BINDINGS = "bindings"; //$NON-NLS-1$
 	private final static String DEPRECATED_TAG_ACCELERATOR = "accelerator"; //$NON-NLS-1$
 	private final static String DEPRECATED_TAG_ACTION = "action"; //$NON-NLS-1$
 	private final static String DEPRECATED_TAG_CONFIGURATION = "configuration"; //$NON-NLS-1$		
-	private final static String DEPRECATED_TAG_KEY = "org.eclipse.ui.keybindings"; //$NON-NLS-1$
 	private final static String DEPRECATED_TAG_KEY_SEQUENCE = "keysequence"; //$NON-NLS-1$
 	private final static String DEPRECATED_TAG_KEY_STROKE = "keystroke"; //$NON-NLS-1$
 	private final static String DEPRECATED_TAG_PLUGIN = "plugin"; //$NON-NLS-1$
@@ -59,11 +60,18 @@ public final class PreferenceRegistry extends AbstractMutableRegistry {
 	public void load() 
 		throws IOException {
 		IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();
-		String deprecatedPreferenceString = preferenceStore.getString(DEPRECATED_TAG_KEY);
+
+		String deprecatedActiveKeyConfigurationsString = preferenceStore.getString(DEPRECATED_KEY_ACTIVE_KEY_CONFIGURATION);
+		List deprecatedActiveKeyConfigurations = Collections.EMPTY_LIST;
+	
+		if (deprecatedActiveKeyConfigurationsString != null && deprecatedActiveKeyConfigurationsString.length() != 0)		
+			deprecatedActiveKeyConfigurations = Collections.singletonList(ActiveKeyConfiguration.create(null, deprecatedActiveKeyConfigurationsString));
+
+		String deprecatedKeyBindingsString = preferenceStore.getString(DEPRECATED_KEY_KEY_BINDINGS);
 		List deprecatedKeyBindings = Collections.EMPTY_LIST;
 
-		if (deprecatedPreferenceString != null && deprecatedPreferenceString.length() != 0) {
-			Reader reader = new BufferedReader(new StringReader(deprecatedPreferenceString));
+		if (deprecatedKeyBindingsString != null && deprecatedKeyBindingsString.length() != 0) {
+			Reader reader = new BufferedReader(new StringReader(deprecatedKeyBindingsString));
 		
 			try {
 				IMemento memento = XMLMemento.createReadRoot(reader);
@@ -105,6 +113,11 @@ public final class PreferenceRegistry extends AbstractMutableRegistry {
 				reader.close();
 			}
 		}
+
+		List activeKeyConfigurations = new ArrayList();
+		activeKeyConfigurations.addAll(deprecatedActiveKeyConfigurations);
+		activeKeyConfigurations.addAll(this.activeKeyConfigurations);
+		this.activeKeyConfigurations = Collections.unmodifiableList(activeKeyConfigurations);
 	
 		List keyBindings = new ArrayList();
 		keyBindings.addAll(deprecatedKeyBindings);
