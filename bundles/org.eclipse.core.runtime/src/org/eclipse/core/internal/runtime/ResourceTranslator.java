@@ -71,7 +71,7 @@ public class ResourceTranslator {
 
 	private static boolean hasRuntime21(Bundle b) {
 		try {
-			ManifestElement[] prereqs = ManifestElement.parseHeader(Constants.REQUIRE_BUNDLE, (String) b.getHeaders().get(Constants.REQUIRE_BUNDLE));
+			ManifestElement[] prereqs = ManifestElement.parseHeader(Constants.REQUIRE_BUNDLE, (String) b.getHeaders("").get(Constants.REQUIRE_BUNDLE)); //$NON-NLS-1$
 			if (prereqs == null)
 				return false;
 			for (int i = 0; i < prereqs.length; i++) {
