@@ -54,7 +54,10 @@ public class ContentStamps {
 	
 	public static ContentStamp get(IFile file) {
 		try {
-			return (ContentStamp)file.getSessionProperty(CONTENT_STAMP);
+			ContentStamp result= (ContentStamp)file.getSessionProperty(CONTENT_STAMP);
+			if (result != null)
+				return result;
+			return NULL_CONTENT_STAMP;
 		} catch (CoreException e) {
 			// fall through
 		}
@@ -63,7 +66,7 @@ public class ContentStamps {
 	
 	public static ContentStamp get(IFile file, boolean create) {
 		ContentStamp result= get(file);
-		if (result == null && create) {
+		if (result.isNullStamp() && create) {
 			result= new ContentStampImpl(0);
 			try {
 				file.setSessionProperty(CONTENT_STAMP, result);
