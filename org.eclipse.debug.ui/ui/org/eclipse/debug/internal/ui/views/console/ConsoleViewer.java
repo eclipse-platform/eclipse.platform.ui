@@ -43,8 +43,10 @@ import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
-public class ConsoleViewer extends TextViewer implements IPropertyChangeListener, MouseTrackListener, MouseMoveListener, MouseListener, PaintListener, LineStyleListener {
+public class ConsoleViewer extends TextViewer implements IPropertyChangeListener, MouseTrackListener, MouseMoveListener, MouseListener, PaintListener, LineStyleListener, Listener {
 	
 	/**
 	 * Hand cursor
@@ -119,6 +121,7 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 		getTextWidget().addMouseTrackListener(this);
 		getTextWidget().addPaintListener(this);
 		getTextWidget().addLineStyleListener(this);
+		getTextWidget().addListener(SWT.KeyUp, this);
 	}
 	
 	/**
@@ -289,20 +292,7 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 		} catch (IllegalArgumentException ex) {
 			// out of the document range
 		}
-		if (offset >= 0) {
-			IConsoleHyperlink link = getHyperlink(offset);
-			if (link != null) {
-				if (link.equals(fHyperLink)) {
-					return;
-				} else {
-					linkEntered(link);
-					return;
-				}
-			}
-		}
-		if (fHyperLink != null) {
-			linkExited(fHyperLink);
-		}		
+		updateLinks(offset);	
 	}
 
 	public IConsoleHyperlink getHyperlink(int offset) {
@@ -475,6 +465,39 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 	public boolean isAutoScroll() {
 		return fAutoScroll;
 	}	
+
+	/**
+	 * On KeyUp events, see if we need to enter/exit a link.
+	 * 
+	 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+	 */
+	public void handleEvent(Event event) {
+		int offset = getTextWidget().getCaretOffset();
+		updateLinks(offset);
+	}
+	
+	/**
+	 * The cursor has just be moved to the given offset, the mouse has
+	 * hovered over the given offset. Update link rendering.
+	 * 
+	 * @param offset
+	 */
+	protected void updateLinks(int offset) {
+		if (offset >= 0) {
+			IConsoleHyperlink link = getHyperlink(offset);
+			if (link != null) {
+				if (link.equals(fHyperLink)) {
+					return;
+				} else {
+					linkEntered(link);
+					return;
+				}
+			}
+		}
+		if (fHyperLink != null) {
+			linkExited(fHyperLink);
+		}		
+	}
 
 }
 
