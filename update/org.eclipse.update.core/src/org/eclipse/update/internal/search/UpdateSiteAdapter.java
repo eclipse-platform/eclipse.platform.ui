@@ -43,4 +43,7 @@ public class UpdateSiteAdapter implements IUpdateSiteAdapter {
 		}
 	}
 */
+	public String toString(){
+		return "" + getURL();
+	}
 }
