@@ -16,7 +16,6 @@ import org.eclipse.swt.custom.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
-import org.eclipse.update.internal.search.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.wizards.*;
 import org.eclipse.update.search.*;
