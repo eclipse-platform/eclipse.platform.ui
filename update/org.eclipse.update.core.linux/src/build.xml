@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project name="buildlibrary" default="run" basedir="."> 
   
   <!-- The properties ${eclipse-home} ${jdk-path} should be passed into this script -->
