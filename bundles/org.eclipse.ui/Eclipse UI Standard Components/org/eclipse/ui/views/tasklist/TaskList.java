@@ -683,7 +683,7 @@ boolean checkResource(IResource resource) {
 			else {
 				project = resource2.getProject();
 				
-				if (project.equals(resource.getProject())) {
+				if (project == null || project.equals(resource.getProject())) {
 					return true;
 				}
 			}
