@@ -62,7 +62,7 @@ public class SiteReconciler extends ModelObject {
 
 		// TRACE
 		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
-			UpdateCore.debug("Compare features within :" + configuredSite.getSite().getURL());
+			UpdateCore.debug("Compare features within :" + configuredSite.getSite().getURL()); //$NON-NLS-1$
 		}
 
 		for (int indexConfiguredFeatures = 0; indexConfiguredFeatures < configuredFeatures.length - 1; indexConfiguredFeatures++) {
@@ -95,7 +95,7 @@ public class SiteReconciler extends ModelObject {
 
 		// TRACE
 		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
-			UpdateCore.debug("Compare: " + featureRef1 + " && " + featureRef2);
+			UpdateCore.debug("Compare: " + featureRef1 + " && " + featureRef2); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		if (featureRef1 == null)
@@ -157,7 +157,7 @@ public class SiteReconciler extends ModelObject {
 		ConfiguredSite cSite = (ConfiguredSite) configuredSite;
 		// debug
 		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
-			UpdateCore.debug("Validate configuration of site " + cSite.getSite().getURL());
+			UpdateCore.debug("Validate configuration of site " + cSite.getSite().getURL()); //$NON-NLS-1$
 		}
 		IFeatureReference[] configuredRefs = cSite.getConfiguredFeatures();
 		ArrayList allPossibleConfiguredFeatures = new ArrayList();
@@ -167,10 +167,10 @@ public class SiteReconciler extends ModelObject {
 				allPossibleConfiguredFeatures.add(feature);
 				// debug
 				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
-					UpdateCore.debug("   configured feature " + feature.getVersionedIdentifier().toString());
+					UpdateCore.debug("   configured feature " + feature.getVersionedIdentifier().toString()); //$NON-NLS-1$
 				}
 			} catch (CoreException e) {
-				UpdateCore.warn("", e);
+				UpdateCore.warn("", e); //$NON-NLS-1$
 			}
 		}
 
@@ -213,10 +213,10 @@ public class SiteReconciler extends ModelObject {
 				cPolicy.unconfigure(ref, true, false);
 				// debug
 				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
-					UpdateCore.debug("Unconfiguring \"extra\" feature " + feature.getVersionedIdentifier().toString());
+					UpdateCore.debug("Unconfiguring \"extra\" feature " + feature.getVersionedIdentifier().toString()); //$NON-NLS-1$
 				}
 			} catch (CoreException e) {
-				UpdateCore.warn("", e);
+				UpdateCore.warn("", e); //$NON-NLS-1$
 			}
 		}
 	}
@@ -241,20 +241,20 @@ public class SiteReconciler extends ModelObject {
 						topFeatures.remove(children[j].getVersionedIdentifier());
 					} catch (CoreException e1) {
 						if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_WARNINGS)
-							UpdateCore.warn("", e1);
+							UpdateCore.warn("", e1); //$NON-NLS-1$
 					}
 				}
 			} catch (CoreException e) {
-				UpdateCore.warn("", e);
+				UpdateCore.warn("", e); //$NON-NLS-1$
 			}
 		}
 		ArrayList list = new ArrayList();
 		list.addAll(topFeatures.values());
 		// debug
 		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
-			UpdateCore.debug("Computed top-level features");
+			UpdateCore.debug("Computed top-level features"); //$NON-NLS-1$
 			for (int i = 0; i < topFeatures.size(); i++) {
-				UpdateCore.debug("   " + ((IFeature) list.get(i)).getVersionedIdentifier().toString());
+				UpdateCore.debug("   " + ((IFeature) list.get(i)).getVersionedIdentifier().toString()); //$NON-NLS-1$
 			}
 		}
 		return list;
@@ -284,7 +284,7 @@ public class SiteReconciler extends ModelObject {
 			features.add(feature);
 			// debug
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
-				UpdateCore.debug("Retaining configured feature " + feature.getVersionedIdentifier().toString());
+				UpdateCore.debug("Retaining configured feature " + feature.getVersionedIdentifier().toString()); //$NON-NLS-1$
 			}
 		}
 
@@ -293,7 +293,7 @@ public class SiteReconciler extends ModelObject {
 		try {
 			children = feature.getIncludedFeatureReferences();
 		} catch (CoreException e) {
-			UpdateCore.warn("", e);
+			UpdateCore.warn("", e); //$NON-NLS-1$
 			return;
 		}
 
@@ -303,7 +303,7 @@ public class SiteReconciler extends ModelObject {
 				child = children[j].getFeature(null);
 			} catch (CoreException e) {
 				if (!UpdateManagerUtils.isOptional(children[j]))
-					UpdateCore.warn("", e);
+					UpdateCore.warn("", e); //$NON-NLS-1$
 				// 25202 do not return right now, the peer children may be ok
 			}
 			if (child != null)
@@ -342,7 +342,7 @@ public class SiteReconciler extends ModelObject {
 					if (element.getImports()[i].isPatch()) {
 						VersionedIdentifier id = element.getImports()[i].getVersionedIdentifier();
 						if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER)
-							UpdateCore.debug("Found patch " + element + " for feature identifier " + id);
+							UpdateCore.debug("Found patch " + element + " for feature identifier " + id); //$NON-NLS-1$ //$NON-NLS-2$
 						patchedFeaturesID.add(id);
 					}
 				}
@@ -387,10 +387,10 @@ public class SiteReconciler extends ModelObject {
 
 			if (!toEnable) {
 				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER)
-				UpdateCore.debug("The Patch " + efixFeature + " does not patch any enabled features: it will be disabled");
+				UpdateCore.debug("The Patch " + efixFeature + " does not patch any enabled features: it will be disabled"); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
 				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER)
-					UpdateCore.debug("The patch " + efixFeature + " will be enabled.");
+					UpdateCore.debug("The patch " + efixFeature + " will be enabled."); //$NON-NLS-1$ //$NON-NLS-2$
 				result.add(efixFeature);
 			}
 		}
@@ -430,7 +430,7 @@ public class SiteReconciler extends ModelObject {
 			features.add(feature);
 			// debug
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
-				UpdateCore.debug("Retaining configured feature " + feature.getVersionedIdentifier().toString());
+				UpdateCore.debug("Retaining configured feature " + feature.getVersionedIdentifier().toString()); //$NON-NLS-1$
 			}
 		}
 
@@ -439,7 +439,7 @@ public class SiteReconciler extends ModelObject {
 		try {
 			children = feature.getIncludedFeatureReferences();
 		} catch (CoreException e) {
-			UpdateCore.warn("", e);
+			UpdateCore.warn("", e); //$NON-NLS-1$
 			return;
 		}
 
@@ -449,7 +449,7 @@ public class SiteReconciler extends ModelObject {
 				child = children[j].getFeature(null);
 			} catch (CoreException e) {
 				if (!children[j].isOptional())
-					UpdateCore.warn("", e);
+					UpdateCore.warn("", e); //$NON-NLS-1$
 				// 25202 do not return right now, the peer children may be ok
 			}
 			if (child != null){

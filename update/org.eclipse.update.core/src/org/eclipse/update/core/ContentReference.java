@@ -156,7 +156,7 @@ public class ContentReference {
 	 * @since 2.0
 	 */
 	InputStream getPartialInputStream(long offset) throws IOException {
-		if (url != null && "http".equals(url.getProtocol())) {
+		if (url != null && "http".equals(url.getProtocol())) { //$NON-NLS-1$
 			URL resolvedURL = URLEncoder.encode(url);
 			response = UpdateCore.getPlugin().get(resolvedURL);
 			if(response instanceof HttpResponse)

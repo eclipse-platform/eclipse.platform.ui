@@ -64,7 +64,7 @@ public class InstallConfigurationParser {
 		try {
 			siteURL = Platform.asLocalURL(siteURL);
 			// TODO workaround bug in platform url resolution
-			if (siteURL.getProtocol().equals("file"))
+			if (siteURL.getProtocol().equals("file")) //$NON-NLS-1$
 				siteURL = new File(siteURL.getFile()).toURL();
 		} catch (IOException e) {
 			// keep original url
@@ -124,7 +124,7 @@ public class InstallConfigurationParser {
 			}
 
 		} else {
-			UpdateCore.log( Policy.bind("InstallConfigurationParser.FeatureReferenceNoURL"), new Exception());
+			UpdateCore.log( Policy.bind("InstallConfigurationParser.FeatureReferenceNoURL"), new Exception()); //$NON-NLS-1$
 		}
 
 	}

@@ -154,9 +154,9 @@ public class PluginEntryModel extends ContentEntryModel {
 	 * @see Object#toString()
 	 */
 	public String toString() {
-		String msg = (getPluginIdentifier()!=null)?getPluginIdentifier().toString():"";
-		msg += getPluginVersion()!=null?" "+getPluginVersion().toString():"";
-		msg += isFragment()?" fragment":" plugin";
+		String msg = (getPluginIdentifier()!=null)?getPluginIdentifier().toString():""; //$NON-NLS-1$
+		msg += getPluginVersion()!=null?" "+getPluginVersion().toString():""; //$NON-NLS-1$ //$NON-NLS-2$
+		msg += isFragment()?" fragment":" plugin"; //$NON-NLS-1$ //$NON-NLS-2$
 		return msg;
 	}
 

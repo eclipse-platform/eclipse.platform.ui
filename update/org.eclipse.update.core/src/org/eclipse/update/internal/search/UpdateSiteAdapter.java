@@ -40,6 +40,6 @@ public class UpdateSiteAdapter implements IUpdateSiteAdapter {
 	}
 */
 	public String toString(){
-		return "" + getURL();
+		return "" + getURL(); //$NON-NLS-1$
 	}
 }

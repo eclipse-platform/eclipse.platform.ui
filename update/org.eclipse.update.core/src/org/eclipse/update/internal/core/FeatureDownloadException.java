@@ -27,7 +27,7 @@ public class FeatureDownloadException extends CoreException {
 		super(
 			new Status(
 				IStatus.INFO,
-				"org.eclipse.update.core",
+				"org.eclipse.update.core", //$NON-NLS-1$
 				IStatus.OK,
 				msg,
 				e));

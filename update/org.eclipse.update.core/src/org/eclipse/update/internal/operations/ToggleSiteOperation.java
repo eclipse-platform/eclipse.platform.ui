@@ -45,7 +45,7 @@ public class ToggleSiteOperation
 		} else {
 			try {
 				boolean restartNeeded = SiteManager.getLocalSite().save();
-				OperationsManager.fireObjectChanged(site, "");
+				OperationsManager.fireObjectChanged(site, ""); //$NON-NLS-1$
 				return restartNeeded; // will restart only if changes could not be applied to current config
 			} catch (CoreException e) {
 				//revert

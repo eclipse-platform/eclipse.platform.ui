@@ -59,7 +59,7 @@ public class SiteURLContentProvider extends SiteContentProvider {
 		if (siteArchives.length > 0) {
 			for (int i = 0; i < siteArchives.length && !found; i++) {
 				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_INSTALL)
-					UpdateCore.debug("GetArchiveURL for:"+archiveId+" compare to "+siteArchives[i].getPath());
+					UpdateCore.debug("GetArchiveURL for:"+archiveId+" compare to "+siteArchives[i].getPath()); //$NON-NLS-1$ //$NON-NLS-2$
 				if (archiveId.trim().equalsIgnoreCase(siteArchives[i].getPath())) {
 					result = siteArchives[i].getURL();
 					found = true;

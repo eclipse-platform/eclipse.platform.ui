@@ -27,7 +27,7 @@ import org.eclipse.update.core.*;
  */
 public class InstallRegistry extends Properties {
 	private File file = null;
-	private final static String REGISTRY = "registry";
+	private final static String REGISTRY = "registry"; //$NON-NLS-1$
 	private static InstallRegistry instance;
 	
 	// plugins installed in this eclipse session
@@ -95,7 +95,7 @@ public class InstallRegistry extends Properties {
 		boolean ret = false;
 		try {
 			out = new FileOutputStream(file);
-			super.store(out, "This is a generated file; do not edit.");
+			super.store(out, "This is a generated file; do not edit."); //$NON-NLS-1$
 			ret = true;
 		} catch (IOException e) {
 			UpdateCore.log(e);
@@ -115,7 +115,7 @@ public class InstallRegistry extends Properties {
 	 * @param feature feature to register.
 	 */
 	public static synchronized void registerFeature(IFeature feature) {
-		String name = "feature_"+feature.getVersionedIdentifier();
+		String name = "feature_"+feature.getVersionedIdentifier(); //$NON-NLS-1$
 		if (InstallRegistry.getInstance().get(name) == null) {
 			InstallRegistry.getInstance().put(name, name);
 			// we save after each registration
@@ -128,7 +128,7 @@ public class InstallRegistry extends Properties {
 	 * @param pluginEntry plugin to register.
 	 */
 	public static synchronized void registerPlugin(IPluginEntry pluginEntry) {
-		String name = "plugin_"+pluginEntry.getVersionedIdentifier();
+		String name = "plugin_"+pluginEntry.getVersionedIdentifier(); //$NON-NLS-1$
 		if (InstallRegistry.getInstance().get(name) == null) {
 			InstallRegistry.getInstance().put(name, name);
 			// we save after each registration
@@ -144,7 +144,7 @@ public class InstallRegistry extends Properties {
 	 *
 	 */
 	public static synchronized void unregisterFeature(IFeature feature) {
-		String name = "feature_"+feature.getVersionedIdentifier();
+		String name = "feature_"+feature.getVersionedIdentifier(); //$NON-NLS-1$
 		InstallRegistry.getInstance().remove(name);
 	}
 	
@@ -153,7 +153,7 @@ public class InstallRegistry extends Properties {
 	 *
 	 */
 	public static synchronized void unregisterPlugin(IPluginEntry pluginEntry) {
-		String name = "plugin_"+pluginEntry.getVersionedIdentifier();
+		String name = "plugin_"+pluginEntry.getVersionedIdentifier(); //$NON-NLS-1$
 		InstallRegistry.getInstance().remove(name);
 		
 		// remove the plugin from the list of just installed plugins (if needed).
@@ -166,7 +166,7 @@ public class InstallRegistry extends Properties {
 	 * @return
 	 */
 	public boolean isPluginJustInstalled(IPluginEntry pluginEntry) {
-		String name = "plugin_"+pluginEntry.getVersionedIdentifier();
+		String name = "plugin_"+pluginEntry.getVersionedIdentifier(); //$NON-NLS-1$
 		return InstallRegistry.getInstance().justInstalledPlugins.get(name) != null;
 	}
 	

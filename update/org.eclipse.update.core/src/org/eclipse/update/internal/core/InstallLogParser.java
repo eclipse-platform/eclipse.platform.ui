@@ -50,7 +50,7 @@ public class InstallLogParser {
 	
 	public InstallLogParser(){
 		String loc = ConfiguratorUtils.getCurrentPlatformConfiguration().getConfigurationLocation().getFile();
-		logPath = new Path(loc).removeLastSegments(1).append("install.log"); 
+		logPath = new Path(loc).removeLastSegments(1).append("install.log");  //$NON-NLS-1$
 		installConfigMap = new HashMap();
 		try {
 			InstallConfiguration[] configs = (InstallConfiguration[])SiteManager.getLocalSite().getConfigurationHistory();
@@ -133,10 +133,10 @@ public class InstallLogParser {
 					String time = htmlCode.nextToken();
 					String date;
 					StringBuffer target = new StringBuffer();
-					date = htmlCode.nextToken("."); 
-					htmlCode.nextToken(" "); 
+					date = htmlCode.nextToken(".");  //$NON-NLS-1$
+					htmlCode.nextToken(" ");  //$NON-NLS-1$
 					while (htmlCode.countTokens() > 2){
-						target.append(" ");
+						target.append(" "); //$NON-NLS-1$
 						target.append(htmlCode.nextToken());
 					}
 					
@@ -149,7 +149,7 @@ public class InstallLogParser {
 					date = new StringBuffer();
 					while (htmlCode.countTokens() > 0){
 						if (date.length() != 0)
-							date.append(" ");
+							date.append(" "); //$NON-NLS-1$
 						date.append(htmlCode.nextToken());
 					}
 					currentConfiguration = (InstallConfiguration)installConfigMap.get(new Long(time));

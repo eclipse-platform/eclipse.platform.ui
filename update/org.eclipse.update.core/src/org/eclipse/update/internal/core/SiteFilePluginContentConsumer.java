@@ -50,7 +50,7 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 		String pluginPath = null;
 
 		if (closed) {
-			UpdateCore.warn("Attempt to store in a closed SiteFilePluginContentConsumer", new Exception());
+			UpdateCore.warn("Attempt to store in a closed SiteFilePluginContentConsumer", new Exception()); //$NON-NLS-1$
 			return;
 		}
 
@@ -63,18 +63,18 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 
 			// error recovery
 			String logEntry=null;
-			if ("plugin.xml".equals(contentKey)) {
+			if ("plugin.xml".equals(contentKey)) { //$NON-NLS-1$
 				logEntry=ErrorRecoveryLog.PLUGIN_ENTRY;
-			} else if ("fragment.xml".equals(contentKey)) {
+			} else if ("fragment.xml".equals(contentKey)) { //$NON-NLS-1$
 				logEntry=ErrorRecoveryLog.FRAGMENT_ENTRY;
-			} else if ("META-INF/MANIFEST.MF".equals(contentKey)) {
+			} else if ("META-INF/MANIFEST.MF".equals(contentKey)) { //$NON-NLS-1$
 				logEntry=ErrorRecoveryLog.BUNDLE_MANIFEST_ENTRY;
 			}
 			if (logEntry!=null) {
 				String originalName = pluginPath.replace(File.separatorChar, '/');
 				File localFile = new File(originalName);
 				if (localFile.exists()) {
-					throw Utilities.newCoreException(Policy.bind("UpdateManagerUtils.FileAlreadyExists", new Object[] { localFile }), null);
+					throw Utilities.newCoreException(Policy.bind("UpdateManagerUtils.FileAlreadyExists", new Object[] { localFile }), null); //$NON-NLS-1$
 				}
 				pluginPath = ErrorRecoveryLog.getLocalRandomIdentifier(pluginPath);
 				renames.put(pluginPath, originalName);
@@ -103,7 +103,7 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 	public void close() throws CoreException {
 
 		if (closed) {
-			UpdateCore.warn("Attempt to close a closed SiteFilePluginContentConsumer", new Exception());
+			UpdateCore.warn("Attempt to close a closed SiteFilePluginContentConsumer", new Exception()); //$NON-NLS-1$
 			return;
 		}
 
@@ -120,7 +120,7 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 				sucess = fileToRename.renameTo(renamedFile);
 			}
 			if (!sucess) {
-				String msg = Policy.bind("ContentConsumer.UnableToRename", temporary, original);
+				String msg = Policy.bind("ContentConsumer.UnableToRename", temporary, original); //$NON-NLS-1$
 				throw Utilities.newCoreException(msg, new Exception(msg));
 			}
 		}
@@ -136,7 +136,7 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 	public void abort() throws CoreException {
 
 		if (closed) {
-			UpdateCore.warn("Attempt to abort a closed SiteFilePluginContentConsumer", new Exception());
+			UpdateCore.warn("Attempt to abort a closed SiteFilePluginContentConsumer", new Exception()); //$NON-NLS-1$
 			return;
 		}
 
@@ -149,7 +149,7 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 			File fileToRemove = new File(originalName);
 			if (fileToRemove.exists()) {
 				if(!fileToRemove.delete()){
-					String msg = Policy.bind("Unable to delete", originalName);
+					String msg = Policy.bind("Unable to delete", originalName); //$NON-NLS-1$
 					UpdateCore.log(msg, null);	
 					success = false;
 				}

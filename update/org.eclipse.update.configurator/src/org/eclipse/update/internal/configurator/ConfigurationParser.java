@@ -44,10 +44,10 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 			parserFactory.setNamespaceAware(true);
 			this.parser = parserFactory.newSAXParser();
 		} catch (ParserConfigurationException e) {
-			Utils.log(Utils.newStatus("ConfigurationParser", e));
+			Utils.log(Utils.newStatus("ConfigurationParser", e)); //$NON-NLS-1$
 			throw new InvocationTargetException(e);
 		} catch (SAXException e) {
-			Utils.log(Utils.newStatus("ConfigurationParser", e));
+			Utils.log(Utils.newStatus("ConfigurationParser", e)); //$NON-NLS-1$
 			throw new InvocationTargetException(e);
 		}
 	}
@@ -59,7 +59,7 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 		long lastModified = 0;
 		try {
 			configURL = url;
-			if ("file".equals(url.getProtocol())) {
+			if ("file".equals(url.getProtocol())) { //$NON-NLS-1$
 				File inputFile = new File(url.getFile());
 				if (!inputFile.exists() || !inputFile.canRead())
 					return null;
@@ -70,7 +70,7 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 			parser.parse(new InputSource(input), this);
 			return config;
 		} catch (Exception e) {
-			Utils.log(Utils.newStatus("ConfigurationParser.parse() error:", e));
+			Utils.log(Utils.newStatus("ConfigurationParser.parse() error:", e)); //$NON-NLS-1$
 			throw e;
 		} finally {
 			if (config != null)
@@ -175,7 +175,7 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 				policyType = i;
 				String pluginList = attributes.getValue(CFG_LIST);
 				if (pluginList != null) {
-					StringTokenizer st = new StringTokenizer(pluginList,",");
+					StringTokenizer st = new StringTokenizer(pluginList,","); //$NON-NLS-1$
 					policyList = new String[st.countTokens()];
 					for (i=0; i<policyList.length; i++)
 						policyList[i] = st.nextToken();
@@ -195,7 +195,7 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 		}
 		
 		flag = attributes.getValue(CFG_ENABLED); //$NON-NLS-1$
-		if (flag != null && flag.equals("false"))
+		if (flag != null && flag.equals("false")) //$NON-NLS-1$
 			site.setEnabled(false);
 		else
 			site.setEnabled(true);
@@ -234,7 +234,7 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 		
 		// get install locations
 		String locations = attributes.getValue(CFG_FEATURE_ENTRY_ROOT);
-		StringTokenizer st = locations != null ? new StringTokenizer(locations,",") : new StringTokenizer("");
+		StringTokenizer st = locations != null ? new StringTokenizer(locations,",") : new StringTokenizer(""); //$NON-NLS-1$ //$NON-NLS-2$
 		ArrayList rootList = new ArrayList(st.countTokens());
 		while (st.hasMoreTokens()){
 			try{
@@ -284,7 +284,7 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 				config = new Configuration(new Date(time));
 			} catch (NumberFormatException e1) {
 				time = new Date().getTime();
-				Utils.log(Messages.getString("InstalledSiteParser.date", date));
+				Utils.log(Messages.getString("InstalledSiteParser.date", date)); //$NON-NLS-1$
 				config = new Configuration(); // constructed with current date
 			}
 		}
@@ -302,12 +302,12 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 			}
 		} catch (Exception e) {
 			// could not load from shared install
-			Utils.log(Utils.newStatus("Could not load from shared install", e));
+			Utils.log(Utils.newStatus(Messages.getString("ConfigurationParser.cannotLoadSharedInstall"), e)); //$NON-NLS-1$
 		}
 
 		String flag = attributes.getValue(CFG_TRANSIENT);
 		if (flag != null) {
-			config.setTransient(flag.equals("true"));
+			config.setTransient(flag.equals("true")); //$NON-NLS-1$
 		}
 		
 		// DEBUG:		

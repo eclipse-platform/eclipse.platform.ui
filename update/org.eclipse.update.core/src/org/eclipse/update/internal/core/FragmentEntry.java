@@ -64,8 +64,8 @@ public class FragmentEntry {
 	 * @see Object#toString()
 	 */
 	public String toString() {
-		String msg = (getPluginIdentifier()!=null)?getPluginIdentifier().toString():"";
-		msg += getPluginVersion()!=null?" "+getPluginVersion().toString():"";
+		String msg = (getPluginIdentifier()!=null)?getPluginIdentifier().toString():""; //$NON-NLS-1$
+		msg += getPluginVersion()!=null?" "+getPluginVersion().toString():""; //$NON-NLS-1$ //$NON-NLS-2$
 		return msg;
 	}
 }

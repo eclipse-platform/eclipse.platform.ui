@@ -23,8 +23,8 @@ import org.eclipse.update.internal.operations.*;
  * The new plugin should only contain files that have changed.
  */
 public class DeltaInstallHandler extends BaseInstallHandler {
-	private final static String PLUGIN_XML = "plugin.xml";
-	private final static String FRAGMENT_XML = "fragment.xml";
+	private final static String PLUGIN_XML = "plugin.xml"; //$NON-NLS-1$
+	private final static String FRAGMENT_XML = "fragment.xml"; //$NON-NLS-1$
 	private final static String META_MANIFEST = "META-INF/MANIFEST.MF"; //$NON-NLS-1$
 
 	protected IFeature oldFeature;
@@ -64,7 +64,7 @@ public class DeltaInstallHandler extends BaseInstallHandler {
 							Status.ERROR,
 							UpdateUtils.getPluginId(),
 							1,
-							"",
+							"", //$NON-NLS-1$
 							e));
 				}
 			}

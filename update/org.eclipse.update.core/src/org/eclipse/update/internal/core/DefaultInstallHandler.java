@@ -53,7 +53,7 @@ public class DefaultInstallHandler extends BaseInstallHandler {
 				// see if the data entry is a jar
 				ContentReference archive = archives[j];
 				if (!(archives[j] instanceof JarContentReference)
-					&& archives[j].getIdentifier().endsWith(".jar")) {
+					&& archives[j].getIdentifier().endsWith(".jar")) { //$NON-NLS-1$
 					try {
 						archive =
 							new JarContentReference(archives[j].getIdentifier(), archives[j].asFile());
@@ -87,12 +87,12 @@ public class DefaultInstallHandler extends BaseInstallHandler {
 			IContentConsumer nonPluginConsumer = consumer.open(nonPluginEntries[i]);
 			for (int j = 0; j < archive.length; j++) {
 				String id = archive[j].getIdentifier();
-				if (id.endsWith(".jar")) {
+				if (id.endsWith(".jar")) { //$NON-NLS-1$
 					// the non-plugin archive is a jar. Unpack it into
 					// a directory constructed using the archive id
 					try {
-						final String prefix = id.substring(0, id.length() - 4) + "/";
-						JarContentReference jarRef = new JarContentReference("", archive[j].asFile());
+						final String prefix = id.substring(0, id.length() - 4) + "/"; //$NON-NLS-1$
+						JarContentReference jarRef = new JarContentReference("", archive[j].asFile()); //$NON-NLS-1$
 						ContentSelector selector = new ContentSelector() {
 							public String defineIdentifier(JarEntry entry) {
 								if (entry == null)

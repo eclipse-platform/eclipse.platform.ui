@@ -87,7 +87,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 			return;
 
 		if (featureReference == null) {
-			UpdateCore.warn("The feature reference to configure is null");
+			UpdateCore.warn("The feature reference to configure is null"); //$NON-NLS-1$
 			return;
 		}
 
@@ -97,15 +97,15 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		} catch (CoreException e) {
 			if (!UpdateManagerUtils.isOptional(featureReference)) {
 				URL url = featureReference.getURL();
-				String urlString = (url != null) ? url.toExternalForm() : "<no feature reference url>";
-				UpdateCore.warn("Error retrieving feature:" + urlString, e);
+				String urlString = (url != null) ? url.toExternalForm() : "<no feature reference url>"; //$NON-NLS-1$
+				UpdateCore.warn("Error retrieving feature:" + urlString, e); //$NON-NLS-1$
 				return;
 			}
 		}
 		if (feature == null) {
 			URL url = featureReference.getURL();
-			String urlString = (url != null) ? url.toExternalForm() : "<no feature reference url>";
-			UpdateCore.warn("The feature to unconfigure is null: feature reference is:" + urlString);
+			String urlString = (url != null) ? url.toExternalForm() : "<no feature reference url>"; //$NON-NLS-1$
+			UpdateCore.warn("The feature to unconfigure is null: feature reference is:" + urlString); //$NON-NLS-1$
 		}
 
 		// Setup optional install handler
@@ -151,9 +151,9 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 				newException = t;
 			}
 			if (originalException != null) // original exception wins
-				throw Utilities.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()), originalException);
+				throw Utilities.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()), originalException); //$NON-NLS-1$
 			if (newException != null)
-				throw Utilities.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()), newException);
+				throw Utilities.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()), newException); //$NON-NLS-1$
 		}
 	}
 
@@ -164,12 +164,12 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 	public boolean unconfigure(IFeatureReference featureReference, boolean callInstallHandler, boolean createActivity) throws CoreException {
 
 		if (isUnconfigured(featureReference)) {
-			UpdateCore.warn("Feature already unconfigured");
+			UpdateCore.warn("Feature already unconfigured"); //$NON-NLS-1$
 			return true;
 		}
 
 		if (featureReference == null) {
-			UpdateCore.warn("The feature reference to unconfigure is null");
+			UpdateCore.warn("The feature reference to unconfigure is null"); //$NON-NLS-1$
 			return false;
 		}
 
@@ -179,16 +179,16 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		} catch (CoreException e) {
 			if (!UpdateManagerUtils.isOptional(featureReference)) {
 				URL url = featureReference.getURL();
-				String urlString = (url != null) ? url.toExternalForm() : "<no feature reference url>";
-				UpdateCore.warn("Error retrieving feature:" + urlString, e);
+				String urlString = (url != null) ? url.toExternalForm() : "<no feature reference url>"; //$NON-NLS-1$
+				UpdateCore.warn("Error retrieving feature:" + urlString, e); //$NON-NLS-1$
 				return false;
 			}
 		}
 
 		if (feature == null) {
 			URL url = featureReference.getURL();
-			String urlString = (url != null) ? url.toExternalForm() : "<no feature reference url>";
-			UpdateCore.warn("The feature to unconfigure is null: feature reference is:" + urlString);
+			String urlString = (url != null) ? url.toExternalForm() : "<no feature reference url>"; //$NON-NLS-1$
+			UpdateCore.warn("The feature to unconfigure is null: feature reference is:" + urlString); //$NON-NLS-1$
 			return false;
 		}
 
@@ -251,15 +251,15 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 				newException = t;
 			}
 			if (originalException != null) // original exception wins
-				throw Utilities.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()), originalException);
+				throw Utilities.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()), originalException); //$NON-NLS-1$
 			if (newException != null)
-				throw Utilities.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()), newException);
+				throw Utilities.newCoreException(Policy.bind("InstallHandler.error", feature.getLabel()), newException); //$NON-NLS-1$
 		}
 
 		if (!success) {
 			URL url = featureReference.getURL();
-			String urlString = (url != null) ? url.toExternalForm() : "<no feature reference url>";
-			UpdateCore.warn("Unable to unconfigure:" + urlString);
+			String urlString = (url != null) ? url.toExternalForm() : "<no feature reference url>"; //$NON-NLS-1$
+			UpdateCore.warn("Unable to unconfigure:" + urlString); //$NON-NLS-1$
 		}
 		return success;
 	}
@@ -306,11 +306,11 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		//TRACE
 		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
 			UpdateCore
-					.debug("GetPluginPath for: "
-							+ ((site == null) ? "<No site>" : site.getURL()
+					.debug("GetPluginPath for: " //$NON-NLS-1$
+							+ ((site == null) ? "<No site>" : site.getURL() //$NON-NLS-1$
 									.toString()));
 			for (int i = 0; i < pluginPaths.length; i++) {
-				UpdateCore.debug("To write:" + pluginPaths[i]);
+				UpdateCore.debug("To write:" + pluginPaths[i]); //$NON-NLS-1$
 			}
 		}
 		return pluginPaths;
@@ -414,7 +414,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 	 */
 	private String[] getConfiguredPluginStrings(ISite site, PatchedFeature[] features) throws CoreException {
 		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION){
-			UpdateCore.warn("CONFIGURED PLUGINS");
+			UpdateCore.warn("CONFIGURED PLUGINS"); //$NON-NLS-1$
 		}
 	
 		// Use set to eliminate plugins with same ID and version.
@@ -432,7 +432,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 	 */
 	private String[] getAllKnownPluginStrings(ISite site, IFeatureReference[] configured,IFeatureReference[] unconfigured) throws CoreException {
 		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION){
-			UpdateCore.warn("ALL PLUGINS");
+			UpdateCore.warn("ALL PLUGINS"); //$NON-NLS-1$
 		}
 		// Add features, patched features, or patches
 		IFeatureReference[] all=new IFeatureReference[configured.length+unconfigured.length];
@@ -444,7 +444,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 			try {
 				IFeature feature = all[i].getFeature(null);
 				if (feature == null) {
-					UpdateCore.warn("Null Feature", new Exception());
+					UpdateCore.warn("Null Feature", new Exception()); //$NON-NLS-1$
 					continue;
 				}
 

@@ -25,7 +25,7 @@ import org.eclipse.update.operations.*;
 public class InstallOperation
 	extends FeatureOperation
 	implements IInstallFeatureOperation {
-	private static final String KEY_OLD = "OperationsManager.error.old";
+	private static final String KEY_OLD = "OperationsManager.error.old"; //$NON-NLS-1$
 
 	private IFeatureReference[] optionalFeatures;
 	private IFeature[] unconfiguredOptionalFeatures;

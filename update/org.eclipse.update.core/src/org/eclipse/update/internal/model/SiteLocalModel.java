@@ -225,7 +225,7 @@ public class SiteLocalModel extends ModelObject {
 	 * @see org.eclipse.update.core.model.ModelObject#getPropertyName()
 	 */
 	protected String getPropertyName() {
-		return "platform";
+		return "platform"; //$NON-NLS-1$
 	}
 
 	/*
@@ -233,7 +233,7 @@ public class SiteLocalModel extends ModelObject {
 	 */
 	private void processHistory() {
 		try {
-			URL historyURL = new URL(getLocationURL(), "history");
+			URL historyURL = new URL(getLocationURL(), "history"); //$NON-NLS-1$
 			historyURL = Platform.asLocalURL(historyURL);
 			File historyDir = new File(historyURL.getFile());
 			if (historyDir.exists()) {
@@ -241,7 +241,7 @@ public class SiteLocalModel extends ModelObject {
 				BaseSiteLocalFactory factory = new BaseSiteLocalFactory();
 				for (int i=0; i<backedConfigs.length; i++) {
 					String name = backedConfigs[i].getName();
-					if (name.endsWith(".xml"))
+					if (name.endsWith(".xml")) //$NON-NLS-1$
 						name = name.substring(0, name.length()-4);
 					else 
 						continue;
@@ -257,7 +257,7 @@ public class SiteLocalModel extends ModelObject {
 				}
 			}
 		} catch (Exception e) {
-			UpdateCore.warn("Error processing history: ", e);
+			UpdateCore.warn("Error processing history: ", e); //$NON-NLS-1$
 		}
 	}
 

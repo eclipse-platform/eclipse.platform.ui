@@ -54,7 +54,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 		try {
 			setURL(ref.getURL());
 		} catch (CoreException e) {
-			UpdateCore.warn("", e);
+			UpdateCore.warn("", e); //$NON-NLS-1$
 		}
 	}
 
@@ -67,7 +67,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 		try {
 			setURL(ref.getURL());
 		} catch (CoreException e) {
-			UpdateCore.warn("", e);
+			UpdateCore.warn("", e); //$NON-NLS-1$
 		}
 	}
 
@@ -179,7 +179,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 				versionId = new VersionedIdentifier(id, ver);
 				return versionId;
 			} catch (Exception e) {
-				UpdateCore.warn("Unable to create versioned identifier:" + id + ":" + ver);
+				UpdateCore.warn("Unable to create versioned identifier:" + id + ":" + ver); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 
@@ -188,7 +188,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 		try {
 			versionId = getFeature(null).getVersionedIdentifier();
 		} catch (CoreException e) {
-			UpdateCore.warn("", e);
+			UpdateCore.warn("", e); //$NON-NLS-1$
 		}
 		return versionId;
 	}
@@ -282,7 +282,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 			} catch (CoreException e) {
 				return false;
 			}
-		return "true".equalsIgnoreCase(super.getPatch());
+		return "true".equalsIgnoreCase(super.getPatch()); //$NON-NLS-1$
 	}
 
 }

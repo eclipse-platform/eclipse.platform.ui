@@ -187,7 +187,7 @@ public class FeatureHierarchyElement {
 		throws CoreException {
 		IFeature feature = featureRef.getFeature(null);
 		return feature.getLabel()
-			+ " "
+			+ " " //$NON-NLS-1$
 			+ feature.getVersionedIdentifier().getVersion().toString();
 	}
 	/**

@@ -254,7 +254,7 @@ public class FeatureReferenceModel extends ModelObject {
 		try {
 			url = resolveURL(base, bundleURL, urlString);
 		} catch (MalformedURLException e){
-			UpdateCore.warn("",e);
+			UpdateCore.warn("",e); //$NON-NLS-1$
 		}
 	}
 
@@ -263,8 +263,8 @@ public class FeatureReferenceModel extends ModelObject {
 	 */
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(getClass().toString() + " :");
-		buffer.append(" at ");
+		buffer.append(getClass().toString() + " :"); //$NON-NLS-1$
+		buffer.append(" at "); //$NON-NLS-1$
 		if (url != null)
 			buffer.append(url.toExternalForm());
 		return buffer.toString();

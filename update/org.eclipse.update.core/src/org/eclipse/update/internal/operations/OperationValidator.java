@@ -30,36 +30,36 @@ import org.eclipse.update.operations.*;
  */
 public class OperationValidator implements IOperationValidator {
 	private static final String KEY_ROOT_MESSAGE =
-		"ActivityConstraints.rootMessage";
+		"ActivityConstraints.rootMessage"; //$NON-NLS-1$
 	private static final String KEY_ROOT_MESSAGE_INIT =
-		"ActivityConstraints.rootMessageInitial";
+		"ActivityConstraints.rootMessageInitial"; //$NON-NLS-1$
 	private static final String KEY_CHILD_MESSAGE =
-		"ActivityConstraints.childMessage";
-	private static final String KEY_PLATFORM = "ActivityConstraints.platform";
-	private static final String KEY_PRIMARY = "ActivityConstraints.primary";
-	private static final String KEY_OS = "ActivityConstraints.os";
-	private static final String KEY_WS = "ActivityConstraints.ws";
-	private static final String KEY_ARCH = "ActivityConstraints.arch";
-	private static final String KEY_PREREQ = "ActivityConstraints.prereq";
+		"ActivityConstraints.childMessage"; //$NON-NLS-1$
+	private static final String KEY_PLATFORM = "ActivityConstraints.platform"; //$NON-NLS-1$
+	private static final String KEY_PRIMARY = "ActivityConstraints.primary"; //$NON-NLS-1$
+	private static final String KEY_OS = "ActivityConstraints.os"; //$NON-NLS-1$
+	private static final String KEY_WS = "ActivityConstraints.ws"; //$NON-NLS-1$
+	private static final String KEY_ARCH = "ActivityConstraints.arch"; //$NON-NLS-1$
+	private static final String KEY_PREREQ = "ActivityConstraints.prereq"; //$NON-NLS-1$
 	private static final String KEY_PREREQ_PLUGIN =
-		"ActivityConstaints.prereq.plugin";
+		"ActivityConstaints.prereq.plugin"; //$NON-NLS-1$
 	private static final String KEY_PREREQ_FEATURE =
-		"ActivityConstaints.prereq.feature";
+		"ActivityConstaints.prereq.feature"; //$NON-NLS-1$
 	private static final String KEY_PREREQ_PERFECT =
-		"ActivityConstraints.prereqPerfect";
+		"ActivityConstraints.prereqPerfect"; //$NON-NLS-1$
 	private static final String KEY_PREREQ_EQUIVALENT =
-		"ActivityConstraints.prereqEquivalent";
+		"ActivityConstraints.prereqEquivalent"; //$NON-NLS-1$
 	private static final String KEY_PREREQ_COMPATIBLE =
-		"ActivityConstraints.prereqCompatible";
+		"ActivityConstraints.prereqCompatible"; //$NON-NLS-1$
 	private static final String KEY_PREREQ_GREATER =
-		"ActivityConstraints.prereqGreaterOrEqual";
+		"ActivityConstraints.prereqGreaterOrEqual"; //$NON-NLS-1$
 	private static final String KEY_OPTIONAL_CHILD =
-		"ActivityConstraints.optionalChild";
-	private static final String KEY_CYCLE = "ActivityConstraints.cycle";
-	private static final String KEY_CONFLICT = "ActivityConstraints.conflict";
-	private static final String KEY_EXCLUSIVE = "ActivityConstraints.exclusive";
+		"ActivityConstraints.optionalChild"; //$NON-NLS-1$
+	private static final String KEY_CYCLE = "ActivityConstraints.cycle"; //$NON-NLS-1$
+	private static final String KEY_CONFLICT = "ActivityConstraints.conflict"; //$NON-NLS-1$
+	private static final String KEY_EXCLUSIVE = "ActivityConstraints.exclusive"; //$NON-NLS-1$
 	private static final String KEY_NO_LICENSE =
-		"ActivityConstraints.noLicense";
+		"ActivityConstraints.noLicense"; //$NON-NLS-1$
 
 	/**
 	 * Checks if the platform configuration has been modified outside this program.
@@ -397,7 +397,7 @@ public class OperationValidator implements IOperationValidator {
 			// get the real last modified value
 			URL platformXML = platformConfig.getConfigurationLocation();
 			long actualTimeStamp = currentTimeStamp;
-			if ("file".equals(platformXML.getProtocol()))
+			if ("file".equals(platformXML.getProtocol())) //$NON-NLS-1$
 				actualTimeStamp = new File(platformXML.getFile()).lastModified();
 			else {
 				URLConnection connection = platformXML.openConnection();
@@ -407,7 +407,7 @@ public class OperationValidator implements IOperationValidator {
 				status.add(createStatus(
 								null,
 								FeatureStatus.CODE_OTHER,
-								Policy.bind("ActivityConstraints.platformModified")));
+								Policy.bind("ActivityConstraints.platformModified"))); //$NON-NLS-1$
 		} catch (IOException e) {
 			// ignore
 		}
@@ -421,7 +421,7 @@ public class OperationValidator implements IOperationValidator {
 		if (csite != null && !csite.isUpdatable())
 			status.add(createStatus(feature, FeatureStatus.CODE_OTHER,
 					Policy
-					.bind("ActivityConstraints.readOnly",
+					.bind("ActivityConstraints.readOnly", //$NON-NLS-1$
 							csite.getSite().getURL().toExternalForm())));
 	}
 
@@ -1199,7 +1199,7 @@ public class OperationValidator implements IOperationValidator {
 			} else {
 				if (isBetterStatus(beforeStatus, status)) {
 					return createMultiStatus(
-						"ActivityConstraints.warning",
+						"ActivityConstraints.warning", //$NON-NLS-1$
 						beforeStatus,
 						IStatus.WARNING);
 					// errors may be fixed
@@ -1207,12 +1207,12 @@ public class OperationValidator implements IOperationValidator {
 					ArrayList combined = new ArrayList();
 					combined.add(
 						createMultiStatus(
-							"ActivityConstraints.beforeMessage",
+							"ActivityConstraints.beforeMessage", //$NON-NLS-1$
 							beforeStatus,
 							IStatus.ERROR));
 					combined.add(
 						createMultiStatus(
-							"ActivityConstraints.afterMessage",
+							"ActivityConstraints.afterMessage", //$NON-NLS-1$
 							status,
 							IStatus.ERROR));
 					return createMultiStatus(
@@ -1228,10 +1228,10 @@ public class OperationValidator implements IOperationValidator {
 		ArrayList list = new ArrayList();
 		if (commaSeparatedList != null) {
 			StringTokenizer t =
-				new StringTokenizer(commaSeparatedList.trim(), ",");
+				new StringTokenizer(commaSeparatedList.trim(), ","); //$NON-NLS-1$
 			while (t.hasMoreTokens()) {
 				String token = t.nextToken().trim();
-				if (!token.equals(""))
+				if (!token.equals("")) //$NON-NLS-1$
 					list.add(token);
 			}
 		}

@@ -72,8 +72,8 @@ public class SiteStatusAnalyzer {
 		ISite featureSite = feature.getSite();
 		if (featureSite == null) {
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
-				UpdateCore.debug("Cannot determine status of feature:" + feature.getLabel() + ". Site is NULL.");
-			String msg = Policy.bind("SiteLocal.UnableToDetermineFeatureStatusSiteNull", new Object[] { feature.getURL()});
+				UpdateCore.debug("Cannot determine status of feature:" + feature.getLabel() + ". Site is NULL."); //$NON-NLS-1$ //$NON-NLS-2$
+			String msg = Policy.bind("SiteLocal.UnableToDetermineFeatureStatusSiteNull", new Object[] { feature.getURL()}); //$NON-NLS-1$
 			return createStatus(IStatus.ERROR, IFeature.STATUS_AMBIGUOUS, msg, null);
 		}
 
@@ -81,8 +81,8 @@ public class SiteStatusAnalyzer {
 		ConfiguredSite cSite = (ConfiguredSite) featureSite.getCurrentConfiguredSite();
 		if (cSite == null) {
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
-				UpdateCore.warn("Cannot determine status of feature: " + feature.getLabel() + ". Configured Site is NULL.");
-			String msg = Policy.bind("SiteLocal.UnableToDetermineFeatureStatusConfiguredSiteNull", new Object[] { feature.getURL()});
+				UpdateCore.warn("Cannot determine status of feature: " + feature.getLabel() + ". Configured Site is NULL."); //$NON-NLS-1$ //$NON-NLS-2$
+			String msg = Policy.bind("SiteLocal.UnableToDetermineFeatureStatusConfiguredSiteNull", new Object[] { feature.getURL()}); //$NON-NLS-1$
 			return createStatus(IStatus.ERROR, IFeature.STATUS_AMBIGUOUS, msg, null);
 		}
 
@@ -90,17 +90,17 @@ public class SiteStatusAnalyzer {
 		IFeatureReference ref = cSite.getSite().getFeatureReference(feature);
 		if (ref != null) {
 			if (!cSite.getConfigurationPolicy().isConfigured(ref))
-				return createStatus(IStatus.OK, IFeature.STATUS_DISABLED, "", null);
+				return createStatus(IStatus.OK, IFeature.STATUS_DISABLED, "", null); //$NON-NLS-1$
 		} else {
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
-				UpdateCore.warn("Unable to find reference for feature " + feature + " in site " + cSite.getSite().getURL());
+				UpdateCore.warn("Unable to find reference for feature " + feature + " in site " + cSite.getSite().getURL()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		// check if broken
 		IStatus status = cSite.getBrokenStatus(feature);
 		if (status.getSeverity() != IStatus.OK) {
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
-				UpdateCore.debug("Feature broken:" + feature.getLabel() + ".Site:" + cSite.toString());
+				UpdateCore.debug("Feature broken:" + feature.getLabel() + ".Site:" + cSite.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 			return status;
 		}
 
@@ -125,7 +125,7 @@ public class SiteStatusAnalyzer {
 
 		// consider disable
 		// check the current feature
-		String msg = Policy.bind("SiteLocal.FeatureDisable");
+		String msg = Policy.bind("SiteLocal.FeatureDisable"); //$NON-NLS-1$
 		int code = IFeature.STATUS_DISABLED;
 		IStatus featureStatus = getStatus(feature);
 		MultiStatus multiTemp = new MultiStatus(featureStatus.getPlugin(), code, msg, null);
@@ -148,15 +148,15 @@ public class SiteStatusAnalyzer {
 						childFeature = children[i].getFeature(null);
 					} catch (CoreException e) {
 						if (!UpdateManagerUtils.isOptional(children[i]))
-							UpdateCore.warn("Error retrieving feature:" + children[i]);
+							UpdateCore.warn("Error retrieving feature:" + children[i]); //$NON-NLS-1$
 					}
 
 					if (childFeature == null) {
-						UpdateCore.warn("getFeatureStatus: Feature is null for:" + children[i]);
+						UpdateCore.warn("getFeatureStatus: Feature is null for:" + children[i]); //$NON-NLS-1$
 						// Unable to find children feature, broken
 						Object featureAsPrintableObject = children[i].getURL();
 						featureAsPrintableObject = children[i].getVersionedIdentifier();
-						String msg1 = Policy.bind("SiteLocal.NestedFeatureUnavailable", new Object[] { featureAsPrintableObject });
+						String msg1 = Policy.bind("SiteLocal.NestedFeatureUnavailable", new Object[] { featureAsPrintableObject }); //$NON-NLS-1$
 						multiTemp.add(createStatus(IStatus.ERROR, IFeature.STATUS_UNHAPPY, msg1, null));
 						if (IFeature.STATUS_UNHAPPY > code)
 							code = IFeature.STATUS_UNHAPPY;
@@ -166,16 +166,16 @@ public class SiteStatusAnalyzer {
 						// returns a multiStatus 
 						if (childStatus.getCode() == IFeature.STATUS_DISABLED) {
 							VersionedIdentifier versionID = childFeature.getVersionedIdentifier();
-							String featureVer = (versionID == null) ? "" : versionID.getVersion().toString();
-							String msg1 = Policy.bind("SiteLocal.NestedFeatureDisable", childFeature.getLabel(), featureVer);
+							String featureVer = (versionID == null) ? "" : versionID.getVersion().toString(); //$NON-NLS-1$
+							String msg1 = Policy.bind("SiteLocal.NestedFeatureDisable", childFeature.getLabel(), featureVer); //$NON-NLS-1$
 							multiTemp.add(createStatus(IStatus.ERROR, childStatus.getCode(), msg1, null));
 							if (IFeature.STATUS_UNHAPPY > code)
 								code = IFeature.STATUS_UNHAPPY;
 						}
 						if (childStatus.getSeverity() != IStatus.OK) {
 							VersionedIdentifier versionID = childFeature.getVersionedIdentifier();
-							String featureVer = (versionID == null) ? "" : versionID.getVersion().toString();
-							String msg1 = Policy.bind("SiteLocal.NestedFeatureUnHappy", childFeature.getLabel(), featureVer);
+							String featureVer = (versionID == null) ? "" : versionID.getVersion().toString(); //$NON-NLS-1$
+							String msg1 = Policy.bind("SiteLocal.NestedFeatureUnHappy", childFeature.getLabel(), featureVer); //$NON-NLS-1$
 							multiTemp.add(createStatus(IStatus.ERROR, childStatus.getCode(), msg1, null));
 							if (childStatus.getCode() > code)
 								code = childStatus.getCode();
@@ -188,19 +188,19 @@ public class SiteStatusAnalyzer {
 		// set message
 		switch (code) {
 			case IFeature.STATUS_HAPPY :
-				msg = Policy.bind("SiteLocal.FeatureHappy");
+				msg = Policy.bind("SiteLocal.FeatureHappy"); //$NON-NLS-1$
 				break;
 			case IFeature.STATUS_UNHAPPY :
-				msg = Policy.bind("SiteLocal.FeatureUnHappy");
+				msg = Policy.bind("SiteLocal.FeatureUnHappy"); //$NON-NLS-1$
 				break;
 			case IFeature.STATUS_AMBIGUOUS :
-				msg = Policy.bind("SiteLocal.FeatureAmbiguous");
+				msg = Policy.bind("SiteLocal.FeatureAmbiguous"); //$NON-NLS-1$
 				break;
 			case IFeature.STATUS_DISABLED :
-				msg = Policy.bind("SiteLocal.FeatureDisable");
+				msg = Policy.bind("SiteLocal.FeatureDisable"); //$NON-NLS-1$
 				break;
 			default :
-				msg = Policy.bind("SiteLocal.FeatureStatusUnknown");
+				msg = Policy.bind("SiteLocal.FeatureStatusUnknown"); //$NON-NLS-1$
 				break;
 		}
 		MultiStatus multi = new MultiStatus(featureStatus.getPlugin(), code, msg, null);
@@ -214,9 +214,9 @@ public class SiteStatusAnalyzer {
 	private IStatus status(IPluginEntry[] featurePlugins) {
 		VersionedIdentifier featurePluginID;
 
-		String happyMSG = Policy.bind("SiteLocal.FeatureHappy");
-		String ambiguousMSG = Policy.bind("SiteLocal.FeatureAmbiguous");
-		IStatus featureStatus = createStatus(IStatus.OK, IFeature.STATUS_HAPPY, "", null);
+		String happyMSG = Policy.bind("SiteLocal.FeatureHappy"); //$NON-NLS-1$
+		String ambiguousMSG = Policy.bind("SiteLocal.FeatureAmbiguous"); //$NON-NLS-1$
+		IStatus featureStatus = createStatus(IStatus.OK, IFeature.STATUS_HAPPY, "", null); //$NON-NLS-1$
 		MultiStatus multi = new MultiStatus(featureStatus.getPlugin(), IFeature.STATUS_AMBIGUOUS, ambiguousMSG, null);
 		PackageAdmin pkgAdmin = UpdateCore.getPlugin().getPackageAdmin();
 		
@@ -243,15 +243,15 @@ public class SiteStatusAnalyzer {
 				String msg = null;
 				if (feature == null) {
 					Object[] values = new Object[] {bundles[j].getSymbolicName(), featurePluginID.getVersion(), bundleVersion};
-					msg = Policy.bind("SiteLocal.TwoVersionSamePlugin1", values);
+					msg = Policy.bind("SiteLocal.TwoVersionSamePlugin1", values); //$NON-NLS-1$
 				} else {
 					String label = feature.getLabel();
 					String featureVersion = feature.getVersionedIdentifier().getVersion().toString();
 					Object[] values = new Object[] { bundles[j].getSymbolicName(), featurePluginID.getVersion(), bundleVersion, label, featureVersion };
-					msg = Policy.bind("SiteLocal.TwoVersionSamePlugin2", values);
+					msg = Policy.bind("SiteLocal.TwoVersionSamePlugin2", values); //$NON-NLS-1$
 				}
 
-				UpdateCore.warn("Found another version of the same plugin on the path:" + bundles[j].getSymbolicName() + " " + bundleVersion);
+				UpdateCore.warn("Found another version of the same plugin on the path:" + bundles[j].getSymbolicName() + " " + bundleVersion); //$NON-NLS-1$ //$NON-NLS-2$
 				tempmulti.add(createStatus(IStatus.ERROR, IFeature.STATUS_AMBIGUOUS, msg, null));
 			}
 	
@@ -264,12 +264,12 @@ public class SiteStatusAnalyzer {
 					multi.addAll(tempmulti);
 				} else {
 					if (multi.getCode() != IFeature.STATUS_UNHAPPY) {
-						String unhappyMSG = Policy.bind("SiteLocal.FeatureUnHappy");
+						String unhappyMSG = Policy.bind("SiteLocal.FeatureUnHappy"); //$NON-NLS-1$
 						MultiStatus newMulti = new MultiStatus(featureStatus.getPlugin(), IFeature.STATUS_UNHAPPY, unhappyMSG, null);
 						newMulti.addAll(multi);
 						multi = newMulti;
 					}
-					String msg = Policy.bind("SiteLocal.NoPluginVersion", featurePluginID.getIdentifier());
+					String msg = Policy.bind("SiteLocal.NoPluginVersion", featurePluginID.getIdentifier()); //$NON-NLS-1$
 					multi.add(createStatus(IStatus.ERROR, IFeature.STATUS_UNHAPPY, msg, null));
 				}
 			}
@@ -287,13 +287,13 @@ public class SiteStatusAnalyzer {
 	private IStatus createStatus(int statusSeverity, int statusCode, String msg, Exception e) {
 		String id = UpdateCore.getPlugin().getBundle().getSymbolicName();
 
-		StringBuffer completeString = new StringBuffer("");
+		StringBuffer completeString = new StringBuffer(""); //$NON-NLS-1$
 		if (msg != null)
 			completeString.append(msg);
 		if (e != null) {
-			completeString.append("\r\n[");
+			completeString.append("\r\n["); //$NON-NLS-1$
 			completeString.append(e.toString());
-			completeString.append("]\r\n");
+			completeString.append("]\r\n"); //$NON-NLS-1$
 		}
 		return new Status(statusSeverity, id, statusCode, completeString.toString(), e);
 	}

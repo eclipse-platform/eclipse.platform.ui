@@ -903,7 +903,7 @@ public class FeatureModel extends ModelObject {
 		try {
 			imageURL = resolveURL(base,bundleURL, imageURLString);
 		} catch (MalformedURLException e){
-			UpdateCore.warn("",e);
+			UpdateCore.warn("",e); //$NON-NLS-1$
 		}
 	}
 

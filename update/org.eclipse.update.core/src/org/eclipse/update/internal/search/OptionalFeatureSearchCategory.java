@@ -24,7 +24,7 @@ public class OptionalFeatureSearchCategory extends BaseSearchCategory {
 	private IUpdateSearchQuery[] queries;
 	private ArrayList vids;
 	private static final String CATEGORY_ID =
-		"org.eclipse.update.core.unified-search";
+		"org.eclipse.update.core.unified-search"; //$NON-NLS-1$
 
 	private class OptionalQuery implements IUpdateSearchQuery {
 		public void run(
@@ -34,7 +34,7 @@ public class OptionalFeatureSearchCategory extends BaseSearchCategory {
 			IUpdateSearchResultCollector collector,
 			IProgressMonitor monitor) {
 
-			monitor.beginTask("", vids.size());
+			monitor.beginTask("", vids.size()); //$NON-NLS-1$
 			for (int i = 0; i < vids.size(); i++) {
 				VersionedIdentifier vid = (VersionedIdentifier) vids.get(i);
 				monitor.subTask(vid.toString());
@@ -60,9 +60,9 @@ public class OptionalFeatureSearchCategory extends BaseSearchCategory {
 				// We may need additional information (not only id and version)
 				// in order to create a feature on a site.
 				String relative = vid.toString();
-				URL featureURL = new URL(siteURL, "features/" + relative+".jar");
+				URL featureURL = new URL(siteURL, "features/" + relative+".jar"); //$NON-NLS-1$ //$NON-NLS-2$
 				return site.createFeature(
-					"org.eclipse.update.core.packaged",
+					"org.eclipse.update.core.packaged", //$NON-NLS-1$
 					featureURL,
 					monitor);
 			} catch (Exception e) {

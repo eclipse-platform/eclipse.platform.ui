@@ -14,7 +14,6 @@ package org.eclipse.update.internal.operations;
 import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
-import java.text.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
@@ -32,7 +31,7 @@ import org.eclipse.update.search.*;
  * All the methods are static and this class should be a singleton.
  */
 public class UpdateUtils {
-	public static final String P_UPDATE_POLICY_URL = "updatePolicyURL";
+	public static final String P_UPDATE_POLICY_URL = "updatePolicyURL"; //$NON-NLS-1$
 
 	/**
 	 * Private constructor
@@ -157,7 +156,7 @@ public class UpdateUtils {
 
 	public static IInstallConfiguration getBackupConfigurationFor(IFeature feature) {
 		VersionedIdentifier vid = feature.getVersionedIdentifier();
-		String key = "@" + vid.getIdentifier() + "_" + vid.getVersion();
+		String key = "@" + vid.getIdentifier() + "_" + vid.getVersion(); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
 			ILocalSite lsite = SiteManager.getLocalSite();
 			IInstallConfiguration[] configs = lsite.getPreservedConfigurations();
@@ -479,7 +478,7 @@ public class UpdateUtils {
 		String mapFile = pref.getString(UpdateUtils.P_UPDATE_POLICY_URL);
 		if (mapFile!=null && mapFile.length()>0) {
 			try {
-				String decodedFile = URLDecoder.decode(mapFile, "UTF-8");
+				String decodedFile = URLDecoder.decode(mapFile, "UTF-8"); //$NON-NLS-1$
 				return new URL(decodedFile);
 			}
 			catch (MalformedURLException e) {
@@ -503,7 +502,7 @@ public class UpdateUtils {
 		//DEBUG
 		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_INSTALL) {
 			UpdateCore.debug(
-				"Downloading...:" + feature.getURL().toExternalForm());
+				"Downloading...:" + feature.getURL().toExternalForm()); //$NON-NLS-1$
 		}
 
 		IProgressMonitor pm = new NullProgressMonitor() {
@@ -532,7 +531,7 @@ public class UpdateUtils {
 				((Feature)feature).getFeatureIdentifier());
 		if (targetSite == null) {
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_INSTALL) {
-				UpdateCore.debug("The site to install in is null");
+				UpdateCore.debug("The site to install in is null"); //$NON-NLS-1$
 			}
 
 			targetSitePluginEntries = new IPluginEntry[0];

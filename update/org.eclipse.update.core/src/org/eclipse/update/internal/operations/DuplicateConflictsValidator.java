@@ -25,7 +25,7 @@ import org.eclipse.update.operations.*;
 public class DuplicateConflictsValidator  {
 
 	private static final String KEY_CONFLICT =
-		"DuplicateConflictsDialog.conflict";
+		"DuplicateConflictsDialog.conflict"; //$NON-NLS-1$
 
 	public static class IdEntry {
 		IConfiguredSite csite;
@@ -35,7 +35,7 @@ public class DuplicateConflictsValidator  {
 			this.feature = feature;
 			this.csite = csite;
 			if (csite == null) {
-				System.out.println("csite null");
+				System.out.println("csite null"); //$NON-NLS-1$
 			}
 		}
 		public boolean isInstallCandidate() {

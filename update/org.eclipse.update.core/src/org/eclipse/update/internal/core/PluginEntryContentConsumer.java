@@ -36,7 +36,7 @@ public class PluginEntryContentConsumer extends ContentConsumer {
 		if (!closed){
 			contentConsumer.store(contentReference,monitor);
 		} else {
-			UpdateCore.warn("Attempt to store in a closed PluginEntryContentConsumer",new Exception());
+			UpdateCore.warn("Attempt to store in a closed PluginEntryContentConsumer",new Exception()); //$NON-NLS-1$
 		}
 	}
 
@@ -48,7 +48,7 @@ public class PluginEntryContentConsumer extends ContentConsumer {
 			closed = true;
 			contentConsumer.close();
 		} else {
-			UpdateCore.warn("Attempt to close a closed PluginEntryContentConsumer",new Exception());
+			UpdateCore.warn("Attempt to close a closed PluginEntryContentConsumer",new Exception()); //$NON-NLS-1$
 		}
 	}
 

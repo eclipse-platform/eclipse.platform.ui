@@ -116,7 +116,7 @@ public class JarVerifier extends Verifier {
 			try {
 				jarFile = jarReference.asFile();
 				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_INSTALL)
-					UpdateCore.debug("Attempting to read JAR file:"+jarFile);
+					UpdateCore.debug("Attempting to read JAR file:"+jarFile); //$NON-NLS-1$
 			
 				// # of entries
 				if (!jarFile.exists()) throw new IOException();

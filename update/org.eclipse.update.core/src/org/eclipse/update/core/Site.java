@@ -160,7 +160,7 @@ public class Site extends SiteModel implements ISite {
 
 		//DEBUG:
 		if (!found) {
-			String URLString = (this.getURL() != null) ? this.getURL().toExternalForm() : "<no site url>";
+			String URLString = (this.getURL() != null) ? this.getURL().toExternalForm() : "<no site url>"; //$NON-NLS-1$
 			UpdateCore.warn(Policy.bind("Site.CannotFindCategory", key, URLString)); //$NON-NLS-1$ //$NON-NLS-2$
 			if (getCategoryModels().length <= 0)
 				UpdateCore.warn(Policy.bind("Site.NoCategories"));	//$NON-NLS-1$
@@ -211,7 +211,7 @@ public class Site extends SiteModel implements ISite {
 					list.add(included);
 				else{
 					if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_WARNINGS){
-						UpdateCore.warn("Filtered out feature reference:"+included);
+						UpdateCore.warn("Filtered out feature reference:"+included); //$NON-NLS-1$
 					}
 				}
 			}
@@ -234,7 +234,7 @@ public class Site extends SiteModel implements ISite {
 	public ISiteFeatureReference getFeatureReference(IFeature feature) {
 
 		if (feature == null) {
-			UpdateCore.warn("Site:getFeatureReference: The feature is null");
+			UpdateCore.warn("Site:getFeatureReference: The feature is null"); //$NON-NLS-1$
 			return null;
 		}
 
@@ -246,7 +246,7 @@ public class Site extends SiteModel implements ISite {
 				return currentReference;
 		}
 
-		UpdateCore.warn("Feature " + feature + " not found on site" + this.getURL());
+		UpdateCore.warn("Feature " + feature + " not found on site" + this.getURL()); //$NON-NLS-1$ //$NON-NLS-2$
 		return null;
 	}
 

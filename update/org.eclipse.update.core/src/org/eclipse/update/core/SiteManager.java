@@ -42,9 +42,9 @@ public class SiteManager {
 	private static String nl;
 	private static boolean isHttpProxyEnable;
 	
-	private static final String P_HTTP_HOST = "http.proxyHost";
-	private static final String P_HTTP_PORT = "http.proxyPort";	
-	private static final String P_HTTP_PROXY = "http.proxySet";
+	private static final String P_HTTP_HOST = "http.proxyHost"; //$NON-NLS-1$
+	private static final String P_HTTP_PORT = "http.proxyPort";	 //$NON-NLS-1$
+	private static final String P_HTTP_PROXY = "http.proxySet"; //$NON-NLS-1$
 
 	private SiteManager() {
 	}
@@ -290,7 +290,7 @@ public class SiteManager {
 			System.getProperties().remove(P_HTTP_PORT);
 			System.getProperties().remove(P_HTTP_PROXY);
 			//if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_WARNINGS)
-			UpdateCore.warn("Remove proxy server info");
+			UpdateCore.warn("Remove proxy server info"); //$NON-NLS-1$
 			UpdateCore.getPlugin().getPluginPreferences().setValue(UpdateCore.HTTP_PROXY_ENABLE, isHttpProxyEnable());
 			UpdateCore.getPlugin().savePluginPreferences();
 			return;
@@ -300,11 +300,11 @@ public class SiteManager {
 		//System.getProperties().put("proxyHost", proxyHost);
 		//System.getProperties().put("proxyPort", proxyPort);
 		
-		System.getProperties().setProperty(P_HTTP_PROXY, enable?"true":"false");
+		System.getProperties().setProperty(P_HTTP_PROXY, enable?"true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
 		System.getProperties().setProperty(P_HTTP_HOST, httpProxyServer);
 		System.getProperties().setProperty(P_HTTP_PORT, httpProxyPort);
 		//if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_WARNINGS)
-		UpdateCore.warn("Added proxy server info:" + httpProxyServer + ":" + httpProxyPort);
+		UpdateCore.warn("Added proxy server info:" + httpProxyServer + ":" + httpProxyPort); //$NON-NLS-1$ //$NON-NLS-2$
 		UpdateCore.getPlugin().getPluginPreferences().setValue(UpdateCore.HTTP_PROXY_HOST, getHttpProxyServer());
 		UpdateCore.getPlugin().getPluginPreferences().setValue(UpdateCore.HTTP_PROXY_PORT, getHttpProxyPort());
 		UpdateCore.getPlugin().getPluginPreferences().setValue(UpdateCore.HTTP_PROXY_ENABLE, isHttpProxyEnable());

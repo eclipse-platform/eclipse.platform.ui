@@ -91,7 +91,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 	public void store(ContentReference contentReference, IProgressMonitor monitor) throws CoreException {
 
 		if (closed) {
-			UpdateCore.warn("Attempt to store in a closed SiteFileContentConsumer", new Exception());
+			UpdateCore.warn("Attempt to store in a closed SiteFileContentConsumer", new Exception()); //$NON-NLS-1$
 			return;
 		}
 
@@ -101,11 +101,11 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 		featurePath += contentKey;
 
 		// error recovery
-		if (featurePath.endsWith("\\"+Feature.FEATURE_XML) || featurePath.endsWith("/"+Feature.FEATURE_XML)) {
+		if (featurePath.endsWith("\\"+Feature.FEATURE_XML) || featurePath.endsWith("/"+Feature.FEATURE_XML)) { //$NON-NLS-1$ //$NON-NLS-2$
 			oldPath = featurePath.replace(File.separatorChar, '/');
 			File localFile = new File(oldPath);
 			if (localFile.exists()) {
-				throw Utilities.newCoreException(Policy.bind("UpdateManagerUtils.FileAlreadyExists", new Object[] { localFile }), null);
+				throw Utilities.newCoreException(Policy.bind("UpdateManagerUtils.FileAlreadyExists", new Object[] { localFile }), null); //$NON-NLS-1$
 			}
 			featurePath = ErrorRecoveryLog.getLocalRandomIdentifier(featurePath);
 			newPath = featurePath;
@@ -137,7 +137,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 	public IFeatureReference close() throws CoreException {
 
 		if (closed)
-			UpdateCore.warn("Attempt to close a closed SiteFileContentConsumer", new Exception());
+			UpdateCore.warn("Attempt to close a closed SiteFileContentConsumer", new Exception()); //$NON-NLS-1$
 
 		// create a new Feature reference to be added to the site
 		SiteFeatureReference ref = new SiteFeatureReference();
@@ -160,12 +160,12 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 				File renamedFile = new File(oldPath);
 				if (renamedFile.exists()) {
 					UpdateManagerUtils.removeFromFileSystem(renamedFile);
-					UpdateCore.warn("Removing already existing file:" + oldPath);
+					UpdateCore.warn("Removing already existing file:" + oldPath); //$NON-NLS-1$
 				}
 				sucess = fileToRename.renameTo(renamedFile);
 			}
 			if (!sucess) {
-				String msg = Policy.bind("ContentConsumer.UnableToRename", newPath, oldPath);
+				String msg = Policy.bind("ContentConsumer.UnableToRename", newPath, oldPath); //$NON-NLS-1$
 				throw Utilities.newCoreException(msg, new Exception(msg));
 			}
 		}
@@ -197,7 +197,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 	public void abort() throws CoreException {
 
 		if (closed) {
-			UpdateCore.warn("Attempt to abort a closed SiteFileContentConsumer", new Exception());
+			UpdateCore.warn("Attempt to abort a closed SiteFileContentConsumer", new Exception()); //$NON-NLS-1$
 			return;
 		}
 
@@ -222,7 +222,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 		}
 
 		if (!sucess) {
-			String msg = Policy.bind("Unable to delete", oldPath);
+			String msg = Policy.bind("Unable to delete", oldPath); //$NON-NLS-1$
 			UpdateCore.log(msg, null);
 		} else {
 			// remove the feature files;

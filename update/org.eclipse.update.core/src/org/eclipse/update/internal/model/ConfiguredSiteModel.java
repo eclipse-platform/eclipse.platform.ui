@@ -149,13 +149,13 @@ public class ConfiguredSiteModel extends ModelObject {
 	protected IStatus createStatus(int statusSeverity, int statusCode, String msg, Exception e){
 		String id =	UpdateCore.getPlugin().getBundle().getSymbolicName();
 	
-		StringBuffer completeString = new StringBuffer("");
+		StringBuffer completeString = new StringBuffer(""); //$NON-NLS-1$
 		if (msg!=null)
 			completeString.append(msg);
 		if (e!=null){
-			completeString.append("\r\n[");
+			completeString.append("\r\n["); //$NON-NLS-1$
 			completeString.append(e.toString());
-			completeString.append("]\r\n");
+			completeString.append("]\r\n"); //$NON-NLS-1$
 		}
 		return new Status(statusSeverity, id, statusCode, completeString.toString(), e);
 	}

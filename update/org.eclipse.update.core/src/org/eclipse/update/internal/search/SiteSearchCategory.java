@@ -22,7 +22,7 @@ import org.eclipse.update.search.*;
 public class SiteSearchCategory extends BaseSearchCategory {
 	private IUpdateSearchQuery[] queries;
 	private static final String CATEGORY_ID =
-		"org.eclipse.update.core.unified-search";
+		"org.eclipse.update.core.unified-search"; //$NON-NLS-1$
 
 	private static class Query implements IUpdateSearchQuery {
 		public void run(
@@ -39,7 +39,7 @@ public class SiteSearchCategory extends BaseSearchCategory {
 				}
 			}
 
-			monitor.beginTask("", refs.length);
+			monitor.beginTask("", refs.length); //$NON-NLS-1$
 
 			for (int i = 0; i < refs.length; i++) {
 				ISiteFeatureReference ref = refs[i];

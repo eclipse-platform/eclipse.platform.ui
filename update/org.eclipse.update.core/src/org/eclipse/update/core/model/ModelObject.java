@@ -192,19 +192,19 @@ public abstract class ModelObject extends PlatformObject {
 	 * @return String
 	 */
 	private String resolvePlatfromConfiguration(String resolvedUrlString) {
-		int osIndex = resolvedUrlString.indexOf("$os$");
+		int osIndex = resolvedUrlString.indexOf("$os$"); //$NON-NLS-1$
 		if (osIndex != -1)
 			return getExtendedString(resolvedUrlString);
 
-		int wsIndex = resolvedUrlString.indexOf("$ws$");
+		int wsIndex = resolvedUrlString.indexOf("$ws$"); //$NON-NLS-1$
 		if (wsIndex != -1)
 			return getExtendedString(resolvedUrlString);
 
-		int nlIndex = resolvedUrlString.indexOf("$nl$");
+		int nlIndex = resolvedUrlString.indexOf("$nl$"); //$NON-NLS-1$
 		if (nlIndex != -1)
 			return getExtendedString(resolvedUrlString);
 
-		int archIndex = resolvedUrlString.indexOf("$arch$");
+		int archIndex = resolvedUrlString.indexOf("$arch$"); //$NON-NLS-1$
 		if (archIndex != -1)
 			return getExtendedString(resolvedUrlString);
 
@@ -215,7 +215,7 @@ public abstract class ModelObject extends PlatformObject {
 		IPath path = new Path(resolvedUrlString);
 		path = getExpandedPath(path);
 		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_WARNINGS) {
-			UpdateCore.warn("Resolved :" + resolvedUrlString + " as:" + path.toOSString());
+			UpdateCore.warn("Resolved :" + resolvedUrlString + " as:" + path.toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		return path.toOSString();
@@ -225,13 +225,13 @@ public abstract class ModelObject extends PlatformObject {
 		String first = path.segment(0);
 		if (first != null) {
 			IPath rest = getExpandedPath(path.removeFirstSegments(1));
-			if (first.equals("$ws$")) {
+			if (first.equals("$ws$")) { //$NON-NLS-1$
 				path = new Path(SiteManager.getWS()).append(rest);
-			} else if (first.equals("$os$")) {
+			} else if (first.equals("$os$")) { //$NON-NLS-1$
 				path = new Path(SiteManager.getOS()).append(rest);
-			} else if (first.equals("$nl$")) {
+			} else if (first.equals("$nl$")) { //$NON-NLS-1$
 				path = new Path(SiteManager.getNL()).append(rest);
-			} else if (first.equals("$arch$")) {
+			} else if (first.equals("$arch$")) { //$NON-NLS-1$
 				path = new Path(SiteManager.getOSArch()).append(rest);
 			}
 		}

@@ -67,7 +67,7 @@ public class PatchedFeature {
 			try {
 				IFeature feature = featureRefs[i].getFeature(null);
 				if (feature == null) {
-					UpdateCore.warn("Null Feature", new Exception());
+					UpdateCore.warn("Null Feature", new Exception()); //$NON-NLS-1$
 					continue;
 				}
 				// get plugin entries
@@ -94,7 +94,7 @@ public class PatchedFeature {
 		StringBuffer str = new StringBuffer(feature.toString());
 		IFeatureReference[] patches = getFeatureAndPatches();
 		for (int i = 0; i < patches.length; i++) {
-			str.append(" +patch=" + patches[i].toString() + " ");
+			str.append(" +patch=" + patches[i].toString() + " "); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return str.toString();
 	}

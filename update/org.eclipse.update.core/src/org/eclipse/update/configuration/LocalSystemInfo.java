@@ -279,7 +279,7 @@ public class LocalSystemInfo {
 				vol[i].markReadOnly();
 			}
 		} else {
-			UpdateCore.warn("Unable to find mount points");
+			UpdateCore.warn("Unable to find mount points"); //$NON-NLS-1$
 			// fallback
 			File [] roots = File.listRoots();
 			if (roots.length == 1) {

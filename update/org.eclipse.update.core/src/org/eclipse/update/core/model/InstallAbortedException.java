@@ -30,6 +30,6 @@ public class InstallAbortedException extends CoreException {
 	 * @since 2.0
 	 */
 	public InstallAbortedException(String msg,Exception e) {
-		super(new Status(IStatus.INFO,"org.eclipse.update.core",IStatus.OK,msg,e));
+		super(new Status(IStatus.INFO,"org.eclipse.update.core",IStatus.OK,msg,e)); //$NON-NLS-1$
 	}
 }

@@ -258,11 +258,11 @@ public class DefaultSiteParser extends DefaultHandler {
 					// add text, preserving at most one space between text fragments
 					String newText = (String) objectStack.pop();
 					if (trailingSpace(newText) && !leadingSpace(text)) {
-						text = " " + text;
+						text = " " + text; //$NON-NLS-1$
 					}
 					text = newText.trim() + text;
 					if (leadingSpace(newText) && !leadingSpace(text)) {
-						text = " " + text;
+						text = " " + text; //$NON-NLS-1$
 					}
 				}
 				text = text.trim();
@@ -288,11 +288,11 @@ public class DefaultSiteParser extends DefaultHandler {
 					// add text, preserving at most one space between text fragments
 					String newText = (String) objectStack.pop();
 					if (trailingSpace(newText) && !leadingSpace(text)) {
-						text = " " + text;
+						text = " " + text; //$NON-NLS-1$
 					}
 					text = newText.trim() + text;
 					if (leadingSpace(newText) && !leadingSpace(text)) {
-						text = " " + text;
+						text = " " + text; //$NON-NLS-1$
 					}
 				}
 				text = text.trim();
@@ -506,7 +506,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		// get label if it exists
 		String label = attributes.getValue("label"); //$NON-NLS-1$
 		if (label != null) {
-			if ("".equals(label.trim()))
+			if ("".equals(label.trim())) //$NON-NLS-1$
 				label = null;
 		}
 		feature.setLabel(label);
@@ -528,7 +528,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		feature.setArch(arch);
 
 		//patch
-		String patch = attributes.getValue("patch");
+		String patch = attributes.getValue("patch"); //$NON-NLS-1$
 		feature.setPatch(patch);
 
 		SiteModel site = (SiteModel) objectStack.peek();
@@ -616,7 +616,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	 * 
 	 */
 	private void debug(String s) {
-		UpdateCore.debug("DefaultSiteParser" + s);
+		UpdateCore.debug("DefaultSiteParser" + s); //$NON-NLS-1$
 	}
 
 	/*

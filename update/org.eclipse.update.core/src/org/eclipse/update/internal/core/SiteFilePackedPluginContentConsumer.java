@@ -42,20 +42,20 @@ public class SiteFilePackedPluginContentConsumer extends ContentConsumer {
 		InputStream inStream = null;
 
 		if (closed) {
-			UpdateCore.warn("Attempt to store in a closed SiteFilePluginContentConsumer", new Exception());
+			UpdateCore.warn("Attempt to store in a closed SiteFilePluginContentConsumer", new Exception()); //$NON-NLS-1$
 			return;
 		}
 
 		try {
-			URL newURL = new URL(site.getURL(), Site.DEFAULT_PLUGIN_PATH + pluginEntry.getVersionedIdentifier().toString() + ".jar");
+			URL newURL = new URL(site.getURL(), Site.DEFAULT_PLUGIN_PATH + pluginEntry.getVersionedIdentifier().toString() + ".jar"); //$NON-NLS-1$
 			inStream = contentReference.getInputStream();
 			jarPath = newURL.getFile().replace(File.separatorChar, '/');
 			File jarFile = new File(jarPath);
 			if (jarFile.exists()) {
-				throw Utilities.newCoreException(Policy.bind("UpdateManagerUtils.FileAlreadyExists", new Object[] { jarFile }), null);
+				throw Utilities.newCoreException(Policy.bind("UpdateManagerUtils.FileAlreadyExists", new Object[] { jarFile }), null); //$NON-NLS-1$
 			}
 			// error recovery
-			tempPath= ErrorRecoveryLog.getLocalRandomIdentifier(jarPath+".tmp");
+			tempPath= ErrorRecoveryLog.getLocalRandomIdentifier(jarPath+".tmp"); //$NON-NLS-1$
 				ErrorRecoveryLog.getLog().appendPath(ErrorRecoveryLog.BUNDLE_JAR_ENTRY, tempPath);
 			//
 			UpdateManagerUtils.copyToLocal(inStream, tempPath, null);
@@ -78,7 +78,7 @@ public class SiteFilePackedPluginContentConsumer extends ContentConsumer {
 	public void close() throws CoreException {
 
 		if (closed) {
-			UpdateCore.warn("Attempt to close a closed SiteFilePluginContentConsumer", new Exception());
+			UpdateCore.warn("Attempt to close a closed SiteFilePluginContentConsumer", new Exception()); //$NON-NLS-1$
 			return;
 		}
 
@@ -92,7 +92,7 @@ public class SiteFilePackedPluginContentConsumer extends ContentConsumer {
 				sucess = fileToRename.renameTo(renamedFile);
 			}
 			if (!sucess) {
-				String msg = Policy.bind("ContentConsumer.UnableToRename", tempPath, jarPath);
+				String msg = Policy.bind("ContentConsumer.UnableToRename", tempPath, jarPath); //$NON-NLS-1$
 				throw Utilities.newCoreException(msg, new Exception(msg));
 			}
 		}
@@ -108,7 +108,7 @@ public class SiteFilePackedPluginContentConsumer extends ContentConsumer {
 	public void abort() throws CoreException {
 
 		if (closed) {
-			UpdateCore.warn("Attempt to abort a closed SiteFilePluginContentConsumer", new Exception());
+			UpdateCore.warn("Attempt to abort a closed SiteFilePluginContentConsumer", new Exception()); //$NON-NLS-1$
 			return;
 		}
 
@@ -125,7 +125,7 @@ public class SiteFilePackedPluginContentConsumer extends ContentConsumer {
 		}
 
 		if (!sucess) {
-			String msg = Policy.bind("Unable to delete", jarPath);
+			String msg = Policy.bind("Unable to delete", jarPath); //$NON-NLS-1$
 			UpdateCore.log(msg, null);
 		}
 		closed = true;

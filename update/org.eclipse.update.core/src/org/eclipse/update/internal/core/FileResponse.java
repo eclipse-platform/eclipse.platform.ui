@@ -41,14 +41,14 @@ public class FileResponse implements Response {
 	}
 
 	public String getStatusMessage() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	public long getLastModified() {
 		if (lastModified == 0) {
 			File f = new File(url.getFile());
 			if (f.isDirectory())
-				f = new File(f, "site.xml");
+				f = new File(f, "site.xml"); //$NON-NLS-1$
 			lastModified = f.lastModified();
 		}
 		return lastModified;

@@ -47,7 +47,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 	public SiteEntry(URL url, ISitePolicy policy) {
 		if (url == null)
 			try {
-				url = new URL(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR + "/" + "base" + "/"); //$NON-NLS-1$ //$NON-NLS-2$ // try using platform-relative URL
+				url = new URL(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR + "/" + "base" + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ // try using platform-relative URL
 			} catch (MalformedURLException e) {
 				url = PlatformConfiguration.getInstallURL(); // ensure we come up ... use absolute file URL
 			}
@@ -55,7 +55,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		if (policy == null)
 			policy = new SitePolicy(DEFAULT_POLICY_TYPE, DEFAULT_POLICY_LIST);
 
-		if (url.getProtocol().equals("file")) {
+		if (url.getProtocol().equals("file")) { //$NON-NLS-1$
 			try {
 				// TODO remove this when platform fixes local file url's
 				this.url = new File(url.getFile()).toURL(); 
@@ -229,7 +229,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 				public boolean accept(File f) {
 					boolean valid = f.isDirectory() && (new File(f,FEATURE_XML).exists());
 					if (!valid)
-						System.out.println("Unable to find feature.xml in directory:" + f.getAbsolutePath());
+						Utils.log(Messages.getString("SiteEntry.cannotFindFeatureInDir", f.getAbsolutePath())); //$NON-NLS-1$
 					return valid;
 				}
 			});
@@ -276,7 +276,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 			for (int i = 0; i < files.length; i++) {
 				if(files[i].isDirectory()){
 					detectUnpackedPlugin(files[i], compareTimeStamps);
-				}else if(files[i].getName().endsWith(".jar")){
+				}else if(files[i].getName().endsWith(".jar")){ //$NON-NLS-1$
 					detectPackedPlugin(files[i], compareTimeStamps);
 				}else{
 					// not bundle file
@@ -300,7 +300,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		ZipFile z = null;
 		InputStream bundleManifestIn = null;
 		InputStream pluginManifestIn = null;
-		String pluginURL = PLUGINS + "/" + file.getName();
+		String pluginURL = PLUGINS + "/" + file.getName(); //$NON-NLS-1$
 		try {
 			// First, check if has valid bundle manifest
 			z = new ZipFile(file);
@@ -325,11 +325,11 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 				addPluginEntry(entry1);
 			}
 		} catch (IOException e5) {
-			String pluginFileString2 = pluginURL + "!" + entryName;
-			Utils.log(Messages.getString("InstalledSiteParser.ErrorAccessing",
+			String pluginFileString2 = pluginURL + "!" + entryName; //$NON-NLS-1$
+			Utils.log(Messages.getString("InstalledSiteParser.ErrorAccessing", //$NON-NLS-1$
 					pluginFileString2)); //$NON-NLS-1$
 		} catch (SAXException e3) {
-			String pluginFileString1 = pluginURL + "!" + entryName;
+			String pluginFileString1 = pluginURL + "!" + entryName; //$NON-NLS-1$
 			Utils.log(Messages.getString(
 					"InstalledSiteParser.ErrorParsingFile", pluginFileString1)); //$NON-NLS-1$
 		} finally {
@@ -399,7 +399,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 				Utils.log(Utils.newStatus(Messages.getString(
 						"InstalledSiteParser.ErrorParsingFile", pluginFileString), e));//$NON-NLS-1$
 			else
-				Utils.log(Messages.getString("InstalledSiteParser.ErrorAccessing",
+				Utils.log(Messages.getString("InstalledSiteParser.ErrorAccessing", //$NON-NLS-1$
 						pluginFileString)); //$NON-NLS-1$
 		} catch (SAXException e) {
 			String pluginFileString = pluginFile.getAbsolutePath();
@@ -468,7 +468,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 			return pluginsChangeStamp;
 		
 		if (!PlatformConfiguration.supportsDetection(resolvedURL)) {
-			Utils.log(Messages.getString("SiteEntry.computePluginStamp", resolvedURL.toExternalForm()));
+			Utils.log(Messages.getString("SiteEntry.computePluginStamp", resolvedURL.toExternalForm())); //$NON-NLS-1$
 			return 0;
 		}
 		long start = 0;
@@ -478,7 +478,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		File root = new File(resolvedURL.getFile().replace('/', File.separatorChar));
 		File pluginsDir = new File(root, PLUGINS);
 		if (!pluginsDir.exists() || !pluginsDir.isDirectory()) {
-			Utils.log(Messages.getString("SiteEntry.pluginsDir", pluginsDir.getAbsolutePath()));
+			Utils.log(Messages.getString("SiteEntry.pluginsDir", pluginsDir.getAbsolutePath())); //$NON-NLS-1$
 			return 0;
 		}
 
@@ -492,9 +492,9 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 			ArrayList detectedPlugins = new ArrayList(files.length);
 			for (int i = 0; i < files.length; i++) {
 				if(files[i].isDirectory())
-					detectedPlugins.add(PLUGINS + "/" + files[i].getName() + "/");
-				else if(files[i].getName().endsWith(".jar"))
-					detectedPlugins.add(PLUGINS + "/" + files[i].getName());
+					detectedPlugins.add(PLUGINS + "/" + files[i].getName() + "/"); //$NON-NLS-1$ //$NON-NLS-2$
+				else if(files[i].getName().endsWith(".jar")) //$NON-NLS-1$
+					detectedPlugins.add(PLUGINS + "/" + files[i].getName()); //$NON-NLS-1$
 			} 
 			
 			String[] excludedPlugins = policy.getList();
@@ -589,7 +589,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 				// log error if same feature version/id but a different url
 				if (feature instanceof FeatureEntry && existing instanceof FeatureEntry &&
 						!((FeatureEntry)feature).getURL().equals(((FeatureEntry)existing).getURL()))
-				Utils.log("Duplicate feature found on site "+getURL() + " : " + existing.getFeatureIdentifier());
+				Utils.log(Messages.getString("SiteEntry.duplicateFeature",getURL().toExternalForm(), existing.getFeatureIdentifier())); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} else {
 			featureEntries.put(feature.getFeatureIdentifier(), feature);
@@ -640,8 +640,8 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		if (getURL().toString() != null)
 			siteElement.setAttribute(CFG_URL, getURL().toString());
 
-		siteElement.setAttribute(CFG_ENABLED, isEnabled() ? "true" : "false");
-		siteElement.setAttribute(CFG_UPDATEABLE, isUpdateable() ? "true" : "false");
+		siteElement.setAttribute(CFG_ENABLED, isEnabled() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+		siteElement.setAttribute(CFG_UPDATEABLE, isUpdateable() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (isExternallyLinkedSite()) 
 			siteElement.setAttribute(CFG_LINK_FILE, getLinkFileName().trim().replace(File.separatorChar, '/')); 
 

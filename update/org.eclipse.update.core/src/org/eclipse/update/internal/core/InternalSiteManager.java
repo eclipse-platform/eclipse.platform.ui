@@ -101,10 +101,10 @@ public class InternalSiteManager {
 		}
 		
 		// try adding "eclipse" to the site url, in case this is an extension site
-		if ("file".equals(siteURL.getProtocol()) ) {
+		if ("file".equals(siteURL.getProtocol()) ) { //$NON-NLS-1$
 			File f = new File(siteURL.getFile());
-			if (f.isDirectory() && !"eclipse".equals(f.getName())) {
-				f = new File(f, "eclipse");
+			if (f.isDirectory() && !"eclipse".equals(f.getName())) { //$NON-NLS-1$
+				f = new File(f, "eclipse"); //$NON-NLS-1$
 				try {
 					if ((useCache && globalUseCache) && isValidCachedSite(f.toURL())) {
 						site = (ISite) sites.get(f.toURL().toExternalForm());
@@ -119,7 +119,7 @@ public class InternalSiteManager {
 		// and no site.xml exist
 		// if the user points to a file, consider DEFAULT_SITE_TYPE
 		// site.xml will have to specify the type
-		boolean fileProtocol = "file".equalsIgnoreCase(siteURL.getProtocol());
+		boolean fileProtocol = "file".equalsIgnoreCase(siteURL.getProtocol()); //$NON-NLS-1$
 		boolean directoryExists = false;
 		if (fileProtocol) {
 			File dir;
@@ -131,7 +131,7 @@ public class InternalSiteManager {
 		}
 
 		//PERF: if file: <path>/ and directory exists then consider executable
-		monitor.beginTask(Policy.bind("InternalSiteManager.ConnectingToSite"), 8);
+		monitor.beginTask(Policy.bind("InternalSiteManager.ConnectingToSite"), 8); //$NON-NLS-1$
 		if (fileProtocol && directoryExists) {
 			site = attemptCreateSite(DEFAULT_EXECUTABLE_SITE_TYPE, siteURL, monitor);
 			monitor.worked(4); // only one attempt
@@ -202,7 +202,7 @@ public class InternalSiteManager {
 			// attempt to use this type instead	
 			//DEBUG:
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_TYPE) {
-				UpdateCore.debug("The Site :" + siteURL.toExternalForm() + " is a different type than the guessed type based on the protocol. new Type:" + e.getNewType());	//$NON-NLS-1$ 
+				UpdateCore.debug("The Site :" + siteURL.toExternalForm() + " is a different type than the guessed type based on the protocol. new Type:" + e.getNewType());	//$NON-NLS-1$ //$NON-NLS-2$ 
 			}
 
 			try {

@@ -42,7 +42,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		URL fileURL = provider.getArchiveReference(getPathID(pluginEntry));
 		String result = fileURL.getFile();
 
-		if (!result.endsWith(".jar") && !result.endsWith(File.separator))
+		if (!result.endsWith(".jar") && !result.endsWith(File.separator)) //$NON-NLS-1$
 			result += File.separator;
 		File pluginPath = new File(result);
 		if (!pluginPath.exists())
@@ -119,7 +119,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 			throw Utilities.newCoreException(
 				Policy.bind(
 					"FeatureExecutableContentProvider.UnableToCreateURLFor", //$NON-NLS-1$
-					getURL().toExternalForm() + " " + Feature.FEATURE_XML),
+					getURL().toExternalForm() + " " + Feature.FEATURE_XML), //$NON-NLS-1$
 				e);
 		}
 		return result;
@@ -145,7 +145,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		String archiveID = getPathID(pluginEntry);
 		try {
 			File archiveFile = new File(getPath(pluginEntry));
-			if(!archiveFile.isDirectory() && archiveFile.getName().endsWith(".jar")){
+			if(!archiveFile.isDirectory() && archiveFile.getName().endsWith(".jar")){ //$NON-NLS-1$
 				result[0] = new JarContentReference(archiveID, archiveFile);				
 			} else {
 				result[0] =

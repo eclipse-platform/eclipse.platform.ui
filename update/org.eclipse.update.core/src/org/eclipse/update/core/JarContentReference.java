@@ -134,9 +134,9 @@ public class JarContentReference extends ContentReference {
 		if (this.jarFile == null) {
 			File file = asFile();
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_INSTALL)
-				UpdateCore.debug("asJarFile :" + file);
+				UpdateCore.debug("asJarFile :" + file); //$NON-NLS-1$
 			if (file != null && !file.exists()) {
-				UpdateCore.warn("JarFile does not exits:" + file);
+				UpdateCore.warn("JarFile does not exits:" + file); //$NON-NLS-1$
 				throw new FileNotFoundException(file.getAbsolutePath());
 			}
 			this.jarFile = new JarFile(file);

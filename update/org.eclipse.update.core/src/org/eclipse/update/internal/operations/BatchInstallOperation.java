@@ -22,7 +22,7 @@ public class BatchInstallOperation
 	extends Operation
 	implements IBatchOperation {
 		
-	private static final String KEY_INSTALLING = "OperationsManager.installing";
+	private static final String KEY_INSTALLING = "OperationsManager.installing"; //$NON-NLS-1$
 	protected IInstallFeatureOperation[] operations;
 
 	public BatchInstallOperation(IInstallFeatureOperation[] operations) {

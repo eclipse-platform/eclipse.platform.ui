@@ -68,7 +68,7 @@ public class DefaultPluginParser extends DefaultHandler {
 		}
 
 		if (id == null || id.trim().length() == 0)
-			id = "_no_id_";
+			id = "_no_id_"; //$NON-NLS-1$
 		pluginEntry.setVersionedIdentifier(new VersionedIdentifier(id, version));
 		return pluginEntry;
 	}

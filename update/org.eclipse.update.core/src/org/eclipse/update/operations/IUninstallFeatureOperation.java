@@ -22,5 +22,5 @@ package org.eclipse.update.operations;
  * @since 3.0
  */
 public interface IUninstallFeatureOperation extends IFeatureOperation {
-	public final static String UNINSTALL = "uninstall";
+	public final static String UNINSTALL = "uninstall"; //$NON-NLS-1$
 }

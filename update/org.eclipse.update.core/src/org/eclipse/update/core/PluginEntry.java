@@ -57,11 +57,11 @@ public class PluginEntry extends PluginEntryModel implements IPluginEntry {
 				versionId = new VersionedIdentifier(id, ver);
 				return versionId;
 			} catch (Exception e) {
-				UpdateCore.warn("Unable to create versioned identifier:" + id + ":" + ver);
+				UpdateCore.warn("Unable to create versioned identifier:" + id + ":" + ver); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 
-		versionId = new VersionedIdentifier("",null);
+		versionId = new VersionedIdentifier("",null); //$NON-NLS-1$
 		return versionId;
 	}
 

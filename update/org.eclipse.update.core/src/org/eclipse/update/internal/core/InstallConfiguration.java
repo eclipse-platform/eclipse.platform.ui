@@ -30,7 +30,7 @@ import org.osgi.framework.*;
  */
 
 public class InstallConfiguration extends InstallConfigurationModel implements IInstallConfiguration {
-	private static boolean isWindows = System.getProperty("os.name").startsWith("Win");
+	private static boolean isWindows = System.getProperty("os.name").startsWith("Win"); //$NON-NLS-1$ //$NON-NLS-2$
 	private ListenersList listeners = new ListenersList();
 
 	/*
@@ -109,13 +109,13 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 */
 	public IConfiguredSite createConfiguredSite(File file) throws CoreException {
 
-		if (!file.getName().equals("eclipse")) {
-			file = new File(file, "eclipse");
+		if (!file.getName().equals("eclipse")) { //$NON-NLS-1$
+			file = new File(file, "eclipse"); //$NON-NLS-1$
 			file.mkdirs();
 		}
 		
 		if (isDuplicateSite(file))
-			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.location.exists", file.getPath()),null);
+			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.location.exists", file.getPath()),null); //$NON-NLS-1$
 		ISite site = InternalSiteManager.createSite(file);
 
 		//create a config site around the site
@@ -124,11 +124,11 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		ConfiguredSite configSite = (ConfiguredSite) factory.createConfigurationSiteModel((SiteModel) site, getDefaultPolicy());
 
 		if (configSite.isNativelyLinked()) {
-			throw Utilities.newCoreException("InstallConfiguration.AlreadyNativelyLinked", null);
+			throw Utilities.newCoreException("InstallConfiguration.AlreadyNativelyLinked", null); //$NON-NLS-1$
 		}
 		
 		if (configSite.isProductSite()) {
-			throw Utilities.newCoreException("InstallConfiguration.AlreadyProductSite", null);
+			throw Utilities.newCoreException("InstallConfiguration.AlreadyProductSite", null); //$NON-NLS-1$
 		}
 		
 		if (site != null) {
@@ -217,8 +217,8 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		for (int i = 0; i < newFeaturesRef.length; i++) {
 			// TRACE
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
-				String reconciliationType = "enable (optimistic)";
-				UpdateCore.debug("New Linked Site:New Feature: " + newFeaturesRef[i].getURL() + " as " + reconciliationType);
+				String reconciliationType = "enable (optimistic)"; //$NON-NLS-1$
+				UpdateCore.debug("New Linked Site:New Feature: " + newFeaturesRef[i].getURL() + " as " + reconciliationType); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			ConfigurationPolicy policy = linkedSite.getConfigurationPolicy();
 			policy.configure(newFeaturesRef[i], true, false);
@@ -385,13 +385,13 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			runtimeConfiguration.save();
 			// log configuration and activities
 			this.date = new Date(runtimeConfiguration.getChangeStamp());
-			if ("file".equalsIgnoreCase(getURL().getProtocol()))
+			if ("file".equalsIgnoreCase(getURL().getProtocol())) //$NON-NLS-1$
 				UpdateCore.log(this);
 			resetActivities();
 			return isRestartNeeded(runtimeConfiguration);
 		} catch (IOException e) {
 			CoreException exc = Utilities.newCoreException(Policy.bind("InstallConfiguration.UnableToSavePlatformConfiguration", runtimeConfiguration.getConfigurationLocation().toExternalForm()), e);	//$NON-NLS-1$
-			UpdateCore.warn("",exc);
+			UpdateCore.warn("",exc); //$NON-NLS-1$
 		}
 		return true;
 	}
@@ -654,10 +654,10 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			URL pluginEntryfullURL = siteContentProvider.getArchiveReference(pluginPathID);
 
 			//
-			if (!rootString.startsWith("platform")) {
+			if (!rootString.startsWith("platform")) { //$NON-NLS-1$
 				// DEBUG:
 				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
-					UpdateCore.debug("getRuntimeConfiguration Plugin Entry Full URL:" + pluginEntryfullURL + " Platform String:" + rootString + " [NON PLATFORM URL].");
+					UpdateCore.debug("getRuntimeConfiguration Plugin Entry Full URL:" + pluginEntryfullURL + " Platform String:" + rootString + " [NON PLATFORM URL]."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				return pluginEntryfullURL;
 			}
 
@@ -673,15 +673,15 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 
 			// DEBUG:
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
-				UpdateCore.debug("getRuntimeConfiguration plugin Entry Full URL:" + pluginEntryfullURL + " Platform String:" + rootString + " Site URL:" + pluginEntryRootURL + " Relative:" + relativeString);
+				UpdateCore.debug("getRuntimeConfiguration plugin Entry Full URL:" + pluginEntryfullURL + " Platform String:" + rootString + " Site URL:" + pluginEntryRootURL + " Relative:" + relativeString); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
 			// verify we are about to write a valid file URL
 			// check with fullURL as it is not resolved to platform:base/
 			if (pluginEntryfullURL != null) {
-				if ("file".equals(pluginEntryfullURL.getProtocol())) {
+				if ("file".equals(pluginEntryfullURL.getProtocol())) { //$NON-NLS-1$
 					String fileString = pluginEntryfullURL.getFile();
 					if (!new File(fileString).exists()) {
-						UpdateCore.warn("The URL:" + result + " doesn't point to a valid platform plugin.The URL will not be written in the platform configuration", new Exception());
+						UpdateCore.warn("The URL:" + result + " doesn't point to a valid platform plugin.The URL will not be written in the platform configuration", new Exception()); //$NON-NLS-1$ //$NON-NLS-2$
 						return null;
 					}
 				}
@@ -738,19 +738,19 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 
 		// try to determine if supplied URL can be recast as install-relative
 		if (install.getProtocol().equals(url.getProtocol())) {
-			if (install.getProtocol().equals("file")) {
+			if (install.getProtocol().equals("file")) { //$NON-NLS-1$
 				String installS = new File(install.getFile()).getAbsolutePath().replace(File.separatorChar, '/');
-				if (!installS.endsWith("/"))
-					installS += "/";
+				if (!installS.endsWith("/")) //$NON-NLS-1$
+					installS += "/"; //$NON-NLS-1$
 				String urlS = new File(url.getFile()).getAbsolutePath().replace(File.separatorChar, '/');
-				if (!urlS.endsWith("/"))
-					urlS += "/";
-				int ix = installS.lastIndexOf("/");
+				if (!urlS.endsWith("/")) //$NON-NLS-1$
+					urlS += "/"; //$NON-NLS-1$
+				int ix = installS.lastIndexOf("/"); //$NON-NLS-1$
 				if (ix != -1) {
 					installS = installS.substring(0, ix + 1);
 					if (urlS.startsWith(installS)) {
 						try {
-							return new URL("platform:/base/" + urlS.substring(installS.length()));
+							return new URL("platform:/base/" + urlS.substring(installS.length())); //$NON-NLS-1$
 						} catch (MalformedURLException e) {
 						}
 					}
@@ -830,7 +830,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 				continue;
 			
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
-				UpdateCore.debug("Bundle " + oldBundleLocation + " has been removed");
+				UpdateCore.debug("Bundle " + oldBundleLocation + " has been removed"); //$NON-NLS-1$ //$NON-NLS-2$
 			return true;
 		}
 

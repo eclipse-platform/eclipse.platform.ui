@@ -67,7 +67,7 @@ public class SiteFeatureReference extends SiteFeatureReferenceModel implements I
 					categories.add(siteCat);
 				else {
 					String siteURL = getSite().getURL() != null ? getSite().getURL().toExternalForm() : null;
-					UpdateCore.warn("Category " + categoriesAsString[i] + " not found in Site:" + siteURL);
+					UpdateCore.warn("Category " + categoriesAsString[i] + " not found in Site:" + siteURL); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		}

@@ -12,7 +12,6 @@ package org.eclipse.update.internal.core;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
@@ -39,12 +38,12 @@ public class UpdateCore extends Plugin {
 	public static boolean DEBUG_SHOW_RECONCILER;
 
 	// preference keys
-	private static final String PREFIX = "org.eclipse.update.core";
-	public static final String P_HISTORY_SIZE = PREFIX + ".historySize";
-	public static final String P_CHECK_SIGNATURE = PREFIX + ".checkSignature";
-	public static final String P_UPDATE_VERSIONS = PREFIX + ".updateVersions";
-	public static final String EQUIVALENT_VALUE = "equivalent";
-	public static final String COMPATIBLE_VALUE = "compatible";
+	private static final String PREFIX = "org.eclipse.update.core"; //$NON-NLS-1$
+	public static final String P_HISTORY_SIZE = PREFIX + ".historySize"; //$NON-NLS-1$
+	public static final String P_CHECK_SIGNATURE = PREFIX + ".checkSignature"; //$NON-NLS-1$
+	public static final String P_UPDATE_VERSIONS = PREFIX + ".updateVersions"; //$NON-NLS-1$
+	public static final String EQUIVALENT_VALUE = "equivalent"; //$NON-NLS-1$
+	public static final String COMPATIBLE_VALUE = "compatible"; //$NON-NLS-1$
 	
 	public static int DEFAULT_HISTORY = 100;//Integer.MAX_VALUE;
 	
@@ -53,14 +52,14 @@ public class UpdateCore extends Plugin {
 
 	//log
 	private static UpdateManagerLogWriter log;
-	private static final String LOG_FILE="install.log";
+	private static final String LOG_FILE="install.log"; //$NON-NLS-1$
 	
 	//Connection manager
 	private ConnectionThreadManager connectionManager;
 
-	public static String HTTP_PROXY_HOST = "org.eclipse.update.core.proxy.host";
-	public static String HTTP_PROXY_PORT = "org.eclipse.update.core.proxy.port";
-	public static String HTTP_PROXY_ENABLE = "org.eclipse.update.core.proxy.enable";
+	public static String HTTP_PROXY_HOST = "org.eclipse.update.core.proxy.host"; //$NON-NLS-1$
+	public static String HTTP_PROXY_PORT = "org.eclipse.update.core.proxy.port"; //$NON-NLS-1$
+	public static String HTTP_PROXY_ENABLE = "org.eclipse.update.core.proxy.enable"; //$NON-NLS-1$
 
 	// bundle data
 	private BundleContext context;
@@ -104,9 +103,9 @@ public class UpdateCore extends Plugin {
 	public static void debug(String s) {
 		StringBuffer msg = new StringBuffer();
 		msg.append(getPlugin().toString());
-		msg.append("^");
+		msg.append("^"); //$NON-NLS-1$
 		msg.append(Integer.toHexString(Thread.currentThread().hashCode()));
-		msg.append(" ");
+		msg.append(" "); //$NON-NLS-1$
 		msg.append(s);
 		System.out.println(msg.toString());
 	}
@@ -117,7 +116,7 @@ public class UpdateCore extends Plugin {
 	public static void warn(String s) {
 		if (DEBUG && DEBUG_SHOW_WARNINGS) {
 			if (s!=null){
-				s="WARNING: "+s;
+				s="WARNING: "+s; //$NON-NLS-1$
 			}
 			log(s, null); 
 		}
@@ -133,7 +132,7 @@ public class UpdateCore extends Plugin {
 	public static void warn(String s, Throwable e) {
 		if (DEBUG && DEBUG_SHOW_WARNINGS){
 			if (s!=null){
-				s="UPDATE MANAGER INFO: "+s;
+				s="UPDATE MANAGER INFO: "+s; //$NON-NLS-1$
 			}
 			log(s,e);
 		}
@@ -150,7 +149,7 @@ public class UpdateCore extends Plugin {
 	 * Logs an error
 	 */
 	public static void log(Throwable e){		
-		log("",e);
+		log("",e); //$NON-NLS-1$
 	}	
 	
 	/**
@@ -182,13 +181,13 @@ public class UpdateCore extends Plugin {
 		IPlatformConfiguration config = ConfiguratorUtils.getCurrentPlatformConfiguration();		
 		URL configurationLocation = config.getConfigurationLocation();
 		if (configurationLocation==null){
-			warn("Unable to retrieve location for update manager log file");
+			warn("Unable to retrieve location for update manager log file"); //$NON-NLS-1$
 			return null;
 		}
 //		URL configLocation = Platform.resolve(configurationLocation);
 		File updateStateLocation = null;
 
-		if ("file".equalsIgnoreCase(configurationLocation.getProtocol())) {
+		if ("file".equalsIgnoreCase(configurationLocation.getProtocol())) { //$NON-NLS-1$
 			File path = new File(configurationLocation.getFile());
 			updateStateLocation = new File(path.getParentFile(), LOG_FILE);
 		}
@@ -212,9 +211,9 @@ public class UpdateCore extends Plugin {
 		//Request request = null;
 		Response response = null;
 		
-		if ("file".equals(url.getProtocol())) {
+		if ("file".equals(url.getProtocol())) { //$NON-NLS-1$
 			response = new FileResponse(url);
-		} else if (url != null && url.getProtocol().startsWith("http")) {
+		} else if (url != null && url.getProtocol().startsWith("http")) { //$NON-NLS-1$
 			response = new HttpResponse(url);
 		} else {
 			response = new OtherResponse(url);
@@ -278,7 +277,7 @@ public class UpdateCore extends Plugin {
 			if (logFile!=null)
 				log = new UpdateManagerLogWriter(logFile);
 		} catch (IOException e){
-			warn("",e);
+			warn("",e); //$NON-NLS-1$
 		}
 		
 		SiteManager.setHttpProxyInfo(

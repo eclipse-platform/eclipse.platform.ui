@@ -50,7 +50,7 @@ public class OtherResponse implements Response {
 	}
 
 	public String getStatusMessage() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	public long getLastModified() {

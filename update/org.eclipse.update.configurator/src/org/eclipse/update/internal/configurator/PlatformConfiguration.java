@@ -58,8 +58,8 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	private static final String ECLIPSE = "eclipse"; //$NON-NLS-1$
 	private static final String CONFIG_HISTORY = "history"; //$NON-NLS-1$
 	private static final String PLATFORM_XML = "platform.xml"; //$NON-NLS-1$
-	private static final String CONFIG_NAME = ConfigurationActivator.NAME_SPACE + "/" + PLATFORM_XML;
-	private static final String CONFIG_INI = "config.ini"; //NON-NLS-1$
+	private static final String CONFIG_NAME = ConfigurationActivator.NAME_SPACE + "/" + PLATFORM_XML; //$NON-NLS-1$
+	private static final String CONFIG_INI = "config.ini"; //NON-NLS-1$ //$NON-NLS-1$
 	private static final String CONFIG_FILE_LOCK_SUFFIX = ".lock"; //$NON-NLS-1$
 	private static final String CONFIG_FILE_TEMP_SUFFIX = ".tmp"; //$NON-NLS-1$
 	private static final String LINKS = "links"; //$NON-NLS-1$
@@ -217,7 +217,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		SiteEntry result = config.getSiteEntry(key);	
 		if (result == null) { // retry with decoded URL string
 			try {
-				key = URLDecoder.decode(key, "UTF-8");
+				key = URLDecoder.decode(key, "UTF-8"); //$NON-NLS-1$
 			} catch (UnsupportedEncodingException e) {
 				// ignore
 			}
@@ -254,11 +254,11 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		for (int i=0; i<sites.length; i++) {
 			// find out what site contains the feature and configure it
 			try {
-				URL url = new URL(sites[i].getURL(), FEATURES + "/" + entry.getFeatureIdentifier()+ "_" + entry.getFeatureVersion() + "/");
+				URL url = new URL(sites[i].getURL(), FEATURES + "/" + entry.getFeatureIdentifier()+ "_" + entry.getFeatureVersion() + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				if (new File(url.getFile()).exists())
 					sites[i].addFeatureEntry(entry);
 				else  {
-					url = new URL(sites[i].getURL(), FEATURES + "/" + entry.getFeatureIdentifier() + "/");
+					url = new URL(sites[i].getURL(), FEATURES + "/" + entry.getFeatureIdentifier() + "/"); //$NON-NLS-1$ //$NON-NLS-2$
 					if (new File(url.getFile()).exists())
 						sites[i].addFeatureEntry(entry);
 				}
@@ -416,7 +416,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		ISiteEntry[] sites = getConfiguredSites();
 		for (int i = 0; i < sites.length; i++) {
 			if (!(sites[i] instanceof SiteEntry)) {
-				Utils.debug("Site " + sites[i].getURL() + " is not a SiteEntry");
+				Utils.debug("Site " + sites[i].getURL() + " is not a SiteEntry"); //$NON-NLS-1$ //$NON-NLS-2$
 				continue;
 			}
 			PluginEntry[] plugins = ((SiteEntry)sites[i]).getPluginEntries();
@@ -516,7 +516,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			File cfigFile = new File(url.getFile().replace('/', File.separatorChar));
 			if (!cfigFile.getName().equals(PLATFORM_XML)) {
 				if (cfigFile.exists() && cfigFile.isFile()) {
-					Utils.log("Either specify the configuration directory or a file named platform.xml, not " + cfigFile.getName());
+					Utils.log(Messages.getString("PlatformConfiguration.expectingPlatformXMLorDirectory") + cfigFile.getName()); //$NON-NLS-1$
 					cfigFile = cfigFile.getParentFile();
 				}
 				cfigFile = new File(cfigFile, CONFIG_NAME);
@@ -538,16 +538,16 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 				if (!backupDir.exists())
 					backupDir.mkdir();
 				long timestamp = cfigFile.lastModified();
-				File preservedFile = new File(backupDir, String.valueOf(timestamp)+".xml");
+				File preservedFile = new File(backupDir, String.valueOf(timestamp)+".xml"); //$NON-NLS-1$
 				// If the target file exists, increment the timestamp. Try at most 100 times.
 				long increment = 1;
 				while (preservedFile.exists() && increment < 100){
-					preservedFile = new File(backupDir, String.valueOf(timestamp+increment++)+".xml");
+					preservedFile = new File(backupDir, String.valueOf(timestamp+increment++)+".xml"); //$NON-NLS-1$
 				}
 				if (!preservedFile.exists()) {
 					// try renaming current config to backup copy
 					if (!cfigFile.renameTo(preservedFile))
-						Utils.log("Cannot backup current configuration");
+						Utils.log(Messages.getString("PlatformConfiguration.cannotBackupConfig")); //$NON-NLS-1$
 				}
 			}
 			
@@ -571,7 +571,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 					os.close();
 					os = null;
 				} catch (IOException e1) {
-					Utils.log("Could not close output stream for " + cfigTmp);
+					Utils.log(Messages.getString("PlatformConfiguration.cannotCloseStream") + cfigTmp); //$NON-NLS-1$
 					Utils.log(e1.getMessage());
 				}
 				// set file time stamp to match that of the config element
@@ -588,7 +588,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 					try {
 						os.close();
 					} catch (IOException e1) {
-						Utils.log("Could not close output stream for temp file " + cfigTmp);
+						Utils.log(Messages.getString("PlatformConfiguration.cannotCloseTempFile") + cfigTmp); //$NON-NLS-1$
 					}
 			}
 
@@ -601,7 +601,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 				// with "tmp" (latest), then "bak" (the previous). We can also end up
 				// here if we failed to rename the current config to "bak". In that
 				// case we will restart with the previous state.
-				Utils.log("Could not rename configuration temp file");
+				Utils.log(Messages.getString("PlatformConfiguration.cannotRenameTempFile")); //$NON-NLS-1$
 				
 				throw new IOException(Messages.getString("cfig.unableToSave", cfigTmp.getAbsolutePath())); //$NON-NLS-1$
 			}
@@ -616,7 +616,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 				copy(configIniURL, configIni);
 			}
 		} catch (Exception e) {
-			System.out.println(Messages.getString("cfg.unableToCreateConfig.ini"));
+			System.out.println(Messages.getString("cfg.unableToCreateConfig.ini")); //$NON-NLS-1$
 		}
 	}
 
@@ -634,7 +634,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		if (currentPlatformConfiguration == null) {
 			currentPlatformConfiguration = new PlatformConfiguration(platformConfigLocation);
 			if (currentPlatformConfiguration.config == null)
-				throw new Exception("Cannot load configuration from " + platformConfigLocation.getURL());
+				throw new Exception(Messages.getString("PlatformConfiguration.cannotLoadConfig") + platformConfigLocation.getURL()); //$NON-NLS-1$
 			if (currentPlatformConfiguration.config.isDirty())
 				// If this is a transient config (generated by PDE),do nothing
 				// otherwise, save the configuration with proper date
@@ -699,7 +699,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 					}
 					return;
 				} catch (Exception ioe) {
-					Utils.debug("Creating default configuration from " + configFileURL.toExternalForm());
+					Utils.debug("Creating default configuration from " + configFileURL.toExternalForm()); //$NON-NLS-1$
 					createDefaultConfiguration(configFileURL);
 				}
 			}
@@ -738,7 +738,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			// parse the site directory to discover features
 			defaultSite.loadFromDisk(0);
 		} catch (CoreException e1) {
-			Utils.log("Cannot load default site " + defaultSite.getResolvedURL());
+			Utils.log(Messages.getString("PlatformConfiguration.cannotLoadDefaultSite") + defaultSite.getResolvedURL()); //$NON-NLS-1$
 			return;
 		}
 	}
@@ -747,7 +747,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		ISitePolicy defaultPolicy = createSitePolicy(DEFAULT_POLICY_TYPE, DEFAULT_POLICY_LIST);
 		URL siteURL = null;
 		try {
-			siteURL = new URL(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR + "/" + "base" + "/"); //$NON-NLS-1$ //$NON-NLS-2$ // try using platform-relative URL
+			siteURL = new URL(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR + "/" + "base" + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ // try using platform-relative URL
 		} catch (MalformedURLException e) {
 			siteURL = getInstallURL(); // ensure we come up ... use absolute file URL
 		}
@@ -766,7 +766,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		File lockFile = new File(url.getFile(), ConfigurationActivator.NAME_SPACE+ File.separator+CONFIG_FILE_LOCK_SUFFIX);
 		verifyPath(url);
 		try {
-			RandomAccessFile raf = new RandomAccessFile(lockFile, "rw");
+			RandomAccessFile raf = new RandomAccessFile(lockFile, "rw"); //$NON-NLS-1$
 			lock = raf.getChannel().lock();
 		} catch (IOException ioe) {
 			lock = null;
@@ -961,8 +961,8 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			// modify config.ini and platform.xml to only link original files
 			File configIni = new File(newConfigIniURL.getFile());
 			Properties props = new Properties();
-			props.put("osgi.sharedConfiguration.area", sharedConfigLocation.getURL().toExternalForm());
-			props.store(new FileOutputStream(configIni), "Linked configuration");
+			props.put("osgi.sharedConfiguration.area", sharedConfigLocation.getURL().toExternalForm()); //$NON-NLS-1$
+			props.store(new FileOutputStream(configIni), "Linked configuration"); //$NON-NLS-1$
 			
 			config = new Configuration(new Date());
 			config.setURL(new URL(newConfigLocation.getURL(), CONFIG_NAME));
@@ -1021,7 +1021,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		try {
 			config = parser.parse(url);
 			if (config == null)
-				throw new Exception("Platform configuration file cannot be found");
+				throw new Exception(Messages.getString("PlatformConfiguration.cannotFindConfigFile")); //$NON-NLS-1$
 		} catch (Exception e1) {
 			// check for save failures, so open temp and backup configurations
 			originalException = e1;
@@ -1035,13 +1035,13 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			} catch (Exception e2) {
 				try {
 					// check the backup
-					if ("file".equals(url.getProtocol())) {
+					if ("file".equals(url.getProtocol())) { //$NON-NLS-1$
 						File cfigFile = new File(url.getFile().replace('/', File.separatorChar));
 						File workingDir = cfigFile.getParentFile();
 						if (workingDir != null && workingDir.exists()) {
 							File[] backups = workingDir.listFiles(new FileFilter(){
 								public boolean accept(File pathname) {
-									return pathname.isFile() && pathname.getName().endsWith(".xml");
+									return pathname.isFile() && pathname.getName().endsWith(".xml"); //$NON-NLS-1$
 								}});
 							if (backups != null && backups.length > 0) {
 								URL backupUrl = backups[backups.length-1].toURL();
@@ -1131,19 +1131,19 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			Document doc = docBuilder.newDocument();
 
 			if (config == null)
-				throw Utils.newCoreException("Configuration cannot be saved because it does not exist",null);
+				throw Utils.newCoreException(Messages.getString("PlatformConfiguration.cannotSaveNonExistingConfig"),null); //$NON-NLS-1$
 			
 			config.setDate(new Date());
-			doc.appendChild(doc.createComment("Created on " + config.getDate().toString()));
+			doc.appendChild(doc.createComment("Created on " + config.getDate().toString())); //$NON-NLS-1$
 			Element configElement = config.toXML(doc);
 			doc.appendChild(configElement);
 
 			// Write out to a file
 			
 			Transformer transformer=transformerFactory.newTransformer();
-			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
 			DOMSource source = new DOMSource(doc);
 			result = new StreamResult(stream);
 
@@ -1151,7 +1151,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			//will close the stream in the caller
 			//stream.close();
 		} catch (Exception e) {
-			throw Utils.newCoreException("", e);
+			throw Utils.newCoreException("", e); //$NON-NLS-1$
 		} finally {
 			result.setOutputStream(null);
 			result = null;

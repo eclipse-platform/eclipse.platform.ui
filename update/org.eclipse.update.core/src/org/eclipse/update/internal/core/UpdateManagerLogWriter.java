@@ -55,7 +55,7 @@ public class UpdateManagerLogWriter {
 	 */
 	public UpdateManagerLogWriter(File file) {
 		this.logFile = file;
-		UpdateCore.warn("UPDATE MANAGER LOG Location: "+file.getAbsolutePath());
+		UpdateCore.warn("UPDATE MANAGER LOG Location: "+file.getAbsolutePath()); //$NON-NLS-1$
 
 		// If the file does not exist, prime it with the sites in the exisiting config
 		if (!file.exists())
@@ -262,7 +262,7 @@ public class UpdateManagerLogWriter {
 				return PRESERVED;
 							
 			default :
-				return UNKNOWN+" ["+i+"]";
+				return UNKNOWN+" ["+i+"]"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 

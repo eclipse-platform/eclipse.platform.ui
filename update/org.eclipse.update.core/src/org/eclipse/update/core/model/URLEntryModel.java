@@ -157,7 +157,7 @@ public class URLEntryModel extends ModelObject {
 		try {
 			url = resolveURL(base,bundleURL, urlString);
 		} catch (MalformedURLException e){
-			UpdateCore.warn("",e);
+			UpdateCore.warn("",e); //$NON-NLS-1$
 		}
 	}
 

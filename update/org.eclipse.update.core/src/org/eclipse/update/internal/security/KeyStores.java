@@ -206,6 +206,6 @@ public class KeyStores {
 	}	
 	
 	private void log(Exception e){
-		UpdateCore.warn("Cannot retrieve a KeyStore",e);
+		UpdateCore.warn("Cannot retrieve a KeyStore",e); //$NON-NLS-1$
 	}
 }

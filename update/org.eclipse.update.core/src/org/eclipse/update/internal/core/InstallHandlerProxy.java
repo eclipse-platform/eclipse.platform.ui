@@ -24,8 +24,8 @@ public class InstallHandlerProxy implements IInstallHandler {
 	private IStatus savedStatus = null;
 	private boolean DEBUG = false;
 
-	private static final String EXT_PLUGIN = "org.eclipse.update.core";
-	private static final String EXT_POINT = "installHandlers";
+	private static final String EXT_PLUGIN = "org.eclipse.update.core"; //$NON-NLS-1$
+	private static final String EXT_POINT = "installHandlers"; //$NON-NLS-1$
 
 	private InstallHandlerProxy() {
 	}
@@ -60,25 +60,25 @@ public class InstallHandlerProxy implements IInstallHandler {
 		//  check if we have a handler entry specified in the feature.xml
 		if (entry == null) {
 			if (DEBUG)
-				debug("not specified");
+				debug("not specified"); //$NON-NLS-1$
 			return; // no handler entry
 		}
 
 		String library = entry.getLibrary();
 		String handlerName = entry.getHandlerName();
-		if (handlerName == null || handlerName.trim().equals("")) {
+		if (handlerName == null || handlerName.trim().equals("")) { //$NON-NLS-1$
 			if (DEBUG)
-				debug("not specified");
+				debug("not specified"); //$NON-NLS-1$
 			return; // no handler class spacified in entry
 		}
 		if (DEBUG) {
-			debug("handler=" + handlerName);
-			debug("path=   " + library);
+			debug("handler=" + handlerName); //$NON-NLS-1$
+			debug("path=   " + library); //$NON-NLS-1$
 		}
 
 		// get handler instance
 		try {
-			if (library == null || library.trim().equals(""))
+			if (library == null || library.trim().equals("")) //$NON-NLS-1$
 				this.handler = getGlobalHandler(handlerName);
 			else
 				this.handler = getLocalHandler(library, handlerName);
@@ -113,7 +113,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		else {
 			try {
 				if (DEBUG)
-					debug("calling installInitiated()");
+					debug("calling installInitiated()"); //$NON-NLS-1$
 				handler.installInitiated();
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
@@ -130,7 +130,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		else {
 			try {
 				if (DEBUG)
-					debug("calling pluginsDownloaded()");
+					debug("calling pluginsDownloaded()"); //$NON-NLS-1$
 				handler.pluginsDownloaded(plugins);
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
@@ -148,7 +148,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		else {
 			try {
 				if (DEBUG)
-					debug("calling completeInstall()");
+					debug("calling completeInstall()"); //$NON-NLS-1$
 				handler.completeInstall(consumer);
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
@@ -168,7 +168,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		else {
 			try {
 				if (DEBUG)
-					debug("calling nonPluginDataDownloaded()");
+					debug("calling nonPluginDataDownloaded()"); //$NON-NLS-1$
 				handler.nonPluginDataDownloaded(nonPluginData, listener);
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
@@ -185,7 +185,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		else {
 			try {
 				if (DEBUG)
-					debug("calling installCompleted()");
+					debug("calling installCompleted()"); //$NON-NLS-1$
 				handler.installCompleted(success);
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
@@ -202,7 +202,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		else {
 			try {
 				if (DEBUG)
-					debug("calling configureInitiated()");
+					debug("calling configureInitiated()"); //$NON-NLS-1$
 				handler.configureInitiated();
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
@@ -219,7 +219,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		else {
 			try {
 				if (DEBUG)
-					debug("calling completeConfigure()");
+					debug("calling completeConfigure()"); //$NON-NLS-1$
 				handler.completeConfigure();
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
@@ -236,7 +236,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		else {
 			try {
 				if (DEBUG)
-					debug("calling configureCompleted()");
+					debug("calling configureCompleted()"); //$NON-NLS-1$
 				handler.configureCompleted(success);
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
@@ -253,7 +253,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		else {
 			try {
 				if (DEBUG)
-					debug("calling unconfigureInitiated()");
+					debug("calling unconfigureInitiated()"); //$NON-NLS-1$
 				handler.unconfigureInitiated();
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
@@ -270,7 +270,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		else {
 			try {
 				if (DEBUG)
-					debug("calling completeUnconfigure()");
+					debug("calling completeUnconfigure()"); //$NON-NLS-1$
 				handler.completeUnconfigure();
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
@@ -290,7 +290,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		} else {
 			try {
 				if (DEBUG)
-					debug("calling unconfigureCompleted()");
+					debug("calling unconfigureCompleted()"); //$NON-NLS-1$
 				handler.unconfigureCompleted(success);
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
@@ -309,7 +309,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		else {
 			try {
 				if (DEBUG)
-					debug("calling uninstallInitiated()");
+					debug("calling uninstallInitiated()"); //$NON-NLS-1$
 				handler.uninstallInitiated();
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
@@ -326,7 +326,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		else {
 			try {
 				if (DEBUG)
-					debug("calling completeUninstall()");
+					debug("calling completeUninstall()"); //$NON-NLS-1$
 				handler.completeUninstall();
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
@@ -346,7 +346,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		} else {
 			try {
 				if (DEBUG)
-					debug("calling uninstallCompleted()");
+					debug("calling uninstallCompleted()"); //$NON-NLS-1$
 				handler.uninstallCompleted(success);
 			} catch (Throwable e) {
 				handleExceptionInCall(e, feature);
@@ -449,7 +449,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		if (this.type == IInstallHandler.HANDLER_ACTION_UNINSTALL) {
 			// check if we are doing uninstall
 			// ... need to make temp copy of library (being removed)
-			File tempLib = File.createTempFile("tmp", ".jar");
+			File tempLib = File.createTempFile("tmp", ".jar"); //$NON-NLS-1$ //$NON-NLS-2$
 			tempLib.deleteOnExit();
 			FileOutputStream fos = null;
 			InputStream is = null;
@@ -493,11 +493,11 @@ public class InstallHandlerProxy implements IInstallHandler {
 				Policy.bind("InstallHandler.unableToCreateHandler", this.feature.getLabel()), //$NON-NLS-1$
 				null);
 
-		return (IInstallHandler) handlerExtension[0].createExecutableExtension("class");
+		return (IInstallHandler) handlerExtension[0].createExecutableExtension("class"); //$NON-NLS-1$
 	}
 	
 	private void debug(String s) {
-		String pfx = (feature==null) ? "" : feature.getVersionedIdentifier().toString();
+		String pfx = (feature==null) ? "" : feature.getVersionedIdentifier().toString(); //$NON-NLS-1$
 		System.out.println("InstallHandler["+pfx+"]: " + s); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

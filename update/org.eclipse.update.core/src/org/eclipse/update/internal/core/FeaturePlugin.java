@@ -41,6 +41,6 @@ public class FeaturePlugin {
 		return getEntry().getVersionedIdentifier().hashCode();
 	}
 	public String toString() {
-		return pluginEntry + " in " + feature;
+		return pluginEntry + " in " + feature; //$NON-NLS-1$
 	}
 }

@@ -36,7 +36,7 @@ public class NonPluginEntryContentConsumer extends ContentConsumer {
 		if (!closed){
 			contentConsumer.store( contentReference,monitor);
 		} else {
-			UpdateCore.warn("Attempt to store in a closed NonPluginEntryContentConsumer",new Exception());
+			UpdateCore.warn("Attempt to store in a closed NonPluginEntryContentConsumer",new Exception()); //$NON-NLS-1$
 		}
 	}
 
@@ -48,7 +48,7 @@ public class NonPluginEntryContentConsumer extends ContentConsumer {
 			closed = true;
 			contentConsumer.close();
 		} else {
-			UpdateCore.warn("Attempt to close a closed NonPluginEntryContentConsumer",new Exception());
+			UpdateCore.warn("Attempt to close a closed NonPluginEntryContentConsumer",new Exception()); //$NON-NLS-1$
 		}
 	}
 

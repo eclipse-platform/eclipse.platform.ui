@@ -40,7 +40,7 @@ public class UninstallOperation extends FeatureOperation implements IUninstallFe
 				// we should do something here
 				String message =
 					Policy.bind(
-						"OperationsManager.error.uninstall",
+						"OperationsManager.error.uninstall", //$NON-NLS-1$
 						feature.getLabel());
 				IStatus status =
 					new Status(

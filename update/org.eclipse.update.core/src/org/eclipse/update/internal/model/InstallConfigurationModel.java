@@ -249,7 +249,7 @@ public class InstallConfigurationModel extends ModelObject {
 			}
 			
 		} catch (CoreException e) {
-			UpdateCore.warn("Error processing configuration history:" + locationURL.toExternalForm(), e);
+			UpdateCore.warn("Error processing configuration history:" + locationURL.toExternalForm(), e); //$NON-NLS-1$
 		} finally {
 			initialized = true;
 		}

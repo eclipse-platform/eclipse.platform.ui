@@ -82,7 +82,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 			// Do not set read only as may install in it
 			//site.markReadOnly();
 		} catch (MalformedURLException e) {
-			throw Utilities.newCoreException(Policy.bind("SiteFileFactory.UnableToCreateURL", url == null ? "" : url.toExternalForm()), e);	//$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("SiteFileFactory.UnableToCreateURL", url == null ? "" : url.toExternalForm()), e);	//$NON-NLS-1$ //$NON-NLS-2$
 		} catch (IOException e) {
 			throw Utilities.newCoreException(Policy.bind("SiteFileFactory.UnableToAccessSite"),ISite.SITE_ACCESS_EXCEPTION, e);//$NON-NLS-1$
 		} finally {
@@ -140,12 +140,12 @@ public class SiteFileFactory extends BaseSiteFactory {
 				for (int index = 0; index < dir.length; index++) {
 
 					// the URL must ends with '/' for the bundle to be resolved
-					newFilePath = dir[index] + (dir[index].endsWith("/") ? "/" : "");
+					newFilePath = dir[index] + (dir[index].endsWith("/") ? "/" : ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					currentFeatureDir = new File(featureDir, newFilePath);
 					// check if feature.xml exists
 					File featureXMLFile = new File(currentFeatureDir, Feature.FEATURE_XML);
 					if (!featureXMLFile.exists()) {
-						UpdateCore.warn("Unable to find feature.xml in directory:" + currentFeatureDir);
+						UpdateCore.warn("Unable to find feature.xml in directory:" + currentFeatureDir); //$NON-NLS-1$
 					} else {
 						// PERF: remove code
 						//SiteFileFactory archiveFactory = new SiteFileFactory();
@@ -185,15 +185,15 @@ public class SiteFileFactory extends BaseSiteFactory {
 
 					// check if the JAR file contains a feature.xml
 					currentFeatureFile = new File(featureDir, dir[index]);
-					JarContentReference ref = new JarContentReference("", currentFeatureFile);
+					JarContentReference ref = new JarContentReference("", currentFeatureFile); //$NON-NLS-1$
 					ContentReference result = null;
 					try {
 						result = ref.peek(Feature.FEATURE_XML, null, null);
 					} catch (IOException e) {
-						UpdateCore.warn("Exception retrieving feature.xml in file:" + currentFeatureFile, e);
+						UpdateCore.warn("Exception retrieving feature.xml in file:" + currentFeatureFile, e); //$NON-NLS-1$
 					}
 					if (result == null) {
-						UpdateCore.warn("Unable to find feature.xml in file:" + currentFeatureFile);
+						UpdateCore.warn("Unable to find feature.xml in file:" + currentFeatureFile); //$NON-NLS-1$
 					} else {
 						featureURL = currentFeatureFile.toURL();
 						// PERF: remove code
@@ -230,7 +230,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 		});
 		DefaultPluginParser parser = new DefaultPluginParser();
 		for (int i = 0; i < dirs.length; i++) {
-			File pluginFile = new File(dirs[i], "META-INF/MANIFEST.MF");
+			File pluginFile = new File(dirs[i], "META-INF/MANIFEST.MF"); //$NON-NLS-1$
 			InputStream in = null;
 			try {
 				BundleManifest bundleManifest = new BundleManifest(pluginFile);
@@ -238,7 +238,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 					PluginEntry entry = bundleManifest.getPluginEntry();
 					addParsedPlugin(entry, dirs[i]);
 				} else {
-					if (!(pluginFile = new File(dirs[i], "plugin.xml"))
+					if (!(pluginFile = new File(dirs[i], "plugin.xml")) //$NON-NLS-1$
 							.exists()) { //$NON-NLS-1$
 						pluginFile = new File(dirs[i], "fragment.xml"); //$NON-NLS-1$
 					}
@@ -301,7 +301,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 
 				// TRACE				
 				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
-					UpdateCore.debug("Added archive to site:" + pluginID + " pointing to: " + location);
+					UpdateCore.debug("Added archive to site:" + pluginID + " pointing to: " + location); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		} catch (MalformedURLException e) {

@@ -482,7 +482,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	 */
 	private String cleanupText(String text) {
 		text = text.trim();
-		if ("".equals(text)) return null;
+		if ("".equals(text)) return null; //$NON-NLS-1$
 		return text;
 	}
 
@@ -492,7 +492,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	 * @since 2.0
 	 */
 	public void characters(char[] ch, int start, int length) {
-		String text = "";
+		String text = ""; //$NON-NLS-1$
 		boolean valid = true;
 
 		if (valid) {
@@ -722,7 +722,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 			feature.setAffinityFeature(affinity);
 
 			// primary plugin
-			String plugin = attributes.getValue("plugin");
+			String plugin = attributes.getValue("plugin"); //$NON-NLS-1$
 			feature.setPrimaryPluginID(plugin);
 
 			objectStack.push(feature);
@@ -835,8 +835,8 @@ public class DefaultFeatureParser extends DefaultHandler {
 		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING) {
 			debug("End process Includes tag: id:" //$NON-NLS-1$
 			+id + " ver:" + ver); //$NON-NLS-1$
-			debug("name =" + name + " optional=" + optional + " search-location=" + locationName);
-			debug("os=" + os + " ws=" + ws + " arch=" + arch);
+			debug("name =" + name + " optional=" + optional + " search-location=" + locationName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			debug("os=" + os + " ws=" + ws + " arch=" + arch); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
 
@@ -851,7 +851,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 		inf.setURLString(infoURL);
 		inf.setAnnotation(label);
 		
-		if ("web".equalsIgnoreCase(type))
+		if ("web".equalsIgnoreCase(type)) //$NON-NLS-1$
 			inf.setType(IURLEntry.WEB_SITE);
 		else 
 			inf.setType(IURLEntry.UPDATE_SITE);
@@ -871,7 +871,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 		String idMatch = attributes.getValue("id-match"); //$NON-NLS-1$
 
 		if (!(pluginID == null ^ featureID == null)) {
-			internalError(Policy.bind("DefaultFeatureParser.PluginAndFeatureId"));
+			internalError(Policy.bind("DefaultFeatureParser.PluginAndFeatureId")); //$NON-NLS-1$
 			return;
 		}
 
@@ -889,21 +889,21 @@ public class DefaultFeatureParser extends DefaultHandler {
 			ImportModel imp = factory.createImportModel();
 			String ver = attributes.getValue("version"); //$NON-NLS-1$
 			String match = attributes.getValue("match"); //$NON-NLS-1$
-			String patch = attributes.getValue("patch");
+			String patch = attributes.getValue("patch"); //$NON-NLS-1$
 
-			imp.setPatch(patch != null && patch.equalsIgnoreCase("true"));
+			imp.setPatch(patch != null && patch.equalsIgnoreCase("true")); //$NON-NLS-1$
 
 			if (ver == null) {
 				if (imp.isPatch()) {
-					internalError(Policy.bind("DefaultFeatureParser.MissingPatchVersion"));
+					internalError(Policy.bind("DefaultFeatureParser.MissingPatchVersion")); //$NON-NLS-1$
 				}
-				ver = "0.0.0";
-				match = "greaterOrEqual";
+				ver = "0.0.0"; //$NON-NLS-1$
+				match = "greaterOrEqual"; //$NON-NLS-1$
 			} else if (match == null) {
 				if (imp.isPatch())
-					match = "perfect";
+					match = "perfect"; //$NON-NLS-1$
 				else
-					match = "compatible";
+					match = "compatible"; //$NON-NLS-1$
 			}
 
 			imp.setIdentifier(id);
@@ -914,23 +914,23 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 			if (imp.isPatch()) {
 				// patch reference must be perfect.
-				if (match != null && !match.equalsIgnoreCase("perfect")) {
-					internalError(Policy.bind("DefaultFeatureParser.wrongMatchForPatch"));
+				if (match != null && !match.equalsIgnoreCase("perfect")) { //$NON-NLS-1$
+					internalError(Policy.bind("DefaultFeatureParser.wrongMatchForPatch")); //$NON-NLS-1$
 				}
 				if (imp.isFeatureImport() == false) {
 					imp.setPatch(false);
-					internalError(Policy.bind("DefaultFeatureParser.patchWithPlugin"));
+					internalError(Policy.bind("DefaultFeatureParser.patchWithPlugin")); //$NON-NLS-1$
 				}
 			}
 
 			// os arch ws
-			String os = attributes.getValue("os");
+			String os = attributes.getValue("os"); //$NON-NLS-1$
 			imp.setOS(os);
 
-			String ws = attributes.getValue("ws");
+			String ws = attributes.getValue("ws"); //$NON-NLS-1$
 			imp.setWS(ws);
 
-			String arch = attributes.getValue("arch");
+			String arch = attributes.getValue("arch"); //$NON-NLS-1$
 			imp.setOSArch(arch);
 
 			objectStack.push(imp);
@@ -984,7 +984,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 			// setUnpack
 			String unpack = attributes.getValue("unpack"); //$NON-NLS-1$
-			pluginEntry.setUnpack(!"false".equalsIgnoreCase(unpack));
+			pluginEntry.setUnpack(!"false".equalsIgnoreCase(unpack)); //$NON-NLS-1$
 
 			// download size
 			long download_size = ContentEntryModel.UNKNOWN_SIZE;

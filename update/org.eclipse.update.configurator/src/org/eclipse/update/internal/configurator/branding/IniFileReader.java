@@ -27,7 +27,7 @@ import org.osgi.framework.*;
  * properties file - format being "n = some text", where n is a number.
  */
 public class IniFileReader {
-	private static final String PID = "org.eclipse.update.configurator";
+	private static final String PID = "org.eclipse.update.configurator"; //$NON-NLS-1$
 	private static final Status OK_STATUS = new Status(IStatus.OK, PID, 0, "", null); //$NON-NLS-1$
 	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
 	private static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
@@ -81,7 +81,7 @@ public class IniFileReader {
 		bundle = Platform.getBundle(pluginId);
 		if (bundle == null || bundle.getState() == Bundle.UNINSTALLED || bundle.getState() == Bundle.INSTALLED) {
 			bundle = null; // make it null for other test down the road
-			String message = Messages.getString("IniFileReader.MissingDesc", featureId); 
+			String message = Messages.getString("IniFileReader.MissingDesc", featureId);  //$NON-NLS-1$
 			return new Status(IStatus.ERROR, PID, 0, message, null);
 		}
 
@@ -96,7 +96,7 @@ public class IniFileReader {
 			ioe = e;
 		}
 		if (iniURL == null) {
-			String message = Messages.getString("IniFileReader.OpenINIError", iniFilename); 
+			String message = Messages.getString("IniFileReader.OpenINIError", iniFilename);  //$NON-NLS-1$
 			return new Status(IStatus.ERROR, PID, 0, message, ioe);
 		}
 		

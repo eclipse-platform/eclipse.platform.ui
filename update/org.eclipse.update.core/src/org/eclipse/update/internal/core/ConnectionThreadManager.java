@@ -36,9 +36,9 @@ import org.eclipse.core.runtime.*;
  */
 public class ConnectionThreadManager {
 	// set connection timeout to 1 minute
-	private static final String CONNECT_TIMEOUT = "60000";
+	private static final String CONNECT_TIMEOUT = "60000"; //$NON-NLS-1$
 	// set read timeout to 1 minute
-	private static final String READ_TIMEOUT = "60000";
+	private static final String READ_TIMEOUT = "60000"; //$NON-NLS-1$
 	// max number of active threads
 	private static final int MAX_COUNT = 9;
 	private Vector threads;
@@ -98,7 +98,7 @@ public class ConnectionThreadManager {
 	class ConnectionThread extends Thread {
 		private StreamRunnable runnable;
 		public ConnectionThread(StreamRunnable runnable) {
-			super(runnable, "update-connection");
+			super(runnable, "update-connection"); //$NON-NLS-1$
 			this.runnable = runnable;
 		}
 
@@ -109,13 +109,13 @@ public class ConnectionThreadManager {
 
 	public ConnectionThreadManager() {
 		// In case we are running Sun's code.
-		setIfNotDefaultProperty("sun.net.client.defaultConnectTimeout", CONNECT_TIMEOUT);
-		setIfNotDefaultProperty("sun.net.client.defaultReadTimeout", READ_TIMEOUT); 
+		setIfNotDefaultProperty("sun.net.client.defaultConnectTimeout", CONNECT_TIMEOUT); //$NON-NLS-1$
+		setIfNotDefaultProperty("sun.net.client.defaultReadTimeout", READ_TIMEOUT);  //$NON-NLS-1$
 	}
 	
 	private void setIfNotDefaultProperty(String key, String value) {
 		String oldValue = System.getProperty(key);
-		if (oldValue==null || oldValue.equals("-1"))
+		if (oldValue==null || oldValue.equals("-1")) //$NON-NLS-1$
 			System.setProperty(key, value);
 	}
 
@@ -153,7 +153,7 @@ public class ConnectionThreadManager {
 						pluginId,
 						IStatus.OK,
 						Policy.bind(
-							"ConnectionThreadManager.unresponsiveURL",
+							"ConnectionThreadManager.unresponsiveURL", //$NON-NLS-1$
 							url),
 						null);
 				children.add(status);
@@ -163,7 +163,7 @@ public class ConnectionThreadManager {
 					pluginId,
 					IStatus.OK,
 					(IStatus[]) children.toArray(new IStatus[children.size()]),
-					Policy.bind("ConnectionThreadManager.tooManyConnections"),
+					Policy.bind("ConnectionThreadManager.tooManyConnections"), //$NON-NLS-1$
 					null);
 			throw new CoreException(parentStatus);
 		}

@@ -31,7 +31,7 @@ public class HttpResponse implements Response {
 		if (in == null && url != null) {
 			connection = url.openConnection();
 			if (offset > 0)
-				connection.setRequestProperty("Range", "bytes=" + offset + "-");
+				connection.setRequestProperty("Range", "bytes=" + offset + "-"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			in = connection.getInputStream();
 			checkOffset();
 		}
@@ -45,7 +45,7 @@ public class HttpResponse implements Response {
 		if (in == null && url != null) {
 			connection = url.openConnection();
 			if (offset > 0)
-				connection.setRequestProperty("Range", "bytes=" + offset + "-");
+				connection.setRequestProperty("Range", "bytes=" + offset + "-"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 			if (monitor != null) {
 				this.in =
@@ -77,7 +77,7 @@ public class HttpResponse implements Response {
 			try {
 				return ((HttpURLConnection) connection).getResponseCode();
 			} catch (IOException e) {
-				UpdateCore.warn("", e);
+				UpdateCore.warn("", e); //$NON-NLS-1$
 			}
 		}
 		return IStatusCodes.HTTP_OK;
@@ -88,10 +88,10 @@ public class HttpResponse implements Response {
 			try {
 				return ((HttpURLConnection) connection).getResponseMessage();
 			} catch (IOException e) {
-				UpdateCore.warn("", e);
+				UpdateCore.warn("", e); //$NON-NLS-1$
 			}
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	public long getLastModified() {
@@ -150,14 +150,14 @@ public class HttpResponse implements Response {
 	private void checkOffset() throws IOException {
 		if (offset == 0)
 			return;
-		String range = connection.getHeaderField("Content-Range");
+		String range = connection.getHeaderField("Content-Range"); //$NON-NLS-1$
 		//System.out.println("Content-Range=" + range);
 		if (range == null) {
 			//System.err.println("Server does not support ranges");
-			throw new IOException("Server returned full content instead of a range.");
-		} else if (!range.startsWith("bytes " + offset + "-")) {
+			throw new IOException(Policy.bind("HttpResponse.rangeExpected")); //$NON-NLS-1$
+		} else if (!range.startsWith("bytes " + offset + "-")) { //$NON-NLS-1$ //$NON-NLS-2$
 			//System.err.println("Server returned wrong range");
-			throw new IOException("Server returned wrong range.");
+			throw new IOException(Policy.bind("HttpResponse.wrongRange")); //$NON-NLS-1$
 		}
 	}
 }
