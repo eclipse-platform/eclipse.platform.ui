@@ -242,7 +242,7 @@ public class ExternalToolsUtil {
 			abort(msg, null, 0);
 		}
 
-		int depth = IResource.DEPTH_ZERO;
+		int depth = IResource.DEPTH_ONE;
 		if (isRefreshRecursive(configuration))
 			depth = IResource.DEPTH_INFINITE;
 
