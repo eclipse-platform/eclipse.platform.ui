@@ -211,7 +211,18 @@ public interface IDebugUIConstants {
 	 * 
 	 * @since 2.1
 	 */
-	public static final String PREF_ACTIVATE_WORKBENCH= PLUGIN_ID + ".activate_workbench"; //$NON-NLS-1$	
+	public static final String PREF_ACTIVATE_WORKBENCH= PLUGIN_ID + ".activate_workbench"; //$NON-NLS-1$
+	
+	/**
+	 * String preference controlling whether the debugger waits for a currently
+	 * pending (running or waiting) background build to complete before launching.
+	 * Valid values are either "always", "never", or "prompt".
+	 * If "always" or "never", launching will wait for builds to finish (or not) automatically.
+	 * If "prompt", the user will be prompted each time.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String PREF_WAIT_FOR_BUILD= PLUGIN_ID + ".wait_for_build"; //$NON-NLS-1$
 	
 	// Debug views
 	

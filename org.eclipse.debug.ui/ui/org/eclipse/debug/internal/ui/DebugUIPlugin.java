@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -323,6 +324,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		prefs.setDefault(IDebugUIConstants.PREF_SHOW_RUN_PERSPECTIVE_DEFAULT, IDebugUIConstants.PERSPECTIVE_NONE);
 		prefs.setDefault(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, false);
 		prefs.setDefault(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH, true);
+		prefs.setDefault(IDebugUIConstants.PREF_WAIT_FOR_BUILD, AlwaysNeverDialog.PROMPT);
 		prefs.setDefault(IDebugUIConstants.PREF_REUSE_EDITOR, true);
 		
 		//ConsolePreferencePage
@@ -727,10 +729,67 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, subMonitor);
 			subMonitor = new SubProgressMonitor(monitor, 100);
 		} else {
-			subMonitor = monitor;
-			subMonitor.beginTask(message, 100);
+			Job[] build = Platform.getJobManager().find(ResourcesPlugin.FAMILY_AUTO_BUILD); 
+			if (build.length == 1) {
+				boolean join= waitForBuild(build[0].getState(), buildBeforeLaunch);
+				if (join) {
+					try {
+						subMonitor = new SubProgressMonitor(monitor, 100);
+						subMonitor.beginTask(DebugUIMessages.getString("DebugUIPlugin.14"), 100); //$NON-NLS-1$
+						build[0].join();
+					} catch (InterruptedException e) {
+						throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, DebugUIMessages.getString("DebugUIPlugin.15"), e)); //$NON-NLS-1$
+					}
+				}else {
+					subMonitor = monitor;
+					subMonitor.beginTask(message, 100);
+				}
+			}
 		}
 		return configuration.launch(mode, subMonitor);
-	}	
+	}
+	
+	/**
+	 * Returns whether a launch should wait for a build to finish before proceeding. If
+	 * a build is running and the user has asked to build before launching, always wait.
+	 * If a build is running and the user hasn't specified that they want to build before
+	 * launching, warn them (because the workspace state is changing) before proceeding.
+	 * If the user has asked to build before launching and a build is waiting, also ask them
+	 * because the build won't begin for an indeterminite amount of time.
+	 * 
+	 * @param buildState the state of the build job
+	 * @param buildBeforeLaunch whether or not the user has specified that they want to build
+	 *  before launching
+	 * @return whether a launch should wait for a build to finish before proceeding
+	 */
+	private static boolean waitForBuild(final int buildState, final boolean buildBeforeLaunch) {
+		if (buildState == Job.RUNNING && buildBeforeLaunch) {
+			return true;
+		}
+		String waitPreference= DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_WAIT_FOR_BUILD);
+		if (AlwaysNeverDialog.ALWAYS.equals(waitPreference)) {
+			return true;
+		} else if (AlwaysNeverDialog.NEVER.equals(waitPreference)) {
+			return false;
+		}
+		final boolean[] wait= new boolean[1];
+		Display.getDefault().syncExec(new Runnable() {
+			public void run() {
+				String message= null;
+				if (buildState == Job.RUNNING) {
+					message= DebugUIMessages.getString("DebugUIPlugin.16"); //$NON-NLS-1$
+				} else if (buildState == Job.WAITING) {
+					message= DebugUIMessages.getString("DebugUIPlugin.17"); //$NON-NLS-1$
+				}
+				if (message != null) {
+					wait[0]= AlwaysNeverDialog.openQuestion(getShell(), DebugUIMessages.getString("DebugUIPlugin.18"), message, IDebugUIConstants.PREF_WAIT_FOR_BUILD, DebugUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$
+				} else {
+					// Unknown or sleeping job. Don't wait.
+					wait[0]= false;
+				}
+			}
+		});
+		return wait[0];
+	}
 }
 
