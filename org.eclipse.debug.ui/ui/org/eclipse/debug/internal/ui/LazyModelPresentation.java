@@ -163,4 +163,13 @@ public class LazyModelPresentation implements IDebugModelPresentation {
 
 		fAttributes.put(id, value);
 	}
+	
+	/**
+	 * Returns the identifier of the debug model this
+	 * presentation is registered for.
+	 */
+	public String getDebugModelIdentifier() {
+		return fConfig.getAttribute("id");
+	}
+	
 }

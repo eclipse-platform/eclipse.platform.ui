@@ -5,8 +5,6 @@ package org.eclipse.debug.internal.ui.views;
  * All Rights Reserved.
  */
  
-import java.util.Vector;
-
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.debug.core.DebugPlugin;
@@ -20,6 +18,7 @@ import org.eclipse.debug.internal.ui.OpenBreakpointMarkerAction;
 import org.eclipse.debug.internal.ui.RemoveAllBreakpointsAction;
 import org.eclipse.debug.internal.ui.RemoveBreakpointAction;
 import org.eclipse.debug.internal.ui.ShowQualifiedAction;
+import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;

@@ -25,7 +25,6 @@ import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.widgets.Control;
 
 /**
  * Handles debug events, updating the launch view and viewer.

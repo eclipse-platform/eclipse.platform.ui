@@ -38,6 +38,7 @@ import org.eclipse.debug.internal.ui.SuspendActionDelegate;
 import org.eclipse.debug.internal.ui.TerminateActionDelegate;
 import org.eclipse.debug.internal.ui.TerminateAllAction;
 import org.eclipse.debug.internal.ui.TerminateAndRemoveActionDelegate;
+import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
@@ -46,7 +47,6 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -580,4 +580,22 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	protected LaunchViewEventHandler getEventHandler() {
 		return fEventHandler;
 	}	
+	
+	/**
+	 * Added here to make visible for event handler
+	 * 
+	 * @see AbstractDebugView#asyncExec(Runnable)
+	 */
+	protected void asyncExec(Runnable r) {
+		super.asyncExec(r);
+	}
+	
+	/**
+	 * Added here to make visible for event handler
+	 * 
+	 * @see AbstractDebugView#syncExec(Runnable)
+	 */
+	protected void syncExec(Runnable r) {
+		super.syncExec(r);
+	}		
 }

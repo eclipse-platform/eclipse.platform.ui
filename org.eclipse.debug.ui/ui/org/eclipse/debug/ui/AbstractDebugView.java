@@ -1,4 +1,4 @@
-package org.eclipse.debug.internal.ui.views;
+package org.eclipse.debug.ui;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
+import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugViewAdapter;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -20,10 +21,8 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -53,6 +52,15 @@ import org.eclipse.ui.texteditor.IUpdate;
  * 		<code>DOUBLE_CLICK_ACTION</code> when the mouse 
  * 		is double-clicked.</li>
  * </ul>
+ * <p>
+ * This class may be subclassed.
+ * </p>
+ * <p>
+ * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to 
+ * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
+ * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+ * (repeatedly) as the API evolves.
+ * </p>
  */
 
 public abstract class AbstractDebugView extends ViewPart implements IDebugViewAdapter, IDoubleClickListener {
@@ -77,7 +85,7 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	 * 
 	 * @see #setAction(String, IAction)
 	 */
-	protected static final String REMOVE_ACTION = "Remove_ActionId";
+	public static final String REMOVE_ACTION = "Remove_ActionId";
 	
 	/**
 	 * Action id for a view's double-click action. Any view
@@ -87,7 +95,7 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	 * 
 	 * @see #setAction(String, IAction)
 	 */
-	protected static final String DOUBLE_CLICK_ACTION = "Double_Click_ActionId";	
+	public static final String DOUBLE_CLICK_ACTION = "Double_Click_ActionId";	
 	
 	/**
 	 * Constructs a new debug view.
@@ -181,9 +189,7 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 			getViewer().removeDoubleClickListener(this);
 		}
 		setViewer(null);
-		if (fActionMap != null) {
-			fActionMap.clear();
-		}
+		fActionMap.clear();
 		super.dispose();
 	}
 	
@@ -198,7 +204,16 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	 * @see IDebugViewAdapter#getPresentation(String)
 	 */
 	public IDebugModelPresentation getPresentation(String id) {
-		return ((DelegatingModelPresentation)getViewer().getLabelProvider()).getPresentation(id);
+		IBaseLabelProvider lp = getViewer().getLabelProvider();
+		if (lp instanceof DelegatingModelPresentation) {
+			return ((DelegatingModelPresentation)lp).getPresentation(id);
+		}
+		if (lp instanceof LazyModelPresentation) {
+			if (((LazyModelPresentation)lp).getDebugModelIdentifier().equals(id)) {
+				return (IDebugModelPresentation)lp;
+			}
+		}
+		return null;
 	}
 	
 	/**
