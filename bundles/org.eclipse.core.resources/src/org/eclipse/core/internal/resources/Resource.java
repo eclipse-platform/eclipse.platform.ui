@@ -639,12 +639,15 @@ public int hashCode() {
  */
 protected void internalSetLocal(boolean flag, int depth) throws CoreException {
 	ResourceInfo info = getResourceInfo(true, true);
-	if (flag && !isPhantom(getFlags(info))) {
-		info.set(M_LOCAL_EXISTS);
-		workspace.updateModificationStamp(info);
-	} else {
-		info.clear(M_LOCAL_EXISTS);
-		info.setModificationStamp(IResource.NULL_STAMP);
+	//only make the change if it's not already in desired state
+	if (info.isSet(M_LOCAL_EXISTS) != flag) {
+		if (flag && !isPhantom(getFlags(info))) {
+			info.set(M_LOCAL_EXISTS);
+			workspace.updateModificationStamp(info);
+		} else {
+			info.clear(M_LOCAL_EXISTS);
+			info.setModificationStamp(IResource.NULL_STAMP);
+		}
 	}
 	if (getType() == IResource.FILE || depth == IResource.DEPTH_ZERO)
 		return;
