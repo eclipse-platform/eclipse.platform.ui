@@ -43,7 +43,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
-import org.eclipse.ui.externaltools.internal.ant.preferences.AddCustomDialog;
+import org.eclipse.ui.externaltools.internal.ant.preferences.AddPropertyDialog;
 import org.eclipse.ui.externaltools.internal.ant.preferences.AntPreferencesMessages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider;
@@ -220,15 +220,15 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab {
 	 */
 	private void addProperty() {
 		String title = AntPreferencesMessages.getString("AntPropertiesPage.Add_Property_2");  //$NON-NLS-1$
-		String msg = AntPreferencesMessages.getString("AntPropertiesPage.Enter_a_name_and_value_for_the_user_property__3");  //$NON-NLS-1$
-		AddCustomDialog dialog = new AddCustomDialog(getShell(), null, title, msg, AntPreferencesMessages.getString("AntPropertiesPage.&Value__4")); //$NON-NLS-1$
+		AddPropertyDialog dialog = new AddPropertyDialog(getShell(), title, new String[]{"", ""});
 		if (dialog.open() == Dialog.CANCEL) {
 			return;
 		}
 
 		Property prop = new Property();
-		prop.setName(dialog.getName());
-		prop.setValue(dialog.getClassName());
+		String[] pair= dialog.getNameValuePair();
+		prop.setName(pair[0]);
+		prop.setValue(pair[1]);
 		((ExternalToolsContentProvider)propertyTableViewer.getContentProvider()).add(prop);
 		updateLaunchConfigurationDialog();
 	}
@@ -240,17 +240,15 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab {
 			return;
 		}
 		String title = AntPreferencesMessages.getString("AntPropertiesPage.Edit_User_Property_5"); //$NON-NLS-1$
-		String msg = AntPreferencesMessages.getString("AntPropertiesPage.Modify_the_name_or_value_of_a_user_property__6"); //$NON-NLS-1$
-		AddCustomDialog dialog = new AddCustomDialog(getShell(), null, title, msg, AntPreferencesMessages.getString("AntPropertiesPage.Value__7")); //$NON-NLS-1$
+		AddPropertyDialog dialog = new AddPropertyDialog(getShell(), title, new String[]{prop.getName(), prop.getValue()});
 		
-		dialog.setClassName(prop.getValue());
-		dialog.setName(prop.getName());
 		if (dialog.open() == Dialog.CANCEL) {
 			return;
 		}
 
-		prop.setName(dialog.getName());
-		prop.setValue(dialog.getClassName());
+		String[] pair= dialog.getNameValuePair();
+		prop.setName(pair[0]);
+		prop.setValue(pair[1]);
 		propertyTableViewer.update(prop, null);
 		updateLaunchConfigurationDialog();
 	}

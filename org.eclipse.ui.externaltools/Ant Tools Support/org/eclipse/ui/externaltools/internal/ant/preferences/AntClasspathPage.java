@@ -296,7 +296,7 @@ public class AntClasspathPage extends AntPage {
 		antHome.setEnabled(false);
 		browseAntHomeButton.setEnabled(false);
 		antHomeButton.setSelection(false);
-		antHome.setText("");
+		antHome.setText(""); //$NON-NLS-1$
 		tableSelectionChanged((IStructuredSelection) getTableViewer().getSelection());
 		userTableSelectionChanged((IStructuredSelection)userTableViewer.getSelection());
 	}

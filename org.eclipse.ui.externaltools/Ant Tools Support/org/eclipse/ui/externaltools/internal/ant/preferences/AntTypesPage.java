@@ -9,6 +9,10 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
 **********************************************************************/
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.ant.core.Type;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -56,7 +60,14 @@ public class AntTypesPage extends AntPage {
 	private void addType() {
 		String title = AntPreferencesMessages.getString("AntTypesPage.addTypeDialogTitle"); //$NON-NLS-1$
 		String msg = AntPreferencesMessages.getString("AntTypesPage.addTypeDialogDescription"); //$NON-NLS-1$
-		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), title, msg, null);
+		
+		Iterator types= getContents().iterator();
+		List names= new ArrayList();
+		while (types.hasNext()) {
+			Type aTask = (Type) types.next();
+			names.add(aTask.getTypeName());
+		}
+		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), names, title, msg, AntPreferencesMessages.getString("AntTypesPage.type_1")); //$NON-NLS-1$
 		if (dialog.open() == Dialog.CANCEL) {
 			return;
 		}
@@ -109,7 +120,15 @@ public class AntTypesPage extends AntPage {
 		}
 		String title = AntPreferencesMessages.getString("AntTypesPage.editTypeDialogTitle"); //$NON-NLS-1$
 		String msg = AntPreferencesMessages.getString("AntTypesPage.editTypeDialogDescription"); //$NON-NLS-1$
-		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), title, msg, null);
+		
+		Iterator types= getContents().iterator();
+		List names= new ArrayList();
+		while (types.hasNext()) {
+			Type aTask = (Type) types.next();
+			names.add(aTask.getTypeName());
+		}
+		
+		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), names, title, msg, AntPreferencesMessages.getString("AntTypesPage.type_1")); //$NON-NLS-1$
 		
 		dialog.setClassName(type.getClassName());
 		dialog.setName(type.getTypeName());

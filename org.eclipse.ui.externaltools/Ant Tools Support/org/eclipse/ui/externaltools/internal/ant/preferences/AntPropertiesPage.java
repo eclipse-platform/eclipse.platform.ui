@@ -183,15 +183,15 @@ public class AntPropertiesPage extends AntPage {
 	 */
 	private void addProperty() {
 		String title = AntPreferencesMessages.getString("AntPropertiesPage.Add_Property_2");  //$NON-NLS-1$
-		String msg = AntPreferencesMessages.getString("AntPropertiesPage.Enter_a_name_and_value_for_the_user_property__3");  //$NON-NLS-1$
-		AddCustomDialog dialog = new AddCustomDialog(getShell(), null, title, msg, AntPreferencesMessages.getString("AntPropertiesPage.&Value__4")); //$NON-NLS-1$
+		AddPropertyDialog dialog = new AddPropertyDialog(getShell(), title, new String[]{"", ""}); //$NON-NLS-1$ //$NON-NLS-2$
 		if (dialog.open() == Dialog.CANCEL) {
 			return;
 		}
 
 		Property prop = new Property();
-		prop.setName(dialog.getName());
-		prop.setValue(dialog.getClassName());
+		String[] pair= dialog.getNameValuePair();
+		prop.setName(pair[0]);
+		prop.setValue(pair[1]);
 		addContent(prop);
 	}
 	
@@ -201,17 +201,15 @@ public class AntPropertiesPage extends AntPage {
 			return;
 		}
 		String title = AntPreferencesMessages.getString("AntPropertiesPage.Edit_User_Property_5"); //$NON-NLS-1$
-		String msg = AntPreferencesMessages.getString("AntPropertiesPage.Modify_the_name_or_value_of_a_user_property__6"); //$NON-NLS-1$
-		AddCustomDialog dialog = new AddCustomDialog(getShell(), null, title, msg, AntPreferencesMessages.getString("AntPropertiesPage.Value__7")); //$NON-NLS-1$
+		AddPropertyDialog dialog = new AddPropertyDialog(getShell(), title, new String[]{prop.getName(), prop.getValue()});
 		
-		dialog.setClassName(prop.getValue());
-		dialog.setName(prop.getName());
 		if (dialog.open() == Dialog.CANCEL) {
 			return;
 		}
 
-		prop.setName(dialog.getName());
-		prop.setValue(dialog.getClassName());
+		String[] pair= dialog.getNameValuePair();
+		prop.setName(pair[0]);
+		prop.setValue(pair[1]);
 		updateContent(prop);
 	}
 

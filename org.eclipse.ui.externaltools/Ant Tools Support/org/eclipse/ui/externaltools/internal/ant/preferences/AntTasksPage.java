@@ -9,6 +9,10 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
 **********************************************************************/
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.ant.core.Task;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -56,9 +60,17 @@ public class AntTasksPage extends AntPage {
 	private void addTask() {
 		String title = AntPreferencesMessages.getString("AntTasksPage.addTaskDialogTitle"); //$NON-NLS-1$
 		String msg = AntPreferencesMessages.getString("AntTasksPage.addTaskDialogDescription"); //$NON-NLS-1$
-		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), title, msg, null);
-		if (dialog.open() == Dialog.CANCEL)
+
+		Iterator tasks= getContents().iterator();
+		List names= new ArrayList();
+		while (tasks.hasNext()) {
+			Task task = (Task) tasks.next();
+			names.add(task.getTaskName());	
+		}
+		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), names, title, msg, AntPreferencesMessages.getString("AntTasksPage.task_1")); //$NON-NLS-1$
+		if (dialog.open() == Dialog.CANCEL) {
 			return;
+		}
 
 		Task task = new Task();
 		task.setTaskName(dialog.getName());
@@ -108,7 +120,14 @@ public class AntTasksPage extends AntPage {
 		}
 		String title = AntPreferencesMessages.getString("AntTasksPage.editTaskDialogTitle"); //$NON-NLS-1$
 		String msg = AntPreferencesMessages.getString("AntTasksPage.editTaskDialogDescription"); //$NON-NLS-1$
-		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), title, msg, null);
+		
+		Iterator tasks= getContents().iterator();
+		List names= new ArrayList();
+		while (tasks.hasNext()) {
+			Task aTask = (Task) tasks.next();
+			names.add(aTask.getTaskName());
+		}
+		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), names, title, msg, AntPreferencesMessages.getString("AntTasksPage.task_1")); //$NON-NLS-1$
 		
 		dialog.setClassName(task.getClassName());
 		dialog.setName(task.getTaskName());
@@ -130,7 +149,7 @@ public class AntTasksPage extends AntPage {
 		return labelProvider;
 	}
 
-		/**
+	/**
 	 * Label provider for task elements
 	 */
 	private static final class AntTasksLabelProvider extends LabelProvider implements ITableLabelProvider {
