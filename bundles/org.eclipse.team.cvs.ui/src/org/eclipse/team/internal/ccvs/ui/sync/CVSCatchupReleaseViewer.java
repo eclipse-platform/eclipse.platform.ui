@@ -181,7 +181,7 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 								ResourceSyncInfo info = cvsFile.getSyncInfo();
 								KSubstOption option = info != null && info.getKeywordMode() != null ?
 									KSubstOption.fromMode(info.getKeywordMode()) :
-									KSubstOption.fromPattern(resource.getName());
+									KSubstOption.fromFile((IFile)resource);
 								postfix.append("(" + option.getShortDisplayText() + ")");
 							} else if (resource instanceof IContainer) {
 								ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor((IContainer)resource);

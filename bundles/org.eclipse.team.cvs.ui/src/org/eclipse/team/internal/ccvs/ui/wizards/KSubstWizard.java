@@ -354,7 +354,7 @@ public class KSubstWizard extends Wizard {
 									KSubstOption fromKSubst = KSubstOption.fromMode(info.getKeywordMode());
 									KSubstOption toKSubst = ksubst;
 									if (ksubst == null) {
-										toKSubst = KSubstOption.fromPattern(file.getName());
+										toKSubst = KSubstOption.fromFile(file);
 									}
 									changeList.add(new KSubstChangeElement(file, classification, false, fromKSubst, toKSubst));
 								}

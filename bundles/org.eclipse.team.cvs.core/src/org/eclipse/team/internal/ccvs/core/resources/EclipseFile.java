@@ -31,7 +31,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
  * Represents handles to CVS resource on the local file system. Synchronization
  * information is taken from the CVS subdirectories. 
  */
-class EclipseFile extends EclipseResource implements ICVSFile {
+public class EclipseFile extends EclipseResource implements ICVSFile {
 
 	private static final String TEMP_FILE_EXTENSION = ".tmp";//$NON-NLS-1$
 	private static final IPath PROJECT_META_DATA_PATH = new Path(".project");//$NON-NLS-1$
@@ -204,7 +204,7 @@ class EclipseFile extends EclipseResource implements ICVSFile {
 	/*
 	 * Typecasting helper
 	 */
-	private IFile getIFile() {
+	public IFile getIFile() {
 		return (IFile)resource;
 	}	
 	

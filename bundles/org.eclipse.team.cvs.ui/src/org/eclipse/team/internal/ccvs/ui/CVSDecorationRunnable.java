@@ -194,14 +194,14 @@ public class CVSDecorationRunnable implements Runnable {
 						}
 						KSubstOption option = fileInfo.getKeywordMode() != null ?
 							KSubstOption.fromMode(fileInfo.getKeywordMode()) :
-							KSubstOption.fromPattern(fileInfo.getName());
+							KSubstOption.fromFile((IFile) resource);
 						bindings.put(CVSDecoratorConfiguration.FILE_KEYWORD, option.getShortDisplayText());
 						if (tag != null && (tag.getType() != CVSTag.HEAD)) {
 							bindings.put(CVSDecoratorConfiguration.RESOURCE_TAG, tag.getName());
 						}
 					} else {
 						// only show the type that cvs will use when comitting the file
-						KSubstOption option = KSubstOption.fromPattern(file.getName());
+						KSubstOption option = KSubstOption.fromFile((IFile) resource);
 						bindings.put(CVSDecoratorConfiguration.FILE_KEYWORD, option.getShortDisplayText());
 					}
 					break;

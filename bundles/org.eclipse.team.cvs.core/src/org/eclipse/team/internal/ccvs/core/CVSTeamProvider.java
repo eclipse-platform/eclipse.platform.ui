@@ -40,8 +40,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.team.core.IFileTypeRegistry;
 import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
@@ -194,7 +194,6 @@ public class CVSTeamProvider extends RepositoryProvider {
 		// and the depth isn't zero
 		final Set textfiles = new HashSet(resources.length);
 		final Set binaryfiles = new HashSet(resources.length);
-		final IFileTypeRegistry registry = TeamPlugin.getFileTypeRegistry();
 		final TeamException[] eHolder = new TeamException[1];
 		for (int i=0; i<resources.length; i++) {
 			
@@ -221,8 +220,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 						if (! mResource.isManaged() && (currentResource.equals(resource) || ! mResource.isIgnored())) {
 							String name = resource.getProjectRelativePath().toString();
 							if (resource.getType() == IResource.FILE) {
-								String extension = resource.getFileExtension();
-								if ((extension != null) && (registry.getType(extension) == IFileTypeRegistry.TEXT)) {
+								if (Team.getType((IFile)resource) == Team.TEXT) {
 									textfiles.add(name);
 								} else {
 									binaryfiles.add(name);

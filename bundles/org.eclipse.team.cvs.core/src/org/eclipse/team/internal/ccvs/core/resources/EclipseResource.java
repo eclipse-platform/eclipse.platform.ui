@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.core.IIgnoreInfo;
+import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
@@ -128,7 +129,7 @@ abstract class EclipseResource implements ICVSResource {
 		} catch(CVSException e) {
 			cvsIgnorePatterns = null;
 		}
-		IIgnoreInfo[] ignorePatterns = TeamPlugin.getPlugin().getGlobalIgnore();
+		IIgnoreInfo[] ignorePatterns = Team.getAllIgnores();
 		for (int i = 0; i < ignorePatterns.length; i++) {
 			IIgnoreInfo info = ignorePatterns[i];
 			if(info.getEnabled()) {

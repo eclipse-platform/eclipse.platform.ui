@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.ui.IWorkbench;
@@ -106,7 +107,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 			ICVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:username@host.acme.org:/home/cvsroot");				 //$NON-NLS-1$
 			bindings.put(CVSDecoratorConfiguration.RESOURCE_TAG, "v2_0"); //$NON-NLS-1$
 			bindings.put(CVSDecoratorConfiguration.FILE_KEYWORD,
-				KSubstOption.fromPattern("file.txt").getShortDisplayText()); //$NON-NLS-1$
+				Command.KSUBST_TEXT.getShortDisplayText()); //$NON-NLS-1$
 			bindings.put(CVSDecoratorConfiguration.FILE_REVISION, "1.34"); //$NON-NLS-1$
 			bindings.put(CVSDecoratorConfiguration.DIRTY_FLAG, dirtyFlag.getText());
 			bindings.put(CVSDecoratorConfiguration.ADDED_FLAG, addedFlag.getText());

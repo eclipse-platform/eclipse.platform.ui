@@ -43,8 +43,8 @@ import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.ICVSRunnable;
 import org.eclipse.team.ccvs.core.IConnectionMethod;
-import org.eclipse.team.core.IFileTypeRegistry;
 import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.client.Checkout;
@@ -179,7 +179,7 @@ public class CVSProvider implements ICVSProvider {
 				IFile vcm_meta = project.getFile(".vcm_meta");
 				ICVSFile project_meta = CVSWorkspaceRoot.getCVSFileFor(project.getFile(".project"));
 				if ( ! vcm_meta.exists() && ! project_meta.isManaged()) {
-					RepositoryProvider.addNatureToProject(project, CVSProviderPlugin.getTypeId(), Policy.subMonitorFor(monitor, 100));
+					Team.addNatureToProject(project, CVSProviderPlugin.getTypeId(), Policy.subMonitorFor(monitor, 100));
 				}
 //				if (!project.getDescription().hasNature(CVSProviderPlugin.getTypeId())) {
 //					TeamPlugin.addNatureToProject(project, CVSProviderPlugin.getTypeId(), Policy.subMonitorFor(monitor, 100));
@@ -482,7 +482,7 @@ public class CVSProvider implements ICVSProvider {
 			// (unless the project already has the proper nature from the project meta-information)
 			try {
 				if (!project.getDescription().hasNature(CVSProviderPlugin.getTypeId())) {
-					RepositoryProvider.addNatureToProject(project, CVSProviderPlugin.getTypeId(), Policy.subMonitorFor(monitor, 1));
+					Team.addNatureToProject(project, CVSProviderPlugin.getTypeId(), Policy.subMonitorFor(monitor, 1));
 				}
 			} catch (CoreException e) {
 				throw wrapException(e);
@@ -513,13 +513,8 @@ public class CVSProvider implements ICVSProvider {
 		return repositories.containsKey(repository.getLocation());
 	}
 	
-	public static boolean isText(String filename) {
-		IFileTypeRegistry registry = TeamPlugin.getFileTypeRegistry();
-		int lastDot = filename.lastIndexOf('.');
-		// Assume files with no extension are binary
-		if (lastDot == -1) return false;
-		String extension = filename.substring(lastDot + 1);
-		return (extension != null) && (registry.getType(extension) == IFileTypeRegistry.TEXT);
+	public static boolean isText(IFile file) {
+		return Team.getType(file) == Team.TEXT;
 	}
 	
 	private void removeFromCache(ICVSRepositoryLocation repository) {
@@ -552,7 +547,7 @@ public class CVSProvider implements ICVSProvider {
 		// (unless the project already has the proper nature from the project meta-information)
 		try {
 			if (!project.getDescription().hasNature(CVSProviderPlugin.getTypeId()))
-				RepositoryProvider.addNatureToProject(project, CVSProviderPlugin.getTypeId(), monitor);
+				Team.addNatureToProject(project, CVSProviderPlugin.getTypeId(), monitor);
 		} catch (CoreException e) {
 			throw wrapException(e);
 		}

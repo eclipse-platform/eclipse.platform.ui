@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -549,13 +550,13 @@ public abstract class Command extends Request {
 			return option;
 		}
 		/**
-		 * Gets the KSubstOption instance for the specified file by pattern.
+		 * Gets the KSubstOption instance for the specified file.
 		 *
-		 * @param filename the filename of interest
+		 * @param file the file to get the option for
 		 * @return an instance for that mode
 		 */
-		public static KSubstOption fromPattern(String filename) {
-			if (CVSProvider.isText(filename)) return KSUBST_TEXT_EXPAND; // XXX should this be KSUBST_TEXT?
+		public static KSubstOption fromFile(IFile file) {
+			if (CVSProvider.isText(file)) return KSUBST_TEXT_EXPAND; // XXX should this be KSUBST_TEXT?
 			return KSUBST_BINARY;
 		}
 		/**

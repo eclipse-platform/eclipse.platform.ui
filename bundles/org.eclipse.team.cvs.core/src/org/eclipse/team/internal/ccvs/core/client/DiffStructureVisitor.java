@@ -8,6 +8,7 @@ import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
+import org.eclipse.team.internal.ccvs.core.resources.EclipseFile;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
@@ -37,7 +38,12 @@ class DiffStructureVisitor extends FileStructureVisitor {
 		Policy.checkCanceled(monitor);
 
 		if (addedFile) {
-			ksubst = KSubstOption.fromPattern(mFile.getName());
+			if (mFile instanceof EclipseFile) {
+				EclipseFile file = (EclipseFile)mFile;
+				ksubst = KSubstOption.fromFile(file.getIFile());
+			} else {
+				ksubst = Command.KSUBST_BINARY;
+			}
 			MutableResourceSyncInfo newInfo = new MutableResourceSyncInfo(mFile.getName(), ResourceSyncInfo.ADDED_REVISION);	
 			newInfo.setKeywordMode(ksubst.toMode());
 			info = newInfo;

@@ -11,7 +11,6 @@
 package org.eclipse.team.core;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.IFileModificationValidator;
@@ -23,7 +22,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.internal.Policy;
@@ -100,7 +98,7 @@ public abstract class RepositoryProvider implements IProjectNature {
 			configureProject();
 		} catch(CoreException e) {
 			try {
-				removeNatureFromProject(getProject(), getID(), null);
+				Team.removeNatureFromProject(getProject(), getID(), null);
 			} catch(TeamException e2) {
 				throw new CoreException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("RepositoryProvider_Error_removing_nature_from_project___1") + getID(), e2)); //$NON-NLS-1$
 			}
@@ -234,53 +232,6 @@ public abstract class RepositoryProvider implements IProjectNature {
 			TeamPlugin.log(new Status(IStatus.WARNING, TeamPlugin.ID, 0, Policy.bind("RepositoryProviderTypeRepositoryProvider_not_registered_as_a_nature_id___3") + id, ex)); //$NON-NLS-1$
 		}
 		return null;
-	}
-	
-	/**
-	 * Utility method for adding a nature to a project.
-	 * 
-	 * @param proj the project to add the nature
-	 * @param natureId the id of the nature to assign to the project
-	 * @param monitor a progress monitor to indicate the duration of the operation, or
-	 * <code>null</code> if progress reporting is not required.
-	 * 
-	 * @exception TeamException if a problem occured setting the nature
-	 */
-	final public static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws TeamException {
-		try {
-			IProjectDescription description = proj.getDescription();
-			String[] prevNatures= description.getNatureIds();
-			String[] newNatures= new String[prevNatures.length + 1];
-			System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
-			newNatures[prevNatures.length]= natureId;
-			description.setNatureIds(newNatures);
-			proj.setDescription(description, monitor);
-		} catch(CoreException e) {
-				throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("manager.errorSettingNature",  //$NON-NLS-1$
-														 proj.getName(), natureId), e));
-		}
-	}
-	
-	/**
-	 * Utility method for removing a project nature from a project.
-	 * 
-	 * @param proj the project to remove the nature from
-	 * @param natureId the nature id to remove
-	 * @param monitor a progress monitor to indicate the duration of the operation, or
-	 * <code>null</code> if progress reporting is not required.
-	 */
-	final public static void removeNatureFromProject(IProject proj, String natureId, IProgressMonitor monitor) throws TeamException {
-		try {
-			IProjectDescription description = proj.getDescription();
-			String[] prevNatures= description.getNatureIds();
-			List newNatures = new ArrayList(Arrays.asList(prevNatures));
-			newNatures.remove(natureId);
-			description.setNatureIds((String[])newNatures.toArray(new String[newNatures.size()]));
-			proj.setDescription(description, monitor);
-		} catch(CoreException e) {
-				throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("manager.errorRemovingNature",  //$NON-NLS-1$
-														 proj.getName(), natureId), e));
-		}
 	}
 	
 	/*
