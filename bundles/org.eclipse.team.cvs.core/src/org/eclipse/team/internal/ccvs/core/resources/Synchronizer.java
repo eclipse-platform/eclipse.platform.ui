@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.ResourceDeltaVisitor;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileUtil;
@@ -74,6 +75,15 @@ public class Synchronizer {
 	private Set invalidatedEntryFiles = new HashSet(10);
 	private Set invalidatedFolderConfigs = new HashSet(10);
 	
+	// Fields for progress monitoring algorithm. Initially, give progress for every 4 resources, double
+	// this value at halfway point, then reset halfway point to be half of remaining work.  (this gives an infinite
+	// series that converges at total work after an infinite number of resources).
+	public static final int TOTAL_WORK = 250;
+	private int halfWay = TOTAL_WORK / 2;
+	private int currentIncrement = 4;
+	private int nextProgress = currentIncrement;
+	private int worked = 0;
+	
 	/** 
 	 * Data structured used in the cache tables to save information about file contents that
 	 * are read from disk.
@@ -83,28 +93,9 @@ public class Synchronizer {
 		Map config = new HashMap(10);
 	}
 	
-	public void dump() {
-		System.out.println("Synchronizer:");
-		System.out.println("\tEntries");
-		for (Iterator it = entriesCache.keySet().iterator(); it.hasNext();) {
-			File entriesFile = (File)it.next();
-			SyncFile contents = (SyncFile)entriesCache.get(entriesFile);
-			System.out.println(entriesFile.getAbsolutePath() + " (" + contents.config.size() +")");
-			for (Iterator it2	= contents.config.keySet().iterator(); it2.hasNext();) {
-				System.out.println(((String)it2.next()));				
-			}
-		}
-		
-		System.out.println("\tFolders");
-		for (Iterator it = folderConfigCache.keySet().iterator(); it.hasNext();) {
-			File folder = (File)it.next();
-			System.out.println(folder.getAbsolutePath());
-		}
-	}
-	
 	/**
-	 * When a container resource in the workbench is deleted the Synchronizer
-	 * must clear the cache so that stale sync info are removed.
+	 * When a container resource in the workbench is deleted the Synchronizer must clear the cache so that 
+	 * stale sync infos are removed.
 	 */
 	public class SyncResourceDeletionListener extends ResourceDeltaVisitor {
 		protected void handleAdded(IProject project, IResource resource) {
@@ -123,7 +114,29 @@ public class Synchronizer {
 		protected void handleChanged(IProject project, IResource resource) {
 		}
 	}
-			
+	
+	/**
+	 * Debug method that displays the contents of the cache.
+	 */
+	public void dump() {
+		System.out.println("Synchronizer:");
+		System.out.println("\tEntries");
+		for (Iterator it = entriesCache.keySet().iterator(); it.hasNext();) {
+			File entriesFile = (File)it.next();
+			SyncFile contents = (SyncFile)entriesCache.get(entriesFile);
+			System.out.println(entriesFile.getAbsolutePath() + " (" + contents.config.size() +")");
+			for (Iterator it2	= contents.config.keySet().iterator(); it2.hasNext();) {
+				System.out.println(((String)it2.next()));				
+			}
+		}
+		
+		System.out.println("\tFolders");
+		for (Iterator it = folderConfigCache.keySet().iterator(); it.hasNext();) {
+			File folder = (File)it.next();
+			System.out.println(folder.getAbsolutePath());
+		}
+	}
+		
 	/**
 	 * Singleton constructor
 	 */
@@ -264,7 +277,6 @@ public class Synchronizer {
 		folderSync.config.put(folder.getName(), info);
 		folderConfigCache.put(folder, folderSync);
 		invalidatedFolderConfigs.add(folder);			
-		broadcastSyncChange(folder);
 	}
 	
 	/**
@@ -385,29 +397,13 @@ public class Synchronizer {
 	 * @param folder the root folder at which to start reloading.
 	 * @param monitor the progress monitor, cannot be <code>null</code>.
 	 */
-	public void reload(ICVSFolder folder, IProgressMonitor monitor) throws CVSException {		
-		if (folder instanceof LocalFolder) {
-			LocalFolder fsFolder = (LocalFolder) folder;
-			File file = fsFolder.getLocalFile();
-									
-			ICVSFolder[] folders = folder.getFolders();
-			for (int i = 0; i < folders.length; i++) {
-				ICVSFolder iCVSFolder = folders[i];
-				reload(iCVSFolder, monitor);
-			}
-			
-			FolderSyncInfo info = getFolderSync(file, true);
-			
-			// info will be null if the CVS subdirectory or folder does not exist, then we can safely
-			// clear this folder from the cache. Otherwise, reload the entries file for this folder as
-			// well.
-			if(info==null) {
-				deleteFolderAndChildEntries(file, false);
-			} else {			
-				getResourceSync(new File(file, "dummy"), true);
-			}
-						
-			monitor.worked(1);			
+	public void reload(ICVSResource resource, IProgressMonitor monitor) throws CVSException {
+		try {
+			monitor = Policy.monitorFor(monitor);
+			monitor.beginTask("", TOTAL_WORK);
+			doReload(resource, monitor);
+		} finally {
+			monitor.done();
 		}
 	}
 	
@@ -548,5 +544,53 @@ public class Synchronizer {
 		
 		// notify of state change to this folder
 		broadcastSyncChange(folder);
+	}
+	
+	/**
+	 * Perform the reload.
+	 */
+	private void doReload(ICVSResource resource, IProgressMonitor monitor) throws CVSException {		
+		if (resource instanceof LocalFolder) {
+			LocalFolder fsFolder = (LocalFolder) resource;
+			File file = fsFolder.getLocalFile();
+			
+			String message = Policy.bind("Synchronizer.reload", fsFolder.getName());
+			monitor.subTask(message);
+									
+			ICVSFolder[] folders = fsFolder.getFolders();
+			for (int i = 0; i < folders.length; i++) {
+				ICVSFolder iCVSFolder = folders[i];
+				reload(iCVSFolder, monitor);
+			}
+			
+			FolderSyncInfo info = getFolderSync(file, true);
+			
+			// info will be null if the CVS subdirectory or folder does not exist, then we can safely
+			// clear this folder from the cache. Otherwise, reload the entries file for this folder as
+			// well.
+			if(info==null) {
+				deleteFolderAndChildEntries(file, false);
+			} else {			
+				getResourceSync(new File(file, "dummy"), true);
+			}
+		
+			// Update monitor work amount
+			if (--nextProgress <= 0) {
+				monitor.worked(1);
+				worked++;
+				if (worked >= halfWay) {
+					//we have passed the current halfway point, so double the
+					//increment and reset the halfway point.
+					currentIncrement *= 2;
+					halfWay += (TOTAL_WORK - halfWay) / 2;				
+				}
+				//reset the progress counter to another full increment
+				nextProgress = currentIncrement;
+			}	
+		}
+		if(resource instanceof LocalFile) {
+			// force a reload of entries file of parent
+			getResourceSync(((LocalFile)resource).getLocalFile(), true);
+		}		
 	}
 }
