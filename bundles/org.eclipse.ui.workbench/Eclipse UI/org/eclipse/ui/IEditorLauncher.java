@@ -19,7 +19,7 @@ import org.eclipse.core.resources.IFile;
  * Clients should implement this interface to define a new type of editor
  * launcher.  Each new launcher must be registered as an editor in the 
  * workbench's editor extension point 
- * (named <code>"org.eclipse.ui.exportWizards"</code>).
+ * (named <code>"org.eclipse.ui.editors"</code>).
  *
  * For example, the plug-in's XML markup might contain:
  * <pre>
