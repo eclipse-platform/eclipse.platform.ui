@@ -356,7 +356,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 		IProjectDescription desc = getDescriptionFor(project);
 		if (desc != null) {
 			File localLocation = desc.getLocation().toFile();
-			return localLocation.exists();
+			if (localLocation.exists()) return true;
 		}
 				
 		// Next, check if the resource itself exists
