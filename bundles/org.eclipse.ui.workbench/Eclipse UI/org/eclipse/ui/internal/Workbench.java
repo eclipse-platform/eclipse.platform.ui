@@ -25,25 +25,17 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProduct;
+import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.DeviceData;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ExternalActionManager;
 import org.eclipse.jface.action.IAction;
@@ -60,7 +52,15 @@ import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.DeviceData;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
@@ -88,10 +88,6 @@ import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.ContextManagerEvent;
 import org.eclipse.ui.contexts.IContextManagerListener;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
-import org.eclipse.ui.intro.IIntroManager;
-import org.eclipse.ui.progress.IProgressService;
-import org.eclipse.ui.themes.IThemeManager;
-
 import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 import org.eclipse.ui.internal.commands.ws.CommandCallback;
 import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
@@ -111,6 +107,9 @@ import org.eclipse.ui.internal.themes.FontDefinition;
 import org.eclipse.ui.internal.themes.ThemeElementHelper;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.intro.IIntroManager;
+import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.themes.IThemeManager;
 
 /**
  * The workbench class represents the top of the Eclipse user interface. Its
@@ -1535,6 +1534,7 @@ public final class Workbench implements IWorkbench {
             if (initOK && runEventLoop) {
                 // start eager plug-ins
                 startPlugins();
+                addStartupRegistryListener();
 
                 display.asyncExec(new Runnable() {
                     public void run() {
@@ -1860,7 +1860,8 @@ public final class Workbench implements IWorkbench {
         // for dynamic UI 
         Platform.getExtensionRegistry().removeRegistryChangeListener(
                 extensionEventHandler);
-
+        Platform.getExtensionRegistry().removeRegistryChangeListener(
+				startupRegistryListener);
         // shutdown the rest of the workbench
         WorkbenchColors.shutdown();
         activityHelper.shutdown();
@@ -2120,6 +2121,35 @@ public final class Workbench implements IWorkbench {
      */
     private IntroDescriptor introDescriptor;
 	private IConfigurationElementTracker tracker = new ConfigurationElementTracker();
+	private IRegistryChangeListener startupRegistryListener = new IRegistryChangeListener() {
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
+		 */
+		public void registryChanged(IRegistryChangeEvent event) {
+			final IExtensionDelta[] deltas = event.getExtensionDeltas(
+					PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_STARTUP);
+			if (deltas.length == 0)
+				return;
+	        final String disabledPlugins = getPreferenceStore().getString(
+	                IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP);
+			Runnable runnable = new Runnable() {
+				public void run() {
+					for (int i = 0; i < deltas.length; i++) {
+	                    IExtension extension = deltas[i].getExtension();
+	                    if (deltas[i].getKind() == IExtensionDelta.REMOVED)
+	                    	continue;
+
+	                    // if the plugin is not in the set of disabled plugins, then
+	                    // execute the code to start it
+	                    if (disabledPlugins.indexOf(extension.getNamespace()) == -1)
+	                        Platform.run(new EarlyStartupRunnable(extension));
+					}										
+				}
+			};
+			Thread thread = new Thread(runnable);
+			thread.start();
+		}};
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbench#getThemeManager()
@@ -2214,5 +2244,15 @@ public final class Workbench implements IWorkbench {
 	 */
 	public IConfigurationElementTracker getConfigurationElementTracker() {		
 		return tracker ;
+	}
+	
+
+    /**
+     * Adds the listener that handles startup plugins
+	 * @since 3.1
+	 */
+	private void addStartupRegistryListener() {
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
+		registry.addRegistryChangeListener(startupRegistryListener);
 	}
 }
