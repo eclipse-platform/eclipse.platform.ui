@@ -111,17 +111,18 @@ public class SchedulerStartup implements IStartup {
                         UpdateUI.getStandardDisplay().asyncExec(new Runnable() {
                             public void run() {
                                 asyncNotifyDownloadUser();
+                                scheduleUpdateJob();
                             }
                         });
                     } else {
                         UpdateUI.getStandardDisplay().asyncExec(new Runnable() {
                             public void run() {
                                 asyncNotifyUser();
+                                scheduleUpdateJob();
                             }
                         });
                     }
                 }
-				scheduleUpdateJob();
 			}
 		}
         
