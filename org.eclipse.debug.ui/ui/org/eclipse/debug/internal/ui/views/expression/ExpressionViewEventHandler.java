@@ -89,9 +89,9 @@ public class ExpressionViewEventHandler extends VariablesViewEventHandler implem
 							decendants.add(expression);
 							// Remove the parent cache for the expression and its children
 							expressionProvider.removeCache(decendants.toArray());
-							IExpression[] expressions= DebugPlugin.getDefault().getExpressionManager().getExpressions();
-							if (expressions.length > 0) {
-								getTreeViewer().setSelection(new StructuredSelection(expressions[0]), true);
+							IExpression[] allExpressions= DebugPlugin.getDefault().getExpressionManager().getExpressions();
+							if (allExpressions.length > 0) {
+								getTreeViewer().setSelection(new StructuredSelection(allExpressions[0]), true);
 							}
 						}						
 					}

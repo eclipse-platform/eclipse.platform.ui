@@ -285,9 +285,9 @@ public class DebugActionGroupsManager implements IMenuListener {
 					if (!display.isDisposed()) {
 						updateDebugActionGroups(view);
 						fDebugViews.add(view);
-						Iterator itr= contextMenus.iterator();
-						while (itr.hasNext()) {
-							IMenuManager menu = (IMenuManager)itr.next();
+						Iterator iter= contextMenus.iterator();
+						while (iter.hasNext()) {
+							IMenuManager menu = (IMenuManager)iter.next();
 							if (menu != null) {
 								fDebugViewsWithMenu.put(menu, view);
 								//fake a showing of the context menu to get a 

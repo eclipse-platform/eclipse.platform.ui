@@ -209,12 +209,12 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 		}
 		Runnable r= new Runnable() {
 			public void run() {
-				IWorkbenchWindow window= getView().getViewSite().getPage().getWorkbenchWindow();
-				if (window == null) {
+				IWorkbenchWindow ww= getView().getViewSite().getPage().getWorkbenchWindow();
+				if (ww == null) {
 					return;
 				}
-				Shell shell= window.getShell();
-				if (shell == null || shell.isDisposed()) {
+				Shell s= ww.getShell();
+				if (s == null || s.isDisposed()) {
 					return;
 				}
 				update();
