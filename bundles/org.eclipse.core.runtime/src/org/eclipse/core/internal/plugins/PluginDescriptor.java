@@ -778,10 +778,14 @@ public final URL find(IPath path) {
  * @see IPluginDescriptor
  */
 public final URL find(IPath path, Map override) {
-	if (path == null) return null;
+	if (path == null || path.isEmpty() || path.isRoot())
+		return null;
 	
 	URL install = getInstallURLInternal();
 	String first = path.segment(0);
+	// first will be null if the path contains only a
+	// separator.  We have already checked for a null and
+	// an empty path
 	if (first.charAt(0) != '$') {		
 		URL result = findInPlugin(install, path.toString());
 		if (result != null)
