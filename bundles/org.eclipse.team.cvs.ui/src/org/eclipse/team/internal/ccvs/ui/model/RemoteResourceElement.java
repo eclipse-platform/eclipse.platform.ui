@@ -26,6 +26,7 @@ public abstract class RemoteResourceElement extends CVSModelElement {
 	 */
 	public Object getParent(Object o) {
 		if (!(o instanceof ICVSRemoteResource)) return null;
-		return null;
+		ICVSRemoteResource rr = (ICVSRemoteResource)o;
+		return rr.getParent();
 	}
 }
