@@ -830,8 +830,11 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 							(WorkbenchPartReference) ((PartPane) newChild).getPartReference();
 						info.tabText = ref.getRegisteredName();
 					}
+					CTabItem oldItem = tabFolder.getSelection();
 					CTabItem item = createPartTab(newChild, info.tabText, info.partImage, -1);
-					int index = tabFolder.indexOf(item);
+					if (oldItem == null) 
+						oldItem = item;
+					int index = tabFolder.indexOf(oldItem);
 					setSelection(index);
 				} else {
 					invisibleChildren[i].part = newChild;

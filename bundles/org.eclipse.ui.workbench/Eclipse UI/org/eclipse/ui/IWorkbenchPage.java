@@ -656,4 +656,27 @@ public interface IWorkbenchPage extends IPartService, ISelectionService, ICompat
 	 * @since 3.0
 	 */
 	IViewPart [] getViewStack(IViewPart part);
+	
+	/**
+	 * Creates a view in this page but does not give it focus. If the view is already
+	 * present in this page, then nothing happens.  
+	 * <p>
+	 * The view type is determined by mapping <code>viewId</code> to a view
+	 * extension registered with the workbench. A view id is passed rather than
+	 * a view object to prevent the accidental creation of more than one view
+	 * of a particular type. It also guarantees a consistent lifecycle for
+	 * views, regardless of whether they are created by the user or restored
+	 * from saved data.
+	 * </p>
+	 * 
+	 * <em>EXPERIMENTAL</em>
+	 * 
+	 * @param viewId 
+	 * 				  the id of the view extension to use
+	 * @return a view
+	 * @exception PartInitException
+	 *                if the view could not be initialized
+	 * @since 3.0
+	 */
+	IViewPart createView(String viewId) throws PartInitException;	
 }
