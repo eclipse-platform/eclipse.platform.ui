@@ -62,6 +62,7 @@ public class FormIntroPartImplementation extends
             backAction.setEnabled(canNavigateBackward());
             return;
         }
+        // no actions are added in static swt.
     }
 
 
@@ -253,7 +254,7 @@ public class FormIntroPartImplementation extends
 
         if (standby) {
             // we are in standby. Show standby page, in PageForm.
-            String standbyPageId = getModel().getCurrentPageId();
+            String standbyPageId = getModel().getHomePage().getId();
             AbstractIntroPage standbyPage = getModel().getStandbyPage();
             if (standbyPage != null)
                 standbyPageId = standbyPage.getId();
@@ -352,8 +353,8 @@ public class FormIntroPartImplementation extends
             currentIntroPart.getControl().setRedraw(true);
             return success;
         } else
+            // static model. Nothing to do.
             return false;
-
     }
 
 

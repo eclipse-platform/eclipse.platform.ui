@@ -68,9 +68,10 @@ public class BrowserIntroPartImplementation extends
 
             public void completed(ProgressEvent event) {
                 browser.setData("frameNavigation", null); //$NON-NLS-1$
+                if (!getModel().isDynamic())
+                    updateNavigationActionsState();
             }
         });
-
 
         // Enable IE pop-up menu only in debug mode.
         browser.addListener(SWT.MenuDetect, new Listener() {
@@ -142,18 +143,19 @@ public class BrowserIntroPartImplementation extends
      * @param page
      *            the page to generate HTML for
      */
-    private void generateDynamicContentForPage(AbstractIntroPage page) {
+    private boolean generateDynamicContentForPage(AbstractIntroPage page) {
 
         HTMLElement html = getHTMLGenerator().generateHTMLforPage(page);
 
         if (html == null) {
             // there was an error generating the html. log an error
             Log.error("Error generating HTML", null); //$NON-NLS-1$
-            return;
+            return false;
         }
-        // set the browser's HTML
+        // set the browser's HTML.
+        boolean success = false;
         if (browser != null) {
-            boolean success = browser.setText(html.toString());
+            success = browser.setText(html.toString());
             if (!success)
                 Log.error("Unable to set HTML on the browser", null); //$NON-NLS-1$
         }
@@ -165,6 +167,7 @@ public class BrowserIntroPartImplementation extends
                 System.out.println(html);
             }
         }
+        return success;
     }
 
     /**
@@ -197,17 +200,6 @@ public class BrowserIntroPartImplementation extends
 
     public void dynamicStandbyStateChanged(boolean standby,
             boolean isStandbyPartNeeded) {
-
-        // if we have a standby part, regardless if standby state, disable
-        // actions.
-        if (isStandbyPartNeeded | standby) {
-            homeAction.setEnabled(false);
-            forwardAction.setEnabled(false);
-            backAction.setEnabled(false);
-        } else {
-            homeAction.setEnabled(true);
-            updateNavigationActionsState();
-        }
 
         if (isStandbyPartNeeded)
             // we have a standby part, nothing more to do in presentation.
@@ -298,17 +290,25 @@ public class BrowserIntroPartImplementation extends
                 navigateHistoryBackward();
                 if (isURL(getCurrentLocation())) {
                     success = browser.setUrl(getCurrentLocation());
-                } else
-                    // we need to regen HTML. Set current page, and this
-                    // will triger regen.
-                    success = getModel().setCurrentPageId(getCurrentLocation());
+                } else {
+                    // we need to regen HTML. We can not use setting current
+                    // page to trigger regen for one case: navigating back from
+                    // an url will trigger regen since current page would be the
+                    // same.
+                    AbstractIntroPage page = (AbstractIntroPage) getModel()
+                            .findChild(getCurrentLocation(),
+                                    AbstractIntroElement.ABSTRACT_PAGE);
+                    success = generateDynamicContentForPage(page);
+                    getModel().setCurrentPageId(getCurrentLocation(), false);
+                }
             } else
                 success = false;
+            // update history only in dynamic case.
+            updateNavigationActionsState();
         } else
             // static HTML case. use browser real Back.
             success = browser.back();
 
-        updateNavigationActionsState();
         return success;
     }
 
@@ -326,18 +326,21 @@ public class BrowserIntroPartImplementation extends
                 navigateHistoryForward();
                 if (isURL(getCurrentLocation())) {
                     success = browser.setUrl(getCurrentLocation());
-                } else
-                    // we need to regen HTML. Set current page, and this
-                    // will triger regen.
-                    success = getModel().setCurrentPageId(getCurrentLocation());
-
+                } else {
+                    AbstractIntroPage page = (AbstractIntroPage) getModel()
+                            .findChild(getCurrentLocation(),
+                                    AbstractIntroElement.ABSTRACT_PAGE);
+                    success = generateDynamicContentForPage(page);
+                    getModel().setCurrentPageId(getCurrentLocation(), false);
+                }
             } else
                 success = false;
+            // update history only in dynamic case.
+            updateNavigationActionsState();
         } else
             // static HTML case. use browser real Forward.
             success = browser.forward();
 
-        updateNavigationActionsState();
         return success;
     }
 
@@ -350,20 +353,17 @@ public class BrowserIntroPartImplementation extends
         // Home is URL of root page in static case, and root page in
         // dynamic.
         IntroHomePage rootPage = getModel().getHomePage();
+        String location = null;
+        boolean success = false;
         if (getModel().isDynamic()) {
-            String location = null;
-            boolean success = false;
-            if (getModel().isDynamic()) {
-                location = rootPage.getId();
-                success = getModel().setCurrentPageId(location);
-            } else {
-                location = rootPage.getUrl();
-                success = browser.setUrl(location);
-            }
-            updateHistory(location);
-            return success;
-        } else
-            return false;
+            location = rootPage.getId();
+            success = getModel().setCurrentPageId(location);
+        } else {
+            location = rootPage.getUrl();
+            success = browser.setUrl(location);
+        }
+        updateHistory(location);
+        return success;
     }
 
 
@@ -386,6 +386,17 @@ public class BrowserIntroPartImplementation extends
 
 
     public void standbyStateChanged(boolean standby, boolean isStandbyPartNeeded) {
+        // if we have a standby part, regardless if standby state, disable
+        // actions. Same behavior for static html.
+        if (isStandbyPartNeeded | standby) {
+            homeAction.setEnabled(false);
+            forwardAction.setEnabled(false);
+            backAction.setEnabled(false);
+        } else {
+            homeAction.setEnabled(true);
+            updateNavigationActionsState();
+        }
+
         if (getModel().isDynamic())
             dynamicStandbyStateChanged(standby, isStandbyPartNeeded);
         else

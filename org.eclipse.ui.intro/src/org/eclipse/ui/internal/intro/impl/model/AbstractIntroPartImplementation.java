@@ -245,7 +245,6 @@ public abstract class AbstractIntroPartImplementation {
      */
     protected abstract void updateNavigationActionsState();
 
-
     public abstract boolean navigateBackward();
 
     public abstract boolean navigateForward();

@@ -247,8 +247,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * want to support loading content from other xml files. The design is that
      * only the id and content from the existing page are honored. all other
      * attributes are what they are defined in the external page.
-     * 
-     * @return Returns all the children of this container.
+     *  
      */
     protected void loadChildren() {
         if (content == null) {
@@ -257,10 +256,10 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
             return;
         }
 
-        // load the first page from content xml file.
+        // load the first page with correct id, from content xml file.
         Document dom = new IntroContentParser(content).getDocument();
         if (dom == null)
-            // return empty array. Parser would have logged fact.
+            // bad xml. Parser would have logged fact.
             return;
 
         Element[] pages = ModelLoaderUtil.getElementsByTagName(dom,
@@ -270,7 +269,9 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
             return;
         }
         // point the element of this page to the new element. Pick first page
-        // with matching id.
+        // with matching id. Make sure to disable loading of children of current
+        // element if a matching page in the external content file is not found.
+        boolean foundMatchingPage = false;
         for (int i = 0; i < pages.length; i++) {
             Element pageElement = pages[i];
             if (pageElement.getAttribute(IntroPage.ATT_ID).equals(getId())) {
@@ -278,17 +279,28 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
                 // call init on the new element. the filtering and the style-id
                 // are loaded by the parent class.
                 init(pageElement, getBundle());
-                // TODO: revisit. Special processing here should be made
+                // TODO: revisit. Special processing here should be made more
                 // general.
                 style_id = element
                         .getAttribute(AbstractBaseIntroElement.ATT_STYLE_ID);
                 filteredFrom = element
                         .getAttribute(AbstractBaseIntroElement.ATT_FIlTERED_FROM);
-
+                foundMatchingPage = true;
             }
         }
-        // now do children loading as usual.
-        super.loadChildren();
+        if (foundMatchingPage)
+            // now do children loading as usual.
+            super.loadChildren();
+        else {
+            // page was not found in content file. Perform load actions, and log
+            // fact.
+            // init the children vector.
+            children = new Vector();
+            loaded = true;
+            // null instance to free xml memory.
+            element = null;
+            Log.warning("Content file does not have page with id= " + getId()); //$NON-NLS-1$
+        }
     }
 }
 

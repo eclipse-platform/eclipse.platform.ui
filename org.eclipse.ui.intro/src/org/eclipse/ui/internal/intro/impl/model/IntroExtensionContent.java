@@ -72,6 +72,8 @@ public class IntroExtensionContent extends AbstractIntroElement {
         }
         Element[] filteredElements = new Element[vector.size()];
         vector.copyInto(filteredElements);
+        // null to free xml memory.
+        this.element = null;
         return filteredElements;
     }
 

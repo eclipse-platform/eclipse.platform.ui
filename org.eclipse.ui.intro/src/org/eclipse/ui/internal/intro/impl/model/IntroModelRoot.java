@@ -58,6 +58,10 @@ import org.w3c.dom.*;
  * need to preserve the presentation instance since the UI is already loaded.
  * This is done by reloading the model, and directly resetting the presentation
  * to what it was.</li>
+ * <li>Model classes should not have DOM classes as instance vars, and if this
+ * is a must, null the DOM class instance the minute you are done. This is
+ * because you want the VM to garbage collect the DOM model. Keeping a reference
+ * to the DOM model from the Intro model will prevent that.</li>
  * </ol>
  */
 public class IntroModelRoot extends AbstractIntroContainer {

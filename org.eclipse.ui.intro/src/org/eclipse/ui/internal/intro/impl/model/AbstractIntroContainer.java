@@ -23,7 +23,8 @@ import org.w3c.dom.*;
  */
 public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
 
-    // vector is lazily created when children are populated.
+    // vector is lazily created when children are loaded, ie: call to
+    // loadChildren().
     protected Vector children;
     protected boolean loaded = false;
     protected boolean resolved = false;
@@ -54,6 +55,11 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     public AbstractIntroElement[] getChildren() {
         if (!loaded)
             loadChildren();
+
+        if (!loaded)
+            // if loaded still is false, something went wrong. This could happen
+            // when loading content from another external content files.
+            return new AbstractIntroElement[0];
 
         if (!resolved)
             resolveChildren();
@@ -196,6 +202,9 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         // add the elements at the end children's vector.
         insertElementsBefore(filteredElements, getBundle(), children.size());
         loaded = true;
+        // null instance to free xml memory.
+        element = null;
+
     }
 
     /**

@@ -19,13 +19,13 @@ import org.eclipse.ui.internal.intro.impl.model.*;
  */
 public class BrowserIntroPartLocationListener implements LocationListener {
 
-    private AbstractIntroPartImplementation implementation;
+    private BrowserIntroPartImplementation implementation;
 
     /**
      * Takes the implementation as an input.
      */
     public BrowserIntroPartLocationListener(
-            AbstractIntroPartImplementation implementation) {
+            BrowserIntroPartImplementation implementation) {
         this.implementation = implementation;
     }
 
@@ -56,19 +56,20 @@ public class BrowserIntroPartLocationListener implements LocationListener {
             return;
         }
 
-        if (parser.hasProtocol()) {
+        if (implementation.getModel().isDynamic()
+                && !url.equalsIgnoreCase("about:blank")) {
             // Update the history even with real URLs. Note that if we have
             // multiple embedded URL navigations due to frames, the
             // frameNavigation flag filters them. This flag is set here, and is
             // cleared by a progress listener, when all the frame navigation is
-            // completed.
+            // completed. We need to update history only in dynamic case. In
+            // static case, the browser keeps the history.
             Browser browser = (Browser) event.getSource();
             if (browser.getData("frameNavigation") == null) { //$NON-NLS-1$
                 browser.setData("frameNavigation", "true"); //$NON-NLS-1$ //$NON-NLS-2$
                 implementation.updateHistory(url);
             }
         }
-        //redundantNavigation++;
         return;
     }
 
