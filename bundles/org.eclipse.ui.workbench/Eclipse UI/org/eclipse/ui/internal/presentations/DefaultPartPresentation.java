@@ -802,8 +802,10 @@ public class DefaultPartPresentation extends StackPresentation {
 	}
 	
 	private CTabItem createPartTab(IPresentablePart part, int tabIndex) {
-    	Assert.isTrue(!isDisposed());
-    	
+		Assert.isTrue(!isDisposed());
+		
+		tabIndex = Math.min(tabIndex, tabFolder.getItemCount());
+		
 		CTabItem tabItem;
 
 		int style = SWT.NONE;
@@ -823,7 +825,7 @@ public class DefaultPartPresentation extends StackPresentation {
 		
 		part.addPropertyListener(childPropertyChangeListener);
 		tabItem.addDisposeListener(tabDisposeListener);
-
+	
 		initTab(tabItem, part);
 		
 		return tabItem;
