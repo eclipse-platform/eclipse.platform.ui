@@ -413,7 +413,7 @@ private void loadCustomPersp(PerspectiveDescriptor persp)
 {
 	try {
 		InputStream stream = new FileInputStream(persp.getCustomFile());
-		InputStreamReader reader = new InputStreamReader(stream);
+		InputStreamReader reader = new InputStreamReader(stream, "utf-8");
 		// Restore the layout state.
 		IMemento memento = XMLMemento.createReadRoot(reader);
 		restoreState(memento);
@@ -687,7 +687,7 @@ public void saveDescAs(IPerspectiveDescriptor desc) {
 	PerspectiveDescriptor realDesc = (PerspectiveDescriptor)desc;
 	try {
 		OutputStream stream = new FileOutputStream(realDesc.getCustomFile());
-		Writer writer = new OutputStreamWriter(stream);
+		Writer writer = new OutputStreamWriter(stream, "utf-8");
 		memento.save(writer);
 		writer.close();
 		descriptor = realDesc;

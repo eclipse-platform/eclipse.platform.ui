@@ -167,9 +167,10 @@ public void load(Reader r) {
  * Method declared on IDialogSettings.
  */
 public void load(String fileName) throws IOException {
-	FileReader f = new FileReader(fileName);
-	load(f);
-	f.close();
+	FileInputStream stream = new FileInputStream(fileName);
+	InputStreamReader writer = new InputStreamReader(stream, "utf-8");
+	load(writer);
+	writer.close();
 }
 /* (non-Javadoc)
  * Load the setting from the <code>document</code>
@@ -270,7 +271,8 @@ public void save(Writer writer) throws IOException {
  * Method declared on IDialogSettings.
  */
 public void save(String fileName) throws IOException {
-	FileWriter writer = new FileWriter(fileName);
+	FileOutputStream stream = new FileOutputStream(fileName);
+	OutputStreamWriter writer = new OutputStreamWriter(stream, "utf-8");
 	save(writer);
 	writer.close();
 }

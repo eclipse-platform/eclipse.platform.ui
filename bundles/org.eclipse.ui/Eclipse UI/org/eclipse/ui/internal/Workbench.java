@@ -461,7 +461,7 @@ private boolean openPreviousWorkbenchState() {
 	Platform.run(new SafeRunnableAdapter(WorkbenchMessages.getString("ErrorReadingState")) { //$NON-NLS-1$
 		public void run() throws Exception {
 			FileInputStream input = new FileInputStream(stateFile);
-			InputStreamReader reader = new InputStreamReader(input);
+			InputStreamReader reader = new InputStreamReader(input, "utf-8");
 			// Restore the workbench state.
 			IMemento memento = XMLMemento.createReadRoot(reader);
 			String version = memento.getString(IWorkbenchConstants.TAG_VERSION);
@@ -677,7 +677,8 @@ private boolean saveWorkbenchState(XMLMemento memento) {
 	// Save it to a file.
 	File stateFile = getWorkbenchStateFile();
 	try {
-		FileWriter writer = new FileWriter(stateFile);
+		FileOutputStream stream = new FileOutputStream(stateFile);
+		OutputStreamWriter writer = new OutputStreamWriter(stream, "utf-8");
 		memento.save(writer);
 		writer.close();
 	} catch (IOException e) {
