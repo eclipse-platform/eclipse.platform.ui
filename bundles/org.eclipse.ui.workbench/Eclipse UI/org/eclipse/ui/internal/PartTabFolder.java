@@ -21,7 +21,13 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.window.ColorSchemeService;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder2;
 import org.eclipse.swt.custom.CTabFolderCloseAdapter;
@@ -38,23 +44,18 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-
-import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.window.ColorSchemeService;
-import org.eclipse.jface.window.Window;
-
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.UIJob;
-
 import org.eclipse.ui.internal.dnd.AbstractDragSource;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
+import org.eclipse.ui.progress.UIJob;
 
 public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWorkbenchDragSource {
 	private static int tabLocation = -1; // Initialized in constructor.
+
+	private IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();
 
 	private CTabFolder2 tabFolder;
 	private Map mapTabToPart = new HashMap();
@@ -172,13 +173,6 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		super("PartTabFolder"); //$NON-NLS-1$
 		setID(this.toString());
 		// Each folder has a unique ID so relative positioning is unambiguous.
-
-		// Get the location of the tabs from the preferences
-		if (tabLocation == -1)
-			tabLocation =
-				WorkbenchPlugin.getDefault().getPreferenceStore().getInt(
-					IPreferenceConstants.VIEW_TAB_POSITION);
-
 	}
 	/**
 	 * Add a part at an index.
@@ -278,6 +272,17 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		bounds.height = offset.height;
 		return bounds;
 	}
+	
+	private final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+			if (IPreferenceConstants.VIEW_TAB_POSITION.equals(propertyChangeEvent.getProperty()) && tabFolder != null) {
+				int tabLocation = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION); 
+				int style = SWT.BORDER | tabLocation;
+				tabFolder.setStyle(style);
+			}
+		}
+	};	
+	
 	public void createControl(Composite parent) {
 
 		if (tabFolder != null)
@@ -285,6 +290,11 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 
 		// Create control.	
 		this.parent = parent;
+		
+		preferenceStore.addPropertyChangeListener(propertyChangeListener);
+		int tabLocation = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION); 
+		int style = SWT.BORDER | tabLocation;
+		
 		tabFolder = new CTabFolder2(parent, tabLocation | SWT.BORDER);
 		tabFolder.setBorderVisible(true);
 		ColorSchemeService.setTabColors(tabFolder);

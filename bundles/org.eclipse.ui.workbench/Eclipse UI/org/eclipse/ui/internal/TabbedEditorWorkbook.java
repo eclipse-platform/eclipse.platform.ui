@@ -80,10 +80,6 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 
 	public TabbedEditorWorkbook(EditorArea editorArea) {
 		super(editorArea);
-
-		// Get tab location preference.
-		if (tabLocation == -1)
-			tabLocation = preferenceStore.getInt(IPreferenceConstants.EDITOR_TAB_POSITION);
 	}
 
 	protected Object createItem(EditorPane editorPane) {
@@ -123,21 +119,22 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 
 	private final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-			if (IWorkbenchPreferences.SHOW_MULTIPLE_EDITOR_TABS.equals(propertyChangeEvent.getProperty()) && tabFolder != null)
-				tabFolder.setStyle(preferenceStore.getBoolean(IWorkbenchPreferences.SHOW_MULTIPLE_EDITOR_TABS) ? SWT.MULTI : SWT.SINGLE);
+			if (IPreferenceConstants.EDITOR_TAB_POSITION.equals(propertyChangeEvent.getProperty()) || (IWorkbenchPreferences.SHOW_MULTIPLE_EDITOR_TABS.equals(propertyChangeEvent.getProperty())) && tabFolder != null) {
+				int tabLocation = preferenceStore.getInt(IPreferenceConstants.EDITOR_TAB_POSITION); 
+				boolean multi = preferenceStore.getBoolean(IWorkbenchPreferences.SHOW_MULTIPLE_EDITOR_TABS); 						
+				int style = SWT.BORDER | tabLocation | (multi ? SWT.MULTI : SWT.SINGLE);
+				tabFolder.setStyle(style);
+			}
 		}
 	};
 	
 	protected void createPresentation(final Composite parent) {
 		usePulldown = preferenceStore.getBoolean(IPreferenceConstants.EDITORLIST_PULLDOWN_ACTIVE);
 
-		boolean single = !preferenceStore.getBoolean(IWorkbenchPreferences.SHOW_MULTIPLE_EDITOR_TABS); 
-		int style = SWT.BORDER | tabLocation;
-
-		if (single)
-			style |= SWT.SINGLE;
-
 		preferenceStore.addPropertyChangeListener(propertyChangeListener);
+		int tabLocation = preferenceStore.getInt(IPreferenceConstants.EDITOR_TAB_POSITION); 
+		boolean multi = preferenceStore.getBoolean(IWorkbenchPreferences.SHOW_MULTIPLE_EDITOR_TABS); 						
+	    int style = SWT.BORDER | tabLocation | (multi ? SWT.MULTI : SWT.SINGLE);
 		
 		tabFolder = new CTabFolder2(parent, style);
 		tabFolder.setBorderVisible(true);
