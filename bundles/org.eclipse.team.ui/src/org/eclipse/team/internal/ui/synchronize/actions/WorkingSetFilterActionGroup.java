@@ -121,7 +121,11 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 		// Trick to get dynamic menu contribution for most-recent list to
 		// be updated. These are action contributions and must be added/removed
 		// before the menu is shown.
-		updateMruContribution(bars.getMenuManager());
+		// It is also quite possible that this menu hasn't been created when a
+		// setWorking set property change occurs.
+		if(bars.getMenuManager().find(id) != null) {
+			updateMruContribution(bars.getMenuManager());
+		}
 		//bars.updateActionBars();
 	}	
 }
