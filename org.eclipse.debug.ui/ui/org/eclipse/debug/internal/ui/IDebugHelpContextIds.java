@@ -49,6 +49,7 @@ public interface IDebugHelpContextIds {
 	public static final String LOOKUP_SOURCE_ACTION = PREFIX + "lookup_source_context";//$NON-NLS-1$
 	public static final String SKIP_ALL_BREAKPOINT_ACTION = PREFIX + "skip_all_breakpoints_context"; //$NON-NLS-1$
 	public static final String AUTO_MANAGE_VIEWS_ACTION = PREFIX + "auto_manage_views_context"; //$NON-NLS-1$
+	public static final String FIND_VARIABLE_ACTION = PREFIX + "find_variable_context"; //$NON-NLS-1$
 	// Views
 	public static final String DEBUG_VIEW = PREFIX + "debug_view_context"; //$NON-NLS-1$
 	public static final String VARIABLE_VIEW = PREFIX + "variable_view_context"; //$NON-NLS-1$

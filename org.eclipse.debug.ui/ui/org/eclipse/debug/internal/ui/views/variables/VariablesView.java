@@ -37,6 +37,7 @@ import org.eclipse.debug.internal.ui.VariablesViewModelPresentation;
 import org.eclipse.debug.internal.ui.actions.AssignValueAction;
 import org.eclipse.debug.internal.ui.actions.ChangeVariableValueAction;
 import org.eclipse.debug.internal.ui.actions.CollapseAllAction;
+import org.eclipse.debug.internal.ui.actions.FindVariableAction;
 import org.eclipse.debug.internal.ui.actions.ShowTypesAction;
 import org.eclipse.debug.internal.ui.actions.ToggleDetailPaneAction;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
@@ -52,6 +53,7 @@ import org.eclipse.debug.internal.ui.views.RemoteTreeViewer;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -848,9 +850,21 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		textAction.configureAction(VariablesViewMessages.getString("VariablesView.&Paste_14"), "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setAction(ActionFactory.PASTE.getId(), textAction);
 		
-		//XXX Still using "old" resource access
-		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.views.variables.VariablesViewMessages"); //$NON-NLS-1$
-		setAction(ActionFactory.FIND.getId(), new FindReplaceAction(bundle, "find_replace_action.", this));	 //$NON-NLS-1$
+		action= new FindVariableAction(this);
+		setAction("FindVariable", action); //$NON-NLS-1$
+		setAction(ActionFactory.FIND.getId(), new Action() {
+			public void run() {
+				IAction findAction= null;
+				if (getDetailViewer().getTextWidget().isFocusControl()) {
+					//XXX Still using "old" resource access
+					ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.views.variables.VariablesViewMessages"); //$NON-NLS-1$
+					findAction= new FindReplaceAction(bundle, "find_replace_action.", VariablesView.this);	 //$NON-NLS-1$
+				} else {
+					findAction= getAction("FindVariable"); //$NON-NLS-1$
+				}
+				findAction.run();
+			}
+		});
 		
 		fSelectionActions.add(ActionFactory.COPY.getId());
 		fSelectionActions.add(ActionFactory.CUT.getId());
@@ -908,6 +922,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 
 		menu.add(new Separator(IDebugUIConstants.EMPTY_VARIABLE_GROUP));
 		menu.add(new Separator(IDebugUIConstants.VARIABLE_GROUP));
+		menu.add(getAction("FindVariable")); //$NON-NLS-1$
 		menu.add(getAction("ChangeVariableValue")); //$NON-NLS-1$
 		IAction action = new AvailableLogicalStructuresAction(this);
 		if (action.isEnabled()) {
@@ -1269,6 +1284,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			getDetailViewer().setEditable(false);
 		}
 		updateAction("ContentAssist"); //$NON-NLS-1$
+		updateAction("FindVariable"); //$NON-NLS-1$
 	}
 	
 	/**

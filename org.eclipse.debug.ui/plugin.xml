@@ -1244,12 +1244,6 @@
                menubarPath="variableGroup"
                id="org.eclipse.debug.ui.actions.SelectAllVariablesAction">
          </action>
-         <action
-               helpContextId="find_variable_action_context"
-               label="%FindVariable.label"
-               class="org.eclipse.debug.internal.ui.actions.FindVariableAction"
-               menubarPath="variableGroup"
-               id="org.eclipse.debug.ui.actions.FindVariableAction"/>
       </viewerContribution>
 <!-- Contributions to Expression View Popup Menu -->
       <viewerContribution
