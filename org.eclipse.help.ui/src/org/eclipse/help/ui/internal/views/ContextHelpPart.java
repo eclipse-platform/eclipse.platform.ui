@@ -176,10 +176,18 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		lastProvider = provider;
 		lastPart = part;
 		String helpText = createContextHelp(provider, c);
+		updateTitle();
 		if (getSection().isExpanded())
 			updateText(helpText);
 		if (quickSearchButton.getSelection())
 			updateQuickSearch();
+	}
+	
+	private void updateTitle() {
+		if (lastPart!=null)
+			getSection().setText(HelpUIResources.getString("ContextHelpPart.aboutP", lastPart.getSite().getRegisteredName()));
+		else
+			getSection().setText(HelpUIResources.getString("ContextHelpPart.about")); //$NON-NLS-1$
 	}
 
 	private void updateText(String helpText) {
