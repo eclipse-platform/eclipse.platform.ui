@@ -96,6 +96,7 @@ public class MainPreferencePage
 				}
 			});
 		}
+		UpdateUIPlugin.getDefault().savePluginPreferences();
 		return result;
 	}
 }

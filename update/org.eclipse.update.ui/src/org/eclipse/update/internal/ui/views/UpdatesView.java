@@ -388,7 +388,11 @@ public class UpdatesView
 			}
 		};
 		refreshAction.setText(UpdateUIPlugin.getResourceString(KEY_REFRESH));
-
+		refreshAction.setToolTipText(refreshAction.getText());
+		refreshAction.setImageDescriptor(UpdateUIPluginImages.DESC_REFRESH_NAV);
+		refreshAction.setDisabledImageDescriptor(UpdateUIPluginImages.DESC_REFRESH_NAV_D);		
+		refreshAction.setHoverImageDescriptor(UpdateUIPluginImages.DESC_REFRESH_NAV_H);
+		
 		fileFilterAction = new Action() {
 			public void run() {
 				if (fileFilterAction.isChecked()) {
@@ -443,6 +447,8 @@ public class UpdatesView
 	}
 
 	public void fillActionBars(IActionBars bars) {
+		IToolBarManager toolBarManager = bars.getToolBarManager();
+		toolBarManager.add(refreshAction);
 		IMenuManager menuManager = bars.getMenuManager();
 		menuManager.add(fileFilterAction);
 		menuManager.add(new Separator());

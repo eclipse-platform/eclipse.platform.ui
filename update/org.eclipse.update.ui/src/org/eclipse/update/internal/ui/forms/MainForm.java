@@ -28,19 +28,19 @@ private static final String KEY_HISTORY_TITLE = "HomePage.history.title";
 private static final String KEY_HISTORY_DESC = "HomePage.history.desc";
 
 	Image itemImage;
-	Image myEclipseImage;
+	Image configsImage;
 	Image sitesImage;
 	
 public MainForm(UpdateFormPage page) {
 	super(page);
 	itemImage = UpdateUIPluginImages.DESC_ITEM.createImage();
-	myEclipseImage = UpdateUIPluginImages.DESC_CONFIGS_VIEW.createImage();
+	configsImage = UpdateUIPluginImages.DESC_CONFIGS_VIEW.createImage();
 	sitesImage = UpdateUIPluginImages.DESC_SITES_VIEW.createImage();
 }
 
 public void dispose() {
 	itemImage.dispose();
-	myEclipseImage.dispose();
+	configsImage.dispose();
 	sitesImage.dispose();
 	super.dispose();
 }
@@ -89,7 +89,7 @@ protected void createContents(Composite parent) {
 	setFocusControl(text);
 	text.load(UpdateUIPlugin.getResourceString(KEY_UPDATES_DESC), true, false);
 	text.registerTextObject("action1", action);
-	text.registerTextObject("image1", myEclipseImage);
+	text.registerTextObject("image1", sitesImage);
 	TableData td = new TableData();
 	td.grabHorizontal=true;
 	text.setLayoutData(td);
@@ -130,7 +130,7 @@ protected void createContents(Composite parent) {
 	text = factory.createFormEngine(parent);
 	text.load(UpdateUIPlugin.getResourceString(KEY_UNINSTALLS_DESC), true, false);
 	text.registerTextObject("action1", action);
-	text.registerTextObject("image1", myEclipseImage);
+	text.registerTextObject("image1", configsImage);
 	td = new TableData();
 	td.grabHorizontal=true;
 	text.setLayoutData(td);
