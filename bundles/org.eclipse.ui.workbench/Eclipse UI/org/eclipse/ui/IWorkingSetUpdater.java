@@ -28,7 +28,7 @@ public interface IWorkingSetUpdater {
 	/**
 	 * Adds a working set to this updater.
 	 * 
-	 * @return the working set to add to this updater
+	 * @param workingSet the working set to add to this updater
 	 */
 	public void add(IWorkingSet workingSet);
 	
@@ -46,6 +46,8 @@ public interface IWorkingSetUpdater {
 	 * Returns <code>true</code> if the updater contains the
 	 * given working set; otherwise <code>false</code> is 
 	 * returned.
+	 * 
+	 * @param workingSet the parameter to check
 	 * 
 	 * @return whether the updater contains the given working
 	 *  set

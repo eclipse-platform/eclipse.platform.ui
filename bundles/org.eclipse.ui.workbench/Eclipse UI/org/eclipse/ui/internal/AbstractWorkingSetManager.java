@@ -478,21 +478,23 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
 	
     //---- working set delta handling -------------------------------------------------
     
-	public synchronized void bundleChanged(BundleEvent event) {
+	public void bundleChanged(BundleEvent event) {
 		if (event.getType() != BundleEvent.STARTED)
 			return;
 		WorkingSetDescriptor[] descriptors= WorkbenchPlugin.getDefault()
         	.getWorkingSetRegistry().getDescriptorsForNamespace(event.getBundle().getSymbolicName());
-		for (int i= 0; i < descriptors.length; i++) {
-			WorkingSetDescriptor descriptor= descriptors[i];
-			List workingSets= getWorkingSetsForId(descriptor.getId());
-			if (workingSets.size() == 0)
-				continue;
-			IWorkingSetUpdater updater= getUpdater(descriptor);
-			for (Iterator iter= workingSets.iterator(); iter.hasNext();) {
-				IWorkingSet workingSet= (IWorkingSet)iter.next();
-				if (!updater.contains(workingSet))
-					updater.add(workingSet);
+		synchronized(this) {
+			for (int i= 0; i < descriptors.length; i++) {
+				WorkingSetDescriptor descriptor= descriptors[i];
+				List workingSets= getWorkingSetsForId(descriptor.getId());
+				if (workingSets.size() == 0)
+					continue;
+				IWorkingSetUpdater updater= getUpdater(descriptor);
+				for (Iterator iter= workingSets.iterator(); iter.hasNext();) {
+					IWorkingSet workingSet= (IWorkingSet)iter.next();
+					if (!updater.contains(workingSet))
+						updater.add(workingSet);
+				}
 			}
 		}
 	}
@@ -507,14 +509,16 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
     	return result;
 	}
 	
-    private synchronized void addToUpdater(IWorkingSet workingSet) {
+    private void addToUpdater(IWorkingSet workingSet) {
     	WorkingSetDescriptor descriptor= WorkbenchPlugin.getDefault()
 			.getWorkingSetRegistry().getWorkingSetDescriptor(workingSet.getId());
     	if (descriptor == null || !descriptor.isDeclaringPluginActive())
     		return;
-    	IWorkingSetUpdater updater= getUpdater(descriptor);
-    	if (!updater.contains(workingSet))
-    		updater.add(workingSet);
+		synchronized(this) {
+	    	IWorkingSetUpdater updater= getUpdater(descriptor);
+	    	if (!updater.contains(workingSet))
+	    		updater.add(workingSet);
+		}
     }
     
     private IWorkingSetUpdater getUpdater(WorkingSetDescriptor descriptor) {
