@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
@@ -92,12 +91,12 @@ public class FileBufferOperationRunner {
 		try {
 			
 			
-			SubProgressMonitor subMonitor= new SubProgressMonitor(progressMonitor, size * 10);
+			IProgressMonitor subMonitor= Progress.getSubMonitor(progressMonitor, size * 10);
 			IFileBuffer[] fileBuffers= createFileBuffers(locations, subMonitor);
 			subMonitor.done();
 			
 			IFileBuffer[] fileBuffers2Save= findFileBuffersToSave(fileBuffers);
-			subMonitor= new SubProgressMonitor(progressMonitor, size * 10);
+			subMonitor= Progress.getSubMonitor(progressMonitor, size * 10);
 			fFileBufferManager.validateState(fileBuffers2Save, subMonitor, fValidationContext);
 			subMonitor.done();
 			if (!isCommitable(fileBuffers2Save))
@@ -145,13 +144,13 @@ public class FileBufferOperationRunner {
 				throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.CONTENT_CHANGE_FAILED, fThrowable.getLocalizedMessage(), fThrowable));
 			}
 			
-			subMonitor= new SubProgressMonitor(progressMonitor, size * 80);
+			subMonitor= Progress.getSubMonitor(progressMonitor, size * 80);
 			commit(fileBuffers2Save, subMonitor);
 			subMonitor.done();
 			
 		} finally {
 			try {
-				SubProgressMonitor subMonitor= new SubProgressMonitor(progressMonitor, size * 10);
+				IProgressMonitor subMonitor= Progress.getSubMonitor(progressMonitor, size * 10);
 				releaseFileBuffers(locations, subMonitor);
 				subMonitor.done();
 			} finally {
@@ -170,7 +169,7 @@ public class FileBufferOperationRunner {
 			String name= fileBuffer.getLocation().lastSegment();
 			progressMonitor.beginTask(name, 100);
 			try {
-				SubProgressMonitor subMonitor= new SubProgressMonitor(progressMonitor, 100);
+				IProgressMonitor subMonitor= Progress.getSubMonitor(progressMonitor, 100);
 				operation.run(fileBuffer, subMonitor);
 				subMonitor.done();
 			} finally {
@@ -186,7 +185,7 @@ public class FileBufferOperationRunner {
 		for (int i= 0; i < fileBuffers.length; i++) {
 			if (progressMonitor.isCanceled())
 				throw new OperationCanceledException();
-			SubProgressMonitor subMonitor= new SubProgressMonitor(progressMonitor, 100);
+			IProgressMonitor subMonitor= Progress.getSubMonitor(progressMonitor, 100);
 			performOperation(fileBuffers[i], operation, subMonitor);
 			subMonitor.done();
 		}
@@ -225,7 +224,7 @@ public class FileBufferOperationRunner {
 		try {
 			IFileBuffer[] fileBuffers= new ITextFileBuffer[locations.length];
 			for (int i= 0; i < locations.length; i++) {
-				IProgressMonitor subMonitor= new SubProgressMonitor(progressMonitor, 1);
+				IProgressMonitor subMonitor= Progress.getSubMonitor(progressMonitor, 1);
 				fFileBufferManager.connect(locations[i], subMonitor);
 				subMonitor.done();
 				fileBuffers[i]= fFileBufferManager.getFileBuffer(locations[i]);
@@ -248,7 +247,7 @@ public class FileBufferOperationRunner {
 		try {
 			final ITextFileBufferManager fileBufferManager= FileBuffers.getTextFileBufferManager();
 			for (int i= 0; i < locations.length; i++) {
-				SubProgressMonitor subMonitor= new SubProgressMonitor(progressMonitor, 1);
+				IProgressMonitor subMonitor= Progress.getSubMonitor(progressMonitor, 1);
 				fileBufferManager.disconnect(locations[i], subMonitor);
 				subMonitor.done();
 			}
@@ -294,7 +293,7 @@ public class FileBufferOperationRunner {
 				monitor.beginTask("committing", fileBuffers.length);
 				try {
 					for (int i= 0; i < fileBuffers.length; i++) {
-						IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 1);
+						IProgressMonitor subMonitor= Progress.getSubMonitor(monitor, 1);
 						fileBuffers[i].commit(subMonitor, true);
 						subMonitor.done();
 					}
