@@ -103,7 +103,7 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 		// bug 70941
 		// need to ensure we can find resource bundles from fragments 
 		if (Platform.PI_RUNTIME.equals(bundleModel.getNamespace()))
-			Policy.forgetResourceBundle();
+			Messages.reloadMessages();
 		// Do not synchronize on registry here because the registry handles
 		// the synchronization for us in registry.add		
 		registry.add(bundleModel);

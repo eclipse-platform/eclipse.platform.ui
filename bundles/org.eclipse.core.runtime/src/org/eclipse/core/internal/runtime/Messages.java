@@ -30,7 +30,6 @@ public class Messages extends PlatformMessages {
 	public static String plugin_loadClassError;
 	public static String plugin_instantiateClassError;
 	public static String plugin_initObjectError;
-	public static String plugin_bundleNotFound;
 	public static String plugin_notPluginClass;
 	public static String plugin_startupProblems;
 	public static String plugin_shutdownProblems;
@@ -221,5 +220,8 @@ public class Messages extends PlatformMessages {
 	 */
 	public static String bind(String message, Object[] bindings) {
 		return PlatformMessages.bind(message, bindings);
+	}
+	public static void reloadMessages() {
+		PlatformMessages.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
 }

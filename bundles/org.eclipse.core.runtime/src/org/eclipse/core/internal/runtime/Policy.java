@@ -50,8 +50,4 @@ public class Policy {
 		buffer.append(message);
 		System.out.println(buffer.toString());
 	}
-
-	public static void forgetResourceBundle() {
-		//todo
-	}
 }
