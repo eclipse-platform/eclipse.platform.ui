@@ -274,7 +274,6 @@ public interface IPlatform {
 	 * was started.
 	 *
 	 * @return the location of the platform
-	 * @deprecated @see #getInstanceLocation()
 	 */
 	public IPath getLocation() throws IllegalStateException;
 
