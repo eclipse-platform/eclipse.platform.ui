@@ -11,12 +11,8 @@
 package org.eclipse.ui;
 
 import org.eclipse.core.runtime.IAdaptable;
-
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.wizard.IWizard;
-
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
 import org.eclipse.ui.dialogs.IWorkingSetNewWizard;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
@@ -161,32 +157,6 @@ public interface IWorkingSetManager {
     public IWorkingSetEditWizard createWorkingSetEditWizard(
             IWorkingSet workingSet);
     
-    /**
-     * Creates a working set new wizard. The wizard will allow creating new
-     * working sets. Returns <code>null</code> if there aren't any working set
-     *  definitions that support creation of working sets.
-     * <p>
-     * Example:
-     * <code>
-     *   IWizard wizard= workingSetManager.createWorkingSetNewWizard();
-     *   if (wizard != null) {  
-     *	     WizardDialog dialog = new WizardDialog(shell, wizard);
-     *
-     *	     dialog.create();		
-     *	     if (dialog.open() == Window.OK) {		
-     *		    ...
-     *       }
-     *   }
-     * </code>
-     * </p>
-     * 
-     * @return the working set new wizard or <code>null</code>
-     * 
-     * @deprecated will be removed for M6
-     * 
-     * @since 3.1
-     */
-    public IWizard createWorkingSetNewWizard();
 
     /**
      * Creates a working set new wizard. The wizard will allow creating new
@@ -306,9 +276,7 @@ public interface IWorkingSetManager {
     
     /**
      * Disposes the working set manager.
-     * <p>
-     * API under construction and subject to change at any time.
-     * </p>
+     * 
      * @since 3.1
      */
     public void dispose();

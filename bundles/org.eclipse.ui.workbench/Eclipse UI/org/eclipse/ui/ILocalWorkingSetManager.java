@@ -12,14 +12,13 @@ package org.eclipse.ui;
 
 /**
  * A local working set manager can be used to manage a set of
- * working sets.
+ * working sets.  A new local working set manager can be created
+ * using {@link org.eclipse.ui.IWorkbench#createLocalWorkingSetManager()}.
   * <p>
  * This interface is not intended to be implemented or extended by clients.
  * </p>
- * <p>
- * API under construction and subject to change at any time.
- * </p>
  *
+ * @see org.eclipse.ui.IWorkbench#createLocalWorkingSetManager()
  * @since 3.1
  */
 public interface ILocalWorkingSetManager extends IWorkingSetManager {

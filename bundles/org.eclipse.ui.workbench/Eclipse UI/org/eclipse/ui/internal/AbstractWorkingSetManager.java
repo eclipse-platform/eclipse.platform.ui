@@ -23,7 +23,6 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IElementFactory;
@@ -472,10 +471,6 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
          return new WorkingSetNewWizard(descriptors);
 }
 
-	public IWizard createWorkingSetNewWizard() {
-		return createWorkingSetNewWizard(null);
-	}	
-	
     //---- working set delta handling -------------------------------------------------
     
 	public void bundleChanged(BundleEvent event) {
