@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.osgi.service.environment.*;
-
 /**
  * Creates browser by delegating to appropriate browser adapter
  */
@@ -50,27 +49,21 @@ public class BrowserManager {
 	 */
 	private void init() {
 		initialized = true;
-
 		// Find all available browsers
 		browsersDescriptors = createBrowserDescriptors();
-
 		// 1. set default browser from preferences
-		String defBrowserID =
-			HelpBasePlugin
-				.getDefault()
+		String defBrowserID = HelpBasePlugin.getDefault()
 				.getPluginPreferences()
-				.getDefaultString(
-				DEFAULT_BROWSER_ID_KEY);
+				.getDefaultString(DEFAULT_BROWSER_ID_KEY);
 		if (defBrowserID != null && (!"".equals(defBrowserID))) {
 			setDefaultBrowserID(defBrowserID);
 		}
-
 		// 2. set default browser to embedded
-//		if (defaultBrowserDesc == null) {
-//			setDefaultBrowserID(BROWSER_ID_EMBEDDED);
-//		}
-		
-		// 3. set default browser to help implementation of system specific browser
+		//		if (defaultBrowserDesc == null) {
+		//			setDefaultBrowserID(BROWSER_ID_EMBEDDED);
+		//		}
+		// 3. set default browser to help implementation of system specific
+		// browser
 		String os = Platform.getOS();
 		if (defaultBrowserDesc == null) {
 			if (Constants.WS_WIN32.equalsIgnoreCase(os)) {
@@ -78,8 +71,7 @@ public class BrowserManager {
 			} else if (Constants.OS_AIX.equalsIgnoreCase(os)
 					|| (Constants.OS_HPUX.equalsIgnoreCase(os))
 					|| (Constants.OS_LINUX.equalsIgnoreCase(os))
-					|| (Constants.OS_SOLARIS.equalsIgnoreCase(os))
-			) {
+					|| (Constants.OS_SOLARIS.equalsIgnoreCase(os))) {
 				setDefaultBrowserID(BROWSER_ID_MOZILLA);
 				if (defaultBrowserDesc == null) {
 					setDefaultBrowserID(BROWSER_ID_NETSCAPE);
@@ -88,66 +80,57 @@ public class BrowserManager {
 				setDefaultBrowserID(BROWSER_ID_MAC_SYSTEM);
 			}
 		}
-
 		// 4. set browser to one of externally contributed
 		if (defaultBrowserDesc == null) {
 			for (int i = 0; i < browsersDescriptors.length; i++) {
-				if (BROWSER_ID_CUSTOM
-					.equals(browsersDescriptors[i].getID())) {
+				if (BROWSER_ID_CUSTOM.equals(browsersDescriptors[i].getID())) {
 					defaultBrowserDesc = browsersDescriptors[i];
 				}
 			}
 		}
-		
 		// 5. let user specify program
 		if (defaultBrowserDesc == null) {
 			setDefaultBrowserID(BROWSER_ID_CUSTOM);
 		}
-
 		// 6. use null browser
 		if (defaultBrowserDesc == null) {
 			// If no browsers at all, use the Null Browser Adapter
-			defaultBrowserDesc =
-				new BrowserDescriptor(
-					"",
-					"Null Browser",
+			defaultBrowserDesc = new BrowserDescriptor("", "Null Browser",
 					new IBrowserFactory() {
-				public boolean isAvailable() {
-					return true;
-				}
-				public IBrowser createBrowser() {
-					return new IBrowser() {
-						public void close() {
+						public boolean isAvailable() {
+							return true;
 						}
-						public void displayURL(String url) {
-							String msg =
-								HelpBaseResources.getString("no_browsers", url);
-							HelpBasePlugin.logError(msg, null);
-							BaseHelpSystem.getDefaultErrorUtil().displayError(
-								msg);
+						public IBrowser createBrowser() {
+							return new IBrowser() {
+								public void close() {
+								}
+								public void displayURL(String url) {
+									String msg = HelpBaseResources.getString(
+											"no_browsers", url);
+									HelpBasePlugin.logError(msg, null);
+									BaseHelpSystem.getDefaultErrorUtil()
+											.displayError(msg);
+								}
+								public boolean isCloseSupported() {
+									return false;
+								}
+								public boolean isSetLocationSupported() {
+									return false;
+								}
+								public boolean isSetSizeSupported() {
+									return false;
+								}
+								public void setLocation(int width, int height) {
+								}
+								public void setSize(int x, int y) {
+								}
+							};
 						}
-						public boolean isCloseSupported() {
-							return false;
-						}
-						public boolean isSetLocationSupported() {
-							return false;
-						}
-						public boolean isSetSizeSupported() {
-							return false;
-						}
-						public void setLocation(int width, int height) {
-						}
-						public void setSize(int x, int y) {
-						}
-					};
-				}
-			});
+					});
 		}
-
 		// initialize current browser
-		String curBrowserID =
-			HelpBasePlugin.getDefault().getPluginPreferences().getString(
-				DEFAULT_BROWSER_ID_KEY);
+		String curBrowserID = HelpBasePlugin.getDefault()
+				.getPluginPreferences().getString(DEFAULT_BROWSER_ID_KEY);
 		if (curBrowserID != null && (!"".equals(curBrowserID))) {
 			setCurrentBrowserID(curBrowserID);
 			// may fail if such browser does not exist
@@ -155,11 +138,8 @@ public class BrowserManager {
 		if (currentBrowserDesc == null) {
 			setCurrentBrowserID(getDefaultBrowserID());
 		}
-		setAlwaysUseExternal(HelpBasePlugin
-				.getDefault()
-				.getPluginPreferences()
+		setAlwaysUseExternal(HelpBasePlugin.getDefault().getPluginPreferences()
 				.getBoolean(ALWAYS_EXTERNAL_BROWSER_KEY));
-
 	}
 	/**
 	 * Obtains singleton instance.
@@ -176,10 +156,9 @@ public class BrowserManager {
 		if (this.browsersDescriptors != null)
 			return this.browsersDescriptors;
 		Collection bDescriptors = new ArrayList();
-		IConfigurationElement configElements[] =
-			Platform.getPluginRegistry().getConfigurationElementsFor(
-				HelpBasePlugin.PLUGIN_ID,
-				"browser");
+		IConfigurationElement configElements[] = Platform.getPluginRegistry()
+				.getConfigurationElementsFor(HelpBasePlugin.PLUGIN_ID,
+						"browser");
 		for (int i = 0; i < configElements.length; i++) {
 			if (!configElements[i].getName().equals("browser"))
 				continue;
@@ -190,28 +169,24 @@ public class BrowserManager {
 			if (label == null)
 				continue;
 			try {
-				Object adapter =
-					configElements[i].createExecutableExtension("factoryclass");
+				Object adapter = configElements[i]
+						.createExecutableExtension("factoryclass");
 				if (!(adapter instanceof IBrowserFactory))
 					continue;
 				if (((IBrowserFactory) adapter).isAvailable()) {
-					BrowserDescriptor descriptor = new BrowserDescriptor(
-							id,
-							label,
-							(IBrowserFactory) adapter);
-					if(descriptor.isExternal()){
-					bDescriptors.add(
-						descriptor);
-					}else{
+					BrowserDescriptor descriptor = new BrowserDescriptor(id,
+							label, (IBrowserFactory) adapter);
+					if (descriptor.isExternal()) {
+						bDescriptors.add(descriptor);
+					} else {
 						internalBrowserDesc = descriptor;
 					}
 				}
 			} catch (CoreException ce) {
 			}
 		}
-		this.browsersDescriptors =
-			(BrowserDescriptor[]) bDescriptors.toArray(
-				new BrowserDescriptor[bDescriptors.size()]);
+		this.browsersDescriptors = (BrowserDescriptor[]) bDescriptors
+				.toArray(new BrowserDescriptor[bDescriptors.size()]);
 		return this.browsersDescriptors;
 	}
 	/**
@@ -235,6 +210,21 @@ public class BrowserManager {
 		if (currentBrowserDesc == null)
 			return null;
 		return currentBrowserDesc.getID();
+	}
+	/**
+	 * Gets the currentBrowserID.
+	 * 
+	 * @return Returns a String or null if not set
+	 */
+	public String getCurrentInternalBrowserID() {
+		if (!initialized) {
+			init();
+		}
+		if (isEmbeddedBrowserPresent() && !alwaysUseExternal) {
+			return internalBrowserDesc.getID();
+		} else {
+			return getCurrentBrowserID();
+		}
 	}
 	/**
 	 * Gets the currentBrowserID.
@@ -287,15 +277,21 @@ public class BrowserManager {
 	}
 	/**
 	 * Creates web browser
+	 * If preferences specify to always use external,
+	 * the parameter will not be honored
 	 */
-	public IBrowser createBrowser(boolean forceExternal) {
+	public IBrowser createBrowser(boolean external) {
 		if (!initialized) {
 			init();
 		}
-		forceExternal = forceExternal || alwaysUseExternal;
-		return createBrowserAdapter(forceExternal);
-		// TODO fix and use CurrentBrowser
-		//	return new CurrentBrowser(createBrowserAdapter(forceExternal), getCurrentBrowserID());
+		//external = external || alwaysUseExternal;
+		//return createBrowserAdapter(forceExternal);
+		if(external){
+			return new CurrentBrowser(createBrowserAdapter(true),getCurrentBrowserID(), true);
+		}else{
+			return new CurrentBrowser(createBrowserAdapter(alwaysUseExternal),getCurrentInternalBrowserID(), false);
+			
+		}
 	}
 	/**
 	 * Creates web browser
@@ -306,15 +302,16 @@ public class BrowserManager {
 	}
 	/**
 	 * Creates web browser
+	 * for external == false, if no internal browsers are present it will create external one
 	 */
-	private IBrowser createBrowserAdapter(boolean forceExternal) {
+	private IBrowser createBrowserAdapter(boolean external) {
 		if (!initialized) {
 			init();
 		}
 		IBrowser browser = null;
-		if(! forceExternal && internalBrowserDesc != null){
+		if (!external && isEmbeddedBrowserPresent()) {
 			browser = internalBrowserDesc.getFactory().createBrowser();
-		}else{
+		} else {
 			browser = currentBrowserDesc.getFactory().createBrowser();
 		}
 		browsers.add(browser);
@@ -333,24 +330,20 @@ public class BrowserManager {
 			browser.close();
 		}
 	}
-	public boolean isEmbeddedBrowserPresent(){
+	public boolean isEmbeddedBrowserPresent() {
 		if (!initialized) {
 			init();
 		}
 		return internalBrowserDesc != null;
 	}
-	public void setAlwaysUseExternal(boolean alwaysExternal){
+	public void setAlwaysUseExternal(boolean alwaysExternal) {
 		if (!initialized) {
 			init();
 		}
-		
 		alwaysUseExternal = alwaysExternal || !isEmbeddedBrowserPresent();
 	}
-	public boolean isAlwaysUseExternal(){
-		if (!initialized) {
-			init();
-		}
-		if(!isEmbeddedBrowserPresent()){
+	private boolean isAlwaysUseExternal() {
+		if (!isEmbeddedBrowserPresent()) {
 			return true;
 		}
 		return alwaysUseExternal;

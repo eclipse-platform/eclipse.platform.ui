@@ -57,7 +57,8 @@ public class BrowsersPreferencePage extends PreferencePage
 		createSpacer(mainComposite);
 		if (BrowserManager.getInstance().isEmbeddedBrowserPresent()) {
 			alwaysExternal = new Button(mainComposite, SWT.CHECK);
-			alwaysExternal.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL));
+			alwaysExternal
+					.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL));
 			alwaysExternal.setText(HelpUIResources
 					.getString("use_only_external_browser"));
 			alwaysExternal.setSelection(HelpBasePlugin.getDefault()
@@ -119,6 +120,7 @@ public class BrowsersPreferencePage extends PreferencePage
 				.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		createCustomBrowserPathPart(mainComposite);
 		org.eclipse.jface.dialogs.Dialog.applyDialogFont(mainComposite);
+		createSpacer(mainComposite);
 		return mainComposite;
 	}
 	private void createCustomBrowserPathPart(Composite mainComposite) {
@@ -228,6 +230,8 @@ public class BrowsersPreferencePage extends PreferencePage
 				.getText());
 		if (alwaysExternal != null) {
 			pref.setValue(BrowserManager.ALWAYS_EXTERNAL_BROWSER_KEY,
+					alwaysExternal.getSelection());
+			BrowserManager.getInstance().setAlwaysUseExternal(
 					alwaysExternal.getSelection());
 		}
 		HelpBasePlugin.getDefault().savePluginPreferences();

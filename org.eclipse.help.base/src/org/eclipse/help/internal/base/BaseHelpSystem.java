@@ -94,12 +94,12 @@ public final class BaseHelpSystem {
 		if (!forceExternal) {
 			if (getInstance().internalBrowser == null)
 				getInstance().internalBrowser = BrowserManager.getInstance()
-						.createBrowser(forceExternal);
+						.createBrowser(false);
 			return getInstance().internalBrowser;
 		} else {
 			if (getInstance().browser == null)
 				getInstance().browser = BrowserManager.getInstance()
-						.createBrowser(forceExternal);
+						.createBrowser(true);
 			return getInstance().browser;
 		}
 	}

@@ -9,12 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.browser;
-
-import org.eclipse.help.browser.IBrowser;
-
+import org.eclipse.help.browser.*;
 /**
- * Wrapper for individual browsers
- * contributed through extension point.
+ * Wrapper for individual browsers contributed through extension point.
  */
 public class CurrentBrowser implements IBrowser {
 	private IBrowser browserAdapter;
@@ -30,10 +27,12 @@ public class CurrentBrowser implements IBrowser {
 	private int y;
 	private int width;
 	private int height;
-
-	public CurrentBrowser(IBrowser browserImpl, String browserAdapterId) {
+	boolean external;
+	public CurrentBrowser(IBrowser browserImpl, String browserAdapterId,
+			boolean externalBrowser) {
 		this.browserAdapter = browserImpl;
 		this.browserAdapterId = browserAdapterId;
+		this.external = externalBrowser;
 	}
 	/**
 	 * @see org.eclipse.help.browser.IBrowser#close()
@@ -41,14 +40,12 @@ public class CurrentBrowser implements IBrowser {
 	public void close() {
 		browserAdapter.close();
 	}
-
 	/**
 	 * @see org.eclipse.help.browser.IBrowser#isCloseSupported()
 	 */
 	public boolean isCloseSupported() {
 		return browserAdapter.isCloseSupported();
 	}
-
 	/**
 	 * @see org.eclipse.help.browser.IBrowser#displayURL(java.lang.String)
 	 */
@@ -56,12 +53,10 @@ public class CurrentBrowser implements IBrowser {
 		checkDefaultAdapter();
 		if (newBrowserAdapter != null) {
 			browserAdapter.close();
-
 			browserAdapter = newBrowserAdapter;
 			newBrowserAdapter = null;
 			browserAdapterId = newBrowserAdapterId;
 			newBrowserAdapterId = null;
-
 			if (locationSet) {
 				browserAdapter.setLocation(x, y);
 			}
@@ -71,7 +66,6 @@ public class CurrentBrowser implements IBrowser {
 		}
 		browserAdapter.displayURL(url);
 	}
-
 	/**
 	 * @see org.eclipse.help.browser.IBrowser#isSetLocationSupported()
 	 */
@@ -81,10 +75,9 @@ public class CurrentBrowser implements IBrowser {
 			return browserAdapter.isSetLocationSupported();
 		} else {
 			return browserAdapter.isSetLocationSupported()
-				|| newBrowserAdapter.isSetLocationSupported();
+					|| newBrowserAdapter.isSetLocationSupported();
 		}
 	}
-
 	/**
 	 * @see org.eclipse.help.browser.IBrowser#isSetSizeSupported()
 	 */
@@ -94,10 +87,9 @@ public class CurrentBrowser implements IBrowser {
 			return browserAdapter.isSetSizeSupported();
 		} else {
 			return browserAdapter.isSetSizeSupported()
-				|| newBrowserAdapter.isSetSizeSupported();
+					|| newBrowserAdapter.isSetSizeSupported();
 		}
 	}
-
 	/**
 	 * @see org.eclipse.help.browser.IBrowser#setLocation(int, int)
 	 */
@@ -108,7 +100,6 @@ public class CurrentBrowser implements IBrowser {
 		this.x = x;
 		this.y = y;
 	}
-
 	/**
 	 * @see org.eclipse.help.browser.IBrowser#setSize(int, int)
 	 */
@@ -120,16 +111,26 @@ public class CurrentBrowser implements IBrowser {
 		this.height = height;
 	}
 	/*
-	 * Checks wheter default adapter has changed.
-	 * If yes, sets the newBrowserAdapterId field
+	 * Checks wheter default adapter has changed. If yes, sets the
+	 * newBrowserAdapterId field
 	 */
 	private void checkDefaultAdapter() {
-		if (browserAdapterId
-			!= BrowserManager.getInstance().getCurrentBrowserID()) {
-			newBrowserAdapter = BrowserManager.getInstance().createBrowser(true);
-			newBrowserAdapterId =
-				BrowserManager.getInstance().getCurrentBrowserID();
+		if (external) {
+			if (browserAdapterId != BrowserManager.getInstance()
+					.getCurrentBrowserID()) {
+				newBrowserAdapter = BrowserManager.getInstance().createBrowser(
+						true);
+				newBrowserAdapterId = BrowserManager.getInstance()
+						.getCurrentBrowserID();
+			}
+		} else {
+			if (browserAdapterId != BrowserManager.getInstance()
+					.getCurrentInternalBrowserID()) {
+				newBrowserAdapter = BrowserManager.getInstance().createBrowser(
+						false);
+				newBrowserAdapterId = BrowserManager.getInstance()
+						.getCurrentInternalBrowserID();
+			}
 		}
 	}
-
 }
