@@ -645,6 +645,8 @@
             verticalRulerPreferenceValue="false"
             includeOnPreferencePage="false">
       </specification>
+
+      <!-- Hides the unchanged quick diff annotation -->
       <specification
             annotationType="org.eclipse.ui.workbench.texteditor.quickdiffUnchanged"
             colorPreferenceValue="0,0,0"
@@ -658,7 +660,6 @@
             contributesToHeader="false"
             overviewRulerPreferenceValue="false"
             presentationLayer="0"
-            label=""
             textPreferenceValue="false"
             textPreferenceKey="unchangedIndication"
             overviewRulerPreferenceKey="unchangedIndicationInOverviewRuler"
@@ -666,6 +667,7 @@
             verticalRulerPreferenceValue="false"
             includeOnPreferencePage="false">
       </specification>
+
       <specification
       		annotationType="org.eclipse.ui.workbench.texteditor.spelling"
             label="%spelling.label"
