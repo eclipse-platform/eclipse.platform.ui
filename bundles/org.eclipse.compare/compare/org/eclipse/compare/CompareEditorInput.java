@@ -92,9 +92,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * The name of the "dirty" property.
 	 */
 	public static final String DIRTY_STATE= "DIRTY_STATE"; //$NON-NLS-1$
-	
-	private static boolean PR1GB0P4S= true;
-	
+		
 	private static final String COMPARE_EDITOR_IMAGE_NAME= "cview16/compare_view.gif"; //$NON-NLS-1$
 	private static Image fgTitleImage;
 	
@@ -396,15 +394,13 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 			}
 		);
 		
-		if (PR1GB0P4S) {
-			fStructureInputPane.addDoubleClickListener(
-				new IDoubleClickListener() {
-					public void doubleClick(DoubleClickEvent e) {
-						feedDefault1(e.getSelection());
-					}
+		fStructureInputPane.addDoubleClickListener(
+			new IDoubleClickListener() {
+				public void doubleClick(DoubleClickEvent e) {
+					feedDefault1(e.getSelection());
 				}
-			);
-		}
+			}
+		);
 
 		// setup the wiring for second pane
 		fStructurePane1.addSelectionChangedListener(
@@ -429,7 +425,6 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 			public void handleEvent(Event event) {
 				if (event.widget instanceof CompareViewerSwitchingPane) {
 					fFocusPane= (CompareViewerSwitchingPane) event.widget;
-					//System.out.println("switch focus: " + fFocusPane);
 				}
 			}
 		};
@@ -441,10 +436,9 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		if (fInput instanceof ICompareInput) {
 			ICompareInput input2= (ICompareInput) fInput;
 			fStructureInputPane.setInput(input2);
-			fContentInputPane.setInput(input2);
+			feed1(fStructureInputPane.getSelection());
 		}
 		
-		// 
 		fComposite.setData("Nav", //$NON-NLS-1$
 			new CompareViewerSwitchingPane[] {
 				fStructureInputPane,
@@ -470,12 +464,8 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 						Object input= getElement(selection);
 						fContentInputPane.setInput(input);
 						fStructurePane2.setInput(null); // clear downstream pane
-						
-						if (PR1GB0P4S) {
-							if (fStructurePane1.getInput() != input)
-								fStructurePane1.setInput(null);
-						} else
-							fStructurePane1.setInput(input);
+						if (fStructurePane1.getInput() != input)
+							fStructurePane1.setInput(null);
 					}
 				}
 			}
