@@ -42,9 +42,9 @@
 			<describer class="org.eclipse.core.internal.content.XMLContentDescriber"/>
 		</content-type>
 		<!-- temporary - to be contributed by JDT -->			
-		<content-type id="javaProperties" name="%javaPropertiesFileName" 
+		<content-type id="javaProperties" name="%javaPropertiesContentTypeName" 
 			base-type="text"
-			priority="high"				
+			priority="low"				
 			file-extensions="properties"
 			default-charset="ISO-8859-1"/>
 		<!-- temporary - to be contributed by JDT Core -->
