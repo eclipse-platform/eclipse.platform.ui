@@ -12,6 +12,8 @@ package org.eclipse.core.internal.utils;
 import org.eclipse.core.runtime.PlatformMessages;
 
 public class Messages extends PlatformMessages {
+	private static final String BUNDLE_NAME = "org.eclipse.core.internal.utils.messages"; //$NON-NLS-1$
+	
 	// dtree
 	public static String dtree_immutable;
 	public static String dtree_malformedTree;
@@ -414,7 +416,7 @@ public class Messages extends PlatformMessages {
 
 	static {
 		// initialize resource bundles
-		PlatformMessages.initializeMessages("org.eclipse.core.internal.utils.messages", Messages.class); //$NON-NLS-1$
+		PlatformMessages.initializeMessages(BUNDLE_NAME, Messages.class); //$NON-NLS-1$
 	}
 
 	/**
