@@ -101,7 +101,7 @@ public class ContextHelpDialog {
 		int margin = 0;
 		if (System.getProperty("os.name").startsWith("Win"))
 			margin = 28; // for the Windows task bar in the ussual place;
-		Rectangle screen = display.getBounds();
+		Rectangle screen = display.getClientArea();
 		x = x + width <= screen.width ? x : screen.width - width;
 		y = y + height <= screen.height - margin ? y : screen.height - margin - height;
 		shell.setLocation(x, y);
