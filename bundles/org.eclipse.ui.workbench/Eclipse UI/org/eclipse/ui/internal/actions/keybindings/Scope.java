@@ -30,7 +30,7 @@ public final class Scope implements Comparable {
 		throws IllegalArgumentException {
 		super();
 		
-		if (id == null)
+		if (id == null || name == null)
 			throw new IllegalArgumentException();
 
 		this.id = id;
@@ -68,7 +68,7 @@ public final class Scope implements Comparable {
 		int compareTo = id.compareTo(scope.id);
 		
 		if (compareTo == 0) {
-			compareTo = Util.compare(name, scope.name);	
+			compareTo = name.compareTo(scope.name);	
 		
 			if (compareTo == 0) {
 				compareTo = Util.compare(description, scope.description);	
@@ -90,14 +90,14 @@ public final class Scope implements Comparable {
 			return false;
 
 		Scope scope = (Scope) object;		
-		return id.equals(scope.id) && Util.equals(name, scope.name) && Util.equals(description, scope.description) && 
-			Util.equals(parent, scope.parent) && Util.equals(plugin, scope.plugin);
+		return id.equals(scope.id) && name.equals(scope.name) && Util.equals(description, scope.description) && Util.equals(parent, scope.parent) && 
+			Util.equals(plugin, scope.plugin);
 	}
 
 	public int hashCode() {
 		int result = HASH_INITIAL;
 		result = result * HASH_FACTOR + id.hashCode();
-		result = result * HASH_FACTOR + Util.hashCode(name);
+		result = result * HASH_FACTOR + name.hashCode();
 		result = result * HASH_FACTOR + Util.hashCode(description);
 		result = result * HASH_FACTOR + Util.hashCode(parent);
 		result = result * HASH_FACTOR + Util.hashCode(plugin);
@@ -105,6 +105,6 @@ public final class Scope implements Comparable {
 	}	
 
 	public String toString() {
-		return name != null ? name : '(' + id + ')';		
+		return name + '(' + id + ')';	
 	}
 }

@@ -138,19 +138,19 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 
 	private boolean readAcceleratorConfiguration(IConfigurationElement element) {
 		String description = element.getAttribute(ATTRIBUTE_DESCRIPTION);
-
-		if (description == null)
-			logMissingAttribute(element, ATTRIBUTE_DESCRIPTION);
-
 		String id = element.getAttribute(ATTRIBUTE_ID);
-
-		if (id == null)
+		
+		if (id == null) {
 			logMissingAttribute(element, ATTRIBUTE_ID);
-
+			return true;
+		}
+		
 		String name = element.getAttribute(ATTRIBUTE_NAME);
 
-		if (name == null)
+		if (name == null) {
 			logMissingAttribute(element, ATTRIBUTE_NAME);
+			return true;
+		}
 
 		String parent = element.getAttribute(ATTRIBUTE_PARENT_CONFIGURATION);
 		String plugin = getPlugin(element);
@@ -161,22 +161,22 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 
 	private boolean readAcceleratorScope(IConfigurationElement element) {
 		String description = element.getAttribute(ATTRIBUTE_DESCRIPTION);
-
-		if (description == null)
-			logMissingAttribute(element, ATTRIBUTE_DESCRIPTION);
-
 		String id = element.getAttribute(ATTRIBUTE_ID);
 
-		if (id == null)
+		if (id == null) {
 			logMissingAttribute(element, ATTRIBUTE_ID);
+			return true;
+		}
 
 		String name = element.getAttribute(ATTRIBUTE_NAME);
 
-		if (name == null)
+		if (name == null) {
 			logMissingAttribute(element, ATTRIBUTE_NAME);
+			return true;
+		}
 			
 		String parent = element.getAttribute(ATTRIBUTE_PARENT_SCOPE);
-		String plugin = getPlugin(element);
+		String plugin = getPlugin(element);		
 		Scope scope = Scope.create(id, name, description, parent, plugin);
 		registry.addScope(scope);
 		return true;		
@@ -188,12 +188,12 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 			
 		if (configuration == null) {
 			logMissingAttribute(element, ATTRIBUTE_CONFIGURATION_ID);
-			configuration = ZERO_LENGTH_STRING;
+			return true;
 		}
 		
 		if (scope == null) {
 			logMissingAttribute(element, ATTRIBUTE_SCOPE_ID);
-			scope = ZERO_LENGTH_STRING;
+			return true;
 		}
 
 		readElementChildren(element);

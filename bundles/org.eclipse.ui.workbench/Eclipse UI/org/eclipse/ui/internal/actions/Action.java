@@ -28,7 +28,7 @@ public final class Action implements Comparable {
 		throws IllegalArgumentException {
 		super();
 		
-		if (id == null)
+		if (id == null || name == null)
 			throw new IllegalArgumentException();
 		
 		this.id = id;
@@ -66,7 +66,7 @@ public final class Action implements Comparable {
 		int compareTo = id.compareTo(action.id);
 		
 		if (compareTo == 0) {
-			compareTo = Util.compare(name, action.name);	
+			compareTo = name.compareTo(action.name);	
 		
 			if (compareTo == 0) {
 				compareTo = Util.compare(description, action.description);	
@@ -88,14 +88,14 @@ public final class Action implements Comparable {
 			return false;
 
 		Action action = (Action) object;		
-		return id.equals(action.id) && Util.equals(name, action.name) && Util.equals(description, action.description) && 
-			Util.equals(icon, action.icon) && Util.equals(plugin, action.plugin);
+		return id.equals(action.id) && name.equals(action.name) && Util.equals(description, action.description) && Util.equals(icon, action.icon) && 
+			Util.equals(plugin, action.plugin);
 	}
 
 	public int hashCode() {
 		int result = HASH_INITIAL;
 		result = result * HASH_FACTOR + id.hashCode();
-		result = result * HASH_FACTOR + Util.hashCode(name);
+		result = result * HASH_FACTOR + name.hashCode();
 		result = result * HASH_FACTOR + Util.hashCode(description);
 		result = result * HASH_FACTOR + Util.hashCode(icon);
 		result = result * HASH_FACTOR + Util.hashCode(plugin);
@@ -103,6 +103,6 @@ public final class Action implements Comparable {
 	}
 	
 	public String toString() {
-		return name != null ? name : '(' + id + ')';	
+		return name + '(' + id + ')';	
 	}
 }

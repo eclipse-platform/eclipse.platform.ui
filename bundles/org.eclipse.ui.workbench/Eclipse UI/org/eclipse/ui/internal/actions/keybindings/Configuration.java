@@ -30,7 +30,7 @@ public final class Configuration implements Comparable {
 		throws IllegalArgumentException {
 		super();
 		
-		if (id == null)
+		if (id == null || name == null)
 			throw new IllegalArgumentException();
 		
 		this.id = id;
@@ -68,7 +68,7 @@ public final class Configuration implements Comparable {
 		int compareTo = id.compareTo(configuration.id);
 		
 		if (compareTo == 0) {
-			compareTo = Util.compare(name, configuration.name);	
+			compareTo = name.compareTo(configuration.name);	
 		
 			if (compareTo == 0) {
 				compareTo = Util.compare(description, configuration.description);	
@@ -90,14 +90,14 @@ public final class Configuration implements Comparable {
 			return false;
 
 		Configuration configuration = (Configuration) object;		
-		return id.equals(configuration.id) && Util.equals(name, configuration.name) && Util.equals(description, configuration.description) && 
+		return id.equals(configuration.id) && name.equals(configuration.name) && Util.equals(description, configuration.description) && 
 			Util.equals(parent, configuration.parent) && Util.equals(plugin, configuration.plugin);
 	}
 
 	public int hashCode() {
 		int result = HASH_INITIAL;
 		result = result * HASH_FACTOR + id.hashCode();
-		result = result * HASH_FACTOR + Util.hashCode(name);
+		result = result * HASH_FACTOR + name.hashCode();
 		result = result * HASH_FACTOR + Util.hashCode(description);
 		result = result * HASH_FACTOR + Util.hashCode(parent);
 		result = result * HASH_FACTOR + Util.hashCode(plugin);
@@ -105,6 +105,6 @@ public final class Configuration implements Comparable {
 	}
 
 	public String toString() {
-		return name != null ? name : '(' + id + ')';		
+		return name + '(' + id + ')';			
 	}
 }

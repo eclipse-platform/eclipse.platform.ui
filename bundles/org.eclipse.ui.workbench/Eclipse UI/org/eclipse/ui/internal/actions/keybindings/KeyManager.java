@@ -445,8 +445,8 @@ public class KeyManager {
 		registryBindingSet = Collections.unmodifiableSortedSet(solveRegionalBindingSet(registryRegionalBindingSet, states));
 	}
 
-	public void savePreferences() {		
-		XMLMemento xmlMemento = XMLMemento.createWriteRoot("org.eclipse.ui.keybinding");
+	public void savePreference() {		
+		XMLMemento xmlMemento = XMLMemento.createWriteRoot("org.eclipse.ui.keybindings");
 		IMemento memento = xmlMemento.createChild("bindings");
 		writeBindingSet(memento, preferenceBindingSet);
 		StringWriter stringWriter = new StringWriter();
@@ -459,7 +459,7 @@ public class KeyManager {
 		}
 
 		IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();
-		preferenceStore.setValue("org.eclipse.ui.keybinding", preferenceString);
+		preferenceStore.setValue("org.eclipse.ui.keybindings", preferenceString);
 	}
 
 	public boolean setPreferenceBindingSet(SortedSet preferenceBindingSet)
