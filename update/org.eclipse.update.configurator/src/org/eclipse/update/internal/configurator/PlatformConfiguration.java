@@ -57,7 +57,8 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 
 	private static final String ECLIPSE = "eclipse"; //$NON-NLS-1$
 	private static final String CONFIG_HISTORY = "history"; //$NON-NLS-1$
-	private static final String CONFIG_NAME = "platform.xml"; //$NON-NLS-1$
+	private static final String PLATFORM_XML = "platform.xml"; //$NON-NLS-1$
+	private static final String CONFIG_NAME = ConfigurationActivator.NAME_SPACE + "/" + PLATFORM_XML;
 	private static final String CONFIG_INI = "config.ini"; //NON-NLS-1$
 	private static final String CONFIG_FILE_LOCK_SUFFIX = ".lock"; //$NON-NLS-1$
 	private static final String CONFIG_FILE_TEMP_SUFFIX = ".tmp"; //$NON-NLS-1$
@@ -481,12 +482,11 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		} else {
 			// file protocol - do safe i/o
 			File cfigFile = new File(url.getFile().replace('/', File.separatorChar));
-			if (!cfigFile.getName().equals(CONFIG_NAME)) {
+			if (!cfigFile.getName().equals(PLATFORM_XML)) {
 				if (cfigFile.exists() && cfigFile.isFile()) {
 					Utils.log("Either specify the configuration directory or a file named platform.xml, not " + cfigFile.getName());
 					cfigFile = cfigFile.getParentFile();
 				}
-				cfigFile = new File(cfigFile, ConfigurationActivator.NAME_SPACE);
 				cfigFile = new File(cfigFile, CONFIG_NAME);
 			}
 			File workingDir = cfigFile.getParentFile();
@@ -629,7 +629,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		// a new configuration is created. In either case the resulting
 		// configuration is written into the specified configuration area.
 
-		URL configFileURL = new URL(platformConfigLocation.getURL(), ConfigurationActivator.NAME_SPACE + "/" + CONFIG_NAME);
+		URL configFileURL = new URL(platformConfigLocation.getURL(), CONFIG_NAME);
 		try {	
 			// check concurrent use lock
 			// FIXME: might not need this method call.
@@ -646,7 +646,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 					if (parentLocation == null)
 						throw new IOException(); // no platform.xml found, need to create default site
 					
-					URL sharedConfigFileURL = new URL(parentLocation.getURL(), ConfigurationActivator.NAME_SPACE + "/" + CONFIG_NAME);
+					URL sharedConfigFileURL = new URL(parentLocation.getURL(), CONFIG_NAME);
 
 					config = loadConfig(sharedConfigFileURL);
 					
@@ -965,7 +965,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			props.store(new FileOutputStream(configIni), "Linked configuration");
 			
 			config = new Configuration(new Date());
-			config.setURL(new URL(newConfigLocation.getURL(), ConfigurationActivator.NAME_SPACE + "/" + CONFIG_NAME));
+			config.setURL(new URL(newConfigLocation.getURL(), CONFIG_NAME));
 			config.setLinkedConfig(sharedConfig);
 			config.setDirty(true);
 		} catch (IOException e) {
@@ -1171,6 +1171,9 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			URLConnection connection = url.openConnection();
 			if (connection instanceof PlatformURLConnection) {
 				url = ((PlatformURLConnection) connection).getResolvedURL();
+				// TODO URL resolution by platform returns url file:d:/path as opposed to file:/d:/path
+				File f = new File(url.getFile());
+				url = f.toURL();
 			} else {
 				//				connection = new PlatformURLBaseConnection(url);
 				//				url = ((PlatformURLConnection)connection).getResolvedURL();

@@ -761,7 +761,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		IConfiguredSite[] sites = getConfiguredSites();
 		URL fileURL;
 		try {
-			fileURL = new URL("file:" + siteDirectory.getPath()); //$NON-NLS-1$
+			fileURL = siteDirectory.toURL();
 		} catch (MalformedURLException e) {
 			return false;
 		}

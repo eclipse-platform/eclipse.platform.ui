@@ -147,7 +147,7 @@ public class LocalSiteSelector {
 	 */
 	static SiteBookmark createDirSite(File file) {
 		try {
-			URL url = new URL("file:" + file.getAbsolutePath() + File.separator); //$NON-NLS-1$
+			URL url = file.toURL();
 			String siteName = file.getAbsolutePath();
 			SiteBookmark site = new SiteBookmark(siteName, url, false);
 			site.setLocal(true);

@@ -39,13 +39,10 @@ public class SiteFileFactory extends BaseSiteFactory {
 			String path = url.getFile();
 			File siteLocation = new File(path);
 			if (siteLocation.isDirectory()) {
-				path = siteLocation.getAbsolutePath().replace(File.separatorChar, '/');
-				if (!path.endsWith("/"))
-					path += "/";
-				url = new URL("file:" + path); //$NON-NLS-1$
-	
-				if (new File(siteLocation, Site.SITE_XML).exists()) {
-					siteStream = new FileInputStream(new File(siteLocation, Site.SITE_XML));
+				url = siteLocation.toURL();
+				File siteXMLFile = new File(siteLocation, Site.SITE_XML);
+				if (siteXMLFile.exists()) {
+					siteStream = new FileInputStream(siteXMLFile);
 					site = (Site) factory.parseSite(siteStream);
 				} else {
 					// parse siteLocation
