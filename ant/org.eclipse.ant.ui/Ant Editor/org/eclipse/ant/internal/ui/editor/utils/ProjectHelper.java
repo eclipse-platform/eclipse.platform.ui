@@ -151,12 +151,12 @@ public class ProjectHelper extends ProjectHelper2 {
 				onStartElement0(uri, tag, qname, attrs, context);
 				
 				Locator locator= context.getLocator();
-				fAntModel.addTask(task, currentTask, attrs, locator.getLineNumber(), locator.getColumnNumber());
+				getAntModel().addTask(task, currentTask, attrs, locator.getLineNumber(), locator.getColumnNumber());
 				
 			} catch (BuildException be) {
 				Locator locator= context.getLocator();
-				fAntModel.addTask(task, currentTask, attrs, locator.getLineNumber(), locator.getColumnNumber());
-				fAntModel.error(be);
+				getAntModel().addTask(task, currentTask, attrs, locator.getLineNumber(), locator.getColumnNumber());
+				getAntModel().error(be);
 			}
 		}
 
@@ -167,7 +167,7 @@ public class ProjectHelper extends ProjectHelper2 {
 			super.onEndElement(uri, tag, context);
 			
 			Locator locator= context.getLocator();
-			fAntModel.setCurrentElementLength(locator.getLineNumber(), locator.getColumnNumber());
+			getAntModel().setCurrentElementLength(locator.getLineNumber(), locator.getColumnNumber());
 		}
 		
 		private void onStartElement0(String uri, String tag, String qname, Attributes attrs, AntXMLContext context) {
@@ -272,7 +272,7 @@ public class ProjectHelper extends ProjectHelper2 {
 				try {
 					return super.onStartChild(uri, name, qname, attrs, context);
 				} catch (SAXParseException e) {
-					fAntModel.error(e);
+					getAntModel().error(e);
 					throw e;
 				}
 			}
@@ -299,7 +299,7 @@ public class ProjectHelper extends ProjectHelper2 {
 			super.onEndElement(uri, tag, context);
 			if (currentImportStackSize == 1) {
 				Locator locator= context.getLocator();
-				fAntModel.setCurrentElementLength(locator.getLineNumber(), locator.getColumnNumber());
+				getAntModel().setCurrentElementLength(locator.getLineNumber(), locator.getColumnNumber());
 			}
 		}
 		/* (non-Javadoc)
@@ -310,13 +310,13 @@ public class ProjectHelper extends ProjectHelper2 {
 				super.onStartElement(uri, tag, qname, attrs, context);
 				if (currentImportStackSize == 1) {
 					Locator locator= context.getLocator();
-					fAntModel.addProject(context.getProject(), locator.getLineNumber(), locator.getColumnNumber());
+					getAntModel().addProject(context.getProject(), locator.getLineNumber(), locator.getColumnNumber());
 				}
 				
 			} catch (SAXParseException e) {
-				fAntModel.error(e);
+				getAntModel().error(e);
 			} catch (BuildException be) {
-				fAntModel.error(be);
+				getAntModel().error(be);
 			}
 		}
 		
@@ -349,7 +349,7 @@ public class ProjectHelper extends ProjectHelper2 {
 				super.onStartElement(uri, tag, qname, attrs, context);
 				Target newTarget= context.getCurrentTarget();
 				Locator locator= context.getLocator();
-				fAntModel.addTarget(newTarget, locator.getLineNumber(), locator.getColumnNumber());
+				getAntModel().addTarget(newTarget, locator.getLineNumber(), locator.getColumnNumber());
 			} catch (SAXParseException e) {
 				handleErrorInTarget(context, e);
 			} catch (BuildException be) {
@@ -360,8 +360,8 @@ public class ProjectHelper extends ProjectHelper2 {
 		private void handleErrorInTarget(AntXMLContext context, Exception e) {
 			Target newTarget= context.getCurrentTarget();
 			Locator locator= context.getLocator();
-			fAntModel.addTarget(newTarget, locator.getLineNumber(), locator.getColumnNumber());
-			fAntModel.errorFromElement(e, null, locator.getLineNumber(), locator.getColumnNumber());
+			getAntModel().addTarget(newTarget, locator.getLineNumber(), locator.getColumnNumber());
+			getAntModel().errorFromElement(e, null, locator.getLineNumber(), locator.getColumnNumber());
 		}
 		
 		/* (non-Javadoc)
@@ -370,7 +370,7 @@ public class ProjectHelper extends ProjectHelper2 {
 		public void onEndElement(String uri, String tag, AntXMLContext context) {
 			super.onEndElement(uri, tag, context);
 			Locator locator= context.getLocator();
-			fAntModel.setCurrentElementLength(locator.getLineNumber(), locator.getColumnNumber());
+			getAntModel().setCurrentElementLength(locator.getLineNumber(), locator.getColumnNumber());
 		}
 		
 		/* (non-Javadoc)
@@ -397,19 +397,19 @@ public class ProjectHelper extends ProjectHelper2 {
 		 * @see org.xml.sax.ErrorHandler#error(org.xml.sax.SAXParseException)
 		 */
 		public void error(SAXParseException e) {
-			fAntModel.error(e);
+			getAntModel().error(e);
 		}
 		/* (non-Javadoc)
 		 * @see org.xml.sax.ErrorHandler#fatalError(org.xml.sax.SAXParseException)
 		 */
 		public void fatalError(SAXParseException e) {
-			fAntModel.fatalError(e);
+			getAntModel().fatalError(e);
 		}
 		/* (non-Javadoc)
 		 * @see org.xml.sax.ErrorHandler#warning(org.xml.sax.SAXParseException)
 		 */
 		public void warning(SAXParseException e) {
-			fAntModel.warning(e);
+			getAntModel().warning(e);
 		}
 		/* (non-Javadoc)
 		 * @see org.xml.sax.EntityResolver#resolveEntity(java.lang.String, java.lang.String)
@@ -418,7 +418,7 @@ public class ProjectHelper extends ProjectHelper2 {
 			InputSource source= super.resolveEntity(publicId, systemId);
 			if (source != null) {
 				String path = fu.fromURI(source.getSystemId());
-				fAntModel.addEntity(currentEntityName, path);
+				getAntModel().addEntity(currentEntityName, path);
 			}
 			return source;
 		}
@@ -431,12 +431,12 @@ public class ProjectHelper extends ProjectHelper2 {
 			if (columnNumber > -1) {
 				int lineNumber= start;
 				try {
-					lineNumber= fAntModel.getOffset(locator.getLineNumber(), 1);
+					lineNumber= getAntModel().getOffset(locator.getLineNumber(), 1);
 				} catch (BadLocationException e1) {
 				}
-				fAntModel.errorFromElementText(e, lineNumber, locator.getColumnNumber());
+				getAntModel().errorFromElementText(e, lineNumber, locator.getColumnNumber());
 			} else {
-				fAntModel.errorFromElementText(e, start, count);
+				getAntModel().errorFromElementText(e, start, count);
 			}
 		}
 	 }
@@ -487,7 +487,7 @@ public class ProjectHelper extends ProjectHelper2 {
 	 }
 	
 	public ProjectHelper(AntModel model) {
-		fAntModel= model;
+		setAntModel(model);
 	}
 
 	/**
@@ -604,5 +604,13 @@ public class ProjectHelper extends ProjectHelper2 {
             // top level file
             parse(project, source, new RootHandler(context, mainHandler));
         }
+	}
+
+	public static void setAntModel(AntModel antModel) {
+		fAntModel = antModel;
+	}
+
+	public static AntModel getAntModel() {
+		return fAntModel;
 	}
 }

@@ -62,6 +62,7 @@ public class AntModel {
 	private AntTargetNode fIncrementalTarget= null;
 	private boolean fReplaceHasOccurred= false;
 	private int fRemoveLengthOfReplace= 0;
+	private DirtyRegion fDirtyRegion= null;
 	
 	 /**
      * Stack of still open elements.
@@ -124,6 +125,7 @@ public class AntModel {
 	public void reconcile(DirtyRegion region) {
 		//TODO turn off incremental as it is a work in progress
 		region= null; 
+		fDirtyRegion= region;
 		synchronized (fDirtyLock) {
 			if (!fIsDirty) {
 				return;
@@ -149,11 +151,11 @@ public class AntModel {
 			if (fDocument == null) {
 				fProjectNode= null;
 			} else {
-				//long start= System.currentTimeMillis();
+				long start= System.currentTimeMillis();
 				reset(region);
 				parseDocument(fDocument, region);
 				fRemoveLengthOfReplace= 0;
-				//System.out.println(System.currentTimeMillis() - start);
+				System.out.println(System.currentTimeMillis() - start);
 			} 
 	
 			fCore.notifyDocumentModelListeners(new DocumentModelChangeEvent(this));
@@ -185,14 +187,16 @@ public class AntModel {
 	private void parseDocument(IDocument input, DirtyRegion region) {
 		boolean parsed= true;
 		if (input.getLength() == 0) {
+			fProjectNode= null;
 			parsed= false;
 			return;
 		}
+		boolean incremental= false;
 		Project project= null;
     	try {
     		String textToParse= null;
     		ProjectHelper projectHelper= null;
-			if (region == null) {  //full parse
+			if (region == null || fProjectNode == null) {  //full parse
 				if (fProjectNode == null) {
 					project = new Project();
 					projectHelper= prepareForFullParse(project);
@@ -208,19 +212,21 @@ public class AntModel {
 					parsed= false;
 					return;
 				}
+				incremental= true;
 				projectHelper= (ProjectHelper)project.getReference("ant.projectHelper"); //$NON-NLS-1$
 			}
 			beginReporting();
 			Map references= project.getReferences();
 			references.remove("ant.parsing.context"); //$NON-NLS-1$
+			ProjectHelper.setAntModel(this);
 			projectHelper.parse(project, textToParse);
 			
     	} catch(BuildException e) {
 			handleBuildException(e, null);
     	} finally {
     		if (parsed) {
-    			if (fIncrementalTarget != null) {
-    	    		updateForIncrementalParse(region);
+    			if (incremental) {
+    	    		updateAfterIncrementalChange(region, true);
     	    	}
     			resolveBuildfile();
     			endReporting();
@@ -230,7 +236,7 @@ public class AntModel {
     	}
 	}
 	
-	private void updateForIncrementalParse(DirtyRegion region) {
+	private void updateAfterIncrementalChange(DirtyRegion region, boolean updateProjectLength) {
 		if (fProjectNode == null) {
 			return;
 		}
@@ -238,9 +244,12 @@ public class AntModel {
 		if (editAdjustment == 0) {
 			return;
 		}
-		fProjectNode.setLength(fProjectNode.getLength() + editAdjustment);
-		//fIncrementalTarget.setLength(fIncrementalTarget.getLength() + editAdjustment);
-		if (fProjectNode.hasChildren()) {
+		if (updateProjectLength) { //edit within the project 
+			fProjectNode.setLength(fProjectNode.getLength() + editAdjustment);
+		} else {
+			fProjectNode.setOffset(fProjectNode.getOffset() + editAdjustment);
+		}
+		if ((fIncrementalTarget != null || !updateProjectLength) && fProjectNode.hasChildren()) {
 			List children= fProjectNode.getChildNodes();
 			int index= children.indexOf(fIncrementalTarget) + 1;
 			updateNodesForIncrementalParse(editAdjustment, children, index);
@@ -281,10 +290,14 @@ public class AntModel {
 		AntElementNode node= fProjectNode.getNode(region.getOffset());
 		if (node == null) {
 			if (fProjectNode.getLength() > 0) {
-				//outside of any element...not interesting
+				//outside of any element
+				if (region.getOffset() < fProjectNode.getOffset()) {
+					updateAfterIncrementalChange(region, false);
+				}
 				return null;
 			} else { //nodes don't know their lengths due to parsing error --> full parse
 				fProjectNode.reset();
+				System.out.println("full parse");
 				return input.get();
 			}
 			
@@ -299,6 +312,7 @@ public class AntModel {
 			}
 			textToParse= input.get();
 			fProjectNode.reset();
+			System.out.println("full parse");
 		} else {
 			fIncrementalTarget= (AntTargetNode)node;
 			markHierarchy(node, false);
@@ -343,7 +357,7 @@ public class AntModel {
 	private int determineEditAdjustment(DirtyRegion region) {
 		int editAdjustment= 0;
 		if (region.getType().equals(DirtyRegion.INSERT)) {
-			editAdjustment+= region.getLength() + fRemoveLengthOfReplace;
+			editAdjustment+= region.getLength() - fRemoveLengthOfReplace;
 		} else {
 			editAdjustment-= region.getLength();
 		}
@@ -524,25 +538,12 @@ public class AntModel {
 		}
 		fTaskToNode.put(newTask, taskNode);
 		fStillOpenElements.push(taskNode);
-		if (fIncrementalTarget != null) {
-			line = computeCorrection(line);
-		}
 		computeOffset(taskNode, line, column);
 		if (fNodeBeingResolved instanceof AntImportNode) {
 			taskNode.setImportNode(fNodeBeingResolved);
-	}
+		}
 	}
 	
-	private int computeCorrection(int line) {
-		try {
-			int realLineCorrection= 0;
-			realLineCorrection= getLine(fIncrementalTarget.getOffset()) - 2;
-			line= line + realLineCorrection;
-		} catch (BadLocationException e) {
-		}
-		return line;
-	}
-
 	public void addEntity(String entityName, String entityPath) {
 		if (fEntityNameToPath == null) {
 			fEntityNameToPath= new HashMap();
@@ -691,15 +692,15 @@ public class AntModel {
 		}
 		try {
 			int offset;
-				String prefix= "<"; //$NON-NLS-1$
-				if (column <= 0) {
-					offset= getOffset(line, 0);
-					int lastCharColumn= getLastCharColumn(line);
-					offset= computeOffsetUsingPrefix(element, line, offset, prefix, lastCharColumn);
-				} else {
-					offset= getOffset(line, column);
-					offset= computeOffsetUsingPrefix(element, line, offset, prefix, column);
-				}
+			String prefix= "<"; //$NON-NLS-1$
+			if (column <= 0) {
+				offset= getOffset(line, 0);
+				int lastCharColumn= getLastCharColumn(line);
+				offset= computeOffsetUsingPrefix(element, line, offset, prefix, lastCharColumn);
+			} else {
+				offset= getOffset(line, column);
+				offset= computeOffsetUsingPrefix(element, line, offset, prefix, column);
+			}
  			
 			element.setOffset(offset + 1);
 			element.setSelectionLength(element.getName().length());
@@ -714,9 +715,6 @@ public class AntModel {
 		if (lastIndex > -1) {
 			offset= getOffset(line, lastIndex + 1);
 		} else {
-			//offset= getOffset(line, column);
-			//IRegion result= fFindReplaceAdapter.search(offset - 1, prefix, false, false, false, false);
-			//offset= result.getOffset();
 			return computeOffsetUsingPrefix(element, line - 1, offset, prefix, getLastCharColumn(line - 1));
 		}
 		return offset;
@@ -747,11 +745,7 @@ public class AntModel {
 	public void setCurrentElementLength(int lineNumber, int column) {
 		fLastNode= (AntElementNode)fStillOpenElements.pop();
 		if (fLastNode == fCurrentTargetNode) {
-			//the current target element has been closed
-			fCurrentTargetNode= null;
-			if (fLastNode == fIncrementalTarget) {
-				lineNumber= computeCorrection(lineNumber);
-			}
+			fCurrentTargetNode= null; //the current target element has been closed
 		}
 		computeLength(fLastNode, lineNumber, column);
 	}
@@ -958,6 +952,10 @@ public class AntModel {
 			return;
 		}
 		AntElementNode node= (AntElementNode)fStillOpenElements.peek();
+		if (fIncrementalTarget != null) { //update the targets length for the edit
+			fIncrementalTarget.setLength(fIncrementalTarget.getLength() + determineEditAdjustment(fDirtyRegion));
+		}
+		
 		markHierarchy(node, true);
 		
 		if (exception instanceof SAXParseException) {

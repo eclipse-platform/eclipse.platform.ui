@@ -63,5 +63,6 @@ public class AntProjectNode extends AntElementNode {
 	public void reset() {
 		super.reset();
 		fProject.getTargets().clear();
+		setIsErrorNode(false);
 	}
 }

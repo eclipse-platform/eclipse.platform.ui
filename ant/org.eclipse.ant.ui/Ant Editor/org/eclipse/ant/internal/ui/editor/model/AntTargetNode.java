@@ -87,6 +87,8 @@ public class AntTargetNode extends AntElementNode {
 	public void reset() {
 		super.reset();
 		 Map currentTargets = fTarget.getProject().getTargets();
-		 currentTargets.remove(fTarget.getName());
+		 if (currentTargets.get(fTarget.getName()) != null) {
+		 	currentTargets.remove(fTarget.getName());
+		 }
 	}
 }
