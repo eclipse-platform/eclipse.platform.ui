@@ -14,7 +14,6 @@ package org.eclipse.ant.tests.ui.performance;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.ant.tests.ui.AbstractAntUIBuildPerformanceTest;
-import org.eclipse.ant.tests.ui.testplugin.ConsoleLineTracker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.test.performance.Dimension;
 
