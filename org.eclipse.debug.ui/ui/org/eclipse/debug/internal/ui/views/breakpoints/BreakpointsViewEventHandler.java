@@ -22,8 +22,7 @@ import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ActivityManagerEvent;
 import org.eclipse.ui.activities.IActivityManagerListener;
@@ -68,7 +67,38 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 			fView.asyncExec(new Runnable() {
 				public void run() {
 					if (fView.isAvailable()) {
-						CheckboxTableViewer viewer = (CheckboxTableViewer)fView.getViewer();
+						String autoGroup= fView.getAutoGroup();
+						if (autoGroup != null) {
+						    // Add any new breakpoints to the "default group"
+							for (int i = 0; i < breakpoints.length; i++) {
+								try {
+									breakpoints[i].setGroup(autoGroup);
+								} catch (CoreException e) {
+								}
+							}
+						}
+						CheckboxTreeViewer viewer = fView.getCheckboxViewer();
+						viewer.refresh();
+						if (autoGroup != null) {
+						    // After updating to pick up structural changes (possible new group creation),
+						    // update the checked state of the default group.
+							int enabledChildren= 0;
+							Object[] children = fView.getTreeContentProvider().getChildren(autoGroup);
+							for (int i = 0; i < children.length; i++) {
+                                try {
+                                    if (((IBreakpoint) children[i]).isEnabled()) {
+                                        enabledChildren++;
+                                    }
+                                } catch (CoreException e) {
+                                }
+                            }
+							if (enabledChildren == children.length) {
+							    viewer.setChecked(autoGroup, true);
+							    viewer.setGrayed(autoGroup, false);
+							} else {
+							    viewer.setGrayChecked(autoGroup, enabledChildren > 0);
+							}
+						}
 						MultiStatus status= new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, DebugUIViewsMessages.getString("BreakpointsViewEventHandler.4"), null); //$NON-NLS-1$
 						for (int i = 0; i < breakpoints.length; i++) {
 							IBreakpoint breakpoint = breakpoints[i];
@@ -76,7 +106,6 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 							if (!DebugPlugin.getDefault().getBreakpointManager().isRegistered(breakpoint)) {
 								continue;
 							}
-							viewer.add(breakpoint);
 							try {
 								boolean enabled= breakpoint.isEnabled();
 								if (viewer.getChecked(breakpoint) != enabled) {
@@ -109,20 +138,8 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 			fView.asyncExec(new Runnable() {
 				public void run() {
 					if (fView.isAvailable()) {
-						TableViewer viewer= (TableViewer)fView.getViewer();
-						int[] indices= viewer.getTable().getSelectionIndices();
-						viewer.getControl().setRedraw(false);
-						viewer.remove(breakpoints);
-						viewer.getControl().setRedraw(true);
-						if (viewer.getSelection().isEmpty()) {
-							if (indices.length > 0) {
-								int index= indices[0];
-								viewer.getTable().select(Math.min(index, viewer.getTable().getItemCount() - 1));
-							}
-							//fire the selection changed as does not occur when
-							//setting selection on the swt widget
-							viewer.setSelection(viewer.getSelection());
-						}
+						CheckboxTreeViewer viewer= (CheckboxTreeViewer)fView.getViewer();
+						viewer.refresh();
 						fView.updateObjects();
 					}
 				}
@@ -133,31 +150,58 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 	/**
 	 * @see IBreakpointsListener#breakpointsChanged(IBreakpoint[], IMarkerDelta[])
 	 */
-	public void breakpointsChanged(final IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
+	public void breakpointsChanged(final IBreakpoint[] breakpoints, final IMarkerDelta[] deltas) {
 		if (fView.isAvailable() & fView.isVisible()) {
 			fView.asyncExec(new Runnable() {
 				public void run() {
 					if (fView.isAvailable()) {
-						CheckboxTableViewer viewer = (CheckboxTableViewer)fView.getViewer(); 
-						viewer.getControl().setRedraw(false);
+						CheckboxTreeViewer viewer = (CheckboxTreeViewer)fView.getViewer(); 
+						boolean refreshCheckedState= false;
 						for (int i = 0; i < breakpoints.length; i++) {
 							IBreakpoint breakpoint = breakpoints[i];
 							IMarker marker= breakpoint.getMarker();
 							if (marker != null && marker.exists()) {
-								// only refresh if still exists
+								IMarkerDelta delta= deltas[i];
+								if (delta != null) {
+									String oldGroup= (String) delta.getAttribute(IBreakpoint.GROUP);
+									String newGroup= null;
+									try {
+										newGroup= breakpoint.getGroup();
+									} catch (CoreException e1) {
+									}
+									boolean needsRefresh= false;
+									if (newGroup != oldGroup) { // new == old if they're both null
+										if (newGroup == null || oldGroup == null) {
+											// one is null, one isn't => changed
+											needsRefresh= true;
+										} else { // moved from one group to another ?
+											needsRefresh= !newGroup.equals(oldGroup);
+										}
+									}
+									if (needsRefresh) {
+										// If the group has changed, completely refresh the view to
+										// pick up structural changes.
+										fView.getViewer().refresh();
+										fView.initializeCheckedState();
+										return;
+									}
+								}
 								try {
 									boolean enabled= breakpoint.isEnabled();
 									if (viewer.getChecked(breakpoint) != enabled) {
-										viewer.setChecked(breakpoint, breakpoint.isEnabled());								
+										refreshCheckedState= true;
+										viewer.setChecked(breakpoint, breakpoint.isEnabled());
+										viewer.update(breakpoint, null);							
 									}
 								} catch (CoreException e) {
 									DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIViewsMessages.getString("BreakpointsViewEventHandler.1"), DebugUIViewsMessages.getString("BreakpointsViewEventHandler.2"), e); //$NON-NLS-1$ //$NON-NLS-2$
 									DebugUIPlugin.log(e);
 								}
-								viewer.refresh(breakpoint);
 							}
 						}
-						viewer.getControl().setRedraw(true);
+						if (refreshCheckedState) {
+							fView.initializeCheckedState();
+						}
 						fView.updateObjects();
 					}
 				}

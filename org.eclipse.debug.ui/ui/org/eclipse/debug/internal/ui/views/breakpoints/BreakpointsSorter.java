@@ -49,6 +49,15 @@ public class BreakpointsSorter extends ViewerSorter {
 		 *  element is greater than the second element
 		 */
 		public int compare(Viewer viewer, Object e1, Object e2) {
+			// Show sorted groups, then sorted breakpoints.
+			if (e1 instanceof String) {
+				if (e2 instanceof String) {
+					return ((String) e1).compareTo((String) e2);
+				}
+				return -1;
+			} else if (e2 instanceof String) {
+				return 1;
+			}
 	
 			IBreakpoint b1= (IBreakpoint)e1;
 			IBreakpoint b2= (IBreakpoint)e2;

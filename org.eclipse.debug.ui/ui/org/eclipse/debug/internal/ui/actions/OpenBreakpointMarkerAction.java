@@ -82,17 +82,19 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 	 */
 	public void selectionChanged(IStructuredSelection sel) {
 		if (sel.size() == 1) {
-			breakpoint= (IBreakpoint)sel.getFirstElement();
-			input= fgPresentation.getEditorInput(breakpoint);
-			if (input != null) {
-				setEnabled(true);
-			} else {
-				setEnabled(false);
+			Object element = sel.getFirstElement();
+			if (element instanceof IBreakpoint) {
+				breakpoint= (IBreakpoint) element;
+				input= fgPresentation.getEditorInput(breakpoint);
+				if (input != null) {
+					setEnabled(true);
+					return;
+				}
 			}
 		} else {
 			breakpoint = null;
 			input = null;
-			setEnabled(false);
 		}
+		setEnabled(false);
 	}
 }

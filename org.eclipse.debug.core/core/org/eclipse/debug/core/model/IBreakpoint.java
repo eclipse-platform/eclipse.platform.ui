@@ -114,7 +114,14 @@ public interface IBreakpoint extends IAdaptable {
 	 *
 	 * @see org.eclipse.core.resources.IMarker#getAttribute(String, boolean)
 	 */
-	public static final String PERSISTED= "org.eclipse.debug.core.persisted"; //$NON-NLS-1$		
+	public static final String PERSISTED= "org.eclipse.debug.core.persisted"; //$NON-NLS-1$
+	
+	/**
+	 * Breakpoint group marker attribute (value <code>"org.eclipse.debug.core.group"</code>).
+	 * The attribute is a <code>String</code> corresponding to the group
+	 * name.
+	 */
+	public static final String GROUP= "org.eclipse.debug.core.group"; //$NON-NLS-1$
 	
 	/**
 	 * Deletes this breakpoint's underlying marker, and removes
@@ -215,7 +222,28 @@ public interface IBreakpoint extends IAdaptable {
 	 * @exception CoreException if unable to set the associated attribute on
 	 *  this breakpoint's underlying marker.
 	 */
-	public void setPersisted(boolean registered) throws CoreException;	
+	public void setPersisted(boolean registered) throws CoreException;
+	
+	/**
+	 * Returns the name of the group this breakpoint belongs to
+	 * or <code>null</code> if none.
+	 * 
+	 * @return the name of the group this breakpoint belongs to or
+	 *  <code>null</code>.
+	 * @exception CoreException if unable to access the associated attribute
+	 *  on this breakpoint's underlying marker
+	 */
+	public String getGroup() throws CoreException;
+	
+	/**
+	 * Sets this breakpoint's group to the group with the given name or
+	 * <code>null</code> to set the group to none.
+	 * 
+	 * @param groupName the name of the group to which this breakpoint belongs 
+	 * @exception CoreException if unable to set the associated attribute on
+	 *  this breakpoint's underlying marker.
+	 */
+	public void setGroup(String groupName) throws CoreException;
 }
 
 
