@@ -216,8 +216,8 @@ public class ReentrantLock {
 		public boolean ruleContains(IResource resource) {
 			for (Iterator iter = rules.iterator(); iter.hasNext();) {
 				ISchedulingRule rule = (ISchedulingRule) iter.next();
-				if (rule != NULL_SCHEDULING_RULE) {
-					return rule.contains(resource);
+				if (rule != NULL_SCHEDULING_RULE && rule.contains(resource)) {
+					return true;
 				}
 			}
 			return false;
