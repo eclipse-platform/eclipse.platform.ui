@@ -418,7 +418,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		IEditorPart editor = null;
 		try {
 			editor= page.getActiveEditor();
-			if (!editor.getEditorInput().equals(input)) {
+			if (editor != null && !editor.getEditorInput().equals(input)) {
 				editor = page.openEditor(input, editorId, false);
 			}
 		} catch (PartInitException e) {
