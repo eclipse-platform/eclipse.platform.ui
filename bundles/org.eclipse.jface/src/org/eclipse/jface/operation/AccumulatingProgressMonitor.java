@@ -143,9 +143,15 @@ import org.eclipse.swt.widgets.Display;
      * @param subTask
      * @param work
      */
-    private void createCollector(String subTask, double work) {
-        collector = new Collector(subTask, work, getWrappedProgressMonitor());
-        display.asyncExec(collector);
+    private void createCollectorIfRequired(String subTask, double work) {
+    	boolean newCollector = false;
+    	synchronized (this) {
+    		if(collector == null)
+    			collector = new Collector(subTask, work, getWrappedProgressMonitor());
+		}
+        
+    	if(newCollector)
+    		display.asyncExec(collector);
     }
 
     /* (non-Javadoc)
@@ -166,11 +172,8 @@ import org.eclipse.swt.widgets.Display;
      * Method declared on IProgressMonitor.
      */
     public synchronized void internalWorked(final double work) {
-        if (collector == null) {
-            createCollector(null, work);
-        } else {
-            collector.worked(work);
-        }
+        createCollectorIfRequired(null, work);
+        collector.worked(work);
     }
 
     /* (non-Javadoc)
@@ -191,12 +194,10 @@ import org.eclipse.swt.widgets.Display;
     /* (non-Javadoc)
      * Method declared on IProgressMonitor.
      */
-    public synchronized void subTask(final String name) {
-        if (collector == null) {
-            createCollector(name, 0);
-        } else {
-            collector.subTask(name);
-        }
+    public void subTask(final String name) {
+        createCollectorIfRequired(name, 0);
+        collector.subTask(name);
+        
     }
 
     /* (non-Javadoc)
