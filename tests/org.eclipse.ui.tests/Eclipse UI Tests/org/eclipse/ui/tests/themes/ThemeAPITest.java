@@ -110,79 +110,186 @@ public class ThemeAPITest extends ThemeTest {
                 .getRGB("factorycolor"));
     }
 
-    public void testColorPreferenceListener() {
+    public void testColorPreferenceListener_def_swtcolor() {
         IPreferenceStore store = fWorkbench.getPreferenceStore();
         ITheme defaultTheme = getDefaultTheme();
-        ITheme theme1 = getTheme1();
 
         testOverrideColorPreference(defaultTheme, store, "swtcolor");
-        testOverrideColorPreference(theme1, store, "swtcolor");
+    }
+    
+    public void testColorPreferenceListener_def_rgbcolor() {
+        IPreferenceStore store = fWorkbench.getPreferenceStore();
+        ITheme defaultTheme = getDefaultTheme();
+
         testOverrideColorPreference(defaultTheme, store, "rgbcolor");
-        testOverrideColorPreference(theme1, store, "rgbcolor");
+    }    
+    
+    public void testColorPreferenceListener_def_defaultedcolor() {
+        IPreferenceStore store = fWorkbench.getPreferenceStore();
+        ITheme defaultTheme = getDefaultTheme();
+
         testOverrideColorPreference(defaultTheme, store, "defaultedcolor");
-        testOverrideColorPreference(theme1, store, "defaultedcolor");
+    }
+    
+    public void testColorPreferenceListener_def_nooverridecolor() {
+        IPreferenceStore store = fWorkbench.getPreferenceStore();
+        ITheme defaultTheme = getDefaultTheme();
+
         testNoOverrideColorPreference(defaultTheme, store, "nooverridecolor");
+    }
+    
+    public void testColorPreferenceListener_th1_swtcolor() {
+    	IPreferenceStore store = fWorkbench.getPreferenceStore();
+    	ITheme theme1 = getTheme1();
+
+        testOverrideColorPreference(theme1, store, "swtcolor");
+    }
+
+    public void testColorPreferenceListener_th1_rgbcolor() {
+    	IPreferenceStore store = fWorkbench.getPreferenceStore();
+    	ITheme theme1 = getTheme1();
+    	
+        testOverrideColorPreference(theme1, store, "rgbcolor");
+    }
+    
+    public void testColorPreferenceListener_th1_defaultedcolor() {
+    	IPreferenceStore store = fWorkbench.getPreferenceStore();
+    	ITheme theme1 = getTheme1();
+    	
+        testOverrideColorPreference(theme1, store, "defaultedcolor");
+    }
+
+    public void testColorPreferenceListener_th1_nooverridecolor() {
+    	IPreferenceStore store = fWorkbench.getPreferenceStore();
+    	ITheme theme1 = getTheme1();
+    
         testNoOverrideColorPreference(theme1, store, "nooverridecolor");
     }
 
-    public void testDataKeySet() {
+    public void testDataKeySet_data1() {
         ITheme defaultTheme = getDefaultTheme();
         Set themeKeys = defaultTheme.keySet();
+
         assertTrue(themeKeys.contains("data1"));
+    }
+    
+    public void testDataKeySet_data2() {
+        ITheme defaultTheme = getDefaultTheme();
+        Set themeKeys = defaultTheme.keySet();
+        
         assertTrue(themeKeys.contains("data2"));
+    }
+    
+    public void testDataKeySet_int1() {
+        ITheme defaultTheme = getDefaultTheme();
+        Set themeKeys = defaultTheme.keySet();
+        
         assertTrue(themeKeys.contains("int1"));
+    }
+    
+    public void testDataKeySet_bool1() {
+        ITheme defaultTheme = getDefaultTheme();
+        Set themeKeys = defaultTheme.keySet();
+        
         assertTrue(themeKeys.contains("bool1"));
+    }
+    
+    public void testDataKeySet_BOGUSKEY() {
+        ITheme defaultTheme = getDefaultTheme();
+        Set themeKeys = defaultTheme.keySet();
+        
         assertFalse(themeKeys.contains("BOGUSKEY"));
     }
 
-    public void testDataOverride() {
+    public void testDataOverride_data1() {
         ITheme theme1 = getTheme1();
+        
         assertEquals("override1", theme1.getString("data1"));
+    }
+    
+    public void testDataOverride_data2() {
+        ITheme theme1 = getTheme1();
+
         assertEquals("value2", theme1.getString("data2"));
     }
 
-    public void testDefaultedColor() {
+    public void testDefaultedColor_rgbcolor() {
         ITheme defaultTheme = getDefaultTheme();
         assertEquals(defaultTheme.getColorRegistry().getRGB("rgbcolor"),
                 defaultTheme.getColorRegistry().getRGB("defaultedcolor"));
+    }
+ 
+    public void testDefaultedColor_defaultedcolor() {
+        ITheme defaultTheme = getDefaultTheme();
         assertEquals(defaultTheme.getColorRegistry().getRGB("defaultedcolor"),
                 defaultTheme.getColorRegistry().getRGB("defaultedcolor2"));
+    }
+    
+    public void testDefaultedColor_defaultedcolor2() {
+            ITheme defaultTheme = getDefaultTheme();
+        
         assertEquals(defaultTheme.getColorRegistry().getRGB("defaultedcolor2"),
                 defaultTheme.getColorRegistry().getRGB("defaultedcolor3"));
     }
 
-    public void testDefaultedFont() {
+    public void testDefaultedFont_valfont() {
         ITheme defaultTheme = getDefaultTheme();
         assertArrayEquals(
                 defaultTheme.getFontRegistry().getFontData("valfont"),
                 defaultTheme.getFontRegistry().getFontData("defaultedfont"));
+    }
+    
+    public void testDefaultedFont_defaultedfont() {
+        ITheme defaultTheme = getDefaultTheme();
         assertArrayEquals(defaultTheme.getFontRegistry().getFontData(
                 "defaultedfont"), defaultTheme.getFontRegistry().getFontData(
                 "defaultedfont2"));
+    }
+    
+    public void testDefaultedFont_defaultedfont2() {
+        ITheme defaultTheme = getDefaultTheme();
         assertArrayEquals(defaultTheme.getFontRegistry().getFontData(
                 "defaultedfont2"), defaultTheme.getFontRegistry().getFontData(
                 "defaultedfont3"));
-
     }
 
-    public void testDefaultedFontOverride() {
+    public void testDefaultedFontOverride_valfont() {
         ITheme theme1 = getTheme1();
         assertArrayEquals(theme1.getFontRegistry().getFontData("valfont"),
                 theme1.getFontRegistry().getFontData("defaultedfont"));
+    }
+    
+    public void testDefaultedFontOverride_defaultedfont2() {
+        ITheme theme1 = getTheme1();
+
         assertArrayEquals(new FontData[] { new FontData("Courier", 16,
                 SWT.NORMAL)}, theme1.getFontRegistry().getFontData(
                 "defaultedfont2"));
+    }
+    
+    public void testDefaultedFontOverride_defaultedfont3() {
+        ITheme theme1 = getTheme1();
+
         assertArrayEquals(theme1.getFontRegistry()
                 .getFontData("defaultedfont2"), theme1.getFontRegistry()
                 .getFontData("defaultedfont3"));
     }
 
-    public void testDefaultedOverrideColor() {
-        ITheme theme1 = getTheme1();
+    public void testDefaultedOverrideColor_rgbcolor() {
+        ITheme theme1 = getTheme1();       
         assertEquals(theme1.getColorRegistry().getRGB("rgbcolor"), theme1
                 .getColorRegistry().getRGB("defaultedcolor"));
+    }
+    
+    public void testDefaultedOverrideColor_defaultedcolor2() {
+        ITheme theme1 = getTheme1();
         assertEquals(new RGB(9, 9, 9), theme1.getColorRegistry().getRGB(
                 "defaultedcolor2"));
+        
+    }
+    
+    public void testDefaultedOverrideColor_defaultedcolor3() {
+        ITheme theme1 = getTheme1();
         assertEquals(theme1.getColorRegistry().getRGB("defaultedcolor2"),
                 theme1.getColorRegistry().getRGB("defaultedcolor3"));
     }
@@ -210,18 +317,58 @@ public class ThemeAPITest extends ThemeTest {
         currentTheme.removePropertyChangeListener(themeListener);
     }
 
-    public void testFontPreferenceListener() {
+    public void testFontPreferenceListener_def_novalfont() {
         IPreferenceStore store = fWorkbench.getPreferenceStore();
         ITheme defaultTheme = getDefaultTheme();
+        testOverrideFontPreference(defaultTheme, store, "novalfont");
+    }
+    
+    public void testFontPreferenceListener_def_valfont() {
+        IPreferenceStore store = fWorkbench.getPreferenceStore();
+        ITheme defaultTheme = getDefaultTheme();
+        
+        testOverrideFontPreference(defaultTheme, store, "valfont");
+    }
+    
+    public void testFontPreferenceListener_def_defaultedfont() {
+        IPreferenceStore store = fWorkbench.getPreferenceStore();
+        ITheme defaultTheme = getDefaultTheme();
+        
+        testOverrideFontPreference(defaultTheme, store, "defaultedfont");
+    }
+    
+    public void testFontPreferenceListener_def_nooverridefont() {
+        IPreferenceStore store = fWorkbench.getPreferenceStore();
+        ITheme defaultTheme = getDefaultTheme();
+        
+        testNoOverrideFontPreference(defaultTheme, store, "nooverridefont");
+    }
+
+    public void testFontPreferenceListener_th1_valfont() {
+        IPreferenceStore store = fWorkbench.getPreferenceStore();
+        ITheme theme1 = getTheme1();
+        
+        testOverrideFontPreference(theme1, store, "valfont");
+    }
+    
+    public void testFontPreferenceListener_th1_novalfont() {
+        IPreferenceStore store = fWorkbench.getPreferenceStore();
+        ITheme theme1 = getTheme1();
+        
+        testOverrideFontPreference(theme1, store, "novalfont");
+    }
+    
+    public void testFontPreferenceListener_th1_defaultedfont() {
+        IPreferenceStore store = fWorkbench.getPreferenceStore();
+        ITheme theme1 = getTheme1();
+    
+        testOverrideFontPreference(theme1, store, "defaultedfont");
+    }
+    
+    public void testFontPreferenceListener_th1_nooverridefont() {
+        IPreferenceStore store = fWorkbench.getPreferenceStore();
         ITheme theme1 = getTheme1();
 
-        testOverrideFontPreference(defaultTheme, store, "novalfont");
-        testOverrideFontPreference(theme1, store, "novalfont");
-        testOverrideFontPreference(defaultTheme, store, "valfont");
-        testOverrideFontPreference(theme1, store, "valfont");
-        testOverrideFontPreference(defaultTheme, store, "defaultedfont");
-        testOverrideFontPreference(theme1, store, "defaultedfont");
-        testNoOverrideFontPreference(defaultTheme, store, "nooverridefont");
         testNoOverrideFontPreference(theme1, store, "nooverridefont");
     }
 
@@ -393,18 +540,18 @@ public class ThemeAPITest extends ThemeTest {
                 .getRGB(), theme1.getColorRegistry().getRGB("swtcolor"));
     }
 
-    public void testThemeDescriptions() {
-        {
-            ITheme defaultTheme = getDefaultTheme();
-            assertEquals(IThemeManager.DEFAULT_THEME, defaultTheme.getId());
-            // don't bother testing against the actual value
-            assertNotNull(defaultTheme.getLabel());
-        }
-        {
-            ITheme theme1 = getTheme1();
-            assertEquals(THEME1, theme1.getId());
-            assertEquals("test theme 1", theme1.getLabel());
-        }
+    public void testThemeDescription_default() {
+        ITheme defaultTheme = getDefaultTheme();
+        assertEquals(IThemeManager.DEFAULT_THEME, defaultTheme.getId());
+        // don't bother testing against the actual value
+        assertNotNull(defaultTheme.getLabel());
+    }
+    
+    
+    public void testThemeDescription_theme1() {
+        ITheme theme1 = getTheme1();
+        assertEquals(THEME1, theme1.getId());
+        assertEquals("test theme 1", theme1.getLabel());
     }
 
     public void testValFont() {
