@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.internal.SelectionEnabler;
+import org.eclipse.ui.SelectionEnabler;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
@@ -31,7 +31,6 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements IAdaptab
 	private String name;
 	private ImageDescriptor imageDescriptor;
 	private String description;
-	// @issue SelectionEnabler is private class in generic workbench project
 	private SelectionEnabler selectionEnabler;
 	private IConfigurationElement configurationElement;
 /**
