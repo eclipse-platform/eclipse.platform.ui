@@ -128,8 +128,9 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
     protected void revealEndOfDocument() {
         StyledText text = getTextWidget();
         if (text != null) {
-            int charCount = text.getCharCount();
-            text.setCaretOffset(charCount);
+            int lineCount = text.getLineCount();
+            int offsetAtLine = text.getOffsetAtLine(lineCount-1);
+            text.setCaretOffset(offsetAtLine);
             text.showSelection();
         }
     }
