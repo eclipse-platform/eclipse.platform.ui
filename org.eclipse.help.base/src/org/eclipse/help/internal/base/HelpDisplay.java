@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.base;
+import java.io.*;
 import java.net.*;
 
 import org.eclipse.core.boot.*;
@@ -61,18 +62,24 @@ public class HelpDisplay {
 		// check if this is a toc
 		IToc toc = HelpPlugin.getTocManager().getToc(href, BootLoader.getNL());
 		if (toc != null)
-			displayHelpURL("toc=" + URLEncoder.encode(toc.getHref()));
-		else if (
-			href != null
-				&& (href.startsWith("tab=")
-					|| href.startsWith("toc=")
-					|| href.startsWith("topic=")
-					|| href.startsWith(
-						"contextId="))) { // assume it is a query string
+			try {
+				displayHelpURL(
+					"toc=" + URLEncoder.encode(toc.getHref(), "UTF-8"));
+			} catch (UnsupportedEncodingException uee) {
+			} else if (
+				href != null
+					&& (href.startsWith("tab=")
+						|| href.startsWith("toc=")
+						|| href.startsWith("topic=")
+						|| href.startsWith(
+							"contextId="))) { // assume it is a query string
 			displayHelpURL(href);
 		} else // assume this is a topic
 			if (getNoframesURL(href) == null) {
-				displayHelpURL("topic=" + URLEncoder.encode(href));
+				try {
+					displayHelpURL("topic=" + URLEncoder.encode(href, "UTF-8"));
+				} catch (UnsupportedEncodingException uee) {
+				}
 			} else {
 				displayHelpURL(getNoframesURL(href));
 			}
@@ -88,13 +95,17 @@ public class HelpDisplay {
 			return;
 		String topicURL = getTopicURL(topic.getHref());
 		if (getNoframesURL(topicURL) == null) {
-			String url =
-				"tab=links"
-					+ "&contextId="
-					+ URLEncoder.encode(getContextID(context))
-					+ "&topic="
-					+ URLEncoder.encode(topicURL);
-			displayHelpURL(url);
+			try {
+				String url =
+					"tab=links"
+						+ "&contextId="
+						+ URLEncoder.encode(getContextID(context), "UTF-8")
+						+ "&topic="
+						+ URLEncoder.encode(topicURL, "UTF-8");
+				displayHelpURL(url);
+			} catch (UnsupportedEncodingException uee) {
+			}
+
 		} else {
 			displayHelpURL(getNoframesURL(topicURL));
 		}
@@ -109,12 +120,16 @@ public class HelpDisplay {
 		if (searchQuery == null || topic == null)
 			return;
 		if (getNoframesURL(topic) == null) {
-			String url =
-				"tab=search&"
-					+ searchQuery
-					+ "&topic="
-					+ URLEncoder.encode(getTopicURL(topic));
-			displayHelpURL(url);
+			try {
+				String url =
+					"tab=search&"
+						+ searchQuery
+						+ "&topic="
+						+ URLEncoder.encode(getTopicURL(topic), "UTF-8");
+				displayHelpURL(url);
+			} catch (UnsupportedEncodingException uee) {
+			}
+
 		} else {
 			displayHelpURL(getNoframesURL(topic));
 		}
