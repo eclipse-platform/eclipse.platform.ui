@@ -34,7 +34,7 @@
 	    objectClass="org.eclipse.ui.examples.propertysheet.UserElement">
 	    <action id="org.eclipse.ui.examples.propertysheet.action1"
     	   	label="%PopupMenus.action"
-       		menuBarPath="additions"
+       		menubarPath="additions"
        		class="org.eclipse.ui.examples.propertysheet.PopupMenuActionDelegate"	
        		enablesFor="1">
 	    </action>
