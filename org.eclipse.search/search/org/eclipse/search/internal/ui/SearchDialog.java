@@ -1,5 +1,5 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 package org.eclipse.search.internal.ui;
@@ -316,8 +316,8 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 	/*
 	 * Implements method from ISearchPageContainer
 	 */
-	public IWorkingSet getSelectedWorkingSet() {
-		return fScopePart.getSelectedWorkingSet();
+	public IWorkingSet[] getSelectedWorkingSets() {
+		return fScopePart.getSelectedWorkingSets();
 	}
 
 	/*
@@ -331,14 +331,14 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 	 * Implements method from ISearchPageContainer
 	 */
 	public boolean hasValidScope() {
-		return getSelectedScope() != WORKING_SET_SCOPE || getSelectedWorkingSet() != null;
+		return getSelectedScope() != WORKING_SET_SCOPE || getSelectedWorkingSets() != null;
 	}
 	
 	/*
 	 * Implements method from ISearchPageContainer
 	 */
-	public void setSelectedWorkingSet(IWorkingSet workingSet) {
-		fScopePart.setSelectedWorkingSet(workingSet);
+	public void setSelectedWorkingSets(IWorkingSet[] workingSets) {
+		fScopePart.setSelectedWorkingSets(workingSets);
 	}
 
 	private Control getControl(ISearchPage page, Composite parent) {

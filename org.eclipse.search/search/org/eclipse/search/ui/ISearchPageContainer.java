@@ -1,5 +1,5 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 package org.eclipse.search.ui;
@@ -92,32 +92,18 @@ public interface ISearchPageContainer {
 	public boolean hasValidScope();
 
 	/**
-	 * Returns the selected working set of this container.
-	 * <p>
-	 * This method is for internal use only due to issue below. Once
-	 * the issues is solved there will be an official API.
-	 * </p>
-	 * <p>
-	 * [Issue: Working set must be provided by platform.]
-	 * </p>
+	 * Returns the selected working sets of this container.
 	 * 
-	 * @return the selected IWorkingSet or <code>null</code> if the scope is not WORKING_SET_SCOPE
+	 * @return an array with the selected working sets or <code>null</code> if the scope is not WORKING_SET_SCOPE
 	 * @since 2.0
 	 */
-	public IWorkingSet getSelectedWorkingSet();
+	public IWorkingSet[] getSelectedWorkingSets();
 
 	/**
-	 * Sets the selected working set of this container.
-	 * <p>
-	 * This method is for internal use only due to issue below. Once
-	 * the issues is solved there will be an official API.
-	 * </p>
-	 * <p>
-	 * [Issue: Working set must be provided by platform.]
-	 * </p>
+	 * Sets the selected working sets of this container.
 	 * 
-	 * @param workingSet the IWorkingSet to be selected
+	 * @param workingSets an array of IWorkingSet
 	 * @since 2.0
 	 */
-	public void setSelectedWorkingSet(IWorkingSet workingSet);
+	public void setSelectedWorkingSets(IWorkingSet[] workingSets);
 }

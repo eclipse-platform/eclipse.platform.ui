@@ -1,5 +1,5 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 package org.eclipse.search.internal.ui.text;
@@ -45,17 +45,18 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.search.ui.ISearchResultViewEntry;
-import org.eclipse.ui.IWorkingSet;
 import org.eclipse.search.ui.SearchUI;
 
 import org.eclipse.search.internal.core.text.TextSearchScope;
 import org.eclipse.search.internal.ui.ISearchHelpContextIds;
+import org.eclipse.search.internal.ui.ScopePart;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
@@ -90,14 +91,14 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		String		textPattern;
 		Set			fileNamePatterns;
 		int		scope;
-		IWorkingSet	workingSet;
+		IWorkingSet[]	workingSets;
 		
-		public SearchPatternData(String textPattern, boolean ignoreCase, Set fileNamePatterns, int scope, IWorkingSet workingSet) {
+		public SearchPatternData(String textPattern, boolean ignoreCase, Set fileNamePatterns, int scope, IWorkingSet[] workingSets) {
 			this.ignoreCase= ignoreCase;
 			this.textPattern= textPattern;
 			this.fileNamePatterns= fileNamePatterns;
 			this.scope= scope;
-			this.workingSet= workingSet;
+			this.workingSets= workingSets;
 		}
 	}
 	//---- Action Handling ------------------------------------------------
@@ -120,9 +121,9 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 				scope= getSelectedResourcesScope();
 				break;
 			case ISearchPageContainer.WORKING_SET_SCOPE:
-				IWorkingSet workingSet= getContainer().getSelectedWorkingSet();
-				String desc= SearchMessages.getFormattedString("WorkingSetScope", workingSet.getName()); //$NON-NLS-1$
-				scope= new TextSearchScope(desc, workingSet.getElements());
+				IWorkingSet[] workingSets= getContainer().getSelectedWorkingSets();
+				String desc= SearchMessages.getFormattedString("WorkingSetScope", ScopePart.toString(workingSets)); //$NON-NLS-1$
+				scope= new TextSearchScope(desc, workingSets);
 		}		
 		scope.addExtensions(patternData.fileNamePatterns);
 
@@ -176,7 +177,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 			match.textPattern= getPattern();
 			match.fileNamePatterns= getExtensions();
 			match.scope= getContainer().getSelectedScope();
-			match.workingSet= getContainer().getSelectedWorkingSet();
+			match.workingSets= getContainer().getSelectedWorkingSets();
 			// remove - will be added last (see below)
 			fgPreviousSearchPatterns.remove(match);
 		} else {
@@ -185,7 +186,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 						ignoreCase(),
 						getExtensions(),
 						getContainer().getSelectedScope(),
-						getContainer().getSelectedWorkingSet());
+						getContainer().getSelectedWorkingSets());
 		}
 		fgPreviousSearchPatterns.add(match);
 		return match;
@@ -329,8 +330,8 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		fIgnoreCase.setSelection(patternData.ignoreCase);
 		fPattern.setText(patternData.textPattern);
 		fFileTypeEditor.setFileTypes(patternData.fileNamePatterns);
-		if (patternData.workingSet != null)
-			getContainer().setSelectedWorkingSet(patternData.workingSet);
+		if (patternData.workingSets != null)
+			getContainer().setSelectedWorkingSets(patternData.workingSets);
 		else
 			getContainer().setSelectedScope(patternData.scope);
 	}

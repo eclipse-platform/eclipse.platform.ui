@@ -4,6 +4,7 @@
  */
 package org.eclipse.search.internal.core.text;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -11,6 +12,8 @@ import java.util.Set;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+
+import org.eclipse.ui.IWorkingSet;
 
 import org.eclipse.search.internal.core.SearchScope;
 import org.eclipse.search.internal.ui.SearchMessages;
@@ -62,6 +65,10 @@ public class TextSearchScope extends SearchScope {
 		super(description, convertToResources(elements));
 
 	}
+
+	public TextSearchScope(String description, IWorkingSet[] workingSets) {
+		super(description, convertToResources(getElements(workingSets)));
+	}
 	
 	private static IResource[] convertToResources(IAdaptable[] elements) {
 		int length= elements.length;
@@ -72,6 +79,15 @@ public class TextSearchScope extends SearchScope {
 				resources.add(resource);
 		}
 		return (IResource[])resources.toArray(new IResource[resources.size()]);
+	}
+
+	private static IAdaptable[] getElements(IWorkingSet[] workingSets) {
+		int length= workingSets.length;
+		Set elements= new HashSet(length);
+		for (int i= 0; i < length; i++) {
+			elements.addAll(Arrays.asList(workingSets[i].getElements()));
+		}
+		return (IAdaptable[])elements.toArray(new IAdaptable[elements.size()]);
 	}
 	
 	/**

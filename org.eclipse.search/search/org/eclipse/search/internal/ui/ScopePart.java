@@ -1,10 +1,12 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 package org.eclipse.search.internal.ui;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -37,11 +39,10 @@ public class ScopePart {
 	public static final int SELECTION_SCOPE= 1;
 	public static final int WORKING_SET_SCOPE= 2;
 
-	private static String	fgLRUsedWorkingSetName;
-
 	// Settings store
 	private static final String DIALOG_SETTINGS_KEY= "SearchDialog.ScopePart"; //$NON-NLS-1$
 	private static final String STORE_LRU_WORKING_SET_NAME= "lastUsedWorkingSetName"; //$NON-NLS-1$
+	private static final String STORE_LRU_WORKING_SET_NAMES= "lastUsedWorkingSetNames"; //$NON-NLS-1$
 	private static IDialogSettings fgSettingsStore;
 
 	private Group fPart;
@@ -54,7 +55,7 @@ public class ScopePart {
 
 	private int			fScope;
 	private Text			fWorkingSetText;
-	private IWorkingSet	fWorkingSet;
+	private IWorkingSet[]	fWorkingSets;
 
 	// Reference to its search page container (can be null)
 	private ISearchPageContainer fSearchPageContainer;
@@ -86,11 +87,36 @@ public class ScopePart {
 	public ScopePart(int initialScope) {
 		Assert.isLegal(initialScope >= 0 && initialScope <= 3);
 		fScope= initialScope;
+		restoreState();
+	}
+
+	private void restoreState() {
 		fgSettingsStore= SearchPlugin.getDefault().getDialogSettings().getSection(DIALOG_SETTINGS_KEY);
 		if (fgSettingsStore == null)
 			fgSettingsStore= SearchPlugin.getDefault().getDialogSettings().addNewSection(DIALOG_SETTINGS_KEY);
-		String lruWorkingSetName= fgSettingsStore.get(STORE_LRU_WORKING_SET_NAME);
-		fWorkingSet= PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(lruWorkingSetName);
+		String[] lruWorkingSetNames= fgSettingsStore.getArray(STORE_LRU_WORKING_SET_NAMES);
+		if (lruWorkingSetNames != null) {
+			Set existingWorkingSets= new HashSet(lruWorkingSetNames.length);
+			for (int i= 0; i < lruWorkingSetNames.length; i++) {
+				String name= lruWorkingSetNames[i];
+				IWorkingSet workingSet= PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(name);
+				if (workingSet != null)
+					existingWorkingSets.add(workingSet);
+			}
+			if (!existingWorkingSets.isEmpty())
+				fWorkingSets= (IWorkingSet[])existingWorkingSets.toArray(new IWorkingSet[existingWorkingSets.size()]);
+		} 
+		else {
+			// Backward compatibility
+			String workingSetName= fgSettingsStore.get(STORE_LRU_WORKING_SET_NAME);
+			if (workingSetName != null) {
+				IWorkingSet workingSet= PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(workingSetName);
+				if (workingSet != null) {
+					fWorkingSets= new IWorkingSet[] { workingSet };
+					saveState();
+				}
+			}
+		}
 	}
 
 	/**
@@ -100,10 +126,10 @@ public class ScopePart {
 	 * @see #createPart(Composite)
 	 * @param workingSet the initial working set
 	 */
-	public ScopePart(IWorkingSet workingSet) {
-		Assert.isNotNull(workingSet);
+	public ScopePart(IWorkingSet[] workingSets) {
+		Assert.isNotNull(workingSets);
 		fScope= WORKING_SET_SCOPE;
-		fWorkingSet= workingSet;
+		fWorkingSets= workingSets;
 	}
 
 	/**
@@ -150,7 +176,7 @@ public class ScopePart {
 
 	private void updateSearchPageContainerActionPerformedEnablement() {
 		if (fSearchPageContainer != null)
-			fSearchPageContainer.setPerformActionEnabled(fScope != WORKING_SET_SCOPE || fWorkingSet != null);
+			fSearchPageContainer.setPerformActionEnabled(fScope != WORKING_SET_SCOPE || fWorkingSets != null);
 	}
 
 	/**
@@ -160,9 +186,9 @@ public class ScopePart {
 	 * 			- if the scope is not WORKING_SET_SCOPE
 	 * 			- if there is no working set selected
 	 */
-	public IWorkingSet getSelectedWorkingSet() {
+	public IWorkingSet[] getSelectedWorkingSets() {
 		if (getSelectedScope() == WORKING_SET_SCOPE)
-			return fWorkingSet;
+			return fWorkingSets;
 		else
 			return null;
 	}
@@ -173,20 +199,37 @@ public class ScopePart {
 	 * 
 	 * @param workingSet the working set to be selected
 	 */
-	public void setSelectedWorkingSet(IWorkingSet workingSet) {
-		Assert.isNotNull(workingSet);
+	public void setSelectedWorkingSets(IWorkingSet[] workingSets) {
+		Assert.isNotNull(workingSets);
 		setSelectedScope(WORKING_SET_SCOPE);
-		String name= workingSet.getName();
-		workingSet= PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(name);
-		if (workingSet != null) {
-			fWorkingSet= workingSet;
-			fgSettingsStore.put(STORE_LRU_WORKING_SET_NAME, workingSet.getName());
-		} else {
-			name= ""; //$NON-NLS-1$
-			fWorkingSet= null;
+		fWorkingSets= null;
+		Set existingWorkingSets= new HashSet(workingSets.length);
+		for (int i= 0; i < workingSets.length; i++) {
+			String name= workingSets[i].getName();
+			IWorkingSet workingSet= PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(name);
+			if (workingSet != null)
+				existingWorkingSets.add(workingSet);
 		}
+		if (!existingWorkingSets.isEmpty())
+			fWorkingSets= (IWorkingSet[])existingWorkingSets.toArray(new IWorkingSet[existingWorkingSets.size()]);
+		
+		saveState();
+
 		if (fWorkingSetText != null)
-			fWorkingSetText.setText(name);
+			fWorkingSetText.setText(toString(fWorkingSets));
+	}
+
+	/**
+	 * Saves the last recently used working sets,
+	 * if any.
+	 */
+	private void saveState() {
+		if (fWorkingSets != null && fWorkingSets.length > 0) {
+			String[] existingWorkingSetNames= new String[fWorkingSets.length];
+			for (int i= 0; i < existingWorkingSetNames.length; i++)
+				existingWorkingSetNames[i]= fWorkingSets[i].getName();
+			fgSettingsStore.put(STORE_LRU_WORKING_SET_NAMES, existingWorkingSetNames);
+		}
 	}
 
 	/**
@@ -252,8 +295,8 @@ public class ScopePart {
 		setSelectedScope(fScope);
 		
 		// Set initial working set
-		if (fWorkingSet != null)
-			fWorkingSetText.setText(fWorkingSet.getName());
+		if (fWorkingSets != null)
+			fWorkingSetText.setText(toString(fWorkingSets));
 
 		return fPart;
 	}
@@ -270,24 +313,24 @@ public class ScopePart {
 	private boolean handleChooseWorkingSet() {
 		IWorkingSetSelectionDialog dialog=	PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(fUseSelection.getShell());
 		
-		if (fWorkingSet != null)
-			dialog.setSelection(new IWorkingSet[] {fWorkingSet});
+		if (fWorkingSets != null)
+			dialog.setSelection(fWorkingSets);
 		if (dialog.open() == Window.OK) {
 			Object[] result= dialog.getSelection();
-			if (result.length == 1) {
-				setSelectedWorkingSet((IWorkingSet)result[0]);
+			if (result.length > 0) {
+				setSelectedWorkingSets((IWorkingSet[])result);
 				return true;
 			}
 			fWorkingSetText.setText(""); //$NON-NLS-1$
-			fWorkingSet= null;
+			fWorkingSets= null;
 			if (fScope == WORKING_SET_SCOPE)
 				setSelectedScope(WORKSPACE_SCOPE);
 			return false;
 		} else {
 			// test if selected working set has been removed
-			if (!Arrays.asList(PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets()).contains(fWorkingSet)) {
+			if (!Arrays.asList(PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets()).contains(fWorkingSets)) {
 				fWorkingSetText.setText(""); //$NON-NLS-1$
-				fWorkingSet= null;
+				fWorkingSets= null;
 				updateSearchPageContainerActionPerformedEnablement();
 			}
 		}
@@ -296,5 +339,23 @@ public class ScopePart {
 	
 	void setVisible(boolean state) {
 		fPart.setVisible(state);
+	}
+
+	public static String toString(IWorkingSet[] workingSets) {
+		String result= ""; //$NON-NLS-1$
+		if (workingSets != null && workingSets.length > 0) {
+			Arrays.sort(workingSets, new WorkingSetComparator());
+			boolean firstFound= false;
+			for (int i= 0; i < workingSets.length; i++) {
+				String workingSetName= workingSets[i].getName();
+				if (firstFound)
+					result= SearchMessages.getFormattedString("ScopePart.workingSetConcatenation", new String[] {result, workingSetName}); //$NON-NLS-1$
+				else {
+					result= workingSetName;
+					firstFound= true;
+				}
+			}
+		}
+		return result;
 	}
 }
