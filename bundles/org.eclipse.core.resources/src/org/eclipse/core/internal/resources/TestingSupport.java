@@ -78,6 +78,18 @@ public class TestingSupport {
 			throw new RuntimeException("Interrupted while waiting for build"); //$NON-NLS-1$
 		}
 	}
+	/**
+	 * Blocks the calling thread until background snapshot completes.
+	 * @since 3.0
+	 */
+	public static void waitForSnapshot() {
+		try {
+			((Workspace) ResourcesPlugin.getWorkspace()).getSaveManager().snapshotJob.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Interrupted while waiting for snapshot"); //$NON-NLS-1$
+		}
+	}
 	/* 
 	 * Class cannot be instantiated.
 	 */

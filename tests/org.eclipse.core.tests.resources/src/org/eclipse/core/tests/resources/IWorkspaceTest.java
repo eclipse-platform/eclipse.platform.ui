@@ -14,13 +14,13 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
+import org.eclipse.core.internal.resources.TestingSupport;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 public class IWorkspaceTest extends EclipseWorkspaceTest {
-
 
 public IWorkspaceTest() {
 }
@@ -51,9 +51,13 @@ public static Test suite() {
 	TestSuite suite = new TestSuite(IWorkspaceTest.class);
 	return suite;
 }
+protected void setUp() throws Exception {
+	super.setUp();
+}
 protected void tearDown() throws Exception {
 	getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
 	ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
+	super.tearDown();
 }
 /**
  * Tests handling of runnables that throw OperationCanceledException.
@@ -792,6 +796,8 @@ public void testSave() {
 	//ensure save returns a warning if a project's .project file is deleted.
 	IProject project = getWorkspace().getRoot().getProject("Broken");
 	ensureExistsInWorkspace(project, true);
+	//wait for snapshot before modifying file
+	TestingSupport.waitForSnapshot();
 	IFile descriptionFile = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
 	try {
 		descriptionFile.delete(IResource.NONE, null);
