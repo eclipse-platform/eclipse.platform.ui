@@ -131,7 +131,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 		for (int i= 1; i < 20; i++) {
 			try{
 				fClientSocket= new Socket(fHost, fPort);
-				fWriter= new PrintWriter(fClientSocket.getOutputStream(), false/*true*/);
+				fWriter= new PrintWriter(fClientSocket.getOutputStream(), true);
 				fReader= new BufferedReader(new InputStreamReader(fClientSocket.getInputStream()));
 				fReaderThread= new ReaderThread();
 				fReaderThread.start();
