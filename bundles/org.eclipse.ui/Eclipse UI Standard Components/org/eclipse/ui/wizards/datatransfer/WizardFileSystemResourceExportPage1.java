@@ -352,7 +352,7 @@ protected boolean validateDestinationGroup() {
 		return false;
 	} 
 	
-	String conflictingContainer = getContainerNameFor(destinationValue);
+	String conflictingContainer = getConflictingContainerNameFor(destinationValue);
 	if(conflictingContainer == null)
 		setErrorMessage("");
 	else {
@@ -373,7 +373,7 @@ protected boolean validateDestinationGroup() {
  * @return IWorkspaceRoot, IProject or null
  * @param String. The path of the directory.
  */
-protected String getContainerNameFor(String testString){
+protected String getConflictingContainerNameFor(String testString){
 	
 	IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 	IPath testPath = new Path(testString);
