@@ -321,9 +321,8 @@ public final class BuilderPropertyPage extends PropertyPage {
 	 */
 	private ICommand toBuildCommand(ILaunchConfiguration config, ICommand command) throws CoreException {
 		Map args= null;
-		ILaunchConfigurationWorkingCopy workingCopy= null;
 		if (isUnmigratedConfig(config)) {
-			workingCopy= ((ILaunchConfigurationWorkingCopy) config);
+			ILaunchConfigurationWorkingCopy workingCopy= ((ILaunchConfigurationWorkingCopy) config);
 			// This config represents an old external tool builder that hasn't
 			// been edited. Try to find the old ICommand and reuse the arguments.
 			// The goal here is to not change the storage format of old, unedited builders.
@@ -336,15 +335,15 @@ public final class BuilderPropertyPage extends PropertyPage {
 					break;
 				}
 			}
-		} 
-		if (args == null) {
-			// Launch configuration builders are stored by storing their handle
-			if (workingCopy != null) {
+		} else {
+			if (config instanceof ILaunchConfigurationWorkingCopy) {
+				ILaunchConfigurationWorkingCopy workingCopy= (ILaunchConfigurationWorkingCopy) config;
 				if (workingCopy.getOriginal() != null) {
 					config= workingCopy.getOriginal();
 				}
 			}
 			args= new HashMap();
+			// Launch configuration builders are stored by storing their handle
 			args.put(LAUNCH_CONFIG_HANDLE, config.getMemento());
 		}
 		command.setBuilderName(ExternalToolBuilder.ID);
@@ -905,11 +904,19 @@ public final class BuilderPropertyPage extends PropertyPage {
 		toggleEnabledButton.setEnabled(false);
 		if (items != null && items.length == 1) {
 			TableItem item = items[0];
-			Object data = item.getData();
-			if (data instanceof ILaunchConfiguration) {
+			Object firstData = item.getData();
+			if (firstData instanceof ILaunchConfiguration) {
 				toggleEnabledButton.setEnabled(true);
+				for (int i = 0; i < items.length; i++) {
+					Object data= items[i].getData();
+					if (data instanceof ILaunchConfiguration) {
+						if (isUnmigratedConfig((ILaunchConfiguration) data)) {
+							toggleEnabledButton.setEnabled(false);
+						}
+					}
+				}
 				try {
-					if (ExternalToolsUtil.isBuilderEnabled((ILaunchConfiguration) data)) {
+					if (ExternalToolsUtil.isBuilderEnabled((ILaunchConfiguration) firstData)) {
 						toggleEnabledButton.setText(fDisableText);
 					} else {
 						toggleEnabledButton.setText(fEnableText);
@@ -923,7 +930,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 				int max = builderTable.getItemCount();
 				upButton.setEnabled(selection != 0);
 				downButton.setEnabled(selection < max - 1);
-			} else if (data instanceof ErrorConfig) {
+			} else if (firstData instanceof ErrorConfig) {
 				removeButton.setEnabled(true);
 			}
 		}
@@ -1038,7 +1045,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 	 * @return whether the given config represents an unmigrated builder
 	 */
 	private boolean isUnmigratedConfig(ILaunchConfiguration config) {
-		return config instanceof ILaunchConfigurationWorkingCopy && config.getLocation() == null;
+		return config instanceof ILaunchConfigurationWorkingCopy && ((ILaunchConfigurationWorkingCopy) config).getOriginal() == null;
 	}
 
 	private void deleteConfigurations() {
