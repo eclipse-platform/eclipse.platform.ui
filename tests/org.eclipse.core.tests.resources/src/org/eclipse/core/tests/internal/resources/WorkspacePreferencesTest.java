@@ -12,11 +12,12 @@ package org.eclipse.core.tests.internal.resources;
 
 import java.util.Arrays;
 import java.util.List;
+
 import junit.framework.*;
+
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 public class WorkspacePreferencesTest extends EclipseWorkspaceTest {
@@ -54,20 +55,18 @@ public class WorkspacePreferencesTest extends EclipseWorkspaceTest {
 	 */
 	public void testDefaults() {
 		IWorkspaceDescription description = Workspace.defaultWorkspaceDescription();
-		assertEquals("1.0", description.isAutoBuilding(), preferences.getBoolean(ResourcesPlugin.PREF_AUTO_BUILDING));
-		assertEquals("1.1", description.getBuildOrder() == null, preferences.getBoolean(ResourcesPlugin.PREF_DEFAULT_BUILD_ORDER));
-		assertEquals("1.2", WorkspacePreferences.convertStringArraytoString(description.getBuildOrder()), preferences.getString(ResourcesPlugin.PREF_BUILD_ORDER));
-		assertEquals("1.3", description.getFileStateLongevity(), preferences.getLong(ResourcesPlugin.PREF_FILE_STATE_LONGEVITY));
-		assertEquals("1.4", description.getMaxFileStates(), preferences.getInt(ResourcesPlugin.PREF_MAX_FILE_STATES));
-		assertEquals("1.5", description.getMaxFileStateSize(), preferences.getLong(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE));
-		assertEquals("1.6", description.getSnapshotInterval(), preferences.getLong(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL));
-
+		
+		assertEquals("1.0", description, preferences);
+		
+		// ensures that all properties in the default workspace description
+		// appear as non-default-default properties in the property store  
 		String[] descriptionProperties =
 			{
 				ResourcesPlugin.PREF_AUTO_BUILDING,
 				ResourcesPlugin.PREF_BUILD_ORDER,
 				ResourcesPlugin.PREF_DEFAULT_BUILD_ORDER,
 				ResourcesPlugin.PREF_FILE_STATE_LONGEVITY,
+				ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS,
 				ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE,
 				ResourcesPlugin.PREF_MAX_FILE_STATES,
 				ResourcesPlugin.PREF_SNAPSHOT_INTERVAL };
@@ -101,22 +100,88 @@ public class WorkspacePreferencesTest extends EclipseWorkspaceTest {
 
 		preferences.setValue(ResourcesPlugin.PREF_BUILD_ORDER, "");
 		assertTrue("2.3", workspace.getDescription().getBuildOrder().length == 0);
-		
+
 		long snapshotInterval = 800000000L;
 		preferences.setValue(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL, snapshotInterval);
 		assertEquals("3.0", snapshotInterval, workspace.getDescription().getSnapshotInterval());
-		
+
 		long defaultSnapshotInterval = preferences.getDefaultLong(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL);
 		preferences.setValue(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL, defaultSnapshotInterval);
 		assertEquals("3.1", defaultSnapshotInterval, workspace.getDescription().getSnapshotInterval());
-		
+
 		preferences.setToDefault(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL);
 		assertEquals("3.2", defaultSnapshotInterval, workspace.getDescription().getSnapshotInterval());
 		assertEquals("Description not synchronized", workspace.getDescription(), preferences);
 
 	}
 
+	/**
+	 * Ensures preferences with both default/non-default values are properly exported/imported. 
+	 */
 	public void testImportExport() {
+		IPath originalPreferencesFile = getRandomLocation().append("original.epf");
+		IPath modifiedPreferencesFile = getRandomLocation().append("modified.epf");
+		try {
+			// saves the current preferences (should be the default ones)
+			IWorkspaceDescription original = workspace.getDescription();
+			
+			// sets a non-used preference to a non-default value so a  
+			// preferences file can be generated
+			preferences.setValue("foo.bar", getRandomString());
+			
+			// exports original preferences (only default values - except for bogus preference above)
+			try {
+				Preferences.exportPreferences(originalPreferencesFile);
+			} catch (CoreException e) {
+				fail("1.0", e);
+			}		
+			
+			// creates a modified description
+			IWorkspaceDescription modified = workspace.getDescription();
+			modified.setAutoBuilding(!original.isAutoBuilding());
+			modified.setBuildOrder(new String[] {"a", "b", "c"});
+			modified.setFileStateLongevity((original.getFileStateLongevity() + 1) * 2);
+			modified.setMaxBuildIterations((original.getMaxBuildIterations() + 1) * 2);			
+			modified.setMaxFileStates((original.getMaxFileStates() + 1) * 2);
+			modified.setMaxFileStateSize((original.getMaxFileStateSize() + 1) * 2);
+			modified.setSnapshotInterval((original.getSnapshotInterval() + 1) * 2);
+
+			// sets modified description						
+			try {
+				workspace.setDescription(modified);
+			} catch (CoreException ce) {
+				fail("2.0", ce);
+			}
+			assertEquals("2.1", modified, workspace.getDescription());
+			
+			// exports modified preferences
+			try {
+				Preferences.exportPreferences(modifiedPreferencesFile);
+			} catch (CoreException e) {
+				fail("3.0", e);
+			}								
+
+			// imports original preferences
+			try {
+				Preferences.importPreferences(originalPreferencesFile);
+			} catch (CoreException e) {
+				fail("4.0", e);
+			}
+			// ensures preferences exported match the imported ones
+			assertEquals("4.1", original, workspace.getDescription());
+			
+			// imports modified preferences
+			try {
+				Preferences.importPreferences(modifiedPreferencesFile);
+			} catch (CoreException e) {
+				fail("5.0", e);
+			}
+			// ensures preferences exported match the imported ones
+			assertEquals("5.1", modified, workspace.getDescription());
+		} finally {
+			ensureDoesNotExistInFileSystem(originalPreferencesFile.toFile());
+			ensureDoesNotExistInFileSystem(modifiedPreferencesFile.toFile());
+		}
 
 	}
 
@@ -129,6 +194,7 @@ public class WorkspacePreferencesTest extends EclipseWorkspaceTest {
 		description.setAutoBuilding(false);
 		description.setBuildOrder(new String[] { "a", "b,c", "c" });
 		description.setFileStateLongevity(60000 * 5);
+		description.setMaxBuildIterations(35);
 		description.setMaxFileStates(16);
 		description.setMaxFileStateSize(100050);
 		description.setSnapshotInterval(1234567);
@@ -176,13 +242,12 @@ public class WorkspacePreferencesTest extends EclipseWorkspaceTest {
 		assertTrue("2.0 - file .description does not exist", localMetaArea.getOldWorkspaceDescriptionLocation().toFile().isFile());
 		WorkspaceDescription descriptionFromDisk = localMetaArea.readOldWorkspace();
 		assertTrue("2.1 - file .description still exists", !localMetaArea.getOldWorkspaceDescriptionLocation().toFile().isFile());
-		assertEquals("3.1", description.getBuildOrder(), descriptionFromDisk.getBuildOrder());
-		assertEquals("3.2", description.getFileStateLongevity(), descriptionFromDisk.getFileStateLongevity());
-		assertEquals("3.3", description.getMaxFileStates(), descriptionFromDisk.getMaxFileStates());
-		assertEquals("3.4", description.getMaxFileStateSize(), descriptionFromDisk.getMaxFileStateSize());
-		assertEquals("3.5", description.getSnapshotInterval(), descriptionFromDisk.getSnapshotInterval());
-		assertEquals("3.6", description.isAutoBuilding(), descriptionFromDisk.isAutoBuilding());
+		assertEquals("3.0", description, descriptionFromDisk);		
 	}
+	/**
+	 * Compares the values in a workspace description with the corresponding 
+	 * properties in a preferences object. 
+	 */
 	public void assertEquals(String message, IWorkspaceDescription description, Preferences preferences) throws ComparisonFailure {
 		assertEquals(message + " - 1", description.isAutoBuilding(), preferences.getBoolean(ResourcesPlugin.PREF_AUTO_BUILDING));
 		assertEquals(message + " - 2", description.getBuildOrder() == null, preferences.getBoolean(ResourcesPlugin.PREF_DEFAULT_BUILD_ORDER));
@@ -191,8 +256,22 @@ public class WorkspacePreferencesTest extends EclipseWorkspaceTest {
 		assertEquals(message + " - 5", description.getMaxFileStates(), preferences.getInt(ResourcesPlugin.PREF_MAX_FILE_STATES));
 		assertEquals(message + " - 6", description.getMaxFileStateSize(), preferences.getLong(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE));
 		assertEquals(message + " - 7", description.getSnapshotInterval(), preferences.getLong(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL));
+		assertEquals(message + " - 8", description.getMaxBuildIterations(), preferences.getLong(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS));
 	}
+	/**
+	 * Compares two workspace description objects.. 
+	 */
+	public void assertEquals(String message, IWorkspaceDescription description1, IWorkspaceDescription description2) throws ComparisonFailure {
+		assertEquals(message + " - 1", description1.isAutoBuilding(), description2.isAutoBuilding());
+		assertEquals(message + " - 2", description1.getBuildOrder(), description2.getBuildOrder());
+		assertEquals(message + " - 3", WorkspacePreferences.convertStringArraytoString(description1.getBuildOrder()), WorkspacePreferences.convertStringArraytoString(description2.getBuildOrder()));
+		assertEquals(message + " - 4", description1.getFileStateLongevity(), description2.getFileStateLongevity());
+		assertEquals(message + " - 5", description1.getMaxFileStates(), description2.getMaxFileStates());
+		assertEquals(message + " - 6", description1.getMaxFileStateSize(), description2.getMaxFileStateSize());
+		assertEquals(message + " - 7", description1.getSnapshotInterval(), description2.getSnapshotInterval());
+		assertEquals(message + " - 8", description1.getMaxBuildIterations(), description2.getMaxBuildIterations());
+	}	
 	public static Test suite() {
-		return new TestSuite(WorkspacePreferencesTest.class);	
+		return new TestSuite(WorkspacePreferencesTest.class);
 	}
 }
