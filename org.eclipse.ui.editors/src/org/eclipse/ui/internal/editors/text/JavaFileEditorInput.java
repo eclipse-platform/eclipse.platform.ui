@@ -87,4 +87,26 @@ public class JavaFileEditorInput implements IEditorInput, ILocationProvider {
 		}
 		return null;
 	}
+	
+	/*
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object o) {
+		if (o == this)
+			return true;
+		
+		if (o instanceof JavaFileEditorInput) {
+			JavaFileEditorInput input = (JavaFileEditorInput) o;
+			return fFile.equals(input.fFile);		
+		}
+		
+		return false;
+	}
+	
+	/*
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return fFile.hashCode();
+	}
 }

@@ -12,6 +12,12 @@ package org.eclipse.ui.internal.editors.text;
 
 import java.io.File;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 
@@ -27,6 +33,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.part.FileEditorInput;
 
 /**
  * @since 3.0
@@ -36,8 +43,6 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 	private IWorkbenchWindow fWindow;
 
 	public OpenExternalFileAction() {
-//		setId("org.eclipse.ui.edit.text.openExternalFile");
-//		setActionDefinitionId("org.eclipse.ui.edit.text.openExternalFile");
 		setEnabled(true);
 	}
 
@@ -104,6 +109,15 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 	}
 
 	private IEditorInput createEditorInput(File file) {
+		IFile workspaceFile= getWorkspaceFile(file);
+		if (workspaceFile != null)
+			return new FileEditorInput(workspaceFile);
 		return new JavaFileEditorInput(file);
+	}
+	
+	private IFile getWorkspaceFile(File file) {
+		IWorkspace workspace= ResourcesPlugin.getWorkspace();
+		IPath location= new Path(file.getAbsolutePath());
+		return workspace.getRoot().getFileForLocation(location);		
 	}
 }
