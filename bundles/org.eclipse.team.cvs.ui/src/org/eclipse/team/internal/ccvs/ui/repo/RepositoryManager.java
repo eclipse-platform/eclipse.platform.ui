@@ -75,7 +75,6 @@ public class RepositoryManager {
 	private static final String COMMENT_HIST_FILE = "commitCommentHistory.xml"; //$NON-NLS-1$
 	static final String ELEMENT_COMMIT_COMMENT = "CommitComment"; //$NON-NLS-1$
 	static final String ELEMENT_COMMIT_HISTORY = "CommitComments"; //$NON-NLS-1$
-	static final int COMMIT_HISTORY_MAX = 10;
 
 	private Map repositoryRoots = new HashMap();
 	
@@ -90,7 +89,7 @@ public class RepositoryManager {
 	private int notificationLevel = 0;
 	private Map changedRepositories = new HashMap();
 	
-	private static final int MAX_COMMENTS = 10;
+	static final int MAX_COMMENTS = 10;
 	
 	/**
 	 * Answer an array of all known remote roots.
@@ -517,7 +516,7 @@ public class RepositoryManager {
 	}
 	private void writeCommentHistory(XMLWriter writer) throws IOException, CVSException {
 		writer.startTag(ELEMENT_COMMIT_HISTORY, null, false);
-		for (int i=0; i<previousComments.length && i<COMMIT_HISTORY_MAX; i++)
+		for (int i=0; i<previousComments.length && i<MAX_COMMENTS; i++)
 			writer.printSimpleTag(ELEMENT_COMMIT_COMMENT, previousComments[i]);
 		writer.endTag(ELEMENT_COMMIT_HISTORY);
 	}

@@ -18,20 +18,17 @@ import org.xml.sax.Attributes;
 
 class CommentHistoryContentHandler extends DefaultHandler {
 
-	private boolean inCommentElement;
+	private StringBuffer buffer;
 	private Vector comments;
 	public CommentHistoryContentHandler() {
-		inCommentElement = false;
 	}
 
 	/**
 	 * @see ContentHandler#characters(char[], int, int)
 	 */
 	public void characters(char[] chars, int startIndex, int length) throws SAXException {
-		if (!inCommentElement) return;
-		StringBuffer buffer = new StringBuffer();
+		if (buffer == null) return;
 		buffer.append(chars, startIndex, length);
-		comments.add(buffer.toString());
 	}
 
 	/**
@@ -44,11 +41,11 @@ class CommentHistoryContentHandler extends DefaultHandler {
 			Attributes atts)
 			throws SAXException {
 		if (localName.equals(RepositoryManager.ELEMENT_COMMIT_COMMENT)) {
-			inCommentElement=true;
+			buffer = new StringBuffer();
 			return;
 		} 
 		if (localName.equals(RepositoryManager.ELEMENT_COMMIT_HISTORY)) {
-			comments = new Vector(RepositoryManager.COMMIT_HISTORY_MAX);
+			comments = new Vector(RepositoryManager.MAX_COMMENTS);
 			return;
 		}
 	}
@@ -58,7 +55,8 @@ class CommentHistoryContentHandler extends DefaultHandler {
 	 */
 	public void endElement(String namespaceURI, String localName, String qName) {
 		if (localName.equals(RepositoryManager.ELEMENT_COMMIT_COMMENT)) {
-			inCommentElement=false;
+			comments.add(buffer.toString());
+			buffer = null;
 			return;
 		} 
 		if (localName.equals(RepositoryManager.ELEMENT_COMMIT_HISTORY)) {
