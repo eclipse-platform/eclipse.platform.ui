@@ -10,16 +10,24 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
+import java.text.MessageFormat;
 import java.util.*;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionDelta;
+import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.internal.ExtensionEventHandlerMessages;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * The registry of action set extensions.
  */
-public class ActionSetRegistry extends Object
+public class ActionSetRegistry extends RegistryManager implements IRegistryChangeListener
 {
 	public static final String OTHER_CATEGORY = "org.eclipse.ui.actionSetCategory";//$NON-NLS-1$
 	private ArrayList children = new ArrayList();
@@ -32,7 +40,8 @@ public class ActionSetRegistry extends Object
  * Creates the action set registry.
  */
 public ActionSetRegistry() {
-	super();
+	super(WorkbenchPlugin.PI_WORKBENCH, IWorkbenchConstants.PL_ACTION_SETS);
+	Platform.getExtensionRegistry().addRegistryChangeListener(this);
 	readFromRegistry();
 }
 /**
@@ -61,6 +70,41 @@ public void addAssociation(String actionSetId, String partId) {
 	// add the action set if it is not already present
 	if (!actionSets.contains(desc))
 		actionSets.add(desc);
+}
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.registry.RegistryManager#buildNewCacheObject(org.eclipse.core.runtime.IExtensionDelta)
+ */
+public Object[] buildNewCacheObject(IExtensionDelta delta) {
+	IExtension extension = delta.getExtension();
+	if (extension == null)
+		return null;
+	IConfigurationElement[] elements = extension.getConfigurationElements();
+	if (elements == null || elements.length == 0)
+		return null;
+	Object[] retArray = new Object[elements.length];
+		
+	for (int i = 0; i < elements.length; i++) {
+		IConfigurationElement element = elements[i];
+		if (element == null)
+			break;
+		try {
+			ActionSetDescriptor desc = new ActionSetDescriptor(element);
+			addActionSet(desc);
+			retArray[i] = desc;
+		} catch (CoreException e) {
+			// log an error since its not safe to open a dialog here
+			WorkbenchPlugin.log("Unable to create action set descriptor.",e.getStatus());//$NON-NLS-1$
+		}
+	}
+	if (retArray != null && retArray.length != 0) {
+		addResetMessage(
+		    MessageFormat.format(
+			ExtensionEventHandlerMessages.getString("ExtensionEventHandler.change_format"), //$NON-NLS-1$ 
+			new Object[] {
+				extension.getNamespace(),  
+				ExtensionEventHandlerMessages.getString("ExtensionEventHandler.new_action_set")})); //$NON-NLS-1$ 
+	}
+	return retArray;
 }
 /**
  * Finds and returns the registered action set with the given id.
@@ -145,6 +189,11 @@ public void mapActionSetsToCategories() {
 		IActionSetDescriptor desc = (IActionSetDescriptor) enum.next();
 		cat.addActionSet(desc);
 	}
+}
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.registry.RegistryManager#postChangeProcessing()
+ */
+public void postChangeProcessing() {
 }
 /**
  * Reads the registry.

@@ -517,7 +517,7 @@ public class PerspectiveRegistry extends RegistryManager implements IPerspective
 		perspToRemove.add(desc.getId());
 		desc.revertToPredefined();
 	}
-	public Object buildNewCacheObject(IExtensionDelta delta) {
+	public Object[] buildNewCacheObject(IExtensionDelta delta) {
 		IExtension extension = delta.getExtension();
 		if (extension == null)
 			return null;
@@ -547,7 +547,9 @@ public class PerspectiveRegistry extends RegistryManager implements IPerspective
 				
 			}
 		}
-		return desc;
+		Object retArray[] = new Object[1];
+		retArray[0] = desc;
+		return retArray;
 	}
 	public void postChangeProcessing() {
 	}

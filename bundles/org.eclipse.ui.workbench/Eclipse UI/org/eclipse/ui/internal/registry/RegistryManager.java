@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
@@ -22,8 +23,14 @@ import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.ExtensionEventHandlerMessages;
 
 public abstract class RegistryManager implements IRegistryChangeListener {
 	private String elementId;
@@ -34,6 +41,7 @@ public abstract class RegistryManager implements IRegistryChangeListener {
 	public static final int REGISTRY_CACHE_STATE_DELETED = 2;
 	public static final int REGISTRY_CACHE_STATE_MAX = 2;
 	public static final String INTERNAL_REGISTRY_ADDITION = "InternalRegistryAddition"; //$NON-NLS-1$
+	private List changeList = new ArrayList(10);
 	private class RegistryElement {
 		private int state;
 		private ArrayList realObjects = null;
@@ -72,6 +80,10 @@ public abstract class RegistryManager implements IRegistryChangeListener {
 	
 	public RegistryManager getCache() {
 		return this;
+	}
+	
+	public void addResetMessage(String msg) {
+		changeList.add(msg);
 	}
 	
 	public Object[] getRegistryObjects() {
@@ -131,12 +143,18 @@ public abstract class RegistryManager implements IRegistryChangeListener {
 	}
 
 	public void add(IExtensionDelta delta) {
+		IWorkbenchWindow[] win = PlatformUI.getWorkbench().getWorkbenchWindows();
+		if (win.length == 0)
+			return;
+		Display display = win[0].getShell().getDisplay();
+		if (display == null) return;
 		IExtensionPoint extPt = delta.getExtensionPoint();
 		IExtension ext = delta.getExtension();
 		// Get the name of the plugin that is adding this extension.  The
 		// name of the plugin that adds the extension point is us.
 		String pluginId = ext.getNamespace();
 		add(buildNewCacheObject(delta), pluginId);
+		resetCurrentPerspective(display);
 	}
 
 	public void add(Object element, String pluginId) {
@@ -162,15 +180,25 @@ public abstract class RegistryManager implements IRegistryChangeListener {
 			regElement.addNewObject(element);
 		}
 	}
+
+	public void add(Object[] elements, String pluginId) {
+		if (elements == null || elements.length == 0)
+			// Nothing to add, so just return.
+			return;
+		for (int i = 0; i < elements.length; i++) {
+			Object element = elements[i];
+			add(element, pluginId);
+		}
+	}
 	
 	/**
 	 * This is a generic method that is expected to be over-written by the
-	 * parent class.  It should return a new element with all the relevant
-	 * information from the delta.
+	 * parent class.  It should return an array of new elements with all 
+	 * the relevant information from the delta.
 	 * @param delta a delta from a listener on extension events
 	 * @return a new object to be added to the registry cache
 	 */
-	abstract public Object buildNewCacheObject (IExtensionDelta delta);
+	abstract public Object[] buildNewCacheObject (IExtensionDelta delta);
 	/**
 	 * This is a generic method that is expected to be implemented by the
 	 * parent class.  It should do any processing necessary once deltas
@@ -178,6 +206,42 @@ public abstract class RegistryManager implements IRegistryChangeListener {
 	 * cases there may be no extra processing required.
 	 */
 	abstract public void postChangeProcessing();
+	
+	private void resetCurrentPerspective(Display display) {
+		if (changeList.isEmpty()) 
+			return;
+			
+		final StringBuffer message = new StringBuffer(ExtensionEventHandlerMessages.getString("ExtensionEventHandler.following_changes")); //$NON-NLS-1$
+		
+		for (Iterator i = changeList.iterator(); i.hasNext();) {
+			message.append(i.next());
+		}
+		
+		message.append(ExtensionEventHandlerMessages.getString("ExtensionEventHandler.need_to_reset")); //$NON-NLS-1$
+
+		display.asyncExec(new Runnable() {
+			public void run() {
+				Shell parentShell = null;
+				IWorkbench workbench = PlatformUI.getWorkbench();
+				IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+				if (window == null) {
+					if (workbench.getWorkbenchWindowCount() == 0)
+						return;
+					window = workbench.getWorkbenchWindows()[0];
+				}
+		
+				parentShell = window.getShell();
+					
+				if (MessageDialog.openQuestion(parentShell, ExtensionEventHandlerMessages.getString("ExtensionEventHandler.reset_perspective"), message.toString())) { //$NON-NLS-1$
+					IWorkbenchPage page = window.getActivePage();
+					if (page == null)
+						return;
+					page.resetPerspective();
+				}
+			}
+		});
+
+	}
 	/**
 	 * Flag a series of elements in this registry cache as 'to be removed'.
 	 * This does not actually remove these elements as some processing may

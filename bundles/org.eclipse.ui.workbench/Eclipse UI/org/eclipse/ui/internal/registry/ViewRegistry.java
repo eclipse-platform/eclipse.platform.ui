@@ -122,7 +122,7 @@ public void add(IStickyViewDescriptor desc) {
 /* (non-Javadoc)
  * @see org.eclipse.ui.internal.registry.aaRegistryCacheaa#buildNewCacheObject(org.eclipse.core.runtime.IExtensionDelta)
  */
-public Object buildNewCacheObject(IExtensionDelta delta) {
+public Object[] buildNewCacheObject(IExtensionDelta delta) {
 	IExtension extension = delta.getExtension();
 	if (extension == null)
 		return null;
@@ -171,7 +171,7 @@ public Object buildNewCacheObject(IExtensionDelta delta) {
                 regElement.addStickyView(desc);
     		    dirtySticky = true;
             } catch (CoreException e) {
-//              log an error since its not safe to open a dialog here
+            	// log an error since its not safe to open a dialog here
 				WorkbenchPlugin.log("Unable to create sticky view descriptor." , e.getStatus());//$NON-NLS-1$
 			}
 		}
@@ -184,7 +184,9 @@ public Object buildNewCacheObject(IExtensionDelta delta) {
 			(sticky == null || sticky.size() == 0)) {
 		return null;
 	}
-	return regElement;
+	Object retArray[] = new Object[1];
+	retArray[0] = regElement;
+	return retArray;
 }
 /**
  * @param id

@@ -31,5 +31,6 @@ public class DynamicPluginsTestSuite extends TestSuite {
 	public DynamicPluginsTestSuite() {
 		addTest(new TestSuite(PerspectiveTests.class));		
 		addTest(new TestSuite(ViewTests.class));		
+		addTest(new TestSuite(ActionSetTests.class));		
 	}
 }
