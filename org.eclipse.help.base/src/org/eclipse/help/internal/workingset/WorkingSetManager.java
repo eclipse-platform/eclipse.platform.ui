@@ -29,7 +29,7 @@ import org.xml.sax.*;
  * whenever one is added or removed.
  * @since 2.1
  */
-public class WorkingSetManager implements IHelpWorkingSetManager {
+public class WorkingSetManager implements IHelpWorkingSetManager, ITocsChangedListener{
 
 	// Note: keep the following constants in sych with the values defined in IWorkingSetManager.
 	//       They are needed to synch the ui and the help working sets, as help should run w/o ui plugins.
@@ -92,6 +92,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 	 */
 	public WorkingSetManager() {
 		restoreState();
+		HelpPlugin.getDefault().addTocsChangedListener(this);
 	}
 
 	public AdaptableTocsArray getRoot() {
@@ -485,6 +486,22 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 				BaseHelpSystem.WORKING_SET,
 				workingSet);
 			HelpBasePlugin.getDefault().savePluginPreferences();
+	}
+	public void tocsChanged() {
+		saveState();
+		List oldWorkingSets = new ArrayList(workingSets);
+		root = null;
+		workingSets = new TreeSet(new WorkingSetComparator());
+		restoreState();
+		List newWorkingSets = new ArrayList(workingSets);
+		for (Iterator it = oldWorkingSets.iterator(); it.hasNext();) {
+			WorkingSet ws = (WorkingSet) it.next();
+			firePropertyChange(CHANGE_WORKING_SET_REMOVE, ws, null);
+		}
+		for (Iterator it = newWorkingSets.iterator(); it.hasNext();) {
+			WorkingSet ws = (WorkingSet) it.next();
+			firePropertyChange(CHANGE_WORKING_SET_ADD, null, ws);
+		}
 	}
 
 }
