@@ -56,6 +56,17 @@
          </filter>
       </page>
       <page
+            objectClass="org.eclipse.core.resources.IFolder"
+            adaptable="true"
+            name="%CVS"
+            class="org.eclipse.team.internal.ccvs.ui.CVSFolderPropertiesPage"
+            id="org.eclipse.team.ccvs.ui.propertyPages.CVSFolderPropertiesPage">
+         <filter
+               name="projectNature"
+               value="org.eclipse.team.cvs.core.cvsnature">
+         </filter>
+      </page>
+      <page
             objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
             name="%CVS"

@@ -172,11 +172,12 @@ public class RepositoryManager {
 	}
 	
 	/**
-	 * Add the given branch tags to the list of known tags for the given
+	 * Accept branch tags for any CVS resource. However, for the time being,
+	 * the given branch tags are added to the list of known tags for the resource's
 	 * remote root.
 	 */
-	public void addBranchTags(ICVSFolder project, CVSTag[] tags) {
-		ICVSRepositoryLocation location = getRepositoryLocationFor(project);
+	public void addBranchTags(ICVSResource resource, CVSTag[] tags) {
+		ICVSRepositoryLocation location = getRepositoryLocationFor(resource);
 		addBranchTags(location, tags);
 	}
 	
@@ -235,28 +236,51 @@ public class RepositoryManager {
 	}
 	
 	/**
-	 * Add the given version tags to the list of known tags for the given
-	 * remote project.
+	 * Accept version tags for any CVS resource. However, for the time being,
+	 * the given version tags are added to the list of known tags for the 
+	 * remote ancestor of the resource that is a direct child of the remote root
 	 */
-	public void addVersionTags(ICVSFolder project, CVSTag[] tags) {
-		ICVSRepositoryLocation location = getRepositoryLocationFor(project);
-		Hashtable table = (Hashtable)versionTags.get(location);
-		if (table == null) {
-			table = new Hashtable();
-			versionTags.put(location, table);
-		}
-		Set set = (Set)table.get(project.getName());
-		if (set == null) {
-			set = new HashSet();
-			table.put(project.getName(), set);
-		}
-		for (int i = 0; i < tags.length; i++) {
-			set.add(tags[i]);
-		}
-		Iterator it = listeners.iterator();
-		while (it.hasNext() && notifyRepoView) {
-			IRepositoryListener listener = (IRepositoryListener)it.next();
-			listener.versionTagsAdded(tags, location);
+	public void addVersionTags(ICVSResource resource, CVSTag[] tags) {
+		try {
+			
+			// Make sure there is a version tag table for the location
+			ICVSRepositoryLocation location = getRepositoryLocationFor(resource);
+			Hashtable table = (Hashtable)versionTags.get(location);
+			if (table == null) {
+				table = new Hashtable();
+				versionTags.put(location, table);
+			}
+			
+			// Get the name to cache the version tags with
+			ICVSFolder parent;
+			if (resource.isFolder()) {
+				parent = (ICVSFolder)resource;
+			} else {
+				parent = resource.getParent();
+			}
+			if ( ! parent.isCVSFolder()) return;
+			String name = new Path(parent.getFolderSyncInfo().getRepository()).segment(0);
+			
+			// Make sure there is a table for the ancestor that holds the tags
+			Set set = (Set)table.get(name);
+			if (set == null) {
+				set = new HashSet();
+				table.put(name, set);
+			}
+			
+			// Store the tag with the appropriate ancestor
+			for (int i = 0; i < tags.length; i++) {
+				set.add(tags[i]);
+			}
+			
+			// Notify any listeners
+			Iterator it = listeners.iterator();
+			while (it.hasNext() && notifyRepoView) {
+				IRepositoryListener listener = (IRepositoryListener)it.next();
+				listener.versionTagsAdded(tags, location);
+			}
+		} catch (CVSException e) {
+			CVSUIPlugin.log(e.getStatus());
 		}
 	}
 	
@@ -696,8 +720,14 @@ public class RepositoryManager {
 		return (CVSTag[])tagSet.toArray(new CVSTag[0]);
 	}
 	
-	public ICVSRepositoryLocation getRepositoryLocationFor(ICVSFolder folder) {
+	public ICVSRepositoryLocation getRepositoryLocationFor(ICVSResource resource) {
 		try {
+			ICVSFolder folder;
+			if (resource.isFolder()) {
+				folder = (ICVSFolder)resource;
+			} else {
+				folder = resource.getParent();
+			}
 			if(folder.isCVSFolder()) {
 				ICVSRepositoryLocation location = CVSProvider.getInstance().getRepository(folder.getFolderSyncInfo().getRoot());
 				return location;

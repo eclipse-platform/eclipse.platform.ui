@@ -47,46 +47,6 @@ public class CVSMoveDeleteHook implements IMoveDeleteHook {
 	public interface IRunnableWithShell {
 		public void run(Shell shell);
 	}
-	
-	public class MoveDeleteMessageDialog extends MessageDialog {
-		Button dontShowAgain;
-		boolean dontShow;
-		boolean showOption;
-		
-		public MoveDeleteMessageDialog(Shell shell, String dialogTitle, Image dialogTitleImage, String dialogMessage, int dialogImageType, String[] dialogButtonLabels, int defaultIndex) {
-			this(shell, dialogTitle, dialogTitleImage, dialogMessage, dialogImageType, dialogButtonLabels, defaultIndex, true);
-		}
-		
-		public MoveDeleteMessageDialog(Shell shell, String dialogTitle, Image dialogTitleImage, String dialogMessage, int dialogImageType, String[] dialogButtonLabels, int defaultIndex, boolean showOption) {
-			super(shell, dialogTitle, dialogTitleImage, dialogMessage, dialogImageType, dialogButtonLabels, defaultIndex);
-			this.showOption = showOption;
-		}
-		
-		protected Control createCustomArea(Composite composite) {
-			if ( ! showOption) return null;
-			dontShow = false;
-			dontShowAgain = new Button(composite, SWT.CHECK);
-			GridData data = new GridData();
-			data.horizontalIndent = 50;
-			dontShowAgain.setLayoutData(data);
-			dontShowAgain.setText(Policy.bind("CVSMoveDeleteHook.dontShowAgain")); //$NON-NLS-1$
-			dontShowAgain.setSelection(dontShow);
-			dontShowAgain.addSelectionListener(new SelectionListener() {
-				public void widgetSelected(SelectionEvent e) {
-					dontShow = dontShowAgain.getSelection();
-				}
-				public void widgetDefaultSelected(SelectionEvent e) {
-					widgetSelected(e);
-				}
-
-			});
-			return dontShowAgain;
-		}
-		
-		public boolean isDontShowAgain() {
-			return dontShow;
-		}
-	}
 
 	private void showDialog(final IRunnableWithShell runnable) {
 		Display.getDefault().syncExec(new Runnable() {
@@ -177,7 +137,7 @@ public class CVSMoveDeleteHook implements IMoveDeleteHook {
 			if ( ! performDelete[0]){
 				showDialog(new IRunnableWithShell() {
 					public void run(Shell shell) {
-						MoveDeleteMessageDialog dialog = new MoveDeleteMessageDialog(
+						AvoidableMessageDialog dialog = new AvoidableMessageDialog(
 							shell,
 							title, 
 							null,	// accept the default window icon
@@ -237,7 +197,7 @@ public class CVSMoveDeleteHook implements IMoveDeleteHook {
 				dialogShown = true;
 				showDialog(new IRunnableWithShell() {
 					public void run(Shell shell) {
-						MoveDeleteMessageDialog dialog = new MoveDeleteMessageDialog(
+						AvoidableMessageDialog dialog = new AvoidableMessageDialog(
 							shell,
 							title, 
 							null,	// accept the default window icon

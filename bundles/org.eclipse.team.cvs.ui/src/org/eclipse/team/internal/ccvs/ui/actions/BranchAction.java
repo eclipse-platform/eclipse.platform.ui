@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.wizards.BranchWizard;
@@ -47,7 +48,8 @@ public class BranchAction extends TeamAction {
 			RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());
 			if (provider == null) return false;
 			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-			if (resource.getType()!=IResource.PROJECT&&!cvsResource.isManaged()) return false;
+			if (resource.getType() == IResource.PROJECT && ((ICVSFolder)cvsResource).isCVSFolder()) return true;
+			if ( ! cvsResource.isManaged()) return false;
 		}
 		return true;
 	}

@@ -18,8 +18,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -27,7 +29,6 @@ import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -37,7 +38,6 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
-import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
 
 public class BranchWizard extends Wizard {
 	BranchWizardPage mainPage;
@@ -62,12 +62,10 @@ public class BranchWizard extends Wizard {
 						boolean update = mainPage.getUpdate();
 						String versionString = mainPage.getVersionTag();
 						CVSTag rootVersionTag = null;
-						CVSTag branchTag = new CVSTag(tagString, CVSTag.BRANCH);
+						final CVSTag branchTag = new CVSTag(tagString, CVSTag.BRANCH);
 						if (versionString != null) {
 							rootVersionTag = new CVSTag(versionString, CVSTag.VERSION);
 						}
-						boolean eclipseWay = true;
-						//boolean eclipseWay = methodPage.getEclipseWay();
 						
 						RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
 						Hashtable table = getProviderMapping(resources);
@@ -80,23 +78,51 @@ public class BranchWizard extends Wizard {
 							CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
 							List list = (List)table.get(provider);
 							IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
+							// For non-projects determine if the tag being loaded is the same as the resource's parent
+							// If it's not, warn the user that they will have strange sync behavior
+							if (update) {
+								for (int i = 0; i < resources.length; i++) {
+									if (providerResources[i].getType() != IResource.PROJECT) {
+										ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resources[i]);
+										CVSTag parentTag = cvsResource.getParent().getFolderSyncInfo().getTag();
+										if ( ! equalTags(branchTag, parentTag)) {
+											final Shell shell = getShell();
+											final boolean[] result = new boolean[] { false };
+											shell.getDisplay().syncExec(new Runnable() {
+												public void run() {
+													result[0] = MessageDialog.openQuestion(getShell(), Policy.bind("question"), Policy.bind("BranchWizard.mixingTags", branchTag.getName())); //$NON-NLS-1$ //$NON-NLS-2$
+												}
+											});
+											if (!result[0]) return;
+											// Only ask once!
+											// XXX Should we ask once per provider or only once overall?
+											break;
+										}
+									}
+									
+								}
+							}
+				
 							ICVSRepositoryLocation root = provider.getCVSWorkspaceRoot().getRemoteLocation();
 							try {
+								// XXX This check is dangerous if you allow branching at the resource level
 								if(!areAllResourcesSticky(resources)) {													
 									// version everything in workspace with the root version tag specified in dialog
-									provider.makeBranch(providerResources, rootVersionTag, branchTag, update, eclipseWay, subMonitor);
+									provider.makeBranch(providerResources, rootVersionTag, branchTag, update, true, subMonitor);
 								} else {
 									// all resources are versions, use that version as the root of the branch
-									provider.makeBranch(providerResources, null, branchTag, update, eclipseWay, subMonitor);										
+									provider.makeBranch(providerResources, null, branchTag, update, true, subMonitor);										
 								}
-								if (rootVersionTag != null) {
+								if (rootVersionTag != null || update) {
 									for (int i = 0; i < providerResources.length; i++) {
-										ICVSRemoteFolder remoteResource = (ICVSRemoteFolder) CVSWorkspaceRoot.getRemoteResourceFor(providerResources[i]);
-										manager.addVersionTags(remoteResource, new CVSTag[] { rootVersionTag });
+										ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(providerResources[i]);
+										if (rootVersionTag != null) {
+											manager.addVersionTags(cvsResource, new CVSTag[] { rootVersionTag });
+										}
+										if (update) {
+											manager.addBranchTags(cvsResource, new CVSTag[] { branchTag });
+										}
 									}
-								}
-								if (update) {
-									manager.addBranchTags(root, new CVSTag[] { branchTag });
 								}
 							} catch (TeamException e) {
 								status.merge(e.getStatus());
@@ -176,5 +202,11 @@ public class BranchWizard extends Wizard {
 			return false;
 		}
 		return false;
+	}
+	
+	protected boolean equalTags(CVSTag tag1, CVSTag tag2) {
+		if (tag1 == null) tag1 = CVSTag.DEFAULT;
+		if (tag2 == null) tag2 = CVSTag.DEFAULT;
+		return tag1.equals(tag2);
 	}
 }

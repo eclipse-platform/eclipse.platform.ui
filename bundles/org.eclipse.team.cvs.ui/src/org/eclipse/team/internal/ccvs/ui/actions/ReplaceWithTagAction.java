@@ -22,9 +22,12 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -53,6 +56,7 @@ public class ReplaceWithTagAction extends ReplaceWithAction {
 					}
 				}
 				
+				// Confirm overwrite of locally modified resources
 				if (isAnyDirty) {
 					final Shell shell = getShell();
 					final boolean[] result = new boolean[] { false };
@@ -64,7 +68,7 @@ public class ReplaceWithTagAction extends ReplaceWithAction {
 					if (!result[0]) return;
 				}
 				
-				// show the tags for one of the selected resources
+				// show the tags for the projects of the selected resources
 				IProject[] projects = new IProject[resources.length];
 				for (int i = 0; i < resources.length; i++) {
 					projects[i] = resources[i].getProject();
@@ -75,6 +79,32 @@ public class ReplaceWithTagAction extends ReplaceWithAction {
 					return;
 				}
 				tag[0] = dialog.getResult();
+				
+				// For non-projects determine if the tag being loaded is the same as the resource's parent
+				// If it's not, warn the user that they will have strange sync behavior
+				try {
+					for (int i = 0; i < resources.length; i++) {
+						if (resources[i].getType() != IResource.PROJECT) {
+							ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resources[i]);
+							CVSTag parentTag = cvsResource.getParent().getFolderSyncInfo().getTag();
+							if ( ! equalTags(tag[0], parentTag)) {
+								final Shell shell = getShell();
+								final boolean[] result = new boolean[] { false };
+								shell.getDisplay().syncExec(new Runnable() {
+									public void run() {
+										result[0] = MessageDialog.openQuestion(getShell(), Policy.bind("question"), Policy.bind("ReplaceWithTagAction.mixingTags")); //$NON-NLS-1$ //$NON-NLS-2$
+									}
+								});
+								if (!result[0]) tag[0] = null;
+								// Only ask once!
+								return;
+							}
+						}
+						
+					}
+				} catch (CVSException e) {
+					throw new InvocationTargetException(e);
+				}
 			}
 		}, Policy.bind("ReplaceWithTagAction.replace"), this.PROGRESS_BUSYCURSOR);			 //$NON-NLS-1$
 		
@@ -119,9 +149,17 @@ public class ReplaceWithTagAction extends ReplaceWithAction {
 					return false;
 				}
 				type = resource.getType();
+				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+				if ( ! cvsResource.isManaged()) return false;
 			}
 			return true;
 		}
 		return false;
+	}
+	
+	protected boolean equalTags(CVSTag tag1, CVSTag tag2) {
+		if (tag1 == null) tag1 = CVSTag.DEFAULT;
+		if (tag2 == null) tag2 = CVSTag.DEFAULT;
+		return tag1.equals(tag2);
 	}
 }
