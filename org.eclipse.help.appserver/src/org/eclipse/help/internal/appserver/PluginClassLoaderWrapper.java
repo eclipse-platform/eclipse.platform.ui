@@ -37,56 +37,77 @@ public class PluginClassLoaderWrapper extends URLClassLoader {
 	}
 	/**
 	 * This is a workaround for the jsp compiler that needs to know the
-	 * classpath. NOTE: for now, assume that the web app plugin requires the
-	 * tomcat plugin
+	 * classpath.
 	 */
 	public URL[] getURLs() {
 		Set urls = getPluginClasspath(plugin);
 		return (URL[]) urls.toArray(new URL[urls.size()]);
 	}
 	private Set getPluginClasspath(String pluginId) {
-		Set urls = new LinkedHashSet();
-		try {
-			Bundle b = Platform.getBundle(pluginId);
-			// declared classpath
-			String headers = (String) b.getHeaders().get(
-					Constants.BUNDLE_CLASSPATH);
-			ManifestElement[] paths = ManifestElement.parseHeader(
-					Constants.BUNDLE_CLASSPATH, headers);
-			if (paths != null) {
-				for (int i = 0; i < paths.length; i++) {
-					String path = paths[i].getValue();
-					URL url = Platform.find(b, new Path(path));
-					if (url != null)
-						try {
-							urls.add(Platform.asLocalURL(url));
-						} catch (IOException ioe) {
-						}
+		// Collect set of plug-ins
+		Set plugins = new HashSet();
+		addPluginWithPrereqs(pluginId, plugins);
+		// Collect URLs for each plug-in
+		Set urls = new HashSet();
+		for (Iterator it = plugins.iterator(); it.hasNext();) {
+			String id = (String) it.next();
+			try {
+				Bundle b = Platform.getBundle(id);
+				// declared classpath
+				String headers = (String) b.getHeaders().get(
+						Constants.BUNDLE_CLASSPATH);
+				ManifestElement[] paths = ManifestElement.parseHeader(
+						Constants.BUNDLE_CLASSPATH, headers);
+				if (paths != null) {
+					for (int i = 0; i < paths.length; i++) {
+						String path = paths[i].getValue();
+						URL url = Platform.find(b, new Path(path));
+						if (url != null)
+							try {
+								urls.add(Platform.asLocalURL(url));
+							} catch (IOException ioe) {
+							}
+					}
 				}
-			}
-			// dev classpath
-			String prop = System.getProperty("osgi.dev");
-			if (prop != null) {
-				String[] devpaths = prop.split(",");
-				for (int i = 0; i < devpaths.length; i++) {
-					URL url = Platform.find(b, new Path(devpaths[i]));
-					if (url != null)
-						try {
-							urls.add(Platform.asLocalURL(url));
-						} catch (IOException ioe) {
-						}
+				// dev classpath
+				String prop = System.getProperty("osgi.dev");
+				if (prop != null) {
+					String[] devpaths = prop.split(",");
+					for (int i = 0; i < devpaths.length; i++) {
+						URL url = Platform.find(b, new Path(devpaths[i]));
+						if (url != null)
+							try {
+								urls.add(Platform.asLocalURL(url));
+							} catch (IOException ioe) {
+							}
+					}
 				}
+			} catch (BundleException e) {
 			}
-		} catch (BundleException e) {
-		}
-		//
-		String[] prereqs = getPluginPrereqs(pluginId);
-		for (int i = 0; i < prereqs.length; i++) {
-			urls.addAll(getPluginClasspath(prereqs[i]));
 		}
 		return urls;
 	}
-	private String[] getPluginPrereqs(String pluginId) {
+	/**
+	 * Ensures set contains plugin ID of given plugin and all its prereqs. Does
+	 * nothing if set contains given plug-in.
+	 */
+	private void addPluginWithPrereqs(String pluginId, Set pluginIds) {
+		if (pluginIds.contains(pluginId)) {
+			return;
+		}
+		String[] immidiatePrereqs = getDirectPrereqs(pluginId);
+		for (int i = 0; i < immidiatePrereqs.length; i++) {
+			addPluginWithPrereqs(immidiatePrereqs[i], pluginIds);
+		}
+		pluginIds.add(pluginId);
+	}
+	/**
+	 * Obtain plug-ins immidiately required by given plug-in
+	 * 
+	 * @param pluginId
+	 * @return
+	 */
+	private String[] getDirectPrereqs(String pluginId) {
 		try {
 			Bundle bundle = Platform.getBundle(pluginId);
 			String header = (String) bundle.getHeaders().get(
