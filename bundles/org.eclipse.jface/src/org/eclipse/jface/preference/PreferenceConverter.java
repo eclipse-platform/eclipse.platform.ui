@@ -522,8 +522,9 @@ public class PreferenceConverter {
 		RGB oldValue = getColor(store, name);
 		if (oldValue == null || !oldValue.equals(value)) {
 			store.putValue(name, StringConverter.asString(value));
-			store.firePropertyChangeEvent(name, oldValue, value);
+			//Clear the cache before updating
 			JFaceColors.clearColor(name);
+			store.firePropertyChangeEvent(name, oldValue, value);
 		}
 	}
 }

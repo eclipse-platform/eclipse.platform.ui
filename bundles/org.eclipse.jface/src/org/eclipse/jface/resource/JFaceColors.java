@@ -101,7 +101,7 @@ public class JFaceColors {
 	 */
 	private static Color getColorSetting(Display display, String preferenceName) {
 
-		if(colorTable.contains(preferenceName))
+		if(colorTable.containsKey(preferenceName))
 			return (Color) colorTable.get(preferenceName);
 			
 		IPreferenceStore store = JFacePreferences.getPreferenceStore();
