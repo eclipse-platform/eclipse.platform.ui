@@ -10,15 +10,19 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.DataFormatException;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 
@@ -28,7 +32,10 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public class FontDefinition implements IHierarchalThemeElementDefinition, ICategorizedThemeElementDefinition {
 
-	/**
+	
+	private static final String FONT_SEPERATOR = ";"; //$NON-NLS-1$
+	
+    /**
 	 * The FontPreferenceListener is a class that listens to 
 	 * changes in the preference store and propogates the change
 	 * for any special cases that require updating of other
@@ -136,6 +143,8 @@ public class FontDefinition implements IHierarchalThemeElementDefinition, ICateg
     private String value;
 
     private boolean isEditable;
+
+    private FontData [] parsedValue;
 	/**
 	 * For dynamic UI
 	 * 
@@ -220,10 +229,26 @@ public class FontDefinition implements IHierarchalThemeElementDefinition, ICateg
     /**
      * Returns the value.
      * 
-     * @return String
+     * @return FontData []
      */
-    public String getValue() {
-        return value;
+    public FontData [] getValue() {
+        if (value == null)
+            return null;
+        if (parsedValue == null) {
+            String [] strings = value.split(FONT_SEPERATOR);
+            ArrayList data = new ArrayList(strings.length);
+            for (int i = 0; i < strings.length; i++) {            
+                try {
+                	data.add(StringConverter.asFontData(strings[i]));
+               	}
+               	catch (DataFormatException e) {
+               		//do-nothing
+               	}
+            }
+            parsedValue = JFaceResources.getFontRegistry().bestDataArray((FontData []) data.toArray(new FontData [data.size()]), Workbench.getInstance().getDisplay());
+        }
+
+        return parsedValue;
     }
     
     /**

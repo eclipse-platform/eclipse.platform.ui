@@ -16,7 +16,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
-import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.internal.Workbench;
@@ -55,7 +54,7 @@ public final class ThemeElementHelper {
 		FontData [] prefFont = store != null ? PreferenceConverter.getFontDataArray(store, key) : null;
 		FontData [] defaultFont = null;
 		if (definition.getValue() != null)
-		    defaultFont = new FontData [] {StringConverter.asFontData(definition.getValue(), PreferenceConverter.FONTDATA_DEFAULT_DEFAULT)};
+		    defaultFont = definition.getValue();
 		else if (definition.getDefaultsTo() != null)
 		    defaultFont = registry.bestDataArray(registry.getFontData(definition.getDefaultsTo()), Workbench.getInstance().getDisplay());
 		else {

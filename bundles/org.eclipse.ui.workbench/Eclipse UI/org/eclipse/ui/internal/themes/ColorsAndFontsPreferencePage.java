@@ -1046,9 +1046,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		if (fontPreferencesToSet.containsKey(id)) {
 			if (definition.getValue() != null) { // value-based font
 				if (Arrays.equals((FontData[]) fontPreferencesToSet.get(id), 
-				        new FontData [] {
-				        	StringConverter.asFontData(getPreferenceStore().getDefaultString(id), null)
-				        }))
+				        definition.getValue()))
 					return true;
 			} else {
 			    FontData [] ancestor = getFontAncestorValue(definition);
