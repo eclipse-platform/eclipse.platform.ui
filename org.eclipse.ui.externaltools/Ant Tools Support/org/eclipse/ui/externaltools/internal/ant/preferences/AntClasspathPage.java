@@ -234,18 +234,19 @@ public class AntClasspathPage extends AntPage {
 	}
 	
 	private File validateAntHome(String path) {
-		if (path.length() == 0) {
-			return null;
+		File rootDir= null;
+		if (path.length() > 0) {
+			rootDir = new File(path, "lib"); //$NON-NLS-1$
+			if (!rootDir.exists()) {
+				getPreferencePage().setErrorMessage(AntPreferencesMessages.getString("AntClasspathPage.Specified_ANT_HOME_does_not_contain_a___lib___directory_7")); //$NON-NLS-1$
+				getPreferencePage().setValid(false);
+				return null;
+			}
 		}
-		File rootDir = new File(path, "lib"); //$NON-NLS-1$
-		if (!rootDir.exists()) {
-			getPreferencePage().setErrorMessage(AntPreferencesMessages.getString("AntClasspathPage.Specified_ANT_HOME_does_not_contain_a___lib___directory_7")); //$NON-NLS-1$
-			getPreferencePage().setValid(false);
-			return null;
-		} else {
-			getPreferencePage().setErrorMessage(null);
-			getPreferencePage().setValid(true);
-		}
+		
+		getPreferencePage().setErrorMessage(null);
+		getPreferencePage().setValid(true);
+		
 		return rootDir;
 	}
 	
@@ -280,6 +281,18 @@ public class AntClasspathPage extends AntPage {
 		userTableSelectionChanged((IStructuredSelection)userTableViewer.getSelection());
 		getPreferencePage().setErrorMessage(null);
 		getPreferencePage().setValid(true);
+	}
+	
+	protected void performDefaults() {
+		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
+		getTableViewer().setInput(Arrays.asList(prefs.getDefaultAntURLs()));
+		userTableViewer.setInput(new ArrayList(0));
+		antHome.setEnabled(false);
+		browseAntHomeButton.setEnabled(false);
+		antHomeButton.setSelection(false);
+		antHome.setText("");
+		tableSelectionChanged((IStructuredSelection) getTableViewer().getSelection());
+		userTableSelectionChanged((IStructuredSelection)userTableViewer.getSelection());
 	}
 	
 	/**

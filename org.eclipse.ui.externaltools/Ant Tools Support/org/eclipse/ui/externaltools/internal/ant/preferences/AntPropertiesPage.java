@@ -7,6 +7,7 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.eclipse.ant.core.AntCorePlugin;
@@ -302,6 +303,13 @@ public class AntPropertiesPage extends AntPage {
 	protected void initialize() {
 		getTableViewer().setInput(Arrays.asList(AntCorePlugin.getPlugin().getPreferences().getCustomProperties()));
 		fileTableViewer.setInput(Arrays.asList(AntCorePlugin.getPlugin().getPreferences().getCustomPropertyFiles()));
+		tableSelectionChanged((IStructuredSelection) getTableViewer().getSelection());
+		fileTableSelectionChanged((IStructuredSelection)fileTableViewer.getSelection());
+	}
+	
+	protected void performDefaults() {
+		getTableViewer().setInput(new ArrayList(0));
+		fileTableViewer.setInput(new ArrayList(0));
 		tableSelectionChanged((IStructuredSelection) getTableViewer().getSelection());
 		fileTableSelectionChanged((IStructuredSelection)fileTableViewer.getSelection());
 	}
