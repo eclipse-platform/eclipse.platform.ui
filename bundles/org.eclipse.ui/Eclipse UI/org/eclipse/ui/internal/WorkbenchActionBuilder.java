@@ -481,7 +481,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	 * Adds the keyboard navigation submenu to the specified menu.
 	 */
 	private void addNavigationSubMenu(MenuManager menu) {
-		MenuManager subMenu = new MenuManager(WorkbenchMessages.getString("Workbench.navigation")); //$NON-NLS-1$
+		MenuManager subMenu = new MenuManager(WorkbenchMessages.getString("Workbench.shortcuts")); //$NON-NLS-1$
 		menu.add(subMenu);
 		subMenu.add(activateEditorAction);
 		subMenu.add(showPartPaneMenuAction);
