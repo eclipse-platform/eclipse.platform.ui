@@ -14,7 +14,7 @@
       </library>
    </runtime>
    <requires>
-   	<import plugin="org.eclipse.osgi.services"/>
+   	  <import plugin="org.eclipse.osgi.services"/>
       <import plugin="org.eclipse.core.runtime.compatibility"/>
    </requires>
 
@@ -29,6 +29,10 @@
 
 	<extension id="preferences" point="org.eclipse.core.runtime.preferences" name="preferences">
 		<preferences scope="project" class="org.eclipse.core.internal.resources.ProjectPreferences"/>
+	</extension>
+	
+	<extension point="org.eclipse.core.runtime.contentTypes">
+		<file-association content-type="org.eclipse.core.runtime.xml" file-names=".project"/>
 	</extension>
 
    <extension
