@@ -1155,6 +1155,7 @@
          </description>
       </fontDefinition>
       <themeElementCategory
+            class="org.eclipse.ui.internal.themes.WorkbenchPreview"
             label="%Presentation.misc.workbench"
             id="org.eclipse.ui.workbenchMisc">
       </themeElementCategory>
