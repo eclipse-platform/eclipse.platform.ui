@@ -27,6 +27,7 @@ import org.eclipse.ant.internal.ui.editor.outline.AntEditorContentOutlinePage;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorDocumentProvider;
 import org.eclipse.ant.internal.ui.editor.text.AntFoldingStructureProvider;
 import org.eclipse.ant.internal.ui.editor.text.IReconcilingParticipant;
+import org.eclipse.ant.internal.ui.editor.text.XMLTextHover;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.ant.internal.ui.model.AntModelChangeEvent;
@@ -608,32 +609,37 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		String errorMessage= null;
 		if (selection instanceof ITextSelection) {
 			ITextSelection textSelection= (ITextSelection)selection;
-			String text= textSelection.getText();
-			AntElementNode node= getAntModel().getReferenceNode(text);
-			if (node != null) {
-				setSelection(node, true);
-				return;
+			ISourceViewer viewer= getSourceViewer();
+			IRegion region= XMLTextHover.getRegion(viewer, textSelection.getOffset());
+			IDocument document= viewer.getDocument();
+			String text= null;
+			try {
+				text= document.get(region.getOffset(), region.getLength());
+			} catch (BadLocationException e) {
 			}
-			
-			node= getAntModel().getTargetNode(text);
-			if (node != null) {
-				if (node.isExternal()) {
-					String path= node.getFilePath();
-					errorMessage= openInEditor(path);
+			if (text != null && text.length() > 0) {
+				AntElementNode node= getAntModel().getReferenceNode(text);
+				if (node != null) {
+					errorMessage= openNode(node);
 					if (errorMessage == null) {
 						return;
 					}
 				} else {
-					setSelection(node, true);
-				}
-				return;
-			}
-			
-			String path= getAntModel().getEntityPath(text);
-			if (path != null) {
-				errorMessage= openInEditor(path);
-				if (errorMessage == null) {
-					return;
+					node= getAntModel().getTargetNode(text);
+					if (node != null) {
+						errorMessage= openNode(node);
+						if (errorMessage == null) {
+							return;
+						}
+					} else {
+						String path= getAntModel().getEntityPath(text);
+						if (path != null) {
+							errorMessage= openInEditor(path);
+							if (errorMessage == null) {
+								return;
+							}
+						}
+					}
 				}
 			}
 		}
@@ -645,6 +651,16 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		getSite().getShell().getDisplay().beep();
 	}
 	
+	private String openNode(AntElementNode node) {
+		String errorMessage= null;
+		if (node.isExternal()) {
+			String path= node.getFilePath();
+			errorMessage= openInEditor(path);
+		} else {
+			setSelection(node, true);
+		}
+		return errorMessage;
+	}
 	private String openInEditor(String path) {
 		IFile file= AntUtil.getFileForLocation(path, null);
 		if (file != null && file.exists()) {
