@@ -1,19 +1,16 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
+/*
+ * (c) Copyright IBM Corp. 2002.
+ * All Rights Reserved.
+ */
+ 
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.Viewer;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-
 
 /**
- * Debug favorites and history
+ * Run favorites and history
  */
 public class RunHistoryPreferenceTab extends LaunchHistoryPreferenceTab {
 	
@@ -21,14 +18,14 @@ public class RunHistoryPreferenceTab extends LaunchHistoryPreferenceTab {
 	 * @see LaunchHistoryPreferenceTab#getFavoritesLabel()
 	 */
 	protected String getFavoritesLabel() {
-		return "Favorite Run Configurations:";
+		return "Favorite Run Confi&gurations:";
 	}
 
 	/**
 	 * @see LaunchHistoryPreferenceTab#getRecentLabel()
 	 */
 	protected String getRecentLabel() {
-		return "Recent Run Launches:";
+		return "Recent Run &Launches:";
 	}
 
 	/**
