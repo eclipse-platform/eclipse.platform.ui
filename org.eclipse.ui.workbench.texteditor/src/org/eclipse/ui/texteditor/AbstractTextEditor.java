@@ -2715,6 +2715,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				initializeSourceViewer(input);
 				
 			updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE);
+			if (fIsOverwriting)
+				toggleOverwriteMode();
+			setInsertMode((InsertMode) getLegalInsertModes().get(0));
+			updateCaret();
 			
 			if (fSelectionListener != null)
 				fSelectionListener.setDocument(getDocumentProvider().getDocument(input));
@@ -4494,8 +4498,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	protected List getLegalInsertModes() {
 		if (fLegalInsertModes == null) {
 			fLegalInsertModes= new ArrayList();
-			fLegalInsertModes.add(INSERT);
 			fLegalInsertModes.add(SMART_INSERT);
+			fLegalInsertModes.add(INSERT);
 		}
 		return fLegalInsertModes;
 	}
