@@ -28,21 +28,18 @@ public class UISynchronizer extends Synchronizer {
 		Semaphore work = new Semaphore(runnable);
 		work.setOperationThread(Thread.currentThread());
 		lockListener.addPendingWork(work);
-		if (!lockListener.isUIWaiting()) {
-			asyncExec(new Runnable() {
-				public void run() {
-					lockListener.doPendingWork();
-				}
-			});
-		} else
-			lockListener.interruptUI();
+		asyncExec(new Runnable() {
+			public void run() {
+				lockListener.doPendingWork();
+			}
+		});
 		try {
 			//even if the UI was not blocked earlier, it might become blocked
 			//before it can serve the asyncExec to do the pending work
-			while (!work.acquire(1000)) {
+			do {
 				if (lockListener.isUIWaiting())
 					lockListener.interruptUI();
-			}
+			} while (!work.acquire(1000));
 		} catch (InterruptedException e) {
 		}
 	}
