@@ -125,20 +125,20 @@ public final class ExternalToolMigration {
 	/*
 	 * 2.1 External Tool Keys
 	 */
-	private static final String TAG_TYPE = "type"; //$NON-NLS-1$
-	private static final String TAG_NAME = "name"; //$NON-NLS-1$
-	private static final String TAG_LOCATION = "location"; //$NON-NLS-1$
-	private static final String TAG_WORK_DIR = "workDirectory"; //$NON-NLS-1$
-	private static final String TAG_CAPTURE_OUTPUT = "captureOutput"; //$NON-NLS-1$
-	private static final String TAG_SHOW_CONSOLE = "showConsole"; //$NON-NLS-1$
-	private static final String TAG_RUN_BKGRND = "runInBackground"; //$NON-NLS-1$
-	private static final String TAG_PROMPT_ARGS = "promptForArguments"; //$NON-NLS-1$
-	private static final String TAG_ARGS = "arguments"; //$NON-NLS-1$
-	private static final String TAG_REFRESH_SCOPE = "refreshScope"; //$NON-NLS-1$
-	private static final String TAG_REFRESH_RECURSIVE = "refreshRecursive"; //$NON-NLS-1$
-	private static final String TAG_RUN_BUILD_KINDS = "runForBuildKinds"; //$NON-NLS-1$
-	private static final String TAG_EXTRA_ATTR = "extraAttribute"; //$NON-NLS-1$
-	private static final String TAG_VERSION = "version"; //$NON-NLS-1$
+	public static final String TAG_TYPE = "type"; //$NON-NLS-1$
+	public static final String TAG_NAME = "name"; //$NON-NLS-1$
+	public static final String TAG_LOCATION = "location"; //$NON-NLS-1$
+	public static final String TAG_WORK_DIR = "workDirectory"; //$NON-NLS-1$
+	public static final String TAG_CAPTURE_OUTPUT = "captureOutput"; //$NON-NLS-1$
+	public static final String TAG_SHOW_CONSOLE = "showConsole"; //$NON-NLS-1$
+	public static final String TAG_RUN_BKGRND = "runInBackground"; //$NON-NLS-1$
+	public static final String TAG_PROMPT_ARGS = "promptForArguments"; //$NON-NLS-1$
+	public static final String TAG_ARGS = "arguments"; //$NON-NLS-1$
+	public static final String TAG_REFRESH_SCOPE = "refreshScope"; //$NON-NLS-1$
+	public static final String TAG_REFRESH_RECURSIVE = "refreshRecursive"; //$NON-NLS-1$
+	public static final String TAG_RUN_BUILD_KINDS = "runForBuildKinds"; //$NON-NLS-1$
+	public static final String TAG_EXTRA_ATTR = "extraAttribute"; //$NON-NLS-1$
+	public static final String TAG_VERSION = "version"; //$NON-NLS-1$
 
 	private static final String EXTRA_ATTR_SEPARATOR = "="; //$NON-NLS-1$
 

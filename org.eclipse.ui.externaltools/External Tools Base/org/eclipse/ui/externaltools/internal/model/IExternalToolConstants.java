@@ -142,6 +142,7 @@ public interface IExternalToolConstants {
 	/**
 	 * Boolean attribute indicating if the user should be prompted for
 	 * arguments before running a tool. Default value is <code>false</code>.
+	 * THIS ATTRIBUTE IS NOT USED.
 	 */
 	public static final String ATTR_PROMPT_FOR_ARGUMENTS = PLUGIN_ID + ".ATTR_PROMPT_FOR_ARGUMENTS"; //$NON-NLS-1$
 	
