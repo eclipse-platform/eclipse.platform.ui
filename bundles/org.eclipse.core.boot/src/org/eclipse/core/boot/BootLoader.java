@@ -316,7 +316,37 @@ public static boolean isRunning() {
  * @see #startup
  */
 public static Object run(String applicationName, URL pluginPathLocation, String location, String[] args) throws Exception {
-	return InternalBootLoader.run(applicationName, pluginPathLocation, location, args);
+	return InternalBootLoader.run(applicationName, pluginPathLocation, location, args, null);
+}
+/**
+ * Launches the Platform to run a single application. 
+ * This convenince method starts up the Platform,
+ * runs the indicated application, and then shuts down
+ * the Platform. The Platform must not be running already.
+ *
+ * @param applicationName The fully qualified name of an 
+ * 		extension installed in the Platform plug-in's <code>applications</code> 
+ *		extension-point (i.e., <code>org.eclipse.core.runtime.applications</code>).
+ * @param pluginPathLocation the URL of the plug-in path; this is where
+ *		the Platform is to find the code for plug-ins
+ * @param location the location (usually a string path in the local file
+ *		file system) for the saved platform state
+ * @param args the array of command-line style argments which are passed
+ *		to the Platform on initialization.  The arguments which are consumed by the
+ * 		Platform's initialization are removed from the arg list.  This modified arg list is
+ *		the return value of this method.
+ * @param handler an optional handler invoked by the launched application
+ *      at the point the application considers itself initialized. A typical
+ *      use for the handler would be to take down any splash screen
+ *      that was displayed by the caller of this method.
+ *@return the list of <code>args</code> which were supplied but not consumed
+ *		by this method.  
+ * @return the result, or <code>null</code> if none
+ * @exception Exception if anything goes wrong
+ * @see #startup
+ */
+public static Object run(String applicationName, URL pluginPathLocation, String location, String[] args, Runnable handler) throws Exception {
+	return InternalBootLoader.run(applicationName, pluginPathLocation, location, args, handler);
 }
 /**
  * Shuts down the Platform. The Platform must be running. In the process,
@@ -371,6 +401,45 @@ public static void shutdown() throws Exception {
  * @exception Exception if there are problems starting the platform
  */
 public static String[] startup(URL pluginPathLocation, String location, String[] args) throws Exception {
-	return InternalBootLoader.startup(pluginPathLocation, location, args);
+	return InternalBootLoader.startup(pluginPathLocation, location, args, null);
+}
+/**
+ * Launches the Eclipse Platform. The Platform must not be running.
+ * <p>
+ * The location of the started Platform is defined as follows:
+ * <ul>
+ * <li>If the <code>location</code> argument is specified, that value is used.  
+ * <li>If <code>location</code> is <code>null</code> but <code>args</code> 
+ *		contains a <code>-platform &ltlocation&gt</code> pair, then the given value is used.  
+ * <li> If neither is specified, <code>System.getProperty("user.dir")</code> is used.
+ * </ul>
+ * The plug-in path of the started Platform is defined as follows:
+ * <ul>
+ * <li>If the <code>pluginPathLocation</code> argument is specified, that value is tried.
+ * <li>If <code>pluginPathLocation</code> is <code>null</code> but <code>args</code> 
+ *		contains a <code>-plugins &ltlocation&gt</code> pair, then the given value is tried.  
+ * <li>If neither value is specified or a given location does not exist, 
+ * 		the Platform's location is searched.  
+ * <li>Finally, the default plug-in path is used.  This value identifies the plug-ins in the 
+ *		Platform's install location.
+ * </ul>
+ * @param pluginPathLocation the URL of the plug-in path; this is where
+ *		the Platform is to find the code for plug-ins
+ * @param location the location (usually a string path in the local file
+ *		file system) for the saved Platform state
+ * @param args the array of command-line style argments which are passed
+ *		to the platform on initialization.  The arguments which are consumed by the
+ * 		Platform's initialization are removed from the arg list.  This modified arg list is
+ *		the return value of this method. 
+ * @param handler an optional handler invoked by the launched application
+ *      at the point the application considers itself initialized. A typical
+ *      use for the handler would be to take down any splash screen
+ *      that was displayed by the caller of this method. 
+ *	@return the list of <code>args</code> which were supplied but not consumed
+ *		by this method.  
+ * @exception Exception if there are problems starting the platform
+ */
+public static String[] startup(URL pluginPathLocation, String location, String[] args, Runnable handler) throws Exception {
+	return InternalBootLoader.startup(pluginPathLocation, location, args, handler);
 }
 }

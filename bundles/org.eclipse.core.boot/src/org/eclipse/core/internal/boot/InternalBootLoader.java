@@ -758,13 +758,20 @@ public static URL resolve(URL url) throws IOException {
 }
 /**
  * @see BootLoader
+ * Retained for compatibility with R1.0 launchers
  */
 public static Object run(String applicationName/*R1.0 compatibility*/, URL pluginPathLocation/*R1.0 compatibility*/, String location, String[] args) throws Exception {
+	return run(applicationName, pluginPathLocation, location, args, null);
+}
+/**
+ * @see BootLoader
+ */
+public static Object run(String applicationName/*R1.0 compatibility*/, URL pluginPathLocation/*R1.0 compatibility*/, String location, String[] args, Runnable handler) throws Exception {
 	Object result = null;
 	applicationR10 = applicationName; // for R1.0 compatibility
 	String[] applicationArgs = null;
 	try {
-		applicationArgs = startup(pluginPathLocation, location, args);
+		applicationArgs = startup(pluginPathLocation, location, args, handler);
 	} catch (Exception e) {
 		throw e;
 	}
@@ -870,17 +877,24 @@ public static void shutdown() throws Exception {
 }
 /**
  * @see BootLoader
+ * Retained for compatibility with R1.0 launchers
  */
 public static String[] startup(URL pluginPathLocation/*R1.0 compatibility*/, String location, String[] args) throws Exception {
+	return startup(pluginPathLocation, location, args, null); 
+}
+/**
+ * @see BootLoader
+ */
+public static String[] startup(URL pluginPathLocation/*R1.0 compatibility*/, String location, String[] args, Runnable handler) throws Exception {
 	assertNotRunning();
 	starting = true;
 	commandLine = args;
 	String[] applicationArgs = initialize(pluginPathLocation, location, args);
 	Class platform = loader.loadClass(PLATFORM_ENTRYPOINT);
-	Method method = platform.getDeclaredMethod("loaderStartup", new Class[] { URL[].class, String.class, Properties.class, String[].class });
+	Method method = platform.getDeclaredMethod("loaderStartup", new Class[] { URL[].class, String.class, Properties.class, String[].class, Runnable.class });
 	try {
 		URL[] pluginPath = internalGetPluginPath();
-		method.invoke(platform, new Object[] { pluginPath, baseLocation, options, args });
+		method.invoke(platform, new Object[] { pluginPath, baseLocation, options, args, handler });
 	} catch (InvocationTargetException e) {
 		if (e.getTargetException() instanceof Error)
 			throw (Error) e.getTargetException();

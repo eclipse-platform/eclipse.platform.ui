@@ -40,6 +40,7 @@ public final class InternalPlatform {
 	private static PlatformLogWriter platformLog = null;
 	private static PlatformMetaArea metaArea;
 	private static boolean initialized;
+	private static Runnable endOfInitializationHandler = null;
 	private static IPath location;
 	private static PluginClassLoader xmlClassLoader = null;
 
@@ -84,7 +85,6 @@ public final class InternalPlatform {
 	private static final String KEYRING = "-keyring";
 	private static final String PASSWORD = "-password";
 	private static final String DEV = "-dev";
-	private static final String ENDSPLASH = "-endsplash";
 	private static final String NOREGISTRYCACHE = "-noregistrycache";
 	private static final String PLUGIN_CUSTOMIZATION = "-plugincustomization";
 	
@@ -269,17 +269,9 @@ public static void endSplash() {
 	}	
 	if (splashDown) 
 		return;
-	String[] args = BootLoader.getCommandLineArgs();
-	String splash = null;
-	for (int i = 0; i < args.length; i++)
-        if (args[i].equalsIgnoreCase(ENDSPLASH) && (i + 1) < args.length)
-            splash = args[i + 1];
-	if (splash != null)
-	try {
-		splashDown = true;
-		Runtime.getRuntime().exec(splash);
-	} catch (Exception e) {
-	}
+		
+	splashDown = true;
+	run(endOfInitializationHandler);
 }
 
 /**
@@ -574,7 +566,8 @@ public static void loaderShutdown() {
  *		person starting the platform.
  * @see BootLoader
  */
-public static void loaderStartup(URL[] pluginPath, String locationString, Properties bootOptions, String[] args) throws CoreException {
+public static void loaderStartup(URL[] pluginPath, String locationString, Properties bootOptions, String[] args, Runnable handler) throws CoreException {
+	endOfInitializationHandler = handler;
 	processCommandLine(args);
 	setupMetaArea(locationString);
 	createLockFile();
@@ -841,6 +834,23 @@ public static void run(ISafeRunnable code) {
 	} catch (LinkageError e) {
 		handleException(code, e);
 	}
+}
+private static void run(Runnable handler) {
+	// run end-of-initialization handler
+	if (handler == null)
+		return; 
+		
+	final Runnable finalHandler = handler;
+	ISafeRunnable code = new ISafeRunnable() {
+		public void run() throws Exception {
+			finalHandler.run();
+		}
+		public void handleException(Throwable e) {
+			// just continue ... the exception has already been logged by
+			// the platform (see handleException(ISafeRunnable)
+		}
+	};
+	Platform.run(code);
 }
 public static void setDebugOption(String option, String value) {
 	if (debugEnabled)
