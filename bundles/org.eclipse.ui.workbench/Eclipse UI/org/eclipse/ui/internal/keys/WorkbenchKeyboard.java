@@ -24,6 +24,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -552,6 +553,7 @@ public class WorkbenchKeyboard {
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		multiKeyAssistShell.setLayout(layout);
+		multiKeyAssistShell.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 
 		// Get the list of items.
 		Map partialMatches = new TreeMap(new Comparator() {
@@ -580,8 +582,12 @@ public class WorkbenchKeyboard {
 			Label noMatchesLabel = new Label(multiKeyAssistShell, SWT.NULL);
 			noMatchesLabel.setText(Util.translateString(RESOURCE_BUNDLE, "NoMatches.Message")); //$NON-NLS-1$
 			noMatchesLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
+			noMatchesLabel.setBackground(multiKeyAssistShell.getBackground());
 		} else {
 			final Table completionsTable = new Table(multiKeyAssistShell, SWT.SINGLE);
+			completionsTable.setBackground(multiKeyAssistShell.getBackground());
+			
+			// Initialize the rows.
 			final List commands = new ArrayList(); // remember commands
 			completionsTable.setLayoutData(new GridData(GridData.FILL_BOTH));
 			new TableColumn(completionsTable, SWT.LEFT);
