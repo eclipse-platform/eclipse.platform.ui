@@ -91,39 +91,19 @@ public class JarVerificationService implements IFeatureVerification {
 	 * 
 	 */
 	private void jarVerifierError(final String errorMessage) {
-		/*
-			shell.getDisplay().syncExec(new Runnable() {
-				public void run() {
-					MessageDialog diag =
-						new MessageDialog(
-							shell,
-							errorMessage + ": " + UpdateManagerStrings.getString("S_The_installation_process_will_be_aborted"),
-							null,
-							jarVerifier.getResultException().getMessage(),
-							MessageDialog.ERROR,
-							new String[] { UpdateManagerStrings.getString("S_OK") },
-							0);
-		
-					diag.open();
-		
-		
-				}
-			});
-		*/
 		MessageDialog.openError(shell, Policy.bind("JarVerificationService.Verification"), errorMessage + Policy.bind("JarVerificationService.InstallationAborted")); //$NON-NLS-1$ //$NON-NLS-2$
 		getResult().setResultCode(JarVerificationResult.CANCEL_INSTALL);
-		getResult().setResultException(jarVerifier.getResultException());
 	}
 	/**
 	 * returns an JarVerificationResult
 	 * The monitor can be null.
 	 */
-	public JarVerificationResult okToInstall(final File jarFile, final String id, final String componentName, final String providerName, InstallMonitor monitor) {
+	private JarVerificationResult okToInstall(final File jarFile, final String id, final String featureName, final String providerName, InstallMonitor monitor) {
 
 		jarVerifier.setMonitor(monitor);
-		final int verificationResult = jarVerifier.verify(jarFile);
+		result= jarVerifier.verify(jarFile);
 
-		switch (verificationResult) {
+		switch (getResult().getResultCode()) {
 			case JarVerifier.UNKNOWN_ERROR :
 				{
 					jarVerifierError(Policy.bind("JarVerificationService.ErrorVerification")); //$NON-NLS-1$
@@ -146,8 +126,7 @@ public class JarVerificationService implements IFeatureVerification {
 				{
 					shell.getDisplay().syncExec(new Runnable() {
 						public void run() {
-							getResult().setResultCode(openWizard(jarFile, id, componentName, providerName, verificationResult));
-							getResult().setResultException(null);
+							openWizard(jarFile, id, featureName, providerName);
 						}
 					});
 				}
@@ -158,14 +137,14 @@ public class JarVerificationService implements IFeatureVerification {
 	/**
 	 * 
 	 */
-	private int openWizard(File jarFile, String id, String componentName, String providerName, int verificationResult) {
+	private int openWizard(File jarFile, String id, String componentName, String providerName) {
 
 		int code;
 
 		//	JarVerifierWizard wizard = new JarVerifierWizard(jarFile, componentName, verificationResult);
 		//	WizardDialog dialog = new WizardDialog(shell, wizard);
 
-		JarVerificationDialog dialog = new JarVerificationDialog(shell, id, componentName, providerName, jarFile, verificationResult);
+		JarVerificationDialog dialog = new JarVerificationDialog(shell, id, componentName, providerName, jarFile, result);
 		dialog.open();
 
 		if (JarVerificationDialog.COMPONENT_TO_INSTALL)

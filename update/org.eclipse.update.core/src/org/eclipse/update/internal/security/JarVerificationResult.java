@@ -3,6 +3,10 @@ package org.eclipse.update.internal.security;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
+ 
+import java.security.cert.Certificate;
+import java.util.List;
+
 
 /**
  * Result of the service
@@ -16,6 +20,8 @@ public class JarVerificationResult {
 	private int resultCode;
 	private int verificationCode;
 	private Exception resultException;
+	private List /*of Certificates[] */ certificates;
+	
 	/**
 	 */
 	public int getResultCode() {
@@ -52,5 +58,21 @@ public class JarVerificationResult {
 	public void setVerificationCode(int verificationCode) {
 		this.verificationCode = verificationCode;
 	}
+	
+	/**
+	 * adds an array of Certificates
+	 */
+	public void addCertificates(Certificate[] certs){
+		certificates.add(certs);
+	}
 
+	/**
+	 * Gets the certificates.
+	 * @return Returns a List
+	 */
+	public List getCertificates() {
+		return certificates;
+	}
+
+	
 }
