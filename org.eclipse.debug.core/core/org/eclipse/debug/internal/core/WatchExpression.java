@@ -89,7 +89,7 @@ public class WatchExpression implements IWatchExpression {
 			}
 		};
 		setPending(true);
-		IWatchExpressionDelegate delegate= DebugPlugin.getDefault().getExpressionManager().newWatchExpressionDelegate(context.getModelIdentifier());
+		IWatchExpressionDelegate delegate= ((ExpressionManager)DebugPlugin.getDefault().getExpressionManager()).newWatchExpressionDelegate(context.getModelIdentifier());
 		delegate.evaluateExpression(getExpressionText(), context, listener);
 	}
 
