@@ -120,6 +120,9 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	 * as interrupted so that it will cancel and reschedule itself
 	 */
 	synchronized void interrupt() {
+		//if already interrupted, do nothing
+		if (interrupted)
+			return;
 		switch (getState()) {
 			case NONE :
 				return;
