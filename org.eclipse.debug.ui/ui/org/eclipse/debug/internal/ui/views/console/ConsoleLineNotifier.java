@@ -7,6 +7,9 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
+import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleLineTracker;
@@ -20,7 +23,7 @@ import org.eclipse.jface.util.ListenerList;
  * Tracks text appended to the console and notifies listeners in terms of whole
  * lines.
  */
-public class ConsoleLineNotifier {
+public class ConsoleLineNotifier implements IDebugEventSetListener {
 	
 	/**
 	 * Number of lines processed in the console
@@ -44,6 +47,7 @@ public class ConsoleLineNotifier {
 	 */
 	public void connect(IConsole console) {
 		fConsole = console;
+		DebugPlugin.getDefault().addDebugEventListener(this);
 		Object[] listeners = fListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
 			IConsoleLineTracker listener = (IConsoleLineTracker)listeners[i];
@@ -55,6 +59,7 @@ public class ConsoleLineNotifier {
 	 * Disposes this notifier 
 	 */
 	public void disconnect() {
+		DebugPlugin.getDefault().removeDebugEventListener(this);
 		Object[] listeners = fListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
 			IConsoleLineTracker listener = (IConsoleLineTracker)listeners[i];
@@ -68,7 +73,14 @@ public class ConsoleLineNotifier {
 	 * Notification the console has changed based on the given event
 	 */
 	public void consoleChanged(DocumentEvent event) {
-		IDocument document = event.getDocument();
+		processNewLines();
+	}
+	
+	/**
+	 * Notifies listeners of any new lines appended to the console.
+	 */
+	protected synchronized void processNewLines() {
+		IDocument document = fConsole.getDocument();
 		int lines = document.getNumberOfLines();
 		Object[] listeners = fListeners.getListeners();
 		for (int line = fLinesProcessed; line < lines; line++) {
@@ -79,7 +91,7 @@ public class ConsoleLineNotifier {
 				DebugUIPlugin.log(e);
 				return;
 			}
-			if (delimiter == null) {
+			if (delimiter == null && !fConsole.getProcess().isTerminated()) {
 				// line not complete yet
 				return;
 			}
@@ -95,7 +107,7 @@ public class ConsoleLineNotifier {
 				IConsoleLineTracker listener = (IConsoleLineTracker)listeners[i];
 				listener.lineAppended(lineRegion);
 			}
-		}
+		}		
 	}
 	
 	/**
@@ -115,4 +127,20 @@ public class ConsoleLineNotifier {
 	protected int getLinesProcessed() {
 		return fLinesProcessed;
 	}
+	
+	/**
+	 * Process the last line of the console when the process terminates, if required.
+	 * 
+	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
+	 */
+	public void handleDebugEvents(DebugEvent[] events) {
+		for (int i = 0; i < events.length; i++) {
+			DebugEvent event = events[i];
+			if (event.getSource() == fConsole.getProcess() && event.getKind() == DebugEvent.TERMINATE) {
+				DebugPlugin.getDefault().removeDebugEventListener(this);
+				processNewLines();
+			}
+		}
+	}
+
 }
