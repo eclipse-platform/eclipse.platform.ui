@@ -916,7 +916,12 @@ private void movePart(LayoutPart part, int position, LayoutPart relativePart) {
 		if(oldContainer != sashContainer) {
 			// just a normal move
 			derefPart(part);
-			sashContainer.add(part, relativePosition, (float) 0.5, relativePart);
+			
+			// Create a new folder and add both items
+			PartTabFolder folder = new PartTabFolder();
+			folder.add(part);
+			folder.enableDrag((ViewPane)part, partDropListener);
+			sashContainer.add(folder, relativePosition, (float) 0.5, relativePart);
 		} else {
 			//Move the part to its new position but keep its bounds if possible.
 			sashContainer.move(part,relativePosition,relativePart);			
