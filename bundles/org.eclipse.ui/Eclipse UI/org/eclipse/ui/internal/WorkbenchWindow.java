@@ -983,7 +983,11 @@ private void updateTitle() {
 	String title = workbench.getProductInfo().getName();
 	if (activePage != null) {
 		IPerspectiveDescriptor persp = activePage.getPerspective();
-		title = WorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] {persp.getLabel(), title}); //$NON-NLS-1$
+		String label = persp.getLabel();
+		IAdaptable input = activePage.getInput();
+		if((input != null) && (activePage.getInput() != ResourcesPlugin.getWorkspace().getRoot()))
+			label = activePage.getLabel();
+		title = WorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] {label, title}); //$NON-NLS-1$
 	}
 	getShell().setText(title);	
 }
