@@ -127,7 +127,10 @@ other visual elements even though they weren't used.
 We could argue that those should be off by default, but
 for some reason they're not so if you don't want them
 then you have to turn them off yourself.
-A good place to do this is the <code>preWindowOpen</code> method
+Also the window didn't have a title and it
+opened much larger than it needed to be.
+A good place to take care of all
+this is the <code>preWindowOpen</code> method
 of <code>WorkbenchAdvisor</code>,
 as shown in listing 1.
 </p>
@@ -136,9 +139,10 @@ as shown in listing 1.
 <pre>
 	public void preWindowOpen(IWorkbenchWindowConfigurer configurer) {
 		super.preWindowOpen(configurer);
-		configurer.setShowCoolBar(false);
-		configurer.setShowShortcutBar(false);
-		configurer.setShowStatusLine(false);
+        configurer.setInitialSize(new Point(400, 300));
+        configurer.setShowCoolBar(false);
+        configurer.setShowStatusLine(false);
+		configurer.setTitle("Hello, RCP");
 	}
 </pre>
 
@@ -149,33 +153,15 @@ You call methods on the Configurer interfaces to actually
 change the options.
 These interfaces are not covered in any detail in this tutorial
 but you can refer to their Javadoc for more information.
+See figure 2 for the final result.
 </p>
-
-<p>
-The window looks a little bare without a window title
-so let's add one.
-It can't be done in <code>preWindowOpen</code> because the
-window doesn't exist yet,
-so you need to do it in <code>postWindowOpen</code>.
-See listing 2 for an example, and figure 2 for the final result.
-</p>
-<p><b>Listing 2. <code>postWindowOpen</code> example.
-</b></p>
-<pre>
-	public void postWindowOpen(IWorkbenchWindowConfigurer configurer) {
-		super.postWindowOpen(configurer);
-		configurer.setTitle("Hello, RCP");
-	}
-</pre>
 
 <img src="images/hellotitle.png">
 <p><b>
 Figure 2. Workbench window with a title.
-Everything is turned off using the
+Unused controls are turned off and a title is added using the
 <code>preWindowOpen</code> event of
 <code>WorkbenchAdvisor</code>.
-The title is set using the <code>postWindowOpen</code>
-event.
 </b></p>
 
 <h2>Digging into the <code>WorkbenchAdvisor</code> class</h2>
@@ -242,7 +228,6 @@ Workbench lifecycle hooks provided by <code>org.eclipse.ui.application.Workbench
 	<tr><td>initialize
 		<td>Called first to perform any setup such as
 		parsing the command line, registering adapters and declaring images.
-		Save the workbench configurer handle for later use.
 		<td><code>IWorkbenchConfigurer<code>
 		
 	<tr><td>preStartup
@@ -251,12 +236,6 @@ Workbench lifecycle hooks provided by <code>org.eclipse.ui.application.Workbench
 		are initially opened.
 		<td>&nbsp;
 		
-	<tr><td>postRestore
-		<td>Optionally called after all windows have been restored
-		from saved state (if there was any).
-		Not used or called in 3.0M6.
-		<td>&nbsp;
-
 	<tr><td>postStartup
 		<td>Called after all windows have been opened or restored,
 		but before the event loop starts.
@@ -267,7 +246,6 @@ Workbench lifecycle hooks provided by <code>org.eclipse.ui.application.Workbench
 	<tr><td>preShutdown
 		<td>Called after the event loop has terminated but before any
 		windows have been closed.
-		Not used or called in 3.0M6.
 		<td>&nbsp;
 
 	<tr><td>postShutdown
@@ -308,7 +286,12 @@ Workbench window lifecycle hooks provided by <code>org.eclipse.ui.application.Wo
 		<td>Optionally called after a window has been restored
 		from saved state (if any) but before it is opened.
 		Can't really think of a use for this one.
-		It's called but not used in 3.0M6.
+		It's called but not used in 3.0M8.
+		<td><code>IWorkbenchWindowConfigurer</code>
+		
+	<tr><td>postWindowCreate
+		<td>Optionally called after a window has been restored
+		from saved state (if any) but before it is opened.
 		<td><code>IWorkbenchWindowConfigurer</code>
 		
 	<tr><td>postWindowOpen
@@ -326,7 +309,6 @@ Workbench window lifecycle hooks provided by <code>org.eclipse.ui.application.Wo
 
 	<tr><td>postWindowClose
 		<td>Called after the Workbench window is closed
-		(actually before the window close event in 3.0M6).
 		Can be used to clean up anything created by
 		<code>preWindowOpen</code>.
 		<td><code>IWorkbenchWindowConfigurer</code>
@@ -362,7 +344,7 @@ Event loop hooks provided by <code>org.eclipse.ui.application.WorkbenchAdvisor</
 
 <h3>Information getting hooks</h3>
 <p>
-Finally, there are few methods you can implement that
+Next, there are few methods you can implement that
 the platform will call to get information about your application
 (see table 4).
 The most important one (and the only one that is not optional)
@@ -402,6 +384,38 @@ Information requests provided by <code>org.eclipse.ui.application.WorkbenchAdvis
 		<code>String</code>
 </table>
 
+<h3>Advanced configuration</h3>
+<p>
+The <code>WorkbenchAdvisor</code> events above should be
+sufficient for most applications, but just in case,
+RCP provides two more methods to take complete control
+of how your application windows and controls are created.
+They're listed in table 5 for completeness but I
+don't expect many programs will need them.
+</p>
+
+<p><b>Table 5.
+Advanced methods in <code>org.eclipse.ui.application.WorkbenchAdvisor</code>.
+</b></p>
+<table border="1">
+	<tr><th>Method
+		<th>Description
+		<th>Parameter(s)
+	
+	<tr><td>createWindowContents
+		<td>Creates the contents of one window.
+		Override this method to define custom contents and layout.
+		<td><code>IWorkbenchWindowConfigurer</code>,
+		<code>Shell</code>
+
+	<tr><td>openWindows
+		<td>Open all Workbench windows on startup.
+		The default implementation tries to restore the previously
+		saved workbench state.
+		<td>&nbsp;
+
+</table>
+
 
 <h2>Preparing for internationalization</h2>
 <p>
@@ -425,7 +439,7 @@ that describes how to use it in detail.
 <p>
 Briefly, when you're writing a new section of code
 you will often hard-code strings just to get something going.
-For example, in listing 2 we used:
+For example, in listing 1 we used:
 </p>
 <pre>
 	configurer.setTitle("Hello, RCP");
@@ -445,7 +459,7 @@ highlighted.
 When you're done your source code will look something like this:
 </p>
 <pre>
-	configurer.setTitle(Messages.getString("RcpWorkbenchAdvisor.Hello_RCP")); //$NON-NLS-1$
+	configurer.setTitle(Messages.getString("Hello_RCP")); //$NON-NLS-1$
 </pre>
 <p>
 The string <code>$NON-NLS-1$</code> is a hint for both the compiler and
@@ -458,7 +472,7 @@ the keys and values for all your messages. For example,
 </p>
 <pre>
 RcpTest.properties:
-RcpWorkbenchAdvisor.Hello_RCP=Hello, RCP
+Hello_RCP=Hello, RCP
 </pre>
 <p>
 Finally, the wizard will create a class that wraps a Java resource bundle
