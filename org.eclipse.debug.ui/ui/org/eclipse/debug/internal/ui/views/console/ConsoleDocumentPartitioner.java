@@ -262,7 +262,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		fColorProvider.connect(fProcess, this);
 		DebugPlugin.getDefault().addDebugEventListener(this);
 		if (fProcess.isTerminated()) {
-			// it is possible the termiante event will have been fired before the
+			// it is possible the terminate event will have been fired before the
 			// document is connected - in this case, ensure we have closed the streams
 			// and notified the line tracker
 			streamsClosed();
@@ -799,7 +799,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	}
 	
 	/**
-	 * The stream with the given identifier has had text append to it.
+	 * The stream with the given identifier has had text appended to it.
 	 * Adds a new entry to the queue.
 	 */
 	protected void streamAppended(String text, String streamIdentifier) {
