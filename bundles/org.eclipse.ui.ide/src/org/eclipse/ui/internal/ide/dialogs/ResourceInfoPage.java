@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.SWT;
@@ -63,6 +64,7 @@ public class ResourceInfoPage extends PropertyPage {
 	private Button derivedBox;
 	private boolean previousReadOnlyValue;
 	private boolean previousDerivedValue;
+	private IContentDescription cachedContentDescription;
 	
 	private Combo encodingCombo;
 	private Button defaultEncodingButton;
@@ -76,6 +78,7 @@ public class ResourceInfoPage extends PropertyPage {
 	private static String SIZE_TITLE = IDEWorkbenchMessages.getString("ResourceInfo.size"); //$NON-NLS-1$
 	private static String BYTES_LABEL = IDEWorkbenchMessages.getString("ResourceInfo.bytes"); //$NON-NLS-1$
 	private static String FILE_LABEL = IDEWorkbenchMessages.getString("ResourceInfo.file"); //$NON-NLS-1$
+	private static String FILE_TYPE_FORMAT = IDEWorkbenchMessages.getString("ResourceInfo.fileTypeFormat"); //$NON-NLS-1$
 	private static String FOLDER_LABEL = IDEWorkbenchMessages.getString("ResourceInfo.folder"); //$NON-NLS-1$
 	private static String PROJECT_LABEL = IDEWorkbenchMessages.getString("ResourceInfo.project"); //$NON-NLS-1$
 	private static String LINKED_FILE_LABEL = IDEWorkbenchMessages.getString("ResourceInfo.linkedFile"); //$NON-NLS-1$
@@ -223,6 +226,8 @@ protected Control createContents(Composite parent) {
 	createBasicInfoGroup(composite, resource);
 	createSeparator(composite);
 	createStateGroup(composite,resource);
+	new Label(composite, SWT.NONE);	// a vertical spacer
+	createEncodingGroup(composite, resource);
 
 	return composite;
 }
@@ -310,19 +315,12 @@ private void createStateGroup(Composite parent, IResource resource) {
 		createEditableButton(composite);
 		createDerivedButton(composite);
 	}
-	
-	// encoding for containers and files
-	new Label(composite, SWT.NONE);	// vertical spacer
-	new Label(composite, SWT.NONE);
-	createEncodingGroup(composite, resource);
 }
 
 private void createEncodingGroup(Composite parent, IResource resource) {
 	
 	Font font = parent.getFont();
 	Group group = new Group(parent, SWT.NONE);
-	GridData data = new GridData(GridData.FILL_HORIZONTAL);
-	group.setLayoutData(data);
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 2;
 	group.setLayout(layout);
@@ -354,7 +352,7 @@ private void createEncodingGroup(Composite parent, IResource resource) {
 	
 	defaultEncodingButton.setText(MessageFormat.format(format, new String[] { defaultEnc }));
 	
-	data = new GridData();
+	GridData data = new GridData();
 	data.horizontalSpan = 2;
 	defaultEncodingButton.setLayoutData(data);
 	defaultEncodingButton.addSelectionListener(buttonListener);
@@ -420,30 +418,45 @@ private String getEncoding(IResource resource) {
 }
 
 private String getEncodingFromContent(IFile file) {
-	// tries to obtain a description for the file contents
-	IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-	try {
-		InputStream contents = new BufferedInputStream(file.getContents());
-		try {
-			IContentDescription description = contentTypeManager.getDescriptionFor(contents, file.getName(), new QualifiedName[] {IContentDescription.CHARSET});
-			if (description != null) {
-				String charset= (String) description.getProperty(IContentDescription.CHARSET);
-				if (charset != null)
-					return charset;
-			}
-		} catch (IOException e) {
-		} finally {
-			if (contents != null)
-				try {
-					contents.close();
-				} catch (IOException e) {
-					// ignore silently
-				}				
-		}
-	} catch (CoreException e) {
-		// ignore silently			
-	}
+	IContentDescription description = getContentDescription(file);
+	if (description != null)
+		return (String) description.getProperty(IContentDescription.CHARSET);
 	return null;
+}
+
+private String getContentTypeString(IFile file) {
+	IContentDescription description = getContentDescription(file);
+	if (description != null) {
+		IContentType contentType= description.getContentType();
+		if (contentType != null)
+			return contentType.getName();
+	}
+	return null;	
+}
+
+private IContentDescription getContentDescription(IFile file) {
+	if (cachedContentDescription == null) {
+		// tries to obtain a description for the file contents
+		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+		try {
+			InputStream contents = new BufferedInputStream(file.getContents());
+			try {
+				cachedContentDescription= contentTypeManager.getDescriptionFor(contents, file.getName(), new QualifiedName[] {IContentDescription.CHARSET});
+			} catch (IOException e) {
+				// ignore silently
+			} finally {
+				if (contents != null)
+					try {
+						contents.close();
+					} catch (IOException e) {
+						// ignore silently
+					}				
+			}
+		} catch (CoreException e) {
+			// ignore silently			
+		}
+	}
+	return cachedContentDescription;
 }
 
 private boolean usesDefaultEncoding(IResource resource) {
@@ -600,6 +613,11 @@ private String getTypeString(IResource resource) {
 		if (resource.isLinked())
 			return LINKED_FILE_LABEL;
 			
+		if (resource instanceof IFile) {
+			String contentType= getContentTypeString((IFile)resource);
+			if (contentType != null)
+				return MessageFormat.format(FILE_TYPE_FORMAT, new String[] { contentType });
+		}
 		return FILE_LABEL;
 	}
 
@@ -616,6 +634,7 @@ private String getTypeString(IResource resource) {
 	//Should not be possible
 	return UNKNOWN_LABEL;
 }
+
 /**
  * Returns whether the given resource is a linked resource bound 
  * to a path variable.
