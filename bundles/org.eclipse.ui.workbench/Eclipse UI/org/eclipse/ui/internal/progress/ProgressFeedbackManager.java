@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.progress;
+package org.eclipse.ui.internal.progress;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,17 +25,16 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import org.eclipse.ui.internal.progress.AwaitingFeedbackInfo;
-import org.eclipse.ui.internal.progress.ProgressFeedbackDialog;
-import org.eclipse.ui.internal.progress.ProgressMessages;
+import org.eclipse.ui.progress.UIJob;
 
 /**
  * The ProgressFeedbackManager is a class that blocks a Thread
  * until a result in the UI has occured.
+ * <b> NOTE: This is an experimental API subject to change at any
+ * time.
  */
 public class ProgressFeedbackManager {
 
-	private static ProgressFeedbackManager singleton;
 	private ProgressFeedbackDialog dialog;
 	List pendingInfos = new ArrayList();
 
@@ -48,21 +47,6 @@ public class ProgressFeedbackManager {
 			return Status.OK_STATUS;
 		}
 	};
-	
-	/**
-	 * Get the feedback manager.
-	 * 
-	 * Note: This is experimental API and subject to change
-	 * at any time.
-	 * @return ProgressFeedbackManager
-	 * @since 3.0
-	 */
-
-	public static ProgressFeedbackManager getFeedbackManager() {
-		if (singleton == null)
-			singleton = new ProgressFeedbackManager();
-		return singleton;
-	}
 
 	IStructuredContentProvider contentProvider;
 	
@@ -84,7 +68,7 @@ public class ProgressFeedbackManager {
 	 * @return IStatus
 	 * @since 3.0
 	 */
-	public IStatus requestInUI(UIJob job, String message) {
+	IStatus requestInUI(UIJob job, String message) {
 
 		final IStatus[] statuses = new IStatus[1];
 		final boolean[] wait = { true };

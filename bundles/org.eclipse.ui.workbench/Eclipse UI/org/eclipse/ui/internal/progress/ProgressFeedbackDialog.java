@@ -18,8 +18,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.*;
 
-import org.eclipse.ui.progress.ProgressFeedbackManager;
-import org.eclipse.ui.internal.progress.ProgressMessages;
 
 /**
  * The ProgressFeedbackDialog is a dialog that pops up to
@@ -93,7 +91,7 @@ public class ProgressFeedbackDialog extends Dialog {
 		viewer.getControl().setLayoutData(data);
 		viewer.setContentProvider(provider);
 		viewer.setLabelProvider(getLabelProvider());
-		viewer.setInput(ProgressFeedbackManager.getFeedbackManager());
+		viewer.setInput(ProgressManager.getInstance().getFeedbackManager());
 
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 			/* (non-Javadoc)

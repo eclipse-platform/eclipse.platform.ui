@@ -39,18 +39,20 @@ import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.progress.IProgressManager;
 import org.eclipse.ui.progress.UIJob;
 
 /**
  * JobProgressManager provides the progress monitor to the job manager and
  * informs any ProgressContentProviders of changes.
  */
-public class ProgressManager extends JobChangeAdapter implements IProgressProvider {
+public class ProgressManager extends JobChangeAdapter implements IProgressProvider,IProgressManager {
 
 	private static ProgressManager singleton;
 	private Map jobs = Collections.synchronizedMap(new HashMap());
 	private Collection listeners = Collections.synchronizedList(new ArrayList());
 	private WorkbenchMonitorProvider monitorProvider;
+	private ProgressFeedbackManager feedbackManager = new ProgressFeedbackManager();
 
 	static final String PROGRESS_VIEW_NAME = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
 	static final String PROGRESS_FOLDER = "icons/full/progress/"; //$NON-NLS-1$
@@ -582,6 +584,30 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Block the current thread until UIJob is served. The message
+	 * is used to announce to the user a pending UI Job.
+	 * 
+	 * Note: This is experimental API and subject to change
+	 * at any time.
+	 * 
+	 * @param job
+	 * @param message
+	 * @return IStatus
+	 * @since 3.0
+	 */
+	public IStatus requestInUI(UIJob job, String message) {
+		return feedbackManager.requestInUI(job,message);
+	}
+	
+	/**
+	 * Return the ProgressFeedbackManager for the receiver.
+	 * @return ProgressFeedbackManager
+	 */
+	ProgressFeedbackManager getFeedbackManager(){
+		return feedbackManager;
 	}
 	
 }
