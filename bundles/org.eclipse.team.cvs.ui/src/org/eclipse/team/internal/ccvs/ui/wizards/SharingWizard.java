@@ -218,8 +218,8 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 							// Import
 							doSync[0] = true;
 							// Check if the directory exists on the server
-							ICVSRepositoryLocation location;
-							boolean isKnown;
+							ICVSRepositoryLocation location = null;
+							boolean isKnown = false;
 							try {
 								location = getLocation();
 								isKnown = CVSProviderPlugin.getProvider().isKnownRepository(location.getLocation());
@@ -238,6 +238,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 								}
 							} catch (TeamException e) {
 								ErrorDialog.openError(getShell(), null, null, e.getStatus());
+								if (!isKnown && location != null) location.flushUserInfo();
 								result[0] = false;
 								doSync[0] = false;
 								return;
@@ -330,15 +331,16 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 			ICVSRepositoryLocation location = locationPage.getLocation();
 			if (location != null) return location;
 		}
-				
+		
+		// Otherwise, get the location from the create location page
 		getShell().getDisplay().syncExec(new Runnable() {
 			public void run() {
 				createLocationPage.finish(new NullProgressMonitor());
 			}
 		});
 		Properties properties = createLocationPage.getProperties();
-		CVSRepositoryLocation location = CVSRepositoryLocation.fromProperties(properties);
-		return CVSProviderPlugin.getProvider().getRepository(location.getLocation());
+		ICVSRepositoryLocation location = CVSProviderPlugin.getProvider().createRepository(properties);
+		return location;
 	}
 	/**
 	 * Return the module name.
