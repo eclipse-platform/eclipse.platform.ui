@@ -528,6 +528,10 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * to automatically open/close/activate views as appropriate.
 	 */
 	private void showViewsForCurrentSelection() {
+		// ensure this view is visible in the active page
+		if (!isActive()) {
+			return;
+		}		
 		Object selection = ((IStructuredSelection) getViewer().getSelection()).getFirstElement();
 		if (!fAutoManage) {
 			return;
