@@ -6,20 +6,19 @@
  */
 package org.eclipse.ui.internal.progress;
 
-import java.util.Hashtable;
+import java.util.*;
 
 import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
 
 public class ProgressContentProvider
 	implements ITreeContentProvider, IJobListener, IProgressListener {
 
-	private Hashtable jobs = new Hashtable();
+	private Map jobs = Collections.synchronizedMap(new HashMap());
+
 	private TreeViewer viewer;
 
 	public ProgressContentProvider(TreeViewer mainViewer) {
@@ -73,7 +72,7 @@ public class ProgressContentProvider
 	 * @see org.eclipse.core.runtime.jobs.IProgressListener#beginTask(org.eclipse.core.runtime.jobs.Job, java.lang.String, int)
 	 */
 	public void beginTask(Job job, String name, int totalWork) {
-		if (job instanceof AnimateJob)
+		if (job == null || job instanceof AnimateJob)
 			return;
 		if (totalWork == IProgressMonitor.UNKNOWN)
 			jobs.put(job, new JobInfo(name));
@@ -101,6 +100,9 @@ public class ProgressContentProvider
 	 * @see org.eclipse.core.runtime.jobs.IProgressListener#subTask(org.eclipse.core.runtime.jobs.Job, java.lang.String)
 	 */
 	public void subTask(Job job, String name) {
+		if(job == null)
+			return;
+			
 		if (job instanceof AnimateJob)
 			return;
 		if (name.length() == 0)
@@ -118,6 +120,9 @@ public class ProgressContentProvider
 	 * @see org.eclipse.core.runtime.jobs.IProgressListener#worked(org.eclipse.core.runtime.jobs.Job, int)
 	 */
 	public void worked(Job job, double work) {
+		if(job == null)
+			return;
+			
 		if (job instanceof AnimateJob)
 			return;
 		JobInfo info = getInfo(job);
@@ -158,8 +163,9 @@ public class ProgressContentProvider
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IJobListener#finished(org.eclipse.core.runtime.jobs.Job, org.eclipse.core.runtime.IStatus)
 	 */
-	public void finished(Job job, IStatus result) {
-		// XXX Auto-generated method stub
+	public void done(Job job, IStatus result) {
+		jobs.remove(job);
+		refreshViewer(null);
 
 	}
 	/* (non-Javadoc)

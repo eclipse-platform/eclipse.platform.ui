@@ -770,6 +770,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 
 			}
 		};
+		job.setDisplay(getShell().getDisplay());
 		job.schedule();		
 	}
 	/**

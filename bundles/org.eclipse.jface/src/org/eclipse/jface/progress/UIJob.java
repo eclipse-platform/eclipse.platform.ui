@@ -1,57 +1,44 @@
-/*
- * Created on May 21, 2003
- *
- * To change the template for this generated file go to
- * Window>Preferences>Java>Code Generation>Code and Comments
- */
+/**********************************************************************
+ * Copyright (c) 2003 IBM Corporation and others. All rights reserved.   This
+ * program and the accompanying materials are made available under the terms of
+ * the Common Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.jface.progress;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
 
-/**
- * @author tod
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
- */
 public abstract class UIJob extends NotifyingJob {
-
-	Display display;	
-
+	private Display display;
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public final IStatus run(IProgressMonitor monitor) {
-		final IStatus[] result = new IStatus[1];
-		final IProgressMonitor finalMonitor = monitor;
-		getDisplay().asyncExec(new Runnable() {
-			/* (non-Javadoc)
-			 * @see java.lang.Runnable#run()
-			 */
+	public final IStatus run(final IProgressMonitor monitor) {
+		display.asyncExec(new Runnable() {
 			public void run() {
-				result[0] = runInUIThread(finalMonitor);
-
+				IStatus result = null;
+				try {
+					result = runInUIThread(monitor);
+				} finally {
+					if (result == null)
+						result = new Status(IStatus.ERROR, "org.eclipse.ui", 1, "Error", null);
+					done(result);
+				}
 			}
-
 		});
-		return result[0];
+		return Job.ASYNC_FINISH;
 	}
+	/**
+	 * Run the job in the UI Thread.
+	 */
+	public abstract IStatus runInUIThread(IProgressMonitor montior);
 
 	public void setDisplay(Display runDisplay) {
 		display = runDisplay;
 	}
-
-	public Display getDisplay() {
-		return display;
-	}
-
-	/**
-	 * Run the job in the UI Thread.
-	 * @param montior
-	 * @return
-	 */
-	public abstract IStatus runInUIThread(IProgressMonitor montior);
-
 }

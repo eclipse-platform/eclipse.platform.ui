@@ -28,7 +28,7 @@ public class ProgressContributionItem extends ContributionItem {
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.IJobListener#finished(org.eclipse.core.runtime.jobs.Job, int)
 			 */
-			public void finished(Job job, IStatus result) {
+			public void done(Job job, IStatus result) {
 				decrementJobCount(job);
 			}
 			/* (non-Javadoc)

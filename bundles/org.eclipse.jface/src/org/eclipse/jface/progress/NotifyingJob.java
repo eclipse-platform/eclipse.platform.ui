@@ -54,7 +54,7 @@ public abstract class NotifyingJob extends Job {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.IJobListener#finished(org.eclipse.core.runtime.jobs.Job, org.eclipse.core.runtime.IStatus)
 		 */
-		public void finished(Job job, IStatus result) {
+		public void done(Job job, IStatus result) {
 			if (job == NotifyingJob.this) {
 				Iterator listeners = completionListeners.iterator();
 				while (listeners.hasNext()) {

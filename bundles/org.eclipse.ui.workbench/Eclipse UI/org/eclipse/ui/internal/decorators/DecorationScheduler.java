@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.decorators;
 
 import java.util.*;
 
-import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.progress.UIJob;
@@ -204,7 +203,7 @@ public class DecorationScheduler {
 	 * Get the next resource to be decorated.
 	 * @return IResource
 	 */
-	synchronized DecorationReference next() {
+	synchronized DecorationReference nextElement() {
 
 		if (shutdown || awaitingDecoration.isEmpty()) {
 			return null;
@@ -225,7 +224,7 @@ public class DecorationScheduler {
 			public IStatus run(IProgressMonitor monitor) {
 					//will block if there are no resources to be decorated
 				DecorationReference reference;
-				while ((reference = next()) != null) {
+				while ((reference = nextElement()) != null) {
 
 					DecorationBuilder cacheResult = new DecorationBuilder();
 
