@@ -64,11 +64,11 @@ public class ImageSegment extends ParagraphSegment {
 		}
 		if (wHint != SWT.DEFAULT && loc.x + iwidth > wHint) {
 			// new line
+			if (computeHeightOnly)
+				loc.collectHeights();			
 			loc.x = loc.indent + iwidth;
 			loc.width = loc.x;
 			loc.y += loc.rowHeight;
-			if (computeHeightOnly)
-				loc.collectHeights(true);
 			loc.rowHeight = iheight;
 			loc.leading = 0;
 			newLine=true;
@@ -80,7 +80,7 @@ public class ImageSegment extends ParagraphSegment {
 		return newLine;
 	}
 
-	public void paint(GC gc, int width, Locator loc, Hashtable resourceTable, boolean selected) {
+	public void paint(GC gc, int width, Locator loc, Hashtable resourceTable, boolean selected, SelectionData selData) {
 		Image image = getImage(resourceTable);
 		int iwidth = 0;
 		int iheight = 0;

@@ -89,17 +89,19 @@ public class BulletParagraph extends Paragraph {
 		Locator loc,
 		int lineHeight,
 		Hashtable resourceTable,
-		HyperlinkSegment selectedLink) {
+		HyperlinkSegment selectedLink,
+		SelectionData selData) {
 		computeRowHeights(gc, width, loc, lineHeight, resourceTable);
-		paintBullet(gc, loc, lineHeight, resourceTable);
-		super.paint(gc, width, loc, lineHeight, resourceTable, selectedLink);
+		paintBullet(gc, loc, lineHeight, resourceTable, selData);
+		super.paint(gc, width, loc, lineHeight, resourceTable, selectedLink, selData);
 	}
 
 	public void paintBullet(
 		GC gc,
 		Locator loc,
 		int lineHeight,
-		Hashtable resourceTable) {
+		Hashtable resourceTable,
+		SelectionData selData) {
 		int x = loc.x - getIndent() + getBulletIndent();
 		int rowHeight = ((int[])loc.heights.get(0))[0];
 		if (style == CIRCLE) {

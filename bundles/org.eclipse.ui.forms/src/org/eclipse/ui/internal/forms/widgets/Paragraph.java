@@ -123,7 +123,7 @@ public class Paragraph {
 			ParagraphSegment segment = segments[j];
 			segment.advanceLocator(gc, width, hloc, resourceTable, true);
 		}
-		hloc.collectHeights(false);
+		hloc.collectHeights();
 		loc.heights = heights;
 		loc.rowCounter = 0;
 	}
@@ -134,8 +134,10 @@ public class Paragraph {
 		Locator loc,
 		int lineHeight,
 		Hashtable resourceTable,
-		HyperlinkSegment selectedLink) {
+		HyperlinkSegment selectedLink,
+		SelectionData selData) {
 		ParagraphSegment [] segments = getSegments();
+		int height;
 		if (segments.length > 0) {
 			if (segments[0] instanceof TextSegment
 				&& ((TextSegment) segments[0]).isSelectable())
@@ -148,12 +150,19 @@ public class Paragraph {
 				boolean doSelect = false;
 				if (selectedLink != null && segment.equals(selectedLink))
 					doSelect = true;
-				segment.paint(gc, width, loc, resourceTable, doSelect);
+				segment.paint(gc, width, loc, resourceTable, doSelect, selData);
 			}
 			loc.heights = null;
 			loc.y += loc.rowHeight;
+			height = loc.rowHeight;
 		} else {
 			loc.y += lineHeight;
+			height = lineHeight;
+		}
+		if (selData!=null && selData.isEnclosed()) {
+			if (selData.isSelectedRow(loc.y, height)) {
+				selData.addNewLine();
+			}
 		}
 	}
 	public String getAccessibleText() {

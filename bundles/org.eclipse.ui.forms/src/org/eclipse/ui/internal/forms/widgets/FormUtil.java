@@ -15,6 +15,7 @@ import java.text.BreakIterator;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
@@ -233,6 +234,43 @@ public class FormUtil {
 		// vertical top
 		else if (controlOrigin.y < y) {
 			y = controlOrigin.y;
+		}
+
+		if (scompOrigin.x!=x || scompOrigin.y!=y) {
+			// scroll to reveal
+			scomp.setOrigin(x, y);
+		}
+	}
+	
+	public static void ensureVisible(
+			ScrolledComposite scomp,
+			Control control,
+			MouseEvent e) {
+		Point controlOrigin = getControlLocation(scomp, control);
+		int rX = controlOrigin.x + e.x;
+		int rY = controlOrigin.y + e.y;
+		Rectangle area = scomp.getClientArea();
+		Point scompOrigin = scomp.getOrigin();
+
+		int x = scompOrigin.x;
+		int y = scompOrigin.y;
+		//System.out.println("Ensure: area="+area+", origin="+scompOrigin+", cloc="+controlOrigin+", csize="+controlSize+", x="+x+", y="+y);
+		
+		//horizontal right
+		if (rX > scompOrigin.x + area.width) {
+			x = rX - area.width;
+		}
+		// horizontal left
+		else if (rX < x) {
+			x = rX;
+		}
+		// vertical bottom
+		if (rY > scompOrigin.y + area.height) {
+			y = rY - area.height;
+		}
+		// vertical top
+		else if (rY < y) {
+			y = rY;
 		}
 
 		if (scompOrigin.x!=x || scompOrigin.y!=y) {

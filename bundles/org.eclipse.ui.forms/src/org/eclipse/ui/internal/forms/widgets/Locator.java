@@ -41,7 +41,7 @@ public class Locator implements Cloneable {
 			return null;
 		}
 	}
-	public void collectHeights(boolean advance) {
+	public void collectHeights() {
 		heights.add(new int [] { rowHeight, leading} );
 		rowCounter++;
 	}
@@ -63,6 +63,9 @@ public class Locator implements Cloneable {
 	}
 	
 	public void resetCaret() {
-		x = marginWidth + indent;
+		x = getStartX();
+	}
+	public int getStartX() {
+		return marginWidth + indent;
 	}
 }

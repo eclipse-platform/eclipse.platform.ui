@@ -14,9 +14,10 @@ import java.io.InputStream;
 import java.util.*;
 
 import org.eclipse.jface.action.*;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.*;
 import org.eclipse.swt.accessibility.*;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
@@ -133,7 +134,8 @@ public final class FormText extends Canvas {
 
 	private boolean mouseDown = false;
 
-	// private Point dragOrigin;
+	private SelectionData selData;
+
 	private Action openAction;
 
 	private Action copyShortcutAction;
@@ -606,6 +608,110 @@ public final class FormText extends Canvas {
 	}
 
 	/**
+	 * Adds a selection listener. A Selection event is sent by the widget when
+	 * the selection has changed.
+	 * <p>
+	 * When <code>widgetSelected</code> is called, the event x amd y fields
+	 * contain the start and end caret indices of the selection.
+	 * <code>widgetDefaultSelected</code> is not called for FormText.
+	 * </p>
+	 * 
+	 * @param listener
+	 *            the listener
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 * @exception IllegalArgumentException
+	 *                <ul>
+	 *                <li>ERROR_NULL_ARGUMENT when listener is null</li>
+	 *                </ul>
+	 * @since 3.1
+	 */
+	public void addSelectionListener(SelectionListener listener) {
+		checkWidget();
+		if (listener == null) {
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
+		TypedListener typedListener = new TypedListener(listener);
+		addListener(SWT.Selection, typedListener);
+	}
+
+	/**
+	 * Removes the specified selection listener.
+	 * <p>
+	 * 
+	 * @param listener
+	 *            the listener
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
+	 * @exception IllegalArgumentException
+	 *                <ul>
+	 *                <li>ERROR_NULL_ARGUMENT when listener is null</li>
+	 *                </ul>
+	 */
+	public void removeSelectionListener(SelectionListener listener) {
+		checkWidget();
+		if (listener == null) {
+			SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		}
+		removeListener(SWT.Selection, listener);
+	}
+	
+	/**
+	 * Returns the selected text.
+	 * <p>
+	 *
+	 * @return selected text, or an empty String if there is no selection.
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 * @since 3.1
+	 */
+	
+	public String getSelectionText() {
+		checkWidget();
+		if (selData!=null)
+			return selData.getSelectionText();
+		else
+			return "";
+	}
+	
+	/**
+	 * Tests if the text is selected and can be copied into the clipboard.
+	 * @return <code>true</code> if the selected text can be copied into
+	 * the clipboard, <code>false</code> otherwise.
+	 * @since 3.1
+	 */
+	public boolean canCopy() {
+		return selData!=null && selData.canCopy();
+	}
+	
+	/**
+	 * Copies the selected text into the clipboard.
+	 * 
+	 * @since. 3.1
+	 */
+	
+	public void copy() {
+		if (!canCopy()) return;
+		Clipboard clipboard = new Clipboard(getDisplay());
+		Object [] o = new Object[] {getSelectionText()};
+		Transfer[] t = new Transfer[] {TextTransfer.getInstance()};
+		clipboard.setContents(o, t);
+		clipboard.dispose();
+	}
+
+	/**
 	 * Returns the reference of the hyperlink that currently has keyboard focus,
 	 * or <code>null</code> if there are no hyperlinks in the receiver or no
 	 * hyperlink has focus at the moment.
@@ -690,6 +796,33 @@ public final class FormText extends Canvas {
 			}
 		});
 	}
+	
+	private void startSelection(MouseEvent e) {
+		mouseDown = true;
+		selData = new SelectionData(e);
+		redraw();
+	}
+	private void endSelection(MouseEvent e) {
+		mouseDown = false;
+		if (selData!=null && !selData.isEnclosed())
+			selData = null;
+		Event event = new Event();
+		event.widget = this;
+		event.display = this.getDisplay();
+		event.type = SWT.Selection;
+		notifyListeners(SWT.Selection, event);
+	}
+
+	private void handleDrag(MouseEvent e) {
+		if (selData!=null) {
+			ScrolledComposite scomp = FormUtil.getScrolledComposite(this);
+			if (scomp!=null) {
+				FormUtil.ensureVisible(scomp, this, e);
+			}
+			selData.update(e);
+			redraw();
+		}
+	}
 
 	private void handleMouseClick(MouseEvent e, boolean down) {
 		if (down) {
@@ -701,16 +834,18 @@ public final class FormText extends Canvas {
 				enterLink(segmentUnder, e.stateMask);
 				paintFocusTransfer(oldLink, segmentUnder);
 			}
-			mouseDown = true;
-			// dragOrigin = new Point(e.x, e.y);
+			if (e.button==1)
+				startSelection(e);
+			else {
+			}
 		} else {
 			if (e.button == 1) {
 				HyperlinkSegment segmentUnder = model.findHyperlinkAt(e.x, e.y);
 				if (segmentUnder != null) {
 					activateLink(segmentUnder, e.stateMask);
 				}
+				endSelection(e);
 			}
-			mouseDown = false;
 		}
 	}
 
@@ -873,6 +1008,8 @@ public final class FormText extends Canvas {
 		textGC.setBackground(getBackground());
 		textGC.setFont(getFont());
 		textGC.fillRectangle(0, 0, carea.width, carea.height);
+		if (selData!=null)
+			selData.reset();
 
 		if (loading) {
 			int textWidth = gc.textExtent(loadingText).x;
@@ -889,7 +1026,7 @@ public final class FormText extends Canvas {
 				loc.resetCaret();
 				loc.rowHeight = 0;
 				p.paint(textGC, carea.width, loc, lineHeight, resourceTable,
-						selectedLink);
+						selectedLink, selData);
 			}
 		}
 		gc.drawImage(textBuffer, 0, 0);
@@ -947,10 +1084,6 @@ public final class FormText extends Canvas {
 		FormUtil.ensureVisible(scomp, origin, new Point(bounds.width,
 				bounds.height));
 	}
-
-	private void handleDrag(MouseEvent e) {
-	}
-
 	/**
 	 * Overrides the method by fully trusting the layout manager (computed width
 	 * or height may be larger than the provider width or height hints).

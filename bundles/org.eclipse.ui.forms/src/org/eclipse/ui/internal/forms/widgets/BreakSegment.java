@@ -25,19 +25,17 @@ public class BreakSegment extends ParagraphSegment {
 	 */
 	public boolean advanceLocator(GC gc, int wHint, Locator locator,
 			Hashtable objectTable, boolean computeHeightOnly) {
-		if (!computeHeightOnly) {
-			locator.x = locator.indent;
-			locator.y += locator.rowHeight;
-			locator.rowHeight = 0;
-		}
-		locator.rowCounter++;		
+		if (computeHeightOnly) locator.collectHeights();		
+		locator.x = locator.indent;
+		locator.y += locator.rowHeight;
+		locator.rowHeight = 0;
 		return true;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.internal.widgets.ParagraphSegment#paint(org.eclipse.swt.graphics.GC, int, org.eclipse.ui.forms.internal.widgets.Locator, java.util.Hashtable, boolean)
 	 */
 	public void paint(GC gc, int width, Locator locator, Hashtable resourceTable,
-			boolean selected) {
+			boolean selected, SelectionData selData) {
 		locator.resetCaret();
 		locator.y += locator.rowHeight;
 		locator.rowHeight = 0;
