@@ -531,33 +531,15 @@ private void applyExternalPluginDefaultOverrides() {
 private void applyInternalPluginDefaultOverrides() {
 	
 	// use URLs so we can find the file in fragments too
-	URL iniURL;
-	URL baseURL = null;
-	try {
-		// FIXME - ensure that fragments are consulted!
-		try {
-			baseURL = Platform.resolve(getDescriptor().getInstallURL());
-		} catch (IOException ioe) {
-			// fail quietly
-			if (InternalPlatform.DEBUG_PREFERENCES) {
-				System.out.println("IOException trying to resolve URL " +
-					getDescriptor().getInstallURL());
-			}
-			return;
-		}
-		iniURL = new URL(baseURL, PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME);
-	} catch (MalformedURLException e) {
-		// fail silently
+	URL baseURL = getDescriptor().find(new Path(PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME));
+
+	if (baseURL == null) {
 		if (InternalPlatform.DEBUG_PREFERENCES) {
-			System.out.println("MalformedURLException found for " +
-				baseURL + " with " +
-				PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME);
-			e.printStackTrace();
+			System.out.println("Plugin preference file " + PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME + " not found.");
 		}
 		return;
 	}
-
-	File iniFile = new File(getFileFromURL(iniURL));
+	File iniFile = new File(getFileFromURL(baseURL));
 	if (!iniFile.exists()) {
 		// no preference file - that's fine
 		if (InternalPlatform.DEBUG_PREFERENCES) {

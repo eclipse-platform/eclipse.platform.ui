@@ -904,31 +904,19 @@ public static void applyPrimaryFeaturePluginDefaultOverrides(
 		}
 		return;
 	}
-	URL baseURL = null;
-	try {
-		// FIXME - ensure that fragments are consulted!
-		try {
-			baseURL = Platform.resolve(primaryFeatureDescriptor.getInstallURL());
-		} catch (IOException ioe) {
-			// fail quietly
-			return;
-		}
-		// locate plug-in customization file within primary feature plug-in (or fragment)
-		URL pluginCustomizationURL = new URL(baseURL, PLUGIN_CUSTOMIZATION_FILE_NAME);
+	// locate plug-in customization file within primary feature plug-in (or fragment)
+	URL pluginCustomizationURL = primaryFeatureDescriptor.find(new Path(PLUGIN_CUSTOMIZATION_FILE_NAME));
+	if (pluginCustomizationURL == null) {
 		if (DEBUG_PREFERENCES) {
-			System.out.println("Loading preferences from " + pluginCustomizationURL);
-		}
-		// apply any defaults for the given plug-in
-		applyPluginDefaultOverrides(pluginCustomizationURL, id, preferences);
-	} catch (MalformedURLException e) {
-		// fail silently
-		if (DEBUG_PREFERENCES) {
-			System.out.println("MalformedURLException creating URL with " +
-				baseURL + " and " + PLUGIN_CUSTOMIZATION_FILE_NAME);
-			e.printStackTrace();
+			System.out.println("Preferences file " + PLUGIN_CUSTOMIZATION_FILE_NAME + " not found.");
 		}
 		return;
 	}
+	if (DEBUG_PREFERENCES) {
+		System.out.println("Loading preferences from " + pluginCustomizationURL);
+	}
+	// apply any defaults for the given plug-in
+	applyPluginDefaultOverrides(pluginCustomizationURL, id, preferences);
 }
 
 /**
