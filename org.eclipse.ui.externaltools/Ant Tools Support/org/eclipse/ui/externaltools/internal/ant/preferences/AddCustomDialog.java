@@ -337,7 +337,9 @@ public class AddCustomDialog extends StatusDialog {
 		this.selectionGroup.addSelectionChangedListener(listener);
 		selectionGroup.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				buttonPressed(IDialogConstants.OK_ID);
+				if (getButton(IDialogConstants.OK_ID).isEnabled()) {
+					buttonPressed(IDialogConstants.OK_ID);
+				}
 			}
 		});
 	}
