@@ -32,41 +32,12 @@ public class FormattingContextProperties {
 	public static final String CONTEXT_DOCUMENT= "formatting.context.document"; //$NON-NLS-1$
 
 	/**
-	 * Property key of the indentation property. The property must implement
-	 * <code>java.lang#String</code>.
-	 * <p>
-	 * Value: <code>"formatting.context.indentation"</code>
-	 * 
-	 * TODO: remove
-	 * 
-	 * @deprecated Use the document (set and use property value of
-	 * {@link FormattingContextProperties#CONTEXT_MEDIUM}) to compute
-	 * the indentation in the formatting strategy. Consider migration to
-	 * {@link MultiPassContentFormatter}. To be removed.
-	 */
-	public static final String CONTEXT_INDENTATION= "formatting.context.indentation"; //$NON-NLS-1$
-
-	/**
 	 * Property key of the partition property. The property must implement
 	 * <code>org.eclipse.jface.text#TypedPosition</code>.
 	 * <p>
 	 * Value: <code>"formatting.context.partition"</code>
 	 */
 	public static final String CONTEXT_PARTITION= "formatting.context.partition"; //$NON-NLS-1$
-
-	/**
-	 * Property key of the positions property. The property must implement
-	 * <code>int[]</code>.
-	 * <p>
-	 * Value: <code>"formatting.context.positions"</code>
-	 * 
-	 * TODO: remove
-	 * 
-	 * @deprecated Apply changes directly on the document (set and use
-	 * the property value of {@link FormattingContextProperties#CONTEXT_MEDIUM}).
-	 * Consider migration to {@link MultiPassContentFormatter}.
-	 */
-	public static final String CONTEXT_POSITIONS= "formatting.context.positions"; //$NON-NLS-1$
 
 	/**
 	 * Property key of the preferences property. The property must implement
