@@ -7,10 +7,12 @@ package org.eclipse.ui.views.navigator;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.*;
 
 public class OpenActionFactory extends ActionFactory {
@@ -59,10 +61,6 @@ public class OpenActionFactory extends ActionFactory {
 			fillOpenWithMenu(menu, selection);
 			fillOpenToMenu(menu, selection);
 		}
-		
-		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_OPEN_ADDITIONS));
-		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_OPEN_ADDITIONS + IWorkbenchActionConstants.MB_ADDITIONS_END));
-	
 	}
 
 	/**
