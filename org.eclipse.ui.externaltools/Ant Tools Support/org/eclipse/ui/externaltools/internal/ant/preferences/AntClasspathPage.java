@@ -231,7 +231,10 @@ public class AntClasspathPage extends AntPage {
 			}
 		}
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
-		contentProvider.add(prefs.getToolsJarURL());
+		URL url = prefs.getToolsJarURL();
+		if (url != null) {
+			contentProvider.add(url);
+		}
 	}
 	
 	private File validateAntHome(String path) {
