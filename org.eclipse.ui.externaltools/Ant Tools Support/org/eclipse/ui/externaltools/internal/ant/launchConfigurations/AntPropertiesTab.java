@@ -82,14 +82,14 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab {
 	 */
 	protected void addButtonsToButtonGroup(Composite parent) {
 		if (editButton == null) {
-			addButton= createPushButton(parent, "Add", null);
+			addButton= createPushButton(parent, "Add...", null);
 			addButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					addProperty();
 				}
 			});
 			
-			editButton= createPushButton(parent, "Edit", null); 
+			editButton= createPushButton(parent, "Edit...", null); 
 			editButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					edit();
@@ -103,7 +103,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab {
 				}
 			});
 		} else {
-			addFileButton= createPushButton(parent, "Add", null);
+			addFileButton= createPushButton(parent, "Add...", null);
 			addFileButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					addPropertyFile();
