@@ -1007,15 +1007,6 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 				session.close();
 				monitor.done();
 			}
-			if (getServerPlatform() == CVSNT_SERVER) {
-				// check for the use of a repository prefix
-				if (getRootDirectory().startsWith(Session.SERVER_SEPARATOR)) {
-					// A prefix is in use. Log a warning
-					CVSProviderPlugin.log(IStatus.WARNING, Policy.bind("CVSRepositoryLocation.cvsntPrefix", getLocation()), null); //$NON-NLS-1$
-					throw new CVSAuthenticationException(new Status(IStatus.WARNING, CVSProviderPlugin.ID, 0,
-						Policy.bind("CVSRepositoryLocation.cvsntPrefix", getLocation()), null)); //$NON-NLS-1$
-				}
-			}
 		} catch (CVSException e) {
 			// If the validation failed, dispose of any cached info
 			dispose();
@@ -1038,35 +1029,14 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	/**
 	 * This method is called from Command.VERSION to set the platform type.
 	 */
-	public void setServerPlaform(IStatus status) {
-		// OK means that its a regular cvs server
-		if (status.isOK()) {
-			serverPlatform = CVS_SERVER;
-			return;
-		}
-		// Find the status that reports the CVS platform
-		if (status.isMultiStatus()) {
-			IStatus[] children = status.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				IStatus iStatus = children[i];
-				if (iStatus.getCode() == CVSStatus.SERVER_IS_CVSNT 
-						|| iStatus.getCode() == CVSStatus.UNSUPPORTED_SERVER_VERSION
-						|| iStatus.getCode() == CVSStatus.SERVER_IS_UNKNOWN) {
-					status = iStatus;
-					break;
-				}
-			}
-		}
+	public void setServerPlaform(int serverType) {
 		// Second, check the code of the status itself to see if it is NT
-		switch (status.getCode()) {
-			case CVSStatus.SERVER_IS_CVSNT:
-				serverPlatform = CVSNT_SERVER;
-				break;
-			case CVSStatus.UNSUPPORTED_SERVER_VERSION:
-				serverPlatform = UNSUPPORTED_SERVER;
-				break;
-			case CVSStatus.SERVER_IS_UNKNOWN:
-				serverPlatform = UNKNOWN_SERVER;
+		switch (serverType) {
+			case CVS_SERVER:
+			case CVSNT_SERVER:
+			case UNKNOWN_SERVER:
+			case UNSUPPORTED_SERVER:
+				serverPlatform = serverType;
 				break;
 			default:
 				// We had an error status with no info about the server.

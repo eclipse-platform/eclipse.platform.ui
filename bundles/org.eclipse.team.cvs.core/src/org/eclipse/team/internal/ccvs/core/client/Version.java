@@ -45,7 +45,7 @@ public class Version extends RemoteCommand {
 		// The server may not support the version request
 		if ( ! session.isValidRequest(getRequestId())) {
 			IStatus status = new CVSStatus(IStatus.WARNING, CVSStatus.SERVER_IS_UNKNOWN, Policy.bind("Version.versionNotValidRequest", location.getHost()));//$NON-NLS-1$
-			((CVSRepositoryLocation)location).setServerPlaform(status);
+			((CVSRepositoryLocation)location).setServerPlaform(CVSRepositoryLocation.UNKNOWN_SERVER);
 			CVSProviderPlugin.log(status);
 			return status;
 		}
@@ -64,17 +64,20 @@ public class Version extends RemoteCommand {
 					knownPrefix = CVS_PREFIX;
 				}
 				IStatus status = OK;
+				int serverType = CVSRepositoryLocation.CVS_SERVER;
 				if (knownPrefix != null) {
 					String versionNumber = line.substring(knownPrefix.length(), line.indexOf(' ', knownPrefix.length() + 1));
 					if (versionNumber.startsWith("1.10") || versionNumber.equals("1.11") || versionNumber.equals("1.11.1")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						status = new CVSStatus(IStatus.ERROR, CVSStatus.UNSUPPORTED_SERVER_VERSION, Policy.bind("Version.unsupportedVersion", location.getHost(), versionNumber));//$NON-NLS-1$
+					    serverType = CVSRepositoryLocation.UNSUPPORTED_SERVER;
+						status = new CVSStatus(IStatus.WARNING, CVSStatus.UNSUPPORTED_SERVER_VERSION, Policy.bind("Version.unsupportedVersion", location.getHost(), versionNumber));//$NON-NLS-1$
 					} else if (isCVSNT) {
-						status = new CVSStatus(IStatus.WARNING, CVSStatus.SERVER_IS_CVSNT, Policy.bind("Version.unsupportedCVSNT", location.getHost(), versionNumber));//$NON-NLS-1$
+					    serverType = CVSRepositoryLocation.CVSNT_SERVER;
 					}
 				} else {
+				    serverType = CVSRepositoryLocation.UNKNOWN_SERVER;
 					status = new CVSStatus(IStatus.INFO, CVSStatus.SERVER_IS_UNKNOWN, Policy.bind("Version.unknownVersionFormat", location.getHost(), line));//$NON-NLS-1$
 				}
-				((CVSRepositoryLocation)location).setServerPlaform(status);
+				((CVSRepositoryLocation)location).setServerPlaform(serverType);
 				return status;
 			}
 			public IStatus errorLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot, IProgressMonitor monitor) {
