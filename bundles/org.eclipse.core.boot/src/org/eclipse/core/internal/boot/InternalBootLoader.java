@@ -530,6 +530,7 @@ private static String[] initialize(URL pluginPathLocation, String location, Stri
 			//		.../ide/eclipse
 			String dir = new File(new File(getInstallURL().getFile()).getParent(), "eclipse").getAbsolutePath();
 			System.setProperty("user.dir", dir);
+			baseLocation = dir;
 		} else {
 			// otherwise, use user.dir.  If user.dir overlaps with the install dir, then make the 
 			// location be a workspace subdir of the install location.
