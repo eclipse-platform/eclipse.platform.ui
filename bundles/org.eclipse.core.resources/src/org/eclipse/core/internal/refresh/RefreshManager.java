@@ -80,10 +80,10 @@ public class RefreshManager implements IRefreshResult, IManager, Preferences.IPr
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.refresh.IRefreshResult#refresh(org.eclipse.core.resources.IResource)
 	 */
-	public void refresh(IResource resources) {
+	public void refresh(IResource resource) {
 		//do nothing if we have already shutdown
 		if (refreshJob != null)
-			refreshJob.refresh(resources);
+			refreshJob.refresh(resource);
 	}
 
 	/**
