@@ -123,10 +123,10 @@ public class ToolBarContributionItem extends ContributionItem {
      * @see org.eclipse.jface.action.IContributionItem#dispose()
      */
     public void dispose() {
-
         // Dispose of the ToolBar and all its contributions
         if (toolBarManager != null) {
             toolBarManager.dispose();
+            toolBarManager = null;
         }
 
         /*
@@ -135,8 +135,8 @@ public class ToolBarContributionItem extends ContributionItem {
          */
         if ((coolItem != null) && (!coolItem.isDisposed())) {
             coolItem.dispose();
+            coolItem = null;
         }
-
     }
 
     /*
