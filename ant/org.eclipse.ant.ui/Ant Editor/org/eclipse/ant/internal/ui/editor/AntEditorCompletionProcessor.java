@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.ComponentHelper;
 import org.apache.tools.ant.IntrospectionHelper;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
@@ -603,10 +604,8 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
        } else if (parentName == "project" || parentName == "target") { //$NON-NLS-1$ //$NON-NLS-2$
         	//use the definitions in the project as that includes more than what is defined in the DTD
 			Project project= antModel.getProjectNode().getProject();
-			Map tasks= project.getTaskDefinitions();
-			createProposals(document, prefix, proposals, tasks);
-			Map types= project.getDataTypeDefinitions();
-			createProposals(document, prefix, proposals, types);
+			Map tasksAndTypes= ComponentHelper.getComponentHelper(project).getAntTypeTable();
+			createProposals(document, prefix, proposals, tasksAndTypes);
 			if (parentName.equals("project")) { //$NON-NLS-1$
 				proposals.add(newCompletionProposal(document, prefix, "target")); //$NON-NLS-1$
 			}
