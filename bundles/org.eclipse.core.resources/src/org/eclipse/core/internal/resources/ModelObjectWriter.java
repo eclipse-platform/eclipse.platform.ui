@@ -141,9 +141,6 @@ public class ModelObjectWriter implements IModelObjectConstants {
 			writer.printSimpleTag(NAME, description.getName());
 			String comment = description.getComment();
 			writer.printSimpleTag(COMMENT, comment == null ? "" : comment); //$NON-NLS-1$
-			String charset = description.getDefaultCharset();
-			if (charset != null)
-				writer.printSimpleTag(CHARSET, charset);
 			write(PROJECTS, PROJECT, getReferencedProjects(description), writer);
 			write(BUILD_SPEC, Arrays.asList(description.getBuildSpec(false)), writer);
 			write(NATURES, NATURE, description.getNatureIds(false), writer);

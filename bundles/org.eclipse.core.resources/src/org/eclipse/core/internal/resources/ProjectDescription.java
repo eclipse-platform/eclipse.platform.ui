@@ -29,7 +29,6 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	protected static boolean isWriting = false;
 	protected ICommand[] buildSpec = EMPTY_COMMAND_ARRAY;
 	protected String comment = ""; //$NON-NLS-1$
-	protected String defaultCharset;
 	protected HashMap linkDescriptions = null;
 
 	// fields
@@ -122,13 +121,6 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 */
 	public String getComment() {
 		return comment;
-	}
-
-	/* (non-Javadoc)
-	 * @see IProjectDescription#getDefaultCharset()
-	 */
-	public String getDefaultCharset() {
-		return defaultCharset;
 	}
 
 	/* (non-Javadoc)
@@ -228,13 +220,6 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 */
 	public void setComment(String value) {
 		comment = value;
-	}
-
-	/* (non-Javadoc)
-	 * @see IProjectDescription#setDefaultCharset(String)
-	 */
-	public void setDefaultCharset(String value) {
-		defaultCharset = value;
 	}
 
 	/* (non-Javadoc)

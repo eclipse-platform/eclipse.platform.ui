@@ -30,7 +30,6 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	protected static final int S_BUILD_COMMAND_ARGUMENTS = 11;
 	protected static final int S_BUILD_COMMAND_NAME = 10;
 	protected static final int S_BUILD_SPEC = 3;
-	protected static final int S_CHARSET = 21;
 	protected static final int S_DICTIONARY = 12;
 	protected static final int S_DICTIONARY_KEY = 13;
 	protected static final int S_DICTIONARY_VALUE = 14;
@@ -201,12 +200,6 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			case S_PROJECT_COMMENT :
 				if (elementName.equals(COMMENT)) {
 					projectDescription.setComment(charBuffer.toString());
-					state = S_PROJECT_DESC;
-				}
-				break;
-			case S_CHARSET :
-				if (elementName.equals(CHARSET)) {
-					projectDescription.setDefaultCharset(charBuffer.toString());
 					state = S_PROJECT_DESC;
 				}
 				break;
@@ -425,10 +418,6 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 		}
 		if (elementName.equals(COMMENT)) {
 			state = S_PROJECT_COMMENT;
-			return;
-		}
-		if (elementName.equals(CHARSET)) {
-			state = S_CHARSET;
 			return;
 		}
 		if (elementName.equals(PROJECTS)) {

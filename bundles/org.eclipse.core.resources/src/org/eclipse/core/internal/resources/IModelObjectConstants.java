@@ -16,7 +16,6 @@ public interface IModelObjectConstants {
 	public static final String BUILD_COMMAND = "buildCommand"; //$NON-NLS-1$
 	public static final String BUILD_ORDER = "buildOrder"; //$NON-NLS-1$
 	public static final String BUILD_SPEC = "buildSpec"; //$NON-NLS-1$
-	public static final String CHARSET = "charset"; //$NON-NLS-1$	
 	public static final String COMMENT = "comment"; //$NON-NLS-1$
 	public static final String DICTIONARY = "dictionary"; //$NON-NLS-1$
 	public static final String FILE_STATE_LONGEVITY = "fileStateLongevity"; //$NON-NLS-1$

@@ -48,21 +48,6 @@ public interface IProjectDescription {
 	public String getComment();
 
 	/**
-	 * Returns the default charset for the described project, or <code>null</code>
-	 * if none has been defined.
-	 * <p>
-	 * TODO remove this note before the 3.0 release. should this method be removed?
-	 * <b>Note</b>: This method is part of early access API that may well 
-	 * change in incompatible ways until it reaches its finished form. 
-	 * </p>
-	 * 
-	 * @return the name of the default charset for the described project, or <code>null</code>
-	 * @since 3.0 
-	 * @deprecated Use IProject#getDefaultCharset instead
-	 */
-	public String getDefaultCharset();
-
-	/**
 	 * Returns the dynamic project references for the described project. Dynamic
 	 * project references can be used instead of simple project references in cases
 	 * where the reference information is computed dynamically be a third party.
@@ -173,23 +158,6 @@ public interface IProjectDescription {
 	 * @see #getComment()
 	 */
 	public void setComment(String comment);
-
-	/**
-	 * Sets the default charset for the described project.
-	 * <p>
-	 * TODO: remove this note before the 3.0 release. should this method be removed?
-	 * <b>Note</b>: This method is part of early access API that may well 
-	 * change in incompatible ways until it reaches its finished form. 
-	 * </p>
-	 * 
-	 * @param charset the name of the default charset for the described project, or 
-	 * <code>null</code>
-	 * @see IProject#setDescription(IProjectDescription, int, IProgressMonitor)
-	 * @see #getDefaultCharset() 
-	 * @since 3.0
-	 * @deprecated Use IProject#setDefaultCharset instead
-	 */
-	public void setDefaultCharset(String charset);
 
 	/**
 	 * Sets the dynamic project references for the described project. 

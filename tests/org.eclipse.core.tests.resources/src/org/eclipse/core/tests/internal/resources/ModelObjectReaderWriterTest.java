@@ -69,7 +69,6 @@ public class ModelObjectReaderWriterTest extends EclipseWorkspaceTest {
 		ProjectDescription description = new ProjectDescription();
 		description.setLocation(location);
 		description.setName("MyProjectDescription");
-		description.setDefaultCharset(defaultCharset);
 		HashMap args = new HashMap(3);
 		args.put("ArgOne", "ARGH!");
 		args.put("ArgTwo", "2 x ARGH!");
@@ -93,8 +92,7 @@ public class ModelObjectReaderWriterTest extends EclipseWorkspaceTest {
 		InputSource in = new InputSource(input);
 		ProjectDescription description2 = reader.read(in);
 		assertTrue("1.1", description.getName().equals(description2.getName()));
-		assertEquals("1.2", description.getDefaultCharset(), description2.getDefaultCharset());
-		assertTrue("1.3", location.equals(description.getLocation()));
+		assertTrue("1.2", location.equals(description.getLocation()));
 
 		ICommand[] commands2 = description2.getBuildSpec();
 		assertEquals("2.00", 2, commands2.length);
@@ -149,8 +147,7 @@ public class ModelObjectReaderWriterTest extends EclipseWorkspaceTest {
 		InputSource in = new InputSource(input);
 		ProjectDescription description2 = reader.read(in);
 		assertTrue("1.1", description.getName().equals(description2.getName()));
-		assertEquals("1.2", description.getDefaultCharset(), description2.getDefaultCharset());
-		assertTrue("1.3", location.equals(description.getLocation()));
+		assertTrue("1.2", location.equals(description.getLocation()));
 
 		ICommand[] commands2 = description2.getBuildSpec();
 		assertEquals("2.00", 1, commands2.length);
