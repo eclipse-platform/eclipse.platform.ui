@@ -89,4 +89,16 @@ public class AntWorkingDirectoryBlock extends WorkingDirectoryBlock {
 		fFileSystemButton.setEnabled(enabled);
 		fVariablesButton.setEnabled(enabled);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public boolean isValid(ILaunchConfiguration config) {
+		if (fUseDefaultWorkingDirButton.isEnabled()) { //is this block enabled
+			return super.isValid(config);
+		}
+		setErrorMessage(null);
+		setMessage(null);
+		return true;
+	}
 }
