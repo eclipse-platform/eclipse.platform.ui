@@ -311,6 +311,29 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		protected boolean isPrimer() {
 		    return false;
 		}
+		
+		/*
+		 * @see java.lang.Object#toString()
+		 * @since 3.1
+		 */
+		public String toString() {
+			String wrapLine= "\n    "; //$NON-NLS-1$
+		    StringBuffer text= new StringBuffer(super.toString());
+			text.append("\n  TextCommand:"); //$NON-NLS-1$
+			text.append(wrapLine);
+			text.append("start: "); //$NON-NLS-1$
+			text.append(fStart);
+			text.append(wrapLine);
+		    text.append("end: "); //$NON-NLS-1$
+		    text.append(fEnd);
+			text.append(wrapLine);
+		    text.append("text: "); //$NON-NLS-1$
+			text.append(fText);
+			text.append(wrapLine);
+		    text.append("peservedText: "); //$NON-NLS-1$
+			text.append(fPreservedText);
+		    return text.toString();
+		}
 	}
 	
 	/**
@@ -866,7 +889,7 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	 */
 	private void initializeCommandStack() {
 	    if (fHistory != null && fUndoContext != null)
-			fHistory.dispose(fUndoContext, true, true, true);
+			fHistory.dispose(fUndoContext, true, true, false);
 
 	}
 	
