@@ -1,10 +1,56 @@
 
 <html>
-   <head>
-      <title>
-         Tabs
-      </title>
-<script type="text/javascript" language="JavaScript">
+<head>
+<title>Tabs</title>
+ 
+<style>
+BODY {
+	/*background-color:ActiveBorder;*/
+	background-color:#D4D0C8;
+	background-image:url(images/eclipse_tabbackground.gif);
+	background-repeat:x;
+	/*font: 9pt ms sans serif,sans-serif;*/
+	font: 8pt Tahoma;
+	margin-width:0;
+	margin-left:0px;
+	border-bottom: 2px solid #848284;
+	cursor:default;
+}
+
+TABLE
+	{
+		/*font: 9pt ms sans serif,sans-serif;*/
+		font: 8pt Tahoma;
+	}
+
+.tab {
+	top:0;
+	height:22;
+	margin-top:2;
+	padding:0px 2px 0px 2px;
+	border:0;
+	cursor:default;
+}
+
+.pressed {
+	top:0;
+	margin-top:1;
+	padding:0px 2px 0px 2px;
+	height:22;
+	border-bottom:1px solid #ffffff;
+	border-top:1px solid #ffffff;
+	cursor:default;
+}
+
+
+IMG {
+	margin:0;
+	border:0;
+	padding-left:0;
+}
+</style>
+     
+<script language="JavaScript">
  
 /* Shows the specified internal frame.
    To be called by the tabs.html frame.
@@ -56,58 +102,10 @@ function showNavFrame(nav)
 	searchI.src = "images/leftBorder.gif";
 	linksI.src = "images/rightBorder.gif";
   }
-  
 }
  
 </script>
 
-<style>
-BODY {
-	/*background-color:ActiveBorder;*/
-	background-color:#D4D0C8;
-	background-image:url(images/eclipse_tabbackground.gif);
-	background-repeat:x;
-	/*font: 9pt ms sans serif,sans-serif;*/
-	font: 8pt Tahoma;
-	margin-width:0;
-	margin-left:0px;
-	border-bottom: 2px solid #848284;
-	cursor:default;
-}
-
-TABLE
-	{
-		/*font: 9pt ms sans serif,sans-serif;*/
-		font: 8pt Tahoma;
-	}
-
-.tab {
-	top:0;
-	height:22;
-	margin-top:2;
-	padding:0px 2px 0px 2px;
-	border:0;
-	cursor:default;
-}
-
-.pressed {
-	top:0;
-	margin-top:1;
-	padding:0px 2px 0px 2px;
-	height:22;
-	border-bottom:1px solid #ffffff;
-	border-top:1px solid #ffffff;
-	cursor:default;
-}
-
-
-IMG {
-	margin:0;
-	border:0;
-	padding-left:0;
-}
-
-</style>
 
 </head>
    
