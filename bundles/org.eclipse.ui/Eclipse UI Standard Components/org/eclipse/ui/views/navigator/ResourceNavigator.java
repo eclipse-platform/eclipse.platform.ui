@@ -731,7 +731,7 @@ public class ResourceNavigator
 	 * @param decorator a label decorator or <code>null</code> for no decorations.
 	 * @deprecated use the decorators extension point instead; see IWorkbench.getDecoratorManager()
 	 */
-	public void setLabelDecorator(ICombinedLabelDecorator decorator) {
+	public void setLabelDecorator(ILabelDecorator decorator) {
 		// do nothing
 	}
 	
