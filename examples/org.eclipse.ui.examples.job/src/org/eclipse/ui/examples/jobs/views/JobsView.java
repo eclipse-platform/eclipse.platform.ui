@@ -248,11 +248,13 @@ public class JobsView extends ViewPart {
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		durationField.setLayoutData(data);
+		durationField.add("0"); //$NON-NLS-1$
+		durationField.add("1 millisecond"); //$NON-NLS-1$
 		durationField.add("1 second"); //$NON-NLS-1$
 		durationField.add("10 seconds"); //$NON-NLS-1$
 		durationField.add("1 minute"); //$NON-NLS-1$
 		durationField.add("10 minutes"); //$NON-NLS-1$
-		durationField.select(2);
+		durationField.select(4);
 
 		//delay
 		label = new Label(body, SWT.NONE);
@@ -386,12 +388,16 @@ public class JobsView extends ViewPart {
 	protected long getDuration() {
 		switch (durationField.getSelectionIndex()) {
 			case 0 :
-				return 1000;
+				return 0;
 			case 1 :
-				return 10000;
+				return 1;
 			case 2 :
-				return 60000;
+				return 1000;
 			case 3 :
+				return 10000;
+			case 4 :
+				return 60000;
+			case 5 :
 			default :
 				return 600000;
 		}
