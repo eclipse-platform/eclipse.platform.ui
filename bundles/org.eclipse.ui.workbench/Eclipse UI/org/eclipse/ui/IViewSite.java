@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
-
 /**
- * The primary interface between a view part and the outside world.
+ * The primary interface between a view part and the workbench.
  * <p>
  * The workbench exposes its implemention of view part sites via this interface,
  * which is not intended to be implemented or extended by clients.
