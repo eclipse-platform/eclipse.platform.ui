@@ -735,10 +735,10 @@ public class AntClasspathBlock {
 		boolean check= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING);
 		if (check && !AntUIPlugin.isMacOS()) {
 			List antURLs= getAntURLs();
-			boolean valid= JARPresent(antURLs, TOOLS) != null;
+			boolean valid= !JARPresent(antURLs, TOOLS).isEmpty();
 			if (!valid) {
 				List userURLs= getUserURLs();
-				if (JARPresent(userURLs, TOOLS) == null) {
+				if (JARPresent(userURLs, TOOLS).isEmpty()) {
 					valid= MessageDialogWithToggle.openQuestion(AntUIPlugin.getActiveWorkbenchWindow().getShell(), AntPreferencesMessages.getString("AntClasspathBlock.31"), AntPreferencesMessages.getString("AntClasspathBlock.32"), IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, AntPreferencesMessages.getString("AntClasspathBlock.33"), AntUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				} else {
 					valid= true;
