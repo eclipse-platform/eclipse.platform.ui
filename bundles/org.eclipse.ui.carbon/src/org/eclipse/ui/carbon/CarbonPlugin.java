@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.carbon;
 
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
 import org.eclipse.swt.internal.Callback;
 import org.eclipse.swt.internal.carbon.*;
 import org.eclipse.swt.widgets.Display;
@@ -27,12 +30,22 @@ import org.eclipse.ui.PlatformUI;
 
 public class CarbonPlugin implements IStartup {
 		
-	static final int kHICommandPreferences= ('p'<<24) + ('r'<<16) + ('e'<<8) + 'f';
-	static final int kHICommandAbout= ('a'<<24) + ('b'<<16) + ('o'<<8) + 'u';
-	static final int kHICommandServices= ('s'<<24) + ('e'<<16) + ('r'<<8) + 'v';
+	private static final int kHICommandPreferences= ('p'<<24) + ('r'<<16) + ('e'<<8) + 'f';
+	private static final int kHICommandAbout= ('a'<<24) + ('b'<<16) + ('o'<<8) + 'u';
+	private static final int kHICommandServices= ('s'<<24) + ('e'<<16) + ('r'<<8) + 'v';
+
+	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.carbon.Messages"; //$NON-NLS-1$
+	private static String fgAboutActionName;
 
 	public CarbonPlugin() {
-		System.out.println("CarbonPlugin");
+		if (fgAboutActionName == null) {
+			ResourceBundle resourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
+			try {
+				fgAboutActionName= resourceBundle.getString("AboutAction.name");	//$NON-NLS-1$
+			} catch (MissingResourceException e) {
+				fgAboutActionName= "About Eclipse...";
+			}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -49,34 +62,6 @@ public class CarbonPlugin implements IStartup {
 		);
 	}
 	
-	private void runAction(String name) {
-		IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (window == null)
-			return;
-		Shell shell= window.getShell();
-		Menu menubar= shell.getMenuBar();
-		for (int i= 0; i < menubar.getItemCount(); i++) {
-			MenuItem mi= menubar.getItem(i);
-			Menu m= mi.getMenu();
-			for (int j= 0; j < m.getItemCount(); j++) {
-				MenuItem mi2= m.getItem(j);
-				Object o= mi2.getData();
-				if (o instanceof ActionContributionItem) {
-					ActionContributionItem aci= (ActionContributionItem) o;
-					String id= aci.getId();
-					System.out.println(id);
-					if (id != null && id.equals(name)) {
-						IAction a= aci.getAction();
-						if (a != null) {
-							a.run();
-							return;
-						}
-					}
-				}
-			}
-		}
-	}
-	
 	/**
 	 * See Apple Technical Q&A 1079 (http://developer.apple.com/qa/qa2001/qa1079.html)
 	 */
@@ -90,12 +75,9 @@ public class CarbonPlugin implements IStartup {
 					OS.GetEventParameter(theEvent, OS.kEventParamDirectObject, OS.typeHICommand, null, HICommand.sizeof, null, command);
 					switch (command.commandID) {
 					case kHICommandPreferences:
-						runAction("preferences"); //$NON-NLS-1$
-						//new OpenPreferencesAction().run();
-						return OS.noErr;
+						return runAction("preferences"); //$NON-NLS-1$
 					case kHICommandAbout:
-						runAction("about"); //$NON-NLS-1$
-						return OS.noErr;
+						return runAction("about"); //$NON-NLS-1$
 					default:
 						break;
 					}
@@ -123,10 +105,9 @@ public class CarbonPlugin implements IStartup {
 		if (OS.GetIndMenuItemWithCommandID(0, kHICommandPreferences, 1, outMenu, outIndex) == OS.noErr && outMenu[0] != 0) {
 			int menu= outMenu[0];
 
-			String s= "About Eclipse..."; //$NON-NLS-1$
-			int l= s.length();
+			int l= fgAboutActionName.length();
 			char buffer[]= new char[l];
-			s.getChars(0, l, buffer, 0);
+			fgAboutActionName.getChars(0, l, buffer, 0);
 			int str= OS.CFStringCreateWithCharacters(OS.kCFAllocatorDefault, buffer, l);
 			OS.InsertMenuItemTextWithCFString(menu, str, (short) 0, 0, kHICommandAbout);
 			OS.CFRelease(str);
@@ -149,5 +130,37 @@ public class CarbonPlugin implements IStartup {
 				}
 			}
 		);
+	}
+	
+	/**
+	 * Locate an action in the current menubar by name.
+	 */
+	private int runAction(String name) {
+		IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window != null) {
+			Shell shell= window.getShell();
+			Menu menubar= shell.getMenuBar();
+			for (int i= 0; i < menubar.getItemCount(); i++) {
+				MenuItem mi= menubar.getItem(i);
+				Menu m= mi.getMenu();
+				for (int j= 0; j < m.getItemCount(); j++) {
+					MenuItem mi2= m.getItem(j);
+					Object o= mi2.getData();
+					if (o instanceof ActionContributionItem) {
+						ActionContributionItem aci= (ActionContributionItem) o;
+						String id= aci.getId();
+						System.out.println(id);
+						if (id != null && id.equals(name)) {
+							IAction action= aci.getAction();
+							if (action != null && action.isEnabled()) {
+								action.run();
+								return OS.noErr;
+							}
+						}
+					}
+				}
+			}
+		}
+		return OS.eventNotHandledErr;
 	}
 }
