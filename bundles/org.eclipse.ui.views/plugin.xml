@@ -5,6 +5,7 @@
    version="2.1.0"
    provider-name="%providerName"
    class="org.eclipse.ui.internal.ViewsPlugin">
+
    <runtime>
       <library name="views.jar">
          <export name="*"/>
@@ -14,7 +15,9 @@
    <requires>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.help"/>
-      <import plugin="org.eclipse.jface"/>
-      <import plugin="org.eclipse.ui.workbench"/>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.ui"/>
    </requires>
+
+
 </plugin>

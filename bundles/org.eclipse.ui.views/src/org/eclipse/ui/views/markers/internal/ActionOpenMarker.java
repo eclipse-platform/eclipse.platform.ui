@@ -26,6 +26,7 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.SelectionProviderAction;
+import org.eclipse.ui.ide.IDE;
 
 /**
  * Action to open an editor on the selected bookmarks.
@@ -71,7 +72,7 @@ public class ActionOpenMarker extends SelectionProviderAction {
 		}
 
 		try {
-			part.getSite().getPage().openEditor(marker, OpenStrategy.activateOnOpen());
+			IDE.openEditor(part.getSite().getPage(), marker, OpenStrategy.activateOnOpen());
 		} catch (PartInitException e) {
 			// Open an error style dialog for PartInitException by
 			// including any extra information from the nested

@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.IDE;
 
 /**
  * Action to open an editor on the selected bookmarks.
@@ -41,7 +42,7 @@ class OpenBookmarkAction extends BookmarkAction {
 		for (Iterator i = getStructuredSelection().iterator(); i.hasNext();) {
 			IMarker marker = (IMarker) i.next();
 			try {
-				page.openEditor(marker,OpenStrategy.activateOnOpen());
+				IDE.openEditor(page, marker, OpenStrategy.activateOnOpen());
 			} catch (PartInitException e) {
 				// Open an error style dialog for PartInitException by
 				// including any extra information from the nested
