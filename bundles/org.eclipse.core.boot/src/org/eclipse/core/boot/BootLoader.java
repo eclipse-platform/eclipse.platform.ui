@@ -225,10 +225,9 @@ public static URL getInstallURL() {
 }
 /**
  * Returns the string name of the current locale for use in finding files
- * whose path starts with <code>$nl$</code>.  <code>null</code> is returned
- * if the locale cannot be determined.
+ * whose path starts with <code>$nl$</code>.
  *
- * @return the string name of the current locale or <code>null</code>
+ * @return the string name of the current locale
  */
 public static String getNL() {
 	return InternalBootLoader.getNL();

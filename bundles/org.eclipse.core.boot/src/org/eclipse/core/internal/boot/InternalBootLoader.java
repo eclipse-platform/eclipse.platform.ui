@@ -905,8 +905,25 @@ public static void setupOptions() {
 private static void setupSystemContext() {
 	// if the user didn't set the locale with a command line argument then
 	// use the default.
-	if (nl == null)
-		nl = Locale.getDefault().toString();
+	if (nl != null) {
+		StringTokenizer tokenizer = new StringTokenizer(nl, "_"); //$NON-NLS-1$
+		int segments = tokenizer.countTokens();
+		try {
+			switch (segments) {
+				case 2:
+					Locale userLocale = new Locale(tokenizer.nextToken(), tokenizer.nextToken());
+					Locale.setDefault(userLocale);
+					break;
+				case 3:
+					userLocale = new Locale(tokenizer.nextToken(), tokenizer.nextToken(), tokenizer.nextToken());
+					Locale.setDefault(userLocale);
+					break;
+			}
+		} catch (NoSuchElementException e) {
+			// fall through and use the default
+		}
+	}
+	nl = Locale.getDefault().toString();
 
 	// if the user didn't set the operating system with a command line 
 	// argument then use the default.
