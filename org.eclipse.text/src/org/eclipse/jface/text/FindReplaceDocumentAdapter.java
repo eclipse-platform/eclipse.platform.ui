@@ -24,7 +24,7 @@ import java.util.regex.PatternSyntaxException;
  */
 public class FindReplaceDocumentAdapter implements CharSequence {
 	
-	// Shortcuts to findReplace opertion codes
+	// Shortcuts to findReplace operation codes
 	private static final FindReplaceOperationCode FIND_FIRST= FindReplaceOperationCode.FIND_FIRST;
 	private static final FindReplaceOperationCode FIND_NEXT= FindReplaceOperationCode.FIND_NEXT;
 	private static final FindReplaceOperationCode REPLACE= FindReplaceOperationCode.REPLACE;
@@ -183,7 +183,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 			}
 		}
 
-		if (operationCode == FIND_FIRST || operationCode == FIND_NEXT) {
+		if (operationCode != REPLACE) {
 			if (forwardSearch) {
 
 				boolean found= false;
