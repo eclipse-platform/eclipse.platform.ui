@@ -3,33 +3,14 @@ package org.eclipse.update.core;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.update.core.model.ArchiveReferenceModel;
-import org.eclipse.update.core.model.FeatureModel;
-import org.eclipse.update.core.model.FeatureReferenceModel;
-import org.eclipse.update.core.model.SiteCategoryModel;
-import org.eclipse.update.core.model.SiteMapModel;
-import org.eclipse.update.core.model.URLEntryModel;
-import org.eclipse.update.internal.core.FeatureReference;
-import org.eclipse.update.internal.core.FeatureTypeFactory;
-import org.eclipse.update.internal.core.IWritable;
-import org.eclipse.update.internal.core.ListenersList;
-import org.eclipse.update.internal.core.SiteParser;
-import org.eclipse.update.internal.core.UpdateManagerPlugin;
-import org.eclipse.update.internal.core.UpdateManagerUtils;
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.Writer;
 
 public class Site extends SiteMapModel implements ISite, IWritable {
@@ -38,7 +19,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	 * default path under the site where features will be installed
 	 */
 	public static final String INSTALL_FEATURE_PATH = "install/features/";
-	
+
 	/**
 	 * default path under the site where plugins will be installed
 	 */
@@ -56,7 +37,6 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 
 	public static final String SITE_FILE = "site";
 	public static final String SITE_XML = SITE_FILE + ".xml";
-	private SiteParser parser;
 
 	private ListenersList listeners = new ListenersList();
 	/**
@@ -68,11 +48,11 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	 * The content provider of the Site
 	 */
 	private ISiteContentProvider siteContentProvider;
-	
+
 	/**
 	 * plugin entries 
 	 */
-	private List pluginEntries = new ArrayList(0);	
+	private List pluginEntries = new ArrayList(0);
 
 	/**
 	 * Constructor for Site
@@ -88,7 +68,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 		File file = new File(getURL().getFile() + SITE_XML);
 		try {
 			PrintWriter fileWriter = new PrintWriter(new FileOutputStream(file));
-			Writer writer = new Writer(); 
+			Writer writer = new Writer();
 			writer.writeSite(this, fileWriter);
 			fileWriter.close();
 		} catch (FileNotFoundException e) {
@@ -120,16 +100,16 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	 * @see ISite#install(IFeature, IProgressMonitor)
 	 */
 	public IFeatureReference install(IFeature sourceFeature, IProgressMonitor progress) throws CoreException {
-		
+
 		// make sure we have an InstallMonitor		
 		InstallMonitor monitor;
 		if (progress == null)
 			monitor = null;
 		else if (progress instanceof InstallMonitor)
-			monitor = (InstallMonitor)progress;
+			monitor = (InstallMonitor) progress;
 		else
 			monitor = new InstallMonitor(progress);
-		
+
 		// create new executable feature and install source content into it
 		IFeature localFeature = createExecutableFeature(sourceFeature);
 		IFeatureReference localFeatureReference = sourceFeature.install(localFeature, monitor);
@@ -155,23 +135,23 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	 * @see ISite#remove(IFeature, IProgressMonitor)
 	 */
 	public void remove(IFeature feature, IProgressMonitor progress) throws CoreException {
-	
+
 		// make sure we have an InstallMonitor		
 		InstallMonitor monitor;
 		if (progress == null)
 			monitor = null;
 		else if (progress instanceof InstallMonitor)
-			monitor = (InstallMonitor)progress;
+			monitor = (InstallMonitor) progress;
 		else
 			monitor = new InstallMonitor(progress);
-		
+
 		// remove the feature and the plugins if they are not used and not activated
 		// get the plugins from the feature
 		IPluginEntry[] pluginsToRemove = SiteManager.getLocalSite().getUnusedPluginEntries(feature);
 
 		//finds the contentReferences for this IPluginEntry
 		for (int i = 0; i < pluginsToRemove.length; i++) {
-			remove(feature,pluginsToRemove[i], monitor);
+			remove(feature, pluginsToRemove[i], monitor);
 		}
 
 		// remove the feature content
@@ -179,10 +159,10 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 		for (int i = 0; i < references.length; i++) {
 			try {
 				UpdateManagerUtils.removeFromFileSystem(references[i].asFile());
-			} catch (IOException e){
+			} catch (IOException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Cannot remove feature:"+feature.getVersionIdentifier().getIdentifier(),e);
-				throw new CoreException(status);					
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot remove feature:" + feature.getVersionIdentifier().getIdentifier(), e);
+				throw new CoreException(status);
 			}
 		}
 
@@ -206,20 +186,20 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 		}
 
 	}
-	
-	private void remove(IFeature feature,IPluginEntry pluginEntry, InstallMonitor monitor)  throws CoreException{
-		
-		if (pluginEntry==null)
+
+	private void remove(IFeature feature, IPluginEntry pluginEntry, InstallMonitor monitor) throws CoreException {
+
+		if (pluginEntry == null)
 			return;
-		
+
 		ContentReference[] references = feature.getFeatureContentProvider().getPluginEntryArchiveReferences(pluginEntry, monitor);
 		for (int i = 0; i < references.length; i++) {
 			try {
 				UpdateManagerUtils.removeFromFileSystem(references[i].asFile());
-			} catch (IOException e){
+			} catch (IOException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Cannot remove plugin:"+pluginEntry.getIdentifier(),e);
-				throw new CoreException(status);					
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot remove plugin:" + pluginEntry.getIdentifier(), e);
+				throw new CoreException(status);
 			}
 		}
 	}
@@ -233,10 +213,10 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 		if (executableFeatureType != null) {
 			IFeatureFactory factory = FeatureTypeFactory.getInstance().getFactory(executableFeatureType);
 			result = factory.createFeature(this);
-			
+
 			// at least set the version identifier to be the same
-			((FeatureModel)result).setFeatureIdentifier(sourceFeature.getVersionIdentifier().getIdentifier());
-			((FeatureModel)result).setFeatureVersion(sourceFeature.getVersionIdentifier().getVersion().toString());			
+			 ((FeatureModel) result).setFeatureIdentifier(sourceFeature.getVersionIdentifier().getIdentifier());
+			((FeatureModel) result).setFeatureVersion(sourceFeature.getVersionIdentifier().getVersion().toString());
 		}
 		return result;
 	}
@@ -247,8 +227,8 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	public URL getURL() {
 		URL url = null;
 		try {
-			url =  getSiteContentProvider().getURL();
-		} catch (CoreException e){
+			url = getSiteContentProvider().getURL();
+		} catch (CoreException e) {
 			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
 		}
 		return url;
@@ -259,7 +239,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	 */
 	public IFeatureReference[] getFeatureReferences() {
 		FeatureReferenceModel[] result = getFeatureReferenceModels();
-		if (result.length == 0) 
+		if (result.length == 0)
 			return new IFeatureReference[0];
 		else
 			return (IFeatureReference[]) result;
@@ -270,7 +250,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	 */
 	public IArchiveEntry[] getArchives() {
 		ArchiveReferenceModel[] result = getArchiveReferenceModels();
-		if (result.length == 0) 
+		if (result.length == 0)
 			return new IArchiveEntry[0];
 		else
 			return (IArchiveEntry[]) result;
@@ -281,7 +261,8 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	 */
 	public URL getInfoURL() {
 		URLEntryModel description = getDescriptionModel();
-		if (description==null) return null;
+		if (description == null)
+			return null;
 		return description.getURL();
 	}
 
@@ -290,7 +271,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	 */
 	public ICategory[] getCategories() {
 		SiteCategoryModel[] result = getCategoryModels();
-		if (result.length == 0) 
+		if (result.length == 0)
 			return new ICategory[0];
 		else
 			return (ICategory[]) result;
@@ -327,7 +308,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	 */
 	public IPluginEntry[] getPluginEntries() {
 		IPluginEntry[] result = new IPluginEntry[0];
-		if (!(pluginEntries==null || pluginEntries.isEmpty())){
+		if (!(pluginEntries == null || pluginEntries.isEmpty())) {
 			result = new IPluginEntry[pluginEntries.size()];
 			pluginEntries.toArray(result);
 		}
@@ -354,12 +335,11 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	public ISiteContentProvider getSiteContentProvider() throws CoreException {
 		if (siteContentProvider == null) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Content Provider not set for site:" , null);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Content Provider not set for site:", null);
 			throw new CoreException(status);
 		}
 		return siteContentProvider;
 	}
-
 
 	/*
 	 * @see IWritable#write(int, PrintWriter)
@@ -373,7 +353,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 		for (int i = 0; i < IWritable.INDENT; i++)
 			increment += " ";
 
-		w.print(gap + "<" + SiteParser.SITE + " ");
+		w.print(gap + "<site ");
 		// FIXME: site type to implement
 		// 
 		// Site URL
@@ -396,18 +376,18 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 		for (int index = 0; index < archives.length; index++) {
 			IArchiveEntry element = (IArchiveEntry) archives[index];
 			URLInfoString = UpdateManagerUtils.getURLAsString(this.getURL(), element.getURL());
-			w.println(gap + "<" + SiteParser.ARCHIVE + " id=\"" + Writer.xmlSafe(element.getPath()) + "\" url=\"" + Writer.xmlSafe(URLInfoString) + "\"/>");
+			w.println(gap + "<archive " + "id = \"" + Writer.xmlSafe(element.getPath()) + "\" url=\"" + Writer.xmlSafe(URLInfoString) + "\"/>");
 		}
 		w.println("");
 
 		ICategory[] categories = getCategories();
 		for (int index = 0; index < categories.length; index++) {
 			Category element = (Category) categories[index];
-			w.println(gap + "<" + SiteParser.CATEGORY_DEF + " label=\"" + Writer.xmlSafe(element.getLabel()) + "\" name=\"" + Writer.xmlSafe(element.getName()) + "\">");
+			w.println(gap + "<category-def " + "label = \"" + Writer.xmlSafe(element.getLabel()) + "\" name=\"" + Writer.xmlSafe(element.getName()) + "\">");
 
 			IURLEntry info = element.getDescription();
 			if (info != null) {
-				w.print(gap + increment + "<" + SiteParser.DESCRIPTION + " ");
+				w.print(gap + increment + "<description");
 				URLInfoString = null;
 				if (info.getURL() != null) {
 					URLInfoString = UpdateManagerUtils.getURLAsString(this.getURL(), info.getURL());
@@ -417,15 +397,15 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 				if (info.getAnnotation() != null) {
 					w.println(gap + increment + increment + Writer.xmlSafe(info.getAnnotation()));
 				}
-				w.print(gap + increment + "</" + SiteParser.DESCRIPTION + ">");
+				w.print(gap + increment + "</description>");
 			}
-			w.println(gap + "</" + SiteParser.CATEGORY_DEF + ">");
+			w.println(gap + "</category-def>");
 
 		}
 		w.println("");
 		// end
-		w.println("</" + SiteParser.SITE + ">");
-		
+		w.println("</site>");
+
 	}
 
 	/*
@@ -480,8 +460,8 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	 * @see ISite#getDefaultInstallableFeatureType()
 	 */
 	public String getDefaultInstallableFeatureType() {
-		String pluginID = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier()+".";
-		return pluginID+IFeatureFactory.INSTALLABLE_FEATURE_TYPE;
+		String pluginID = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier() + ".";
+		return pluginID + IFeatureFactory.INSTALLABLE_FEATURE_TYPE;
 	}
 
 }

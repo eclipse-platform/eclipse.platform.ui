@@ -106,7 +106,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	String increment = "";
 	for (int i = 0; i < IWritable.INDENT; i++) increment += " ";
 		
-		w.print(gap+"<"+SiteParser.FEATURE+" ");
+		w.print(gap+"<feature");
 		// FIXME: feature type to implement
 		// 
 		// feature URL
@@ -120,9 +120,9 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 		String[] categoryNames = getCategoryNames();
 		for (int i = 0; i < categoryNames.length; i++){
 			String element = categoryNames[i];
-			w.println(gap+increment+"<"+SiteParser.CATEGORY+" name=\""+Writer.xmlSafe(element)+"\"/>");		
+			w.println(gap+increment+"<category name=\""+Writer.xmlSafe(element)+"\"/>");		
 		}
-		w.println("</"+SiteParser.FEATURE+">");
+		w.println("</feature>");
 	}
 
 	/**

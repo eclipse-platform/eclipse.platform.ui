@@ -97,6 +97,7 @@ public class Feature extends FeatureModel implements IFeature {
 		try {
 			contentProvider = getFeatureContentProvider();
 		} catch (CoreException e) {
+			// FIXME
 		}
 		return (contentProvider != null) ? contentProvider.getURL() : null;
 	}

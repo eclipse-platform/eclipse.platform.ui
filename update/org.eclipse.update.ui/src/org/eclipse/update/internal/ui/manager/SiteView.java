@@ -241,6 +241,7 @@ private void performRefresh() {
 					viewer.refresh(bookmark);
 				}
 				catch (CoreException e) {
+					// FIXME
 					System.out.println(e);
 				}
 			}
@@ -272,6 +273,7 @@ private Object [] getSiteCatalog(final SiteBookmark bookmark) {
 					bag.catalog = bookmark.getCatalog();
 				}
 				catch (CoreException e) {
+					// FIXME
 				}
 			}
 		});

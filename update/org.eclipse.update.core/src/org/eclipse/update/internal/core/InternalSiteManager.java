@@ -100,7 +100,9 @@ public class InternalSiteManager {
 
 		} catch (CoreException e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "cannot create an instance of the Site Object", e);
+			String siteString = (siteURL!=null)?siteURL.toExternalForm():"<NO URL>";
+			MultiStatus status = new MultiStatus(id, IStatus.ERROR, "cannot create an instance of the Site using URL "+siteURL.toExternalForm()+"\r\n Verify site of type: "+type+" understand the URL. You may have to ad a '/' or speficy the exact file (i.e site.xml) instead of a directory.",e);
+			status.add(e.getStatus());
 			throw new CoreException(status);
 		}
 
