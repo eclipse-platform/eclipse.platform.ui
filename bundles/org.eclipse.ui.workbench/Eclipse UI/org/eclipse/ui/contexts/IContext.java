@@ -11,8 +11,6 @@
 
 package org.eclipse.ui.contexts;
 
-import java.util.Set;
-
 /**
  * An instance of this interface is an context as defined by the extension point
  * <code>org.eclipse.ui.contexts</code>.
