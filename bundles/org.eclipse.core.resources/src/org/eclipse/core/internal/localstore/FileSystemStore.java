@@ -310,9 +310,25 @@ public void transferStreams(InputStream source, OutputStream destination, String
 				try {
 					destination.write(buffer, 0, bytesRead);
 				} catch (IOException e) {
-					String msg = Policy.bind("localstore.couldNotWrite", new String[] {path}); //$NON-NLS-1$
 					IPath p = path == null ? null : new Path(path);
-					throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, p, msg, e);
+					String msg=null;
+					int code=0;
+					// check to see if the immediate parent is marked as read-only. If so 
+					// then we can set a more accurate error code and message for the user.
+					if (p != null) {
+						String parent = p.toFile().getParent();
+						if (parent != null && CoreFileSystemLibrary.isReadOnly(parent)) {
+							msg = Policy.bind("localstore.readOnlyParent", path); //$NON-NLS-1$
+							code = IResourceStatus.PARENT_READ_ONLY;
+						}
+					}
+					// if message is null then we didn't discover a read-only immediate parent
+					// so set a general message and error code
+					if (msg == null) {
+						msg = Policy.bind("localstore.couldNotWrite", path); //$NON-NLS-1$
+						code = IResourceStatus.FAILED_WRITE_LOCAL;
+					}
+					throw new ResourceException(code, p, msg, e);
 				}
 				monitor.worked(1);
 			}
