@@ -194,7 +194,15 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 						prepareTagPage(remoteFolder);
 						return tagPage;
 					} else {
-						populateSyncPage(false /* remote exists */);
+						try {
+							populateSyncPage(false /* remote exists */);
+						} catch (InvocationTargetException e) {
+							CVSUIPlugin.openError(getShell(), null, null, e);
+							if (!RepositoryProvider.isShared(project)) {
+								// Only stay on the current page if the sharing was a total failure
+								return null;
+							}
+						}
 						return syncPage;
 					}
 				} else {

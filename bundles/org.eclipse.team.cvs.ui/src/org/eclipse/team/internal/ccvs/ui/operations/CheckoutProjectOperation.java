@@ -105,7 +105,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 		return moduleName;
 	}
 
-	protected IStatus checkout(final ICVSRemoteFolder resource, final IProject project, IProgressMonitor pm) throws CVSException {
+	protected IStatus checkout(final ICVSRemoteFolder resource, IProject project, IProgressMonitor pm) throws CVSException {
 		// Get the location and the workspace root
 		ICVSFolder root = CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot());
 		ICVSRepositoryLocation repository = resource.getRepository();
@@ -115,6 +115,13 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 		Policy.checkCanceled(pm);
 		session.open(Policy.subMonitorFor(pm, 5), false /* read-only */);
 		try {
+			
+			// Check to see if the entire repo is being checked out.
+			if (project == null && resource.getName().equals(".")) { //$NON-NLS-1$
+				// No project was specified but we need on for this to work
+				String name = new Path(resource.getRepository().getRootDirectory()).lastSegment();
+				project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+			}
 			
 			// Determine the local target projects (either the project provider or the module expansions)
 			// Note: Module expansions can be run over the same connection as a checkout
@@ -126,6 +133,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 				return OK;
 			}
 			
+			final boolean sendModuleName = project != null;
 			final IStatus[] result = new IStatus[] { null };
 			ISchedulingRule schedulingRule = getSchedulingRule(targetProjects);
 			if (schedulingRule instanceof IResource && ((IResource)schedulingRule).getType() == IResource.ROOT) {
@@ -133,14 +141,14 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 				// Just return the workspace root rule
 				try {
 					Platform.getJobManager().beginRule(schedulingRule, pm);
-					result[0] = performCheckout(session, resource, targetProjects, project != null, Policy.subMonitorFor(pm, 90));
+					result[0] = performCheckout(session, resource, targetProjects, sendModuleName, Policy.subMonitorFor(pm, 90));
 				} finally {
 					Platform.getJobManager().endRule(schedulingRule);
 				}
 			} else {
 				EclipseSynchronizer.getInstance().run(schedulingRule, new ICVSRunnable() {
 					public void run(IProgressMonitor monitor) throws CVSException {
-						result[0] = performCheckout(session, resource, targetProjects, project != null, monitor);
+						result[0] = performCheckout(session, resource, targetProjects, sendModuleName, monitor);
 					}
 				}, Policy.subMonitorFor(pm, 90));
 			}
