@@ -44,6 +44,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
@@ -752,9 +753,15 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 				boolean join= waitForBuild(build[0].getState());
 				if (join) {
 					try {
+						ILaunch pendingLaunch= new Launch(configuration, mode, null);
+						DebugPlugin.getDefault().getLaunchManager().addLaunch(pendingLaunch);
 						subMonitor = new SubProgressMonitor(monitor, 100);
 						subMonitor.beginTask(DebugUIMessages.getString("DebugUIPlugin.14"), 100); //$NON-NLS-1$
 						build[0].join();
+						DebugPlugin.getDefault().getLaunchManager().removeLaunch(pendingLaunch);
+						if (pendingLaunch.isTerminated()) {
+							monitor.setCanceled(true);
+						}
 					} catch (InterruptedException e) {
 						throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, DebugUIMessages.getString("DebugUIPlugin.15"), e)); //$NON-NLS-1$
 					}
