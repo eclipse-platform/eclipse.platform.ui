@@ -13,6 +13,9 @@ package org.eclipse.jface.text.contentassist;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+/**
+ * Helper class to get NLSed messages.
+ */
 class JFaceTextMessages {
 
 	private static final String RESOURCE_BUNDLE= "org.eclipse.jface.text.JFaceTextMessages";//$NON-NLS-1$
@@ -22,6 +25,12 @@ class JFaceTextMessages {
 	private JFaceTextMessages() {
 	}
 
+	/**
+	 * Gets a string from the resource bundle.
+	 * 
+	 * @param key the string used to get the bundle value, must not be <code>null</code>
+	 * @return the string from the resource bundle
+	 */
 	public static String getString(String key) {
 		try {
 			return fgResourceBundle.getString(key);
