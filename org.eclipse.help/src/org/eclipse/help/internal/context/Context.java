@@ -30,10 +30,14 @@ public class Context extends ContextsNode implements IStyledContext {
 		shortID = attrs.getValue("id");
 	}
 	/**
-	 * @return plain text (without <@#$b> or </@#$b> bug 59541)
+	 * @return plain text (without <@#$b>or </@#$b> bug 59541)
 	 */
 	public String getText() {
-		return text.replaceAll("\\s*</?@#\\$b>\\s*"," ");
+		return text
+				// if there are spaces on any or both side of bold they need to be
+				// collapsed to one
+				.replaceAll("(\\s+</?@#\\$b>\\s*)|(\\s*</?@#\\$b>\\s+)", " ")
+				.replaceAll("</?@#\\$b>", "");
 	}
 	/**
 	 * @return styled text with <@#$b> and </@#$b> to mark bold range

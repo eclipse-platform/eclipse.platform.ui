@@ -183,9 +183,9 @@ public class ContextHelpDialog {
 	private Control createInfoArea(Composite parent) {
 		// Create the text field.
 		String styledText;
-		if(context instanceof IStyledContext){
-			styledText = ((IStyledContext)context).getStyledText();
-		} else{
+		if (context instanceof IStyledContext) {
+			styledText = ((IStyledContext) context).getStyledText();
+		} else {
 			styledText = context.getText();
 		}
 		if (styledText == null) // no description found in context objects.
