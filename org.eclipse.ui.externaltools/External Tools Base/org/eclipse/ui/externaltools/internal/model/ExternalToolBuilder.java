@@ -11,6 +11,7 @@
 package org.eclipse.ui.externaltools.internal.model;
 
 
+import java.text.MessageFormat;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -61,10 +62,12 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 				break;
 			}
 		}
-		if (!runTool)
+		if (!runTool) {
 			return null;
+		}
+		monitor.subTask(MessageFormat.format(ExternalToolsModelMessages.getString("ExternalToolBuilder.Running_{0}..._1"), new String[]{config.getName()})); //$NON-NLS-1$
 		VariableContextManager.getDefault().buildStarted(getProject(), kind);
-		config.launch(ILaunchManager.RUN_MODE, null);
+		config.launch(ILaunchManager.RUN_MODE, monitor);
 		VariableContextManager.getDefault().buildEnded();
 		forgetLastBuiltState();
 				
