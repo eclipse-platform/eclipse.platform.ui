@@ -91,8 +91,8 @@ public class CustomizePerspectiveDialog extends Dialog {
 		private ArrayList children = new ArrayList();
 		private ActionSetDisplayItem parent = null;
 		private String id = null;
-		private String text = "";
-		private String description = "";
+		private String text = ""; //$NON-NLS-1$
+		private String description = "";  //$NON-NLS-1$
 		private ImageDescriptor imageDescriptor;
 		private int type = MENUITEM;
 		private final static int MENUITEM = 0;
@@ -101,7 +101,7 @@ public class CustomizePerspectiveDialog extends Dialog {
 		private ActionSetDisplayItem() {
 		}
 		private ActionSetDisplayItem(String id) {
-			this(null, id, "", MENUITEM);
+			this(null, id, "", MENUITEM); //$NON-NLS-1$
 		}
 		private ActionSetDisplayItem(ActionSetDisplayItem parent, String id, String text, int type) {
 			if (parent != null) {
@@ -194,13 +194,13 @@ public class CustomizePerspectiveDialog extends Dialog {
 		private String getDisplayText() {
 			if (type == MENUITEM) {
 				if (children.size() > 0) {
-					if (parent.id.equals("Root")) {
-						return WorkbenchMessages.format("ActionSetSelection.menubarLocation", new Object[] {text});
+					if (parent.id.equals("Root")) { //$NON-NLS-1$
+						return WorkbenchMessages.format("ActionSetSelection.menubarLocation", new Object[] {text}); //$NON-NLS-1$
 					} 
 				}
 				return text;
 			} else {
-				if (children.size() > 0) return WorkbenchMessages.format("ActionSetSelection.toolbarLocation", new Object[] {text});
+				if (children.size() > 0) return WorkbenchMessages.format("ActionSetSelection.toolbarLocation", new Object[] {text}); //$NON-NLS-1$
 				else return text;
 			}
 		}
@@ -320,7 +320,7 @@ public class CustomizePerspectiveDialog extends Dialog {
 					}
 					break;
 				}
-			if (text == null) text = "";
+			if (text == null) text = ""; //$NON-NLS-1$
 			return text; 
 		}
 		public String getText(Object element) {
@@ -332,7 +332,7 @@ public class CustomizePerspectiveDialog extends Dialog {
 			} else if (element instanceof WorkbenchWizardElement) {
 				text = ((WorkbenchWizardElement)element).getLabel(element);
 			}
-			if (text == null) text = "";
+			if (text == null) text = ""; //$NON-NLS-1$
 			return text; 
 		}
 	}
@@ -393,13 +393,6 @@ public class CustomizePerspectiveDialog extends Dialog {
 				ids.addAll(menu.getCheckedItemIds());
 			}
 			return ids;
-		}
-		private ShortcutMenu getChild(String id) {
-			for (int i=0; i<children.size(); i++) {
-				ShortcutMenu child = (ShortcutMenu)children.get(i);
-				if (child.id.equals(id)) return child;
-			}
-			return null;
 		}
 		private ArrayList getChildren() {
 			return children;
@@ -543,7 +536,7 @@ public class CustomizePerspectiveDialog extends Dialog {
 				String text = item.getDisplayText();
 				return text;
 			}
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		public int getIndent(Object element) {
 			if (element instanceof ActionSetDisplayItem) {
@@ -793,7 +786,6 @@ private Composite createActionSetsPage(Composite parent) {
 }
 protected Control createDialogArea(Composite parent) {
 	Composite composite = (Composite)super.createDialogArea(parent);
-	GridLayout layout = (GridLayout)composite.getLayout();
 	
 	tabFolder = new TabFolder(composite, SWT.NONE);
 	GridData gd = new GridData(GridData.FILL_BOTH);
@@ -923,8 +915,8 @@ private void handleActionSetMenuViewerKeyPressed(KeyEvent event) {
 		ActionSetDisplayItem element = (ActionSetDisplayItem)sel.getFirstElement();
 		if (element != null) {
 			String desc = element.description;
-			if (desc == null || desc.equals("")) {
-				desc = WorkbenchMessages.getString("ActionSetSelection.noDesc");
+			if (desc == null || desc.equals("")) { //$NON-NLS-1$
+				desc = WorkbenchMessages.getString("ActionSetSelection.noDesc"); //$NON-NLS-1$
 			}
 			popUp(desc);
 		}
@@ -940,8 +932,8 @@ private void handleActionSetSelected(SelectionChangedEvent event) {
 	ActionSetDisplayItem toolbarStructure = null;
 	if (structures == null) {
 		structures = new ArrayList(2);
-		menubarStructure = new ActionSetDisplayItem("Menubar");
-		toolbarStructure = new ActionSetDisplayItem("Toolbar");
+		menubarStructure = new ActionSetDisplayItem("Menubar"); //$NON-NLS-1$
+		toolbarStructure = new ActionSetDisplayItem("Toolbar"); //$NON-NLS-1$
 		MenuManager windowMenuMgr = window.getMenuManager();
 		CoolBarManager windowCoolBarManager = window.getCoolBarManager();
 		if (containsActionSet(windowMenuMgr, actionSetId)) {
@@ -995,8 +987,8 @@ private void handleActionSetToolbarViewerKeyPressed(KeyEvent event) {
 		ActionSetDisplayItem element = (ActionSetDisplayItem)sel.getFirstElement();
 		if (element != null) {
 			String desc = element.description;
-			if (desc == null || desc.equals("")) {
-				desc = WorkbenchMessages.getString("ActionSetSelection.noDesc");
+			if (desc == null || desc.equals("")) { //$NON-NLS-1$
+				desc = WorkbenchMessages.getString("ActionSetSelection.noDesc"); //$NON-NLS-1$
 			}
 			popUp(desc);
 		}
@@ -1009,8 +1001,8 @@ private void handleActionSetViewerKeyPressed(KeyEvent event) {
 		ActionSetDescriptor element = (ActionSetDescriptor)sel.getFirstElement();
 		if (element != null) {
 			String desc = element.getDescription();
-			if (desc == null || desc.equals("")) {
-				desc = WorkbenchMessages.getString("ActionSetSelection.noDesc");
+			if (desc == null || desc.equals("")) { //$NON-NLS-1$
+				desc = WorkbenchMessages.getString("ActionSetSelection.noDesc"); //$NON-NLS-1$
 			}
 			popUp(desc);
 		}
@@ -1143,7 +1135,7 @@ private void initializeShortCutMenu(ShortcutMenu menu, WizardCollectionElement e
 	}
 }
 private void initializeShortcutMenuInput() {
-	rootMenu = new ShortcutMenu(null, "Root", ""); //$NON-NLS-1$
+	rootMenu = new ShortcutMenu(null, "Root", ""); //$NON-NLS-1$ //$NON-NLS-2$
 	ShortcutMenu wizardMenu = new ShortcutMenu(rootMenu, ShortcutMenu.ID_WIZARD, WorkbenchMessages.getString("ActionSetDialogInput.wizardCategory")); //$NON-NLS-1$
 	NewWizardsRegistryReader rdr = new NewWizardsRegistryReader();
 	WizardCollectionElement wizardCollection = (WizardCollectionElement)rdr.getWizards();

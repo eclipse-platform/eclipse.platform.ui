@@ -195,7 +195,7 @@ public class WorkbenchWindow extends ApplicationWindow
 			Control[] ws= composite.getChildren();
 			for (int i= 0; i < ws.length; i++) {
 				Control w= ws[i];
-				if ((i == 0) && (!"carbon".equals(SWT.getPlatform()))) {
+				if ((i == 0) && (!"carbon".equals(SWT.getPlatform()))) { //$NON-NLS-1$
 					Point e= w.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
 					w.setBounds(clientArea.x, clientArea.y, clientArea.width, e.y);
 					clientArea.y+= e.y;
@@ -1206,9 +1206,9 @@ public String getToolbarLabel(String actionSetId) {
 		return actionSet.getLabel();
 	} else {
 		if (IWorkbenchActionConstants.TOOLBAR_FILE.equalsIgnoreCase(actionSetId)) 
-			return WorkbenchMessages.getString("WorkbenchWindow.FileToolbar");
+			return WorkbenchMessages.getString("WorkbenchWindow.FileToolbar"); //$NON-NLS-1$
 		if (IWorkbenchActionConstants.TOOLBAR_NAVIGATE.equalsIgnoreCase(actionSetId)) 
-			return WorkbenchMessages.getString("WorkbenchWindow.NavigateToolbar");
+			return WorkbenchMessages.getString("WorkbenchWindow.NavigateToolbar"); //$NON-NLS-1$
 	}
 	return null;
 }
@@ -1460,7 +1460,6 @@ public IStatus restoreState(IMemento memento, IPerspectiveDescriptor activeDescr
 		newActivePage = (IWorkbenchPage)pageList.getNextActive();
 		
 	setActivePage(newActivePage);
-	IWorkbenchPart part = newActivePage.getActivePart();
 	
 	// TODO: is this necessary?
 	updateActionAndContextManager();
