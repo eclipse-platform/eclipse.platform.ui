@@ -31,15 +31,9 @@ import org.eclipse.help.internal.HelpPlugin;
  * </ul>
  */
 public class StandaloneHelp extends EclipseController {
-	// timout for .hostport file to apper since starting eclipse [ms]
-	private static final int STARTUP_TIMEOUT = 40 * 1000;
-	// number of retries to connectect to webapp
-	private static final int CONNECTION_RETRIES = 3;
-	// time between retries to connectect to webapp [ms]
-	private static final int CONNECTION_RETRY_INTERVAL = 5 * 1000;
 	// ID of the application to run
 	private static final String HELP_APPLICATION_ID =
-		HelpPlugin.PLUGIN_ID+".helpApplication";
+		HelpPlugin.PLUGIN_ID + ".helpApplication";
 
 	/**
 	 * Constructs help system
@@ -74,19 +68,6 @@ public class StandaloneHelp extends EclipseController {
 		}
 	}
 
-	/**
-	 * Overrides the initialization of the connection to pass retry parameters.
-	 */
-	protected EclipseConnection initConnection() {
-		int timeout = STARTUP_TIMEOUT;
-		if (Options.getServerTimeout() > 0) {
-			timeout = 1000 * Options.getServerTimeout();
-		}
-		return new EclipseConnection(
-			timeout,
-			CONNECTION_RETRIES,
-			CONNECTION_RETRY_INTERVAL);
-	}
 	/**
 	 * @see org.eclipse.help.standalone.Help#displayContext(java.lang.String,int,int)
 	 */

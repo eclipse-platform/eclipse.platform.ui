@@ -80,8 +80,8 @@ public class Options {
 
 		// consume -command option
 		helpCommand = extractOption(eclipseArgs, "-command");
-		if(helpCommand==null){
-			helpCommand=new ArrayList(0);
+		if (helpCommand == null) {
+			helpCommand = new ArrayList(0);
 		}
 
 		// read -debug option
@@ -95,10 +95,10 @@ public class Options {
 		}
 		// consume -eclipsehome (accept eclipse_home too) option
 		List homes = extractOption(eclipseArgs, "-eclipseHome");
-		if (homes==null || homes.isEmpty()) {
+		if (homes == null || homes.isEmpty()) {
 			homes = extractOption(eclipseArgs, "-eclipse_Home");
 		}
-		if (homes!=null && !homes.isEmpty()) {
+		if (homes != null && !homes.isEmpty()) {
 			eclipseHome = new File((String) homes.get(0));
 		} else {
 			eclipseHome = new File(System.getProperty("user.dir"));
@@ -111,7 +111,7 @@ public class Options {
 		} else {
 			workspace = new File(eclipseHome, "workspace");
 		}
-		lockFile = new File(workspace, "/.metadata/.lock");
+		lockFile = new File(workspace, "/.metadata/.helplock");
 		hostPortFile = new File(workspace, "/.metadata/.connection");
 
 		// consume -host option
@@ -158,10 +158,10 @@ public class Options {
 		}
 
 		// consume -vmargs option
-		vmArgs=new ArrayList(0);
+		vmArgs = new ArrayList(0);
 		List passedVmArgs = extractOption(eclipseArgs, "-vmargs");
-		if (passedVmArgs!=null && passedVmArgs.size() > 0) {
-			vmArgs=passedVmArgs;
+		if (passedVmArgs != null && passedVmArgs.size() > 0) {
+			vmArgs = passedVmArgs;
 		}
 
 		// modify the options for passing them to eclipse

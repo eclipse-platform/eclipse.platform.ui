@@ -27,14 +27,16 @@ public class Eclipse extends Thread {
 
 	File dir;
 	String[] cmdarray;
-	private int status;
-	private Exception exception = new Exception("Unknown exception.");
+	private int status = STATUS_INIT;
+	private Exception exception;
 	Process pr;
+	private EclipseLifeCycleListener lifeCycleListener;
 	/**
 	 * Constructor
 	 */
-	public Eclipse() {
+	public Eclipse(EclipseLifeCycleListener listener) {
 		super();
+		this.lifeCycleListener = listener;
 		this.setName("Eclipse");
 		this.dir = Options.getEclipseHome();
 	}
@@ -88,24 +90,18 @@ public class Eclipse extends Thread {
 			if (Options.isDebug()) {
 				printCommand();
 			}
-			launchProcess();
-		} catch (Exception exc) {
-			exception = exc;
-			status = STATUS_ERROR;
-		} finally {
-			if (status == STATUS_INIT) {
-				status = STATUS_ERROR;
-			}
-		}
-	}
-	private void launchProcess() throws IOException {
-		try {
 			do {
 				pr = Runtime.getRuntime().exec(cmdarray, (String[]) null, dir);
 				(new StreamConsumer(pr.getInputStream())).start();
 				(new StreamConsumer(pr.getErrorStream())).start();
-				status = STATUS_STARTED;
-				pr.waitFor();
+				if (status == STATUS_INIT) {
+					// started first time
+					status = STATUS_STARTED;
+				}
+				try {
+					pr.waitFor();
+				} catch (InterruptedException e) {
+				}
 				if (Options.isDebug()) {
 					System.out.println(
 						"Eclipse exited with status code " + pr.exitValue());
@@ -115,7 +111,17 @@ public class Eclipse extends Thread {
 					}
 				}
 			} while (pr.exitValue() == NEEDS_RESTART);
-		} catch (InterruptedException e) {
+		} catch (Exception exc) {
+			exception = exc;
+			status = STATUS_ERROR;
+		} finally {
+			if (status == STATUS_INIT) {
+				status = STATUS_ERROR;
+			}
+			if (status == STATUS_ERROR) {
+				exception = new Exception("Unknown exception.");
+			}
+			lifeCycleListener.eclipseEnded();
 		}
 	}
 	/**
@@ -202,7 +208,7 @@ public class Eclipse extends Thread {
 
 	}
 	/**
-	 * Used in unit testing.
+	 * Forcibly kill Eclipse process.
 	 */
 	public void killProcess() {
 		if (pr != null) {
