@@ -354,7 +354,7 @@ public class CVSSyncInfo extends SyncInfo {
 	public String getLocalContentIdentifier() {
 		try {
 			IResource local = getLocal();
-			if (local != null || local.getType() == IResource.FILE) {
+			if (local != null && local.getType() == IResource.FILE) {
 				// it's a file, return the revision number if we can find one
 				ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile) local);
 				ResourceSyncInfo info = cvsFile.getSyncInfo();
