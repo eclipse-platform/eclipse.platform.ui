@@ -85,6 +85,14 @@
                toolbarPath="sampleGroup"
                id="org.eclipse.ui.examples.jobs.actions.SuspendJobManagerAction">
          </action>
+         <action
+               label="&amp;Dump Job Information"
+               icon="icons/sample.gif"
+               class="org.eclipse.ui.examples.jobs.actions.DebugJobManagerAction"
+               tooltip="Dump job information"
+               menubarPath="sampleMenu/sampleGroup"
+               id="org.eclipse.ui.examples.jobs.actions.SuspendJobManagerAction">
+         </action>
       </actionSet>
    </extension>
 
