@@ -1003,8 +1003,15 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		String key = url.toExternalForm();
 
 		ISiteEntry result = (ISiteEntry) sites.get(key);
+		try {
+			key = URLDecoder.decode(key, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// ignore
+		}
+		
 		if (result == null) // retry with decoded URL string
-			result = (ISiteEntry) sites.get(URLDecoder.decode(key));
+			result = (ISiteEntry) sites.get(key);
+			
 		return result;
 	}
 
