@@ -110,10 +110,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 * @see org.eclipse.ui.IPartListener#partClosed(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void partClosed(IWorkbenchPart part) {
-        boolean pin = fPinned;
-        fPinned = false;
 		super.partClosed(part);
-        fPinned = pin;
 		fPinAction.update();
 	}
 
