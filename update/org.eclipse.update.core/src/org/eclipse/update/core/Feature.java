@@ -382,6 +382,7 @@ public class Feature extends FeatureModel implements IFeature {
 					pluginConsumer.store(references[j], subMonitor);
 				}
 
+				InstallRegistry.register("plugin_"+pluginsToInstall[i].getVersionedIdentifier());
 				if (monitor.isCanceled())
 						abort();
 			}
@@ -402,6 +403,7 @@ public class Feature extends FeatureModel implements IFeature {
 					setMonitorTaskName(subMonitor, msg + " " + references[i].getIdentifier());
 					consumer.store(references[i], subMonitor);
 				}
+				InstallRegistry.register("feature_"+getVersionedIdentifier());
 			} else {
 				monitor.worked(1);
 			}

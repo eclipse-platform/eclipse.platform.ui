@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.operations.*;
 
 /**
  * Site on the File System
@@ -117,7 +118,7 @@ public class SiteFile extends Site {
 			UpdateCore.warn("Feature to remove is null");
 			return;
 		}
-
+		
 		ErrorRecoveryLog recoveryLog = ErrorRecoveryLog.getLog();
 
 		// make sure we have an InstallMonitor		
@@ -167,17 +168,22 @@ public class SiteFile extends Site {
 				}
 			}
 
-			// remove the feature content
-			ContentReference[] references = feature.getFeatureContentProvider().getFeatureEntryArchiveReferences(monitor);
-			for (int i = 0; i < references.length; i++) {
-				try {
-					UpdateManagerUtils.removeFromFileSystem(references[i].asFile());
-					if (monitor != null)
-						monitor.worked(1);
-				} catch (IOException e) {
-					throw Utilities.newCoreException(Policy.bind("SiteFile.CannotRemoveFeature", feature.getVersionedIdentifier().getIdentifier(), getURL().toExternalForm()), e);
-					//$NON-NLS-1$
+			if (InstallRegistry.getInstance().get("feature_"+feature.getVersionedIdentifier()) == null) {
+				UpdateCore.log("Feature " + feature.getVersionedIdentifier() + " was not removed", null);
+			} else {
+				// remove the feature content
+				ContentReference[] references = feature.getFeatureContentProvider().getFeatureEntryArchiveReferences(monitor);
+				for (int i = 0; i < references.length; i++) {
+					try {
+						UpdateManagerUtils.removeFromFileSystem(references[i].asFile());
+						if (monitor != null)
+							monitor.worked(1);
+					} catch (IOException e) {
+						throw Utilities.newCoreException(Policy.bind("SiteFile.CannotRemoveFeature", feature.getVersionedIdentifier().getIdentifier(), getURL().toExternalForm()), e);
+						//$NON-NLS-1$
+					}
 				}
+				InstallRegistry.unregister("feature_"+feature.getVersionedIdentifier());
 			}
 
 			//finds the contentReferences for an IPluginEntry
@@ -359,6 +365,11 @@ public class SiteFile extends Site {
 
 		if (pluginEntry == null)
 			return;
+			
+		if (InstallRegistry.getInstance().get("plugin_"+pluginEntry.getVersionedIdentifier()) == null) {
+			UpdateCore.log("Plugin " + pluginEntry.getVersionedIdentifier() + " was not removed", null);
+			return; 
+		}
 
 		ContentReference[] references = feature.getFeatureContentProvider().getPluginEntryArchiveReferences(pluginEntry, monitor);
 		for (int i = 0; i < references.length; i++) {
@@ -371,6 +382,7 @@ public class SiteFile extends Site {
 				//$NON-NLS-1$
 			}
 		}
+		InstallRegistry.unregister("plugin_"+pluginEntry.getVersionedIdentifier());
 	}
 
 	/*
