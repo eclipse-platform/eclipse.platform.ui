@@ -251,6 +251,19 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
                 // Don't allow views to be dragged between windows
                 if (pane.getWorkbenchWindow() != getWorkbenchWindow()) { return null; }
 
+                // Regardless of the wishes of the presentation, ignore 4 pixels around the edge of the control.
+                // This ensures that it will always be possible to dock around the edge of the control.
+                {
+	                Point controlCoordinates = currentControl.getParent().toControl(position);
+	                Rectangle bounds = currentControl.getBounds();
+	                int closestSide = Geometry.getClosestSide(bounds, controlCoordinates);
+	                
+	                if (Geometry.getDistanceFromEdge(bounds, controlCoordinates, closestSide) < 5) {
+	                	return null;
+	                }
+                }
+                // End of check for stacking on edge
+                
                 final StackDropResult dropResult = getPresentation().dragOver(
                         currentControl, position);
 

@@ -847,20 +847,6 @@ public class DefaultPartPresentation extends StackPresentation {
 	public StackDropResult dragOver(Control currentControl, Point location) {
 		// Determine which tab we're currently dragging over
 		Point localPos = tabFolder.getControl().toControl(location);
-				
-		// Ignore drops that are really close to the edge of the tab folder. These will
-		// fall through to the parent, making it easier to split the pane on the same side as
-		// the tabs are located (otherwise, it would be hard to drop a pane on top of a folder
-		// when the tabs are located on top). We ignore the top 1/3 of the tab height
-		
-		Rectangle bounds = tabFolder.getControl().getBounds();
-		bounds.x = 0;
-		bounds.y = 0;
-		
-		if (Geometry.getDistanceFromEdge(bounds, localPos, tabFolder.getTabPosition()) 
-				< tabFolder.getTabHeight() / 3) {
-			return null;
-		}
 		
 		final CTabItem tabUnderPointer = tabFolder.getItem(localPos);
 		
