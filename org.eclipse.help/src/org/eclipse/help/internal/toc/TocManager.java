@@ -106,7 +106,7 @@ public class TocManager {
 			for (Iterator it = builtTocs.iterator(); it.hasNext();) {
 				tocs[i++] = (ITocElement) it.next();
 			}
-			Collection orderedTocs = orderTocs(builtTocs);
+			List orderedTocs = orderTocs(builtTocs);
 			tocs = new ITocElement[orderedTocs.size()];
 			orderedTocs.toArray(tocs);
 		} catch (Exception e) {
@@ -119,7 +119,7 @@ public class TocManager {
 	/**
 	 * Orders the TOCs according to a product wide preference.
 	 */
-	private Collection orderTocs(Collection unorderedTocs) {
+	private List orderTocs(Collection unorderedTocs) {
 		ArrayList orderedHrefs = getPreferredTocOrder();
 		ArrayList orderedTocs = new ArrayList(unorderedTocs.size());
 
