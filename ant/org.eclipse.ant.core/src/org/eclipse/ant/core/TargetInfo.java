@@ -15,7 +15,7 @@ public class TargetInfo {
 
 	private String name = null;
 	private String description = null;
-	private String project = null;
+	private ProjectInfo project = null;
 	private String[] dependencies = null;
 	private boolean isDefault = false;
 
@@ -25,12 +25,12 @@ public class TargetInfo {
 	 * @param name target name
 	 * @param description a brief explanation of the target's purpose
 	 * 		or <code>null</code> if not specified
-	 * @param project enclosing project's name
+	 * @param project enclosing project
 	 * @param dependencies names of prerequisite projects 
 	 * @param isDefault whether this is the build file default target
 	 */
 	/*package*/
-	TargetInfo(String name, String description, String project, String[] dependencies, boolean isDefault) {
+	TargetInfo(ProjectInfo project, String name, String description, String[] dependencies, boolean isDefault) {
 		this.name = name == null ? "" : name; //$NON-NLS-1$
 		this.description = description;
 		this.project = project;
@@ -58,10 +58,10 @@ public class TargetInfo {
 	}
 	
 	/**
-	 * Returns the name of the enclosing project.
-	 * 	 * @return the project name or <code>null</code> if
-	 * 	the enclosing project has no name	 */
-	public String getProject() {
+	 * Returns the ProjectInfo of the enclosing project.
+	 * 	 * @return the project info for the enclosing project
+	 */
+	public ProjectInfo getProject() {
 		return project;
 	}
 	

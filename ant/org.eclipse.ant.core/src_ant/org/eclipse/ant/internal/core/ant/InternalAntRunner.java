@@ -284,9 +284,10 @@ public class InternalAntRunner {
 		antProject.setProperty("ant.file", getBuildFileLocation()); //$NON-NLS-1$
 		parseScript(antProject);
 		defaultTarget = antProject.getDefaultTarget();
-		
 		Enumeration targets = antProject.getTargets().elements();
 		List infos= new ArrayList();
+		infos.add(antProject.getName());
+		infos.add(antProject.getDescription());
 		List info;
 		boolean defaultFound= false;
 		while (targets.hasMoreElements()) {
@@ -297,7 +298,6 @@ public class InternalAntRunner {
 				defaultFound= true;
 			}
 			info.add(target.getDescription());
-			info.add(target.getProject().getName());
 			List dependencies= new ArrayList();
 			Enumeration enum= target.getDependencies();
 			while (enum.hasMoreElements()) {

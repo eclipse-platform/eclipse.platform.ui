@@ -203,13 +203,16 @@ public class AntRunner implements IPlatformRunnable {
 			String defaultName= (String)getDefault.invoke(runner, null);
 			// collect the info into target objects
 			List infos = (List) results;
+			
+			ProjectInfo project= new ProjectInfo((String)infos.remove(0), (String)infos.remove(0));
+			int i= 0;
 			Iterator iter= infos.iterator();
 			List info;
 			TargetInfo[] targets= new TargetInfo[infos.size()];
-			int i= 0;
+			
 			while (iter.hasNext()) {
 				info= (List)iter.next();
-				targets[i++] = new TargetInfo((String)info.get(0), (String)info.get(1), (String)info.get(2), (String[])info.get(3), info.get(0).equals(defaultName));
+				targets[i++] = new TargetInfo(project, (String)info.get(0), (String)info.get(1), (String[])info.get(2), info.get(0).equals(defaultName));
 			}
 			return targets;
 		} catch (NoClassDefFoundError e) {
