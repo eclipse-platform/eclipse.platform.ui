@@ -100,7 +100,7 @@ public class GetSyncAction extends TargetSyncAction {
 	 						break;
 	 					}
 					}
-	 				if (!delete) folderDeletions.remove(container);
+	 				if (!delete) iter.remove();
 	 			}
 	 			get((IResource[])folderDeletions.toArray(new IResource[folderDeletions.size()]), monitor);
  			}

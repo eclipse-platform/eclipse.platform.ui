@@ -55,7 +55,7 @@ public abstract class AuthenticatedSite extends Site {
 	public void setUsername(String name) throws TeamException {
 		Map authInfo=Platform.getAuthorizationInfo(getURL(), "", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (authInfo==null) authInfo=new HashMap(2);
-		authInfo.put("name", username); //$NON-NLS-1$
+		authInfo.put("name", name); //$NON-NLS-1$
 		try {
 			Platform.flushAuthorizationInfo(getURL(), "", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			Platform.addAuthorizationInfo(getURL(), "", "", authInfo); //$NON-NLS-1$ //$NON-NLS-2$

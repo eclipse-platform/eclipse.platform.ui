@@ -102,7 +102,7 @@ public class PutSyncAction extends TargetSyncAction {
 	 						break;
 	 					}
 	 				}
-	 				if (!delete) folderDeletions.remove(i);
+	 				if (!delete) iter.remove();
 	 			}
 	 			put((IResource[])folderDeletions.toArray(new IResource[folderDeletions.size()]), monitor);
 			}

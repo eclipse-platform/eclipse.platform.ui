@@ -52,7 +52,7 @@ public abstract class TargetSyncAction extends Action {
 	private Shell shell;
 	
 	protected static IRemoteResource getRemoteResourceFor(IResource local) throws TeamException {
-		return TargetManager.getProvider(local.getProject()).getRemoteSyncElement(local).getRemote();
+		return TargetManager.getProvider(local.getProject()).getRemoteResourceFor(local);
 	}
 	
 	/**
@@ -111,7 +111,7 @@ public abstract class TargetSyncAction extends Action {
 			}
 		};
 		try {
-			run(op, Policy.bind("MergeAction.problemsDuringSync")); //$NON-NLS-1$
+			run(op, Policy.bind("TargetSyncAction.errorEncountered")); //$NON-NLS-1$
 		} catch (InterruptedException e) {
 		}
 		if (result[0] != null) {
