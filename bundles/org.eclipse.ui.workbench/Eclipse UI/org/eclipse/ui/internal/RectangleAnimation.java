@@ -133,7 +133,7 @@ public class RectangleAnimation extends Job {
 		// Determine if we're on a platform where animations look ugly. 
 		// If so, we indicate this by setting canvas=null, in which case this job does nothing.
 		String platform = SWT.getPlatform();
-		if ("gtk".equals(platform)) { //$NON-NLS-1$
+		if (!"win32".equals(platform)) { //$NON-NLS-1$
 			return;
 		}
 		
@@ -162,7 +162,9 @@ public class RectangleAnimation extends Job {
 		startTime = System.currentTimeMillis();
 		
 		while (!done) {
-			canvas.getDisplay().syncExec(paintJob);
+			if (!canvas.isDisposed()) {
+				canvas.getDisplay().syncExec(paintJob);
+			}
 		}
 
 		if (!canvas.isDisposed()) {
