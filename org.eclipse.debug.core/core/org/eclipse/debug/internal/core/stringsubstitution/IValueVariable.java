@@ -14,6 +14,10 @@ package org.eclipse.debug.internal.core.stringsubstitution;
  * A variable with a value that can be set and retrieved. The context in which
  * a value variable is referenced does not effect the value of the variable.
  * A value variable can be contributed by an extension or created programmatically.
+ * A contributor may optionally specify an initial value for a variable, or
+ * provide a delegate that will initialie the variable with a value. 
+ * 
+ * TODO: example plug-in XML
  * 
  * @since 3.0
  */
