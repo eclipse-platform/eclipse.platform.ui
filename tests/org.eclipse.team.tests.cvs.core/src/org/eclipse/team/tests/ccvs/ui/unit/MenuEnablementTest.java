@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
- * IBM - Initial implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.team.tests.ccvs.ui.unit;
 
 import java.io.ByteArrayInputStream;
@@ -91,7 +91,10 @@ public class MenuEnablementTest extends EclipseTest {
 	 * this test project is used by the get resource methods to return resources
 	 * of the proper type.
 	 * 
-	 * @param actionDelegate	 * @throws CoreException	 * @throws TeamException	 */
+	 * @param actionDelegate
+	 * @throws CoreException
+	 * @throws TeamException
+	 */
 	private IProject createTestProject(IActionDelegate actionDelegate) throws CoreException, TeamException {
 		String actionName = getName(actionDelegate);
 		return createProject(actionName, new String[] { "file.txt", "folder1/", "folder1/a.txt" });
@@ -186,7 +189,10 @@ public class MenuEnablementTest extends EclipseTest {
 	 * Assert that the enablement for the given IActionDelegate and ISelection
 	 * match that provided as expectedEnablement.
 	 * 
-	 * @param actionDelegate	 * @param selection	 * @param expectedEnablement	 */
+	 * @param actionDelegate
+	 * @param selection
+	 * @param expectedEnablement
+	 */
 	private void assertEnablement(IActionDelegate actionDelegate, ISelection selection, boolean expectedEnablement) {
 		IAction action = new Action() {};
 		actionDelegate.selectionChanged(action, selection);
@@ -379,7 +385,8 @@ public class MenuEnablementTest extends EclipseTest {
 	}
 	
 	/*
-	 * Should be the same as testAdd	 */
+	 * Should be the same as testAdd
+	 */
 	public void testIgnoreAction() throws CoreException, TeamException {
 		IActionDelegate action = new IgnoreAction();
 		IProject project = createTestProject(action);
