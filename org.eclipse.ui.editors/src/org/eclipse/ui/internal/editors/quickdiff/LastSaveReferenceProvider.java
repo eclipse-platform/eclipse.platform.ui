@@ -48,6 +48,8 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 	private IDocumentProvider fDocumentProvider;
 	/** The current editor input. */
 	private IEditorInput fEditorInput;
+	/** Private lock noone else will synchronize on. */
+	private final Object fLock= new Object();
 
 	/*
 	 * @see org.eclipse.ui.editors.quickdiff.IQuickDiffReferenceProvider#getReference()
@@ -62,13 +64,16 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 	 * @see org.eclipse.ui.editors.quickdiff.IQuickDiffReferenceProvider#dispose()
 	 */
 	public void dispose() {
-		if (fDocumentProvider != null)
-			fDocumentProvider.removeElementStateListener(this);
+		IDocumentProvider provider= fDocumentProvider;
+		if (provider != null)
+			provider.removeElementStateListener(this);
 		
-		fEditorInput= null;
-		fDocumentProvider= null;
-		fReference= null;
-		fDocumentRead= false;
+		synchronized (fLock) {
+			fEditorInput= null;
+			fDocumentProvider= null;
+			fReference= null;
+			fDocumentRead= false;
+		}
 	}
 
 	/*
@@ -117,14 +122,18 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 	 * Reads in the saved document into <code>fReference</code>.
 	 */
 	private void readDocument() {
+		// protect against concurrent disposal
+		IDocumentProvider prov= fDocumentProvider;
+		IEditorInput inp= fEditorInput;
+		IDocument doc= fReference;
 		
-		if (fDocumentProvider instanceof IStorageDocumentProvider && fEditorInput instanceof IFileEditorInput) {
+		if (prov instanceof IStorageDocumentProvider && inp instanceof IFileEditorInput) {
 			
-			IFileEditorInput input= (IFileEditorInput) fEditorInput;
-			IStorageDocumentProvider provider= (IStorageDocumentProvider) fDocumentProvider;
+			IFileEditorInput input= (IFileEditorInput) inp;
+			IStorageDocumentProvider provider= (IStorageDocumentProvider) prov;
 			
-			if (fReference == null)
-				fReference= new Document();
+			if (doc == null)
+				doc= new Document();
 	
 			// addElementStateListener adds at most once - no problem to call repeatedly
 			((IDocumentProvider)provider).addElementStateListener(this);
@@ -136,15 +145,25 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 			String encoding= getEncoding(input, provider);
 			
 			try {
-				setDocumentContent(fReference, stream, encoding);
-				fDocumentRead= true;
+				setDocumentContent(doc, stream, encoding);
 			} catch (IOException e) {
 				return;
+			}
+			
+			// update state
+			synchronized (fLock) {
+				if (fDocumentProvider != null) { 
+					// only update state if we have not been disposed in between
+					fReference= doc;
+					fDocumentRead= true;
+				}
 			}
 			
 		}
 	}
 
+	/* utility methods */
+	
 	/**
 	 * Gets the contents of the file referred to by <code>input</code> as an input stream.
 	 * 
