@@ -9,6 +9,7 @@ import java.util.Map;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.runtime.AuthorizationDatabase;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tests.runtime.RuntimeTest;
 
 public class AuthorizationDatabaseTest extends RuntimeTest {
@@ -29,44 +30,43 @@ public static Test suite() {
 	return suite;
 }
 public void test1(){
+	File file = new File(Platform.getLocation().toFile(), Long.toString(System.currentTimeMillis()) + ".auth");
 	try {
-
-	String root = System.getProperty("user.dir");
-	String filename = root + "\\temp\\authorizationDatabase";
-	String password = "testing";
-
-	File file = new File(filename);
-	if(file.exists()){
-		file.delete();
-	}
-
-	AuthorizationDatabase db = new AuthorizationDatabase(filename, password);
-
-	URL serverUrl = new URL("http://www.oti.com/");
-	URL resourceUrl = new URL("http://www.oti.com/folder/");
-	String realm = "WallyWorld";
-	String authScheme = "Basic";
-	Map info = new Hashtable(2);
-	info.put("username", "jonathan");
-	info.put("password", "testing");
-
-	db.addAuthorizationInfo(serverUrl, realm, authScheme, info);
-	db.addProtectionSpace(resourceUrl, realm);
-
-	db.save();
-
-	db = new AuthorizationDatabase(filename, password);
-
-	info = db.getAuthorizationInfo(serverUrl, realm, authScheme);
-	assertEquals("00", "jonathan", info.get("username"));
-	assertEquals("01", "testing", info.get("password"));
-
-	assertEquals("02", realm, db.getProtectionSpace(resourceUrl));
-	assertEquals("03", realm, db.getProtectionSpace(new URL(resourceUrl.toString() + "file")));
-
+		String filename = file.getAbsolutePath();
+		String password = "testing";
+		if(file.exists()){
+			file.delete();
+		}
+	
+		AuthorizationDatabase db = new AuthorizationDatabase(filename, password);
+	
+		URL serverUrl = new URL("http://www.oti.com/");
+		URL resourceUrl = new URL("http://www.oti.com/folder/");
+		String realm = "WallyWorld";
+		String authScheme = "Basic";
+		Map info = new Hashtable(2);
+		info.put("username", "jonathan");
+		info.put("password", "testing");
+	
+		db.addAuthorizationInfo(serverUrl, realm, authScheme, info);
+		db.addProtectionSpace(resourceUrl, realm);
+	
+		db.save();
+	
+		db = new AuthorizationDatabase(filename, password);
+	
+		info = db.getAuthorizationInfo(serverUrl, realm, authScheme);
+		assertEquals("00", "jonathan", info.get("username"));
+		assertEquals("01", "testing", info.get("password"));
+	
+		assertEquals("02", realm, db.getProtectionSpace(resourceUrl));
+		assertEquals("03", realm, db.getProtectionSpace(new URL(resourceUrl.toString() + "file")));
 	} catch(Exception e){
 		assertTrue("04", false);
+	} finally {
+		file.delete();
 	}
+		
 }
 public void test2(){
 	AuthorizationDatabase db = new AuthorizationDatabase();
