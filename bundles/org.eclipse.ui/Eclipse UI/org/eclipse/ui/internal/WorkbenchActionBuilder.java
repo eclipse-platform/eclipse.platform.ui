@@ -71,8 +71,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private RetargetAction addBookmarkAction;
 	private RetargetAction printAction;
 	
-	//decorator factory
-	DecoratorActionFactory decoratorFactory;
+	// decorator factory
+	private DecoratorActionFactory decoratorFactory;
 /**
  * WorkbenchActionBuilder constructor comment.
  */

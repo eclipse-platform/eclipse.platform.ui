@@ -1,19 +1,26 @@
 package org.eclipse.ui.internal;
+
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.ui.views.navigator.LabelDecoratorAction;
+import org.eclipse.ui.internal.LabelDecoratorAction;
 import org.eclipse.ui.views.navigator.ResourceNavigatorMessages;
 
 /**
  * The DecoratorActionFactory builds the actions for the 
  * decorator functions.
+ * 
+ * @since 2.0
  */
-
 public class DecoratorActionFactory {
 
 	LabelDecoratorAction[] actions;
-	/*
-	 * @see ActionFactory#makeActions()
+	
+	/**
+	 * Makes the actions for the registered decorators.
 	 */
 	public void makeActions() {
 		//Make an action for each decorator definition
@@ -29,16 +36,20 @@ public class DecoratorActionFactory {
 	}
 	
 	/**
-	 * Fill the supplied menu with entries for the decorators.
+	 * Adds a submenu for decorators to the supplied menu.
 	 */
 	public void fillMenu(IMenuManager menu) {
 		
-		IMenuManager submenu =
-			new MenuManager(ResourceNavigatorMessages.getString("DecoratorMenu.title"));
-		//$NON-NLS-1$
+		// don't contribute the menu if there are no decorators.
+		if (actions.length == 0) {
+			return;
+		}
+		
+		String title = ResourceNavigatorMessages.getString("DecoratorMenu.title"); //$NON-NLS-1$
+		IMenuManager submenu =	new MenuManager(title);
 		menu.add(submenu);
 		
-		for(int i = 0; i < actions.length; i ++){
+		for (int i = 0; i < actions.length; i++){
 			submenu.add(actions[i]);
 		}
 		

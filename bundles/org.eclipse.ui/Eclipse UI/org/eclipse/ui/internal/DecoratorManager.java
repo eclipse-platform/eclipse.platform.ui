@@ -1,7 +1,10 @@
 package org.eclipse.ui.internal;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 import java.util.*;
-
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.*;
@@ -11,13 +14,14 @@ import org.eclipse.ui.IContributorResourceAdapter;
 /**
  * The DecoratorManager is the class that handles all of the
  * decorators defined in the image.
+ * 
+ * @since 2.0
  */
-
 public class DecoratorManager
 	implements ILabelDecorator, ILabelProviderListener {
 
 	//Hold onto the list of listeners to be told if a change has occured
-	private Collection listeners = new HashSet();
+	private HashSet listeners = new HashSet();
 
 	//The cachedDecorators are a 1-many mapping of type to decorator.
 	private HashMap cachedDecorators = new HashMap();
@@ -34,7 +38,6 @@ public class DecoratorManager
 	 * Create a new instance of the receiver and load the
 	 * settings from the installed plug-ins.
 	 */
-
 	public DecoratorManager() {
 		DecoratorRegistryReader reader = new DecoratorRegistryReader();
 		Collection values = reader.readRegistry(Platform.getPluginRegistry());
@@ -134,7 +137,7 @@ public class DecoratorManager
 
 	/**
 	 * Get the resource adapted object for the supplied
-	 * element. return null if there isn't one.
+	 * element. Return null if there isn't one.
 	 */
 	private Object getResourceAdapter(Object element) {
 
@@ -258,11 +261,10 @@ public class DecoratorManager
 	}
 
 	/**
-	* Add interface Class objects to the result list based
-	* on the class hierarchy. Interfaces will be searched
-	* based on their position in the result list.
-	*/
-
+	 * Add interface Class objects to the result list based
+	 * on the class hierarchy. Interfaces will be searched
+	 * based on their position in the result list.
+	 */
 	private void internalComputeInterfaceOrder(
 		Class[] interfaces,
 		List result,
