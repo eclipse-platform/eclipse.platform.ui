@@ -38,6 +38,11 @@ public class LaunchConfigurationTypePropertyPage extends PropertyPage {
 	 * @see PreferencePage#createContents(Composite)
 	 */
 	protected Control createContents(Composite parent) {
+		
+		if (!getResource().isAccessible()) {
+			return createForInaccessibleResource(parent);
+		}
+		
 		Composite topComp = new Composite(parent, SWT.NONE);
 		GridLayout topLayout = new GridLayout();		
 		topComp.setLayout(topLayout);
@@ -99,6 +104,9 @@ public class LaunchConfigurationTypePropertyPage extends PropertyPage {
 	 * @see IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
+		if (!getResource().isAccessible()) {
+			return true;
+		}
 		int selectedIndex = getConfigTypeCombo().getSelectionIndex();
 		ILaunchConfigurationType configType = null;
 		if (selectedIndex > -1) {
@@ -158,5 +166,12 @@ public class LaunchConfigurationTypePropertyPage extends PropertyPage {
 	
 	private ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();		
+	}
+	
+	private Control createForInaccessibleResource(Composite parent) {
+		Label label= new Label(parent, SWT.LEFT);
+		label.setText("Launcher configuration type information is not available for an inaccessible resource.");
+		label.setFont(parent.getFont());
+		return label;
 	}
 }
