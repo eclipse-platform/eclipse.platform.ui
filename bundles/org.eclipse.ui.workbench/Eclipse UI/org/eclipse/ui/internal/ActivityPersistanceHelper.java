@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -24,13 +25,14 @@ import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IActivityManagerListener;
 import org.eclipse.ui.activities.IActivityRequirementBinding;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
+import org.eclipse.ui.activities.NotDefinedException;
 
 /**
  * Utility class that manages the persistance of enabled activities.
  * 
  * @since 3.0
  */
-class ActivityPersistanceHelper {
+final class ActivityPersistanceHelper {
 
     /**
      * Prefix for all activity preferences
@@ -54,6 +56,17 @@ class ActivityPersistanceHelper {
          */
         public void activityManagerChanged(
                 ActivityManagerEvent activityManagerEvent) {
+            //process newly defined activities.
+            if (activityManagerEvent.haveDefinedActivityIdsChanged()) {
+                Set delta = new HashSet(activityManagerEvent
+                        .getActivityManager().getDefinedActivityIds());
+                delta.removeAll(activityManagerEvent
+                        .getPreviouslyDefinedActivityIds());
+                // whatever is still in delta are new activities - restore their
+                // state
+                loadEnabledStates(activityManagerEvent
+                        .getActivityManager().getEnabledActivityIds(), delta);
+            }
             if (activityManagerEvent.haveEnabledActivityIdsChanged())
                 saveEnabledStates();
         }
@@ -189,6 +202,22 @@ class ActivityPersistanceHelper {
      * Loads the enabled states from the preference store.
      */
     void loadEnabledStates() {
+        loadEnabledStates(Collections.EMPTY_SET, PlatformUI.getWorkbench()
+                .getActivitySupport().getActivityManager()
+                .getDefinedActivityIds());
+    }
+
+    /**
+     * Load the enabled states for the given activity IDs.
+     * 
+     * @param previouslyEnabledActivities the activity states to maintain.  This set must be writabe.
+     * @param activityIdsToProcess the activity ids to process
+     */
+    protected void loadEnabledStates(Set previouslyEnabledActivities, Set activityIdsToProcess) {
+        if (activityIdsToProcess.isEmpty())
+            return;
+        
+        Set enabledActivities = new HashSet(previouslyEnabledActivities);
         IPreferenceStore store = WorkbenchPlugin.getDefault()
                 .getPreferenceStore();
 
@@ -197,18 +226,22 @@ class ActivityPersistanceHelper {
 
         IActivityManager activityManager = support.getActivityManager();
 
-        for (Iterator i = activityManager.getEnabledActivityIds().iterator(); i
-                .hasNext();) { // default enabled IDs		    
-            store.setDefault(createPreferenceKey((String) i.next()), true);
-        }
-
-        Set enabledActivities = new HashSet();
-        for (Iterator i = activityManager.getDefinedActivityIds().iterator(); i
+        for (Iterator i = activityIdsToProcess.iterator(); i
                 .hasNext();) {
             String activityId = (String) i.next();
+            try {
+                IActivity activity = activityManager.getActivity(activityId);
+                if (activity.isDefaultEnabled())
+                    store.setDefault(createPreferenceKey(activityId), true);
+
+            } catch (NotDefinedException e) {
+                // can't happen - we're iterating over defined activities
+            }
 
             if (store.getBoolean(createPreferenceKey(activityId)))
                 enabledActivities.add(activityId);
+            else 
+                enabledActivities.remove(activityId);
         }
 
         support.setEnabledActivityIds(enabledActivities);
