@@ -2398,4 +2398,10 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		    getFastViewBar().update(true);
 		}
     }
+    /**
+     * @return Returns the progressRegion.
+     */
+    public ProgressRegion getProgressRegion() {
+        return progressRegion;
+    }
 }

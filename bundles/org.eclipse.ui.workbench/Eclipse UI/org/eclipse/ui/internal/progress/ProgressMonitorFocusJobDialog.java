@@ -19,13 +19,22 @@ import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.WorkbenchJob;
+
+import org.eclipse.ui.internal.RectangleAnimation;
+import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**
  * The ProgressMonitorFocusJobDialog is a dialog that shows progress for a
@@ -361,7 +370,9 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
              * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
              */
             public void widgetSelected(SelectionEvent e) {
+                Rectangle shellPosition = getShell().getBounds();
                 close();
+                animateClose(shellPosition);
             }
         });
 
@@ -378,5 +389,30 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
         shell.setText(job.getName());
+    }
+
+    /**
+     * Animate the closing of the dialog.
+     * 
+     * @param startPosition
+     */
+    private void animateClose(Rectangle startPosition) {
+
+        IWorkbenchWindow currentWindow = PlatformUI.getWorkbench()
+                .getActiveWorkbenchWindow();
+        if (currentWindow == null) return;
+
+        IWorkbenchPage page = currentWindow.getActivePage();
+        if (page == null || !(page instanceof WorkbenchPage)) return;
+        WorkbenchPage internalPage = (WorkbenchPage) page;
+        WorkbenchWindow internalWindow = (WorkbenchWindow) currentWindow;
+        Composite composite = internalPage.getClientComposite();
+        Rectangle end = internalWindow.getProgressRegion().getControl().getBounds();
+        Point start = internalWindow.getShell().getLocation();
+        end.x += start.x;
+        end.y += start.y;
+        RectangleAnimation animation = new RectangleAnimation(composite,
+                startPosition, end, 250);
+        animation.schedule();
     }
 }
