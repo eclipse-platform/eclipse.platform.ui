@@ -386,7 +386,7 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 			document.set(buffer.toString());
 			
 		} catch (IOException x) {
-			throw new CoreException(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, "Failed to access or read underlying storage", null)); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, "Failed to access or read underlying storage", x)); //$NON-NLS-1$
 		} finally {
 			try {
 				if (in != null)
