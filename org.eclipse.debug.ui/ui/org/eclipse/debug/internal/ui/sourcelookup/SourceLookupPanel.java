@@ -476,6 +476,9 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	 */
 	public void dispose() {
 		super.dispose();
+		if (getDirector() != null) {
+			getDirector().dispose();
+		}
 		IWorkingSetManager workingSetMgr =DebugUIPlugin.getDefault().getWorkbench().getWorkingSetManager();
 		//listen to changes user made to the working sets, if a working set is being removed
 		//check current list to validate working sets  

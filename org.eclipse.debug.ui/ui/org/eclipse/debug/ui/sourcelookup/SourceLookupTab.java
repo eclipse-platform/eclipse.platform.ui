@@ -111,8 +111,9 @@ public class SourceLookupTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
 	public void dispose() {
-		if(fSourceLookupPanel!= null && fSourceLookupPanel.getDirector() !=null)
-			fSourceLookupPanel.getDirector().dispose();
+		if (fSourceLookupPanel != null) {
+			fSourceLookupPanel.dispose();
+		}
 		fSourceLookupPanel = null;		
 		super.dispose();
 	}
