@@ -157,4 +157,29 @@ public class ImportTest extends EclipseTest {
 		
 
 	}
+	
+	public void testRootShare() throws CoreException {
+		// Create a test project 
+		IProject project = getUniqueTestProject(getName());
+		IResource[] result = buildResources(project, new String[] { "file1.txt", "folder1/", "folder1/a.txt" }, true);
+		// Share the project
+		shareProject(getRepository(), project, null, DEFAULT_MONITOR);
+		addResources(project, new String[] { "file1.txt", "folder1/", "folder1/a.txt" }, true);
+		// Checkout a copy ans test
+		IProject copy = checkoutProject(getUniqueTestProject(getName() + "copy"), project.getName(), null);
+		assertEquals(project, copy);
+	}
+	
+	public void testNonRootShare() throws CoreException {
+		// Create a test project 
+		IProject project = getUniqueTestProject(getName());
+		IResource[] result = buildResources(project, new String[] { "file1.txt", "folder1/", "folder1/a.txt" }, true);
+		// Share it as a non-root folder in the repository
+		String moduleName = "root" + Long.toString(System.currentTimeMillis()) + "/" + project.getName();
+		shareProject(getRepository(), project, moduleName, DEFAULT_MONITOR);
+		addResources(project, new String[] { "file1.txt", "folder1/", "folder1/a.txt" }, true);
+		// Checkout a copy and test
+		IProject copy = checkoutProject(getUniqueTestProject(getName() + "copy"), moduleName, null);
+		assertEquals(project, copy);
+	}
 }

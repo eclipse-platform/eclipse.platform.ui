@@ -29,6 +29,7 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.operations.ShareProjectOperation;
 import org.eclipse.team.ui.IConfigurationWizard;
 import org.eclipse.team.ui.synchronize.TeamSubscriberParticipant;
 import org.eclipse.ui.IWorkbench;
@@ -241,10 +242,14 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 							}
 							
 							// Create the remote module for the project
-							CVSWorkspaceRoot.createModule(location, project, getModuleName(), new SubProgressMonitor(monitor, 50));
+							ShareProjectOperation op = new ShareProjectOperation(getShell(), location, project, getModuleName());
+							op.run(new SubProgressMonitor(monitor, 50));
 						}
 					} catch (TeamException e) {
 						throw new InvocationTargetException(e);
+					} catch (InterruptedException e) {
+						// Must have been canceled
+						return;
 					} finally {
 						monitor.done();
 					}

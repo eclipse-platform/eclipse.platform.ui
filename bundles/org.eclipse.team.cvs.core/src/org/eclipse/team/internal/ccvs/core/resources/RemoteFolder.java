@@ -463,6 +463,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	 * @see ICVSRemoteFolder#getTag()
 	 */
 	public CVSTag getTag() {
+		if (folderInfo == null) return null;
 		return folderInfo.getTag();
 	}
 	/*

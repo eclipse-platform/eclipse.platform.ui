@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.*;
+import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -32,7 +32,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -40,6 +39,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.eclipse.swt.widgets.Display;
@@ -71,6 +71,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileChangeListener;
 import org.eclipse.team.internal.ccvs.ui.operations.CVSOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.CheckoutSingleProjectOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.ShareProjectOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.ITagOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.ReplaceOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.TagInRepositoryOperation;
@@ -718,7 +719,20 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	}
 	
 	protected void mapNewProject(IProject project) throws TeamException {
-		CVSWorkspaceRoot.createModule(getRepository(), project, null, DEFAULT_MONITOR);
+		shareProject(getRepository(), project, null, DEFAULT_MONITOR);
+	}
+	
+	/**
+	 * Map the given local project to remote folder, creating the remote folder or any of
+	 * its ancestors as necessary.
+	 * @param location
+	 * @param project
+	 * @param moduleName
+	 * @param default_monitor
+	 */
+	protected void shareProject(CVSRepositoryLocation location, IProject project, String moduleName, IProgressMonitor default_monitor) throws CVSException {
+		ShareProjectOperation op = new ShareProjectOperation(null, location, project, moduleName);
+		executeHeadless(op);
 	}
 	
 	protected void commitNewProject(IProject project) throws CoreException, CVSException, TeamException {
