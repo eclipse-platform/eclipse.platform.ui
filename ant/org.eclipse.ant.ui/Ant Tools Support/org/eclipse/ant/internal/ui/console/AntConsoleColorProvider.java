@@ -87,7 +87,9 @@ public class AntConsoleColorProvider extends ConsoleColorProvider implements IPr
 			AntUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 				public void run() {
 				    IOConsoleOutputStream stream = getConsole().getStream(streamId);
-				    stream.setColor(getColor(streamId));
+				    if (stream != null) {
+				        stream.setColor(getColor(streamId));
+				    }
 				}
 			});
 		}
