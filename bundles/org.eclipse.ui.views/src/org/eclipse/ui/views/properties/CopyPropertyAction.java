@@ -15,7 +15,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
@@ -31,10 +30,10 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 	/**
 	 * Creates the action.
 	 */
-	public CopyPropertyAction(PropertySheetViewer viewer, String name) {
+	public CopyPropertyAction(PropertySheetViewer viewer, String name, Clipboard clipboard) {
 		super(viewer, name);
 		WorkbenchHelp.setHelp(this, IPropertiesHelpContextIds.COPY_PROPERTY_ACTION);
-		clipboard = new Clipboard(Display.getCurrent());
+		this.clipboard = clipboard;
 	}
 	
 	/**

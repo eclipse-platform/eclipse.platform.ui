@@ -77,6 +77,8 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 	private IActionBars actionBars;
 	private ICellEditorActivationListener cellEditorActivationListener;
 	private CellEditorActionHandler cellEditorActionHandler;
+
+	private Clipboard clipboard;
 	/**
 	 * Creates a new property sheet page.
 	 */
@@ -167,8 +169,14 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 	 */
 	public void dispose() {
 		super.dispose();
-		if (rootEntry != null)
+		if (rootEntry != null) {
 			rootEntry.dispose();
+			rootEntry = null;
+		}
+		if (clipboard != null) {
+			clipboard.dispose();
+			clipboard = null;
+		}			
 	}
 	/**
 	 * Returns the cell editor activation listener for this page
@@ -296,7 +304,9 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 		categoriesAction.setChecked(true);
 	
 		// Copy	
-		copyAction = new CopyPropertyAction(viewer, "copy"); //$NON-NLS-1$
+		Shell shell = viewer.getControl().getShell();
+		clipboard = new Clipboard(shell.getDisplay());
+		copyAction = new CopyPropertyAction(viewer, "copy", clipboard); //$NON-NLS-1$
 		copyAction.setText(PropertiesMessages.getString("CopyProperty.text"));
 		copyAction.setImageDescriptor(getImageDescriptor("etool16/copy_edit.gif")); //$NON-NLS-1$
 		copyAction.setHoverImageDescriptor(getImageDescriptor("ctool16/copy_edit.gif")); //$NON-NLS-1$
