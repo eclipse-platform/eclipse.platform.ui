@@ -21,7 +21,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.synchronize.IResourceVariant;
+import org.eclipse.team.core.variants.IResourceVariant;
+import org.eclipse.team.core.variants.PersistantResourceVariantByteStore;
+import org.eclipse.team.core.variants.ResourceVariantByteStore;
+import org.eclipse.team.core.variants.ResourceVariantTree;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber;
@@ -33,9 +36,6 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteResource;
-import org.eclipse.team.internal.core.subscribers.caches.PersistantResourceVariantByteStore;
-import org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore;
-import org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree;
 
 /**
  * CVS Specific refresh operation
@@ -64,7 +64,7 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 	 */
 	protected byte[] getBytes(IResource local, IResourceVariant remote) throws TeamException {
 		if (remote != null) {
-			return ((RemoteResource)remote).getSyncBytes();
+			return super.getBytes(local, remote);
 		} else {
 			if (local.getType() == IResource.FOLDER) {
 				// If there is no remote, use the local sync for the folder

@@ -18,8 +18,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.core.subscribers.caches.*;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.core.variants.PersistantResourceVariantByteStore;
+import org.eclipse.team.core.variants.ResourceVariantByteStore;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.core.subscribers.DescendantResourceVariantByteStore;
 
 /**
  * CVS sycnrhonization cache that ignores stale remote bytes

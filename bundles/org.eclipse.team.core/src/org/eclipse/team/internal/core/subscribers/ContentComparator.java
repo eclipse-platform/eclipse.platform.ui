@@ -15,7 +15,7 @@ import java.io.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.synchronize.IResourceVariant;
+import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
 

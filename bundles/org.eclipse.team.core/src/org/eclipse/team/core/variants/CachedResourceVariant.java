@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.core.synchronize;
+package org.eclipse.team.core.variants;
 
 import java.io.InputStream;
 

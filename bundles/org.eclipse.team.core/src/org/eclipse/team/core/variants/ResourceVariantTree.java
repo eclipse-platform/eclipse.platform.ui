@@ -8,11 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.core.subscribers.caches;
+package org.eclipse.team.core.variants;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.synchronize.IResourceVariant;
 
 /**
  * Provides caching for a {@link AbstractResourceVariantTree} using a
@@ -84,10 +83,14 @@ public abstract class ResourceVariantTree extends AbstractResourceVariantTree {
 	
 	/**
 	 * Get the bytes to be stored in the <code>ResourceVariantByteStore</code> 
-	 * from the given resource variant.
+	 * from the given resource variant. By default, the <code>IResourceVariant#asBytes()</code>
+	 * method is used to get the bytes.
 	 * @param local the local resource
 	 * @param remote the corresponding resource variant handle
 	 * @return the bytes for the resource variant.
 	 */
-	protected abstract byte[] getBytes(IResource local, IResourceVariant remote) throws TeamException;
+	protected byte[] getBytes(IResource local, IResourceVariant remote) throws TeamException {
+		if (remote == null) return null;
+		return remote.asBytes();
+	}
 }

@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.synchronize.CachedResourceVariant;
+import org.eclipse.team.core.variants.CachedResourceVariant;
 
 /**
  * This class implements a caching facility that can be used by TeamProviders to cache contents

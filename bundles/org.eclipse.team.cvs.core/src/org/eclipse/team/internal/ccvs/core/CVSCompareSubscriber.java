@@ -23,10 +23,10 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.ISubscriberChangeEvent;
 import org.eclipse.team.core.subscribers.ISubscriberChangeListener;
 import org.eclipse.team.core.subscribers.SubscriberChangeEvent;
+import org.eclipse.team.core.variants.IResourceVariantTree;
+import org.eclipse.team.core.variants.SessionResourceVariantByteStore;
 import org.eclipse.team.internal.ccvs.core.syncinfo.CVSResourceVariantTree;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MultiTagResourceVariantTree;
-import org.eclipse.team.internal.core.subscribers.caches.IResourceVariantTree;
-import org.eclipse.team.internal.core.subscribers.caches.SessionResourceVariantByteStore;
 
 /**
  * This subscriber is used when comparing the local workspace with its

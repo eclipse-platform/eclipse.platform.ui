@@ -16,7 +16,7 @@ import java.util.Date;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.synchronize.CachedResourceVariant;
+import org.eclipse.team.core.variants.CachedResourceVariant;
 
 /**
  * This class provides the implementation for the ICacheEntry

@@ -13,12 +13,16 @@ package org.eclipse.team.examples.filesystem;
 import java.io.File;
 
 import org.eclipse.core.resources.IFileModificationValidator;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.variants.IResourceVariant;
+import org.eclipse.team.examples.filesystem.subscriber.FileSystemResourceVariant;
+import org.eclipse.team.examples.filesystem.subscriber.FileSystemSubscriber;
 
 /**
  * This example illustrates how to create a concrete implementation of a <code>RepositoryProvider</code>
@@ -71,6 +75,7 @@ public class FileSystemProvider extends RepositoryProvider {
 	 * @see org.eclipse.team.core.RepositoryProvider#configureProject()
 	 */
 	public void configureProject() throws CoreException {
+		FileSystemSubscriber.getInstance().handleRootChanged(getProject(), true /* added */);
 	}
 
 	/**
@@ -82,6 +87,7 @@ public class FileSystemProvider extends RepositoryProvider {
 	public void deconfigure() throws CoreException {
 		// Clear the persistant property containing the location
 		getProject().setPersistentProperty(FILESYSTEM_REPO_LOC, null);
+		FileSystemSubscriber.getInstance().handleRootChanged(getProject(), false /* removed */);
 	}
 
 	/**
@@ -160,6 +166,45 @@ public class FileSystemProvider extends RepositoryProvider {
 	 */
 	public IFileModificationValidator getFileModificationValidator() {
 		return new FileModificationValidator(this);
+	}
+
+	/**
+	 * Return the resource variant for the local resource using the bytes to
+	 * identify the variant.
+	 * @param resource the resource
+	 * @param bytes the bytes that identify the resource variant
+	 * @return the resource variant handle
+	 */
+	public IResourceVariant getResourceVariant(IResource resource, byte[] bytes) {
+		File file = getFile(resource);
+		if (file == null) return null;
+		return new FileSystemResourceVariant(file, bytes);
+	}
+	
+	/**
+	 * Return the resource variant for the local resource.
+	 * @param resource the resource
+	 * @return the resource variant
+	 */
+	public IResourceVariant getResourceVariant(IResource resource) {
+		File file = getFile(resource);
+		if (file == null) return null;
+		return new FileSystemResourceVariant(file);
+	}
+	
+	/**
+	 * Return the <code>java.io.File</code> that the given resource maps to.
+	 * Return <code>null</code> if the resource is not a child of this provider's
+	 * project.
+	 * @param resource the resource
+	 * @return the file that the resource maps to.
+	 */
+	public java.io.File getFile(IResource resource) {
+		if (resource.getProject().equals(getProject())) {
+			IPath rootdir = getRoot();
+			return new File(rootdir.append(resource.getProjectRelativePath()).toOSString());
+		}
+		return null;
 	}
 
 }

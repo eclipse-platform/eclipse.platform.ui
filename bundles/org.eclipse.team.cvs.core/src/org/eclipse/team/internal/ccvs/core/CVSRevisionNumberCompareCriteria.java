@@ -12,8 +12,8 @@ package org.eclipse.team.internal.ccvs.core;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.team.core.synchronize.IResourceVariant;
-import org.eclipse.team.core.synchronize.IResourceVariantComparator;
+import org.eclipse.team.core.variants.IResourceVariant;
+import org.eclipse.team.core.variants.IResourceVariantComparator;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 

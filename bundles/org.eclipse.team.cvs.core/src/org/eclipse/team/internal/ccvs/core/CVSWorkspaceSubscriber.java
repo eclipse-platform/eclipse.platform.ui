@@ -30,18 +30,18 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamStatus;
 import org.eclipse.team.core.subscribers.ISubscriberChangeEvent;
 import org.eclipse.team.core.subscribers.SubscriberChangeEvent;
-import org.eclipse.team.core.synchronize.IResourceVariant;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
+import org.eclipse.team.core.variants.IResourceVariant;
+import org.eclipse.team.core.variants.IResourceVariantTree;
+import org.eclipse.team.core.variants.PersistantResourceVariantByteStore;
+import org.eclipse.team.core.variants.ResourceVariantByteStore;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.CVSBaseResourceVariantTree;
 import org.eclipse.team.internal.ccvs.core.syncinfo.CVSDescendantResourceVariantByteStore;
 import org.eclipse.team.internal.ccvs.core.syncinfo.CVSResourceVariantTree;
 import org.eclipse.team.internal.ccvs.core.util.ResourceStateChangeListeners;
-import org.eclipse.team.internal.core.subscribers.caches.IResourceVariantTree;
-import org.eclipse.team.internal.core.subscribers.caches.PersistantResourceVariantByteStore;
-import org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore;
 import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.core.subscribers.caches;
+package org.eclipse.team.core.variants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,7 @@ import org.eclipse.team.internal.core.Assert;
  * the <code>org.eclipse.core.resources.ISynchronizer</code> so that
  * the tree is cached accross workbench invocations.
  * <p>
- * This class is not intended to be subclassed by clients
+ * This class is not intended to be subclassed by clients.
  * 
  * @since 3.0
  */

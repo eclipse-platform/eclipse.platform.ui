@@ -8,13 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.core.subscribers.caches;
+package org.eclipse.team.internal.core.subscribers;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.variants.*;
 
 /**
  * A <code>ResourceVariantByteStore</code> that optimizes the memory footprint
@@ -44,7 +45,7 @@ public abstract class DescendantResourceVariantByteStore extends ResourceVariant
 	
 	/**
 	 * This method will dispose the remote cache but not the base cache.
-	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore#dispose()
+	 * @see org.eclipse.team.core.variants.ResourceVariantByteStore#dispose()
 	 */
 	public void dispose() {
 		remoteStore.dispose();

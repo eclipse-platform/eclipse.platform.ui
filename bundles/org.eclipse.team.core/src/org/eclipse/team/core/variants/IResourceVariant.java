@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.core.synchronize;
+package org.eclipse.team.core.variants;
 
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -19,7 +19,7 @@ import org.eclipse.team.core.TeamException;
  * to provide access to the base and remote resources that correspond to 
  * a local resource.
  * 
- * @see SyncInfo
+ * @see org.eclipse.team.core.synchronize.SyncInfo
  * @since 3.0
  */
 public interface IResourceVariant {
@@ -61,6 +61,14 @@ public interface IResourceVariant {
 	 * @throws TeamException
 	 */
 	public String getContentIdentifier();
+	
+	/**
+	 * Return an array of bytes that can be used to uniquely identify this
+	 * resource variant when compared to other resource variants and could
+	 * also potentially be used to recreate a resource variant handle.
+	 * @return the bytes that uniquely identify this resource variant
+	 */
+	public byte[] asBytes();
 	
 	/**
 	 * Returns whether the remote resource is equal to the provided object.

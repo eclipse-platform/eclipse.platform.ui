@@ -15,9 +15,9 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.team.core.variants.ResourceVariantByteStore;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
-import org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore;
 
 /**
  * A CVS resource variant tree that associates a different tag with each root project.

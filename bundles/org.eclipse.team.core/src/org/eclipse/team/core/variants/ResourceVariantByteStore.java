@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.core.subscribers.caches;
+package org.eclipse.team.core.variants;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.TeamException;

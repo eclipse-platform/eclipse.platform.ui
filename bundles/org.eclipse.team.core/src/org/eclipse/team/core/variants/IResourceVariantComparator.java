@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.core.synchronize;
+package org.eclipse.team.core.variants;
 
 import org.eclipse.core.resources.IResource;
 
@@ -20,8 +20,8 @@ import org.eclipse.core.resources.IResource;
  * size or file timestamps as comparison criterias whereas a CVS workspace subscriber would
  * use file revision numbers.
  * 
- * @see SyncInfo
- * @see Subscriber
+ * @see org.eclipse.team.core.synchronize.SyncInfo
+ * @see org.eclipse.team.core.subscribers.Subscriber
  * @since 3.0
  */
 public interface IResourceVariantComparator {

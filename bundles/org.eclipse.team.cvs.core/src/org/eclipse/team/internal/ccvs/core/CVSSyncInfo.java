@@ -17,12 +17,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.*;
 import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.variants.*;
+import org.eclipse.team.core.variants.ResourceVariantTreeSubscriber;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.resources.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTreeSubscriber;
 
 /**
  * CVSSyncInfo

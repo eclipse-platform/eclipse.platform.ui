@@ -21,9 +21,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamStatus;
-import org.eclipse.team.core.synchronize.IResourceVariantComparator;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
+import org.eclipse.team.core.variants.IResourceVariantComparator;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
 

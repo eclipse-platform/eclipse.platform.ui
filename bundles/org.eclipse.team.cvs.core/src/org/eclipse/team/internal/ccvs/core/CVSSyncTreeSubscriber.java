@@ -20,11 +20,11 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
-import org.eclipse.team.core.synchronize.IResourceVariant;
-import org.eclipse.team.core.synchronize.IResourceVariantComparator;
 import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.variants.IResourceVariant;
+import org.eclipse.team.core.variants.IResourceVariantComparator;
+import org.eclipse.team.core.variants.ResourceVariantTreeSubscriber;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTreeSubscriber;
 
 /**
  * This class provides common funtionality for three way sychronizing

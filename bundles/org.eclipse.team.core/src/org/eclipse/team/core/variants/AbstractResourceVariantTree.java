@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.core.subscribers.caches;
+package org.eclipse.team.core.variants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.synchronize.IResourceVariant;
 import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.core.Policy;
 
@@ -77,7 +76,7 @@ public abstract class AbstractResourceVariantTree implements IResourceVariantTre
 	 * Helper method invoked from <code>refresh(IResource[], int, IProgressMonitor monitor)</code>
 	 * for each resource. The default implementation performs the following steps:
 	 * <ol>
-	 * <li>obtaine the scheduling rule for the resource
+	 * <li>obtain the scheduling rule for the resource
 	 * as returned from <code>getSchedulingRule(IResource)</code>. 
 	 * <li>get the resource variant handle corresponding to the local resource by calling
 	 * <code>getRemoteTree</code>.

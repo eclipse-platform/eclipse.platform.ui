@@ -1,0 +1,115 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.team.examples.filesystem.subscriber;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.variants.IResourceVariant;
+import org.eclipse.team.core.variants.ThreeWayRemoteTree;
+import org.eclipse.team.core.variants.ThreeWaySubscriber;
+import org.eclipse.team.core.variants.ThreeWaySynchronizer;
+import org.eclipse.team.examples.filesystem.FileSystemPlugin;
+import org.eclipse.team.examples.filesystem.FileSystemProvider;
+
+/**
+ * This is an example file system subscriber that overrides
+ * ThreeWaySubscriber. It uses a repository
+ * provider (<code>FileSystemProvider</code>) to determine and
+ * manage the roots and to create resource variants. It also makes
+ * use of a file system specific remote tree (<code>FileSystemRemoteTree</code>)
+ * for provided the remote tree access and refresh.
+ * 
+ * @see ThreeWaySubscriber
+ * @see ThreeWaySynchronizer
+ * @see FileSystemProvider
+ * @see FileSystemRemoteTree
+ */
+public class FileSystemSubscriber extends ThreeWaySubscriber {
+
+	private static FileSystemSubscriber instance;
+	
+	/**
+	 * Return the file system subscriber singleton.
+	 * @return the file system subscriber singleton.
+	 */
+	public static synchronized FileSystemSubscriber getInstance() {
+		if (instance == null) {
+			instance = new FileSystemSubscriber();
+		}
+		return instance;
+	}
+	
+	/**
+	 * Create the file system subscriber.
+	 */
+	private FileSystemSubscriber() {
+		super(new ThreeWaySynchronizer(new QualifiedName(FileSystemPlugin.ID, "workpsace-sync"))); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.variants.ThreeWaySubscriber#getResourceVariant(org.eclipse.core.resources.IResource, byte[])
+	 */
+	public IResourceVariant getResourceVariant(IResource resource, byte[] bytes) throws TeamException {
+		RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), FileSystemPlugin.PROVIDER_ID);
+		if (provider != null) {
+			return ((FileSystemProvider)provider).getResourceVariant(resource, bytes);
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.variants.ThreeWaySubscriber#createRemoteTree()
+	 */
+	protected ThreeWayRemoteTree createRemoteTree() {
+		return new FileSystemRemoteTree(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.subscribers.Subscriber#getName()
+	 */
+	public String getName() {
+		return "File System Example";
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.subscribers.Subscriber#roots()
+	 */
+	public IResource[] roots() {
+		List result = new ArrayList();
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		for (int i = 0; i < projects.length; i++) {
+			IProject project = projects[i];
+			if(project.isAccessible()) {
+				RepositoryProvider provider = RepositoryProvider.getProvider(project, FileSystemPlugin.PROVIDER_ID);
+				if(provider != null) {
+					result.add(project);
+				}
+			}
+		}
+		return (IProject[]) result.toArray(new IProject[result.size()]);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.variants.ThreeWaySubscriber#handleRootChanged(org.eclipse.core.resources.IResource, boolean)
+	 */
+	public void handleRootChanged(IResource resource, boolean added) {
+		// Override to allow FileSystemProvider to signal the addition and removal of roots
+		super.handleRootChanged(resource, added);
+	}
+
+}

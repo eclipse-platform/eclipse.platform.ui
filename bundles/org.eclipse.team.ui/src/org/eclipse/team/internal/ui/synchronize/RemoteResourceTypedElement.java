@@ -17,7 +17,7 @@ import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.synchronize.IResourceVariant;
+import org.eclipse.team.core.variants.IResourceVariant;
 
 /**
  * RemoteResourceTypedElement
