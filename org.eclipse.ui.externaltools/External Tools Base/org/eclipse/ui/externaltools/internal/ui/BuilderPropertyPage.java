@@ -358,7 +358,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 					ILaunchConfiguration config= (ILaunchConfiguration) data;
 					if (data instanceof ILaunchConfigurationWorkingCopy) {
 						// Warn the user that editing an old config will cause storage migration.
-						if (!MessageDialog.openQuestion(getShell(), "Migrate project builder", "This project builder is stored in a format that is no longer supported. If you wish to edit this builder, it will first be migrated to the new format. If you proceed, this project builder will not be understood by older versions of Eclipse.\nProceed with edit?")) {
+						if (!MessageDialog.openQuestion(getShell(), "Migrate project builder", "This project builder is stored in a format that is no longer supported. If you wish to edit this builder, it will first be migrated to the new format. If you proceed, this project builder will not be understood by installations running versions 2.0 or earlier of the org.eclipse.ui.externaltools plugin.\n\nProceed with migration?")) {
 							return;
 						}
 						ILaunchConfigurationWorkingCopy workingCopy= (ILaunchConfigurationWorkingCopy) data;
