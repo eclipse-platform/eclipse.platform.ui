@@ -921,6 +921,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		int startOffset= -1; // the location where the proposals would insert (< fInvocationOffset if invoked in the middle of an ident)
 		String currentPrefix= null; // the prefix already in the document
 		int currentPrefixLen= -1; // the length of the current prefix
+		List caseFiltered= new ArrayList();
 		
 		for (int i= 0; i < fFilteredProposals.length; i++) {
 			ICompletionProposal proposal= fFilteredProposals[i];
@@ -941,6 +942,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 			// prune ignore-case matches
 			if (isCaseSensitive() && !insertion.toString().startsWith(currentPrefix))
 				continue;
+			
+			caseFiltered.add(proposal);
 
 			if (prefix == null)
 				prefix= new StringBuffer(insertion.toString()); // initial
@@ -956,6 +959,12 @@ class CompletionProposalPopup implements IContentAssistListener {
 			return false;
 	
 		// 2: replace / insert the common prefix in the document
+		
+		if (caseFiltered.size() == 1) {
+			insertProposal((ICompletionProposal) caseFiltered.get(0), (char) 0, 0, fInvocationOffset);
+			hide();
+			return true;
+		}
 		
 		try {
 			String presentPart= prefix.substring(0, currentPrefixLen);
