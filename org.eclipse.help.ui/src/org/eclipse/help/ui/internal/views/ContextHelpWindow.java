@@ -256,6 +256,7 @@ public class ContextHelpWindow extends Window {
 	}
 	
 	public void update(IContext context, Control c) {
+		helpPart.showPage(IHelpUIConstants.HV_CONTEXT_HELP_PAGE);
 		helpPart.update(context, null, c);
 	}
 

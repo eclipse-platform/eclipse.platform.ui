@@ -18,17 +18,14 @@ import org.eclipse.help.internal.search.*;
 import org.eclipse.help.internal.search.federated.IndexerJob;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
-import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
+import org.eclipse.ui.forms.widgets.*;
 
 public class DynamicHelpPart extends SectionPart implements IHelpPart {
 	private static final String CANCEL_HREF = "__cancel__"; //$NON-NLS-1$
@@ -99,6 +96,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		// create 'clear' hyperlink on the section tool bar
 		ImageHyperlink clearLink = new ImageHyperlink(section, SWT.NULL);
 		toolkit.adapt(clearLink, true, true);
+		/*
 		clearLink.setToolTipText(HelpUIResources
 				.getString("SearchPart.clearResults")); //$NON-NLS-1$
 		clearLink.setImage(HelpUIResources
@@ -109,7 +107,8 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 				clearResults();
 			}
 		});
-		section.setTextClient(clearLink);		
+		section.setTextClient(clearLink);
+		*/		
 		resultSorter = new SorterByScore();
 		searchResults = toolkit.createFormText(section, true);
 		section.setClient(searchResults);
