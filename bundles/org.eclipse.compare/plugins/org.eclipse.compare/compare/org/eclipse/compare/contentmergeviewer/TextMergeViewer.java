@@ -1048,7 +1048,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 						
 		fAllDiffs= new ArrayList();
 		fChangeDiffs= new ArrayList();
-
+		fCurrentDiff= null;
+		
 		IDocument aDoc= null;
 		IDocument lDoc= fLeft.getDocument();
 		IDocument rDoc= fRight.getDocument();
@@ -2088,8 +2089,12 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			fCurrentDiff= d;
 		}
 		
-		updateDiffBackground(oldDiff);
-		updateDiffBackground(fCurrentDiff);
+		Diff d1= oldDiff != null ? oldDiff.fParent : null;
+		Diff d2= fCurrentDiff != null ? fCurrentDiff.fParent : null;
+		if (d1 != d2) {
+			updateDiffBackground(d1);
+			updateDiffBackground(d2);
+		}
 		
 		updateControls();
 		invalidateLines();
