@@ -163,8 +163,8 @@ public class EclipseController {
 				System.out.println("  " + (String) it.next());
 			}
 		}
-		eclipse =
-			new Eclipse(Options.getEclipseHome(), Options.getEclipseArgs());
+			eclipse =
+				new Eclipse();
 		eclipse.start();
 		if (Options.isDebug()) {
 			System.out.println("Eclipse launched");

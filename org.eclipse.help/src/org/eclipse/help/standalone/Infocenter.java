@@ -43,6 +43,9 @@ public class Infocenter {
 	*  shutdown.   Default is 40s.  You may need to use this option when
 	*  running from a slow media such as a CD-ROM.
 	* <p>
+	*  Option <code>-noexec</code> indicates that
+	*  Eclipse executable should not be used.
+	* <p>
 	*  Additionally,  most options accepted by Eclipse execuable are supported.
 	*/
 	public Infocenter(String[] options) {
@@ -64,7 +67,7 @@ public class Infocenter {
 	 * Controls start up and shut down of infocenter from command line.
 	 * @param args array of String containing options
 	 *  Options are:
-	 * 	<code>-command start | shutdown [-eclipsehome eclipseInstallPath] [-host helpServerHost] [-port helpServerPort] [-servertimeout timeout] [platform options] [-vmargs JavaVMarguments]</code>
+	 * 	<code>-command start | shutdown [-eclipsehome eclipseInstallPath] [-host helpServerHost] [-port helpServerPort] [-servertimeout timeout] [-noexec] [platform options] [-vmargs JavaVMarguments]</code>
 	 *  where
 	 *  <ul>
 	 * 	<li><code>eclipseInstallPath</code> specifies Eclipse installation directory;
@@ -80,6 +83,8 @@ public class Infocenter {
 	 *    to connect to the help server while executing commands,
 	 *    such as shutdown.  Default is 40s.  You may need to
 	 *    use this option when running from a slow media such as a CD-ROM.
+	 * 	<li><code>-noexec</code> option indicates that
+	 *    Eclipse executable should not be used.</li>
 	 *   <li><code>platform options</code> are other options that are supported by Eclipse Executable.</li>
 	 *  <ul>
 	 */

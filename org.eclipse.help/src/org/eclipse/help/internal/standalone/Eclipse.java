@@ -8,24 +8,47 @@ import java.io.*;
 import java.util.List;
 
 /**
- * Launches Eclipse executable.
+ * Eclipse launcher.  Spawns eclipse executable
+ * or org.eclipse.core.launcher.Main.
  */
 public class Eclipse extends Thread {
 	File dir;
 	String[] cmdarray;
 	/**
 	 * Constructor
-	 * @param eclipseHome Eclipse instllation directory
-	 * @param eclipseOptions List of String options to be passed to Eclipse
 	 */
-	public Eclipse(File eclipseHome, List eclipseOptions) {
+	public Eclipse() {
 		super();
 		this.setName("Eclipse");
-		this.dir = eclipseHome;
-		cmdarray = new String[eclipseOptions.size() + 1];
-		cmdarray[0] = new File(eclipseHome, "eclipse").getAbsolutePath();
-		for (int i = 0; i < eclipseOptions.size(); i++) {
-			cmdarray[i + 1] = (String) eclipseOptions.get(i);
+		this.dir = Options.getEclipseHome();
+		List vmArgs = Options.getVmArgs();
+		List eclipseArgs = Options.getEclipseArgs();
+		if (Options.useExe()) {
+			cmdarray = new String[3 + vmArgs.size() + 1 + eclipseArgs.size()];
+			cmdarray[0] =
+				new File(Options.getEclipseHome(), "eclipse").getAbsolutePath();
+			cmdarray[1] = "-vm";
+			cmdarray[2] = Options.getVm();
+			for (int i = 0; i < eclipseArgs.size(); i++) {
+				cmdarray[3 + i] = (String) eclipseArgs.get(i);
+			}
+			cmdarray[3 + eclipseArgs.size()] = "-vmargs";
+			for (int i = 0; i < vmArgs.size(); i++) {
+				cmdarray[4 + eclipseArgs.size() + i] = (String) vmArgs.get(i);
+			}
+
+		} else {
+			cmdarray = new String[1 + vmArgs.size() + 3 + eclipseArgs.size()];
+			cmdarray[0] = Options.getVm();
+			for (int i = 0; i < vmArgs.size(); i++) {
+				cmdarray[1 + i] = (String) vmArgs.get(i);
+			}
+			cmdarray[1 + vmArgs.size()] = "-cp";
+			cmdarray[2 + vmArgs.size()] = "startup.jar";
+			cmdarray[3 + vmArgs.size()] = "org.eclipse.core.launcher.Main";
+			for (int i = 0; i < eclipseArgs.size(); i++) {
+				cmdarray[4 + vmArgs.size() + i] = (String) eclipseArgs.get(i);
+			}
 		}
 	}
 	/**

@@ -74,7 +74,7 @@ public class StandaloneInfocenter extends EclipseController {
 		System.out.println("Parameters syntax:");
 		System.out.println();
 		System.out.println(
-			"-command start | shutdown [-eclipsehome eclipseInstallPath] [-host helpServerHost] [-port helpServerPort] [platform options] [-vmargs [Java VM arguments]]");
+			"-command start | shutdown [-eclipsehome eclipseInstallPath] [-host helpServerHost] [-port helpServerPort] [-noexec] [platform options] [-vmargs [Java VM arguments]]");
 		System.out.println();
 		System.out.println("where:");
 		System.out.println(
@@ -83,6 +83,8 @@ public class StandaloneInfocenter extends EclipseController {
 			" helpServerHost specifies host name of the interface that help server will use,");
 		System.out.println(
 			" helpServerPort specifies port number that help server will use,");
+		System.out.println(
+			" noexec option indicates that Eclipse executable should not be used, ");
 		System.out.println(
 			" platform options are other options that are supported by Eclipse Executable.");
 	}

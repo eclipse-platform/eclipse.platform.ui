@@ -13,6 +13,8 @@ import java.util.*;
 public class Options {
 	// debugging
 	private static boolean debug = false;
+	// use eclipse.exe
+	private static boolean useExe = true;
 	// Eclipse installation directory
 	private static File eclipseHome;
 	// workspace directory to be used by Eclipse
@@ -21,12 +23,14 @@ public class Options {
 	private static File lockFile;
 	// .hostport file to obtain help server host and port from Eclipse help application
 	private static File hostPortFile;
+	// vm to use
+	private static String vm;
 	// arguments to pass to Eclipse
+	private static List vmArgs;
+	// arguments to pass to VM
 	private static List eclipseArgs;
 	// help command to execute
 	private static List helpCommand;
-	// input list of args
-	private static List argsList;
 	// host to override appserver preferences
 	private static String host;
 	// port to override appserver preferences
@@ -45,14 +49,13 @@ public class Options {
 	 *  Additionally, most options accepted by Eclipse execuable are supported.
 	 */
 	public static void init(String appId, String[] args) {
-
 		// convert array of arguments to a list
-		argsList = new ArrayList();
+		List list = new ArrayList();
 		for (int i = 0; i < args.length; i++) {
-			argsList.add(args[i]);
+			list.add(args[i]);
 		}
 
-		init(appId, argsList);
+		init(appId, list);
 	}
 	/**
 	 * Initializes options.
@@ -65,30 +68,38 @@ public class Options {
 	 *  Additionally, most options accepted by Eclipse execuable are supported.
 	 */
 	public static void init(String appId, List options) {
-
-		argsList = options;
+		// Initialize eclipseArgs with all passed options
+		eclipseArgs = new ArrayList();
+		eclipseArgs.addAll(options);
 
 		// consume -command option
-		helpCommand = extractOption("-command");
+		helpCommand = extractOption(eclipseArgs, "-command");
+		if(helpCommand==null){
+			helpCommand=new ArrayList(0);
+		}
 
 		// read -debug option
-		if (getOption("-debug") != null) {
+		if (getOption(eclipseArgs, "-debug") != null) {
 			debug = true;
 			System.out.println("Debugging is on.");
 		}
-		// consume -eclipsehome (accept eclipse_home too) option
-		List homes = extractOption("-eclipseHome");
-		if (homes.isEmpty()) {
-			homes = extractOption("-eclipse_Home");
+		// consume -noexec option
+		if (extractOption(eclipseArgs, "-noexec") != null) {
+			useExe = false;
 		}
-		if (!homes.isEmpty()) {
+		// consume -eclipsehome (accept eclipse_home too) option
+		List homes = extractOption(eclipseArgs, "-eclipseHome");
+		if (homes==null || homes.isEmpty()) {
+			homes = extractOption(eclipseArgs, "-eclipse_Home");
+		}
+		if (homes!=null && !homes.isEmpty()) {
 			eclipseHome = new File((String) homes.get(0));
 		} else {
 			eclipseHome = new File(System.getProperty("user.dir"));
 		}
 
 		// read -data option
-		List workspaces = getOption("-data");
+		List workspaces = getOption(eclipseArgs, "-data");
 		if (workspaces != null && !workspaces.isEmpty()) {
 			workspace = new File((String) workspaces.get(0));
 		} else {
@@ -98,20 +109,20 @@ public class Options {
 		hostPortFile = new File(workspace, "/.metadata/.connection");
 
 		// consume -host option
-		List hosts = extractOption("-host");
+		List hosts = extractOption(eclipseArgs, "-host");
 		if (hosts != null && hosts.size() > 0) {
 			host = (String) hosts.get(0);
 		}
 
 		// consume -port option
-		List ports = extractOption("-port");
+		List ports = extractOption(eclipseArgs, "-port");
 		if (ports != null && ports.size() > 0) {
 			port = (String) ports.get(0);
 		}
 
 		// consume -servertimout option
 		serverTimeout = 0;
-		List timeouts = extractOption("-servertimeout");
+		List timeouts = extractOption(eclipseArgs, "-servertimeout");
 		if (timeouts != null && timeouts.size() > 0) {
 			try {
 				int timeout = Integer.parseInt((String) timeouts.get(0));
@@ -122,8 +133,52 @@ public class Options {
 			}
 		}
 
+		// consume -vm option
+		List vms = extractOption(eclipseArgs, "-vm");
+		if (vms != null && !vms.isEmpty()) {
+			vm = (String) vms.get(0);
+		} else {
+			String vmName = System.getProperty("java.vm.name");
+			String executable = "J9".equals(vmName) ? "j9" : "java";
+			if (System.getProperty("os.name").startsWith("Win")) {
+				executable += "w.exe";
+			}
+			vm =
+				System.getProperty("java.home")
+					+ File.separator
+					+ "bin"
+					+ File.separator
+					+ executable;
+		}
+
+		// consume -vmargs option
+		vmArgs=new ArrayList(0);
+		List passedVmArgs = extractOption(eclipseArgs, "-vmargs");
+		if (passedVmArgs!=null && passedVmArgs.size() > 0) {
+			vmArgs=passedVmArgs;
+		}
+
 		// modify the options for passing them to eclipse
-		eclipseArgs = prepareEclipseOptions(appId);
+		// add -application option
+		extractOption(eclipseArgs, "-application");
+		eclipseArgs.add(0, "-application");
+		eclipseArgs.add(1, appId);
+
+		// add -nosplash option (prevent splash)
+		extractOption(eclipseArgs, "-showsplash");
+		extractOption(eclipseArgs, "-endsplash");
+		extractOption(eclipseArgs, "-nosplash");
+		eclipseArgs.add(0, "-nosplash");
+
+		// add server_host and/or port to -vmargs option
+		if (host != null || port != null) {
+			if (host != null) {
+				vmArgs.add("-Dserver_host=" + host);
+			}
+			if (port != null) {
+				vmArgs.add("-Dserver_port=" + port);
+			}
+		}
 	}
 
 	/**
@@ -170,77 +225,33 @@ public class Options {
 	 * Removes specified option and its list of values
 	 * from a list of options
 	 * @param optionName name of the option e.g. -data
-	 * @return List of String values of the specified option
+	 * @return List of String values of the specified option,
+	 *  or null if option is not present
 	 */
-	private static List extractOption(String optionName) {
-		List values = new ArrayList(1);
-		for (int i = 0; i < argsList.size();) {
-			if (optionName.equalsIgnoreCase((String) argsList.get(i))) {
+	private static List extractOption(List options, String optionName) {
+		List values = null;
+		for (int i = 0; i < options.size();) {
+			if (optionName.equalsIgnoreCase((String) options.get(i))) {
+				if (values == null) {
+					values = new ArrayList(1);
+				}
 				// found the option, remove option
-				argsList.remove(i);
-				while (i < argsList.size()) {
-					if (((String) argsList.get(i)).startsWith("-")) {
+				options.remove(i);
+				while (i < options.size()) {
+					if (((String) options.get(i)).startsWith("-")
+						&& !"-vmargs".equals((String) options.get(i))) {
 						// start of next option
 						break;
 					}
 					// note, and remove option value
-					values.add(argsList.get(i));
-					argsList.remove(i);
+					values.add(options.get(i));
+					options.remove(i);
 				}
 			} else {
 				i++;
 			}
 		}
 		return values;
-	}
-
-	private static List prepareEclipseOptions(String appId) {
-		// add -vm option if not present
-		List vms = getOption("-vm");
-		if (vms == null || vms.isEmpty()) {
-			String vm = System.getProperty("java.vm.name");
-			String executable = "J9".equals(vm) ? "j9" : "java";
-			if (System.getProperty("os.name").startsWith("Win")) {
-				executable += "w.exe";
-			}
-			String javaExe =
-				System.getProperty("java.home")
-					+ File.separator
-					+ "bin"
-					+ File.separator
-					+ executable;
-			argsList.add(0, "-vm");
-			argsList.add(1, javaExe);
-
-		}
-
-		// add -application option
-		extractOption("-application");
-		argsList.add(0, "-application");
-		argsList.add(1, appId);
-
-		// add -nosplash option (prevent splash)
-		extractOption("-showsplash");
-		extractOption("-endsplash");
-		extractOption("-nosplash");
-		argsList.add(0, "-nosplash");
-
-		// add server_host and/or port to -vmargs option
-		if (host != null || port != null) {
-			List vmargs = extractOption("-vmargs");
-			argsList.add("-vmargs");
-			for (Iterator i = vmargs.iterator(); i.hasNext();) {
-				argsList.add((String) i.next());
-			}
-			if (host != null) {
-				argsList.add("-Dserver_host=" + host);
-			}
-			if (port != null) {
-				argsList.add("-Dserver_port=" + port);
-			}
-		}
-
-		return argsList;
 	}
 
 	/**
@@ -251,23 +262,38 @@ public class Options {
 	 * @return List of String values of the specified option,
 	 *  or null if option is not present
 	 */
-	private static List getOption(String optionName) {
+	private static List getOption(List options, String optionName) {
 		List values = null;
-		for (int i = 0; i < argsList.size(); i++) {
-			if (optionName.equalsIgnoreCase((String) argsList.get(i))) {
+		for (int i = 0; i < options.size(); i++) {
+			if (optionName.equalsIgnoreCase((String) options.get(i))) {
 				if (values == null) {
 					values = new ArrayList(1);
 				}
-				for (int j = i + 1; j < argsList.size(); j++) {
-					if (((String) argsList.get(j)).startsWith("-")) {
+				for (int j = i + 1; j < options.size(); j++) {
+					if (((String) options.get(j)).startsWith("-")
+						&& !"-vmargs".equals((String) options.get(j))) {
 						// start of next option
 						i = j;
 						break;
 					}
-					values.add(argsList.get(j));
+					values.add(options.get(j));
 				}
 			}
 		}
 		return values;
 	}
+	public static String getVm() {
+		return vm;
+	}
+	public static List getVmArgs() {
+		return vmArgs;
+	}
+	/**
+	 * Returns the useExe.
+	 * @return boolean
+	 */
+	public static boolean useExe() {
+		return useExe;
+	}
+
 }
