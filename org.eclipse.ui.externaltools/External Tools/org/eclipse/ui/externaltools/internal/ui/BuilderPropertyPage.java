@@ -32,7 +32,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 	private Table builderTable;
 	private Button upButton, downButton, newButton, editButton, removeButton;
 	private ArrayList imagesToDispose = new ArrayList();
-	private Image antImage, builderImage;
+	private Image antImage, builderImage, externalToolImage, invalidBuildToolImage;
 
 	/**
 	 * Creates an initialized property page
@@ -140,10 +140,15 @@ public final class BuilderPropertyPage extends PropertyPage {
 	 * Method declared on PreferencePage.
 	 */
 	protected Control createContents(Composite parent) {
+		externalToolImage = ExternalToolsPlugin.getDefault().getImageDescriptor(ExternalToolsPlugin.IMG_EXTERNAL_TOOL).createImage();
 		antImage = ExternalToolsPlugin.getDefault().getImageDescriptor(ExternalToolsPlugin.IMG_ANT_TOOL).createImage();
 		builderImage = ExternalToolsPlugin.getDefault().getImageDescriptor(ExternalToolsPlugin.IMG_BUILDER).createImage();
+		invalidBuildToolImage = ExternalToolsPlugin.getDefault().getImageDescriptor(ExternalToolsPlugin.IMG_INVALID_BUILD_TOOL).createImage();
+
+		imagesToDispose.add(externalToolImage);
 		imagesToDispose.add(antImage);
 		imagesToDispose.add(builderImage);
+		imagesToDispose.add(invalidBuildToolImage);
 		
 		Composite topLevel = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -305,27 +310,6 @@ public final class BuilderPropertyPage extends PropertyPage {
 	}
 	
 	/**
-	 * Returns the image to use for the given command line
-	 * string.  Returns a default image if none could be computed.
-	 */
-	private Image imageForProgram(String commandLine) {
-		Image image = antImage;
-		int lastDot = commandLine.lastIndexOf('.');
-		String name = ""; //$NON-NLS-1$
-		if (lastDot > 0)
-			name = commandLine.substring(lastDot);
-		Program program = Program.findProgram(name);
-		if (program != null) {
-			ImageData data = program.getImageData();
-			if (data != null) {
-				image = new Image(getShell().getDisplay(), data);
-				imagesToDispose.add(image);
-			}
-		}
-		return image;
-	}
-	
-	/**
 	 * Moves an entry in the builder table to the given index.
 	 */
 	private void move(TableItem item, int index) {
@@ -394,12 +378,16 @@ public final class BuilderPropertyPage extends PropertyPage {
 		String builderID = command.getBuilderName();
 		if (builderID.equals(ExternalToolsBuilder.ID)) {
 			ExternalTool tool = ExternalTool.fromArgumentMap(command.getArguments());
+			if (tool == null) {
+				item.setText(ToolMessages.getString("BuilderPropertyPage.invalidBuildTool")); //$NON-NLS-1$
+				item.setImage(invalidBuildToolImage);
+				return;
+			}
 			item.setText(tool.getName());
 			if (tool.TOOL_TYPE_ANT.equals(tool.getType())) {
 				item.setImage(antImage);
 			} else {
-				Image image = imageForProgram(tool.getLocation());
-				item.setImage(image);
+				item.setImage(externalToolImage);
 			}
 		} else {
 			// Get the human-readable name of the builder
