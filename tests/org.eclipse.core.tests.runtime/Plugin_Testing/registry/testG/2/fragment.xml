@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<fragment
+   id="testG2"
+   name="TestG2 Plug-in"
+   version="1.0.0"
+
+   plugin-id="testG1"
+   plugin-version="1.0.0">
+  
+   <extension-point id="xptG2" name="Label xptG2" schema="schema/xptG2.exsd"/>
+
+</fragment>
