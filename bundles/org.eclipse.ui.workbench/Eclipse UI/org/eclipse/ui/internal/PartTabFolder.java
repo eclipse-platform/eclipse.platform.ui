@@ -13,7 +13,6 @@ package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -41,8 +40,7 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.presentations.StackDropResult;
 import org.eclipse.ui.presentations.StackPresentation;
 
-public class PartTabFolder extends LayoutPart implements ILayoutContainer,
-        IWorkbenchDragSource {
+public class PartTabFolder extends LayoutPart implements ILayoutContainer {
 
     private boolean active = false;
 
@@ -119,6 +117,16 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer,
         }
 
         public void setState(int newState) {
+        	if (newState == STATE_MINIMIZED) {
+        		if ((flags & SWT.MIN) == 0) {
+        			return;
+        		}
+        	}
+        	if (newState == STATE_MINIMIZED) {
+        		if ((flags & SWT.MAX) == 0) {
+        			return;
+        		}
+        	}
             PartTabFolder.this.setState(newState);
         }
     };
@@ -175,15 +183,6 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer,
         if (active) {
             showPart(newChild, position);
         }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.internal.IWorkbenchDropTarget#addDropTargets(java.util.Collection)
-     */
-    public void addDropTargets(Collection result) {
-        addDropTargets(result, this);
     }
 
     /*
@@ -488,15 +487,6 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer,
         return indexOf(current);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.internal.IWorkbenchDragSource#getType()
-     */
-    public int getType() {
-        return VIEW;
-    }
-
     /**
      * Returns the visible child.
      */
@@ -791,7 +781,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer,
                 .get(index)));
     }
 
-    private void setSelection(LayoutPart part) {
+    public void setSelection(LayoutPart part) {
         // TODO stefan: ok that i comment this out?
         //		if (current == part) {
         //			return;
@@ -923,15 +913,6 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer,
         if (current == null) {
             setSelection(part);
         }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.internal.IWorkbenchDropTarget#targetPartFor(org.eclipse.ui.internal.IWorkbenchDragSource)
-     */
-    public LayoutPart targetPartFor(IWorkbenchDragSource dragSource) {
-        return this;
     }
 
     /**
