@@ -49,6 +49,11 @@ public class CompareConfiguration {
 	 * Name of the show pseudo conflicts property (value <code>"SHOW_PSEUDO_CONFLICTS"</code>).
 	 */
 	public static final String SHOW_PSEUDO_CONFLICTS= "SHOW_PSEUDO_CONFLICTS"; //$NON-NLS-1$
+	/**
+	 * Name of the use outline view property (value <code>"USE_OUTLINE_VIEW"</code>).
+	 * @since 3.0
+	 */
+	public static final String USE_OUTLINE_VIEW= "USE_OUTLINE_VIEW"; //$NON-NLS-1$
 
 
 	private static final int WIDTH= 22;
