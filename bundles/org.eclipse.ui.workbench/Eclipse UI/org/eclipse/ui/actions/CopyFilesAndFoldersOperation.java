@@ -184,7 +184,7 @@ public class CopyFilesAndFoldersOperation {
 		shell.getDisplay().syncExec(query);
 		return result[0];
 	}
-	private void collectExistingFiles(IPath destinationPath, File[] sourceFiles, ArrayList copyFiles) {
+	private void collectExistingReadonlyFiles(IPath destinationPath, File[] sourceFiles, ArrayList copyFiles) {
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 
 		for (int i = 0; i < sourceFiles.length; i++) {
@@ -199,13 +199,13 @@ public class CopyFilesAndFoldersOperation {
 			folder = getFolder(newDestination);
 			if (folder != null) {
 				if (source.isDirectory()) {
-					collectExistingFiles(newDestinationPath, source.listFiles(), copyFiles);
+					collectExistingReadonlyFiles(newDestinationPath, source.listFiles(), copyFiles);
 				}
 			}			
 			else {
 				IFile file = getFile(newDestination);
 				
-				if (file != null) {
+				if (file != null && file.isReadOnly()) {
 					copyFiles.add(file);
 				}
 			}
@@ -218,7 +218,7 @@ public class CopyFilesAndFoldersOperation {
 	 * @param copyResources resources that may exist in the destination
 	 * @param existing holds the collected existing files 
 	 */
-	private void collectExistingFiles(IPath destinationPath, IResource[] copyResources, ArrayList existing) {
+	private void collectExistingReadonlyFiles(IPath destinationPath, IResource[] copyResources, ArrayList existing) {
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 
 		for (int i = 0; i < copyResources.length; i++) {
@@ -236,7 +236,7 @@ public class CopyFilesAndFoldersOperation {
 			
 				if (sourceFolder != null) {
 					try {
-						collectExistingFiles(newDestinationPath, sourceFolder.members(), existing);
+						collectExistingReadonlyFiles(newDestinationPath, sourceFolder.members(), existing);
 					}
 					catch (CoreException exception) {
 						recordError(exception); 
@@ -246,7 +246,7 @@ public class CopyFilesAndFoldersOperation {
 			else {
 				IFile file = getFile(newDestination);
 				
-				if (file != null) {
+				if (file != null && file.isReadOnly()) {
 					existing.add(file);
 				}
 			}
@@ -918,7 +918,7 @@ public class CopyFilesAndFoldersOperation {
 		ArrayList copyFiles = new ArrayList();
 		ArrayList rejectedFiles = new ArrayList();
 		
-		collectExistingFiles(destination.getFullPath(), sourceResources, copyFiles);
+		collectExistingReadonlyFiles(destination.getFullPath(), sourceResources, copyFiles);
 		if (copyFiles.size() > 0) {
 			IFile[] files = (IFile[]) copyFiles.toArray(new IFile[copyFiles.size()]);
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -937,7 +937,7 @@ public class CopyFilesAndFoldersOperation {
 		ArrayList existingFiles = new ArrayList();
 		ArrayList rejectedFiles = new ArrayList();
 					
-		collectExistingFiles(destination.getFullPath(), sourceFiles, existingFiles);
+		collectExistingReadonlyFiles(destination.getFullPath(), sourceFiles, existingFiles);
 		if (existingFiles.size() > 0) {
 			IFile[] files = (IFile[]) existingFiles.toArray(new IFile[existingFiles.size()]);
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
