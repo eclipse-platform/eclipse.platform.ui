@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- File written by PDE 1.0 -->
 <plugin
    id="org.eclipse.update.tests.core"
    name="Tests"
    version="0.0.1"
    class="org.eclipse.update.tests.UpdateTestsPlugin">
+
+<runtime>
+   <library name="updatetests.jar">
+      <export name="*"/>
+   </library>
+</runtime>
 <requires>
    <import plugin="org.eclipse.core.runtime"/>
    <import plugin="org.junit"/>
@@ -12,14 +17,8 @@
    <import plugin="org.eclipse.core.resources"/>
    <import plugin="org.eclipse.update.core"/>
    <import plugin="org.eclipse.help"/>
-   <import plugin="org.eclipse.tomcat"/>
 </requires>
 
-<runtime>
-   <library name="updatetests.jar">
-      <export name="*"/>
-   </library>
-</runtime>
 
 <extension
       id="feature1"
@@ -35,4 +34,5 @@
          class="org.eclipse.update.tests.implementation.SiteFTPFactory">
    </site-factory>
 </extension>
+
 </plugin>

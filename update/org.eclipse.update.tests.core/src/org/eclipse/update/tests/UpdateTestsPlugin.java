@@ -5,7 +5,6 @@ package org.eclipse.update.tests;
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.IAppServer;
-import org.eclipse.help.internal.server.HelpServer;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
 /**
@@ -25,7 +24,8 @@ public class UpdateTestsPlugin extends Plugin {
 		// set dynamic address
 		appServer = getAppServer();
 		if (appServer != null){
-			appServer.setAddress(null, 0);
+			appServer.setAddress("127.0.0.1",1333);
+			//appServer.setAddress(null,0);
 		}
 	}
 
@@ -54,7 +54,7 @@ public class UpdateTestsPlugin extends Plugin {
 	public void shutdown() throws CoreException {
 		// stop the web app
 		if (getAppServer() != null) {
-			getAppServer().remove("updatetests", "org.eclipse.update.tests");
+			getAppServer().remove("updatetests", "org.eclipse.update.tests.core");
 			getAppServer().stop();
 		}
 		super.shutdown();

@@ -45,10 +45,12 @@ public class TestRevert extends UpdateManagerTestCase {
 		
 		IInstallConfiguration old = site.getCurrentConfiguration();
 		ConfigurationPolicy excludepolicy = new ConfigurationPolicy(IPlatformConfiguration.ISitePolicy.USER_EXCLUDE);
-		((ConfigurationSiteModel)old.getConfigurationSites()[0]).setConfigurationPolicyModel((ConfigurationPolicyModel)excludepolicy);
+		IConfigurationSite oldConfigSite = old.getConfigurationSites()[0];
+		((ConfigurationSiteModel)oldConfigSite).setConfigurationPolicyModel((ConfigurationPolicyModel)excludepolicy);
 		
 		IInstallConfiguration newConfig = site.cloneCurrentConfiguration(null,"new Label");
 		IConfigurationSite configSite = newConfig.getConfigurationSites()[0];
+		if (!configSite.getSite().equals(oldConfigSite.getSite())) fail("Config sites are not equals");
 		site.addConfiguration(newConfig);		
 		IFeatureReference installedFeature = configSite.install(feature,null);
 		site.save();
@@ -58,6 +60,7 @@ public class TestRevert extends UpdateManagerTestCase {
 		IFeature feature2 = featureRef2.getFeature();
 		IInstallConfiguration newConfig2 = site.cloneCurrentConfiguration(null,"new Label2");
 		IConfigurationSite anotherConfigSite = newConfig2.getConfigurationSites()[0];
+		if (!anotherConfigSite.getSite().equals(oldConfigSite.getSite())) fail("Config sites are not equals");		
 		site.addConfiguration(newConfig2);		
 		anotherConfigSite.install(feature2,null);
 		site.save();
@@ -74,13 +77,22 @@ public class TestRevert extends UpdateManagerTestCase {
 		
 		// teh current one points to a real fature
 		// does not throw error.
-		IConfigurationSite configSite2 = site.getCurrentConfiguration().getConfigurationSites()[0];
-		int oldNumber = old.getConfigurationSites()[0].getConfiguredFeatures().length;
-		int newNumber = site.getCurrentConfiguration().getConfigurationSites()[0].getConfiguredFeatures().length;		
+		IConfigurationSite newConfigSite = null;
+		IConfigurationSite[] sites = site.getCurrentConfiguration().getConfigurationSites();
+		for (int i = 0; i < sites.length; i++) {
+			if (sites[i].getSite().equals(oldConfigSite.getSite())){
+				 newConfigSite = sites[i];
+				 break;
+			}
+		}
+		if (newConfigSite==null) fail("Cannot find configuration site");
+
+		int oldNumber = oldConfigSite.getConfiguredFeatures().length;
+		int newNumber = newConfigSite.getConfiguredFeatures().length;		
 		assertTrue("Wrong number of configured features",oldNumber==newNumber);
 		
 		// test only 2 install config in local site
-		assertTrue("wrong number of unconfigured features",site.getCurrentConfiguration().getConfigurationSites()[0].getConfigurationPolicy().getUnconfiguredFeatures().length==2);
+		assertTrue("wrong number of unconfigured features",newConfigSite.getConfigurationPolicy().getUnconfiguredFeatures().length==2);
 		
 		// cleanup
 		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocationURL(),SiteLocal.SITE_LOCAL_FILE).getFile());

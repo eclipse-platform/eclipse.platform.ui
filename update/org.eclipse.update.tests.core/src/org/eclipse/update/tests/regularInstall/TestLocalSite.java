@@ -91,6 +91,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		ILocalSite site = SiteManager.getLocalSite();
 		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);
 		IFeature feature = remoteSite.getFeatureReferences()[0].getFeature();
+		int oldNumber = site.getCurrentConfiguration().getConfigurationSites().length;
 		
 		// we are not checking if this is read only
 		IInstallConfiguration newConfig = site.cloneCurrentConfiguration(null,"new Label");
@@ -120,8 +121,8 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		// test only 2 install config in local site
 		assertTrue("wrong number of history in Local site",site.getConfigurationHistory().length==2);
 		
-		// test only 1 site in current config
-		assertTrue("Wrong number of config sites in current config",site.getCurrentConfiguration().getConfigurationSites().length==1);
+		// test same # of sites in current config
+		assertTrue("Wrong number of config sites in current config",site.getCurrentConfiguration().getConfigurationSites().length==oldNumber);
 		
 		//test only one feature for the site
 		assertTrue("wrong number of configured features for config site",site.getCurrentConfiguration().getConfigurationSites()[0].getConfiguredFeatures().length==1);
@@ -165,6 +166,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		ILocalSite site = SiteManager.getLocalSite();
 		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);
 		IFeature feature = remoteSite.getFeatureReferences()[0].getFeature();
+		int oldNumber = site.getCurrentConfiguration().getConfigurationSites().length;		
 		
 		// we are not checking if this is read only
 		IInstallConfiguration newConfig = site.cloneCurrentConfiguration(null,"new Label");
@@ -200,8 +202,8 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		// test only 2 install config in local site
 		assertTrue("wrong number of history in Local site",site.getConfigurationHistory().length==2);
 		
-		// test only 1 site in current config
-		assertTrue("Wrong number of config sites in current config",site.getCurrentConfiguration().getConfigurationSites().length==1);
+		// test # of sites in current config
+		assertTrue("Wrong number of config sites in current config",site.getCurrentConfiguration().getConfigurationSites().length==oldNumber);
 		
 		//test only one feature for the site
 		assertTrue("wrong number of configured features for config site",site.getCurrentConfiguration().getConfigurationSites()[0].getConfiguredFeatures().length==1);
@@ -248,6 +250,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		InternalSiteManager.localSite=null;
 		site = SiteManager.getLocalSite();
 		feature = remoteSite.getFeatureReferences()[0].getFeature();
+		int oldNumber = site.getCurrentConfiguration().getConfigurationSites().length;		
 		
 		// check
 		// there are 2 configuration
@@ -268,8 +271,8 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		// test only 2 install config in local site
 		assertTrue("wrong number of history in Local site",site.getConfigurationHistory().length==2);
 		
-		// test only 1 site in current config
-		assertTrue("Wrong number of config sites in current config",site.getCurrentConfiguration().getConfigurationSites().length==1);
+		// test same number of sites in current config
+		assertTrue("Wrong number of config sites in current config",site.getCurrentConfiguration().getConfigurationSites().length==oldNumber);
 		
 		//test only one feature for the site
 		assertTrue("wrong number of configured features for config site",site.getCurrentConfiguration().getConfigurationSites()[0].getConfiguredFeatures().length==1);
