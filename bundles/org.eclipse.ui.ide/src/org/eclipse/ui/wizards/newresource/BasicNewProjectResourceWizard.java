@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -52,6 +53,7 @@ import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.dialogs.WizardNewProjectReferencePage;
 import org.eclipse.ui.ide.IDE;
+
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -203,7 +205,7 @@ private IProject createNewProject() {
 			// CoreExceptions are handled above, but unexpected runtime exceptions and errors may still occur.
 			IDEWorkbenchPlugin.getDefault().getLog().log(
 				new Status(
-					Status.ERROR, 
+					IStatus.ERROR, 
 					IDEWorkbenchPlugin.IDE_WORKBENCH, 
 					0, 
 					t.toString(),
