@@ -318,6 +318,8 @@ public class DebugViewLabelDecorator extends LabelProvider implements ILabelDeco
 						synchronized(resumedThreads) {
 							if (!thread.isTerminated() && !thread.isSuspended()) {
 								resumedThreads.add(thread);
+								// no need to compute label for "running" stack frame
+								continue;
 							}
 						}
 					}
