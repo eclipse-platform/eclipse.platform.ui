@@ -30,7 +30,7 @@ HTML {
  
 BODY {
 	font: 8pt Tahoma;
-	background:ActiveBorder;
+	background:ButtonFace;
 	border:1px black solid;
 	padding:0px;
 	margin:0px;
@@ -39,11 +39,11 @@ BODY {
 	scrollbar-shadow-color:ThreeDShadow;
 	scrollbar-arrow-color:#000000;
 	scrollbar-darkshadow-color:Window;
-	scrollbar-face-color:ActiveBorder;
+	scrollbar-face-color:ButtonFace;
 }
 
 TABLE {
-	background:ActiveBorder;
+	background:ButtonFace;
 	font: 8pt Tahoma;
 }
 

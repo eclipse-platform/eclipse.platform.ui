@@ -29,7 +29,7 @@
 	scrollbar-shadow-color:ThreeDShadow;
 	scrollbar-arrow-color:#000000;
 	scrollbar-darkshadow-color:Window;
-	scrollbar-face-color:ActiveBorder;	
+	scrollbar-face-color:ButtonFace;	
 }  
 </style>
 
@@ -37,7 +37,7 @@
 
 <body>
 
-<div id="bannerTitle" style="background:ActiveBorder; width:100%; position:absolute; left:10px; top:20; font: 14pt icon">
+<div id="bannerTitle" style="background:ButtonFace; width:100%; position:absolute; left:10px; top:20; font: 14pt icon">
 	<%=UrlUtil.getRequestParameter(request, "title") != null ?UrlUtil.getRequestParameter(request, "title") : WebappResources.getString("Bookshelf", request)%>
 </div>
 

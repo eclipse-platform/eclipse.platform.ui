@@ -33,7 +33,7 @@ BODY {
 	scrollbar-shadow-color:ThreeDShadow;
 	scrollbar-arrow-color:#000000;
 	scrollbar-darkshadow-color:Window;
-	scrollbar-face-color:ActiveBorder;
+	scrollbar-face-color:ButtonFace;
 }
 
 
@@ -66,7 +66,7 @@ TABLE {
 }
      
 .active { 
-	background:ActiveBorder;
+	background:ButtonFace;
 	padding:2px;
 }
 

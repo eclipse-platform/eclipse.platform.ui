@@ -31,7 +31,7 @@ HTML {
  }
  
 BODY {
-	background:ActiveBorder;
+	background:ButtonFace;
 }
 
 #titleText {

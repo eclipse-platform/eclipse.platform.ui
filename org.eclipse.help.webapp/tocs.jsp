@@ -29,7 +29,7 @@ BODY {
 	scrollbar-shadow-color:ThreeDShadow;
 	scrollbar-arrow-color:#000000;
 	scrollbar-darkshadow-color:Window;
-	scrollbar-face-color:ActiveBorder;
+	scrollbar-face-color:ButtonFace;
 }
 
 A {
@@ -53,7 +53,7 @@ DIV {
 }
      
 DIV.active { 
-	background:ActiveBorder;
+	background:ButtonFace;
 	background-image: url("images/container_obj.gif");
 	background-position:center left;
 	background-repeat:no-repeat;
@@ -66,7 +66,7 @@ DIV.active {
 }
      
 #bookshelf.active { 
-	background:ActiveBorder;
+	background:ButtonFace;
 	background-image: url("images/home_obj.gif");
 	background-position:center left;
 	background-repeat:no-repeat;

@@ -42,10 +42,10 @@ BODY {
 
 /* tabs at the bottom */
 .tab {
-	background:ActiveBorder;
+	background:ButtonFace;
 	margin:0px;
 	padding:0px;
- 	border:1px ActiveBorder solid;
+ 	border:1px ButtonFace solid;
 	cursor:default;
 	align:center;
 }

@@ -27,7 +27,7 @@ BODY {
 	scrollbar-shadow-color:ThreeDShadow;
 	scrollbar-arrow-color:#000000;
 	scrollbar-darkshadow-color:Window;
-	scrollbar-face-color:ActiveBorder;
+	scrollbar-face-color:ButtonFace;
 }
 
 UL { 
@@ -89,14 +89,14 @@ A.leaf {
 
 
 A.activeNode { 
-	background:ActiveBorder;
+	background:ButtonFace;
 	background-image: url("images/container_obj.gif");
 	background-position:center left;
 	background-repeat:no-repeat;
 }
      
 A.activeLeaf { 
-	background:ActiveBorder;
+	background:ButtonFace;
 	background-image: url("images/topic_obj.gif");
 	background-position:center left;
 	background-repeat:no-repeat;
