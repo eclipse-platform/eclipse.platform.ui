@@ -127,7 +127,7 @@ class ImplicitJobs {
 					join = true;
 					//if this job has a rule, then we are essentially acquiring a lock
 					if (rule != null)
-						manager.getLockManager().addLockThread(Thread.currentThread());
+						manager.getLockManager().addLockThread(currentThread);
 				}
 				threadJobs.put(currentThread, threadJob);
 			}
@@ -162,12 +162,14 @@ class ImplicitJobs {
 	 * Returns a new or reused ThreadJob instance.
 	 */
 	private ThreadJob newThreadJob(ISchedulingRule rule) {
-		if (jobCache != null) {
+// TODO: we removed this when trying to track down another problem.
+// can probably be added back now.
+/*		if (jobCache != null) {
 			ThreadJob job = jobCache;
 			job.setRule(rule);
 			jobCache = null;
 			return job;
-		}
+		} */
 		return new ThreadJob(rule);
 	}
 	/**
