@@ -160,6 +160,8 @@ public class BuilderNatureTest extends AbstractBuilderTest {
 
 		//now add the snow nature back and ensure snow builder runs
 		builder.reset();
+		builder.addExpectedLifecycleEvent(SnowBuilder.SET_INITIALIZATION_DATA);
+		builder.addExpectedLifecycleEvent(SnowBuilder.STARTUP_ON_INITIALIZE);
 		builder.addExpectedLifecycleEvent(SnowBuilder.SNOW_BUILD_EVENT);
 		try {
 			IProjectDescription desc = project.getDescription();
@@ -197,6 +199,8 @@ public class BuilderNatureTest extends AbstractBuilderTest {
 
 		//now re-enable the nature and ensure that the delta was null
 		builder.reset();
+		builder.addExpectedLifecycleEvent(SnowBuilder.SET_INITIALIZATION_DATA);
+		builder.addExpectedLifecycleEvent(SnowBuilder.STARTUP_ON_INITIALIZE);
 		builder.addExpectedLifecycleEvent(SnowBuilder.SNOW_BUILD_EVENT);
 		try {
 			IProjectDescription desc = project.getDescription();

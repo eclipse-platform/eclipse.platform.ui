@@ -281,9 +281,13 @@ public class BuilderTest extends AbstractBuilderTest {
 			fail("4.99", e);
 		}
 		// Build the project
+		// Note that since the arguments have changed, the identity of the build
+		// command is different so a new builder will be instantiated
 		try {
 			dirty(file1);
 			project1.build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
+			verifier.addExpectedLifecycleEvent(TestBuilder.SET_INITIALIZATION_DATA);
+			verifier.addExpectedLifecycleEvent(TestBuilder.STARTUP_ON_INITIALIZE);
 			verifier.addExpectedLifecycleEvent(TestBuilder.DEFAULT_BUILD_ID);
 			verifier.assertLifecycleEvents("5.2");
 		} catch (CoreException e) {
@@ -307,6 +311,8 @@ public class BuilderTest extends AbstractBuilderTest {
 		}
 		// Build
 		try {
+			verifier.addExpectedLifecycleEvent(TestBuilder.SET_INITIALIZATION_DATA);
+			verifier.addExpectedLifecycleEvent(TestBuilder.STARTUP_ON_INITIALIZE);
 			verifier.addExpectedLifecycleEvent("Project1Build1");
 			//second builder is touched for the first time
 			verifier.addExpectedLifecycleEvent(TestBuilder.SET_INITIALIZATION_DATA);
@@ -413,6 +419,8 @@ public class BuilderTest extends AbstractBuilderTest {
 			verifier.addExpectedLifecycleEvent(TestBuilder.SET_INITIALIZATION_DATA);
 			verifier.addExpectedLifecycleEvent(TestBuilder.STARTUP_ON_INITIALIZE);
 			verifier.addExpectedLifecycleEvent("Build1");
+			verifier.addExpectedLifecycleEvent(TestBuilder.SET_INITIALIZATION_DATA);
+			verifier.addExpectedLifecycleEvent(TestBuilder.STARTUP_ON_INITIALIZE);
 			verifier.addExpectedLifecycleEvent("Build2");
 			verifier.assertLifecycleEvents("4.0 ");
 		} catch (CoreException e) {
@@ -552,6 +560,8 @@ public class BuilderTest extends AbstractBuilderTest {
 			verifier.addExpectedLifecycleEvent(TestBuilder.SET_INITIALIZATION_DATA);
 			verifier.addExpectedLifecycleEvent(TestBuilder.STARTUP_ON_INITIALIZE);
 			verifier.addExpectedLifecycleEvent("Build1");
+			verifier.addExpectedLifecycleEvent(TestBuilder.SET_INITIALIZATION_DATA);
+			verifier.addExpectedLifecycleEvent(TestBuilder.STARTUP_ON_INITIALIZE);
 			verifier.addExpectedLifecycleEvent("Build2");
 			verifier.assertLifecycleEvents("4.0 ");
 		} catch (CoreException e) {

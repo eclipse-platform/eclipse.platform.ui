@@ -44,22 +44,19 @@ public class TestCloseNoSave extends WorkspaceSerializationTest {
 	}
 
 	public void test2() throws CoreException {
-		/* projects should exist, but files shouldn't.  Refresh local should bring in files */
+		// projects should exist immediately due to snapshot - files may or 
+		// may not exist due to snapshot timing. All resources should exist after refresh.
 		IResource[] members = workspace.getRoot().members();
 		assertEquals("1.0", 1, members.length);
 		assertTrue("1.1", members[0].getType() == IResource.PROJECT);
 		IProject project = (IProject) members[0];
 		assertTrue("1.2", project.exists());
-		members = project.members();
-		assertEquals("1.3", 1, members.length);
-		assertEquals("1.3a", IProjectDescription.DESCRIPTION_FILE_NAME, members[0].getName());
 		IFolder folder = project.getFolder(FOLDER);
 		IFile file = folder.getFile(FILE);
-		assertTrue("1.4", !folder.exists());
-		assertTrue("1.5", !file.exists());
 
 		//opening the project does an automatic local refresh	
-		project.open(null);
+		if (!project.isOpen())
+			project.open(null);
 
 		assertEquals("2.0", 2, project.members().length);
 		assertTrue("2.1", folder.exists());
