@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others. All rights reserved.
- * This program and the accompanying materials are made available under the
- * terms of the Common Public License v1.0 which accompanies this distribution,
- * and is available at http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004 IBM Corporation and others. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Common Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: IBM Corporation - initial API and implementation
  ******************************************************************************/
@@ -98,8 +98,7 @@ public class BrowserIntroPartImplementation extends
     private Action homeAction = new Action() {
 
         {
-            setToolTipText(IntroPlugin
-                    .getString("Browser.homeButton_tooltip")); //$NON-NLS-1$
+            setToolTipText(IntroPlugin.getString("Browser.homeButton_tooltip")); //$NON-NLS-1$
             setImageDescriptor(ImageUtil.createImageDescriptor("home_nav.gif")); //$NON-NLS-1$
         }
 
@@ -129,8 +128,7 @@ public class BrowserIntroPartImplementation extends
         addToolBarActions();
 
         if (!getModelRoot().hasValidConfig()) {
-            browser.setText(IntroPlugin
-                    .getString("Browser.invalidConfig")); //$NON-NLS-1$
+            browser.setText(IntroPlugin.getString("Browser.invalidConfig")); //$NON-NLS-1$
             return;
         }
 
@@ -187,7 +185,7 @@ public class BrowserIntroPartImplementation extends
         if (browser != null) {
             boolean success = browser.setText(html.toString());
             if (!success)
-                Log.error("Unable to set HTML on the browser", null); //$NON-NLS-1$
+                    Log.error("Unable to set HTML on the browser", null); //$NON-NLS-1$
         }
         // print the HTML if we are in debug mode and have tracing turned on
         if (IntroPlugin.getDefault().isDebugging()) {
@@ -206,7 +204,7 @@ public class BrowserIntroPartImplementation extends
      */
     private IntroHTMLGenerator getHTMLGenerator() {
         if (htmlGenerator == null)
-            htmlGenerator = new IntroHTMLGenerator();
+                htmlGenerator = new IntroHTMLGenerator();
 
         return htmlGenerator;
     }
@@ -233,8 +231,8 @@ public class BrowserIntroPartImplementation extends
         if (propId == IntroModelRoot.CURRENT_PAGE_PROPERTY_ID) {
             String pageId = getModelRoot().getCurrentPageId();
             if (pageId == null || pageId.equals("")) //$NON-NLS-1$
-                // page ID was not set properly. exit.
-                return;
+                    // page ID was not set properly. exit.
+                    return;
             generateDynamicContentForPage(getModelRoot().getCurrentPage());
         }
     }

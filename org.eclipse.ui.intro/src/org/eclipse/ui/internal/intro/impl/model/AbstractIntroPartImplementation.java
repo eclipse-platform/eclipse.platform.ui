@@ -114,8 +114,8 @@ public abstract class AbstractIntroPartImplementation {
 
         // quick exit.
         if (!history.isEmpty() && getCurrentLocation().equals(location))
-            // resetting the same location is useless.
-            return;
+                // resetting the same location is useless.
+                return;
 
         doUpdateHistory(location);
     }
@@ -162,8 +162,8 @@ public abstract class AbstractIntroPartImplementation {
 
     protected void navigateBackward() {
         if (badNavigationLocation(navigationLocation - 1))
-            // do nothing. We are at the begining.
-            return;
+                // do nothing. We are at the begining.
+                return;
         --navigationLocation;
     }
 
@@ -174,8 +174,8 @@ public abstract class AbstractIntroPartImplementation {
      */
     protected void navigateForward() {
         if (badNavigationLocation(navigationLocation + 1))
-            // do nothing. We are at the begining.
-            return;
+                // do nothing. We are at the begining.
+                return;
         ++navigationLocation;
     }
 

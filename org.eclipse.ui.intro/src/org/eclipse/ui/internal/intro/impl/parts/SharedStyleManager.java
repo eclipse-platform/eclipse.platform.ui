@@ -25,6 +25,12 @@ public class SharedStyleManager {
     protected AbstractIntroPage page;
     protected Bundle bundle;
 
+    /*
+     * StringBuffer to return when paths can not be created. Doing this for
+     * memory
+     */
+    protected static StringBuffer emptyBuffer = new StringBuffer("");
+
     SharedStyleManager() {
     }
 
@@ -152,9 +158,11 @@ public class SharedStyleManager {
     private String createImageKey(AbstractIntroPage page, IntroLink link,
             String qualifier) {
         StringBuffer buff = null;
-        if (link != null)
+        if (link != null) {
             buff = createPathKey(link);
-        else {
+            if (buff == null)
+                    return "";
+        } else {
             buff = new StringBuffer();
             buff.append(page.getId());
         }
@@ -163,12 +171,23 @@ public class SharedStyleManager {
         return buff.toString();
     }
 
+    /**
+     * Creates a key for the given element. Returns null if any id is null along
+     * teh path.
+     * 
+     * @param element
+     * @return
+     */
     protected StringBuffer createPathKey(AbstractIntroIdElement element) {
+        if (element.getId() == null)
+                return null;
         StringBuffer buffer = new StringBuffer(element.getId());
         AbstractBaseIntroElement parent = (AbstractBaseIntroElement) element
                 .getParent();
         while (parent != null
                 && !parent.isOfType(AbstractIntroElement.MODEL_ROOT)) {
+            if (parent.getId() == null)
+                    return null;
             buffer.insert(0, parent.getId() + ".");
             parent = (AbstractBaseIntroElement) parent.getParent();
         }

@@ -90,7 +90,7 @@ public class FormsWidgetFactory {
         case AbstractIntroElement.DIV:
             IntroDiv group = (IntroDiv) element;
             Control c = createGroup(parent, group);
-            updateLayoutData(c);
+            updateLayoutData(c, element);
             // c must be a composite.
             Composite newParent = (Composite) c;
             if (c instanceof Section)
@@ -103,25 +103,40 @@ public class FormsWidgetFactory {
         case AbstractIntroElement.LINK:
             IntroLink link = (IntroLink) element;
             c = createImageHyperlink(parent, link);
-            updateLayoutData(c);
+            updateLayoutData(c, element);
             break;
         case AbstractIntroElement.TEXT:
             IntroText text = (IntroText) element;
             c = createText(parent, text);
-            updateLayoutData(c);
+            updateLayoutData(c, element);
             break;
+        case AbstractIntroElement.IMAGE:
+            String imageText = ((IntroImage) element).getAlt();
+            if (imageText == null)
+                    break;
+            c = createText(parent, imageText);
+            updateLayoutData(c, element);
+            break;
+        case AbstractIntroElement.HTML:
+            IntroText htmlText = ((IntroHTML) element).getIntroText();
+            if (htmlText == null)
+                    break;
+            c = createText(parent, htmlText);
+            updateLayoutData(c, element);
+            break;
+
 
         default:
             break;
         }
     }
 
-    private void updateLayoutData(Control c) {
-        if (c instanceof Hyperlink)
-                return;
+    private void updateLayoutData(Control c, AbstractIntroElement element) {
         TableWrapData td = new TableWrapData(TableWrapData.FILL,
                 TableWrapData.TOP);
         td.grabHorizontal = true;
+        td.colspan = styleManager
+                .getColSpan((AbstractBaseIntroElement) element);
         c.setLayoutData(td);
     }
 
@@ -224,17 +239,20 @@ public class FormsWidgetFactory {
      */
     private Control createText(Composite parent, IntroText text) {
         if (text.isFormatted()) {
-
             FormText formText = toolkit.createFormText(parent, true);
             formText.addHyperlinkListener(hyperlinkAdapter);
             formText.setLayoutData(new TableWrapData(TableWrapData.FILL,
                     TableWrapData.FILL));
             formText.setText(generateFormText(text.getText()), true, true);
             return formText;
-        } else {
-            Label label = toolkit.createLabel(parent, text.getText(), SWT.WRAP);
-            return label;
-        }
+        } else
+            return createText(parent, text.getText());
+    }
+
+
+    private Control createText(Composite parent, String text) {
+        Label label = toolkit.createLabel(parent, text, SWT.WRAP);
+        return label;
     }
 
 

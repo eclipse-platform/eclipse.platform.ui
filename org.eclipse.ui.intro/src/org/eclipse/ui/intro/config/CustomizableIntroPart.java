@@ -56,12 +56,12 @@ public final class CustomizableIntroPart extends IntroPart {
         IAdapterFactory factory = new IAdapterFactory() {
 
             public Class[] getAdapterList() {
-                return new Class[] { StandbyPart.class};
+                return new Class[] { StandbyPart.class };
             }
 
             public Object getAdapter(Object adaptableObject, Class adapterType) {
                 if (!(adaptableObject instanceof CustomizableIntroPart))
-                    return null;
+                        return null;
 
                 if (adapterType.equals(StandbyPart.class)) {
                     return getStandbyPart();
@@ -96,18 +96,18 @@ public final class CustomizableIntroPart extends IntroPart {
             // we have a valid config contribution, get presentation.
             presentation = model.getPresentation();
             if (presentation != null)
-                presentation.init(this);
+                    presentation.init(this);
             standbyPart = new StandbyPart(model);
             standbyPart.init(this);
         }
 
         // REVISIT: make sure this is handled better.
         if (model == null || !model.hasValidConfig())
-            DialogUtil.displayErrorMessage(site.getShell(),
-                    "Could not find a valid configuration for Intro Part: " //$NON-NLS-1$
-                            + ModelLoaderUtil.getLogString(
-                                    getConfigurationElement(), "id") //$NON-NLS-1$
-                            + "\nCheck Log View for details.", null); //$NON-NLS-1$
+                DialogUtil.displayErrorMessage(site.getShell(),
+                        "Could not find a valid configuration for Intro Part: " //$NON-NLS-1$
+                                + ModelLoaderUtil.getLogString(
+                                        getConfigurationElement(), "id") //$NON-NLS-1$
+                                + "\nCheck Log View for details.", null); //$NON-NLS-1$
 
     }
 
@@ -179,9 +179,9 @@ public final class CustomizableIntroPart extends IntroPart {
      */
     public void setFocus() {
         if (presentation != null)
-            presentation.setFocus();
+                presentation.setFocus();
         if (standbyPart != null)
-            standbyPart.setFocus();
+                standbyPart.setFocus();
     }
 
     /*
@@ -193,9 +193,9 @@ public final class CustomizableIntroPart extends IntroPart {
         super.dispose();
         // call dispose on both parts.
         if (presentation != null)
-            presentation.dispose();
+                presentation.dispose();
         if (standbyPart != null)
-            standbyPart.dispose();
+                standbyPart.dispose();
         // clear all loaded models since we are disposing of the Intro Part.
         IntroPlugin.getDefault().getExtensionPointManager().clear();
     }
@@ -208,4 +208,17 @@ public final class CustomizableIntroPart extends IntroPart {
 
     }
 
+    /**
+     * Returns the primary control associated with this Intro part.
+     * 
+     * @return the SWT control which displays this Intro part's content, or
+     *         <code>null</code> if this standby part's controls have not yet
+     *         been created.
+     */
+    public Control getControl() {
+        return container;
+    }
 }
+
+
+

@@ -109,29 +109,38 @@ public class PageStyleManager extends SharedStyleManager {
 
     public int getPageNumberOfColumns() {
         String key = page.getId() + ".layout.ncolumns"; //$NON-NLS-1$
-        int ncolumns = 0;
-        String value = getProperty(key);
-        try {
-            ncolumns = Integer.parseInt(value);
-        } catch (NumberFormatException e) {
-        }
-        return ncolumns;
+        return getIntProperty(key);
     }
 
 
     public int getNumberOfColumns(IntroDiv group) {
-        String key = createPathKey(group).append(".layout.ncolumns").toString();
+        StringBuffer buff = createPathKey(group);
+        if (buff == null)
+                return 1;
+        String key = buff.append(".layout.ncolumns").toString();
         return getIntProperty(key);
     }
 
+    public int getColSpan(AbstractBaseIntroElement element) {
+        StringBuffer buff = createPathKey(element);
+        if (buff == null)
+                return 1;
+        String key = buff.append(".layout.colspan").toString();
+        int colspan = getIntProperty(key);
+        if (colspan != 0)
+            return colspan;
+        else
+            return 1;
+    }
+
     private int getIntProperty(String key) {
-        int ncolumns = 0;
+        int intValue = 0;
         String value = getProperty(key);
         try {
-            ncolumns = Integer.parseInt(value);
+            intValue = Integer.parseInt(value);
         } catch (NumberFormatException e) {
         }
-        return ncolumns;
+        return intValue;
     }
 
     public int getVerticalLinkSpacing() {
@@ -156,11 +165,16 @@ public class PageStyleManager extends SharedStyleManager {
      * </p>
      * If not found, use the default description style.
      * 
+     * Returns null if no default style found, or any id in path is null.
+     * 
      * @param group
      * @return
      */
     public String getDescription(IntroDiv group) {
-        String key = createPathKey(group).append(".description-id").toString();
+        StringBuffer buff = createPathKey(group);
+        if (buff == null)
+                return null;
+        String key = buff.append(".description-id").toString();
         return doGetDescription(group, key);
     }
 
@@ -173,10 +187,14 @@ public class PageStyleManager extends SharedStyleManager {
      * </p>
      * If not found, use the default description style.
      * 
+     * Returns null if no default style found, or any id in path is null.
+     * 
      * @param group
      * @return
      */
     public String getPageDescription() {
+        if (page.getId() == null)
+                return null;
         String key = page.getId() + ".description-id";
         return doGetDescription(page, key);
     }
@@ -273,55 +291,6 @@ public class PageStyleManager extends SharedStyleManager {
         if (value == null)
                 value = "true"; //$NON-NLS-1$
         return value.toLowerCase().equals("true"); //$NON-NLS-1$
-    }
-
-
-
-    //********* remove later ***********
-
-    private String findTextFromIdXX(AbstractIntroContainer parent,
-            String childId) {
-        AbstractIntroElement child = parent.findChild(childId);
-        if (child != null && child.isOfType(AbstractIntroElement.TEXT))
-                return ((IntroText) child).getText();
-        return null;
-    }
-
-    /**
-     * Returns the first child text element with the given style-id. This search
-     * is deep and it will look past first level children.
-     * 
-     * @return
-     */
-    private String findTextFromStyleIdXX(AbstractIntroContainer parent,
-            String styleId) {
-        String text = doFindTextWithClassIdXXX(parent, styleId);
-        if (text != null)
-                return text;
-        AbstractIntroContainer[] containers = (AbstractIntroContainer[]) parent
-                .getChildrenOfType(AbstractIntroElement.ABSTRACT_CONTAINER);
-        for (int i = 0; i < containers.length; i++) {
-            text = findTextFromStyleId(containers[i], styleId);
-            if (text != null)
-                    return text;
-        }
-        return null;
-    }
-
-    /**
-     * Returns the first direct child text element with the given style-id.
-     * 
-     * @return
-     */
-    private String doFindTextWithClassIdXXX(AbstractIntroContainer container,
-            String styleId) {
-        IntroText[] allText = (IntroText[]) container
-                .getChildrenOfType(AbstractIntroElement.TEXT);
-        for (int i = 0; i < allText.length; i++) {
-            if (allText[i].getClassId().equals(styleId))
-                    return allText[i].getText();
-        }
-        return null;
     }
 
 

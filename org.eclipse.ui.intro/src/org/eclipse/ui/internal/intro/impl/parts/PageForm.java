@@ -182,7 +182,9 @@ public class PageForm implements IIntroConstants, IPropertyListener {
     public void propertyChanged(Object source, int propId) {
         if (propId == IntroModelRoot.CURRENT_PAGE_PROPERTY_ID) {
             // make sure to avoid flicker.
-            pageForm.setRedraw(false);
+            //parentForm.setRedraw(false);
+            //pageForm.setRedraw(false);
+            //categoryPageBook.getContainer().setRedraw(false);
 
 
             // update page book with correct PageContentForm composite.
@@ -203,7 +205,10 @@ public class PageForm implements IIntroConstants, IPropertyListener {
             // update this page form's title, ie: Page subtitle, if it exists.
             pageForm.setText((String) page.getData(PAGE_SUBTITLE));
 
-            pageForm.setRedraw(true);
+
+            //categoryPageBook.getContainer().setRedraw(true);
+            //pageForm.setRedraw(true);
+            //parentForm.setRedraw(true);
 
             //TODO need to transfer focus to the first link in
             // the page somehow; we may need IIntroPage interface with
