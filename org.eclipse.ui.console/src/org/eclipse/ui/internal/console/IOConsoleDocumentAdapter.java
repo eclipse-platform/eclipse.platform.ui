@@ -155,8 +155,8 @@ public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentList
      */
     public String getLine(int lineIndex) {
         StringBuffer line = new StringBuffer((String) lines.get(lineIndex));
-        int index = line.length()-1;
-        while(index > 0 && (line.charAt(index)=='\n' || line.charAt(index)=='\r')) {
+        int index = line.length() - 1;
+        while(index > -1 && (line.charAt(index)=='\n' || line.charAt(index)=='\r')) {
             index--;
         }
         return line.substring(0, index + 1);
