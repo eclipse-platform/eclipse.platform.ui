@@ -19,6 +19,7 @@ import org.eclipse.jface.preference.*;
  * Window - Preferences - Java - Code Style - Code Templates
  */
 public class ScopePreferenceManager extends PreferenceManager implements IHelpUIConstants {
+	private ScopeSet set;	
 	class SubpagePreferenceNode extends PreferenceNode {
 		private IConfigurationElement config;
 	
@@ -47,7 +48,7 @@ public class ScopePreferenceManager extends PreferenceManager implements IHelpUI
 			this.desc = desc;
 		}
 	    public void createPage() {
-	    	IPreferencePage page = desc.createRootPage();
+	    	IPreferencePage page = desc.createRootPage(set.getName());
 	    	setPage(page);
 	    	page.setTitle(desc.getLabel());
 	    	page.setImageDescriptor(desc.getImageDescriptor());
@@ -57,10 +58,11 @@ public class ScopePreferenceManager extends PreferenceManager implements IHelpUI
 	/**
 	 * 
 	 */
-	public ScopePreferenceManager(ArrayList engineDescriptors) {
+	public ScopePreferenceManager(ArrayList engineDescriptors, ScopeSet set) {
+		this.set = set;		
 		load(engineDescriptors);
 	}
-	
+
 	private void load(ArrayList descriptors) {
 		for (int i=0; i<descriptors.size(); i++) {
 			EngineDescriptor desc = (EngineDescriptor)descriptors.get(i);

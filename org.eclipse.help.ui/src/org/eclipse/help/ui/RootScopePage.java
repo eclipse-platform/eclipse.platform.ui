@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.*;
  */
 public abstract class RootScopePage extends PreferencePage implements ISearchScopePage {
 	private String engineId;
+	private String scopeSetName;
 	private Button masterButton;
 	private Control scopeContents;
 	/**
@@ -38,8 +39,9 @@ public abstract class RootScopePage extends PreferencePage implements ISearchSco
 	public RootScopePage() {
 	}
 	
-	public void setEngineIdentifier(String id) {
-		this.engineId = id;
+	public void init(String engineId, String scopeSetName) {
+		this.engineId = engineId;
+		this.scopeSetName = scopeSetName;
 	}
 
 	protected final Control createContents(Composite parent) {
@@ -64,6 +66,14 @@ public abstract class RootScopePage extends PreferencePage implements ISearchSco
 	
 	protected void masterValueChanged(boolean value) {
 		scopeContents.setVisible(value);
+	}
+	
+	protected String getScopeSetName() {
+		return scopeSetName;
+	}
+	
+	protected String getEngineId() {
+		return engineId;
 	}
 	
     public boolean performOk() {

@@ -80,12 +80,12 @@ public class EngineDescriptor {
 			desc = HelpUIResources.getImageDescriptor(IHelpUIConstants.IMAGE_HELP_SEARCH);
 		return desc;
 	}
-	public RootScopePage createRootPage() {
+	public RootScopePage createRootPage(String scopeSetName) {
 		try {
 			Object obj = config.createExecutableExtension(IHelpUIConstants.ATT_PAGE_CLASS);
 			if (obj instanceof RootScopePage) {
 				RootScopePage page = (RootScopePage)obj;
-				page.setEngineIdentifier(getId());
+				page.init(getId(), scopeSetName);
 				return page;
 			}
 			else

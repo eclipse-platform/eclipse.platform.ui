@@ -18,9 +18,5 @@ import org.eclipse.jface.preference.IPreferencePage;
  * @since 3.1
  */
 public interface ISearchScopePage extends IPreferencePage {
-/**
- * Sets the unique identifier of the associated search engine.
- * @param id the search engine identifier
- */
-	void setEngineIdentifier(String id);
+	void init(String engineId, String scopeSetName);
 }

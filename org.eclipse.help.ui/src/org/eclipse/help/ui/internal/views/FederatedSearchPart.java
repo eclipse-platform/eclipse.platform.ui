@@ -235,9 +235,9 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart, 
 	}
 	
 	private void doAdvanced() {
-		PreferenceManager manager = new ScopePreferenceManager(engineDescriptors);
+		ScopeSet set = scopeSetManager.getActiveSet();		
+		PreferenceManager manager = new ScopePreferenceManager(engineDescriptors, set);
 		PreferenceDialog dialog = new PreferenceDialog(container.getShell(), manager);
-		ScopeSet set = scopeSetManager.getActiveSet();
 		dialog.setPreferenceStore(set.getPreferenceStore());
 		dialog.open();
 		updateMasters(set);

@@ -244,7 +244,7 @@ public class ScopeSetDialog extends ListDialog {
 		IStructuredSelection ssel = (IStructuredSelection)getTableViewer().getSelection();
 		ScopeSet set = (ScopeSet)ssel.getFirstElement();
 		if (set!=null) {
-			PreferenceManager manager = new ScopePreferenceManager(engineDescriptors);
+			PreferenceManager manager = new ScopePreferenceManager(engineDescriptors, set);
 			PreferenceDialog dialog = new PreferenceDialog(getShell(), manager);
 			dialog.setPreferenceStore(set.getPreferenceStore());
 			dialog.open();
