@@ -85,6 +85,7 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.internal.intro.IIntroConstants;
+import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.part.components.services.IWorkbenchPartFactory;
 import org.eclipse.ui.internal.part.services.WorkbenchPartFactory;
@@ -176,6 +177,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                     }
                     try {
                         UIStats.start(UIStats.NOTIFY_PART_LISTENERS, label);
+                        UIListenerLogging.logPartListener2Event(WorkbenchPage.this, ref, UIListenerLogging.PE2_PART_VISIBLE);
                         partListeners2.firePartVisible(ref);
                     } finally {
                         UIStats.end(UIStats.NOTIFY_PART_LISTENERS, part, label);
@@ -187,6 +189,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                     }
                     try {
                         UIStats.start(UIStats.NOTIFY_PART_LISTENERS, label);
+                        UIListenerLogging.logPartListener2Event(WorkbenchPage.this, ref, UIListenerLogging.PE2_PART_HIDDEN);
                         partListeners2.firePartHidden(ref);
                     } finally {
                         UIStats.end(UIStats.NOTIFY_PART_LISTENERS, part, label);
@@ -1480,8 +1483,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Fire part activation out.
      */
     private void firePartActivated(IWorkbenchPart part) {
+        UIListenerLogging.logPartListenerEvent(this, part, UIListenerLogging.PE_ACTIVATED);
         partListeners.firePartActivated(part);
-        partListeners2.firePartActivated(getReference(part));
+        
+        IWorkbenchPartReference ref = getReference(part);
+        UIListenerLogging.logPartListener2Event(this, ref, UIListenerLogging.PE2_ACTIVATED);
+        partListeners2.firePartActivated(ref);
+        
         selectionService.partActivated(part);
     }
 
@@ -1489,8 +1497,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Fire part brought to top out.
      */
     private void firePartBroughtToTop(IWorkbenchPart part) {
+        UIListenerLogging.logPartListenerEvent(this, part, UIListenerLogging.PE_PART_BROUGHT_TO_TOP);
         partListeners.firePartBroughtToTop(part);
-        partListeners2.firePartBroughtToTop(getReference(part));
+        
+        IWorkbenchPartReference ref = getReference(part);
+        UIListenerLogging.logPartListener2Event(this, ref, UIListenerLogging.PE2_PART_BROUGHT_TO_TOP);
+        partListeners2.firePartBroughtToTop(ref);
         selectionService.partBroughtToTop(part);
     }
 
@@ -1500,9 +1512,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     private void firePartClosed(IWorkbenchPartReference ref) {
         IWorkbenchPart part= ref.getPart(false);
         if (part != null) {
+            UIListenerLogging.logPartListenerEvent(this, part, UIListenerLogging.PE_PART_CLOSED);
             partListeners.firePartClosed(part);
             selectionService.partClosed(part);
         }
+        UIListenerLogging.logPartListener2Event(this, ref, UIListenerLogging.PE2_PART_CLOSED);
         partListeners2.firePartClosed(ref);
     }
 
@@ -1510,8 +1524,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Fire part deactivation out.
      */
     private void firePartDeactivated(IWorkbenchPart part) {
+        UIListenerLogging.logPartListenerEvent(this, part, UIListenerLogging.PE_PART_DEACTIVATED);
         partListeners.firePartDeactivated(part);
-        partListeners2.firePartDeactivated(getReference(part));
+        
+        IWorkbenchPartReference ref = getReference(part);
+        UIListenerLogging.logPartListener2Event(this, ref, UIListenerLogging.PE2_PART_DEACTIVATED);
+        partListeners2.firePartDeactivated(ref);
+        
         selectionService.partDeactivated(part);
     }
 
@@ -1519,8 +1538,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Fire part open out.
      */
     public void firePartOpened(IWorkbenchPart part) {
+        UIListenerLogging.logPartListenerEvent(this, part, UIListenerLogging.PE_PART_OPENED);
         partListeners.firePartOpened(part);
-        partListeners2.firePartOpened(getReference(part));
+        
+        IWorkbenchPartReference ref = getReference(part);
+        UIListenerLogging.logPartListener2Event(this, ref, UIListenerLogging.PE2_PART_OPENED);
+        partListeners2.firePartOpened(ref);
         selectionService.partOpened(part);
     }
 
@@ -1528,7 +1551,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Fire part input changed out.
      */
     private void firePartInputChanged(IWorkbenchPart part) {
-        partListeners2.firePartInputChanged(getReference(part));
+        IWorkbenchPartReference ref = getReference(part);
+        UIListenerLogging.logPartListener2Event(this, ref, UIListenerLogging.PE2_PART_INPUT_CHANGED);
+        
+        partListeners2.firePartInputChanged(ref);
         selectionService.partInputChanged(part);
     }
 
@@ -1544,6 +1570,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     private void firePropertyChange(String changeId, Object oldValue,
             Object newValue) {
+        
+        UIListenerLogging.logPagePropertyChanged(this, changeId, oldValue, newValue);
+        
         Object[] listeners = propertyChangeListeners.getListeners();
         PropertyChangeEvent event = new PropertyChangeEvent(this, changeId,
                 oldValue, newValue);
@@ -1994,9 +2023,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * See IWorkbenchPage.
      */
     public boolean isPartVisible(IWorkbenchPart part) {
-        return ((PartSite) part.getSite()).getPane().isVisible();
+        return ((PartSite) part.getSite()).getPane().getVisible();
     }
-
+    
     /**
      * See IWorkbenchPage.
      */
@@ -4105,4 +4134,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		
 	}
+
+    public boolean isPartVisible(IWorkbenchPartReference reference) {        
+        IWorkbenchPart part = reference.getPart(false);
+        // Can't be visible if it isn't created yet
+        if (part == null) {
+            return false;
+        }
+        
+        return isPartVisible(part);
+    }
 }

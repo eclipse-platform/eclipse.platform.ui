@@ -98,3 +98,32 @@ org.eclipse.ui/trace/operations=false
 
 # Report verbose information about (undo) operations history changes.
 org.eclipse.ui/trace/operations.verbose=false
+
+# Enable logging of listener events (must be enabled for any of the /listener/ events to be logged)
+org.eclipse.ui/listeners=false
+
+# Enable logging of events fired from an IWorkbenchPage to an IPartListener
+org.eclipse.ui/listeners/IWorkbenchPage.IPartListener=false
+
+# Enable logging of events fired from an IWorkbenchPage to an IPartListener2
+org.eclipse.ui/listeners/IWorkbenchPage.IPartListener2=false
+
+# Enable logging of events fired from an IWorkbenchPage to an IPropertyChangeListener
+org.eclipse.ui/listeners/IWorkbenchPage.IPropertyChangeListener=false
+
+# Enable logging of events fired from an IWorkbenchPartReference
+org.eclipse.ui/listeners/IWorkbenchPartReference=false
+
+# Enable logging of events fired from an IWorkbenchWindow to an IPerspectiveListener
+org.eclipse.ui/listeners/IWorkbenchWindow.IPerspectiveListener=false
+
+# Enable logging of events fired from an IWorkbenchWindow to an IPartListener
+org.eclipse.ui/listeners/IWorkbenchWindow.IPartListener=false
+
+# Enable logging of events fired from an IWorkbenchWindow to an IPartListener2
+org.eclipse.ui/listeners/IWorkbenchWindow.IPartListener2=false
+
+# Enable logging of events fired from an IWorkbenchWindow to an IPageListener
+org.eclipse.ui/listeners/IWorkbenchWindow.IPageListener=false
+
+

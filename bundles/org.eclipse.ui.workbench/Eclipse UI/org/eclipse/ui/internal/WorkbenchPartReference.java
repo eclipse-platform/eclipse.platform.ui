@@ -21,6 +21,7 @@ import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.util.Util;
 
 /**
@@ -337,6 +338,8 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
             return;
         }
 
+        UIListenerLogging.logPartReferencePropertyChange(this, id);
+        
         Object listeners[] = propChangeListeners.getListeners();
         for (int i = 0; i < listeners.length; i++) {
             ((IPropertyListener) listeners[i]).propertyChanged(part, id);

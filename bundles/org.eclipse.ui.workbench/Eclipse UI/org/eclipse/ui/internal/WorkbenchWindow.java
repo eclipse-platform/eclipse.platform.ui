@@ -100,6 +100,7 @@ import org.eclipse.ui.internal.layout.TrimLayout;
 import org.eclipse.ui.internal.layout.TrimLayoutData;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
+import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.ProgressRegion;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
@@ -1002,6 +1003,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
         }
         try {
 	        UIStats.start(UIStats.NOTIFY_PAGE_LISTENERS, label);
+            UIListenerLogging.logPageEvent(this, page, UIListenerLogging.WPE_PAGE_ACTIVATED);
 	        pageListeners.firePageActivated(page);
 	        partService.pageActivated(page);
         } finally {
@@ -1019,6 +1021,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
         }
         try {
 	        UIStats.start(UIStats.NOTIFY_PAGE_LISTENERS, label);
+            UIListenerLogging.logPageEvent(this, page, UIListenerLogging.WPE_PAGE_CLOSED);
 	        pageListeners.firePageClosed(page);
 	        partService.pageClosed(page);
         } finally {
@@ -1037,6 +1040,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
         }
         try {	        
             UIStats.start(UIStats.NOTIFY_PAGE_LISTENERS, label);
+            UIListenerLogging.logPageEvent(this, page, UIListenerLogging.WPE_PAGE_OPENED);
             pageListeners.firePageOpened(page);
             partService.pageOpened(page);
         } finally {
@@ -1049,6 +1053,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
      */
     void firePerspectiveActivated(IWorkbenchPage page,
             IPerspectiveDescriptor perspective) {
+        UIListenerLogging.logPerspectiveEvent(this, page, perspective, UIListenerLogging.PLE_PERSP_ACTIVATED);
         perspectiveListeners.firePerspectiveActivated(page, perspective);
     }
 
@@ -1059,6 +1064,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
      */
     void firePerspectiveDeactivated(IWorkbenchPage page,
             IPerspectiveDescriptor perspective) {
+        UIListenerLogging.logPerspectiveEvent(this, page, perspective, UIListenerLogging.PLE_PERSP_DEACTIVATED);
     	perspectiveListeners.firePerspectiveDeactivated(page, perspective);
     }
     
@@ -1070,6 +1076,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
         // Some callers call this even when there is no active perspective.
         // Just ignore this case.
         if (perspective != null) {
+            UIListenerLogging.logPerspectiveChangedEvent(this, page, perspective, null, changeId);
             perspectiveListeners.firePerspectiveChanged(page, perspective,
                     changeId);
         }
@@ -1084,6 +1091,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
         // Some callers call this even when there is no active perspective.
         // Just ignore this case.
         if (perspective != null) {
+            UIListenerLogging.logPerspectiveChangedEvent(this, page, perspective, partRef, changeId);
             perspectiveListeners.firePerspectiveChanged(page, perspective,
                     partRef, changeId);
         }
