@@ -76,6 +76,7 @@ public class HelpPlugin extends Plugin implements IRegistryChangeListener{
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
+		Platform.getExtensionRegistry().addRegistryChangeListener(this);
 		plugin = null;
 		bundleContext = null;
 		super.stop(context);
