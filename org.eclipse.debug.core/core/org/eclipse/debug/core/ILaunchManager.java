@@ -87,18 +87,16 @@ public interface ILaunchManager {
 	 * Returns all launch configurations defined in the workspace.
 	 * 
 	 * @return all launch configurations defined in the workspace
-	 * @exception CoreException if an exception occurrs retrieving configurations
+	 * @exception CoreException if an exception occurs retrieving configurations
 	 * @since 2.0
 	 */
 	public ILaunchConfiguration[] getLaunchConfigurations() throws CoreException;
 	
 	/**
-	 * Returns all launch configurations defined in the workspace
-	 * of the specified type
+	 * Returns all launch configurations of the specified type defined in the workspace
 	 * 
 	 * @param type a launch configuration type
-	 * @return all launch configurations defined in the workspace
-	 *  of the specified type
+	 * @return all launch configurations of the specified type defined in the workspace
 	 * @exception CoreException if an error occurs while retreiving
 	 *  a launch configuration
 	 * @since 2.0
@@ -124,7 +122,7 @@ public interface ILaunchManager {
 	 * @return a handle to the launch configuration specified by
 	 *  the given memento
 	 * @exception CoreException if the given memento is invalid or
-	 *  an exception occurrs parsing the memento
+	 *  an exception occurs parsing the memento
 	 * @see ILaunchConfiguration#getMemento()
 	 * @since 2.0
 	 */
@@ -201,7 +199,7 @@ public interface ILaunchManager {
 	 * @param identifier the identifier associated with a 
 	 *  persistable source locator extension
 	 * @return a source locator
-	 * @exception CoreException if an exception occurrs creating
+	 * @exception CoreException if an exception occurs creating
 	 *  the source locator
 	 * @since 2.0
 	 */

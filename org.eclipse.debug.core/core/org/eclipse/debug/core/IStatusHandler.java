@@ -33,7 +33,7 @@ import org.eclipse.core.runtime.IStatus;
  *      id="com.example.ExampleIdentifier"
  *      class="com.example.ExampleStatusHandler"
  *      plugin="com.example.ExamplePluginId"
- *      code="123"
+ *      code="123"&gt;
  *   &lt;/statusHandler&gt;
  * &lt;/extension&gt;
  * </pre>
