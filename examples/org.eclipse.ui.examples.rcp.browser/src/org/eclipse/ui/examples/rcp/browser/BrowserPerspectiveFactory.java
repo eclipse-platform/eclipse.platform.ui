@@ -26,7 +26,6 @@ public class BrowserPerspectiveFactory implements IPerspectiveFactory {
 		layout.addPlaceholder(BrowserApp.HISTORY_VIEW_ID, IPageLayout.LEFT, .3f, IPageLayout.ID_EDITOR_AREA); //$NON-NLS-1$
 		IViewLayout historyLayout = layout.getViewLayout(BrowserApp.HISTORY_VIEW_ID);
 		historyLayout.setCloseable(true);
-		historyLayout.setMoveable(true);
 		layout.setEditorAreaVisible(false);
 	}
 }
