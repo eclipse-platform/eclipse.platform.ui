@@ -140,7 +140,7 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
         public void run() {
             ActiveChangeSet set = getSelectedSet();
             if (set == null) return;
-            if (MessageDialog.openConfirm(getConfiguration().getSite().getShell(), "Confirm Remove", "Are you sure you want to remove {0}" + set.getTitle())) {
+            if (MessageDialog.openConfirm(getConfiguration().getSite().getShell(), Policy.bind("ChangeSetActionGroup.0"), Policy.bind("ChangeSetActionGroup.1", set.getTitle()))) { //$NON-NLS-1$ //$NON-NLS-2$
                 getActiveChangeSetManager().remove(set);
             }
         }
@@ -165,7 +165,7 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
         private final ActiveChangeSet set;
 	    
         public AddToChangeSetAction(ISynchronizePageConfiguration configuration, ActiveChangeSet set, ISelection selection) {
-            super(set == null ? "No Set" : set.getTitle(), configuration);
+            super(set == null ? Policy.bind("ChangeSetActionGroup.2") : set.getTitle(), configuration); //$NON-NLS-1$
             this.set = set;
             selectionChanged(selection);
         }
