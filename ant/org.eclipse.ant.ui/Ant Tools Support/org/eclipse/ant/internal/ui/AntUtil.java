@@ -222,14 +222,15 @@ public final class AntUtil {
 		//tasks and position info but no lexical info
 		IAntModel model= getAntModel(buildfile, null, false, true, true);
 		AntProjectNode project= model.getProjectNode();
+		if (project == null) {
+			model.dispose();
+			return null;
+		}
 		return getTargets(project);
 	}
 	
 	public static IAntModel getAntModel(String buildFilePath, boolean needsLexicalResolution, boolean needsPositionResolution, boolean needsTaskResolution) {
 	    IAntModel model= getAntModel(getBuildFile(buildFilePath), null, needsLexicalResolution, needsPositionResolution, needsTaskResolution);
-	    if (model == null) {
-	        return null;
-	    }
 	    return model;   
 	}
 	
