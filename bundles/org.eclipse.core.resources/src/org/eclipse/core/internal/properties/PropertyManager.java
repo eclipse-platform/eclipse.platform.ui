@@ -60,8 +60,10 @@ public class PropertyManager implements IManager, ILifecycleListener {
 	 */
 	private void assertRunning(IResource target, PropertyStore store) throws CoreException {
 		if (!store.isRunning()) {
-			String message = Policy.bind("properties.storeNotAvailable", target.getFullPath().toString()); //$NON-NLS-1$
-			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
+			//if the store is not running then the resource is in the process of being deleted, 
+			//so report the error as if the resource was not found
+			String message = Policy.bind("resources.mustExist", target.getFullPath().toString()); //$NON-NLS-1$
+			throw new ResourceException(IResourceStatus.RESOURCE_NOT_FOUND, target.getFullPath(), message, null);
 		}
 	}
 	protected void copyProperties(IResource source, IResource destination, int depth) throws CoreException {
