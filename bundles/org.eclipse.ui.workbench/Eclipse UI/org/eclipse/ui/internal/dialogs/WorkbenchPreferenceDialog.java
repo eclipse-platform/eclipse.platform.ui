@@ -608,7 +608,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		setPageContainer(createPageContainer(pageAreaComposite));
 		getPageContainer().setLayoutData(new GridData(GridData.FILL_BOTH));
 		Label separator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
-		separator.setBackground(separator.getDisplay().getSystemColor(SWT.COLOR_CYAN));
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 		gd.horizontalSpan = columns;
 		separator.setLayoutData(gd);
