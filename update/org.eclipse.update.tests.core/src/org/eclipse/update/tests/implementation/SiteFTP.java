@@ -133,4 +133,11 @@ public class SiteFTP implements ISite {
 	public void store(IPluginEntry entry, String name, InputStream inStream) throws CoreException {
 	}
 
+	/*
+	 * @see IAdaptable#getAdapter(Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		return null;
+	}
+
 }

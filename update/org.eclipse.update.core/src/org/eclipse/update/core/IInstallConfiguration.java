@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.Date;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -13,7 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Installation configuration object.
  */
-public interface IInstallConfiguration {
+public interface IInstallConfiguration extends IAdaptable {
 		
 	/**
 	 * Returns <code>true</code> is this is the current configuration

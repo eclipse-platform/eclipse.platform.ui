@@ -380,4 +380,11 @@ public void revertTo(IInstallConfiguration configuration, IProgressMonitor monit
 
 }
 
+	/*
+	 * @see IAdaptable#getAdapter(Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		return null;
+	}
+
 }

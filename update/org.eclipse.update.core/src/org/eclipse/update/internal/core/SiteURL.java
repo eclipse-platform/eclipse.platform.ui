@@ -143,5 +143,12 @@ public class SiteURL extends Site {
 		return SITE_TYPE;
 	}
 
+	/*
+	 * @see IAdaptable#getAdapter(Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		return null;
+	}
+
 }
 

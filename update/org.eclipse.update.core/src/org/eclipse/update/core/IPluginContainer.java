@@ -7,6 +7,7 @@ package org.eclipse.update.core;
 
 import java.io.InputStream;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * A PluginContainer manages plug-in archives.
@@ -17,7 +18,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 //FIXME: javadoc
 
-public interface IPluginContainer {
+public interface IPluginContainer extends IAdaptable {
 	/**
 	 * Returns an array of plug-ins managed by the container
 	 * 

@@ -1008,4 +1008,11 @@ public abstract class Feature implements IFeature {
 		 */
 		protected abstract String[] getContentReferenceToInstall(IPluginEntry[] pluginsToInstall);
 
+		/*
+	 * @see IAdaptable#getAdapter(Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		return null;
 	}
+
+}
