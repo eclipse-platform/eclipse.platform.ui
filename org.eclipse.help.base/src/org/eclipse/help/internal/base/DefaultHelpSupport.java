@@ -22,7 +22,7 @@ import org.eclipse.help.internal.context.*;
  * In is registered into the support extension point, and all 
  * requests to display help are delegated to this class.
  */
-public class DefaultHelpSupport implements IHelp {
+public class DefaultHelpSupport {
 
 	/**
 	 * BaseHelpViewer constructor.

@@ -48,7 +48,7 @@ public final class BaseHelpSystem {
 	private boolean webappStarted = false;
 	private IErrorUtil defaultErrorMessenger;
 	private IBrowser browser;
-	private IHelp helpSupport = null;
+	private DefaultHelpSupport helpSupport = null;
 	private boolean webappRunning = false;
 
 	/**
@@ -102,9 +102,9 @@ public final class BaseHelpSystem {
 		return getInstance().browser;
 	}
 
-	public static synchronized IHelp getHelpSupport() {
+	public static synchronized DefaultHelpSupport getHelpSupport() {
 		if (getInstance().helpSupport == null)
-			getInstance().helpSupport = getInstance().initHelpSupport();
+			getInstance().helpSupport = new DefaultHelpSupport();
 		return getInstance().helpSupport;
 	}
 	/**
@@ -271,40 +271,6 @@ public final class BaseHelpSystem {
 		return "org.eclipse.help.webapp";
 	}
 
-	/**
-	 * Instantiate the help support
-	 */
-	private IHelp initHelpSupport() {
-		if (helpSupport == null) {
-			IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
-			IExtensionPoint point =
-				pluginRegistry.getExtensionPoint(HELP_SUPPORT_EXTENSION_ID);
-			if (point != null) {
-				IExtension[] extensions = point.getExtensions();
-				if (extensions.length != 0) {
-					// There should only be one extension/config element so we just take the first
-					IConfigurationElement[] elements =
-						extensions[0].getConfigurationElements();
-					if (elements.length != 0) { // Instantiate the help support
-						try {
-							helpSupport =
-								(IHelp) elements[0].createExecutableExtension(
-									HELP_SUPPORT_CLASS_ATTRIBUTE);
-						} catch (CoreException e) {
-							// may need to change this
-							HelpBasePlugin.getDefault().getLog().log(e.getStatus());
-						}
-					}
-				}
-			}
-		}
-
-		// if no extension point found or instantiated, use default impl
-		if (helpSupport == null)
-			helpSupport = new DefaultHelpSupport();
-
-		return helpSupport;
-	}
 	/**
 	 * Obtains Name of the Eclipse product
 	 * @return String
