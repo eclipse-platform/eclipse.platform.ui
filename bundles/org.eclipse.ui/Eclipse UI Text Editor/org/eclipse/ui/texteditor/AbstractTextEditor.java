@@ -417,6 +417,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/** The editor's part listener */
 	private IPartListener fPartListener= new PartListener();
 	
+	private boolean fReuseEditor = true;
+	
 	
 	/**
 	 * Creates a new text editor. It initializes the editor and ruler context
@@ -1794,11 +1796,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	public boolean getReuseEditor() {
-		return true;
+		return fReuseEditor;
 		
 	}
 	
 	public void setReuseEditor(boolean reuse) {
+		fReuseEditor = reuse;
 	}
 	
 }

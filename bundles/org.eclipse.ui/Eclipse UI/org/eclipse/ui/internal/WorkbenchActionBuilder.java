@@ -50,6 +50,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private EditActionSetsAction editActionSetAction;
 	private ClosePageAction closePageAction;
 	private CloseAllPagesAction closeAllPagesAction;
+	private ReuseEditorAction reuseEditorAction;
 
 	// menus
 	private OpenPerspectiveMenu openPerspMenu;
@@ -253,6 +254,7 @@ private void createMenuBar() {
 	popup.add(new Separator(IWorkbenchActionConstants.WINDOW_EXT));
 	popup.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 	popup.add(new Separator());
+	popup.add(reuseEditorAction);
 	popup.add(openPreferencesAction);
 	popup.add(new SwitchToWindowMenu(window, true));
 
@@ -431,6 +433,9 @@ private void makeActions() {
 
 	closeAllAction = new CloseAllAction(window);
 	partService.addPartListener(closeAllAction);
+	
+	reuseEditorAction = new ReuseEditorAction(window);
+	partService.addPartListener(reuseEditorAction);
 
 	aboutAction = new AboutAction(window);
 	aboutAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD));
