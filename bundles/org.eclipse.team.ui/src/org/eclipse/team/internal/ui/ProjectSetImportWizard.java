@@ -49,7 +49,7 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 	public boolean performFinish() {
 		final boolean[] result = new boolean[] {false};
 		try {
-			getContainer().run(true, false, new IRunnableWithProgress() {
+			getContainer().run(true, true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException {
 					InputStreamReader reader = null;
 					try {
