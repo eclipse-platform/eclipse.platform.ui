@@ -95,7 +95,7 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 				if(prompt) {
 					return Policy.bind("RefreshSubscriberJob.2a"); //$NON-NLS-1$
 				} else {
-					return Policy.bind("RefreshSubscriberJob.2b", participant.getName()); //$NON-NLS-1$
+					return Policy.bind("RefreshSubscriberJob.2b", Utils.shortenText(100, participant.getName())); //$NON-NLS-1$
 				}
 			}
 		};
