@@ -6,14 +6,11 @@
  */
 package org.eclipse.ui.views.progress;
 
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ProgressIndicator;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.internal.progress.JobInfoWithProgress;
@@ -25,7 +22,7 @@ import org.eclipse.ui.internal.progress.JobInfoWithProgress;
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class ProgressTreeViewer extends TreeViewer {
-
+	
 	/**
 	 * Create an instance of the receiver.
 	 * @param parent
@@ -62,43 +59,62 @@ public class ProgressTreeViewer extends TreeViewer {
 			return;
 
 		JobInfoWithProgress job = (JobInfoWithProgress) element;
-		Tree tree = getTree();
-		final TreeEditor editor = new TreeEditor(tree);
+		
+		if(job.getProgressIndicator() == null)
+			createTreeEditor(item, finalItem, job, getTree());
+		else
+			job.getLabel().setText(item.getText());
+	}
 
+	/**
+	 * Create the tree editor for this item and job.
+	 * @param item
+	 * @param finalItem
+	 * @param job
+	 * @param tree
+	 */
+	private void createTreeEditor(
+		Item item,
+		final TreeItem finalItem,
+		JobInfoWithProgress job,
+		Tree tree) {
+		final TreeEditor editor = new TreeEditor(tree);
+		
 		editor.horizontalAlignment = SWT.LEFT;
 		editor.grabHorizontal = true;
-		editor.minimumWidth = 50;
-
+		editor.minimumWidth = 30;
+		
 		final Composite editorComposite = new Composite(getTree(), SWT.NONE);
 		editorComposite.setBackground(getTree().getBackground());
 		FormLayout layout = new FormLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		editorComposite.setLayout(layout);
-
+		
 		final Label displayLabel = new Label(editorComposite, SWT.NONE);
 		displayLabel.setBackground(tree.getBackground());
 		displayLabel.setText(item.getText());
-
+		job.setLabel(displayLabel);
+		
 		FormData data = new FormData();
 		data.top = new FormAttachment(0, 0);
 		data.left = new FormAttachment(0, 0);
 		data.bottom = new FormAttachment(100, 0);
 		displayLabel.setLayoutData(data);
-
+		
 		final ProgressIndicator indicator =
 			new ProgressIndicator(editorComposite);
 		indicator.setBackground(getTree().getBackground());
 		job.setProgressIndicator(indicator);
-
+		
 		data = new FormData();
 		data.top = new FormAttachment(0, 0);
 		data.left = new FormAttachment(displayLabel);
 		data.right = new FormAttachment(100, 0);
 		data.bottom = new FormAttachment(100, 0);
-
+		
 		indicator.setLayoutData(data);
-
+		
 		final FocusListener listener = new FocusListener() {
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.events.FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
@@ -112,10 +128,10 @@ public class ProgressTreeViewer extends TreeViewer {
 			 */
 			public void focusLost(FocusEvent e) {
 			}
-
+		
 		};
 		getTree().addFocusListener(listener);
-
+		
 		item.addDisposeListener(new DisposeListener() {
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
@@ -127,7 +143,7 @@ public class ProgressTreeViewer extends TreeViewer {
 				indicator.dispose();
 				displayLabel.dispose();
 			}
-
+		
 		});
 	}
 

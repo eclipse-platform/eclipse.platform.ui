@@ -1,9 +1,3 @@
-/*
- * Created on May 1, 2003
- *
- * To change the template for this generated file go to
- * Window>Preferences>Java>Code Generation>Code and Comments
- */
 package org.eclipse.ui.internal.progress;
 
 import java.util.*;
@@ -15,16 +9,16 @@ import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jface.viewers.*;
 
 public class ProgressContentProvider
-	implements ITreeContentProvider, IJobListener, IProgressListener {
+	implements ITreeContentProvider, IJobChangeListener {
 
 	private Map jobs = Collections.synchronizedMap(new HashMap());
 
 	private TreeViewer viewer;
 
 	public ProgressContentProvider(TreeViewer mainViewer) {
-		JobManager.getInstance().addJobListener(this);
-		JobManager.getInstance().addProgressListener(this);
+		JobManager.getInstance().addJobChangeListener(this);
 		viewer = mainViewer;
+		JobProgressManager.getInstance().addProvider(this);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
@@ -58,7 +52,8 @@ public class ProgressContentProvider
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
-		// XXX Auto-generated method stub
+		JobManager.getInstance().removeJobChangeListener(this);
+		JobProgressManager.getInstance().removeProvider(this);
 
 	}
 
@@ -82,27 +77,12 @@ public class ProgressContentProvider
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.IProgressListener#done(org.eclipse.core.runtime.jobs.Job)
-	 */
-	public void done(Job job) {
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.IProgressListener#setTaskName(org.eclipse.core.runtime.jobs.Job, java.lang.String)
-	 */
-	public void setTaskName(Job job, String name) {
-		// XXX Auto-generated method stub
-
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IProgressListener#subTask(org.eclipse.core.runtime.jobs.Job, java.lang.String)
 	 */
 	public void subTask(Job job, String name) {
-		if(job == null)
+		if (job == null)
 			return;
-			
+
 		if (job instanceof AnimateJob)
 			return;
 		if (name.length() == 0)
@@ -121,9 +101,9 @@ public class ProgressContentProvider
 	 * @see org.eclipse.core.runtime.jobs.IProgressListener#worked(org.eclipse.core.runtime.jobs.Job, int)
 	 */
 	public void worked(Job job, double work) {
-		if(job == null)
+		if (job == null)
 			return;
-			
+
 		if (job instanceof AnimateJob)
 			return;
 		JobInfo info = getInfo(job);

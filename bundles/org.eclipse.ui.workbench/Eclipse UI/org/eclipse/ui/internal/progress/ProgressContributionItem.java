@@ -1,9 +1,9 @@
 package org.eclipse.ui.internal.progress;
 
 import org.eclipse.core.internal.jobs.JobManager;
-import org.eclipse.core.runtime.jobs.IJobListener;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.StatusLineLayoutData;
 import org.eclipse.swt.graphics.Rectangle;
@@ -15,7 +15,7 @@ public class ProgressContributionItem extends ContributionItem {
 
 	public ProgressContributionItem(String id) {
 		super(id);
-		JobManager.getInstance().addJobListener(new IJobListener() {
+		JobManager.getInstance().addJobChangeListener(new IJobChangeListener() {
 
 			int jobCount = 0;
 			/* (non-Javadoc)

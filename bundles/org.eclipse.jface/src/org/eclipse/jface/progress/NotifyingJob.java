@@ -7,14 +7,14 @@ import java.util.*;
 
 import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.jobs.IJobListener;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
 
 public abstract class NotifyingJob extends Job {
 
 	Collection completionListeners = new ArrayList();
 
-	IJobListener listener = new IJobListener() {
+	IJobChangeListener listener = new IJobChangeListener() {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.IJobListener#aboutToRun(org.eclipse.core.runtime.jobs.Job)
 		 */
@@ -68,7 +68,7 @@ public abstract class NotifyingJob extends Job {
 
 	public NotifyingJob() {
 		super();
-		JobManager.getInstance().addJobListener(this.listener);
+		JobManager.getInstance().addJobChangeListener(this.listener);
 	}
 
 	public void addCompletionListener(IJobCompletionListener listener) {

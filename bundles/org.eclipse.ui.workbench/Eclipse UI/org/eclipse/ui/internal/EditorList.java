@@ -16,16 +16,15 @@ import java.util.*;
 import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.jobs.IJobListener;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.progress.*;
+import org.eclipse.jface.progress.IJobCompletionListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.progress.*;
+import org.eclipse.ui.internal.progress.StatusWithResult;
 
 public class EditorList {
 	private WorkbenchWindow window;
