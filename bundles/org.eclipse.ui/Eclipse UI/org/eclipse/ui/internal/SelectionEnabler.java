@@ -31,6 +31,7 @@ public class SelectionEnabler {
 	public static final int NONE_OR_ONE = -3;
 	public static final int NONE        = -4;
 	private List classes;
+	private ActionExpression enablementExpression;
 	private int mode=UNKNOWN;
 
 	public static class SelectionClass {
@@ -51,21 +52,27 @@ public SelectionEnabler(IConfigurationElement configElement) {
  * this action.
  */
 public boolean isEnabledForSelection(ISelection selection) {
+	// Optimize it.
 	if (mode == UNKNOWN) return false;
+	
+	// Get selection count.
 	if (!(selection instanceof IStructuredSelection))
 	return false;
 	IStructuredSelection ssel = (IStructuredSelection)selection;
 	int count = ssel.size();
 	
-	// a few quick checks
+	// Compare selection count with requirements.
 	if (count > 0 && mode == NONE) return false;
 	if (count == 0 && mode == ONE_OR_MORE) return false;
 	if (count > 1 && mode == NONE_OR_ONE) return false;
-	// check multiple selection
 	if (count < 2 && mode == MULTIPLE) return false;
-	// if exact number is needed, check if it matches
 	if (mode > 0 && count != mode) return false;
-	// number matches. Check class types.
+
+	// Compare selection to enablement expression.
+	if (enablementExpression != null)
+		return enablementExpression.isEnabledFor(ssel);
+
+	// Compare selection to class requirements.
 	if (classes==null) return true;
 	for (Iterator elements=ssel.iterator(); elements.hasNext();) {
 		Object obj = elements.next();
@@ -84,31 +91,39 @@ public boolean isEnabledForSelection(ISelection selection) {
  * for verification.
  */
 private void parseClasses(IConfigurationElement config) {
+	// Get enables for.
 	String enablesFor = config.getAttribute(PluginActionBuilder.ATT_ENABLES_FOR);
 	if (enablesFor == null)
-		enablesFor = "*";//$NON-NLS-1$
-	if (enablesFor.equals("*"))//$NON-NLS-1$
+		enablesFor = "*"; //$NON-NLS-1$
+	if (enablesFor.equals("*")) //$NON-NLS-1$
 		mode = ANY_NUMBER;
-	else
-		if (enablesFor.equals("?"))//$NON-NLS-1$
-			mode = NONE_OR_ONE;
-		else
-			if (enablesFor.equals("!"))//$NON-NLS-1$
-				mode = NONE;
-			else
-				if (enablesFor.equals("+"))//$NON-NLS-1$
-					mode = ONE_OR_MORE;
-				else
-					if (enablesFor.equals("multiple") || enablesFor.equals("2+"))//$NON-NLS-2$//$NON-NLS-1$
-						mode = MULTIPLE;
-					else {
-						try {
-							mode = Integer.parseInt(enablesFor);
-						} catch (NumberFormatException e) {
-							mode = UNKNOWN;
-						}
-					}
-	IConfigurationElement[] children = config.getChildren(TAG_SELECTION);
+	else if (enablesFor.equals("?")) //$NON-NLS-1$
+		mode = NONE_OR_ONE;
+	else if (enablesFor.equals("!")) //$NON-NLS-1$
+		mode = NONE;
+	else if (enablesFor.equals("+")) //$NON-NLS-1$
+		mode = ONE_OR_MORE;
+	else if (
+		enablesFor.equals("multiple")
+			|| enablesFor.equals("2+")) //$NON-NLS-2$//$NON-NLS-1$
+		mode = MULTIPLE;
+	else {
+		try {
+			mode = Integer.parseInt(enablesFor);
+		} catch (NumberFormatException e) {
+			mode = UNKNOWN;
+		}
+	}
+	
+	// Get enablement block.					
+	IConfigurationElement[] children = config.getChildren("enablement"); //$NON-NLS-1$
+	if (children.length > 0) {
+		enablementExpression = new ActionExpression(children[0]);
+		return;
+	}
+	
+	// Get selection block.
+	children = config.getChildren(TAG_SELECTION);
 	if (children.length > 0) {
 		classes = new ArrayList();
 		for (int i = 0; i < children.length; i++) {

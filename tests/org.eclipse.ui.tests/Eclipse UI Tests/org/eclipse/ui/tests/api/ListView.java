@@ -21,8 +21,8 @@ public class ListView extends MockViewPart
 	ArrayList input;
 	MenuManager menuMgr;
 	Menu menu;
-	Action fakeAction;
-	String FAKE_ACTION_ID = "fakeAction";
+	Action addAction;
+	String ADD_ACTION_ID = "addAction";
 	
 	/**
 	 * Constructor for ElementViewPart
@@ -30,10 +30,6 @@ public class ListView extends MockViewPart
 	public ListView() {
 		super();
 		input = new ArrayList();
-		input.add(new ListElement("Fred"));
-		input.add(new ListElement("Barney"));
-		input.add(new ListElement("Wilma"));
-		input.add(new ListElement("Betty"));
 	}
 
 	/**
@@ -50,6 +46,9 @@ public class ListView extends MockViewPart
 		
 		// Create popup menu.
 		createPopupMenu();
+		
+		// Register stuff.
+		getSite().setSelectionProvider(viewer);
 	}
 
 	/**
@@ -57,16 +56,17 @@ public class ListView extends MockViewPart
 	 */	
 	public void createPopupMenu() {
 		// Create actions.
-		fakeAction = new Action("Fake") {
+		addAction = new Action("Add Standard Items") {
 			public void run() {
+				addStandardItems();
 			}
 		};
-		fakeAction.setId(FAKE_ACTION_ID);
+		addAction.setId(ADD_ACTION_ID);
 		
 		// Create popup menu.
 		IConfigurationElement config = getConfig();
 		String str = config.getAttributeAsIs("menuType");
-		if (str.equals("static"))
+		if (str != null && str.equals("static"))
 			createStaticPopupMenu();
 		else	
 			createDynamicPopupMenu();
@@ -115,7 +115,7 @@ public class ListView extends MockViewPart
 	 * @see IMenuListener#menuAboutToShow(IMenuManager)
 	 */
 	public void menuAboutToShow(IMenuManager menuMgr) {
-		menuMgr.add(fakeAction);
+		menuMgr.add(addAction);
 		menuMgr.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 	
@@ -123,7 +123,14 @@ public class ListView extends MockViewPart
 	 * Tests that the menu mgr contains the expected actions.
 	 */
 	public void verifyActions(TestCase test, IMenuManager menuMgr) {
-		test.assertNotNull(menuMgr.find(FAKE_ACTION_ID));
+		test.assertNotNull(menuMgr.find(ADD_ACTION_ID));
+	}
+	
+	public void addStandardItems() {
+		addElement(new ListElement("red"));
+		addElement(new ListElement("blue"));
+		addElement(new ListElement("green"));
+		addElement(new ListElement("red", true));
 	}
 
 }

@@ -64,6 +64,11 @@
 	   class="org.eclipse.ui.tests.api.ListView"
 	   menuType="static"/>
 	<view
+       id="org.eclipse.ui.tests.internal.ActionExpressionTest"
+	   name="Action Expression Test View"
+       icon="icons\view.gif"
+	   class="org.eclipse.ui.tests.api.ListView"/>
+	<view
        id="org.eclipse.ui.tests.api.IActionFilterTest2"
 	   name="Action Filter Test View 2"
        icon="icons\view.gif"
@@ -157,35 +162,184 @@
     <objectContribution id="oc1" 
         objectClass="org.eclipse.ui.tests.api.ListElement"> 
         <filter name="name" value="red"/> 
-        <action id="oc1" label="redAction" 
+        <action id="oc1" label="redAction_v1" 
         	class="org.eclipse.ui.tests.api.MockActionDelegate"/> 
     </objectContribution> 
     <objectContribution id="oc2" 
         objectClass="org.eclipse.ui.tests.api.ListElement"> 
         <filter name="name" value="blue"/> 
-        <action id="oc2" label="blueAction"
+        <action id="oc2" label="blueAction_v1"
         	class="org.eclipse.ui.tests.api.MockActionDelegate"/>
     </objectContribution> 
     <objectContribution id="oc3" 
         objectClass="org.eclipse.ui.tests.api.ListElement"> 
         <filter name="flag" value="true"/> 
-        <action id="oc3" label="trueAction"
+        <action id="oc3" label="trueAction_v1"
 			class="org.eclipse.ui.tests.api.MockActionDelegate"/>
     </objectContribution> 
     <objectContribution id="oc4" 
         objectClass="org.eclipse.ui.tests.api.ListElement"> 
         <filter name="flag" value="false"/> 
-        <action id="oc4" label="falseAction"
+        <action id="oc4" label="falseAction_v1"
 			class="org.eclipse.ui.tests.api.MockActionDelegate"/>
     </objectContribution> 
     <objectContribution id="oc5" 
         objectClass="org.eclipse.ui.tests.api.ListElement"> 
         <filter name="name" value="red"/> 
         <filter name="flag" value="true"/> 
-        <action id="oc5" label="redTrueAction"
+        <action id="oc5" label="redTrueAction_v1"
+        	class="org.eclipse.ui.tests.api.MockActionDelegate"/>
+    </objectContribution>
+</extension> 
+
+<extension point = "org.eclipse.ui.actionSets"> 
+    <actionSet id="org.eclipse.ui.tests.internal.ListElementActions" 
+        label="List Element">
+        <menu id="org.eclipse.ui.tests.internal.ListElementMenu" 
+            label="List Element" 
+            path="additions"> 
+            <separator name="group1"/> 
+        </menu> 
+        <action id="org.eclipse.ui.tests.internal.ac1" 
+            label="allAction_v2" 
+            menubarPath="org.eclipse.ui.tests.internal.ListElementMenu/group1" 
+            class="org.eclipse.ui.tests.api.MockActionDelegate" 
+            enablesFor="1"> 
+            <enablement>
+            	<objectClass name="org.eclipse.ui.tests.api.ListElement"/>
+            </enablement>
+        </action> 
+        <action id="org.eclipse.ui.tests.internal.ac2" 
+            label="redAction_v2" 
+            menubarPath="org.eclipse.ui.tests.internal.ListElementMenu/group1" 
+            class="org.eclipse.ui.tests.api.MockActionDelegate" 
+            enablesFor="1"> 
+            <enablement>
+            	<and>
+	            	<objectClass name="org.eclipse.ui.tests.api.ListElement"/>
+    	        	<objectState name="name" value="red"/>
+    	        </and>
+            </enablement>
+        </action> 
+        <action id="org.eclipse.ui.tests.internal.ac3" 
+            label="notRedAction_v2" 
+            menubarPath="org.eclipse.ui.tests.internal.ListElementMenu/group1" 
+            class="org.eclipse.ui.tests.api.MockActionDelegate" 
+            enablesFor="1"> 
+            <enablement>
+            	<and>
+	            	<objectClass name="org.eclipse.ui.tests.api.ListElement"/>
+     	        	<not>
+	    	        	<objectState name="name" value="red"/>
+	        	    </not>
+	        	</and>
+            </enablement>
+        </action> 
+        <action id="org.eclipse.ui.tests.internal.ac4" 
+            label="trueAction_v2" 
+            menubarPath="org.eclipse.ui.tests.internal.ListElementMenu/group1" 
+            class="org.eclipse.ui.tests.api.MockActionDelegate" 
+            enablesFor="1"> 
+            <enablement>
+            	<and>
+	            	<objectClass name="org.eclipse.ui.tests.api.ListElement"/>
+    	        	<objectState name="flag" value="true"/>
+    	        </and>
+            </enablement>
+        </action> 
+        <action id="org.eclipse.ui.tests.internal.ac5" 
+            label="redOrBlueAction_v2" 
+            menubarPath="org.eclipse.ui.tests.internal.ListElementMenu/group1" 
+            class="org.eclipse.ui.tests.api.MockActionDelegate" 
+            enablesFor="1"> 
+            <enablement>
+            	<or>
+	            	<and>
+		            	<objectClass name="org.eclipse.ui.tests.api.ListElement"/>
+	    	        	<objectState name="name" value="red"/>
+	    	        </and>
+	            	<and>
+		            	<objectClass name="org.eclipse.ui.tests.api.ListElement"/>
+	    	        	<objectState name="name" value="blue"/>
+	    	        </and>
+	    	    </or>
+            </enablement>
+        </action> 
+        <action id="org.eclipse.ui.tests.internal.ac6" 
+            label="redAndTrueAction_v2" 
+            menubarPath="org.eclipse.ui.tests.internal.ListElementMenu/group1" 
+            class="org.eclipse.ui.tests.api.MockActionDelegate" 
+            enablesFor="1"> 
+            <enablement>
+            	<and>
+	            	<objectClass name="org.eclipse.ui.tests.api.ListElement"/>
+    	        	<objectState name="name" value="red"/>
+    	        	<objectState name="flag" value="true"/>
+    	        </and>
+            </enablement>
+        </action> 
+    </actionSet> 
+</extension> 
+
+<extension point="org.eclipse.ui.popupMenus"> 
+
+	<!-- Tests for popup menu enablement with v 2.0 format -->
+	
+	<objectContribution id="oc1"
+		objectClass="org.eclipse.ui.tests.api.ListElement">  
+        <action id="oc1" label="allAction_v2" 
+        	class="org.eclipse.ui.tests.api.MockActionDelegate"/> 
+    </objectContribution> 
+    <objectContribution id="oc2"
+		objectClass="org.eclipse.ui.tests.api.ListElement"> 
+		<visibility>
+        	<objectState name="name" value="red"/>
+		</visibility>
+        <action id="oc2" label="redAction_v2"
         	class="org.eclipse.ui.tests.api.MockActionDelegate"/>
     </objectContribution> 
+    <objectContribution id="oc3"
+		objectClass="org.eclipse.ui.tests.api.ListElement">
+		<visibility>
+        	<not>
+   	        	<objectState name="name" value="red"/>
+       	    </not>
+		</visibility>
+        <action id="oc3" label="notRedAction_v2"
+			class="org.eclipse.ui.tests.api.MockActionDelegate"/>
+    </objectContribution> 
+    <objectContribution id="oc4"
+		objectClass="org.eclipse.ui.tests.api.ListElement">
+		<visibility>
+        	<objectState name="flag" value="true"/>
+		</visibility>
+        <action id="oc4" label="trueAction_v2"
+			class="org.eclipse.ui.tests.api.MockActionDelegate"/>
+    </objectContribution> 
+    <objectContribution id="oc5"
+		objectClass="org.eclipse.ui.tests.api.ListElement">
+		<visibility>
+        	<or>
+   	        	<objectState name="name" value="red"/>
+   	        	<objectState name="name" value="blue"/>
+       	    </or>
+		</visibility>
+        <action id="oc4" label="redOrBlueAction_v2"
+			class="org.eclipse.ui.tests.api.MockActionDelegate"/>
+    </objectContribution> 
+    <objectContribution id="oc6"
+		objectClass="org.eclipse.ui.tests.api.ListElement">
+		<visibility>
+        	<and>
+   	        	<objectState name="name" value="red"/>
+	        	<objectState name="flag" value="true"/>
+       	    </and>
+		</visibility>
+        <action id="oc4" label="redAndTrueAction_v2"
+			class="org.eclipse.ui.tests.api.MockActionDelegate"/>
+    </objectContribution> 
 </extension> 
+
 
 
 </plugin>

@@ -18,7 +18,7 @@ public class ListElement implements IAdaptable {
 	}
 	
 	public String toString() {
-		return name;
+		return name + ':' + flag;
 	}
 
 	public String getName() {

@@ -20,5 +20,7 @@ public class InternalTestSuite extends TestSuite {
 	 */
 	public InternalTestSuite() {
 		addTest(new TestSuite(EditorActionBarsTest.class));
+		addTest(new TestSuite(ActionSetExpressionTest.class));
+		addTest(new TestSuite(PopupMenuExpressionTest.class));
 	}
 }

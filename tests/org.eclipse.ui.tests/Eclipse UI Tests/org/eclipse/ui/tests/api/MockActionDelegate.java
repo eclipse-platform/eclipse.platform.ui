@@ -1,11 +1,12 @@
 package org.eclipse.ui.tests.api;
 
+import org.eclipse.jdt.junit.util.CallHistory;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IActionDelegate;
-import org.eclipse.jdt.junit.util.*;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-public class MockActionDelegate implements IActionDelegate {
+public class MockActionDelegate implements IWorkbenchWindowActionDelegate {
 
 	public CallHistory callHistory;
 	public static final String ACTION_SET_ID = "org.eclipse.ui.tests.api.MockActionSet";
@@ -16,6 +17,12 @@ public class MockActionDelegate implements IActionDelegate {
 		lastDelegate = this;
 	}
 	
+	/*
+	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
+	 */
+	public void init(IWorkbenchWindow window) {
+	}
+
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
@@ -29,5 +36,12 @@ public class MockActionDelegate implements IActionDelegate {
 	public void selectionChanged(IAction action, ISelection selection) {
 		callHistory.add("selectionChanged");
 	}
+	
+	/*
+	 * @see IWorkbenchWindowActionDelegate#dispose()
+	 */
+	public void dispose() {
+	}
+
 }
 

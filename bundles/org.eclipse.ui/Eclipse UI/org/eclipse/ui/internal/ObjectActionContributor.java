@@ -142,6 +142,7 @@ protected boolean readElement(IConfigurationElement element) {
 	String tag = element.getName();
 	if (tag.equals(PluginActionBuilder.TAG_VISIBILITY)) {
 		visibilityTest = new ActionExpression(element);
+		return true;
 	} else if (tag.equals(PluginActionBuilder.TAG_FILTER)) {
 		if (filterTest == null)
 			filterTest = new ObjectFilterTest();

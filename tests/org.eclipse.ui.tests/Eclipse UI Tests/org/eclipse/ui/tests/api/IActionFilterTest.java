@@ -105,11 +105,11 @@ public class IActionFilterTest extends UITestCase {
 		view.selectElement(red);
 		ActionUtil.fireAboutToShow(menuMgr);
 		assertTrue(filter.getCalled());
-		assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "redAction"));
-		assertNull(ActionUtil.getActionWithLabel(menuMgr, "blueAction"));
-		assertNull(ActionUtil.getActionWithLabel(menuMgr, "trueAction"));
-		assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "falseAction"));
-		assertNull(ActionUtil.getActionWithLabel(menuMgr, "redTrueAction"));
+		assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "redAction_v1"));
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "blueAction_v1"));
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "trueAction_v1"));
+		assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "falseAction_v1"));
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "redTrueAction_v1"));
 		view.verifyActions(this, menuMgr);
 		
 		// Select blue, verify popup.
@@ -117,11 +117,11 @@ public class IActionFilterTest extends UITestCase {
 		view.selectElement(blue);
 		ActionUtil.fireAboutToShow(menuMgr);
 		assertTrue(filter.getCalled());
-		assertNull(ActionUtil.getActionWithLabel(menuMgr, "redAction"));
-		assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "blueAction"));
-		assertNull(ActionUtil.getActionWithLabel(menuMgr, "trueAction"));
-		assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "falseAction"));
-		assertNull(ActionUtil.getActionWithLabel(menuMgr, "redTrueAction"));
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "redAction_v1"));
+		assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "blueAction_v1"));
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "trueAction_v1"));
+		assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "falseAction_v1"));
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "redTrueAction_v1"));
 		view.verifyActions(this, menuMgr);
 		
 		// Select green, verify popup.
@@ -129,11 +129,11 @@ public class IActionFilterTest extends UITestCase {
 		view.selectElement(green);
 		ActionUtil.fireAboutToShow(menuMgr);
 		assertTrue(filter.getCalled());
-		assertNull(ActionUtil.getActionWithLabel(menuMgr, "redAction"));
-		assertNull(ActionUtil.getActionWithLabel(menuMgr, "blueAction"));
-		assertNull(ActionUtil.getActionWithLabel(menuMgr, "trueAction"));
-		assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "falseAction"));
-		assertNull(ActionUtil.getActionWithLabel(menuMgr, "redTrueAction"));
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "redAction_v1"));
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "blueAction_v1"));
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "trueAction_v1"));
+		assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "falseAction_v1"));
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "redTrueAction_v1"));
 		view.verifyActions(this, menuMgr);
 		
 		// Select redTrue, verify popup.
@@ -141,11 +141,11 @@ public class IActionFilterTest extends UITestCase {
 		view.selectElement(redTrue);
 		ActionUtil.fireAboutToShow(menuMgr);
 		assertTrue(filter.getCalled());
-		assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "redAction"));
-		assertNull(ActionUtil.getActionWithLabel(menuMgr, "blueAction"));
-		assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "trueAction"));
-		assertNull(ActionUtil.getActionWithLabel(menuMgr, "falseAction"));
-		assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "redTrueAction"));
+		assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "redAction_v1"));
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "blueAction_v1"));
+		assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "trueAction_v1"));
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "falseAction_v1"));
+		assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "redTrueAction_v1"));
 		view.verifyActions(this, menuMgr);
 
 		// Select nothing, verify popup.
@@ -153,11 +153,11 @@ public class IActionFilterTest extends UITestCase {
 		view.selectElement(null);
 		ActionUtil.fireAboutToShow(menuMgr);
 		assertTrue(!filter.getCalled());
-		assertNull(ActionUtil.getActionWithLabel(menuMgr, "redAction"));
-		assertNull(ActionUtil.getActionWithLabel(menuMgr, "blueAction"));
-		assertNull(ActionUtil.getActionWithLabel(menuMgr, "trueAction"));
-		assertNull(ActionUtil.getActionWithLabel(menuMgr, "falseAction"));
-		assertNull(ActionUtil.getActionWithLabel(menuMgr, "redTrueAction"));
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "redAction_v1"));
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "blueAction_v1"));
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "trueAction_v1"));
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "falseAction_v1"));
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "redTrueAction_v1"));
 		view.verifyActions(this, menuMgr);
  	}	
 }
