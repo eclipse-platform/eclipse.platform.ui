@@ -249,10 +249,14 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	}
 	
 	/**
-	 * Updates the enablement of the "Search" button based on the validity of
-	 * the user's selections.
+	 * Updates the dialog based on the state of the working set settings
+	 * <ul>
+	 * <li>Sets the enablement of the "Search" button based on the validity of
+	 * 	the settings</li>
+	 * <li>Sets any or clears the error message</li>
+	 * </ul>
 	 */
-	private void updateOkEnabled() {
+	private void updateForWorkingSetSettings() {
 		if (workingSetScopeButton.getSelection()) {
 			String error= null;
 			if (searchScopes == null) {
@@ -267,7 +271,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 			}
 		}
 		getOkButton().setEnabled(true);
-		setErrorMessage(""); //$NON-NLS-1$
+		setErrorMessage(null);
 	}
 
 	/**
@@ -301,7 +305,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 		if (set == null) {
 			searchScopes= null;
 			workingSetText.setText(""); //$NON-NLS-1$
-			updateOkEnabled();
+			validateInput();
 			return;
 		}
 		IAdaptable[] elements= set.getElements();
@@ -322,7 +326,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 		workingSetText.setText(set.getName());
 		selectRadioButton(workingSetScopeButton);
 		
-		updateOkEnabled();
+		validateInput();
 	}
 
 	/**
@@ -405,4 +409,18 @@ public class SearchForBuildFilesDialog extends InputDialog {
 		WorkbenchHelp.setHelp(shell, IAntUIHelpContextIds.SEARCH_FOR_BUILDFILES_DIALOG);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.InputDialog#validateInput()
+	 */
+	protected void validateInput() {
+		String errorMessage = null;
+		if (getValidator() != null) {
+			errorMessage = getValidator().isValid(getText().getText());
+		}
+
+		setErrorMessage(errorMessage);
+		if (errorMessage == null) {
+			updateForWorkingSetSettings();
+		}
+	}
 }
