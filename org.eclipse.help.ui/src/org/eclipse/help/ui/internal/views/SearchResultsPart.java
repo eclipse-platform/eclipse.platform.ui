@@ -211,10 +211,26 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 	void startNewSearch(String phrase, ArrayList eds) {
 		this.phrase = phrase;
 		separator.setVisible(true);
+		// locate local help engine and add it first
+		EngineDescriptor localHelp = findLocalHelp(eds);
+		if (localHelp!=null)
+			add(localHelp);
+		// add engines other than local help
 		for (int i = 0; i < eds.size(); i++) {
-			add((EngineDescriptor) eds.get(i));
+			EngineDescriptor ed = (EngineDescriptor) eds.get(i);
+			if (ed==localHelp)
+				continue;
 		}
 		reflow();
+	}
+	
+	private EngineDescriptor findLocalHelp(ArrayList eds) {
+		for (int i=0; i<eds.size(); i++) {
+			EngineDescriptor ed = (EngineDescriptor)eds.get(i);
+			if (ed.getEngineTypeId().equals(IHelpUIConstants.INTERNAL_HELP_ID))
+				return ed;
+		}
+		return null;
 	}
 	
 	void completed() {

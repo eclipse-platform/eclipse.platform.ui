@@ -257,7 +257,7 @@ public class EngineResultSection {
 
 	private ISearchEngineResult[] getResults() {
 		ArrayList list = hits;
-		if (desc.getEngineTypeId().equals("org.eclipse.help.ui.localSearch")) { //$NON-NLS-1$
+		if (desc.getEngineTypeId().equals(IHelpUIConstants.INTERNAL_HELP_ID)) {
 			if (part.parent.isFilteredByRoles()) {
 				list = new ArrayList();
 				for (int i = 0; i < hits.size(); i++) {

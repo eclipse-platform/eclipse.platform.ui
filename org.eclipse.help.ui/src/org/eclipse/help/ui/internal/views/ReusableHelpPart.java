@@ -676,6 +676,7 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 			showAllAction.setToolTipText(HelpUIResources
 						.getString("AllTopicsPart.showAll.tooltip")); //$NON-NLS-1$
 			toolBarManager.insertBefore("back", showAllAction); //$NON-NLS-1$
+			toolBarManager.insertBefore("back", new Separator()); //$NON-NLS-1$
 			showAllAction.setChecked(!HelpBasePlugin.getActivitySupport()
 						.isFilteringEnabled());
 		}
