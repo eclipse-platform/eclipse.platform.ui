@@ -60,37 +60,35 @@ public class InstallCommand extends ScriptedCommand {
 			this.remoteSiteURL = new URL(UpdateURLDecoder.decode(fromSite, "UTF-8")); //$NON-NLS-1$
 
 			// Get site to install to
-			IConfiguredSite[] sites = getConfiguration().getConfiguredSites();
-			if (toSite != null) {
-				File sitePath = new File(toSite);
-				if (!sitePath.exists())
-					sitePath.mkdirs();
-				URL toSiteURL = sitePath.toURL();
-				ISite site = SiteManager.getSite(toSiteURL, null);
-				if (site == null) {
-					throw new Exception(Policy.bind("Standalone.noSite") + toSite); //$NON-NLS-1$
-				}
-				targetSite = site.getCurrentConfiguredSite();
-				if (targetSite == null) {
-					targetSite = getConfiguration().createConfiguredSite(sitePath);
-					IStatus status = targetSite.verifyUpdatableStatus();
-					if (status.isOK())
-						getConfiguration().addConfiguredSite(targetSite);
-					else 
-						throw new CoreException(status);
-
-					// update the sites array to pick up new site
-					sites = getConfiguration().getConfiguredSites();
-				}
-			}
+			targetSite = getTargetSite(toSite);
+			// if no site, try selecting the site that already has the old feature
+			targetSite = UpdateUtils.getSiteWithFeature(getConfiguration(), featureId);
+			// if still no site, pick the product site, if writeable
 			if (targetSite == null) {
+				IConfiguredSite[] sites = getConfiguration().getConfiguredSites();
 				for (int i = 0; i < sites.length; i++) {
-					if (sites[i].isProductSite()) {
+					if (sites[i].isProductSite() && sites[i].isUpdatable()) {
 						targetSite = sites[i];
 						break;
 					}
 				}
 			}
+			// if all else fails, pick the first updateable site
+			if (targetSite == null) {
+				IConfiguredSite[] sites = getConfiguration().getConfiguredSites();
+				for (int i = 0; i < sites.length; i++) {
+					if (sites[i].isUpdatable()) {
+						targetSite = sites[i];
+						break;
+					}
+				}
+			}
+			// are we still checking for sites? forget about it
+			if (targetSite == null)
+				throw Utilities.newCoreException(
+						Policy.bind("Standalone.cannotInstall") + featureId + " " + version, //$NON-NLS-1$ //$NON-NLS-2$
+						null);
+			
 			UpdateSearchScope searchScope = new UpdateSearchScope();
 			searchScope.addSearchSite(
 				"remoteSite", //$NON-NLS-1$
@@ -182,7 +180,44 @@ public class InstallCommand extends ScriptedCommand {
 		}
 	}
 
+	private IConfiguredSite getTargetSite(String toSite) throws Exception {
+		if (toSite == null) 
+			return null;
+			
+		IConfiguredSite[] configuredSites = getConfiguration().getConfiguredSites();
+		File sitePath = new File(toSite);
+		File secondaryPath = sitePath.getName().equals("eclipse") ? // $NON-NLS-1$
+							null : new File(sitePath, "eclipse"); // $NON-NLS-1$
 
+		for (int i = 0; i < configuredSites.length; i++) {
+			IConfiguredSite csite = configuredSites[i];
+			if (csite.getSite().getURL().sameFile(sitePath.toURL())) 
+				return csite;
+			else if (secondaryPath != null && csite.getSite().getURL().sameFile(secondaryPath.toURL())) 
+				return csite;
+		}
+
+		// extension site not found, need to create one
+		if (!sitePath.exists())
+			sitePath.mkdirs();
+		URL toSiteURL = sitePath.toURL();
+		ISite site = SiteManager.getSite(toSiteURL, null);
+		if (site == null) {
+			throw new Exception(Policy.bind("Standalone.noSite") + toSite); //$NON-NLS-1$
+		}
+		IConfiguredSite csite = site.getCurrentConfiguredSite();
+		if (csite == null) {
+			csite = getConfiguration().createConfiguredSite(sitePath);
+			IStatus status = csite.verifyUpdatableStatus();
+			if (status.isOK())
+				getConfiguration().addConfiguredSite(csite);
+			else 
+				throw new CoreException(status);
+
+			return csite;
+		}
+		return csite;
+	}
 	class UpdateSearchResultCollector implements IUpdateSearchResultCollector {
 		private ArrayList operations = new ArrayList();
 
