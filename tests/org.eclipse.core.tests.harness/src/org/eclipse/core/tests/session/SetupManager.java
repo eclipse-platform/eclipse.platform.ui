@@ -19,7 +19,6 @@ import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 public class SetupManager {
-
 	public class SetupException extends Exception {
 		public SetupException(String message, Throwable cause) {
 			super(message, cause);
@@ -27,14 +26,37 @@ public class SetupManager {
 	}
 
 	private static SetupManager instance;
-	private String defaultVariations = "";
-	private Map setups;
+	private static final String SETUP_DEBUG = "setup.debug";
+	private static final String SETUP_FILES = "setup.files";
+	private static final String SETUP_OPTIONS = "setup.options";
+	private static final String SETUP_OVERRIDE_ECLIPSEARGS = "setup.override.eclipseArgs";
+	private static final String SETUP_OVERRIDE_SYSTEMPROPERTIES = "setup.override.systemProperties";
+	private static final String SETUP_OVERRIDE_VMARGS = "setup.override.vmArgs";
+	private String defaultOptionSetIds = "";
+	private Map setupById;
+	private Collection setups;
+
+	private static boolean contains(Object[] set, Object element) {
+		for (int i = 0; i < set.length; i++)
+			if (element.equals(set[i]))
+				return true;
+		return false;
+	}
 
 	public synchronized static SetupManager getInstance() throws SetupException {
 		if (instance != null)
 			return instance;
 		instance = new SetupManager();
 		return instance;
+	}
+
+	public static boolean inDebugMode() {
+		return Boolean.getBoolean(SETUP_DEBUG);
+	}
+
+	public static void main(String[] args) throws Exception {
+		SetupManager manager = SetupManager.getInstance();
+		System.out.println(manager.getDefaultSetup());
 	}
 
 	static String[] parseItems(String string) {
@@ -55,7 +77,8 @@ public class SetupManager {
 	}
 
 	protected SetupManager() throws SetupException {
-		setups = new HashMap();
+		setups = new HashSet();
+		setupById = new HashMap();
 		try {
 			loadSetups();
 		} catch (Exception e) {
@@ -63,9 +86,26 @@ public class SetupManager {
 		}
 	}
 
+	public Setup buildSetup(String[] optionSets) {
+		Setup defaultSetup = Setup.getDefaultSetup(this);
+		for (Iterator i = setups.iterator(); i.hasNext();) {
+			Setup customSetup = (Setup) i.next();
+			if ((customSetup.getId() == null || contains(optionSets, customSetup.getId())) && customSetup.isSatisfied(optionSets))
+				defaultSetup.merge(customSetup);
+		}
+		defaultSetup.setEclipseArguments(parseOptions(System.getProperty(SETUP_OVERRIDE_ECLIPSEARGS)));
+		defaultSetup.setVMArguments(parseOptions(System.getProperty(SETUP_OVERRIDE_VMARGS)));
+		defaultSetup.setSystemProperties(parseOptions(System.getProperty(SETUP_OVERRIDE_SYSTEMPROPERTIES)));
+		return defaultSetup;
+	}
+
 	private String getAttribute(NamedNodeMap attributes, String name) {
 		Node selected = attributes.getNamedItem(name);
 		return selected == null ? null : selected.getNodeValue();
+	}
+
+	private String[] getDefaultOptionSets() {
+		return parseItems(System.getProperty(SETUP_OPTIONS, defaultOptionSetIds));
 	}
 
 	/**
@@ -75,28 +115,11 @@ public class SetupManager {
 	 * @return a new setup object
 	 */
 	public Setup getDefaultSetup() {
-		String[] variationIds = getDefaultVariationIds();
-		Setup defaultSetup = Setup.getDefaultSetup();
-		for (int i = 0; i < variationIds.length; i++) {
-			Setup variation = getSetup(variationIds[i]);
-			if (variation != null)
-				defaultSetup.merge(variation);
-		}
-		return defaultSetup;
+		return buildSetup(getDefaultOptionSets());
 	}
 
-	private String[] getDefaultVariationIds() {
-		System.getProperty("setup.variations");
-		List allDefaultVariations = new ArrayList();
-		// leave the user provided default variations *after* the ones found in the file
-		allDefaultVariations.addAll(Arrays.asList(parseItems(defaultVariations)));
-		allDefaultVariations.addAll(Arrays.asList(parseItems(System.getProperty("setup.variations"))));
-		return (String[]) allDefaultVariations.toArray(new String[allDefaultVariations.size()]);
-	}
-
-	public Setup getSetup(String setupId) {
-		Setup setup = (Setup) setups.get(setupId);
-		return setup == null ? null : (Setup) setup.clone();
+	public Setup getSetup(String id) {
+		return (Setup) setupById.get(id);
 	}
 
 	private void loadEclipseArgument(Setup newSetup, Element toParse) {
@@ -111,10 +134,13 @@ public class SetupManager {
 		NamedNodeMap attributes = markup.getAttributes();
 		if (attributes == null)
 			return;
-		Setup newSetup = new Setup();
+		Setup newSetup = new Setup(this);
 		newSetup.setId(getAttribute(attributes, "id"));
 		newSetup.setName(getAttribute(attributes, "name"));
 		String timeout = getAttribute(attributes, "timeout");
+		newSetup.setBaseSetups(parseItems(getAttribute(attributes, "base")));
+		newSetup.setRequiredSets(parseItems(getAttribute(attributes, "with")));
+
 		if (timeout != null)
 			newSetup.setTimeout(Integer.parseInt(timeout));
 		NodeList children = markup.getChildNodes();
@@ -127,14 +153,16 @@ public class SetupManager {
 				loadEclipseArgument(newSetup, toParse);
 			else if (toParse.getTagName().equals("vmArg"))
 				loadVMArgument(newSetup, toParse);
-			else if (toParse.getTagName().equals("property"))
+			else if (toParse.getTagName().equals("systemProperty"))
 				loadProperty(newSetup, toParse);
 		}
-		setups.put(newSetup.getId(), newSetup);
+		setups.add(newSetup);
+		if (newSetup.getId() != null)
+			setupById.put(newSetup.getId(), newSetup);
 	}
 
 	private void loadSetups() throws ParserConfigurationException, FactoryConfigurationError, SAXException, IOException {
-		String setupFilesProperty = System.getProperty("setup.files", System.getProperty("setup.file", "default-setup.xml"));
+		String setupFilesProperty = System.getProperty(SETUP_FILES, "default-setup.xml");
 		String[] setupFileNames = parseItems(setupFilesProperty);
 		File[] setupFiles = new File[setupFileNames.length];
 		int found = 0;
@@ -155,16 +183,16 @@ public class SetupManager {
 		for (int fileIndex = 0; fileIndex < found; fileIndex++) {
 			Document doc = docBuilder.parse(setupFiles[fileIndex]);
 			Element root = doc.getDocumentElement();
-			String setupDefaultVariations = root.getAttribute("default");
-			if (setupDefaultVariations != null)
-				defaultVariations = defaultVariations == null ? setupDefaultVariations : (defaultVariations + ',' + setupDefaultVariations);
-			NodeList variations = root.getChildNodes();
-			for (int i = 0; i < variations.getLength(); i++) {
-				Node next = variations.item(i);
+			String setupDefaultOptionSets = root.getAttribute("default");
+			if (setupDefaultOptionSets != null)
+				defaultOptionSetIds = defaultOptionSetIds == null ? setupDefaultOptionSets : (defaultOptionSetIds + ',' + setupDefaultOptionSets);
+			NodeList optionSets = root.getChildNodes();
+			for (int i = 0; i < optionSets.getLength(); i++) {
+				Node next = optionSets.item(i);
 				if (!(next instanceof Element))
 					continue;
 				Element toParse = (Element) next;
-				if (!toParse.getTagName().equals("variant"))
+				if (!toParse.getTagName().equals("optionSet"))
 					continue;
 				loadSetup(toParse);
 			}
@@ -175,7 +203,23 @@ public class SetupManager {
 		newSetup.setVMArgument(toParse.getAttribute("option"), toParse.getAttribute("value"));
 	}
 
-	public static boolean inDebugMode() {
-		return Boolean.getBoolean("setup.debug");
+	private Map parseOptions(String options) {
+		if (options == null)
+			return Collections.EMPTY_MAP;
+		Map result = new HashMap();
+		StringTokenizer tokenizer = new StringTokenizer(options.trim(), ";");
+		while (tokenizer.hasMoreTokens()) {
+			String option = tokenizer.nextToken();
+			int separatorIndex = option.indexOf('=');
+			if (separatorIndex == -1 || separatorIndex == option.length() - 1)
+				// property with no value defined
+				result.put(option, "");
+			else {
+				String key = option.substring(0, separatorIndex);
+				String value = option.substring(separatorIndex + 1);
+				result.put(key, value);
+			}
+		}
+		return result;
 	}
 }
