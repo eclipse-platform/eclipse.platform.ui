@@ -222,8 +222,7 @@ public abstract class AbstractSite implements ISite {
 	public ICategory[] getCategories() {
 		ICategory[] result = null;
 		if (isManageable) {
-			if (categories == null)
-					initializeSite();
+			if (categories == null)	initializeSite();
 			//FIXME: I do not like this pattern.. List or Array ???
 			if (!categories.isEmpty()) {
 				result = (ICategory[]) categories.toArray(new ICategory[categories.size()]);

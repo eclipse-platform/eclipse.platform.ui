@@ -128,11 +128,22 @@ public class DefaultPackagedFeature extends AbstractFeature {
 			String newFile = SiteManager.getTempSite().getURL().getPath()+getIdentifier().toString()+".jar";
 			FileOutputStream localContentReferenceStream = new FileOutputStream(newFile);
 			transferStreams(sourceContentReferenceStream,localContentReferenceStream);
-			this.setURL(new URL("file:///"+newFile));				
+			this.setURL(new URL("jar:file://"+newFile+"!/"));				
 		} else {
 			throw new IOException("Couldn\'t find the file: "+getURL().toExternalForm());
 		}
-		return getURL().openStream();
+		
+		// create a new JAR url around the file
+		URL insideURL = null;
+		try {
+			String newURLString = getURL()+"feature.xml";
+			insideURL = new URL(newURLString);
+		} catch (MalformedURLException e){
+			//FIXME:
+			e.printStackTrace();
+		}
+		
+		return insideURL.openStream();
 	}
 
 /**

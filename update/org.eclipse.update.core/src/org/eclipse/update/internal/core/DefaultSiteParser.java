@@ -123,7 +123,7 @@ public class DefaultSiteParser extends DefaultHandler {
 
 		// url
 		String defaultString = "features/"+feature.getIdentifier().toString()+".jar";
-		URL url = UpdateManagerUtils.getURL(site.getInfoURL(),attributes.getValue("url"),defaultString);
+		URL url = UpdateManagerUtils.getURL(site.getURL(),attributes.getValue("url"),defaultString);
 		((AbstractFeature) feature).setURL(url);
 		
 		// add the feature

@@ -25,14 +25,14 @@ public class DefaultCategory implements ICategory {
 	 * @see ICategory#getName()
 	 */
 	public String getName() {
-		return null;
+		return name;
 	}
 
 	/**
 	 * @see ICategory#getLabel()
 	 */
 	public String getLabel() {
-		return null;
+		return label;
 	}
 
 	/**

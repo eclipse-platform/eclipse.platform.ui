@@ -79,30 +79,37 @@ public class DefaultFeatureParser extends DefaultHandler {
 	
 		if (tag.equalsIgnoreCase(FEATURE)){
 			processFeature(attributes);
+			return;
 		}
 	
 		if (tag.equalsIgnoreCase(DESCRIPTION)){
 			feature.setDescription(processInfo(attributes));
+			return;
 		}
 		
 		if (tag.equalsIgnoreCase(COPYRIGHT)){
 			feature.setCopyright(processInfo(attributes));
+			return;
 		}
 		
 		if (tag.equalsIgnoreCase(LICENSE)){
 			feature.setLicense(processInfo(attributes));
+			return;
 		}
 	
 		if (tag.equalsIgnoreCase(UPDATE)){
 			feature.setUpdateInfo(processURLInfo(attributes));
+			return;
 		}		
 		
 		if (tag.equalsIgnoreCase(DISCOVERY)){
 			feature.addDiscoveryInfo(processURLInfo(attributes));
+			return;
 		}		
 		
 		if (tag.equalsIgnoreCase(IMPORT)){
 			processImport(attributes);
+			return;
 		}
 		
 		if (tag.equalsIgnoreCase(PLUGIN)){
@@ -139,7 +146,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	private IInfo processInfo(Attributes attributes){
 		String infoURL = attributes.getValue("url");
 		infoURL = UpdateManagerUtils.getResourceString(infoURL,bundle);
-		URL url = UpdateManagerUtils.getURL(feature.getSite().getURL(),infoURL,null);
+		URL url = UpdateManagerUtils.getURL(feature.getURL(),infoURL,null);
 		Info inf = new Info(url);
 		return inf;
 	}
