@@ -231,29 +231,12 @@ public class File extends Resource implements IFile {
 				;
 		return description.getProperty(IContentDescription.CHARSET) == null ? getParent().getDefaultCharset() : (String) description.getProperty(IContentDescription.CHARSET);
 	}
-
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.core.resources.IFile#getContentDescription()
+	 */
 	public IContentDescription getContentDescription() throws CoreException {
-		// tries to obtain a description for this file contents
-		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-		InputStream contents = getContents();
-		boolean failed = false;
-		try {
-			return contentTypeManager.getDescriptionFor(contents, getName(), IContentDescription.ALL);
-		} catch (IOException e) {
-			failed = true;
-			String message = Policy.bind("resources.errorContentDescription", getFullPath().toString()); //$NON-NLS-1$		
-			throw new ResourceException(IResourceStatus.FAILED_DESCRIBING_CONTENTS, getFullPath(), message, e);
-		} finally {
-			if (contents != null)
-				try {
-					contents.close();
-				} catch (IOException e) {
-					if (!failed) {
-						String message = Policy.bind("resources.errorContentDescription", getFullPath().toString()); //$NON-NLS-1$		
-						throw new ResourceException(IResourceStatus.FAILED_DESCRIBING_CONTENTS, getFullPath(), message, e);
-					}
-				}
-		}
+		return workspace.getContentDescriptionManager().getDescriptionFor(this);
 	}
 
 	/* (non-Javadoc)

@@ -33,6 +33,7 @@ public class AllTests extends TestCase {
 		TestSuite suite = new TestSuite();
 		suite.addTest(QueueTest.suite());
 		suite.addTest(ObjectMapTest.suite());
+		suite.addTest(CacheTest.suite());
 		return suite;
 	}
 }

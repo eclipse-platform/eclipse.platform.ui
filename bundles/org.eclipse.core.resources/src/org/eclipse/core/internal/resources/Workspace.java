@@ -43,6 +43,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected PathVariableManager pathVariableManager;
 	protected PropertyManager propertyManager;
 	protected MarkerManager markerManager;
+	protected ContentDescriptionManager contentDescriptionManager;
 	/**
 	 * Work manager should never be accessed directly because accessor
 	 * asserts that workspace is still open.
@@ -920,10 +921,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return aliasManager;
 	}
 
-	public CharsetManager getCharsetManager() {
-		return charsetManager;
-	}
-
 	/**
 	 * Returns this workspace's build manager
 	 */
@@ -977,6 +974,15 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 		return buildOrder;
 	}
+	
+	public CharsetManager getCharsetManager() {
+		return charsetManager;
+	}
+	
+	public ContentDescriptionManager getContentDescriptionManager() {
+		return contentDescriptionManager;
+	}	
+	
 
 	/* (non-Javadoc)
 	 * @see IWorkspace#getDanglingReferences()
@@ -1730,7 +1736,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected void shutdown(IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			IManager[] managers = {buildManager, propertyManager, pathVariableManager, charsetManager, fileSystemManager, markerManager, saveManager, _workManager, aliasManager, refreshManager};
+			IManager[] managers = {buildManager, propertyManager, pathVariableManager, charsetManager, fileSystemManager, markerManager, saveManager, _workManager, aliasManager, refreshManager, contentDescriptionManager};
 			monitor.beginTask(null, managers.length);
 			String message = Policy.bind("resources.shutdownProblems"); //$NON-NLS-1$
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
@@ -1759,6 +1765,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			_workManager = null;
 			aliasManager = null;
 			refreshManager = null;
+			charsetManager = null;
+			contentDescriptionManager = null;
 			if (!status.isOK())
 				throw new CoreException(status);
 		} finally {
@@ -1801,6 +1809,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		refreshManager.startup(null);
 		charsetManager = new CharsetManager(this);
 		charsetManager.startup(null);
+		contentDescriptionManager = new ContentDescriptionManager();
+		contentDescriptionManager.startup(null);
 		treeLocked = null; // unlock the tree.
 	}
 
