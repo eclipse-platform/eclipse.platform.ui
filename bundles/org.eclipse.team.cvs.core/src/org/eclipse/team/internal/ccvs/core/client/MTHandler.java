@@ -22,7 +22,7 @@ public class MTHandler extends ResponseHandler {
 	 * @see ResponseHandler#getResponseID()
 	 */
 	public String getResponseID() {
-		return "MT"; // $NON-NLS-1$
+		return "MT"; //$NON-NLS-1$
 	}
 
 	/**
@@ -58,7 +58,7 @@ public class MTHandler extends ResponseHandler {
 			}
 			
 			// Accumulate the line and indicate if its available for use
-			if (tag.equals("newline")) {
+			if (tag.equals("newline")) { //$NON-NLS-1$
 				isLineAvailable = true;
 			} else if (text != null) {
 				// Reset the previous line if required

@@ -151,7 +151,7 @@ public class Session {
 			if (isCVSNT()) {
 				Request.registerResponseHandler(new MTHandler());
 			} else {
-				Request.removeResponseHandler("MT");
+				Request.removeResponseHandler("MT"); //$NON-NLS-1$
 			}
 			
 			// tell the server the names of the responses we can handle
