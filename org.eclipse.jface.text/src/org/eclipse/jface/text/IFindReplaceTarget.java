@@ -35,8 +35,8 @@ public interface IFindReplaceTarget {
  	 * @param offset the offset at which searching starts
  	 * @param findString the string which should be found
  	 * @param searchForward <code>true</code> searches forward, <code>false</code> backwards
-  	 * @param caseSensitive <code>true</code> performes a case sensitve search, <code>false</code> an insensitive search
-  	 * @param wholeWord if <code>true</code> only occurences are reported in which the findString stands as a word by itself 
+  	 * @param caseSensitive <code>true</code> performs a case sensitive search, <code>false</code> an insensitive search
+  	 * @param wholeWord if <code>true</code> only occurrences are reported in which the findString stands as a word by itself 
   	 * @return the position of the specified string, or -1 if the string has not been found
 	 */
 	int findAndSelect(int offset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord);
