@@ -80,7 +80,7 @@ public class SiteLocal implements ILocalSite, IWritable {
 		// notify listeners
 		Object[] siteLocalListeners = listeners.getListeners();
 		for (int i = 0; i < siteLocalListeners.length; i++) {
-			((ISiteLocalChangedListener) siteLocalListeners[i]).currentInstallConfigurationChanged(config);
+			((ILocalSiteChangedListener) siteLocalListeners[i]).currentInstallConfigurationChanged(config);
 		}
 		}
 		
@@ -143,7 +143,7 @@ public class SiteLocal implements ILocalSite, IWritable {
 			// notify listeners
 			Object[] localSiteListeners = listeners.getListeners();
 			for (int i = 0; i < localSiteListeners.length; i++) {
-				((ISiteLocalChangedListener) localSiteListeners[i]).currentInstallConfigurationChanged(currentConfiguration);
+				((ILocalSiteChangedListener) localSiteListeners[i]).currentInstallConfigurationChanged(currentConfiguration);
 			}
 
 			//FIXME: the plugin site may not be read-write
@@ -159,18 +159,18 @@ public class SiteLocal implements ILocalSite, IWritable {
 		}
 	}
 	/*
-	 * @see ILocalSite#addLocalSiteChangedListener(ISiteLocalChangedListener)
+	 * @see ILocalSite#addLocalSiteChangedListener(ILocalSiteChangedListener)
 	 */
-	public void addLocalSiteChangedListener(ISiteLocalChangedListener listener) {
+	public void addLocalSiteChangedListener(ILocalSiteChangedListener listener) {
 		synchronized (listeners) {
 			listeners.add(listener);
 		}
 	}
 
 	/*
-	 * @see ILocalSite#removeLocalSiteChangedListener(ISiteLocalChangedListener)
+	 * @see ILocalSite#removeLocalSiteChangedListener(ILocalSiteChangedListener)
 	 */
-	public void removeLocalSiteChangedListener(ISiteLocalChangedListener listener) {
+	public void removeLocalSiteChangedListener(ILocalSiteChangedListener listener) {
 		synchronized (listeners) {
 			listeners.add(listener);
 		}
@@ -313,15 +313,31 @@ public class SiteLocal implements ILocalSite, IWritable {
 	/*
 	 * @see ILocalSite#revertTo(IInstallConfiguration)
 	 */
-	public void revertTo(IInstallConfiguration configuration) throws CoreException {
-		// create a configuration
-		IInstallConfiguration newConfiguration = cloneCurrentConfiguration(null, configuration.getLabel());
-		// process delta
-		// the Configured featuresConfigured are the same as the old configuration
-		// the unconfigured featuresConfigured are the rest...
+	public void revertTo(IInstallConfiguration configuration, IProgressMonitor monitor) throws CoreException {
+		
+		// save previous current configuration
+		if (getCurrentConfiguration()!=null)	((InstallConfiguration)getCurrentConfiguration()).save();
+		
+		InstallConfiguration result = null;
+		String oldFilename = configuration.getURL().getFile();
+		String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(oldFilename);
+		try {
+			URL newFile = UpdateManagerUtils.getURL(getLocation(), newFileName, null);
+			Date currentDate = new Date();
+			// pass the date onto teh name
+			String name = configuration.getLabel();
+			result = new InstallConfiguration(configuration, newFile, name);
+			// set teh same date in the installConfig
+			result.setCreationDate(currentDate);
+			
+		} catch (MalformedURLException e) {
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot revert to configuration in:" + newFileName, e);
+			throw new CoreException(status);
+		}
 
 		// add to the stack which will set up as current
-		addConfiguration(newConfiguration);
+		addConfiguration(result);
 
 	}
 }
