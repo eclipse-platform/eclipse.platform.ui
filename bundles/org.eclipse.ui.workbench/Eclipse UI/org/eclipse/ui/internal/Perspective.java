@@ -204,6 +204,8 @@ private void checkDragLimit(SelectionEvent event) {
 public boolean containsView(IViewPart view) {
 	String id = view.getSite().getId();
 	IViewReference ref = findView(id);
+	if(ref == null)
+		return false;
 	return (view == ref.getPart(false));
 }
 /**
