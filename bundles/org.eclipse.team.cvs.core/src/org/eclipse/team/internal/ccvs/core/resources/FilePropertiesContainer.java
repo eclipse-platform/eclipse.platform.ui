@@ -114,6 +114,7 @@ public class FilePropertiesContainer {
 		Map mapData = new HashMap();
 		int start;
 		int end;
+		boolean noDirectories = false;
 		
 		data = cvsFolder.getProperty(key);
 		
@@ -121,7 +122,9 @@ public class FilePropertiesContainer {
 			for (int i = 0; i < data.length; i++) {
 				start = data[i].indexOf(seperator)+1;
 				end = data[i].indexOf(seperator,start+1);
-				mapData.put(data[i].substring(start,end),data[i]);
+				// The entry may contain a D indicating that there are no directories. ignore the D.
+				if (start != -1 && end != -1)
+					mapData.put(data[i].substring(start,end),data[i]);
 			}
 		}
 		
