@@ -82,6 +82,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 				} else {
 					selectedProjects.remove(project);
 				}
+				updateEnablement();
 			}
 		});
 		createLabel(composite, Policy.bind("ExportProjectSetMainPage.Project_Set_File_Name__3")); //$NON-NLS-1$
@@ -145,8 +146,10 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 	}
 	private void updateEnablement() {
 		boolean complete;
-
-		if (file.length() == 0) {
+		if (selectedProjects.size() == 0) {
+			setMessage(null);
+			complete = false;
+		} else if (file.length() == 0) {
 			setMessage(null);
 			complete = false;
 		} else {
