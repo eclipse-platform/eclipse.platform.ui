@@ -107,6 +107,7 @@ public class TemplateReaderWriter {
 				boolean deleted = getBooleanValue(attributes, DELETED_ATTRIBUTE, false);
 				
 				String name= getStringValue(attributes, NAME_ATTRIBUTE);
+				name= translateString(name, bundle);
 
 				String description= getStringValue(attributes, DESCRIPTION_ATTRIBUTE, ""); //$NON-NLS-1$
 				description= translateString(description, bundle);

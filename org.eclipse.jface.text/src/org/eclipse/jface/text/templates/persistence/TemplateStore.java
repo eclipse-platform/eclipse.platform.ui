@@ -58,7 +58,7 @@ public final class TemplateStore {
 	
 	private static final String INCLUDE= "include"; //$NON-NLS-1$
 	private static final String FILE= "file"; //$NON-NLS-1$
-	private static final String TRANSLATIONS= "templates"; //$NON-NLS-1$
+	private static final String TRANSLATIONS= "translations"; //$NON-NLS-1$
 
 	/** The stored templates. */
 	private final List fTemplates= new ArrayList();
