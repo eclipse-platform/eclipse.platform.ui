@@ -5,10 +5,8 @@
 %>
 <html>
 <head>
-<meta http-equiv="Refresh" content="0; URL=<%=ie||mozilla?"":"ns4/"%>help.jsp<%=request.getQueryString()!=null?"?"+request.getQueryString():""%>">
 </head>
-
-<body>
+<body onload='window.location.replace("<%=ie||mozilla?"":"ns4/"%>help.jsp<%=request.getQueryString()!=null?"?"+request.getQueryString():""%>")'>
 </body>
 
 
