@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,12 +23,31 @@ import org.eclipse.team.core.TeamException;
  * background job. This is useful in the following situations. 
  * <ul>
  * <li>an operation is potentially long running but a resposive UI is desired
- * while the operation is being performed.</li>
+ * while the operation is being performed. To do this incoming events are processed
+ * and resulting outgoing events are queued and then dispatched at an appropriuate time,
+ * thus batching UI updates.</li>
  * <li>a change is a POST_CHANGE delta requires further modifications to the workspace
  * which cannot be performed in the delta handler because the workspace is locked.</li>
  * <li>a data structure is not thread safe and requires serialized operations.<li> 
  * </ul>
  * </p>
+ * <p>
+ * The event handler has the following characteristics:
+ * <ol>
+ * <li>Incoming events are placed in an incoming queue.</li>
+ * <li>Each event is processed by calling the <code>processEvent</code> method 
+ * which is implemented by the subclass. The implementation may choose to process events
+ * directly or queue events on an outgoing event queue</li>
+ * <li>The <code>doDispatchEvents</code> method of the subclass is called at certain intervals
+ * to give the subclass a chance to dispatch the events in it's outgoing queue. The interval between
+ * the first 3 dispatches will be the <code>shortDispatchDelay</code> and subsequent intervals will be
+ * the <code>longDispatchDelay</code>. This is done to avoid constantly hammering the UI for long running
+ * operations.<li> 
+ * <li>Errors that occur during event processing or dispatch can be accumulated by calling the <code>handle</code>
+ * method. Accumulated errors are used to form the status that is returned when the job completes.<li> 
+ * </ul>
+ * </p>
+ *
  * @since 3.0
  */
 public abstract class BackgroundEventHandler {
