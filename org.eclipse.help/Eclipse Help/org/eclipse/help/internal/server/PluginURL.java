@@ -7,11 +7,10 @@ package org.eclipse.help.internal.server;
 
 import java.io.*;
 import java.util.*;
-import java.util.zip.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.util.Logger;
 import java.net.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.util.*;
 
 /**
  * URL for documentation coming from a plugin.
@@ -149,107 +148,15 @@ public class PluginURL extends HelpURL {
 					
 		InputStream inputStream = null;
 		
-		// Optimization:
-		// Properties files and .ini files are likely to
-		// be found on the disk first.
-		// The other files (documentation) are more likely
-		// to first be found in the doc.zip files
-		if (url.endsWith(PROPERTIES)  || url.endsWith(INI))
-		{
-			// first try finding the file in the plugin
-			// and if not found, in the doc.zip
-			inputStream = openFileFromPlugin();
-			if (inputStream == null)
-				inputStream = openFileFromZip();
-		}
-		else
-		{
-			// first try finding the file inside nl tree in doc.zip,
-			// and then, in the file system
-			inputStream = openFileFromZip();
-			if (inputStream == null)
-				inputStream = openFileFromPlugin();
-		}
+		// first try finding the file inside nl tree in doc.zip,
+		// and then, in the file system
+		inputStream = ResourceLocator.openFromZip(getPlugin(), "doc.zip", getFile());
+		if (inputStream == null)
+			inputStream = ResourceLocator.openFromPlugin(getPlugin(), getFile());
+		
 		return inputStream;
 	}
 	
-	/**
-	 * Opens an input stream to a file contained in doc.zip in a plugin.
-	 * This includes NL lookup.
-	 */
-	public InputStream openFileFromZip()
-	{
-		// First try the NL lookup
-		InputStream is = doOpenFileFromZip("$nl$/doc.zip", getFile());
-		if (is == null)
-			// Default location <plugin>/doc.zip
-			is = doOpenFileFromZip("doc.zip", getFile());
-		return is;
-	}
-
-	/**
-	 * Opens an input stream to a file contained in a plugin.
-	 * This includes NL lookup.
-	 */
-	public InputStream openFileFromPlugin()
-	{
-		InputStream is = doOpenFileFromPlugin("$nl$/" + getFile());
-		if (is == null)
-			// Default location
-			is = doOpenFileFromPlugin(getFile());
-		return is;
-	}
 	
-	/**
-	 * Opens an input stream to a file contained in doc.zip in a plugin
-	 */
-	private InputStream doOpenFileFromZip(String zip, String file)
-	{
-		IPath zipFilePath = new Path(zip);
-		try{
-			URL zipFileURL = getPlugin().getPlugin().find(zipFilePath);
-			if(zipFileURL!=null){
-				try{
-					URL realZipURL = Platform.resolve(zipFileURL);
-					if (realZipURL == null) 
-						return null;
-					URL jurl =	new URL("jar", "", realZipURL.toExternalForm()+"!/"+file);
-					
-					URLConnection jconnection = jurl.openConnection();
-					jconnection.setDefaultUseCaches(false);
-					jconnection.setUseCaches(false);
-					return jconnection.getInputStream();
-					
-					//return jurl.openStream();
-				}catch (IOException ioe){
-					return null;
-				}
-			}
-		}catch(CoreException ce){
-			return null;
-		}
-		return null;
-	}
-	
-	/**
-	 * Opens an input stream to a file contained in a plugin
-	 */
-	private InputStream doOpenFileFromPlugin(String file)
-	{
-		IPath flatFilePath = new Path(file); 
-		try{
-			URL flatFileURL = getPlugin().getPlugin().find(flatFilePath);
-			if(flatFileURL!=null)
-				try{
-					return flatFileURL.openStream();
-				} catch (IOException e){
-					return null;
-				}
-
-		}catch(CoreException ce){
-			return null;
-		}
-		return null;
-	}
 	
 }

@@ -4,7 +4,6 @@ package org.eclipse.help.internal.util;
  * All Rights Reserved.
  */
 
-
 import java.io.*;
 import java.util.Date;
 import java.text.DateFormat;
@@ -19,18 +18,29 @@ class HelpLogListener implements ILogListener {
 	PrintWriter log = null;
 	public HelpLogListener() {
 		try {
-			// ** Initialize log file location here.
-			IPath path =
-				HelpPlugin
-					.getDefault()
-					.getStateLocation()
-					.addTrailingSeparator()
-					.append(".log");
-			File outputFile = path.toFile();
-			log =
-				new PrintWriter(
-					new BufferedWriter(new FileWriter(outputFile.toString(), false)),
-					true);
+			// Initialize log file location here. Check to see
+			// if we need to log to console. If not set, then it is
+			// assumed that we are logging to file.
+
+			String logToConsole =
+				Platform.getDebugOption("org.eclipse.help/debug/consolelog");
+
+			if ( (logToConsole != null)
+				&& (logToConsole.equalsIgnoreCase("true"))) {
+					System.out.println("Help System logging to console...");
+					log = new PrintWriter(System.out, true);
+
+			} else {
+
+				IPath path =
+					HelpPlugin.getDefault().getStateLocation().addTrailingSeparator().append(".log");
+				File outputFile = path.toFile();
+				log =
+					new PrintWriter(
+						new BufferedWriter(new FileWriter(outputFile.toString(), false)),
+						true);
+
+			}
 		} catch (Exception e) {
 			// ** can not log anything.
 			log = null;

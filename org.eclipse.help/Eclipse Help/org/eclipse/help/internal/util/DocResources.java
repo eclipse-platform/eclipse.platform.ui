@@ -6,9 +6,9 @@ package org.eclipse.help.internal.util;
 
 
 import java.util.*;
-import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.server.PluginURL;
-import java.net.*;
+import java.io.*;
+import org.eclipse.help.internal.util.*;
+
 
 /**
  * Uses a resource bundle to load images and strings from
@@ -16,7 +16,7 @@ import java.net.*;
  */
 public class DocResources {
 
-	static HashMap resourceBundleTable = new HashMap();
+	//static HashMap resourceBundleTable = new HashMap();
 	static ArrayList pluginsWithoutResources = new ArrayList();
 	static HashMap propertiesTable = new HashMap();
 
@@ -42,13 +42,12 @@ public class DocResources {
 	
 		// load doc.properties
 		if (properties == null) {
-			PluginURL propertiesURL = null;
 			try {
-				propertiesURL =
-					new PluginURL(pluginID + "/doc.properties", "lang=" + Locale.getDefault().toString());
 				Properties localProp = new Properties();
-						
-				localProp.load(propertiesURL.openStream()); //throws
+				
+				InputStream data = 
+					ResourceLocator.openFromPlugin(pluginID, "doc.properties");		
+				localProp.load(data);
 				
 				properties = localProp;
 				propertiesTable.put(pluginID, properties);

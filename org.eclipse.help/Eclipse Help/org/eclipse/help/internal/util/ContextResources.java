@@ -6,7 +6,7 @@ package org.eclipse.help.internal.util;
 
 
 import java.util.*;
-import org.eclipse.help.internal.server.PluginURL;
+import java.io.*;
 
 /**
  * Uses a resource bundle to load images and strings from
@@ -39,12 +39,12 @@ public class ContextResources extends DocResources{
 	
 		// load context.properties
 		if (properties == null) {
-			properties=loadPropertiesLocally(pluginID,"/context.properties");
+			properties=loadPropertiesLocally(pluginID,"context.properties");
 		}
 		
 		// load doc.properties, for compatibility with old specs
 		if (properties == null) {
-			properties=loadPropertiesLocally(pluginID,"/doc.properties");
+			properties=loadPropertiesLocally(pluginID,"doc.properties");
 		}
 		
 		if(properties==null){
@@ -66,14 +66,12 @@ public class ContextResources extends DocResources{
 	 * @return property file or null if not exists
 	 */
 	private static Properties loadPropertiesLocally(String pluginID, String propFile){
-		PluginURL propertiesURL = null;
 		try {
-			propertiesURL =
-				new PluginURL(pluginID + propFile, "lang=" + Locale.getDefault().toString());
 			Properties localProp = new Properties();
-					
-			localProp.load(propertiesURL.openStreamLocally()); //throws
-			
+			InputStream data = 
+					ResourceLocator.openFromPlugin(pluginID, propFile);		
+			localProp.load(data);		
+	
 			propertiesTable.put(pluginID, localProp);
 			return localProp;
 		} catch (Throwable ex) {

@@ -85,5 +85,9 @@
    <!-- ========================================================================== -->
    <extension-point id="searchEngine" name="%searchengine_extention_point_name"/>
 
+
+	<extension point="org.eclipse.core.runtime.urlHandlers"> 
+		<handler protocol="help" class="org.eclipse.help.internal.protocols.help.Handler"/> 
+	</extension> 
    
 </plugin>

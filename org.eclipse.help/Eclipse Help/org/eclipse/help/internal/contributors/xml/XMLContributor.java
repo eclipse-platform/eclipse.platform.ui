@@ -7,13 +7,11 @@ package org.eclipse.help.internal.contributors.xml;
 
 import java.util.*;
 import java.io.*;
-import java.net.*;
 import org.xml.sax.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.util.*;
 import org.eclipse.help.internal.contributors.*;
 import org.eclipse.help.internal.contributions.*;
-import org.eclipse.help.internal.server.PluginURL;
 import org.eclipse.help.internal.contributions.xml.HelpContribution;
 
 /**
@@ -94,23 +92,23 @@ public abstract class XMLContributor implements Contributor {
 		String file = plugin.getUniqueIdentifier()+"/"+ configuration.getAttribute(nameAttribute);
 
 		try {
-			PluginURL xmlURL = new PluginURL(file, "");
-			InputStream stream = xmlURL.openFileFromPlugin();
+			InputStream stream = ResourceLocator.openFromPlugin(
+				plugin.getUniqueIdentifier(), 
+				configuration.getAttribute(nameAttribute));
+			
 			if (stream == null)
 				return null;
 
 			InputSource source = new InputSource(stream);
 			// set id info for parser exceptions.
 			// use toString method to capture protocol...etc
-			////////source.setSystemId(xmlURL.toString());
+			// source.setSystemId(xmlURL.toString());
 			source.setSystemId(file);
 
 			ContributionParser parser = getContributionParser();
 			parser.parse(source);
 			stream.close();
 			contribution = parser.getContribution();
-		} catch (MalformedURLException ue) {
-			Logger.logError("", ue);
 		} catch (SAXException se) {
 			Logger.logError("", se);
 		} catch (IOException ioe) {
