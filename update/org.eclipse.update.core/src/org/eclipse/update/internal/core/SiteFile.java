@@ -6,6 +6,11 @@ package org.eclipse.update.internal.core;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
@@ -15,8 +20,9 @@ import org.eclipse.update.core.*;
  * Site on the File System
  */
 public class SiteFile extends SiteURL {
-
+	
 	private String path;
+	
 	public static final String INSTALL_FEATURE_PATH = "install/features/";
 
 	/**
@@ -88,9 +94,9 @@ public class SiteFile extends SiteURL {
 	}
 
 	/*
-	 * @see AbstractSite#getDefaultFeature(URL)
+	 * @see Site#getDefaultFeature(URL)
 	 */
-	public IFeature getDefaultFeature(URL featureURL) {
+	public IFeature getDefaultFeature(URL featureURL) throws CoreException {
 		return new FeatureExecutable(featureURL, this);
 	}
 
@@ -101,6 +107,8 @@ public class SiteFile extends SiteURL {
 	public boolean optimize() {
 		return false;
 	}
+	
+	
 
 	/**
 	 * Method parseSite.
@@ -111,12 +119,20 @@ public class SiteFile extends SiteURL {
 		String pluginPath = path + DEFAULT_PLUGIN_PATH;
 		String fragmentPath = path + DEFAULT_FRAGMENT_PATH;
 		PluginRegistryModel model = new PluginRegistryModel();		
-	
-		parseFeature();
+
+		//PACKAGED
+		parsePackagedFeature(); // in case it contains JAR files
+
+		parsePackagedPlugins(pluginPath);
+		
+		parsePackagedPlugins(fragmentPath);		
+
+		// EXECUTABLE	
+		parseExecutableFeature();
 		
 		model = parsePlugins(pluginPath);
 		addParsedPlugins(model.getPlugins());
-		
+
 		// FIXME: fragments
 		model = parsePlugins(fragmentPath);
 		addParsedPlugins(model.getFragments());
@@ -124,8 +140,76 @@ public class SiteFile extends SiteURL {
 		System.out.print("");
 
 	}
-
-
+	
+	/**
+	 * Method parseFeature.
+	 * @throws CoreException
+	 */
+	private void parseExecutableFeature() throws CoreException {
+		
+		String path = UpdateManagerUtils.getPath(getURL());
+		String featurePath = path + INSTALL_FEATURE_PATH;
+		
+		
+		File featureDir = new File(featurePath);
+		if (featureDir.exists()) {
+			String[] dir;
+			FeatureReference featureRef;
+			URL featureURL;
+			String newFilePath = null;
+		
+			try {
+				// handle teh installed features under features subdirectory
+				dir = featureDir.list();
+				for (int index = 0; index < dir.length; index++) {
+					// teh URL must ends with '/' for teh bundle to be resolved
+					newFilePath = featurePath + dir[index] + "/";
+					featureURL = new URL("file", null, newFilePath);
+					featureRef = new FeatureReference(this, featureURL);
+					addFeatureReference(featureRef);
+				}
+			} catch (MalformedURLException e) {
+				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error creating file URL for:" + newFilePath, e);
+				throw new CoreException(status);
+			}
+		}
+	}
+	
+		/**
+	 * Method parseFeature.
+	 * @throws CoreException
+	 */
+	private void parsePackagedFeature() throws CoreException {
+		
+		String path = UpdateManagerUtils.getPath(getURL());
+		String featurePath = path + DEFAULT_FEATURE_PATH;
+		
+		// FEATURES
+		File featureDir = new File(featurePath);
+		if (featureDir.exists()) {
+			String[] dir;
+			FeatureReference featureRef;
+			URL featureURL;
+			String newFilePath = null;
+		
+			try {
+				// handle teh installed features under features subdirectory
+				dir = featureDir.list(FeaturePackaged.filter);
+				for (int index = 0; index < dir.length; index++) {
+					newFilePath = featurePath + dir[index];
+					featureURL = new URL("file", null, newFilePath);
+					featureRef = new FeatureReference(this, featureURL);
+					addFeatureReference(featureRef);
+				}
+			} catch (MalformedURLException e) {
+				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error creating file URL for:" + newFilePath, e);
+				throw new CoreException(status);
+			}
+		}
+	}
+	
 	/**
 	 * Method parsePlugins.
 	 * @return PluginRegistryModel
@@ -134,7 +218,6 @@ public class SiteFile extends SiteURL {
 	private PluginRegistryModel parsePlugins(String path) throws CoreException {
 		
 		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-
 		
 		PluginRegistryModel model;
 		//FIXME: handle the archives
@@ -185,51 +268,58 @@ public class SiteFile extends SiteURL {
 		}
 	}
 
-	/**
-	 * Method parseFeature.
-	 * @throws CoreException
-	 */
-	private void parseFeature() throws CoreException {
+	private void parsePackagedPlugins(String pluginPath) throws CoreException { 
+			
+		File pluginDir = new File(pluginPath);
+		File file = null;
+		ZipFile zipFile = null;
+		ZipEntry entry = null;
+		String[] dir;	
+		URL pluginURL=null;
 		
-		String path = UpdateManagerUtils.getPath(getURL());
-		String featurePath = path + INSTALL_FEATURE_PATH;
+		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+		PluginRegistryModel registryModel;
+		MultiStatus parsingStatus = new MultiStatus(id, IStatus.WARNING, "Error parsing plugin.xml", new Exception());
+		Factory factory = new Factory(parsingStatus);
 		
-		
-		File featureDir = new File(featurePath);
-		if (featureDir.exists()) {
-			String[] dir;
-			FeatureReference featureRef;
-			URL featureURL;
-			String newFilePath = null;
-		
-			try {
-				// handle teh installed features under features subdirectory
-				dir = featureDir.list();
-				for (int index = 0; index < dir.length; index++) {
-					// teh URL must ends with '/' for teh bundle to be resolved
-					newFilePath = featurePath + dir[index] + "/";
-					featureURL = new URL("file", null, newFilePath);
-					featureRef = new FeatureReference(this, featureURL);
-					addFeatureReference(featureRef);
+		String tempDir = System.getProperty("java.io.tmpdir");
+		if (!tempDir.endsWith(File.separator)) tempDir += File.separator;
+					
+		try {
+		if (pluginDir.exists()) {
+			dir = pluginDir.list(FeaturePackaged.filter);
+			for (int i = 0; i < dir.length; i++) {
+				file = new File(pluginPath,dir[i]);
+				zipFile = new ZipFile(file);
+				entry = zipFile.getEntry("plugin.xml");
+				if (entry==null) entry = zipFile.getEntry("fragment.xml"); //FIXME: fragments
+				if (entry!=null){
+					pluginURL=UpdateManagerUtils.copyToLocal(zipFile.getInputStream(entry),tempDir+entry.getName(),null);
+					registryModel = Platform.parsePlugins(new URL[] { pluginURL }, factory);					
+					if (registryModel!=null) {
+						PluginModel[] models = null;
+						if (entry.getName().equals("plugin.xml")){
+							models = registryModel.getPlugins();
+						} else {
+							models = registryModel.getFragments();
+						}
+						for (int index = 0; index < models.length; index++) {
+							String pluginID = new VersionedIdentifier(models[index].getId(), models[index].getVersion()).toString() + FeaturePackaged.JAR_EXTENSION;
+							URL url = new URL("file",null,file.getAbsolutePath());
+							IInfo info = new Info(pluginID, url);
+							this.addArchive(info);
+						}
+					}
 				}
-			} catch (MalformedURLException e) {
-				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error creating file URL for:" + newFilePath, e);
-				throw new CoreException(status);
-			}
+				zipFile.close();		
+			}	
 		}
+		}
+		//catch (MalformedURLException m){throw new CoreException(new Status(IStatus.ERROR, id, IStatus.OK, "Error accessing plugin.xml in file :" + file, m));}		
+		//catch (ZipException z){throw new CoreException(new Status(IStatus.ERROR, id, IStatus.OK, "Error accessing plugin.xml in file :" + file, z));}		
+		catch (IOException e){ throw new CoreException(new Status(IStatus.ERROR, id, IStatus.OK, "Error accessing plugin.xml in file :" + file, e));}
+		 finally {try {zipFile.close();} catch (Exception e) {}}
+		 
 	}
 	
-	
-	
-	/**
-	 * Method saveSite.
-	 * Generate the XML representation of the Site in  site.xml
-	 */
-	protected void saveSite() throws CoreException {
-		
-
-
-	}
-
 }

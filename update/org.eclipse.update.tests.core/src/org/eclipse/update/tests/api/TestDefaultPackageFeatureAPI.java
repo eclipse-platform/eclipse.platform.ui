@@ -30,7 +30,7 @@ public class TestDefaultPackageFeatureAPI extends UpdateManagerTestCase {
 	private Feature getFeature() throws MalformedURLException, CoreException {
 		if (remoteFeature == null){
 		ISite site = SiteManager.getSite(SOURCE_FILE_SITE);
-		URL id = UpdateManagerUtils.getURL(site.getURL(),"org.eclipse.update.core.feature1_1.0.0.jar",null);					
+		URL id = UpdateManagerUtils.getURL(site.getURL(),"org.eclipse.update.core.feature1_1.0.0.jar",null);	
 		remoteFeature = new FeaturePackaged(id,site);
 		}
 		return remoteFeature;

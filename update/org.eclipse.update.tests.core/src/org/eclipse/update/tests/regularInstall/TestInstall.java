@@ -52,7 +52,7 @@ public class TestInstall extends UpdateManagerTestCase {
 	private IFeature getFeature1(ISite site) throws MalformedURLException, CoreException {
 		URL id = UpdateManagerUtils.getURL(site.getURL(), "features/org.eclipse.update.core.tests.feature1_1.0.4.jar", null);
 		FeaturePackaged remoteFeature = new FeaturePackaged(id, site);
-		remoteFeature.initializeFeature();
+		//remoteFeature.initializeFeature();
 		return remoteFeature;
 	}
 
@@ -80,7 +80,7 @@ public class TestInstall extends UpdateManagerTestCase {
 	private IFeature getFeature2(ISite site) throws MalformedURLException, CoreException {
 		URL id = UpdateManagerUtils.getURL(site.getURL(), "features/features2.jar", null);
 		FeaturePackaged remoteFeature = new FeaturePackaged(id, site);
-		remoteFeature.initializeFeature();
+		//remoteFeature.initializeFeature();
 		return remoteFeature;
 	}
 

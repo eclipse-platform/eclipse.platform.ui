@@ -24,6 +24,12 @@ public class FeaturePackaged extends Feature {
 
 	public static final String JAR_EXTENSION = ".jar";
 
+	public static final FilenameFilter filter = new FilenameFilter(){
+		 public boolean accept(File dir, String name){
+		 	return name.endsWith(FeaturePackaged.JAR_EXTENSION);
+		 }
+	};
+
 	/**
 	 * @see IFeature#getRootURL()
 	 * In general, the Root URL is the URL of teh Feature
@@ -72,7 +78,7 @@ public class FeaturePackaged extends Feature {
 	/**
 	 * Constructor for DefaultPackagedFeature
 	 */
-	public FeaturePackaged(URL url, ISite targetSite) {
+	public FeaturePackaged(URL url, ISite targetSite)  throws CoreException {
 		super(url, targetSite);
 	}
 
@@ -197,7 +203,7 @@ public class FeaturePackaged extends Feature {
 			result = currentOpenJarFile.getInputStream(entry);
 
 		} catch (IOException e) {
-			throw new IOException("Error opening :" + name + " in feature archive:" + getIdentifier().toString() + "\r\n" + e.toString());
+			throw new IOException("Error opening :" + name + " in feature archive:" + getURL().toExternalForm() + "\r\n" + e.toString());
 		}
 		return result;
 	}

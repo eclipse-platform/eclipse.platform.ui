@@ -28,7 +28,7 @@ public class TestFeatureParse extends UpdateManagerTestCase {
 			URL id = UpdateManagerUtils.getURL(remoteSite.getURL(),xmlFile,null);
 			
 			FeatureExecutable feature = new FeatureExecutable(id,remoteSite);
-			feature.initializeFeature();
+			//feature.initializeFeature();
 			
 			String prov = feature.getProvider();
 			assertEquals("Object Technology International",prov);

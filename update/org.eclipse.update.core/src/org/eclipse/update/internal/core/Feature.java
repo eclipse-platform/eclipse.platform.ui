@@ -144,9 +144,10 @@ public abstract class Feature implements IFeature {
 	/**
 	 * Constructor
 	 */
-	public Feature(URL url, ISite targetSite) {
+	public Feature(URL url, ISite targetSite) throws CoreException {
 		this.site = targetSite;
 		this.url = url;
+		initializeFeature();
 	}
 
 	/**

@@ -18,6 +18,7 @@ public static Test suite() {
 	suite.addTest(new TestSuite(TestInstall.class));
 	suite.addTest(new TestSuite(TestGetFeature.class));
 	suite.addTest(new TestSuite(TestExecutableInstall.class));	
+	suite.addTest(new TestSuite(TestExecutablePackagedInstall.class));		
 	
 	// or you can specify the method
 	//suite.addTest(new TestGetFeature("methodThatDoesNotStartWithtest"));	

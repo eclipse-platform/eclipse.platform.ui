@@ -7,9 +7,7 @@ package org.eclipse.update.tests;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
+import java.net.*;
 import java.util.*;
 
 import junit.framework.TestCase;
@@ -24,21 +22,22 @@ import org.eclipse.update.internal.core.UpdateManagerUtils;
 public abstract class UpdateManagerTestCase extends TestCase {
 
 	protected ResourceBundle bundle;
+	protected String dataPath;
 
 	protected static URL SOURCE_FILE_SITE;
 	protected static URL SOURCE_HTTP_SITE;
 	protected static URL TARGET_FILE_SITE;
-	
+
 	private static final String DATA_PATH = "data/";
 
 	/**
 	 * Default Constructor
 	 */
-	public UpdateManagerTestCase(String name)  {
+	public UpdateManagerTestCase(String name) {
 		super(name);
 		try {
 			init();
-		} catch (Exception e){
+		} catch (Exception e) {
 			fail(e.toString());
 			e.printStackTrace();
 		}
@@ -46,25 +45,21 @@ public abstract class UpdateManagerTestCase extends TestCase {
 
 	protected void init() throws MissingResourceException, IOException, MalformedURLException {
 
-		IPluginDescriptor dataDesc =
-			Platform.getPluginRegistry().getPluginDescriptor(
-				"org.eclipse.update.tests.core");
+		IPluginDescriptor dataDesc = Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.update.tests.core");
 		URL resolvedURL = Platform.resolve(dataDesc.getInstallURL());
-		String path = UpdateManagerUtils.getPath(resolvedURL);			
-		URL dataURL = new URL(resolvedURL.getProtocol(), resolvedURL.getHost(),path+DATA_PATH);
+		dataPath = UpdateManagerUtils.getPath(resolvedURL)+DATA_PATH;
+		URL dataURL = new URL(resolvedURL.getProtocol(), resolvedURL.getHost(), dataPath);
 		String homePath = System.getProperty("user.home");
 
-
 		if (bundle == null) {
-				ClassLoader l =
-					new URLClassLoader(new URL[] {dataURL}, null);
-				bundle = ResourceBundle.getBundle("resources", Locale.getDefault(), l);
+			ClassLoader l = new URLClassLoader(new URL[] { dataURL }, null);
+			bundle = ResourceBundle.getBundle("resources", Locale.getDefault(), l);
 		}
 
 		try {
-			path = UpdateManagerUtils.getPath(dataURL);						
+			String path = UpdateManagerUtils.getPath(dataURL);
 			SOURCE_FILE_SITE = new URL("file", null, path);
-			SOURCE_HTTP_SITE = new URL("http",bundle.getString("HTTP_HOST_1"),bundle.getString("HTTP_PATH_1"));
+			SOURCE_HTTP_SITE = new URL("http", bundle.getString("HTTP_HOST_1"), bundle.getString("HTTP_PATH_1"));
 			TARGET_FILE_SITE = new URL("file", null, homePath + "/target/");
 		} catch (Exception e) {
 			fail(e.toString());

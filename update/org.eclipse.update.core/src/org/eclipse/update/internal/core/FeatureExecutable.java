@@ -37,7 +37,7 @@ public class FeatureExecutable extends Feature {
 	/**
 	 * Constructor for DefaultExecutableFeature
 	 */
-	public FeatureExecutable(URL url, ISite targetSite) {
+	public FeatureExecutable(URL url, ISite targetSite) throws CoreException {
 		super(url, targetSite);
 	}
 
@@ -123,7 +123,7 @@ public class FeatureExecutable extends Feature {
 		String result = UpdateManagerUtils.getPath(getURL());;		
 
 		// return the list of all subdirectories
-		if (!result.endsWith(File.separator)) result += File.separator;		
+		if (!(result.endsWith(File.separator) || result.endsWith("/"))) result += File.separator;		
 		File pluginDir = new File(result);			
 		if (!pluginDir.exists())
 			throw new IOException("The File:" + result + "does not exist.");

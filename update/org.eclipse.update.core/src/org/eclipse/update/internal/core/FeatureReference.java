@@ -6,12 +6,13 @@ package org.eclipse.update.internal.core;
  */
 
 import java.io.PrintWriter;
+import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.internal.runtime.Assert;
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.ICategory;
 
 /**
  *
@@ -26,7 +27,7 @@ public class FeatureReference implements IFeatureReference, IWritable {
 
 	private String featureType;
 	
-	private Feature feature;
+	private IFeature feature;
 
 	/**
 	 * category String; From teh XML file
@@ -98,13 +99,17 @@ public class FeatureReference implements IFeatureReference, IWritable {
 	public IFeature getFeature() throws CoreException {
 
 		if (feature == null) {
-			if (featureType == null || featureType.equals("")) {
-				// ask the Site for the default type 
-				feature = (Feature) ((Site) site).getDefaultFeature(url);
-				feature.initializeFeature();
+			if (featureType != null && !featureType.equals("")) {
+				feature = createFeature(featureType);
+				Assert.isTrue(false,"Type not available yet for features in Site.XML...");
 			} else {
-				Assert.isTrue(false, "Not implemented Yet... do not use 'type' in the feature tag of site.xml");
-				//FIXME: manages creation of feature...
+				if (url.toExternalForm().endsWith(FeaturePackaged.JAR_EXTENSION)) {
+					// if it ends with JAR, guess it is a FeaturePackaged
+					feature = new FeaturePackaged(url,site);
+				} else {
+					// ask the Site for the default type 
+					feature = (Feature) ((Site) site).getDefaultFeature(url);
+				}
 			}
 		}
 		return feature;
@@ -183,5 +188,15 @@ public class FeatureReference implements IFeatureReference, IWritable {
 		}
 		w.println("</"+SiteParser.FEATURE+">");
 	}
+
+	/**
+	 * create an instance of a class that implements IFeature
+	 */
+	private IFeature createFeature(String featureClass) throws CoreException{
+		IFeature feature = null;
+		//FIXME: Executable extension for Feature Type
+		return feature;
+	}
+	
 
 }
