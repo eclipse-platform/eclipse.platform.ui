@@ -51,38 +51,46 @@ public class InstallOperation
 	public boolean execute(IProgressMonitor pm, IOperationListener listener)
 		throws CoreException {
 
+		boolean reinstall = false;
+		if (oldFeature != null
+			&& feature.getVersionedIdentifier().equals(
+				oldFeature.getVersionedIdentifier()))
+			reinstall = true;
+
 		if (optionalFeatures == null)
 			targetSite.install(feature, verifier, pm);
 		else
 			targetSite.install(feature, optionalFeatures, verifier, pm);
 
-		if (oldFeature != null) { //&& isOptionalDelta()) {
-			preserveOptionalState();
+		if (!reinstall) {
 
-			boolean oldSuccess = unconfigure(config, oldFeature);
-			if (!oldSuccess) {
-				if (!UpdateManager.isNestedChild(config, oldFeature)) {
-					// "eat" the error if nested child
-					String message =
-						UpdateManager.getFormattedMessage(
-							KEY_OLD,
-							oldFeature.getLabel());
-					IStatus status =
-						new Status(
-							IStatus.ERROR,
-							UpdateManager.getPluginId(),
-							IStatus.OK,
-							message,
-							null);
-					throw new CoreException(status);
+			if (oldFeature != null) { //&& isOptionalDelta()) {
+				preserveOptionalState();
+
+				boolean oldSuccess = unconfigure(config, oldFeature);
+				if (!oldSuccess) {
+					if (!UpdateManager.isNestedChild(config, oldFeature)) {
+						// "eat" the error if nested child
+						String message =
+							UpdateManager.getFormattedMessage(
+								KEY_OLD,
+								oldFeature.getLabel());
+						IStatus status =
+							new Status(
+								IStatus.ERROR,
+								UpdateManager.getPluginId(),
+								IStatus.OK,
+								message,
+								null);
+						throw new CoreException(status);
+					}
 				}
 			}
-		}
 
-		if (oldFeature == null) {
-			ensureUnique();
+			if (oldFeature == null) {
+				ensureUnique();
+			}
 		}
-
 		return true;
 	}
 
