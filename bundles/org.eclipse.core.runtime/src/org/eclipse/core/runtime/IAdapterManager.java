@@ -69,7 +69,23 @@ public interface IAdapterManager {
 	 * if the given adaptable object does not have an available adapter of the
 	 * given type
 	 */
-	public Object getAdapter(Object adaptable, Class adapterType);
+	public Object getAdapter(Object adaptable, Class adapterType);	
+	/**
+	 * Returns an object which is an instance of the given class name associated
+	 * with the given object. Returns <code>null</code> if no such object can
+	 * be found.
+	 * <p>
+	 * Note that this method will never cause plug-ins to be loaded. If the
+	 * only suitable factory is not yet loaded, this method will return <code>null</code>.
+	 * 
+	 * @param adaptable the adaptable object being queried (usually an instance
+	 * of <code>IAdaptable</code>)
+	 * @param adapterTypeName the fully qualified name of the type of adapter to look up
+	 * @return an object castable to the given adapter type, or <code>null</code>
+	 * if the given adaptable object does not have an available adapter of the
+	 * given type
+	 */
+	public Object getAdapter(Object adaptable, String adapterTypeName);
 	/**
 	 * Returns whether there is an adapter factory registered that may be able
 	 * to convert <code>adaptable</code> to an object of type <code>adapterTypeName</code>.

@@ -10,21 +10,20 @@
  *******************************************************************************/
 package org.eclipse.core.internal.runtime;
 import java.util.*;
-import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.core.runtime.IAdapterManager;
+
+import org.eclipse.core.runtime.*;
 /**
- * This class is a default implementation of <code>IAdapterManager</code>. It provides
+ * This class is the standard implementation of <code>IAdapterManager</code>. It provides
  * fast lookup of property values with the following semantics:
  * <ul>
  * <li>At most one factory will be invoked per property lookup
  * <li>If multiple installed factories provide the same adapter, only the first found in
  * the search order will be invoked.
  * <li>The search order from a class with the definition <br>
- * <code>class X extends Y implements A, B</code><br>
- * is as follows: <il>
+ * <code>class X extends Y implements A, B</code><br> is as follows: <il>
  * <li>the target's class: X
  * <li>X's superclasses in order to <code>Object</code>
- * <li>a depth-first traversal of the target class's interfaces in the order returned by
+ * <li>a breadth-first traversal of the target class's interfaces in the order returned by
  * <code>getInterfaces</code> (in the example, A and its superinterfaces then B and its
  * superinterfaces) </il>
  * </ul>
@@ -32,18 +31,13 @@ import org.eclipse.core.runtime.IAdapterManager;
  * @see IAdapter
  * @see IAdapterManager
  */
-public final class AdapterManager implements IAdapterManager {
+public final class AdapterManager implements IAdapterManager, IRegistryChangeListener {
 	/**
 	 * Map of factories, keyed by <code>String</code>, fully qualified class name of
 	 * the adaptable class that the factory provides adapters for. Value is a <code>List</code>
 	 * of <code>IAdapterFactory</code>.
 	 */
 	protected final HashMap factories;
-	/**
-	 * An adapter factory that searches in the set of unloaded plug-ins to
-	 * see if they have an adapter of the required type.
-	 */
-	protected ExtensionAdapterFactory extensionFactory;
 	/** 
 	 * Cache of adapter search paths; <code>null</code> if none. 
 	 */
@@ -54,53 +48,86 @@ public final class AdapterManager implements IAdapterManager {
 	public AdapterManager() {
 		factories = new HashMap(5);
 		lookup = null;
-		
+		registerFactoryProxies();
+		Platform.getExtensionRegistry().addRegistryChangeListener(this);
 	}
 	/**
-	 * Given a list of types, add all of the factories that respond to those types into
-	 * the lookupTable. Each entry will be keyed by the adapter class name (supplied in
+	 * Given a type name, add all of the factories that respond to those types into
+	 * the given table. Each entry will be keyed by the adapter class name (supplied in
 	 * IAdapterFactory.getAdapterList).
 	 */
-	private void addFactoriesFor(List types, Map lookupTable) {
-		for (Iterator classes = types.iterator(); classes.hasNext();) {
-			Class clazz = (Class) classes.next();
-			List factoryList = (List) factories.get(clazz);
-			if (factoryList == null)
-				continue;
-			for (Iterator list = factoryList.iterator(); list.hasNext();) {
-				IAdapterFactory factory = (IAdapterFactory) list.next();
+	private void addFactoriesFor(String typeName, Map table) {
+		List factoryList = (List) factories.get(typeName);
+		if (factoryList == null)
+			return;
+		for (int i = 0, imax = factoryList.size(); i < imax; i++) {
+			IAdapterFactory factory = (IAdapterFactory) factoryList.get(i);
+			if (factory instanceof AdapterFactoryProxy) {
+				String[] adapters = ((AdapterFactoryProxy)factory).getAdapterNames();
+				for (int j = 0; j < adapters.length; j++) {
+					if (table.get(adapters[j]) == null)
+						table.put(adapters[j], factory);
+				}
+			} else {
 				Class[] adapters = factory.getAdapterList();
-				for (int i = 0; i < adapters.length; i++) 
-					if (lookupTable.get(adapters[i]) == null)
-						lookupTable.put(adapters[i], factory);
+				for (int j = 0; j < adapters.length; j++) {
+					String adapterName = adapters[j].getName();
+					if (table.get(adapterName) == null)
+						table.put(adapterName, factory);
+				}
 			}
 		}
 	}
 	/**
-	 * Returns the class search order starting with <code>extensibleClass</code>. The
-	 * search order is defined in this class' comment.
+	 * Returns the class with the given fully qualified name, or null
+	 * if that class does not exist or belongs to a plug-in that has not
+	 * yet been loaded.
 	 */
-	private List computeClassOrder(Class extensibleClass) {
-		List result = new ArrayList(4);
-		Class clazz = extensibleClass;
-		while (clazz != null) {
-			result.add(clazz);
-			clazz = clazz.getSuperclass();
+	private Class classForName(IAdapterFactory factory, String typeName) {
+		try {
+			if (factory instanceof AdapterFactoryProxy) {
+				factory = ((AdapterFactoryProxy)factory).loadFactory();
+			}
+			if (factory != null)
+				return factory.getClass().getClassLoader().loadClass(typeName);
+		} catch (ClassNotFoundException e) {
+			//class not yet loaded
 		}
-		return result;
+		return null;
 	}
 	/**
-	 * Returns the interface search order for the class hierarchy described by <code>classList</code>.
-	 * The search order is defined in this class' comment.
+	 * Builds and returns a table of adapters for the given adaptable type.
+	 * The table is keyed by adapter class name. The
+	 * value is the <b>sole<b> factory that defines that adapter. Note that
+	 * if multiple adapters technically define the same property, only the
+	 * first found in the search order is considered.
+	 * 
+	 * Note that it is important to maintain a consistent class and interface
+	 * lookup order. See the class comment for more details.
 	 */
-	private List computeInterfaceOrder(List classList) {
-		List result = new ArrayList(4);
+	private Map computeClassOrder(Class adaptable) {
+		HashMap table = new HashMap(4);
+		Class clazz = adaptable;
 		Set seen = new HashSet(4);
-		for (Iterator list = classList.iterator(); list.hasNext();) {
-			Class[] interfaces = ((Class) list.next()).getInterfaces();
-			internalComputeInterfaceOrder(interfaces, result, seen);
+		while (clazz != null) {
+			addFactoriesFor(clazz.getName(), table);
+			computeInterfaceOrder(clazz.getInterfaces(), table, seen);
+			clazz = clazz.getSuperclass();
 		}
-		return result;
+		return table;
+	}
+	private void computeInterfaceOrder(Class[] interfaces, Map table, Set seen) {
+		List newInterfaces = new ArrayList(interfaces.length);
+		for (int i = 0; i < interfaces.length; i++) {
+			Class interfac = interfaces[i];
+			if (seen.add(interfac)) {
+				addFactoriesFor(interfac.getName(), table);
+				//note we cannot recurse here without changing the resulting interface order
+				newInterfaces.add(interfac);
+			}
+		}
+		for (Iterator it = newInterfaces.iterator(); it.hasNext();)
+			computeInterfaceOrder(((Class) it.next()).getInterfaces(), table, seen);
 	}
 	/**
 	 * Flushes the cache of adapter search paths. This is generally required whenever an
@@ -117,7 +144,7 @@ public final class AdapterManager implements IAdapterManager {
 	 * @see org.eclipse.core.runtime.IAdapterManager#getAdapter(java.lang.Object, java.lang.Class)
 	 */
 	public synchronized Object getAdapter(Object adaptable, Class adapterType) {
-		IAdapterFactory factory = getFactory(adaptable.getClass(), adapterType);
+		IAdapterFactory factory = getFactory(adaptable.getClass(), adapterType.getName());
 		Object result = null;
 		if (factory != null)
 			result = factory.getAdapter(adaptable, adapterType);
@@ -125,91 +152,112 @@ public final class AdapterManager implements IAdapterManager {
 			return adaptable;
 		return result;
 	}
-	/**
-	 * Returns the class with the given fully qualified name, or null
-	 * if that class does not exist or belongs to a plug-in that has not
-	 * yet been loaded.
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdapterManager#getAdapter(java.lang.Object, java.lang.Class)
 	 */
-	private Class classForName(String typeName) {
-		try {
-			return Class.forName(typeName);
-		} catch (ClassNotFoundException e) {
-			//class not yet loaded
-			return null;
+	public synchronized Object getAdapter(Object adaptable, String adapterType) {
+		IAdapterFactory factory = getFactory(adaptable.getClass(), adapterType);
+		Object result = null;
+		if (factory != null) {
+			Class clazz = classForName(factory, adapterType);
+			if (clazz != null)
+				result = factory.getAdapter(adaptable, clazz);
 		}
+		if (result == null && adaptable.getClass().getName().equals(adapterType))
+			return adaptable;
+		return result;
 	}
 	/**
 	 * Gets the adapter factory installed for objects of class <code>extensibleClass</code>
 	 * which defines adapters of type <code>adapter</code>. If no such factories
 	 * exists, returns null.
 	 */
-	private IAdapterFactory getFactory(Class extensibleClass, Class adapter) {
+	private IAdapterFactory getFactory(Class adaptable, String adapterName) {
 		Map table;
 		// check the cache first.
 		if (lookup != null) {
-			table = (Map) lookup.get(extensibleClass);
+			table = (Map) lookup.get(adaptable.getName());
 			if (table != null)
-				return (IAdapterFactory) table.get(adapter);
-		}
-		// Its not in the cache so we have to build the adapter table for this
-		// class.
-		// The table is keyed by adapter class name. The
-		// value is the <b>sole<b> factory that defines that adapter. Note that
-		// if
-		// if multiple adapters technically define the same property, only the
-		// first found
-		// in the search order is considered.
-		table = new HashMap(4);
-		// get the list of all superclasses and add the adapter factories
-		// installed for each
-		// of those classes to the table.
-		List classList = computeClassOrder(extensibleClass);
-		addFactoriesFor(classList, table);
-		// get the ordered set of all interfaces for the extensible class and
-		// its
-		// superclasses and add the adapter factories installed for each
-		// of those interfaces to the table.
-		classList = computeInterfaceOrder(classList);
-		addFactoriesFor(classList, table);
+				return (IAdapterFactory) table.get(adapterName);
+		} else
+			lookup = new HashMap(30);
+		// Its not in the cache so we have to build the adapter table for this class.
+		table = computeClassOrder(adaptable);
 		//cache the table and do the lookup again.
-		if (lookup == null)
-			lookup = new HashMap(5);
-		lookup.put(extensibleClass, table);
-		return (IAdapterFactory) table.get(adapter);
+		lookup.put(adaptable, table);
+		return (IAdapterFactory) table.get(adapterName);
 	}
 	public boolean hasAdapter(Object adaptable, String adapterTypeName) {
-		//ask the extension adapter factory
-		 return getExtensionFactory().hasAdapter(adaptable, adapterTypeName);
-	}
-	private ExtensionAdapterFactory getExtensionFactory() {
-		if (extensionFactory == null)
-			extensionFactory = new ExtensionAdapterFactory();
-		return extensionFactory;
-	}
-	private void internalComputeInterfaceOrder(Class[] interfaces, List result, Set seen) {
-		List newInterfaces = new ArrayList(interfaces.length);
-		for (int i = 0; i < interfaces.length; i++) {
-			Class interfac = interfaces[i];
-			if (seen.add(interfac)) {
-				result.add(interfac);
-				newInterfaces.add(interfac);
-			}
-		}
-		for (Iterator it = newInterfaces.iterator(); it.hasNext();)
-			internalComputeInterfaceOrder(((Class) it.next()).getInterfaces(), result, seen);
+		 return getFactory(adaptable.getClass(), adapterTypeName) != null;
 	}
 	/*
 	 * @see IAdapterManager#registerAdapters
 	 */
 	public synchronized void registerAdapters(IAdapterFactory factory, Class adaptable) {
-		List list = (List) factories.get(adaptable);
+		registerFactory(factory, adaptable.getName());
+		flushLookup();
+	}
+	private void registerExtension(IExtension extension) {
+		IConfigurationElement[] elements = extension.getConfigurationElements();
+		for (int j = 0; j < elements.length; j++) {
+			AdapterFactoryProxy proxy = AdapterFactoryProxy.createProxy(elements[j]);
+			if (proxy != null)
+				registerFactory(proxy, proxy.getAdaptableType());
+		}
+	}
+	/*
+	 * @see IAdapterManager#registerAdapters
+	 */
+	private void registerFactory(IAdapterFactory factory, String adaptableType) {
+		List list = (List) factories.get(adaptableType);
 		if (list == null) {
 			list = new ArrayList(5);
-			factories.put(adaptable, list);
+			factories.put(adaptableType, list);
 		}
 		list.add(factory);
-		getExtensionFactory().registerAdapters(factory, adaptable);
+	}
+	/**
+	 * Loads adapters registered with the adapters extension point from
+	 * the plug-in registry.  Note that the actual factory implementations
+	 * are loaded lazily as they are needed.
+	 */
+	private void registerFactoryProxies() {
+		IPluginRegistry registry = Platform.getPluginRegistry();
+		IExtensionPoint point = registry.getExtensionPoint(Platform.PI_RUNTIME, Platform.PT_ADAPTERS);
+		if (point == null)
+			return;
+		IExtension[] extensions = point.getExtensions();
+		for (int i = 0; i < extensions.length; i++) 
+			registerExtension(extensions[i]);
+	}
+	public void registryChanged(IRegistryChangeEvent event) {
+		//find the set of changed adapter extensions
+		HashSet toRemove = new HashSet();
+		IExtensionDelta[] deltas = event.getExtensionDeltas();
+		String adapterId = Platform.PI_RUNTIME + '.' + Platform.PT_ADAPTERS;
+		for (int i = 0; i < deltas.length; i++) {
+			if (deltas[i].getKind() == IExtensionDelta.ADDED) {
+				registerExtension(deltas[i].getExtension());
+			} else {
+				if (adapterId.equals(deltas[i].getExtensionPoint().getUniqueIdentifier()))
+					toRemove.add(deltas[i].getExtension());
+			}
+		}
+		if (toRemove.isEmpty())
+			return;
+		//need to discard cached state for the changed extensions
 		flushLookup();
+		//remove any factories belonging to extensions that are going away
+		for (Iterator it = factories.values().iterator(); it.hasNext();) {
+			for (Iterator it2 = ((List)it.next()).iterator(); it2.hasNext();) {
+				IAdapterFactory factory = (IAdapterFactory) it2.next();
+				if (factory instanceof AdapterFactoryProxy) {
+					IExtension ext = ((AdapterFactoryProxy)factory).getExtension();
+					if (toRemove.contains(ext))
+						it2.remove();
+				}
+			}
+		}
 	}
 	/*
 	 * @see IAdapterManager#unregisterAdapters
@@ -223,17 +271,20 @@ public final class AdapterManager implements IAdapterManager {
 	 * @see IAdapterManager#unregisterAdapters
 	 */
 	public synchronized void unregisterAdapters(IAdapterFactory factory, Class adaptable) {
-		Vector factoryList = (Vector) factories.get(adaptable);
+		List factoryList = (List) factories.get(adaptable.getName());
 		if (factoryList == null)
 			return;
-		factoryList.removeElement(factory);
+		factoryList.remove(factory);
 		flushLookup();
 	}
 	/*
-	 * @see IAdapterManager#unregisterAllAdapters
+	 * Shuts down the adapter manager by removing all factories
+	 * and removing the registry change listener. Should only be
+	 * invoked during platform shutdown.
 	 */
 	public synchronized void unregisterAllAdapters() {
 		factories.clear();
 		flushLookup();
+		Platform.getExtensionRegistry().removeRegistryChangeListener(this);
 	}
 }

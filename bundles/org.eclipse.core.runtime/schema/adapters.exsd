@@ -3,17 +3,19 @@
 <schema targetNamespace="org.eclipse.core.runtime">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.core.runtime" id="adapters" name="adaptersName"/>
+         <meta.schema plugin="org.eclipse.core.runtime" id="adapters" name="Adapters"/>
       </appInfo>
       <documentation>
-         The adapters extension point allows plug-ins to specify declaratively what adapter factories they will provide once started.  This information is used to by the runtime XML expression language to determine existence of adapters without causing plug-ins to be loaded.
+         The adapters extension point allows plug-ins to declaratively register adapter factories.  This information is used to by the 
+         runtime XML expression language to determine existence of adapters without causing plug-ins to be loaded.
+         Registration of adapter factories via extension point eliminates the need to manually register adapter factories when a plug-in starts up.
       </documentation>
    </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="adapter" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="factory" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -39,20 +41,41 @@
       </complexType>
    </element>
 
-   <element name="adapter">
+   <element name="factory">
       <complexType>
+         <sequence>
+            <element ref="adapter"/>
+         </sequence>
          <attribute name="adaptableType" type="string" use="required">
             <annotation>
                <documentation>
-                  The fully qualified name of a class (typically implementing IAdaptable) that this plug-in provides adapter factories for.
+                  The fully qualified name of a class (typically implementing IAdaptable) that this factory provides adapters for.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="adapterType" type="string" use="required">
+         <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The fully qualified name of an adapter class that is produced by an adaptor factory provided by this plug-in.
+                  The fully qualified name of the adapter factory class.  Must implement &lt;tt&gt;org.eclipse.core.runtime.IAdapterFactory&lt;/tt&gt;.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.core.runtime.IAdapterFactory"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="adapter">
+      <complexType>
+         <attribute name="type" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The fully qualified name of a Java class or interface that this factory can adapt to.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -76,7 +99,11 @@
 &lt;p&gt;
    &lt;pre&gt;
       &lt;extension point=&quot;org.eclipse.core.runtime.adapters&quot;&gt;
-         &lt;adapter adaptableType=&quot;org.eclipse.core.resources.IFile&quot; adapterType=&quot;com.xyz.MyFile&quot;/&gt;
+         &lt;factory 
+            class=&quot;com.xyz.MyFileAdapterFactory&quot; 
+            adaptableType=&quot;org.eclipse.core.resources.IFile&quot; 
+            &lt;adapter type=&quot;com.xyz.MyFile&quot;/&gt;
+         &lt;/factory&gt;
       &lt;/extension&gt;
    &lt;/pre&gt;
 &lt;/p&gt;
@@ -89,7 +116,8 @@
       </appInfo>
       <documentation>
          Adapter factories registered using this extension point can be queried using the method 
-&lt;code&gt;IAdapterManager.hasAdapter&lt;/code&gt;.
+&lt;code&gt;IAdapterManager.hasAdapter&lt;/code&gt;, or retrieved using one of the &lt;tt&gt;getAdapter&lt;/tt&gt; methods on &lt;tt&gt;IAdapterFactory&lt;/tt&gt;.
+An adapter factory registered with this extension point does not need to be registered at runtime using &lt;tt&gt;IAdapterFactory.registerAdapters&lt;/tt&gt;.
       </documentation>
    </annotation>
 
