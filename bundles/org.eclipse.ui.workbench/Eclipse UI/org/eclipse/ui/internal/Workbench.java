@@ -549,7 +549,7 @@ public class Workbench
 	public void updateActiveWorkbenchWindowMenuManager() {
 		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
 
-		if (workbenchWindow != null) {
+		if (workbenchWindow instanceof WorkbenchWindow) {
 			MenuManager menuManager =
 				((WorkbenchWindow) workbenchWindow).getMenuManager();
 			menuManager.update(IAction.TEXT);
