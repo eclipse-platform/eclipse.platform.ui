@@ -126,9 +126,6 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 	 */
 	private static int getSWTStyles() {
 		int styles= SWT.H_SCROLL | SWT.V_SCROLL;
-		if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugPreferenceConstants.CONSOLE_WRAP)) {
-			styles= styles | SWT.WRAP;
-		}
 		return styles;
 	}
 
