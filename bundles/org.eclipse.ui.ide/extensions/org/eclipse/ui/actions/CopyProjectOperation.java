@@ -53,7 +53,7 @@ public class CopyProjectOperation {
 
     private String newName;
 
-    private boolean cancelled;
+    private boolean canceled;
 
 	/** 
 	 * Create a new operation initialized with a shell. 
@@ -70,7 +70,7 @@ public class CopyProjectOperation {
 	public void copyProject(IProject project) {
 
 	    newName = null;
-	    cancelled = false;
+	    canceled = false;
 		errorStatus = null;
 	
 		//Get the project name and location in a two element list
@@ -78,13 +78,13 @@ public class CopyProjectOperation {
 			new ProjectLocationSelectionDialog(parentShell, project);
 		dialog.setTitle(IDEWorkbenchMessages.getString("CopyProjectOperation.copyProject")); //$NON-NLS-1$
 		if (dialog.open() != Dialog.OK) {
-		    cancelled = true;
+		    canceled = true;
 			return;
 		}
 		
 		Object[] destinationPaths = dialog.getResult();
 		if (destinationPaths == null) { 
-		    cancelled = true;
+		    canceled = true;
 			return;
 		}
 			
@@ -94,13 +94,13 @@ public class CopyProjectOperation {
 		boolean completed = performProjectCopy(project, newName, newLocation);
 	
 		if (!completed) {// ie.- canceled
-		    cancelled = true;
+		    canceled = true;
 			return; // not appropriate to show errors
 		}
 	
 		// If errors occurred, open an Error dialog
 		if (errorStatus != null) {
-		    cancelled = true;
+		    canceled = true;
 			ErrorDialog.openError(
 				parentShell, 
 				IDEWorkbenchMessages.getString("CopyProjectOperation.copyFailedTitle"), //$NON-NLS-1$
@@ -117,8 +117,8 @@ public class CopyProjectOperation {
 	 *   <code>false</code> if the operation was successful
 	 * @since 3.0.1
 	 */
-	public boolean isCancelled() {
-	    return cancelled;
+	public boolean isCanceled() {
+	    return canceled;
 	}
 	
 	/**
