@@ -55,9 +55,6 @@ import org.eclipse.swt.widgets.Display;
  */
 public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocumentPartitionerExtension, IPropertyChangeListener, IConsole, IDebugEventSetListener {
 
-	private boolean fClosed= false;
-	private boolean fKilled= false;
-
 	protected IProcess fProcess;
 	protected IConsoleColorProvider fColorProvider;
 	private IStreamsProxy fProxy;
@@ -186,9 +183,19 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	private boolean fAppending = false;
 	
 	/**
+	 * Whether the console has been killed/disconnected
+	 */
+	private boolean fKilled = false;
+	
+	/**
 	 * Whether to keep polling
 	 */
 	private boolean fPoll = false;
+	
+	/**
+	 * Whether the streams coonnected to the associated process are closed
+	 */
+	private boolean fClosed= false;
 	
 	/**
 	 * The associated document
@@ -253,6 +260,13 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		fMaxLineLength = store.getInt(IDebugPreferenceConstants.CONSOLE_WIDTH);
 		store.addPropertyChangeListener(this);		
 		fColorProvider.connect(fProcess, this);
+		DebugPlugin.getDefault().addDebugEventListener(this);
+		if (fProcess.isTerminated()) {
+			// it is possible the termiante event will have been fired before the
+			// document is connected - in this case, ensure we have closed the streams
+			// and notified the line tracker
+			streamsClosed();
+		}
 	}
 
 	/**
@@ -502,12 +516,17 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 			fHighWaterMark = -1;
 			fMaxAppendSize = 80000;
 		}
-		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
-
-	public void close() {
-		if (!fClosed) {
-			fClosed= true;
+	
+	/**
+	 * Stops reading/polling immediately
+	 */
+	public synchronized void kill() {
+		if (!fKilled) {
+			fKilled = true;
+			if (fPollingThread != null && fPollingThread.isAlive()) {
+				fPollingThread.interrupt();
+			}
 			fPoll = false;
 			Iterator iter = fStreamListeners.iterator();
 			while (iter.hasNext()) {
@@ -517,22 +536,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 			DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		}
 	}
-	
-	/**
-	 * Stops reading/polling immediately
-	 */
-	public void kill() {
-		fKilled = true;
-		if (fPollingThread != null && fPollingThread.isAlive()) {
-			fPollingThread.interrupt();
-		}
-		close();
-	}
 
-	protected boolean isClosed() {
-		return fClosed;
-	}
-		
 	public synchronized void startReading() {
 		if (fPollingThread != null) {
 			// already polling
@@ -553,7 +557,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	 * process terminates
 	 */
 	protected void pollAndSleep() {
-		while (!fKilled && fPoll && (!isTerminated() || !fQueue.isEmpty())) {
+		while (!fKilled && fPoll && (!isClosed() || !fQueue.isEmpty())) {
 			poll();
 			try {
 				Thread.sleep(BASE_DELAY);
@@ -799,7 +803,14 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	 * Adds a new entry to the queue.
 	 */
 	protected void streamAppended(String text, String streamIdentifier) {
-		fQueue.add(new StreamEntry(text, streamIdentifier));
+		synchronized (fQueue) {
+			if (fClosed) {
+				// ERROR - attempt to append after console is closed
+				DebugUIPlugin.logErrorMessage("An attempt was made to append text to the console, after it was closed."); //$NON-NLS-1$
+			} else {
+				fQueue.add(new StreamEntry(text, streamIdentifier));
+			}
+		}
 	}
 	
 	/**
@@ -807,7 +818,12 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	 * Adds a new "stream closed" entry to the queue.
 	 */
 	protected void streamsClosed() {
-		fQueue.add(new StreamsClosedEntry());
+		synchronized (fQueue) {
+			if (!fClosed) {
+				fQueue.add(new StreamsClosedEntry());
+				fClosed = true;
+			}
+		}
 	}	
 					
 	/**
@@ -887,8 +903,12 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		connect(streamsProxy.getErrorStreamMonitor(), IDebugUIConstants.ID_STANDARD_ERROR_STREAM);
 	}
 	
-	protected boolean isTerminated() {
-		return fProcess.isTerminated();
+	/**
+	 * Returns whether the streams assocaited with this console's process
+	 * have been closed.
+	 */
+	protected boolean isClosed() {
+		return fClosed;
 	}
 
 	protected IConsoleColorProvider getColorProvider() {
