@@ -129,6 +129,9 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 	 * @see org.apache.tools.ant.BuildListener#buildFinished(org.apache.tools.ant.BuildEvent)
 	 */
 	public void buildFinished(BuildEvent event) {
+		if (!fSentProcessId) {
+			establishConnection(event);
+		}
 		handleException(event);
         printMessage( getTimeString(System.currentTimeMillis() - startTime), out, Project.MSG_INFO); 
 		shutDown();
