@@ -424,7 +424,7 @@ protected void restore(Project project, IProgressMonitor monitor) throws CoreExc
 		}
 		restoreMarkers(project, true, Policy.subMonitorFor(monitor, 10));
 		restoreSyncInfo(project, Policy.subMonitorFor(monitor, 10));
-		// restore meta info last because it might delete a project if its description is not found
+		// restore meta info last because it might close a project if its description is not found
 		restoreMetaInfo(project, Policy.subMonitorFor(monitor, 10));
 	} finally {
 		monitor.done();
@@ -528,6 +528,10 @@ protected void restoreMetaInfo(Project project, IProgressMonitor monitor) throws
 	try {
 		if (project.isOpen())
 			description = workspace.getFileSystemManager().read(project, true);
+		else
+			//for closed projects, just try to read the legacy .prj file, 
+			//because the project location is stored there.
+			description = workspace.getMetaArea().readOldDescription(project);
 	} catch (CoreException e) {
 		failure = e;
 	}
