@@ -301,7 +301,7 @@ public abstract class FormSection implements IPropertyChangeListener {
 	}
 
 	private void doToggle() {
-		boolean collapsed = toggle.getSelection();
+		collapsed = toggle.getSelection();
 		reflow();
 		if (descriptionLabel != null)
 			descriptionLabel.setVisible(!collapsed);
