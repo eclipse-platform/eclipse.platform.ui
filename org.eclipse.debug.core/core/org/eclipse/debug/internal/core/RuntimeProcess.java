@@ -5,13 +5,7 @@ package org.eclipse.debug.internal.core;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.core.*;
-import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.core.model.IStreamsProxy;
-import org.eclipse.core.runtime.PlatformObject;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.HashMap;
+import java.io.InputStream;import java.io.OutputStream;import java.util.HashMap;import org.eclipse.core.runtime.IStatus;import org.eclipse.core.runtime.PlatformObject;import org.eclipse.core.runtime.Status;import org.eclipse.debug.core.DebugEvent;import org.eclipse.debug.core.DebugException;import org.eclipse.debug.core.DebugPlugin;import org.eclipse.debug.core.IDebugConstants;import org.eclipse.debug.core.IDebugStatusConstants;import org.eclipse.debug.core.ILaunch;import org.eclipse.debug.core.model.IProcess;import org.eclipse.debug.core.model.IStreamsProxy;
 
 
 /**
@@ -22,6 +16,14 @@ import java.util.HashMap;
  * underlying system process for terminataion.
  */
 public class RuntimeProcess extends PlatformObject implements IProcess {
+	
+	private final static String PREFIX= "runtime_process.";
+	
+	private final static String ERROR = PREFIX + "error.";
+	private final static String TERMINATE_FAILED = ERROR + "terminate_failed";
+
+	private static final int MAX_WAIT_FOR_DEATH_ATTEMPTS = 10;
+	
 	/**
 	 * The system process
 	 */
@@ -132,9 +134,18 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	public void terminate() throws DebugException {
 		if (!isTerminated()) {
 			fProcess.destroy();
-			try {
-				fProcess.waitFor();
-			} catch (InterruptedException ie) {}
+			int attempts = 0;
+			while (attempts < MAX_WAIT_FOR_DEATH_ATTEMPTS) {
+				try {
+					fProcess.exitValue();
+					return;
+				} catch (IllegalThreadStateException ie) {
+				}
+			}
+			// clean-up
+			fMonitor.stopMonitoring();
+			IStatus status = new Status(IStatus.ERROR, IDebugConstants.PLUGIN_ID, IDebugStatusConstants.TARGET_REQUEST_FAILED, TERMINATE_FAILED, null);		
+			throw new DebugException(status);
 		}
 	}
 

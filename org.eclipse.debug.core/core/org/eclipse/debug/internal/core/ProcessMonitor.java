@@ -67,4 +67,9 @@ public class ProcessMonitor {
 		}
 	}
 
+	protected void stopMonitoring() {
+		fOSProcess = null;
+		fThread.interrupt();
+		fProcess.terminated();
+	}
 }
