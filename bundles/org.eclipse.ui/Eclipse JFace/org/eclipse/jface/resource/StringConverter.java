@@ -695,11 +695,24 @@ public static String asString(boolean value) {
  * @return the string with all whitespace characters removed
  */
 public static String removeWhiteSpaces(String s) {
-	StringBuffer result = new StringBuffer();
+	//check for no whitespace (common case)
+	boolean found = false;
+	int wsIndex = -1;
 	int size = s.length();
 	for (int i = 0; i < size; i++) {
+		found = Character.isWhitespace(s.charAt(i));
+		if (found) {
+			wsIndex = i;
+			break;
+		}
+	}
+	if (!found)
+		return s;
+	
+	StringBuffer result = new StringBuffer(s.substring(0, wsIndex));
+	for (int i = wsIndex + 1; i < size; i++) {
 		char ch = s.charAt(i);
-		if (ch > ' ')
+		if (!Character.isWhitespace(ch))
 			result.append(ch);
 	}
 	return result.toString();
