@@ -177,7 +177,7 @@ public abstract class BackgroundEventHandler {
 			IProgressMonitor subMonitor = Policy.infiniteSubMonitorFor(monitor, 90);
 			subMonitor.beginTask(null, 1024);
 
-			while ((event = nextElement()) != null) {
+			while ((event = nextElement()) != null && ! shutdown) {
 				// Cancellation is dangerous because this will leave the sync info in a bad state.
 				// Purposely not checking -				 	
 				try {

@@ -120,7 +120,7 @@ public class SyncViewerSubscriberListActions extends SyncViewerActionGroup {
 		SwitchSubscriberAction action =  new SwitchSubscriberAction(input);
 		actions.put(input.getSubscriber().getId(), action);		
 		if(cancelAction == null) {
-			cancelAction = new CancelSubscription(input.getSubscriber());
+			cancelAction = new CancelSubscription(getSyncView(), input.getSubscriber());
 		}
 		if(enableFirstContext) {
 			activate(action);

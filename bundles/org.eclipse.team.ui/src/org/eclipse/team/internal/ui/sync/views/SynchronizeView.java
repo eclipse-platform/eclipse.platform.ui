@@ -539,9 +539,6 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 			if(delta.getFlags() == TeamDelta.SUBSCRIBER_CREATED) {
 				TeamSubscriber s = delta.getSubscriber();
 				addSubscriber(s);
-			} else if(delta.getFlags() == TeamDelta.SUBSCRIBER_DELETED) {
-				TeamSubscriber s = delta.getSubscriber();
-				removeSubscriber(s);
 			}
 		}
 	}
@@ -558,7 +555,7 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 		actions.addContext(context);
 	}
 	
-	synchronized private void removeSubscriber(TeamSubscriber s) {
+	synchronized public void removeSubscriber(TeamSubscriber s) {
 		// notify that context is changing
 		SubscriberInput si = (SubscriberInput)subscriberInputs.get(s.getId());
 		ActionContext context = new ActionContext(null);
@@ -570,6 +567,9 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 		
 		// forget about this input
 		subscriberInputs.remove(s.getId());
+		
+		// de-register the subscriber with the platform
+		s.cancel();
 		
 		if (si == input) {
 			if (subscriberInputs.isEmpty()) {
