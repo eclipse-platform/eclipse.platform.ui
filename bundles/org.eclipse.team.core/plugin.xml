@@ -54,4 +54,9 @@
 	<moveDeleteHook class="org.eclipse.team.internal.core.MoveDeleteManager"/>
 </extension>
 
+<extension point="org.eclipse.core.resources.teamHook" id="TeamHook">
+	<moveDeleteHook class="org.eclipse.team.internal.core.TeamHookDispatcher"/>
+</extension>
+
+
 </plugin>

@@ -56,6 +56,9 @@ import org.eclipse.team.internal.core.TeamPlugin;
  * @since 2.0
  */
 public final class Team {
+	
+	public static final Status OK_STATUS = new Status(Status.OK, TeamPlugin.ID, Status.OK, Policy.bind("ok"), null); //$NON-NLS-1$
+	
 	// File type constants
 	public static final int UNKNOWN = 0;
 	public static final int TEXT = 1;

@@ -12,14 +12,14 @@ package org.eclipse.team.internal.core.target;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
 
 public interface ITeamStatusConstants {
 
-	public static final IStatus OK_STATUS =
-		new Status(IStatus.OK, TeamPlugin.ID, TeamException.OK, Policy.bind("OK_1"), null); //$NON-NLS-1$
+	public static final IStatus OK_STATUS = Team.OK_STATUS;
 
 	public static final IStatus NOT_CHECKED_OUT_STATUS =
 		new Status(

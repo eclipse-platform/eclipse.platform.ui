@@ -20,6 +20,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.resources.IProjectNatureDescriptor;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
@@ -27,6 +29,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
@@ -133,7 +136,22 @@ public abstract class RepositoryProvider implements IProjectNature {
 
 		if(provider == null)
 			throw new TeamException(Policy.bind("RepositoryProvider.couldNotInstantiateProvider", project.getName(), id)); //$NON-NLS-1$
-			
+		
+		// validate that either the provider supports linked resources or the project has no linked resources
+		if (!provider.canHandleLinkedResources()) {
+			try {
+				IResource[] members = project.members();
+				for (int i = 0; i < members.length; i++) {
+					IResource resource = members[i];
+					if (resource.isLinked()) {
+						throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, IResourceStatus.LINKING_NOT_ALLOWED, Policy.bind("RepositoryProvider.linkedResourcesExist", project.getName(), id), null)); //$NON-NLS-1$
+					}
+				}
+			} catch (CoreException e) {
+				throw TeamPlugin.wrapException(e);
+			}
+		}
+		
 		//store provider instance as session property
 		try {
 			project.setSessionProperty(PROVIDER_PROP_KEY, provider);
@@ -504,4 +522,43 @@ public abstract class RepositoryProvider implements IProjectNature {
 			Team.removeNatureFromProject(project, providerId, new NullProgressMonitor());
 		}
 	}
-}
+	
+	/**
+	 * Method validateCreateLink is invoked by the Platform Core TeamHook when a
+	 * linked resource is about to be added to the provider's project. It should
+	 * not be called by other clients and it should not need to be overridden by
+	 * subclasses (although it is possible to do so in special cases).
+	 * Subclasses can indicate that they support linked resources by overridding
+	 * the <code>canHandleLinkedResources()</code> method.
+	 * 
+	 * @param resource see <code>org.eclipse.core.resources.team.TeamHook</code>
+	 * @param updateFlags see <code>org.eclipse.core.resources.team.TeamHook</code>
+	 * @param location see <code>org.eclipse.core.resources.team.TeamHook</code>
+	 * @return IStatus see <code>org.eclipse.core.resources.team.TeamHook</code>
+	 * 
+	 * @see RepositoryProvider#canHandleLinkedResources()
+	 */
+	public IStatus validateCreateLink(IResource resource, int updateFlags, IPath location) {
+		if (canHandleLinkedResources()) {
+			return Team.OK_STATUS;
+		} else {
+			return new Status(IStatus.ERROR, TeamPlugin.ID, IResourceStatus.LINKING_NOT_ALLOWED, Policy.bind("RepositoryProvider.linkedResourcesNotSupported", getProject().getName(), getID()), null);
+		}
+	}
+	
+	/**
+	 * Method canHandleLinkedResources should be overridden by subclasses who
+	 * support linked resources. At a minimum, supporting linked resources
+	 * requires changes to the move/delete hook 
+	 * (see org.eclipe.team.resources.team.IMoveDeleteHook). This method is
+	 * called after the RepositoryProvider is instantiated but before
+	 * <code>setProject()</code> is invoked so it will not have access to any
+	 * state determined from the <code>setProject()</code> method.
+	 * @return boolean
+	 * 
+	 * @see org.eclipe.team.resources.team.IMoveDeleteHook
+	 */
+	private boolean canHandleLinkedResources() {
+		return false;
+	}
+}	
