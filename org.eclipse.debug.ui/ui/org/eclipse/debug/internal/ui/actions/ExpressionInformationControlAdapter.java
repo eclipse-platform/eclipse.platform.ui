@@ -12,7 +12,7 @@ package org.eclipse.debug.internal.ui.actions;
 
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.internal.ui.views.expression.ExpressionPopupContentProvider;
-import org.eclipse.debug.internal.ui.views.expression.ExpressionView;
+import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewContentProvider;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewer;
 import org.eclipse.debug.ui.DebugUITools;
@@ -26,7 +26,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 
 
@@ -45,20 +44,38 @@ public class ExpressionInformationControlAdapter implements IPopupInformationCon
 	}
 
 	public void setInformation(String information) {
-		IViewPart part = page.findView(IDebugUIConstants.ID_EXPRESSION_VIEW);
-		if (part != null) {
-			ExpressionView debugView = (ExpressionView) part;
-			StructuredViewer structuredViewer = (StructuredViewer) debugView.getViewer();
+		VariablesView view = getViewToEmulate();
+		viewer.getContentProvider();
+		if (view != null) {
+			StructuredViewer structuredViewer = (StructuredViewer) view.getViewer();
 			ViewerFilter[] filters = structuredViewer.getFilters();
 			for (int i = 0; i < filters.length; i++) {
 				viewer.addFilter(filters[i]);
 			}
-			((VariablesViewContentProvider)viewer.getContentProvider()).setShowLogicalStructure(debugView.isShowLogicalStructure());
+			((VariablesViewContentProvider)viewer.getContentProvider()).setShowLogicalStructure(view.isShowLogicalStructure());
 		}
 		viewer.setInput(new Object[]{exp});
 		viewer.expandToLevel(2);
 	}
 
+	private VariablesView getViewToEmulate() {
+		VariablesView expressionsView = (VariablesView)page.findView(IDebugUIConstants.ID_EXPRESSION_VIEW);
+		if (expressionsView != null && expressionsView.isVisible()) {
+			return expressionsView;
+		} else {
+			VariablesView variablesView = (VariablesView)page.findView(IDebugUIConstants.ID_VARIABLE_VIEW);
+			if (variablesView != null && variablesView.isVisible()) {
+				return variablesView;
+			} else {
+				if (expressionsView != null) {
+					return expressionsView;
+				} else {
+					return variablesView;
+				}
+			}
+		}
+	}
+	
 	public boolean hasContents() {
 		return (viewer != null);
 	}
@@ -69,7 +86,7 @@ public class ExpressionInformationControlAdapter implements IPopupInformationCon
 		composite.setLayout(layout);
 
 		GridData gd = new GridData(GridData.FILL_BOTH);
-
+		
 		viewer = new VariablesViewer(composite, SWT.NO_TRIM);
 		viewer.setContentProvider(new ExpressionPopupContentProvider());
 		viewer.setLabelProvider(DebugUITools.newDebugModelPresentation());
