@@ -68,8 +68,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 				} else {
 					return IDebugUIConstants.IMG_OBJS_STACKFRAME_RUNNING;					
 				}
-			} 
-			else if (element instanceof IThread) {
+			} else if (element instanceof IThread) {
 				IThread thread = (IThread)element;
 				if (thread.isSuspended()) {
 					return IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED;
