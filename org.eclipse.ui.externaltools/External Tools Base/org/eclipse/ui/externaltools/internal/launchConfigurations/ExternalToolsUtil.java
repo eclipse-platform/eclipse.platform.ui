@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Keith Seitz (keiths@redhat.com) - environment variables contribution (Bug 27243(
+ *     Keith Seitz (keiths@redhat.com) - Bug 27243 (environment variables contribution)
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.launchConfigurations;
 
