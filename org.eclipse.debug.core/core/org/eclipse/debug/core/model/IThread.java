@@ -97,7 +97,7 @@ public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminat
 	 * one breakpoint if two breakpoints are at the same location in
 	 * a program.
 	 *
-	 * @return breakpoints that caused suspend, possibly empty
+	 * @return the collection of breakpoints that caused this thread to suspend
 	 */
 	public IBreakpoint[] getBreakpoints();	
 }
