@@ -45,8 +45,8 @@ public class PromptingDialog {
 		} else {
 			buttons = new String[] {
 					IDialogConstants.YES_LABEL, 
-					IDialogConstants.NO_LABEL, 
 					IDialogConstants.YES_TO_ALL_LABEL, 
+					IDialogConstants.NO_LABEL, 
 					IDialogConstants.CANCEL_LABEL};			
 		}				 
 	}

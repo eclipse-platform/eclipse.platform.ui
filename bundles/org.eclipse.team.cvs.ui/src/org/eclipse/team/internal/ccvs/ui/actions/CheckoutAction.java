@@ -117,7 +117,7 @@ public class CheckoutAction extends CVSAction {
 					return Policy.bind("AddToWorkspaceAction.thisResourceExists", resource.getName());//$NON-NLS-1$
 				} else {
 					return Policy.bind("AddToWorkspaceAction.thisExternalFileExists", resource.getName());//$NON-NLS-1$
-				}//$NON-NLS-1$
+				}
 			}
 			private File getFileLocation(IResource resource) {
 				return new File(resource.getParent().getLocation().toFile(), resource.getName());
