@@ -11,9 +11,11 @@
 
 package org.eclipse.ui.internal.dialogs;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -21,9 +23,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-
-import org.eclipse.jface.dialogs.IDialogConstants;
-
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
@@ -83,6 +82,7 @@ class PreferenceImportExportSettingsSelectionPage extends AbstractPreferenceImpo
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
+	    Font parentFont = parent.getFont();
 		final Composite page = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
 		page.setLayout(layout);
@@ -103,6 +103,7 @@ class PreferenceImportExportSettingsSelectionPage extends AbstractPreferenceImpo
 
 		// Set-up the table and its columns.
 		settingsTable = new Table(page, SWT.CHECK | SWT.BORDER);
+		settingsTable.setFont(parentFont);
 		layoutData = new GridData(GridData.FILL_BOTH);
 		layoutData.verticalSpan = 3;
 		settingsTable.setLayoutData(layoutData);
@@ -125,6 +126,7 @@ class PreferenceImportExportSettingsSelectionPage extends AbstractPreferenceImpo
 
         // Set-up the select all button.
 		final Button selectAllButton = new Button(page, SWT.PUSH);
+		selectAllButton.setFont(parentFont);
 		layoutData = new GridData();
 		selectAllButton.setText(WorkbenchMessages.getString("ImportExportPages.selectAll")); //$NON-NLS-1$
 		layoutData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
@@ -139,6 +141,7 @@ class PreferenceImportExportSettingsSelectionPage extends AbstractPreferenceImpo
 
 		// Set-up the deselect all button.
 		final Button deselectAllButton = new Button(page, SWT.PUSH);
+		deselectAllButton.setFont(parentFont);
 		layoutData = new GridData();
 		deselectAllButton.setText(WorkbenchMessages.getString("ImportExportPages.deselectAll")); //$NON-NLS-1$
 		layoutData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
@@ -153,6 +156,7 @@ class PreferenceImportExportSettingsSelectionPage extends AbstractPreferenceImpo
 
 		// Set-up the invert selection button.
 		final Button invertSelectionButton = new Button(page, SWT.PUSH);
+		invertSelectionButton.setFont(parentFont);
 		layoutData = new GridData();
 		invertSelectionButton.setText(WorkbenchMessages.getString("ImportExportPages.invertSelection")); //$NON-NLS-1$
 		layoutData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);

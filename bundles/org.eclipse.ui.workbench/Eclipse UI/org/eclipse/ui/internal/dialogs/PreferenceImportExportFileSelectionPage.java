@@ -12,9 +12,12 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.io.File;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -24,10 +27,6 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.wizard.IWizardContainer;
-
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -159,6 +158,7 @@ class PreferenceImportExportFileSelectionPage extends AbstractPreferenceImportEx
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
+	    Font parentFont = parent.getFont();
 		final Composite page = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(3, false);
 		page.setLayout(layout);
@@ -180,11 +180,13 @@ class PreferenceImportExportFileSelectionPage extends AbstractPreferenceImportEx
 		// Set up the file selection label.
 		final Label fileLabel = new Label(page, SWT.NONE);
 		fileLabel.setText(WorkbenchMessages.getString("ImportExportPages.fileLabel")); //$NON-NLS-1$
+		fileLabel.setFont(parentFont);
 		layoutData = new GridData();
 		fileLabel.setLayoutData(layoutData);
 
 		// Set up the text widget containing the file selection.
 		fileText = new Text(page, SWT.SINGLE | SWT.BORDER);
+		fileText.setFont(parentFont);
 		layoutData = new GridData();
 		layoutData.grabExcessHorizontalSpace = true;
 		layoutData.horizontalAlignment = GridData.FILL;
@@ -193,6 +195,7 @@ class PreferenceImportExportFileSelectionPage extends AbstractPreferenceImportEx
 
 		// Set up the button for choosing a file.
 		final Button browseButton = new Button(page, SWT.PUSH);
+		browseButton.setFont(parentFont);
 		layoutData = new GridData();
 		browseButton.setText(WorkbenchMessages.getString("ImportExportPages.browseButton")); //$NON-NLS-1$
 		layoutData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
@@ -213,6 +216,7 @@ class PreferenceImportExportFileSelectionPage extends AbstractPreferenceImportEx
 
 		// Create the radio button for the export/import all option.
 		allItemsRadioButton = new Button(page, SWT.RADIO | SWT.CENTER);
+		allItemsRadioButton.setFont(parentFont);
 		layoutData = new GridData();
 		layoutData.horizontalSpan = 3;
 		allItemsRadioButton.setLayoutData(layoutData);
@@ -220,6 +224,7 @@ class PreferenceImportExportFileSelectionPage extends AbstractPreferenceImportEx
 
 		// Create the radio button for the select preferences to export/import.
 		selectItemsRadioButton = new Button(page, SWT.RADIO | SWT.CENTER);
+		selectItemsRadioButton.setFont(parentFont);
 		layoutData = new GridData();
 		layoutData.horizontalSpan = 3;
 		selectItemsRadioButton.setLayoutData(layoutData);
@@ -231,6 +236,7 @@ class PreferenceImportExportFileSelectionPage extends AbstractPreferenceImportEx
 			 * items from the currently selected page.
 			 */
 			pageItemsRadioButton = new Button(page, SWT.RADIO | SWT.CENTER);
+			pageItemsRadioButton.setFont(parentFont);
 			layoutData = new GridData();
 			layoutData.horizontalSpan = 3;
 			pageItemsRadioButton.setLayoutData(layoutData);
