@@ -19,6 +19,7 @@ import org.eclipse.ant.internal.ui.launchConfigurations.AntLaunchShortcut;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.AntTargetNode;
+import org.eclipse.ant.internal.ui.model.AntTaskNode;
 import org.eclipse.ant.internal.ui.views.AntView;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -54,19 +55,26 @@ public class RunTargetAction extends Action implements IUpdate {
 	}
 
 	/**
-	 * Executes the selected target or project in the Ant view.
+	 * Executes the appropriate target based on the selection in the Ant view.
 	 */
 	public void run() {
-		UIJob job= new UIJob(AntViewActionMessages.getString("RunTargetAction.2")) { //$NON-NLS-1$
+		run(getSelectedElement());
+	}
+	
+	/**
+     * @param selectedElement The element to use as the context for launching
+     */
+    public void run(final AntElementNode selectedElement) {
+        UIJob job= new UIJob(AntViewActionMessages.getString("RunTargetAction.2")) { //$NON-NLS-1$
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				launch(getSelectedElement());
+				launch(selectedElement);
 				return Status.OK_STATUS;
 			}
 		};
 		job.schedule();
-	}
-	
-	/**
+    }
+
+    /**
 	 * Launches the given Ant element node
 	 * @param node the node to use to launch
 	 * @see AntLaunchShortcut.launch(AntElementNode)
@@ -93,15 +101,19 @@ public class RunTargetAction extends Action implements IUpdate {
 				enabled= true;
 				setToolTipText(AntViewActionMessages.getString("RunTargetAction.3")); //$NON-NLS-1$
 			}
+		}  else if (selection instanceof AntTaskNode) {
+			if (!((AntTaskNode) selection).isErrorNode()) {
+				enabled= true;
+				setToolTipText(AntViewActionMessages.getString("RunTargetAction.0")); //$NON-NLS-1$
+			}
 		}
 		setEnabled(enabled);
 	}
 	
 	/**
-	 * Returns the selected target or project node or <code>null</code> if no target or
-	 * project is selected or if more than one element is selected.
+	 * Returns the selected node or <code>null</code> if more than one element is selected.
 	 * 
-	 * @return AntElementNode the selected <code>AntTargetNode</code> or <code>AntProjectNode</code>
+	 * @return AntElementNode the selected node
 	 */
 	private AntElementNode getSelectedElement() {
 		IStructuredSelection selection= (IStructuredSelection) fView.getViewer().getSelection();
@@ -110,8 +122,7 @@ public class RunTargetAction extends Action implements IUpdate {
 		}
 		Iterator iter= selection.iterator();
 		Object data= iter.next();
-		if (iter.hasNext() || (!(data instanceof AntTargetNode) && !(data instanceof AntProjectNode))) {
-			// Only return a AntTargetNode or AntProjectNode
+		if (iter.hasNext()) {
 			return null;
 		}
 		return (AntElementNode) data;

@@ -17,7 +17,6 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntModelLabelProvider;
@@ -348,7 +347,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	private void handleProjectViewerDoubleClick() {
 		AntElementNode node= getSelectionNode();
 		if (node != null) {
-			AntUtil.openInEditor(getViewSite().getPage(), node);
+			runTargetAction.run(node);
 		} 
 	}
 
