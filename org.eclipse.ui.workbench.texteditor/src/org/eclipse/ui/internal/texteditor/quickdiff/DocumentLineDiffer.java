@@ -512,6 +512,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			
 		};
 		
+		fInitializationJob.setSystem(true);
 		fInitializationJob.setPriority(Job.DECORATE);
 		fInitializationJob.schedule();
 	}
