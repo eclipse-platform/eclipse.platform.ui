@@ -441,6 +441,7 @@ public class InternalAntRunner {
 		PrintStream originalOut = System.out;
 		try {
 			getCurrentProject().init();
+			
 			addBuildListeners(getCurrentProject());
 			
 			boolean executeScript= true;
@@ -487,8 +488,12 @@ public class InternalAntRunner {
 		} finally {
 			System.setErr(originalErr);
 			System.setOut(originalOut);
-			fErr.close();
-			fOut.close();
+			if (fErr != originalErr) {
+				fErr.close();
+			}
+			if (fOut != originalOut) {
+				fOut.close();
+			}
 			fireBuildFinished(getCurrentProject(), error);
 		}
 	}
@@ -558,14 +563,16 @@ public class InternalAntRunner {
 		if (project != null) {
 			project.log(message, priority);	
 		} else {
-			project = new Project();
-			BuildEvent event = new BuildEvent(project);
-			event.setMessage(message, priority);
-			//notify the build listeners that are not registered as
-			//no project existed
-			for (Iterator iterator = fBuildListeners.iterator(); iterator.hasNext();) {
-				BuildListener listener = (BuildListener) iterator.next();
-				listener.messageLogged(event);
+			if (fBuildListeners != null) {
+				project = new Project();
+				BuildEvent event = new BuildEvent(project);
+				event.setMessage(message, priority);
+				//notify the build listeners that are not registered as
+				//no project existed
+				for (Iterator iterator = fBuildListeners.iterator(); iterator.hasNext();) {
+					BuildListener listener = (BuildListener) iterator.next();
+					listener.messageLogged(event);
+				}
 			}
 		}
 	}
