@@ -265,7 +265,9 @@ public class ProcessConsoleManager implements ILaunchListener {
                 if (colorProvider instanceof IConsoleColorProvider) {
                     return (IConsoleColorProvider)colorProvider;
                 } 
-                DebugUIPlugin.logErrorMessage(MessageFormat.format(ConsoleMessages.getString("ConsoleDocumentManager.1"),new String[]{extension.getDeclaringExtension().getUniqueIdentifier()} )); //$NON-NLS-1$
+                DebugUIPlugin.logErrorMessage(MessageFormat.format(
+                		"Extension {0} must specify an instanceof IConsoleColorProvider for class attribute.", //$NON-NLS-1$
+                		new String[]{extension.getDeclaringExtension().getUniqueIdentifier()}));
             } catch (CoreException e) {
                 DebugUIPlugin.log(e);
             }
