@@ -143,6 +143,7 @@ import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
+import org.eclipse.ui.internal.roles.IDERoleManager;
 import org.eclipse.ui.internal.roles.RoleManager;
 import org.eclipse.ui.internal.util.StatusLineContributionItem;
 import org.eclipse.ui.keys.KeySequence;
@@ -1431,6 +1432,8 @@ public class Workbench
 			display.setSynchronizer(
 				new UISynchronizer(display, uiLockListener));
 		}
+		
+		RoleManager.setManager(new IDERoleManager());
 
 		try {
 			UIStats.start(UIStats.RESTORE_WORKBENCH, "Workbench"); //$NON-NLS-1$

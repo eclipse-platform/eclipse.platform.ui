@@ -68,13 +68,32 @@ public class RoleManager implements IActivityListener {
 		}
 	};
 
+	/**
+	 * Get the static instance. Create a default one if it has
+	 * not been set.
+	 * @return RoleManager
+	 */
 	public static RoleManager getInstance() {
 		if (singleton == null)
-			singleton = new IDERoleManager();
+			singleton = new RoleManager();
 
 		return singleton;
 
 	}
+	
+	/**
+	 * Set the singleton. This can only be done once so 
+	 * any subsequent called will throw IllegalArgumentException.
+	 * @param manager
+	 */
+	public static void setManager(RoleManager manager){
+		if(singleton != null)
+			throw new IllegalArgumentException("Role Manager is already set");
+		singleton = manager;
+		
+	}
+	
+	
 
 	/**
 	 * Shutdown the current manager if it exists.
