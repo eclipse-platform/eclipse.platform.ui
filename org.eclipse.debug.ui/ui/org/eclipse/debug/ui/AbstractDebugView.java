@@ -81,7 +81,7 @@ import org.eclipse.ui.texteditor.IUpdate;
  * </p>
  */
 
-public abstract class AbstractDebugView extends PageBookView implements IDebugViewAdapter, IDoubleClickListener {
+public abstract class AbstractDebugView extends PageBookView implements IDebugView, IDoubleClickListener {
 	
 	/**
 	 * Underlying viewer that displays the contents of
@@ -167,7 +167,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * @see IDebugViewAdapter
 	 */
 	public Object getAdapter(Class adapter) {
-		if (adapter == IDebugViewAdapter.class) {
+		if (adapter == IDebugView.class) {
 			return this;
 		}
 		return super.getAdapter(adapter);

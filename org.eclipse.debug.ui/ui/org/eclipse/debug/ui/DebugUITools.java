@@ -196,7 +196,7 @@ public class DebugUITools {
 			if (page != null) {
 				IWorkbenchPart part = page.findView(IDebugUIConstants.ID_DEBUG_VIEW);
 				if (part != null) {
-					IDebugViewAdapter view = (IDebugViewAdapter)part.getAdapter(IDebugViewAdapter.class);
+					IDebugView view = (IDebugView)part.getAdapter(IDebugView.class);
 					if (view != null) {
 						Viewer viewer = view.getViewer();
 						if (viewer != null) {

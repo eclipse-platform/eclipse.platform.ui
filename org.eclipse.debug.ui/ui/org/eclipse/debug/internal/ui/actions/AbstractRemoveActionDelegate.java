@@ -9,7 +9,7 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.IDebugViewAdapter;
+import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IViewPart;
@@ -40,7 +40,7 @@ public abstract class AbstractRemoveActionDelegate extends AbstractListenerActio
 	 */
 	protected boolean initialize(IAction action, ISelection selection) {
 		if (!isInitialized()) {
-			IDebugViewAdapter debugView= (IDebugViewAdapter)getView().getAdapter(IDebugViewAdapter.class);
+			IDebugView debugView= (IDebugView)getView().getAdapter(IDebugView.class);
 			if (debugView != null) {
 				debugView.setAction(AbstractDebugView.REMOVE_ACTION, action);
 			}

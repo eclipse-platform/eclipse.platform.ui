@@ -12,7 +12,7 @@ import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.ui.IDebugViewAdapter;
+import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -71,7 +71,7 @@ public class RemoveAllTerminatedAction extends AbstractRemoveAllActionDelegate i
 	 * @return array of object
 	 */
 	protected Object[] getElements() {
-		IDebugViewAdapter view = (IDebugViewAdapter)getView().getAdapter(IDebugViewAdapter.class);
+		IDebugView view = (IDebugView)getView().getAdapter(IDebugView.class);
 		if (view != null) {
 			Viewer viewer = view.getViewer();
 			if (viewer instanceof StructuredViewer) {

@@ -9,7 +9,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.ui.IDebugViewAdapter;
+import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -36,7 +36,7 @@ public class RemoveExpressionAction extends AbstractRemoveActionDelegate {
 		if (getView() == null) {
 			return null;
 		}
-		IDebugViewAdapter adapter= (IDebugViewAdapter)getView().getAdapter(IDebugViewAdapter.class);
+		IDebugView adapter= (IDebugView)getView().getAdapter(IDebugView.class);
 		if (adapter != null) {
 			Viewer v= adapter.getViewer();
 			if (v instanceof TreeViewer) {

@@ -17,7 +17,7 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.IDebugViewAdapter;
+import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -41,7 +41,7 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 	 */
 	protected boolean initialize(IAction action, ISelection selection) {
 		if (!isInitialized()) {
-			IDebugViewAdapter adapter= (IDebugViewAdapter)getView().getAdapter(IDebugViewAdapter.class);
+			IDebugView adapter= (IDebugView)getView().getAdapter(IDebugView.class);
 			if (adapter != null) {
 				if (adapter.getViewer() instanceof ContentViewer) {
 					setViewer((ContentViewer) adapter.getViewer());

@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.IDebugViewAdapter;
+import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuListener;
@@ -152,14 +152,14 @@ public class DebugActionGroupsManager implements IMenuListener {
 	 */
 	public void updateDebugActionGroups() {
 		for (Iterator iterator = fDebugViews.iterator(); iterator.hasNext();) {
-			IDebugViewAdapter view = (IDebugViewAdapter) iterator.next();
+			IDebugView view = (IDebugView) iterator.next();
 			updateDebugActionGroups(view);
 			
 		}
 	}
 
 	protected void updateDebugActionGroups(IViewPart viewPart) {
-		IDebugViewAdapter debugView= (IDebugViewAdapter)viewPart.getAdapter(IDebugViewAdapter.class);
+		IDebugView debugView= (IDebugView)viewPart.getAdapter(IDebugView.class);
 		if (debugView == null) {
 			return;
 		}
@@ -199,7 +199,7 @@ public class DebugActionGroupsManager implements IMenuListener {
 	 * affected by debug action groups.  Has no effect if the view was
 	 * previously registered.
 	 */
-	public void registerView(final IDebugViewAdapter view) {
+	public void registerView(final IDebugView view) {
 		if (fDebugViews.contains(view)) {
 			return;
 		}
@@ -233,7 +233,7 @@ public class DebugActionGroupsManager implements IMenuListener {
 	 * affected by debug action groups.  Has no effect if the view was
 	 * not previously registered.
 	 */
-	public void deregisterView(IDebugViewAdapter view) {
+	public void deregisterView(IDebugView view) {
 		if (fDebugViews.remove(view)) {
 			Collection actions= fDebugActionGroupActions.values();
 			List removed= new ArrayList();
@@ -260,7 +260,7 @@ public class DebugActionGroupsManager implements IMenuListener {
 		String viewName= "UNKNOWN";
 		String viewId= "";
 		for (Iterator views = fDebugViews.iterator(); views.hasNext();) {
-			IDebugViewAdapter view = (IDebugViewAdapter) views.next();
+			IDebugView view = (IDebugView) views.next();
 			Menu menu= view.getViewer().getControl().getMenu();
 			if (((MenuManager)manager).getMenu().equals(menu)) {
 				viewName= view.getTitle();

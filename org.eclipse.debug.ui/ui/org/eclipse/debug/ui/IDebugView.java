@@ -36,7 +36,7 @@ import org.eclipse.ui.IViewPart;
  * @see IDebugModelPresentation
  */
 
-public interface IDebugViewAdapter extends IViewPart {
+public interface IDebugView extends IViewPart {
 	
 	/**
 	 * Returns the viewer contained in this debug view.

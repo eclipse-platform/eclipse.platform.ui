@@ -6,7 +6,7 @@ package org.eclipse.debug.internal.ui.actions;
  */
 
 import org.eclipse.debug.ui.AbstractDebugView;
-import org.eclipse.debug.ui.IDebugViewAdapter;
+import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -50,8 +50,8 @@ public abstract class SelectAllAction extends AbstractListenerActionDelegate {
 	 */
 	protected boolean initialize(IAction action, ISelection selection) {
 		if (!isInitialized()) {
-			IDebugViewAdapter debugView =
-				(IDebugViewAdapter) getView().getAdapter(IDebugViewAdapter.class);
+			IDebugView debugView =
+				(IDebugView) getView().getAdapter(IDebugView.class);
 			if (debugView != null) {
 				debugView.setAction(AbstractDebugView.SELECT_ALL_ACTION, action);
 			}
