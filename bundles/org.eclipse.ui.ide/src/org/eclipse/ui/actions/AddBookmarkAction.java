@@ -142,6 +142,7 @@ public class AddBookmarkAction extends SelectionListenerAction {
 	 * if the selection is not empty and contains just file resources.
 	 */
 	protected boolean updateSelection(IStructuredSelection selection) {
+		// @issue typed selections
 		return super.updateSelection(selection) && !selection.isEmpty() && selectionIsOfType(IFile.FILE);
 	}
 

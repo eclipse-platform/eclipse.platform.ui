@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
-import org.eclipse.ui.actions.NewWizardAction;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.NewWizardMenu;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
@@ -30,16 +30,30 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
  * Invoke the resource creation wizard selection Wizard.
  * This action will retarget to the active view.
  */
-public class NewWizardDropDownAction extends Action implements IMenuCreator, IWorkbenchWindowPulldownDelegate2 {
-	private IWorkbenchWindow window;
-	private NewWizardAction newWizardAction;
+public class NewWizardDropDownAction
+		extends Action
+		implements ActionFactory.IWorkbenchAction,
+			IMenuCreator,
+			IWorkbenchWindowPulldownDelegate2 {
+
+	/**
+	 * The workbench window; or <code>null</code> if this
+	 * action has been <code>dispose</code>d.
+	 */
+	private IWorkbenchWindow workbenchWindow;
+
+	private IAction newWizardAction;
+	
 	private MenuManager dropDownMenuMgr;
 	/**
 	 *	Create a new instance of this class
 	 */
-	public NewWizardDropDownAction(IWorkbenchWindow window, NewWizardAction newWizardAction) {
+	public NewWizardDropDownAction(IWorkbenchWindow window, IAction newWizardAction) {
 		super(IDEWorkbenchMessages.getString("NewWizardDropDown.text")); //$NON-NLS-1$
-		this.window = window;
+		if (window == null) {
+			throw new IllegalArgumentException();
+		}
+		this.workbenchWindow = window;
 		this.newWizardAction = newWizardAction;
 		setToolTipText(newWizardAction.getToolTipText());
 		setImageDescriptor(newWizardAction.getImageDescriptor());
@@ -51,13 +65,17 @@ public class NewWizardDropDownAction extends Action implements IMenuCreator, IWo
 	protected void createDropDownMenuMgr() {
 		if (dropDownMenuMgr == null) {
 			dropDownMenuMgr = new MenuManager();
-			dropDownMenuMgr.add(new NewWizardMenu(window));
+			dropDownMenuMgr.add(new NewWizardMenu(workbenchWindow));
 		}
 	}
 	/**
 	 * dispose method comment.
 	 */
 	public void dispose() {
+		if (workbenchWindow == null) {
+			// action has already been disposed
+			return;
+		}
 		if (dropDownMenuMgr != null) {
 			dropDownMenuMgr.dispose();
 			dropDownMenuMgr = null;
@@ -94,6 +112,10 @@ public class NewWizardDropDownAction extends Action implements IMenuCreator, IWo
 	public void init(IWorkbenchWindow window) {
 	}
 	public void run() {
+		if (workbenchWindow == null) {
+			// action has been disposed
+			return;
+		}
 		newWizardAction.run();
 	}
 	/**

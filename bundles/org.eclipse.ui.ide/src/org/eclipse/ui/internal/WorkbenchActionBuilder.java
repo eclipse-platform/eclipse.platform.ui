@@ -8,10 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
@@ -23,40 +21,30 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
-import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.actions.ExportResourcesAction;
-import org.eclipse.ui.actions.GlobalBuildAction;
-import org.eclipse.ui.actions.ImportResourcesAction;
-import org.eclipse.ui.actions.LabelRetargetAction;
-import org.eclipse.ui.actions.NewWizardAction;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.actions.NewWizardMenu;
-import org.eclipse.ui.actions.OpenInNewWindowAction;
-import org.eclipse.ui.actions.QuickStartAction;
-import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.actions.ProjectPropertyDialogAction;
+import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
 
 /**
  * Adds actions to a workbench window.
+ * 
+ * @issue move WorkbenchActionBuilder to package org.eclipse.ui.internal.ide
  */
 public final class WorkbenchActionBuilder {
 
@@ -92,80 +80,80 @@ public final class WorkbenchActionBuilder {
 		}
 	};
 
-	// @issue which actions become API, which go to IDE
-	// actions
-	private NewWizardAction newWizardAction;
-	private NewWizardDropDownAction newWizardDropDownAction;
+	// generic actions
+	private IWorkbenchAction closeAction;
+	private IWorkbenchAction closeAllAction;
+	private IWorkbenchAction closeAllSavedAction;
+	private IWorkbenchAction saveAction;
+	private IWorkbenchAction saveAllAction;
+	private IWorkbenchAction aboutAction;
+	private IWorkbenchAction openPreferencesAction;
+	private IWorkbenchAction saveAsAction;
+	private IWorkbenchAction hideShowEditorAction;
+	private IWorkbenchAction savePerspectiveAction;
+	private IWorkbenchAction resetPerspectiveAction;
+	private IWorkbenchAction editActionSetAction;
+	private IWorkbenchAction closePerspAction;
+	private IWorkbenchAction lockToolBarAction;
+	private IWorkbenchAction closeAllPerspsAction;
+	private IWorkbenchAction pinEditorAction;
+	private IWorkbenchAction showViewMenuAction;
+	private IWorkbenchAction showPartPaneMenuAction;
+	private IWorkbenchAction nextPartAction;
+	private IWorkbenchAction prevPartAction;
+	private IWorkbenchAction nextEditorAction;
+	private IWorkbenchAction prevEditorAction;
+	private IWorkbenchAction nextPerspectiveAction;
+	private IWorkbenchAction prevPerspectiveAction;
+	private IWorkbenchAction activateEditorAction;
+	private IWorkbenchAction maximizePartAction;
+	private IWorkbenchAction workbenchEditorsAction;
+	private IWorkbenchAction backwardHistoryAction;
+	private IWorkbenchAction forwardHistoryAction;
+
+	// generic retarget actions
+	private IWorkbenchAction undoAction;
+	private IWorkbenchAction redoAction;
+	private IWorkbenchAction cutAction;
+	private IWorkbenchAction copyAction;
+	private IWorkbenchAction pasteAction;
+	private IWorkbenchAction deleteAction;
+	private IWorkbenchAction selectAllAction;
+	private IWorkbenchAction findAction;
+	private IWorkbenchAction printAction;
+	private IWorkbenchAction revertAction;
+	private IWorkbenchAction refreshAction;
+	private IWorkbenchAction propertiesAction;
+	private IWorkbenchAction moveAction;
+	private IWorkbenchAction renameAction;
+	private IWorkbenchAction goIntoAction;
+	private IWorkbenchAction backAction;
+	private IWorkbenchAction forwardAction;
+	private IWorkbenchAction upAction;
+	private IWorkbenchAction nextAction;
+	private IWorkbenchAction previousAction;
+
+	// IDE-specific actions
+	private IWorkbenchAction projectPropertyDialogAction;
+	private IWorkbenchAction newWizardAction;
+	private IWorkbenchAction newWizardDropDownAction;
+	private IWorkbenchAction importResourcesAction;
+	private IWorkbenchAction exportResourcesAction;
+
+	private IWorkbenchAction rebuildAllAction; // Full build
+	private IWorkbenchAction buildAllAction; // Incremental build
+	private IWorkbenchAction quickStartAction;
+	private IWorkbenchAction tipsAndTricksAction;
+
+	// IDE-specific retarget actions
+	private IWorkbenchAction addBookmarkAction;
+	private IWorkbenchAction addTaskAction;
+	private IWorkbenchAction buildProjectAction;
+	private IWorkbenchAction rebuildProjectAction;
+	private IWorkbenchAction openProjectAction;
+	private IWorkbenchAction closeProjectAction;
+
 	private NewWizardMenu newWizardMenu;
-	private CloseEditorAction closeAction;
-	private CloseAllAction closeAllAction;
-	private CloseAllSavedAction closeAllSavedAction;
-	private ImportResourcesAction importResourcesAction;
-	private ExportResourcesAction exportResourcesAction;
-	private GlobalBuildAction rebuildAllAction; // Full build
-	private GlobalBuildAction buildAllAction; // Incremental build
-	private SaveAction saveAction;
-	private SaveAllAction saveAllAction;
-	private AboutAction aboutAction;
-	private OpenPreferencesAction openPreferencesAction;
-	private QuickStartAction quickStartAction;
-	private TipsAndTricksAction tipsAndTricksAction;
-	private SaveAsAction saveAsAction;
-	private ToggleEditorsVisibilityAction hideShowEditorAction;
-	private SavePerspectiveAction savePerspectiveAction;
-	private ResetPerspectiveAction resetPerspectiveAction;
-	private EditActionSetsAction editActionSetAction;
-	private ClosePerspectiveAction closePerspAction;
-	private LockToolBarAction lockToolBarAction;
-	private CloseAllPerspectivesAction closeAllPerspsAction;
-	private PinEditorAction pinEditorAction;
-
-	private ShowViewMenuAction showViewMenuAction;
-	private ShowPartPaneMenuAction showPartPaneMenuAction;
-	private CyclePartAction nextPartAction;
-	private CyclePartAction prevPartAction;
-	private CycleEditorAction nextEditorAction;
-	private CycleEditorAction prevEditorAction;
-	private CyclePerspectiveAction nextPerspectiveAction;
-	private CyclePerspectiveAction prevPerspectiveAction;
-	private ActivateEditorAction activateEditorAction;
-	private MaximizePartAction maximizePartAction;
-
-	private WorkbenchEditorsAction workbenchEditorsAction;
-
-	// retarget actions.
-	private RetargetAction undoAction;
-	private RetargetAction redoAction;
-	private RetargetAction cutAction;
-	private RetargetAction copyAction;
-	private RetargetAction pasteAction;
-	private RetargetAction deleteAction;
-	private RetargetAction selectAllAction;
-	private RetargetAction findAction;
-	private RetargetAction addBookmarkAction;
-	private RetargetAction addTaskAction;
-	private RetargetAction printAction;
-
-	private RetargetAction revertAction;
-	private RetargetAction refreshAction;
-	private RetargetAction propertiesAction;
-	private RetargetAction moveAction;
-	private RetargetAction renameAction;
-	private RetargetAction goIntoAction;
-	private RetargetAction backAction;
-	private RetargetAction forwardAction;
-	private RetargetAction upAction;
-	private RetargetAction nextAction;
-	private RetargetAction previousAction;
-
-	private RetargetAction buildProjectAction;
-	private RetargetAction rebuildProjectAction;
-	private RetargetAction openProjectAction;
-	private RetargetAction closeProjectAction;
-	private ProjectPropertyDialogAction projectPropertyDialogAction;
-
-	private NavigationHistoryAction backwardHistoryAction;
-	private NavigationHistoryAction forwardHistoryAction;
 
 	/**
 	 * Constructs a new action builder which contributes actions
@@ -235,21 +223,6 @@ public final class WorkbenchActionBuilder {
 				enableActions(true);
 			}
 			public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
-			}
-		});
-
-		//Listen for the selection changing and update the
-		//actions that are interested
-		getWindow().getSelectionService().addSelectionListener(new ISelectionListener() {
-			public void selectionChanged(
-				IWorkbenchPart part,
-				ISelection selection) {
-				if (selection instanceof IStructuredSelection) {
-					IStructuredSelection structured =
-						(IStructuredSelection) selection;
-					importResourcesAction.selectionChanged(structured);
-					exportResourcesAction.selectionChanged(structured);
-				}
 			}
 		});
 	}
@@ -384,11 +357,11 @@ public final class WorkbenchActionBuilder {
 		menu.add(
 			new ReopenEditorMenu(
 				getWindow(),
-				((Workbench) getWindow().getWorkbench()).getEditorHistory(),
+				((Workbench) PlatformUI.getWorkbench()).getEditorHistory(),
 				true));
 		menu.add(new GroupMarker(IWorkbenchActionConstants.MRU));
 		menu.add(new Separator());
-		menu.add(new QuitAction(getWindow().getWorkbench()));
+		menu.add(ActionFactory.QUIT.create(getWindow()));
 		menu.add(new GroupMarker(IWorkbenchActionConstants.FILE_END));
 		return menu;
 	}
@@ -506,7 +479,7 @@ public final class WorkbenchActionBuilder {
 	private MenuManager createWindowMenu() {
 		MenuManager menu = new MenuManager(IDEWorkbenchMessages.getString("Workbench.window"), IWorkbenchActionConstants.M_WINDOW); //$NON-NLS-1$
 
-		OpenInNewWindowAction action = new OpenInNewWindowAction(getWindow());
+		IWorkbenchAction action = ActionFactory.OPEN_NEW_WINDOW.create(getWindow());
 		action.setText(IDEWorkbenchMessages.getString("Workbench.openNewWindow")); //$NON-NLS-1$
 		menu.add(action);
 		menu.add(new Separator());
@@ -644,13 +617,12 @@ public final class WorkbenchActionBuilder {
 		// Many actions need the workbench.
 		IWorkbench workbench = getWindow().getWorkbench();
 
-		newWizardAction = new NewWizardAction(getWindow());
+		newWizardAction = IDEActionFactory.NEW.create(getWindow());
 		// images for this action are set in its constructor
 		registerGlobalAction(newWizardAction);
 
 		ISharedImages sharedImages = workbench.getSharedImages();
-		newWizardDropDownAction =
-			new NewWizardDropDownAction(getWindow(), newWizardAction);
+		newWizardDropDownAction = IDEActionFactory.NEW_WIZARD_DROP_DOWN.create(getWindow());
 		newWizardDropDownAction.setImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
 		newWizardDropDownAction.setHoverImageDescriptor(
@@ -658,7 +630,7 @@ public final class WorkbenchActionBuilder {
 		newWizardDropDownAction.setDisabledImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED));
 
-		importResourcesAction = new ImportResourcesAction(getWindow());
+		importResourcesAction = IDEActionFactory.IMPORT.create(getWindow());
 		importResourcesAction.setImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_IMPORT_WIZ));
@@ -669,7 +641,8 @@ public final class WorkbenchActionBuilder {
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_IMPORT_WIZ_DISABLED));
 
-		exportResourcesAction = new ExportResourcesAction(getWindow(), IDEWorkbenchMessages.getString("ExportResourcesAction.fileMenuText")); //$NON-NLS-1$
+		exportResourcesAction = IDEActionFactory.EXPORT.create(getWindow());
+		exportResourcesAction.setText(IDEWorkbenchMessages.getString("ExportResourcesAction.fileMenuText")); //$NON-NLS-1$
 		exportResourcesAction.setImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ));
@@ -680,15 +653,11 @@ public final class WorkbenchActionBuilder {
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ_DISABLED));
 
-		rebuildAllAction =
-			new GlobalBuildAction(getWindow(), IncrementalProjectBuilder.FULL_BUILD);
+		rebuildAllAction = IDEActionFactory.FULL_BUILD.create(getWindow());
 		rebuildAllAction.setActionDefinitionId(rebuildAllActionDefId);
 		registerGlobalAction(rebuildAllAction);
 
-		buildAllAction =
-			new GlobalBuildAction(
-				getWindow(),
-				IncrementalProjectBuilder.INCREMENTAL_BUILD);
+		buildAllAction = IDEActionFactory.INCREMENTAL_BUILD.create(getWindow());
 		buildAllAction.setImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC));
@@ -701,7 +670,7 @@ public final class WorkbenchActionBuilder {
 		buildAllAction.setActionDefinitionId(buildAllActionDefId);
 		registerGlobalAction(buildAllAction);
 
-		saveAction = new SaveAction(getWindow());
+		saveAction = ActionFactory.SAVE_EDITOR.create(getWindow());
 		saveAction.setImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT));
@@ -711,11 +680,10 @@ public final class WorkbenchActionBuilder {
 		saveAction.setDisabledImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT_DISABLED));
-		partService.addPartListener(saveAction);
 		saveAction.setActionDefinitionId(saveActionDefId);
 		registerGlobalAction(saveAction);
 
-		saveAsAction = new SaveAsAction(getWindow());
+		saveAsAction = ActionFactory.SAVE_EDITOR_AS.create(getWindow());
 		saveAsAction.setImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_SAVEAS_EDIT));
@@ -725,9 +693,8 @@ public final class WorkbenchActionBuilder {
 		saveAsAction.setDisabledImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_SAVEAS_EDIT_DISABLED));
-		partService.addPartListener(saveAsAction);
 
-		saveAllAction = new SaveAllAction(getWindow());
+		saveAllAction = ActionFactory.SAVE_EDITOR_AS.create(getWindow());
 		saveAllAction.setImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_SAVEALL_EDIT));
@@ -737,51 +704,55 @@ public final class WorkbenchActionBuilder {
 		saveAllAction.setDisabledImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_SAVEALL_EDIT_DISABLED));
-		partService.addPartListener(saveAllAction);
 		saveAllAction.setActionDefinitionId(saveAllActionDefId);
 		registerGlobalAction(saveAllAction);
-
-		undoAction = createGlobalAction(IWorkbenchActionConstants.UNDO, "edit", true); //$NON-NLS-1$
+		
+		undoAction = ActionFactory.UNDO.create(getWindow());
 		undoAction.setImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_UNDO));
 		undoAction.setHoverImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_UNDO_HOVER));
 		undoAction.setDisabledImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_UNDO_DISABLED));
+		registerGlobalAction(undoAction);
 
-		redoAction = createGlobalAction(IWorkbenchActionConstants.REDO, "edit", true); //$NON-NLS-1$
+		redoAction = ActionFactory.REDO.create(getWindow());
 		redoAction.setImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
 		redoAction.setHoverImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_REDO_HOVER));
 		redoAction.setDisabledImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_REDO_DISABLED));
+		registerGlobalAction(redoAction);
 
-		cutAction = createGlobalAction(IWorkbenchActionConstants.CUT, "edit", false); //$NON-NLS-1$
+		cutAction = ActionFactory.CUT.create(getWindow());
 		cutAction.setImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT));
 		cutAction.setHoverImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT_HOVER));
 		cutAction.setDisabledImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT_DISABLED));
+		registerGlobalAction(cutAction);
 
-		copyAction = createGlobalAction(IWorkbenchActionConstants.COPY, "edit", false); //$NON-NLS-1$
+		copyAction = ActionFactory.COPY.create(getWindow());
 		copyAction.setImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 		copyAction.setHoverImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_HOVER));
 		copyAction.setDisabledImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
+		registerGlobalAction(redoAction);
 
-		pasteAction = createGlobalAction(IWorkbenchActionConstants.PASTE, "edit", false); //$NON-NLS-1$
+		pasteAction = ActionFactory.PASTE.create(getWindow());
 		pasteAction.setImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
 		pasteAction.setHoverImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_HOVER));
 		pasteAction.setDisabledImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
+		registerGlobalAction(pasteAction);
 
-		printAction = createGlobalAction(IWorkbenchActionConstants.PRINT, "file", false); //$NON-NLS-1$
+		printAction = ActionFactory.PRINT.create(getWindow());
 		printAction.setImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT));
@@ -791,33 +762,32 @@ public final class WorkbenchActionBuilder {
 		printAction.setDisabledImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT_DISABLED));
+		registerGlobalAction(printAction);
 
-		selectAllAction = createGlobalAction(IWorkbenchActionConstants.SELECT_ALL, "edit", false); //$NON-NLS-1$
-
-		findAction = createGlobalAction(IWorkbenchActionConstants.FIND, "findReplace", "edit", "findReplace", false); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		selectAllAction = ActionFactory.SELECT_ALL.create(getWindow());
+		registerGlobalAction(selectAllAction);
+		
+		findAction = ActionFactory.FIND.create(getWindow());
 		// Find's images are commented out due to a conflict with Search.
 		// See bug 16412.
 		//		findAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC));
 		//		findAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC_HOVER));
 		//		findAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC_DISABLED));
+		registerGlobalAction(findAction);
 
-		closeAction = new CloseEditorAction(getWindow());
-		partService.addPartListener(closeAction);
+		closeAction = ActionFactory.CLOSE_EDITOR.create(getWindow());
 		closeAction.setActionDefinitionId(closeActionDefId);
 		registerGlobalAction(closeAction);
 
-		closeAllAction = new CloseAllAction(getWindow());
-		partService.addPartListener(closeAllAction);
+		closeAllAction = ActionFactory.CLOSE_ALL_EDITORS.create(getWindow());
 		closeAllAction.setActionDefinitionId(closeAllActionDefId);
 		registerGlobalAction(closeAllAction);
 
-		closeAllSavedAction = new CloseAllSavedAction(getWindow());
-		partService.addPartListener(closeAllSavedAction);
+		closeAllSavedAction = ActionFactory.CLOSE_ALL_CLEAN_EDITORS.create(getWindow());
 		closeAllSavedAction.setActionDefinitionId(closeAllSavedActionDefId);
 		registerGlobalAction(closeAllSavedAction);
 
-		pinEditorAction = new PinEditorAction(getWindow());
-		partService.addPartListener(pinEditorAction);
+		pinEditorAction = ActionFactory.PIN_EDITOR.create(getWindow());
 		pinEditorAction.setImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR));
@@ -829,7 +799,14 @@ public final class WorkbenchActionBuilder {
 				IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR_DISABLED));
 
 		try {
-			aboutAction = new AboutAction(getWindow(), windowConfigurer.getWorkbenchConfigurer().getPrimaryFeatureAboutInfo());
+			aboutAction = ActionFactory.ABOUT.create(getWindow());
+			AboutInfo aboutInfo = windowConfigurer.getWorkbenchConfigurer().getPrimaryFeatureAboutInfo();
+			String productName = aboutInfo.getProductName();
+			if (productName == null) {
+				productName = ""; //$NON-NLS-1$
+			}
+			aboutAction.setText(IDEWorkbenchMessages.format("AboutAction.text", new Object[] { productName })); //$NON-NLS-1$
+			aboutAction.setToolTipText(IDEWorkbenchMessages.format("AboutAction.toolTip", new Object[] { productName})); //$NON-NLS-1$
 			aboutAction.setImageDescriptor(
 				WorkbenchImages.getImageDescriptor(
 					IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD));
@@ -838,37 +815,32 @@ public final class WorkbenchActionBuilder {
 			// do nothing
 		}
 
-		openPreferencesAction = new OpenPreferencesAction(getWindow());
+		openPreferencesAction = ActionFactory.PREFERENCES.create(getWindow());
 
-		addBookmarkAction = createGlobalAction(IWorkbenchActionConstants.BOOKMARK, "addBookMark", "edit", "addBookmark", false); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
-		addTaskAction = createGlobalAction(IWorkbenchActionConstants.ADD_TASK, "edit", false); //$NON-NLS-1$
+		addBookmarkAction = IDEActionFactory.ADD_BOOKMARK.create(getWindow());
+		registerGlobalAction(addBookmarkAction);
 
-		// can't use createGlobalAction convenience since deleteAction is not registered with the key binding service
-		deleteAction = new RetargetAction(IWorkbenchActionConstants.DELETE, IDEWorkbenchMessages.getString("Workbench.delete")); //$NON-NLS-1$
-		deleteAction.setToolTipText(IDEWorkbenchMessages.getString("Workbench.deleteToolTip")); //$NON-NLS-1$
+		addTaskAction = IDEActionFactory.ADD_TASK.create(getWindow());
+		registerGlobalAction(addTaskAction);
+
+		deleteAction = ActionFactory.DELETE.create(getWindow());
 		deleteAction.setImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
 		deleteAction.setHoverImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_HOVER));
 		deleteAction.setDisabledImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
-		deleteAction.enableAccelerator(false);
-		WorkbenchHelp.setHelp(
-			deleteAction,
-			IHelpContextIds.DELETE_RETARGET_ACTION);
-		partService.addPartListener(deleteAction);
-		deleteAction.setActionDefinitionId(deleteActionDefId);
 		// don't register the delete action with the key binding service.
 		// doing so would break cell editors that listen for keyPressed SWT 
 		// events.
-		//keyBindingService.registerGlobalAction(deleteAction);
+		// registerGlobalAction(deleteAction);
 
 		try {
 			AboutInfo[] infos = windowConfigurer.getWorkbenchConfigurer().getAllFeaturesAboutInfo();
 			// See if a welcome page is specified
 			for (int i = 0; i < infos.length; i++) {
 				if (infos[i].getWelcomePageURL() != null) {
-					quickStartAction = new QuickStartAction(getWindow());
+					quickStartAction = IDEActionFactory.QUICK_START.create(getWindow());
 					registerGlobalAction(quickStartAction);
 					break;
 				}
@@ -876,7 +848,7 @@ public final class WorkbenchActionBuilder {
 			// See if a tips and tricks page is specified
 			for (int i = 0; i < infos.length; i++) {
 				if (infos[i].getTipsAndTricksHref() != null) {
-					tipsAndTricksAction = new TipsAndTricksAction(getWindow());
+					tipsAndTricksAction = IDEActionFactory.TIPS_AND_TRICKS.create(getWindow());
 					registerGlobalAction(tipsAndTricksAction);
 					break;
 				}
@@ -887,72 +859,63 @@ public final class WorkbenchActionBuilder {
 		}
 
 		// Actions for invisible accelerators
-		showViewMenuAction = new ShowViewMenuAction(getWindow());
+		showViewMenuAction = ActionFactory.SHOW_VIEW_MENU.create(getWindow());
 		showViewMenuAction.setActionDefinitionId(showViewMenuActionDefId);
 		registerGlobalAction(showViewMenuAction);
 
-		showPartPaneMenuAction = new ShowPartPaneMenuAction(getWindow());
+		showPartPaneMenuAction = ActionFactory.SHOW_PART_PANE_MENU.create(getWindow());
 		showPartPaneMenuAction.setActionDefinitionId(
 			showPartPaneMenuActionDefId);
 		registerGlobalAction(showPartPaneMenuAction);
 
-		nextEditorAction = new CycleEditorAction(getWindow(), true);
+		nextEditorAction = ActionFactory.NEXT_EDITOR.create(getWindow());
 		nextEditorAction.setActionDefinitionId(nextEditorActionDefId);
 		registerGlobalAction(nextEditorAction);
-		nextEditorAction.commandForward = nextEditorActionDefId;
-		nextEditorAction.commandBackward = prevEditorActionDefId;
 
-		prevEditorAction = new CycleEditorAction(getWindow(), false);
+		prevEditorAction = ActionFactory.PREVIOUS_EDITOR.create(getWindow());
 		prevEditorAction.setActionDefinitionId(prevEditorActionDefId);
 		registerGlobalAction(prevEditorAction);
-		prevEditorAction.commandForward = nextEditorActionDefId;
-		prevEditorAction.commandBackward = prevEditorActionDefId;
+		ActionFactory.linkCycleActionPair(nextEditorAction, prevEditorAction);
 
-		nextPartAction = new CyclePartAction(getWindow(), true);
+		nextPartAction = ActionFactory.NEXT_PART.create(getWindow());
 		nextPartAction.setActionDefinitionId(nextPartActionDefId);
 		registerGlobalAction(nextPartAction);
-		nextPartAction.commandForward = nextPartActionDefId;
-		nextPartAction.commandBackward = prevPartActionDefId;
 
-		prevPartAction = new CyclePartAction(getWindow(), false);
+		prevPartAction = ActionFactory.PREVIOUS_PART.create(getWindow());
 		prevPartAction.setActionDefinitionId(prevPartActionDefId);
 		registerGlobalAction(prevPartAction);
-		prevPartAction.commandForward = nextPartActionDefId;
-		prevPartAction.commandBackward = prevPartActionDefId;
+		ActionFactory.linkCycleActionPair(nextPartAction, prevPartAction);
 
-		nextPerspectiveAction = new CyclePerspectiveAction(getWindow(), true);
+		nextPerspectiveAction = ActionFactory.NEXT_PERSPECTIVE.create(getWindow());
 		nextPerspectiveAction.setActionDefinitionId(nextPerspectiveActionDefId);
 		registerGlobalAction(nextPerspectiveAction);
-		nextPerspectiveAction.commandForward = nextPerspectiveActionDefId;
-		nextPerspectiveAction.commandBackward = prevPerspectiveActionDefId;
 
-		prevPerspectiveAction = new CyclePerspectiveAction(getWindow(), false);
+		prevPerspectiveAction = ActionFactory.NEXT_PERSPECTIVE.create(getWindow());
 		prevPerspectiveAction.setActionDefinitionId(prevPerspectiveActionDefId);
 		registerGlobalAction(prevPerspectiveAction);
-		prevPerspectiveAction.commandForward = nextPerspectiveActionDefId;
-		prevPerspectiveAction.commandBackward = prevPerspectiveActionDefId;
+		ActionFactory.linkCycleActionPair(nextPerspectiveAction, prevPerspectiveAction);
 
-		activateEditorAction = new ActivateEditorAction(getWindow());
+		activateEditorAction = ActionFactory.ACTIVATE_EDITOR.create(getWindow());
 		activateEditorAction.setActionDefinitionId(activateEditorActionDefId);
 		registerGlobalAction(activateEditorAction);
 
-		maximizePartAction = new MaximizePartAction(getWindow());
+		maximizePartAction = ActionFactory.MAXIMIZE_PART.create(getWindow());
 		maximizePartAction.setActionDefinitionId(maximizePartActionDefId);
 		registerGlobalAction(maximizePartAction);
 		
-		workbenchEditorsAction = new WorkbenchEditorsAction(getWindow());
+		workbenchEditorsAction = ActionFactory.SHOW_OPEN_EDITORS.create(getWindow());
 		workbenchEditorsAction.setActionDefinitionId(workbenchEditorsActionDefId);
 		registerGlobalAction(workbenchEditorsAction);
 
-		hideShowEditorAction = new ToggleEditorsVisibilityAction(getWindow());
-		savePerspectiveAction = new SavePerspectiveAction(getWindow());
-		editActionSetAction = new EditActionSetsAction(getWindow());
-		lockToolBarAction = new LockToolBarAction(getWindow());
-		resetPerspectiveAction = new ResetPerspectiveAction(getWindow());
-		closePerspAction = new ClosePerspectiveAction(getWindow());
-		closeAllPerspsAction = new CloseAllPerspectivesAction(getWindow());
+		hideShowEditorAction = ActionFactory.SHOW_EDITOR.create(getWindow());
+		savePerspectiveAction = ActionFactory.SAVE_PERSPECTIVE.create(getWindow());
+		editActionSetAction = ActionFactory.EDIT_ACTION_SETS.create(getWindow());
+		lockToolBarAction = ActionFactory.LOCK_TOOL_BAR.create(getWindow());
+		resetPerspectiveAction = ActionFactory.RESET_PERSPECTIVE.create(getWindow());
+		closePerspAction = ActionFactory.CLOSE_PERSPECTIVE.create(getWindow());
+		closeAllPerspsAction = ActionFactory.CLOSE_ALL_PERSPECTIVES.create(getWindow());
 
-		backwardHistoryAction = new NavigationHistoryAction(getWindow(), false);
+		backwardHistoryAction = ActionFactory.BACKWARD_HISTORY.create(getWindow());
 		backwardHistoryAction.setImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
 		backwardHistoryAction.setHoverImageDescriptor(
@@ -962,7 +925,7 @@ public final class WorkbenchActionBuilder {
 		backwardHistoryAction.setActionDefinitionId(backwardHistoryActionDefId);
 		registerGlobalAction(backwardHistoryAction);
 
-		forwardHistoryAction = new NavigationHistoryAction(getWindow(), true);
+		forwardHistoryAction = ActionFactory.FORWARD_HISTORY.create(getWindow());
 		forwardHistoryAction.setImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
 		forwardHistoryAction.setHoverImageDescriptor(
@@ -972,79 +935,61 @@ public final class WorkbenchActionBuilder {
 		forwardHistoryAction.setActionDefinitionId(forwardHistoryActionDefId);
 		registerGlobalAction(forwardHistoryAction);
 
-		revertAction = createGlobalAction(IWorkbenchActionConstants.REVERT, "file", false); //$NON-NLS-1$
-		refreshAction = createGlobalAction(IWorkbenchActionConstants.REFRESH, "file", false); //$NON-NLS-1$
-		propertiesAction = createGlobalAction(IWorkbenchActionConstants.PROPERTIES, "file", false); //$NON-NLS-1$
-		moveAction = createGlobalAction(IWorkbenchActionConstants.MOVE, "edit", false); //$NON-NLS-1$
-		renameAction = createGlobalAction(IWorkbenchActionConstants.RENAME, "edit", false); //$NON-NLS-1$
-		goIntoAction = createGlobalAction(IWorkbenchActionConstants.GO_INTO, "navigate", false); //$NON-NLS-1$
-		backAction = createGlobalAction(IWorkbenchActionConstants.BACK, "navigate", true); //$NON-NLS-1$
-		forwardAction = createGlobalAction(IWorkbenchActionConstants.FORWARD, "navigate", true); //$NON-NLS-1$
-		upAction = createGlobalAction(IWorkbenchActionConstants.UP, "navigate", true); //$NON-NLS-1$
-		nextAction = createGlobalAction(IWorkbenchActionConstants.NEXT, "navigate", true); //$NON-NLS-1$
+		revertAction = ActionFactory.REVERT.create(getWindow());
+		registerGlobalAction(revertAction);
+
+		refreshAction = ActionFactory.REFRESH.create(getWindow());
+		registerGlobalAction(refreshAction);
+
+		propertiesAction = ActionFactory.PROPERTIES.create(getWindow());
+		registerGlobalAction(propertiesAction);
+
+		moveAction = ActionFactory.MOVE.create(getWindow());
+		registerGlobalAction(moveAction);
+
+		renameAction = ActionFactory.RENAME.create(getWindow());
+		registerGlobalAction(renameAction);
+
+		goIntoAction = ActionFactory.GO_INTO.create(getWindow());
+		registerGlobalAction(goIntoAction);
+
+		backAction = ActionFactory.BACK.create(getWindow());
+		registerGlobalAction(backAction);
+
+		forwardAction = ActionFactory.FORWARD.create(getWindow());
+		registerGlobalAction(forwardAction);
+
+		upAction = ActionFactory.UP.create(getWindow());
+		registerGlobalAction(upAction);
+
+		nextAction = ActionFactory.NEXT.create(getWindow());
 		nextAction.setImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_NEXT_NAV));
-		previousAction = createGlobalAction(IWorkbenchActionConstants.PREVIOUS, "navigate", true); //$NON-NLS-1$
+		registerGlobalAction(nextAction);
+
+		previousAction = ActionFactory.PREVIOUS.create(getWindow());
 		previousAction.setImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_PREVIOUS_NAV));
-		buildProjectAction = createGlobalAction(IWorkbenchActionConstants.BUILD_PROJECT, "project", false); //$NON-NLS-1$
-		rebuildProjectAction = createGlobalAction(IWorkbenchActionConstants.REBUILD_PROJECT, "project", false); //$NON-NLS-1$
-		openProjectAction = createGlobalAction(IWorkbenchActionConstants.OPEN_PROJECT, "project", false); //$NON-NLS-1$
-		closeProjectAction = createGlobalAction(IWorkbenchActionConstants.CLOSE_PROJECT, "project", false); //$NON-NLS-1$
-		projectPropertyDialogAction = new ProjectPropertyDialogAction(getWindow());
+		registerGlobalAction(previousAction);
+
+				
+		buildProjectAction = IDEActionFactory.BUILD_PROJECT.create(getWindow());
+		registerGlobalAction(buildProjectAction);
+
+		rebuildProjectAction = IDEActionFactory.REBUILD_PROJECT.create(getWindow());
+		registerGlobalAction(rebuildProjectAction);
+
+		openProjectAction = IDEActionFactory.OPEN_PROJECT.create(getWindow());
+		registerGlobalAction(openProjectAction);
+
+		closeProjectAction = IDEActionFactory.CLOSE_PROJECT.create(getWindow());
+		registerGlobalAction(closeProjectAction);
+		
+		projectPropertyDialogAction = IDEActionFactory.OPEN_PROJECT_PROPERTIES.create(getWindow());
 		projectPropertyDialogAction.setActionDefinitionId(projectPropertiesActionDefId);
-		partService.addPartListener(projectPropertyDialogAction);
 		registerGlobalAction(projectPropertyDialogAction);
-	}
-
-	/**
-	 * Creates a global (retargetable) action.
-	 * 
-	 * @param id the global action id (also used as the id to use when looking up messages, and the suffix to use
-	 *   in the action definition id)
-	 * @param actionDefPrefix the prefix to use in the action definition id
-	 * @param labelRetarget <code>true</code> if the action's label is retargetable, <code>false</code> if not
-	 * @return the action
-	 */
-	private RetargetAction createGlobalAction(
-		String id,
-		String actionDefPrefix,
-		boolean labelRetarget) {
-		return createGlobalAction(id, id, actionDefPrefix, id, labelRetarget);
-	}
-
-	/**
-	 * Creates a global (retargetable) action.
-	 * 
-	 * @param id the global action id
-	 * @param messageId the id to use when looking up messages
-	 * @param actionDefPrefix the prefix to use in the action definition id
-	 * @param actionDefSuffix the suffix to use in the action definition id
-	 * @param labelRetarget <code>true</code> if the action's label is retargetable, <code>false</code> if not
-	 * @return the action
-	 */
-	private RetargetAction createGlobalAction(
-		String id,
-		String messageId,
-		String actionDefPrefix,
-		String actionDefSuffix,
-		boolean labelRetarget) {
-			
-		String text = IDEWorkbenchMessages.getString("Workbench." + messageId); //$NON-NLS-1$
-		String toolTipText = IDEWorkbenchMessages.getString("Workbench." + messageId + "ToolTip"); //$NON-NLS-1$ //$NON-NLS-2$
-		RetargetAction action;
-		if (labelRetarget) {
-			action = new LabelRetargetAction(id, text);
-		} else {
-			action = new RetargetAction(id, text);
-		}
-		action.setToolTipText(toolTipText);
-		getWindow().getPartService().addPartListener(action);
-		action.setActionDefinitionId(PlatformUI.PLUGIN_ID + "." + actionDefPrefix + "." + actionDefSuffix); //$NON-NLS-1$ //$NON-NLS-2$
-		registerGlobalAction(action);
-		return action;
 	}
 
 	/**
@@ -1059,6 +1004,7 @@ public final class WorkbenchActionBuilder {
 			else
 				removePinEditorAction(windowConfigurer);
 		} else if (event.getProperty().equals(IPreferenceConstants.REUSE_EDITORS)) {
+			// @issue idiosyncratic semantics of pinEditor
 			pinEditorAction.updateState();
 		} else if (event.getProperty().equals(IPreferenceConstants.RECENT_FILES)) {
 			Workbench wb = (Workbench) (Workbench) getWindow().getWorkbench();
@@ -1089,6 +1035,7 @@ public final class WorkbenchActionBuilder {
 	 */
 	private void removePinEditorAction(IWorkbenchWindowConfigurer configurer) {
 		// Flag the action so it is hidden in the editor menu.
+		// @issue idiosyncratic semantics of pinEditor
 		pinEditorAction.setVisible(false);
 		
 		IToolBarManager tBarMgr = configurer.getToolBar(IWorkbenchActionConstants.TOOLBAR_NAVIGATE);

@@ -46,8 +46,9 @@ public IAdaptable createElement(IMemento memento) {
 		return null;
 
 	AboutInfo info = null;
+	// @issue access to about info
 	AboutInfo [] infos = 
-		((Workbench)(IDEWorkbenchPlugin.getDefault().getWorkbench())).getConfigurationInfo().getFeaturesInfo();
+		PlatformUI.getWorkbench().getConfigurationInfo().getFeaturesInfo();
 	for (int i = 0; i < infos.length; i++) {
 		if (featureId.equals(infos[i].getFeatureId())) {
 			info = infos[i];

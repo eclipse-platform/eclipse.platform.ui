@@ -10,17 +10,28 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import org.eclipse.jface.action.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IContributionManager;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.internal.NewWizardShortcutAction;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
-import java.util.*;
-import java.util.List;
 
 /**
  * A <code>NewWizardMenu</code> is used to populate a menu manager with
@@ -28,9 +39,9 @@ import java.util.List;
  * from the Perspective Customize dialog.
  */
 public class NewWizardMenu extends ContributionItem {
-	private Action showDlgAction;
-	private Action newProjectAction;
-	private Action newExampleAction;
+	private IAction showDlgAction;
+	private IAction newProjectAction;
+	private IAction newExampleAction;
 	private Map actions = new HashMap(21);
 	private NewWizardsRegistryReader reader = new NewWizardsRegistryReader();
 	private boolean enabled = true;
@@ -68,7 +79,7 @@ public class NewWizardMenu extends ContributionItem {
 	public NewWizardMenu(IWorkbenchWindow window) {
 		super();
 		this.window = window;
-		showDlgAction = new NewWizardAction(window);
+		showDlgAction = IDEActionFactory.NEW.create(window);
 		newProjectAction = new NewProjectAction(window);
 		newExampleAction = new NewExampleAction(window);
 	}

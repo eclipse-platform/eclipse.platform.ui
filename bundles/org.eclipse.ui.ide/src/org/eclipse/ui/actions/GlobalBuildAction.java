@@ -12,13 +12,24 @@ package org.eclipse.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -31,30 +42,23 @@ import org.eclipse.ui.internal.ide.IHelpContextIds;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */
-public class GlobalBuildAction extends Action {
-	
+public class GlobalBuildAction
+		extends Action 
+		implements ActionFactory.IWorkbenchAction {
+
 	/**
 	 * The type of build performed by this action. Can be either
 	 * <code>IncrementalProjectBuilder.INCREMENTAL_BUILD</code> or
 	 * <code>IncrementalProjectBuilder.FULL_BUILD</code>.
 	 */
 	private int buildType;
-	
+		
 	/**
-	 * The workbench this action applies to.
+	 * The workbench window; or <code>null</code> if this
+	 * action has been <code>dispose</code>d.
 	 */
-	private IWorkbench workbench;
-	
-	/**
-	 * The window this action appears in.
-	 */
-	private IWorkbenchWindow window;
-	
-	/**
-	 * The shell used to display message dialogs to the user
-	 */
-	private Shell shell;
-	
+	private IWorkbenchWindow workbenchWindow;
+			
 /**
  * Creates a new action of the appropriate type. The action id is 
  * <code>IWorkbenchActionConstants.BUILD</code> for incremental builds
@@ -69,15 +73,11 @@ public class GlobalBuildAction extends Action {
  * @deprecated use GlobalBuildAction(IWorkbenchWindow, type) instead
  */
 public GlobalBuildAction(IWorkbench workbench, Shell shell, int type) {
-	if (workbench == null) {
-		throw new IllegalArgumentException();
-	}
+	// always use active window; ignore shell
+	this(workbench.getActiveWorkbenchWindow(), type);
 	if (shell == null) {
 		throw new IllegalArgumentException();
 	}
-	this.workbench = workbench;
-	this.shell = shell;
-	setBuildType(type);
 }
 
 /**
@@ -89,13 +89,15 @@ public GlobalBuildAction(IWorkbench workbench, Shell shell, int type) {
  * @param type the type of build; one of
  *  <code>IncrementalProjectBuilder.INCREMENTAL_BUILD</code> or 
  *  <code>IncrementalProjectBuilder.FULL_BUILD</code>
+ * @deprecated Use {@link IDEActionFactory#FULL_BUILD IDEActionFactory.FULL_BUILD}
+ * or Use {@link IDEActionFactory#INCREMENTAL_BUILD IDEActionFactory.INCREMENTAL_BUILD} instead
+ * @issue document this deprecation (contingent upon IDEActionFactory being public)
  */
 public GlobalBuildAction(IWorkbenchWindow window, int type) {
 	if (window == null) {
 		throw new IllegalArgumentException();
 	}
-	this.workbench = window.getWorkbench();
-	this.window = window;
+	this.workbenchWindow = window;
 	setBuildType(type);
 }
 
@@ -129,16 +131,10 @@ private void setBuildType(int type) {
 }
 
 /**
- * Returns the shell to use.  Uses the window's shell if a window
- * has been set, otherwise it uses the shell passed to the deprecated constructor.
+ * Returns the shell to use.
  */
 private Shell getShell() {
-	if (window != null) {
-		return window.getShell();
-	}
-	else {
-		return shell;
-	}
+	return workbenchWindow.getShell();
 }
 /**
  * Returns the operation name to use
@@ -198,7 +194,7 @@ public void doBuild() {
 		// Unexpected runtime exceptions
 		IDEWorkbenchPlugin.log("Exception in " + getClass().getName() + ".run: " + e.getTargetException());//$NON-NLS-2$//$NON-NLS-1$
 		MessageDialog.openError(
-			shell, 
+			getShell(), 
 			IDEWorkbenchMessages.getString("GlobalBuildAction.buildProblems"), //$NON-NLS-1$
 			IDEWorkbenchMessages.format(
 				"GlobalBuildAction.internalError", //$NON-NLS-1$
@@ -209,7 +205,7 @@ public void doBuild() {
 	// If errors occurred, open an error dialog
 	if (!status.isOK()) {
 		ErrorDialog.openError(
-			shell,
+			getShell(),
 			IDEWorkbenchMessages.getString("GlobalBuildAction.problemTitle"), //$NON-NLS-1$
 			null, // no special message
 			status);
@@ -229,6 +225,10 @@ public void doBuild() {
  * preference.
  */
 public void run() {
+	if (workbenchWindow == null) {
+		// action has been disposed
+		return;
+	}
 	// Do nothing if there are no projects...
 	IProject[] roots = getWorkspaceProjects();
 	if (roots.length < 1)
@@ -253,7 +253,7 @@ public void run() {
 	if (!BuildAction.isSaveAllSet())
 		return;
 		
-	IWorkbenchWindow[] windows = this.workbench.getWorkbenchWindows();
+	IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
 	for (int i = 0; i < windows.length; i++) {
 		IWorkbenchPage[] perspectives = windows[i].getPages();
 		for (int j = 0; j < perspectives.length; j++)
@@ -284,4 +284,17 @@ public void run() {
 	
 	return false;
 }
+
+/* (non-Javadoc)
+ * Method declared on ActionFactory.IWorkbenchAction.
+ * @since 3.0
+ */
+public void dispose() {
+	if (workbenchWindow == null) {
+		// action has already been disposed
+		return;
+	}
+	workbenchWindow = null;
+}
+
 }

@@ -31,6 +31,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetPage;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
@@ -201,7 +202,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 		ArrayList resources = new ArrayList(10);
 		findCheckedResources(resources, (IContainer) tree.getInput());
 		if (workingSet == null) {
-			IWorkingSetManager workingSetManager = IDEWorkbenchPlugin.getDefault().getWorkingSetManager();
+			IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
 			workingSet = workingSetManager.createWorkingSet(getWorkingSetName(), (IAdaptable[]) resources.toArray(new IAdaptable[resources.size()]));
 		} else {
 			workingSet.setName(getWorkingSetName());
@@ -405,7 +406,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 			errorMessage = IDEWorkbenchMessages.getString("ResourceWorkingSetPage.warning.nameMustNotBeEmpty"); //$NON-NLS-1$
 		}
 		if (errorMessage == null && (workingSet == null || newText.equals(workingSet.getName()) == false)) {
-			IWorkingSet[] workingSets = IDEWorkbenchPlugin.getDefault().getWorkingSetManager().getWorkingSets();
+			IWorkingSet[] workingSets = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets();
 			for (int i = 0; i < workingSets.length; i++) {
 				if (newText.equals(workingSets[i].getName())) {
 					errorMessage = IDEWorkbenchMessages.getString("ResourceWorkingSetPage.warning.workingSetExists"); //$NON-NLS-1$

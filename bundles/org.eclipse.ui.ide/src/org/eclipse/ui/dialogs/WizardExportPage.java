@@ -14,6 +14,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.IFileEditorMapping;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
@@ -24,6 +25,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import java.util.*;
 import java.util.List; // disambiguate from SWT
+
 /**
  * Abstract superclass for a typical export wizard's main page.
  * <p>
@@ -522,7 +524,7 @@ protected Object[] queryIndividualResourcesToExport(IAdaptable rootResource) {
  */
 protected Object[] queryResourceTypesToExport() {
 	IFileEditorMapping editorMappings[] =
-		IDEWorkbenchPlugin.getDefault().getEditorRegistry().getFileEditorMappings();
+		PlatformUI.getWorkbench().getEditorRegistry().getFileEditorMappings();
 
 	int mappingsSize = editorMappings.length;
 	List selectedTypes = getTypesToExport();

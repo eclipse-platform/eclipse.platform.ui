@@ -79,7 +79,7 @@ public Composite createContents(Composite parent) {
 
 	final Button createLinkButton = new Button(groupComposite, SWT.CHECK);
 	if (type == IResource.FILE)
-		createLinkButton.setText(IDEWorkbenchMessagesIDEWorkbenchMessages.getString("CreateLinkedResourceGroup.linkFileButton")); //$NON-NLS-1$
+		createLinkButton.setText(IDEWorkbenchMessages.getString("CreateLinkedResourceGroup.linkFileButton")); //$NON-NLS-1$
 	else
 		createLinkButton.setText(IDEWorkbenchMessages.getString("CreateLinkedResourceGroup.linkFolderButton")); //$NON-NLS-1$
 	createLinkButton.setSelection(createLink);

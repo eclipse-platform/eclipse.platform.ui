@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
@@ -23,6 +22,8 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.PartEventAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
@@ -32,35 +33,48 @@ import org.eclipse.ui.internal.ide.IHelpContextIds;
 /**
  * Launch the tips and tricks action.
  */
-public class TipsAndTricksAction extends PartEventAction {
-	private IWorkbenchWindow window;
+public class TipsAndTricksAction
+		extends PartEventAction
+		implements ActionFactory.IWorkbenchAction {
+
+	/**
+	 * The workbench window this action is registered with.
+	 */
+	 private IWorkbenchWindow workbenchWindow;
 
 	/**
 	 *	Create an instance of this class
 	 */
 	public TipsAndTricksAction(IWorkbenchWindow window) {
 		super(IDEWorkbenchMessages.getString("TipsAndTricks.text")); //$NON-NLS-1$
+		if (window == null) {
+			throw new IllegalArgumentException();
+		}
+		this.workbenchWindow = window;
 		setToolTipText(IDEWorkbenchMessages.getString("TipsAndTricks.toolTip")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.TIPS_AND_TRICKS_ACTION);
 		setActionDefinitionId("org.eclipse.ui.help.tipsAndTricksAction"); //$NON-NLS-1$
-		this.window = window;
+		workbenchWindow.getPartService().addPartListener(this);
 	}
 
 	/**
 	 *	The user has invoked this action
 	 */
 	public void run() {
+		if (workbenchWindow == null) {
+			// action has been disposed
+			return;
+		}
 		// Ask the user to select a feature
-		AboutInfo[] features = ((Workbench) window.getWorkbench()).getConfigurationInfo().getFeaturesInfo();
+		// @issue access to AboutInfo
+		AboutInfo[] features = PlatformUI.getWorkbench().getConfigurationInfo().getFeaturesInfo();
 		ArrayList tipsAndTricksFeatures = new ArrayList();
 		for (int i = 0; i < features.length; i++) {
 			if (features[i].getTipsAndTricksHref() != null)
 				tipsAndTricksFeatures.add(features[i]);
 		}
 
-		if (window == null)
-			return;
-		Shell shell = window.getShell();
+		Shell shell = workbenchWindow.getShell();
 
 		if (tipsAndTricksFeatures.size() == 0) {
 			MessageDialog.openInformation(
@@ -72,7 +86,8 @@ public class TipsAndTricksAction extends PartEventAction {
 
 		features = new AboutInfo[tipsAndTricksFeatures.size()];
 		tipsAndTricksFeatures.toArray(features);
-		AboutInfo primaryFeature = ((Workbench) window.getWorkbench()).getConfigurationInfo().getAboutInfo();
+		// @issue access to AboutInfo
+		AboutInfo primaryFeature = PlatformUI.getWorkbench().getConfigurationInfo().getAboutInfo();
 
 		FeatureSelectionDialog d = new FeatureSelectionDialog(
 			shell, 
@@ -117,5 +132,17 @@ public class TipsAndTricksAction extends PartEventAction {
 				IDEWorkbenchMessages.getString("TipsAndTricksErrorDialog.noFeatures"), //$NON-NLS-1$
 				status);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * Method declared on ActionFactory.IWorkbenchAction.
+	 */
+	public void dispose() {
+		if (workbenchWindow == null) {
+			// action has already been disposed
+			return;
+		}
+		workbenchWindow.getPartService().removePartListener(this);
+		workbenchWindow = null;
 	}
 }

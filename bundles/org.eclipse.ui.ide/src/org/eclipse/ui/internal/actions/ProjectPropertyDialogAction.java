@@ -24,27 +24,40 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.PartEventAction;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
-import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.dialogs.PropertyDialog;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.dialogs.PropertyPageManager;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+
 /**
  * Implementation for the action Property on the Project menu.
  */
-public class ProjectPropertyDialogAction extends PartEventAction implements INullSelectionListener {
-	private IWorkbenchWindow window;
+public class ProjectPropertyDialogAction
+		extends PartEventAction
+		implements INullSelectionListener, ActionFactory.IWorkbenchAction {
+			
+/**
+ * The workbench window; or <code>null</code> if this
+ * action has been <code>dispose</code>d.
+ */
+private IWorkbenchWindow workbenchWindow;
 	
 public ProjectPropertyDialogAction(IWorkbenchWindow window) {
 	super(new String());
-	this.window = window;
+	if (window == null) {
+		throw new IllegalArgumentException();
+	}
+	this.workbenchWindow = window;
 	setText(IDEWorkbenchMessages.getString("Workbench.projectProperties")); //$NON-NLS-1$
 	setToolTipText(IDEWorkbenchMessages.getString("Workbench.projectPropertiesToolTip")); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(this, IHelpContextIds.PROJECT_PROPERTY_DIALOG_ACTION);
-	window.getSelectionService().addSelectionListener(this);
+	workbenchWindow.getSelectionService().addSelectionListener(this);
+	workbenchWindow.getPartService().addPartListener(this);
 }
 /**
  * Returns the label for the specified adaptable.
@@ -77,7 +90,7 @@ public void run() {
 	String name = getName(project);
 	if (!pages.hasNext()) {
 		MessageDialog.openInformation(
-			window.getShell(),
+			workbenchWindow.getShell(),
 			IDEWorkbenchMessages.getString("PropertyDialog.messageTitle"), //$NON-NLS-1$
 			IDEWorkbenchMessages.format("PropertyDialog.noPropertyMessage", new Object[] {name})); //$NON-NLS-1$
 		return;
@@ -85,7 +98,7 @@ public void run() {
 		title = IDEWorkbenchMessages.format("PropertyDialog.propertyMessage", new Object[] {name}); //$NON-NLS-1$
 
 	// @issue should use PropertyDialogAction instead
-	PropertyDialog propertyDialog = new PropertyDialog(window.getShell(), pageManager, new StructuredSelection(project)); 
+	PropertyDialog propertyDialog = new PropertyDialog(workbenchWindow.getShell(), pageManager, new StructuredSelection(project)); 
 	propertyDialog.create();
 	propertyDialog.getShell().setText(title);
 	WorkbenchHelp.setHelp(propertyDialog.getShell(), IHelpContextIds.PROPERTY_DIALOG);
@@ -113,7 +126,7 @@ private IProject getProject() {
 	if(part instanceof IEditorPart) {
 		selection = ((IEditorPart)part).getEditorInput();
 	} else {
-		ISelection sel = window.getSelectionService().getSelection();
+		ISelection sel = workbenchWindow.getSelectionService().getSelection();
 		if((sel != null) && (sel instanceof IStructuredSelection))
 			selection = ((IStructuredSelection)sel).getFirstElement();		
 	}
@@ -126,4 +139,18 @@ private IProject getProject() {
 		return null;
 	return resource.getProject();	
 }
+
+/* (non-javadoc)
+ * Method declared on ActionFactory.IWorkbenchAction
+ */
+public void dispose() {
+	if (workbenchWindow == null) {
+		// action has already been disposed
+		return;
+	}
+	workbenchWindow.getSelectionService().removeSelectionListener(this);
+	workbenchWindow.getPartService().removePartListener(this);
+	workbenchWindow = null;
+}
+
 }

@@ -36,8 +36,19 @@ import org.eclipse.ui.internal.dialogs.NewWizard;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
+ * <p>
+ * This method automatically registers listeners so that it can keep its
+ * enablement state up to date. Ordinarily, the window's references to these
+ * listeners will be dropped automatically when the window closes. However,
+ * if the client needs to get rid of an action while the window is still open,
+ * the client must call {@link IWorkbenchAction#dispose dispose} to give the
+ * action an opportunity to deregister its listeners and to perform any other
+ * cleanup.
+ * </p>
  */
-public class NewWizardAction extends Action {
+public class NewWizardAction
+	extends Action
+	implements ActionFactory.IWorkbenchAction {
 
 	/**
 	 * The wizard dialog width
@@ -56,16 +67,23 @@ public class NewWizardAction extends Action {
 	private String categoryId = null;
 	
 	/**
-	 * The workbench window this action will work within.
+	 * The workbench window; or <code>null</code> if this
+	 * action has been <code>dispose</code>d.
 	 */
-	private IWorkbenchWindow window;
+	private IWorkbenchWindow workbenchWindow;
 	
 	/**
-	 *	Create a new instance of this class
+	 *	Create a new instance of this class.
+	 * @deprecated Use {@link IDEActionFactory#NEW IDEActionFactory.NEW} instead
+	 * @issue document this deprecation (contingent upon IDEActionFactory being public)
 	 */
 	public NewWizardAction(IWorkbenchWindow window) {
 		super(IDEWorkbenchMessages.getString("NewWizardAction.text")); //$NON-NLS-1$
-		this.window = window;
+		if (window == null) {
+			throw new IllegalArgumentException();
+		}
+		this.workbenchWindow = window;
+		// @issues should be IDE-specific images
 		ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
 		setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
 		setHoverImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD_HOVER));
@@ -102,16 +120,20 @@ public class NewWizardAction extends Action {
 	 * Method declared on IAction.
 	 */
 	public void run() {
+		if (workbenchWindow == null) {
+			// action has been disposed
+			return;
+		}
 		NewWizard wizard = new NewWizard();
 		wizard.setCategoryId(categoryId);
 
-		ISelection selection = window.getSelectionService().getSelection();
+		ISelection selection = workbenchWindow.getSelectionService().getSelection();
 		IStructuredSelection selectionToPass = StructuredSelection.EMPTY;
 		if (selection instanceof IStructuredSelection) {
 			selectionToPass = (IStructuredSelection) selection;
 		} else {
 			// Build the selection from the IFile of the editor
-			IWorkbenchPart part = window.getPartService().getActivePart();
+			IWorkbenchPart part = workbenchWindow.getPartService().getActivePart();
 			if (part instanceof IEditorPart) {
 				IEditorInput input = ((IEditorPart) part).getEditorInput();
 				if (input instanceof IFileEditorInput) {
@@ -120,7 +142,7 @@ public class NewWizardAction extends Action {
 			}
 		}
 
-		wizard.init(window.getWorkbench(), selectionToPass);
+		wizard.init(workbenchWindow.getWorkbench(), selectionToPass);
 		IDialogSettings workbenchSettings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
 		IDialogSettings wizardSettings = workbenchSettings.getSection("NewWizardAction"); //$NON-NLS-1$
 		if (wizardSettings == null)
@@ -128,11 +150,24 @@ public class NewWizardAction extends Action {
 		wizard.setDialogSettings(wizardSettings);
 		wizard.setForcePreviousAndNextButtons(true);
 
-		Shell parent = window.getShell();
+		Shell parent = workbenchWindow.getShell();
 		WizardDialog dialog = new WizardDialog(parent, wizard);
 		dialog.create();
 		dialog.getShell().setSize(Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x), SIZING_WIZARD_HEIGHT);
 		WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.NEW_WIZARD);
 		dialog.open();
 	}
+
+	/* (non-Javadoc)
+	 * Method declared on ActionFactory.IWorkbenchAction.
+	 * @since 3.0
+	 */
+	public void dispose() {
+		if (workbenchWindow == null) {
+			// action has already been disposed
+			return;
+		}
+		workbenchWindow = null;
+	}
+
 }
