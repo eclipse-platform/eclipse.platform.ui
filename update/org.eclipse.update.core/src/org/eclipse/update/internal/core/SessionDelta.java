@@ -52,64 +52,10 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 	 * @see ISessionDelta#process(IProgressMonitor)
 	 */
 	public void process(IProgressMonitor pm) throws CoreException {
-
-		createInstallConfiguration();
-
-		// process all feature references to configure
-		// find the configured site each feature belongs to
-		if (process == ENABLE) {
-			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
-				UpdateCore.warn("ENABLE SESSION DELTA");			
-			if (featureReferences != null && featureReferences.size() > 0) {
-				// manage ProgressMonitor
-				if (pm != null) {
-					int nbFeatures = featureReferences.size();
-					pm.beginTask(Policy.bind("SessionDelta.EnableFeatures"), nbFeatures);
-				}
-				// since 2.0.2 ISite.getConfiguredSite()
-				// find the configuredSite that maintains this featureReference
-				// configure the feature
-				Iterator iterator = featureReferences.iterator();
-				IFeatureReference ref = null;
-				IConfiguredSite configSite = null;
-				IFeature featureToConfigure = null;
-				while (iterator.hasNext()) {
-					ref = (IFeatureReference) iterator.next();
-					
-					try {
-						featureToConfigure = ref.getFeature();
-					} catch (CoreException e) {
-						UpdateCore.warn(null, e);
-					}
-
-					if (featureToConfigure != null) {
-						if (pm != null)
-							pm.worked(1);
-							
-						configSite = ref.getSite().getCurrentConfiguredSite();
-						try {
-							// make sure only the latest version of the configured features
-							// is configured across sites [16502]													
-							if (enable(featureToConfigure)) {
-								configSite.configure(featureToConfigure);
-							} else {
-								configSite.unconfigure(featureToConfigure);
-							}
-						} catch (CoreException e) {
-							// if I cannot configure one, 
-							//then continue with others 
-							UpdateCore.warn("Unable to configure feature:" + featureToConfigure, e);
-						}
-					} else {
-						UpdateCore.warn("Unable to configure null feature:" + ref,null);
-					}
-
-				}
-			}
-		}
-
-		delete();
-		saveLocalSite();
+		if (featureReferences.isEmpty()) return;
+		IFeatureReference[] selected = new IFeatureReference[featureReferences.size()];
+		featureReferences.toArray(selected);
+		process(selected,pm);
 	}
 
 	/*
@@ -117,16 +63,16 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 	 */
 	public void delete() {
 		if (deleted) {
-			UpdateCore.warn("Attempt to delete an already deleted session delta:" + file);
+			UpdateManagerPlugin.warn("Attempt to delete an already deleted session delta:" + file);
 			return;
 		}
 
 		// remove the file from the file system
 		if (file != null) {
 			UpdateManagerUtils.removeFromFileSystem(file);
-			UpdateCore.warn("Removing SessionDelta:" + file);
+			UpdateManagerPlugin.warn("Removing SessionDelta:" + file);
 		} else {
-			UpdateCore.warn("Unable to remove SessionDelta. File is null");
+			UpdateManagerPlugin.warn("Unable to remove SessionDelta. File is null");
 		}
 
 		deleted = true;
@@ -212,7 +158,7 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 						}
 					}
 				} catch (CoreException e) {
-					UpdateCore.warn(null, e);
+					UpdateManagerPlugin.warn(null, e);
 				}
 			}
 		}
@@ -229,8 +175,8 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 	private int compare(IFeature feature1, IFeature feature2) throws CoreException {
 
 		// TRACE
-		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
-			UpdateCore.debug("Compare: " + feature1 + " && " + feature2);
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
+			UpdateManagerPlugin.debug("Compare: " + feature1 + " && " + feature2);
 		}
 
 		if (feature1 == null)
@@ -262,5 +208,68 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 		}
 		return 0;
 	};
+
+	/**
+	 * @see org.eclipse.update.configuration.ISessionDelta#process(org.eclipse.update.core.IFeatureReference, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void process(IFeatureReference[] selected, IProgressMonitor pm) throws CoreException {
+		
+		createInstallConfiguration();
+
+		// process all feature references to configure
+		// find the configured site each feature belongs to
+		if (process == ENABLE) {
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION)
+				UpdateManagerPlugin.warn("ENABLE SESSION DELTA");
+			if (featureReferences != null && featureReferences.size() > 0) {
+				// manage ProgressMonitor
+				if (pm != null) {
+					int nbFeatures = featureReferences.size();
+					pm.beginTask(Policy.bind("SessionDelta.EnableFeatures"), nbFeatures);
+				}
+				// since 2.0.2 ISite.getConfiguredSite()
+				// find the configuredSite that maintains this featureReference
+				// configure the feature
+				IFeatureReference ref = null;
+				IConfiguredSite configSite = null;
+				IFeature featureToConfigure = null;
+				for (int i = 0; i < selected.length; i++) {
+					ref = (IFeatureReference) selected[i];
+
+					try {
+						featureToConfigure = ref.getFeature();
+					} catch (CoreException e) {
+						UpdateManagerPlugin.warn(null, e);
+					}
+
+					if (featureToConfigure != null) {
+						if (pm != null)
+							pm.worked(1);
+
+						configSite = ref.getSite().getCurrentConfiguredSite();
+						try {
+							// make sure only the latest version of the configured features
+							// is configured across sites [16502]
+							if (enable(featureToConfigure)) {
+								configSite.configure(featureToConfigure);
+							} else {
+								configSite.unconfigure(featureToConfigure);
+							}
+						} catch (CoreException e) {
+							// if I cannot configure one,
+							//then continue with others
+							UpdateManagerPlugin.warn("Unable to configure feature:" + featureToConfigure, e);
+						}
+					} else {
+						UpdateManagerPlugin.warn("Unable to configure null feature:" + ref,null);
+					}
+				}
+			}
+		}
+
+		delete();
+		saveLocalSite();
+				
+	}
 
 }

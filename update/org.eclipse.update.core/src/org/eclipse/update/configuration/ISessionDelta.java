@@ -111,6 +111,23 @@ public interface ISessionDelta extends IAdaptable {
 	 * </p>
 	 */
 	public void process(IProgressMonitor progressMonitor) throws CoreException;
+
+	/**
+	 * Process the selected feature references of the Session Delta.
+	 * Removes the Session Delta from the file system after processing it.
+	 *
+	 * @param selected list of selected feature references to be processed
+	 * @param progressMonitor the progress monitor
+	 * @throws CoreException if an error occurs.
+	 * @since 2.0
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
+	 */
+	public void process(IFeatureReference [] selected, IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Removes the Session Delta from the file system without processing it.
