@@ -18,6 +18,7 @@ import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
@@ -149,7 +150,7 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 		// If the file exists, send the appropriate indication to the server
 		if (mFile.exists()) {
 			if (mFile.isModified()) {
-				boolean binary = (info != null) && ResourceSyncInfo.BINARY_TAG.equals(mFile.getSyncInfo().getKeywordMode());
+				boolean binary = info != null && KSubstOption.fromMode(info.getKeywordMode()).isBinary();
 				if (sendModifiedContents) {
 					session.sendModified(mFile, binary, monitor);
 				} else {

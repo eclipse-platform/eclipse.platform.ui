@@ -8,6 +8,7 @@ package org.eclipse.team.internal.ccvs.core.client;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 /**
@@ -35,7 +36,7 @@ class TagFileSender extends FileStructureVisitor {
 			}
 			if (! info.isAdded()) {
 				session.sendEntry(info.getEntryLine(false, mFile.getTimeStamp()));
-				boolean binary = (info != null) && ResourceSyncInfo.BINARY_TAG.equals(mFile.getSyncInfo().getKeywordMode());
+				boolean binary = info != null && KSubstOption.fromMode(info.getKeywordMode()).isBinary();
 				session.sendIsModified(mFile, binary, monitor);
 			}
 		}

@@ -14,7 +14,7 @@ import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.util.FileNameMatcher;
 
 /**
@@ -105,14 +105,12 @@ class ImportStructureVisitor implements ICVSResourceVisitor {
 			return;
 		}
 		
-		String mode;
+		// XXX should we default to text or to binary?
+		boolean binary = false;
 		if (wrapMatcher != null) {
-			mode = wrapMatcher.getMatch(mFile.getName());
-		} else {
-			mode = ""; //$NON-NLS-1$
+			String mode = wrapMatcher.getMatch(mFile.getName());
+			if (mode != null) binary = KSubstOption.fromMode(mode).isBinary();
 		}
-		// XXX Is this condition right?
-		boolean binary = mode != null && mode.indexOf(ResourceSyncInfo.BINARY_TAG) != -1;
 		session.sendModified(mFile, binary, monitor);
 	}
 

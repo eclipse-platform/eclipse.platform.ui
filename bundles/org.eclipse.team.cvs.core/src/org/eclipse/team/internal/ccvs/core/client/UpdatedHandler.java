@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.EntryFileDateFormat;
@@ -71,6 +72,7 @@ class UpdatedHandler extends ResponseHandler {
 		String repositoryFile = session.readLine();
 		String entryLine = session.readLine();
 		String permissionsLine = session.readLine();
+		ResourceSyncInfo info = new ResourceSyncInfo(entryLine, permissionsLine, null);
 
 		// clear file update modifiers
 		Date modTime = session.getModTime();
@@ -83,8 +85,8 @@ class UpdatedHandler extends ResponseHandler {
 		Assert.isTrue(mParent.exists());
 		ICVSFile mFile = mParent.getFile(fileName);
 		
-		boolean binary = entryLine.indexOf("/" + ResourceSyncInfo.BINARY_TAG) != -1; //$NON-NLS-1$
-		boolean readOnly = permissionsLine.indexOf(READ_ONLY_FLAG) == -1;
+		boolean binary = KSubstOption.fromMode(info.getKeywordMode()).isBinary();
+		boolean readOnly = info.getPermissions().indexOf(READ_ONLY_FLAG) == -1;
 		
 		session.receiveFile(mFile, binary, handlerType, monitor);
 		if (readOnly) mFile.setReadOnly(true);
@@ -101,14 +103,15 @@ class UpdatedHandler extends ResponseHandler {
 			// having outgoing changes.
 			// The purpose for having the two different timestamp options for merges is to 
 			// dissallow commit of files that have conflicts until they have been manually edited.			
-			if(entryLine.indexOf(ResourceSyncInfo.MERGE_UNMODIFIED) != -1) {
+			if(info.getTimeStamp().indexOf(ResourceSyncInfo.MERGE_UNMODIFIED) != -1) {
 				timestamp = ResourceSyncInfo.RESULT_OF_MERGE_CONFLICT + mFile.getTimeStamp();
 			} else {
 				timestamp = ResourceSyncInfo.RESULT_OF_MERGE;
 			}
 		} else {
 			timestamp = mFile.getTimeStamp();
-		}				
-		mFile.setSyncInfo(new ResourceSyncInfo(entryLine, permissionsLine, timestamp));
+		}
+		mFile.setSyncInfo(new ResourceSyncInfo(info.getName(), info.getRevision(),
+			timestamp, info.getKeywordMode(), info.getTag(), info.getPermissions()));
 	}
 }

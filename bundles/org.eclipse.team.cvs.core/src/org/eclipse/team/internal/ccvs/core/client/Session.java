@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -78,6 +79,7 @@ public class Session {
 	private Date modTime = null;
 	private boolean noLocalChanges = false;
 	private List expansions;
+	private Collection /* of ICVSFile */ textTransferOverrideSet = null;
 
 	// a shared buffer used for file transfers
 	private byte[] transferBuffer = null;
@@ -510,6 +512,10 @@ public class Session {
 	 */
 	public void sendFile(ICVSFile file, boolean isBinary, IProgressMonitor monitor)
 		throws CVSException {
+		// check overrides
+		if (textTransferOverrideSet != null &&
+			textTransferOverrideSet.contains(file)) isBinary = false;
+
 		// update progress monitor
 		String title = Policy.bind(getSendFileTitleKey(), new Object[]{ Util.toTruncatedPath(file, localRoot, 3) }); //$NON-NLS-1$
 		monitor.subTask(Policy.bind("Session.transferNoSize", title)); //$NON-NLS-1$
@@ -605,6 +611,10 @@ public class Session {
 	 */
 	public void receiveFile(ICVSFile file, boolean isBinary, int responseType, IProgressMonitor monitor)
 	throws CVSException {
+		// check overrides
+		if (textTransferOverrideSet != null &&
+			textTransferOverrideSet.contains(file)) isBinary = false;
+
 		// update progress monitor
 		String title = Policy.bind("Session.receiving", new Object[]{ Util.toTruncatedPath(file, localRoot, 3) }); //$NON-NLS-1$
 		monitor.subTask(Policy.bind("Session.transferNoSize", title)); //$NON-NLS-1$
@@ -780,5 +790,14 @@ public class Session {
 	public void setSendFileTitleKey(String sendFileTitleKey) {
 		this.sendFileTitleKey = sendFileTitleKey;
 	}
-
+	
+	/**
+	 * Remembers a set of files that must be transferred as 'text'
+	 * regardless of what the isBinary parameter to sendFile() is.
+	 * 
+	 * @param textTransferOverrideSet the set of ICVSFiles to override, or null if none
+	 */
+	public void setTextTransferOverride(Collection textTransferOverrideSet) {
+		this.textTransferOverrideSet = textTransferOverrideSet;
+	}
 }

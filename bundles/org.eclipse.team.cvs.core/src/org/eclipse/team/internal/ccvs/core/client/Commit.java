@@ -14,6 +14,12 @@ import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 
 public class Commit extends Command {
 	/*** Local options: specific to commit ***/
+	// Forces a file to be committed even if it has not been modified; implies -l.
+	// NOTE: This option is not fully supported -- a file will not be sent
+	//       unless it is dirty.  The primary use is to resend a file that may
+	//       or may not be changed (e.g. could depend on CR/LF translations, etc...)
+	//       and force the server to create a new revision and reply Checked-in.
+	public static final LocalOption FORCE = new LocalOption("-f");
 
 	protected Commit() { }
 	protected String getCommandId() {

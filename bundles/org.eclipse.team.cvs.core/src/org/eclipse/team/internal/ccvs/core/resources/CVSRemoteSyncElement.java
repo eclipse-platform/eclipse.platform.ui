@@ -18,9 +18,9 @@ import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.core.sync.RemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Update;
+import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
@@ -159,8 +159,9 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 			if (local.exists()) {
 				// We could have an incoming change or deletion
 				if (remote == null) {
+					String mode = KSubstOption.fromPattern(local.getName()).toMode();
 					info =  new ResourceSyncInfo(local.getName(), ResourceSyncInfo.ADDED_REVISION, ResourceSyncInfo.DUMMY_TIMESTAMP,
-								CVSProvider.isText(local.getName()) ? ResourceSyncInfo.USE_SERVER_MODE:ResourceSyncInfo.BINARY_TAG, local.getParent().getFolderSyncInfo().getTag(), null);
+						mode, local.getParent().getFolderSyncInfo().getTag(), null);
 					revision = info.getRevision();
 				} else {
 					info = remote.getSyncInfo();

@@ -7,9 +7,11 @@ package org.eclipse.team.internal.ccvs.core.client;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -22,6 +24,7 @@ import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 
@@ -81,12 +84,20 @@ public abstract class Command {
 	public static final LocalOption[] NO_LOCAL_OPTIONS = new LocalOption[0];
 	// valid for: annotate checkout commit diff export log rdiff remove rtag status tag update  
 	public static final LocalOption DO_NOT_RECURSE = new LocalOption("-l"); //$NON-NLS-1$	
-	// valid for: add checkout export import update
-	public static final LocalOption KSUBST_BINARY = new LocalOption("-kb"); //$NON-NLS-1$
 	// valid for: checkout export update
 	public static final LocalOption PRUNE_EMPTY_DIRECTORIES = new LocalOption("-P"); //$NON-NLS-1$
 	// valid for: checkout export update
 	public static final LocalOption MESSAGE_OPTION = new LocalOption("-m"); //$NON-NLS-1$
+
+	/*** Local options: keyword substitution mode ***/
+	// valid for: add admin checkout export import update
+	private static final Map ksubstOptionMap = new HashMap();
+	public static final KSubstOption KSUBST_BINARY = new KSubstOption("-kb"); //$NON-NLS-1$
+	public static final KSubstOption KSUBST_TEXT = new KSubstOption("-ko"); //$NON-NLS-1$
+	public static final KSubstOption KSUBST_TEXT_EXPAND = new KSubstOption("-kkv"); //$NON-NLS-1$
+	public static final KSubstOption KSUBST_TEXT_EXPAND_LOCKER = new KSubstOption("-kkvl"); //$NON-NLS-1$
+	public static final KSubstOption KSUBST_TEXT_VALUES_ONLY = new KSubstOption("-kv"); //$NON-NLS-1$
+	public static final KSubstOption KSUBST_TEXT_KEYWORDS_ONLY = new KSubstOption("-kk"); //$NON-NLS-1$
 
 	/*** Response handler map ***/
 	private static final Hashtable responseHandlers = new Hashtable();
@@ -541,14 +552,36 @@ public abstract class Command {
 		/**
 		 * Returns the option part of the option
 		 */
-		public String getOption() {
+		String getOption() {
 			return option;
+		}
+		/**
+		 * Compares two options for equality.
+		 * @param other the other option
+		 */
+		public boolean equals(Object other) {
+			if (this == other) return true;
+			if (other instanceof Option) {
+				Option otherOption = (Option) other;
+				return option.equals(otherOption.option);
+			}
+			return false;
 		}
 		/**
 		 * Sends the option to a CVS server
 		 * @param session the CVS session
 		 */
 		public abstract void send(Session session) throws CVSException;		
+		/*
+		 * To make debugging a tad easier.
+		 */
+		public String toString() {
+			if (argument != null && argument.length() != 0) {
+				return option + " " + argument;
+			} else {
+				return option;
+			}
+		}
 	}	
 	/**
 	 * Option subtype for global options that are common to all commands.
@@ -585,6 +618,83 @@ public abstract class Command {
 		public void send(Session session) throws CVSException {
 			session.sendArgument(option);
 			if (argument != null) session.sendArgument(argument);
+		}
+	}
+	/**
+	 * Options subtype for keyword substitution options.
+	 */
+	public static class KSubstOption extends LocalOption {
+		private String shortDisplayText;
+		private String longDisplayText;
+		
+		private KSubstOption(String option) {
+			this(option, Policy.bind("KSubstOption." + option + ".short"),
+				Policy.bind("KSubstOption." + option + ".long"));
+		}
+		private KSubstOption(String option, String shortDisplayText, String longDisplayText) {
+			super(option);
+			this.shortDisplayText = shortDisplayText;
+			this.longDisplayText = longDisplayText;
+			ksubstOptionMap.put(option, this);
+		}
+		/**
+		 * Gets the KSubstOption instance for the specified mode.
+		 * 
+		 * @param mode the mode, e.g. -kb
+		 * @return an instance for that mode
+		 */
+		public static KSubstOption fromMode(String mode) {
+			if (mode.length() == 0) mode = "-kkv"; // use default
+			KSubstOption option = (KSubstOption) ksubstOptionMap.get(mode);
+			if (option == null) {
+				option = new KSubstOption(mode,
+					Policy.bind("KSubstOption.unknown.short", mode),
+					Policy.bind("KSubstOption.unknown.long", mode));
+				ksubstOptionMap.put(mode, option);
+			}
+			return option;
+		}
+		/**
+		 * Gets the KSubstOption instance for the specified file by pattern.
+		 *
+		 * @param filename the filename of interest
+		 * @return an instance for that mode
+		 */
+		public static KSubstOption fromPattern(String filename) {
+			if (CVSProvider.isText(filename)) return KSUBST_TEXT_EXPAND; // XXX should this be KSUBST_TEXT?
+			return KSUBST_BINARY;
+		}
+		/**
+		 * Returns an array of all valid modes.
+		 */
+		public static KSubstOption[] getAllKSubstOptions() {
+			return (KSubstOption[]) ksubstOptionMap.values().toArray(new KSubstOption[ksubstOptionMap.size()]);
+		}
+		/**
+		 * Returns the entry line mode string for this instance.
+		 */
+		public String toMode() {
+			if (KSUBST_TEXT_EXPAND.equals(this)) return "";
+			return getOption();
+		}
+		/**
+		 * Returns true if the substitution mode requires no data translation
+		 * during file transfer.
+		 */
+		public boolean isBinary() {
+			return KSUBST_BINARY.equals(this);
+		}
+		/**
+		 * Returns a short localized text string describing this mode.
+		 */
+		public String getShortDisplayText() {
+			return shortDisplayText;
+		}
+		/**
+		 * Returns a long localized text string describing this mode.
+		 */
+		public String getLongDisplayText() {
+			return longDisplayText;
 		}
 	}
 

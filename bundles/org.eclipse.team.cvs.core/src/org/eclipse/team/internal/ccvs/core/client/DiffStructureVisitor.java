@@ -6,6 +6,7 @@ package org.eclipse.team.internal.ccvs.core.client;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 /**
@@ -24,7 +25,7 @@ class DiffStructureVisitor extends FileStructureVisitor {
 	 * Send unmanaged files as modified with a default entry line.
 	 */
 	protected void sendFile(ICVSFile mFile, String mode) throws CVSException {
-		boolean binary = mode != null && mode.indexOf(ResourceSyncInfo.BINARY_TAG) != -1;
+		boolean binary = mode != null && KSubstOption.fromMode(mode).isBinary();
 		boolean newFile = false;
 
 		if (mFile.isManaged()) {

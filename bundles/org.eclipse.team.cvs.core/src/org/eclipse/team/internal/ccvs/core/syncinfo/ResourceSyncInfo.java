@@ -31,7 +31,6 @@ public class ResourceSyncInfo {
 	
 	// utility constants
 	private static final String DIRECTORY_PREFIX = "D/"; //$NON-NLS-1$
-	public static final String BINARY_TAG = "-kb"; //$NON-NLS-1$
 	public static final String USE_SERVER_MODE = ""; //$NON-NLS-1$
 	private static final String SEPERATOR = "/"; //$NON-NLS-1$
 	
