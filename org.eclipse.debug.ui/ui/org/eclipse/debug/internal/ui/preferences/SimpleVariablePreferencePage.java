@@ -15,7 +15,6 @@ import java.text.MessageFormat;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.variables.ILaunchVariableManager;
 import org.eclipse.debug.core.variables.ISimpleLaunchVariable;
-import org.eclipse.debug.core.variables.SimpleLaunchVariable;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.jface.dialogs.Dialog;
@@ -231,9 +230,9 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 		if (dialog.open() != Dialog.OK) {
 			return;
 		}
-		String name= dialog.getValue();
+		String name= dialog.getValue().trim();
 		if (name.length() > 0) {
-			ISimpleLaunchVariable variable= new SimpleLaunchVariable(dialog.getValue());
+			ISimpleLaunchVariable variable= DebugPlugin.getDefault().getLaunchVariableManager().newSimpleVariable(name, null, null);
 			if (editVariable(variable)) {
 				getVariableManager().addSimpleVariables(new ISimpleLaunchVariable[] {variable});
 				variableTable.refresh();
@@ -347,7 +346,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 						} else if (e2 == null) {
 							return 1;
 						} else {
-							return ((SimpleLaunchVariable)e1).getName().compareTo(((SimpleLaunchVariable)e2).getName());
+							return ((ISimpleLaunchVariable)e1).getName().compareTo(((ISimpleLaunchVariable)e2).getName());
 						}
 					}
 				});

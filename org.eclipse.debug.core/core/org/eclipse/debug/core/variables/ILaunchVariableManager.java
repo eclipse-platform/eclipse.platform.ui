@@ -139,4 +139,16 @@ public interface ILaunchVariableManager {
 	 * @return the simple launch variables in this registry.
 	 */
 	public ISimpleLaunchVariable[] getSimpleVariables();
+	
+	/**
+	 * Creates and returns a new simple launch variable with the given name,
+	 * description, and value. The variable is <b>not</b> registered with the
+	 * launch variable manager.
+	 * 
+	 * @param name variable name, cannot be <code>null</code>
+	 * @param value variable value, may be <code>null</code>
+	 * @param description variable description, may be <code>null</code>
+	 * @return launch variable
+	 */
+	public ISimpleLaunchVariable newSimpleVariable(String name, String value, String description);
 }

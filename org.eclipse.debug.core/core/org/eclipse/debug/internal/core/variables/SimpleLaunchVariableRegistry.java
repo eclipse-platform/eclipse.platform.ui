@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.variables.ILaunchVariableInitializer;
 import org.eclipse.debug.core.variables.ISimpleLaunchVariable;
-import org.eclipse.debug.core.variables.SimpleLaunchVariable;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

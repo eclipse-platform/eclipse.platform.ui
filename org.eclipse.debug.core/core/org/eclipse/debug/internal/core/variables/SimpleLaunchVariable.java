@@ -8,7 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.core.variables;
+package org.eclipse.debug.internal.core.variables;
+
+import org.eclipse.debug.core.variables.ILaunchVariableInitializer;
+import org.eclipse.debug.core.variables.ISimpleLaunchVariable;
 
 /**
  * Implementation of a simple launch variable.
