@@ -140,7 +140,7 @@ public boolean isApplicableTo(Object object) {
 	if (testObject instanceof IActionFilter)
 		filter = (IActionFilter)testObject;
 	else if (testObject instanceof IAdaptable)
-		filter = (IActionFilter)((IAdaptable)object).getAdapter(IActionFilter.class);
+		filter = (IActionFilter)((IAdaptable)testObject).getAdapter(IActionFilter.class);
 
 	if (filter != null)
 		return testCustom(testObject, filter);
