@@ -533,7 +533,7 @@ public final class InternalPlatform implements IPlatform {
 	public void stop(BundleContext bundleContext) {
 		assertInitialized();
 		//shutdown all running jobs
-		JobManager.getInstance().shutdown();
+		JobManager.shutdown();
 		debugTracker.close();
 		if (writeVersion)
 			writeVersion();

@@ -226,22 +226,6 @@ public interface IJobManager {
 	 */
 	public void setProgressProvider(ProgressProvider provider);
 	/**
-	 * Shuts down the job manager. Scheduled jobs in the <code>WAITING</code> or
-	 * <code>SLEEPING</code> states will be canceled. Jobs in the <code>RUNNING</code>
-	 * state will be told to stop, but there is no guarantee that they will do so. 
-	 * If the job manager is already shut down, this method has no effect.
-	 * <p>
-	 * After shutdown, no new jobs can be scheduled with the job manager until <code>startup</code>
-	 * is called on it.
-	 * <p>
-	 * Since this method will cause pending work to be canceled, it must only
-	 * be called by the application when it is shutting down.  It is not intended
-	 * to be called by other plugins.
-	 * 
-	 * @see #startup
-	 */
-	public void shutdown();
-	/**
 	 * Requests that all jobs in the given job family be suspended.  Jobs currently 
 	 * waiting to be run will be removed from the queue and moved into the 
 	 * <code>SLEEPING</code> state.  Jobs that have been put to sleep
@@ -254,20 +238,6 @@ public interface IJobManager {
 	 * @see Job#belongsTo(Object)
 	 */
 	public void sleep(Object family);
-	/**
-	 * Starts up the job manager. New jobs can now be scheduled to run 
-	 * with the job manager.  If the job manager is already started,
-	 * this method has no effect.
-	 * <p>
-	 * By default, the job manager's lifecycle is tied 
-	 * to the platform.  It is started when the platform starts up, and is 
-	 * shutdown before the platform exits. If plugins choose to shutdown 
-	 * the job manager while the  platform is running, it must be restarted 
-	 * using this method before new jobs can be scheduled.
-	 * 
-	 * @see shutdown
-	 */
-	public void startup();
 	/**
 	 * Resumes scheduling of all sleeping jobs in the given family.  This method
 	 * has no effect on jobs in the family that are not currently sleeping.

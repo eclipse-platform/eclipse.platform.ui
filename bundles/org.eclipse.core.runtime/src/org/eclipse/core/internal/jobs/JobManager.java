@@ -93,10 +93,19 @@ public class JobManager implements IJobManager {
 		msgBuf.append('[').append(Thread.currentThread()).append(']').append(msg);
 		System.out.println(msgBuf.toString());
 	}
+	/**
+	 * Returns the job manager singleton. For internal use only.
+	 */
 	public static synchronized JobManager getInstance() {
 		if (instance == null)
 			new JobManager().startup();
 		return instance;
+	}
+	public static void shutdown() {
+		if (instance != null) {
+			instance.doShutdown();
+			instance = null;
+		}
 	}
 	/**
 	 * For debugging purposes only
@@ -292,6 +301,32 @@ public class JobManager implements IJobManager {
 			default :
 				Assert.isTrue(false, "Job has invalid priority: " + priority); //$NON-NLS-1$
 				return 0;
+		}
+	}
+	/**
+	 * Shuts down the job manager.  Currently running jobs will be told
+	 * to stop, but worker threads may still continue processing.
+	 * (note: This implemented IJobManager.shutdown which was removed
+	 * due to problems caused by premature shutdown)
+	 */
+	private void doShutdown() {
+		Job[] toCancel = null;
+		synchronized (lock) {
+			if (active) {
+				active = false;
+				//cancel all running jobs
+				toCancel = (Job[]) running.toArray(new Job[running.size()]);
+				//clean up
+				sleeping.clear();
+				waiting.clear();
+				running.clear();
+			}
+		}
+		if (toCancel != null) {
+			//cancel jobs outside sync block to avoid deadlock
+			for (int i = 0; i < toCancel.length; i++)
+				cancel(toCancel[i]);
+			pool.shutdown();
 		}
 	}
 	/**
@@ -688,30 +723,7 @@ public class JobManager implements IJobManager {
 			job.internalSetRule(rule);
 		}
 	}
-	/**
-	 * Shuts down the job manager.  Currently running jobs will be told
-	 * to stop, but worker threads may still continue processing.
-	 */
-	public void shutdown() {
-		Job[] toCancel = null;
-		synchronized (lock) {
-			if (active) {
-				active = false;
-				//cancel all running jobs
-				toCancel = (Job[]) running.toArray(new Job[running.size()]);
-				//clean up
-				sleeping.clear();
-				waiting.clear();
-				running.clear();
-			}
-		}
-		if (toCancel != null) {
-			//cancel jobs outside sync block to avoid deadlock
-			for (int i = 0; i < toCancel.length; i++)
-				cancel(toCancel[i]);
-			pool.shutdown();
-		}
-	}
+
 	/**
 	 * Puts a job to sleep. Returns true if the job was successfully put to sleep.
 	 */
@@ -781,7 +793,7 @@ public class JobManager implements IJobManager {
 				//listeners may have canceled or put the job to sleep
 				synchronized (lock) {
 					if (job.getState() == Job.RUNNING) {
-						InternalJob internal = (InternalJob)job;
+						InternalJob internal = job;
 						if (internal.getProgressMonitor() == null)
 							internal.setProgressMonitor(createMonitor(job));
 						//change from ABOUT_TO_RUN to RUNNING
@@ -802,8 +814,10 @@ public class JobManager implements IJobManager {
 	}
 	/**
 	 * Starts up the job manager. Jobs can be scheduled once again.
+	 * (Note that this method previously implemented IJobManager.startup,
+	 * which was removed due to problems with starting too late).
 	 */
-	public void startup() {
+	private void startup() {
 		synchronized (lock) {
 			if (!active) {
 				active = true;
