@@ -105,7 +105,7 @@
             id="org.eclipse.ant.ui.views.AntView">
       </command>
       <keyBinding
-            string=""
+            keySequence=""
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.ant.ui.views.AntView"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
