@@ -33,6 +33,7 @@ import org.apache.tools.ant.helper.AntXMLContext;
 import org.apache.tools.ant.helper.ProjectHelper2;
 import org.apache.tools.ant.util.FileUtils;
 import org.apache.tools.ant.util.JAXPUtils;
+import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.jface.text.BadLocationException;
 import org.xml.sax.Attributes;
@@ -422,6 +423,19 @@ public class ProjectHelper extends ProjectHelper2 {
 		 * @see org.xml.sax.ext.LexicalHandler#comment(char[], int, int)
 		 */
 		public void comment(char[] ch, int start, int length) throws SAXException {
+			AntModel model= getAntModel();
+			AntProjectNode node= model.getProjectNode();
+			if (node != null) {
+				Project project= node.getProject();
+				AntXMLContext context= (AntXMLContext)project.getReference("ant.parsing.context"); //$NON-NLS-1$
+				Locator locator= context.getLocator();
+				RuntimeConfigurable wrapper= context.currentWrapper();
+				Task currentTask= null;
+				if (wrapper != null) {
+					currentTask= (Task)wrapper.getProxy();
+				}
+				model.addComment(locator.getLineNumber(), locator.getColumnNumber(), length, currentTask);
+			}
 		}
 
 		/* (non-Javadoc)

@@ -75,6 +75,11 @@ public class AntElementNode implements IAdaptable {
      * The child nodes.
      */
     protected List childNodes= null;
+    
+    /**
+     * The child nodes not including comments
+     */
+    protected List outlineNodes= null;
 
     /**
      * The (tag-)name of the element.
@@ -165,7 +170,15 @@ public class AntElementNode implements IAdaptable {
     }
     
     /**
-     * Returns all the descendents of this target
+     * Returns the child nodes that compose the outline tree under this node.
+     * Does not include comments
+     */
+    public List getOutlineNodes() {
+        return outlineNodes;
+    }
+    
+    /**
+     * Returns all the descendents of this node
      */
     public List getDescendents() {
     	if (childNodes == null) {
@@ -219,6 +232,12 @@ public class AntElementNode implements IAdaptable {
         	childNodes= new ArrayList();
         }
         childNodes.add(childElement);
+        if (!childElement.isCommentNode()) {
+        	if (outlineNodes == null) {	
+        		outlineNodes= new ArrayList();
+        	}
+        	outlineNodes.add(childElement);
+        }
     }
     
 	protected void setParent(AntElementNode node) {
@@ -533,6 +552,13 @@ public class AntElementNode implements IAdaptable {
 		}
 		return !childNodes.isEmpty();
 	}
+	
+	public boolean hasOutlineChildren() {
+		if (outlineNodes == null) {
+			return false;
+		}
+		return !outlineNodes.isEmpty();
+	}
 
 	public void reset() {
 		childNodes= null;
@@ -576,5 +602,9 @@ public class AntElementNode implements IAdaptable {
 	 */
 	public Object getAdapter(Class adapter) {
 		return Platform.getAdapterManager().getAdapter(this, adapter);
+	}
+	
+	public boolean isCommentNode() {
+		return false;
 	}
 }

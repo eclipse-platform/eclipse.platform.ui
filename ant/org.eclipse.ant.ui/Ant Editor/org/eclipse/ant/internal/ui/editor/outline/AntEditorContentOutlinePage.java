@@ -198,9 +198,9 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(Object)
 		 */
 		public Object[] getChildren(Object parentNode) {
-			AntElementNode tempParentElement = (AntElementNode)parentNode;
-			if (tempParentElement.hasChildren()) {
-				List children= tempParentElement.getChildNodes();
+			AntElementNode parentElement = (AntElementNode)parentNode;
+			if (parentElement.hasOutlineChildren()) {
+				List children= parentElement.getOutlineNodes();
 				return children.toArray();
 			} 
 			return EMPTY_ARRAY;
@@ -218,7 +218,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(Object)
 		 */
 		public boolean hasChildren(Object aNode) {
-			return ((AntElementNode)aNode).hasChildren();
+			return ((AntElementNode)aNode).hasOutlineChildren();
 		}
 
 		/* (non-Javadoc)

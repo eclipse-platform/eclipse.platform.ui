@@ -36,6 +36,7 @@ import org.apache.tools.ant.UnknownElement;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.Type;
 import org.eclipse.ant.internal.core.IAntCoreConstants;
+import org.eclipse.ant.internal.ui.editor.model.AntCommentNode;
 import org.eclipse.ant.internal.ui.editor.model.AntDefiningTaskNode;
 import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
 import org.eclipse.ant.internal.ui.editor.model.AntImportNode;
@@ -637,7 +638,7 @@ public class AntModel {
 				if (taskNode.isExternal()) {
 					fCurrentTargetNode.setExternal(true);
 					fCurrentTargetNode.setFilePath(taskNode.getFilePath());
-			}
+				}
 			}
 		} else {
 			taskNode= newNotWellKnownTaskNode(newTask, attributes);
@@ -820,14 +821,14 @@ public class AntModel {
 		}
 		try {
 			int offset;
-			String prefix= "<"; //$NON-NLS-1$
+			String prefix= "<" + element.getName(); //$NON-NLS-1$
 			if (column <= 0) {
 				offset= getOffset(line, 0);
 				int lastCharColumn= getLastCharColumn(line);
-				offset= computeOffsetUsingPrefix(element, line, offset, prefix, lastCharColumn);
+				offset= computeOffsetUsingPrefix(line, offset, prefix, lastCharColumn);
 			} else {
 				offset= getOffset(line, column);
-				offset= computeOffsetUsingPrefix(element, line, offset, prefix, column);
+				offset= computeOffsetUsingPrefix(line, offset, prefix, column);
 			}
  			
 			element.setOffset(offset + 1);
@@ -837,13 +838,13 @@ public class AntModel {
 		}
 	}
 	
-	private int computeOffsetUsingPrefix(AntElementNode element, int line, int offset, String prefix, int column) throws BadLocationException {
+	private int computeOffsetUsingPrefix(int line, int offset, String prefix, int column) throws BadLocationException {
 		String lineText= fDocument.get(fDocument.getLineOffset(line - 1), column);
-		int lastIndex= lineText.indexOf(prefix + element.getName());
+		int lastIndex= lineText.indexOf(prefix);
 		if (lastIndex > -1) {
 			offset= getOffset(line, lastIndex + 1);
 		} else {
-			return computeOffsetUsingPrefix(element, line - 1, offset, prefix, getLastCharColumn(line - 1));
+			return computeOffsetUsingPrefix(line - 1, offset, prefix, getLastCharColumn(line - 1));
 		}
 		return offset;
 	}
@@ -1281,6 +1282,33 @@ public class AntModel {
 				helper.getAntTypeTable().remove(nodeLabel);
 				iter.remove();
 			}
+		}
+	}
+
+	public void addComment(int lineNumber, int columnNumber, int length, Task parentTask) {
+		AntCommentNode commentNode= new AntCommentNode();
+		int offset= -1;
+		try {
+			if (columnNumber <= 0) {
+				offset= getOffset(lineNumber, 0);
+				int lastCharColumn= getLastCharColumn(lineNumber);
+				offset= computeOffsetUsingPrefix(lineNumber, offset, "-->", lastCharColumn); //$NON-NLS-1$
+			} else {
+				offset= getOffset(lineNumber, columnNumber);
+			}
+		} catch (BadLocationException e) {
+			AntUIPlugin.log(e);
+		}
+		commentNode.setOffset(offset - length);
+		commentNode.setLength(length);
+		if (parentTask == null) {
+			if (fCurrentTargetNode == null) {
+				fProjectNode.addChildNode(commentNode);
+			} else {
+				fCurrentTargetNode.addChildNode(commentNode);
+			}
+		} else {
+			((AntTaskNode)fTaskToNode.get(parentTask)).addChildNode(commentNode);
 		}
 	}
 }
