@@ -74,6 +74,9 @@ public abstract class AbstractFormPart implements IFormPart {
 	 */
 	public void refresh() {
 		stale = false;
+		// since we have refreshed, any changes we had in the
+		// part are gone and we are not dirty
+		dirty = false;
 	}
 	/**
 	 * Marks the part dirty. Subclasses should call this method as a result of
