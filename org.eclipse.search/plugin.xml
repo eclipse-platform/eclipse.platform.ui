@@ -162,4 +162,20 @@
 	</page>
 </extension>
 
+<extension
+     point="org.eclipse.ui.workbench.texteditor.markerAnnotationSpecification">
+     <specification
+      		annotationType="org.eclipse.search.results"
+            label="%SearchMarkerPreference.label"
+            markerType="org.eclipse.search.searchmarker"
+            textPreferenceKey="searchResultIndication"
+            textPreferenceValue="true"
+            overviewRulerPreferenceKey="searchResultIndicationInOverviewRuler"
+            overviewRulerPreferenceValue="true"
+            colorPreferenceKey="searchResultIndicationColor"
+            colorPreferenceValue="192,192,192"
+            presentationLayer="3">
+     </specification>
+</extension>
+
 </plugin>
