@@ -4698,4 +4698,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	public void showChangeInformation(boolean show) {
 		// do nothing
 	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.ITextEditorExtension3#isChangeInformationShowing()
+	 */
+	public boolean isChangeInformationShowing() {
+		return false;
+	}
 }

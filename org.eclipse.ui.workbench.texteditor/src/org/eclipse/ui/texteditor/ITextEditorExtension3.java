@@ -65,4 +65,11 @@ public interface ITextEditorExtension3 {
 	 * @param show <code>true</code> if quick diff information should be shown, <code>false</code> otherwise
 	 */
 	void showChangeInformation(boolean show);
+	
+	/**
+	 * Returns the quick diff display state.
+	 * 
+	 * @return <code>true</code> if quick diff info is displayed, <code>false</code> otherwise
+	 */
+	boolean isChangeInformationShowing();
 }

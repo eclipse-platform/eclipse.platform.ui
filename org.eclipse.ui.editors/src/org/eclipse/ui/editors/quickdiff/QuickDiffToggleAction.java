@@ -11,13 +11,6 @@
 
 package org.eclipse.ui.editors.quickdiff;
 
-import java.util.Iterator;
-
-import org.eclipse.core.runtime.IAdaptable;
-
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -25,28 +18,14 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
 
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.source.CompositeRuler;
-import org.eclipse.jface.text.source.IAnnotationModel;
-import org.eclipse.jface.text.source.IAnnotationModelExtension;
-import org.eclipse.jface.text.source.IChangeRulerColumn;
-import org.eclipse.jface.text.source.IVerticalRulerColumn;
-import org.eclipse.jface.text.source.IVerticalRulerInfo;
-
 import org.eclipse.ui.IEditorActionDelegate;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
-import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorExtension;
 import org.eclipse.ui.texteditor.ITextEditorExtension3;
 import org.eclipse.ui.texteditor.IUpdate;
 
-import org.eclipse.ui.internal.editors.quickdiff.DocumentLineDiffer;
 import org.eclipse.ui.internal.editors.quickdiff.QuickDiffMessages;
 import org.eclipse.ui.internal.editors.quickdiff.QuickDiffRestoreAction;
 import org.eclipse.ui.internal.editors.quickdiff.ReferenceProviderDescriptor;
@@ -56,7 +35,6 @@ import org.eclipse.ui.internal.editors.quickdiff.RevertBlockAction;
 import org.eclipse.ui.internal.editors.quickdiff.RevertLineAction;
 import org.eclipse.ui.internal.editors.quickdiff.RevertSelectionAction;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
-import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 /**
  * Action to toggle the line number bar's quick diff display. When turned on, quick diff shows
@@ -106,6 +84,7 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 				 * don't add themselves to MB_ADDITIONS or alike, but rather to the end, too. So
 				 * we preinstall their respective menu groups here.
 				 */
+				// TODO move these into editor as well
 				if (manager.find(GROUP_DEBUB) == null)
 					manager.insertBefore(IWorkbenchActionConstants.MB_ADDITIONS, new Separator(GROUP_DEBUB));
 				if (manager.find(GROUP_ADD) == null)
@@ -159,36 +138,6 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 			fRestoreActions[i].setEditor(fEditor);
 		}
 		setPopupMenu();
-		postAutoInit();
-	}
-
-	/**
-	 * Requests the initialization of the quick diff if the preference <code>ENABLE_ON_OPEN</code> is set.
-	 * The initialization is run via <code>asyncExec</code> because <code>setActiveEditor</code> is called
-	 * before initializing the line number ruler column.
-	 */
-	private void postAutoInit() {
-		Runnable runnable= new Runnable() {
-			public void run() {
-				boolean enable= EditorsPlugin.getDefault().getPreferenceStore().getBoolean(TextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON);
-				if (enable && !hasDiffer())
-					QuickDiffToggleAction.this.run(fProxy);
-			}
-
-		};
-		IWorkbench workbench= TextEditorPlugin.getDefault().getWorkbench();
-		if (workbench == null)
-			return;
-		IWorkbenchWindow activeWorkbenchWindow= workbench.getActiveWorkbenchWindow();
-		if (activeWorkbenchWindow == null)
-			return;
-		Shell shell= activeWorkbenchWindow.getShell();
-		if (shell == null)
-			return;
-		Display display= shell.getDisplay();
-		if (display == null || display.isDisposed())
-			return;
-		display.asyncExec(runnable);
 	}
 
 	/**
@@ -221,13 +170,9 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 	 * @return <code>true</code> if a differ has been installed on <code>fEditor</code>.
 	 */
 	boolean isConnected() {
-		IChangeRulerColumn column= getColumn();
-		if (column != null) {
-			IAnnotationModel m= column.getModel();
-			if (m instanceof DocumentLineDiffer)
-				return true;
-		}
-		return false;
+		if (!(fEditor instanceof ITextEditorExtension3))
+			return false;
+		return ((ITextEditorExtension3)fEditor).isChangeInformationShowing();
 	}
 
 	/*
@@ -237,94 +182,11 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 		fProxy= action;
 		if (fEditor == null)
 			return;
-		IDocumentProvider provider= fEditor.getDocumentProvider();
-		IEditorInput editorInput= fEditor.getEditorInput();
-		IAnnotationModelExtension model= getModel();
-		if (model == null)
-			return;
-
-		DocumentLineDiffer differ= getDiffer(model);
-		IDocument actual= provider.getDocument(editorInput);
-		if (actual == null)
-			return;
-
-		IChangeRulerColumn column= getColumn();
-		if (isConnected()) {
-			column.setModel(null);
-			if (fEditor instanceof ITextEditorExtension3)
-				((ITextEditorExtension3)fEditor).showChangeInformation(false);
-		} else {
-			if (differ == null)
-				differ= createDiffer(model);
-			if (column == null)
-				column= createColumn();
-			if (column != null)
-				column.setModel(differ);
+			
+		if (fEditor instanceof ITextEditorExtension3) {
+			ITextEditorExtension3 extension= (ITextEditorExtension3)fEditor;
+			extension.showChangeInformation(!extension.isChangeInformationShowing()); 
 		}
-	}
-
-	/**
-	 * Triggers the editor to show quick diff information and returns the colum as in 
-	 * <code>getColumn</code>.
-	 * 
-	 * @return an instance of <code>IChangeRulerColumn</code> or <code>null</code>
-	 */
-	private IChangeRulerColumn createColumn() {
-		if (fEditor instanceof ITextEditorExtension3)
-			((ITextEditorExtension3)fEditor).showChangeInformation(true);
-		return getColumn();
-	}
-
-	/**
-	 * Checks if the document currently displayed in <code>fEditor</code> has a 
-	 * diff model associated with its annotation model.
-	 * 
-	 * @return <code>true</code> if the document has an associated diff model, <code>false</code> otherwise
-	 */
-	boolean hasDiffer() {
-		IAnnotationModelExtension model= getModel();
-		return (model != null && getDiffer(model) != null);
-	}
-
-	/**
-	 * Returns the <code>IAnnotationModelExtension</code> for the document currently
-	 * displayed in <code>fEditor</code>. 
-	 * 
-	 * @return the displayed document's annotation model if it implements <code>IAnnotationModelExtension</code>, or <code>null</code> 
-	 */
-	private IAnnotationModelExtension getModel() {
-		if (fEditor == null)
-			return null;
-		IDocumentProvider provider= fEditor.getDocumentProvider();
-		IEditorInput editorInput= fEditor.getEditorInput();
-		IAnnotationModel m= provider.getAnnotationModel(editorInput);
-		if (m instanceof IAnnotationModelExtension) {
-			return (IAnnotationModelExtension)m;
-		} else {
-			return null;
-		}
-	}
-
-	/**
-	 * Returns the linenumber ruler of <code>fEditor</code>, or <code>null</code> if it cannot be
-	 * found.
-	 * 
-	 * @return an instance of <code>IChangeRulerColumn</code> or <code>null</code>.
-	 */
-	private IChangeRulerColumn getColumn() {
-		// HACK: we get the IVerticalRulerInfo and assume its a CompositeRuler.
-		// will get broken if IVerticalRulerInfo implementation changes
-		if (fEditor instanceof IAdaptable) {
-			IVerticalRulerInfo info= (IVerticalRulerInfo) ((IAdaptable)fEditor).getAdapter(IVerticalRulerInfo.class);
-			if (info instanceof CompositeRuler) {
-				for (Iterator it= ((CompositeRuler)info).getDecoratorIterator(); it.hasNext();) {
-					IVerticalRulerColumn c= (IVerticalRulerColumn)it.next();
-					if (c instanceof IChangeRulerColumn)
-						return (IChangeRulerColumn)c;
-				}
-			}
-		}
-		return null;
 	}
 
 	/*
@@ -332,59 +194,6 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 		fProxy= action;
-	}
-
-	/**
-	 * Extracts the line differ from the annotation model.
-	 * 
-	 * @param model the model
-	 * @return the linediffer, or <code>null</code> if none found.
-	 */
-	private DocumentLineDiffer getDiffer(IAnnotationModelExtension model) {
-		return (DocumentLineDiffer)model.getAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID);
-	}
-
-	/**
-	 * Creates a new <code>DocumentLineDiffer</code> and installs it with <code>model</code>.
-	 * The default reference provider is installed with the newly created differ.
-	 * 
-	 * @param model the annotation model of the current document.
-	 * @return a new <code>DocumentLineDiffer</code> instance.
-	 */
-	private DocumentLineDiffer createDiffer(IAnnotationModelExtension model) {
-		DocumentLineDiffer differ;
-		differ= new DocumentLineDiffer();
-		String defaultID= EditorsPlugin.getDefault().getPreferenceStore().getString(TextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER);
-		ReferenceProviderDescriptor[] descs= EditorsPlugin.getDefault().getExtensions();
-		IQuickDiffProviderImplementation provider= null;
-		// try to fetch preferred provider; load if needed
-		for (int i= 0; i < descs.length; i++) {
-			if (descs[i].getId().equals(defaultID)) {
-				provider= descs[i].createProvider();
-				if (provider != null) {
-					provider.setActiveEditor(fEditor);
-					if (provider.isEnabled())
-						break;
-					provider.dispose();
-					provider= null;
-				}
-			}
-		}
-		// if not found, get default provider
-		if (provider == null) {
-			provider= EditorsPlugin.getDefault().getDefaultProvider().createProvider();
-			if (provider != null) {
-				provider.setActiveEditor(fEditor);
-				if (!provider.isEnabled()) {
-					provider.dispose();
-					provider= null;
-				}
-			}
-		}
-		if (provider != null)
-			differ.setReferenceProvider(provider);
-		model.addAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID, differ);
-		return differ;
 	}
 
 	/*
