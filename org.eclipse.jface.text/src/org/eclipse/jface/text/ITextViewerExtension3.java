@@ -18,7 +18,8 @@ package org.eclipse.jface.text;
  * range is considered the model selection.<p> 
  * This general concepts replaces the notion of <code>visible region</code>.
  * 
- * @since 2.1 
+ * @since 2.1
+ * @deprecated replaced by <code>ITextViewerExtension5</code>
  */
 public interface ITextViewerExtension3 {
 	
@@ -29,7 +30,7 @@ public interface ITextViewerExtension3 {
 	 * 
 	 * @return the minimal region of the viewer's document comprising the contents of the viewer's widget
 	 */
-	public IRegion getModelCoverage();
+	IRegion getModelCoverage();
 	
 	
 	/**
@@ -38,7 +39,7 @@ public interface ITextViewerExtension3 {
 	 * @param modelLine the line of the viewer's document
 	 * @return the corresponding widget line or <code>-1</code>
 	 */
-	public int modelLine2WidgetLine(int modelLine);
+	int modelLine2WidgetLine(int modelLine);
 
 	/**
 	 * Returns the widget offset that corresponds to the given offset in the viewer's document
@@ -47,7 +48,7 @@ public interface ITextViewerExtension3 {
 	 * @param modelOffset the offset in the viewer's document
 	 * @return the corresponding widget offset or <code>-1</code>
 	 */
-	public int modelOffset2WidgetOffset(int modelOffset);
+	int modelOffset2WidgetOffset(int modelOffset);
 
 	/**
 	 * Returns the minimal region of the viewer's widget that completely comprises the given region of the
@@ -56,7 +57,7 @@ public interface ITextViewerExtension3 {
 	 * @param modelRange the region of the viewer's document
 	 * @return the minimal region of the widget comprising <code>modelRange</code> or <code>null</code>
 	 */
-	public IRegion modelRange2WidgetRange(IRegion modelRange);
+	IRegion modelRange2WidgetRange(IRegion modelRange);
 
 
 	/**
@@ -66,7 +67,7 @@ public interface ITextViewerExtension3 {
 	 * @param widgetOffset the widget offset
 	 * @return the corresponding offset in the viewer's document or <code>-1</code>
 	 */
-	public int widgetOffset2ModelOffset(int widgetOffset);
+	int widgetOffset2ModelOffset(int widgetOffset);
 	
 	/**
 	 * Returns the minimal region of the viewer's document that completely comprises the given widget region
@@ -75,7 +76,7 @@ public interface ITextViewerExtension3 {
 	 * @param widgetRange the widget region
 	 * @return the minimal region of the viewer's document comprising <code>widgetlRange</code> or <code>null</code>
 	 */
-	public IRegion widgetRange2ModelRange(IRegion widgetRange);
+	IRegion widgetRange2ModelRange(IRegion widgetRange);
 
 	/**
 	 * Returns the line of the viewer's document that corresponds to the given widget line or <code>-1</code> if there is no such line.
@@ -83,7 +84,7 @@ public interface ITextViewerExtension3 {
 	 * @param widgetLine the widget line
 	 * @return the corresponding line of the viewer's document or <code>-1</code>
 	 */
-	public int widgetlLine2ModelLine(int widgetLine);
+	int widgetlLine2ModelLine(int widgetLine);
 	
 	/**
 	 * Returns the widget line of the given widget offset.
@@ -91,5 +92,5 @@ public interface ITextViewerExtension3 {
 	 * @param widgetOffset the widget offset
 	 * @return the widget line of the widget offset
 	 */
-	public int widgetLineOfWidgetOffset(int widgetOffset);
+	int widgetLineOfWidgetOffset(int widgetOffset);
 }
