@@ -38,6 +38,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -59,10 +60,8 @@ import org.eclipse.jface.text.templates.TemplateMessages;
 public class TemplateSet {
 
 	private static final String NAME_ATTRIBUTE= "name"; //$NON-NLS-1$
-	private static final String ID_ATTRIBUTE= "id"; //$NON-NLS-1$
 	private static final String DESCRIPTION_ATTRIBUTE= "description"; //$NON-NLS-1$
 	private static final String CONTEXT_ATTRIBUTE= "context"; //$NON-NLS-1$
-	private static final String ENABLED_ATTRIBUTE= "enabled"; //$NON-NLS-1$
 
 	private List fTemplates= new ArrayList();
 	private String fTemplateTag;
@@ -133,12 +132,9 @@ public class TemplateSet {
 					description= translateString(description, bundle);
 				} 
 				String context= getAttributeValue(attributes, CONTEXT_ATTRIBUTE);
-				Node enabledNode= attributes.getNamedItem(ENABLED_ATTRIBUTE);
 
 				if (name == null || description == null || context == null)
 					throw new SAXException(TemplateMessages.getString("TemplateSet.error.missing.attribute")); //$NON-NLS-1$
-
-				boolean enabled= (enabledNode == null) || (enabledNode.getNodeValue().equals("true")); //$NON-NLS-1$
 
 				StringBuffer buffer= new StringBuffer();
 				NodeList children= node.getChildNodes();
