@@ -51,7 +51,7 @@ public class OpenWithActionGroup extends SyncViewerActionGroup {
 	private void fillOpenWithMenu(IMenuManager menu, IStructuredSelection selection) {
 
 		// Only supported if exactly one file is selected.
-		if (selection.size() != 1)
+		if (selection == null || selection.size() != 1)
 			return;
 		Object element = selection.getFirstElement();
 		IResource resource = getResource(element);
