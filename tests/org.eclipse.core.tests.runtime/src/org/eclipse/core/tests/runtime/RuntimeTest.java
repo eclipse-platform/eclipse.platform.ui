@@ -15,6 +15,7 @@ import junit.framework.TestCase;
  * Common superclass for all runtime tests.
  */
 public abstract class RuntimeTest extends TestCase {
+	public static final String PI_RUNTIME_TESTS = "org.eclipse.core.tests.runtime";
 /**
  * Constructor required by test framework.
  */
