@@ -183,10 +183,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 			monitor.addListener(fSystemOutListener);
 			String contents= monitor.getContents();
 			if (contents.length() > 0) {
-				fNewStreamWriteEnd= getLength() + contents.length();				
-				replace0(getLength(), 0, contents);
-				updateOutputStyleRanges(OUT);
-				fLastStreamWriteEnd= getLength();
+				systemOutAppended(contents);
 			}
 		}
 		monitor= fProxy.getErrorStreamMonitor();
@@ -194,10 +191,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 			monitor.addListener(fSystemErrListener);
 			String contents= monitor.getContents();
 			if (contents.length() > 0) {
-				fNewStreamWriteEnd= getLength() + contents.length();				
-				replace0(getLength(), 0, contents);
-				updateOutputStyleRanges(ERR);
-				fLastStreamWriteEnd= getLength();
+				systemErrAppended(contents);
 			}
 		}
 	}
