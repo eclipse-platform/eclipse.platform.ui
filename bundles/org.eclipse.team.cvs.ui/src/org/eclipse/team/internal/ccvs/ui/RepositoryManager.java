@@ -212,7 +212,10 @@ public class RepositoryManager {
 			properties.setProperty("connection", dis.readUTF());
 			properties.setProperty("user", dis.readUTF());
 			properties.setProperty("host", dis.readUTF());
-			properties.setProperty("port", dis.readUTF());
+			String port = dis.readUTF();
+			if (!port.equals("" + IRemoteRoot.DEFAULT_PORT)) {
+				properties.setProperty("port", port);
+			}
 			properties.setProperty("root", dis.readUTF());
 			IRemoteRoot root = getRoot(properties);
 			int tagsSize = dis.readInt();
