@@ -1543,7 +1543,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			}
 			constructNewConfig(configType);
 		} catch(CoreException ce) {
-			DebugUIPlugin.errorDialog(getShell(), "Error", "Exception getting configuration type for new launch configuration.", ce.getStatus());
+			DebugUIPlugin.errorDialog(getShell(), "Error", "Exception getting configuration type for new launch configuration.", ce);
  			clearLaunchConfiguration();
 		}		
 	}	

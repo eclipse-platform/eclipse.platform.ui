@@ -115,7 +115,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 				perspectiveId = getPerspectiveId(launch);
 			} catch (CoreException e) {
 				String name = DebugUIPlugin.getDefault().getModelPresentation().getText(launch);
-				switchFailed(e.getStatus(), name);
+				switchFailed(e, name);
 			}
 			if (perspectiveId != null) {
 				switchToPerspective(perspectiveId);
@@ -140,7 +140,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 						DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(),
 						"Error", 
 						MessageFormat.format("Unable to switch to perspective: {0}", new String[]{id}),
-						e.getStatus());
+						e);
 					}
 				}
 			}
@@ -174,12 +174,12 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	 * @param launchName the name of the launch that the
 	 *  failure is associated with
 	 */
-	protected void switchFailed(final IStatus status, final String launchName) {
+	protected void switchFailed(final Throwable t, final String launchName) {
 		sync(new Runnable() {
 			public void run() {
 				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), "Error", 
 				 MessageFormat.format("Unable to switch perpsectives as specified by launch: {0}", new String[] {launchName}),
-				 status);
+				 t);
 			}});
 	}
 	

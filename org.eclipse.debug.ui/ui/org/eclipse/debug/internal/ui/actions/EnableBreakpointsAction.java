@@ -132,7 +132,7 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 					action.setEnabled(isEnableAction());
 				}
 			} catch (CoreException ce) {
-				DebugUIPlugin.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), ActionMessages.getString("EnableDisableBreakpointAction.Enabling/disabling_breakpoints_3"), ActionMessages.getString("EnableDisableBreakpointAction.Exceptions_occurred_enabling/disabling_the_breakpoint(s)._4"), ce.getStatus()); //$NON-NLS-2$ //$NON-NLS-1$
+				DebugUIPlugin.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), ActionMessages.getString("EnableDisableBreakpointAction.Enabling/disabling_breakpoints_3"), ActionMessages.getString("EnableDisableBreakpointAction.Exceptions_occurred_enabling/disabling_the_breakpoint(s)._4"), ce); //$NON-NLS-2$ //$NON-NLS-1$
 			}
 		}
 	}

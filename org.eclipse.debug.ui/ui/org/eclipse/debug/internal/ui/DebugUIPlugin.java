@@ -1416,21 +1416,32 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	 * Utility method with conventions
 	 */
 	public static void errorDialog(Shell shell, String title, String message, IStatus s) {
+		log(s);
 		// if the 'message' resource string and the IStatus' message are the same,
 		// don't show both in the dialog
 		if (s != null && message.equals(s.getMessage())) {
 			message= null;
 		}
 		ErrorDialog.openError(shell, title, message, s);
-		log(s);
 	}
 	
 	/**
 	 * Utility method with conventions
 	 */
 	public static void errorDialog(Shell shell, String title, String message, Throwable t) {
-		IStatus status= new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "Error logged from Debug UI: ", t); //$NON-NLS-1$	
-		errorDialog(shell, title, message, status);
+		log(t);
+		IStatus status;
+		if (t instanceof CoreException) {
+			status= ((CoreException)t).getStatus();
+			// if the 'message' resource string and the IStatus' message are the same,
+			// don't show both in the dialog
+			if (status != null && message.equals(status.getMessage())) {
+				message= null;
+			}
+		} else {
+			status= new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "Error within Debug UI: ", t); //$NON-NLS-1$	
+		}
+		ErrorDialog.openError(shell, title, message, status);
 	}
 
 	/**
@@ -1529,11 +1540,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 			String title= DebugUIMessages.getString("DebugUIPlugin.Run/Debug_1"); //$NON-NLS-1$
 			String message= DebugUIMessages.getString("DebugUIPlugin.Build_error._Check_log_for_details._2"); //$NON-NLS-1$
 			Throwable t = e.getTargetException();
-			IStatus status = null;
-			if (t instanceof CoreException) {
-				status = ((CoreException)t).getStatus();
-			}
-			errorDialog(getShell(), title, message, status);
+			errorDialog(getShell(), title, message, t);
 			return false;
 		}
 		return true;

@@ -237,7 +237,7 @@ public class LauncherPropertyPage extends PropertyPage implements IWorkbenchPref
 			}
 			getLaunchManager().setDefaultLauncher(project, null);
 		} catch (CoreException e) {
-			DebugUIPlugin.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), DebugUIMessages.getString("LauncherPropertyPage.Launcher_property_page_5"), DebugUIMessages.getString("LauncherPropertyPage.Exceptions_occurred_saving_the_launcher_preferences_6"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
+			DebugUIPlugin.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), DebugUIMessages.getString("LauncherPropertyPage.Launcher_property_page_5"), DebugUIMessages.getString("LauncherPropertyPage.Exceptions_occurred_saving_the_launcher_preferences_6"), e); //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
 		}
 		return true;
