@@ -14,12 +14,14 @@ public interface IBundleGroupProvider {
 	/**
 	 * Returns the human-readable name of this bundle group provider.
 	 * @return the name of this bundle group provider
+	 * @since 3.0
 	 */
 	public String getName();
 	
 	/**
 	 * Returns the bundle groups provided by this provider.
 	 * @return the bundle groups provided by this provider
+	 * @since 3.0
 	 */
 	public IBundleGroup[] getBundleGroups();
 }
