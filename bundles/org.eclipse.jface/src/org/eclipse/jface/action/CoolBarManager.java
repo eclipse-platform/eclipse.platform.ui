@@ -16,6 +16,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -185,9 +187,12 @@ public class CoolBarManager extends ContributionManager implements
             
             String secondId = currentItem.getId();
             if (firstId.equals(secondId)) {
-                System.out.println("Trying to add a duplicate item."); //$NON-NLS-1$
-                new Exception().printStackTrace(System.out);
-                System.out.println("DONE --------------------------"); //$NON-NLS-1$
+                if ("true".equalsIgnoreCase(Platform //$NON-NLS-1$
+                        .getDebugOption("org.eclipse.jface/trace/toolbarDisposal"))) { //$NON-NLS-1$
+                    System.out.println("Trying to add a duplicate item."); //$NON-NLS-1$
+                    new Exception().printStackTrace(System.out);
+                    System.out.println("DONE --------------------------"); //$NON-NLS-1$
+                }
                 return true;
             }
         }
