@@ -47,16 +47,19 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 
 	private static TeamUIPlugin instance;
 	
+	// image paths
+	public static final String ICON_PATH = "icons/full/"; //$NON-NLS-1$
+	
 	public static final String ID = "org.eclipse.team.ui"; //$NON-NLS-1$
 	public static final String PT_SUBSCRIBER_MENUS = "subscriberMenus"; //$NON-NLS-1$
 	
-	//	plugin id
+	// plugin id
 	public static final String PLUGIN_ID = "org.eclipse.team.ui"; //$NON-NLS-1$
 	
-	 // extension points
-	 public static final String PT_CONFIGURATION ="configurationWizards"; //$NON-NLS-1$
-	 public static final String PT_TARGETCONFIG ="targetConfigWizards"; //$NON-NLS-1$
-	 public static final String PT_DECORATORS = "decorators"; //$NON-NLS-1$	
+	// extension points
+	public static final String PT_CONFIGURATION ="configurationWizards"; //$NON-NLS-1$
+	public static final String PT_TARGETCONFIG ="targetConfigWizards"; //$NON-NLS-1$
+	public static final String PT_DECORATORS = "decorators"; //$NON-NLS-1$	
 	
 	private static List propertyChangeListeners = new ArrayList(5);
 	
@@ -250,7 +253,7 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 	protected static void createImageDescriptor(String id, URL baseURL) {
 		URL url = null;
 		try {
-			url = new URL(baseURL, ISharedImages.ICON_PATH + id);
+			url = new URL(baseURL, ICON_PATH + id);
 		} catch (MalformedURLException e) {
 		}
 		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
@@ -294,11 +297,13 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 	private void initializeImages() {
 		URL baseURL = TeamUIPlugin.getPlugin().getDescriptor().getInstallURL();
 
-		// View decoration overlays
+		// Overlays
 		createImageDescriptor(ISharedImages.IMG_DIRTY_OVR, baseURL);
 		createImageDescriptor(ISharedImages.IMG_CONFLICT_OVR, baseURL);
 		createImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR, baseURL);
 		createImageDescriptor(ISharedImages.IMG_CHECKEDOUT_OVR, baseURL);
+		
+		
 		createImageDescriptor(ISharedImages.IMG_SYNC_VIEW, baseURL);
 		
 		// Collapse all

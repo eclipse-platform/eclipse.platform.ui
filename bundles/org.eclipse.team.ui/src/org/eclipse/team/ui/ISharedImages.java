@@ -17,9 +17,6 @@ package org.eclipse.team.ui;
  * convenience.
  */
 public interface ISharedImages {
-	//	image paths
-	 public final String ICON_PATH = "icons/full/"; //$NON-NLS-1$
-
 	public final String IMG_DIRTY_OVR = "ovr/dirty_ov.gif"; //$NON-NLS-1$
 	public final String IMG_CHECKEDIN_OVR = "ovr/version_controlled.gif"; //$NON-NLS-1$
 	public final String IMG_CHECKEDOUT_OVR = "ovr/checkedout_ov.gif"; //$NON-NLS-1$
