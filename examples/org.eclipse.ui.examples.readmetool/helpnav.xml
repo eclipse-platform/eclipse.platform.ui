@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+
+<manifest>
+
+   <component id="com.ibm.itp.examples.ui.readmetool" label="XMPUIREADME">
+
+      <section book="com.ibm.itp.isv" category="Reference">
+         <topic label="Extension Points for README Tool" id="xmp_readme" href="doc/com_ibm_itp_examples_ui_readmetool.html">
+            <topic label="Section Parser" id="xmp_readme_parser" href="doc/com_ibm_itp_examples_ui_readmetool_sectionParser.html"/>
+         </topic>
+      </section>
+
+   </component>
+
+</manifest>
+
+
+
+
+
+
+
+
+
