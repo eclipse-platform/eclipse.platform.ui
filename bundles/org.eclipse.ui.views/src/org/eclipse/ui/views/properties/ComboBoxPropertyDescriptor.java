@@ -6,6 +6,7 @@ package org.eclipse.ui.views.properties;
  */
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -49,7 +50,7 @@ public ComboBoxPropertyDescriptor(Object id, String displayName, String[] values
  * </p>
  */
 public CellEditor createPropertyEditor(Composite parent) {
-	CellEditor editor = new ComboBoxCellEditor(parent, values);
+	CellEditor editor = new ComboBoxCellEditor(parent, values, SWT.READ_ONLY);
 	if (getValidator() != null)
 		editor.setValidator(getValidator());
 	return editor;
