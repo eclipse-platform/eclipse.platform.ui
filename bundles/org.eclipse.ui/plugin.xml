@@ -32,8 +32,8 @@
    <extension-point id="acceleratorConfigurations" name="%ExtPoint.acceleratorConfigurations"/>
    <extension-point id="acceleratorScopes" name="%ExtPoint.acceleratorScopes"/>
    <extension-point id="actionDefinitions" name="%ExtPoint.actionDefinitions"/>
-   <extension-point id="actionSetPartAssociations" name="%ExtPoint.actionSetPartAssociations" schema="schema/actionSetPartAssociations"/>
-   <extension-point id="actionSets" name="%ExtPoint.actionSets" schema="schema/actionSets"/>
+   <extension-point id="actionSetPartAssociations" name="%ExtPoint.actionSetPartAssociations" schema="schema/actionSetPartAssociations.mxsd"/>
+   <extension-point id="actionSets" name="%ExtPoint.actionSets" schema="schema/actionSets.mxsd"/>
    <extension-point id="capabilities" name="%ExtPoint.capabilities" schema="schema/capabilities.mxsd"/>
    <extension-point id="decorators" name="%ExtPoint.decorators" schema="schema/decorators.mxsd"/>
    <extension-point id="dropActions" name="%ExtPoint.dropActions" schema="schema/dropActions.mxsd"/>
