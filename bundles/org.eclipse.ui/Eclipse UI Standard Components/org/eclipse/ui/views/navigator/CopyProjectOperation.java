@@ -33,7 +33,7 @@ import org.eclipse.ui.dialogs.ProjectLocationSelectionDialog;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */
-/*package*/ class CopyProjectOperation {
+public class CopyProjectOperation {
 
 	/**
 	 * Status containing the errors detected when running the operation or

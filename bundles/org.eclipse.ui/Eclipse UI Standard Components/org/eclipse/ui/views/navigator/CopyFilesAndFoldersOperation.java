@@ -46,7 +46,7 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */
-/*package*/ class CopyFilesAndFoldersOperation {
+public class CopyFilesAndFoldersOperation {
 	
 	/**
 	 * Status containing the errors detected when running the operation or
