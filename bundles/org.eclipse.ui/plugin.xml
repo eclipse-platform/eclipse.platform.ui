@@ -1584,9 +1584,10 @@
 		    id="org.eclipse.ui.LinkedResourceDecorator"
             adaptable="true"
             label="%DecoratorLinkedResource.label"
-            decoratorClass="org.eclipse.ui.internal.LinkedResourceDecorator"
+            class="org.eclipse.ui.internal.LinkedResourceDecorator"
             icon="icons/full/ovr16/link_ovr.gif"
-            quadrant="TOP_LEFT">
+            quadrant="TOP_LEFT"
+            lightweight="true">
          <description>
             %DecoratorLinkedResource.desc
 	     </description>
