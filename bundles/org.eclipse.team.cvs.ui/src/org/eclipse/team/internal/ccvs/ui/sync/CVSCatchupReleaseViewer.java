@@ -393,6 +393,7 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 		
 		// Show in history view
 		showInHistory = new HistoryAction(Policy.bind("CVSCatchupReleaseViewer.showInHistory")); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(showInHistory, IHelpContextIds.SHOW_IN_RESOURCE_HISTORY);
 		addSelectionChangedListener(showInHistory);
 		
 		selectAdditions = new Action(Policy.bind("CVSCatchupReleaseViewer.Select_&Outgoing_Additions_1"), null) { //$NON-NLS-1$
@@ -459,6 +460,7 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 				}
 			}
 		};
+		WorkbenchHelp.setHelp(selectAdditions, IHelpContextIds.SELECT_NEW_RESOURCES_ACTION);
 		
 		// confirm merge
 		confirmMerge = new Action(Policy.bind("CVSCatchupReleaseViewer.confirmMerge"), null) { //$NON-NLS-1$
@@ -511,6 +513,7 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 				return true;
 			}
 		};
+		WorkbenchHelp.setHelp(confirmMerge, IHelpContextIds.CONFIRM_MERGE_ACTION);
 	}
 	
 	protected void mergeRecursive(IDiffElement element, List needsMerge) {

@@ -118,7 +118,10 @@ public interface IHelpContextIds {
 	public static final String DESELECT_WORKING_SET_ACTION = PREFIX + "deselect_working_set_action_context"; //$NON-NLS-1$
 	public static final String EDIT_WORKING_SET_ACTION = PREFIX + "edit_working_set_action_context"; //$NON-NLS-1$
 	public static final String REMOVE_REPOSITORY_LOCATION_ACTION = PREFIX + "remove_root_action_context"; //$NON-NLS-1$
-
+	public static final String SHOW_IN_RESOURCE_HISTORY = PREFIX + "show_in_history_action_context"; //$NON-NLS-1$
+	public static final String SELECT_NEW_RESOURCES_ACTION = PREFIX + "select_new_action_context"; //$NON-NLS-1$
+	public static final String CONFIRM_MERGE_ACTION = PREFIX + "confirm_merge_action_context"; //$NON-NLS-1$;
+	
 	// Team menu actions
 	public static final String TEAM_SYNCHRONIZE_ACTION = PREFIX + "team_synchronize_action_context"; //$NON-NLS-1$
 	public static final String TEAM_SYNCHRONIZE_OUTGOING_ACTION = PREFIX + "team_synchronize_outgoing_action_context"; //$NON-NLS-1$
