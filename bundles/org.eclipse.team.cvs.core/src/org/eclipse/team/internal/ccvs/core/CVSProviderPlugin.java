@@ -114,7 +114,7 @@ public class CVSProviderPlugin extends Plugin {
 	private IConsoleListener consoleListener;
 	private boolean determineVersionEnabled = true;
 	
-	private static CVSProviderPlugin instance;
+	private static volatile CVSProviderPlugin instance;
 	
 	// CVS specific resource delta listeners
 	private IResourceChangeListener preAutoBuildListener;
@@ -144,7 +144,7 @@ public class CVSProviderPlugin extends Plugin {
 	 */
 	public CVSProviderPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
-		setPlugin(this);
+		instance = this;
 	}
 	
 	/**
@@ -164,7 +164,7 @@ public class CVSProviderPlugin extends Plugin {
 	 * 
 	 * @return the plugin instance
 	 */
-	public static synchronized CVSProviderPlugin getPlugin() {
+	public static CVSProviderPlugin getPlugin() {
 		// If the instance has not been initialized, we will wait.
 		// This can occur if multiple threads try to load the plugin at the same
 		// time (see bug 33825: http://bugs.eclipse.org/bugs/show_bug.cgi?id=33825)
@@ -176,10 +176,6 @@ public class CVSProviderPlugin extends Plugin {
 			}
 		}
 		return instance;
-	}
-
-	private static synchronized void setPlugin(CVSProviderPlugin plugin) {
-		instance = plugin;
 	}
 	
 	/**
