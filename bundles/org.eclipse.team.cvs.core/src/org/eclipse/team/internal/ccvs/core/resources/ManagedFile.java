@@ -39,14 +39,7 @@ class ManagedFile extends ManagedResource implements IManagedFile {
 	ICVSFile cvsFile;
 
 	private static final byte[] BUFFER = new byte[4096];
-
-	private static final boolean cacheing = true;
-	
-	// If we do not extend the key and therefore the key is the same like
-	// the absolut pathname we have indirectly an reference to the key in
-	// the weak hashmap. Therefore the WeakHashMap does not finalize anything
-	private static final String KEY_EXTENTION = "KEY";
-	
+		
 	// We could use a normal HashMap in case the caller does not have instances
 	// for all the time it needs the object
 	private static Map instancesCache = new HashMap();
@@ -68,7 +61,7 @@ class ManagedFile extends ManagedResource implements IManagedFile {
 		
 		ManagedFile resultFile;
 		
-		if (!cacheing) {
+		if (!CACHING) {
 			return new ManagedFile(newFile);
 		}
 
@@ -356,7 +349,8 @@ class ManagedFile extends ManagedResource implements IManagedFile {
 	 * @see IManagedResource#showDirty()
 	 */
 	public boolean showDirty() throws CVSException {
-		if (showDirtyCache == null) {
+		
+		if (!CACHING || showDirtyCache == null) {
 			showDirtyCache = new Boolean(isDirty());
 		}
 		return showDirtyCache.booleanValue();

@@ -36,16 +36,8 @@ import org.eclipse.team.internal.ccvs.core.util.Assert;
  */
 class ManagedFolder extends ManagedResource implements IManagedFolder {
 	
-	public static final String PWD_PROPERTY = "Password";
-	private static final boolean cacheing = true;
-	
 	private ICVSFolder cvsFolder;
 	private FilePropertiesContainer fileInfoContainer;
-
-	// If we do not extend the key and therefore the key is the same like
-	// the absolut pathname we have indirectly an reference to the key in
-	// the weak hashmap. Therefore the WeakHashMap does not finalize anything
-	private static final String KEY_EXTENTION = "KEY";
 	
 	// We could use a normal HashMap in case the caller does not have instances
 	// for all the time it needs the object
@@ -70,7 +62,7 @@ class ManagedFolder extends ManagedResource implements IManagedFolder {
 		
 		ManagedFolder resultFolder;
 		
-		if (!cacheing) {
+		if (!CACHING) {
 			return new ManagedFolder(newFolder);
 		}
 
@@ -288,15 +280,6 @@ class ManagedFolder extends ManagedResource implements IManagedFolder {
 	 */
 	public void mkdir() throws CVSException {
 		cvsFolder.mkdir();
-	}
-
-	/**
-	 * @see IManagedFolder#flush(boolean)
-	 */
-	public void flush(boolean deep) {
-		// Does do nothing as AUTO_SAVE == true
-		//
-		// Otherwise we need somthing like load and save.
 	}
 
 	/**
@@ -561,14 +544,6 @@ class ManagedFolder extends ManagedResource implements IManagedFolder {
 		return cvsFolder;
 	}
 
-//	/**
-//	 * @see ManagedResource#delete()
-//	 */
-//	public void delete() {	
-//		instancesCache.remove(cvsFolder.getPath()+KEY_EXTENTION);
-//		super.delete();
-//	}
-
 	/**
 	 * @see IManagedFolder#isCVSFolder()
 	 */
@@ -704,7 +679,7 @@ class ManagedFolder extends ManagedResource implements IManagedFolder {
 		IManagedResource[] children;
 		boolean result = false;
 		
-		if (showDirtyCache == null) {
+		if (!CACHING || showDirtyCache == null) {
 			
 			// We do not have a cached value therefore we:
 			// 1. init the result to false

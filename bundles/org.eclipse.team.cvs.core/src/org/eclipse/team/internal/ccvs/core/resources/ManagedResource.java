@@ -9,7 +9,6 @@ import java.io.IOException;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.connection.CVSFileException;
 import org.eclipse.team.internal.ccvs.core.resources.api.CVSFileNotFoundException;
 import org.eclipse.team.internal.ccvs.core.resources.api.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.resources.api.ICVSFolder;
@@ -17,7 +16,9 @@ import org.eclipse.team.internal.ccvs.core.resources.api.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFile;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedResource;
+import org.eclipse.team.internal.ccvs.core.resources.api.IManagedVisitor;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
  * Implements the IManagedResource interface on top of an 
@@ -27,21 +28,23 @@ import org.eclipse.team.internal.ccvs.core.util.Assert;
  */
 abstract class ManagedResource implements IManagedResource {
 
+	// If we do not extend the key and therefore the key is the same like
+	// the absolut pathname we have indirectly an reference to the key in
+	// the weak hashmap. Therefore the WeakHashMap does not finalize anything
+	static final String KEY_EXTENTION = "KEY";
+
 	static final String PLATFORM_NEWLINE = System.getProperty("line.separator");
 	static final String SERVER_NEWLINE = "\n";
 	
 	static final byte[] PLATFORM_NEWBYTE = PLATFORM_NEWLINE.getBytes();
 	static final byte[] SERVER_NEWBYTE = SERVER_NEWLINE.getBytes();
 	
+	// Flag for the caching of folders/files
+	static final boolean CACHING = true;
+	
 	// Initialise Chaches to empty
 	Boolean showDirtyCache = null;
 	Boolean showManagedCache = null;
-	
-	/**
-	 * Constructor for ManagedResource
-	 */
-	ManagedResource() {
-	}
 
 	/**
 	 * Get the extention of the path of resource
@@ -53,6 +56,7 @@ abstract class ManagedResource implements IManagedResource {
 		throws CVSException {
 		
 		ManagedResource rootFolder;
+		String result;
 		
 		try {
 			rootFolder = (ManagedResource)root;
@@ -60,37 +64,8 @@ abstract class ManagedResource implements IManagedResource {
 			throw new CVSException(0,0,"two different implementations of IManagedResource used",e);
 		}
 		
-		return getRelativePath(getCVSResource().getPath(), rootFolder.getCVSResource().getPath());
-		
-	}
-
-	/**
-	 * Get the extention of the path of resource
-	 * relative to the path of root
-	 * 
-	 * seperator is the seperation between the different folders
-	 * 
-	 * @throws CVSException if root is not a root-folder of resource
-	 */
-	public static String getRelativePath(String resourceName, String rootName) 
-		throws CVSException {
-
-		String relativePath;
-
-		if (!resourceName.startsWith(rootName)) {
-			throw new CVSException("Internal error, resource does not start with root.");
-		}
-		
-		// Otherwise we would get an ArrayOutOfBoundException
-		// in case of two equal Resources
-		if (rootName.length() == resourceName.length()) {
-			return "";
-		}
-		
-		// Get rid of the seperator, that would be in the 
-		// beginning, if we did not go from +1
-		relativePath = resourceName.substring(rootName.length() + 1);
-		return convertSeparatorOutgoing(relativePath);
+		result = Util.getRelativePath(rootFolder.getCVSResource().getPath(),getCVSResource().getPath()); 
+		return convertSeparatorOutgoing(result);
 		
 	}
 
@@ -99,13 +74,7 @@ abstract class ManagedResource implements IManagedResource {
 	 */
 	public void delete() {
 		getCVSResource().delete();
-		
-		try {
-			clearDirty(true);
-		} catch (CVSException e) {
-			Assert.isTrue(false);
-		}
-		
+		clearDirty(true);
 	}
 
 	/**
@@ -160,13 +129,13 @@ abstract class ManagedResource implements IManagedResource {
 		return ManagedFile.createInternalFileFrom(file);
 	}
 	
-	/** 
-	 * Clean up incoming path
-	 * replaces "/" and "\\" for ICVSResource.seperator
-	 */
-	static String convertSeparatorIncoming(String path) {
-		return convertSeperator(path, ICVSResource.seperator);	
-	}
+//	/** 
+//	 * Clean up incoming path
+//	 * replaces "/" and "\\" for ICVSResource.seperator
+//	 */
+//	static String convertSeparatorIncoming(String path) {
+//		return convertSeperator(path, ICVSResource.seperator);	
+//	}
 	
 	/** 
 	 * Clean up outgoing path
@@ -214,19 +183,6 @@ abstract class ManagedResource implements IManagedResource {
 	}
 
 	/**
-	 * Comparing for the work with the sets,
-	 * 
-	 * The coparison is done by the underlying cvsResources.
-	 */
-	public int compareTo(Object obj) {
-		if (!(obj instanceof ManagedResource)) {
-			return -1;
-		} else {
-			return getCVSResource().compareTo(((ManagedResource) obj).getCVSResource());
-		}
-	}
-
-	/**
 	 * Generate a Standard CVSException for an
 	 * IOException
 	 * 
@@ -254,21 +210,12 @@ abstract class ManagedResource implements IManagedResource {
 	 */
 	public int hashCode() {
 		return getCVSResource().hashCode();
-	}
-	/*
-	 * Comparing for the work with the sets,
-	 * 
-	 * The coparison is done by the paths.
-	 *
-	public int compareTo(Object obj) {
-		return cvsResource.compareTo(obj);
-	}
-	*/		
+	}	
 	
 	/**
 	 * @see IManagedResource#clearDirty(boolean)
 	 */
-	public void clearDirty(boolean up) throws CVSException {
+	public void clearDirty(boolean up) {
 		if (showDirtyCache == null) {
 			return;
 		}
@@ -276,20 +223,27 @@ abstract class ManagedResource implements IManagedResource {
 		showDirtyCache = null;
 		
 		if (up) {
-			getParent().clearDirty(up);
+			getInternalParent().clearDirty(up);
 		}	
 	}
 	
+	/**
+	 * @see IManagedResource#showManaged()
+	 */
 	public boolean showManaged() throws CVSException {	
-		if (showManagedCache == null) {
+		if (!CACHING || showManagedCache == null) {
 			showManagedCache = new Boolean(isManaged());
 		}		
 		return showManagedCache.booleanValue();
 	}
 	
+	/**
+	 * @see IManagedResource#clearManaged()
+	 */
 	public void clearManaged() throws CVSException {
 		showManagedCache = null;
 	}
+
 }
 
 

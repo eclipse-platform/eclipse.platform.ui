@@ -25,7 +25,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
  * file is not there.
  */
 
-public interface ICVSResource extends Comparable {
+public interface ICVSResource {
 
 	/**
 	 * The seperator that is used for giving and

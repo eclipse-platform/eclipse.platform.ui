@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.PrintStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.commands.CommandDispatcher;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
@@ -48,6 +49,7 @@ public class Client {
 	public static final String CURRENT_REMOTE_FOLDER = "";
 	public static final String SERVER_SEPARATOR = "/";
 	
+	// Supported Commands
 	public static final String CHECKOUT = "co";
 	public static final String UPDATE = "update";
 	public static final String COMMIT = "ci";
@@ -78,168 +80,37 @@ public class Client {
 	public static final String MESSAGE_OPTION = "-m";
 	
 	public static final String[] EMPTY_ARGS_LIST = new String[0];
-		
-	/**
-	 * Executes the given request
-	 */
-	public static void execute(String request, 
-						String[] globalOptions, 
-						String[] localOptions, 
-						String[] arguments,
-						IManagedFolder localFolder, 
-						IProgressMonitor monitor,
-						PrintStream messageOut,
-						CVSRepositoryLocation repository,
-						IResponseHandler[] customHandlers) 
-						throws CVSException {
-		Connection connection = repository.openConnection();
-		try {
-			execute(request, globalOptions, localOptions, arguments, localFolder, monitor, messageOut, connection, customHandlers);
-		} finally {
-			connection.close();
-		}
-	}
-	
-	/**
-	 * Executes the given request.
-	 * 
-	 * create a new Connection to the server, either from an "-d" global option
-	 * or from the Root-Properie of the root-folder.
-	 */
-	public static void execute(String request, 
-						String[] globalOptions, 
-						String[] localOptions, 
-						String[] arguments,
-						IManagedFolder mRoot,
-						IProgressMonitor monitor, 
-						PrintStream messageOut) 
-						throws CVSException {
-		execute(request, globalOptions, localOptions, arguments, mRoot, monitor, messageOut, new IResponseHandler[0]);
-	}
-							
-	/**
-	 * Executes the given request.
-	 * 
-	 * create a new Connection to the server, either from an "-d" global option
-	 * or from the Root-Properie of the root-folder.
-	 */
-	public static void execute(String request, 
-						String[] globalOptions, 
-						String[] localOptions, 
-						String[] arguments,
-						IManagedFolder mRoot,
-						IProgressMonitor monitor, 
-						PrintStream messageOut,
-						IResponseHandler[] customHandlers) 
-						throws CVSException {
-		
-		CVSRepositoryLocation repository;
-		Connection connection;
-
-		// this is a hack to prevent from changing the
-		// acctuall array that is given from the user
-		// while nulling the "-d" ":pserver:nkra@ ... " option
-		globalOptions = (String[]) globalOptions.clone();
-		
-		repository = getRepository(globalOptions, mRoot);
-		connection = repository.openConnection();
-
-		try {		
-			execute(request,
-				globalOptions,
-				localOptions,
-				arguments,
-				mRoot,
-				monitor,
-				messageOut,
-				connection,
-				customHandlers);
-		} finally {
-			connection.close();
-		}
-			
-	}
 
 	/**
-	 * Executes the given request.
-	 * 
-	 * Uses a connection to the server that is allready there. This
-	 * expects you not to use the global option "-d".
-	 * 
-	 * Will this ever close the connection? If so, what are the conditions
-	 */
-	public static void execute(String request, 
-						String[] globalOptions, 
-						String[] localOptions, 
-						String[] arguments,
-						IManagedFolder mRoot,
-						IProgressMonitor monitor, 
-						PrintStream messageOut,
-						Connection connection) 
-						throws CVSException {
-		
-		execute(request,
-				globalOptions,
-				localOptions,
-				arguments,
-				mRoot,
-				monitor,
-				messageOut,
-				connection,
-				null);
-	}
-	
-	/**
-	 * Creates a new client connection for the given cvs repository location.
-	 * 
+	 * Executes the given command, with all the parameter. It works like a
+	 * cvs-client in terms of different parameter. 
 	 * Sets up the three main objects of the program:
 	 * 
 	 * commandDispatcher  => Knows about commands (update, commit ...)
 	 * responseDispatcher => Reacts on input from the server
 	 * requestSender     => Knows how to send requests to the server
 	 * 
+	 * @param request the cvs-command to run, not-null
+	 * @param globalOptions the cvs-options null possible
+	 * @param localOptions the cvs-options null possible
+	 * @param arguments the cvs-arguments null possible
+	 * @param mRoot the fileSystem the command is executed on, not-null
+	 * @param monitor the progress-monitor null possible
+	 * @param messageOut PrintStream that the Messages and Error of the server
+	 * 		   are piped to
+	 * @param connection the connection to the cvs-server
+	 * @param customHandlers handlers for responseTypes of the server. It is 
+	 * 		   dangerous to register MessageHandler and ErrorHandler. It is not
+	 * 		   recomended to try to register ANY other hander.
+	 * @param FirstTime if you work over an opened connection you have to set
+	 * 		   the first-time parameter to true, the first time you execute a 
+	 * 		   requst. After the first time you can (but you do not have to) set
+	 * 		   this parameter to false in order to save the overhead of the
+	 * 		   intialisation with the server
 	 * @see commandDispatcher
 	 * @see RequestSender
 	 * @see responseDispatcher
-	 * 
-	 */
-	public static void execute(String request, 
-						String[] globalOptions, 
-						String[] localOptions, 
-						String[] arguments,
-						IManagedFolder mRoot,
-						IProgressMonitor monitor, 
-						PrintStream messageOut,
-						Connection connection,
-						IResponseHandler[] customHandlers) 
-						throws CVSException {
-				
-		execute(request,
-				globalOptions,
-				localOptions,
-				arguments,
-				mRoot,
-				monitor,
-				messageOut,
-				connection,
-				customHandlers,
-				true);
-	}
-	
-		/**
-	 * Creates a new client connection for the given cvs repository location.
-	 * 
-	 * Sets up the three main objects of the program:
-	 * 
-	 * commandDispatcher  => Knows about commands (update, commit ...)
-	 * responseDispatcher => Reacts on input from the server
-	 * requestSender     => Knows how to send requests to the server
-	 * 
-	 * @see commandDispatcher
-	 * @see RequestSender
-	 * @see responseDispatcher
-	 * 
-	 */
+	 */	
 	public static void execute(String request, 
 						String[] globalOptions, 
 						String[] localOptions, 
@@ -251,14 +122,31 @@ public class Client {
 						IResponseHandler[] customHandlers,
 						boolean firstTime) 
 						throws CVSException {
-				
+		
+		Assert.isNotNull(request);
+		Assert.isNotNull(connection);
+		Assert.isNotNull(mRoot);
+		globalOptions = notNull(globalOptions);
+		localOptions = notNull(localOptions);
+		arguments = notNull(arguments);
+		monitor = Policy.monitorFor(monitor);
+		customHandlers = notNull(customHandlers);
+		
+		// We might remove certain options and arguments when 
+		// we looked at them and they do not need our attention 
+		// any more. This changes should not affect the caller.
+		globalOptions = (String[])globalOptions.clone();
+		localOptions = (String[])localOptions.clone();
+		arguments = (String[])arguments.clone();
+		
 		ResponseDispatcher responseDispatcher = new ResponseDispatcher(connection, customHandlers);
 		RequestSender requestSender = new RequestSender(connection);
 		CommandDispatcher commandDispatcher = new CommandDispatcher(responseDispatcher, requestSender);
 		
-		if (firstTime)
+		if (firstTime) {
 			initialize(responseDispatcher, requestSender, connection, mRoot, monitor, messageOut);
-
+		}
+		
 		commandDispatcher.execute(request,
 								globalOptions,
 								localOptions,
@@ -266,6 +154,82 @@ public class Client {
 								mRoot,
 								monitor,
 								messageOut);
+	}
+
+	/**
+	 * Executes the given request. Give the client a CVSRepositoryLocation
+	 * that the server is going to open and close the connection from.
+	 * 
+	 * @param repository represents an abstract cvs-repository. If it is null
+	 * 		   connection-infrmation is searced in the globalOptions and in the
+	 * 		   filesystem
+	 * @see Client#execute(String,String[],String[],String[],IManagedFolder,IProgressMonitor,PrintStream,Connection,IResponseHandler[],boolean)
+	 */
+	public static void execute(String request, 
+						String[] globalOptions, 
+						String[] localOptions, 
+						String[] arguments,
+						IManagedFolder mRoot, 
+						IProgressMonitor monitor,
+						PrintStream messageOut,
+						CVSRepositoryLocation repository,
+						IResponseHandler[] customHandlers) 
+						throws CVSException {
+
+		Assert.isNotNull(mRoot);
+		globalOptions = notNull(globalOptions);
+
+		// We might remove certain global options.
+		// This should not affect the caller
+		globalOptions = (String[])globalOptions.clone();
+				
+		if (repository == null) {
+			repository = getRepository(globalOptions, mRoot);			
+		}				
+		
+		Connection connection = repository.openConnection();
+		try {
+			execute(request, 
+				globalOptions, 
+				localOptions, 
+				arguments, 
+				mRoot, 
+				monitor, 
+				messageOut, 
+				connection, 
+				customHandlers,
+				true);
+		} finally {
+			connection.close();
+		}
+	}
+	
+	/**
+	 * Executes the given request in the standard cvs-way. This is the preferred 
+	 * way to call the client. It is equal to the call:<br>
+	 * execute(request,globalOptions,localOptions,arguments,mRoot,monitor,messageOut,null,null);<br>
+	 * 
+	 * @see Client#execute(String,String[],String[],String[],IManagedFolder,IProgressMonitor,PrintStream,CVSRepositoryLocation,IResponseHandler[])
+	 * @see Client#execute(String,String[],String[],String[],IManagedFolder,IProgressMonitor,PrintStream,Connection,IResponseHandler[],boolean)
+	 */
+	public static void execute(String request, 
+						String[] globalOptions, 
+						String[] localOptions, 
+						String[] arguments,
+						IManagedFolder mRoot,
+						IProgressMonitor monitor, 
+						PrintStream messageOut) 
+						throws CVSException {
+			
+		execute(request,
+			globalOptions,
+			localOptions,
+			arguments,
+			mRoot,
+			monitor,
+			messageOut,
+			null,
+			null);
 	}
 	
 	/**
@@ -288,27 +252,6 @@ public class Client {
 				messageOut);
 	}
 
-	/**
-	 * @see Client#(String,String[],String[],String[],ICVSFolder,IProgressMonitor,OutputStream,Connection) 
-	 */
-	public static void execute(String request, 
-						String[] globalOptions, 
-						String[] localOptions, 
-						String[] arguments,
-						ICVSFolder root,
-						IProgressMonitor monitor, 
-						PrintStream messageOut,
-						Connection connection) 
-						throws CVSException {
-		execute(request,
-				globalOptions,
-				localOptions,
-				arguments,
-				ResourceFactory.getManaged(root),
-				monitor,
-				messageOut,
-				connection);
-	}
 
 	/**
 	 * @see Client#(String,String[],String[],String[],ICVSFolder,IProgressMonitor,OutputStream,Connection) 
@@ -328,28 +271,6 @@ public class Client {
 				ResourceFactory.getManagedFolder(root),
 				monitor,
 				messageOut);
-	}
-
-	/**
-	 * @see Client#(String,String[],String[],String[],ICVSFolder,IProgressMonitor,OutputStream,Connection) 
-	 */
-	public static void execute(String request, 
-						String[] globalOptions, 
-						String[] localOptions, 
-						String[] arguments,
-						File root,
-						IProgressMonitor monitor, 
-						PrintStream messageOut,
-						Connection connection) 
-						throws CVSException {
-		execute(request,
-				globalOptions,
-				localOptions,
-				arguments,
-				ResourceFactory.getManagedFolder(root),
-				monitor,
-				messageOut,
-				connection);
 	}
 	
 	/**
@@ -377,8 +298,6 @@ public class Client {
 	 * 
 	 * Gets the valid-requsts form the server, and puts them into the
 	 * request sender.
-	 * 
-	 * MV: Why isn't this method in the Command execute method?
 	 */
 	private static void initialize(ResponseDispatcher responseDispatcher,
 							RequestSender requestSender,
@@ -442,5 +361,21 @@ public class Client {
 		}
 		
 		return CVSRepositoryLocation.fromString(repoName);
-	}		
+	}
+
+	private static String[] notNull(String[] arg) {
+		if (arg == null) {
+			return new String[0];
+		} else {
+			return arg;
+		}
+	}
+	
+	private static IResponseHandler[] notNull(IResponseHandler[] arg) {
+		if (arg == null) {
+			return new IResponseHandler[0];
+		} else {
+			return arg;
+		}
+	}
 }

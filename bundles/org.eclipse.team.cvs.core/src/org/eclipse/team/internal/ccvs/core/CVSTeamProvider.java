@@ -509,6 +509,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 				managedProject,
 				progress,
 				stream,
+				null,
 				new IResponseHandler[] {new DiffMessageHandler(), new DiffErrorHandler(errors)});
 		} catch(CVSDiffException e) {
 			// Ignore this for now

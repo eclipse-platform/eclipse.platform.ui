@@ -95,32 +95,7 @@ public interface IManagedFolder extends IManagedResource {
 	 * @throws CVSException if for some reason it was not possible to create the folder
 	 */
 	void mkdir() throws CVSException;
-	
-	/**
-	 * Return the child folder at the given path relative to
-	 * the receiver.
-	 * 
-	 * @throws CVSException if childExists(path) = false
-	 * @throws CVSException if getChild(path).isFolder = false
-	 */
-	// IManagedFolder getFolder(String path) throws CVSException;
-	
-	/**
-	 * Return the child file at the given path relative to
-	 * the receiver.
-	 * 
-	 * @throws CVSException if childExists(path) = false
-	 * @throws CVSException if getChild(path).isFolder = true
-	 */
-	// IManagedFile getFile(String path) throws CVSException;
 
-	/**
-	 * Does write all cached infromation to the file-system.
-	 * 
-	 * @param deep=true => is called recursively for all subfolders
-	 */
-	void flush(boolean deep);
-		
 	/**
 	 * Get Infos about the folder.
 	 * 
@@ -140,44 +115,15 @@ public interface IManagedFolder extends IManagedResource {
 	 * @throws CVSException if (folderInfo!=null & exists()==false)
 	 */
 	void setFolderInfo(FolderProperties folderInfo) throws CVSException;
-		
-	/**
-	 * Add a subFolder to the entries
-	 */
-	// we don't need that, we are going to do that, when
-	// we set the FolderProperties of the parent-folder
-	// void addFolder(String name);
 	
 	/**
-	 * Remove a subFolder from the entries
-	 */
-	// we don't need that, we are going to do that, when
-	// we set the FolderProperties of the parent-folder
-	// void removeFolder(String name);
-	
-	/**
-	 * Look if a subFolder is in the entries
-	 */
-	// we can ask for createFolder(name).isManaged() insead
-	// we do not need it
-	// boolean containsFolder(String name);
-	
-	/**
-	 * Attace a property to the folder.
+	 * Attache a property to the folder.
 	 * 
 	 * @param content==null has the same effect as unsetProperty, 
 	          content==String[0] creates an empty Property
 	 * @throws CVSFileNotFoundException if exists() = false
 	 */
 	void setProperty(String key, String[] content) throws CVSException;
-
-	/**
-	 * Delete a property from a folder. If the property did not exist,
-	 * nothing happens.
-	 * 
-	 * @throws CVSFileNotFoundException if exists() = false
-	 */
-	// void unsetProperty(String key) throws CVSException;
 	
 	/**
 	 * Get the property of a folder.

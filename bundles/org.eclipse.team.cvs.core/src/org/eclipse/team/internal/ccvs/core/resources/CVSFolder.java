@@ -34,12 +34,6 @@ class CVSFolder extends CVSResource implements ICVSFolder {
 	// -- private File ioFolder;
 	
 	public static final String CVS_FOLDER_NAME = "CVS";
-	public static final boolean PROPERTY_READ_CHACHING = true;
-	
-	// If we do not extend the key and therefore the key is the same like
-	// the absolut pathname we have indirectly an reference to the key in
-	// the weak hashmap. Therefore the WeakHashMap does not finalize anything
-	private static final String KEY_EXTENTION = "KEY";
 	
 	// We could use a normal HashMap in case the caller does not have instances
 	// for all the time it needs the object
@@ -80,7 +74,7 @@ class CVSFolder extends CVSResource implements ICVSFolder {
 	/**
 	 * @see ICVSFolder#getFiles()
 	 */
-	public ICVSFile[] getFiles() {
+	public ICVSFile[] getFiles() throws CVSException {
 		
 		File[] fileList;
 		ICVSFile[] cvsFileList;
@@ -90,7 +84,7 @@ class CVSFolder extends CVSResource implements ICVSFolder {
 		cvsFileList = new ICVSFile[fileList.length];
 		
 		for (int i = 0; i<fileList.length; i++) {
-			 cvsFileList[i] = new CVSFile(fileList[i]);
+			 cvsFileList[i] = CVSFile.createInternalFileFrom(fileList[i]);
 		}
 		return cvsFileList;
 	}
@@ -116,7 +110,7 @@ class CVSFolder extends CVSResource implements ICVSFolder {
 			if (resourceList[i].isDirectory()) {
 				cvsResourceList[i] = createInternalFolderFrom(resourceList[i]);
 			} else {
-				cvsResourceList[i] = new CVSFile(resourceList[i]);
+				cvsResourceList[i] = CVSFile.createInternalFileFrom(resourceList[i]);
 			}
 		}
 		
@@ -132,11 +126,7 @@ class CVSFolder extends CVSResource implements ICVSFolder {
 	}
 
 	/**
-	 * Acctuall creation of a new folder. (Does not have to exist before)
-	 * This is used from outside to create a folder at a location.
-	 * 
-	 * Here is checked, wether the file we try to create exists
-	 * and if we try to create somthing unallowed (e.g. the cvs-folder)
+	 * Get a file-object, that may or may not exist
 	 */
 	public static ICVSFolder createFolderFrom(File newFolder) throws CVSException {
 		
@@ -153,6 +143,11 @@ class CVSFolder extends CVSResource implements ICVSFolder {
 		}	
 	}
 	
+	/**
+	 * Use this method intead of the constructur. If CACHING == true
+	 * the instances of this class are stored in a map and given you
+	 * on request.
+	 */
 	static CVSFolder createInternalFolderFrom(File newFolder) throws CVSException {
 		
 		CVSFolder resultFolder;
@@ -161,7 +156,10 @@ class CVSFolder extends CVSResource implements ICVSFolder {
 			newFolder = newFolder.getCanonicalFile();
 		} catch (IOException e) {
 			throw new CVSException(Policy.bind("CVSFolder.invalidPath"),e);
-			// Util.logError(Policy.bind("CVSFolder.invalidPath"),e);
+		}
+
+		if (!CACHING) {
+			return new CVSFolder(newFolder);
 		}
 		
 		resultFolder = (CVSFolder) instancesCache.get(newFolder.getAbsolutePath()+KEY_EXTENTION);
@@ -192,7 +190,7 @@ class CVSFolder extends CVSResource implements ICVSFolder {
 	 */
 	public boolean isCVSFolder() throws CVSFileNotFoundException {
 		
-		if (cvsFolderCache == null) {
+		if (!CACHING || cvsFolderCache == null) {
 			exceptionIfNotExist();
 			cvsFolderCache = new Boolean((new File(ioResource, CVS_FOLDER_NAME)).exists());
 		}
@@ -249,7 +247,7 @@ class CVSFolder extends CVSResource implements ICVSFolder {
 
 		writeToFile(propertyFile,content);
 		
-		if (PROPERTY_READ_CHACHING) {		
+		if (CACHING) {		
 			propertiesCache.put(key, content);
 		}
 	}
@@ -264,7 +262,7 @@ class CVSFolder extends CVSResource implements ICVSFolder {
 		cvsFolder = getCVSFolder();
 		(new File(cvsFolder, key)).delete();
 		
-		if (PROPERTY_READ_CHACHING) {		
+		if (CACHING) {		
 			propertiesCache.put(key, null);
 		}
 	}
@@ -280,7 +278,7 @@ class CVSFolder extends CVSResource implements ICVSFolder {
 		File cvsFolder;
 		File propertyFile;
 		
-		if (PROPERTY_READ_CHACHING && propertiesCache.containsKey(key)) {
+		if (CACHING && propertiesCache.containsKey(key)) {
 			return (String[])propertiesCache.get(key);
 		}
 			
@@ -295,7 +293,7 @@ class CVSFolder extends CVSResource implements ICVSFolder {
 			property = null;
 		} 
 
-		if (PROPERTY_READ_CHACHING) {	
+		if (CACHING) {	
 			propertiesCache.put(key, property);
 		}
 		
@@ -384,7 +382,7 @@ class CVSFolder extends CVSResource implements ICVSFolder {
 		if (file.isDirectory()) {
 			return createInternalFolderFrom(file);
 		} else {
-			return new CVSFile(file);
+			return CVSFile.createInternalFileFrom(file);
 		}
 	}
 

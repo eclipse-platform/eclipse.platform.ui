@@ -11,10 +11,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.api.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 
 /**
@@ -22,22 +25,53 @@ import org.eclipse.team.internal.ccvs.core.resources.api.ICVSFile;
  * @see CVSResource
  */
 class CVSFile extends CVSResource implements ICVSFile {
+
+	// We could use a normal HashMap in case the caller does not have instances
+	// for all the time it needs the object
+	private static Map instancesCache = new HashMap();
 	
 	// The ioResource is saved in CVSResource and used from there
 	// private File file;
 	
-	CVSFile(String path) throws CVSException {
-		this(new File(path));
-	}
-
-
-	CVSFile(File ioFile) {
+	/**
+	 * Do not use the constructor, as it does not support the caching.
+	 * Use createInternalFileFrom instead.
+	 */
+	private CVSFile(File ioFile) {
 		// puts the file into resource
 		super(ioFile);
 		
 		Assert.isTrue(!ioFile.exists() || ioFile.isFile());
 	}
 
+	/**
+	 * Use this method intead of the constructur. If CACHING == true
+	 * the instances of this class are stored in a map and given you
+	 * on request.
+	 */
+	static CVSFile createInternalFileFrom(File newFile) throws CVSException {
+		
+		CVSFile resultFile;
+		
+		try {
+			newFile = newFile.getCanonicalFile();
+		} catch (IOException e) {
+			throw new CVSException(Policy.bind("CVSFolder.invalidPath"),e);
+		}
+
+		if (!CACHING) {
+			return new CVSFile(newFile);
+		}
+		
+		resultFile = (CVSFile) instancesCache.get(newFile.getAbsolutePath()+KEY_EXTENTION);
+		
+		if (resultFile == null) {
+			resultFile = new CVSFile(newFile);
+			instancesCache.put(resultFile.ioResource.getAbsolutePath()+KEY_EXTENTION,resultFile);
+		}
+		
+		return resultFile;
+	}
 
 	/**
 	 * @see ICVSFile#getInputStream()
@@ -53,18 +87,6 @@ class CVSFile extends CVSResource implements ICVSFile {
 		}
 	}
 
-
-	/**
-	 * Acctuall creation of a new file. (Does not have to exist before)
-	 * This is used from outside to create a file at a location.
-	 * 
-	 * All checks, and creaton of files are done here
-	 */		
-	static ICVSFile createFileFrom(String path) throws CVSException {
-		return createFileFrom(new File(path));
-	}
-
-
 	/**
 	 * @see CVSFile#createFileFromPath(String)
 	 */	
@@ -76,11 +98,10 @@ class CVSFile extends CVSResource implements ICVSFile {
 		
 		try {		
 			newFile = newFile.getCanonicalFile();
-			// newFile.createNewFile();
 		} catch (IOException e) {
 			throw wrapException(e);
 		}
-		return new CVSFile(newFile);
+		return createInternalFileFrom(newFile);
 	}
 	
 	/**
@@ -146,15 +167,6 @@ class CVSFile extends CVSResource implements ICVSFile {
 	public String[] getContent() throws CVSException {
 		return readFromFile(ioResource);
 	}
-
-	/**
-	 * @see ICVSFile#setContent(String[], boolean)
-	 */
-//	public void setContent(String[] content, String delim)
-//		throws CVSException {
-//		
-//		writeToFile(ioResource, content, delim);
-//	}
 	
 	/**
 	 * @see ICVSFile#moveTo(ICVSFile)
@@ -174,7 +186,8 @@ class CVSFile extends CVSResource implements ICVSFile {
 	 * @see ICVSResource#clearCache()
 	 */
 	public void clearCache(boolean deep) throws CVSException {
-		// getParent().clearCache(boolean deep);
+		// Needs to clear any information stored with this file, as this
+		// is called on delete
 	}
 	
 	public void setReadOnly() {

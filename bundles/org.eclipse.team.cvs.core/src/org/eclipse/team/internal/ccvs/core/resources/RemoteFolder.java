@@ -154,7 +154,8 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IM
 				monitor,
 				getPrintStream(),
 				c,
-				new IResponseHandler[]{new UpdateMessageHandler(listener), new UpdateErrorHandler(listener, errors)});
+				new IResponseHandler[]{new UpdateMessageHandler(listener), new UpdateErrorHandler(listener, errors)},
+				true);
 
 			if (progress.isCanceled()) {
 				throw new OperationCanceledException();

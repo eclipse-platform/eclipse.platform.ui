@@ -6,24 +6,26 @@ package org.eclipse.team.internal.ccvs.core.commands;
  */
 
 import java.io.PrintStream;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
 import org.eclipse.team.internal.ccvs.core.requests.RequestSender;
+import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
 import org.eclipse.team.internal.ccvs.core.response.ResponseDispatcher;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 /** 
  * Class that acctually runs the commands that come form the 
- * "command-line"
+ * "command-line". It searches the command and runs it with the
+ * rest of the parameters.
  * 
  * @see CommandExecuter#execute(String command, IConnection, String[], String[], ICvsResource, OutputStream)
  */
 public class CommandDispatcher {
 	
-	private Hashtable commandPool;
+	private Map commandPool;
 
 	private ResponseDispatcher responseDispatcher;
 	private RequestSender requestSender;
@@ -38,7 +40,7 @@ public class CommandDispatcher {
 	public CommandDispatcher(ResponseDispatcher responseDispatcher,
 							RequestSender requestSender) {
 
-		commandPool = new Hashtable();
+		commandPool = new HashMap();
 		
 		registerCommand(new Update(responseDispatcher,requestSender));
 		registerCommand(new Checkout(responseDispatcher,requestSender));

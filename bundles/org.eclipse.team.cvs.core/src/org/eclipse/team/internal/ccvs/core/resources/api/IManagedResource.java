@@ -14,7 +14,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
  * It also provides a list of resources within every folder, that is 
  * independend of underlign file-system
  */
-public interface IManagedResource extends Comparable {
+public interface IManagedResource {
 	
 	/**
 	 * Do we save the properties after every set

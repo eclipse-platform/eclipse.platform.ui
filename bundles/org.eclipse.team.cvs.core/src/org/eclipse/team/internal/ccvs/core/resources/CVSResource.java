@@ -39,7 +39,14 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
  * @see ICVSFile
  * @see ICVSResource
  */
-abstract class CVSResource implements ICVSResource, Comparable {
+abstract class CVSResource implements ICVSResource {
+
+	public static final boolean CACHING = true;
+
+	// If we do not extend the key and therefore the key is the same like
+	// the absolut pathname we have indirectly an reference to the key in
+	// the weak hashmap. Therefore the WeakHashMap does not finalize anything
+	static final String KEY_EXTENTION = "KEY";
 
 	public static final String PLATFORM_NEWLINE = System.getProperty("line.separator");
 
@@ -169,20 +176,6 @@ abstract class CVSResource implements ICVSResource, Comparable {
 		
 		if (!exists()) {
 			throw new CVSFileNotFoundException(ioResource + " not found");
-		}
-	}
-	
-	/**
-	 * Comparing for the work with the sets,
-	 * 
-	 * The coparison is done by the paths.
-	 */
-	public int compareTo(Object obj) {
-		
-		if (!(obj instanceof CVSResource)) {
-			return -1;
-		} else {
-			return getPath().compareTo(((CVSResource)obj).getPath());
 		}
 	}
 
