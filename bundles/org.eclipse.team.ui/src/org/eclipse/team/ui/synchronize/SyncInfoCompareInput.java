@@ -96,7 +96,8 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 		// Add a dispose listener to the created control so that we can use this
 		// to de-register our resource change listener.
 		final Control control = super.createContents(parent);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
+		// See bug 66349
+		//ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 		timestamp = resource.getLocalTimeStamp();
 		control.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
@@ -149,7 +150,7 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 				UIJob job = new UIJob("") { //$NON-NLS-1$
 					public IStatus runInUIThread(IProgressMonitor monitor) {
 						if (!isSaveNeeded()) {
-							updateNode();
+							//updateNode();
 						}
 						return Status.OK_STATUS;
 					}
@@ -161,7 +162,8 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 	}
 	
 	private void dispose() {
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+		// See bug 66349
+		//ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
 	
 	/*
@@ -249,6 +251,7 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 			node.fireChange();
 			setDirty(false);
 			isSaving = false;
+			timestamp = resource.getLocalTimeStamp();
 		}
 	}
 
@@ -256,28 +259,27 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 		long newTimestamp = resource.getLocalTimeStamp();
 		if(newTimestamp != timestamp) {
 			final MessageDialog dialog = 
-				new MessageDialog(TeamUIPlugin.getStandardDisplay().getActiveShell(), Policy.bind("SyncInfoCompareInput.0"), null, Policy.bind("SyncInfoCompareInput.1"), MessageDialog.QUESTION, //$NON-NLS-1$ //$NON-NLS-2$
+				new MessageDialog(TeamUIPlugin.getStandardDisplay().getActiveShell(), 
+						Policy.bind("SyncInfoCompareInput.0"),  //$NON-NLS-1$
+						null, 
+						Policy.bind("SyncInfoCompareInput.1"),  //$NON-NLS-1$
+						MessageDialog.QUESTION,
 					new String[] {
 						Policy.bind("SyncInfoCompareInput.2"), //$NON-NLS-1$
-						Policy.bind("SyncInfoCompareInput.3"), //$NON-NLS-1$
 						IDialogConstants.CANCEL_LABEL}, 
 					0);
 			
 			int retval = dialog.open();
 			switch(retval) {
-				// load
-				case 1: updateNode();
-							 // fall through
-				case 2:
+				// save
+				case 0: 
+					return false;
+				// cancel
+				case 1:
 					return true;
 			}
 		}
 		return false;
-	}
-	
-	private void updateNode() {
-		node.update(node.getSyncInfo());
-		timestamp = resource.getLocalTimeStamp();
 	}
 	
 	private static void commit(IProgressMonitor pm, DiffNode node) throws CoreException {
