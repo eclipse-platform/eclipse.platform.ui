@@ -841,6 +841,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 			public void run() {
 				getButton(IDialogConstants.OK_ID).setEnabled(false);
 				errorOccurred = false;
+				boolean hasFailedOK = false;
 				try {
 					// Notify all the pages and give them a chance to abort
 					Iterator nodes = preferenceManager.getElements(PreferenceManager.PRE_ORDER)
@@ -849,18 +850,24 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 						IPreferenceNode node = (IPreferenceNode) nodes.next();
 						IPreferencePage page = node.getPage();
 						if (page != null) {
-							if (!page.performOk())
+							if (!page.performOk()){
+								hasFailedOK = true;
 								return;
+							}
 						}
 					}
 				} catch (Exception e) {
 					handleException(e);
 				} finally {
-					// Give subclasses the choice to save the state of the
-					// preference pages.
+					//Don't bother closing if the OK failed
+					if(hasFailedOK)
+						return;
+					
 					if (!errorOccurred)
+						 //Give subclasses the choice to save the state of the
+					    //preference pages.
 						handleSave();
-					// Need to restore state
+					
 					close();
 				}
 			}
