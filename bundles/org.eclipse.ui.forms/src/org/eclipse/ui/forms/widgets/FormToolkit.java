@@ -354,6 +354,17 @@ public class FormToolkit {
 		composite.setMenu(composite.getParent().getMenu());
 	}
 	/**
+	 * A helper method that ensures the provided control is visible
+	 * when ScrolledComposite is somewhere in the parent chain. If 
+	 * scroll bars are visible and the control is clipped,
+	 * the client of the scrolled composite will be scrolled
+	 * to reveal the control.
+	 * @param c the control to reveal
+	 */
+	public static void ensureVisible(Control c) {
+		FormUtil.ensureVisible(c);
+	}
+	/**
 	 * Creates a section as a part of the form.
 	 * 
 	 * @param parent
