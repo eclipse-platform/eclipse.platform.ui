@@ -85,7 +85,9 @@ public class PresentationUtil {
 			if (l != null) {
 				c.setCapture(true);
 				l.handleEvent(de);
-				c.setCapture(false);
+				if (!c.isDisposed()) {
+					c.setCapture(false);
+				}
 			}
 		}
 	}	
