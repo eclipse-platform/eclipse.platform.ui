@@ -1,9 +1,15 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0 which
+ * accompanies this distribution, and is available at http://www.eclipse.
+ * org/legal/cpl-v10.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ ************************************************************************/
 package org.eclipse.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -199,11 +205,10 @@ List pruneResources(List resourceCollection) {
 	// Try the project prerequisite order then
 	IProject[] projects = new IProject[resourceCollection.size()];
 	projects = (IProject[]) resourceCollection.toArray(projects);
-	IProject[][] prereqs = ResourcesPlugin.getWorkspace().computePrerequisiteOrder(projects);
-	ArrayList ordered = new ArrayList();
-	ordered.addAll(Arrays.asList(prereqs[0]));
-	ordered.addAll(Arrays.asList(prereqs[1]));
-	return ordered;
+	IWorkspace.ProjectOrder po = ResourcesPlugin.getWorkspace().computeProjectOrder(projects);
+	ArrayList orderedProjects = new ArrayList();
+	orderedProjects.addAll(Arrays.asList(po.projects));
+	return orderedProjects;
 }
 /* (non-Javadoc)
  * Method declared on IAction; overrides method on WorkspaceAction.

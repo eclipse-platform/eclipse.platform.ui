@@ -1,14 +1,14 @@
-package org.eclipse.ui.internal.dialogs;
-
 /**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
-All rights reserved.   This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
- 
-Contributors:
-**********************************************************************/
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0 which
+ * accompanies this distribution, and is available at http://www.eclipse.
+ * org/legal/cpl-v10.html
+ * 
+ * Contributors: 
+ * IBM - Initial implementation
+ ***********************************************************************/
+package org.eclipse.ui.internal.dialogs;
 
 import java.util.TreeSet;
 
@@ -355,20 +355,15 @@ private String[] getCurrentBuildOrder() {
 private String[] getDefaultProjectOrder() {
 	if (defaultBuildOrder == null) {
 		IWorkspace workspace = getWorkspace();
-		IProject[][] projectOrder =
-			getWorkspace().computePrerequisiteOrder(workspace.getRoot().getProjects());
-
-		IProject[] foundProjects = projectOrder[0];
-		IProject[] ambiguousProjects = projectOrder[1];
-
-		defaultBuildOrder =
-			new String[foundProjects.length + ambiguousProjects.length];
+		IWorkspace.ProjectOrder projectOrder =
+			getWorkspace().computeProjectOrder(workspace.getRoot().getProjects());
+		IProject[] foundProjects = projectOrder.projects;
+		defaultBuildOrder = new String[foundProjects.length];
 		int foundSize = foundProjects.length;
-		for (int i = 0; i < foundSize; i++)
+		for (int i = 0; i < foundSize; i++) {
 			defaultBuildOrder[i] = foundProjects[i].getName();
+		}
 		markedItemsStartIndex = foundSize;
-		for (int i = 0; i < ambiguousProjects.length; i++)
-			defaultBuildOrder[i + foundSize] = MARKER + ambiguousProjects[i].getName();
 	}
 	
 	return defaultBuildOrder;
