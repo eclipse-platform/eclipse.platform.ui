@@ -55,7 +55,7 @@ import org.eclipse.ui.internal.misc.UIStats;
  * and editor panes.
  */
 public abstract class PartPane extends LayoutPart
-	implements Listener, IWorkbenchDragSource
+	implements Listener
 {
 	public static final String PROP_ZOOMED = "zoomed"; //$NON-NLS-1$
 	private boolean isZoomed = false;
