@@ -44,11 +44,11 @@ public class ExpressionTests extends TestCase {
 	}
 	
 	public void testEscape() throws Exception {
-		assertEquals("Str'ing", Expressions.unEscapeString("Str''ing"));
-		assertEquals("'", Expressions.unEscapeString("''"));
+		assertEquals("Str'ing", Expressions.unEscapeString("Str''ing")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("'", Expressions.unEscapeString("''")); //$NON-NLS-1$ //$NON-NLS-2$
 		boolean caught= false;
 		try {
-			Expressions.unEscapeString("'");
+			Expressions.unEscapeString("'"); //$NON-NLS-1$
 		} catch (CoreException e) {
 			caught= true;
 		}
@@ -57,74 +57,74 @@ public class ExpressionTests extends TestCase {
 	
 	public void testArgumentConversion() throws Exception {
 		assertNull(Expressions.convertArgument(null));
-		assertEquals("", Expressions.convertArgument(""));
-		assertEquals("", Expressions.convertArgument("''"));
-		assertEquals("eclipse", Expressions.convertArgument("eclipse"));
-		assertEquals("e'clips'e", Expressions.convertArgument("e'clips'e"));
-		assertEquals("eclipse", Expressions.convertArgument("'eclipse'"));
-		assertEquals("'ecl'ipse'", Expressions.convertArgument("'''ecl''ipse'''"));
-		assertEquals("true", Expressions.convertArgument("'true'"));
-		assertEquals("1.7", Expressions.convertArgument("'1.7'"));
-		assertEquals("007", Expressions.convertArgument("'007'"));
-		assertEquals(Boolean.TRUE, Expressions.convertArgument("true"));
-		assertEquals(Boolean.FALSE, Expressions.convertArgument("false"));
-		assertEquals(new Integer(100), Expressions.convertArgument("100"));
-		assertEquals(new Float(1.7f), Expressions.convertArgument("1.7"));
+		assertEquals("", Expressions.convertArgument("")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("", Expressions.convertArgument("''")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("eclipse", Expressions.convertArgument("eclipse")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("e'clips'e", Expressions.convertArgument("e'clips'e")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("eclipse", Expressions.convertArgument("'eclipse'")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("'ecl'ipse'", Expressions.convertArgument("'''ecl''ipse'''")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("true", Expressions.convertArgument("'true'")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("1.7", Expressions.convertArgument("'1.7'")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("007", Expressions.convertArgument("'007'")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals(Boolean.TRUE, Expressions.convertArgument("true")); //$NON-NLS-1$
+		assertEquals(Boolean.FALSE, Expressions.convertArgument("false")); //$NON-NLS-1$
+		assertEquals(new Integer(100), Expressions.convertArgument("100")); //$NON-NLS-1$
+		assertEquals(new Float(1.7f), Expressions.convertArgument("1.7")); //$NON-NLS-1$
 	}
 	
 	public void testArgumentParsing() throws Exception {
 		Object[] result= null;
 		
-		result= Expressions.parseArguments("");
-		assertEquals("", result[0]);
+		result= Expressions.parseArguments(""); //$NON-NLS-1$
+		assertEquals("", result[0]); //$NON-NLS-1$
 		
-		result= Expressions.parseArguments("s1");
-		assertEquals("s1", result[0]);
+		result= Expressions.parseArguments("s1"); //$NON-NLS-1$
+		assertEquals("s1", result[0]); //$NON-NLS-1$
 		
-		result= Expressions.parseArguments(" s1 ");
-		assertEquals("s1", result[0]);
+		result= Expressions.parseArguments(" s1 "); //$NON-NLS-1$
+		assertEquals("s1", result[0]); //$NON-NLS-1$
 		
-		result= Expressions.parseArguments("s1,s2");
-		assertEquals("s1", result[0]);
-		assertEquals("s2", result[1]);
+		result= Expressions.parseArguments("s1,s2"); //$NON-NLS-1$
+		assertEquals("s1", result[0]); //$NON-NLS-1$
+		assertEquals("s2", result[1]); //$NON-NLS-1$
 		
-		result= Expressions.parseArguments(" s1 , s2 ");
-		assertEquals("s1", result[0]);
-		assertEquals("s2", result[1]);
+		result= Expressions.parseArguments(" s1 , s2 "); //$NON-NLS-1$
+		assertEquals("s1", result[0]); //$NON-NLS-1$
+		assertEquals("s2", result[1]); //$NON-NLS-1$
 		
-		result= Expressions.parseArguments("' s1 ',' s2 '");
-		assertEquals(" s1 ", result[0]);
-		assertEquals(" s2 ", result[1]);
+		result= Expressions.parseArguments("' s1 ',' s2 '"); //$NON-NLS-1$
+		assertEquals(" s1 ", result[0]); //$NON-NLS-1$
+		assertEquals(" s2 ", result[1]); //$NON-NLS-1$
 		
-		result= Expressions.parseArguments(" s1 , ' s2 '");
-		assertEquals("s1", result[0]);
-		assertEquals(" s2 ", result[1]);
+		result= Expressions.parseArguments(" s1 , ' s2 '"); //$NON-NLS-1$
+		assertEquals("s1", result[0]); //$NON-NLS-1$
+		assertEquals(" s2 ", result[1]); //$NON-NLS-1$
 		
-		result= Expressions.parseArguments("' s1 ', s2 ");
-		assertEquals(" s1 ", result[0]);
-		assertEquals("s2", result[1]);
+		result= Expressions.parseArguments("' s1 ', s2 "); //$NON-NLS-1$
+		assertEquals(" s1 ", result[0]); //$NON-NLS-1$
+		assertEquals("s2", result[1]); //$NON-NLS-1$
 		
-		result= Expressions.parseArguments("''''");
-		assertEquals("'", result[0]);
+		result= Expressions.parseArguments("''''"); //$NON-NLS-1$
+		assertEquals("'", result[0]); //$NON-NLS-1$
 		
-		result= Expressions.parseArguments("''',''',','");
-		assertEquals("','", result[0]);		
-		assertEquals(",", result[1]);
+		result= Expressions.parseArguments("''',''',','"); //$NON-NLS-1$
+		assertEquals("','", result[0]);		 //$NON-NLS-1$
+		assertEquals(",", result[1]); //$NON-NLS-1$
 		
-		result= Expressions.parseArguments("' s1 ', true ");
-		assertEquals(" s1 ", result[0]);
+		result= Expressions.parseArguments("' s1 ', true "); //$NON-NLS-1$
+		assertEquals(" s1 ", result[0]); //$NON-NLS-1$
 		assertEquals(Boolean.TRUE, result[1]);
 		
 		boolean caught= false;
 		try {
-			Expressions.parseArguments("' s1");
+			Expressions.parseArguments("' s1"); //$NON-NLS-1$
 		} catch (CoreException e) {
 			caught= true;
 		}
 		assertTrue(caught);
 		caught= false;
 		try {
-			Expressions.parseArguments("'''s1");
+			Expressions.parseArguments("'''s1"); //$NON-NLS-1$
 		} catch (CoreException e) {
 			caught= true;
 		}
@@ -132,27 +132,27 @@ public class ExpressionTests extends TestCase {
 	}
 	
 	public void testSystemProperty() throws Exception {
-		SystemTestExpression expression= new SystemTestExpression("os.name", System.getProperty("os.name"));
+		SystemTestExpression expression= new SystemTestExpression("os.name", System.getProperty("os.name")); //$NON-NLS-1$ //$NON-NLS-2$
 		EvaluationResult result= expression.evaluate(new EvaluationContext(null, new Object()));
 		assertTrue(result == EvaluationResult.TRUE);
 	}
 	
 	public void testAdaptExpression() throws Exception {
-		AdaptExpression expression= new AdaptExpression("org.eclipse.core.internal.expressions.tests.Adapter");
-		expression.add(new InstanceofExpression("org.eclipse.core.internal.expressions.tests.Adapter"));
+		AdaptExpression expression= new AdaptExpression("org.eclipse.core.internal.expressions.tests.Adapter"); //$NON-NLS-1$
+		expression.add(new InstanceofExpression("org.eclipse.core.internal.expressions.tests.Adapter")); //$NON-NLS-1$
 		EvaluationResult result= expression.evaluate(new EvaluationContext(null, new Adaptee()));
 		assertTrue(result == EvaluationResult.TRUE);
 	}
 	
 	public void testAdaptExpressionFail() throws Exception {
-		AdaptExpression expression= new AdaptExpression("org.eclipse.core.internal.expressions.tests.NotExisting");
+		AdaptExpression expression= new AdaptExpression("org.eclipse.core.internal.expressions.tests.NotExisting"); //$NON-NLS-1$
 		EvaluationResult result= expression.evaluate(new EvaluationContext(null, new Adaptee()));
 		assertTrue(result == EvaluationResult.FALSE);
 	}
 	
 	public void testAdaptExpressionFail2() throws Exception {
-		AdaptExpression expression= new AdaptExpression("org.eclipse.core.internal.expressions.tests.Adapter");
-		expression.add(new InstanceofExpression("org.eclipse.core.internal.expressions.tests.NotExisting"));
+		AdaptExpression expression= new AdaptExpression("org.eclipse.core.internal.expressions.tests.Adapter"); //$NON-NLS-1$
+		expression.add(new InstanceofExpression("org.eclipse.core.internal.expressions.tests.NotExisting")); //$NON-NLS-1$
 		EvaluationResult result= expression.evaluate(new EvaluationContext(null, new Adaptee()));
 		assertTrue(result == EvaluationResult.FALSE);
 	}
@@ -161,125 +161,125 @@ public class ExpressionTests extends TestCase {
 		final Object result= new Object();
 		IVariableResolver resolver= new IVariableResolver() {
 			public Object resolve(String name, Object[] args) throws CoreException {
-				assertEquals("variable", name);
-				assertEquals("arg1", args[0]);
+				assertEquals("variable", name); //$NON-NLS-1$
+				assertEquals("arg1", args[0]); //$NON-NLS-1$
 				assertEquals(Boolean.TRUE, args[1]);
 				return result;
 			}
 		};
 		EvaluationContext context= new EvaluationContext(null, new Object(), new IVariableResolver[] { resolver });
-		assertTrue(result == context.resolveVariable("variable", new Object[] {"arg1", Boolean.TRUE}));
+		assertTrue(result == context.resolveVariable("variable", new Object[] {"arg1", Boolean.TRUE})); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public void testEqualsExpression() throws Exception {
-		EqualsExpression exp= new EqualsExpression("name");
-		EvaluationContext context= new EvaluationContext(null, "name");
+		EqualsExpression exp= new EqualsExpression("name"); //$NON-NLS-1$
+		EvaluationContext context= new EvaluationContext(null, "name"); //$NON-NLS-1$
 		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
 		
 		exp= new EqualsExpression(Boolean.TRUE);
 		context= new EvaluationContext(null, Boolean.TRUE);
 		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));		
 		
-		exp= new EqualsExpression("name");
+		exp= new EqualsExpression("name"); //$NON-NLS-1$
 		context= new EvaluationContext(null, Boolean.TRUE);
 		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));		
 	}
 	
 	public void testCountExpressionAnyNumber() throws Exception {
-		CountExpression exp= new CountExpression("*");
+		CountExpression exp= new CountExpression("*"); //$NON-NLS-1$
 		
 		List list= new ArrayList();
 		EvaluationContext context= new EvaluationContext(null, list);
 		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
 		
 		list.clear();
-		list.add("one");
+		list.add("one"); //$NON-NLS-1$
 		context= new EvaluationContext(null, list);
 		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
 		
 		list.clear();
-		list.add("one");
-		list.add("two");
-		list.add("three");
+		list.add("one"); //$NON-NLS-1$
+		list.add("two"); //$NON-NLS-1$
+		list.add("three"); //$NON-NLS-1$
 		context= new EvaluationContext(null, list);
 		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
 	}
 	
 	public void testCountExpressionExact() throws Exception {
-		CountExpression exp= new CountExpression("2");
+		CountExpression exp= new CountExpression("2"); //$NON-NLS-1$
 		
 		List list= new ArrayList();
-		list.add("one");
+		list.add("one"); //$NON-NLS-1$
 		EvaluationContext context= new EvaluationContext(null, list);
 		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
 		
 		list.clear();
-		list.add("one");
-		list.add("two");
+		list.add("one"); //$NON-NLS-1$
+		list.add("two"); //$NON-NLS-1$
 		context= new EvaluationContext(null, list);
 		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
 		
 		list.clear();
-		list.add("one");
-		list.add("two");
-		list.add("three");
+		list.add("one"); //$NON-NLS-1$
+		list.add("two"); //$NON-NLS-1$
+		list.add("three"); //$NON-NLS-1$
 		context= new EvaluationContext(null, list);
 		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
 	}
 	
 	public void testCountExpressionNoneOrOne() throws Exception {
-		CountExpression exp= new CountExpression("?");
+		CountExpression exp= new CountExpression("?"); //$NON-NLS-1$
 		
 		List list= new ArrayList();
 		EvaluationContext context= new EvaluationContext(null, list);
 		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
 		
 		list.clear();
-		list.add("one");
+		list.add("one"); //$NON-NLS-1$
 		context= new EvaluationContext(null, list);
 		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
 		
 		list.clear();
-		list.add("one");
-		list.add("two");
+		list.add("one"); //$NON-NLS-1$
+		list.add("two"); //$NON-NLS-1$
 		context= new EvaluationContext(null, list);
 		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
 	}
 	
 	public void testCountExpressionOneOrMore() throws Exception {
-		CountExpression exp= new CountExpression("+");
+		CountExpression exp= new CountExpression("+"); //$NON-NLS-1$
 		
 		List list= new ArrayList();
 		EvaluationContext context= new EvaluationContext(null, list);
 		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
 		
 		list.clear();
-		list.add("one");
+		list.add("one"); //$NON-NLS-1$
 		context= new EvaluationContext(null, list);
 		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
 		
 		list.clear();
-		list.add("one");
-		list.add("two");
+		list.add("one"); //$NON-NLS-1$
+		list.add("two"); //$NON-NLS-1$
 		context= new EvaluationContext(null, list);
 		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
 	}
 	
 	public void testCountExpressionNone() throws Exception {
-		CountExpression exp= new CountExpression("!");
+		CountExpression exp= new CountExpression("!"); //$NON-NLS-1$
 		
 		List list= new ArrayList();
 		EvaluationContext context= new EvaluationContext(null, list);
 		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
 		
 		list.clear();
-		list.add("one");
+		list.add("one"); //$NON-NLS-1$
 		context= new EvaluationContext(null, list);
 		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
 		
 		list.clear();
-		list.add("one");
-		list.add("two");
+		list.add("one"); //$NON-NLS-1$
+		list.add("two"); //$NON-NLS-1$
 		context= new EvaluationContext(null, list);
 		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
 	}
@@ -288,13 +288,13 @@ public class ExpressionTests extends TestCase {
 		B b= new B();
 		EvaluationContext context= new EvaluationContext(null, b);
 		
-		InstanceofExpression exp= new InstanceofExpression("org.eclipse.core.internal.expressions.tests.B");
+		InstanceofExpression exp= new InstanceofExpression("org.eclipse.core.internal.expressions.tests.B"); //$NON-NLS-1$
 		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
 
-		exp= new InstanceofExpression("org.eclipse.core.internal.expressions.tests.A");
+		exp= new InstanceofExpression("org.eclipse.core.internal.expressions.tests.A"); //$NON-NLS-1$
 		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
 		
-		exp= new InstanceofExpression("org.eclipse.core.internal.expressions.tests.I");
+		exp= new InstanceofExpression("org.eclipse.core.internal.expressions.tests.I"); //$NON-NLS-1$
 		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
 	}
 	
@@ -302,7 +302,7 @@ public class ExpressionTests extends TestCase {
 		A a= new A();
 		EvaluationContext context= new EvaluationContext(null, a);
 		
-		InstanceofExpression exp= new InstanceofExpression("org.eclipse.core.internal.expressions.tests.B");
+		InstanceofExpression exp= new InstanceofExpression("org.eclipse.core.internal.expressions.tests.B"); //$NON-NLS-1$
 		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
 	}
 	
@@ -314,11 +314,11 @@ public class ExpressionTests extends TestCase {
 				return EvaluationResult.TRUE;
 			}
 		};
-		IterateExpression exp= new IterateExpression("and");
+		IterateExpression exp= new IterateExpression("and"); //$NON-NLS-1$
 		exp.add(myExpression);
 		List input= new ArrayList();
-		input.add("one");
-		input.add("two");
+		input.add("one"); //$NON-NLS-1$
+		input.add("two"); //$NON-NLS-1$
 		EvaluationContext context= new EvaluationContext(null, input);
 		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
 		assertTrue(result.equals(input));
@@ -332,14 +332,14 @@ public class ExpressionTests extends TestCase {
 				return EvaluationResult.FALSE;
 			}
 		};
-		IterateExpression exp= new IterateExpression("and");
+		IterateExpression exp= new IterateExpression("and"); //$NON-NLS-1$
 		exp.add(myExpression);
 		List input= new ArrayList();
-		input.add("one");
-		input.add("two");
+		input.add("one"); //$NON-NLS-1$
+		input.add("two"); //$NON-NLS-1$
 		EvaluationContext context= new EvaluationContext(null, input);
 		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
-		assertTrue(result.size() == 1 && result.get(0).equals("one"));
+		assertTrue(result.size() == 1 && result.get(0).equals("one")); //$NON-NLS-1$
 	}
 	
 	public void testIterateExpressionOrTrue() throws Exception {
@@ -350,14 +350,14 @@ public class ExpressionTests extends TestCase {
 				return EvaluationResult.TRUE;
 			}
 		};
-		IterateExpression exp= new IterateExpression("or");
+		IterateExpression exp= new IterateExpression("or"); //$NON-NLS-1$
 		exp.add(myExpression);
 		List input= new ArrayList();
-		input.add("one");
-		input.add("two");
+		input.add("one"); //$NON-NLS-1$
+		input.add("two"); //$NON-NLS-1$
 		EvaluationContext context= new EvaluationContext(null, input);
 		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
-		assertTrue(result.size() == 1 && result.get(0).equals("one"));
+		assertTrue(result.size() == 1 && result.get(0).equals("one")); //$NON-NLS-1$
 	}
 	
 	public void testIterateExpressionOrFalse() throws Exception {
@@ -368,11 +368,11 @@ public class ExpressionTests extends TestCase {
 				return EvaluationResult.FALSE;
 			}
 		};
-		IterateExpression exp= new IterateExpression("or");
+		IterateExpression exp= new IterateExpression("or"); //$NON-NLS-1$
 		exp.add(myExpression);
 		List input= new ArrayList();
-		input.add("one");
-		input.add("two");
+		input.add("one"); //$NON-NLS-1$
+		input.add("two"); //$NON-NLS-1$
 		EvaluationContext context= new EvaluationContext(null, input);
 		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
 		assertTrue(result.equals(input));
@@ -380,16 +380,16 @@ public class ExpressionTests extends TestCase {
 	
 	public void testReadXMLExpression() throws Exception {
 		IExtensionRegistry registry= Platform.getExtensionRegistry();
-		IConfigurationElement[] ces= registry.getConfigurationElementsFor("org.eclipse.core.expressions.tests", "testParticipants");
+		IConfigurationElement[] ces= registry.getConfigurationElementsFor("org.eclipse.core.expressions.tests", "testParticipants"); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		IConfigurationElement enable= findExtension(ces, "test1").getChildren("enablement")[0];
+		IConfigurationElement enable= findExtension(ces, "test1").getChildren("enablement")[0]; //$NON-NLS-1$ //$NON-NLS-2$
 		Expression exp= ExpressionConverter.getDefault().perform(enable);
 		ref(exp);
 	}
 
 	private IConfigurationElement findExtension(IConfigurationElement[] ces, String id) {
 		for (int i= 0; i < ces.length; i++) {
-			if (id.equals(ces[i].getAttribute("id")))
+			if (id.equals(ces[i].getAttribute("id"))) //$NON-NLS-1$
 				return ces[i];
 		}
 		return null;

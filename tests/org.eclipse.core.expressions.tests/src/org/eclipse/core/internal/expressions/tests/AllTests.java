@@ -16,7 +16,7 @@ import junit.framework.TestSuite;
 public class AllTests {
 	
 	public static Test suite() {
-		TestSuite suite= new TestSuite("All Expression Language Tests");
+		TestSuite suite= new TestSuite("All Expression Language Tests"); //$NON-NLS-1$
 		suite.addTest(PropertyTesterTests.suite());
 		suite.addTest(ExpressionTests.suite());
 		return suite;
