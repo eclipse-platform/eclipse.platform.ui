@@ -18,8 +18,6 @@ public abstract class AbstractRemoveActionDelegate extends AbstractListenerActio
 	public void init(IViewPart view) {
 		setView(view);
 		setWindow(view.getViewSite().getWorkbenchWindow());
-		getPage().addPartListener(this);
-		getPage().getWorkbenchWindow().addPageListener(this);
 	}
 	
 	/**
