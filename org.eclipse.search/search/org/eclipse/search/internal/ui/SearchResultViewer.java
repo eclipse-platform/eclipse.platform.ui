@@ -54,6 +54,7 @@ class SearchResultViewer extends TableViewer {
 	private GotoMarkerAction fGotoMarkerAction;
 	private SearchAgainAction fSearchAgainAction;
 	private RemoveAllSearchesAction fRemoveAllSearchesAction;
+	private RemoveMatchAction fRemoveMatchAction;
 	private SortDropDownAction fSortDropDownAction;
 	private SearchDropDownAction fSearchDropDownAction;
 	private int fMarkerToShow;
@@ -84,6 +85,8 @@ class SearchResultViewer extends TableViewer {
 		fShowPreviousResultAction.setEnabled(false);
 		fGotoMarkerAction= new GotoMarkerAction(this);
 		fGotoMarkerAction.setEnabled(false);
+		fRemoveMatchAction= new RemoveMatchAction(this);
+		fRemoveMatchAction.setEnabled(false);
 		fRemoveAllSearchesAction= new RemoveAllSearchesAction();
 		fSearchAgainAction= new SearchAgainAction();
 		fSearchAgainAction.setEnabled(hasSearch);
@@ -102,6 +105,7 @@ class SearchResultViewer extends TableViewer {
 					fShowNextResultAction.setEnabled(hasSingleSelection || (hasElements && selectionCount == 0));
 					fShowPreviousResultAction.setEnabled(hasSingleSelection || (hasElements && selectionCount == 0));
 					fGotoMarkerAction.setEnabled(hasSingleSelection);
+					fRemoveMatchAction.setEnabled(hasSingleSelection);
 					fMarkerToShow= -1;
 					String location= "";
 					if (hasSingleSelection) {
@@ -145,6 +149,8 @@ class SearchResultViewer extends TableViewer {
 			fSearchDropDownAction.setEnabled(state);
 		if (fGotoMarkerAction.isEnabled())
 			fGotoMarkerAction.setEnabled(false);
+		if (fRemoveMatchAction.isEnabled())
+			fRemoveMatchAction.setEnabled(false);			
 		if (state != fSearchAgainAction.isEnabled())
 			fSearchAgainAction.setEnabled(state);
 	}
@@ -175,7 +181,7 @@ class SearchResultViewer extends TableViewer {
 		if (! getSelection().isEmpty()) {
 			menu.add(new GotoMarkerAction(this));
 			if (getSelectedMarkerCount() == 1)
-				menu.add(new RemoveMatchAction(this));
+				menu.add(fRemoveMatchAction);
 			menu.add(new RemoveResultAction(this));
 			menu.add(new Separator());
 		}
@@ -211,6 +217,7 @@ class SearchResultViewer extends TableViewer {
 		tbm.add(fShowNextResultAction);
 		tbm.add(fShowPreviousResultAction);
 		tbm.add(fGotoMarkerAction);
+		tbm.add(fRemoveMatchAction);
 		tbm.add(new Separator());
 		tbm.add(fRemoveAllSearchesAction);
 		tbm.add(fSearchDropDownAction);
