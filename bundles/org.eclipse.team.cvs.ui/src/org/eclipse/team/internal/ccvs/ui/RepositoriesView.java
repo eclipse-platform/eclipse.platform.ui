@@ -119,7 +119,7 @@ public class RepositoriesView extends ViewPart {
 				viewer.refresh();
 			}
 		};
-		refreshAction.setToolTipText(Policy.bind("RepositoriesView.refresh")); //$NON-NLS-1$
+		refreshAction.setToolTipText(Policy.bind("RepositoriesView.refreshTooltip")); //$NON-NLS-1$
 
 		// New Repository (popup)
 		final Action newAction = new Action(Policy.bind("RepositoriesView.new"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_NEWLOCATION)) { //$NON-NLS-1$
