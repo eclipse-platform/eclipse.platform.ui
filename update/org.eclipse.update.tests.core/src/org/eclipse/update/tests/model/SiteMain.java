@@ -25,7 +25,9 @@ public class SiteMain extends UpdateManagerTestCase {
 
 	public void testMain() throws Exception {
 		
-		PrintWriter w = new PrintWriter(System.out);
+		StringWriter strWriter=new StringWriter();
+		PrintWriter w = new PrintWriter(strWriter);
+
 		process("site_old_format.xml",w);
 		process("site.xml",w);
 		try {
@@ -34,6 +36,7 @@ public class SiteMain extends UpdateManagerTestCase {
 		} catch (InvalidSiteTypeException e) {
 			assertEquals(e.getNewType(),"some.other.site.type");
 		} finally {
+			System.out.println(strWriter);
 			w.close();
 		}
 	}

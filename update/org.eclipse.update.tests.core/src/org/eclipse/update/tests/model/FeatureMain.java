@@ -28,9 +28,8 @@ public class FeatureMain extends UpdateManagerTestCase {
 		FeatureModelFactory factory = new FeatureModelFactory();
 		InputStream is = null;
 		FeatureModel feature = null;
-		PrintWriter w = new PrintWriter(System.out);
 		
-		w.println("Parsing feature ...");
+		System.out.println("Parsing feature ...");
 		try {
 			is = FeatureMain.class.getResourceAsStream("feature.xml");		
 			feature = factory.parseFeature(is);
@@ -41,12 +40,10 @@ public class FeatureMain extends UpdateManagerTestCase {
 		}
 		
 		String base = "http://another.server/feature.xml";
-		w.println("Resolving feature using "+base+" ...");
+		System.out.println("Resolving feature using "+base+" ...");
 		ResourceBundle bundle = null;
 		bundle = ResourceBundle.getBundle("org/eclipse/update/tests/model/test");
 		feature.resolve(new URL(base), new URL(base));
-				
-		w.close();
 	}
 	
 	private static void writeFeature(PrintWriter w, int level, FeatureModel feature) {
