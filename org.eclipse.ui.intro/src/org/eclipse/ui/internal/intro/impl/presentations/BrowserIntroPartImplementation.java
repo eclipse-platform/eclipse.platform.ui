@@ -220,7 +220,7 @@ public class BrowserIntroPartImplementation extends
                         .getInst().createContentProvider(provider, site);
 
             if (providerClass != null) {
-                // create the specialized content
+                // create the specialized content, and remove content tag.
                 providerClass.createContent(provider.getId(),
                         (Element) contentProviderElement.getParentNode());
                 contentProviderElement.getParentNode().removeChild(
@@ -332,6 +332,7 @@ public class BrowserIntroPartImplementation extends
      * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#reflow()
      */
     public void reflow(IIntroContentProvider provider, boolean incremental) {
+        // getModel().getCurrentPage().
         updateContent();
     }
 
