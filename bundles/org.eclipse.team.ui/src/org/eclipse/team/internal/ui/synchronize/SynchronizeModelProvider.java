@@ -588,7 +588,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 			try {
 				String property = null;
 				if(! clear) {
-					IMarker[] markers = resource.findMarkers(IMarker.PROBLEM, true, getLogicalModelDepth());
+					IMarker[] markers = resource.findMarkers(IMarker.PROBLEM, true, getLogicalModelDepth(resource));
 					for (int i = 0; i < markers.length; i++) {
 						IMarker marker = markers[i];
 						try {
@@ -760,7 +760,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 		return element;
 	}
 	
-	protected int getLogicalModelDepth() {
+	protected int getLogicalModelDepth(IResource resource) {
 		return IResource.DEPTH_INFINITE;
 	}
 	

@@ -289,8 +289,12 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 		}
 	}
 	
-	protected int getLogicalModelDepth() {
-		return IResource.DEPTH_ONE;
+	protected int getLogicalModelDepth(IResource resource) {
+		if(resource.getType() == IResource.PROJECT) {
+			return IResource.DEPTH_INFINITE;
+		} else {
+			return IResource.DEPTH_ONE;
+		}
 	}
 	
 	private boolean isCompressedParentEmpty(IResource resource) {
