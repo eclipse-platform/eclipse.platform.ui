@@ -17,6 +17,16 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.ui.IService;
 
 /**
+ * <p>
+ * Provides services related to the command architecture within the workbench.
+ * This service can be used to access the set of commands and handlers.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>. The commands architecture is currently under
+ * development for Eclipse 3.1. This class -- its existence, its name and its
+ * methods -- are in flux. Do not use this class yet.
+ * </p>
+ * 
  * @since 3.1
  */
 public interface ICommandService extends IService {

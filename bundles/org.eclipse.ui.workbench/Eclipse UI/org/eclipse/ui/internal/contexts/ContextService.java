@@ -17,9 +17,19 @@ import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.ui.contexts.IContextService;
 
 /**
+ * <p>
+ * Provides services related to contexts in the Eclipse workbench. This provides
+ * access to contexts.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>. The commands architecture is currently under
+ * development for Eclipse 3.1. This class -- its existence, its name and its
+ * methods -- are in flux. Do not use this class yet.
+ * </p>
+ * 
  * @since 3.1
  */
-public class ContextService implements IContextService {
+public final class ContextService implements IContextService {
 
 	/**
 	 * The context manager that supports this service. This value is never
@@ -41,7 +51,7 @@ public class ContextService implements IContextService {
 		}
 		this.contextManager = contextManager;
 	}
-	
+
 	public final Context getContext(final String contextId) {
 		/*
 		 * TODO Need to put in place protection against the context being
@@ -50,10 +60,7 @@ public class ContextService implements IContextService {
 		return contextManager.getContext(contextId);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.contexts.IContextService#getDefinedContextIds()
-	 */
-	public Collection getDefinedContextIds() {
+	public final Collection getDefinedContextIds() {
 		return contextManager.getDefinedContextIds();
 	}
 }

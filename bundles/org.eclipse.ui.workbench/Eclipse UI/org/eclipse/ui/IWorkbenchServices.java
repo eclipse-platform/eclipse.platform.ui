@@ -11,13 +11,21 @@
 package org.eclipse.ui;
 
 /**
+ * <p>
  * The list of service types officially support by the workbench. While
  * third-party plug-ins can contribute additional services, this is the list of
  * service types that the workbench provides initial support for.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>. The commands architecture is currently under
+ * development for Eclipse 3.1. This class -- its existence, its name and its
+ * methods -- are in flux. Do not use this class yet.
+ * </p>
  * 
  * @since 3.1
  */
 public interface IWorkbenchServices {
+
 	/**
 	 * The service type that provides access to the current set of bindings.
 	 * This service can be used for querying the current state of the binding

@@ -20,9 +20,21 @@ import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.ui.keys.IBindingService;
 
 /**
+ * <p>
+ * Provides services related to the binding architecture (e.g., keyboard
+ * shortcuts) within the workbench. This service can be used to access the
+ * currently active bindings, as well as the current state of the binding
+ * architecture.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>. The commands architecture is currently under
+ * development for Eclipse 3.1. This class -- its existence, its name and its
+ * methods -- are in flux. Do not use this class yet.
+ * </p>
+ * 
  * @since 3.1
  */
-public class BindingService implements IBindingService {
+public final class BindingService implements IBindingService {
 
 	/**
 	 * The binding manager that supports this service. This value is never
@@ -49,31 +61,31 @@ public class BindingService implements IBindingService {
 		return bindingManager.getActiveBindingsFor(commandId);
 	}
 
-	public Scheme getActiveScheme() {
+	public final Scheme getActiveScheme() {
 		return bindingManager.getActiveScheme();
 	}
 
-	public Set getBindings() {
+	public final Set getBindings() {
 		return bindingManager.getBindings();
 	}
 
-	public Collection getDefinedSchemeIds() {
+	public final Collection getDefinedSchemeIds() {
 		return bindingManager.getDefinedSchemeIds();
 	}
 
-	public String getLocale() {
+	public final String getLocale() {
 		return bindingManager.getLocale();
 	}
 
-	public Map getPartialMatches(final TriggerSequence trigger) {
+	public final Map getPartialMatches(final TriggerSequence trigger) {
 		return bindingManager.getPartialMatches(trigger);
 	}
 
-	public String getPerfectMatch(final TriggerSequence trigger) {
+	public final String getPerfectMatch(final TriggerSequence trigger) {
 		return bindingManager.getPerfectMatch(trigger);
 	}
 
-	public String getPlatform() {
+	public final String getPlatform() {
 		return bindingManager.getPlatform();
 	}
 

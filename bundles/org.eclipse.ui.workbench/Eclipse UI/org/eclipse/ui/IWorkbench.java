@@ -168,21 +168,29 @@ public interface IWorkbench {
     public IPreferenceStore getPreferenceStore();
     
     /**
-     * Returns the service of the given type.  If the service does not currently
-     * exist for the workbench, then this returns <code>null</code>.
-     * 
-     * @param type The type of service to retrieve.  The services provided by the
-     * workbench are defined in <code>IWorkbenchServices</code>.
-     * 
-     * @return The given service, if available; <code>null</code> otherwise.
-     */
-    public IService getService(int type);
+	 * <p>
+	 * Returns the service of the given type. If the service does not currently
+	 * exist for the workbench, then this returns <code>null</code>.
+	 * </p>
+	 * <p>
+	 * <em>EXPERIMENTAL</em>. The commands architecture is currently under
+	 * development for Eclipse 3.1. This class -- its existence, its name and
+	 * its methods -- are in flux. Do not use this class yet.
+	 * </p>
+	 * 
+	 * @since 3.1
+	 * @param type
+	 *            The type of service to retrieve. The services provided by the
+	 *            workbench are defined in <code>IWorkbenchServices</code>.
+	 * @return The given service, if available; <code>null</code> otherwise.
+	 */
+	public IService getService(int type);
 
     /**
-     * Returns the shared images for the workbench.
-     * 
-     * @return the shared image manager
-     */
+	 * Returns the shared images for the workbench.
+	 * 
+	 * @return the shared image manager
+	 */
     public ISharedImages getSharedImages();
 
     /**

@@ -18,9 +18,19 @@ import org.eclipse.core.commands.CommandManager;
 import org.eclipse.ui.commands.ICommandService;
 
 /**
+ * <p>
+ * Provides services related to the command architecture within the workbench.
+ * This service can be used to access the set of commands and handlers.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>. The commands architecture is currently under
+ * development for Eclipse 3.1. This class -- its existence, its name and its
+ * methods -- are in flux. Do not use this class yet.
+ * </p>
+ * 
  * @since 3.1
  */
-public class CommandService implements ICommandService {
+public final class CommandService implements ICommandService {
 
 	/**
 	 * The command manager that supports this service. This value is never
@@ -43,12 +53,7 @@ public class CommandService implements ICommandService {
 		this.commandManager = commandManager;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.commands.ICommandService#getCategory(java.lang.String)
-	 */
-	public Category getCategory(String categoryId) {
+	public final Category getCategory(final String categoryId) {
 		/*
 		 * TODO Need to put in place protection against the category being
 		 * changed.
@@ -64,21 +69,11 @@ public class CommandService implements ICommandService {
 		return commandManager.getCommand(commandId);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.commands.ICommandService#getDefinedCategoryIds()
-	 */
-	public Collection getDefinedCategoryIds() {
+	public final Collection getDefinedCategoryIds() {
 		return commandManager.getDefinedCategoryIds();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.contexts.ICommandService#getDefinedCommandIds()
-	 */
-	public Collection getDefinedCommandIds() {
+	public final Collection getDefinedCommandIds() {
 		return commandManager.getDefinedCommandIds();
 	}
 }

@@ -20,9 +20,10 @@ import org.eclipse.ui.IService;
 
 /**
  * <p>
- * Provides services related to the binding (e.g., keyboard shortcuts) within
- * the workbench. This service can be used to access the currently active
- * bindings, as well as the current state of the binding architecture.
+ * Provides services related to the binding architecture (e.g., keyboard
+ * shortcuts) within the workbench. This service can be used to access the
+ * currently active bindings, as well as the current state of the binding
+ * architecture.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>. The commands architecture is currently under
