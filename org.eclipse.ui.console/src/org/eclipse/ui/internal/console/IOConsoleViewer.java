@@ -163,7 +163,7 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
      */
     public void lineGetStyle(LineStyleEvent event) {
         IDocument document = getDocument();
-        if (document.getLength() > 0){
+        if (document != null && document.getLength() > 0){
             IOConsolePartition[] partitions = (IOConsolePartition[]) document.getDocumentPartitioner().computePartitioning(event.lineOffset, event.lineText.length());
             StyleRange[] styles = new StyleRange[partitions.length];        
             for (int i = 0; i < partitions.length; i++) {                
