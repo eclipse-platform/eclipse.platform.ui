@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.resources;
 
 import java.util.*;
-
 import org.eclipse.core.internal.events.ILifecycleListener;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
@@ -523,14 +522,14 @@ public class AliasManager implements IManager, ILifecycleListener {
 			if (locationsMap.remove(location, linkedResource))
 				linkedResourceCount--;
 	}
-	/**
-	 * @see IManager#shutdown
+	/* (non-Javadoc)
+	 * @see IManager#shutdown(IProgressMonitor)
 	 */
 	public void shutdown(IProgressMonitor monitor) throws CoreException {
 	}
 	
-	/**
-	 * @see IManager#startup
+	/* (non-Javadoc)
+	 * @see IManager#startup(IProgressMonitor)
 	 */
 	public void startup(IProgressMonitor monitor) throws CoreException {
 		workspace.addLifecycleListener(this);
@@ -546,7 +545,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 	 * @param location the file system location of the resource (passed as a
 	 * parameter because in the project deletion case the resource is no longer
 	 * accessible at time of update).
-	 * @param whether to search for aliases on all children of the given
+	 * @param depth whether to search for aliases on all children of the given
 	 * resource.  Only depth ZERO and INFINITE are used.
 	 */
 	public void updateAliases(IResource resource, IPath location, int depth, IProgressMonitor monitor) throws CoreException {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.core.internal.resources;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.eclipse.core.internal.boot.PlatformURLConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
 import org.eclipse.core.internal.utils.Policy;
@@ -65,7 +64,8 @@ protected URL resolve() throws IOException {
 
 /**
  * This method is called during resource plugin startup() initialization.
- * @param url URL to the root of the current workspace.
+ * 
+ * @param root URL to the root of the current workspace.
  */
 public static void startup(IPath root) {
 	// register connection type for platform:/resource/ handling

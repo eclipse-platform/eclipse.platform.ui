@@ -29,20 +29,20 @@ protected WorkspaceRoot(IPath path, Workspace container) {
 	Assert.isTrue(path.equals(Path.ROOT));
 }
 /**
- * @see IResource
+ * @see IResource#clearHistory(IProgressMonitor)
  */
 public void clearHistory(IProgressMonitor monitor) throws CoreException {
 	getLocalManager().getHistoryStore().removeAll();
 }
 /**
- * @see IResource#delete
+ * @see IResource#delete(boolean, IProgressMonitor)
  */
 public void delete(boolean force, IProgressMonitor monitor) throws CoreException {
 	int updateFlags = force ? IResource.FORCE : IResource.NONE;
 	delete(updateFlags, monitor);
 }
 /**
- * @see IWorkspaceRoot#delete
+ * @see IWorkspaceRoot#delete(boolean, boolean, IProgressMonitor)
  */
 public void delete(boolean deleteContent, boolean force, IProgressMonitor monitor) throws CoreException {
 	int updateFlags = force ? IResource.FORCE : IResource.NONE;
@@ -53,31 +53,31 @@ public boolean exists(int flags, boolean checkType) {
 	return true;
 }
 /**
- * @see IWorkspaceRoot#findContainersForLocation
+ * @see IWorkspaceRoot#findContainersForLocation(IPath)
  */
 public IContainer[] findContainersForLocation(IPath location) {
 	return (IContainer[]) getLocalManager().allResourcesFor(location, false);
 }
 /**
- * @see IWorkspaceRoot#findFilesForLocation
+ * @see IWorkspaceRoot#findFilesForLocation(IPath)
  */
 public IFile[] findFilesForLocation(IPath location) {
 	return (IFile[])getLocalManager().allResourcesFor(location, true);
 }
 /**
- * @see IWorkspaceRoot
+ * @see IWorkspaceRoot#getContainerForLocation(IPath)
  */
 public IContainer getContainerForLocation(IPath location) {
 	return getLocalManager().containerForLocation(location);
 }
 /**
- * @see IContainer#getDefaultCharset
+ * @see IContainer#getDefaultCharset()
  */
 public String getDefaultCharset() {
 	return getDefaultCharset(true);
 }
 /**
- * @see IContainer#getDefaultCharset
+ * @see IContainer#getDefaultCharset(boolean)
  */
 public String getDefaultCharset(boolean checkImplicit) {
 	if (checkImplicit)
@@ -85,43 +85,43 @@ public String getDefaultCharset(boolean checkImplicit) {
 	return ResourcesPlugin.getPlugin().getPluginPreferences().getString(ResourcesPlugin.PREF_ENCODING);
 }
 /**
- * @see IWorkspaceRoot
+ * @see IWorkspaceRoot#getFileForLocation(IPath)
  */
 public IFile getFileForLocation(IPath location) {
 	return getLocalManager().fileForLocation(location);
 }
 /**
- * @see IResource
+ * @see IResource#getLocalTimeStamp()
  */
 public long getLocalTimeStamp() {
 	return IResource.NULL_STAMP;
 }
 /**
- * @see IResource#getLocation
+ * @see IResource#getLocation()
  */
 public IPath getLocation() {
 	return Platform.getLocation();
 }
 /**
- * @see IResource#getName
+ * @see IResource#getName()
  */
 public String getName() {
 	return ""; //$NON-NLS-1$
 }
 /**
- * @see IResource#getParent
+ * @see IResource#getParent()
  */
 public IContainer getParent() {
 	return null;
 }
 /**
- * @see IResource#getProject
+ * @see IResource#getProject()
  */
 public IProject getProject() {
 	return null;
 }
 /**
- * @see IResource#getProject
+ * @see IWorkspaceRoot#getProject(String)
  */
 public IProject getProject(String name) {
 	//first check our project cache
@@ -136,13 +136,13 @@ public IProject getProject(String name) {
 	return result;
 }
 /**
- * @see IResource#getProjectRelativePath
+ * @see IResource#getProjectRelativePath()
  */
 public IPath getProjectRelativePath() {
 	return Path.EMPTY;
 }
 /**
- * @see IWorkspaceRoot
+ * @see IWorkspaceRoot#getProjects()
  */
 public IProject[] getProjects() {
 	IResource[] roots = getChildren(Path.ROOT, false);
@@ -150,6 +150,9 @@ public IProject[] getProjects() {
 	System.arraycopy(roots, 0, result, 0, roots.length);
 	return result;
 }
+/**
+ * @see IResource#getType()
+ */
 public int getType() {
 	return IResource.ROOT;
 }
@@ -166,14 +169,14 @@ public void internalSetLocal(boolean flag, int depth) throws CoreException {
 		 ((Resource) children[i]).internalSetLocal(flag, depth);
 }
 /**
- * @see IResource#isLocal
+ * @see IResource#isLocal(int)
  */
 public boolean isLocal(int depth) {
 	// the flags parm is ignored for the workspace root so pass anything
 	return isLocal(-1, depth);
 }
 /**
- * @see IResource#isLocal
+ * @see IResource#isLocal(int)
  */
 public boolean isLocal(int flags, int depth) {
 	// don't check the flags....workspace root is always local
@@ -190,13 +193,13 @@ public boolean isLocal(int flags, int depth) {
 	return true;
 }
 /**
- * @see IResource#isPhantom
+ * @see IResource#isPhantom()
  */
 public boolean isPhantom() {
 	return false;
 }
 /**
- * @see IContainer#setDefaultCharset
+ * @see IContainer#setDefaultCharset(String)
  */
 public void setDefaultCharset(String charset) throws CoreException {
 	// directly change the Resource plugin's preference for encoding
@@ -207,7 +210,7 @@ public void setDefaultCharset(String charset) throws CoreException {
 	resourcesPreferences.setToDefault(ResourcesPlugin.PREF_ENCODING);
 }
 /**
- * @see IResource
+ * @see IResource#setLocalTimeStamp(long)
  */
 public long setLocalTimeStamp(long value) throws CoreException {
 	if (value < 0)
@@ -216,7 +219,7 @@ public long setLocalTimeStamp(long value) throws CoreException {
 	return value;
 }
 /**
- * @see IResource
+ * @see IResource#setReadOnly(boolean)
  */
 public void setReadOnly(boolean readonly) {
 	//can't set the root read only
@@ -229,7 +232,7 @@ public boolean synchronizing() {
 	return false;
 }
 /**
- * @see IResource#touch
+ * @see IResource#touch(IProgressMonitor)
  */
 public void touch(IProgressMonitor monitor) throws CoreException {
 	// do nothing for the workspace root

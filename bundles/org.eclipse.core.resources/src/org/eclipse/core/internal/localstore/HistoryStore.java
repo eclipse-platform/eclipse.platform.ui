@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,7 +97,7 @@ protected void accept(IPath path, IHistoryStoreVisitor visitor, boolean visitOnP
 /**
  * Adds state into history log.
  *
- * @param key Full workspace path to the resource being logged.
+ * @param path Full workspace path to the resource being logged.
  * @param uuid UUID for stored file contents.
  * @params lastModified Timestamp for rseource being logged.
  */
@@ -452,6 +452,7 @@ public void shutdown(IProgressMonitor monitor) {
 	store.close();
 }
 public void startup(IProgressMonitor monitor) {
+	// do nothing
 }
 protected void resetIndexedStore() {
 	store.reset();
@@ -471,7 +472,7 @@ public File getFileFor(UniversalUniqueIdentifier uuid) {
  * Returns the paths of all files with entries in this history store at or below
  * the given workspace resource path to the given depth.
  * 
- * @param key full workspace path to resource
+ * @param path full workspace path to resource
  * @param depth depth limit: one of <code>DEPTH_ZERO</code>, <code>DEPTH_ONE</code>
  *    or <code>DEPTH_INFINITE</code>
  * @return the set of paths for files that have at least one history entry

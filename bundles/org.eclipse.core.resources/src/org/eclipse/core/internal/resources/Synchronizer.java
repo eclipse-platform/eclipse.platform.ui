@@ -39,7 +39,7 @@ public Synchronizer(Workspace workspace) {
 	this.writer = new SyncInfoWriter(workspace, this);
 }
 /**
- * @see ISynchronizer#accept
+ * @see ISynchronizer#accept(QualifiedName, IResource, IResourceVisitor, int)
  */
 public void accept(QualifiedName partner, IResource resource, IResourceVisitor visitor, int depth) throws CoreException {
 	Assert.isLegal(partner != null);
@@ -65,14 +65,14 @@ public void accept(QualifiedName partner, IResource resource, IResourceVisitor v
 		accept(partner, children[i], visitor, depth);
 }
 /**
- * @see ISynchronizer#add
+ * @see ISynchronizer#add(QualifiedName)
  */
 public void add(QualifiedName partner) {
 	Assert.isLegal(partner != null);
 	registry.add(partner);
 }
 /**
- * @see ISynchronizer#flushSyncInfo
+ * @see ISynchronizer#flushSyncInfo(QualifiedName, IResource, int)
  */
 public void flushSyncInfo(final QualifiedName partner, final IResource root, final int depth) throws CoreException {
 	Assert.isLegal(partner != null);
@@ -94,7 +94,7 @@ public void flushSyncInfo(final QualifiedName partner, final IResource root, fin
 	workspace.run(body, root, IResource.NONE, null);
 }
 /**
- * @see ISynchronizer#getPartners
+ * @see ISynchronizer#getPartners()
  */
 public QualifiedName[] getPartners() {
 	return (QualifiedName[]) registry.toArray(new QualifiedName[registry.size()]);
@@ -106,7 +106,7 @@ protected Set getRegistry() {
 	return registry;
 }
 /**
- * @see ISynchronizer#getSyncInfo
+ * @see ISynchronizer#getSyncInfo(QualifiedName, IResource)
  */
 public byte[] getSyncInfo(QualifiedName partner, IResource resource) throws CoreException {
 	Assert.isLegal(partner != null);
@@ -126,7 +126,7 @@ protected boolean isRegistered(QualifiedName partner) {
 	return registry.contains(partner);
 }
 /**
- * @see #writePartners
+ * @see #savePartners(DataOutputStream)
  */
 public void readPartners(DataInputStream input) throws CoreException {
 	SyncInfoReader reader = new SyncInfoReader(workspace, this);
@@ -177,7 +177,7 @@ protected void restoreFromSnap(IResource resource) {
 	}
 }
 /**
- * @see ISynchronizer#remove
+ * @see ISynchronizer#remove(QualifiedName)
  */
 public void remove(QualifiedName partner) {
 	Assert.isLegal(partner != null);
@@ -202,7 +202,7 @@ protected void setRegistry(Set registry) {
 	this.registry = registry;
 }
 /**
- * @see ISynchronizer#setSyncInfo
+ * @see ISynchronizer#setSyncInfo(QualifiedName, IResource, byte[])
  */
 public void setSyncInfo(QualifiedName partner, IResource resource, byte[] info) throws CoreException {
 	Assert.isLegal(partner != null);

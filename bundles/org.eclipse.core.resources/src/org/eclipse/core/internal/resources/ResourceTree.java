@@ -86,7 +86,7 @@ private void copyLocalHistory (IResource source, IResource destination) {
 }
 
 /**
- * @see IResourceTree#movedFile
+ * @see IResourceTree#movedFile(IFile, IFile)
  */
 public void movedFile(IFile source, IFile destination) {
 	Assert.isLegal(isValid);
@@ -142,7 +142,7 @@ public void movedFile(IFile source, IFile destination) {
 	}
 }
 /**
- * @see IResourceTree#movedFolderSubtree
+ * @see IResourceTree#movedFolderSubtree(IFolder, IFolder)
  */
 public void movedFolderSubtree(IFolder source, IFolder destination) {
 	Assert.isLegal(isValid);
@@ -200,7 +200,7 @@ public void movedFolderSubtree(IFolder source, IFolder destination) {
 }
 
 /**
- * @see IResourceTree#movedProjectSubtree.
+ * @see IResourceTree#movedProjectSubtree(IProject, IProjectDescription)
  */
 public boolean movedProjectSubtree(IProject project, IProjectDescription destDescription) {
 	Assert.isLegal(isValid);
@@ -317,7 +317,7 @@ protected IStatus getStatus() {
 	return multistatus;
 }
 /**
- * @see IResourceTree#getTimestamp
+ * @see IResourceTree#getTimestamp(IFile)
  */
 public long getTimestamp(IFile file) {
 	Assert.isLegal(isValid);
@@ -332,7 +332,7 @@ public long getTimestamp(IFile file) {
 	}		
 }
 /**
- * @see IResourceTree#deletedFile
+ * @see IResourceTree#deletedFile(IFile)
  */
 public void deletedFile(IFile file) {
 	Assert.isLegal(isValid);
@@ -354,7 +354,7 @@ public void deletedFile(IFile file) {
 	}
 }
 /**
- * @see IResourceTree#deletedFolder
+ * @see IResourceTree#deletedFolder(IFolder)
  */
 public void deletedFolder(IFolder folder) {
 	Assert.isLegal(isValid);
@@ -376,7 +376,7 @@ public void deletedFolder(IFolder folder) {
 	}
 }
 /**
- * @see IResourceTree#deletedProject
+ * @see IResourceTree#deletedProject(IProject)
  */
 public void deletedProject(IProject target) {
 	Assert.isLegal(isValid);
@@ -444,7 +444,7 @@ private boolean isContentChange(IProject project, IProjectDescription destinatio
 	return !sourceDescription.getLocation().equals(destinationDescription.getLocation());
 }
 /**
- * @see IResourceTree#isSynchronized
+ * @see IResourceTree#isSynchronized(IResource, int)
  */
 public boolean isSynchronized(IResource resource, int depth) {
 	try {
@@ -455,7 +455,7 @@ public boolean isSynchronized(IResource resource, int depth) {
 	}		
 }
 /**
- * @see IResourceTree#computeTimestamp
+ * @see IResourceTree#computeTimestamp(IFile)
  */
 public long computeTimestamp(IFile file) {
 	Assert.isLegal(isValid);
@@ -475,7 +475,7 @@ protected long internalComputeTimestamp(String location) {
 	return CoreFileSystemLibrary.getLastModified(location);
 }
 /**
- * @see IResourceTree#standardDeleteFile
+ * @see IResourceTree#standardDeleteFile(IFile, int, IProgressMonitor)
  */
 public void standardDeleteFile(IFile file, int updateFlags, IProgressMonitor monitor) {
 	Assert.isLegal(isValid);
@@ -560,7 +560,7 @@ private boolean internalDeleteFile(IFile file, int updateFlags, IProgressMonitor
 	}
 }
 /**
- * @see IResourceTree#standardDeleteFolder
+ * @see IResourceTree#standardDeleteFolder(IFolder, int, IProgressMonitor)
  */
 public void standardDeleteFolder(IFolder folder, int updateFlags, IProgressMonitor monitor) {
 	Assert.isLegal(isValid);
@@ -638,7 +638,7 @@ public void standardDeleteFolder(IFolder folder, int updateFlags, IProgressMonit
  */
 private void addToLocalHistory(IResource root, int depth) {
 	IResourceVisitor visitor = new IResourceVisitor() {
-		public boolean visit(IResource resource) throws CoreException {
+		public boolean visit(IResource resource) {
 			if (resource.getType() == IResource.FILE)
 				addToLocalHistory((IFile) resource);
 			return true;
@@ -712,7 +712,7 @@ private boolean internalDeleteFolder(IFolder folder, int updateFlags, IProgressM
 	}
 }
 /**
- * @see IResourceTree#standardDeleteProject
+ * @see IResourceTree#standardDeleteProject(IProject, int, IProgressMonitor)
  */
 public void standardDeleteProject(IProject project, int updateFlags, IProgressMonitor monitor) {
 	Assert.isLegal(isValid);
@@ -853,7 +853,7 @@ private void moveProjectContent(IProject source, IProjectDescription destDescrip
 	}
 }
 /**
- * @see IResourceTree#standardMoveFile
+ * @see IResourceTree#standardMoveFile(IFile, IFile, int, IProgressMonitor)
  */
 public void standardMoveFile(IFile source, IFile destination, int updateFlags, IProgressMonitor monitor) {
 	Assert.isLegal(isValid);
@@ -915,7 +915,7 @@ public void standardMoveFile(IFile source, IFile destination, int updateFlags, I
 	}
 }
 /**
- * @see IResourceTree#standardMoveFolder
+ * @see IResourceTree#standardMoveFolder(IFolder, IFolder, int, IProgressMonitor)
  */
 public void standardMoveFolder(IFolder source, IFolder destination, int updateFlags, IProgressMonitor monitor) {
 	Assert.isLegal(isValid);
@@ -1108,7 +1108,7 @@ private boolean internalDeleteProject(IProject project, int updateFlags, IProgre
 }
 
 /**
- * @see IResourceTree#standardMoveProject
+ * @see IResourceTree#standardMoveProject(IProject, IProjectDescription, int, IProgressMonitor)
  */
 public void standardMoveProject(IProject source, IProjectDescription description, int updateFlags, IProgressMonitor monitor) {
 	Assert.isLegal(isValid);
@@ -1173,7 +1173,7 @@ private void moveInFileSystem(java.io.File source, java.io.File destination, int
 	store.move(source, destination, force, monitor);
 }
 /**
- * @see IResourceTree#updateMovedFileTimestamp
+ * @see IResourceTree#updateMovedFileTimestamp(IFile, long)
  */
 public void updateMovedFileTimestamp(IFile file, long timestamp) {
 	Assert.isLegal(isValid);

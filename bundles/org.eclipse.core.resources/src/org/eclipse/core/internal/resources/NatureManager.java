@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 	private static final byte BLACK = 2;
 	
 protected NatureManager() {
+	super();
 }
 /**
  * Computes the list of natures that are enabled for the given project.
@@ -99,15 +100,15 @@ protected String[] computeNatureEnablements(Project project) {
 	//remaining candidates are enabled
 	return (String[]) candidates.toArray(new String[candidates.size()]);
 }
-/**
- * @see IWorkspace#getNatureDescriptor
+/* (non-Javadoc)
+ * @see IWorkspace#getNatureDescriptor(String)
  */
 public IProjectNatureDescriptor getNatureDescriptor(String natureId) {
 	lazyInitialize();
 	return (IProjectNatureDescriptor)descriptors.get(natureId);
 }
-/**
- * @see IWorkspace#getNatureDescriptors
+/* (non-Javadoc)
+ * @see IWorkspace#getNatureDescriptors()
  */
 public IProjectNatureDescriptor[] getNatureDescriptors() {
 	lazyInitialize();
@@ -397,9 +398,10 @@ protected void insert(ArrayList list, Set seen, String id) {
 	}
 	list.add(id);
 }
-/**
+/* (non-Javadoc)
  * Returns true if the given nature is enabled for the given project.
- * @see IProject#isNatureEnabled
+ * 
+ * @see IProject#isNatureEnabled(String)
  */
 public boolean isNatureEnabled(Project project, String id) {
 	String[] enabled = getEnabledNatures(project);
@@ -447,10 +449,11 @@ protected void setEnabledNatures(IProject project, String[] enablements) {
 	natureEnablements.put(project, enablements);
 }
 public void shutdown(IProgressMonitor monitor) throws CoreException {
+	// do nothing
 }
 
-/**
- * @see IWorkspace#sortNatureSet
+/* (non-Javadoc)
+ * @see IWorkspace#sortNatureSet(String[])
  */
 public String[] sortNatureSet(String[] natureIds) {
 	int count = natureIds.length;
@@ -547,6 +550,7 @@ public IStatus validateLinkCreation(String[] natureIds) {
 /**
  * Validates the given nature removals in the nature set for this
  * project.  Tolerates existing inconsistencies in the nature set.
+ * 
  * @param newNatures the complete new set of nature IDs for the project, 
  * 	excluding deletions
  * @param deletions the nature IDs that are being removed from the set.
@@ -569,8 +573,8 @@ protected IStatus validateRemovals(HashSet newNatures, HashSet deletions) {
 	}
 	return Status.OK_STATUS;
 }
-/**
- * @see IWorkspace#validateNatureSet
+/* (non-Javadoc)
+ * @see IWorkspace#validateNatureSet(String[])
  */
 public IStatus validateNatureSet(String[] natureIds) {
 	int count = natureIds.length;

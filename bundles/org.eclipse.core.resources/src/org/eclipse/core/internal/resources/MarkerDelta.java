@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.core.internal.resources;
 
 import java.util.Iterator;
 import java.util.Map;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 /**
@@ -30,14 +29,14 @@ public MarkerDelta(int kind, IResource resource, MarkerInfo info) {
 	this.resource = resource;
 	this.info = info;
 }
-/**
- * @see IMarkerDelta#getAttribute
+/* (non-Javadoc)
+ * @see IMarkerDelta#getAttribute(String)
  */
 public Object getAttribute(String attributeName) {
 	return info.getAttribute(attributeName);
 }
-/**
- * @see IMarkerDelta#getAttribute
+/* (non-Javadoc)
+ * @see IMarkerDelta#getAttribute(String, int)
  */
 public int getAttribute(String attributeName, int defaultValue) {
 	Object value = info.getAttribute(attributeName);
@@ -45,8 +44,8 @@ public int getAttribute(String attributeName, int defaultValue) {
 		return ((Integer) value).intValue();
 	return defaultValue;
 }
-/**
- * @see IMarkerDelta#getAttribute
+/* (non-Javadoc)
+ * @see IMarkerDelta#getAttribute(String, String)
  */
 public String getAttribute(String attributeName, String defaultValue) {
 	Object value = info.getAttribute(attributeName);
@@ -54,8 +53,8 @@ public String getAttribute(String attributeName, String defaultValue) {
 		return (String) value;
 	return defaultValue;
 }
-/**
- * @see IMarkerDelta#getAttribute
+/* (non-Javadoc)
+ * @see IMarkerDelta#getAttribute(String, boolean)
  */
 public boolean getAttribute(String attributeName, boolean defaultValue) {
 	Object value = info.getAttribute(attributeName);
@@ -63,50 +62,50 @@ public boolean getAttribute(String attributeName, boolean defaultValue) {
 		return ((Boolean) value).booleanValue();
 	return defaultValue;
 }
-/**
- * @see IMarkerDelta#getAttributes
+/* (non-Javadoc)
+ * @see IMarkerDelta#getAttributes()
  */
 public Map getAttributes() {
 	return info.getAttributes();
 }
-/**
- * @see IMarkerDelta#getAttributes
+/* (non-Javadoc)
+ * @see IMarkerDelta#getAttributes(String[])
  */
 public Object[] getAttributes(String[] attributeNames) {
 	return info.getAttributes(attributeNames);
 }
-/**
- * @see IMarkerDelta#getId
+/* (non-Javadoc)
+ * @see IMarkerDelta#getId()
  */
 public long getId() {
 	return info.getId();
 }
-/**
- * @see IMarkerDelta#getKind
+/* (non-Javadoc)
+ * @see IMarkerDelta#getKind()
  */
 public int getKind() {
 	return kind;
 }
-/**
- * @see IMarkerDelta#getMarker
+/* (non-Javadoc)
+ * @see IMarkerDelta#getMarker()
  */
 public IMarker getMarker() {
 	return new Marker(resource, getId());
 }
-/**
- * @see IMarkerDelta#getResource
+/* (non-Javadoc)
+ * @see IMarkerDelta#getResource()
  */
 public IResource getResource() {
 	return resource;
 }
-/**
- * @see IMarkerDelta#getType
+/* (non-Javadoc)
+ * @see IMarkerDelta#getType()
  */
 public String getType() {
 	return info.getType();
 }
-/**
- * @see IMarkerDelta#isSubtypeOf
+/* (non-Javadoc)
+ * @see IMarkerDelta#isSubtypeOf(String)
  */
 public boolean isSubtypeOf(String superType) {
 	return ((Workspace) getResource().getWorkspace()).getMarkerManager().isSubtype(getType(), superType);

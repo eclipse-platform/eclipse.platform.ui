@@ -12,7 +12,6 @@ package org.eclipse.core.internal.resources;
 
 import java.io.*;
 import java.util.*;
-
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -22,8 +21,8 @@ public class CharsetManager implements IManager {
 	public static final IPath ENCODING_FILE = new Path(".encoding"); //$NON-NLS-1$
 	private Workspace workspace;
 	private IResourceChangeListener listener;
-	private CharsetManagerJob job;
-	private final boolean[] isSaving = new boolean[1];
+	CharsetManagerJob job;
+	final boolean[] isSaving = new boolean[1];
 	public CharsetManager(Workspace workspace) {
 		this.workspace = workspace;
 	}
@@ -64,7 +63,7 @@ public class CharsetManager implements IManager {
 	/*
 	 * Retrieves the settings for the given project, reading them from disk if needed.
 	 */
-	private Map getSettings(IProject project) throws CoreException {
+	Map getSettings(IProject project) throws CoreException {
 		ProjectInfo info = (ProjectInfo) ((Project) project).getResourceInfo(false, false);
 		Map charsets = info.getCharsets();
 		if (charsets != null)
@@ -109,7 +108,7 @@ public class CharsetManager implements IManager {
 	/*
 	 * Create a serializable representation for the settings.
 	 */
-	private InputStream createContents(final Map charsets) {
+	InputStream createContents(final Map charsets) {
 		ByteArrayOutputStream tmpOutput = new ByteArrayOutputStream(200);
 		PrintWriter writer = new PrintWriter(tmpOutput);
 		for (Iterator iter = charsets.entrySet().iterator(); iter.hasNext();) {
@@ -121,7 +120,7 @@ public class CharsetManager implements IManager {
 		writer.close();
 		return new ByteArrayInputStream(tmpOutput.toByteArray());
 	}
-	private void storeSettings(Project project) throws CoreException {
+	void storeSettings(Project project) throws CoreException {
 		storeSettings(project, ((ProjectInfo) project.getResourceInfo(false, false)).getCharsets());
 	}
 	private void storeSettings(final Project project, final Map charsets) throws CoreException {
@@ -163,7 +162,7 @@ public class CharsetManager implements IManager {
 	 * Forgets the in-memory state. This will cause the state to be fetched
 	 * from the file system (when needed).
 	 */
-	private synchronized void invalidateModel(IProject project) {
+	synchronized void invalidateModel(IProject project) {
 		ProjectInfo info = (ProjectInfo) ((Project) project).getResourceInfo(false, false);
 		if (info != null)
 			info.setCharsets(null);

@@ -27,38 +27,38 @@ public FileState(HistoryStore store, IPath fullPath, long lastModified, Universa
 	this.uuid = uuid;
 	this.fullPath = fullPath;
 }
-/**
- * @see IFileState#exists
+/* (non-Javadoc)
+ * @see IFileState#exists()
  */
 public boolean exists() {
 	return store.exists(this);
 }
-/**
- * @see IEncodedStorage#getCharset
+/* (non-Javadoc)
+ * @see org.eclipse.core.resources.IEncodedStorage#getCharset()
  */
 public String getCharset() throws CoreException {
 	return null;
 }
-/**
- * @see IFileState#getContents
+/* (non-Javadoc)
+ * @see IFileState#getContents()
  */
 public InputStream getContents() throws CoreException {
 	return store.getContents(this);
 }
-/**
- * @see IFileState
+/* (non-Javadoc)
+ * @see IFileState#getFullPath()
  */
 public IPath getFullPath() {
 	return fullPath;
 }
-/**
- * @see IFileState#getModificationTime
+/* (non-Javadoc)
+ * @see IFileState#getModificationTime()
  */
 public long getModificationTime() {
 	return lastModified;
 }
-/**
- * @see IFileState
+/* (non-Javadoc)
+ * @see IFileState#getName()
  */
 public String getName() {
 	return fullPath.lastSegment();
@@ -66,8 +66,8 @@ public String getName() {
 public UniversalUniqueIdentifier getUUID() {
 	return uuid;
 }
-/**
- * @see IFileState
+/* (non-Javadoc)
+ * @see IFileState#isReadOnly()
  */
 public boolean isReadOnly() {
 	return true;

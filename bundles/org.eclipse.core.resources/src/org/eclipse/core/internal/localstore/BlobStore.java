@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,8 +57,8 @@ public UniversalUniqueIdentifier addBlob(File target, boolean moveContents) thro
 		localStore.copy(target, destination, IResource.DEPTH_ZERO, null);
 	return uuid;
 }
-/**
- * @see UniversalUniqueIdentifier#appendByteString
+/* (non-Javadoc)
+ * @see UniversalUniqueIdentifier#appendByteString(StringBuffer, byte)
  */
 private void appendByteString(StringBuffer buffer, byte value) {
 	String hexString;
@@ -70,10 +70,10 @@ private void appendByteString(StringBuffer buffer, byte value) {
 		buffer.append("0"); //$NON-NLS-1$
 	buffer.append(hexString);
 }
-/**
+/* (non-Javadoc)
  * Converts an array of bytes into a String.
  *
- * @see UniversalUniqueIdentifier#toString
+ * @see UniversalUniqueIdentifier#toString()
  */
 private String bytesToHexString(byte[] b) {
 	StringBuffer buffer = new StringBuffer();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,9 +42,10 @@ public class MarkerManager implements IManager {
 public MarkerManager(Workspace workspace) {
 	this.workspace = workspace;
 }
-/**
+/* (non-Javadoc)
  * Adds the given markers to the given resource.
- * @see IResource#addMarkers 
+ * 
+ * @see IResource#createMarker(String) 
  */
 public void add(IResource resource, MarkerInfo newMarker) throws CoreException {
 	Resource target = (Resource) resource;
@@ -459,18 +460,20 @@ protected void restoreFromSnap(IResource resource) {
 public void save(ResourceInfo info, IPathRequestor requestor, DataOutputStream output, List list) throws IOException {
 	writer.save(info, requestor, output, list);
 }
-/**
- * @see IManager
+/* (non-Javadoc)
+ * @see IManager#shutdown(IProgressMonitor)
  */
 public void shutdown(IProgressMonitor monitor) {
+	// do nothing
 }
 public void snap(ResourceInfo info, IPathRequestor requestor, DataOutputStream output) throws IOException {
 	writer.snap(info, requestor, output);
 }
-/**
- * @see IManager
+/* (non-Javadoc)
+ * @see IManager#startup(IProgressMonitor)
  */
 public void startup(IProgressMonitor monitor) throws CoreException {
+	// do nothing
 }
 /**
  * Adds the markers for a subtree of resources to the list.

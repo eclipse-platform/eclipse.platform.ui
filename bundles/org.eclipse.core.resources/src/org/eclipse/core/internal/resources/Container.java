@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.resources;
  
 import java.util.*;
-
 import org.eclipse.core.internal.localstore.HistoryStore;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -32,19 +31,19 @@ public void convertToPhantom() throws CoreException {
 	for (int i = 0; i < members.length; i++)
 		 ((Resource) members[i]).convertToPhantom();
 }
-/** 
- * @see IContainer
+/* (non-Javadoc)
+ * @see IContainer#exists(IPath)
  */
-public boolean exists(IPath path) {
-	return workspace.getResourceInfo(getFullPath().append(path), false, false) != null;
+public boolean exists(IPath childPath) {
+	return workspace.getResourceInfo(getFullPath().append(childPath), false, false) != null;
 }
-/**
+/* (non-Javadoc)
  * @see IContainer#findMember(String)
  */
 public IResource findMember(String name) {
 	return findMember(name, false);
 }
-/**
+/* (non-Javadoc)
  * @see IContainer#findMember(String, boolean)
  */
 public IResource findMember(String name, boolean phantom) {
@@ -52,22 +51,20 @@ public IResource findMember(String name, boolean phantom) {
 	ResourceInfo info = workspace.getResourceInfo(childPath, phantom, false);
 	return info == null ? null : workspace.newResource(childPath, info.getType());
 }
-/**
+/* (non-Javadoc)
  * @see IContainer#findMember(IPath)
  */
-public IResource findMember(IPath path) {
-	return findMember(path, false);
+public IResource findMember(IPath childPath) {
+	return findMember(childPath, false);
 }
-/**
+/* (non-Javadoc)
  * @see IContainer#findMember(IPath)
  */
-public IResource findMember(IPath path, boolean phantom) {
-	path = getFullPath().append(path);
-	ResourceInfo info = workspace.getResourceInfo(path, phantom, false);
-	return (info == null) ? null : workspace.newResource(path, info.getType());
+public IResource findMember(IPath childPath, boolean phantom) {
+	childPath = getFullPath().append(childPath);
+	ResourceInfo info = workspace.getResourceInfo(childPath, phantom, false);
+	return (info == null) ? null : workspace.newResource(childPath, info.getType());
 }
-/**
- */
 protected void fixupAfterMoveSource() throws CoreException {
 	super.fixupAfterMoveSource();
 	if (!synchronizing(getResourceInfo(true, false)))
@@ -104,29 +101,23 @@ protected IResource[] getChildren(IPath parentPath, boolean phantom) {
 		return trimmedResult;
 	}
 }
-/** 
- * @see IContainer#getFile
- */
 public IFile getFile(String name) {
 	return (IFile)workspace.newResource(getFullPath().append(name), FILE);
 }
-/** 
- * @see IContainer#getFile
+/* (non-Javadoc)
+ * @see IContainer#getFile(IPath)
  */
-public IFile getFile(IPath path) {
-	return (IFile)workspace.newResource(getFullPath().append(path), FILE);
+public IFile getFile(IPath childPath) {
+	return (IFile)workspace.newResource(getFullPath().append(childPath), FILE);
 }
-/** 
- * @see IContainer#getFolder
- */
 public IFolder getFolder(String name) {
 	return (IFolder)workspace.newResource(getFullPath().append(name), FOLDER);
 }
-/** 
- * @see IContainer#getFolder
+/* (non-Javadoc)
+ * @see IContainer#getFolder(IPath)
  */
-public IFolder getFolder(IPath path) {
-	return (IFolder)workspace.newResource(getFullPath().append(path), FOLDER);
+public IFolder getFolder(IPath childPath) {
+	return (IFolder)workspace.newResource(getFullPath().append(childPath), FOLDER);
 }
 public boolean isLocal(int flags, int depth) {
 	if (!super.isLocal(flags, depth))
@@ -144,15 +135,15 @@ public boolean isLocal(int flags, int depth) {
 	return true;
 }
 
-/**
- * @see IContainer#members
+/* (non-Javadoc)
+ * @see IContainer#members()
  */
 public IResource[] members() throws CoreException {
 	// forward to central method
 	return members(IResource.NONE);
 }
 
-/**
+/* (non-Javadoc)
  * @see IContainer#members(boolean)
  */
 public IResource[] members(boolean phantom) throws CoreException {
@@ -160,8 +151,8 @@ public IResource[] members(boolean phantom) throws CoreException {
 	return members(phantom ? INCLUDE_PHANTOMS : IResource.NONE);
 }
 
-/*
- * @see IContainer
+/* (non-Javadoc)
+ * @see IContainer#members(int)
  */
 public IResource[] members(int memberFlags) throws CoreException {
 	final boolean phantom = (memberFlags & INCLUDE_PHANTOMS) != 0;
@@ -199,14 +190,14 @@ public IResource[] members(int memberFlags) throws CoreException {
 		return reducedMembers;
 	}		
 }
-/**
- * @see IContainer
+/* (non-Javadoc)
+ * @see IContainer#getDefaultCharset()
  */
 public String getDefaultCharset() throws CoreException {
 	return getDefaultCharset(true);
 }
-/**
- * @see IContainer
+/* (non-Javadoc)
+ * @see IContainer#getDefaultCharset(boolean)
  */
 public String getDefaultCharset(boolean checkImplicit) throws CoreException {
 	// non-existing resources default to parent's charset
@@ -216,8 +207,8 @@ public String getDefaultCharset(boolean checkImplicit) throws CoreException {
 	return (charset == null && checkImplicit) ? getParent().getDefaultCharset() : charset;
 }
 
-/**
- * @see IContainer#findDeletedMembersWithHistory
+/* (non-Javadoc)
+ * @see IContainer#findDeletedMembersWithHistory(int, IProgressMonitor)
  */
 public IFile[] findDeletedMembersWithHistory(int depth, IProgressMonitor monitor) throws CoreException {
 	HistoryStore historyStore = getLocalManager().getHistoryStore();
@@ -246,8 +237,8 @@ public IFile[] findDeletedMembersWithHistory(int depth, IProgressMonitor monitor
 	}
 	return (IFile[]) deletedFiles.toArray(new IFile[deletedFiles.size()]);
 }
-/**
- * @see IContainer
+/* (non-Javadoc)
+ * @see IContainer#setDefaultCharset(String)
  */
 public void setDefaultCharset(String charset) throws CoreException {
 	ResourceInfo info = getResourceInfo(false, false);

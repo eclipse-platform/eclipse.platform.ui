@@ -102,8 +102,8 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		//still need to copy the result to prevent tampering with the cache
 		return makeCopy ? (IProject[])cachedRefs.clone() : cachedRefs;
 	}
-	/**
-	 * @see IProjectDescription
+	/* (non-Javadoc)
+	 * @see IProjectDescription#getBuildSpec()
 	 */
 	public ICommand[] getBuildSpec() {
 		return getBuildSpec(true);
@@ -113,20 +113,20 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 			return EMPTY_COMMAND_ARRAY;
 		return makeCopy ? (ICommand[]) buildSpec.clone() : buildSpec;
 	}
-	/**
-	 * @see IProjectDescription
+	/* (non-Javadoc)
+	 * @see IProjectDescription#getComment()
 	 */
 	public String getComment() {
 		return comment;
 	}
-	/**
-	 * @see IProjectDescription
+	/* (non-Javadoc)
+	 * @see IProjectDescription#getDefaultCharset()
 	 */
 	public String getDefaultCharset() {
 		return defaultCharset;
 	}	
-	/**
-	 * @see IProjectDescription
+	/* (non-Javadoc)
+	 * @see IProjectDescription#getDynamicReferences()
 	 */
 	public IProject[] getDynamicReferences() {
 		return getDynamicReferences(true);
@@ -150,20 +150,18 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * Returns the map of link descriptions (String name -> LinkDescription).
 	 * Since this method is only used internally, it never creates a copy.
 	 * Returns null if the project does not have any linked resources.
-	 * 
-	 * @return HashMap
 	 */
 	public HashMap getLinks() {
 		return linkDescriptions;
 	}
-	/**
-	 * @see IProjectDescription#getLocation
+	/* (non-Javadoc)
+	 * @see IProjectDescription#getLocation()
 	 */
 	public IPath getLocation() {
 		return location;
 	}
-	/**
-	 * @see IProjectDescription
+	/* (non-Javadoc)
+	 * @see IProjectDescription#getNatureIds()
 	 */
 	public String[] getNatureIds() {
 		return getNatureIds(true);
@@ -173,8 +171,8 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 			return EMPTY_STRING_ARRAY;
 		return makeCopy ? (String[]) natures.clone() : natures;
 	}
-	/**
-	 * @see IProjectDescription
+	/* (non-Javadoc)
+	 * @see IProjectDescription#getReferencedProjects()
 	 */
 	public IProject[] getReferencedProjects() {
 		return getReferencedProjects(true);
@@ -184,8 +182,8 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 			return EMPTY_PROJECT_ARRAY;
 		return makeCopy ? (IProject[]) staticRefs.clone() : staticRefs;
 	}
-	/**
-	 * @see IProjectDescription#hasNature
+	/* (non-Javadoc)
+	 * @see IProjectDescription#hasNature(String)
 	 */
 	public boolean hasNature(String natureID) {
 		String[] natureIDs = getNatureIds(false);
@@ -194,33 +192,33 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 				return true;
 		return false;
 	}
-	/**
-	 * @see IProjectDescription
+	/* (non-Javadoc)
+	 * @see IProjectDescription#newCommand()
 	 */
 	public ICommand newCommand() {
 		return new BuildCommand();
 	}
-	/**
-	 * @see IProjectDescription
+	/* (non-Javadoc)
+	 * @see IProjectDescription#setBuildSpec(ICommand[])
 	 */
 	public void setBuildSpec(ICommand[] value) {
 		Assert.isLegal(value != null);
 		buildSpec = (ICommand[]) value.clone();
 	}
-	/**
-	 * @see IProjectDescription
+	/* (non-Javadoc)
+	 * @see IProjectDescription#setComment(String)
 	 */
 	public void setComment(String value) {
 		comment = value;
 	}
-	/**
-	 * @see IProjectDescription
+	/* (non-Javadoc)
+	 * @see IProjectDescription#setDefaultCharset(String)
 	 */
 	public void setDefaultCharset(String value) {
 		defaultCharset = value;
 	}
-	/**
-	 * @see IProjectDescription
+	/* (non-Javadoc)
+	 * @see IProjectDescription#setDynamicReferences(IProject[])
 	 */
 	public void setDynamicReferences(IProject[] value) {
 		Assert.isLegal(value != null);
@@ -231,8 +229,6 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * Sets the map of link descriptions (String name -> LinkDescription).
 	 * Since this method is only used internally, it never creates a copy. May
 	 * pass null if this project does not have any linked resources
-	 * 
-	 * @return HashMap
 	 */
 	public void setLinkDescriptions(HashMap linkDescriptions) {
 		this.linkDescriptions = linkDescriptions;
@@ -256,26 +252,26 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 			}
 		}
 	}
-	/**
-	 * @see IProjectDescription#setLocation
+	/* (non-Javadoc)
+	 * @see IProjectDescription#setLocation(IPath)
 	 */
 	public void setLocation(IPath location) {
 		this.location = location;
 	}
-	/**
-	 * @see IProjectDescription
+	/* (non-Javadoc)
+	 * @see IProjectDescription#setName(String)
 	 */
 	public void setName(String value) {
 		super.setName(value);
 	}
-	/**
-	 * @see IProjectDescription
+	/* (non-Javadoc)
+	 * @see IProjectDescription#setNatureIds(String[])
 	 */
 	public void setNatureIds(String[] value) {
 		natures = (String[]) value.clone();
 	}
-	/**
-	 * @see IProjectDescription
+	/* (non-Javadoc)
+	 * @see IProjectDescription#setReferencedProjects(IProject[])
 	 */
 	public void setReferencedProjects(IProject[] value) {
 		Assert.isLegal(value != null);

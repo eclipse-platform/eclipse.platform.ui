@@ -97,7 +97,7 @@ public class WorkspacePreferences extends WorkspaceDescription {
 		preferences.setValue(ResourcesPlugin.PREF_AUTO_BUILDING, value);
 	}
 	/**
-	 * @see org.eclipse.core.resources.IWorkspaceDescription#setBuildOrder(java.lang.String)
+	 * @see org.eclipse.core.resources.IWorkspaceDescription#setBuildOrder(String[])
 	 */
 	public void setBuildOrder(String[] value) {
 		preferences.setValue(ResourcesPlugin.PREF_DEFAULT_BUILD_ORDER, value == null);

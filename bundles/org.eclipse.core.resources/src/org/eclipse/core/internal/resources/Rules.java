@@ -8,8 +8,8 @@
  * IBM - Initial API and implementation
  **********************************************************************/
 package org.eclipse.core.internal.resources;
-import java.util.*;
 
+import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.TeamHook;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;

@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.resources;
 
 import java.io.*;
-
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
@@ -27,8 +26,8 @@ protected File(IPath path, Workspace container) {
 	super(path, container);
 }
 
-/*
- * @see IFile
+/* (non-Javadoc)
+ * @see IFile#appendContents(InputStream, int, IProgressMonitor)
  */
 public void appendContents(InputStream content, int updateFlags, IProgressMonitor monitor) throws CoreException {
 	final boolean force = (updateFlags & IResource.FORCE) != 0;
@@ -58,8 +57,8 @@ public void appendContents(InputStream content, int updateFlags, IProgressMonito
 	}
 }
 
-/**
- * @see IFile
+/* (non-Javadoc)
+ * @see IFile#appendContents(InputStream, boolean, boolean, IProgressMonitor)
  */
 public void appendContents(InputStream content, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 	// funnel all operations to central method
@@ -76,8 +75,6 @@ public void appendContents(InputStream content, boolean force, boolean keepHisto
  * contents.
  * <p>
  * <b>This method is for the exclusive use of the local resource manager</b>
- *
- * @see FileSystemResourceManager#reportChanges
  */
 public IFolder changeToFolder() throws CoreException {
 	getPropertyManager().deleteProperties(this, IResource.DEPTH_ZERO);
@@ -93,8 +90,8 @@ public IFolder changeToFolder() throws CoreException {
 	return result;
 }
 
-/**
- * @see IFile
+/* (non-Javadoc)
+ * @see IFile#create(InputStream, int, IProgressMonitor)
  */
 public void create(InputStream content, int updateFlags, IProgressMonitor monitor)	throws CoreException {
 	final boolean force = (updateFlags & IResource.FORCE) != 0;
@@ -177,8 +174,8 @@ public void create(InputStream content, int updateFlags, IProgressMonitor monito
 	}
 }
 
-/**
- * @see IFile
+/* (non-Javadoc)
+ * @see IFile#create(InputStream, boolean, IProgressMonitor)
  */
 public void create(InputStream content, boolean force, IProgressMonitor monitor) throws CoreException {
 	// funnel all operations to central method
@@ -199,14 +196,14 @@ protected void ensureClosed(InputStream stream) {
 		}
 	}
 }
-/**
- * @see IFile
+/* (non-Javadoc)
+ * @see IFile#getCharset()
  */
 public String getCharset() throws CoreException {
 	return getCharset(true);
 }
-/**
- * @see IFile
+/* (non-Javadoc)
+ * @see IFile#getCharset(boolean)
  */
 public String getCharset(boolean checkImplicit) throws CoreException {
 	// non-existing resources default to parent's charset
@@ -239,14 +236,14 @@ public String getCharset(boolean checkImplicit) throws CoreException {
 			}				
 	}
 }
-/**
- * @see IFile#getContents
+/* (non-Javadoc)
+ * @see IFile#getContents()
  */
 public InputStream getContents() throws CoreException {
 	return getContents(false);
 }
-/**
- * @see IFile
+/* (non-Javadoc)
+ * @see IFile#getContents(boolean)
  */
 public InputStream getContents(boolean force) throws CoreException {
 	ResourceInfo info = getResourceInfo(false, false);
@@ -255,7 +252,7 @@ public InputStream getContents(boolean force) throws CoreException {
 	checkLocal(flags, DEPTH_ZERO);
 	return getLocalManager().read(this, force, null);
 }
-/**
+/* (non-Javadoc)
  * @see IFile#getEncoding()
  * @deprecated
  */
@@ -266,13 +263,16 @@ public int getEncoding() throws CoreException {
 	checkLocal(flags, DEPTH_ZERO);
 	return getLocalManager().getEncoding(this);
 }
-/**
- * @see IFile#getHistory
+/* (non-Javadoc)
+ * @see IFile#getHistory(IProgressMonitor)
  */
 public IFileState[] getHistory(IProgressMonitor monitor) throws CoreException {
 	// FIXME: monitor is not used
 	return getLocalManager().getHistoryStore().getStates(getFullPath());
 }
+/* (non-Javadoc)
+ * @see IResource#getType()
+ */
 public int getType() {
 	return FILE;
 }
@@ -296,15 +296,15 @@ public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreExcepti
 		super.refreshLocal(IResource.DEPTH_ZERO, monitor);
 }
 
-/*
- * @see IFile
+/* (non-Javadoc)
+ * @see IFile#setContents(IFileState, int, IProgressMonitor)
  */
 public void setContents(IFileState content, int updateFlags, IProgressMonitor monitor) throws CoreException {
 	setContents(content.getContents(), updateFlags, monitor);
 }
 
-/*
- * @see IFile
+/* (non-Javadoc)
+ * @see IFile#setContents(InputStream, int, IProgressMonitor)
  */
 public void setContents(InputStream content, int updateFlags, IProgressMonitor monitor) throws CoreException {
 	final boolean force = (updateFlags & IResource.FORCE) != 0;
@@ -334,7 +334,7 @@ public void setContents(InputStream content, int updateFlags, IProgressMonitor m
 	}
 }
 /* (non-Javadoc)
- * @see org.eclipse.core.resources.IResource#setLocalTimeStamp(long)
+ * @see IResource#setLocalTimeStamp(long)
  */
 public long setLocalTimeStamp(long value) throws CoreException {
 	//override to handle changing timestamp on project description file
@@ -358,16 +358,16 @@ public void updateProjectDescription() throws CoreException {
 	if (path.segmentCount() == 2 && path.segment(1).equals(IProjectDescription.DESCRIPTION_FILE_NAME))
 		((Project)getProject()).updateDescription();
 }
-/**
- * @see IFile
+/* (non-Javadoc)
+ * @see IFile#setCharset(String)
  */
 public void setCharset(String newCharset) throws CoreException {
 	ResourceInfo info = getResourceInfo(false, false);
 	checkAccessible(getFlags(info));
 	workspace.getCharsetManager().setCharsetFor(getFullPath(), newCharset);		 		  
 }
-/**
- * @see IFile
+/* (non-Javadoc)
+ * @see IFile#setContents(InputStream, boolean, boolean, IProgressMonitor)
  */
 public void setContents(InputStream content, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 	// funnel all operations to central method
@@ -376,8 +376,8 @@ public void setContents(InputStream content, boolean force, boolean keepHistory,
 	setContents(content, updateFlags, monitor);
 }
 
-/**
- * @see IFile#setContents
+/* (non-Javadoc)
+ * @see IFile#setContents(IFileState, boolean, boolean, IProgressMonitor)
  */
 public void setContents(IFileState source, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 	// funnel all operations to central method

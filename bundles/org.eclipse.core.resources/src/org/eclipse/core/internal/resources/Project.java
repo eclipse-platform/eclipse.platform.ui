@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.resources;
 
 import java.util.*;
-
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
@@ -61,8 +60,8 @@ protected MultiStatus basicSetDescription(ProjectDescription description) {
 	workspace.getNatureManager().configureNatures(this, current, description, result);
 	return result;
 }
-/** 
- * @see IProject#build
+/* (non-Javadoc)
+ * @see IProject#build(int, String, Map, IProgressMonitor)
  */
 public void build(int kind, String builderName, Map args, IProgressMonitor monitor) throws CoreException {
 	final ISchedulingRule rule = workspace.getRuleFactory().buildRule();
@@ -82,8 +81,8 @@ public void build(int kind, String builderName, Map args, IProgressMonitor monit
 		workspace.endOperation(rule, false, null);
 	}
 }
-/** 
- * @see IProject#build
+/* (non-Javadoc)
+ * @see IProject#build(int, IProgressMonitor)
  */
 public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 	final ISchedulingRule rule = workspace.getRuleFactory().buildRule();
@@ -144,8 +143,8 @@ protected void checkDescription(IProject project, IProjectDescription desc, bool
 	//try infer the device if there isn't one (windows)
 	desc.setLocation(new Path(location.toFile().getAbsolutePath()));
 }
-/**
- * @see IProject#close
+/* (non-Javadoc)
+ * @see IProject#close(IProgressMonitor)
  */
 public void close(IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
@@ -185,8 +184,8 @@ public void close(IProgressMonitor monitor) throws CoreException {
 		monitor.done();
 	}
 }
-/**
- * @see IResource#copy
+/* (non-Javadoc)
+ * @see IResource#copy(IProjectDescription, int, IProgressMonitor)
  */
 public void copy(IProjectDescription destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
 	// FIXME - the logic here for copying projects needs to be moved to Resource.copy
@@ -195,8 +194,8 @@ public void copy(IProjectDescription destination, int updateFlags, IProgressMoni
 	Assert.isNotNull(destination);
 	internalCopy(destination, updateFlags, monitor);
 }
-/**
- * @see IResource#copy
+/* (non-Javadoc)
+ * @see IResource#copy(IPath, int, IProgressMonitor)
  */
 public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
 	// FIXME - the logic here for copying projects needs to be moved to Resource.copy
@@ -220,8 +219,8 @@ protected void copyMetaArea(IProject source, IProject destination, IProgressMoni
 	java.io.File newMetaArea = workspace.getMetaArea().locationFor(destination).toFile();
 	getLocalManager().getStore().copy(oldMetaArea, newMetaArea, IResource.DEPTH_INFINITE, monitor);
 }
-/**
- * @see IProject#create
+/* (non-Javadoc)
+ * @see IProject#create(IProjectDescription, IProgressMonitor)
  */
 public void create(IProjectDescription description, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
@@ -278,13 +277,13 @@ public void create(IProjectDescription description, IProgressMonitor monitor) th
 		monitor.done();
 	}
 }
-/**
+/* (non-Javadoc)
  * @see IProject#create(IProgressMonitor)
  */
 public void create(IProgressMonitor monitor) throws CoreException {
 	create(null, monitor);
 }
-/**
+/* (non-Javadoc)
  * @see IResource#delete(boolean, IProgressMonitor)
  */
 public void delete(boolean force, IProgressMonitor monitor) throws CoreException {
@@ -295,7 +294,7 @@ protected void fixupAfterMoveSource() throws CoreException {
 	workspace.deleteResource(this);
 }
 
-/**
+/* (non-Javadoc)
  * @see IProject#delete(boolean, boolean, IProgressMonitor)
  */
 public void delete(boolean deleteContent, boolean force, IProgressMonitor monitor) throws CoreException {
@@ -304,16 +303,16 @@ public void delete(boolean deleteContent, boolean force, IProgressMonitor monito
 	delete(updateFlags, monitor);
 }
 
-/**
- * @see IProject
+/* (non-Javadoc)
+ * @see IProject#getDescription()
  */
 public IProjectDescription getDescription() throws CoreException {
 	ResourceInfo info = getResourceInfo(false, false);
 	checkAccessible(getFlags(info));
 	return (IProjectDescription) ((ProjectInfo) info).getDescription().clone();
 }
-/**
- * @see IProject#getNature
+/* (non-Javadoc)
+ * @see IProject#getNature(String)
  */
 public IProjectNature getNature(String natureID) throws CoreException {
 	// Has it already been initialized?
@@ -329,14 +328,14 @@ public IProjectNature getNature(String natureID) throws CoreException {
 	}
 	return nature;
 }
-/**
- * @see IResource#getParent
+/* (non-Javadoc)
+ * @see IResource#getParent()
  */
 public IContainer getParent() {
 	return workspace.getRoot();
 }
-/**
- * @see IProject
+/* (non-Javadoc)
+ * @see IProject#getPluginWorkingLocation(IPluginDescriptor)
  */
 public IPath getPluginWorkingLocation(IPluginDescriptor plugin) {
 	if (!exists())
@@ -345,27 +344,27 @@ public IPath getPluginWorkingLocation(IPluginDescriptor plugin) {
 	result.toFile().mkdirs();
 	return result;
 }
-/**
- * @see IResource#getProject
+/* (non-Javadoc)
+ * @see IResource#getProject()
  */
 public IProject getProject() {
 	return this;
 }
-/**
- * @see IResource#getProjectRelativePath
+/* (non-Javadoc)
+ * @see IResource#getProjectRelativePath()
  */
 public IPath getProjectRelativePath() {
 	return Path.EMPTY;
 }
-/**
- * @see IResource#getRawLocation
+/* (non-Javadoc)
+ * @see IResource#getRawLocation()
  */
 public IPath getRawLocation() {
 	ProjectDescription description = internalGetDescription();
 	return description == null ? null : description.getLocation();
 }
-/*
- * @see IProject
+/* (non-Javadoc)
+ * @see IProject#getReferencedProjects()
  */
 public IProject[] getReferencedProjects() throws CoreException {
 	ResourceInfo info = getResourceInfo(false, false);
@@ -373,8 +372,8 @@ public IProject[] getReferencedProjects() throws CoreException {
 	return ((ProjectInfo)info).getDescription().getAllReferences(true);
 }
 
-/**
- * @see IProject
+/* (non-Javadoc)
+ * @see IProject#getReferencingProjects()
  */
 public IProject[] getReferencingProjects() {
 	IProject[] projects = workspace.getRoot().getProjects();
@@ -395,14 +394,14 @@ public IProject[] getReferencingProjects() {
 	}
 	return (IProject[]) result.toArray(new IProject[result.size()]);
 }
-/**
- * @see IResource#getType
+/* (non-Javadoc)
+ * @see IResource#getType()
  */
 public int getType() {
 	return PROJECT;
 }
-/**
- * @see IProject#hasNature
+/* (non-Javadoc)
+ * @see IProject#hasNature(String)
  */
 public boolean hasNature(String natureID) throws CoreException {
 	checkAccessible(getFlags(getResourceInfo(false, false)));
@@ -574,22 +573,22 @@ public void internalSetLocal(boolean flag, int depth) throws CoreException {
 	for (int i = 0; i < children.length; i++)
 		 ((Resource) children[i]).internalSetLocal(flag, depth);
 }
-/**
- * @see IResource#isAccessible
+/* (non-Javadoc)
+ * @see IResource#isAccessible()
  */
 public boolean isAccessible() {
 	return isOpen();
 }
-/**
- * @see IResource#isLocal
+/* (non-Javadoc)
+ * @see IResource#isLocal(int)
  */
 public boolean isLocal(int depth) {
 	// the flags parm is ignored for projects so pass anything
 	return isLocal(-1, depth);
 }
 
-/**
- * @see IResource#isLocal
+/* (non-Javadoc)
+ * @see IResource#isLocal(int)
  */
 public boolean isLocal(int flags, int depth) {
 	// don't check the flags....projects are always local
@@ -605,22 +604,22 @@ public boolean isLocal(int flags, int depth) {
 			return false;
 	return true;
 }
-/**
+/* (non-Javadoc)
  * @see IProject#isNatureEnabled(String)
  */
 public boolean isNatureEnabled(String natureId) throws CoreException {
 	checkAccessible(getFlags(getResourceInfo(false, false)));
 	return workspace.getNatureManager().isNatureEnabled(this, natureId);
 }
-/**
- * @see IProject
+/* (non-Javadoc)
+ * @see IProject#isOpen()
  */
 public boolean isOpen() {
 	ResourceInfo info = getResourceInfo(false, false);
 	return isOpen(getFlags(info));
 }
-/**
- * @see IProject
+/* (non-Javadoc)
+ * @see IProject#isOpen()
  */
 public boolean isOpen(int flags) {
 	return flags != NULL_FLAG && ResourceInfo.isSet(flags, M_OPEN);
@@ -634,15 +633,15 @@ protected boolean isProjectDescriptionFile(IResource resource) {
 		resource.getFullPath().segmentCount() == 2 &&
 		resource.getName().equals(IProjectDescription.DESCRIPTION_FILE_NAME);
 }
-/**
- * @see IProject#move
+/* (non-Javadoc)
+ * @see IProject#move(IProjectDescription, boolean, IProgressMonitor)
  */
 public void move(IProjectDescription destination, boolean force, IProgressMonitor monitor) throws CoreException {
 	Assert.isNotNull(destination);
 	move(destination, force ? IResource.FORCE : IResource.NONE, monitor);
 }
-/*
- * @see IResource#move
+/* (non-Javadoc)
+ * @see IResource#move(IProjectDescription, int, IProgressMonitor)
  */
 public void move(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException {
 	Assert.isNotNull(description);
@@ -690,8 +689,8 @@ public void move(IProjectDescription description, int updateFlags, IProgressMoni
 		monitor.done();
 	}
 }
-/**
- * @see IProject
+/* (non-Javadoc)
+ * @see IProject#open(IProgressMonitor)
  */
 public void open(IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
@@ -742,7 +741,7 @@ public void open(IProgressMonitor monitor) throws CoreException {
  * links to bring the links in sync with those described in the project description.
  * @param newDescription the new project description that may have
  * 	changed link descriptions.
- * @param status ok if everything went well, otherwise an ERROR multistatus 
+ * @return status ok if everything went well, otherwise an ERROR multistatus 
  * 	describing the problems encountered.
  */
 public IStatus reconcileLinks(ProjectDescription newDescription) {
@@ -801,8 +800,8 @@ protected void renameMetaArea(IProject source, IProject destination, IProgressMo
 	java.io.File newMetaArea = workspace.getMetaArea().locationFor(destination).toFile();
 	getLocalManager().getStore().move(oldMetaArea, newMetaArea, false, monitor);
 }
-/**
- * @see IProject
+/* (non-Javadoc)
+ * @see IProject#setDescription(IProjectDescription, int, IProgressMonitor)
  */
 public void setDescription(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException {
 	// FIXME - update flags should be honoured:
@@ -855,8 +854,8 @@ public void setDescription(IProjectDescription description, int updateFlags, IPr
 		monitor.done();
 	}
 }
-/**
- * @see IProject
+/* (non-Javadoc)
+ * @see IProject#setDescription(IProjectDescription, IProgressMonitor)
  */
 public void setDescription(IProjectDescription description, IProgressMonitor monitor) throws CoreException {
 	// funnel all operations to central method
@@ -874,8 +873,8 @@ protected void startup() throws CoreException {
 	workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_OPEN, this));
 }
 
-/**
- * @see IResource
+/* (non-Javadoc)
+ * @see IResource#touch(IProgressMonitor)
  */
 public void touch(IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);

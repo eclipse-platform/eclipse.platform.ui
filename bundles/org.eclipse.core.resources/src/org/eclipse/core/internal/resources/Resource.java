@@ -13,7 +13,6 @@ package org.eclipse.core.internal.resources;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
@@ -33,7 +32,7 @@ protected Resource(IPath path, Workspace workspace) {
 	this.path = path.removeTrailingSeparator();
 	this.workspace = workspace;
 }
-/**
+/* (non-Javadoc)
  * @see IResource#accept(IResourceProxyVisitor, int)
  */
 public void accept(final IResourceProxyVisitor visitor, int memberFlags) throws CoreException {
@@ -75,20 +74,20 @@ public void accept(final IResourceProxyVisitor visitor, int memberFlags) throws 
 		proxy.info = null;
 	}
 }
-/**
+/* (non-Javadoc)
  * @see IResource#accept(IResourceVisitor)
  */
 public void accept(IResourceVisitor visitor) throws CoreException {
 	accept(visitor, IResource.DEPTH_INFINITE, 0);
 }
-/**
+/* (non-Javadoc)
  * @see IResource#accept(IResourceVisitor, int, boolean)
  */
 public void accept(IResourceVisitor visitor, int depth, boolean includePhantoms) throws CoreException {
 	accept(visitor, depth, includePhantoms ? IContainer.INCLUDE_PHANTOMS : 0);
 }
-/*
- * @see IResource#accept
+/* (non-Javadoc)
+ * @see IResource#accept(IResourceVisitor, int, int)
  */
 public void accept(final IResourceVisitor visitor, int depth, int memberFlags) throws CoreException {
 	// it is invalid to call accept on a phantom when INCLUDE_PHANTOMS is not specified
@@ -179,7 +178,7 @@ public void checkAccessible(int flags) throws CoreException {
  * its message in an AssertionFailureException. The second one just throws a
  * CoreException using the status returned by this method.
  * 
- * @see IResource#copy
+ * @see IResource#copy(IPath, int, IProgressMonitor)
  */
 public IStatus checkCopyRequirements(IPath destination, int destinationType, int updateFlags) throws CoreException {
 	String message = Policy.bind("resources.copyNotMet"); //$NON-NLS-1$
@@ -321,7 +320,7 @@ public void checkLocal(int flags, int depth) throws CoreException {
  * second one just throws a CoreException using the status returned
  * by this method.
  * 
- * @see IResource#move
+ * @see IResource#move(IPath, int, IProgressMonitor)
  */
 protected IStatus checkMoveRequirements(IPath destination, int destinationType, int updateFlags) throws CoreException {
 	String message = Policy.bind("resources.moveNotMet"); //$NON-NLS-1$
@@ -407,15 +406,15 @@ public void checkValidPath(IPath toValidate, int type, boolean lastSegmentOnly) 
 	if (!result.isOK())
 		throw new ResourceException(result);
 }
-/**
- * @see IResource
+/* (non-Javadoc)
+ * @see IResource#clearHistory(IProgressMonitor)
  */
 public void clearHistory(IProgressMonitor monitor) throws CoreException {
 	getLocalManager().getHistoryStore().removeAll(this);
 }
 /*
  *  (non-Javadoc)
- * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
+ * @see ISchedulingRule#contains(ISchedulingRule)
  */
 public boolean contains(ISchedulingRule rule) {
 	if (this == rule)
@@ -449,9 +448,9 @@ public void convertToPhantom() throws CoreException {
 	info.setMarkers(null);
 }
 
-/*
+/* (non-Javadoc)
  * Used when a folder is to be copied to a project.
- * @see IResource#copy
+ * @see IResource#copy(IProjectDescription, int, IProgressMonitor)
  */
 public void copy(IProjectDescription destDesc, int updateFlags, IProgressMonitor monitor) throws CoreException {
 	Assert.isNotNull(destDesc);
@@ -495,16 +494,16 @@ public void copy(IProjectDescription destDesc, int updateFlags, IProgressMonitor
 	}
 }
 
-/*
- * @see IResource#copy
+/* (non-Javadoc)
+ * @see IResource#copy(IProjectDescription, boolean, IProgressMonitor)
  */
 public void copy(IProjectDescription destDesc, boolean force, IProgressMonitor monitor) throws CoreException {
 	int updateFlags = force ? IResource.FORCE : IResource.NONE;
 	copy(destDesc, updateFlags, monitor);
 }
 
-/**
- * @see IResource#copy
+/* (non-Javadoc)
+ * @see IResource#copy(IPath, int, IProgressMonitor)
  */
 public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
 	try {
@@ -534,8 +533,8 @@ public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) t
 	}
 }
 
-/**
- * @see IResource#copy
+/* (non-Javadoc)
+ * @see IResource#copy(IPath, boolean, IProgressMonitor)
  */
 public void copy(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
 	int updateFlags = force ? IResource.FORCE : IResource.NONE;
@@ -550,7 +549,7 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
 public int countResources(int depth, boolean phantom) {
 	return workspace.countResources(path, depth, phantom);
 }
-/**
+/* (non-Javadoc)
  * @see org.eclipse.core.resources.IFolder#createLink(IPath, int, IProgressMonitor)
  * @see org.eclipse.core.resources.IFile#createLink(IPath, int, IProgressMonitor)
  */
@@ -597,8 +596,8 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
 		monitor.done();
 	}
 }
-/**
- * @see IResource
+/* (non-Javadoc)
+ * @see IResource#createMarker(String)
  */
 public IMarker createMarker(String type) throws CoreException {
 	Assert.isNotNull(type);
@@ -617,15 +616,15 @@ public IMarker createMarker(String type) throws CoreException {
 	}
 }
 
-/**
- * @see IResource
+/* (non-Javadoc)
+ * @see IResource#delete(boolean, IProgressMonitor)
  */
 public void delete(boolean force, IProgressMonitor monitor) throws CoreException {
 	delete(force ? IResource.FORCE : IResource.NONE , monitor);
 }
 
-/**
- * @see IResource
+/* (non-Javadoc)
+ * @see IResource#delete(int, IProgressMonitor)
  */
 public void delete(int updateFlags, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
@@ -676,16 +675,18 @@ public void delete(int updateFlags, IProgressMonitor monitor) throws CoreExcepti
 		monitor.done();
 	}
 }
-/**
- * @see IProject and IWorkspaceRoot -- N.B. This is not an IResource method!
+/* (non-Javadoc)
+ * @see IProject#delete(boolean, boolean, IProgressMonitor)
+ * @see IWorkspaceRoot#delete(boolean, boolean, IProgressMonitor)
+ * N.B. This is not an IResource method!
  */
 public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 	int updateFlags = force ? IResource.FORCE : IResource.NONE;
 	updateFlags |= keepHistory ? IResource.KEEP_HISTORY : IResource.NONE;
 	delete(updateFlags, monitor);
 }
-/**
- * @see IResource
+/* (non-Javadoc)
+ * @see IResource#deleteMarkers(String, boolean, int)
  */
 public void deleteMarkers(String type, boolean includeSubtypes, int depth) throws CoreException {
 	final ISchedulingRule rule = workspace.getRuleFactory().markerRule(this);
@@ -739,8 +740,8 @@ public void deleteResource(boolean convertToPhantom, MultiStatus status) throws 
 	if (err != null)
 		throw err;
 }
-/**
- * @see IResource#equals
+/* (non-Javadoc)
+ * @see IResource#equals(Object)
  */
 public boolean equals(Object target) {
 	if (this == target)
@@ -750,8 +751,8 @@ public boolean equals(Object target) {
 	Resource resource = (Resource) target;
 	return getType() == resource.getType() && path.equals(resource.path) && workspace.equals(resource.workspace);
 }
-/**
- * @see IResource#exists
+/* (non-Javadoc)
+ * @see IResource#exists()
  */
 public boolean exists() {
 	ResourceInfo info = getResourceInfo(false, false);
@@ -760,14 +761,14 @@ public boolean exists() {
 public boolean exists(int flags, boolean checkType) {
 	return flags != NULL_FLAG && !(checkType && ResourceInfo.getType(flags) != getType());
 }
-/**
- * @see IResource#findMarker
+/* (non-Javadoc)
+ * @see IResource#findMarker(long)
  */
 public IMarker findMarker(long id) throws CoreException {
 	return workspace.getMarkerManager().findMarker(this, id);
 }
-/**
- * @see IResource#findMarkers
+/* (non-Javadoc)
+ * @see IResource#findMarkers(String, boolean, int)
  */
 public IMarker[] findMarkers(String type, boolean includeSubtypes, int depth) throws CoreException {
 	ResourceInfo info = getResourceInfo(false, false);
@@ -797,8 +798,8 @@ protected void fixupAfterMoveSource() throws CoreException {
 	info.setModificationStamp(IResource.NULL_STAMP);
 	info.setMarkers(null);
 }
-/**
- * @see IResource#getFileExtension
+/* (non-Javadoc)
+ * @see IResource#getFileExtension()
  */
 public String getFileExtension() {
 	String name = getName();
@@ -812,8 +813,8 @@ public String getFileExtension() {
 public int getFlags(ResourceInfo info) {
 	return (info == null) ? NULL_FLAG : info.getFlags();
 }
-/**
- * @see IResource#getFullPath
+/* (non-Javadoc)
+ * @see IResource#getFullPath()
  */
 public IPath getFullPath() {
 	return path;
@@ -821,15 +822,15 @@ public IPath getFullPath() {
 public FileSystemResourceManager getLocalManager() {
 	return workspace.getFileSystemManager();
 }
-/**
- * @see IResource 
+/* (non-Javadoc)
+ * @see IResource#getLocalTimeStamp()
  */
 public long getLocalTimeStamp() {
 	ResourceInfo info = getResourceInfo(false, false);
 	return info == null ? IResource.NULL_STAMP : info.getLocalSyncInfo();
 }
-/**
- * @see IResource#getLocation
+/* (non-Javadoc)
+ * @see IResource#getLocation()
  */
 public IPath getLocation() {
 	IProject project = getProject();
@@ -838,9 +839,6 @@ public IPath getLocation() {
 	return getLocalManager().locationFor(this);
 }
 
-/**
- * @see IResource#getLocationURL
- */
 public URL getLocationURL() {
 	IProject project = getProject();
 	if (project != null && !project.exists())
@@ -851,8 +849,8 @@ public URL getLocationURL() {
 		return null;
 	}
 }
-/**
- * @see IResource
+/* (non-Javadoc)
+ * @see IResource#getMarker(long)
  */
 public IMarker getMarker(long id) {
 	return new Marker(this, id);
@@ -860,21 +858,21 @@ public IMarker getMarker(long id) {
 protected MarkerManager getMarkerManager() {
 	return workspace.getMarkerManager();
 }
-/**
- * @see IResource
+/* (non-Javadoc)
+ * @see IResource#getModificationStamp()
  */
 public long getModificationStamp() {
 	ResourceInfo info = getResourceInfo(false, false);
 	return info == null ? IResource.NULL_STAMP : info.getModificationStamp();
 }
-/**
- * @see IResource#getName
+/* (non-Javadoc)
+ * @see IResource#getName()
  */
 public String getName() {
 	return path.lastSegment();
 }
-/**
- * @see IResource#getParent
+/* (non-Javadoc)
+ * @see IResource#getParent()
  */
 public IContainer getParent() {
 	int segments = path.segmentCount();
@@ -884,8 +882,8 @@ public IContainer getParent() {
 		return workspace.getRoot().getProject(path.segment(0));
 	return (IFolder) workspace.newResource(path.removeLastSegments(1), IResource.FOLDER);
 }
-/**
- * @see IResource
+/* (non-Javadoc)
+ * @see IResource#getPersistentProperty(QualifiedName)
  */
 public String getPersistentProperty(QualifiedName key) throws CoreException {
 	ResourceInfo info = getResourceInfo(false, false);
@@ -894,14 +892,14 @@ public String getPersistentProperty(QualifiedName key) throws CoreException {
 	checkLocal(flags, DEPTH_ZERO);
 	return getPropertyManager().getProperty(this, key);
 }
-/**
- * @see IResource#getProject
+/* (non-Javadoc)
+ * @see IResource#getProject()
  */
 public IProject getProject() {
 	return workspace.getRoot().getProject(path.segment(0));
 }
-/**
- * @see IResource#getProjectRelativePath
+/* (non-Javadoc)
+ * @see IResource#getProjectRelativePath()
  */
 public IPath getProjectRelativePath() {
 	return getFullPath().removeFirstSegments(ICoreConstants.PROJECT_SEGMENT_LENGTH);
@@ -909,8 +907,8 @@ public IPath getProjectRelativePath() {
 public PropertyManager getPropertyManager() {
 	return workspace.getPropertyManager();
 }
-/**
- * @see IResource#getRawLocation
+/* (non-Javadoc)
+ * @see IResource#getRawLocation()
  */
 public IPath getRawLocation() {
 	if (isLinked())
@@ -925,8 +923,8 @@ public IPath getRawLocation() {
 public ResourceInfo getResourceInfo(boolean phantom, boolean mutable) {
 	return workspace.getResourceInfo(getFullPath(), phantom, mutable);
 }
-/**
- * @see IResource
+/* (non-Javadoc)
+ * @see IResource#getSessionProperty(QualifiedName)
  */
 public Object getSessionProperty(QualifiedName key) throws CoreException {
 	ResourceInfo info = getResourceInfo(false, false);
@@ -935,8 +933,8 @@ public Object getSessionProperty(QualifiedName key) throws CoreException {
 	checkLocal(flags, DEPTH_ZERO);
 	return info.getSessionProperty(key);
 }
-/**
- * @see IResource#getType
+/* (non-Javadoc)
+ * @see IResource#getType()
  */
 public abstract int getType();
 public String getTypeString() {
@@ -952,8 +950,8 @@ public String getTypeString() {
 	}
 	return ""; //$NON-NLS-1$
 }
-/**
- * @see IResource#getWorkspace
+/* (non-Javadoc)
+ * @see IResource#getWorkspace()
  */
 public IWorkspace getWorkspace() {
 	return workspace;
@@ -987,15 +985,14 @@ protected void internalSetLocal(boolean flag, int depth) throws CoreException {
 	for (int i = 0; i < children.length; i++)
 		 ((Resource) children[i]).internalSetLocal(flag, depth);
 }
-/**
- * @see IResource
+/* (non-Javadoc)
+ * @see IResource#isAccessible()
  */
 public boolean isAccessible() {
 	return exists();
 }
-/*
- *  (non-Javadoc)
- * @see org.eclipse.core.runtime.jobs.ISchedulingRule#isConflicting(org.eclipse.core.runtime.jobs.ISchedulingRule)
+/* (non-Javadoc)
+ * @see ISchedulingRule#isConflicting(ISchedulingRule)
  */
 public boolean isConflicting(ISchedulingRule rule) {
 	//must not schedule at same time as notification
@@ -1007,8 +1004,8 @@ public boolean isConflicting(ISchedulingRule rule) {
 	return path.isPrefixOf(otherPath) || otherPath.isPrefixOf(path);
 }
 
-/**
- * @see IResource
+/* (non-Javadoc)
+ * @see IResource#isLocal(int)
  */
 public boolean isLocal(int depth) {
 	ResourceInfo info = getResourceInfo(false, false);
@@ -1025,8 +1022,8 @@ public boolean isLocal(int flags, int depth) {
 		return flags != NULL_FLAG && ResourceInfo.isSet(flags, M_LOCAL_EXISTS);
 }
 
-/**
- * @see IResource
+/* (non-Javadoc)
+ * @see IResource#isPhantom()
  */
 public boolean isPhantom() {
 	ResourceInfo info = getResourceInfo(true, false);
@@ -1035,8 +1032,8 @@ public boolean isPhantom() {
 public boolean isPhantom(int flags) {
 	return flags != NULL_FLAG && ResourceInfo.isSet(flags, M_PHANTOM);
 }
-/**
- * @see IResource
+/* (non-Javadoc)
+ * @see IResource#isReadOnly()
  */
 public boolean isReadOnly() {
 	IPath location = getLocation();
@@ -1044,7 +1041,7 @@ public boolean isReadOnly() {
 		return false;
 	return CoreFileSystemLibrary.isReadOnly(location.toOSString());
 }
-/**
+/* (non-Javadoc)
  * @see IResource#isSynchronized(int)
  */
 public boolean isSynchronized(int depth) {
@@ -1056,8 +1053,8 @@ protected IPath makePathAbsolute(IPath target) {
 	return getParent().getFullPath().append(target);
 }
 
-/*
- * @see IResource#move
+/* (non-Javadoc)
+ * @see IResource#move(IProjectDescription, boolean, IProgressMonitor)
  */
 public void move(IProjectDescription description, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 	int updateFlags = force ? IResource.FORCE : IResource.NONE;
@@ -1065,8 +1062,8 @@ public void move(IProjectDescription description, boolean force, boolean keepHis
 	move(description, updateFlags, monitor);
 }
 
-/*
- * @see IResource#move
+/* (non-Javadoc)
+ * @see IResource#move(IPath, int, IProgressMonitor)
  */
 public void move(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException {
 	Assert.isNotNull(description);
@@ -1077,15 +1074,15 @@ public void move(IProjectDescription description, int updateFlags, IProgressMoni
 	((Project)this).move(description, updateFlags, monitor);
 }
 
-/**
- * @see IResource#move
+/* (non-Javadoc)
+ * @see IResource#move(IPath, boolean, IProgressMonitor)
  */
 public void move(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
 	move(destination, force ? IResource.FORCE : IResource.NONE, monitor);
 }
 
-/**
- * @see IResource#move
+/* (non-Javadoc)
+ * @see IResource#move(IPath, boolean, IProgressMonitor)
  */
 public void move(IPath destination, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 	int updateFlags = force ? IResource.FORCE : IResource.NONE;
@@ -1093,8 +1090,8 @@ public void move(IPath destination, boolean force, boolean keepHistory, IProgres
 	move(destination, updateFlags, monitor);
 }
 
-/**
- * @see IResource#move
+/* (non-Javadoc)
+ * @see IResource#move(IPath, int, IProgressMonitor)
  */
 public void move(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
@@ -1144,8 +1141,8 @@ public void move(IPath destination, int updateFlags, IProgressMonitor monitor) t
 		monitor.done();
 	}
 }
-/**
- * @see IResource#refreshLocal
+/* (non-Javadoc)
+ * @see IResource#refreshLocal(int, IProgressMonitor)
  */
 public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
@@ -1171,8 +1168,8 @@ public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreExcepti
 		monitor.done();
 	}
 }
-/**
- * @see IResource
+/* (non-Javadoc)
+ * @see IResource#setLocal(boolean, int, IProgressMonitor)
  */
 public void setLocal(boolean flag, int depth, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
@@ -1191,8 +1188,8 @@ public void setLocal(boolean flag, int depth, IProgressMonitor monitor) throws C
 		monitor.done();
 	}
 }
-/**
- * @see IResource 
+/* (non-Javadoc)
+ * @see IResource#setLocalTimeStamp(long)
  */
 public long setLocalTimeStamp(long value) throws CoreException {
 	if (value < 0)
@@ -1205,8 +1202,8 @@ public long setLocalTimeStamp(long value) throws CoreException {
 	checkLocal(flags, DEPTH_ZERO);
 	return getLocalManager().setLocalTimeStamp(this, info, value);
 }
-/**
- * @see IResource
+/* (non-Javadoc)
+ * @see IResource#setPersistentProperty(QualifiedName, String)
  */
 public void setPersistentProperty(QualifiedName key, String value) throws CoreException {
 	ResourceInfo info = getResourceInfo(false, false);
@@ -1215,16 +1212,16 @@ public void setPersistentProperty(QualifiedName key, String value) throws CoreEx
 	checkLocal(flags, DEPTH_ZERO);
 	getPropertyManager().setProperty(this, key, value);
 }
-/**
- * @see IResource
+/* (non-Javadoc)
+ * @see IResource#setReadOnly(boolean)
  */
 public void setReadOnly(boolean readonly) {
 	IPath location = getLocation();
 	if (location != null)
 		CoreFileSystemLibrary.setReadOnly(location.toOSString(), readonly);
 }
-/**
- * @see IResource
+/* (non-Javadoc)
+ * @see IResource#setSessionProperty(QualifiedName, Object)
  */
 public void setSessionProperty(QualifiedName key, Object value) throws CoreException {
 	// fetch the info but don't bother making it mutable even though we are going
@@ -1243,11 +1240,14 @@ public void setSessionProperty(QualifiedName key, Object value) throws CoreExcep
 public boolean synchronizing(ResourceInfo info) {
 	return info != null && info.getSyncInfo(false) != null;
 }
+/* (non-Javadoc)
+ * @see Object#toString()
+ */
 public String toString() {
 	return getTypeString() + getFullPath().toString();
 }
-/**
- * @see IResource
+/* (non-Javadoc)
+ * @see IResource#touch(IProgressMonitor)
  */
 public void touch(IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
@@ -1311,8 +1311,8 @@ private String findVariant(String target, String[] list) {
 	return null;
 }
 
-/*
- * @see IResource
+/* (non-Javadoc)
+ * @see IResource#isDerived()
  */
 public boolean isDerived() {
 	ResourceInfo info = getResourceInfo(false, false);
@@ -1329,7 +1329,7 @@ public boolean isDerived() {
 public boolean isDerived(int flags) {
 	return flags != NULL_FLAG && ResourceInfo.isSet(flags, ICoreConstants.M_DERIVED);
 }
-/**
+/* (non-Javadoc)
  * @see IResource#isLinked()
  */
 public boolean isLinked() {
@@ -1339,8 +1339,8 @@ public boolean isLinked() {
 	ResourceInfo info = getResourceInfo(false, false);
 	return info != null && info.isSet(M_LINK);
 }
-/*
- * @see IResource
+/* (non-Javadoc)
+ * @see IResource#setDerived(boolean)
  */
 public void setDerived(boolean isDerived) throws CoreException {
 	// fetch the info but don't bother making it mutable even though we are going
@@ -1359,8 +1359,8 @@ public void setDerived(boolean isDerived) throws CoreException {
 	}
 }
 
-/*
- * @see IResource
+/* (non-Javadoc)
+ * @see IResource#isTeamPrivateMember()
  */
 public boolean isTeamPrivateMember() {
 	ResourceInfo info = getResourceInfo(false, false);
@@ -1391,8 +1391,8 @@ public boolean isUnderLink() {
 	IPath linkParent = path.removeLastSegments(depth-2);
 	return workspace.getResourceInfo(linkParent, false, false).isSet(ICoreConstants.M_LINK);
 }
-/*
- * @see IResource
+/* (non-Javadoc)
+ * @see IResource#setTeamPrivateMember(boolean)
  */
 public void setTeamPrivateMember(boolean isTeamPrivate) throws CoreException {
 	// fetch the info but don't bother making it mutable even though we are going

@@ -14,7 +14,6 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.*;
-
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.io.IOException;
@@ -323,10 +322,11 @@ public boolean isDescriptionSynchronized(IProject target) {
 		return false;
 	return projectInfo.getLocalSyncInfo() == CoreFileSystemLibrary.getLastModified(descriptionFile.getLocation().toOSString());
 }
-/**
+/* (non-Javadoc)
  * Returns true if the given resource is synchronized with the filesystem
  * to the given depth.  Returns false otherwise.
- * @see IResource.isSynchronized
+ * 
+ * @see IResource#isSynchronized(int)
  */
 public boolean isSynchronized(IResource target, int depth) {
 	switch (target.getType()) {

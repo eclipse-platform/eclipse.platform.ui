@@ -45,7 +45,7 @@ protected void assertCreateRequirements(IPath location, int updateFlags) throws 
 	   throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, getFullPath(), msg, null);
 	}
 }
-/**
+/* (non-Javadoc)
  * Changes this folder to be a file in the resource tree and returns the newly
  * created file.  All related properties are deleted.  It is assumed that on
  * disk the resource is already a file so no action is taken to delete the disk
@@ -53,7 +53,7 @@ protected void assertCreateRequirements(IPath location, int updateFlags) throws 
  * <p>
  * <b>This method is for the exclusive use of the local refresh mechanism</b>
  *
- * @see RefreshLocalVisitor#folderToFile
+ * @see org.eclipse.core.internal.localstore.RefreshLocalVisitor#folderToFile(UnifiedTreeNode, Resource)
  */
 public IFile changeToFile() throws CoreException {
 	getPropertyManager().deleteProperties(this, IResource.DEPTH_INFINITE);
@@ -69,8 +69,8 @@ public IFile changeToFile() throws CoreException {
 	return result;
 }
 
-/*
- * @see IFolder
+/* (non-Javadoc)
+ * @see IFolder#create(int, boolean, IProgressMonitor)
  */
 public void create(int updateFlags, boolean local, IProgressMonitor monitor) throws CoreException {
 	final boolean force = (updateFlags & IResource.FORCE) != 0;
@@ -108,8 +108,8 @@ public void create(int updateFlags, boolean local, IProgressMonitor monitor) thr
 		monitor.done();
 	}
 }
-/**
- * @see IFolder
+/* (non-Javadoc)
+ * @see IFolder#create(boolean, boolean, IProgressMonitor)
  */
 public void create(boolean force, boolean local, IProgressMonitor monitor) throws CoreException {
 	// funnel all operations to central method
@@ -138,8 +138,8 @@ public void ensureExists(IProgressMonitor monitor) throws CoreException {
 		 ((Folder) parent).ensureExists(monitor);
 	internalCreate(true, true, monitor);
 }
-/**
- * @see IResource#getType
+/* (non-Javadoc)
+ * @see IResource#getType()
  */
 public int getType() {
 	return FOLDER;
@@ -166,8 +166,4 @@ public void internalCreate(boolean force, boolean local, IProgressMonitor monito
 		monitor.done();
 	}
 }
-
-
-
-
 }

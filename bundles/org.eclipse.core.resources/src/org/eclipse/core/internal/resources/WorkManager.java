@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,7 +69,7 @@ class WorkManager implements IManager {
 	 * Must be followed eventually by endUnprotected. Any
 	 * beginUnprotected/endUnprotected pair must be done entirely within the
 	 * scope of a checkIn/checkOut pair. Returns the old lock depth.
-	 * @see endUnprotected
+	 * @see #endUnprotected(int)
 	 */
 	public int beginUnprotected() {
 		int depth = lock.getDepth();
@@ -144,7 +144,7 @@ class WorkManager implements IManager {
 	/**
 	 * Re-acquires the workspace lock that was temporarily released during an
 	 * operation, and restores the old lock depth.
-	 * @see beginUnprotected
+	 * @see #beginUnprotected()
 	 */
 	public void endUnprotected(int depth) {
 		for (int i = 0; i < depth; i++)
@@ -228,8 +228,10 @@ class WorkManager implements IManager {
 		return false;
 	}
 	public void shutdown(IProgressMonitor monitor) {
+		// do nothing
 	}
 	public void startup(IProgressMonitor monitor) {
+		// do nothing
 	}
 	/**
 	 * Returns true if the workspace lock has already been acquired by this

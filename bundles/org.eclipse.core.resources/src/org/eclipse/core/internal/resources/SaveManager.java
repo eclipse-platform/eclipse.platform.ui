@@ -12,7 +12,6 @@ package org.eclipse.core.internal.resources;
 
 import java.io.*;
 import java.util.*;
-
 import org.eclipse.core.internal.events.BuilderPersistentInfo;
 import org.eclipse.core.internal.events.ResourceComparator;
 import org.eclipse.core.internal.localstore.*;
@@ -726,7 +725,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 	 * project has never been saved).  This method is
 	 * used when restoring a saved/closed project.  restoreTree(Workspace) is
 	 * used when restoring a complete workspace after workspace save/shutdown.
-	 * @exception if the project could not be restored.
+	 * @exception CoreException if the project could not be restored.
 	 */
 	protected void restoreTree(Project project, IProgressMonitor monitor) throws CoreException {
 		long start = System.currentTimeMillis();
@@ -766,7 +765,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 	 * Reads the contents of the tree rooted by the given resource from the 
 	 * file system. This method is used when restoring a complete workspace 
 	 * after workspace save/shutdown.
-	 * @exception if the workspace could not be restored.
+	 * @exception CoreException if the workspace could not be restored.
 	 */
 	protected void restoreTree(Workspace workspace, IProgressMonitor monitor) throws CoreException {
 		long start = System.currentTimeMillis();
@@ -1177,7 +1176,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 		}
 	}
 	/**
-	 * @see IElementInfoFlattener#readElement
+	 * @see IElementInfoFlattener#readElement(IPath, DataInput)
 	 */
 	public Object readElement(IPath path, DataInput input) throws IOException {
 		Assert.isNotNull(path);
@@ -1190,7 +1189,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 		return info;
 	}
 	/**
-	 * @see IElementInfoFlattener#writeElement
+	 * @see IElementInfoFlattener#writeElement(IPath, Object, DataOutput)
 	 */
 	public void writeElement(IPath path, Object element, DataOutput output) throws IOException {
 		Assert.isNotNull(path);
@@ -1577,11 +1576,13 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 				try {
 					markersOutput.close();
 				} catch (IOException e) {
+					// ignore
 				}
 			if (syncInfoOutput != null)
 				try {
 					syncInfoOutput.close();
 				} catch (IOException e) {
+					// ignore
 				}
 		}
 
