@@ -1212,6 +1212,7 @@ public final class InternalPlatform {
 				File controlledDir = new File(InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath() + '/' + Platform.PI_RUNTIME);
 				controlledDir.mkdirs();
 				runtimeFileManager = new FileManager(controlledDir);
+				runtimeFileManager.open(true);
 			} catch (IOException e) {
 				getFrameworkLog().log(new FrameworkLogEntry(Platform.PI_RUNTIME, Policy.bind("meta.fileManagerInitializationFailed", InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath() + '/' + Platform.PI_RUNTIME), 0, null, null)); //$NON-NLS-1$
 			}
