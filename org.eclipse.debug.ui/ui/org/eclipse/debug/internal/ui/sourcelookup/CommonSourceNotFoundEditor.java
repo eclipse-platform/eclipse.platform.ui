@@ -1,0 +1,445 @@
+/*******************************************************************************
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.debug.internal.ui.sourcelookup;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventSetListener;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.ISourceLocator;
+import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.internal.core.sourcelookup.AbstractSourceLookupDirector;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.views.launch.LaunchView;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IReusableEditor;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.part.EditorPart;
+
+/**
+ * Editor for when source is not found. Shows the source name and has 
+ * a button to add new containers.
+ * Editor ID: IInternalDebugUIConstants.ID_COMMON_SOURCE_NOT_FOUND_EDITOR = org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditor
+ * 
+ * May be subclassed if a debugger requires additional buttons on the editor. For example,
+ * a button may be added if the user has the additional option of using generated source
+ * for debugging.
+ * 
+ * @see AbstractSourceLookupDirector
+ * @see CommonSourceNotFoundEditorInput
+ * @since 3.0
+ */
+public class CommonSourceNotFoundEditor extends EditorPart implements IReusableEditor, IDebugEventSetListener {
+	
+	/**
+	 * Text widgets used for this editor
+	 */
+	private Text fText;	
+	/**
+	 * The stackframe associated with the object that is requesting source. Object
+	 * may or may not be a stackframe.
+	 */
+	protected IStackFrame fStackFrame;	
+    /**
+     * object for which the source is showing for (i.e., stackframe, breakpoint)
+     */
+	protected Object fObject; 
+	/**
+	 * The identifier used for markers that mark the position that the editor should be
+	 * scrolled to.
+	 * @since 3.0
+	 */
+	protected static String SCROLL_TO_MARKER = "org.eclipse.debug.ui.ScrollToMarker"; //$NON-NLS-1$
+	
+	/**
+	 * @see org.eclipse.ui.IEditorPart#doSave(IProgressMonitor)
+	 */
+	public void doSave(IProgressMonitor monitor) {
+	}
+	
+	/**
+	 * @see org.eclipse.ui.IEditorPart#doSaveAs()
+	 */
+	public void doSaveAs() {
+	}
+	
+	/**
+	 * @see org.eclipse.ui.IEditorPart#gotoMarker(IMarker)
+	 */
+	public void gotoMarker(IMarker marker) {
+	}
+	
+	/**
+	 * @see org.eclipse.ui.IEditorPart#init(IEditorSite, IEditorInput)
+	 */
+	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+		setSite(site);
+		setInput(input);
+		DebugPlugin.getDefault().addDebugEventListener(this);
+	}
+	
+	/**
+	 * @see org.eclipse.ui.IEditorPart#isDirty()
+	 */
+	public boolean isDirty() {
+		return false;
+	}
+	
+	/**
+	 * @see org.eclipse.ui.IEditorPart#isSaveAsAllowed()
+	 */
+	public boolean isSaveAsAllowed() {
+		return false;
+	}
+	
+	/**
+	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(Composite)
+	 */
+	public void createPartControl(Composite parent) {
+		GridLayout topLayout = new GridLayout();
+		GridData data = new GridData();	
+		topLayout.numColumns = 1;
+		topLayout.verticalSpacing = 10;
+		parent.setLayout(topLayout);
+		parent.setLayoutData(data);		
+		parent.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		
+		fText = new Text(parent,SWT.READ_ONLY|SWT.WRAP);
+		fText.setForeground(JFaceColors.getErrorText(fText.getDisplay()));	
+		fText.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));	
+		if (getEditorInput() != null) {
+			setInput(getEditorInput());
+		}
+		
+		
+		Button button = new Button(parent, SWT.PUSH);
+		data = new GridData();
+		data.grabExcessHorizontalSpace = false;
+		data.grabExcessVerticalSpace = false;
+		data.heightHint = 50;
+		data.widthHint=50;
+		button.setData(data);
+		button.setText(SourceLookupUIMessages.getString("addSourceLocation.addButton2")); //$NON-NLS-1$
+		button.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				buttonSelected();
+			}
+		});		
+		
+		Dialog.applyDialogFont(parent);
+		
+		WorkbenchHelp.setHelp(parent, IDebugHelpContextIds.NO_SOURCE_EDITOR);
+	}
+	
+	/**
+	 * Handles the event when the "add source container" button is selected.
+	 * Displays the <code>EditSourceLookupPathDialog</code> so the user 
+	 * can add additional source containers that should be searched.
+	 */
+	private void buttonSelected(){
+		ISourceLocator locator = null;		
+		ILaunch launch = null;		
+		IAdaptable selection = DebugUITools.getDebugContext();
+		
+		if(selection == null) return;
+		
+		if (selection.getAdapter(ILaunch.class) != null ) {
+			launch = (ILaunch) selection.getAdapter(ILaunch.class);
+			locator = launch.getSourceLocator();			
+		} 
+		else if (selection.getAdapter(IDebugElement.class) != null ) {
+			launch = ((IDebugElement)selection.getAdapter(IDebugElement.class)).getLaunch();
+			locator = launch.getSourceLocator();					
+		}
+		else return;  //should not occur
+		if (locator == null || !(locator instanceof AbstractSourceLookupDirector))
+			return; 
+		
+		final EditSourceLookupPathDialog dialog =
+			new EditSourceLookupPathDialog(DebugUIPlugin.getShell(),(AbstractSourceLookupDirector) locator);
+		
+		int result = dialog.open();		
+		if(result == Dialog.OK)
+		{
+			resetEditor();				
+		}
+	}
+	/**
+	 * Clears the (source not found) editor inputs associated with the stack and
+	 * opening the editor again, if the item is not a stackframe. A marker will be added
+	 * and the editor will be told to scroll to the marker.
+	 * 
+	 * If it is a stackframe, the launch view will pick up the change event and open a new
+	 * editor automatically.
+	 * 
+	 */
+	public void resetEditor()
+	{
+		fireChangeEventsOnStack();
+		
+		if(fObject instanceof IStackFrame)
+			return; //launch view will pick up from here
+		//TODO: since moving to 3.0, this is hit and miss...doesn't
+		//always open a new editor, might be the plugin I was using for testing though...
+		
+		closeEditor();	
+		// get new editor input
+		IDebugModelPresentation modelPres = DebugUITools.newDebugModelPresentation();	
+		IEditorInput newEditorInput = modelPres.getEditorInput(fObject);
+		IEditorPart editor = null;
+		IWorkbenchWindow dwindow= DebugUIPlugin.getActiveWorkbenchWindow();
+		if (dwindow == null) return;
+		IWorkbenchPage page= dwindow.getActivePage();
+		if (page == null) return;
+		
+		if(fObject instanceof IMarker)
+		{
+			try{
+				editor = page.openEditor(newEditorInput, modelPres.getEditorId(newEditorInput, (IMarker)fObject));
+			}catch(PartInitException e){}
+		}
+		else if(fObject instanceof IFile)
+		{
+			try{
+				editor = page.openEditor(newEditorInput, modelPres.getEditorId(newEditorInput,(IFile) fObject));
+			}catch(PartInitException e){}
+		}else { //get editor input
+			
+			try{
+				editor = page.openEditor(newEditorInput, modelPres.getEditorId(newEditorInput, fObject));
+			}catch(PartInitException e){}
+			
+		}
+		modelPres.dispose();	
+		if(editor == null)
+			return;
+		//Now try to scroll the editor to the line of interest
+		int line = getLineNumber();			
+		if(line != -1){			
+			try{		
+				IMarker locationMarker;
+				locationMarker = ResourcesPlugin.getWorkspace().getRoot().createMarker(SCROLL_TO_MARKER);
+				locationMarker.setAttribute(IMarker.LINE_NUMBER, line);
+				locationMarker.setAttribute(IMarker.TRANSIENT, true);
+				IDE.gotoMarker(editor, locationMarker);		
+			}catch(CoreException e){}
+		}		
+		
+	}
+	
+	/**
+	 * Returns the line number associated with the breakpoint (marker).
+	 * @return the line number to scroll to
+	 */
+	protected int getLineNumber(){
+		int line = -1;
+		if(fObject instanceof IMarker)
+		{
+			try{
+				line=((Integer)((IMarker)fObject).getAttribute(IMarker.LINE_NUMBER)).intValue();							
+			}catch(CoreException e){}
+		}
+		return line;
+	}
+	
+	/**
+	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
+	 */
+	public void setFocus() {
+		if (fText != null) {
+			fText.setFocus();
+		}
+	}
+	
+	/**
+	 * @see IReusableEditor#setInput(org.eclipse.ui.IEditorInput)
+	 */
+	public void setInput(IEditorInput input) {
+		super.setInput(input);
+		if(input instanceof CommonSourceNotFoundEditorInput)
+		{
+			fStackFrame = ((CommonSourceNotFoundEditorInput)input).getStackFrame();
+			fObject = ((CommonSourceNotFoundEditorInput)input).getObject();
+		}
+		else fStackFrame = null;
+		setTitle(input.getName());
+		if (fText != null) {			
+			fText.setText(input.getToolTipText()+"\n"); //$NON-NLS-1$
+		}
+	}
+
+	/**
+	 * Fires change event(s) to clear the source file history of the items in the stack.
+	 */
+	protected void fireChangeEventsOnStack(){
+		if(fObject == null)
+			return;
+		if(fObject instanceof IStackFrame)
+		{
+			fireChangeEvent(DebugEvent.CONTENT, (IStackFrame)fObject);				
+		}
+		else if(fObject instanceof IDebugElement)
+		{ //loop through all threads and clear the cached source files
+			try{		
+				IThread[] threads =((IDebugElement)fObject).getDebugTarget().getThreads();
+				for(int i=0; i< threads.length; i++)
+				{
+					fireChangeEvent(DebugEvent.CONTENT, threads[i].getTopStackFrame());
+				}
+			}catch(DebugException e){}
+		}			
+	}
+	
+	/**
+	 * Fire a debug change event with detail
+	 * @param detail @see DebugEvent
+	 */
+	public void fireChangeEvent(int detail, IDebugElement source) {
+		fireEvent(new DebugEvent(source, DebugEvent.CHANGE, detail));
+	}		
+	
+	
+	/**
+	 * Fire a debug event
+	 */
+	private void fireEvent(DebugEvent event) {
+		if(DebugPlugin.getDefault() != null)
+			DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] {event});
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
+	 */
+	public void handleDebugEvents(DebugEvent[] events) {
+		for (int i = 0; i < events.length; i++) {
+			DebugEvent event = events[i];
+			Object source= event.getSource();			
+			switch (event.getKind()) {
+			case DebugEvent.TERMINATE :
+				if(checkIfEditorShouldClose(source))
+					closeEditor();			 
+				break;
+				
+			case DebugEvent.CHANGE :
+				if(!source.equals(fStackFrame))
+					return;
+				//	Trigger a selectionChange event
+				IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
+				if (window == null) {
+					return;
+				}
+				IWorkbenchPage p= window.getActivePage();
+				if (p == null) {
+					return;
+				}
+				IViewPart fLaunchView= p.findView(IDebugUIConstants.ID_DEBUG_VIEW);
+				if (fLaunchView instanceof ISelectionChangedListener) {						
+					ISelection fSelection = ((LaunchView)fLaunchView).getViewer().getSelection();
+					//	To clear the stackframe stored in the launchView
+					((LaunchView)fLaunchView).clearSourceSelection(((IStackFrame)source).getThread());
+					((LaunchView)fLaunchView).getViewer().setSelection(fSelection, true);					
+				}			
+				break;
+			}					
+		}
+	}
+	
+	
+	/**
+	 * Checks if the source of the terminate event is associated with this editor
+	 * object.
+	 * @param source the source of the event
+	 * @return true if the <code>source</code> is related to this editor, false otherwise
+	 */
+	protected boolean checkIfEditorShouldClose(Object source)
+	{
+		//Make sure terminate event is for me
+		if(fStackFrame == null)
+			return false;	
+		if(source instanceof IDebugTarget)
+		{
+			if(((IDebugTarget)source).equals(fStackFrame.getDebugTarget()))
+				return true;
+		}
+		else if(source instanceof IStackFrame)
+		{
+			if(source.equals(fStackFrame))
+				return true;
+		}
+		else if(source instanceof IThread)
+		{
+			if(((IThread)source).equals(fStackFrame.getThread()))
+				return true;
+		}		 
+		return false;
+	}
+	
+	/**
+	 * Closes this editor.
+	 */
+	protected void closeEditor()
+	{
+		final IEditorPart editor = this;
+		DebugUIPlugin.getShell().getDisplay().syncExec(
+				new Runnable() {
+					public void run() {											
+						DebugUIPlugin.getActiveWorkbenchWindow().getActivePage().closeEditor(editor,false);										
+					}						
+				});			
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
+	 */
+	public void dispose() {
+		DebugPlugin.getDefault().removeDebugEventListener(this);
+		super.dispose();
+	}
+	
+	
+}
+
+

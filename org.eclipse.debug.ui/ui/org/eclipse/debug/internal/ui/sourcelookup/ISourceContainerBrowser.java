@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,17 +22,17 @@ import org.eclipse.swt.widgets.Shell;
  * </p>
  * 
  * TODO: issue - should we use a wizard instead of a dialog for this? 
- *
+ *@see ISourceContainerType
  *@since 3.0
  */
-public interface ISourceLocationBrowser {
+public interface ISourceContainerBrowser {
 	/**
-	* Displays a browse dialog and then uses the input to create a source location.
-	* If user input is not required, it can just return a new source location without
-	* displaying a browse dialog.
-	* @param shell the shell to use to display the dialog
-	* @return the new source location or locations (if multiple items selected by user)
-	*/
+	 * Displays a browse dialog and then uses the input to create a source container.
+	 * If user input is not required, it can just return a new source container without
+	 * displaying a browse dialog.
+	 * @param shell the shell to use to display the dialog
+	 * @return the new source container or containers (if multiple items selected by user)
+	 */
 	public ISourceContainer[] createSourceContainers(Shell shell);
-
+	
 }

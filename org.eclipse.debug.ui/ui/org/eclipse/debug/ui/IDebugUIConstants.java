@@ -406,6 +406,31 @@ public interface IDebugUIConstants {
 	/** Terminated system process image identifier. */
 	public static final String IMG_OBJS_OS_PROCESS_TERMINATED= "IMG_OBJS_OS_PROCESS_TERMINATED"; //$NON-NLS-1$
 
+	/** Edit source lookup action icon.
+	 * @since 3.0
+	 */
+	public static final String IMG_SRC_LOOKUP_MENU = "IMG_SRC_LOOKUP_MENU"; //$NON-NLS-1$
+	/** Disabled edit source lookup action icon.
+	 * @since 3.0
+	 */
+	public static final String IMG_SRC_LOOKUP_MENU_DLCL = "IMG_SRC_LOOKUP_MENU_DISABLED"; //$NON-NLS-1$
+	/** Enabled edit source lookup action icon.
+	 * @since 3.0
+	 */
+	public static final String IMG_SRC_LOOKUP_MENU_ELCL = "IMG_SRC_LOOKUP_MENU_ENABLED"; //$NON-NLS-1$
+	/** Source lookup launch configuration tab icon.
+	 * @since 3.0
+	 */
+	public static final String IMG_SRC_LOOKUP_TAB = "IMG_SRC_LOOKUP_TAB"; //$NON-NLS-1$
+	/** Add source lookup dialog banner icon.
+	 * @since 3.0
+	 */
+	public static final String IMG_ADD_SRC_LOC_WIZ = "IMG_ADD_SRC_LOCATION"; //$NON-NLS-1$
+	/** Edit source lookup dialog banner icon.
+	 * @since 3.0
+	 */
+	public static final String IMG_EDIT_SRC_LOC_WIZ = "IMG_EDIT_SRC_LOCATION"; //$NON-NLS-1$
+	
 	/**
 	 * Expression image identifier.
 	 * 
@@ -824,6 +849,6 @@ public interface IDebugUIConstants {
 	 * components extension point specifies an <code>IVariableComponent</code>
 	 * for an <code>IContextLaunchVariable</code>.
 	 */
-	public static final String EXTENSION_POINT_LAUNCH_VARIABLE_COMPONENTS = "launchVariableComponents";		//$NON-NLS-1$		
+	public static final String EXTENSION_POINT_LAUNCH_VARIABLE_COMPONENTS = "launchVariableComponents";		//$NON-NLS-1$	
 		
 }

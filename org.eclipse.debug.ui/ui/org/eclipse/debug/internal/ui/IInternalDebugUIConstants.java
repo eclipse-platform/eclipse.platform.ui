@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,6 +96,12 @@ public interface IInternalDebugUIConstants {
 	 */
 	public static final String ID_SOURCE_NOT_FOUND_EDITOR = "org.eclipse.debug.ui.NoSourceFoundEditor"; //$NON-NLS-1$
 	
+	/**
+	 * Editor Id for the "Common Source Not Found" editor.
+	 * @since 3.0
+	 */
+	public static final String ID_COMMON_SOURCE_NOT_FOUND_EDITOR="org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditor"; //$NON-NLS-1$
+		
 	/**
 	 * The name of the font to use for detail panes. This font is managed via
 	 * the workbench font preference page.

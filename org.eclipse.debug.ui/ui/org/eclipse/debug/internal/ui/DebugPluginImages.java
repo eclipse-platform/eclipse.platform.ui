@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -162,7 +162,15 @@ public class DebugPluginImages {
 		// Overlays
 		declareRegistryImage(IDebugUIConstants.IMG_OVR_ERROR, OVR + "error.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_OVR_TRANSPARENT, OVR + "transparent.gif"); //$NON-NLS-1$		
-				
+		
+		//source location
+		declareRegistryImage(IDebugUIConstants.IMG_SRC_LOOKUP_MENU, LOCALTOOL + "edtsrclkup_menu.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_SRC_LOOKUP_MENU_DLCL, DLCL + "edtsrclkup_menu.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_SRC_LOOKUP_MENU_ELCL, ELCL + "edtsrclkup_menu.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_SRC_LOOKUP_TAB, OBJECT + "edtsrclkup_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_ADD_SRC_LOC_WIZ, WIZBAN + "addsrcloc_wiz.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_EDIT_SRC_LOC_WIZ, WIZBAN + "edtsrclkup_wiz.gif"); //$NON-NLS-1$
+		
 		// launch configuration types
 		IPluginDescriptor pluginDescriptor = DebugUIPlugin.getDefault().getDescriptor();
 		IExtensionPoint extensionPoint= pluginDescriptor.getExtensionPoint(IDebugUIConstants.EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPE_IMAGES);

@@ -1,0 +1,125 @@
+/*******************************************************************************
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.debug.internal.ui.sourcelookup;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Hashtable;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.debug.internal.ui.DebugPluginImages;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.swt.graphics.Image;
+
+/**
+ * Utility methods for the UI portion of the source lookup solution. * 
+ * @see SourceLookupUtils
+ * 
+ * @since 3.0
+ */
+public class SourceLookupUIUtils {
+	
+	
+	/**
+	 * Constant for the container presentation extension id.
+	 * @since 3.0
+	 */
+	public static final String CONTAINER_PRESENTATION_EXTENSION = "sourceContainerPresentations"; //$NON-NLS-1$
+	/**
+	 * Constant for the container presentation icon attribute.
+	 * @since 3.0
+	 */
+	public static final String ICON_ATTRIBUTE = "icon";	 //$NON-NLS-1$
+	/**
+	 * Constant for the container presentation browser attribute.
+	 * @since 3.0
+	 */
+	public static final String BROWSER_CLASS_ATTRIBUTE = "browserClass"; //$NON-NLS-1$
+	/**
+	 * Constant for the container presentation type id attribute.
+	 * @since 3.0
+	 */
+	public static final String CONTAINER_ID_ATTRIBUTE = "containerTypeID";	//$NON-NLS-1$
+	
+	private static Hashtable fSourceContainerPresentationHashtable;
+	
+	/**
+	 * Constructor. Reads in Source Container Presentation extension implementations.
+	 */
+	public SourceLookupUIUtils(){
+		IPluginDescriptor descriptor= DebugUIPlugin.getDefault().getDescriptor();		
+		//read in SourceContainer presentation extensions
+		IConfigurationElement[] sourceContainerPresentationExtensions =
+			descriptor.getExtensionPoint(CONTAINER_PRESENTATION_EXTENSION).getConfigurationElements();
+		fSourceContainerPresentationHashtable = new Hashtable();
+		for (int i = 0; i < sourceContainerPresentationExtensions.length; i++) {
+			fSourceContainerPresentationHashtable.put(
+					sourceContainerPresentationExtensions[i].getAttribute(CONTAINER_ID_ATTRIBUTE),
+					sourceContainerPresentationExtensions[i]);
+			registerContainerImages(sourceContainerPresentationExtensions[i]);			
+		}		
+	}	
+	
+	
+	/**
+	 * Retrieves the icon associated with a source container type.
+	 * @param id the container type id
+	 * @return the image for the type specified
+	 */
+	public static Image getSourceContainerImage(String id){
+		if(fSourceContainerPresentationHashtable == null)
+			new SourceLookupUIUtils();
+		return DebugPluginImages.getImage(id);
+	}
+	
+	/**
+	 * Retrieves the browser class associated with the source container type specified.
+	 * @param typeID the source container type id
+	 * @return the browser class
+	 */
+	public static ISourceContainerBrowser getSourceContainerBrowser(String typeID)
+	{
+		if(fSourceContainerPresentationHashtable == null)
+			new SourceLookupUIUtils();
+		IConfigurationElement element = (IConfigurationElement)fSourceContainerPresentationHashtable.get(typeID);
+		ISourceContainerBrowser browser = null;
+		try{
+			if(element!= null && element.getAttribute(BROWSER_CLASS_ATTRIBUTE) != null)
+				browser = (ISourceContainerBrowser) element.createExecutableExtension(BROWSER_CLASS_ATTRIBUTE);
+		}catch(CoreException e){}
+		return browser;
+	}
+	
+	private void registerContainerImages(IConfigurationElement configElement){
+		URL iconURL = configElement.getDeclaringExtension().getDeclaringPluginDescriptor().getInstallURL();
+		String iconPath = configElement.getAttribute(ICON_ATTRIBUTE);
+		ImageDescriptor imageDescriptor = ImageDescriptor.getMissingImageDescriptor();
+		String configTypeID = configElement.getAttribute(CONTAINER_ID_ATTRIBUTE);
+		ImageRegistry imageRegistry = DebugPluginImages.getImageRegistry();
+		DebugPluginImages.getImageRegistry();
+		if(iconPath != null)
+		{
+			try {
+				iconURL = new URL(iconURL, iconPath);
+				imageDescriptor = ImageDescriptor.createFromURL(iconURL);
+			} catch (MalformedURLException mue) {
+				DebugUIPlugin.log(mue);
+			}	
+			
+			imageRegistry.put(configTypeID, imageDescriptor);			
+		}		
+	}
+	
+}

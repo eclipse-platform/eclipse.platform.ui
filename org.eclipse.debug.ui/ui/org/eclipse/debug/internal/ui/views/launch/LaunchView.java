@@ -39,6 +39,7 @@ import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.internal.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
@@ -46,6 +47,7 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.InstructionPointerManager;
 import org.eclipse.debug.internal.ui.actions.AddToFavoritesAction;
 import org.eclipse.debug.internal.ui.actions.EditLaunchConfigurationAction;
+import org.eclipse.debug.internal.ui.sourcelookup.CommonSourceNotFoundEditorInput;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.internal.ui.views.DebugViewDecoratingLabelProvider;
@@ -611,7 +613,10 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		}
 		sourceElement = locator.getSourceElement(stackFrame);
 		if (sourceElement == null) {
-			sourceNotFound(stackFrame);
+			if(locator instanceof AbstractSourceLookupDirector)
+				commonSourceNotFound(stackFrame, stackFrame);
+			else
+				sourceNotFound(stackFrame);
 			return;
 		}
 		
@@ -648,6 +653,14 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	private void sourceNotFound(IStackFrame frame) {
 		setEditorInput(new SourceNotFoundEditorInput(frame));
 		setEditorId(IInternalDebugUIConstants.ID_SOURCE_NOT_FOUND_EDITOR);
+	}
+
+	/**
+	 * Sets editor id and input for the "common source not found" editor.
+	 */
+	private void commonSourceNotFound(IStackFrame frame, Object objectRequestingSource) {
+		setEditorInput(new CommonSourceNotFoundEditorInput(frame, objectRequestingSource));
+		setEditorId(IInternalDebugUIConstants.ID_COMMON_SOURCE_NOT_FOUND_EDITOR);
 	}
 
 	/**

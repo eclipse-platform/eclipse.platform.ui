@@ -1413,5 +1413,99 @@
             id="org.eclipse.debug.ui.workingSetComparator">
       </launchConfigurationComparator>
    </extension>
-
+   
+<extension
+         point="org.eclipse.ui.popupMenus">
+      <viewerContribution
+            targetID="org.eclipse.debug.ui.DebugView"
+            id="org.eclipse.debug.ui.debugViewContributions">
+         <visibility>
+            <and>
+               <systemProperty
+                     name="org.eclipse.debug.ui.sourceLookupDirectorActive"
+                     value="true">
+               </systemProperty>
+            </and>
+         </visibility>
+         <action
+               label="%manageSourceAction.action"
+               icon="icons\full\clcl16\edtsrclkup_menu.gif"
+               helpContextId="edit_source_lookup_path_action"
+               class="org.eclipse.debug.internal.ui.sourcelookup.EditSourceLookupPathAction"
+               menubarPath="wsaDebugGroup"
+               id="org.eclipse.debug.ui.sourcelookup.EditSourceLookupPathAction">
+            <enablement>
+               <and>
+                  <systemProperty
+                        name="org.eclipse.debug.ui.sourceLookupDirectorActive"
+                        value="true">
+                  </systemProperty>
+               </and>
+            </enablement>
+         </action>
+      </viewerContribution>
+   </extension>
+<!-- Editor -->
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="%sourceNotFoundEditorName"
+            icon="icons/full/cview16/source_view.gif"
+            class="org.eclipse.debug.internal.ui.sourcelookup.CommonSourceNotFoundEditor"
+            id="org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditor">
+      </editor>
+   </extension>
+<!-- ==================================================================== -->
+<!--  Implementation of the Working set source container type			 -->
+<!-- ==================================================================== -->
+   <extension
+         point="org.eclipse.debug.core.sourceContainerTypes">     
+      <sourceContainerType
+            name="%containerName.workingSet"
+            class="org.eclipse.debug.internal.ui.sourcelookup.containers.WorkingSetSourceContainerType"
+            id="org.eclipse.debug.ui.containerType.workingSet">
+      </sourceContainerType>    
+   </extension>
+<!-- ==================================================================== -->
+<!--  Implementations of the 7 provided source containers presentation support-->
+<!-- ==================================================================== -->
+   <extension
+         point="org.eclipse.debug.ui.sourceContainerPresentations">
+      <sourceContainerPresentation
+            browserClass="org.eclipse.debug.internal.ui.sourcelookup.browsers.ProjectSourceContainerBrowser"
+            containerTypeID="org.eclipse.debug.core.containerType.project"
+            icon="icons/full/obj16/prj_obj.gif"
+            id="org.eclipse.debug.ui.containerPresentation.project">
+      </sourceContainerPresentation>
+      <sourceContainerPresentation
+            browserClass="org.eclipse.debug.internal.ui.sourcelookup.browsers.WorkingSetSourceContainerBrowser"
+            containerTypeID="org.eclipse.debug.ui.containerType.workingSet"
+            icon="icons/full/obj16/workset.gif"
+            id="org.eclipse.debug.ui.containerPresentation.workingSet">
+      </sourceContainerPresentation>           
+      <sourceContainerPresentation
+            browserClass="org.eclipse.debug.internal.ui.sourcelookup.browsers.DirectorySourceContainerBrowser"
+            containerTypeID="org.eclipse.debug.core.containerType.directory"
+            icon="icons/full/obj16/fldr_obj.gif"
+            id="org.eclipse.debug.ui.containerPresentation.directory">
+      </sourceContainerPresentation>
+      <sourceContainerPresentation
+            browserClass="org.eclipse.debug.internal.ui.sourcelookup.browsers.FolderSourceContainerBrowser"
+            containerTypeID="org.eclipse.debug.core.containerType.folder"
+            icon="icons/full/obj16/fldr_obj.gif"
+            id="org.eclipse.debug.ui.containerPresentation.folder">
+      </sourceContainerPresentation>
+      <sourceContainerPresentation
+            browserClass="org.eclipse.debug.internal.ui.sourcelookup.browsers.WorkspaceSourceContainerBrowser"
+            containerTypeID="org.eclipse.debug.core.containerType.workspace"
+            icon="icons/full/obj16/prj_obj.gif"
+            id="org.eclipse.debug.ui.containerPresentation.workspace">
+      </sourceContainerPresentation>
+      <sourceContainerPresentation           
+            containerTypeID="org.eclipse.debug.core.containerType.default"
+            icon="icons/full/obj16/prj_obj.gif"
+            id="org.eclipse.debug.ui.containerPresentation.default">
+      </sourceContainerPresentation>
+   </extension>
+    
 </plugin>
