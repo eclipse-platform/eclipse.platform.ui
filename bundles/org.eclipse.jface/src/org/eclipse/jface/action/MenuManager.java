@@ -26,6 +26,8 @@ import java.util.List;  // disambiguate from SWT List
  */
 public class MenuManager extends ContributionManager implements IMenuManager {
 
+	private final static String PERMANENT = "lkg84hsdf098a!243lkjha9SDFlkjhsdfXlkjhsfdkljhfds$#$%sdfa68fgh"; //$NON-NLS-1$
+
 	/**
 	 * The menu control; <code>null</code> before
 	 * creation and after disposal.
@@ -507,7 +509,7 @@ protected void update(boolean force, boolean recursive) {
 			MenuItem[] mi= menu.getItems();
 			for (int i= 0; i < mi.length; i++) {
 				Object data= mi[i].getData();
-				if (data == null || !clean.contains(data)) {
+				if (data == null || !clean.contains(data) || !PERMANENT.equals(data)) {
 					mi[i].dispose();
 				} else if(data instanceof IContributionItem && 
 					((IContributionItem)data).isDynamic() && 
@@ -565,7 +567,8 @@ protected void update(boolean force, boolean recursive) {
 
 			// remove any old menu items not accounted for
 			for (; srcIx < mi.length; srcIx++) {
-				mi[srcIx].dispose();
+				if (!PERMANENT.equals(mi[srcIx].getData()))
+					mi[srcIx].dispose();
 			}
 			
 			setDirty(false);
@@ -632,5 +635,4 @@ private void updateMenuItem() {
 			}
 		}
 }
-
 }
