@@ -52,8 +52,8 @@ public class PropertySheetSorter  {
 	 * Returns a negative, zero, or positive number depending on whether the
 	 * first element is less than, equal to, or greater than the second element.
 	 * <p>
-	 * The default implementation of this method is based on a case insensitive
-	 * compare of the display names. Subclasses may override.
+	 * The default implementation of this method uses the collator to
+	 * compare the display names. Subclasses may override.
 	 * </p>
 	 * 
 	 * @param entryA
@@ -74,8 +74,8 @@ public class PropertySheetSorter  {
 	 * Returns a negative, zero, or positive number depending on whether the
 	 * first element is less than, equal to, or greater than the second element.
 	 * <p>
-	 * The default implementation of this method is based on a case insensitive
-	 * compare of the strings. Subclasses may override.
+	 * The default implementation of this method uses the collator to
+	 * compare the strings. Subclasses may override.
 	 * </p>
 	 * 
 	 * @param categoryA
