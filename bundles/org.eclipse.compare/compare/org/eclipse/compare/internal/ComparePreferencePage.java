@@ -60,7 +60,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	public static final String TEXT_FONT= PREFIX + "TextFont"; //$NON-NLS-1$
 	public static final String IGNORE_WHITESPACE= PREFIX + "IgnoreWhitespace"; //$NON-NLS-1$
 	//public static final String USE_SPLINES= PREFIX + "UseSplines"; //$NON-NLS-1$
-	//public static final String USE_SINGLE_LINE= PREFIX + "UseSingleLine"; //$NON-NLS-1$
+	public static final String USE_SINGLE_LINE= PREFIX + "UseSingleLine"; //$NON-NLS-1$
 	//public static final String USE_RESOLVE_UI= PREFIX + "UseResolveUI"; //$NON-NLS-1$
 	
 	
@@ -86,7 +86,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT),
 		
 		//new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, USE_SPLINES),
-		//new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, USE_SINGLE_LINE),
+		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, USE_SINGLE_LINE),
 		//new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, USE_RESOLVE_UI),
 	};
 	
@@ -99,7 +99,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		store.setDefault(SHOW_MORE_INFO, false);
 		store.setDefault(IGNORE_WHITESPACE, false);
 		//store.setDefault(USE_SPLINES, false);
-		//store.setDefault(USE_SINGLE_LINE, false);
+		store.setDefault(USE_SINGLE_LINE, true);
 		//store.setDefault(USE_RESOLVE_UI, false);
 		
 		store.setDefault(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, true);
@@ -240,7 +240,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		addCheckBox(composite, "ComparePreferencePage.showPseudoConflicts.label", SHOW_PSEUDO_CONFLICTS, 0);	//$NON-NLS-1$
 		
 		//addCheckBox(composite, "ComparePreferencePage.useSplines.label", USE_SPLINES, 0);	//$NON-NLS-1$
-		//addCheckBox(composite, "ComparePreferencePage.useSingleLine.label", USE_SINGLE_LINE, 0);	//$NON-NLS-1$
+		addCheckBox(composite, "ComparePreferencePage.useSingleLine.label", USE_SINGLE_LINE, 0);	//$NON-NLS-1$
 		//addCheckBox(composite, "ComparePreferencePage.useResolveUI.label", USE_RESOLVE_UI, 0);	//$NON-NLS-1$
 		
 		// a filler

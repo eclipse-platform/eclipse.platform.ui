@@ -227,7 +227,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	private boolean fUseSplines= true;
 	private boolean fUseSingleLine= true;
-	private boolean fUseResolveUI= true;
+	private boolean fUseResolveUI= fUseSingleLine;	// resolve UI only for single lines	private boolean fShowSummeryIcon;
 
 	private ActionContributionItem fNextItem;	// goto next difference
 	private ActionContributionItem fPreviousItem;	// goto previous difference
@@ -242,6 +242,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private boolean fSubDoc= true;
 	private IPositionUpdater fPositionUpdater;
 	private boolean fIsMotif;	
+	private Image fSummaryIcon;
+		
 
 	// SWT widgets
 	private BufferedCanvas fAncestorCanvas;
@@ -251,13 +253,14 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private ScrollBar fVScrollBar;
 	private Canvas fBirdsEyeCanvas;
 	private Label fSummaryCanvas;
-		
+	
 	// SWT resources to be disposed
 	private Map fColors;
 	private Font fFont;
 	private Cursor fBirdsEyeCursor;
 	private Image fOKImage;
 	private Image fNOTOKImage;
+	private Image fNOTOKConflictImage;
 				
 	// points for center curves
 	private double[] fBasicCenterCurve;
@@ -608,7 +611,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			fShowMoreInfo= fPreferenceStore.getBoolean(ComparePreferencePage.SHOW_MORE_INFO);
 			fShowPseudoConflicts= fPreferenceStore.getBoolean(ComparePreferencePage.SHOW_PSEUDO_CONFLICTS);
 			//fUseSplines= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SPLINES);
-			//fUseSingleLine= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SINGLE_LINE);
+			fUseSingleLine= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SINGLE_LINE);
+			fUseResolveUI= fUseSingleLine;
 			//fUseResolveUI= fPreferenceStore.getBoolean(ComparePreferencePage.USE_RESOLVE_UI);
 		}
 		
@@ -862,6 +866,10 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		if (fNOTOKImage != null) {
 			fNOTOKImage.dispose();
 			fNOTOKImage= null;
+		}
+		if (fNOTOKConflictImage != null) {
+			fNOTOKConflictImage.dispose();
+			fNOTOKConflictImage= null;
 		}
 		
 		super.handleDispose(event);
@@ -1142,6 +1150,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 											  : diff.getRightHeight();
 								
 				if (useChange(diff.fDirection) && !diff.fIsWhitespace) {
+					
 					yy= (y*size.y)/virtualHeight;
 					hh= (h*size.y)/virtualHeight;
 					if (hh < 3)
@@ -2549,42 +2558,65 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	}
 	
 	private void updateResolveStatus() {
-		Image c= null;
+			
+		Image icon= null;
+		
 		if (showResolveUI()) {
-			boolean hasIncoming= false;	// we only show red or green if there is at least one incoming or conflicting change
-			boolean unresolved= false;
+			// we only show red or green if there is at least one incoming or conflicting change
+			int incomingOrConflicting= 0;
+			int unresolvedIncoming= 0;
+			int unresolvedConflicting= 0;
+
 			if (fChangeDiffs != null) {
 				Iterator e= fChangeDiffs.iterator();
 				while (e.hasNext()) {
 					Diff d= (Diff) e.next();
-					if (d.isIncomingOrConflicting()) {
-						hasIncoming= true;
+					if (d.isIncomingOrConflicting() /* && useChange(d.fDirection) && !d.fIsWhitespace */) {
+						incomingOrConflicting++;
 						if (!d.fResolved) {
-							unresolved= true;
-							break;
+							if (d.fDirection == RangeDifference.CONFLICT) {
+								unresolvedConflicting++;
+								break; // we can stop here because a conflict has the maximum priority
+							} else {
+								unresolvedIncoming++;
+							}
 						}
 					}
 				}
 			}
-			if (hasIncoming) {
-				if (unresolved) {
-					if (fNOTOKImage == null) {
-						ImageDescriptor id= CompareUIPlugin.getImageDescriptor("obj16/unresolved.gif");	//$NON-NLS-1$
+		
+			if (incomingOrConflicting > 0) {
+				Display display= fSummaryCanvas.getDisplay();
+				if (unresolvedConflicting > 0) {
+					if (fNOTOKConflictImage == null) {
+						ImageDescriptor id= CompareUIPlugin.getImageDescriptor("obj16/unresolved_conflicts.gif");	//$NON-NLS-1$
 						if (id != null)
-							fNOTOKImage= id.createImage(fSummaryCanvas.getDisplay());
+							fNOTOKConflictImage= id.createImage(display);
 					}
-					c= fNOTOKImage;
+					icon= fNOTOKConflictImage;
+				} else if (unresolvedIncoming > 0) {
+					if (fNOTOKImage == null) {
+						ImageDescriptor id= CompareUIPlugin.getImageDescriptor("obj16/unresolved_incoming.gif");	//$NON-NLS-1$
+						if (id != null)
+							fNOTOKImage= id.createImage(display);
+					}
+					icon= fNOTOKImage;
 				} else {
 					if (fOKImage == null) {
 						ImageDescriptor id= CompareUIPlugin.getImageDescriptor("obj16/resolved.gif");	//$NON-NLS-1$
 						if (id != null)
-							fOKImage= id.createImage(fSummaryCanvas.getDisplay());
+							fOKImage= id.createImage(display);
 					}
-					c= fOKImage;
+					icon= fOKImage;
 				}
 			}
 		}
-		fSummaryCanvas.setImage(c);
+		
+		if (fSummaryIcon != icon) {
+			fSummaryCanvas.setImage(icon);
+			fSummaryCanvas.redraw();
+			fSummaryIcon= icon;
+		}
 	}
 
 	private void updateStatus(Diff diff) {
@@ -2831,10 +2863,12 @@ public class TextMergeViewer extends ContentMergeViewer  {
 //			fUseSplines= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SPLINES);
 //			invalidateLines();
 
-//		} else if (key.equals(ComparePreferencePage.USE_SINGLE_LINE)) {
-//			fUseSingleLine= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SINGLE_LINE);
-//			fBasicCenterCurve= null;
-//			invalidateLines();
+		} else if (key.equals(ComparePreferencePage.USE_SINGLE_LINE)) {
+			fUseSingleLine= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SINGLE_LINE);
+			fUseResolveUI= fUseSingleLine;
+			fBasicCenterCurve= null;
+			updateResolveStatus();
+			invalidateLines();
 	
 //		} else if (key.equals(ComparePreferencePage.USE_RESOLVE_UI)) {
 //			fUseResolveUI= fPreferenceStore.getBoolean(ComparePreferencePage.USE_RESOLVE_UI);
