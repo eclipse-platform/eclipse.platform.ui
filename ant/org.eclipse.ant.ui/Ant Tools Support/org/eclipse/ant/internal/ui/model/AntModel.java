@@ -1547,7 +1547,7 @@ public class AntModel implements IAntModel {
         if (identifier == null) {
             return;
         }
-        if (newTasks.isEmpty()) {
+        if (newTasks.isEmpty() && fCurrentNodeIdentifiers != null) {
             fCurrentNodeIdentifiers.remove(identifier);
         }
         Iterator iter= newTasks.iterator();
