@@ -275,7 +275,13 @@ public void mouseMove(MouseEvent e) {
 	
 	// If the mouse is not down or the mouse has moved only a small amount
 	// ignore the move.
-	if (!mouseDown) 
+	// Bug 9004: If a previous MouseDown event caused a dialog to open, 
+	// the PartDragDrop will not be notified of the MouseUp event and the 
+	// mouseDown flag will not be reset. The fix is to check and make sure 
+	// that the mouse button is still pressed.
+	// Can not use a focus listener since the dragControl may not actually 
+	// receive focus on a MouseDown.
+	if (!mouseDown || (e.stateMask & SWT.BUTTON1) == 0)
 		return;
 	int dx= e.x - xAnchor;
 	int dy= e.y - yAnchor;
