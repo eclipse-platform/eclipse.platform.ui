@@ -1,12 +1,12 @@
-package org.eclipse.ui.internal.keybindings;
-
-/**
-Copyright (c) 2002 IBM Corp.
+/*
+Copyright (c) 2000, 2001, 2002 IBM Corp.
 All rights reserved.  This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 */
+
+package org.eclipse.ui.internal.keybindings;
 
 import java.text.Collator;
 import java.util.Arrays;
@@ -19,9 +19,17 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.AcceleratorConfiguration;
 import org.eclipse.ui.internal.registry.AcceleratorRegistry;
 
