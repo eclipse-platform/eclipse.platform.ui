@@ -129,6 +129,8 @@ public class ConfigurationElement extends NestedRegistryModelObject implements I
 			classInstance = bundle.loadClass(className);
 		} catch (Exception e1) {
 			throwException(Policy.bind("plugin.loadClassError", bundle.getSymbolicName(), className), e1); //$NON-NLS-1$
+		} catch (LinkageError e) {
+			throwException(Policy.bind("plugin.loadClassError", bundle.getSymbolicName(), className), e); //$NON-NLS-1$
 		}
 
 		// create a new instance
