@@ -24,11 +24,9 @@ public class WorkbenchTextEditorTestSuite extends TestSuite {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test Suite for org.eclipse.ui.workbench.texteditor"); //$NON-NLS-1$
-	
 		//$JUnit-BEGIN$
 		suite.addTest(DiffTestSuite.suite());
 		//$JUnit-END$
-
 		return suite;
 	}
 }
