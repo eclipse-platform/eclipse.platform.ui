@@ -29,7 +29,7 @@ build Java applications that can compete with native applications on any
 platform. This tutorial is designed to get you started building RCP applications
 quickly.</p>
 <p><b>By Ed Burnette, SAS Institute Inc.</b><br>
-<font size="-1">June 23, 2004</font></p>
+<font size="-1">June 29, 2004</font></p>
 <hr width="100%">
 <h2>Introduction</h2>
 <p>Try this experiment: Show Eclipse to some friends or co-workers who haven't
@@ -87,7 +87,7 @@ and the perspective with <code>org.eclipse.ui.perspectives</code>.
 To add these extensions use the Add button on the Extensions tab,
 or just type in the XML in the plugin.xml tab.
 Also, you need to tell Eclipse that the plug-in will depend on two other Eclipse plugins,
-<code>org.eclipse.core.runtime.compatibility</code> and
+<code>org.eclipse.core.runtime</code> and
 <code>org.eclipse.ui</code>, so those need to be added to the
 Dependencies tab or in the XML.
 While you're editing it you can change the version number,
@@ -114,7 +114,7 @@ and the tags starting with percents (%) will be defined later in plugin.properti
         &lt;/library&gt;
     &lt;/runtime&gt;
     &lt;requires&gt;
-        &lt;import plugin=&quot;org.eclipse.core.runtime.compatibility&quot;/&gt;
+        &lt;import plugin=&quot;org.eclipse.core.runtime&quot;/&gt;
         &lt;import plugin=&quot;org.eclipse.ui&quot;/&gt;
     &lt;/requires&gt;
 
@@ -367,6 +367,10 @@ the RCP application you clicked on
 the Add Required Plug-ins button.
 Simply open the launch configuration again to see the list.
 Copy all the plug-ins that are checked off there.
+In addition, you need to copy the
+<code>org.eclipse.update.configurator</code>
+plug-in if you want automatic discovery of plug-ins at runtime
+(which we do).
 </p>
 <p>
 <img src="images/note.gif" alt="Note: " width="62" height="13">
@@ -386,7 +390,6 @@ done you should have a structure that looks like this:</p>
     |    startup.jar
     +--- plugins
          +--- org.eclipse.core.expressions_3.0.0
-         +--- org.eclipse.core.runtime.compatibility_3.0.0
          +--- org.eclipse.core.runtime_3.0.0
          +--- org.eclipse.help_3.0.0
          +--- org.eclipse.jface_3.0.0
@@ -485,13 +488,17 @@ is the plug-in id followed by a period and the id you specified on the
 <code>org.eclipse.core.runtime.applications</code> extension.
 This message might also be printed if all the required
 plug-ins are not available at run-time.
+Check the log for additional error messages that may identify the
+specific plug-ins that are missing.
 
 <dt>
-<b>!MESSAGE Bundle reference:file:C:/eclipse/plugins/org.eclipse.ui_3.0.0 [13] was not resolved</b>
+<b>!MESSAGE Bundle update@/c:/RcpTutorial1/plugins/org.eclipse.ui_3.0.0/ [13] was not resolved.</b>
 <dd>
 This one is a little tougher.
-It usually means that some prerequisite of the plug-in listed was not there
-You can find out exactly what's going on by re-running the program
+It usually means that some prerequisite of the plug-in listed was not there.
+Usually the log will contain additional messages that will tell you
+which plug-ins were missing.
+You can also find out exactly what's going on by re-running the program
 with the <code>-console</code> command line option.
 This will allow you to enter OSGi console commands to diagnose the problem.
 After the error occurs again, go to the console window and enter the
@@ -502,14 +509,6 @@ Pick one of them (in the above message it would be number 13), and enter the
 is the bundle number. For example, "<b>diag 13</b>".
 This will tell you what the missing bundle is.
 Note that you can't run OSGi commands if the program has already terminated.
-
-<dt>
-<b>!MESSAGE Missing required bundle org.eclipse.core.runtime.compatibility_null,null.</b>
-<dd>
-This can be caused if you have incompletely adopted your plug-in
-to the 3.0 OSGi manifest files.
-See the section on the compatibility layer for more information.
-
 
 <dt>
 <b>'1.4' target mode requires '-1.4' compliance mode: 1.3</b>
@@ -527,42 +526,64 @@ Adjust the compliance levels as follows:<br>
 <tr><td>Disallow identifiers called 'assert': <td>Error
 </table>
 
+<dt>
+<b>
+java.lang.RuntimeException: Application "org.eclipse.ui.tutorials.rcp.part1.RcpApplication" could not be found in the registry. The applications available are:
+&lt;NONE&gt;.
+</b>
+<dd>
+This is caused by a missing plug-in, most commonly
+<code>org.eclipse.update.configurator</code>.
+The update configurator is responsible for scanning the plugins directory to
+discover what plug-ins are available.
+Without it, you have to list them out manually in a configuration file
+(config.ini).
+Unfortunately this plug-in is not part of the standard
+RCP SDK, so you have to copy it from the regular Eclipse SDK.
+
 
 </dl>
 
 
-<h2>The compatibility layer</h2>
+<h2>Compatibility, OSGi, and MANIFEST.MF</h2>
 <p>
-Astute readers will notice that this example uses the compatibility layer
-(<code>org.eclipse.core.runtime.compatibility</code>)
-and may wonder exactly what that means.
-Eclipse 3.0 introduced a new OSGi based run-time system that
-uses bundles to implement plug-ins,
-a new bundle manifest file named MANIFEST.MF,
-and many API changes that broke compatibility with 2.1 plug-ins.
-The compatibility layer preserves the API and converts plugin.xml on the fly
-so it's possible to have a plug-in that works without modification in both
-2.1 and 3.0.
+Astute readers will notice a new 3.0 version comment in plugin.xml
+and a few references in Eclipse
+wizards and documentation to OSGi and a new bundle manifest file
+called MANIFEST.MF.
+For the most part this is transparent and RCP
+developers don't have to worry about it.
+But just in case, let's take a few moments to discuss these changes
+from Eclipse 2.1.
 </p>
 <p>
-As of this writing, most people are not familiar with the new system and the
-PDE support is not fully tested (for example you have to take an
-extra step to create MANIFEST.MF and there were some bugs late in the 3.0 cycle
-editing it).
-Also most plug-in documentation and articles were written before
-the new run-time was in place.
-The compatibility layer is completely adequate for this simple example, but
-after you are comfortable with writing plug-ins and
-RCP applications, you might want to look in the
-Eclipse 3.0 Runtime Adoption Guide (in the references section)
-to learn more about the new run-time
-and how to run without the compatibility layer.
+The 3.0 tag in plugin.xml
+(<code>&lt;?eclipse version=&quot;3.0&quot;?&gt;</code>)
+says whether or not the plugin.xml itself is in 3.0 form.
+For 3.0 there were various changes to the plugins
+(code moved, new plugins, etc.) and various extension points moved.
+The presence of the 3.0 tag tells the runtime that it does not
+need to do any "munging" of the plugin.xml to map the old
+form/names onto the new form/names. 
 </p>
 <p>
-<img src="images/note.gif" alt="Note: " width="62" height="13">
-The new OSGi/bundle API
-is considered experimental in the first version of 3.0
-and might change in future versions.
+If you include the 3.0 tag but still need to reference
+the deprecated 2.1 APIs, you can manually include an optional
+compatibility layer plug-in
+(<code>org.eclipse.core.runtime.compatibility</code>).
+Since the examples in these tutorials only work in 3.0 they don't need the
+compatibility layer.
+</p>
+<p>
+Eclipse 3.0 also introduced a new run-time system based on OSGi standards that
+uses bundles and a new manifest file to implement plug-ins.
+The use of MANIFEST.MF, in normal circumstances, is completely optional.
+You will notice that almost all of the 3.0 SDK plug-ins do NOT have one
+yet all are marked as 3.0 and many do not require compatibility.
+The only reason you might want to have a MANIFEST.MF is if you need to
+use a particular OSGi capability that is not exposed through the plugin.xml
+(for example, import-package).
+Otherwise it's recommended at this time that you don't have one.
 </p>
 
 <h2>Conclusion</h2>
