@@ -8,7 +8,6 @@
 
   <requires>
     <import plugin="org.apache.xerces"/>
-    <import plugin="org.eclipse.ant.core" optional="true"/>
   </requires>
 
   <runtime>
@@ -57,25 +56,23 @@
       <antTask
          name="eclipse.convertPath"
          class="org.eclipse.core.resources.ant.ConvertPath"
-         library="lib/resources-ant.jar">
+         library="ant_tasks/resources-ant.jar">
       </antTask>
       <antTask
          name="eclipse.incrementalBuild"
          class="org.eclipse.core.resources.ant.IncrementalBuild"
-         library="lib/resources-ant.jar">
+         library="ant_tasks/resources-ant.jar">
       </antTask>
       <antTask
          name="eclipse.refreshLocal"
          class="org.eclipse.core.resources.ant.RefreshLocalTask"
-         library="lib/resources-ant.jar">
+         library="ant_tasks/resources-ant.jar">
       </antTask>
    </extension>
 
    <!-- Extra Classpath -->
    <extension point="org.eclipse.ant.core.extraClasspathEntries">
-      <extraClasspathEntry
-         library="lib/resources-ant.jar">
-      </extraClasspathEntry>
+      <extraClasspathEntry library="ant_tasks/resources-ant.jar"/>
    </extension>
 
 </plugin>

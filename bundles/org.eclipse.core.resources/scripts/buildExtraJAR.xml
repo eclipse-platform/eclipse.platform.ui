@@ -12,7 +12,7 @@
 
 	<target name="build" if="fullBuild">
 		<antcall target="clean"/>
-		<antcall target="lib/resources-ant.jar"/>
+		<antcall target="ant_tasks/resources-ant.jar"/>
 		<antcall target="refresh"/>
 	</target>
 
@@ -27,25 +27,25 @@
 		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
 	</target>
 
-	<target name="lib/resources-ant.jar" depends="init" unless="lib/resources-ant.jar">
-		<property name="destdir" value="${temp.folder}/lib/resources-ant.jar.bin"/>
-		<delete dir="${temp.folder}/lib/resources-ant.jar.bin"/>
-		<mkdir dir="${temp.folder}/lib/resources-ant.jar.bin"/>
+	<target name="ant_tasks/resources-ant.jar" depends="init" unless="ant_tasks/resources-ant.jar">
+		<property name="destdir" value="${temp.folder}/ant_tasks/resources-ant.jar.bin"/>
+		<delete dir="${temp.folder}/ant_tasks/resources-ant.jar.bin"/>
+		<mkdir dir="${temp.folder}/ant_tasks/resources-ant.jar.bin"/>
 		<!-- compile the source code -->
-		<javac destdir="${temp.folder}/lib/resources-ant.jar.bin" failonerror="false" verbose="false" debug="on" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="${basedir}/../org.eclipse.core.runtime/runtime.jar;${basedir}/bin;${basedir}/../org.apache.ant/ant.jar;${basedir}/../org.apache.xerces/xercesImpl.jar;${basedir}/../org.apache.xerces/xmlParserAPIs.jar;${basedir}/../org.apache.xerces/bin;${basedir}/../org.eclipse.ant.core/antsupport.jar;${basedir}/../org.eclipse.core.boot/boot.jar;${basedir}/../org.eclipse.ant.core/bin;${basedir}/../org.eclipse.core.runtime/bin;${basedir}/../org.eclipse.core.boot/bin">
+		<javac destdir="${temp.folder}/ant_tasks/resources-ant.jar.bin" failonerror="false" verbose="true" debug="on" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="../org.eclipse.core.runtime/runtime.jar;resources.jar;../org.apache.xerces/xercesImpl.jar;../org.apache.xerces/xmlParserAPIs.jar;lib/ant.jar;../org.apache.xerces/bin;lib/antsupport.jar;../org.eclipse.core.boot/boot.jar;../org.eclipse.core.runtime/bin;../org.eclipse.core.boot/bin">
 			<src path="src_ant/"/>
 		</javac>
 		<!-- copy necessary resources -->
-		<copy todir="${temp.folder}/lib/resources-ant.jar.bin">
+		<copy todir="${temp.folder}/ant_tasks/resources-ant.jar.bin">
 			<fileset dir="src_ant/" excludes="**/*.java"/>
 		</copy>
-		<mkdir dir="${build.result.folder}/lib"/>
-		<jar jarfile="${build.result.folder}/lib/resources-ant.jar" basedir="${temp.folder}/lib/resources-ant.jar.bin"/>
-		<delete dir="${temp.folder}"/>
+		<mkdir dir="${build.result.folder}/ant_tasks"/>
+		<jar jarfile="${build.result.folder}/ant_tasks/resources-ant.jar" basedir="${temp.folder}/ant_tasks/resources-ant.jar.bin"/>
+		<delete dir="${temp.folder}/ant_tasks/resources-ant.jar.bin"/>
 	</target>
 
 	<target name="clean" depends="init">
-		<delete file="${build.result.folder}/lib/pdebuild-ant.jar"/>
+		<delete file="${build.result.folder}/ant_tasks/pdebuild-ant.jar"/>
 		<delete dir="${temp.folder}"/>
 	</target>
 
