@@ -27,6 +27,7 @@ public class NullBuildLogger implements BuildLogger {
 	protected int fMessageOutputLevel = MSG_INFO;
 	private PrintStream fErr= null;
 	private PrintStream fOut= null;
+	protected boolean fEmacsMode= false;
 	
 	/**
 	 * An exception that has already been logged.	 */
@@ -47,6 +48,7 @@ public class NullBuildLogger implements BuildLogger {
 	 * @see org.apache.tools.ant.BuildLogger#setEmacsMode(boolean)
 	 */
 	public void setEmacsMode(boolean emacsMode) {
+		fEmacsMode= emacsMode;
 	}
 
 	/**
