@@ -861,35 +861,6 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	return true;
 }
 /**
- * Closes all perspectives in the page. The page is kept so as
- * not to lose the input.
- * 
- * @param save whether the page's editors should be saved
- */
-/* package */ void closeAllPerspectives(boolean save) {
-	
-	if (perspList.isEmpty())
-		return;
-		
-	// Always unzoom
-	if (isZoomed())
-		zoomOut();
-		
-	// Close all editors
-	if (!closeAllEditors(save))
-		return;
-
-	// Deactivate the active perspective and part
-	setPerspective((Perspective)null);
-	
-	// Close each perspective in turn
-	PerspectiveList oldList = perspList;
-	perspList = new PerspectiveList();
-	Iterator enum = oldList.iterator();
-	while (enum.hasNext())
-		closePerspective((Perspective)enum.next(), false);
-}
-/**
  * Closes the specified perspective. If last perspective, then
  * entire page is closed.
  * 

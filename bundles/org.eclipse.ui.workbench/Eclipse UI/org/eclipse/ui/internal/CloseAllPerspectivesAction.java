@@ -33,6 +33,6 @@ public class CloseAllPerspectivesAction extends Action {
 	public void run() {
 		WorkbenchPage page = (WorkbenchPage)window.getActivePage();
 		if (page != null)
-			page.closeAllPerspectives(true);
+			page.close();
 	}
 }
