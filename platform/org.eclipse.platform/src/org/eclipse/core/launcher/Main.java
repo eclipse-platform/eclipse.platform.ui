@@ -14,6 +14,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.*;
+import java.nio.channels.FileLock;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -1494,12 +1495,20 @@ private static boolean isCompatible() {
 private static boolean isAlreadyRunning() {
 	// Calculate the location of the lock file
 	File lockFile = computeLockFileLocation();
-
-	// if the lock file already exists, try to delete,
-	// assume failure means another eclipse has it open
-	if (lockFile.exists())
-		lockFile.delete();
-	return lockFile.exists();
+	FileOutputStream stream = null;
+	try {
+		stream = new FileOutputStream(lockFile,true);
+		FileLock lock = stream.getChannel().tryLock();
+		return lock == null;
+	} catch (IOException e) {
+		return false;
+	} finally {
+		if (stream != null)
+			try {
+				stream.close();
+			} catch (IOException e) {
+			}
+	}
 }
 
 }
