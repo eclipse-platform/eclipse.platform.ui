@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ReferenceCounter;
@@ -75,8 +74,8 @@ public abstract class IntroPart implements IIntroPart, IExecutableExtension {
         super();
     }
 
-    /*
-     * (non-Javadoc) Method declared on IWorkbenchPart.
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.intro.IIntroPart#addPropertyListener(org.eclipse.ui.IPropertyListener)
      */
     public void addPropertyListener(IPropertyListener l) {
         propChangeListeners.add(l);
@@ -94,8 +93,8 @@ public abstract class IntroPart implements IIntroPart, IExecutableExtension {
     public abstract void createPartControl(Composite parent);
 
     /**
-     * The <code>WorkbenchPart</code> implementation of this
-     * <code>IWorkbenchPart</code> method disposes the title image loaded by
+     * The <code>IntroPart</code> implementation of this
+     * <code>IIntroPart</code> method disposes the title image loaded by
      * <code>setInitializationData</code>. Subclasses may extend.
      */
     public void dispose() {
@@ -174,9 +173,9 @@ public abstract class IntroPart implements IIntroPart, IExecutableExtension {
     public final IIntroSite getIntroSite() {
         return partSite;
     }
-
-    /*
-     * (non-Javadoc) Method declared on IWorkbenchPart.
+  
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.intro.IIntroPart#getTitleImage()
      */
     public Image getTitleImage() {
         if (titleImage != null) { return titleImage; }
@@ -213,15 +212,16 @@ public abstract class IntroPart implements IIntroPart, IExecutableExtension {
         this.partSite = site;
     }
 
-    /*
-     * (non-Javadoc) Method declared on IWorkbenchPart.
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.intro.IIntroPart#removePropertyListener(org.eclipse.ui.IPropertyListener)
      */
     public void removePropertyListener(IPropertyListener l) {
         propChangeListeners.remove(l);
     }
 
     /**
-     * The base implementation of this {@link IIntroPart}method does nothing.
+     * The base implementation of this {@link IIntroPart} method does nothing.
      * Subclasses may override.
      * 
      * @param memento
@@ -243,7 +243,7 @@ public abstract class IntroPart implements IIntroPart, IExecutableExtension {
     public abstract void setFocus();
 
     /**
-     * The <code>WorkbenchPart</code> implementation of this
+     * The <code>IntroPart</code> implementation of this
      * <code>IExecutableExtension</code> records the configuration element in
      * and internal state variable (accessible via <code>getConfigElement</code>).
      * It also loads the title image, if one is specified in the configuration
@@ -291,6 +291,6 @@ public abstract class IntroPart implements IIntroPart, IExecutableExtension {
         //Do not send changes if they are the same
         if (this.titleImage == titleImage) return;
         this.titleImage = titleImage;
-        firePropertyChange(IWorkbenchPart.PROP_TITLE);
+        firePropertyChange(IIntroPart.PROP_TITLE);
     }
 }
