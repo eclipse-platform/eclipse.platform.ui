@@ -46,7 +46,7 @@ import org.eclipse.swt.widgets.*;
  * is rarely required.
  * </p>
  */
-public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
+public class WizardDialog extends TitleAreaDialog implements IWizardContainer2 {
 
 	/**
 	 * Image registry key for error message image (value <code>"dialog_title_error_image"</code>).
@@ -1117,6 +1117,14 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 		updateSizeForPage(page);
 		pageContainerLayout.layoutPage(page.getControl());
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.IWizardContainer2#updateSize()
+	 */
+	public void updateSize() {
+		updateSize(currentPage);		
+	}
+	
 	/**
 	 * Computes the correct dialog size for the given page and resizes 
 	 * its shell if nessessary.

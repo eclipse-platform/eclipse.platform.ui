@@ -28,27 +28,22 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.wizard.IWizardContainer;
+import org.eclipse.jface.wizard.IWizardContainer2;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
@@ -99,13 +94,10 @@ class NewWizardNewPage
 //	}
 
 	// id constants
-	private static final int DESCRIPTION_IMAGE_HEIGHT = 150;
-	private static final int DESCRIPTION_IMAGE_WIDTH = 200;
 	private static final String DIALOG_SETTING_SECTION_NAME = "NewWizardSelectionPage."; //$NON-NLS-1$
 
 	private final static int SIZING_LISTS_HEIGHT = 200;
 	private final static int SIZING_VIEWER_WIDTH = 300;
-	private final static int SIZING_DESC_WIDTH = 200;
 	private final static String STORE_EXPANDED_CATEGORIES_ID = DIALOG_SETTING_SECTION_NAME + "STORE_EXPANDED_CATEGORIES_ID"; //$NON-NLS-1$
 	private final static String STORE_SELECTED_ID = DIALOG_SETTING_SECTION_NAME + "STORE_SELECTED_ID"; //$NON-NLS-1$
 	private static final String SHOW_ALL_ENABLED = DIALOG_SETTING_SECTION_NAME + ".SHOW_ALL_SELECTED"; //$NON-NLS-1$
@@ -118,7 +110,6 @@ class NewWizardNewPage
 
 	private Button showAllCheck;
 
-	private Text descriptionText;
 	private WizardCollectionElement wizardCategories;
 
     private WorkbenchWizardElement[] primaryWizards;
@@ -127,11 +118,9 @@ class NewWizardNewPage
 
     private String wizardHelpHref;
 
-    private Canvas descImageCanvas;
+    private CLabel descImageCanvas;
     
     private Map imageTable = new HashMap();
-
-    private Label imageSeperator;
 
     private WorkbenchWizardElement selectedElement;
     
@@ -253,51 +242,26 @@ class NewWizardNewPage
 		Font wizardFont = parent.getFont();
 		// top level group
 		Composite outerContainer = new Composite(parent, SWT.NONE);
-		outerContainer.setLayout(new GridLayout(2, false));
-		outerContainer.setFont(wizardFont);
-
-		createViewer(outerContainer);
-		createDescription(outerContainer);
+		GridLayout layout = new GridLayout();
+		outerContainer.setLayout(layout);
 		
-		if (needShowAll) {
-			showAllCheck = new Button(outerContainer, SWT.CHECK);
-			GridData data = new GridData(GridData.FILL_HORIZONTAL);
-			data.horizontalSpan = 2;
-	        showAllCheck.setLayoutData(data);
-	        showAllCheck.setFont(wizardFont);
-			showAllCheck.setText(WorkbenchMessages.getString("NewWizardNewPage.showAll")); //$NON-NLS-1$
-			showAllCheck.setSelection(false);
-			
-			// flipping tabs updates the selected node
-			showAllCheck.addSelectionListener(new SelectionAdapter() {
-					private Object [] expandedElements = new Object[0];
+		Label wizardLabel = new Label(outerContainer, SWT.NONE);
+		GridData data = new GridData(GridData.FILL_VERTICAL);
+	    wizardLabel.setFont(wizardFont);
+	    wizardLabel.setText(WorkbenchMessages.getString("NewWizardNewPage.wizardsLabel")); //$NON-NLS-1$	    
+	    
+		Composite innerContainer = new Composite(outerContainer, SWT.NONE);
+		layout = new GridLayout(2, false);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		innerContainer.setLayout(layout);
+		innerContainer.setFont(wizardFont);
+		data = new GridData(GridData.FILL_BOTH);
+		innerContainer.setLayoutData(data);
 
-                    public void widgetSelected(SelectionEvent e) {				    
-					    boolean showAll = showAllCheck.getSelection();
-                        if (!showAll)
-					        expandedElements = viewer.getExpandedElements();
-	                    
-	                    if (showAll) {
-	                        viewer.getControl().setRedraw(false);
-	                    }
-	
-	                    try {
-	                        if (showAll) {
-	                            viewer.resetFilters();
-	                            viewer.setExpandedElements(expandedElements);
-	                        }
-	                        else {
-	                            viewer.addFilter(filter);
-	                        }
-	                        viewer.refresh(false);
-	                    }
-	                    finally {
-	                        if (showAll)
-	                            viewer.getControl().setRedraw(true);
-	                    }
-					}
-				});
-		}
+		createViewer(innerContainer);
+				
+		createImage(innerContainer);		
 
 		updateDescription(null);
 
@@ -309,68 +273,15 @@ class NewWizardNewPage
 	}
 
 	/**
-	 * Create the description controls.
+	 * Create the image controls.
 	 * 
 	 * @param parent the parent <code>Composite</code>.
 	 * @since 3.0
 	 */
-	private void createDescription(Composite parent) {	    	   
-	    Composite descParent = new Composite(parent, SWT.NONE);	    
-		GridData data = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING);
-		data.widthHint = SIZING_DESC_WIDTH;
-		descParent.setLayoutData(data);
-		
-		GridLayout layout = new GridLayout(2, true);
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		descParent.setLayout(layout);
-		
-	    Label descLabel = new Label(descParent, SWT.NONE);	
-	    descLabel.setFont(parent.getFont());
-	    descLabel.setText(WorkbenchMessages.getString("NewWizardNewPage.descriptionLabel")); //$NON-NLS-1$
-	    	    
-	    data = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING );
-	    descLabel.setLayoutData(data);
-	    
-	    Image buttonImage = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_LINKTO_HELP);
-	    ToolBar toolBar =  new ToolBar(descParent, SWT.HORIZONTAL | SWT.FLAT);
-	    helpButton = new ToolItem(toolBar, SWT.NONE);
-	    helpButton.setImage(buttonImage);	    	
-		helpButton.setToolTipText(WorkbenchMessages.getString("NewWizardNewPage.moreHelp")); //$NON-NLS-1$
-        data = new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END);
-	    toolBar.setLayoutData(data);
-	    
-        helpButton.addSelectionListener(new SelectionAdapter() {
-        	
-        	/* (non-Javadoc)
-        	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-        	 */
-        	public void widgetSelected(SelectionEvent e) {
-        		WorkbenchHelp.displayHelpResource(wizardHelpHref);
-        	}
-        });	    
-		
-		descriptionText = new Text(descParent, SWT.READ_ONLY | SWT.MULTI | SWT.WRAP);
-		descriptionText.setFont(parent.getFont());	
-		descriptionText.setBackground(parent.getBackground());
-		data = new GridData(GridData.FILL_BOTH);
-		data.grabExcessVerticalSpace = true;
-		data.horizontalSpan = 2;
-		descriptionText.setLayoutData(data);
-		        
-        imageSeperator = new Label(descParent, SWT.SEPARATOR | SWT.HORIZONTAL);
-        data = new GridData(GridData.FILL_HORIZONTAL);
-        data.horizontalSpan = 2;
-        data.widthHint = 0;
-        data.heightHint = 0;
-        imageSeperator.setLayoutData(data);
-                
-        descImageCanvas = new Canvas(descParent, SWT.NONE);
-        data = new GridData(GridData.HORIZONTAL_ALIGN_CENTER | GridData.VERTICAL_ALIGN_CENTER);
-        data.horizontalSpan = 2;        
-        data.widthHint = 0;
-        data.heightHint = 0;
-	    descImageCanvas.setLayoutData(data);    
+	private void createImage(Composite parent) {	    
+        descImageCanvas = new CLabel(parent, SWT.NONE);
+        GridData data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
+	    descImageCanvas.setLayoutData(data);
 	    
 	    // hook a listener to get rid of cached images.
 	    descImageCanvas.addDisposeListener(new DisposeListener() {
@@ -383,76 +294,8 @@ class NewWizardNewPage
                     ((Image) i.next()).dispose();                    
                 }
                 imageTable.clear();
-            }});
-            
-    	descImageCanvas.addPaintListener(new PaintListener() {
-
-            /* (non-Javadoc)
-             * @see org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent)
-             */
-            public void paintControl(PaintEvent e) {
-		        ImageDescriptor descriptor = null;
-		        if (selectedElement != null) {
-			        descriptor = selectedElement.getDescriptionImage();
-				}        
-
-				
-		        Point size = descImageCanvas.getSize();
-                if (descriptor != null) {
-					Image image = (Image) imageTable.get(descriptor);					
-					if (image == null) {
-			        	image = descriptor.createImage(false);			        	
-			        	if (image != null) {
-			        		// see if the image needs to be scaled down
-			        		ImageData scaledData = scale(image.getImageData());
-			        		if (scaledData != null) { 
-			        			Image newImage = new Image(descImageCanvas.getDisplay(), scaledData);
-			        			image.dispose();
-			        			image = newImage;
-			        		}
-		        			imageTable.put(descriptor, image);			        		
-			        	}
-			        }	        
-			        if (image != null) {			            			            
-				        GC gc = new GC(descImageCanvas);
-				        Rectangle bounds = image.getBounds();
-                        int xOffset = (size.x - bounds.width) / 2;
-				        int yOffset = (size.y - bounds.height) / 2;
-				        gc.drawImage(image, xOffset, yOffset);
-				        gc.dispose();
-				        return;
-				    }        
-				}
-		        GC gc = new GC(descImageCanvas);
-		        gc.fillRectangle(0,0, size.x, size.y);
-		        gc.dispose();
-		}
-
-            /**
-             * @param data
-             * @return
-             */
-            private ImageData scale(ImageData imageData) {
-		        int width = imageData.width;
-				int height = imageData.height;
-				float scale = 1.0f;				
-				Point size = descImageCanvas.getSize();
-				
-                if (width > height) 
-					if (width > size.x)
-						scale = (float)size.x / (float)width;
-				else 
-					if (height > size.y)
-						scale = (float)size.y / (float)height;
-
-				if (scale == 1.0f)
-					return null;
-				
-				width *= scale;
-				height *= scale;
-				return imageData.scaledTo(width, height);
             }
-    	});        		
+	    });
 	}
 
 	/**
@@ -461,39 +304,27 @@ class NewWizardNewPage
 	 * @param parent the parent <code>Composite</code>.
 	 * @since 3.0
 	 */
-	private void createViewer(Composite parent) {
-		// category tree pane...create SWT tree directly to
-		// get single selection mode instead of multi selection.
-	    
-	    Composite treeParent = new Composite(parent, SWT.NONE);
-	    treeParent.setFont(parent.getFont());
-		GridData data = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING);
+	private void createViewer(Composite parent) {		
+	    Composite composite = new Composite(parent, SWT.NONE);
+	    GridData data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = SIZING_VIEWER_WIDTH;		
 
-		boolean needsHint = DialogUtil.inRegularFontMode(treeParent.getParent());
+		boolean needsHint = DialogUtil.inRegularFontMode(parent);
 
 		//Only give a height hint if the dialog is going to be too small
 		if (needsHint) {
 			data.heightHint = SIZING_LISTS_HEIGHT;
 		}
-
-		treeParent.setLayoutData(data);
-		
-		GridLayout layout = new GridLayout(1, true);
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		treeParent.setLayout(layout);
-			    
-	    Label wizardLabel = new Label(treeParent, SWT.NONE);	
-	    wizardLabel.setFont(parent.getFont());
-	    wizardLabel.setText(WorkbenchMessages.getString("NewWizardNewPage.wizardsLabel")); //$NON-NLS-1$
+		composite.setLayoutData(data);
 	    
-	    data = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-	    wizardLabel.setLayoutData(data);
+	    GridLayout layout = new GridLayout(2, false);
+	    layout.marginHeight = 0;
+	    layout.marginWidth = 0;
+	    composite.setLayout(layout);
 	    
 		Tree tree =
 			new Tree(
-			    treeParent,
+			    composite,
 				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		viewer = new TreeViewer(tree);
 		 
@@ -552,7 +383,70 @@ class NewWizardNewPage
 		});
 		
 		data = new GridData(GridData.FILL_BOTH);
+		data.horizontalSpan = 2;
+
 		tree.setLayoutData(data);		
+		
+		if (needShowAll) {
+			showAllCheck = new Button(composite, SWT.CHECK);
+			data = new GridData();
+	        showAllCheck.setLayoutData(data);
+	        showAllCheck.setFont(parent.getFont());
+			showAllCheck.setText(WorkbenchMessages.getString("NewWizardNewPage.showAll")); //$NON-NLS-1$
+			showAllCheck.setSelection(false);
+			
+			// flipping tabs updates the selected node
+			showAllCheck.addSelectionListener(new SelectionAdapter() {
+				private Object [] expandedElements = new Object[0];
+
+                public void widgetSelected(SelectionEvent e) {				    
+				    boolean showAll = showAllCheck.getSelection();
+                    if (!showAll)
+				        expandedElements = viewer.getExpandedElements();
+                    
+                    if (showAll) {
+                        viewer.getControl().setRedraw(false);
+                    }
+
+                    try {
+                        if (showAll) {
+                            viewer.resetFilters();
+                            viewer.setExpandedElements(expandedElements);
+                        }
+                        else {
+                            viewer.addFilter(filter);
+                        }
+                        viewer.refresh(false);
+                    }
+                    finally {
+                        if (showAll)
+                            viewer.getControl().setRedraw(true);
+                    }
+				}
+			});
+		}
+		
+		
+		Image buttonImage = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_LINKTO_HELP);
+	    ToolBar toolBar =  new ToolBar(composite, SWT.HORIZONTAL | SWT.FLAT);
+	    helpButton = new ToolItem(toolBar, SWT.NONE);
+	    helpButton.setImage(buttonImage);
+	    helpButton.setEnabled(false);
+		helpButton.setToolTipText(WorkbenchMessages.getString("NewWizardNewPage.moreHelp")); //$NON-NLS-1$		
+        data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.VERTICAL_ALIGN_END);
+        if (!needShowAll)
+            data.horizontalSpan = 2;
+	    toolBar.setLayoutData(data);
+	    
+        helpButton.addSelectionListener(new SelectionAdapter() {
+        	
+        	/* (non-Javadoc)
+        	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+        	 */
+        	public void widgetSelected(SelectionEvent e) {
+        		WorkbenchHelp.displayHelpResource(wizardHelpHref);
+        	}
+        });		
 	}
 	
 	/**
@@ -647,6 +541,8 @@ class NewWizardNewPage
 				(IStructuredSelection) selectionEvent.getSelection());
 
 		if (selectedObject instanceof WorkbenchWizardElement) {
+		    if (selectedObject == selectedElement)
+		        return;
 			updateWizardSelection((WorkbenchWizardElement) selectedObject);
 		}
 		else {
@@ -750,11 +646,9 @@ class NewWizardNewPage
 		String string = ""; //$NON-NLS-1$
 		if (selectedObject != null)
 			string = selectedObject.getDescription();
-			
-		if (descriptionText != null && !descriptionText.isDisposed()) {
-        	descriptionText.setText(string);        	        	
-        }       
-        
+		
+		page.setDescription(string);
+		
         if (selectedObject != null) {
 	        wizardHelpHref = selectedObject.getHelpHref();
 		}        
@@ -763,35 +657,37 @@ class NewWizardNewPage
 		} 
 		
 		if (wizardHelpHref != null) {
-			helpButton.getParent().setVisible(true);
+			helpButton.setEnabled(true);
 		}
 		else {
-			helpButton.getParent().setVisible(false);
+			helpButton.setEnabled(false);
 		}
 
 		if (hasImage(selectedObject)) {
-		    GridData data = (GridData) descImageCanvas.getLayoutData(); 
-	        data.widthHint = DESCRIPTION_IMAGE_WIDTH;
-	        data.heightHint = DESCRIPTION_IMAGE_HEIGHT;
-		    data = (GridData) imageSeperator.getLayoutData();
-		    data.widthHint = SWT.DEFAULT;
-		    data.heightHint = SWT.DEFAULT;
-		    imageSeperator.setVisible(true);
+	        ImageDescriptor descriptor = null;
+	        if (selectedObject != null) {
+		        descriptor = selectedObject.getDescriptionImage();
+			}        
+			
+            if (descriptor != null) {
+				Image image = (Image) imageTable.get(descriptor);					
+				if (image == null) {
+		        	image = descriptor.createImage(false);			        	
+        			imageTable.put(descriptor, image);			        		
+		        }
+				descImageCanvas.setImage(image);
+		    }            
 		}
 		else {
-		    GridData data = (GridData) descImageCanvas.getLayoutData(); 
-		    data.widthHint = 0;
-		    data.heightHint = 0;
-		    data = (GridData) imageSeperator.getLayoutData();
-		    data.widthHint = 0;
-		    data.heightHint = 0;	
-		    imageSeperator.setVisible(false);
+			descImageCanvas.setImage(null);
 		}
 		
-		descImageCanvas.getParent().layout();
+		descImageCanvas.getParent().layout(true);
 
-		descImageCanvas.redraw();
-		
+		IWizardContainer container = page.getWizard().getContainer();
+		if (container instanceof IWizardContainer2) {
+		    ((IWizardContainer2)container).updateSize();
+		}
 	}
 
 	/**

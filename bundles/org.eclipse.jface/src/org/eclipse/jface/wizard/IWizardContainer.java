@@ -29,6 +29,8 @@ import org.eclipse.swt.widgets.Shell;
  * <p>
  * Implementors are responsible for disposing of their wizards.
  * </p>
+ * 
+ * @see org.eclipse.jface.wizard.IWizardContainer2
  */
 public interface IWizardContainer extends IRunnableContext {
 /**
