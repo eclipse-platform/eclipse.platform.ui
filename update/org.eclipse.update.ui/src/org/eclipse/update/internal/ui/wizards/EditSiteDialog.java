@@ -13,8 +13,8 @@ package org.eclipse.update.internal.ui.wizards;
 import java.net.*;
 
 import org.eclipse.swt.widgets.*;
+import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.update.operations.*;
 
 
 public class EditSiteDialog extends NewUpdateSiteDialog {
@@ -35,7 +35,7 @@ public class EditSiteDialog extends NewUpdateSiteDialog {
 		try {
 			bookmark.setName(name.getText());
 			bookmark.setURL(new URL(url.getText()));
-			OperationsManager.fireObjectChanged(bookmark, null);
+			UpdateUI.getDefault().getUpdateModel().fireObjectChanged(bookmark, null);
 		} catch (MalformedURLException e) {
 		}
 	}
