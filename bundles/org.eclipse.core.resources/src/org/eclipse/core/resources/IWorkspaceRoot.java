@@ -85,11 +85,11 @@ public void delete(boolean deleteContent, boolean force, IProgressMonitor monito
  * a trailing separator is ignored.
  * The resulting resource need not exist in the workspace.
  *
- * @param path a path in the local file system
+ * @param location a path in the local file system
  * @return the corresponding project or folder in the workspace,
  *    or <code>null</code> if none
  */
-public IContainer getContainerForLocation(IPath path);
+public IContainer getContainerForLocation(IPath location);
 /**
  * Returns a handle to the file which is mapped to the given path 
  * in the local file system, or <code>null</code> if none.
@@ -97,11 +97,11 @@ public IContainer getContainerForLocation(IPath path);
  * The resulting file need not exist in the workspace.
  * <p>
  *
- * @param path a path in the local file system
+ * @param location a path in the local file system
  * @return the corresponding file in the workspace,
  *    or <code>null</code> if none
  */
-public IFile getFileForLocation(IPath filesystemPath);
+public IFile getFileForLocation(IPath location);
 /**
  * Returns a handle to the project resource with the given name
  * which is a child of this root.
