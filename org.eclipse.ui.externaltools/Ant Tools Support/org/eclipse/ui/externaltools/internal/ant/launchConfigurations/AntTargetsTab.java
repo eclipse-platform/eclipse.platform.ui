@@ -427,11 +427,16 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		
 		String newLocation= null;
 		try {
-			newLocation= configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, "");
+			newLocation= configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
 		} catch (CoreException ce) {
 			ExternalToolsPlugin.getDefault().log("Error reading configuration", ce);
 		}
-		if (newLocation != null && !newLocation.equals(location)) {
+		if (newLocation == null) {
+			executeTargetsTable.setInput(new TargetInfo[0]);
+			return; 
+		}
+		
+		if (!newLocation.equals(location)) {
 			allTargets= null;
 			location= newLocation;
 			runDefaultTargetButton.setText("Run default target");
