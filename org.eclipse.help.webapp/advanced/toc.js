@@ -407,8 +407,9 @@ function getVerticalScroll(node)
  */
 function focusHandler(e)
 {
-	if (isMozilla)
+	/*if (isMozilla)
 		return;
+	*/
 		
 	try{
 		if (oldActive){
