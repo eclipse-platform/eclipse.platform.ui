@@ -51,8 +51,7 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 	}
 	
 	public void remove(IStructuredSelection selection) {
-		Object[] array= selection.toArray();
-		elements.remove(array);
-		viewer.remove(array);
+		elements.removeAll(selection.toList());
+		viewer.remove(selection.toArray());
 	}
 }
