@@ -324,7 +324,7 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 		refresh.setToolTipText(Policy.bind("CatchupReleaseViewer.refreshAction")); //$NON-NLS-1$
 		
 		// Expand action
-		expandAll = new ExpandAllAction(Policy.bind("CatchupReleaseViewer.expand"), null);
+		expandAll = new ExpandAllAction(Policy.bind("CatchupReleaseViewer.expand"), null); //$NON-NLS-1$
 		
 		// Toggle granularity
 		image = TeamImages.getImageDescriptor(UIConstants.IMG_CONTENTS);
@@ -338,7 +338,7 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 		compareFileContents = diffModel.getSyncGranularity() != IRemoteSyncElement.GRANULARITY_TIMESTAMP;
 		toggleGranularity.setChecked(compareFileContents);
 		
-		removeFromTree = new RemoveFromTreeAction(Policy.bind("CatchupReleaseViewer.removeFromView"), null);
+		removeFromTree = new RemoveFromTreeAction(Policy.bind("CatchupReleaseViewer.removeFromView"), null); //$NON-NLS-1$
 		
 		copyAllRightToLeft = new Action(Policy.bind("CatchupReleaseViewer.copyAllRightToLeft"), null) { //$NON-NLS-1$
 			public void run() {
