@@ -150,7 +150,11 @@ class SearchResultViewer extends TableViewer {
 
 		if (!updateMarkerToShow)
 			fHandleNextSelectionChangedEvent= false;
-		
+		updateStatusLine();
+	}
+
+	void updateStatusLine() {
+		boolean hasSingleSelection= getSelectedEntriesCount() == 1;
 		String location= ""; //$NON-NLS-1$
 		if (hasSingleSelection) {
 			ISearchResultViewEntry entry= (ISearchResultViewEntry)getTable().getItem(getTable().getSelectionIndex()).getData();
@@ -159,7 +163,6 @@ class SearchResultViewer extends TableViewer {
 				location= path.makeRelative().toString();
 		}
 		setStatusLineMessage(location);
-
 	}
 
 	void enableActions() {
@@ -364,6 +367,7 @@ class SearchResultViewer extends TableViewer {
 		}
 		entry.setSelectedMarkerIndex(fMarkerToShow);
 		openCurrentSelection();
+		updateStatusLine();
 	}
 
 
@@ -399,6 +403,7 @@ class SearchResultViewer extends TableViewer {
 		}
 		entry.setSelectedMarkerIndex(fMarkerToShow);
 		openCurrentSelection();
+		updateStatusLine();
 	}
 	
 	private boolean canDoShowResult(Table table) {
@@ -482,6 +487,7 @@ class SearchResultViewer extends TableViewer {
 		}
 		else
 			updateItem(item, entry);
+		updateStatusLine();
 	}
 
 	/**
