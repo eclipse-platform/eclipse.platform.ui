@@ -67,6 +67,9 @@ public abstract class AntDebugElement extends PlatformObject implements IDebugEl
 		if (adapter == IDebugElement.class) {
 			return this;
 		}
+		if (adapter == IDebugTarget.class) {
+			return getDebugTarget();
+		}
 		return super.getAdapter(adapter);
 	}
 	
