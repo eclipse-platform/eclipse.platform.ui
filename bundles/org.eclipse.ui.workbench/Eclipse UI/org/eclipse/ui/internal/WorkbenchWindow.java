@@ -565,7 +565,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		shell.setLayout(getLayout());
 
 		WorkbenchHelp.setHelp(shell, IHelpContextIds.WORKBENCH_WINDOW);
 
@@ -935,10 +934,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		}
 	}
 
-	/**
-	 * Returns the layout for the shell.
-	 * 
-	 * @return the layout for the shell
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#getLayout()
 	 */
 	protected Layout getLayout() {
 		return new FormLayout();
@@ -1864,7 +1861,15 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	public void fillActionBars(IActionBarConfigurer configurer, int flags) {
 		getAdvisor().fillActionBars(this, configurer, flags);
 	}
-	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.window.Window#initializeBounds()
+	 */
+	protected void initializeBounds() {
+		super.initializeBounds();
+		setLayoutDataForContents();
+	}	
 	private IWorkbenchWindowContextSupport workbenchWindowContextSupport;
 	
 	public Object getAdapter(Class adapter) {

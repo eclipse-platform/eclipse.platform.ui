@@ -261,11 +261,14 @@ protected void configureShell(Shell shell) {
 		seperator1 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
 	
 	createTrimWidgets(shell);
-
-	// we need a special layout
-	shell.setLayout(new ApplicationWindowLayout());
-
 	
+}
+
+/* (non-Javadoc)
+ * @see org.eclipse.jface.window.Window#getLayout()
+ */
+protected Layout getLayout() {
+	return new ApplicationWindowLayout();
 }
 /**
  * Create the widgets around the perimeter of the window.

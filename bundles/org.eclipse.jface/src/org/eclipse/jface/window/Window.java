@@ -270,11 +270,19 @@ protected void configureShell(Shell newShell) {
 		else
 			newShell.setImage(defaultImage);
 	}
+	newShell.setLayout(getLayout());
+}
 
+
+/**
+ * Get the layout for the shell.
+ * @return Layout
+ */
+protected Layout getLayout() {
 	GridLayout layout = new GridLayout();
 	layout.marginHeight = 0;
 	layout.marginWidth = 0;
-	newShell.setLayout(layout);
+	return layout;
 }
 /**
  * Constrain the shell size to be no larger than the display bounds.
