@@ -14,6 +14,7 @@ public class HelpURLConnection extends URLConnection {
 	public HelpURLConnection(URL url) {
 		super(url);
 		helpURL = HelpURLFactory.createHelpURL(url.getFile());
+		setDefaultUseCaches(helpURL.isCacheable());
 		if (Logger.DEBUG)
 			Logger.logDebugMessage("HelpURLConnection", "url= " + url);
 	}
@@ -30,4 +31,8 @@ public class HelpURLConnection extends URLConnection {
 		return helpURL.openStream();
 	}
 
+	public String getContentType()
+	{
+		return helpURL.getContentType();
+	}
 }
