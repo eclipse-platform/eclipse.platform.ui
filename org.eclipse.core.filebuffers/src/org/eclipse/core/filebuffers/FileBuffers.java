@@ -78,15 +78,17 @@ public final class FileBuffers {
 		IProject[] projects= workspaceRoot.getProjects();
 		
 		for (int i= 0, length= projects.length; i < length; i++) {
-			IPath path= projects[i].getLocation();
-			if (path != null && path.isPrefixOf(location)) {
-				IPath filePath= location.removeFirstSegments(path.segmentCount());
-				filePath= projects[i].getFullPath().append(filePath);
-				filePath= filePath.makeAbsolute();
-				IFile file= workspaceRoot.getFile(filePath);
-				if (file != null && file.exists())
-					return filePath;
-				break;
+			if (projects[i].isAccessible()) {
+				IPath path= projects[i].getLocation();
+				if (path != null && path.isPrefixOf(location)) {
+					IPath filePath= location.removeFirstSegments(path.segmentCount());
+					filePath= projects[i].getFullPath().append(filePath);
+					filePath= filePath.makeAbsolute();
+					IFile file= workspaceRoot.getFile(filePath);
+					if (file != null && file.exists())
+						return filePath;
+					break;
+				}
 			}
 		}
 		return location.makeAbsolute();

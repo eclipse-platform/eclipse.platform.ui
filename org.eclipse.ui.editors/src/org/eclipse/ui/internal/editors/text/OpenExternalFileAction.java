@@ -12,15 +12,17 @@ package org.eclipse.ui.internal.editors.text;
 
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.FileDialog;
+
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.FileDialog;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -28,6 +30,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
+
+import org.eclipse.ui.editors.text.EditorsUI;
 
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
@@ -38,7 +42,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
-import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.part.FileEditorInput;
 
 /**
@@ -157,11 +160,25 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		IPath location= Path.fromOSString(file.getAbsolutePath());
 		IFile[] files= workspace.getRoot().findFilesForLocation(location);
+		files= filterNonExistentFiles(files);
 		if (files == null || files.length == 0)
 			return null;
 		if (files.length == 1)
 			return files[0];
 		return selectWorkspaceFile(files);
+	}
+	
+	private IFile[] filterNonExistentFiles(IFile[] files){
+		if (files == null)
+			return null;
+		
+		int length= files.length;
+		ArrayList existentFiles= new ArrayList(length);
+		for (int i= 0; i < length; i++) {
+			if (files[i].exists())
+				existentFiles.add(files[i]);
+		}
+		return (IFile[])existentFiles.toArray(new IFile[existentFiles.size()]);
 	}
 
 	private IFile selectWorkspaceFile(IFile[] files) {
