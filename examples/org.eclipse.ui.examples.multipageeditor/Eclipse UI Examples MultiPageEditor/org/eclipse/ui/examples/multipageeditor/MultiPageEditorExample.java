@@ -62,7 +62,7 @@ void createPage0() {
 	try {
 		editor = new TextEditor();
 		int index = addPage(editor, getEditorInput());
-		setPageText(index, editor.getTitle());
+		setPageText(index, MessageUtil.getString("Source")); //$NON-NLS-1$
 	}
 	catch (PartInitException e) {
 		ErrorDialog.openError(getSite().getShell(), MessageUtil.getString("ErrorCreatingNestedEditor"), null, e.getStatus()); //$NON-NLS-1$
