@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.Shell;
  * a table of contents area.
  * 
  */
-class TableOfContentsWizardDialog extends WizardDialog {
+public class TableOfContentsWizardDialog extends WizardDialog {
 
 	private TableOfContentsArea tocArea;
 	/*
