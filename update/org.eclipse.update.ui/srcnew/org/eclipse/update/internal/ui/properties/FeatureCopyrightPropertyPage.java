@@ -61,7 +61,7 @@ public class FeatureCopyrightPropertyPage extends PropertyPage implements IWorkb
 					button.addSelectionListener(new SelectionAdapter() {
 						public void widgetSelected(SelectionEvent e) {
 							String urlName = url.getProtocol() + ":" + url.getFile();
-							UpdateUI.showURL(urlName, false);
+							UpdateUI.showURL(urlName);
 						}
 					});
 				}

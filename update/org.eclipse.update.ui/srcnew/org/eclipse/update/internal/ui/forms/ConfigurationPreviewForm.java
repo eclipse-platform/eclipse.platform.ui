@@ -101,7 +101,7 @@ public class ConfigurationPreviewForm extends WebForm implements IUpdateModelCha
 			public void linkActivated(IHyperlinkSegment link) {
 				String url = link.getArg();
 				if (url!=null)
-					UpdateUI.showURL(url, false);
+					UpdateUI.showURL(url);
 			}
 		};
 		IActionBars bars = view.getViewSite().getActionBars();

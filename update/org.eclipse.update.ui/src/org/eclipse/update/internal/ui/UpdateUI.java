@@ -21,7 +21,6 @@ import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.appserver.*;
 import org.eclipse.help.internal.browser.*;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.preference.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.program.*;
 import org.eclipse.swt.widgets.*;
@@ -45,9 +44,6 @@ public class UpdateUI extends AbstractUIPlugin {
 
 	public static final String ID_BROWSER = PLUGIN_ID + "WebBrowser";
 	
-	// Web-triggered update preference
-	public static final String P_MASTER_SWITCH = PLUGIN_ID + ".appServer";
-
 	//The shared instance.
 	private static UpdateUI plugin;
 	//Resource bundle.
@@ -162,13 +158,6 @@ public class UpdateUI extends AbstractUIPlugin {
 			getPluginPreferences().getInt(UpdateCore.P_HISTORY_SIZE);
 		if (historyPref > 0) {
 			SiteLocalModel.DEFAULT_HISTORY = historyPref;
-		}
-		if (getPluginPreferences().getBoolean(P_MASTER_SWITCH)) {
-			try {
-				startWebApp();
-			} catch (CoreException e) {
-				logException(e);
-			}
 		}
 	}
 
@@ -429,6 +418,7 @@ public class UpdateUI extends AbstractUIPlugin {
 			log(e.getStatus(), true); //$NON-NLS-1$
 		}
 	}
+	
 	public static void requestRestart() {
 		String title = UpdateUI.getString("RestartTitle");
 		String message = UpdateUI.getString("RestartMessage");
@@ -440,44 +430,14 @@ public class UpdateUI extends AbstractUIPlugin {
 		if (restart)
 			PlatformUI.getWorkbench().restart();
 	}
-	/** 
-	 * Initializes a preference store with default preference values 
-	 * for this plug-in.
-	 * <p>
-	 * This method is called after the preference store is initially loaded
-	 * (default values are never stored in preference stores).
-	 * </p>
-	 * <p>
-	 * The default implementation of this method does nothing.
-	 * Subclasses should reimplement this method if the plug-in has any preferences.
-	 * </p>
-	 * <p>
-	 * A subclass may reimplement this method to set default values for the 
-	 * preference store using JFace API. This is the older way of initializing 
-	 * default values. If this method is reimplemented, do not override
-	 * <code>initializeDefaultPluginPreferences()</code>.
-	 * </p>
-	 *
-	 * @param store the preference store to fill
-	 */
-	protected void initializeDefaultPreferences(IPreferenceStore store) {
-		store.setDefault(P_MASTER_SWITCH, false);
-	}
-
-	public static boolean showURL(String url) {
-		return showURL(url, true);
-	}
-
-	public static boolean showURL(String url, boolean considerEmbedded) {
-		boolean focusGrabbed = false;
-		boolean win32 = SWT.getPlatform().equals("win32");
+	
+	public static void showURL(String url) {
 
 		url = WebInstallHandler.getEncodedURLName(url);
 
-		if (win32) {
+		if (SWT.getPlatform().equals("win32")) {
 			Program.launch(url);
 		} else {
-			// defect 11483
 			IBrowser browser = BrowserManager.getInstance().createBrowser();
 			try {
 				browser.displayURL(url);
@@ -485,7 +445,6 @@ public class UpdateUI extends AbstractUIPlugin {
 				UpdateUI.logException(e);
 			}
 		}
-		return focusGrabbed;
 	}
 
 }

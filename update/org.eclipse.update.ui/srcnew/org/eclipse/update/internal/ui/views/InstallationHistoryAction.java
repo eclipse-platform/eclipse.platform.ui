@@ -45,7 +45,7 @@ public class InstallationHistoryAction extends Action {
 		try {
 			openLog();
 			parseLog();
-			UpdateUI.showURL("file:" + getTempFile().getPath().toString(), false);
+			UpdateUI.showURL("file:" + getTempFile().getPath().toString());
 		} catch (CoreException e) {
 			UpdateUI.logException(e);
 		} finally {
