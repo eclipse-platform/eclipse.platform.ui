@@ -28,7 +28,6 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleListener;
 
 //TODO 1: this class must be made thread safe (query methods must be sync'd as well)
-//TODO 2: only resolved bundles should appear in the plugin registry - this implementation exposes all known bundles
 public class PluginRegistry implements IPluginRegistry {
 	private IExtensionRegistry extRegistry;
 
@@ -71,6 +70,8 @@ public class PluginRegistry implements IPluginRegistry {
 		return extRegistry.getExtensionPoints();
 	}
 
+	//TODO The three following methods must be fixed. They must support multiple version. Maybe should we have another kind of key.
+	//This also need to check if the plugin is not a fragment 
 	public synchronized IPluginDescriptor getPluginDescriptor(String plugin) {
 		// first check to see if a bundle exists
 		Bundle b = InternalPlatform.getDefault().getBundle(plugin);
@@ -89,6 +90,7 @@ public class PluginRegistry implements IPluginRegistry {
 			descriptors.remove(plugin);
 		return null;
 	}
+	//This methods must iterate through the bundle list and return all the one that matches
 	public IPluginDescriptor[] getPluginDescriptors(String plugin) {
 		IPluginDescriptor pd = getPluginDescriptor(plugin);
 		if (pd == null)

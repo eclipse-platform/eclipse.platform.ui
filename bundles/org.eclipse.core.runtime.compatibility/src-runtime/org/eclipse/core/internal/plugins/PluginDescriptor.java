@@ -49,6 +49,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 	}
 	/**
 	 * convert a list of comma-separated tokens into an array
+	 *TODO This method is not used. 
 	 */
 	private static String[] getArrayFromList(String prop) {
 		if (prop == null || prop.trim().equals("")) //$NON-NLS-1$
@@ -76,7 +77,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 	/**
 	 * @see IPluginDescriptor
 	 */
-	public IExtensionPoint getExtensionPoint(String extensionPointId) {
+	public IExtensionPoint getExtensionPoint(String extensionPointId) {	//TODO This code only works if the underlying bundle as a symbolicName
 		return InternalPlatform.getDefault().getRegistry().getExtensionPoint(getId(), extensionPointId);
 	}
 	/**
@@ -106,6 +107,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 	/**
 	 * @return a URL to the install location that does not need to be resolved.
 	 */
+	//TODO this can be private
 	public URL getInstallURLInternal() {
 		try {
 			return InternalPlatform.getDefault().resolve(getInstallURL());
@@ -139,6 +141,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 		return classLoader;
 	}
 
+	//TODO This does not seems to be used
 	public String getFileFromURL(URL target) {
 		String protocol = target.getProtocol();
 		if (protocol.equals(PlatformURLHandler.FILE))
@@ -192,7 +195,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 	 * @see IPluginDescriptor
 	 */
 	public ILibrary[] getRuntimeLibraries() {
-		if (!isLegacy())
+		if (!isLegacy())		//TODO Remove this check
 			return new ILibrary[0];
 
 		ArrayList allLibraries = new ArrayList();
@@ -206,7 +209,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 			Bundle element = (Bundle) iter.next();
 			String classpath = (String) element.getHeaders().get(Constants.BUNDLE_CLASSPATH);
 			if (classpath != null)
-				allLibraries.addAll(splitClasspath(classpath));	
+				allLibraries.addAll(splitClasspath(classpath));		//TODO This should use ManifestElement. If this is done then splitClasspath can be removed
 		}
 		return (ILibrary[]) allLibraries.toArray(new ILibrary[allLibraries.size()]);
 	}
@@ -240,7 +243,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 	public PluginVersionIdentifier getVersionIdentifier() {
 		String version = (String) bundleOsgi.getHeaders().get(Constants.BUNDLE_VERSION);
 		if (version == null)
-			return new PluginVersionIdentifier("1.0.0"); //$NON-NLS-1$
+			return new PluginVersionIdentifier("1.0.0"); //$NON-NLS-1$	//TODO Why do we have 1.0.0 as default  value ?
 		try {
 			return new PluginVersionIdentifier(version);
 		} catch (Exception e) {
@@ -256,7 +259,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 
 	
 	public IPluginPrerequisite[] getPluginPrerequisites() {
-		if (!isLegacy())
+		if (!isLegacy())	//TODO Remove this check
 			return new IPluginPrerequisite[0];
 
 		BundleDescription description = Platform.getPlatformAdmin().getState(false).getBundle(bundleOsgi.getBundleId());
@@ -292,7 +295,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 	}
 	/*
 	 * NOTE: This method is not synchronized because it is called from within a
-	 * sync block in PluginClassLoader.
+	 * sync block in PluginClassLoader.	//TODO This is no longer true
 	 */
 	public boolean isPluginDeactivated() {
 		return deactivated;
@@ -379,7 +382,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 		// to getting a class. It needs to handle the
 		// case where it is called multiple times during the activation
 		// processing itself (as a result of other classes from this
-		// plugin being directly referenced by the plugin class)
+		// plugin being directly referenced by the plugin class)	//TODO Invalid comment
 
 		// NOTE: there is a remote scenario where the plugin class can
 		// deadlock, if it starts separate thread(s) within its
@@ -419,7 +422,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 }
 
 	private String getPluginClass() {
-		return (String) bundleOsgi.getHeaders().get(PLUGIN_CLASS); //$NON-NLS-1$
+		return (String) bundleOsgi.getHeaders().get(PLUGIN_CLASS);
 	}
 
 	private String getId() {

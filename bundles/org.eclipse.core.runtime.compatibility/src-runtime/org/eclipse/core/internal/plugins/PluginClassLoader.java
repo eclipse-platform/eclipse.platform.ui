@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
 public class PluginClassLoader extends URLClassLoader {
-	private Bundle bundle;
+	private Bundle bundle;	//We should be able to get rid of this field, since the info is in the descriptor
 	private PluginDescriptor descriptor;
 	PluginClassLoader(PluginDescriptor descriptor) {
 		super(computeURLs(descriptor));
@@ -63,7 +63,7 @@ public class PluginClassLoader extends URLClassLoader {
 		return urls;
 	}
 
-	private static String[] computeDevPath() {
+	private static String[] computeDevPath() {	//TODO This must use the new classpath computer for dev.properties
 		//Code copied from DefaultAdaptor
 		if (!BootLoader.inDevelopmentMode())
 			return new String[0];
