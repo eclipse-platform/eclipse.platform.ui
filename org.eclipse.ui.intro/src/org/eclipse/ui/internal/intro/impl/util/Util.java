@@ -10,16 +10,19 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.util;
 
-import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 
 public class Util {
@@ -70,7 +73,7 @@ public class Util {
             if (parent == null)
                 parent = DialogUtil.getActiveShell();
             DialogUtil.displayCoreErrorDialog(parent, errorId,
-                    (CoreException) e);
+                (CoreException) e);
 
             return;
         }
@@ -157,7 +160,7 @@ public class Util {
         };
         int[] allEvents = new int[] { SWT.Selection, SWT.Dispose, SWT.Paint,
                 SWT.Resize, SWT.MouseDoubleClick, SWT.MouseDown, SWT.MouseUp,
-                //SWT.MouseMove,
+                // SWT.MouseMove,
                 SWT.MouseEnter, SWT.MouseExit, SWT.MouseHover, SWT.FocusIn,
                 SWT.FocusOut, SWT.KeyDown, SWT.KeyUp, SWT.Traverse, SWT.Show,
                 SWT.Hide };
@@ -182,122 +185,25 @@ public class Util {
         Control control = Display.getCurrent().getFocusControl();
         if (control != null)
             control.setBackground(Display.getCurrent().getSystemColor(
-                    SWT.COLOR_DARK_RED));
+                SWT.COLOR_DARK_RED));
     }
 
     /**
      * Launch an external brwoser on the given url.
      */
     public static boolean openBrowser(String href) {
-        // format the href for an html file (file:///<filename.html>
-        // required for Mac only.
-        if (href.startsWith("file:")) { //$NON-NLS-1$
-            href = href.substring(5);
-            while (href.startsWith("/")) { //$NON-NLS-1$
-                href = href.substring(1);
-            }
-            href = "file:///" + href; //$NON-NLS-1$
-        }
-        final String localHref = href;
-
-        final Display display = Display.getCurrent();
-        String platform = SWT.getPlatform();
-
-        if ("win32".equals(platform)) { //$NON-NLS-1$
-            return Program.launch(localHref);
-        } else if ("carbon".equals(platform)) { //$NON-NLS-1$
-            try {
-                Process process = Runtime.getRuntime().exec(
-                        "/usr/bin/open " + localHref); //$NON-NLS-1$
-                if (process == null)
-                    return false;
-                return process.exitValue() == 0 ? true : false;
-            } catch (IOException e) {
-                openBrowserError(display, e);
-                return false;
-            }
-        } else {
-            final boolean[] result = new boolean[1];
-            Thread launcher = new Thread("Intro browser Launcher") {//$NON-NLS-1$
-
-                public void run() {
-                    try {
-                        Process process = doOpenBrowser(localHref, true);
-                        if (process == null)
-                            // no browser already opened. Launch new one.
-                            process = doOpenBrowser(localHref, false);
-                        if (process == null)
-                            result[0] = false;
-                        else
-                            result[0] = process.exitValue() == 0 ? true : false;
-                        if (result[0] == false)
-                            // make sure we display error if we fail.
-                            openBrowserError(display, null);
-                    } catch (Exception e) {
-                        openBrowserError(display, e);
-                        result[0] = false;
-                    }
-                }
-
-                private Process doOpenBrowser(String href, boolean remote)
-                        throws Exception {
-                    Process p = null;
-                    String webBrowser;
-                    // try netscape first.
-                    webBrowser = "netscape"; //$NON-NLS-1$
-                    String cmd = createCommand(webBrowser, href, remote);
-                    try {
-                        p = Runtime.getRuntime().exec(cmd);
-                    } catch (IOException e) {
-                        // command failed
-                        p = null;
-                    }
-                    if (p != null) {
-                        int exitCode = p.waitFor();
-                        if (exitCode == 0)
-                            return p;
-                    }
-
-                    // netscape failed. Try mozilla.
-                    webBrowser = "mozilla"; //$NON-NLS-1$
-                    cmd = createCommand(webBrowser, href, remote);
-                    try {
-                        p = Runtime.getRuntime().exec(cmd);
-                    } catch (IOException e) {
-                        // command failed
-                        p = null;
-                    }
-                    if (p != null) {
-                        int exitCode = p.waitFor();
-                        if (exitCode == 0)
-                            return p;
-                    }
-
-                    // all failed. return null
-                    return null;
-                }
-
-                /**
-                 * Create a command to launch the given browser, with/without
-                 * remote control.
-                 *  
-                 */
-                private String createCommand(String browser, String href,
-                        boolean remote) {
-                    StringBuffer cmd = new StringBuffer(browser);
-                    if (remote) {
-                        cmd.append(" -remote openURL("); //$NON-NLS-1$
-                        cmd.append(href);
-                        cmd.append(")"); //$NON-NLS-1$
-                    } else {
-                        cmd.append(" "); //$NON-NLS-1$
-                        cmd.append(href);
-                    }
-                    return cmd.toString();
-                }
-            };
-            launcher.start();
-            return result[0];
+        try {
+            URL url = new URL(href);
+            IWorkbenchBrowserSupport support = PlatformUI.getWorkbench()
+                .getBrowserSupport();
+            support.getExternalBrowser().openURL(url);
+            return true;
+        } catch (PartInitException e) {
+            Log.error("Intro failed to get Browser support.", e);
+            return false;
+        } catch (MalformedURLException e) {
+            Log.error("Intro failed to display: " + href, e);
+            return false;
         }
     }
 
@@ -310,7 +216,7 @@ public class Util {
 
             public void run() {
                 DialogUtil.displayErrorMessage(display.getActiveShell(),
-                        IntroPlugin.getString("OpenBroswer.failedToLaunch"), e); //$NON-NLS-1$
+                    IntroPlugin.getString("OpenBroswer.failedToLaunch"), e); //$NON-NLS-1$
             }
         });
     }
