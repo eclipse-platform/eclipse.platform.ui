@@ -114,7 +114,6 @@ public final class InternalPlatform implements IPlatform {
 	private static final String PRODUCT = "-product"; //$NON-NLS-1$	
 	private static final String APPLICATION = "-application"; //$NON-NLS-1$	
 	private static final String DATA = "-data"; //$NON-NLS-1$	
-	private static final String LOG = "-consolelog"; //$NON-NLS-1$
 	private static final String KEYRING = "-keyring"; //$NON-NLS-1$
 	protected static final String PASSWORD = "-password"; //$NON-NLS-1$
 	private static final String NOREGISTRYCACHE = "-noregistrycache"; //$NON-NLS-1$	
@@ -482,9 +481,6 @@ public final class InternalPlatform implements IPlatform {
 		initialized = true;
 		platformLog = new PlatformLogWriter();
 		addLogListener(platformLog);
-		if ("true".equals(System.getProperty("eclipse.consoleLog"))) {
-			getFrameworkLog().setConsoleLog(true);
-		}
 		platformRegistration = context.registerService(IPlatform.class.getName(), this, null);
 	}	
 	/**
@@ -667,12 +663,6 @@ public final class InternalPlatform implements IPlatform {
 		for (int i = 0; i < args.length; i++) {
 			boolean found = false;
 			// check for args without parameters (i.e., a flag arg)
-
-			// look for the log flag
-			if (args[i].equalsIgnoreCase(LOG)) {
-				System.setProperty(PROP_CONSOLE_LOG, "true"); //$NON-NLS-1$
-				found = true;
-			}
 
 			// look for the no registry cache flag
 			if (args[i].equalsIgnoreCase(NOREGISTRYCACHE)) {
