@@ -311,7 +311,7 @@ public class DefaultPreferences extends EclipsePreferences {
 			return result;
 		InputStream input = null;
 		try {
-			input = Platform.resolve(url).openStream();
+			input = url.openStream();
 			result.load(input);
 		} catch (IOException e) {
 			if (InternalPlatform.DEBUG_PREFERENCES) {
