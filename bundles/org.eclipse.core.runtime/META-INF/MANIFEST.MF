@@ -8,6 +8,10 @@ Bundle-Activator: org.eclipse.core.internal.runtime.PlatformActivator
 Bundle-Localization: plugin
 Export-Package: 
  org.osgi.service.prefs; specification-version=1.0,
+ org.eclipse.core.runtime,
+ org.eclipse.core.runtime.content,
+ org.eclipse.core.runtime.dynamicHelpers,
+ org.eclipse.core.runtime.jobs,
  org.eclipse.core.runtime.preferences
 Provide-Package: 
  org.osgi.service.prefs,
