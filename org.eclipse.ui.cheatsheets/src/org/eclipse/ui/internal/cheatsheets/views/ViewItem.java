@@ -406,17 +406,19 @@ public abstract class ViewItem {
 		// Run the action for this ViewItem
 		if (action instanceof ICheatSheetAction) {
 			// Prepare parameters
-			String[] clonedParams = new String[params.length];
-			System.arraycopy(params, 0, clonedParams, 0, params.length);
-			for (int i = 0; i < clonedParams.length; i++) {
-				String param = clonedParams[i];
-				if(param != null && param.startsWith("${") && param.endsWith("}")) { //$NON-NLS-1$ //$NON-NLS-2$
-					param = param.substring(2,param.length()-1);
-					String value = csm.getData(param);
-					clonedParams[i] = value == null ? "" : value; //$NON-NLS-1$
+			String[] clonedParams = null;
+			if(params != null && params.length > 0) {
+				clonedParams = new String[params.length];
+				System.arraycopy(params, 0, clonedParams, 0, params.length);
+				for (int i = 0; i < clonedParams.length; i++) {
+					String param = clonedParams[i];
+					if(param != null && param.startsWith("${") && param.endsWith("}")) { //$NON-NLS-1$ //$NON-NLS-2$
+						param = param.substring(2,param.length()-1);
+						String value = csm.getData(param);
+						clonedParams[i] = value == null ? "" : value; //$NON-NLS-1$
+					}
 				}
-			}
-			
+			}			
 			((ICheatSheetAction) action).run(clonedParams, csm);
 		} else
 			action.run();
