@@ -12,17 +12,16 @@ package org.eclipse.debug.internal.ui.views.variables;
 
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * Memento of the expanded and selected items in a variables viewer.
@@ -32,7 +31,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 public class ViewerState {
 
 	// paths to expanded variables
-	private IPath[] fExpandedElements = null;
+	private List fExpandedElements = null;
 	// paths to selected variables	
 	private IPath[] fSelection = null;
 	
@@ -50,27 +49,38 @@ public class ViewerState {
 	 * @param viewer viewer of which to save the state
 	 */
 	public void saveState(TreeViewer viewer) {
-		Object[] expansion = viewer.getExpandedElements();
-		fExpandedElements = new IPath[expansion.length];
-		for (int i = 0; i < expansion.length; i++) {
-			IVariable variable = (IVariable)expansion[i];
-			try {
-				fExpandedElements[i] = encodeVariable(variable, viewer);
-			} catch (DebugException e1) {
+		List expanded = new ArrayList();
+		fExpandedElements = null;
+		TreeItem[] items = viewer.getTree().getItems();
+		try {
+			for (int i = 0; i < items.length; i++) {
+				collectExandedItesm(items[i], expanded);
 			}
+			if (expanded.size() > 0) {
+				fExpandedElements = expanded;
+			}
+		} catch (DebugException e) {
+			fExpandedElements = null;
 		}
 		
-		IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
-		fSelection = new IPath[selection.size()];
-		Iterator elements = selection.iterator();
-		int i = 0;
+		TreeItem[] selection = viewer.getTree().getSelection();
+		fSelection = new IPath[selection.length];
 		try {
-			while (elements.hasNext()) {
-				fSelection[i] = encodeVariable((IVariable)elements.next(), viewer);
-				i++;
+			for (int i = 0; i < selection.length; i++) {
+				fSelection[i] = encodeVariable(selection[i]);
 			}
 		} catch (DebugException e) {
 			fSelection = null;
+		}
+	}
+	
+	protected void collectExandedItesm(TreeItem item, List expanded) throws DebugException {
+		if (item.getExpanded()) {
+			expanded.add(encodeVariable(item));
+			TreeItem[] items = item.getItems();
+			for (int i = 0; i < items.length; i++) {
+				collectExandedItesm(items[i], expanded);
+			}
 		}
 	}
 	
@@ -82,9 +92,9 @@ public class ViewerState {
 	 */
 	public void restoreState(TreeViewer viewer) {
 		if (fExpandedElements != null) {
-			List expansion = new ArrayList(fExpandedElements.length);
-			for (int i = 0; i < fExpandedElements.length; i++) {
-				IPath path = fExpandedElements[i];
+			List expansion = new ArrayList(fExpandedElements.size());
+			for (int i = 0; i < fExpandedElements.size(); i++) {
+				IPath path = (IPath) fExpandedElements.get(i);
 				if (path != null) {
 					IVariable var;
 					try {
@@ -121,19 +131,18 @@ public class ViewerState {
 	 * path denote parent variable names, and the last segment is the name of
 	 * the given variable.
 	 *   
-	 * @param variable variable to encode
-	 * @param viewer viewer the variable is contained in
+	 * @param item tree item containing the variable to encode
 	 * @return path encoding the given variable
 	 * @throws DebugException if unable to generate a path
 	 */
-	protected IPath encodeVariable(IVariable variable, TreeViewer viewer) throws DebugException {
-		ITreeContentProvider contentProvider = (ITreeContentProvider)viewer.getContentProvider();
+	protected IPath encodeVariable(TreeItem item) throws DebugException {
+		IVariable variable = (IVariable)item.getData();
 		IPath path = new Path(variable.getName());
-		Object parent = contentProvider.getParent(variable);
-		while (parent instanceof IVariable) {
-			IVariable parentVar = (IVariable)parent;
-			path = new Path(parentVar.getName()).append(path);
-			parent = contentProvider.getParent(parentVar);
+		TreeItem parent = item.getParentItem();
+		while (parent instanceof TreeItem) {
+			variable = (IVariable)parent.getData();
+			path = new Path(variable.getName()).append(path);
+			parent = parent.getParentItem();
 		}
 		return path;
 	}
