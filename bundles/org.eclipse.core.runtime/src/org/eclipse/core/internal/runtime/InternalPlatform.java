@@ -1166,6 +1166,9 @@ public final class InternalPlatform implements IPlatform {
 			configMetadataLocation = new Path(System.getProperty("osgi.configuration.area")); //$NON-NLS-1$
 		return configMetadataLocation;
 	}
+	public IPath getConfigurationMetadataLocation() {
+		return this.getConfigurationLocation();
+	}
 	public IPath getStateLocation(Bundle bundle, boolean create) throws IllegalStateException {
 		assertInitialized();
 		IPath result = getMetaArea().getStateLocation(bundle);
