@@ -139,7 +139,7 @@
       		</description>
       		<param 
       			name="url" 
-      			value="http://www.google.ca/search?hl=en&amp;q={expression}&amp;btnG=Google+Search&amp;meta=">
+      			value="http://www.google.com/search?hl=en&amp;q={expression}&amp;btnG=Google+Search&amp;meta=">
       		</param>
       </engine>
       <engine

@@ -210,11 +210,11 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		while (parent != null) {
 			Object data = parent.getData();
 			if (data instanceof IWizardContainer) {
-				WizardDialog wd = (WizardDialog) data;
+				IWizardContainer wc = (IWizardContainer) data;
 				buff.append("\""); //$NON-NLS-1$
-				buff.append(wd.getCurrentPage().getName());
+				buff.append(wc.getCurrentPage().getName());
 				buff.append("\" OR \""); //$NON-NLS-1$
-				buff.append(wd.getCurrentPage().getWizard().getWindowTitle());
+				buff.append(wc.getCurrentPage().getWizard().getWindowTitle());
 				buff.append("\""); //$NON-NLS-1$
 				break;
 			} else if (data instanceof IWorkbenchWindow) {
