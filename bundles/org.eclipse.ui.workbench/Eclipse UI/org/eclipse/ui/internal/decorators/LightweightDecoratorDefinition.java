@@ -173,7 +173,9 @@ class LightweightDecoratorDefinition extends DecoratorDefinition {
 		//Only do something if disabled so as to prevent
 		//gratutitous activation
 		if (!this.enabled && decorator != null) {
-			disposeCachedDecorator(decorator);
+			IBaseLabelProvider cached = decorator;
+			decorator = null;
+			disposeCachedDecorator(cached);
 		}
 	}
 }

@@ -101,28 +101,12 @@ class FullDecoratorDefinition extends DecoratorDefinition {
 		//Only do something if disabled so as to prevent
 		//gratutitous activation
 		if (!this.enabled && decorator != null) {
-			disposeCachedDecorator(decorator);
+			IBaseLabelProvider cached = decorator;
+			decorator = null;
+			disposeCachedDecorator(cached);
 		}
 	}
 	
-	/**
-	 * Sets the enabled flag and adds or removes the decorator
-	 * manager as a listener as appropriate.
-	 * @param enabled The enabled to set
-	 */
-	public void setEnabled(boolean newState) {
-
-		//Only refresh if there has been a change
-		if (this.enabled != newState) {
-			this.enabled = newState;
-			try {
-				refreshDecorator();
-			} catch (CoreException exception) {
-				handleCoreException(exception);
-			}
-
-		}
-	}
 	/**
 	 * Decorate the image provided for the element type.
 	 * This method should not be called unless a check for

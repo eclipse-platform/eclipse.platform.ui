@@ -116,13 +116,10 @@ public abstract class DecoratorDefinition {
 	 * as appropirate.
 	 *  @param decorator
 	 */
-	protected void disposeCachedDecorator(IBaseLabelProvider decorator) {
-		IBaseLabelProvider cached = decorator;
-		cached.removeListener(
+	protected void disposeCachedDecorator(IBaseLabelProvider disposedDecorator) {
+		disposedDecorator.removeListener(
 			WorkbenchPlugin.getDefault().getDecoratorManager());
-		//Clear the decorator before disposing
-		decorator = null;
-		cached.dispose();
+		disposedDecorator.dispose();
 
 	}
 
