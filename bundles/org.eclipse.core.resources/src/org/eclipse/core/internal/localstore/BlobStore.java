@@ -88,7 +88,7 @@ private String bytesToHexString(byte[] b) {
 protected boolean delete(File blobFile) {
 	CoreFileSystemLibrary.setReadOnly(blobFile.getAbsolutePath(), false);
 	boolean deleted = blobFile.delete();
-	deleteEmptyDir(new File(blobFile.getParent()));
+	deleteEmptyDir(blobFile.getParentFile());
 	return deleted;
 }
 public void deleteAll() {

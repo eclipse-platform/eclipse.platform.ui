@@ -156,7 +156,7 @@ protected PropertyStore openPropertyStore(IResource target) {
 	Assert.isTrue(type != IResource.FILE && type != IResource.FOLDER);
 	IPath location = workspace.getMetaArea().getPropertyStoreLocation(target);
 	java.io.File storeFile = location.toFile();
-	new java.io.File(storeFile.getParent()).mkdirs();
+	storeFile.getParentFile().mkdirs();
 	PropertyStore store = new PropertyStore(location);
 	setPropertyStore(target, store);
 	return store;

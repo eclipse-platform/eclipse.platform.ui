@@ -363,7 +363,7 @@ public void transferStreams(InputStream source, OutputStream destination, String
 public void write(File target, InputStream content, boolean append, IProgressMonitor monitor) throws CoreException {
 	try {
 		String path = target.getAbsolutePath();
-		writeFolder(new File(target.getParent()));
+		writeFolder(target.getParentFile());
 		transferStreams(content, createStream(target, append), path, monitor);
 	} finally {
 		try {
