@@ -52,19 +52,13 @@ public void handleException(Throwable t) {
 			else
 				throw (Error)t;
 		}
-		if((t instanceof VirtualMachineError) || (t instanceof SWTError)) {
-			//May not be possible to recover. Ask the user.
-			log(t);
-			if(openQuestionDialog(t))
-				closeWorkbench();
-		} else if(t instanceof ThreadDeath) {
+		if(t instanceof ThreadDeath) {
 			// Don't catch ThreadDeath as this is a normal occurrence when the thread dies
 			throw (ThreadDeath)t;
 		} else {
-			// Error or RuntimeException
-			// For instance: it may be a LinkageError in a plugin. Try to keep running.
 			log(t);
-			openInfoDialog(t);
+			if(openQuestionDialog(t))
+				closeWorkbench();
 		}
 	} finally {
 		exceptionCount--;
@@ -123,42 +117,29 @@ private void log(Throwable t) {
 	}
 }
 /**
- * Inform the user about a internal error.
- */
-private void openInfoDialog(Throwable t) {
-	// Open an error dialog, but don't reveal the internal exception name.
-	try {
-		String msg = null;
-		if (t.getMessage() == null) {
-			msg = WorkbenchMessages.getString("InternalErrorNoArg");  //$NON-NLS-1$
-		} else {
-			msg = WorkbenchMessages.format("InternalErrorOneArg", new Object[] {t.getMessage()}); //$NON-NLS-1$
-		} 
-		InternalErrorDialog.openError(null, WorkbenchMessages.getString("Internal_error"), msg,t); //$NON-NLS-1$
-	} catch (Throwable th) {
-		/* It is unlikely to happen */
-		System.err.println("A fatal error happened while informing the user about a fatal error."); //$NON-NLS-1$
-		t.printStackTrace();
-		System.err.println("New exception."); //$NON-NLS-1$
-		th.printStackTrace();
-	}	
-}
-/**
- * Inform the user about a fatal error. Return true if the user decide to exit workspace
+ * Inform the user about a fatal error. Return true if the user decide to 
+ * exit workspace or if another faltal error happens while reporting it.
  */
 private boolean openQuestionDialog(Throwable t) {
 	try {
 		String msg = null;
-		if(t instanceof OutOfMemoryError)
+		if(t instanceof OutOfMemoryError) {
 			msg = MSG_OutOfMemoryError;
-		else if(t instanceof StackOverflowError)
+		} else if(t instanceof StackOverflowError) {
 			msg = MSG_StackOverflowError;
-		else if(t instanceof VirtualMachineError)
+		} else if(t instanceof VirtualMachineError) {
 			msg = MSG_VirtualMachineError;
-		else if(t instanceof SWTError)
+		} else if(t instanceof SWTError) {
 			msg = MSG_SWTError;
-			
-		return InternalErrorDialog.openQuestion(null, WorkbenchMessages.getString("Internal_error"), msg + MSG_FATAL_ERROR,t);
+		} else {
+			if (t.getMessage() == null) {
+				msg = WorkbenchMessages.getString("InternalErrorNoArg");  //$NON-NLS-1$
+			} else {
+				msg = WorkbenchMessages.format("InternalErrorOneArg", new Object[] {t.getMessage()}); //$NON-NLS-1$
+			} 
+			return InternalErrorDialog.openQuestion(null, WorkbenchMessages.getString("Internal_error"), msg,t,1); //$NON-NLS-1$
+	    }	
+		return InternalErrorDialog.openQuestion(null, WorkbenchMessages.getString("Internal_error"), msg + MSG_FATAL_ERROR,t,0);
 	} catch (Throwable th) {
 		/* It may not be possible to show the inform the user about this exception we may not 
 		 * have more memory or OS handles etc. */

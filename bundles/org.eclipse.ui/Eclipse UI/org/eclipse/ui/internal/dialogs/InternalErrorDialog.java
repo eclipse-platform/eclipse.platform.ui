@@ -150,7 +150,7 @@ public static void openError(Shell parent, String title, String message, Throwab
  * @return <code>true</code> if the user presses the OK button,
  *    <code>false</code> otherwise
  */
-public static boolean openQuestion(Shell parent, String title, String message, Throwable detail) {
+public static boolean openQuestion(Shell parent, String title, String message, Throwable detail,int defaultIndex) {
 	String[] labels;
 	if(detail == null)
 		labels = new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL};
@@ -165,7 +165,7 @@ public static boolean openQuestion(Shell parent, String title, String message, T
 		detail,
 		QUESTION, 
 		labels, 
-		0); 	// yes is the default
+		defaultIndex);
 	if(detail != null)
 	    dialog.detailButtonID = 2;
 	return dialog.open() == 0;
