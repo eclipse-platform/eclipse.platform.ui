@@ -82,12 +82,15 @@ public class DumpSummaryView extends SpyView {
 
 		// generates text to be shown on this view
 		StringBuffer output = new StringBuffer();
-		if (dump.isFailed()) {
+		if (dump.isFailed())
 			output.append(dump.getFailureReason().toString());
-			output.append('\n');
-			output.append("\nOffset: " + dump.getOffset()); //$NON-NLS-1$
-		} else
-			output.append("No errors"); //$NON-NLS-1$
+		else
+			output.append("No errors. "); //$NON-NLS-1$
+		output.append(dump.getOffset());
+		output.append('/');
+		output.append(dump.getFile().length());
+		output.append(" byte(s) read"); //$NON-NLS-1$
+		
 
 		// updates the view contents 
 		viewer.getDocument().set(output.toString());
