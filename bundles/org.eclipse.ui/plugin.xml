@@ -1523,13 +1523,13 @@
       </keyBinding>
       <!-- Back -->
       <keyBinding
-            commandId="org.eclipse.ui.navigate.back"
+            commandId="org.eclipse.ui.navigate.backwardHistory"
             keySequence="M1+J M1+Arrow_Left"
             keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
       </keyBinding>
       <!-- Forward -->
       <keyBinding
-            commandId="org.eclipse.ui.navigate.forward"
+            commandId="org.eclipse.ui.navigate.forwardHistory"
             keySequence="M1+J M1+Arrow_Right"
             keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
       </keyBinding>
@@ -2171,7 +2171,7 @@
       </keyBinding>
       <!-- Back -->
       <keyBinding
-            commandId="org.eclipse.ui.navigate.back"
+            commandId="org.eclipse.ui.navigate.backwardHistory"
             keySequence="M3+Arrow_Left"
             keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
       </keyBinding>
@@ -2184,7 +2184,7 @@
       </keyBinding>
       <!-- Forward -->
       <keyBinding
-            commandId="org.eclipse.ui.navigate.forward"
+            commandId="org.eclipse.ui.navigate.forwardHistory"
             keySequence="M3+Arrow_Right"
             keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
       </keyBinding>
