@@ -243,7 +243,8 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 
 		int topLeft= getInclusiveTopIndexStartOffset();
 		int bottomRight= fCachedTextViewer.getBottomIndexEndOffset();
-		int viewPort= bottomRight - topLeft;
+		// http://dev.eclipse.org/bugs/show_bug.cgi?id=14938
+		int viewPort= bottomRight + 1 - topLeft;
 		
 		fScrollPos= fCachedTextWidget.getTopPixel();
 		int lineheight= fCachedTextWidget.getLineHeight();
