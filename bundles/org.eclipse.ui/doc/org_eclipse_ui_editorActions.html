@@ -108,11 +108,11 @@ is used as the button label. The label can contain JFace-encoded mnemonic
 and accelerator information (see example).</li>
 
 <li>
-<b>accelerator</b> - an integer that is used to specify the keycode of
-the accelerator for the action. This is the integer value resulting from
-a bitwise OR of zero or more SWT key modifier masks (i.e. SWT.CTRL or SWT.ALT)
-and a character code. For example, for Ctrl+Z use <tt>SWT.CTRL | 'Z' =
-(1&lt;&lt;18)|'Z' = 262234</tt>.</li>
+<b>accelerator</b> - the accelerator for the action. This is specified as a
+combination of the keys CTRL, SHIFT and ALT and an accelrator key. These values
+are not internationalized and should not be translated. Specification of the
+accelerator for the entry title should be done in the label - this value will
+not be used to build a menu entry.</li>
 
 <li>
 <b>menubarPath</b> - a slash-delimited path ('/') that is used to specify
