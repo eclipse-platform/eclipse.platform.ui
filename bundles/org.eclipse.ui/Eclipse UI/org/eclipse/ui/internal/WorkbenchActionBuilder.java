@@ -25,28 +25,28 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * This is used to add actions to the workbench.
  */
 public class WorkbenchActionBuilder implements IPropertyChangeListener {
-	private static final String saveActionDefId = "file.save";
-	private static final String saveAllActionDefId = "file.saveAll";
-	private static final String printActionDefId = "file.print";
-	private static final String closeActionDefId = "file.close";
-	private static final String closeAllActionDefId = "file.closeAll";
-	private static final String undoActionDefId = "edit.undo";
-	private static final String redoActionDefId = "edit.redo";
-	private static final String cutActionDefId = "edit.cut";
-	private static final String copyActionDefId = "edit.copy";
-	private static final String pasteActionDefId = "edit.paste";
-	private static final String deleteActionDefId = "edit.delete";
-	private static final String selectAllActionDefId = "edit.selectAll";
-	private static final String findActionDefId = "edit.findReplace";
-	private static final String addBookmarkActionDefId = "edit.addBookmark";
-	private static final String showViewMenuActionDefId = "window.showViewMenu";
-	private static final String showPartPaneMenuActionDefId = "window.showSystemMenu";
-	private static final String nextEditorActionDefId = "window.nextEditor";
-	private static final String prevEditorActionDefId = "window.previousEditor";
-	private static final String nextPartActionDefId = "window.nextView";
-	private static final String prevPartActionDefId = "window.previousView";
-	private static final String activateEditorActionDefId = "window.activateEditor";
-	private static final String workbenchEditorsActionDefId = "window.switchToEditor";
+	private static final String saveActionDefId = "org.eclipse.ui.file.save";
+	private static final String saveAllActionDefId = "org.eclipse.ui.file.saveAll";
+	private static final String printActionDefId = "org.eclipse.ui.file.print";
+	private static final String closeActionDefId = "org.eclipse.ui.file.close";
+	private static final String closeAllActionDefId = "org.eclipse.ui.file.closeAll";
+	private static final String undoActionDefId = "org.eclipse.ui.edit.undo";
+	private static final String redoActionDefId = "org.eclipse.ui.edit.redo";
+	private static final String cutActionDefId = "org.eclipse.ui.edit.cut";
+	private static final String copyActionDefId = "org.eclipse.ui.edit.copy";
+	private static final String pasteActionDefId = "org.eclipse.ui.edit.paste";
+	private static final String deleteActionDefId = "org.eclipse.ui.edit.delete";
+	private static final String selectAllActionDefId = "org.eclipse.ui.edit.selectAll";
+	private static final String findActionDefId = "org.eclipse.ui.edit.findReplace";
+	private static final String addBookmarkActionDefId = "org.eclipse.ui.edit.addBookmark";
+	private static final String showViewMenuActionDefId = "org.eclipse.ui.window.showViewMenu";
+	private static final String showPartPaneMenuActionDefId = "org.eclipse.ui.window.showSystemMenu";
+	private static final String nextEditorActionDefId = "org.eclipse.ui.window.nextEditor";
+	private static final String prevEditorActionDefId = "org.eclipse.ui.window.previousEditor";
+	private static final String nextPartActionDefId = "org.eclipse.ui.window.nextView";
+	private static final String prevPartActionDefId = "org.eclipse.ui.window.previousView";
+	private static final String activateEditorActionDefId = "org.eclipse.ui.window.activateEditor";
+	private static final String workbenchEditorsActionDefId = "org.eclipse.ui.window.switchToEditor";
 	
 	// target
 	private WorkbenchWindow window;
