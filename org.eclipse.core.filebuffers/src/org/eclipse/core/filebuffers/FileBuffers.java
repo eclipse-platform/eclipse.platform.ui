@@ -51,10 +51,13 @@ public final class FileBuffers {
 	 */
 	public static IFile getWorkspaceFileAtLocation(IPath location) {
 		IPath normalized= normalizeLocation(location);
-		IWorkspaceRoot workspaceRoot= ResourcesPlugin.getWorkspace().getRoot();
-		IFile file= workspaceRoot.getFile(normalized);
-		if  (file != null && file.exists())
-			return file;
+		if (normalized.segmentCount() >= 2) {
+			// @see IContainer#getFile for the required number of segments
+			IWorkspaceRoot workspaceRoot= ResourcesPlugin.getWorkspace().getRoot();
+			IFile file= workspaceRoot.getFile(normalized);
+			if  (file != null && file.exists())
+				return file;
+		}
 		return null;
 	}
 	
