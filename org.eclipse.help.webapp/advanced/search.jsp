@@ -20,7 +20,7 @@
 			}
 		}
 	}
-	if(cookiesEnabled || (new RequestData(application, request)).getMode() == RequestData.MODE_INFOCENTER){
+	if(cookiesEnabled || (new RequestData(application, request)).getMode() != RequestData.MODE_INFOCENTER){
 		request.getRequestDispatcher("/advanced/searchScoped.jsp").forward(request, response);
 	}else{
 		request.getRequestDispatcher("/advanced/searchSimple.jsp").forward(request, response);
