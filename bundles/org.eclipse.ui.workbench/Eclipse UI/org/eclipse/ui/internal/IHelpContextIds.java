@@ -1,7 +1,5 @@
-package org.eclipse.ui.internal;
-
 /**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. 
+Copyright (c) 2000, 2003 IBM Corp. 
 All rights reserved.   This program and the accompanying materials
 are made available under the terms of the Common Public License v0.5
 which accompanies this distribution, and is available at
@@ -9,6 +7,9 @@ http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
 **********************************************************************/
+
+package org.eclipse.ui.internal;
+
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -67,6 +68,7 @@ public interface IHelpContextIds {
 	public static final String OPEN_NEW_ACTION = PREFIX + "open_new_action_context"; //$NON-NLS-1$
 	public static final String NEXT_PAGE_ACTION = PREFIX + "next_page_action_context"; //$NON-NLS-1$
 	public static final String QUICK_START_ACTION = PREFIX + "quick_start_action_context"; //$NON-NLS-1$
+	public static final String TIPS_AND_TRICKS_ACTION = PREFIX + "tips_and_tricks_action_context"; //$NON-NLS-1$
 	public static final String QUIT_ACTION = PREFIX + "quit_action_context"; //$NON-NLS-1$
 	public static final String RESET_PERSPECTIVE_ACTION = PREFIX + "reset_perspective_action_context"; //$NON-NLS-1$
 	public static final String RESET_TOOLBAR_ACTION = PREFIX + "reset_toolbar_action_context";	//$NON-NLS-1$
@@ -132,6 +134,7 @@ public interface IHelpContextIds {
 	public static final String MARKER_RESOLUTION_SELECTION_DIALOG = PREFIX + "marker_resolution_selection_dialog_context"; //$NON-NLS-1$
 	public static final String WORKBENCH_EDITORS_DIALOG = PREFIX + "workbench_editors_dialog"; //$NON-NLS-1$
 	public static final String WELCOME_PAGE_SELECTION_DIALOG = PREFIX + "welcome_page_selection_dialog"; //$NON-NLS-1$
+	public static final String TIPS_AND_TRICKS_PAGE_SELECTION_DIALOG = PREFIX + "tips_and_tricks_page_selection_dialog"; //$NON-NLS-1$
 	public static final String OPEN_RESOURCE_DIALOG = PREFIX + "open_resource_dialog"; //$NON-NLS-1$
 	public static final String NEW_FOLDER_DIALOG = PREFIX + "new_folder_dialog"; //$NON-NLS-1$
 	public static final String PATH_VARIABLE_SELECTION_DIALOG = PREFIX + "path_variable_selection_dialog"; //$NON-NLS-1$

@@ -8,6 +8,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
 	IBM - Initial implementation
 ************************************************************************/
+
 package org.eclipse.ui.internal;
 
 import java.io.*;
@@ -36,6 +37,7 @@ public class AboutInfo extends NewConfigurationInfo {
 	private String aboutText;
 	private URL welcomePageURL;
 	private String welcomePerspective;
+	private String tipsAndTricksHref;
 	private String featureImageName;
 	private Long featureImageCRC;
 	private boolean calculatedImageCRC = false;
@@ -234,6 +236,15 @@ public class AboutInfo extends NewConfigurationInfo {
 	}
 
 	/**
+	 * Returns a <code>String</code> for the tips and trick href.
+	 * 
+	 * @return the tips and tricks href, or <code>null</code> if none
+	 */
+	public String getTipsAndTricksHref() {
+		return tipsAndTricksHref;
+	}
+
+	/**
 	 * Returns the image descriptor for the window image to use for this product.
 	 * Products designed to run "headless" typically would not have such an image.
 	 * 
@@ -345,6 +356,8 @@ public class AboutInfo extends NewConfigurationInfo {
 
 		welcomePageURL = getURL(ini, "welcomePage"); //$NON-NLS-1$
 		welcomePerspective = (String) ini.get("welcomePerspective"); //$NON-NLS-1$
+
+		tipsAndTricksHref = (String) ini.get("tipsAndTricksHref"); //$NON-NLS-1$
 
 		appName = (String) ini.get("appName"); //$NON-NLS-1$
 		appName = getResourceString(appName, bundle, mappingsArray, null);

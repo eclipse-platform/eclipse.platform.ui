@@ -114,6 +114,7 @@ public class WorkbenchActionBuilder {
 	private AboutAction aboutAction;
 	private OpenPreferencesAction openPreferencesAction;
 	private QuickStartAction quickStartAction;
+	private TipsAndTricksAction tipsAndTricksAction;
 	private SaveAsAction saveAsAction;
 	private ToggleEditorsVisibilityAction hideShowEditorAction;
 	private SavePerspectiveAction savePerspectiveAction;
@@ -536,6 +537,9 @@ public class WorkbenchActionBuilder {
 		// See if a welcome page is specified
 		if (quickStartAction != null)
 			menu.add(quickStartAction);
+		// See if a tips and tricks page is specified
+		if (tipsAndTricksAction != null)
+			menu.add(tipsAndTricksAction);
 		menu.add(new GroupMarker(IWorkbenchActionConstants.HELP_START));
 		menu.add(new GroupMarker(IWorkbenchActionConstants.HELP_END));
 		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
@@ -882,12 +886,19 @@ public class WorkbenchActionBuilder {
 		// events.
 		//keyBindingService.registerGlobalAction(deleteAction);
 
-		// See if a welcome page is specified
 		AboutInfo[] infos =
 			((Workbench) workbench).getConfigurationInfo().getFeaturesInfo();
+		// See if a welcome page is specified
 		for (int i = 0; i < infos.length; i++) {
 			if (infos[i].getWelcomePageURL() != null) {
 				quickStartAction = new QuickStartAction(workbench);
+				break;
+			}
+		}
+		// See if a tips and tricks page is specified
+		for (int i = 0; i < infos.length; i++) {
+			if (infos[i].getTipsAndTricksHref() != null) {
+				tipsAndTricksAction = new TipsAndTricksAction(workbench);
 				break;
 			}
 		}

@@ -1,18 +1,31 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-
-import java.text.Collator;
-import java.util.*;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.PartEventAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
@@ -71,42 +84,16 @@ public void run() {
 	
 	features = new AboutInfo[welcomeFeatures.size()];
 	welcomeFeatures.toArray(features);
-	
-	// Sort ascending
-	Arrays.sort(features, new Comparator() {
-		Collator coll = Collator.getInstance(Locale.getDefault());
-			public int compare(Object a, Object b) {
-				AboutInfo i1, i2;
-				String name1, name2;
-				i1 = (AboutInfo)a;
-				name1 = i1.getFeatureLabel();
-				i2 = (AboutInfo)b;
-				name2 = i2.getFeatureLabel();
-				if (name1 == null)
-					name1 = ""; //$NON-NLS-1$
-				if (name2 == null)
-					name2 = ""; //$NON-NLS-1$
-				return coll.compare(name1, name2);
-			}
-		});
-
-	// Find primary feature
 	AboutInfo primaryFeature = ((Workbench)workbench).getConfigurationInfo().getAboutInfo();
-	int index = -1;
-	if (primaryFeature != null) {
-		for (int i = 0; i < features.length; i++) {
-			if (features[i].getFeatureId().equals(primaryFeature.getFeatureId())) {
-				index = i;
-				break;
-			}
-		}
-	}	
 
-	WelcomePageSelectionDialog d = 
-		new WelcomePageSelectionDialog(
+	FeatureSelectionDialog d = 
+		new FeatureSelectionDialog(
 			shell,
 			features,
-			index);
+			primaryFeature,
+			"WelcomePageSelectionDialog.title",  //$NON-NLS-1$
+			"WelcomePageSelectionDialog.message",//$NON-NLS-1$
+			IHelpContextIds.WELCOME_PAGE_SELECTION_DIALOG);
 	if(d.open() != Dialog.OK || d.getResult().length != 1)
 		return;
 		
@@ -156,8 +143,8 @@ public void run() {
 		IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("QuickStartAction.openEditorException"), e); //$NON-NLS-1$
 		ErrorDialog.openError(
 			workbench.getActiveWorkbenchWindow().getShell(),
-			WorkbenchMessages.getString("QuickStartAction.errorDialogTitle"),  //$NON-NLS-1$
-			WorkbenchMessages.getString("QuickStartAction.errorDialogMessage"),  //$NON-NLS-1$
+			WorkbenchMessages.getString("Workbench.openEditorErrorDialogTitle"),  //$NON-NLS-1$
+			WorkbenchMessages.getString("Workbench.openEditorErrorDialogMessage"),  //$NON-NLS-1$
 			status);
 	}
 }
