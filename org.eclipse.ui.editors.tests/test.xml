@@ -25,7 +25,7 @@
     <property name="eclipse-editors-folder" 
               value="${eclipse-home}/eclipse_editors_folder"/>
     <delete dir="${eclipse-editors-folder}" quiet="true"/>
-    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+    <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="data-dir" value="${eclipse-editors-folder}"/>
       <property name="plugin-name" value="${plugin-name}"/>
       <property name="classname" 

@@ -25,7 +25,7 @@
     <property name="eclipse-workbench-texteditor-folder" 
               value="${eclipse-home}/eclipse_workbench_texteditor_folder"/>
     <delete dir="${eclipse-workbench-texteditor-folder}" quiet="true"/>
-    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+    <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="data-dir" value="${eclipse-workbench-texteditor-folder}"/>
       <property name="plugin-name" value="${plugin-name}"/>
       <property name="classname" 
