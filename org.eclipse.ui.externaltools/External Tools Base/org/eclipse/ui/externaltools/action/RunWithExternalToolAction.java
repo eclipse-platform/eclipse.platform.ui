@@ -9,6 +9,8 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
 **********************************************************************/
 
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IHelpContextIds;
@@ -35,5 +37,9 @@ public class RunWithExternalToolAction extends RunExternalToolAction {
 		setImageDescriptor(ExternalToolsPlugin.getDefault().getImageDescriptor("icons/full/elcl16/runwith_tool.gif")); //$NON-NLS-1$
 		setDisabledImageDescriptor(ExternalToolsPlugin.getDefault().getImageDescriptor("icons/full/dlcl16/runwith_tool.gif")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.RUN_WITH_TOOL_ACTION);
+	}
+	
+	public void run() {
+		MessageDialog.openInformation(Display.getCurrent().getActiveShell(), "Run With", "This action is not yet implemented.");
 	}
 }
