@@ -72,8 +72,10 @@ public interface IFormPart {
 	 * Notifies the part that an object has been set as overall form's input.
 	 * The part can elect to react by revealing or selecting the object, or do
 	 * nothing if not applicable.
+	 * @return <code>true</code> if the part has selected and revealed
+	 * the input object, <code>false</code> otherwise.
 	 */
-	void setFormInput(Object input);
+	boolean setFormInput(Object input);
 	/**
 	 * Instructs form part to transfer focus to the widget that should has
 	 * focus in that part. The method can do nothing (if it has no widgets

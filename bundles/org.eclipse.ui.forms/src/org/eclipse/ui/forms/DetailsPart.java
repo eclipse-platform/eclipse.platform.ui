@@ -148,7 +148,8 @@ public class DetailsPart implements IFormPart, IPartSelectionListener {
 	 * 
 	 * @see org.eclipse.ui.forms.IFormPart#setFormInput(java.lang.Object)
 	 */
-	public void setFormInput(Object input) {
+	public boolean setFormInput(Object input) {
+		return false;
 	}
 	/*
 	 * (non-Javadoc)

@@ -180,12 +180,17 @@ public class ManagedForm implements IManagedForm {
 	 * @param input
 	 *            the input object
 	 */
-	public void setInput(Object input) {
+	public boolean setInput(Object input) {
+		boolean pageResult=false;
+		
 		this.input = input;
 		for (int i = 0; i < parts.size(); i++) {
 			IFormPart part = (IFormPart) parts.get(i);
-			part.setFormInput(input);
+			boolean result = part.setFormInput(input);
+			if (result)
+				pageResult = true;
 		}
+		return pageResult;
 	}
 	public Object getInput() {
 		return input;

@@ -67,8 +67,10 @@ public interface IManagedForm {
 	 * 
 	 * @param input
 	 *            the new page input
+	 * @return <code>true</code> if the form contains this object,
+	 * <code>false</code> otherwise.
 	 */
-	void setInput(Object input);
+	boolean setInput(Object input);
 	/**
 	 * Returns the current page input.
 	 * 

@@ -57,8 +57,10 @@ public abstract class AbstractFormPart implements IFormPart {
 	 * 
 	 * @param input
 	 *            the form input object
+	 * @return <code>false</code>
 	 */
-	public void setFormInput(Object input) {
+	public boolean setFormInput(Object input) {
+		return false;
 	}
 	/**
 	 * Instructs the part to grab keyboard focus.

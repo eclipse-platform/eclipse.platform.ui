@@ -175,6 +175,7 @@ public class TypeOneDetailsPage implements IDetailsPage {
 	public void refresh() {
 		update();
 	}
-	public void setFormInput(Object input) {
+	public boolean setFormInput(Object input) {
+		return false;
 	}
 }

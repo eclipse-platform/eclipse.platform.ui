@@ -175,14 +175,15 @@ public class FormPage extends EditorPart implements IFormPage {
 	public int getIndex() {
 		return index;
 	}
-	public boolean isSource() {
+	public boolean isEditor() {
 		return false;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#focusOn(java.lang.Object)
 	 */
-	public void focusOn(Object object) {
+	public boolean selectReveal(Object object) {
 		if (mform!=null)
-			mform.setInput(object);
+			return mform.setInput(object);
+		return false;
 	}
 }

@@ -9,84 +9,108 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.forms.editor;
-
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.forms.IManagedForm;
-
 /**
- * @author dejan
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * Interface that all GUI pages need to implement in order
+ * to be added to FormEditor part. The interface makes 
+ * several assumptions:
+ * <ul>
+ * <li>The form page has a managed form</li>
+ * <li>The form page has a unique Id</li>
+ * <li>The form page can be GUI but can also wrap a complete
+ * editor class (in that case, it should return <code>true</code>
+ * from isEditor()).</li>
+ * <li>The form page is lazy i.e. understands that 
+ * its part control will be created at the last possible
+ * moment</li>.
+ * </ul>
+ * <p>Existing editors can be wrapped by implementing
+ * this interface. In this case, 'isEditor' should return <code>true</code>.
+ * 
+ * @since 3.0
  */
 public interface IFormPage extends IEditorPart {
-/**
- * 
- *@param editor the form editor that this page belongs to
- */
+	/**
+	 * @param editor
+	 *            the form editor that this page belongs to
+	 */
 	void initialize(FormEditor editor);
-	
-/**
- * Returns the editor this page belongs to.
- * @return the form editor
- */
+	/**
+	 * Returns the editor this page belongs to.
+	 * 
+	 * @return the form editor
+	 */
 	FormEditor getEditor();
-/**
- * Returns the managed form of this page, unless this is a source page.
- * @return the managed form or <samp>null</samp> if this is a source
- * page.
- */
+	/**
+	 * Returns the managed form of this page, unless this is a source page.
+	 * 
+	 * @return the managed form or <samp>null </samp> if this is a source page.
+	 */
 	IManagedForm getManagedForm();
-/**
- * Indicates whether the page has become the active in the editor.
- * Classes that implement this
- * interface may use this method to commit the page (on <code>false</code>)
- * or lazily create and/or populate the content on <code>true</code>.
- * @param active <code>true</code> if page should be visible,
- * <code>false</code> otherwise. 
- */
+	/**
+	 * Indicates whether the page has become the active in the editor. Classes
+	 * that implement this interface may use this method to commit the page (on
+	 * <code>false</code>) or lazily create and/or populate the content on
+	 * <code>true</code>.
+	 * 
+	 * @param active
+	 *            <code>true</code> if page should be visible, <code>false</code>
+	 *            otherwise.
+	 */
 	void setActive(boolean active);
-/**
- * Returns <samp>true</samp> if page is currently active,
- * false if not. 
- * @return <samp>true</samp> for active page.
- */
+	/**
+	 * Returns <samp>true </samp> if page is currently active, false if not.
+	 * 
+	 * @return <samp>true </samp> for active page.
+	 */
 	boolean isActive();
-/**
- * Returns the control associated with this page.
- * @return the control of this page if created or <samp>null</samp>
- * if the page has not been shown yet.
- */
+	/**
+	 * Returns the control associated with this page.
+	 * 
+	 * @return the control of this page if created or <samp>null </samp> if the
+	 *         page has not been shown yet.
+	 */
 	Control getPartControl();
-/**
- * Page must have a unique id that can be used to show it 
- * without knowing its relative position in the editor.
- * @return the unique page identifier
- */
+	/**
+	 * Page must have a unique id that can be used to show it without knowing
+	 * its relative position in the editor.
+	 * 
+	 * @return the unique page identifier
+	 */
 	String getId();
-/**
- * Returns the position of the page in the editor.
- * @return the zero-based index of the page in the editor.
- */
+	/**
+	 * Returns the position of the page in the editor.
+	 * 
+	 * @return the zero-based index of the page in the editor.
+	 */
 	int getIndex();
-/**
- * Sets the position of the page in the editor.
- * @param index the zero-based index of the page in the editor.
- */
+	/**
+	 * Sets the position of the page in the editor.
+	 * 
+	 * @param index
+	 *            the zero-based index of the page in the editor.
+	 */
 	void setIndex(int index);
-/**
- * Tests whether this page shows the editor input in the raw (source)
- * form.
- * @return <samp>true</samp> if the page shows editor input source,
- * <samp>false</samp> if this is a form page.
- */
-	boolean isSource();
-/**
- * A hint to bring the provided object into focus. If the object
- * is in a tree or table control, select it. If it is shown 
- * on a scrollable page, ensure that it is visible.
- * @param object object to bring into focus
- */
-	void focusOn(Object object);
+	/**
+	 * Tests whether this page wraps a complete editor that
+	 * can be registered on its own, or represents a page
+	 * that cannot exist outside the multi-page editor context.
+	 * 
+	 * @return <samp>true </samp> if the page wraps an editor,
+	 *         <samp>false </samp> if this is a form page.
+	 */
+	boolean isEditor();
+	/**
+	 * A hint to bring the provided object into focus. If the object is in a
+	 * tree or table control, select it. If it is shown on a scrollable page,
+	 * ensure that it is visible.
+	 * 
+	 * @param object
+	 *            object to bring into focus
+	 * @return <code>true</code> if the request was successful, <code>false</code>
+	 *         otherwise.
+	 */
+	boolean selectReveal(Object object);
 }

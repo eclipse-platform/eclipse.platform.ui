@@ -95,7 +95,7 @@ public abstract class FormEditor extends MultiPageEditorPart {
 			IFormPage page = (IFormPage) pages.get(i);
 			// don't dispose source pages because they will
 			// be disposed as nested editors by the superclass
-			if (!page.isSource()) page.dispose();
+			if (!page.isEditor()) page.dispose();
 		}
 		pages = null;
 		toolkit.dispose();
@@ -215,6 +215,24 @@ public abstract class FormEditor extends MultiPageEditorPart {
 		return page;
 	}
 	/**
+	 * Iterates through the pages calling similar method until
+	 * a page is found that contains the desired page input.
+	 * 
+	 * @param pageInput the object to select and reveal
+	 * @return the page that accepted the request or <code>null</code>
+	 * if no page has the desired object.
+	 * 
+	 * @see #setActivePage
+	 */
+	public IFormPage selectReveal(Object pageInput) {
+		for (int i=0; i<pages.size(); i++) {
+			IFormPage page = (IFormPage)pages.get(i);
+			if (page.selectReveal(pageInput))
+				return page;
+		}
+		return null;
+	}
+	/**
 	 * Returns active page instance if the currently selected page index is not
 	 * -1, or <code>null</code> if it is.
 	 * 
@@ -254,7 +272,7 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	private void registerPage(IFormPage page) throws PartInitException {
 		if (!pages.contains(page))
 			pages.add(page);
-		if (page.isSource() == false) {
+		if (page.isEditor() == false) {
 			page.init(getEditorSite(), getEditorInput());
 		}
 	}
