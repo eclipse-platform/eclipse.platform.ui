@@ -1044,12 +1044,38 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 
 		return success;
 	}
+	
+	private VersionedIdentifier[] collectFeatures() {	
+		try {
+		   ArrayList result = new ArrayList();
+		   ILocalSite localSite = SiteManager.getLocalSite();
+		   IInstallConfiguration config = localSite.getCurrentConfiguration();
+		   IConfiguredSite [] csites = config.getConfiguredSites();
+		   for (int i=0; i<csites.length; i++) {
+		      IConfiguredSite csite = csites[i];
+		      // get handles to the configured features in the site
+		      IFeatureReference [] crefs = csite.getConfiguredFeatures();
+		      for (int j=0; j<crefs.length; j++) {
+		         IFeatureReference cref = crefs[j];
+		         try {
+		         	VersionedIdentifier vi = cref.getVersionedIdentifier();
+		         	result.add(vi);
+		         } catch (CoreException ex) {
+		         }
+		      }
+		   }
+		   return (VersionedIdentifier[])result.toArray(new VersionedIdentifier[result.size()]);
+		} catch (CoreException e) {
+			return new VersionedIdentifier[0];
+		}
+	}
 
 	/**
 	 * Reads the about info for all the configured features.
 	 */
 	private void readFeaturesInfo() {
 		// get the previous features
+		VersionedIdentifier featureEntries[] = collectFeatures();
 		IDialogSettings settings = WorkbenchPlugin.getDefault().getDialogSettings();
 		String[] oldFeaturesArray = settings.getArray(INSTALLED_FEATURES);
 		List oldFeatures = null;
@@ -1059,27 +1085,23 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		ArrayList aboutInfos = new ArrayList();
 		ArrayList newAboutInfos = new ArrayList();
 		
-		IPlatformConfiguration.IFeatureEntry[] featureEntries = 
-			BootLoader.getCurrentPlatformConfiguration().getConfiguredFeatureEntries();
 		String[] idArray = new String[featureEntries.length];	
 		for (int i = 0; i < featureEntries.length; i++) {
-			IPlatformConfiguration.IFeatureEntry entry = featureEntries[i];
-			String id = entry.getFeatureIdentifier();
-			String ver = entry.getFeatureVersion();
-			String versionedId = id + ":" + ver;
+			VersionedIdentifier entry = featureEntries[i];
+			String id = entry.getIdentifier();
+			PluginVersionIdentifier vid = entry.getVersion();
+			String versionedId = id + ":" + vid;
 			idArray[i] = versionedId;
 
 			try {
-				PluginVersionIdentifier vid = new PluginVersionIdentifier(ver);
 				AboutInfo info = new AboutInfo(id, vid);
 				aboutInfos.add(info);
 				if (oldFeatures != null && !oldFeatures.contains(versionedId))
 					// only report a feature as new if we have a previous record of old features
 					newAboutInfos.add(info);
-			}
-			catch (RuntimeException e) {
+			} catch (RuntimeException e) {
 				if (WorkbenchPlugin.DEBUG) // only report ini problems if the -debug command line argument is used
-					WorkbenchPlugin.log("Error parsing version \"" + ver + "\" for plugin: " + id + " in Workbench.readFeaturesInfo()");
+					WorkbenchPlugin.log("Error parsing version \"" + vid + "\" for plugin: " + id + " in Workbench.readFeaturesInfo()");
 				// continue
 			}
 		}
