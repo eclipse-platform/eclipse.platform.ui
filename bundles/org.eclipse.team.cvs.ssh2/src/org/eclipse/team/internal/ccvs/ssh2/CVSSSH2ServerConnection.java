@@ -9,26 +9,18 @@
  * implementation.
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ssh2;
-import java.io.FilterInputStream;
-import java.io.FilterOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.net.NoRouteToHostException;
+import java.net.UnknownHostException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.IServerConnection;
 import org.eclipse.team.internal.ccvs.core.connection.CVSAuthenticationException;
 import org.eclipse.team.internal.ccvs.ssh.SSHServerConnection;
-import org.eclipse.team.internal.core.streams.PollingInputStream;
-import org.eclipse.team.internal.core.streams.PollingOutputStream;
-import org.eclipse.team.internal.core.streams.TimeoutInputStream;
-import org.eclipse.team.internal.core.streams.TimeoutOutputStream;
+import org.eclipse.team.internal.core.streams.*;
 
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
+import com.jcraft.jsch.*;
 
 /**
  * SSH2 connection method. Has the property of defaulting to SSH1 if the server
@@ -152,6 +144,24 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 			    if (message.equals("Auth fail")) { //$NON-NLS-1$
 			        message = Policy.bind("CVSSSH2ServerConnection.0"); //$NON-NLS-1$
 			        // Could possibly retry below but wont just in case
+			    } else if (message.startsWith("Session.connect: ")) { //$NON-NLS-1$
+			        // Jsh has messages formatted like "Session.connect: java.net.NoRouteToHostException: ..."
+			        // Strip of the exception and try to convert it to a more meaningfull string
+			        int start = message.indexOf(": ") + 1; //$NON-NLS-1$
+			        if (start != -1) {
+				        int end = message.indexOf(": ", start); //$NON-NLS-1$
+				        if (end != -1) {
+				            String exception = message.substring(start, end).trim();
+				            if (exception.indexOf("NoRouteToHostException") != -1) { //$NON-NLS-1$
+				                message = Policy.bind("CVSSSH2ServerConnection.1", location.getHost()); //$NON-NLS-1$
+				                throw new NoRouteToHostException(message);
+				            } else if (exception.indexOf("java.net.UnknownHostException") != -1) { //$NON-NLS-1$
+				                throw new UnknownHostException(location.getHost());
+				            } else {
+				                message = message.substring(end + 1).trim();
+				            }
+				        }
+			        }
 			    }
 				throw new CVSAuthenticationException(message, CVSAuthenticationException.NO_RETRY);
 			}
