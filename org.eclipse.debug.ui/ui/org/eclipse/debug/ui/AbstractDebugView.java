@@ -129,6 +129,12 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * currently listening to part changes.
 	 */
 	private DebugViewPartListener fPartListener= null;
+	
+	/**
+	 * A message was requested to be displayed before the view was fully
+	 * created. The message is cached until it can be properly displayed.
+	 */
+	private String fEarlyMessage= null;
 
 	/**
 	 * Part listener that disables updating when the variables view is not
@@ -288,6 +294,11 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		initPage(getMessagePage());
 		
 		DebugActionGroupsManager.getDefault().registerView(this);
+		
+		if (fEarlyMessage != null) { //bug 28127
+			showMessage(fEarlyMessage);
+			fEarlyMessage= null;
+		}
 	}	
 	
 	/**
@@ -792,6 +803,11 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 */
 	public void showMessage(String message) {
 		if (getPageBook().isDisposed()) {
+			return;
+		}
+		if (getMessagePage() == null) {
+			//not fully created yet
+			fEarlyMessage= message;
 			return;
 		}
 		getMessagePage().setMessage(message);
