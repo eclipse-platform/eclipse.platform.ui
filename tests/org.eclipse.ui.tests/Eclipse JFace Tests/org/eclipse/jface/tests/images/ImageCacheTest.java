@@ -8,6 +8,10 @@
  ******************************************************************************/
 package org.eclipse.jface.tests.images;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import junit.framework.TestCase;
 
 import org.eclipse.jface.resource.ImageCache;
@@ -52,19 +56,60 @@ public class ImageCacheTest extends TestCase {
 	}
 
 	/**
-	 * Anything image.
+	 * A list of available image names (icons folder in "org.eclipse.ui.tests")
 	 */
-	private final static String anythingImage = "anything.gif";//$NON-NLS-1$
+	private static class ImageNames {
+		/**
+		 * Image descriptors.
+		 */
+		private final static String imageAnything = "anything.gif";//$NON-NLS-1$
+
+		private final static String imageBinaryCo = "binary_co.gif";//$NON-NLS-1$
+
+		private final static String imageMockEditor1 = "mockeditorpart1.gif";//$NON-NLS-1$
+
+		private final static String imageMockEditor2 = "mockeditorpart2.gif";//$NON-NLS-1$
+
+		private final static String imageView = "view.gif";//$NON-NLS-1$
+
+		private final static int numberOfImages = 5;
+
+		/**
+		 * Return an image name for the specified index.
+		 * 
+		 * @param index
+		 *            The image's index.
+		 * @return the image's name.
+		 */
+		public static String get(int index) {
+			switch (index) {
+			case 0:
+				return imageAnything;
+			case 1:
+				return imageBinaryCo;
+			case 2:
+				return imageMockEditor1;
+			case 3:
+				return imageMockEditor2;
+			default:
+				return imageView;
+			}
+		}
+
+		/**
+		 * Return the number of image names defined.
+		 * 
+		 * @return the number of image names defined.
+		 */
+		public static int size() {
+			return numberOfImages;
+		}
+	}
 
 	/**
 	 * Image cache.
 	 */
 	private static ImageCache imageCache;
-
-	/**
-	 * View image.
-	 */
-	private final static String viewImage = "view.gif";//$NON-NLS-1$
 
 	/**
 	 * Timer to wait for cleaner thread to clean up images.
@@ -114,6 +159,33 @@ public class ImageCacheTest extends TestCase {
 	}
 
 	/**
+	 * Fill the array with regular, gray and disabled images.
+	 * 
+	 * @param imagesInCache
+	 *            The array of images.
+	 * @param imageDescriptor0
+	 *            The image descriptor 0.
+	 * @param imageDescriptor1
+	 *            The image descriptor 1.
+	 */
+	private void fillImageArray(List imagesInCache,
+			ImageDescriptor imageDescriptor0, ImageDescriptor imageDescriptor1) {
+		// Regular images
+		imagesInCache.add(imageCache.getImage(imageDescriptor0));
+		imagesInCache.add(imageCache.getImage(imageDescriptor1));
+		// Gray images
+		imagesInCache.add(imageCache
+				.getImage(imageDescriptor0, ImageCache.GRAY));
+		imagesInCache.add(imageCache
+				.getImage(imageDescriptor1, ImageCache.GRAY));
+		// Disabled images
+		imagesInCache.add(imageCache.getImage(imageDescriptor0,
+				ImageCache.DISABLE));
+		imagesInCache.add(imageCache.getImage(imageDescriptor1,
+				ImageCache.DISABLE));
+	}
+
+	/**
 	 * Get an image descriptor for the specified image name.
 	 * 
 	 * @param imageName
@@ -123,17 +195,6 @@ public class ImageCacheTest extends TestCase {
 	protected ImageDescriptor getImageDescriptor(String imageName) {
 		TestPlugin plugin = TestPlugin.getDefault();
 		return plugin.getImageDescriptor(imageName);
-	}
-
-	/**
-	 * Shut down the image cache right after each test. This is done in this
-	 * method instead of the tearDown to prevent locking in the image cache
-	 * disposal method.
-	 */
-	private void prematureTearDown() {
-		// dispose all the images
-		imageCache.dispose();
-		imageCache = null;
 	}
 
 	/*
@@ -153,20 +214,19 @@ public class ImageCacheTest extends TestCase {
 	 */
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		if (imageCache != null) {
-			imageCache.dispose();
-			imageCache = null;
-		}
+		imageCache.dispose();
+		imageCache = null;
+
 	}
 
 	/**
 	 * Ensure that the cleaning thread disposes the images only when both
 	 * equivalent descriptors have been nulled.
-	 *  
+	 * 
 	 */
 	public void testCleanUpForEquivalentDescriptor() {
-		ImageDescriptor imageDescriptor1 = getImageDescriptor(anythingImage);
-		ImageDescriptor imageDescriptor2 = getImageDescriptor(anythingImage);
+		ImageDescriptor imageDescriptor1 = getImageDescriptor(ImageNames.get(0));
+		ImageDescriptor imageDescriptor2 = getImageDescriptor(ImageNames.get(0));
 
 		Image image1 = imageCache.getImage(imageDescriptor1);
 		Image image2 = imageCache.getImage(imageDescriptor2);
@@ -178,17 +238,16 @@ public class ImageCacheTest extends TestCase {
 		imageDescriptor2 = null;
 		assertTrue(checkImageCleaning(image1));
 
-		prematureTearDown();
 	}
 
 	/**
 	 * Ensure that the cleaning thread disposes the images for different image
-	 * descriptors when their respective descriptors have been nulled.
-	 *  
+	 * descriptors when their respective descriptors have been cleared.
+	 * 
 	 */
 	public void testCleanUpForMultipleEquivalenceSets() {
-		ImageDescriptor imageDescriptor1 = getImageDescriptor(anythingImage);
-		ImageDescriptor imageDescriptor2 = getImageDescriptor(viewImage);
+		ImageDescriptor imageDescriptor1 = getImageDescriptor(ImageNames.get(0));
+		ImageDescriptor imageDescriptor2 = getImageDescriptor(ImageNames.get(1));
 
 		Image image1 = imageCache.getImage(imageDescriptor1);
 		Image image2 = imageCache.getImage(imageDescriptor2);
@@ -200,17 +259,15 @@ public class ImageCacheTest extends TestCase {
 		assertTrue(checkImageCleaning(image1));
 		assertTrue(checkImageCleaning(image2));
 
-		prematureTearDown();
-
 	}
 
 	/**
 	 * Ensure that the cleaning thread disposes the image when its image
 	 * descriptor has been nulled.
-	 *  
+	 * 
 	 */
 	public void testCleanUpForSameDescriptor() {
-		ImageDescriptor imageDescriptor = getImageDescriptor(anythingImage);
+		ImageDescriptor imageDescriptor = getImageDescriptor(ImageNames.get(0));
 
 		Image image1 = imageCache.getImage(imageDescriptor);
 		Image image2 = imageCache.getImage(imageDescriptor);
@@ -219,75 +276,101 @@ public class ImageCacheTest extends TestCase {
 		imageDescriptor = null;
 		assertTrue(checkImageCleaning(image1));
 
-		prematureTearDown();
-
 	}
 
 	/**
 	 * Test that the image cache properly disposes all of its images.
-	 *  
+	 * 
 	 */
-	//TODO: Need to modify the dispose test since Bug 77323 required a change in the
-	// dispose design.
-	/*public void testDispose() {
-		// Store descriptors to avoid gc interference
-		ImageDescriptor anythingImageDescriptor = getImageDescriptor(anythingImage);
-		ImageDescriptor viewImageDescriptor = getImageDescriptor(viewImage);
+	public void testDispose() {
+		// List of images
+		List imagesInCache = new ArrayList();
 
-		Image image1 = imageCache.getImage(anythingImageDescriptor);
-		Image image2 = imageCache.getImage(viewImageDescriptor);
-		Image grayImage1 = imageCache.getImage(anythingImageDescriptor,
-				ImageCache.GRAY);
-		Image grayImage2 = imageCache.getImage(viewImageDescriptor,
-				ImageCache.GRAY);
-		Image disabledImage1 = imageCache.getImage(anythingImageDescriptor,
-				ImageCache.DISABLE);
-		Image disabledImage2 = imageCache.getImage(viewImageDescriptor,
-				ImageCache.DISABLE);
+		// Store descriptors to avoid gc interference
+		ImageDescriptor imageDescriptor0 = getImageDescriptor(ImageNames.get(0));
+		ImageDescriptor imageDescriptor1 = getImageDescriptor(ImageNames.get(1));
+
+		// Fill the array of images
+		fillImageArray(imagesInCache, imageDescriptor0, imageDescriptor1);
 		Image missingImage = imageCache.getMissingImage();
 
 		imageCache.dispose();
 
-		assertTrue(image1.isDisposed());
-		assertTrue(image2.isDisposed());
-		assertTrue(grayImage1.isDisposed());
-		assertTrue(grayImage2.isDisposed());
-		assertTrue(disabledImage1.isDisposed());
-		assertTrue(disabledImage2.isDisposed());
+		for (Iterator i = imagesInCache.iterator(); i.hasNext();) {
+			assertTrue(((Image) i.next()).isDisposed());
+		}
 		assertTrue(missingImage.isDisposed());
+		imagesInCache.clear();
 
 		// dispose an empty cache
 		imageCache.dispose();
 
-		image1 = imageCache.getImage(anythingImageDescriptor);
-		image2 = imageCache.getImage(viewImageDescriptor);
-		grayImage1 = imageCache.getImage(anythingImageDescriptor,
-				ImageCache.GRAY);
-		grayImage2 = imageCache.getImage(viewImageDescriptor, ImageCache.GRAY);
-		disabledImage1 = imageCache.getImage(anythingImageDescriptor,
-				ImageCache.DISABLE);
-		disabledImage2 = imageCache.getImage(viewImageDescriptor,
-				ImageCache.DISABLE);
+		// Regular images
+		fillImageArray(imagesInCache, imageDescriptor0, imageDescriptor1);
 		missingImage = imageCache.getMissingImage();
 
 		// Manually dispose the images
-		image1.dispose();
-		image2.dispose();
-		grayImage1.dispose();
-		grayImage2.dispose();
-		disabledImage1.dispose();
-		disabledImage2.dispose();
+		for (Iterator i = imagesInCache.iterator(); i.hasNext();) {
+			((Image) i.next()).dispose();
+		}
 		missingImage.dispose();
 
 		// dispose a cache where the images have already been disposed
 		imageCache.dispose();
 
-		prematureTearDown();
-	}*/
+	}
+
+	/**
+	 * Test that the image cache properly performs image disposal in the case
+	 * where the cleaner thread is processing images to dispose while the image
+	 * cache's dispose is invoked. This method will create 15 images.
+	 * 
+	 */
+	public void testDisposeWhileCleaning() {
+		List imageDescriptors = new ArrayList();
+		List imagesInCache = new ArrayList();
+
+		// Add image descriptors
+		for (int index = 0; index < ImageNames.size(); index++) {
+			imageDescriptors.add(getImageDescriptor(ImageNames.get(index)));
+		}
+
+		// Regular Images
+		for (Iterator i = imageDescriptors.iterator(); i.hasNext();) {
+			imagesInCache.add(imageCache.getImage((ImageDescriptor) i.next()));
+		}
+
+		// Gray images
+		for (Iterator i = imageDescriptors.iterator(); i.hasNext();) {
+			imagesInCache.add(imageCache.getImage((ImageDescriptor) i.next(),
+					ImageCache.GRAY));
+		}
+
+		// Disabled images
+		for (Iterator i = imageDescriptors.iterator(); i.hasNext();) {
+			imagesInCache.add(imageCache.getImage((ImageDescriptor) i.next(),
+					ImageCache.DISABLE));
+		}
+
+		// Clear all descriptors
+		imageDescriptors.clear();
+
+		// For the GC to run
+		System.gc();
+		System.runFinalization();
+
+		// Dispose while the cleaner thread is cleaning up images
+		imageCache.dispose();
+
+		// Ensure the images have all been disposed
+		for (Iterator i = imagesInCache.iterator(); i.hasNext();) {
+			assertTrue(((Image) i.next()).isDisposed());
+		}
+	}
 
 	/**
 	 * Test that the cache returns the missing image for a bad image descriptor.
-	 *  
+	 * 
 	 */
 	public void testGetBadImage() {
 		BadImageDescriptor badImageDescriptor = new BadImageDescriptor();
@@ -303,7 +386,6 @@ public class ImageCacheTest extends TestCase {
 		badImage = imageCache.getImage(badImageDescriptor);
 		assertSame(badImage, missingImage);
 
-		prematureTearDown();
 	}
 
 	/**
@@ -311,8 +393,8 @@ public class ImageCacheTest extends TestCase {
 	 * same image is returned in each case.
 	 */
 	public void testGetImageForEquivalentDescriptor() {
-		ImageDescriptor imageDescriptor1 = getImageDescriptor(anythingImage);
-		ImageDescriptor imageDescriptor2 = getImageDescriptor(anythingImage);
+		ImageDescriptor imageDescriptor1 = getImageDescriptor(ImageNames.get(0));
+		ImageDescriptor imageDescriptor2 = getImageDescriptor(ImageNames.get(0));
 
 		Image image1 = imageCache.getImage(imageDescriptor1);
 		Image image2 = imageCache.getImage(imageDescriptor2);
@@ -326,15 +408,13 @@ public class ImageCacheTest extends TestCase {
 		image2 = imageCache.getImage(imageDescriptor1, ImageCache.DISABLE);
 		assertSame(image1, image2);
 
-		prematureTearDown();
-
 	}
 
 	/**
 	 * Test retrieving images with null descriptors.
-	 *  
+	 * 
 	 */
-	public void testGetImageForNullValues() {
+	public void testGetImageForInvalidValues() {
 		Image image = imageCache.getImage(null);
 		assertNull(image);
 
@@ -347,13 +427,11 @@ public class ImageCacheTest extends TestCase {
 		image = imageCache.getImage(null, 4);
 		assertNull(image);
 
-		image = imageCache.getImage(getImageDescriptor(anythingImage), 3);
+		image = imageCache.getImage(getImageDescriptor(ImageNames.get(0)), 3);
 		assertNull(image);
 
-		image = imageCache.getImage(getImageDescriptor(anythingImage), -1);
+		image = imageCache.getImage(getImageDescriptor(ImageNames.get(0)), -1);
 		assertNull(image);
-
-		prematureTearDown();
 
 	}
 
@@ -362,7 +440,7 @@ public class ImageCacheTest extends TestCase {
 	 * same image is returned in each case.
 	 */
 	public void testGetImageForSameDescriptor() {
-		ImageDescriptor imageDescriptor = getImageDescriptor(anythingImage);
+		ImageDescriptor imageDescriptor = getImageDescriptor(ImageNames.get(0));
 
 		Image image1 = imageCache.getImage(imageDescriptor);
 		Image image2 = imageCache.getImage(imageDescriptor);
@@ -376,17 +454,15 @@ public class ImageCacheTest extends TestCase {
 		image2 = imageCache.getImage(imageDescriptor, ImageCache.GRAY);
 		assertSame(image1, image2);
 
-		prematureTearDown();
-
 	}
 
 	/**
 	 * Test retrieving multiple non-equivalent images from the image cache.
-	 *  
+	 * 
 	 */
 	public void testMultipleEquivalenceSets() {
-		ImageDescriptor imageDescriptor1 = getImageDescriptor(anythingImage);
-		ImageDescriptor imageDescriptor2 = getImageDescriptor(viewImage);
+		ImageDescriptor imageDescriptor1 = getImageDescriptor(ImageNames.get(0));
+		ImageDescriptor imageDescriptor2 = getImageDescriptor(ImageNames.get(1));
 
 		Image image1 = imageCache.getImage(imageDescriptor1);
 		Image image2 = imageCache.getImage(imageDescriptor2);
@@ -399,8 +475,6 @@ public class ImageCacheTest extends TestCase {
 		image1 = imageCache.getImage(imageDescriptor1, ImageCache.DISABLE);
 		image2 = imageCache.getImage(imageDescriptor2, ImageCache.DISABLE);
 		assertNotSame(image1, image2);
-
-		prematureTearDown();
 
 	}
 
