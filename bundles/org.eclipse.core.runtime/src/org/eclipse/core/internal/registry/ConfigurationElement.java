@@ -31,6 +31,7 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 	private IConfigurationElement[] children = null;
 
 	//This field is only used when doing createExecutableExtension 
+	// TODO should this be removed? it does not get referenced.
 	private Object oldStyleConfigurationElement = null;
 
 	public Object createExecutableExtension(String attributeName) throws CoreException {
@@ -318,6 +319,8 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 	 * Optimization to replace a non-localized key with its localized value.  Avoids having
 	 * to access resource bundles for further lookups.
 	 */
+	// TODO unclear why we do not make sure object is not read-only.
+	// should update javadoc or perform check.
 	public void setLocalizedValue(String value) {
 		this.value = value;
 		((ExtensionRegistry) InternalPlatform.getDefault().getRegistry()).setDirty(true);

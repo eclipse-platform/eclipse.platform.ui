@@ -92,6 +92,8 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 		BundleModel bundleModel = getBundleModel(bundle);
 		if (bundleModel == null)
 			return;
+		// Do not synchronize on registry here because the registry handles
+		// the synchronization for us in registry.add
 		registry.add(bundleModel);
 	}
 

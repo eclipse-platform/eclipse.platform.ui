@@ -28,6 +28,7 @@ public class ExtensionPoint extends RegistryModelObject implements IExtensionPoi
 	// DTD properties (included in plug-in manifest)
 	private String id = null;
 	// transient properties (not included in plug-in manifest)
+	// TODO should these be transient variables?
 	private IExtension[] extensions = null; // configured extensions
 	private String schemaReference;
 

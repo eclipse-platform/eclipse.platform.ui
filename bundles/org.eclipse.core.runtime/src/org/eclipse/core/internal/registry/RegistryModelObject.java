@@ -27,7 +27,7 @@ public abstract class RegistryModelObject {
 	protected String name = null;
 
 	// transient properties (not included in plug-in manifest)
-	private int flags = 0;
+	private int flags = 0;  // TODO should this be a transient variable?
 	// the last bit is a read-only flag
 	// IMPORTANT: One bit in the "flags" integer is used to store the 
 	// read-only flag and the other bits are used to store an integer value

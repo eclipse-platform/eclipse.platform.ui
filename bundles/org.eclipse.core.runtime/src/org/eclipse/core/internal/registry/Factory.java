@@ -20,7 +20,10 @@ import org.eclipse.core.runtime.MultiStatus;
  * This class may be instantiated, or further subclassed.
  * </p>
  */
-
+// TODO Why are all the types returned by this factory implementation classes
+// and not interfaces?  Can a developer supply a different factory for the registry?
+// Not sure if this factory is allowing the registry to be a plugable 
+// implementation or not.
 public class Factory {
 	private MultiStatus status;
 	/**

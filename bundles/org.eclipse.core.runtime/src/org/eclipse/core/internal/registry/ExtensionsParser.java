@@ -89,6 +89,8 @@ public class ExtensionsParser extends DefaultHandler {
 	private static final int EXTENSION_POINT_INDEX = 0;
 	private static final int EXTENSION_INDEX = 1;
 	private static final int LAST_INDEX = 1;
+	// TODO does this object need to be a synchronized Vector?
+	// Don't see how this object could be accessed by more than one thread.
 	private Vector scratchVectors[] = new Vector[LAST_INDEX + 1];
 
 	private String manifestType;
@@ -329,6 +331,9 @@ public class ExtensionsParser extends DefaultHandler {
 		if (parserReference != null)
 			InternalPlatform.getDefault().getBundleContext().ungetService(parserReference);
 	}
+
+	// TODO why is this synchronized; does not appear to be called by multiple threads.
+	// a new ExtensionParser is created for each parsing action.
 	synchronized public BundleModel parseManifest(InputSource in, String manifestType) throws SAXException, IOException {
 		long start = 0;
 		if (InternalPlatform.DEBUG)
@@ -352,6 +357,7 @@ public class ExtensionsParser extends DefaultHandler {
 				factory.newSAXParser().parse(in, this);
 			} catch (ParserConfigurationException e) {
 				// TODO Auto-generated catch block
+				// If this happens seems like we should throw an exception.
 				e.printStackTrace();
 			}
 

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.registry;
 
+// TODO seems like a waste of a class just to hold one int constant.
 public interface IRegistryConstants {
 
 	int PLUGIN_ERROR = 1;

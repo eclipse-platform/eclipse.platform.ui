@@ -77,6 +77,7 @@ public class BundleModel extends RegistryModelObject implements IRegistryElement
 		assertIsWriteable();
 		extensionPoints = value;
 	}
+	// TODO is this method needed? does not appear to be called by anyone.
 	public IExtensionPoint getExtensionPoint(String xpt) {
 		if (xpt == null)
 			return null;
@@ -92,9 +93,15 @@ public class BundleModel extends RegistryModelObject implements IRegistryElement
 	public IExtensionPoint[] getExtensionPoints() {
 		return extensionPoints == null ? new IExtensionPoint[0] : extensionPoints;
 	}
+
+	// TODO should use FindSupport.findInPlugin instead?
+	// actually this is dead code to be removed
 	private URL findInPlugin(Bundle bundle, String filePath) {
 		return bundle.getEntry(filePath);
 	}
+
+	// TODO should use FindSupport.findInFragments instead?
+	// actually this is dead code to be removed
 	private URL findInFragments(Bundle bundle, String filePath) {
 		Bundle[] fragments = InternalPlatform.getDefault().getFragments(bundle);
 		URL fileURL = null;
@@ -131,6 +138,7 @@ public class BundleModel extends RegistryModelObject implements IRegistryElement
 		if (renamedUIextensionPoints == null) {
 			// lazily initialize 
 			final Map t = new HashMap(13);
+			// TODO should this be hard coded? can we use a properties file?
 			t.put("org.eclipse.ui.markerImageProvider", "org.eclipse.ui.ide.markerImageProvider"); //$NON-NLS-1$ //$NON-NLS-2$
 			t.put("org.eclipse.ui.markerHelp", "org.eclipse.ui.ide.markerHelp"); //$NON-NLS-1$ //$NON-NLS-2$
 			t.put("org.eclipse.ui.markerImageProviders", "org.eclipse.ui.ide.markerImageProviders"); //$NON-NLS-1$ //$NON-NLS-2$

@@ -174,6 +174,8 @@ public class Extension extends RegistryModelObject implements IExtension {
 	 * Optimization to replace a non-localized key with its localized value.  Avoids having
 	 * to access resource bundles for further lookups.
 	 */
+	// TODO unclear why we do not make sure object is not read-only.
+	// should update javadoc or perform check.
 	public void setLocalizedName(String value) {
 		name = value;
 		((ExtensionRegistry) InternalPlatform.getDefault().getRegistry()).setDirty(true);

@@ -111,6 +111,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		}
 		if (registry == null) {
 			fromCache = false;
+			// TODO should we use the Factory object to create the registry
 			registry = new ExtensionRegistry(new ExtensionLinker());
 		}
 
@@ -119,6 +120,11 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		context.addBundleListener(pluginBundleListener);
 
 		// populate the registry with all the currently installed bundles.
+		// There is a small window here while processBundles is being
+		// called where the pluginBundleListener may receive a BundleEvent 
+		// to add/remove a bundle from the registry.  This is ok since
+		// the registry is a synchronized object and will not add the
+		// same bundle twice.
 		if (!fromCache)
 			pluginBundleListener.processBundles(context.getBundles());
 

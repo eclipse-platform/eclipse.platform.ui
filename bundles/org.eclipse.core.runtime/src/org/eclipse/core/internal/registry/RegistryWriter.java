@@ -12,7 +12,7 @@ package org.eclipse.core.internal.registry;
 
 import java.io.PrintWriter;
 import org.eclipse.core.runtime.*;
-
+// TODO dead code? Does not seem to be used.
 public class RegistryWriter {
 	public RegistryWriter() {
 		super();

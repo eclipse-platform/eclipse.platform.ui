@@ -191,6 +191,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 	/**
 	 * Adds the given listener for registry change events on the given plug-in.
 	 */
+	// TODO This should be thread safe code.  May get called by multiple threads.
 	public void addRegistryChangeListener(IRegistryChangeListener listener, String filter) {
 		this.listeners.add(new ListenerInfo(listener, filter));
 	}
@@ -452,6 +453,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 	 * Adds the given listener for registry change events related to this
 	 * plug-in's extension points.
 	 */
+	// TODO This should be thread safe code.  May get called by multiple threads.
 	public void removeRegistryChangeListener(IRegistryChangeListener listener) {
 		this.listeners.remove(new ListenerInfo(listener, null));
 	}
