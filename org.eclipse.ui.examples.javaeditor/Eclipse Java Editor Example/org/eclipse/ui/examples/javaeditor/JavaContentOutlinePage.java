@@ -44,7 +44,7 @@ public class JavaContentOutlinePage extends ContentOutlinePage {
 		public String toString() {
 			return name;
 		}
-	};
+	}
 
 	/**
 	 * Divides the editor's document into ten segments and provides elements for them.
@@ -58,7 +58,7 @@ public class JavaContentOutlinePage extends ContentOutlinePage {
 		protected void parse(IDocument document) {
 
 			int lines= document.getNumberOfLines();
-			int increment= Math.max(Math.round((float) (lines / 10)), 10);
+			int increment= Math.max(Math.round(lines / 10), 10);
 
 			for (int line= 0; line < lines; line += increment) {
 
@@ -157,7 +157,7 @@ public class JavaContentOutlinePage extends ContentOutlinePage {
 				return fContent.toArray();
 			return new Object[0];
 		}
-	};
+	}
 
 	protected Object fInput;
 	protected IDocumentProvider fDocumentProvider;

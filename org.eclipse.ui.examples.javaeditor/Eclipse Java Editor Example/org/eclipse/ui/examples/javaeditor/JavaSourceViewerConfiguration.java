@@ -36,7 +36,7 @@ public class JavaSourceViewerConfiguration extends SourceViewerConfiguration {
 			public SingleTokenScanner(TextAttribute attribute) {
 				setDefaultReturnToken(new Token(attribute));
 			}
-		};
+		}
 		
 
 	/**
