@@ -10,15 +10,16 @@ import org.apache.xerces.parsers.DOMParser;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
-import org.eclipse.help.internal.ui.WorkbenchHelpPlugin;
+import org.eclipse.help.ITopic;
+import org.eclipse.help.internal.ui.*;
 import org.eclipse.help.internal.ui.util.WorkbenchResources;
-import org.eclipse.help.internal.util.*;
-import org.eclipse.help.ui.browser.IBrowser;
+import org.eclipse.help.internal.util.Logger;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.search.ui.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 /**
@@ -106,29 +107,17 @@ public class SearchOperation extends WorkspaceModifyOperation {
 				if (element instanceof ISearchResultViewEntry) {
 					ISearchResultViewEntry entry = (ISearchResultViewEntry) element;
 					try {
-						if (!AppServer.isRunning())
-							return; // may want to display an error message
-						String url =
-							"http://"
-								+ AppServer.getHost()
-								+ ":"
-								+ AppServer.getPort()
-								+ "/help?tab=search&query="
-								+ URLCoder.encode(queryData.getExpression())
-								/*+ "&topic=http://"
-								+ AppServer.getHost()
-								+ ":"
-								+ AppServer.getPort()
-								+ "/help/content/help:"
-								+ (String) entry.getSelectedMarker().getAttribute(
-									SearchUIConstants.HIT_MARKER_ATTR_HREF)*/;
-						IBrowser browser = WorkbenchHelpPlugin.getDefault().getHelpBrowser();
-						browser.displayURL(url);
+						IHelp ihelp = WorkbenchHelp.getHelpSupport();
+						if (ihelp instanceof DefaultHelp)
+							((DefaultHelp) ihelp).displaySearch(
+								queryData.getExpression(),
+								(String) entry.getSelectedMarker().getAttribute(
+									SearchUIConstants.HIT_MARKER_ATTR_HREF));
 					} catch (Exception e) {
+						System.out.println(e);
 					}
 				}
-			}
-		}, new IGroupByKeyComputer() {
+			}		}, new IGroupByKeyComputer() {
 			public Object computeGroupByKey(IMarker marker) {
 				try {
 					if (marker.getAttribute(SearchUIConstants.HIT_MARKER_ATTR_HREF) != null)
