@@ -6,7 +6,7 @@
 	<!-- Set the timestamp and important properties -->
 	<target name="init">
 		<tstamp/>
-		<property name="destdir" value="../../plugin-export" />
+		<property name="destdir" value="../../../plugin-export" />
 		<property name="dest"  value="${destdir}/org.eclipse.debug.ui" />
 	</target>
 
@@ -17,19 +17,19 @@
 		<mkdir dir="${dest}" />
 		<jar 
 			jarfile="${dest}/dtui.jar"
-			basedir="bin"
+			basedir="../bin"
 		/>
 		<!-- Create the source zip -->
 		<zip zipfile="${dest}/dtuisrc.zip">
-			<fileset dir="Eclipse Debug UI"/>
+			<fileset dir="../Eclipse Debug UI"/>
 		</zip>
-		<copy file="plugin.xml" todir="${dest}"/>
-		<copy file="plugin.jars" todir="${dest}"/>
-		<copy file="plugin.properties" todir="${dest}"/>
-		<copy file=".classpath" todir="${dest}"/>
-		<copy file=".options" todir="${dest}"/>
+		<copy file="../plugin.xml" todir="${dest}"/>
+		<copy file="../plugin.jars" todir="${dest}"/>
+		<copy file="../plugin.properties" todir="${dest}"/>
+		<copy file="../.classpath" todir="${dest}"/>
+		<copy file="../.options" todir="${dest}"/>
 		<copy todir="${dest}/icons">
-			<fileset dir="icons" />
+			<fileset dir="../icons" />
 		</copy>
 	</target>
 	
