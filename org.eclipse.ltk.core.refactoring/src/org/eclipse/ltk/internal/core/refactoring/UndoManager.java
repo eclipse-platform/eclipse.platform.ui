@@ -80,9 +80,6 @@ public class UndoManager implements IUndoManager {
 			fListeners= null;
 	}
 	
-	/**
-	 * {@inheritDoc}
-	 */
 	public void aboutToPerformChange(final Change change) {
 		if (fListeners == null)
 			return;
@@ -100,9 +97,6 @@ public class UndoManager implements IUndoManager {
 		}
 	}
 	
-	/**
-	 * {@inheritDoc}
-	 */
 	public void changePerformed(final Change change) {
 		if (fListeners == null)
 			return;
@@ -118,6 +112,11 @@ public class UndoManager implements IUndoManager {
 				}
 			});
 		}
+	}
+	
+	public void changePerformed(Change change, boolean successful) {
+		// the listeners don't care about success or not.
+		changePerformed(change);
 	}
 
 	/*
@@ -270,12 +269,14 @@ public class UndoManager implements IUndoManager {
 						return;
 					}
 					ResourcesPlugin.getWorkspace().checkpoint(false);
+					boolean successful= false;
 					try {
 						aboutToPerformChange(change);
 						undo[0]= change.perform(new SubProgressMonitor(monitor, 8));
+						successful= true;
 						ResourcesPlugin.getWorkspace().checkpoint(false);
 					} finally {
-						changePerformed(change);
+						changePerformed(change, successful);
 					}
 					change.dispose();
 					if (undo[0] != null) {

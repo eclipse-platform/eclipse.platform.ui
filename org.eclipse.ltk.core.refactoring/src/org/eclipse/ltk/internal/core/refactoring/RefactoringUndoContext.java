@@ -12,7 +12,6 @@ package org.eclipse.ltk.internal.core.refactoring;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 
-import org.eclipse.core.commands.operations.IContextOperationApprover;
 import org.eclipse.core.commands.operations.IUndoContext;
 
 public class RefactoringUndoContext implements IUndoContext {
@@ -21,14 +20,10 @@ public class RefactoringUndoContext implements IUndoContext {
 		return RefactoringCoreMessages.getString("RefactoringUndoContext.label"); //$NON-NLS-1$
 	}
 
-	public IContextOperationApprover getOperationApprover() {
-		return null;
-	}
-
 	public boolean matches(IUndoContext context) {
 		IUndoContext workspaceContext= (IUndoContext)ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
 		if (workspaceContext == null)
 			return false;
-		return workspaceContext.equals(context);
+		return workspaceContext.matches(context);
 	}
 }

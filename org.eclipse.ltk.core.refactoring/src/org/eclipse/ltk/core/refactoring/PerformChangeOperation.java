@@ -30,7 +30,8 @@ import org.eclipse.ltk.internal.core.refactoring.NotCancelableProgressMonitor;
  * If the change has been performed successfully (e.g. {@link #changeExecuted()} returns
  * <code>true</code>) then the operation has called {@link Change#dispose()} as well
  * to clear-up internal state in the change object. If it hasn't been executed the
- * change is still intact and the client is responsible to dispose the change object.
+ * change, the change is still intact and the client is responsible to dispose the 
+ * change object.
  * </p>
  * <p>
  * If an undo change has been provided by the change to execute then the operation 
@@ -235,7 +236,7 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 						if (fUndoManager != null) {
 							ResourcesPlugin.getWorkspace().checkpoint(false);
 							if (aboutToPerformChangeCalled)
-								fUndoManager.changePerformed(fChange);
+								fUndoManager.changePerformed(fChange, !fChangeExecutionFailed);
 						}
 					}
 					fChange.dispose();
@@ -283,4 +284,3 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 		return fCreateChangeOperation != null;
 	}
 }
-

@@ -21,6 +21,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * This interface is not intended to be implemented by clients. Clients should use the  
  * method {@link RefactoringCore#getUndoManager()} to access the refactoring undo manager.
  * </p>
+ * <p>
+ * As of 3.1 the implementation of the refactoring undo mamager is based on the 
+ * {@link org.eclipse.core.commands.operations.IOperationHistory} provided by the
+ * <code>org.eclipse.core.commands</code> plugin.
+ * </p>
+ * 
+ * @see org.eclipse.core.commands.operations.IOperationHistory
  * 
  * @since 3.0
  */
@@ -65,8 +72,19 @@ public interface IUndoManager {
 	 * The infrastructure has performed the given change.
 	 * 
 	 * @param change the change that was performed
+	 * 
+	 * @deprecated use #changePerformed(Change, boolean) instead
 	 */
 	public void changePerformed(Change change);
+
+	/**
+	 * The infrastructure has performed the given change.
+	 * 
+	 * @param change the change that was performed
+	 * @param successful <code>true</code> if the change got executed
+	 *  successful; <code>false</code> otherwise.
+	 */
+	public void changePerformed(Change change, boolean successful);
 
 	/**
 	 * Adds a new undo change to this undo manager.

@@ -18,11 +18,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.core.commands.operations.OperationHistoryFactory;
+import org.eclipse.core.commands.operations.TriggeredOperations;
 
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.IUndoManager;
@@ -35,9 +37,16 @@ public class UndoManager2 implements IUndoManager {
 	private class OperationHistroyListener implements IOperationHistoryListener {
 		public void historyNotification(OperationHistoryEvent event) {
 			IUndoableOperation op= event.getOperation();
-			if (!(op instanceof UndoableOperation2ChangeAdapter)) 
+			if (op instanceof TriggeredOperations) {
+				op= ((TriggeredOperations)op).getTriggeringOperation(); 
+			}
+			UndoableOperation2ChangeAdapter changeOperation= null;
+			if (op instanceof UndoableOperation2ChangeAdapter) {
+				changeOperation= (UndoableOperation2ChangeAdapter)op;
+			}
+			if (changeOperation == null) 
 				return;
-			Change change= ((UndoableOperation2ChangeAdapter)op).getChange();
+			Change change= changeOperation.getChange();
 			switch(event.getEventType()) {
 				case OperationHistoryEvent.ABOUT_TO_EXECUTE:
 				case OperationHistoryEvent.ABOUT_TO_UNDO:
@@ -93,7 +102,7 @@ public class UndoManager2 implements IUndoManager {
 	private IOperationHistoryListener fOperationHistoryListener;
 	
 	private boolean fIsOpen;
-	private UndoableOperation2ChangeAdapter fActiveOperation;
+	private TriggeredOperations fActiveOperation;
 	
 	private ListenerList fListeners;
 
@@ -122,27 +131,32 @@ public class UndoManager2 implements IUndoManager {
 	}
 
 	public void aboutToPerformChange(Change change) {
-		fActiveOperation= new UndoableOperation2ChangeAdapter(change);
+		IUndoableOperation operation= new UndoableOperation2ChangeAdapter(change);
+		operation.addContext(RefactoringCorePlugin.getUndoContext());
+		fActiveOperation= new TriggeredOperations(operation, fOperationHistroy);
 		fActiveOperation.addContext(RefactoringCorePlugin.getUndoContext());
-    	fOperationHistroy.openOperation(fActiveOperation);
+    	fOperationHistroy.openOperation(fActiveOperation, IOperationHistory.EXECUTE);
     	fIsOpen= true;
 	}
 
 	public void changePerformed(Change change) {
+		changePerformed(change, true);
+	}
+
+	public void changePerformed(Change change, boolean successful) {
 		if (fIsOpen && fActiveOperation != null) {
-			fOperationHistroy.closeOperation();
+			fOperationHistroy.closeOperation(successful, false, IOperationHistory.EXECUTE);
 	        fIsOpen= false;
 		}
 	}
 
 	public void addUndo(String name, Change change) {
 		if (fActiveOperation != null) {
-			fActiveOperation.setUndoChange(change);
-			// No need to add the operation to the undo history. It already
-			// got added via closing the operation.
+			UndoableOperation2ChangeAdapter operation= (UndoableOperation2ChangeAdapter)fActiveOperation.getTriggeringOperation();
+			operation.setUndoChange(change);
+			operation.setLabel(name);
+			fOperationHistroy.add(fActiveOperation);
 			fActiveOperation= null;
-			// But we have to fire an undo stack changed here
-			fireUndoStackChanged();
 		}
 	}
 
@@ -158,14 +172,17 @@ public class UndoManager2 implements IUndoManager {
 	}
 
 	public void performUndo(IValidationCheckResultQuery query, IProgressMonitor pm) throws CoreException {
-		IUndoableOperation op= fOperationHistroy.getUndoOperation(RefactoringCorePlugin.getUndoContext());
-		if (!(op instanceof UndoableOperation2ChangeAdapter)) 
+		UndoableOperation2ChangeAdapter op= getUnwrappedOperation(fOperationHistroy.getUndoOperation(RefactoringCorePlugin.getUndoContext()));
+		if (op == null) 
 			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(),
-				IStatus.ERROR, "Top most undoable operation doesn't represent a refactoring change", null));
+				IStatus.ERROR, RefactoringCoreMessages.getString("UndoManager2.no_change"), null)); //$NON-NLS-1$
 		if (query == null)
 			query= new NullQuery();
-		// TODO handle exception
-		// fOperationHistroy.undoOperation(op, pm, new QueryAdapter(query));
+		try {
+			fOperationHistroy.undoOperation(op, pm, new QueryAdapter(query));
+		} catch (ExecutionException e) {
+			handleException(e);
+		}
 	}
 
 	public boolean anythingToRedo() {
@@ -180,29 +197,55 @@ public class UndoManager2 implements IUndoManager {
 	}
 
 	public void performRedo(IValidationCheckResultQuery query, IProgressMonitor pm) throws CoreException {
-		IUndoableOperation op= fOperationHistroy.getRedoOperation(RefactoringCorePlugin.getUndoContext());
-		if (!(op instanceof UndoableOperation2ChangeAdapter)) 
+		UndoableOperation2ChangeAdapter op= getUnwrappedOperation(fOperationHistroy.getRedoOperation(RefactoringCorePlugin.getUndoContext()));
+		if (op == null) 
 			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(),
-				IStatus.ERROR, "Top most redoable operation doesn't represent a refactoring change", null));
+				IStatus.ERROR, RefactoringCoreMessages.getString("UndoManager2.no_change"), null)); //$NON-NLS-1$
 		if (query == null)
 			query= new NullQuery();
-		// TODO handle exception
-		// fOperationHistroy.redoOperation(op, pm, new QueryAdapter(query));
+		try {
+			fOperationHistroy.redoOperation(op, pm, new QueryAdapter(query));
+		} catch (ExecutionException e) {
+			handleException(e);
+		}
+	}
+
+	private UndoableOperation2ChangeAdapter getUnwrappedOperation(IUndoableOperation operation) {
+		IUndoableOperation result= operation;
+		if (result instanceof TriggeredOperations) {
+			result= ((TriggeredOperations)result).getTriggeringOperation();
+		}
+		if (result instanceof UndoableOperation2ChangeAdapter) {
+			return (UndoableOperation2ChangeAdapter)result;
+		}
+		return null;
 	}
 
 	public void flush() {
 		if (fIsOpen && fActiveOperation != null) {
-			fOperationHistroy.closeOperation();
+			fOperationHistroy.closeOperation(false, false, IOperationHistory.EXECUTE);
 		}
 		fActiveOperation= null;
 		fIsOpen= false;
-		fOperationHistroy.dispose(RefactoringCorePlugin.getUndoContext(), true, true);
+		fOperationHistroy.dispose(RefactoringCorePlugin.getUndoContext(), true, true, false);
 	}
 
 	public void shutdown() {
 		// nothing to do since we have a shared undo manager anyways.
 	}
 	
+	private void handleException(ExecutionException e) throws CoreException {
+		Throwable cause= e.getCause();
+		if (cause instanceof CoreException) {
+			throw (CoreException)cause;
+		} else {
+			throw new CoreException(new Status(
+				IStatus.ERROR, RefactoringCorePlugin.getPluginId(),IStatus.ERROR, 
+				RefactoringCoreMessages.getString("RefactoringCorePlugin.internal_error"), //$NON-NLS-1$
+				e));
+		}
+	}
+
 	//---- event fireing methods -------------------------------------------------
 	
 	private void fireAboutToPerformChange(final Change change) {

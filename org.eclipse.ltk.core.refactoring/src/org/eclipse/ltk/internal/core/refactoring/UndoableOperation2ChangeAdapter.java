@@ -36,6 +36,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
 
 public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IHistoryNotificationAwareOperation {
 	
+	private String fLabel;
 	private Change fExecuteChange;
 	private Change fUndoChange;
 	private Change fRedoChange;
@@ -83,7 +84,13 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IHis
 		return fActiveChange;
 	}
 
+	public void setLabel(String label) {
+		fLabel= label;
+	}
+	
 	public String getLabel() {
+		if (fLabel != null)
+			return fLabel;
 		return fActiveChange.getName();
 	}
 
@@ -100,7 +107,16 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IHis
 	}
 
 	public boolean hasContext(IUndoContext context) {
-		return fContexts.contains(context);
+		if (context == null)
+			return false;
+		for (int i = 0; i< fContexts.size(); i++) {
+			IUndoContext otherContext = (IUndoContext)fContexts.get(i);
+			// have to check both ways because one context may be more general in
+			// its matching rules than another.
+			if (context.matches(otherContext) || otherContext.matches(context)) 
+				return true;
+		}
+		return false;
 	}
 
 	public void removeContext(IUndoContext context) {

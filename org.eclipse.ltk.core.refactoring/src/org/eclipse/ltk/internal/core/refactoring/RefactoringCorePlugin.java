@@ -14,8 +14,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 
+import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.ObjectUndoContext;
+import org.eclipse.core.commands.operations.OperationHistoryFactory;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 
@@ -47,6 +49,8 @@ public class RefactoringCorePlugin extends Plugin {
 			if (workspaceContext instanceof ObjectUndoContext) {
 				((ObjectUndoContext)workspaceContext).addMatch(fRefactoringUndoContext);
 			}
+			IOperationHistory operationHistory= OperationHistoryFactory.getOperationHistory();
+			operationHistory.setLimit(fRefactoringUndoContext, 5);
 		}
 		return fRefactoringUndoContext;
 	}

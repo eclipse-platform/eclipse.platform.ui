@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 
@@ -248,8 +249,11 @@ public abstract class Change implements IAdaptable {
 	 * {@inheritDoc}
 	 */
 	public Object getAdapter(Class adapter) {
-		if (fParent == null)
-			return null;
-		return fParent.getAdapter(adapter);
+		Object result= Platform.getAdapterManager().getAdapter(this, adapter);
+		if (result != null)
+			return result;
+		if (fParent != null)
+			return fParent.getAdapter(adapter);
+		return null;
 	}
 }
