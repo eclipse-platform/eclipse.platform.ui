@@ -1137,7 +1137,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 				if (page == null) {
 					IContainer root = WorkbenchPlugin.getPluginWorkspace().getRoot();
 					try {
-						page = (WorkbenchPage) getActiveWorkbenchWindow().openPage(newFeaturesWithPerspectives[x].getWelcomePerspective(), root);
+						page = (WorkbenchPage) newWindow.openPage(newFeaturesWithPerspectives[x].getWelcomePerspective(), root);
 					} catch (WorkbenchException e) {
 						result.add(e.getStatus());
 					}
