@@ -28,9 +28,16 @@ public class AntFileRunner {
 		if (baseDir.length() > 0) {
 			// Ant requires the working directory to be specified
 			// as one of the arguments, so it needs to be appended.
-			runnerArgs = new String[args.length + 1];
-			System.arraycopy(args, 0, runnerArgs, 0, args.length);
-			runnerArgs[args.length] = BASE_DIR_PREFIX + baseDir;
+			int length = 1;
+			if (args != null) {
+				length = args.length + 1;
+			} 
+			
+			runnerArgs = new String[length];
+			if (args != null) {
+				System.arraycopy(args, 0, runnerArgs, 0, args.length);
+			}
+			runnerArgs[length - 1] = BASE_DIR_PREFIX + baseDir;
 		}
 		runner.setArguments(runnerArgs);
 

@@ -52,6 +52,12 @@ public abstract class AbstractAntTest extends TestCase {
 		return file;
 	}
 	
+	protected IFolder getWorkingDirectory(String workingDirectoryName) {
+		IFolder folder = getProject().getFolder(workingDirectoryName);
+		assertTrue("Could not find the working directory named: " + workingDirectoryName, folder.exists());
+		return folder;
+	}
+	
 	protected IFile checkFileExists(String fileName) throws CoreException {
 		getProject().refreshLocal(IProject.DEPTH_INFINITE, null);
 		IFile file = getProject().getFolder("scripts").getFile(fileName);
@@ -68,6 +74,10 @@ public abstract class AbstractAntTest extends TestCase {
 	}
 	
 	public void run(String buildFileName, String[] args, boolean retrieveTargets) throws CoreException {
+		run(buildFileName, args, retrieveTargets, "");
+	}
+	
+	public void run(String buildFileName, String[] args, boolean retrieveTargets, String workingDir) throws CoreException {
 		AntTestChecker.reset();
 		IFile buildFile= null;
 		if (buildFileName != null) {
@@ -78,7 +88,10 @@ public abstract class AbstractAntTest extends TestCase {
 		if (retrieveTargets) {
 			targets= getTargetNames(buildFileName);
 		}
-		runner.run(buildFile, targets, args, "", true);
+		if (workingDir.length() > 0) {
+			workingDir= getWorkingDirectory(workingDir).getLocation().toFile().getAbsolutePath();
+		} 
+		runner.run(buildFile, targets, args, workingDir, true);
 		assertTrue("Build starts did not equal build finishes", AntTestChecker.getDefault().getBuildsStartedCount() == AntTestChecker.getDefault().getBuildsFinishedCount());
 	}
 	

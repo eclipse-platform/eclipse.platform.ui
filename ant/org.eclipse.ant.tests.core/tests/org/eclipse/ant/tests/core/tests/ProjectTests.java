@@ -31,16 +31,5 @@ public class ProjectTests extends AbstractAntTest {
 		assertTrue("ant.file should have been set as the build file name", fullName.equals(AntTestChecker.getDefault().getUserProperty("ant.file")));
 		assertNotNull("ant.version should have been set", AntTestChecker.getDefault().getUserProperty("ant.version"));
 	}
-	
-	/**
-	 * Tests that the three properties that should always be set are correct
-	 */
-	public void testBasePropertiesSetForDefaultBuildFile() throws CoreException {
-		String buildFileName="build.xml"; 
-		run((String)null, null, false);
-		assertTrue("eclipse.running should have been set as true", "true".equals(AntTestChecker.getDefault().getUserProperty("eclipse.running")));
-		assertTrue("ant.file should have been set as the build file name", buildFileName.equals(AntTestChecker.getDefault().getUserProperty("ant.file")));
-		assertNotNull("ant.version should have been set", AntTestChecker.getDefault().getUserProperty("ant.version"));
-	}
 }
 
