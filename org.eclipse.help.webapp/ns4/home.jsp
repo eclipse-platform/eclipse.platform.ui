@@ -30,7 +30,7 @@
 <body>
 
 <div id="bannerTitle" style="background:#D4D0C8; width:100%; position:absolute; left:10px; top:20; font: 14pt icon;">
-	<%=request.getParameter("title") != null ?request.getParameter("title") : WebappResources.getString("Bookshelf", request)%>
+	<%=UrlUtil.getRequestParameter(request, "title") != null ?UrlUtil.getRequestParameter(request, "title") : WebappResources.getString("Bookshelf", request)%>
 </div>
 
 </body>
