@@ -45,7 +45,7 @@
 	</target>
 
 	<target name="clean" depends="init">
-		<delete file="${build.result.folder}/ant_tasks/pdebuild-ant.jar"/>
+		<delete file="${build.result.folder}/ant_tasks/resources-ant.jar"/>
 		<delete dir="${temp.folder}"/>
 	</target>
 
