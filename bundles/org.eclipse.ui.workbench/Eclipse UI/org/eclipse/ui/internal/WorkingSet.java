@@ -13,8 +13,11 @@ package org.eclipse.ui.internal;
 import java.util.*;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
+import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 
 /**
  * A working set holds a number of IAdaptable elements. 
@@ -96,24 +99,6 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 	/** 
 	 * Implements IWorkingSet
 	 * 
-	 * @see org.eclipse.ui.IWorkingSet#getName()
-	 */
-	public String getName() {
-		return name;
-	}
-	/**
-	 * Implements IWorkingSet
-	 * 
-	 * @see org.eclipse.ui.IWorkingSet#getId()
-	 * @see org.eclipse.ui.dialogs.IWorkingSetPage
-	 * @since 2.1
-	 */
-	public String getId() {
-		return editPageId;
-	}
-	/** 
-	 * Implements IWorkingSet
-	 * 
 	 * @see org.eclipse.ui.IWorkingSet#getElements()
 	 */
 	public IAdaptable[] getElements() {
@@ -141,6 +126,48 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 	 */
 	public String getFactoryId() {
 		return FACTORY_ID;
+	}
+	/**
+	 * Implements IWorkingSet
+	 * 
+	 * @see org.eclipse.ui.IWorkingSet#getId()
+	 * @see org.eclipse.ui.dialogs.IWorkingSetPage
+	 * @since 2.1
+	 */
+	public String getId() {
+		return editPageId;
+	}
+	/**
+	 * Returns the working set icon.
+	 * Currently, this is one of the icons specified in the extensions 
+	 * of the org.eclipse.ui.workingSets extension point. 
+	 * The extension is identified using the value returned by
+	 * <code>getId()</code>. 
+	 * Returns <code>null</code> if no icon has been specified in the 
+	 * extension or if <code>getId()</code> returns <code>null</code>. 
+	 * 
+	 * @return the working set icon or <code>null</code>.
+	 * @since 2.1 
+	 */
+	public ImageDescriptor getImage() {
+		WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
+		WorkingSetDescriptor descriptor = null;
+		
+		if (editPageId != null) {
+			descriptor = registry.getWorkingSetDescriptor(editPageId);
+		}		
+		if (descriptor == null) {
+			return null;
+		}					
+		return descriptor.getIcon();
+	}
+	/** 
+	 * Implements IWorkingSet
+	 * 
+	 * @see org.eclipse.ui.IWorkingSet#getName()
+	 */
+	public String getName() {
+		return name;
 	}
 	/**
 	 * Returns the hash code.

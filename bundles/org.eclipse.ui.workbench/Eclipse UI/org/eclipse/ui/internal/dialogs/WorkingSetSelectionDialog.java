@@ -14,7 +14,6 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -34,8 +33,6 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
-import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 /**
@@ -67,16 +64,11 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 		public Image getImage(Object object) {
 			Assert.isTrue(object instanceof IWorkingSet);
 			IWorkingSet workingSet = (IWorkingSet) object; 
-			WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
-			WorkingSetDescriptor descriptor = registry.getWorkingSetDescriptor(workingSet.getId());
-			
-			if (descriptor == null) {
+			ImageDescriptor imageDescriptor = workingSet.getImage();
+
+			if (imageDescriptor == null)
 				return null;
-			}
-			ImageDescriptor imageDescriptor = descriptor.getIcon();
-			if (imageDescriptor == null) {
-				return null;
-			}
+				
 			Image icon = (Image) icons.get(imageDescriptor);
 			if (icon == null) {
 				icon = imageDescriptor.createImage();

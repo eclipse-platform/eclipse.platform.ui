@@ -11,6 +11,7 @@ Contributors:
 package org.eclipse.ui;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * A working set holds a number of IAdaptable elements. 
@@ -43,6 +44,20 @@ public interface IWorkingSet {
 	 * @since 2.1 
 	 */
 	public String getId();
+
+	/**
+	 * Returns the working set icon.
+	 * Currently, this is one of the icons specified in the extensions 
+	 * of the org.eclipse.ui.workingSets extension point. 
+	 * The extension is identified using the value returned by
+	 * <code>getId()</code>. 
+	 * Returns <code>null</code> if no icon has been specified in the 
+	 * extension or if <code>getId()</code> returns <code>null</code>. 
+	 * 
+	 * @return the working set icon or <code>null</code>.
+	 * @since 2.1 
+	 */
+	public ImageDescriptor getImage();
 
 	/**
 	 * Returns the name of the working set.
