@@ -90,7 +90,6 @@ public class AnimationItem {
 		final AnimationManager manager = AnimationManager.getInstance();
 		// Canvas to show the image.
 		imageCanvas = new Canvas(parent, SWT.NONE);
-		imageCanvas.setBackground(AnimationManager.getItemBackgroundColor(getControl()));
 		imageCanvas.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent event) {
 				paintImage(event, manager.getImage(), manager.getImageData()[0]);
