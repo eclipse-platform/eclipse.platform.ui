@@ -340,16 +340,19 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 		if (getTextWidget() == null)
 			return false;
 		
-		if (operation == CONTENTASSIST_PROPOSALS || operation == CONTENTASSIST_CONTEXT_INFORMATION)
+		if (operation == CONTENTASSIST_PROPOSALS)
+			return fContentAssistant != null && isEditable();
+			
+		if (operation == CONTENTASSIST_CONTEXT_INFORMATION)
 			return fContentAssistant != null;
-		
+			
 		if (operation == INFORMATION)
 			return fInformationPresenter != null;
 			
 		if (operation == FORMAT) {
 			Point p= getSelectedRange();
 			int length= (p == null ? -1 : p.y);
-			return (fContentFormatter != null && (length == 0 || isBlockSelected()));
+			return (fContentFormatter != null && isEditable() && (length == 0 || isBlockSelected()));
 		}
 		
 		return super.canDoOperation(operation);

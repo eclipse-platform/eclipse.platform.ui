@@ -34,8 +34,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * </p>
  */
 public abstract class AbstractDocumentProvider implements IDocumentProvider, IDocumentProviderExtension {
-	
-	
+		
+		
 		/**
 		 * Collection of all information managed for a connected element.
 		 */
@@ -105,6 +105,20 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			public void documentAboutToBeChanged(DocumentEvent event) {
 			}
 		};
+		
+	
+	/** 
+	 * Indicates whether this provider should behave as described in
+	 * use case 5 of http://bugs.eclipse.org/bugs/show_bug.cgi?id=10806.
+	 */ 
+	static final boolean PR10806_UC5_ENABLED= false;
+	
+	/**
+	 * Indicates whether this provider should behave as described in
+	 * http://bugs.eclipse.org/bugs/show_bug.cgi?id=14469
+	 * Notes: This contradicts <code>PR10806_UC5_ENABLED</code>.
+	 */
+	static final boolean PR14469_ENABLED= true;
 	
 	
 	/** Information of all connected elements */
@@ -543,7 +557,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
 		if (info != null) {
 			doValidateState(element, computationContext);
-			updateStateCache(element);
+			doUpdateStateCache(element);
 			info.fIsStateValidated= true;
 			fireElementStateValidationChanged(element, true);
 		}
@@ -558,6 +572,22 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	protected void doUpdateStateCache(Object element) throws CoreException {
 	}
 	
+	/**
+	 * Returns whether the state of the element must be invalidated given its
+	 * previous read-only state.
+	 * 
+	 * @param element the element
+	 * @param wasReadOnly the previous read-only state
+	 * @return <code>true</code> if the state of the given element must be invalidated
+	 */
+	protected boolean invalidatesState(Object element, boolean wasReadOnly) {
+		Assert.isTrue(PR10806_UC5_ENABLED != PR14469_ENABLED);
+		boolean readOnlyChanged= (isReadOnly(element) != wasReadOnly);
+		if (PR14469_ENABLED)
+			return readOnlyChanged && !canSaveDocument(element);
+		return readOnlyChanged;
+	}
+	
 	/*
 	 * @see IDocumentProviderExtension#updateStateCache(Object)
 	 */
@@ -566,7 +596,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 		if (info != null) {
 			boolean wasReadOnly= isReadOnly(element);
 			doUpdateStateCache(element);
-			if (isReadOnly(element) != wasReadOnly) {
+			if (invalidatesState(element, wasReadOnly)) {
 				info.fIsStateValidated= false;
 				fireElementStateValidationChanged(element, false);
 			}
