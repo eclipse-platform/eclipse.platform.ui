@@ -23,15 +23,24 @@ import org.eclipse.swt.widgets.Control;
  */
 public class Geometry {
 
+	/**
+	 * Prevent this class from being instantiated.
+	 * 
+	 * @since 3.0
+	 */
 	private Geometry() {
 	}
 
 	/**
-	 * Returns the square of the distance between two points
+	 * Returns the square of the distance between two points. 
+	 * <p>This is preferred over the real distance when searching
+	 * for the closest point, since it avoids square roots.</p>
 	 * 
-	 * @param p1
-	 * @param p2
-	 * @return
+	 * @param p1 first endpoint
+	 * @param p2 second endpoint
+	 * @return the square of the distance between the two points
+	 * 
+	 * @since 3.0
 	 */
 	public static int distanceSquared(Point p1, Point p2) {
 		int term1 = p1.x - p2.x;
@@ -43,7 +52,8 @@ public class Geometry {
 	 * Returns the magnitude of the given 2d vector (represented as a Point)
 	 *  
 	 * @param p point representing the 2d vector whose magnitude is being computed
-	 * @return
+	 * @return the magnitude of the given 2d vector
+	 * @since 3.0
 	 */
 	public static double magnitude(Point p) {
 		return Math.sqrt(magnitudeSquared(p));
@@ -53,18 +63,20 @@ public class Geometry {
 	 * Returns the square of the magnitude of the given 2-space vector (represented
 	 * using a point)
 	 * 
-	 * @param p
+	 * @param p the point whose magnitude is being computed
 	 * @return the square of the magnitude of the given vector
+	 * @since 3.0
 	 */
 	public static int magnitudeSquared(Point p) {
 		return p.x * p.x + p.y * p.y;
 	}
 
 	/**
-	 * Returns the area of the rectangle
+	 * Returns the size of the rectangle, as a Point
 	 * 
-	 * @param rectangle
-	 * @return
+	 * @param rectangle rectangle whose size is being computed
+	 * @return the size of the given rectangle
+	 * @since 3.0
 	 */
 	public static Point getSize(Rectangle rectangle) {
 		return new Point(rectangle.width, rectangle.height);
@@ -74,22 +86,38 @@ public class Geometry {
 	 * Returns a new point whose coordinates are the minimum of the coordinates of the
 	 * given points
 	 * 
-	 * @param p1
-	 * @param p2
+	 * @param p1 a Point
+	 * @param p2 a Point
 	 * @return a new point whose coordinates are the minimum of the coordinates of the
 	 * given points
+	 * @since 3.0
 	 */
 	public static Point min(Point p1, Point p2) {
 		return new Point(Math.min(p1.x, p2.x), Math.min(p1.y, p2.y));
 	}
+	
+	/**
+	 * Returns a new point whose coordinates are the maximum of the coordinates
+	 * of the given points
+	 * @param p1 a Point
+	 * @param p2 a Point
+	 * @return point a new point whose coordinates are the maximum of the coordinates
+	 * @since 3.0
+	 */
+	public static Point max(Point p1, Point p2) {
+		return new Point(Math.max(p1.x, p2.x), Math.max(p1.y, p2.y));
+	}
 
 	/**
-	 * Returns a direction vector in the given direction with the given
-	 * magnitude.
+	 * Returns a vector in the given direction with the given
+	 * magnitude. Directions are given using SWT direction constants, and
+	 * the resulting vector is in the screen's coordinate system. That is,
+	 * the vector (0, 1) is down and the vector (1, 0) is right. 
 	 * 
 	 * @param distance magnitude of the vector
 	 * @param direction one of SWT.TOP, SWT.BOTTOM, SWT.LEFT, or SWT.RIGHT
 	 * @return a point representing a vector in the given direction with the given magnitude
+	 * @since 3.0
 	 */
 	public static Point getDirectionVector(int distance, int direction) {
 		switch (direction) {
@@ -105,8 +133,9 @@ public class Geometry {
 	/**
 	 * Returns the point in the center of the given rectangle.
 	 * 
-	 * @param rect
-	 * @return
+	 * @param rect rectangle being computed
+	 * @return a Point at the center of the given rectangle.
+	 * @since 3.0
 	 */
 	public static Point centerPoint(Rectangle rect) {
 		return new Point(rect.x + rect.width / 2, rect.y + rect.height / 2);
@@ -117,7 +146,8 @@ public class Geometry {
 	 * 
 	 * @param toMeasure rectangle to measure
 	 * @param width returns the width if true, and the height if false
-	 * @return
+	 * @return the width or height of the given rectangle
+	 * @since 3.0
 	 */
 	public static int getDimension(Rectangle toMeasure, boolean width) {
 		if (width) {
@@ -131,10 +161,11 @@ public class Geometry {
 	 * Returns the distance of the given point from a particular side of the given rectangle.
 	 * Returns negative values for points outside the rectangle.
 	 * 
-	 * @param rectangle
-	 * @param testPoint
-	 * @param edgeOfInterest
-	 * @return the distance of the given point from the edge of the rectangle.
+	 * @param rectangle a bounding rectangle
+	 * @param testPoint a point to test
+	 * @param edgeOfInterest side of the rectangle to test against
+	 * @return the distance of the given point from the given edge of the rectangle
+	 * @since 3.0
 	 */
 	public static int getDistanceFromEdge(Rectangle rectangle, Point testPoint, int edgeOfInterest) {
 		switch(edgeOfInterest) {
@@ -150,7 +181,7 @@ public class Geometry {
 	/**
 	 * Extrudes the given edge inward by the given distance. That is, if one side of the rectangle
 	 * was sliced off with a given thickness, this returns the rectangle that forms the slice. Note
-	 * that the returned rectangle will be inside the given rectangle.
+	 * that the returned rectangle will be inside the given rectangle if size > 0.
 	 * 
 	 * @param toExtrude the rectangle to extrude. The resulting rectangle will share three sides
 	 * with this rectangle.
@@ -159,6 +190,7 @@ public class Geometry {
 	 * @param orientation the side to extrude.  One of SWT.LEFT, SWT.RIGHT, SWT.TOP, or SWT.BOTTOM. The 
 	 * resulting rectangle will always share this side with the original rectangle.
 	 * @return a rectangle formed by extruding the given side of the rectangle by the given distance.
+	 * @since 3.0
 	 */
 	public static Rectangle getExtrudedEdge(Rectangle toExtrude, int size, int orientation) {
 		Rectangle bounds = new Rectangle(toExtrude.x, toExtrude.y, toExtrude.width, toExtrude.height);
@@ -189,6 +221,7 @@ public class Geometry {
 	 * 
 	 * @param swtDirectionConstant one of SWT.LEFT, SWT.RIGHT, SWT.TOP, or SWT.BOTTOM
 	 * @return one of SWT.LEFT, SWT.RIGHT, SWT.TOP, or SWT.BOTTOM
+	 * @since 3.0
 	 */
 	public static int getOppositeSide(int swtDirectionConstant) {
 		switch(swtDirectionConstant) {
@@ -206,6 +239,7 @@ public class Geometry {
 	 * 
 	 * @param horizontal if true, returns SWT.HORIZONTAL. If false, returns SWT.VERTICAL 
 	 * @return SWT.HORIZONTAL or SWT.VERTICAL.
+	 * @since 3.0
 	 */
 	public static int getSwtHorizontalOrVerticalConstant(boolean horizontal) {
 		if (horizontal) {
@@ -222,6 +256,7 @@ public class Geometry {
 	 * 
 	 * @param swtSideConstant one of SWT.TOP, SWT.BOTTOM, SWT.LEFT, or SWT.RIGHT
 	 * @return true iff the given side is horizontal.
+	 * @since 3.0
 	 */
 	public static boolean isHorizontal(int swtSideConstant) {
 		return !(swtSideConstant == SWT.LEFT || swtSideConstant == SWT.RIGHT);
@@ -230,8 +265,9 @@ public class Geometry {
 	/**
 	 * Moves the given rectangle by the given delta.
 	 * 
-	 * @param rect
-	 * @param delta
+	 * @param rect rectangle to move (will be modified)
+	 * @param delta direction vector to move the rectangle by
+	 * @since 3.0
 	 */
 	public static void moveRectangle(Rectangle rect, Point delta) {
 		rect.x += delta.x;
@@ -244,7 +280,8 @@ public class Geometry {
 	 * width or height that extends to the upper-left of the original
 	 * rectangle. 
 	 * 
-	 * @param rect
+	 * @param rect rectangle to modify
+	 * @since 3.0
 	 */
 	public static void normalize(Rectangle rect) {
 		if (rect.width < 0) {
@@ -260,11 +297,12 @@ public class Geometry {
 
 	/**
 	 * Converts the given rectangle from the local coordinate system of the given object
-	 * into display coordinates
+	 * into display coordinates.
 	 * 
-	 * @param coordinateSystem
-	 * @param toConvert
-	 * @return
+	 * @param coordinateSystem local coordinate system being converted from
+	 * @param toConvert rectangle to convert
+	 * @return a rectangle in display coordinates
+	 * @since 3.0
 	 */
 	public static Rectangle toDisplay(Control coordinateSystem, Rectangle toConvert) {
 		Point start = coordinateSystem.toDisplay(toConvert.x, toConvert.y);

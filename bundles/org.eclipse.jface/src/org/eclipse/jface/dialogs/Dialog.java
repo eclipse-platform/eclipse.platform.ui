@@ -557,7 +557,7 @@ public abstract class Dialog extends Window {
 	 * </p>
 	 * <p>
 	 * The returned control's layout data must be an instance of 
-	 * <code>GridData</code>.
+	 * <code>GridData</code>. This method must not modify the parent's layout.
 	 * </p>
 	 * <p>
 	 * Subclasses must override this method but may call <code>super</code>
