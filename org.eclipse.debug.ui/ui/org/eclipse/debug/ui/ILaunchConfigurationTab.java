@@ -82,6 +82,7 @@ import org.eclipse.swt.widgets.Control;
  * </p>
  * @see ILaunchConfigurationType
  * @see ILaunchConfiguration
+ * @since 2.0
  */
 public interface ILaunchConfigurationTab {
 

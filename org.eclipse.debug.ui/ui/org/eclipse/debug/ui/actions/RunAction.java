@@ -20,6 +20,7 @@ import org.eclipse.ui.IViewActionDelegate;
  * <p>
  * This class is not intended to be subclassed.
  * </p>
+ * @since 2.0
  */
 public final class RunAction extends ExecutionAction implements IViewActionDelegate {
 	

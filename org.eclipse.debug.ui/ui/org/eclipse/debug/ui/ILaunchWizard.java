@@ -37,6 +37,7 @@ import org.eclipse.jface.wizard.IWizard;
  * </p>
  * @see org.eclipse.debug.core.ILauncher
  * @see org.eclipse.debug.core.model.ILauncherDelegate
+ * @deprecated to be replaced with launch configuration tabs
  */
 
 public interface ILaunchWizard extends IWizard {

@@ -8,6 +8,15 @@ import org.eclipse.jface.operation.IRunnableContext;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+ 
+ /**
+  * A launch configuraiton dialog contains a launch configuration
+  * tab group.
+  * 
+  * @see ILaunchConfigurationTabGroup
+  * @see ILaunchConfigurationTab
+  * @since 2.0
+  */
 
 public interface ILaunchConfigurationDialog extends IRunnableContext {
 	
