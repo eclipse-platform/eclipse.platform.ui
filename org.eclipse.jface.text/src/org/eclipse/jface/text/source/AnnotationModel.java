@@ -20,7 +20,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.util.Assert;
 
@@ -40,6 +42,10 @@ public class AnnotationModel implements IAnnotationModel {
 	protected IDocument fDocument;
 	/** The number of open connections to the same document */
 	private int fOpenConnections= 0;
+	/** The document listener for tracking whether document positions might have been changed. */
+	private IDocumentListener fDocumentListener;
+	/** The flag indicating whether the document positions might have been changed. */
+	private boolean fDocumentChanged= true;
 
 	/**
 	 * Creates a new annotation model. The annotation is empty, i.e. does not
@@ -48,6 +54,16 @@ public class AnnotationModel implements IAnnotationModel {
 	public AnnotationModel() {
 		fAnnotations= Collections.synchronizedMap(new HashMap(10));
 		fAnnotationModelListeners= new ArrayList(2);
+		
+		fDocumentListener= new IDocumentListener() {
+			
+			public void documentAboutToBeChanged(DocumentEvent event) {
+			}
+
+			public void documentChanged(DocumentEvent event) {
+				fDocumentChanged= true;
+			}
+		};
 	}
 
 	/*
@@ -118,8 +134,10 @@ public class AnnotationModel implements IAnnotationModel {
 		}
 		
 		++ fOpenConnections;
-		if (fOpenConnections == 1)
+		if (fOpenConnections == 1) {
+			fDocument.addDocumentListener(fDocumentListener);
 			connected();
+		}
 	}
 	
 	/**
@@ -145,6 +163,7 @@ public class AnnotationModel implements IAnnotationModel {
 		if (fOpenConnections == 0) {
 			
 			disconnected();
+			fDocument.removeDocumentListener(fDocumentListener);
 		
 			if (fDocument != null) {
 				Iterator e= fAnnotations.values().iterator();
@@ -213,16 +232,20 @@ public class AnnotationModel implements IAnnotationModel {
 	 * @param fireModelChanged indicates whether to notify all model listeners
 	 */
 	protected void cleanup(boolean fireModelChanged) {
-		ArrayList deleted= new ArrayList();
-		Iterator e= new ArrayList(fAnnotations.keySet()).iterator();
-		while (e.hasNext()) {
-			Annotation a= (Annotation) e.next();
-			Position p= (Position) fAnnotations.get(a);
-			if (p == null || p.isDeleted())
-				deleted.add(a);
+		if (fDocumentChanged) {
+			fDocumentChanged= false;
+			
+			ArrayList deleted= new ArrayList();
+			Iterator e= new ArrayList(fAnnotations.keySet()).iterator();
+			while (e.hasNext()) {
+				Annotation a= (Annotation) e.next();
+				Position p= (Position) fAnnotations.get(a);
+				if (p == null || p.isDeleted())
+					deleted.add(a);
+			}
+			
+			removeAnnotations(deleted, fireModelChanged, false);
 		}
-		
-		removeAnnotations(deleted, fireModelChanged, false);
 	}
 	
 	/*
