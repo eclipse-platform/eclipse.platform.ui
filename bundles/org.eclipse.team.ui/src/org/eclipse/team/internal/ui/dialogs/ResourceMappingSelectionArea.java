@@ -88,6 +88,12 @@ public class ResourceMappingSelectionArea extends DialogArea {
      */
     public void createArea(Composite parent) {
         Composite composite = createComposite(parent, 1, true);
+        GridLayout layout = new GridLayout(1, false);
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        layout.verticalSpacing = 0;
+        layout.horizontalSpacing = 0;
+        composite.setLayout(layout);
         
         if (description != null)
             createWrappingLabel(composite, description, 1);
@@ -95,7 +101,7 @@ public class ResourceMappingSelectionArea extends DialogArea {
         viewer = CheckboxTableViewer.newCheckList(composite, SWT.SINGLE | SWT.BORDER);
         GridData data = new GridData(GridData.FILL_BOTH);
         data.heightHint = 100;
-        data.widthHint = 200;
+        data.widthHint = 300;
         viewer.getControl().setLayoutData(data);
         viewer.setContentProvider(new BaseWorkbenchContentProvider());
         viewer.setLabelProvider(new ResourceMappingLabelProvider());
@@ -156,6 +162,7 @@ public class ResourceMappingSelectionArea extends DialogArea {
         GridLayout layout = new GridLayout();
         layout.numColumns = 2; // this is incremented by createButton
         layout.makeColumnsEqualWidth = true;
+        layout.marginWidth = 0;
         buttons.setLayout(layout);
         data = new GridData(GridData.HORIZONTAL_ALIGN_END
                 | GridData.VERTICAL_ALIGN_CENTER);
