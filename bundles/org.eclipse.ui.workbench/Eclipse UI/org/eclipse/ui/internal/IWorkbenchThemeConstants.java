@@ -18,6 +18,7 @@ package org.eclipse.ui.internal;
  */
 public interface IWorkbenchThemeConstants {
     public static final String TAB_TEXT_FONT = "org.eclipse.ui.workbench.TAB_TEXT_FONT"; //$NON-NLS-1$    
+    public static final String VIEW_MESSAGE_TEXT_FONT = "org.eclipse.ui.workbench.VIEW_MESSAGE_TEXT_FONT"; //$NON-NLS-1$
     
     public static final String ACTIVE_TAB_TEXT_COLOR = "org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR"; //$NON-NLS-1$
     public static final String INACTIVE_TAB_TEXT_COLOR = "org.eclipse.ui.workbench.INACTIVE_TAB_TEXT_COLOR"; //$NON-NLS-1$
@@ -32,5 +33,5 @@ public interface IWorkbenchThemeConstants {
     public static final String INACTIVE_TAB_PERCENT = "org.eclipse.ui.workbench.INACTIVE_TAB_PERCENT"; //$NON-NLS-1$
 
     public static final String ACTIVE_TAB_VERTICAL = "org.eclipse.ui.workbench.ACTIVE_TAB_VERTICAL"; //$NON-NLS-1$
-    public static final String INACTIVE_TAB_VERTICAL = "org.eclipse.ui.workbench.INACTIVE_TAB_VERTICAL"; //$NON-NLS-1$
+    public static final String INACTIVE_TAB_VERTICAL = "org.eclipse.ui.workbench.INACTIVE_TAB_VERTICAL"; //$NON-NLS-1$    
 }

@@ -44,7 +44,8 @@ public class ColorSchemeService {
                     
                     String property = event.getProperty();
                     if (property.equals(IThemeManager.CHANGE_CURRENT_THEME) 
-                            || property.equals(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END)) {
+                            || property.equals(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END)
+                            || property.equals(IWorkbenchThemeConstants.VIEW_MESSAGE_TEXT_FONT)) {
                         setViewColors(control);                        
                     }
                 }	            
@@ -69,7 +70,8 @@ public class ColorSchemeService {
 	        
 	        
 	    }
-	    control.setBackground(theme.getColorRegistry().get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END));	    
+	    control.setBackground(theme.getColorRegistry().get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END));
+	    control.setFont(theme.getFontRegistry().get(IWorkbenchThemeConstants.VIEW_MESSAGE_TEXT_FONT));
     }
     
 	public static void setTabAttributes(final CTabFolder control) {

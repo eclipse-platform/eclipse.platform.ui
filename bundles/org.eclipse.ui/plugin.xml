@@ -1154,6 +1154,14 @@
             %FontsPreference.TitleFontDescription
          </description>
       </fontDefinition>
+      <fontDefinition
+            label="%FontsPreference.ViewMessageFont"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            id="org.eclipse.ui.workbench.VIEW_MESSAGE_TEXT_FONT">
+         <description>
+            %FontsPreference.ViewMessageFontDescription
+         </description>
+      </fontDefinition>            
       <themeElementCategory
             class="org.eclipse.ui.internal.themes.WorkbenchPreview"
             label="%Presentation.misc.workbench"
