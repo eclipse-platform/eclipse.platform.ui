@@ -908,8 +908,14 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				
 				fCommandQueue= new ProjectionCommandQueue();
 				
-				int topIndex= getTopIndex();
-				Point selection= getSelectedRange();
+				boolean isRedrawing= redraws();
+				int topIndex;
+				if (isRedrawing) {
+					rememberSelection();
+					topIndex= getTopIndex();
+				} else {
+					topIndex= -1;
+				}
 								
 				processDeletions(event, removedAnnotations, true);
 				List coverage= new ArrayList();
@@ -920,8 +926,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				fCommandQueue= null;
 
 				if (commandQueue.passedRedrawCostsThreshold()) {
-					
-					setRedraw(false);
+					if (isRedrawing)
+						setRedraw(false);
 					try {
 						
 						try {
@@ -931,7 +937,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 						}
 						
 					} finally {
-						setRedraw(true, topIndex);
+						if (isRedrawing)
+							setRedraw(true, topIndex);
 					}
 									
 				} else {
@@ -939,7 +946,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 					StyledText textWidget= getTextWidget();
 					
 					try {
-						if (textWidget != null && !textWidget.isDisposed())
+						if (isRedrawing && textWidget != null && !textWidget.isDisposed())
 							textWidget.setRedraw(false);
 						
 						boolean fireRedraw= !commandQueue.passedInvalidationCostsThreshold();
@@ -952,8 +959,10 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 						}
 						
 					} finally {
-						restoreSelection(selection);
-						restoreViewport(topIndex);
+						if (isRedrawing) {
+							restoreSelection();
+							restoreViewport(topIndex);
+						}
 					}
 				}
 				
@@ -962,24 +971,6 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		}
 	}
 
-	private void restoreSelection(Point selection) throws BadLocationException {
-		if (selection.x != -1 && selection.y != -1) {
-			IRegion widgetRange= modelRange2WidgetRange(new Region(selection.x, selection.y));
-			if (widgetRange != null) {
-				setSelectedRange(selection.x, selection.y);
-			} else if (fInformationMapping != null) {
-				// selection got hidden by the folding operation
-				int line= getDocument().getLineOfOffset(selection.x);
-				int imageLine= fInformationMapping.toClosestImageLine(line);
-				int visibleModelLine= fInformationMapping.toOriginLine(imageLine);
-				if (visibleModelLine < line && getVisibleDocument().getNumberOfLines() > imageLine + 1)
-					visibleModelLine= fInformationMapping.toOriginLine(imageLine + 1);
-				int lineOffset= getDocument().getLineOffset(visibleModelLine);
-				setSelectedRange(lineOffset, 0);
-			}
-		}
-	}
-	
 	private void restoreViewport(int topIndex) {
 		StyledText textWidget= getTextWidget();
 		if (textWidget != null && !textWidget.isDisposed()) {
