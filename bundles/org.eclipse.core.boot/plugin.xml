@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <plugin
-  name="Core Boot"
+  name="%pluginName"
   id="org.eclipse.core.boot"
   version="0.9"
   provider-name="Object Technology International, Inc.">

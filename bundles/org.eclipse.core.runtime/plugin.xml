@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin
-  name="Core Runtime"
+  name="%pluginName"
   id="org.eclipse.core.runtime"
   version="0.9"
   provider-name="Object Technology International, Inc.">
@@ -15,7 +15,7 @@
     <import plugin="org.apache.xerces"/>
   </requires>
 
-  <extension-point name="Applications" id="applications"/>
-  <extension-point name="URL Stream Handlers" id="urlHandlers"/>
+  <extension-point name="%applicationsName" id="applications"/>
+  <extension-point name="%handlersName" id="urlHandlers"/>
 
 </plugin>
