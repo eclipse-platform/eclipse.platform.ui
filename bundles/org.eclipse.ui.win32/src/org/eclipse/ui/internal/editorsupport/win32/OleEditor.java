@@ -342,21 +342,21 @@ public class OleEditor extends EditorPart {
 
 	private void handleWord() {
 		OleAutomation dispInterface = new OleAutomation(clientSite);
-			// Get Application
-			int[] appId = dispInterface.getIDsOfNames(new String[]{"Application"});
-			if (appId != null) {
-				Variant pVarResult = dispInterface.getProperty(appId[0]);
-				if (pVarResult != null) {
-					OleAutomation application = pVarResult.getAutomation();
-					int[] dispid = application.getIDsOfNames(new String[] {"DisplayScrollBars"});
-					if (dispid != null) {
-						Variant rgvarg = new Variant(true);
-						boolean result = application.setProperty(dispid[0], rgvarg);
-					}
-					application.dispose();
+		// Get Application
+		int[] appId = dispInterface.getIDsOfNames(new String[]{"Application"});
+		if (appId != null) {
+			Variant pVarResult = dispInterface.getProperty(appId[0]);
+			if (pVarResult != null) {
+				OleAutomation application = pVarResult.getAutomation();
+				int[] dispid = application.getIDsOfNames(new String[] {"DisplayScrollBars"});
+				if (dispid != null) {
+					Variant rgvarg = new Variant(true);
+					boolean result = application.setProperty(dispid[0], rgvarg);
 				}
+				application.dispose();
 			}
-			dispInterface.dispose();
+		}
+		dispInterface.dispose();
 	}
 
 	/* (non-Javadoc)
@@ -548,7 +548,8 @@ public class OleEditor extends EditorPart {
 		if (!oleActivated) {
 			clientSite.doVerb(OLE.OLEIVERB_SHOW);
 			oleActivated = true;
-			if (clientSite.getProgramID().startsWith("Word.Document")){
+			String progId = clientSite.getProgramID();
+			if (progId != null && progId.startsWith("Word.Document")) {  //$NON-NLS-1$
 				handleWord();
 			}
 		}
@@ -561,19 +562,14 @@ public class OleEditor extends EditorPart {
 		resource = file;
 		source = new File(file.getLocation().toOSString());
 	}
-	/*
-	* See if it is one of the known types that use OLE Storage
-	* @return boolean
-	*/
-
+	/**
+	 * See if it is one of the known types that use OLE Storage.
+	 */
 	private static boolean usesStorageFiles(String progID) {
-		if (progID.startsWith("Word.", 0) //$NON-NLS-1$
+		return (progID != null && (progID.startsWith("Word.", 0) //$NON-NLS-1$
 			|| progID.startsWith("MSGraph", 0) //$NON-NLS-1$
 			|| progID.startsWith("PowerPoint", 0) //$NON-NLS-1$
-			|| progID.startsWith("Excel", 0)) //$NON-NLS-1$
-			return true;
-
-		return false;
+			|| progID.startsWith("Excel", 0))); //$NON-NLS-1$
 	}
 
 	/**
@@ -597,11 +593,11 @@ public class OleEditor extends EditorPart {
 		return !sourceDeleted && super.isSaveOnCloseNeeded();
 	}
 
-	/*
-		 * Posts the update code "behind" the running operation.
-		 *
-		 * @param runnable the update code
-		 */
+	/**
+	 * Posts the update code "behind" the running operation.
+	 *
+	 * @param runnable the update code
+	 */
 	private void update(Runnable runnable) {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
