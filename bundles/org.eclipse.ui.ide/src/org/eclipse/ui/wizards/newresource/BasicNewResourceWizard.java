@@ -66,12 +66,29 @@ public IWorkbench getWorkbench() {
  * The <code>BasicNewResourceWizard</code> implementation of this 
  * <code>IWorkbenchWizard</code> method records the given workbench and
  * selection, and initializes the default banner image for the pages
- * by calling <code>initializeDefaultPageImageDescriptor</code>. 
+ * by calling <code>initializeDefaultPageImageDescriptor</code>.
+ * If the given selection is empty but the window's active part is an
+ * editor open on an <code>IFile</code> then use that file as the
+ * selection.
  * Subclasses may extend.
  */
 public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 	this.workbench = workbench;
 	this.selection = currentSelection;
+
+	if (currentSelection.isEmpty()) {
+		// plan B: get selection from IFile of active editor
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window != null) {
+			IWorkbenchPart part = window.getPartService().getActivePart();
+			if (part instanceof IEditorPart) {
+				IEditorInput input = ((IEditorPart) part).getEditorInput();
+				if (input instanceof IFileEditorInput) {
+					this.selection = new StructuredSelection(((IFileEditorInput) input).getFile());
+				}
+			}		
+		}
+	}
 	
 	initializeDefaultPageImageDescriptor();
 }
