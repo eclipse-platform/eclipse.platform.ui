@@ -2,13 +2,13 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.help.appserver">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.help.appserver" id="server" name="server"/>
-   </appInfo>
-   <documentation>
-      Internal extension point to plug in an application server for help and other eclipse plugins.
-   </documentation>
-</annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.help.appserver" id="server" name="server"/>
+      </appInfo>
+      <documentation>
+         Internal extension point to plug in an application server for help and other eclipse plugins.
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -65,8 +65,8 @@
          The following is a sample usage of the support extension point:
 &lt;p&gt;
 &lt;samp&gt;
-&amp;lt;extension id="appserver" name="Tomcat"  point="org.eclipse.help.appserver.server"&amp;gt;
-&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;    &amp;lt;server class="org.eclipse.tomcat.internal.TomcatAppServer" default="true" /&amp;gt; 
+&amp;lt;extension id=&quot;appserver&quot; name=&quot;Tomcat&quot;  point=&quot;org.eclipse.help.appserver.server&quot;&amp;gt;
+&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;    &amp;lt;server class=&quot;org.eclipse.tomcat.internal.TomcatAppServer&quot; default=&quot;true&quot; /&amp;gt; 
 &lt;br&gt;   &amp;lt;/extension&amp;gt;
 &lt;/samp&gt;
 &lt;/p&gt;
@@ -82,6 +82,10 @@
 &lt;tt&gt;org.eclipse.help.internal.appserver.IWebappServer&lt;/tt&gt;
 interface. Methods in that interface control starting and stopping of the application server,
 as well as starting and stopping of a web application.
+
+&lt;p&gt;
+In addition to this, all the web applications running under the provided application server must have access to the Jasper 1 JSP Engine runtime. These libraries are currently shipped with Tomcat 4.0.x drivers (http://jakarta.apache.org).
+&lt;/p&gt;
       </documentation>
    </annotation>
 
