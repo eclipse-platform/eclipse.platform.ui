@@ -64,16 +64,10 @@ public void addView(String viewId) {
 
 	try {
 		// Create the part.
-		IViewReference ref = viewFactory.createView(viewId);
-		IViewPart view = (IViewPart)ref.getPart(true);
-		if(view != null) {
-			ViewSite site = (ViewSite)view.getSite();
-			LayoutPart newPart = site.getPane();		
-			linkPartToPageLayout(viewId, newPart);
-
-			// Add it to the folder.
-			folder.add(newPart);
-		}
+		WorkbenchPartReference ref = (WorkbenchPartReference)viewFactory.createView(viewId);
+		ViewPane newPart = new ViewPane((IViewReference)ref,(WorkbenchPage)ref.getPage());
+		ref.setPane(newPart);
+		folder.add(newPart);
 	} catch (PartInitException e) {
 		// cannot safely open the dialog so log the problem
 		WorkbenchPlugin.log(e.getMessage()) ;

@@ -72,8 +72,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 				setWorkingSet(null);
 			} else if(LayoutPart.PROP_VISIBILITY.equals(property)) {
 				WorkbenchPartReference ref = (WorkbenchPartReference)((PartPane)event.getSource()).getPartReference();
-				IWorkbenchPart part = ref.getPart(true);
-				if(ref == null)
+				IWorkbenchPart part = ref.getPart(Boolean.TRUE.equals(event.getNewValue()));
+				if(ref == null || part == null)
 					return;
 				if(Boolean.TRUE.equals(event.getNewValue()))
 					partListeners.firePartVisible(part);

@@ -110,9 +110,7 @@ public void addFastView(String id, float ratio) {
 	if (id != null) {
 		try {
 			IViewReference ref = viewFactory.createView(id);
-			IViewPart view = (IViewPart)ref.getPart(true);
-			if(view != null)
-				fastViews.add(view);
+			fastViews.add(ref);
 			if(ratio >= IPageLayout.RATIO_MIN && ratio <= IPageLayout.RATIO_MAX)
 				mapFastViewToWidthRatio.put(id, new Float(ratio));
 		} catch(PartInitException e) {
@@ -213,7 +211,7 @@ public void addView(String viewId, int relationship, float ratio, String refId) 
 		return true;
 	}
 	for(int i = 0; i<fastViews.size(); i++) {
-		if(((IViewPart)fastViews.get(i)).getSite().getId().equals(partId))
+		if(((IViewReference)fastViews.get(i)).getId().equals(partId))
 			return true;
 	}
 	
@@ -262,14 +260,10 @@ private LayoutPart createView(String partID)
 	if (partID.equals(ID_EDITOR_AREA)) {
 		return editorFolder;
 	} else {
-		IViewReference ref = viewFactory.createView(partID);
-		IViewPart view = (IViewPart)ref.getPart(true);
-		if(view == null) {
-			String message = WorkbenchMessages.format("Perspective.exceptionRestoringView",new String[]{ref.getId()}); //$NON-NLS-1$
-			throw new PartInitException(message);
-		}
-		ViewSite site = (ViewSite)view.getSite();
-		return site.getPane();
+		WorkbenchPartReference ref = (WorkbenchPartReference)viewFactory.createView(partID);
+		ViewPane newPart = new ViewPane((IViewReference)ref,(WorkbenchPage)ref.getPage());
+		ref.setPane(newPart);
+		return newPart;
 	}
 }
 /**
