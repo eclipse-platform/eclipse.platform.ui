@@ -4,18 +4,20 @@
  */
 package org.eclipse.help.internal.toc;
 import java.io.*;
-import org.eclipse.help.ITopic;
+
+import org.eclipse.help.*;
 import org.eclipse.help.internal.util.XMLGenerator;
+
 /**
  * This generates the XML file for the help navigation.
  */
 public class TocWriter extends XMLGenerator {
-	protected Toc toc;
+	protected IToc toc;
 	/**
 	 * @param toc Toc
 	 * @param writer java.io.Writer
 	 */
-	public TocWriter(Toc toc, Writer writer) {
+	public TocWriter(IToc toc, Writer writer) {
 		super(writer);
 		this.toc = toc;
 	}
@@ -23,7 +25,7 @@ public class TocWriter extends XMLGenerator {
 	 * @param toc Toc
 	 * @param outputFile java.io.File
 	 */
-	public TocWriter(Toc toc, File outputFile) {
+	public TocWriter(IToc toc, File outputFile) {
 		super(outputFile);
 		this.toc = toc;
 	}
