@@ -20,9 +20,11 @@ package org.eclipse.core.runtime;
  * need to retain an object must be aware that it may become invalid if the 
  * declaring plug-in is updated or uninstalled. If this happens, all methods except 
  * {@link #isValid()} will throw an {@link org.eclipse.core.runtime.InvalidRegistryObjectException}.
- *  Clients may check for invalid objects by calling {@link #isValid()}.
+ * Clients may check for invalid objects by calling {@link #isValid()}.
  * More generally, clients may registry a listener with the extension registry to receive
  * notification of changes.
+ * Due to the concurrent nature of eclipse, an isValid() check does not save you from the exception 
+ * checks, since the object you are using can be uninstalled while you are processing it.
  * 
  * A plug-in declaring that it is not dynamic aware can ignore the InvalidRegistryObjectExceptions.
  * 
