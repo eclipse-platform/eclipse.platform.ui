@@ -573,7 +573,7 @@ public class HistoryView extends ViewPart {
 	 */
 	void initDragAndDrop() {
 		int ops = DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK;
-		Transfer[] transfers = new Transfer[] {ResourceTransfer.getInstance()};
+		Transfer[] transfers = new Transfer[] {ResourceTransfer.getInstance(), CVSResourceTransfer.getInstance()};
 		tableViewer.addDropSupport(ops, transfers, new HistoryDropAdapter(tableViewer, this));
 	}
 	private void fillTableMenu(IMenuManager manager) {

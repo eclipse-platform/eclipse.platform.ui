@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.ui.part.ResourceTransfer;
 
 public class HistoryDropAdapter extends ViewerDropAdapter {
@@ -49,15 +50,23 @@ public class HistoryDropAdapter extends ViewerDropAdapter {
 	}
 	public boolean performDrop(Object data) {
 		if (data == null) return false;
-		IResource[] sources = (IResource[])data;
-		if (sources.length == 0) return false;
-		IResource resource = sources[0];
-		if (!(resource instanceof IFile)) return false;
-		view.showHistory(resource, true /* fetch */);
-		return true;
+		if(data instanceof IResource[]) {
+            IResource[] sources = (IResource[])data;
+    		if (sources.length == 0) return false;
+    		IResource resource = sources[0];
+    		if (!(resource instanceof IFile)) return false;
+    		view.showHistory(resource, true /* fetch */);
+    		return true;
+        } else if( data instanceof ICVSRemoteFile) {
+            view.showHistory((ICVSRemoteFile) data, true /* fetch */);
+            return true;
+        }
+        return false;
 	}
 	public boolean validateDrop(Object target, int operation, TransferData transferType) {
-		if (transferType != null && ResourceTransfer.getInstance().isSupportedType(transferType)) {
+        if (transferType != null && 
+            (ResourceTransfer.getInstance().isSupportedType(transferType) ||
+             CVSResourceTransfer.getInstance().isSupportedType(transferType))) {
 			return true;
 		}
 		return false;

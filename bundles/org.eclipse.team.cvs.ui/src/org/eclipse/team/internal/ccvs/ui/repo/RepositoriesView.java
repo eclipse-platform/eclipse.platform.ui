@@ -26,6 +26,10 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
@@ -37,6 +41,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
+import org.eclipse.team.internal.ccvs.ui.CVSResourceTransfer;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
@@ -97,6 +102,45 @@ public class RepositoriesView extends RemoteViewPart {
 			});
 		}
 	};
+    
+    private static final class RepositoryDragSourceListener implements DragSourceListener {
+        private IStructuredSelection selection;
+
+        public void dragStart(DragSourceEvent event) {
+            if(selection!=null) {            
+                final Object[] array = selection.toArray();
+                // event.doit = Utils.getResources(array).length > 0;
+                for (int i = 0; i < array.length; i++) {
+                    if (array[i] instanceof ICVSRemoteFile) {
+                        event.doit = true;
+                        return;
+                    }
+                }
+                event.doit = false;
+            }
+        }
+
+        public void dragSetData(DragSourceEvent event) {
+            if (selection!=null && CVSResourceTransfer.getInstance().isSupportedType(event.dataType)) {
+                final Object[] array = selection.toArray();
+                for (int i = 0; i < array.length; i++) {
+                    if (array[i] instanceof ICVSRemoteFile) {
+                        event.data = array[i];
+                        return;
+                    }
+                }
+            }
+        }
+        
+        public void dragFinished( DragSourceEvent event) {
+        }
+
+        public void updateSelection( IStructuredSelection selection) {
+            this.selection = selection;
+        }
+    }
+    
+    RepositoryDragSourceListener repositoryDragSourceListener;
 	
 	/**
 	 * Constructor for RepositoriesView.
@@ -247,6 +291,11 @@ public class RepositoriesView extends RemoteViewPart {
 				handleChange(selection);	
 			}			
 		});
+        
+        repositoryDragSourceListener = new RepositoryDragSourceListener();
+        viewer.addDragSupport( DND.DROP_LINK | DND.DROP_DEFAULT, 
+                new Transfer[] { CVSResourceTransfer.getInstance()}, 
+                repositoryDragSourceListener);
 	}
 	
 	/**
@@ -323,5 +372,8 @@ public class RepositoriesView extends RemoteViewPart {
 		removeRootAction.updateSelection(selection);
 		removeDateTagAction.updateSelection(selection);
 		removeAction.setEnabled(removeRootAction.isEnabled() || removeDateTagAction.isEnabled());
+        
+        repositoryDragSourceListener.updateSelection(selection);
 	}
+    
 }
