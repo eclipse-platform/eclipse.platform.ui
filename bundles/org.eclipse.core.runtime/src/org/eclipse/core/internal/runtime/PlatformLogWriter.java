@@ -8,19 +8,18 @@ package org.eclipse.core.internal.runtime;
 import java.io.*;
 import java.util.*;
 
-import org.apache.xml.serialize.XMLSerializer;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributesImpl;
+/**
+ * A log writer that writes log entries in XML format.  
+ * See PlatformLogReader for reading logs back into memory.
+ */
+public class PlatformLogWriter implements ILogListener {
+	protected File logFile = null;
+	protected PrintWriter log = null;
+	protected int tabDepth;
 
-class PlatformLogWriter implements ILogListener {
-	private PrintWriter log = null;
-	private boolean usingLogFile = false;
-	private int tab;
-
-	private static final String XML_VERSION = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+	protected static final String XML_VERSION = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 
 	protected static final String ATTRIBUTE_DATE = "date";
 	protected static final String ATTRIBUTE_SEVERITY = "severity";
@@ -34,20 +33,18 @@ class PlatformLogWriter implements ILogListener {
 	protected static final String ELEMENT_STATUS = "status";
 	protected static final String ELEMENT_EXCEPTION = "exception";
 
-
-	
-PlatformLogWriter() {
-	usingLogFile = true;
+public PlatformLogWriter(File file) {
+	this.logFile = file;
 	// remove old log file
-	InternalPlatform.getMetaArea().getLogLocation().toFile().delete();
+	logFile.delete();
 }
 /**
- * It should only be used to pass System.out .
+ * This constructor should only be used to pass System.out .
  */
-PlatformLogWriter(OutputStream out) {
+public PlatformLogWriter(OutputStream out) {
 	log = new PrintWriter(out);
 }
-private static void appendEscapedChar(StringBuffer buffer, char c) {
+protected static void appendEscapedChar(StringBuffer buffer, char c) {
 	String replacement = getReplacement(c);
 	if (replacement != null) {
 		buffer.append('&');
@@ -57,13 +54,13 @@ private static void appendEscapedChar(StringBuffer buffer, char c) {
 		buffer.append(c);
 	}
 }
-public static String getEscaped(String s) {
+protected static String getEscaped(String s) {
 	StringBuffer result = new StringBuffer(s.length() + 10);
 	for (int i = 0; i < s.length(); ++i)
 		appendEscapedChar(result, s.charAt(i));
 	return result.toString();
 }
-private static String getReplacement(char c) {
+protected static String getReplacement(char c) {
 	// Encode special XML characters into the equivalent character references.
 	// These five are defined by default for all XML documents.
 	switch (c) {
@@ -80,7 +77,7 @@ private static String getReplacement(char c) {
 	}
 	return null;
 }
-private void closeLogFile() {
+protected void closeLogFile() {
 	try {
 		log.flush();
 		log.close();
@@ -113,13 +110,13 @@ protected String encodeStackTrace(Throwable t) {
 	pWriter.flush();
 	return sWriter.toString();
 }
-public void endTag(String name) {
-	tab--;
+protected void endTag(String name) {
+	tabDepth--;
 	printTag('/' + name, null);
 }
 public synchronized void logging(IStatus status, String plugin) {
 	// thread safety: (Concurrency003)
-	if (usingLogFile)
+	if (logFile != null)
 		openLogFile();
 	if (log == null)
 		return;
@@ -128,11 +125,11 @@ public synchronized void logging(IStatus status, String plugin) {
 	} catch (Exception e) {
 		e.printStackTrace();
 	}finally {
-		if (usingLogFile)
+		if (logFile != null)
 			closeLogFile();
 	}
 }
-private void openLogFile() {
+protected void openLogFile() {
 	try {
 		File file = InternalPlatform.getMetaArea().getLogLocation().toFile();
 		boolean newLog = !file.exists();
@@ -146,16 +143,16 @@ private void openLogFile() {
 		log = new PrintWriter(System.out);
 	}
 }
-public void printTabulation() {
-	for (int i = 0; i < tab; i++)
+protected void printTabulation() {
+	for (int i = 0; i < tabDepth; i++)
 		log.print("  ");
 }
 
-public void printTag(String name, HashMap parameters) {
+protected void printTag(String name, HashMap parameters) {
 	printTabulation();
 	log.print('<');
 	log.print(name);
-	tab++;
+	tabDepth++;
 	if (parameters != null)
 		for (Enumeration enum = Collections.enumeration(parameters.keySet()); enum.hasMoreElements();) {
 			//new line for each attribute if there's more than one
@@ -170,20 +167,20 @@ public void printTag(String name, HashMap parameters) {
 			log.print(getEscaped(String.valueOf(parameters.get(key))));
 			log.print("\"");
 		}
-	tab--;
+	tabDepth--;
 	log.println(">");
 }
-
 /**
  * @see ILogListener
  */
 public synchronized void shutdown() {
-	if (usingLogFile) {
+	if (logFile != null) {
 		try {
 			openLogFile();
 			endTag(ELEMENT_LOG);
 		} finally {
 			closeLogFile();
+			logFile = null;
 		}
 	} else {
 		if (log != null) {
@@ -194,11 +191,11 @@ public synchronized void shutdown() {
 		}
 	}
 }
-public void startTag(String name, HashMap parameters) {
+protected void startTag(String name, HashMap parameters) {
 	printTag(name, parameters);
-	tab++;
+	tabDepth++;
 }
-protected void write(Throwable throwable) throws SAXException {
+protected void write(Throwable throwable) {
 	if (throwable == null)
 		return;
 	HashMap attributes = new HashMap();
@@ -207,7 +204,7 @@ protected void write(Throwable throwable) throws SAXException {
 	startTag(ELEMENT_EXCEPTION, attributes);
 	endTag(ELEMENT_EXCEPTION);
 }
-protected void write(IStatus status) throws SAXException {
+protected void write(IStatus status) {
 	HashMap attributes = new HashMap();
 	attributes.put(ATTRIBUTE_SEVERITY, encodeSeverity(status.getSeverity()));
 	attributes.put(ATTRIBUTE_PLUGIN_ID, status.getPlugin());
@@ -224,15 +221,13 @@ protected void write(IStatus status) throws SAXException {
 	}
 	endTag(ELEMENT_STATUS);
 }
-protected void writeLogEntry(IStatus status) throws SAXException {
-	tab = 0;
+protected void writeLogEntry(IStatus status) {
+	tabDepth = 0;
 	HashMap attributes = new HashMap();
 	attributes.put(ATTRIBUTE_DATE, new Date());
 	startTag(ELEMENT_LOG_ENTRY, attributes);
-	tab = 1;
 	write(status);
 	endTag(ELEMENT_LOG_ENTRY);
-	tab = 0;
 }
 }
 

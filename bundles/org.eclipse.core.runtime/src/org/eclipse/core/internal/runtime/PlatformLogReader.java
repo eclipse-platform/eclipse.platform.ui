@@ -14,7 +14,7 @@ import org.xml.sax.SAXException;
  * General strategy: log entries that are malformed in any way are skipped, and an extra
  * status is returned mentioned that there were problems.
  */
-class PlatformLogReader {
+public class PlatformLogReader {
 	/**
 	 * Temporary main class for testing...
 	 */
@@ -168,7 +168,6 @@ protected IStatus readStatus(Node node) {
 			children.add(o);
 		} else if (o instanceof Throwable) {
 			exception = (Throwable)o;
-			exception.printStackTrace();
 		}
 	}
 	if (children.size() > 0) {
