@@ -197,9 +197,13 @@ public class SubscriberEventHandler {
 		};
 		eventHandlerJob.addJobChangeListener(new JobChangeAdapter() {
 			public void done(IJobChangeEvent event) {
-				// Make sure an unhandled event didn't squeak in.
-				if (hasUnprocessedEvents()) {
+				// Make sure an unhandled event didn't squeak in unless we are shutdown
+				if (shutdown == false && hasUnprocessedEvents()) {
 					schedule();
+				} else {
+					synchronized(this) {
+						awaitingProcessing.clear();
+					}
 				}
 			}
 		});
