@@ -31,6 +31,7 @@ public class CVSLocalSyncElement extends LocalSyncElement {
 		try {
 			this.cvsResource = folder.getChild(local.getFullPath().removeFirstSegments(1).toString());
 		} catch(CVSException e) {
+			// XXX when should this fail - and what does it mean?
 			this.cvsResource = null;
 		}
 	}
@@ -106,4 +107,19 @@ public class CVSLocalSyncElement extends LocalSyncElement {
 	 public IManagedResource getCVSResource() {
 	 	return cvsResource;
 	 }	 
+	/*
+	 * @see LocalSyncElement#isIgnored(IResource)
+	 */
+	protected boolean isIgnored(IResource child) {
+		if(cvsResource==null || !cvsResource.isFolder() ) {
+			return false;
+		} else {
+			try {
+				IManagedResource managedChild = ((IManagedFolder)cvsResource).getChild(child.getName());
+				return managedChild.isIgnored();
+			} catch(CVSException e) {
+				return false;		
+			}
+		}
+	}
 }

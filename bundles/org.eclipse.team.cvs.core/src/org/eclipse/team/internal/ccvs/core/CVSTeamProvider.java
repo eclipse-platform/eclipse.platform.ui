@@ -84,11 +84,6 @@ import org.eclipse.team.internal.ccvs.core.util.ProjectDescriptionManager;
  */
 public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 
-	// Type related static variables
-	private static final String ID = CVSProviderPlugin.ID;
-	private static final String VERSION = "1.0";
-	public static final QualifiedName TYPE = new QualifiedName(ID, VERSION);
-
 	// Instance variables
 	private IManagedFolder managedProject;
 	private IProject project;
@@ -166,13 +161,6 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		CVSProviderPlugin.getProvider().importAndCheckout(project, configuration, Policy.monitorFor(null));
 	}
 			
-	/**
-	 * @see ITeamProvider#getType()
-	 */
-	public QualifiedName getType() {
-		return TYPE;
-	}
-	
 	/*
 	 * Build the repository instance from the given properties.
 	 * The supported properties are:
@@ -742,6 +730,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	
 	/**
 	 * @see ITeamProvider#hasRemote(IResource)
+	 * XXX to be removed when sync methods are removed from ITeamProvider
 	 */
 	public boolean hasRemote(IResource resource) {
 		try {
@@ -765,10 +754,12 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			CVSProviderPlugin.log(e);
 			return false;
 		}
+		
 	}
 	
 	/**
 	 * @see ITeamProvider#isLocallyCheckedOut(IResource)
+ 	 * XXX to be removed when sync methods are removed from ITeamProvider
 	 */
 	public boolean isCheckedOut(IResource resource) {
 		// check to see if the resource exists and has an entry
@@ -790,6 +781,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	
 	/**
 	 * @see ITeamSynch#isDirty(IResource)
+	 * XXX to be removed when sync methods are removed from ITeamProvider
 	 */
 	public boolean isDirty(IResource resource) {
 		try {
@@ -820,14 +812,6 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			
 		// Get the IManagedResource corresponding to the resource and check if its managed
 		return getChild(resource).showManaged();
-	}
-	
-	/**
-	 * @see ITeamSynch#isOutOfDate(IResource)
-	 */
-	public boolean isOutOfDate(IResource resource) {
-		// NOTE: For now, we'll just say we aren't but we'll need to fix this
-		return false;
 	}
 	
 	/**
@@ -1076,6 +1060,13 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		monitor = Policy.monitorFor(monitor);
 		monitor.subTask(Policy.bind("CVSTeamProvider.snapshot"));
 		ResourcesPlugin.getWorkspace().save(false, monitor);
+	}
+	/*
+	 * @see ITeamProvider#isOutOfDate(IResource)
+	 * XXX to be removed when sync methods are removed from ITeamProvider
+	 */
+	public boolean isOutOfDate(IResource resource) {
+		return false;
 	}
 }
 

@@ -142,7 +142,9 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 					localChild =	getResourceChild(local /* parent */, keyChildName, isContainer);
 				}
 
-				syncChildren.add(create(localChild, baseChild, remoteChild, getData()));
+				if(!localChild.exists() || !isIgnored(localChild)) {
+					syncChildren.add(create(localChild, baseChild, remoteChild, getData()));
+				}
 			}
 			return (IRemoteSyncElement[]) syncChildren.toArray(new IRemoteSyncElement[syncChildren.size()]);
 		}

@@ -135,4 +135,10 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 	public ILocalSyncElement create(IResource local, IRemoteResource base, Object data) {
 		return localSync.create(local, base, data);
 	}
+	/*
+	 * @see LocalSyncElement#isIgnored(IResource)
+	 */
+	protected boolean isIgnored(IResource resource) {
+		return localSync.isIgnored(resource);
+	}
 }

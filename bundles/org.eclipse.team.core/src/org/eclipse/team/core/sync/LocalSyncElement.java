@@ -41,6 +41,17 @@ public abstract class LocalSyncElement implements ILocalSyncElement {
 	 * @return client specific data that will be passed to create.
 	 */
 	protected abstract Object getData();
+	
+	/**
+	 * Client can decide is a specific element should be ignored from this sync element's
+	 * children.
+	 * 
+	 * @param resource the resource to be queried.
+	 * 
+	 * @return <code>true</code> if this element should be ignored and not considered an 
+	 * immediate child of this element, and <code>false</code> otherwise.
+	 */
+	protected abstract boolean isIgnored(IResource resource);
 
 	/*
 	 * @see ILocalSyncElement#getSyncKind(int, IProgressMonitor)
@@ -78,7 +89,9 @@ public abstract class LocalSyncElement implements ILocalSyncElement {
 					IResource iResource = members[i];
 					// the base is initialy set to null, however the concrete subclass should
 					// initialize the base if one is available.
-					syncElements.add(create(iResource, null, getData()));
+					if(!isIgnored(iResource)) {
+						syncElements.add(create(iResource, null, getData()));
+					}
 				}
 				return (ILocalSyncElement[]) syncElements.toArray(new ILocalSyncElement[syncElements.size()]);		
 			} else {
