@@ -7,6 +7,7 @@
 <% 
 	WorkingSetData data = new WorkingSetData(application, request);
 	WebappPreferences prefs = data.getPrefs();
+	boolean isEditMode = "edit".equals(data.getOperation());
 %>
 
 
@@ -130,7 +131,7 @@ function doSubmit()
 	<table id="wsTable" width="100%" cellspacing=0 cellpading=0 border=0 align=center >
 		<tr><td style="padding:0px 10px;"><%=WebappResources.getString("WorkingSetName", request)%>
 		</td></tr>
-		<tr><td style="padding:0px 10px;"><input type="text" id="workingSet" name="workingSet" value='<%=data.getWorkingSetName()%>' maxlength=256 alt='<%=WebappResources.getString("WorkingSetName", request)%>'>
+		<tr><td style="padding:0px 10px;"><input type="text" id="workingSet" name="workingSet" value='<%=isEditMode?data.getWorkingSetName():""%>' maxlength=256 alt='<%=WebappResources.getString("WorkingSetName", request)%>'>
         </td></tr>
         
     </table>
@@ -145,7 +146,7 @@ TocData tocData = new TocData(application, request);
 for (int i=0; i<tocData.getTocCount(); i++)
 {
 	String label = tocData.getTocLabel(i);
-	String checked = data.isTocIncluded(tocData.getTocHref(i)) ? "checked" : "";
+	String checked =isEditMode && data.isTocIncluded(tocData.getTocHref(i)) ? "checked" : "";
 %>
 				<div class="book"><input class="checkbox" type="checkbox" name='<%=tocData.getTocHref(i)%>' alt="<%=label%>" <%=checked%>><%=label%></div>
 <%

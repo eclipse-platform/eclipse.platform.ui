@@ -98,7 +98,7 @@ var w = 300;
 var h = 300;
 
 function newWorkingSet() {
-	workingSetDialog = window.open("workingSet.jsp?operation=add&workingSet=", "workingSetDialog", "resizeable=no,height="+h+",width="+w );
+	workingSetDialog = window.open("workingSet.jsp?operation=add&workingSet="+getWorkingSet(), "workingSetDialog", "resizeable=no,height="+h+",width="+w );
 	workingSetDialog.focus(); 
 }
 
@@ -147,7 +147,6 @@ for (int i=0; i<wsets.length; i++)
 	<td align='left' class='label' nowrap style="width:100%; padding-left:5px;">
 		<a id='a<%=i%>' 
 		   href='#' 
-		   onfocus="highlightTopic(this)"
 		   onclick="document.getElementById('selectws').checked = true;"
    		   ondblclick="selectWorkingSet()"
 		   onkeydown="if (event.keyCode == 13) selectWorkingSet();"
