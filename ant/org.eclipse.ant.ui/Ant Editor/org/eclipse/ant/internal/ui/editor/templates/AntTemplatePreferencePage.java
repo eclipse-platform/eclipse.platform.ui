@@ -12,7 +12,7 @@
 package org.eclipse.ant.internal.ui.editor.templates;
 
 import org.eclipse.ant.internal.ui.editor.formatter.FormattingPreferences;
-import org.eclipse.ant.internal.ui.editor.formatter.XmlDocumentFormatter;
+import org.eclipse.ant.internal.ui.editor.formatter.XmlFormatter;
 import org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
@@ -34,7 +34,6 @@ import org.eclipse.ui.texteditor.templates.TemplatePreferencePage;
  */
 public class AntTemplatePreferencePage extends TemplatePreferencePage {
 
-	private XmlDocumentFormatter fFormatter= new XmlDocumentFormatter();
 	private FormattingPreferences fFormattingPreferences= new FormattingPreferences();
 	
     public AntTemplatePreferencePage() {
@@ -90,7 +89,7 @@ public class AntTemplatePreferencePage extends TemplatePreferencePage {
 			TemplatePersistenceData data= (TemplatePersistenceData) selection.getFirstElement();
 			Template template= data.getTemplate();
 			if (AntUIPlugin.getDefault().getPreferenceStore().getBoolean(getFormatterPreferenceKey())) {
-				String formatted= fFormatter.format(template.getPattern(),fFormattingPreferences);
+				String formatted= XmlFormatter.format(template.getPattern(), fFormattingPreferences);
 				viewer.getDocument().set(formatted);
 			} else {
 				viewer.getDocument().set(template.getPattern());

@@ -12,7 +12,9 @@
 package org.eclipse.ant.internal.ui.editor.templates;
 
 import org.eclipse.ant.internal.ui.editor.formatter.FormattingPreferences;
-import org.eclipse.ant.internal.ui.editor.formatter.XmlDocumentFormatter;
+import org.eclipse.ant.internal.ui.editor.formatter.XmlFormatter;
+import org.eclipse.ant.internal.ui.model.AntUIPlugin;
+import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.swt.widgets.Shell;
 
@@ -46,9 +48,9 @@ public class AntSourceViewerInformationControl extends DefaultInformationControl
 	 * @see org.eclipse.jface.text.IInformationControl#setInformation(java.lang.String)
 	 */
 	public void setInformation(String content) {
-		if (content != null) {
-			XmlDocumentFormatter formatter= new XmlDocumentFormatter();
-			content= formatter.format(content, new FormattingPreferences());
+		if (content != null 
+			&& AntUIPlugin.getDefault().getPreferenceStore().getBoolean(AntEditorPreferenceConstants.TEMPLATES_USE_CODEFORMATTER)) {
+			content= XmlFormatter.format(content, new FormattingPreferences());
 		}
 		super.setInformation(content);
 	}
