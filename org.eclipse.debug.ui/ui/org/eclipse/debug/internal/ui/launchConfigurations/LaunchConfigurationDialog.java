@@ -30,6 +30,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.PixelConverter;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.DebugUITools;
@@ -124,7 +125,16 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	private SashForm fSashForm;
 	
-	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] {1, 3};
+	/**
+	 * Default weights for the SashForm that specify how wide the selection and
+	 * edit areas aree relative to each other.
+	 */
+	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] {11, 30};
+	
+	/**
+	 * The launch configuration selection area.
+	 */
+	private Composite fSelectionArea;	
 	
 	/**
 	 * The launch configuration edit area.
@@ -274,6 +284,12 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * The height in pixels of this dialog's progress indicator
 	 */
 	private static int PROGRESS_INDICATOR_HEIGHT = 18;
+
+	/**
+	 * Constant specifying how wide this dialog is allowed to get (as a percentage of
+	 * total available screen width) as a result of tab labels in the edit area.
+	 */
+	private static final float MAX_DIALOG_WIDTH_PERCENT = 0.75f;
 
 	/**
 	 * Empty array
@@ -427,11 +443,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	protected Control createContents(Composite parent) {
 		Control contents = super.createContents(parent);
+		initializeSashForm();
 		createContextMenu(getTreeViewer().getControl());
 		getLaunchManager().addLaunchConfigurationListener(this);
 		initializeBounds();
 		doInitialTreeSelection();
-		//initializeSashForm();
 		return contents;
 	}
 
@@ -495,13 +511,13 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	protected void persistShellGeometry() {
 		Point shellLocation = getShell().getLocation();
 		Point shellSize = getShell().getSize();
-		//int[] sashWeights = getSashForm().getWeights();
+		int[] sashWeights = getSashForm().getWeights();
 		String locationString = serializeCoords(shellLocation);
 		String sizeString = serializeCoords(shellSize);
-		//String sashWeightString = serializeCoords(new Point(sashWeights[0], sashWeights[1]));
+		String sashWeightString = serializeCoords(new Point(sashWeights[0], sashWeights[1]));
 		getPreferenceStore().setValue(IDebugPreferenceConstants.PREF_LAUNCH_CONFIGURATION_DIALOG_LOCATION, locationString);
 		getPreferenceStore().setValue(IDebugPreferenceConstants.PREF_LAUNCH_CONFIGURATION_DIALOG_SIZE, sizeString);
-		//getPreferenceStore().setValue(IDebugPreferenceConstants.PREF_LAUNCH_CONFIGURATION_DIALOG_SASH_WEIGHTS, sashWeightString);
+		getPreferenceStore().setValue(IDebugPreferenceConstants.PREF_LAUNCH_CONFIGURATION_DIALOG_SASH_WEIGHTS, sashWeightString);
 	}
 	
 	/**
@@ -626,33 +642,31 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		setMessage(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Ready_to_launch_2")); //$NON-NLS-1$
 		setModeLabelState();
 
-		/*
+		// Create the SashForm that contains the selection area on the left,
+		// and the edit area on the right
 		setSashForm(new SashForm(topComp, SWT.NONE));
 		getSashForm().setOrientation(SWT.HORIZONTAL);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
 		getSashForm().setLayoutData(gd);
-		*/
-
-		// Build the launch configuration selection area
-		// and put it into the composite.
-		//Composite launchConfigSelectionArea = createLaunchConfigurationSelectionArea(getSashForm());
-		Composite launchConfigSelectionArea = createLaunchConfigurationSelectionArea(topComp);
+		
+		// Build the launch configuration selection area and put it into the composite.
+		Composite launchConfigSelectionArea = createLaunchConfigurationSelectionArea(getSashForm());
 		gd = new GridData(GridData.FILL_VERTICAL);
 		launchConfigSelectionArea.setLayoutData(gd);
 	
-		// Build the launch configuration edit area
-		// and put it into the composite.
-		//Composite editAreaComp = createLaunchConfigurationEditArea(getSashForm());
-		Composite editAreaComp = createLaunchConfigurationEditArea(topComp);
+		// Build the launch configuration edit area and put it into the composite.
+		Composite editAreaComp = createLaunchConfigurationEditArea(getSashForm());
 		gd = new GridData(GridData.FILL_BOTH);
 		editAreaComp.setLayoutData(gd);
 			
-		// Build the separator line
+		// Build the separator line that demarcates the button bar
 		Label separator = new Label(topComp, SWT.HORIZONTAL | SWT.SEPARATOR);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		separator.setLayoutData(gd);
+		
+		dialogComp.layout(true);
 		
 		return dialogComp;
 	}
@@ -875,8 +889,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */ 
 	protected Composite createLaunchConfigurationSelectionArea(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
+		setSelectionArea(comp);
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+		layout.numColumns = 3;
 		layout.marginHeight = 0;
 		layout.marginWidth = 5;
 		comp.setLayout(layout);
@@ -884,12 +899,12 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		Label treeLabel = new Label(comp, SWT.NONE);
 		treeLabel.setText("Launch Con&figurations:");
 		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
+		gd.horizontalSpan = 3;
 		treeLabel.setLayoutData(gd);
 		
 		TreeViewer tree = new TreeViewer(comp);
 		gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 2;
+		gd.horizontalSpan = 3;
 		// Set width hint to 0 to force tree to only be as wide as the combined
 		// width of the 'New' & 'Delete' buttons.  Otherwise tree wants to be much wider.
 		gd.widthHint = 0;
@@ -910,11 +925,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		
 		Button newButton = SWTUtil.createPushButton(comp, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Ne&w_13"), null); //$NON-NLS-1$
 		setButtonActionNew(new ButtonActionNew(newButton.getText(), newButton));
-		((GridData)newButton.getLayoutData()).grabExcessHorizontalSpace = true;
 		
 		Button deleteButton = SWTUtil.createPushButton(comp, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Dele&te_14"), null); //$NON-NLS-1$
 		setButtonActionDelete(new ButtonActionDelete(deleteButton.getText(), deleteButton));
-		((GridData)deleteButton.getLayoutData()).grabExcessHorizontalSpace = true;
 		
 		setButtonActionDuplicate(new ButtonActionDuplicate(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Duplicate_1"), null)); //$NON-NLS-1$
 		
@@ -930,15 +943,22 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * @return the composite used for launch configuration editing
 	 */ 
 	protected Composite createLaunchConfigurationEditArea(Composite parent) {
-		Composite comp = new Composite(parent, SWT.NONE);
+		Composite outerComp = new Composite(parent, SWT.NONE);
+		GridLayout outerCompLayout = new GridLayout();
+		outerCompLayout.numColumns = 1;
+		outerCompLayout.marginHeight = 0;
+		outerCompLayout.marginWidth = 0;
+		outerComp.setLayout(outerCompLayout);
+		
+		Composite comp = new Composite(outerComp, SWT.NONE);
 		setEditArea(comp);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginHeight = 0;
 		layout.marginWidth = 5;
-		comp.setLayout(layout);
-		
-		GridData gd;
+		comp.setLayout(layout);		
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		comp.setLayoutData(gd);
 		
 		Label nameLabel = new Label(comp, SWT.HORIZONTAL | SWT.LEFT);
 		nameLabel.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.&Name__16")); //$NON-NLS-1$
@@ -1012,7 +1032,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			}
 		});
 		
-		return comp;
+		return outerComp;
 	}	
 	
 	/**
@@ -1432,17 +1452,19 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  	 * launch configuration type.
  	 */
  	protected void showTabsForConfigType(ILaunchConfigurationType configType) {		
+ 		
+ 		// Don't do any work if the current tabs are for the current config type
  		if (getTabType() != null && getTabType().equals(configType)) {
  			return;
  		}
  		
- 		// avoid flicker
+ 		// Avoid flicker
  		getEditArea().setVisible(false);
  		
-		// dispose the current tabs
+		// Dispose the current tabs
 		disposeExistingTabs();
 
-		// build the new tabs
+		// Build the new tabs
  		ILaunchConfigurationTabGroup group = null;
  		try {
 	 		group = createGroup(configType);
@@ -1452,6 +1474,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		}
  		
  		// Create the Control for each tab, and determine the maximum tab dimensions
+ 		PixelConverter pixelConverter = new PixelConverter(getTabFolder());
+ 		int runningTabWidth = 0;
  		ILaunchConfigurationTab[] tabs = group.getTabs();
  		Point contentSize = new Point(0, 0);
  		for (int i = 0; i < tabs.length; i++) {
@@ -1461,7 +1485,12 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  				name = LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.unspecified_28"); //$NON-NLS-1$
  			}
  			tab.setText(name);
- 			tab.setImage(tabs[i].getImage());
+ 			Image image = tabs[i].getImage();
+ 			tab.setImage(image);
+ 			runningTabWidth += pixelConverter.convertWidthInCharsToPixels(name.length() + 5);
+ 			if (image != null) {
+	 			runningTabWidth += image.getBounds().width;
+ 			}
  			tabs[i].createControl(tab.getParent());
  			Control control = tabs[i].getControl();
  			if (control != null) {
@@ -1475,6 +1504,20 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 			}
  			}
  		}
+ 		
+ 		// Determine if more space is needed to show all tab labels across the top of the
+ 		// tab folder.  If so, only increase size of dialog to some percent of the available
+ 		// screen real estate.
+		if (runningTabWidth > contentSize.x) {
+			int maxAllowedWidth = (int) (getDisplay().getBounds().width * MAX_DIALOG_WIDTH_PERCENT);
+			int otherWidth = getSashForm().SASH_WIDTH + getSelectionArea().getBounds().width;
+			int totalWidth = runningTabWidth + otherWidth;
+			if (totalWidth > maxAllowedWidth) {
+				contentSize.x = maxAllowedWidth - otherWidth;
+			} else {
+				contentSize.x = runningTabWidth;
+			} 
+		}
  		
  		// Adjust the maximum tab dimensions to account for the extra space required for the tab labels
  		Rectangle tabFolderBoundingBox = getTabFolder().computeTrim(0, 0, contentSize.x, contentSize.y);
@@ -1492,13 +1535,20 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		int vdiff= contentSize.y - containerSize.y;
 		// Only increase size of dialog, never shrink it
 		if (hdiff > 0 || vdiff > 0) {
+			int[] newSashWeights = null;
+			if (hdiff > 0) {			
+				newSashWeights = calculateNewSashWeights(hdiff);				
+			}
 			hdiff= Math.max(0, hdiff);
 			vdiff= Math.max(0, vdiff);
 			Shell shell= getShell();
 			Point shellSize= shell.getSize();
 			setShellSize(shellSize.x + hdiff, shellSize.y + vdiff);
-		} else if (hdiff < 0 || vdiff < 0) {
-			getTabFolder().setSize(containerSize);
+			// Adjust the sash weights so that all of the increase in width
+			// is given to the tab area
+			if (newSashWeights != null) {
+				getSashForm().setWeights(newSashWeights);
+			}
 		}
 
  		setTabGroup(group);
@@ -1507,6 +1557,21 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  	}
  	
  	/**
+ 	 * Calculate & return a 2 element integer array that specifies the relative 
+ 	 * weights of the selection area and the edit area, based on the specified
+ 	 * increase in width of the owning shell.  The point of this method is calculate 
+ 	 * sash weights such that when the shell gets wider, all of the increase in width
+ 	 * is given to the edit area (tab folder), and the selection area (tree) stays
+ 	 * the same width.
+ 	 */
+	protected int[] calculateNewSashWeights(int widthIncrease) {
+		int[] newWeights = new int[2];
+		newWeights[0] = getSelectionArea().getBounds().width;
+		newWeights[1] = getEditArea().getBounds().width + widthIncrease;
+		return newWeights;
+	}
+
+ 	/**
  	 * Increase the size of this dialog's <code>Shell</code> by the specified amounts.
  	 * Do not increase the size of the Shell beyond the bounds of the Display.
  	 */
@@ -1514,7 +1579,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		Rectangle bounds = getShell().getDisplay().getBounds();
 		getShell().setSize(Math.min(width, bounds.width), Math.min(height, bounds.height));
 	}
-
+	
  	protected void disposeExistingTabs() {
 		TabItem[] oldTabs = getTabFolder().getItems();
 		if (getTabGroup() != null) {
@@ -2691,6 +2756,24 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			index = newString.indexOf('&');
 		}
 		return newString;
+	}
+
+	/**
+	 * Returns the launch configuration selection area control.
+	 * 
+	 * @return control
+	 */
+	protected Composite getSelectionArea() {
+		return fSelectionArea;
+	}
+
+	/**
+	 * Sets the launch configuration selection area control.
+	 * 
+	 * @param editArea control
+	 */
+	private void setSelectionArea(Composite selectionArea) {
+		fSelectionArea = selectionArea;
 	}
 
 	/**
