@@ -779,7 +779,7 @@ public void standardMoveFile(IFile source, IFile destination, int updateFlags, I
 		try {
 			moveInFileSystem(sourceFile, destFile, updateFlags);
 		} catch (CoreException e) {
-			message = Policy.bind("localstore.couldNotMove", source.getFullPath().toString());
+			message = Policy.bind("localstore.couldnotMove", source.getFullPath().toString());
 			IStatus status = new ResourceStatus(IResourceStatus.ERROR, source.getFullPath(), message, e);
 			failed(status);
 			return;
