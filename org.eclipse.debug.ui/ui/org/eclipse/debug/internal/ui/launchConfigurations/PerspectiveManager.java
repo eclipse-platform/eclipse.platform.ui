@@ -109,7 +109,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 		try {
 			perspectiveId = getPerspectiveId(launch);
 		} catch (CoreException e) {
-			String name = DebugUIPlugin.getDefault().getModelPresentation().getText(launch);
+			String name = DebugUIPlugin.getModelPresentation().getText(launch);
 			switchFailed(e, name);
 		}
 		if (perspectiveId != null) {
@@ -145,7 +145,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	 * Utility method to submit an asnychronous runnable to the UI
 	 */
 	protected void async(Runnable r) {
-		Display d = DebugUIPlugin.getDefault().getStandardDisplay();
+		Display d = DebugUIPlugin.getStandardDisplay();
 		if (d != null && !d.isDisposed()) {
 			d.asyncExec(r);
 		}
@@ -155,7 +155,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	 * Utility method to submit a synchronous runnable to the UI
 	 */
 	protected void sync(Runnable r) {
-		Display d = DebugUIPlugin.getDefault().getStandardDisplay();
+		Display d = DebugUIPlugin.getStandardDisplay();
 		if (d != null && !d.isDisposed()) {
 			d.syncExec(r);
 		}
@@ -188,7 +188,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 		// and the preferences are set to switch
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];
-			if (event.getKind() == DebugEvent.SUSPEND && event.getDetail() == event.BREAKPOINT) {
+			if (event.getKind() == DebugEvent.SUSPEND && event.getDetail() == DebugEvent.BREAKPOINT) {
 				// apply event filters
 				ILaunch launch = null;
 				Object source = event.getSource();

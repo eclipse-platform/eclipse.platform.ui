@@ -31,14 +31,14 @@ public class RunDropDownAction extends LaunchDropDownAction {
 	 * @see LaunchDropDownAction#getHistory()
 	 */
 	public LaunchConfigurationHistoryElement[] getHistory() {
-		return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getRunHistory();
+		return DebugUIPlugin.getLaunchConfigurationManager().getRunHistory();
 	}
 	
 	/**
 	 * @see LaunchDropDownAction#getFavorites()
 	 */
 	public LaunchConfigurationHistoryElement[] getFavorites() {
-		return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getRunFavorites();
+		return DebugUIPlugin.getLaunchConfigurationManager().getRunFavorites();
 	}		
 
 	/**

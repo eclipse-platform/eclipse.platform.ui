@@ -52,6 +52,7 @@ import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IFindReplaceTarget;
+import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
@@ -615,7 +616,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	
 		//detail specific actions
 		
-		TextViewerAction textAction= new TextViewerAction(getDetailViewer(), getDetailViewer().CONTENTASSIST_PROPOSALS);
+		TextViewerAction textAction= new TextViewerAction(getDetailViewer(), ISourceViewer.CONTENTASSIST_PROPOSALS);
 		textAction.configureAction(DebugUIViewsMessages.getString("VariablesView.Co&ntent_Assist_3"), "",""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		textAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ELCL_CONTENT_ASSIST));
 		textAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_CONTENT_ASSIST));
@@ -628,19 +629,19 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		// Also hook CTRL-Space in case the java UI is not loaded/available
 		addVerifyKeyListener();
 		
-		textAction= new TextViewerAction(getDetailViewer(), getDetailViewer().getTextOperationTarget().SELECT_ALL);
+		textAction= new TextViewerAction(getDetailViewer(), ITextOperationTarget.SELECT_ALL);
 		textAction.configureAction(DebugUIViewsMessages.getString("VariablesView.Select_&All_5"), "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setAction(DETAIL_SELECT_ALL_ACTION, textAction);
 		
-		textAction= new TextViewerAction(getDetailViewer(), getDetailViewer().getTextOperationTarget().COPY);
+		textAction= new TextViewerAction(getDetailViewer(), ITextOperationTarget.COPY);
 		textAction.configureAction(DebugUIViewsMessages.getString("VariablesView.&Copy_8"), "", "");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setAction(DETAIL_COPY_ACTION, textAction);
 		
-		textAction= new TextViewerAction(getDetailViewer(), getDetailViewer().getTextOperationTarget().CUT);
+		textAction= new TextViewerAction(getDetailViewer(), ITextOperationTarget.CUT);
 		textAction.configureAction(DebugUIViewsMessages.getString("VariablesView.Cu&t_11"), "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setAction(ITextEditorActionConstants.CUT, textAction);
 		
-		textAction= new TextViewerAction(getDetailViewer(), getDetailViewer().getTextOperationTarget().PASTE);
+		textAction= new TextViewerAction(getDetailViewer(), ITextOperationTarget.PASTE);
 		textAction.configureAction(DebugUIViewsMessages.getString("VariablesView.&Paste_14"), "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setAction(ITextEditorActionConstants.PASTE, textAction);
 		

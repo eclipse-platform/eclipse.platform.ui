@@ -90,7 +90,7 @@ public class TextViewerGotoLineAction extends TextViewerAction {
 			String value= Integer.toString(startLine);
 			Shell activeShell= fTextViewer.getTextWidget().getShell();
 			InputDialog d= new InputDialog(activeShell, title, message, value, new NumberValidator());
-			if (d.open() == d.OK) {
+			if (d.open() == InputDialog.OK) {
 				try {
 					int line= Integer.parseInt(d.getValue());
 					gotoLine(line - 1);

@@ -72,7 +72,7 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */
 	public void launchRemoved(final ILaunch launch) {
-		DebugUIPlugin.getDefault().getStandardDisplay().syncExec(new Runnable () {
+		DebugUIPlugin.getStandardDisplay().syncExec(new Runnable () {
 			public void run() {
 				IProcess currentProcess= getCurrentProcess();
 				IProcess[] processes= launch.getProcesses();
@@ -115,7 +115,7 @@ public class ConsoleDocumentManager implements ILaunchListener {
 		}
 		setCurrentProcess(newProcess);
 				
-		DebugUIPlugin.getDefault().getStandardDisplay().syncExec(new Runnable () {
+		DebugUIPlugin.getStandardDisplay().syncExec(new Runnable () {
 			public void run() {
 				IProcess[] processes= launch.getProcesses();
 				for (int i= 0; i < processes.length; i++) {
@@ -271,9 +271,9 @@ public class ConsoleDocumentManager implements ILaunchListener {
 		if (doc != null && debugViewProcess != null && !doc.equals(getConsoleDocument(debugViewProcess))) {
 			return;
 		}
-		DebugUIPlugin.getDefault().getStandardDisplay().asyncExec(new Runnable() {
+		DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 			public void run() {
-				IWorkbenchWindow window= DebugUIPlugin.getDefault().getActiveWorkbenchWindow();
+				IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
 				if (window != null) {
 					IWorkbenchPage page= window.getActivePage();
 					if (page != null) {
