@@ -18,6 +18,9 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 public class IdentityRule implements ISchedulingRule {
 	private static int nextRule = 0;
 	private final int ruleNumber = nextRule++;
+	public boolean contains(ISchedulingRule rule) {
+		return rule == this;
+	}
 	public boolean isConflicting(ISchedulingRule rule) {
 		return rule == this;
 	}

@@ -56,11 +56,29 @@ public class MultiRule implements ISchedulingRule {
 	public ISchedulingRule[] getChildren() {
 		return (ISchedulingRule[]) rules.clone();
 	}
+	public boolean contains(ISchedulingRule rule) {
+		if (rule instanceof MultiRule) {
+			ISchedulingRule[] otherRules = ((MultiRule) rule).getChildren();
+			//for each child of the target, there must be some child in this rule that contains it.
+			for (int other = 0; other < otherRules.length; other++) {
+				boolean found = false;
+				for (int mine = 0; !found && mine < rules.length; mine++)
+					found = rules[mine].contains(otherRules[other]);
+				if (!found)
+					return false;
+			}
+		} else {
+			for (int i = 0; i < rules.length; i++)
+				if (rules[i].contains(rule))
+					return true;
+		}
+		return false;
+	}
 	public boolean isConflicting(ISchedulingRule rule) {
 		if (rule instanceof MultiRule) {
 			ISchedulingRule[] otherRules = ((MultiRule) rule).getChildren();
-			for (int i = 0; i < rules.length; i++)
-				for (int j = 0; j < otherRules.length; j++)
+			for (int j = 0; j < otherRules.length; j++)
+				for (int i = 0; i < rules.length; i++)
 					if (rules[i].isConflicting(otherRules[j]))
 						return true;
 		} else {

@@ -11,9 +11,16 @@ package org.eclipse.core.runtime.jobs;
 
 /**
  * Scheduling rules are used by jobs to indicate when they need exclusive access
- * to a resource.  The job manager guarantees that no two jobs with conflicting
- * scheduling rules will run concurrently. The job manager provides no implementations
- * of scheduling rules, but clients are free to implement their own.
+ * to a resource.  Scheduling rules can also be applied synchronously to a thread
+ * using <tt>IJobManager.start(ISchedulingRule)</tt> and 
+ * <tt>IJobManager.end(ISchedulingRule)</tt>.  The job manager guarantees that 
+ * no two jobs with conflicting scheduling rules will run concurrently. 
+ * Multiple rules can be applied to a given thread only if they explicitly allow the
+ * nesting.  
+ * <p>
+ * Clients may implement this interface.
+ * <p>
+ * This API is experimental, and is subject to change or removal without notice.
  * 
  * @see Job#getRule
  * @see Job#setRule
@@ -21,13 +28,32 @@ package org.eclipse.core.runtime.jobs;
  */
 public interface ISchedulingRule {
 	/**
+	 * Returns whether this scheduling rule completely contains another scheduling
+	 * rule.  Rules can only be nested within a thread if the inner rule is completely 
+	 * contained within the outer rule.
+	 * <p>
+	 * Implementations of this method must obey the rules of a partial order relation
+	 * on the set of all scheduling rules.  In particular, implementations must be reflexive
+	 * (a.contains(a) is always true), antisymmetric (a.contains(b) and b.contains(a) iff a=b), 
+	 * and transitive (if a.contains(b) and b.contains(c), then a.contains(c)).  Implementations
+	 * of this method must return <code>false</code> when compared to a rule they
+	 * know nothing about.
+	 * <p>
+ 	 * This API is experimental, and is subject to change or removal without notice.
+	 * 
+	 * @param rule the rule to check for containment
+	 * @return <code>true</code> if this rule contains the given rule, and 
+	 * <code>false</code> otherwise.
+	 */
+	public boolean contains(ISchedulingRule rule);
+	/**
 	 * Returns whether this scheduling rule is compatible with another scheduling rule.
 	 * If <code>false</code> is returned, then no job with this rule will be run at the 
 	 * same time as a job with the conflicting rule.  If <code>true</code> is returned, 
 	 * then the job manager is free to run jobs with these rules at the same time.
 	 * <p>
-	 * Implementations of this method must be sure to obey the standard rules
-	 * of equivalence relations.  That is, implementations must be reflexive,
+	 * Implementations of this method must obey the rules of an equivalence relation
+	 * on the set of all scheduling rules.  That is, implementations must be reflexive,
 	 * symmetric, transitive, and consistent.    Implementations of this method
 	 * must return <code>false</code> when compared to a rule they know nothing
 	 * about.

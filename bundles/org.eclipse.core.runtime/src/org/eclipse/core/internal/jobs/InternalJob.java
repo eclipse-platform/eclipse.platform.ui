@@ -23,6 +23,12 @@ import org.eclipse.core.runtime.jobs.*;
 public abstract class InternalJob extends PlatformObject implements Comparable {
 	private static final JobManager manager = JobManager.getInstance();
 	private static int nextJobNumber = 0;
+
+	/** 
+	 * Job state code (value 8) indicating that a job is blocked by another currently
+	 * running job.  From an API point of view, this is the same as WAITING.
+	 */
+	public static final int BLOCKED = 0x08;
 	
 	//flag mask bits
 	private static final int M_STATE = 0xFF;
@@ -111,10 +117,24 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 		return startTime;
 	}
 	protected int getState() {
+		int state = flags & M_STATE;
+		//blocked state is equivalent to waiting state for clients
+		return state == BLOCKED ? Job.WAITING : state;
+	}
+	final int internalGetState() {
 		return flags & M_STATE;
 	}
+	/*
+	 * Must be called from JobManager#setPriority
+	 */
 	void internalSetPriority(int newPriority) {
 		this.priority = newPriority;
+	}
+	/*
+	 * Must be called from JobManager#changeState
+	 */
+	final void internalSetState(int i) {
+		flags = (flags & ~M_STATE) | i;
 	}
 	/**
 	 * Returns true if this job conflicts with the given job, and false otherwise.
@@ -151,10 +171,10 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * Removes this entry from any list it belongs to.  Returns the receiver.
 	 */
 	final InternalJob remove() {
-		if (next != null)
-			next.setPrevious(previous);
-		if (previous != null)
-			previous.setNext(next);
+		Assert.isNotNull(next);
+		Assert.isNotNull(previous);
+		next.setPrevious(previous);
+		previous.setNext(next);
 		next = null;
 		previous = null;
 		return this;
@@ -191,9 +211,6 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	}
 	final void setStartTime(long time) {
 		startTime = time;
-	}
-	final void setState(int i) {
-		flags = (flags & ~M_STATE) | i;
 	}
 	protected void setSystem(boolean value) {
 		flags = value ? flags | M_SYSTEM : flags & ~M_SYSTEM;

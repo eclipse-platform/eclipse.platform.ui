@@ -43,6 +43,28 @@ public interface IJobManager {
 	 */
 	public void addJobChangeListener(IJobChangeListener listener);
 	/**
+	 * Begins applying this rule in the calling thread.  If the rule conficts with another
+	 * rule currently running in another thread, this method blocks until there are
+	 * no conflicting rules.  Calls to <tt>beginRule</tt> must eventually be followed
+	 * by a matching call to <tt>endRule</tt> in the same thread and with the same
+	 * rule instance.
+	 * <p>
+	 * Rules can be nested only if the rule for the inner <tt>beginRule</tt>
+	 * is contained within the rule for the outer <tt>beginRule</tt>.  Also, begin/end
+	 * pairs must be strictly nested.  Only the rule that has most recently begun
+	 * can be ended at any given time.
+	 * <p>
+	 * If this method is called from within a job that has a scheduling rule, the
+	 * given rule must also be contained within the rule for the running job.
+	 * <p>
+	 * This API is experimental, and is subject to change or removal without notice.
+	 * 
+	 * @param rule the rule to begin applying in this thread
+	 * @throws IllegalArgumentException if the rule is not strictly nested within
+	 * all other rules currently active for this thread.
+	 */
+	public void beginRule(ISchedulingRule rule);
+	/**
 	 * Cancels all jobs in the given job family.  Jobs in the family that are currently waiting
 	 * will be removed from the queue.  Sleeping jobs will be discarded without having 
 	 * a chance to wake up.  Currently executing jobs will be asked to cancel but there 
@@ -57,6 +79,23 @@ public interface IJobManager {
 	 * is no currently running job.
 	 */
 	public Job currentJob();
+	/**
+	 * Ends the application of a rule to the calling thread.  Calls to <tt>end</tt> 
+	 * must be preceded by a matching call to <tt>begin</tt> in the same thread.
+	 * <p>
+	 * Rules can be nested only if the rule for the inner <tt>begin</tt>
+	 * is contained within the rule for the outer <tt>begin</tt>.  Also, begin/end
+	 * pairs must be strictly nested.  Only the rule that has most recently begun
+	 * can be ended at any given time.
+	 * <p>
+	 * This API is experimental, and is subject to change or removal without notice.
+	 * 
+	 * @param rule the rule to end applying in this thread
+	 * @throws IllegalArgumentException if this method is called on a rule for which
+	 * there is no matching begin, or that does not match the most recent begin.
+	 * @see ISchedulingRule#contains
+	 */
+	public void endRule();
 	/**
 	 * Returns all waiting, executing and sleeping jobs belonging
 	 * to the given family. If no jobs are found, an empty array is returned.
