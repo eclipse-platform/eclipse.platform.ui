@@ -445,9 +445,9 @@
 		targetID = "org.eclipse.debug.ui.VariableView">
 		<action
 			id="org.eclipse.debug.ui.variableViewActions.toolbar.detailPaneWordWrap"
-			label="%DetailPaneWrodWrapAction.label"
+			label="%DetailPaneWordWrapAction.label"
 			menubarPath="viewActions"
-			tooltip="%DetailPaneWrodWrapAction.tooltip"
+			tooltip="%DetailPaneWordWrapAction.tooltip"
 			helpContextId="java_variables_detail_pane_word_wrap_action_context"
 			class="org.eclipse.debug.internal.ui.views.variables.JavaVariablesDetailPaneWordWrapAction">
 		</action>
@@ -809,5 +809,34 @@
 			%ConsoleFontDefinition.description
 		</description>
 	</fontDefinition> 
-   </extension> 
+</extension>
+
+<extension point="org.eclipse.ui.actionDefinitions">
+	<actionDefinition
+		id="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
+		name= "%ActionDefinition.stepInto.name"
+		description="%ActionDefinition.stepInto.description"
+	/>
+	<actionDefinition
+		id="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
+		name= "%ActionDefinition.stepOver.name"
+		description="%ActionDefinition.stepOver.description"
+	/>
+	<actionDefinition
+		id="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
+		name= "%ActionDefinition.stepReturn.name"
+		description="%ActionDefinition.stepReturn.description"
+	/>
+</extension>
+<extension point="org.eclipse.ui.acceleratorSets">	
+	<acceleratorSet
+		scopeId="org.eclipse.ui.globalScope"
+		configurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+
+		<!-- step actions -->
+		<accelerator key="F5" id="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate" />
+		<accelerator key="F6" id="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate" />
+		<accelerator key="F7" id="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate" />
+	</acceleratorSet>
+</extension>
 </plugin>

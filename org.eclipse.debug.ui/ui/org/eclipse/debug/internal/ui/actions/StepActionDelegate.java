@@ -1,12 +1,16 @@
 package org.eclipse.debug.internal.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2003 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
+ 
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IStep;
+import org.eclipse.jface.action.IAction;
 
 public abstract class StepActionDelegate extends AbstractListenerActionDelegate {
 	
@@ -48,4 +52,15 @@ public abstract class StepActionDelegate extends AbstractListenerActionDelegate 
 	 * @exception DebugException if the action fails
 	 */
 	protected abstract void stepAction(IStep element) throws DebugException;
+	
+	/**
+	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.
+	 * IAction)
+	 */
+  		
+ 	public void init(IAction action) {
+ 		action.setActionDefinitionId(getActionDefinitionId());
+	}
+	
+	protected abstract String getActionDefinitionId();
 }
