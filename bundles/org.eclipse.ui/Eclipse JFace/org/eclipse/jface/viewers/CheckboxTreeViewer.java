@@ -404,6 +404,25 @@ public boolean setGrayed(Object element, boolean state) {
 	}
 	return false;
 }
+
+/**
+ * Check and gray the selection rather than calling both
+ * setGrayed and setChecked so as to avoid the extra internalExpand.
+ * @param element - the item being checked
+ * @param state - a boolean indicating selection or deselection
+ * @return boolean indicating success or failure.
+ */
+public boolean setGrayChecked(Object element, boolean state) {
+	Widget widget = internalExpand(element, false);
+	if (widget instanceof TreeItem) {
+		TreeItem item = (TreeItem) widget;
+		item.setChecked(state);
+		item.setGrayed(state);
+		return true;
+	}
+	return false;
+}
+
 /**
  * Sets which elements are grayed in this viewer's tree.
  * The given list contains the elements that are to be grayed;
