@@ -16,6 +16,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.debug.ui.variables.IGroupDialogPage;
+import org.eclipse.debug.ui.variables.VariableUtil;
+import org.eclipse.debug.ui.variables.WorkingSetComponent;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -29,12 +32,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.externaltools.internal.group.IGroupDialogPage;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolBuilder;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
-import org.eclipse.ui.externaltools.internal.model.ToolUtil;
-import org.eclipse.ui.externaltools.internal.variable.WorkingSetComponent;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab implements IGroupDialogPage {
@@ -133,7 +133,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 		
 		updateWorkingSetComponent();
 		if (buildScope != null) {
-			ToolUtil.VariableDefinition variable= ToolUtil.extractVariableTag(buildScope, 0);
+			VariableUtil.VariableDefinition variable= VariableUtil.extractVariableTag(buildScope, 0);
 			workingSetComponent.setVariableValue(variable.argument);
 		}
 		
@@ -172,7 +172,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 		configuration.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, buffer.toString());
 		
 		if (workingSetButton.getSelection()) {
-			String variableTag= ToolUtil.buildVariableTag("working_set", workingSetComponent.getVariableValue()); //$NON-NLS-1$
+			String variableTag= VariableUtil.buildVariableTag("working_set", workingSetComponent.getVariableValue()); //$NON-NLS-1$
 			configuration.setAttribute(IExternalToolConstants.ATTR_REFRESH_SCOPE, variableTag);
 		} else {
 			configuration.setAttribute(IExternalToolConstants.ATTR_REFRESH_SCOPE, (String)null);

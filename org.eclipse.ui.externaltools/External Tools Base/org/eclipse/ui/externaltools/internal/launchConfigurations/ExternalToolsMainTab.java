@@ -20,7 +20,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.debug.ui.variables.ExternalToolVariableRegistry;
+import org.eclipse.debug.ui.variables.IVariableConstants;
+import org.eclipse.debug.ui.variables.VariableSelectionDialog;
+import org.eclipse.debug.ui.variables.VariableUtil;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -44,9 +49,6 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
-import org.eclipse.ui.externaltools.internal.model.ToolUtil;
-import org.eclipse.ui.externaltools.internal.model.ToolUtil.VariableDefinition;
-import org.eclipse.ui.externaltools.internal.registry.ExternalToolVariableRegistry;
 
 public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 
@@ -423,7 +425,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	 */
 	private String validateVariables(String value) {
 		int start= 0;
-		VariableDefinition variable = ToolUtil.extractVariableTag(value, start);
+		VariableUtil.VariableDefinition variable = VariableUtil.extractVariableTag(value, start);
 		while (variable.start != -1) {
 			if (variable.end == -1) {
 				return ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Invalid_Expected_closing_}"); //$NON-NLS-1$
@@ -431,18 +433,18 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 			if (variable.name == null || variable.name.length() == 0) {
 				return ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.No_variable_specified"); //$NON-NLS-1$
 			}
-			ExternalToolVariableRegistry registry = ExternalToolsPlugin.getDefault().getToolVariableRegistry();
+			ExternalToolVariableRegistry registry = DebugUIPlugin.getDefault().getToolVariableRegistry();
 			if (registry.getVariable(variable.name) == null) {
 				return MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Unknown_variable"), new String[] {variable.name}); //$NON-NLS-1$
 			}
 			start= variable.end;
-			variable = ToolUtil.extractVariableTag(value, start);
+			variable = VariableUtil.extractVariableTag(value, start);
 		}
 		return null;
 	}
 	
 	private boolean containsVariable(String value) {
-		return ToolUtil.extractVariableTag(value, 0).start != -1;
+		return VariableUtil.extractVariableTag(value, 0).start != -1;
 	}
 
 	/**
@@ -500,7 +502,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		}
 		IResource resource = (IResource)results[0];
 		StringBuffer buf = new StringBuffer();
-		ToolUtil.buildVariableTag(IExternalToolConstants.VAR_WORKSPACE_LOC, resource.getFullPath().toString(), buf);
+		VariableUtil.buildVariableTag(IVariableConstants.VAR_WORKSPACE_LOC, resource.getFullPath().toString(), buf);
 		String text= buf.toString();
 		if (text != null) {
 			locationField.setText(text);
@@ -523,7 +525,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		Object[] resource = containerDialog.getResult();
 		String text= null;
 		if (resource != null && resource.length > 0) {
-			text= ToolUtil.buildVariableTag(IExternalToolConstants.VAR_WORKSPACE_LOC, ((IPath)resource[0]).toString());
+			text= VariableUtil.buildVariableTag(IVariableConstants.VAR_WORKSPACE_LOC, ((IPath)resource[0]).toString());
 		}
 		if (text != null) {
 			workDirectoryField.setText(text);

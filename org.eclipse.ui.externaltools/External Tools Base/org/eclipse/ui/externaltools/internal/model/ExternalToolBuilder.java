@@ -41,6 +41,8 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	private static final int[] DEFAULT_BUILD_TYPES= new int[] {
 									IncrementalProjectBuilder.INCREMENTAL_BUILD,
 									IncrementalProjectBuilder.FULL_BUILD};
+
+	private static String buildType = IExternalToolConstants.BUILD_TYPE_NONE;
 	
 	/* (non-Javadoc)
 	 * Method declared on IncrementalProjectBuilder.
@@ -70,13 +72,51 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 		
 		if (buildForChange) {
 			monitor.subTask(MessageFormat.format(ExternalToolsModelMessages.getString("ExternalToolBuilder.Running_{0}..._1"), new String[]{config.getName()})); //$NON-NLS-1$
-			VariableContextManager.getDefault().buildStarted(getProject(), kind);
+			buildStarted(kind);
 			config.launch(ILaunchManager.RUN_MODE, monitor);
-			VariableContextManager.getDefault().buildEnded();
+			buildEnded();
 			forgetLastBuiltState();
 		}
 				
 		return null;
+	}
+	
+	/**
+	 * Returns the build type being performed if the
+	 * external tool is being run as a project builder.
+	 * 
+	 * @return one of the <code>IExternalToolConstants.BUILD_TYPE_*</code> constants.
+	 */
+	public static String getBuildType() {
+		return buildType;
+	}
+	
+	/**
+	 * Stores the currently active build kind when a build begins
+	 * @param buildKind
+	 */
+	private void buildStarted(int buildKind) {
+		switch (buildKind) {
+			case IncrementalProjectBuilder.INCREMENTAL_BUILD :
+				buildType = IExternalToolConstants.BUILD_TYPE_INCREMENTAL;
+				break;
+			case IncrementalProjectBuilder.FULL_BUILD :
+				buildType = IExternalToolConstants.BUILD_TYPE_FULL;
+				break;
+			case IncrementalProjectBuilder.AUTO_BUILD :
+				buildType = IExternalToolConstants.BUILD_TYPE_AUTO;
+				break;
+			default :
+				buildType = IExternalToolConstants.BUILD_TYPE_NONE;
+				break;
+		}
+	}
+	
+	/**
+	 * Clears the current build kind when a build finishes.
+	 */
+	private void buildEnded() {
+		buildType= IExternalToolConstants.BUILD_TYPE_NONE;
 	}
 	
 	private boolean buildScopeIndicatesBuild(IResource[] resources) {

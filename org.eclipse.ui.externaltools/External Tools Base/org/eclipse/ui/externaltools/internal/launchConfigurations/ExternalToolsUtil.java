@@ -30,11 +30,12 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.model.ToolUtil;
-import org.eclipse.ui.externaltools.internal.model.VariableContextManager;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolMigration;
-import org.eclipse.ui.externaltools.internal.registry.ExternalToolVariable;
-import org.eclipse.ui.externaltools.internal.registry.RefreshScopeVariableRegistry;
-import org.eclipse.ui.externaltools.internal.variable.ExpandVariableContext;
+import org.eclipse.ui.externaltools.internal.variables.RefreshScopeVariableRegistry;
+import org.eclipse.debug.ui.variables.ExpandVariableContext;
+import org.eclipse.debug.ui.variables.ExternalToolVariable;
+import org.eclipse.debug.ui.variables.VariableContextManager;
+import org.eclipse.debug.ui.variables.VariableUtil;
 
 /**
  * Utilities for external tool launch configurations.
@@ -307,7 +308,7 @@ public class ExternalToolsUtil {
 			return null;
 		}
 
-		ToolUtil.VariableDefinition varDef = ToolUtil.extractVariableTag(scope, 0);
+		VariableUtil.VariableDefinition varDef = VariableUtil.extractVariableTag(scope, 0);
 		if (varDef.start == -1 || varDef.end == -1 || varDef.name == null) {
 			String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.invalidRefreshVarFormat"), new Object[] { configuration.getName()}); //$NON-NLS-1$
 			abort(msg, null, 0);

@@ -24,8 +24,7 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.externaltools.internal.registry.ExternalToolVariableRegistry;
-import org.eclipse.ui.externaltools.internal.registry.RefreshScopeVariableRegistry;
+import org.eclipse.ui.externaltools.internal.variables.RefreshScopeVariableRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -40,7 +39,6 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	private static ExternalToolsPlugin plugin;
 
 	private RefreshScopeVariableRegistry refreshVarRegistry;
-	private ExternalToolVariableRegistry toolVariableRegistry;
 	
 	private static final String EMPTY_STRING= ""; //$NON-NLS-1$
 
@@ -75,16 +73,6 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	 */
 	public static CoreException newError(String message, Throwable exception) {
 		return new CoreException(new Status(Status.ERROR, IExternalToolConstants.PLUGIN_ID, 0, message, exception));
-	}
-
-	/**
-	 * Returns the registry of external tool variables.
-	 */
-	public ExternalToolVariableRegistry getToolVariableRegistry() {
-		if (toolVariableRegistry == null) {
-			toolVariableRegistry = new ExternalToolVariableRegistry();
-		}
-		return toolVariableRegistry;
 	}
 
 	/**
@@ -178,13 +166,6 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	 */
 	public void startup() throws CoreException {
 		super.startup();
-		getStandardDisplay().asyncExec(
-			new Runnable() {
-				public void run() {
-					//initialize the variable context manager
-					VariableContextManager.getDefault();
-				}
-			});	
 	}
 
 	/**

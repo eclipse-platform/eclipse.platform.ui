@@ -25,7 +25,6 @@
 
 <!-- extension point definitions -->
 	<extension-point id="configurationDuplicationMaps" name="%ExtPoint.configurationDuplicationMaps"/>
-	<extension-point id="toolVariables" name="%ExtPoint.toolVariables"/>
 	<extension-point id="refreshVariables" name="%ExtPoint.refreshVariables"/>
 
 <!-- Extensions -->
@@ -194,108 +193,40 @@
 	</extension>
 		
 	<!-- Variable Extensions -->
-	<extension point="org.eclipse.ui.externaltools.toolVariables">
-		<variable
-			tag="workspace_loc"
-			description="%workspace_loc.description"
-			expanderClass="org.eclipse.ui.externaltools.internal.variable.WorkspaceExpander">
-		</variable>
-		<variable
-			tag="project_loc"
-			description="%project_loc.description"
-			expanderClass="org.eclipse.ui.externaltools.internal.variable.ProjectExpander">
-		</variable>
-		<variable
-			tag="project_path"
-			description="%project_path.description"
-			expanderClass="org.eclipse.ui.externaltools.internal.variable.ProjectExpander">
-		</variable>
-		<variable
-			tag="project_name"
-			description="%project_name.description"
-			expanderClass="org.eclipse.ui.externaltools.internal.variable.ProjectNameExpander">
-		</variable>
-		<variable
-			tag="resource_loc"
-			description="%resource_loc.description"
-			componentClass="org.eclipse.ui.externaltools.internal.variable.SpecificFileResourceComponent"
-			expanderClass="org.eclipse.ui.externaltools.internal.variable.ResourceExpander">
-		</variable>
-		<variable
-			tag="resource_path"
-			description="%resource_path.description"
-			componentClass="org.eclipse.ui.externaltools.internal.variable.SpecificFileResourceComponent"
-			expanderClass="org.eclipse.ui.externaltools.internal.variable.ResourceExpander">
-		</variable>
-		<variable
-			tag="resource_name"
-			description="%resource_name.description"
-			expanderClass="org.eclipse.ui.externaltools.internal.variable.ResourceNameExpander">
-		</variable>
-		<variable
-			tag="container_loc"
-			description="%container_loc.description"
-			expanderClass="org.eclipse.ui.externaltools.internal.variable.ContainerExpander">
-		</variable>
-		<variable
-			tag="container_path"
-			description="%container_path.description"
-			expanderClass="org.eclipse.ui.externaltools.internal.variable.ContainerExpander">
-		</variable>
-		<variable
-			tag="container_name"
-			description="%container_name.description"
-			expanderClass="org.eclipse.ui.externaltools.internal.variable.ContainerNameExpander">
-		</variable>
+	<extension point="org.eclipse.debug.ui.launchConfigurationVariables">
 		<variable
 			tag="build_type"
 			description="%build_type.description"
-			expanderClass="org.eclipse.ui.externaltools.internal.variable.BuildTypeExpander">
-		</variable>
-		<variable
-			tag="string_prompt"
-			description="%string_prompt.description"
-			expanderClass="org.eclipse.ui.externaltools.internal.variable.StringPromptExpander">
-		</variable>
-		<variable
-			tag="file_prompt"
-			description="%file_prompt.description"
-			expanderClass="org.eclipse.ui.externaltools.internal.variable.FilePromptExpander">
-		</variable>
-		<variable
-			tag="folder_prompt"
-			description="%folder_prompt.description"
-			expanderClass="org.eclipse.ui.externaltools.internal.variable.FolderPromptExpander">
+			expanderClass="org.eclipse.ui.externaltools.internal.variables.BuildTypeExpander">
 		</variable>
 	</extension>
-
 	<extension point="org.eclipse.ui.externaltools.refreshVariables">
 		<variable
 			tag="workspace"
 			description="%workspace.description"
-			expanderClass="org.eclipse.ui.externaltools.internal.variable.WorkspaceExpander">
+			expanderClass="org.eclipse.debug.ui.variables.WorkspaceExpander">
 		</variable>
 		<variable
 			tag="project"
 			description="%project.description"
-			expanderClass="org.eclipse.ui.externaltools.internal.variable.ProjectExpander">
+			expanderClass="org.eclipse.debug.ui.variables.ProjectExpander">
 		</variable>
 		<variable
 			tag="container"
 			description="%container.description"
-			expanderClass="org.eclipse.ui.externaltools.internal.variable.ContainerExpander">
+			expanderClass="org.eclipse.debug.ui.variables.ContainerExpander">
 		</variable>
 		<variable
 			tag="resource"
 			description="%resource.description"
-			componentClass="org.eclipse.ui.externaltools.internal.variable.ResourceComponent"
-			expanderClass="org.eclipse.ui.externaltools.internal.variable.ResourceExpander">
+			componentClass="org.eclipse.debug.ui.variables.ResourceComponent"
+			expanderClass="org.eclipse.debug.ui.variables.ResourceExpander">
 		</variable>
 		<variable
 			tag="working_set"
 			description="%working_set.description"
-			componentClass="org.eclipse.ui.externaltools.internal.variable.WorkingSetComponent"
-			expanderClass="org.eclipse.ui.externaltools.internal.variable.WorkingSetExpander">
+			componentClass="org.eclipse.debug.ui.variables.WorkingSetComponent"
+			expanderClass="org.eclipse.debug.ui.variables.WorkingSetExpander">
 		</variable>
 	</extension>
 </plugin>

@@ -32,7 +32,8 @@
    <extension-point id="launchConfigurationTypeImages" name="%LaunchConfigurationTypeImageExtensionName" schema="schema/launchConfigurationTypeImages.exsd"/>
    <extension-point id="launchGroups" name="%LaunchGroupsExtensionName" schema="schema/launchGroups.exsd"/>
    <extension-point id="launchShortcuts" name="%LaunchShortcutsName" schema="schema/launchShortcuts.exsd"/>
-
+   <extension-point id="launchConfigurationVariables" name="%LaunchConfigurationVariablesName"/>
+	
 <!-- Extensions -->
    <extension
          point="org.eclipse.ui.perspectives">
@@ -1119,6 +1120,77 @@
 			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
 		/>
 				
-	</extension>   
+	</extension>
+	
+	<!-- Variable Extensions -->
+	<extension point="org.eclipse.debug.ui.launchConfigurationVariables">
+		<variable
+			tag="workspace_loc"
+			description="%workspace_loc.description"
+			expanderClass="org.eclipse.debug.ui.variables.WorkspaceExpander">
+		</variable>
+		<variable
+			tag="project_loc"
+			description="%project_loc.description"
+			expanderClass="org.eclipse.debug.ui.variables.ProjectExpander">
+		</variable>
+		<variable
+			tag="project_path"
+			description="%project_path.description"
+			expanderClass="org.eclipse.debug.ui.variables.ProjectExpander">
+		</variable>
+		<variable
+			tag="project_name"
+			description="%project_name.description"
+			expanderClass="org.eclipse.debug.ui.variables.ProjectNameExpander">
+		</variable>
+		<variable
+			tag="resource_loc"
+			description="%resource_loc.description"
+			componentClass="org.eclipse.debug.ui.variables.SpecificFileResourceComponent"
+			expanderClass="org.eclipse.debug.ui.variables.ResourceExpander">
+		</variable>
+		<variable
+			tag="resource_path"
+			description="%resource_path.description"
+			componentClass="org.eclipse.debug.ui.variables.SpecificFileResourceComponent"
+			expanderClass="org.eclipse.debug.ui.variables.ResourceExpander">
+		</variable>
+		<variable
+			tag="resource_name"
+			description="%resource_name.description"
+			expanderClass="org.eclipse.debug.ui.variables.ResourceNameExpander">
+		</variable>
+		<variable
+			tag="container_loc"
+			description="%container_loc.description"
+			expanderClass="org.eclipse.debug.ui.variables.ContainerExpander">
+		</variable>
+		<variable
+			tag="container_path"
+			description="%container_path.description"
+			expanderClass="org.eclipse.debug.ui.variables.ContainerExpander">
+		</variable>
+		<variable
+			tag="container_name"
+			description="%container_name.description"
+			expanderClass="org.eclipse.debug.ui.variables.ContainerNameExpander">
+		</variable>
+		<variable
+			tag="string_prompt"
+			description="%string_prompt.description"
+			expanderClass="org.eclipse.debug.ui.variables.StringPromptExpander">
+		</variable>
+		<variable
+			tag="file_prompt"
+			description="%file_prompt.description"
+			expanderClass="org.eclipse.debug.ui.variables.FilePromptExpander">
+		</variable>
+		<variable
+			tag="folder_prompt"
+			description="%folder_prompt.description"
+			expanderClass="org.eclipse.debug.ui.variables.FolderPromptExpander">
+		</variable>
+	</extension>
    
 </plugin>

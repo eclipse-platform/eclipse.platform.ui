@@ -20,8 +20,9 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.ui.variables.IVariableConstants;
+import org.eclipse.debug.ui.variables.VariableUtil;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
-import org.eclipse.ui.externaltools.internal.model.ToolUtil;
 
 /**
  * Responsible reading an old external tool format and creating
@@ -171,9 +172,9 @@ public final class ExternalToolMigration {
 		// Update the location...
 		String location = (String) args.get(TAG_TOOL_LOCATION);
 		if (location != null) {
-			ToolUtil.VariableDefinition varDef = ToolUtil.extractVariableTag(location, 0);
-			if (IExternalToolConstants.VAR_WORKSPACE_LOC.equals(varDef.name)) {
-				location = ToolUtil.buildVariableTag(IExternalToolConstants.VAR_RESOURCE_LOC, varDef.argument);
+			VariableUtil.VariableDefinition varDef = VariableUtil.extractVariableTag(location, 0);
+			if (IVariableConstants.VAR_WORKSPACE_LOC.equals(varDef.name)) {
+				location = VariableUtil.buildVariableTag(IVariableConstants.VAR_RESOURCE_LOC, varDef.argument);
 			}
 			config.setAttribute(IExternalToolConstants.ATTR_LOCATION, location);
 		}
@@ -181,7 +182,7 @@ public final class ExternalToolMigration {
 		// Update the refresh scope...
 		String refresh = (String) args.get(TAG_TOOL_REFRESH);
 		if (refresh != null) {
-			ToolUtil.VariableDefinition varDef = ToolUtil.extractVariableTag(refresh, 0);
+			VariableUtil.VariableDefinition varDef = VariableUtil.extractVariableTag(refresh, 0);
 			if ("none".equals(varDef.name)) { //$NON-NLS-1$
 				refresh = null;
 			}
@@ -195,7 +196,7 @@ public final class ExternalToolMigration {
 			int start = 0;
 			ArrayList targets = new ArrayList();
 			StringBuffer buffer = new StringBuffer();
-			ToolUtil.VariableDefinition varDef = ToolUtil.extractVariableTag(arguments, start);
+			VariableUtil.VariableDefinition varDef = VariableUtil.extractVariableTag(arguments, start);
 			while (varDef.end != -1) {
 				if ("ant_target".equals(varDef.name) && varDef.argument != null) { //$NON-NLS-1$
 					targets.add(varDef.argument);
@@ -204,7 +205,7 @@ public final class ExternalToolMigration {
 					buffer.append(arguments.substring(start, varDef.end));
 				}
 				start = varDef.end;
-				varDef = ToolUtil.extractVariableTag(arguments, start);
+				varDef = VariableUtil.extractVariableTag(arguments, start);
 			}
 			buffer.append(arguments.substring(start, arguments.length()));
 			arguments = buffer.toString();

@@ -41,7 +41,6 @@ public interface IExternalToolsHelpContextIds {
 	public static final String STATUS_DIALOG = PREFIX + "status_dialog_context"; //$NON-NLS-1$
 	public static final String MESSAGE_WITH_TOGGLE_DIALOG = PREFIX + "message_with_toggle_dialog_context"; //$NON-NLS-1$
 	public static final String TARGET_ORDER_DIALOG = PREFIX + "target_order_dialog_context"; //$NON-NLS-1$
-	public static final String VARIABLE_SELECTION_DIALOG = PREFIX + "variable_selection_dialog_context"; //$NON-NLS-1$
 	
 	// Preference Pages
 	public static final String EXTERNAL_TOOLS_PREFERENCE_PAGE = PREFIX + "preference_page_context";  //$NON-NLS-1$

@@ -48,6 +48,8 @@ import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.console.ConsoleDocumentManager;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.variables.ExternalToolVariableRegistry;
+import org.eclipse.debug.ui.variables.VariableContextManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -112,6 +114,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * Launch configuration manager
 	 */
 	private LaunchConfigurationManager fLaunchConfigurationManager = null;
+	
+	/**
+	 * Collection of launch configuration variables
+	 */
+	private ExternalToolVariableRegistry toolVariableRegistry;
 	
 	/**
 	 * Returns whether the debug UI plug-in is in trace
@@ -180,6 +187,17 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		} 
 		return fLaunchConfigurationManager;
 	}
+
+	/**
+	 * Returns the registry of launch configuration variables.
+	 */
+	public ExternalToolVariableRegistry getToolVariableRegistry() {
+		if (toolVariableRegistry == null) {
+			toolVariableRegistry = new ExternalToolVariableRegistry();
+		}
+		return toolVariableRegistry;
+	}
+	
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
 	}
@@ -293,6 +311,13 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		DebugUIAdapterFactory uiFactory = new DebugUIAdapterFactory();
 		manager.registerAdapters(uiFactory, ILaunchConfiguration.class);
 		manager.registerAdapters(uiFactory, ILaunchConfigurationType.class);
+		getStandardDisplay().asyncExec(
+			new Runnable() {
+				public void run() {
+					//initialize the variable context manager
+					VariableContextManager.getDefault();
+				}
+			});	
 	}
 
 	/**

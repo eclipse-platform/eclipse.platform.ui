@@ -15,6 +15,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.debug.ui.variables.ExternalToolVariable;
+import org.eclipse.debug.ui.variables.ExternalToolVariableForm;
+import org.eclipse.debug.ui.variables.IGroupDialogPage;
+import org.eclipse.debug.ui.variables.VariableUtil;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -24,14 +28,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.externaltools.internal.dialog.ExternalToolVariableForm;
-import org.eclipse.ui.externaltools.internal.group.IGroupDialogPage;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
-import org.eclipse.ui.externaltools.internal.model.ToolUtil;
-import org.eclipse.ui.externaltools.internal.registry.ExternalToolVariable;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab implements IGroupDialogPage {
@@ -142,7 +142,7 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 		String varName = null;
 		String varValue = null;
 		if (scope != null) {
-			ToolUtil.VariableDefinition varDef = ToolUtil.extractVariableTag(scope, 0);
+			VariableUtil.VariableDefinition varDef = VariableUtil.extractVariableTag(scope, 0);
 			varName = varDef.name;
 			varValue = varDef.argument;
 		}
