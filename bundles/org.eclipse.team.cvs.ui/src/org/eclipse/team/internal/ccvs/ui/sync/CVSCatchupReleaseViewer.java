@@ -196,7 +196,8 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 	}
 	
 	private static class Decoration implements IDecoration {
-		public String prefix, suffix;
+		public String prefix = ""; //$NON-NLS-1$
+		public String suffix = ""; //$NON-NLS-1$
 		public ImageDescriptor overlay;
 
 		/**
