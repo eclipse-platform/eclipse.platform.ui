@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.jface.action;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.eclipse.core.runtime.Platform;
 
 /**
  * Abstract base class for all contribution managers, and standard implementation 
@@ -391,7 +395,9 @@ public void removeAll() {
  * Replaces the item of the given identifier with another contribution item.
  * This can be used, for example, to replace large contribution items with
  * placeholders to avoid memory leaks.  If the identifier cannot be found in the
- * current list of items, then this does nothing.
+ * current list of items, then this does nothing.  If multiple occurrences are
+ * found, then the replacement items is put in the first position and the other
+ * positions are removed.
  * @param identifier The identifier to look for in the list of contributions;
  * should not be <code>null</code>.
  * @param replacementItem The contribution item to replace the old item; must
@@ -421,8 +427,12 @@ public boolean replaceItem(final String identifier, final IContributionItem repl
 	for (int i = contributions.size() - 1; i > index; i--) {
 	    IContributionItem item = (IContributionItem) contributions.get(i);
 	    if ((item != null) && (identifier.equals(item.getId()))) {
-	        System.out.println("Removing duplicate on replace: " + identifier);
+            if ("true".equalsIgnoreCase(Platform //$NON-NLS-1$
+                    .getDebugOption("org.eclipse.jface/trace/toolbarDisposal"))) { //$NON-NLS-1$
+                System.out.println("Removing duplicate on replace: " + identifier); //$NON-NLS-1$
+            }
 	        contributions.remove(i);
+	        itemRemoved(item);
 	    }
 	}
 	
