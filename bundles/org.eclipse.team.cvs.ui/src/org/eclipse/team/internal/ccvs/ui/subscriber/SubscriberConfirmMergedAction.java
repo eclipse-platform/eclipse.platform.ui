@@ -62,7 +62,7 @@ public class SubscriberConfirmMergedAction extends CVSSubscriberAction {
 		try {
 			CVSSyncInfo cvsInfo = getCVSSyncInfo(info);
 			if (cvsInfo == null) {
-				CVSUIPlugin.log(IStatus.ERROR, "Synchronization information is missing for resource {0}" + cvsInfo.getLocal().getFullPath().toString(), null);
+				CVSUIPlugin.log(IStatus.ERROR, Policy.bind("SubscriberConfirmMergedAction.0", cvsInfo.getLocal().getFullPath().toString()), null); //$NON-NLS-1$
 				return false;
 			}
 			// Make sure the parent is managed
@@ -79,5 +79,12 @@ public class SubscriberConfirmMergedAction extends CVSSubscriberAction {
 		} finally {
 			monitor.done();
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#getJobName(org.eclipse.team.ui.synchronize.actions.SyncInfoSet)
+	 */
+	protected String getJobName(SyncInfoSet syncSet) {
+		return Policy.bind("SubscriberConfirmMergedAction.jobName", new Integer(syncSet.size()).toString()); //$NON-NLS-1$
 	}
 }

@@ -178,9 +178,7 @@ public abstract class CVSSubscriberAction extends SubscriberAction {
 	 * @param syncSet
 	 * @return
 	 */
-	protected String getJobName(SyncInfoSet syncSet) {
-		return Policy.bind("CVSSubscriberAction.jobName", new Integer(syncSet.size()).toString()); //$NON-NLS-1$
-	}
+	protected abstract String getJobName(SyncInfoSet syncSet);
 
 	/**
 	 * Return a scheduling rule that includes all resources that will be operated 

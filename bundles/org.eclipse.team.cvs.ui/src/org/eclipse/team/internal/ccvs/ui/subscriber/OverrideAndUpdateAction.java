@@ -66,4 +66,11 @@ public class OverrideAndUpdateAction extends CVSSubscriberAction {
 			Policy.cancelOperation();
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#getJobName(org.eclipse.team.ui.synchronize.actions.SyncInfoSet)
+	 */
+	protected String getJobName(SyncInfoSet syncSet) {
+		return Policy.bind("OverrideAndUpdateAction.jobName", new Integer(syncSet.size()).toString()); //$NON-NLS-1$
+	}
 }
