@@ -22,6 +22,7 @@ import org.eclipse.ant.tests.ui.editor.AntEditorContentOutlineTests;
 import org.eclipse.ant.tests.ui.editor.CodeCompletionTest;
 import org.eclipse.ant.tests.ui.editor.EnclosingTargetSearchingHandlerTest;
 import org.eclipse.ant.tests.ui.editor.TaskDescriptionProviderTest;
+import org.eclipse.ant.tests.ui.externaltools.MigrationTests;
 import org.eclipse.ant.tests.ui.separateVM.SeparateVMTests;
 
 /**
@@ -41,6 +42,7 @@ public class AntUITests extends TestSuite {
         suite.addTest(new TestSuite(TaskDescriptionProviderTest.class));
         suite.addTest(new TestSuite(AntEditorContentOutlineTests.class));
         suite.addTest(new TestSuite(EnclosingTargetSearchingHandlerTest.class));
+        suite.addTest(new TestSuite(MigrationTests.class));
         return suite;
     }
 }
