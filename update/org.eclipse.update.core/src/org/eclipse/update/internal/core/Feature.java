@@ -441,6 +441,10 @@ public abstract class Feature implements IFeature {
 		return ((PluginEntry) entry).getInstallSize();
 	}
 	/**
+	 * returns the download size
+	 * of the feature to be installed on the site.
+	 * If the site is <code>null</code> returns the maximum size
+	 * 
 	 * If one plug-in entry has an unknown size.
 	 * then the download size is unknown.
 	 * 
@@ -449,9 +453,12 @@ public abstract class Feature implements IFeature {
 	 */
 	public long getDownloadSize(ISite site) throws CoreException {
 		int result = 0;
-		IPluginEntry[] featureEntries = this.getPluginEntries();
-		IPluginEntry[] siteEntries = site.getPluginEntries();
-		IPluginEntry[] entriesToInstall = intersection(featureEntries, siteEntries);
+		IPluginEntry[] entriesToInstall = this.getPluginEntries();
+		if (site!=null){
+			IPluginEntry[] siteEntries = site.getPluginEntries();
+			entriesToInstall = intersection(entriesToInstall, siteEntries);
+		}
+			
 		if (entriesToInstall == null || entriesToInstall.length == 0) {
 			result = -1;
 		} else {
@@ -466,6 +473,10 @@ public abstract class Feature implements IFeature {
 		return result;
 	}
 	/**
+	 * returns the install size
+	 * of the feature to be installed on the site.
+	 * If the site is <code>null</code> returns the maximum size
+	 * 
 	 * If one plug-in entry has an unknown size.
 	 * then the install size is unknown.
 	 * 
@@ -473,9 +484,11 @@ public abstract class Feature implements IFeature {
 	 */
 	public long getInstallSize(ISite site) throws CoreException {
 		int result = 0;
-		IPluginEntry[] featureEntries = this.getPluginEntries();
-		IPluginEntry[] siteEntries = site.getPluginEntries();
-		IPluginEntry[] entriesToInstall = intersection(featureEntries, siteEntries);
+		IPluginEntry[] entriesToInstall = this.getPluginEntries();
+		if (site!=null){
+			IPluginEntry[] siteEntries = site.getPluginEntries();
+			entriesToInstall = intersection(entriesToInstall, siteEntries);
+		}
 		if (entriesToInstall == null || entriesToInstall.length == 0) {
 			result = -1;
 		} else {

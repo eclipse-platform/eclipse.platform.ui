@@ -229,6 +229,28 @@ public interface IFeature extends IPluginContainer {
 	// FIXME: javadoc	
 	String[] getArchives();
 	
+	
+		/**
+	 * returns the download size
+	 * of the feature to be installed on the site.
+	 * If the site is <code>null</code> returns the maximum size
+	 * 
+	 * If one plug-in entry has an unknown size.
+	 * then the download size is unknown and equal to <code>-1</code>
+	 * 
+	 */
+	long getDownloadSize(ISite site) throws CoreException;
+	
+	/**
+	 * returns the install size
+	 * of the feature to be installed on the site.
+	 * If the site is <code>null</code> returns the maximum size
+	 * 
+	 * If one plug-in entry has an unknown size.
+	 * then the install size is unknown and equal to <code>-1</code>.
+	 */
+	long getInstallSize(ISite site) throws CoreException;
+		
 }
 
 
