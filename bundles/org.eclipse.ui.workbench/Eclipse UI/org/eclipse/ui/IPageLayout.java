@@ -242,7 +242,7 @@ public void addShowInPart(String id);
 public void addShowViewShortcut(String id);
 /**
  * Adds a fixed view with the given id to this page layout.  
- * Once added, a fixed view cannot be moved or closed.
+ * Once added, a fixed view cannot be closed.
  * The id must name a view contributed to the workbench's view extension point 
  * (named <code>"org.eclipse.ui.views"</code>).
  *
