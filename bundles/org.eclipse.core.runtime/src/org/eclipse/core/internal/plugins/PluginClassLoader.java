@@ -6,7 +6,7 @@ package org.eclipse.core.internal.plugins;
  */
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.boot.*;
+import org.eclipse.core.boot.BootLoader;import org.eclipse.core.internal.boot.*;
 import org.eclipse.core.internal.runtime.Policy;
 import java.io.File;
 import java.util.*;
@@ -160,10 +160,15 @@ public void initializeImportedLoaders() {
 	PluginRegistry registry = desc.getPluginRegistry();
 	ArrayList require = new ArrayList();
 	for (int i = 0; i < prereqs.length; i++) {
-		desc = (PluginDescriptor) registry.getPluginDescriptor(prereqs[i].getUniqueIdentifier(), prereqs[i].getResolvedVersionIdentifier());
-		// can be null if the prereq was optional and did not exst.
-		if (desc != null)
-			require.add(new DelegateLoader((DelegatingURLClassLoader) desc.getPluginClassLoader(true), prereqs[i].isExported()));
+		String prereqId = prereqs[i].getUniqueIdentifier();
+		// skip over the runtime and boot plugins if they were specified.  They are automatically included
+		// as the platfrom and parent respectively.
+		if (!prereqId.equalsIgnoreCase(Platform.PI_RUNTIME) && !prereqId.equalsIgnoreCase(BootLoader.PI_BOOT)) {
+			desc = (PluginDescriptor) registry.getPluginDescriptor(prereqId, prereqs[i].getResolvedVersionIdentifier());
+			// can be null if the prereq was optional and did not exst.
+			if (desc != null)
+				require.add(new DelegateLoader((DelegatingURLClassLoader) desc.getPluginClassLoader(true), prereqs[i].isExported()));
+		}
 	}
 
 	if (require.isEmpty())

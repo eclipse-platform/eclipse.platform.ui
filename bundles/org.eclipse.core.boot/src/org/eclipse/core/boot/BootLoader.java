@@ -27,6 +27,12 @@ import java.net.URL;
 public final class BootLoader {
 
 	/**
+	 * The unique identifier constant (value "<code>org.eclipse.core.boot</code>")
+	 * of the Core Boot (pseudo-) plug-in.
+	 */
+	public static final String PI_BOOT = "org.eclipse.core.boot";
+
+	/**
 	 * Constant string (value "win32") indicating the platform is running on a
 	 * Window 32-bit operating system (e.g., Windows 98, NT, 2000).
 	 */

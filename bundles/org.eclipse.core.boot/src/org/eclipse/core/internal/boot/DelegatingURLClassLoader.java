@@ -29,15 +29,6 @@ public abstract class DelegatingURLClassLoader extends URLClassLoader {
 
 	// development mode class path additions
 	public static String devClassPath = null;
-	// native library loading
-	private static String libPrefix;
-	private static String libSuffix;
-	private static final String WIN_LIBRARY_PREFIX = "";
-	private static final String WIN_LIBRARY_SUFFIX = ".dll";
-	private static final String UNIX_LIBRARY_PREFIX = "lib";
-	private static final String UNIX_LIBRARY_SUFFIX = ".so";
-	private Hashtable nativeLibs = new Hashtable();
-	private static final int BUF_SIZE = 32768;
 
 	// control class load tracing
 	public static boolean DEBUG = false;
@@ -133,7 +124,6 @@ public abstract class DelegatingURLClassLoader extends URLClassLoader {
 
 public DelegatingURLClassLoader(URL[] codePath, URLContentFilter[] codeFilters, URL[] resourcePath, URLContentFilter[] resourceFilters, ClassLoader parent) {
 	super(codePath, parent);
-	initialize();
 	if (resourcePath != null && resourcePath.length > 0)
 		resourceLoader = new ResourceLoader(resourcePath);
 
@@ -543,15 +533,6 @@ private URL getURLforClass(Class clazz) {
 	if (DEBUG && DEBUG_SHOW_ACTIONS && debugClass(clazz.getName()))
 		debug("*** " + clazz.getName());
 	return null;
-}
-private void initialize() {
-	if (BootLoader.getOS().equals(BootLoader.OS_WIN32)) {
-		libPrefix = WIN_LIBRARY_PREFIX;
-		libSuffix = WIN_LIBRARY_SUFFIX;
-	} else {
-		libPrefix = UNIX_LIBRARY_PREFIX;
-		libSuffix = UNIX_LIBRARY_SUFFIX;
-	}
 }
 public void initializeImportedLoaders() {
 }
