@@ -17,7 +17,6 @@ import junit.framework.TestSuite;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.internal.ftp.FTPException;
-import org.eclipse.team.internal.ftp.FTPServerLocation;
 import org.eclipse.team.internal.ftp.client.FTPClient;
 import org.eclipse.team.tests.core.TeamTest;
 
@@ -46,11 +45,10 @@ public class ClientTest extends TeamTest {
 	}
 	
 	public FTPClient openFTPConnection() throws FTPException {
-		FTPServerLocation location = FTPServerLocation.fromURL(getURL(), false);
-		FTPClient client = new FTPClient(location, null, null);
-		client.open(DEFAULT_PROGRESS_MONITOR);
-		return client;
+		return FTPTestSetup.openFTPConnection(getURL());
 	}
+	
+
 	
 	public void testCreateDirectory() throws FTPException {
 		FTPClient client = openFTPConnection();

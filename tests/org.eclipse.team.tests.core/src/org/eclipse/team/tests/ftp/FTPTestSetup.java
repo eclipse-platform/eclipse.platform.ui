@@ -18,9 +18,12 @@ import java.io.FileReader;
 
 import junit.extensions.TestSetup;
 import junit.framework.Test;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.internal.ftp.FTPException;
 import org.eclipse.team.internal.ftp.FTPServerLocation;
 import org.eclipse.team.internal.ftp.client.FTPClient;
+import org.eclipse.team.internal.ftp.client.IFTPClientListener;
 
 /**
  * Provides the FTP tests with a host to ftp to.
@@ -29,6 +32,8 @@ public class FTPTestSetup extends TestSetup {
 
 	public static final String FTP_URL;
 	public static final boolean SCRUB_URL;
+	
+	private static final IProgressMonitor DEFAULT_PROGRESS_MONITOR = new NullProgressMonitor();
 	
 	public static URL ftpURL;
 	
@@ -86,12 +91,8 @@ public class FTPTestSetup extends TestSetup {
 		// is important for the UI tests.
 		URL url = new URL(urlString);
 		FTPServerLocation location = FTPServerLocation.fromURL(url, false);
-		FTPClient client = new FTPClient(location, null, null);
-		try {
-			client.open(null);
-		} finally {
-			client.close(null);
-		}
+		FTPClient client = openFTPConnection(url);
+		client.close(DEFAULT_PROGRESS_MONITOR);
 		
 		// Initialize the repo if requested (requires rsh access)
 		if( SCRUB_URL ) {
@@ -104,4 +105,27 @@ public class FTPTestSetup extends TestSetup {
 	public void tearDown() {
 		// Nothing to do here
 	}
+	
+	public static FTPClient openFTPConnection(URL url) throws FTPException {
+		FTPServerLocation location = FTPServerLocation.fromURL(url, false);
+		FTPClient client = new FTPClient(location, null, getListener());
+		client.open(DEFAULT_PROGRESS_MONITOR);
+		return client;
+	}
+	
+	public static IFTPClientListener getListener() {
+		return new IFTPClientListener() {
+			public void responseReceived(int responseCode, String responseText) {
+				System.out.println(responseText);
+			}
+			public void requestSent(String command, String argument) {
+				if (argument != null) {
+					System.out.println(command + " " + argument);
+				} else {
+					System.out.println(command);
+				}
+			}
+		};
+	}
+	
 }

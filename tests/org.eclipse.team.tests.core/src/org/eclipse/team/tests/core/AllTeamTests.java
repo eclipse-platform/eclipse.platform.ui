@@ -30,6 +30,7 @@ public class AllTeamTests extends EclipseWorkspaceTest {
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 		suite.addTest(RepositoryProviderTests.suite());
+		suite.addTest(StreamTests.suite());
 		return suite;
 	}
 }

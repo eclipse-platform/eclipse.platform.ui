@@ -15,10 +15,12 @@
       <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.core.tests.harness"/>
       <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.core.boot"/>
       <import plugin="org.eclipse.team.core"/>
       <import plugin="org.eclipse.team.cvs.core"/>
       <import plugin="org.eclipse.team.ui"/>
       <import plugin="org.eclipse.team.cvs.ui"/>
+      <import plugin="org.eclipse.team.ftp"/>
       <import plugin="org.eclipse.compare"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.junit"/>
@@ -40,6 +42,15 @@
             id="target.all">
          <run
                class="org.eclipse.team.tests.core.TargetProviderTests">
+         </run>
+      </test>
+   </extension>
+     <extension
+         point="org.eclipse.core.tests.harness.tests">
+      <test
+            id="team.ftp">
+         <run
+               class="org.eclipse.team.tests.ftp.ClientTest">
          </run>
       </test>
    </extension>
@@ -85,4 +96,14 @@
       </one-of-nature>
    </extension>
 
+   <extension
+         id="testapplication"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="org.eclipse.team.tests.ftp.TestApplication">
+         </run>
+      </application>
+   </extension>
+   
 </plugin>
