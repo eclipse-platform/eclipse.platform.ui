@@ -714,7 +714,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 		List remove = null;
 		Iterator iter = history.iterator();
 		while (iter.hasNext()) {
-			LaunchHistoryElement element = (LaunchHistoryElement)iter.next();
+			LaunchConfigurationHistoryElement element = (LaunchConfigurationHistoryElement)iter.next();
 			if (element.getLaunchElement() == null) {
 				if (remove == null) {
 					remove = new ArrayList(1);
