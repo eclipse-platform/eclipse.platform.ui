@@ -359,6 +359,19 @@
 			class="org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntTabGroup">
 		</launchConfigurationTabGroup>
 	</extension>
+	
+	<extension point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+		<launchConfigurationTypeImage
+			id="org.eclipse.ui.externaltools.launchConfigurationTypeImage.program"
+			configTypeID="org.eclipse.ui.externaltools.ProgramLaunchConfigurationType"
+			icon="icons/full/obj16/external_tools.gif">
+		</launchConfigurationTypeImage>	
+		<launchConfigurationTypeImage
+			id="org.eclipse.ant.launchConfigurationTypeImage.ant"
+			configTypeID="org.eclipse.ant.AntLaunchConfigurationType"
+			icon="icons/full/obj16/ant_file.gif">
+		</launchConfigurationTypeImage>	
+	</extension>	
     
 	<extension point="org.eclipse.ui.preferencePages">
 		<page 
