@@ -26,15 +26,18 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
@@ -522,38 +525,225 @@ public class EclipseSynchronizerTest extends EclipseTest {
 		}
 	}
 	
-	/*
-	 * See bug 44446
+	/**
+	 * Create a test project whose name is derived from the currently running test case.
+	 * The resources are built using the names supplied in the given String array.
+	 * Paths ending in / will be folders while others will be files. Intermediate folders
+	 * are created as needed. Dummy sync info is applied to all created resources and
+	 * the project is mapped to the CVS repository provider.
+	 * @param resourcePaths paths of resources to be generated
+	 * @return the create project
 	 */
-	public void testRecreation() throws CoreException {
-		
-		// Set up a project with dummy sync info
+	protected IProject createProject(String[] resourcePaths) throws CoreException {
+		// Create the project and build the resources
 		IProject project = getUniqueTestProject(getName());
-		sync.setFolderSync(project, dummyFolderSync(project));
+		buildResources(project, resourcePaths, true);
 		
-		IFolder folder = project.getFolder("folder1");
-		folder.create(false, true, null);
-		sync.setFolderSync(folder, dummyFolderSync(folder));
-		sync.setResourceSync(folder, dummyResourceSync(folder));
-		
-		IFile file = folder.getFile("file1");
-		file.create(getRandomContents(), false /*force*/, null);
-		sync.setResourceSync(file, dummyResourceSync(file));
+		// Associate dummy sync info with al create resources
+		project.accept(new IResourceVisitor() {
+			public boolean visit(IResource resource) throws CoreException {
+				if (resource.getType() != IResource.PROJECT) {
+					sync.setResourceSync(resource, dummyResourceSync(resource));
+				}
+				if (resource.getType() != IResource.FILE) {
+					sync.setFolderSync((IContainer)resource, dummyFolderSync((IContainer)resource));
+				}
+				return true;
+			}
+		});
 		
 		// Map the project to CVS so the Move/Delete hook works
 		RepositoryProvider.map(project, CVSProviderPlugin.getTypeId());
+		return project;
+	}
+	
+	/**
+	 * Assert that the resources at the given resource paths have sync info.
+	 * Also assert that the ancestors of the resources also have sync info
+	 * @param project the project containing the resources
+	 * @param resourcePaths the project relative resource paths
+	 * @throws CVSException
+	 */
+	protected void assertHasSyncInfo(IProject project, String[] resourcePaths) throws CVSException {
+		for (int i = 0; i < resourcePaths.length; i++) {
+			String path = resourcePaths[i];
+			IResource resource = findResource(project, path);
+			assertHasSyncInfo(resource);
+		}
+	}
+
+	private IResource findResource(IProject project, String path) {
+		IResource resource = project.findMember(path);
+		if (resource == null) {
+			if (path.charAt(path.length()-1) == Path.SEPARATOR)
+				resource = (IResource) project.getFolder(path);
+			else
+				resource = (IResource) project.getFile(path);
+		}
+		return resource;
+	}
+
+	/**
+	 * Assert that the resource and its ancestors have sync info
+	 * @param resource the resource being queried
+	 * @throws CVSException
+	 */
+	protected void assertHasSyncInfo(IResource resource) throws CVSException {
+		if (resource.getType() == IResource.ROOT) return;
+		if (resource.getType() != IResource.FILE) {
+			assertNotNull("Folder should have folder sync info but does not: " + resource.getProjectRelativePath(), sync.getFolderSync((IContainer)resource));
+		}
+		if (resource.getType() != IResource.PROJECT) {
+			assertNotNull("Resource should have sync bytes but does not: " + resource.getProjectRelativePath(), sync.getSyncBytes(resource));
+			assertHasSyncInfo(resource.getParent());
+		}
+	}
+	
+	/**
+	 * Assert that the resources at the given resource paths do not have sync info.
+	 * Also assert that the descendants of the resources also do not have sync info
+	 * @param project
+	 * @param resourcePaths
+	 * @throws CVSException
+	 */
+	private void assertHasNoSyncInfo(IProject project, String[] resourcePaths) throws CoreException {
+		for (int i = 0; i < resourcePaths.length; i++) {
+			String path = resourcePaths[i];
+			IResource resource = findResource(project, path);
+			assertHasNoSyncInfo(resource);
+		}
+	}
+	
+	protected void assertHasNoSyncInfo(IResource resource) throws CoreException {
+		if (resource.getType() == IResource.ROOT) return;
+		if (resource.getType() != IResource.FILE) {
+			assertNull("Folder should not have folder sync but does: " + resource.getProjectRelativePath(), sync.getFolderSync((IContainer)resource));
+			IResource[] members = ((IContainer)resource).members();
+			for (int i = 0; i < members.length; i++) {
+				IResource child = members[i];
+				assertHasNoSyncInfo(child);
+			}
+		}
+		if (resource.getType() != IResource.PROJECT) {
+			assertNull("Resource should not have sync bytes but does: " + resource.getProjectRelativePath(), sync.getSyncBytes(resource));
+		}
+	}
+
+	public void testDeleteFile() throws CoreException {
+		// Create a project with dummy sync info
+		IProject project =  createProject(new String[] {"folder1/folder2/file1", "folder1/folder2/file2"});
+		
+		// Delete the file and assert old sync info is still in place and new has no sync info
+		IFile file = project.getFile("folder1/folder2/file1");
+		file.delete(false, false, null);
+		assertHasSyncInfo(project, new String[] {"folder1/folder2/file1"});
+	}
+	
+	public void testDeleteFolder() throws CoreException {
+		// Create a project with dummy sync info
+		IProject project =  createProject(new String[] {"folder1/folder2/file1", "folder1/folder2/file2"});
+		
+		// Delete the folder and assert old sync info is still in place and new has no sync info
+		IFolder folder = project.getFolder("folder1/folder2/");
+		folder.delete(false, false, null);
+		assertHasSyncInfo(project, new String[] {"folder1/folder2/file1", "folder1/folder2/file2"});
+	}
+	
+	public void testMoveFile() throws CoreException {
+		// Create a project with dummy sync info
+		IProject project =  createProject(new String[] {"folder1/folder2/file1", "folder1/folder2/file2"});
+		
+		// Move the file and assert old sync info is still in place and new has no sync info
+		IFile file = project.getFile("folder1/folder2/file1");
+		project.getFolder("folder1/folder3/").create(false, true, null);
+		file.move(project.getFolder("folder1/folder3/file1").getFullPath(), false, null);
+		assertHasSyncInfo(project, new String[] {"folder1/folder2/file1"});
+		assertHasNoSyncInfo(project, new String[] {"folder1/folder3"});
+	}
+	
+	public void testMoveFolder() throws CoreException {
+		// Create a project with dummy sync info
+		IProject project =  createProject(new String[] {"folder1/folder2/file1"});
+		
+		// Move the folder and assert old sync info is still in place and new has no sync info
+		IFolder folder = project.getFolder("folder1/folder2/");
+		folder.move(project.getFolder("folder1/folder3").getFullPath(), false, null);
+		assertHasSyncInfo(project, new String[] {"folder1/folder2/file1"});
+		assertHasNoSyncInfo(project, new String[] {"folder1/folder3/"});
+	}
+	
+	/*
+	 * See bug 44446
+	 */
+	public void testFileRecreation() throws CoreException {
+		// Create a project with dummy sync info
+		IProject project =  createProject(new String[] {"folder1/file1"});
 		
 		// Remove the file and assert that it still has sync info
+		IFile file = project.getFile("folder1/file1");
 		file.delete(false, false, null);
-		assertNotNull("Sync bytes should not be null for " + file.getFullPath(), sync.getSyncBytes(file));
+		assertHasSyncInfo(file);
 		
 		// Recreate the file and assert that it still has sync info
 		file.create(getRandomContents(), false /*force*/, null);
-		assertNotNull("Sync bytes should not be null for " + file.getFullPath(), sync.getSyncBytes(file));
+		assertHasSyncInfo(file);
 		
 		// unmanage the file and assert that sync info is gone
 		sync.deleteResourceSync(file);
-		assertNull("Sync bytes should be null for " + file.getFullPath(), sync.getSyncBytes(file));
-
+		assertHasNoSyncInfo(file);
+	}
+	
+	/*
+	 * This testcase simulates an update that has an incoming deletion and a merge 
+	 * (which may do a move).
+	 */
+	public void testFileMoveAndDelete() throws CoreException {
+		// Create a project with dummy sync info
+		final IProject project =  createProject(new String[] {"folder1/file1", "folder1/file2"});
+		
+		sync.run(project, new ICVSRunnable() {
+			public void run(IProgressMonitor monitor) throws CVSException {
+				try {
+					IFile file1 = project.getFile("folder1/file1");
+					IFile file2 = project.getFile("folder1/file2");
+					// Delete file 1
+					file1.delete(false, false, null);
+					assertHasSyncInfo(file1);
+					assertHasSyncInfo(file2);
+					sync.deleteResourceSync(file1);
+					assertHasNoSyncInfo(file1);
+					assertHasSyncInfo(file2);
+					// Move file 2
+					file2.move(new Path("file3"), false, false, null);
+					assertHasNoSyncInfo(file1);
+					assertHasSyncInfo(file2);
+				} catch (CoreException e) {
+					throw CVSException.wrapException(e);
+				}
+			}
+		}, null);
+	}
+	
+	public void testMoveFolderOverFolder() throws CoreException {
+		// Create a project with dummy sync info
+		final IProject project =  createProject(new String[] {"folder1/file1", "folder2/file1"});
+		
+		// Change the sync info of folder1/file1 to be revision 1.9
+		String revision = "1.9";
+		IFile file11 = project.getFile("folder1/file1");
+		ResourceSyncInfo info = sync.getResourceSync(file11);
+		MutableResourceSyncInfo muttable = info.cloneMutable();
+		muttable.setRevision(revision);
+		sync.setResourceSync(file11, muttable);
+		
+		// Move the folder and verify that the sync info stays
+		project.getFolder("folder2").delete(false, false, null);
+		project.getFolder("folder1").move(new Path("folder2"), false, false, null);
+		assertHasSyncInfo(file11);
+		IFile file21 = project.getFile("folder2/file1");
+		assertHasSyncInfo(file21);
+		assertTrue(sync.getResourceSync(file11).getRevision().equals(revision));
+		assertTrue(!sync.getResourceSync(file21).getRevision().equals(revision));
+		
 	}
 }

@@ -596,13 +596,6 @@ public class EclipseSynchronizer implements IFlushOperation {
 			monitor.done();
 		}
 	}
-
-	private void purgeCache(IResource resource, boolean deep) throws CVSException {
-		sessionPropertyCache.purgeResourceSyncCache(resource);
-		if (resource.getType() != IResource.FILE) {
-			sessionPropertyCache.purgeCache((IContainer)resource, deep);
-		}
-	}
 	
 	/**
 	 * Called to notify the synchronizer that meta files have changed on disk, outside 
@@ -654,12 +647,21 @@ public class EclipseSynchronizer implements IFlushOperation {
 			(IResource[]) changed.toArray(new IResource[changed.size()]));
 	}
 	
-	/**
-	 * The folder is about to be deleted (including its CVS subfolder).
-	 * Take any appropriate action to remember the CVS information.
+	/*
+	 * The resource is about to be deleted by the move delete hook.
+	 * In all cases (except when the resource doesn't exist), this method 
+	 * will indicate that the dirty state of the parent needs to be recomputed.
+	 * For managed resources, it will move the cached sync info from the session
+	 * property cache into the sycnrhonizer cache, purging the session cache.
+	 * @param resource the resource about to be deleted.
+	 * <p>
+	 * Note taht this method is not recursive. Hence, for managed resources
+	 * 
+	 * @returns whether children need to be prepared
+	 * @throws CVSException
 	 */
-	public void prepareForDeletion(IResource resource) throws CVSException {
-		if (!resource.exists()) return;
+	/* private */ boolean prepareForDeletion(IResource resource) throws CVSException {
+		if (!resource.exists()) return false;
 		ISchedulingRule rule = null;
 		try {
 			rule = beginBatching(resource, null);
@@ -678,21 +680,27 @@ public class EclipseSynchronizer implements IFlushOperation {
 							syncBytes = convertToDeletion(syncBytes);
 							synchronizerCache.setCachedSyncBytes(resource, syncBytes, true);
 						}
+						sessionPropertyCache.purgeResourceSyncCache(resource);
 						resourceChanged(resource);
 					}
+					return false;
 				} else {
 					IContainer container = (IContainer)resource;
 					if (container.getType() == IResource.PROJECT) {
 						synchronizerCache.flush((IProject)container);
+						return false;
 					} else {
 						// Move the folder sync info into phantom space
 						FolderSyncInfo info = getFolderSync(container);
-						if (info == null) return;
+						if (info == null) return false;
 						synchronizerCache.setCachedFolderSync(container, info, true);
 						folderChanged(container);
 						// move the resource sync as well
 						byte[] syncBytes = getSyncBytes(resource);
 						synchronizerCache.setCachedSyncBytes(resource, syncBytes, true);
+						sessionPropertyCache.purgeResourceSyncCache(container);
+						sessionPropertyCache.purgeCache(container, false);
+						return true;
 					}
 				}
 			} finally {
@@ -722,37 +730,41 @@ public class EclipseSynchronizer implements IFlushOperation {
 	}
 	
 	/**
-	 * Prepare for a move or delete within the move/delete hook by moving the
-	 * sync info into phantom space and flushing the session properties cache.
-	 * This will allow sync info for deletions to be maintained in the source
-	 * location and sync info at the destination to be preserved as well.
+	 * Prepare for the deletion of the target resource from within 
+	 * the move/delete hook. The method is invoked by both the 
+	 * deleteFile/Folder methods and for the source resource
+	 * of moveFile/Folder. This method will move the cached sync info
+	 * into the phantom (ISynchronizer) cache so that outgoing deletions
+	 * and known remote folders are preserved.
 	 * 
 	 * @param resource
 	 * @param monitor
 	 * @throws CVSException
 	 */
-	public void prepareForMoveDelete(IResource resource, IProgressMonitor monitor) throws CVSException {
+	public void prepareForDeletion(IResource resource, IProgressMonitor monitor) throws CVSException {
 		// Move sync info to phantom space for the resource and all it's children
+		monitor = Policy.monitorFor(monitor);
 		try {
+			beginOperation();
 			monitor.beginTask(null, 100);
-			resource.accept(new IResourceVisitor() {
-				public boolean visit(IResource innerResource) throws CoreException {
-					try {
-						prepareForDeletion(innerResource);
-					} catch (CVSException e) {
-						CVSProviderPlugin.log(e);
-						throw new CoreException(e.getStatus());
+			try {
+				resource.accept(new IResourceVisitor() {
+					public boolean visit(IResource innerResource) throws CoreException {
+						try {
+							return prepareForDeletion(innerResource);
+						} catch (CVSException e) {
+							CVSProviderPlugin.log(e);
+							throw new CoreException(e.getStatus());
+						}
 					}
-					return true;
-				}
-			});
-		} catch (CoreException e) {
-			throw CVSException.wrapException(e);
+				});
+			} catch (CoreException e) {
+				throw CVSException.wrapException(e);
+			}
 		} finally {
+			endOperation();
 			monitor.done();
 		}
-		// purge the sync info to clear the session properties
-		purgeCache(resource, true);
 	}
 	
 	/**
@@ -1542,14 +1554,69 @@ public class EclipseSynchronizer implements IFlushOperation {
 	}
 
 	/**
-	 * React to a file that was just moved by the move/delete hook.
-	 * @param file the file that was moved (at its new location)
+	 * React to a resource that was just moved by the move/delete hook.
+	 * @param resource the resource that was moved (at its new location)
 	 */
-	public void fileMoved(IFile file) throws CVSException {
-		if (!isWithinActiveOperationScope(file)) {
-			sessionPropertyCache.purgeCache(file.getParent(), false /*don't flush children*/);
+	public void postMove(IResource resource) throws CVSException {
+		try {
+			beginOperation();
+			if (resource.getType() == IResource.FILE) {
+				// Purge any copied sync info so true sync info will 
+				// be obtained from the synchronizer cache
+				sessionPropertyCache.purgeResourceSyncCache(resource);
+			} else {
+				IContainer container = (IContainer)resource;
+				// Purge any copied sync info
+				sessionPropertyCache.purgeCache(container, true /* deep */);
+				// Dirty all resources so old sync info will be rewritten to disk
+				try {
+					container.accept(new IResourceVisitor() {
+						public boolean visit(IResource resource) throws CoreException {
+							if (getSyncBytes(resource) != null) {
+								resourceChanged(resource);
+							}
+							if (resource.getType() != IResource.FILE) {
+								if (getFolderSync((IContainer)resource) != null) {
+									folderChanged((IContainer)resource);
+									return true;
+								}
+							}
+							return false;
+						}
+					});
+				} catch (CoreException e) {
+					throw CVSException.wrapException(e);
+				}
+				// Flush the sync info to disk
+				flush(container, true /* deep */, null);
+			}
+		} finally {
+			endOperation();
 		}
-		
 	}
 	
+	/**
+	 * This method is to be invoked only from the move/delete hook. It's purpose
+	 * is to obtain the sync look in order to prevent other threads from accessing
+	 * sync info while the move/delete is taking place.
+	 * @param runnable
+	 * @param monitor
+	 * @throws CVSException
+	 */
+	public void performMoveDelete(ICVSRunnable runnable, IProgressMonitor monitor) throws CVSException {
+		ISchedulingRule rule = null;
+		try {
+			monitor.beginTask(null, 100);
+			rule = beginBatching(null, null);
+			try {
+				beginOperation();
+				runnable.run(Policy.subMonitorFor(monitor, 95));
+			} finally {
+				endOperation();
+			}
+		} finally {
+			if (rule != null) endBatching(rule, Policy.subMonitorFor(monitor, 5));
+			monitor.done();
+		}
+	}
 }
