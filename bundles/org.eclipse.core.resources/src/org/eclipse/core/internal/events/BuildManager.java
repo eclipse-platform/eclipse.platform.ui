@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,7 +80,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	}
 	
 	//the job for performing background autobuild
-	private final AutoBuildJob autoBuildJob;
+	protected final AutoBuildJob autoBuildJob;
 	protected boolean building = false;
 	protected final ArrayList builtProjects = new ArrayList();
 	protected InternalBuilder currentBuilder;
@@ -98,8 +98,6 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 */
 	final protected DeltaCache deltaTreeCache = new DeltaCache();
 	
-	//used for interrupting an auto-build when another operation starts
-	protected volatile boolean interrupted = false;
 	protected ElementTree lastBuiltTree;
 
 	//used for the build cycle looping mechanism
@@ -268,7 +266,6 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	}
 	private void cleanup() {
 		building = false;
-		interrupted = false;
 		builtProjects.clear();
 		deltaCache.flush();
 		deltaTreeCache.flush();
@@ -309,13 +306,15 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	protected boolean canRun(int trigger) {
 		return !building;
 	}
+	/**
+	 * Another thread is attempting to modify the workspace. Cancel the
+	 * autobuild and wait until it completes.
+	 */
 	public void interrupt() {
-		if (autoBuildJob.checkCancel() && building) {
-			interrupted = true;
+		if (autoBuildJob.interrupt() && building) {
 			try {
-				//wait until the build completes, otherwise we will fail to
-				//re-schedule the autobuild job if it is still running when this
-				//operation ends
+				//wait until the build completes, otherwise we will fail to re-schedule 
+				//the autobuild job if it is still running when this operation ends
 				autoBuildJob.join();
 			} catch (InterruptedException e) {
 				//break out when interrupted
@@ -327,7 +326,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 */
 	private void checkCanceled(int trigger, IProgressMonitor monitor) {
 		Policy.checkCanceled(monitor);
-		if (trigger == IncrementalProjectBuilder.AUTO_BUILD && interrupted)
+		if (trigger == IncrementalProjectBuilder.AUTO_BUILD && autoBuildJob.isInterrupted())
 			throw new OperationCanceledException();
 	}
 	protected IProject[] computeUnorderedProjects(IProject[] ordered) {
@@ -391,7 +390,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * The outermost workspace operation has finished.  Do an autobuild if necessary.
 	 */
 	public void endTopLevel(boolean needsBuild) {
-		autoBuildJob.endTopLevel(needsBuild);
+		autoBuildJob.build(needsBuild);
 	}
 	protected IncrementalProjectBuilder getBuilder(String builderName, IProject project, MultiStatus status) throws CoreException {
 		Hashtable builders = getBuilders(project);

@@ -20,12 +20,19 @@ import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * The job for performing workspace auto-builds, and pre- and post- autobuild
- * notification.  This job is run regardless of whether autobuild is on or off.
+ * notification.  This job is run whenever the workspace changes regardless 
+ * of whether autobuild is on or off.
  */
 class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	private boolean avoidBuild = false;
 	private boolean buildNeeded = false;
 	private boolean forceBuild = false;
+	/**
+	 * Indicates that another thread tried to modify the workspace during
+	 * the autobuild.  The autobuild should be immediately rescheduled
+	 * so that it will run as soon as the next workspace modification completes.
+	 */
+	private boolean interrupted = false;
 	private long lastBuild = 0L;
 	private Workspace workspace;
 
@@ -47,14 +54,14 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 		//force a build if autobuild has been turned on
 		if (!forceBuild && !wasAutoBuilding && isAutoBuilding) {
 			forceBuild = true;
-			endTopLevel(false);
+			build(false);
 		}
 	}
 	/**
 	 * Used to prevent auto-builds at the end of operations that contain
 	 * explicit builds
 	 */
-	public synchronized void avoidBuild() {
+	synchronized void avoidBuild() {
 		avoidBuild = true;
 	}
 	public boolean belongsTo(Object family) {
@@ -64,20 +71,58 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 		workspace.getNotificationManager().broadcastChanges(workspace.getElementTree(), type, false);
 	}
 	/**
+	 * Instructs the build job that a build is required.  Ensure the build
+	 * job is scheduled to run.
+	 * @param needsBuild Whether a build is required, either due to 
+	 * workspace change or other factor that invalidates the built state.
+	 */
+	synchronized void build(boolean needsBuild) {
+		buildNeeded |= needsBuild;
+		long delay = Math.max(Policy.MIN_BUILD_DELAY, Policy.MAX_BUILD_DELAY + lastBuild - System.currentTimeMillis());
+		switch (getState()) {
+			case Job.SLEEPING:
+				wakeUp(delay);
+				break;
+			case NONE:
+				schedule(delay);
+				break;
+		}
+	}
+	/**
+	 * The autobuild job has been canceled.  There are two flavours of
+	 * cancel, explicit user cancelation, and implicit interruption due to another
+	 * thread trying to modify the workspace.  In the latter case, we must 
+	 * make sure the build is immediately rescheduled if it was interrupted 
+	 * by another thread, so that clients waiting to join autobuild will properly 
+	 * continue waiting
+	 * @return a status with severity <code>CANCEL</code>
+	 */
+	private synchronized IStatus canceled() {
+		//regardless of the form of cancelation, the build state is not happy
+		buildNeeded = true;
+		//schedule a rebuild immediately if build was implicitly canceled
+		if (interrupted)
+			build(true);
+		interrupted = false;
+		return Status.CANCEL_STATUS;
+	}
+	/**
 	 * Another thread is attempting to modify the workspace. Cancel the
 	 * autobuild. Returns true if the build is currently running and should be
 	 * interrupted, and false otherwise.
 	 */
-	synchronized boolean checkCancel() {
+	synchronized boolean interrupt() {
 		int state = getState();
-		//cancel the build job if it is waiting to run
-		if (state == Job.WAITING) {
-			cancel();
-			return false;
-		}
+		//put the job to sleep if it is waiting to run
+		if (state == Job.WAITING) 
+			interrupted = !sleep();
+		else 
+			interrupted = state == Job.RUNNING && InternalPlatform.getDefault().getJobManager().currentJob() != this;
+		//clear the autobuild avoidance flag if we were interrupted
+		avoidBuild = false;
 		//cancel the build job if another job is attempting to modify the workspace
 		//while the build job is running
-		return state == Job.RUNNING && InternalPlatform.getDefault().getJobManager().currentJob() != this;
+		return interrupted;
 	}
 	private void doBuild(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 		monitor = Policy.monitorFor(monitor);
@@ -102,27 +147,33 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 			monitor.done();
 		}
 	}
-	public synchronized void endTopLevel(boolean needsBuild) {
-		buildNeeded |= needsBuild;
-		long delay = Math.max(Policy.MIN_BUILD_DELAY, Policy.MAX_BUILD_DELAY + lastBuild - System.currentTimeMillis());
-		if (getState() == Job.NONE)
-			schedule(delay);
+	synchronized boolean isInterrupted() {
+		return interrupted;
+	}
+	public void propertyChange(PropertyChangeEvent event) {
+		if (!event.getProperty().equals(ResourcesPlugin.PREF_AUTO_BUILDING))
+			return;
+		Object oldValue = event.getOldValue();
+		Object newValue = event.getNewValue();
+		if (oldValue instanceof Boolean && newValue instanceof Boolean)
+			autoBuildChanged(((Boolean)oldValue).booleanValue(), ((Boolean)newValue).booleanValue());
 	}
 	public IStatus run(IProgressMonitor monitor) {
 		//synchronized in case build starts during checkCancel
 		synchronized (this) {
 			if (monitor.isCanceled())
-				return Status.CANCEL_STATUS;
+				return canceled();
 		}
 		try {
 			doBuild(monitor);
 			lastBuild = System.currentTimeMillis();
 			return Status.OK_STATUS;
 		} catch (OperationCanceledException e) {
-			buildNeeded = true;
-			return Status.CANCEL_STATUS;
+			return canceled();
 		} catch (CoreException sig) {
 			return sig.getStatus();
+		} finally {
+			interrupted = false;
 		}
 	}
 	public synchronized boolean shouldBuild() {
@@ -141,13 +192,5 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 			//regardless of the result, clear the build flags for next time
 			forceBuild = avoidBuild = false;
 		}
-	}
-	public void propertyChange(PropertyChangeEvent event) {
-		if (!event.getProperty().equals(ResourcesPlugin.PREF_AUTO_BUILDING))
-			return;
-		Object oldValue = event.getOldValue();
-		Object newValue = event.getNewValue();
-		if (oldValue instanceof Boolean && newValue instanceof Boolean)
-			autoBuildChanged(((Boolean)oldValue).booleanValue(), ((Boolean)newValue).booleanValue());
 	}
 }

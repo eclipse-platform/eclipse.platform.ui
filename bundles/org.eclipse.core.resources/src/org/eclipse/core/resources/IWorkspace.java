@@ -1378,4 +1378,10 @@ public IStatus validateProjectLocation(IProject project, IPath location);
  * @since 2.1
  */
 public IPathVariableManager getPathVariableManager();
+/**
+ * @deprecated
+ * Use run(IWorkspaceRunnable, ISchedulingRule, int, IProgressMonitor).
+ * This method will be removed before the 3.0 release.
+ */
+public void run(IWorkspaceRunnable action, ISchedulingRule rule, IProgressMonitor monitor) throws CoreException;
 }
