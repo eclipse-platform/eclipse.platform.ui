@@ -385,7 +385,7 @@ public class CodeCompletionTest extends TestCase {
     /**
      * Tests how the processor determines the proposal mode.
      */
-    public void testDeterminingProposalMode() throws IOException {
+    public void testDeterminingAttributeProposalMode() throws IOException {
         TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
 
         // Modes:
@@ -400,45 +400,81 @@ public class CodeCompletionTest extends TestCase {
         assertEquals(2, mode);
         mode = processor.determineProposalMode("<project><property ", 19, "");
         assertEquals(2, mode);
-        // (T) has to be implemented still
         mode = processor.determineProposalMode("<project><property   ", 21, "");
         assertEquals(2, mode);
-        mode = processor.determineProposalMode("<project><prop", 14, "prop");
-        assertEquals(1, mode);
-        mode = processor.determineProposalMode("<project><prop bla", 18, "bla");
-        assertEquals(0, mode); // task not known
-        mode = processor.determineProposalMode("<project> hjk", 13, "");
-        assertEquals(0, mode);
-        mode = processor.determineProposalMode("<project> hjk<", 14, "");
-        assertEquals(1, mode); // allow this case though it is not valid with Ant
-        mode = processor.determineProposalMode("<project>", 9, "");
-        assertEquals(1, mode);
-        mode = processor.determineProposalMode("<project> ", 10, "");
-        assertEquals(1, mode);
-        mode = processor.determineProposalMode("<project></", 11, "");
-        assertEquals(3, mode);
-        mode = processor.determineProposalMode("<project>< </project>", 10, "");
-        assertEquals(1, mode);
         mode = processor.determineProposalMode("<property id=\"hu\" ", 18, "");
         assertEquals(2, mode);
         mode = processor.determineProposalMode("<property id=\"hu\" \r\n ", 21, "");
         assertEquals(2, mode);
         mode = processor.determineProposalMode("<property\n", 10, "");
         assertEquals(2, mode);
-        mode = processor.determineProposalMode("<property id=\"\" \r\n ", 14, "");
-        assertEquals(4, mode);
-        mode = processor.determineProposalMode("<target name=\"main\"><zip><size></size></zip></", 46, "");
-        assertEquals(3, mode);
-        mode = processor.determineProposalMode("<project><target name=\"$\"", 24, "");
-        assertEquals(5, mode);
-        mode = processor.determineProposalMode("<project><target name=\"${\"", 25, "");
-        assertEquals(5, mode);
-        mode = processor.determineProposalMode("<project><target name=\"${ja.bl\"", 30, "ja.bl");
-        assertEquals(5, mode);
-        mode = processor.determineProposalMode("", 0, "");
-        assertEquals(1, mode);
     }
+    
+	/**
+		* Tests how the processor determines the proposal mode.
+		*/
+	   public void testDeterminingPropertyProposalMode() throws IOException {
+		   TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
 
+		   // Modes:
+		   // 0 None
+		   // 1 Task Proposal
+		   // 2 Attribute Proposal
+		   // 3 Task Closing Proposal
+		   // 4 Attribute Value Proposal
+		   // 5 Property Proposal
+        
+		   int mode =processor.determineProposalMode("<project><target name=\"$\"", 24, "");
+		   assertEquals(5, mode);
+		   mode = processor.determineProposalMode("<project><target name=\"${\"", 25, "");
+		   assertEquals(5, mode);
+		   mode = processor.determineProposalMode("<project><target name=\"${ja.bl\"", 30, "ja.bl");
+		   assertEquals(5, mode);
+	   }
+    
+	/**
+	 * Tests how the processor determines the proposal mode.
+	 */
+	public void testDeterminingTaskProposalMode() throws IOException {
+		TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
+
+		// Modes:
+		// 0 None
+		// 1 Task Proposal
+		// 2 Attribute Proposal
+		// 3 Task Closing Proposal
+		// 4 Attribute Value Proposal
+		// 5 Property Proposal
+    
+		int mode = processor.determineProposalMode("<project><prop", 14, "prop");
+		assertEquals(1, mode);
+		mode = processor.determineProposalMode("<project> hjk", 13, "");
+		assertEquals(1, mode);
+		mode = processor.determineProposalMode("<project> hjk<", 14, "");
+		assertEquals(1, mode); // allow this case though it is not valid with Ant
+		mode = processor.determineProposalMode("<project>", 9, "");
+		assertEquals(1, mode);
+		mode = processor.determineProposalMode("<project> ", 10, "");
+		assertEquals(1, mode);
+		mode = processor.determineProposalMode("<project></", 11, "");
+		assertEquals(3, mode);
+		mode = processor.determineProposalMode("<project>< </project>", 10, "");
+		assertEquals(1, mode);
+		mode = processor.determineProposalMode("<project default=\"hey\"><target name=\"hey\">a</target></project>", 44, "a");
+		assertEquals(1, mode);
+		mode = processor.determineProposalMode("<project default=\"hey\"><target name=\"hey\"></target></project>", 43, "");
+		assertEquals(1, mode);
+		mode = processor.determineProposalMode("<project default=\"hey\"><target name=\"hey\"><a</target></project>", 45, "<a");
+		assertEquals(1, mode);
+		mode = processor.determineProposalMode("<target name=\"main\"><zip><size></size></zip></", 46, "");
+		assertEquals(3, mode);
+		mode = processor.determineProposalMode("", 0, "");
+		assertEquals(1, mode);
+		mode= processor.determineProposalMode("<project default=\"hey\"><target name=\"hey\"><javac>a</javac></target></project>", 51, "a");
+		assertEquals(1, mode);
+		mode = processor.determineProposalMode("<project> hjk", 13, "");
+		assertEquals(1, mode);
+	}
 
     /**
      * Tests how the prefix will be determined.
@@ -571,5 +607,24 @@ public class CodeCompletionTest extends TestCase {
 		} catch (SAXException e) {
 		} catch (IOException e) {
 		}
+	}
+    /**
+     * Tests how the processor determines the proposal mode.
+     */
+    public void testDeterminingNoneProposalMode() throws IOException {
+        TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
+
+        // Modes:
+        // 0 None
+        // 1 Task Proposal
+        // 2 Attribute Proposal
+        // 3 Task Closing Proposal
+        // 4 Attribute Value Proposal
+        // 5 Property Proposal
+        
+        int mode = processor.determineProposalMode("<project><prop bla", 18, "bla");
+        assertEquals(0, mode);
+		mode= processor.determineProposalMode("<project default=\"hey\"><target name=", 37, "name=");
+		assertEquals(0, mode);
 	}
 }
