@@ -18,6 +18,7 @@ package org.eclipse.core.runtime;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
+ * @deprecated Use {@link org.eclipse.core.runtime.registry.IExtensionPoint org.eclipse.core.runtime.registry.IExtensionPoint}
  */
 public interface IExtensionPoint {
 	/**

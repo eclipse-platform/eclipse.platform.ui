@@ -20,6 +20,8 @@ import java.util.EventListener;
  * @see IPluginEvent
  * @see Platform#addPluginListener
  * @since 3.0
+ * @deprecated This API will be removed before 3.0
+ * Use {@link org.osgi.framework.BundleListener BundleListener} instead.
  */
 public interface IPluginListener extends EventListener {
 	/**
@@ -31,6 +33,7 @@ public interface IPluginListener extends EventListener {
 	 *</p>
 	 * @param events an array containing plug-in lifecycle events
 	 * @see IPluginEvent
+	 * @deprecated Use {@link org.osgi.framework.BundleListener#bundleChanged(BundleEvent) BundleListener#bundleChanged(BundleEvent)}
 	 */
 	public void pluginChanged(IPluginEvent[] events);
 }

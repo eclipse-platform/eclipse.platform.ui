@@ -17,6 +17,7 @@ package org.eclipse.core.runtime;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
+ * @deprecated Use {@link org.eclipse.core.runtime.registry.IExtension org.eclipse.core.runtime.registry.IExtension}
  */
 public interface IExtension {
 	/**

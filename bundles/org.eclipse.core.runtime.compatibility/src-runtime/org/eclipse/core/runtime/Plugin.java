@@ -153,6 +153,8 @@ import org.osgi.framework.*;
  * }
  * </pre>
  * </p>
+ * @deprecated In eclipse 3.0, the concept of plugin has been renamed to Bundle and slightly modified and enhanced (see the  porting guide further information).
+ * The responsibilities of the plugin class are now being spread across {@link org.osgi.framework.Bundle Bundle}, {@link org.osgi.framework.BundleActivator BundleActivator}
  */
 public abstract class Plugin {
 	private PluginActivator activator;

@@ -20,6 +20,8 @@ package org.eclipse.core.runtime;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
+ * @deprecated Use {@link org.eclipse.core.runtime.registry.IExtensionRegistry IExtensionRegistry} for all information relative to extension-points and extensions. 
+ * For the information plugins being installed, go to the OSGi framework. For further information about this reorganisation please refer to the porting guide.
  */
 public interface IPluginRegistry {
 	/**
@@ -31,6 +33,7 @@ public interface IPluginRegistry {
 	 * @param extensionPointId the unique identifier of the extension point
 	 *		(e.g. <code>"org.eclipse.core.resources.builders"</code>)
 	 * @return the configuration elements
+	 * @deprecated Use the same method available on the IExtensionRegistry
 	 */
 	public IConfigurationElement[] getConfigurationElementsFor(String extensionPointId);
 	/**
@@ -44,6 +47,7 @@ public interface IPluginRegistry {
 	 * @param extensionPointName the simple identifier of the 
 	 *		extension point (e.g. <code>"builders"</code>)
 	 * @return the configuration elements
+	 * @deprecated Same method available on the IExtensionRegistry
 	 */
 	public IConfigurationElement[] getConfigurationElementsFor(String pluginId, String extensionPointName);
 	/**
@@ -58,6 +62,7 @@ public interface IPluginRegistry {
 	 * @param extensionId the unique identifier of the extension 
 	 *		(e.g. <code>"com.example.acme.coolbuilder</code>)
 	 * @return the configuration elements
+	 * @deprecated Same method available on the IExtensionRegistry
 	 */
 	public IConfigurationElement[] getConfigurationElementsFor(String pluginId, String extensionPointName, String extensionId);
 	/**
@@ -71,6 +76,7 @@ public interface IPluginRegistry {
 	 * @param extensionId the unique identifier of the extension 
 	 *		(e.g. <code>"com.example.acme.coolbuilder"</code>)
 	 * @return the extension, or <code>null</code>
+	 * @deprecated Same method available on the IExtensionRegistry
 	 */
 	public IExtension getExtension(String extensionPointId, String extensionId);
 	/**
@@ -86,6 +92,7 @@ public interface IPluginRegistry {
 	 * @param extensionId the unique identifier of the extension 
 	 *		(e.g. <code>"com.example.acme.coolbuilder"</code>)
 	 * @return the extension, or <code>null</code>
+	 * @deprecated Same method available on the IExtensionRegistry
 	 */
 	public IExtension getExtension(String pluginId, String extensionPointName, String extensionId);
 	/**
@@ -96,6 +103,7 @@ public interface IPluginRegistry {
 	 * @param extensionPointId the unique identifier of the extension point 
 	 *    (e.g., <code>"org.eclipse.core.resources.builders"</code>)
 	 * @return the extension point, or <code>null</code>
+	 * @deprecated Same method available on the IExtensionRegistry
 	 */
 	public IExtensionPoint getExtensionPoint(String extensionPointId);
 	/**
@@ -108,6 +116,7 @@ public interface IPluginRegistry {
 	 * @param extensionPointName the simple identifier of the 
 	 *		extension point (e.g. <code>" builders"</code>)
 	 * @return the extension point, or <code>null</code>
+	 * @deprecated Same method available on the IExtensionRegistry
 	 */
 	public IExtensionPoint getExtensionPoint(String pluginId, String extensionPointName);
 
@@ -116,6 +125,7 @@ public interface IPluginRegistry {
 	 * Returns an empty array if there are no extension points.
 	 *
 	 * @return the extension points known to this plug-in registry
+	 * @deprecated Same method available on the IExtensionRegistry
 	 */
 	public IExtensionPoint[] getExtensionPoints();
 
@@ -128,6 +138,8 @@ public interface IPluginRegistry {
 	 * @param pluginId the unique identifier of the plug-in 
 	 *		(e.g. <code>"com.example.acme"</code>).
 	 * @return the plug-in descriptor, or <code>null</code>
+	 * @deprecated: Use {@link org.osgi.framework.BundleContext#getBundles(String) BundleContext#getBundles(pluginId)} and filter the results.
+	 * Remember that this list can contain plugin in any state excepted UNINSTALLED. 
 	 */
 	public IPluginDescriptor getPluginDescriptor(String pluginId);
 	/**
@@ -141,6 +153,8 @@ public interface IPluginRegistry {
 	 * a non-deterministically chosen version of the identified plug-in (if any)
 	 * will be returned
 	 * @return the plug-in descriptor, or <code>null</code>
+	 * @deprecated: Use {@link org.osgi.framework.BundleContext#getBundles(String) BundleContext#getBundles(id)} and filter the results.
+	 * Remember that this list can contain plugin in any state excepted UNINSTALLED.
 	 */
 	public IPluginDescriptor getPluginDescriptor(String pluginId, PluginVersionIdentifier version);
 	/**
@@ -148,6 +162,8 @@ public interface IPluginRegistry {
 	 * Returns an empty array if there are no installed plug-ins.
 	 *
 	 * @return the plug-in descriptors known to this plug-in registry
+	 * @deprecated  Use {@link org.osgi.framework.BundleContext#getBundles() BundleContext#getBundles()} 
+	 * Remember that this list can contain plugin in any state excepted UNINSTALLED.
 	 */
 	public IPluginDescriptor[] getPluginDescriptors();
 	/**
@@ -159,6 +175,8 @@ public interface IPluginRegistry {
 	 * @param pluginId the unique identifier of the plug-in 
 	 *		(e.g. <code>"org.eclipse.core.resources"</code>).
 	 * @return the plug-in descriptors known to this plug-in registry
+	 * @deprecated: Use {@link org.osgi.framework.BundleContext#getBundles(String) BundleContext#getBundles(pluginId)} and filter the results.
+	 * Remember that this list can contain plugin in any state excepted UNINSTALLED. 
 	 */
 	public IPluginDescriptor[] getPluginDescriptors(String pluginId);
 

@@ -19,6 +19,13 @@ package org.eclipse.core.runtime;
  * </p>
  *
  * @see IPluginDescriptor#getPluginPrerequisites
+ * @deprecated
+ * The concept of prerequisite has been refined into two new concepts.
+ * Import of packages and requirement of bundles. See the porting guide presenting the new
+ * concepts for an in depth discussion.
+ * The import information can be obtained using {@link org.osgi.framework.Bundle#getHeaders() Bundle#getHeaders().get(org.osgi.framework.Constants#IMPORT_PACKAGE)},
+ * the requirement information using {@link org.osgi.framework.Bundle#getHeaders() Bundle#getHeaders().get(org.osgi.framework.Constants#REQUIRE_BUNDLE)}.
+ * There is no replacing class.
  */
 public interface IPluginPrerequisite {
 	/**

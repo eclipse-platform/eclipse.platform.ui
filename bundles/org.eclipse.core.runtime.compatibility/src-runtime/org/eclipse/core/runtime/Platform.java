@@ -38,6 +38,10 @@ import org.osgi.framework.BundleContext;
  * be shutdown from inside (code in plug-ins have no access to
  * <code>BootLoader</code>).
  * </p>
+ * @deprecated The platform object has been deprecated and is now provided as a service implementing
+ * the {@link org.eclipse.core.runtime.IPlatform IPlatform} interface. If you get can acquire the IPlatform service, it 
+ * means that eclipse is running. Note that the OSGi framework can be run without eclipse. 
+ * For an in depth discussion of the new concepts please see the porting guide.
  */
 public final class Platform {
 	/**

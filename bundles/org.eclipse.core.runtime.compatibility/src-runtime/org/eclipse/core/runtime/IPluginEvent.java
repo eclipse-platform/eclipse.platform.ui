@@ -16,6 +16,8 @@ package org.eclipse.core.runtime;
  * This interface is not intended to be implemented by clients.
  * </p>
  * @since 3.0
+ * @deprecated This API will be removed before 3.0 comes out.
+ * Use {@link org.osgi.framework.BundleEvent BundleEvent}.
  */
 public interface IPluginEvent {
 	/**
@@ -73,6 +75,7 @@ public interface IPluginEvent {
 	 *
 	 * @return A plugin descriptor for a plugin that had a change 
 	 * occur in its lifecycle.
+	 * @deprecated Use {@link org.osgi.framework.BundleEvent#getBundle() BundleEvent#getBundle()}
 	 */
 	public IPluginDescriptor getPluginDescriptor();
 
