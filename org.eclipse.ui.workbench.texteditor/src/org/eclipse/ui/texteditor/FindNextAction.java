@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.IFindReplaceTarget;
+import org.eclipse.jface.text.TextUtilities;
 
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
@@ -323,7 +324,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		 */
 		String selection= fTarget.getSelectionText();
 		if (selection != null && selection.length() > 0) {
-			int[] info= TextUtilities.indexOf(TextUtilities.fgDelimiters, selection, 0);
+			int[] info= TextUtilities.indexOf(TextUtilities.DELIMITERS, selection, 0);
 			if (info[0] > 0)
 				return selection.substring(0, info[0]);
 			else if (info[0] == -1)

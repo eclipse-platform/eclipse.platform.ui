@@ -45,6 +45,7 @@ import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextUtilities;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -773,14 +774,9 @@ class FindReplaceDialog extends Dialog {
 	 * @return the selection of the target
 	 */
 	private String getSelectionString() {
-		
-		/*
-		 * 1GF86V3: ITPUI:WINNT - Internal errors using Find/Replace Dialog
-		 * Now uses TextUtilities rather than focussing on '\n'  
-		 */
 		String selection= fTarget.getSelectionText();
 		if (selection != null && selection.length() > 0) {
-			int[] info= TextUtilities.indexOf(TextUtilities.fgDelimiters, selection, 0);
+			int[] info= TextUtilities.indexOf(TextUtilities.DELIMITERS, selection, 0);
 			if (info[0] > 0)
 				return selection.substring(0, info[0]);
 			else if (info[0] == -1)

@@ -26,9 +26,17 @@ import java.util.Set;
 public class TextUtilities {
 	
 	/**
-	 * Default line delimiters used by these text functions.
+	 * Default line delimiters used by these text functons.
 	 */
-	public final static String[] fgDelimiters= new String[] { "\n", "\r", "\r\n" }; //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
+	public final static String[] DELIMITERS= new String[] { "\n", "\r", "\r\n" }; //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
+	
+	/**
+	 * Default line delimiters used by these text functions.
+	 * 
+	 * @deprecated use DELIMITERS instead
+	 */
+	public final static String[] fgDelimiters= DELIMITERS;
+	
 	
 	
 	/**
@@ -40,8 +48,8 @@ public class TextUtilities {
 	 */
 	public static String determineLineDelimiter(String text, String hint) {
 		try {
-			int[] info= indexOf(fgDelimiters, text, 0);
-			return fgDelimiters[info[1]];
+			int[] info= indexOf(DELIMITERS, text, 0);
+			return DELIMITERS[info[1]];
 		} catch (ArrayIndexOutOfBoundsException x) {
 		}
 		return hint;
@@ -440,5 +448,41 @@ public class TextUtilities {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Returns the default line delimiter for the given document. This is either the delimiter of the first line, or the platform line delimiter if it is
+	 * a legal line delimiter or the first one of the legal line delimiters. The default line delimiter should be used when performing document
+	 * manipulations that span multiple lines.
+	 * 
+	 * @param document the document
+	 * @return the document's default line delimiter
+	 * @since 3.0
+	 */
+	public static String getDefaultLineDelimiter(IDocument document) {
+		
+		String lineDelimiter= null;
+		
+		try {
+			lineDelimiter= document.getLineDelimiter(0);
+		} catch (BadLocationException x) {
+		}
+			
+		if (lineDelimiter == null) {
+			String sysLineDelimiter= System.getProperty("line.separator"); //$NON-NLS-1$
+			String[] delimiters= document.getLegalLineDelimiters();
+			Assert.isTrue(delimiters.length > 0);
+			for (int i= 0; i < delimiters.length; i++) {
+				if (delimiters[i].equals(sysLineDelimiter)) {
+					lineDelimiter= sysLineDelimiter;
+					break;
+				}
+			}
+				
+			if (lineDelimiter == null)
+				lineDelimiter= delimiters[0];
+		}
+		
+		return lineDelimiter;
 	}
 }
