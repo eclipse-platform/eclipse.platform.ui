@@ -7,6 +7,7 @@ package org.eclipse.ui.internal.dialogs;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.*;
+import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.*;
@@ -54,34 +55,21 @@ public class FileEditorsPreferencePage extends PreferencePage implements IWorkbe
  * This is typically called after the extension dialog is shown to the user.
  */
 public void addResourceType(String newName, String newExtension) {
-	// A file extension must always be provided. Only the file
-	// name is optional.
-	if (newExtension == null || newExtension.length() < 1) {
-		MessageDialog.openInformation(
-			getControl().getShell(),
-			WorkbenchMessages.getString("FileEditorPreference.extensionEmptyTitle"), //$NON-NLS-1$
-			WorkbenchMessages.getString("FileEditorPreference.extensionEmptyMessage")); //$NON-NLS-1$
-		return;
-	}
+	// Either a file name or extension must be provided
+	Assert.isTrue((newName != null && newName.length() != 0) || 
+		(newExtension != null && newExtension.length() != 0));
 
-	if (newName == null || newName.length() < 1)
-		newName = "*";//$NON-NLS-1$
-	else {
-		// Wild card only valid by itself (i.e. rep* is not valid)
-		int index = newName.indexOf('*');
-		if (index > -1) {
-			if (!(index == 0 && newName.length() == 1)) {
-				MessageDialog.openInformation(
-					getControl().getShell(),
-					WorkbenchMessages.getString("FileEditorPreference.fileNameInvalidTitle"), //$NON-NLS-1$
-					WorkbenchMessages.getString("FileEditorPreference.fileNameInvalidMessage")); //$NON-NLS-1$
-				return;
-			}
-		}
+	// Wild card only valid by itself (i.e. rep* is not valid)
+	// And must have an extension
+	int index = newName.indexOf('*');
+	if (index > -1) {
+		Assert.isTrue(index == 0 && newName.length() == 1); 
+		Assert.isTrue(newExtension != null && newExtension.length() != 0);
 	}
 	
 	// Find the index at which to insert the new entry.
-	String newFilename = (newName + "." + newExtension).toUpperCase();//$NON-NLS-1$
+	String newFilename = (newName + (newExtension == null || newExtension.length() == 0 ?
+		 "" : "." + newExtension)).toUpperCase();//$NON-NLS-1$
 	IFileEditorMapping resourceType;
 	TableItem[] items = resourceTypeTable.getItems();
 	boolean found = false;
@@ -89,7 +77,7 @@ public void addResourceType(String newName, String newExtension) {
 
 	while (i < items.length && !found) {
 		resourceType = (IFileEditorMapping) items[i].getData();
-		int result = newFilename.compareTo(resourceType.getLabel().toUpperCase());
+		int result = newFilename.compareToIgnoreCase(resourceType.getLabel());
 		if (result == 0) {
 			// Same resource type not allowed!
 			MessageDialog.openInformation(
@@ -107,9 +95,9 @@ public void addResourceType(String newName, String newExtension) {
 
 	// Create the new type and insert it
 	resourceType = new FileEditorMapping(newName, newExtension);
-	newResourceTableItem(resourceType, i, true);
+	TableItem item = newResourceTableItem(resourceType, i, true);
 	resourceTypeTable.setFocus();
-	fillEditorTable();
+	resourceTypeTable.showItem(item);
 }
 /**
  * Creates the page's UI content.
@@ -449,9 +437,7 @@ public void promptForResourceType() {
 	if (dialog.open() == dialog.OK) {
 		String name = dialog.getName();
 		String extension = dialog.getExtension();
-		if (extension.length() > 0) {
-			addResourceType(name, extension);
-		}
+		addResourceType(name, extension);
 	}
 }
 /**

@@ -560,7 +560,8 @@ private String mappingKeyFor(String type) {
  * of the given mapping
  */
 private String mappingKeyFor(FileEditorMapping mapping) {
-	return mappingKeyFor(mapping.getName() + "." + mapping.getExtension());//$NON-NLS-1$
+	return mappingKeyFor(mapping.getName() + 
+		(mapping.getExtension().length() == 0 ? "" : "." + mapping.getExtension()));//$NON-NLS-1$ //$NON-NLS-2$
 }
 /**
  * Rebuild the editor map
