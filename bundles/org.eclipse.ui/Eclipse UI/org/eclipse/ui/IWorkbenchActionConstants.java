@@ -132,7 +132,7 @@ public interface IWorkbenchActionConstants {
 	public static final String M_EDIT = MENU_PREFIX+"edit"; //$NON-NLS-1$
 
 	/**
-	 * Name of standard Workbench menu (value <code>"workbench"</code>).
+	 * Name of standard Workspace menu (value <code>"workbench"</code>).
 	 */
 	public static final String M_WORKBENCH = MENU_PREFIX+"workbench"; //$NON-NLS-1$
 
