@@ -40,10 +40,9 @@ public class TargetManager {
 			factory = getTargetFactory(id);
 			if(factory != null) {
 				factories.put(id, factory);
-				return factory;
 			}
 		}
-		return null;
+		return factory;
 	}
 	
 	public static void startup() {
