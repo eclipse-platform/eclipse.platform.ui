@@ -710,9 +710,10 @@ class FindReplaceDialog extends Dialog {
 		setGridData(fIsRegExCheckBox, GridData.BEGINNING, false, GridData.CENTER, false);
 		((GridData)fIsRegExCheckBox.getLayoutData()).horizontalSpan= 2;
 		fIsRegExCheckBox.setSelection(fIsRegExInit);
-		fIncrementalCheckBox.setEnabled(!isRegExSearchAvailableAndChecked());
-		fWholeWordCheckBox.setEnabled(!isRegExSearchAvailableAndChecked());
-		fIsRegExCheckBox.addSelectionListener(new SelectionListener() {
+		fIsRegExCheckBox.addSelectionListener(new SelectionAdapter() {
+			/*
+			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
 			public void widgetSelected(SelectionEvent e) {
 				boolean newState= fIsRegExCheckBox.getSelection();
 				fIncrementalCheckBox.setEnabled(!newState);
@@ -722,11 +723,17 @@ class FindReplaceDialog extends Dialog {
 				fFindFieldContentAssistant.enableAutoActivation(newState);
 				fReplaceFieldContentAssistant.enableAutoActivation(newState);
 			}
-	
-			public void widgetDefaultSelected(SelectionEvent e) {
+		});
+		fWholeWordCheckBox.setEnabled(!isRegExSearchAvailableAndChecked());
+		fWholeWordCheckBox.addSelectionListener(new SelectionAdapter() {
+			/*
+			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
+			public void widgetSelected(SelectionEvent e) {
+				updateButtonState();
 			}
 		});
-
+		fIncrementalCheckBox.setEnabled(!isRegExSearchAvailableAndChecked());
 		return panel;
 	}
 	
@@ -1457,13 +1464,32 @@ class FindReplaceDialog extends Dialog {
 
 			boolean enable= fTarget != null && (fActiveShell == fParentShell || fActiveShell == getShell());
 			String str= getFindString();
-			boolean findString= (str != null && str.length() > 0);
+			boolean findString= str != null && str.length() > 0 && (isRegExSearchAvailableAndChecked() || !isWholeWordSearch() || isWord(str));
 
 			fFindNextButton.setEnabled(enable && findString);
 			fReplaceSelectionButton.setEnabled(!disableReplace && enable && isEditable() && selection && (!fNeedsInitialFindBeforeReplace || !isRegExSearchAvailableAndChecked()));
 			fReplaceFindButton.setEnabled(!disableReplace && enable && isEditable() && findString && selection && (!fNeedsInitialFindBeforeReplace || !isRegExSearchAvailableAndChecked()));
 			fReplaceAllButton.setEnabled(enable && isEditable() && findString);
 		}
+	}
+	
+	/**
+	 * Tests whether each character in the given
+	 * string is a letter.
+	 * 
+	 * @param str
+	 * @return <code>true</code> if the given string is a worf
+	 * @since 3.0
+	 */
+	private boolean isWord(String str) {
+		if (str == null)
+			return false;
+		
+		for (int i= 0, length= str.length(); i < length; i++) {
+			if (!Character.isLetter(str.charAt(i)))
+				return false;
+		}
+		return true; 
 	}
 	
 	/**
