@@ -172,8 +172,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			CoolBarContributionItem groupItem = (CoolBarContributionItem)toolsManager.find(workbenchToolGroupId);
 			tBarMgr = groupItem.getToolBarManager();
 		} 
-		tBarMgr.prependToGroup(IWorkbenchActionConstants.BUILD_EXT, buildAction);
-		tBarMgr.prependToGroup(IWorkbenchActionConstants.BUILD_EXT, new Separator());
+		tBarMgr.appendToGroup(IWorkbenchActionConstants.BUILD_EXT, buildAction);
 		tBarMgr.update(true);
 	}
 	
@@ -629,11 +628,11 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		toolsManager.add(new GroupMarker(IWorkbenchActionConstants.SAVE_EXT));
 		toolsManager.add(printAction);
 		toolsManager.add(new GroupMarker(IWorkbenchActionConstants.BUILD_EXT));
+		toolsManager.prependToGroup(IWorkbenchActionConstants.BUILD_EXT, new Separator());
 		toolsManager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		// Only add the manual incremental build if auto build off
 		if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
-			toolsManager.prependToGroup(IWorkbenchActionConstants.BUILD_EXT, buildAction);
-			toolsManager.prependToGroup(IWorkbenchActionConstants.BUILD_EXT, new Separator());
+			toolsManager.appendToGroup(IWorkbenchActionConstants.BUILD_EXT, buildAction);
 		}
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		if(store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
