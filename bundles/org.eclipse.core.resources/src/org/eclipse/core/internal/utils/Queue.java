@@ -202,18 +202,22 @@ public class Queue {
 
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		sb.append("["); //$NON-NLS-1$
-		Enumeration enum = elements();
+		sb.append('[');
+		int count = 0;
 		if (!isEmpty()) {
-			while (true) {
-				sb.append(enum.nextElement());
-				if (enum.hasMoreElements())
-					sb.append(", "); //$NON-NLS-1$
+			Enumeration it = elements();
+			//only print a fixed number of elements to prevent debugger from choking
+			while (count < 100) {
+				sb.append(it.nextElement());
+				if (it.hasMoreElements())
+					sb.append(',').append(' ');
 				else
 					break;
 			}
 		}
-		sb.append("]"); //$NON-NLS-1$
+		if (count < size())
+			sb.append('.').append('.').append('.');
+		sb.append(']');
 		return sb.toString();
 	}
 }
