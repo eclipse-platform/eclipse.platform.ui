@@ -109,9 +109,7 @@ class AnimationManager {
 	void addItem(final AnimationItem item) {
 		items.add(item);
 		if (background == null)
-			background =
-				item.getControl().getDisplay().getSystemColor(
-					SWT.COLOR_WIDGET_BACKGROUND);
+			background = item.getControl().getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 		item.getControl().addDisposeListener(new DisposeListener() {
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
@@ -146,8 +144,7 @@ class AnimationManager {
 			if (showingError)
 				return JFaceResources.getImageRegistry().get(ERROR_IMAGE_NAME);
 			else
-				return JFaceResources.getImageRegistry().get(
-					ANIMATED_IMAGE_NAME);
+				return JFaceResources.getImageRegistry().get(ANIMATED_IMAGE_NAME);
 		} else
 			return JFaceResources.getImageRegistry().get(DISABLED_IMAGE_NAME);
 	}
@@ -215,10 +212,7 @@ class AnimationManager {
 		}
 
 		Image offScreenImage =
-			new Image(
-				display,
-				loader.logicalScreenWidth,
-				loader.logicalScreenHeight);
+			new Image(display, loader.logicalScreenWidth, loader.logicalScreenHeight);
 		GC offScreenImageGC = new GC(offScreenImage);
 
 		try {
@@ -259,13 +253,11 @@ class AnimationManager {
 						int backgroundPixel = loader.backgroundPixel;
 						if (backgroundPixel != -1) {
 							// Fill with the background color.
-							RGB backgroundRGB =
-								imageData.palette.getRGB(backgroundPixel);
+							RGB backgroundRGB = imageData.palette.getRGB(backgroundPixel);
 							bgColor = new Color(null, backgroundRGB);
 						}
 						try {
-							offScreenImageGC.setBackground(
-								bgColor != null ? bgColor : background);
+							offScreenImageGC.setBackground(bgColor != null ? bgColor : background);
 							offScreenImageGC.fillRectangle(
 								imageData.x,
 								imageData.y,
@@ -275,8 +267,7 @@ class AnimationManager {
 							if (bgColor != null)
 								bgColor.dispose();
 						}
-					} else if (
-						imageData.disposalMethod == SWT.DM_FILL_PREVIOUS) {
+					} else if (imageData.disposalMethod == SWT.DM_FILL_PREVIOUS) {
 						// Restore the previous image before drawing.
 						offScreenImageGC.drawImage(
 							image,
@@ -291,8 +282,7 @@ class AnimationManager {
 					}
 
 					// Get the next image data.
-					imageDataIndex =
-						(imageDataIndex + 1) % imageDataArray.length;
+					imageDataIndex = (imageDataIndex + 1) % imageDataArray.length;
 					imageData = imageDataArray[imageDataIndex];
 					image.dispose();
 					image = new Image(display, imageData);
@@ -314,9 +304,10 @@ class AnimationManager {
 						if (item.imageCanvasGC.isDisposed()) {
 							refreshItems = true;
 							continue;
+						} else {
+							// Draw the off-screen image to the screen.
+							item.imageCanvasGC.drawImage(offScreenImage, 0, 0);
 						}
-						// Draw the off-screen image to the screen.
-						item.imageCanvasGC.drawImage(offScreenImage, 0, 0);
 					}
 
 					if (refreshItems)
@@ -366,10 +357,7 @@ class AnimationManager {
 	 * @return Rectangle
 	 */
 	public Rectangle getImageBounds() {
-		return JFaceResources
-			.getImageRegistry()
-			.get(DISABLED_IMAGE_NAME)
-			.getBounds();
+		return JFaceResources.getImageRegistry().get(DISABLED_IMAGE_NAME).getBounds();
 	}
 
 	private IJobProgressManagerListener getProgressListener() {
@@ -411,8 +399,7 @@ class AnimationManager {
 				JobInfo[] currentInfos = manager.getJobInfos();
 				for (int i = 0; i < currentInfos.length; i++) {
 					JobInfo info = currentInfos[i];
-					if (manager
-						.isNonDisplayableJob(info.getJob(), showsDebug()))
+					if (manager.isNonDisplayableJob(info.getJob(), showsDebug()))
 						continue;
 					add(currentInfos[i]);
 				}
@@ -461,9 +448,7 @@ class AnimationManager {
 				//We always track errors
 				if (info.getErrorStatus() == null) {
 					Job job = info.getJob();
-					return job.getState() != Job.RUNNING
-						|| job == clearJob
-						|| job == animateJob;
+					return job.getState() != Job.RUNNING || job == clearJob || job == animateJob;
 				} else
 					return false;
 			}
