@@ -13,8 +13,8 @@ package org.eclipse.ui.internal.progress;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.IProgressProvider;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -129,7 +129,7 @@ public class JobProgressManager implements IProgressProvider {
 	 * Create a new instance of the receiver.	 *
 	 */
 	JobProgressManager() {
-		JobManager.getInstance().setProgressProvider(this);
+		Platform.getJobManager().setProgressProvider(this);
 	}
 
 	/* (non-Javadoc)

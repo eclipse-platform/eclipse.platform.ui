@@ -13,12 +13,9 @@ package org.eclipse.ui.internal.progress;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 
@@ -32,14 +29,14 @@ public class ProgressControl {
 	private static final String PROGRESS_FOLDER = "icons/full/progress/"; //$NON-NLS-1$
 	private static final String RUNNING_ICON = "running.gif"; //$NON-NLS-1$
 	private static final String BACKGROUND_ICON = "back.gif"; //$NON-NLS-1$
+
 	/**
-	 * 
+	 * Create a new instance of the receiver and register it with
+	 * the JobManager.
 	 */
 	public ProgressControl() {
 		super();
-		JobManager
-			.getInstance()
-			.addJobChangeListener(new IJobChangeListener() {
+		Platform.getJobManager().addJobChangeListener(new JobChangeAdapter() {
 
 			int jobCount = 0;
 			/* (non-Javadoc)
@@ -82,57 +79,43 @@ public class ProgressControl {
 				jobCount--;
 			}
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.IJobListener#awake(org.eclipse.core.runtime.jobs.Job)
-			 */
-			public void awake(Job job) {
-				// XXX Auto-generated method stub
-
-			}
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.IJobListener#running(org.eclipse.core.runtime.jobs.Job)
-			 */
-			public void running(Job job) {
-				// XXX Auto-generated method stub
-
-			}
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.IJobListener#scheduled(org.eclipse.core.runtime.jobs.Job)
-			 */
-			public void scheduled(Job job) {
-				// XXX Auto-generated method stub
-
-			}
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.IJobListener#sleeping(org.eclipse.core.runtime.jobs.Job)
-			 */
-			public void sleeping(Job job) {
-				// XXX Auto-generated method stub
-
-			}
-
 		});
 	}
 
+	/**
+	 * Set the image on the canvas to the disabled image.
+	 */
 	public void setDisabledImage() {
 		canvas.setAnimated(false);
-
 	}
 
+	/**
+	 * Set the image on the canvas to the enabled image.
+	 */
 	public void setEnabledImage() {
 		canvas.setAnimated(true);
 
 	}
 
+	/**
+	 * Dispose the canvas.
+	 */
 	public void dispose() {
 		canvas.dispose();
 	}
 
+	/**
+	 * Get the AnimatedCanvas that this control wraps.
+	 * @return AnimatedCanvas
+	 */
 	public AnimatedCanvas getCanvas() {
 		return canvas;
 	}
 
+	/**
+	 * Create the canvas for the receiver in parent.
+	 * @param parent
+	 */
 	public void createCanvas(Composite parent) {
 		URL iconsRoot =
 			Platform.getPlugin(PlatformUI.PLUGIN_ID).find(
