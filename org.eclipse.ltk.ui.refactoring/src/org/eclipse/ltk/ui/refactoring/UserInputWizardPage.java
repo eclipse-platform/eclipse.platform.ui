@@ -21,8 +21,6 @@ import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-
-import org.eclipse.ltk.internal.ui.refactoring.Assert;
 import org.eclipse.ltk.internal.ui.refactoring.ErrorWizardPage;
 import org.eclipse.ltk.internal.ui.refactoring.FinishResult;
 import org.eclipse.ltk.internal.ui.refactoring.InternalAPI;
@@ -52,8 +50,11 @@ public abstract class UserInputWizardPage extends RefactoringWizardPage {
 	}
 	
 	/**
-	 * Returns <code>true</code> if this is the last user input page; returns <code>
-	 * false</code> otherwise.
+	 * Returns <code>true</code> if this is the last user input page in the stack
+	 * of input pages; <code>false</code> otherwise. The last user input page isn't
+	 * necessarily the page after which the refactoring's precondition has to 
+	 * triggered. For wizards implementing a dynamic work flow the may happen for
+	 * other pages as well.
 	 * 
 	 * @return whether this is the last user input page or not.
 	 */
@@ -62,15 +63,14 @@ public abstract class UserInputWizardPage extends RefactoringWizardPage {
 	}
 	
 	/**
-	 * Computes the wizard page that should follow this user input page. The method
-	 * requires that this page is the last user input page. The successor page is
-	 * either the error page or the preview page, depending on the result of the 
-	 * condition checking of the refactoring.
+	 * Triggers the refactoring's condition checking and returns either the
+	 * error wizard page or a preview page depending on the outcome of the
+	 * precondition checking.
 	 * 
-	 * @return the wizard page that should be shown after the last user input page
+	 * @return either the error or the preview page depending on the refactoring's
+	 *  precondition checking
 	 */
 	protected final IWizardPage computeSuccessorPage() {
-		Assert.isTrue(isLastUserInputPage());
 		return getRefactoringWizard().computeUserInputSuccessorPage(this, getContainer());
 	}
 
