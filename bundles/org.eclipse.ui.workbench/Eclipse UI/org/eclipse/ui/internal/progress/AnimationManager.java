@@ -180,6 +180,7 @@ class AnimationManager {
 	 * Dispose the images in the receiver.
 	 */
 	void dispose() {
+		setAnimated(false);
 		JobProgressManager.getInstance().removeListener(listener);
 	}
 
