@@ -42,6 +42,9 @@ public class SearchResults implements ISearchHitCollector {
 		List searchHitList = new ArrayList();
 		float scoreScale = 1.0f;
 		boolean scoreScaleSet = false;
+		// need to keep track of previous score to work around
+		// workaround for bug in Lucene 1.2.0 final
+		float lastScore = Float.MAX_VALUE;
 		for (int h = 0; h < hits.length() && h < maxHits; h++) {
 			org.apache.lucene.document.Document doc;
 			float score;
@@ -72,9 +75,17 @@ public class SearchResults implements ISearchHitCollector {
 				if (score > 0) {
 					scoreScale = 0.99f / score;
 					score = 1;
+					lastScore = score;
 				}
 				scoreScaleSet = true;
 			} else {
+				// workaround for bug in Lucene 1.2.0 final
+				// http://nagoya.apache.org/bugzilla/show_bug.cgi?id=12273
+				if (score > lastScore) {
+					scoreScale = scoreScale * lastScore / score;
+				}
+				lastScore = score;
+				//
 				score = score * scoreScale + 0.01f;
 			}
 
