@@ -145,7 +145,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 */
 	public final IStatus refreshNow(IResource[] resources, String taskName, IProgressMonitor monitor) {
 		RefreshSubscriberJob job = new RefreshSubscriberJob(this, taskName, taskName, resources, null);
-		return job.runInWorkspace(monitor);
+		return job.run(monitor);
 	}
 	
 	/* (non-Javadoc)

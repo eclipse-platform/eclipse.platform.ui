@@ -47,7 +47,7 @@ import org.eclipse.ui.progress.UIJob;
  * </p>
  * @since 3.0
  */
-public final class RefreshSubscriberJob extends WorkspaceJob {
+public final class RefreshSubscriberJob extends Job {
 	
 	/**
 	 * Uniquely identifies this type of job. This is used for cancellation.
@@ -217,7 +217,7 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 	 * This is run by the job scheduler. A list of subscribers will be refreshed, errors will not stop the job 
 	 * and it will continue to refresh the other subscribers.
 	 */
-	public IStatus runInWorkspace(IProgressMonitor monitor) {
+	public IStatus run(IProgressMonitor monitor) {
 		// Perform a pre-check for auto-build or manual build jobs
 		// when auto-refreshing
 		if (shouldReschedule() &&
