@@ -139,6 +139,54 @@ public Rectangle getBounds() {
 public Control getControl() {
 	return control;
 }
+
+/*
+ * @see LayoutPart#getMinimumHeight()
+ */
+public int getMinimumHeight() {
+	if (control == null || control.isDisposed())
+		return super.getMinimumHeight();
+	
+	// don't assume every future part will have top controls
+	boolean top = false;
+	
+	/* compute title bar height; this should be done by computeTrim 
+	 * to correctly handle seperate top center.
+	 */
+	int leftHeight = 0;
+	if (control.getTopLeft() != null && !control.getTopLeft().isDisposed()) {
+		leftHeight = control.getTopLeft().computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+		top = true;
+	}
+	int centerHeight = 0;
+	if (control.getTopCenter() != null && !control.getTopCenter().isDisposed()) {
+		centerHeight = control.getTopCenter().computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+		top=true;
+	}
+	int rightHeight = 0;
+	if (control.getTopRight() != null && !control.getTopRight().isDisposed()) {
+		rightHeight = control.getTopRight().computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+		top = true;
+	}
+	
+	int topHeight = Math.max(leftHeight, Math.max(centerHeight, rightHeight));
+	
+	/* add BORDER_BOTTOM+BORDER_TOP=+4 as a workaround for bug# 11516, 
+	 * until ViewForm.computeTrim is overridden.
+	 */
+	if ((getStyle() & SWT.BORDER) != 0) {
+		topHeight += 4;
+	}
+	/* add +1 for highlight line. ViewForm adds this *inside* client area
+	 * even though it's arguably an inset; see ViewForm.layout for details.
+	 */
+	if (top) {
+		topHeight += 1;
+	}
+	
+	return topHeight;
+}
+
 /**
  * Returns the top level SWT Canvas of this Pane. 
  */

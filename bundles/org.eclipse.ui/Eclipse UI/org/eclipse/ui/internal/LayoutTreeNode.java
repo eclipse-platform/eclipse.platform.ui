@@ -178,7 +178,10 @@ public boolean isVisible() {
 	return children[0].isVisible() || children[1].isVisible();
 }
 /**
- * Recompute the ratios in this tree.
+ * Recompute the ratios in this tree. The ratio for a node is the width
+ * (or height if the sash is horizontal) of the left child's bounds 
+ * divided by the width or height of node's bounds. Sash width <em>is</em> 
+ * considered in ratio computation.
  */
 public void recomputeRatio() {
 	children[0].recomputeRatio();
@@ -268,8 +271,7 @@ public void setBounds(Rectangle bounds) {
 	Rectangle sashBounds = new Rectangle(bounds.x,bounds.y,bounds.width,bounds.height);
 	if(getSash().isVertical()) {
 		//Work on x and width
-		int w = bounds.width - SASH_WIDTH;
-		leftBounds.width = (int)(getSash().getRatio() * w);
+		leftBounds.width = (int)(getSash().getRatio() * bounds.width);
 		sashBounds.x = leftBounds.x + leftBounds.width;
 		sashBounds.width = SASH_WIDTH;
 		rightBounds.x = sashBounds.x + sashBounds.width;
@@ -278,7 +280,7 @@ public void setBounds(Rectangle bounds) {
 	} else {
 		//Work on y and height
 		int h = bounds.height - SASH_WIDTH;
-		leftBounds.height = (int)(getSash().getRatio() * h);
+		leftBounds.height = (int)(getSash().getRatio() * bounds.height);
 		sashBounds.y = leftBounds.y + leftBounds.height;
 		sashBounds.height = SASH_WIDTH;
 		rightBounds.y = sashBounds.y + sashBounds.height;
@@ -320,8 +322,8 @@ private int adjustChildHeight(Rectangle childBounds, Rectangle nodeBounds, boole
 	int minimum = 0;
 
 	minimum = left ? 
-		(int)(getMinimumRatioFor(nodeBounds) * nodeBounds.height) :
-		(int)((1 - getMaximumRatioFor(nodeBounds)) * nodeBounds.height);
+		Math.round(getMinimumRatioFor(nodeBounds) * nodeBounds.height):
+		Math.round((1 - getMaximumRatioFor(nodeBounds)) * nodeBounds.height) - SASH_WIDTH;
 	
 	if (minimum > childBounds.height) {
 		adjustment = minimum - childBounds.height;
@@ -361,8 +363,8 @@ private int adjustChildWidth(Rectangle childBounds, Rectangle nodeBounds, boolea
 	int minimum = 0;
 
 	minimum = left ? 
-		(int)(getMinimumRatioFor(nodeBounds) * nodeBounds.width) :
-		(int)((1 - getMaximumRatioFor(nodeBounds)) * nodeBounds.width);
+		Math.round(getMinimumRatioFor(nodeBounds) * nodeBounds.width) :
+		Math.round((1 - getMaximumRatioFor(nodeBounds)) * nodeBounds.width) - SASH_WIDTH;
 	
 	if (minimum > childBounds.width) {
 		adjustment = minimum - childBounds.width;
@@ -373,6 +375,10 @@ private int adjustChildWidth(Rectangle childBounds, Rectangle nodeBounds, boolea
 }
 
 // getMinimumRatioFor added by cagatayk@acm.org 
+/**
+ * Obtain the minimum ratio required to display the control on the "left"
+ * using its minimum dimensions.
+ */
 public float getMinimumRatioFor(Rectangle bounds) {
 	float part = 0, whole = 0;
 
@@ -385,20 +391,24 @@ public float getMinimumRatioFor(Rectangle bounds) {
 		whole = bounds.height;
 	}
 	
-	return (part != 0 ) ? (part + SASH_WIDTH ) / whole : IPageLayout.RATIO_MIN;
+	return (part != 0 ) ? part / whole : IPageLayout.RATIO_MIN;
 }
 
 // getMaximumRatioFor added by cagatayk@acm.org 
+/**
+ * Obtain the maximum ratio required to display the control on the "right"
+ * using its minimum dimensions.
+ */
 public float getMaximumRatioFor(Rectangle bounds) {
 	float part = 0, whole = 0;
 
 	if (getSash().isVertical()) {
-		part = bounds.width - children[1].getMinimumWidth();
 		whole = bounds.width;
+		part = whole - children[1].getMinimumWidth();
 	}
 	else {
-		part = bounds.height - children[1].getMinimumHeight();
 		whole = bounds.height;
+		part = whole - children[1].getMinimumHeight();
 	}
 	
 	return (part != whole) ? (part - SASH_WIDTH) / whole : IPageLayout.RATIO_MAX;
@@ -406,6 +416,10 @@ public float getMaximumRatioFor(Rectangle bounds) {
 }
 
 // getMinimumHeight added by cagatayk@acm.org 
+/**
+ * Obtain the minimum height required to display all controls under
+ * this node.
+ */
 public int getMinimumHeight() {
 	int left = children[0].getMinimumHeight();
 	int right = children[1].getMinimumHeight();
@@ -414,24 +428,35 @@ public int getMinimumHeight() {
 	if (getSash().isVertical())
 		minimum = Math.max(left, right);
 	else if (left > 0 || right > 0) {
-		//consider the top and bottom borders?
-		minimum = left + right + SASH_WIDTH * 2;
+		minimum = left + right;
+		// only consider sash if both children are visible, fix for placeholders
+		if (children[0].isVisible() && children[1].isVisible()) {
+			minimum += SASH_WIDTH;
+		}
 	}
 	
 	return minimum;
 }
 
 // getMinimumWidth added by cagatayk@acm.org 
+/**
+ * Obtain the minimum width required to display all controls under
+ * this node.
+ */
 public int getMinimumWidth() {
 	int left = children[0].getMinimumWidth();
 	int right = children[1].getMinimumWidth();
 
 	int minimum = 0;
-	if (getSash().isVertical() && (left > 0 || right > 0))
-		//consider the left and right borders?
-		minimum = left + right + SASH_WIDTH * 2;
-	else
-		minimum = Math.max(left, right);
+	if (!getSash().isVertical())
+ 		minimum = Math.max(left, right);
+	else if (left > 0 || right > 0) {
+		minimum = left + right;
+		// only consider sash if both children are visible, fix for placeholders
+		if (children[0].isVisible() && children[1].isVisible()) {
+			minimum += SASH_WIDTH;
+		}
+	}
 	
 	return minimum;
 }

@@ -29,7 +29,15 @@ class LayoutPartSash extends LayoutPart {
 	private LayoutPartSash postLimit;
 
 	SelectionListener selectionListener;
-	private float ratio = (float)0.5;
+	private float ratio = 0.5f;
+	
+	/* Optimize limit checks by calculating minimum 
+	 * and maximum ratios once per drag
+	 */
+	private float minRatio;
+	private float maxRatio;
+
+	
 	
 LayoutPartSash(PartSashContainer rootContainer,int style) {
 	super(null);
@@ -44,37 +52,50 @@ LayoutPartSash(PartSashContainer rootContainer,int style) {
 				LayoutPartSash.this.widgetSelected(e.x, e.y, e.width, e.height);
 		}
 	};
+
+	initDragRatios();
 }
 
 // checkDragLimit contains changes by cagatayk@acm.org
 private void checkDragLimit(SelectionEvent event) {
 	LayoutTree root = rootContainer.getLayoutTree();
 	LayoutTreeNode node = root.findSash(this);
-	Rectangle bounds = node.getBounds();
+	Rectangle nodeBounds = node.getBounds();
+	Rectangle sashBounds = getBounds();
 	
-	float minRatio = node.getMinimumRatioFor(bounds);
-	float maxRatio = node.getMaximumRatioFor(bounds);
+	// optimization: compute ratios only once per drag
+	if (minRatio < 0)
+		minRatio = node.getMinimumRatioFor(nodeBounds);
+	if (maxRatio < 0)
+		maxRatio = node.getMaximumRatioFor(nodeBounds);
 
 	if(style == SWT.VERTICAL) {
-		if (event.x < bounds.x)
-			event.x = bounds.x;
-		if ((event.x + event.width) > (bounds.x + bounds.width))
-			event.x = bounds.x + bounds.width - event.width;
-		if (event.x - bounds.x < ((float)bounds.width * minRatio))
-			event.x = bounds.x + (int)((float)bounds.width * minRatio);
-		if (event.x - bounds.x > ((float)bounds.width * maxRatio))
-			event.x = bounds.x + (int)((float)bounds.width * maxRatio);		
+		// limit drag to current node's bounds
+		if (event.x < nodeBounds.x)
+			event.x = nodeBounds.x;
+		if ((event.x + event.width) > (nodeBounds.x + nodeBounds.width))
+			event.x = nodeBounds.x + nodeBounds.width - event.width;
+		// limit drag to current node's ratios
+		float width = nodeBounds.width;
+		if (event.x - nodeBounds.x < width * minRatio)
+			event.x = nodeBounds.x + (int)(width * minRatio);
+		if (event.x - nodeBounds.x > width * maxRatio)
+			event.x = nodeBounds.x + (int)(width * maxRatio);
 	} else {
-		if (event.y < bounds.y)
-			event.y = bounds.y;
-		if ((event.y + event.height) > (bounds.y + bounds.height))
-			event.y = bounds.y + bounds.height - event.height;
-		if (event.y - bounds.y < ((float)bounds.height * minRatio))
-			event.y = bounds.y + (int)((float)bounds.height * minRatio);
-		if (event.y - bounds.y > ((float)bounds.height * maxRatio))
-			event.y = bounds.y + (int)((float)bounds.height * maxRatio);		
+		// limit drag to current node's bounds
+		if (event.y < nodeBounds.y)
+			event.y = nodeBounds.y;
+		if ((event.y + event.height) > (nodeBounds.y + nodeBounds.height))
+			event.y = nodeBounds.y + nodeBounds.height - event.height;
+		// limit drag to current node's ratios
+		float height = nodeBounds.height;
+		if (event.y - nodeBounds.y < height * minRatio)
+			event.y = nodeBounds.y + (int)(height * minRatio);
+		if (event.y - nodeBounds.y > height * maxRatio)
+			event.y = nodeBounds.y + (int)(height * maxRatio);
 	}
 }
+
 /**
  * Creates the control
  */
@@ -156,6 +177,14 @@ private void widgetSelected(int x, int y, int width, int height) {
 		setRatio((float)(y - nodeBounds.y)/(float)nodeBounds.height);
 	}
 		
-	node.setBounds(node.getBounds());
+	node.setBounds(nodeBounds);
+	initDragRatios();
 }
+
+
+private void initDragRatios() {
+	minRatio = maxRatio = -1f;
+}
+
+
 }

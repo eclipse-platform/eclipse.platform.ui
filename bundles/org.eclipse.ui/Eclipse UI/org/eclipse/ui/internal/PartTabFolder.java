@@ -365,16 +365,18 @@ public Rectangle getBounds() {
  * @see LayoutPart#getMinimumHeight()
  */
 public int getMinimumHeight() {
-	if (tabFolder != null && !tabFolder.isDisposed() && current != null) {
-		if (getItemCount() > 1)
-			// +1 for tab border
-			return current.getMinimumHeight() + tabFolder.getTabHeight() + 1;
-		else
-			// +1 for one row of ViewForm border
-			return current.getMinimumHeight() + 1;
+	if (current == null || tabFolder == null || tabFolder.isDisposed())
+		return super.getMinimumHeight();
+	
+	if (getItemCount() > 1) {
+		Rectangle trim = tabFolder.computeTrim(0, 0, 0, current.getMinimumHeight());
+		/* +1 as a workaround for bug# 11515 until CTabFolder.computeTrim is fixed;
+		 * this accounts for the divider between tabs and folder content.
+		 */
+		return trim.height + 1;
 	}
-	return super.getMinimumHeight();
-		
+	else
+		return current.getMinimumHeight();
 }
 
 /**

@@ -361,18 +361,6 @@ public MenuManager getMenuManager() {
 	return isvMenuMgr;
 }
 
-// getMinimumHeight() added by cagatayk@acm.org 
-/**
- * @see LayoutPart#getMinimumHeight()
- */
-public int getMinimumHeight() {
-	if (titleLabel != null && !titleLabel.isDisposed())
-		// +1 for one row of ViewForm border
-		return titleLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT).y + 1;
-	else
-		return super.getMinimumHeight();
-}
-
 /**
  * Returns the tab list to use when this part is active.
  * Includes the view and its tab (if applicable), in the appropriate order.
