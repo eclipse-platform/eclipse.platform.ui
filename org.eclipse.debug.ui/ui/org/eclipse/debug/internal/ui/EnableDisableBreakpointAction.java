@@ -54,7 +54,8 @@ public class EnableDisableBreakpointAction extends SelectionProviderAction imple
 		while (enum.hasNext()) {
 			IMarker marker= (IMarker) enum.next();
 			try {
-				getBreakpoint(marker).toggleEnabled();
+				IBreakpoint breakpoint= getBreakpoint(marker);
+				breakpoint.setEnabled(!breakpoint.isEnabled());
 			} catch (CoreException e) {
 				ms.merge(e.getStatus());
 			}

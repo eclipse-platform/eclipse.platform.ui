@@ -19,15 +19,6 @@ public interface IBreakpoint {
  */
 public void delete() throws CoreException;
 /**
- * Tests this breakpoint for equality with the given object.
- * Two breakpoints are equal if their markers have the same id.
- * Markers are assigned an id when created on a resource.
- *
- * @param object the other object
- * @return an indication of whether the objects are equal
- */
-public boolean equals(Object object);
-/**
  * Returns whether this marker exists in the workspace.  A marker
  * exists if its resource exists and has a marker with the marker's id.
  *
@@ -35,14 +26,6 @@ public boolean equals(Object object);
  *    <code>false</code>
  */
 public boolean exists();
-/**
- * Enable this breakpoint
- */
-public void enable() throws CoreException;
-/**
- * Disable this breakpoint
- */
-public void disable() throws CoreException;
 /**
  * Returns the marker associated with the breakpoint.
  * 
@@ -87,15 +70,11 @@ public String getType() throws CoreException;
  */
 public boolean isEnabled() throws CoreException;
 /**
- * Returns whether this breakpoint is disabled
+ * Set the enabled state of this breakpoint.
+ * 
+ * @param enabled  whether this breakpoint should be enabled
  */
-public boolean isDisabled() throws CoreException;
-/**
- * Sets the enabled state of this breakpoint to the opposite of its
- * current state.
- */
-public void toggleEnabled() throws CoreException;
-
+public void setEnabled(boolean enabled) throws CoreException;
 /**
  * Install a breakpoint request for this breakpoint in the given target.
  * 

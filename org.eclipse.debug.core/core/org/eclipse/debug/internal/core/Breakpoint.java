@@ -58,7 +58,7 @@ public abstract class Breakpoint implements IBreakpoint {
 	 * A breakpoint is not equal to any other kind of object.
 	 */
 	public boolean equals(Object item) {
-		if (item instanceof IBreakpoint) {
+		if (item instanceof Breakpoint) {
 			return getId() == ((IBreakpoint)item).getId();
 		}
 		return false;
@@ -102,10 +102,12 @@ public abstract class Breakpoint implements IBreakpoint {
 	public abstract void removeFromTarget(IDebugTarget target);
 	
 	/**
-	 * Enable the breakpoint
+	 * @see IBreakpoint#setEnabled(boolean)
 	 */
-	public void enable() throws CoreException {
-		fMarker.setAttribute(IDebugConstants.ENABLED, true);
+	public void setEnabled(boolean enabled) throws CoreException {
+		if (enabled != isEnabled()) {
+			fMarker.setAttribute(IDebugConstants.ENABLED, enabled);
+		}
 	}
 	
 	/**
@@ -113,31 +115,6 @@ public abstract class Breakpoint implements IBreakpoint {
 	 */
 	public boolean isEnabled() throws CoreException {
 		return fMarker.getAttribute(IDebugConstants.ENABLED, false);
-	}
-	
-	/**
-	 * @see IBreakpoint#toggleEnabled()
-	 */
-	public void toggleEnabled() throws CoreException {
-		if (isEnabled()) {
-			disable();
-		} else {
-			enable();
-		}
-	}
-	
-	/**
-	 * Disable the breakpoint
-	 */
-	public void disable() throws CoreException {
-		fMarker.setAttribute(IDebugConstants.ENABLED, false);		
-	}
-	
-	/**
-	 * Returns whether the breakpoint is disabled
-	 */
-	public boolean isDisabled() throws CoreException {
-		return !isEnabled();
 	}
 
 	/**
