@@ -14,6 +14,7 @@ import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
 import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.IMarkerHelpRegistry;
 import org.eclipse.ui.part.*;
 import org.eclipse.jface.*;
 import org.eclipse.jface.window.*;
@@ -336,6 +337,12 @@ public PlatformInfo getPlatformInfo() {
  */
 public ISharedImages getSharedImages() {
 	return WorkbenchPlugin.getDefault().getSharedImages();
+}
+/* (non-Javadoc)
+ * Method declared on IWorkbench.
+ */
+public IMarkerHelpRegistry getMarkerHelpRegistry() {
+	return WorkbenchPlugin.getDefault().getMarkerHelpRegistry();
 }
 /*
  * Return the current window manager being used by the workbench

@@ -210,6 +210,82 @@
 		class="org.eclipse.ui.examples.readmetool.ReadmeDropActionDelegate">
         </action>
   </extension>
+  
+  <extension id="readmemarker" point="org.eclipse.core.resources.markers" name="%readmeMarker.name">
+	<super type="org.eclipse.core.resources.taskmarker"/>
+	<super type="org.eclipse.core.resources.textmarker"/>
+	<persistent value="true"/>
+	<attribute name="org.eclipse.ui.examples.readmetool.id"/>
+	<attribute name="org.eclipse.ui.examples.readmetool.level"/>
+	<attribute name="org.eclipse.ui.examples.readmetool.department"/>
+	<attribute name="org.eclipse.ui.examples.readmetool.code"/>
+	<attribute name="org.eclipse.ui.examples.readmetool.language"/>
+  </extension>   
 
+  <extension point="org.eclipse.ui.markerHelp"> 
+   <markerHelp 
+      markerType="org.eclipse.ui.examples.readmetool.readmemarker" 
+      helpContextId="org.eclipse.ui.examples.readmetool.marker_example1_context"> 
+      <attribute name="org.eclipse.ui.examples.readmetool.id" value= "1234"/> 
+   </markerHelp> 
+   <markerHelp 
+      markerType="org.eclipse.ui.examples.readmetool.readmemarker" 
+      helpContextId="org.eclipse.ui.examples.readmetool.marker_example2_context"> 
+      <attribute name="org.eclipse.ui.examples.readmetool.level" value= "7"/> 
+   </markerHelp> 
+   <markerHelp 
+      markerType="org.eclipse.ui.examples.readmetool.readmemarker" 
+      helpContextId="org.eclipse.ui.examples.readmetool.marker_example3_context"> 
+      <attribute name="org.eclipse.ui.examples.readmetool.level" value= "7"/> 
+      <attribute name="org.eclipse.ui.examples.readmetool.department" value= "infra"/> 
+   </markerHelp> 
+   <markerHelp 
+      markerType="org.eclipse.ui.examples.readmetool.readmemarker" 
+      helpContextId="org.eclipse.ui.examples.readmetool.marker_example4_context"> 
+      <attribute name="org.eclipse.ui.examples.readmetool.code" value= "red"/> 
+   </markerHelp> 
+   <markerHelp 
+      markerType="org.eclipse.ui.examples.readmetool.readmemarker" 
+      helpContextId="org.eclipse.ui.examples.readmetool.marker_example5_context"> 
+      <attribute name="org.eclipse.ui.examples.readmetool.language" value= "english"/> 
+   </markerHelp> 
+   <markerHelp 
+      markerType="org.eclipse.ui.examples.readmetool.readmemarker" 
+      helpContextId="org.eclipse.ui.examples.readmetool.marker_example6_context"> 
+      <attribute name="org.eclipse.ui.examples.readmetool.id" value= "1234"/> 
+      <attribute name="org.eclipse.ui.examples.readmetool.level" value= "7"/> 
+      <attribute name="org.eclipse.ui.examples.readmetool.department" value= "infra"/> 
+      <attribute name="org.eclipse.ui.examples.readmetool.code" value= "red"/> 
+      <attribute name="org.eclipse.ui.examples.readmetool.language" value= "english"/> 
+   </markerHelp> 
+   <markerHelp 
+      markerType="org.eclipse.ui.examples.readmetool.readmemarker" 
+      helpContextId="org.eclipse.ui.examples.readmetool.marker_example7_context"> 
+   </markerHelp> 
+  </extension> 
 
+  <extension point="org.eclipse.ui.markerResolution"> 
+   <markerResolution 
+      label="Add Sentence - id = 1234" 
+      class="org.eclipse.ui.examples.readmetool.AddSentenceResolution" 
+      markerType="org.eclipse.ui.examples.readmetool.readmemarker"> 
+      <attribute name="org.eclipse.ui.examples.readmetool.id" value= "1234"/> 
+   </markerResolution> 
+   <markerResolution 
+      label="Add Sentence - level = 7" 
+      class="org.eclipse.ui.examples.readmetool.AddSentenceResolution" 
+      markerType="org.eclipse.ui.examples.readmetool.readmemarker"> 
+      <attribute name="org.eclipse.ui.examples.readmetool.level" value= "7"/> 
+   </markerResolution> 
+   <markerResolution 
+      label="Add Sentence - code = red, language = english" 
+      class="org.eclipse.ui.examples.readmetool.AddSentenceResolution" 
+      markerType="org.eclipse.ui.examples.readmetool.readmemarker"> 
+      <attribute name="org.eclipse.ui.examples.readmetool.code" value= "red"/> 
+      <attribute name="org.eclipse.ui.examples.readmetool.language" value= "english"/> 
+   </markerResolution> 
+</extension> 
+   
+ 
+  
 </plugin>

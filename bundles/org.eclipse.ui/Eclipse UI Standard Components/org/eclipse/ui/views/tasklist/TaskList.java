@@ -58,6 +58,7 @@ public class TaskList extends ViewPart {
 	private TaskAction purgeCompletedAction;
 	private TaskAction gotoTaskAction;
 	private TaskAction selectAllAction;
+	private TaskAction resolveMarkerAction;
 	private TaskAction filtersAction;
 	
 	private static String[] tableColumnProperties = {
@@ -361,7 +362,7 @@ public void createPartControl(Composite parent) {
 	memento = null;
 	
 	// Set help on the view itself
-	WorkbenchHelp.setHelp(viewer.getControl(), new ViewContextComputer(this, ITaskListHelpContextIds.TASK_LIST_VIEW));
+	WorkbenchHelp.setHelp(viewer.getControl(), new TaskListContextComputer(this, ITaskListHelpContextIds.TASK_LIST_VIEW));
 
 	// Prime the status line and title.
 	updateStatusMessage();
@@ -418,6 +419,8 @@ void fillContextMenu(IMenuManager menu) {
 	menu.add(gotoTaskAction);
 	menu.add(new Separator());
 	menu.add(purgeCompletedAction);
+	menu.add(new Separator());
+	menu.add(resolveMarkerAction);
 	menu.add(new Separator());
 	menu.add(filtersAction);
 	menu.add(new Separator());
@@ -599,6 +602,11 @@ void makeActions() {
 	selectAllAction = new SelectAllTasksAction(this, "selectAll"); //$NON-NLS-1$
 	selectAllAction.setText(TaskListMessages.getString("SelectAll.text")); //$NON-NLS-1$
 	selectAllAction.setToolTipText(TaskListMessages.getString("SelectAll.tooltip")); //$NON-NLS-1$
+
+	// resolutions
+	resolveMarkerAction = new ResolveMarkerAction(this, "resolve"); //$NON-NLS-1$
+	resolveMarkerAction.setText(TaskListMessages.getString("Resolve.text")); //$NON-NLS-1$
+	resolveMarkerAction.setToolTipText(TaskListMessages.getString("Resolve.tooltip")); //$NON-NLS-1$
 
 	// filters...
 	filtersAction = new FiltersAction(this, "filter"); //$NON-NLS-1$

@@ -37,5 +37,11 @@ public interface IReadmeConstants {
 	public static final String SECTIONS_DIALOG_CONTEXT = PREFIX+"sections_dialog_context"; //$NON-NLS-1$
 	public static final String CONTENT_OUTLINE_PAGE_CONTEXT = PREFIX+"content_outline_page_context"; //$NON-NLS-1$
 	public static final String CREATION_WIZARD_PAGE_CONTEXT = PREFIX+"creation_wizard_page_context"; //$NON-NLS-1$
-
+	
+	// Marker attributes
+	public static final String MARKER_ATT_ID = PREFIX+"id"; //$NON-NLS-1$
+	public static final String MARKER_ATT_LEVEL = PREFIX+"level"; //$NON-NLS-1$
+	public static final String MARKER_ATT_DEPT = PREFIX+"department"; //$NON-NLS-1$
+	public static final String MARKER_ATT_CODE = PREFIX+"code"; //$NON-NLS-1$
+	public static final String MARKER_ATT_LANG = PREFIX+"language"; //$NON-NLS-1$
 }

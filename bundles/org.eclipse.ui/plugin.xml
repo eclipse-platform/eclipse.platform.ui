@@ -49,6 +49,8 @@
 <extension-point name="%ExtPoint.markerImageProviders" id="markerImageProviders"/>
 <extension-point name="%ExtPoint.projectNatureImages" id="projectNatureImages"/>
 <extension-point name="%ExtPoint.decorators" id="decorators"/>
+<extension-point name="%ExtPoint.markerHelp" id="markerHelp"/>
+<extension-point name="%ExtPoint.markerResolution" id="markerResolution"/>
 
 <!-- Extensions -->
 

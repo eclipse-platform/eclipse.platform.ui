@@ -45,8 +45,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private EditorRegistry editorRegistry;
 	// Manager that maps project nature ids to images
 	private ProjectImageRegistry projectImageRegistry;
-	//Manager for the DecoratorManager
+	// Manager for the DecoratorManager
 	private DecoratorManager decoratorManager;
+	// Manager that maps markers to help context ids and resolutions
+	private MarkerHelpRegistry markerHelpRegistry;
 
 	// Global workbench ui plugin flag. Only workbench implementation is allowed to use this flag
 	// All other plugins, examples, or test cases must *not* use this flag.
@@ -139,6 +141,18 @@ public ActionSetRegistry getActionSetRegistry() {
 		actionSetRegistry = new ActionSetRegistry();
 	}
 	return actionSetRegistry; 
+}
+/**
+ * Returns the marker help registry for the workbench.
+ *
+ * @return the marker help registry
+ */
+public MarkerHelpRegistry getMarkerHelpRegistry() {
+	if (markerHelpRegistry == null) {
+		markerHelpRegistry = new MarkerHelpRegistry();
+		new MarkerHelpRegistryReader().addHelp(markerHelpRegistry);
+	}
+	return markerHelpRegistry; 
 }
 /* Return the default instance of the receiver. This represents the runtime plugin.
  *

@@ -97,6 +97,13 @@ public PreferenceManager getPreferenceManager();
  */
 public ISharedImages getSharedImages();
 /**
+ * Returns the marker help registry for the workbench.
+ * 
+ * @since 2.0
+ * @return the marker help registry
+ */
+public IMarkerHelpRegistry getMarkerHelpRegistry();
+/**
  * Returns a list of the open main windows associated with this workbench.
  * Note that wizards and dialogs are not included in this list since they
  * are not considered main windows.
