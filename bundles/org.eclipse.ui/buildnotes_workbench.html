@@ -53,7 +53,38 @@ Other highlights</h3>
 
 <blockquote>Working sets have been changed from being set in a workbench
 page to being view specific. A working set for the resource navigator view
-may be selected in the view's filter dialog.</blockquote>
+may be selected in the view's filter dialog.
+<p>Added a preference for Text File Encoding (on the Work In Progress preference
+page). Any clients, such as text editors and builders, which read text
+files from the workspace should use the workspace encoding preference.
+This preference is actually stored in the preferences for org.eclipse.core.resources,
+rather than org.eclipse.ui, so that builders and other headless clients
+can access it. See PREF_ENCODING and getEncoding() in org.eclipse.core.resources.ResourcesPlugin.
+<p>The following is one recommended way of reading text files:
+<br>IFile file = ...;
+<br>InputStreamReader reader = null;
+<br>try {
+<br>&nbsp;reader = new InputStreamReader(file.getContents(), ResourcesPlugin.getEncoding());
+<br>&nbsp;// use the reader
+<br>}
+<br>catch (UnsupportedEncodingException e) {
+<br>&nbsp;// The encoding preference is not supported.
+<br>&nbsp;// Handle it here.
+<br>}
+<br>catch (IOException e) {
+<br>&nbsp;// Some other IO exception has occurred.
+<br>&nbsp;// Handle it here.
+<br>}
+<br>finally {
+<br>&nbsp;if (reader != null) {
+<br>&nbsp; try {
+<br>&nbsp;&nbsp; reader.close();
+<br>&nbsp; }
+<br>&nbsp; catch (IOException e) {
+<br>&nbsp;&nbsp; // ignore
+<br>&nbsp; }
+<br>&nbsp;}
+<br>}</blockquote>
 
 <h2>
 Known deficiencies</h2>
@@ -814,9 +845,8 @@ Known deficiencies</h2>
 <h2>
 Problem reports fixed</h2>
 <a href="http://dev.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&chfield=bug_status&chfieldfrom=2002%2F01%2F29&chfieldto=2002%2F02%2F05&product=Platform&component=UI&cmdtype=doit&&order=Bug+Number">Click
-here</a>
-to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED between
-2002/01/22 and 2002/01/29.
+here</a> to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED
+between 2002/01/22 and 2002/01/29.
 <p>
 <hr SIZE=0 WIDTH="100%">
 <h1>
@@ -935,9 +965,8 @@ with non-IStructuredSelection objects.
 Action Enablement</h4>
 In version 1 of Eclipse the enablement and visibility of window, view,
 editor and popup menu action extensions was defined using a limited set
-of
-elements in xml.&nbsp; The existing tags cannot adequately describe the
-conditions when an action should be enabled or visible.&nbsp; To resolve
+of elements in xml.&nbsp; The existing tags cannot adequately describe
+the conditions when an action should be enabled or visible.&nbsp; To resolve
 these issues, the following approach has been implemented:
 <p>- a refreshPluginActions() has been added to AbstractUIPlugin.&nbsp;
 The AbtractUIPlugin.startup method will call this to trigger the creation
