@@ -221,17 +221,39 @@ public class EclipsePhantomSynchronizer extends EclipseSynchronizer {
 	public void folderCreated(IFolder folder) throws CVSException {
 		FolderSyncInfo folderInfo = getPhantomFolderSyncInfo(folder);
 		if (folderInfo != null) {
-			if (folder.getFolder(SyncFileWriter.CVS_DIRNAME).exists()) {
-				// There is already a CVS subdirectory which indicates that the folder
-				// was recreated by an external tool. 
-				// Therefore, just forget what we had and use the info from disk.
-				flushPhantomInfo(folder);
-				return;
-			}
 			try {
 				beginOperation(null);
-				setFolderSync(folder, folderInfo);
 				Map map = getPhantomResourceSyncInfoMap(folder);
+				if (folder.getFolder(SyncFileWriter.CVS_DIRNAME).exists()) {
+					// There is already a CVS subdirectory which indicates that 
+					// either the folder was recreated by an external tool or that
+					// a folder with CVS information was copied from another location.
+					// To know the difference, we need to compare the folder sync info.
+					// If they are mapped to the same root and repository then just
+					// purge the phantom info. Otherwise, keep the original sync info. 
+					
+					// flush the phantom info so we can get what is on disk.
+					flushPhantomInfo(folder);
+					
+					// Get the new folder sync info
+					FolderSyncInfo newFolderInfo = getFolderSync(folder);
+					if (newFolderInfo.getRoot().equals(folderInfo.getRoot()) 
+						&& newFolderInfo.getRepository().equals(folderInfo.getRepository())) {
+							// The folder is the same so use what is on disk
+							return;
+					}
+					
+					// The folder is mapped to a different location.
+					// Purge new resource sync before restoring from phantom
+					ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(folder);
+					ICVSResource[] children = cvsFolder.members(ICVSFolder.MANAGED_MEMBERS);
+					for (int i = 0; i < children.length; i++) {
+						ICVSResource resource = children[i];
+						deleteResourceSync(resource.getIResource());
+					}
+				}
+				// set the sync info using what was cached in the phantom
+				setFolderSync(folder, folderInfo);
 				for (Iterator it = map.values().iterator(); it.hasNext();) {
 					ResourceSyncInfo info = (ResourceSyncInfo) it.next();
 					IPath path = new Path(info.getName());
@@ -244,8 +266,11 @@ public class EclipsePhantomSynchronizer extends EclipseSynchronizer {
 					setResourceSync(childResource, info);
 				}
 			} finally {
-				endOperation(null);
-				flushPhantomInfo(folder);
+				try {
+					endOperation(null);
+				} finally {
+					flushPhantomInfo(folder);
+				}
 			}
 		}	
 	}
@@ -279,10 +304,10 @@ public class EclipsePhantomSynchronizer extends EclipseSynchronizer {
 	 */
 	private void flushPhantomInfo(IContainer container) throws CVSException {
 		try {
-			if (container.isPhantom()) {
+			if (container.exists() || container.isPhantom()) {
 				getWorkspaceSynchronizer().flushSyncInfo(FOLDER_SYNC_KEY, container, IResource.DEPTH_ZERO);
 			}
-			if (container.isPhantom()) {
+			if (container.exists() || container.isPhantom()) {
 				getWorkspaceSynchronizer().flushSyncInfo(RESOURCE_SYNC_KEY, container, IResource.DEPTH_ZERO);
 			}
 		} catch (CoreException e) {
