@@ -512,7 +512,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 				cfigTmp.setLastModified(config.getDate().getTime());
 				// make the change stamp to be the same as the config file
 				changeStamp = config.getDate().getTime();
-//				changeStampIsValid = true;
+				config.setDirty(false);
 			} catch (CoreException e) {
 				throw new IOException(Messages.getString("cfig.unableToSave", cfigTmp.getAbsolutePath())); //$NON-NLS-1$
 			} finally {
