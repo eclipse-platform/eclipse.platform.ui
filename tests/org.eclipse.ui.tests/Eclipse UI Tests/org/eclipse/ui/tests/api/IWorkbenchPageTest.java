@@ -1009,4 +1009,48 @@ public class IWorkbenchPageTest extends UITestCase {
 		}
 		return false;
 	}
+	
+	public void testStackOrder() {
+		WorkbenchPage page = (WorkbenchPage) fActivePage;
+		try {
+			IViewPart part1 = page.showView(MockViewPart.ID);
+			IViewPart part2 = page.showView(MockViewPart.ID2);
+			IViewPart part3 = page.showView(MockViewPart.ID3);
+			IViewPart part4 = page.showView(MockViewPart.ID4);
+			
+			IViewPart [] stack = page.getViewStack(part1);
+			assertTrue(stack.length == 4);
+			assertTrue(stack[0] == part4);
+			assertTrue(stack[1] == part3);
+			assertTrue(stack[2] == part2);
+			assertTrue(stack[3] == part1);
+			
+			page.activate(part2);
+			stack = page.getViewStack(part1);
+			assertTrue(stack.length == 4);
+			assertTrue(stack[0] == part2);
+			assertTrue(stack[1] == part4);
+			assertTrue(stack[2] == part3);
+			assertTrue(stack[3] == part1);
+			
+			page.activate(part1);
+			stack = page.getViewStack(part1);
+			assertTrue(stack.length == 4);
+			assertTrue(stack[0] == part1);
+			assertTrue(stack[1] == part2);
+			assertTrue(stack[2] == part4);
+			assertTrue(stack[3] == part3);
+
+			page.activate(part3);
+			stack = page.getViewStack(part1);
+			assertTrue(stack.length == 4);
+			assertTrue(stack[0] == part3);
+			assertTrue(stack[1] == part1);
+			assertTrue(stack[2] == part2);
+			assertTrue(stack[3] == part4);
+		}
+		catch(PartInitException e) {
+		    fail(e.getMessage());
+		}
+	}
 }

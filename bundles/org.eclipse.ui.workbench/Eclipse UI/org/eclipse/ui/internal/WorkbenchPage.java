@@ -3481,7 +3481,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		ILayoutContainer container = ((PartSite)part.getSite()).getPane().getContainer();
 		if (container instanceof PartTabFolder) {
 			PartTabFolder folder = (PartTabFolder) container;
-			ArrayList list = new ArrayList(folder.getChildren().length);
+			final ArrayList list = new ArrayList(folder.getChildren().length);
 			for (int i = 0; i < folder.getChildren().length; i++) {
 				LayoutPart layoutPart = folder.getChildren()[i];
 				if (layoutPart instanceof ViewPane) {					
@@ -3490,6 +3490,15 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 						list.add(view);
 				}
 			}
+
+			// sort the list by activation order
+			Collections.sort(list, new Comparator() {
+                public int compare(Object o1, Object o2) {
+                    int pos1 = (-1) * activationList.indexOf((IWorkbenchPart) o1);
+                    int pos2 = (-1) * activationList.indexOf((IWorkbenchPart) o2);
+                    return pos1 - pos2;
+                }});
+			
 			return (IViewPart []) list.toArray(new IViewPart [list.size()]);
 		}
 		
