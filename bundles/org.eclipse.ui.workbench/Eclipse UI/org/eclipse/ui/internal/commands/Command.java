@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.ui.commands.ActionHandler;
 import org.eclipse.ui.commands.CommandEvent;
 import org.eclipse.ui.commands.ExecutionException;
 import org.eclipse.ui.commands.ICommand;
@@ -27,7 +26,6 @@ import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.commands.NoSuchAttributeException;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.commands.NotHandledException;
-
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.util.Util;
 
@@ -36,7 +34,8 @@ final class Command implements ICommand {
     /**
      * Whether commands should print out information about handler changes.
      */
-    private static final boolean DEBUG_HANDLERS = Policy.DEBUG_HANDLERS && Policy.DEBUG_HANDLERS_VERBOSE;
+    private static final boolean DEBUG_HANDLERS = Policy.DEBUG_HANDLERS
+            && Policy.DEBUG_HANDLERS_VERBOSE;
 
     /**
      * Which command should print out debugging information.
@@ -47,15 +46,15 @@ final class Command implements ICommand {
 
     private final static int HASH_INITIAL = Command.class.getName().hashCode();
 
-    private List contextBindings;
-
-    private transient IContextBinding[] contextBindingsAsArray;
-
     private String categoryId;
 
     private List commandListeners;
 
     private Set commandsWithListeners;
+
+    private List contextBindings;
+
+    private transient IContextBinding[] contextBindingsAsArray;
 
     private boolean defined;
 
@@ -261,12 +260,10 @@ final class Command implements ICommand {
     }
 
     public boolean isHandled() {
-        if (handler == null) { return false; }
-
         try {
-            Object value = handler
-                    .getAttributeValue(ActionHandler.ATTRIBUTE_HANDLED);
-            return ((Boolean) value).booleanValue();
+            return handler != null
+                    && Boolean.TRUE
+                            .equals(handler.getAttributeValue("handled")); //$NON-NLS-1$ 
         } catch (NoSuchAttributeException e) {
             return true;
         }
@@ -280,13 +277,9 @@ final class Command implements ICommand {
         if (commandListeners.isEmpty()) commandsWithListeners.remove(this);
     }
 
-    boolean setContextBindings(List contextBindings) {
-        contextBindings = Util.safeCopy(contextBindings, IContextBinding.class);
-
-        if (!Util.equals(contextBindings, this.contextBindings)) {
-            this.contextBindings = contextBindings;
-            this.contextBindingsAsArray = (IContextBinding[]) this.contextBindings
-                    .toArray(new IContextBinding[this.contextBindings.size()]);
+    boolean setCategoryId(String categoryId) {
+        if (!Util.equals(categoryId, this.categoryId)) {
+            this.categoryId = categoryId;
             hashCodeComputed = false;
             hashCode = 0;
             string = null;
@@ -296,9 +289,13 @@ final class Command implements ICommand {
         return false;
     }
 
-    boolean setCategoryId(String categoryId) {
-        if (!Util.equals(categoryId, this.categoryId)) {
-            this.categoryId = categoryId;
+    boolean setContextBindings(List contextBindings) {
+        contextBindings = Util.safeCopy(contextBindings, IContextBinding.class);
+
+        if (!Util.equals(contextBindings, this.contextBindings)) {
+            this.contextBindings = contextBindings;
+            this.contextBindingsAsArray = (IContextBinding[]) this.contextBindings
+                    .toArray(new IContextBinding[this.contextBindings.size()]);
             hashCodeComputed = false;
             hashCode = 0;
             string = null;
@@ -339,7 +336,6 @@ final class Command implements ICommand {
             hashCode = 0;
             string = null;
 
-            // If people are curious, let them know that I've changed handlers.
             if ((DEBUG_HANDLERS)
                     && ((DEBUG_HANDLERS_COMMAND_ID == null) || (DEBUG_HANDLERS_COMMAND_ID
                             .equals(id)))) {
@@ -349,16 +345,11 @@ final class Command implements ICommand {
                     System.out.println("no handler"); //$NON-NLS-1$
                 } else {
                     System.out.print("'"); //$NON-NLS-1$
-                    if (handler instanceof ActionHandler) {
-                        final ActionHandler actionHandler = (ActionHandler) handler;
-                        System.out.print(actionHandler.getAction().getClass()
-                                .getName());
-                    } else {
-                        System.out.print(handler.getClass().getName());
-                    }
+                    System.out.print(handler);
                     System.out.println("' as its handler"); //$NON-NLS-1$
                 }
             }
+
             return true;
         }
 
