@@ -31,7 +31,7 @@ import org.osgi.framework.Bundle;
  */
 public class FileBuffersForFilesInLinkedFolders extends FileBufferFunctions {
 	
-	private File fExternalDir;
+	private File fExternalFile;
 	
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#tearDown()
@@ -39,7 +39,12 @@ public class FileBuffersForFilesInLinkedFolders extends FileBufferFunctions {
 	protected void tearDown() throws Exception {
 		File file= FileBuffers.getSystemFileAtLocation(getPath());
 		FileTool.delete(file);
-		FileTool.delete(fExternalDir);
+		file= fExternalFile;
+		FileTool.delete(file); // externalResources/linkedFolderTarget/FileInLinkedFolder
+		file= file.getParentFile();
+		FileTool.delete(file); // externalResources/linkedFolderTarget
+		file= file.getParentFile();
+		FileTool.delete(file); // externalResources/
 		super.tearDown();
 	}
 	
@@ -47,12 +52,11 @@ public class FileBuffersForFilesInLinkedFolders extends FileBufferFunctions {
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#createPath(org.eclipse.core.resources.IProject)
 	 */
 	protected IPath createPath(IProject project) throws Exception {
-		File sourceDir= FileTool.getFileInPlugin(FileBuffersTestPlugin.getDefault(), new Path("testResources/linkedFolderTarget"));
-		fExternalDir= FileTool.createTempFileInPlugin(FileBuffersTestPlugin.getDefault(), new Path("externalResources/linkedFolderTarget"));
-		fExternalDir.mkdirs();
-		FileTool.copy(sourceDir, fExternalDir);
+		File sourceFile= FileTool.getFileInPlugin(FileBuffersTestPlugin.getDefault(), new Path("testResources/linkedFolderTarget/FileInLinkedFolder"));
+		fExternalFile= FileTool.createTempFileInPlugin(FileBuffersTestPlugin.getDefault(), new Path("externalResources/linkedFolderTarget/FileInLinkedFolder"));
+		FileTool.copy(sourceFile, fExternalFile);
 		
-		IFolder folder= ResourceHelper.createLinkedFolder(project, new Path("LinkedFolder"), fExternalDir);
+		IFolder folder= ResourceHelper.createLinkedFolder(project, new Path("LinkedFolder"), fExternalFile.getParentFile());
 		IFile file= folder.getFile(new Path("FileInLinkedFolder"));
 		return file.getFullPath();
 	}
