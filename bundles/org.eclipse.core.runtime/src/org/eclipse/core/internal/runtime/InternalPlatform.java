@@ -1409,7 +1409,6 @@ public static void installPlugins(URL[] installURLs) throws CoreException {
  */
 public static IExtensionRegistry getExtensionRegistry() {
 	assertInitialized();
-	assertIncremental();
 	return extensionsRegistry; 	
 }
 /**
