@@ -148,14 +148,10 @@ public interface IWorkbenchPreferenceConstants {
      * A named preference indicating where the perspective bar should be docked.
      * The default value (when this preference is not set) is <code>TOP_RIGHT</code>.
      * <p>
-     * This preference may be one of the following value:
-     * <li><code>TOP_RIGHT</code></li>
-     * <li><code>TOP_LEFT</code></li>
-     * <li><code>LEFT</code></li>
+     * This preference may be one of the following values:
+     * {@link #TOP_RIGHT}, {@link #TOP_LEFT}, or {@link #LEFT}.
+     * </p>
      *
-     * @see #TOP_RIGHT 
-     * @see #TOP_LEFT
-     * @see #LEFT
      * @since 3.0
      */
     public static String DOCK_PERSPECTIVE_BAR = "DOCK_PERSPECTIVE_BAR"; //$NON-NLS-1$	
