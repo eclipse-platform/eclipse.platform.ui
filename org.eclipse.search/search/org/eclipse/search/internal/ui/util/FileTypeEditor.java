@@ -16,7 +16,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.ui.IEditorRegistry;
@@ -25,13 +25,13 @@ import org.eclipse.search.internal.ui.SearchMessages;
 
 public class FileTypeEditor extends SelectionAdapter implements DisposeListener, SelectionListener {
 	
-	private Text fTextField;
+	private Combo fTextField;
 	private Button fBrowseButton;
 	private IEditorRegistry fResourceEditorRegistry;
 
 	final static String TYPE_DELIMITER= SearchMessages.getString("FileTypeEditor.typeDelimiter"); //$NON-NLS-1$
 
-	public FileTypeEditor(IEditorRegistry registry, Text textField, Button browseButton) {
+	public FileTypeEditor(IEditorRegistry registry, Combo textField, Button browseButton) {
 		fResourceEditorRegistry= registry;
 		fTextField= textField;
 		fBrowseButton= browseButton;
@@ -77,6 +77,16 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener,
 	 *	@param types java.util.Vector
 	 */
 	public void setFileTypes(Set types) {
+		fTextField.setText(typesToString(types));
+	}
+	protected void handleBrowseButton() {
+		TypeFilteringDialog dialog= new TypeFilteringDialog(fTextField.getShell(), getFileTypes());
+		if (dialog.open() == dialog.OK) {
+			setFileTypes(new HashSet(Arrays.asList(dialog.getResult())));
+		}
+	}
+
+	public static String typesToString(Set types) {
 		StringBuffer result= new StringBuffer();
 		Iterator typesIter= types.iterator();
 		boolean first= true;
@@ -88,12 +98,6 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener,
 				first= false;
 			result.append(typesIter.next());
 		}
-		fTextField.setText(result.toString());
-	}
-	protected void handleBrowseButton() {
-		TypeFilteringDialog dialog= new TypeFilteringDialog(fTextField.getShell(), getFileTypes());
-		if (dialog.open() == dialog.OK) {
-			setFileTypes(new HashSet(Arrays.asList(dialog.getResult())));
-		}
+		return result.toString();
 	}
 }

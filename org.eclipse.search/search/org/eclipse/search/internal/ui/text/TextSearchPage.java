@@ -34,7 +34,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -80,7 +79,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 	
 	private Combo fPattern;
 	private Button fIgnoreCase;
-	private Text fExtensions;
+	private Combo fExtensions;
 
 	private ISearchPageContainer fContainer;
 	private FileTypeEditor fFileTypeEditor;
@@ -191,12 +190,22 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		return match;
 	}
 
+	private String[] getPreviousExtensions() {
+		List extensions= new ArrayList(fgPreviousSearchPatterns.size());
+		for (int i= fgPreviousSearchPatterns.size() -1 ; i >= 0; i--) {
+			SearchPatternData data= (SearchPatternData)fgPreviousSearchPatterns.get(i);
+			String text= FileTypeEditor.typesToString(data.extensions);
+			if (!extensions.contains(text))
+				extensions.add(text);
+		}
+		return (String[])extensions.toArray(new String[extensions.size()]);
+	}
+
 	private String[] getPreviousSearchPatterns() {
-		// Search results are not persistent
-		int patternCount= fgPreviousSearchPatterns.size();
-		String [] patterns= new String[patternCount];
-		for (int i= 0; i < patternCount; i++)
-			patterns[i]= ((SearchPatternData) fgPreviousSearchPatterns.get(patternCount - 1 - i)).pattern;
+		int size= fgPreviousSearchPatterns.size();
+		String [] patterns= new String[size];
+		for (int i= 0; i < size; i++)
+			patterns[i]= ((SearchPatternData) fgPreviousSearchPatterns.get(size - 1 - i)).pattern;
 		return patterns;
 	}
 	
@@ -228,6 +237,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 				fFirstTime= false;
 				// Set item and text here to prevent page from resizing
 				fPattern.setItems(getPreviousSearchPatterns());
+				fExtensions.setItems(getPreviousExtensions());
 				initializePatternControl();
 			}
 			fPattern.setFocus();
@@ -367,10 +377,15 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 				extension= "*"; //$NON-NLS-1$
 		}		
 		fPattern.setText(insertEscapeChars(text));
-		if (extension == null)
-			extension= getExtensionFromEditor();
-		if (extension != null)
-			fExtensions.setText(extension);
+		
+		if (getPreviousExtensions().length > 0)
+			fExtensions.setText(getPreviousExtensions()[0]);
+		else {
+			if (extension == null)
+				extension= getExtensionFromEditor();
+			if (extension != null)
+				fExtensions.setText(extension);
+		}
 	}
 	
 	private String insertEscapeChars(String text) {
@@ -421,7 +436,14 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		Label label= new Label(result, SWT.LEFT);
 		label.setText(SearchMessages.getString("SearchPage.extensions")); //$NON-NLS-1$
 		
-		fExtensions= new Text(result, SWT.LEFT | SWT.BORDER);
+//		fExtensions= new Text(result, SWT.LEFT | SWT.BORDER);
+		fExtensions= new Combo(result, SWT.SINGLE | SWT.BORDER);
+//		fExtensions.addSelectionListener(new SelectionAdapter() {
+//			public void widgetSelected(SelectionEvent e) {
+//				handleWidgetSelected();
+//			}
+//		});
+		
 
 		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint= convertWidthInCharsToPixels(30);
