@@ -28,21 +28,14 @@ public class IOConsoleOutputStream extends OutputStream {
     private IOConsole console;
     private boolean activateOnWrite = false;
     private Color color;
-    private String streamId;
-
     private int fontStyle;
     
 
-    IOConsoleOutputStream(String streamId, IOConsole console) {
-        this.streamId = streamId;
+    IOConsoleOutputStream(IOConsole console) {
         this.console = console;
-        this.partitioner = console.getPartitioner();
+        this.partitioner = (IOConsolePartitioner) console.getPartitioner();
     }
 
-    public String getStreamId() {
-        return streamId;
-    }
-    
     public int getFontStyle() {
         return fontStyle;
     }
@@ -63,6 +56,11 @@ public class IOConsoleOutputStream extends OutputStream {
         this.activateOnWrite = activateOnWrite;
     }
     
+	/**
+	 * Sets the color of this message stream
+	 * 
+	 * @param color color of this message stream, possibly <code>null</code>
+	 */
 	public void setColor(Color newColor) {
 		Color old = color;
 		if (old == null || old.equals(newColor)) {
@@ -71,10 +69,22 @@ public class IOConsoleOutputStream extends OutputStream {
 		}
 	}
 	
+	/**
+	 * Returns the color of this message stream, or <code>null</code>
+	 * if default.
+	 * 
+	 * @return the color of this message stream, or <code>null</code>
+	 */
 	public Color getColor() {
 	    return color;
 	}
 
+	
+	/**
+	 * Returns the console this stream is connected to.
+	 * 
+	 * @return the console this stream is connected to
+	 */
 	public Object getConsole() {
         return console;
     }

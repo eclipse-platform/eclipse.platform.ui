@@ -18,6 +18,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.internal.console.IOConsoleHyperlinkPosition;
 import org.eclipse.ui.internal.console.IOConsolePage;
@@ -26,19 +27,17 @@ import org.eclipse.ui.internal.console.IOConsolePatternMatcher;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
- * This class is new and experimental. It will likely be subject to significant change before
- * it is finalized.
+ * A console that displays messages and accepts input from users.
+ * The console may have multiple output streams connected to it and
+ * provides one input stream.
+ * Mechanisms are also provided for matching of the document
+ * to regular expressions and adding hyperlinks to the document.
  * 
  * @since 3.1
  *
  */
 public class IOConsole extends AbstractConsole {
-    
-	/** 
-	 * The font used by this console
-	 */
-	private Font font = null;
-	
+    	
 	/**
 	 * Property constant indicating the font of this console has changed. 
 	 */
@@ -60,29 +59,43 @@ public class IOConsole extends AbstractConsole {
 	public static final String P_TAB_SIZE = ConsolePlugin.getUniqueIdentifier()  + "IOConsole.P_TAB_SIZE";	 //$NON-NLS-1$
 	
 	/**
-	 * Property constant indicating word wrapping has changed
-	 */
-	public  static final String P_WORD_WRAP = ConsolePlugin.getUniqueIdentifier() + "IOConsole.P_WORD_WRAP"; //$NON-NLS-1$
-	
-	/**
 	 * Property constant indicating the width of a fixed width console has changed.
 	 */
 	public static final String P_CONSOLE_WIDTH = ConsolePlugin.getUniqueIdentifier() + "IOConsole.P_CONSOLE_WIDTH"; //$NON-NLS-1$
+	
+	/** 
+	 * The font used by this console
+	 */
+	private Font font = null;
 	
 	/**
 	 * The default tab size
 	 */
 	public static final int DEFAULT_TAB_SIZE = 8;
-    
+	
+	/**
+	 * The document partitioner
+	 */
     private IOConsolePartitioner partitioner;
+    
+    /**
+     * The stream from which user input may be read
+     */
     private IOConsoleInputStream inputStream;
+    
+    /**
+     * The current tab width
+     */
     private int tabWidth = DEFAULT_TAB_SIZE;
-    private boolean wordWrap;
-
+    
+    /**
+     * Matches text of the console's document to regular expressions.
+     */
     private IOConsolePatternMatcher patternMatcher;
     
     /**
-     * -1 console isn't fixed width.
+     * The current width of the console. Used for fixed width consoles.
+     * A value of <=0 means does not have a fixed width.
      */
     private int consoleWidth = -1;
 
@@ -96,30 +109,96 @@ public class IOConsole extends AbstractConsole {
         patternMatcher = new IOConsolePatternMatcher(document);
     }
 
+	/**
+	 * Returns the document this console writes to.
+	 * 
+	 * @return the document this console wites to
+	 */
     public IDocument getDocument() {
         return partitioner.getDocument();
     }
-    
+
+    /*
+     *  (non-Javadoc)
+     * @see org.eclipse.ui.console.IConsole#createPage(org.eclipse.ui.console.IConsoleView)
+     */
     public IPageBookViewPage createPage(IConsoleView view) {
         return new IOConsolePage(this, view);
     }
 
-    public IOConsoleOutputStream createOutputStream(String streamId) {
-        return new IOConsoleOutputStream(streamId, this);
+    /**
+     * Creates a new IOConsoleOutputStream which may be used to write to the console.
+     * A console may be connected to more than one OutputStream at once.
+     * 
+     * @return A new output stream connected to this console
+     */
+    public IOConsoleOutputStream newOutputStream() {
+        return new IOConsoleOutputStream(this);
     }
     
+    /**
+     * Returns an IOConsoleInputStream which may be used to read a users input.
+     * Every console has one input stream only.
+     * 
+     * @return The input stream connected to this console.
+     */
     public IOConsoleInputStream getInputStream() {
         return inputStream;
     }
 
-    public IOConsolePartitioner getPartitioner() {
+    /**
+     * Returns the consoles document partitioner.
+     * @return The console's document partitioner
+     */
+    public IDocumentPartitioner getPartitioner() {
         return partitioner;
     }
 
+	/**
+	 * Returns the maximum number of characters that the console will display at
+	 * once. This is analagous to the size of the text buffer this console
+	 * maintains.
+	 * 
+	 * @return the maximum number of characters that the console will display
+	 */
+	public int getHighWaterMark() {
+	    return partitioner.getHighWaterMark();
+	}
+	
+	/**
+	 * Returns the number of characters that will remain in this console
+	 * when its high water mark is exceeded.
+	 *  
+	 * @return the number of characters that will remain in this console
+	 *  when its high water mark is exceeded
+	 */
+	public int getLowWaterMark() {
+		return partitioner.getLowWaterMark();
+	}
+	
+	/**
+	 * Sets the text buffer size for this console. The high water mark indicates
+	 * the maximum number of characters stored in the buffer. The low water mark
+	 * indicates the number of characters remaining in the buffer when the high
+	 * water mark is exceeded.
+	 * 
+	 * @param low the number of characters remaining in the buffer when the high
+	 *  water mark is exceeded
+	 * @param high the maximum number of characters this console will cache in
+	 *  its text buffer
+	 * @exception IllegalArgumentException if low >= high
+	 */
 	public void setWaterMarks(int low, int high) {
+	    if (low >= high) {
+	        throw new IllegalArgumentException("High water mark must be greater than low water mark"); //$NON-NLS-1$
+	    }
 		partitioner.setWaterMarks(low, high);
 	}
 	
+	/**
+	 * Sets the tab width.
+	 * @param tabSize The tab width 
+	 */
     public void setTabWidth(final int newTabWidth) {
         if (tabWidth != newTabWidth) {
             final int oldTabWidth = tabWidth;
@@ -131,14 +210,29 @@ public class IOConsole extends AbstractConsole {
             });
         }
     }
+    
+	/**
+	 * Returns the tab width.
+	 * @return tab width
+	 */
     public int getTabWidth() {
         return tabWidth;
     }
 
+	/**
+	 * Returns the font for this console
+	 * 
+	 * @return font for this console
+	 */
     public Font getFont() {
         return font;
     }
     
+	/**
+	 * Sets the font used by this console
+	 * 
+	 * @param font font
+	 */
     public void setFont(Font newFont) {
         if (font == null || !font.equals(newFont)) {
             Font old = font;
@@ -147,14 +241,22 @@ public class IOConsole extends AbstractConsole {
         }
     }
     
-    public boolean getWordWrap() {
-        return wordWrap;
-    }
-
+    /**
+     * Returns the current width of this console. A value of zero of less 
+     * implies the console has no fixed width.
+     * 
+     * @return The current width of this console
+     */
     public int getConsoleWidth() {
         return consoleWidth;
     }
     
+    /**
+     * Sets the width of this console. Any value greater than zero will cause
+     * this console to have a fixed width.
+     * @param width The width to make this console. Values of 0 or less imply
+     * the console does not have any fixed width.
+     */
     public void setConsoleWidth(int width) {
         if (consoleWidth != width) {
             int old = consoleWidth;
@@ -164,20 +266,29 @@ public class IOConsole extends AbstractConsole {
         }
     }
 
-    public void setWordWrap(boolean wrap) {
-        if(wordWrap != wrap) {
-            wordWrap = wrap;
-            firePropertyChange(IOConsole.this, IOConsole.P_WORD_WRAP, new Boolean(!wordWrap), new Boolean(wordWrap));
-        }
+    /**
+     * Adds a matchHandler to match a pattern to the document's content.
+     * @param matchHandler The IPatternMatchHandler to add.
+     */
+    public void addPatternMatchHandler(IPatternMatchHandler matchHandler) {
+        patternMatcher.addPatternMatchHandler(matchHandler);
     }
-
-    public void addPatternMatchNotifier(IPatternMatchHandler matchNotifier) {
-        patternMatcher.addPatternMatchNotifier(matchNotifier);
-    }
-    public void removePatternMatchNotifier(IPatternMatchHandler matchNotifier) {
-        patternMatcher.removePatternMatchNotifier(matchNotifier);
+    
+    /**
+     * Removes an IPatternMatchHandler so that its pattern will no longer get matched to the document.
+     * @param matchHandler The IPatternMatchHandler to remove.
+     */
+    public void removePatternMatchHandler(IPatternMatchHandler matchHandler) {
+        patternMatcher.removePatternMatchHandler(matchHandler);
     }    
     
+    /**
+     * Adds an IConsoleHyperlink to the document.
+     * @param hyperlink The hyperlink to add.
+     * @param offset The offset in the document at which the hyperlink should be added.
+     * @param length The length of the text which should be hyperlinked.
+     * @throws BadLocationException Thrown if the specified location is not valid.
+     */
     public void addHyperlink(IConsoleHyperlink hyperlink, int offset, int length) throws BadLocationException {
 		IOConsoleHyperlinkPosition hyperlinkPosition = new IOConsoleHyperlinkPosition(hyperlink, offset, length); 
 		try {
@@ -187,10 +298,14 @@ public class IOConsole extends AbstractConsole {
 		} 
     }
     
-    public void dispose() {
+    /**
+     * disposes of this console.
+     */
+    protected void dispose() {
         partitioner.disconnect();
         try {
             inputStream.close();
+            //FIXME: should close output streams? Need to store references.
         } catch (IOException ioe) {
         }
         patternMatcher.dispose();

@@ -88,6 +88,7 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 			}
 		}
 	};
+    private boolean readOnly;
     
     public IOConsolePage(IOConsole console, IConsoleView view) {
         this.console = console;
@@ -104,7 +105,6 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 
     public void createControl(Composite parent) {
 		viewer = new IOConsoleViewer(parent, console.getDocument());
-		viewer.setWordWrap(console.getWordWrap());
 		viewer.setConsoleWidth(console.getConsoleWidth());
 		console.addPropertyChangeListener(this);
 		
@@ -123,6 +123,9 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 		
 		viewer.getSelectionProvider().addSelectionChangedListener(selectionChangedListener);
 		viewer.addTextListener(textListener);
+		if (readOnly) {
+		    viewer.setReadOnly();
+		}
     }
     
     public void dispose() {
@@ -172,12 +175,8 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 		} else if (property.equals(IOConsole.P_STREAM_COLOR)) {
 		    viewer.getTextWidget().redraw();
 		} else if (source.equals(console) && property.equals(IOConsole.P_TAB_SIZE)) {
-			if (viewer != null) {
-			    Integer tabSize = (Integer)event.getNewValue();
-				viewer.setTabWidth(tabSize.intValue());
-			}
-		} else if(source.equals(console) && property.equals(IOConsole.P_WORD_WRAP)) {
-		    viewer.setWordWrap(console.getWordWrap());
+		    Integer tabSize = (Integer)event.getNewValue();
+		    viewer.setTabWidth(tabSize.intValue());
 		} else if (source.equals(console) && property.equals(IOConsole.P_CONSOLE_WIDTH)) {
 		    viewer.setConsoleWidth(console.getConsoleWidth()); 
 		}
@@ -281,6 +280,16 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 			return viewer.getTextWidget();
 		}
 		return null;
+    }
+
+    /**
+     * 
+     */
+    public void setReadOnly() {
+        readOnly = true;
+        if (viewer != null) {
+            viewer.setReadOnly();
+        }
     }
 
 }

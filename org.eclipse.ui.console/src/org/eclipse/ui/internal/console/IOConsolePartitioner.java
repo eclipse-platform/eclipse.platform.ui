@@ -81,6 +81,13 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 		connected = true;
 	}
 	
+	public int getHighWaterMark() {
+	    return highWaterMark;
+	}
+	
+	public int getLowWaterMark() {
+	    return lowWaterMark;
+	}
 	
 	public void setWaterMarks(int low, int high) {
 		lowWaterMark = low;

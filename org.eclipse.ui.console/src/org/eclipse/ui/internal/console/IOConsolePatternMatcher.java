@@ -32,14 +32,14 @@ public class IOConsolePatternMatcher implements IDocumentListener {
         patterns = new ArrayList();
     }
     
-    public void addPatternMatchNotifier(IPatternMatchHandler matchNotifier) {
+    public void addPatternMatchHandler(IPatternMatchHandler matchHandler) {
         synchronized(patterns) {
-            if (matchNotifier == null || matchNotifier.getPattern() == null) {
+            if (matchHandler == null || matchHandler.getPattern() == null) {
                 throw new IllegalArgumentException("Pattern cannot be null"); //$NON-NLS-1$
             }
             
-            Pattern pattern = Pattern.compile(matchNotifier.getPattern());
-            CompiledPatternMatchNotifier notifier = new CompiledPatternMatchNotifier(pattern, matchNotifier);
+            Pattern pattern = Pattern.compile(matchHandler.getPattern());
+            CompiledPatternMatchNotifier notifier = new CompiledPatternMatchNotifier(pattern, matchHandler);
             patterns.add(notifier);
             
             try {
@@ -50,11 +50,11 @@ public class IOConsolePatternMatcher implements IDocumentListener {
     }
     
     
-    public void removePatternMatchNotifier(IPatternMatchHandler matchNotifier) {
+    public void removePatternMatchHandler(IPatternMatchHandler matchHandler) {
         synchronized(patterns){
             for (Iterator iter = patterns.iterator(); iter.hasNext();) {
                 CompiledPatternMatchNotifier element = (CompiledPatternMatchNotifier) iter.next();
-                if (element.notifier == matchNotifier) {
+                if (element.notifier == matchHandler) {
                     iter.remove();
                 }
             }

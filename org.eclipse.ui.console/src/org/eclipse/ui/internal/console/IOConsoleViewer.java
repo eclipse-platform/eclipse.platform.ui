@@ -51,7 +51,7 @@ import org.eclipse.ui.console.IConsoleHyperlink;
  */
 public class IOConsoleViewer extends TextViewer implements LineStyleListener, LineBackgroundListener, MouseTrackListener, MouseMoveListener, MouseListener, PaintListener {
 
-    private boolean autoScroll = false;
+    private boolean autoScroll = true;
     private IOConsoleDocumentAdapter documentAdapter;
     private IConsoleHyperlink hyperlink;
     private Cursor handCursor;
@@ -138,6 +138,7 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
             StyledText text = getTextWidget();
             int charCount = text.getCharCount();
             text.setCaretOffset(charCount);
+            text.showSelection();
         }
     }
     
@@ -391,5 +392,12 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Li
         handCursor=null;
         textCursor=null;
         hyperlink = null;
+    }
+
+    /**
+     * 
+     */
+    public void setReadOnly() {
+        getTextWidget().setEditable(false);
     }
 }

@@ -83,13 +83,6 @@ public class IOConsolePartition implements ITypedRegion {
         return outputStream.getColor();
     }
 
-    public String getStreamId() {
-        if (type.equals(INPUT_PARTITION_TYPE)) {
-            return inputStream.getStreamId();
-        } 
-        return outputStream.getStreamId();
-    }
-
     public boolean isReadOnly() {
         return readOnly;
     }
