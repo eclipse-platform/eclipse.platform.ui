@@ -164,7 +164,7 @@ function isToc(name) {
 }
 
 function isParentTocSelected(name) {
-	var parentCheckbox = getParentCheckbox(parentId);
+	var parentCheckbox = getParentCheckbox(name);
 	return (parentCheckbox.checked && !getGrayed(parentCheckbox));
 }
 
