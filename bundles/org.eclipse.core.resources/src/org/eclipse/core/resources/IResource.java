@@ -1146,6 +1146,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @return the modification stamp, or <code>NULL_STAMP</code> if this resource either does
 	 *    not exist or exists as a closed project
 	 * @see IResource#NULL_STAMP
+	 * @see #revertModificationStamp(long)
 	 */
 	public long getModificationStamp();
 
@@ -1870,6 +1871,34 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResourceRuleFactory#refreshRule(IResource)
 	 */
 	public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreException;
+	
+	/**
+	 * Reverts this resource's modification stamp to a previous value.  This is
+	 * intended to be used by a client that is rolling back or undoing a previous 
+	 * change to this resource.  It is the caller's responsibility to ensure that the 
+	 * value of the reverted modification stamp matches this resource's modification 
+	 * stamp prior to the change that has been rolled back.
+	 * <p>
+	 * Reverting the modification stamp will <b>not</b> be reported in a 
+	 * subsequent resource change event.
+	 * <p>
+	 * Note that a resource's modification stamp is unrelated to the local
+	 * time stamp for this resource on disk, if any.  A resource's local time
+	 * stamp is modified using the <code>setLocalTimeStamp</code> method.
+	 * 
+	 * @param value A non-negative modification stamp value
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> This resource does not exist.</li>
+	 * <li> This resource is not local.</li>
+	 * <li> This resource is not accessible.</li>
+	 * <li> Resource changes are disallowed during certain types of resource change 
+	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
+	 * </ul>
+	 * @see #getModificationStamp()
+	 * @since 3.1
+	 */
+	public void revertModificationStamp(long value) throws CoreException;
 
 	/**
 	 * Sets whether this resource subtree is marked as derived.

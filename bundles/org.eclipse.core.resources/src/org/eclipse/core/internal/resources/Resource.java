@@ -1267,6 +1267,21 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	}
 
 	/* (non-Javadoc)
+	 * @see IResource#revertModificationStamp
+	 */
+	public void revertModificationStamp(long value) throws CoreException {
+		if (value < 0)
+			throw new IllegalArgumentException("Illegal value: " + value); //$NON-NLS-1$
+		// fetch the info but don't bother making it mutable even though we are going
+		// to modify it. It really doesn't matter as the change we are doing does not show up in deltas.
+		ResourceInfo info = getResourceInfo(false, false);
+		int flags = getFlags(info);
+		checkAccessible(flags);
+		checkLocal(flags, DEPTH_ZERO);
+		info.setModificationStamp(value);
+	}
+
+	/* (non-Javadoc)
 	 * @see IResource#setLocal(boolean, int, IProgressMonitor)
 	 */
 	public void setLocal(boolean flag, int depth, IProgressMonitor monitor) throws CoreException {
@@ -1292,7 +1307,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 */
 	public long setLocalTimeStamp(long value) throws CoreException {
 		if (value < 0)
-			throw new IllegalArgumentException("Illegal time stamp: " + value); //$NON-NLS-1$
+			throw new IllegalArgumentException("Illegal value: " + value); //$NON-NLS-1$
 		// fetch the info but don't bother making it mutable even though we are going
 		// to modify it. It really doesn't matter as the change we are doing does not show up in deltas.
 		ResourceInfo info = getResourceInfo(false, false);

@@ -25,10 +25,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	 * This field stores the resource modification stamp in the lower two bytes,
 	 * and the character set generation count in the higher two bytes.
 	 */
-	protected volatile int charsetAndModStamp = 0;
-
-	/** Unique content identifier */
-	protected int contentId = 0;
+	protected volatile int charsetAndContentId = 0;
 
 	/** Set of flags which reflect various states of the info (used, derived, ...). */
 	protected int flags = 0;
@@ -45,6 +42,9 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 
 	/** The collection of markers for this resource. */
 	protected MarkerSet markers = null;
+
+	/** Modification stamp */
+	protected long modStamp = 0;
 
 	/** Unique node identifier */
 	// thread safety: (Concurrency004)
@@ -98,7 +98,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	}
 
 	public void clearModificationStamp() {
-		charsetAndModStamp &= UPPER;
+		modStamp = IResource.NULL_STAMP;
 	}
 
 	public synchronized void clearSessionProperties() {
@@ -114,11 +114,11 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	}
 
 	public int getCharsetGenerationCount() {
-		return charsetAndModStamp >> 16;
+		return charsetAndContentId >> 16;
 	}
 
 	public int getContentId() {
-		return contentId;
+		return charsetAndContentId & LOWER;
 	}
 
 	/** 
@@ -162,8 +162,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	}
 
 	public long getModificationStamp() {
-		int stamp = charsetAndModStamp & LOWER;
-		return stamp == 0 ? IResource.NULL_STAMP : stamp + localInfo;
+		return modStamp;
 	}
 
 	public long getNodeId() {
@@ -230,14 +229,15 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	 */
 	public void incrementCharsetGenerationCount() {
 		//increment high order bits
-		charsetAndModStamp = ((charsetAndModStamp + LOWER + 1) & UPPER) + (charsetAndModStamp & LOWER);
+		charsetAndContentId = ((charsetAndContentId + LOWER + 1) & UPPER) + (charsetAndContentId & LOWER);
 	}
 
 	/** 
 	 * Mark this resource info as having changed content
 	 */
 	public void incrementContentId() {
-		contentId += 1;
+		//increment low order bits
+		charsetAndContentId = (charsetAndContentId & UPPER) + ((charsetAndContentId + 1) & LOWER);
 	}
 
 	/** 
@@ -255,8 +255,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	 * distinguish two arbitrary resource generations.
 	 */
 	public void incrementModificationStamp() {
-		//increment low order bits
-		charsetAndModStamp = (charsetAndModStamp & UPPER) + ((charsetAndModStamp + 1) & LOWER);
+		modStamp++;
 	}
 
 	/** 
@@ -282,8 +281,8 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 		this.flags = newFlags;
 		localInfo = input.readLong();
 		nodeId = input.readLong();
-		contentId = input.readInt();
-		charsetAndModStamp = ((int) input.readLong()) & LOWER;
+		charsetAndContentId = input.readInt() & LOWER;
+		modStamp = input.readLong();
 	}
 
 	/** 
@@ -326,6 +325,13 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	 */
 	public void setMarkers(MarkerSet value) {
 		markers = value;
+	}
+
+	/**
+	 * Sets the resource modification stamp.
+	 */
+	public void setModificationStamp(long value) {
+		this.modStamp = value;
 	}
 
 	/** 
@@ -422,7 +428,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 		// and see what type of info is being loaded.
 		output.writeLong(localInfo);
 		output.writeLong(nodeId);
-		output.writeInt(contentId);
-		output.writeLong(charsetAndModStamp & LOWER);
+		output.writeInt(getContentId());
+		output.writeLong(modStamp);
 	}
 }

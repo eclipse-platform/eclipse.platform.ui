@@ -144,10 +144,10 @@ public class IResourceTest extends ResourceTest {
 
 	public static Test suite() {
 		return new TestSuite(IResourceTest.class);
-
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new IResourceTest("testAttributeArchive"));
-		//		return suite;
+//
+//		TestSuite suite = new TestSuite();
+//		suite.addTest(new IResourceTest("testRevertModificationStamp"));
+//		return suite;
 	}
 
 	public IResourceTest() {
@@ -165,7 +165,7 @@ public class IResourceTest extends ResourceTest {
 		IProject fullProject = getWorkspace().getRoot().getProject("FullProject");
 		//resource pattern is: empty file, empty folder, full folder, repeat
 		// with full folder
-		IResource[] resources = buildResources(fullProject, new String[] {"1", "2/", "3/", "3/1", "3/2/", "3/3/", "3/3/1", "3/3/2/"});
+		IResource[] resources = buildResources(fullProject, new String[] {"1", "2/", "3/", "3/1", "3/2/"});
 
 		IResource[] result = new IResource[resources.length + 3];
 		result[0] = getWorkspace().getRoot();
@@ -1861,6 +1861,66 @@ public class IResourceTest extends ResourceTest {
 		file.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
 	}
 
+	/**
+	 * This method tests the IResource.revertModificationStamp() operation */
+	public void testRevertModificationStamp() {
+		//revert all existing resources
+		try {
+			getWorkspace().getRoot().accept(new IResourceVisitor() {
+				public boolean visit(IResource resource) throws CoreException {
+					if (!resource.isAccessible())
+						return false;
+					long oldStamp = resource.getModificationStamp();
+					resource.touch(null);
+					long newStamp = resource.getModificationStamp();
+					if (resource.getType() == IResource.ROOT)
+						assertTrue("1.0." + resource.getFullPath(), oldStamp == newStamp);
+					else
+						assertTrue("1.0." + resource.getFullPath(), oldStamp != newStamp);
+					resource.revertModificationStamp(oldStamp);
+					assertEquals("1.1." + resource.getFullPath(), oldStamp, resource.getModificationStamp());
+					return true;
+				}
+			});
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		//illegal values
+		IResource[] resources = buildInterestingResources();
+		long[] illegal = new long[] {-1, -10, -100};
+		for (int i = 0; i < resources.length; i++) {
+			if (!resources[i].isAccessible())
+				continue;
+			for (int j = 0; j < illegal.length; j++) {
+				try {
+					resources[i].revertModificationStamp(illegal[j]);
+					fail("2." + j + "." + resources[i].getFullPath());
+				} catch (RuntimeException e) {
+					//should fail
+				} catch (CoreException e) {
+					//should get runtime exception, not CoreException
+					fail("2.99", e);
+				}
+			}
+		}
+		//should fail for non-existent resources
+		try {
+			getWorkspace().getRoot().delete(IResource.ALWAYS_DELETE_PROJECT_CONTENT, getMonitor());
+		} catch (CoreException e) {
+			fail("3.99", e);
+		}
+		for (int i = 0; i < resources.length; i++) {
+			try {
+				resources[i].revertModificationStamp(1);
+				if (resources[i].getType() != IResource.ROOT)
+					fail("4." + resources[i].getFullPath());
+			} catch (CoreException e) {
+				//should fail except for root
+				if (resources[i].getType() == IResource.ROOT)
+					fail("4.99");
+			}
+		}
+	}
 	/**
 	 * This method tests the IResource.setLocalTimeStamp() operation */
 	public void testSetLocalTimeStamp() {
