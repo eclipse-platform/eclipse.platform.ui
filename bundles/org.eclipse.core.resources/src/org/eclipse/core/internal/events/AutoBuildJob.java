@@ -14,6 +14,7 @@ import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -21,7 +22,7 @@ import org.eclipse.core.runtime.jobs.Job;
  * The job for performing workspace auto-builds, and pre- and post- autobuild
  * notification.  This job is run regardless of whether autobuild is on or off.
  */
-class AutoBuildJob extends Job {
+class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	private boolean avoidBuild = false;
 	private boolean buildNeeded = false;
 	private boolean forceBuild = false;
@@ -33,13 +34,14 @@ class AutoBuildJob extends Job {
 		setRule(workspace.getRoot());
 		setSystem(!workspace.isAutoBuilding());
 		this.workspace = workspace;
+		ResourcesPlugin.getPlugin().getPluginPreferences().addPropertyChangeListener(this);
 	}
 	/**
 	 * The workspace description has changed.  Update autobuild state.
 	 * @param wasAutoBuilding the old autobuild state
 	 * @param isAutoBuilding the new autobuild state
 	 */
-	public void autoBuildChanged(boolean wasAutoBuilding, boolean isAutoBuilding) {
+	private void autoBuildChanged(boolean wasAutoBuilding, boolean isAutoBuilding) {
 		//make the autobuild a system job if autobuild is off
 		setSystem(!isAutoBuilding);
 		//force a build if autobuild has been turned on
@@ -139,5 +141,13 @@ class AutoBuildJob extends Job {
 			//regardless of the result, clear the build flags for next time
 			forceBuild = avoidBuild = false;
 		}
+	}
+	public void propertyChange(PropertyChangeEvent event) {
+		if (!event.getProperty().equals(ResourcesPlugin.PREF_AUTO_BUILDING))
+			return;
+		Object oldValue = event.getOldValue();
+		Object newValue = event.getNewValue();
+		if (oldValue instanceof Boolean && newValue instanceof Boolean)
+			autoBuildChanged(((Boolean)oldValue).booleanValue(), ((Boolean)newValue).booleanValue());
 	}
 }

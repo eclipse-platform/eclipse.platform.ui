@@ -1249,7 +1249,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	/**
 	 * Link the given tree into the receiver's tree at the specified resource.
 	 */
-	protected void linkTrees(IPath path, ElementTree[] newTrees) throws CoreException {
+	protected void linkTrees(IPath path, ElementTree[] newTrees) {
 		tree = tree.mergeDeltaChain(path, newTrees);
 	}
 	/**
@@ -1495,29 +1495,20 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// create root location
 		localMetaArea.locationFor(getRoot()).toFile().mkdirs();
 
-		// turn off autobuilding while we open the workspace.  This is in
-		// case an operation is triggered.  We don't want to do an autobuild
-		// just yet. Any changes will be reported the next time we build.
-		boolean oldBuildFlag = description.isAutoBuilding();
-		try {
-			description.setAutoBuilding(false);
-			IProgressMonitor nullMonitor = Policy.monitorFor(null);
-			startup(nullMonitor);
-			//restart the notification manager so it is initialized with the right tree
-			notificationManager.startup(null);
-			openFlag = true;
-			if (crashed || refreshRequested()) {
-				try {
-					getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
-				} catch (CoreException e) {
-					//don't fail entire open if refresh failed, just report as minor warning
-					return e.getStatus();
-				}
+		IProgressMonitor nullMonitor = Policy.monitorFor(null);
+		startup(nullMonitor);
+		//restart the notification manager so it is initialized with the right tree
+		notificationManager.startup(null);
+		openFlag = true;
+		if (crashed || refreshRequested()) {
+			try {
+				getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
+			} catch (CoreException e) {
+				//don't fail entire open if refresh failed, just report as minor warning
+				return e.getStatus();
 			}
-			return Status.OK_STATUS;
-		} finally {
-			description.setAutoBuilding(oldBuildFlag);
 		}
+		return Status.OK_STATUS;
 	}
 	/**
 	 * Called before checking the pre-conditions of an operation.  Optionally supply
@@ -1629,9 +1620,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		String[] newOrder = newDescription.getBuildOrder(false);
 		if (description.getBuildOrder(false) != null || newOrder != null)
 			buildOrder = null;
-		//if autobuild state has changed, notify the build manager
-		if (description.isAutoBuilding() != newDescription.isAutoBuilding())
-			buildManager.autoBuildChanged(description.isAutoBuilding(), newDescription.isAutoBuilding());
 		description.copyFrom(newDescription);
 		Policy.setupAutoBuildProgress(description.isAutoBuilding());
 		ResourcesPlugin.getPlugin().savePluginPreferences();
@@ -2120,4 +2108,5 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		if (!status[0].isOK())
 			throw new ResourceException(status[0]);
 	}
+
 }

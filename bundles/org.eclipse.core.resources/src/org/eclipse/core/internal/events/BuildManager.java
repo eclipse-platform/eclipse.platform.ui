@@ -80,7 +80,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	}
 	
 	//the job for performing background autobuild
-	private AutoBuildJob autoBuildJob;
+	private final AutoBuildJob autoBuildJob;
 	protected boolean building = false;
 	protected final ArrayList builtProjects = new ArrayList();
 	protected InternalBuilder currentBuilder;
@@ -110,7 +110,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	protected Workspace workspace;
 	public BuildManager(Workspace workspace) {
 		this.workspace = workspace;
-		autoBuildJob = new AutoBuildJob(workspace);
+		this.autoBuildJob = new AutoBuildJob(workspace);
 	}
 	protected void basicBuild(int trigger, IncrementalProjectBuilder builder, Map args, MultiStatus status, IProgressMonitor monitor) {
 		try {
@@ -387,19 +387,11 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			return "<no project>"; //$NON-NLS-1$
 		return currentBuilder.getProject().getFullPath().toString();
 	}
-/**
- * The outermost workspace operation has finished.  Do an autobuild if necessary.
- */
+	/**
+	 * The outermost workspace operation has finished.  Do an autobuild if necessary.
+	 */
 	public void endTopLevel(boolean needsBuild) {
 		autoBuildJob.endTopLevel(needsBuild);
-	}
-	/**
-	 * The workspace description has changed.  Update autobuild state.
-	 * @param wasAutoBuilding the old autobuild state
-	 * @param isAutoBuilding the new autobuild state
-	 */
-	public void autoBuildChanged(boolean wasAutoBuilding, boolean isAutoBuilding) {
-		autoBuildJob.autoBuildChanged(wasAutoBuilding, isAutoBuilding);
 	}
 	protected IncrementalProjectBuilder getBuilder(String builderName, IProject project, MultiStatus status) throws CoreException {
 		Hashtable builders = getBuilders(project);
