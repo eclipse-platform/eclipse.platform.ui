@@ -181,15 +181,20 @@ public class InternalAntRunner {
 	}
 
 	protected void addBuildListeners(Project project) {
+		String className= null;
 		try {
 			project.addBuildListener(createLogger());
 			if (fBuildListeners != null) {
 				for (Iterator iterator = fBuildListeners.iterator(); iterator.hasNext();) {
-					String className = (String) iterator.next();
+					className = (String) iterator.next();
 					Class listener = Class.forName(className);
 					project.addBuildListener((BuildListener) listener.newInstance());
 				}
 			}
+		} catch (ClassCastException e) {
+			String message = MessageFormat.format("{0} which was specified to be a build listener is not an instance of org.apache.tools.ant.BuildListener.", new String[]{className});
+			logMessage(null, message, Project.MSG_ERR);
+			throw new BuildException(message);
 		} catch (Exception e) {
 			throw new BuildException(e);
 		}
@@ -522,9 +527,9 @@ public class InternalAntRunner {
 			try {
 				fBuildLogger = (BuildLogger) (Class.forName(fLoggerClassname).newInstance());
 			} catch (ClassCastException e) {
-				String message = MessageFormat.format("Class {0} which was specified to perform logging is not an instance of BuildLogger.  Using org.apache.tools.ant.DefaultLogger", new String[]{fLoggerClassname}); //$NON-NLS-1$
+				String message = MessageFormat.format("{0} which was specified to perform logging is not an instance of org.apache.tools.ant.BuildLogger.", new String[]{fLoggerClassname});
 				logMessage(null, message, Project.MSG_ERR);
-				fBuildLogger = new DefaultLogger();
+				throw new BuildException(message);
 			} catch (Exception e) {
 				String message = MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Unable_to_instantiate_logger__{0}_6"), new String[]{fLoggerClassname}); //$NON-NLS-1$
 				logMessage(null, message, Project.MSG_ERR);
@@ -612,8 +617,13 @@ public class InternalAntRunner {
 				//notify the build listeners that are not registered as
 				//no project existed
 				for (Iterator iterator = fBuildListeners.iterator(); iterator.hasNext();) {
-					BuildListener listener = (BuildListener) iterator.next();
-					listener.messageLogged(event);
+					try {
+						BuildListener listener = (BuildListener) iterator.next();
+						listener.messageLogged(event);
+					} catch (ClassCastException e) {
+						//ignore we could be trying to log that a build listener is the
+						//wrong type of class
+					}
 				}
 			}
 		}
