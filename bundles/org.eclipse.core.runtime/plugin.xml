@@ -14,6 +14,7 @@
 
   <requires>
     <import plugin="org.eclipse.osgi"/>
+    <import plugin="org.eclipse.osgi.util"/> 
   </requires>
 
   <extension-point name="%applicationsName" id="applications" schema="schema/applications.mxsd"/>
