@@ -178,7 +178,7 @@ public class TemplateReaderWriter {
 			else if (t != null)
 				throw new IOException(t.getMessage());
 			else
-				throw new IOException();
+				throw new IOException(e.getMessage());
 		}
 		
 		return null; // dummy
