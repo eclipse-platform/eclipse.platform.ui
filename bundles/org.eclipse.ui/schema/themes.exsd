@@ -605,7 +605,7 @@ href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse
         This color is used for the background color of the XYZ plugin editor.
         &lt;/description&gt;
       &lt;/colorDefinition&gt;      
-      &lt;fontDefiniton
+      &lt;fontDefinition
         id=&quot;com.xyz.TextFont&quot;
         categoryId=&quot;com.xyz.ThemeCategory&quot;        
         label=&quot;XYZ Editor Font&quot;
@@ -613,7 +613,7 @@ href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse
         &lt;description&gt;
         This font is used by the XYY plugin editor.
         &lt;/description&gt;
-      &lt;/fontDefintion&gt;
+      &lt;/fontDefinition&gt;
       &lt;data
        name=&quot;com.xyz.EditorMarginWidth&quot;
        value=&quot;5&quot;/&gt;      
