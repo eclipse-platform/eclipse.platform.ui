@@ -111,8 +111,9 @@ public final class BindingManager implements IContextManagerListener,
 	private Scheme activeScheme = null;
 
 	/**
-	 * The set of all bindings currently handled by this manager. This value may
-	 * be <code>null</code> if there are no bindings.
+	 * The set of all bindings currently handled by this manager. This set has
+	 * all duplicates removed, and also has deletion removed. This value may be
+	 * <code>null</code> if there are no bindings.
 	 */
 	private Set bindings = null;
 
@@ -218,9 +219,6 @@ public final class BindingManager implements IContextManagerListener,
 		activeBindings = null;
 		cachedBindings.clear();
 		recomputeBindings();
-
-		fireBindingManagerChanged(new BindingManagerEvent(this, false, null,
-				false, false));
 	}
 
 	/**
@@ -267,11 +265,16 @@ public final class BindingManager implements IContextManagerListener,
 	private final void computeBindings(final Map activeContextTree,
 			final Map commandIdsByTrigger) {
 		/*
+		 * FIRST PASS: Remove all of the bindings that are marking deletions.
+		 */
+		final Set trimmedBindings = removeDeletions(bindings);
+
+		/*
 		 * FIRST PASS: Just throw in bindings that match the current state. If
 		 * there is more than one match for a binding, then create a list.
 		 */
 		final Map possibleBindings = new HashMap();
-		final Iterator bindingItr = bindings.iterator();
+		final Iterator bindingItr = trimmedBindings.iterator();
 		while (bindingItr.hasNext()) {
 			final Binding binding = (Binding) bindingItr.next();
 			boolean found;
@@ -528,7 +531,8 @@ public final class BindingManager implements IContextManagerListener,
 	 * 
 	 * @return The map of triggers (<code>TriggerSequence</code>) to command
 	 *         ids (<code>String</code>) which are currently active. This
-	 *         value will not be <code>null</code>, but may be empty.
+	 *         value may be <code>null</code> if there are no active bindings,
+	 *         and it may be empty.
 	 */
 	public final Map getActiveBindings() {
 		return activeBindings;
@@ -550,8 +554,8 @@ public final class BindingManager implements IContextManagerListener,
 		}
 
 		// Build a cached binding set for that state.
-		final CachedBindingSet bindingCache = new CachedBindingSet(
-				Collections.EMPTY_MAP, locales, platforms, schemeIds);
+		final CachedBindingSet bindingCache = new CachedBindingSet(null,
+				locales, platforms, schemeIds);
 
 		/*
 		 * Check if the cached binding set already exists. If so, simply set the
@@ -576,6 +580,31 @@ public final class BindingManager implements IContextManagerListener,
 	}
 
 	/**
+	 * Computes the bindings for the current state of the application, but
+	 * disregarding the current contexts. This can be useful when trying to
+	 * display all the possible bindings.
+	 * 
+	 * @return All of the active bindings (<code>Binding</code>), not sorted
+	 *         in any fashion. This collection may be empty, but it is never
+	 *         <code>null</code>.
+	 */
+	public final Collection getActiveBindingsDisregardingContextFlat() {
+		final Collection bindingCollections = getActiveBindingsDisregardingContext()
+				.values();
+		final Collection mergedBindings = new ArrayList();
+		final Iterator bindingCollectionItr = bindingCollections.iterator();
+		while (bindingCollectionItr.hasNext()) {
+			final Collection bindingCollection = (Collection) bindingCollectionItr
+					.next();
+			if ((bindingCollection != null) && (!bindingCollection.isEmpty())) {
+				mergedBindings.addAll(bindingCollection);
+			}
+		}
+
+		return mergedBindings;
+	}
+
+	/**
 	 * Gets the currently active scheme.
 	 * 
 	 * @return The active scheme; may be <code>null</code> if there is no
@@ -586,12 +615,18 @@ public final class BindingManager implements IContextManagerListener,
 	}
 
 	/**
-	 * Returns the set of all bindings managed by this class.
+	 * Returns the set of all bindings managed by this class. This set is
+	 * wrapped in a <code>Collections.unmodifiableSet</code>. This is to
+	 * prevent modification of the manager's internal data structures.
 	 * 
-	 * @return The set of all bindings. This value may be empty, and it may be
-	 *         <code>null</code>.
+	 * @return The set of all bindings. This value may be <code>null</code>
+	 *         and it may be empty.
 	 */
 	public final Set getBindings() {
+		if (bindings == null) {
+			return null;
+		}
+
 		return Collections.unmodifiableSet(bindings);
 	}
 
@@ -777,12 +812,12 @@ public final class BindingManager implements IContextManagerListener,
 	 */
 	private final boolean localeMatches(final Binding binding) {
 		boolean matches = false;
-		
+
 		final String locale = binding.getLocale();
 		if (locale == null) {
-			return true;  // shortcut a common case
+			return true; // shortcut a common case
 		}
-		
+
 		for (int i = 0; i < locales.length; i++) {
 			if (Util.equals(locales[i], locale)) {
 				matches = true;
@@ -807,9 +842,9 @@ public final class BindingManager implements IContextManagerListener,
 
 		final String platform = binding.getPlatform();
 		if (platform == null) {
-			return true;  // shortcut a common case
+			return true; // shortcut a common case
 		}
-		
+
 		for (int i = 0; i < platforms.length; i++) {
 			if (Util.equals(platforms[i], platform)) {
 				matches = true;
@@ -938,9 +973,6 @@ public final class BindingManager implements IContextManagerListener,
 			activeBindings = null;
 			cachedBindings.clear();
 			recomputeBindings();
-
-			fireBindingManagerChanged(new BindingManagerEvent(this, false,
-					null, false, false));
 		}
 	}
 
@@ -951,12 +983,15 @@ public final class BindingManager implements IContextManagerListener,
 	 *            The bindings from which the deleted items should be removed.
 	 *            This collection should not be <code>null</code>, but may be
 	 *            empty. It should only contains instance of
-	 *            <code>Binding</code>. This method is destructive; it acts
-	 *            in place.
+	 *            <code>Binding</code>.
+	 * @return The set of bindings with the deletions removed; never
+	 *         <code>null</code>, but may be empty. Contains only instances
+	 *         of <code>Binding</code>.
 	 */
-	private final void removeDeletions(final Collection bindings) {
+	private final Set removeDeletions(final Collection bindings) {
 		final Collection deletions = new ArrayList();
-		Iterator bindingItr = bindings.iterator();
+		final Set bindingsCopy = new HashSet(bindings);
+		Iterator bindingItr = bindingsCopy.iterator();
 		while (bindingItr.hasNext()) {
 			final Binding binding = (Binding) bindingItr.next();
 			if ((binding.getCommandId() == null) && (localeMatches(binding))
@@ -969,7 +1004,7 @@ public final class BindingManager implements IContextManagerListener,
 		final Iterator deletionItr = deletions.iterator();
 		while (deletionItr.hasNext()) {
 			final Binding deletion = (Binding) deletionItr.next();
-			bindingItr = bindings.iterator();
+			bindingItr = bindingsCopy.iterator();
 			while (bindingItr.hasNext()) {
 				final Binding binding = (Binding) bindingItr.next();
 				if (deletion.deletes(binding)) {
@@ -977,6 +1012,8 @@ public final class BindingManager implements IContextManagerListener,
 				}
 			}
 		}
+
+		return bindingsCopy;
 	}
 
 	/**
@@ -1268,20 +1305,10 @@ public final class BindingManager implements IContextManagerListener,
 			return;
 		}
 
-		if (bindings != null) {
-			removeDeletions(bindings);
-			this.bindings = new HashSet();
-			this.bindings.addAll(bindings);
-		} else {
-			this.bindings = null;
-		}
-
+		this.bindings = bindings;
 		activeBindings = null;
 		cachedBindings.clear();
 		recomputeBindings();
-
-		fireBindingManagerChanged(new BindingManagerEvent(this, false, null,
-				false, false));
 	}
 
 	/**
