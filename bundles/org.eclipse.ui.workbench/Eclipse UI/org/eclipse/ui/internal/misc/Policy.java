@@ -27,6 +27,10 @@ public class Policy {
 
     public static boolean DEBUG_PART_LISTENERS = DEFAULT;
 
+    public static boolean DEBUG_PAGE_LISTENERS = DEFAULT;
+    
+    public static boolean DEBUG_PERSPECTIVE_LISTENERS = DEFAULT;
+    
     public static boolean DEBUG_PERSPECTIVE = DEFAULT;
 
     public static boolean DEBUG_RESTORE_WORKBENCH = DEFAULT;
@@ -37,6 +41,8 @@ public class Policy {
 
     public static boolean DEBUG_STALE_JOBS = DEFAULT;
 
+    public static boolean DEBUG_INCLUDE_TIMINGS = DEFAULT;
+    
     /**
      * Whether to print information about key bindings that are successfully
      * recognized within the system (as the keys are pressed).
@@ -101,6 +107,8 @@ public class Policy {
             DEBUG_START_WORKBENCH = getDebugOption("/trace/workbench.start"); //$NON-NLS-1$
             DEBUG_PART_ACTIVATE = getDebugOption("/trace/part.activate"); //$NON-NLS-1$
             DEBUG_PART_LISTENERS = getDebugOption("/trace/part.listeners"); //$NON-NLS-1$
+            DEBUG_PAGE_LISTENERS = getDebugOption("/trace/page.listeners"); //$NON-NLS-1$
+            DEBUG_PERSPECTIVE_LISTENERS = getDebugOption("/trace/perspective.listeners"); //$NON-NLS-1$
             DEBUG_DRAG_DROP = getDebugOption("/trace/dragDrop"); //$NON-NLS-1$
             DEBUG_KEY_BINDINGS = getDebugOption("/trace/keyBindings"); //$NON-NLS-1$
             DEBUG_KEY_BINDINGS_VERBOSE = getDebugOption("/trace/keyBindings.verbose"); //$NON-NLS-1$
@@ -114,6 +122,7 @@ public class Policy {
             DEBUG_HANDLERS_VERBOSE_COMMAND_ID = Platform
                     .getDebugOption(PlatformUI.PLUGIN_ID
                             + "/trace/handlers.verbose.commandId"); //$NON-NLS-1$
+            DEBUG_INCLUDE_TIMINGS = getDebugOption("/debug/include.timings"); //$NON-NLS-1$
         }
     }
 

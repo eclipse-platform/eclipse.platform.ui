@@ -1416,7 +1416,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Fire part close out.
      */
     private void firePartClosed(IWorkbenchPartReference ref) {
-        String label = "close" + ref.getTitle(); //$NON-NLS-1$
+        String label = "close::" + ref.getTitle(); //$NON-NLS-1$
         try {
             UIStats.start(UIStats.NOTIFY_PART_LISTENERS, label);
             IWorkbenchPart part = ref.getPart(false);
@@ -1434,7 +1434,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Fire part deactivation out.
      */
     private void firePartDeactivated(IWorkbenchPart part) {
-        String label = "deactivate" + (part != null ? part.getTitle() : "none"); //$NON-NLS-1$ //$NON-NLS-2$
+        String label = "deactivate::" + (part != null ? part.getTitle() : "none"); //$NON-NLS-1$ //$NON-NLS-2$
         try {
             UIStats.start(UIStats.NOTIFY_PART_LISTENERS, label);
             partListeners.firePartDeactivated(part);
@@ -1449,7 +1449,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Fire part open out.
      */
     public void firePartOpened(IWorkbenchPart part) {
-        String label = "deactivate" + (part != null ? part.getTitle() : "none"); //$NON-NLS-1$ //$NON-NLS-2$
+        String label = "opened::" + (part != null ? part.getTitle() : "none"); //$NON-NLS-1$ //$NON-NLS-2$
         try {
             UIStats.start(UIStats.NOTIFY_PART_LISTENERS, label);
             partListeners.firePartOpened(part);
@@ -1464,7 +1464,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Fire part input changed out.
      */
     private void firePartInputChanged(IWorkbenchPart part) {
-        String label = "inputChanged" + (part != null ? part.getTitle() : "none"); //$NON-NLS-1$ //$NON-NLS-2$
+        String label = "inputChanged::" + (part != null ? part.getTitle() : "none"); //$NON-NLS-1$ //$NON-NLS-2$
         try {
             UIStats.start(UIStats.NOTIFY_PART_LISTENERS, label);
             partListeners2.firePartInputChanged(getReference(part));

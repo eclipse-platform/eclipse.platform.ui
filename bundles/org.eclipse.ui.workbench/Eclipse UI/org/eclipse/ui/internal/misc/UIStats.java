@@ -24,27 +24,31 @@ public class UIStats {
 
     private static HashMap operations = new HashMap();
 
-    public static int CREATE_PART = 0;
+    public static final int CREATE_PART = 0;
 
-    public static int CREATE_PART_CONTROL = 1;
+    public static final int CREATE_PART_CONTROL = 1;
 
-    public static int INIT_PART = 2;
+    public static final int INIT_PART = 2;
 
-    public static int CREATE_PERSPECTIVE = 3;
+    public static final int CREATE_PERSPECTIVE = 3;
 
-    public static int RESTORE_WORKBENCH = 4;
+    public static final int RESTORE_WORKBENCH = 4;
 
-    public static int START_WORKBENCH = 5;
+    public static final int START_WORKBENCH = 5;
 
-    public static int CREATE_PART_INPUT = 6;
+    public static final int CREATE_PART_INPUT = 6;
 
-    public static int ACTIVATE_PART = 7;
+    public static final int ACTIVATE_PART = 7;
 
-    public static int BRING_PART_TO_TOP = 8;
+    public static final int BRING_PART_TO_TOP = 8;
 
-    public static int NOTIFY_PART_LISTENERS = 9;
+    public static final int NOTIFY_PART_LISTENERS = 9;
 
-    public static int SWITCH_PERSPECTIVE = 10;
+    public static final int SWITCH_PERSPECTIVE = 10;
+    
+    public static final int NOTIFY_PAGE_LISTENERS = 11;
+
+    public static final int NOTIFY_PERSPECTIVE_LISTENERS = 12;
 
     static {
         debug[CREATE_PART] = Policy.DEBUG_PART_CREATE;
@@ -58,6 +62,8 @@ public class UIStats {
         debug[ACTIVATE_PART] = Policy.DEBUG_PART_ACTIVATE;
         debug[BRING_PART_TO_TOP] = Policy.DEBUG_PART_ACTIVATE;
         debug[NOTIFY_PART_LISTENERS] = Policy.DEBUG_PART_LISTENERS;
+        debug[NOTIFY_PAGE_LISTENERS] = Policy.DEBUG_PAGE_LISTENERS;
+        debug[NOTIFY_PERSPECTIVE_LISTENERS] = Policy.DEBUG_PERSPECTIVE_LISTENERS;
 
         startStrings[CREATE_PART] = "Creating part: "; //$NON-NLS-1$
         endStrings[CREATE_PART] = " ms to create: "; //$NON-NLS-1$
@@ -80,20 +86,28 @@ public class UIStats {
         endStrings[BRING_PART_TO_TOP] = " ms to bring part to top: "; //$NON-NLS-1$
         startStrings[NOTIFY_PART_LISTENERS] = "Notifying part listeners: "; //$NON-NLS-1$
         endStrings[NOTIFY_PART_LISTENERS] = " ms to notify listeners: "; //$NON-NLS-1$
+        startStrings[NOTIFY_PAGE_LISTENERS] = "Notifying page listeners: "; //$NON-NLS-1$
+        endStrings[NOTIFY_PAGE_LISTENERS] = " ms to notify listeners: "; //$NON-NLS-1$
+        startStrings[NOTIFY_PERSPECTIVE_LISTENERS] = "Notifying perspective listeners: "; //$NON-NLS-1$
+        endStrings[NOTIFY_PERSPECTIVE_LISTENERS] = " ms to notify listeners: "; //$NON-NLS-1$
+        
         startStrings[SWITCH_PERSPECTIVE] = "Swtich perspective: "; //$NON-NLS-1$
         endStrings[SWITCH_PERSPECTIVE] = " ms to switch perspective: "; //$NON-NLS-1$
     }
 
     public static void start(int operation, String label) {
         if (debug[operation]) {
-            System.out.println(startStrings[operation] + label);
-            operations.put(operation + label, new Long(System
-                    .currentTimeMillis()));
+            String output = startStrings[operation] + label;
+            System.out.println(output);
+            if (Policy.DEBUG_INCLUDE_TIMINGS) {
+	            operations.put(operation + label, new Long(System
+	                    .currentTimeMillis()));
+            }
         }
     }
 
     public static void end(int operation, String label) {
-        if (debug[operation]) {
+        if (debug[operation] && Policy.DEBUG_INCLUDE_TIMINGS) {
             Long startTime = (Long) operations.remove(operation + label);
             System.out.println("Time - " + //$NON-NLS-1$
                     (System.currentTimeMillis() - startTime.longValue())

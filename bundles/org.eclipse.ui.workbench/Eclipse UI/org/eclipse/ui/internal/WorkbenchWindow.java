@@ -831,24 +831,43 @@ public class WorkbenchWindow extends ApplicationWindow implements
      * Fires page activated
      */
     private void firePageActivated(IWorkbenchPage page) {
-        pageListeners.firePageActivated(page);
-        partService.pageActivated(page);
+        String label = "activated " + page.getLabel(); //$NON-NLS-1$
+        try {
+	        UIStats.start(UIStats.NOTIFY_PAGE_LISTENERS, label);
+	        pageListeners.firePageActivated(page);
+	        partService.pageActivated(page);
+        } finally {
+            UIStats.end(UIStats.NOTIFY_PAGE_LISTENERS, label);
+        }
     }
 
     /**
      * Fires page closed
      */
     private void firePageClosed(IWorkbenchPage page) {
-        pageListeners.firePageClosed(page);
-        partService.pageClosed(page);
+        String label = "closed " + page.getLabel(); //$NON-NLS-1$
+        try {
+	        UIStats.start(UIStats.NOTIFY_PAGE_LISTENERS, label);
+	        pageListeners.firePageClosed(page);
+	        partService.pageClosed(page);
+        } finally {
+            UIStats.end(UIStats.NOTIFY_PAGE_LISTENERS, label);
+        }
+
     }
 
     /**
      * Fires page opened
      */
     private void firePageOpened(IWorkbenchPage page) {
-        pageListeners.firePageOpened(page);
-        partService.pageOpened(page);
+        String label = "opened " + page.getLabel(); //$NON-NLS-1$
+        try {	        
+            UIStats.start(UIStats.NOTIFY_PAGE_LISTENERS, label);
+            pageListeners.firePageOpened(page);
+            partService.pageOpened(page);
+        } finally {
+            UIStats.end(UIStats.NOTIFY_PAGE_LISTENERS, label);
+        }
     }
 
     /**
@@ -856,8 +875,15 @@ public class WorkbenchWindow extends ApplicationWindow implements
      */
     void firePerspectiveActivated(IWorkbenchPage page,
             IPerspectiveDescriptor perspective) {
-        perspectiveListeners.firePerspectiveActivated(page, perspective);
-        perspectiveService.firePerspectiveActivated(page, perspective);
+        String label = "activated page = " + page.getLabel() + ", perspective = " + perspective.getId(); //$NON-NLS-1$ //$NON-NLS-2$
+        try {	        
+            UIStats.start(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
+
+	        perspectiveListeners.firePerspectiveActivated(page, perspective);
+	        perspectiveService.firePerspectiveActivated(page, perspective);
+        } finally {
+            UIStats.end(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
+        }
     }
 
     /**
@@ -865,9 +891,17 @@ public class WorkbenchWindow extends ApplicationWindow implements
      */
     void firePerspectiveChanged(IWorkbenchPage page,
             IPerspectiveDescriptor perspective, String changeId) {
-        perspectiveListeners
-                .firePerspectiveChanged(page, perspective, changeId);
-        perspectiveService.firePerspectiveChanged(page, perspective, changeId);
+        String label = "changed perspective = " + perspective.getId() + ", page = " + page.getLabel()   //$NON-NLS-1$ //$NON-NLS-2$
+    		+ ", changeId = " + changeId; //$NON-NLS-1$
+        try {	        
+            UIStats.start(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
+
+	        perspectiveListeners
+	                .firePerspectiveChanged(page, perspective, changeId);
+	        perspectiveService.firePerspectiveChanged(page, perspective, changeId);
+        } finally {
+            UIStats.end(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
+        }
     }
 
     /**
@@ -876,8 +910,17 @@ public class WorkbenchWindow extends ApplicationWindow implements
     void firePerspectiveChanged(IWorkbenchPage page,
             IPerspectiveDescriptor perspective,
             IWorkbenchPartReference partRef, String changeId) {
-        perspectiveListeners.firePerspectiveChanged(page, perspective, partRef,
-                changeId);
+        String label = "changed perspective = " + perspective.getId() + ", page = " + page.getLabel()   //$NON-NLS-1$ //$NON-NLS-2$
+        	+ ", changeId = " + changeId + ", partRef = " + partRef.getId(); //$NON-NLS-1$ //$NON-NLS-2$
+        try {	        
+            UIStats.start(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
+
+	        perspectiveListeners.firePerspectiveChanged(page, perspective, partRef,
+	                changeId);
+        } finally {
+            UIStats.end(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
+        }
+
     }
 
     /**
