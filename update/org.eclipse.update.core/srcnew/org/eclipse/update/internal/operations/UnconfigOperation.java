@@ -33,7 +33,7 @@ public class UnconfigOperation extends PendingOperation {
 		boolean result = site.unconfigure(feature);
 		cleaner.dispose();
 		
-		return true;
+		return result;
 		// should we throw an exception when result == false ?
 	}
 	
