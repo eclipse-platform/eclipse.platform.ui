@@ -326,6 +326,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	public LaunchConfigurationDialog(Shell shell, IStructuredSelection selection, String mode) {
 		super(shell);
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 		setContext(resolveContext(selection));
 		setMode(mode);
 	}
@@ -453,10 +454,23 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
+	 * Write out this dialog's Shell size & location to the preference store.
+	 */
+	protected void persistShellGeometry() {
+		Point shellLocation = getShell().getLocation();
+		Point shellSize = getShell().getSize();
+		String locationString = serializeCoords(shellLocation);
+		String sizeString = serializeCoords(shellSize);
+		getPreferenceStore().setValue(IDebugPreferenceConstants.PREF_LAUNCH_CONFIGURATION_DIALOG_LOCATION, locationString);
+		getPreferenceStore().setValue(IDebugPreferenceConstants.PREF_LAUNCH_CONFIGURATION_DIALOG_SIZE, sizeString);
+	}
+	
+	/**
 	 * @see Window#close()
 	 */
 	public boolean close() {
 		getLaunchManager().removeLaunchConfigurationListener(this);
+		persistShellGeometry();
 		return super.close();
 	}
 	
@@ -804,11 +818,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		
 	/**
 	 * Creates the launch configuration selection area of the dialog.
-	 * This area displays a tree of launch configrations that the user
+	 * This area displays a tree of launch configurations that the user
 	 * may select, and allows users to create new configurations, and
-	 * delete and copy existing configurations.
+	 * delete and duplicate existing configurations.
 	 * 
-	 * @return the composite used for launch configuration selection
+	 * @return the composite used for launch configuration selection area
 	 */ 
 	protected Composite createLaunchConfigurationSelectionArea(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
@@ -821,8 +835,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		TreeViewer tree = new TreeViewer(comp);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
-		gd.widthHint = 130;
-		gd.heightHint = 375;
+		// Set width hint to 0 to force tree to only be as wide as the combined
+		// width of the 'New' & 'Delete' buttons.  Otherwise tree wants to be much wider.
+		gd.widthHint = 0;
 		tree.getControl().setLayoutData(gd);
 		tree.setContentProvider(new LaunchConfigurationContentProvider());
 		tree.setLabelProvider(DebugUITools.newDebugModelPresentation());
@@ -903,8 +918,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		TabFolder tabFolder = new TabFolder(fTabComposite, SWT.NONE);
 		setTabFolder(tabFolder);
 		gd = new GridData(GridData.FILL_BOTH);
-		gd.heightHint = 375;
-		gd.widthHint = 375;
 		tabFolder.setLayoutData(gd);
 		getTabFolder().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
@@ -974,7 +987,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
-	 * Sets the title for the dialog and establishes the help context.
+	 * Sets the title for the dialog, and establishes the help context.
 	 * 
 	 * @see org.eclipse.jface.window.Window#configureShell(Shell);
 	 */
@@ -984,6 +997,65 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		WorkbenchHelp.setHelp(
 			shell,
 			IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG);
+	}
+	
+	/**
+	 * @see Window#getInitialLocation(Point)
+	 */
+	protected Point getInitialLocation(Point initialSize) {	
+		String locationString = getPreferenceStore().getString(IDebugPreferenceConstants.PREF_LAUNCH_CONFIGURATION_DIALOG_LOCATION);
+		if (locationString.length() > 0) {
+			Point locationPoint = parseCoordinates(locationString);
+			if (locationPoint != null) {
+				return locationPoint;
+			}
+		}
+		return super.getInitialLocation(initialSize);
+	}
+
+	/**
+	 * @see Window#getInitialSize()
+	 */
+	protected Point getInitialSize() {
+		String sizeString = getPreferenceStore().getString(IDebugPreferenceConstants.PREF_LAUNCH_CONFIGURATION_DIALOG_SIZE);
+		if (sizeString.length() > 0) {
+			Point sizePoint = parseCoordinates(sizeString);
+			if (sizePoint != null) {
+				return sizePoint;
+			}
+		}
+		return super.getInitialSize();
+	}
+	
+	/**
+	 * Given a coordinate String of the form "123x456" return a Point object whose
+	 * X value is 123 and Y value is 456.  Return <code>null</code> if the String
+	 * is not in the specified form.
+	 */
+	protected Point parseCoordinates(String coordString) {
+		int byIndex = coordString.indexOf('x');
+		if (byIndex < 0) {
+			return null;
+		}
+		
+		try {
+			int x = Integer.parseInt(coordString.substring(0, byIndex));
+			int y = Integer.parseInt(coordString.substring(byIndex + 1));			
+			return new Point(x, y);
+		} catch (NumberFormatException nfe) {
+			return null;
+		}
+	}
+	
+	/**
+	 * Given a Point object, return a String of the form "XCoordxYCoord".
+	 */
+	protected String serializeCoords(Point coords) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(coords.x);
+		buffer.append('x');
+		buffer.append(coords.y);
+		return buffer.toString();
 	}
 	
 	/**
@@ -1352,6 +1424,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		Point containerSize= new Point(rect.width, rect.height);
 		int hdiff= contentSize.x - containerSize.x;
 		int vdiff= contentSize.y - containerSize.y;
+		// Only increase size of dialog, never shrink it
 		if (hdiff > 0 || vdiff > 0) {
 			hdiff= Math.max(0, hdiff);
 			vdiff= Math.max(0, vdiff);

@@ -72,6 +72,16 @@ public interface IDebugPreferenceConstants {
 	public static final String PREF_DISABLED_DEBUG_ACTION_GROUPS = IDebugUIConstants.PLUGIN_ID + "disabledDebugActionGroups"; //$NON-NLS-1$
 	
 	/**
+	 * Serialized X,Y coordinates of the last location of the launch configuration dialog.
+	 */
+	public static final String PREF_LAUNCH_CONFIGURATION_DIALOG_LOCATION = IDebugUIConstants.PLUGIN_ID + "launchConfigurationDialogLocation"; //$NON-NLS-1$
+	
+	/**
+	 * Serialized width,height values of the launch configuration dialog.
+	 */
+	public static final String PREF_LAUNCH_CONFIGURATION_DIALOG_SIZE = IDebugUIConstants.PLUGIN_ID + "launchConfigurationDialogSize"; //$NON-NLS-1$
+	
+	/**
 	 * The maximum size of the launch history list
 	 */
 	public static int MAX_LAUNCH_HISTORY_SIZE= 15;
