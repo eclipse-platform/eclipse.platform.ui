@@ -114,9 +114,11 @@ public int addToObjectTable(Object object) {
 
 }
 private void debug(String msg) {
-	System.out.println("RegistryCacheReader: " + msg);
+	System.out.println("RegistryCacheReader: " + msg); //$NON-NLS-1$
 }
 public static String decipherLabel(byte labelValue) {
+	// This method should use the constants in IModel
+	// e.g. return "<" + IModel.REGISTRY + ">"
 	switch (labelValue) {
 		case REGISTRY_LABEL:
 			return "<registry>";
@@ -254,7 +256,7 @@ public boolean interpretHeaderInformation(DataInputStream in) {
 			(windowsStamp.equals(BootLoader.getWS())) &&
 			(localeStamp.equals(BootLoader.getNL())) );
 	} catch (IOException ioe) {
-		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", "HeaderInformation"), ioe));
+		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", "HeaderInformation"), ioe)); //$NON-NLS-1$
 		return false;
 	}
 }
@@ -295,8 +297,8 @@ public ConfigurationElementModel readConfigurationElement(DataInputStream in, bo
 							if (debugFlag) {
 								String name = configurationElement.getName();
 								if (name == null)
-									name = new String ("<unknown name>");
-								debug ("Trouble reading configuration property #" + i + " for configuration element " + name);
+									name = new String ("<unknown name>"); //$NON-NLS-1$
+								debug ("Trouble reading configuration property #" + i + " for configuration element " + name); //$NON-NLS-1$ //$NON-NLS-2$
 							}
 							configurationElement = null;
 							done = true;
@@ -319,8 +321,8 @@ public ConfigurationElementModel readConfigurationElement(DataInputStream in, bo
 									if (debugFlag) {
 										String name = configurationElement.getName();
 										if (name == null)
-											name = new String ("<unknown name>");
-										debug ("Unable to read subelement #" + i + " for configuration element " + name);
+											name = new String ("<unknown name>"); //$NON-NLS-1$
+										debug ("Unable to read subelement #" + i + " for configuration element " + name); //$NON-NLS-1$ //$NON-NLS-2$
 									}
 									configurationElement = null;
 									done = true;
@@ -334,8 +336,8 @@ public ConfigurationElementModel readConfigurationElement(DataInputStream in, bo
 								if (debugFlag) {
 									String name = configurationElement.getName();
 									if (name == null)
-										name = new String ("<unknown name>");
-									debug ("Unexpected byte code " + decipherLabel(subInByte) + "reading subelements of configuration element" + name);
+										name = new String ("<unknown name>"); //$NON-NLS-1$
+									debug ("Unexpected byte code " + decipherLabel(subInByte) + "reading subelements of configuration element" + name); //$NON-NLS-1$ //$NON-NLS-2$
 								}
 								done = true;
 								configurationElement = null;
@@ -358,8 +360,8 @@ public ConfigurationElementModel readConfigurationElement(DataInputStream in, bo
 					if (debugFlag) {
 						String name = configurationElement.getName();
 						if (name == null)
-							name = new String ("<unknown name>");
-						debug ("Unexpected byte code " + decipherLabel(inByte) + "reading configuration element" + name);
+							name = new String ("<unknown name>"); //$NON-NLS-1$
+						debug ("Unexpected byte code " + decipherLabel(inByte) + "reading configuration element" + name); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					done = true;
 					configurationElement = null;
@@ -367,7 +369,7 @@ public ConfigurationElementModel readConfigurationElement(DataInputStream in, bo
 			}
 		}
 	} catch (IOException ioe) {
-		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(CONFIGURATION_ELEMENT_LABEL)), ioe));
+		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(CONFIGURATION_ELEMENT_LABEL)), ioe)); //$NON-NLS-1$
 		return null;
 	}
 	return configurationElement;
@@ -407,8 +409,8 @@ public ConfigurationPropertyModel readConfigurationProperty(DataInputStream in, 
 					if (debugFlag) {
 						String name = configurationProperty.getName();
 						if (name == null)
-							name = new String ("<unknown name>");
-						debug ("Unexpected byte code " + decipherLabel(inByte) + " reading configuration property " + name);
+							name = new String ("<unknown name>"); //$NON-NLS-1$
+						debug ("Unexpected byte code " + decipherLabel(inByte) + " reading configuration property " + name); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					configurationProperty = null;
 					done = true;
@@ -416,7 +418,7 @@ public ConfigurationPropertyModel readConfigurationProperty(DataInputStream in, 
 			}
 		}
 	} catch (IOException ioe) {
-		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(CONFIGURATION_PROPERTY_LABEL)), ioe));
+		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(CONFIGURATION_PROPERTY_LABEL)), ioe)); //$NON-NLS-1$
 		return null;
 	}
 	return configurationProperty;
@@ -464,8 +466,8 @@ public ExtensionModel readExtension(DataInputStream in, boolean debugFlag) {
 									if (debugFlag) {
 										String name = extension.getName();
 										if (name == null)
-											name = new String("<unknown name>");
-										debug ("Unable to read subelement #" + i + " for extension " + name);
+											name = new String("<unknown name>"); //$NON-NLS-1$
+										debug ("Unable to read subelement #" + i + " for extension " + name); //$NON-NLS-1$ //$NON-NLS-2$
 									}
 									extension = null;
 									done = true;
@@ -479,8 +481,8 @@ public ExtensionModel readExtension(DataInputStream in, boolean debugFlag) {
 								if (debugFlag) {
 									String name = extension.getName();
 									if (name == null)
-										name = new String("<unknown name>");
-									debug ("Unexpected byte code " + decipherLabel(subInByte) + " reading subelements for extension " + name);
+										name = new String("<unknown name>"); //$NON-NLS-1$
+									debug ("Unexpected byte code " + decipherLabel(subInByte) + " reading subelements for extension " + name); //$NON-NLS-1$ //$NON-NLS-2$
 								}
 								extension = null;
 								done = true;
@@ -502,8 +504,8 @@ public ExtensionModel readExtension(DataInputStream in, boolean debugFlag) {
 								if (debugFlag) {
 									String name = extension.getName();
 									if (name == null)
-										name = new String("<unknown name>");
-									debug ("Trouble reading parent plugin for extension " + name);
+										name = new String("<unknown name>"); //$NON-NLS-1$
+									debug ("Trouble reading parent plugin for extension " + name); //$NON-NLS-1$
 								}
 								done = true;
 								extension = null;
@@ -520,8 +522,8 @@ public ExtensionModel readExtension(DataInputStream in, boolean debugFlag) {
 								if (debugFlag) {
 									String name = extension.getName();
 									if (name == null)
-										name = new String("<unknown name>");
-									debug ("Trouble reading parent fragment for extension " + name);
+										name = new String("<unknown name>"); //$NON-NLS-1$
+									debug ("Trouble reading parent fragment for extension " + name); //$NON-NLS-1$
 								}
 								done = true;
 								extension = null;
@@ -537,8 +539,8 @@ public ExtensionModel readExtension(DataInputStream in, boolean debugFlag) {
 							if (debugFlag) {
 								String name = extension.getName();
 								if (name == null)
-									name = new String("<unknown name>");
-								debug ("Unexpected byte code " + decipherLabel(subByte) + "reading parent of extension " + name);
+									name = new String("<unknown name>"); //$NON-NLS-1$
+								debug ("Unexpected byte code " + decipherLabel(subByte) + "reading parent of extension " + name); //$NON-NLS-1$ //$NON-NLS-2$
 							}
 							done = true;
 							extension = null;
@@ -553,8 +555,8 @@ public ExtensionModel readExtension(DataInputStream in, boolean debugFlag) {
 					if (debugFlag) {
 						String name = extension.getName();
 						if (name == null)
-							name = new String ("<unknown name>");
-						debug ("Unexpected byte code " + decipherLabel(inByte) + "reading extension" + name);
+							name = new String ("<unknown name>"); //$NON-NLS-1$
+						debug ("Unexpected byte code " + decipherLabel(inByte) + "reading extension" + name); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					done = true;
 					extension = null;
@@ -562,7 +564,7 @@ public ExtensionModel readExtension(DataInputStream in, boolean debugFlag) {
 			}
 		}
 	} catch (IOException ioe) {
-		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(PLUGIN_EXTENSION_LABEL)), ioe));
+		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(PLUGIN_EXTENSION_LABEL)), ioe)); //$NON-NLS-1$
 		return null;
 	}
 	return extension;
@@ -614,8 +616,8 @@ public ExtensionPointModel readExtensionPoint(DataInputStream in, boolean debugF
 									if (debugFlag) {
 										String name = extPoint.getName();
 										if (name == null)
-											name = new String ("<unknown name>");
-										debug ("Unable to read extension #" + i + " for extension point " + name);
+											name = new String ("<unknown name>"); //$NON-NLS-1$
+										debug ("Unable to read extension #" + i + " for extension point " + name); //$NON-NLS-1$ //$NON-NLS-2$
 									}
 									done = true;
 									extPoint = null;
@@ -629,8 +631,8 @@ public ExtensionPointModel readExtensionPoint(DataInputStream in, boolean debugF
 								if (debugFlag) {
 									String name = extPoint.getName();
 									if (name == null)
-										name = new String ("<unknown name>");
-									debug ("Unexpected byte code " + decipherLabel(subByte) + "reading extension #" + i + " for extension point " + name);
+										name = new String ("<unknown name>"); //$NON-NLS-1$
+									debug ("Unexpected byte code " + decipherLabel(subByte) + "reading extension #" + i + " for extension point " + name); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 								}
 								extPoint = null;
 								done = true;
@@ -652,8 +654,8 @@ public ExtensionPointModel readExtensionPoint(DataInputStream in, boolean debugF
 					if (debugFlag) {
 						String name = extPoint.getName();
 						if (name == null)
-							name = new String ("<unknown name>");
-						debug ("Unexpected byte code " + decipherLabel(inByte) + " reading extension point " + name);
+							name = new String ("<unknown name>"); //$NON-NLS-1$
+						debug ("Unexpected byte code " + decipherLabel(inByte) + " reading extension point " + name); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					extPoint = null;
 					done = true;
@@ -661,7 +663,7 @@ public ExtensionPointModel readExtensionPoint(DataInputStream in, boolean debugF
 			}
 		}
 	} catch (IOException ioe) {
-		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(PLUGIN_EXTENSION_POINT_LABEL)), ioe));
+		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(PLUGIN_EXTENSION_POINT_LABEL)), ioe)); //$NON-NLS-1$
 		return null;
 	}
 	return extPoint;
@@ -703,8 +705,8 @@ public LibraryModel readLibrary(DataInputStream in, boolean debugFlag) {
 							if (debugFlag) {
 								String name = library.getName();
 								if (name == null)
-									name = new String ("<unknown name>");
-								debug ("Empty export string for export #" + i + " reading library " + name);
+									name = new String ("<unknown name>"); //$NON-NLS-1$
+								debug ("Empty export string for export #" + i + " reading library " + name); //$NON-NLS-1$ //$NON-NLS-2$
 							}
 							done = true;
 							library = null;
@@ -722,8 +724,8 @@ public LibraryModel readLibrary(DataInputStream in, boolean debugFlag) {
 					if (debugFlag) {
 						String name = library.getName();
 						if (name == null)
-							name = new String ("<unknown name>");
-						debug ("Unexpected byte code " + decipherLabel(inByte) + " reading library " + name);
+							name = new String ("<unknown name>"); //$NON-NLS-1$
+						debug ("Unexpected byte code " + decipherLabel(inByte) + " reading library " + name); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					library = null;
 					done = true;
@@ -731,7 +733,7 @@ public LibraryModel readLibrary(DataInputStream in, boolean debugFlag) {
 			}
 		}
 	} catch (IOException ioe) {
-		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(PLUGIN_LIBRARY_LABEL)), ioe));
+		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(PLUGIN_LIBRARY_LABEL)), ioe)); //$NON-NLS-1$
 		return null;
 	}
 	return library;
@@ -784,8 +786,8 @@ public PluginDescriptorModel readPluginDescriptor(DataInputStream in, boolean de
 						if (debugFlag) {
 							String name = plugin.getName();
 							if (name == null)
-								name = new String ("<unknown name>");
-							debug ("Unable to read prerequisite for plugin " + name);
+								name = new String ("<unknown name>"); //$NON-NLS-1$
+							debug ("Unable to read prerequisite for plugin " + name); //$NON-NLS-1$
 						}
 						plugin = null;
 						done = true;
@@ -813,8 +815,8 @@ public PluginDescriptorModel readPluginDescriptor(DataInputStream in, boolean de
 						if (debugFlag) {
 							String name = plugin.getName();
 							if (name == null)
-								name = new String ("<unknown name>");
-							debug ("Unable to read library for plugin " + name);
+								name = new String ("<unknown name>"); //$NON-NLS-1$
+							debug ("Unable to read library for plugin " + name); //$NON-NLS-1$
 						}
 						plugin = null;
 						done = true;
@@ -842,8 +844,8 @@ public PluginDescriptorModel readPluginDescriptor(DataInputStream in, boolean de
 						if (debugFlag) {
 							String name = plugin.getName();
 							if (name == null)
-								name = new String ("<unknown name>");
-							debug ("Unable to read extension for plugin " + name);
+								name = new String ("<unknown name>"); //$NON-NLS-1$
+							debug ("Unable to read extension for plugin " + name); //$NON-NLS-1$
 						}
 						plugin = null;
 						done = true;
@@ -886,8 +888,8 @@ public PluginDescriptorModel readPluginDescriptor(DataInputStream in, boolean de
 						if (debugFlag) {
 							String name = plugin.getName();
 							if (name == null)
-								name = new String ("<unknown name>");
-							debug ("Unable to read extension point for plugin " + name);
+								name = new String ("<unknown name>"); //$NON-NLS-1$
+							debug ("Unable to read extension point for plugin " + name); //$NON-NLS-1$
 						}
 						plugin = null;
 						done = true;
@@ -915,8 +917,8 @@ public PluginDescriptorModel readPluginDescriptor(DataInputStream in, boolean de
 						if (debugFlag) {
 							String name = plugin.getName();
 							if (name == null)
-								name = new String ("<unknown name>");
-							debug ("Unable to read fragment for plugin " + name);
+								name = new String ("<unknown name>"); //$NON-NLS-1$
+							debug ("Unable to read fragment for plugin " + name); //$NON-NLS-1$
 						}
 						plugin = null;
 						done = true;
@@ -964,8 +966,8 @@ public PluginDescriptorModel readPluginDescriptor(DataInputStream in, boolean de
 					if (debugFlag) {
 						String name = plugin.getName();
 						if (name == null)
-							name = new String ("<unknown name>");
-						debug ("Unexpected byte code " + decipherLabel(inByte) + " reading plugin " + name);
+							name = new String ("<unknown name>"); //$NON-NLS-1$
+						debug ("Unexpected byte code " + decipherLabel(inByte) + " reading plugin " + name); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					plugin = null;
 					done = true;
@@ -973,7 +975,7 @@ public PluginDescriptorModel readPluginDescriptor(DataInputStream in, boolean de
 			}
 		}
 	} catch (IOException ioe) {
-		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(PLUGIN_LABEL)), ioe));
+		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(PLUGIN_LABEL)), ioe)); //$NON-NLS-1$
 		return null;
 	}
 	return plugin;
@@ -1029,8 +1031,8 @@ public PluginFragmentModel readPluginFragment(DataInputStream in, boolean debugF
 						if (debugFlag) {
 							String name = fragment.getName();
 							if (name == null)
-								name = new String ("<unknown name>");
-							debug ("Unable to read prerequisite for fragment " + name);
+								name = new String ("<unknown name>"); //$NON-NLS-1$
+							debug ("Unable to read prerequisite for fragment " + name); //$NON-NLS-1$
 						}
 						done = true;
 						fragment = null;
@@ -1058,8 +1060,8 @@ public PluginFragmentModel readPluginFragment(DataInputStream in, boolean debugF
 						if (debugFlag) {
 							String name = fragment.getName();
 							if (name == null)
-								name = new String ("<unknown name>");
-							debug ("Unable to read library for fragment " + name);
+								name = new String ("<unknown name>"); //$NON-NLS-1$
+							debug ("Unable to read library for fragment " + name); //$NON-NLS-1$
 						}
 						fragment = null;
 						done = true;
@@ -1087,8 +1089,8 @@ public PluginFragmentModel readPluginFragment(DataInputStream in, boolean debugF
 						if (debugFlag) {
 							String name = fragment.getName();
 							if (name == null)
-								name = new String ("<unknown name>");
-							debug ("Unable to read extension for fragment " + name);
+								name = new String ("<unknown name>"); //$NON-NLS-1$
+							debug ("Unable to read extension for fragment " + name); //$NON-NLS-1$
 						}
 						fragment = null;
 						done = true;
@@ -1131,8 +1133,8 @@ public PluginFragmentModel readPluginFragment(DataInputStream in, boolean debugF
 						if (debugFlag) {
 							String name = fragment.getName();
 							if (name == null)
-								name = new String ("<unknown name>");
-							debug ("Unable to read extension point for fragment " + name);
+								name = new String ("<unknown name>"); //$NON-NLS-1$
+							debug ("Unable to read extension point for fragment " + name); //$NON-NLS-1$
 						}
 						fragment = null;
 						done = true;
@@ -1164,8 +1166,8 @@ public PluginFragmentModel readPluginFragment(DataInputStream in, boolean debugF
 					if (debugFlag) {
 						String name = fragment.getName();
 						if (name == null)
-							name = new String ("<unknown name>");
-						debug ("Unexpected byte code " + decipherLabel(inByte) + " reading fragment " + name);
+							name = new String ("<unknown name>"); //$NON-NLS-1$
+						debug ("Unexpected byte code " + decipherLabel(inByte) + " reading fragment " + name); //$NON-NLS-1$
 					}
 					fragment = null;
 					done = true;
@@ -1173,7 +1175,7 @@ public PluginFragmentModel readPluginFragment(DataInputStream in, boolean debugF
 			}
 		}
 	} catch (IOException ioe) {
-		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(FRAGMENT_LABEL)), ioe));
+		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(FRAGMENT_LABEL)), ioe)); //$NON-NLS-1$
 		return null;
 	}
 	return fragment;
@@ -1227,8 +1229,8 @@ public PluginPrerequisiteModel readPluginPrerequisite(DataInputStream in, boolea
 					if (debugFlag) {
 						String name = requires.getName();
 						if (name == null)
-							name = new String ("<unknown name>");
-						debug ("Unexpected byte code " + decipherLabel(inByte) + " reading prerequisite " + name);
+							name = new String ("<unknown name>"); //$NON-NLS-1$
+						debug ("Unexpected byte code " + decipherLabel(inByte) + " reading prerequisite " + name); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					done = true;
 					requires = null;
@@ -1236,19 +1238,19 @@ public PluginPrerequisiteModel readPluginPrerequisite(DataInputStream in, boolea
 			}
 		}
 	} catch (IOException ioe) {
-		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(PLUGIN_REQUIRES_LABEL)), ioe));
+		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(PLUGIN_REQUIRES_LABEL)), ioe)); //$NON-NLS-1$
 		return null;
 	}
 	return requires;
 }
 public PluginRegistryModel readPluginRegistry(DataInputStream in, URL[] pluginPath, boolean debugFlag) {
 	if (cacheReadProblems == null) {
-		cacheReadProblems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("meta.registryCacheReadProblems"), null);
+		cacheReadProblems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("meta.registryCacheReadProblems"), null); //$NON-NLS-1$
 	}
 
 	if (!interpretHeaderInformation(in)) {
 		if (debugFlag)
-			debug ("Cache header information out of date - ignoring cache");
+			debug ("Cache header information out of date - ignoring cache"); //$NON-NLS-1$
 		return null;
 	}
 	PluginRegistryModel cachedRegistry = cacheFactory.createPluginRegistry();
@@ -1286,7 +1288,7 @@ public PluginRegistryModel readPluginRegistry(DataInputStream in, URL[] pluginPa
 						// Something went wrong reading this plugin
 						// Invalidate the cache
 						if (debugFlag) {
-							debug ("Unable to read plugin descriptor for plugin registry");
+							debug ("Unable to read plugin descriptor for plugin registry"); //$NON-NLS-1$
 						}
 						done = true;
 						cachedRegistry = null;
@@ -1304,7 +1306,7 @@ public PluginRegistryModel readPluginRegistry(DataInputStream in, URL[] pluginPa
 						// Something went wrong reading this fragment
 						// Invalidate the cache
 						if (debugFlag) {
-							debug ("Unable to read fragment descriptor for plugin registry");
+							debug ("Unable to read fragment descriptor for plugin registry"); //$NON-NLS-1$
 						}
 						done = true;
 						cachedRegistry = null;
@@ -1321,7 +1323,7 @@ public PluginRegistryModel readPluginRegistry(DataInputStream in, URL[] pluginPa
 					// We got something we weren't expecting
 					// Invalidate this cached registry
 					if (debugFlag) {
-						debug ("Unexpected byte code " + decipherLabel(inByte) + " reading plugin registry");
+						debug ("Unexpected byte code " + decipherLabel(inByte) + " reading plugin registry"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					done = true;
 					cachedRegistry = null;
@@ -1329,7 +1331,7 @@ public PluginRegistryModel readPluginRegistry(DataInputStream in, URL[] pluginPa
 			}
 		}
 	} catch (IOException ioe) {
-		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(REGISTRY_LABEL)), ioe));
+		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(REGISTRY_LABEL)), ioe)); //$NON-NLS-1$
 		return null;
 	}
 	if (cachedRegistry == null)
@@ -1353,7 +1355,7 @@ public PluginRegistryModel readPluginRegistry(DataInputStream in, URL[] pluginPa
 private String[] getPathMembers(URL path) {
 	String[] list = null;
 	String protocol = path.getProtocol();
-	if (protocol.equals("file")) {
+	if (protocol.equals("file")) { //$NON-NLS-1$
 		list = (new File(path.getFile())).list();
 	} else {
 		// XXX: attempt to read URL and see if we got html dir page

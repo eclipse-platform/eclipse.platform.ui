@@ -87,7 +87,7 @@ public void characters(char[] ch, int start, int length) {
 		ConfigurationElementModel currentConfigElement = (ConfigurationElementModel) objectStack.peek();
 		String value = new String(ch, start, length);
 		String newValue = value.trim();
-		if (!newValue.equals("") || newValue.length() != 0)
+		if (!newValue.equals("") || newValue.length() != 0) //$NON-NLS-1$
 			currentConfigElement.setValue(newValue);
 	} 
 }
@@ -100,7 +100,7 @@ public void endElement(String uri, String elementName, String qName) {
 			break;
 		case INITIAL_STATE :
 			// shouldn't get here
-			internalError (Policy.bind("parse.internalStack", elementName));
+			internalError (Policy.bind("parse.internalStack", elementName)); //$NON-NLS-1$
 			break;
 		case PLUGIN_STATE :
 		case FRAGMENT_STATE :
@@ -229,7 +229,7 @@ public void handleExtensionPointState(String elementName, Attributes attributes)
 
 	// We ignore all elements under extension points (if there are any)
 	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-	internalError(Policy.bind("parse.unknownElement", EXTENSION_POINT, elementName));
+	internalError(Policy.bind("parse.unknownElement", EXTENSION_POINT, elementName)); //$NON-NLS-1$
 }
 public void handleExtensionState(String elementName, Attributes attributes) {
 
@@ -263,20 +263,20 @@ public void handleInitialState(String elementName, Attributes attributes) {
 			parseFragmentAttributes(attributes);
 		} else {
 			stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-			internalError(Policy.bind("parse.unknownTopElement", elementName));
+			internalError(Policy.bind("parse.unknownTopElement", elementName)); //$NON-NLS-1$
 		}
 }
 public void handleLibraryExportState(String elementName, Attributes attributes) {
 
 	// All elements ignored.
 	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-	internalError(Policy.bind("parse.unknownElement", LIBRARY_EXPORT, elementName));
+	internalError(Policy.bind("parse.unknownElement", LIBRARY_EXPORT, elementName)); //$NON-NLS-1$
 }
 public void handleLibraryState(String elementName, Attributes attributes) {
 	// The only valid element at this stage is a export
 	if (!elementName.equals(LIBRARY_EXPORT)) {
 		stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-		internalError(Policy.bind("parse.unknownElement", LIBRARY, elementName));
+		internalError(Policy.bind("parse.unknownElement", LIBRARY, elementName)); //$NON-NLS-1$
 		return;
 	}
 
@@ -299,7 +299,7 @@ public void handleLibraryState(String elementName, Attributes attributes) {
 		if (attrName.equals(LIBRARY_EXPORT_MASK))
 			maskValue = attrValue;
 		else 
-			internalError(Policy.bind("parse.unknownAttribute", LIBRARY, attrName));
+			internalError(Policy.bind("parse.unknownAttribute", LIBRARY, attrName)); //$NON-NLS-1$
 	}
 
 	// set up mask tables
@@ -349,13 +349,13 @@ public void handlePluginState(String elementName, Attributes attributes) {
 	// If we get to this point, the element name is one we don't currently accept.
 	// Set the state to indicate that this element will be ignored
 	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-	internalError(Policy.bind("parse.unknownElement", PLUGIN + " / " + FRAGMENT, elementName));
+	internalError(Policy.bind("parse.unknownElement", PLUGIN + " / " + FRAGMENT, elementName)); //$NON-NLS-1$ //$NON-NLS-2$
 }
 public void handleRequiresImportState(String elementName, Attributes attributes) {
 
 	// All elements ignored.
 	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-	internalError(Policy.bind("parse.unknownElement", PLUGIN_REQUIRES_IMPORT, elementName));
+	internalError(Policy.bind("parse.unknownElement", PLUGIN_REQUIRES_IMPORT, elementName)); //$NON-NLS-1$
 }
 public void handleRequiresState(String elementName, Attributes attributes) {
 
@@ -366,7 +366,7 @@ public void handleRequiresState(String elementName, Attributes attributes) {
 	// If we get to this point, the element name is one we don't currently accept.
 	// Set the state to indicate that this element will be ignored
 	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-	internalError(Policy.bind("parse.unknownElement", PLUGIN_REQUIRES, elementName));
+	internalError(Policy.bind("parse.unknownElement", PLUGIN_REQUIRES, elementName)); //$NON-NLS-1$
 }
 public void handleRuntimeState(String elementName, Attributes attributes) {
 
@@ -380,7 +380,7 @@ public void handleRuntimeState(String elementName, Attributes attributes) {
 	// If we get to this point, the element name is one we don't currently accept.
 	// Set the state to indicate that this element will be ignored
 	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-	internalError(Policy.bind("parse.unknownElement", RUNTIME, elementName));
+	internalError(Policy.bind("parse.unknownElement", RUNTIME, elementName)); //$NON-NLS-1$
 }
 
 public void ignoreableWhitespace(char[] ch, int start, int length) {
@@ -390,15 +390,16 @@ private void logStatus(SAXParseException ex) {
 	if (name == null)
 		name = locationName;
 	if (name == null) 
-		name = "";
+		name = ""; //$NON-NLS-1$
 	else
-		name = name.substring(1 + name.lastIndexOf("/"));
+		name = name.substring(1 + name.lastIndexOf("/")); //$NON-NLS-1$
 
 	String msg;
-	if (name.equals(""))
-		msg = Policy.bind("parse.error", ex.getMessage());
+	if (name.equals("")) //$NON-NLS-1$
+		msg = Policy.bind("parse.error", ex.getMessage()); //$NON-NLS-1$
 	else
-		msg = Policy.bind("parse.errorNameLineColumn", new String[] { name, Integer.toString(ex.getLineNumber()), Integer.toString(ex.getColumnNumber()), ex.getMessage()});
+		msg = Policy.bind("parse.errorNameLineColumn", //$NON-NLS-1$
+			new String[] { name, Integer.toString(ex.getLineNumber()), Integer.toString(ex.getColumnNumber()), ex.getMessage()});
 	factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, msg, ex));
 }
 
@@ -454,13 +455,13 @@ public void parseExtensionAttributes(Attributes attributes) {
 					String targetName;
 					if (attrValue.lastIndexOf('.') == -1) {
 						String baseId = parent instanceof PluginDescriptorModel ? parent.getId() : ((PluginFragmentModel) parent).getPlugin();
-						targetName = baseId + "." + attrValue;
+						targetName = baseId + "." + attrValue; //$NON-NLS-1$
 					} else
 						targetName = attrValue;
 					currentExtension.setExtensionPoint(targetName);
 				}
 				else
-					internalError(Policy.bind("parse.unknownAttribute", EXTENSION, attrName));
+					internalError(Policy.bind("parse.unknownAttribute", EXTENSION, attrName)); //$NON-NLS-1$
 	}
 }
 public void parseExtensionPointAttributes(Attributes attributes) {
@@ -482,7 +483,7 @@ public void parseExtensionPointAttributes(Attributes attributes) {
 				if (attrName.equals(EXTENSION_POINT_SCHEMA))
 					currentExtPoint.setSchema(attrValue);
 				else
-					internalError(Policy.bind("parse.unknownAttribute", EXTENSION_POINT, attrName));
+					internalError(Policy.bind("parse.unknownAttribute", EXTENSION_POINT, attrName)); //$NON-NLS-1$
 	}
 	// currentExtPoint contains a pointer to the parent plugin descriptor.
 	PluginModel root = (PluginModel) objectStack.peek();
@@ -524,10 +525,10 @@ public void parseFragmentAttributes(Attributes attributes) {
 			else if (FRAGMENT_PLUGIN_MATCH_GREATER_OR_EQUAL.equals(attrValue))
 				current.setMatch(PluginFragmentModel.FRAGMENT_MATCH_GREATER_OR_EQUAL);
 			else
-				internalError(Policy.bind("parse.validMatch", attrValue));
+				internalError(Policy.bind("parse.validMatch", attrValue)); //$NON-NLS-1$
 		}
 		else
-			internalError(Policy.bind("parse.unknownAttribute", FRAGMENT, attrName));
+			internalError(Policy.bind("parse.unknownAttribute", FRAGMENT, attrName)); //$NON-NLS-1$
 	}
 }
 
@@ -558,9 +559,9 @@ public void parseLibraryAttributes(Attributes attributes) {
 				     attrValue.equals(LibraryModel.RESOURCE))
 					current.setType(attrValue.toLowerCase());
 				else
-					internalError(Policy.bind("parse.unknownLibraryType", attrValue, current.getName()));
+					internalError(Policy.bind("parse.unknownLibraryType", attrValue, current.getName())); //$NON-NLS-1$
 			} else
-				internalError(Policy.bind("parse.unknownAttribute", LIBRARY, attrName));
+				internalError(Policy.bind("parse.unknownAttribute", LIBRARY, attrName)); //$NON-NLS-1$
 	}
 }
 public void parsePluginAttributes(Attributes attributes) {
@@ -589,7 +590,7 @@ public void parsePluginAttributes(Attributes attributes) {
 						if (attrName.equals(PLUGIN_CLASS))
 							current.setPluginClass(attrValue);
 						else
-							internalError(Policy.bind("parse.unknownAttribute", PLUGIN, attrName));
+							internalError(Policy.bind("parse.unknownAttribute", PLUGIN, attrName)); //$NON-NLS-1$
 	}
 }
 
@@ -609,7 +610,7 @@ public void parsePluginRequiresImport(Attributes attributes) {
 				current.setVersion(attrValue);
 			else
 				if (attrName.equals(PLUGIN_REQUIRES_OPTIONAL))
-					current.setOptional("true".equalsIgnoreCase(attrValue));
+					current.setOptional(TRUE.equalsIgnoreCase(attrValue));
 				else
 					if (attrName.equals(PLUGIN_REQUIRES_MATCH)) {
 						if (PLUGIN_REQUIRES_MATCH_PERFECT.equals(attrValue))
@@ -622,7 +623,7 @@ public void parsePluginRequiresImport(Attributes attributes) {
 						else if (PLUGIN_REQUIRES_MATCH_GREATER_OR_EQUAL.equals(attrValue))
 							current.setMatchByte(PluginPrerequisiteModel.PREREQ_MATCH_GREATER_OR_EQUAL);
 						else
-							internalError(Policy.bind("parse.validMatch", attrValue));
+							internalError(Policy.bind("parse.validMatch", attrValue)); //$NON-NLS-1$
 					} else
 						if (attrName.equals(PLUGIN_REQUIRES_EXPORT)) {
 							if (TRUE.equals(attrValue))
@@ -631,9 +632,9 @@ public void parsePluginRequiresImport(Attributes attributes) {
 								if (FALSE.equals(attrValue))
 									current.setExport(false);
 								else
-									internalError(Policy.bind("parse.validExport", attrValue));
+									internalError(Policy.bind("parse.validExport", attrValue)); //$NON-NLS-1$
 						} else
-							internalError(Policy.bind("parse.unknownAttribute", PLUGIN_REQUIRES_IMPORT, attrName));
+							internalError(Policy.bind("parse.unknownAttribute", PLUGIN_REQUIRES_IMPORT, attrName)); //$NON-NLS-1$
 
 	}
 	// Populate the vector of prerequisites with this new element
@@ -694,7 +695,7 @@ public void startElement(String uri, String elementName, String qName, Attribute
 			break;
 		default :
 			stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-			internalError (Policy.bind("parse.unknownTopElement", elementName));
+			internalError (Policy.bind("parse.unknownTopElement", elementName)); //$NON-NLS-1$
 	}
 }
 public void warning(SAXParseException ex) {
@@ -702,7 +703,7 @@ public void warning(SAXParseException ex) {
 }
 private void internalError(String message) {
 	if (locationName != null)
-		factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, locationName + ": " + message, null));
+		factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, locationName + ": " + message, null)); //$NON-NLS-1$
 	else
 		factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, message, null));
 }

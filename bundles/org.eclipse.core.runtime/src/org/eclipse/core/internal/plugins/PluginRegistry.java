@@ -15,8 +15,8 @@ import java.util.*;
 
 public class PluginRegistry extends PluginRegistryModel implements IPluginRegistry {
 
-	private static final String URL_PROTOCOL_FILE = "file";
-	private static final String F_DEBUG_REGISTRY = ".debugregistry";
+	private static final String URL_PROTOCOL_FILE = "file"; //$NON-NLS-1$
+	private static final String F_DEBUG_REGISTRY = ".debugregistry"; //$NON-NLS-1$
 
 	// lifecycle events
 	private static final int STARTUP = 0;
@@ -195,7 +195,7 @@ public void saveRegistry() throws IOException {
 	try {
 		output = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(path.toFile())));
 	} catch (IOException ioe) {
-		String message = Policy.bind("meta.unableToCreateCache");
+		String message = Policy.bind("meta.unableToCreateCache"); //$NON-NLS-1$
 		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, ioe);
 		logError(status);
 	}
@@ -204,7 +204,7 @@ public void saveRegistry() throws IOException {
 		RegistryCacheWriter cacheWriter = new RegistryCacheWriter();
 		cacheWriter.writePluginRegistry(this, output);
 		if (InternalPlatform.DEBUG)
-			System.out.println("Wrote registry: " + (System.currentTimeMillis() - start) + "ms");
+			System.out.println("Wrote registry: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 	} finally {
 		output.close();
 	}
@@ -219,7 +219,7 @@ public void debugRegistry(String filename) {
 	Path path = new Path(filename);
 	path = (Path)path.makeAbsolute();
 	if (!path.isValidPath(path.toOSString())) {
-		String message = Policy.bind("meta.invalidRegDebug", path.toOSString());
+		String message = Policy.bind("meta.invalidRegDebug", path.toOSString()); //$NON-NLS-1$
 		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, null);
 		logError(status);
 		return;
@@ -230,14 +230,14 @@ public void debugRegistry(String filename) {
 		PrintWriter w = new PrintWriter(fs);
 		try {
 			RegistryWriter regWriter = new RegistryWriter();
-			System.out.println(Policy.bind("meta.infoRegDebug", path.toOSString()));
+			System.out.println(Policy.bind("meta.infoRegDebug", path.toOSString())); //$NON-NLS-1$
 			regWriter.writePluginRegistry(this, w, 0);
 			w.flush();
 		} finally {
 			w.close();
 		}
 	} catch (IOException ioe) {
-		String message = Policy.bind("meta.unableToCreateRegDebug", path.toOSString());
+		String message = Policy.bind("meta.unableToCreateRegDebug", path.toOSString()); //$NON-NLS-1$
 		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, ioe);
 		logError(status);
 	}
@@ -263,12 +263,12 @@ private void shutdownPlugins() {
 						long time = 0L;
 						if (InternalPlatform.DEBUG_SHUTDOWN) {
 							time = System.currentTimeMillis();
-							System.out.println("Shutting down plugin: " + plugin.getDescriptor().getUniqueIdentifier());
+							System.out.println("Shutting down plugin: " + plugin.getDescriptor().getUniqueIdentifier()); //$NON-NLS-1$
 						}
 						plugin.shutdown();
 						if (InternalPlatform.DEBUG_SHUTDOWN) {
 							time = System.currentTimeMillis() - time;
-							System.out.println("Finished plugin shutdown for " + plugin.getDescriptor().getUniqueIdentifier() + " time: " + time + "ms");
+							System.out.println("Finished plugin shutdown for " + plugin.getDescriptor().getUniqueIdentifier() + " time: " + time + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						}
 					} finally {
 						((PluginDescriptor) descriptor).doPluginDeactivation();

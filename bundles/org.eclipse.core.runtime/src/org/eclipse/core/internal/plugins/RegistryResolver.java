@@ -21,7 +21,7 @@ public class RegistryResolver {
 	private boolean crossLink = true;
 
 	private boolean DEBUG_RESOLVE = false;
-	private static final String OPTION_DEBUG_RESOLVE = "org.eclipse.core.runtime/registry/debug/resolve";
+	private static final String OPTION_DEBUG_RESOLVE = "org.eclipse.core.runtime/registry/debug/resolve"; //$NON-NLS-1$
 
 	// constraint entry
 	// A constraint is made for each relationship where 'parent' requires 'prq'.
@@ -73,11 +73,11 @@ public class RegistryResolver {
 
 		public String toString() {
 			if (prq == null)
-				return "(null)";
-			String s = parent.toString() + "->" + prq.getPlugin();
+				return "(null)"; //$NON-NLS-1$
+			String s = parent.toString() + "->" + prq.getPlugin(); //$NON-NLS-1$
 			switch (prq.getMatchByte()) {
 				case PluginPrerequisiteModel.PREREQ_MATCH_UNSPECIFIED:
-					s += "(any)";
+					s += "(any)"; //$NON-NLS-1$
 					break;
 				case PluginPrerequisiteModel.PREREQ_MATCH_PERFECT:
 					s += IModel.PLUGIN_REQUIRES_MATCH_PERFECT;
@@ -162,7 +162,7 @@ public class RegistryResolver {
 
 		private void removeConstraint(Constraint c) {
 			if (DEBUG_RESOLVE)
-				debug("removing constraint " + c.toString());
+				debug("removing constraint " + c.toString()); //$NON-NLS-1$
 			constraintList.remove(c);
 			c.setConstraintsEntry(null);
 			lastResolved = null;
@@ -265,7 +265,7 @@ public class RegistryResolver {
 					bestMatch = (PluginDescriptorModel) parent.versions().get(0);
 					if (bestMatch == null) {
 						if (DEBUG_RESOLVE)
-							debug("*ERROR* no resolved descriptor for " + parent.getId());
+							debug("*ERROR* no resolved descriptor for " + parent.getId()); //$NON-NLS-1$
 					} else
 						bestMatchEnabled = bestMatch.getEnabled();
 				}
@@ -277,7 +277,7 @@ public class RegistryResolver {
 				bestMatch = getMatchingDescriptor();
 				if (bestMatch == null) {
 					if (DEBUG_RESOLVE)
-						debug("*ERROR* no resolved descriptor for " + parent.getId());
+						debug("*ERROR* no resolved descriptor for " + parent.getId()); //$NON-NLS-1$
 				} else
 					bestMatchEnabled = true;
 			}
@@ -299,7 +299,7 @@ public class RegistryResolver {
 				bestMatch.setEnabled(bestMatchEnabled);
 				if (bestMatchEnabled) {
 					if (DEBUG_RESOLVE)
-						debug("configured " + bestMatch.toString());
+						debug("configured " + bestMatch.toString()); //$NON-NLS-1$
 					if (constraintList.size() > 0) {
 						for (int i = 0; i < constraintList.size(); i++) {
 							// Put which actual version this prerequisite resolved to in the
@@ -412,7 +412,7 @@ public class RegistryResolver {
 				return null;
 			}
 			if (DEBUG_RESOLVE)
-				debug("creating new constraints list in " + id + " for " + c.toString());
+				debug("creating new constraints list in " + id + " for " + c.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 			concurrentList.add(cie);
 			return pd;
 		}
@@ -522,7 +522,7 @@ public class RegistryResolver {
 	}
 public RegistryResolver() {	
 	String debug = Platform.getDebugOption(OPTION_DEBUG_RESOLVE);
-	DEBUG_RESOLVE = debug==null ? false : ( debug.equalsIgnoreCase("true") ? true : false );
+	DEBUG_RESOLVE = debug==null ? false : ( debug.equalsIgnoreCase("true") ? true : false ); //$NON-NLS-1$
 }
 private void add(PluginDescriptorModel pd) {
 
@@ -615,7 +615,7 @@ private void addPrerequisites(PluginPrerequisiteModel[] prerequisites, PluginDes
 	plugin.setRequires(result);
 }
 private void debug(String s) {
-	System.out.println("Registry Resolve: "+s);
+	System.out.println("Registry Resolve: "+s); //$NON-NLS-1$
 }
 private void error(String message) {
 	Status error = new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, message, null);
@@ -647,7 +647,7 @@ private PluginVersionIdentifier getVersionIdentifier(PluginDescriptorModel descr
 		// has already been successfully converted from a string to
 		// a PluginVersionIdentifier and back to a string.  But keep
 		// this catch around in case something does go wrong.
-		return new PluginVersionIdentifier("0.0.0");
+		return new PluginVersionIdentifier("0.0.0"); //$NON-NLS-1$
 	}
 }
 private PluginVersionIdentifier getVersionIdentifier(PluginFragmentModel fragment) {
@@ -658,7 +658,7 @@ private PluginVersionIdentifier getVersionIdentifier(PluginFragmentModel fragmen
 		// has already been successfully converted from a string to
 		// a PluginVersionIdentifier and back to a string.  But keep
 		// this catch around in case something does go wrong.
-		return new PluginVersionIdentifier("0.0.0");
+		return new PluginVersionIdentifier("0.0.0"); //$NON-NLS-1$
 	}
 }
 private PluginVersionIdentifier getVersionIdentifier(PluginPrerequisiteModel prereq) {
@@ -676,7 +676,7 @@ private boolean fragmentHasPrerequisites (PluginFragmentModel fragment) {
 		// this plugin is not in the registry.
 		if (idmap.get(requires[i].getPlugin()) == null) {
 			// We know this plugin doesn't exist
-			error(Policy.bind("parse.badPrereqOnFrag", fragment.getName(), requires[i].getPlugin()));
+			error(Policy.bind("parse.badPrereqOnFrag", fragment.getName(), requires[i].getPlugin())); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -694,11 +694,11 @@ private void linkFragments() {
 			// ignore it.
 			String id, name;
 			if ((id = fragment.getId()) != null)
-				error (Policy.bind("parse.fragmentMissingAttr", id));
+				error (Policy.bind("parse.fragmentMissingAttr", id)); //$NON-NLS-1$
 			else if ((name = fragment.getName()) != null)
-				error (Policy.bind("parse.fragmentMissingAttr", name));
+				error (Policy.bind("parse.fragmentMissingAttr", name)); //$NON-NLS-1$
 			else
-				error (Policy.bind("parse.fragmentMissingIdName"));
+				error (Policy.bind("parse.fragmentMissingIdName")); //$NON-NLS-1$
 			continue;
 		}
 		if (!fragmentHasPrerequisites(fragment)) {
@@ -742,7 +742,7 @@ private void linkFragments() {
 
 		if (plugin == null) {
 			// We couldn't find this fragment's plugin
-			error (Policy.bind("parse.missingFragmentPd", fragment.getPluginId(), fragment.getId()));
+			error (Policy.bind("parse.missingFragmentPd", fragment.getPluginId(), fragment.getId())); //$NON-NLS-1$
 			continue;
 		}
 		
@@ -766,7 +766,7 @@ private void removeConstraintFor(PluginPrerequisiteModel prereq) {
 	IndexEntry ix = (IndexEntry) idmap.get(id);
 	if (ix == null) {
 		if (DEBUG_RESOLVE)
-			debug("unable to locate index entry for " + id);
+			debug("unable to locate index entry for " + id); //$NON-NLS-1$
 		return;
 	}
 	ix.removeConstraintFor(prereq);
@@ -786,11 +786,11 @@ private void resolve() {
 			pluginList[i].setEnabled(false);
 			String id, name;
 			if ((id = pluginList[i].getId()) != null)
-				error (Policy.bind("parse.pluginMissingAttr", id));
+				error (Policy.bind("parse.pluginMissingAttr", id)); //$NON-NLS-1$
 			else if ((name = pluginList[i].getName()) != null)
-				error (Policy.bind("parse.pluginMissingAttr", name));
+				error (Policy.bind("parse.pluginMissingAttr", name)); //$NON-NLS-1$
 			else
-				error (Policy.bind("parse.pluginMissingIdName"));
+				error (Policy.bind("parse.pluginMissingIdName")); //$NON-NLS-1$
 			continue;
 		}
 		add(pluginList[i]);
@@ -824,7 +824,7 @@ private void resolve() {
 		resolvePluginRegistry();
 		idmap = null;
 		reg = null;
-		error(Policy.bind("plugin.unableToResolve"));
+		error(Policy.bind("plugin.unableToResolve")); //$NON-NLS-1$
 		return;
 	}
 	
@@ -848,7 +848,7 @@ private void resolve() {
 			if (!roots.contains(orphans.get(j))) {
 				roots.add(orphans.get(j));
 				if (DEBUG_RESOLVE)
-					debug("orphan " + orphans.get(j));
+					debug("orphan " + orphans.get(j)); //$NON-NLS-1$
 			}
 		}
 		orphans = null;
@@ -877,7 +877,7 @@ public IStatus resolve(PluginRegistryModel registry) {
 	// Calling this method, with a valid registry will 
 	// cause this registry to be 'resolved'.
 	
-	status = new MultiStatus(Platform.PI_RUNTIME, IStatus.OK, "", null);
+	status = new MultiStatus(Platform.PI_RUNTIME, IStatus.OK, "", null); //$NON-NLS-1$
 
 	if (registry.isResolved())
 		// don't bother doing anything if it's already resolved
@@ -891,26 +891,26 @@ public IStatus resolve(PluginRegistryModel registry) {
 private void resolveExtension(ExtensionModel ext) {
 
 	String target = ext.getExtensionPoint();
-	int ix = target.lastIndexOf(".");
+	int ix = target.lastIndexOf("."); //$NON-NLS-1$
 	String pluginId = target.substring(0, ix);
 	String extPtId = target.substring(ix + 1);
 	String message;
 
 	PluginDescriptorModel plugin = (PluginDescriptorModel) reg.getPlugin(pluginId);
 	if (plugin == null) {
-		message = Policy.bind("parse.extPointUnknown", target, ext.getParentPluginDescriptor().getId());
+		message = Policy.bind("parse.extPointUnknown", target, ext.getParentPluginDescriptor().getId()); //$NON-NLS-1$
 		error(message);
 		return;
 	}
 	if (!plugin.getEnabled()) {
-		message = Policy.bind("parse.extPointDisabled", target, ext.getParentPluginDescriptor().getId());
+		message = Policy.bind("parse.extPointDisabled", target, ext.getParentPluginDescriptor().getId()); //$NON-NLS-1$
 		error(message);
 		return;
 	}
 
 	ExtensionPointModel extPt = (ExtensionPointModel) getExtensionPoint(plugin, extPtId);
 	if (extPt == null) {
-		message = Policy.bind("parse.extPointUnknown", target, ext.getParentPluginDescriptor().getId());
+		message = Policy.bind("parse.extPointUnknown", target, ext.getParentPluginDescriptor().getId()); //$NON-NLS-1$
 		error(message);
 		return;
 	}
@@ -949,7 +949,7 @@ private Cookie resolveNode(String child, PluginDescriptorModel parent, PluginPre
 	// We are trying to resolve for the plugin descriptor with id 'child'.
 
 	if (DEBUG_RESOLVE)
-		debug("PUSH> " + child);
+		debug("PUSH> " + child); //$NON-NLS-1$
 
 	if (cookie == null)
 		cookie = new Cookie();
@@ -966,9 +966,9 @@ private Cookie resolveNode(String child, PluginDescriptorModel parent, PluginPre
 		if (prq.getOptional() && parent != null && child != null)
 			return cookie;
 		if (parent != null)
-			error(Policy.bind("parse.prereqDisabled", new String[] { parent.getId(), child }));
+			error(Policy.bind("parse.prereqDisabled", new String[] { parent.getId(), child })); //$NON-NLS-1$
 		if (DEBUG_RESOLVE)
-			debug("<POP  " + child + " not found");
+			debug("<POP  " + child + " not found"); //$NON-NLS-1$ //$NON-NLS-2$
 		cookie.isOk(false);
 		return cookie;
 	}
@@ -983,14 +983,14 @@ private Cookie resolveNode(String child, PluginDescriptorModel parent, PluginPre
 			if (prq.getOptional()) {
 				// This is an optional prerequisite.  Ignore the conflict and this
 				// prerequisite.
-				information (Policy.bind("parse.unsatisfiedOptPrereq", parent.getId(), child));
+				information (Policy.bind("parse.unsatisfiedOptPrereq", parent.getId(), child)); //$NON-NLS-1$
 				return cookie;
 			} else {
 				// This prerequisite is mandatory.  
-				String message = Policy.bind("parse.unsatisfiedPrereq", parent.getId(), child);
+				String message = Policy.bind("parse.unsatisfiedPrereq", parent.getId(), child); //$NON-NLS-1$
 				error(message);
 				if (DEBUG_RESOLVE)
-					debug("<POP  " + child + " unable to satisfy constraint");
+					debug("<POP  " + child + " unable to satisfy constraint"); //$NON-NLS-1$ //$NON-NLS-2$
 				cookie.isOk(false);
 				return cookie;
 			}
@@ -999,13 +999,13 @@ private Cookie resolveNode(String child, PluginDescriptorModel parent, PluginPre
 				if (prq.getOptional()) {
 					// This is an optional prerequisite.  Ignore the loop, and the
 					// prerequisite
-					information (Policy.bind("parse.prereqOptLoop", parent.getId(), child));
+					information (Policy.bind("parse.prereqOptLoop", parent.getId(), child)); //$NON-NLS-1$
 					return cookie;
 				} else {
-					String message = Policy.bind("parse.prereqLoop", parent.getId(), child);
+					String message = Policy.bind("parse.prereqLoop", parent.getId(), child); //$NON-NLS-1$
 					error(message);
 					if (DEBUG_RESOLVE)
-						debug("<POP  " + child + " prerequisite loop");
+						debug("<POP  " + child + " prerequisite loop"); //$NON-NLS-1$ //$NON-NLS-2$
 					cookie.isOk(false);
 					return cookie;
 				}
@@ -1016,7 +1016,7 @@ private Cookie resolveNode(String child, PluginDescriptorModel parent, PluginPre
 		childPd = ix.getMatchingDescriptorFor(currentConstraint);
 		if (childPd == null) {
 			if (DEBUG_RESOLVE)
-				debug("<POP  " + child + " not found (missing descriptor entry)");
+				debug("<POP  " + child + " not found (missing descriptor entry)"); //$NON-NLS-1$ //$NON-NLS-2$
 			cookie.isOk(false);
 			return cookie;
 		}
@@ -1025,7 +1025,7 @@ private Cookie resolveNode(String child, PluginDescriptorModel parent, PluginPre
 	// check to see if subtree is already resolved
 	if (ix.isResolvedFor(currentConstraint)) {
 		if (DEBUG_RESOLVE)
-			debug("<POP  " + child + " already resolved");
+			debug("<POP  " + child + " already resolved"); //$NON-NLS-1$ //$NON-NLS-2$
 		return cookie;
 	}
 
@@ -1051,16 +1051,16 @@ private Cookie resolveNode(String child, PluginDescriptorModel parent, PluginPre
 			removeConstraintFor(prereq);
 		}
 		if (parent != null)
-			error(Policy.bind("parse.prereqDisabled", parent.getId(), child));
+			error(Policy.bind("parse.prereqDisabled", parent.getId(), child)); //$NON-NLS-1$
 		childPd.setEnabled(false);
 		if (DEBUG_RESOLVE)
-			debug("<POP  " + child + " failed to resolve subtree");
+			debug("<POP  " + child + " failed to resolve subtree"); //$NON-NLS-1$ //$NON-NLS-2$
 		return cookie;
 	} else {
 		// we're done
 		ix.isResolvedFor(currentConstraint, true);
 		if (DEBUG_RESOLVE)
-			debug("<POP  " + child + " " + getVersionIdentifier(childPd));
+			debug("<POP  " + child + " " + getVersionIdentifier(childPd)); //$NON-NLS-1$ //$NON-NLS-2$
 		return cookie;
 	}
 }
@@ -1119,7 +1119,7 @@ private void resolvePluginFragments(PluginDescriptorModel plugin) {
 			dirty = true;
 			if (getVersionIdentifier(fragmentList[i]).equals(getVersionIdentifier(latestVersion)))
 				// ignore duplicates
-				error (Policy.bind("parse.duplicateFragment", fragmentId, fragmentList[i].getVersion()));
+				error (Policy.bind("parse.duplicateFragment", fragmentId, fragmentList[i].getVersion())); //$NON-NLS-1$
 			if (getVersionIdentifier(fragmentList[i]).isGreaterThan(getVersionIdentifier(latestVersion))) {
 				latestFragments.put(fragmentId, fragmentList[i]);
 			}
@@ -1267,12 +1267,12 @@ private List resolveRootDescriptors() {
 						// Don't disable this one.  It is the
 						// one with the highest version number.
 						if (DEBUG_RESOLVE)
-							debug("root " + pd);
+							debug("root " + pd); //$NON-NLS-1$
 					} else {
 						// Disable all versions except the one with the
 						// highest version number.
 						if (DEBUG_RESOLVE)
-							debug("     " + pd + " disabled");
+							debug("     " + pd + " disabled"); //$NON-NLS-1$ //$NON-NLS-2$
 						pd.setEnabled(false);
 					}
 				}
@@ -1280,7 +1280,7 @@ private List resolveRootDescriptors() {
 		}
 	} else {
 		if (DEBUG_RESOLVE)
-			debug("NO ROOTS");
+			debug("NO ROOTS"); //$NON-NLS-1$
 	}
 
 	return ids;
@@ -1305,7 +1305,7 @@ private void trimRegistry() {
 		PluginDescriptorModel pd = (PluginDescriptorModel) list[i];
 		if (!pd.getEnabled()) {
 			if (DEBUG_RESOLVE)
-				debug("removing " + pd.toString());
+				debug("removing " + pd.toString()); //$NON-NLS-1$
 			reg.removePlugin(pd.getId(), pd.getVersion());
 		}
 	}

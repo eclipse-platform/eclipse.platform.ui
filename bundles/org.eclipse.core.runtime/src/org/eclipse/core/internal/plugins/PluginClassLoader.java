@@ -47,15 +47,15 @@ protected void activatePlugin(String name) {
 		// the in-progress flag is set when we detect that activation will be required.
 		// be sure to unset it here.
 		if (DEBUG && DEBUG_SHOW_ACTIVATE && debugLoader())
-			debug("Attempting to activate " + descriptor.getUniqueIdentifier());
+			debug("Attempting to activate " + descriptor.getUniqueIdentifier()); //$NON-NLS-1$
 		descriptor.doPluginActivation();
 	} catch (CoreException e) {
 		if (DEBUG && DEBUG_SHOW_ACTIVATE && debugLoader())
-			debug("Activation failed for " + descriptor.getUniqueIdentifier());
-		throw new DelegatingLoaderException("Plugin " + descriptor.getUniqueIdentifier() + " activation failed while loading class " + name, e);
+			debug("Activation failed for " + descriptor.getUniqueIdentifier()); //$NON-NLS-1$
+		throw new DelegatingLoaderException(Policy.bind("plugin.delegatingLoaderTrouble", descriptor.getUniqueIdentifier(), name), e); //$NON-NLS-1$
 	} finally {
 		if (DEBUG && DEBUG_SHOW_ACTIVATE && debugLoader())
-			debug("Exit activation for " + descriptor.getUniqueIdentifier());
+			debug("Exit activation for " + descriptor.getUniqueIdentifier()); //$NON-NLS-1$
 		pluginActivationInProgress = false;
 	}
 }
@@ -190,12 +190,12 @@ protected boolean shouldLookForClass(String name) {
 	// (2) the check cannot be added to the "right" spot inside private
 	//     implementation of URLClassLoader
 	String resource = name.replace('.', '/');
-	if (findClassResource(resource + ".class") == null)
+	if (findClassResource(resource + ".class") == null) //$NON-NLS-1$
 		return false;
 
 	// check if plugin is permanently deactivated
 	if (descriptor.isPluginDeactivated()) {
-		String message = Policy.bind("plugin.deactivatedLoad", name, descriptor.getUniqueIdentifier());
+		String message = Policy.bind("plugin.deactivatedLoad", name, descriptor.getUniqueIdentifier()); //$NON-NLS-1$
 		throw new DelegatingLoaderException(message);
 	}
 	return true;

@@ -54,19 +54,19 @@ public IExtension[] getExtensions() {
 }
 public String getLabel() {
 	String s = getName();
-	return s == null ? "" : ((PluginDescriptor) getDeclaringPluginDescriptor()).getResourceString(s);
+	return s == null ? "" : ((PluginDescriptor) getDeclaringPluginDescriptor()).getResourceString(s); //$NON-NLS-1$
 }
 public java.lang.String getSchemaReference() {
 	String s = getSchema();
-	return s == null ? "" : s.replace(File.separatorChar, '/');
+	return s == null ? "" : s.replace(File.separatorChar, '/'); //$NON-NLS-1$
 }
 public String getSimpleIdentifier() {
 	return getId();
 }
 public String getUniqueIdentifier() {
-	return getParentPluginDescriptor().getId() + "." + getSimpleIdentifier();
+	return getParentPluginDescriptor().getId() + "." + getSimpleIdentifier(); //$NON-NLS-1$
 }
 public String toString() {
-	return getParent().getPluginId() + "." + getSimpleIdentifier();
+	return getParent().getPluginId() + "." + getSimpleIdentifier(); //$NON-NLS-1$
 }
 }

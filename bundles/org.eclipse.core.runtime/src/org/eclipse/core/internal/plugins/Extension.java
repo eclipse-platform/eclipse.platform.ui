@@ -32,7 +32,7 @@ public String getExtensionPointUniqueIdentifier() {
 }
 public String getLabel() {
 	String s = getName();
-	return s == null ? "" : ((PluginDescriptor) getDeclaringPluginDescriptor()).getResourceString(s);
+	return s == null ? "" : ((PluginDescriptor) getDeclaringPluginDescriptor()).getResourceString(s); //$NON-NLS-1$
 }
 public String getSimpleIdentifier() {
 	return getId();
@@ -41,9 +41,9 @@ public String getUniqueIdentifier() {
 	String simple = getSimpleIdentifier();
 	if (simple == null)
 		return null;
-	return getParentPluginDescriptor().getId() + "." + simple;
+	return getParentPluginDescriptor().getId() + "." + simple; //$NON-NLS-1$
 }
 public String toString() {
-	return getParent().getPluginId() + "." + getSimpleIdentifier();
+	return getParent().getPluginId() + "." + getSimpleIdentifier(); //$NON-NLS-1$
 }
 }

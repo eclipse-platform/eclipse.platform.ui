@@ -5,9 +5,9 @@ import org.eclipse.core.internal.runtime.PlatformURLFragmentConnection;
 public class FragmentDescriptor extends PluginFragmentModel {
 
 	// constants
-	static final String FRAGMENT_URL = PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR + "/" + PlatformURLFragmentConnection.FRAGMENT + "/";
+	static final String FRAGMENT_URL = PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR + "/" + PlatformURLFragmentConnection.FRAGMENT + "/"; //$NON-NLS-1$ //$NON-NLS-2$
 
 public String toString() {
 	return getId() + PluginDescriptor.VERSION_SEPARATOR + getVersion();
 }
-public URL getInstallURL() {	try {		return new URL(FRAGMENT_URL + toString() + "/");	} catch (MalformedURLException e) {		throw new IllegalStateException(); // unchecked	}}}
+public URL getInstallURL() {	try {		return new URL(FRAGMENT_URL + toString() + "/"); //$NON-NLS-1$	} catch (MalformedURLException e) {		throw new IllegalStateException(); // unchecked	}}}

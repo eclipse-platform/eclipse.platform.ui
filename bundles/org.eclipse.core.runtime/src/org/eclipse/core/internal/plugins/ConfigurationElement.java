@@ -31,7 +31,7 @@ public Object createExecutableExtension(String attributeName) throws CoreExcepti
 		prop = getValue();
 		if (prop != null) {
 			prop = prop.trim();
-			if (prop.equals(""))
+			if (prop.equals("")) //$NON-NLS-1$
 				prop = null;
 		}
 	}
@@ -47,15 +47,15 @@ public Object createExecutableExtension(String attributeName) throws CoreExcepti
 		exec = getChildren(attributeName);
 		if (exec.length != 0) {
 			element = exec[0]; // assumes single definition
-			pluginName = (String) element.getAttribute("plugin");
-			className = (String) element.getAttribute("class");
-			parms = element.getChildren("parameter");
+			pluginName = (String) element.getAttribute("plugin"); //$NON-NLS-1$
+			className = (String) element.getAttribute("class"); //$NON-NLS-1$
+			parms = element.getChildren("parameter"); //$NON-NLS-1$
 			if (parms != null) {
 				initParms = new Hashtable(parms.length + 1);
 				for (i = 0; i < parms.length; i++) {
-					pname = (String) parms[i].getAttribute("name");
+					pname = (String) parms[i].getAttribute("name"); //$NON-NLS-1$
 					if (pname != null)
-						initParms.put(pname, parms[i].getAttribute("value"));
+						initParms.put(pname, parms[i].getAttribute("value")); //$NON-NLS-1$
 				}
 				if (!initParms.isEmpty())
 					initData = initParms;
@@ -64,7 +64,7 @@ public Object createExecutableExtension(String attributeName) throws CoreExcepti
 
 		// specified name is not a simple attribute nor child element
 		else {
-			String message = Policy.bind("plugin.extDefNotFound", attributeName);
+			String message = Policy.bind("plugin.extDefNotFound", attributeName); //$NON-NLS-1$
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, null);
 			throw new CoreException(status);
 		}
@@ -85,8 +85,8 @@ public Object createExecutableExtension(String attributeName) throws CoreExcepti
 			className = executable;
 	}
 
-	if (className == null || className.equals("")) {
-		String message = Policy.bind("plugin.extDefNoClass", attributeName );
+	if (className == null || className.equals("")) { //$NON-NLS-1$
+		String message = Policy.bind("plugin.extDefNoClass", attributeName ); //$NON-NLS-1$
 		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, null);
 		logError(status);
 		throw new CoreException(status);

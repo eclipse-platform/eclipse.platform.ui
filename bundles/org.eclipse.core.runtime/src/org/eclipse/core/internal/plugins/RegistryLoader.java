@@ -31,13 +31,13 @@ private RegistryLoader(Factory factory, boolean debug) {
 }
 private void debug(String msg) {
 	long thisTick = System.currentTimeMillis();
-	System.out.println("RegistryLoader: " + msg + " [+"+ (thisTick - lastTick) + "ms]");
+	System.out.println("RegistryLoader: " + msg + " [+"+ (thisTick - lastTick) + "ms]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	lastTick = thisTick;
 }
 private String[] getPathMembers(URL path) {
 	String[] list = null;
 	String protocol = path.getProtocol();
-	if (protocol.equals("file")) {
+	if (protocol.equals("file")) { //$NON-NLS-1$
 		list = (new File(path.getFile())).list();
 	} else {
 		// XXX: attempt to read URL and see if we got html dir page
@@ -57,7 +57,7 @@ private PluginRegistryModel parseRegistry(URL[] pluginPath) {
 	PluginRegistryModel result = processManifestFiles(pluginPath);
 	if (InternalPlatform.DEBUG) {
 		long endTick = System.currentTimeMillis();
-		debug("Parsed Registry: " + (endTick - startTick) + "ms");
+		debug("Parsed Registry: " + (endTick - startTick) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	return result;
 }
@@ -70,7 +70,7 @@ private PluginModel processManifestFile(URL manifest) {
 		is = manifest.openStream();
 	} catch (IOException e) {
 		if (debug)
-			debug("No plugin found for: " + manifest);
+			debug("No plugin found for: " + manifest); //$NON-NLS-1$
 		return null;
 	}
 	PluginModel result = null;
@@ -86,9 +86,9 @@ private PluginModel processManifestFile(URL manifest) {
 		}
 	} catch (SAXParseException se) {
 		/* exception details logged by parser */
-		factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("parse.errorProcessing", manifest.toString()), null));
+		factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("parse.errorProcessing", manifest.toString()), null)); //$NON-NLS-1$
 	} catch (Exception e) {
-		factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("parse.errorProcessing", manifest.toString() + ":  " + e.getMessage()), null));
+		factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("parse.errorProcessing", manifest.toString() + ":  " + e.getMessage()), null)); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	return result;
 }
@@ -100,27 +100,27 @@ private PluginRegistryModel processManifestFiles(URL[] pluginPath) {
 }
 private void processPluginPathEntry(PluginRegistryModel registry, URL location) {
 	if (debug)
-		debug("Path - " + location);
-	if (location.getFile().endsWith("/")) {
+		debug("Path - " + location); //$NON-NLS-1$
+	if (location.getFile().endsWith("/")) { //$NON-NLS-1$
 		// directory entry - search for plugins
 		String[] members = getPathMembers(location);
 		for (int j = 0; j < members.length; j++) {
 			boolean found = false;
 			try {
-				found = processPluginPathFile(registry, new URL(location, members[j] + "/plugin.xml"));
+				found = processPluginPathFile(registry, new URL(location, members[j] + "/plugin.xml")); //$NON-NLS-1$
 				if (!found)
-					found = processPluginPathFile(registry, new URL(location, members[j] + "/fragment.xml"));
+					found = processPluginPathFile(registry, new URL(location, members[j] + "/fragment.xml")); //$NON-NLS-1$
 			} catch (MalformedURLException e) {
 				// Skip bad URLs
 			}
 			if (debug)
-				debug(found ? "Processed - " : "Processed (not found) - " + members[j]);
+				debug(found ? "Processed - " : "Processed (not found) - " + members[j]); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	} else {
 		// specific file entry - load the given file
 		boolean found = processPluginPathFile(registry, location);
 		if (debug)
-			debug(found ? "Processed - " : "Processed (not found) - " + location);
+			debug(found ? "Processed - " : "Processed (not found) - " + location); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }
 /**
@@ -140,21 +140,21 @@ private boolean processPluginPathFile(PluginRegistryModel registry, URL location
 	entry.setVersion(getQualifiedVersion(entry, location)); // check for version qualifier
 	if (entry instanceof PluginDescriptorModel) {
 		if (entry.getId() == null || entry.getVersion() == null) {
-			return parseProblem(Policy.bind("parse.nullPluginIdentifier", location.toString()));
+			return parseProblem(Policy.bind("parse.nullPluginIdentifier", location.toString())); //$NON-NLS-1$
 		}
 		//skip duplicate entries
 		if (registry.getPlugin(entry.getId(), entry.getVersion()) != null) {
-			return parseProblem(Policy.bind("parse.duplicatePlugin", entry.getId(), location.toString()));
+			return parseProblem(Policy.bind("parse.duplicatePlugin", entry.getId(), location.toString())); //$NON-NLS-1$
 		}
 		registry.addPlugin((PluginDescriptorModel) entry);
 	} else {
 		if (entry.getId() == null || entry.getVersion() == null) {
-			return parseProblem(Policy.bind("parse.nullFragmentIdentifier", location.toString()));
+			return parseProblem(Policy.bind("parse.nullFragmentIdentifier", location.toString())); //$NON-NLS-1$
 		}
 		if (entry instanceof PluginFragmentModel) {
 			registry.addFragment((PluginFragmentModel) entry);
 		} else {
-			return parseProblem(Policy.bind("parse.unknownEntry", location.toString()));
+			return parseProblem(Policy.bind("parse.unknownEntry", location.toString())); //$NON-NLS-1$
 		}
 	}
 	String url = location.toString();
@@ -172,18 +172,18 @@ private String getQualifiedVersion(PluginModel entry, URL base) {
 	try {		
 		// check to see if we have buildmanifest.properties for this plugin
 		URL manifest = null;
-		manifest = new URL(base, "buildmanifest.properties");
+		manifest = new URL(base, "buildmanifest.properties"); //$NON-NLS-1$
 		Properties props = new Properties();
 		is = manifest.openStream();
 		props.load(is);
 	
 		// lookup qualifier for this plugin and "morph" the identifier if needed
-		String key = "plugin@"+entry.getId();
+		String key = "plugin@"+entry.getId(); //$NON-NLS-1$
 		String qualifier = props.getProperty(key);
 		if (qualifier == null)
 			return entry.getVersion();
 		PluginVersionIdentifier v = new PluginVersionIdentifier(entry.getVersion());
-		if (!v.getQualifierComponent().equals(""))
+		if (!v.getQualifierComponent().equals("")) //$NON-NLS-1$
 			return entry.getVersion();
 		else 
 			return (new PluginVersionIdentifier(v.getMajorComponent(), v.getMinorComponent(), v.getServiceComponent(), qualifier)).toString();
@@ -207,15 +207,15 @@ private boolean requiredPluginModel(PluginModel plugin, URL location) {
 	int versionLength = version == null ? 0 : version.length();
 	
 	if (nameLength <= 0) {
-		parseProblem(Policy.bind("parse.missingPluginName", location.toString()));
+		parseProblem(Policy.bind("parse.missingPluginName", location.toString())); //$NON-NLS-1$
 		return false;
 	}
 	if (idLength <= 0) {
-		parseProblem(Policy.bind("parse.missingPluginId", location.toString()));
+		parseProblem(Policy.bind("parse.missingPluginId", location.toString())); //$NON-NLS-1$
 		return false;
 	}
 	if (versionLength <= 0) {
-		parseProblem(Policy.bind("parse.missingPluginVersion", location.toString()));
+		parseProblem(Policy.bind("parse.missingPluginVersion", location.toString())); //$NON-NLS-1$
 		return false;
 	}
 
@@ -225,11 +225,11 @@ private boolean requiredPluginModel(PluginModel plugin, URL location) {
 		int pNameLength = pluginName == null ? 0 : pluginName.length();
 		int pNameVersion = pluginVersion == null ? 0 : pluginVersion.length();
 		if (pNameLength <= 0) {
-			parseProblem(Policy.bind("parse.missingFPName", location.toString()));
+			parseProblem(Policy.bind("parse.missingFPName", location.toString())); //$NON-NLS-1$
 			return false;
 		}
 		if (pNameVersion <= 0) {
-			parseProblem(Policy.bind("parse.missingFPVersion", location.toString()));
+			parseProblem(Policy.bind("parse.missingFPVersion", location.toString())); //$NON-NLS-1$
 			return false;
 		}
 	}

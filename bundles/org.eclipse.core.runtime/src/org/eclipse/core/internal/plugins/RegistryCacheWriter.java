@@ -51,7 +51,7 @@ public void writeLabel(byte labelValue, DataOutputStream out) {
 			out.writeByte(labelValue);
 		}
 	} catch (IOException ioe) {
-		cacheWriteProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", RegistryCacheReader.decipherLabel(labelValue)), ioe));
+		cacheWriteProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", RegistryCacheReader.decipherLabel(labelValue)), ioe)); //$NON-NLS-1$
 	}
 }
 public void writeConfigurationElement(ConfigurationElementModel configElement, DataOutputStream out) {
@@ -113,7 +113,7 @@ public void writeConfigurationElement(ConfigurationElementModel configElement, D
 
 		writeLabel(RegistryCacheReader.CONFIGURATION_ELEMENT_END_LABEL, out);
 	} catch (IOException ioe) {
-		cacheWriteProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", RegistryCacheReader.decipherLabel(RegistryCacheReader.CONFIGURATION_ELEMENT_LABEL)), ioe));
+		cacheWriteProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", RegistryCacheReader.decipherLabel(RegistryCacheReader.CONFIGURATION_ELEMENT_LABEL)), ioe)); //$NON-NLS-1$
 	}
 }
 public void writeConfigurationProperty(ConfigurationPropertyModel configProperty, DataOutputStream out) {
@@ -137,7 +137,7 @@ public void writeConfigurationProperty(ConfigurationPropertyModel configProperty
 
 		writeLabel(RegistryCacheReader.CONFIGURATION_PROPERTY_END_LABEL, out);
 	} catch (IOException ioe) {
-		cacheWriteProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", RegistryCacheReader.decipherLabel(RegistryCacheReader.CONFIGURATION_PROPERTY_LABEL)), ioe));
+		cacheWriteProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", RegistryCacheReader.decipherLabel(RegistryCacheReader.CONFIGURATION_PROPERTY_LABEL)), ioe)); //$NON-NLS-1$
 	}
 }
 public void writeExtension(ExtensionModel extension, DataOutputStream out) {
@@ -209,7 +209,7 @@ public void writeExtension(ExtensionModel extension, DataOutputStream out) {
 
 		writeLabel(RegistryCacheReader.EXTENSION_END_LABEL, out);
 	} catch (IOException ioe) {
-		cacheWriteProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", RegistryCacheReader.decipherLabel(RegistryCacheReader.PLUGIN_EXTENSION_LABEL)), ioe));
+		cacheWriteProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", RegistryCacheReader.decipherLabel(RegistryCacheReader.PLUGIN_EXTENSION_LABEL)), ioe)); //$NON-NLS-1$
 	}
 }
 public void writeExtensionPoint(ExtensionPointModel extPoint, DataOutputStream out) {
@@ -271,7 +271,7 @@ public void writeExtensionPoint(ExtensionPointModel extPoint, DataOutputStream o
 
 		writeLabel(RegistryCacheReader.EXTENSION_POINT_END_LABEL, out);
 	} catch (IOException ioe) {
-		cacheWriteProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", RegistryCacheReader.decipherLabel(RegistryCacheReader.PLUGIN_EXTENSION_POINT_LABEL)), ioe));
+		cacheWriteProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", RegistryCacheReader.decipherLabel(RegistryCacheReader.PLUGIN_EXTENSION_POINT_LABEL)), ioe)); //$NON-NLS-1$
 	}
 }
 public void writeHeaderInformation(DataOutputStream out) {
@@ -286,7 +286,7 @@ public void writeHeaderInformation(DataOutputStream out) {
 		// locale stamp
 		out.writeUTF(BootLoader.getNL());
 	} catch (IOException ioe) {
-		cacheWriteProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", "HeaderInformation"), ioe));
+		cacheWriteProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", "HeaderInformation"), ioe)); //$NON-NLS-1$
 	}
 }
 public void writeLibrary(LibraryModel library, DataOutputStream out) {
@@ -322,7 +322,7 @@ public void writeLibrary(LibraryModel library, DataOutputStream out) {
 		// from the values in the 'exports' list.
 		writeLabel(RegistryCacheReader.LIBRARY_END_LABEL, out);
 	} catch (IOException ioe) {
-		cacheWriteProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", RegistryCacheReader.decipherLabel(RegistryCacheReader.PLUGIN_LIBRARY_LABEL)), ioe));
+		cacheWriteProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", RegistryCacheReader.decipherLabel(RegistryCacheReader.PLUGIN_LIBRARY_LABEL)), ioe)); //$NON-NLS-1$
 	}
 }
 public void writePluginDescriptor(PluginDescriptorModel plugin, DataOutputStream out) {
@@ -424,7 +424,7 @@ public void writePluginDescriptor(PluginDescriptorModel plugin, DataOutputStream
 
 		writeLabel(RegistryCacheReader.PLUGIN_END_LABEL, out);
 	} catch (IOException ioe) {
-		cacheWriteProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", RegistryCacheReader.decipherLabel(RegistryCacheReader.PLUGIN_LABEL)), ioe));
+		cacheWriteProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", RegistryCacheReader.decipherLabel(RegistryCacheReader.PLUGIN_LABEL)), ioe)); //$NON-NLS-1$
 	}
 }
 public void writePluginFragment(PluginFragmentModel fragment, DataOutputStream out) {
@@ -524,7 +524,7 @@ public void writePluginFragment(PluginFragmentModel fragment, DataOutputStream o
 
 		writeLabel(RegistryCacheReader.FRAGMENT_END_LABEL, out);
 	} catch (IOException ioe) {
-		cacheWriteProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", RegistryCacheReader.decipherLabel(RegistryCacheReader.FRAGMENT_LABEL)), ioe));
+		cacheWriteProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", RegistryCacheReader.decipherLabel(RegistryCacheReader.FRAGMENT_LABEL)), ioe)); //$NON-NLS-1$
 	}
 }
 public void writePluginPrerequisite(PluginPrerequisiteModel requires, DataOutputStream out) {
@@ -570,12 +570,12 @@ public void writePluginPrerequisite(PluginPrerequisiteModel requires, DataOutput
 
 		writeLabel(RegistryCacheReader.REQUIRES_END_LABEL, out);
 	} catch (IOException ioe) {
-		cacheWriteProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", RegistryCacheReader.decipherLabel(RegistryCacheReader.PLUGIN_REQUIRES_LABEL)), ioe));
+		cacheWriteProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", RegistryCacheReader.decipherLabel(RegistryCacheReader.PLUGIN_REQUIRES_LABEL)), ioe)); //$NON-NLS-1$
 	}
 }
 public void writePluginRegistry(PluginRegistryModel registry, DataOutputStream out) {
 	if (cacheWriteProblems == null) {
-		cacheWriteProblems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("meta.registryCacheWriteProblems"), null);
+		cacheWriteProblems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("meta.registryCacheWriteProblems"), null); //$NON-NLS-1$
 	}
 
 	try {
@@ -611,7 +611,7 @@ public void writePluginRegistry(PluginRegistryModel registry, DataOutputStream o
 			writePluginFragment(fragmentList[i], out);
 		writeLabel(RegistryCacheReader.REGISTRY_END_LABEL, out);
 	} catch (IOException ioe) {
-		cacheWriteProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", RegistryCacheReader.decipherLabel(RegistryCacheReader.REGISTRY_LABEL)), ioe));
+		cacheWriteProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", RegistryCacheReader.decipherLabel(RegistryCacheReader.REGISTRY_LABEL)), ioe)); //$NON-NLS-1$
 	}
 }
 }
