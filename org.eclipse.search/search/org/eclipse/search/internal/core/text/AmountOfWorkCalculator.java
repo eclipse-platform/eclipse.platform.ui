@@ -26,7 +26,7 @@ public class AmountOfWorkCalculator extends TypedResourceVisitor {
 	}
 		
 	protected boolean visitFile(IFile file) throws CoreException {
-		if (fScope.encloses(file))
+		if (fScope.encloses(file) && !file.isDerived())
 			fResult++;
 		return true;	
 	}
