@@ -164,6 +164,30 @@ M4 = Platform-specific fourth key -->
             command="org.eclipse.ant.ui.openExternalDoc"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
+      <command
+            name="%AntShortcut.description.run"
+            description="%AntShortcut.description.run"
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.ant.ui.antShortcut.run">
+      </command>
+      <keyBinding
+            keySequence="M3+M2+X Q"
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.ant.ui.antShortcut.run"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+       <command
+            name="%AntShortcut.description.debug"
+            description="%AntShortcut.description.debug"
+            categoryId="org.eclipse.debug.ui.category.run"
+            id="org.eclipse.ant.ui.antShortcut.debug">
+      </command>
+      <keyBinding
+            keySequence="M3+M2+D Q"
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.ant.ui.antShortcut.debug"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
