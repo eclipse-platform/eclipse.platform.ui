@@ -26,26 +26,33 @@ class DiffStructureVisitor extends FileStructureVisitor {
 	/**
 	 * Send unmanaged files as modified with a default entry line.
 	 */
-	protected void sendFile(ICVSFile mFile, String mode) throws CVSException {
-		boolean binary = mode != null && KSubstOption.fromMode(mode).isBinary();
-		boolean newFile = false;
+	protected void sendFile(ICVSFile mFile) throws CVSException {
+		KSubstOption ksubst;
+		ResourceSyncInfo info = mFile.getSyncInfo();
+		boolean addedFile = (info==null);
+
+		// Send the parent folder if it hasn't been sent already
+		sendFolder(mFile.getParent());
 
 		Policy.checkCanceled(monitor);
 
-		if (mFile.isManaged()) {
-			session.sendEntry(mFile.getSyncInfo().getServerEntryLine(null /*don't send merged timestamps*/));
+		if (addedFile) {
+			ksubst = KSubstOption.fromPattern(mFile.getName());
+			MutableResourceSyncInfo newInfo = new MutableResourceSyncInfo(mFile.getName(), ResourceSyncInfo.ADDED_REVISION);	
+			newInfo.setKeywordMode(ksubst.toMode());
+			info = newInfo;
 		} else {
-			MutableResourceSyncInfo info = new MutableResourceSyncInfo(mFile.getName(), ResourceSyncInfo.ADDED_REVISION);
-			session.sendEntry(info.getServerEntryLine(null));
-			newFile = true;
+			// existing file
+			ksubst = KSubstOption.fromMode(info.getKeywordMode());
 		}
-
+		session.sendEntry(info.getServerEntryLine(null));
+		
 		if (!mFile.exists()) {
 			return;
 		}
 
-		if (mFile.isModified() || newFile) {
-			session.sendModified(mFile, binary, monitor);
+		if (mFile.isModified() || addedFile) {
+			session.sendModified(mFile, ksubst.isBinary(), monitor);
 		} else {
 			session.sendUnchanged(mFile);
 		}
