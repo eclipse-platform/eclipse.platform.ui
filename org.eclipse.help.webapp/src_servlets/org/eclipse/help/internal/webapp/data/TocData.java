@@ -188,14 +188,14 @@ public class TocData extends RequestData {
 			out.write(UrlUtil.htmlEncode(topic.getLabel()));
 			out.write("</a>");
 
-			out.write("<ul class='collapsed'>");
+			out.write("<ul class='collapsed'>\n");
 
 			ITopic[] topics = topic.getSubtopics();
 			for (int i = 0; i < topics.length; i++) {
 				generateTopic(topics[i], out);
 			}
 
-			out.write("</ul>");
+			out.write("</ul>\n");
 		} else {
 			out.write("<img src='");
 			out.write(imagesDirectory);
@@ -208,7 +208,7 @@ public class TocData extends RequestData {
 			out.write("</a>");
 		}
 
-		out.write("</li>");
+		out.write("</li>\n");
 	}
 
 	/**
@@ -244,14 +244,14 @@ public class TocData extends RequestData {
 			out.write("</a>");
 			out.write("</nobr>");
 
-			out.write("<ul>");
+			out.write("<ul>\n");
 
 			ITopic[] topics = topic.getSubtopics();
 			for (int i = 0; i < topics.length; i++) {
 				generateBasicTopic(topics[i], out);
 			}
 
-			out.write("</ul>");
+			out.write("</ul>\n");
 		} else {
 			out.write("<nobr>");
 			out.write("<a ");
@@ -267,7 +267,7 @@ public class TocData extends RequestData {
 			out.write("</nobr>");
 		}
 
-		out.write("</li>");
+		out.write("</li>\n");
 	}
 	/**
 	 * @return String - help form of selected topic URL, or ""
