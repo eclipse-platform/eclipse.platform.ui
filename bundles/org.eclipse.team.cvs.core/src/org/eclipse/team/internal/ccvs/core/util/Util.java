@@ -313,6 +313,6 @@ public class Util {
 	*/
 	
 	public static void logError(String message, Throwable throwable) {
-		CVSProviderPlugin.log(new Status(IStatus.ERROR, null, IStatus.ERROR, message, throwable));
+		CVSProviderPlugin.log(new Status(IStatus.ERROR, CVSProviderPlugin.ID, IStatus.ERROR, message, throwable));
 	}
 }

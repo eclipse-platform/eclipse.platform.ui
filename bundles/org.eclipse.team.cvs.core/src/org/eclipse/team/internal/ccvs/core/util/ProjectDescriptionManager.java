@@ -47,7 +47,7 @@ public class ProjectDescriptionManager {
 	public final static boolean UPDATE_PROJECT_DESCRIPTION_ON_LOAD = true;
 
 	/*
-	 * Read the projetc meta file into the provider description
+	 * Read the project meta file into the provider description
 	 */
 	public static void readProjectDescription(IProjectDescription desc, InputStream stream) throws IOException, CVSException {
 		SAXParser parser = new SAXParser();
@@ -139,10 +139,22 @@ public class ProjectDescriptionManager {
 				} finally {
 					is.close();
 				}
-				project.setDescription(desc, progress);
+				try {
+					project.setDescription(desc, progress);
+				} catch (CoreException ex) {
+					// Failing to set the description is probably due to a missing nature
+					// Other natures are still set
+					Util.logError(Policy.bind("ProjectDescriptionManager.unableToSetDescription"), ex);
+				}
 				// Make sure we have the cvs nature (the above read may have removed it)
 				if (!project.getDescription().hasNature(CVSProviderPlugin.NATURE_ID)) {
-					TeamPlugin.getManager().setProvider(project, CVSProviderPlugin.NATURE_ID, null, progress);
+					try {
+						TeamPlugin.getManager().setProvider(project, CVSProviderPlugin.NATURE_ID, null, progress);
+					}  catch (TeamException ex) {
+						// Failing to set the provider is probably due to a missing nature.
+						// Other natures are still set
+						Util.logError(Policy.bind("ProjectDescriptionManager.unableToSetDescription"), ex);
+					}
 					writeProjectDescription(project, progress);
 				}
 			} catch(TeamException ex) {
@@ -150,10 +162,6 @@ public class ProjectDescriptionManager {
 				// something went wrong, delete the project description file
 				descResource.delete(true, progress);
 			} catch (IOException ex) {
-				Util.logError(Policy.bind("ProjectDescriptionManager.unableToReadDescription"), ex);
-				// something went wrong, delete the project description file
-				descResource.delete(true, progress);
-			} catch (CoreException ex) {
 				Util.logError(Policy.bind("ProjectDescriptionManager.unableToReadDescription"), ex);
 				// something went wrong, delete the project description file
 				descResource.delete(true, progress);
