@@ -36,6 +36,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -441,9 +442,17 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		projectViewer.setInput(restoredRoot);
 		projectViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				Iterator iter = updateActions.iterator();
-				while (iter.hasNext()) {
-					((IUpdate) iter.next()).update();
+				Iterator actionIter = updateActions.iterator();
+				while (actionIter.hasNext()) {
+					((IUpdate) actionIter.next()).update();
+				}
+				Iterator selectionIter= ((IStructuredSelection) event.getSelection()).iterator();
+				Object selection= selectionIter.next();
+				if (!selectionIter.hasNext() && selection instanceof ProjectNode) {
+					ProjectNode project= (ProjectNode) selection;
+					AntView.this.getViewSite().getActionBars().getStatusLineManager().setMessage(project.getBuildFileName());
+				} else {
+					AntView.this.getViewSite().getActionBars().getStatusLineManager().setMessage(null);
 				}
 			}
 		});
