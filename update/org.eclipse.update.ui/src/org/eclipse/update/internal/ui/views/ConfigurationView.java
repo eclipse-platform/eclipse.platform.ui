@@ -941,15 +941,20 @@ public class ConfigurationView
 					(adapter.isOptional() || !adapter.isIncluded());
 				boolean missing = feature instanceof MissingFeature;
 
-				swapVersionAction.setEnabled(enable && !missing);
-
 				featureStateAction.setFeature(adapter);
 				featureStateAction.setEnabled(enable && !missing);
 
 				if (enable && !missing && adapter.isConfigured()) {
+					IFeature[] features = UpdateUtils.getInstalledFeatures(feature, false);
+					swapVersionAction.setEnabled(features.length > 1);
+					if (features.length > 1) {
+						swapVersionAction.setCurrentFeature(feature);
+						swapVersionAction.setFeatures(features);
+					}
 					findUpdatesAction.setEnabled(true);
 					findUpdatesAction.setFeature(feature);
 				} else {
+					swapVersionAction.setEnabled(false);
 					findUpdatesAction.setEnabled(false);
 				}
 

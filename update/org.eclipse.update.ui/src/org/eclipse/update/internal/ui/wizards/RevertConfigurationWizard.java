@@ -28,10 +28,6 @@ public class RevertConfigurationWizard extends Wizard {
 		addPage(page);
 	}
 
-	public boolean canFinish() {
-		return page.isPageComplete();
-	}
-
 	public boolean performFinish() {
 		return page.performFinish();
 	}

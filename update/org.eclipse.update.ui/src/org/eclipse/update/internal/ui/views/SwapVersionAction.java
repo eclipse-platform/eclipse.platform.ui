@@ -11,15 +11,37 @@
 package org.eclipse.update.internal.ui.views;
 
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.wizards.SwapFeatureWizard;
 
 public class SwapVersionAction extends Action {
+	
+	private IFeature currentFeature;
+	private IFeature[] features;
 	
 	public SwapVersionAction(String text) {
 		super(text);
 	}
 	
+	public void setCurrentFeature(IFeature feature) {
+		currentFeature = feature;
+	}
+	
+	public void setFeatures(IFeature[] features) {
+		this.features = features;
+	}
+	
 	public void run() {
-		super.run();
+		if (currentFeature == null || features == null || features.length < 2)
+			return;
+		SwapFeatureWizard wizard = new SwapFeatureWizard(currentFeature, features);
+		WizardDialog dialog = new WizardDialog(UpdateUI.getActiveWorkbenchShell(), wizard);
+		dialog.create();
+		dialog.getShell().setText(UpdateUI.getActiveWorkbenchShell().getText());
+		dialog.getShell().setSize(400,400);
+		dialog.open();
 	}
 
 
