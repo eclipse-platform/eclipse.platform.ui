@@ -38,6 +38,9 @@ Some annotations serve as the UI counterpart of markers (see &lt;code&gt;org.ecl
                <documentation>
                   
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

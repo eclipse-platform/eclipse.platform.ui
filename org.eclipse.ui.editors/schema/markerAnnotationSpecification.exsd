@@ -46,6 +46,9 @@ Annotation preference types that extend another annotation preference are allowe
                <documentation>
                   
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
