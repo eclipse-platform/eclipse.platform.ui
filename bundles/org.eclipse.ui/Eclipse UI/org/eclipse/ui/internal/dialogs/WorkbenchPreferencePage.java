@@ -135,13 +135,17 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		Label configLabel = createLabel(groupComposite, label);
 		accelConfigCombo = createCombo(groupComposite);
 
-		String[] comboItems = new String[namesToConfiguration.size()];
-		namesToConfiguration.keySet().toArray(comboItems);
-		Arrays.sort(comboItems,Collator.getInstance());
-		accelConfigCombo.setItems(comboItems);
+		if(namesToConfiguration.size() > 0) { 
+			String[] comboItems = new String[namesToConfiguration.size()];
+			namesToConfiguration.keySet().toArray(comboItems);
+			Arrays.sort(comboItems,Collator.getInstance());
+			accelConfigCombo.setItems(comboItems);
 		
-		if(activeAcceleratorConfigurationName != null)
-			accelConfigCombo.select(accelConfigCombo.indexOf(activeAcceleratorConfigurationName));
+			if(activeAcceleratorConfigurationName != null)
+				accelConfigCombo.select(accelConfigCombo.indexOf(activeAcceleratorConfigurationName));
+		} else {
+			accelConfigCombo.setEnabled(false);
+		}	
 	}
 	/**
 	 * Create a composite that contains entry fields specifying editor preferences.
@@ -316,7 +320,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 			namesToConfiguration.put(configs[i].getName(), configs[i]);	
 
 		AcceleratorConfiguration config = ((Workbench)aWorkbench).getActiveAcceleratorConfiguration();
-		activeAcceleratorConfigurationName = config.getName();
+		if(config != null)
+			activeAcceleratorConfigurationName = config.getName();
 	}
 	/**
 	 * The default button has been pressed. 
@@ -395,11 +400,13 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		store.setValue(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE, newProjectPerspectiveSetting);
 
 		// store the active accelerator configuration id
-		AcceleratorConfiguration config = (AcceleratorConfiguration)namesToConfiguration.get(accelConfigCombo.getText());
-		store.setValue(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID, config.getId());
-		Workbench workbench = (Workbench)PlatformUI.getWorkbench();
-		workbench.setActiveAcceleratorConfiguration(config);
-
+		String configName = accelConfigCombo.getText();
+		AcceleratorConfiguration config = (AcceleratorConfiguration)namesToConfiguration.get(configName);
+		if(config != null) {
+			store.setValue(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID, config.getId());
+			Workbench workbench = (Workbench)PlatformUI.getWorkbench();
+			workbench.setActiveAcceleratorConfiguration(config);
+		}
 		return true;
 	}
 }

@@ -52,6 +52,8 @@ public class KeyBindingService implements IKeyBindingService {
 	 * @see IKeyBindingService#processKey(Event)
 	 */
 	public boolean processKey(Event event) {
+		if(scope == null)
+			return false;
     	return scope.processKey(this,event);
     }
 	/*
