@@ -29,15 +29,20 @@
   <fileTypes extension="txt" type="text"/>
   <fileTypes extension="properties" type="text"/>
   <fileTypes extension="xml" type="text"/>
+  <fileTypes extension="xsl" type="text"/>
   <fileTypes extension="html" type="text"/>
   <fileTypes extension="htm" type="text"/>
   <fileTypes extension="jpg" type="binary"/>
+  <fileTypes extension="jpeg" type="binary"/>
   <fileTypes extension="gif" type="binary"/>
+  <fileTypes extension="png" type="binary"/>
   <fileTypes extension="ico" type="binary"/>
   <fileTypes extension="bmp" type="binary"/>
   <fileTypes extension="tif" type="binary"/>
+  <fileTypes extension="tiff" type="binary"/>
   <fileTypes extension="doc" type="binary"/>
   <fileTypes extension="xls" type="binary"/>
+  <fileTypes extension="pdf" type="binary"/>
   <fileTypes extension="ppt" type="binary"/>
   <fileTypes extension="zip" type="binary"/>
   <fileTypes extension="exe" type="binary"/>
