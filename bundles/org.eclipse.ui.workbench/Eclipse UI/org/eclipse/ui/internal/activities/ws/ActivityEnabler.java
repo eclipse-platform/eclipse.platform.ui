@@ -21,7 +21,6 @@ import java.util.Set;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -184,7 +183,6 @@ public class ActivityEnabler {
 		
 		dualViewer = new CheckboxTreeViewer(c);
 		dualViewer.setSorter(new ViewerSorter());
-		dualViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 		dualViewer.setLabelProvider(new ActivityCategoryLabelProvider());
 		dualViewer.setContentProvider(provider);
 		dualViewer.setInput(activitySupport.getActivityManager());
