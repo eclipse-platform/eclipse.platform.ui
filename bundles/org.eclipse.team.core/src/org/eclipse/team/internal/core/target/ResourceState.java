@@ -484,10 +484,8 @@ public abstract class ResourceState {
 				return;
 			}
 			
-			// If the remote resource is a file.
+			// If the remote resource is a file, download the remote contents
 			if (getRemoteType() == IResource.FILE) {
-				// Replace any existing local resource with a copy of the remote file.
-				deleteLocal(Policy.subMonitorFor(progress, 10));
 				download(Policy.subMonitorFor(progress, 90));
 				return;
 			}
