@@ -303,7 +303,7 @@ public void setType(int value) {
 }
 public void writeTo(DataOutput output) throws IOException {
 	// The flags for this info are written by the visitor (flattener). 
-	// See Workspace.writeElement().  This allows the reader to look ahead 
+	// See SaveManager.writeElement().  This allows the reader to look ahead 
 	// and see what type of info is being loaded.
 	output.writeLong(localInfo);
 	output.writeLong(nodeId);
