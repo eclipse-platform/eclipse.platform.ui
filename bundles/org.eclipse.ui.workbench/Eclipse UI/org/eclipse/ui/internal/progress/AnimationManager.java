@@ -169,8 +169,11 @@ class AnimationManager {
 			if (isAnimated() && imageDataArray.length > 1) {
 				getAnimateJob().schedule();
 			}
-		} else //Not showing an error if there is no animation
+		} else{//Not showing an error if there is no animation
 			showingError = false;
+			//Refresh the progress viewer to clear out any stale remainders
+			ProgressViewUpdater.getSingleton().refreshAll();
+		}
 	}
 
 	/**
