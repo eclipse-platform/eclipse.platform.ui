@@ -115,19 +115,41 @@ public void move(File source, File destination, boolean force, IProgressMonitor 
 					throw new ResourceException(-1, new Path(destination.getAbsolutePath()), message, e);
 				}
 		}
-		if (!source.renameTo(destination)) {
-			boolean success = false;
-			try {
-				copy(source, destination, IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, 1));
-				success = true;
-			} finally {
-				if (success)
-					Workspace.clear(source);
-				else
+		if (source.renameTo(destination)) {
+			// double-check to ensure we really did move
+			// since java.io.File#renameTo sometimes lies
+			if (source.exists()) {
+				if (destination.exists()) {
+					// couldn't delete the source so remove the destination
+					// and throw an error
 					Workspace.clear(destination);
+					throw new ResourceException(new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, "Could not remove source file: " + source));
+				} else {
+					// source exists but destination doesn't so try to copy below
+				}
+			} else {
+				if (destination.exists()) {
+					// success case
+					return;
+				} else {
+					// neither the source nor the destination exist. this is REALLY bad
+					throw new ResourceException(new ResourceStatus(IResourceStatus.ERROR, "Failed to move: " + source + " to: " + destination));
+				}
 			}
-			monitor.worked(1);
+		} 
+		boolean success = false;
+		try {
+			copy(source, destination, IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, 1));
+			success = true;
+		} finally {
+			if (success)
+				Workspace.clear(source);
+			else {
+				Workspace.clear(destination);
+				throw new ResourceException(new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, "Could not move " + source + " to " + destination));
+			}
 		}
+		monitor.worked(1);
 	} finally {
 		monitor.done();
 	}
