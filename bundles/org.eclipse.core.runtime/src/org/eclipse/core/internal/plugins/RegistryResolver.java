@@ -1157,7 +1157,29 @@ private void resolvePluginFragments(PluginDescriptorModel plugin) {
 		PluginFragmentModel latestFragment = (PluginFragmentModel)list.next();
 		if (dirty)
 			latestOnly.add(latestFragment);
+		int numLibraries = latestFragment.getRuntime() == null ? 0 : latestFragment.getRuntime().length;
 		resolvePluginFragment(latestFragment, plugin);
+		// If this fragment added library entries, check to see if it
+		// added a duplicate library entry.
+		if (numLibraries != 0) {
+			// Something got added
+			LibraryModel[] libraries = plugin.getRuntime();
+			// Put all the library names into a set as we know the set will not
+			// have any duplicates.
+			Set libNames = new HashSet();
+			int setSize = libNames.size();
+			for (int i = 0; i < libraries.length; i++) {
+				libNames.add(libraries[i].getName());
+				if (libNames.size() == setSize) {
+					// We know this library name didn't get added to the set.
+					// Ignore the duplicate but indicate an error
+					String[] bindings = {latestFragment.getId(), plugin.getId(), libraries[i].getName()};
+					error (Policy.bind("parse.duplicateLib", bindings)); //$NON-NLS-1$
+				} else {
+					setSize = libNames.size();
+				}
+			}
+		}
 	}
 	// Currently the fragments on the plugin include all fragment 
 	// versions.  Now strip off all but the latest version of each
