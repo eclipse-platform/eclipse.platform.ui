@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import org.eclipse.compare.internal.TabFolderLayout;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -110,7 +109,6 @@ public class CVSSSH2PreferencePage extends PreferencePage
     container.setLayout(layout);
 
     TabFolder tabFolder = new TabFolder(container, SWT.NONE);
-//    tabFolder.setLayout(new TabFolderLayout());
     tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
 
     TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
