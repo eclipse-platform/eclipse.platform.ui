@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Common Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/cpl-v10.html
@@ -601,18 +601,17 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		
 		endingThread.start();
 		StatusChecker.waitForStatus(status, StatusChecker.STATUS_RUNNING);
-		
-		//should be able to end the rule from this thread
-		manager.endRule(rule1);
-		
+
 		try {
 			endingThread.join();
 		} catch (InterruptedException e) {
-			
 		}
 		//the thread should be dead now
 		assertTrue("1.0", !endingThread.isAlive());
 
+		//should be able to end the rule from this thread
+		manager.endRule(rule1);
+		
 		//starting several rules on this thread, and trying to end them from other threads
 		ISchedulingRule rules[] = new ISchedulingRule[3];
 
