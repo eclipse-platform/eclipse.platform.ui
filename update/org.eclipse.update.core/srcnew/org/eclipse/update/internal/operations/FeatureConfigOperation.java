@@ -27,7 +27,7 @@ public class FeatureConfigOperation extends PendingOperation {
 		this.site = site;
 	}
 	
-	public void execute() throws CoreException {
+	public void execute(IProgressMonitor pm) throws CoreException {
 		site.configure(feature);		
 	}
 	

@@ -81,7 +81,7 @@ public class PendingOperation {
 		// used to be called setModel
 	}
 	
-	public void execute() throws CoreException {
+	public void execute(IProgressMonitor pm) throws CoreException {
 	}
 	
 	public void undo()  throws CoreException{

@@ -270,6 +270,13 @@ public class OperationsManager implements IAdaptable {
 						null);
 				throw new CoreException(status);
 			}
+		} else if (job instanceof FeatureInstallOperation) {
+			FeatureInstallOperation installJob = (FeatureInstallOperation)job;
+			installJob.setInstallConfiguration(config);
+			installJob.setTargetSite(targetSite);
+			installJob.setOptionalFeatures(optionalFeatures);
+			installJob.setVerificationListener(verifier);
+			installJob.execute(monitor);
 		} else if (job.getJobType() == PendingOperation.INSTALL) {
 			if (optionalFeatures == null)
 				targetSite.install(feature, verifier, monitor);
@@ -390,7 +397,7 @@ public class OperationsManager implements IAdaptable {
 		else
 			toggleOperation = new FeatureConfigOperation(site, feature);
 
-		toggleOperation.execute();
+		toggleOperation.execute(null); // no progress monitor needed
 	
 		IStatus status = UpdateManager.getValidator().validateCurrentState();
 		if (status != null) {
