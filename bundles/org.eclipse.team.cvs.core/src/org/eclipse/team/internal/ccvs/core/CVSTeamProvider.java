@@ -513,61 +513,66 @@ public class CVSTeamProvider extends RepositoryProvider {
 	 * Use specialiazed tagging to move all local changes (including additions and
 	 * deletions) to the specified branch.
 	 */
-	public void makeBranch(IResource[] resources, CVSTag versionTag, CVSTag branchTag, boolean moveToBranch, boolean eclipseWay, IProgressMonitor monitor) throws TeamException {
+	public void makeBranch(IResource[] resources, final CVSTag versionTag, final CVSTag branchTag, boolean moveToBranch, IProgressMonitor monitor) throws TeamException {
 		
 		// Determine the total amount of work
-		int totalWork = 10 + (versionTag!= null ? 60 : 40) + (moveToBranch ? 20 : 0);
+		int totalWork = (versionTag!= null ? 60 : 40) + (moveToBranch ? 20 : 0);
 		monitor.beginTask(Policy.bind("CVSTeamProvider.makeBranch"), totalWork);  //$NON-NLS-1$
 		try {
-			
-			// Determine which tag command to used depending on whether the Eclipse specific
-			// method of branching is requested
-			Tag tagCommand = Command.TAG;
-			if (eclipseWay) {
-				tagCommand = Command.CUSTOM_TAG;
-			}
-			
 			// Build the arguments list
-			String[] arguments = getValidArguments(resources, Command.NO_LOCAL_OPTIONS);
+			final ICVSResource[] arguments = getCVSArguments(resources);
 			
 			// Tag the remote resources
 			Session s = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot());
 			try {
-				s.open(Policy.subMonitorFor(monitor, 10));
-				
-				IStatus status;
+				final IStatus status[] = new IStatus[] { null };
 				if (versionTag != null) {
-					// Version using tag and branch using rtag
-					status = tagCommand.execute(s,
-						Command.NO_GLOBAL_OPTIONS,
-						Command.NO_LOCAL_OPTIONS,
-						versionTag,
-						arguments,
-						null,
-						Policy.subMonitorFor(monitor, 40));
-					if (status.isOK()) {
+					// Version using a custom tag command that skips added but not commited reesources
+					Session.run(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true /* output to console */,
+						new ICVSRunnable(						) {
+							public void run(IProgressMonitor monitor) throws CVSException {
+								status[0] = Command.CUSTOM_TAG.execute(
+									Command.NO_GLOBAL_OPTIONS,
+									Command.NO_LOCAL_OPTIONS,
+									versionTag,
+									arguments,
+									null,
+									monitor);
+							}
+						}, Policy.subMonitorFor(monitor, 40));
+					if (status[0].isOK()) {
 						// XXX Could use RTAG here when it works
-						status = tagCommand.execute(s,
-							Command.NO_GLOBAL_OPTIONS,
-							Command.NO_LOCAL_OPTIONS,
-							branchTag,
-							arguments,
-							null,
-							Policy.subMonitorFor(monitor, 20));
+						Session.run(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true /* output to console */,
+							new ICVSRunnable(						) {
+								public void run(IProgressMonitor monitor) throws CVSException {
+									status[0] = Command.CUSTOM_TAG.execute(
+										Command.NO_GLOBAL_OPTIONS,
+										Command.NO_LOCAL_OPTIONS,
+										branchTag,
+										arguments,
+										null,
+										monitor);
+								}
+							}, Policy.subMonitorFor(monitor, 20));
 					}
 				} else {
 					// Just branch using tag
-					status = tagCommand.execute(s,
-						Command.NO_GLOBAL_OPTIONS,
-						Command.NO_LOCAL_OPTIONS,
-						branchTag,
-						arguments,
-						null,
-						Policy.subMonitorFor(monitor, 40));
+					Session.run(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true /* output to console */,
+						new ICVSRunnable(						) {
+							public void run(IProgressMonitor monitor) throws CVSException {
+								status[0] = Command.CUSTOM_TAG.execute(
+									Command.NO_GLOBAL_OPTIONS,
+									Command.NO_LOCAL_OPTIONS,
+									branchTag,
+									arguments,
+									null,
+									monitor);
+							}
+						}, Policy.subMonitorFor(monitor, 40));
 	
 				}
-				if ( ! status.isOK()) {
-					throw new CVSServerException(status);
+				if ( ! status[0].isOK()) {
+					throw new CVSServerException(status[0]);
 				}
 			} finally {
 				s.close();
@@ -576,11 +581,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 			// Set the tag of the local resources to the branch tag (The update command will not
 			// properly update "cvs added" and "cvs removed" resources so a custom visitor is used
 			if (moveToBranch) {
-				if (eclipseWay) {
-					setTag(resources, branchTag, Policy.subMonitorFor(monitor, 20));
-				} else {
-					update(resources, Command.NO_LOCAL_OPTIONS, branchTag, true /*createBackups*/, Policy.subMonitorFor(monitor, 20));
-				}
+				setTag(resources, branchTag, Policy.subMonitorFor(monitor, 20));
 			}
 		} finally {
 			monitor.done();

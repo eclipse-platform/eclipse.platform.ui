@@ -24,6 +24,7 @@ import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.Policy;
@@ -701,16 +702,8 @@ public abstract class Command extends Request {
 		ICommandOutputListener listener, IProgressMonitor pm) throws CVSException {
 		
 		Session openSession = getOpenSession(arguments);
-		if (openSession == null) {
-			throw new CVSException(Policy.bind("Command.noOpenSession")); //$NON-NLS-1$
-		} else {
-			// Convert arguments
-			List stringArguments = new ArrayList(arguments.length);
-			for (int i = 0; i < arguments.length; i++) {
-				stringArguments.add(arguments[i].getRelativePath(openSession.getLocalRoot()));
-			}
-			return execute(openSession, globalOptions, localOptions, (String[]) stringArguments.toArray(new String[stringArguments.size()]), listener, pm);
-		}
+		String[] stringArguments = convertArgumentsForOpenSession(arguments, openSession);
+		return execute(openSession, globalOptions, localOptions, stringArguments, listener, pm);
 	}
 	
 	protected Session getOpenSession(ICVSResource[] arguments) throws CVSException {
@@ -722,6 +715,18 @@ public abstract class Command extends Request {
 		} else {
 			openSession = Session.getOpenSession(arguments[0]);
 		}
+		if (openSession == null) {
+			throw new CVSException(Policy.bind("Command.noOpenSession")); //$NON-NLS-1$
+		}
 		return openSession;
+	}
+	
+	protected String[] convertArgumentsForOpenSession(ICVSResource[] arguments, Session openSession) throws CVSException {
+		// Convert arguments
+		List stringArguments = new ArrayList(arguments.length);
+		for (int i = 0; i < arguments.length; i++) {
+			stringArguments.add(arguments[i].getRelativePath(openSession.getLocalRoot()));
+		}
+		return (String[]) stringArguments.toArray(new String[stringArguments.size()]);
 	}
 }

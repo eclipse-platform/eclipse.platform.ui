@@ -99,6 +99,7 @@ public class CVSProviderPlugin extends Plugin {
 	private String cvsServer = DEFAULT_CVS_SERVER;
 	private IConsoleListener consoleListener;
 	private boolean watchEditEnabled = true;
+	private boolean determineVersionEnabled = true;
 	
 	private static CVSProviderPlugin instance;
 	
@@ -785,6 +786,20 @@ public class CVSProviderPlugin extends Plugin {
 		return Team.getType(file) == Team.TEXT;
 	}
 	
+	/**
+	 * Gets the determineVersionEnabled.
+	 * @return boolean
+	 */
+	public boolean isDetermineVersionEnabled() {
+		return determineVersionEnabled;
+	}
 
+	/**
+	 * Sets the determineVersionEnabled.
+	 * @param determineVersionEnabled The determineVersionEnabled to set
+	 */
+	public void setDetermineVersionEnabled(boolean determineVersionEnabled) {
+		this.determineVersionEnabled = determineVersionEnabled;
+	}
 }
 

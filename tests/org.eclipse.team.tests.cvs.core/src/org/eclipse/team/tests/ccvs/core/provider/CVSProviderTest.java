@@ -208,7 +208,7 @@ public class CVSProviderTest extends EclipseTest {
 		// Make the branch including a pre-version
 		CVSTag version = new CVSTag("v1", CVSTag.BRANCH);
 		CVSTag branch = new CVSTag("branch1", CVSTag.BRANCH);
-		getProvider(project).makeBranch(new IResource[] {project}, version, branch, true, true, DEFAULT_MONITOR);
+		getProvider(project).makeBranch(new IResource[] {project}, version, branch, true, DEFAULT_MONITOR);
 
 		// Checkout a copy from the branch and version and compare
 		IProject branchCopy = checkoutCopy(project, branch);

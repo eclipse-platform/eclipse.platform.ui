@@ -100,19 +100,11 @@ public class RTag extends RemoteCommand {
 		CVSTag sourceTag, CVSTag tag, ICVSRemoteResource[] arguments, IProgressMonitor monitor) 
 		throws CVSException {
 		
-		// Get the open session for the arguments
-		Session session = getOpenSession((ICVSResource[])Arrays.asList(arguments).toArray(new ICVSResource[arguments.length]));
-		if (session == null) {
-			throw new CVSException(Policy.bind("Command.noOpenSession")); //$NON-NLS-1$
-		}
-		
-		// Convert arguments to repository relative path
-		List stringArguments = new ArrayList(arguments.length);
-		for (int i = 0; i < arguments.length; i++) {
-			stringArguments.add(arguments[i].getRepositoryRelativePath());
-		}
-			
-		return execute(session, globalOptions, localOptions, sourceTag, tag, (String[]) stringArguments.toArray(new String[stringArguments.size()]), monitor);
+		ICVSResource[] resources = (ICVSResource[])Arrays.asList(arguments).toArray(new ICVSResource[arguments.length]);
+		Session session = getOpenSession(resources);
+		String[] stringArguments = convertArgumentsForOpenSession(resources, session);
+
+		return execute(session, globalOptions, localOptions, sourceTag, tag, stringArguments, monitor);
 	}
 	
 	protected ICommandOutputListener getDefaultCommandOutputListener() {

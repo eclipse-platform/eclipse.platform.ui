@@ -340,7 +340,7 @@ public class Session {
 			}
 			
 			// get the server platform if it is unknown
-			if (location.getServerPlatform() == location.UNDETERMINED_PLATFORM) {
+			if (CVSProviderPlugin.getPlugin().isDetermineVersionEnabled() && location.getServerPlatform() == location.UNDETERMINED_PLATFORM) {
 				Command.VERSION.execute(this, location, Policy.subMonitorFor(monitor, 10));
 			}
 		} catch (CVSException e) {

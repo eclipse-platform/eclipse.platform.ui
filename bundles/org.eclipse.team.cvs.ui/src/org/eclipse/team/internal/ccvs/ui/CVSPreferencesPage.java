@@ -69,6 +69,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	private Button showMarkers;
 	private Button replaceUnmanaged;
 	private Button repositoriesAreBinary;
+	private Button determineVersionEnabled;
 	
 	private Button never;
 	private Button prompt;
@@ -179,6 +180,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		showMarkers = createCheckBox(composite, Policy.bind("CVSPreferencePage.showAddRemoveMarkers")); //$NON-NLS-1$		
 		replaceUnmanaged = createCheckBox(composite, Policy.bind("CVSPreferencePage.replaceUnmanaged")); //$NON-NLS-1$
 		repositoriesAreBinary = createCheckBox(composite, Policy.bind("CVSPreferencePage.repositoriesAreBinary")); //$NON-NLS-1$
+		determineVersionEnabled = createCheckBox(composite, Policy.bind("CVSPreferencePage.determineVersionEnabled")); //$NON-NLS-1$
 			
 		createLabel(composite, ""); createLabel(composite, ""); //$NON-NLS-1$ //$NON-NLS-2$
 		
@@ -247,6 +249,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		WorkbenchHelp.setHelp(replaceUnmanaged, IHelpContextIds.PREF_REPLACE_DELETE_UNMANAGED);
 		WorkbenchHelp.setHelp(showMarkers, IHelpContextIds.PREF_MARKERS_ENABLED);
 		WorkbenchHelp.setHelp(repositoriesAreBinary, IHelpContextIds.PREF_TREAT_NEW_FILE_AS_BINARY);
+		WorkbenchHelp.setHelp(determineVersionEnabled, IHelpContextIds.PREF_DETERMINE_SERVER_VERSION);
 						
 		return composite;
 	}
@@ -303,6 +306,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		considerContentsInCompare.setSelection(store.getBoolean(ICVSUIConstants.PREF_CONSIDER_CONTENTS));
 		showMarkers.setSelection(store.getBoolean(ICVSUIConstants.PREF_SHOW_MARKERS));
 		replaceUnmanaged.setSelection(store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
+		determineVersionEnabled.setSelection(store.getBoolean(ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION));
 		
 		initializeSaveRadios(store.getInt(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS));		
 	}
@@ -346,6 +350,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		store.setValue(ICVSUIConstants.PREF_REPLACE_UNMANAGED, replaceUnmanaged.getSelection());
 		store.setValue(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS, getSaveRadio());
 		store.setValue(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY, repositoriesAreBinary.getSelection());
+		store.setValue(ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION, determineVersionEnabled.getSelection());
 		
 		CVSProviderPlugin.getPlugin().setReplaceUnmanaged(
 			store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
@@ -361,6 +366,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		KSubstOption oldKSubst = CVSProviderPlugin.getPlugin().getDefaultTextKSubstOption();
 		KSubstOption newKSubst = KSubstOption.fromMode(store.getString(ICVSUIConstants.PREF_TEXT_KSUBST));
 		CVSProviderPlugin.getPlugin().setDefaultTextKSubstOption(newKSubst);
+		CVSProviderPlugin.getPlugin().setDetermineVersionEnabled(store.getBoolean(ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION));
 		
 		// changing the default keyword substitution mode for text files may affect
 		// information displayed in the decorators

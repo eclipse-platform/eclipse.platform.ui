@@ -102,10 +102,10 @@ public class BranchAction extends WorkspaceAction {
 						ICVSRepositoryLocation root = provider.getCVSWorkspaceRoot().getRemoteLocation();
 						if (!areAllResourcesSticky(resources)) {													
 							// version everything in workspace with the root version tag specified in dialog
-							provider.makeBranch(providerResources, rootVersionTag, branchTag, update, true, subMonitor);
+							provider.makeBranch(providerResources, rootVersionTag, branchTag, update, subMonitor);
 						} else {
 							// all resources are versions, use that version as the root of the branch
-							provider.makeBranch(providerResources, null, branchTag, update, true, subMonitor);										
+							provider.makeBranch(providerResources, null, branchTag, update, subMonitor);										
 						}
 						if (rootVersionTag != null || update) {
 							for (int i = 0; i < providerResources.length; i++) {
