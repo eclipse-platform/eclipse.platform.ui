@@ -222,6 +222,16 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			return;
 		}
 		
+		if (event.getProperty().equals(IDebugPreferenceConstants.PREF_PADDED_STR))
+		{
+			if (!fIsDisposed)
+			{
+				fTableViewer.refresh();
+				fTableCursor.redraw();
+			}
+			return;
+		}
+		
 		Object evtSrc = event.getSource();
 		
 		// do not handle event if the rendering is displaying an error
@@ -553,6 +563,8 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 				
 			}};
 		scroll.addSelectionListener(fScrollbarSelectionListener);
+		
+		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		
 	}
 	
@@ -1384,13 +1396,14 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 				// otherwise, use default
 				if (fColumnSize >= 4)
 				{
-					columns[i].setText(Integer.toHexString(i*fColumnSize).toUpperCase() + 
-							" - " + Integer.toHexString(i*fColumnSize+fColumnSize-1).toUpperCase()); //$NON-NLS-1$
+					columns[i].setText(Integer.toHexString(j*fColumnSize).toUpperCase() + 
+							" - " + Integer.toHexString(j*fColumnSize+fColumnSize-1).toUpperCase()); //$NON-NLS-1$
 				}
 				else
 				{
-					columns[i].setText(Integer.toHexString(i*fColumnSize).toUpperCase());
+					columns[i].setText(Integer.toHexString(j*fColumnSize).toUpperCase());
 				}
+				j++;
 			}
 		}
 	}
@@ -1595,6 +1608,8 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			IMemoryRenderingSynchronizationService syncService = getMemoryRenderingContainer().getMemoryRenderingSite().getSynchronizationService();
 			if (syncService != null)
 				syncService.removePropertyChangeListener(this);
+			
+			DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 			
 			super.dispose();
 
@@ -2450,8 +2465,6 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	 *            addres where the bytes belong to
 	 * @param data -
 	 *            the bytes
-	 * @param paddedStr -
-	 *            fill each byte that is invalid with this padded string.
 	 * @return a string to represent the memory. Do not return null. Return a
 	 *         string to pad the cell if the memory cannot be converted
 	 *         successfully.
@@ -2466,10 +2479,10 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	 * @param dataType - type of data the string represents
 	 * @param address - address where the bytes belong to
 	 * @param currentValues - current values of the data in bytes format
-	 * @param data - the string to be converted to bytes
+	 * @param newValue - the string to be converted to bytes
 	 * @return the bytes to be passed to debug adapter for modification.
 	 */
-	abstract public byte[] getBytes(String dataType, BigInteger address, MemoryByte[] currentValues, String data);
+	abstract public byte[] getBytes(String dataType, BigInteger address, MemoryByte[] currentValues, String newValue);
 
 }	
 

@@ -45,7 +45,7 @@
    <element name="renderingType">
       <annotation>
          <documentation>
-            This element defines a rendering.  A rendering is comprised of an id, a name, an optional rendering factory, and an optional list of rendering properties.
+            This element defines a rendering type.  
          </documentation>
       </annotation>
       <complexType>
@@ -69,7 +69,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  fully qualified name of the Java class that implements &lt;code&gt;org.eclipse.debug.ui.memory.IMemoryRenderingFactory&lt;/code&gt;
+                  fully qualified name of the Java class that implements &lt;code&gt;org.eclipse.debug.ui.memory.IMemoryRenderingTypeDelegate&lt;/code&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
