@@ -80,7 +80,7 @@ public final class InternalPlatform {
 
 	private FileManager runtimeFileManager;
 	private Path cachedInstanceLocation; // Cache the path of the instance location
-	
+
 	// execution options
 	private static final String OPTION_DEBUG = Platform.PI_RUNTIME + "/debug"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_SYSTEM_CONTEXT = Platform.PI_RUNTIME + "/debug/context"; //$NON-NLS-1$
@@ -148,6 +148,10 @@ public final class InternalPlatform {
 	public static final String PROP_ARCH = "osgi.arch"; //$NON-NLS-1$
 	public static final String PROP_ADAPTOR = "osgi.adaptor"; //$NON-NLS-1$
 	public static final String PROP_SYSPATH = "osgi.syspath"; //$NON-NLS-1$
+
+	private static final String[] ARCH_LIST = {Platform.ARCH_PA_RISC, Platform.ARCH_PPC, Platform.ARCH_SPARC, Platform.ARCH_X86, Platform.ARCH_AMD64};
+	private static final String[] OS_LIST = {Platform.OS_AIX, Platform.OS_HPUX, Platform.OS_LINUX, Platform.OS_MACOSX, Platform.OS_QNX, Platform.OS_SOLARIS, Platform.OS_WIN32};
+	private static final String[] WS_LIST = {Platform.WS_CARBON, Platform.WS_GTK, Platform.WS_MOTIF, Platform.WS_PHOTON, Platform.WS_WIN32};
 
 	/**
 	 * Private constructor to block instance creation.
@@ -291,7 +295,7 @@ public final class InternalPlatform {
 			File file = new File(location.getURL().getFile());
 			cachedInstanceLocation = new Path(file.toString());
 		}
-		return cachedInstanceLocation;	
+		return cachedInstanceLocation;
 	}
 
 	/**
@@ -1192,9 +1196,9 @@ public final class InternalPlatform {
 	public void unregisterBundleGroupProvider(IBundleGroupProvider provider) {
 		groupProviders.remove(provider);
 	}
-	
+
 	public FileManager getRuntimeFileManager() {
-		if (runtimeFileManager==null) {
+		if (runtimeFileManager == null) {
 			try {
 				File controlledDir = new File(InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath() + '/' + Platform.PI_RUNTIME);
 				controlledDir.mkdirs();
@@ -1204,5 +1208,32 @@ public final class InternalPlatform {
 			}
 		}
 		return runtimeFileManager;
+	}
+
+	/**
+	 * Returns a list of known system architectures.
+	 * 
+	 * @return the list of system architectures known to the system
+	 */
+	public String[] knownOSArchValues() {
+		return ARCH_LIST;
+	}
+
+	/**
+	 * Returns a list of known operating system names.
+	 * 
+	 * @return the list of operating systems known to the system
+	 */
+	public String[] knownOSValues() {
+		return OS_LIST;
+	}
+
+	/**
+	 * Returns a list of known windowing system names.
+	 * 
+	 * @return the list of window systems known to the system
+	 */
+	public String[] knownWSValues() {
+		return WS_LIST;
 	}
 }

@@ -23,11 +23,14 @@ import org.osgi.framework.Bundle;
  * bundle groups also carry an arbitrary set of properties.  The valid set of 
  * key-value pairs and their interpretation defined by the consumer in the 
  * target environment.
+ * </p><p>
+ * The Eclipse UI is the typical consumer of bundle groups and defines various 
+ * property keys that it will use, for example, to display About information.  See
+ * <code>org.eclipse.ui.branding.IBundleGroupConstants</code>.
  * </p>
  * @see IBundleGroupProvider
  * @since 3.0
  */
-//TODO Put a reference to org.eclipse.ui.branding.IBundleGroupConstants
 public interface IBundleGroup {
 
 	/**

@@ -160,6 +160,130 @@ public final class Platform {
 	public static final int FAILED_DELETE_METADATA = 6;
 
 	/**
+	 * Constant string (value "win32") indicating the platform is running on a
+	 * Window 32-bit operating system (e.g., Windows 98, NT, 2000).
+	 */
+	public static final String OS_WIN32 = "win32";//$NON-NLS-1$
+
+	/**
+	 * Constant string (value "linux") indicating the platform is running on a
+	 * Linux-based operating system.
+	 */
+	public static final String OS_LINUX = "linux";//$NON-NLS-1$
+
+	/**
+	 * Constant string (value "aix") indicating the platform is running on an
+	 * AIX-based operating system.
+	 */
+	public static final String OS_AIX = "aix";//$NON-NLS-1$
+
+	/**
+	 * Constant string (value "solaris") indicating the platform is running on a
+	 * Solaris-based operating system.
+	 */
+	public static final String OS_SOLARIS = "solaris";//$NON-NLS-1$
+
+	/**
+	 * Constant string (value "hpux") indicating the platform is running on an
+	 * HP/UX-based operating system.
+	 */
+	public static final String OS_HPUX = "hpux";//$NON-NLS-1$
+
+	/**
+	 * Constant string (value "qnx") indicating the platform is running on a
+	 * QNX-based operating system.
+	 */
+	public static final String OS_QNX = "qnx";//$NON-NLS-1$
+
+	/**
+	 * Constant string (value "macosx") indicating the platform is running on a
+	 * Mac OS X operating system.
+	 * 
+	 * @since 2.0
+	 */
+	public static final String OS_MACOSX = "macosx";//$NON-NLS-1$
+
+	/**
+	 * Constant string (value "unknown") indicating the platform is running on a
+	 * machine running an unknown operating system.
+	 */
+	public static final String OS_UNKNOWN = "unknown";//$NON-NLS-1$
+
+	/**
+	 * Constant string (value "x86") indicating the platform is running on an
+	 * x86-based architecture.
+	 */
+	public static final String ARCH_X86 = "x86";//$NON-NLS-1$
+
+	/**
+	 * Constant string (value "PA_RISC") indicating the platform is running on an
+	 * PA_RISC-based architecture.
+	 */
+	public static final String ARCH_PA_RISC = "PA_RISC";//$NON-NLS-1$
+
+	/**
+	 * Constant string (value "ppc") indicating the platform is running on an
+	 * PowerPC-based architecture.
+	 * 
+	 * @since 2.0
+	 */
+	public static final String ARCH_PPC = "ppc";//$NON-NLS-1$
+
+	/**
+	 * Constant string (value "sparc") indicating the platform is running on an
+	 * Sparc-based architecture.
+	 * 
+	 * @since 2.0
+	 */
+	public static final String ARCH_SPARC = "sparc";//$NON-NLS-1$
+
+	/**
+	 * Constant string (value "amd64") indicating the platform is running on an
+	 * AMD64-based architecture.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String ARCH_AMD64 = "amd64";//$NON-NLS-1$
+
+	/**
+	 * Constant string (value "win32") indicating the platform is running on a
+	 * machine using the Windows windowing system.
+	 */
+	public static final String WS_WIN32 = "win32";//$NON-NLS-1$
+
+	/**
+	 * Constant string (value "motif") indicating the platform is running on a
+	 * machine using the Motif windowing system.
+	 */
+	public static final String WS_MOTIF = "motif";//$NON-NLS-1$
+
+	/**
+	 * Constant string (value "gtk") indicating the platform is running on a
+	 * machine using the GTK windowing system.
+	 */
+	public static final String WS_GTK = "gtk";//$NON-NLS-1$
+
+	/**
+	 * Constant string (value "photon") indicating the platform is running on a
+	 * machine using the Photon windowing system.
+	 */
+	public static final String WS_PHOTON = "photon";//$NON-NLS-1$
+
+	/**
+	 * Constant string (value "carbon") indicating the platform is running on a
+	 * machine using the Carbon windowing system (Mac OS X).
+	 * 
+	 * @since 2.0
+	 */
+	public static final String WS_CARBON = "carbon";//$NON-NLS-1$
+
+	/**
+	 * Constant string (value "unknown") indicating the platform is running on a
+	 * machine running an unknown windowing system.
+	 */
+	public static final String WS_UNKNOWN = "unknown";//$NON-NLS-1$
+
+	/**
 	 * Private constructor to block instance creation.
 	 */
 	private Platform() {
@@ -418,7 +542,6 @@ public final class Platform {
 	 * as described above.  If the compatibility layer is not installed, <code>null</code>
 	 * is returned in all cases.
 	 */
-	//TODO Throws IllegalStateException
 	public static Plugin getPlugin(String id) {
 		try {
 			IPluginRegistry registry = getPluginRegistry();
@@ -1017,5 +1140,80 @@ public final class Platform {
 	 */
 	public static boolean isRunning() {
 		return InternalPlatform.getDefault().isRunning();
+	}
+	/**
+	 * Returns a list of known system architectures.
+	 * <p>
+	 * Note that this list is not authoritative; there may be legal values
+	 * not included in this list. Indeed, the value returned by 
+	 * <code>getOSArch</code> may not be in this list. Also, this list may 
+	 * change over time as Eclipse comes to run on more operating environments.
+	 * </p>
+	 * 
+	 * @return the list of system architectures known to the system
+	 * @see #getOSArch()
+	 * @since 3.0
+	 */
+	public static String[] knownOSArchValues() {
+		return InternalPlatform.getDefault().knownOSArchValues();
+	}
+
+	/**
+	 * Returns a list of known operating system names.
+	 * <p>
+	 * Note that this list is not authoritative; there may be legal values
+	 * not included in this list. Indeed, the value returned by 
+	 * <code>getOS</code> may not be in this list. Also, this list may 
+	 * change over time as Eclipse comes to run on more operating environments.
+	 * </p>
+	 * 
+	 * @return the list of operating systems known to the system
+	 * @see #getOS()
+	 * @since 3.0
+	 */
+	public static String[] knownOSValues() {
+		return InternalPlatform.getDefault().knownOSValues();
+	}
+
+	/**
+	 * Returns a list of known windowing system names.
+	 * <p>
+	 * Note that this list is not authoritative; there may be legal values
+	 * not included in this list. Indeed, the value returned by 
+	 * <code>getWS</code> may not be in this list. Also, this list may 
+	 * change over time as Eclipse comes to run on more operating environments.
+	 * </p>
+	 * 
+	 * @return the list of window systems known to the system
+	 * @see #getWS()
+	 * @since 3.0
+	 */
+	public static String[] knownWSValues() {
+		return InternalPlatform.getDefault().knownWSValues();
+	}
+
+	/**
+	 * Returns <code>true</code> if the platform is currently running in 
+	 * debug mode.  The platform is typically put in debug mode using the
+	 * "-debug" command line argument.
+	 *
+	 * @return whether or not the platform is running in debug mode
+	 * @since 3.0
+	 */
+	public static boolean inDebugMode() {
+		return System.getProperty("osgi.debug") != null; //$NON-NLS-1$
+	}
+
+	/**
+	 * Returns <code>true</code> if the platform is currently running in 
+	 * development mode.  That is, if special procedures are to be 
+	 * taken when defining plug-in class paths.  The platform is typically put in 
+	 * development mode using the "-dev" command line argument.
+	 *
+	 * @return whether or not the platform is running in development mode
+	 * @since 3.0
+	 */
+	public static boolean inDevelopmentMode() {
+		return System.getProperty("osgi.dev") != null; //$NON-NLS-1$
 	}
 }

@@ -187,8 +187,9 @@ public abstract class Plugin implements BundleActivator {
 			if ((bundle.getState() & (Bundle.STARTING | Bundle.ACTIVE | Bundle.STOPPING)) == 0)
 				bundle.start();
 		} catch (BundleException e) {
-			// TODO do nothing for now
-			e.printStackTrace();
+			String message = Policy.bind("plugin.startupProblems", descriptor.getUniqueIdentifier()); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
+			InternalPlatform.getDefault().log(status);
 		}
 	}
 
@@ -230,12 +231,9 @@ public abstract class Plugin implements BundleActivator {
 	 * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.
 	 * See the comments on {@link IPluginDescriptor} and its methods for details.
 	 */
-	// TODO throw IllegalStateException if compatibility is not around.
 	public final IPluginDescriptor getDescriptor() {
 		if (descriptor != null)
 			return descriptor;
-
-		//TODO Need to check if pluginId exists
 		String pluginId = bundle.getSymbolicName();
 		descriptor = CompatibilityHelper.getPluginDescriptor(pluginId);
 		if (descriptor != null)
@@ -499,27 +497,27 @@ public abstract class Plugin implements BundleActivator {
 	public void shutdown() throws CoreException {
 		if (CompatibilityHelper.getCompatibility() == null)
 			return;
-		
+		Throwable exception = null;
 		Method m;
 		try {
 			m = descriptor.getClass().getMethod("doPluginDeactivation", new Class[0]); //$NON-NLS-1$
 			m.invoke(descriptor, null);
 		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			exception = e;
 		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			exception = e;
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			exception = e;
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			exception = e;
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			exception = e;
 		}
+		if (exception == null)
+			return;
+		String message = Policy.bind("plugin.shutdownProblems", descriptor.getUniqueIdentifier()); //$NON-NLS-1$
+		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, exception);
+		InternalPlatform.getDefault().log(status);
 	}
 
 	/**
