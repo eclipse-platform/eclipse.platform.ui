@@ -1197,7 +1197,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		IProject project = createProject(new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
 		IFolder newFolder = project.getFolder("newFolder");
 		newFolder.create(false, true, null);
-		IFile newFile = newFolder.getFile("newFile");
+		buildResources(newFolder, new String[] {"newFile"}, false);
 		overrideAndUpdate(project, new String[] {"newFolder", "newFolder/newFile"}, true);
 		assertDoesNotExistInFileSystem(newFolder);
 	}

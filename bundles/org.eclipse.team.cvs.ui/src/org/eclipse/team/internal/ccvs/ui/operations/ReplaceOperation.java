@@ -76,16 +76,20 @@ public class ReplaceOperation extends UpdateOperation {
 					recurse ? IResource.DEPTH_INFINITE : IResource.DEPTH_ZERO, 
 					Policy.subMonitorFor(monitor, 30)); //$NON-NLS-1$
 				
-				// Prune any empty folders left after the resources were purged
-				new PruneFolderVisitor().visit(session, resources);
-				
 				// Only perform the remote command if some of the resources being replaced were managed
-				if (managedResources.length == 0) {
-					return OK;
-				} else {
+				IStatus status = OK;
+				if (managedResources.length > 0) {
 					// Perform an update, ignoring any local file modifications
-					return super.executeCommand(session, provider, managedResources, Policy.subMonitorFor(monitor, 70));
+					status = super.executeCommand(session, provider, managedResources, Policy.subMonitorFor(monitor, 70));
 				}
+				
+				// Prune any empty folders left after the resources were purged.
+				// This is done to prune any empty folders that contained only unmanaged resources
+				if (status.isOK() && CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) {
+					new PruneFolderVisitor().visit(session, resources);
+				}
+				
+				return status;
 			} finally {
 				monitor.done();
 			}
