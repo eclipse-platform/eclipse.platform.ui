@@ -181,11 +181,11 @@ public class MultipleInputDialog extends Dialog {
 			});
 		}
 		
-		Button button = createButton(comp, IDialogConstants.IGNORE_ID, "Browse...", false);
+		Button button = createButton(comp, IDialogConstants.IGNORE_ID, DebugUIMessages.getString("MultipleInputDialog.6"), false); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog dialog = new DirectoryDialog(getShell());
-				dialog.setMessage("Select a file"); 
+				dialog.setMessage(DebugUIMessages.getString("MultipleInputDialog.7"));  //$NON-NLS-1$
 				String currentWorkingDir = text.getText();
 				if (!currentWorkingDir.trim().equals("")) { //$NON-NLS-1$
 					File path = new File(currentWorkingDir);
@@ -245,7 +245,7 @@ public class MultipleInputDialog extends Dialog {
 			});
 		}
 		
-		Button button = createButton(comp, IDialogConstants.IGNORE_ID, "Variables...", false);
+		Button button = createButton(comp, IDialogConstants.IGNORE_ID, DebugUIMessages.getString("MultipleInputDialog.8"), false); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
