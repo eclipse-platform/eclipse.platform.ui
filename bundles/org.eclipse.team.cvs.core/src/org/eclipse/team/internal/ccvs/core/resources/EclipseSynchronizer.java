@@ -1433,7 +1433,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 		return SyncFileWriter.isEdited(resource);
 	}
 	
-	private void adjustDirtyStateRecursively(IResource resource, String indicator) throws CVSException {
+	/* package */ void adjustDirtyStateRecursively(IResource resource, String indicator) throws CVSException {
 		if (resource.getType() == IResource.ROOT) return;
 		try {
 			beginOperation();

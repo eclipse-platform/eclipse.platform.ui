@@ -134,6 +134,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 				safeSetSessionProperty(container, FOLDER_SYNC_KEY, null);
 				safeSetSessionProperty(container, RESOURCE_SYNC_CACHED_KEY, null);
 				flushed.add(container);
+				EclipseSynchronizer.getInstance().adjustDirtyStateRecursively(container, RECOMPUTE_INDICATOR);
 			}
 			IResource[] members = container.members();
 			for (int i = 0; i < members.length; i++) {
@@ -153,6 +154,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 	
 	/* package*/ void purgeResourceSyncCache(IResource resource) throws CVSException {
 		safeSetSessionProperty(resource, RESOURCE_SYNC_KEY, null);
+		EclipseSynchronizer.getInstance().adjustDirtyStateRecursively(resource, RECOMPUTE_INDICATOR);
 	}
 	
 	/**
