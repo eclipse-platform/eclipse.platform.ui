@@ -41,16 +41,18 @@ by '/'. This attribute provides for creating category hierarchy.</li>
 </ul>
 <tt>&nbsp;&nbsp; &lt;!ELEMENT view EMPTY></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST view</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; category&nbsp;&nbsp;&nbsp; CDATA
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; category&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA
 #IMPLIED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #IMPLIED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; fastViewWidthRatio&nbsp;&nbsp;
+CDATA #OPTIONAL</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
 <ul>
 <li>
@@ -73,6 +75,11 @@ in order to inherit the default functionality.</li>
 <li>
 <b>icon</b> - a relative name of the icon that will be associated with
 the view.</li>
+
+<li>
+<b>fastViewWidthRatio</b> - the percentage of the width of the workbench that the view will take up
+as an active fast view. This must be defined as a floating point value and lie between 0.05 and 0.95.
+If no value is supplied, a default ratio will be used.</li>
 </ul>
 <b><i>Examples:</i></b>
 <p>The following is an example of the extension point:
