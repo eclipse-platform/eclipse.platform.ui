@@ -791,17 +791,34 @@ public void setDescription(IWorkspaceDescription description) throws CoreExcepti
  */
 public void setWorkspaceLock(WorkspaceLock lock);
 /**
+ * <b>Note:</b> This method is part of an interim API that is still under 
+ * development and expected to change significantly before reaching stability. 
+ * It is being made available at this early stage to solicit feedback from pioneering 
+ * adopters on the understanding that any code that uses this API will almost 
+ * certainly be broken (repeatedly) as the API evolves.
+ * 
  * Advises that the caller intends to modify the contents of the given files in the near future and
  * asks whether modifying all these files would be reasonable. The files must all exist.
  * This method is used to give the VCM component an opportunity to check out (or otherwise
  * prepare) the files if required. (It is provided in this component rather than in the UI so that
  * "core" (i.e., head-less) clients can use it. Similarly, it is located outside the VCM component 
  * for the convenience of clients that must also operate in configurations without VCM.)
+ * </p>
  * <p>
- * Clients can make use of this method to achieve better integration of VCM with their tools.
- * Clients should call this method when they are about to modify files that have not been 
- * modified previously. Calling this method might trigger check outs for those files not already
- * checked out. By passing a UI context, the caller indicates that the VCM component may
+ * A client (such as an editor) should perform a <code>validateEdit</code> on a file 
+ * whenever it finds itself in the following position: (a) the file is marked read-only, 
+ * and (b) the client believes it likely (not necessarily certain) that it will modify the 
+ * file's contents at some point. A case in point is an editor that has a buffer opened 
+ * on a file. When the user starts to dirty the buffer, the editor should check to see whether 
+ * the file is read-only. If it is, it should call <code>validateEdit</code>, and can 
+ * reasonably expect this call, when successful, to cause the file to become read-write. 
+ * An editor should also be sensitive to a file becoming read-only again even after a successful 
+ * <code>validateEdit</code> (e.g., due to the user checking in the file in a different view); 
+ * the editor should again call <code>validateEdit</code> if the file is read-only before 
+ * attempting to save the contents of the file.
+ * </p>
+ * <p>
+ * By passing a UI context, the caller indicates that the VCM component may
  * contact the user to help decide how best to proceed. If no UI context is provided, the
  * VCM component will make its decision without additional interaction with the user.
  * If OK is returned, the caller can safely assume that all of the given files haven been prepared
@@ -820,16 +837,6 @@ public void setWorkspaceLock(WorkspaceLock lock);
  * way to ensure such changes get done atomically.)
  * </p>
  * <p>
- * The contact is loose (intentionally). Repeated revalidation is not required; a client is free to
- * assume that once the modification has been validated, a file will remain in that state until the
- * contents of the file actually change. On the other hand, occasional revalidation of a file is not
- * a problem; a client may assume that the VCM component knows which files can be considered
- * already open for modification and will not pester the user without good reason.
- * Failing to call this method prior to modifying a file's contents places the VCM component
- * in a position where it is forced to react to each individual file modification without further opportunity
- * to interact with the user.
- * </p>
- * <p>
  * The method calls <code>IFileModificationValidator.validateEdit</code> for
  * the file modification validator (if provided by the VCM plug-in). When there is no file modification
  * validator, this method immediately return an OK status.
@@ -838,9 +845,9 @@ public void setWorkspaceLock(WorkspaceLock lock);
  * @param files the files that are to be modified; these files must all exist in the workspace
  * @param context the <code>org.eclipse.swt.widgets.Shell</code> that is to be used to
  *    parent any dialogs with the user, or <code>null</code> if there is no UI context (declared
- *   as an Object to avoid any direct references on the SWT component)
+ *   as an <code>Object</code> to avoid any direct references on the SWT component)
  * @return a status object that is OK if things are fine, otherwise a status describing
- *    reasons why mofifying the given files is not a reasonable
+ *    reasons why modifying the given files is not a reasonable
  * @since 2.0
  */
 public IStatus validateEdit(IFile[] files, Object context);
