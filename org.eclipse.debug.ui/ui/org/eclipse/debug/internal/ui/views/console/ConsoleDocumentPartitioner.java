@@ -615,7 +615,9 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 				if (display != null) {
 					display.asyncExec(new Runnable() {
 						public void run() {
-							fLineNotifier.streamClosed();
+							if (fLineNotifier != null) {
+								fLineNotifier.streamClosed();
+							}
 						}
 					});
 				}

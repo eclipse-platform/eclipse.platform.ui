@@ -85,7 +85,14 @@ public class ConsoleLineNotifier {
 	 */
 	public void streamClosed() {
 		fClosed= true;
+		// First, notify of any pending lines
 		processNewLines();
+		// Then, notify of the close
+		Object[] listeners= fListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			IConsoleLineTracker tracker = (IConsoleLineTracker) listeners[i];
+			tracker.streamClosed();
+		}
 	}
 	
 	/**
