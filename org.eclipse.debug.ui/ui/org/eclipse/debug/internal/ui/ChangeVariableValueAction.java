@@ -67,7 +67,7 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 		try {
 			valueString= fVariable.getValue().getValueString();
 		} catch (DebugException de) {
-			DebugUIUtils.errorDialog(activeShell, ERROR, de.getStatus());			
+			DebugUIUtils.errorDialog(activeShell,"Setting variable value","Setting the variable value failed.", de.getStatus());			
 		}
 		TreeItem[] selectedItems = fTree.getSelection();
 		fTreeEditor.horizontalAlignment = SWT.LEFT;
@@ -134,7 +134,7 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 			}
 			variable.setValue(newValue);
 		} catch (DebugException de) {
-			DebugUIUtils.errorDialog(shell, ERROR, de.getStatus());			
+			DebugUIUtils.errorDialog(shell, "Setting variable value","Setting the variable value failed.", de.getStatus());			
 		}
 		cleanup();		
 	}

@@ -42,7 +42,7 @@ public class TerminateAllAction extends Action {
 		ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
 		ILaunch[] launches= lManager.getLaunches();
 		MultiStatus ms = new MultiStatus(DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 
-			IDebugStatusConstants.REQUEST_FAILED, DebugUIUtils.getResourceString(PREFIX + STATUS), null);
+			IDebugStatusConstants.REQUEST_FAILED, "Terminate all failed", null);
 		for (int i= 0; i < launches.length; i++) {
 			ILaunch launch= (ILaunch) launches[i];
 			if (!launch.isTerminated()) {
@@ -54,7 +54,7 @@ public class TerminateAllAction extends Action {
 			}
 		}
 		if (!ms.isOK()) {
-			DebugUIUtils.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), PREFIX + ERROR, ms);
+			DebugUIUtils.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), "Terminate all","Exceptions occurred attempting to terminate all." , ms);
 		}
 	}
 

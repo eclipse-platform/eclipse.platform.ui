@@ -243,7 +243,7 @@ public class LauncherPropertyPage extends PropertyPage implements IWorkbenchPref
 			}
 			getLaunchManager().setDefaultLauncher(project, null);
 		} catch (CoreException e) {
-			DebugUIUtils.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), ERROR, e.getStatus());
+			DebugUIUtils.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), "Launcher property page", "Exceptions occurred saving the launcher preferences", e.getStatus());
 			return false;
 		}
 		return true;

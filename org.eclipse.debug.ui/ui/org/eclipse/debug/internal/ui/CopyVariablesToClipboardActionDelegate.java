@@ -60,4 +60,11 @@ public class CopyVariablesToClipboardActionDelegate extends CopyToClipboardActio
 	public void selectionChanged(IAction action, ISelection s) {
 		action.setEnabled(!s.isEmpty());
 	}
+	
+	/*
+	 * @see ControlActionDelegate#getText()
+	 */
+	protected String getText() {
+		return "Copy &Variables";
+	}
 }

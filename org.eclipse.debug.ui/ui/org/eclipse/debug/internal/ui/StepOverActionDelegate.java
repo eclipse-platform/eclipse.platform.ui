@@ -11,8 +11,6 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 
 public class StepOverActionDelegate extends StepActionDelegate {
-	
-	private static final String PREFIX= "step_over_action.";
 
 	/**
 	 * @see StepActionDelegate
@@ -28,13 +26,6 @@ public class StepOverActionDelegate extends StepActionDelegate {
 		element.stepOver();
 	}
 	
-	/**
-	 * @see ControlActionDelegate
-	 */
-	protected String getPrefix() {
-		return PREFIX;
-	}
-	
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.STEP_OVER_ACTION;
 	}
@@ -46,5 +37,39 @@ public class StepOverActionDelegate extends StepActionDelegate {
 		action.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_STEPOVER));
 		action.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_STEPOVER));
 		action.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_STEPOVER));
+	}
+	/**
+	 * @see ControlActionDelegate#getStatusMessage()
+	 */
+	protected String getStatusMessage() {
+		return "Step over failed";
+	}
+
+	/**
+	 * @see ControlActionDelegate#getErrorDialogMessage()
+	 */
+	protected String getErrorDialogMessage() {
+		return "Exceptions occurred attempting to step over the frame";
+	}
+
+	/**
+	 * @see ControlActionDelegate#getErrorDialogTitle()
+	 */
+	protected String getErrorDialogTitle() {
+		return getToolTipText();
+	}
+
+	/**
+	 * @see ControlActionDelegate#getToolTipText()
+	 */
+	protected String getToolTipText() {
+		return "Step over";
+	}
+
+	/**
+	 * @see ControlActionDelegate#getText()
+	 */
+	protected String getText() {
+		return "Step O&ver";
 	}
 }

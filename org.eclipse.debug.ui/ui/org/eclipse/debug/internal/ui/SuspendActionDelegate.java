@@ -12,8 +12,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 public class SuspendActionDelegate extends ControlActionDelegate {
-	
-	private static final String PREFIX= "suspend_action.";
 
 	/**
 	 * @see ControlActionDelegate
@@ -42,13 +40,6 @@ public class SuspendActionDelegate extends ControlActionDelegate {
 		}
 	}
 	
-	/**
-	 * @see ControlActionDelegate
-	 */
-	protected String getPrefix() {
-		return PREFIX;
-	}
-	
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.SUSPEND_ACTION;
 	}
@@ -60,5 +51,38 @@ public class SuspendActionDelegate extends ControlActionDelegate {
 		action.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_SUSPEND));
 		action.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_SUSPEND));
 		action.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_SUSPEND));
+	}
+	/*
+	 * @see ControlActionDelegate#getStatusMessage()
+	 */
+	protected String getStatusMessage() {
+		return "Suspend failed";
+	}
+
+	/*
+	 * @see ControlActionDelegate#getErrorDialogMessage()
+	 */
+	protected String getErrorDialogMessage() {
+		return "Exceptions occurred attempting to suspend.";
+	}
+
+	/*
+	 * @see ControlActionDelegate#getErrorDialogTitle()
+	 */
+	protected String getErrorDialogTitle() {
+		return getToolTipText();
+	}
+	/*
+	 * @see ControlActionDelegate#getToolTipText()
+	 */
+	protected String getToolTipText() {
+		return "Suspend";
+	}
+
+	/*
+	 * @see ControlActionDelegate#getText()
+	 */
+	protected String getText() {
+		return "&Suspend";
 	}
 }

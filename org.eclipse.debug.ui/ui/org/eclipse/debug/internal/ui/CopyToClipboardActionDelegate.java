@@ -18,8 +18,6 @@ import org.eclipse.swt.widgets.Display;
 public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 	
 	protected ContentViewer fViewer;
-
-	private static final String PREFIX= "copy_to_clipboard_action.";
 	
 	/**
 	 * @see ControlActionDelegate
@@ -29,13 +27,7 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 		fViewer = (ContentViewer)controlAction.getSelectionProvider();		
 		super.initializeForOwner(controlAction);
 	}
-	
-	/**
-	 * @see ControlActionDelegate
-	 */
-	protected String getPrefix() {
-		return PREFIX;
-	}
+
 	/**
 	 * @see ControlActionDelegate
 	 */
@@ -176,5 +168,38 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 	
 	protected boolean shouldAppendChildren(Object e) {
 		return e instanceof IDebugElement && ((IDebugElement)e).getElementType() < IDebugElement.STACK_FRAME;
+	}
+	/*
+	 * @see ControlActionDelegate#getStatusMessage()
+	 */
+	protected String getStatusMessage() {
+		return null;
+	}
+
+	/*
+	 * @see ControlActionDelegate#getErrorDialogMessage()
+	 */
+	protected String getErrorDialogMessage() {
+		return null;
+	}
+
+	/*
+	 * @see ControlActionDelegate#getErrorDialogTitle()
+	 */
+	protected String getErrorDialogTitle() {
+		return null;
+	}
+	/*
+	 * @see ControlActionDelegate#getToolTipText()
+	 */
+	protected String getToolTipText() {
+		return "Copy to Clipboard";
+	}
+
+	/*
+	 * @see ControlActionDelegate#getText()
+	 */
+	protected String getText() {
+		return "&Copy Stack";
 	}
 }

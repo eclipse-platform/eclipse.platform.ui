@@ -12,8 +12,6 @@ import org.eclipse.jface.action.IAction;
 
 public class StepIntoActionDelegate extends StepActionDelegate {
 	
-	private static final String PREFIX= "step_into_action.";
-
 	/**
 	 * @see StepActionDelegate
 	 */
@@ -28,13 +26,6 @@ public class StepIntoActionDelegate extends StepActionDelegate {
 		element.stepInto();
 	}
 	
-	/**
-	 * @see ControlActionDelegate
-	 */
-	protected String getPrefix() {
-		return PREFIX;
-	}
-	
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.STEP_INTO_ACTION;
 	}
@@ -46,5 +37,38 @@ public class StepIntoActionDelegate extends StepActionDelegate {
 		action.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_STEPINTO));
 		action.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_STEPINTO));
 		action.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_STEPINTO));
+	}
+	/**
+	 * @see ControlActionDelegate#getStatusMessage()
+	 */
+	protected String getStatusMessage() {
+		return "Step into failed";
+	}
+
+	/**
+	 * @see ControlActionDelegate#getErrorDialogMessage()
+	 */
+	protected String getErrorDialogMessage() {
+		return "Exceptions occurred attempting to step into the frame";
+	}
+
+	/**
+	 * @see ControlActionDelegate#getErrorDialogTitle()
+	 */
+	protected String getErrorDialogTitle() {
+		return getToolTipText();
+	}
+	/**
+	 * @see ControlActionDelegate#getToolTipText()
+	 */
+	protected String getToolTipText() {
+		return "Step Into";
+	}
+
+	/**
+	 * @see ControlActionDelegate#getText()
+	 */
+	protected String getText() {
+		return "Step &Into";
 	}
 }

@@ -13,8 +13,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 public class ResumeActionDelegate extends ControlActionDelegate {
-	
-	private static final String PREFIX= "resume_action.";
 
 	/**
 	 * @see ControlActionDelegate
@@ -47,13 +45,6 @@ public class ResumeActionDelegate extends ControlActionDelegate {
 		}
 	}
 	
-	/**
-	 * @see ControlActionDelegate
-	 */
-	protected String getPrefix() {
-		return PREFIX;
-	}
-
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.RESUME_ACTION;
 	}
@@ -66,4 +57,38 @@ public class ResumeActionDelegate extends ControlActionDelegate {
 		action.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_RESUME));
 		action.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_RESUME));
 	}	
+	/*
+	 * @see ControlActionDelegate#getStatusMessage()
+	 */
+	protected String getStatusMessage() {
+		return "Resume failed.";
+	}
+
+	/*
+	 * @see ControlActionDelegate#getErrorDialogMessage()
+	 */
+	protected String getErrorDialogMessage() {
+		return "Exceptions occurred attempting to resume.";
+	}
+
+	/*
+	 * @see ControlActionDelegate#getErrorDialogTitle()
+	 */
+	protected String getErrorDialogTitle() {
+		return getToolTipText();
+	}
+
+	/*
+	 * @see ControlActionDelegate#getToolTipText()
+	 */
+	protected String getToolTipText() {
+		return "Resume";
+	}
+
+	/*
+	 * @see ControlActionDelegate#getText()
+	 */
+	protected String getText() {
+		return "&Resume";
+	}
 }

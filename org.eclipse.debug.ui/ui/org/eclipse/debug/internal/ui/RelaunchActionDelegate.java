@@ -17,12 +17,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 
 public class RelaunchActionDelegate extends ControlActionDelegate {
 	
-	private static final String PREFIX= "relaunch_action.";
-	private static final String ERROR= "error.";
-	private static final String LAUNCH_PREFIX= "launch_action.";
-	private static final String LAUNCH_ERROR_TITLE= LAUNCH_PREFIX + ERROR + "title";
-	private static final String LAUNCH_ERROR_MESSAGE= LAUNCH_PREFIX + ERROR + "message";		
-
 	/**
 	 * @see ControlActionDelegate
 	 */
@@ -42,9 +36,9 @@ public class RelaunchActionDelegate extends ControlActionDelegate {
 	public static void relaunch(ILauncher launcher, String mode, Object element) {
 		boolean ok= launcher.launch(new Object[]{element}, mode);
 		if (!ok) {
-			String string= DebugUIUtils.getResourceString(LAUNCH_ERROR_MESSAGE);
+			String string= "Launch attempt failed: {0}";
 			String message= MessageFormat.format(string, new String[] {launcher.getLabel()});
-			MessageDialog.openError(DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(), DebugUIUtils.getResourceString(LAUNCH_ERROR_TITLE), message);	
+			MessageDialog.openError(DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(), "Launch failed", message);	
 		}				
 	}
 	
@@ -86,13 +80,6 @@ public class RelaunchActionDelegate extends ControlActionDelegate {
 		return launch != null && DebugUIPlugin.getDefault().isVisible(launch.getLauncher());
 	}
 	
-	/**
-	 * @see ControlActionDelegate
-	 */
-	protected String getPrefix() {
-		return PREFIX;
-	}
-	
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.RELAUNCH_ACTION;
 	}
@@ -105,4 +92,37 @@ public class RelaunchActionDelegate extends ControlActionDelegate {
 		action.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_RELAUNCH));
 		action.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_RELAUNCH));
 	}		
+	/*
+	 * @see ControlActionDelegate#getStatusMessage()
+	 */
+	protected String getStatusMessage() {
+		return null;
+	}
+
+	/*
+	 * @see ControlActionDelegate#getErrorDialogMessage()
+	 */
+	protected String getErrorDialogMessage() {
+		return null;
+	}
+
+	/*
+	 * @see ControlActionDelegate#getErrorDialogTitle()
+	 */
+	protected String getErrorDialogTitle() {
+		return null;
+	}
+	/*
+	 * @see ControlActionDelegate#getToolTipText()
+	 */
+	protected String getToolTipText() {
+		return "Relaunch";
+	}
+
+	/*
+	 * @see ControlActionDelegate#getText()
+	 */
+	protected String getText() {
+		return "Re&launch";
+	}
 }

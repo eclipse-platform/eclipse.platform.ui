@@ -11,8 +11,6 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 
 public class TerminateActionDelegate extends ControlActionDelegate {
-	
-	private static final String PREFIX= "terminate_action.";
 
 	/**
 	 * @see ControlActionDelegate
@@ -30,13 +28,6 @@ public class TerminateActionDelegate extends ControlActionDelegate {
 		return element instanceof ITerminate && ((ITerminate)element).canTerminate();
 	}
 	
-	/**
-	 * @see ControlActionDelegate
-	 */
-	protected String getPrefix() {
-		return PREFIX;
-	}
-	
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.TERMINATE_ACTION;
 	}
@@ -49,4 +40,39 @@ public class TerminateActionDelegate extends ControlActionDelegate {
 		action.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TERMINATE));
 		action.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TERMINATE));
 	}	
+	/*
+	 * @see ControlActionDelegate#getStatusMessage()
+	 */
+	protected String getStatusMessage() {
+		return "Terminate failed.";
+	}
+
+	/*
+	 * @see ControlActionDelegate#getErrorDialogMessage()
+	 */
+	protected String getErrorDialogMessage() {
+		return "Exceptions occurred attempting to terminate.";
+
+	}
+
+	/*
+	 * @see ControlActionDelegate#getErrorDialogTitle()
+	 */
+	protected String getErrorDialogTitle() {
+		return getToolTipText();
+	}
+
+	/*
+	 * @see ControlActionDelegate#getToolTipText()
+	 */
+	protected String getToolTipText() {
+		return "Terminate";
+	}
+
+	/*
+	 * @see ControlActionDelegate#getText()
+	 */
+	protected String getText() {
+		return "&Terminate";
+	}
 }

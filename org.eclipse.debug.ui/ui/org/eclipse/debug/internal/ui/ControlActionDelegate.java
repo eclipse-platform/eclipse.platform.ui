@@ -5,14 +5,12 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import java.util.Iterator;import org.eclipse.core.runtime.MultiStatus;import org.eclipse.debug.core.*;import org.eclipse.jface.action.IAction;import org.eclipse.jface.viewers.*;import org.eclipse.swt.custom.BusyIndicator;import org.eclipse.swt.widgets.Display;import org.eclipse.ui.IWorkbenchWindow;import org.eclipse.ui.IWorkbenchWindowActionDelegate;import org.eclipse.ui.actions.SelectionProviderAction;
+import java.util.Iterator;import org.eclipse.core.runtime.MultiStatus;import org.eclipse.debug.core.*;import org.eclipse.jface.action.IAction;import org.eclipse.jface.viewers.*;import org.eclipse.swt.custom.BusyIndicator;import org.eclipse.swt.widgets.Display;import org.eclipse.ui.IActionDelegate;
+import org.eclipse.ui.IWorkbenchWindow;import org.eclipse.ui.IWorkbenchWindowActionDelegate;import org.eclipse.ui.actions.SelectionProviderAction;
 
 public abstract class ControlActionDelegate implements IWorkbenchWindowActionDelegate {
-
-	protected static final String ERROR= "error.";
-	protected static final String STATUS= "status";
 	
-	protected String fMode= ILaunchManager.DEBUG_MODE;
+	private String fMode= ILaunchManager.DEBUG_MODE;
 
 	/**
 	 * It's crucial that delegate actions have a zero-arg constructor so that
@@ -32,9 +30,9 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 		setActionImages(controlAction);
 		LaunchesViewer provider= (LaunchesViewer)controlAction.getSelectionProvider();
 		IContentProvider contentProvider= provider.getContentProvider();
-		fMode= ILaunchManager.DEBUG_MODE;
+		setMode(ILaunchManager.DEBUG_MODE);
 		if (contentProvider instanceof ProcessesContentProvider) {
-			fMode= ILaunchManager.RUN_MODE;
+			setMode(ILaunchManager.RUN_MODE);
 		}	
 	}
 	
@@ -42,7 +40,7 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	 * Do the specific action using the current selection.
 	 */
 	public void run() {
-		LaunchesView view= getLaunchesView(fMode);
+		LaunchesView view= getLaunchesView(getMode());
 		if (view == null) {
 			return;
 		}
@@ -51,7 +49,7 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 		final Iterator enum= selection.iterator();
 		String pluginId= DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier();
 		final MultiStatus ms= 
-			new MultiStatus(pluginId, IDebugStatusConstants.REQUEST_FAILED, DebugUIUtils.getResourceString(getPrefix() + STATUS), null); 
+			new MultiStatus(pluginId, IDebugStatusConstants.REQUEST_FAILED, getStatusMessage(), null); 
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 			public void run() {
 				while (enum.hasNext()) {
@@ -67,24 +65,24 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 			}
 		});
 		if (!ms.isOK()) {
-			DebugUIUtils.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), getPrefix() + ERROR, ms);
+			DebugUIUtils.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), getErrorDialogTitle(), getErrorDialogMessage(), ms);
 		}		
 	}
 
 	/**
-	 * @see IWorkbenchWindowActionDelegate
+	 * @see IWorkbenchWindowActionDelegate#dispose()
 	 */
 	public void dispose(){
 	}
 
 	/**
-	 * @see IWorkbenchWindowActionDelegate
+	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow window){
 	}
 
 	/**
-	 * @see IActionDelegate
+	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action){
 		run();
@@ -95,10 +93,11 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	 * Set the icons for this action on the first selection changed
 	 * event.  This is necessary because the XML currently only
 	 * supports setting the enabled icon.  
-	 * @see IActionDelegate
+	 * 
+	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection s) {
-		LaunchesView view= getLaunchesView(fMode);
+		LaunchesView view= getLaunchesView(getMode());
 		if (view == null) {
 			action.setEnabled(false);
 			return;
@@ -141,18 +140,20 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 		IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
 		return
 			DebugUIPlugin.getDefault().findDebugPart(window, mode);
-		
+	}
+	
+	protected String getMode() {
+		return fMode;
+	}
+
+	protected void setMode(String mode) {
+		fMode = mode;
 	}
 	
 	/**
 	 * Does the specific action of this action to the process.
 	 */
 	protected abstract void doAction(Object element) throws DebugException;
-
-	/**
-	 * Returns the resource bundle prefix for this action
-	 */
-	protected abstract String getPrefix();
 
 	/**
 	 * Returns whether this action will work for the given element
@@ -169,4 +170,31 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	 */
 	protected abstract void setActionImages(IAction action);
 	
+	/**
+	 * Returns the String to use as an error dialog title for
+	 * a failed action.
+	 */
+	protected abstract String getErrorDialogTitle();
+	
+	/**
+	 * Returns the String to use as an error dialog message for
+	 * a failed action.
+	 */
+	protected abstract String getErrorDialogMessage();
+	
+	/**
+	 * Returns the String to use as a status message for
+	 * a failed action.
+	 */
+	protected abstract String getStatusMessage();
+	
+	/**
+	 * Returns the text for this action.
+	 */
+	protected abstract String getText();
+	
+	/**
+	 * Returns the tool tip text for this action.
+	 */
+	protected abstract String getToolTipText();
 }

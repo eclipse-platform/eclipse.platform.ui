@@ -11,8 +11,6 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 
 public class DisconnectActionDelegate extends ControlActionDelegate {
-	
-	private static final String PREFIX= "disconnect_action.";
 
 	/**
 	 * @see ControlActionDelegate
@@ -29,13 +27,6 @@ public class DisconnectActionDelegate extends ControlActionDelegate {
 		return element instanceof IDisconnect && ((IDisconnect) element).canDisconnect();
 	}
 	
-	/**
-	 * @see ControlActionDelegate
-	 */
-	protected String getPrefix() {
-		return PREFIX;
-	}
-	
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.DISCONNECT_ACTION;
 	}
@@ -48,4 +39,37 @@ public class DisconnectActionDelegate extends ControlActionDelegate {
 		action.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_DISCONNECT));
 		action.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DISCONNECT));
 	}	
+	/*
+	 * @see ControlActionDelegate#getStatusMessage()
+	 */
+	protected String getStatusMessage() {
+		return "Disconnect failed";
+	}
+
+	/*
+	 * @see ControlActionDelegate#getErrorDialogMessage()
+	 */
+	protected String getErrorDialogMessage() {
+		return "Exceptions occurred attempting to disconnect.";
+	}
+
+	/*
+	 * @see ControlActionDelegate#getErrorDialogTitle()
+	 */
+	protected String getErrorDialogTitle() {
+		return "Disconnect";
+	}
+	/*
+	 * @see ControlActionDelegate#getToolTipText()
+	 */
+	protected String getToolTipText() {
+		return "&Disconnect";
+	}
+
+	/*
+	 * @see ControlActionDelegate#getText()
+	 */
+	protected String getText() {
+		return "Disconnect";
+	}
 }

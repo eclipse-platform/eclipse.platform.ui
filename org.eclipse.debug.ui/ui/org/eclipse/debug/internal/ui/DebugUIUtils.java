@@ -5,12 +5,13 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 /**
  * This class serves as a location for utility methods for the debug UI.
@@ -22,14 +23,12 @@ public class DebugUIUtils {
 	/**
 	 * Utility method with conventions
 	 */
-	public static void errorDialog(Shell shell, String resourcePrefix, IStatus s) {
-		String message= getResourceString(resourcePrefix + "message");
+	public static void errorDialog(Shell shell, String title, String message, IStatus s) {
 		// if the 'message' resource string and the IStatus' message are the same,
 		// don't show both in the dialog
 		if (s != null && message.equals(s.getMessage())) {
 			message= null;
 		}
-		String title= getResourceString(resourcePrefix + "title");
 		ErrorDialog.openError(shell, title, message, s);
 	}
 
@@ -71,6 +70,5 @@ public class DebugUIUtils {
 			System.out.println();
 		}
 	}
-	
 }
 

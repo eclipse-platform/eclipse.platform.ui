@@ -5,29 +5,88 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import java.io.*;
-import java.util.*;
-import javax.xml.parsers.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import org.apache.xerces.dom.DocumentImpl;
-import org.apache.xml.serialize.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.*;
-import org.eclipse.debug.core.model.*;
-import org.eclipse.debug.ui.*;
+import org.apache.xml.serialize.Method;
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.Serializer;
+import org.apache.xml.serialize.SerializerFactory;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventListener;
+import org.eclipse.debug.core.IDebugStatusConstants;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchListener;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.ILauncher;
+import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.ITerminate;
+import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.IDebugUIEventFilter;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.*;
-import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.IPageListener;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.w3c.dom.*;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -420,7 +479,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 			}
 		} catch (PartInitException pie) {
 			IStatus status= new Status(IStatus.ERROR, getDescriptor().getUniqueIdentifier(), IDebugStatusConstants.INTERNAL_ERROR, pie.getMessage(), pie);
-			DebugUIUtils.errorDialog(getActiveWorkbenchWindow().getShell(), "debug_ui_plugin.switch_perspective.error.", status);
+			DebugUIUtils.errorDialog(getActiveWorkbenchWindow().getShell(), "Problem Switching to the Debug Perspective", "Exceptions occurred switching to the specified debug layout.", status);
 		}
 		switchContext.setDebuggerView(debugPart);
 	}
@@ -551,7 +610,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 				switchContext.setPageCreated(true);
 			} catch (WorkbenchException e) {
 				IStatus status= new Status(IStatus.ERROR, getDescriptor().getUniqueIdentifier(), IDebugStatusConstants.INTERNAL_ERROR, e.getMessage(), e);
-				DebugUIUtils.errorDialog(window.getShell(), "debug_ui_plugin.switch_perspective.error.", status);
+				DebugUIUtils.errorDialog(window.getShell(), "Problem Switching to the Debug Perspective", "Exceptions occurred switching to the specified debug layout.", status);
 				return;
 			}
 			switchContext.setPage(page);
@@ -969,6 +1028,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 								page.bringToTop(consoleView);
 							}
 						} catch (PartInitException pie) {
+							DebugUIUtils.logError(pie);
 						}
 					}
 				}

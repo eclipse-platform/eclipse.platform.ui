@@ -65,8 +65,8 @@ public class LaunchWizardNode implements IWizardNode {
 		}
 		try {
 			fWizard= createWizard(); // create instance of target wizard
-		} catch (CoreException e) {			
-			DebugUIUtils.errorDialog(fParentWizardPage.getControl().getShell(), ERROR, e.getStatus());
+		} catch (CoreException e) {		
+			DebugUIUtils.errorDialog(fParentWizardPage.getControl().getShell(), "Problem Opening Wizard","The selected wizard could not be started." , e.getStatus());
 			return null;
 		}
 

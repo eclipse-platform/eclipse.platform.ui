@@ -20,8 +20,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class RemoveBreakpointAction extends SelectionProviderAction {
 
 	private final static String PREFIX= "remove_breakpoint_action.";
-	private final static String ERROR= "error.";
-	private final static String STATUS= PREFIX + "status";
 
 	public RemoveBreakpointAction(ISelectionProvider provider) {
 		super(provider, DebugUIUtils.getResourceString(PREFIX + TEXT));
@@ -46,7 +44,7 @@ public class RemoveBreakpointAction extends SelectionProviderAction {
 		IStructuredSelection es= (IStructuredSelection)selection;
 		final Iterator itr= es.iterator();
 		final MultiStatus ms = new MultiStatus(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-			IDebugStatusConstants.REQUEST_FAILED, DebugUIUtils.getResourceString(STATUS), null);
+			IDebugStatusConstants.REQUEST_FAILED, "Breakpoint(s) removal failed", null);
  
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) {
@@ -67,7 +65,7 @@ public class RemoveBreakpointAction extends SelectionProviderAction {
 			ms.merge(ce.getStatus());
 		}
 		if (!ms.isOK()) {
-			DebugUIUtils.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), PREFIX + ERROR, ms);
+			DebugUIUtils.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), "Removing a breakpoint","Exceptions occurred attempting to remove a breakpoint." , ms);
 		}
 	}
 

@@ -7,13 +7,15 @@ package org.eclipse.debug.internal.ui;
 
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.debug.core.*;
+import org.eclipse.debug.core.IBreakpointListener;
+import org.eclipse.debug.core.IDebugStatusConstants;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -22,17 +24,11 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * Enables or disables a breakpoint
  */
 public class EnableDisableBreakpointAction extends SelectionProviderAction implements IBreakpointListener {
-	
-	private final static String PREFIX= "enable_disable_breakpoint_action.";
-	private final static String ENABLE= PREFIX + TEXT + ".enable";
-	private final static String DISABLE= PREFIX + TEXT + ".disable";
-	private final static String ERROR= PREFIX + "error.";
-	private final static String STATUS= PREFIX + "status.message";
 	/**
 	 * Creates the action to enable/disable breakpoints
 	 */
 	public EnableDisableBreakpointAction(ISelectionProvider selectionProvider) {
-		super(selectionProvider, DebugUIUtils.getResourceString(PREFIX + TEXT));
+		super(selectionProvider, "&Enable/Disable");
 		setEnabled(!getStructuredSelection().isEmpty());
 		WorkbenchHelp.setHelp(
 			this,
@@ -50,7 +46,7 @@ public class EnableDisableBreakpointAction extends SelectionProviderAction imple
 			return;
 		}
 
-		MultiStatus ms= new MultiStatus(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), IDebugStatusConstants.REQUEST_FAILED, DebugUIUtils.getResourceString(STATUS), null);
+		MultiStatus ms= new MultiStatus(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), IDebugStatusConstants.REQUEST_FAILED, "Enable/Disable breakpoint(s) failed", null);
 		while (enum.hasNext()) {
 			IBreakpoint breakpoint = (IBreakpoint) enum.next();
 			try {
@@ -60,12 +56,12 @@ public class EnableDisableBreakpointAction extends SelectionProviderAction imple
 			}
 		}
 		if (!ms.isOK()) {
-			DebugUIUtils.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), ERROR, ms);
+			DebugUIUtils.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), "Enabling/disabling breakpoints", "Exceptions occurred enabling/disabling the breakpoint(s).", ms);
 		}
 	}
 
 	/**
-	 * @see SelectionProviderAction
+	 * @see SelectionProviderAction#selectionChanged(IStructuredSelection)
 	 */
 	public void selectionChanged(IStructuredSelection sel) {
 		Iterator enum= sel.iterator();
@@ -79,34 +75,34 @@ public class EnableDisableBreakpointAction extends SelectionProviderAction imple
 			//single selection
 			try {
 				if (bp.isEnabled()) {
-					setText(DebugUIUtils.getResourceString(DISABLE));
+					setText("&Disable");
 				} else {
-					setText(DebugUIUtils.getResourceString(ENABLE));
+					setText("&Enable");
 				}
 			} catch (CoreException ce) {
-				DebugUIUtils.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), ERROR, ce.getStatus());
+				DebugUIUtils.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), "Enabling/disabling breakpoints", "Exceptions occurred enabling/disabling the breakpoint(s).", ce.getStatus());
 			}
 		} else {
 			// multi- selection
-			setText(DebugUIUtils.getResourceString(PREFIX + TEXT));
+			setText("&Enable/Disable");
 		}
 		setEnabled(true);
 	}
 
 	/** 
-	 * @see IBreakpointListener
+	 * @see IBreakpointListener#breakpointAdded(IBreakpoint)
 	 */
 	public void breakpointAdded(IBreakpoint breakpoint) {
 	}
 
 	/** 
-	 * @see IBreakpointListener
+	 * @see IBreakpointListener#breakpointRemoved(IBreakpoint, IMarkerDelta)
 	 */
 	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
 	}
 
 	/** 
-	 * @see IBreakpointListener
+	 * @see IBreakpointListener#breakpointChanged(IBreakpoint, IMarkerDelta)
 	 */
 	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
 		Display display= Display.getDefault();
@@ -122,13 +118,5 @@ public class EnableDisableBreakpointAction extends SelectionProviderAction imple
 			}
 		});
 	}
-	
-	/**
-	 * Returns the breakpoint manager
-	 */
-	private IBreakpointManager getBreakpointManager() {
-		return DebugPlugin.getDefault().getBreakpointManager();
-	}
-	
 }
 

@@ -5,7 +5,10 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.viewers.ISelectionProvider;import org.eclipse.jface.viewers.IStructuredSelection;import org.eclipse.ui.actions.SelectionProviderAction;import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.actions.SelectionProviderAction;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Provides the common functionality of the control actions.
@@ -28,15 +31,15 @@ public class ControlAction extends SelectionProviderAction {
 		super(selectionProvider, "");
 		fDelegate= delegate;
 		fDelegate.initializeForOwner(this);
-		setText(DebugUIUtils.getResourceString(fDelegate.getPrefix() + TEXT));
-		setToolTipText(DebugUIUtils.getResourceString(fDelegate.getPrefix() + TOOL_TIP_TEXT));		
+		setText(fDelegate.getText());
+		setToolTipText(fDelegate.getToolTipText());	
 		WorkbenchHelp.setHelp(
 			this,
 			new Object[] { fDelegate.getHelpContextId() });
 	}
 
 	/**
-	 * @see Action
+	 * @see IAction#run()
 	 * The actual work is deferred to the delegate.
 	 */
 	public void run() {
@@ -44,8 +47,8 @@ public class ControlAction extends SelectionProviderAction {
 	}	
 
 	/**
-	 * @see SelectionProviderAction
 	 * Updates the enable state based on what and how much is selected.
+	 * @see SelectionProviderAction#selectionChanged(IStructuredSelection)
 	 */
 	public void selectionChanged(IStructuredSelection sel) {
 		fDelegate.selectionChanged(this, sel);

@@ -181,7 +181,8 @@ public abstract class ExecutionAction extends Action {
 			launchers= Arrays.asList(getLaunchManager().getLaunchers(getMode()));
 		} else {
 			launchers= new ArrayList(2);
-			MultiStatus status= new MultiStatus(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), IDebugStatusConstants.REQUEST_FAILED, DebugUIUtils.getResourceString(STATUS), null);
+
+			MultiStatus status= new MultiStatus(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), IDebugStatusConstants.REQUEST_FAILED, "Error occurred retrieving default launcher", null);
 			for (int i = 0; i < projects.length; i++) {
 				IProject project= projects[i];
 				ILauncher defaultLauncher= null;
@@ -202,7 +203,7 @@ public abstract class ExecutionAction extends Action {
 				}
 			}
 			if (!status.isOK()) {
-				DebugUIUtils.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), PREFIX + ERROR, status);
+				DebugUIUtils.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), "Error finding default launchers", "Exceptions occurred determining the default launcher(s).", status);
 			}
 			if (launchers.isEmpty()) {
 				launchers= Arrays.asList(getLaunchManager().getLaunchers(getMode()));
