@@ -37,10 +37,15 @@ TABLE {
 	width:auto;
 }
 
-TD, TR {
+HTML, BODY, TD, TR{
 	margin:0px;
 	padding:0px;
 	border:0px;
+}
+
+BODY {
+width:100%;
+height:100%;
 }
 
 BUTTON {
@@ -49,17 +54,7 @@ BUTTON {
 
 </style>
 
-<script language="JavaScript" src="list.js"></script>
 <script language="JavaScript">
-
-function highlightHandler()
-{
-	document.getElementById('selectws').checked = true;
-	enableButtons();
-}
-
-// register handler
-_highlightHandler = highlightHandler;
 
 function onloadHandler() {
 <%
@@ -108,11 +103,14 @@ function showAllConfirmed(){
 
 <body dir="<%=direction%>" onload="onloadHandler()" onunload="closeConfirmShowAllDialog()">
 <form onsubmit="showAllConfirmed();return false;">
-<div style="overflow:auto;height:150px;width:100%;padding:10px;">
-<span style="font-weight:bold;">
-	<%=ServletResources.getString("confirmShowAllQuestion", request)%></span>
-<br><br>
-	<%=ServletResources.getString("confirmShowAllExplanation", request)%></div>
+<div style="overflow:auto;height:150px;width:100%;">
+	<div style="padding:10px;">
+	<span style="font-weight:bold;"><%=ServletResources.getString("confirmShowAllQuestion", request)%></span>
+	<br><br>
+	<%=ServletResources.getString("confirmShowAllExplanation", request)%>
+	</div>
+</div>
+
 <div style="height:50px;">
 	<table valign="bottom" align="<%=isRTL?"left":"right"%>" style="background:<%=prefs.getToolbarBackground()%>">
 		<tr id="buttonsTable" valign="bottom"><td valign="bottom" align="<%=isRTL?"left":"right"%>">
