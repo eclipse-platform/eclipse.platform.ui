@@ -5,8 +5,30 @@
 #include <jni.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <stdlib.h>
 #include "core.h"
 
+/*
+ * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibrary
+ * Method:    internalIsUnicode
+ * Signature: ()Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibrary_internalIsUnicode
+  (JNIEnv *env, jclass clazz) {
+  	// no specific support for Unicode-based file names on Linux
+	return JNI_FALSE;
+}
+
+/*
+ * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibrary
+ * Method:    internalGetStatW
+ * Signature: ([C)J
+ */
+JNIEXPORT jlong JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibrary_internalGetStatW
+   (JNIEnv *env, jclass clazz, jcharArray target) {
+	// shouldn't ever be called - there is no Unicode-specific calls on Linux
+	return 0;
+}   
 
 /*
  * Get a null-terminated byte array from a java byte array.
@@ -100,6 +122,17 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSys
 	free(name);
 	return code != -1;
 }
+/*
+ * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibrary
+ * Method:    internalSetReadOnlyW
+ * Signature: ([CZ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibrary_internalSetReadOnlyW
+   (JNIEnv *env, jclass clazz, jcharArray target, jboolean readOnly) {
+	// shouldn't ever be called - there is no Unicode-specific calls on Linux
+	return JNI_FALSE;   
+}
+
 
 /*
  * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibrary
@@ -127,6 +160,18 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSys
   free(destinationFile);
   return code != -1;
 }
+
+/*
+ * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibrary
+ * Method:    internalCopyAttributesW
+ * Signature: ([C[CZ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibrary_internalCopyAttributesW
+  (JNIEnv *env, jclass clazz, jcharArray source, jcharArray destination, jboolean copyLastModified) {
+	// shouldn't ever be called - there is no Unicode-specific calls on Linux
+	return JNI_FALSE;   
+}
+
 
 /*
  * Class:     org_eclipse_ant_core_EclipseProject

@@ -25,7 +25,7 @@ jlong fileTimeToMillis(FILETIME ft) {
 
 /*
  * Get a null-terminated byte array from a java byte array.
- * The returned bytearray needs to be freed whe not used
+ * The returned bytearray needs to be freed when not used
  * anymore. Use free(result) to do that.
  */
 jbyte* getByteArray(JNIEnv *env, jbyteArray target) {
@@ -41,6 +41,78 @@ jbyte* getByteArray(JNIEnv *env, jbyteArray target) {
 	return result;
 }
 
+/*
+ * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibrary
+ * Method:    internalIsUnicode
+ * Signature: ()Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibrary_internalIsUnicode
+  (JNIEnv *env, jclass clazz) {
+	HANDLE hModule;
+  	OSVERSIONINFO osvi;
+  	memset(&osvi, 0, sizeof(OSVERSIONINFO));
+  	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+  	if (!GetVersionEx (&osvi)) 
+    	return JNI_FALSE;
+	// only Windows NT 4, Windows 2K and XP support Unicode API calls
+    if (!(osvi.dwMajorVersion >= 5 || (osvi.dwPlatformId == VER_PLATFORM_WIN32_NT && osvi.dwMajorVersion == 4)))
+		return JNI_FALSE;
+	return JNI_TRUE;		
+}
+
+/*
+ * Get a null-terminated short array from a java char array.
+ * The returned short array needs to be freed when not used
+ * anymore. Use free(result) to do that.
+ */
+jchar* getCharArray(JNIEnv *env, jcharArray target) {
+	jsize n;
+	jchar *temp, *result;
+	
+	temp = (*env)->GetCharArrayElements(env, target, 0);
+	n = (*env)->GetArrayLength(env, target);
+	result = malloc((n+1) * sizeof(jchar));
+	memcpy(result, temp, n * 2);
+	result[n] = 0;
+	(*env)->ReleaseCharArrayElements(env, target, temp, 0);
+	return result;
+}
+
+/*
+ * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibrary
+ * Method:    internalGetStatW
+ * Signature: ([C)J
+ */
+JNIEXPORT jlong JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibrary_internalGetStatW
+   (JNIEnv *env, jclass clazz, jcharArray target) {
+	int i;
+	HANDLE handle;
+	WIN32_FIND_DATAW info;
+	jlong result = 0; // 0 = failed
+	jchar *name;
+	
+	name = getCharArray(env, target);	
+	
+	handle = FindFirstFileW(name, &info);
+	
+	if (handle != INVALID_HANDLE_VALUE) {
+		// select interesting information
+		// lastModified
+		result = fileTimeToMillis(info.ftLastWriteTime); // lower bits
+		// valid stat
+		result |= STAT_VALID;
+		// folder or file?
+		if (info.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+			result |= STAT_FOLDER;
+		// read-only?
+		if (info.dwFileAttributes & FILE_ATTRIBUTE_READONLY)
+			result |= STAT_READ_ONLY;
+	}
+
+	free(name);
+	FindClose(handle);
+	return result;
+}
 /*
  * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibrary
  * Method:    internalGetStat
@@ -75,7 +147,6 @@ JNIEXPORT jlong JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystem
 	FindClose(handle);
 	return result;
 }
-
 /*
  * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibrary
  * Method:    internalSetReadOnly
@@ -96,6 +167,34 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSys
 
 	free(name);
 	return code != -1;
+}
+
+/*
+ * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibrary
+ * Method:    internalSetReadOnlyW
+ * Signature: ([CZ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibrary_internalSetReadOnlyW
+   (JNIEnv *env, jclass clazz, jcharArray target, jboolean readOnly) {
+
+	HANDLE handle;
+	jchar *targetFile;
+	int success = JNI_TRUE;
+	DWORD attributes;
+
+	targetFile = getCharArray(env, target);
+
+	attributes = GetFileAttributesW(targetFile);
+
+	if (readOnly)
+		attributes = attributes | FILE_ATTRIBUTE_READONLY;
+	else
+		attributes = attributes & ~FILE_ATTRIBUTE_READONLY;
+	
+	success = SetFileAttributesW(targetFile, attributes);
+
+	free(targetFile);
+	return success;
 }
 
 /*
@@ -129,6 +228,40 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSys
 	FindClose(handle);
 	return success;
 }
+/*
+ * Class:     org_eclipse_core_internal_localstore_CoreFileSystemLibrary
+ * Method:    internalCopyAttributesW
+ * Signature: ([C[CZ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_localstore_CoreFileSystemLibrary_internalCopyAttributesW
+  (JNIEnv *env, jclass clazz, jcharArray source, jcharArray destination, jboolean copyLastModified) {
+
+	HANDLE handle;
+	WIN32_FIND_DATAW info;
+	jchar *sourceFile, *destinationFile;
+	int success = 1;
+
+	sourceFile = getCharArray(env, source);
+	destinationFile = getCharArray(env, destination);
+
+	handle = FindFirstFileW(sourceFile, &info);
+	
+	if (handle != INVALID_HANDLE_VALUE) {
+		success = SetFileAttributesW(destinationFile, info.dwFileAttributes);
+		if (success != 0 && copyLastModified) {
+			// does not honor copyLastModified
+			// call to SetFileTime should pass file handle instead of file name
+			// success = SetFileTime(destinationFile, &info.ftCreationTime, &info.ftLastAccessTime, &info.ftLastWriteTime);
+		}
+	} else {
+		success = 0;
+	}
+
+	free(sourceFile);
+	free(destinationFile);
+	FindClose(handle);
+	return success;
+}  
 
 /*
  * Class:     org_eclipse_ant_core_EclipseProject
