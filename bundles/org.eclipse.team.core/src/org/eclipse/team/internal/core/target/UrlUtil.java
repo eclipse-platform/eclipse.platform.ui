@@ -45,4 +45,14 @@ public class UrlUtil {
 				
 		return root + end.toString();	//have one separator between the two, just concat end
 	}
+	
+	/*
+	 * Return a string that is like url but guaranteed to end with a '/'
+	 */
+	public static String makeAbsolute(String url) {
+		boolean hasTrailing = url.charAt(url.length() - 1) == Path.SEPARATOR;  //has trailing '/'
+		if(hasTrailing)
+			return url;
+		return url + Path.SEPARATOR;
+	}
 }
