@@ -178,6 +178,12 @@
             class="org.eclipse.update.internal.ui.properties.FeatureGeneralPropertyPage"
             id="org.eclipse.update.ui.featureGeneralPropertyPage">
       </page>
+      <page
+            objectClass="org.eclipse.update.internal.ui.model.IFeatureAdapter"
+            name="License"
+            class="org.eclipse.update.internal.ui.properties.FeatureLicensePropertyPage"
+            id="org.eclipse.update.ui.featureLicensePropertyPage">
+      </page>
    </extension>
    <extension
          point="org.eclipse.update.ui.searchCategory">
