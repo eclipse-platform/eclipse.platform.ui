@@ -6,10 +6,12 @@ package org.eclipse.update.internal.core;
  */
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
@@ -863,6 +865,7 @@ public class ConfiguredSite
 		}
 			
 		verifyStatus=createStatus(IStatus.OK,"",null);
+		isUpdatable(true);
 		return verifyStatus;
 	}
 	
@@ -1042,4 +1045,130 @@ public class ConfiguredSite
 			}	 	
 	 	}
 	 }
+	 
+	/*
+	 * Returns true if the directory of the Site contains
+	 * .eclipseextension
+	 */
+	public boolean isExtensionSite(){
+		return containsMarker(EXTENSION_SITE_MARKER);
+	}
+
+	/*
+	 * Returns true if the directory of the Site contains
+	 * .eclipseextension
+	 */
+	public boolean isProductSite(){
+		return containsMarker(PRODUCT_SITE_MARKER);
+	}
+
+	/*
+	 * Returns true if the directory of the Site contains
+	 * .eclipseextension
+	 */
+	public boolean isPrivateSite(){
+		return containsMarker(PRIVATE_SITE_MARKER);
+	}
+
+	/*
+	 * 
+	 */
+	private boolean containsMarker(String marker){
+		ISite site = getSite();
+		if (site==null) {
+			UpdateManagerPlugin.warn("The site is null",new Exception());			
+			 return false;
+		}
+		
+		URL url = site.getURL();
+		if (url == null) {
+			UpdateManagerPlugin.warn("Site URL is null",new Exception());	
+			return false;
+		}
+		if (!"file".equalsIgnoreCase(url.getProtocol())){
+			UpdateManagerPlugin.warn("Non file protocol",new Exception());
+			return false;
+		}
+		File file = new File(url.getFile());
+		if (!file.exists()){
+			UpdateManagerPlugin.warn("The site doesn't exist:"+file,new Exception());
+			return false;			
+		}
+		File extension = new File(file,marker);
+		if (!extension.exists()){
+			UpdateManagerPlugin.warn("The extensionfile does not exist:"+extension,new Exception());
+			return false;									
+		}
+		return true;			
+	}
+	
+	/*
+	 * Returns true if the Site is already natively linked
+	 */		
+	public boolean isNativelyLinked() throws CoreException {
+		String platformString = getPlatformURLString();
+		if (platformString==null){
+			UpdateManagerPlugin.warn("Unable to retrieve platformString",new Exception());
+			return false;									
+		}
+		
+		URL siteURL = null;
+		try {
+			// check if the site exists and is updatable
+			// update configSite
+			URL	urlToCheck = new URL(platformString);
+		 	IPlatformConfiguration runtimeConfig = BootLoader.getCurrentPlatformConfiguration();			
+		 	IPlatformConfiguration.ISiteEntry entry = runtimeConfig.findConfiguredSite(urlToCheck);	 
+		 	if (entry!=null){	
+			 	return entry.isNativelyLinked();
+		 	} else {
+		 		UpdateManagerPlugin.warn("Unable to retrieve site:" +platformString+" from platform.");
+		 	}
+		 	
+		 	// check by comparing URLs
+		 	IPlatformConfiguration.ISiteEntry[] sites = runtimeConfig.getConfiguredSites();
+		 	for (int i = 0; i < sites.length; i++) {
+				siteURL = sites[i].getURL();
+				URL resolvedURL = Platform.resolve(siteURL);
+				if (sameURL(resolvedURL,urlToCheck))
+					return true;
+			}
+		} catch (MalformedURLException e){
+			String msg = Policy.bind("ConfiguredSite.UnableResolveURL",platformString);
+			throw Utilities.newCoreException(msg,e);
+		} catch (IOException e){
+			String msg = Policy.bind("ConfiguredSite.UnableToAccessSite",new Object[]{siteURL});
+			throw Utilities.newCoreException(msg,e);
+		}
+		
+		return false;
+	}
+	
+	/*
+	 * Compares two URL for equality
+	 * Return false if one of them is null
+	 */
+	private boolean sameURL(URL url1, URL url2) {
+		if (url1 == null)
+			return false;
+		if (url1.equals(url2))
+			return true;
+
+		// check if URL are file: URL as we may
+		// have 2 URL pointing to the same featureReference
+		// but with different representation
+		// (i.e. file:/C;/ and file:C:/)
+		if (!"file".equalsIgnoreCase(url1.getProtocol()))
+			return false;
+		if (!"file".equalsIgnoreCase(url2.getProtocol()))
+			return false;
+ 
+		File file1 = new File(url1.getFile());
+		File file2 = new File(url2.getFile());
+
+		if (file1 == null)
+			return false;
+
+		return (file1.equals(file2));
+	}		 
 }

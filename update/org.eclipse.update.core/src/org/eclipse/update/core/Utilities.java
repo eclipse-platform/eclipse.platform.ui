@@ -208,7 +208,7 @@ public class Utilities {
 		Throwable e2) {
 		String id =
 			UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-		MultiStatus multi = new MultiStatus(id, IStatus.ERROR, s, null);
+		MultiStatus multi = new MultiStatus(id, IStatus.OK, s, null);
 		
 		// check if core exception
 		if (e1 instanceof CoreException){

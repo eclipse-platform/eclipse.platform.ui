@@ -140,6 +140,66 @@ public class InstallConfiguration
 		return configSite;
 	}
 
+	/**
+	 * Creates a Configuration Site and a new Site as a private link site
+	 * The policy is from <code> org.eclipse.core.boot.IPlatformConfiguration</code>
+	 */
+	public IConfiguredSite createLinkedConfiguredSite(File file)
+		throws CoreException {
+
+		ISite site = InternalSiteManager.createSite(file);
+
+
+		//create a config site around the site
+		// even if the site == null
+		BaseSiteLocalFactory factory = new BaseSiteLocalFactory();
+		ConfiguredSite configSite =
+			(ConfiguredSite) factory.createConfigurationSiteModel(
+				(SiteModel) site,
+				getDefaultPolicy());
+		
+		if (!configSite.isExtensionSite()){
+			String msg = Policy.bind("InstallConfiguration.NotAnExtensionSite");
+			throw Utilities.newCoreException(msg,null);	
+		}
+
+		if (configSite.isNativelyLinked()) {
+			throw Utilities.newCoreException("InstallConfiguration.AlreadyNativelyLinked",null);
+		}
+
+		if (site != null) {
+			configSite.setPlatformURLString(site.getURL().toExternalForm());
+
+			// obtain the list of plugins
+			IPlatformConfiguration runtimeConfiguration =
+				BootLoader.getCurrentPlatformConfiguration();
+			ConfigurationPolicy configurationPolicy =
+				(ConfigurationPolicy) configSite.getConfigurationPolicy();
+			String[] pluginPath = new String[0];
+			if (configurationPolicy.getPolicy()
+				== IPlatformConfiguration.ISitePolicy.USER_INCLUDE)
+				pluginPath = configurationPolicy.getPluginPath(site, null);
+
+			// create new Site in configuration
+			IPlatformConfiguration.ISitePolicy sitePolicy =
+				runtimeConfiguration.createSitePolicy(
+					configurationPolicy.getPolicy(),
+					pluginPath);
+
+			// change runtime					
+			IPlatformConfiguration.ISiteEntry siteEntry =
+				runtimeConfiguration.createSiteEntry(site.getURL(), sitePolicy);
+			runtimeConfiguration.configureSite(siteEntry);
+
+			// if the privatre marker doesn't already exist create it
+			configSite.createPrivateSiteMarker();
+		}
+
+		return configSite;
+	}
+
+	
+
 	/*
 	 * 
 	 */
@@ -175,7 +235,6 @@ public class InstallConfiguration
 	public void removeConfiguredSite(IConfiguredSite site) {
 
 		if (removeConfigurationSiteModel((ConfiguredSiteModel) site)) {
-
 			// notify listeners
 			Object[] configurationListeners = listeners.getListeners();
 			for (int i = 0; i < configurationListeners.length; i++) {
@@ -192,7 +251,6 @@ public class InstallConfiguration
 			activity.setDate(new Date());
 			activity.setStatus(IActivity.STATUS_OK);
 			this.addActivityModel((ConfigurationActivityModel) activity);
-
 		}
 	}
 
@@ -761,5 +819,4 @@ public class InstallConfiguration
 		}
 		return url;
 	}
-
 }

@@ -160,4 +160,42 @@ public interface IConfiguredSite extends IAdaptable {
 	 */
 	public void removeConfiguredSiteChangedListener(IConfiguredSiteChangedListener listener);
 
+	/**
+	 * Indicates if the site is an extension site.
+	 * 
+	 * @return <code>true</code> if the site is an extension site,
+	 * <code>false</code> otherwise
+	 * @since 2.0
+	 */
+	public boolean isExtensionSite();
+
+	/**
+	 * Indicates if the site is a product site.
+	 * 
+	 * @return <code>true</code> if the site is a product site,
+	 * <code>false</code> otherwise
+	 * @since 2.0
+	 */
+	public boolean isProductSite();
+
+	/**
+	 * Indicates if the site is a private site.
+	 * This does not check if this private site belongs to the
+	 * product that is running.
+	 * 
+	 * @return <code>true</code> if the site is a private site,
+	 * <code>false</code> otherwise
+	 * @since 2.0
+	 */	
+	public boolean isPrivateSite();
+	
+	/**
+	 * Indicates if the site has been linked by a native
+	 * installer.
+	 * 
+	 * @return <code>true</code> if the site is a natively linked site,
+	 * <code>false</code> otherwise
+	 * @since 2.0
+	 */	
+	public boolean isNativelyLinked() throws CoreException;
 }

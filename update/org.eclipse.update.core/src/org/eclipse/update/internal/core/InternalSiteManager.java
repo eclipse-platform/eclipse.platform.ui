@@ -95,7 +95,7 @@ public class InternalSiteManager {
 				site = attemptCreateSite(DEFAULT_EXECUTABLE_SITE_TYPE, siteURL);
 			} catch (CoreException retryException) {
 				IStatus firstStatus = preservedException.getStatus();
-				MultiStatus multi = new MultiStatus(firstStatus.getPlugin(), IStatus.WARNING, Policy.bind("InternalSiteManager.FailedRetryAccessingSite"), retryException); //$NON-NLS-1$
+				MultiStatus multi = new MultiStatus(firstStatus.getPlugin(), IStatus.OK, Policy.bind("InternalSiteManager.FailedRetryAccessingSite"), retryException); //$NON-NLS-1$
 				multi.addAll(firstStatus);
 				throw preservedException;
 			}

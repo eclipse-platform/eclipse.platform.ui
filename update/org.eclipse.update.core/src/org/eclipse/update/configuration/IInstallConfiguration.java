@@ -50,6 +50,22 @@ public interface IInstallConfiguration extends IAdaptable {
 		throws CoreException;
 
 	/**
+	 * Create a new linked site, based on a local file 
+	 * system directory. Note, the site is not added to the
+	 * configuration as a result of this call.
+	 * The linked site is only created if the directory is an
+	 * already existing extension site and if it is not already
+	 * natively linked to teh local site.
+	 * 
+	 * @param directory file directory
+	 * @return new linked site
+	 * @exception CoreException
+	 * @since 2.0 
+	 */
+	public IConfiguredSite createLinkedConfiguredSite(File directory)
+		throws CoreException;
+
+	/**
 	 * Adds the specified site to this configuration.
 	 * 
 	 * @param site new site

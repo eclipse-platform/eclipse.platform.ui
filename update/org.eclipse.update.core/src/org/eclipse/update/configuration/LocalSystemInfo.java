@@ -188,6 +188,7 @@ public class LocalSystemInfo {
 				vol[i].markReadOnly();
 			}
 		} else {
+			UpdateManagerPlugin.warn("Unable to find mount points");
 			// fallback
 			File [] roots = File.listRoots();
 			if (roots.length == 1) {
