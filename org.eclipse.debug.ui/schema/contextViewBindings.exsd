@@ -44,7 +44,7 @@
          <attribute name="contextId" type="string" use="required">
             <annotation>
                <documentation>
-                  Specifies the context identifier that this binding is for
+                  Specifies the context identifier that this binding is for.
                </documentation>
             </annotation>
          </attribute>
@@ -97,7 +97,7 @@ Specifies whether the view should be automatically closed when the given context
          viewId=&quot;com.example.view&quot;
          autoOpen=&quot;true&quot;
          autoClose=&quot;false&quot;&gt;
-   &lt;/modelContextBinding&gt;
+   &lt;/contextViewBinding&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
 In the above example, when a context with the specified identifier is activated by the Debug view, the given view will be automatically opened. When a context which is bound to a different debug model is activated that isn&apos;t associated with the view, the view will not be automatically closed.
