@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.WizardExportResourcesPage;
 import org.eclipse.ui.help.DialogPageContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  *	Page 1 of the base resource export-to-file-system Wizard
@@ -115,11 +116,12 @@ protected void createDestinationGroup(Composite parent) {
  */
 protected void createOptionsGroup(Composite parent) {
 	// options group
-	Composite optionsGroup = new Composite(parent, SWT.NONE);
+	Group optionsGroup = new Group(parent, SWT.NONE);
 	GridLayout layout = new GridLayout();
-	layout.marginHeight = 0;
 	optionsGroup.setLayout(layout);
 	optionsGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+	optionsGroup.setText(WorkbenchMessages.getString("WizardExportPage.options")); //$NON-NLS-1$
+	
 
 	// overwrite... checkbox
 	overwriteExistingFilesCheckbox = new Button(optionsGroup,SWT.CHECK|SWT.LEFT);

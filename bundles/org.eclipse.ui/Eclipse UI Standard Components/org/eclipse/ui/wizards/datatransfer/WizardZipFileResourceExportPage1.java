@@ -7,6 +7,7 @@ package org.eclipse.ui.wizards.datatransfer;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.*;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.jface.*;
 import org.eclipse.jface.dialogs.*;
@@ -76,11 +77,11 @@ public void createControl(Composite parent) {
  */
 protected void createOptionsGroup(Composite parent) {
 	// options group
-	Composite optionsGroup = new Composite(parent, SWT.NONE);
+	Group optionsGroup = new Group(parent, SWT.NONE);
 	GridLayout layout = new GridLayout();
-	layout.marginHeight = 0;
 	optionsGroup.setLayout(layout);
 	optionsGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+	optionsGroup.setText(WorkbenchMessages.getString("WizardExportPage.options")); //$NON-NLS-1$
 
 	// overwrite... checkbox
 	overwriteExistingFileCheckbox = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);

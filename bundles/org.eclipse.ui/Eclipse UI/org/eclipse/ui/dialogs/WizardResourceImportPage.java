@@ -125,9 +125,6 @@ public void createControl(Composite parent) {
 	createPlainLabel(composite, WorkbenchMessages.getString("WizardImportPage.destinationLabel")); //$NON-NLS-1$
 	createDestinationGroup(composite);
 
-	createSpacer(composite);
-
-	createPlainLabel(composite, WorkbenchMessages.getString("WizardExportPage.options")); //$NON-NLS-1$
 	createOptionsGroup(composite);
 
 	restoreWidgetValues();

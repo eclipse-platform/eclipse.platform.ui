@@ -195,11 +195,12 @@ public void createControl(Composite parent) {
  */
 protected void createOptionsGroup(Composite parent) {
 	// options group
-	Composite optionsGroup = new Composite(parent, SWT.NONE);
+	Group optionsGroup = new Group(parent, SWT.NONE);
 	GridLayout layout = new GridLayout();
-	layout.marginHeight = 0;
 	optionsGroup.setLayout(layout);
 	optionsGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+	optionsGroup.setText(WorkbenchMessages.getString("WizardExportPage.options")); //$NON-NLS-1$
+
 
 	// overwrite... checkbox
 	overwriteExistingResourcesCheckbox = new Button(optionsGroup,SWT.CHECK);

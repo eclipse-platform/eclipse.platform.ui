@@ -222,7 +222,6 @@ public void createControl(Composite parent) {
 	createPlainLabel(composite, WorkbenchMessages.getString("WizardExportPage.whereLabel"));  //$NON-NLS-1$
 	createDestinationGroup(composite);
 	
-	createPlainLabel(composite, WorkbenchMessages.getString("WizardExportPage.options")); //$NON-NLS-1$
 	createOptionsGroup(composite);
 
 	restoreResourceSpecificationWidgetValues();		// ie.- local
