@@ -395,7 +395,8 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * 
 	 * <p>This method is called immediately prior to calling the job's
 	 * run method, so it can be used for last minute pre-condition checking before
-	 * a job is run.</p>
+	 * a job is run.  This method must not attempt to schedule or change the
+	 * state of any other job.</p>
 	 * 
 	 * <p>Clients may override this method.  This default implementation always returns
 	 * <code>true</code>.
