@@ -21,6 +21,7 @@ import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
@@ -80,11 +81,25 @@ public class CVSDecorator implements ITeamDecorator {
 		
 		try {	
 			switch (resource.getType()) {
+				case IResource.FOLDER: // fall through
 				case IResource.PROJECT:
 					ICVSFolder folder = new LocalFolder(resource.getLocation().toFile());
 					FolderSyncInfo folderInfo = folder.getFolderSyncInfo();
 					if(folderInfo!=null) {
-						return Policy.bind("CVSDecorator.projectDecoration", text, folderInfo.getRoot());
+						CVSTag tag = folderInfo.getTag();
+						if(tag!=null) {
+							if(resource.getType()==IResource.PROJECT) {
+								return Policy.bind("CVSDecorator.projectDecorationWithTag", new Object[] {text, tag.getName(), folderInfo.getRoot()});
+							} else {
+								return Policy.bind("CVSDecorator.folderDecoration", text, tag.getName());
+							}
+						} else {
+							if(resource.getType()==IResource.PROJECT) {
+								return Policy.bind("CVSDecorator.projectDecoration", text, folderInfo.getRoot());
+							} else {
+								return text;
+							}
+						}
 					}
 					break;
 				case IResource.FILE:
@@ -98,6 +113,7 @@ public class CVSDecorator implements ITeamDecorator {
 							return Policy.bind("CVSDecorator.fileDecorationWithTag", new Object[] {text, tag.getName(), fileInfo.getRevision()});
 						}
 					}
+					break;
 			}	
 		} catch (CVSException e) {
 			return text;
