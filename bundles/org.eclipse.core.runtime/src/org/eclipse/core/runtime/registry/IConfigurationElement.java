@@ -93,7 +93,7 @@ public String getAttribute(String name);
  * corresponds to a configuration element, named <code>"tooltip"</code>,
  * with value <code>"#hattip"</code>.
  * </p>
- *
+ * @param name the name of the attribute
  * @return the untranslated text value of this configuration element or <code>null</code>
  */
 public String getAttributeAsIs(String name);
