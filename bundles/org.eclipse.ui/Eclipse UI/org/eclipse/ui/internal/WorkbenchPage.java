@@ -588,25 +588,27 @@ public boolean closeAllSavedEditors() {
 	if (isZoomed())
 		zoomOut();
 		
-	// Deactivate part.
-	boolean deactivate = activePart instanceof IEditorPart;
-	if (deactivate)
-		setActivePart(null);
-	lastActiveEditor = null;
-	actionSwitcher.updateTopEditor(null);
+	boolean deactivated = false;
 			
 	// Close all editors.
 	IEditorPart [] editors = getEditorManager().getEditors();
 	for (int i = 0; i < editors.length; i ++) {
 		IEditorPart editor = editors[i];
 		if(!editor.isDirty()) {
+			if (editor == activePart) {
+				deactivated = true;
+				setActivePart(null);
+			} else if (lastActiveEditor == editor) {
+				lastActiveEditor = null;
+				actionSwitcher.updateTopEditor(null);
+			}
 			getEditorManager().closeEditor(editor);
 			activationList.remove(editor);
 			firePartClosed(editor);
 			editor.dispose();
 		}
 	}
-	if (deactivate)
+	if (deactivated)
 		activate(activationList.getActive());
 		
 	// Notify interested listeners
@@ -682,8 +684,8 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	firePartClosed(editor);
 	editor.dispose();
 
-		// Notify interested listeners
-		window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_CLOSE);
+	// Notify interested listeners
+	window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_CLOSE);
 	
 	// Activate new part.
 	if (partWasActive) {
@@ -1482,6 +1484,17 @@ protected void onActivate() {
 		if (activePart instanceof IEditorPart) {
 			lastActiveEditor = (IEditorPart) activePart;
 			actionSwitcher.updateTopEditor((IEditorPart) activePart);
+		} else {
+			IEditorPart editor = editorMgr.getVisibleEditor();
+			if (editor != null) {
+				actionSwitcher.updateTopEditor(editor);
+				
+				// inform the site's action bars of the current editor 
+				// (important that this occur during page opening).
+				PartSite site = (PartSite)editor.getSite();
+				SubActionBars bars = (SubActionBars)site.getActionBars();
+				bars.partChanged(editor);
+			}
 		}
 		firePartActivated(activePart);
 	} else {
