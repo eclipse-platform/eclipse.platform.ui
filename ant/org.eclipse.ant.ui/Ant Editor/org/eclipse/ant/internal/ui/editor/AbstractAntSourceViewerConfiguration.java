@@ -53,6 +53,9 @@ public abstract class AbstractAntSourceViewerConfiguration extends SourceViewerC
 	    return tagScanner;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getPresentationReconciler(org.eclipse.jface.text.source.ISourceViewer)
+	 */
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 	    PresentationReconciler reconciler = new PresentationReconciler();
 	
@@ -128,7 +131,9 @@ public abstract class AbstractAntSourceViewerConfiguration extends SourceViewerC
 		}
     }
 	
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredContentTypes(org.eclipse.jface.text.source.ISourceViewer)
+	 */
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
 	    return new String[] {
 	        IDocument.DEFAULT_CONTENT_TYPE,
@@ -136,6 +141,9 @@ public abstract class AbstractAntSourceViewerConfiguration extends SourceViewerC
 	        AntEditorPartitionScanner.XML_TAG };
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getTabWidth(org.eclipse.jface.text.source.ISourceViewer)
+	 */
 	public int getTabWidth(ISourceViewer sourceViewer) {
 		return AntUIPlugin.getDefault().getPreferenceStore().getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
 	}
