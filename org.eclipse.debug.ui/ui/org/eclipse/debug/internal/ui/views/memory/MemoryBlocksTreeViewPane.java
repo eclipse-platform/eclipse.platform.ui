@@ -33,9 +33,12 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -51,6 +54,7 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 
@@ -68,6 +72,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 	private ViewPaneSelectionProvider fSelectionProvider;
 	private AddMemoryBlockAction fAddMemoryBlockAction;
 	private IAction fRemoveMemoryBlockAction;
+	private IAction fRemoveAllMemoryBlocksAction;
 	private Hashtable fTargetMemoryBlockMap = new Hashtable();
 	private String fPaneId;
 	private boolean fVisible = true;
@@ -88,7 +93,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 			setEnabled(true);
 		}
 		
-			/* (non-Javadoc)
+		/* (non-Javadoc)
 		 * @see org.eclipse.jface.action.IAction#run()
 		 */
 		public void run() {
@@ -96,15 +101,54 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 			
 			if (selected != null && selected instanceof IStructuredSelection)
 			{
-				Object selectedObj = ((IStructuredSelection)selected).getFirstElement();
+				Object[] selectedMemBlks = ((IStructuredSelection)selected).toArray();
+				IMemoryBlock[] memBlocks = new IMemoryBlock[selectedMemBlks.length];
 				
-				if (selectedObj != null && selectedObj instanceof IMemoryBlock)
-				{
-					DebugPlugin.getDefault().getMemoryBlockManager().removeMemoryBlocks(new IMemoryBlock[]{(IMemoryBlock)selectedObj});
-				}
-				
+				System.arraycopy(selectedMemBlks, 0, memBlocks, 0, selectedMemBlks.length);
+				DebugPlugin.getDefault().getMemoryBlockManager().removeMemoryBlocks(memBlocks);
 			}
 		}
+	}
+	
+	class TreeViewerRemoveAllMemoryBlocksAction extends Action
+	{
+		TreeViewerRemoveAllMemoryBlocksAction()
+		{
+			super();
+			setText(DebugUIMessages.getString(DebugUIMessages.getString("MemoryBlocksTreeViewPane.2"))); //$NON-NLS-1$
+
+			setToolTipText(DebugUIMessages.getString("MemoryBlocksTreeViewPane.2")); //$NON-NLS-1$
+			setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE_ALL));	
+			setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE_ALL));
+			setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE_ALL));
+			WorkbenchHelp.setHelp(this, IDebugUIConstants.PLUGIN_ID + ".RemoveAllMemoryBlocksAction_context"); //$NON-NLS-1$
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.action.IAction#run()
+		 */
+		public void run() {
+			
+			IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
+			if (window == null) {
+				return;
+			}
+			boolean proceed = MessageDialog.openQuestion(window.getShell(), DebugUIMessages.getString("MemoryBlocksTreeViewPane.0"), DebugUIMessages.getString("MemoryBlocksTreeViewPane.1")); //$NON-NLS-1$ //$NON-NLS-2$
+			if (proceed) {
+				IMemoryBlock[] memBlocks;
+				
+				IContentProvider contentProvider = fTreeViewer.getContentProvider();
+				
+				if (contentProvider instanceof IStructuredContentProvider)
+				{
+					IStructuredContentProvider strucContentProv = (IStructuredContentProvider)contentProvider;
+					Object[] elements = strucContentProv.getElements(fDebugTarget);
+					memBlocks = new IMemoryBlock[elements.length];
+					System.arraycopy(elements, 0, memBlocks, 0, elements.length);
+					DebugPlugin.getDefault().getMemoryBlockManager().removeMemoryBlocks(memBlocks);	
+				}
+			}
+		}		
 	}
 	
 	class MemoryBlocksViewerContentProvider extends BasicDebugViewContentProvider implements IMemoryBlockListener, ITreeContentProvider
@@ -491,9 +535,15 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 		{
 			fRemoveMemoryBlockAction = new TreeViewerRemoveMemoryBlocksAction();
 		}
+		
+		if (fRemoveAllMemoryBlocksAction == null)
+		{
+			fRemoveAllMemoryBlocksAction = new TreeViewerRemoveAllMemoryBlocksAction();
+		}
+		
 		updateActionsEnablement();
 		
-		return new IAction[]{fAddMemoryBlockAction, fRemoveMemoryBlockAction};
+		return new IAction[]{fAddMemoryBlockAction, fRemoveMemoryBlockAction, fRemoveAllMemoryBlocksAction};
 	}
 
 	/* (non-Javadoc)
@@ -575,10 +625,19 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 		if (fMemoryBlocks == null)
 			return;
 		
+		if (fRemoveAllMemoryBlocksAction == null)
+			return;
+		
 		if (fMemoryBlocks.size() > 0)
+		{
 			fRemoveMemoryBlockAction.setEnabled(true);
+			fRemoveAllMemoryBlocksAction.setEnabled(true);
+		}
 		else
+		{
 			fRemoveMemoryBlockAction.setEnabled(false);
+			fRemoveAllMemoryBlocksAction.setEnabled(false);
+		}
 	}
 
 }

@@ -79,6 +79,7 @@ public interface IInternalDebugUIConstants {
 	public static final String IMG_ELCL_RESET_MEMORY= "IMG_ELCL_RESET_MEMORY";  //$NON-NLS-1$
 	public static final String IMG_ELCL_COPY_VIEW_TO_CLIPBOARD= "IMG_ELCL_COPY_VIEW_TO_CLIPBOARD";  //$NON-NLS-1$
 	public static final String IMG_ELCL_PRINT_TOP_VIEW_TAB= "IMG_ELCL_PRINT_TOP_VIEW_TAB";  //$NON-NLS-1$
+	public static final String IMG_ELCL_REMOVE_ALL = "IMG_ELCL_REMOVE_ALL"; //$NON-NLS-1$
 	
 	// object images
 	public static final String IMG_OBJS_INSTRUCTION_POINTER_TOP = "IMG_OBJS_INSTRUCTION_POINTER_TOP"; //$NON-NLS-1$
