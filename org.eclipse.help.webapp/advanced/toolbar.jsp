@@ -93,13 +93,10 @@ if (data.isIE()) {
 %>
 }
 
-</style>
-
 <%
 // workaround for adding right border on mozilla (ugly..)
 if (data.isMozilla() && "content".equals(request.getParameter("toolbar"))) { 
 %>
-<style type="text/css">
 
 /* need this one for Mozilla */
 HTML { 
@@ -107,11 +104,12 @@ HTML {
 	padding:0px;
 	border-right:2px solid ThreeDShadow;
 }
-
-</style>
 <%
 }
 %>
+
+</style>
+
 <script language="JavaScript">
 
 var isMozilla = navigator.userAgent.indexOf('Mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
@@ -206,8 +204,9 @@ if(buttons.length > 0){
 		<td nowrap style="font: <%=prefs.getToolbarFont()%>" valign="middle">
 			<div id="titleText">&nbsp;<%=data.getTitle()%>
 			</div>
-		</td>
-		<td>
+		
+		
+		<div style="position:absolute; top:2px; right:0px;">
 		<table width="100%" border="0" cellspacing="1" cellpadding="0" height="100%">
 			<tr>
 				<td align="right">
@@ -243,6 +242,7 @@ if(buttons.length > 0){
 				</td>
 			</tr>
 		</table> 
+		</div>
 		</td>
 	</tr>
 </table>
