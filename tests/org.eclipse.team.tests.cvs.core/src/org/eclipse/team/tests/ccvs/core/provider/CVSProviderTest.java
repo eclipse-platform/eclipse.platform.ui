@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
@@ -404,6 +405,31 @@ public class CVSProviderTest extends EclipseTest {
 		ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(file);
 		ResourceSyncInfo info = cvsFile.getSyncInfo();
 		assertEquals(ksubst, info.getKeywordMode());
+	}
+	
+	public void testUnmap() throws CoreException, TeamException {
+		// Create a project
+		IProject project = createProject("testUnmap", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt", "folder1/", "folder1/folder2/deep.txt", "folder2/b.txt" });
+		// delete a file and folder to create phantoms
+		project.getFile("deleted.txt").delete(false, false, null);
+		assertTrue(project.getFile("deleted.txt").isPhantom());
+		project.getFolder("folder2").delete(false, false, null);
+		assertTrue(project.getFolder("folder2").isPhantom());
+		// unmap
+		RepositoryProvider.unmap(project);
+		// ensure that phantoms for the resoucrs no longer exist
+		assertFalse(project.getFile("deleted.txt").isPhantom());
+		assertFalse(project.getFolder("folder2").isPhantom());
+		
+		// Create a project
+		project = createProject("testUnmap2", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt", "folder1/", "folder1/folder2/deep.txt", "folder2/b.txt" });
+		// delete a deep folder to create phantoms
+		project.getFolder("folder1/folder2").delete(false, false, null);
+		assertTrue(project.getFolder("folder1/folder2").isPhantom());
+		// unmap
+		RepositoryProvider.unmap(project);
+		// ensure that phantoms for the resources no longer exist
+		assertFalse(project.getFolder("folder1/folder2").isPhantom());
 	}
 }
 
