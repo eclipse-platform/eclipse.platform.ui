@@ -288,7 +288,7 @@ public class AboutPluginsDialog extends Dialog {
 			MessageDialog.openError(
 				getShell(), 
 				WorkbenchMessages.getString("AboutPluginsDialog.errorTitle"), //$NON-NLS-1$
-				WorkbenchMessages.format("AboutPluginsDialog.unableToOpenFile", new Object[] {PLUGININFO, desc.getLabel()})); //$NON-NLS-1$
+				WorkbenchMessages.format("AboutPluginsDialog.unableToOpenFile", new Object[] {PLUGININFO, desc.getUniqueIdentifier()})); //$NON-NLS-1$
 			return;
 		}
 
