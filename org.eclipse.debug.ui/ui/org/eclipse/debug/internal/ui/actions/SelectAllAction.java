@@ -15,13 +15,6 @@ import org.eclipse.ui.IViewPart;
 public abstract class SelectAllAction extends AbstractListenerActionDelegate {
 
 	/**
-	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)
-	 */
-	protected boolean isEnabledFor(Object element) {
-		return true;
-	}
-
-	/**
 	 * @see IViewActionDelegate#init(IViewPart)
 	 */
 	public void init(IViewPart view) {

@@ -53,7 +53,7 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 			}
 		};
 		
-		getWindow().getShell().getDisplay().asyncExec(r);
+		shell.getDisplay().asyncExec(r);
 	}
 	
 	/**

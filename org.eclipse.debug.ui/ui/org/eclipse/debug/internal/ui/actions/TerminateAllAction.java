@@ -73,14 +73,6 @@ public class TerminateAllAction extends AbstractListenerActionDelegate {
 		}
 	}
 
-	/**
-	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)
-	 */
-	protected boolean isEnabledFor(Object element) {
-		return true;
-	}
-
-
 	protected void doHandleDebugEvent(DebugEvent event) {
 		switch (event.getKind()) {
 			case DebugEvent.TERMINATE :

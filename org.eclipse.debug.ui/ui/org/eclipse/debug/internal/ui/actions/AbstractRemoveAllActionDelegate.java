@@ -27,13 +27,6 @@ public abstract class AbstractRemoveAllActionDelegate extends AbstractListenerAc
 	}
 	
 	protected abstract void doAction();
-
-	/**
-	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)
-	 */
-	protected boolean isEnabledFor(Object element) {
-		return true;
-	}
 	
 	protected void update(IAction action, ISelection s) {
 		update();

@@ -34,13 +34,6 @@ public abstract class StepActionDelegate extends AbstractListenerActionDelegate 
 	}
 
 	/**
-	 * @see AbstractDebugActionDelegate#enableForMultiSelection()
-	 */
-	protected boolean enableForMultiSelection() {
-		return false;
-	}
-
-	/**
 	 * Returns whether the <code>IStep</code> has the capability to perform the
 	 * requested step action.
 	 */

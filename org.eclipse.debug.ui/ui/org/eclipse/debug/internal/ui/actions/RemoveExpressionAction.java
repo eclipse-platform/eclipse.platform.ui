@@ -49,12 +49,5 @@ public class RemoveExpressionAction extends AbstractRemoveActionDelegate {
 		}
 		return null;
 	}
-	
-	/**
-	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)
-	 */
-	protected boolean isEnabledFor(Object element) {
-		return element instanceof IVariable || element instanceof IExpression;
-	}
 }
 

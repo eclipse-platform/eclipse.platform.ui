@@ -7,7 +7,6 @@ package org.eclipse.debug.internal.ui.actions;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.ISuspendResume;
-import org.eclipse.jface.viewers.IStructuredSelection;
 
 public class SuspendActionDelegate extends AbstractListenerActionDelegate {
 
@@ -25,17 +24,6 @@ public class SuspendActionDelegate extends AbstractListenerActionDelegate {
 	 */
 	protected boolean isEnabledFor(Object element) {
 		return element instanceof ISuspendResume && ((ISuspendResume)element).canSuspend();
-	}
-
-	/**
-	 * @see AbstractDebugActionDelegate#getEnableStateForSelection(IStructuredSelection)
-	 */
-	protected boolean getEnableStateForSelection(IStructuredSelection selection) {	 		
-		if (selection.size() == 1) {
-			return isEnabledFor(selection.getFirstElement());
-		} else {
-			 return false;
-		}
 	}
 
 	/**

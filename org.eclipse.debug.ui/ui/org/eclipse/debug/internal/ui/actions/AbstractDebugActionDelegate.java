@@ -152,45 +152,10 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	}
 	
 	/**
-	 * Return whether the action should be enabled or not based on the given selection.
-	 */
-	protected boolean getEnableStateForSelection(IStructuredSelection selection) {
-		if (selection.size() == 0) {
-			return false;
-		}
-		Iterator enum= selection.iterator();
-		int count= 0;
-		while (enum.hasNext()) {
-			count++;
-			if (count > 1 && !enableForMultiSelection()) {
-				return false;
-			}
-			Object element= enum.next();
-			if (!isEnabledFor(element)) {
-				return false;
-			}
-		}
-		return true;		
-	}
-	
-	/**
-	 * Returns whether this action should be enabled if there is
-	 * multi selection.
-	 */
-	protected boolean enableForMultiSelection() {
-		return true;
-	}
-		
-	/**
 	 * Performs the specific action on this element.
 	 */
 	protected abstract void doAction(Object element) throws DebugException;
 
-	/**
-	 * Returns whether this action will work for the given element
-	 */
-	protected abstract boolean isEnabledFor(Object element);
-	
 	/**
 	 * Returns the String to use as an error dialog title for
 	 * a failed action. Default is to return null.
@@ -325,5 +290,26 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 
 	protected void setWindow(IWorkbenchWindow window) {
 		fWindow = window;
+	}
+	
+	/**
+	 * Return whether the action should be enabled or not based on the given selection.
+	 */
+	protected boolean getEnableStateForSelection(IStructuredSelection selection) {
+		if (selection.size() == 0) {
+			return false;
+		}
+		Iterator enum= selection.iterator();
+		while (enum.hasNext()) {
+			Object element= enum.next();
+			if (!isEnabledFor(element)) {
+				return false;
+			}
+		}
+		return true;		
+	}
+
+	protected boolean isEnabledFor(Object element) {
+		return true;
 	}
 }
