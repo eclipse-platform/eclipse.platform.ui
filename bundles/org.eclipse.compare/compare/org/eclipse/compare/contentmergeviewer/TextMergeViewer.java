@@ -229,7 +229,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	private boolean fIgnoreAncestor= false;
 	private ActionContributionItem fIgnoreAncestorItem;
-	private boolean fHiglightRanges;
+	private boolean fHighlightRanges;
 	
 	private boolean fShowPseudoConflicts= false;
 	
@@ -1130,7 +1130,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		int lineHeight= tp.getTextWidget().getLineHeight();
 		int visibleHeight= tp.getViewportHeight();
 
-		if (! fHiglightRanges)
+		if (! fHighlightRanges)
 			return null;
 
 		if (fChangeDiffs != null) {
@@ -1173,7 +1173,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		Point size= canvas.getSize();
 		int w= size.x;
 
-		if (! fHiglightRanges)
+		if (! fHighlightRanges)
 			return null;
 
 		if (fChangeDiffs != null) {
@@ -1623,7 +1623,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			n++;
 		if (right != null)
 			n++;
-		fHiglightRanges= n > 1;
+		fHighlightRanges= n > 1;
 		
 		// clear stuff
 		fCurrentDiff= null;
@@ -1690,7 +1690,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	private void updateDiffBackground(Diff diff) {
 		
-		if (! fHiglightRanges)
+		if (! fHighlightRanges)
 			return;
 		
 		if (diff == null || diff.fIsToken)
@@ -2691,7 +2691,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		}
 		
 		if (fDirectionLabel != null) {
-			if (fHiglightRanges && fCurrentDiff != null && isThreeWay() && !fIgnoreAncestor) {
+			if (fHighlightRanges && fCurrentDiff != null && isThreeWay() && !fIgnoreAncestor) {
 				fDirectionLabel.setImage(fCurrentDiff.getImage());
 			} else {
 				fDirectionLabel.setImage(null);
@@ -3223,7 +3223,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			g.fillRectangle(w-1, 0, 1, size.y);
 		}
 			
-		if (! fHiglightRanges)
+		if (! fHighlightRanges)
 			return;
 
 		boolean showResolveUI= showResolveUI();
@@ -3372,7 +3372,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				g.fillRectangle(size.x-1, 0, 1, size.y);
 		}
 
-		if (! fHiglightRanges)
+		if (! fHighlightRanges)
 			return;
 
 		if (fChangeDiffs != null) {
@@ -3415,7 +3415,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	private void paint(PaintEvent event, MergeSourceViewer tp) {
 		
-		if (! fHiglightRanges)
+		if (! fHighlightRanges)
 			return;
 		if (fChangeDiffs == null)
 			return;
