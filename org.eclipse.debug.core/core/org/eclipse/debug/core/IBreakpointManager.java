@@ -99,9 +99,9 @@ public interface IBreakpointManager {
 	 * @param lineNumber the line number the breakpoint is associated with, or -1
 	 *    if unknown
 	 * @param charStart the index in an associated source element, of the first
-	 *    character associated with the breakoint, or -1 if unknown
+	 *    character associated with the breakpoint, or -1 if unknown
 	 * @param charEnd the index in an associated source element, of the last
-	 *    character associated with the breakoint, or -1 if unknown
+	 *    character associated with the breakpoint, or -1 if unknown
 	 *
 	 * @exception CoreException if setting an attribute fails
 	 * @see IMarker#setAttribute(String, Object)
