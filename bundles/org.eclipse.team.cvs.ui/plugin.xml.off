@@ -123,12 +123,6 @@
 			objectClass="org.eclipse.core.resources.IProject" adaptable="true">
 			<filter name="projectNature" value="org.eclipse.team.cvs.core.cvsnature"/>
 			<action 
-				id="org.eclipse.team.ccvs.ui.compareWithTag"
-				label="%CompareWithTagAction.label"
-				tooltip="%CompareWithTagAction.tooltip"
-				menubarPath="compareWithMenu/compareWithGroup"
-				class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithTagAction"/>
-			<action 
 				id="org.eclipse.team.ccvs.ui.merge"
 				label="%MergeAction.label"
 				tooltip="%MergeAction.tooltip"
@@ -140,17 +134,23 @@
 				tooltip="%BranchAction.tooltip"
 				menubarPath="team.main/group1"
 				class="org.eclipse.team.internal.ccvs.ui.actions.BranchAction"/>
-		</objectContribution>
-		<objectContribution
-			id="org.eclipse.team.ccvs.ui.IContainerContributions"
-			objectClass="org.eclipse.core.resources.IContainer" adaptable="true">
-			<filter name="projectNature" value="org.eclipse.team.cvs.core.cvsnature"/>
 			<action 
 				id="org.eclipse.team.ccvs.ui.replaceWithTag"
 				label="%ReplaceWithTagAction.label"
 				tooltip="%ReplaceWithTagAction.tooltip"
 				menubarPath="replaceWithMenu/replaceWithGroup"
 				class="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithTagAction"/>
+		</objectContribution>
+		<objectContribution
+			id="org.eclipse.team.ccvs.ui.IContainerContributions"
+			objectClass="org.eclipse.core.resources.IContainer" adaptable="true">
+			<filter name="projectNature" value="org.eclipse.team.cvs.core.cvsnature"/>
+			<action 
+				id="org.eclipse.team.ccvs.ui.compareWithTag"
+				label="%CompareWithTagAction.label"
+				tooltip="%CompareWithTagAction.tooltip"
+				menubarPath="compareWithMenu/compareWithGroup"
+				class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithTagAction"/>
 			<action 
 				id="org.eclipse.team.ccvs.ui.unmanage"
 				label="%UnmanageFolder.label"
