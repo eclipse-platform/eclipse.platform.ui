@@ -222,8 +222,10 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 		return composite;
 	}
 	public void commandStateChanged(boolean back, boolean forward) {
-		backItem.setEnabled(back);
-		forwardItem.setEnabled(forward);
+		if (backItem.getEnabled() != back)
+			backItem.setEnabled(back);
+		if (forwardItem.getEnabled() != forward)
+			forwardItem.setEnabled(forward);
 	}
 	/**
 	 * Reads commands from standard input.
