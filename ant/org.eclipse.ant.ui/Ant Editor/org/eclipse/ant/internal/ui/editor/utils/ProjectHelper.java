@@ -433,7 +433,9 @@ public class ProjectHelper extends ProjectHelper2 {
 		public void comment(char[] ch, int start, int length) throws SAXException {
 			AntXMLContext context= getContext();
 			Locator locator= context.getLocator();
-			getAntModel().addComment(locator.getLineNumber(), locator.getColumnNumber(), length);
+			if (locator != null) {
+				getAntModel().addComment(locator.getLineNumber(), locator.getColumnNumber(), length);
+			}
 		}
 
 		/* (non-Javadoc)
