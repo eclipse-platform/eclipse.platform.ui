@@ -59,7 +59,7 @@ public abstract class UpdateManagerTestCase extends TestCase {
 	protected static void init() throws MissingResourceException, IOException, MalformedURLException {
 
 		IPluginDescriptor dataDesc = Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.update.tests.core");
-		URL resolvedURL = Platform.resolve(dataDesc.getInstallURL());
+		URL resolvedURL = Platform.asLocalURL(Platform.resolve(dataDesc.getInstallURL()));
 		URL dataURL = new URL(resolvedURL, DATA_PATH);
 		dataPath = dataURL.getFile();
 		String homePath = (System.getProperty("java.io.tmpdir")).replace(File.separatorChar, '/');

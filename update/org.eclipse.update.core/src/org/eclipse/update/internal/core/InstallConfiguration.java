@@ -752,7 +752,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 				String location = fragments[i].getLocation();
 				try {
 					URL locationURL = new URL(location);
-					locationURL = Platform.resolve(locationURL);
+					locationURL = Platform.asLocalURL(Platform.resolve(locationURL));
 					list.add(asInstallRelativeURL(locationURL));
 				} catch (IOException e) {
 					// skip bad fragments
