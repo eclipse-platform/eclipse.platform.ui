@@ -23,7 +23,7 @@ import org.eclipse.jface.text.IEventConsumer;
 
 /**
  * A content assist subject control can request assistance provided by a
- * {@link org.eclipse.jface.text.contentassist.IContentAssistant content assistant}.
+ * {@linkplain org.eclipse.jface.contentassist.ISubjectControlContentAssistant subject control content assistant}.
  * 
  * @since 3.0
  */

@@ -15,9 +15,9 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationPresenter;
 
 /**
- * Extends <code>IContextInformationPresenter</code> with the concept of a
- * content assist subject control which provides the context for
- * the content assistant.
+ * Extends {@link org.eclipse.jface.text.contentassist.IContextInformationPresenter} to
+ * allow to install a content assistant on the given
+ * {@linkplain org.eclipse.jface.contentassist.IContentAssistSubjectControl content assist subject control}.
  * 
  * @since 3.0
  */

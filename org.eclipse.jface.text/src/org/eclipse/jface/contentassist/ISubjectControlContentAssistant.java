@@ -14,12 +14,10 @@ import org.eclipse.jface.text.contentassist.IContentAssistant;
 
 
 /**
- * Extension interface for <code>IContentAssistant</code> which allows
- * to install a content assistant on the given content assist subject
- * control instead of a text viewer.
+ * Extends {@link org.eclipse.jface.text.contentassist.IContentAssistant} to
+ * allow to install a content assistant on the given
+ * {@linkplain org.eclipse.jface.contentassist.IContentAssistSubjectControl content assist subject control}.
  * 
- * @see org.eclipse.jface.text.contentassist.IContentAssistant
- * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl
  * @since 3.0
  */
 public interface ISubjectControlContentAssistant extends IContentAssistant {
@@ -27,8 +25,7 @@ public interface ISubjectControlContentAssistant extends IContentAssistant {
 	/**
 	 * Installs content assist support on the given subject.
 	 * 
-	 * @param contentAssistSubject the one who requests content assist
-	 * @throws UnsupportedOperationException if the content assist does not support this method
+	 * @param contentAssistSubjectControl the one who requests content assist
 	 */
-	void install(IContentAssistSubjectControl contentAssistSubject);
+	void install(IContentAssistSubjectControl contentAssistSubjectControl);
 }

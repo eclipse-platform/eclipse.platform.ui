@@ -16,11 +16,10 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 
 /**
- * Extends <code>IContentAssit</code> with the concept of a
- * content assist subject control which provides the context for
- * the content assistant.
+ * Extension interface for {@link org.eclipse.jface.text.contentassist.IContentAssistProcessor}
+ * which provides the context for the
+ * {@linkplain org.eclipse.jface.contentassist.ISubjectControlContentAssistant subject control content assistant}.
  * 
- * @see org.eclipse.jface.contentassist.IContentAssistSubjectControl
  * @since 3.0
  */
 public interface ISubjectControlContentAssistProcessor extends IContentAssistProcessor {
