@@ -58,7 +58,7 @@ public abstract class MultiPageEditorPart extends EditorPart {
 	 * Need to hang onto them here, in addition to using get/setData on the items,
 	 * because dispose() needs to access them, but widgetry has already been disposed at that point.
 	 */
-	private ArrayList nestedEditors;
+	private ArrayList nestedEditors = new ArrayList(3);
 /**
  * Creates an empty multi-page editor with no pages.
  */
@@ -107,8 +107,6 @@ public int addPage(IEditorPart editor, IEditorInput input) throws PartInitExcept
 	Item item = createItem(parent2);
 	// remember the editor, as both data on the item, and in the list of editors (see field comment)
 	item.setData(editor);
-	if (nestedEditors == null)
-		nestedEditors = new ArrayList();
 	nestedEditors.add(editor);
 	return getPageCount() - 1;
 }
@@ -185,12 +183,11 @@ protected IEditorSite createSite(IEditorPart editor){
  * Subclasses may extend.
  */
 public void dispose() {
-	if (nestedEditors != null) {
-		for (int i = 0; i < nestedEditors.size(); ++i) {
-			IEditorPart editor = (IEditorPart) nestedEditors.get(i);
-			editor.dispose();
-		}
+	for (int i = 0; i < nestedEditors.size(); ++i) {
+		IEditorPart editor = (IEditorPart) nestedEditors.get(i);
+		editor.dispose();
 	}
+	nestedEditors.clear();
 }
 /**
  * Returns the active nested editor if there is one.
