@@ -283,6 +283,13 @@ public class AntRunner implements IPlatformRunnable {
 			// set build file
 			Method setBuildFileLocation = classInternalAntRunner.getMethod("setBuildFileLocation", new Class[] { String.class }); //$NON-NLS-1$
 			setBuildFileLocation.invoke(runner, new Object[] { buildFileLocation });
+			
+			//set the custom classpath
+			if (customClasspath != null) {
+				Method setCustomClasspath = classInternalAntRunner.getMethod("setCustomClasspath", new Class[] { URL[].class }); //$NON-NLS-1$
+				setCustomClasspath.invoke(runner, new Object[] { customClasspath });
+			}
+			
 			// add listeners
 			if (buildListeners != null) {
 				Method addBuildListeners = classInternalAntRunner.getMethod("addBuildListeners", new Class[] { List.class }); //$NON-NLS-1$

@@ -81,41 +81,37 @@ import org.eclipse.core.runtime.*;
  */
 public class InternalAntRunner {
 
-	protected IProgressMonitor monitor;
+	private IProgressMonitor monitor;
 
-	protected List buildListeners;
+	private List buildListeners;
 
-	protected String buildFileLocation;
+	private String buildFileLocation;
 
 	/** 
 	 * Targets we want to run.	 */
-	protected Vector targets;
+	private Vector targets;
 
-	protected Map userProperties;
+	private Map userProperties;
 	
-	protected Project currentProject;
+	private Project currentProject;
 	
-	protected String defaultTarget;
+	private String defaultTarget;
 	
-	protected BuildLogger buildLogger= null;
-	
-	/**
-	 * Cache of the Ant version information when it has been loaded	 */
-	protected String antVersion= null;
+	private BuildLogger buildLogger= null;
 	
 	/**
 	 * Cache of the Ant version number when it has been loaded
 	 */
-	protected String antVersionNumber= null;
+	private String antVersionNumber= null;
 
 	/** Our current message output status. Follows Project.MSG_XXX */
-	protected int messageOutputLevel = Project.MSG_INFO;
+	private int messageOutputLevel = Project.MSG_INFO;
 
 	/** Indicates whether output to the log is to be unadorned. */
-	protected boolean emacsMode = false;
+	private boolean emacsMode = false;
 
 	/** Indicates we should only parse and display the project help information */
-	protected boolean projectHelp = false;
+	private boolean projectHelp = false;
 
 	/** Stream that we are using for logging */
 	private PrintStream out = System.out;
@@ -129,14 +125,16 @@ public class InternalAntRunner {
 	 * interface.  An empty String indicates that no logger is to be used.  A <code>null</code>
 	 * name indicates that the org.apache.tools.ant.DefaultLogger will be used.
 	 */
-	protected String loggerClassname = null;
+	private String loggerClassname = null;
 
 	/** Extra arguments to be parsed as command line arguments. */
-	protected String[] extraArguments = null;
+	private String[] extraArguments = null;
 	
-	protected boolean scriptExecuted= false;
+	private boolean scriptExecuted= false;
 	
-	protected List propertyFiles= new ArrayList();
+	private List propertyFiles= new ArrayList();
+	
+	private URL[] customClasspath= null;
 	
 	/**
      * The Ant InputHandler class. There may be only one input handler.
@@ -1366,15 +1364,22 @@ public class InternalAntRunner {
 	 * Sets the Java class path in org.apache.tools.ant.types.Path
 	 */
 	private void setJavaClassPath() {
-		
+		URL[] antClasspath= null;
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
-		URL[] antClasspath= prefs.getAntURLs();
+		if (customClasspath == null) {
+			antClasspath= prefs.getURLs();
+		} else {
+			List fullClasspath= new ArrayList();
+			fullClasspath.addAll(Arrays.asList(customClasspath));
+			fullClasspath.addAll(Arrays.asList(prefs.getExtraClasspathURLs()));
+			antClasspath= (URL[])fullClasspath.toArray(new URL[fullClasspath.size()]);
+		}
 		StringBuffer buff= new StringBuffer();
 		for (int i = 0; i < antClasspath.length; i++) {
 			URL url = antClasspath[i];
 			IPath path= null;
 			try {
-				path = new org.eclipse.core.runtime.Path(Platform.asLocalURL(url).getFile());
+				path = new Path(Platform.asLocalURL(url).getFile());
 			} catch (IOException e) {
 				continue;
 			}
@@ -1384,5 +1389,13 @@ public class InternalAntRunner {
 
 		org.apache.tools.ant.types.Path systemClasspath= new org.apache.tools.ant.types.Path(null, buff.substring(0, buff.length() - 2));
 		org.apache.tools.ant.types.Path.systemClasspath= systemClasspath;
+	}
+	
+	/**
+	 * Sets the custom classpath to be included when setting the Java classpath for this build.
+	 * @param classpath The custom classpath for this build.
+	 */
+	public void setCustomClasspath(URL[] classpath) {
+		customClasspath= classpath;
 	}
 }
