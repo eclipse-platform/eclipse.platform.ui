@@ -66,10 +66,12 @@ import org.eclipse.ui.internal.activities.ws.ActivityMessages;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
- * <em>EXPERIMENTAL</em>
+ * Activities preference page that primarily shows categories and can optionally
+ * show an advanced dialog that allows fine-tune adjustmenet of activities.
+ * 
  * @since 3.1
  */
-public class ActivitiesPreferencePage3 extends PreferencePage implements
+public class ActivityCategoryPreferencePage extends PreferencePage implements
         IWorkbenchPreferencePage, IExecutableExtension {
 
     /**
