@@ -201,8 +201,9 @@ class JobInfo extends JobTreeElement {
      * @see org.eclipse.ui.internal.progress.JobTreeElement#getCondensedDisplayString()
      */
     String getCondensedDisplayString() {
-        if (hasTaskInfo())
-            return getTaskInfo().getDisplayStringWithoutTask();
+    	TaskInfo info = getTaskInfo();
+        if (info != null)
+            return info.getDisplayStringWithoutTask();
         return getJob().getName();
     }
 
@@ -306,8 +307,9 @@ class JobInfo extends JobTreeElement {
      * @return int
      */
     int getPercentDone() {
-        if (hasTaskInfo())
-            return (int) taskInfo.preWork * 100 / taskInfo.totalWork;
+    	TaskInfo info = getTaskInfo();
+        if (info != null)
+            return (int) info.preWork * 100 / info.totalWork;
         return -1;
     }
 
