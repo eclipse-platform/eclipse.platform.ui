@@ -50,6 +50,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 	private Text text;
 	private CheckboxTreeViewer tree;
 	private IWorkingSet workingSet;
+	private boolean firstCheck = false;		// set to true if selection is set in setSelection
 
 	/**
 	 * Creates a new instance of the receiver.
@@ -126,7 +127,6 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 		}
 		initializeCheckedState();
 		disableClosedProjects();		
-		validateInput();				
 	}
 	/**
 	 * Grays all disabled projects
@@ -165,7 +165,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 		findCheckedResources(resources, (IContainer) tree.getInput());
 		if (workingSet == null) {
 			IWorkingSetManager workingSetManager = WorkbenchPlugin.getDefault().getWorkingSetManager();
-			workingSet = workingSetManager.createWorkingSet(text.getText(), (IAdaptable[]) resources.toArray(new IAdaptable[resources.size()]));
+			workingSet = workingSetManager.createWorkingSet(getWorkingSetName(), (IAdaptable[]) resources.toArray(new IAdaptable[resources.size()]));
 		} else {
 			// Add inaccessible resources
 			IAdaptable[] oldItems = workingSet.getElements();
@@ -181,7 +181,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 					resources.add(oldResource);
 				}
 			}
-			((WorkingSet) workingSet).setName(text.getText());
+			((WorkingSet) workingSet).setName(getWorkingSetName());
 			((WorkingSet) workingSet).setElements((IAdaptable[]) resources.toArray(new IAdaptable[resources.size()]));
 		}
 	}	
@@ -192,6 +192,14 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 	 */
 	public IWorkingSet getSelection() {
 		return workingSet;
+	}
+	/**
+	 * Returns the name entered in the working set name field.
+	 * 
+	 * @return the name entered in the working set name field.
+	 */
+	private String getWorkingSetName() {
+		return text.getText();
 	}
 	/**
 	 * Called when the checked state of a tree item changes.
@@ -270,7 +278,6 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 					}
 					updateParentState(resource);
 				}
-				validateInput();
 			}
 		});
 	}
@@ -283,6 +290,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 		Assert.isNotNull(workingSet, "Working set must not be null"); //$NON-NLS-1$
 		this.workingSet = workingSet;
 		if (getShell() != null && text != null) {
+			firstCheck = true;
 			text.setText(workingSet.getName());
 			initializeCheckedState();
 			disableClosedProjects();
@@ -358,6 +366,10 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 		String errorMessage = null;	//$NON-NLS-1$
 		String newText = text.getText();
 
+		if (firstCheck) {
+			firstCheck = false;
+			return;
+		}
 		if (newText.equals("")) { //$NON-NLS-1$
 			errorMessage = WorkbenchMessages.getString("ResourceWorkingSetPage.warning.nameMustNotBeEmpty"); //$NON-NLS-1$
 		}
