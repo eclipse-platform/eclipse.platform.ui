@@ -654,6 +654,38 @@ public void testFindMarkers() {
 		fail("3.5", e);
 	}
 }
+/*
+ * Bug 35300 - ClassCastException if marker transient attribute is set to a non-boolean
+ */
+public void test_35300() {
+	IProject project = getWorkspace().getRoot().getProject(getUniqueString());
+	ensureExistsInWorkspace(project, true);
+	String MARKER_ID = "foomarker.example.com";
+	IMarker marker = null;
+	int expected = 4;
+
+	// setup
+	try {
+		marker = project.createMarker(MARKER_ID);
+		marker.setAttribute(IMarker.TRANSIENT, expected);
+	} catch (CoreException e) {
+		fail("1.0", e);
+	} catch (Exception e) {
+		fail("1.1", e);
+	}
+
+	try {
+		int actual = marker.getAttribute(IMarker.TRANSIENT, -1);
+		assertEquals("2.1", expected, actual);
+		try {
+			marker.setAttribute(IMarker.MESSAGE, getRandomString());
+		} catch (CoreException e) {
+			fail("2.2", e);
+		}
+	} catch (Exception e) {
+		fail("2.3", e);
+	}
+}
 public void test_10989() {
 	log("test_10989");
 
