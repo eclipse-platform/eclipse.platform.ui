@@ -28,7 +28,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  */
 public class LaunchWithAction extends Action implements IMenuCreator {
 	
-	protected String fMode;
+	private String fMode;
 
 	/**
 	 * @see IAction#run()
@@ -38,7 +38,7 @@ public class LaunchWithAction extends Action implements IMenuCreator {
 
 	public LaunchWithAction(String mode) {
 		super();
-		fMode= mode;
+		setMode(mode);
 		String text= mode.equals(ILaunchManager.DEBUG_MODE) ? DebugUIMessages.getString("LaunchWithAction.Debug_1") : DebugUIMessages.getString("LaunchWithAction.Run_2"); //$NON-NLS-2$ //$NON-NLS-1$
 		setText(text);
 		ImageDescriptor descriptor= null;
@@ -60,25 +60,25 @@ public class LaunchWithAction extends Action implements IMenuCreator {
 	}
 
 	/**
-	 * @see IMenuCreator
+	 * @see IMenuCreator#dispose()
 	 */
 	public void dispose() {
 	}
 
 	/**
-	 * @see IMenuCreator
+	 * @see IMenuCreator#getMenu(Control)
 	 */
 	public Menu getMenu(Control parent) {
 		return null;
 	}
 
 	/**
-	 * @see IMenuCreator
+	 * @see IMenuCreator#getMenu(Menu)
 	 */
 	public Menu getMenu(Menu parent) {
 		Object element= null;
 		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
-		ILauncher[] launchers= manager.getLaunchers(fMode);
+		ILauncher[] launchers= manager.getLaunchers(getMode());
 		IStructuredSelection selection = resolveSelection(DebugUIPlugin.getActiveWorkbenchWindow());
 		if (selection != null) {
 			element= selection.getFirstElement();
@@ -87,7 +87,7 @@ public class LaunchWithAction extends Action implements IMenuCreator {
 		Menu menu= new Menu(parent);
 		for (int i= 0; i < launchers.length; i++) {
 			if (DebugUIPlugin.getDefault().isVisible(launchers[i])) {
-				LaunchSelectionAction newAction= new LaunchSelectionAction(launchers[i], element, fMode);
+				LaunchSelectionAction newAction= new LaunchSelectionAction(launchers[i], element, getMode());
 				createMenuForAction(menu, newAction);
 			}
 		}
@@ -125,6 +125,15 @@ public class LaunchWithAction extends Action implements IMenuCreator {
 		}
 		return (IStructuredSelection)selection;
 	}
+	
+	protected String getMode() {
+		return fMode;
+	}
+
+	protected void setMode(String mode) {
+		fMode = mode;
+	}
+
 }
 
 
