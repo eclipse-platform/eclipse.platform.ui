@@ -718,7 +718,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 					break;
 					
 				default :
-					if (e.keyCode != SWT.MOD1 && e.keyCode != SWT.MOD2 && e.keyCode != SWT.MOD3 && e.keyCode != SWT.MOD4)
+					if (e.keyCode != SWT.CAPS_LOCK && e.keyCode != SWT.MOD1 && e.keyCode != SWT.MOD2 && e.keyCode != SWT.MOD3 && e.keyCode != SWT.MOD4)
 						hide();
 					return true;
 			}
