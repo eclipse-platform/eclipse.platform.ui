@@ -148,10 +148,10 @@ public class Cipher {
 		return nextRandom;
 	}
 
-	private byte[] transform(byte[] data, int off, int len, int mode) throws Exception {
+	private byte[] transform(byte[] data, int off, int len, int mod) throws Exception {
 		byte[] result = nextRandom(len);
 		for (int i = 0; i < len; ++i) {
-			result[i] = (byte) (data[i + off] + mode * result[i]);
+			result[i] = (byte) (data[i + off] + mod * result[i]);
 		}
 		return result;
 	}
