@@ -542,7 +542,13 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 				File backupDir = new File(workingDir, CONFIG_HISTORY);
 				if (!backupDir.exists())
 					backupDir.mkdir();
-				File preservedFile = new File(backupDir, String.valueOf(cfigFile.lastModified())+".xml");
+				long timestamp = cfigFile.lastModified();
+				File preservedFile = new File(backupDir, String.valueOf(timestamp)+".xml");
+				// If the target file exists, increment the timestamp. Try at most 100 times.
+				long increment = 1;
+				while (preservedFile.exists() && increment < 100){
+					preservedFile = new File(backupDir, String.valueOf(timestamp+increment++)+".xml");
+				}
 				if (!preservedFile.exists()) {
 					// try renaming current config to backup copy
 					if (!cfigFile.renameTo(preservedFile))
