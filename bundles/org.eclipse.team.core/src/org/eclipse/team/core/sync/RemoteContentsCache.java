@@ -18,9 +18,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
@@ -275,10 +277,17 @@ public class RemoteContentsCache {
 	private void clearOldCacheEntries() {
 		long current = new Date().getTime();
 		if ((lastCacheCleanup!=-1) && (current - lastCacheCleanup < CACHE_FILE_LIFESPAN)) return;
+		List stale = new ArrayList();
 		for (Iterator iter = cacheFileTimes.keySet().iterator(); iter.hasNext();) {
 			String f = (String) iter.next();
 			long lastHit = Long.valueOf((String)cacheFileTimes.get(f)).longValue();
-			if ((current - lastHit) > CACHE_FILE_LIFESPAN) purgeCacheFile(f);
+			if ((current - lastHit) > CACHE_FILE_LIFESPAN){
+				stale.add(f);
+			}
+		}
+		for (Iterator iter = stale.iterator(); iter.hasNext();) {
+			String f = (String) iter.next();
+			purgeCacheFile(f);
 		}
 	}
 	
