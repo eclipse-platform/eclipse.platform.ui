@@ -149,7 +149,9 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		IMemento memento = getMemento();
 		if (memento != null) {
 			IMemento node = memento.getChild(IDebugUIConstants.EXTENSION_POINT_BREAKPOINT_ORGANIZERS);
-			if (node != null) {
+			if (node == null) {
+                fContentProvider.setOrganizers(null);
+            } else {
 				String value = node.getString(KEY_VALUE);
                 if (value != null) {
                     String[] ids = value.split(","); //$NON-NLS-1$
