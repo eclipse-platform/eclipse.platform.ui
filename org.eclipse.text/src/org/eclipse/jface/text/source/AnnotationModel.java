@@ -139,12 +139,12 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
     
     /**
      * Returns the current annotation model event. This is the event that will be sent out
-     * when calling <code>fireModelChanged</code>. This method is not intended to be overridden.
+     * when calling <code>fireModelChanged</code>.
      * 
      * @return the current annotation model event
      * @since 3.0
      */
-    protected AnnotationModelEvent getAnnotationModelEvent() {
+    protected final AnnotationModelEvent getAnnotationModelEvent() {
     	synchronized (getLockObject()) {
     		if (fModelEvent == null) {
     			fModelEvent= createAnnotationModelEvent();
@@ -472,7 +472,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	}
 	
 	/*
-	 * @see IAnnotationModel#getAnnotationsIterator()
+	 * @see IAnnotationModel#getAnnotationIterator()
 	 */
 	public Iterator getAnnotationIterator() {
 		return getAnnotationIterator(true, true);
