@@ -16,7 +16,10 @@ The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used t
       <complexType>
          <sequence>
             <element ref="activity"/>
-            <element ref="patternBinding"/>
+            <element ref="activityActivityBinding"/>
+            <element ref="activityParentBinding"/>
+            <element ref="category"/>
+            <element ref="categoryActivityBinding"/>
          </sequence>
          <attribute name="id" type="string">
             <annotation>
@@ -45,7 +48,7 @@ The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used t
    <element name="activity">
       <annotation>
          <documentation>
-            This element is used to define activities. If more than one of these elements exist with the same &lt;code&gt;id&lt;/code&gt; attribute, only the last declared element (in order of reading the plugin registry) is considered valid.
+            This element is used to define activities. If more than one of these elements exist with the same &lt;code&gt;id&lt;/code&gt; attribute, only the last declared element (in order of reading the registry) is considered valid.
          </documentation>
       </annotation>
       <complexType>
@@ -73,14 +76,38 @@ The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used t
          <attribute name="parentId" type="string">
             <annotation>
                <documentation>
-                  The unique identifier of the parent of this activity.
+                  The unique identifier of the parent of this activity. This is an experimental attribute only, and will likely be removed for 3.0.
                </documentation>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
-   <element name="patternBinding">
+   <element name="activityActivityBinding">
+      <annotation>
+         <documentation>
+            This element allows one to bind activities to activities. The parent-child relationship can be interpreted as &apos;parent requires child&apos;.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="childActivityId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The unique identifier of the child activity to bind.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="parentActivityId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The unique identifier of the parent activity to bind.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="activityPatternBinding">
       <annotation>
          <documentation>
             This element allows one to bind activities to patterns.
@@ -90,21 +117,69 @@ The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used t
          <attribute name="activityId" type="string" use="required">
             <annotation>
                <documentation>
-                  The unique identifier of the activity to bind to a pattern.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="inclusive" type="boolean" use="default" value="true">
-            <annotation>
-               <documentation>
-                  Determines whether this binding should be considered inclusive or exclusive.
+                  The unique identifier of the activity to bind.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="pattern" type="string" use="required">
             <annotation>
                <documentation>
-                  The pattern to be bound to the activity. Patterns are regular expressions which match unique identifiers.
+                  The pattern to be bound. Patterns are regular expressions which match unique identifiers.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="category">
+      <annotation>
+         <documentation>
+            This element is used to define categories. If more than one of these elements exist with the same &lt;code&gt;id&lt;/code&gt; attribute, only the last declared element (in order of reading the registry) is considered valid.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  A translatable short description of this category for display in the UI.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The unique identifier of this category.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The translatable name of this category for display in the UI.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="categoryActivityBinding">
+      <annotation>
+         <documentation>
+            This element allows one to bind categories to activities.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="activityId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The unique identifier of the activity to bind.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="categoryId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The unique identifier of the category to bind.
                </documentation>
             </annotation>
          </attribute>
