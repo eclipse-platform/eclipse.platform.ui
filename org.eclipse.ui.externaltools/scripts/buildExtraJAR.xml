@@ -33,20 +33,20 @@
 		<delete dir="${temp.folder}/lib/antbuilder.jar.bin"/>
 		<mkdir dir="${temp.folder}/lib/antbuilder.jar.bin"/>
 		<!-- compile the source code -->
-		<javac destdir="${temp.folder}/lib/antbuilder.jar.bin" failonerror="false" verbose="false" debug="on" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="${basedir}/../org.eclipse.core.runtime/runtime.jar;${basedir}/../org.apache.ant/ant.jar;${basedir}/../org.apache.xerces/xercesImpl.jar;${basedir}/../org.apache.xerces/xmlParserAPIs.jar;${basedir}/bin;${basedir}/../org.eclipse.core.boot/boot.jar;${swt.jar};${basedir}/../org.eclipse.ant.core/bin">
-			<src path="Ant Builder/"/>
+		<javac destdir="${temp.folder}/lib/antrunner.jar.bin" failonerror="false" verbose="false" debug="on" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="${basedir}/../org.eclipse.core.runtime/runtime.jar;${basedir}/../org.apache.ant/ant.jar;${basedir}/../org.apache.xerces/xercesImpl.jar;${basedir}/../org.apache.xerces/xmlParserAPIs.jar;${basedir}/bin;${basedir}/../org.eclipse.core.boot/boot.jar;${swt.jar};${basedir}/../org.eclipse.ant.core/bin">
+			<src path="Ant Runner Support/"/>
 		</javac>
 		<!-- copy necessary resources -->
-		<copy todir="${temp.folder}/lib/antbuilder.jar.bin">
-			<fileset dir="Ant Builder/" excludes="**/*.java"/>
+		<copy todir="${temp.folder}/lib/antrunner.jar.bin">
+			<fileset dir="Ant Runner Support/" excludes="**/*.java"/>
 		</copy>
 		<mkdir dir="${build.result.folder}/lib"/>
-		<jar jarfile="${build.result.folder}/lib/antbuilder.jar" basedir="${temp.folder}/lib/antbuilder.jar.bin"/>
+		<jar jarfile="${build.result.folder}/lib/antrunner.jar" basedir="${temp.folder}/lib/antrunner.jar.bin"/>
 		<delete dir="${temp.folder}"/>
 	</target>
 
 	<target name="clean" depends="init">
-		<delete file="${build.result.folder}/lib/antbuilder.jar"/>
+		<delete file="${build.result.folder}/lib/antrunner.jar"/>
 		<delete dir="${temp.folder}"/>
 	</target>
 
