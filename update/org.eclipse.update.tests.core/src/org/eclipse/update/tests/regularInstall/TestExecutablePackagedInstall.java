@@ -102,7 +102,6 @@ public class TestExecutablePackagedInstall extends UpdateManagerTestCase {
 				Throwable e1 = e.getStatus().getException();
 				String msg = e1.getMessage().replace(File.separatorChar,'/');
 				if (msg.indexOf("CVS/feature.xml")==-1){
-					System.err.println("** "+msg);
 					throw e;
 				}				
 			}

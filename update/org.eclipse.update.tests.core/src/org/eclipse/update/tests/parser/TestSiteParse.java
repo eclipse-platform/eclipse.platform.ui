@@ -171,7 +171,6 @@ public class TestSiteParse extends UpdateManagerTestCase {
 		} catch (CoreException e){
 			Throwable e1 = e.getStatus().getException();
 				if (!e1.getMessage().endsWith("www.eclipse.org/feature3/feature.xml")){
-					System.err.println("** "+e1.getMessage());
 					throw e;
 				}
 		}		
@@ -198,7 +197,6 @@ public class TestSiteParse extends UpdateManagerTestCase {
 			Throwable e1 = e.getStatus().getException();
 			String msg = e1.getMessage().replace(File.separatorChar,'/');
 				if (msg.indexOf("_1.0.0.jar/feature.xml")==-1){
-					System.err.println("** "+msg);
 					throw e;
 				}
 		}
