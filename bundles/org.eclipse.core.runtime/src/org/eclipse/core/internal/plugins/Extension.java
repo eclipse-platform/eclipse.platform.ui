@@ -12,10 +12,8 @@
 package org.eclipse.core.internal.plugins;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
-import org.eclipse.core.internal.plugins.IModel;
-import org.eclipse.core.internal.runtime.Policy;
-import java.util.*;
+import org.eclipse.core.runtime.model.ConfigurationElementModel;
+import org.eclipse.core.runtime.model.ExtensionModel;
 
 public class Extension extends ExtensionModel implements IExtension {
   public Extension()

@@ -11,19 +11,15 @@
 
 package org.eclipse.core.internal.plugins;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
-import org.eclipse.core.internal.plugins.*;
-import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Policy;
-import org.eclipse.core.boot.BootLoader;
-
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.model.*;
 
 public class RegistryCacheReader {
 

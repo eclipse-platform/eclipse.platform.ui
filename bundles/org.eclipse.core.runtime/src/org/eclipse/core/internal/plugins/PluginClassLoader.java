@@ -11,12 +11,14 @@
 
 package org.eclipse.core.internal.plugins;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.boot.BootLoader;import org.eclipse.core.internal.boot.*;
-import org.eclipse.core.internal.runtime.Policy;
-import java.io.File;
-import java.util.*;
 import java.net.URL;
+import java.util.ArrayList;
+
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.internal.boot.DelegatingURLClassLoader;
+import org.eclipse.core.internal.boot.URLContentFilter;
+import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.runtime.*;
 
 /**
  * Plugin class loader.

@@ -11,11 +11,11 @@
 
 package org.eclipse.core.internal.plugins;
 
+import java.io.File;
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
-import org.eclipse.core.internal.plugins.IModel;
-import java.util.*;
-import java.io.File;
 
 public class ExtensionPoint extends ExtensionPointModel implements IExtensionPoint {
   public ExtensionPoint()

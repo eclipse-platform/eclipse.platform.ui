@@ -11,11 +11,11 @@
 
 package org.eclipse.core.internal.runtime;
 
-import java.net.*;
-import java.util.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.boot.PlatformURLHandler;
+import java.net.URLStreamHandler;
+import java.net.URLStreamHandlerFactory;
+
 import org.eclipse.core.internal.boot.PlatformURLHandlerFactory;
+import org.eclipse.core.runtime.*;
  
 public class PlatformURLPluginHandlerFactory implements URLStreamHandlerFactory {
 

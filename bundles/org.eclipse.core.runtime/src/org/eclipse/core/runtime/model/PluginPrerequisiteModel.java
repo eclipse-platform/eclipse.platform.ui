@@ -11,8 +11,6 @@
 package org.eclipse.core.runtime.model;
 
 import org.eclipse.core.internal.runtime.Assert;
-import org.eclipse.core.runtime.PluginVersionIdentifier;	// for javadoc
-
 /**
  * An object which represents the relationship between a plug-in and a
  * prerequisite plug-in in the dependent's plug-in manifest.

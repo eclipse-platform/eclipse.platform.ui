@@ -11,9 +11,8 @@
 
 package org.eclipse.core.internal.plugins;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.model.*;
-import org.eclipse.core.internal.runtime.InternalPlatform;
 
 public class InternalFactory extends Factory {
 public InternalFactory(MultiStatus status) {

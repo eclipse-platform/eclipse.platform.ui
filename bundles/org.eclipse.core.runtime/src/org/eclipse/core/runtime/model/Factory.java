@@ -10,10 +10,9 @@
  **********************************************************************/
 package org.eclipse.core.runtime.model;
 
-import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.runtime.model.*;
-import org.eclipse.core.internal.plugins.RegistryResolver;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 
 /**
  * An object which can create plug-in related model objects (typically when

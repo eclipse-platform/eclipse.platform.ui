@@ -11,13 +11,13 @@
 
 package org.eclipse.core.internal.plugins;
 
+import java.io.*;
+import java.util.*;
+
+import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
-import org.eclipse.core.internal.runtime.*;
-import java.io.*;
-import java.net.URL;
-import java.net.MalformedURLException;
-import java.util.*;
 
 public class PluginRegistry extends PluginRegistryModel implements IPluginRegistry {
 

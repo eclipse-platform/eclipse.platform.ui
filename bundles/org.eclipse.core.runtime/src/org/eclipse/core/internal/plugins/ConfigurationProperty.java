@@ -11,9 +11,7 @@
 
 package org.eclipse.core.internal.plugins;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
-import java.io.PrintWriter;
+import org.eclipse.core.runtime.model.ConfigurationPropertyModel;
 
 public class ConfigurationProperty extends ConfigurationPropertyModel {
 public ConfigurationProperty() {

@@ -12,9 +12,9 @@
 package org.eclipse.core.internal.runtime;
 
 import java.util.*;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IAdapterManager;
+
 import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.core.runtime.IAdapterManager;
 
 /**
  * This class is a default implementation of <code>IAdapterManager</code>.
