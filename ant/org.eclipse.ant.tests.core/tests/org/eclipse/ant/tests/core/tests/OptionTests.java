@@ -89,7 +89,7 @@ public class OptionTests extends AbstractAntTest {
 	/**
 	 * Tests the "-listener" option with a listener that is not an instance of BuildListener
 	 */
-	public void testListenerBad() throws CoreException {
+	public void testListenerBad() {
 		try {
 			run("TestForEcho.xml", new String[]{"-listener", "java.lang.String"});
 		} catch (CoreException ce) {
@@ -114,7 +114,7 @@ public class OptionTests extends AbstractAntTest {
 	/**
 	 * Tests specifying the -logfile with no arg
 	 */
-	public void testLogFileWithNoArg() throws CoreException {
+	public void testLogFileWithNoArg() {
 		try {
 			run("TestForEcho.xml", new String[]{"-logfile"});
 		} catch (CoreException ce) {
@@ -152,7 +152,7 @@ public class OptionTests extends AbstractAntTest {
 	/**
 	 * Tests specifying the -logger with no arg
 	 */
-	public void testLoggerWithNoArg() throws CoreException {
+	public void testLoggerWithNoArg() {
 		try {
 			run("TestForEcho.xml", new String[]{"-logger"});
 		} catch (CoreException ce) {
@@ -164,7 +164,7 @@ public class OptionTests extends AbstractAntTest {
 	/**
 	 * Tests the "-logger" option with a logger that is not an instance of BuildLogger
 	 */
-	public void testLoggerBad() throws CoreException {
+	public void testLoggerBad() {
 		try {
 			run("TestForEcho.xml", new String[]{"-logger", "java.lang.String"});
 		} catch (CoreException ce) {
@@ -176,7 +176,7 @@ public class OptionTests extends AbstractAntTest {
 	/**
 	 * Tests the "-logger" option with two loggers specified...only one is allowed
 	 */
-	public void testTwoLoggers() throws CoreException {
+	public void testTwoLoggers() {
 		try {
 			run("TestForEcho.xml", new String[]{"-logger", "java.lang.String", "-q", "-logger", "java.lang.String"});
 		} catch (CoreException ce) {
@@ -188,7 +188,7 @@ public class OptionTests extends AbstractAntTest {
 	/**
 	 * Tests specifying the -listener with no arg
 	 */
-	public void testListenerWithNoArg() throws CoreException {
+	public void testListenerWithNoArg() {
 		try {
 			run("TestForEcho.xml", new String[]{"-listener"});
 		} catch (CoreException ce) {
@@ -200,7 +200,7 @@ public class OptionTests extends AbstractAntTest {
 	/**
 	 * Tests specifying the -listener with a class that will not be found
 	 */
-	public void testListenerClassNotFound() throws CoreException {
+	public void testListenerClassNotFound() {
 		try {
 			run("TestForEcho.xml", new String[]{"-listener", "TestBuildListener"});
 		} catch (CoreException e) {
@@ -233,7 +233,7 @@ public class OptionTests extends AbstractAntTest {
 	/**
 	 * Tests specifying the -listener option multiple times, with one missing the arg
 	 */
-	public void testListenerMultipleWithBad() throws CoreException {
+	public void testListenerMultipleWithBad() {
 		try {
 			run("TestForEcho.xml", new String[]{"-listener", ANT_TEST_BUILD_LISTENER, "-q", "-listener", "-verbose"});
 		} catch(CoreException e) {
@@ -246,7 +246,7 @@ public class OptionTests extends AbstractAntTest {
 	/**
 	 * Tests specifying the -buildfile with no arg
 	 */
-	public void testBuildFileWithNoArg() throws CoreException {
+	public void testBuildFileWithNoArg() {
 		try {
 			run("TestForEcho.xml", new String[]{"-buildfile"});
 		} catch (CoreException ce) {
@@ -269,7 +269,7 @@ public class OptionTests extends AbstractAntTest {
 	/**
 	 * Tests specifying a target at the command line that does not exist.
 	 */
-	public void testSpecifyBadTargetAsArg() throws CoreException {
+	public void testSpecifyBadTargetAsArg() {
 		try {
 			run("TestForEcho.xml", new String[]{"echo2"}, false);
 		} catch (CoreException ce) {
@@ -397,7 +397,7 @@ public class OptionTests extends AbstractAntTest {
 		assertSuccessful();
 	}
 	
-	public void testPropertyFileWithNoArg() throws CoreException {
+	public void testPropertyFileWithNoArg() {
 		try {
 			run("TestForEcho.xml", new String[]{"-propertyfile"});
 		} catch (CoreException ce) {
@@ -436,7 +436,7 @@ public class OptionTests extends AbstractAntTest {
 		assertNull("my.name was not set and should be null", AntTestChecker.getDefault().getUserProperty("my.name"));
 	}
 	
-	public void testInputHandlerWithNoArg() throws CoreException {
+	public void testInputHandlerWithNoArg() {
 		try {
 			run("TestForEcho.xml", new String[]{"-inputhandler"});
 		} catch (CoreException ce) {
@@ -450,7 +450,7 @@ public class OptionTests extends AbstractAntTest {
 	/**
 	 * Tests the "-inputhandler" option with two handlers specified...only one is allowed
 	 */
-	public void testInputHandlerMultiple() throws CoreException {
+	public void testInputHandlerMultiple() {
 		try {
 			run("TestForEcho.xml", new String[]{"-inputhandler", "org.apache.tools.ant.input.DefaultInputHandler", "-q", "-inputhandler", "org.apache.tools.ant.input.DefaultInputHandler"});
 		} catch (CoreException ce) {
@@ -464,7 +464,7 @@ public class OptionTests extends AbstractAntTest {
 	/**
 	 * Tests the "-inputhandler" option with a input handler that is not an instance of InputHandler
 	 */
-	public void testInputHandlerBad() throws CoreException {
+	public void testInputHandlerBad() {
 		try {
 			run("TestForEcho.xml", new String[]{"-inputhandler", "java.lang.StringBuffer"});
 		} catch (CoreException ce) {
@@ -478,7 +478,7 @@ public class OptionTests extends AbstractAntTest {
 	/**
 	 * Tests the "-inputhandler" option with a input handler that is not a defined class
 	 */
-	public void testInputHandlerBad2() throws CoreException {
+	public void testInputHandlerBad2() {
 		try {
 			run("TestForEcho.xml", new String[]{"-inputhandler", "ja.lang.StringBuffer"});
 		} catch (CoreException ce) {

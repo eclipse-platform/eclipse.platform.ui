@@ -324,12 +324,9 @@ public class ProjectHelperImpl extends org.apache.tools.ant.helper.ProjectHelper
 		 * @param name The name of the element which is ending.
 		 *             Will not be <code>null</code>.
 		 *
-		 * @exception SAXException in case of error (not thrown in
-		 *                         this implementation)
-		 *
 		 * @see #finished()
 		 */
-		public void endElement(String name) throws SAXException {
+		public void endElement(String name) {
 
 			finished();
 			// Let parent resume handling SAX events
@@ -729,11 +726,9 @@ public class ProjectHelperImpl extends org.apache.tools.ant.helper.ProjectHelper
 		 * @param attrs Attributes of the element to be handled.
 		 *              Will not be <code>null</code>.
 		 *
-		 * @exception SAXParseException if an error occurs when initialising
-		 *                              the task handler
 		 *
 		 */
-		private void handleTaskdef(String name, AttributeList attrs) throws SAXParseException {
+		private void handleTaskdef(String name, AttributeList attrs) {
 			(new TaskHandler(helperImpl, this, null, null, null)).init(name, attrs);
 		}
 
@@ -746,10 +741,8 @@ public class ProjectHelperImpl extends org.apache.tools.ant.helper.ProjectHelper
 		 * @param attrs Attributes of the element to be handled.
 		 *              Will not be <code>null</code>.
 		 *
-		 * @exception SAXParseException if an error occurs initialising the
-		 *                              handler
 		 */
-		private void handleTypedef(String name, AttributeList attrs) throws SAXParseException {
+		private void handleTypedef(String name, AttributeList attrs) {
 			(new TaskHandler(helperImpl, this, null, null, null)).init(name, attrs);
 		}
 
@@ -762,10 +755,8 @@ public class ProjectHelperImpl extends org.apache.tools.ant.helper.ProjectHelper
 		 * @param attrs Attributes of the element to be handled.
 		 *              Will not be <code>null</code>.
 		 *
-		 * @exception SAXParseException if an error occurs initialising
-		 *                              the handler
 		 */
-		private void handleProperty(String name, AttributeList attrs) throws SAXParseException {
+		private void handleProperty(String name, AttributeList attrs) {
 			(new TaskHandler(helperImpl, this, null, null, null)).init(name, attrs);
 		}
 
@@ -1067,10 +1058,8 @@ public class ProjectHelperImpl extends org.apache.tools.ant.helper.ProjectHelper
 		 * @param attrs Attributes of the element which caused this
 		 *              handler to be created. Must not be <code>null</code>.
 		 *
-		 * @exception SAXParseException in case of error (not thrown in
-		 *                              this implementation)
 		 */
-		public void init(String tag, AttributeList attrs) throws SAXParseException {
+		public void init(String tag, AttributeList attrs) {
 			try {
 				task = helperImpl.project.createTask(tag);
 			} catch (BuildException e) {

@@ -11,7 +11,6 @@
 package org.eclipse.ant.tests.core.tests;
 
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.ant.core.AntCorePlugin;
@@ -27,7 +26,7 @@ public class TypeTests extends AbstractAntTest {
 		super(name);
 	}
 
-	public void testAddType() throws MalformedURLException, CoreException {
+	public void testAddType() throws CoreException {
 		AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
 		URL[] urls= prefs.getExtraClasspathURLs();
 		Type newType= new Type();
@@ -42,7 +41,7 @@ public class TypeTests extends AbstractAntTest {
 		assertSuccessful();
 	}
 	
-	public void testRemoveType() throws CoreException {
+	public void testRemoveType() {
 		AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
 		prefs.setCustomTypes(new Type[]{});
 		try {
@@ -64,7 +63,7 @@ public class TypeTests extends AbstractAntTest {
 		assertSuccessful();
 	}
 	
-	public void testTypeDefinedInExtensionPointHeadless() throws CoreException {
+	public void testTypeDefinedInExtensionPointHeadless() {
 		AntCorePlugin.getPlugin().setRunningHeadless(true);
 		try {
 			run("ExtensionPointType.xml");

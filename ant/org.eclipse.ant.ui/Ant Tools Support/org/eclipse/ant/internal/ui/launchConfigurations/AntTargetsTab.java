@@ -456,7 +456,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 						/* (non-Javadoc)
 						 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 						 */
-						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+						public void run(IProgressMonitor monitor) {
 							try {
 								fAllTargets = AntUtil.getTargets(expandedLocation, arguments, fLaunchConfiguration);
 							} catch (CoreException ce) {

@@ -29,7 +29,7 @@ public class TaskTests extends AbstractAntTest {
 		super(name);
 	}
 	
-	public void testAddTask() throws MalformedURLException, CoreException {
+	public void testAddTask() throws CoreException {
 		AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
 		URL[] urls= prefs.getExtraClasspathURLs();
 		Task newTask= new Task();
@@ -46,7 +46,7 @@ public class TaskTests extends AbstractAntTest {
 		assertSuccessful();
 	}
 	
-	public void testRemoveTask() throws CoreException {
+	public void testRemoveTask() {
 		AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
 		prefs.setCustomTasks(new Task[]{});
 		try {
@@ -106,7 +106,7 @@ public class TaskTests extends AbstractAntTest {
 		assertSuccessful();
 	}
 		
-	public void testTaskDefinedInExtensionPointHeadless() throws CoreException {
+	public void testTaskDefinedInExtensionPointHeadless() {
 		AntCorePlugin.getPlugin().setRunningHeadless(true);
 		try {
 			run("ExtensionPointTask.xml");
