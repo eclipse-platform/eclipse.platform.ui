@@ -14,7 +14,45 @@ Eclipse Platform Build Notes</h1>
 <h1>
 Text Editor Support (including JFace Text)</h1>
 
-<p><br>Eclipse SDK Build 20020312
+<p><br>Eclipse SDK Build 20020318
+<h2>
+Breaking API changes</h2>
+
+<h2>
+Other highlights</h2>
+
+<ul>
+<li>
+All find operations can be limited to a scope using the find replace dialog.
+Multi-line selections serve as scope.</li>
+
+<li>
+Emacs-like incremental search (CTRL-J) is now part of AbstractTextEditor.</li>
+
+<li>
+Preparations for key binding support</li>
+
+<br>&nbsp;</ul>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports closed</h2>
+#2280 Undo does not jump to undone location (1GEK1G5)
+<br>#7381 Search results block hover help for problems
+<br>#7954 Content assist off the edge of the display
+<br>#10141 Shift Left/Right disabled unless selection is "full lines".
+<br>#11047 Index out of bounds on text hover
+<br>#11148 Syntax coloring lost on revert
+<br>#11377 Code assist leaks threads
+<br>#11433 NPE opening editor when some plugins disabled
+<br>&nbsp;
+<br>&nbsp;
+<p>
+<hr WIDTH="100%">
+<br>&nbsp;
+<p>Eclipse SDK Build 20020312
 <h2>
 Breaking API changes</h2>
 
@@ -24,9 +62,10 @@ Other highlights</h2>
 <ul>
 <li>
 All editors based on AbstractTextEditor now support <i>Find Next</i> and
-<i>Find Previous. </i>Both actions are selection aware, i.e. having a word
-selected when invoking <i>Find Next </i>searches for the next appearance
-of the selected word.</li>
+<i>Find
+Previous. </i>Both actions are selection aware, i.e. having a word selected
+when invoking <i>Find Next </i>searches for the next appearance of the
+selected word.</li>
 
 <li>
 A first cut of incremental search is implemented accessible via the Find/Replace

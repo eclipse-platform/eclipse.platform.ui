@@ -49,6 +49,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -62,6 +63,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IFindReplaceTarget;
+import org.eclipse.jface.text.IFindReplaceTargetExtension;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextOperationTarget;
@@ -83,6 +85,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 
+import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorRegistry;
@@ -96,6 +99,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.EditorPart;
 
 
@@ -279,12 +283,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	class ActivationCodeTrigger implements VerifyKeyListener {
 		
-		public boolean fIsInstalled= false;
+		private boolean fIsInstalled= false;
+//		private IKeyBindingService fKeyBindingService;
 		
 		/**
 		 * @see VerifyKeyListener#verifyKey(VerifyEvent)
 		 */
 		public void verifyKey(VerifyEvent event) {
+							
 			ActionActivationCode code= null;
 			int size= fActivationCodes.size();
 			for (int i= 0; i < size; i++) {
@@ -303,8 +309,51 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 						}
 					}
 				}
-			}	
-		}		
+			}
+//			if (fKeyBindingService.processKey(event)) {
+//				/* mode handling not yet right */
+//				event.doit= false;
+//			}
+		}
+		
+		/**
+		 * Installs this trigger on the editor's text widget.
+		 */
+		public void install() {
+			if (!fIsInstalled) {
+				StyledText text= fSourceViewer.getTextWidget();
+				text.addVerifyKeyListener(this);
+//				fKeyBindingService= getEditorSite().getKeyBindingService();
+				fIsInstalled= true;
+			}
+		}
+		
+		/**
+		 * Uninstalls this trigger from the editor's text widget.
+		 */
+		public void uninstall() {
+			if (fIsInstalled) {
+				StyledText text= fSourceViewer.getTextWidget();
+				text.removeVerifyKeyListener(fActivationCodeTrigger);
+				fIsInstalled= false;
+//				fKeyBindingService= null;
+			}
+		}
+		
+		/**
+		 * Registers the given action for key activation.
+		 */
+		public void registerActionForKeyActivation(IAction action) {
+//			if (action.getActionDefinitionId() != null)
+//				fKeyBindingService.registerAction(action);
+		}
+		
+		/**
+		 * The given action is no longer available for key activation
+		 */
+		public void unregisterActionFromKeyActivation(IAction action) {
+			// No such action available on service
+		}
 	};
 	
 	/**
@@ -391,6 +440,28 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	interface ICursorListener extends MouseListener, KeyListener {
 	};
 	
+	/**
+	 * Maps an action definition id to an StyledText action.
+	 */
+	static class IdMapEntry {
+		
+		private String fActionId;
+		private int fAction;
+		
+		public IdMapEntry(String actionId, int action) {
+			fActionId= actionId;
+			fAction= action;
+		}
+		
+		public String getActionId() {
+			return fActionId;
+		}
+		
+		public int getAction() {
+			return fAction;
+		}
+	};
+	
 	
 	
 	/** Key used to look up font preference */
@@ -403,6 +474,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	public final static String PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT= "AbstractTextEditor.Color.Foreground.SystemDefault"; //$NON-NLS-1$
 	/** Key used to look up background color system default preference */
 	public final static String PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT= "AbstractTextEditor.Color.Background.SystemDefault"; //$NON-NLS-1$	
+	/** Key used to look up find scope background color preference */
+	public final static String PREFERENCE_COLOR_FIND_SCOPE= "AbstractTextEditor.Color.FindScope"; //$NON-NLS-1$	
 	
 	/** Menu id for the editor context menu. */
 	public final static String DEFAULT_EDITOR_CONTEXT_MENU_ID= "#EditorContext"; //$NON-NLS-1$
@@ -411,6 +484,51 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/** The width of the vertical ruler */
 	protected final static int VERTICAL_RULER_WIDTH= 12;
+	
+	/** The complete mapping between action definition ids used by eclipse and StyledText actions. */
+	protected final static IdMapEntry[] ACTION_MAP= new IdMapEntry[] {
+		// navigation
+		new IdMapEntry(ITextEditorActionDefinitionIds.LINE_UP, ST.LINE_UP),
+		new IdMapEntry(ITextEditorActionDefinitionIds.LINE_DOWN, ST.LINE_DOWN),
+		new IdMapEntry(ITextEditorActionDefinitionIds.LINE_START, ST.LINE_START),
+		new IdMapEntry(ITextEditorActionDefinitionIds.LINE_END, ST.LINE_END),
+		new IdMapEntry(ITextEditorActionDefinitionIds.COLUMN_PREVIOUS, ST.COLUMN_PREVIOUS),
+		new IdMapEntry(ITextEditorActionDefinitionIds.COLUMN_NEXT, ST.COLUMN_NEXT),
+		new IdMapEntry(ITextEditorActionDefinitionIds.PAGE_UP, ST.PAGE_UP),
+		new IdMapEntry(ITextEditorActionDefinitionIds.PAGE_DOWN, ST.PAGE_DOWN),
+		new IdMapEntry(ITextEditorActionDefinitionIds.WORD_PREVIOUS, ST.WORD_PREVIOUS),
+		new IdMapEntry(ITextEditorActionDefinitionIds.WORD_NEXT, ST.WORD_NEXT),
+		new IdMapEntry(ITextEditorActionDefinitionIds.TEXT_START, ST.TEXT_START),
+		new IdMapEntry(ITextEditorActionDefinitionIds.TEXT_END, ST.TEXT_END),
+		new IdMapEntry(ITextEditorActionDefinitionIds.WINDOW_START, ST.WINDOW_START),
+		new IdMapEntry(ITextEditorActionDefinitionIds.WINDOW_END, ST.WINDOW_END),
+		// selection
+		new IdMapEntry(ITextEditorActionDefinitionIds.SELECT_LINE_UP, ST.SELECT_LINE_UP),
+		new IdMapEntry(ITextEditorActionDefinitionIds.SELECT_LINE_DOWN, ST.SELECT_LINE_DOWN),
+		new IdMapEntry(ITextEditorActionDefinitionIds.SELECT_LINE_START, ST.SELECT_LINE_START),
+		new IdMapEntry(ITextEditorActionDefinitionIds.SELECT_LINE_END, ST.SELECT_LINE_END),
+		new IdMapEntry(ITextEditorActionDefinitionIds.SELECT_COLUMN_PREVIOUS, ST.SELECT_COLUMN_PREVIOUS),
+		new IdMapEntry(ITextEditorActionDefinitionIds.SELECT_COLUMN_NEXT, ST.SELECT_COLUMN_NEXT),
+		new IdMapEntry(ITextEditorActionDefinitionIds.SELECT_PAGE_UP, ST.SELECT_PAGE_UP),
+		new IdMapEntry(ITextEditorActionDefinitionIds.SELECT_PAGE_DOWN, ST.SELECT_PAGE_DOWN),
+		new IdMapEntry(ITextEditorActionDefinitionIds.SELECT_WORD_PREVIOUS, ST.SELECT_WORD_PREVIOUS),
+		new IdMapEntry(ITextEditorActionDefinitionIds.SELECT_WORD_NEXT,  ST.SELECT_WORD_NEXT),
+		new IdMapEntry(ITextEditorActionDefinitionIds.SELECT_TEXT_START, ST.SELECT_TEXT_START),
+		new IdMapEntry(ITextEditorActionDefinitionIds.SELECT_TEXT_END, ST.SELECT_TEXT_END),
+		new IdMapEntry(ITextEditorActionDefinitionIds.SELECT_WINDOW_START, ST.SELECT_WINDOW_START),
+		new IdMapEntry(ITextEditorActionDefinitionIds.SELECT_WINDOW_END, ST.SELECT_WINDOW_END),
+		// modification
+		new IdMapEntry(ITextEditorActionDefinitionIds.CUT, ST.CUT),
+		new IdMapEntry(ITextEditorActionDefinitionIds.COPY, ST.COPY),
+		new IdMapEntry(ITextEditorActionDefinitionIds.PASTE, ST.PASTE),
+		new IdMapEntry(ITextEditorActionDefinitionIds.DELETE_PREVIOUS, ST.DELETE_PREVIOUS),
+		new IdMapEntry(ITextEditorActionDefinitionIds.DELETE_NEXT, ST.DELETE_NEXT),
+		// miscellaneous
+		new IdMapEntry(ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE, ST.TOGGLE_OVERWRITE)
+	};
+
+	
+	
 	
 	
 	/** The editor's internal document provider */
@@ -431,6 +549,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private Color fForegroundColor;
 	/** The editor's background color */
 	private Color fBackgroundColor;
+	/** The find scope's highlight color */
+	private Color fFindScopeHighlightColor;
 	/** The editor's vertical ruler */
 	private IVerticalRuler fVerticalRuler;
 	/** The editor's context menu id */
@@ -483,6 +603,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private boolean fCompatibilityMode= true;
 	/** The number of reentrances into error correction code while saving */
 	private int fErrorCorrectionOnSave;
+	/** The incremental find target */
+	private IncrementalFindTarget fIncrementalFindTarget;
+	
 	
 	
 	/**
@@ -921,6 +1044,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				
 		initializeViewerFont(fSourceViewer);
 		initializeViewerColors(fSourceViewer);
+		initializeFindScopeColor(fSourceViewer);
 		
 		StyledText styledText= fSourceViewer.getTextWidget();
 		styledText.addMouseListener(getCursorListener());
@@ -975,7 +1099,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		if (fRulerContextMenuId == null)
 			fRulerContextMenuId= DEFAULT_RULER_CONTEXT_MENU_ID;
-		
+			
+		fActivationCodeTrigger.install();
+		createNavigationActions();
 		createActions();
 		
 		getSite().setSelectionProvider(getSelectionProvider());
@@ -1100,6 +1226,27 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fBackgroundColor= color;
 		}
 	}
+
+	private void initializeFindScopeColor(ISourceViewer viewer) {
+
+		IPreferenceStore store= getPreferenceStore();
+		if (store != null) {
+
+			StyledText styledText= viewer.getTextWidget();
+			
+			Color color= createColor(store, PREFERENCE_COLOR_FIND_SCOPE, styledText.getDisplay());	
+
+			IFindReplaceTarget target= viewer.getFindReplaceTarget();
+			if (target != null && target instanceof IFindReplaceTargetExtension)
+				((IFindReplaceTargetExtension) target).setScopeHighlightColor(color);
+			
+			if (fFindScopeHighlightColor != null)
+				fFindScopeHighlightColor.dispose();
+
+			fFindScopeHighlightColor= color;				
+		}			
+	}
+
 		
 	/**
 	 * Initializes the editor's source viewer based on the given editor input.
@@ -1344,13 +1491,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			
 		String property= event.getProperty();
 		
-		if (PREFERENCE_FONT.equals(property))
+		if (PREFERENCE_FONT.equals(property)) {
 			initializeViewerFont(fSourceViewer);
-			
-		if (PREFERENCE_COLOR_FOREGROUND.equals(property) || PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT.equals(property) ||
+
+		} else if (PREFERENCE_COLOR_FOREGROUND.equals(property) || PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT.equals(property) ||
 			PREFERENCE_COLOR_BACKGROUND.equals(property) ||	PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT.equals(property))
 		{
 			initializeViewerColors(fSourceViewer);
+		} else if (PREFERENCE_COLOR_FIND_SCOPE.equals(property)) {
+			initializeFindScopeColor(fSourceViewer);
 		}
 			
 		if (affectsTextPresentation(event))
@@ -1683,10 +1832,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	public void setAction(String actionID, IAction action) {
 		Assert.isNotNull(actionID);
-		if (action == null)
-			fActions.remove(actionID);
-		else
+		if (action == null) {
+			action= (IAction) fActions.remove(actionID);
+			if (action != null)
+				fActivationCodeTrigger.unregisterActionFromKeyActivation(action);
+		} else {
 			fActions.put(actionID, action);
+			fActivationCodeTrigger.registerActionForKeyActivation(action);
+		}
 	}
 	
 	/*
@@ -1832,6 +1985,22 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
+	 * Creates this editor's standard navigation actions.
+	 * <p>
+	 * Subclasses may extend.
+	 * </p>
+	 */
+	protected void createNavigationActions() {
+		StyledText textWidget= getSourceViewer().getTextWidget();
+		for (int i= 0; i < ACTION_MAP.length; i++) {
+			IdMapEntry entry= (IdMapEntry) ACTION_MAP[i];
+			TextNavigationAction action= new TextNavigationAction(textWidget, entry.getAction());
+			action.setActionDefinitionId(entry.getActionId());
+			setAction(entry.getActionId(), action);
+		}
+	}
+	
+	/**
 	 * Creates this editor's standard actions and connects them with the global
 	 * workbench actions.
 	 * <p>
@@ -1844,74 +2013,97 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Undo.", this, ITextOperationTarget.UNDO); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.UNDO_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.UNDO);
 		setAction(ITextEditorActionConstants.UNDO, action);
 		
 		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Redo.", this, ITextOperationTarget.REDO); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.REDO_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.REDO);
 		setAction(ITextEditorActionConstants.REDO, action);
 		
 		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Cut.", this, ITextOperationTarget.CUT); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.CUT_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CUT);
 		setAction(ITextEditorActionConstants.CUT, action);
 		
 		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Copy.", this, ITextOperationTarget.COPY); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.COPY_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.COPY);
 		setAction(ITextEditorActionConstants.COPY, action);
 		
 		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Paste.", this, ITextOperationTarget.PASTE); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.PASTE_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.PASTE);
 		setAction(ITextEditorActionConstants.PASTE, action);
 		
 		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Delete.", this, ITextOperationTarget.DELETE); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.DELETE_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.DELETE);
 		setAction(ITextEditorActionConstants.DELETE, action);
 		
 		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.SelectAll.", this, ITextOperationTarget.SELECT_ALL); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SELECT_ALL_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SELECT_ALL);
 		setAction(ITextEditorActionConstants.SELECT_ALL, action);
 		
 		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.ShiftRight.", this, ITextOperationTarget.SHIFT_RIGHT); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SHIFT_RIGHT_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SHIFT_RIGHT);
 		setAction(ITextEditorActionConstants.SHIFT_RIGHT, action);
 		
 		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.ShiftLeft.", this, ITextOperationTarget.SHIFT_LEFT); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SHIFT_LEFT_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SHIFT_LEFT);
 		setAction(ITextEditorActionConstants.SHIFT_LEFT, action);
 		
 		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Print.", this, ITextOperationTarget.PRINT); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.PRINT_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.PRINT);
 		setAction(ITextEditorActionConstants.PRINT, action);
 		
 		action= new FindReplaceAction(EditorMessages.getResourceBundle(), "Editor.FindReplace.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.FIND_REPLACE);
 		setAction(ITextEditorActionConstants.FIND, action);
 
 		action= new FindNextAction(EditorMessages.getResourceBundle(), "Editor.FindNext.", this, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.FIND_NEXT);
 		setAction(ITextEditorActionConstants.FIND_NEXT, action);
 
 		action= new FindNextAction(EditorMessages.getResourceBundle(), "Editor.FindPrevious.", this, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.FIND_PREVIOUS);
 		setAction(ITextEditorActionConstants.FIND_PREVIOUS, action);
+
+		action= new IncrementalFindAction(EditorMessages.getResourceBundle(), "Editor.FindIncremental.", this); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.FIND_INCREMENTAL);
+		setAction(ITextEditorActionConstants.FIND_INCREMENTAL, action);
 		
 		action= new AddMarkerAction(EditorMessages.getResourceBundle(), "Editor.AddBookmark.", this, IMarker.BOOKMARK, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.BOOKMARK_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.ADD_BOOKMARK);
 		setAction(ITextEditorActionConstants.BOOKMARK, action);
 		
 		action= new AddMarkerAction(EditorMessages.getResourceBundle(), "Editor.AddTask.", this, IMarker.TASK, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.ADD_TASK_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.ADD_TASK);
 		setAction(ITextEditorActionConstants.ADD_TASK, action);
 		
 		action= new SaveAction(EditorMessages.getResourceBundle(), "Editor.Save.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SAVE_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SAVE);
 		setAction(ITextEditorActionConstants.SAVE, action);
 		
 		action= new RevertToSavedAction(EditorMessages.getResourceBundle(), "Editor.Revert.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.REVERT_TO_SAVED_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.REVERT_TO_SAVED);
 		setAction(ITextEditorActionConstants.REVERT_TO_SAVED, action);
 		
 		action= new GotoLineAction(EditorMessages.getResourceBundle(), "Editor.GotoLine.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.GOTO_LINE_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.LINE_GOTO);
 		setAction(ITextEditorActionConstants.GOTO_LINE, action);
 		
 		setAction(ITextEditorActionConstants.RULER_MANAGE_BOOKMARKS, new MarkerRulerAction(EditorMessages.getResourceBundle(), "Editor.ManageBookmarks.", fVerticalRuler, this, IMarker.BOOKMARK, true)); //$NON-NLS-1$
@@ -1924,6 +2116,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		markAsContentDependentAction(ITextEditorActionConstants.FIND, true);
 		markAsContentDependentAction(ITextEditorActionConstants.FIND_NEXT, true);
 		markAsContentDependentAction(ITextEditorActionConstants.FIND_PREVIOUS, true);
+		markAsContentDependentAction(ITextEditorActionConstants.FIND_INCREMENTAL, true);
 		
 		markAsSelectionDependentAction(ITextEditorActionConstants.CUT, true);
 		markAsSelectionDependentAction(ITextEditorActionConstants.COPY, true);
@@ -2048,8 +2241,22 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @see IAdaptable#getAdapter(Class)
 	 */
 	public Object getAdapter(Class required) {
-		if (IFindReplaceTarget.class.equals(required))
-			return (fSourceViewer == null ? null : fSourceViewer.getFindReplaceTarget());
+		if (IncrementalFindTarget.class.equals(required)) {
+			if (fIncrementalFindTarget == null) {
+				IEditorActionBarContributor contributor= getEditorSite().getActionBarContributor();
+				if (contributor instanceof EditorActionBarContributor) {
+					IStatusLineManager manager= ((EditorActionBarContributor) contributor).getActionBars().getStatusLineManager();
+					fIncrementalFindTarget= (fSourceViewer == null ? null : new IncrementalFindTarget(fSourceViewer, manager));
+				}
+			}
+			return fIncrementalFindTarget;
+		}
+		if (IFindReplaceTarget.class.equals(required)) {
+			IFindReplaceTarget target= (fSourceViewer == null ? null : fSourceViewer.getFindReplaceTarget());
+			if (target != null && target instanceof IFindReplaceTargetExtension)
+				((IFindReplaceTargetExtension) target).setScopeHighlightColor(fFindScopeHighlightColor);
+			return target;
+		}
 		if (ITextOperationTarget.class.equals(required))
 			return (fSourceViewer == null ? null : fSourceViewer.getTextOperationTarget());
 		return super.getAdapter(required);
@@ -2059,7 +2266,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @see IDesktopPart#setFocus()
 	 */
 	public void setFocus() {
-		if (fSourceViewer != null)
+		if (fSourceViewer != null && fSourceViewer.getTextWidget() != null)
 			fSourceViewer.getTextWidget().setFocus();
 	}
 	

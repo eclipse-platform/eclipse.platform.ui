@@ -9,6 +9,8 @@ package org.eclipse.ui.texteditor;
 import java.text.MessageFormat;import java.util.ArrayList;import java.util.List;import java.util.ResourceBundle;import org.eclipse.core.runtime.Platform;import org.eclipse.swt.SWT;import org.eclipse.swt.events.ModifyEvent;import org.eclipse.swt.events.ModifyListener;import org.eclipse.swt.events.SelectionAdapter;import org.eclipse.swt.events.SelectionEvent;import org.eclipse.swt.events.SelectionListener;import org.eclipse.swt.events.ShellAdapter;import org.eclipse.swt.events.ShellEvent;import org.eclipse.swt.graphics.Image;import org.eclipse.swt.graphics.Point;import org.eclipse.swt.graphics.Rectangle;import org.eclipse.swt.layout.GridData;import org.eclipse.swt.layout.GridLayout;import org.eclipse.swt.widgets.Button;import org.eclipse.swt.widgets.Combo;import org.eclipse.swt.widgets.Composite;import org.eclipse.swt.widgets.Control;import org.eclipse.swt.widgets.Group;import org.eclipse.swt.widgets.Label;import org.eclipse.swt.widgets.Shell;import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.Dialog;import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.IFindReplaceTarget;import org.eclipse.jface.text.IFindReplaceTargetExtension;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -30,6 +32,7 @@ class FindReplaceDialog extends Dialog {
 	class ActivationListener extends ShellAdapter {
 		
 		public void shellActivated(ShellEvent e) {
+			
 			String oldText= fFindField.getText(); // XXX workaround for 10766
 			List oldList= new ArrayList();
 			oldList.addAll(fFindHistory);
@@ -52,7 +55,13 @@ class FindReplaceDialog extends Dialog {
 		
 		public void shellDeactivated(ShellEvent e) {
 			storeSettings();
-			fActiveShell= null;
+
+			if (fTarget != null && (fTarget instanceof IFindReplaceTargetExtension))
+				((IFindReplaceTargetExtension) fTarget).setScope(null);
+
+			fOldScope= null;
+
+			fActiveShell= null;			
 			updateButtonState();
 		}
 	}
@@ -80,7 +89,7 @@ class FindReplaceDialog extends Dialog {
 
 	private Point fLocation;
 	private Point fIncrementalBaseLocation;
-	private boolean fWrapInit, fCaseInit, fWholeWordInit, fForwardInit, fIncrementalInit;
+	private boolean fWrapInit, fCaseInit, fWholeWordInit, fForwardInit, fGlobalInit, fIncrementalInit;
 	private List fFindHistory;
 	private List fReplaceHistory;
 
@@ -92,11 +101,12 @@ class FindReplaceDialog extends Dialog {
 	private ModifyListener fFindModifyListener= new FindModifyListener();
 
 	private Label fReplaceLabel, fStatusLabel;
-	private Button fForwardRadioButton;
+	private Button fForwardRadioButton, fGlobalRadioButton, fSelectedRangeRadioButton;
 	private Button fCaseCheckBox, fWrapCheckBox, fWholeWordCheckBox, fIncrementalCheckBox;
 	private Button fReplaceSelectionButton, fReplaceFindButton, fFindNextButton, fReplaceAllButton;
 	private Combo fFindField, fReplaceField;
 	private Rectangle fDialogPositionInit;
+	private IRegion fOldScope;
 
 	private IDialogSettings fDialogSettings;
 
@@ -117,6 +127,7 @@ class FindReplaceDialog extends Dialog {
 		fCaseInit= false;
 		fWholeWordInit= false;
 		fIncrementalInit= false;
+		fGlobalInit= true;
 		fForwardInit= true;
 
 		readConfiguration();
@@ -186,6 +197,8 @@ class FindReplaceDialog extends Dialog {
 		GridLayout layout= new GridLayout();
 		layout.numColumns= -2;
 		layout.makeColumnsEqualWidth= true;
+		layout.marginWidth= 0;
+		layout.marginHeight= 0;
 		panel.setLayout(layout);
 		
 		fFindNextButton= makeButton(panel, "FindReplace.FindNextButton.label", 102, true, new SelectionAdapter() { //$NON-NLS-1$
@@ -249,9 +262,15 @@ class FindReplaceDialog extends Dialog {
 		panel.setLayout(layout);
 
 		Composite directionGroup= createDirectionGroup(panel);
-		setGridData(directionGroup, GridData.FILL, true, GridData.BEGINNING, false);
+		setGridData(directionGroup, GridData.FILL, true, GridData.FILL, false);
+		Composite scopeGroup= createScopeGroup(panel);
+		setGridData(scopeGroup, GridData.FILL, true, GridData.FILL, false);
+
 		Composite optionsGroup= createOptionsGroup(panel);
-		setGridData(optionsGroup, GridData.FILL, true, GridData.BEGINNING, false);
+		setGridData(optionsGroup, GridData.FILL, true, GridData.FILL, false);
+		GridData data= (GridData) optionsGroup.getLayoutData();
+		data.horizontalSpan= 2;
+		optionsGroup.setLayoutData(data);
 
 		return panel;
 	}
@@ -295,13 +314,15 @@ class FindReplaceDialog extends Dialog {
 
 		Composite panel= new Composite(parent, SWT.NONE);
 		GridLayout layout= new GridLayout();
-		layout.numColumns= 1;
+		layout.marginWidth= 0;
+		layout.marginHeight= 0;
 		panel.setLayout(layout);
 
 		Group group= new Group(panel, SWT.SHADOW_ETCHED_IN);
 		group.setText(EditorMessages.getString("FindReplace.Direction")); //$NON-NLS-1$
 		GridLayout groupLayout= new GridLayout();
 		group.setLayout(groupLayout);
+		group.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		SelectionListener selectionListener= new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
@@ -325,6 +346,90 @@ class FindReplaceDialog extends Dialog {
 
 		backwardRadioButton.setSelection(!fForwardInit);
 		fForwardRadioButton.setSelection(fForwardInit);
+
+		return panel;
+	}
+
+	/**
+	 * Creates the scope defining part of the find replace dialog.
+	 *
+	 * @param parent the parent composite
+	 * @return the scope defining part
+	 */
+	private Composite createScopeGroup(Composite parent) {
+
+		Composite panel= new Composite(parent, SWT.NONE);
+		GridLayout layout= new GridLayout();
+		layout.marginWidth= 0;
+		layout.marginHeight= 0;
+		panel.setLayout(layout);		
+
+		Group group= new Group(panel, SWT.SHADOW_ETCHED_IN);
+		group.setText(EditorMessages.getString("FindReplace.Scope")); //$NON-NLS-1$
+		GridLayout groupLayout= new GridLayout();
+		group.setLayout(groupLayout);
+		group.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		fGlobalRadioButton= new Button(group, SWT.RADIO | SWT.LEFT);
+		fGlobalRadioButton.setText(EditorMessages.getString("FindReplace.GlobalRadioButton.label")); //$NON-NLS-1$
+		setGridData(fGlobalRadioButton, GridData.BEGINNING, false, GridData.CENTER, false);
+		fGlobalRadioButton.setSelection(fGlobalInit);
+		fGlobalRadioButton.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				if (!fGlobalRadioButton.getSelection())
+					return;
+				
+				if (isIncrementalSearch())
+					initIncrementalBaseLocation();
+
+				if (fTarget != null && fTarget instanceof IFindReplaceTargetExtension) {
+					IFindReplaceTargetExtension extensionTarget= (IFindReplaceTargetExtension) fTarget;
+
+					fOldScope= extensionTarget.getScope();
+					extensionTarget.setScope(null);
+				}
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		fSelectedRangeRadioButton= new Button(group, SWT.RADIO | SWT.LEFT);
+		fSelectedRangeRadioButton.setText(EditorMessages.getString("FindReplace.SelectedRangeRadioButton.label")); //$NON-NLS-1$
+		setGridData(fSelectedRangeRadioButton, GridData.BEGINNING, false, GridData.CENTER, false);
+		fSelectedRangeRadioButton.setSelection(!fGlobalInit);
+		fSelectedRangeRadioButton.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				if (!fSelectedRangeRadioButton.getSelection())
+					return;
+
+				if (isIncrementalSearch())
+					initIncrementalBaseLocation();
+				
+				if (fTarget != null && fTarget instanceof IFindReplaceTargetExtension) {
+					IFindReplaceTargetExtension extensionTarget= (IFindReplaceTargetExtension) fTarget;
+
+					IRegion scope;
+					if (fOldScope == null) {
+						Point lineSelection= extensionTarget.getLineSelection();
+						scope= new Region(lineSelection.x, lineSelection.y);
+					} else {
+						scope= fOldScope;
+						fOldScope= null;
+					}
+
+					int offset= isForwardSearch()
+						? scope.getOffset() 
+						: scope.getOffset() + scope.getLength();					
+
+					extensionTarget.setSelection(offset, 0);					
+					extensionTarget.setScope(scope);
+				}
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
 
 		return panel;
 	}
@@ -379,13 +484,17 @@ class FindReplaceDialog extends Dialog {
 
 		Composite panel= new Composite(parent, SWT.NULL);
 		GridLayout layout= new GridLayout();
-		layout.numColumns= 1;
+		layout.marginWidth= 0;
+		layout.marginHeight= 0;
 		panel.setLayout(layout);
 
 		Group group= new Group(panel, SWT.SHADOW_NONE);
 		group.setText(EditorMessages.getString("FindReplace.Options")); //$NON-NLS-1$
 		GridLayout groupLayout= new GridLayout();
+		groupLayout.numColumns= 2;
+		groupLayout.makeColumnsEqualWidth= true;		
 		group.setLayout(groupLayout);
+		group.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		SelectionListener selectionListener= new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
@@ -444,6 +553,8 @@ class FindReplaceDialog extends Dialog {
 		Composite panel= new Composite(parent, SWT.NULL);
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 2;
+		layout.marginWidth= 0;
+		layout.marginHeight= 0;		
 		panel.setLayout(layout);
 
 		fStatusLabel= new Label(panel, SWT.LEFT);
@@ -451,7 +562,7 @@ class FindReplaceDialog extends Dialog {
 
 		String label= EditorMessages.getString("FindReplace.CloseButton.label"); //$NON-NLS-1$
 		Button closeButton= createButton(panel, 101, label, false);
-		setGridData(closeButton, GridData.END, false, GridData.CENTER, false);
+		setGridData(closeButton, GridData.END, false, GridData.END, false);
 
 		return panel;
 	}
@@ -498,13 +609,13 @@ class FindReplaceDialog extends Dialog {
 	/**
 	 * Returns whether the specified  search string can be found using the given options.
 	 */
-	private boolean findNext(String findString, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean incremental) {
+	private boolean findNext(String findString, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean incremental, boolean global) {
 
 		Point r= fTarget.getSelection();
 		int findReplacePosition= r.x;
 		if (forwardSearch)
 			findReplacePosition += r.y;
-			
+
 		if (incremental)
 			findReplacePosition= forwardSearch
 				? fIncrementalBaseLocation.x + fIncrementalBaseLocation.y
@@ -582,8 +693,7 @@ class FindReplaceDialog extends Dialog {
 		if (selection != null && selection.length() > 0) {
 			int[] info= TextUtilities.indexOf(TextUtilities.fgDelimiters, selection, 0);
 			if (info[0] > 0)
-				return "";
-//				return selection.substring(0, info[0]);
+				return selection.substring(0, info[0]);
 			else if (info[0] == -1)
 				return selection;
 		}
@@ -699,6 +809,17 @@ class FindReplaceDialog extends Dialog {
 	}
 
 	/**
+	 * Retrieves and returns the option global scope from
+	 * the appropriate check box.
+	 */
+	private boolean isGlobalSearch() {
+		if (okToUse(fGlobalRadioButton)) {
+			return fGlobalRadioButton.getSelection();
+		}
+		return fGlobalInit;
+	}
+
+	/**
 	 * Retrieves and returns the option search whole words from
 	 * the appropriate check box.
 	 */
@@ -802,7 +923,7 @@ class FindReplaceDialog extends Dialog {
 
 		if (findString != null && findString.length() > 0) {
 
-			replaceCount= replaceAll(findString, replaceString, isForwardSearch(), isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch());
+			replaceCount= replaceAll(findString, replaceString, isForwardSearch(), isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch(), isGlobalSearch());
 
 			if (replaceCount != 0) {
 				if (replaceCount == 1) { // not plural
@@ -843,7 +964,7 @@ class FindReplaceDialog extends Dialog {
 
 		if (findString != null && findString.length() > 0) {
 
-			boolean somethingFound= findNext(findString, isForwardSearch(), isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch(), isIncrementalSearch());
+			boolean somethingFound= findNext(findString, isForwardSearch(), isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch(), isIncrementalSearch(), isGlobalSearch());
 
 			if (somethingFound) {
 				statusMessage(""); //$NON-NLS-1$
@@ -860,7 +981,7 @@ class FindReplaceDialog extends Dialog {
 	 * the replace string.  Returns the number of replacements
 	 * that occur.
 	 */
-	private int replaceAll(String findString, String replaceString, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord) {
+	private int replaceAll(String findString, String replaceString, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean global) {
 
 		int replaceCount= 0;
 		int findReplacePosition= 0;
@@ -992,8 +1113,13 @@ class FindReplaceDialog extends Dialog {
 
 			fTarget= target;
 	
-			if (fTarget != null && fTarget instanceof IFindReplaceTargetExtension)
+			if (fTarget != null && fTarget instanceof IFindReplaceTargetExtension) {
 				((IFindReplaceTargetExtension) fTarget).beginSession();
+
+				fGlobalInit= true;
+				fGlobalRadioButton.setSelection(fGlobalInit);
+				fSelectedRangeRadioButton.setSelection(!fGlobalInit);
+			}
 		}
 
 		if (okToUse(fReplaceLabel)) {

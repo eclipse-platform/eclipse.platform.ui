@@ -61,6 +61,8 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	private RetargetTextEditorAction fFindNext;
 	/** The find previous action */
 	private RetargetTextEditorAction fFindPrevious;	
+	/** The incremental find action */
+	private RetargetTextEditorAction fIncrementalFind;	
 	/** The go to line action */
 	private RetargetTextEditorAction fGotoLine;
 	/** The map of status fields */
@@ -76,6 +78,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	public BasicTextEditorActionContributor() {
 		fFindNext= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "FindNext."); //$NON-NLS-1$
 		fFindPrevious= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "FindPrevious."); //$NON-NLS-1$
+		fIncrementalFind= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "IncrementalFind."); //$NON-NLS-1$
 		fGotoLine= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "GotoLine."); //$NON-NLS-1$
 		fStatusFields= new HashMap(3);
 		for (int i= 0; i < STATUSFIELDS.length; i++)
@@ -129,6 +132,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 
 		fFindNext.setAction(getAction(editor, ITextEditorActionConstants.FIND_NEXT));
 		fFindPrevious.setAction(getAction(editor, ITextEditorActionConstants.FIND_PREVIOUS));
+		fIncrementalFind.setAction(getAction(editor, ITextEditorActionConstants.FIND_INCREMENTAL));
 		fGotoLine.setAction(getAction(editor, ITextEditorActionConstants.GOTO_LINE));
 		
 		if (fActiveEditorPart instanceof ITextEditorExtension) {
@@ -146,6 +150,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		if (editMenu != null) {
 			editMenu.add(fFindNext);
 			editMenu.add(fFindPrevious);
+			editMenu.add(fIncrementalFind);
 			editMenu.add(fGotoLine);
 		}
 	}

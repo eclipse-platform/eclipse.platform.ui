@@ -80,6 +80,10 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * Name of the action to find next. 
 	 */
 	static final String FIND_PREVIOUS= "FindPrevious"; //$NON-NLS-1$
+	/** 
+	 * Name of the action to incremental find. 
+	 */
+	static final String FIND_INCREMENTAL= "FindIncremental"; //$NON-NLS-1$
 	
 	
 	/** 

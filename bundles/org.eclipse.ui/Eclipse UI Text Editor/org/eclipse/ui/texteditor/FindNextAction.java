@@ -14,6 +14,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.IFindReplaceTarget;
+import org.eclipse.jface.text.IFindReplaceTargetExtension;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
@@ -41,12 +43,13 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	private IWorkbenchWindow fWorkbenchWindow;
 
 	private IDialogSettings fDialogSettings;
+
+	private List fFindHistory= new ArrayList();
 	private String fFindString;
 	private boolean fForward;
 	private boolean fWrapInit;
 	private boolean fCaseInit;
 	private boolean fWholeWordInit;
-	private List fFindHistory= new ArrayList();
 	
 	/**
 	 * Creates a new find/replace action for the given text editor. 

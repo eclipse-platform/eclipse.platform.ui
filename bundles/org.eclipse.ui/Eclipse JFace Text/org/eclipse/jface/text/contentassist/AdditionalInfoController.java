@@ -71,6 +71,12 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 	 * @see AbstractInformationControlManager#install(Control)
 	 */
 	public void install(Control control) {
+
+		if (fProposalTable == control) {
+			// already installed
+			return;
+		}
+		
 		super.install(control);
 		
 		Assert.isTrue(control instanceof Table);

@@ -73,6 +73,9 @@ public class DefaultUndoManager implements IUndoManager {
 		 */
 		protected void undo(StyledText text) {
 			text.replaceTextRange(fStart, fText.length(), fPreservedText);
+			int length= fPreservedText == null ? 0 : fPreservedText.length();
+			text.setSelectionRange(fStart, length);
+			text.showSelection();		
 		}
 		
 		/**
@@ -83,6 +86,9 @@ public class DefaultUndoManager implements IUndoManager {
 		 */
 		protected void redo(StyledText text) {
 			text.replaceTextRange(fStart, fEnd - fStart, fText);
+			int length= fText == null ? 0 : fText.length();
+			text.setSelectionRange(fStart, length);
+			text.showSelection();
 		}
 		
 		/**

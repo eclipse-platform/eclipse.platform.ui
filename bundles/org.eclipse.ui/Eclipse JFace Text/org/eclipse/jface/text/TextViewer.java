@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.LineBackgroundEvent;
+import org.eclipse.swt.custom.LineBackgroundListener;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlEvent;
@@ -352,11 +354,122 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		}	
 	};
 	
+	private class FindReplaceRange implements LineBackgroundListener, ITextListener, IPositionUpdater {		
+
+		private final static String RANGE_CATEGORY= "org.eclipse.jface.text.TextViewer.find.range";
+
+		private Color fHighlightColor;
+		private IRegion fRange;
+		private Position fPosition;
+		
+		public FindReplaceRange(IRegion range) {
+			setRange(range);
+		}
+		
+		public void setRange(IRegion range) {
+			fPosition= new Position(range.getOffset(), range.getLength());
+		}
+		
+		public IRegion getRange() {
+			return new Region(fPosition.getOffset(), fPosition.getLength());
+		}
+		
+		public void setHighlightColor(Color color) {
+			fHighlightColor= color;
+			paint();
+		}
+
+		/*
+		 * @see LineBackgroundListener#lineGetBackground(LineBackgroundEvent)
+		 */
+		public void lineGetBackground(LineBackgroundEvent event) {
+			/* Don't use cached line information because of patched redrawing events. */
+			
+			if (fTextWidget != null) {
+				int offset= event.lineOffset + TextViewer.this.getVisibleRegionOffset();
+				int length= event.lineText.length();
+				
+				if (fPosition.includes(offset) && (length == 0 || fPosition.includes(offset + length - 1)) &&
+					(event.lineBackground == null ||
+					event.lineBackground.equals(fTextWidget.getBackground())))
+				{
+					event.lineBackground= fHighlightColor;
+				}
+//				else
+//					event.lineBackground= fTextWidget.getBackground();
+			}
+		}
+		
+		public void install() {
+			TextViewer.this.addTextListener(this);						
+			fTextWidget.addLineBackgroundListener(this);
+
+			IDocument document= TextViewer.this.getDocument();
+			try {
+				document.addPositionCategory(RANGE_CATEGORY);
+				document.addPosition(RANGE_CATEGORY, fPosition);
+				document.addPositionUpdater(this);
+			} catch (BadPositionCategoryException e) {
+				// should not happen
+			} catch (BadLocationException e) {
+				// should not happen
+			}
+
+			paint();
+		}
+		
+		public void uninstall() {
+			IDocument document= TextViewer.this.getDocument();
+			document.removePositionUpdater(this);
+			document.removePosition(fPosition);
+
+			fTextWidget.removeLineBackgroundListener(this);
+			TextViewer.this.removeTextListener(this);						
+
+			clear();
+		}
+		
+		private void clear() {
+			fTextWidget.redraw();
+		}
+		
+		private void paint() {
+			int offset= fPosition.getOffset() - TextViewer.this.getVisibleRegionOffset();
+			int length= fPosition.getLength();
+			fTextWidget.redrawRange(offset, length, true);
+		}
+
+		/*
+		 * @see ITextListener#textChanged(TextEvent)
+		 */
+		public void textChanged(TextEvent event) {
+			paint();
+		}
+
+		/*
+		 * @see IPositionUpdater#update(DocumentEvent)
+		 */
+		public void update(DocumentEvent event) {
+			int offset= event.getOffset();
+			int length= event.getLength();
+			int delta= event.getText().length() - length;
+
+			if (offset < fPosition.getOffset())
+				fPosition.setOffset(fPosition.getOffset() + delta);
+			else if (offset < fPosition.getOffset() + fPosition.getLength())
+				fPosition.setLength(fPosition.getLength() + delta);
+		}
+
+	}
+	
 	/**
 	 * This viewer's find/replace target.
 	 */
 	class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtension {
 
+		private FindReplaceRange fRange;
+		private Color fScopeHighlightColor;
+		
 		/*
 		 * @see IFindReplaceTarget#getSelectionText()
 		 */
@@ -399,8 +512,16 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			if (offset != -1)
 				offset += TextViewer.this.getVisibleRegionOffset();
 
-			offset= TextViewer.this.findAndSelect(offset, findString, searchForward, caseSensitive, wholeWord);
-			offset -= TextViewer.this.getVisibleRegionOffset();
+			if (fRange != null) {
+				IRegion range= fRange.getRange();
+				offset= TextViewer.this.findAndSelectInRange(offset, findString, searchForward, caseSensitive, wholeWord, range.getOffset(), range.getLength());
+			} else {
+				offset= TextViewer.this.findAndSelect(offset, findString, searchForward, caseSensitive, wholeWord);
+			}
+
+			if (offset != -1)
+				offset -= TextViewer.this.getVisibleRegionOffset();
+
 			return offset;
 		}
 		
@@ -415,13 +536,85 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		 * @see IFindReplaceTargetExtension#beginSession()
 		 */
 		public void beginSession() {
+			fRange= null;
 		}
 
 		/*
 		 * @see IFindReplaceTargetExtension#endSession()
 		 */
 		public void endSession() {
+			if (fRange != null) {
+				fRange.uninstall();
+				fRange= null;
+			}
 		}
+
+		/*
+		 * @see IFindReplaceTargetExtension#getScope()
+		 */
+		public IRegion getScope() {			
+			return fRange == null ? null : fRange.getRange();
+		}
+
+		/*
+		 * @see IFindReplaceTargetExtension#getLineSelection()
+		 */
+		public Point getLineSelection() {
+			Point point= TextViewer.this.getSelectedRange();
+
+			try {
+				IDocument document= TextViewer.this.getDocument();
+
+				// beginning of line
+				int line= document.getLineOfOffset(point.x);
+				int offset= document.getLineOffset(line);
+
+				// end of line
+				line= document.getLineOfOffset(point.x + point.y);
+				IRegion info= document.getLineInformation(line); // no delimiter
+				int length= info.getOffset() + info.getLength() - offset;
+
+				return new Point(offset, length);
+
+			} catch (BadLocationException e) {
+				// should not happen			
+				return null;
+			}
+		}
+
+		/*
+		 * @see IFindReplaceTargetExtension#setSelection(int, int)
+		 */
+		public void setSelection(int offset, int length) {
+			TextViewer.this.setSelectedRange(offset /*+ TextViewer.this.getVisibleRegionOffset()*/, length);
+		}
+
+		/*
+		 * @see IFindReplaceTargetExtension#setScope(IRegion)
+		 */
+		public void setScope(IRegion scope) {
+			if (fRange != null)
+				fRange.uninstall();
+
+			if (scope == null) {
+				fRange= null;
+				return;
+			}
+			
+			fRange= new FindReplaceRange(scope);
+			fRange.setHighlightColor(fScopeHighlightColor);
+			fRange.install();			
+		}
+
+		/*
+		 * @see IFindReplaceTargetExtension#setScopeHighlightColor(Color)
+		 */
+		public void setScopeHighlightColor(Color color) {
+			if (fRange != null)
+				fRange.setHighlightColor(color);
+			fScopeHighlightColor= color;
+		}
+
 	}
 	
 		
@@ -1889,7 +2082,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				return true;
 			case SHIFT_RIGHT:
 			case SHIFT_LEFT:
-				return isEditable() && fIndentChars != null && fTextWidget.getSelectionCount() > 0;
+				return isEditable() && fIndentChars != null && isBlockSelected();
 			case PREFIX:
 			case STRIP_PREFIX:
 				return isEditable() && fDefaultPrefixChars != null;
@@ -2335,14 +2528,20 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			return -1;
 			
 		try {
-
-			int offset= (startPosition == -1 ? (forwardSearch ? rangeOffset : rangeOffset + rangeLength) : startPosition);
+			int offset;
+			if (forwardSearch && (startPosition == -1 || startPosition < rangeOffset)) {
+				offset= rangeOffset;
+			} else if (!forwardSearch && (startPosition == -1 || startPosition > rangeOffset + rangeLength)) {
+				offset= rangeOffset + rangeLength;
+			} else {
+				offset= startPosition;
+			}
 			offset -= getVisibleRegionOffset();
 			
 			int pos= getVisibleDocument().search(offset, findString, forwardSearch, caseSensitive, wholeWord);
 
 			int length =  findString.length();
-			if (pos + getVisibleRegionOffset() < rangeOffset || pos + getVisibleRegionOffset() + length > rangeOffset + rangeLength)
+			if (pos != -1 && (pos + getVisibleRegionOffset() < rangeOffset || pos + getVisibleRegionOffset() + length > rangeOffset + rangeLength))
 				pos= -1;
 
 			if (pos > -1) {
@@ -2469,4 +2668,5 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	public ITextOperationTarget getTextOperationTarget() {
 		return this;
 	}
+
 }
