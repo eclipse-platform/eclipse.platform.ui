@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
 import java.util.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.update.ui.internal.model.*;
+import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;

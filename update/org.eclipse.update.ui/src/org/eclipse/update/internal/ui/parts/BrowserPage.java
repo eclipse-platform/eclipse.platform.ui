@@ -14,7 +14,7 @@ import org.eclipse.swt.ole.win32.*;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.update.internal.ui.*;
 import java.util.*;
-import org.eclipse.update.ui.internal.model.*;
+import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.jface.action.*;
 

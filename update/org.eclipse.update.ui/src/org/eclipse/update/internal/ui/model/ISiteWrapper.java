@@ -1,4 +1,4 @@
-package org.eclipse.update.ui.internal.model;
+package org.eclipse.update.internal.ui.model;
 
 import org.eclipse.update.core.ISite;
 import java.net.URL;

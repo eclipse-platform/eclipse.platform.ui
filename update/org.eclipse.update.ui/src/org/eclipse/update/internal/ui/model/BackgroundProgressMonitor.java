@@ -1,4 +1,4 @@
-package org.eclipse.update.ui.internal.model;
+package org.eclipse.update.internal.ui.model;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import java.util.*;
@@ -62,35 +62,40 @@ public class BackgroundProgressMonitor implements IProgressMonitor {
 			}
 		});
 	}
-
+
+
 	/**
 	 * @see IProgressMonitor#done()
 	 */
 	public void done() {
+		final Vector safeMonitors = (Vector)monitors.clone();
 		display.asyncExec(new Runnable() {
 			public void run() {
-				for (Iterator iter=monitors.iterator(); iter.hasNext();) {
+				for (Iterator iter=safeMonitors.iterator(); iter.hasNext();) {
 					IProgressMonitor m = (IProgressMonitor)iter.next();
 					m.done();
 				}
+				inProgress = false;
 			}
 		});
-		inProgress = false;
 	}
-
+
+
 	/**
 	 * @see IProgressMonitor#internalWorked(double)
 	 */
 	public void internalWorked(double arg0) {
 	}
-
+
+
 	/**
 	 * @see IProgressMonitor#isCanceled()
 	 */
 	public boolean isCanceled() {
 		return canceled;
 	}
-
+
+
 	/**
 	 * @see IProgressMonitor#setCanceled(boolean)
 	 */
@@ -101,11 +106,12 @@ public class BackgroundProgressMonitor implements IProgressMonitor {
 					IProgressMonitor m = (IProgressMonitor)iter.next();
 					m.setCanceled(canceled);
 				}
+				BackgroundProgressMonitor.this.canceled = canceled;
 			}
 		});
-		this.canceled = canceled;
 	}
-
+
+
 	/**
 	 * @see IProgressMonitor#setTaskName(String)
 	 */
@@ -116,11 +122,12 @@ public class BackgroundProgressMonitor implements IProgressMonitor {
 					IProgressMonitor m = (IProgressMonitor)iter.next();
 					m.setTaskName(name);
 				}
+				BackgroundProgressMonitor.this.taskName = name;
 			}
 		});
-		this.taskName = name;
 	}
-
+
+
 	/**
 	 * @see IProgressMonitor#subTask(String)
 	 */
@@ -135,7 +142,8 @@ public class BackgroundProgressMonitor implements IProgressMonitor {
 			}
 		});
 	}
-
+
+
 	/**
 	 * @see IProgressMonitor#worked(int)
 	 */

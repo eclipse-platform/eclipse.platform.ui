@@ -1,4 +1,4 @@
-package org.eclipse.update.ui.internal.model;
+package org.eclipse.update.internal.ui.model;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -80,5 +80,37 @@ public class MyComputer extends ModelObject implements IWorkbenchAdapter {
 	 */
 	public Object getParent(Object arg0) {
 		return null;
+	}
+	
+	public void collectSites(Vector sites, MyComputerSearchSettings settings, IProgressMonitor monitor) {
+		File [] drives = File.listRoots();
+		for (int i=0; i<drives.length; i++) {
+			File drive = drives[i];
+			if (monitor.isCanceled()) return;
+			DriveSearchSettings ds = settings.getDriveSettings(drive.getPath());
+			if (ds.isChecked()) {
+				collectSites(drive, sites, ds, monitor);
+			}
+		}
+	}
+	
+	private void collectSites(File dir, Vector sites, DriveSearchSettings driveSettings, IProgressMonitor monitor) {
+		File [] children = dir.listFiles();
+		if (children==null) return;
+		
+		for (int i=0; i<children.length; i++) {
+			File child = children[i];
+			if (monitor.isCanceled()) return;
+			monitor.subTask(child.getPath());
+			if (child.isDirectory()) {
+				SiteBookmark bookmark = MyComputerDirectory.createSite(child);
+				if (bookmark!=null) {
+					ISite site = bookmark.getSite(false);
+					if (site!=null) sites.add(site);
+				}
+				else 
+					collectSites(child, sites, driveSettings, monitor);
+			}
+		}
 	}
 }

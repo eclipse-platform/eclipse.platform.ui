@@ -1,8 +1,9 @@
-package org.eclipse.update.ui.internal.model;
+package org.eclipse.update.internal.ui.model;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
- */
+ */
+
 import java.net.URL;
 import org.eclipse.update.core.*;
 import org.eclipse.core.runtime.*;
@@ -10,13 +11,19 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.ui.model.*;
 import java.util.*;
+import org.eclipse.update.internal.ui.*;
+import java.io.*;
+import org.eclipse.ui.*;
+import org.eclipse.swt.graphics.Image;
 
-public class UpdateSearchSite extends ModelObject 
-							implements IWorkbenchAdapter,
-										ISiteWrapper {
-	private ISite site;
-	private Vector candidates;
-	private String label;
+public class MyComputerFile extends ModelObject implements IWorkbenchAdapter {
+	private ModelObject parent;
+	private File file;
+
+	public MyComputerFile(ModelObject parent, File file) {
+		this.parent = parent;
+		this.file = file;
+	}
 	
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(IWorkbenchAdapter.class)) {
@@ -25,60 +32,42 @@ public class UpdateSearchSite extends ModelObject
 		return super.getAdapter(adapter);
 	}
 	
-	public UpdateSearchSite(String label, ISite site) {
-		this.label = label;
-		this.site = site;
-		candidates = new Vector();
-	}
-	
-	public ISite getSite() {
-		return site;
-	}
-	
-	public String getLabel() {
-		return label;
+	public String getName() {
+		return file.getName();
 	}
 	
 	public String toString() {
-		return getLabel();
+		return getName();
 	}
 	
 	/**
 	 * @see IWorkbenchAdapter#getChildren(Object)
 	 */
+	
 	public Object[] getChildren(Object parent) {
-		return candidates.toArray();
+		return new Object[0];
 	}
-
+
+
 	/**
 	 * @see IWorkbenchAdapter#getImageDescriptor(Object)
 	 */
 	public ImageDescriptor getImageDescriptor(Object obj) {
-		return null;
+		return PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(getName());
 	}
-
+	
 	/**
 	 * @see IWorkbenchAdapter#getLabel(Object)
 	 */
 	public String getLabel(Object obj) {
-		return getLabel();
+		return getName();
 	}
-
+
+
 	/**
 	 * @see IWorkbenchAdapter#getParent(Object)
 	 */
 	public Object getParent(Object arg0) {
-		return null;
+		return parent;
 	}
-	
-	public void addCandidate(IFeature candidate) {
-		candidates.add(candidate);
-	}
-	/**
-	 * @see ISiteWrapper#getURL()
-	 */
-	public URL getURL() {
-		return site.getURL();
-	}
-
 }

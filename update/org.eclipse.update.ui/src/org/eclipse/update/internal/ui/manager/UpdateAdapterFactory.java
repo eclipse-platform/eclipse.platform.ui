@@ -5,10 +5,9 @@ package org.eclipse.update.internal.ui.manager;
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.views.properties.*;
-import org.eclipse.update.ui.internal.model.*;
+import org.eclipse.update.internal.ui.model.*;
 
 public class UpdateAdapterFactory implements IAdapterFactory {
-	SiteBookmarkPropertySource siteBookmarkPropertySource;
 
 public Object getAdapter(Object adaptableObject, Class adapterType) {
 	if (adapterType.equals(IPropertySource.class)) 
@@ -21,10 +20,7 @@ public Object getAdapter(Object adaptableObject, Class adapterType) {
 
 private Object getProperties(Object object) {
 	if (object instanceof SiteBookmark) {
-		if (siteBookmarkPropertySource==null)
-		   siteBookmarkPropertySource = new SiteBookmarkPropertySource();
-		siteBookmarkPropertySource.setBookmark((SiteBookmark)object);
-		return siteBookmarkPropertySource;
+	   return new SiteBookmarkPropertySource((SiteBookmark)object);
 	}
 	return null;
 }

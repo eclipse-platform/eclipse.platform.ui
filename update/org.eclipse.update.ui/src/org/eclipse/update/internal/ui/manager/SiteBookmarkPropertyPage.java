@@ -8,7 +8,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
-import org.eclipse.update.ui.internal.model.*;
+import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.swt.events.*;
 import java.net.*;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;

@@ -1,4 +1,4 @@
-package org.eclipse.update.ui.internal.model;
+package org.eclipse.update.internal.ui.model;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.

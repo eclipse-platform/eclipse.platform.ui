@@ -1,8 +1,9 @@
-package org.eclipse.update.ui.internal.model;
+package org.eclipse.update.internal.ui.model;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
- */
+ */
+
 import java.net.URL;
 import org.eclipse.update.core.*;
 import org.eclipse.core.runtime.*;
@@ -69,19 +70,24 @@ public class SiteBookmark extends ModelObject
 	public URL getURL() {
 		return url;
 	}
-
+
+
 	public void setURL(URL url) {
 		this.url = url;
 		notifyObjectChanged(P_URL);
 	}
 	
 	public ISite getSite() {
+		return getSite(true);
+	}
+	
+	public ISite getSite(boolean showDialogIfFailed) {
 		if (site==null) {
 			try {
 				connect();
 			}
 			catch (CoreException e) {
-				UpdateUIPlugin.logException(e);
+				UpdateUIPlugin.logException(e, showDialogIfFailed);
 			}
 		}
 		return site;
@@ -102,21 +108,24 @@ public class SiteBookmark extends ModelObject
 	public Object[] getChildren(Object parent) {
 		return null;
 	}
-
+
+
 	/**
 	 * @see IWorkbenchAdapter#getImageDescriptor(Object)
 	 */
 	public ImageDescriptor getImageDescriptor(Object obj) {
 		return null;
 	}
-
+
+
 	/**
 	 * @see IWorkbenchAdapter#getLabel(Object)
 	 */
 	public String getLabel(Object obj) {
 		return getName();
 	}
-
+
+
 	/**
 	 * @see IWorkbenchAdapter#getParent(Object)
 	 */
@@ -219,5 +228,6 @@ public class SiteBookmark extends ModelObject
 	public String getLabel() {
 		return getName();
 	}
-
+
+
 }

@@ -11,7 +11,7 @@ import org.eclipse.core.resources.*;
 import java.util.*;
 import org.eclipse.ui.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.internal.model.*;
+import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.manager.*;
 import org.eclipse.update.core.*;
 import java.lang.reflect.*;
@@ -115,6 +115,7 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		IAdapterManager manager = Platform.getAdapterManager();
 		adapterFactory = new UpdateAdapterFactory();
 		manager.registerAdapters(adapterFactory, ModelObject.class);
+		
 	}
 	
 	public void shutdown() throws CoreException {
@@ -142,7 +143,8 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		Status status = new Status(IStatus.ERROR, getPluginId(), IStatus.OK, message, e);
 		if (showErrorDialog) 
 		   ErrorDialog.openError(getActiveWorkbenchShell(), null, null, status);
-		ResourcesPlugin.getPlugin().getLog().log(status);
+		//ResourcesPlugin.getPlugin().getLog().log(status);
+		Platform.getPlugin("org.eclipse.core.runtime").getLog().log(status);
 	}
 	
 	public static IFeature [] searchSite(String featureId, ISite site) throws CoreException {

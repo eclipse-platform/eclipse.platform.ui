@@ -33,17 +33,19 @@ public class UpdateSearchProgressMonitor implements IProgressMonitor {
 		workedSoFar = 0;
 		contribution = new UpdateSearchContribution("updateProgress");
 		manager.add(contribution);
-		manager.update(true);
+		manager.update(false);
 		update();
+		contribution.startAnimation();
 	}
-
+	
 	/**
 	 * @see IProgressMonitor#done()
 	 */
 	public void done() {
+		contribution.stopAnimation();
 		manager.remove(contribution.getId());
 		contribution.dispose();
-		manager.update(true);
+		manager.update(false);
 		contribution=null;
 	}
 
@@ -79,8 +81,10 @@ public class UpdateSearchProgressMonitor implements IProgressMonitor {
 	 * @see IProgressMonitor#subTask(String)
 	 */
 	public void subTask(String subTaskName) {
+		/*
 		this.subTaskName = subTaskName;
 		update();
+		*/
 	}
 
 	/**
@@ -96,7 +100,8 @@ public class UpdateSearchProgressMonitor implements IProgressMonitor {
 		int percent = 0;
 		if (total>0 && workedSoFar>0)
 			percent = (workedSoFar * 100)/total;
-		String tooltip = taskName + " ("+percent+"%) "+subTaskName;
+		//String tooltip = taskName + " ("+percent+"%) "+subTaskName;
+		String tooltip = taskName + " ("+percent+"%)";
 		contribution.setToolTipText(tooltip);
 	}
 }

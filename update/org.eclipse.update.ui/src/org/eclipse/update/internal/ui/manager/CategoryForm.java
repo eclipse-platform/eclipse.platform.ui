@@ -12,7 +12,7 @@ import org.eclipse.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.ui.internal.model.*;
+import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import java.net.URL;
 import org.eclipse.core.runtime.CoreException;

@@ -1,4 +1,4 @@
-package org.eclipse.update.ui.internal.model;
+package org.eclipse.update.internal.ui.model;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -95,7 +95,7 @@ public class MyComputerDirectory
 		return children;
 	}
 
-	private SiteBookmark createSite(File file) {
+	static SiteBookmark createSite(File file) {
 		try {
 			File siteXML = new File(file, "site.xml");
 			if (siteXML.exists()==false) return null;

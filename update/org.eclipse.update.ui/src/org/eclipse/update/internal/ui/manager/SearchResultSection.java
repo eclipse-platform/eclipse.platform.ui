@@ -16,7 +16,7 @@ import org.eclipse.update.internal.ui.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
 import java.lang.reflect.InvocationTargetException;
-import org.eclipse.update.ui.internal.model.*;
+import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.swt.graphics.Image;
 

@@ -4,7 +4,7 @@ package org.eclipse.update.internal.ui.wizards;
  * All Rights Reserved.
  */
 import org.eclipse.jface.wizard.*;
-import org.eclipse.update.ui.internal.model.*;
+import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.*;
 import java.util.*;
 import org.eclipse.update.core.*;

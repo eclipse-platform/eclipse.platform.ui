@@ -59,6 +59,7 @@ public class UpdateUIPluginImages {
 	 */
 	public static final String IMG_FORM_BANNER = NAME_PREFIX+"FORM_BANNER";
 	public static final String IMG_FORM_UNDERLINE = NAME_PREFIX + "FORM_UNDERLINE";
+	public static final String IMG_UPDATES_OBJ = NAME_PREFIX + "UDATES_OBJ";
 
 	/**
 	 * OBJ16
@@ -81,7 +82,10 @@ public class UpdateUIPluginImages {
 	/**
 	 * TOOL16
 	 */
-	//public static final ImageDescriptor DESC_DEFCON_TOOL = create(PATH_TOOL, "defcon_wiz.gif");
+	public static final ImageDescriptor DESC_SEARCH_PROGRESS_0 = create(PATH_TOOL, "search_progress0.gif");
+	public static final ImageDescriptor DESC_SEARCH_PROGRESS_1 = create(PATH_TOOL, "search_progress1.gif");
+	public static final ImageDescriptor DESC_SEARCH_PROGRESS_2 = create(PATH_TOOL, "search_progress2.gif");
+	public static final ImageDescriptor DESC_SEARCH_PROGRESS_3 = create(PATH_TOOL, "search_progress3.gif");
 	
 	
 	/**
@@ -169,6 +173,7 @@ private static final void initialize() {
 	PLUGIN_REGISTRY = new ImageRegistry();
 	manage(IMG_FORM_BANNER, DESC_FORM_BANNER);
 	manage(IMG_FORM_UNDERLINE, DESC_FORM_UNDERLINE);
+	manage(IMG_UPDATES_OBJ, DESC_UPDATES_OBJ);
 }
 
 private static URL makeImageURL(String prefix, String name) {

@@ -1,12 +1,14 @@
-package org.eclipse.update.ui.internal.model;
+package org.eclipse.update.internal.ui.model;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
- */
+ */
+
 import org.eclipse.update.core.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
-
+
+
 public class PendingChange extends ModelObject {
 	public static final int INSTALL = 0x1;
 	public static final int UNINSTALL = 0x2;
@@ -19,7 +21,8 @@ public class PendingChange extends ModelObject {
 		this.jobType = jobType;
 		this.feature = feature;
 	}
-
+
+
 	public int getJobType() {
 		return jobType;
 	}

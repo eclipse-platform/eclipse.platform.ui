@@ -13,7 +13,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.ui.internal.model.*;
+import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.update.core.*;
@@ -30,7 +30,7 @@ import org.eclipse.update.core.VersionedIdentifier;
 import java.util.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.update.ui.internal.model.UpdateModel;
+import org.eclipse.update.internal.ui.model.UpdateModel;
 
 /**
  * Insert the type's description here.
@@ -199,7 +199,7 @@ class LocalSiteLabelProvider extends LabelProvider {
 
 public LocalSiteView() {
 	eclipseImage = UpdateUIPluginImages.DESC_ECLIPSE_OBJ.createImage();
-	updatesImage = UpdateUIPluginImages.DESC_UPDATES_OBJ.createImage();
+	updatesImage = UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_UPDATES_OBJ);
 	featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
 	ImageDescriptor siteDesc = UpdateUIPluginImages.DESC_SITE_OBJ;
 	siteImage = siteDesc.createImage();
@@ -262,7 +262,6 @@ public void dispose() {
 	siteImage.dispose();
 	installSiteImage.dispose();
 	linkedSiteImage.dispose();
-	updatesImage.dispose();
 	
 	if (initialized) {
 		try {

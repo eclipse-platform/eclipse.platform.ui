@@ -12,7 +12,7 @@ import org.eclipse.swt.graphics.*;
 
 import java.net.URL;
 import org.eclipse.update.core.*;
-import org.eclipse.update.ui.internal.model.*;
+import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.custom.*;

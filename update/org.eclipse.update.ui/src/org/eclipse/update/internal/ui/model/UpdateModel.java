@@ -1,8 +1,9 @@
-package org.eclipse.update.ui.internal.model;
+package org.eclipse.update.internal.ui.model;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
- */
+ */
+
 import java.util.*;
 import org.eclipse.update.core.*;
 import org.eclipse.jface.dialogs.*;
@@ -54,10 +55,15 @@ public class UpdateModel {
 				urls[i] = bookmark.getURL().toString();
 			}
 		}
+		else {
+			names = new String [0];
+			urls = new String [0];
+		}
 		settings.put(KEY_BOOKMARK_NAMES, names);
 		settings.put(KEY_BOOKMARK_URLS, urls);
 	}
-
+
+
 	public PendingChange [] getPendingChanges() {
 		return (PendingChange[])
 			changes.toArray(new PendingChange[changes.size()]);
@@ -126,7 +132,8 @@ public class UpdateModel {
 		if (!listeners.contains(listener)) 
 		   listeners.add(listener);
 	}
-
+
+
 	public void removeUpdateModelChangedListener(IUpdateModelChangedListener listener) {
 		if (listeners.contains(listener))
 			listeners.remove(listener);
@@ -139,7 +146,8 @@ public class UpdateModel {
 			listener.objectAdded(parent, child);
 		}
 	}
-
+
+
 	void fireObjectRemoved(Object parent, Object child) {
 		for (Iterator iter=listeners.iterator();
 				iter.hasNext();) {

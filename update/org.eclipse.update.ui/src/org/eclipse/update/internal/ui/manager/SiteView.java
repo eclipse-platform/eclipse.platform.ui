@@ -11,7 +11,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.action.*;
 import org.eclipse.ui.*;
 import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.ui.internal.model.*;
+import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.core.*;
 import org.eclipse.swt.widgets.Shell;
