@@ -23,13 +23,12 @@ public interface ISharedImages {
 	public final String IMG_CONFLICT_OVR = "ovr/confchg_ov.gif"; //$NON-NLS-1$
 	public final String IMG_ERROR_OVR = "ovr/error_co.gif"; //$NON-NLS-1$
 	public final String IMG_WARNING_OVR = "ovr/warning_co.gif"; //$NON-NLS-1$
-	public final String IMG_HOURGLASS_OVR = "ovr/hourglass_ov.gif"; //$NON-NLS-1$
+	public final String IMG_HOURGLASS_OVR = "ovr/waiting_ovr.gif"; //$NON-NLS-1$
 	
 	public final String IMG_COLLAPSE_ALL = "clcl16/collapseall.gif"; //$NON-NLS-1$
 	public final String IMG_COLLAPSE_ALL_ENABLED = "elcl16/collapseall.gif"; //$NON-NLS-1$
 	
 	public final String IMG_SYNC_VIEW = "eview16/synch_synch.gif"; //$NON-NLS-1$
-	public final String IMG_COMPARE_VIEW = "eview16/compare_view.gif"; //$NON-NLS-1$
 
 	 // local toolbars (colour)
 	 public final String IMG_DLG_SYNC_INCOMING = "elcl16/incom_synch.gif"; //$NON-NLS-1$
@@ -80,7 +79,6 @@ public interface ISharedImages {
 	 public final String IMG_SITE_ELEMENT = "elcl16/site_element.gif"; //$NON-NLS-1$
 	 public final String IMG_CHANGE_FILTER = "elcl16/change_filter.gif"; //$NON-NLS-1$	 
 	 public final String IMG_COMPRESSED_FOLDER = "obj/compressed_folder_obj.gif"; //$NON-NLS-1$
-	 public final String IMG_WARNING = "ovr/warning_co.gif"; //$NON-NLS-1$
 	 public final String IMG_HIERARCHICAL = "elcl16/hierarchicalLayout.gif"; //$NON-NLS-1$
 }
 
