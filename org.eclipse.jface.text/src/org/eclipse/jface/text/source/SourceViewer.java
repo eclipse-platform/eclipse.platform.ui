@@ -654,6 +654,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 					}
 					try {
 						setRedraw(false);
+						startSequentialRewriteMode(false);
 						target.beginCompoundChange();
 
 						final IDocument document= getDocument();
@@ -671,6 +672,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 						restoreSelection();
 						context.dispose();
 
+						stopSequentialRewriteMode();
 						setRedraw(true);
 					}
 					return;
