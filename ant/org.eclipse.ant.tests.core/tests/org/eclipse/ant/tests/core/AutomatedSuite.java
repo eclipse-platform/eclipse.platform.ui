@@ -12,8 +12,7 @@ import java.util.Enumeration;
 import junit.framework.*;
 
 import org.eclipse.ant.tests.core.testplugin.TestPluginLauncher;
-import org.eclipse.ant.tests.core.tests.OptionTests;
-import org.eclipse.ant.tests.core.tests.TargetTests;
+import org.eclipse.ant.tests.core.tests.*;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -39,8 +38,9 @@ public class AutomatedSuite extends TestSuite {
 	 */
 	public AutomatedSuite() {
 		addTest(new TestSuite(ProjectCreationDecorator.class));
-		addTest(new TestSuite(OptionTests.class));
 		addTest(new TestSuite(TargetTests.class));
+		addTest(new TestSuite(ProjectTests.class));
+		addTest(new TestSuite(OptionTests.class));
 	}
 	
 	public static void main(String[] args) {
