@@ -2,11 +2,11 @@
 <plugin
   name="IBM Tooling Platform Core Tests"
   id="tests.d"
-  version="2.1.0"
+  version="2.0.0"
   vendor-name="IBM">
 
   <requires>
-     <import plugin="tests.e" version="2.1.0"/>
+     <import plugin="tests.e" version="2.0.0"/>
   </requires>
 
 </plugin>

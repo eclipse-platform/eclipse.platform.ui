@@ -2,7 +2,7 @@
 <plugin
   name="IBM Tooling Platform Core Tests"
   id="tests.b"
-  version="2.1.0"
+  version="2.0.0"
   vendor-name="IBM">
 
 </plugin>

@@ -6,7 +6,7 @@
   vendor-name="IBM">
 
   <requires>
-     <import plugin="tests.d" version="2.1.0"/>
+     <import plugin="tests.d" version="2.0.0"/>
   </requires>
 
 </plugin>
