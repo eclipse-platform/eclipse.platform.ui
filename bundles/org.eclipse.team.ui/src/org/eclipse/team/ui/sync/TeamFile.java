@@ -6,6 +6,7 @@ package org.eclipse.team.ui.sync;
  */
  
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.ITypedElement;
@@ -17,14 +18,19 @@ import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.ui.TeamUIPlugin;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -43,10 +49,11 @@ public class TeamFile extends DiffElement implements ICompareInput, ITeamNode {
 	/**
 	 * Creates a new file node.
 	 */	
-	public TeamFile(IDiffContainer parent, MergeResource res, int changeType) {
+	public TeamFile(IDiffContainer parent, MergeResource res, int changeType, Shell shell) {
 		super(parent, changeType);
 		Assert.isNotNull(res);
 		this.mergeResource = res;
+		this.shell = shell;
 	
 		commonByteContents = new TypedBufferedContent(this, false) {
 			public InputStream createStream() throws CoreException {
@@ -233,22 +240,44 @@ public class TeamFile extends DiffElement implements ICompareInput, ITeamNode {
 	 * Saves cached copy to disk and clears dirty flag.
 	 */
 	private void saveChanges() throws CoreException {
-		InputStream stream = localByteContents.getContents();
-		IFile file = (IFile) getResource();
-		if (stream != null) {
-			if (!file.exists()) {
-				file.create(stream, false, null);
-			} else {
-				file.setContents(stream, false, true, null);
+		run(new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				try {
+					InputStream stream = localByteContents.getContents();
+					IFile file = (IFile) getResource();
+					if (stream != null) {
+						if (!file.exists()) {
+							file.create(stream, false, monitor);
+						} else {
+							file.setContents(stream, false, true, monitor);
+						}
+					} else {
+						file.delete(false, true, monitor);
+					}
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
+				}
 			}
-		} else {
-			file.delete(false, true, null);
-		}
+		});
 	}
 	/**
 	 * For debugging purposes only.
 	 */
 	public String toString() {
 		return "TeamFile(" + mergeResource.getName() + ")";
+	}
+	
+	private void run(IRunnableWithProgress runnable) throws CoreException {
+		try {
+			new ProgressMonitorDialog(shell).run(false, false, runnable);
+		} catch (InvocationTargetException e) {
+			if (e.getTargetException() instanceof CoreException) {
+				throw (CoreException)e.getTargetException();
+			} else {
+				throw new CoreException(new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, Policy.bind("simpleInternal"), e.getTargetException()));
+			}
+		} catch (InterruptedException e) {
+			// Ignore
+		}
 	}
 }

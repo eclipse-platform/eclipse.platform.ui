@@ -273,7 +273,7 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 			}
 			return element;
 		} else {
-			TeamFile file = new TeamFile(parent, mergeResource, type);
+			TeamFile file = new TeamFile(parent, mergeResource, type, shell);
 			file.addCompareInputChangeListener(listener);
 			return file;
 		}
