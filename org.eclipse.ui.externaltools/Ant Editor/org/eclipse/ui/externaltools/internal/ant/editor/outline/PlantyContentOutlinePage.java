@@ -318,7 +318,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 	 * Returns the root XmlElement, or null if the
 	 * outline could not be generated.
 	 */
-	private XmlElement getContentOutline(IAdaptable input) {
+	protected XmlElement getContentOutline(IAdaptable input) {
 		/*
 		 * What happens here:
 		 * The file is parsed by the SAX Parser.
@@ -553,7 +553,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 	 * <P>
 	 * Tabs will be converted to spaces according to the tab size.
 	 */
-	private String getFileContentAsString(IFile aFile) {
+	protected String getFileContentAsString(IFile aFile) {
 		InputStream tempStream;
 		try {
 			tempStream = aFile.getContents();
