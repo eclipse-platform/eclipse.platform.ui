@@ -11,35 +11,17 @@
 package org.eclipse.ui.internal.presentations;
 
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.internal.PartPane;
+import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
-/**
- * @since 3.0
- */
-public class PartPaneSystemContribution extends StandardSystemContribution {
+public class SystemMenuMoveView extends SystemMenuMove {
 
-	private PartPane pane;
-	
-	/**
-	 * @param site
-	 */
-	public PartPaneSystemContribution(IStackPresentationSite site) {
-		super(site);
-	}
-	
-	public void setCurrentPane(PartPane pane) {
-		this.pane = pane;
-		setPart(pane.getPresentablePart());
-	}
-	
-	protected PartPane getPane() {
-		return pane;
-	}
-	
-	protected void addSizeMenuItem (Menu menu) {
-		if (pane != null) {
-			pane.addSizeMenuItem(menu);			
-		}
-	}	
+    public SystemMenuMoveView(IPresentablePart presentablePart,
+            IStackPresentationSite stackPresentationSite) {
+        super(presentablePart, stackPresentationSite);
+    }
+
+    public void fill(Menu menu, int index) {
+        fill(menu, index, "ViewPane.moveView"); //$NON-NLS-1$ 
+    }
 }

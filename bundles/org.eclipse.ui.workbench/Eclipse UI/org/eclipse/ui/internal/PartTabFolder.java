@@ -18,6 +18,8 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.window.Window;
@@ -27,13 +29,21 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
-import org.eclipse.ui.internal.presentations.PartTabFolderSystemContribution;
+import org.eclipse.ui.internal.presentations.SystemMenuClose;
+import org.eclipse.ui.internal.presentations.SystemMenuFastView;
+import org.eclipse.ui.internal.presentations.SystemMenuMaximize;
+import org.eclipse.ui.internal.presentations.SystemMenuMinimize;
+import org.eclipse.ui.internal.presentations.SystemMenuMoveView;
+import org.eclipse.ui.internal.presentations.SystemMenuRestore;
+import org.eclipse.ui.internal.presentations.SystemMenuSize;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
@@ -131,8 +141,49 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
         }
     };
 
-    private PartTabFolderSystemContribution paneContribution = new PartTabFolderSystemContribution(
-            presentationSite);
+    private class SystemMenuContribution extends ContributionItem {
+        
+        private SystemMenuClose systemMenuClose;
+        private SystemMenuFastView systemMenuFastView;
+        private SystemMenuMaximize systemMenuMaximize;
+        private SystemMenuMinimize systemMenuMinimize;
+        private SystemMenuMoveView systemMenuMoveView;
+        private SystemMenuRestore systemMenuRestore;
+        private SystemMenuSize systemMenuSize;
+        
+        SystemMenuContribution(IStackPresentationSite stackPresentationSite, ViewPane viewPane) {
+            systemMenuClose = new SystemMenuClose(viewPane.getPresentablePart(), stackPresentationSite);
+            systemMenuFastView = new SystemMenuFastView(stackPresentationSite, viewPane);
+            systemMenuMaximize = new SystemMenuMaximize(stackPresentationSite);
+            systemMenuMinimize = new SystemMenuMinimize(stackPresentationSite);
+            systemMenuMoveView = new SystemMenuMoveView(viewPane.getPresentablePart(), stackPresentationSite);
+            systemMenuRestore = new SystemMenuRestore(stackPresentationSite);
+            systemMenuSize = new SystemMenuSize(viewPane);            
+        }
+        
+        public void fill(Menu menu, int index) {
+            systemMenuFastView.fill(menu, index);
+            systemMenuRestore.fill(menu, index);
+            systemMenuMoveView.fill(menu, index);
+            systemMenuSize.fill(menu, index);
+            systemMenuMinimize.fill(menu, index);
+            systemMenuMaximize.fill(menu, index);
+            new MenuItem(menu, SWT.SEPARATOR);
+            systemMenuClose.fill(menu, index);
+        }
+        
+        public void dispose() {
+            systemMenuClose.dispose();
+            systemMenuFastView.dispose();
+            systemMenuMaximize.dispose();
+            systemMenuMinimize.dispose();
+            systemMenuMoveView.dispose();
+            systemMenuRestore.dispose();
+            systemMenuSize.dispose();
+        }
+    }
+    
+    private IContributionItem systemMenuContribution;
     
     /**
      * PartTabFolder constructor comment.
@@ -900,26 +951,26 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
         StackPresentation presentation = getPresentation();
 
         if (presentation == null) {
-            if (paneContribution != null) {
-                paneContribution.dispose();
-                paneContribution = null;
+            if (systemMenuContribution != null) {
+                // TODO spec says not to call this directly
+                systemMenuContribution.dispose();
+                systemMenuContribution = null;
             }
-            return;
-        }
-
-        IMenuManager systemMenuManager = presentation.getSystemMenuManager();
-        
-        if (paneContribution != null) {
-            systemMenuManager.remove(paneContribution);
-            paneContribution.dispose();
-            paneContribution = null;
-        }
-
-        if (current != null && current instanceof PartPane) {
-            paneContribution = new PartTabFolderSystemContribution(
-                    presentationSite);
-            paneContribution.setCurrentPane((PartPane) current);
-            systemMenuManager.add(paneContribution);
+        } else {	
+	        IMenuManager systemMenuManager = presentation.getSystemMenuManager();
+	                
+	        if (systemMenuContribution != null) {
+	            systemMenuManager.remove(systemMenuContribution);
+                // TODO spec says not to call this directly
+	            systemMenuContribution.dispose();
+	            systemMenuContribution = null;
+	        }
+	
+	        if (current != null && current instanceof ViewPane) {
+	            systemMenuContribution = new SystemMenuContribution(
+	                    presentationSite, (ViewPane) current);
+	            systemMenuManager.add(systemMenuContribution);
+	        }
         }
     }
 }

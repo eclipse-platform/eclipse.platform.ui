@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -24,7 +26,12 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.presentations.PartTabFolderPresentation;
-import org.eclipse.ui.internal.presentations.StandardSystemContribution;
+import org.eclipse.ui.internal.presentations.SystemMenuClose;
+import org.eclipse.ui.internal.presentations.SystemMenuMaximize;
+import org.eclipse.ui.internal.presentations.SystemMenuMinimize;
+import org.eclipse.ui.internal.presentations.SystemMenuMoveView;
+import org.eclipse.ui.internal.presentations.SystemMenuRestore;
+import org.eclipse.ui.internal.presentations.SystemMenuSizeFastView;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.presentations.StackPresentation;
@@ -39,7 +46,7 @@ import org.eclipse.ui.presentations.StackPresentation;
  * 
  * @see org.ecliplse.ui.internal.FastViewBar
  */
-class FastViewPane {
+public class FastViewPane {
 	private int side = SWT.LEFT;
 
 	//private Sash fastViewSash;
@@ -113,22 +120,47 @@ class FastViewPane {
 		}
 		
 	};
-	
-	private StandardSystemContribution systemContribution = new StandardSystemContribution(site) {
 		
-		protected void addSizeMenuItem (Menu menu) {
-			//Add size menu
-			MenuItem item = new MenuItem(menu, SWT.NONE);
-			item.setText(WorkbenchMessages.getString("PartPane.size")); //$NON-NLS-1$
-			item.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					moveSash();
-				}
-			});		
-			item.setEnabled(currentPane != null);
-		}
-	};
-	
+    private class SystemMenuContribution extends ContributionItem {
+        
+        private SystemMenuClose systemMenuClose;
+        private SystemMenuMaximize systemMenuMaximize;
+        private SystemMenuMinimize systemMenuMinimize;
+        private SystemMenuMoveView systemMenuMoveView;
+        private SystemMenuRestore systemMenuRestore;
+        private SystemMenuSizeFastView systemMenuSizeFastView;
+        
+        SystemMenuContribution(IStackPresentationSite stackPresentationSite, FastViewPane fastViewPane) {
+            systemMenuClose = new SystemMenuClose(fastViewPane.getCurrentPane().getPresentablePart(), stackPresentationSite);
+            systemMenuMaximize = new SystemMenuMaximize(stackPresentationSite);
+            systemMenuMinimize = new SystemMenuMinimize(stackPresentationSite);
+            systemMenuMoveView = new SystemMenuMoveView(fastViewPane.getCurrentPane().getPresentablePart(), stackPresentationSite);
+            systemMenuRestore = new SystemMenuRestore(stackPresentationSite);
+            systemMenuSizeFastView = new SystemMenuSizeFastView(fastViewPane);            
+        }
+        
+        public void fill(Menu menu, int index) {
+            systemMenuRestore.fill(menu, index);
+            systemMenuMoveView.fill(menu, index);
+            systemMenuSizeFastView.fill(menu, index);
+            systemMenuMinimize.fill(menu, index);
+            systemMenuMaximize.fill(menu, index);
+            new MenuItem(menu, SWT.SEPARATOR);
+            systemMenuClose.fill(menu, index);
+        }
+        
+        public void dispose() {
+            systemMenuClose.dispose();
+            systemMenuMaximize.dispose();
+            systemMenuMinimize.dispose();
+            systemMenuMoveView.dispose();
+            systemMenuRestore.dispose();
+            systemMenuSizeFastView.dispose();
+        }
+    }
+    
+    private IContributionItem systemMenuContribution;
+    	
 	public void moveSash() {
 		sash.moveSash();
 	}
@@ -267,12 +299,13 @@ class FastViewPane {
 		
 		site.setPresentation(presentation);
 		site.setPresentationState(IStackPresentationSite.STATE_RESTORED);
-		systemContribution.setPart(pane.getPresentablePart());
 		presentation.addPart(pane.getPresentablePart(), null);
 		presentation.selectPart(pane.getPresentablePart());
 		presentation.setActive(true);
 		presentation.setVisible(true);
-		presentation.getSystemMenuManager().add(systemContribution);
+
+		systemMenuContribution = new SystemMenuContribution(site, this);
+		presentation.getSystemMenuManager().add(systemMenuContribution);
 
 		// Show pane fast.
 		ctrl.setEnabled(true); // Add focus support.
@@ -324,9 +357,14 @@ class FastViewPane {
 		}
 				
 		StackPresentation presentation = getPresentation();
+		
 		if (presentation != null) {
-			presentation.getSystemMenuManager().remove(systemContribution);
+			presentation.getSystemMenuManager().remove(systemMenuContribution);
+			// TODO spec says not to call this directly
+			systemMenuContribution.dispose();
+			systemMenuContribution = null;
 		}
+		
 		site.dispose();
 	}
 

@@ -21,7 +21,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.action.IContributionManager;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
@@ -31,6 +31,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPartReference;
@@ -38,7 +39,14 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
-import org.eclipse.ui.internal.presentations.EditorPresentationSystemContribution;
+import org.eclipse.ui.internal.presentations.SystemMenuClose;
+import org.eclipse.ui.internal.presentations.SystemMenuCloseAllEditors;
+import org.eclipse.ui.internal.presentations.SystemMenuCloseOtherEditors;
+import org.eclipse.ui.internal.presentations.SystemMenuMaximize;
+import org.eclipse.ui.internal.presentations.SystemMenuMoveEditor;
+import org.eclipse.ui.internal.presentations.SystemMenuPinEditor;
+import org.eclipse.ui.internal.presentations.SystemMenuRestore;
+import org.eclipse.ui.internal.presentations.SystemMenuSize;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
@@ -127,38 +135,6 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
         }
     };
 
-    private ContributionItem editorPresentationSystemContribution;
-
-    private static class EditorWorkbookSystemContribution extends ContributionItem {
-    	   	
-        EditorPane editorPane;
-        
-    	public EditorWorkbookSystemContribution(EditorPane editorPane) {
-    		setEditorPane(editorPane);
-    	}
-
-    	public void setEditorPane(EditorPane editorPane) {
-    		this.editorPane = editorPane;
-    		IContributionManager parent = getParent();
-    		
-    		if (parent != null) {
-    			parent.markDirty();
-    		}
-    	}
-    	
-    	public boolean isDynamic() {
-    		return true;
-    	}
-    	
-    	public void fill(Menu menu, int index) {
-    	    editorPane.addCloseOthersItem(menu);
-    	    editorPane.addCloseAllItem(menu);
-    	    editorPane.addPinEditorItem(menu);
-    	}
-    }   
-    
-    private ContributionItem editorWorkbookSystemContribution;
-    
     // inactiveCurrent is only used when restoring the persisted state of
     // perspective on startup.
     private LayoutPart current;
@@ -171,6 +147,51 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
 
     private List children = new ArrayList(3);
 
+    private class SystemMenuContribution extends ContributionItem {
+        
+        private SystemMenuClose systemMenuClose;
+        private SystemMenuCloseAllEditors systemMenuCloseAllEditors;
+        private SystemMenuCloseOtherEditors systemMenuCloseOtherEditors;
+        private SystemMenuMaximize systemMenuMaximize;
+        private SystemMenuMoveEditor systemMenuMoveEditor;
+        private SystemMenuPinEditor systemMenuPinEditor;
+        private SystemMenuRestore systemMenuRestore;
+        private SystemMenuSize systemMenuSize;
+        
+        SystemMenuContribution(IStackPresentationSite stackPresentationSite, EditorPane editorPane) {
+            systemMenuClose = new SystemMenuClose(editorPane.getPresentablePart(), stackPresentationSite);
+            systemMenuCloseAllEditors = new SystemMenuCloseAllEditors(editorPane);
+            systemMenuCloseOtherEditors = new SystemMenuCloseOtherEditors(editorPane);
+            systemMenuMaximize = new SystemMenuMaximize(stackPresentationSite);
+            systemMenuMoveEditor = new SystemMenuMoveEditor(editorPane.getPresentablePart(), stackPresentationSite);
+            systemMenuPinEditor = new SystemMenuPinEditor(editorPane);
+            systemMenuRestore = new SystemMenuRestore(stackPresentationSite);
+            systemMenuSize = new SystemMenuSize(editorPane);            
+        }
+        
+        public void fill(Menu menu, int index) {
+            systemMenuPinEditor.fill(menu, index);
+            systemMenuRestore.fill(menu, index);
+            systemMenuMoveEditor.fill(menu, index);
+            systemMenuSize.fill(menu, index);
+            systemMenuMaximize.fill(menu, index);
+            new MenuItem(menu, SWT.SEPARATOR);
+            systemMenuClose.fill(menu, index);
+            systemMenuCloseOtherEditors.fill(menu, index);
+            systemMenuCloseAllEditors.fill(menu, index);
+        }
+        
+        public void dispose() {
+            systemMenuClose.dispose();
+            systemMenuMaximize.dispose();
+            systemMenuMoveEditor.dispose();
+            systemMenuRestore.dispose();
+            systemMenuSize.dispose();
+        }
+    }
+    
+    private IContributionItem systemMenuContribution;
+    
     /**
      * EditorWorkbook constructor comment.
      */
@@ -1022,43 +1043,27 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
         StackPresentation presentation = getPresentation();
 
         if (presentation == null) {
-            if (editorPresentationSystemContribution != null) {
-                editorPresentationSystemContribution.dispose();
-                editorPresentationSystemContribution = null;
+            if (systemMenuContribution != null) {
+                // TODO spec says not to call this directly
+                systemMenuContribution.dispose();
+                systemMenuContribution = null;
             }
-
-            if (editorWorkbookSystemContribution != null) {
-                editorWorkbookSystemContribution.dispose();
-                editorWorkbookSystemContribution = null;
-            }
-
-            return;
-        }
-
-        IMenuManager systemMenuManager = presentation.getSystemMenuManager();
-        
-        if (editorPresentationSystemContribution != null) {
-            systemMenuManager.remove(editorPresentationSystemContribution);
-            editorPresentationSystemContribution.dispose();
-            editorPresentationSystemContribution = null;
-        }
-        
-        if (editorWorkbookSystemContribution != null) {
-            systemMenuManager.remove(editorWorkbookSystemContribution);
-            editorWorkbookSystemContribution.dispose();
-            editorWorkbookSystemContribution = null;
-        }
-
-        if (current != null && current instanceof PartPane) {
-            editorPresentationSystemContribution = new EditorPresentationSystemContribution(
-                    presentationSite);
-            ((EditorPresentationSystemContribution) editorPresentationSystemContribution).setCurrentPane((PartPane) current);         
-            systemMenuManager.add(editorPresentationSystemContribution);
-        
-            editorWorkbookSystemContribution = new EditorWorkbookSystemContribution(
-                    (EditorPane) current);
-            systemMenuManager.add(editorWorkbookSystemContribution);
-        }        
+        } else {	
+	        IMenuManager systemMenuManager = presentation.getSystemMenuManager();
+	                
+	        if (systemMenuContribution != null) {
+	            systemMenuManager.remove(systemMenuContribution);
+                // TODO spec says not to call this directly
+	            systemMenuContribution.dispose();
+	            systemMenuContribution = null;
+	        }
+	
+	        if (current != null && current instanceof EditorPane) {
+	            systemMenuContribution = new SystemMenuContribution(
+	                    presentationSite, (EditorPane) current);
+	            systemMenuManager.add(systemMenuContribution);
+	        }
+        }     
     }
 
     public Control[] getTabList() {
