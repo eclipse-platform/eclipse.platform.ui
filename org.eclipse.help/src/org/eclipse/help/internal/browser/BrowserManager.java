@@ -54,15 +54,20 @@ public class BrowserManager {
 			// No default browser in properties!
 			// Set default browser to prefered implementation
 			if (System.getProperty("os.name").startsWith("Win")) {
-				if (Platform
-					.getPluginRegistry()
-					.getPluginDescriptor("org.eclipse.help.ui")
-					!= null)
-					setDefaultBrowserID("org.eclipse.help.ui.iexplorer");
-				else
+				setDefaultBrowserID("org.eclipse.help.ui.iexplorer");
+				if (defaultBrowserDesc == null) {
+					setDefaultBrowserID("org.eclipse.help.ui.systembrowser");
+				}
+				if (defaultBrowserDesc == null) {
 					setDefaultBrowserID("org.eclipse.help.custombrowser");
+				}
+
 			} else if (System.getProperty("os.name").startsWith("Linux")) {
 				setDefaultBrowserID("org.eclipse.help.mozillaLinux");
+				if (defaultBrowserDesc == null) {
+					setDefaultBrowserID("org.eclipse.help.netscapeLinux");
+				}
+
 			} else if (System.getProperty("os.name").startsWith("SunOS")) {
 				setDefaultBrowserID("org.eclipse.help.netscapeSolaris");
 			} else if (System.getProperty("os.name").startsWith("AIX")) {
