@@ -363,9 +363,10 @@ public final class BindingManagerTest extends UITestCase {
 		bindings.add(partialMatchBinding1);
 		bindingManager.setBindings(bindings);
 		Map partialMatches = bindingManager.getPartialMatches(perfectMatch);
-		assertTrue(
-				"If one bindings matches perfectly, there can be no partial matches",
-				partialMatches.isEmpty());
+		assertTrue("A partial match should override a perfect match",
+				!partialMatches.isEmpty());
+		assertTrue("A partial match should override a perfect match",
+				partialMatches.containsKey(partialMatch1));
 
 		// SCENARIO 2
 		final KeySequence partialMatch2 = KeySequence
@@ -522,8 +523,8 @@ public final class BindingManagerTest extends UITestCase {
 		bindings.add(perfectMatchBinding);
 		bindings.add(partialMatchBinding1);
 		bindingManager.setBindings(bindings);
-		assertTrue("A perfect match should not be counted as partial",
-				!bindingManager.isPartialMatch(perfectMatch));
+		assertTrue("A perfect match should be overridden by a partial",
+				bindingManager.isPartialMatch(perfectMatch));
 
 		// SCENARIO 2
 		final KeySequence partialMatch2 = KeySequence

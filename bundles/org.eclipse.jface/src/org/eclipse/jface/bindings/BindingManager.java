@@ -319,7 +319,9 @@ public final class BindingManager implements IContextManagerListener,
 					.getKey();
 
 			// Add the perfect match.
-			prefixTable.put(triggerSequence, null);
+			if (!prefixTable.containsKey(triggerSequence)) {
+				prefixTable.put(triggerSequence, null);
+			}
 
 			final List prefixes = triggerSequence.getPrefixes();
 			if (prefixes.isEmpty()) {
@@ -332,11 +334,9 @@ public final class BindingManager implements IContextManagerListener,
 			while (prefixItr.hasNext()) {
 				final TriggerSequence prefix = (TriggerSequence) prefixItr
 						.next();
-				if (prefixTable.containsKey(prefix)) {
-					final Object value = prefixTable.get(prefix);
-					if (value instanceof Map) {
-						((Map) value).put(triggerSequence, commandId);
-					}
+				final Object value = prefixTable.get(prefix);
+				if ((prefixTable.containsKey(prefix)) && (value instanceof Map)) {
+					((Map) value).put(triggerSequence, commandId);
 				} else {
 					final Map map = new HashMap();
 					prefixTable.put(prefix, map);
