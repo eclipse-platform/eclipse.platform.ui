@@ -4,6 +4,7 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -21,6 +22,7 @@ class LayoutPartSash extends LayoutPart {
 
 	SelectionListener selectionListener;
 	private float ratio = (float)0.5;
+	
 LayoutPartSash(PartSashContainer rootContainer,int style) {
 	super(null);
 	this.style = style;
@@ -45,11 +47,19 @@ private void checkDragLimit(SelectionEvent event) {
 			event.x = bounds.x;
 		if ((event.x + event.width) > (bounds.x + bounds.width))
 			event.x = bounds.x + bounds.width - event.width;
+		if (event.x - bounds.x < ((float)bounds.width * IPageLayout.RATIO_MIN))
+			event.x = bounds.x + (int)((float)bounds.width * IPageLayout.RATIO_MIN);
+		if (event.x - bounds.x > ((float)bounds.width * IPageLayout.RATIO_MAX))
+			event.x = bounds.x + (int)((float)bounds.width * IPageLayout.RATIO_MAX);		
 	} else {
 		if (event.y < bounds.y)
 			event.y = bounds.y;
 		if ((event.y + event.height) > (bounds.y + bounds.height))
 			event.y = bounds.y + bounds.height - event.height;
+		if (event.y - bounds.y < ((float)bounds.height * IPageLayout.RATIO_MIN))
+			event.y = bounds.y + (int)((float)bounds.height * IPageLayout.RATIO_MIN);
+		if (event.y - bounds.y > ((float)bounds.height * IPageLayout.RATIO_MAX))
+			event.y = bounds.y + (int)((float)bounds.height * IPageLayout.RATIO_MAX);		
 	}
 }
 /**
@@ -114,7 +124,7 @@ void setPreLimit(LayoutPartSash newPreLimit) {
 }
 void setRatio(float newRatio) {
 	if (newRatio < 0.0 || newRatio > 1.0) return;
-		ratio = newRatio;
+	ratio = newRatio;
 }
 /**
  * @see IPartDropTarget::targetPartFor
