@@ -1367,7 +1367,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * @since 3.1
 	 */
 	private final void selectedButtonExport() {
-		final FileDialog fileDialog = new FileDialog(getShell());
+		final FileDialog fileDialog = new FileDialog(getShell(), SWT.SAVE);
 		fileDialog.setFilterExtensions(new String[] { "*.csv" }); //$NON-NLS-1$
 		fileDialog.setFilterNames(new String[] { Util.translateString(
 				RESOURCE_BUNDLE, "csvFilterName") }); //$NON-NLS-1$
