@@ -28,28 +28,30 @@ import org.eclipse.jface.util.Util;
  * @since 3.1
  */
 public abstract class TriggerSequence {
+	
+	/**
+	 * The value to see that hash code to if the hash code is not yet computed.
+	 */
+	private static final int HASH_CODE_NOT_COMPUTED = -1;
 
 	/**
 	 * A factor for computing the hash code for all trigger sequences.
 	 */
-	protected final static int HASH_FACTOR = 89;
+	private static final int HASH_FACTOR = 89;
 
 	/**
 	 * An internal constant used only in this object's hash code algorithm.
 	 */
-	private final static int HASH_INITIAL = TriggerSequence.class.getName()
+	private static final int HASH_INITIAL = TriggerSequence.class.getName()
 			.hashCode();
 
 	/**
 	 * The hash code for this object. This value is computed lazily, and marked
-	 * as invalid when one of the values on which it is based changes.
+	 * as invalid when one of the values on which it is based changes.  This
+	 * values is <code>HASH_CODE_NOT_COMPUTED</code> iff the hash code has not
+	 * yet been computed.
 	 */
 	protected transient int hashCode;
-
-	/**
-	 * Whether <code>hashCode</code> still contains a valid value.
-	 */
-	protected transient boolean hashCodeComputed = false;
 
 	/**
 	 * The list of trigger in this sequence. This value is never
@@ -158,10 +160,12 @@ public abstract class TriggerSequence {
 	 * @see java.lang.Object#hashCode()
 	 */
 	public final int hashCode() {
-		if (!hashCodeComputed) {
+		if (hashCode == HASH_CODE_NOT_COMPUTED) {
 			hashCode = HASH_INITIAL;
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(triggers);
-			hashCodeComputed = true;
+			if (hashCode == HASH_CODE_NOT_COMPUTED) {
+				hashCode++;
+			}
 		}
 
 		return hashCode;
