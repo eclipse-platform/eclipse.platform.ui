@@ -328,9 +328,17 @@ public class Utils {
 	}
 
 	public static void initAction(IAction a, String prefix) {
-		Utils.initAction(a, prefix, Policy.bundle);
+		Utils.initAction(a, prefix, Policy.bundle, null);
+	}
+	
+	public static void initAction(IAction a, String prefix, ResourceBundle bundle) {
+		Utils.initAction(a, prefix, bundle, null);
 	}
 
+	public static void initAction(IAction a, String prefix, String[] bindings) {
+		Utils.initAction(a, prefix, Policy.bundle, bindings);
+	}
+	
 	public static void updateLabels(SyncInfo sync, CompareConfiguration config) {
 		final IResourceVariant remote = sync.getRemote();
 		final IResourceVariant base = sync.getBase();
@@ -355,7 +363,7 @@ public class Utils {
 	/**
 	 * Initialize the given Action from a ResourceBundle.
 	 */
-	public static void initAction(IAction a, String prefix, ResourceBundle bundle) {
+	public static void initAction(IAction a, String prefix, ResourceBundle bundle, String[] bindings) {
 		String labelKey = "label"; //$NON-NLS-1$
 		String tooltipKey = "tooltip"; //$NON-NLS-1$
 		String imageKey = "image"; //$NON-NLS-1$
@@ -366,7 +374,12 @@ public class Utils {
 			imageKey = prefix + imageKey;
 			descriptionKey = prefix + descriptionKey;
 		}
-		String s = Policy.bind(labelKey, bundle);
+		String s = null;
+		if(bindings != null) {
+			s = Policy.bind(Policy.bind(labelKey, bundle), bindings);
+		} else {
+			s = Policy.bind(labelKey, bundle);
+		}
 		if (s != null)
 			a.setText(s);
 		s = Policy.bind(tooltipKey, bundle);
