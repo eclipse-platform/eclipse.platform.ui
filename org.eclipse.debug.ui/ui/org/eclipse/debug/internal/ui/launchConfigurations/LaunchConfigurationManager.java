@@ -48,7 +48,10 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class LaunchConfigurationManager implements ILaunchListener, ILaunchConfigurationListener, IPropertyChangeListener  {
+public class LaunchConfigurationManager implements ILaunchListener, 
+														ILaunchConfigurationListener, 
+														IPropertyChangeListener,
+														ILaunchHistoryChangedListener  {
 	/**
 	 * The singleton instance of the launch configuration manager
 	 */
@@ -120,7 +123,8 @@ public class LaunchConfigurationManager implements ILaunchListener, ILaunchConfi
 	private static final String HISTORY_MEMENTO_ATT = "memento"; //$NON-NLS-1$
 	private static final String HISTORY_MODE_ATT = "mode"; //$NON-NLS-1$
 	
-	private LaunchConfigurationManager() {		setEmptyLaunchHistories();		
+	private LaunchConfigurationManager() {		
+		setEmptyLaunchHistories();		
 		fMaxHistorySize = DebugUIPlugin.getDefault().getPreferenceStore().getInt(IDebugUIConstants.PREF_MAX_HISTORY_SIZE);
 		fLastLaunchList = new ArrayList(fMaxHistorySize);
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
@@ -133,6 +137,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ILaunchConfi
 			launchAdded(launches[i]);
 		}
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
+		addLaunchHistoryListener(this);
 		loadLaunchConfigurationShortcuts();
 	}
 
@@ -175,11 +180,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ILaunchConfi
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		launchManager.removeLaunchListener(this);
 		launchManager.removeLaunchConfigurationListener(this);
-		try {
-			persistLaunchHistory();
-		} catch (IOException e) {
-			DebugUIPlugin.log(e);
-		}
+		removeLaunchHistoryListener(this);
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 	}
 	
@@ -908,8 +909,20 @@ public class LaunchConfigurationManager implements ILaunchListener, ILaunchConfi
 	protected void shortenHistoryLists(int newLength) {		
 		setRunHistoryVector(new Vector(getRunHistoryVector().subList(0, newLength)));
 		setDebugHistoryVector(new Vector(getDebugHistoryVector().subList(0, newLength)));
-		fLastLaunchList = new ArrayList(fLastLaunchList.subList(0, newLength));
-		
+		fLastLaunchList = new ArrayList(fLastLaunchList.subList(0, newLength));		
+	}
+
+	/**
+	 * @see ILaunchHistoryChangedListener#launchHistoryChanged()
+	 */
+	public void launchHistoryChanged() {
+		try {
+			persistLaunchHistory();
+		} catch (IOException e) {
+			DebugUIPlugin.log(e);
+		} catch (CoreException ce) {
+			DebugUIPlugin.log(ce);			
+		}		
 	}
 
 }
