@@ -73,6 +73,9 @@ a file association extends an existing content type by associating new file name
                <documentation>
                   the human-readable name of this content type
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="file-extensions" type="string">
