@@ -17,7 +17,6 @@ import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeEvent;
 import org.osgi.service.prefs.BackingStoreException;
 
