@@ -13,7 +13,6 @@ package org.eclipse.core.internal.plugins;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
@@ -23,16 +22,20 @@ import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
+import org.eclipse.osgi.util.ManifestElement;
 import org.osgi.framework.*;
+
 
 public class PluginDescriptor implements IPluginDescriptor {
 
 	private static final String PLUGIN_CLASS = "Plugin-Class"; //$NON-NLS-1$
+	protected Plugin pluginObject = null; // plugin object
+	private Bundle bundleOsgi;
+
+	//The three following fields can't be replaced by a test to the bundle state.
 	private boolean active = false; // plugin is active
 	private volatile boolean activePending = false; // being activated
 	private boolean deactivated = false; // plugin deactivated due to startup errors
-	protected Plugin pluginObject = null; // plugin object
-	private Bundle bundleOsgi;
 
 	private PluginClassLoader classLoader;
 
@@ -45,23 +48,6 @@ public class PluginDescriptor implements IPluginDescriptor {
 		active = false;
 		activePending = false;
 		deactivated = false;
-	}
-
-	/**
-	 * convert a list of comma-separated tokens into an array
-	 *TODO This method is not used. 
-	 */
-	private static String[] getArrayFromList(String prop) {
-		if (prop == null || prop.trim().equals("")) //$NON-NLS-1$
-			return new String[0];
-		Vector list = new Vector();
-		StringTokenizer tokens = new StringTokenizer(prop, ","); //$NON-NLS-1$
-		while (tokens.hasMoreTokens()) {
-			String token = tokens.nextToken().trim();
-			if (!token.equals("")) //$NON-NLS-1$
-				list.addElement(token);
-		}
-		return list.isEmpty() ? new String[0] : (String[]) list.toArray(new String[0]);
 	}
 
 	/**
@@ -102,27 +88,9 @@ public class PluginDescriptor implements IPluginDescriptor {
 	 */
 	public URL getInstallURL() {
 		try {
-			return new URL(PLUGIN_URL + toString() + "/");
+			return new URL(PLUGIN_URL + toString() + '/');
 		} catch (IOException e) {
 			throw new IllegalStateException(); // unchecked
-		}
-	}
-
-	/**
-	 * @return a URL to the install location that does not need to be resolved.
-	 */
-	//TODO this can be private
-	//TODO Given that we can have a pluginDescriptor for a real bundle, what happens here?
-	public URL getInstallURLInternal() {
-		try {
-			return InternalPlatform.getDefault().resolve(getInstallURL());
-		} catch (IOException ioe) {
-			try {
-				return new URL(bundleOsgi.getEntry("plugin.xml"), ".");
-			} catch (IOException io) {
-				io.printStackTrace();
-				return getInstallURL();
-			}
 		}
 	}
 
@@ -142,25 +110,6 @@ public class PluginDescriptor implements IPluginDescriptor {
 				classLoader = new PluginClassLoader(this);
 		}
 		return classLoader;
-	}
-
-	//TODO This does not seems to be used
-	public String getFileFromURL(URL target) {
-		String protocol = target.getProtocol();
-		if (protocol.equals(PlatformURLHandler.FILE))
-			return target.getFile();
-		if (protocol.equals(PlatformURLHandler.JAR)) {
-			// strip off the jar separator at the end of the url then do a recursive call
-			// to interpret the sub URL.
-			String file = target.getFile();
-			file = file.substring(0, file.length() - PlatformURLHandler.JAR_SEPARATOR.length());
-			try {
-				return getFileFromURL(new URL(file));
-			} catch (MalformedURLException e) {
-				// ignore bad URLs
-			}
-		}
-		return null;
 	}
 
 	public PluginRegistry getPluginRegistry() {
@@ -208,21 +157,16 @@ public class PluginDescriptor implements IPluginDescriptor {
 
 		for (Iterator iter = allBundes.iterator(); iter.hasNext();) {
 			Bundle element = (Bundle) iter.next();
-			String classpath = (String) element.getHeaders().get(Constants.BUNDLE_CLASSPATH);
-			if (classpath != null)
-				allLibraries.addAll(splitClasspath(classpath)); //TODO This should use ManifestElement. If this is done then splitClasspath can be removed
+			try {
+				ManifestElement[] classpathElements = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, (String) element.getHeaders().get(Constants.BUNDLE_CLASSPATH));
+				for (int i = 0; i < classpathElements.length; i++) {
+					allLibraries.add(new Library(classpathElements[i].getValue()));
+				}
+			} catch (BundleException e) {
+				//Ignore because by the time we get there the errors will have already been logged.
+			}
 		}
 		return (ILibrary[]) allLibraries.toArray(new ILibrary[allLibraries.size()]);
-	}
-
-	private ArrayList splitClasspath(String classpath) {
-		StringTokenizer tokens = new StringTokenizer(classpath, ","); //$NON-NLS-1$
-		ArrayList libraries = new ArrayList(tokens.countTokens());
-		while (tokens.hasMoreElements()) {
-			String element = (String) tokens.nextElement();
-			libraries.add(new Library(element.trim()));
-		}
-		return libraries;
 	}
 
 	/**
@@ -233,7 +177,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 	}
 
 	/**
-	 * @see #toString
+	 * @see #toString()
 	 */
 	public static String getUniqueIdentifierFromString(String pluginString) {
 		int ix = pluginString.indexOf(VERSION_SEPARATOR);
@@ -245,8 +189,6 @@ public class PluginDescriptor implements IPluginDescriptor {
 	 */
 	public PluginVersionIdentifier getVersionIdentifier() {
 		String version = (String) bundleOsgi.getHeaders().get(Constants.BUNDLE_VERSION);
-		if (version == null)
-			return new PluginVersionIdentifier("1.0.0"); //$NON-NLS-1$	//TODO Why do we have 1.0.0 as default  value ?
 		try {
 			return new PluginVersionIdentifier(version);
 		} catch (Exception e) {
@@ -255,7 +197,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 	}
 
 	/**
-	 * @see #toString
+	 * @see #toString()
 	 */
 	public static PluginVersionIdentifier getVersionIdentifierFromString(String pluginString) {
 		return new PluginVersionIdentifier(pluginString);
@@ -297,7 +239,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 
 	/*
 	 * NOTE: This method is not synchronized because it is called from within a
-	 * sync block in PluginClassLoader.	//TODO This is no longer true
+	 * sync block in PluginClassLoader.
 	 */
 	public boolean isPluginDeactivated() {
 		return deactivated;
@@ -342,8 +284,8 @@ public class PluginDescriptor implements IPluginDescriptor {
 	}
 
 	/**
-	 * @see #getUniqueIdentifierFromString
-	 * @see #getVersionIdentifierFromString
+	 * @see #getUniqueIdentifierFromString(String)
+	 * @see #getVersionIdentifierFromString(String)
 	 */
 	public String toString() {
 		return getUniqueIdentifier() + VERSION_SEPARATOR + getVersionIdentifier().toString();
@@ -481,10 +423,6 @@ public class PluginDescriptor implements IPluginDescriptor {
 
 	public Bundle getBundle() {
 		return bundleOsgi;
-	}
-
-	public String getLocation() {
-		return getInstallURLInternal().toExternalForm();
 	}
 
 	public void setPlugin(Plugin object) {

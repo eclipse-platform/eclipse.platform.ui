@@ -237,7 +237,10 @@ public abstract class Plugin implements BundleActivator {
 	public final IPluginDescriptor getDescriptor() {
 		if (descriptor != null)
 			return descriptor;
-		descriptor = CompatibilityHelper.getPluginDescriptor(bundle.getSymbolicName());
+		
+		//TODO Need to check if pluginId exists
+		String pluginId = bundle.getSymbolicName();
+		descriptor = CompatibilityHelper.getPluginDescriptor(pluginId);
 		if (descriptor != null)
 			CompatibilityHelper.setPlugin(descriptor, this);
 		return descriptor;
@@ -678,7 +681,12 @@ public abstract class Plugin implements BundleActivator {
 	 */
 	public void start(BundleContext context) throws Exception {
 		bundle = context.getBundle();
-		descriptor = CompatibilityHelper.getPluginDescriptor(bundle.getSymbolicName());
+		
+		//This associate a descriptor to any real bundle that uses this to start
+		String pluginId = bundle.getSymbolicName();
+		if (pluginId == null)
+			return;
+		descriptor = CompatibilityHelper.getPluginDescriptor(pluginId);
 		CompatibilityHelper.setPlugin(descriptor, this);
 		CompatibilityHelper.setActive(descriptor);
 	}

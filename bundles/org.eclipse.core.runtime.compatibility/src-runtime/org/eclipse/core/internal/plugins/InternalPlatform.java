@@ -38,7 +38,6 @@ public class InternalPlatform {
 		BundleContext context = org.eclipse.core.internal.runtime.InternalPlatform.getDefault().getBundleContext();
 		for (int i = 0; i < installURLs.length; i++) {
 			try {
-				//TODO: must generate a manifest on-the-fly if needed 				//TODO I think this comment is invalid
 				context.installBundle(installURLs[i].toExternalForm());
 			} catch (BundleException e) {
 				IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 0, org.eclipse.core.internal.plugins.Policy.bind("platform.cannotInstallPlugin", installURLs[i].toExternalForm()), e); //$NON-NLS-1$
