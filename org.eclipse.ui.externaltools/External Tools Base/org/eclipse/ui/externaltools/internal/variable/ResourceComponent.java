@@ -38,6 +38,7 @@ public class ResourceComponent extends AbstractVariableComponent {
 	protected Button specificResourceButton;
 	protected TreeViewer resourceList;
 	private IResource selectedResource;
+	private boolean selectedResourceVariable= true;
 	
 	/**
 	 * Creates the component
@@ -110,6 +111,7 @@ public class ResourceComponent extends AbstractVariableComponent {
 			public void widgetSelected(SelectionEvent e) {
 				updateResourceListEnablement();
 				getPage().updateValidState();
+				selectedResourceVariable= !specificResourceButton.getSelection();
 			}
 		});
 	}
@@ -125,7 +127,7 @@ public class ResourceComponent extends AbstractVariableComponent {
 	 * Method declared on IVariableComponent.
 	 */
 	public String getVariableValue() {
-		if (selectedResourceButton != null && selectedResourceButton.getSelection()) {
+		if (selectedResourceVariable) {
 			return null;
 		}
 		
