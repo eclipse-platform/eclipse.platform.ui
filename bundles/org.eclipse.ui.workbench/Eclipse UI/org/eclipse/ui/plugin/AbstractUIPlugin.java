@@ -94,14 +94,13 @@ import org.eclipse.ui.internal.Workbench;
  * method.
  * </p>
  */
-public abstract class AbstractUIPlugin extends Plugin
-{
+public abstract class AbstractUIPlugin extends Plugin {
 
 	/**
 	 * The name of the dialog settings file (value 
 	 * <code>"dialog_settings.xml"</code>).
 	 */
-	private static final String FN_DIALOG_SETTINGS = "dialog_settings.xml";//$NON-NLS-1$
+	private static final String FN_DIALOG_SETTINGS = "dialog_settings.xml"; //$NON-NLS-1$
 
 	/**
 	 * Storage for dialog and wizard data; <code>null</code> if not yet
@@ -119,7 +118,7 @@ public abstract class AbstractUIPlugin extends Plugin
 	 * initialized.
 	 */
 	private ImageRegistry imageRegistry = null;
-	
+
 	/**
 	 * Internal implementation of a JFace preference store atop a core runtime
 	 * preference store.
@@ -127,24 +126,24 @@ public abstract class AbstractUIPlugin extends Plugin
 	 * @since 2.0
 	 */
 	private class CompatibilityPreferenceStore implements IPreferenceStore {
-	
+
 		/**
 		 * Flag to indicate that the listener has been added.
 		 */
 		private boolean listenerAdded = false;
-		
+
 		/**
 		 * The underlying core runtime preference store; <code>null</code> if it
 		 * has not been initialized yet.
 		 */
 		private Preferences prefs = null;
-	
+
 		/**
 		 * Identity list of old listeners (element type: 
 		 * <code>org.eclipse.jface.util.IPropertyChangeListener</code>).
 		 */
 		private ListenerList listeners = new ListenerList();
-	
+
 		/**
 		 * Indicates whether property change events should be suppressed
 		 * (used in implementation of <code>putValue</code>). Initially
@@ -153,7 +152,7 @@ public abstract class AbstractUIPlugin extends Plugin
 		 * @see IPreferenceStore#putValue
 		 */
 		private boolean silentRunning = false;
-	
+
 		/**
 		 * Creates a new instance for the this plug-in.
 		 */
@@ -161,7 +160,7 @@ public abstract class AbstractUIPlugin extends Plugin
 			// Important: do not call initialize() here
 			// due to heinous reentrancy problems.
 		}
-		
+
 		/**
 		 * Initializes this preference store.
 		 */
@@ -179,8 +178,11 @@ public abstract class AbstractUIPlugin extends Plugin
 				// register listener that funnels everything to firePropertyChangeEvent
 				this
 					.prefs
-					.addPropertyChangeListener(new Preferences.IPropertyChangeListener() {
-					public void propertyChange(Preferences.PropertyChangeEvent event) {
+					.addPropertyChangeListener(
+						new Preferences
+						.IPropertyChangeListener() {
+					public void propertyChange(
+						Preferences.PropertyChangeEvent event) {
 						if (!silentRunning) {
 							firePropertyChangeEvent(
 								event.getProperty(),
@@ -192,7 +194,7 @@ public abstract class AbstractUIPlugin extends Plugin
 				this.listenerAdded = true;
 			}
 		}
-	
+
 		/**
 		 * Returns the underlying preference store.
 		 * 
@@ -206,21 +208,21 @@ public abstract class AbstractUIPlugin extends Plugin
 			}
 			return prefs;
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public void addPropertyChangeListener(final IPropertyChangeListener listener) {
 			listeners.add(listener);
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public void removePropertyChangeListener(IPropertyChangeListener listener) {
 			listeners.remove(listener);
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
@@ -228,13 +230,13 @@ public abstract class AbstractUIPlugin extends Plugin
 			String name,
 			Object oldValue,
 			Object newValue) {
-	
+
 			// efficiently handle case of 0 listeners
 			if (listeners.isEmpty()) {
 				// no one interested
 				return;
-			}	
-	
+			}
+
 			// important: create intermediate array to protect against listeners 
 			// being added/removed during the notification
 			final Object[] list = listeners.getListeners();
@@ -243,118 +245,119 @@ public abstract class AbstractUIPlugin extends Plugin
 			Platform.run(new SafeRunnable(JFaceResources.getString("PreferenceStore.changeError")) { //$NON-NLS-1$
 				public void run() {
 					for (int i = 0; i < list.length; i++) {
-						((IPropertyChangeListener) list[i]).propertyChange(event);
+						((IPropertyChangeListener) list[i]).propertyChange(
+							event);
 					}
 				}
 			});
-			
+
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public boolean contains(String name) {
 			return getPrefs().contains(name);
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public boolean getBoolean(String name) {
 			return getPrefs().getBoolean(name);
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public boolean getDefaultBoolean(String name) {
 			return getPrefs().getDefaultBoolean(name);
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public double getDefaultDouble(String name) {
 			return getPrefs().getDefaultDouble(name);
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public float getDefaultFloat(String name) {
 			return getPrefs().getDefaultFloat(name);
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public int getDefaultInt(String name) {
 			return getPrefs().getDefaultInt(name);
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public long getDefaultLong(String name) {
 			return getPrefs().getDefaultLong(name);
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public String getDefaultString(String name) {
 			return getPrefs().getDefaultString(name);
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public double getDouble(String name) {
 			return getPrefs().getDouble(name);
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public float getFloat(String name) {
 			return getPrefs().getFloat(name);
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public int getInt(String name) {
 			return getPrefs().getInt(name);
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public long getLong(String name) {
 			return getPrefs().getLong(name);
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public String getString(String name) {
 			return getPrefs().getString(name);
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public boolean isDefault(String name) {
 			return getPrefs().isDefault(name);
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public boolean needsSaving() {
 			return getPrefs().needsSaving();
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
@@ -367,432 +370,431 @@ public abstract class AbstractUIPlugin extends Plugin
 				silentRunning = false;
 			}
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public void setDefault(String name, double value) {
 			getPrefs().setDefault(name, value);
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public void setDefault(String name, float value) {
 			getPrefs().setDefault(name, value);
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public void setDefault(String name, int value) {
 			getPrefs().setDefault(name, value);
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public void setDefault(String name, long value) {
 			getPrefs().setDefault(name, value);
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public void setDefault(String name, String value) {
 			getPrefs().setDefault(name, value);
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public void setDefault(String name, boolean value) {
 			getPrefs().setDefault(name, value);
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public void setToDefault(String name) {
 			getPrefs().setToDefault(name);
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public void setValue(String name, double value) {
 			getPrefs().setValue(name, value);
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public void setValue(String name, float value) {
 			getPrefs().setValue(name, value);
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public void setValue(String name, int value) {
 			getPrefs().setValue(name, value);
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public void setValue(String name, long value) {
 			getPrefs().setValue(name, value);
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public void setValue(String name, String value) {
 			getPrefs().setValue(name, value);
 		}
-	
+
 		/* (non-javadoc)
 		 * Method declared on IPreferenceStore
 		 */
 		public void setValue(String name, boolean value) {
 			getPrefs().setValue(name, value);
 		}
-	}	
-	
-/**
- * Creates an abstract UI plug-in runtime object for the given plug-in descriptor.
- * <p>
- * Note that instances of plug-in runtime classes are automatically created 
- * by the platform in the course of plug-in activation.
- * </p>
- *
- * @param descriptor the plug-in descriptor
- */
-public AbstractUIPlugin(IPluginDescriptor descriptor) {
-	super(descriptor);
-}
-
-/** 
- * Returns a new image registry for this plugin-in.  The registry will be
- * used to manage images which are frequently used by the plugin-in.
- * <p>
- * The default implementation of this method creates an empty registry.
- * Subclasses may override this method if needed.
- * </p>
- *
- * @return ImageRegistry the resulting registry.
- * @see #getImageRegistry
- */
-protected ImageRegistry createImageRegistry() {
-	return new ImageRegistry();
-}
-/**
- * Returns the dialog settings for this UI plug-in.
- * The dialog settings is used to hold persistent state data for the various
- * wizards and dialogs of this plug-in in the context of a workbench. 
- * <p>
- * If an error occurs reading the dialog store, an empty one is quietly created
- * and returned.
- * </p>
- * <p>
- * Subclasses may override this method but are not expected to.
- * </p>
- *
- * @return the dialog settings
- */
-public IDialogSettings getDialogSettings() {
-	if (dialogSettings == null)
-		loadDialogSettings();
-	return dialogSettings;
-}
-/**
- * Returns the image registry for this UI plug-in. 
- * <p>
- * The image registry contains the images used by this plug-in that are very 
- * frequently used and so need to be globally shared within the plug-in. Since 
- * many OSs have a severe limit on the number of images that can be in memory at 
- * any given time, a plug-in should only keep a small number of images in their 
- * registry.
- * <p>
- * Subclasses should reimplement <code>initializeImageRegistry</code> if they have
- * custom graphic images to load.
- * </p>
- * <p>
- * Subclasses may override this method but are not expected to.
- * </p>
- *
- * @return the image registry
- */
-public ImageRegistry getImageRegistry() {
-	if (imageRegistry == null) {
-		imageRegistry = createImageRegistry();
-		initializeImageRegistry(imageRegistry);
 	}
-	return imageRegistry;
-}
-/**
- * Returns the preference store for this UI plug-in.
- * This preference store is used to hold persistent settings for this plug-in in
- * the context of a workbench. Some of these settings will be user controlled, 
- * whereas others may be internal setting that are never exposed to the user.
- * <p>
- * If an error occurs reading the preference store, an empty preference store is
- * quietly created, initialized with defaults, and returned.
- * </p>
- * <p>
- * Subclasses should reimplement <code>initializeDefaultPreferences</code> if
- * they have custom graphic images to load.
- * </p>
- *
- * @return the preference store 
- */
-public IPreferenceStore getPreferenceStore() {
-	// Create the preference store lazily.
-	if (preferenceStore == null) {
-		// must assign field before calling initialize(), since
-		// this method can be reentered during initialization
-		preferenceStore = new CompatibilityPreferenceStore();
-		// force initialization
-		preferenceStore.initialize();
+
+	/**
+	 * Creates an abstract UI plug-in runtime object for the given plug-in descriptor.
+	 * <p>
+	 * Note that instances of plug-in runtime classes are automatically created 
+	 * by the platform in the course of plug-in activation.
+	 * </p>
+	 *
+	 * @param descriptor the plug-in descriptor
+	 */
+	public AbstractUIPlugin(IPluginDescriptor descriptor) {
+		super(descriptor);
 	}
-	return preferenceStore;
-}
 
-/**
- * Returns the Platform UI workbench.  
- * <p> 
- * This method exists as a convenience for plugin implementors.  The
- * workbench can also be accessed by invoking <code>PlatformUI.getWorkbench()</code>.
- * </p>
- */
-public IWorkbench getWorkbench() {
-	return PlatformUI.getWorkbench();
-}
-
-/** 
- * Initializes a preference store with default preference values 
- * for this plug-in.
- * <p>
- * This method is called after the preference store is initially loaded
- * (default values are never stored in preference stores).
- * </p>
- * <p>
- * The default implementation of this method does nothing.
- * Subclasses should reimplement this method if the plug-in has any preferences.
- * </p>
- * <p>
- * A subclass may reimplement this method to set default values for the 
- * preference store using JFace API. This is the older way of initializing 
- * default values. If this method is reimplemented, do not override
- * <code>initializeDefaultPluginPreferences()</code>.
- * </p>
- *
- * @param store the preference store to fill
- */
-protected void initializeDefaultPreferences(IPreferenceStore store) {
-}
-
-/**
- * The <code>AbstractUIPlugin</code> implementation of this 
- * <code>Plugin</code> method forwards to 
- * <code>initializeDefaultPreferences(IPreferenceStore)</code>.
- * <p>
- * A subclass may reimplement this method to set default values for the core
- * runtime preference store in the standard way. This is the recommended way
- * to do this. 
- * The older <code>initializeDefaultPreferences(IPreferenceStore)</code> method
- * serves a similar purpose. If this method is reimplemented, do not send super,
- * and do not override <code>initializeDefaultPreferences(IPreferenceStore)</code>.
- * </p>
- * 
- * @see #initializeDefaultPreferences
- * @since 2.0
- */
-protected void initializeDefaultPluginPreferences() {
-	// N.B. by the time this method is called, the plug-in has a 
-	// core runtime preference store (no default values)
-
-	// call loadPreferenceStore (only) for backwards compatibility with Eclipse 1.0
-	loadPreferenceStore();
-	// call initializeDefaultPreferences (only) for backwards compatibility 
-	// with Eclipse 1.0
-	initializeDefaultPreferences(getPreferenceStore());
-}
-
-/** 
- * Initializes an image registry with images which are frequently used by the 
- * plugin.
- * <p>
- * The image registry contains the images used by this plug-in that are very
- * frequently used and so need to be globally shared within the plug-in. Since
- * many OSs have a severe limit on the number of images that can be in memory
- * at any given time, each plug-in should only keep a small number of images in 
- * its registry.
- * </p><p>
- * Implementors should create a JFace image descriptor for each frequently used
- * image.  The descriptors describe how to create/find the image should it be needed. 
- * The image described by the descriptor is not actually allocated until someone 
- * retrieves it.
- * </p><p>
- * Subclasses may override this method to fill the image registry.
- * </p>
- *
- * @see #getImageRegistry
- */
-protected void initializeImageRegistry(ImageRegistry reg) {
-}
-
-/**
- * Loads the dialog settings for this plug-in.
- * The default implementation first looks for a standard named file in the 
- * plug-in's read/write state area; if no such file exists, the plug-in's
- * install directory is checked to see if one was installed with some default
- * settings; if no file is found in either place, a new empty dialog settings
- * is created. If a problem occurs, an empty settings is silently used.
- * <p>
- * This framework method may be overridden, although this is typically
- * unnecessary.
- * </p>
- */
-protected void loadDialogSettings() {
-	dialogSettings = new DialogSettings("Workbench"); //$NON-NLS-1$
-
-	// try r/w state area in the local file system
-	String readWritePath =
-		getStateLocation().append(FN_DIALOG_SETTINGS).toOSString();
-	File settingsFile = new File(readWritePath);
-	if (settingsFile.exists()) {
-		try {
-			dialogSettings.load(readWritePath);
-		} catch (IOException e) {
-			// load failed so ensure we have an empty settings
-			dialogSettings = new DialogSettings("Workbench"); //$NON-NLS-1$
+	/** 
+	 * Returns a new image registry for this plugin-in.  The registry will be
+	 * used to manage images which are frequently used by the plugin-in.
+	 * <p>
+	 * The default implementation of this method creates an empty registry.
+	 * Subclasses may override this method if needed.
+	 * </p>
+	 *
+	 * @return ImageRegistry the resulting registry.
+	 * @see #getImageRegistry
+	 */
+	protected ImageRegistry createImageRegistry() {
+		return new ImageRegistry();
+	}
+	/**
+	 * Returns the dialog settings for this UI plug-in.
+	 * The dialog settings is used to hold persistent state data for the various
+	 * wizards and dialogs of this plug-in in the context of a workbench. 
+	 * <p>
+	 * If an error occurs reading the dialog store, an empty one is quietly created
+	 * and returned.
+	 * </p>
+	 * <p>
+	 * Subclasses may override this method but are not expected to.
+	 * </p>
+	 *
+	 * @return the dialog settings
+	 */
+	public IDialogSettings getDialogSettings() {
+		if (dialogSettings == null)
+			loadDialogSettings();
+		return dialogSettings;
+	}
+	/**
+	 * Returns the image registry for this UI plug-in. 
+	 * <p>
+	 * The image registry contains the images used by this plug-in that are very 
+	 * frequently used and so need to be globally shared within the plug-in. Since 
+	 * many OSs have a severe limit on the number of images that can be in memory at 
+	 * any given time, a plug-in should only keep a small number of images in their 
+	 * registry.
+	 * <p>
+	 * Subclasses should reimplement <code>initializeImageRegistry</code> if they have
+	 * custom graphic images to load.
+	 * </p>
+	 * <p>
+	 * Subclasses may override this method but are not expected to.
+	 * </p>
+	 *
+	 * @return the image registry
+	 */
+	public ImageRegistry getImageRegistry() {
+		if (imageRegistry == null) {
+			imageRegistry = createImageRegistry();
+			initializeImageRegistry(imageRegistry);
 		}
-	} else {
-		// not found - use installed  defaults if available
-		URL baseURL = getDescriptor().getInstallURL();
-
-		URL dsURL = null;
-		try {
-			dsURL = new URL(baseURL, FN_DIALOG_SETTINGS);
-		} catch (MalformedURLException e) {
-			return;
+		return imageRegistry;
+	}
+	/**
+	 * Returns the preference store for this UI plug-in.
+	 * This preference store is used to hold persistent settings for this plug-in in
+	 * the context of a workbench. Some of these settings will be user controlled, 
+	 * whereas others may be internal setting that are never exposed to the user.
+	 * <p>
+	 * If an error occurs reading the preference store, an empty preference store is
+	 * quietly created, initialized with defaults, and returned.
+	 * </p>
+	 * <p>
+	 * Subclasses should reimplement <code>initializeDefaultPreferences</code> if
+	 * they have custom graphic images to load.
+	 * </p>
+	 *
+	 * @return the preference store 
+	 */
+	public IPreferenceStore getPreferenceStore() {
+		// Create the preference store lazily.
+		if (preferenceStore == null) {
+			// must assign field before calling initialize(), since
+			// this method can be reentered during initialization
+			preferenceStore = new CompatibilityPreferenceStore();
+			// force initialization
+			preferenceStore.initialize();
 		}
-		InputStream is = null;
-		try {
-			is = dsURL.openStream();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(is, "utf-8")); //$NON-NLS-1$
-			dialogSettings.load(reader);
-		} catch (IOException e) {
-			// load failed so ensure we have an empty settings
-			dialogSettings = new DialogSettings("Workbench");  //$NON-NLS-1$
-		} finally {
+		return preferenceStore;
+	}
+
+	/**
+	 * Returns the Platform UI workbench.  
+	 * <p> 
+	 * This method exists as a convenience for plugin implementors.  The
+	 * workbench can also be accessed by invoking <code>PlatformUI.getWorkbench()</code>.
+	 * </p>
+	 */
+	public IWorkbench getWorkbench() {
+		return PlatformUI.getWorkbench();
+	}
+
+	/** 
+	 * Initializes a preference store with default preference values 
+	 * for this plug-in.
+	 * <p>
+	 * This method is called after the preference store is initially loaded
+	 * (default values are never stored in preference stores).
+	 * </p>
+	 * <p>
+	 * The default implementation of this method does nothing.
+	 * Subclasses should reimplement this method if the plug-in has any preferences.
+	 * </p>
+	 * <p>
+	 * A subclass may reimplement this method to set default values for the 
+	 * preference store using JFace API. This is the older way of initializing 
+	 * default values. If this method is reimplemented, do not override
+	 * <code>initializeDefaultPluginPreferences()</code>.
+	 * </p>
+	 *
+	 * @param store the preference store to fill
+	 */
+	protected void initializeDefaultPreferences(IPreferenceStore store) {
+	}
+
+	/**
+	 * The <code>AbstractUIPlugin</code> implementation of this 
+	 * <code>Plugin</code> method forwards to 
+	 * <code>initializeDefaultPreferences(IPreferenceStore)</code>.
+	 * <p>
+	 * A subclass may reimplement this method to set default values for the core
+	 * runtime preference store in the standard way. This is the recommended way
+	 * to do this. 
+	 * The older <code>initializeDefaultPreferences(IPreferenceStore)</code> method
+	 * serves a similar purpose. If this method is reimplemented, do not send super,
+	 * and do not override <code>initializeDefaultPreferences(IPreferenceStore)</code>.
+	 * </p>
+	 * 
+	 * @see #initializeDefaultPreferences
+	 * @since 2.0
+	 */
+	protected void initializeDefaultPluginPreferences() {
+		// N.B. by the time this method is called, the plug-in has a 
+		// core runtime preference store (no default values)
+
+		// call loadPreferenceStore (only) for backwards compatibility with Eclipse 1.0
+		loadPreferenceStore();
+		// call initializeDefaultPreferences (only) for backwards compatibility 
+		// with Eclipse 1.0
+		initializeDefaultPreferences(getPreferenceStore());
+	}
+
+	/** 
+	 * Initializes an image registry with images which are frequently used by the 
+	 * plugin.
+	 * <p>
+	 * The image registry contains the images used by this plug-in that are very
+	 * frequently used and so need to be globally shared within the plug-in. Since
+	 * many OSs have a severe limit on the number of images that can be in memory
+	 * at any given time, each plug-in should only keep a small number of images in 
+	 * its registry.
+	 * </p><p>
+	 * Implementors should create a JFace image descriptor for each frequently used
+	 * image.  The descriptors describe how to create/find the image should it be needed. 
+	 * The image described by the descriptor is not actually allocated until someone 
+	 * retrieves it.
+	 * </p><p>
+	 * Subclasses may override this method to fill the image registry.
+	 * </p>
+	 *
+	 * @see #getImageRegistry
+	 */
+	protected void initializeImageRegistry(ImageRegistry reg) {
+	}
+
+	/**
+	 * Loads the dialog settings for this plug-in.
+	 * The default implementation first looks for a standard named file in the 
+	 * plug-in's read/write state area; if no such file exists, the plug-in's
+	 * install directory is checked to see if one was installed with some default
+	 * settings; if no file is found in either place, a new empty dialog settings
+	 * is created. If a problem occurs, an empty settings is silently used.
+	 * <p>
+	 * This framework method may be overridden, although this is typically
+	 * unnecessary.
+	 * </p>
+	 */
+	protected void loadDialogSettings() {
+		dialogSettings = new DialogSettings("Workbench"); //$NON-NLS-1$
+
+		// try r/w state area in the local file system
+		String readWritePath =
+			getStateLocation().append(FN_DIALOG_SETTINGS).toOSString();
+		File settingsFile = new File(readWritePath);
+		if (settingsFile.exists()) {
 			try {
-				if (is != null)
-					is.close();
+				dialogSettings.load(readWritePath);
 			} catch (IOException e) {
+				// load failed so ensure we have an empty settings
+				dialogSettings = new DialogSettings("Workbench"); //$NON-NLS-1$
 			}
-		}
-	}
-}
+		} else {
+			// not found - use installed  defaults if available
+			URL baseURL = getDescriptor().getInstallURL();
 
-/**
- * Loads the preference store for this plug-in.
- * The default implementation looks for a standard named file in the 
- * plug-in's read/write state area. If no file is found or a problem
- * occurs, a new empty preference store is silently created. 
- * <p>
- * This framework method may be overridden, although this is typically 
- * unnecessary.
- * </p>
- * 
- * @deprecated As of Eclipse 2.0, a basic preference store exists for all
- * plug-ins. This method now exists only for backwards compatibility.
- * It is called as the plug-in's preference store is being initialized.
- * The plug-ins preferences are loaded from the file regardless of what
- * this method does.
- */
-protected void loadPreferenceStore() {
-}
-
-/**
- * Refreshes the actions for the plugin.
- * This method is called from <code>startup</code>.
- * <p>
- * This framework method may be overridden, although this is typically 
- * unnecessary.
- * </p>
- */
-protected void refreshPluginActions() {
-	final Workbench wb = (Workbench)PlatformUI.getWorkbench();
-	if (wb != null) {
-		// startup() is not guaranteed to be called in the UI thread,
-		// but refreshPluginActions must run in the UI thread, 
-		// so use asyncExec.  See bug 6623 for more details.
-		Display.getDefault().asyncExec(
-			new Runnable() {
-				public void run() {
-					wb.refreshPluginActions(getDescriptor().getUniqueIdentifier());
+			URL dsURL = null;
+			try {
+				dsURL = new URL(baseURL, FN_DIALOG_SETTINGS);
+			} catch (MalformedURLException e) {
+				return;
+			}
+			InputStream is = null;
+			try {
+				is = dsURL.openStream();
+				BufferedReader reader = new BufferedReader(new InputStreamReader(is, "utf-8")); //$NON-NLS-1$
+				dialogSettings.load(reader);
+			} catch (IOException e) {
+				// load failed so ensure we have an empty settings
+				dialogSettings = new DialogSettings("Workbench"); //$NON-NLS-1$
+			} finally {
+				try {
+					if (is != null)
+						is.close();
+				} catch (IOException e) {
 				}
 			}
-		);
+		}
 	}
-}	
-/**
- * Saves this plug-in's dialog settings.
- * Any problems which arise are silently ignored.
- */
-protected void saveDialogSettings() {
-	if (dialogSettings == null) {
-		return;
-	}
-	
-	try {
-		String readWritePath = getStateLocation().append(FN_DIALOG_SETTINGS).toOSString();
-		dialogSettings.save(readWritePath);
-	}
-	catch (IOException e) {
-	}
-}
 
-/**
- * Saves this plug-in's preference store.
- * Any problems which arise are silently ignored.
- * 
- * @see Plugin#savePluginPreferences
- * @deprecated As of Eclipse 2.0, preferences exist for all plug-ins. The 
- * equivalent of this method is <code>Plugin.savePluginPreferences</code>. 
- * This method now calls <code>savePluginPreferences</code>, and exists only for
- * backwards compatibility.
- */
-protected void savePreferenceStore() {
-	savePluginPreferences();
-}
+	/**
+	 * Loads the preference store for this plug-in.
+	 * The default implementation looks for a standard named file in the 
+	 * plug-in's read/write state area. If no file is found or a problem
+	 * occurs, a new empty preference store is silently created. 
+	 * <p>
+	 * This framework method may be overridden, although this is typically 
+	 * unnecessary.
+	 * </p>
+	 * 
+	 * @deprecated As of Eclipse 2.0, a basic preference store exists for all
+	 * plug-ins. This method now exists only for backwards compatibility.
+	 * It is called as the plug-in's preference store is being initialized.
+	 * The plug-ins preferences are loaded from the file regardless of what
+	 * this method does.
+	 */
+	protected void loadPreferenceStore() {
+	}
 
-/**
- * The <code>AbstractUIPlugin</code> implementation of this <code>Plugin</code>
- * method refreshes the plug-in actions.  Subclasses may extend this method,
- * but must send super first.
- * <p>
- * WARNING: Plug-ins may not be started in the UI thread.
- * The <code>startup()</code> method should not assume that its code runs in
- * the UI thread, otherwise SWT thread exceptions may occur on startup.
- */
-public void startup() throws CoreException {
-	refreshPluginActions();
-}
-/**
- * The <code>AbstractUIPlugin</code> implementation of this <code>Plugin</code>
- * method saves this plug-in's preference and dialog stores and shuts down 
- * its image registry (if they are in use). Subclasses may extend this method,
- * but must send super first.
- */
-public void shutdown() throws CoreException {
-	super.shutdown();
-	saveDialogSettings();
-	savePreferenceStore();
-	preferenceStore = null;
-	imageRegistry = null;
-}
+	/**
+	 * Refreshes the actions for the plugin.
+	 * This method is called from <code>startup</code>.
+	 * <p>
+	 * This framework method may be overridden, although this is typically 
+	 * unnecessary.
+	 * </p>
+	 */
+	protected void refreshPluginActions() {
+		final Workbench wb = (Workbench) PlatformUI.getWorkbench();
+		if (wb != null) {
+			// startup() is not guaranteed to be called in the UI thread,
+			// but refreshPluginActions must run in the UI thread, 
+			// so use asyncExec.  See bug 6623 for more details.
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					wb.refreshPluginActions(
+						getDescriptor().getUniqueIdentifier());
+				}
+			});
+		}
+	}
+	/**
+	 * Saves this plug-in's dialog settings.
+	 * Any problems which arise are silently ignored.
+	 */
+	protected void saveDialogSettings() {
+		if (dialogSettings == null) {
+			return;
+		}
+
+		try {
+			String readWritePath =
+				getStateLocation().append(FN_DIALOG_SETTINGS).toOSString();
+			dialogSettings.save(readWritePath);
+		} catch (IOException e) {
+		}
+	}
+
+	/**
+	 * Saves this plug-in's preference store.
+	 * Any problems which arise are silently ignored.
+	 * 
+	 * @see Plugin#savePluginPreferences
+	 * @deprecated As of Eclipse 2.0, preferences exist for all plug-ins. The 
+	 * equivalent of this method is <code>Plugin.savePluginPreferences</code>. 
+	 * This method now calls <code>savePluginPreferences</code>, and exists only for
+	 * backwards compatibility.
+	 */
+	protected void savePreferenceStore() {
+		savePluginPreferences();
+	}
+
+	/**
+	 * The <code>AbstractUIPlugin</code> implementation of this <code>Plugin</code>
+	 * method refreshes the plug-in actions.  Subclasses may extend this method,
+	 * but must send super first.
+	 * <p>
+	 * WARNING: Plug-ins may not be started in the UI thread.
+	 * The <code>startup()</code> method should not assume that its code runs in
+	 * the UI thread, otherwise SWT thread exceptions may occur on startup.
+	 */
+	public void startup() throws CoreException {
+		refreshPluginActions();
+	}
+	/**
+	 * The <code>AbstractUIPlugin</code> implementation of this <code>Plugin</code>
+	 * method saves this plug-in's preference and dialog stores and shuts down 
+	 * its image registry (if they are in use). Subclasses may extend this method,
+	 * but must send super first.
+	 */
+	public void shutdown() throws CoreException {
+		super.shutdown();
+		saveDialogSettings();
+		savePreferenceStore();
+		preferenceStore = null;
+		imageRegistry = null;
+	}
 }
