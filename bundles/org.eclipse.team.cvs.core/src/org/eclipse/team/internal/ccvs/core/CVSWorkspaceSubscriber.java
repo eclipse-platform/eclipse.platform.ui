@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ccvs.core;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -34,8 +35,10 @@ import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.core.variants.IResourceVariantTree;
 import org.eclipse.team.core.variants.PersistantResourceVariantByteStore;
 import org.eclipse.team.core.variants.ResourceVariantByteStore;
+import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTreeBuilder;
 import org.eclipse.team.internal.ccvs.core.syncinfo.CVSBaseResourceVariantTree;
 import org.eclipse.team.internal.ccvs.core.syncinfo.CVSDescendantResourceVariantByteStore;
 import org.eclipse.team.internal.ccvs.core.syncinfo.CVSResourceVariantTree;
@@ -245,6 +248,20 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 	 */
 	private CVSDescendantResourceVariantByteStore getRemoteByteStore() {
 		return (CVSDescendantResourceVariantByteStore)((CVSResourceVariantTree)getRemoteTree()).getByteStore();
+	}
+
+	/**
+	 * Update the remote tree to the base
+	 */
+	public void updateRemote(CVSTeamProvider provider, IProgressMonitor monitor) throws TeamException {
+		monitor.beginTask(null, 100);
+		ICVSResource tree = RemoteFolderTreeBuilder.buildBaseTree(
+				(CVSRepositoryLocation)provider.getRemoteLocation(), 
+				provider.getCVSWorkspaceRoot().getLocalRoot(), 
+				null, 
+				Policy.subMonitorFor(monitor, 50));
+		setRemote(provider.getProject(), (IResourceVariant)tree, Policy.subMonitorFor(monitor, 50));
+		monitor.done();
 	}
 
 }
