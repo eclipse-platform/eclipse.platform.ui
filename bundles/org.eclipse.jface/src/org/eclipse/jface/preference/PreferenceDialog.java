@@ -51,19 +51,19 @@ public class PreferenceDialog
 		reg.put(PREF_DLG_TITLE_IMG, ImageDescriptor.createFromFile(PreferenceDialog.class, "images/pref_dialog_title.gif")); //$NON-NLS-1$
 	}
 
-	private Composite titleArea;
+	Composite titleArea;
 	private CLabel messageLabel;
 	private Label titleImage;
-	private Color titleAreaColor;
+	Color titleAreaColor;
 
 	private String message = ""; //$NON-NLS-1$
 	private String errorMessage;
-	private Color normalMsgAreaBackground;
-	private Color errorMsgAreaBackground;
+	Color normalMsgAreaBackground;
+	Color errorMsgAreaBackground;
 	private Image messageImage;
 	private Image errorMsgImage;
 	private boolean showingError = false;
-	private Point lastShellSize;
+	Point lastShellSize;
 
 	/**
 	 * Preference store, initially <code>null</code> meaning none.
@@ -76,7 +76,7 @@ public class PreferenceDialog
 	 * The current preference page, or <code>null</code> if
 	 * there is none.
 	 */
-	private IPreferencePage currentPage;
+	IPreferencePage currentPage;
 
 	/**
 	 * The preference manager.
@@ -86,14 +86,14 @@ public class PreferenceDialog
 	/**
 	 * The Composite in which a page is shown.
 	 */
-	private Composite pageContainer;
+	Composite pageContainer;
 
 	/**
 	 * The minimum page size; 400 by 400 by default.
 	 *
 	 * @see #setMinimumPageSize
 	 */
-	private Point minimumPageSize = new Point(400, 400);
+	Point minimumPageSize = new Point(400, 400);
 
 	/**
 	 * The OK button.
@@ -103,12 +103,12 @@ public class PreferenceDialog
 	/**
 	 * The Cancel button.
 	 */
-	private Button cancelButton;
+	Button cancelButton;
 
 	/**
 	 * The Help button; <code>null</code> if none.
 	 */
-	private Button helpButton = null;
+	Button helpButton = null;
 
 	/**
 	 * Indicates whether help is available; <code>false</code> by default.'
@@ -120,12 +120,12 @@ public class PreferenceDialog
 	/**
 	 * The tree control.
 	 */
-	private Tree tree;
+	Tree tree;
 
 	/**
 	 * The current tree item.
 	 */
-	private TreeItem currentTreeItem;
+	TreeItem currentTreeItem;
 
 	/**
 	 * Layout for the page container.
@@ -650,7 +650,7 @@ public class PreferenceDialog
 	 * Selects the page determined by <code>currentTreeItem</code> in
 	 * the page hierarchy.
 	 */
-	private void selectCurrentPageAgain() {
+	void selectCurrentPageAgain() {
 		tree.setSelection(new TreeItem[] { currentTreeItem });
 		currentPage.setVisible(true);
 	}
@@ -734,7 +734,7 @@ public class PreferenceDialog
 	 * Clear the last selected node. This is so that we not chache
 	 * the last selection in case of an error.
 	 */
-	private void clearSelectedNode() {
+	void clearSelectedNode() {
 		setSelectedNodePreference(null);
 	}
 
@@ -969,7 +969,7 @@ public class PreferenceDialog
 		if (currentPage != null) {
 			if (!currentPage.okToLeave())
 				return false;
-		};
+		}
 
 		IPreferencePage oldPage = currentPage;
 		currentPage = newPage;
@@ -986,7 +986,6 @@ public class PreferenceDialog
 					currentPage.createControl(pageContainer);
 				}
 				public void handleException(Throwable e) {
-					e.printStackTrace();
 					failed[0] = true;
 				}
 			});
@@ -1065,7 +1064,7 @@ public class PreferenceDialog
 	/**
 	 * Shows the "Page Flipping abort" dialog.
 	 */
-	private void showPageFlippingAbortDialog() {
+	void showPageFlippingAbortDialog() {
 		MessageDialog.openError(getShell(), JFaceResources.getString("AbortPageFlippingDialog.title"), //$NON-NLS-1$
 		JFaceResources.getString("AbortPageFlippingDialog.message")); //$NON-NLS-1$
 	}
