@@ -9,32 +9,40 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.views.internal.markers;
+package org.eclipse.ui.views.internal.table;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.views.internal.markers.IField;
 
-class MarkerLabelProvider extends LabelProvider implements ITableLabelProvider {
+
+public class TableViewLabelProvider extends LabelProvider implements ITableLabelProvider {
+
+	IField[] fields;
 	
-	IField[] properties;
-	
-	public MarkerLabelProvider(IField[] properties) {
-		this.properties = properties;
+	public TableViewLabelProvider(IField[] fields) {
+		this.fields = fields;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
+	 */
 	public Image getColumnImage(Object element, int columnIndex) {
-		if (element == null || !(element instanceof IMarker) || properties == null || columnIndex >= properties.length)
+		if (fields == null || columnIndex < 0 || columnIndex >= fields.length) {
 			return null;
-			
-		return properties[columnIndex].getImage(element);
+		}
+		return fields[columnIndex].getImage(element);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
+	 */
 	public String getColumnText(Object element, int columnIndex) {
-		if (element == null || !(element instanceof IMarker) || properties == null || columnIndex >= properties.length)
-			return ""; //$NON-NLS-1$
-
-		return properties[columnIndex].getValue(element);
+		if (fields == null || columnIndex < 0 || columnIndex >= fields.length) {
+			return null;
+		}
+		return fields[columnIndex].getValue(element);
 	}
+
 }

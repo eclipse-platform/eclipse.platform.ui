@@ -58,9 +58,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MarkerTransfer;
-import org.eclipse.ui.views.internal.tableview.IItemsChangedListener;
-import org.eclipse.ui.views.internal.tableview.ITableViewContentProvider;
-import org.eclipse.ui.views.internal.tableview.TableView;
+import org.eclipse.ui.views.internal.table.IItemsChangedListener;
+import org.eclipse.ui.views.internal.table.ITableViewContentProvider;
+import org.eclipse.ui.views.internal.table.TableView;
 import org.eclipse.ui.views.navigator.ShowInNavigatorAction;
 import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
 
@@ -77,8 +77,8 @@ public abstract class MarkerView extends TableView {
 	private MarkerFilter filter;
 	private Clipboard clipboard;
 	
-	protected CopyMarkerAction copyAction;
-	protected PasteMarkerAction pasteAction;
+	protected ActionCopyMarker copyAction;
+	protected ActionPasteMarker pasteAction;
 	protected SelectionProviderAction revealAction;
 	protected SelectionProviderAction openAction;
 	protected SelectionProviderAction showInNavigatorAction;
@@ -155,18 +155,18 @@ public abstract class MarkerView extends TableView {
 	 */
 	protected void createActions() {
 		viewer = getViewer();
-		revealAction = new RevealMarkerAction(this, viewer);
-		openAction = new OpenMarkerAction(this, viewer);
-		copyAction = new CopyMarkerAction(this, viewer);
+		revealAction = new ActionRevealMarker(this, viewer);
+		openAction = new ActionOpenMarker(this, viewer);
+		copyAction = new ActionCopyMarker(this, viewer);
 		copyAction.setClipboard(clipboard);
 		copyAction.setProperties(getFields());
-		pasteAction = new PasteMarkerAction(this, viewer);
+		pasteAction = new ActionPasteMarker(this, viewer);
 		pasteAction.setClipboard(clipboard);
 		pasteAction.setPastableTypes(getRegistry().getTypes());
-		deleteAction = new RemoveMarkerAction(this, viewer);
-		selectAllAction = new SelectAllAction(viewer, getRegistry());
+		deleteAction = new ActionRemoveMarker(this, viewer);
+		selectAllAction = new ActionSelectAll(viewer, getRegistry());
 		showInNavigatorAction = new ShowInNavigatorAction(getViewSite().getPage(), viewer);
-		propertiesAction = new MarkerPropertiesAction(this, viewer);
+		propertiesAction = new ActionMarkerProperties(this, viewer);
 		
 		super.createActions();
 	}
@@ -337,7 +337,7 @@ public abstract class MarkerView extends TableView {
 	protected Dialog getFiltersDialog() {
 		IFilter filter = getFilter();
 		if (filter != null && filter instanceof MarkerFilter) {
-			return new FiltersDialog(getSite().getShell(), (MarkerFilter) filter);
+			return new DialogMarkerFilter(getSite().getShell(), (MarkerFilter) filter);
 		}
 		return null;
 	}

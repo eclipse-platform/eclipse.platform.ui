@@ -22,8 +22,8 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.views.internal.tableview.IItemsChangedListener;
-import org.eclipse.ui.views.internal.tableview.ITableViewContentProvider;
+import org.eclipse.ui.views.internal.table.IItemsChangedListener;
+import org.eclipse.ui.views.internal.table.ITableViewContentProvider;
 
 
 /**

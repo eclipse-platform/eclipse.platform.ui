@@ -22,7 +22,6 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
 
-
 /**
  * Manages images and image descriptors.
  */
@@ -86,5 +85,4 @@ public class ImageFactory {
 
 		return imageDescriptor;
 	}
-
 }
