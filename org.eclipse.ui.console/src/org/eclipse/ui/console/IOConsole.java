@@ -561,9 +561,9 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
 										// match was found, or after the last match on the same line
 										int matchLine = doc.getLineOfOffset(baseOffset + quick.start());
 										if (lineOfLastMatch == matchLine) {
-											startOfNextSearch = baseOffset + endOfLastMatch;
+											startOfNextSearch = endOfLastMatch;
 										} else {
-											startOfNextSearch = doc.getLineOffset(matchLine);
+											startOfNextSearch = doc.getLineOffset(matchLine) - baseOffset;
 										}
 									} else {
 										startOfNextSearch = lengthToSearch;
