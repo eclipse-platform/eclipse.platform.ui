@@ -47,7 +47,7 @@ public abstract class PlatformURLConnection extends URLConnection {
 	private static final String CACHE_INDEX_PROP = "index"; //$NON-NLS-1$
 	private static final String CACHE_PREFIX_PROP = "prefix"; //$NON-NLS-1$
 	private static final String CACHE_INDEX = ".index.properties"; //$NON-NLS-1$
-	private static final String CACHE_DIR = ".eclipse-" + PlatformURLHandler.PROTOCOL + File.separator;
+	private static final String CACHE_DIR = ".eclipse-" + PlatformURLHandler.PROTOCOL + File.separator; //$NON-NLS-1$
 
 	// debug tracing
 	public static boolean DEBUG = false;

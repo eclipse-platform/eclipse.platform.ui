@@ -480,7 +480,7 @@ public class PluginParser extends DefaultHandler implements IModel {
 	}
 
 	private SAXParserFactory acquireXMLParsing() {
-		parserReference = InternalPlatform.getDefault().getBundleContext().getServiceReference("javax.xml.parsers.SAXParserFactory");
+		parserReference = InternalPlatform.getDefault().getBundleContext().getServiceReference("javax.xml.parsers.SAXParserFactory"); //$NON-NLS-1$
 		if (parserReference == null)
 			return null;
 		return (SAXParserFactory) InternalPlatform.getDefault().getBundleContext().getService(parserReference);

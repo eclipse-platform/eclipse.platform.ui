@@ -39,8 +39,8 @@ public class PlatformURLHandler extends AbstractURLStreamHandlerService {
 		// Note: openConnection() method is made public (rather than protected)
 		//       to enable request delegation from proxy handlers
 		String spec = url.getFile().trim();
-		if (spec.startsWith("/"))
-			spec = spec.substring(1); //$NON-NLS-1$
+		if (spec.startsWith("/")) //$NON-NLS-1$
+			spec = spec.substring(1);
 		int ix = spec.indexOf("/"); //$NON-NLS-1$
 		if (ix == -1) {
 			//TODO need to create message in catalog and use Policy to retrieve it 
