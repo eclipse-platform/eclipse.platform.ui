@@ -159,7 +159,7 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 		});
 	}
 	
-	private void updateResults() {
+	private synchronized void updateResults() {
 		StringBuffer buff= new StringBuffer();
 		buff.append("<form>"); //$NON-NLS-1$
 		buff.append("<p><span color=\""); //$NON-NLS-1$
@@ -189,10 +189,14 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 			buff.append(IHelpUIConstants.IMAGE_FILE_F1TOPIC);
 			buff.append("\">"); //$NON-NLS-1$
 			buff.append("<a href=\""); //$NON-NLS-1$
-			buff.append(hit.getHref());
-			buff.append("\" alt=\"");
-			buff.append(hit.getCategory().getLabel());
-			buff.append("\">"); //$NON-NLS-1$
+			buff.append(escapeSpecialChars(hit.getHref()));
+			buff.append("\"");
+			if (hit.getCategory()!=null) {
+				buff.append(" alt=\"");
+				buff.append(hit.getCategory().getLabel());
+				buff.append("\"");
+			}
+			buff.append(">"); //$NON-NLS-1$
 			buff.append(hit.getLabel());
 			buff.append("</a>"); //$NON-NLS-1$
 			/*
@@ -209,6 +213,34 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 			*/
 			buff.append("</li>"); //$NON-NLS-1$
 		}
+	}
+	
+	private String escapeSpecialChars(String value) {
+		StringBuffer buf = new StringBuffer();
+		for (int i = 0; i < value.length(); i++) {
+			char c = value.charAt(i);
+			switch (c) {
+				case '&' :
+					buf.append("&amp;"); //$NON-NLS-1$
+					break;
+				case '<' :
+					buf.append("&lt;"); //$NON-NLS-1$
+					break;
+				case '>' :
+					buf.append("&gt;"); //$NON-NLS-1$
+					break;
+				case '\'' :
+					buf.append("&apos;"); //$NON-NLS-1$
+					break;
+				case '\"' :
+					buf.append("&quot;"); //$NON-NLS-1$
+					break;
+				default :
+					buf.append(c);
+					break;
+			}
+		}
+		return buf.toString();
 	}
 
 	private void doOpenLink(Object href) {
