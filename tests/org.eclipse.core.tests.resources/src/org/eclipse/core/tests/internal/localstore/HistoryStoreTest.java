@@ -11,26 +11,75 @@
 package org.eclipse.core.tests.internal.localstore;
 
 import java.io.*;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.localstore.HistoryStore;
-import org.eclipse.core.internal.resources.FileState;
-import org.eclipse.core.internal.resources.Resource;
-import org.eclipse.core.internal.resources.Workspace;
+import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.internal.localstore.HistoryStoreTest.LogListenerVerifier.VerificationFailedException;
 
 /**
  * This class defines all tests for the HistoryStore Class.
  */
 
 public class HistoryStoreTest extends EclipseWorkspaceTest {
+	class LogListenerVerifier implements ILogListener {
+		class VerificationFailedException extends Exception {
+			VerificationFailedException(String message) {
+				super(message);
+			}
+		}
+		
+		List expected = new ArrayList();
+		List actual = new ArrayList();
+		
+		void addExpected(int statusCode) {
+			expected.add(new Integer(statusCode));
+		}
+		void verify() throws VerificationFailedException {
+			String message;
+			if (expected.size() != actual.size()) {
+				message = "Expected size: " + expected.size() + " does not equal actual size: " + actual.size() + "\n";
+				message += dump();
+				throw new VerificationFailedException(message);
+			}
+			for (Iterator i = expected.iterator(); i.hasNext();) {
+				Integer status = (Integer)i.next();
+				if (!actual.contains(status)) {
+					message = "Expected and actual results differ.\n";
+					message += dump();
+					throw new VerificationFailedException(message);
+				}
+			}
+		}
+		void reset() {
+			expected = new ArrayList();
+			actual = new ArrayList();
+		}
+		String dump() {
+			StringBuffer buffer = new StringBuffer();
+			buffer.append("Expected:\n");
+			for (Iterator i = expected.iterator(); i.hasNext();)
+				buffer.append("\t" + i.next() + "\n");
+			buffer.append("Actual:\n");
+			for (Iterator i = actual.iterator(); i.hasNext();)
+				buffer.append("\t" + i.next() + "\n");
+			return buffer.toString();
+		}
+		/**
+		 * @see org.eclipse.core.runtime.ILogListener#logging(org.eclipse.core.runtime.IStatus, java.lang.String)
+		 */
+		public void logging(IStatus status, String plugin) {
+			actual.add(new Integer(status.getCode()));
+		}
+
+	}
+	
 public HistoryStoreTest() {
 	super();
 }
@@ -1711,17 +1760,56 @@ public void testCopyHistoryFile() {
 		file2.create(getContents(contents[3]), true, getMonitor());
 		file2.setContents(getContents(contents[4]), true, true, getMonitor());
 	} catch (CoreException e) {
-		fail("1.9", e);
+		fail("1.3", e);
 	}
 
+	// Run some tests with illegal arguments
+	LogListenerVerifier verifier = new LogListenerVerifier();
+	ILog log = ResourcesPlugin.getPlugin().getLog();
+	log.addLogListener(verifier);
+	
 	// Test with null source and/or destination
 	HistoryStore store = ((Resource) file).getLocalManager().getHistoryStore();
+	verifier.addExpected(IResourceStatus.INTERNAL_ERROR);
 	store.copyHistory(null, null);
+	try {
+		verifier.verify();
+	} catch (VerificationFailedException e) {
+		fail("1.4 ", e);
+	}
+	verifier.reset();
+
+	verifier.addExpected(IResourceStatus.INTERNAL_ERROR);
 	store.copyHistory(null, file2.getLocation());
+	try {
+		verifier.verify();
+	} catch (VerificationFailedException e) {
+		fail("1.5 ", e);
+	}
+	verifier.reset();
+
+	verifier.addExpected(IResourceStatus.INTERNAL_ERROR);
 	store.copyHistory(file.getLocation(), null);
-	
+	try {
+		verifier.verify();
+	} catch (VerificationFailedException e) {
+		fail("1.6 ", e);
+	}
+	verifier.reset();
+
 	// Try to copy the history store stuff to the same location
+	verifier.addExpected(IResourceStatus.INTERNAL_ERROR);
 	store.copyHistory(file.getLocation(), file.getLocation());
+	try {
+		verifier.verify();
+	} catch (VerificationFailedException e) {
+		fail("1.7 ", e);
+	}
+	verifier.reset();
+
+	// Remember to remove the log listener now that we are done
+	// testing illegal arguments.
+	log.removeLogListener(verifier);
 	
 	// Test a valid copy of a file
 	store.copyHistory(file.getFullPath(), file2.getFullPath());
