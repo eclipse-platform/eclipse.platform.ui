@@ -14,6 +14,7 @@ import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 
 import org.eclipse.swt.graphics.RGB;
@@ -343,7 +344,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 		}
 		IAnnotationModel model= getOrCreateDiffer();
 		if (model instanceof DocumentLineDiffer)
-			((DocumentLineDiffer)model).suspend();
+			((DocumentLineDiffer) model).suspend();
 	}
 
 	/**
@@ -1023,5 +1024,28 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	protected void disposeDocumentProvider() {
 		super.disposeDocumentProvider();
 		fImplicitDocumentProvider= null;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * <p>This implementation also updates change information in the quick diff
+	 * ruler.</p>
+	 * 
+	 * @param input {@inheritDoc}
+	 */
+	protected void doSetInput(IEditorInput input) throws CoreException {
+		if (fIsChangeInformationShown) {
+			if (isPrefQuickDiffAlwaysOn()) {
+				// only uninstall the model since we will reuse the change ruler
+				uninstallChangeRulerModel();
+				fIsChangeInformationShown= false;
+			} else
+				showChangeInformation(false);
+		}
+		
+		super.doSetInput(input);
+		
+		if (isPrefQuickDiffAlwaysOn())
+			showChangeInformation(true);
 	}
 }
