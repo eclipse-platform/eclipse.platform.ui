@@ -27,7 +27,12 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 	protected ElementTree lastSnap;
 	protected int operationCount = 0;
 	protected boolean snapshotRequested;
-
+	
+	// snapshotInterval should be set as part of the workspace description
+	// or possibly as a preference
+	protected long snapshotInterval= 5 * 60 * 1000;
+	protected DelayedSnapshotRunnable snapshotRunnable;	
+	
 	/** plugins that participate on a workspace save */
 	protected HashMap saveParticipants;
 
@@ -793,6 +798,10 @@ void setPluginsSavedState(HashMap savedStates) {
 	this.savedStates = savedStates;
 }
 public void shutdown(IProgressMonitor monitor) {
+	if (snapshotRunnable != null) {
+		snapshotRunnable.cancel();
+		snapshotRunnable= null;
+	}
 }
 /**
  * Performs a snapshot if one is deemed necessary.
@@ -802,7 +811,11 @@ public void shutdown(IProgressMonitor monitor) {
 public void snapshotIfNeeded() throws CoreException {
 	if (!workspace.internalGetDescription().isSnapshotEnabled() && !snapshotRequested)
 		return;
-	if (snapshotRequested || operationCount >= workspace.internalGetDescription().getOperationsPerSnapshot()) {
+	if (snapshotRequested) {
+		if (snapshotRunnable != null) {
+			snapshotRunnable.cancel();
+		}
+		snapshotRunnable = null;
 		try {
 			ResourceStats.startSnapshot();
 			long begin = System.currentTimeMillis();
@@ -818,8 +831,17 @@ public void snapshotIfNeeded() throws CoreException {
 		}
 	} else {
 		operationCount++;
+		if (snapshotRunnable == null) {
+			if (ResourcesPlugin.getPlugin().isDebugging()) {
+				System.out.println("Starting snapshot delay thread");
+			}
+			snapshotRunnable = new DelayedSnapshotRunnable(this, snapshotInterval);
+			Thread t = new Thread(snapshotRunnable, "Snapshot");
+			t.start();
+		}
 	}
 }
+
 /**
  * Performs a snapshot of the workspace tree.
  */
