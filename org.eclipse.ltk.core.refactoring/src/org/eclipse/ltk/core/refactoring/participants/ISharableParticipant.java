@@ -24,7 +24,7 @@ package org.eclipse.ltk.core.refactoring.participants;
  * method. All subsequent elements will be added via the generic <code>
  * addElement(Object, RefactoringArguments)</code> method. Implementors
  * of this interface can assume that the refactoring arguments passed
- * to the <code>addElement</code> method conform the the participant. For
+ * to the <code>addElement</code> method conform to the participant. For
  * example the arguments are of type <code>MoveArguments</code> if this
  * interface is mixed into a move participant.
  * </p>

@@ -27,7 +27,7 @@ public class MoveArguments extends RefactoringArguments {
 	private boolean fUpdateReferences;
 	
 	/**
-	 * Creates new rename arguments.
+	 * Creates new move arguments.
 	 * 
 	 * @param destination the destination of the move
 	 * @param updateReferences <code>true</code> if reference
