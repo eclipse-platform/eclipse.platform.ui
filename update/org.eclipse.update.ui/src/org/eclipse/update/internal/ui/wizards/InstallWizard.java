@@ -381,13 +381,11 @@ public class InstallWizard
 		
 		job = new Job(UpdateUI.getString("InstallWizard.jobName")) { //$NON-NLS-1$	
 			public IStatus run(IProgressMonitor monitor) {
-				try {
-					if (download(monitor))
-						return Status.OK_STATUS;
-					else
-						return Status.CANCEL_STATUS;
-				} finally {
+				if (download(monitor))
+					return Status.OK_STATUS;
+				else {
 					isRunning = false;
+					return Status.CANCEL_STATUS;
 				}
 			}
 			public boolean belongsTo(Object family) {
@@ -422,7 +420,9 @@ public class InstallWizard
 				});
 			}
 		} catch (CoreException e) {
-		} 
+		} finally {
+			isRunning = false;
+		}
 	}
 	
 	private boolean download(final IProgressMonitor monitor) {
