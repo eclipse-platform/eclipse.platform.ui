@@ -244,11 +244,9 @@ private void load() throws CoreException {
 			input.close();
 		}
 	} catch (IOException e) {
-		String message = Policy.bind(e.getMessage());
-		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 13, message, e));
+		throw new CoreException(new Status(IStatus.ERROR,Platform.PI_RUNTIME,13,Policy.bind("meta.unableToReadAuthorization",file.toString()),e));
 	} catch (ClassNotFoundException e) {
-		String message = Policy.bind(e.getMessage());
-		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 13, message, e));
+		throw new CoreException(new Status(IStatus.ERROR,Platform.PI_RUNTIME,13,Policy.bind("meta.unableToReadAuthorization",file.toString()),e));
 	}
 }
 private void load(InputStream is) throws IOException, ClassNotFoundException {
@@ -269,8 +267,7 @@ public void save() throws CoreException {
 		file.createNewFile();
 		save(new FileOutputStream(file));
 	} catch (IOException e) {
-		String message = Policy.bind(e.getMessage());
-		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 13, message, e));
+		throw new CoreException(new Status(IStatus.ERROR,Platform.PI_RUNTIME,13,Policy.bind("meta.unableToWriteAuthorization",file.toString()),e));
 	}
 	needsSaving = false;
 }
