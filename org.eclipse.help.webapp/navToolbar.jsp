@@ -59,7 +59,7 @@ BODY {
 	<div id="borderLayer" style="position:absolute; z-index:2; left:0; top:0; height:100%; width:100%; ">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" height="100% ">
 			<tr>
-				<td style="border:1px black solid;">
+				<td style="border:1px solid WindowText; border-left:0px;">
 					&nbsp;
 				</td>
 			</tr>

@@ -110,7 +110,7 @@ if(request.getParameter("searchWord")!=null || request.getParameter("searchWordJ
 <TABLE BORDER='0'>
 	<TR><TD><%=WebappResources.getString("Indexing", request)%></TD></TR>
 	<TR><TD ALIGN='LEFT'>
-		<DIV STYLE='width:100px;height:16px;border:1px solid black;'>
+		<DIV STYLE='width:100px;height:16px;border:1px solid WindowText;'>
 			<DIV ID='divProgress' STYLE='width:<%=percentage%>px;height:100%;background-color:Highlight'></DIV>
 		</DIV>
 	</TD></TR>

@@ -17,6 +17,32 @@
 
 <title><%=WebappResources.getString("Toolbar", request)%></title>
  
+<style type="text/css">
+
+/* need this one for Mozilla */
+HTML { 
+	width:100%;
+	height:100%;
+	margin:0px;
+	padding:0px;
+	border:0px;
+ }
+ 
+BODY {
+	background:ButtonFace;
+}
+
+#titleText {
+	font-weight:bold;
+}
+
+#tdborder {
+	border:1px solid WindowText; 
+	border-left-width:0;
+}
+ 
+</style>
+
 <script language="JavaScript">
 
 var isMozilla = navigator.userAgent.indexOf('Mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
@@ -24,7 +50,14 @@ var isIE = navigator.userAgent.indexOf('MSIE') != -1;
 
 var navVisible = true;
 
-
+var extraStyle = "";
+if (isIE)
+ 	 extraStyle = "<style type='text/css'>#tdborder{border-right-width:0;}</style>";
+else if (isMozilla)
+	 extraStyle = "<style type='text/css'>#hide_nav{display:none;}</style>";
+document.write(extraStyle);
+	
+	
 function showBookshelf(button)
 {
 	parent.NavFrame.switchTab("toc");
@@ -85,27 +118,6 @@ function setTitle(label)
 
 </script>
 
-<style type="text/css">
-
-/* need this one for Mozilla */
-HTML { 
-	width:100%;
-	height:100%;
-	margin:0px;
-	padding:0px;
-	border:0px;
- }
- 
-BODY {
-	background:ButtonFace;
-}
-
-#titleText {
-	font-weight:bold;
-}
- 
-</style>
-
 </head>
  
 <body>
@@ -122,7 +134,7 @@ BODY {
 	<div id="borderLayer" style="position:absolute; z-index:2; left:0; top:0; height:100%; width:100%; ">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" height="100% ">
 			<tr>
-				<td style="border:1px black solid; border-left-width:0;">
+				<td id="tdborder">
 					&nbsp;
 				</td>
 			</tr>
@@ -143,7 +155,7 @@ BODY {
 				<td align="middle" width="9">
 					<img width="1" height=16 src="images/tool_separator.gif" alt='' border="0">
 				</td>
-				<td align="middle" width="22">
+				<td id="hide_nav" align="middle" width="22">
 					<a href="#" onclick="toggleNav(this);" onmouseover="window.status='<%=WebappResources.getString("Toggle", request)%>';return true;" onmouseout="window.status='';"><img src="images/hide_nav.gif" alt='<%=WebappResources.getString("Toggle", request)%>' border="0" name="hide_nav"></a>
 				</td>
 				<td align="middle" width="22">

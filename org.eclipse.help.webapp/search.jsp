@@ -41,9 +41,7 @@ HTML {
 
 BODY {
 	background-color:ButtonFace;
-	border-top:1px solid black;
-	border-left:1px solid black;
-	border-right:1px solid black;
+	border:0px;
 	text:white;
 	height:100%;
 }
@@ -52,7 +50,6 @@ TABLE {
 	font: icon;
 	background:ButtonFace;
 	margin:0;
-	xborder-right:1px solid black;
 	padding:0;
 	height:100%;
 }
@@ -64,7 +61,6 @@ FORM {
 
 INPUT {
 	font: icon;
-	border:1px solid black;
 	margin:0px;
 	padding:0px;
 }
@@ -77,12 +73,14 @@ INPUT {
 #searchWord {	
 	padding-left:4px;
 	padding-right:4px;
+	border:1px solid;
 }
 
 #go {
 	background:WindowText;
 	color:Window;
 	font-weight:bold;
+	border:1px solid WindowText;
 }
 
 
@@ -103,6 +101,8 @@ var isIE = navigator.userAgent.indexOf('MSIE') != -1;
 var extraStyle = "";
 if (isIE)
  	 extraStyle = "<style type='text/css'>#searchWord{margin-bottom:-1px;} #go{padding-left:1px;} </style>";
+else
+ 	 extraStyle = "<style type='text/css'>body {border-right:1px solid WindowText;}</style>";
 document.write(extraStyle);
 	
 var selectedBooks;

@@ -48,7 +48,7 @@ HTML {
 BODY {
 	font: icon;
 	background:ButtonFace;
-	border:1px black solid;
+	border:1px solid WindowText;
 	padding:0px;
 	margin:0px;
 	
@@ -84,7 +84,7 @@ FORM {
 }
 
 #searchWord {
-	border:1px solid #000;
+	border:1px solid WindowText;
 	width:100%;
 	font:icon;
 }
@@ -117,7 +117,7 @@ FORM {
  var isMozilla = navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
  var extraStyle = "";
   if (isMozilla)
-  	 document.write( '<style type="text/css">input[type="checkbox"] {border:2px solid black; margin:0xp; padding:0px;	height:12px;width:12px;}</style>');
+  	 document.write( '<style type="text/css">input[type="checkbox"] {border:2px solid WindowText; margin:0xp; padding:0px;	height:12px;width:12px;}</style>');
 
  
 function doAdvancedSearch()
@@ -247,10 +247,10 @@ for (int i=0; i<tocs.getLength(); i++)
 		<tr id="buttonsTable" valign="bottom"><td valign="bottom" align="right">
   			<table cellspacing=10 cellpading=0 border=0 align=right  style="background:transparent;">
 				<tr>
-					<td style="border:1px solid black; padding:0px; margin:0px;">
+					<td style="border:1px solid WindowText; padding:0px; margin:0px;">
 						<input id="searchButton" class='button'  type="button" onclick="doAdvancedSearch()" value='<%=WebappResources.getString("Search", request)%>'  id="go" alt='<%=WebappResources.getString("Search", request)%>'>
 					</td>
-					<td style="border:1px solid black; padding:0px; margin:0px;">
+					<td style="border:1px solid WindowText; padding:0px; margin:0px;">
 					  	<input class='button' type="button" onclick="window.close()"  type="button"  value='<%=WebappResources.getString("Cancel", request)%>'  id="cancel" alt='<%=WebappResources.getString("Cancel", request)%>'>
 					</td>
 				</tr>

@@ -17,9 +17,6 @@ public class CSSFilter implements IFilter {
 	"scrollbar-arrow-color:#000000;" +
 	"scrollbar-darkshadow-color:Window;" +
 	"scrollbar-face-color:ButtonFace;" +
-	"border-right:1px solid black; border-bottom:1px solid black;" +
-	"width:100%; height:100%;}" +
-	"html: {width:100%; height:100%;}" +
 	"</style>").getBytes();
 		
 	public CSSFilter() {

@@ -44,22 +44,13 @@
 <title><%=WebappResources.getString("Tabs", request)%></title>
     
 <style type="text/css">
-
-/* need this one for Mozilla */
-HTML { 
-	width:100%;
-	height:100%;
-	margin:0px;
-	padding:0px;
-	border:0px;
- }
  
 BODY {
 	margin:0px;
 	padding:0px;
-	border:1px black solid;
+	border-right:1px solid WindowText;
 	border-top:1px Window solid;
-	background:#000000;
+	background:WindowText;
 	height:100%;
 }
 
@@ -68,7 +59,7 @@ BODY {
 	background:ButtonFace;
 	margin:0px;
 	padding:0px;
- 	border-top:1px black solid;
+ 	border-top:1px solid WindowText;
 	cursor:default;
 	align:center;
 }
@@ -88,7 +79,7 @@ BODY {
 	border:0px;
 	height:100%;
 	/*background-color:ThreeDShadow;*/
-	background-color:black;
+	background-color:WindowText;
 }
 
 A {

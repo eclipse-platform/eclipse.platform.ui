@@ -28,8 +28,6 @@
 	font: icon;
 	margin:0;
 	padding:0;
-	border-bottom:1px solid black;
-	border-right:1px solid black;
 	cursor:default;
 	scrollbar-highlight-color:ThreeDShadow;
 	scrollbar-shadow-color:ThreeDShadow;
