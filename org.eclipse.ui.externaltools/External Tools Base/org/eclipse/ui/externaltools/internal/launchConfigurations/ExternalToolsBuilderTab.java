@@ -77,6 +77,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 	private void createBuildScheduleComponent(Composite parent) {
 		Label label= new Label(parent, SWT.NONE);
 		label.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Run_this_builder_for__1")); //$NON-NLS-1$
+		label.setFont(parent.getFont());
 		fullBuildButton= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.&Full_builds_2"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Full")); //$NON-NLS-1$ //$NON-NLS-2$
 		incrementalBuildButton= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.&Incremental_builds_4"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Inc")); //$NON-NLS-1$ //$NON-NLS-2$
 		autoBuildButton= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.&Auto_builds_(Not_recommended)_6"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Auto")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -100,6 +101,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 		button.setText(text);
 		button.setToolTipText(tooltipText);
 		button.addSelectionListener(listener);
+		button.setFont(parent.getFont());
 		return button;
 	}
 
