@@ -1,7 +1,7 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
@@ -43,7 +43,6 @@ import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
-import org.eclipse.team.ui.sync.TeamFile;
 
 /**
  * This class is repsible for maintaining the UI's list of known repositories,
