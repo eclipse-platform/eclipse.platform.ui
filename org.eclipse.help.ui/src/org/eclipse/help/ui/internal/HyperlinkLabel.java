@@ -5,11 +5,13 @@
 
 package org.eclipse.help.ui.internal;
 
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.*;
+import org.eclipse.swt.accessibility.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import sun.security.krb5.internal.crypto.*;
 
 /**
  *
@@ -87,6 +89,7 @@ public class HyperlinkLabel extends Canvas{
 		data.verticalAlignment = data.VERTICAL_ALIGN_BEGINNING;
 		label.setLayoutData(data);
 
+		initAccessible(this);
 	}
 
 	public void setText(String text)
@@ -177,5 +180,50 @@ public class HyperlinkLabel extends Canvas{
 	public void setCursor(Cursor c) {
 		super.setCursor(c);
 		label.setCursor(c);
+	}
+	
+	private void initAccessible(final Control control) {
+		Accessible accessible = control.getAccessible();
+		accessible.addAccessibleListener(new AccessibleAdapter() {
+			public void getName(AccessibleEvent e) {
+				e.result = label.getText();
+			}
+
+			public void getHelp(AccessibleEvent e) {
+				e.result = label.getToolTipText();
+			}
+		});
+
+		accessible
+			.addAccessibleControlListener(new AccessibleControlAdapter() {
+			public void getChildAtPoint(AccessibleControlEvent e) {
+				Point pt = label.toControl(new Point(e.x, e.y));
+				e.childID =
+					(control.getBounds().contains(pt))
+						? ACC.CHILDID_SELF
+						: ACC.CHILDID_NONE;
+			}
+
+			public void getLocation(AccessibleControlEvent e) {
+				Rectangle location = label.getBounds();
+				Point pt = control.toDisplay(new Point(location.x, location.y));
+				e.x = pt.x;
+				e.y = pt.y;
+				e.width = location.width;
+				e.height = location.height;
+			}
+
+			public void getChildCount(AccessibleControlEvent e) {
+				e.detail = 0;
+			}
+
+			public void getRole(AccessibleControlEvent e) {
+				e.detail = ACC.ROLE_LABEL;
+			}
+
+			public void getState(AccessibleControlEvent e) {
+				e.detail = ACC.STATE_READONLY;
+			}
+		});
 	}
 }

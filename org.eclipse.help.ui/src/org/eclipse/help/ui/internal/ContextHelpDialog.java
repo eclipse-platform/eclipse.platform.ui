@@ -4,17 +4,18 @@ package org.eclipse.help.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.help.*;
-import org.eclipse.help.ui.internal.util.WorkbenchResources;
-import org.eclipse.help.internal.util.Logger;
+import org.eclipse.help.internal.util.*;
+import org.eclipse.help.ui.internal.util.*;
 import org.eclipse.jface.resource.*;
-import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.*;
+import org.eclipse.swt.accessibility.*;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.help.*;
+
 /**
  * ContextHelpDialog
  */
@@ -27,7 +28,8 @@ public class ContextHelpDialog {
 	private Color linkColour = null;
 	private static HyperlinkHandler linkManager = new HyperlinkHandler();
 	private Shell shell;
-	
+	private String infopopText;
+
 	/**
 	 * Listener for hyperlink selection.
 	 */
@@ -41,7 +43,7 @@ public class ContextHelpDialog {
 		}
 
 	}
-	
+
 	/**
 	 * Constructor:
 	 * @param context an array of String or an array of IContext
@@ -72,7 +74,9 @@ public class ContextHelpDialog {
 		shell.addControlListener(new ControlAdapter() {
 			public void controlMoved(ControlEvent e) {
 				if (Logger.DEBUG)
-					Logger.logDebugMessage("ContextHelpDialog", "controlMoved: called. ");
+					Logger.logDebugMessage(
+						"ContextHelpDialog",
+						"controlMoved: called. ");
 				Rectangle clientArea = shell.getClientArea();
 				shell.redraw(
 					clientArea.x,
@@ -88,7 +92,8 @@ public class ContextHelpDialog {
 				"ContextHelpDialog",
 				"Constructor: Focus owner is: "
 					+ Display.getCurrent().getFocusControl().toString());
-		linkManager.setHyperlinkUnderlineMode(HyperlinkHandler.UNDERLINE_ALWAYS);
+		linkManager.setHyperlinkUnderlineMode(
+			HyperlinkHandler.UNDERLINE_ALWAYS);
 		createContents(shell);
 		shell.pack();
 		// Correct x and y of the shell if it not contained within the screen
@@ -102,6 +107,8 @@ public class ContextHelpDialog {
 		x = x + width <= screen.width ? x : screen.width - width;
 		y = y + height <= screen.height ? y : screen.height - height;
 		shell.setLocation(x, y);
+
+		initAccessible(shell);
 	}
 	public synchronized void close() {
 		try {
@@ -117,6 +124,7 @@ public class ContextHelpDialog {
 		}
 	}
 	protected Control createContents(Composite contents) {
+		initAccessible(contents);
 		contents.setBackground(backgroundColour);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 5;
@@ -134,7 +142,9 @@ public class ContextHelpDialog {
 		if (styledText == null) // no description found in context objects.
 			styledText = WorkbenchResources.getString("WW002");
 		StyledText text =
-			new StyledText(parent, SWT.MULTI | SWT.READ_ONLY | SWT.NO_FOCUS /* | SWT.WRAP*/
+			new StyledText(
+				parent,
+				SWT.MULTI | SWT.READ_ONLY /*| SWT.NO_FOCUS  | SWT.WRAP*/
 		);
 		text.getCaret().setVisible(false);
 		text.setBackground(backgroundColour);
@@ -142,6 +152,10 @@ public class ContextHelpDialog {
 		StyledLineWrapper content = new StyledLineWrapper(styledText);
 		text.setContent(content);
 		text.setStyleRanges(content.getStyles());
+		
+		infopopText = text.getText();
+		initAccessible(text);
+		
 		return text;
 	}
 	private Control createLink(Composite parent, IHelpResource topic) {
@@ -166,6 +180,8 @@ public class ContextHelpDialog {
 			return null;
 		// Create control
 		Composite composite = new Composite(parent, SWT.NONE);
+		initAccessible(composite);
+		
 		composite.setBackground(backgroundColour);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 2;
@@ -204,7 +220,9 @@ public class ContextHelpDialog {
 	private void launchLinks(IHelpResource selectedTopic) {
 		close();
 		if (Logger.DEBUG)
-			Logger.logDebugMessage("ContextHelpDialog", "launchLinks: closes shell");
+			Logger.logDebugMessage(
+				"ContextHelpDialog",
+				"launchLinks: closes shell");
 		// launch help view
 		DefaultHelp.getInstance().displayHelp(context, selectedTopic);
 	}
@@ -224,11 +242,57 @@ public class ContextHelpDialog {
 			imgRegistry = WorkbenchHelpPlugin.getDefault().getImageRegistry();
 			imgRegistry.put(
 				IMAGE_TOPIC,
-				ImageDescriptor.createFromURL(WorkbenchResources.getImagePath(IMAGE_TOPIC)));
+				ImageDescriptor.createFromURL(
+					WorkbenchResources.getImagePath(IMAGE_TOPIC)));
 		}
 		return imgRegistry.get(IMAGE_TOPIC);
 	}
-	public boolean isShowing(){
-		return (shell !=null && !shell.isDisposed() && shell.isVisible());
+	public boolean isShowing() {
+		return (shell != null && !shell.isDisposed() && shell.isVisible());
+	}
+
+	private void initAccessible(final Control control) {
+		Accessible accessible = control.getAccessible();
+		accessible.addAccessibleListener(new AccessibleAdapter() {
+			public void getName(AccessibleEvent e) {
+				e.result = infopopText;
+			}
+
+			public void getHelp(AccessibleEvent e) {
+				e.result = control.getToolTipText();
+			}
+		});
+
+		accessible
+			.addAccessibleControlListener(new AccessibleControlAdapter() {
+			public void getChildAtPoint(AccessibleControlEvent e) {
+				Point pt = control.toControl(new Point(e.x, e.y));
+				e.childID =
+					(control.getBounds().contains(pt))
+						? ACC.CHILDID_MULTIPLE
+						: ACC.CHILDID_NONE;
+			}
+
+			public void getLocation(AccessibleControlEvent e) {
+				Rectangle location = control.getBounds();
+				Point pt = control.toDisplay(new Point(location.x, location.y));
+				e.x = pt.x;
+				e.y = pt.y;
+				e.width = location.width;
+				e.height = location.height;
+			}
+
+			public void getChildCount(AccessibleControlEvent e) {
+				e.detail = 1;
+			}
+
+			public void getRole(AccessibleControlEvent e) {
+				e.detail = ACC.ROLE_LABEL;
+			}
+
+			public void getState(AccessibleControlEvent e) {
+				e.detail = ACC.STATE_READONLY;
+			}
+		});
 	}
 }
