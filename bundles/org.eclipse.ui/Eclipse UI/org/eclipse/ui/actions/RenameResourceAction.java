@@ -287,14 +287,18 @@ private void queryNewResourceNameInline(final IResource resource) {
 			textEditorParent.redraw();
 		}
 	});
-	textEditor.addKeyListener(new KeyAdapter() {
-		public void keyReleased(KeyEvent event) {
-			if (event.character == SWT.CR) {
-				saveChangesAndDispose(resource);
-			}
-			if (event.character == SWT.ESC) {
-				//Do nothing in this case
-				disposeTextWidget();
+	textEditor.addListener(SWT.Traverse, new Listener() {
+		public void handleEvent(Event event) {
+			switch (event.detail) {
+				case SWT.TRAVERSE_ESCAPE:
+					//Do nothing in this case
+					disposeTextWidget();
+					event.doit = false;
+					break;
+				case SWT.TRAVERSE_RETURN:
+					saveChangesAndDispose(resource);
+					event.doit = false;
+					break;
 			}
 		}
 	});
