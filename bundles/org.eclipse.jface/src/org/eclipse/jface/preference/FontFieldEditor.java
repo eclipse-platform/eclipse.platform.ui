@@ -34,6 +34,11 @@ public class FontFieldEditor extends FieldEditor {
 	private String changeButtonText;
 
 	/**
+	 * The text for the preview, or <code>null</code> if no preview is desired
+	 */
+	private String previewText;
+
+	/**
 	 * Font data for the chosen font button, or <code>null</code> if none.
 	 */
 	private FontData[] chosenFont;
@@ -78,8 +83,8 @@ public class FontFieldEditor extends FieldEditor {
 			font = new Font(text.getDisplay(), fontData);
 			text.setFont(font);
 		}
-		public int getPreferredHeight() {
-			return 60;
+		public int getPreferredExtent() {
+			return 40;
 		}
 	}
 	/**
@@ -88,21 +93,23 @@ public class FontFieldEditor extends FieldEditor {
 	protected FontFieldEditor() {
 	}
 	/**
-	 * Creates a font field editor with a preview window.
+	 * Creates a font field editor with an optional preview area.
 	 * 
 	 * @param name the name of the preference this field editor works on
 	 * @param labelText the label text of the field editor
-	 * @param previewText the text used for the preview window
+	 * @param previewAreaText the text used for the preview window. If it is
+	 * <code>null</code> there will be no preview area,
 	 * @param parent the parent of the field editor's control
 	 */
 	public FontFieldEditor(
 		String name,
 		String labelText,
-		String previewText,
+		String previewAreaText,
 		Composite parent) {
-		this(name, labelText, parent);
-		Assert.isNotNull(previewText);
-		previewer = new DefaultPreviewer(previewText, parent);
+		init(name, labelText);
+		previewText = previewAreaText;
+		changeButtonText = JFaceResources.getString("openChange"); //$NON-NLS-1$
+		createControl(parent);
 
 	}
 	/**
@@ -113,21 +120,22 @@ public class FontFieldEditor extends FieldEditor {
 	 * @param parent the parent of the field editor's control
 	 */
 	public FontFieldEditor(String name, String labelText, Composite parent) {
-		init(name, labelText);
-		changeButtonText = JFaceResources.getString("openChange"); //$NON-NLS-1$
-		createControl(parent);
+		this(name, labelText, null, parent);
+
 	}
 	/* (non-Javadoc)
 	 * Method declared on FieldEditor.
 	 */
 	protected void adjustForNumColumns(int numColumns) {
-		((GridData) valueControl.getLayoutData()).horizontalSpan =
-			numColumns - 2;
-		Control control = getPreviewControl();
-		if (control != null) {
-			((GridData) control.getLayoutData()).horizontalSpan = numColumns;
-		}
+
+		GridData data = new GridData();
+		if (valueControl.getLayoutData() != null)
+			data = (GridData) valueControl.getLayoutData();
+
+		data.horizontalSpan = numColumns - getNumberOfControls() + 1;
+		valueControl.setLayoutData(data);
 	}
+
 	/* (non-Javadoc)
 	 * Method declared on FieldEditor.
 	 */
@@ -139,16 +147,24 @@ public class FontFieldEditor extends FieldEditor {
 	 * Method declared on FieldEditor.
 	 */
 	protected void doFillIntoGrid(Composite parent, int numColumns) {
-		Control control = getLabelControl(parent);
+		getLabelControl(parent);
 
 		valueControl = getValueControl(parent);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = numColumns - 2;
+
+		GridData gd =
+			new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+		gd.horizontalSpan = numColumns - getNumberOfControls() + 1;
 		valueControl.setLayoutData(gd);
+		if (previewText != null) {
+			previewer = new DefaultPreviewer(previewText, parent);
+			gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.heightHint = previewer.getPreferredExtent();
+			gd.widthHint = previewer.getPreferredExtent();
+			previewer.getControl().setLayoutData(gd);
+		}
 
 		changeFontButton = getChangeControl(parent);
 		gd = new GridData();
-		gd.horizontalAlignment = GridData.FILL;
 		gd.heightHint =
 			convertVerticalDLUsToPixels(
 				changeFontButton,
@@ -163,14 +179,6 @@ public class FontFieldEditor extends FieldEditor {
 				changeFontButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		changeFontButton.setLayoutData(gd);
 
-		control = getPreviewControl();
-		if (control != null) {
-			gd = new GridData();
-			gd.horizontalAlignment = GridData.FILL;
-			gd.horizontalSpan = numColumns;
-			gd.heightHint = previewer.getPreferredHeight();
-			control.setLayoutData(gd);
-		}
 	}
 	/* (non-Javadoc)
 	 * Method declared on FieldEditor.
@@ -198,10 +206,11 @@ public class FontFieldEditor extends FieldEditor {
 	 * Method declared on FieldEditor.
 	 */
 	protected void doStore() {
-		PreferenceConverter.setValue(
-			getPreferenceStore(),
-			getPreferenceName(),
-			chosenFont);
+		if (chosenFont != null)
+			PreferenceConverter.setValue(
+				getPreferenceStore(),
+				getPreferenceName(),
+				chosenFont);
 	}
 	/**
 	 * Returns the change button for this field editor.
@@ -217,10 +226,13 @@ public class FontFieldEditor extends FieldEditor {
 				public void widgetSelected(SelectionEvent event) {
 					FontDialog fontDialog =
 						new FontDialog(changeFontButton.getShell());
-					fontDialog.setFontData(chosenFont[0]);
+					if (chosenFont != null)
+						fontDialog.setFontData(chosenFont[0]);
 					FontData font = fontDialog.open();
 					if (font != null) {
 						FontData[] oldFont = chosenFont;
+						if(oldFont == null)
+							oldFont = JFaceResources.getDefaultFont().getFontData();
 						setPresentsDefaultValue(false);
 						FontData[] newData = new FontData[1];
 						newData[0] = font;
@@ -246,7 +258,10 @@ public class FontFieldEditor extends FieldEditor {
 	 * Method declared on FieldEditor.
 	 */
 	public int getNumberOfControls() {
-		return 3;
+		if (previewer == null)
+			return 3;
+		else
+			return 4;
 	}
 	/**
 	 * Returns the preferred preview height. 
@@ -257,7 +272,7 @@ public class FontFieldEditor extends FieldEditor {
 	public int getPreferredPreviewHeight() {
 		if (previewer == null)
 			return -1;
-		return previewer.getPreferredHeight();
+		return previewer.getPreferredExtent();
 	}
 	/**
 	 * Returns the preview control for this field editor.
