@@ -18,6 +18,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 
@@ -73,7 +74,8 @@ public class StatusTextEditor extends AbstractTextEditor {
 			if (getDocumentProvider() instanceof IDocumentProviderExtension) {
 				IDocumentProviderExtension extension= (IDocumentProviderExtension) getDocumentProvider();
 				IStatus status= extension.getStatus(input);
-				if (status.isOK()) {
+				// see bug 42230
+				if (status.isOK() || status.getCode() == IResourceStatus.READ_ONLY_LOCAL) {
 					front= fDefaultComposite;
 				} else {
 					fStatusControl= createStatusControl(fParent, status);
@@ -143,7 +145,8 @@ public class StatusTextEditor extends AbstractTextEditor {
 		if (provider instanceof IDocumentProviderExtension) {
 			IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;
 			IStatus status= extension.getStatus(getEditorInput());
-			if (status != null && !status.isOK()) {
+			// see bug 42230
+			if (status != null && !status.isOK() && status.getCode() != IResourceStatus.READ_ONLY_LOCAL) {
 				IStatusField field= getStatusField(category);
 				if (field != null) {
 					field.setText(fErrorLabel);
