@@ -68,6 +68,7 @@ public class ManagedForm implements IManagedForm {
 	 */
 	public void addPart(IFormPart part) {
 		parts.add(part);
+		part.initialize(this);
 	}
 	/**
 	 * Remove the part from this form.

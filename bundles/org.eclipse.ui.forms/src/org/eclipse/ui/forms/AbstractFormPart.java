@@ -53,7 +53,7 @@ public abstract class AbstractFormPart implements IFormPart {
 		dirty = false;
 	}
 	/**
-	 * Sets the overal form input. Subclases may elect to override the method
+	 * Sets the overall form input. Subclases may elect to override the method
 	 * and adjust according to the form input.
 	 * 
 	 * @param input
