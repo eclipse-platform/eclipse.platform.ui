@@ -316,17 +316,14 @@ public class PartSite implements IWorkbenchPartSite {
 	 * @param delay The delay in scheduling the job.
 	 */
 	public void schedule(Job job, long delay) {
-		IJobChangeListener paneListener = getPane().getJobChangeListener(job);
+		IJobChangeListener paneListener = getPane().getJobChangeListener();
 				
 		if(paneListener != null)
 			job.addJobChangeListener(paneListener);
 		
-		IWorkbenchPart part = getPart();
-		if(part instanceof WorkbenchPart){
-			IJobChangeListener partListener = ((WorkbenchPart) part).getJobChangeListener(job);
-			if(partListener != null)
-				job.addJobChangeListener(partListener);
-		}
+		Object partListener = getPart().getAdapter(IJobChangeListener.class);
+		if(partListener != null)
+			job.addJobChangeListener((IJobChangeListener) partListener);
 		
 		job.schedule(delay);
 	}

@@ -507,12 +507,10 @@ protected void addFastViewMenuItem(Menu parent,boolean isFastView) {}
 protected void doDock() {}
 
 /**
- * Return an IJobChangeListener for job. Return <code>null</code>
- * if there is no listener for the job. 
- * @param job
+ * Return an IJobChangeListener for jobs run in this pane.
  * @return IJobChangeListener or <code>null</code>.
  */
-public IJobChangeListener getJobChangeListener(Job job){
+public IJobChangeListener getJobChangeListener(){
 	return null;
 }
 }
