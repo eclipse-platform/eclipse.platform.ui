@@ -10,12 +10,6 @@
  ******************************************************************************/
 package org.eclipse.core.tests.harness;
 
-import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-
 /**
  * Workspace session tests function as follows:  Each test class looks like a typical JUnit test,
  * except the platform is shutdown and restarted after each test method.  The steps for each
