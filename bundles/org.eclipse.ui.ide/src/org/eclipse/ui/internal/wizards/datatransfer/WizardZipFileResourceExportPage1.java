@@ -61,8 +61,8 @@ public class WizardZipFileResourceExportPage1 extends
      */
     public WizardZipFileResourceExportPage1(IStructuredSelection selection) {
         this("zipFileExportPage1", selection); //$NON-NLS-1$
-        setTitle(DataTransferMessages.getString("ZipExport.exportTitle")); //$NON-NLS-1$
-        setDescription(DataTransferMessages.getString("ZipExport.description")); //$NON-NLS-1$
+        setTitle(DataTransferMessages.ZipExport_exportTitle);
+        setDescription(DataTransferMessages.ZipExport_description);
     }
 
     /** (non-Javadoc)
@@ -84,8 +84,7 @@ public class WizardZipFileResourceExportPage1 extends
         // compress... checkbox
         compressContentsCheckbox = new Button(optionsGroup, SWT.CHECK
                 | SWT.LEFT);
-        compressContentsCheckbox.setText(DataTransferMessages
-                .getString("ZipExport.compressContents")); //$NON-NLS-1$
+        compressContentsCheckbox.setText(DataTransferMessages.ZipExport_compressContents);
         compressContentsCheckbox.setFont(font);
 
         createDirectoryStructureOptions(optionsGroup, font);
@@ -116,20 +115,17 @@ public class WizardZipFileResourceExportPage1 extends
      */
     protected boolean ensureTargetFileIsValid(File targetFile) {
         if (targetFile.exists() && targetFile.isDirectory()) {
-            displayErrorDialog(DataTransferMessages
-                    .getString("ZipExport.mustBeFile")); //$NON-NLS-1$
+            displayErrorDialog(DataTransferMessages.ZipExport_mustBeFile);
             giveFocusToDestination();
             return false;
         }
 
         if (targetFile.exists()) {
             if (targetFile.canWrite()) {
-                if (!queryYesNoQuestion(DataTransferMessages
-                        .getString("ZipExport.alreadyExists"))) //$NON-NLS-1$
+                if (!queryYesNoQuestion(DataTransferMessages.ZipExport_alreadyExists))
                     return false;
             } else {
-                displayErrorDialog(DataTransferMessages
-                        .getString("ZipExport.alreadyExistsError")); //$NON-NLS-1$
+                displayErrorDialog(DataTransferMessages.ZipExport_alreadyExistsError);
                 giveFocusToDestination();
                 return false;
             }
@@ -175,8 +171,7 @@ public class WizardZipFileResourceExportPage1 extends
         IStatus status = op.getStatus();
         if (!status.isOK()) {
             ErrorDialog.openError(getContainer().getShell(),
-                    DataTransferMessages
-                            .getString("DataTransfer.exportProblems"), //$NON-NLS-1$
+                    DataTransferMessages.DataTransfer_exportProblems,
                     null, // no special message
                     status);
             return false;
@@ -207,8 +202,8 @@ public class WizardZipFileResourceExportPage1 extends
                     resourcesToExport, getDestinationValue()));
 
         MessageDialog.openInformation(getContainer().getShell(),
-                DataTransferMessages.getString("DataTransfer.information"), //$NON-NLS-1$
-                DataTransferMessages.getString("FileExport.noneSelected")); //$NON-NLS-1$
+                DataTransferMessages.DataTransfer_information,
+                DataTransferMessages.FileExport_noneSelected);
 
         return false;
     }
@@ -217,7 +212,7 @@ public class WizardZipFileResourceExportPage1 extends
      *	Answer the string to display in the receiver as the destination type
      */
     protected String getDestinationLabel() {
-        return DataTransferMessages.getString("ZipExport.destinationLabel"); //$NON-NLS-1$
+        return DataTransferMessages.ZipExport_destinationLabel;
     }
 
     /**
@@ -266,8 +261,7 @@ public class WizardZipFileResourceExportPage1 extends
     protected void handleDestinationBrowseButtonPressed() {
         FileDialog dialog = new FileDialog(getContainer().getShell(), SWT.SAVE);
         dialog.setFilterExtensions(new String[] { "*.zip", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
-        dialog.setText(DataTransferMessages
-                .getString("ZipExport.selectDestinationTitle")); //$NON-NLS-1$
+        dialog.setText(DataTransferMessages.ZipExport_selectDestinationTitle);
         String currentSourceString = getDestinationValue();
         int lastSeparatorIndex = currentSourceString
                 .lastIndexOf(File.separator);
@@ -338,7 +332,7 @@ public class WizardZipFileResourceExportPage1 extends
      * @see org.eclipse.ui.wizards.datatransfer.WizardFileSystemResourceExportPage1#destinationEmptyMessage()
      */
     protected String destinationEmptyMessage() {
-        return DataTransferMessages.getString("ZipExport.destinationEmpty"); //$NON-NLS-1$
+        return DataTransferMessages.ZipExport_destinationEmpty;
     }
 
 }

@@ -138,10 +138,7 @@ public class SelectFilesOperation implements IRunnableWithProgress {
     public void run(IProgressMonitor monitor) throws InterruptedException {
         try {
             this.monitor = monitor;
-            monitor
-                    .beginTask(
-                            DataTransferMessages
-                                    .getString("DataTransfer.scanningMatching"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+            monitor.beginTask(DataTransferMessages.DataTransfer_scanningMatching, IProgressMonitor.UNKNOWN);
             result = createElement(null, root);
             if (result == null) {
                 result = new FileSystemElement(provider.getLabel(root), null,

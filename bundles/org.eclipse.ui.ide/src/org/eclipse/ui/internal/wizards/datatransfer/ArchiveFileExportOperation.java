@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
@@ -183,17 +184,9 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
             try {
                 exporter.write((IFile) exportResource, destinationName);
             } catch (IOException e) {
-                addError(DataTransferMessages.format(
-                        "DataTransfer.errorExporting", //$NON-NLS-1$
-                        new Object[] {
-                                exportResource.getFullPath().makeRelative(),
-                                e.getMessage() }), e);
+                addError(NLS.bind(DataTransferMessages.DataTransfer_errorExporting, exportResource.getFullPath().makeRelative(), e.getMessage()), e);
             } catch (CoreException e) {
-                addError(DataTransferMessages.format(
-                        "DataTransfer.errorExporting", //$NON-NLS-1$
-                        new Object[] {
-                                exportResource.getFullPath().makeRelative(),
-                                e.getMessage() }), e);
+                addError(NLS.bind(DataTransferMessages.DataTransfer_errorExporting, exportResource.getFullPath().makeRelative(), e.getMessage()), e);
             }
 
             monitor.worked(1);
@@ -205,10 +198,7 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
                 children = ((IContainer) exportResource).members();
             } catch (CoreException e) {
                 // this should never happen because an #isAccessible check is done before #members is invoked
-                addError(
-                        DataTransferMessages
-                                .format(
-                                        "DataTransfer.errorExporting", new Object[] { exportResource.getFullPath() }), e); //$NON-NLS-1$
+                addError(NLS.bind(DataTransferMessages.DataTransfer_errorExporting, exportResource.getFullPath()), e);
             }
 
             for (int i = 0; i < children.length; i++)
@@ -254,8 +244,7 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
                 IDEWorkbenchPlugin.IDE_WORKBENCH,
                 IStatus.OK,
                 errors,
-                DataTransferMessages
-                        .getString("FileSystemExportOperation.problemsExporting"), //$NON-NLS-1$
+                DataTransferMessages.FileSystemExportOperation_problemsExporting,
                 null);
     }
 
@@ -302,8 +291,7 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
         try {
             initialize();
         } catch (IOException e) {
-            throw new InvocationTargetException(e, DataTransferMessages.format(
-                    "ZipExport.cannotOpen", new Object[] { e.getMessage() })); //$NON-NLS-1$
+            throw new InvocationTargetException(e, NLS.bind(DataTransferMessages.ZipExport_cannotOpen, e.getMessage()));
         }
 
         try {
@@ -317,8 +305,7 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
             } catch (CoreException e) {
                 // Should not happen
             }
-            monitor.beginTask(DataTransferMessages
-                    .getString("DataTransfer.exportingTitle"), totalWork); //$NON-NLS-1$
+            monitor.beginTask(DataTransferMessages.DataTransfer_exportingTitle, totalWork);
             if (resourcesToExport == null) {
                 exportResource(resource);
             } else {
@@ -331,9 +318,7 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
             } catch (IOException e) {
                 throw new InvocationTargetException(
                         e,
-                        DataTransferMessages
-                                .format(
-                                        "ZipExport.cannotClose", new Object[] { e.getMessage() })); //$NON-NLS-1$
+                        NLS.bind(DataTransferMessages.ZipExport_cannotClose, e.getMessage()));
             }
         } finally {
             monitor.done();

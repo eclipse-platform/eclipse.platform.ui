@@ -39,6 +39,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -144,10 +145,8 @@ public class WizardProjectsImportPage extends WizardPage {
 	public WizardProjectsImportPage(String pageName) {
 		super(pageName);
 		setPageComplete(false);
-		setTitle(DataTransferMessages
-				.getString("WizardProjectsImportPage.ImportProjectsTitle")); //$NON-NLS-1$
-		setDescription(DataTransferMessages
-				.getString("WizardProjectsImportPage.ImportProjectsDescription")); //$NON-NLS-1$
+		setTitle(DataTransferMessages.WizardProjectsImportPage_ImportProjectsTitle);
+		setDescription(DataTransferMessages.WizardProjectsImportPage_ImportProjectsDescription);
 	}
 
 	/**
@@ -192,8 +191,7 @@ public class WizardProjectsImportPage extends WizardPage {
 	private void createProjectsList(Composite workArea) {
 
 		Label title = new Label(workArea, SWT.NONE);
-		title.setText(DataTransferMessages
-				.getString("WizardProjectsImportPage.ProjectsListTitle")); //$NON-NLS-1$
+		title.setText(DataTransferMessages.WizardProjectsImportPage_ProjectsListTitle);
 
 		Composite listComposite = new Composite(workArea, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -301,8 +299,7 @@ public class WizardProjectsImportPage extends WizardPage {
 				GridData.VERTICAL_ALIGN_BEGINNING));
 
 		Button selectAll = new Button(buttonsComposite, SWT.PUSH);
-		selectAll.setText(DataTransferMessages
-				.getString("DataTransfer.selectAll")); //$NON-NLS-1$
+		selectAll.setText(DataTransferMessages.DataTransfer_selectAll);
 		selectAll.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				projectsList.setCheckedElements(selectedProjects);
@@ -312,8 +309,7 @@ public class WizardProjectsImportPage extends WizardPage {
 		setButtonLayoutData(selectAll);
 
 		Button deselectAll = new Button(buttonsComposite, SWT.PUSH);
-		deselectAll.setText(DataTransferMessages
-				.getString("DataTransfer.deselectAll")); //$NON-NLS-1$
+		deselectAll.setText(DataTransferMessages.DataTransfer_deselectAll);
 		deselectAll.addSelectionListener(new SelectionAdapter() {
 			/*
 			 * (non-Javadoc)
@@ -350,8 +346,7 @@ public class WizardProjectsImportPage extends WizardPage {
 
 		// new project label
 		Label projectContentsLabel = new Label(projectGroup, SWT.NONE);
-		projectContentsLabel.setText(DataTransferMessages
-				.getString("WizardProjectsImportPage.RootSelectTitle")); //$NON-NLS-1$
+		projectContentsLabel.setText(DataTransferMessages.WizardProjectsImportPage_RootSelectTitle);
 
 		// project location entry field
 		this.locationPathField = new Text(projectGroup, SWT.BORDER);
@@ -360,8 +355,7 @@ public class WizardProjectsImportPage extends WizardPage {
 				GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
 		// browse button
 		Button browseButton = new Button(projectGroup, SWT.PUSH);
-		browseButton.setText(DataTransferMessages
-				.getString("DataTransfer.browse")); //$NON-NLS-1$
+		browseButton.setText(DataTransferMessages.DataTransfer_browse);
 		setButtonLayoutData(browseButton);
 
 		browseButton.addSelectionListener(new SelectionAdapter() {
@@ -410,10 +404,7 @@ public class WizardProjectsImportPage extends WizardPage {
 				 */
 				public void run(IProgressMonitor monitor) {
 
-					monitor
-							.beginTask(
-									DataTransferMessages
-											.getString("WizardProjectsImportPage.SearchingMessage"), 100); //$NON-NLS-1$
+					monitor.beginTask(DataTransferMessages.WizardProjectsImportPage_SearchingMessage, 100);
 					File directory = new File(path);
 					selectedProjects = new ProjectRecord[0];
 					monitor.worked(10);
@@ -426,9 +417,7 @@ public class WizardProjectsImportPage extends WizardPage {
 						selectedProjects = new ProjectRecord[files.size()];
 						int index = 0;
 						monitor.worked(50);
-						monitor
-								.subTask(DataTransferMessages
-										.getString("WizardProjectsImportPage.ProcessingMessage")); //$NON-NLS-1$
+						monitor.subTask(DataTransferMessages.WizardProjectsImportPage_ProcessingMessage);
 						while (filesIterator.hasNext()) {
 							File file = (File) filesIterator.next();
 							selectedProjects[index] = new ProjectRecord(file);
@@ -466,10 +455,7 @@ public class WizardProjectsImportPage extends WizardPage {
 		if (monitor.isCanceled())
 			return false;
 		monitor
-				.subTask(DataTransferMessages
-						.format(
-								"WizardProjectsImportPage.CheckingMessage", new Object[] { directory //$NON-NLS-1$
-										.getPath() }));
+				.subTask(NLS.bind(DataTransferMessages.WizardProjectsImportPage_CheckingMessage, directory.getPath()));
 		File[] contents = directory.listFiles();
 		//first look for project description files
 		final String dotProject = IProjectDescription.DESCRIPTION_FILE_NAME;
@@ -496,8 +482,7 @@ public class WizardProjectsImportPage extends WizardPage {
 
 		DirectoryDialog dialog = new DirectoryDialog(locationPathField
 				.getShell());
-		dialog.setMessage(DataTransferMessages
-				.getString("WizardProjectsImportPage.SelectDialogTitle")); //$NON-NLS-1$
+		dialog.setMessage(DataTransferMessages.WizardProjectsImportPage_SelectDialogTitle);
 
 		String dirName = locationPathField.getText().trim();
 		if (dirName.length() == 0)

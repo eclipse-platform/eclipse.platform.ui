@@ -24,6 +24,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
@@ -66,11 +67,9 @@ public class WizardFileSystemResourceExportPage1 extends
     private static final String STORE_CREATE_STRUCTURE_ID = "WizardFileSystemResourceExportPage1.STORE_CREATE_STRUCTURE_ID"; //$NON-NLS-1$
 
     //messages
-    private static final String SELECT_DESTINATION_MESSAGE = DataTransferMessages
-            .getString("FileExport.selectDestinationMessage"); //$NON-NLS-1$
+    private static final String SELECT_DESTINATION_MESSAGE = DataTransferMessages.FileExport_selectDestinationMessage;
 
-    private static final String SELECT_DESTINATION_TITLE = DataTransferMessages
-            .getString("FileExport.selectDestinationTitle"); //$NON-NLS-1$
+    private static final String SELECT_DESTINATION_TITLE = DataTransferMessages.FileExport_selectDestinationTitle;
 
     /**
      *	Create an instance of this class
@@ -87,9 +86,8 @@ public class WizardFileSystemResourceExportPage1 extends
      */
     public WizardFileSystemResourceExportPage1(IStructuredSelection selection) {
         this("fileSystemExportPage1", selection); //$NON-NLS-1$
-        setTitle(DataTransferMessages.getString("DataTransfer.fileSystemTitle")); //$NON-NLS-1$
-        setDescription(DataTransferMessages
-                .getString("FileExport.exportLocalFileSystem")); //$NON-NLS-1$
+        setTitle(DataTransferMessages.DataTransfer_fileSystemTitle);
+        setDescription(DataTransferMessages.FileExport_exportLocalFileSystem);
     }
 
     /**
@@ -146,8 +144,7 @@ public class WizardFileSystemResourceExportPage1 extends
         // destination browse button
         destinationBrowseButton = new Button(destinationSelectionGroup,
                 SWT.PUSH);
-        destinationBrowseButton.setText(DataTransferMessages
-                .getString("DataTransfer.browse")); //$NON-NLS-1$
+        destinationBrowseButton.setText(DataTransferMessages.DataTransfer_browse);
         destinationBrowseButton.addListener(SWT.Selection, this);
         destinationBrowseButton.setFont(font);
         setButtonLayoutData(destinationBrowseButton);
@@ -177,16 +174,14 @@ public class WizardFileSystemResourceExportPage1 extends
         // create directory structure radios
         createDirectoryStructureButton = new Button(optionsGroup, SWT.RADIO
                 | SWT.LEFT);
-        createDirectoryStructureButton.setText(DataTransferMessages
-                .getString("FileExport.createDirectoryStructure")); //$NON-NLS-1$
+        createDirectoryStructureButton.setText(DataTransferMessages.FileExport_createDirectoryStructure);
         createDirectoryStructureButton.setSelection(false);
         createDirectoryStructureButton.setFont(font);
 
         // create directory structure radios
         createSelectionOnlyButton = new Button(optionsGroup, SWT.RADIO
                 | SWT.LEFT);
-        createSelectionOnlyButton.setText(DataTransferMessages
-                .getString("FileExport.createSelectedDirectories"));//$NON-NLS-1$
+        createSelectionOnlyButton.setText(DataTransferMessages.FileExport_createSelectedDirectories);
         createSelectionOnlyButton.setSelection(true);
         createSelectionOnlyButton.setFont(font);
     }
@@ -201,8 +196,7 @@ public class WizardFileSystemResourceExportPage1 extends
         // overwrite... checkbox
         overwriteExistingFilesCheckbox = new Button(optionsGroup, SWT.CHECK
                 | SWT.LEFT);
-        overwriteExistingFilesCheckbox.setText(DataTransferMessages
-                .getString("ExportFile.overwriteExisting")); //$NON-NLS-1$
+        overwriteExistingFilesCheckbox.setText(DataTransferMessages.ExportFile_overwriteExisting);
         overwriteExistingFilesCheckbox.setFont(font);
     }
 
@@ -215,13 +209,11 @@ public class WizardFileSystemResourceExportPage1 extends
      */
     protected boolean ensureDirectoryExists(File directory) {
         if (!directory.exists()) {
-            if (!queryYesNoQuestion(DataTransferMessages
-                    .getString("DataTransfer.createTargetDirectory"))) //$NON-NLS-1$
+            if (!queryYesNoQuestion(DataTransferMessages.DataTransfer_createTargetDirectory))
                 return false;
 
             if (!directory.mkdirs()) {
-                displayErrorDialog(DataTransferMessages
-                        .getString("DataTransfer.directoryCreationError")); //$NON-NLS-1$
+                displayErrorDialog(DataTransferMessages.DataTransfer_directoryCreationError);
                 giveFocusToDestination();
                 return false;
             }
@@ -239,8 +231,7 @@ public class WizardFileSystemResourceExportPage1 extends
      */
     protected boolean ensureTargetIsValid(File targetDirectory) {
         if (targetDirectory.exists() && !targetDirectory.isDirectory()) {
-            displayErrorDialog(DataTransferMessages
-                    .getString("FileExport.directoryExists")); //$NON-NLS-1$
+            displayErrorDialog(DataTransferMessages.FileExport_directoryExists);
             giveFocusToDestination();
             return false;
         }
@@ -270,8 +261,7 @@ public class WizardFileSystemResourceExportPage1 extends
         IStatus status = op.getStatus();
         if (!status.isOK()) {
             ErrorDialog.openError(getContainer().getShell(),
-                    DataTransferMessages
-                            .getString("DataTransfer.exportProblems"), //$NON-NLS-1$
+                    DataTransferMessages.DataTransfer_exportProblems,
                     null, // no special message
                     status);
             return false;
@@ -303,8 +293,8 @@ public class WizardFileSystemResourceExportPage1 extends
                     resourcesToExport, getDestinationValue(), this));
 
         MessageDialog.openInformation(getContainer().getShell(),
-                DataTransferMessages.getString("DataTransfer.information"), //$NON-NLS-1$
-                DataTransferMessages.getString("FileExport.noneSelected")); //$NON-NLS-1$
+                DataTransferMessages.DataTransfer_information,
+                DataTransferMessages.FileExport_noneSelected);
 
         return false;
     }
@@ -315,7 +305,7 @@ public class WizardFileSystemResourceExportPage1 extends
      *	@return java.lang.String
      */
     protected String getDestinationLabel() {
-        return DataTransferMessages.getString("FileExport.toDirectory"); //$NON-NLS-1$
+        return DataTransferMessages.FileExport_toDirectory;
     }
 
     /**
@@ -443,9 +433,7 @@ public class WizardFileSystemResourceExportPage1 extends
         if (conflictingContainer == null)
             setErrorMessage(null);
         else {
-            setErrorMessage(DataTransferMessages.format(
-                    "FileExport.conflictingContainer", //$NON-NLS-1$
-                    new Object[] { conflictingContainer }));
+            setErrorMessage(NLS.bind(DataTransferMessages.FileExport_conflictingContainer, conflictingContainer));
             giveFocusToDestination();
             return false;
         }
@@ -457,7 +445,7 @@ public class WizardFileSystemResourceExportPage1 extends
      * Get the message used to denote an empty destination.
      */
     protected String destinationEmptyMessage() {
-        return DataTransferMessages.getString("FileExport.destinationEmpty"); //$NON-NLS-1$
+        return DataTransferMessages.FileExport_destinationEmpty;
     }
 
     /**
@@ -473,7 +461,7 @@ public class WizardFileSystemResourceExportPage1 extends
         IPath testPath = new Path(targetDirectory);
 
         if (root.getLocation().isPrefixOf(testPath))
-            return DataTransferMessages.getString("FileExport.rootName"); //$NON-NLS-1$
+            return DataTransferMessages.FileExport_rootName;
 
         IProject[] projects = root.getProjects();
 

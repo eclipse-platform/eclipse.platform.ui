@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -350,8 +351,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
         try {
             if (selectedFiles == null) {
                 //Set the amount to 1000 as we have no idea of how long this will take
-                monitor.beginTask(DataTransferMessages
-                        .getString("DataTransfer.importTask"), 1000); //$NON-NLS-1$
+                monitor.beginTask(DataTransferMessages.DataTransfer_importTask, 1000);
                 ContainerGenerator generator = new ContainerGenerator(
                         destinationPath);
                 monitor.worked(30);
@@ -365,10 +365,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
             } else {
                 // Choose twice the selected files size to take folders into account
                 int creationCount = selectedFiles.size();
-                monitor
-                        .beginTask(
-                                DataTransferMessages
-                                        .getString("DataTransfer.importTask"), creationCount + 100); //$NON-NLS-1$
+                monitor.beginTask(DataTransferMessages.DataTransfer_importTask, creationCount + 100);
                 ContainerGenerator generator = new ContainerGenerator(
                         destinationPath);
                 monitor.worked(30);
@@ -478,8 +475,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
         IStatus[] errors = new IStatus[errorTable.size()];
         errorTable.toArray(errors);
         return new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK, errors,
-                DataTransferMessages
-                        .getString("ImportOperation.importProblems"), //$NON-NLS-1$
+                DataTransferMessages.ImportOperation_importProblems,
                 null);
     }
 
@@ -497,9 +493,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
             containerResource = getDestinationContainerFor(fileObject);
         } catch (CoreException e) {
             IStatus coreStatus = e.getStatus();
-            String newMessage = DataTransferMessages
-                    .format(
-                            "ImportOperation.coreImportError", new Object[] { fileObject, coreStatus.getMessage() }); //$NON-NLS-1$
+            String newMessage = NLS.bind(DataTransferMessages.ImportOperation_coreImportError, fileObject, coreStatus.getMessage());
             IStatus status = new Status(coreStatus.getSeverity(), coreStatus
                     .getPlugin(), coreStatus.getCode(), newMessage, null);
             errorTable.add(status);
@@ -521,9 +515,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
         if (targetPath != null
                 && (targetPath.toFile().equals(new File(fileObjectPath)))) {
             errorTable.add(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0,
-                    DataTransferMessages.format(
-                            "ImportOperation.targetSameAsSourceError", //$NON-NLS-1$
-                            new Object[] { fileObjectPath }), null));
+                    NLS.bind(DataTransferMessages.ImportOperation_targetSameAsSourceError, fileObjectPath), null));
             return;
         }
 
@@ -534,9 +526,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
                             IStatus.ERROR,
                             PlatformUI.PLUGIN_ID,
                             0,
-                            DataTransferMessages
-                                    .format(
-                                            "ImportOperation.openStreamError", new Object[] { fileObjectPath }), //$NON-NLS-1$
+                            NLS.bind(DataTransferMessages.ImportOperation_openStreamError, fileObjectPath),
                             null));
             return;
         }
@@ -566,9 +556,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
                                 IStatus.ERROR,
                                 PlatformUI.PLUGIN_ID,
                                 0,
-                                DataTransferMessages
-                                        .format(
-                                                "ImportOperation.closeStreamError", new Object[] { fileObjectPath }), //$NON-NLS-1$
+                                NLS.bind(DataTransferMessages.ImportOperation_closeStreamError, fileObjectPath),
                                 e));
             }
         }
@@ -596,8 +584,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
                     // file systems root. Roots can't copied (at least not
                     // under windows).
                     errorTable.add(new Status(IStatus.INFO,
-                            PlatformUI.PLUGIN_ID, 0, DataTransferMessages
-                                    .getString("ImportOperation.cannotCopy"), //$NON-NLS-1$
+                            PlatformUI.PLUGIN_ID, 0, DataTransferMessages.ImportOperation_cannotCopy,
                             null));
                     continue;
                 }
@@ -697,8 +684,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
                 .makeRelative().toString());
 
         if (overwriteAnswer.equals(IOverwriteQuery.CANCEL))
-            throw new OperationCanceledException(DataTransferMessages
-                    .getString("DataTransfer.emptyString")); //$NON-NLS-1$
+            throw new OperationCanceledException(DataTransferMessages.DataTransfer_emptyString);
 
         if (overwriteAnswer.equals(IOverwriteQuery.NO)) {
             return false;

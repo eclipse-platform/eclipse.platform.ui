@@ -95,23 +95,17 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 
     private final static String STORE_CREATE_CONTAINER_STRUCTURE_ID = "WizardFileSystemResourceImportPage1.STORE_CREATE_CONTAINER_STRUCTURE_ID";//$NON-NLS-1$
 
-    private static final String SELECT_TYPES_TITLE = DataTransferMessages
-            .getString("DataTransfer.selectTypes"); //$NON-NLS-1$
+    private static final String SELECT_TYPES_TITLE = DataTransferMessages.DataTransfer_selectTypes;
 
-    private static final String SELECT_ALL_TITLE = DataTransferMessages
-            .getString("DataTransfer.selectAll"); //$NON-NLS-1$
+    private static final String SELECT_ALL_TITLE = DataTransferMessages.DataTransfer_selectAll;
 
-    private static final String DESELECT_ALL_TITLE = DataTransferMessages
-            .getString("DataTransfer.deselectAll"); //$NON-NLS-1$
+    private static final String DESELECT_ALL_TITLE = DataTransferMessages.DataTransfer_deselectAll;
 
-    private static final String SELECT_SOURCE_TITLE = DataTransferMessages
-            .getString("FileImport.selectSourceTitle"); //$NON-NLS-1$
+    private static final String SELECT_SOURCE_TITLE = DataTransferMessages.FileImport_selectSourceTitle;
 
-    private static final String SELECT_SOURCE_MESSAGE = DataTransferMessages
-            .getString("FileImport.selectSource"); //$NON-NLS-1$
+    private static final String SELECT_SOURCE_MESSAGE = DataTransferMessages.FileImport_selectSource;
 
-    protected static final String SOURCE_EMPTY_MESSAGE = DataTransferMessages
-            .getString("FileImport.sourceEmpty"); //$NON-NLS-1$
+    protected static final String SOURCE_EMPTY_MESSAGE = DataTransferMessages.FileImport_sourceEmpty;
 
     /**
      *	Creates an instance of this class
@@ -130,9 +124,8 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
     public WizardFileSystemResourceImportPage1(IWorkbench aWorkbench,
             IStructuredSelection selection) {
         this("fileSystemImportPage1", aWorkbench, selection);//$NON-NLS-1$
-        setTitle(DataTransferMessages.getString("DataTransfer.fileSystemTitle")); //$NON-NLS-1$
-        setDescription(DataTransferMessages
-                .getString("FileImport.importFileSystem")); //$NON-NLS-1$
+        setTitle(DataTransferMessages.DataTransfer_fileSystemTitle);
+        setDescription(DataTransferMessages.FileImport_importFileSystem);
     }
 
     /**
@@ -253,21 +246,18 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         // overwrite... checkbox
         overwriteExistingResourcesCheckbox = new Button(optionsGroup, SWT.CHECK);
         overwriteExistingResourcesCheckbox.setFont(optionsGroup.getFont());
-        overwriteExistingResourcesCheckbox.setText(DataTransferMessages
-                .getString("FileImport.overwriteExisting")); //$NON-NLS-1$
+        overwriteExistingResourcesCheckbox.setText(DataTransferMessages.FileImport_overwriteExisting);
 
         // create containers radio
         createContainerStructureButton = new Button(optionsGroup, SWT.RADIO);
         createContainerStructureButton.setFont(optionsGroup.getFont());
-        createContainerStructureButton.setText(DataTransferMessages
-                .getString("FileImport.createComplete")); //$NON-NLS-1$
+        createContainerStructureButton.setText(DataTransferMessages.FileImport_createComplete);
         createContainerStructureButton.setSelection(false);
 
         // create selection only radio
         createOnlySelectedButton = new Button(optionsGroup, SWT.RADIO);
         createOnlySelectedButton.setFont(optionsGroup.getFont());
-        createOnlySelectedButton.setText(DataTransferMessages
-                .getString("FileImport.createSelectedFolders")); //$NON-NLS-1$
+        createOnlySelectedButton.setText(DataTransferMessages.FileImport_createSelectedFolders);
         createOnlySelectedButton.setSelection(true);
 
     }
@@ -341,8 +331,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 
         // source browse button
         sourceBrowseButton = new Button(sourceContainerGroup, SWT.PUSH);
-        sourceBrowseButton.setText(DataTransferMessages
-                .getString("DataTransfer.browse")); //$NON-NLS-1$
+        sourceBrowseButton.setText(DataTransferMessages.DataTransfer_browse);
         sourceBrowseButton.addListener(SWT.Selection, this);
         sourceBrowseButton.setLayoutData(new GridData(
                 GridData.HORIZONTAL_ALIGN_FILL));
@@ -413,8 +402,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         if (new File(getSourceDirectoryName()).isDirectory())
             return true;
 
-        displayErrorDialog(DataTransferMessages
-                .getString("FileImport.invalidSource")); //$NON-NLS-1$
+        displayErrorDialog(DataTransferMessages.FileImport_invalidSource);
         sourceNameField.setFocus();
         return false;
     }
@@ -437,8 +425,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         IStatus status = op.getStatus();
         if (!status.isOK()) {
             ErrorDialog
-                    .openError(getContainer().getShell(), DataTransferMessages
-                            .getString("FileImport.importProblems"), //$NON-NLS-1$
+                    .openError(getContainer().getShell(), DataTransferMessages.FileImport_importProblems,
                             null, // no special message
                             status);
             return false;
@@ -471,8 +458,8 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
             return importResources(fileSystemObjects);
 
         MessageDialog.openInformation(getContainer().getShell(),
-                DataTransferMessages.getString("DataTransfer.information"), //$NON-NLS-1$
-                DataTransferMessages.getString("FileImport.noneSelected")); //$NON-NLS-1$
+                DataTransferMessages.DataTransfer_information,
+                DataTransferMessages.FileImport_noneSelected);
 
         return false;
     }
@@ -592,7 +579,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
      *	Answer the string to display as the label for the source specification field
      */
     protected String getSourceLabel() {
-        return DataTransferMessages.getString("FileImport.fromDirectory"); //$NON-NLS-1$
+        return DataTransferMessages.FileImport_fromDirectory;
     }
 
     /**
@@ -864,8 +851,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
                     throws InterruptedException {
                 monitor
                         .beginTask(
-                                DataTransferMessages
-                                        .getString("ImportPage.filterSelections"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+                                DataTransferMessages.ImportPage_filterSelections, IProgressMonitor.UNKNOWN);
                 getSelectedResources(filter, monitor);
             }
         };

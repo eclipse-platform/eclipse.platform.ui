@@ -104,7 +104,7 @@ public class ZipFileExportWizard extends Wizard implements IExportWizard {
             this.selection = new StructuredSelection(selectedResources);
         }
 
-        setWindowTitle(DataTransferMessages.getString("DataTransfer.export")); //$NON-NLS-1$
+        setWindowTitle(DataTransferMessages.DataTransfer_export);
         setDefaultPageImageDescriptor(getImageDescriptor("wizban/exportzip_wiz.gif"));//$NON-NLS-1$
         setNeedsProgressMonitor(true);
     }

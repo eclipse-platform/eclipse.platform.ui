@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -103,10 +104,8 @@ public class WizardExternalProjectImportPage extends WizardPage {
     public WizardExternalProjectImportPage() {
         super("wizardExternalProjectPage"); //$NON-NLS-1$
         setPageComplete(false);
-        setTitle(DataTransferMessages
-                .getString("WizardExternalProjectImportPage.title")); //$NON-NLS-1$
-        setDescription(DataTransferMessages
-                .getString("WizardExternalProjectImportPage.description")); //$NON-NLS-1$
+        setTitle(DataTransferMessages.WizardExternalProjectImportPage_title);
+        setDescription(DataTransferMessages.WizardExternalProjectImportPage_description);
 
     }
 
@@ -152,9 +151,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
 
         // new project label
         Label projectContentsLabel = new Label(projectGroup, SWT.NONE);
-        projectContentsLabel
-                .setText(DataTransferMessages
-                        .getString("WizardExternalProjectImportPage.projectContentsLabel")); //$NON-NLS-1$
+        projectContentsLabel.setText(DataTransferMessages.WizardExternalProjectImportPage_projectContentsLabel);
         projectContentsLabel.setFont(parent.getFont());
 
         createUserSpecifiedProjectLocationGroup(projectGroup);
@@ -179,8 +176,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
 
         // new project label
         Label projectLabel = new Label(projectGroup, SWT.NONE);
-        projectLabel.setText(DataTransferMessages
-                .getString("WizardExternalProjectImportPage.nameLabel")); //$NON-NLS-1$
+        projectLabel.setText(DataTransferMessages.WizardExternalProjectImportPage_nameLabel);
         projectLabel.setFont(dialogFont);
 
         // new project name entry field
@@ -211,8 +207,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
 
         // browse button
         this.browseButton = new Button(projectGroup, SWT.PUSH);
-        this.browseButton.setText(DataTransferMessages
-                .getString("WizardExternalProjectImportPage.browseLabel")); //$NON-NLS-1$
+        this.browseButton.setText(DataTransferMessages.DataTransfer_browse);
         this.browseButton.setFont(dialogFont);
         setButtonLayoutData(this.browseButton);
 
@@ -291,8 +286,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
     private void handleLocationBrowseButtonPressed() {
         DirectoryDialog dialog = new DirectoryDialog(locationPathField
                 .getShell());
-        dialog.setMessage(DataTransferMessages
-                .getString("WizardExternalProjectImportPage.directoryLabel")); //$NON-NLS-1$
+        dialog.setMessage(DataTransferMessages.WizardExternalProjectImportPage_directoryLabel);
 
         String dirName = getProjectLocationFieldValue();
         if (dirName.length() == 0)
@@ -328,30 +322,25 @@ public class WizardExternalProjectImportPage extends WizardPage {
 
         if (locationFieldContents.equals("")) { //$NON-NLS-1$
             setErrorMessage(null);
-            setMessage(DataTransferMessages
-                    .getString("WizardExternalProjectImportPage.projectLocationEmpty")); //$NON-NLS-1$
+            setMessage(DataTransferMessages.WizardExternalProjectImportPage_projectLocationEmpty);
             return false;
         }
 
         IPath path = new Path(""); //$NON-NLS-1$
         if (!path.isValidPath(locationFieldContents)) {
-            setErrorMessage(DataTransferMessages
-                    .getString("WizardExternalProjectImportPage.locationError")); //$NON-NLS-1$
+            setErrorMessage(DataTransferMessages.WizardExternalProjectImportPage_locationError);
             return false;
         }
 
         File projectFile = projectFile(locationFieldContents);
         if (projectFile == null) {
-            setErrorMessage(DataTransferMessages.format(
-                    "WizardExternalProjectImportPage.notAProject", //$NON-NLS-1$
-                    new String[] { locationFieldContents }));
+            setErrorMessage(NLS.bind(DataTransferMessages.WizardExternalProjectImportPage_notAProject, locationFieldContents));
             return false;
         }
         setProjectName(projectFile);
 
         if (getProjectHandle().exists()) {
-            setErrorMessage(DataTransferMessages
-                    .getString("WizardExternalProjectImportPage.projectExistsMessage")); //$NON-NLS-1$
+            setErrorMessage(DataTransferMessages.WizardExternalProjectImportPage_projectExistsMessage);
             return false;
         }
 
@@ -473,17 +462,14 @@ public class WizardExternalProjectImportPage extends WizardPage {
                     MessageDialog
                             .openError(
                                     getShell(),
-                                    DataTransferMessages
-                                            .getString("WizardExternalProjectImportPage.errorMessage"), //$NON-NLS-1$
-                                    DataTransferMessages
-                                            .getString("WizardExternalProjectImportPage.caseVariantExistsError") //$NON-NLS-1$,
+                                    DataTransferMessages.WizardExternalProjectImportPage_errorMessage,
+                                    DataTransferMessages.WizardExternalProjectImportPage_caseVariantExistsError
                             );
                 } else {
                     ErrorDialog
                             .openError(
                                     getShell(),
-                                    DataTransferMessages
-                                            .getString("WizardExternalProjectImportPage.errorMessage"), //$NON-NLS-1$
+                                    DataTransferMessages.WizardExternalProjectImportPage_errorMessage,
                                     null, ((CoreException) t).getStatus());
                 }
             }

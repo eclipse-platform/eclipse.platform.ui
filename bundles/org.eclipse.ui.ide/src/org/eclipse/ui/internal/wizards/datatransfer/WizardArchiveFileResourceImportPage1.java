@@ -19,6 +19,7 @@ import java.util.zip.ZipFile;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -67,8 +68,8 @@ public class WizardArchiveFileResourceImportPage1 extends
     public WizardArchiveFileResourceImportPage1(IWorkbench aWorkbench,
             IStructuredSelection selection) {
         super("zipFileImportPage1", aWorkbench, selection); //$NON-NLS-1$
-        setTitle(DataTransferMessages.getString("ArchiveExport.exportTitle")); //$NON-NLS-1$
-        setDescription(DataTransferMessages.getString("ArchiveImport.description")); //$NON-NLS-1$
+        setTitle(DataTransferMessages.ArchiveExport_exportTitle);
+        setDescription(DataTransferMessages.ArchiveImport_description);
     }
 
     /**
@@ -101,8 +102,7 @@ public class WizardArchiveFileResourceImportPage1 extends
         try {
             file.close();
         } catch (IOException e) {
-            displayErrorDialog(DataTransferMessages.format(
-                    "ZipImport.couldNotClose", new Object[] { file.getName() })); //$NON-NLS-1$
+            displayErrorDialog(NLS.bind(DataTransferMessages.ZipImport_couldNotClose, file.getName()));
             return false;
         }
 
@@ -128,8 +128,7 @@ public class WizardArchiveFileResourceImportPage1 extends
 
         // overwrite... checkbox
         overwriteExistingResourcesCheckbox = new Button(parent, SWT.CHECK);
-        overwriteExistingResourcesCheckbox.setText(DataTransferMessages
-                .getString("FileImport.overwriteExisting")); //$NON-NLS-1$
+        overwriteExistingResourcesCheckbox.setText(DataTransferMessages.FileImport_overwriteExisting);
         overwriteExistingResourcesCheckbox.setFont(parent.getFont());
     }
 
@@ -309,7 +308,7 @@ public class WizardArchiveFileResourceImportPage1 extends
      *	Answer the string to display as the label for the source specification field
      */
     protected String getSourceLabel() {
-        return DataTransferMessages.getString("ArchiveImport.fromFile"); //$NON-NLS-1$
+        return DataTransferMessages.ArchiveImport_fromFile;
     }
 
     /**
@@ -331,11 +330,9 @@ public class WizardArchiveFileResourceImportPage1 extends
         try {
             return new ZipFile(fileName);
         } catch (ZipException e) {
-            displayErrorDialog(DataTransferMessages
-                    .getString("ZipImport.badFormat")); //$NON-NLS-1$
+            displayErrorDialog(DataTransferMessages.ZipImport_badFormat);
         } catch (IOException e) {
-            displayErrorDialog(DataTransferMessages
-                    .getString("ZipImport.couldNotRead")); //$NON-NLS-1$
+            displayErrorDialog(DataTransferMessages.ZipImport_couldNotRead);
         }
 
         sourceNameField.setFocus();
@@ -361,11 +358,9 @@ public class WizardArchiveFileResourceImportPage1 extends
         try {
             return new TarFile(fileName);
         } catch (TarException e) {
-        	displayErrorDialog(DataTransferMessages
-        			.getString("TarImport.badFormat")); //$NON-NLS-1$
+        	displayErrorDialog(DataTransferMessages.TarImport_badFormat);
         } catch (IOException e) {
-            displayErrorDialog(DataTransferMessages
-                    .getString("ZipImport.couldNotRead")); //$NON-NLS-1$
+            displayErrorDialog(DataTransferMessages.ZipImport_couldNotRead);
         }
 
         sourceNameField.setFocus();
@@ -471,7 +466,7 @@ public class WizardArchiveFileResourceImportPage1 extends
     protected String queryZipFileToImport() {
         FileDialog dialog = new FileDialog(sourceNameField.getShell(), SWT.OPEN);
         dialog.setFilterExtensions(FILE_IMPORT_MASK);
-        dialog.setText(DataTransferMessages.getString("ArchiveImportSource.title")); //$NON-NLS-1$
+        dialog.setText(DataTransferMessages.ArchiveImportSource_title);
 
         String currentSourceString = sourceNameField.getText();
         int lastSeparatorIndex = currentSourceString

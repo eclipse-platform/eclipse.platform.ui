@@ -63,10 +63,7 @@ public class PopulateElementOperation extends PopulateRootOperation {
     public void run(IProgressMonitor monitor) throws InterruptedException {
         try {
             this.monitor = monitor;
-            monitor
-                    .beginTask(
-                            DataTransferMessages
-                                    .getString("DataTransfer.scanningChildren"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+            monitor.beginTask(DataTransferMessages.DataTransfer_scanningChildren, IProgressMonitor.UNKNOWN);
             MinimizedFileSystemElement element = (MinimizedFileSystemElement) root;
             populateElement(element, monitor);
 

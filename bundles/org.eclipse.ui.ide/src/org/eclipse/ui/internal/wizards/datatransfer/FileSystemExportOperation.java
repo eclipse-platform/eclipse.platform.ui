@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 
@@ -234,9 +235,7 @@ public class FileSystemExportOperation implements IRunnableWithProgress {
         if (targetFile.exists()) {
             if (!targetFile.canWrite()) {
                 errorTable.add(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID,
-                        0, DataTransferMessages.format(
-                                "DataTransfer.cannotOverwrite", //$NON-NLS-1$
-                                new Object[] { targetFile.getAbsolutePath() }),
+                        0, NLS.bind(DataTransferMessages.DataTransfer_cannotOverwrite, targetFile.getAbsolutePath()),
                         null));
                 monitor.worked(1);
                 return;
@@ -272,12 +271,10 @@ public class FileSystemExportOperation implements IRunnableWithProgress {
             exporter.write(file, fullPath);
         } catch (IOException e) {
             errorTable.add(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0,
-                    DataTransferMessages.format("DataTransfer.errorExporting", //$NON-NLS-1$
-                            new Object[] { fullPath, e.getMessage() }), e));
+                    NLS.bind(DataTransferMessages.DataTransfer_errorExporting, fullPath, e.getMessage()), e));
         } catch (CoreException e) {
             errorTable.add(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0,
-                    DataTransferMessages.format("DataTransfer.errorExporting", //$NON-NLS-1$
-                            new Object[] { fullPath, e.getMessage() }), e));
+                    NLS.bind(DataTransferMessages.DataTransfer_errorExporting, fullPath, e.getMessage()), e));
         }
 
         monitor.worked(1);
@@ -355,8 +352,7 @@ public class FileSystemExportOperation implements IRunnableWithProgress {
                 PlatformUI.PLUGIN_ID,
                 IStatus.OK,
                 errors,
-                DataTransferMessages
-                        .getString("FileSystemExportOperation.problemsExporting"), //$NON-NLS-1$
+                DataTransferMessages.FileSystemExportOperation_problemsExporting,
                 null);
     }
 
@@ -410,8 +406,7 @@ public class FileSystemExportOperation implements IRunnableWithProgress {
                 // Should not happen
                 errorTable.add(e.getStatus());
             }
-            monitor.beginTask(DataTransferMessages
-                    .getString("DataTransfer.exportingTitle"), totalWork); //$NON-NLS-1$
+            monitor.beginTask(DataTransferMessages.DataTransfer_exportingTitle, totalWork);
             if (resourcesToExport == null) {
                 exportAllResources();
             } else {

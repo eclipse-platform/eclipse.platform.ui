@@ -66,8 +66,8 @@ public class WizardArchiveFileResourceExportPage1 extends
      */
     public WizardArchiveFileResourceExportPage1(IStructuredSelection selection) {
         this("zipFileExportPage1", selection); //$NON-NLS-1$
-        setTitle(DataTransferMessages.getString("ArchiveExport.exportTitle")); //$NON-NLS-1$
-        setDescription(DataTransferMessages.getString("ArchiveExport.description")); //$NON-NLS-1$
+        setTitle(DataTransferMessages.ArchiveExport_exportTitle);
+        setDescription(DataTransferMessages.ArchiveExport_description);
     }
 
     /** (non-Javadoc)
@@ -96,8 +96,7 @@ public class WizardArchiveFileResourceExportPage1 extends
         // compress... checkbox
         compressContentsCheckbox = new Button(left, SWT.CHECK
                 | SWT.LEFT);
-        compressContentsCheckbox.setText(DataTransferMessages
-                .getString("ZipExport.compressContents")); //$NON-NLS-1$
+        compressContentsCheckbox.setText(DataTransferMessages.ZipExport_compressContents);
         compressContentsCheckbox.setFont(font);
 
         Composite right = new Composite(optionsGroup, SWT.NONE);
@@ -121,15 +120,13 @@ public class WizardArchiveFileResourceExportPage1 extends
     protected void createFileFormatOptions(Composite optionsGroup, Font font) {
         // create directory structure radios
         zipFormatButton = new Button(optionsGroup, SWT.RADIO | SWT.LEFT);
-        zipFormatButton.setText(DataTransferMessages
-                .getString("ArchiveExport.saveInZipFormat")); //$NON-NLS-1$
+        zipFormatButton.setText(DataTransferMessages.ArchiveExport_saveInZipFormat);
         zipFormatButton.setSelection(true);
         zipFormatButton.setFont(font);
 
         // create directory structure radios
         targzFormatButton = new Button(optionsGroup, SWT.RADIO | SWT.LEFT);
-        targzFormatButton.setText(DataTransferMessages
-                .getString("ArchiveExport.saveInTarFormat")); //$NON-NLS-1$
+        targzFormatButton.setText(DataTransferMessages.ArchiveExport_saveInTarFormat);
         targzFormatButton.setSelection(false);
         targzFormatButton.setFont(font);
     }    
@@ -154,20 +151,17 @@ public class WizardArchiveFileResourceExportPage1 extends
      */
     protected boolean ensureTargetFileIsValid(File targetFile) {
         if (targetFile.exists() && targetFile.isDirectory()) {
-            displayErrorDialog(DataTransferMessages
-                    .getString("ZipExport.mustBeFile")); //$NON-NLS-1$
+            displayErrorDialog(DataTransferMessages.ZipExport_mustBeFile);
             giveFocusToDestination();
             return false;
         }
 
         if (targetFile.exists()) {
             if (targetFile.canWrite()) {
-                if (!queryYesNoQuestion(DataTransferMessages
-                        .getString("ZipExport.alreadyExists"))) //$NON-NLS-1$
+                if (!queryYesNoQuestion(DataTransferMessages.ZipExport_alreadyExists))
                     return false;
             } else {
-                displayErrorDialog(DataTransferMessages
-                        .getString("ZipExport.alreadyExistsError")); //$NON-NLS-1$
+                displayErrorDialog(DataTransferMessages.ZipExport_alreadyExistsError);
                 giveFocusToDestination();
                 return false;
             }
@@ -214,8 +208,7 @@ public class WizardArchiveFileResourceExportPage1 extends
         IStatus status = op.getStatus();
         if (!status.isOK()) {
             ErrorDialog.openError(getContainer().getShell(),
-                    DataTransferMessages
-                            .getString("DataTransfer.exportProblems"), //$NON-NLS-1$
+                    DataTransferMessages.DataTransfer_exportProblems,
                     null, // no special message
                     status);
             return false;
@@ -247,8 +240,8 @@ public class WizardArchiveFileResourceExportPage1 extends
         }
 
         MessageDialog.openInformation(getContainer().getShell(),
-                DataTransferMessages.getString("DataTransfer.information"), //$NON-NLS-1$
-                DataTransferMessages.getString("FileExport.noneSelected")); //$NON-NLS-1$
+                DataTransferMessages.DataTransfer_information,
+                DataTransferMessages.FileExport_noneSelected);
 
         return false;
     }
@@ -257,7 +250,7 @@ public class WizardArchiveFileResourceExportPage1 extends
      *	Answer the string to display in the receiver as the destination type
      */
     protected String getDestinationLabel() {
-        return DataTransferMessages.getString("ArchiveExport.destinationLabel"); //$NON-NLS-1$
+        return DataTransferMessages.ArchiveExport_destinationLabel;
     }
 
     /**
@@ -312,8 +305,7 @@ public class WizardArchiveFileResourceExportPage1 extends
     protected void handleDestinationBrowseButtonPressed() {
         FileDialog dialog = new FileDialog(getContainer().getShell(), SWT.SAVE);
         dialog.setFilterExtensions(new String[] { "*.zip;*.tar.gz;*.tar;*.tgz", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
-        dialog.setText(DataTransferMessages
-                .getString("ArchiveExport.selectDestinationTitle")); //$NON-NLS-1$
+        dialog.setText(DataTransferMessages.ArchiveExport_selectDestinationTitle);
         String currentSourceString = getDestinationValue();
         int lastSeparatorIndex = currentSourceString
                 .lastIndexOf(File.separator);
@@ -384,7 +376,7 @@ public class WizardArchiveFileResourceExportPage1 extends
      * @see org.eclipse.ui.wizards.datatransfer.WizardFileSystemResourceExportPage1#destinationEmptyMessage()
      */
     protected String destinationEmptyMessage() {
-        return DataTransferMessages.getString("ArchiveExport.destinationEmpty"); //$NON-NLS-1$
+        return DataTransferMessages.ArchiveExport_destinationEmpty;
     }
     
     /**

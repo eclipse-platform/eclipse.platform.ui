@@ -124,7 +124,7 @@ public class FileSystemExportWizard extends Wizard implements IExportWizard {
             }
         }
 
-        setWindowTitle(DataTransferMessages.getString("DataTransfer.export")); //$NON-NLS-1$
+        setWindowTitle(DataTransferMessages.DataTransfer_export); //$NON-NLS-1$
         setDefaultPageImageDescriptor(getImageDescriptor("wizban/exportdir_wiz.gif"));//$NON-NLS-1$
         setNeedsProgressMonitor(true);
     }
