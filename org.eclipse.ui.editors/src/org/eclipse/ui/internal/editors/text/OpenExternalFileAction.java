@@ -38,6 +38,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.part.FileEditorInput;
 
 /**
@@ -128,7 +129,7 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 		IEditorDescriptor descriptor= editorRegistry.getDefaultEditor(file.getName());
 		if (descriptor != null)
 			return descriptor.getId();
-		return "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
+		return EditorsUI.DEFAULT_TEXT_EDITOR_ID;
 	}
 
 	private IEditorInput createEditorInput(File file) {

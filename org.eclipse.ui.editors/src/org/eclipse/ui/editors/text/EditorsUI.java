@@ -32,6 +32,14 @@ public final class EditorsUI {
 	 * TextEditor Plug-in ID (value <code>{@value}</code>).
 	 */
 	public static final String PLUGIN_ID= "org.eclipse.ui.editors"; //$NON-NLS-1$
+	
+	/**
+	 * The ID of the default text editor.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String DEFAULT_TEXT_EDITOR_ID = "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
+
 
 	/**
 	 * Returns the annotation type lookup of this plug-in.
