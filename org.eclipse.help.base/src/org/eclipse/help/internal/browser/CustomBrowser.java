@@ -138,11 +138,9 @@ public class CustomBrowser implements IBrowser {
 		boolean substituted = false;
 		for (int i = 0; i < tokenList.size(); i++) {
 			String token = (String) tokenList.get(i);
-			if ("%1".equals(token)) { //$NON-NLS-1$
-				tokenList.set(i, url);
-				substituted = true;
-			} else if ("\"%1\"".equals(token)) { //$NON-NLS-1$
-				tokenList.set(i, "\"" + url + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			String newToken = doSubstitutions(token, url);
+			if (newToken != null) {
+				tokenList.set(i, newToken);
 				substituted = true;
 			}
 		}
@@ -153,5 +151,33 @@ public class CustomBrowser implements IBrowser {
 		String[] command = new String[tokenList.size()];
 		tokenList.toArray(command);
 		return command;
+	}
+	
+	/**
+	 * Replaces any occurrences of <code>"%1"</code> or <code>%1</code> with
+	 * the URL.
+	 * 
+	 * @param token
+	 *            The token in which the substitutions should be made; must not
+	 *            be <code>null</code>.
+	 * @return The substituted string, if a substitution is made;
+	 *         <code>null</code> if no substitution is made.
+	 */
+	private String doSubstitutions(String token, String url) {
+		boolean substituted = false;
+		StringBuffer newToken = new StringBuffer(token);
+		String substitutionMarker = "%1";
+		int index = newToken.indexOf(substitutionMarker);
+		while (index != -1) {
+			newToken.replace(index, index + substitutionMarker.length(), url);
+			index = newToken.indexOf(substitutionMarker, index + url.length());
+			substituted = true;
+		}
+
+		if (substituted) {
+			return newToken.toString();
+		}
+
+		return null;
 	}
 }
