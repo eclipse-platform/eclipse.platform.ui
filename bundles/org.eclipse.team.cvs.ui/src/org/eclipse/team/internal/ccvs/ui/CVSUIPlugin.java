@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
+import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.console.CVSOutputConsole;
 import org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
@@ -593,6 +594,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		store.setDefault(ICVSUIConstants.PREF_CVS_RSH, CVSProviderPlugin.DEFAULT_CVS_RSH);
 		store.setDefault(ICVSUIConstants.PREF_CVS_RSH_PARAMETERS, CVSProviderPlugin.DEFAULT_CVS_RSH_PARAMETERS);
 		store.setDefault(ICVSUIConstants.PREF_CVS_SERVER, CVSProviderPlugin.DEFAULT_CVS_SERVER);
+		store.setDefault(ICVSUIConstants.PREF_EXT_CONNECTION_METHOD_PROXY, "ext"); //$NON-NLS-1$
 		store.setDefault(ICVSUIConstants.PREF_PROMPT_ON_CHANGE_GRANULARITY, true);
 		store.setDefault(ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION, true);
 		store.setDefault(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG, CVSProviderPlugin.DEFAULT_CONFIRM_MOVE_TAG);
@@ -634,6 +636,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		CVSProviderPlugin.getPlugin().setCvsRshCommand(store.getString(ICVSUIConstants.PREF_CVS_RSH));
 		CVSProviderPlugin.getPlugin().setCvsRshParameters(store.getString(ICVSUIConstants.PREF_CVS_RSH_PARAMETERS));
 		CVSProviderPlugin.getPlugin().setCvsServer(store.getString(ICVSUIConstants.PREF_CVS_SERVER));
+		CVSRepositoryLocation.setExtConnectionMethodProxy(store.getString(ICVSUIConstants.PREF_EXT_CONNECTION_METHOD_PROXY));
 		CVSProviderPlugin.getPlugin().setQuietness(CVSPreferencesPage.getQuietnessOptionFor(store.getInt(ICVSUIConstants.PREF_QUIETNESS)));
 		CVSProviderPlugin.getPlugin().setCompressionLevel(store.getInt(ICVSUIConstants.PREF_COMPRESSION_LEVEL));
 		CVSProviderPlugin.getPlugin().setReplaceUnmanaged(store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));

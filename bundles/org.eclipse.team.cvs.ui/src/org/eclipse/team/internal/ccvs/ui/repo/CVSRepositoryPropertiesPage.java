@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -33,6 +34,7 @@ import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.wizards.ConfigurationWizardMainPage;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialogWithProjects;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.PropertyPage;
@@ -45,9 +47,16 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 	Text userText;
 	Text passwordText;
 	Combo methodType;
-	Label hostLabel;
-	Label pathLabel;
-	Label portLabel;
+	Text hostText;
+	Text pathText;
+	// Port
+	private Text portText;
+	private Button useDefaultPort;
+	private Button useCustomPort;
+	
+	// Caching password
+	private Button allowCachingButton;
+	private boolean allowCaching = false;
 	
 	boolean passwordChanged;
 	boolean connectionInfoChanged;
@@ -58,11 +67,6 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 	private Button useLocationAsLabel;
 	private Button useCustomLabel;
 	private Text labelText;
-	// Read/write access
-	private Button useDefaultReadWriteLocations;
-	private Button useCustomReadWriteLocations;
-	private Combo readLocation;
-	private Combo writeLocation;
 			
 	/*
 	 * @see PreferencesPage#createContents
@@ -111,83 +115,84 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		passwordText = createPasswordField(composite);
 			
 		createLabel(composite, Policy.bind("CVSPropertiesPage.host"), 1); //$NON-NLS-1$
-		hostLabel = createLabel(composite, "", 2); //$NON-NLS-1$
-		
-		createLabel(composite, Policy.bind("CVSPropertiesPage.port"), 1); //$NON-NLS-1$
-		portLabel = createLabel(composite, "", 2); //$NON-NLS-1$
+		hostText = createTextField(composite);
 		
 		createLabel(composite, Policy.bind("CVSPropertiesPage.path"), 1); //$NON-NLS-1$
-		pathLabel = createLabel(composite, "", 2); //$NON-NLS-1$
-
-		// Add some extra space
-		createLabel(composite, "", 3); //$NON-NLS-1$
-
-		// Add some extra space
-		createLabel(composite, "", 3); //$NON-NLS-1$
+		pathText = createTextField(composite);
 		
-		createReadWriteAccessComposite(composite);
+		// Port number
+		// create a composite to ensure the radio buttons come in the correct order
+		Composite portGroup = new Composite(composite, SWT.NONE);
+		data = new GridData();
+		data.horizontalSpan = 3;
+		portGroup.setLayoutData(data);
+		layout = new GridLayout();
+		layout.numColumns = 3;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		portGroup.setLayout(layout);
+		useDefaultPort = createRadioButton(portGroup, Policy.bind("ConfigurationWizardMainPage.useDefaultPort"), 3); //$NON-NLS-1$
+		useCustomPort = createRadioButton(portGroup, Policy.bind("ConfigurationWizardMainPage.usePort"), 1); //$NON-NLS-1$
+		portText = createTextField(portGroup);
+
+		// Add some extra space
+		createLabel(composite, "", 3); //$NON-NLS-1$
+
+		allowCachingButton = new Button(composite, SWT.CHECK);
+		allowCachingButton.setText(Policy.bind("UserValidationDialog.6")); //$NON-NLS-1$
+		data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+		data.horizontalSpan = 3;
+		allowCachingButton.setLayoutData(data);
+		allowCachingButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				allowCaching = allowCachingButton.getSelection();
+			}
+		});
+	
+		Composite warningComposite = new Composite(composite, SWT.NONE);
+		layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginHeight = 0;
+		layout.marginHeight = 0;
+		warningComposite.setLayout(layout);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 3;
+		warningComposite.setLayoutData(data);
+		Label warningLabel = new Label(warningComposite, SWT.NONE);
+		warningLabel.setImage(Dialog.getImage(Dialog.DLG_IMG_MESSAGE_WARNING));
+		warningLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_BEGINNING));
+		Label warningText = new Label(warningComposite, SWT.WRAP);
+		warningText.setText(Policy.bind("UserValidationDialog.7")); //$NON-NLS-1$
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.widthHint = 300;
+		warningText.setLayoutData(data);
+		
+		// Add some extra space
+		createLabel(composite, "", 3); //$NON-NLS-1$
 		
 		initializeValues();
 		updateWidgetEnablements();
+		Listener connectionInfoChangedListener = new Listener() {
+			public void handleEvent(Event event) {
+				connectionInfoChanged = true;
+				updateWidgetEnablements();
+			}
+		};
 		passwordText.addListener(SWT.Modify, new Listener() {
 			public void handleEvent(Event event) {
 				passwordChanged = true;
 			}
 		});
-		userText.addListener(SWT.Modify, new Listener() {
-			public void handleEvent(Event event) {
-				connectionInfoChanged = true;
-				updateWidgetEnablements();
-			}
-		});
-		methodType.addListener(SWT.Modify, new Listener() {
-			public void handleEvent(Event event) {
-				connectionInfoChanged = true;
-			}
-		});
-		useDefaultReadWriteLocations.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				updateWidgetEnablements();
-
-			}
-		});
-		useCustomReadWriteLocations.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				updateWidgetEnablements();
-	
-			}
-		});
+		userText.addListener(SWT.Modify, connectionInfoChangedListener);
+		methodType.addListener(SWT.Modify, connectionInfoChangedListener);
+		hostText.addListener(SWT.Modify, connectionInfoChangedListener);
+		portText.addListener(SWT.Modify, connectionInfoChangedListener);
+		useCustomPort.addListener(SWT.Selection, connectionInfoChangedListener);
+		pathText.addListener(SWT.Modify, connectionInfoChangedListener);
 		
 		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.REPOSITORY_LOCATION_PROPERTY_PAGE);
         Dialog.applyDialogFont(parent);
 		return composite;
-	}
-	/**
-	 * @param composite
-	 */
-	private void createReadWriteAccessComposite(Composite composite) {
-		Composite radioGroup = createRadioGroupComposite(composite);
-		useDefaultReadWriteLocations = createRadioButton(radioGroup, Policy.bind("CVSRepositoryPropertiesPage.21"), 3); //$NON-NLS-1$
-		useCustomReadWriteLocations = createRadioButton(radioGroup, Policy.bind("CVSRepositoryPropertiesPage.22"), 3); //$NON-NLS-1$
-		createLabel(composite, Policy.bind("CVSRepositoryPropertiesPage.23"), 1); //$NON-NLS-1$
-		readLocation = createCombo(composite);
-		createLabel(composite, Policy.bind("CVSRepositoryPropertiesPage.24"), 1); //$NON-NLS-1$
-		writeLocation = createCombo(composite);
-	}
-	/**
-	 * @param composite
-	 */
-	private Composite createRadioGroupComposite(Composite composite) {
-		Composite radioGroup = new Composite(composite, SWT.NONE);
-		GridData data = new GridData();
-		data.horizontalSpan = 3;
-		radioGroup.setLayoutData(data);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		radioGroup.setLayout(layout);
-		return radioGroup;
 	}
 	
 	/**
@@ -293,6 +298,7 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 	 */
 	private void initializeValues() {
 		passwordChanged = false;
+		connectionInfoChanged = false;
 		
 		IConnectionMethod[] methods = CVSRepositoryLocation.getPluggedInConnectionMethods();
 		for (int i = 0; i < methods.length; i++) {
@@ -303,14 +309,19 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		info = location.getUserInfo(true);
 		userText.setText(info.getUsername());
 		passwordText.setText("*********"); //$NON-NLS-1$
-		hostLabel.setText(location.getHost());
+		hostText.setText(location.getHost());
 		int port = location.getPort();
 		if (port == ICVSRepositoryLocation.USE_DEFAULT_PORT) {
-			portLabel.setText(Policy.bind("CVSPropertiesPage.defaultPort")); //$NON-NLS-1$
+			useDefaultPort.setSelection(true);
+			useCustomPort.setSelection(false);
+			portText.setEnabled(false);
 		} else {
-			portLabel.setText("" + port); //$NON-NLS-1$
+			useDefaultPort.setSelection(false);
+			useCustomPort.setSelection(true);
+			portText.setText("" + port); //$NON-NLS-1$
 		}
-		pathLabel.setText(location.getRootDirectory());
+		pathText.setText(location.getRootDirectory());
+		allowCachingButton.setSelection(location.getUserInfoCached());
 		
 		// get the repository label
 		String label = null;
@@ -322,41 +333,17 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 			label = location.getLocation();
 		}
 		labelText.setText(label);
-		
-		// Fill in read/write repo locations
-		String currentReadLocation = ((CVSRepositoryLocation)root.getRoot()).getReadLocation();
-		String currentWriteLocation = ((CVSRepositoryLocation)root.getRoot()).getWriteLocation();
-		try {
-			// Ensure the read and write locations are listed
-			if (currentReadLocation != null) {
-				KnownRepositories.getInstance().getRepository(currentReadLocation);
-			}
-			if (currentWriteLocation != null) {
-				KnownRepositories.getInstance().getRepository(currentWriteLocation);
-			}
-		} catch (CVSException e) {
-			CVSProviderPlugin.log(e);
-		}
-
-		ICVSRepositoryLocation[] locations = KnownRepositories.getInstance().getRepositories();
-		for (int i = 0; i < locations.length; i++) {
-			ICVSRepositoryLocation location = locations[i];
-			readLocation.add(location.getLocation());
-			writeLocation.add(location.getLocation());
-		}
-		readLocation.setText(currentReadLocation == null ? root.getRoot().getLocation() : currentReadLocation);
-		writeLocation.setText(currentWriteLocation == null ? root.getRoot().getLocation() : currentWriteLocation);
-		if (currentReadLocation == null && currentWriteLocation == null) {
-			useDefaultReadWriteLocations.setSelection(true);
-			useCustomReadWriteLocations.setSelection(false);
-		} else {
-			useDefaultReadWriteLocations.setSelection(false);
-			useCustomReadWriteLocations.setSelection(true);
-		}
 	}
 	
 	private boolean performConnectionInfoChanges() {
-		// Don't do anything if there wasn't a password or connection change
+		// Set the caching mode of the location
+		if (!connectionInfoChanged) {
+			location.setAllowCaching(allowCaching);
+			if (!passwordChanged) {
+				((CVSRepositoryLocation)location).updateCache();
+			}
+		}
+		// Don't do anything else if there wasn't a password or connection change
 		if (!passwordChanged && !connectionInfoChanged) return true;
 		
 		try {
@@ -364,7 +351,9 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 			if (passwordChanged && !connectionInfoChanged) {
 				CVSRepositoryLocation oldLocation = (CVSRepositoryLocation)location;
 				oldLocation.setPassword(getNewPassword());
-				oldLocation.updateCache();
+				if (allowCaching) {
+					oldLocation.updateCache();
+				}
 				passwordChanged = false;
 				return true;
 			}
@@ -372,19 +361,21 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 			// Otherwise change the connection info and the password
 			// This operation is done inside a workspace operation in case the sharing
 			// info for existing projects is changed
+			if (!(location.getHost().equals(hostText.getText()) && location.getRootDirectory().equals(pathText.getText()))) {
+				// The host or path has changed
+				if (!MessageDialog.openConfirm(getShell(), 
+						"Confirm Host or Path Change", 
+						"You have chosen to change the host name or repository root path for this location. You should only continue of you are sure you know what you are doing.")) {
+					return false;
+				}
+			}
 			final boolean[] result = new boolean[] { false };
 			new ProgressMonitorDialog(getShell()).run(false, false, new WorkspaceModifyOperation() {
 				public void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
 						// Create a new repository location with the new information
-						CVSRepositoryLocation newLocation = CVSRepositoryLocation.fromString(location.getLocation());
-						newLocation.setMethod(methodType.getText());
-						info.setUsername(userText.getText());
-						if (passwordChanged) {
-							info.setPassword(getNewPassword());
-						}
-						newLocation.setUserInfo(info);
-						
+						CVSRepositoryLocation newLocation = CVSRepositoryLocation.fromProperties(createProperties());
+						location.setAllowCaching(allowCaching);
 						try {
 							// For each project shared with the old location, set connection info to the new one
 							List projects = new ArrayList();
@@ -455,7 +446,6 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 	
 	private void performNonConnectionInfoChanges() {
 		recordNewLabel((CVSRepositoryLocation)location);
-		recordReadWriteLocations((CVSRepositoryLocation)location);
 	}
 	/*
 	 * @see PreferencesPage#performOk
@@ -467,6 +457,15 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		}
 		return false;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
+	 */
+	protected void performDefaults() {
+		super.performDefaults();
+		initializeValues();
+	}
+	
 	/**
 	 * Shows the given errors to the user.
 	 */
@@ -483,12 +482,10 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		} else {
 			labelText.setEnabled(true);
 		}
-		if (useDefaultReadWriteLocations.getSelection()) {
-			readLocation.setEnabled(false);
-			writeLocation.setEnabled(false);
+		if (useDefaultPort.getSelection()) {
+			portText.setEnabled(false);
 		} else {
-			readLocation.setEnabled(true);
-			writeLocation.setEnabled(true);
+			portText.setEnabled(true);
 		}
 		validateFields();
 	}
@@ -501,13 +498,41 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 			}
 		}
 		String user = userText.getText();
-		if ((user.indexOf('@') != -1) || (user.indexOf(':') != -1)) {
-			setErrorMessage(Policy.bind("ConfigurationWizardMainPage.invalidUserName")); //$NON-NLS-1$
-			setValid(false);
+		IStatus status = ConfigurationWizardMainPage.validateUserName(user);
+		if (!isStatusOK(status)) {
 			return;
 		}
+
+		String host = hostText.getText();
+		status = ConfigurationWizardMainPage.validateHost(host);
+		if (!isStatusOK(status)) {
+			return;
+		}
+
+		if (portText.isEnabled()) {
+			String port = portText.getText();
+			status = ConfigurationWizardMainPage.validatePort(port);
+			if (!isStatusOK(status)) {
+				return;
+			}
+		}
+
+		String pathString = pathText.getText();
+		if (!isStatusOK(status)) {
+			return;
+		}
+		
 		setErrorMessage(null);
 		setValid(true);
+	}
+	
+	private boolean isStatusOK(IStatus status) {
+		if (!status.isOK()) {
+			setErrorMessage(status.getMessage());
+			setValid(false);
+			return false;
+		}
+		return true;
 	}
 	
 	private void recordNewLabel(CVSRepositoryLocation location) {
@@ -542,10 +567,18 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 	/* internal use only */ String getNewPassword() {
 		return passwordText.getText();
 	}
-	private void recordReadWriteLocations(CVSRepositoryLocation location) {
-		location.setReadLocation(useDefaultReadWriteLocations.getSelection() ? null : readLocation.getText());
-		location.setWriteLocation(useDefaultReadWriteLocations.getSelection() ? null : writeLocation.getText());
-		// TODO: These will be lost if a crash occurres before shutdown
+	
+	private Properties createProperties() {
+		Properties result = new Properties();
+		result.setProperty("connection", methodType.getText()); //$NON-NLS-1$
+		result.setProperty("user", userText.getText()); //$NON-NLS-1$
+		result.setProperty("password", passwordText.getText()); //$NON-NLS-1$
+		result.setProperty("host", hostText.getText()); //$NON-NLS-1$
+		if (useCustomPort.getSelection()) {
+			result.setProperty("port", portText.getText()); //$NON-NLS-1$
+		}
+		result.setProperty("root", pathText.getText()); //$NON-NLS-1$
+		return result;
 	}
 }
 

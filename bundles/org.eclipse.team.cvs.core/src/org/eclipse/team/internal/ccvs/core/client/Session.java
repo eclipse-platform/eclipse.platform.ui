@@ -191,21 +191,6 @@ public class Session {
 	 * Return the location to be used for this connection
 	 */
 	private CVSRepositoryLocation getLocationForConnection(boolean writeAccess) {
-		try {
-			if (writeAccess) {
-				String writeLocation = location.getWriteLocation();
-				if (writeLocation != null) {
-					return (CVSRepositoryLocation)KnownRepositories.getInstance().getRepository(writeLocation);
-				}
-			} else {
-				String readLocation = location.getReadLocation();
-				if (readLocation != null) {
-					return (CVSRepositoryLocation)KnownRepositories.getInstance().getRepository(readLocation);
-				}
-			}
-		} catch (CVSException e) {
-			CVSProviderPlugin.log(e);
-		}
 		return location;
 	}
 

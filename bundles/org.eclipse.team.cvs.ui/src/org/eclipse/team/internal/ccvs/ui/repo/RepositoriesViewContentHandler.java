@@ -10,14 +10,19 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.repo;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Stack;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.xml.sax.*;
+import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class RepositoriesViewContentHandler extends DefaultHandler {
@@ -140,14 +145,6 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 			String name = atts.getValue(NAME_ATTRIBUTE);
 			if (name != null) {
 				currentRepositoryRoot.setName(name);
-			}
-			String readLocation = atts.getValue(READ_ID_ATTRIBUTE);
-			if (readLocation != null) {
-				((CVSRepositoryLocation)root).setReadLocation(readLocation);
-			}
-			String writeLocation = atts.getValue(WRITE_ID_ATTRIBUTE);
-			if (writeLocation != null) {
-				((CVSRepositoryLocation)root).setWriteLocation(writeLocation);
 			}
 		} else if(elementName.equals(DATE_TAGS_TAG)){
 			//prepare to collect date tag

@@ -11,20 +11,37 @@
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.IConnectionMethod;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -446,74 +463,48 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 	 */
 	private void validateFields() {
 		String user = userCombo.getText();
-		if (user.length() == 0) {
-			setErrorMessage(null);
-			setPageComplete(false);
-			return;
-		}
-		if ((user.indexOf('@') != -1) || (user.indexOf(':') != -1)) {
-			setErrorMessage(Policy.bind("ConfigurationWizardMainPage.invalidUserName")); //$NON-NLS-1$
-			setPageComplete(false);
+		IStatus status = validateUserName(user);
+		if (!isStatusOK(status)) {
 			return;
 		}
 
 		String host = hostCombo.getText();
-		if (host.length() == 0) {
-			setErrorMessage(null);
-			setPageComplete(false);
-			return;
-		}
-		if (host.indexOf(':') != -1) {
-			setErrorMessage(Policy.bind("ConfigurationWizardMainPage.invalidHostName")); //$NON-NLS-1$
-			setPageComplete(false);
+		status = validateHost(host);
+		if (!isStatusOK(status)) {
 			return;
 		}
 
 		if (portText.isEnabled()) {
-			if (portText.getText().length() == 0) {
-				setErrorMessage(null);
-				setPageComplete(false);
-				return;
-			}
-			try {
-				Integer.parseInt(portText.getText());
-			} catch (NumberFormatException e) {
-				setErrorMessage(Policy.bind("ConfigurationWizardMainPage.invalidPort")); //$NON-NLS-1$
-				setPageComplete(false);
+			String port = portText.getText();
+			status = validatePort(port);
+			if (!isStatusOK(status)) {
 				return;
 			}
 		}
 
-		if (repositoryPathCombo.getText().length() == 0) {
-			setErrorMessage(null);
-			setPageComplete(false);
+		String pathString = repositoryPathCombo.getText();
+		status = validatePath(pathString);
+		if (!isStatusOK(status)) {
 			return;
-		} else {
-			String pathString = repositoryPathCombo.getText();
-			IPath path = new Path(pathString);
-			String[] segments = path.segments();
-			for (int i = 0; i < segments.length; i++) {
-				String string = segments[i];
-				if (string.charAt(0) == ' ' || string.charAt(string.length() -1) == ' ') {
-					setErrorMessage(Policy.bind("ConfigurationWizardMainPage.invalidPathWithSpaces")); //$NON-NLS-1$
-					setPageComplete(false);
-					return;
-				}
-			}
-			// look for // and inform the user that we support use of C:\cvs\root instead of /c//cvs/root
-			if (pathString.indexOf("//") != -1) { //$NON-NLS-1$
-				if (pathString.indexOf("//") == 2) { //$NON-NLS-1$
-					// The user is probably trying to specify a CVSNT path
-					setErrorMessage(Policy.bind("ConfigurationWizardMainPage.useNTFormat")); //$NON-NLS-1$
-				} else {
-					setErrorMessage(Policy.bind("ConfigurationWizardMainPage.invalidPathWithSlashes")); //$NON-NLS-1$
-				}
-				setPageComplete(false);
-				return;
-			}
 		}
+
+		// Everything passed so we're good to go
 		setErrorMessage(null);
 		setPageComplete(true);
+	}
+	
+	private boolean isStatusOK(IStatus status) {
+		if (!status.isOK()) {
+			if (status.getCode() == REQUIRED_FIELD) {
+				// Don't set the message for an empty field
+				setErrorMessage(null);
+			} else {
+				setErrorMessage(status.getMessage());
+			}
+			setPageComplete(false);
+			return false;
+		}
+		return true;
 	}
 	
 	public boolean getValidate() {
@@ -526,4 +517,64 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		}
 	}
 	
+	public static final int REQUIRED_FIELD = 1;
+	public static final int INVALID_FIELD_CONTENTS = 1;
+	public static final IStatus validateUserName(String user) {
+		if (user.length() == 0) {
+			return new Status(IStatus.ERROR, CVSUIPlugin.ID, REQUIRED_FIELD, "User Name Required", null);
+		}
+		if ((user.indexOf('@') != -1) || (user.indexOf(':') != -1)) {
+			return new Status(IStatus.ERROR, CVSUIPlugin.ID, INVALID_FIELD_CONTENTS, 
+					Policy.bind("ConfigurationWizardMainPage.invalidUserName"), null); //$NON-NLS-1$
+		}
+		return Status.OK_STATUS;
+	}
+	public static final IStatus validateHost(String host) {
+		if (host.length() == 0) {
+			return new Status(IStatus.ERROR, CVSUIPlugin.ID, REQUIRED_FIELD, "Host Required", null);
+		}
+		if (host.indexOf(':') != -1) {
+			return new Status(IStatus.ERROR, CVSUIPlugin.ID, INVALID_FIELD_CONTENTS, 
+					Policy.bind("ConfigurationWizardMainPage.invalidHostName"), null); //$NON-NLS-1$
+		}
+		return Status.OK_STATUS;
+	}
+	public static final IStatus validatePort(String port) {
+		if (port.length() == 0) {
+			return new Status(IStatus.ERROR, CVSUIPlugin.ID, REQUIRED_FIELD, "Port Required", null);
+		}
+		try {
+			Integer.parseInt(port);
+		} catch (NumberFormatException e) {
+			return new Status(IStatus.ERROR, CVSUIPlugin.ID, INVALID_FIELD_CONTENTS, 
+				Policy.bind("ConfigurationWizardMainPage.invalidPort"), null); //$NON-NLS-1$
+		}
+		return Status.OK_STATUS;
+	}
+	public static final IStatus validatePath(String pathString) {
+		if (pathString.length() == 0) {
+			return new Status(IStatus.ERROR, CVSUIPlugin.ID, REQUIRED_FIELD, "Repository Path Required", null);
+		}
+		IPath path = new Path(pathString);
+		String[] segments = path.segments();
+		for (int i = 0; i < segments.length; i++) {
+			String string = segments[i];
+			if (string.charAt(0) == ' ' || string.charAt(string.length() -1) == ' ') {
+				return new Status(IStatus.ERROR, CVSUIPlugin.ID, INVALID_FIELD_CONTENTS, 
+					Policy.bind("ConfigurationWizardMainPage.invalidPathWithSpaces"), null); //$NON-NLS-1$
+			}
+		}
+		// look for // and inform the user that we support use of C:\cvs\root instead of /c//cvs/root
+		if (pathString.indexOf("//") != -1) { //$NON-NLS-1$
+			if (pathString.indexOf("//") == 2) { //$NON-NLS-1$
+				// The user is probably trying to specify a CVSNT path
+				return new Status(IStatus.ERROR, CVSUIPlugin.ID, INVALID_FIELD_CONTENTS, 
+					Policy.bind("ConfigurationWizardMainPage.useNTFormat"), null); //$NON-NLS-1$
+			} else {
+				return new Status(IStatus.ERROR, CVSUIPlugin.ID, INVALID_FIELD_CONTENTS, 
+					Policy.bind("ConfigurationWizardMainPage.invalidPathWithSlashes"), null); //$NON-NLS-1$
+			}
+		}
+		return Status.OK_STATUS;
+	}
 }

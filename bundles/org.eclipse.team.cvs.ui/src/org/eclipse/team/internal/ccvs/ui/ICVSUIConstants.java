@@ -84,6 +84,7 @@ public interface ICVSUIConstants {
 	public final String PREF_DEBUG_PROTOCOL = "pref_debug_protocol"; //$NON-NLS-1$
 	public final String PREF_WARN_REMEMBERING_MERGES = "pref_remember_merges"; //$NON-NLS-1$
 	public final String PREF_FIRST_STARTUP = "pref_first_startup"; //$NON-NLS-1$
+	public final String PREF_EXT_CONNECTION_METHOD_PROXY = "pref_ext_connection_method_proxy"; //$NON-NLS-1$
 	
 	// console preferences
 	public final String PREF_CONSOLE_COMMAND_COLOR = "pref_console_command_color"; //$NON-NLS-1$

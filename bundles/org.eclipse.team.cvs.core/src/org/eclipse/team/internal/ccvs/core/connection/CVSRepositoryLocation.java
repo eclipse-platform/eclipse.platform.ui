@@ -59,8 +59,6 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	
 	// Preference keys used to persist the state of the location
 	public static final String PREF_LOCATION = "location"; //$NON-NLS-1$
-	public static final String PREF_WRITE_LOCATION = "write"; //$NON-NLS-1$
-	public static final String PREF_READ_LOCATION = "read"; //$NON-NLS-1$
 	public static final String PREF_SERVER_ENCODING = "encoding"; //$NON-NLS-1$
 	
 	// server platform constants
@@ -108,7 +106,9 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	public static final String USER_VARIABLE = "{user}"; //$NON-NLS-1$
 	public static final String PASSWORD_VARIABLE = "{password}"; //$NON-NLS-1$
 	public static final String HOST_VARIABLE = "{host}"; //$NON-NLS-1$
-	public static final String PORT_VARIABLE = "{port}"; //$NON-NLS-1$
+	public static final String PORT_VARIABLE = "{port}";
+
+	private static String extProxy; //$NON-NLS-1$
 	
 	static {
 		URL temp = null;
@@ -141,6 +141,17 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	
 	private static String getDefaultEncoding() {
 		return System.getProperty("file.encoding", "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
+	/**
+	 * Set the proxy connection method that is to be used when a 
+	 * repository location has the ext connection method. This is
+	 * usefull with the extssh connection method as it can be used to 
+	 * kepp the sandbox compatible with the command line client.
+	 * @param string
+	 */
+	public static void setExtConnectionMethodProxy(String string) {
+		extProxy = string;
 	}
 	
 	/**
@@ -512,7 +523,11 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * be handled by the caller.
 	 */
 	private Connection createConnection(String password, IProgressMonitor monitor) throws CVSException {
-		Connection connection = new Connection(this, method.createConnection(this, password));
+		IConnectionMethod methodToUse = method;
+		if (method.getName().equals("ext") && extProxy != null && !extProxy.equals(method.getName())) { //$NON-NLS-1$
+			methodToUse = getPluggedInConnectionMethod(extProxy); 
+		}
+		Connection connection = new Connection(this, methodToUse.createConnection(this, password));
 		connection.open(monitor);
 		return connection;
 	}
@@ -1083,73 +1098,6 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		}
 		// This is not a server message with the desired prefix
 		return null;
-	}
-	
-	/**
-	 * The read location is a string that contains the connection details 
-	 * to be used when performing an operation that only requires read-access
-	 * to the repository.
-	 * 
-	 * @return Returns the readLocation.
-	 */
-	public String getReadLocation() {
-		if (hasPreferences()) {
-			return internalGetPreferences().get(PREF_READ_LOCATION, null);
-		} else {
-			return null;
-		}
-	}
-
-	/**
-	 * Set the location used to perform operations that only require
-	 * read-access to the repository. Passing a value of <code>null</code>
-	 * will cause the receiver's information to be used when connecting
-	 * for read access.
-	 * @param readLocation The readLocation to set.
-	 */
-	public void setReadLocation(String readLocation) {
-		if (readLocation == null || readLocation.equals(getLocation())) {
-			if (hasPreferences()) {
-				internalGetPreferences().remove(PREF_READ_LOCATION);
-			}
-		} else {
-			ensurePreferencesStored();
-			internalGetPreferences().put(PREF_READ_LOCATION, readLocation);
-			flushPreferences();
-		}
-	}
-
-	/**
-	 * The write location is a string that contains the connection details 
-	 * to be used when performing an operation that only requires read-access
-	 * to the repository.
-	 * @return Returns the writeLocation.
-	 */
-	public String getWriteLocation() {
-		if (hasPreferences()) {
-			return internalGetPreferences().get(PREF_WRITE_LOCATION, null);
-		} else {
-			return null;
-		}
-	}
-
-	/**
-	 * Set the location used to perform operations that require
-	 * write-access to the repository. Passing a value of <code>null</code>
-	 * will cause the receiver's information to be used when connecting
-	 * for write access.
-	 * @param writeLocation The writeLocation to set.
-	 */
-	public void setWriteLocation(String writeLocation) {
-		if (writeLocation == null || writeLocation.equals(getLocation())) {
-			if (hasPreferences()) {
-				internalGetPreferences().remove(PREF_WRITE_LOCATION);
-			}
-		} else {
-			ensurePreferencesStored();
-			internalGetPreferences().put(PREF_WRITE_LOCATION, writeLocation);
-			flushPreferences();
-		}
 	}
 
 	/* (non-Javadoc)

@@ -30,9 +30,6 @@ public class CVSTestSetup extends TestSetup {
 	public static final int COMPRESSION_LEVEL;
 	public static final boolean FAIL_IF_EXCEPTION_LOGGED;
 	
-	public static final String READ_REPOSITORY_LOCATION;
-	public static final String WRITE_REPOSITORY_LOCATION;
-	
 	public static CVSRepositoryLocation repository;
 	public static CVSTestLogListener logListener;
 	
@@ -40,8 +37,6 @@ public class CVSTestSetup extends TestSetup {
 	static {
 		loadProperties();
 		REPOSITORY_LOCATION = System.getProperty("eclipse.cvs.repository");
-		READ_REPOSITORY_LOCATION = System.getProperty("eclipse.cvs.repository.read");
-		WRITE_REPOSITORY_LOCATION = System.getProperty("eclipse.cvs.repository.write");
 		INITIALIZE_REPO = Boolean.valueOf(System.getProperty("eclipse.cvs.initrepo", "false")).booleanValue();
 		DEBUG = Boolean.valueOf(System.getProperty("eclipse.cvs.debug", "false")).booleanValue();
 		RSH = System.getProperty("eclipse.cvs.rsh", "rsh");
@@ -183,8 +178,6 @@ public class CVSTestSetup extends TestSetup {
 		CVSRepositoryLocation repository = (CVSRepositoryLocation)KnownRepositories.getInstance().getRepository(location);
 		KnownRepositories.getInstance().addRepository(repository, false);
 		repository.setUserAuthenticator(new TestsUserAuthenticator());
-		repository.setReadLocation(READ_REPOSITORY_LOCATION);
-		repository.setWriteLocation(WRITE_REPOSITORY_LOCATION);
 		
 		// Give some info about which repository the tests are running with
 		System.out.println("Connecting to: " + repository.getHost() + ":" + repository.getMethod().getName());
