@@ -90,21 +90,23 @@ public class SearchManager {
 		}
 		return removedDocs;
 	}
+	
 	/**
 	 * Obtains locale from query string
 	 * @return locale in the form ll_CC
 	 * @param query String
 	 */
 	private static String getLocale(String query) {
-		String locale = "en_US";
-		int indexNumberOfLang = query.indexOf("&lang=");
-		if (query.charAt(indexNumberOfLang + 8) == '_') {
-			locale = query.substring(indexNumberOfLang + 6, indexNumberOfLang + 11);
-		} else {
-			locale = query.substring(indexNumberOfLang + 6, indexNumberOfLang + 7);
-		}
-		return locale;
+		
+		int indx = query.indexOf("&lang=");
+		if (indx == -1)
+			return Locale.getDefault().toString();
+		else if (query.charAt(indx + 8) == '_') 
+			return query.substring(indx + 6, indx + 11);
+		else
+			return query.substring(indx + 6, indx + 7);
 	}
+	
 	/**
 	 * Searches index for documents containing an expression.
 	 * If the index hasn't been built then return null.
