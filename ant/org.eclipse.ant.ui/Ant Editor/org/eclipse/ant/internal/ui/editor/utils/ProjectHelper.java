@@ -84,6 +84,7 @@ import org.apache.tools.ant.helper.ProjectHelper2;
 import org.apache.tools.ant.util.FileUtils;
 import org.apache.tools.ant.util.JAXPUtils;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
+import org.eclipse.jface.text.BadLocationException;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
@@ -118,7 +119,6 @@ public class ProjectHelper extends ProjectHelper2 {
 	private static AntHandler projectHandler = new ProjectHandler();
 	private static AntHandler targetHandler = new TargetHandler();
 	private static AntHandler mainHandler= new MainHandler();
-	
 	
 	public static class ElementHandler extends ProjectHelper2.ElementHandler {
 		
@@ -246,9 +246,9 @@ public class ProjectHelper extends ProjectHelper2 {
 			try {
 				super.characters(buf, start, count, context);
 			} catch (SAXParseException e) {
-				fAntModel.error(e, start, count);
+				ErrorHelper.handleErrorFromElementText(start, count, context, e);
 			} catch (BuildException be) {
-				fAntModel.error(be, start, count);
+				ErrorHelper.handleErrorFromElementText(start, count, context, be);
 			}
 		}
 	}
@@ -319,9 +319,9 @@ public class ProjectHelper extends ProjectHelper2 {
 			try {
 				super.characters(buf, start, count, context);
 			} catch (SAXParseException e) {
-				fAntModel.error(e, start, count);
+				ErrorHelper.handleErrorFromElementText(start, count, context, e);
 			} catch (BuildException be) {
-				fAntModel.error(be, start, count);
+				ErrorHelper.handleErrorFromElementText(start, count, context, be);
 			}
 		}
 	}
@@ -353,8 +353,9 @@ public class ProjectHelper extends ProjectHelper2 {
 			Target newTarget= context.getCurrentTarget();
 			Locator locator= context.getLocator();
 			fAntModel.addTarget(newTarget, locator.getLineNumber(), locator.getColumnNumber());
-			fAntModel.error(e, null, locator.getLineNumber(), locator.getColumnNumber());
+			fAntModel.errorFromElement(e, null, locator.getLineNumber(), locator.getColumnNumber());
 		}
+		
 		/* (non-Javadoc)
 		 * @see org.apache.tools.ant.helper.ProjectHelper2.AntHandler#onEndElement(java.lang.String, java.lang.String, org.apache.tools.ant.helper.AntXMLContext)
 		 */
@@ -371,9 +372,9 @@ public class ProjectHelper extends ProjectHelper2 {
 			try {
 				super.characters(buf, start, count, context);
 			} catch (SAXParseException e) {
-				fAntModel.error(e, start, count);
+				ErrorHelper.handleErrorFromElementText(start, count, context, e);
 			} catch (BuildException be) {
-				fAntModel.error(be, start, count);
+				ErrorHelper.handleErrorFromElementText(start, count, context, be);
 			}
 		}
 	}
@@ -401,6 +402,23 @@ public class ProjectHelper extends ProjectHelper2 {
 		 */
 		public void warning(SAXParseException e) {
 			fAntModel.warning(e);
+		}
+	 }
+	 
+	 private static class ErrorHelper {
+ 		public static void handleErrorFromElementText(int start, int count, AntXMLContext context, Exception e) {
+ 			Locator locator= context.getLocator();
+			int columnNumber= locator.getColumnNumber();
+			if (columnNumber > -1) {
+				int lineNumber= start;
+				try {
+					lineNumber= fAntModel.getOffset(locator.getLineNumber(), 1);
+				} catch (BadLocationException e1) {
+				}
+				fAntModel.errorFromElementText(e, lineNumber, locator.getColumnNumber());
+			} else {
+				fAntModel.errorFromElementText(e, start, count);
+			}
 		}
 	 }
 	
