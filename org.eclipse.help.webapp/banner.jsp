@@ -90,9 +90,12 @@ if (isIE)
 document.write(extraStyle);
 	
 var advancedDialog;
+var w = 580;
+var h = 400;
+
 function openAdvanced()
 {
-	advancedDialog = window.open("advanced.jsp?searchWord="+escape(document.getElementById("searchWord").value), "advancedDialog", "height=230,width=440" );
+	advancedDialog = window.open("advanced.jsp?searchWord="+escape(document.getElementById("searchWord").value), "advancedDialog", "height="+h+",width="+w );
 	advancedDialog.focus();
 }
 
