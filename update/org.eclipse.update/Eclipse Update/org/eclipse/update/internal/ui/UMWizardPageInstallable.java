@@ -439,6 +439,8 @@ public String convertInstallableToString(int iInstallable) {
 			return UpdateManagerStrings.getString("S_not_newer");
 		case UpdateManagerConstants.NOT_UPDATABLE :
 			return UpdateManagerStrings.getString("S_not_updatable");
+		case UpdateManagerConstants.NOT_AVAILABLE :
+			return UpdateManagerStrings.getString("S_not_available");
 		default :
 			return "";
 	}
@@ -943,14 +945,6 @@ public int isInstallableComponentEntry(TableTreeItem treeItemComponentEntry) {
 		}
 	}
 
-	// True if not yet installed
-	//--------------------------
-	if (umTreeItem._descriptorCurrent == null) {
-		return UpdateManagerConstants.OK_TO_INSTALL;
-	}
-
-	// True if installable
-	//--------------------
 	return umTreeItem._descriptorEntry.isInstallable((IComponentDescriptor) umTreeItem._descriptorCurrent);
 }
 /**
