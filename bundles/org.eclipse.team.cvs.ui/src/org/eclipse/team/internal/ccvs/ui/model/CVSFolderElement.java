@@ -31,7 +31,7 @@ public class CVSFolderElement extends CVSResourceElement {
 	/**
 	 * Returns CVSResourceElement instances
 	 */
-	public Object[] getChildren(final Object o) {
+	public Object[] getChildren(Object o) {
 		final Object[][] result = new Object[1][];
 		try {
 			CVSUIPlugin.runWithProgress(null, true /*cancelable*/, new IRunnableWithProgress() {
@@ -57,6 +57,7 @@ public class CVSFolderElement extends CVSResourceElement {
 			return new Object[0];
 		} catch (InvocationTargetException e) {
 			handle(e.getTargetException());
+			return new Object[0];
 		}
 		return result[0];
 	}
