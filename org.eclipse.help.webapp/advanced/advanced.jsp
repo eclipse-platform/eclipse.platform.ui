@@ -29,8 +29,8 @@ HTML {
  }
  
 BODY {
-	font: icon;
-	background:ButtonFace;
+	font: <%=prefs.getViewFont()%>;
+	background:<%=prefs.getToolbarBackground()%>;
 	border:1px solid WindowText;
 	padding:0px;
 	margin:0px;
@@ -38,7 +38,7 @@ BODY {
 
 TABLE {
 	font:icon;
-	background:ButtonFace;
+	background:<%=prefs.getToolbarBackground()%>;
 }
 
 TD, TR {
