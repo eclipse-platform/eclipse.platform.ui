@@ -299,25 +299,29 @@ class QuickdiffConfigurationBlock {
 			
 			public void widgetSelected(SelectionEvent e) {
 				int i= fQuickDiffProviderList.getSelectionIndex();
-				for (int j= 0; j < fQuickDiffProviderListModel.length; j++) {
-					if (fStore.getString(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER).equals(fQuickDiffProviderListModel[j][0])) {
-						fQuickDiffProviderList.remove(j);
-						fQuickDiffProviderList.add(fQuickDiffProviderListModel[j][1], j);
-					}
-					if (i == j) {
-						fQuickDiffProviderList.remove(j);
-						fQuickDiffProviderList.add(fQuickDiffProviderListModel[j][1] + " " + fMessages.getString(fPrefix + ".quickdiff.defaultlabel"), j);  //$NON-NLS-1$//$NON-NLS-2$
-					}
-				}
-				fSetDefaultButton.setEnabled(false);
-				fQuickDiffProviderList.setSelection(i);
-				fQuickDiffProviderList.redraw();
-				
 				fStore.setValue(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER, fQuickDiffProviderListModel[i][0]);
+				updateProviderList();
 			}
 		});
 		
 		return composite;
+	}
+	
+	private void updateProviderList() {
+		int i= fQuickDiffProviderList.getSelectionIndex();
+		int defaultIndex= -1;
+		String defaultProvider= fStore.getString(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER);
+		for (int j= 0; j < fQuickDiffProviderListModel.length; j++) {
+			fQuickDiffProviderList.remove(j);
+			if (defaultProvider.equals(fQuickDiffProviderListModel[j][0])) {
+				fQuickDiffProviderList.add(fQuickDiffProviderListModel[j][1] + " " + fMessages.getString(fPrefix + ".quickdiff.defaultlabel"), j);  //$NON-NLS-1$//$NON-NLS-2$
+				defaultIndex= j;
+			} else
+				fQuickDiffProviderList.add(fQuickDiffProviderListModel[j][1], j);
+		}
+		fSetDefaultButton.setEnabled(defaultIndex != i);
+		fQuickDiffProviderList.setSelection(i);
+		fQuickDiffProviderList.redraw();
 	}
 
 	public void initialize() {
@@ -355,14 +359,15 @@ class QuickdiffConfigurationBlock {
 
 	public void performDefaults() {
 		initializeFields();
-		handleProviderListSelection();
+		updateProviderList();
 	}
 
 	private void handleProviderListSelection() {
 		int i= fQuickDiffProviderList.getSelectionIndex();
-		
-		boolean b= fStore.getString(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER).equals(fQuickDiffProviderListModel[i][0]);
-		fSetDefaultButton.setEnabled(!b);
+		if (i != -1) {
+			boolean b= fStore.getString(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER).equals(fQuickDiffProviderListModel[i][0]);
+			fSetDefaultButton.setEnabled(!b);
+		}
 	}
 	
 	private void updateQuickDiffControls() {
