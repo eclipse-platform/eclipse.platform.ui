@@ -34,7 +34,7 @@ import java.util.Map;
  * @see ITextStore
  * @see ILineTracker
  */
-public abstract class AbstractDocument implements IDocument, IDocumentExtension {
+public abstract class AbstractDocument implements IDocument, IDocumentExtension, IDocumentExtension2 {
 		
 	/** The document's text store */
 	private ITextStore   fStore;
@@ -73,6 +73,12 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 	 * @since 2.0
 	 */
 	private int fStoppedCount= 0;
+	/**
+	 * Indicates whether the registration of post notification changes should be
+	 * ignored.
+	 * @since 2.1
+	 */
+	private boolean fAcceptPostNotificationReplaces= true;
 	
 	/**
 	 * The default constructor does not perform any configuration
@@ -1134,13 +1140,31 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 	}
 	
 	/*
+	 * @see org.eclipse.jface.text.IDocumentExtension2#acceptPostNotificationReplaces()
+	 * @since 2.1
+	 */
+	public void acceptPostNotificationReplaces() {
+		fAcceptPostNotificationReplaces= true;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IDocumentExtension2#ignorePostNotificationReplaces()
+	 * @since 2.1
+	 */
+	public void ignorePostNotificationReplaces() {
+		fAcceptPostNotificationReplaces= false;
+	}
+	
+	/*
 	 * @see IDocumentExtension#registerPostNotificationReplace(IDocumentListener, IDocumentExtension.IReplace)
 	 * @since 2.0
 	 */
 	public void registerPostNotificationReplace(IDocumentListener owner, IDocumentExtension.IReplace replace) {
-		if (fPostNotificationChanges == null)
-			fPostNotificationChanges= new ArrayList(1);
-		fPostNotificationChanges.add(new RegisteredReplace(owner, replace));
+		if (fAcceptPostNotificationReplaces) {
+			if (fPostNotificationChanges == null)
+				fPostNotificationChanges= new ArrayList(1);
+			fPostNotificationChanges.add(new RegisteredReplace(owner, replace));
+		}
 	}
 	
 	/*

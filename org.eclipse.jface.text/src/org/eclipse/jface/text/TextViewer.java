@@ -2572,7 +2572,7 @@ public class TextViewer extends Viewer implements
 	 * @param command the document command representing the verify event
 	 */
 	protected void customizeDocumentCommand(DocumentCommand command) {
-		if (fIgnoreAutoIndent)
+		if (isIgnoringAutoEditStrategies())
 			return;
 
 		List strategies= (List) selectContentTypePlugin(command.offset, fAutoIndentStrategies);
@@ -2697,16 +2697,16 @@ public class TextViewer extends Viewer implements
 
 			case UNDO:
 				if (fUndoManager != null) {
-					fIgnoreAutoIndent= true;
+					ignoreAutoEditStrategies(true);
 					fUndoManager.undo();
-					fIgnoreAutoIndent= false;
+					ignoreAutoEditStrategies(false);
 				}
 				break;
 			case REDO:
 				if (fUndoManager != null) {
-					fIgnoreAutoIndent= true;
+					ignoreAutoEditStrategies(true);
 					fUndoManager.redo();
-					fIgnoreAutoIndent= false;
+					ignoreAutoEditStrategies(false);
 				}
 				break;
 			case CUT:
@@ -2722,9 +2722,9 @@ public class TextViewer extends Viewer implements
 					fTextWidget.copy();
 				break;
 			case PASTE:
-//				fIgnoreAutoIndent= true;
+//				ignoreAutoEditStrategies(true);
 				fTextWidget.paste();
-//				fIgnoreAutoIndent= false;
+//				ignoreAutoEditStrategies(false);
 				break;
 			case DELETE:
 				deleteText();
@@ -2749,6 +2749,33 @@ public class TextViewer extends Viewer implements
 				print();
 				break;
 		}
+	}
+	
+	/**
+	 * Tells this viewer whether the registered auto edit strategies should be
+	 * ignored.
+	 * @param ignore <code>true</code> if the strategies should be ignored.
+	 */
+	protected void ignoreAutoEditStrategies(boolean ignore) {
+		
+		fIgnoreAutoIndent= ignore;
+		
+		IDocument document= getDocument();
+		if (document instanceof IDocumentExtension2) {
+			IDocumentExtension2 extension= (IDocumentExtension2) document;
+			if (ignore)
+				extension.ignorePostNotificationReplaces();
+			else
+				extension.acceptPostNotificationReplaces();
+		}
+	}
+	
+	/**
+	 * Returns whether this viewer ignores the registered auto edit strategies.
+	 * @return <code>true</code> if the strategies are ignored
+	 */
+	protected boolean isIgnoringAutoEditStrategies() {
+		return fIgnoreAutoIndent;
 	}
 	
 	/*
