@@ -16,7 +16,7 @@ import java.io.Reader;
 /**
  * Text content describers extend basic content describers to provide
  * the ability of scanning character streams (readers). Describers for 
- * text-based content types are supposed to implement this interface 
+ * text-based content types must implement this interface 
  * instead of <code>IContentDescription</code>. 
  * <p>
  * Clients may implement this interface.
