@@ -111,7 +111,9 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		PixelConverter pixelConverter= new PixelConverter(parent);
 
 		Composite composite= new Composite(parent, SWT.NULL);
-		GridLayout layout= new GridLayout(); layout.numColumns= 2;
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridLayout layout= new GridLayout();
+		layout.numColumns= 2;
 		composite.setLayout(layout);
 				
 		Label label= new Label(composite, SWT.LEFT);
@@ -132,7 +134,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 
 		fAnnotationList= new List(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
 		gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
-		gd.heightHint= pixelConverter.convertHeightInCharsToPixels(10);
+		gd.heightHint= pixelConverter.convertHeightInCharsToPixels(20);
 		fAnnotationList.setLayoutData(gd);
 						
 		Composite optionsComposite= new Composite(editorComposite, SWT.NONE);

@@ -184,7 +184,9 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 	 */
 	public Control createControl(Composite parent) {
 		Composite composite= new Composite(parent, SWT.NONE);
-		GridLayout layout= new GridLayout(); layout.numColumns= 2;
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridLayout layout= new GridLayout();
+		layout.numColumns= 2;
 		composite.setLayout(layout);
 
 		String label= TextEditorMessages.getString("QuickDiffConfigurationBlock.showForNewEditors"); //$NON-NLS-1$
