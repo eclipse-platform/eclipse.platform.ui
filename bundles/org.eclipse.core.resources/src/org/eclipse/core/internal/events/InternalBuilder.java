@@ -34,24 +34,28 @@ public abstract class InternalBuilder {
 	private ElementTree oldState;
 	private IPluginDescriptor pluginDescriptor;
 	private IProject project;
-	/**
+	/*
 	 *  @see IncrementalProjectBuilder#build
 	 */
 	protected abstract IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException;
+	/*
+	 * @see IncrementalProjectBuilder
+	 */
+	protected abstract void clean(IProgressMonitor monitor) throws CoreException;
 	/**
 	 * Clears the request to forget last built states.
 	 */
 	final void clearForgetLastBuiltState() {
 		forgetStateRequested = false;
 	}
-	/**
+	/*
 	 * @see IncrementalProjectBuilder#forgetLastBuiltState
 	 */
 	protected void forgetLastBuiltState() {
 		oldState = null;
 		forgetStateRequested = true;
 	}
-	/**
+	/*
 	 * @see IncrementalProjectBuilder#forgetLastBuiltState
 	 */
 	protected IResourceDelta getDelta(IProject project) {
@@ -82,19 +86,19 @@ public abstract class InternalBuilder {
 	protected IProject getProject() {
 		return project;
 	}
-	/**
+	/*
 	 * @see IncrementalProjectBuilder#hasBeenBuilt
 	 */
 	protected boolean hasBeenBuilt(IProject project) {
 		return buildManager.hasBeenBuilt(project);
 	}
-	/**
+	/*
 	 * @see IncrementalProjectBuilder#isInterrupted
 	 */
 	public boolean isInterrupted() {
 		return buildManager.autoBuildJob.isInterrupted();
 	}
-	/**
+	/*
 	 * @see IncrementalProjectBuilder#needRebuild
 	 */
 	protected void needRebuild() {
@@ -123,7 +127,7 @@ public abstract class InternalBuilder {
 		Assert.isTrue(project == null);
 		project = value;
 	}
-	/**
+	/*
 	 * @see IncrementalProjectBuilder#startupOnInitialize
 	 */
 	protected abstract void startupOnInitialize();

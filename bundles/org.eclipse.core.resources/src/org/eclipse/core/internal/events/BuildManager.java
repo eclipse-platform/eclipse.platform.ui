@@ -118,11 +118,12 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			// Figure out which trees are involved based on the trigger and tree availabilty.
 			lastBuiltTree = currentBuilder.getLastBuiltTree();
 			boolean fullBuild = (trigger == IncrementalProjectBuilder.FULL_BUILD) || (lastBuiltTree == null);
+			boolean clean = trigger == IncrementalProjectBuilder.CLEAN_BUILD;
 			// Grab a pointer to the current state before computing the delta
 			currentTree = fullBuild ? null : workspace.getElementTree();
 			try {
 				//short-circuit if none of the projects this builder cares about have changed.
-				if (!fullBuild && !needsBuild(currentBuilder))
+				if (!clean && !fullBuild && !needsBuild(currentBuilder))
 					return;
 				String name = currentBuilder.getLabel();
 				String message;
@@ -135,14 +136,16 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				//do the build
 				Platform.run(getSafeRunnable(trigger, args, status, monitor));
 			} finally {
-				hookEndBuild(builder);
 				// Be sure to clean up after ourselves.
-				ElementTree lastTree = workspace.getElementTree();
-				lastTree.immutable();
-				if (!currentBuilder.wasForgetStateRequested()) {
+				if (clean || currentBuilder.wasForgetStateRequested()) {
+					currentBuilder.setLastBuiltTree(null);
+				} else {
 					// remember the current state as the last built state.
+					ElementTree lastTree = workspace.getElementTree();
+					lastTree.immutable();
 					currentBuilder.setLastBuiltTree(lastTree);
 				}
+				hookEndBuild(builder);
 			}
 		} finally {
 			currentBuilder = null;
@@ -169,6 +172,9 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	protected void basicBuild(final IProject project, final int trigger, final MultiStatus status, final IProgressMonitor monitor) {
 		if (!project.isAccessible())
 			return;
+		//perform clean on the project itself
+		if (trigger == IncrementalProjectBuilder.CLEAN_BUILD)
+			basicBuildClean(project, status);
 		final ICommand[] commands = ((Project) project).internalGetDescription().getBuildSpec(false);
 		if (commands.length == 0)
 			return;
@@ -189,6 +195,17 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			}
 		};
 		Platform.run(code);
+	}
+	/**
+	 * Peforms aspects of build clean that apply to the entire project
+	 */
+	private void basicBuildClean(IProject project, MultiStatus status) {
+		try {
+			//discard all problem markers in the project
+			project.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+		} catch (CoreException e) {
+			status.merge(e.getStatus());
+		}
 	}
 	protected void basicBuild(IProject project, int trigger, String builderName, Map args, MultiStatus status, IProgressMonitor monitor) {
 		IncrementalProjectBuilder builder = null;
@@ -481,10 +498,15 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				}
 			}
 			public void run() throws Exception {
-				IProject[] builders = currentBuilder.build(trigger, args, monitor);
-				if (builders == null)
-					builders = new IProject[0];
-				currentBuilder.setInterestingProjects((IProject[]) builders.clone());
+				IProject[] prereqs = null;
+				//invoke the appropriate build method depending on the trigger
+				if (trigger != IncrementalProjectBuilder.CLEAN_BUILD)
+					prereqs = currentBuilder.build(trigger, args, monitor);
+				else
+					currentBuilder.clean(monitor);
+				if (prereqs == null)
+					prereqs = new IProject[0];
+				currentBuilder.setInterestingProjects((IProject[]) prereqs.clone());
 			}
 		};
 	}
