@@ -27,8 +27,8 @@ import org.eclipse.ui.internal.ICompatibleWorkbenchPage;
  * The number of views and editors within a page is restricted to simplify part
  * management for the user. In particular:
  * <ul>
- * <li>Only one instance of a particular view type may exist within a
- * workbench page.</li>
+ * <li>Unless a view explicitly allows for multiple instances in its plugin 
+ * declaration there will be only one instance in a given workbench page.</li>
  * <li>Only one editor can exist for each editor input within a page.
  * <li>
  * </ul>
