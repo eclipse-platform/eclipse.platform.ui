@@ -19,7 +19,6 @@ public class SearchManager {
 	private HashMap indexes = new HashMap();
 	// Caches analyzers for each locale
 	private HashMap analyzers = new HashMap();
-	private final Analyzer defaultAnalyzer = new StandardAnalyzer();
 	// Progress monitors, indexed by locale
 	private HashMap progressMonitors = new HashMap();
 	/**
@@ -66,10 +65,8 @@ public class SearchManager {
 			}
 		}
 		// create default analyzer
-		analyzer = defaultAnalyzer;
+		analyzer = new DefaultAnalyzer(locale);
 		analyzers.put(locale, analyzer);
-		if (language != null)
-			analyzers.put(language, analyzer);
 		return analyzer;
 	}
 	/**
