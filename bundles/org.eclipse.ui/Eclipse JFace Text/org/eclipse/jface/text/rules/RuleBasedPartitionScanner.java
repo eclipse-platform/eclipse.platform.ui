@@ -24,7 +24,7 @@ import org.eclipse.jface.text.IDocument;
  */
 public class RuleBasedPartitionScanner extends BufferedRuleBasedScanner implements IPartitionTokenScanner {
 	
-	/** The content type of the partion in which to resume scanning. */
+	/** The content type of the partition in which to resume scanning. */
 	protected String fContentType;
 	/** The offset of the partition inside which to resume. */
 	protected int fPartitionOffset;
@@ -57,6 +57,14 @@ public class RuleBasedPartitionScanner extends BufferedRuleBasedScanner implemen
 	public void setPartialRange(IDocument document, int offset, int length, String contentType, int partitionOffset) {
 		fContentType= contentType;
 		fPartitionOffset= partitionOffset;
+		if (partitionOffset > -1) {
+			int delta= offset - partitionOffset;
+			if (delta > 0) {
+				super.setRange(document, partitionOffset, length + delta);
+				fOffset= offset;
+				return;
+			}
+		}
 		super.setRange(document, offset, length);
 	}
 	
@@ -65,15 +73,16 @@ public class RuleBasedPartitionScanner extends BufferedRuleBasedScanner implemen
 	 */
 	public IToken nextToken() {
 	
-		boolean resume= (fPartitionOffset > -1 && fPartitionOffset < fOffset);
 		
 		if (fContentType == null || fRules == null) {
-			if (resume)
-				fOffset= fPartitionOffset;
+			//don't try to resume
 			return super.nextToken();
 		}
 		
+		// inside a partition
+		
 		fColumn= UNDEFINED;
+		boolean resume= (fPartitionOffset > -1 && fPartitionOffset < fOffset);
 		fTokenOffset= resume ? fPartitionOffset : fOffset;
 				
 		IPredicateRule rule;
@@ -91,6 +100,7 @@ public class RuleBasedPartitionScanner extends BufferedRuleBasedScanner implemen
 			}
 		}
 		
+		// haven't found any rule for this type of partition
 		fContentType= null;
 		if (resume)
 			fOffset= fPartitionOffset;
