@@ -1,60 +1,26 @@
 package org.eclipse.core.internal.runtime;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
+import java.util.*;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import org.apache.xerces.parsers.SAXParser;
 import org.eclipse.core.internal.boot.DelegatingURLClassLoader;
 import org.eclipse.core.internal.boot.PlatformClassLoader;
 import org.eclipse.core.runtime.*;
-import org.w3c.dom.*;
-import org.xml.sax.SAXException;
+import org.xml.sax.*;
+import org.xml.sax.helpers.AttributesImpl;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Reads a structured log from disk and reconstructs status and exception objects.
  * General strategy: log entries that are malformed in any way are skipped, and an extra
  * status is returned mentioned that there were problems.
  */
-public class PlatformLogReader {
+public class PlatformLogReader extends DefaultHandler {
 	private static final String NULL_STRING = "" + null;
-	/**
-	 * Temporary main class for testing...
-	 */
-	public static void main(String[] args) {
-		if (args.length != 1)
-			return;
-		String filename = args[0];
-		IStatus[] statii = new PlatformLogReader().readLogFile(filename);
-		System.out.println(statii.length + " status objects read from log");
-	}
-	/**
-	 * Reads the given log file and returns the contained status objects. 
-	 * If the log file could not be read, a status object indicating this fact
-	 * is returned.
-	 */
-public IStatus[] readLogFile(String path) {
-	Exception err = null;
-	//XXX workaround.  See Bug 5801.
-	DelegatingURLClassLoader xmlClassLoader = (DelegatingURLClassLoader)Platform.getPluginRegistry().getPluginDescriptor("org.apache.xerces").getPluginClassLoader();
-	PlatformClassLoader.getDefault().setImports(new DelegatingURLClassLoader[] { xmlClassLoader });
-	try {
-		DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		Document document = parser.parse(new File(path));
-		return (IStatus[])read(document.getFirstChild());
-	} catch (ParserConfigurationException e) {
-		err = e;
-	} catch (SAXException e) {
-		err = e;
-	} catch (IOException e) {
-		err = e;
-	} finally {
-		PlatformClassLoader.getDefault().setImports(null);
-	}
-	return new IStatus[] {new Status(IStatus.WARNING, Platform.PI_RUNTIME, 1, "Unable to parse error log", err)};
-}
+	private ArrayList result = null;
+	private Stack objectStack = null;
+
 /**
  * Returns a severity given its string representation.  
  * Converse of PlatformLogReader#encodeSeverity.
@@ -75,6 +41,28 @@ protected int decodeSeverity(String severity) {
 	} catch (NumberFormatException e) {
 		return -1;
 	}
+}
+public void endElement(String uri, String elementName, String qName) {
+	if (elementName.equals(PlatformLogWriter.ELEMENT_LOG_ENTRY)) {
+		readLogEntry();
+	} else if (elementName.equals(PlatformLogWriter.ELEMENT_STATUS)) {
+		readStatus();
+	} else if (elementName.equals(PlatformLogWriter.ELEMENT_EXCEPTION)) {
+		readException();
+	}
+}
+/**
+ * @see org.xml.sax.ErrorHandler#error.
+ */
+public void error(SAXParseException ex) {
+	log(ex);
+}
+/**
+ * @see org.xml.sax.ErrorHandler#fatalError
+ */
+public void fatalError(SAXParseException ex) throws SAXException {
+	log(ex);
+	throw ex;
 }
 /**
  * Given a stack trace without carriage returns, returns a pretty-printed stack.
@@ -103,101 +91,101 @@ protected String formatStack(String stack) {
 	writer.close();
 	return sWriter.toString();
 }
-protected String getString(Node target, String attributeName) {
-	NamedNodeMap map = target.getAttributes();
-	Node item = map.getNamedItem(attributeName);
-	return item == null ? null : item.getNodeValue();
+protected String getString(Attributes attributes, String attributeName) {
+	return attributes.getValue(attributeName);
 }
-protected IStatus[] readLog(Node node) {
-	NodeList children = node.getChildNodes();
-	int childCount = children.getLength();
-	Throwable parseProblem = null;
-	ArrayList statii = new ArrayList(childCount);
-	for (int i = 0; i < childCount; i++) {
-		try {
-			Object status = read(children.item(i));
-			if (status != null)
-				statii.add(status);
-		} catch (RuntimeException e) {
-			parseProblem = e;
-		}
-	}
-	if (parseProblem != null) {
-		statii.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 1, "Some log file entries could not be read", parseProblem));
-	}
-	return (IStatus[]) statii.toArray(new IStatus[statii.size()]);
+protected void log(Exception ex) {
+	String msg = Policy.bind("meta.exceptionParsingLog", ex.getMessage());
+	result.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, msg, ex));
 }
-protected Object read(Node node) {
-	if (node == null)
-		return null;
-	switch (node.getNodeType()) {
-		case Node.ELEMENT_NODE :
-			String name = node.getNodeName();
-			if (name.equals(PlatformLogWriter.ELEMENT_LOG)) {
-				return readLog(node);
-			} else if (name.equals(PlatformLogWriter.ELEMENT_LOG_ENTRY)) {
-				return readLogEntry(node);
-			} else if (name.equals(PlatformLogWriter.ELEMENT_STATUS)) {
-				return readStatus(node);
-			} else if (name.equals(PlatformLogWriter.ELEMENT_EXCEPTION)) {
-				return readException(node);
-			}
-			break;
-		//ignore text nodes for now, we don't have any in the log format
-		case Node.TEXT_NODE:
-	}
-	return null;
-}
-protected IStatus readLogEntry(Node node) {
-	NodeList children = node.getChildNodes();
-	int len = children.getLength();
-	for (int i = 0; i < len; i++) {
-		Object o = read(children.item(i));
-		if (o instanceof IStatus) {
-			return (IStatus)o;
-		}
-	}
-	return null;
-}
-protected IStatus readStatus(Node node) {
-	int severity = decodeSeverity(getString(node, PlatformLogWriter.ATTRIBUTE_SEVERITY));
-	String pluginID = getString(node, PlatformLogWriter.ATTRIBUTE_PLUGIN_ID);
-	String s = getString(node, PlatformLogWriter.ATTRIBUTE_CODE);
-	int code = s == null ? -1 : Integer.parseInt(s);
-	String message = getString(node, PlatformLogWriter.ATTRIBUTE_MESSAGE);
-	if (severity == -1 || pluginID == null || code == -1 || message == null)
-		throw new IllegalStateException();
-	//status children are either child statii or an exception
-	Throwable exception = null;
-	ArrayList children = new ArrayList();
-	NodeList childNodes = node.getChildNodes();
-	int childCount = childNodes.getLength();
-	for (int i = 0; i < childCount; i++) {
-		Object o = read(childNodes.item(i));
-		if (o instanceof IStatus) {
-			children.add(o);
-		} else if (o instanceof Throwable) {
-			exception = (Throwable)o;
-		}
-	}
-	if (children.size() > 0) {
-		IStatus[] childStatii = (IStatus[]) children.toArray(new IStatus[children.size()]);
-		return new MultiStatus(pluginID, code, childStatii, message, exception);
-	} else {
-		return new Status(severity, pluginID, code, message, exception);
-	}
-
-}
-
-protected Throwable readException(Node node) {
-	String message = getString(node, PlatformLogWriter.ATTRIBUTE_MESSAGE);
+protected void readException() {
+	Attributes attributes = (Attributes)objectStack.pop();
+	String message = getString(attributes, PlatformLogWriter.ATTRIBUTE_MESSAGE);
 	if (NULL_STRING.equals(message)) {
 		message = null;
 	}
-	String stack = getString(node, PlatformLogWriter.ATTRIBUTE_TRACE);
-	return new FakeException(message, formatStack(stack));
+	String stack = getString(attributes, PlatformLogWriter.ATTRIBUTE_TRACE);
+	objectStack.push(new FakeException(message, formatStack(stack)));
 }
-	
+protected void readLogEntry() {
+	while (!objectStack.isEmpty()) {
+		Object o = objectStack.pop();
+		if (o instanceof IStatus) {
+			result.add(o);
+		}
+	}
+}
+/**
+ * Reads the given log file and returns the contained status objects. 
+ * If the log file could not be read, a status object indicating this fact
+ * is returned.
+ */
+public IStatus[] readLogFile(String path) {
+	result = new ArrayList();
+	objectStack = new Stack();
+	//XXX workaround.  See Bug 5801.
+	DelegatingURLClassLoader xmlClassLoader = (DelegatingURLClassLoader)Platform.getPluginRegistry().getPluginDescriptor("org.apache.xerces").getPluginClassLoader();
+	PlatformClassLoader.getDefault().setImports(new DelegatingURLClassLoader[] { xmlClassLoader });
+	try {
+		Reader reader = new BufferedReader(new FileReader(path));
+		SAXParser parser = new SAXParser();
+		parser.setContentHandler(this);
+		parser.setErrorHandler(this);
+		parser.parse(new InputSource(reader));
+	} catch (IllegalStateException e) {
+		log(e);
+	} catch (IOException e) {
+		log(e);
+	}catch (SAXException e) {
+		log(e);
+	}finally {
+		PlatformClassLoader.getDefault().setImports(null);
+	}
+	return (IStatus[]) result.toArray(new IStatus[result.size()]);
+}
+protected void readStatus() {
+	//status children are either child statii or an exception
+	Attributes attributes = null;
+	Throwable exception = null;
+	ArrayList children = new ArrayList();
+	while (!objectStack.isEmpty()) {
+		Object o = objectStack.pop();
+		if (o instanceof IStatus) {
+			//stacking reversed order, so reverse order on pop
+			children.add(0, o);
+		} else if (o instanceof Throwable) {
+			exception = (Throwable)o;
+		} else {
+			attributes = (Attributes)o;
+			break;
+		}
+	}
+	if (attributes == null) 
+		throw new IllegalStateException("Status missing attributes");//$NON-NLS$
+	int severity = decodeSeverity(getString(attributes, PlatformLogWriter.ATTRIBUTE_SEVERITY));
+	String pluginID = getString(attributes, PlatformLogWriter.ATTRIBUTE_PLUGIN_ID);
+	String s = getString(attributes, PlatformLogWriter.ATTRIBUTE_CODE);
+	int code = s == null ? -1 : Integer.parseInt(s);
+	String message = getString(attributes, PlatformLogWriter.ATTRIBUTE_MESSAGE);
+	if (severity == -1 || pluginID == null || code == -1 || message == null)
+		throw new IllegalStateException();
+
+	if (children.size() > 0) {
+		IStatus[] childStatii = (IStatus[]) children.toArray(new IStatus[children.size()]);
+		objectStack.push(new MultiStatus(pluginID, code, childStatii, message, exception));
+	} else {
+		objectStack.push(new Status(severity, pluginID, code, message, exception));
+	}
+}
+public void startElement(String uri, String elementName, String qName, Attributes attributes) {
+	objectStack.push(new AttributesImpl(attributes));
+}
+/**
+ * @see org.xml.sax.ErrorHandler#warning.
+ */
+public void warning(SAXParseException ex) {
+	log(ex);
+}	
 /**
  * A reconsituted exception that only contains a stack trace and a message.
  */
