@@ -1524,15 +1524,19 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		refreshBirdsEyeView();
 		
 		if (!emptyInput && !fComposite.isDisposed()) {
-			// delay so that StyledText widget gets a chance to resize itself
-			// (otherwise selectFirstDiff would not know its visible area)
-			fComposite.getDisplay().asyncExec(
-				new Runnable() {
-					public void run() {
-						selectFirstDiff();
+			if (true) {	// see #13844
+				selectFirstDiff();
+			} else {
+				// delay so that StyledText widget gets a chance to resize itself
+				// (otherwise selectFirstDiff would not know its visible area)
+				fComposite.getDisplay().asyncExec(
+					new Runnable() {
+						public void run() {
+							selectFirstDiff();
+						}
 					}
-				}
-			);
+				);
+			}
 		}
 	}
 	
