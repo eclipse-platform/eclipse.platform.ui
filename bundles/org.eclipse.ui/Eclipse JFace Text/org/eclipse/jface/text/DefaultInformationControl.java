@@ -17,7 +17,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.jface.text.IInformationControl;
 
 
 /**
@@ -25,7 +24,7 @@ import org.eclipse.jface.text.IInformationControl;
  * Displays information in a styled text widget. Before displaying, the 
  * information is processed by an <code>IInformationPresenter</code>. 
  */
-public class DefaultInformationControl implements IInformationControl {
+public class DefaultInformationControl implements IInformationControl, IInformationControlExtension {
 	
 	/**
 	 * A information presenter determines the presentation
@@ -262,6 +261,13 @@ public class DefaultInformationControl implements IInformationControl {
 	 */
 	public void removeFocusListener(FocusListener listener) {
 		fText.removeFocusListener(listener);
+	}
+	
+	/*
+	 * @see IInformationControlExtension#hasContents()
+	 */
+	public boolean hasContents() {
+		return fText.getCharCount() > 0;
 	}
 }
 

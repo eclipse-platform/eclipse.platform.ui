@@ -580,6 +580,12 @@ abstract public class AbstractInformationControlManager {
 			hoverControl.setSizeConstraints(sizeConstraints.x, sizeConstraints.y);
 			hoverControl.setInformation(information);
 			
+			if (hoverControl instanceof IInformationControlExtension) {
+				IInformationControlExtension extension= (IInformationControlExtension) hoverControl;
+				if (!extension.hasContents())
+					return;
+			}
+			
 			Point size= hoverControl.computeSizeHint();
 			
 			if (fEnforceAsMinimalSize) {
