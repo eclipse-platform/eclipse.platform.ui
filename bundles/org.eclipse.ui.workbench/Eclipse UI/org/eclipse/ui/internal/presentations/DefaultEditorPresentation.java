@@ -43,6 +43,8 @@ public class DefaultEditorPresentation extends DefaultPartPresentation {
             .getPreferenceStore();
     private IPreferenceStore apiPreferenceStore = PrefUtil.getAPIPreferenceStore();
 
+    public static String DIRTY_PREFIX = "*";
+    
     private final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
 
         public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
@@ -236,7 +238,7 @@ public class DefaultEditorPresentation extends DefaultPartPresentation {
         }
 
         if (presentablePart.isDirty()) {
-                text = "* " + text; //$NON-NLS-1$
+                text = DIRTY_PREFIX + text; //$NON-NLS-1$
         }
 
         return text;

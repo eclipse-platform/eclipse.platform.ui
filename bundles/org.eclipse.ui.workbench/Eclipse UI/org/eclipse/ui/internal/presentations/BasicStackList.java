@@ -158,11 +158,12 @@ public class BasicStackList extends AbstractTableInformationControl {
     				name2 = lprov.getText(e2);
     				// ILabelProvider's implementation in BasicStackList calls 
     				// DefaultEditorPresentation.getLabelText which returns the name of dirty 
-    				// files begining with "* ", sorting should not take "* " in consideration
-    				if (name1.startsWith("* ")) //$NON-NLS-1$
-    					name1 = name1.substring(2);
-    				if (name2.startsWith("* ")) //$NON-NLS-1$
-    					name2 = name2.substring(2);
+    				// files begining with dirty prefix, sorting should not take dirty prefix in consideration
+    				String prefix = DefaultEditorPresentation.DIRTY_PREFIX;
+    				if (name1.startsWith(prefix))
+    					name1 = name1.substring(prefix.length());
+    				if (name2.startsWith(prefix))
+    					name2 = name2.substring(prefix.length());
     			} else {
     				name1 = e1.toString();
     				name2 = e2.toString();
