@@ -322,6 +322,12 @@ public final class BaseHelpSystem {
 				}
 			}
 		}
+		
+		//Check if the user property is set. If not do not
+		//rely on the vm.
+		if(System.getProperty("osgi.nl.user") == null)
+			return false;
+		
 		// guess from default locale
 		String locale = Platform.getNL();
 		if (locale == null) {
