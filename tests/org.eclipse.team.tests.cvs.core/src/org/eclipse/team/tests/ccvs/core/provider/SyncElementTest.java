@@ -21,7 +21,9 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.ILocalSyncElement;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
+import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
@@ -300,7 +302,9 @@ public class SyncElementTest extends EclipseTest {
 				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.CHANGE });
 		
 		// Catch up to the file1.txt conflict using UPDATE with ignoreLocalChanges
-		getProvider(project).update(new IResource[] {project.getFile("file1.txt")}, IResource.DEPTH_ZERO, null, true,DEFAULT_MONITOR);
+		getProvider(project).update(new IResource[] {project.getFile("file1.txt")}, 
+												 new Command.LocalOption[] {Update.IGNORE_LOCAL_CHANGES, Command.DO_NOT_RECURSE}, 
+												 null, null, DEFAULT_MONITOR);
 		tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testFileConflict", tree, 
 			new String[] { "file1.txt", "folder1/", "folder1/a.txt"}, 
@@ -389,7 +393,9 @@ public class SyncElementTest extends EclipseTest {
 		// Catch-up to conflicting cases using UPDATE
 		// XXX SPECIAL CASE: We need to unmanage the resources before getting the remote
 		makeIncoming(tree, new String[] {"add1a.txt"});
-		getProvider(project).update(new IResource[] {project.getFile("add1a.txt"), project.getFile("add2a.txt")}, IResource.DEPTH_ZERO, null, false, DEFAULT_MONITOR);
+		getProvider(project).update(new IResource[] {project.getFile("add1a.txt"), project.getFile("add2a.txt")}, 
+												 new Command.LocalOption[] {Command.DO_NOT_RECURSE}, 
+												 null, null, DEFAULT_MONITOR);
 		tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testAdditionConflicts", tree, 
 			new String[] { "add1a.txt", "add2a.txt"}, 
@@ -605,7 +611,7 @@ public class SyncElementTest extends EclipseTest {
 				IRemoteSyncElement.OUTGOING | IRemoteSyncElement.DELETION});
 				
 		// Catch up to the deletion by updating
-		getProvider(file).update(new IResource[] {file}, IResource.DEPTH_ZERO, null, false, DEFAULT_MONITOR);
+		getProvider(file).update(new IResource[] {file}, new Command.LocalOption[] {Command.DO_NOT_RECURSE}, null, null, DEFAULT_MONITOR);
 		
 		// Get the sync tree again for the project and ensure others aren't effected
 		tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
@@ -645,7 +651,8 @@ public class SyncElementTest extends EclipseTest {
 		ILocalSyncElement element = getChild(tree, new Path("folder1/add.txt"));
 		
 		// Catch up to the addition by updating
-		getProvider(project).update(new IResource[] {element.getLocal()}, IResource.DEPTH_ZERO, null, false, DEFAULT_MONITOR);
+		getProvider(project).update(new IResource[] {element.getLocal()}, new Command.LocalOption[] {Command.DO_NOT_RECURSE}, 
+												 null, null, DEFAULT_MONITOR);
 		
 		// Get the sync tree again for the project and ensure the added resource is in sync
 		tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
@@ -722,7 +729,7 @@ public class SyncElementTest extends EclipseTest {
 		getProvider(project).tag(new IResource[] {project}, IResource.DEPTH_INFINITE, new CVSTag("v1", CVSTag.VERSION), DEFAULT_MONITOR);
 		getProvider(project).tag(new IResource[] {project}, IResource.DEPTH_INFINITE, new CVSTag("branch1", CVSTag.BRANCH), DEFAULT_MONITOR);
 		
-		getProvider(copy).update(new IResource[] {copy}, IResource.DEPTH_INFINITE, new CVSTag("branch1", CVSTag.BRANCH), false, DEFAULT_MONITOR);
+		getProvider(copy).update(new IResource[] {copy}, Command.NO_LOCAL_OPTIONS, new CVSTag("branch1", CVSTag.BRANCH), null, DEFAULT_MONITOR);
 		
 		// make changes on the branch		
 		addResources(copy, new String[] {"addition.txt", "folderAddition/", "folderAddition/new.txt"}, true);
@@ -756,7 +763,7 @@ public class SyncElementTest extends EclipseTest {
 		IProject project = createProject("testSyncOnBranch", new String[] { "file1.txt", "file2.txt", "file3.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
 		CVSTag branch = new CVSTag("branch1", CVSTag.BRANCH);
 		getProvider(project).tag(new IResource[] {project}, IResource.DEPTH_INFINITE, branch, DEFAULT_MONITOR);
-		getProvider(project).update(new IResource[] {project}, IResource.DEPTH_INFINITE, branch, false, DEFAULT_MONITOR);
+		getProvider(project).update(new IResource[] {project}, Command.NO_LOCAL_OPTIONS, branch, null, DEFAULT_MONITOR);
 
 		// Checkout and modify a copy
 		IProject copy = checkoutCopy(project, branch);

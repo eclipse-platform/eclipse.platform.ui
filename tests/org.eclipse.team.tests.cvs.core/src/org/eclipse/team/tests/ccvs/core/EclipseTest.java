@@ -39,6 +39,7 @@ import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Import;
 import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
@@ -158,12 +159,20 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	 */
 	public IResource[] updateResources(IContainer container, String[] hierarchy, boolean ignoreLocalChanges) throws CoreException, TeamException {
 		IResource[] resources = getResources(container, hierarchy);
-		getProvider(container).update(resources, IResource.DEPTH_INFINITE, null, ignoreLocalChanges, DEFAULT_MONITOR);
+		LocalOption[] options = Command.NO_LOCAL_OPTIONS;
+		if(ignoreLocalChanges) {
+			options = new LocalOption[] {Update.IGNORE_LOCAL_CHANGES};
+		}	
+		getProvider(container).update(resources, options, null, null, DEFAULT_MONITOR);
 		return resources;
 	}
 	
 	public void updateProject(IProject project, CVSTag tag, boolean ignoreLocalChanges) throws TeamException {
-		getProvider(project).update(new IResource[] {project}, IResource.DEPTH_INFINITE, tag, ignoreLocalChanges, DEFAULT_MONITOR);
+		LocalOption[] options = Command.NO_LOCAL_OPTIONS;
+		if(ignoreLocalChanges) {
+			options = new LocalOption[] {Update.IGNORE_LOCAL_CHANGES};
+		}
+		getProvider(project).update(new IResource[] {project}, options, tag, null, DEFAULT_MONITOR);
 	}
 	
 	public void commitProject(IProject project) throws TeamException {
@@ -514,7 +523,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		try {
 			status = Command.IMPORT.execute(s,
 				Command.NO_GLOBAL_OPTIONS,
-				new LocalOption[] {Import.makeMessageOption("Initial Import")},
+				new LocalOption[] {Import.makeArgumentOption(Command.MESSAGE_OPTION, "Initial Import")},
 				new String[] { project.getName(), getRepository().getUsername(), "start" },
 				null,
 				DEFAULT_MONITOR);

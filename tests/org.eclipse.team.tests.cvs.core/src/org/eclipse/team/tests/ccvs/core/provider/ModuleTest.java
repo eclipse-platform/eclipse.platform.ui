@@ -101,7 +101,7 @@ public class ModuleTest extends EclipseTest {
 		s.open(DEFAULT_MONITOR);
 		try {
 			Command.IMPORT.execute(s, Command.NO_GLOBAL_OPTIONS, 
-				new LocalOption[] {Command.makeMessageOption("")},
+				new LocalOption[] {Command.makeArgumentOption(Command.MESSAGE_OPTION, "")},
 				new String[] { projectName, "start", "vendor"},
 				null,
 				DEFAULT_MONITOR);

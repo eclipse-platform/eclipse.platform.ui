@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.team.tests.ccvs.core.JUnitTestCase;
@@ -40,7 +41,7 @@ public class CVSProviderTest extends EclipseTest {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(CVSProviderTest.class);
 		return new CVSTestSetup(suite);
-		//return new CVSTestSetup(new CVSProviderTest("testGet"));
+		//return new CVSTestSetup(new CVSProviderTest("testPruning"));
 	}
 	
 	public void testAddAndDelete() throws TeamException, CoreException {
@@ -82,7 +83,7 @@ public class CVSProviderTest extends EclipseTest {
 		
 		// Commit the copy and update the project
 		getProvider(copy).checkin(new IResource[] {copy}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
-		getProvider(project).update(new IResource[] {project}, IResource.DEPTH_INFINITE, null, false, DEFAULT_MONITOR);
+		getProvider(project).update(new IResource[] {project}, Command.NO_LOCAL_OPTIONS, null, null, DEFAULT_MONITOR);
 		assertEquals(project, copy);
 	}
 	

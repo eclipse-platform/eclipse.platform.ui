@@ -32,10 +32,10 @@ public class AllTests extends EclipseTest {
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 		//suite.addTestSuite(ModuleTest.class);
-		suite.addTestSuite(ImportTest.class);
-		suite.addTestSuite(CVSProviderTest.class);
-		suite.addTestSuite(RemoteResourceTest.class);
-		suite.addTestSuite(SyncElementTest.class);
+		suite.addTest(ImportTest.suite());
+		suite.addTest(CVSProviderTest.suite());
+		suite.addTest(RemoteResourceTest.suite());
+		suite.addTest(SyncElementTest.suite());
 		return new CVSTestSetup(suite);
 	}
 }
