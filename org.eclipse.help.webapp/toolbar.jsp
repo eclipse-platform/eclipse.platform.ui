@@ -151,7 +151,7 @@ function setTitle(label)
 		</table>
 	</div>	
 	<div id="iconLayer" style="position:absolute; z-index:3; left:0; top:0; height:100%; width:100%;">
-		<table width="100%" border="0" cellspacing="0" cellpadding="0" height="100%" style="padding-top:4; padding-right:3;">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" height="100%" style="padding: 3px;">
 			<tr>
 				<td>
 					&nbsp;
@@ -162,8 +162,8 @@ function setTitle(label)
 				<td align="middle" width="22">
 					<a href="#" onclick="goForward(this);" onmouseover="window.status='<%=WebappResources.getString("forward_tip", request)%>';return true;" onmouseout="window.status='';"><img src="images/forward.gif" alt='<%=WebappResources.getString("forward_tip", request)%>' border="0" name="forward"></a>
 				</td>
-				<td align="middle" width="9">
-					<img width="1" height=16 src="images/tool_separator.gif" alt='' border="0">
+				<td align="middle" valign="middle" width="9">
+					<img width="1" height=19 src="images/tool_separator.gif" alt='' border="0">
 				</td>
 				<td id="hide_nav" align="middle" width="22">
 					<a href="#" onclick="toggleNav(this);" onmouseover="window.status='<%=WebappResources.getString("Toggle", request)%>';return true;" onmouseout="window.status='';"><img src="images/hide_nav.gif" alt='<%=WebappResources.getString("Toggle", request)%>' border="0" name="hide_nav"></a>
