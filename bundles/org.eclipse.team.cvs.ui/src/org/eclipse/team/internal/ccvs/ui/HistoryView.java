@@ -173,8 +173,8 @@ public class HistoryView extends ViewPart {
 			try {
 				if(remoteFile != null) {
 					entries = remoteFile.getLogEntries(monitor);
-					final String revisionId = remoteFile.getRevision();
-					Display.getCurrent().asyncExec(new Runnable() {
+					final String revisionId = remoteFile.getRevision();					
+					getSite().getShell().getDisplay().asyncExec(new Runnable() {
 						public void run() {
 							if(tableViewer != null && ! tableViewer.getTable().isDisposed()) {
 								tableViewer.add(entries);
