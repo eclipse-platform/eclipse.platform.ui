@@ -40,13 +40,6 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 	private static final String INPUT_HANDLER_CLASS = "org.eclipse.ui.externaltools.internal.ant.inputhandler.AntInputHandler"; //$NON-NLS-1$	
 
 	/**
-	 * Constructs a new launch delegate
-	 */
-	public AntLaunchDelegate() {
-		super();
-	}
-
-	/**
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
@@ -155,46 +148,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		final AntProcess process = new AntProcess(location.toOSString(), launch, attributes);
 		
 		// create "fake" command line for the process
-		StringBuffer commandLine = new StringBuffer();
-		if (antHome != null) {
-			commandLine.append(antHome);
-			commandLine.append(File.separator);
-		}
-		commandLine.append("ant"); //$NON-NLS-1$
-		if (targets != null) {
-			for (int i = 0; i < targets.length; i++) {
-				commandLine.append(" "); //$NON-NLS-1$
-				commandLine.append(targets[i]);
-			}
-		}
-		commandLine.append(" -buildfile "); //$NON-NLS-1$
-		commandLine.append(location.toOSString());
-		if (arguments != null) {
-			for (int i = 0; i < arguments.length; i++) {
-				String arg = arguments[i];
-				commandLine.append(" "); //$NON-NLS-1$
-				commandLine.append(arg);
-			}
-		}
-		if (propertyFiles != null) {
-			for (int i = 0; i < propertyFiles.length; i++) {
-				String path = propertyFiles[i];
-				commandLine.append(" -propertyfile "); //$NON-NLS-1$
-				commandLine.append(path);
-			}
-		}
-		if (userProperties != null) {
-			Iterator keys = userProperties.keySet().iterator();
-			while (keys.hasNext()) {
-				String key = (String)keys.next();
-				commandLine.append(" -D"); //$NON-NLS-1$
-				commandLine.append(key);
-				commandLine.append("="); //$NON-NLS-1$
-				String value = (String)userProperties.get(key);
-				commandLine.append(value);
-			}
-		}
-		
+		StringBuffer commandLine= generateCommandLine(location, arguments, userProperties, propertyFiles, targets, antHome);
 		process.setAttribute(IProcess.ATTR_CMDLINE, commandLine.toString());
 		
 		if (ExternalToolsUtil.isBackground(configuration)) {
@@ -230,5 +184,57 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		}	
 		
 		monitor.done();	
+	}
+
+	private StringBuffer generateCommandLine(IPath location, String[] arguments, Map userProperties, String[] propertyFiles, String[] targets, String antHome) {
+		StringBuffer commandLine= new StringBuffer();
+		if (antHome != null) {
+			commandLine.append(antHome);
+			commandLine.append(File.separator);
+		}
+		commandLine.append("ant"); //$NON-NLS-1$
+		
+		if (arguments != null) {
+			for (int i = 0; i < arguments.length; i++) {
+				String arg = arguments[i];
+				commandLine.append(' ');
+				commandLine.append(arg);
+			}
+		}
+		if (propertyFiles != null) {
+			for (int i = 0; i < propertyFiles.length; i++) {
+				String path = propertyFiles[i];
+				commandLine.append(" -propertyfile "); //$NON-NLS-1$
+				commandLine.append(path);
+			}
+		}
+		if (userProperties != null) {
+			Iterator keys = userProperties.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String)keys.next();
+				commandLine.append(" -D"); //$NON-NLS-1$
+				commandLine.append(key);
+				commandLine.append('='); 
+				String value = (String)userProperties.get(key);
+				commandLine.append(value);
+			}
+		}
+		
+		commandLine.append(" -inputhandler "); //$NON-NLS-1$
+		commandLine.append(INPUT_HANDLER_CLASS);
+		
+		commandLine.append(" -logger "); //$NON-NLS-1$
+		commandLine.append(ANT_LOGGER_CLASS);
+		
+		commandLine.append(" -buildfile "); //$NON-NLS-1$
+		commandLine.append(location.toOSString());
+		
+		if (targets != null) {
+			for (int i = 0; i < targets.length; i++) {
+				commandLine.append(" "); //$NON-NLS-1$
+				commandLine.append(targets[i]);
+			}
+		}
+		return commandLine;
 	}
 }
