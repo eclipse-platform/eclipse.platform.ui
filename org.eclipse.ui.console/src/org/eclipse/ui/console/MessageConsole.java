@@ -146,9 +146,8 @@ public class MessageConsole extends AbstractConsole {
 	public Font getFont() {
 		if (fFont == null) {
 			return JFaceResources.getTextFont();
-		} else {
-			return fFont;
-		}
+		} 
+		return fFont;
 	}
 	
 	/**

@@ -169,20 +169,19 @@ public class MessageConsolePartitioner implements IDocumentPartitioner, IDocumen
 	public ITypedRegion[] computePartitioning(int offset, int length) {
 		if (offset == 0 && length == fDocument.getLength()) {
 			return (ITypedRegion[])fPartitions.toArray(new ITypedRegion[fPartitions.size()]);
-		} else {
-			int end = offset + length;
-			List list = new ArrayList();
-			for (int i = 0; i < fPartitions.size(); i++) {
-				ITypedRegion partition = (ITypedRegion)fPartitions.get(i);
-				int partitionStart = partition.getOffset();
-				int partitionEnd = partitionStart + partition.getLength();
-				if ((offset >= partitionStart && offset <= partitionEnd) ||
-					(offset < partitionStart && end >= partitionStart)) {
-						list.add(partition);
-				} 
-			}
-			return (ITypedRegion[])list.toArray(new ITypedRegion[list.size()]);
+		} 
+		int end = offset + length;
+		List list = new ArrayList();
+		for (int i = 0; i < fPartitions.size(); i++) {
+			ITypedRegion partition = (ITypedRegion)fPartitions.get(i);
+			int partitionStart = partition.getOffset();
+			int partitionEnd = partitionStart + partition.getLength();
+			if ((offset >= partitionStart && offset <= partitionEnd) ||
+				(offset < partitionStart && end >= partitionStart)) {
+					list.add(partition);
+			} 
 		}
+		return (ITypedRegion[])list.toArray(new ITypedRegion[list.size()]);
 	}
 
 	/**
@@ -322,10 +321,11 @@ public class MessageConsolePartitioner implements IDocumentPartitioner, IDocumen
 	 * 
 	 */
 	private void startUpdaterThread() {
-		if (updaterThreadStarted)
+		if (updaterThreadStarted) {
 			return;
-		else
-			updaterThreadStarted = true;
+		}
+		
+		updaterThreadStarted = true;
 		
 		Runnable r = new Runnable() {
 			public void run() {

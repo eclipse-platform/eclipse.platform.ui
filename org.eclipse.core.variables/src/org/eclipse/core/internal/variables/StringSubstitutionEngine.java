@@ -257,33 +257,29 @@ public class StringSubstitutionEngine {
 				// no variables with the given name
 				if (reportUndefinedVariables) {
 					throw new CoreException(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, MessageFormat.format(VariablesMessages.getString("StringSubstitutionEngine.3"), new String[]{name}), null)); //$NON-NLS-1$
-				} else {
-					// leave as is
-					return getOriginalVarText(var);
-				}
-			} else {
-				if (resolveVariables) {
-					fSubs = true;
-					return dynamicVariable.getValue(arg);
-				} else {
-					//leave as is
-					return getOriginalVarText(var);
-				}
-			}
-		} else {
-			if (arg == null) {
-				if (resolveVariables) {
-					fSubs = true;
-					return valueVariable.getValue();
-				} else {
-					//leave as is
-					return getOriginalVarText(var);
-				}
-			} else {
-				// error - an argument specified for a value variable
-				throw new CoreException(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, MessageFormat.format(VariablesMessages.getString("StringSubstitutionEngine.4"), new String[]{valueVariable.getName()}), null)); //$NON-NLS-1$
-			}
-		}
+				} 
+				// leave as is
+				return getOriginalVarText(var);
+			} 
+			
+			if (resolveVariables) {
+				fSubs = true;
+				return dynamicVariable.getValue(arg);
+			} 
+			//leave as is
+			return getOriginalVarText(var);
+		} 
+		
+		if (arg == null) {
+			if (resolveVariables) {
+				fSubs = true;
+				return valueVariable.getValue();
+			} 
+			//leave as is
+			return getOriginalVarText(var);
+		} 
+		// error - an argument specified for a value variable
+		throw new CoreException(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, MessageFormat.format(VariablesMessages.getString("StringSubstitutionEngine.4"), new String[]{valueVariable.getName()}), null)); //$NON-NLS-1$
 	}
 
 	private String getOriginalVarText(VariableReference var) {
