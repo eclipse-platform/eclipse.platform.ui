@@ -21,6 +21,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -164,7 +165,11 @@ public class RemoveAllTerminatedAction extends AbstractRemoveAllActionDelegate i
 	 */
 	public void launchesRemoved(ILaunch[] launches) {
 		if (getAction().isEnabled()) {
-			update();
+			DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+				public void run() {
+					update();
+				}
+			});
 		}
 	}
 }
