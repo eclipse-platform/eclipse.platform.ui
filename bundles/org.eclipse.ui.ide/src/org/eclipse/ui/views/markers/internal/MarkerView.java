@@ -59,6 +59,7 @@ import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISelectionListener;
@@ -575,9 +576,14 @@ public abstract class MarkerView extends TableView {
         List resources = new ArrayList();
         if (part instanceof IEditorPart) {
             IEditorPart editor = (IEditorPart) part;
-            IFile file = ResourceUtil.getFile(editor.getEditorInput());
-            if (file != null) {
-                resources.add(file);
+            IEditorInput input = editor.getEditorInput();
+            // Fix for bug 88965: editors aren't supposed to return a null input, but if there is
+            // a buggy editor somewhere, it shouldn't bring down the marker view
+            if (input != null) {
+                IFile file = ResourceUtil.getFile(input);
+                if (file != null) {
+                    resources.add(file);
+                }
             }
         } else {
             if (selection instanceof IStructuredSelection) {
