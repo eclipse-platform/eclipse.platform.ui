@@ -441,7 +441,7 @@ private void verifyDefaultPerspective() {
 	if (desc != null)
 		return;
 
-	// Step 3. Use internal workbench default.
-	defaultPerspID = IWorkbenchConstants.DEFAULT_LAYOUT_ID;
+	// Step 3. Use application-specific default
+	defaultPerspID = Workbench.getInstance().getDefaultPerspectiveId();
 }
 }
