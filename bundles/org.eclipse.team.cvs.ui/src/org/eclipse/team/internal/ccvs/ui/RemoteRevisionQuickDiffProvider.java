@@ -226,6 +226,7 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvi
 	}
 
 	private SyncInfo getSyncState(IResource resource) throws TeamException {
+		if (resource == null) return null;
 		ICVSFile cvsFile = getManagedCVSFile();
 		return CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().getSyncInfo(resource);
 	}
