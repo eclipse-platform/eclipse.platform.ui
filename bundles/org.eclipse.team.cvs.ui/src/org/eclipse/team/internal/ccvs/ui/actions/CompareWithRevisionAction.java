@@ -75,6 +75,8 @@ public class CompareWithRevisionAction extends TeamAction {
 	 */
 	protected boolean isEnabled() throws TeamException {
 		IResource[] resources = getSelectedResources();
-		return resources.length == 1;
+		if (resources.length != 1) return false;
+		CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resources[0]);
+		return provider.isManaged(resources[0]);
 	}
 }
