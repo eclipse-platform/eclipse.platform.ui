@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Item;
 /**
  * Internal table viewer implementation.
  */
-/* package */abstract class TableViewerImpl {
+/* package */abstract class TableEditorImpl {
 
     private CellEditor cellEditor;
 
@@ -49,7 +49,7 @@ import org.eclipse.swt.widgets.Item;
 
     private StructuredViewer viewer;
 
-    TableViewerImpl(StructuredViewer viewer) {
+    TableEditorImpl(StructuredViewer viewer) {
         this.viewer = viewer;
         initCellEditorListener();
     }
@@ -262,11 +262,11 @@ import org.eclipse.swt.widgets.Item;
             }
 
             public void cancelEditor() {
-                TableViewerImpl.this.cancelEditing();
+                TableEditorImpl.this.cancelEditing();
             }
 
             public void applyEditorValue() {
-                TableViewerImpl.this.applyEditorValue();
+                TableEditorImpl.this.applyEditorValue();
             }
         };
     }

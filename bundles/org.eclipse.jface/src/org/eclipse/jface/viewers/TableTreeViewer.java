@@ -51,7 +51,7 @@ public class TableTreeViewer extends AbstractTreeViewer {
     /**
      * Internal table viewer implementation.
      */
-    private TableViewerImpl tableViewerImpl;
+    private TableEditorImpl tableViewerImpl;
 
     /**
      * This viewer's table tree control.
@@ -66,7 +66,7 @@ public class TableTreeViewer extends AbstractTreeViewer {
     /**
      * Private implementation class.
      */
-    class TableTreeViewerImpl extends TableViewerImpl {
+    class TableTreeViewerImpl extends TableEditorImpl {
         public TableTreeViewerImpl(TableTreeViewer viewer) {
             super(viewer);
         }

@@ -213,7 +213,7 @@ public class TableViewer extends StructuredViewer {
 	/**
 	 * Internal table viewer implementation.
 	 */
-	private TableViewerImpl tableViewerImpl;
+	private TableEditorImpl tableViewerImpl;
 
 	/**
 	 * This viewer's table control.
@@ -411,7 +411,7 @@ public class TableViewer extends StructuredViewer {
 			// Also enter loop if no columns added. See 1G9WWGZ: JFUIF:WINNT -
 			// TableViewer with 0 columns does not work
 			for (int column = 0; column < columnCount || column == 0; column++) {
-				// Similar code in TableTreeViewer.doUpdateItem()
+				// Similar code in TreeViewer.doUpdateItem()
 				String text = "";//$NON-NLS-1$
 				Image image = null;
 				tableColorAndFont.setFontsAndColors(ti,element,column);
@@ -611,7 +611,7 @@ public class TableViewer extends StructuredViewer {
 	 * Initializes the table viewer implementation.
 	 */
 	private void initTableViewerImpl() {
-		tableViewerImpl = new TableViewerImpl(this) {
+		tableViewerImpl = new TableEditorImpl(this) {
 			Rectangle getBounds(Item item, int columnNumber) {
 				return ((TableItem) item).getBounds(columnNumber);
 			}
