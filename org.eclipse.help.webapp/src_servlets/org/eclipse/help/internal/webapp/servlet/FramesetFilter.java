@@ -26,6 +26,11 @@ public class FramesetFilter implements IFilter {
 		if (uri == null || !uri.endsWith("html") && !uri.endsWith("htm")) {
 			return out;
 		}
+		
+		String noframes = req.getParameter("noframes");
+		if ("true".equals(noframes)){
+			return out;
+		}
 
 		String path = req.getPathInfo();
 		if (path == null) {
