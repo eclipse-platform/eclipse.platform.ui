@@ -445,6 +445,9 @@ private CTabItem getTab(LayoutPart child) {
  * Includes the active editor and its tab, in the appropriate order.
  */
 public Control[] getTabList() {
+	if (tabFolder == null) {
+		return new Control[0];
+	}
 	if (visibleEditor == null) {
 		return new Control[] { tabFolder };
 	}
