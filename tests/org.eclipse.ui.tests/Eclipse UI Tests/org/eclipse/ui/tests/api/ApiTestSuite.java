@@ -38,5 +38,7 @@ public class ApiTestSuite extends TestSuite {
 		addTest(new TestSuite(IViewSiteTest.class));
 		addTest(new TestSuite(IEditorSiteTest.class));
 		addTest(new TestSuite(IActionBarsTest.class));
+		addTest(new TestSuite(IViewPartTest.class));
+		addTest(new TestSuite(IEditorPartTest.class));
 	}
 }
