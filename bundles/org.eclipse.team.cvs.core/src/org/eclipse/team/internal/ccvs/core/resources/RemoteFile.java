@@ -40,7 +40,7 @@ public class RemoteFile extends RemoteResource implements IRemoteFile {
 	public InputStream getContents(final IProgressMonitor monitor) throws TeamException {
 			
 		// Perform a "cvs update..."
-		RemoteManagedFolder folder = new RemoteManagedFolder(".", getConnection(), parent.getFullPath(), getName());
+		RemoteManagedFolder folder = new RemoteManagedFolder(".", getConnection(), getParentPath(), new String[] {getName()});
 		List localOptions = getLocalOptionsForTag();
 		Client.execute(
 			Client.UPDATE,
@@ -60,16 +60,13 @@ public class RemoteFile extends RemoteResource implements IRemoteFile {
 	 */
 	public ILogEntry[] getLogEntries(IProgressMonitor monitor) throws CVSException {
 		
-		// NOTE: Should we be using the localOptions here?
-		
-		// Perform a "cvs status..." with a custom message hanlder
-		RemoteManagedFolder folder = new RemoteManagedFolder(".", getConnection(), parent.getFullPath(), getName());
-		List localOptions = getLocalOptionsForTag();
+		// Perform a "cvs log..." with a custom message handler
+		RemoteManagedFolder folder = new RemoteManagedFolder(".", getConnection(), getParentPath(), new String[] {getName()});
 		final List entries = new ArrayList();
 		Client.execute(
 			Client.LOG,
 			Client.EMPTY_ARGS_LIST, 
-			(String[])localOptions.toArray(new String[localOptions.size()]),
+			Client.EMPTY_ARGS_LIST,
 			new String[]{getName()}, 
 			folder,
 			monitor,
@@ -83,29 +80,10 @@ public class RemoteFile extends RemoteResource implements IRemoteFile {
 	 * @see IRemoteFile#getRevision()
 	 */
 	public String getRevision(IProgressMonitor monitor) throws CVSException {
-		
-		// Create a listener for receiving the revision info
-		final String[] revision = new String[] { null };
-		IStatusListener listener = new IStatusListener() {
-			public void fileStatus(IPath path, String remoteRevision) {
-				revision[0] = remoteRevision;
-			}
-		};
-			
-		// Perform a "cvs status..." with a custom message hanlder
-		RemoteManagedFolder folder = new RemoteManagedFolder(".", getConnection(), parent.getFullPath(), getName());
-		List localOptions = getLocalOptionsForTag();
-		Client.execute(
-			Client.STATUS,
-			Client.EMPTY_ARGS_LIST, 
-			(String[])localOptions.toArray(new String[localOptions.size()]),
-			new String[]{getName()}, 
-			folder,
-			monitor,
-			CVSTeamProvider.getPrintStream(),
-			getConnection(),
-			new IResponseHandler[] {new StatusMessageHandler(listener)});
-		return revision[0];
+		return tag;
+	}
+	public String getRevision() {
+		return tag;
 	}
 	
 	/**
@@ -115,8 +93,8 @@ public class RemoteFile extends RemoteResource implements IRemoteFile {
 		return FILE;
 	}
 	
-	public RemoteFileRevision toRemoteFileRevision(String revision) {
-		return new RemoteFileRevision(parent, getName(), revision);
+	public RemoteFile toRemoteFileRevision(String revision) {
+		return new RemoteFile(parent, getName(), revision);
 	}
 }
 

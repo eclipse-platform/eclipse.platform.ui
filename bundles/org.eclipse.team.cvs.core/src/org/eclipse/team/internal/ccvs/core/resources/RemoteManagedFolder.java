@@ -5,6 +5,10 @@ package org.eclipse.team.internal.ccvs.core.resources;
  * All Rights Reserved.
  */
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Client;
 import org.eclipse.team.internal.ccvs.core.Policy;
@@ -13,7 +17,6 @@ import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFile;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedResource;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedVisitor;
-import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 
 /**
  * This class can be used to pass an empty folder to CVS in order to see
@@ -26,19 +29,27 @@ import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
  */
 public class RemoteManagedFolder extends RemoteManagedResource implements IManagedFolder {
 	
-	// NIK: Comment for the "one child" solution ?
-	private RemoteManagedFile child;
+	private Map children;
 	protected String remote;
+	protected String tag;
 	
 	public RemoteManagedFolder(String name, ICVSRepositoryLocation repository, String remote) {
 		this(name, repository, remote, null);
 	}
 	
-	public RemoteManagedFolder(String name, ICVSRepositoryLocation repository, String remote, String child) {
+	public RemoteManagedFolder(String name, ICVSRepositoryLocation repository, String remote, String[] children) {
+		this(name, repository, remote, children, null);
+	}
+
+	public RemoteManagedFolder(String name, ICVSRepositoryLocation repository, String remote, String[] children, String tag) {
 		super(name, null, repository);
 		this.remote = remote;
-		if (child != null)
-			this.child = new RemoteManagedFile(child, this, repository);
+		this.tag = tag;
+		if (children != null) {
+			this.children = new HashMap();
+			for (int i=0;i<children.length;i++)
+				this.children.put(children[i], new RemoteManagedFile(children[i], this, repository));
+		}
 	}
 	
 	/**
@@ -52,10 +63,10 @@ public class RemoteManagedFolder extends RemoteManagedResource implements IManag
 	 * @see IManagedFolder#getFiles()
 	 */
 	public IManagedFile[] getFiles() throws CVSException {
-		if (child == null)
+		if (children == null)
 			return new IManagedFile[0];
 		else
-			return new IManagedFile[] {child};
+			return (IManagedFile[])children.entrySet().toArray(new IManagedFile[children.size()]);
 	}
 
 	/**
@@ -98,8 +109,11 @@ public class RemoteManagedFolder extends RemoteManagedResource implements IManag
 	public IManagedResource getChild(String path) throws CVSException {
 		if (path.equals(Client.CURRENT_LOCAL_FOLDER))
 			return this;
-		if ((child != null) && (path.equals(child.getName())))
-			return child;
+		if (children != null) {
+			IManagedResource resource = (IManagedResource) children.get(path);
+			if (resource != null)
+				return resource;
+		}
 		throw new CVSException(Policy.bind("RemoteManagedFolder.invalidChild", new Object[] {name}));
 	}
 
@@ -120,7 +134,10 @@ public class RemoteManagedFolder extends RemoteManagedResource implements IManag
 	 * @see IManagedFolder#getFolderInfo()
 	 */
 	public FolderProperties getFolderInfo() throws CVSException {
-		return new FolderProperties(repository.getLocation(), remote, false);
+		FolderProperties fp = new FolderProperties(repository.getLocation(), remote, false);
+		if (tag != null)
+			fp.setTag(tag);
+		return fp;
 	}
 
 	/**

@@ -6,21 +6,30 @@ package org.eclipse.team.internal.ccvs.core.resources;
  */
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.Client;
-import org.eclipse.team.internal.ccvs.core.response.IResponseHandler;
-import org.eclipse.team.internal.ccvs.core.response.custom.IUpdateMessageListener;
-import org.eclipse.team.internal.ccvs.core.response.custom.UpdateErrorHandler;
-import org.eclipse.team.internal.ccvs.core.response.custom.UpdateMessageHandler;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.IRemoteFolder;
 import org.eclipse.team.ccvs.core.IRemoteResource;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.Client;
+import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.commands.CommandDispatcher;
+import org.eclipse.team.internal.ccvs.core.connection.Connection;
+import org.eclipse.team.internal.ccvs.core.requests.RequestSender;
+import org.eclipse.team.internal.ccvs.core.response.IResponseHandler;
+import org.eclipse.team.internal.ccvs.core.response.ResponseDispatcher;
+import org.eclipse.team.internal.ccvs.core.response.custom.IStatusListener;
+import org.eclipse.team.internal.ccvs.core.response.custom.IUpdateMessageListener;
+import org.eclipse.team.internal.ccvs.core.response.custom.StatusMessageHandler;
+import org.eclipse.team.internal.ccvs.core.response.custom.UpdateErrorHandler;
+import org.eclipse.team.internal.ccvs.core.response.custom.UpdateMessageHandler;
 
 /**
  * This class provides the implementation of IRemoteFolder
@@ -34,6 +43,57 @@ public class RemoteFolder extends RemoteResource implements IRemoteFolder {
 		super(parent, name, tag);
 	}
 
+	// Get the file revisions for the given filenames
+	protected String[] getFileRevisions(Connection connection, String[] fileNames, IProgressMonitor monitor) throws CVSException {
+		
+		// Create a listener for receiving the revision info
+		final Map revisions = new HashMap();
+		IStatusListener listener = new IStatusListener() {
+			public void fileStatus(IPath path, String remoteRevision) {
+				revisions.put(path.lastSegment(), remoteRevision);
+			}
+		};
+			
+		// Perform a "cvs status..." with a custom message hanlder
+		RemoteManagedFolder folder = new RemoteManagedFolder(".", getConnection(), getFullPath(), fileNames, tag);
+		List localOptions = getLocalOptionsForTag();
+		
+		// NOTE: This should be in a single methodin Client
+		ResponseDispatcher responseDispatcher = new ResponseDispatcher(connection, new IResponseHandler[] {new StatusMessageHandler(listener)});
+		RequestSender requestSender = new RequestSender(connection);
+		CommandDispatcher commandDispatcher = new CommandDispatcher(responseDispatcher, requestSender);		
+		commandDispatcher.execute(
+			Client.STATUS,
+			Client.EMPTY_ARGS_LIST, 
+			(String[])localOptions.toArray(new String[localOptions.size()]),
+			fileNames,
+			folder,
+			monitor,
+			CVSTeamProvider.getPrintStream());
+
+//		client.execute(
+//			Client.STATUS,
+//			Client.EMPTY_ARGS_LIST, 
+//			(String[])localOptions.toArray(new String[localOptions.size()]),
+//			fileNames,
+//			folder,
+//			monitor,
+//			CVSTeamProvider.getPrintStream(),
+//			connection,
+//			new IResponseHandler[] {new StatusMessageHandler(listener)});
+		
+		if (revisions.size() != fileNames.length)
+			throw new CVSException(Policy.bind("RemoteFolder.errorFetchingRevisions"));
+		String[] result = new String[fileNames.length];
+		for (int i=0;i<fileNames.length;i++) {
+			String revision = (String)revisions.get(fileNames[i]);
+			if (revision == null)
+				throw new CVSException(Policy.bind("RemoteFolder.errorFetchingRevisions"));
+			result[i] = revision;
+		}
+		return result;
+	}
+	
 	/**
 	 * @see IRemoteFolder#getMembers()
 	 */
@@ -78,9 +138,12 @@ public class RemoteFolder extends RemoteResource implements IRemoteFolder {
 			localOptions.add(Client.TAG_OPTION);
 			localOptions.add(tagName);
 		}
-			
-		// Perform a "cvs -n update -d -r tagName folderName" with custom message and error handlers
+		
+		// Retrieve the children and any file revision numbers in a single connection
+		Connection c = getConnection().openConnection();
+		List result = new ArrayList();
 		try {
+			// Perform a "cvs -n update -d -r tagName folderName" with custom message and error handlers
 			Client.execute(
 				Client.UPDATE,
 				new String[]{Client.NOCHANGE_OPTION}, 
@@ -89,16 +152,26 @@ public class RemoteFolder extends RemoteResource implements IRemoteFolder {
 				new RemoteManagedFolder(".", getConnection(), getFullPath()),
 				monitor,
 				CVSTeamProvider.getPrintStream(),
-				getConnection(),
+				c,
 				new IResponseHandler[]{new UpdateMessageHandler(listener), new UpdateErrorHandler(listener, errors)});
+			// Get the revision numbers for the files
+			
+			if (newRemoteFiles.size() > 0) {
+				String[] revisions = getFileRevisions(c, (String[])newRemoteFiles.toArray(new String[newRemoteFiles.size()]), monitor);
+				for (int i=0;i<newRemoteFiles.size();i++) {
+					result.add(new RemoteFile(this, (String)newRemoteFiles.get(i), revisions[i]));
+				}
+			}
+			for (int i=0;i<newRemoteDirectories.size();i++)
+				result.add(new RemoteFolder(this, (String)newRemoteDirectories.get(i), tagName));
+
+
+			
 		} catch (CVSException e) {
 			throw CVSTeamProvider.wrapException(e, errors);
+		} finally {
+			c.close();
 		}
-		List result = new ArrayList();
-		for (int i=0;i<newRemoteDirectories.size();i++)
-			result.add(new RemoteFolder(this, (String)newRemoteDirectories.get(i), tagName));
-		for (int i=0;i<newRemoteFiles.size();i++)
-			result.add(new RemoteFile(this, (String)newRemoteFiles.get(i), tagName));
 		return (IRemoteResource[])result.toArray(new IRemoteResource[0]);
 	}
 

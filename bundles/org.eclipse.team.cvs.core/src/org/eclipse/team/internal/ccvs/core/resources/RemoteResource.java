@@ -53,6 +53,13 @@ public abstract class RemoteResource extends PlatformObject implements IRemoteRe
 	}
 	
 	/**
+	 * Get the path of the parent, starting at the root
+	 */
+	public String getParentPath() {
+		return parent.getFullPath();
+	}
+	
+	/**
 	 * Return the IRemoteRoot that is the ancestor of the receiver
 	 */
 	public IRemoteRoot getRemoteRoot() {
