@@ -176,6 +176,13 @@ public interface IDebugUIConstants {
 	public static final String PREF_REUSE_EDITOR = PLUGIN_ID + ".reuse_editor"; //$NON-NLS-1$
 	
 	/**
+	 * Integer preference that specifies the length of the Run & Debug launch history lists.
+	 * 
+	 * @since 2.0
+	 */
+	public static final String PREF_MAX_HISTORY_SIZE = PLUGIN_ID + ".max_history_size"; //$NON-NLS-1$
+	
+	/**
 	 * Boolean preference controlling whether the debugger shows types names
 	 * in its variable view. When <code>true</code> the debugger
 	 * will display type names in new variable views.

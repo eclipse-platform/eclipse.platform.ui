@@ -62,6 +62,8 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Color;
@@ -85,7 +87,9 @@ import org.xml.sax.SAXException;
  * The Debug UI Plugin.
  *
  */
-public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, ILaunchConfigurationListener {															   
+public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
+																	ILaunchConfigurationListener, 
+																	IPropertyChangeListener {															   
 									   	
 	/**
 	 * The singleton debug plugin instance
@@ -121,7 +125,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	/**
 	 * The length of the Run & Debug history lists.  
 	 */
-	protected final static int MAX_HISTORY_SIZE= 5;
+	protected int fMaxHistorySize;
 	
 	/**
 	 * The most recent debug launches
@@ -147,7 +151,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	 * The list of most recent launches, independent of mode.
 	 * This list may be empty, but should never be <code>null</code>.
 	 */
-	protected List fLastLaunchList = new ArrayList(MAX_HISTORY_SIZE);
+	protected List fLastLaunchList;
 	
 	/**
 	 * The list of registered implementors of <code>ILaunchHistoryChangedListener</code>
@@ -337,6 +341,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 			fgPresentation.dispose();
 		}
 		
+		getPreferenceStore().removePropertyChangeListener(this);
+		
 		super.shutdown();
 	}
 
@@ -345,6 +351,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	 */
 	public void startup() throws CoreException {
 		super.startup();
+		
+		fMaxHistorySize = getPreferenceStore().getInt(IDebugUIConstants.PREF_MAX_HISTORY_SIZE);
+		fLastLaunchList = new ArrayList(fMaxHistorySize);
+		getPreferenceStore().addPropertyChangeListener(this);
+		
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		launchManager.addLaunchListener(this);	
 		launchManager.addLaunchConfigurationListener(this);
@@ -781,11 +792,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	 * Erase both (run & debug) launch histories and the last launched list.
 	 */
 	protected void setEmptyLaunchHistories() {
-		fRunHistory = new Vector(MAX_HISTORY_SIZE);
-		fDebugHistory = new Vector(MAX_HISTORY_SIZE);
-		setRunFavorites(new Vector(MAX_HISTORY_SIZE));
-		setDebugFavorites(new Vector(MAX_HISTORY_SIZE));
-		fLastLaunchList = new ArrayList(MAX_HISTORY_SIZE);
+		fRunHistory = new Vector(fMaxHistorySize);
+		fDebugHistory = new Vector(fMaxHistorySize);
+		setRunFavorites(new Vector(fMaxHistorySize));
+		setDebugFavorites(new Vector(fMaxHistorySize));
+		fLastLaunchList = new ArrayList(fMaxHistorySize);
 		fireLaunchHistoryChanged();		
 	}
 	
@@ -857,7 +868,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		} 			
 		history.add(0, item);
 		
-		if (history.size() > MAX_HISTORY_SIZE) {
+		if (history.size() > fMaxHistorySize) {
 			history.remove(history.size() - 1);
 		}
 
@@ -1343,6 +1354,34 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		RGB rgb= PreferenceConverter.getColor(pstore, type);
 		ColorManager colorManager= DebugUIPlugin.getDefault().getColorManager();
 		return colorManager.getColor(rgb);
+	}
+	
+	/**
+	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(IDebugUIConstants.PREF_MAX_HISTORY_SIZE)) {
+			int newValue = ((Integer)event.getNewValue()).intValue();
+			int oldValue = ((Integer)event.getOldValue()).intValue();
+			if (newValue != oldValue) {
+				if (newValue < oldValue) {
+					shortenHistoryLists(newValue);
+				}
+				fMaxHistorySize = newValue;
+				fireLaunchHistoryChanged();
+			}
+		}
+	}
+
+	/**
+	 * Adjust the lengths of the history lists, throwing away any entries that are past the new end
+	 * of the lists. 
+	 */
+	protected void shortenHistoryLists(int newLength) {		
+		fRunHistory = new Vector(fRunHistory.subList(0, newLength));
+		fDebugHistory = new Vector(fDebugHistory.subList(0, newLength));
+		fLastLaunchList = new ArrayList(fLastLaunchList.subList(0, newLength));
+		
 	}
 }
 
