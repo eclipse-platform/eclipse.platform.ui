@@ -297,39 +297,51 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		}
 		assertExistsInWorkspace("3.3", folder);
 		assertDoesNotExistInWorkspace("3.4", childFile);
+		
+		//try to copy a file to the folder
+		IFile destination = folder.getFile(existingFileInExistingProject.getName());
+		try {
+			existingFileInExistingProject.copy(destination.getFullPath(), IResource.NONE, getMonitor());
+			//should fail
+			fail("3.5");
+		} catch (CoreException e) {
+			//expected
+		}
+		assertTrue("3.6", !destination.exists());
+		
 		// try to change resource's contents
 		try {
 			childFile.setContents(getContents("new contents"), IResource.NONE, null);
 			// Resource has no-defined location - should fail
-			fail("3.5");
+			fail("4.0");
 		} catch (CoreException re) {
 			// success: resource had no defined location
 		}
 	
-		assertExistsInWorkspace("3.6", folder);
+		assertExistsInWorkspace("4.1", folder);
 		// the location is null
-		assertNull("3.7", folder.getLocation());
+		assertNull("4.2", folder.getLocation());
 	
 		// re-creates the variable with its previous value
 		try {
 			manager.setValue(VARIABLE_NAME, existingValue);
 		} catch (CoreException e) {
-			fail("4.0", e);
+			fail("5.0", e);
 		}
 	
-		assertExistsInWorkspace("5.0", folder);
-		assertNotNull("5.1", folder.getLocation());
-		assertExistsInFileSystem("5.2", folder);
-		assertDoesNotExistInWorkspace("5.3", childFile);
-		assertExistsInFileSystem("5.4", childFile);
+		assertExistsInWorkspace("6.0", folder);
+		assertNotNull("6.1", folder.getLocation());
+		assertExistsInFileSystem("6.2", folder);
+		assertDoesNotExistInWorkspace("6.3", childFile);
+		assertExistsInFileSystem("6.4", childFile);
 		
 		//refresh should recreate the child
 		try {
 			folder.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
 		} catch (CoreException e) {
-			fail("6.0", e);
+			fail("7.0", e);
 		}
-		assertExistsInWorkspace("6.1", folder);
-		assertExistsInWorkspace("6.2", childFile);
+		assertExistsInWorkspace("7.1", folder);
+		assertExistsInWorkspace("7.2", childFile);
 	}
 }
