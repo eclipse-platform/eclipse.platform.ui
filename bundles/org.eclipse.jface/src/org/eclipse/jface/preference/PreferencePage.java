@@ -375,7 +375,7 @@ public abstract class PreferencePage extends DialogPage implements
      * it is expected to set the margins of this <code>Layout</code> to 0 pixels.
      */
     public void createControl(Composite parent){
-    	createControl(parent,false);
+    	createControl(parent,true);
     }
     
     /**

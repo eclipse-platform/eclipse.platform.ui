@@ -991,7 +991,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 */
 	protected void createPageControl(IPreferencePage page, Composite parent) {
 		if (page instanceof PreferencePage)
-			((PreferencePage) page).createControl(parent, true);
+			((PreferencePage) page).createControl(parent);
 		else
 			super.createPageControl(page, parent);
 	}
