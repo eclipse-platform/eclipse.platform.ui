@@ -829,7 +829,7 @@ public final class WorkbenchKeyboard {
         }
         final Point workbenchWindowSize = state.getAssociatedWindow().getShell().getSize();
         final int maxWidth = workbenchWindowSize.x * 2 / 5;
-        final int maxHeight = workbenchWindowSize.y;
+        final int maxHeight = workbenchWindowSize.y / 2;
         if (assistShellSize.x > maxWidth) {
             assistShellSize.x = maxWidth;
         }
@@ -842,9 +842,9 @@ public final class WorkbenchKeyboard {
         final Rectangle workbenchWindowBounds = state.getAssociatedWindow()
                 .getShell().getBounds();
         final int xCoord = workbenchWindowBounds.x
-                + workbenchWindowBounds.width - assistShellSize.x + 20;
+                + workbenchWindowBounds.width - assistShellSize.x;
         final int yCoord = workbenchWindowBounds.y
-                + workbenchWindowBounds.height - assistShellSize.y + 20;
+                + workbenchWindowBounds.height - assistShellSize.y;
         final Point assistShellLocation = new Point(xCoord, yCoord);
         Rectangle displayBounds = display.getClientArea();
         final int displayRightEdge = displayBounds.x + displayBounds.width;
