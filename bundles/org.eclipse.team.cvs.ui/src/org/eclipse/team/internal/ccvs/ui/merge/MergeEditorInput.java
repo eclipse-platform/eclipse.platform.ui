@@ -5,8 +5,6 @@ package org.eclipse.team.internal.ccvs.ui.merge;
  * All Rights Reserved.
  */
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
@@ -17,18 +15,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
-import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
-import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
-import org.eclipse.team.ui.sync.MergeResource;
-import org.eclipse.team.ui.sync.SyncView;
-import org.eclipse.team.ui.sync.TeamFile;
+import org.eclipse.team.internal.ui.sync.MergeResource;
+import org.eclipse.team.internal.ui.sync.SyncView;
+import org.eclipse.team.internal.ui.sync.TeamFile;
 
 public class MergeEditorInput extends CVSSyncCompareInput {
 	CVSTag start;

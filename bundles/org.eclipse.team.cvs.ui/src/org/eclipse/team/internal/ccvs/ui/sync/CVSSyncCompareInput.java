@@ -28,10 +28,10 @@ import org.eclipse.team.internal.ccvs.ui.AvoidableMessageDialog;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.ui.sync.CatchupReleaseViewer;
-import org.eclipse.team.ui.sync.ChangedTeamContainer;
-import org.eclipse.team.ui.sync.SyncCompareInput;
-import org.eclipse.team.ui.sync.TeamFile;
+import org.eclipse.team.internal.ui.sync.CatchupReleaseViewer;
+import org.eclipse.team.internal.ui.sync.ChangedTeamContainer;
+import org.eclipse.team.internal.ui.sync.SyncCompareInput;
+import org.eclipse.team.internal.ui.sync.TeamFile;
 
 public class CVSSyncCompareInput extends SyncCompareInput {
 	private IResource[] resources;

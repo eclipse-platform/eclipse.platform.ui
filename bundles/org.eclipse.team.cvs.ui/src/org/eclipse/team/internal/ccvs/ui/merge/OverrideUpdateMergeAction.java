@@ -9,8 +9,8 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
-import org.eclipse.team.ui.sync.ITeamNode;
-import org.eclipse.team.ui.sync.SyncSet;
+import org.eclipse.team.internal.ui.sync.ITeamNode;
+import org.eclipse.team.internal.ui.sync.SyncSet;
 
 public class OverrideUpdateMergeAction extends UpdateMergeAction {
 	public OverrideUpdateMergeAction(CVSSyncCompareInput model, ISelectionProvider sp, String label, Shell shell) {

@@ -12,8 +12,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
-import org.eclipse.team.ui.actions.TeamAction;
-import org.eclipse.team.ui.sync.SyncView;
+import org.eclipse.team.internal.ui.sync.SyncView;
 import org.eclipse.ui.PartInitException;
 
 /**

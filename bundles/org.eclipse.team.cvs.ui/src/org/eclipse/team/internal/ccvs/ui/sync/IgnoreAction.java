@@ -19,11 +19,11 @@ import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.ui.sync.ChangedTeamContainer;
-import org.eclipse.team.ui.sync.ITeamNode;
-import org.eclipse.team.ui.sync.SyncSet;
-import org.eclipse.team.ui.sync.TeamFile;
-import org.eclipse.team.ui.sync.UnchangedTeamContainer;
+import org.eclipse.team.internal.ui.sync.ChangedTeamContainer;
+import org.eclipse.team.internal.ui.sync.ITeamNode;
+import org.eclipse.team.internal.ui.sync.SyncSet;
+import org.eclipse.team.internal.ui.sync.TeamFile;
+import org.eclipse.team.internal.ui.sync.UnchangedTeamContainer;
 
 public class IgnoreAction extends Action {
 	Shell shell;

@@ -19,7 +19,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -43,11 +42,9 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
-import org.eclipse.team.ui.sync.ChangedTeamContainer;
-import org.eclipse.team.ui.sync.ITeamNode;
-import org.eclipse.team.ui.sync.SyncSet;
-import org.eclipse.team.ui.sync.TeamFile;
-import org.eclipse.team.ui.sync.UnchangedTeamContainer;
+import org.eclipse.team.internal.ui.sync.ChangedTeamContainer;
+import org.eclipse.team.internal.ui.sync.ITeamNode;
+import org.eclipse.team.internal.ui.sync.SyncSet;
 
 /**
  * UpdateSyncAction is run on a set of sync nodes when the "Update" menu item is performed

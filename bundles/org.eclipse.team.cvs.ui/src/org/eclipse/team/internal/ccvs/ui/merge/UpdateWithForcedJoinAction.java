@@ -13,8 +13,8 @@ import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
-import org.eclipse.team.ui.sync.ITeamNode;
-import org.eclipse.team.ui.sync.SyncSet;
+import org.eclipse.team.internal.ui.sync.ITeamNode;
+import org.eclipse.team.internal.ui.sync.SyncSet;
 
 /*
  * Used only in the merge editor. This action allows the user to select a single conflict and use

@@ -85,7 +85,7 @@
 		icon="icons/full/cview16/synch_synch.gif"
 		name="Synchronize"
 		category="org.eclipse.team.ui"
-		class="org.eclipse.team.ui.sync.SyncView">
+		class="org.eclipse.team.internal.ui.sync.SyncView">
 	</view>
 </extension>	
 

@@ -27,16 +27,15 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
-import org.eclipse.team.ui.sync.ChangedTeamContainer;
-import org.eclipse.team.ui.sync.ITeamNode;
-import org.eclipse.team.ui.sync.SyncSet;
-import org.eclipse.team.ui.sync.TeamFile;
+import org.eclipse.team.internal.ui.sync.ChangedTeamContainer;
+import org.eclipse.team.internal.ui.sync.ITeamNode;
+import org.eclipse.team.internal.ui.sync.SyncSet;
+import org.eclipse.team.internal.ui.sync.TeamFile;
 
 public class CommitSyncAction extends MergeAction {
 	public CommitSyncAction(CVSSyncCompareInput model, ISelectionProvider sp, String label, Shell shell) {

@@ -29,7 +29,6 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
@@ -56,11 +55,11 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.merge.OverrideUpdateMergeAction;
 import org.eclipse.team.internal.ccvs.ui.merge.UpdateMergeAction;
 import org.eclipse.team.internal.ccvs.ui.merge.UpdateWithForcedJoinAction;
-import org.eclipse.team.ui.sync.CatchupReleaseViewer;
-import org.eclipse.team.ui.sync.ITeamNode;
-import org.eclipse.team.ui.sync.MergeResource;
-import org.eclipse.team.ui.sync.SyncView;
-import org.eclipse.team.ui.sync.TeamFile;
+import org.eclipse.team.internal.ui.sync.CatchupReleaseViewer;
+import org.eclipse.team.internal.ui.sync.ITeamNode;
+import org.eclipse.team.internal.ui.sync.MergeResource;
+import org.eclipse.team.internal.ui.sync.SyncView;
+import org.eclipse.team.internal.ui.sync.TeamFile;
 
 public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 	// Actions

@@ -1,4 +1,4 @@
-package org.eclipse.team.ui.sync;
+package org.eclipse.team.internal.ui.sync;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2002.

@@ -18,7 +18,7 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
-import org.eclipse.team.ui.sync.SyncView;
+import org.eclipse.team.internal.ui.sync.SyncView;
 
 public class CVSLocalCompareEditorInput extends CVSSyncCompareInput {
 	CVSTag[] tags;
