@@ -864,8 +864,11 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 */
 	public void populateDetailPane() {
 		if (isDetailPaneVisible()) {
-			IStructuredSelection selection = (IStructuredSelection) getViewer().getSelection();
-			populateDetailPaneFromSelection(selection);		
+			Viewer viewer = getViewer();
+			if (viewer != null) {
+				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+				populateDetailPaneFromSelection(selection);	
+			}	
 		}
 	}
 	
