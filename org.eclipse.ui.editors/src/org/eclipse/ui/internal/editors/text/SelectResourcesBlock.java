@@ -847,18 +847,8 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 		Iterator keyIterator= items.keySet().iterator();
 		while (keyIterator.hasNext()) {
 			Object key= keyIterator.next();
-			List selections= (List) items.get(key);
-			//Replace the items in the checked state store with those from the
-			// supplied items
-			checkedStateStore.put(key, selections);
-			selectedNodes.add(key);
-			// proceed up the tree element hierarchy
-			Object parent= treeContentProvider.getParent(key);
-			if (parent != null) {
-				// proceed up the tree element hierarchy and make sure
-				// everything is in the table
-				primeHierarchyForSelection(parent, selectedNodes);
-			}
+			primeHierarchyForSelection(key, selectedNodes);
+			checkedStateStore.put(key, items.get(key));
 		}
 
 		// Update the checked tree items. Since each tree item has a selected
@@ -873,105 +863,4 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 				listViewer.setCheckedElements(((List) displayItems).toArray());
 		}
 	}
-	
-//	/**
-//	 * This method must be called just before this window becomes visible.
-//	 */
-//	private void aboutToOpen() {
-//		determineWhiteCheckedDescendents(root);
-//		checkNewTreeElements(treeContentProvider.getElements(root));
-//		currentTreeSelection= null;
-//
-//		//select the first element in the list
-//		Object[] elements= treeContentProvider.getElements(root);
-//		Object primary= elements.length > 0 ? elements[0] : null;
-//		if (primary != null) {
-//			treeViewer.setSelection(new StructuredSelection(primary));
-//		}
-//		treeViewer.getControl().setFocus();
-//	}
-//
-//	/**
-//	 * Set the focus on to the list widget.
-//	 */
-//	private void setFocus() {
-//		this.treeViewer.getTree().setFocus();
-//	}
-//
-//	/**
-//	 * Set the root of the widget to be new Root. Regenerate all of the tables
-//	 * and lists from this value.
-//	 * 
-//	 * @param newRoot the new root
-//	 */
-//	private void setRoot(Object newRoot) {
-//		this.root= newRoot;
-//		initialize();
-//	}
-//	/**
-//	 * Set the initial checked state of the passed list element to
-//	 * <code>true</code>.
-//	 * 
-//	 * @param element the element
-//	 */
-//	private void initialCheckListItem(Object element) {
-//		Object parent= treeContentProvider.getParent(element);
-//		selectAndReveal(parent);
-//		//Check the element in the viewer as if it had been manually checked
-//		listViewer.setChecked(element, true);
-//		//As this is not done from the UI then set the box for updating from
-//		// the selection to false
-//		listItemChecked(element, true, false);
-//		grayUpdateHierarchy(parent);
-//	}
-//
-//	/**
-//	 * Set the initial checked state of the passed element to <code>true</code>,
-//	 * as well as to all of its children and associated list elements
-//	 * 
-//	 * @param element the element
-//	 */
-//	private void initialCheckTreeItem(Object element) {
-//		treeItemChecked(element, true);
-//		selectAndReveal(element);
-//	}
-//
-//	/**
-//	 * Get the table the list viewer uses.
-//	 * 
-//	 * @return org.eclipse.swt.widgets.Table
-//	 */
-//	private Table getListTable() {
-//		return this.listViewer.getTable();
-//	}
-//
-//	/**
-//	 * Answer the number of elements that have been checked by the user.
-//	 * 
-//	 * @return int
-//	 */
-//	private int getCheckedElementCount() {
-//		return checkedStateStore.values().size();
-//	}
-//
-//	/**
-//	 * Recursively add appropriate tree elements to the collection of known
-//	 * white-checked tree elements.
-//	 * 
-//	 * @param treeElement java.lang.Object
-//	 */
-//	private void determineWhiteCheckedDescendents(Object treeElement) {
-//		// always go through all children first since their white-checked
-//		// statuses will be needed to determine the white-checked status for
-//		// this tree element
-//		Object[] children= treeContentProvider.getElements(treeElement);
-//		for (int i= 0; i < children.length; ++i)
-//			determineWhiteCheckedDescendents(children[i]);
-//
-//		// now determine the white-checked status for this tree element
-//		if (determineShouldBeWhiteChecked(treeElement))
-//			setWhiteChecked(treeElement, true);
-//	}
-
-
 }
