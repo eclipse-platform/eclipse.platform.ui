@@ -144,7 +144,7 @@ protected Control createDialogArea(Composite parent) {
 	// Add perspective list.
 	list = new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 	list.setLabelProvider(new PerspectiveLabelProvider());
-	list.setContentProvider(new PerspContentProvider(true));
+	list.setContentProvider(new PerspContentProvider());
 	list.setSorter(new ViewerSorter());
 	list.setInput(perspReg);
 	list.addSelectionChangedListener(this);
