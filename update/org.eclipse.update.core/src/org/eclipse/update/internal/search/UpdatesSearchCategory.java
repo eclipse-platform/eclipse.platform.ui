@@ -145,20 +145,6 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 		}
 	}
 
-	private class HitSorter extends Sorter {
-		public boolean compare(Object left, Object right) {
-			Hit hit1 = (Hit) left;
-			Hit hit2 = (Hit) right;
-			try {
-				VersionedIdentifier hv1 = hit1.ref.getVersionedIdentifier();
-				VersionedIdentifier hv2 = hit2.ref.getVersionedIdentifier();
-				return isNewerVersion(hv2, hv1);
-			} catch (CoreException e) {
-				return false;
-			}
-		}
-	}
-
 	class UpdateQuery implements IUpdateSearchQuery {
 		IFeature candidate;
 		IQueryUpdateSiteAdapter adapter;
@@ -305,11 +291,9 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 		IUpdateSearchFilter filter,
 		IUpdateSearchResultCollector collector) {
 		Object[] array = hits.toArray();
-		HitSorter sorter = new HitSorter();
-		sorter.sortInPlace(array);
 		IFeature topHit = null;
-		for (int i = 0; i < array.length; i++) {
-			Hit hit = (Hit) array[i];
+		for (int i = 0; i < hits.size(); i++) {
+			Hit hit = (Hit) hits.get(i);
 			IInstallFeatureOperation job = hit.getJob();
 			if (job == null)
 				continue;
