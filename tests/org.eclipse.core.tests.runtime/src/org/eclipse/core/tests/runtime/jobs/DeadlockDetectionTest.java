@@ -185,7 +185,8 @@ public class DeadlockDetectionTest extends TestCase {
 		
 		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_DONE, 100);
 		StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_DONE, 100);
-		
+		waitForThreadDeath(first);
+		waitForThreadDeath(second);
 		assertTrue("3.0", !first.isAlive());
 		assertTrue("4.0", !second.isAlive());
 		//the underlying array has to be empty
@@ -250,7 +251,9 @@ public class DeadlockDetectionTest extends TestCase {
 		
 		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_DONE, 100);
 		StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_DONE, 100);
-			
+		waitForCompletion(first);
+		waitForCompletion(second);
+		
 		assertEquals("3.0", Job.NONE, first.getState());
 		assertEquals("3.1", Status.OK_STATUS, first.getResult());
 		assertEquals("4.0", Job.NONE, second.getState());
@@ -366,6 +369,32 @@ public class DeadlockDetectionTest extends TestCase {
 		//the underlying array has to be empty
 		assertTrue("Locks not removed from graph.", manager.isEmpty());
 	}
+	/**
+	 * Spin until the given job completes
+	 */
+	private void waitForCompletion(Job job) {
+		int i = 0;
+		while(job.getState() != Job.NONE) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+			}
+			assertTrue("Timeout waiting for job to end.", ++i < 100);
+		}
+	}
+	/**
+	 * Spin until the given thread dies
+	 */
+	private void waitForThreadDeath(Thread thread) {
+		int i = 0;
+		while(thread.isAlive()) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+			}
+			assertTrue("Timeout waiting for job to end.", ++i < 100);
+		}
+	}
 	
 	public void testJobRuleCancellation() {
 		final JobManager manager = JobManager.getInstance();
@@ -414,14 +443,7 @@ public class DeadlockDetectionTest extends TestCase {
 		second.cancel();
 		status[0] = StatusChecker.STATUS_RUNNING;
 		StatusChecker.waitForStatus(status, StatusChecker.STATUS_DONE);
-		int i = 0;
-		while(first.getState() != Job.NONE) {
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-			}
-			assertTrue("Timeout waiting for job to end.", ++i < 100);
-		}
+		waitForCompletion(first);
 		//the underlying graph should now be empty
 		assertTrue("Cancelled job not removed from graph.", manager.getLockManager().isEmpty());
 	}
@@ -482,13 +504,7 @@ public class DeadlockDetectionTest extends TestCase {
 		status[0] = StatusChecker.STATUS_RUNNING;
 		StatusChecker.waitForStatus(status, StatusChecker.STATUS_DONE);
 		int i = 0;
-		while(ruleOwner.getState() != Job.NONE) {
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-			}
-			assertTrue("Timeout waiting for job to end.", ++i < 100);
-		}
+		waitForCompletion(ruleOwner);
 		RuleSetA.conflict = false;
 		//the underlying graph should now be empty
 		assertTrue("Cancelled rule not removed from graph.", manager.getLockManager().isEmpty());
