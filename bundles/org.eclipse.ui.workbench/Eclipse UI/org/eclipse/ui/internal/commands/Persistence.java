@@ -38,7 +38,8 @@ final class Persistence {
 	final static String TAG_KEY_STROKE = "keyStroke"; //$NON-NLS-1$
 	final static String TAG_LOCALE = "locale"; //$NON-NLS-1$		
 	final static String TAG_NAME = "name"; //$NON-NLS-1$
-	final static String TAG_PACKAGE = "org.eclipse.ui.commands"; //$NON-NLS-1$
+	final static String TAG_PACKAGE_BASE = "commands"; //$NON-NLS-1$
+	final static String TAG_PACKAGE_FULL = "org.eclipse.ui." + TAG_PACKAGE_BASE; //$NON-NLS-1$
 	final static String TAG_PARENT = "parent"; //$NON-NLS-1$
 	final static String TAG_PLATFORM = "platform"; //$NON-NLS-1$		
 	final static String TAG_PLUGIN = "plugin"; //$NON-NLS-1$

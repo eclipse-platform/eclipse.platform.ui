@@ -42,6 +42,7 @@ public final class CoreRegistry extends AbstractRegistry {
 		private final static String DEPRECATED_TAG_CONFIGURATION_ID = "configurationId"; //$NON-NLS-1$		
 		private final static String DEPRECATED_TAG_KEY = "key"; //$NON-NLS-1$
 		private final static String DEPRECATED_TAG_SCOPE_ID = "scopeId"; //$NON-NLS-1$	
+		private final static String TAG_ROOT = Persistence.TAG_PACKAGE_BASE;
 		
 		private List activeGestureConfigurations;
 		private List activeKeyConfigurations;		
@@ -76,7 +77,7 @@ public final class CoreRegistry extends AbstractRegistry {
 				readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, DEPRECATED_TAG_ACCELERATOR_SCOPES);
 				readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, DEPRECATED_TAG_ACCELERATOR_SETS);
 				readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, DEPRECATED_TAG_ACTION_DEFINITIONS);				
-				readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, Persistence.TAG_COMMAND);
+				readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, TAG_ROOT);
 			}
 
 			CoreRegistry.this.activeGestureConfigurations = Collections.unmodifiableList(activeGestureConfigurations);

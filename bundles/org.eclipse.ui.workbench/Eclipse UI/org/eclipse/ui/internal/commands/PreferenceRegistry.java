@@ -40,7 +40,8 @@ public final class PreferenceRegistry extends AbstractMutableRegistry {
 	private final static String DEPRECATED_TAG_PLUGIN = "plugin"; //$NON-NLS-1$
 	private final static String DEPRECATED_TAG_RANK = "rank"; //$NON-NLS-1$
 	private final static String DEPRECATED_TAG_SCOPE = "scope"; //$NON-NLS-1$
-	private final static String KEY = Persistence.TAG_PACKAGE;
+	private final static String KEY = Persistence.TAG_PACKAGE_FULL;
+	private final static String TAG_ROOT = Persistence.TAG_PACKAGE_FULL;
 
 	public static PreferenceRegistry instance;
 	
@@ -113,7 +114,7 @@ public final class PreferenceRegistry extends AbstractMutableRegistry {
 	
 	public void save()
 		throws IOException {
-		XMLMemento xmlMemento = XMLMemento.createWriteRoot(Persistence.TAG_PACKAGE);		
+		XMLMemento xmlMemento = XMLMemento.createWriteRoot(TAG_ROOT);		
 		Persistence.writeItems(xmlMemento, Persistence.TAG_ACTIVE_GESTURE_CONFIGURATION, activeGestureConfigurations);		
 		Persistence.writeItems(xmlMemento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, activeKeyConfigurations);		
 		Persistence.writeItems(xmlMemento, Persistence.TAG_CATEGORY, categories);		

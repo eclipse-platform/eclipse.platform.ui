@@ -29,8 +29,9 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 
 public final class LocalRegistry extends AbstractMutableRegistry {
 
-	private final static String PATH = Persistence.TAG_PACKAGE + ".xml"; //$NON-NLS-1$
-
+	private final static String PATH = Persistence.TAG_PACKAGE_FULL + ".xml"; //$NON-NLS-1$
+	private final static String TAG_ROOT = Persistence.TAG_PACKAGE_FULL;
+	
 	public static LocalRegistry instance;
 	
 	public static LocalRegistry getInstance() {
@@ -73,7 +74,7 @@ public final class LocalRegistry extends AbstractMutableRegistry {
 	
 	public void save()
 		throws IOException {
-		XMLMemento xmlMemento = XMLMemento.createWriteRoot(Persistence.TAG_PACKAGE);		
+		XMLMemento xmlMemento = XMLMemento.createWriteRoot(TAG_ROOT);		
 		Persistence.writeItems(xmlMemento, Persistence.TAG_ACTIVE_GESTURE_CONFIGURATION, activeGestureConfigurations);		
 		Persistence.writeItems(xmlMemento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, activeKeyConfigurations);		
 		Persistence.writeItems(xmlMemento, Persistence.TAG_CATEGORY, categories);		
