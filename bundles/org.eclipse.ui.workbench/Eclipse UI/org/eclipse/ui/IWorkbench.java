@@ -130,21 +130,12 @@ public interface IWorkbench extends IAdaptable {
 
 	/**
 	 * <p>
-	 * Returns the operation support for the workbench.
-	 * </p>
-	 * <p>
-	 * Note: This method is part of a new API under development. It has been
-	 * added to builds so that clients can start using the new features.
-	 * However, it may change significantly before reaching stability. It is
-	 * being made available at this early stage to solicit feedback with the
-	 * understanding that any code that uses this API may be broken as the API
-	 * evolves.
+	 * Returns the undoable operation support for the workbench.
 	 * </p>
 	 * 
 	 * @return the workbench operation support
 	 * 
 	 * @since 3.1
-	 * @experimental
 	 */
 	public IWorkbenchOperationSupport getOperationSupport();
 

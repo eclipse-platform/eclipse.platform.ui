@@ -15,19 +15,11 @@ import java.util.List;
 
 /**
  * <p>
- * An operation context that can be used to represent any given object. The
- * operation contexts are equal if they both represent the same object.
- * </p>
- * <p>
- * Note: This class/interface is part of a new API under development. It has
- * been added to builds so that clients can start using the new features.
- * However, it may change significantly before reaching stability. It is being
- * made available at this early stage to solicit feedback with the understanding
- * that any code that uses this API may be broken as the API evolves.
+ * An undo context that can be used to represent any given object. Clients
+ * can add matching contexts to this context. 
  * </p>
  * 
  * @since 3.1
- * @experimental
  */
 public class ObjectUndoContext extends UndoContext {
 
@@ -87,8 +79,8 @@ public class ObjectUndoContext extends UndoContext {
 	 * matches of this context will be interpreted as a match of this context
 	 * when the history is filtered for a particular context. Adding a match
 	 * allows components to create their own contexts for implementing
-	 * specialized behavior, yet have their operations appear in the workbench
-	 * filtered operations list.
+	 * specialized behavior, yet have their operations appear in a more
+	 * global context.
 	 * 
 	 * @param context -
 	 *            the context to be added as a match of this context

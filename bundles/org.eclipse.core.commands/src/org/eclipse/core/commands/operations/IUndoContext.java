@@ -12,27 +12,29 @@ package org.eclipse.core.commands.operations;
 
 /**
  * <p>
- * An interface for an undo context that can be used to identify any operation as
- * having a specific context.
+ * An undo context is used to "tag" operations as being applicable to a certain
+ * context. The undo context is used to filter the history of operations
+ * available for undo or redo so that only operations appropriate for a given
+ * undo context are shown when the application is presenting that context.
  * </p>
  * <p>
- * Note: This class/interface is part of a new API under development. It has
- * been added to builds so that clients can start using the new features.
- * However, it may change significantly before reaching stability. It is being
- * made available at this early stage to solicit feedback with the understanding
- * that any code that uses this API may be broken as the API evolves.
+ * The scope of an undo context is defined by the application that is making
+ * undo and redo of operations available. Undo contexts may be related to
+ * application models, or may be associated with UI objects that are providing
+ * undo and redo support.
  * </p>
+ * <p>
+ * An undo context may be defined as "matching" another context. This allows
+ * applications to provide specialized implementations of an undo context that
+ * will appear in the operation history for their matching context.
  * 
  * @since 3.1
- * @experimental
  */
 
 public interface IUndoContext {
 
 	/**
-	 * Get the label that should be used to describe the context in any views.
-	 * Contexts may be shown when filtered operation histories are shown to the
-	 * user.
+	 * Get the label that describes the undo context.
 	 * 
 	 * @return the label for the context.
 	 */
@@ -40,8 +42,8 @@ public interface IUndoContext {
 
 	/**
 	 * Return whether the specified context is considered a match for the
-	 * receiving context. When a context matches another context, objects that
-	 * have the context are considered to also have the matching context.
+	 * receiving context. When a context matches another context, operations
+	 * that have the context are considered to also have the matching context.
 	 * 
 	 * @param context -
 	 *            the context to be checked against the receiving context.

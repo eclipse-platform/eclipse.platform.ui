@@ -23,18 +23,12 @@ import org.eclipse.ui.internal.misc.Policy;
 
 /**
  * <p>
- * Provides operation support for the workbench.
- * </p>
- * <p>
- * Note: This class/interface is part of a new API under development. It has
- * been added to builds so that clients can start using the new features.
- * However, it may change significantly before reaching stability. It is being
- * made available at this early stage to solicit feedback with the understanding
- * that any code that uses this API may be broken as the API evolves.
+ * Provides undoable operation support for the workbench.  This includes  providing access to the default 
+ * operation history and installing a workbench-specific operation approver that enforces a linear
+ * undo strategy.
  * </p>
  * 
  * @since 3.1
- * @experimental
  */
 public class WorkbenchOperationSupport implements IWorkbenchOperationSupport {
 

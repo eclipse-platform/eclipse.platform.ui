@@ -60,16 +60,8 @@ import org.eclipse.core.runtime.IStatus;
  * the operation and need to determine whether an undo or redo will cause any
  * conflicts with their local state.
  * </p>
- * <p>
- * Note: This class/interface is part of a new API under development. It has
- * been added to builds so that clients can start using the new features.
- * However, it may change significantly before reaching stability. It is being
- * made available at this early stage to solicit feedback with the understanding
- * that any code that uses this API may be broken as the API evolves.
- * </p>
  * 
  * @since 3.1
- * @experimental
  */
 public interface IOperationHistory {
 
@@ -97,6 +89,31 @@ public interface IOperationHistory {
 	public static final IUndoContext GLOBAL_UNDO_CONTEXT = new GlobalUndoContext();
 
 	/**
+	 * An operation info status describing the condition that there is no
+	 * available operation for redo.
+	 */
+	public static final IStatus NOTHING_TO_REDO_STATUS = new OperationStatus(
+			IStatus.INFO, OperationStatus.NOTHING_TO_REDO,
+			"No operation to redo"); //$NON-NLS-1$
+
+	/**
+	 * An operation info status describing the condition that there is no
+	 * available operation for undo.
+	 */
+	public static final IStatus NOTHING_TO_UNDO_STATUS = new OperationStatus(
+			IStatus.INFO, OperationStatus.NOTHING_TO_UNDO,
+			"No operation to undo"); //$NON-NLS-1$
+
+	/**
+	 * An operation error status describing the condition that the operation
+	 * available for execution, undo or redo is not in a valid state for the
+	 * action to be performed.
+	 */
+	public static final IStatus OPERATION_INVALID_STATUS = new OperationStatus(
+			IStatus.ERROR, OperationStatus.OPERATION_INVALID,
+			"Operation is not valid"); //$NON-NLS-1$
+
+	/**
 	 * Add the specified operation to the history without executing it. The
 	 * operation should have already been executed by the time it is added to
 	 * the history. Listeners will be notified that the operation was added to
@@ -108,21 +125,26 @@ public interface IOperationHistory {
 	void add(IUndoableOperation operation);
 
 	/**
-	 * Add the specified approver to the operation history.
+	 * Add the specified approver to the list of operation approvers consulted
+	 * by the operation history before an undo or redo is allowed to proceed.
 	 * 
 	 * @param approver -
-	 *            the IOperationApprover that will be consulted before any
-	 *            operation in the history is undone or redone
+	 *            the IOperationApprover to be added as an approver.
+	 * 
+	 * @see org.eclipse.core.commands.operations.IOperationApprover
 	 */
 	void addOperationApprover(IOperationApprover approver);
 
 	/**
-	 * Add the specified listener to the operation history.
+	 * Add the specified listener to the list of operation history listeners
+	 * that are notified about changes in the history or operations that are
+	 * executed, undone, or redone.
 	 * 
 	 * @param listener -
-	 *            the IOperationHistoryListener to receive notifications about
-	 *            changes in the history or operations that are executed,
-	 *            undone, or redone
+	 *            the IOperationHistoryListener to be added as a listener.
+	 * 
+	 * @see org.eclipse.core.commands.operations.IOperationHistoryListener
+	 * @see org.eclipse.core.commands.operations.OperationHistoryEvent
 	 */
 	void addOperationHistoryListener(IOperationHistoryListener listener);
 
@@ -159,7 +181,7 @@ public interface IOperationHistory {
 	 * @param mode -
 	 *            the mode the operation was opened in. Can be one of
 	 *            <code>EXECUTE</code>, <code>UNDO</code>, or
-	 *            <code>REDO</code>.  This determines what notifications are
+	 *            <code>REDO</code>. This determines what notifications are
 	 *            sent.
 	 */
 	void closeOperation(boolean operationOK, boolean addToHistory, int mode);
@@ -228,19 +250,19 @@ public interface IOperationHistory {
 	 * 
 	 * @param info -
 	 *            the IAdaptable (or <code>null</code>) provided by the
-	 *            caller containing additional information. When this API is
-	 *            called from the UI, callers can use this to provide additional
-	 *            info for prompting the user. If an IAdaptable is provided,
-	 *            callers are encouraged to provide an adapter for the
-	 *            org.eclipse.swt.widgets.Shell.class.
+	 *            caller in order to supply UI information for prompting the
+	 *            user if necessary. When this parameter is not
+	 *            <code>null</code>, it should minimally contain an adapter
+	 *            for the org.eclipse.swt.widgets.Shell.class.
 	 * 
 	 * @return the IStatus indicating whether the execution succeeded.
 	 * 
 	 * The severity code in the returned status describes whether the operation
 	 * succeeded and whether it was added to the history. <code>OK</code>
 	 * severity indicates that the execute operation was successful and that the
-	 * operation has been added to the history. Listeners will receive the
-	 * <code>DONE</code> notification.
+	 * operation has been added to the history. Listeners will receive
+	 * notifications about the operation's success (<code>DONE</code>) and
+	 * about the operation being added to the history (<code>OPERATION_ADDED</code>).
 	 * 
 	 * <code>CANCEL</code> severity indicates that the user cancelled the
 	 * operation and that the operation was not added to the history.
@@ -282,9 +304,7 @@ public interface IOperationHistory {
 	IUndoableOperation[] getRedoHistory(IUndoContext context);
 
 	/**
-	 * Get the operation that will next be redone in the given context. This
-	 * method is used to retrieve the label or description as needed for the
-	 * "Redo" menu.
+	 * Get the operation that will next be redone in the given context.
 	 * 
 	 * @param context -
 	 *            the context for the redo
@@ -309,14 +329,14 @@ public interface IOperationHistory {
 	 * <p>
 	 * Open this composite operation and consider it an operation that contains
 	 * other related operations. Consider all operations that are subsequently
-	 * executed or added to be part of this operation. When an
-	 * operation is opened, listeners will immediately receive a notification
-	 * depending on the mode in which the operation is opened. (<code>ABOUT_TO_EXECUTE</code>,
+	 * executed or added to be part of this operation. When an operation is
+	 * opened, listeners will immediately receive a notification depending on
+	 * the mode in which the operation is opened. (<code>ABOUT_TO_EXECUTE</code>,
 	 * <code>ABOUT_TO_UNDO</code>, <code>ABOUT_TO_REDO</code>) for the
-	 * opened operation. Notifications for any other execute or add
-	 * while this operation is open will not occur. Instead, those operations
-	 * will be added to the current operation.
-	 * 
+	 * opened operation. Notifications for any other execute or add while this
+	 * operation is open will not occur. Instead, those operations will be added
+	 * to the current operation.
+	 * </p>
 	 * <p>
 	 * Note: This method is intended to be used by legacy undo frameworks that
 	 * do not expect related undo operations to appear in the same undo history
@@ -325,28 +345,25 @@ public interface IOperationHistory {
 	 * result in that operation being added to the open operation. Once the
 	 * operation is closed, the composite will be considered an atomic
 	 * operation.
-	 * 
+	 * </p>
 	 * <p>
 	 * When a composite is open, operations that are added to the history will
 	 * be considered part of the open operation instead. Operations that are
 	 * executed while a composite is open will first be executed and then added
 	 * to the composite.
-	 * 
+	 * </p>
 	 * <p>
-	 * Open operations cannot be nested. If this method is called when another
+	 * Open operations cannot be nested. If this method is called when a different
 	 * operation is open, that operation will be closed first.
-	 * 
+	 * </p>
 	 * @param operation -
 	 *            the composite operation to be considered as the parent for all
 	 *            subsequent operations.
 	 * @param mode -
 	 *            the mode the operation is executing in. Can be one of
 	 *            <code>EXECUTE</code>, <code>UNDO</code>, or
-	 *            <code>REDO</code>.  This determines what notifications are sent.
-	 * 
-	 * <p>
-	 * EXPERIMENTAL - this protocol is experimental and may change signficantly
-	 * or be removed before the final release.
+	 *            <code>REDO</code>. This determines what notifications are
+	 *            sent.
 	 */
 	void openOperation(ICompositeOperation operation, int mode);
 
@@ -354,20 +371,16 @@ public interface IOperationHistory {
 	 * <p>
 	 * The specified operation has changed in some way since it was added to the
 	 * operation history. Notify listeners with an OPERATION_CHANGED event.
+	 * </p>
 	 * 
 	 * @param operation -
 	 *            the operation that has changed.
 	 * 
-	 * <p>
-	 * EXPERIMENTAL - this protocol is experimental and may change signficantly
-	 * or be removed before the final release.
 	 */
 	void operationChanged(IUndoableOperation operation);
 
 	/**
-	 * Get the operation that will next be undone in the given context. This
-	 * method is used to retrieve the label or description as needed for the
-	 * "Undo" menu.
+	 * Get the operation that will next be undone in the given context.
 	 * 
 	 * @param context -
 	 *            the context for the undo
@@ -383,15 +396,14 @@ public interface IOperationHistory {
 	 * @param context -
 	 *            the context to be redone
 	 * @param monitor -
-	 *            the progress monitor to be used for the redo, or <code>null</code> if no
-	 *            progress monitor is provided.
+	 *            the progress monitor to be used for the redo, or
+	 *            <code>null</code> if no progress monitor is provided.
 	 * @param info -
 	 *            the IAdaptable (or <code>null</code>) provided by the
-	 *            caller containing additional information. When this API is
-	 *            called from the UI, callers can use this to provide additional
-	 *            info for prompting the user. If an IAdaptable is provided,
-	 *            callers are encourated to provide an adapter for the
-	 *            org.eclipse.swt.widgets.Shell.class.
+	 *            caller in order to supply UI information for prompting the
+	 *            user if necessary. When this parameter is not
+	 *            <code>null</code>, it should minimally contain an adapter
+	 *            for the org.eclipse.swt.widgets.Shell.class.
 	 * @return the IStatus indicating whether the redo succeeded.
 	 * 
 	 * The severity code in the returned status describes whether the operation
@@ -424,14 +436,13 @@ public interface IOperationHistory {
 	 * @param operation -
 	 *            the operation to be redone
 	 * @param monitor -
-	 *            the progress monitor to be used for the redo, or code>null</code> if no
-	 *            progress monitor is provided
+	 *            the progress monitor to be used for the redo, or code>null</code>
+	 *            if no progress monitor is provided
 	 * @param info -
 	 *            the IAdaptable (or <code>null</code>) provided by the
-	 *            caller containing additional information. When this API is
-	 *            called from the UI, callers can use this to provide additional
-	 *            info for prompting the user. If an IAdaptable is provided,
-	 *            callers are encourated to provide an adapter for the
+	 *            caller in order to supply UI information for prompting the
+	 *            user if necessary. When this parameter is not <code>null</code>,
+	 *            it should minimally contain an adapter for the
 	 *            org.eclipse.swt.widgets.Shell.class.
 	 * 
 	 * @return the IStatus indicating whether the redo succeeded.
@@ -443,14 +454,14 @@ public interface IOperationHistory {
 	 * <code>REDONE</code> notification.
 	 * 
 	 * <code>CANCEL</code> severity indicates that the user cancelled the
-	 * operation and that the operation remains in the redo history.
-	 * <code>ERROR</code> severity indicates that the operation could not
-	 * successfully be redone. The operation will remain at its current location
-	 * in the history, and callers must explicitly remove it if desired. Any
-	 * other severity code is not interpreted by the history, and is simply
-	 * passed back to the caller. For all severities other than <code>OK</code>,
-	 * listeners will receive the <code>OPERATION_NOT_OK</code> notification
-	 * instead of the <code>REDONE</code> notification.
+	 * operation and that the operation remains in the redo history. <code>ERROR</code>
+	 * severity indicates that the operation could not successfully be redone.
+	 * The operation will remain at its current location in the history, and
+	 * callers must explicitly remove it if desired. Any other severity code is
+	 * not interpreted by the history, and is simply passed back to the caller.
+	 * For all severities other than <code>OK</code>, listeners will receive
+	 * the <code>OPERATION_NOT_OK</code> notification instead of the <code>REDONE</code>
+	 * notification.
 	 * 
 	 * @throws ExecutionException
 	 *             if an exception occurred during redo.
@@ -460,7 +471,8 @@ public interface IOperationHistory {
 			throws ExecutionException;
 
 	/**
-	 * Remove the specified operation approver from the operation history.
+	 * Remove the specified operation approver from the list of operation
+	 * approvers that are consulted before an operation is undone or redone.
 	 * 
 	 * @param approver -
 	 *            the IOperationApprover to be removed
@@ -468,7 +480,8 @@ public interface IOperationHistory {
 	void removeOperationApprover(IOperationApprover approver);
 
 	/**
-	 * Remove the specified listener from the operation history.
+	 * Remove the specified listener from the list of operation history
+	 * listeners.
 	 * 
 	 * @param listener -
 	 *            The IOperationHistoryListener to be removed
@@ -495,11 +508,12 @@ public interface IOperationHistory {
 	 * Set the limit on the undo and redo history for a particular context.
 	 * 
 	 * @param context -
-	 *            the context whose limit is being set.  
+	 *            the context whose limit is being set.
 	 * 
 	 * @param limit -
 	 *            the maximum number of operations that should be kept in the
-	 *            undo or redo history for the specified context.  Must not be negative.
+	 *            undo or redo history for the specified context. Must not be
+	 *            negative.
 	 */
 	void setLimit(IUndoContext context, int limit);
 
@@ -509,15 +523,14 @@ public interface IOperationHistory {
 	 * @param context -
 	 *            the context to be undone
 	 * @param monitor -
-	 *            the progress monitor to be used for the undo, or <code>null</code> if no
-	 *            progress monitor is provided.
+	 *            the progress monitor to be used for the undo, or
+	 *            <code>null</code> if no progress monitor is provided.
 	 * @param info -
 	 *            the IAdaptable (or <code>null</code>) provided by the
-	 *            caller containing additional information. When this API is
-	 *            called from the UI, callers can use this to provide additional
-	 *            info for prompting the user. If an IAdaptable is provided,
-	 *            callers are encourated to provide an adapter for the
-	 *            org.eclipse.swt.widgets.Shell.class.
+	 *            caller in order to supply UI information for prompting the
+	 *            user if necessary. When this parameter is not
+	 *            <code>null</code>, it should minimally contain an adapter
+	 *            for the org.eclipse.swt.widgets.Shell.class.
 	 * 
 	 * @return the IStatus indicating whether the undo succeeded.
 	 * 
@@ -550,15 +563,14 @@ public interface IOperationHistory {
 	 * @param operation -
 	 *            the operation to be undone
 	 * @param monitor -
-	 *            the progress monitor to be used for the undo, or <code>null</code> if no
-	 *            progress monitor is provided
+	 *            the progress monitor to be used for the undo, or
+	 *            <code>null</code> if no progress monitor is provided
 	 * @param info -
 	 *            the IAdaptable (or <code>null</code>) provided by the
-	 *            caller containing additional information. When this API is
-	 *            called from the UI, callers can use this to provide additional
-	 *            info for prompting the user. If an IAdaptable is provided,
-	 *            callers are encourated to provide an adapter for the
-	 *            org.eclipse.swt.widgets.Shell.class.
+	 *            caller in order to supply UI information for prompting the
+	 *            user if necessary. When this parameter is not
+	 *            <code>null</code>, it should minimally contain an adapter
+	 *            for the org.eclipse.swt.widgets.Shell.class.
 	 * 
 	 * @return the IStatus indicating whether the undo succeeded.
 	 * 

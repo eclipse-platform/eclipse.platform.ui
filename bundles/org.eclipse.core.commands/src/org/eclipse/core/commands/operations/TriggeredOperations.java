@@ -27,16 +27,8 @@ import org.eclipse.core.runtime.IStatus;
  * triggered operation is executed, undone, or redone if it is still present. If
  * the trigger is no longer present, than the operation is invalid.
  * </p>
- * <p>
- * Note: This class/interface is part of a new API under development. It has
- * been added to builds so that clients can start using the new features.
- * However, it may change significantly before reaching stability. It is being
- * made available at this early stage to solicit feedback with the understanding
- * that any code that uses this API may be broken as the API evolves.
- * </p>
  * 
  * @since 3.1
- * @experimental
  */
 public class TriggeredOperations extends AbstractOperation implements
 		ICompositeOperation {
@@ -88,25 +80,28 @@ public class TriggeredOperations extends AbstractOperation implements
 	public void remove(IUndoableOperation operation) {
 		if (operation == triggeringOperation) {
 			triggeringOperation = null;
-			history.replaceOperation(this, 
-					(IUndoableOperation[])children.toArray(new IUndoableOperation[children.size()]));
+			history.replaceOperation(this, (IUndoableOperation[]) children
+					.toArray(new IUndoableOperation[children.size()]));
 		} else {
 			children.remove(operation);
 			operation.dispose();
 			recomputeContexts();
 		}
 	}
-	
+
 	/**
-	 * Remove the specified context from the receiver.  This method is typically invoked when
-	 * the history is being flushed for a certain context.  In the case of triggered operations,
-	 * if the context for the triggering operation is being removed, then the operation must be
-	 * replaced with its atomic children.  
+	 * Remove the specified context from the receiver. This method is typically
+	 * invoked when the history is being flushed for a certain context. In the
+	 * case of triggered operations, if the context for the triggering operation
+	 * is being removed, then the triggering operation must be replaced with 
+	 * the atomic operations that it triggered.
 	 * 
-	 * @param context - the undo context being removed from the receiver.
+	 * @param context -
+	 *            the undo context being removed from the receiver.
 	 */
 	public void removeContext(IUndoContext context) {
-		// first check to see if we are removing the only context of the triggering operation
+		// first check to see if we are removing the only context of the
+		// triggering operation
 		if (triggeringOperation.hasContext(context)) {
 			if (triggeringOperation.getContexts().length == 1) {
 				remove(triggeringOperation);
@@ -117,8 +112,8 @@ public class TriggeredOperations extends AbstractOperation implements
 		}
 		// the triggering operation remains, check all the children
 		ArrayList toBeRemoved = new ArrayList();
-		for (int i=0; i< children.size(); i++) {
-			IUndoableOperation child = (IUndoableOperation)children.get(i);
+		for (int i = 0; i < children.size(); i++) {
+			IUndoableOperation child = (IUndoableOperation) children.get(i);
 			if (child.hasContext(context)) {
 				if (child.getContexts().length == 1) {
 					toBeRemoved.add(child);
@@ -128,8 +123,8 @@ public class TriggeredOperations extends AbstractOperation implements
 				}
 			}
 		}
-		for (int i=0; i<toBeRemoved.size(); i++) {
-			remove((IUndoableOperation)toBeRemoved.get(i));
+		for (int i = 0; i < toBeRemoved.size(); i++) {
+			remove((IUndoableOperation) toBeRemoved.get(i));
 		}
 	}
 
@@ -145,14 +140,15 @@ public class TriggeredOperations extends AbstractOperation implements
 			history.openOperation(this, IOperationHistory.EXECUTE);
 			try {
 				IStatus status = triggeringOperation.execute(monitor, info);
-				history.closeOperation(status.isOK(), false, IOperationHistory.EXECUTE);
+				history.closeOperation(status.isOK(), false,
+						IOperationHistory.EXECUTE);
 				return status;
 			} catch (ExecutionException e) {
 				history.closeOperation(false, false, IOperationHistory.EXECUTE);
 				throw e;
 			}
 		}
-		return DefaultOperationHistory.OPERATION_INVALID_STATUS;
+		return IOperationHistory.OPERATION_INVALID_STATUS;
 	}
 
 	/*
@@ -168,14 +164,15 @@ public class TriggeredOperations extends AbstractOperation implements
 			try {
 				removeAllChildren();
 				IStatus status = triggeringOperation.redo(monitor, info);
-				history.closeOperation(status.isOK(), false, IOperationHistory.REDO);
+				history.closeOperation(status.isOK(), false,
+						IOperationHistory.REDO);
 				return status;
 			} catch (ExecutionException e) {
 				history.closeOperation(false, false, IOperationHistory.REDO);
 				throw e;
 			}
 		}
-		return DefaultOperationHistory.OPERATION_INVALID_STATUS;
+		return IOperationHistory.OPERATION_INVALID_STATUS;
 	}
 
 	/*
@@ -191,14 +188,15 @@ public class TriggeredOperations extends AbstractOperation implements
 			try {
 				removeAllChildren();
 				IStatus status = triggeringOperation.undo(monitor, info);
-				history.closeOperation(status.isOK(), false, IOperationHistory.UNDO);
+				history.closeOperation(status.isOK(), false,
+						IOperationHistory.UNDO);
 				return status;
 			} catch (ExecutionException e) {
 				history.closeOperation(false, false, IOperationHistory.UNDO);
 				throw e;
 			}
 		}
-		return DefaultOperationHistory.OPERATION_INVALID_STATUS;
+		return IOperationHistory.OPERATION_INVALID_STATUS;
 	}
 
 	/*
@@ -271,20 +269,22 @@ public class TriggeredOperations extends AbstractOperation implements
 		contexts = allContexts;
 
 	}
-	
+
 	/*
 	 * Remove all non-triggering children
 	 */
 	private void removeAllChildren() {
-		IUndoableOperation [] nonTriggers = (IUndoableOperation [])children.toArray(new IUndoableOperation[children.size()]);
-		for (int i=0; i<nonTriggers.length; i++) {
+		IUndoableOperation[] nonTriggers = (IUndoableOperation[]) children
+				.toArray(new IUndoableOperation[children.size()]);
+		for (int i = 0; i < nonTriggers.length; i++) {
 			children.remove(nonTriggers[i]);
 			nonTriggers[i].dispose();
 		}
 	}
-	
+
 	/**
-	 * Return the operation that triggered the other operations in this composite.
+	 * Return the operation that triggered the other operations in this
+	 * composite.
 	 * 
 	 * @return - the IUndoableOperation that triggered the other children.
 	 */

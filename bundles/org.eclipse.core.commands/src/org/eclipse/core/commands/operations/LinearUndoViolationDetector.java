@@ -18,71 +18,71 @@ import org.eclipse.core.runtime.Status;
  * <p>
  * An abstract class for detecting violations in a strict linear undo/redo
  * model. Once a violation is detected, subclasses implement the specific
- * behavior for allowing whether or not the undo/redo should proceed.
- * </p>
- * <p>
- * Note: This class/interface is part of a new API under development. It has
- * been added to builds so that clients can start using the new features.
- * However, it may change significantly before reaching stability. It is being
- * made available at this early stage to solicit feedback with the understanding
- * that any code that uses this API may be broken as the API evolves.
+ * behavior for indicating whether or not the undo/redo should proceed.
  * </p>
  * 
  * @since 3.1
- * @experimental
  */
-public abstract class LinearUndoViolationDetector implements
-		IOperationApprover {
+public abstract class LinearUndoViolationDetector implements IOperationApprover {
 
 	/*
-	 * Return whether a linear redo violation is allowable.  A linear redo violation
-	 * is defined as a request to redo a particular operation even if it is not the most
-	 * recently added operation to the redo history.
+	 * Return whether a linear redo violation is allowable. A linear redo
+	 * violation is defined as a request to redo a particular operation even if
+	 * it is not the most recently added operation to the redo history.
 	 */
-	protected abstract IStatus allowLinearRedoViolation(IUndoableOperation operation,
-			IUndoContext context, IOperationHistory history, IAdaptable uiInfo);
+	protected abstract IStatus allowLinearRedoViolation(
+			IUndoableOperation operation, IUndoContext context,
+			IOperationHistory history, IAdaptable uiInfo);
 
 	/*
-	 * Return whether a linear undo violation is allowable.  A linear undo violation
-	 * is defined as a request to undo a particular operation even if it is not the most
-	 * recently added operation to the undo history.
+	 * Return whether a linear undo violation is allowable. A linear undo
+	 * violation is defined as a request to undo a particular operation even if
+	 * it is not the most recently added operation to the undo history.
 	 */
-	protected abstract IStatus allowLinearUndoViolation(IUndoableOperation operation,
-			IUndoContext context, IOperationHistory history, IAdaptable uiInfo);
+	protected abstract IStatus allowLinearUndoViolation(
+			IUndoableOperation operation, IUndoContext context,
+			IOperationHistory history, IAdaptable uiInfo);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.core.commands.operations.IOperationApprover#proceedRedoing(org.eclipse.core.commands.operations.IUndoableOperation,
-	 *      org.eclipse.core.commands.operations.IUndoContext, org.eclipse.core.commands.operations.IOperationHistory, org.eclipse.core.runtime.IAdaptable)
+	 *      org.eclipse.core.commands.operations.IOperationHistory,
+	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
 	public IStatus proceedRedoing(IUndoableOperation operation,
 			IOperationHistory history, IAdaptable info) {
-		IUndoContext [] contexts = operation.getContexts();
-		for (int i=0; i<contexts.length; i++) {
+		IUndoContext[] contexts = operation.getContexts();
+		for (int i = 0; i < contexts.length; i++) {
 			IUndoContext context = contexts[i];
 			if (history.getRedoOperation(context) != operation) {
-				IStatus status = allowLinearRedoViolation(operation, context, history, info);
-				if (!status.isOK()) return status;
+				IStatus status = allowLinearRedoViolation(operation, context,
+						history, info);
+				if (!status.isOK())
+					return status;
 			}
 		}
 		return Status.OK_STATUS;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.core.commands.operations.IOperationApprover#proceedUndoing(org.eclipse.core.commands.operations.IUndoableOperation,
-	 *      org.eclipse.core.commands.operations.IUndoContext, org.eclipse.core.commands.operations.IOperationHistory, org.eclipse.core.runtime.IAdaptable)
+	 *      org.eclipse.core.commands.operations.IOperationHistory,
+	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
 
 	public IStatus proceedUndoing(IUndoableOperation operation,
 			IOperationHistory history, IAdaptable info) {
-		IUndoContext [] contexts = operation.getContexts();
-		for (int i=0; i<contexts.length; i++) {
+		IUndoContext[] contexts = operation.getContexts();
+		for (int i = 0; i < contexts.length; i++) {
 			IUndoContext context = contexts[i];
 			if (history.getUndoOperation(context) != operation) {
-				IStatus status = allowLinearUndoViolation(operation, context, history, info);
-				if (!status.isOK()) return status;
+				IStatus status = allowLinearUndoViolation(operation, context,
+						history, info);
+				if (!status.isOK())
+					return status;
 			}
 		}
 		return Status.OK_STATUS;

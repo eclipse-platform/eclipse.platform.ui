@@ -24,20 +24,13 @@ import org.eclipse.core.runtime.IStatus;
  * By the time an IOperationApprover is consulted, the undo has already been
  * requested. Approvers should return <code>true</code> if the operation
  * should proceed, and <code>false</code> if it should not. When an operation
- * is rejected, it is expected that the object rejecting the operation has
- * already consulted the user if necessary or otherwise provided any necessary
- * information to the user about the rejection.
- * </p>
- * <p>
- * Note: This class/interface is part of a new API under development. It has
- * been added to builds so that clients can start using the new features.
- * However, it may change significantly before reaching stability. It is being
- * made available at this early stage to solicit feedback with the understanding
- * that any code that uses this API may be broken as the API evolves.
+ * is not approved, it is expected that the object not allowing the operation
+ * has already consulted the user if necessary or otherwise provided any
+ * necessary information to the user about the fact that operation is not
+ * approved.
  * </p>
  * 
  * @since 3.1
- * @experimental
  */
 public interface IOperationApprover {
 
@@ -53,12 +46,11 @@ public interface IOperationApprover {
 	 * @param history -
 	 *            the history redoing the operation
 	 * @param info -
-	 *            the IAdaptable (or <code>null</code>) provided by the caller
-	 *            containing additional information.  When this API is called
-	 *            from the UI, callers can use this to provide additional info
-	 *            for prompting the user.   If an IAdaptable is provided, 
-	 *            callers are encourated to provide an adapter for the
-	 *            org.eclipse.swt.widgets.Shell.class.
+	 *            the IAdaptable (or <code>null</code>) provided by the
+	 *            caller in order to supply UI information for prompting the
+	 *            user if necessary. When this parameter is not
+	 *            <code>null</code>, it should minimally contain an adapter
+	 *            for the org.eclipse.swt.widgets.Shell.class.
 	 * @return the IStatus describing whether the operation is approved. The
 	 *         redo will not proceed if the status severity is not
 	 *         <code>OK</code>, and the caller requesting the redo will be
@@ -80,12 +72,11 @@ public interface IOperationApprover {
 	 * @param history -
 	 *            the history undoing the operation
 	 * @param info -
-	 *            the IAdaptable (or <code>null</code>) provided by the caller
-	 *            containing additional information.  When this API is called
-	 *            from the UI, callers can use this to provide additional info
-	 *            for prompting the user.   If an IAdaptable is provided, 
-	 *            callers are encourated to provide an adapter for the
-	 *            org.eclipse.swt.widgets.Shell.class.
+	 *            the IAdaptable (or <code>null</code>) provided by the
+	 *            caller in order to supply UI information for prompting the
+	 *            user if necessary. When this parameter is not
+	 *            <code>null</code>, it should minimally contain an adapter
+	 *            for the org.eclipse.swt.widgets.Shell.class.
 	 * @return the IStatus describing whether the operation is approved. The
 	 *         undo will not proceed if the status severity is not
 	 *         <code>OK</code>, and the caller requesting the undo will be

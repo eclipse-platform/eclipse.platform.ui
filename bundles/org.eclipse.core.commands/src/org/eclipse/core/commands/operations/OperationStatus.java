@@ -18,33 +18,25 @@ import org.eclipse.core.runtime.Status;
  * OperationStatus describes the status of a request to execute, undo, or redo
  * an operation.
  * </p>
- * <p>
- * Note: This class/interface is part of a new API under development. It has
- * been added to builds so that clients can start using the new features.
- * However, it may change significantly before reaching stability. It is being
- * made available at this early stage to solicit feedback with the understanding
- * that any code that uses this API may be broken as the API evolves.
- * </p>
  * 
  * @since 3.1
- * @experimental
  */
 public class OperationStatus extends Status {
 	/**
 	 * NOTHING_TO_REDO indicates there was no operation available for redo.
 	 */
-	public static final int NOTHING_TO_REDO = 12;
+	public static final int NOTHING_TO_REDO = 1;
 
 	/**
 	 * NOTHING_TO_UNDO indicates there was no operation available for undo.
 	 */
-	public static final int NOTHING_TO_UNDO = 11;
+	public static final int NOTHING_TO_UNDO = 2;
 
 	/**
 	 * OPERATION_INVALID indicates that the operation available for undo or redo
 	 * is not in a state to perform the undo or redo.
 	 */
-	public static final int OPERATION_INVALID = 10;
+	public static final int OPERATION_INVALID = 3;
 
 	/**
 	 * PLUGIN_ID identifies the plugin reporting the status.

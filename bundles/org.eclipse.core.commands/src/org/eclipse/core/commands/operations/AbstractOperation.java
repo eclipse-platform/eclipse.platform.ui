@@ -21,18 +21,12 @@ import org.eclipse.core.runtime.IStatus;
 
 /**
  * <p>
- * Abstract implementation for an operation
- * </p>
- * <p>
- * Note: This class/interface is part of a new API under development. It has
- * been added to builds so that clients can start using the new features.
- * However, it may change significantly before reaching stability. It is being
- * made available at this early stage to solicit feedback with the understanding
- * that any code that uses this API may be broken as the API evolves.
+ * Abstract implementation for an undoable operation
  * </p>
  * 
+ * @see org.eclipse.core.commands.operations.IUndoableOperation
+ * 
  * @since 3.1
- * @experimental
  */
 public abstract class AbstractOperation implements IUndoableOperation {
 	protected List contexts = new ArrayList();
@@ -99,15 +93,17 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#execute(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
+	 * @see org.eclipse.core.commands.operations.IUndoableOperation#execute(org.eclipse.core.runtime.IProgressMonitor,
+	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
-	public abstract IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException;
+	public abstract IStatus execute(IProgressMonitor monitor, IAdaptable info)
+			throws ExecutionException;
 
 	public IUndoContext[] getContexts() {
 		return (IUndoContext[]) contexts.toArray(new IUndoContext[contexts
 				.size()]);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -134,11 +130,12 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	 */
 	public boolean hasContext(IUndoContext context) {
 		Assert.isNotNull(context);
-		for (int i = 0; i< contexts.size(); i++) {
-			IUndoContext otherContext = (IUndoContext)contexts.get(i);
-			// have to check both ways because one context may be more general in
+		for (int i = 0; i < contexts.size(); i++) {
+			IUndoContext otherContext = (IUndoContext) contexts.get(i);
+			// have to check both ways because one context may be more general
+			// in
 			// its matching rules than another.
-			if (context.matches(otherContext) || otherContext.matches(context)) 
+			if (context.matches(otherContext) || otherContext.matches(context))
 				return true;
 		}
 		return false;
@@ -147,9 +144,11 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#redo(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
+	 * @see org.eclipse.core.commands.operations.IUndoableOperation#redo(org.eclipse.core.runtime.IProgressMonitor,
+	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
-	public abstract IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException;
+	public abstract IStatus redo(IProgressMonitor monitor, IAdaptable info)
+			throws ExecutionException;
 
 	public void removeContext(IUndoContext context) {
 		contexts.remove(context);
@@ -158,13 +157,15 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.core.commands.operations.IUndoableOperation#undo(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
+	 * @see org.eclipse.core.commands.operations.IUndoableOperation#undo(org.eclipse.core.runtime.IProgressMonitor,
+	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
-	public abstract IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException;
+	public abstract IStatus undo(IProgressMonitor monitor, IAdaptable info)
+			throws ExecutionException;
 
 	/**
-	 * The string representation of this operation.  Used for debugging purposes only.
-	 * This string should not be shown to an end user.
+	 * The string representation of this operation. Used for debugging purposes
+	 * only. This string should not be shown to an end user.
 	 * 
 	 * @return The string representation.
 	 */
@@ -172,8 +173,8 @@ public abstract class AbstractOperation implements IUndoableOperation {
 		final StringBuffer stringBuffer = new StringBuffer();
 		stringBuffer.append(getLabel());
 		stringBuffer.append("("); //$NON-NLS-1$
-		IUndoContext [] contexts = getContexts();
-		for (int i=0; i<contexts.length; i++) {
+		IUndoContext[] contexts = getContexts();
+		for (int i = 0; i < contexts.length; i++) {
 			stringBuffer.append(contexts[i].toString());
 			stringBuffer.append(',');
 		}

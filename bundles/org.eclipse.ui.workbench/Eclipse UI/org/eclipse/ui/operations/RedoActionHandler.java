@@ -23,16 +23,8 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * RedoActionHandler provides common behavior for redoing an operation, as well
  * as labeling and enabling the menu item.
  * </p>
- * <p>
- * Note: This class/interface is part of a new API under development. It has
- * been added to builds so that clients can start using the new features.
- * However, it may change significantly before reaching stability. It is being
- * made available at this early stage to solicit feedback with the understanding
- * that any code that uses this API may be broken as the API evolves.
- * </p>
  * 
  * @since 3.1
- * @experimental
  */
 public class RedoActionHandler extends OperationHistoryActionHandler {
 
@@ -73,7 +65,7 @@ public class RedoActionHandler extends OperationHistoryActionHandler {
 	}
 
 	protected boolean shouldBeEnabled() {
-		// make sure a context is set. If a part doesn't return
+		// make sure a context is set. If a part doesn't provide
 		// a context, then we should not enable.
 		if (undoContext == null)
 			return false;

@@ -12,20 +12,11 @@ package org.eclipse.core.commands.operations;
 
 /**
  * <p>
- * A simple, lightweight operation context that can be used to tag any
- * operation. It does not provided a specialized label or operation approval
- * sequence.
- * </p>
- * <p>
- * Note: This class/interface is part of a new API under development. It has
- * been added to builds so that clients can start using the new features.
- * However, it may change significantly before reaching stability. It is being
- * made available at this early stage to solicit feedback with the understanding
- * that any code that uses this API may be broken as the API evolves.
+ * A simple, lightweight undo context that can be used to tag any
+ * operation. It does not provided a specialized label.
  * </p>
  * 
  * @since 3.1
- * @experimental
  */
 public class UndoContext implements IUndoContext {
 

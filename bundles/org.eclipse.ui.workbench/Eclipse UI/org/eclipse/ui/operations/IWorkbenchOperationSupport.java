@@ -15,21 +15,14 @@ import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 
 /**
- * An instance of this interface provides support for managing operations and a
- * shared operations history at the <code>IWorkbench</code> level.
+ * An instance of this interface provides support for managing undoable
+ * operations and a shared operations history at the <code>IWorkbench</code>
+ * level.
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
- * <p>
- * Note: This class/interface is part of a new API under development. It has
- * been added to builds so that clients can start using the new features.
- * However, it may change significantly before reaching stability. It is being
- * made available at this early stage to solicit feedback with the understanding
- * that any code that uses this API may be broken as the API evolves.
- * </p>
  * 
  * @since 3.1
- * @experimental
  */
 public interface IWorkbenchOperationSupport {
 

@@ -56,17 +56,9 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * occur and it is assumed that clients of the particular undo context are pruning 
  * the history when necessary.
  * </p>
- * <p>
- * Note: This class/interface is part of a new API under development. It has
- * been added to builds so that clients can start using the new features.
- * However, it may change significantly before reaching stability. It is being
- * made available at this early stage to solicit feedback with the understanding
- * that any code that uses this API may be broken as the API evolves.
- * </p>
  * 
  * @since 3.1
- * @experimental
- */
+  */
 public abstract class OperationHistoryActionHandler extends Action implements
 		ActionFactory.IWorkbenchAction, IAdaptable, IOperationHistoryListener {
 
