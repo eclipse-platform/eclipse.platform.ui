@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.preferences;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.variables.ILaunchVariableManager;
@@ -360,6 +361,15 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 			}
 		}
 		public void addVariable(ISimpleLaunchVariable variable) {
+			String newName= variable.getName();
+			ListIterator iter= editedVariables.listIterator();
+			while (iter.hasNext()) {
+				String variableName = ((ISimpleLaunchVariable) iter.next()).getName();
+				if (variableName.equals(newName)) {
+					iter.remove();
+					break;
+				}
+			}
 			editedVariables.add(variable);
 		}
 		public void removeVariables(ISimpleLaunchVariable[] variables) {
