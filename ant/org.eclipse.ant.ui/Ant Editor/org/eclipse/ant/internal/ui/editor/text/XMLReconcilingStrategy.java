@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,13 +31,13 @@ public class XMLReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 		fEditor= editor;
 	}
 	
-	private void internalReconcile() {
+	private void internalReconcile(DirtyRegion dirtyRegion) {
 		IDocumentProvider provider= fEditor.getDocumentProvider();
 		if (provider instanceof AntEditorDocumentProvider) {
 			AntEditorDocumentProvider documentProvider= (AntEditorDocumentProvider) provider;
 			AntModel model= documentProvider.getAntModel(fEditor.getEditorInput());
 			if (model != null)
-				model.reconcile();
+				model.reconcile(dirtyRegion);
 		}
 	}
 
@@ -45,14 +45,14 @@ public class XMLReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 	 * @see IReconcilingStrategy#reconcile(IRegion)
 	 */
 	public void reconcile(IRegion partition) {
-		internalReconcile();
+		internalReconcile(null);
 	}
 
 	/*
 	 * @see IReconcilingStrategy#reconcile(DirtyRegion, IRegion)
 	 */
 	public void reconcile(DirtyRegion dirtyRegion, IRegion subRegion) {
-		internalReconcile();
+		internalReconcile(dirtyRegion);
 	}
 
 	/*
@@ -71,6 +71,6 @@ public class XMLReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension#initialReconcile()
 	 */
 	public void initialReconcile() {
-		internalReconcile();
+		internalReconcile(null);
 	}
 }

@@ -70,8 +70,7 @@ public class AntElementNode {
     /**
      * The child nodes.
      */
-    protected List childNodes = new ArrayList();
-
+    protected List childNodes= null;
 
     /**
      * The (tag-)name of the element.
@@ -175,6 +174,9 @@ public class AntElementNode {
             throw new AntEditorException(MessageFormat.format(AntModelMessages.getString("XmlElement.XmlElement_cannot_be_added_as_a_child"), new String[]{childElement.toString(), childElement.getParentNode().toString()})); //$NON-NLS-1$
         }
         childElement.parent = this;
+        if (childNodes == null) {
+        	childNodes= new ArrayList();
+        }
         childNodes.add(childElement);
     }
 
@@ -396,6 +398,9 @@ public class AntElementNode {
 	 * @return the node that includes the offset in its source range or <code>null</code>
 	 */
 	public AntElementNode getNode(int sourceOffset) {
+		if (childNodes == null) {
+			return null;
+		}
 		for (Iterator iter = childNodes.iterator(); iter.hasNext(); ) {
 			AntElementNode node = (AntElementNode) iter.next();
 			AntElementNode containingNode= node.getNode(sourceOffset);
@@ -460,5 +465,16 @@ public class AntElementNode {
 	
 	public void setImportNode(AntElementNode importNode) {
 		this.importNode = importNode;
+	}
+	
+	public boolean hasChildren() {
+		if (childNodes == null) {
+			return false;
+		}
+		return !childNodes.isEmpty();
+	}
+
+	public void reset() {
+		childNodes= null;
 	}
 }

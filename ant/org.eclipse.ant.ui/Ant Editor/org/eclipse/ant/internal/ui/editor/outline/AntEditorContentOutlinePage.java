@@ -85,6 +85,8 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 
 	private static ViewerSorter fSorter;
 	
+	private static final Object[] EMPTY_ARRAY= new Object[0];
+	
 	/**
 	 * A viewer filter that removes internal targets
 	 */
@@ -154,8 +156,12 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		 */
 		public Object[] getChildren(Object parentNode) {
 			AntElementNode tempParentElement = (AntElementNode)parentNode;
-			List children= tempParentElement.getChildNodes();
-			return children.toArray();
+			if (tempParentElement.hasChildren()) {
+				List children= tempParentElement.getChildNodes();
+				return children.toArray();
+			} else {
+				return EMPTY_ARRAY;
+			}
 		}
 
 		/* (non-Javadoc)
@@ -170,7 +176,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(Object)
 		 */
 		public boolean hasChildren(Object aNode) {
-			return ((AntElementNode)aNode).getChildNodes().size() > 0;
+			return ((AntElementNode)aNode).hasChildren();
 		}
 
 		/* (non-Javadoc)

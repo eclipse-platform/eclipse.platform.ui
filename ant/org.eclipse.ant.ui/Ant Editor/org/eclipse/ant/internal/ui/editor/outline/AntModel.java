@@ -30,6 +30,7 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.UnknownElement;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
+import org.eclipse.ant.core.Type;
 import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
 import org.eclipse.ant.internal.ui.editor.model.AntImportNode;
 import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
@@ -37,20 +38,15 @@ import org.eclipse.ant.internal.ui.editor.model.AntPropertyNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTaskNode;
 import org.eclipse.ant.internal.ui.editor.model.IAntModelConstants;
+import org.eclipse.ant.internal.ui.editor.text.PartiallySynchronizedDocument;
 import org.eclipse.ant.internal.ui.editor.utils.ProjectHelper;
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.reconciler.DirtyRegion;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 
@@ -66,6 +62,10 @@ public class AntModel {
 	private AntElementNode fLastNode;
 	private AntElementNode fNodeBeingResolved;
 	
+	private AntTargetNode fIncrementalTarget= null;
+	private boolean fReplaceHasOccurred= false;
+	private int fRemoveLengthOfReplace= 0;
+	
 	 /**
      * Stack of still open elements.
      * <P>
@@ -74,7 +74,7 @@ public class AntModel {
 	private Stack fStillOpenElements = new Stack();
 	
 	private Map fTaskToNode= new HashMap();
-	
+
 	private List fProperties= null;
 	
 	private Map fEntityNameToPath;
@@ -82,7 +82,7 @@ public class AntModel {
 	private final Object fDirtyLock= new Object();
 	private boolean fIsDirty= true;
 	private IDocumentListener fListener;
-	private File fEditedFile= null;
+	private File fEditedFile= null;	
 	
 	//TODO Bug 50302
 	private boolean fValidateFully= false; //AntUIPlugin.getDefault().getPreferenceStore().getBoolean(AntEditorPreferenceConstants.VALIDATE_BUILDFILES);
@@ -92,11 +92,15 @@ public class AntModel {
      */
     private FindReplaceDocumentAdapter fFindReplaceAdapter;
     
-	private static final String BUILDFILE_PROBLEM_MARKER = AntUIPlugin.PI_ANTUI + ".problem"; //$NON-NLS-1$
+    //TODO bug 37180
+	//private static final String BUILDFILE_PROBLEM_MARKER = AntUIPlugin.PI_ANTUI + ".problem"; //$NON-NLS-1$
 
 	public AntModel(XMLCore core, IDocument document, IProblemRequestor problemRequestor, LocationProvider locationProvider) {
 		fCore= core;
 		fDocument= document;
+		if (document instanceof PartiallySynchronizedDocument) {
+			((PartiallySynchronizedDocument)document).setAntModel(this);
+		}
 		fFindReplaceAdapter= new FindReplaceDocumentAdapter(document);
 		fProblemRequestor= problemRequestor;
 		fLocationProvider= locationProvider;
@@ -126,44 +130,60 @@ public class AntModel {
 		}
 	}
 	
-	public void reconcile() {
-		
+	public void reconcile(DirtyRegion region) {
+		//TODO turn off incremental as it is a work in progress
+		region= null; 
 		synchronized (fDirtyLock) {
 			if (!fIsDirty) {
 				return;
 			}
-			fIsDirty= false;
+			if (fReplaceHasOccurred && region != null) {
+				//this is the removed part of a replace
+				//the insert region will be along shortly
+				fRemoveLengthOfReplace= region.getLength();
+				fReplaceHasOccurred= false;
+				return;
+			} else {
+				fIsDirty= false;
+			}
 		}
 
 		synchronized (this) {
 			if (fCore == null) {
 				// disposed
+				notifyAll();
 				return;
 			}
 			
 			if (fDocument == null) {
 				fProjectNode= null;
 			} else {
-				reset();
-				parseDocument(fDocument);
+				//long start= System.currentTimeMillis();
+				reset(region);
+				parseDocument(fDocument, region);
+				fRemoveLengthOfReplace= 0;
+				//System.out.println(System.currentTimeMillis() - start);
 			} 
 	
 			fCore.notifyDocumentModelListeners(new DocumentModelChangeEvent(this));
+			notifyAll();
 		}
 	}
 
-	private void reset() {
+	private void reset(DirtyRegion region) {
 		fCurrentTargetNode= null;
-		fStillOpenElements= new Stack();
-		fTaskToNode= new HashMap();
-		fProperties= new ArrayList();
-		fProjectNode= null;
-		fNodeBeingResolved= null;
+		if (region == null ) {
+			fStillOpenElements= new Stack();
+			fTaskToNode= new HashMap();
+			fProperties= new ArrayList();
+			fProjectNode= null;
+			fNodeBeingResolved= null;
+		}
 		//removeProblems();
 	}
 
 	public synchronized AntElementNode[] getRootElements() {
-		reconcile();
+		possiblyWaitForReconcile();
 		if (fProjectNode == null) {
 			return new AntElementNode[0];
 		} else {
@@ -171,22 +191,81 @@ public class AntModel {
 		}
 	}
 
-	/**
-	 * Contructs the content outline for a given input element.
-	 */
-	private void parseDocument(IDocument input) {
+	private void parseDocument(IDocument input, DirtyRegion region) {
+		boolean parsed= true;
 		if (input.getLength() == 0) {
+			parsed= false;
 			return;
 		}
-    	Project project = new Project();
-    	
-    	initializeProject(project);
-    	
-    	/* 
-    	 * Ant's parsing facilities always works on a file, therefore we need
-    	 * to determine the actual location of the file. Though the file 
-    	 * contents will not be parsed. We parse the passed document string.
-    	 */
+		Project project= null;
+    	try {
+    		String textToParse= null;
+    		ProjectHelper projectHelper= null;
+			if (region == null) {  //full parse
+				if (fProjectNode == null) {
+					project = new Project();
+					projectHelper= prepareForFullParse(project);
+				} else {
+					project= fProjectNode.getProject();
+					projectHelper= (ProjectHelper)project.getReference("ant.projectHelper"); //$NON-NLS-1$
+				}
+				textToParse= input.get(); //the entire document
+			} else { //incremental
+				project= fProjectNode.getProject();
+				textToParse= prepareForIncrementalParse(project, region, input);
+				if (textToParse == null) {
+					parsed= false;
+					return;
+				}
+				projectHelper= (ProjectHelper)project.getReference("ant.projectHelper"); //$NON-NLS-1$
+			}
+			beginReporting();
+			projectHelper.parse(project, textToParse);
+			
+    	} catch(BuildException e) {
+			handleBuildException(e, null);
+    	} finally {
+    		if (parsed) {
+    			resolveBuildfile();
+    			endReporting();
+    			project.fireBuildFinished(null); //cleanup
+    		}
+    	}
+    	if (fIncrementalTarget != null && parsed) {
+    		updateForIncrementalParse(region);
+    	}
+	}
+	
+	private void updateForIncrementalParse(DirtyRegion region) {
+		if (fProjectNode == null || !fProjectNode.hasChildren()) {
+			return;
+		}
+		int editAdjustment= determineEditAdjustment(region);
+		if (editAdjustment == 0) {
+			return;
+		}
+		List children= fProjectNode.getChildNodes();
+		int index= children.indexOf(fIncrementalTarget) + 1;
+		updateNodesForIncrementalParse(editAdjustment, children, index);
+	}
+
+	private void updateNodesForIncrementalParse(int editAdjustment, List children, int index) {
+		AntElementNode node;
+		for (int i = index; i < children.size(); i++) {
+			node= (AntElementNode)children.get(i);
+			node.setOffset(node.getOffset() + editAdjustment);
+			if (node.hasChildren()) {
+				updateNodesForIncrementalParse(editAdjustment, node.getChildNodes(), 0);
+			}
+		}
+	}
+
+	private ProjectHelper prepareForFullParse(Project project) {
+		fIncrementalTarget= null;
+		initializeProject(project);
+    	// Ant's parsing facilities always works on a file, therefore we need
+    	// to determine the actual location of the file. Though the file 
+    	// contents will not be parsed. We parse the passed document string
     	File file = getEditedFile();
     	String filePath= ""; //$NON-NLS-1$
     	if (file != null) {
@@ -194,23 +273,67 @@ public class AntModel {
     	}
     	project.setUserProperty("ant.file", filePath); //$NON-NLS-1$
 
-    	try {
-			ProjectHelper projectHelper= new ProjectHelper(this);
-    		projectHelper.setBuildFile(file);
-			beginReporting();
-			project.addReference("ant.projectHelper", projectHelper); //$NON-NLS-1$
-    		projectHelper.parse(project, input.get());  // File will be parsed here
-    	} catch(BuildException e) {
-			handleBuildException(e, null);
-    	} finally {
-    		resolveBuildfile();
-    		endReporting();
-    		project.fireBuildFinished(null); //cleanup
-    	}
+		ProjectHelper projectHelper= new ProjectHelper(this);
+		projectHelper.setBuildFile(file);
+		project.addReference("ant.projectHelper", projectHelper); //$NON-NLS-1$
+		return projectHelper;
+	}
+	
+	private String prepareForIncrementalParse(Project project, DirtyRegion region, IDocument input) {
+		String textToParse= null;
+		AntElementNode node= fProjectNode.getNode(region.getOffset());
+		if (node == null) {
+			//outside of any element...not interesting
+			return null;
+		}
+		
+		while (node != null && !(node instanceof AntTargetNode)) {
+			node= node.getParentNode();
+		}
+		if (node == null) { //no enclosing target node found
+			if (region.getText() != null && region.getText().trim().length() == 0) {
+				return null; //no need to parse for whitespace additions
+			}
+			textToParse= input.get();
+			fIncrementalTarget= null;
+			fProjectNode.reset();
+		} else {
+			fIncrementalTarget= (AntTargetNode)node;
+			StringBuffer temp= new StringBuffer("<project");//$NON-NLS-1$
+			String defltTarget= project.getDefaultTarget();
+			if (defltTarget != null) {
+				temp.append(" default=\""); //$NON-NLS-1$
+				temp.append(defltTarget);
+				temp.append("\""); //$NON-NLS-1$
+			}
+			temp.append(">\n"); //$NON-NLS-1$
+			
+			fIncrementalTarget.reset();
+			try {
+				int editAdjustment = determineEditAdjustment(region) + 1;
+				String targetString= input.get(node.getOffset() - 1, node.getLength() + editAdjustment);
+				temp.append(targetString);
+				temp.append("\n</project>"); //$NON-NLS-1$
+				textToParse= temp.toString();
+			} catch (BadLocationException e) {
+				textToParse= input.get();
+			}
+		}
+		return textToParse;
+	}
+
+	private int determineEditAdjustment(DirtyRegion region) {
+		int editAdjustment= 0;
+		if (region.getType().equals(DirtyRegion.INSERT)) {
+			editAdjustment+= region.getLength() + fRemoveLengthOfReplace;
+		} else {
+			editAdjustment-= region.getLength();
+		}
+		return editAdjustment;
 	}
 
 	private void initializeProject(Project project) {
-		//ClassLoader loader= getClassLoader();
+		ClassLoader loader= getClassLoader();
 		if (fValidateFully) {
     		project.setCoreLoader(getClassLoader());
     	}
@@ -218,8 +341,7 @@ public class AntModel {
 		//setTasks(project, loader);
 		//setTypes(project, loader);
 	}
-	
-//	TODO Bug 50302
+//	TODO Bug 50302	
 //	private void setTasks(Project project, ClassLoader loader) {
 //		List tasks = AntCorePlugin.getPlugin().getPreferences().getTasks();
 //		
@@ -235,7 +357,6 @@ public class AntModel {
 //				project.addTaskDefinition(task.getTaskName(), taskClass);
 //			} catch (ClassNotFoundException e) {
 //			} catch (NoClassDefFoundError e) {
-//				
 //			}
 //		}
 //	}
@@ -255,7 +376,7 @@ public class AntModel {
 //		}
 //	}
 
-	private void resolveBuildfile() {
+	private void resolveBuildfile() {	
 		resolveProperties();
 		Collection nodes= fTaskToNode.values();
 		Collection nodeCopy= new ArrayList();
@@ -268,9 +389,9 @@ public class AntModel {
 				if (node.configure(fValidateFully)) {
 					//resolve any new elements
 					resolveBuildfile();
-				}
 			}
 		}
+	}
 		fNodeBeingResolved= null;
 	}
 
@@ -299,15 +420,24 @@ public class AntModel {
 				length= node.getLength();
 			} else {
 				line= location.getLineNumber();
-				originalOffset= getOffset(line, 1);
-				nonWhitespaceOffset= originalOffset;
-				length= getLastCharColumn(line) - (nonWhitespaceOffset - originalOffset);
-				try {
-					nonWhitespaceOffset= getNonWhitespaceOffset(line, 1);
-				} catch (BadLocationException be) {
+				if (line == 0) {
+					if (getProjectNode() != null) {
+						length= getProjectNode().getSelectionLength();
+						nonWhitespaceOffset= getProjectNode().getOffset();
+						getProjectNode().setIsErrorNode(true);
+					} else {
+						return;
+					}
+				} else {
+					originalOffset= getOffset(line, 1);
+					nonWhitespaceOffset= originalOffset;
+					length= getLastCharColumn(line) - (nonWhitespaceOffset - originalOffset);
+					try {
+						nonWhitespaceOffset= getNonWhitespaceOffset(line, 1);
+					} catch (BadLocationException be) {
+					}
 				}
 			}
-			
 			notifyProblemRequestor(e, nonWhitespaceOffset, length, XMLProblem.SEVERTITY_ERROR);
 		} catch (BadLocationException e1) {
 		}
@@ -332,17 +462,26 @@ public class AntModel {
 	}
 
 	public void addTarget(Target newTarget, int line, int column) {
-		AntTargetNode targetNode= new AntTargetNode(newTarget);
-		fProjectNode.addChildNode(targetNode);
-		fCurrentTargetNode= targetNode;
-		fStillOpenElements.push(targetNode);
-		computeOffset(targetNode, line, column);
-		if (fNodeBeingResolved instanceof AntImportNode) {
-			targetNode.setImportNode(fNodeBeingResolved);
+		if (fIncrementalTarget != null) {
+			fCurrentTargetNode= fIncrementalTarget;
+			fCurrentTargetNode.setTarget(newTarget);
+			fStillOpenElements.push(fCurrentTargetNode);
+		} else {
+			AntTargetNode targetNode= new AntTargetNode(newTarget);
+			fProjectNode.addChildNode(targetNode);
+			fCurrentTargetNode= targetNode;
+			fStillOpenElements.push(targetNode);
+			computeOffset(targetNode, line, column);
+			if (fNodeBeingResolved instanceof AntImportNode) {
+				targetNode.setImportNode(fNodeBeingResolved);
+			}
 		}
 	}
 	
 	public void addProject(Project project, int line, int column) {
+		if (fIncrementalTarget != null) {
+			return;
+		}
 		fProjectNode= new AntProjectNode(project, this);
 		fStillOpenElements.push(fProjectNode);
 		computeOffset(fProjectNode, line, column);
@@ -359,7 +498,7 @@ public class AntModel {
 				if (taskNode.isExternal()) {
 					fCurrentTargetNode.setExternal(true);
 					fCurrentTargetNode.setFilePath(taskNode.getFilePath());
-				}
+			}
 			}
 		} else {
 			taskNode= createNotWellKnownTask(newTask, attributes);
@@ -367,12 +506,25 @@ public class AntModel {
 		}
 		fTaskToNode.put(newTask, taskNode);
 		fStillOpenElements.push(taskNode);
+		if (fIncrementalTarget != null) {
+			line = computeCorrection(line);
+		}
 		computeOffset(taskNode, line, column);
 		if (fNodeBeingResolved instanceof AntImportNode) {
 			taskNode.setImportNode(fNodeBeingResolved);
-		}
+	}
 	}
 	
+	private int computeCorrection(int line) {
+		try {
+			int realLineCorrection= 0;
+			realLineCorrection= getLine(fIncrementalTarget.getOffset()) - 2;
+			line= line + realLineCorrection;
+		} catch (BadLocationException e) {
+		}
+		return line;
+	}
+
 	public void addEntity(String entityName, String entityPath) {
 		if (fEntityNameToPath == null) {
 			fEntityNameToPath= new HashMap();
@@ -428,6 +580,7 @@ public class AntModel {
             }
             newNode= new AntTaskNode(newTask, label);        
 		} else if(taskName.equalsIgnoreCase("delete")) { //$NON-NLS-1$
+			
         	String label = "delete "; //$NON-NLS-1$
             String file = attributes.getValue(IAntModelConstants.ATTR_FILE);
             if(file != null) {
@@ -453,7 +606,7 @@ public class AntModel {
 		}
 		return newNode;
 	}
-	
+            
 	private boolean isTaskExternal(String taskFileName) {
 		File taskFile= new File(taskFileName);
 		return !taskFile.equals(getEditedFile());
@@ -486,33 +639,33 @@ public class AntModel {
 		
 		try {
 			int length;
-			int offset;
-			if (column <= 0) {
-				int lineOffset= getOffset(line, 1);
-				StringBuffer searchString= new StringBuffer("</"); //$NON-NLS-1$
-				searchString.append(element.getName());
-				searchString.append('>'); 
-				IRegion result= fFindReplaceAdapter.search(lineOffset, searchString.toString(), true, true, false, false); //$NON-NLS-1$
-				if (result == null) {
-					result= fFindReplaceAdapter.search(lineOffset, "/>", true, true, false, false); //$NON-NLS-1$
+				int offset;
+				if (column <= 0) {
+					int lineOffset= getOffset(line, 1);
+					StringBuffer searchString= new StringBuffer("</"); //$NON-NLS-1$
+					searchString.append(element.getName());
+					searchString.append('>'); 
+					IRegion result= fFindReplaceAdapter.search(lineOffset, searchString.toString(), true, true, false, false); //$NON-NLS-1$
 					if (result == null) {
-						offset= -1;
+						result= fFindReplaceAdapter.search(lineOffset, "/>", true, true, false, false); //$NON-NLS-1$
+						if (result == null) {
+							offset= -1;
+						} else {
+							offset= result.getOffset() + 2;
+						}
 					} else {
-						offset= result.getOffset() + 2;
+						offset= result.getOffset() + searchString.length() - 1;
+					}
+					if (offset < 0 || getLine(offset) != line) {
+						offset= lineOffset;
+					} else {
+						offset++;
 					}
 				} else {
-					offset= result.getOffset() + searchString.length() - 1;
+					offset= getOffset(line, column);
 				}
-				if (offset < 0 || getLine(offset) != line) {
-					offset= lineOffset;
-				} else {
-					offset++;
-				}
-			} else {
-				offset= getOffset(line, column);
-			}
 				
-			length= offset - element.getOffset();
+				length= offset - element.getOffset();
 			element.setLength(length);
 		} catch (BadLocationException e) {
 			//ignore as the parser may be out of sync with the document during reconciliation
@@ -526,24 +679,24 @@ public class AntModel {
 		
 		try {
 			int offset;
-			String prefix= "<"; //$NON-NLS-1$
-			if (column <= 0) {
-				offset= getOffset(line, 0);
-				int lastCharColumn= getLastCharColumn(line);
-				String lineText= fDocument.get(fDocument.getLineOffset(line - 1), lastCharColumn);
-				int lastIndex= lineText.indexOf(prefix + element.getName());
-				if (lastIndex > -1) {
-					offset+= lastIndex + 1;
+				String prefix= "<"; //$NON-NLS-1$
+				if (column <= 0) {
+					offset= getOffset(line, 0);
+					int lastCharColumn= getLastCharColumn(line);
+					String lineText= fDocument.get(fDocument.getLineOffset(line - 1), lastCharColumn);
+					int lastIndex= lineText.indexOf(prefix + element.getName());
+					if (lastIndex > -1) {
+						offset+= lastIndex + 1;
+					} else {
+						offset= getOffset(line, lastCharColumn);
+						IRegion result= fFindReplaceAdapter.search(offset - 1, prefix, false, false, false, false);
+						offset= result.getOffset();
+					}
 				} else {
-					offset= getOffset(line, lastCharColumn);
+					offset= getOffset(line, column);
 					IRegion result= fFindReplaceAdapter.search(offset - 1, prefix, false, false, false, false);
 					offset= result.getOffset();
 				}
-			} else {
-				offset= getOffset(line, column);
-				IRegion result= fFindReplaceAdapter.search(offset - 1, prefix, false, false, false, false);
-				offset= result.getOffset();
-			}
  			
 			element.setOffset(offset + 1);
 			element.setSelectionLength(element.getName().length());
@@ -579,6 +732,9 @@ public class AntModel {
 		if (fLastNode == fCurrentTargetNode) {
 			//the current target element has been closed
 			fCurrentTargetNode= null;
+			if (fLastNode == fIncrementalTarget) {
+				lineNumber= computeCorrection(lineNumber);
+			}
 		}
 		computeLength(fLastNode, lineNumber, column);
 	}
@@ -591,57 +747,58 @@ public class AntModel {
 		//createMarker(problem);
 	}
 
-	private void createMarker(IProblem problem) {
-		IFile file = getResource();
-		int lineNumber= 1;
-		try {
-			lineNumber = getLine(problem.getOffset());
-		} catch (BadLocationException e1) {
-		}
+	//TODO bug 37180
+//	private void createMarker(IProblem problem) {
+//		IFile file = getResource();
+//		int lineNumber= 1;
+//		try {
+//			lineNumber = getLine(problem.getOffset());
+//		} catch (BadLocationException e1) {
+//		}
+//	
+//		try {
+//			IMarker marker = file.createMarker(AntModel.BUILDFILE_PROBLEM_MARKER);
+//		
+//			marker.setAttributes(
+//					new String[] { 
+//							IMarker.MESSAGE, 
+//							IMarker.SEVERITY, 
+//							IMarker.LOCATION,
+//							IMarker.CHAR_START, 
+//							IMarker.CHAR_END, 
+//							IMarker.LINE_NUMBER
+//					},
+//					new Object[] {
+//							problem.getMessage(),
+//							new Integer(IMarker.SEVERITY_ERROR), 
+//							problem.getMessage(),
+//							new Integer(problem.getOffset()),
+//							new Integer(problem.getOffset() + problem.getLength()),
+//							new Integer(lineNumber)
+//					}
+//			);
+//		} catch (CoreException e) {
+//			
+//		} 
+//		
+//	}
 	
-		try {
-			IMarker marker = file.createMarker(AntModel.BUILDFILE_PROBLEM_MARKER);
-		
-			marker.setAttributes(
-					new String[] { 
-							IMarker.MESSAGE, 
-							IMarker.SEVERITY, 
-							IMarker.LOCATION,
-							IMarker.CHAR_START, 
-							IMarker.CHAR_END, 
-							IMarker.LINE_NUMBER
-					},
-					new Object[] {
-							problem.getMessage(),
-							new Integer(IMarker.SEVERITY_ERROR), 
-							problem.getMessage(),
-							new Integer(problem.getOffset()),
-							new Integer(problem.getOffset() + problem.getLength()),
-							new Integer(lineNumber)
-					}
-			);
-		} catch (CoreException e) {
-			
-		} 
-		
-	}
-	
-	private IFile getResource() {
-		IPath location= fLocationProvider.getLocation();
-		IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(location);
-		return files[0];
-	}
+//	private IFile getResource() {
+//		IPath location= fLocationProvider.getLocation();
+//		IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(location);
+//		return files[0];
+//	}
 
-	private void removeProblems() {
-		IFile file= getResource();
-		
-		try {
-			if (file != null && file.exists())
-				file.deleteMarkers(AntModel.BUILDFILE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
-		} catch (CoreException e) {
-			// assume there were no problems
-		}
-	}
+//	private void removeProblems() {
+//		IFile file= getResource();
+//		
+//		try {
+//			if (file != null && file.exists())
+//				file.deleteMarkers(AntModel.BUILDFILE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+//		} catch (CoreException e) {
+//			// assume there were no problems
+//		}
+//	}
 
 	private void beginReporting() {
 		if (fProblemRequestor != null) {
@@ -935,7 +1092,29 @@ public class AntModel {
 	}
 	
 	public AntProjectNode getProjectNode() {
-		reconcile();
+		possiblyWaitForReconcile();
 		return fProjectNode;
+	}
+	
+	private void possiblyWaitForReconcile() {
+		synchronized (fDirtyLock) {
+			if (!fIsDirty) {
+				return;
+			}
+		}
+		synchronized (this) {
+			//wait for the reconcile from the edit
+			try {
+				wait();
+			} catch (InterruptedException e) {
+			}
+		}
+	}
+
+	/**
+	 * 
+	 */
+	public void setReplaceHasOccurred() {
+		fReplaceHasOccurred= true;
 	}
 }

@@ -57,4 +57,11 @@ public class AntProjectNode extends AntElementNode {
 	protected AntModel getAntModel() {
 		return fModel;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.editor.model.AntElementNode#reset()
+	 */
+	public void reset() {
+		super.reset();
+		fProject.getTargets().clear();
+	}
 }

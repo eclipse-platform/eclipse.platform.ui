@@ -11,6 +11,7 @@
 
 package org.eclipse.ant.internal.ui.editor.text;
 
+import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 
@@ -18,6 +19,8 @@ import org.eclipse.jface.text.Document;
  * Document that can also be used by a background reconciler.
  */
 public class PartiallySynchronizedDocument extends Document {
+	
+	AntModel fAntModel= null; 
 			
 	/*
 	 * @see IDocumentExtension#startSequentialRewrite(boolean)
@@ -59,6 +62,13 @@ public class PartiallySynchronizedDocument extends Document {
 	 */
 	synchronized public void replace(int offset, int length, String text) throws BadLocationException {
 		super.replace(offset, length, text);
+		if (length == 0 && text != null) {
+			// Insert
+		} else if (text == null || text.length() == 0) {
+			// Remove
+		} else {
+			fAntModel.setReplaceHasOccurred();
+		}
 	}
 			
 	/*
@@ -66,5 +76,9 @@ public class PartiallySynchronizedDocument extends Document {
 	 */
 	synchronized public void set(String text) {
 		super.set(text);
+	}
+	
+	public void setAntModel(AntModel model) {
+		fAntModel= model;
 	}
 }
