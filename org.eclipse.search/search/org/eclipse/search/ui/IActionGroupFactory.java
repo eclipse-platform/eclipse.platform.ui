@@ -23,12 +23,11 @@ import org.eclipse.ui.actions.ActionGroup;
  * 
  * Clients can implement this interface and pass an
  * instance to the search result view.
- * @deprecated subclass <code>AbstractTextSearchViewPage</code> instead.
- * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage
  * 
  * @see	org.eclipse.ui.actions.ActionGroup
  * @see	ISearchResultView#searchStarted
  * @since 	2.0
+ * @deprecated Subclass {@link org.eclipse.search.ui.text.AbstractTextSearchViewPage} instead.
  */
 public interface IActionGroupFactory {
 

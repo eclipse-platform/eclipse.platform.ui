@@ -15,8 +15,7 @@ import org.eclipse.core.resources.IMarker;
 /**
  * Computes the key by which the markers in the search result view
  * are grouped.
- * @deprecated subclass <code>AbstractTextSearchResult</code> instead.
- * @see org.eclipse.search.ui.text.AbstractTextSearchResult
+ * @deprecated Subclass {@link org.eclipse.search.ui.text.AbstractTextSearchResult} instead.
  */
 public interface IGroupByKeyComputer {
 	

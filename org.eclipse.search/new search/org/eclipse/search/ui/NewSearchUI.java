@@ -171,7 +171,6 @@ public class NewSearchUI {
 	 * The goto action can decide to use or ignore this preference.
 	 *
 	 * @return <code>true</code> if editors should be reused for showing search results
-	 * @since 2.0
 	 */
 	public static boolean reuseEditor() {
 		return SearchPreferencePage.isEditorReused();
@@ -186,7 +185,6 @@ public class NewSearchUI {
 	 * inexact matches if this method returns <code>true</code>
 	 * </p>
 	 * @return <code>true</code> if search engine must not report inexact matches
-	 * @since 2.1
 	 */
 	public static boolean arePotentialMatchesIgnored() {
 		return SearchPreferencePage.arePotentialMatchesIgnored();
@@ -200,7 +198,6 @@ public class NewSearchUI {
 	 * appear in the current perspective.
 	 * </p>
 	 * @return the ID of the default perspective <code>null</code> if no default perspective is set
-	 * @since 2.1
 	 */
 	public static String getDefaultPerspectiveId() {
 		return SearchPreferencePage.getDefaultPerspectiveId();

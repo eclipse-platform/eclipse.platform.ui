@@ -26,14 +26,14 @@ import org.eclipse.ui.IWorkbenchWindow;
  *   window.</li>
  * </ul>
  *
- * @deprecated use <code>NewSearchUI</code> instead.
- * @see org.eclipse.search.ui.NewSearchUI
  * @see ISearchResultView
+ * @deprecated Use {@link org.eclipse.search.ui.NewSearchUI} instead.
  */
 public final class SearchUI {
 
 	/**
 	 * Search Plug-in Id (value <code>"org.eclipse.search"</code>).
+	 * @deprecated Use {@link NewSearchUI#PLUGIN_ID} instead.
 	 */
 	public static final String PLUGIN_ID= NewSearchUI.PLUGIN_ID;
 
@@ -41,6 +41,7 @@ public final class SearchUI {
 	 * Search marker type (value <code>"org.eclipse.search.searchmarker"</code>).
 	 *
 	 * @see org.eclipse.core.resources.IMarker
+	 * @deprecated Use {@link NewSearchUI#SEARCH_MARKER} instead.
 	 */ 
 	public static final String SEARCH_MARKER=  NewSearchUI.SEARCH_MARKER;
 
@@ -79,6 +80,7 @@ public final class SearchUI {
 	/** 
 	 * Id of the new Search view
 	 * (value <code>"org.eclipse.search.ui.views.SearchView"</code>).
+	 * @deprecated Use {@link NewSearchUI#SEARCH_VIEW_ID} instead.
 	 */
 	public static final String SEARCH_VIEW_ID= NewSearchUI.SEARCH_VIEW_ID;
 	
@@ -87,6 +89,7 @@ public final class SearchUI {
 	 * (value <code>"org.eclipse.search.searchActionSet"</code>).
 	 *
 	 * @since 2.0
+	 * @deprecated Use {@link NewSearchUI#ACTION_SET_ID} instead.
 	 */
 	public static final String ACTION_SET_ID= NewSearchUI.ACTION_SET_ID;
 
@@ -96,6 +99,7 @@ public final class SearchUI {
 	 * if the search result view is already activated.
 	 *
 	 * @return <code>true</code> if the search result view could be activated
+	 * @deprecated Use {@link NewSearchUI#activateSearchResultView()} instead.
 	 */
 	public static boolean activateSearchResultView() {
 		return SearchPlugin.activateSearchResultView();	
@@ -109,6 +113,7 @@ public final class SearchUI {
 	 * @param pageId	the page to select or <code>null</code>
 	 * 					if the best fitting page should be selected
 	 * @since 2.0
+	 * @deprecated Use {@link NewSearchUI#openSearchDialog(IWorkbenchWindow, String)} instead.
 	 */
 	public static void openSearchDialog(IWorkbenchWindow window, String pageId) {
 		NewSearchUI.openSearchDialog(window, pageId);
@@ -120,6 +125,7 @@ public final class SearchUI {
 	 *
 	 * @return	the search result view or <code>null</code>
 	 * 		if there is no active search result view
+	 * @deprecated Use {@link NewSearchUI#getSearchResultView()} instead.
 	 */
 	public static ISearchResultView getSearchResultView() {
 		return SearchPlugin.getSearchResultView();	
@@ -145,6 +151,7 @@ public final class SearchUI {
 	 *
 	 * @return <code>true</code> if editors should be reused for showing search results
 	 * @since 2.0
+	 * @deprecated Use {@link NewSearchUI#reuseEditor()} instead.
 	 */
 	public static boolean reuseEditor() {
 		return NewSearchUI.reuseEditor();
@@ -160,6 +167,7 @@ public final class SearchUI {
 	 * </p>
 	 * @return <code>true</code> if search engine must not report inexact matches
 	 * @since 2.1
+	 * @deprecated Use {@link NewSearchUI#arePotentialMatchesIgnored()} instead.
 	 */
 	public static boolean arePotentialMatchesIgnored() {
 		return NewSearchUI.arePotentialMatchesIgnored();
@@ -174,6 +182,7 @@ public final class SearchUI {
 	 * </p>
 	 * @return the ID of the default perspective <code>null</code> if no default perspective is set
 	 * @since 2.1
+	 * @deprecated Use {@link NewSearchUI#getDefaultPerspectiveId()} instead.
 	 */
 	public static String getDefaultPerspectiveId() {
 		return NewSearchUI.getDefaultPerspectiveId();

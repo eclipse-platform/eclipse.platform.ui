@@ -20,9 +20,8 @@ import org.eclipse.jface.viewers.IInputSelectionProvider;
  * must implement this interface and pass an
  * instance of itself to the search result view.
  * 
- * @deprecated subclass <code>AbstractTextSearchViewPage</code> instead.
- * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage
  * @see	ISearchResultView#searchStarted
+ * @deprecated Subclass {@link org.eclipse.search.ui.text.AbstractTextSearchViewPage} instead.
  */
 public interface IContextMenuContributor {
 

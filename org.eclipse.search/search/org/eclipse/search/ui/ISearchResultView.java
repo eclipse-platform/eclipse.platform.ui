@@ -33,8 +33,7 @@ import org.eclipse.ui.IViewPart;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * @deprecated use <code>ISearchResultViewPart</code> instead.
- * @see org.eclipse.search.ui.ISearchResultViewPart
+ * @deprecated Use {@link org.eclipse.search.ui.ISearchResultViewPart} instead.
  */
 public interface ISearchResultView extends IViewPart {
 
