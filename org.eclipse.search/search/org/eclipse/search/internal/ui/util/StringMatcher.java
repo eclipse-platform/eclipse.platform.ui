@@ -73,14 +73,7 @@ public class StringMatcher {
 		fIgnoreCase= ignoreCase;
 		fIgnoreWildCards= ignoreWildCards;
 		fLength= aPattern.length();
-
-		/* convert case */
-		if (fIgnoreCase) {
-			fPattern= aPattern.toUpperCase();
-		} else {
-			fPattern= aPattern;
-		}
-
+		fPattern= aPattern;
 		if (fIgnoreWildCards) {
 			parseNoWildCards();
 		} else {
@@ -362,8 +355,7 @@ public class StringMatcher {
 			if (pchar == tchar)
 				continue;
 			if (fIgnoreCase) {
-				char tc= Character.toUpperCase(tchar);
-				if (tc == pchar)
+				if (Character.toUpperCase(tchar) == Character.toUpperCase(pchar))
 					continue;
 			}
 			return false;
