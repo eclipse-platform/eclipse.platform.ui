@@ -59,6 +59,9 @@ import org.xml.sax.SAXParseException;
 
 public class AntModel {
 
+	private static ClassLoader fgClassLoader;
+	private static int fgInstanceCount= 0;
+	
 	private XMLCore fCore;
 	private IDocument fDocument;
 	private IProblemRequestor fProblemRequestor;
@@ -96,10 +99,10 @@ public class AntModel {
 	
 	private Preferences.IPropertyChangeListener fPropertyChangeListener= new Preferences.IPropertyChangeListener() {
 		public void propertyChange(Preferences.PropertyChangeEvent event) {
+			fgClassLoader= null;
 			AntDefiningTaskNode.setJavaClassPath();
-			beginReporting();
-			resolveBuildfile();
-			endReporting();
+			fIsDirty= true;
+			reconcile(null);
 			updateMarkers();
 		}
 	};
@@ -113,6 +116,7 @@ public class AntModel {
 		fLocationProvider= locationProvider;
 		AntCorePlugin.getPlugin().getPluginPreferences().addPropertyChangeListener(fPropertyChangeListener);
 		AntDefiningTaskNode.setJavaClassPath();
+		fgInstanceCount++;
 	}
 
 	public void install() {
@@ -138,6 +142,10 @@ public class AntModel {
 		}
 		
 		AntCorePlugin.getPlugin().getPluginPreferences().removePropertyChangeListener(fPropertyChangeListener);
+		fgInstanceCount--;
+		if (fgInstanceCount == 0) {
+			fgClassLoader= null;
+		}
 	}
 	
 	public void reconcile(DirtyRegion region) {
@@ -1139,6 +1147,11 @@ public class AntModel {
 	}
 	
 	private ClassLoader getClassLoader() {
+//		if (fgClassLoader == null) {
+//			fgClassLoader= AntCorePlugin.getPlugin().getNewClassLoader();
+//		}
+//		return fgClassLoader;
+		
 		AntCorePreferences corePreferences= AntCorePlugin.getPlugin().getPreferences();
 		URL[] urls= corePreferences.getURLs();
 		org.apache.tools.ant.AntClassLoader loader= new org.apache.tools.ant.AntClassLoader(this.getClass().getClassLoader(), true);
