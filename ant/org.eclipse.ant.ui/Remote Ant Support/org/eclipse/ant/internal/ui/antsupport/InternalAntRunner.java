@@ -119,6 +119,9 @@ public class InternalAntRunner {
 	
 	private BuildLogger buildLogger= null;
 	
+	private Map eclipseSpecifiedTasks;
+	private Map eclipseSpecifiedTypes;
+	
 	/**
 	 * Cache of the Ant version number when it has been loaded
 	 */
@@ -387,6 +390,8 @@ public class InternalAntRunner {
 			
 			getCurrentProject().log(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Build_file__{0}_1"), new String[]{getBuildFileLocation()})); //$NON-NLS-1$
 			
+			setTasksAndTypes();
+			
 			if (isVersionCompatible("1.6")) { //$NON-NLS-1$
 				getCurrentProject().setKeepGoingMode(keepGoing);
 			}
@@ -437,6 +442,40 @@ public class InternalAntRunner {
 		}
 	}
 	
+	private void setTasksAndTypes() {
+		if (eclipseSpecifiedTasks != null) {
+			Iterator itr= eclipseSpecifiedTasks.keySet().iterator();
+			
+			while (itr.hasNext()) {
+				String taskName = (String) itr.next();
+				String taskClassName= (String) eclipseSpecifiedTasks.get(taskName);
+				try {
+					Class taskClass = Class.forName(taskClassName);
+					getCurrentProject().addTaskDefinition(taskName, taskClass);
+				} catch (ClassNotFoundException e) {
+					String message= MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.161"), new String[]{taskClassName, taskName}); //$NON-NLS-1$
+					getCurrentProject().log(message, Project.MSG_WARN);
+				}	
+			}
+		}
+		
+		if (eclipseSpecifiedTypes != null) {
+			Iterator itr= eclipseSpecifiedTypes.keySet().iterator();
+			
+			while (itr.hasNext()) {
+				String typeName = (String) itr.next();
+				String typeClassName= (String) eclipseSpecifiedTypes.get(typeName);
+				try {
+					Class typeClass = Class.forName(typeClassName);
+					getCurrentProject().addDataTypeDefinition(typeName, typeClass);
+				} catch (ClassNotFoundException e) {
+					String message= MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.162"), new String[]{typeClassName, typeName}); //$NON-NLS-1$
+					getCurrentProject().log(message, Project.MSG_WARN);
+				}	
+			}
+		}
+	}
+
 	private void remapSystemIn() {
 		if (!isVersionCompatible("1.6")) { //$NON-NLS-1$
 			return;
@@ -509,21 +548,11 @@ public class InternalAntRunner {
 		}
 	}
 
-	/*
-	 * We only have to do this because Project.fireBuildFinished is protected. If it becomes
-	 * public we should remove this method and call the appropriate one.
-	 */
 	private void fireBuildFinished(Project project, Throwable error) {
-		BuildEvent event = new BuildEvent(project);
 		if (error == null && scriptExecuted) {
 			logMessage(project, InternalAntMessages.getString("InternalAntRunner.BUILD_SUCCESSFUL_1"), messageOutputLevel); //$NON-NLS-1$
-		} else {
-			event.setException(error);
 		}
-		for (Iterator iterator = project.getBuildListeners().iterator(); iterator.hasNext();) {
-			BuildListener listener = (BuildListener) iterator.next();
-			listener.buildFinished(event);
-		}
+		project.fireBuildFinished(error);
 	}
 
 	private void logMessage(Project project, String message, int priority) {
@@ -613,42 +642,42 @@ public class InternalAntRunner {
 	
 	private boolean preprocessCommandLine(List commands) {
 		
-		String[] args = getArgument(commands, "-listener"); //$NON-NLS-1$
-		while (args != null) {
-			if (args.length == 0) {
+		String arg = getArgument(commands, "-listener"); //$NON-NLS-1$
+		while (arg != null) {
+			if (arg.length() == 0) {
 				throw new BuildException(InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_classname_when_using_the_-listener_argument_1")); //$NON-NLS-1$
 			} 
 			if (buildListeners == null) {
 				buildListeners= new ArrayList(1);
 			}
-			buildListeners.add(args[0]);
-			args = getArgument(commands, "-listener"); //$NON-NLS-1$
+			buildListeners.add(arg);
+			arg = getArgument(commands, "-listener"); //$NON-NLS-1$
 		}
 
-		args = getArgument(commands, "-logger"); //$NON-NLS-1$
-		if (args != null) {
-			if (args.length == 0) {
+		arg = getArgument(commands, "-logger"); //$NON-NLS-1$
+		if (arg != null) {
+			if (arg.length() == 0) {
 				throw new BuildException(InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_classname_when_using_the_-logger_argument_2")); //$NON-NLS-1$
 			} 
-			loggerClassname = args[0];
+			loggerClassname = arg;
 		}
-		args = getArgument(commands, "-logger"); //$NON-NLS-1$
-		if (args != null) {
+		arg = getArgument(commands, "-logger"); //$NON-NLS-1$
+		if (arg != null) {
 			throw new BuildException(InternalAntMessages.getString("InternalAntRunner.Only_one_logger_class_may_be_specified_1")); //$NON-NLS-1$
 		}
 		
-		args = getArgument(commands, "-inputhandler"); //$NON-NLS-1$
-		if (args != null) {
+		arg = getArgument(commands, "-inputhandler"); //$NON-NLS-1$
+		if (arg != null) {
 			if (!isVersionCompatible("1.5")) { //$NON-NLS-1$
 				throw new BuildException(InternalAntMessages.getString("InternalAntRunner.Specifying_an_InputHandler_is_an_Ant_1.5.*_feature._Please_update_your_Ant_classpath_to_include_an_Ant_version_greater_than_this._2")); //$NON-NLS-1$
 			}
-			if (args.length == 0) {
+			if (arg.length() == 0) {
 				throw new BuildException(InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_classname_when_using_the_-inputhandler_argument_1")); //$NON-NLS-1$
 			} 
-			inputHandlerClassname = args[0];
+			inputHandlerClassname = arg;
 		}
-		args = getArgument(commands, "-inputhandler"); //$NON-NLS-1$
-		if (args != null) {
+		arg = getArgument(commands, "-inputhandler"); //$NON-NLS-1$
+		if (arg != null) {
 			throw new BuildException(InternalAntMessages.getString("InternalAntRunner.Only_one_input_handler_class_may_be_specified._2")); //$NON-NLS-1$
 		}
 		return true;
@@ -703,41 +732,41 @@ public class InternalAntRunner {
 			return false;
 		}
 		
-		String[] args = getArgument(commands, "-logfile"); //$NON-NLS-1$
-		if (args == null) {
-			args = getArgument(commands, "-l"); //$NON-NLS-1$
+		String arg = getArgument(commands, "-logfile"); //$NON-NLS-1$
+		if (arg == null) {
+			arg = getArgument(commands, "-l"); //$NON-NLS-1$
 		}
-		if (args != null) {
-			if (args.length == 0) {
+		if (arg != null) {
+			if (arg.length() == 0) {
 				String message= InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_log_file_when_using_the_-log_argument_3"); //$NON-NLS-1$
 				logMessage(currentProject, message, Project.MSG_ERR); 
 				throw new BuildException(message);
 			} 
 			try {
-				createLogFile(args[0]);
+				createLogFile(arg);
 			} catch (IOException e) {
 				// just log message and ignore exception
-				logMessage(getCurrentProject(), MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Could_not_write_to_the_specified_log_file__{0}._Make_sure_the_path_exists_and_you_have_write_permissions._2"), new String[]{args[0]}), Project.MSG_ERR); //$NON-NLS-1$
+				logMessage(getCurrentProject(), MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Could_not_write_to_the_specified_log_file__{0}._Make_sure_the_path_exists_and_you_have_write_permissions._2"), new String[]{arg}), Project.MSG_ERR); //$NON-NLS-1$
 				return false;
 			}
 		
 		}
 		
-		args = getArgument(commands, "-buildfile"); //$NON-NLS-1$
-		if (args == null) {
-			args = getArgument(commands, "-file"); //$NON-NLS-1$
-			if (args == null) {
-				args = getArgument(commands, "-f"); //$NON-NLS-1$
+		arg = getArgument(commands, "-buildfile"); //$NON-NLS-1$
+		if (arg == null) {
+			arg = getArgument(commands, "-file"); //$NON-NLS-1$
+			if (arg == null) {
+				arg = getArgument(commands, "-f"); //$NON-NLS-1$
 			}
 		}
 		
-		if (args != null) {
-			if (args.length == 0) {
+		if (arg != null) {
+			if (arg.length() == 0) {
 				String message= InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_buildfile_when_using_the_-buildfile_argument_4"); //$NON-NLS-1$
 				logMessage(currentProject, message, Project.MSG_ERR); 
 				throw new BuildException(message);
 			} 
-			setBuildFileLocation(args[0]);
+			setBuildFileLocation(arg);
 		}
 		
 		if (isVersionCompatible("1.6")) { //$NON-NLS-1$
@@ -747,23 +776,24 @@ public class InternalAntRunner {
 			if (commands.remove("-noinput")) { //$NON-NLS-1$
 				allowInput= false;
 			}
-			args= getArgument(commands, "-lib"); //$NON-NLS-1$
-			if (args != null) {
+			arg= getArgument(commands, "-lib"); //$NON-NLS-1$
+			if (arg != null) {
 				logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.157"), Project.MSG_ERR); //$NON-NLS-1$
 				return false;
 			}
 		}
 		
-		args= getArgument(commands, "-find"); //$NON-NLS-1$
-		if (args == null) {
-			args= getArgument(commands, "-s"); //$NON-NLS-1$
+		arg= getArgument(commands, "-find"); //$NON-NLS-1$
+		if (arg == null) {
+			arg= getArgument(commands, "-s"); //$NON-NLS-1$
 		}
-		if (args != null) {
+		if (arg != null) {
 			logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.-find_not_supported"), Project.MSG_ERR); //$NON-NLS-1$
 			return false;
 		}
 		
-
+		processTasksAndTypes(commands);
+		
 		if ((commands != null) && (!commands.isEmpty())) {
 			processUnrecognizedCommands(commands);
 		}
@@ -775,6 +805,32 @@ public class InternalAntRunner {
 		return true;
 	}
 	
+	private void processTasksAndTypes(List commands) {
+		String arg = getArgument(commands, "-eclipseTask"); //$NON-NLS-1$
+		while (arg != null) {
+			if (eclipseSpecifiedTasks == null) {
+				eclipseSpecifiedTasks= new HashMap();
+			}
+			int index= arg.indexOf(',');
+			String name= arg.substring(0, index);
+			String className= arg.substring(index + 1);
+			eclipseSpecifiedTasks.put(name, className);
+			arg = getArgument(commands, "-eclipseTask"); //$NON-NLS-1$
+		}
+		
+		arg = getArgument(commands, "-eclipseType"); //$NON-NLS-1$
+		while (arg != null) {
+			if (eclipseSpecifiedTypes == null) {
+				eclipseSpecifiedTypes= new HashMap();
+			}
+			int index= arg.indexOf(',');
+			String name= arg.substring(0, index);
+			String className= arg.substring(index + 1);
+			eclipseSpecifiedTypes.put(name, className);
+			arg = getArgument(commands, "-eclipseType"); //$NON-NLS-1$
+		}
+	}
+
 	/*
 	 * Checks for unrecognized arguments on the command line.
 	 * Since there is no syntactic way to distingush between
@@ -860,20 +916,20 @@ public class InternalAntRunner {
 	 * Ensures that -D properties take precedence.	 */
 	private void processProperties(List commands) {
 		//MULTIPLE property files are allowed
-		String[] args= getArgument(commands, "-propertyfile"); //$NON-NLS-1$
-		while (args != null) {
+		String arg= getArgument(commands, "-propertyfile"); //$NON-NLS-1$
+		while (arg != null) {
 			if (!isVersionCompatible("1.5")) { //$NON-NLS-1$
 				logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.Specifying_property_files_is_a_Ant_1.5.*_feature._Please_update_your_Ant_classpath._6"), Project.MSG_ERR); //$NON-NLS-1$
 				break;
 			}
-			if (args.length == 0) {
+			if (arg.length() == 0) {
 				String message= InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_property_filename_when_using_the_-propertyfile_argument_3"); //$NON-NLS-1$
 				logMessage(currentProject, message, Project.MSG_ERR); 
 				throw new BuildException(message);
 			} 
 			
-			propertyFiles.add(args[0]);
-			args= getArgument(commands, "-propertyfile"); //$NON-NLS-1$
+			propertyFiles.add(arg);
+			arg= getArgument(commands, "-propertyfile"); //$NON-NLS-1$
 		}
 		
 		if (propertyFiles != null && !propertyFiles.isEmpty()) {
@@ -1033,13 +1089,13 @@ public class InternalAntRunner {
 	}
 
 	/*
-	 * From a command line list, get the array of arguments of a given parameter.
+	 * From a command line list, return the argument for the given parameter.
 	 * The parameter and its argument are removed from the list.
 	 * 
 	 * @return <code>null</code> if the parameter is not found 
-	 * 			or an empty array if no arguments are found
+	 * 			or an empty String if no arguments are found
 	 */
-	private String[] getArgument(List commands, String param) {
+	private String getArgument(List commands, String param) {
 		if (commands == null) {
 			return null;
 		}
@@ -1049,18 +1105,16 @@ public class InternalAntRunner {
 		}
 		commands.remove(index);
 		if (index == commands.size()) {// if this is the last command
-			return new String[]{};
+			return ""; //$NON-NLS-1$
 		}
-		String[] args= new String[1];
 		
 		String command = (String) commands.get(index);
 		if (command.startsWith("-")) { //new parameter //$NON-NLS-1$
-			return new String[]{};
+			return ""; //$NON-NLS-1$
 		}
-		args[0]= command;
-		commands.remove(index);
 		
-		return args;
+		commands.remove(index);
+		return command;
 	}
 
 	/*
