@@ -62,6 +62,14 @@
 				icon="icons/view.gif"
 				tooltip="%openhelpcontents"/>
 
+			<menu
+				id="org.eclipse.search.menu"
+				label="%searchMenu.label"
+				path="navigate">
+				<groupMarker name="internalDialogGroup"/>   <!-- not to be used by clients  -->
+				<groupMarker name="dialogGroup"/>           <!-- to be used by clients      -->
+				<separator name="contextMenuActionsGroup"/>
+			</menu>
 			<action id="org.eclipse.help.ui.OpenHelpSearchPage"
 				menubarPath="org.eclipse.search.menu/dialogGroup"
 				label="%openHelpSearchPageAction.label"
