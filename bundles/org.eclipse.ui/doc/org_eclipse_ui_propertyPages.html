@@ -94,6 +94,7 @@ CDATA #REQUIRED</tt>
 the name attribute, the name value pair is used to define the target object
 for a property page.</li>
 </ul>
+
 <b><i>Examples:</i></b>
 <p>The following is an example of the property page definition:
 <p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.ui.propertyPages"></tt>
@@ -107,14 +108,18 @@ Properties"</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;filter name="readOnly" value="true"/></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/page></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;/extension></tt>
+
 <p><b><i>API Information</i></b>: Attribute <tt>class</tt> must specify
 a fully qualified name of the class that implements <tt>org.eclipse.ui.IWorkbenchPropertyPage</tt>.
+
 <p><b><i>Supplied Implementation</i>: </b>Some objects provided by the
 workbench may have property pages registered. Plug-ins are allowed to add
 more property pages for these objects. Property pages are not limited to
 workbench resources: all objects showing up in the workbench (even domain
 specific objects created by the plug-ins) may have property pages and other
 plug-ins are allowed to register property pages for them.
-<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
+
+<p><a href="hglegal2002.htm"><img SRC="ngibmcpy2002.gif" ALT="Copyright IBM Corporation and others 2000, 2002." BORDER=0</a>
+
 </body>
 </html>

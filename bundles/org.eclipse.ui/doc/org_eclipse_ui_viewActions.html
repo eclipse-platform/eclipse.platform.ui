@@ -72,8 +72,6 @@ into which actions can be added.</li>
 NMTOKEN #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; accelerator&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-CDATA #IMPLIED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; menubarPath&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #IMPLIED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; toolbarPath&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -105,14 +103,6 @@ action.</li>
 on the context. In menus, it is used as the menu text. In toolbars, it
 is used as the button label. The label can contain JFace-encoded mnemonic
 and accelerator information (see example).</li>
-
-<li>
-<b>accelerator</b> - the accelerator for the action. This is specified as a
-combination of the keys CTRL, SHIFT and ALT and an accelrator key. These values
-are not internationalized and should not be translated. Specification of the
-accelerator for the entry title should be done in the label - this value will
-not be used to build a menu entry.</li>
-
 
 <li>
 <b>menubarPath</b> - a slash-delimited path ('/') that is used to specify
@@ -214,20 +204,10 @@ delegate has been instantiated, it may control the action enable state
 directly within its
 <tt>selectionChanged</tt> method.
 <p>Action and menu labels may contain special characters that encode mnemonics
-and accelerators using the following rules:
-<ol>
-<li>
-Mnemonics are specified using the ampersand ('&amp;') character in front
+which are specified using the ampersand ('&amp;') character in front
 of a mnemonic character in the translatable text. Since ampersand is not
 allowed in XML strings, use <tt>&amp;amp;</tt> character entity.</li>
 
-<li>
-Optional accelerators are specified at the and of the name string, using
-<tt>@</tt>
-followed by a series of modifiers and the final accelerator character (for
-example, <tt>&amp;amp;Save@Ctrl+S</tt>). Modified can be chained using
-the '+' sign as the delimiter (as in <tt>@Ctrl+Shift+S</tt>).</li>
-</ol>
 If two or more actions are contributed to a menu or toolbar by a single
 extension the actions will appear in the reverse order of how they are
 listed in the plugin.xml file. This behavior is admittedly unintuitive.&nbsp;
