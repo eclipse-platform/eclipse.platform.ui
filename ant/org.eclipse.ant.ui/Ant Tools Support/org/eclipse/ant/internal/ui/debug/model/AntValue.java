@@ -11,13 +11,12 @@
 package org.eclipse.ant.internal.ui.debug.model;
 
 import org.eclipse.ant.internal.ui.debug.IAntDebugConstants;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 
 public class AntValue extends AntDebugElement implements IValue  {
 
-    String fValueString;
+    private String fValueString;
     
     /**
      * @param target
@@ -30,35 +29,35 @@ public class AntValue extends AntDebugElement implements IValue  {
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IValue#getReferenceTypeName()
      */
-    public String getReferenceTypeName() throws DebugException {
+    public String getReferenceTypeName() {
         return ""; //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IValue#getValueString()
      */
-    public String getValueString() throws DebugException {
+    public String getValueString() {
         return fValueString;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IValue#isAllocated()
      */
-    public boolean isAllocated() throws DebugException {
+    public boolean isAllocated() {
         return true;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IValue#getVariables()
      */
-    public IVariable[] getVariables() throws DebugException {
+    public IVariable[] getVariables() {
         return null;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.model.IValue#hasVariables()
      */
-    public boolean hasVariables() throws DebugException {
+    public boolean hasVariables() {
         return false;
     }
 

@@ -55,7 +55,7 @@ public class AntStackFrame extends AntDebugElement implements IStackFrame {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStackFrame#getVariables()
 	 */
-	public IVariable[] getVariables() throws DebugException {
+	public IVariable[] getVariables() {
 	   return fThread.getVariables();
 	}
 
