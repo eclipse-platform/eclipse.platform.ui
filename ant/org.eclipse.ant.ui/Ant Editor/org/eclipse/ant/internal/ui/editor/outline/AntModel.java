@@ -149,6 +149,7 @@ public class AntModel {
 			//generated
 			getProjectNode().getProject().fireBuildFinished(null);
 		}
+	}
 	
 	public void reconcile(DirtyRegion region) {
 		//TODO turn off incremental as it is deferred to post 3.0
