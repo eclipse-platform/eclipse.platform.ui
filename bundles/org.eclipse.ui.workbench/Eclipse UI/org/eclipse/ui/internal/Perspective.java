@@ -1057,7 +1057,7 @@ public IStatus restoreState() {
 		perspectiveActionIds.add(id);
 	}
 	
-	ArrayList extActionSets = getActionSetsFromRegistry();
+	ArrayList extActionSets = getPerspectiveExtensionActionSets();
 	for (int i = 0; i < extActionSets.size(); i++) {
 		String actionSetID = (String)extActionSets.get(i);
 		if (knownActionSetIds.contains(actionSetID))
@@ -1067,6 +1067,10 @@ public IStatus restoreState() {
 		if (d != null) {
 			alwaysOnActionSets.add(d);
 			visibleActionSets.add(d);
+			// You don't need to add this action set id to
+			// the list of knownActionSetIds.  The next thing
+			// we do is to add all visibleActionSets to the
+			// list of knownActionSetIds.
 		}
 	}
 	
@@ -1126,7 +1130,7 @@ private void restoreViewLayoutRec(IMemento childMem, IViewReference viewRef) {
 /**
  * Returns the ActionSets read from perspectiveExtensions in the registry.  
  */
-private ArrayList getActionSetsFromRegistry() {
+private ArrayList getPerspectiveExtensionActionSets() {
 	PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
 	reader.setIncludeOnlyTags(new String[] { PerspectiveExtensionReader.TAG_ACTION_SET });
 	PageLayout layout = new PageLayout();
