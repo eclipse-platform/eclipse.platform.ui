@@ -972,13 +972,7 @@
          </description>
       </fontDefinition>
    </extension>
-   <extension
-         point="org.eclipse.ui.actionDefinitions">
-      <actionDefinition
-            name="%ActionDefinition.followHyperlink.name"
-            description="%ActionDefinition.followHyperlink.description"
-            id="org.eclipse.debug.internal.ui.actions.FollowHyperlinkAction">
-      </actionDefinition>
+   <extension point="org.eclipse.ui.actionDefinitions">
       <actionDefinition
             name="%ActionDefinition.stepWithFilters.name"
             description="%ActionDefinition.stepWithFilters.description"
@@ -1040,10 +1034,6 @@
       <acceleratorSet
             scopeId="org.eclipse.ui.globalScope"
             configurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-         <accelerator
-               key=""
-               id="org.eclipse.debug.internal.ui.actions.FollowHyperlinkAction">
-         </accelerator>
          <accelerator
                key="F8"
                id="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate">

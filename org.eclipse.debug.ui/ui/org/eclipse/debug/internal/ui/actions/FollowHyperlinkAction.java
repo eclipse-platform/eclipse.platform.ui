@@ -34,7 +34,6 @@ public class FollowHyperlinkAction extends SelectionProviderAction {
 			this,
 			IDebugHelpContextIds.FOLLOW_CONSOLE_HYPERLINK_ACTION);
 		setEnabled(false);
-		setActionDefinitionId("org.eclipse.debug.internal.ui.actions.FollowHyperlinkAction");
 	}
 	
 	public IConsoleHyperlink getHyperLink() {

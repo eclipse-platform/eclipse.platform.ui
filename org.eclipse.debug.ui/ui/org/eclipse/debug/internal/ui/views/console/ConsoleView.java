@@ -277,6 +277,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		setGlobalAction(actionBars, ITextEditorActionConstants.GOTO_LINE, action);
 		
 		fFollowLinkAction = new FollowHyperlinkAction(getConsoleViewer());
+		fFollowLinkAction.setActionDefinitionId("org.eclipse.jdt.ui.edit.text.java.open.editor");
 		getSite().getKeyBindingService().registerAction(fFollowLinkAction);
 		
 		fProcessDropDownAction = new ProcessDropDownAction(this);
@@ -420,6 +421,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		}
 		if (fFollowLinkAction != null) {
 			fFollowLinkAction.dispose();
+			getSite().getKeyBindingService().unregisterAction(fFollowLinkAction);
 		}
 		if (fLaunchListener != null) {
 			DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(fLaunchListener);
