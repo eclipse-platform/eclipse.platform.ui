@@ -3,11 +3,13 @@ package org.eclipse.ui.tests.dialogs;
 import java.util.ResourceBundle;
 
 import junit.framework.TestCase;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jdt.junit.util.DialogCheck;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.jdt.junit.util.DialogCheck;
 
 public class UIMessageDialogs extends TestCase {
 	private static final String DUMMY_RESOURCE = "Dummy.resource";
@@ -22,6 +24,20 @@ public class UIMessageDialogs extends TestCase {
 	private Shell getShell() {
 		return DialogCheck.getShell();
 	}
+	
+	/**
+	 * Returns the given string from the Text Editor's resource bundle.
+	 * Should call org.eclipse.ui.texteditor.EditorMessages directly,
+	 * but it has package visibility.
+	 */
+	private String getEditorString(String id) {
+		ResourceBundle bundle = ResourceBundle.getBundle("org.eclipse.ui.texteditor.EditorMessages");
+		assertNotNull("EditorMessages", bundle);
+		String string = bundle.getString(id);		
+		assertNotNull(id, string);
+		return string;
+	}
+	
 	/*
 	 * Convenience method simliar to org.eclipse.jface.dialogs.MessageDialog::openConfirm.
 	 * The method will return the dialog instead of opening.
@@ -109,19 +125,15 @@ public class UIMessageDialogs extends TestCase {
 	}
 	
 	public void testAbortPageFlipping() {
-		Dialog dialog = getWarningDialog (
+		Dialog dialog = getWarningDialog(
 			JFaceResources.getString("AbortPageFlippingDialog.title"),
 			JFaceResources.getString("AbortPageFlippingDialog.message") );
 		DialogCheck.assertDialog(dialog, this);
 	}
 	public void testCloseFileDeleted() {
-		Dialog dialog = null;
-		ResourceBundle bundle = ResourceBundle.getBundle("org.eclipse.ui.texteditor.AbstractTextEditorResources");
-		if (bundle != null) {
-			dialog = getConfirmDialog(
-				bundle.getString("Error.activated.deleted.close.title"),
-				bundle.getString("Error.activated.deleted.close.message") );
-		}
+		Dialog dialog = getConfirmDialog(
+				getEditorString("Editor.error.activated.deleted.close.title"),
+				getEditorString("Editor.error.activated.deleted.close.message") );
 		DialogCheck.assertDialog(dialog, this);
 	}
 	public void testCopyOverwrite() {
@@ -192,13 +204,9 @@ public class UIMessageDialogs extends TestCase {
 		DialogCheck.assertDialog(dialog, this);
 	}
 	public void testFileChanged() {
-		MessageDialog dialog = null;
-		ResourceBundle bundle = ResourceBundle.getBundle("org.eclipse.ui.texteditor.AbstractTextEditorResources");
-		if (bundle != null) {
-			dialog = getQuestionDialog(
-				bundle.getString("Error.activated.outofsync.title"),
-				bundle.getString("Error.activated.outofsync.message") );
-		}
+		MessageDialog dialog = getQuestionDialog(
+				getEditorString("Editor.error.activated.outofsync.title"),
+				getEditorString("Editor.error.activated.outofsync.message") );
 		DialogCheck.assertDialog(dialog, this);
 	}
 	public void testFileExtensionEmpty() {
@@ -349,30 +357,22 @@ public class UIMessageDialogs extends TestCase {
 		DialogCheck.assertDialog(dialog, this);
 	}
 	public void testSaveFileDeleted() {
-		MessageDialog dialog = null;
-		ResourceBundle bundle = ResourceBundle.getBundle("org.eclipse.ui.texteditor.AbstractTextEditorResources");
-		if (bundle != null) {
-			dialog= new MessageDialog(
+		MessageDialog dialog = new MessageDialog(
 				getShell(),
-				bundle.getString("Error.activated.deleted.save.title"),
+				getEditorString("Editor.error.activated.deleted.save.title"),
 				null,
-				bundle.getString("Error.activated.deleted.save.message"),
+				getEditorString("Editor.error.activated.deleted.save.message"),
 				MessageDialog.QUESTION,
 				new String[] {
-					bundle.getString("Error.activated.deleted.save.button.save"),
-					bundle.getString("Error.activated.deleted.save.button.close")},
+					getEditorString("Editor.error.activated.deleted.save.button.save"),
+					getEditorString("Editor.error.activated.deleted.save.button.close")},
 				0);
-		}
 		DialogCheck.assertDialog(dialog, this);
 	}
 	public void testUpdateConflict() {
-		MessageDialog dialog = null;
-		ResourceBundle bundle = ResourceBundle.getBundle("org.eclipse.ui.texteditor.AbstractTextEditorResources");
-		if (bundle != null) {
-			dialog = getQuestionDialog(
-				bundle.getString("Error.save.outofsync.title"),
-				bundle.getString("Error.save.outofsync.message") );
-		}
+		MessageDialog dialog = getQuestionDialog(
+				getEditorString("Editor.error.save.outofsync.title"),
+				getEditorString("Editor.error.save.outofsync.message") );
 		DialogCheck.assertDialog(dialog, this);
 	}
 	public void testWizardClosing() {
