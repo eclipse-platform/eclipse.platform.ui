@@ -25,8 +25,7 @@ import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.compatibility.PluginActivator;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleException;
+import org.osgi.framework.*;
 
 public class PluginDescriptor implements IPluginDescriptor {
 
@@ -45,7 +44,6 @@ public class PluginDescriptor implements IPluginDescriptor {
 
 	// constants
 	static final String VERSION_SEPARATOR = "_"; //$NON-NLS-1$
-	public static final String IMPORT_BUNDLE = "Import-Bundle";
 
 	private static final String DEFAULT_BUNDLE_NAME = "plugin"; //$NON-NLS-1$
 	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
@@ -358,8 +356,8 @@ public class PluginDescriptor implements IPluginDescriptor {
 
 		ArrayList resolvedPrerequisites = null;
 		// TODO Who calls this?  It does not do the right thing as it is so perhaps it is not used?
-		String prereqs = (String) bundleOsgi.getHeaders().get(IMPORT_BUNDLE);
-		if (prereqs == null || isLegacy())
+		String prereqs = (String) bundleOsgi.getHeaders().get(Constants.REQUIRE_BUNDLE);
+		if (prereqs == null)
 			return new IPluginPrerequisite[0];
 
 		StringTokenizer tokens = new StringTokenizer(prereqs, ",");

@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 
-//TODO Some methods in this class needs to be refined.  
+//TODO Some methods in this class needs to be refined.
 public class PluginPrerequisite implements IPluginPrerequisite {
 	private Bundle prereq = null;
 
@@ -26,7 +26,8 @@ public class PluginPrerequisite implements IPluginPrerequisite {
 	}
 
 	public PluginVersionIdentifier getResolvedVersionIdentifier() {
-		return new PluginVersionIdentifier((String) prereq.getHeaders().get(Constants.BUNDLE_VERSION));
+		String version = (String) prereq.getHeaders().get(Constants.BUNDLE_VERSION);
+		return version == null ? null : new PluginVersionIdentifier(version);	
 	}
 
 	public String getUniqueIdentifier() {
