@@ -95,6 +95,9 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 						IWorkbenchPreferenceConstants.EDITOR_MINIMUM_CHARACTERS,
 						-1);
 
+        // Default for closing editors on exit.
+        node.putBoolean(IWorkbenchPreferenceConstants.CLOSE_EDITORS_ON_EXIT, false);
+
 		IEclipsePreferences rootNode = (IEclipsePreferences) Platform
 				.getPreferencesService().getRootNode()
 				.node(InstanceScope.SCOPE);
