@@ -1014,6 +1014,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		} catch (Exception e){
 			fOpenConnections= 0;
 			uninstall();
+			TextEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, "invariant violated when connecting to DocumentLineDiffer", e)); //$NON-NLS-1$
 			return;
 		}
 		
