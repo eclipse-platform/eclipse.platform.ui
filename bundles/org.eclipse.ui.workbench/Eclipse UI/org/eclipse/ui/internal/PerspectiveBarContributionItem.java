@@ -56,7 +56,7 @@ public class PerspectiveBarContributionItem extends ContributionItem {
 
     public PerspectiveBarContributionItem(IPerspectiveDescriptor perspective,
             WorkbenchPage workbenchPage) {
-        super(PerspectiveBarContributionItem.class.getName());
+        super(perspective.getId());
         this.perspective = perspective;
         this.workbenchPage = workbenchPage;
         preferenceStore.addPropertyChangeListener(propertyChangeListener);
