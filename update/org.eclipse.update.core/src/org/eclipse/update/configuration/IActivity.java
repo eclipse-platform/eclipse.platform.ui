@@ -17,6 +17,7 @@ public interface IActivity {
 	public static final int ACTION_UNCONFIGURE 		= 5;
 	public static final int ACTION_CONFIGURE 		= 6;
 	public static final int ACTION_REVERT 			= 7;	
+	public static final int ACTION_RECONCILIATION		= 8;		
 	
 	public static final int STATUS_OK 				= 0;
 	public static final int STATUS_NOK 				= 1;

@@ -30,6 +30,7 @@ public class ActivitySection extends UpdateSection {
 	private static final String KEY_UNCONFIGURE = "InstallConfigurationPage.ActivitySection.action.unconfigure";
 	private static final String KEY_UNKNOWN = "InstallConfigurationPage.ActivitySection.action.unknown";
 	private static final String KEY_REVERT = "InstallConfigurationPage.ActivitySection.action.revert";
+	private static final String KEY_RECONCILIATION = "InstallConfigurationPage.ActivitySection.action.reconcile";	
 	private static final String KEY_OK = "InstallConfigurationPage.ActivitySection.status.ok";
 	private static final String KEY_NOK = "InstallConfigurationPage.ActivitySection.status.nok";
 
@@ -128,6 +129,8 @@ public class ActivitySection extends UpdateSection {
 				return UpdateUIPlugin.getResourceString(KEY_UNCONFIGURE);
 			case IActivity.ACTION_REVERT:
 				return UpdateUIPlugin.getResourceString(KEY_REVERT);
+			case IActivity.ACTION_RECONCILIATION:
+				return UpdateUIPlugin.getResourceString(KEY_RECONCILIATION);				
 			default:
 				return UpdateUIPlugin.getResourceString(KEY_UNKNOWN);		
 		}

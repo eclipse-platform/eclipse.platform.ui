@@ -44,10 +44,6 @@ public interface IConfiguredSite {
 	 */
 
 	void isUpdateable(boolean installable);
-
-
-	
-		
 		
 		
 	/**
@@ -94,11 +90,22 @@ public interface IConfiguredSite {
 
 	/**
 	 * returns the feature used in this configurationSite
-	 * This is a subset of the feature of teh site
+	 * This is a subset of the feature of the site
 	 * @since 2.0 
 	 */
 
 	IFeatureReference[] getConfiguredFeatures();
+
+	/**
+	 * returns the feature references filtered by this ConfigurationSite
+	 * This is the sum of Configured + unconfigured features
+	 * They may not match exactly the FeaturesReferences of teh Site (ie during reconciliation)
+	 * @since 2.0 
+	 */
+
+	IFeatureReference[] getFeaturesReferences();
+
+
 	
 	/**
 	 * returns the InstallConfiguration this Configuration Site is part of

@@ -12,36 +12,35 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.model.*;
-import org.eclipse.update.internal.core.Policy;
 
 /**
  * 
  */
-public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSite, IWritable {
+public class ConfiguredSite
+	extends ConfiguredSiteModel
+	implements IConfiguredSite, IWritable {
 
 	private ListenersList listeners = new ListenersList();
 
-
-	
 	/**
- 	 * 
- 	 */
+		 * 
+		 */
 	public ConfiguredSite() {
 	}
 
-	 
 	/**
 	 * Copy Constructor
 	 */
 	public ConfiguredSite(IConfiguredSite configSite) {
-		setSiteModel((SiteModel)configSite.getSite());
-		ConfiguredSite cSite = (ConfiguredSite)configSite;
-		setConfigurationPolicyModel(new ConfigurationPolicy(cSite.getConfigurationPolicy()));
+		setSiteModel((SiteModel) configSite.getSite());
+		ConfiguredSite cSite = (ConfiguredSite) configSite;
+		setConfigurationPolicyModel(
+			new ConfigurationPolicy(cSite.getConfigurationPolicy()));
 		isUpdateable(configSite.isUpdateable());
 		setPreviousPluginPath(cSite.getPreviousPluginPath());
 		//
-		if (configSite instanceof ConfiguredSiteModel){
-			ConfiguredSiteModel siteModel = (ConfiguredSiteModel)configSite;
+		if (configSite instanceof ConfiguredSiteModel) {
+			ConfiguredSiteModel siteModel = (ConfiguredSiteModel) configSite;
 			setPlatformURLString(siteModel.getPlatformURLString());
 		} else {
 			setPlatformURLString(configSite.getSite().getURL().toExternalForm());
@@ -56,7 +55,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 			listeners.add(listener);
 		}
 	}
-	
+
 	/*
 	 *  @see
 	 */
@@ -77,12 +76,24 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		for (int i = 0; i < IWritable.INDENT; i++)
 			increment += " "; //$NON-NLS-1$
 
-		w.println(gap + "<" + InstallConfigurationParser.CONFIGURATION_SITE + " "); //$NON-NLS-1$ //$NON-NLS-2$
-		w.println(gap + increment + "url=\"" + getSite().getURL().toExternalForm() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		w.println(gap + increment + "platformURL=\"" + getPlatformURLString() + "\"");		 //$NON-NLS-1$ //$NON-NLS-2$
-		w.println(gap + increment + "policy=\"" + getConfigurationPolicyModel().getPolicy() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
-		String install = isUpdateable() ? "true" : "false"; //$NON-NLS-1$ //$NON-NLS-2$
-		w.print(gap + increment + "install=\"" + install + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+		w.println(gap + "<" + InstallConfigurationParser.CONFIGURATION_SITE + " ");
+		//$NON-NLS-1$ //$NON-NLS-2$
+		w.println(
+			gap + increment + "url=\"" + getSite().getURL().toExternalForm() + "\"");
+		//$NON-NLS-1$ //$NON-NLS-2$
+		w.println(gap + increment + "platformURL=\"" + getPlatformURLString() + "\"");
+		//$NON-NLS-1$ //$NON-NLS-2$
+		w.println(
+			gap
+				+ increment
+				+ "policy=\""
+				+ getConfigurationPolicyModel().getPolicy()
+				+ "\" ");
+		//$NON-NLS-1$ //$NON-NLS-2$
+		String install = isUpdateable() ? "true" : "false";
+		//$NON-NLS-1$ //$NON-NLS-2$
+		w.print(gap + increment + "install=\"" + install + "\" ");
+		//$NON-NLS-1$ //$NON-NLS-2$
 		w.println(">"); //$NON-NLS-1$
 		w.println(""); //$NON-NLS-1$
 
@@ -91,68 +102,100 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		if (featuresReferences != null) {
 			for (int index = 0; index < featuresReferences.length; index++) {
 				IFeatureReference element = featuresReferences[index];
-				w.print(gap + increment + "<" + InstallConfigurationParser.FEATURE + " "); //$NON-NLS-1$ //$NON-NLS-2$
+				w.print(gap + increment + "<" + InstallConfigurationParser.FEATURE + " ");
+				//$NON-NLS-1$ //$NON-NLS-2$
 				// configured = true
 				w.print("configured = \"true\" "); //$NON-NLS-1$
 				// feature URL
 				String URLInfoString = null;
 				if (element.getURL() != null) {
 					ISite featureSite = (ISite) ((FeatureReference) element).getSite();
-					URLInfoString = UpdateManagerUtils.getURLAsString(featureSite.getURL(), element.getURL());
-					w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
-						}
+					URLInfoString =
+						UpdateManagerUtils.getURLAsString(featureSite.getURL(), element.getURL());
+					w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\" ");
+					//$NON-NLS-1$ //$NON-NLS-2$
+				}
 				w.println("/>"); //$NON-NLS-1$
 			}
 		}
 
 		// unconfigured features ref
-		featuresReferences = ((ConfigurationPolicy) getConfigurationPolicyModel()).getUnconfiguredFeatures();
+		featuresReferences =
+			((ConfigurationPolicy) getConfigurationPolicyModel())
+				.getUnconfiguredFeatures();
 		if (featuresReferences != null) {
 			for (int index = 0; index < featuresReferences.length; index++) {
 				IFeatureReference element = featuresReferences[index];
-				w.print(gap + increment + "<" + InstallConfigurationParser.FEATURE + " "); //$NON-NLS-1$ //$NON-NLS-2$
+				w.print(gap + increment + "<" + InstallConfigurationParser.FEATURE + " ");
+				//$NON-NLS-1$ //$NON-NLS-2$
 				// configured = true
 				w.print("configured = \"false\" "); //$NON-NLS-1$
 				// feature URL
 				String URLInfoString = null;
 				if (element.getURL() != null) {
 					ISite featureSite = element.getSite();
-					URLInfoString = UpdateManagerUtils.getURLAsString(featureSite.getURL(), element.getURL());
-					w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+					URLInfoString =
+						UpdateManagerUtils.getURLAsString(featureSite.getURL(), element.getURL());
+					w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\" ");
+					//$NON-NLS-1$ //$NON-NLS-2$
 				}
 				w.println("/>"); //$NON-NLS-1$
 			}
 		}
 
 		// end
-		w.println(gap + "</" + InstallConfigurationParser.CONFIGURATION_SITE + ">"); //$NON-NLS-1$ //$NON-NLS-2$
+		w.println(gap + "</" + InstallConfigurationParser.CONFIGURATION_SITE + ">");
+		//$NON-NLS-1$ //$NON-NLS-2$
 
 	}
 
 	/*
 	 * @see IConfiguredSite#install(IFeature,IVerifier, IProgressMonitor)
 	 */
-	public IFeatureReference install(IFeature feature,IVerificationListener verificationListener, IProgressMonitor monitor) throws CoreException {
+	public IFeatureReference install(
+		IFeature feature,
+		IVerificationListener verificationListener,
+		IProgressMonitor monitor)
+		throws CoreException {
 		if (!isUpdateable()) {
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, Policy.bind("ConfiguredSite.NonInstallableSite", getSite().getURL().toExternalForm()), null); //$NON-NLS-1$
+			String id =
+				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status =
+				new Status(
+					IStatus.WARNING,
+					id,
+					IStatus.OK,
+					Policy.bind(
+						"ConfiguredSite.NonInstallableSite",
+						getSite().getURL().toExternalForm()),
+					null);
+			//$NON-NLS-1$
 			throw new CoreException(status);
 		}
 
-		if (feature==null) {
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, Policy.bind("ConfiguredSite.NullFeatureToInstall"), null); //$NON-NLS-1$
+		if (feature == null) {
+			String id =
+				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status =
+				new Status(
+					IStatus.WARNING,
+					id,
+					IStatus.OK,
+					Policy.bind("ConfiguredSite.NullFeatureToInstall"),
+					null);
+			//$NON-NLS-1$
 			throw new CoreException(status);
 		}
 
 		IFeatureReference installedFeature;
 		//Start UOW ?
-		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_FEATURE_INSTALL);
+		ConfigurationActivity activity =
+			new ConfigurationActivity(IActivity.ACTION_FEATURE_INSTALL);
 		activity.setLabel(feature.getVersionedIdentifier().toString());
 		activity.setDate(new Date());
 
 		try {
-			installedFeature = getSite().install(feature, verificationListener,monitor);
+			installedFeature = getSite().install(feature, verificationListener, monitor);
 
 			// everything done ok
 			activity.setStatus(IActivity.STATUS_OK);
@@ -160,16 +203,23 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 			// notify listeners
 			Object[] siteListeners = listeners.getListeners();
 			for (int i = 0; i < siteListeners.length; i++) {
-				((IConfiguredSiteChangedListener) siteListeners[i]).featureInstalled(installedFeature.getFeature());
+				((IConfiguredSiteChangedListener) siteListeners[i]).featureInstalled(
+					installedFeature.getFeature());
 			}
 		} catch (CoreException e) {
 			activity.setStatus(IActivity.STATUS_NOK);
 			throw e;
 		} finally {
-			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivityModel((ConfigurationActivityModel)activity);
+			(
+				(InstallConfiguration) SiteManager
+					.getLocalSite()
+					.getCurrentConfiguration())
+					.addActivityModel(
+				(ConfigurationActivityModel) activity);
 		}
 
-		configure(installedFeature.getFeature(), false /*callInstallHandler*/);
+		configure(installedFeature.getFeature(), false /*callInstallHandler*/
+		);
 
 		return installedFeature;
 	}
@@ -177,41 +227,61 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	/*
 	 * @see IConfiguredSite#remove(IFeature, IProgressMonitor)
 	 */
-	public void remove(IFeature feature, IProgressMonitor monitor) throws CoreException {
+	public void remove(IFeature feature, IProgressMonitor monitor)
+		throws CoreException {
 		if (!isUpdateable()) {
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, Policy.bind("ConfiguredSite.NonUninstallableSite", getSite().getURL().toExternalForm()), null); //$NON-NLS-1$
+			String id =
+				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status =
+				new Status(
+					IStatus.WARNING,
+					id,
+					IStatus.OK,
+					Policy.bind(
+						"ConfiguredSite.NonUninstallableSite",
+						getSite().getURL().toExternalForm()),
+					null);
+			//$NON-NLS-1$
 			throw new CoreException(status);
 		}
 
-		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_FEATURE_REMOVE);
+		ConfigurationActivity activity =
+			new ConfigurationActivity(IActivity.ACTION_FEATURE_REMOVE);
 		activity.setLabel(feature.getVersionedIdentifier().toString());
 		activity.setDate(new Date());
 
 		try {
 			FeatureReferenceModel referenceToRemove = null;
-			FeatureReferenceModel[] featureRef = getSiteModel().getFeatureReferenceModels();
-			IFeatureReference ref = getSite().getFeatureReference(feature);			
-			
+			FeatureReferenceModel[] featureRef =
+				getSiteModel().getFeatureReferenceModels();
+			IFeatureReference ref = getSite().getFeatureReference(feature);
+
 			for (int i = 0; i < featureRef.length; i++) {
 				if (featureRef[i].equals(ref)) {
 					referenceToRemove = featureRef[i];
 					break;
 				}
 			}
-			
+
 			// UI will check. For non-UI application, throw error is feature is configured
-			if (referenceToRemove!=null){
-				if (getConfigurationPolicy().isConfigured(referenceToRemove)){
-					IFeature featureToRemove = ((IFeatureReference)referenceToRemove).getFeature();
-					String featureLabel = (featureToRemove==null)?null:featureToRemove.getLabel();
-					throw Utilities.newCoreException("Unable to remove a configured feature: {0} You must unconfigure the feature first"+featureLabel,null);
+			if (referenceToRemove != null) {
+				if (getConfigurationPolicy().isConfigured(referenceToRemove)) {
+					IFeature featureToRemove =
+						((IFeatureReference) referenceToRemove).getFeature();
+					String featureLabel =
+						(featureToRemove == null) ? null : featureToRemove.getLabel();
+					throw Utilities.newCoreException(
+						"Unable to remove a configured feature: {0} You must unconfigure the feature first"
+							+ featureLabel,
+						null);
 				}
 			} else {
-					throw Utilities.newCoreException("Unable to Find the feature {0} on this site."+feature.getURL(),null);				
+				throw Utilities.newCoreException(
+					"Unable to Find the feature {0} on this site." + feature.getURL(),
+					null);
 
 			}
-			
+
 			getSite().remove(feature, monitor);
 			getConfigurationPolicy().removeFeatureReference(referenceToRemove);
 
@@ -221,14 +291,20 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 			// notify listeners
 			Object[] siteListeners = listeners.getListeners();
 			for (int i = 0; i < siteListeners.length; i++) {
-				((IConfiguredSiteChangedListener) siteListeners[i]).featureUninstalled(feature);
+				((IConfiguredSiteChangedListener) siteListeners[i]).featureUninstalled(
+					feature);
 			}
 
 		} catch (CoreException e) {
 			activity.setStatus(IActivity.STATUS_NOK);
 			throw e;
 		} finally {
-			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivityModel((ConfigurationActivityModel)activity);
+			(
+				(InstallConfiguration) SiteManager
+					.getLocalSite()
+					.getCurrentConfiguration())
+					.addActivityModel(
+				(ConfigurationActivityModel) activity);
 		}
 	}
 
@@ -236,30 +312,60 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	 * @see IConfiguredSite#configure(IFeature)
 	 */
 	public void configure(IFeature feature) throws CoreException {
-		configure(feature, true /*callInstallHandler*/);
+		configure(feature, true /*callInstallHandler*/
+		);
 	}
 
 	/*
 	 * @see IConfiguredSite#configure(IFeatureReference)
 	 */
-	private void configure(IFeature feature, boolean callInstallHandler) throws CoreException {
+	private void configure(IFeature feature, boolean callInstallHandler)
+		throws CoreException {
 		IFeatureReference featureReference = getSite().getFeatureReference(feature);
-		((ConfigurationPolicy) getConfigurationPolicyModel()).configure(featureReference, callInstallHandler);
+		((ConfigurationPolicy) getConfigurationPolicyModel()).configure(
+			featureReference,
+			callInstallHandler);
 	}
 
 	/*
 	 * @see IConfiguredSite#unconfigure(IFeature)
 	 */
 	public boolean unconfigure(IFeature feature) throws CoreException {
-		IFeatureReference featureReference = getSite().getFeatureReference(feature);		
-		return ((ConfigurationPolicy) getConfigurationPolicyModel()).unconfigure(featureReference);
+		IFeatureReference featureReference = getSite().getFeatureReference(feature);
+		return ((ConfigurationPolicy) getConfigurationPolicyModel()).unconfigure(
+			featureReference);
 	}
 
 	/*
 	 * @see IConfiguredSite#getConfiguredFeatures()
 	 */
 	public IFeatureReference[] getConfiguredFeatures() {
-		return ((ConfigurationPolicy) getConfigurationPolicyModel()).getConfiguredFeatures();
+		return ((ConfigurationPolicy) getConfigurationPolicyModel())
+			.getConfiguredFeatures();
+	}
+
+	/**
+	 * @see IConfiguredSite#getFeaturesReferences()
+	 */
+	public IFeatureReference[] getFeaturesReferences() {
+
+		IFeatureReference[] configuredFeatures = getConfiguredFeatures();
+		int confLen = configuredFeatures.length;
+
+		IFeatureReference[] unconfiguredFeatures =
+			((ConfigurationPolicy) getConfigurationPolicyModel())
+				.getUnconfiguredFeatures();
+		int unconfLen = unconfiguredFeatures.length;
+
+		IFeatureReference[] result = new IFeatureReference[confLen + unconfLen];
+		if (confLen > 0) {
+			System.arraycopy(configuredFeatures, 0, result, 0, confLen);
+		}
+		if (unconfLen > 0) {
+			System.arraycopy(unconfiguredFeatures, 0, result, confLen, unconfLen);
+		}		
+
+		return result;
 	}
 
 	/**
@@ -267,18 +373,24 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	 * 
 	 */
 	/*package*/
-	void deltaWith(IConfiguredSite currentConfiguration, IProgressMonitor monitor, IProblemHandler handler) throws CoreException, InterruptedException {
+	void deltaWith(
+		IConfiguredSite currentConfiguration,
+		IProgressMonitor monitor,
+		IProblemHandler handler)
+		throws CoreException, InterruptedException {
 
 		// copy the plugins as they are transient
-		this.setPreviousPluginPath(((ConfiguredSite)currentConfiguration).getPreviousPluginPath());			
-		
+		this.setPreviousPluginPath(
+			((ConfiguredSite) currentConfiguration).getPreviousPluginPath());
+
 		// retrieve the feature that were configured
 		IFeatureReference[] configuredFeatures = processConfiguredFeatures(handler);
 
 		// we only care about unconfigured features if the Site policy is USER_EXCLUDE
 		// calculate all the features we have to unconfigure from the current state to this state
 		// in the history. 
-		if (getConfigurationPolicyModel().getPolicy() == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
+		if (getConfigurationPolicyModel().getPolicy()
+			== IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
 			List featureToUnconfigure = processUnconfiguredFeatures();
 
 			// we have all the unconfigured feature for this site config
@@ -294,7 +406,10 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 				IFeatureReference element = (IFeatureReference) iter.next();
 				try {
 					element.getFeature();
-					((ConfigurationPolicy) getConfigurationPolicyModel()).addUnconfiguredFeatureReference((FeatureReferenceModel)element);
+					(
+						(ConfigurationPolicy) getConfigurationPolicyModel())
+							.addUnconfiguredFeatureReference(
+						(FeatureReferenceModel) element);
 				} catch (CoreException e) {
 					// feature does not exist ?
 					featureToUnconfigure.remove(element);
@@ -302,8 +417,17 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 					if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
 						String feature = element.getFeature().getVersionedIdentifier().toString();
 						ISite site = element.getFeature().getSite();
-						String siteString = (site != null) ? site.getURL().toExternalForm() : Policy.bind("ConfiguredSite.NoSite"); //$NON-NLS-1$
-						UpdateManagerPlugin.getPlugin().debug(Policy.bind("ConfiguredSite.CannotFindFeatureToUnconfigure", feature , siteString )); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						String siteString =
+							(site != null)
+								? site.getURL().toExternalForm()
+								: Policy.bind("ConfiguredSite.NoSite");
+						//$NON-NLS-1$
+						UpdateManagerPlugin.getPlugin().debug(
+							Policy.bind(
+								"ConfiguredSite.CannotFindFeatureToUnconfigure",
+								feature,
+								siteString));
+						//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					}
 				}
 			}
@@ -333,19 +457,22 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		// try to see if teh site config exists
 		// if it does, get the unconfigured features 
 		// and the configured one
-		IInstallConfiguration[] history = SiteManager.getLocalSite().getConfigurationHistory();
+		IInstallConfiguration[] history =
+			SiteManager.getLocalSite().getConfigurationHistory();
 		for (int i = 0; i < history.length; i++) {
 			IInstallConfiguration element = history[i];
 			IConfiguredSite[] configSites = element.getConfiguredSites();
 			for (int j = 0; j < configSites.length; j++) {
-				ConfiguredSite configSite = (ConfiguredSite)configSites[j];
-				if (configSite.getSite().getURL().equals(((ISite)getSite()).getURL())) {
-					featureToUnconfigure.addAll(Arrays.asList(configSite.getConfigurationPolicy().getUnconfiguredFeatures()));
-					featureToUnconfigure.addAll(Arrays.asList(configSite.getConfigurationPolicy().getConfiguredFeatures()));
+				ConfiguredSite configSite = (ConfiguredSite) configSites[j];
+				if (configSite.getSite().getURL().equals(((ISite) getSite()).getURL())) {
+					featureToUnconfigure.addAll(
+						Arrays.asList(configSite.getConfigurationPolicy().getUnconfiguredFeatures()));
+					featureToUnconfigure.addAll(
+						Arrays.asList(configSite.getConfigurationPolicy().getConfiguredFeatures()));
 				}
 			}
 		}
-		
+
 		return featureToUnconfigure;
 	}
 
@@ -355,7 +482,8 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	 * @return IFeatureReference[]
 	 * @throws CoreException
 	 */
-	private IFeatureReference[] processConfiguredFeatures(IProblemHandler handler) throws CoreException, InterruptedException {
+	private IFeatureReference[] processConfiguredFeatures(IProblemHandler handler)
+		throws CoreException, InterruptedException {
 		// we keep our configured feature
 		// check if they are all valid
 		IFeatureReference[] configuredFeatures = getConfiguredFeatures();
@@ -368,8 +496,12 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 				} catch (CoreException e) {
 					// notify we cannot find the feature
 					UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
-					String featureString =configuredFeatures[i].getURL().toExternalForm();			
-					if (!handler.reportProblem(Policy.bind("ConfiguredSite.CannotFindFeatureToConfigure",featureString))) { //$NON-NLS-1$
+					String featureString = configuredFeatures[i].getURL().toExternalForm();
+					if (!handler
+						.reportProblem(
+							Policy.bind(
+								"ConfiguredSite.CannotFindFeatureToConfigure",
+								featureString))) { //$NON-NLS-1$
 						throw new InterruptedException();
 					}
 				}
@@ -392,14 +524,32 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 						IPluginEntry[] entries = feature.getPluginEntries();
 						for (int index = 0; index < entries.length; index++) {
 							IPluginEntry entry = entries[index];
-							if (!contains(entry.getVersionedIdentifier(),siteIdentifiers)) {
+							if (!contains(entry.getVersionedIdentifier(), siteIdentifiers)) {
 								// the plugin defined by the feature
 								// doesn't seem to exist on the site
-								String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-								IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error verifying existence of plugin:" + entry.getVersionedIdentifier().toString(), null); //$NON-NLS-1$
+								String id =
+									UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+								IStatus status =
+									new Status(
+										IStatus.ERROR,
+										id,
+										IStatus.OK,
+										"Error verifying existence of plugin:"
+											+ entry.getVersionedIdentifier().toString(),
+										null);
+								//$NON-NLS-1$
 								UpdateManagerPlugin.getPlugin().getLog().log(status);
-								String siteString = (site != null) ? site.getURL().toExternalForm() : Policy.bind("ConfiguredSite.NoSite"); //$NON-NLS-1$
-								if (!handler.reportProblem(Policy.bind("ConfiguredSite.CannotFindPluginEntry",entry.getVersionedIdentifier().toString(),siteString))) { //$NON-NLS-1$ //$NON-NLS-2$
+								String siteString =
+									(site != null)
+										? site.getURL().toExternalForm()
+										: Policy.bind("ConfiguredSite.NoSite");
+								//$NON-NLS-1$
+								if (!handler
+									.reportProblem(
+										Policy.bind(
+											"ConfiguredSite.CannotFindPluginEntry",
+											entry.getVersionedIdentifier().toString(),
+											siteString))) { //$NON-NLS-1$ //$NON-NLS-2$
 									throw new InterruptedException();
 								}
 							} // end if not found in site
@@ -418,25 +568,30 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	 * @param list
 	 */
 	private List remove(IFeatureReference[] featureRefs, List list) {
-		
-		List result= new ArrayList(0);
-				
-		if (list==null) return result;
+
+		List result = new ArrayList(0);
+
+		if (list == null)
+			return result;
 		Iterator iter = list.iterator();
-		
+
 		// if an element of the list is not found in the array, add it to the result list
 		while (iter.hasNext()) {
 			IFeatureReference element = (IFeatureReference) iter.next();
 			boolean found = false;
 			for (int i = 0; i < featureRefs.length; i++) {
-				if (element.getURL().toExternalForm().trim().equalsIgnoreCase(featureRefs[i].getURL().toExternalForm())) {
+				if (element
+					.getURL()
+					.toExternalForm()
+					.trim()
+					.equalsIgnoreCase(featureRefs[i].getURL().toExternalForm())) {
 					found = true;
 				}
 			}
 			if (!found)
 				result.add(element);
 		}
-		
+
 		return result;
 	}
 
@@ -444,53 +599,48 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	 * I have issues when running list.contain(versionedIdentifier)
 	 * The code runs teh Object.equals instead of teh VersionedIdentifier.equals
 	 */
-	private boolean contains (VersionedIdentifier id, List list){
+	private boolean contains(VersionedIdentifier id, List list) {
 		boolean found = false;
-		if (list!=null && !list.isEmpty()){
+		if (list != null && !list.isEmpty()) {
 			Iterator iter = list.iterator();
 			while (iter.hasNext() && !found) {
 				VersionedIdentifier element = (VersionedIdentifier) iter.next();
-				if (element.equals(id)){
+				if (element.equals(id)) {
 					found = true;
-				}		
+				}
 			}
 		}
 		return found;
 	}
 
-
 	/**
 	 *
 	 */
 	public void setConfigurationPolicy(ConfigurationPolicy policy) {
-		setConfigurationPolicyModel((ConfigurationPolicyModel)policy);
+		setConfigurationPolicyModel((ConfigurationPolicyModel) policy);
 	}
 
 	/**
 	 * 
 	 */
 	public ConfigurationPolicy getConfigurationPolicy() {
-		return (ConfigurationPolicy)getConfigurationPolicyModel();
+		return (ConfigurationPolicy) getConfigurationPolicyModel();
 	}
 
 	/*
 	 * @see IConfiguredSite#getSite()
 	 */
 	public ISite getSite() {
-		return (ISite)getSiteModel();
+		return (ISite) getSiteModel();
 	}
 
 	/*
 	 * @see IConfiguredSite#getInstallConfiguration()
 	 */
 	public IInstallConfiguration getInstallConfiguration() {
-		return (IInstallConfiguration)getInstallConfigurationModel();
+		return (IInstallConfiguration) getInstallConfigurationModel();
 	}
 
-	
-	
-	
-	
 	/*
 	 * @see IConfiguredSite#isBroken(IFeature)
 	 */
@@ -506,19 +656,30 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 			IPluginEntry[] missing = UpdateManagerUtils.diff(featuresEntries, result);
 			String listOfMissingPlugins = ""; //$NON-NLS-1$
 			for (int k = 0; k < missing.length; k++) {
-				listOfMissingPlugins = "\r\nplugin:" + missing[k].getVersionedIdentifier().toString(); //$NON-NLS-1$
+				listOfMissingPlugins =
+					"\r\nplugin:" + missing[k].getVersionedIdentifier().toString();
+				//$NON-NLS-1$
 			}
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			String featureString = (feature==null)?null:feature.getURL().toExternalForm();
-			String siteString = (currentSite==null)?null:currentSite.getURL().toExternalForm();
-			String[] values = new String[]{featureString,siteString,listOfMissingPlugins};
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("ConfiguredSite.MissingPluginsBrokenFeature",values), null); //$NON-NLS-1$ 
+			String id =
+				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			String featureString =
+				(feature == null) ? null : feature.getURL().toExternalForm();
+			String siteString =
+				(currentSite == null) ? null : currentSite.getURL().toExternalForm();
+			String[] values =
+				new String[] { featureString, siteString, listOfMissingPlugins };
+			IStatus status =
+				new Status(
+					IStatus.ERROR,
+					id,
+					IStatus.OK,
+					Policy.bind("ConfiguredSite.MissingPluginsBrokenFeature", values),
+					null);
+			//$NON-NLS-1$
 			UpdateManagerPlugin.getPlugin().getLog().log(status);
 			return true;
 		}
 		return false;
 	}
-
-
 
 }
