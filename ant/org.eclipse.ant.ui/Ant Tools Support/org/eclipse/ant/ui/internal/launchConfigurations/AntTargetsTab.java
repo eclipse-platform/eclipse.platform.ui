@@ -25,6 +25,7 @@ import org.eclipse.ant.ui.internal.model.AntUtil;
 import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.ant.ui.internal.model.IAntUIHelpContextIds;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -245,7 +246,15 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 					String[] arguments = ExternalToolsUtil.getArguments(fLaunchConfiguration, ExpandVariableContext.EMPTY_CONTEXT);
 					fAllTargets = AntUtil.getTargets(expandedLocation, arguments, fLaunchConfiguration);
 				} catch (CoreException ce) {
-					setErrorMessage(ce.getMessage());
+					IStatus exceptionStatus= ce.getStatus();
+					IStatus[] children= exceptionStatus.getChildren();
+					StringBuffer message= new StringBuffer(ce.getMessage());
+					for (int i = 0; i < children.length; i++) {
+						message.append(' ');
+						IStatus childStatus = children[i];
+						message.append(childStatus.getMessage());
+					}
+					setErrorMessage(message.toString());
 					fAllTargets= null;
 					return fAllTargets;
 				}
