@@ -12,8 +12,6 @@
 package org.eclipse.ui.internal.keys;
 
 import java.util.Iterator;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -233,19 +231,6 @@ public final class KeySupport {
 
         return key;
     }
-
-	public static String translateString(ResourceBundle resourceBundle, String key, String string) {
-		if (resourceBundle != null && key != null)
-			try {
-				final String translatedString = resourceBundle.getString(key);
-				
-				if (translatedString != null)
-					return translatedString.trim();
-			} catch (MissingResourceException eMissingResource) {
-			}
-
-		return string;
-	}
 
     private KeySupport() {
     }
