@@ -129,7 +129,9 @@ public class ExpressionViewEventHandler extends VariablesViewEventHandler implem
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesViewEventHandler#doHandleChangeEvent(org.eclipse.debug.core.DebugEvent)
 	 */
 	protected void doHandleChangeEvent(DebugEvent event) {
-		if (event.getDetail() == DebugEvent.STATE) {
+		if (event.getSource() instanceof IExpression) {
+			refresh(event.getSource());
+		} else if (event.getDetail() == DebugEvent.STATE) {
 			// only process variable state changes
 			if (event.getSource() instanceof IVariable) {
 				refresh(event.getSource());
