@@ -12,7 +12,6 @@ package org.eclipse.help.ui.internal;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.appserver.*;
 import org.eclipse.jface.preference.*;
-import org.eclipse.jface.resource.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
