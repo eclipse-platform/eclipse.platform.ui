@@ -953,7 +953,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	private void internalApply(IEclipsePreferences tree, IPreferenceFilter[] filters) throws BackingStoreException {
 		ArrayList trees = new ArrayList();
 		for (int i = 0; i < filters.length; i++)
-			trees.add(trimTree(getRootNode(), filters[i]));
+			trees.add(trimTree(tree, filters[i]));
 		IEclipsePreferences toApply = mergeTrees((IEclipsePreferences[]) trees.toArray(new IEclipsePreferences[trees.size()]));
 		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
 			public boolean visit(IEclipsePreferences node) throws BackingStoreException {
