@@ -25,6 +25,7 @@ class JobInfo extends JobTreeElement {
 	private TaskInfo taskInfo;
 	private IStatus errorStatus;
 	private IStatus blockedStatus;
+	private boolean canceled = false;
 
 	/**
 	 * Return the job that the receiver is collecting data
@@ -88,9 +89,13 @@ class JobInfo extends JobTreeElement {
 
 	private String getDisplayStringWithStatus() {
 		
+		if(isCanceled())
+			return ProgressMessages.format("JobInfo.Cancelled", //$NON-NLS-1$
+				new Object[] { getJob().getName()});
+					
 		if (isBlocked())
 			return ProgressMessages.format("JobInfo.Blocked", //$NON-NLS-1$
-					new Object[] { getJob().getName(), blockedStatus.getMessage()});
+				new Object[] { getJob().getName(), blockedStatus.getMessage()});
 		
 		if (errorStatus != null)
 			return ProgressMessages.format("JobInfo.Error", //$NON-NLS-1$
@@ -235,6 +240,22 @@ class JobInfo extends JobTreeElement {
 	 */
 	public boolean isBlocked(){
 		return getBlockedStatus() != null;
+	}
+
+	/**
+	 * Return whether or not the job was cancelled in the UI.
+	 * @return boolean
+	 */
+	public boolean isCanceled() {
+		return canceled;
+	}
+
+	/**
+	 * Set the canceled flag to true.
+	 */
+	public void cancel() {
+		this.canceled = true;
+		this.job.cancel();
 	}
 
 }

@@ -110,16 +110,11 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	 */
 	private class JobMonitor implements IProgressMonitorWithBlocking {
 		Job job;
-		boolean cancelled = false;
 		IProgressMonitor workbenchMonitor;
 		String currentTaskName;
 
 		/**
 		 * Create a monitor on the supplied job.
-		 * 
-		 * 
-		 * 
-		 * 
 		 * 
 		 * 
 		 * @param newJob
@@ -163,15 +158,20 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 		 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
 		 */
 		public boolean isCanceled() {
-			return cancelled;
+			JobInfo info = getJobInfo(job);
+			return info.isCanceled();
 		}
 
 		/*
 		 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
 		 */
 		public void setCanceled(boolean value) {
-			cancelled = value;
 			workbenchMonitor.setCanceled(value);
+			JobInfo info = getJobInfo(job);
+			
+			//Don't bother cancelling twice
+			if(value && !info.isCanceled())
+				info.cancel();
 		}
 
 		/*
@@ -290,11 +290,6 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	/**
 	 * Return a monitor for the job. Check if we cached a monitor for this job
 	 * previously for a long operation timeout check.
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
 	 * @param job
 	 * @return IProgressMonitor
 	 */
@@ -307,12 +302,6 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 
 	/**
 	 * Add an IJobProgressManagerListener to listen to the changes.
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
 	 * @param listener
 	 */
 	void addListener(IJobProgressManagerListener listener) {
@@ -322,11 +311,6 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	/**
 	 * Remove the supplied IJobProgressManagerListener from the list of
 	 * listeners.
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
 	 * 
 	 * @param listener
 	 */

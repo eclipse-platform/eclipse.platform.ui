@@ -212,7 +212,8 @@ public class ProgressView extends ViewPart implements IViewPart {
 				if (element == null) {
 					return;
 				}
-				element.getJob().cancel();
+				element.cancel();
+				ProgressManager.getInstance().refresh(element);
 
 			}
 
