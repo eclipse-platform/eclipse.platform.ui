@@ -13,6 +13,8 @@ package org.eclipse.jface.text;
 
 
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
@@ -49,6 +51,23 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	private Object fMutex= new Object();
 	/** The currently shown text hover. */
 	private volatile ITextHover fTextHover;
+	/**
+	 * Tells whether the next mouse hover event
+	 * should be processed. 
+	 * @since 3.0
+	 */
+	private boolean fProcessMouseHoverEvent= true;
+	/**
+	 * Internal mouse move listener.
+	 * @since 3.0
+	 */
+	private MouseMoveListener fMouseMoveListener;
+	/**
+	 * Internal viewport listener.
+	 * @since 3.0
+	 */
+	private IViewportListener fViewportListener;
+
 	
 	/**
 	 * Creates a new text viewer hover manager specific for the given text viewer.
@@ -70,6 +89,24 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 				}
 			}
 		};
+		fViewportListener= new IViewportListener() {
+			/*
+			 * @see org.eclipse.jface.text.IViewportListener#viewportChanged(int)
+			 */
+			public void viewportChanged(int verticalOffset) {
+				fProcessMouseHoverEvent= false;
+			}
+		};
+		fTextViewer.addViewportListener(fViewportListener);
+		fMouseMoveListener= new MouseMoveListener() {
+			/*
+			 * @see MouseMoveListener#mouseMove(MouseEvent)
+			 */
+			public void mouseMove(MouseEvent event) {
+				fProcessMouseHoverEvent= true;
+			}
+		};
+		fTextViewer.getTextWidget().addMouseMoveListener(fMouseMoveListener);
 	}
 	
 	/**
@@ -77,6 +114,11 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	 * a background thread.
 	 */
 	protected void computeInformation() {
+		
+		if (!fProcessMouseHoverEvent) {
+			setInformation(null, null);
+			return;
+		}
 		
 		Point location= getHoverEventLocation();
 		int offset= computeOffsetAtLocation(location.x, location.y);
@@ -168,7 +210,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	protected void presentInformation() {
 		if (fTextViewer == null)
 			return;
-			
+
 		StyledText textWidget= fTextViewer.getTextWidget();
 		if (textWidget != null && !textWidget.isDisposed()) {
 			Display display= textWidget.getDisplay();
@@ -354,5 +396,21 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	 */
 	protected ITextHover getCurrentTextHover() {
 		return fTextHover;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.AbstractHoverInformationControlManager#dispose()
+	 */
+	public void dispose() {
+		if (fTextViewer != null) {
+			fTextViewer.removeViewportListener(fViewportListener);
+			fViewportListener= null;
+			
+			StyledText st= fTextViewer.getTextWidget();
+			if (st != null && !st.isDisposed())
+				st.removeMouseMoveListener(fMouseMoveListener);
+			fMouseMoveListener= null;
+		}
+		super.dispose();
 	}
 }
