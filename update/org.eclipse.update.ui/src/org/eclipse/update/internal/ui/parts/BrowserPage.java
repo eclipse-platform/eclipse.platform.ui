@@ -112,7 +112,6 @@ public class BrowserPage implements IUpdateFormPage {
 	 * @see IFormPage#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
-		//browser = new WebBrowser(parent);
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
@@ -127,12 +126,16 @@ public class BrowserPage implements IUpdateFormPage {
 		createNavBar(navContainer);
 		navContainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		browser = new WebBrowser(container);
+
 		Control c = browser.getControl();
 		c.setLayoutData(new GridData(GridData.FILL_BOTH));
 		Composite statusContainer = new Composite(container, SWT.NONE);
 		statusContainer.setLayoutData(
 				new GridData(GridData.FILL_HORIZONTAL));
 		final BrowserControlSite site = browser.getControlSite();
+		IStatusLineManager smng = getView().getViewSite().getActionBars().getStatusLineManager();
+		site.setStatusLineManager(smng);
+
 		site.setStatusContainer(statusContainer);
 		site.addEventListener(WebBrowser.DownloadComplete, new OleListener() {
 			public void handleEvent(OleEvent event) {

@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.Platform;
 import java.io.IOException;
 import java.util.*;
 import org.eclipse.ui.texteditor.*;
+import org.eclipse.jface.action.IStatusLineManager;
 
 /**
  * Needed for the OLE implementation
@@ -30,6 +31,12 @@ public class BrowserControlSite extends OleControlSite {
 	private Label webStatus;
 	private String presentationURL;
 	private boolean redirection;
+	private IStatusLineManager statusLineManager;
+	private int workSoFar=0;
+	
+	public void setStatusLineManager(IStatusLineManager manager) {
+		this.statusLineManager = statusLineManager;
+	}
 	
 	void setBrowser(WebBrowser browser) {
 		this.browser = browser;
@@ -68,6 +75,8 @@ public class BrowserControlSite extends OleControlSite {
 			public void handleEvent(OleEvent event) {
 				startedDownload = true;
 				webProgress.setSelection(0);
+				if (statusLineManager!=null)
+				   statusLineManager.getProgressMonitor().beginTask("", 100);
 			}
 		});
 
@@ -75,6 +84,8 @@ public class BrowserControlSite extends OleControlSite {
 			public void handleEvent(OleEvent event) {
 				startedDownload = false;
 				webProgress.setSelection(0);
+				if (statusLineManager!=null) 
+				   statusLineManager.getProgressMonitor().done();
 				if (redirection)
 				   redirection = false;
 				else
@@ -126,6 +137,11 @@ public class BrowserControlSite extends OleControlSite {
 				   webProgress.setMaximum(maxProgress.getInt());
 				
 				webProgress.setSelection(progress.getInt());
+				int newValue = progress.getInt();
+				int worked = newValue - workSoFar;
+				workSoFar = newValue;
+				if (statusLineManager!=null) 
+				   statusLineManager.getProgressMonitor().worked(worked);
 			}
 		});
 
@@ -135,8 +151,15 @@ public class BrowserControlSite extends OleControlSite {
 				String msg = newText.getString();
 
 				if (webStatus!=null) {
-					if (msg != null) webStatus.setText(msg);
-					else webStatus.setText("");
+					if (msg != null) {
+						webStatus.setText(msg);
+						if (statusLineManager!=null) 
+						   statusLineManager.setMessage(msg);
+					}
+					else {
+						webStatus.setText("");
+						if (statusLineManager!=null) statusLineManager.setMessage("");
+					}
 				}
 			}
 		});
