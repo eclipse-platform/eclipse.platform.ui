@@ -635,7 +635,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			}
 			IPluginEntry[] featuresEntries = element.getFeature().getPluginEntries();
 			IPluginEntry[] result = intersection(featuresEntries, siteEntries);
-			if (result == null || (result.length != featuresEntries.length)) {
+			if (result == null || (result.length != 0)) {
 				((FeatureReferenceModel) element).setBroken(true);
 				IPluginEntry[] missing = intersection(featuresEntries, result);
 				String listOfMissingPlugins = "";
