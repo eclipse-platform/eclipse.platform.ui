@@ -419,11 +419,11 @@ private boolean addLibrary(String base, String libSpec, String[] filters, String
 			add = new File(file).exists();
 		if (add) {
 			if (type.equals(ILibrary.CODE)) {
-				result[0].add(entry);
+				result[0].add(resolved);
 				result[1].add(new URLContentFilter(filters));
 			} else
 				if (type.equals(ILibrary.RESOURCE)) {
-					result[2].add(entry);
+					result[2].add(resolved);
 					result[3].add(new URLContentFilter(filters));
 				}
 			return true;
