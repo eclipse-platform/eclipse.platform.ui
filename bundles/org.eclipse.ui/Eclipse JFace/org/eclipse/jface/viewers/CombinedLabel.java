@@ -29,7 +29,7 @@ public class CombinedLabel {
 	/**
 	 * Returns the label's text.
 	 * 
-	 * @return the label's text
+	 * @return the label's text. Return value may be null.
 	 */
 	public String getText() {
 		return text;
@@ -38,7 +38,7 @@ public class CombinedLabel {
 	/**
 	 * Returns the label's image.
 	 * 
-	 * @return the label's image
+	 * @return the label's image. Return value may be null.
 	 */
 	public Image getImage() {
 		return image;
