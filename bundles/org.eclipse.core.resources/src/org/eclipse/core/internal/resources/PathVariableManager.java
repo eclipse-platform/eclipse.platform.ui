@@ -57,22 +57,25 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	public void setValue(String varName, IPath newValue) throws CoreException {
 		checkIsValidName(varName);
 		checkIsValidValue(newValue);
-		IPath currentValue = getValue(varName);
-
-		boolean variableExists = currentValue != null;
-
-		if (!variableExists && newValue == null)
-			return;
-
-		if (variableExists && currentValue.equals(newValue))
-			return;
-
-		if (newValue == null)
-			removeVariable(varName);
-		else if (variableExists)
-			updateVariable(varName, newValue);
-		else
-			createVariable(varName, newValue);
+		int eventType;
+		// read previous value and set new value atomically in order to generate the right event		
+		synchronized (this) {
+			IPath currentValue = getValue(varName);
+			boolean variableExists = currentValue != null;
+			if (!variableExists && newValue == null)
+				return;
+			if (variableExists && currentValue.equals(newValue))
+				return;
+			if (newValue == null) {
+				preferences.setToDefault(getKeyForName(varName));
+				eventType = IPathVariableChangeEvent.VARIABLE_DELETED;
+			} else {
+				preferences.setValue(getKeyForName(varName), newValue.toString());
+				eventType = variableExists ? IPathVariableChangeEvent.VARIABLE_CHANGED : IPathVariableChangeEvent.VARIABLE_CREATED;
+			}
+		}
+		// notify listeners from outside the synchronized block to avoid deadlocks
+		fireVariableChangeEvent(varName, newValue, eventType);
 	}
 	/**
 	 * Throws an exception if the given path is not valid as a path variable
@@ -88,32 +91,6 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	 */
 	private String getKeyForName(String varName) {
 		return VARIABLE_PREFIX + varName;
-	}
-	/**
-	 * Remove the given variable from the table of path variables.
-	 * Also include it in the set of all removed variables to help with
-	 * updating the preference store later. Fire the appropriate change
-	 * event to notify listeners.
-	 */
-	private void removeVariable(String varName) {
-		preferences.setToDefault(getKeyForName(varName));
-		fireVariableChangeEvent(varName, null, IPathVariableChangeEvent.VARIABLE_DELETED);
-	}
-	/**
-	 * Create the given key-value pair in the path variable table. Fire the
-	 * appropriate change event to notify listeners. 
-	 */
-	private void createVariable(String varName, IPath varValue) {
-		preferences.setValue(getKeyForName(varName), varValue.toString());
-		fireVariableChangeEvent(varName, varValue, IPathVariableChangeEvent.VARIABLE_CREATED);
-	}
-	/**
-	 * Update the given path variable key to be mapped to the given value. Fire
-	 * the appropriate change event to notify listeners. 
-	 */
-	private void updateVariable(String varName, IPath varValue) {
-		preferences.setValue(getKeyForName(varName), varValue.toString());
-		fireVariableChangeEvent(varName, varValue, IPathVariableChangeEvent.VARIABLE_CHANGED);
 	}
 	/**
 	 * @see org.eclipse.core.resources.IPathVariableManager#resolvePath(IPath)
@@ -146,6 +123,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 		if (this.listeners.size() == 0)
 			return;
 
+		// use a separate collection to avoid interference of simultaneous additions/removals 
 		Object[] listeners = this.listeners.toArray();
 		PathVariableChangeEvent pve = new PathVariableChangeEvent(this, name, value, type);
 		for (int i = 0; i < listeners.length; ++i) {
@@ -157,7 +135,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	/**
 	 * @see org.eclipse.core.resources.IPathVariableManager#getPathVariableNames()
 	 */
-	public synchronized String[] getPathVariableNames() {
+	public String[] getPathVariableNames() {
 		List result = new LinkedList();
 		String[] names = preferences.propertyNames();
 		for (int i = 0; i < names.length; i++) {
