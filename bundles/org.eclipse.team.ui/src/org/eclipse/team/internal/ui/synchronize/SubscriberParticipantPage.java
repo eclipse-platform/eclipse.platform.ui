@@ -125,4 +125,9 @@ public final class SubscriberParticipantPage extends SyncInfoSetSynchronizePage 
 	public WorkingSetFilteredSyncInfoCollector getCollector() {
 		return collector;
 	}
+	
+	public void dispose() {
+		super.dispose();
+		collector.dispose();
+	}
 }
