@@ -45,7 +45,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	 */
 	ProgressFloatingWindow(Shell parent, Control associatedControl) {
 		super(parent, associatedControl);
-		setShellStyle(SWT.NO_TRIM | SWT.NO_FOCUS);
+		setShellStyle(SWT.RESIZE | SWT.ON_TOP);
 	}
 
 	/*
@@ -102,6 +102,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 			}
 		});
 
+		
 		return viewer.getControl();
 	}
 
@@ -178,17 +179,6 @@ class ProgressFloatingWindow extends AssociatedWindow {
 		return 50;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.AssociatedWindow#configureShell(org.eclipse.swt.widgets.Shell)
-	 */
-	protected void configureShell(Shell newShell) {
-		super.configureShell(newShell);
-		//newShell.setBackground(JFaceColors.getSchemeBackground(newShell.getDisplay()));
-
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
@@ -200,6 +190,25 @@ class ProgressFloatingWindow extends AssociatedWindow {
 		if (result && oldRegion != null)
 			oldRegion.dispose();
 		return result;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#open()
+	 */
+	public int open() {
+		if (getShell() == null) {
+			// create the window
+			create();
+		}
+
+		// limit the shell size to the display size
+		constrainShellSize();
+		
+		// open the window
+		getShell().setVisible(true);
+
+		return getReturnCode();
+		
 	}
 
 }
