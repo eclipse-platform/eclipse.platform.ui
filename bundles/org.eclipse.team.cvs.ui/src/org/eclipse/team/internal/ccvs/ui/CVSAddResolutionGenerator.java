@@ -44,18 +44,24 @@ public class CVSAddResolutionGenerator extends CVSAbstractResolutionGenerator {
 				try {
 					final IResource resource = marker.getResource();
 					ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+					final TeamException[] exception = new TeamException[] {null};
 					if ( ! cvsResource.isManaged()) {
 						CVSAddResolutionGenerator.this.run(new IRunnableWithProgress() {
 							public void run(IProgressMonitor monitor)throws InvocationTargetException, InterruptedException {
 								try {
 									((CVSTeamProvider)RepositoryProvider.getProvider(resource.getProject())).add(new IResource[] {resource}, IResource.DEPTH_ZERO, monitor);
 								} catch (TeamException e) {
-									throw new InvocationTargetException(e);
+									exception[0] = e;
 								}
 							}
 						});
 					}
+					if (exception[0] != null) {
+						throw exception[0];
+					}
 					marker.delete();
+				} catch (TeamException e) {
+					handle(e, null, null);
 				} catch (CoreException e) {
 					handle(e, null, null);
 				} catch (InvocationTargetException e) {
@@ -74,18 +80,24 @@ public class CVSAddResolutionGenerator extends CVSAbstractResolutionGenerator {
 				try {
 					final IResource resource = marker.getResource();
 					ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+					final TeamException[] exception = new TeamException[] {null};
 					if ( ! cvsResource.isManaged()) {
 						CVSAddResolutionGenerator.this.run(new IRunnableWithProgress() {
 							public void run(IProgressMonitor monitor)throws InvocationTargetException, InterruptedException {
 								try {
 									((CVSTeamProvider)RepositoryProvider.getProvider(resource.getProject())).add(new IResource[] {resource}, IResource.DEPTH_INFINITE, monitor);
 								} catch (TeamException e) {
-									throw new InvocationTargetException(e);
+									exception[0] = e;
 								}
 							}
 						});
 					}
+					if (exception[0] != null) {
+						throw exception[0];
+					}
 					marker.delete();
+				} catch (TeamException e) {
+					handle(e, null, null);
 				} catch (CoreException e) {
 					handle(e, null, null);
 				} catch (InvocationTargetException e) {

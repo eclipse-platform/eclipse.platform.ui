@@ -37,6 +37,7 @@ import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.ui.IWorkbenchWindow;
 
 public class CVSMoveDeleteHook implements IMoveDeleteHook {
 
@@ -79,22 +80,20 @@ public class CVSMoveDeleteHook implements IMoveDeleteHook {
 			return dontShow;
 		}
 	}
-	
+
 	private void showDialog(final IRunnableWithShell runnable) {
-		Display display = Display.getCurrent();
-		if (display != null) {
-			Shell shell = new Shell(display);
-			runnable.run(shell);
-		} else {
-			// sync exec in default thread
-			Display.getDefault().syncExec(new Runnable() {
-				public void run() {
+		Display.getDefault().syncExec(new Runnable() {
+			public void run() {
+				IWorkbenchWindow window = CVSUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow();
+				if (window != null) {
+					runnable.run(window.getShell());
+				} else {
 					Display display = Display.getCurrent();
 					Shell shell = new Shell(display);
 					runnable.run(shell);
 				}
-			});
-		}
+			}
+		});
 	}
 	
 	private void makeFileOutgoingDeletion(IResourceTree tree, IFile source, IFile destination, int updateFlags, IProgressMonitor monitor) throws CoreException {

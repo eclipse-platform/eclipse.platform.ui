@@ -23,17 +23,26 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.ui.TeamUIPlugin;
 import org.eclipse.ui.IMarkerResolutionGenerator;
+import org.eclipse.ui.IWorkbenchWindow;
 
 public abstract class CVSAbstractResolutionGenerator implements IMarkerResolutionGenerator {
 
+	protected Shell getShell() {
+		IWorkbenchWindow window = CVSUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow();
+		if (window != null) {
+			return window.getShell();
+		} else {
+			Display display = Display.getCurrent();
+			return new Shell(display);
+		}
+	}
+	
 	protected void run(final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
 		final Exception[] exception = new Exception[] {null};
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
-				Display display = Display.getCurrent();
-				Shell shell = new Shell(display);
 				try {
-					new ProgressMonitorDialog(shell).run(true, true, runnable);
+					new ProgressMonitorDialog(getShell()).run(true, true, runnable);
 				} catch (InterruptedException e) {
 					exception[0] = e;
 				} catch (InvocationTargetException e) {
@@ -65,6 +74,7 @@ public abstract class CVSAbstractResolutionGenerator implements IMarkerResolutio
 		// Handle the target exception for InvocationTargetExceptions
 		if (exception instanceof InvocationTargetException) {
 			handle(((InvocationTargetException)exception).getTargetException(), title, message);
+			return;
 		}
 		
 		// Create a status to be displayed for the exception
@@ -105,9 +115,7 @@ public abstract class CVSAbstractResolutionGenerator implements IMarkerResolutio
 				final String displayTitle = title;
 				Display.getDefault().syncExec(new Runnable() {
 					public void run() {
-						Display display = Display.getCurrent();
-						Shell shell = new Shell(display);
-						ErrorDialog.openError(shell, displayTitle, message, showStatus);
+						ErrorDialog.openError(getShell(), displayTitle, message, showStatus);
 					}
 				});
 			}

@@ -64,15 +64,19 @@ public class CVSRemoveResolutionGenerator extends CVSAbstractResolutionGenerator
 									deletedInfo.setDeleted(true);
 									mFile.setSyncInfo(deletedInfo);
 								}
+								final TeamException[] exception = new TeamException[] {null};
 								CVSRemoveResolutionGenerator.this.run(new IRunnableWithProgress() {
 									public void run(IProgressMonitor monitor)throws InvocationTargetException, InterruptedException {
 										try {
 											((CVSTeamProvider)RepositoryProvider.getProvider(parent.getProject())).checkin(new IResource[] {parent.getFile(new Path(childName))}, IResource.DEPTH_ZERO, monitor);
 										} catch (TeamException e) {
-											throw new InvocationTargetException(e);
+											exception[0] = e;
 										}
 									}
 								});
+								if (exception[0] != null) {
+									throw exception[0];
+								}
 							}
 						}
 						marker.delete();
@@ -153,19 +157,23 @@ public class CVSRemoveResolutionGenerator extends CVSAbstractResolutionGenerator
 								mFile.setSyncInfo(deletedInfo);
 							}
 						}
-							
+						
+						final TeamException[] exception = new TeamException[] {null};
 						CVSRemoveResolutionGenerator.this.run(new IRunnableWithProgress() {
 							public void run(IProgressMonitor monitor)throws InvocationTargetException, InterruptedException {
 								try {
 									((CVSTeamProvider)RepositoryProvider.getProvider(parent.getProject())).update(new IResource[] {parent.getFile(new Path(childName))}, Command.NO_LOCAL_OPTIONS, null, null, monitor);
 								} catch (TeamException e) {
-									throw new InvocationTargetException(e);
+									exception[0] = e;
 								}
 							}
 						});
-								
+						if (exception[0] != null) {
+							throw exception[0];
+						}
+									
 						marker.delete();
-					} catch (CVSException e) {
+					} catch (TeamException e) {
 						handle(e, null, null);
 					} catch (CoreException e) {
 						handle(e, null, null);
