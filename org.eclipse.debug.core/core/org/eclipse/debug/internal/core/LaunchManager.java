@@ -955,21 +955,14 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		if (directory.isDirectory()) {
 			FilenameFilter filter = new FilenameFilter() {
 				public boolean accept(File dir, String name) {
-					return dir.equals(directory) && name.endsWith(ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION);
+					return dir.equals(directory) &&
+							name.endsWith(ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION);
 				}
 			};
-			File[] files = directory.listFiles(filter);
+			String[] files = directory.list(filter);
 			for (int i = 0; i < files.length; i++) {
-				try {
-					LaunchConfiguration config = new LaunchConfiguration(new Path(files[i].getCanonicalPath()));
-					configs.add(config);
-				} catch (IOException e) {
-					throw new CoreException(
-						new Status(
-						 Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-						 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_while_re-building_local_launch_configuration_index_11"), new String[]{e.toString()}), null //$NON-NLS-1$
-						));
-				}
+				LaunchConfiguration config = new LaunchConfiguration(containerPath.append(files[i]));
+				configs.add(config);
 			}
 		}
 		return configs;
