@@ -274,10 +274,10 @@ public interface IResource extends IAdaptable {
  * @see IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS
  * @see IResource#isPhantom
  * @see IResource#isTeamPrivateMember
- * @see IFastResourceVisitor#visit
+ * @see IResourceProxyVisitor#visit
  * @since 2.1
  */
-public void accept(final IFastResourceVisitor fastVisitor, int memberFlags) throws CoreException;
+public void accept(final IResourceProxyVisitor fastVisitor, int memberFlags) throws CoreException;
 /**
  * Accepts the given visitor.
  * The visitor's <code>visit</code> method is called with this

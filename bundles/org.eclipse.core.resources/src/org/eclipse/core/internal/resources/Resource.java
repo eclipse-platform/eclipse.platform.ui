@@ -32,9 +32,9 @@ protected Resource(IPath path, Workspace workspace) {
 	this.workspace = workspace;
 }
 /**
- * @see IResource#accept(IFastResourceVisitor, int)
+ * @see IResource#accept(IResourceProxyVisitor, int)
  */
-public void accept(final IFastResourceVisitor fastVisitor, int memberFlags) throws CoreException {
+public void accept(final IResourceProxyVisitor fastVisitor, int memberFlags) throws CoreException {
 	final ResourceProxy proxy = new ResourceProxy();
 	final CoreException[] signal = new CoreException[1];
 	final boolean includePhantoms = (memberFlags & IContainer.INCLUDE_PHANTOMS) != 0;

@@ -24,7 +24,7 @@ import java.lang.String;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * @see IFastResourceVisitor
+ * @see IResourceProxyVisitor
  * @since 2.1
  */
 public interface IResourceProxy {

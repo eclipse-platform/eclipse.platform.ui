@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.CoreException;
  * <p> 
  * Usage:
  * <pre>
- * class Visitor implements IFastResourceVisitor { 	
+ * class Visitor implements IResourceProxyVisitor { 	
  * 	public boolean visit (IResourceProxy proxy) { 
  * 		//	 your code here 
  * 		return true;  
@@ -36,7 +36,7 @@ import org.eclipse.core.runtime.CoreException;
  * @see IResource#accept
  * @since 2.1
  */
-public interface IFastResourceVisitor {
+public interface IResourceProxyVisitor {
 	/** 
 	 * Visits the given resource.
 	 *
