@@ -149,16 +149,14 @@ public class JFaceColors {
 	 * Get the default color to use for displaying errors.
 	 */
 	public static Color getErrorText(Display display) {
-
-		return getColorSetting(display,JFacePreferences.ERROR_COLOR);
+	    return JFaceResources.getColorRegistry().get(JFacePreferences.ERROR_COLOR);
 	}
 	
 	/**
 	 * Get the default color to use for displaying hyperlinks.
 	 */
 	public static Color getHyperlinkText(Display display) {
-
-		return getColorSetting(display,JFacePreferences.HYPERLINK_COLOR);
+	    return JFaceResources.getColorRegistry().get(JFacePreferences.HYPERLINK_COLOR);
 	}
 	
 	/**
@@ -166,7 +164,7 @@ public class JFaceColors {
 	 */
 	
 	public static Color getActiveHyperlinkText(Display display) {
-		return getColorSetting(display,JFacePreferences.ACTIVE_HYPERLINK_COLOR);
+	    return JFaceResources.getColorRegistry().get(JFacePreferences.ACTIVE_HYPERLINK_COLOR);
 	}
 	
 	private static Hashtable getColorMap () {

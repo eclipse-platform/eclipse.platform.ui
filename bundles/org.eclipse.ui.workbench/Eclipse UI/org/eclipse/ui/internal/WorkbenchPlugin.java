@@ -36,7 +36,6 @@ import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IPerspectiveRegistry;
@@ -477,16 +476,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.SHOW_STATUS_LINE, true);
 		store.setDefault(IPreferenceConstants.SHOW_TOOL_BAR, true);
 		store.setDefault(IPreferenceConstants.MULTI_KEY_ASSIST, false);
-		store.setDefault(IPreferenceConstants.MULTI_KEY_ASSIST_TIME, 1000);
-			
-		// @issue get rid of PreferenceConverter - just hard code the RGB string		
-		//Set the default error colour to red
-		PreferenceConverter.setDefault(store,JFacePreferences.ERROR_COLOR, new RGB(255, 0, 0));
-		//Set the default hyperlink line colour to dark blue
-		PreferenceConverter.setDefault(store,JFacePreferences.HYPERLINK_COLOR, new RGB(0, 0, 153));
-		//Set the default active hyperlink line colour to blue
-		PreferenceConverter.setDefault(store,JFacePreferences.ACTIVE_HYPERLINK_COLOR, new RGB(0, 0, 255));
-		
+		store.setDefault(IPreferenceConstants.MULTI_KEY_ASSIST_TIME, 1000);			
 		
 		// Temporary option to enable wizard for project capability
 		store.setDefault("ENABLE_CONFIGURABLE_PROJECT_WIZARD", false); //$NON-NLS-1$

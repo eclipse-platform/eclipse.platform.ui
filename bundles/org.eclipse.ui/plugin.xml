@@ -1238,9 +1238,17 @@
             categoryId="org.eclipse.ui.workbenchMisc"
             direction="vertical"
             id="VIEW_TITLE_GRADIENT_COLOR_ACTIVE">
-		 <colorFactory plugin="org.eclipse.ui" class="org.eclipse.ui.themes.RGBBlendColorFactory">
-            <parameter name="color1" value="COLOR_WHITE" />
-       	 	<parameter name="color2" value="COLOR_TITLE_BACKGROUND_GRADIENT" />
+         <colorFactory
+               plugin="org.eclipse.ui"
+               class="org.eclipse.ui.themes.RGBBlendColorFactory">
+            <parameter
+                  name="color1"
+                  value="COLOR_WHITE">
+            </parameter>
+            <parameter
+                  name="color2"
+                  value="COLOR_TITLE_BACKGROUND_GRADIENT">
+            </parameter>
          </colorFactory>
          <gradientPart
                percentage="100"
@@ -1263,6 +1271,33 @@
             label="%Presentation.misc.workbench"
             id="org.eclipse.ui.workbenchMisc">
       </themeElementCategory>
+      <colorDefinition
+            label="%Color.errorText"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            value="255,0,0"
+            id="ERROR_COLOR">
+         <description>
+            %Color.errorTextDesc
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            label="%Color.hyperlinkText"
+            value="0,0,153"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            id="HYPERLINK_COLOR">
+         <description>
+            %Color.hyperlinkTextDesc
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            label="%Color.activeHyperlinkText"
+            value="0,0,255"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            id="ACTIVE_HYPERLINK_COLOR">
+         <description>
+            %Color.activeHyperlinkTextDesc
+         </description>
+      </colorDefinition>
    </extension>
 
 </plugin>

@@ -13,23 +13,16 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.text.MessageFormat;
 
-import org.eclipse.jface.preference.BooleanFieldEditor;
-import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -58,14 +51,6 @@ public class ViewsPreferencePage
 	 * change the tab style of the workbench
 	 */
 	private Button showTraditionalStyleTabs;
-	
-	/*
-	 * Editors for working with colors in the Views/Appearance preference page 
-	 */
-	private BooleanFieldEditor colorIconsEditor;
-	private ColorFieldEditor errorColorEditor;
-	private ColorFieldEditor hyperlinkColorEditor;
-	private ColorFieldEditor activeHyperlinkColorEditor;
 
 	/*
 	 * No longer supported - removed when confirmed!
@@ -74,47 +59,15 @@ public class ViewsPreferencePage
 	int editorAlignment;
 	int viewAlignment;
 
-	private static final String COLOUR_ICONS_TITLE = WorkbenchMessages.getString("ViewsPreference.colorIcons"); //$NON-NLS-1$
-	static final String EDITORS_TITLE = WorkbenchMessages.getString("ViewsPreference.editors"); //$NON-NLS-1$
-	private static final String EDITORS_TOP_TITLE = WorkbenchMessages.getString("ViewsPreference.editors.top"); //$NON-NLS-1$
-	private static final String EDITORS_BOTTOM_TITLE = WorkbenchMessages.getString("ViewsPreference.editors.bottom"); //$NON-NLS-1$
-	private static final String VIEWS_TITLE = WorkbenchMessages.getString("ViewsPreference.views"); //$NON-NLS-1$
-	private static final String VIEWS_TOP_TITLE = WorkbenchMessages.getString("ViewsPreference.views.top"); //$NON-NLS-1$
-	private static final String VIEWS_BOTTOM_TITLE = WorkbenchMessages.getString("ViewsPreference.views.bottom"); //$NON-NLS-1$
 	/*
 	 * No longer supported - remove when confirmed!
 	 * private static final String OVM_FLOAT = WorkbenchMessages.getString("OpenViewMode.float"); //$NON-NLS-1$
 	 */
-	/**
-	 * The label used for the note text.
-	 */
-	private static final String NOTE_LABEL = WorkbenchMessages.getString("Preference.note"); //$NON-NLS-1$
-	private static final String APPLY_MESSAGE = WorkbenchMessages.getString("ViewsPreference.applyMessage"); //$NON-NLS-1$
 
     private Combo themeCombo;
 
-	/**
-	 * Create a composite that for creating the tab toggle buttons.
-	 * @param composite Composite
-	 * @param title String
-	 */
-	private Group createButtonGroup(Composite composite, String title) {
+    private Button colorIcons;
 
-		Group buttonComposite = new Group(composite, SWT.NONE);
-		buttonComposite.setText(title);
-		buttonComposite.setFont(composite.getFont());
-		FormLayout layout = new FormLayout();
-		layout.marginWidth = 2;
-		layout.marginHeight = 2;
-		buttonComposite.setLayout(layout);
-		GridData data =
-			new GridData(
-				GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
-		buttonComposite.setLayoutData(data);
-
-		return buttonComposite;
-
-	}
 	/**
 	 * Creates and returns the SWT control for the customized body 
 	 * of this preference page under the given parent composite.
@@ -131,9 +84,6 @@ public class ViewsPreferencePage
  		Font font = parent.getFont();
 
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.VIEWS_PREFERENCE_PAGE);
-
-		IPreferenceStore store =
-			WorkbenchPlugin.getDefault().getPreferenceStore();
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -160,60 +110,19 @@ public class ViewsPreferencePage
 		themeCombo = new Combo(composite, SWT.READ_ONLY);
         themeCombo.setLayoutData(data);
 		refreshThemeCombo();
-
-		Composite colorIconsComposite = new Composite(composite, SWT.NONE);
-		colorIconsComposite.setFont(font);
-		colorIconsEditor =
-			new BooleanFieldEditor(
-				IPreferenceConstants.COLOR_ICONS,
-				COLOUR_ICONS_TITLE,
-				colorIconsComposite);
-		colorIconsEditor.setPreferencePage(this);
-		colorIconsEditor.setPreferenceStore(doGetPreferenceStore());
-		colorIconsEditor.load();
-
+		
 		createShowTextOnPerspectiveBarPref(composite);
 
 		createShowTraditionalStyleTabsPref(composite);
 		
-		createNoteComposite(font, composite, NOTE_LABEL, APPLY_MESSAGE);
+		createNoteComposite(font, composite, WorkbenchMessages.getString("Preference.note"), WorkbenchMessages.getString("ViewsPreference.applyMessage")); //$NON-NLS-1$ //$NON-NLS-2$
 
-		Group colorComposite = new Group(composite, SWT.NONE);
-		colorComposite.setLayout(new GridLayout());
-		colorComposite.setText(WorkbenchMessages.getString("ViewsPreference.ColorsTitle")); //$NON-NLS-1$
-		colorComposite.setFont(font);
-
-		data =
-			new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
-		colorComposite.setLayoutData(data);
-
-		//Add in an intermediate composite to allow for spacing
-		Composite spacingComposite = new Composite(colorComposite, SWT.NONE);
-		GridLayout spacingLayout = new GridLayout();
-		spacingLayout.numColumns = 4;
-		spacingComposite.setLayout(spacingLayout);
-		spacingComposite.setFont(font);
-
-		errorColorEditor = new ColorFieldEditor(JFacePreferences.ERROR_COLOR, WorkbenchMessages.getString("ViewsPreference.ErrorText"), spacingComposite); //$NON-NLS-1$,
-
-		errorColorEditor.setPreferenceStore(doGetPreferenceStore());
-		errorColorEditor.load();
-
-		hyperlinkColorEditor = new ColorFieldEditor(JFacePreferences.HYPERLINK_COLOR, WorkbenchMessages.getString("ViewsPreference.HyperlinkText"), spacingComposite); //$NON-NLS-1$
-
-		hyperlinkColorEditor.setPreferenceStore(doGetPreferenceStore());
-		hyperlinkColorEditor.load();
-
-		activeHyperlinkColorEditor = new ColorFieldEditor(JFacePreferences.ACTIVE_HYPERLINK_COLOR, WorkbenchMessages.getString("ViewsPreference.ActiveHyperlinkText"),spacingComposite); //$NON-NLS-1$
-
-		activeHyperlinkColorEditor.setPreferenceStore(doGetPreferenceStore());
-		activeHyperlinkColorEditor.load();
-
+		createColorIconsPref(composite);
+		
 		return composite;
 	}
 	
-	/**
+    /**
      * 
      */
     private void refreshThemeCombo() {
@@ -257,26 +166,22 @@ public class ViewsPreferencePage
 	 */
 	protected void createShowTraditionalStyleTabsPref(Composite composite) {
 		showTraditionalStyleTabs = new Button(composite, SWT.CHECK);
-		showTraditionalStyleTabs.setText("Show &traditional style tabs");
+		showTraditionalStyleTabs.setText(WorkbenchMessages.getString("ViewsPreference.traditionalTabs")); //$NON-NLS-1$
 		showTraditionalStyleTabs.setFont(composite.getFont());
 		showTraditionalStyleTabs.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
 		setButtonLayoutData(showTraditionalStyleTabs);
 	}
 	
 	/**
-	 * Set the two supplied controls to be beside each other.
-	 */
-	private void attachControls(Control leftControl, Control rightControl) {
-
-		FormData leftData = new FormData();
-		leftData.left = new FormAttachment(0, 0);
-
-		FormData rightData = new FormData();
-		rightData.left = new FormAttachment(leftControl, 5);
-
-		leftControl.setLayoutData(leftData);
-		rightControl.setLayoutData(rightData);
-	}
+     * @param composite
+     */
+    private void createColorIconsPref(Composite composite) {
+		colorIcons = new Button(composite, SWT.CHECK);
+		colorIcons.setText(WorkbenchMessages.getString("ViewsPreference.colorIcons")); //$NON-NLS-1$
+		colorIcons.setFont(composite.getFont());
+		colorIcons.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.COLOR_ICONS));
+		setButtonLayoutData(colorIcons);
+    }	
 
 	/**
 	 * Returns preference store that belongs to the our plugin.
@@ -296,6 +201,7 @@ public class ViewsPreferencePage
 	 * @param workbench the workbench
 	 */
 	public void init(org.eclipse.ui.IWorkbench workbench) {
+	    //no-op
 	}
 	/**
 	 * The default button has been pressed. 
@@ -306,11 +212,8 @@ public class ViewsPreferencePage
 
 		showTextOnPerspectiveBar.setSelection(store.getDefaultBoolean(IPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR));
 		showTraditionalStyleTabs.setSelection(store.getDefaultBoolean(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
-		
-		colorIconsEditor.loadDefault();
-		errorColorEditor.loadDefault();
-		hyperlinkColorEditor.loadDefault();
-		activeHyperlinkColorEditor.loadDefault();
+		colorIcons.setSelection(store.getDefaultBoolean(IPreferenceConstants.COLOR_ICONS));
+
 		/*
 		 * No longer supported - remove when confirmed!
 		 * if (openFloatButton != null) 
@@ -328,11 +231,7 @@ public class ViewsPreferencePage
 
 		store.setValue(IPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR, showTextOnPerspectiveBar.getSelection());
 		store.setValue(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, showTraditionalStyleTabs.getSelection());
-		
-		colorIconsEditor.store();
-		errorColorEditor.store();
-		hyperlinkColorEditor.store();
-		activeHyperlinkColorEditor.store();
+		store.setValue(IPreferenceConstants.COLOR_ICONS, colorIcons.getSelection());		
 	
 		if (Workbench.getInstance() != null) {
 			IWorkbenchWindow[] windows = Workbench.getInstance().getWorkbenchWindows();
