@@ -533,8 +533,10 @@ protected void update(boolean force, boolean recursive) {
 				IContributionItem dest;
 
 				if (srcIx < mi.length)
-					while (PERMANENT.equals(mi[srcIx].getData(PERMANENT)))
+					while (PERMANENT.equals(mi[srcIx].getData(PERMANENT))) {
 						srcIx++;
+						destIx++;
+					}
 					
 				// get corresponding item in SWT widget
 				if (srcIx < mi.length)
