@@ -12,8 +12,8 @@ package org.eclipse.debug.internal.ui.preferences;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.variables.ILaunchVariableManager;
@@ -21,6 +21,7 @@ import org.eclipse.debug.core.variables.ISimpleLaunchVariable;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -231,11 +232,25 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 		if (dialog.open() != Dialog.OK) {
 			return;
 		}
-		String name= dialog.getValue(NAME_LABEL);
+		String name= dialog.getValue(NAME_LABEL).trim();
 		if (name != null && name.length() > 0) {
 			String value= dialog.getValue(VALUE_LABEL);
 			String description= dialog.getValue(DESCRIPTION_LABEL);
 			ISimpleLaunchVariable variable= DebugPlugin.getDefault().getLaunchVariableManager().newSimpleVariable(name, value, description);
+			List editedVariables= variableContentProvider.getEditedVariables();
+			Iterator iter= editedVariables.iterator();
+			while (iter.hasNext()) {
+				ISimpleLaunchVariable currentVariable = (ISimpleLaunchVariable) iter.next();
+				String variableName = currentVariable.getName();
+				if (variableName.equals(name)) {
+					boolean overWrite= MessageDialog.openQuestion(getShell(), DebugPreferencesMessages.getString("SimpleVariablePreferencePage.15"), MessageFormat.format(DebugPreferencesMessages.getString("SimpleVariablePreferencePage.16"), new String[] {name}));  //$NON-NLS-1$ //$NON-NLS-2$
+					if (!overWrite) {
+						return;
+					}
+					variableContentProvider.removeVariable(currentVariable);
+					break;
+				}
+			}
 			variableContentProvider.addVariable(variable);
 			variableTable.refresh();
 		}
@@ -361,21 +376,18 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 			}
 		}
 		public void addVariable(ISimpleLaunchVariable variable) {
-			String newName= variable.getName();
-			ListIterator iter= editedVariables.listIterator();
-			while (iter.hasNext()) {
-				String variableName = ((ISimpleLaunchVariable) iter.next()).getName();
-				if (variableName.equals(newName)) {
-					iter.remove();
-					break;
-				}
-			}
 			editedVariables.add(variable);
 		}
 		public void removeVariables(ISimpleLaunchVariable[] variables) {
 			for (int i= 0; i < variables.length; i++) {
-				editedVariables.remove(variables[i]);
+				removeVariable(variables[i]);
 			}
+		}
+		public void removeVariable(ISimpleLaunchVariable variable) {
+			editedVariables.remove(variable);
+		}
+		public List getEditedVariables() {
+			return editedVariables;
 		}
 		/**
 		 * Discards the edited variable state and restores the variables from the
