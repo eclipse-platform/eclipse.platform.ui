@@ -544,7 +544,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				String builderName = currentBuilder.getLabel();
 				if (builderName == null || builderName.length() == 0)
 					builderName = currentBuilder.getClass().getName();
-				String pluginId = currentBuilder.getPluginDescriptor().getUniqueIdentifier();
+				String pluginId = currentBuilder.getPluginId();
 				String message = Policy.bind("events.builderError", builderName, currentBuilder.getProject().getName()); //$NON-NLS-1$
 				status.add(new Status(IStatus.WARNING, pluginId, IResourceStatus.BUILD_FAILED, message, null));
 
@@ -688,7 +688,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		}
 		//The nature exists, or this builder doesn't specify a nature
 		InternalBuilder builder = (InternalBuilder) configs[0].createExecutableExtension("run"); //$NON-NLS-1$
-		builder.setPluginDescriptor(extension.getDeclaringPluginDescriptor());
+		builder.setPluginId(extension.getNamespace());
 		builder.setLabel(extension.getLabel());
 		builder.setNatureId(natureId);
 		return (IncrementalProjectBuilder) builder;

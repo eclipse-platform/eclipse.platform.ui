@@ -34,7 +34,10 @@ public abstract class InternalBuilder {
 	private String label;
 	private String natureId;
 	private ElementTree oldState;
-	private IPluginDescriptor pluginDescriptor;
+	/**
+	 * The symbolic name of the plugin that defines this builder
+	 */
+	private String pluginId;
 	private IProject project;
 
 	/*
@@ -89,8 +92,8 @@ public abstract class InternalBuilder {
 		return natureId;
 	}
 
-	final IPluginDescriptor getPluginDescriptor() {
-		return pluginDescriptor;
+	final String getPluginId() {
+		return pluginId;
 	}
 
 	/**
@@ -137,8 +140,8 @@ public abstract class InternalBuilder {
 		this.natureId = id;
 	}
 
-	final void setPluginDescriptor(IPluginDescriptor value) {
-		pluginDescriptor = value;
+	final void setPluginId(String value) {
+		pluginId = value;
 	}
 
 	/**
