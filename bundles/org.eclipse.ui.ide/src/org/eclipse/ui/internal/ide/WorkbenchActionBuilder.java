@@ -32,6 +32,8 @@ import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
@@ -292,15 +294,7 @@ public final class WorkbenchActionBuilder {
             public void propertyChange(Preferences.PropertyChangeEvent event) {
                 if (event.getProperty().equals(
                         ResourcesPlugin.PREF_AUTO_BUILDING)) {
-                    if (window.getShell() != null
-                            && !window.getShell().isDisposed()) {
-                        // this property change notification could be from a non-ui thread
-                        window.getShell().getDisplay().syncExec(new Runnable() {
-                            public void run() {
-                                updateBuildActions();
-                            }
-                        });
-                    }
+                   	updateBuildActions();
                 }
             }
         };
@@ -1560,47 +1554,59 @@ public final class WorkbenchActionBuilder {
 
     /**
      * Update the build actions on the toolbar and menu bar based on the 
-     * current state of autobuild
+     * current state of autobuild.  This method can be called from any thread.
      */
     void updateBuildActions() {
-    	IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IProject[] projects = workspace.getRoot().getProjects();
-    	boolean enabled = BuildUtilities.isEnabled(projects, IncrementalProjectBuilder.INCREMENTAL_BUILD);
-        //update menu bar actions in project menu
-        buildAllAction.setEnabled(enabled);
-        buildProjectAction.setEnabled(enabled);
-        toggleAutoBuildAction.setChecked(workspace.isAutoBuilding());
-        cleanAction.setEnabled(BuildUtilities.isEnabled(projects, IncrementalProjectBuilder.CLEAN_BUILD));
-
-        //update the cool bar build button
-        ICoolBarManager coolBarManager = actionBarConfigurer
-                .getCoolBarManager();
-        IContributionItem cbItem = coolBarManager
-                .find(IWorkbenchActionConstants.TOOLBAR_FILE);
-        if (!(cbItem instanceof ToolBarContributionItem)) {
-            // This should not happen
-            IDEWorkbenchPlugin.log("File toolbar contribution item is missing"); //$NON-NLS-1$
-            return;
-        }
-        ToolBarContributionItem toolBarItem = (ToolBarContributionItem) cbItem;
-        IToolBarManager toolBarManager = toolBarItem.getToolBarManager();
-        if (toolBarManager == null) {
-            // error if this happens, file toolbar assumed to always exist
-            IDEWorkbenchPlugin.log("File toolbar is missing"); //$NON-NLS-1$
-            return;
-        }
-        //add the build button if build actions are enabled, and remove it otherwise
-        boolean found = toolBarManager.find(buildAllAction.getId()) != null;
-        if (enabled && !found) {
-            toolBarManager.appendToGroup(IWorkbenchActionConstants.BUILD_GROUP,
-                    buildAllAction);
-            toolBarManager.update(false);
-            toolBarItem.update(ICoolBarManager.SIZE);
-        } else if (buildAllAction != null && found) {
-            toolBarManager.remove(buildAllAction.getId());
-            toolBarManager.update(false);
-            toolBarItem.update(ICoolBarManager.SIZE);
-        }
+        // this can be triggered by property or resource change notifications
+        Runnable update = new Runnable() {
+            public void run() {
+		    	IWorkspace workspace = ResourcesPlugin.getWorkspace();
+				IProject[] projects = workspace.getRoot().getProjects();
+		    	boolean enabled = BuildUtilities.isEnabled(projects, IncrementalProjectBuilder.INCREMENTAL_BUILD);
+		        //update menu bar actions in project menu
+		        buildAllAction.setEnabled(enabled);
+		        buildProjectAction.setEnabled(enabled);
+		        toggleAutoBuildAction.setChecked(workspace.isAutoBuilding());
+		        cleanAction.setEnabled(BuildUtilities.isEnabled(projects, IncrementalProjectBuilder.CLEAN_BUILD));
+		
+		        //update the cool bar build button
+		        ICoolBarManager coolBarManager = actionBarConfigurer
+		                .getCoolBarManager();
+		        IContributionItem cbItem = coolBarManager
+		                .find(IWorkbenchActionConstants.TOOLBAR_FILE);
+		        if (!(cbItem instanceof ToolBarContributionItem)) {
+		            // This should not happen
+		            IDEWorkbenchPlugin.log("File toolbar contribution item is missing"); //$NON-NLS-1$
+		            return;
+		        }
+		        ToolBarContributionItem toolBarItem = (ToolBarContributionItem) cbItem;
+		        IToolBarManager toolBarManager = toolBarItem.getToolBarManager();
+		        if (toolBarManager == null) {
+		            // error if this happens, file toolbar assumed to always exist
+		            IDEWorkbenchPlugin.log("File toolbar is missing"); //$NON-NLS-1$
+		            return;
+		        }
+		        //add the build button if build actions are enabled, and remove it otherwise
+		        boolean found = toolBarManager.find(buildAllAction.getId()) != null;
+		        if (enabled && !found) {
+		            toolBarManager.appendToGroup(IWorkbenchActionConstants.BUILD_GROUP,
+		                    buildAllAction);
+		            toolBarManager.update(false);
+		            toolBarItem.update(ICoolBarManager.SIZE);
+		        } else if (buildAllAction != null && found) {
+		            toolBarManager.remove(buildAllAction.getId());
+		            toolBarManager.update(false);
+		            toolBarItem.update(ICoolBarManager.SIZE);
+		        }
+            }
+        };
+        //run the update immediately if we are in the UI thread
+        if (Display.getCurrent() != null)
+        	update.run();
+        //dispatch the update to the UI thread
+        Shell shell = window.getShell();
+        if (shell != null && !shell.isDisposed())
+        	shell.getDisplay().asyncExec(update);
     }
 
 	/**
