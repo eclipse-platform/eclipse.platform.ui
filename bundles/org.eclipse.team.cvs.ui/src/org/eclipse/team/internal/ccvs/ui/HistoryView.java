@@ -164,7 +164,7 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 		
 		// Double click open action
 		openAction = new OpenRemoteFileAction();
-		tableViewer.getTable().addListener(SWT.MouseDoubleClick, new Listener() {
+		tableViewer.getTable().addListener(SWT.DefaultSelection, new Listener() {
 			public void handleEvent(Event e) {
 				openAction.selectionChanged(null, tableViewer.getSelection());
 				openAction.run(null);
