@@ -48,6 +48,11 @@ public class ImageRegistry {
 	 *  or <code>ImageDescriptor</code>).
 	 */
 	private Map table = null;
+	
+	/**
+	 * display used when getting images
+	 */
+	private Display display;
 
 	/**
 	 * Creates an empty image registry.
@@ -78,6 +83,7 @@ public class ImageRegistry {
 	 */
 	public Image get(String key) {
 		
+		// can be null
 		if (key == null){
 			return null;
 		}
@@ -90,17 +96,30 @@ public class ImageRegistry {
 		 * 
 		 * @see Display.getSystemIcon(int ID)
 		 */
+		int swtKey = -1;
 		if (key.equals(Dialog.DLG_IMG_INFO)) {
-			return Display.getCurrent().getSystemImage(SWT.ICON_INFORMATION);
+			swtKey = SWT.ICON_INFORMATION;			
 		}
 		if (key.equals(Dialog.DLG_IMG_QUESTION)) {
-			return Display.getCurrent().getSystemImage(SWT.ICON_QUESTION);
+			swtKey = SWT.ICON_QUESTION;
 		}
 		if (key.equals(Dialog.DLG_IMG_WARNING)) {
-			return Display.getCurrent().getSystemImage(SWT.ICON_WARNING);
+			swtKey = SWT.ICON_WARNING;
 		}
 		if (key.equals(Dialog.DLG_IMG_ERROR)) {
-				return Display.getCurrent().getSystemImage(SWT.ICON_ERROR);
+				swtKey = SWT.ICON_ERROR;
+		}
+		// if we actually just want to return an SWT image do so without
+		// looking in the registry
+		if (swtKey != -1){
+			final Display d = (display == null) ? Display.getCurrent() : display;
+			final Image[] image = new Image[1];
+			d.syncExec(new Runnable() {
+				public void run() {
+					image[0] = d.getSystemImage(SWT.ICON_INFORMATION);
+				}
+			});
+			return image[0];
 		}
 		
 		Entry entry = getEntry(key);
@@ -133,7 +152,8 @@ public class ImageRegistry {
 	 * Shut downs this resource registry and disposes of all registered images.
 	 */
 	void handleDisplayDispose() {
-
+		// remove reference to display
+		display = null;
 		//Do not bother if the table was never used
 		if (table == null)
 			return;
