@@ -202,7 +202,6 @@ public class PlatformActivator implements BundleActivator, ServiceListener {
 				}
 				break;
 			case ServiceEvent.UNREGISTERING :
-				System.out.println("Service Unregistering:");
 				servicesInterfaces = (String[]) reference.getProperty(Constants.OBJECTCLASS);
 				for (int i = 0; i < servicesInterfaces.length; i++) {
 					if (servicesInterfaces[i].equals(EnvironmentInfo.class.getName()))
