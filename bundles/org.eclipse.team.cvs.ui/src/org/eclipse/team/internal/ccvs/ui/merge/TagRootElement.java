@@ -95,4 +95,12 @@ public class TagRootElement implements IWorkbenchAdapter, IAdaptable {
 	public Object getParent(Object o) {
 		return null;
 	}
+	/**
+	 * Gets the typeOfTagRoot.
+	 * @return Returns a int
+	 */
+	public int getTypeOfTagRoot() {
+		return typeOfTagRoot;
+	}
+
 }

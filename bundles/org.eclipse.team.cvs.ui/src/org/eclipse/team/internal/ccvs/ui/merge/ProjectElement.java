@@ -9,7 +9,8 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -25,7 +26,36 @@ public class ProjectElement implements IAdaptable, IWorkbenchAdapter {
 	public static final int INCLUDE_BRANCHES = 4;
 	public static final int INCLUDE_VERSIONS = 8;
 	public static final int INCLUDE_ALL_TAGS = INCLUDE_HEAD_TAG | INCLUDE_BASE_TAG | INCLUDE_BRANCHES | INCLUDE_VERSIONS;
-	
+
+	public static class ProjectElementSorter extends ViewerSorter {
+		public boolean isOfInterest(Object o) {
+			return (o instanceof TagRootElement) || (o instanceof TagElement);
+		}
+		public int compare(Viewer viewer, Object e1, Object e2) {
+			boolean oneIsOfInterest = isOfInterest(e1);
+			boolean twoIsOfInterest = isOfInterest(e2);
+			if (oneIsOfInterest != twoIsOfInterest) {
+				return oneIsOfInterest ? -1 : 1;
+			}
+			if (!oneIsOfInterest) {
+				return super.compare(viewer, e1, e2);
+			}
+			// Tag elements can occur under branches and versions as well as HEAD and BASE
+			if (e1 instanceof TagElement) {
+				if (((TagElement)e1).getTag() == CVSTag.DEFAULT) return -1;
+				if (((TagElement)e1).getTag() == CVSTag.BASE) return 1;
+			}
+			if (e2 instanceof TagElement) {
+				if (((TagElement)e2).getTag() == CVSTag.DEFAULT) return 1;
+				if (((TagElement)e2).getTag() == CVSTag.BASE) return -1;
+			}
+			if (e1 instanceof TagRootElement && e2 instanceof TagRootElement) {
+				return ((TagRootElement)e1).getTypeOfTagRoot() == CVSTag.BRANCH ? -1 : 1;
+			}
+			return super.compare(viewer, e1, e2);
+		}
+	}
+		
 	public ProjectElement(ICVSFolder project, int includeFlags) {
 		this.project = project;
 		this.includeFlags = includeFlags;

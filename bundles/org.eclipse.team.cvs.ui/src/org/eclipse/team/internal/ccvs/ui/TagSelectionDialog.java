@@ -31,6 +31,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement;
 import org.eclipse.team.internal.ccvs.ui.merge.TagElement;
+import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement.ProjectElementSorter;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -160,6 +161,7 @@ public class TagSelectionDialog extends Dialog {
 		
 		tagTree = createTree(inner);
 		tagTree.setInput(new ProjectElement(folders[0], includeFlags));
+		tagTree.setSorter(new ProjectElementSorter());
 		Runnable refresh = new Runnable() {
 			public void run() {
 				getShell().getDisplay().syncExec(new Runnable() {
