@@ -70,7 +70,7 @@ M4 = Platform-specific fourth key
           point="org.eclipse.ui.console.consoleFactories">
        <consoleFactory
              label="%consoleViewConsoleFactory.name"
-             class="org.eclipse.ui.console.actions.ConsoleViewConsoleFactory"/>
+             class="org.eclipse.ui.internal.console.ConsoleViewConsoleFactory"/>
     </extension>
 
 </plugin>

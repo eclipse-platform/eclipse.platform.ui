@@ -6,11 +6,9 @@
          <meta.schema plugin="org.eclipse.ui.console" id="consoleFactories" name="Console Factories"/>
       </appInfo>
       <documentation>
-         An action to open a console in the console view.
+         A console factory creates or activates a console, and appears as action in the console view.
       </documentation>
    </annotation>
-
-   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
 
    <element name="extension">
       <complexType>
@@ -112,7 +110,7 @@ This extension will cause an entry to appear in the console view&apos;s &lt;b&gt
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         None.
+         The console plug-in provides a console factory to open a new console view.
       </documentation>
    </annotation>
 

@@ -80,7 +80,7 @@ public interface IConsoleManager {
 	public void warnOfContentChange(IConsole console);
 	
 	/**
-	 * Returns a collection of pattern match listeners which are enabled for
+	 * Creates and returns a collection of new pattern match listeners enabled for
 	 * the given console. The pattern match listeners are new instances, intended
 	 * to be used in a new console. No methods on the participants have been
 	 * called. Clients are responsible for connecting to and disconnecting from
@@ -90,6 +90,6 @@ public interface IConsoleManager {
 	 * @return a collection of new pattern match listeners
 	 * @since 3.1
 	 */
-	public IPatternMatchListener[] getPatternMatchListeners(IConsole console);
+	public IPatternMatchListener[] createPatternMatchListeners(IConsole console);
 	
 }

@@ -170,7 +170,7 @@ public class ConsoleManager implements IConsoleManager {
 		    IConsole console = consoles[i];
 		    if(console instanceof TextConsole) {
 		        TextConsole ioconsole = (TextConsole)console;
-		        IPatternMatchListener[] matchListeners = getPatternMatchListeners(ioconsole);
+		        IPatternMatchListener[] matchListeners = createPatternMatchListeners(ioconsole);
 		        for (int j = 0; j < matchListeners.length; j++) {
 		            ioconsole.addPatternMatchListener(matchListeners[j]);
 		        }
@@ -315,7 +315,7 @@ public class ConsoleManager implements IConsoleManager {
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IConsoleManager#getPatternMatchListenerDelegates(org.eclipse.ui.console.IConsole)
      */
-    public IPatternMatchListener[] getPatternMatchListeners(IConsole console) {
+    public IPatternMatchListener[] createPatternMatchListeners(IConsole console) {
     		if (fPatternMatchListeners == null) {
     		    fPatternMatchListeners = new ArrayList();
     			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.EXTENSION_POINT_CONSOLE_PATTERN_MATCH_LISTENERS);
