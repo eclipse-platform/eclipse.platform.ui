@@ -1,9 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.Image;
@@ -77,7 +83,8 @@ public class MessageDialog extends IconAndMessageDialog {
 	private Image image = null;
 	
 	/**
-	 * The custom dialog area.	 */
+	 * The custom dialog area.
+	 */
 	private Control customArea;
 /**
  * Create a message dialog.
@@ -352,7 +359,9 @@ protected Button createButton(Composite parent,int id,String label,boolean defau
  * we take focus for the default button or if that should be 
  * determined by the dialog.
  * By default only return true if the custom area is a label
- * or CLabel that cannot take focus. * @return boolean */
+ * or CLabel that cannot take focus.
+ * @return boolean
+ */
 protected boolean customShouldTakeFocus() {
 	if(customArea instanceof Label) 
 		return false;
