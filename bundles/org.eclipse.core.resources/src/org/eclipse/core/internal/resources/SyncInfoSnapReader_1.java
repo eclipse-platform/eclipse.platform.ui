@@ -39,10 +39,8 @@ private HashMap internalReadSyncInfo(DataInputStream input) throws IOException {
  * RESOURCE -> RESOURCE_PATH SIZE SYNCINFO*
  * RESOURCE_PATH -> String
  * SIZE -> int
- * SYNCINFO -> TYPE BYTES
- * TYPE -> INDEX | QNAME
- * INDEX -> byte int
- * QNAME -> byte String
+ * SYNCINFO -> QNAME BYTES
+ * QNAME -> String String
  * BYTES -> byte[]
  */
 public void readSyncInfo(DataInputStream input) throws IOException {

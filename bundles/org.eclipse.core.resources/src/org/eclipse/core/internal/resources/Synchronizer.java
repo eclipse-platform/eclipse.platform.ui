@@ -146,7 +146,7 @@ protected void restoreFromSave(IResource resource) throws CoreException {
 	}
 }
 protected void restoreFromSnap(IResource resource) {
-	IPath sourceLocation = workspace.getMetaArea().getSyncInfoLocationFor(resource);
+	IPath sourceLocation = workspace.getMetaArea().getSyncInfoSnapshotLocationFor(resource);
 	try {
 		DataInputStream input = new DataInputStream(new SafeChunkyInputStream(sourceLocation.toOSString()));
 		try {
