@@ -525,8 +525,11 @@ protected void disposePresentation() {
 }
 
 protected void drawGradient(Color fgColor, Color[] bgColors, int[] bgPercents) {
-	tabFolder.setSelectionForeground(fgColor);
-	tabFolder.setSelectionBackground(bgColors, bgPercents);
+	//tabFolder.setSelectionForeground(fgColor);
+	if(bgPercents == null)
+		tabFolder.setSelectionBackground(bgColors[0]);
+	else
+		tabFolder.setSelectionBackground(bgColors, bgPercents);
 	tabFolder.update();
 }
 

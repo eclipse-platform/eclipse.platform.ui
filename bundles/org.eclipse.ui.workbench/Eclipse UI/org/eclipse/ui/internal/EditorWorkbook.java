@@ -215,31 +215,32 @@ protected void doZoom() {
  */
 public void drawGradient() {
 	Color fgColor;
-	Color[] bgColors;
-	int[] bgPercents;
+	Color[] bgColors = new Color[1];
+	int[] bgPercents = null;
 	
 	switch (activeState) {
 		case ACTIVE_FOCUS :
 			if (getShellActivated()) {
 				fgColor = WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_FOREGROUND);
-				bgColors = WorkbenchColors.getActiveEditorGradient();
-				bgPercents = WorkbenchColors.getActiveEditorGradientPercents();
+				bgColors[0] = getControl().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+//				WorkbenchColors.getActiveEditorGradient();
+//				bgPercents = WorkbenchColors.getActiveEditorGradientPercents();
 			}
 			else {
 				fgColor = WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
-				bgColors = WorkbenchColors.getDeactivatedEditorGradient();
-				bgPercents = WorkbenchColors.getDeactivatedEditorGradientPercents();
+				bgColors[0] = getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION);
+//				bgPercents = WorkbenchColors.getDeactivatedEditorGradientPercents();
 			}
 			break;
 		case ACTIVE_NOFOCUS :
 			fgColor = WorkbenchColors.getSystemColor(SWT.COLOR_LIST_FOREGROUND);
-			bgColors = WorkbenchColors.getActiveNoFocusEditorGradient();
-			bgPercents = WorkbenchColors.getActiveNoFocusEditorGradientPercents();
+			bgColors[0] = getControl().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+
 			break;
 		case INACTIVE :
 		default :
 			fgColor = null;
-			bgColors = null;
+			bgColors[0] = null;
 			bgPercents = null;
 			break;
 	}

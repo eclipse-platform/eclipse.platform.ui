@@ -117,6 +117,7 @@ public class IDEWorkbenchWindow extends WorkbenchWindow {
 		clientAreaData.right = new FormAttachment(100);
 
 		getClientComposite().setLayoutData(clientAreaData);
+		
 
 	}
 
@@ -144,6 +145,13 @@ public class IDEWorkbenchWindow extends WorkbenchWindow {
 	 */
 	protected int shortCutBarStyle() {
 		return SWT.FLAT | SWT.WRAP | SWT.HORIZONTAL | SWT.RIGHT;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.ApplicationWindow#showTopSeperator()
+	 */
+	protected boolean showTopSeperator() {
+		return false;
 	}
 
 }

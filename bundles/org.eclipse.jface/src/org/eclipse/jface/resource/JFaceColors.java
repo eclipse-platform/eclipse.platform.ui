@@ -31,6 +31,8 @@ public class JFaceColors {
 	//as system colors do not need to be disposed.
 	private static ArrayList allocatedColors = new ArrayList();
 
+	public static int STATUS_PERCENT = 100;
+	
 	/**
 	 * Get the Color used for banner backgrounds
 	 */

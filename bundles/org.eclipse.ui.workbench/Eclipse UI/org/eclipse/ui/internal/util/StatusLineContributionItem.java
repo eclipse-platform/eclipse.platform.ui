@@ -14,8 +14,11 @@ package org.eclipse.ui.internal.util;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.StatusLineLayoutData;
+import org.eclipse.jface.resource.JFaceColors;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Composite;
 
@@ -42,8 +45,14 @@ public class StatusLineContributionItem extends ContributionItem {
 	}
 
 	public void fill(Composite parent) {	
-		label = new CLabel(parent, SWT.SHADOW_IN);
+		label = new CLabel(parent, SWT.NONE);//SWT.SHADOW_IN);
 		StatusLineLayoutData statusLineLayoutData = new StatusLineLayoutData();
+		Color[] colors = new Color[2];
+		colors[0] = parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
+		colors[1] = label.getBackground();
+		int[] gradient = new int[] {JFaceColors.STATUS_PERCENT};
+		label.setBackground(colors, gradient);
+		label.setBackground(colors, gradient);
 		
 		if (widthHint < 0) {
 			GC gc = new GC(parent);

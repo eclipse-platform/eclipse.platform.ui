@@ -260,7 +260,7 @@ protected void configureShell(Shell shell) {
 	// we need a special layout
 	shell.setLayout(new ApplicationWindowLayout());
 
-	if (! "carbon".equals(SWT.getPlatform())) //$NON-NLS-1$
+	if (showTopSeperator()) 
 		 seperator1 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
 
 	createToolBarControl(shell);
@@ -269,6 +269,15 @@ protected void configureShell(Shell shell) {
 		statusLineManager.createControl(shell);
 	}
 }
+
+/**
+ * Return whether or not the top seperator is being shown.
+ * @return boolean
+ */
+protected boolean showTopSeperator() {
+	return ! "carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
+}
+
 /**
  * Returns a new menu manager for the window.
  * <p>
