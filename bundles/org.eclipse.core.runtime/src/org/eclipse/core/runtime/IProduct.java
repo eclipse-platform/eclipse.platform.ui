@@ -77,7 +77,7 @@ public interface IProduct {
 	 * Typically this is used as a base for searching for images and other files 
 	 * that are needed in presenting the product.
 	 * 
-	 * @return Bundle the bundle which defines this product or <code>null</code> if none
+	 * @return the bundle which defines this product or <code>null</code> if none
 	 */
 	public Bundle getDefiningBundle();
 }
