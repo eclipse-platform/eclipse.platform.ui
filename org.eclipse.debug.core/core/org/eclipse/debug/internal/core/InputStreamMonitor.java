@@ -107,10 +107,8 @@ public class InputStreamMonitor {
 			String text = (String)fQueue.firstElement();
 			fQueue.removeElementAt(0);
 			try {
-				if (fStream != null) {
-					fStream.write(text.getBytes());
-					fStream.flush();
-				}
+				fStream.write(text.getBytes());
+				fStream.flush();
 			} catch (IOException e) {
 				DebugPlugin.log(e);
 			}
