@@ -84,7 +84,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 			if (revisionName != null) {
 				IResource resource = CVSCompareRevisionsInput.this.resource;
 				try {
-					ICVSRemoteFile currentEdition = ((ICVSRemoteFile)provider.getRemoteResource(resource));
+					ICVSRemoteFile currentEdition = (ICVSRemoteFile)provider.getRemoteResource(resource);
 					if (currentEdition != null && currentEdition.getRevision().equals(revisionName)) {
 						return "*" + revisionName;
 					} else {
