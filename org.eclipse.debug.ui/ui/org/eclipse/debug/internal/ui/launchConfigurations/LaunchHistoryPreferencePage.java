@@ -206,10 +206,9 @@ public class LaunchHistoryPreferencePage
 	protected Vector convertToHisotryElements(List configs, String mode) {
 		Vector  v = new Vector(configs.size());
 		Iterator iter = configs.iterator();
-		ILabelProvider lp = DebugUIPlugin.getDefaultLabelProvider();
 		while (iter.hasNext()) {
 			ILaunchConfiguration config = (ILaunchConfiguration)iter.next();
-			LaunchConfigurationHistoryElement hist = new LaunchConfigurationHistoryElement(config, mode, lp.getText(config));
+			LaunchConfigurationHistoryElement hist = new LaunchConfigurationHistoryElement(config, mode);
 			v.add(hist);
 		}
 		return v;

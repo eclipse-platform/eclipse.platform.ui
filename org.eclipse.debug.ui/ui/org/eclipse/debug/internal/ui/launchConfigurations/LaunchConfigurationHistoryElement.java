@@ -15,25 +15,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 /**
  * A wrapper for entries in a launch history list.  
  */
-public class LaunchConfigurationHistoryElement {
-
-	// TXN
-	/**
-	 * Flag indicating whether this is 'new' style ILaunchConfiguration based history element.
-	 */
-	private boolean fConfigurationBased;
-	
-	/**
-	 * The identifier of the launcher used.
-	 */
-	protected String fLauncherIdentifier= null;
-	
-	/**
-	 * The memento of the launched element.
-	 */
-	protected String fMemento= null;
-	// End of TXN
-	
+public class LaunchConfigurationHistoryElement {	
 	/**
 	 * The launch configuration
 	 */
@@ -44,45 +26,11 @@ public class LaunchConfigurationHistoryElement {
 	 */
 	private String fMode;
 	
-	/**
-	 * The label for the launch
-	 */
-	private String fLabel;
-
 	public LaunchConfigurationHistoryElement(ILaunchConfiguration launchConfiguration, 
-											  String mode,
-											  String label) {
-		fConfigurationBased = true;
+											  String mode) {
 		setLaunchConfiguration(launchConfiguration);
 		setMode(mode);
-		setLabel(label);
 	}
-
-	// TXN
-	public LaunchConfigurationHistoryElement(String launcherId, String elementMemento, String mode, String label) {
-		fConfigurationBased = false;
-		fLauncherIdentifier = launcherId;
-		fMemento = elementMemento;
-		setMode(mode);
-		setLabel(label);
-	}
-	
-	/**
-	 * Returns the identifier of the launcher that was
-	 * invoked.
-	 */
-	public String getLauncherIdentifier() {
-		return fLauncherIdentifier;
-	}
-	
-	/**
-	 * Returns the memento of the element that was
-	 * launched.
-	 */
-	public String getElementMemento() {
-		return fMemento;
-	}
-	// End of TXN
 	
 	/**
 	 * Sets the launch configuration for this history element
@@ -111,19 +59,12 @@ public class LaunchConfigurationHistoryElement {
 	public String getMode() {
 		return fMode;
 	}
-	
-	/**
-	 * Sets the label for this history element
-	 */
-	private void setLabel(String label) {
-		fLabel = label;
-	}
-	
+		
 	/**
 	 * Returns the label for this history element
 	 */
 	public String getLabel() {
-		return fLabel;
+		return DebugUIPlugin.getDefaultLabelProvider().getText(getLaunchConfiguration());
 	}
 	
 	/**
@@ -154,7 +95,8 @@ public class LaunchConfigurationHistoryElement {
 	public boolean equals(Object o) {
 		if (o instanceof LaunchConfigurationHistoryElement) {
 			LaunchConfigurationHistoryElement e= (LaunchConfigurationHistoryElement)o;
-			return getLaunchConfiguration().equals(e.getLaunchConfiguration());
+			return getLaunchConfiguration().equals(e.getLaunchConfiguration()) &&
+			getMode().equals(e.getMode());
 		}
 		return false;
 	}
@@ -166,12 +108,4 @@ public class LaunchConfigurationHistoryElement {
 		return getLaunchConfiguration().hashCode();
 	}
 		
-	
-	/**
-	 * Return whether this history element is based on a launch configuration.  
-	 */
-	public boolean isConfigurationBased() {
-		return fConfigurationBased;
-	}
-
 }

@@ -171,7 +171,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	private static final String HISTORY_LAST_LAUNCH_NODE = "lastLaunch"; //$NON-NLS-1$
 	private static final String HISTORY_MEMENTO_ATT = "memento"; //$NON-NLS-1$
 	private static final String HISTORY_MODE_ATT = "mode"; //$NON-NLS-1$
-	private static final String HISTORY_LABEL_ATT = "label"; //$NON-NLS-1$
 	
 	/**
 	 * Returns whether the debug UI plug-in is in trace
@@ -774,8 +773,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 		}
 		
 		// Create a new history item
-		String label = getModelPresentation().getText(launch);
-		LaunchConfigurationHistoryElement item= new LaunchConfigurationHistoryElement(launchConfig, mode, label);
+		LaunchConfigurationHistoryElement item= new LaunchConfigurationHistoryElement(launchConfig, mode);
 		
 		// Update the most recent launch field
 		if (launch.getLaunchMode().equals(mode)) {
@@ -840,7 +838,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	 */
 	public void addDebugFavorite(ILaunchConfiguration config) {
 		if (!isDebugFavorite(config)) {
-			LaunchConfigurationHistoryElement hist = new LaunchConfigurationHistoryElement(config, ILaunchManager.DEBUG_MODE, getModelPresentation().getText(config));
+			LaunchConfigurationHistoryElement hist = new LaunchConfigurationHistoryElement(config, ILaunchManager.DEBUG_MODE);
 			fDebugFavorites.add(hist);
 		}
 	}	
@@ -853,7 +851,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	 */
 	public void addRunFavorite(ILaunchConfiguration config) {
 		if (!isRunFavorite(config)) {
-			LaunchConfigurationHistoryElement hist = new LaunchConfigurationHistoryElement(config, ILaunchManager.RUN_MODE, getModelPresentation().getText(config));
+			LaunchConfigurationHistoryElement hist = new LaunchConfigurationHistoryElement(config, ILaunchManager.RUN_MODE);
 			fRunFavorites.add(hist);
 		}
 	}	
@@ -1002,8 +1000,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 		}
 		String memento = config.getMemento();
 		entry.setAttribute(HISTORY_MEMENTO_ATT, memento); 
-		entry.setAttribute(HISTORY_MODE_ATT, element.getMode());		
-		entry.setAttribute(HISTORY_LABEL_ATT, element.getLabel());		 
+		entry.setAttribute(HISTORY_MODE_ATT, element.getMode());			 
 	}
 			
 	protected IPath getHistoryFilePath() {
@@ -1105,25 +1102,16 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	protected LaunchConfigurationHistoryElement createNewHistoryElement(Element entry) {
 		String memento = entry.getAttribute(HISTORY_MEMENTO_ATT); 
 		String mode = entry.getAttribute(HISTORY_MODE_ATT);       
-		String label = entry.getAttribute(HISTORY_LABEL_ATT);
 		LaunchConfigurationHistoryElement hist = null;
 		try {
 			ILaunchConfiguration launchConfig = getLaunchManager().getLaunchConfiguration(memento);
 			if (launchConfig.exists()) {
-				hist = new LaunchConfigurationHistoryElement(launchConfig, mode, label);
+				hist = new LaunchConfigurationHistoryElement(launchConfig, mode);
 			}
 		} catch (CoreException e) {
 			DebugUIPlugin.log(e);
 		}	
 		return hist;
-	}
-	
-	protected LaunchConfigurationHistoryElement createOldHistoryElement(Element entry) {
-		String launcherId = entry.getAttribute("launcherId"); //$NON-NLS-1$
-		String memento = entry.getAttribute("elementMemento"); //$NON-NLS-1$
-		String mode = entry.getAttribute(HISTORY_MODE_ATT); 
-		String label = entry.getAttribute(HISTORY_LABEL_ATT); 
-		return new LaunchConfigurationHistoryElement(launcherId, memento, mode, label);		
 	}
 				
 	/**
