@@ -78,6 +78,18 @@ public interface IWorkbenchPreferences {
 	public static String SHOULD_SHOW_STATUS_LINE = "wb.show.status.line"; //$NON-NLS-1$
 
 	/**
+	 * Workbench preference id for whether the workbench should show multiple 
+	 * editor tabs. 
+	 * 
+	 * Boolean-valued: <code>true</code> if editors should show mulitple editor tabs, and 
+	 * <code>false</code> if editors should show a single editor tab (3.0 style)
+	 * <p>
+	 * The default value for this preference is: <code>false</code> (show single editor tab)
+	 * </p>
+	 */
+	public static String SHOW_MULTIPLE_EDITOR_TABS = "wb.show.multiple.editor.tabs"; //$NON-NLS-1$	
+	
+	/**
 	 * Workbench preference id for whether the workbench should attempt to close
 	 * all open editors when the workbench closes. 
 	 * Boolean-valued: <code>true</code> if editors should be closed, and 
