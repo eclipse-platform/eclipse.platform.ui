@@ -9,6 +9,8 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.apache.tools.ant.*;
 import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -25,6 +27,22 @@ import java.util.*;
  */
 
 public class EclipseProject extends Project {
+
+	/** Indicates the default string encoding on this platform */
+	private static String defaultEncoding = new java.io.InputStreamReader(new java.io.ByteArrayInputStream(new byte[0])).getEncoding();
+
+	/** instance of this library */
+	private static final String LIBRARY_NAME = "core203";
+	private static boolean hasNatives = false;
+	
+	static {
+		try {
+			System.loadLibrary(LIBRARY_NAME);
+			hasNatives = true;
+		} catch (UnsatisfiedLinkError e) {
+			logMissingNativeLibrary(e);
+		}
+	}
 
 /**
  * Creates a new project for use in running Ant inside the Eclipse Platform.
@@ -240,5 +258,51 @@ public void executeTarget(String targetName) throws BuildException {
         throw exc;
     }
 }
-
+/**
+ * @see Project#copyFile(File, File, boolean, boolean, boolean)
+ */
+public void copyFile(File sourceFile, File destFile, boolean filtering, boolean overwrite, boolean preserveLastModified) throws IOException {
+	if (hasNatives) {
+		super.copyFile(sourceFile, destFile, filtering, overwrite, false);
+		internalCopyAttributes(toPlatformBytes(sourceFile.getAbsolutePath()), toPlatformBytes(destFile.getAbsolutePath()), preserveLastModified);
+	} else {
+		super.copyFile(sourceFile, destFile, filtering, overwrite, preserveLastModified);
+	}
+}
+/**
+ * Copies file attributes from source to destination. The copyLastModified attribute
+ * indicates whether the lastModified attribute should be copied.
+ */
+public static boolean copyAttributes(String source, String destination, boolean copyLastModified) {
+	if (hasNatives)
+		return internalCopyAttributes(toPlatformBytes(source), toPlatformBytes(destination), false);
+	return false; // not supported
+}
+private static void logMissingNativeLibrary(UnsatisfiedLinkError e) {
+	String libName = System.mapLibraryName(LIBRARY_NAME);
+	String message = Policy.bind("localstore.couldNotLoadLibrary", libName);
+	IStatus status = new Status(IStatus.INFO, AntPlugin.PI_ANT, IStatus.INFO, message, e);
+	AntPlugin.getPlugin().getLog().log(status);
+}
+/**
+ * Copies file attributes from source to destination. The copyLastModified attribute
+ * indicates whether the lastModified attribute should be copied.
+ */
+private static final native boolean internalCopyAttributes(byte[] source, byte[] destination, boolean copyLastModified);
+/**
+ * Calling String.getBytes() creates a new encoding object and other garbage.
+ * This can be avoided by calling String.getBytes(String encoding) instead.
+ */
+public static byte[] toPlatformBytes(String target) {
+	if (defaultEncoding == null)
+		return target.getBytes();
+	// try to use the default encoding
+	try {
+		return target.getBytes(defaultEncoding);
+	} catch (UnsupportedEncodingException e) {
+		// null the default encoding so we don't try it again
+		defaultEncoding = null;
+		return target.getBytes();
+	}
+}
 }
