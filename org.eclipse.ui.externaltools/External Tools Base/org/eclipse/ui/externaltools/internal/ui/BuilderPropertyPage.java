@@ -923,6 +923,14 @@ public final class BuilderPropertyPage extends PropertyPage {
 				handleException(e);
 			}
 		}
+		try {
+			if (getBuilderFolder().members().length == 0) {
+				// All files in the builder folder were newly created. Clean up
+				getBuilderFolder().delete(true, false, null);
+			}
+		} catch (CoreException e) {
+			handleException(e);
+		}
 		return super.performCancel();
 	}
 
