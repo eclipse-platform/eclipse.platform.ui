@@ -54,13 +54,13 @@ abstract public class AbstractReconciler implements IReconciler {
 	 */
 	class BackgroundThread extends Thread {
 		
-		/** Has the reconciler been canceled */
-		private boolean fCanceled= false;
-		/** Has the reconciler been reset */
+		/** Has the reconciler been cancelled. */
+		private boolean fCancelled= false;
+		/** Has the reconciler been reset. */
 		private boolean fReset= false;
-		/** Has a change been applied */
+		/** Some changes need to be processed. */
 		private boolean fIsDirty= false;
-		/** Is a reconciling strategy active */
+		/** Is a reconciling strategy active. */
 		private boolean fIsActive= false;
 		
 		/**
@@ -85,10 +85,19 @@ abstract public class AbstractReconciler implements IReconciler {
 		}
 		
 		/**
+		 * Returns whether some changes need to be processed.
+		 * 
+		 * @return <code>true</code> if changes wait to be processed
+		 */
+		public synchronized boolean isDirty() {
+			return fIsDirty;
+		}
+		
+		/**
 		 * Cancels the background thread.
 		 */
 		public void cancel() {
-			fCanceled= true;
+			fCancelled= true;
 			synchronized (fDirtyRegionQueue) {
 				fDirtyRegionQueue.notifyAll();
 			}
@@ -99,16 +108,18 @@ abstract public class AbstractReconciler implements IReconciler {
 		 * emptied the dirty region queue.
 		 */
 		public void suspendCallerWhileDirty() {
-			while (fIsDirty) {
+			boolean isDirty;
+			do {
 				synchronized (fDirtyRegionQueue) {
-					if (fIsDirty) {
+					isDirty= fDirtyRegionQueue.getSize() > 0;
+					if (isDirty) {
 						try {
 							fDirtyRegionQueue.wait();
 						} catch (InterruptedException x) {
 						}
 					}
 				}
-			}
+			} while (isDirty);
 		}
 		
 		/**
@@ -154,7 +165,7 @@ abstract public class AbstractReconciler implements IReconciler {
 			
 			initialProcess();
 			
-			while (!fCanceled) {
+			while (!fCancelled) {
 				
 				synchronized (fDirtyRegionQueue) {
 					try {
@@ -163,17 +174,17 @@ abstract public class AbstractReconciler implements IReconciler {
 					}
 				}
 					
-				if (fCanceled)
+				if (fCancelled)
 					break;
 					
-				if (!fIsDirty)
+				if (!isDirty())
 					continue;
 					
-				if (fReset) {
-					synchronized (this) {
+				synchronized (this) {
+					if (fReset) {
 						fReset= false;
+						continue;
 					}
-					continue;
 				}
 				
 				DirtyRegion r= null;
@@ -218,7 +229,7 @@ abstract public class AbstractReconciler implements IReconciler {
 		 */
 		public void documentChanged(DocumentEvent e) {
 			
-			if (!fThread.fIsDirty)
+			if (!fThread.isDirty())
 				aboutToBeReconciled();
 			
 			if (fProgressMonitor != null && fThread.isActive())
@@ -247,6 +258,7 @@ abstract public class AbstractReconciler implements IReconciler {
 					if (fDocument != null && fDocument.getLength() > 0) {
 						DocumentEvent e= new DocumentEvent(fDocument, 0, fDocument.getLength(), null);
 						createDirtyRegion(e);
+						fThread.reset();
 						fThread.suspendCallerWhileDirty();
 					}
 				}
@@ -269,7 +281,7 @@ abstract public class AbstractReconciler implements IReconciler {
 				
 			fDocument.addDocumentListener(this);
 			
-			if (!fThread.fIsDirty)
+			if (!fThread.isDirty())
 				aboutToBeReconciled();
 
 			if (fIsIncrementalReconciler) {
@@ -332,7 +344,7 @@ abstract public class AbstractReconciler implements IReconciler {
 	 * Tells the reconciler how long it should wait for further text changes before
 	 * activating the appropriate reconciling strategies.
 	 *
-	 * @param delay the duration in milli seconds of a change collection period.
+	 * @param delay the duration in milliseconds of a change collection period.
 	 */
 	public void setDelay(int delay) {
 		fDelay= delay;
