@@ -24,6 +24,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.MultiRule;
 
 public abstract class Resource extends PlatformObject implements IResource, ICoreConstants, Cloneable {
 	/* package */ IPath path;
@@ -401,8 +402,8 @@ protected IStatus checkMoveRequirements(IPath destination, int destinationType, 
  *
  * @exception CoreException if the path is not valid
  */
-public void checkValidPath(IPath path, int type, boolean lastSegmentOnly) throws CoreException {
-	IStatus result = workspace.validatePath(path, type, lastSegmentOnly);
+public void checkValidPath(IPath toValidate, int type, boolean lastSegmentOnly) throws CoreException {
+	IStatus result = workspace.validatePath(toValidate, type, lastSegmentOnly);
 	if (!result.isOK())
 		throw new ResourceException(result);
 }
@@ -422,6 +423,14 @@ public boolean contains(ISchedulingRule rule) {
 	//must allow notifications to nest in all resource rules
 	if (rule.getClass().equals(WorkManager.NotifyRule.class))
 		return true;
+	if (rule instanceof MultiRule) {
+		MultiRule multi = (MultiRule)rule;
+		ISchedulingRule[] children = multi.getChildren();
+		for (int i = 0; i < children.length; i++)
+			if (!contains(children[i]))
+				return false;
+		return true;
+	}
 	if (!(rule instanceof IResource))
 		return false;
 	return path.isPrefixOf(((IResource)rule).getFullPath());
@@ -444,8 +453,6 @@ public void convertToPhantom() throws CoreException {
  * @see IResource#copy
  */
 public void copy(IProjectDescription destDesc, int updateFlags, IProgressMonitor monitor) throws CoreException {
-	// FIXME - funnel through a central method
-	// FIXME - ensure source is a project
 	Assert.isNotNull(destDesc);
 	monitor = Policy.monitorFor(monitor);
 	try {
@@ -503,20 +510,23 @@ public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) t
 		monitor = Policy.monitorFor(monitor);
 		String message = Policy.bind("resources.copying", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
+		Policy.checkCanceled(monitor);
+		destination = makePathAbsolute(destination);
+		checkValidPath(destination, getType(), false);
+		Resource destResource = workspace.newResource(destination, getType());
+		final ISchedulingRule rule = Rules.copyRule(this, destResource);
 		try {
-			workspace.prepareOperation(workspace.getRoot(), monitor);
+			workspace.prepareOperation(rule, monitor);
 			// The following assert method throws CoreExceptions as stated in the IResource.copy API
 			// and assert for programming errors. See checkCopyRequirements for more information.
-			Policy.checkCanceled(monitor);
 			assertCopyRequirements(destination, getType(), updateFlags);
 			workspace.beginOperation(true);
-			Resource destResource = workspace.newResource(makePathAbsolute(destination), getType());
 			getLocalManager().copy(this, destResource, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork));
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(workspace.getRoot(), true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();
@@ -619,7 +629,7 @@ public void delete(int updateFlags, IProgressMonitor monitor) throws CoreExcepti
 	try {
 		String message = Policy.bind("resources.deleting", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork * 1000);
-		ISchedulingRule rule = getType() == ROOT ? (ISchedulingRule)this : getParent();
+		final ISchedulingRule rule = Rules.deleteRule(this);
 		try {
 			workspace.prepareOperation(rule, monitor);
 			// if there is no resource then there is nothing to delete so just return
@@ -1082,37 +1092,40 @@ public void move(IPath destination, boolean force, boolean keepHistory, IProgres
 /**
  * @see IResource#move
  */
-public void move(IPath path, int updateFlags, IProgressMonitor monitor) throws CoreException {
+public void move(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
 		String message = Policy.bind("resources.moving", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
+		destination = makePathAbsolute(destination);
+		checkValidPath(destination, getType(), false);
+		Resource destResource = workspace.newResource(destination, getType());
+		final ISchedulingRule rule = Rules.moveRule(this, destResource);
 		try {
-			workspace.prepareOperation(workspace.getRoot(), monitor);
+			workspace.prepareOperation(rule, monitor);
 			// The following assert method throws CoreExceptions as stated in the IResource.move API
 			// and assert for programming errors. See checkMoveRequirements for more information.
-			assertMoveRequirements(path, getType(), updateFlags);
-			path = makePathAbsolute(path);
+			assertMoveRequirements(destination, getType(), updateFlags);
 			workspace.beginOperation(true);
 			IPath originalLocation = getLocation();
 			message = Policy.bind("resources.moveProblem"); //$NON-NLS-1$
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
 			WorkManager workManager = workspace.getWorkManager();
 			ResourceTree tree = new ResourceTree(workManager.getLock(), status, updateFlags);
-			IResource destination = null;
+			boolean success = false;
 			int depth = 0;
 			try {
 				depth = workManager.beginUnprotected();
-				destination = unprotectedMove(tree, path, updateFlags, monitor);
+				success = unprotectedMove(tree, destResource, updateFlags, monitor);
 			} finally {
 				workManager.endUnprotected(depth);
 			}
 			// Invalidate the tree for further use by clients.
 			tree.makeInvalid();
 			//update any aliases of this resource and the destination
-			if (destination != null) {
+			if (success) {
 				workspace.getAliasManager().updateAliases(this, originalLocation, IResource.DEPTH_INFINITE, monitor);
-				workspace.getAliasManager().updateAliases(destination, destination.getLocation(), IResource.DEPTH_INFINITE, monitor);
+				workspace.getAliasManager().updateAliases(destResource, destResource.getLocation(), IResource.DEPTH_INFINITE, monitor);
 			}
 			if (!tree.getStatus().isOK())
 				throw new ResourceException(tree.getStatus());
@@ -1120,7 +1133,7 @@ public void move(IPath path, int updateFlags, IProgressMonitor monitor) throws C
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(workspace.getRoot(), true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();
@@ -1423,21 +1436,18 @@ private void unprotectedDelete(ResourceTree tree, int updateFlags, IProgressMoni
 /**
  * Calls the move/delete hook to perform the move.  Since this method calls 
  * client code, it is run "unprotected", so the workspace lock is not held.  
- * Returns the destination resource, or null if the resource was not moved.
+ * Returns true if resources were actually moved, and false otherwise.
  */
-private IResource unprotectedMove(ResourceTree tree, IPath path, int updateFlags, IProgressMonitor monitor) throws CoreException, ResourceException {
+private boolean unprotectedMove(ResourceTree tree, final IResource destination, int updateFlags, IProgressMonitor monitor) throws CoreException, ResourceException {
 	IMoveDeleteHook hook = workspace.getMoveDeleteHook();
-	IResource destination = null;
 	switch (getType()) {
 		case IResource.FILE:
-			destination = workspace.getRoot().getFile(path);
 			if (isLinked())
 				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_MOVE, this, destination, updateFlags));
 			if (!hook.moveFile(tree, (IFile) this, (IFile) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2)))
 				tree.standardMoveFile((IFile) this, (IFile) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2));
 			break;
 		case IResource.FOLDER:
-			destination = workspace.getRoot().getFolder(path);
 			if (isLinked())
 				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_MOVE, this, destination, updateFlags));
 			if (!hook.moveFolder(tree, (IFolder) this, (IFolder) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2)))
@@ -1446,13 +1456,12 @@ private IResource unprotectedMove(ResourceTree tree, IPath path, int updateFlags
 		case IResource.PROJECT:
 			IProject project = (IProject) this;
 			// if there is no change in name, there is nothing to do so return.
-			if (getName().equals(path.lastSegment()))
-				return null;
+			if (getName().equals(destination.getName()))
+				return false;
 			//we are deleting the source project so notify.
-			destination = workspace.getRoot().getProject(path.lastSegment());
 			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_MOVE, this, destination, updateFlags));
 			IProjectDescription description = project.getDescription();
-			description.setName(path.lastSegment());
+			description.setName(destination.getName());
 			if (!hook.moveProject(tree, project, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2)))
 				tree.standardMoveProject(project, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork/2));
 			break;
@@ -1460,6 +1469,6 @@ private IResource unprotectedMove(ResourceTree tree, IPath path, int updateFlags
 			String msg = Policy.bind("resources.moveRoot"); //$NON-NLS-1$
 			throw new ResourceException(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), msg));
 	}
-	return destination;
+	return true;
 }
 }

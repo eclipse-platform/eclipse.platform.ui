@@ -421,16 +421,17 @@ protected void internalCopy(IProjectDescription destDesc, int updateFlags, IProg
 	try {
 		String message = Policy.bind("resources.copying", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
+		String destName = destDesc.getName();
+		IPath destPath = new Path(destName).makeAbsolute();
+		Project destination = (Project) workspace.getRoot().getProject(destName);
+		final ISchedulingRule rule = Rules.copyRule(this, destination);
 		try {
-			workspace.prepareOperation(workspace.getRoot(), monitor);
-			String destName = destDesc.getName();
-			IPath destPath = new Path(destName).makeAbsolute();
+			workspace.prepareOperation(rule, monitor);
 			// The following assert method throws CoreExceptions as stated in the IProject.copy API
 			// and assert for programming errors. See checkCopyRequirements for more information.
 			assertCopyRequirements(destPath, IResource.PROJECT, updateFlags);
-			Project destProject = (Project) workspace.getRoot().getProject(destName);
-			checkDescription(destProject, destDesc, false);
-			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_COPY, this, destProject, updateFlags));
+			checkDescription(destination, destDesc, false);
+			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_COPY, this, destination, updateFlags));
 
 			workspace.beginOperation(true);
 			getLocalManager().refresh(this, DEPTH_INFINITE, true, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
@@ -439,13 +440,13 @@ protected void internalCopy(IProjectDescription destDesc, int updateFlags, IProg
 			getPropertyManager().closePropertyStore(this);
 
 			// copy the meta area for the project
-			copyMetaArea(this, destProject, Policy.subMonitorFor(monitor, Policy.opWork * 5 / 100));
+			copyMetaArea(this, destination, Policy.subMonitorFor(monitor, Policy.opWork * 5 / 100));
 
 			// copy just the project and not its children yet (tree node, properties)
-			internalCopyProjectOnly(destProject, Policy.subMonitorFor(monitor, Policy.opWork * 5 / 100));
+			internalCopyProjectOnly(destination, Policy.subMonitorFor(monitor, Policy.opWork * 5 / 100));
 
 			// set the description
-			destProject.internalSetDescription(destDesc, false);
+			destination.internalSetDescription(destDesc, false);
 
 			// call super.copy for each child (excluding project description file)
 			//make it a best effort copy
@@ -459,7 +460,7 @@ protected void internalCopy(IProjectDescription destDesc, int updateFlags, IProg
 				IResource child = children[i];
 				if (!isProjectDescriptionFile(child)) {
 					try {
-						child.copy(destProject.getFullPath().append(child.getName()), updateFlags, Policy.subMonitorFor(monitor, childWork));
+						child.copy(destPath.append(child.getName()), updateFlags, Policy.subMonitorFor(monitor, childWork));
 					} catch (CoreException e) {
 						problems.merge(e.getStatus());
 					}
@@ -468,10 +469,10 @@ protected void internalCopy(IProjectDescription destDesc, int updateFlags, IProg
 
 			// write out the new project description to the meta area
 			try {
-				destProject.writeDescription(IResource.FORCE);
+				destination.writeDescription(IResource.FORCE);
 			} catch (CoreException e) {
 				try {
-					destProject.delete((updateFlags & IResource.FORCE) != 0, null);
+					destination.delete((updateFlags & IResource.FORCE) != 0, null);
 				} catch (CoreException e2) {
 					// ignore and rethrow the exception that got us here
 				}
@@ -481,14 +482,14 @@ protected void internalCopy(IProjectDescription destDesc, int updateFlags, IProg
 
 			// refresh local
 			monitor.subTask(Policy.bind("resources.updating")); //$NON-NLS-1$
-			getLocalManager().refresh(destProject, DEPTH_INFINITE, true, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
+			getLocalManager().refresh(destination, DEPTH_INFINITE, true, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 			if (!problems.isOK())
 				throw new ResourceException(problems);
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(workspace.getRoot(), true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();
@@ -630,15 +631,16 @@ public void move(IProjectDescription description, int updateFlags, IProgressMoni
 	try {
 		String message = Policy.bind("resources.moving", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
+		IProject destination = workspace.getRoot().getProject(description.getName());
+		final ISchedulingRule rule = Rules.moveRule(this, destination);
 		try {
-			workspace.prepareOperation(workspace.getRoot(), monitor);
+			workspace.prepareOperation(rule, monitor);
 			// The following assert method throws CoreExceptions as stated in the IResource.move API
 			// and assert for programming errors. See checkMoveRequirements for more information.
 			if (!getName().equals(description.getName())) {
-				IPath path = Path.ROOT.append(description.getName());
-				assertMoveRequirements(path, IResource.PROJECT, updateFlags);
+				IPath destPath = Path.ROOT.append(description.getName());
+				assertMoveRequirements(destPath, IResource.PROJECT, updateFlags);
 			}
-			IProject destination = workspace.getRoot().getProject(description.getName());
 			checkDescription(destination, description, true);
 			workspace.beginOperation(true);
 			message = Policy.bind("resources.moveProblem"); //$NON-NLS-1$
@@ -663,7 +665,7 @@ public void move(IProjectDescription description, int updateFlags, IProgressMoni
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(workspace.getRoot(), true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();

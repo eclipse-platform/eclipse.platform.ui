@@ -101,9 +101,8 @@ public void create(InputStream content, int updateFlags, IProgressMonitor monito
 		String message = monitorNull ? "" : Policy.bind("resources.creating", getFullPath().toString()); //$NON-NLS-1$ //$NON-NLS-2$
 		monitor.beginTask(message, Policy.totalWork);
 		checkValidPath(path, FILE, true);
-		ISchedulingRule rule = null;
+		final ISchedulingRule rule = getParent();
 		try {
-			rule = getParent();
 			workspace.prepareOperation(rule, monitor);
 			checkDoesNotExist();
 			Container parent = (Container) getParent();
