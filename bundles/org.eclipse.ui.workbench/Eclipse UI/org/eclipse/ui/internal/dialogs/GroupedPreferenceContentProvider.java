@@ -25,7 +25,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 public class GroupedPreferenceContentProvider extends FilteredPreferenceContentProvider {
 
 	Collection groupedIds;
-	
+
 	WorkbenchPreferenceGroup currentInput;
 
 	/**
@@ -33,21 +33,23 @@ public class GroupedPreferenceContentProvider extends FilteredPreferenceContentP
 	 */
 	public GroupedPreferenceContentProvider() {
 		super();
-		
+
 		groupedIds = new HashSet();
-		WorkbenchPreferenceManager manager =
-			(WorkbenchPreferenceManager) WorkbenchPlugin.getDefault().getPreferenceManager();
-		WorkbenchPreferenceGroup [] groups = manager.groups;
-		
+		WorkbenchPreferenceManager manager = (WorkbenchPreferenceManager) WorkbenchPlugin
+				.getDefault().getPreferenceManager();
+		WorkbenchPreferenceGroup[] groups = manager.groups;
+
 		for (int i = 0; i < groups.length; i++) {
 			WorkbenchPreferenceGroup group = groups[i];
 			groupedIds.addAll(group.getPageIds());
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferenceContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object inputElement) {
+
 		if (inputElement instanceof WorkbenchPreferenceGroup)
 			return ((WorkbenchPreferenceGroup) inputElement).getGroupsAndNodes();
 		return new Object[0];
@@ -60,7 +62,7 @@ public class GroupedPreferenceContentProvider extends FilteredPreferenceContentP
 		if (newInput == null || !(newInput instanceof WorkbenchPreferenceGroup))
 			return;
 		
-		currentInput = (WorkbenchPreferenceGroup) newInput;
+		currentInput = (WorkbenchPreferenceGroup) newInput;			
 		viewer.refresh();
 	}
 
@@ -69,6 +71,7 @@ public class GroupedPreferenceContentProvider extends FilteredPreferenceContentP
 	 */
 	public Object getParent(Object element) {
 		return currentInput.findParent(element);
+
 	}
 
 	/* (non-Javadoc)
@@ -77,11 +80,11 @@ public class GroupedPreferenceContentProvider extends FilteredPreferenceContentP
 	public Object[] getChildren(Object parentElement) {
 
 		Object[] children;
-		if(parentElement instanceof WorkbenchPreferenceNode)
-		  children = super.getChildren(parentElement);
+		if (parentElement instanceof WorkbenchPreferenceNode)
+			children = super.getChildren(parentElement);
 		else
 			children = getElements(parentElement);
-	
+
 		ArrayList returnValue = new ArrayList();
 		for (int i = 0; i < children.length; i++) {
 			if (children[i] instanceof WorkbenchPreferenceNode) {

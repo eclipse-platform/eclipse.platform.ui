@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.dialogs;
 import java.util.ArrayList;
 
 import org.eclipse.jface.preference.PreferenceContentProvider;
+
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 /**
@@ -55,4 +56,6 @@ public class FilteredPreferenceContentProvider extends
             return null;
         return parent;
     }
+    
+    
 }

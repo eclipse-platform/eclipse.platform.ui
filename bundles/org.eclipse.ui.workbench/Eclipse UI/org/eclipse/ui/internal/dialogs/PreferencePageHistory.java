@@ -127,14 +127,13 @@ class PreferencePageHistory {
 	/**
 	 * Creates the history toolbar and initializes <code>historyToolbar</code>.
 	 * 
-	 * @param composite the composite to add the toolbar to
+	 * @param historyBar 
+	 * @param manager
 	 * @return the control of the history toolbar
 	 */
-	public Control createHistoryControls(Composite composite) {
-		ToolBar historyBar= new ToolBar(composite, SWT.FLAT | SWT.HORIZONTAL);
-		
-		historyToolbar= new ToolBarManager(historyBar);
-		
+	public ToolBar createHistoryControls(ToolBar historyBar, ToolBarManager manager) {
+	
+		historyToolbar = manager;
 		/**
 		 * Superclass of the two for-/backward actions for the history.
 		 */
@@ -238,11 +237,9 @@ class PreferencePageHistory {
 		registerKeybindings(forward);
 		historyToolbar.add(forward);
 		
-		historyToolbar.createControl(composite);
-		historyToolbar.update(false);
-		
 		return historyBar;
 	}
+
 
 	/**
 	 * Registers the given action with the workbench command support.
@@ -253,5 +250,19 @@ class PreferencePageHistory {
 		IHandler handler= new ActionHandler(action);
 		HandlerSubmission sub= new HandlerSubmission(null, dialog.getShell(), null, action.getActionDefinitionId(), handler, Priority.MEDIUM);
 		PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(sub);
+	}
+
+	/**
+	 * Create the history control in the parent
+	 * @param parent
+	 * @return Control
+	 */
+	public Control createHistoryControls(Composite parent) {
+		ToolBar historyBar= new ToolBar(parent, SWT.FLAT | SWT.HORIZONTAL);
+		
+		ToolBarManager historyManager = new ToolBarManager(historyBar);
+		
+		createHistoryControls(historyBar,historyManager);
+		return historyBar;
 	}
 }

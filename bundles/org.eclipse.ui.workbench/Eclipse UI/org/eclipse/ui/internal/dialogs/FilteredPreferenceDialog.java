@@ -15,7 +15,6 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -30,6 +29,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
@@ -65,8 +67,6 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	//The id of the last page that was selected
 	private static String lastGroupId = null;
 
-	private static String SEARCH_ICON = "org.eclipse.ui.internal.dialogs.SEARCH_ICON";//$NON-NLS-1$
-
 	private static String LOOK_ICON = "org.eclipse.ui.internal.dialogs.LOOK_ICON";//$NON-NLS-1$
 
 	private Point minimumSize = new Point(400, 400);
@@ -78,20 +78,26 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	 */
 	private PreferencePageHistory history;
 
-	ToolBar toolbar;
-
 	GroupedPreferenceLabelProvider groupedLabelProvider;
 
 	private WorkbenchPreferenceGroup currentGroup;
-	
+
 	private CTabItem tab;
+
+	private Composite toolBarComposite;
+
+	private ToolBar toolBar;
+
+	static boolean groupedMode = false;
 
 	static {
 		ImageDescriptor descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
-				PlatformUI.PLUGIN_ID, "icons/full/obj16/search.gif"); //$NON-NLS-1$
+				PlatformUI.PLUGIN_ID, "icons/full/obj16/layout_co.gif"); //$NON-NLS-1$
 		if (descriptor != null) {
-			JFaceResources.getImageRegistry().put(SEARCH_ICON, descriptor);
+			JFaceResources.getImageRegistry().put(LOOK_ICON, descriptor);
 		}
+		groupedMode = ((WorkbenchPreferenceManager) WorkbenchPlugin.getDefault()
+				.getPreferenceManager()).getGroups().length > 0;
 	}
 
 	/**
@@ -118,6 +124,9 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	}
 
 	private void clearSearchResults() {
+		if (!(getTreeViewer().getInput() instanceof WorkbenchPreferenceGroup))
+			return;
+
 		WorkbenchPreferenceGroup group = (WorkbenchPreferenceGroup) getTreeViewer().getInput();
 		group.highlightHits(""); //$NON-NLS-1$
 	}
@@ -147,13 +156,18 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		ToolBar toolbar = createToolBar(composite);
+		toolBarComposite = new Composite(composite, SWT.NONE);
+		GridLayout toolBarLayout = new GridLayout();
+		toolBarLayout.marginHeight = 0;
+		toolBarLayout.marginWidth = 0;
+		toolBarComposite.setLayout(toolBarLayout);
+		toolBarComposite.setBackground(composite.getDisplay().getSystemColor(
+				SWT.COLOR_LIST_BACKGROUND));
+		toolBarComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
+				| GridData.GRAB_HORIZONTAL));
 
-		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
-		data.horizontalAlignment = GridData.HORIZONTAL_ALIGN_BEGINNING;
-		data.horizontalIndent = IDialogConstants.HORIZONTAL_MARGIN;
-		data.verticalIndent = IDialogConstants.VERTICAL_MARGIN;
-		toolbar.setLayoutData(data);
+		if (groupedMode)
+			createToolBar(toolBarComposite);
 
 		createDialogContents(composite);
 
@@ -296,14 +310,12 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 
 		if (!hasGroups())
 			return super.createPageContainer(parent);
-
-		Color background = parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
-
 		CTabFolder parentFolder = new CTabFolder(parent, SWT.BORDER);
 
 		tab = new CTabItem(parentFolder, SWT.BORDER);
 
-		parentFolder.setSelectionForeground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
+		parentFolder.setSelectionForeground(parent.getDisplay().getSystemColor(
+				SWT.COLOR_LIST_SELECTION));
 		parentFolder.setSelectionBackground(parent.getDisplay().getSystemColor(
 				SWT.COLOR_WIDGET_BACKGROUND));
 		parentFolder.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
@@ -314,10 +326,6 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		parentFolder.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
 				| GridData.GRAB_VERTICAL));
 		parentFolder.setSimple(false);
-	
-		Control historyBar = history.createHistoryControls(parentFolder);
-		parentFolder.setTopRight(historyBar, SWT.RIGHT);
-		historyBar.setBackground(background);
 
 		Composite result = new Composite(parentFolder, SWT.NULL);
 		result.setLayout(getPageLayout());
@@ -348,10 +356,10 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 					x = Math.max(x, size.x);
 					y = Math.max(y, size.y);
 				}
-				
+
 				x += IDialogConstants.HORIZONTAL_MARGIN * 2;
 				y += IDialogConstants.VERTICAL_MARGIN * 2;
-				
+
 				if (wHint != SWT.DEFAULT)
 					x = wHint;
 				if (hHint != SWT.DEFAULT)
@@ -368,10 +376,9 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 				Control[] children = composite.getChildren();
 				for (int i = 0; i < children.length; i++) {
 					children[i].setBounds(IDialogConstants.HORIZONTAL_MARGIN,
-							IDialogConstants.VERTICAL_MARGIN,
-							rect.width - (2 * IDialogConstants.HORIZONTAL_MARGIN),
-							rect.height - (2 * IDialogConstants.VERTICAL_MARGIN)
-							);
+							IDialogConstants.VERTICAL_MARGIN, rect.width
+									- (2 * IDialogConstants.HORIZONTAL_MARGIN), rect.height
+									- (2 * IDialogConstants.VERTICAL_MARGIN));
 				}
 			}
 
@@ -382,8 +389,61 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	 * Get the toolbar for the container
 	 * @return Control
 	 */
-	private Control getContainerToolBar(Composite parentFolder) {
-		return history.createHistoryControls(parentFolder);
+	private Control getContainerToolBar(Composite composite) {
+
+		ToolBar historyBar = new ToolBar(composite, SWT.FLAT | SWT.HORIZONTAL);
+
+		ToolBarManager historyManager = new ToolBarManager(historyBar);
+
+		history.createHistoryControls(historyBar, historyManager);
+		createModeSwitch(historyBar, historyManager);
+
+		historyManager.update(false);
+		historyBar.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+
+		return historyBar;
+	}
+
+	/**
+	 * Create the button that switches modes.
+	 * @param historyBar
+	 * @param historyManager
+	 */
+	private void createModeSwitch(ToolBar historyBar, ToolBarManager historyManager) {
+
+		IAction modeSwitchAction = new Action("", IAction.AS_PUSH_BUTTON) {//$NON-NLS-1$
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.action.Action#run()
+			 */
+			public void run() {
+				groupedMode = !groupedMode;
+				if (groupedMode)
+					createToolBar(toolBarComposite);
+				else
+					toolBar.dispose();
+				getShell().setSize(getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT));
+				getShell().layout(true);
+				
+				//Clear the input
+				getTreeViewer().setInput(null);
+				
+				setContentAndLabelProviders(getTreeViewer());
+				
+				if (groupedMode)
+					getTreeViewer().setInput(currentGroup);
+				else
+					getTreeViewer().setInput(getPreferenceManager());
+
+				getTreeViewer().refresh();
+			}
+		};
+
+		modeSwitchAction.setToolTipText("Switch layout");//$NON-NLS-1$
+		modeSwitchAction.setImageDescriptor(JFaceResources.getImageRegistry().getDescriptor(
+				LOOK_ICON));
+
+		historyManager.add(modeSwitchAction);
+
 	}
 
 	/**
@@ -403,17 +463,16 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	 * @param composite
 	 * @return GenericListViewer
 	 */
-	private ToolBar createToolBar(Composite composite) {
+	private void createToolBar(Composite composite) {
 
-		toolbar = new ToolBar(composite, SWT.HORIZONTAL | SWT.CENTER | SWT.FLAT);
-		toolbar.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-		composite.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+		toolBar = new ToolBar(composite, SWT.HORIZONTAL | SWT.CENTER | SWT.FLAT);
+		toolBar.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
 		WorkbenchPreferenceGroup[] groups = getGroups();
 
 		for (int i = 0; i < groups.length; i++) {
 			final WorkbenchPreferenceGroup group = groups[i];
-			ToolItem newItem = new ToolItem(toolbar, SWT.RADIO);
+			ToolItem newItem = new ToolItem(toolBar, SWT.RADIO);
 			newItem.setText(group.getName());
 			newItem.setImage(group.getImage());
 			newItem.setData(group);
@@ -428,7 +487,11 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 
 		}
 
-		return toolbar;
+		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
+		data.horizontalAlignment = GridData.HORIZONTAL_ALIGN_BEGINNING;
+		data.horizontalIndent = IDialogConstants.HORIZONTAL_MARGIN;
+		data.verticalIndent = IDialogConstants.VERTICAL_MARGIN;
+		toolBar.setLayoutData(data);
 	}
 
 	/**
@@ -479,15 +542,18 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	protected TreeViewer createTreeViewer(Composite parent) {
 		TreeViewer tree = super.createTreeViewer(parent);
 
+		setContentAndLabelProviders(tree);
+
 		if (hasGroups()) {
-			groupedLabelProvider = new GroupedPreferenceLabelProvider();
-			tree.setContentProvider(new GroupedPreferenceContentProvider());
-			tree.setLabelProvider(groupedLabelProvider);
+
 			tree.addSelectionChangedListener(new ISelectionChangedListener() {
 				/* (non-Javadoc)
 				 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 				 */
 				public void selectionChanged(SelectionChangedEvent event) {
+					if (!groupedMode)
+						return;
+
 					if (event.getSelection() instanceof IStructuredSelection) {
 						IStructuredSelection selection = (IStructuredSelection) event
 								.getSelection();
@@ -499,11 +565,25 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 				}
 			});
 
-		} else {
-			tree.setContentProvider(new FilteredPreferenceContentProvider());
-			tree.setLabelProvider(new PreferenceLabelProvider());
 		}
+
 		return tree;
+	}
+
+	/**
+	 * Set the content and label providers for the treeViewer
+	 * @param treeViewer
+	 */
+	private void setContentAndLabelProviders(TreeViewer treeViewer) {
+		if (groupedMode && hasGroups()) {
+			treeViewer.setContentProvider(new GroupedPreferenceContentProvider());
+			treeViewer.setLabelProvider(new GroupedPreferenceLabelProvider());
+		} else {
+			treeViewer.setContentProvider(new FilteredPreferenceContentProvider());
+			treeViewer.setLabelProvider(new PreferenceLabelProvider());
+
+		}
+
 	}
 
 	/**
@@ -525,12 +605,12 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	 * @see org.eclipse.jface.preference.PreferenceDialog#selectSavedItem()
 	 */
 	protected void selectSavedItem() {
-		if (hasGroups()) {
+		if (hasGroups() && groupedMode) {
 
 			WorkbenchPreferenceGroup startGroup = null;
 
 			if (lastGroupId != null) {
-				ToolItem[] items = toolbar.getItems();
+				ToolItem[] items = toolBar.getItems();
 				for (int i = 0; i < items.length; i++) {
 					ToolItem item = items[i];
 					WorkbenchPreferenceGroup group = (WorkbenchPreferenceGroup) items[i].getData();
@@ -542,7 +622,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 				}
 			}
 			if (startGroup == null) {
-				toolbar.getItem(0).setSelection(true);
+				toolBar.getItem(0).setSelection(true);
 				startGroup = getGroups()[0];
 			}
 			groupSelected(startGroup);
@@ -637,7 +717,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	public void updateMessage() {
 		//Do nothing as this is done by the page now
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferenceDialog#updateTitle()
 	 */
@@ -653,13 +733,13 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	protected PreferencePageHistory getHistory() {
 		return this.history;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferenceDialog#createPageControl(org.eclipse.jface.preference.IPreferencePage, org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createPageControl(IPreferencePage page, Composite parent) {
-		if(page instanceof PreferencePage)
-			((PreferencePage) page).createControl(parent,true);
+		if (page instanceof PreferencePage)
+			((PreferencePage) page).createControl(parent, true);
 		else
 			super.createPageControl(page, parent);
 	}
