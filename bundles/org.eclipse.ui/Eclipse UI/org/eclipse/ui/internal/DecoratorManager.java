@@ -5,6 +5,7 @@ import java.util.*;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IContributorResourceAdapter;
 import org.eclipse.ui.ResourceAdapterUtil;
@@ -14,7 +15,8 @@ import org.eclipse.ui.ResourceAdapterUtil;
  * decorators defined in the image.
  */
 
-public class DecoratorManager implements ILabelDecorator {
+public class DecoratorManager
+	implements ILabelDecorator, ILabelProviderListener {
 
 	//Hold onto the list of listeners to be told if a change has occured
 	private Collection listeners = new HashSet();
@@ -35,6 +37,11 @@ public class DecoratorManager implements ILabelDecorator {
 		Collection values = reader.readRegistry(Platform.getPluginRegistry());
 		definitions = new DecoratorDefinition[values.size()];
 		values.toArray(definitions);
+		for(int i = 0; i < definitions.length; i ++){
+			//Add a listener if it is an enabled option
+			if(definitions[i].isEnabled())
+				definitions[i].getDecorator().addListener(this);
+		}
 	}
 
 	/**
@@ -121,12 +128,13 @@ public class DecoratorManager implements ILabelDecorator {
 		//Get any adaptions to IResource
 		if (element instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) element;
-			Object resourceAdapter = adaptable.getAdapter(IContributorResourceAdapter.class);
+			Object resourceAdapter =
+				adaptable.getAdapter(IContributorResourceAdapter.class);
 			if (resourceAdapter == null)
 				resourceAdapter = ResourceAdapterUtil.getResourceAdapter();
 
-			return ((IContributorResourceAdapter) resourceAdapter).
-						getAdaptedResource(adaptable);
+			return ((IContributorResourceAdapter) resourceAdapter).getAdaptedResource(
+				adaptable);
 		}
 		return null;
 	}
@@ -295,6 +303,13 @@ public class DecoratorManager implements ILabelDecorator {
 	 */
 	public DecoratorDefinition[] getDecoratorDefinitions() {
 		return definitions;
+	}
+
+	/*
+	 * @see ILabelProviderListener#labelProviderChanged(LabelProviderChangedEvent)
+	 */
+	public void labelProviderChanged(LabelProviderChangedEvent event) {
+		fireListeners(event);
 	}
 
 }

@@ -91,11 +91,19 @@ public class DecoratorDefinition {
 	}
 
 	/**
-	 * Sets the enabled.
+	 * Sets the enabled flag and adds or removes the decorator
+	 * manager as a listener as appropriate.
 	 * @param enabled The enabled to set
 	 */
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+		DecoratorManager manager =
+			WorkbenchPlugin.getDefault().getDecoratorManager();
+			
+		if(enabled)
+			getDecorator().addListener(manager);
+		else
+			getDecorator().removeListener(manager);
 	}
 
 	/**
