@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,13 +59,13 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 	/**
  	 * Create the Ant page.
      */
-		public AntPreferencePage() {
-			super(GRID);
-			setDescription(AntPreferencesMessages.getString("AntPreferencePage.General")); //$NON-NLS-1$
-			setPreferenceStore(AntUIPlugin.getDefault().getPreferenceStore());
-		}
+	public AntPreferencePage() {
+		super(GRID);
+		setDescription(AntPreferencesMessages.getString("AntPreferencePage.General")); //$NON-NLS-1$
+		setPreferenceStore(AntUIPlugin.getDefault().getPreferenceStore());
+	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
 	protected void createFieldEditors() {
@@ -89,8 +89,6 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 			toolsWarningEditor= new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, AntPreferencesMessages.getString("AntPreferencePage.10"), getFieldEditorParent());  //$NON-NLS-1$
 			addField(toolsWarningEditor);
 		}
-		
-		addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_CLASSPATH_WARNING, AntPreferencesMessages.getString("AntPreferencePage.13"), getFieldEditorParent())); //$NON-NLS-1$
 		
 		addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_ERROR_DIALOG, AntPreferencesMessages.getString("AntPreferencePage.12"), getFieldEditorParent())); //$NON-NLS-1$
 		new Label(getFieldEditorParent(), SWT.NONE);

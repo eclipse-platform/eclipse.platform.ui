@@ -33,8 +33,6 @@ public interface IAntUIPreferenceConstants {
 	
 	public static final String ANT_ERROR_DIALOG= "errorDialog"; //$NON-NLS-1$
 	
-	public static final String ANT_CLASSPATH_WARNING= "antClasspathInfo";	 //$NON-NLS-1$
-	
 	/**
 	 * Boolean preference identifier constant which specifies whether the Ant editor should
 	 * show internal targets in the Outline.
