@@ -17,38 +17,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultListener;
 import org.eclipse.search.ui.SearchResultEvent;
-import org.eclipse.ui.IEditorPart;
 
 /**
  * An abstract base implementation for text-match based search results. This search
- * result implementation consists of a list of matches. No assumptions are made about
+ * result implementation consists of a list of {@link org.eclipse.search.ui.text.Match matches}. No assumptions are made about
  * the kind of elements these matches are reported against. 
- * 
- * TODO This see tag is embedded in the middle of the text.
- * 
- * see {@link org.eclipse.search.ui.text.Match}
- * 
- * 
- * This class has abstract methods to map matches to both editors and files.
- * 
- * TODO the client has to implement these methods since they are abstract. So 
- * we should give him some hints what a good implementation is.
- * 
- * If a client implements the methods related to editors, matches will be highlighted
- * automatically in participating editors. Editors must implement or adapt to ITextEditor,
- * or they must adapt to IAnnotationModel in order for match highlighting to work.<br>
- * 
- * see {@link #findContainedMatches(IEditorPart)}<br>
- * see {@link #isShownInEditor(Match,IEditorPart)}<br>
- * If a client implements the methods related to files, matches will be automatically
- * updated if the file is changed via the filebuffer infrastructure.<br>
- * see {@link org.eclipse.core.filebuffers.FileBuffers}<br>
- * see {@link #findContainedMatches(IFile)<br>
- * see {@link #getFile(Object)<br>
  */
 public abstract class AbstractTextSearchResult implements ISearchResult {
 	private Map fElementsToMatches;
@@ -57,8 +33,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	private MatchEvent fMatchEvent;
 
 	/**
-	 * TODO doc missing
-	 * Constructor
+	 * Constructs a new <code>AbstractTextSearchResult</code>
 	 */
 	protected AbstractTextSearchResult() {
 		fElementsToMatches= new HashMap();
@@ -69,9 +44,9 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	/**
 	 * Returns an array with all matches reported against the given element.
 	 * 
+	 * @param element The element to report matches for
+	 * @return All matches reported for this element
 	 * @see Match#getElement()
-	 * @param element The element to report matches for.
-	 * @return All matches reported for this element.
 	 */
 	public Match[] getMatches(Object element) {
 		synchronized (fElementsToMatches) {
@@ -93,7 +68,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * Subclasses may extend this method.
 	 * </p>
 	 * 
-	 * @param match The match to add.
+	 * @param match The match to add
 	 */
 	public void addMatch(Match match) {
 		boolean hasAdded= false;
@@ -110,7 +85,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * <p>
 	 * Subclasses may extend this method.
 	 * </p>
-	 * @param matches the matches to add.
+	 * @param matches the matches to add
 	 */
 	public void addMatches(Match[] matches) {
 
@@ -154,7 +129,9 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	
 	/**
 	 * Removes all matches from this search result.
+	 * <p>
 	 * Subclasses may extend this method.
+	 * </p>
 	 */
 	public void removeAll() {
 		synchronized (fElementsToMatches) {
@@ -169,9 +146,10 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	/**
 	 * Removes the given match from this search result. This method has no
 	 * effect if the match is not found.
+	 * <p>
 	 * Subclasses may extend this method.
-	 * 
-	 * @param match the match to remove.
+	 * </p>
+	 * @param match the match to remove
 	 */
 	public void removeMatch(Match match) {
 		boolean existed= false;
@@ -185,9 +163,11 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	/**
 	 * Removes the given matches from this search result. This method has no
 	 * effect for matches that are not found
+	 * <p>
 	 * Subclasses may extend this method.
+	 * </p>
 	 * 
-	 * @param matches the matches to remove.
+	 * @param matches the matches to remove
 	 */
 	public void removeMatches(Match[] matches) {
 		Set existing= new HashSet();
@@ -231,10 +211,10 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	}
 	
 	/**
-	 * Send the given <code>SearchResultEvent<code> to all registered search
-	 * result listeners
+	 * Send the given <code>SearchResultEvent</code> to all registered search
+	 * result listeners.
+	 * @param e The event to be sent
 	 * @see ISearchResultListener
-	 * @param e The event to be sent.
 	 */
 	protected void fireChange(SearchResultEvent e) {
 		HashSet copiedListeners= new HashSet();
@@ -249,7 +229,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	/**
 	 * Returns the total number of matches contained in this search result.
 	 * 
-	 * @return Total number of matches.
+	 * @return Total number of matches
 	 */
 	public int getMatchCount() {
 		int count= 0;
@@ -266,8 +246,8 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * Returns the number of matches reported against a given element. This is
 	 * equivalent to calling <code>getMatches(element).length</code>
 	 * 
-	 * @param element The element to get the match count for.
-	 * @return The number of matches reported against the element.
+	 * @param element The element to get the match count for
+	 * @return The number of matches reported against the element
 	 */
 	public int getMatchCount(Object element) {
 		List matches= (List) fElementsToMatches.get(element);
@@ -279,7 +259,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * Returns an array containing the set of all elements that matches are
 	 * reported against in this search result.
 	 * 
-	 * @return The set of elements in this search result. 
+	 * @return The set of elements in this search result
 	 */
 	public Object[] getElements() {
 		synchronized (fElementsToMatches) {
@@ -287,10 +267,23 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		}
 	}
 
+	/**
+	 * Returns an implementation of <code>IEditorMatchAdapter</code> appropriate
+	 * for this search result. 
+	 * @return An appropriate adapter or null of none has been implemented
+	 * 
+	 * @see IEditorMatchAdapter
+	 */
 	public IEditorMatchAdapter getEditorMatchAdapter() {
 		return null;
 	}
 
+	/**
+	 * Returns an implementation of <code>IFileMatchAdapter</code> appropriate
+	 * for this search result. 
+	 * @return An appropriate adapter or null of none has been implemented
+	 * @see IFileMatchAdapter
+	 */
 	public IFileMatchAdapter getFileMatchAdapter() {
 		return null;
 	}

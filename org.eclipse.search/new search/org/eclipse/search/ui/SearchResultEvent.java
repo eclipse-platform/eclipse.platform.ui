@@ -7,26 +7,21 @@
  * Contributors: IBM Corporation - initial API and implementation
  ******************************************************************************/
 package org.eclipse.search.ui;
+
+import java.util.EventObject;
+
 /**
- * The common superclass of all events sent from ISearchResults. This class is
- * supposed to be subclassed to provide more specific notification.
+ * The common superclass of all events sent from <code>ISearchResults</code>.
+ * This class is supposed to be subclassed to provide more specific
+ * notification.
  * 
- * TODO see tags are done by @see
- * see {@link org.eclipse.search.ui.ISearchResultListener#searchResultChanged(SearchResultEvent)}
- * 
- * Question ? Shouldn't this be a sublcass of event object ?
- * 
- * This API is preliminary and subject to change at any time.
+ * @see org.eclipse.search.ui.ISearchResultListener#searchResultChanged(SearchResultEvent)
  * 
  * @since 3.0
  */
-public abstract class SearchResultEvent {
-	protected ISearchResult fSearchResult;
+public abstract class SearchResultEvent extends EventObject {
 	protected SearchResultEvent(ISearchResult searchResult) {
-		fSearchResult= searchResult;
-	}
-	protected SearchResultEvent() {
-		this(null);
+		super(searchResult);
 	}
 	/**
 	 * Gets the <code>ISearchResult</code> for this event.
@@ -34,13 +29,6 @@ public abstract class SearchResultEvent {
 	 * @return The source of this event.
 	 */
 	public ISearchResult getSearchResult() {
-		return fSearchResult;
-	}
-	/**
-	 * Sets the search result for this event.
-	 * @param searchResult The searchResult to set.
-	 */
-	protected void setSearchResult(ISearchResult searchResult) {
-		fSearchResult= searchResult;
+		return (ISearchResult) getSource();
 	}
 }

@@ -13,12 +13,13 @@ import org.eclipse.core.resources.IFile;
 /**
  * This interface serves to map matches to IFile instances. Changes to those
  * files are then tracked (via the platforms file buffer mechanism) and matches
- * updated when changes occur. Clients who want their match positions
+ * updated when changes are saved. Clients who want their match positions
  * automatically updated should return an implementation of
  * <code>IFileMatchAdapter</code> from the <code>getFileMatchAdapter()</code>
  * method in their search result implementation. It is assumed that the match
- * adapters are stateless, and no lifecycle management is provided. Clients may
- * implement this interface.<p>
+ * adapters are stateless, and no lifecycle management is provided.
+ * <p>
+ * Clients may implement this interface.</p>
  * @see org.eclipse.search.ui.text.AbstractTextSearchResult
  */
 public interface IFileMatchAdapter {

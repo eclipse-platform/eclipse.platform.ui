@@ -10,30 +10,34 @@ package org.eclipse.search.ui;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.ui.IViewPart;
 /**
- * Interface for the search result view. The search result view part is responsible
+ * <p>
+ * Interface for the search result view. The search result view is responsible
  * for managing the set of search result and delegates display of search results
- * to the appropriate <code>ISearchResultPage</code>.
- * This insterface must not be implemented by clients.
+ * to the appropriate <code>ISearchResultPage</code>. Clients may access the
+ * search result view via the <code>NewSearchUI</code> facade class.
+ * </p>
+ * <p>
+ * This interface is not intended to be implemented by clients
+ * </p>
  * 
- * TODO the standard sentence is
- *  - This interface is not intended to be implemented by clients.
- *  - How do I access an instance of the search result view part. NewSearchUI ??
- * 
- * This API is preliminary and subject to change at any time.
+ * @see NewSearchUI#activateSearchResultView()
+ * @see NewSearchUI#getSearchResultView()
  * 
  * @since 3.0
  */
 public interface ISearchResultViewPart extends IViewPart {
 	/**
-	 * Search result pages should call this method to have the search results view
-	 * contribute to their context menus.
+	 * Search result pages should call this method to have the search results
+	 * view contribute to their context menus.
 	 * 
-	 * @param menuManager the menu manager the search result view should contribute to.
+	 * @param menuManager
+	 *            the menu manager the search result view should contribute to.
 	 */
 	void fillContextMenu(IMenuManager menuManager);
 	/**
-	 * Returns the <code>ISearchResultPage</code> currently shown in this 
+	 * Returns the <code>ISearchResultPage</code> currently shown in this
 	 * search view. Returns <code>null</code> if no page is currently shown.
+	 * 
 	 * @return the active <code>ISearchResultPage</code> or <code>null</code>
 	 */
 	ISearchResultPage getActivePage();

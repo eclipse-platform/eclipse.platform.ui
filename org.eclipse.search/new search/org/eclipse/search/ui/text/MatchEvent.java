@@ -10,39 +10,45 @@ package org.eclipse.search.ui.text;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.SearchResultEvent;
 /**
- * An event describing adding and removing of Matches. This API is preliminary
- * and subject to change at any time.
+ * An event object describing addition and removal of matches. Events of this
+ * class are sent when <code>Match</code> es are added or removed from an
+ * <code>AbstractTextSearchResult</code>.
  * 
- * TODO is this class intended to be sublcassed
+ * Clients may subclass this class.
  * 
  * @since 3.0
  */
 public class MatchEvent extends SearchResultEvent {
 	private int fKind;
 	private Match[] fMatches;
-	private Match[] fMatchContainer= new Match[1];
+	private Match[] fMatchContainer = new Match[1];
 	/**
-	 * Constant for a match being added.
+	 * Constant for a matches being added.
 	 * 
 	 * @see MatchEvent#getKind()
 	 */
-	public static final int ADDED= 1;
+	public static final int ADDED = 1;
 	/**
-	 * Constant for a match being removed.
+	 * Constant for a matches being removed.
 	 * 
 	 * @see MatchEvent#getKind()
 	 */
-	public static final int REMOVED= 2;
+	public static final int REMOVED = 2;
 	
-	private static final Match[] fgEmtpyMatches= new Match[0];
+	private static final Match[] fgEmtpyMatches = new Match[0];
 	
+	/**
+	 * Constructs a new <code>MatchEvent</code>.
+	 * @param searchResult The search result concerned
+	 */
 	public MatchEvent(ISearchResult searchResult) {
 		super(searchResult);
 	}
+	
 	/**
 	 * Tells whether this is a remove or an add.
 	 * 
-	 * @return One of <code>ADDED</code> or <code>REMOVED</code>.
+	 * @return One of <code>ADDED</code> or <code>REMOVED</code>
 	 */
 	public int getKind() {
 		return fKind;
@@ -50,35 +56,45 @@ public class MatchEvent extends SearchResultEvent {
 	/**
 	 * Returns the concerned matches.
 	 * 
-	 * @return The match this event is about.
+	 * @return The matches this event is about.
 	 */
 	public Match[] getMatches() {
 		if (fMatches != null)
 			return fMatches;
 		else if (fMatchContainer[0] != null)
 			return fMatchContainer;
-		else 
+		else
 			return fgEmtpyMatches;
 	}
+	
 	/**
-	 * TODO Text missing
-	 * @param kind The kind to set.
+	 * Sets the kind of event this is.
+	 * 
+	 * @param kind
+	 *            The kind to set; either <code>ADDED</code> or <code>REMOVED</code>
 	 */
 	protected void setKind(int kind) {
-		fKind= kind;
+		fKind = kind;
 	}
 	/**
-	 * TODO Text missing
-	 * @param match The match to set.
+	 * Sets the match for the change this event reports.
+	 * 
+	 * @param match
+	 *            The match to set
 	 */
 	protected void setMatch(Match match) {
-		fMatchContainer[0]= match;
-		fMatches= null;
+		fMatchContainer[0] = match;
+		fMatches = null;
 	}
-
+	
+	/**
+	 * Sets the matches for the change this event reports.
+	 * 
+	 * @param matches
+	 *            The matches to set
+	 */
 	protected void setMatches(Match[] matches) {
-		fMatchContainer[0]= null;
-		fMatches= matches;
+		fMatchContainer[0] = null;
+		fMatches = matches;
 	}
-
 }

@@ -11,7 +11,6 @@ import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.SearchResultEvent;
 /**
  * An event indicating that all matches have been removed from a <code>AbstractTextSearchResult</code>.
- * This API is preliminary and subject to change at any time.
  * 
  * @since 3.0
  */
