@@ -174,9 +174,9 @@ public class PageWidgetFactory {
         TableWrapLayout layout = new TableWrapLayout();
         int numColumns = styleManager.getNumberOfColumns(group);
         numColumns = numColumns < 1 ? 1 : numColumns;
-        int vspacing = styleManager.getVerticalLinkSpacing();
         layout.numColumns = numColumns;
-        layout.verticalSpacing = vspacing;
+        layout.verticalSpacing = styleManager.getVerticalSpacing(group);
+        layout.horizontalSpacing = styleManager.getHorizantalSpacing(group);
         client.setLayout(layout);
         //Util.highlight(client, SWT.COLOR_YELLOW);
         return control;

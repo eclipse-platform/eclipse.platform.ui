@@ -111,11 +111,14 @@ public class PageContentForm implements IIntroConstants {
         layout.rightMargin = 0;
         int numColumns = styleManager.getPageNumberOfColumns();
         layout.numColumns = numColumns == 0 ? 1 : numColumns;
+        layout.horizontalSpacing = styleManager.getPageHorizantalSpacing();
+        layout.verticalSpacing = styleManager.getPageVerticalSpacing();
         client.setLayout(layout);
 
         // parent has TableWrapLayout, and so update layout of this child.
-        TableWrapData td = new TableWrapData();
-        td.align = TableWrapData.FILL;
+        TableWrapData td = new TableWrapData(TableWrapData.FILL,
+                TableWrapData.FILL);
+        //td.align = TableWrapData.FILL;
         td.grabHorizontal = true;
         client.setLayoutData(td);
         return client;

@@ -122,13 +122,28 @@ public class PageStyleManager extends SharedStyleManager {
      * default is 1.
      */
     public int getPageNumberOfColumns() {
-        String key = page.getId() + ".layout.ncolumns";
-        return getIntProperty(key, 0);
+        return getIntProperty(page, ".layout.ncolumns", 0);
     }
 
 
     public int getNumberOfColumns(IntroGroup group) {
         return getIntProperty(group, ".layout.ncolumns", 0);
+    }
+
+    public int getPageVerticalSpacing() {
+        return getIntProperty(page, ".layout.vspacing", 5);
+    }
+
+    public int getVerticalSpacing(IntroGroup group) {
+        return getIntProperty(group, ".layout.vspacing", 5);
+    }
+
+    public int getPageHorizantalSpacing() {
+        return getIntProperty(page, ".layout.hspacing", 5);
+    }
+
+    public int getHorizantalSpacing(IntroGroup group) {
+        return getIntProperty(group, ".layout.hspacing", 5);
     }
 
     public int getColSpan(AbstractBaseIntroElement element) {
@@ -157,18 +172,6 @@ public class PageStyleManager extends SharedStyleManager {
         }
         return intValue;
     }
-
-    public int getVerticalLinkSpacing() {
-        String key = page.getId() + ".layout.link-vspacing"; //$NON-NLS-1$
-        int vspacing = 5;
-        String value = getProperty(key);
-        try {
-            vspacing = Integer.parseInt(value);
-        } catch (NumberFormatException e) {
-        }
-        return vspacing;
-    }
-
 
 
     /**

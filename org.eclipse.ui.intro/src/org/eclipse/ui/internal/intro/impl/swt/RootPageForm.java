@@ -189,12 +189,16 @@ public class RootPageForm implements IIntroConstants {
         int numChildren = children.length;
         GridLayout layout = new GridLayout();
         // separate links a bit more.
-        layout.horizontalSpacing = 20;
-        layout.verticalSpacing = rootPageStyleManager.getVerticalLinkSpacing();
+        layout.horizontalSpacing = rootPageStyleManager
+                .getPageHorizantalSpacing();
+        layout.verticalSpacing = rootPageStyleManager.getPageVerticalSpacing();
         // set number of columns.
         int numColumns = rootPageStyleManager.getPageNumberOfColumns();
         numColumns = numColumns == 0 ? numChildren : numColumns;
         layout.numColumns = numColumns;
+        layout.horizontalSpacing = rootPageStyleManager
+                .getPageHorizantalSpacing();
+        layout.verticalSpacing = rootPageStyleManager.getPageVerticalSpacing();
         contentComposite.setLayout(layout);
         for (int i = 0; i < children.length; i++) {
             if (((AbstractBaseIntroElement) children[i]).isFiltered())
@@ -227,6 +231,9 @@ public class RootPageForm implements IIntroConstants {
         int numColumns = rootPageStyleManager.getNumberOfColumns(group);
         numColumns = numColumns < 1 ? numChildren : numColumns;
         layout.numColumns = numColumns;
+        layout.verticalSpacing = rootPageStyleManager.getVerticalSpacing(group);
+        layout.horizontalSpacing = rootPageStyleManager
+                .getHorizantalSpacing(group);
         contentComposite.setLayout(layout);
         for (int i = 0; i < children.length; i++) {
             if (((AbstractBaseIntroElement) children[i]).isFiltered())
