@@ -88,7 +88,7 @@ function showView(view)
 }
 
 var activityFiltering = <%=(new ActivitiesData(application, request, response)).isActivityFiltering()?"true":"false"%>;
-var re=/(\?|&)showAll=(on|off)/;
+var regExp=/&(showAll|synch)=(on|off|yes|no)/gi;
 function toggleShowAll(){
 	if(activityFiltering){
 		confirmShowAll();
@@ -106,10 +106,10 @@ function showAll(){
 		window.frames.search.searchToolbarFrame.setButtonState("show_all", true);
 	}catch(ex) {}
 	try{
-		window.frames.toc.tocViewFrame.location.replace(window.frames.toc.tocViewFrame.location.href.replace(re, "")+"&showAll=on");
+		window.frames.toc.tocViewFrame.location.replace(window.frames.toc.tocViewFrame.location.href.replace(regExp, "")+"&showAll=on");
 	}catch(ex) {}
 	try{
-		window.frames.search.searchViewFrame.location.replace(window.frames.search.searchViewFrame.location.href.replace(re, "")+"&showAll=on");
+		window.frames.search.searchViewFrame.location.replace(window.frames.search.searchViewFrame.location.href.replace(regExp, "")+"&showAll=on");
 	}catch(ex) {}
 }
 
@@ -122,10 +122,10 @@ function dontShowAll(){
 		window.frames.search.searchToolbarFrame.setButtonState("show_all", false);
 	}catch(ex) {}
 	try{
-		window.frames.toc.tocViewFrame.location.replace(window.frames.toc.tocViewFrame.location.href.replace(re, "")+"&showAll=off");
+		window.frames.toc.tocViewFrame.location.replace(window.frames.toc.tocViewFrame.location.href.replace(regExp, "")+"&showAll=off");
 	}catch(ex) {}
 	try{
-		window.frames.search.searchViewFrame.location.replace(window.frames.search.searchViewFrame.location.href.replace(re, "")+"&showAll=off");
+		window.frames.search.searchViewFrame.location.replace(window.frames.search.searchViewFrame.location.href.replace(regExp, "")+"&showAll=off");
 	}catch(ex) {}
 }
 
