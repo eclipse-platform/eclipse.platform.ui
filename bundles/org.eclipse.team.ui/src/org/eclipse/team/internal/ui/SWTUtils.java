@@ -33,13 +33,8 @@ public class SWTUtils {
 	public static final int MARGINS_DIALOG= 1;
 
 	public static PreferenceLinkArea createPreferenceLink(IWorkbenchPreferenceContainer container, Composite parent, String pageId, String text) {
-		return createPreferenceLink(container, parent, pageId, text, 1);
-	}
-	
-	public static PreferenceLinkArea createPreferenceLink(IWorkbenchPreferenceContainer container, Composite parent, String pageId, String text, int span) {
-		final PreferenceLinkArea area = new PreferenceLinkArea(parent, SWT.NONE, pageId, text, container, null);
-		area.getControl().setLayoutData(createHFillGridData(span));
-		return area;
+        final PreferenceLinkArea area = new PreferenceLinkArea(parent, SWT.NONE, pageId, text, container, null);
+        return area;
 	}
 	
     public static GridData createGridData(int width, int height, boolean hFill, boolean vFill) {
