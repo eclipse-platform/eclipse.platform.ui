@@ -609,8 +609,10 @@ private boolean certifyPart(IWorkbenchPart part) {
 		IEditorReference ref = (IEditorReference)getReference(part);
 		return getEditorManager().containsEditor(ref);
 	}
-	if (part instanceof IViewPart)
-		return getActivePerspective().containsView((IViewPart)part);
+	if (part instanceof IViewPart) {
+		Perspective persp = getActivePerspective();
+		return persp != null && persp.containsView((IViewPart)part);
+	}
 	return false;
 }
 /**
