@@ -1,130 +1,93 @@
-<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<!DOCTYPE doctype PUBLIC "-//w3c//dtd html 4.0 transitional//en">
 <html>
 <head>
-   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.79 [en] (Windows NT 5.0; U) [Netscape]">
-   <title>Help System Extension Points</title>
+      
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+      
+  <meta name="GENERATOR"
+ content="Mozilla/4.79 [en] (Windows NT 5.0; U) [Netscape]">
+  <title>Help System Extension Points</title>
 </head>
-<body text="#000000" bgcolor="#FFFFFF" link="#0000FF" vlink="#800080" alink="#FF0000">
-
+<body text="#000000" bgcolor="#ffffff" link="#0000ff" vlink="#800080"
+ alink="#ff0000">
 <center>
-<h1>
-Help System</h1></center>
+<h1>Help System</h1>
+</center>
 The Help System plug-in, <tt>org.eclipse.help</tt>, defines two extension
-points (<tt>"contexts" </tt>and <tt>"toc"</tt>) which allow individual
-plug-ins to contribute context-sensitive help and online help for their
-components. A typical plug-in that provides documentation would make use
-of these extension points.
+points (<tt>"contexts" </tt>and <tt>"toc"</tt>) which allow individual plug-ins
+to contribute context-sensitive help and online help for their components.
+A typical plug-in that provides documentation would make use of these extension
+points.
 <p>Other extension points serve extending capabilities of the help system.
-<br>For more advanced applications, there is also an extension point&nbsp;
-(<tt>"support"</tt>) for plugging in a a help system UI.
-<p>
-<hr WIDTH="100%">
-<h1>
-Extension Points</h1>
+<br>
+For more advanced applications, there is also an extension point&nbsp; (<tt>"support"</tt>)
+for plugging in a a help system UI.</p>
+<p></p>
+<hr width="100%">
+<h1>Extension Points</h1>
 The following extension points can be used to extend the help system:
 <ul>
-<li>
-<a href="org_eclipse_help_contexts.html">org.eclipse.help.contexts</a></li>
-
-<li>
-<a href="org_eclipse_help_luceneAnalyzer.html">org.eclipse.help.luceneAnalyzer</a></li>
-
-<li>
-<a href="org_eclipse_help_support.html">org.eclipse.help.support</a></li>
-
-<li>
-<a href="org_eclipse_help_toc.html">org.eclipse.help.toc</a></li>
+  <li><a href="org_eclipse_help_contexts.html">org.eclipse.help.contexts</a></li>
+  <li><a href="org_eclipse_help_luceneAnalyzer.html">org.eclipse.help.luceneAnalyzer</a></li>
+  <li><a href="org_eclipse_help_support.html">org.eclipse.help.support</a></li>
+  <li><a href="org_eclipse_help_toc.html">org.eclipse.help.toc</a></li>
 </ul>
-
-<hr WIDTH="100%">
-<h1>
-Preferences</h1>
+<hr width="100%">
+<h1>Preferences</h1>
 The following preferences settings can be used with the help system:
 <ul>
-<li>
-<b>log_level</b>: denotes what kind of information gets written to the
+  <li><b>log_level</b>: denotes what kind of information gets written to the
 help log. Use one of the following tree values.</li>
-
-<ul>
-<li>
-0: log errors only</li>
-
-<li>
-1: log errors and warnings</li>
-
-<li>
-2: log errors, warnings and information (debug) messages</li>
-</ul>
-
-<li>
-<b>banner</b>: the help view allows application branding. If you want to
-show a company logo or any other things on top of the help view, specify
-your html page as <i>/pluginId/path/to/banner.html</i>. Currently, the
-default banner is /org.eclipse.help.webapp/banner.html. If you set this
-name to empty string then no banner is shown at all.</li>
-
-<li>
-<b>banner_height</b>: the height of the banner area. Currently the default
-is 45.</li>
-
-<li>
-<b>help_home</b>: The page to show inn the content area when opening help.
-Specify your html page as <i>/pluginId/path/to/home.html</i>. Currently,
+  
+  <ul>
+    <li>0: log errors only</li>
+    <li>1: log errors and warnings</li>
+    <li>2: log errors, warnings and information (debug) messages</li>
+  
+  </ul>
+  <li><b>help_home</b>: The page to show inn the content area when opening
+help. Specify your html page as <i>/pluginId/path/to/home.html</i>. Currently,
 the default home is /org.eclipse.help/doc/help_home.html.</li>
-
-<li>
-<b>linksView</b>: set to true or false to control the visibility of the
-related links view. Note: this option has no effect in the infocenter.</li>
-
-<li>
-<b>bookmarksView</b>: set to true or false to control the visibility of
-the bookmarks view. Note: this option has no effect in the infocenter.</li>
-
-<li>
-<b>baseTOCS</b>: ordered list of help TOC's (books) as they would appear
+  <li><b>linksView</b>: set to true or false to control the visibility of
+the related links view. Note: this option has no effect in the infocenter.</li>
+  <li><b>bookmarksView</b>: set to true or false to control the visibility
+of the bookmarks view. Note: this option has no effect in the infocenter.</li>
+  <li><b>baseTOCS</b>: ordered list of help TOC's (books) as they would appear
 on the bookshelf. All the other TOCS will be follow these books. Non-present
 TOC's on this list will be ignored. Use the location of each TOC as <i>/pluginId/path/to/toc.xml</i>.</li>
-
-<li>
-<b>imagesDirectory</b>: directory containing images used in the help view.
-Images must have the same name as those in the org.eclipse.help.webapp
+  <li><b>imagesDirectory</b>: directory containing images used in the help
+view. Images must have the same name as those in the org.eclipse.help.webapp
 plugin. Use the /pluginID/directory format. Default is "images".</li>
-
-<li>
-<b>advanced.toolbarBackground</b>: CSS background for toolbars.&nbsp; Value
-is used in browsers that display advanced help UI.&nbsp; Default is "ButtonFace"</li>
-
-<li>
-<b>advanced.viewBackground</b>: CSS background for navigation views.&nbsp;
-Value is used in browsers that display advanced help UI.&nbsp; Default
-is "Window"</li>
-
-<li>
-<b>advanced.toolbarFont</b>: CSS font for toolbars.&nbsp; Value is used
+  <li><b>advanced.toolbarBackground</b>: CSS background for toolbars.&nbsp;
+Value is used in browsers that display advanced help UI.&nbsp; Default is
+"ButtonFace"</li>
+  <li><b>advanced.viewBackground</b>: CSS background for navigation views.&nbsp;
+Value is used in browsers that display advanced help UI.&nbsp; Default is
+"Window"</li>
+  <li><b>advanced.toolbarFont</b>: CSS font for toolbars.&nbsp; Value is used
 in browsers that display advanced help UI.&nbsp; Default is "icon"</li>
-
-<li>
-<b>advanced.viewFont</b>: CSS font for navigation views.&nbsp; Value is
-used in browsers that display advanced help UI.&nbsp; Default is "icon"</li>
-
-<li>
-<b>basic.toolbarBackground</b>: background color for toolbars.&nbsp; Value
-is used in browsers displaying basic help UI.&nbsp; Default is "#D4D0C8"</li>
-
-<li>
-<b>basic.viewBackground</b>: background color for navigation views.&nbsp;
+  <li><b>advanced.viewFont</b>: CSS font for navigation views.&nbsp; Value
+is used in browsers that display advanced help UI.&nbsp; Default is "icon"</li>
+  <li><b>basic.toolbarBackground</b>: background color for toolbars.&nbsp;
+Value is used in browsers displaying basic help UI.&nbsp; Default is "#D4D0C8"</li>
+  <li><b>basic.viewBackground</b>: background color for navigation views.&nbsp;
 Value is used in browsers displaying basic help UI.&nbsp; Default is "#FFFFFF"</li>
-
-<li>
-<b>basic.toolbarFont</b>: foreground text color for toolbars.&nbsp; Value
-is used in browsers displaying basic help UI.&nbsp; Default is "#000000"</li>
-
-<li>
-<b>basic.viewFont</b>: foreground text color for navigation views.&nbsp;
+  <li><b>basic.toolbarFont</b>: foreground text color for toolbars.&nbsp;
 Value is used in browsers displaying basic help UI.&nbsp; Default is "#000000"</li>
+  <li><b>basic.viewFont</b>: foreground text color for navigation views.&nbsp;
+Value is used in browsers displaying basic help UI.&nbsp; Default is "#000000"</li>
+  <li><b>productIndex</b>: plug-in ID of a plugin containing prebuilt documentation
+index. &nbsp;If present, the index retrieved from the plug-in will be used
+as a starting point in creation of documentation index for use by help search.&nbsp;
+Default is ""<br>
+  </li>
 </ul>
-
-<p><br><a href="hglegal2002.htm"><img SRC="ngibmcpy2002.gif" ALT="Copyright IBM Corp. and others 2000, 2002. All Rights Reserved." BORDER=0 ></a>
+<p><br>
+<a href="hglegal2002.htm"><img src="ngibmcpy2002.gif"
+ alt="Copyright IBM Corp. and others 2000, 2002. All Rights Reserved."
+ border="0"></a></p>
+<br>
+<br>
 </body>
 </html>
