@@ -13,9 +13,7 @@ package org.eclipse.ui.internal.progress;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * JobInfo is the class that keeps track of the tree structure 
@@ -25,28 +23,7 @@ class JobInfo extends JobTreeElement {
 	private ArrayList children = new ArrayList();
 	private Job job;
 	private TaskInfo taskInfo;
-	private IStatus status;
-
-	static int RUNNING_STATUS = 0;
-	static int PENDING_STATUS = 1;
-	static int DONE_STATUS = 2;
-	//	IStatus.ERROR = 4 so we keep our constants lower for sorting
-
-	/**
-	 * Create a new status for the supplied job with the
-	 * code.
-	 * @param code. One of RUNNING_STATUS, PENDING_STATUS,
-	 *  DONE_STATUS or IStatus.ERROR.
-		 * @param Job
-	 */
-	private static IStatus createStatus(int code, Job job) {
-		return new Status(
-			IStatus.INFO,
-			PlatformUI.PLUGIN_ID,
-			code,
-			job.getName(),
-			null);
-	}
+	private IStatus errorStatus;
 
 	/**
 	 * Return the job that the receiver is collecting data
@@ -61,8 +38,8 @@ class JobInfo extends JobTreeElement {
 	 * Return the current status of the receiver.
 	 * @return IStatus
 	 */
-	IStatus getStatus() {
-		return status;
+	IStatus getErrorStatus() {
+		return errorStatus;
 	}
 
 	/**
@@ -87,27 +64,27 @@ class JobInfo extends JobTreeElement {
 	 */
 	JobInfo(Job enclosingJob) {
 		this.job = enclosingJob;
-		status = createStatus(PENDING_STATUS, enclosingJob);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getDisplayString()
 	 */
 	String getDisplayString() {
-		if(job.isSystem())
+		if (job.isSystem())
 			return ProgressMessages.format("JobInfo.System", //$NON-NLS-1$
-					new Object[] { status.getMessage()});
-		if (status.getCode() == PENDING_STATUS)
-			return ProgressMessages.format("JobInfo.Pending", //$NON-NLS-1$
-			new Object[] { status.getMessage()});
-		if (status.getCode() == IStatus.ERROR)
+			new Object[] { getJob().getName()});
+		if (errorStatus != null)
 			return ProgressMessages.format("JobInfo.Error", //$NON-NLS-1$
-			new Object[] { job.getName(), status.getMessage()});
-
-		if (taskInfo == null)
-			return status.getMessage();
-		else
-			return taskInfo.getDisplayString();
+			new Object[] { job.getName(), errorStatus.getMessage()});
+		if (getJob().getState() == Job.RUNNING) {
+			if (taskInfo == null)
+				return getJob().getName();
+			else
+				return taskInfo.getDisplayString();
+		} else {
+			return ProgressMessages.format("JobInfo.Pending", //$NON-NLS-1$
+				new Object[] { getJob().getName()});
+		}
 	}
 
 	/* (non-Javadoc)
@@ -164,22 +141,10 @@ class JobInfo extends JobTreeElement {
 	}
 
 	/**
-	 * Set the status to running.
-	 */
-	void setRunning() {
-		status = createStatus(RUNNING_STATUS, job);
-	}
-	/**
 	 * Set the status to error.
 	 */
-	void setError(IStatus errorStatus) {
-		status = errorStatus;
-	}
-	/**
-	 * Set the status to done.
-	 */
-	void setDone() {
-		status = createStatus(DONE_STATUS, job);
+	void setError(IStatus status) {
+		errorStatus = status;
 	}
 
 	/* (non-Javadoc)
@@ -194,9 +159,13 @@ class JobInfo extends JobTreeElement {
 	 */
 	public int compareTo(Object arg0) {
 		JobInfo element = (JobInfo) arg0;
-		if (element.getStatus() == getStatus())
+		if (element.getJob().getState() == getJob().getState())
 			return getJob().getName().compareTo(getJob().getName());
-		else //Lower codes are shown higher (@see static fields)
-			return getStatus().getCode() - element.getStatus().getCode();
+		else{ //If the receiver is running and the other isn't show it higer
+			if(getJob().getState() == Job.RUNNING)
+				return -1;
+			else
+				return 1;
+		}	
 	}
 }

@@ -1,6 +1,6 @@
 package org.eclipse.ui.internal.progress;
 
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.*;
@@ -11,7 +11,6 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.internal.ViewSite;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.internal.progress.ProgressMessages;
 
 public class ProgressView extends ViewPart implements IViewPart {
 
@@ -86,11 +85,10 @@ public class ProgressView extends ViewPart implements IViewPart {
 				if (info == null) {
 					return;
 				}
-				int code = info.getStatus().getCode();
-				if (code == JobInfo.PENDING_STATUS
-					|| code == JobInfo.RUNNING_STATUS)
+				int code = info.getJob().getState();
+				if (code == Job.RUNNING)
 					cancelAction.setEnabled(true);
-				else if (code == IStatus.ERROR) {
+				else if (info.getErrorStatus() != null) {
 					deleteAction.setEnabled(true);
 					showErrorAction.setEnabled(true);
 				}
@@ -222,8 +220,8 @@ public class ProgressView extends ViewPart implements IViewPart {
 					ErrorDialog.openError(
 						viewer.getControl().getShell(),
 						element.getDisplayString(),
-						element.getStatus().getMessage(),
-						element.getStatus());
+						element.getErrorStatus().getMessage(),
+						element.getErrorStatus());
 				}
 
 		};

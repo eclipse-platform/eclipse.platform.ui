@@ -191,7 +191,6 @@ public class JobProgressManager
 	public void aboutToRun(IJobChangeEvent event) {
 		if (!isNonDisplayableJob(event.getJob())) {
 			JobInfo info = getJobInfo(event.getJob());
-			info.setRunning();
 			refresh(info);
 		}
 	} 
@@ -296,11 +295,13 @@ public class JobProgressManager
 			return false;
 		else
 			return job.isSystem() || job.getState() == Job.SLEEPING;
-	} /**
-							 * Return whether or not this job is ever displayable.
-							 * @param job
-							 * @return
-							 */
+	} 
+	
+	/**
+	 * Return whether or not this job is ever displayable.
+	 * @param job
+	 * @return
+	 */
 	private boolean isNeverDisplayedJob(Job job) {
 		if (job == null)
 			return true;
@@ -338,7 +339,7 @@ public class JobProgressManager
 	 */
 	void clearJob(Job job) {
 		JobInfo info = (JobInfo) jobs.get(job);
-		if (info != null && info.getStatus().getCode() == IStatus.ERROR) {
+		if (info != null && info.getErrorStatus() != null) {
 			jobs.remove(job);
 			remove(info);
 		}
