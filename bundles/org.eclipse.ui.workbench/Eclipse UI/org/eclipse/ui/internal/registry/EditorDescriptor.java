@@ -285,6 +285,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable, 
 			}
 		}
 		if (openMode != OPEN_EXTERNAL && openMode != OPEN_INTERNAL && openMode != OPEN_INPLACE) {
+		    WorkbenchPlugin.log("Ignoring editor descriptor with invalid openMode: " + this); //$NON-NLS-1$
 		    return false;
 		}
 
