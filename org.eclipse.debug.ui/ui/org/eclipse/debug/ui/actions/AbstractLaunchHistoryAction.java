@@ -29,6 +29,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MenuAdapter;
+import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -51,14 +53,20 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	private Menu fMenu;
 		
 	/**
-	 * The action used to render this deleage.
+	 * The action used to render this delegate.
 	 */
 	private IAction fAction;
 	
 	/**
-	 * Launch groupd identifier
+	 * Launch group identifier
 	 */
 	private String fLaunchGroupIdentifier;
+	
+	/**
+	 * Indicates whether the launch history has changed and
+	 * the sub menu needs to be recreated.
+	 */
+	protected boolean fRecreateMenu= false;
 	
 	/**
 	 * Constructs a launch history action.
@@ -161,6 +169,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 * @see ILaunchHistoryChangedListener#launchHistoryChanged()
 	 */
 	public void launchHistoryChanged() {
+		fRecreateMenu= true;
 		updateTooltip();
 	}
 
@@ -185,6 +194,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	public Menu getMenu(Control parent) {
 		setMenu(new Menu(parent));
 		fillMenu(fMenu);
+		initMenu();
 		return fMenu;
 	}
 	
@@ -194,9 +204,31 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	public Menu getMenu(Menu parent) {
 		setMenu(new Menu(parent));
 		fillMenu(fMenu);
+		initMenu();
 		return fMenu;
 	}
 	
+	/**
+	 * Creates the menu for the action
+	 */
+	private void initMenu() {
+		// Add listener to repopulate the menu each time
+		// it is shown because of dynamic history list
+		fMenu.addMenuListener(new MenuAdapter() {
+			public void menuShown(MenuEvent e) {
+				if (fRecreateMenu) {
+					Menu m = (Menu)e.widget;
+					MenuItem[] items = m.getItems();
+					for (int i=0; i < items.length; i++) {
+						items[i].dispose();
+					}
+					fillMenu(m);
+					fRecreateMenu= false;
+				}
+			}
+		});
+	}
+
 	/**
 	 * Sets this action's drop-down menu, disposing the previous menu.
 	 * 
