@@ -441,6 +441,19 @@
 	</viewContribution>
 <!-- Contributions to Expression View Toolbar -->
 	<viewContribution
+		id = "org.eclipse.debug.ui.variableView.toolbar"
+		targetID = "org.eclipse.debug.ui.VariableView">
+		<action
+			id="org.eclipse.debug.ui.variableViewActions.toolbar.detailPaneWordWrap"
+			label="%DetailPaneWrodWrapAction.label"
+			menubarPath="viewActions"
+			tooltip="%DetailPaneWrodWrapAction.tooltip"
+			helpContextId="java_variables_detail_pane_word_wrap_action_context"
+			class="org.eclipse.debug.internal.ui.views.variables.JavaVariablesDetailPaneWordWrapAction">
+		</action>
+	</viewContribution>
+<!-- Contributions to Expression View Toolbar -->
+	<viewContribution
 		id = "org.eclipse.debug.ui.expressionsView.toolbar"
 		targetID = "org.eclipse.debug.ui.ExpressionView">
 		<action
@@ -464,6 +477,13 @@
 			class = "org.eclipse.debug.internal.ui.actions.RemoveExpressionAction"
 			tooltip="%RemoveExpressionAction.tooltip"
 			label="%RemoveAction.label">
+		</action>
+		<action id="org.eclipse.debug.ui.variableViewActions.toolbar.detailPaneWordWrap"
+			label="%DetailPaneWrodWrapAction.label"
+			menubarPath="viewActions"
+			tooltip="%DetailPaneWrodWrapAction.tooltip"
+			helpContextId="java_variables_detail_pane_word_wrap_action_context"
+			class="org.eclipse.debug.internal.ui.views.variables.JavaVariablesDetailPaneWordWrapAction">
 		</action>
 	</viewContribution>
 </extension>
