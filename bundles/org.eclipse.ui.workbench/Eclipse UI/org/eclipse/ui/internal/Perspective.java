@@ -155,7 +155,7 @@ public boolean bringToTop(IViewReference ref) {
  * Returns true if a view can close.
  */
 public boolean canCloseView(IViewPart view) {
-	if (PrefUtil.getInternalPreferenceStore().getBoolean("fix72114")) {
+	if (PrefUtil.getInternalPreferenceStore().getBoolean("fix72114")) { //$NON-NLS-1$
 		if (view instanceof ISaveablePart) {
 			ISaveablePart saveable = (ISaveablePart)view;
 			if (saveable.isSaveOnCloseNeeded()) {
