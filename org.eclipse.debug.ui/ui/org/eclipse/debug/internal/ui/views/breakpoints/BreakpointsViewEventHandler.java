@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brock Janiczak - bug 57999
+ *     Michael Fraenkel - bug 84385
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
@@ -30,7 +31,7 @@ import org.eclipse.ui.activities.IActivityManagerListener;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 
 /**
- * Handles breakpoint events and activity manager events (which can affect filtering),
+ * Handles breakpoint events and activity manager events (which can affect grouping),
  * updating the breakpoints view and viewer.
  */
 public class BreakpointsViewEventHandler implements IBreakpointsListener, IActivityManagerListener, IBreakpointManagerListener {
@@ -141,6 +142,8 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
                                 for (int j = 0; j < containers.length; j++ ) {
                                     updates.add(containers[j]);
                                 }
+                            } else {
+                            	updates.add(breakpoint);
                             }
 						}
                         Object[] objects = updates.toArray();
