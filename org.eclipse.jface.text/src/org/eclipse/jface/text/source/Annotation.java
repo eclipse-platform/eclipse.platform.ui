@@ -13,6 +13,7 @@ package org.eclipse.jface.text.source;
 
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
@@ -77,6 +78,8 @@ public abstract class Annotation {
 			int y= 0;
 			switch (valign) {
 				case SWT.TOP:
+					FontMetrics fontMetrics= gc.getFontMetrics();
+					y= fontMetrics.getHeight() + fontMetrics.getAscent() + fontMetrics.getDescent() - image.getBounds().height / 2;
 					break;
 				case SWT.CENTER:
 					y= (r.height - bounds.height) / 2;
