@@ -1,19 +1,22 @@
 package org.eclipse.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. 
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.util.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.*;
 
 /**
  * Handles the redirection of the global Cut, Copy, Paste, and
@@ -102,6 +105,7 @@ public class TextActionHandler {
 			super(WorkbenchMessages.getString("Delete")); //$NON-NLS-1$
 			setId("TextDeleteActionHandler");//$NON-NLS-1$
 			setEnabled(false);
+			WorkbenchHelp.setHelp(this, IHelpContextIds.TEXT_DELETE_ACTION);
 		}
 		public void runWithEvent(Event event) {
 			if (activeTextControl != null && !activeTextControl.isDisposed()) {
@@ -131,6 +135,7 @@ public class TextActionHandler {
 			super(WorkbenchMessages.getString("Cut")); //$NON-NLS-1$
 			setId("TextCutActionHandler");//$NON-NLS-1$
 			setEnabled(false);
+			WorkbenchHelp.setHelp(this, IHelpContextIds.TEXT_CUT_ACTION);
 		}
 		public void runWithEvent(Event event) {
 			if (activeTextControl != null && !activeTextControl.isDisposed()) {
@@ -160,6 +165,7 @@ public class TextActionHandler {
 			super(WorkbenchMessages.getString("Copy")); //$NON-NLS-1$
 			setId("TextCopyActionHandler");//$NON-NLS-1$
 			setEnabled(false);
+			WorkbenchHelp.setHelp(this, IHelpContextIds.TEXT_COPY_ACTION);
 		}
 		public void runWithEvent(Event event) {
 			if (activeTextControl != null && !activeTextControl.isDisposed()) {
@@ -189,6 +195,7 @@ public class TextActionHandler {
 			super(WorkbenchMessages.getString("Paste")); //$NON-NLS-1$
 			setId("TextPasteActionHandler");//$NON-NLS-1$
 			setEnabled(false);
+			WorkbenchHelp.setHelp(this, IHelpContextIds.TEXT_PASTE_ACTION);
 		}
 		public void runWithEvent(Event event) {
 			if (activeTextControl != null && !activeTextControl.isDisposed()) {

@@ -1,10 +1,17 @@
 package org.eclipse.ui.internal;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. 
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.WorkbenchEditorsDialog;
 
 /**
@@ -23,7 +30,7 @@ public class WorkbenchEditorsAction extends Action {
 		super(WorkbenchMessages.getString("WorkbenchEditorsAction.label")); //$NON-NLS-1$
 		setAccelerator(SWT.CTRL | SWT.SHIFT | 'W');
 		this.window = window;
-
+		WorkbenchHelp.setHelp(this, IHelpContextIds.WORKBENCH_EDITORS_ACTION);
 	}
 	public void run() {
 		new WorkbenchEditorsDialog(window).open();

@@ -1,25 +1,21 @@
 package org.eclipse.ui.dialogs;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.ListViewer;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. 
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IMarkerResolution;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.SimpleListContentProvider;
 import org.eclipse.ui.internal.misc.Assert;
 
@@ -68,6 +64,7 @@ public class MarkerResolutionSelectionDialog extends SelectionDialog {
 		setTitle(WorkbenchMessages.getString("MarkerResolutionSelectionDialog.title"));	//$NON-NLS-1$
 		setMessage(WorkbenchMessages.getString("MarkerResolutionSelectionDialog.messageLabel")); //$NON-NLS-1$
 		setInitialSelections(new Object[]{markerResolutions[0]});
+		WorkbenchHelp.setHelp(shell, IHelpContextIds.MARKER_RESOLUTION_SELECTION_DIALOG);
 	}
 	
 	/* (non-Javadoc)

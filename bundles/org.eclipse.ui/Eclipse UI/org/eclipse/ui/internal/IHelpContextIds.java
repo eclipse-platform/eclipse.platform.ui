@@ -1,9 +1,14 @@
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. 
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -63,11 +68,27 @@ public interface IHelpContextIds {
 	public static final String QUICK_START_ACTION = PREFIX + "quick_start_action_context"; //$NON-NLS-1$
 	public static final String QUIT_ACTION = PREFIX + "quit_action_context"; //$NON-NLS-1$
 	public static final String RESET_PERSPECTIVE_ACTION = PREFIX + "reset_perspective_action_context"; //$NON-NLS-1$
-	public static final String RESET_TOOLBAR_ACTION = PREFIX + "reset_toolbar_action_context"; //$NON-NLS-1$
-	public static final String TOGGLE_EDITORS_VISIBILITY_ACTION = PREFIX + "target_editors_visibility_action_context"; //$NON-NLS-1$
+	public static final String RESET_TOOLBAR_ACTION = PREFIX + "reset_toolbar_action_context";	public static final String TOGGLE_EDITORS_VISIBILITY_ACTION = PREFIX + "target_editors_visibility_action_context"; //$NON-NLS-1$
 	public static final String SWITCH_TO_PERSPECTIVE_ACTION = PREFIX + "switch_to_perspective_action_context"; //$NON-NLS-1$
 	public static final String SHOW_VIEW_ACTION = PREFIX + "show_view_action_context"; //$NON-NLS-1$
-	
+	public static final String CLOSE_ALL_SAVED_ACTION = PREFIX + "close_all_saved_action_context"; //$NON-NLS-1$
+	public static final String ACTIVATE_EDITOR_ACTION = PREFIX + "activate_editor_action_context"; //$NON-NLS-1$
+	public static final String SHOW_VIEW_MENU_ACTION = PREFIX + "show_view_menu_action_context"; //$NON-NLS-1$
+	public static final String WORKBENCH_EDITORS_ACTION = PREFIX + "workbench_editors_action_context"; //$NON-NLS-1$
+	public static final String NEW_WIZARD_SHORTCUT_ACTION = PREFIX + "new_wizard_shortcut_action_context"; //$NON-NLS-1$
+	public static final String TEXT_CUT_ACTION = PREFIX + "text_cut_action_context"; //$NON-NLS-1$
+	public static final String TEXT_COPY_ACTION = PREFIX + "text_copy_action_context"; //$NON-NLS-1$
+	public static final String TEXT_PASTE_ACTION = PREFIX + "text_paste_action_context"; //$NON-NLS-1$
+	public static final String TEXT_DELETE_ACTION = PREFIX + "text_delete_action_context"; //$NON-NLS-1$
+	public static final String CELL_CUT_ACTION = PREFIX + "cell_cut_action_context"; //$NON-NLS-1$
+	public static final String CELL_COPY_ACTION = PREFIX + "cell_copy_action_context"; //$NON-NLS-1$
+	public static final String CELL_PASTE_ACTION = PREFIX + "cell_paste_action_context"; //$NON-NLS-1$
+	public static final String CELL_DELETE_ACTION = PREFIX + "cell_delete_action_context"; //$NON-NLS-1$
+	public static final String CELL_FIND_ACTION = PREFIX + "cell_find_action_context"; //$NON-NLS-1$
+	public static final String CELL_SELECT_ALL_ACTION = PREFIX + "cell_select_all_action_context"; //$NON-NLS-1$
+	public static final String CELL_UNDO_ACTION = PREFIX + "cell_undo_action_context"; //$NON-NLS-1$
+	public static final String CELL_REDO_ACTION = PREFIX + "cell_redo_action_context"; //$NON-NLS-1$
+		
 	// Dialogs
 	public static final String ABOUT_DIALOG = PREFIX + "about_dialog_context"; //$NON-NLS-1$
 	public static final String ABOUT_PLUGINS_DIALOG = PREFIX + "about_plugins_dialog_context"; //$NON-NLS-1$
@@ -90,8 +111,13 @@ public interface IHelpContextIds {
 	public static final String YES_NO_CANCEL_LIST_SELECTION_DIALOG = PREFIX + "yes_no_cancel_list_selection_dialog_context"; //$NON-NLS-1$
 	public static final String RESOURCE_SELECTION_DIALOG = PREFIX + "resource_selection_dialog_context"; //$NON-NLS-1$
 	public static final String GOTO_LINE_DIALOG = PREFIX + "goto_line_dialog_context"; //$NON-NLS-1$	
-	public static final String WORKING_SET_SELECTION_DIALOG = PREFIX + "working_set_selection_dialog" ; //$NON-NLS-1$
-
+	public static final String WORKING_SET_SELECTION_DIALOG = PREFIX + "working_set_selection_dialog_context" ; //$NON-NLS-1$
+	public static final String DELETE_PROJECT_DIALOG = PREFIX + "delete_project_dialog_context"; //$NON-NLS-1$
+	public static final String INTERNAL_ERROR_DIALOG = PREFIX + "internal_error_dialog_context"; //$NON-NLS-1$
+	public static final String FILTER_DIALOG = PREFIX + "filter_dialog_context"; //$NON-NLS-1$
+	public static final String MARKER_RESOLUTION_SELECTION_DIALOG = PREFIX + "marker_resolution_selection_dialog_context"; //$NON-NLS-1$
+	public static final String WORKBENCH_EDITORS_DIALOG = PREFIX + "workbench_editors_dialog"; //$NON-NLS-1$
+	
 	// Editors
 	public static final String WELCOME_EDITOR = PREFIX + "welcome_editor_context"; //$NON-NLS-1$
 	
@@ -103,6 +129,8 @@ public interface IHelpContextIds {
 	public static final String VIEWS_PREFERENCE_PAGE = PREFIX + "views_preference_page_context"; //$NON-NLS-1$
 	public static final String WORKBENCH_PREFERENCE_PAGE = PREFIX + "workbench_preference_page_context"; //$NON-NLS-1$
 	public static final String FONT_PREFERENCE_PAGE = PREFIX + "font_preference_page_context"; //$NON-NLS-1$
+	public static final String DECORATORS_PREFERENCE_PAGE = PREFIX + "decorators_preference_page_context"; //$NON-NLS-1$
+	public static final String STARTUP_PREFERENCE_PAGE = PREFIX + "startup_preference_page_context"; //$NON-NLS-1$
 
 	// Property pages
 	public static final String PROJECT_REFERENCE_PROPERTY_PAGE = PREFIX + "project_reference_property_page_context"; //$NON-NLS-1$
@@ -136,6 +164,6 @@ public interface IHelpContextIds {
 	public static final String IMPORT_WIZARD = PREFIX + "import_wizard_context"; //$NON-NLS-1$
 	public static final String EXPORT_WIZARD = PREFIX + "export_wizard_context"; //$NON-NLS-1$
 	public static final String UPDATE_CAPABILITY_WIZARD = PREFIX + "update_capability_wizard_context"; //$NON-NLS-1$
-	public static final String WORKING_SET_NEW_WIZARD = PREFIX + "working_set_new_wizard"; //$NON-NLS-1$	
-	public static final String WORKING_SET_EDIT_WIZARD = PREFIX + "working_set_edit_wizard"; //$NON-NLS-1$		
+	public static final String WORKING_SET_NEW_WIZARD = PREFIX + "working_set_new_wizard_context"; //$NON-NLS-1$	
+	public static final String WORKING_SET_EDIT_WIZARD = PREFIX + "working_set_edit_wizard_context"; //$NON-NLS-1$		
 }

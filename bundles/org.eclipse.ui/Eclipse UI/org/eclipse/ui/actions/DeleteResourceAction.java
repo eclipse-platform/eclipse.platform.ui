@@ -1,10 +1,14 @@
 package org.eclipse.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. 
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.Iterator;
@@ -48,6 +52,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
 				new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL},
 				0); 	// yes is the default
 			this.projects = projects;
+			WorkbenchHelp.setHelp(parentShell, IHelpContextIds.DELETE_PROJECT_DIALOG);
 		}
 		
 		static String getTitle(List projects) {

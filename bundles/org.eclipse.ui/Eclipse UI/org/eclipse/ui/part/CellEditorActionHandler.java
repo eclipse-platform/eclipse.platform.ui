@@ -1,18 +1,24 @@
 package org.eclipse.ui.part;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
+import java.util.*;
+
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.util.*;
+import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
-import java.util.HashMap;
-import java.util.Iterator;
+import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.IHelpContextIds;
 
 /**
  * Handles the redirection of the global actions Cut, Copy, Paste,
@@ -145,6 +151,7 @@ public class CellEditorActionHandler {
 		protected CutActionHandler() {
 			setId("CellEditorCutActionHandler");//$NON-NLS-1$
 			setEnabled(false);
+			WorkbenchHelp.setHelp(this, IHelpContextIds.CELL_CUT_ACTION);
 		}
 		public void runWithEvent(Event event) {
 			if (activeEditor != null) {
@@ -173,6 +180,7 @@ public class CellEditorActionHandler {
 		protected CopyActionHandler() {
 			setId("CellEditorCopyActionHandler");//$NON-NLS-1$
 			setEnabled(false);
+			WorkbenchHelp.setHelp(this, IHelpContextIds.CELL_COPY_ACTION);
 		}
 		public void runWithEvent(Event event) {
 			if (activeEditor != null) {
@@ -201,6 +209,7 @@ public class CellEditorActionHandler {
 		protected PasteActionHandler() {
 			setId("CellEditorPasteActionHandler");//$NON-NLS-1$
 			setEnabled(false);
+			WorkbenchHelp.setHelp(this, IHelpContextIds.CELL_PASTE_ACTION);
 		}
 		public void runWithEvent(Event event) {
 			if (activeEditor != null) {
@@ -229,6 +238,7 @@ public class CellEditorActionHandler {
 		protected DeleteActionHandler() {
 			setId("CellEditorDeleteActionHandler");//$NON-NLS-1$
 			setEnabled(false);
+			WorkbenchHelp.setHelp(this, IHelpContextIds.CELL_DELETE_ACTION);
 		}
 		public void runWithEvent(Event event) {
 			if (activeEditor != null) {
@@ -257,6 +267,7 @@ public class CellEditorActionHandler {
 		protected SelectAllActionHandler() {
 			setId("CellEditorSelectAllActionHandler");//$NON-NLS-1$
 			setEnabled(false);
+			WorkbenchHelp.setHelp(this, IHelpContextIds.CELL_SELECT_ALL_ACTION);
 		}
 		public void runWithEvent(Event event) {
 			if (activeEditor != null) {
@@ -285,6 +296,7 @@ public class CellEditorActionHandler {
 		protected FindActionHandler() {
 			setId("CellEditorFindActionHandler");//$NON-NLS-1$
 			setEnabled(false);
+			WorkbenchHelp.setHelp(this, IHelpContextIds.CELL_FIND_ACTION);
 		}
 		public void runWithEvent(Event event) {
 			if (activeEditor != null) {
@@ -313,6 +325,7 @@ public class CellEditorActionHandler {
 		protected UndoActionHandler() {
 			setId("CellEditorUndoActionHandler");//$NON-NLS-1$
 			setEnabled(false);
+			WorkbenchHelp.setHelp(this, IHelpContextIds.CELL_UNDO_ACTION);
 		}
 		public void runWithEvent(Event event) {
 			if (activeEditor != null) {
@@ -341,6 +354,7 @@ public class CellEditorActionHandler {
 		protected RedoActionHandler() {
 			setId("CellEditorRedoActionHandler");//$NON-NLS-1$
 			setEnabled(false);
+			WorkbenchHelp.setHelp(this, IHelpContextIds.CELL_REDO_ACTION);
 		}
 		public void runWithEvent(Event event) {
 			if (activeEditor != null) {
