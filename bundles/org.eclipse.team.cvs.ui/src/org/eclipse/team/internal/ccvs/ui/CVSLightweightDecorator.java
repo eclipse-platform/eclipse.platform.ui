@@ -46,7 +46,6 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamImages;
-import org.eclipse.ui.IDecoratorManager;
 
 public class CVSLightweightDecorator
 	extends LabelProvider
@@ -92,9 +91,6 @@ public class CVSLightweightDecorator
 		CVSProviderPlugin.addResourceStateChangeListener(this);
 		CVSProviderPlugin.broadcastDecoratorEnablementChanged(true /* enabled */);
 	}
-
-	// Keep track of deconfigured projects
-	private Set deconfiguredProjects = new HashSet();
 
 	public static boolean isDirty(final ICVSResource cvsResource) {
 		try {
@@ -434,26 +430,10 @@ public class CVSLightweightDecorator
 	}
 	
 	/*
-	 * Return the CVSLightweightDecorator instance that is currently enabled.
-	 * Return null if we don't have a decorator or its not enabled.
-	 */	 
-	/* package */ static CVSLightweightDecorator getActiveCVSDecorator() {
-		IDecoratorManager manager = CVSUIPlugin.getPlugin().getWorkbench().getDecoratorManager();
-		if (manager.getEnabled(CVSUIPlugin.DECORATOR_ID))
-			return (CVSLightweightDecorator) manager.getBaseLabelProvider(CVSUIPlugin.DECORATOR_ID);
-		return null;
-	}
-	/*
-	 * Perform a blanket refresh of all CVS decorations
-	 */
-	 public static void refresh() {
-		CVSLightweightDecorator activeDecorator = getActiveCVSDecorator();
-
-		if(activeDecorator == null)
-			return;	//nothing to do, our decorator isn't active
-
-		//update all displaying of our decorator;
-		activeDecorator.fireLabelProviderChanged(new LabelProviderChangedEvent(activeDecorator));
+	* Perform a blanket refresh of all CVS decorations
+	*/
+	public static void refresh() {
+		CVSUIPlugin.getPlugin().getWorkbench().getDecoratorManager().update(CVSUIPlugin.DECORATOR_ID);
 	}
 
 	/*
