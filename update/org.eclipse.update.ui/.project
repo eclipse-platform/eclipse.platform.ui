@@ -7,6 +7,7 @@
 		<project>org.eclipse.core.runtime.compatibility</project>
 		<project>org.eclipse.help.base</project>
 		<project>org.eclipse.ui</project>
+		<project>org.eclipse.update.configurator</project>
 		<project>org.eclipse.update.core</project>
 		<project>org.eclipse.update.core.linux</project>
 		<project>org.eclipse.update.ui.forms</project>
