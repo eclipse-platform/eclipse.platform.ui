@@ -857,10 +857,6 @@ private void resolvePluginRegistry() {
 
 	// resolve relationships
 	if (crossLink) {
-		// knit the fragments into the plugins.  This must be done after any trimming
-		// so that fragments for disabled plugins are not added.
-		resolveFragments();
-		
 		// cross link all of the extensions and extension points.
 		PluginDescriptorModel[] plugins = reg.getPlugins();
 		for (int i = 0; i < plugins.length; i++)
