@@ -127,7 +127,7 @@ public class ContextHelpDialog {
 		String styledText = context.getText();
 		if (styledText == null) // no description found in context objects.
 			styledText = WorkbenchResources.getString("WW002");
-		StyledText text = new StyledText(parent, SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
+		StyledText text = new StyledText(parent, SWT.MULTI | SWT.READ_ONLY /* | SWT.WRAP*/);
 		text.getCaret().setVisible(false);
 		text.setBackground(backgroundColour);
 		text.setForeground(foregroundColour);
