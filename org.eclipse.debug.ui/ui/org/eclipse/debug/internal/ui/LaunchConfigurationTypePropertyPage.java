@@ -42,7 +42,7 @@ public class LaunchConfigurationTypePropertyPage extends PropertyPage {
 		topComp.setLayout(topLayout);
 		
 		setSelectLabel(new Label(topComp, SWT.NONE));
-		getSelectLabel().setText("Select default launch configuration type");
+		getSelectLabel().setText("&Select default launch configuration type");
 		
 		setConfigTypeCombo(new Combo(topComp, SWT.NONE));
 		initializeConfigComboItems();
@@ -112,7 +112,7 @@ public class LaunchConfigurationTypePropertyPage extends PropertyPage {
 	}
 	
 	/**
-	 * Get the IResource this page works on.
+	 * Returns the IResource this page works on.
 	 */
 	protected IResource getResource() {
 		IAdaptable adaptable = getElement();
@@ -154,5 +154,4 @@ public class LaunchConfigurationTypePropertyPage extends PropertyPage {
 	private ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();		
 	}
-
 }
