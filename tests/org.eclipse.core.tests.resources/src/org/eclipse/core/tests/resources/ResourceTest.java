@@ -761,6 +761,8 @@ public class ResourceTest extends CoreTest {
 		// Session tests should overwrite it.
 		ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
 		getWorkspace().save(true, null);
+		//don't leak builder jobs, since they may affect subsequent tests
+		waitForBuild();
 	}
 
 	/**
