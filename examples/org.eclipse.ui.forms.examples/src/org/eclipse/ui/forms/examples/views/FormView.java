@@ -50,6 +50,9 @@ public class FormView extends ViewPart {
 		td.colspan = 2;
 		button.setLayoutData(td);
 		ExpandableComposite ec = toolkit.createExpandableComposite(form.getBody(), ExpandableComposite.TREE_NODE|ExpandableComposite.CLIENT_INDENT);
+		ImageHyperlink eci = toolkit.createImageHyperlink(ec, SWT.NULL);
+		eci.setImage(ExamplesPlugin.getDefault().getImageRegistry().get(ExamplesPlugin.IMG_SAMPLE));
+		ec.setTextClient(eci);
 		ec.setText("Expandable Composite title");
 		String ctext = "We will now create a somewhat long text so that "+
 		"we can use it as content for the expandable composite. "+

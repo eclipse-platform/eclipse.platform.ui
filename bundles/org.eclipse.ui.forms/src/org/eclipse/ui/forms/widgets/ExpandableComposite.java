@@ -76,6 +76,7 @@ public class ExpandableComposite extends Composite {
 	private int SEPARATOR_HEIGHT = 2;
 	private int expansionStyle = TWISTIE | FOCUS_TITLE | EXPANDED;
 	private boolean expanded;
+	private Control textClient;
 	private Control client;
 	private Vector listeners;
 	protected ToggleHyperlink toggle;
@@ -86,11 +87,16 @@ public class ExpandableComposite extends Composite {
 			int x = marginWidth;
 			int y = marginHeight;
 			Point tsize = null;
+			Point tcsize = null;
 			if (toggle != null)
 				tsize = toggle.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
 			int twidth = clientArea.width - marginWidth - marginWidth;
 			if (tsize != null)
 				twidth -= tsize.x + GAP;
+			if (textClient !=null)
+				tcsize = textClient.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
+			if (tcsize!=null)
+				twidth -= tcsize.x + GAP;
 			Point size = textLabel.computeSize(twidth, SWT.DEFAULT, changed);
 			if (textLabel instanceof Label) {
 				Point defSize = textLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT,
@@ -113,6 +119,10 @@ public class ExpandableComposite extends Composite {
 				x += tsize.x + GAP;
 			}
 			textLabel.setBounds(x, y, size.x, size.y);
+			if (textClient!=null) {
+				int tcx = clientArea.width - tcsize.x;
+				textClient.setBounds(tcx, y, tcsize.x, tcsize.y);
+			}
 			y += size.y;
 			if (getSeparatorControl() != null) {
 				y += VSPACE;
@@ -159,8 +169,17 @@ public class ExpandableComposite extends Composite {
 			int innerwHint = wHint;
 			if (innerwHint != SWT.DEFAULT)
 				innerwHint -= twidth;
+			
+			int innertHint = innerwHint;
+			
+			Point tcsize = null;
+			if (textClient!=null) {
+				tcsize = textClient.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
+				if (innertHint!=SWT.DEFAULT)
+					innertHint -= GAP + tcsize.x;
+			}
 			Point size = textLabel
-					.computeSize(innerwHint, SWT.DEFAULT, changed);
+					.computeSize(innertHint, SWT.DEFAULT, changed);
 			if (textLabel instanceof Label) {
 				Point defSize = textLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT,
 						changed);
@@ -170,7 +189,7 @@ public class ExpandableComposite extends Composite {
 				}
 			}
 			width = size.x;
-			height = size.y;
+			height = tcsize!=null?Math.max(tcsize.y, size.y):size.y;
 			if (getSeparatorControl() != null) {
 				height += VSPACE + SEPARATOR_HEIGHT;
 				if (expanded && client != null)
@@ -216,7 +235,14 @@ public class ExpandableComposite extends Composite {
 		public int computeMinimumWidth(Composite parent, boolean changed) {
 			int width = 0;
 			Point size = textLabel.computeSize(5, SWT.DEFAULT, changed);
+			Point tcsize=null;
+			if (textClient!=null) {
+				tcsize = textClient.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
+			}
 			width = size.x;
+			if (tcsize!=null)
+				width += GAP + tcsize.x;
+
 			if ((expanded || (expansionStyle & COMPACT) == 0) && client != null) {
 				Point dsize = null;
 				if (getDescriptionControl() != null) {
@@ -244,7 +270,13 @@ public class ExpandableComposite extends Composite {
 			int width = 0;
 			Point size = textLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT,
 					changed);
+			Point tcsize=null;
+			if (textClient!=null) {
+				tcsize = textClient.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
+			}
 			width = size.x;
+			if (tcsize!=null)
+				width += GAP + tcsize.x;
 			if ((expanded || (expansionStyle & COMPACT) == 0) && client != null) {
 				Point dsize = null;
 				if (getDescriptionControl() != null) {
@@ -571,5 +603,28 @@ public class ExpandableComposite extends Composite {
 	protected boolean isFixedStyle() {
 		return (expansionStyle & TWISTIE) == 0
 				&& (expansionStyle & TREE_NODE) == 0;
+	}
+	/**
+	 * Returns the text client control.
+	 * @return Returns the text client control if specified, or <code>null</code> if
+	 * not.
+	 */
+	public Control getTextClient() {
+		return textClient;
+	}
+	/**
+	 * Sets the text client control. Text client is a control that 
+	 * is a child of the expandable composite and is placed to the right
+	 * of the text. It can be used to place small image hyperlinks. If
+	 * more than one control is needed, use Composite to hold them. Care should
+	 * be taken that the height of the control is comparable to the
+	 * height of the text.
+	 * @param textClient the textClient to set or <code>null</code> if not
+	 * needed any more.
+	 */
+	public void setTextClient(Control textClient) {
+		if (this.textClient!=null)
+			this.textClient.dispose();
+		this.textClient = textClient;
 	}
 }
