@@ -1,0 +1,37 @@
+<html><head><title>Reconnecting to existing</title>
+<LINK REL=STYLESHEET HREF=../book.css CHARSET=ISO-8859-1 TYPE=text/css>
+<meta NAME="keywords" content="">
+<meta NAME="since" content="">
+</head><h2>Reconnecting to existing</h2>
+<p>Since: <br>
+Last Modified: $Date: 2003/11/27 22:04:58 $</p><body>
+<p>
+The following scenario represents how a user would reconnect a project that does
+not contain CVS meta-data to it's remote counterpart. It is assumed that the local project 
+was derived from a previous version of the remote project but both the local project and
+the remote may have been modified since then.
+</p>
+<p>Perform the following steps:</p>
+<ol>
+  <li>Load an existing project (using Checkout or some other means)</li>
+  <li>Disconnect the project and indicate that CVS meta-data is to be deleted</li>
+  <li>Modify some local resources</li>
+  <li>Optionally, modify the remote contents of some resources using a separate checkout</li>
+  <li>Perform a Team>Share Project and select CVS (if there is more than one 
+  repository provider available).</li>
+  <li>Select the repository the project was loaded from and click OK.</li>
+  <li>You will be prompted that the project already exists. Click Yes to continue.
+  In the next dialog that appears, select HEAD as the branch to share with.</li>
+  <li>Click Finish. This will close the wizard and show the sync view.</li>
+  <li>When the background job is completed, ensure that all folders (except new ones)
+  are marked as in-sync and all files (except new ones) are conflicting additions.
+  <li>Changing the comparison criteria to compare contents should not contact the server
+  and should leave only the resources that differ in the sync view. Perform a 
+  Mark As Merged and a Commit on these resources.</li>
+  <li>Changing the comparison criteria back to revision number will reveal all the files
+  whose content did not change, perform a Mark as merged on these resources followed by 
+  a Team>Update on the project in the Navigator (Note: This could be handled better).</li>
+  <li>After the update, ensure the project has no out-of-sync resources.</li>
+</ol>
+
+</body></html>
