@@ -202,7 +202,7 @@ protected Control createContents(Composite parent) {
 	groupComponent.setLayoutData(data);
 	
 	addEditorButton = new Button(groupComponent, SWT.PUSH);
-	addEditorButton.setText(WorkbenchMessages.getString("FileEditorPreference.add")); //$NON-NLS-1$
+	addEditorButton.setText(WorkbenchMessages.getString("FileEditorPreference.addEditor")); //$NON-NLS-1$
 	addEditorButton.addListener(SWT.Selection, this);
 	data = new GridData();
 	data.horizontalAlignment = GridData.FILL;

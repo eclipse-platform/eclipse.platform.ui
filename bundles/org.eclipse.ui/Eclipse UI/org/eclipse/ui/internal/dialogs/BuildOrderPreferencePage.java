@@ -32,10 +32,10 @@ public class BuildOrderPreferencePage
 	private List buildList;
 	private Composite buttonComposite;
 
-	private static String UP_LABEL = WorkbenchMessages.getString("Up"); //$NON-NLS-1$
-	private static String DOWN_LABEL = WorkbenchMessages.getString("Down"); //$NON-NLS-1$
-	private static String ADD_LABEL = WorkbenchMessages.getString("Add"); //$NON-NLS-1$
-	private static String REMOVE_LABEL = WorkbenchMessages.getString("Remove"); //$NON-NLS-1$
+	private static String UP_LABEL = WorkbenchMessages.getString("BuildOrderPreference.up"); //$NON-NLS-1$
+	private static String DOWN_LABEL = WorkbenchMessages.getString("BuildOrderPreference.down"); //$NON-NLS-1$
+	private static String ADD_LABEL = WorkbenchMessages.getString("BuildOrderPreference.add"); //$NON-NLS-1$
+	private static String REMOVE_LABEL = WorkbenchMessages.getString("BuildOrderPreference.remove"); //$NON-NLS-1$
 	private static String UNSELECTED_PROJECTS = WorkbenchMessages.getString("BuildOrderPreference.selectProject"); //$NON-NLS-1$
 	private static String PROJECT_SELECTION_MESSAGE = WorkbenchMessages.getString("BuildOrderPreference.selectOtherProjects"); //$NON-NLS-1$
 	private static String DEFAULTS_LABEL = WorkbenchMessages.getString("BuildOrderPreference.useDefaults"); //$NON-NLS-1$
