@@ -27,7 +27,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.quickdiff.IQuickDiffProviderImplementation;
-import org.eclipse.ui.editors.text.StorageDocumentProvider;
+import org.eclipse.ui.editors.text.IStorageDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -112,14 +112,14 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 		if (fReference == null)
 			fReference= new Document();
 
-		if (provider instanceof StorageDocumentProvider) {
+		if (provider instanceof IStorageDocumentProvider) {
 			InputStream stream= null;
 			try {
 				stream= ((IFileEditorInput)input).getFile().getContents();
 			} catch (CoreException e) {
 				return;
 			}
-			StorageDocumentProvider sProvider= (StorageDocumentProvider)provider;
+			IStorageDocumentProvider sProvider= (IStorageDocumentProvider) provider;
 			try {
 				String encoding= sProvider.getEncoding(input);
 				if (encoding == null)

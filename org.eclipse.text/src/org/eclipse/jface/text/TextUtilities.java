@@ -410,7 +410,7 @@ public class TextUtilities {
 			try {
 				return extension3.computePartitioning(partitioning, offset, length);
 			} catch (BadPartitioningException x) {
-				return null;
+				return new ITypedRegion[0];
 			}
 		} else {
 			return document.computePartitioning(offset, length);
