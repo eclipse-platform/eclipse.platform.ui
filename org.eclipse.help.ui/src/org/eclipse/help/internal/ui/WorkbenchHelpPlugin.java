@@ -32,7 +32,7 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 		// set dynamic address
 		appServer = getAppServer();
 		if (appServer != null)
-			appServer.setAddress(null, 80);
+			appServer.setAddress(null, 0);
 	}
 	/**
 	 * @return HelpViewerPlugin
