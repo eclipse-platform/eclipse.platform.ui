@@ -441,15 +441,21 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
 	 * @since 3.1
 	 */
 	private int getOpenMode() {
-        if (getLauncher() != null) {
+		if (configurationElement == null) { // if we've been serialized, return our serialized value
+			return openMode;
+		}
+		else if (getLauncher() != null) {
             // open using a launcer
         	return EditorDescriptor.OPEN_EXTERNAL;
         } else if (getFileName() != null) {
             // open using an external editor 	
             return EditorDescriptor.OPEN_EXTERNAL;
-        } else {
+        } else if (getPluginId() != null) {
         	// open using an internal editor
         	return EditorDescriptor.OPEN_INTERNAL;
+        }
+        else {
+        	return 0; // default for system editor
         }
 	}
 
