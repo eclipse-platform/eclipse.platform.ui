@@ -10,15 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.preferences;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
+import java.util.StringTokenizer;
 import org.eclipse.ant.internal.ui.AntSourceViewerConfiguration;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant;
 import org.eclipse.ant.internal.ui.editor.text.IAntEditorColorConstants;
+import org.eclipse.jdt.internal.ui.javaeditor.EditorUtility;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
@@ -35,10 +38,15 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -51,6 +59,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -231,6 +240,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		{AntPreferencesMessages.getString("AntEditorPreferencePage.lineNumberForegroundColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, null}, //$NON-NLS-1$
 		{AntPreferencesMessages.getString("AntEditorPreferencePage.currentLineHighlighColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, null}, //$NON-NLS-1$
 		{AntPreferencesMessages.getString("AntEditorPreferencePage.printMarginColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, null}, //$NON-NLS-1$
+		{AntPreferencesMessages.getString("AntEditorPreferencePage.27"), AntEditorPreferenceConstants.EDITOR_LINK_COLOR, null}, //$NON-NLS-1$
 		{AntPreferencesMessages.getString("AntEditorPreferencePage.41"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR}, //$NON-NLS-1$
 		{AntPreferencesMessages.getString("AntEditorPreferencePage.42"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR}, //$NON-NLS-1$
 	};
@@ -263,6 +273,9 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 	private SelectionListener fSelectionListener;
 	protected Map fWorkingValues;
 	protected ArrayList fComboBoxes;
+	
+	private Text fBrowserLikeLinksKeyModifierText;
+	private Button fBrowserLikeLinksCheckBox;
 	
 	public AntEditorPreferencePage() {
 		super();
@@ -323,6 +336,11 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.EDITOR_FOLDING_DTD));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.EDITOR_FOLDING_DEFINING));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.EDITOR_FOLDING_TARGETS));
+		
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AntEditorPreferenceConstants.EDITOR_LINK_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.EDITOR_BROWSER_LIKE_LINKS));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AntEditorPreferenceConstants.EDITOR_BROWSER_LIKE_LINKS_KEY_MODIFIER));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AntEditorPreferenceConstants.EDITOR_BROWSER_LIKE_LINKS_KEY_MODIFIER_MASK));
 		
 		for (int i= 0; i < fSyntaxColorListModel.length; i++) {
 			String colorKey= fSyntaxColorListModel[i][1];
@@ -519,6 +537,10 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		item.setControl(createProblemsTabContent(folder));
 					
 		item= new TabItem(folder, SWT.NONE);
+		item.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.28")); //$NON-NLS-1$
+		item.setControl(createNavigationPage(folder));
+		
+		item= new TabItem(folder, SWT.NONE);
 		item.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.19")); //$NON-NLS-1$
 		item.setControl(createFoldingTabContent(folder));
 		
@@ -573,6 +595,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 	private void initialize() {
 		
 		initializeFields();
+		fBrowserLikeLinksKeyModifierText.setEnabled(fBrowserLikeLinksCheckBox.getSelection());
 		
 		for (int i= 0, n= fSyntaxColorListModel.length; i < n; i++) {
 			fHighlightingColorList.add(
@@ -598,9 +621,6 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		initializeBackgroundColorFields();
 	}
 	
-	/**
-	 * 
-	 */
 	private void initializeBackgroundColorFields() {
 		RGB rgb= PreferenceConverter.getColor(getOverlayStore(), AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND);
 		fBackgroundColorEditor.setColorValue(rgb);		
@@ -763,6 +783,130 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		});
 				
 		return colorComposite;
+	}
+	
+	private Control createNavigationPage(Composite parent) {
+		Composite composite= new Composite(parent, SWT.NULL);
+		GridLayout layout= new GridLayout(); layout.numColumns= 2;
+		composite.setLayout(layout);
+
+		String label= AntPreferencesMessages.getString("AntEditorPreferencePage.29"); //$NON-NLS-1$
+		fBrowserLikeLinksCheckBox= addCheckBox(composite, label, AntEditorPreferenceConstants.EDITOR_BROWSER_LIKE_LINKS, 0);
+		fBrowserLikeLinksCheckBox.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				boolean state= fBrowserLikeLinksCheckBox.getSelection();
+				fBrowserLikeLinksKeyModifierText.setEnabled(state);
+				handleBrowserLikeLinksKeyModifierModified();
+			}
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+		
+		// Text field for modifier string
+		label= AntPreferencesMessages.getString("AntEditorPreferencePage.30"); //$NON-NLS-1$
+		fBrowserLikeLinksKeyModifierText= addTextField(composite, label, AntEditorPreferenceConstants.EDITOR_BROWSER_LIKE_LINKS_KEY_MODIFIER, 20, 0, null);
+		fBrowserLikeLinksKeyModifierText.setTextLimit(Text.LIMIT);
+		
+		if (computeStateMask(getOverlayStore().getString(AntEditorPreferenceConstants.EDITOR_BROWSER_LIKE_LINKS_KEY_MODIFIER)) == -1) {
+			// Fix possible illegal modifier string
+			int stateMask= getOverlayStore().getInt(AntEditorPreferenceConstants.EDITOR_BROWSER_LIKE_LINKS_KEY_MODIFIER_MASK);
+			if (stateMask == -1) {
+				fBrowserLikeLinksKeyModifierText.setText(""); //$NON-NLS-1$
+			} else {
+				fBrowserLikeLinksKeyModifierText.setText(EditorUtility.getModifierString(stateMask));
+			}
+		}
+		
+		fBrowserLikeLinksKeyModifierText.addKeyListener(new KeyListener() {
+			private boolean isModifierCandidate;
+			public void keyPressed(KeyEvent e) {
+				isModifierCandidate= e.keyCode > 0 && e.character == 0 && e.stateMask == 0;
+			}
+		
+			public void keyReleased(KeyEvent e) {
+				if (isModifierCandidate && e.stateMask > 0 && e.stateMask == e.stateMask && e.character == 0) {
+					String modifierString= fBrowserLikeLinksKeyModifierText.getText();
+					Point selection= fBrowserLikeLinksKeyModifierText.getSelection();
+					int i= selection.x - 1;
+					while (i > -1 && Character.isWhitespace(modifierString.charAt(i))) {
+						i--;
+					}
+					boolean needsPrefixDelimiter= i > -1 && !String.valueOf(modifierString.charAt(i)).equals(AntPreferencesMessages.getString("AntEditorPreferencePage.31")); //$NON-NLS-1$
+
+					i= selection.y;
+					while (i < modifierString.length() && Character.isWhitespace(modifierString.charAt(i))) {
+						i++;
+					}
+					boolean needsPostfixDelimiter= i < modifierString.length() && !String.valueOf(modifierString.charAt(i)).equals(AntPreferencesMessages.getString("AntEditorPreferencePage.31")); //$NON-NLS-1$
+
+					String insertString;
+					if (needsPrefixDelimiter && needsPostfixDelimiter) {
+						insertString= MessageFormat.format(AntPreferencesMessages.getString("AntEditorPreferencePage.33"), new String[] {Action.findModifierString(e.stateMask)}); //$NON-NLS-1$
+					} else {
+						if (needsPrefixDelimiter) {
+							insertString= MessageFormat.format(AntPreferencesMessages.getString("AntEditorPreferencePage.34"), new String[] {Action.findModifierString(e.stateMask)}); //$NON-NLS-1$
+						} else if (needsPostfixDelimiter) {
+							insertString= MessageFormat.format(AntPreferencesMessages.getString("AntEditorPreferencePage.35"), new String[] {Action.findModifierString(e.stateMask)}); //$NON-NLS-1$
+						} else {
+							insertString= Action.findModifierString(e.stateMask);
+						}
+					}
+
+					fBrowserLikeLinksKeyModifierText.insert(insertString);
+				}
+			}
+		});
+
+		fBrowserLikeLinksKeyModifierText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				handleBrowserLikeLinksKeyModifierModified();
+			}
+		});
+
+		return composite;
+	}
+	
+	private void handleBrowserLikeLinksKeyModifierModified() {
+		String modifiers= fBrowserLikeLinksKeyModifierText.getText();
+		int stateMask= computeStateMask(modifiers);
+
+		if (fBrowserLikeLinksCheckBox.getSelection() && (stateMask == -1 || (stateMask & SWT.SHIFT) != 0)) {
+			if (stateMask == -1) {
+				setErrorMessage(MessageFormat.format(AntPreferencesMessages.getString("AntEditorPreferencePage.36"), new String[]{modifiers})); //$NON-NLS-1$
+			} else {
+				setErrorMessage(AntPreferencesMessages.getString("AntEditorPreferencePage.43")); //$NON-NLS-1$
+			}
+			setValid(false);
+			return;
+		} 
+		setValid(true);
+		setErrorMessage(null);
+	}
+	
+	/**
+	 * Computes the state mask for the given modifier string.
+	 * 
+	 * @param modifiers	the string with the modifiers, separated by '+', '-', ';', ',' or '.'
+	 * @return the state mask or -1 if the input is invalid
+	 */
+	private int computeStateMask(String modifiers) {
+		if (modifiers == null) {
+			return -1;
+		}
+		
+		if (modifiers.length() == 0) {
+			return SWT.NONE;
+		}
+
+		int stateMask= 0;
+		StringTokenizer modifierTokenizer= new StringTokenizer(modifiers, ",;.:+-* "); //$NON-NLS-1$
+		while (modifierTokenizer.hasMoreTokens()) {
+			int modifier= EditorUtility.findLocalizedModifier(modifierTokenizer.nextToken());
+			if (modifier == 0 || (stateMask & modifier) == modifier)
+				return -1;
+			stateMask= stateMask | modifier;
+		}
+		return stateMask;
 	}
 	
 	private Control createPreviewer(Composite parent) {

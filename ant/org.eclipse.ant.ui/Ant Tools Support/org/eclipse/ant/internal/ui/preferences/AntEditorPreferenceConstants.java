@@ -11,8 +11,10 @@
 package org.eclipse.ant.internal.ui.preferences;
 
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
@@ -237,7 +239,52 @@ public class AntEditorPreferenceConstants {
 	 * @since 3.1
 	 */
 	public static final String EDITOR_FOLDING_DEFINING= "editor_folding_defining"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that controls if browser like links are turned on or off.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.1
+	 */
+	public static final String EDITOR_BROWSER_LIKE_LINKS= "browserLikeLinks"; //$NON-NLS-1$
 
+	/**
+	 * A named preference that controls the key modifier for browser like links.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * </p>
+	 * 
+	 * @since 3.1
+	 */
+	public static final String EDITOR_BROWSER_LIKE_LINKS_KEY_MODIFIER= "browserLikeLinksKeyModifier"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls the key modifier mask for browser like links.
+	 * The value is only used if the value of <code>EDITOR_BROWSER_LIKE_LINKS</code>
+	 * cannot be resolved to valid SWT modifier bits.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * </p>
+	 * 
+	 * @see #EDITOR_BROWSER_LIKE_LINKS_KEY_MODIFIER
+	 * @since 3.1
+	 */
+	public static final String EDITOR_BROWSER_LIKE_LINKS_KEY_MODIFIER_MASK= "browserLikeLinksKeyModifierMask"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that holds the color used for 'linked-mode' underline.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 *
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @since 3.1
+	 */
+	public final static String EDITOR_LINK_COLOR= "linkColor"; //$NON-NLS-1$
 
 	public static void initializeDefaultValues(IPreferenceStore store) {
 		TextEditorPreferenceConstants.initializeDefaultValues(store);
@@ -266,5 +313,11 @@ public class AntEditorPreferenceConstants {
 		store.setDefault(PROBLEM_TASKS, BUILDFILE_ERROR);
 		
 		store.setDefault(EDITOR_FOLDING_ENABLED, true);
+		
+		String mod1Name= Action.findModifierString(SWT.MOD1);	// SWT.COMMAND on Mac; SWT.CONTROL elsewhere
+		PreferenceConverter.setDefault(store, EDITOR_LINK_COLOR, new RGB(0, 0, 255));
+		store.setDefault(EDITOR_BROWSER_LIKE_LINKS, true);
+		store.setDefault(EDITOR_BROWSER_LIKE_LINKS_KEY_MODIFIER, mod1Name);
+		store.setDefault(EDITOR_BROWSER_LIKE_LINKS_KEY_MODIFIER_MASK, SWT.MOD1);
 	}
 }

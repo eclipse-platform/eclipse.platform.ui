@@ -100,7 +100,6 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
  * The actual editor implementation for Eclipse's Ant integration.
  */
 public class AntEditor extends TextEditor implements IReconcilingParticipant, IProjectionListener {
-	
 	/**
 	 * Updates the Ant outline page selection and this editor's range indicator.
 	 * 
@@ -355,6 +354,13 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	private boolean fSelectionSetFromOutline= false;
 
     private FoldingActionGroup fFoldingGroup;
+    
+	/** 
+	 * The hyper link manager.
+	 * @since 3.1  
+	 */
+	private AntEditorLinkManager fLinkManager;
+
   
     public AntEditor() {
         super();
@@ -554,7 +560,16 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 			}
 			return;
 		}
-		
+			
+		if (AntEditorPreferenceConstants.EDITOR_BROWSER_LIKE_LINKS.equals(property)) {
+			if (isBrowserLikeLinks()) {
+				enableBrowserLikeLinks();
+			} else {
+				disableBrowserLikeLinks();
+			}
+			return;
+		}
+
 		AntEditorSourceViewerConfiguration sourceViewerConfiguration= (AntEditorSourceViewerConfiguration)getSourceViewerConfiguration();
 		if (affectsTextPresentation(event)) {
 			sourceViewerConfiguration.adaptToPreferenceChange(event);
@@ -623,43 +638,27 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 
 	public void openReferenceElement() {
 		ISelection selection= getSelectionProvider().getSelection();
-		String errorMessage= null;
-		AntElementNode node= null;
+		Object target= null;
 		if (selection instanceof ITextSelection) {
 			ITextSelection textSelection= (ITextSelection)selection;
 			ISourceViewer viewer= getSourceViewer();
 			int textOffset= textSelection.getOffset();
 			IRegion region= XMLTextHover.getRegion(viewer, textOffset);
-			if (region != null) {
-				IDocument document= viewer.getDocument();
-				String text= null;
-				try {
-					text= document.get(region.getOffset(), region.getLength());
-				} catch (BadLocationException e) {
-				}
-				if (text != null && text.length() > 0) {
-					AntModel model= getAntModel();
-					node= model.getReferenceNode(text);
-					if (node == null) {
-						node= model.getTargetNode(text);
-						if (node == null) {
-							node= model.getPropertyNode(text);
-							if (node == null) {
-								String path= model.getPath(text, region.getOffset());
-								if (path != null) {
-									errorMessage= openInEditor(path, model.getEditedFile());
-									if (errorMessage == null) {
-										return;
-									}
-								}
-							}
-						}
-					}
-				}
-			}
+			target= findTarget(region);
 		}
-		if (node != null) {
-			errorMessage= openNode(node);
+		
+		openTarget(target);
+	}
+	
+	protected void openTarget(Object node) {
+		String errorMessage= null;
+		if (node instanceof AntElementNode) {
+			errorMessage= openNode((AntElementNode) node);
+			if (errorMessage == null) {
+				return;
+			}
+		} else if (node instanceof String){
+			errorMessage= openInEditor((String) node, getAntModel().getEditedFile());
 			if (errorMessage == null) {
 				return;
 			}
@@ -670,8 +669,45 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		setStatusLineErrorMessage(errorMessage);
 		getSite().getShell().getDisplay().beep();
 	}
-	
-	private String openNode(AntElementNode node) {
+
+	/**
+     * @param region The region to find the navigation target
+     * @return the navigation target at the specified region
+     */
+    public Object findTarget(IRegion region) {
+        ISourceViewer viewer = getSourceViewer();
+        AntElementNode node= null;
+       
+		if (region != null) {
+			IDocument document= viewer.getDocument();
+			String text= null;
+			try {
+				text= document.get(region.getOffset(), region.getLength());
+			} catch (BadLocationException e) {
+			}
+			if (text != null && text.length() > 0) {
+				AntModel model= getAntModel();
+				node= model.getReferenceNode(text);
+				if (node == null) {
+					node= model.getTargetNode(text);
+					if (node == null) {
+						node= model.getPropertyNode(text);
+						if (node == null) {
+							String path= model.getPath(text, region.getOffset());
+							if (path != null) {
+								return path;
+							}
+						}
+					} 
+					
+				}
+			}
+		}
+		return node;
+    }
+
+
+    String openNode(AntElementNode node) {
 		String errorMessage= null;
 		if (node.isExternal()) {
 			String path= node.getFilePath();
@@ -759,9 +795,15 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
         if (isFoldingEnabled()) {
         	projectionViewer.doOperation(ProjectionViewer.TOGGLE);
         }
+        
 		if (isTabConversionEnabled()) {
-			startTabConversion();		
+			startTabConversion();
 		}
+		
+		if (isBrowserLikeLinks()) {
+			enableBrowserLikeLinks();
+		}
+		
 		fEditorSelectionChangedListener= new EditorSelectionChangedListener();
 		fEditorSelectionChangedListener.install(getSelectionProvider());
 	}
@@ -793,7 +835,6 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		super.dispose();
 		if (fEditorSelectionChangedListener != null)  {
 			fEditorSelectionChangedListener.uninstall(getSelectionProvider());
 			fEditorSelectionChangedListener= null;
@@ -804,7 +845,13 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 			fProjectionSupport= null;
 		}
 		
+		if (isBrowserLikeLinks()) {
+			disableBrowserLikeLinks();
+		}
+		
 		AntModelCore.getDefault().removeAntModelListener(fAntModelListener);
+		
+		super.dispose();
 	}
 	
 	/* (non-Javadoc)
@@ -991,4 +1038,39 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	protected void initializeKeyBindingScopes() {
 		setKeyBindingScopes(new String[] { "org.eclipse.ant.ui.AntEditorScope" });  //$NON-NLS-1$
 	}
+	
+	/**
+	 * Return whether the browser like links should be enabled
+	 * according to the preference store settings.
+	 * @return <code>true</code> if the browser like links should be enabled
+	 */
+	private boolean isBrowserLikeLinks() {
+		IPreferenceStore store= getPreferenceStore();
+		return store.getBoolean(AntEditorPreferenceConstants.EDITOR_BROWSER_LIKE_LINKS);
+	}
+	
+	/**
+	 * Enables browser like links.
+	 */
+	private void enableBrowserLikeLinks() {
+		if (fLinkManager == null) {
+			fLinkManager= new AntEditorLinkManager(this);
+			fLinkManager.install();
+		}
+	}
+	
+	/**
+	 * Disables browser like links.
+	 */
+	private void disableBrowserLikeLinks() {
+		if (fLinkManager != null) {
+			fLinkManager.uninstall();
+			fLinkManager= null;
+		}
+	}
+	
+	protected IPreferenceStore getEditorPreferenceStore() {
+		return getPreferenceStore();
+	}
+	
 }
