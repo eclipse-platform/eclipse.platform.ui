@@ -60,12 +60,16 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 
 	protected SelectionAdapter selectionAdapter;
 	
+	protected boolean fInitializing= false;
+	
 	/**
 	 * A listener to update for text modification and widget selection.
 	 */
 	protected class WidgetListener extends SelectionAdapter implements ModifyListener {
 		public void modifyText(ModifyEvent e) {
-			updateLaunchConfigurationDialog();
+			if (!fInitializing) {
+				updateLaunchConfigurationDialog();
+			}
 		}
 		public void widgetSelected(SelectionEvent e) {
 			Object source= e.getSource();
@@ -150,7 +154,9 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		workspaceLocationButton= createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.&Browse_Workspace..._3"), null); //$NON-NLS-1$
 		workspaceLocationButton.addSelectionListener(fListener);
 		fileLocationButton= createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Brows&e_File_System..._4"), null); //$NON-NLS-1$
+		
 		fileLocationButton.addSelectionListener(fListener);
+		locationField.addModifyListener(fListener);
 	}
 	
 	/**
@@ -195,7 +201,9 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		workspaceWorkingDirectoryButton= createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Browse_Wor&kspace..._6"), null); //$NON-NLS-1$
 		workspaceWorkingDirectoryButton.addSelectionListener(fListener);
 		fileWorkingDirectoryButton= createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Browse_F&ile_System..._7"), null); //$NON-NLS-1$
+		
 		fileWorkingDirectoryButton.addSelectionListener(fListener);
+		workDirectoryField.addModifyListener(fListener);
 	}
 	/**
 	 * Return the String to use as the label for the working directory field.
@@ -252,9 +260,11 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
+		fInitializing= true;
 		updateLocation(configuration);
 		updateWorkingDirectory(configuration);
 		updateArgument(configuration);
+		fInitializing= false;
 	}
 	
 	protected void updateWorkingDirectory(ILaunchConfiguration configuration) {
@@ -265,8 +275,6 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 			ExternalToolsPlugin.getDefault().log(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Error_reading_configuration_10"), ce); //$NON-NLS-1$
 		}
 		workDirectoryField.setText(workingDir);
-		workDirectoryField.addModifyListener(fListener);
-		
 	}
 	
 	protected void updateLocation(ILaunchConfiguration configuration) {
@@ -277,7 +285,6 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 			ExternalToolsPlugin.getDefault().log(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Error_reading_configuration_10"), ce); //$NON-NLS-1$
 		}
 		locationField.setText(location);
-		locationField.addModifyListener(fListener);
 	}
 
 	protected void updateArgument(ILaunchConfiguration configuration) {
@@ -476,4 +483,15 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		return ExternalToolsImages.getImage(IExternalToolConstants.IMG_TAB_MAIN);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
+	}
 }
