@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.intro.impl.model.loader;
 
 import org.eclipse.ui.internal.intro.impl.model.*;
+import org.eclipse.ui.internal.intro.impl.util.*;
 
 /**
  * Manages all Intro plugin extension points. Currently, there are two:
@@ -102,7 +103,10 @@ public class ExtensionPointManager extends BaseExtensionPointManager {
 
     public void clear() {
         currentModel = null;
+        sharedConfigExtensionsManager = null;
         introModels.clear();
+        Log.info("Cleared Intro model");
     }
+
 
 }

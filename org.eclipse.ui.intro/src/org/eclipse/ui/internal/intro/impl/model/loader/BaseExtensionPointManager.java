@@ -38,10 +38,9 @@ public class BaseExtensionPointManager {
     // the id attribute in any intro element.
     protected static final String ATT_ID = AbstractBaseIntroElement.ATT_ID;
 
+
     protected Hashtable introModels = new Hashtable();
-
     protected IExtensionRegistry registry;
-
     protected SharedConfigExtensionsManager sharedConfigExtensionsManager;
 
 
@@ -208,7 +207,8 @@ public class BaseExtensionPointManager {
      * Loads all shared config extennsions (ie: standby parts and commands).
      */
     protected void loadSharedConfigExtensions() {
-        sharedConfigExtensionsManager = new SharedConfigExtensionsManager(registry);
+        sharedConfigExtensionsManager = new SharedConfigExtensionsManager(
+                registry);
         sharedConfigExtensionsManager.loadSharedConfigExtensions();
     }
 
@@ -219,4 +219,5 @@ public class BaseExtensionPointManager {
     public SharedConfigExtensionsManager getSharedConfigExtensionsManager() {
         return sharedConfigExtensionsManager;
     }
+
 }

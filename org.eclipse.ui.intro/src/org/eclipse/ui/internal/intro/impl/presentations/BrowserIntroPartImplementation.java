@@ -368,5 +368,20 @@ public class BrowserIntroPartImplementation extends
     }
 
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#handleRegistryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
+     */
+    protected void handleRegistryChanged(IRegistryChangeEvent event) {
+        if (getModelRoot().isDynamic()) {
+            // null generator first.
+            htmlGenerator = null;
+            //  Add this presentation as a listener to model
+            // only in dynamic case, for now.
+            getModelRoot().addPropertyListener(this);
+        }
+    }
+
 
 }

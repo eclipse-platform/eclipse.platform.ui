@@ -29,6 +29,8 @@ import org.w3c.dom.*;
  * <ol>
  * <li>if an attribute is not included in the markup, its value will be null in
  * the model.</li>
+ * <li>the current page id is set silently when loading the model. You do not
+ * need the event notification on model load.</li>
  * <li>Children of a given parent (ie: model root, page, or group) *must* have
  * distinctive IDs otherwise resolving includes and extensions may fail.</li>
  * <li>Containers have the concept of loading children and resolving children.
@@ -473,19 +475,24 @@ public class IntroModelRoot extends AbstractIntroContainer {
     }
 
     /**
-     * Fires a property changed event.
+     * Fires a property changed event. Made public because it can be used to
+     * trigger a UI refresh.
      * 
      * @param propertyId
      *            the id of the property that changed
      */
-    protected void firePropertyChange(final int propertyId) {
+    public void firePropertyChange(final int propertyId) {
         Object[] array = propChangeListeners.getListeners();
-        for (int nX = 0; nX < array.length; nX++) {
-            final IPropertyListener l = (IPropertyListener) array[nX];
+        Log.info("entering fire Property change.");
+        for (int i = 0; i < array.length; i++) {
+            Log.info("entering loop in Property change.");
+            final IPropertyListener l = (IPropertyListener) array[i];
             Platform.run(new SafeRunnable() {
 
                 public void run() {
+                    Log.info("entering run Property change.");
                     l.propertyChanged(this, propertyId);
+                    Log.info("leaving Property change.");
                 }
 
                 public void handleException(Throwable e) {

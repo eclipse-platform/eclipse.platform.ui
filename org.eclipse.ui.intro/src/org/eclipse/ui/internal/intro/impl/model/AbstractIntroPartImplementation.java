@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.intro.impl.model;
 import java.util.*;
 import java.util.List;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -27,8 +28,8 @@ import org.eclipse.ui.intro.config.*;
 /**
  * UI Implementation class that represents a Presentation Part. This class is
  * instantiated from plugin markup and so we need a default constructor,
- * including in subclasses. It has some utility methods, including maintaining a
- * history of navigation locations.
+ * including in subclasses. It has some base methods, including maintaining a
+ * history of navigation locations. Also, dynamic awarness is honored here.
  *  
  */
 public abstract class AbstractIntroPartImplementation {
@@ -38,9 +39,7 @@ public abstract class AbstractIntroPartImplementation {
 
     // IMemento for restoring state.
     private IMemento memento;
-
-    private Vector history = null;
-
+    private Vector history = new Vector();
     private int navigationLocation = 0;
 
     //  Global actions
@@ -115,7 +114,6 @@ public abstract class AbstractIntroPartImplementation {
             throws PartInitException {
         // we know the class type to cast to.
         this.introPart = (CustomizableIntroPart) introPart;
-        history = new Vector();
         this.memento = memento;
     }
 
@@ -244,7 +242,6 @@ public abstract class AbstractIntroPartImplementation {
      * dispose of resources. By default, this implementation does nothing.
      */
     public void dispose() {
-
     }
 
 
@@ -352,4 +349,29 @@ public abstract class AbstractIntroPartImplementation {
     public IMemento getMemento() {
         return memento;
     }
+
+    /**
+     * Support dynamic awarness. Clear cached models first, then update UI by
+     * delegating to implementation.
+     * 
+     * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
+     */
+    public void registryChanged(IRegistryChangeEvent event) {
+        history.clear();
+        navigationLocation = 0;
+        // give implementation a chance to react to change.
+        handleRegistryChanged(event);
+        getModelRoot().firePropertyChange(
+                IntroModelRoot.CURRENT_PAGE_PROPERTY_ID);
+        Log.info("fired current page event");
+    }
+
+    /*
+     * Handle reacting to plugin registry changes. This method will only be
+     * called when regitry changes pertaining to Intro extension points is
+     * detected.
+     */
+    protected abstract void handleRegistryChanged(IRegistryChangeEvent event);
+
+
 }

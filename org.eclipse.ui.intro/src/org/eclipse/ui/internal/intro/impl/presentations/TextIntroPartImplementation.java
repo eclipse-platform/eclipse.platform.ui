@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.presentations;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.internal.intro.impl.*;
@@ -56,6 +57,14 @@ public class TextIntroPartImplementation extends
      */
     public boolean navigateForward() {
         return false;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#handleRegistryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
+     */
+    protected void handleRegistryChanged(IRegistryChangeEvent event) {
     }
 
 

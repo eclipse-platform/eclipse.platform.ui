@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.presentations;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
@@ -220,16 +221,26 @@ public class FormIntroPartImplementation extends
      */
     public void propertyChanged(Object source, int propId) {
         if (propId == IntroModelRoot.CURRENT_PAGE_PROPERTY_ID) {
-            String pageId = getModelRoot().getCurrentPageId();
-            if (pageId == null | pageId.equals("")) //$NON-NLS-1$
-                // If page ID was not set properly. exit.
-                return;
+            try {
+                Log.info("entering Property change.");
+                String pageId = getModelRoot().getCurrentPageId();
+                Log.info("current page id is: " + pageId);
+                if (pageId == null | pageId.equals("")) //$NON-NLS-1$
+                    // If page ID was not set properly. exit.
+                    return;
 
-            // if we are showing a regular intro page, or if the Home Page has a
-            // regular page layout, set the page id to the static PageForm id.
-            if (!mainPageBook.hasPage(pageId))
-                pageId = PageForm.PAGE_FORM_ID;
-            mainPageBook.showPage(pageId);
+                // if we are showing a regular intro page, or if the Home Page
+                // has a
+                // regular page layout, set the page id to the static PageForm
+                // id.
+                if (!mainPageBook.hasPage(pageId))
+                    pageId = PageForm.PAGE_FORM_ID;
+                Log.info("before show page");
+                mainPageBook.showPage(pageId);
+                Log.info("after show page. ");
+            } catch (Exception e) {
+                Log.error("Property change failed.", e);
+            }
         }
     }
 
@@ -324,6 +335,17 @@ public class FormIntroPartImplementation extends
         }
         updateNavigationActionsState();
         return success;
+    }
+
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#handleRegistryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
+     */
+    protected void handleRegistryChanged(IRegistryChangeEvent event) {
+        // TODO Auto-generated method stub
+
     }
 
 

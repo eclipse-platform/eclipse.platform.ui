@@ -182,6 +182,7 @@ public class IntroHTMLGenerator {
 		AbstractIntroElement[] children = introPage.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			AbstractIntroElement child = children[i];
+			Log.info(" in generateBodyElement, child is: " + child.getType());
 			// check to see if this element should be filtered from the HTML 
 			// presentation
 			if(!filteredFromPresentation(child)){
