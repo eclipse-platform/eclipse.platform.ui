@@ -307,7 +307,7 @@ public class AboutInfo extends NewConfigurationInfo {
 		aboutText = (String) ini.get("aboutText"); //$NON-NLS-1$
 		aboutText = getResourceString(aboutText, bundle, mappingsArray);
 
-		aboutImage = getImage(ini, "largeImage"); //$NON-NLS-1$
+		aboutImage = getImage(ini, "aboutImage"); //$NON-NLS-1$
 
 		featureImageName = (String) ini.get("featureImage"); //$NON-NLS-1$
 		featureImage = getImage(ini, "featureImage"); //$NON-NLS-1$
