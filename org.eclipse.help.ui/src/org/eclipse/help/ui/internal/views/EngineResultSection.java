@@ -13,14 +13,11 @@ package org.eclipse.help.ui.internal.views;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.search.ISearchEngineResult;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.*;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -29,7 +26,6 @@ import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.internal.forms.widgets.FormUtil;
 import org.osgi.framework.Bundle;
 
 public class EngineResultSection {
@@ -215,11 +211,8 @@ public class EngineResultSection {
 					public void run() {
 						updateResults(true);
 						if (scrollToBeginning) {
-							//part.scrollToBeginning();
 							searchResults.setFocus();
-							ScrolledComposite scomp = FormUtil.getScrolledComposite(section);
-							Point controlOrigin = FormUtil.getControlLocation(scomp, section);
-							scomp.setOrigin(0, controlOrigin.y);
+							FormToolkit.setControlVisible(section, true);
 						}
 					}
 				});
@@ -468,8 +461,18 @@ public class EngineResultSection {
 
 	public void dispose() {
 		if (!section.isDisposed()) {
-			FormUtil.recursiveSetMenu(section, null);
+			recursiveSetMenu(section, null);
 			section.dispose();
+		}
+	}
+	private void recursiveSetMenu(Control control, Menu menu) {
+		control.setMenu(menu);
+		if (control instanceof Composite) {
+			Composite parent = (Composite) control;
+			Control[] children = parent.getChildren();
+			for (int i = 0; i < children.length; i++) {
+				recursiveSetMenu(children[i], menu);
+			}
 		}
 	}
 }

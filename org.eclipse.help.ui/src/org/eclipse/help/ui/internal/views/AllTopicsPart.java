@@ -12,23 +12,18 @@ package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.help.*;
 import org.eclipse.help.ui.internal.*;
-import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.AbstractFormPart;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.internal.forms.widgets.FormsResources;
 
 public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 	private ReusableHelpPart parent;
@@ -40,6 +35,7 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 	private TreeViewer treeViewer;
 
 	private TreeItem lastItem;
+	private Cursor handCursor;
 
 	class TopicsProvider implements ITreeContentProvider {
 		public Object[] getChildren(Object parentElement) {
@@ -128,6 +124,7 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 	 */
 	public AllTopicsPart(Composite parent, final FormToolkit toolkit,
 			IToolBarManager tbm) {
+		handCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_HAND);
 		container = toolkit.createComposite(parent);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -246,8 +243,7 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 					}
 					Object obj = item.getData();
 					IHelpResource res = (IHelpResource) obj;
-					treeViewer.getTree().setCursor(
-							FormsResources.getHandCursor());
+					treeViewer.getTree().setCursor(handCursor);
 					item.setForeground(toolkit.getHyperlinkGroup()
 							.getActiveForeground());
 					lastItem = item;
@@ -264,7 +260,11 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 			}
 		});
 		contributeToToolBar(tbm);
-
+	}
+	
+	public void dispose() {
+		handCursor.dispose();
+		super.dispose();
 	}
 
 	private void repaintItem(TreeItem item) {

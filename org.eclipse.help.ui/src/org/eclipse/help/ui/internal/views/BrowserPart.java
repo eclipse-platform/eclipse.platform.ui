@@ -142,8 +142,9 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	 */
 	public void setVisible(boolean visible) {
 		if (browser != null) {
-			if (!visible)
+			if (!visible) {
 				browser.stop();
+			}
 			browser.setVisible(visible);
 		}
 	}
