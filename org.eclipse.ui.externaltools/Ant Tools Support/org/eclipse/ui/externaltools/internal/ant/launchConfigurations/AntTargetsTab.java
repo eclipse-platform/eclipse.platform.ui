@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +41,6 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
-import org.eclipse.ui.externaltools.internal.ui.AntTargetContentProvider;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.model.ToolUtil;
 import org.eclipse.ui.externaltools.variable.ExpandVariableContext;
@@ -131,6 +129,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		
 	 	executeLabel.setEnabled(enabled);
 	 	executeTargetsTable.getControl().setEnabled(enabled);
+	 	executeTargetsTable.refresh();
 	 	if (enabled && executeTargetsTable.getTable().getItemCount() == 0) {
 	 		executeTargetsTable.setInput(getTargets());
 	 	}
@@ -251,18 +250,18 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		if (dialog.open() == SelectionDialog.OK) {
 			Object[] results = dialog.getResult();
 			for (int i = 0; i < results.length; i++) {
-				TargetInfo info = (TargetInfo)results[i];
-				executeTargetsTable.add(info);
+				getContentProvider().add(results[i]);
 			}
 		}
 	}
 	
+	private AntTargetContentProvider getContentProvider() {
+		return (AntTargetContentProvider)executeTargetsTable.getContentProvider();
+	}
+	
 	private void removeTargets() {
 		IStructuredSelection selection = (IStructuredSelection)executeTargetsTable.getSelection();
-		Iterator enum = selection.iterator();
-		while (enum.hasNext()) {
-			executeTargetsTable.remove(enum.next());
-		}
+		getContentProvider().remove(selection);
 	}
 	
 	private void handleMove(int direction) {
@@ -308,7 +307,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		
 		executeTargetsTable = new TableViewer(tableComposite,SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
 		executeTargetsTable.setContentProvider(new AntTargetContentProvider());
-		AntTargetLabelProvider labelProvider= new AntTargetLabelProvider();
+		AntTargetLabelProvider labelProvider= new AntTargetLabelProvider(executeTargetsTable);
 		if (defaultTarget != null) {
 			labelProvider.setDefaultTargetName(defaultTarget.getName());
 		}
@@ -319,11 +318,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		executeTargetsTable.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection selection = (IStructuredSelection)executeTargetsTable.getSelection();
-				//if (selection.isEmpty()) {
-					targetsSelected((TargetInfo)selection.getFirstElement());
-				//} else {
-					//deselectAll();
-				//}
+				targetsSelected((TargetInfo)selection.getFirstElement());
 			}
 		});
 	}
@@ -397,6 +392,8 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		runDefaultTargetButton = new Button(parent, SWT.CHECK);
 		// The label that is applied if the default target is unknown
 		runDefaultTargetButton.setText("Run default target");
+		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+		runDefaultTargetButton.setLayoutData(gridData);
 		runDefaultTargetButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				allowSelectTargets(!runDefaultTargetButton.getSelection());
@@ -441,6 +438,10 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			return; 
 		}
 		String[] targetNames= AntUtil.parseRunTargets(configTargets);
+		if (targetNames.length == 0) {
+			executeTargetsTable.setInput(new TargetInfo[0]);
+			return;
+		}
 		
 		TargetInfo[] targetInfos= new TargetInfo[targetNames.length];
 		int found= 0;
@@ -457,6 +458,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 				break;
 			}
 		}
+
 		if (targetInfos.length > 0) {
 			executeTargetsTable.setInput(targetInfos);
 		}
@@ -470,11 +472,11 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if (!runDefaultTargetButton.getSelection()) {
-			TableItem[] items= executeTargetsTable.getTable().getItems();
+			Object[] items= getContentProvider().getElements(null);
 			StringBuffer buff= new StringBuffer();
 			for (int i = 0; i < items.length; i++) {
-				TableItem item = items[i];
-				buff.append(item.getText());
+				TargetInfo item = (TargetInfo)items[i];
+				buff.append(item.getName());
 				buff.append(',');
 			}
 			configuration.setAttribute(IExternalToolConstants.ATTR_ANT_TARGETS, buff.toString());

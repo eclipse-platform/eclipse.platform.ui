@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import org.eclipse.ant.core.TargetInfo;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
@@ -23,7 +24,15 @@ import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 public class AntTargetLabelProvider extends LabelProvider {
 	private ArrayList selectedTargets = null;
 	private String defaultTargetName = null;
+	private TableViewer viewer= null;
 
+	public AntTargetLabelProvider(TableViewer viewer) {
+		this.viewer= viewer;
+	}
+	
+	public AntTargetLabelProvider() {
+	}
+	
 	/* (non-Javadoc)
 	 * Method declared on ILabelProvider.
 	 */
@@ -60,7 +69,10 @@ public class AntTargetLabelProvider extends LabelProvider {
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object element) {
-		return ExternalToolsImages.getImage(IExternalToolConstants.IMG_TAB_ANT_TARGETS);
+		if (viewer == null || viewer.getControl().isEnabled()) {
+			return ExternalToolsImages.getImage(IExternalToolConstants.IMG_TAB_ANT_TARGETS);
+		}
+		return null;
 	}
 
 }
