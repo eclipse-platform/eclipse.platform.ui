@@ -39,12 +39,12 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.jface.text.ITextViewerHelper;
+import org.eclipse.jface.text.IEditingSupport;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
-import org.eclipse.jface.text.ITextViewerHelperRegistry;
+import org.eclipse.jface.text.IEditingSupportRegistry;
 import org.eclipse.jface.text.TextUtilities;
 
 
@@ -146,7 +146,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * have focus while the 'logical focus' is still with the editor. 
 	 * @since 3.1
 	 */
-	private ITextViewerHelper fFocusHelper;
+	private IEditingSupport fFocusHelper;
 	
 	/**
 	 * Creates a new completion proposal popup for the given elements.
@@ -381,17 +381,17 @@ class CompletionProposalPopup implements IContentAssistListener {
 			
 		fInserting= true;
 		IRewriteTarget target= null;
-		ITextViewerHelper helper= new ITextViewerHelper() {
+		IEditingSupport helper= new IEditingSupport() {
 			
 			public boolean isSourceOfEvent(Object event) {
 				return true;
 			}
 			
-			public boolean isValidSubjectRegion(IRegion focus) {
+			public boolean isOriginator(DocumentEvent event, IRegion focus) {
 				return focus.getOffset() <= offset && focus.getOffset() + focus.getLength() >= offset;
 			}
 			
-			public boolean hasShellFocus() {
+			public boolean ownsFocusShell() {
 				return false;
 			}
 			
@@ -409,9 +409,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 			if (target != null)
 				target.beginCompoundChange();
 
-			if (fViewer instanceof ITextViewerHelperRegistry) {
-				ITextViewerHelperRegistry registry= (ITextViewerHelperRegistry) fViewer;
-				registry.registerHelper(helper);
+			if (fViewer instanceof IEditingSupportRegistry) {
+				IEditingSupportRegistry registry= (IEditingSupportRegistry) fViewer;
+				registry.register(helper);
 			}
 
 
@@ -453,9 +453,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 			if (target != null)
 				target.endCompoundChange();
 
-			if (fViewer instanceof ITextViewerHelperRegistry) {
-				ITextViewerHelperRegistry registry= (ITextViewerHelperRegistry) fViewer;
-				registry.deregisterHelper(helper);
+			if (fViewer instanceof IEditingSupportRegistry) {
+				IEditingSupportRegistry registry= (IEditingSupportRegistry) fViewer;
+				registry.unregister(helper);
 			}
 			fInserting= false;
 		}
@@ -480,9 +480,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		unregister();
 		
-		if (fViewer instanceof ITextViewerHelperRegistry) {
-			ITextViewerHelperRegistry registry= (ITextViewerHelperRegistry) fViewer;
-			registry.deregisterHelper(fFocusHelper);
+		if (fViewer instanceof IEditingSupportRegistry) {
+			IEditingSupportRegistry registry= (IEditingSupportRegistry) fViewer;
+			registry.unregister(fFocusHelper);
 		}
 
 		if (Helper.okToUse(fProposalShell)) {
@@ -631,25 +631,25 @@ class CompletionProposalPopup implements IContentAssistListener {
 				document.addDocumentListener(fDocumentListener);
 			
 			if (fFocusHelper == null) {
-				fFocusHelper= new ITextViewerHelper() {
+				fFocusHelper= new IEditingSupport() {
 					
 					public boolean isSourceOfEvent(Object event) {
 						return false;
 					}
 					
-					public boolean isValidSubjectRegion(IRegion focus) {
+					public boolean isOriginator(DocumentEvent event, IRegion focus) {
 						return false; // this helper just covers the focus change to the proposal shell, no remote editions
 					}
 					
-					public boolean hasShellFocus() {
+					public boolean ownsFocusShell() {
 						return true;
 					}
 					
 				};
 			}
-			if (fViewer instanceof ITextViewerHelperRegistry) {
-				ITextViewerHelperRegistry registry= (ITextViewerHelperRegistry) fViewer;
-				registry.registerHelper(fFocusHelper);
+			if (fViewer instanceof IEditingSupportRegistry) {
+				IEditingSupportRegistry registry= (IEditingSupportRegistry) fViewer;
+				registry.register(fFocusHelper);
 			}
 
 			

@@ -42,7 +42,7 @@ import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.jface.text.ITextViewerHelper;
+import org.eclipse.jface.text.IEditingSupport;
 import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
@@ -53,7 +53,7 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.ITextViewerExtension5;
-import org.eclipse.jface.text.ITextViewerHelperRegistry;
+import org.eclipse.jface.text.IEditingSupportRegistry;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -330,10 +330,10 @@ public class LinkedModeUI {
 				// Post in UI thread since the assistant popup will only get the focus after we lose it.
 				display.asyncExec(new Runnable() {
 					public void run() {
-						if (fIsActive && viewer instanceof ITextViewerHelperRegistry) {
-							ITextViewerHelper[] helpers= ((ITextViewerHelperRegistry) viewer).getCurrentHelpers();
+						if (fIsActive && viewer instanceof IEditingSupportRegistry) {
+							IEditingSupport[] helpers= ((IEditingSupportRegistry) viewer).getRegisteredSupports();
 							for (int i= 0; i < helpers.length; i++) {
-								if (helpers[i].hasShellFocus())
+								if (helpers[i].ownsFocusShell())
 									return;
 							}
 						}
@@ -380,10 +380,10 @@ public class LinkedModeUI {
 			for (int offset= event.getOffset(); offset <= end; offset++) {
 				if (!fModel.anyPositionContains(offset)) {
 					ITextViewer viewer= fCurrentTarget.getViewer();
-					if (fFramePosition != null && viewer instanceof ITextViewerHelperRegistry) {
-						ITextViewerHelper[] helpers= ((ITextViewerHelperRegistry) viewer).getCurrentHelpers();
+					if (fFramePosition != null && viewer instanceof IEditingSupportRegistry) {
+						IEditingSupport[] helpers= ((IEditingSupportRegistry) viewer).getRegisteredSupports();
 						for (int i= 0; i < helpers.length; i++) {
-							if (helpers[i].isValidSubjectRegion(new Region(fFramePosition.getOffset(), fFramePosition.getLength())))
+							if (helpers[i].isOriginator(null, new Region(fFramePosition.getOffset(), fFramePosition.getLength())))
 								return;
 						}
 					}

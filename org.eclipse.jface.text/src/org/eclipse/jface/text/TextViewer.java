@@ -91,7 +91,7 @@ import org.eclipse.jface.text.projection.ChildDocumentManager;
  * will be broken by future releases.
  */
 public class TextViewer extends Viewer implements
-					ITextViewer, ITextViewerExtension, ITextViewerExtension2, ITextViewerExtension4, ITextViewerExtension6, ITextViewerHelperRegistry,
+					ITextViewer, ITextViewerExtension, ITextViewerExtension2, ITextViewerExtension4, ITextViewerExtension6, IEditingSupportRegistry,
 					ITextOperationTarget, ITextOperationTargetExtension,
 					IWidgetTokenOwner, IWidgetTokenOwnerExtension, IPostSelectionProvider {
 	
@@ -5035,31 +5035,31 @@ public class TextViewer extends Viewer implements
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.ITextViewerHelperRegistry#registerHelper(org.eclipse.jface.text.ITextViewerHelper)
+	 * @see org.eclipse.jface.text.IEditingSupportRegistry#registerHelper(org.eclipse.jface.text.IEditingSupport)
 	 * XXX API still in flux, do not rely on this method
 	 * @since 3.1
 	 */
-	public void registerHelper(ITextViewerHelper helper) {
+	public void register(IEditingSupport helper) {
 		Assert.isLegal(helper != null);
 		fEditorHelpers.add(helper);		
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.ITextViewerHelperRegistry#deregisterHelper(org.eclipse.jface.text.ITextViewerHelper)
+	 * @see org.eclipse.jface.text.IEditingSupportRegistry#deregisterHelper(org.eclipse.jface.text.IEditingSupport)
 	 * XXX API still in flux, do not rely on this method
 	 * @since 3.1
 	 */
-	public void deregisterHelper(ITextViewerHelper helper) {
+	public void unregister(IEditingSupport helper) {
 		fEditorHelpers.remove(helper);
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.ITextViewerHelperRegistry#getCurrentHelpers()
+	 * @see org.eclipse.jface.text.IEditingSupportRegistry#getCurrentHelpers()
 	 * XXX API still in flux, do not rely on this method
 	 * @since 3.1
 	 */
-	public ITextViewerHelper[] getCurrentHelpers() {
-		return (ITextViewerHelper[]) fEditorHelpers.toArray(new ITextViewerHelper[fEditorHelpers.size()]);
+	public IEditingSupport[] getRegisteredSupports() {
+		return (IEditingSupport[]) fEditorHelpers.toArray(new IEditingSupport[fEditorHelpers.size()]);
 	}
 
 	/*
