@@ -138,7 +138,7 @@ public abstract class Request {
 				break;
 			} else if (response.equals("error") || (isCVSNT && response.equals(""))) {  //$NON-NLS-1$ //$NON-NLS-2$
 				if (argument.trim().length() == 0) {
-					argument = Policy.bind("Command.serverError", Policy.bind("Command." + getRequestId()));  //$NON-NLS-1$  //$NON-NLS-2$
+					argument = getServerErrorMessage();
 				}
 				if (accumulatedStatus.isEmpty()) {
 					accumulatedStatus.add(new CVSStatus(CVSStatus.ERROR, CVSStatus.SERVER_ERROR, Policy.bind("Command.noMoreInfoAvailable")));//$NON-NLS-1$
@@ -201,6 +201,14 @@ public abstract class Request {
 				(IStatus[]) accumulatedStatus.toArray(new IStatus[accumulatedStatus.size()]),
 				Policy.bind("Command.warnings", Policy.bind("Command." + getRequestId())), null);  //$NON-NLS-1$  //$NON-NLS-2$
 		}
+	}
+	
+	/*
+	 * Provide the message that is used for the status that is generated when the server
+	 * reports as error.
+	 */
+	protected String getServerErrorMessage() {
+		return Policy.bind("Command.serverError", Policy.bind("Command." + getRequestId())); //$NON-NLS-1$  //$NON-NLS-2$
 	}
 	
 	/**

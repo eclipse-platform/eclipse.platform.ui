@@ -411,7 +411,7 @@ public class Console extends ViewPart {
 			String time = TIME_FORMAT.format(new Date(commandRuntime));
 			String statusText;
 			if (status != null && status.getCode() == CVSStatus.SERVER_ERROR) {
-				statusText = Policy.bind("Console.resultServerError", time); //$NON-NLS-1$
+				statusText = Policy.bind("Console.resultServerError", status.getMessage(), time); //$NON-NLS-1$
 			} else if (exception != null) {
 				if (exception instanceof OperationCanceledException) {
 					statusText = Policy.bind("Console.resultAborted", time); //$NON-NLS-1$

@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
@@ -49,5 +50,9 @@ public class Diff extends Command {
 		checkResourcesManaged(resources);
 		DiffStructureVisitor visitor = new DiffStructureVisitor(session, monitor);
 		visitor.visit(session, resources);
+	}
+	
+	protected String getServerErrorMessage() {
+		return Policy.bind("Diff.serverError"); //$NON-NLS-1$
 	}
 }
