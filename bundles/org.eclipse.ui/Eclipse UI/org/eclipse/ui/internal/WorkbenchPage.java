@@ -1800,7 +1800,6 @@ private void restoreState(IMemento memento) {
 		}
 	}
 	perspList.setActive(activePerspective);
-	activePerspective.restoreState();
 	
 	// Make sure we have a valid perspective to work with,
 	// otherwise return.
@@ -1812,6 +1811,7 @@ private void restoreState(IMemento memento) {
 	if (activePerspective == null)
 		return;
 
+	activePerspective.restoreState();
 	window.firePerspectiveActivated(this, activePerspective.getDesc());
 
 	// Restore active part.
