@@ -397,8 +397,7 @@ M4 = Platform-specific fourth key -->
             helpContextId="org.eclipse.ui.externaltools.launchConfigHelpContext.ant"
             description="%antLaunchConfigurationTabGroup.description"
             class="org.eclipse.ant.internal.ui.launchConfigurations.AntTabGroup"
-            id="org.eclipse.ant.ui.launchConfigurationTabGroup.ant"
-            bannerImage="icons/full/wizban/importbuildfile_wiz.gif">
+            id="org.eclipse.ant.ui.launchConfigurationTabGroup.ant">
       </launchConfigurationTabGroup>
       <launchConfigurationTabGroup
             type="org.eclipse.ant.AntBuilderLaunchConfigurationType"
