@@ -415,7 +415,6 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
             if (activeWorkbenchPage != null) {
                 IWorkbenchPart activeWorkbenchPart = activeWorkbenchPage
                         .getActivePart();
-                System.out.println("activePart = " + activeWorkbenchPart); //$NON-NLS-1$
 
                 if (activeWorkbenchPart != null) {
                     newActiveWorkbenchSite = activeWorkbenchPart.getSite();
