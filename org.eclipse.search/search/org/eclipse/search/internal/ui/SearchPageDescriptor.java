@@ -198,6 +198,8 @@ class SearchPageDescriptor implements Comparable {
 	private void readExtensionScorePairs() {
 		fExtensionScorePairs= new ArrayList(3);
 		String content= fElement.getAttribute(EXTENSIONS_ATTRIBUTE);
+		if (content == null)
+			return;
 		StringTokenizer tokenizer= new StringTokenizer(content, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreElements()) {
 			String token= tokenizer.nextToken().trim();
