@@ -92,7 +92,10 @@ public class AboutInfo extends NewConfigurationInfo {
 	private Long calculateFeatureImageCRC() {
 		URL url = null;
 		if (featureImageName != null) {
-			url = getDescriptor().find(new Path("$nl$").append(featureImageName));
+			IPluginDescriptor desc = getDescriptor();
+			if(desc == null)
+				return null;
+			url = desc.find(new Path("$nl$").append(featureImageName));
 		}
 		if (url == null)
 			return null;
@@ -337,7 +340,10 @@ public class AboutInfo extends NewConfigurationInfo {
 		URL url = null;
 		String fileName = (String) ini.get(key);
 		if (fileName != null) {
-			url = getDescriptor().find(new Path(fileName));
+			IPluginDescriptor desc = getDescriptor();
+			if(desc == null)
+				return null;
+			url = desc.find(new Path(fileName));
 		}
 		return url;
 	}

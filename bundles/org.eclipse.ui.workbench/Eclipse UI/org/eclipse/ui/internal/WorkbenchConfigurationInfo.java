@@ -26,7 +26,6 @@ import org.eclipse.ui.WorkbenchException;
 import java.lang.Exception;
 import java.text.Collator;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
@@ -39,7 +38,6 @@ import org.eclipse.core.boot.BootLoader;
 import java.net.URL;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import java.lang.Object;
-import org.eclipse.core.runtime.Platform;
 
 public class WorkbenchConfigurationInfo {
 	private AboutInfo aboutInfo;
@@ -108,14 +106,14 @@ protected void openWelcomeEditors() {
 
 		// Get the infos with welcome pages
 		ArrayList welcomeFeatures = new ArrayList();
-		IPluginRegistry registry = Platform.getPluginRegistry();
 		for (int i = 0; i < newFeatures.length; i++) {
 			if (newFeatures[i].getWelcomePageURL() != null) {
 				if (newFeatures[i].getFeatureId() != null && newFeatures[i].getWelcomePerspective() != null) {
-					IPluginDescriptor desc = registry.getPluginDescriptor(newFeatures[i].getFeatureId());
+					IPluginDescriptor desc = newFeatures[i].getDescriptor();
 					//activates the feature plugin so it can run some install code.
 					try {
-						desc.getPlugin();
+						if(desc != null)
+							desc.getPlugin();
 					} catch (CoreException e) {
 					}
 				}

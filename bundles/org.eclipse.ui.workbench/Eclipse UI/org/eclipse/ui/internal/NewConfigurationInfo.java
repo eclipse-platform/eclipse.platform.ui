@@ -13,6 +13,8 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -61,15 +63,7 @@ public abstract class NewConfigurationInfo {
 			reportINIFailure(null, "Plugin registry is null"); //$NON-NLS-1$
 			return;
 		}
-		if (versionId == null)
-			desc = reg.getPluginDescriptor(featureId);
-		else {
-			desc = reg.getPluginDescriptor(featureId, versionId);
-			if (desc == null)
-				// try ignoring the version
-				desc = reg.getPluginDescriptor(featureId);
-		}
-		if (desc == null) {
+		if (getDescriptor() == null) {
 			reportINIFailure(null, "Missing plugin descriptor for " + featureId); //$NON-NLS-1$
 			return;
 		}
@@ -116,6 +110,24 @@ public abstract class NewConfigurationInfo {
 	 * @return Returns a IPluginDescriptor
 	 */
 	public IPluginDescriptor getDescriptor() {
+		if(desc == null) {
+			IPlatformConfiguration platformConfiguration = BootLoader.getCurrentPlatformConfiguration();
+			IPlatformConfiguration.IFeatureEntry feature = platformConfiguration.findConfiguredFeatureEntry(featureId);
+			if(feature == null)
+				return null;
+			String pluginId = feature.getFeaturePluginIdentifier();
+			String pluginVersion = feature.getFeaturePluginVersion();
+			IPluginRegistry reg = Platform.getPluginRegistry();
+			if (pluginVersion == null) {
+				desc = reg.getPluginDescriptor(pluginId);
+			} else {
+				PluginVersionIdentifier vid = new PluginVersionIdentifier(pluginVersion);	
+				desc = reg.getPluginDescriptor(pluginId, vid);
+				if (desc == null)
+					// try ignoring the version
+					desc = reg.getPluginDescriptor(pluginId);
+			}
+		}		
 		return desc;
 	}
 	/**
