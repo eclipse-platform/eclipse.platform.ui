@@ -368,6 +368,7 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 		}
 		.performTest(inputs);
 	}
+
 	public void testCopyFolder() {
 		final IFolder source = nonExistingFolderInExistingProject;
 		IResource[] destinationResources =
@@ -442,35 +443,90 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 		}
 		.performTest(inputs);
 	}
+	/**
+	 * Tests copying a linked file resource that doesn't exist in the filesystem
+	 */
+	public void testCopyMissingFile() {
+		IPath location = getRandomLocation();
+		IFile linkedFile = nonExistingFileInExistingProject;
+		try {
+			linkedFile.createLink(location, IResource.ALLOW_MISSING_LOCAL, getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+
+		IFile dest = existingProject.getFile("FailedCopyDest");
+		try {
+			linkedFile.copy(dest.getFullPath(), IResource.NONE, getMonitor());
+			fail("2.0");
+		} catch (CoreException e1) {
+			//should fail
+		}
+		assertTrue("2.1", !dest.exists());
+		try {
+			linkedFile.copy(dest.getFullPath(), IResource.FORCE, getMonitor());
+			fail("2.2");
+		} catch (CoreException e1) {
+			//should fail
+		}
+		assertTrue("2.3", !dest.exists());
+	}
+	/**
+	 * Tests copying a linked folder that doesn't exist in the filesystem
+	 */
+	public void testCopyMissingFolder() {
+		IPath location = getRandomLocation();
+		IFolder linkedFolder = nonExistingFolderInExistingProject;
+		try {
+			linkedFolder.createLink(location, IResource.ALLOW_MISSING_LOCAL, getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+
+		IFolder dest = existingProject.getFolder("FailedCopyDest");
+		try {
+			linkedFolder.copy(dest.getFullPath(), IResource.NONE, getMonitor());
+			fail("2.0");
+		} catch (CoreException e1) {
+			//should fail
+		}
+		assertTrue("2.1", !dest.exists());
+		try {
+			linkedFolder.copy(dest.getFullPath(), IResource.FORCE, getMonitor());
+			fail("2.2");
+		} catch (CoreException e1) {
+			//should fail
+		}
+		assertTrue("2.3", !dest.exists());
+	}
 	public void testCopyProjectWithLinks() {
 		IPath fileLocation = getRandomLocation();
-		IFile file = nonExistingFileInExistingProject;
-		IFolder folder = nonExistingFolderInExistingProject;
+		IFile linkedFile = nonExistingFileInExistingProject;
+		IFolder linkedFolder = nonExistingFolderInExistingProject;
 		try {
 			try {
 				createFileInFileSystem(resolvePath(fileLocation));
-				folder.createLink(existingLocation, IResource.NONE, getMonitor());
-				file.createLink(fileLocation, IResource.NONE, getMonitor());
+				linkedFolder.createLink(existingLocation, IResource.NONE, getMonitor());
+				linkedFile.createLink(fileLocation, IResource.NONE, getMonitor());
 			} catch (CoreException e) {
 				fail("1.0", e);
 			}
 
 			//copy the project
 			IProject destination = getWorkspace().getRoot().getProject("CopyTargetProject");
-
 			try {
 				existingProject.copy(destination.getFullPath(), IResource.SHALLOW, getMonitor());
 			} catch (CoreException e) {
 				fail("2.0", e);
 			}
 
-			IFile newFile = destination.getFile(file.getProjectRelativePath());
+			IFile newFile = destination.getFile(linkedFile.getProjectRelativePath());
 			assertTrue("3.0", newFile.isLinked());
-			assertEquals("3.1", file.getLocation(), newFile.getLocation());
+			assertEquals("3.1", linkedFile.getLocation(), newFile.getLocation());
 
-			IFolder newFolder = destination.getFolder(folder.getProjectRelativePath());
+			IFolder newFolder = destination.getFolder(linkedFolder.getProjectRelativePath());
 			assertTrue("4.0", newFolder.isLinked());
-			assertEquals("4.1", folder.getLocation(), newFolder.getLocation());
+			assertEquals("4.1", linkedFolder.getLocation(), newFolder.getLocation());
 
 			//test project deep copy
 			try {
@@ -484,6 +540,58 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 			assertTrue("5.3", !newFolder.isLinked());
 			assertEquals("5.4", destination.getLocation().append(newFolder.getProjectRelativePath()), newFolder.getLocation());
 
+			//test copy project when linked resources don't exist with force=false
+			try {
+				destination.delete(IResource.NONE, getMonitor());
+			} catch (CoreException e) {
+				fail("5.99", e);
+			}
+			assertTrue("6.0", resolvePath(fileLocation).toFile().delete());
+			
+			try {
+				existingProject.copy(destination.getFullPath(), IResource.NONE, getMonitor());
+				fail("6.1");
+			} catch (CoreException e) {
+				//should fail
+			}
+			//all members except the missing link should have been copied
+			assertTrue("6.2", destination.exists());
+			assertTrue("6.2.1", !destination.getFile(linkedFile.getName()).exists());
+			try {
+				IResource[] srcChildren = existingProject.members();
+				for (int i = 0; i < srcChildren.length; i++) {
+					if (!srcChildren[i].equals(linkedFile))
+						assertNotNull("6.3." + i, destination.findMember(srcChildren[i].getProjectRelativePath()));
+				}
+			} catch (CoreException e) {
+				fail("6.4", e);
+			}
+			//test copy project when linked resources don't exist with force=true
+			//this should mostly suceed, but still throw an exception indicating
+			//a resource could not be copied because its location was missing
+			try {
+				destination.delete(IResource.NONE, getMonitor());
+			} catch (CoreException e) {
+				fail("6.5", e);
+			}
+			try {
+				existingProject.copy(destination.getFullPath(), IResource.FORCE, getMonitor());
+				fail("6.6");
+			} catch (CoreException e) {
+				//should fail
+			}
+			assertTrue("6.7", destination.exists());
+			assertTrue("6.7.1", !destination.getFile(linkedFile.getName()).exists());
+			//all members except the missing link should have been copied
+			try {
+				IResource[] srcChildren = existingProject.members();
+				for (int i = 0; i < srcChildren.length; i++) {
+					if (!srcChildren[i].equals(linkedFile))
+						assertNotNull("6.8." + i, destination.findMember(srcChildren[i].getProjectRelativePath()));
+				}
+			} catch (CoreException e) {
+				fail("6.99", e);
+			}
 		} finally {
 			Workspace.clear(resolvePath(fileLocation).toFile());
 		}
@@ -853,6 +961,62 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 			}
 		}
 		.performTest(inputs);
+	}
+	/**
+	 * Tests moving a linked file resource that doesn't exist in the filesystem
+	 */
+	public void testMoveMissingFile() {
+		IPath location = getRandomLocation();
+		IFile linkedFile = nonExistingFileInExistingProject;
+		try {
+			linkedFile.createLink(location, IResource.ALLOW_MISSING_LOCAL, getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+
+		IFile dest = existingProject.getFile("FailedMoveDest");
+		try {
+			linkedFile.move(dest.getFullPath(), IResource.NONE, getMonitor());
+			fail("2.0");
+		} catch (CoreException e1) {
+			//should fail
+		}
+		assertTrue("2.1", !dest.exists());
+		try {
+			linkedFile.move(dest.getFullPath(), IResource.FORCE, getMonitor());
+			fail("2.2");
+		} catch (CoreException e1) {
+			//should fail
+		}
+		assertTrue("2.3", !dest.exists());
+	}
+	/**
+	 * Tests moving a linked folder that doesn't exist in the filesystem
+	 */
+	public void testMoveMissingFolder() {
+		IPath location = getRandomLocation();
+		IFolder linkedFolder = nonExistingFolderInExistingProject;
+		try {
+			linkedFolder.createLink(location, IResource.ALLOW_MISSING_LOCAL, getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+
+		IFolder dest = existingProject.getFolder("FailedMoveDest");
+		try {
+			linkedFolder.move(dest.getFullPath(), IResource.NONE, getMonitor());
+			fail("2.0");
+		} catch (CoreException e1) {
+			//should fail
+		}
+		assertTrue("2.1", !dest.exists());
+		try {
+			linkedFolder.move(dest.getFullPath(), IResource.FORCE, getMonitor());
+			fail("2.2");
+		} catch (CoreException e1) {
+			//should fail
+		}
+		assertTrue("2.3", !dest.exists());
 	}
 	public void testMoveProjectWithLinks() {
 		IPath fileLocation = getRandomLocation();

@@ -330,6 +330,23 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		} catch (CoreException e) {
 			//should fail
 		}
+
+		//move should fail
+		IPath moveFileDestination = existingProject.getFullPath().append("MoveFileDest");
+		IPath moveFolderDestination = existingProject.getFullPath().append("MoveFolderDest");
+		
+		try {
+			testFile.move(moveFileDestination, IResource.NONE, getMonitor());
+			fail("4.0");
+		} catch (CoreException e) {
+			//should fail
+		}
+		try {
+			testFolder.move(moveFolderDestination, IResource.NONE, getMonitor());
+			fail("4.1");
+		} catch (CoreException e) {
+			//should fail
+		}
 		
 		//refresh local should suceed
 		try {
@@ -339,9 +356,8 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 			testFolder.refreshLocal(IResource.DEPTH_ZERO, getMonitor());
 			existingProject.refreshLocal(IResource.NONE, getMonitor());
 		} catch (CoreException e) {
-			fail("4.0", e);
+			fail("5.0", e);
 		}
-		
 		
 		//delete should suceed
 		try {

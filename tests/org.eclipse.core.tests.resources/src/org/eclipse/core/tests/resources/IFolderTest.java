@@ -64,7 +64,26 @@ public void testChangeCase() {
 	assertDoesNotExistInWorkspace("1.3", beforeFile);
 	assertExistsInWorkspace("1.0", after);
 	assertExistsInWorkspace("1.1", afterFile);
-
+}
+public void testCopyMissingFolder() {
+	//tests copying a folder that is missing from the file system
+	IProject project = getWorkspace().getRoot().getProject("Project");
+	IFolder before = project.getFolder("OldFolder");
+	IFolder after = project.getFolder("NewFolder");
+	ensureExistsInWorkspace(project, true);
+	ensureExistsInWorkspace(before, true);
+	ensureDoesNotExistInFileSystem(before);
+	
+	try {
+		//should fail because 'before' does not exist in the filesystem
+		before.copy(after.getFullPath(), IResource.FORCE, getMonitor());
+		fail("1.0");
+	} catch (CoreException e) {
+		//should fail
+	}
+	//the destination should not exist, because the source does not exist
+	assertTrue("1.1", !before.exists());
+	assertTrue("1.2", !after.exists());
 }
 public void testFolderCreation() throws Exception {
 	// basic folder creation
