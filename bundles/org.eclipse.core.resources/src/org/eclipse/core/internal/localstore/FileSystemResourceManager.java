@@ -470,6 +470,7 @@ public ProjectDescription read(IProject target, boolean creation) throws CoreExc
 	if (info == null) {
 		//create a new resource on the sly -- don't want to start an operation
 		info = getWorkspace().createResource(descriptionFile, false);
+		updateLocalSync(info, lastModified);
 	}
 	//if the project description has changed between sessions, let it remain
 	//out of sync -- that way link changes will be reconciled on next refresh
