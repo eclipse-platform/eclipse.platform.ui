@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.ide.dialogs;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -122,24 +123,32 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
         });
 
         List encodings = IDEEncoding.getIDEEncodings();
-        String [] encodingStrings = new String[encodings.size()];
-        encodings.toArray(encodingStrings);
-        encodingCombo.setItems(encodingStrings);
         
-       
         String resourcePreference = IDEEncoding.getResourceEncoding();
-        boolean isDefault = resourcePreference == null;
-        
-        if(isDefault)
-        	encodingCombo.setText(WorkbenchEncoding.getWorkbenchDefaultEncoding());
-        else
-        	encodingCombo.setText(resourcePreference);
-        
-
-        updateEncodingState(isDefault);
+        populateEncodingsCombo(encodings,resourcePreference);        
+        updateEncodingState(resourcePreference == null);
     }
 
-    protected void updateValidState() {
+    /**
+     * Populate the encodings combo. Set the text based on the
+     * selectedEncoding. If selectedEncoding is null set it to the
+     * default.
+     * @param encodings
+     * @param selectedEncoding
+     */
+	private void populateEncodingsCombo(List encodings,String selectedEncoding) {
+		String [] encodingStrings = new String[encodings.size()];
+        encodings.toArray(encodingStrings);
+        encodingCombo.setItems(encodingStrings);        
+       
+
+        if(selectedEncoding == null)
+        	encodingCombo.setText(WorkbenchEncoding.getWorkbenchDefaultEncoding());
+        else
+        	encodingCombo.setText(selectedEncoding);
+	}
+
+	protected void updateValidState() {
         super.updateValidState();
         if (!isValid()) {
             return;
@@ -176,8 +185,15 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
      * The default button has been pressed. 
      */
     protected void performDefaults() {
-        updateEncodingState(true);
+        
         clearUserSettings = true;
+        
+        List encodings = WorkbenchEncoding.getDefinedEncodings();
+        Collections.sort(encodings);
+        
+        populateEncodingsCombo(encodings,null);
+        updateEncodingState(true);
+        
         super.performDefaults();
     }
 

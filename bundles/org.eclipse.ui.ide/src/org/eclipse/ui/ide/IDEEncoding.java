@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.ide;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -57,7 +58,7 @@ public class IDEEncoding {
 	 * @return List of String
 	 */
 	public static List getIDEEncodings() {
-		List encodings = WorkbenchEncoding.getStandardEncodings();
+		List encodings = new ArrayList(WorkbenchEncoding.getDefinedEncodings());
 
 		String[] userEncodings = getIDEEncodingsPreference();
 		for (int i = 0; i < userEncodings.length; i++) {
@@ -119,7 +120,7 @@ public class IDEEncoding {
 	 */
 	public static void addIDEEncoding(String value) {
 		
-		if(WorkbenchEncoding.getStandardEncodings().contains(value))
+		if(WorkbenchEncoding.getDefinedEncodings().contains(value))
 			return;
 		
 		String[] currentEncodings = getIDEEncodingsPreference();

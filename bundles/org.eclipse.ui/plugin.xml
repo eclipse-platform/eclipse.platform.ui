@@ -37,6 +37,7 @@
    <extension-point id="editorActions" name="%ExtPoint.editorActions" schema="schema/editorActions.exsd"/>
    <extension-point id="editors" name="%ExtPoint.editors" schema="schema/editors.exsd"/>
    <extension-point id="elementFactories" name="%ExtPoint.elementFactories" schema="schema/elementFactories.exsd"/>
+   <extension-point id="encodings" name="%ExtPoint.encodings" schema="schema/encodings.exsd"/>
    <extension-point id="exportWizards" name="%ExtPoint.exportWizards" schema="schema/exportWizards.exsd"/>
    <extension-point id="fontDefinitions" name="%ExtPoint.fontDefinitions" schema="schema/fontDefinitions.exsd"/>
    <extension-point id="helpSupport" name="%ExtPoint.helpSupport" schema="schema/helpSupport.exsd"/>
@@ -1375,6 +1376,15 @@
             class="org.eclipse.ui.presentations.WorkbenchPresentationFactory"
             id="org.eclipse.ui.presentations.default">
       </factory>
+   </extension>
+   <extension
+         point="org.eclipse.ui.encodings">
+      <encoding name="ISO-8859-1"/>
+      <encoding name="UTF-8"/>
+      <encoding name="UTF-16"/>
+      <encoding name="UTF-16BE"/>
+      <encoding name="UTF-16LE"/>
+      <encoding name="US-ASCII"/>
    </extension>
    <!--
       <extension
