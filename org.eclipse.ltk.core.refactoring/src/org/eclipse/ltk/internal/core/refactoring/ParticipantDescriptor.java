@@ -41,6 +41,10 @@ public class ParticipantDescriptor {
 		return fConfigurationElement.getAttribute(ID);
 	}
 	
+	public String getName() {
+		return fConfigurationElement.getAttribute(NAME);
+	}
+	
 	public IStatus checkSyntax() {
 		if (fConfigurationElement.getAttribute(ID) == null) {
 			return new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IStatus.ERROR,

@@ -15,11 +15,14 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 
 import org.eclipse.ltk.core.refactoring.IUndoManager;
+import org.eclipse.ltk.core.refactoring.IValidationCheckResultQuery;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.UndoManagerAdapter;
 
@@ -41,12 +44,18 @@ public class UndoRefactoringAction extends UndoManagerAction {
 	/* (non-Javadoc)
 	 * Method declared in UndoManagerAction
 	 */
-	protected IRunnableWithProgress createOperation() {
-		// PR: 1GEWDUH: ITPJCORE:WINNT - Refactoring - Unable to undo refactor change
+	protected IRunnableWithProgress createOperation(Shell parent) {
+		final IValidationCheckResultQuery query= new Query(parent, RefactoringUIMessages.getString("UndoRefactoringAction.error.title")) { //$NON-NLS-1$
+			protected String getFullMessage(String errorMessage) {
+				return RefactoringUIMessages.getFormattedString(
+					"UndoRefactoringAction.error.message",  //$NON-NLS-1$
+					errorMessage);
+			}
+		};
 		return new IRunnableWithProgress(){
 			public void run(IProgressMonitor pm) throws InvocationTargetException {
 				try {
-					setPreflightStatus(RefactoringCore.getUndoManager().performUndo(pm));
+					RefactoringCore.getUndoManager().performUndo(query, pm);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);			
 				}

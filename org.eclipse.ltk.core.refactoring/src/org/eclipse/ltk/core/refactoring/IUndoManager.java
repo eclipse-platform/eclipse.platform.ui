@@ -85,13 +85,16 @@ public interface IUndoManager {
 	/**
 	 * Undo the top most undo change.
 	 * 
+	 * @param query a proceed query to decide how to proceed if the validation
+	 *  checking of the undo change to perform returns a non OK status and the
+	 *  status isn't a fatal error. If <code>null</code> is passed in the the 
+	 *  undo proceeds if the status is not a fatal error.
 	 * @param pm a progress monitor to report progress during performing
 	 *  the undo change. The progress monitor must not be <code>null</code>
-	 * @return the validation status of the undone change.
 	 * 
 	 * @throws CoreException if performing the undo caused an exception
 	 */	
-	public RefactoringStatus performUndo(IProgressMonitor pm) throws CoreException;
+	public void performUndo(IValidationCheckResultQuery query, IProgressMonitor pm) throws CoreException;
 
 	/**
 	 * Returns <code>true</code> if there is anything to redo, otherwise
@@ -113,13 +116,16 @@ public interface IUndoManager {
 	/**
 	 * Redo the top most redo change.
 	 * 
+	 * @param query a proceed query to decide how to proceed if the validation
+	 *  checking of the undo change to perform returns a non OK status. If
+	 *  <code>null</code> is passed in the the undo proceeds if the status
+	 *  is not a fatal error.
 	 * @param pm a progress monitor to report progress during performing
 	 *  the redo change. The progress monitor must not be <code>null</code>
-	 * @return the validation status of the redone change.
 	 * 
 	 * @throws CoreException if performing the redo caused an exception
 	 */	
-	public RefactoringStatus performRedo(IProgressMonitor pm) throws CoreException;
+	public void performRedo(IValidationCheckResultQuery query, IProgressMonitor pm) throws CoreException;
 	
 	/**
 	 * Flushes the undo manager's undo and redo stacks.

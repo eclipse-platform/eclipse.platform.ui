@@ -315,11 +315,13 @@ public abstract class TextChange extends Change {
 	 * 
 	 * @param edit the {@link UndoEdit} to create an undo change for
 	 * 
-	 * @return the undo change
-	 * 
-	 * @throws CoreException if an undo change can't be created
+	 * @return the undo change or <code>null</code> if no undo change can
+	 *  be created. Returning <code>null</code> results in the fact that
+	 *  the whole change tree can't be undone. So returning <code>null</code>
+	 *  is only recommended if an exception occurred during creating the
+	 *  undo change.
 	 */
-	protected abstract Change createUndoChange(UndoEdit edit) throws CoreException;
+	protected abstract Change createUndoChange(UndoEdit edit);
 	
 	/**
 	 * {@inheritDoc}
@@ -332,14 +334,7 @@ public abstract class TextChange extends Change {
 			TextEditProcessor processor= createTextEditProcessor(document, TextEdit.CREATE_UNDO, false);
 			UndoEdit undo= processor.performEdits();
 			commit(document, new SubProgressMonitor(pm, 1));
-			try {
-				return createUndoChange(undo);
-			} catch (CoreException e) {
-				// if we can't create an undo change then we discard
-				// the whole undo. But at least the execution doesn't
-				// fail.
-				return null;
-			}
+			return createUndoChange(undo);
 		} catch (BadLocationException e) {
 			throw Changes.asCoreException(e);
 		} finally {

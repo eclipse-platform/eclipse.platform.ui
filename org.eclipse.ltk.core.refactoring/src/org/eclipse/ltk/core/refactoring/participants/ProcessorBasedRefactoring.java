@@ -107,7 +107,11 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 			return result;
 		}
 		
-		fParticipants= getProcessor().loadParticipants(fSharedParticipants);
+		fParticipants= getProcessor().loadParticipants(result, fSharedParticipants);
+		if (result.hasFatalError()) {
+			pm.done();
+			return result;
+		}
 		IProgressMonitor sm= new SubProgressMonitor(pm, 2);
 		sm.beginTask("", fParticipants.length); //$NON-NLS-1$
 		for (int i= 0; i < fParticipants.length; i++) {
@@ -134,10 +138,8 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 		Change processorChange= getProcessor().createChange(new SubProgressMonitor(pm, 1));
 		
 		List changes= new ArrayList();
-		List descriptors= new ArrayList();
 		for (int i= 0; i < fParticipants.length; i++) {
 			RefactoringParticipant participant= fParticipants[i];
-			descriptors.add(participant.getDescriptor());
 			try {
 				Change change= participant.createChange(new SubProgressMonitor(pm, 1));
 				if (change != null)

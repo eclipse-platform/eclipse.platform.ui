@@ -23,8 +23,10 @@ import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.expressions.EvaluationContext;
 
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 import org.eclipse.ltk.internal.core.refactoring.ParticipantDescriptor;
+import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
 /* package */ class ParticipantExtensionPoint {
@@ -60,7 +62,7 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 		return fName;
 	}
 
-	public RefactoringParticipant[] getParticipants(RefactoringProcessor processor, Object element, RefactoringArguments arguments, String[] affectedNatures, SharableParticipants shared) {
+	public RefactoringParticipant[] getParticipants(RefactoringStatus status, RefactoringProcessor processor, Object element, RefactoringArguments arguments, String[] affectedNatures, SharableParticipants shared) {
 		if (fParticipants == null)
 			init();
 		
@@ -87,6 +89,9 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 						}
 					}
 				} catch (CoreException e) {
+					status.addError(RefactoringCoreMessages.getFormattedString(
+						"ParticipantExtensionPoint.participant_removed",  //$NON-NLS-1$
+						descriptor.getName()));
 					RefactoringCorePlugin.logRemovedParticipant(descriptor, e);
 					iter.remove();
 				}

@@ -117,11 +117,13 @@ public class TextFileChange extends TextChange {
 	 * @param stampToRestore the content stamp to restore when the undo
 	 *  edit is executed.
 	 * 
-	 * @return the undo change
-	 * 
-	 * @throws CoreException if an undo change can't be created
+	 * @return the undo change or <code>null</code> if no undo change can
+	 *  be created. Returning <code>null</code> results in the fact that
+	 *  the whole change tree can't be undone. So returning <code>null</code>
+	 *  is only recommended if an exception occurred during creating the
+	 *  undo change.
 	 */
-	protected Change createUndoChange(UndoEdit edit, ContentStamp stampToRestore) throws CoreException {
+	protected Change createUndoChange(UndoEdit edit, ContentStamp stampToRestore) {
 		return new UndoTextFileChange(getName(), fFile, edit, stampToRestore, fSaveMode);
 	}
 	
@@ -204,7 +206,7 @@ public class TextFileChange extends TextChange {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected final Change createUndoChange(UndoEdit edit) throws CoreException {
+	protected final Change createUndoChange(UndoEdit edit) {
 		return createUndoChange(edit, fContentStamp);
 	}
 	

@@ -20,10 +20,16 @@ import org.eclipse.ltk.core.refactoring.ContentStamp;
 public class ContentStamps {
 	
 	private static class ContentStampImpl extends ContentStamp {
+		
+		public static final int NULL_VALUE= -1;
+		
 		private int fValue;
-
+		
 		private ContentStampImpl(int value) {
 			fValue= value;
+		}
+		public boolean isNullStamp() {
+			return fValue == NULL_VALUE;
 		}
 		public boolean equals(Object obj) {
 			if (!(obj instanceof ContentStampImpl))
@@ -33,7 +39,14 @@ public class ContentStamps {
 		public int hashCode() {
 			return fValue;
 		}
+		public String toString() {
+			if (fValue == NULL_VALUE)
+				return "Null Stamp"; //$NON-NLS-1$
+			return "Stamp: " + fValue; //$NON-NLS-1$
+		}
 	}
+	
+	private static final ContentStamp NULL_CONTENT_STAMP= new ContentStampImpl(ContentStampImpl.NULL_VALUE);
 	
 	private static final QualifiedName CONTENT_STAMP= new QualifiedName(
 		RefactoringCorePlugin.getPluginId(), 
@@ -45,7 +58,7 @@ public class ContentStamps {
 		} catch (CoreException e) {
 			// fall through
 		}
-		return null;
+		return NULL_CONTENT_STAMP;
 	}
 	
 	public static ContentStamp get(IFile file, boolean create) {
@@ -55,7 +68,7 @@ public class ContentStamps {
 			try {
 				file.setSessionProperty(CONTENT_STAMP, result);
 			} catch (CoreException e) {
-				return null;
+				return NULL_CONTENT_STAMP;
 			}
 		}
 		return result;

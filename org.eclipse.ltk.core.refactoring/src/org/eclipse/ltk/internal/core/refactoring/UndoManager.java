@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.IValidationCheckResultQuery;
 import org.eclipse.ltk.core.refactoring.IUndoManager;
 import org.eclipse.ltk.core.refactoring.IUndoManagerListener;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
@@ -37,6 +38,15 @@ public class UndoManager implements IUndoManager {
 	private Stack fRedoNames;
 
 	private ListenerList fListeners;
+	
+	private static class NullQuery implements IValidationCheckResultQuery {
+		public boolean proceed(RefactoringStatus status) {
+			return true;
+		}
+		public void stopped(RefactoringStatus status) {
+			// do nothing
+		}
+	}
 
 	/**
 	 * Creates a new undo manager with an empty undo and redo stack.
@@ -150,15 +160,16 @@ public class UndoManager implements IUndoManager {
 	/*
 	 * (Non-Javadoc) Method declared in IUndoManager.
 	 */
-	public RefactoringStatus performUndo(IProgressMonitor pm) throws CoreException {
+	public void performUndo(IValidationCheckResultQuery query, IProgressMonitor pm) throws CoreException {
 		RefactoringStatus result= new RefactoringStatus();
 
 		if (fUndoChanges.empty())
-			return result;
+			return;
 
 		Change change= (Change)fUndoChanges.pop();
-
-		Change redo= executeChange(result, change, pm);
+		if (query == null)
+			query= new NullQuery();	
+		Change redo= executeChange(result, change, query, pm);
 
 		if (!result.hasFatalError()) {
 			if (redo != null && !fUndoNames.isEmpty()) {
@@ -172,21 +183,21 @@ public class UndoManager implements IUndoManager {
 		} else {
 			flush();
 		}
-		return result;
 	}
 
 	/*
 	 * (Non-Javadoc) Method declared in IUndoManager.
 	 */
-	public RefactoringStatus performRedo(IProgressMonitor pm) throws CoreException {
+	public void performRedo(IValidationCheckResultQuery query, IProgressMonitor pm) throws CoreException {
 		RefactoringStatus result= new RefactoringStatus();
 
 		if (fRedoChanges.empty())
-			return result;
+			return;
 
 		Change change= (Change)fRedoChanges.pop();
-
-		Change undo= executeChange(result, change, pm);
+		if (query == null)
+			query= new NullQuery();	
+		Change undo= executeChange(result, change, query, pm);
 
 		if (!result.hasFatalError()) {
 			if (undo != null && !fRedoNames.isEmpty()) {
@@ -198,11 +209,9 @@ public class UndoManager implements IUndoManager {
 		} else {
 			flush();
 		}
-
-		return result;
 	}
 
-	private Change executeChange(final RefactoringStatus status, final Change change, IProgressMonitor pm) throws CoreException {
+	private Change executeChange(final RefactoringStatus status, final Change change, final IValidationCheckResultQuery query, IProgressMonitor pm) throws CoreException {
 		final Change[] undo= new Change[1];
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -211,9 +220,12 @@ public class UndoManager implements IUndoManager {
 					monitor.beginTask("", 11); //$NON-NLS-1$
 					status.merge(change.isValid(new SubProgressMonitor(monitor, 2)));
 					if (status.hasFatalError()) {
+						query.stopped(status);
 						return;
 					}
-
+					if (!status.isOK() && !query.proceed(status)) {
+						return;
+					}
 					ResourcesPlugin.getWorkspace().checkpoint(false);
 					aboutToPerformChange(change);
 					

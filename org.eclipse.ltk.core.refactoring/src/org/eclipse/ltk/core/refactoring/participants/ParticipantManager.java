@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.participants;
 
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+
 /**
  * Facade to access the rename, move, delete, create and copy participant
  * extension point provided by the org.eclipse.ltk.core.refactoring plug-in.
@@ -33,6 +35,8 @@ public class ParticipantManager {
 	/**
 	 * Loads the rename participants for the given element.
 	 * 
+	 * @param status a refactoring status to report status if problems occurred while
+	 *  loading the participants
 	 * @param processor the processor that will own the participants
 	 * @param element the element to be renamed
 	 * @param arguments the rename arguments describing the rename
@@ -41,8 +45,8 @@ public class ParticipantManager {
 	 * 
 	 * @return an array of rename participants
 	 */
-	public static RenameParticipant[] loadRenameParticipants(RefactoringProcessor processor, Object element, RenameArguments arguments, String[] affectedNatures, SharableParticipants shared) {
-		RefactoringParticipant[] participants= fgRenameInstance.getParticipants(processor, element, arguments, affectedNatures, shared);
+	public static RenameParticipant[] loadRenameParticipants(RefactoringStatus status, RefactoringProcessor processor, Object element, RenameArguments arguments, String[] affectedNatures, SharableParticipants shared) {
+		RefactoringParticipant[] participants= fgRenameInstance.getParticipants(status, processor, element, arguments, affectedNatures, shared);
 		RenameParticipant[] result= new RenameParticipant[participants.length];
 		System.arraycopy(participants, 0, result, 0, participants.length);
 		return result;
@@ -56,6 +60,8 @@ public class ParticipantManager {
 	/**
 	 * Loads the move participants for the given element.
 	 * 
+	 * @param status a refactoring status to report status if problems occurred while
+	 *  loading the participants
 	 * @param processor the processor that will own the participants
 	 * @param element the element to be moved
 	 * @param arguments the move arguments describing the move
@@ -64,8 +70,8 @@ public class ParticipantManager {
 	 * 
 	 * @return an array of move participants
 	 */
-	public static MoveParticipant[] loadMoveParticipants(RefactoringProcessor processor, Object element, MoveArguments arguments, String[] affectedNatures, SharableParticipants shared) {
-		RefactoringParticipant[] participants= fgMoveExtensions.getParticipants(processor, element, arguments, affectedNatures, shared);
+	public static MoveParticipant[] loadMoveParticipants(RefactoringStatus status, RefactoringProcessor processor, Object element, MoveArguments arguments, String[] affectedNatures, SharableParticipants shared) {
+		RefactoringParticipant[] participants= fgMoveExtensions.getParticipants(status, processor, element, arguments, affectedNatures, shared);
 		MoveParticipant[] result= new MoveParticipant[participants.length];
 		System.arraycopy(participants, 0, result, 0, participants.length);
 		return result;
@@ -79,6 +85,8 @@ public class ParticipantManager {
 	/**
 	 * Loads the copy participants for the given element.
 	 * 
+	 * @param status a refactoring status to report status if problems occurred while
+	 *  loading the participants
 	 * @param processor the processor that will own the participants
 	 * @param element the element to be copied
 	 * @param arguments the copy arguments describing the copy
@@ -87,8 +95,8 @@ public class ParticipantManager {
 	 * 
 	 * @return an array of copy participants
 	 */
-	public static CopyParticipant[] loadCopyParticipants(RefactoringProcessor processor, Object element, CopyArguments arguments, String[] affectedNatures, SharableParticipants shared) {
-		RefactoringParticipant[] participants= fgCopyInstance.getParticipants(processor, element, arguments, affectedNatures, shared);
+	public static CopyParticipant[] loadCopyParticipants(RefactoringStatus status, RefactoringProcessor processor, Object element, CopyArguments arguments, String[] affectedNatures, SharableParticipants shared) {
+		RefactoringParticipant[] participants= fgCopyInstance.getParticipants(status, processor, element, arguments, affectedNatures, shared);
 		CopyParticipant[] result= new CopyParticipant[participants.length];
 		System.arraycopy(participants, 0, result, 0, participants.length);
 		return result;
@@ -101,7 +109,8 @@ public class ParticipantManager {
 	
 	/**
 	 * Loads the delete participants for the given element.
-	 * 
+	 * @param status a refactoring status to report status if problems occurred while
+     *  loading the participants
 	 * @param processor the processor that will own the participants
 	 * @param element the element to be deleted
 	 * @param arguments the delete arguments describing the delete
@@ -110,8 +119,8 @@ public class ParticipantManager {
 	 * 
 	 * @return an array of delete participants
 	 */
-	public static DeleteParticipant[] loadDeleteParticipants(RefactoringProcessor processor, Object element, DeleteArguments arguments, String[] affectedNatures, SharableParticipants shared) {
-		RefactoringParticipant[] participants= fgDeleteInstance.getParticipants(processor, element, arguments, affectedNatures, shared);
+	public static DeleteParticipant[] loadDeleteParticipants(RefactoringStatus status, RefactoringProcessor processor, Object element, DeleteArguments arguments, String[] affectedNatures, SharableParticipants shared) {
+		RefactoringParticipant[] participants= fgDeleteInstance.getParticipants(status, processor, element, arguments, affectedNatures, shared);
 		DeleteParticipant[] result= new DeleteParticipant[participants.length];
 		System.arraycopy(participants, 0, result, 0, participants.length);
 		return result;
@@ -125,6 +134,8 @@ public class ParticipantManager {
 	/**
 	 * Loads the create participants for the given element.
 	 * 
+	 * @param status a refactoring status to report status if problems occurred while
+	 *  loading the participants
 	 * @param processor the processor that will own the participants
 	 * @param element the element to be created or a corresponding descriptor
 	 * @param arguments the create arguments describing the create
@@ -133,8 +144,8 @@ public class ParticipantManager {
 	 * 
 	 * @return an array of create participants
 	 */
-	public static CreateParticipant[] loadCreateParticipants(RefactoringProcessor processor, Object element, CreateArguments arguments, String affectedNatures[], SharableParticipants shared) {
-		RefactoringParticipant[] participants= fgCreateInstance.getParticipants(processor, element, arguments, affectedNatures, shared);
+	public static CreateParticipant[] loadCreateParticipants(RefactoringStatus status, RefactoringProcessor processor, Object element, CreateArguments arguments, String affectedNatures[], SharableParticipants shared) {
+		RefactoringParticipant[] participants= fgCreateInstance.getParticipants(status, processor, element, arguments, affectedNatures, shared);
 		CreateParticipant[] result= new CreateParticipant[participants.length];
 		System.arraycopy(participants, 0, result, 0, participants.length);
 		return result;

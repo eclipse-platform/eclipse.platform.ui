@@ -18,7 +18,11 @@ package org.eclipse.ltk.core.refactoring;
  * performing a corresponding undo change.
  * <p>
  * Clients of the refactoring framework don't need to take care of content
- * stamps. They are managed by the framework itself. 
+ * stamps. They are managed by the framework itself.
+ * </p>
+ * <p>
+ * Not all files in the workspace are annotated with a content stamp. The 
+ * refactoring framework only adds content stamp to those files where necessary.
  * </p>
  * <p>
  * This class is not intended to be extended by clients.
@@ -28,4 +32,12 @@ package org.eclipse.ltk.core.refactoring;
  */
 public abstract class ContentStamp {
 
+	/**
+	 * Checks whether the stamp is the null stamp or not. A null stamp
+	 * is generated for files which either don't exist or exist in a 
+	 * closed project.
+	 * 
+	 * @return whether the stamp is the null stamp or not.
+	 */
+	public abstract boolean isNullStamp();
 }

@@ -154,7 +154,7 @@ class DirtyBufferValidationState extends BufferValidationState {
 		RefactoringStatus result= super.isValid();
 		if (result.hasFatalError())
 			return result;
-		if (fChanged || (fContentStamp != null && !fContentStamp.equals(ContentStamps.get(fFile)))) {
+		if (fChanged || (!fContentStamp.isNullStamp() && !fContentStamp.equals(ContentStamps.get(fFile)))) {
 			result.addFatalError(RefactoringCoreMessages.getFormattedString(
 				"TextChanges.error.content_changed", //$NON-NLS-1$
 				fFile.getFullPath().toString()
@@ -193,12 +193,7 @@ class SavedBufferValidationState extends BufferValidationState {
 		RefactoringStatus result= super.isValid();
 		if (result.hasFatalError())
 			return result;
-		if (fContentStamp == null) {
-			result.addFatalError(RefactoringCoreMessages.getFormattedString(
-				"TextChanges.error.missing_stamp", //$NON-NLS-1$
-				fFile.getFullPath().toString()
-				)); 
-		} if (!fContentStamp.equals(ContentStamps.get(fFile))) {
+		if (!fContentStamp.equals(ContentStamps.get(fFile))) {
 			result.addFatalError(RefactoringCoreMessages.getFormattedString(
 				"TextChanges.error.content_changed", //$NON-NLS-1$
 				fFile.getFullPath().toString()

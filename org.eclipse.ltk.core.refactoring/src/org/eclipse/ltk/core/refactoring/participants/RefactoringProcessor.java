@@ -197,7 +197,8 @@ public abstract class RefactoringProcessor extends PlatformObject {
 	 * {@link #checkFinalConditions(IProgressMonitor, CheckConditionsContext)}has 
 	 * been called on the processor itself.
 	 * </p>
-	 * 
+	 * @param status a refactoring status to report status if problems occur while
+	 *  loading the participants
 	 * @param sharedParticipants a list of sharable participants. Implementors of
 	 *  this method can simply pass this instance to the corresponding participant
 	 *  loading methods defined in {@link ParticipantManager}.  
@@ -208,5 +209,5 @@ public abstract class RefactoringProcessor extends PlatformObject {
 	 * 
 	 * @see ISharableParticipant
 	 */
-	public abstract RefactoringParticipant[] loadParticipants(SharableParticipants sharedParticipants) throws CoreException;
+	public abstract RefactoringParticipant[] loadParticipants(RefactoringStatus status, SharableParticipants sharedParticipants) throws CoreException;
 }
