@@ -573,7 +573,7 @@ class NewWizardNewPage
 				return;
 		}
 		StructuredSelection selection = new StructuredSelection(selected);
-		viewer.setSelection(selection);
+		viewer.setSelection(selection, true);
 	}
 
 	/**
