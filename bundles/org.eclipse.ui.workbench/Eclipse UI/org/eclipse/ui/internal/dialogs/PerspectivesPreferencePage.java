@@ -11,7 +11,10 @@
 
 package org.eclipse.ui.internal.dialogs;
 
+import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -104,6 +107,19 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 	private final String OPM_NEW_WINDOW = WorkbenchMessages
 			.getString("OpenPerspectiveMode.newWindow"); //$NON-NLS-1$
 
+	/**
+	 * <code>Comparator</code> to compare two perspective descriptors
+	 */
+    private Comparator comparator = new Comparator() {
+        private Collator collator = Collator.getInstance();
+
+        public int compare(Object ob1, Object ob2) {
+            IPerspectiveDescriptor d1 = (IPerspectiveDescriptor) ob1;
+            IPerspectiveDescriptor d2 = (IPerspectiveDescriptor) ob2;
+            return collator.compare(d1.getLabel(), d2.getLabel());
+        }
+    };
+    
 	/**
 	 * Creates the page's UI content.
 	 */
@@ -285,6 +301,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 		perspectives = new ArrayList(persps.length);
 		for (int i = 0; i < persps.length; i++)
 			perspectives.add(i, persps[i]);
+		Collections.sort(perspectives, comparator);
 		defaultPerspectiveId = perspectiveRegistry.getDefaultPerspective();
 		updateList();
 
