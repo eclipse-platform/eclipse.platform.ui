@@ -13,6 +13,8 @@ package org.eclipse.debug.ui.actions;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.AbstractRulerActionDelegate;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -62,7 +64,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * </p>
  * @since 3.1
  */
-public class RulerToggleBreakpointActionDelegate extends AbstractRulerActionDelegate {
+public class RulerToggleBreakpointActionDelegate extends AbstractRulerActionDelegate implements IActionDelegate2 {
 	
 	private IEditorPart fEditor = null;
 	private ToggleBreakpointAction fDelegate = null;
@@ -92,5 +94,29 @@ public class RulerToggleBreakpointActionDelegate extends AbstractRulerActionDele
 		}
 		fEditor = targetEditor;
 		super.setActiveEditor(callerAction, targetEditor);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
+	 */
+	public void init(IAction action) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate2#dispose()
+	 */
+	public void dispose() {
+		if (fDelegate != null) {
+			fDelegate.dispose();
+		}
+		fDelegate = null;
+		fEditor = null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
+	 */
+	public void runWithEvent(IAction action, Event event) {
+		run(action);
 	}
 }
