@@ -51,6 +51,8 @@ public class UnifiedTree {
 	/** special node to mark the separation of a node's children */
 	protected static final UnifiedTreeNode childrenMarker = new UnifiedTreeNode(null, null, 0, null, null, false);
 	
+	/** Singleton to indicate no local children */
+	private static final Object[] NO_CHILDREN = new Object[0];
 
 	public UnifiedTree() {
 		super();
@@ -92,22 +94,23 @@ public class UnifiedTree {
 	protected void addChildren(UnifiedTreeNode node) throws CoreException {
 		Resource parent = (Resource)node.getResource();
 
-		/* is there a possibility to have children? */
+		// is there a possibility to have children? 
 		int parentType = parent.getType();
 		if (parentType == IResource.FILE && node.isFile())
 			return;
 
-		/* get the list of resources in the file system */
+		// get the list of resources in the file system 
 		String parentLocalLocation = node.getLocalLocation();
-		Object[] list = getLocalList(node, parentLocalLocation);
+		// don't ask for local children if we know it doesn't exist locally
+		Object[] list = node.existsInFileSystem() ? getLocalList(node, parentLocalLocation) : NO_CHILDREN;
 		int localIndex = 0;
 		
-		/* See if the children of this resource have been computed before */
+		// See if the children of this resource have been computed before 
 		ResourceInfo resourceInfo = parent.getResourceInfo(false, false);
 		int flags = parent.getFlags(resourceInfo);
 		boolean unknown = ResourceInfo.isSet(flags, ICoreConstants.M_CHILDREN_UNKNOWN);
 
-		/* get the list of resources in the workspace */
+		// get the list of resources in the workspace 
 		if (!unknown && (parentType == IResource.FOLDER || parentType == IResource.PROJECT) && parent.exists(flags, true)) {
 			IResource target = null;
 			UnifiedTreeNode child = null;

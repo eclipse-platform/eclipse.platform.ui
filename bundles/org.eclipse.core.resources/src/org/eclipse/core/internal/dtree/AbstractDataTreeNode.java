@@ -214,18 +214,25 @@ public abstract class AbstractDataTreeNode {
 
 	/**
 	 * Returns the child with the given local name, ignoring case.  
-	 * Returns null if the child does not exist.
+	 * If multiple case variants exist, the search will favour real nodes
+	 * over deleted nodes. If multiple real nodes are found, the first one
+	 * encountered in case order is returned. Returns null if no matching
+	 * children are found.
 	 * 
-	 * @param localName
-	 *	name of child to retrieve
+	 * @param localName name of child to retrieve
 	 */
 	AbstractDataTreeNode childAtIgnoreCase(String localName) {
-		AbstractDataTreeNode[] children = this.children;
+		AbstractDataTreeNode result = null;
 		for (int i = 0; i < children.length; i++) {
-			if (children[i].getName().equalsIgnoreCase(localName))
-				return children[i];
+			if (children[i].getName().equalsIgnoreCase(localName)) {
+				//if we find a deleted child, keep looking for a real child
+				if (children[i].isDeleted())
+					result = children[i];
+				else
+					return children[i];
+			}
 		}
-		return null;
+		return result;
 	}
 
 	/** 
