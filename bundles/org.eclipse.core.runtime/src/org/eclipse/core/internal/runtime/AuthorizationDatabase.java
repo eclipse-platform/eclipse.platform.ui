@@ -259,7 +259,7 @@ private void load() throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR,Platform.PI_RUNTIME,Platform.FAILED_READ_METADATA,Policy.bind("meta.unableToReadAuthorization",file.toString()),e)); //$NON-NLS-1$
 	}
 }
-private void load(InputStream is) throws IOException, ClassNotFoundException {
+private void load(InputStream is) throws IOException, ClassNotFoundException, CoreException {
 	//try to read the file version number. Pre 2.0 versions had no number
 	int version = is.read();
 	if (version == KEYRING_FILE_VERSION) {
@@ -273,14 +273,21 @@ private void load(InputStream is) throws IOException, ClassNotFoundException {
 			ois.close();
 		}
 	} else {
-		//the format has changed, just log a warning and carry on
+		//the format has changed, just log a warning
 		InternalPlatform.log(new Status(
 			IStatus.WARNING, 
 			Platform.PI_RUNTIME, 
 			Platform.FAILED_READ_METADATA, 
-			Policy.bind("meta.authFormatChanged"), 
+			Policy.bind("meta.authFormatChanged"),  //$NON-NLS-1$
 			null));
+		//close the stream and save a new file in the correct format
+		try {
+			is.close();
+		} catch (IOException e) {
+			//ignore failure to close
+		}
 		needsSaving = true;
+		save();
 	}
 }
 /**
