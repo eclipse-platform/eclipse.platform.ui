@@ -517,42 +517,60 @@ public class ScopedPreferenceStore implements IPreferenceStore, IPersistentPrefe
 	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, double)
 	 */
 	public void setValue(String name, double value) {
-		getStorePreferences().putDouble(name, value);
+		if (getDefaultDouble(name) == value)
+			getStorePreferences().remove(name);
+		else
+			getStorePreferences().putDouble(name, value);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, float)
 	 */
-	public void setValue(String name, float value) {
-		getStorePreferences().putFloat(name, value);
+	public void setValue(String name, float value) {		
+		if (getDefaultFloat(name) == value)
+			getStorePreferences().remove(name);
+		else
+			getStorePreferences().putFloat(name, value);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, int)
 	 */
 	public void setValue(String name, int value) {
-		getStorePreferences().putInt(name, value);
+		if (getDefaultInt(name) == value)
+			getStorePreferences().remove(name);
+		else
+			getStorePreferences().putInt(name, value);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, long)
 	 */
 	public void setValue(String name, long value) {
-		getStorePreferences().putLong(name, value);
+		if (getDefaultLong(name) == value)
+			getStorePreferences().remove(name);
+		else
+			getStorePreferences().putLong(name, value);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, java.lang.String)
 	 */
 	public void setValue(String name, String value) {
-		getStorePreferences().put(name, value);
+		if (getDefaultString(name).equals(value))
+			getStorePreferences().remove(name);
+		else
+			getStorePreferences().put(name, value);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, boolean)
 	 */
 	public void setValue(String name, boolean value) {
-		getStorePreferences().putBoolean(name, value);
+		if (getDefaultBoolean(name) == value)
+			getStorePreferences().remove(name);
+		else
+			getStorePreferences().putBoolean(name, value);
 	}
 
 	/* (non-Javadoc)
