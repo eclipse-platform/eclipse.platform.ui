@@ -23,11 +23,19 @@ public class WorkingSetManagerData extends RequestData {
 	private final static int REMOVE = 2;
 	private final static int EDIT = 3;
 	
+	private static boolean workingSetsSynchronized = false;
+	
 	private WorkingSetManager wsmgr =
 		HelpSystem.getWorkingSetManager(getLocale());
 
 	public WorkingSetManagerData(ServletContext context, HttpServletRequest request) {
 		super(context, request);
+		
+		if (!workingSetsSynchronized && getMode() == MODE_WORKBENCH) {
+			// upon startup in workbench mode, make sure working sets are in synch with those from UI
+			workingSetsSynchronized = true;
+			wsmgr.synchronizeWorkingSets();
+		}
 
 		switch(getOperation()) {
 			case ADD:

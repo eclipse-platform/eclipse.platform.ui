@@ -29,7 +29,7 @@ public class HelpWorkingSetSynchronizer
 		workingSets = new ArrayList();
 	}
 	/**
-	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
+	 * @see org.eclipse.help.internal.workingset.PropertyChange.IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event
@@ -64,7 +64,7 @@ public class HelpWorkingSetSynchronizer
 	}
 
 	/**
-	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
+	 * @see org.eclipse.help.internal.workingset.PropertyChange.IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChange.PropertyChangeEvent event) {
 		if (event
@@ -95,6 +95,18 @@ public class HelpWorkingSetSynchronizer
 			// change the content of the eclipse working set
 			WorkingSet ws = (WorkingSet) event.getNewValue();
 			changeWorkingSet(ws);
+		} else if (
+			event.getProperty().equals(
+				WorkingSetManager.CHANGE_WORKING_SETS_SYNCH)) {
+			
+			// remove working sets not present in the UI
+			WorkingSet[] baseWorkingSets = getHelpWorkingSetManager().getWorkingSets();
+			for (int i=0; i<baseWorkingSets.length; i++) {
+				IWorkingSet iws =
+					getEclipseWorkingSetManager().getWorkingSet(baseWorkingSets[i].getName());
+				if (iws == null) 
+					getHelpWorkingSetManager().removeWorkingSet(baseWorkingSets[i]);
+			}
 		}
 	}
 

@@ -63,6 +63,13 @@ public class WorkingSetManager {
 	 */
 	public static final String CHANGE_WORKING_SET_NAME_CHANGE = "workingSetNameChange";	//$NON-NLS-1$	
 	 
+	/**
+	 * Synchronize event id. When other working sets repositories are used,
+	 * one may want to keep things in synch.
+	 *
+	 * @see IPropertyChangeListener
+	 */
+	public static final String CHANGE_WORKING_SETS_SYNCH = "workingSetsSynch";
 	 
 	// Working set persistence
 	private static final String WORKING_SET_STATE_FILENAME = "workingsets.xml";
@@ -379,6 +386,16 @@ public class WorkingSetManager {
 		saveState();
 		firePropertyChange(CHANGE_WORKING_SET_NAME_CHANGE, null, changedWorkingSet);
 		firePropertyChange(CHANGE_WORKING_SET_CONTENT_CHANGE, null, changedWorkingSet);
+	}
+	
+	/**
+	 * Synchronizes the working sets. Should only be called by the webapp
+	 * working set manager dialog.
+	 *
+	 * @param changedWorkingSet the working set that has changed
+	 */
+	public void synchronizeWorkingSets() {
+		firePropertyChange(CHANGE_WORKING_SETS_SYNCH, null, null);
 	}
 	
 	public AdaptableToc getAdaptableToc(String href) {
