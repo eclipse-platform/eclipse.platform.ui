@@ -73,10 +73,11 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	
 	
 	private TextMergeViewer fPreviewViewer;
-	private IPropertyChangeListener	fPreferenceChangeListener;
+	private IPropertyChangeListener fPreferenceChangeListener;
 	private CompareConfiguration fCompareConfiguration;
 	private OverlayPreferenceStore fOverlayStore;
 	private Map fCheckBoxes= new HashMap();
+	private Text fFilters;
 	private SelectionListener fCheckBoxListener;
 
 
@@ -140,6 +141,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	 * @see IWorkbenchPreferencePage#init()
 	 */
 	public void init(IWorkbench workbench) {
+		// empty
 	}	
 
 	/*
@@ -247,13 +249,13 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		l= new Label(c2, SWT.NONE);
 		l.setText(Utilities.getString("ComparePreferencePage.filter.label")); //$NON-NLS-1$
 		
-		final Text t= new Text(c2, SWT.BORDER);
-		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		t.setText(fOverlayStore.getString(PATH_FILTER));
-		t.addModifyListener(
+		fFilters= new Text(c2, SWT.BORDER);
+		fFilters.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fFilters.setText(fOverlayStore.getString(PATH_FILTER));
+		fFilters.addModifyListener(
 			new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
-					String filters= t.getText();
+					String filters= fFilters.getText();
 					String message= CompareFilter.validateResourceFilters(filters);
 					setValid(message == null);
 					setMessage(null);
@@ -336,6 +338,9 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 			String key= (String) fCheckBoxes.get(b);
 			b.setSelection(fOverlayStore.getBoolean(key));
 		}
+		
+		if (fFilters != null)
+			fFilters.setText(fOverlayStore.getString(PATH_FILTER));
 	}
 
 	// overlay stuff
