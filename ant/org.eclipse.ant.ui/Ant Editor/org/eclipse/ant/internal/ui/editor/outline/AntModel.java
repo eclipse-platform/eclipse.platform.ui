@@ -48,6 +48,7 @@ public class AntModel {
 
 	private AntProjectNode fProjectNode;
 	private AntTargetNode fCurrentTargetNode;
+	private AntElementNode fLastNode;
 	 /**
      * Stack of still open elements.
      * <P>
@@ -175,7 +176,7 @@ public class AntModel {
     		// build files.
 			try {
 				int line= e.getLocation().getLineNumber();
-				notifyProblemRequestor(e, getOffset(line, 0), getLastCharColumn(line), XMLProblem.SEVERTITY_ERROR);
+				notifyProblemRequestor(e, getNonWhitespaceOffset(line, 1), getLastCharColumn(line), XMLProblem.SEVERTITY_ERROR);
 			} catch (BadLocationException e1) {
 			}
     	} finally {
@@ -384,6 +385,14 @@ public class AntModel {
 		return fDocument.getLineOffset(line - 1) + column - 1;
 	}
 	
+	private int getNonWhitespaceOffset(int line, int column) throws BadLocationException {
+		int offset= fDocument.getLineOffset(line - 1) + column - 1;
+		while(Character.isWhitespace(fDocument.getChar(offset))) {
+			offset++;
+		}
+		return offset;
+	}
+	
 	private int getLine(int offset) throws BadLocationException {
 		return fDocument.getLineOfOffset(offset) + 1;
 	}
@@ -395,7 +404,8 @@ public class AntModel {
 	}
 
 	public void setCurrentElementLength(int lineNumber, int column) {
-		computeLength((AntElementNode)fStillOpenElements.pop(), lineNumber, column);
+		fLastNode= (AntElementNode)fStillOpenElements.pop();
+		computeLength(fLastNode, lineNumber, column);
 	}
 	
 	public void acceptProblem(IProblem problem) {
@@ -449,8 +459,7 @@ public class AntModel {
 	
 	public void error(Exception exception, int start, int count) {
 		notifyProblemRequestor(exception, start, count, XMLProblem.SEVERTITY_ERROR);
-		AntElementNode node= (AntElementNode)fStillOpenElements.peek();
-		node.setIsErrorNode(true);
+		generateExceptionOutline(fLastNode);
 	}
 
 	private AntElementNode createProblemElement(SAXParseException exception) {

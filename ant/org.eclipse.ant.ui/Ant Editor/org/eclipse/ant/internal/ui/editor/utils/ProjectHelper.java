@@ -143,7 +143,6 @@ public class ProjectHelper extends ProjectHelper2 {
 				}
 				onStartElement0(uri, tag, qname, attrs, context);
 				if (fAntModel != null) {
-					//Task newTask= (Task)context.currentWrapper().getProxy();
 					Locator locator= context.getLocator();
 					fAntModel.addTask(task, currentTask, attrs, locator.getLineNumber(), locator.getColumnNumber());
 				}
@@ -240,6 +239,23 @@ public class ProjectHelper extends ProjectHelper2 {
             }
 
             context.pushWrapper(wrapper);
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.apache.tools.ant.helper.ProjectHelper2.AntHandler#characters(char[], int, int, org.apache.tools.ant.helper.AntXMLContext)
+		 */
+		public void characters(char[] buf, int start, int count, AntXMLContext context) {
+			try {
+				super.characters(buf, start, count, context);
+			} catch (SAXParseException e) {
+				if (fAntModel != null) {
+					fAntModel.error(e, start, count);
+				}
+			} catch (BuildException be) {
+				if (fAntModel != null) {
+					fAntModel.error(be, start, count);
+				}
+			}
 		}
 	}
 	
@@ -372,6 +388,24 @@ public class ProjectHelper extends ProjectHelper2 {
 				fAntModel.setCurrentElementLength(locator.getLineNumber(), locator.getColumnNumber());
 			}
 		}
+		
+		/* (non-Javadoc)
+		 * @see org.apache.tools.ant.helper.ProjectHelper2.AntHandler#characters(char[], int, int, org.apache.tools.ant.helper.AntXMLContext)
+		 */
+		public void characters(char[] buf, int start, int count, AntXMLContext context) {
+			try {
+				super.characters(buf, start, count, context);
+			} catch (SAXParseException e) {
+				if (fAntModel != null) {
+					fAntModel.error(e, start, count);
+				}
+			} catch (BuildException be) {
+				if (fAntModel != null) {
+					fAntModel.error(be, start, count);
+				}
+			}
+		}
+		
 	}
 	
 	 public static class RootHandler extends ProjectHelper2.RootHandler {

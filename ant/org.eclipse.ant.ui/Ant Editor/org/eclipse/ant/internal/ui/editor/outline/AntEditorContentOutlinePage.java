@@ -248,7 +248,12 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			}
 			
 			if("property".equalsIgnoreCase(tempElement.getName())) { //$NON-NLS-1$
-				return AntUIImages.getImage(IAntUIConstants.IMG_PROPERTY);
+				int flags= 0;
+				ImageDescriptor base= AntUIImages.getImageDescriptor(IAntUIConstants.IMG_PROPERTY);
+				if (tempElement.isErrorNode()) {
+					flags |= AntImageDescriptor.HAS_ERRORS;
+				}
+				return AntUIImages.getImage(new AntImageDescriptor(base, flags));
 			}
             
             if("import".equalsIgnoreCase(tempElement.getName())) { //$NON-NLS-1$
