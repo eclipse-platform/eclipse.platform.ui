@@ -25,11 +25,8 @@ public class SyncTests extends CVSUITestCase {
 	private static final int FILE_SIZE_VARIANCE = 0;
 	private static final int PROB_BINARY = 0;
 	
-	public SyncTests(String name) {
-		super(name);
-	}
-	public SyncTests() {
-		super("");
+	public SyncTests(Test test) {
+		super(test);
 	}
 
 	public static Test suite() {

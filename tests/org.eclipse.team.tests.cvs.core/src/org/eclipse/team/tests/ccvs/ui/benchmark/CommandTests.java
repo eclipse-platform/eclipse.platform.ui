@@ -20,6 +20,7 @@ import java.util.TreeSet;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -43,22 +44,23 @@ public class CommandTests extends CVSUITestCase {
 	private IProject eclipseProject;
 	private IProject uiProject;
 	
-	public CommandTests(String name) {
-		super(name);
-	}
-	public CommandTests() {
-		super("");
+	public CommandTests(Test test) {
+		super(test);
 	}
 	public static Test suite() {
     	return new BenchmarkTestSetup(new TestSuite(CommandTests.class));
 	}
 
-	public void setUp() throws Exception {
+	public void setUp() throws CVSException {
 		super.setUp();
-		baseName = Util.makeUniqueName(null, getName(), null);
-		referenceProject = Util.createProject(baseName + "-reference");
-		eclipseProject = Util.createProject(baseName + "-eclipse");
-		uiProject = Util.createProject(baseName);
+		try {
+			baseName = Util.makeUniqueName(null, "thisproject", null);
+			referenceProject = Util.createProject(baseName + "-reference");
+			eclipseProject = Util.createProject(baseName + "-eclipse");
+			uiProject = Util.createProject(baseName);
+		} catch (CoreException e) {
+			throw new CVSException(e);
+		}
 	}
 	
 	public void testImportAddCommitCheckout() throws Throwable {

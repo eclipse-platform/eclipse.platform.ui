@@ -40,6 +40,7 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 
 	private ITeamResourceChangeListener listener;
 	private List accumulatedTeamDeltas = new ArrayList();
+	private static SyncInfoSource source = null;
 
 	public CVSSyncSubscriberTest() {
 		super();
@@ -49,6 +50,10 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 		super(name);
 	}
 
+	public static void setSyncSource(SyncInfoSource newSource) {
+		source = newSource;
+	}
+	
 	protected TeamSubscriber getWorkspaceSubscriber() throws TeamException {
 		TeamSubscriber subscriber = TeamProvider.getSubscriber(CVSProviderPlugin.CVS_WORKSPACE_SUBSCRIBER_ID);
 		if (subscriber == null) fail("The CVS sync subsciber is not registered");
@@ -56,7 +61,8 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 	}
 	
 	public SyncInfoSource getSyncInfoSource() {
-		return SubscriberTestSetup.getSyncInfoSource();
+		assertNotNull(source);
+		return source;
 	}
 	
 	protected void refresh(TeamSubscriber subscriber, IResource resource) throws TeamException {

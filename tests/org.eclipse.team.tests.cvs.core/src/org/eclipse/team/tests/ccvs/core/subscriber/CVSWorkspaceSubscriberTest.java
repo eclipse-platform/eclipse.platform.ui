@@ -29,6 +29,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
@@ -1122,7 +1123,7 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		IProject project = createProject("testDisconnect", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
 		ICVSFolder cvsProject = CVSWorkspaceRoot.getCVSFolderFor(project);
 		CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(project);
-		provider.deconfigure();		
+		cvsProject.unmanage(new NullProgressMonitor());
 		assertProjectRemoved(getWorkspaceSubscriber(), project);
 	}
 	

@@ -28,11 +28,8 @@ public class WorkflowTests extends CVSUITestCase {
 	private int FILE_SIZE_MEAN = 16384;
 	private int FILE_SIZE_VARIANCE = 12288;
 	private int PROB_BINARY = 5;
-	public WorkflowTests(String name) {
-		super(name);
-	}
-	public WorkflowTests() {
-		super("");
+	public WorkflowTests(Test test) {
+		super(test);
 	}
 
 	public static Test suite() {

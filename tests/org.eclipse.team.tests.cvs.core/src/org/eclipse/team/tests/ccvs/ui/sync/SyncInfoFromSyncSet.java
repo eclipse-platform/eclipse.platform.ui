@@ -18,8 +18,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
-import org.eclipse.team.internal.ui.IPreferenceIds;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.sync.sets.SubscriberInput;
 import org.eclipse.team.internal.ui.sync.sets.SyncSet;
 import org.eclipse.team.internal.ui.sync.views.SynchronizeView;
@@ -34,7 +32,6 @@ public class SyncInfoFromSyncSet extends SyncInfoSource {
 	}
 	
 	public SyncInfo getSyncInfo(TeamSubscriber subscriber, IResource resource) throws TeamException {
-		TeamUIPlugin.getPlugin().getPreferenceStore().setValue(IPreferenceIds.TESTING_SYNCVIEW, true);
 		SubscriberInput input = getInput(subscriber);
 		SyncSet set = input.getWorkingSetSyncSet();
 		SyncInfo info = set.getSyncInfo(resource);
@@ -56,12 +53,6 @@ public class SyncInfoFromSyncSet extends SyncInfoSource {
 			syncView.activateSubscriber(subscriber);
 			while (Display.getCurrent().readAndDispatch()) {};			
 			input = syncView.getInput();
-		} else {
-			try {
-				// sleep to let the events propagate
-				Thread.sleep(500);
-				} catch (InterruptedException e) {
-			}
 		}
 		if (subscriber != input.getSubscriber()) {
 			throw new AssertionFailedError();

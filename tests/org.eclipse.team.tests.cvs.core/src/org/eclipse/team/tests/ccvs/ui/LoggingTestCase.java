@@ -12,19 +12,21 @@ package org.eclipse.team.tests.ccvs.ui;
 
 
 import junit.framework.Assert;
-import junit.framework.TestCase;
+import junit.framework.Test;
 import junit.framework.TestResult;
-import org.eclipse.core.runtime.IStatus;
 
-public class LoggingTestCase extends TestCase {
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
+
+public class LoggingTestCase extends CVSTestSetup {
 	private LoggingTestResult logResult;
 	private int disableLogStack;
 	
 	/**
 	 * Creates a new logging test case.
 	 */
-	public LoggingTestCase(String name) {
-		super(name);
+	public LoggingTestCase(Test test) {
+		super(test);
 	}
 	
 	/**

@@ -12,10 +12,11 @@ package org.eclipse.team.tests.ccvs.core.subscriber;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 
 public class AllTestsTeamSubscriber extends EclipseTest {
-
+	
 	public AllTestsTeamSubscriber() {
 		super();
 	}
@@ -25,13 +26,10 @@ public class AllTestsTeamSubscriber extends EclipseTest {
 	}
 
 	public static Test suite() {
-		return suite(new SyncInfoSource());
-	}
-	
-	public static Test suite(SyncInfoSource source) {
 		TestSuite suite = new TestSuite();
 		suite.addTest(CVSMergeSubscriberTest.suite());
 		suite.addTest(CVSWorkspaceSubscriberTest.suite());
-		return new SubscriberTestSetup(suite, source);
+		CVSSyncSubscriberTest.setSyncSource(new SyncInfoSource());
+		return new CVSTestSetup(suite);
 	}
 }

@@ -19,6 +19,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import junit.framework.Test;
+
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
@@ -27,6 +29,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
@@ -79,12 +82,12 @@ public class CVSUITestCase extends LoggingTestCase {
 	protected boolean USE_CONSOLE = System.getProperty("cvs.tests.use_console") != null;
 	protected boolean SHOW_CONSOLE = System.getProperty("cvs.tests.show_console") != null;
 
-	public CVSUITestCase(String name) {
-		super(name);
+	public CVSUITestCase(Test test) {
+		super(test);
 		testWindows = new ArrayList(3);
 	}
 	
-	protected void setUp() throws Exception {
+	public void setUp() throws CVSException {
 		super.setUp();
 		testRepository = CVSTestSetup.repository;
 		testWindow = openTestWindow();
@@ -106,7 +109,11 @@ public class CVSUITestCase extends LoggingTestCase {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceDescription description = workspace.getDescription();
 		description.setAutoBuilding(false);
-		workspace.setDescription(description);
+		try {
+			workspace.setDescription(description);
+		} catch (CoreException e) {
+			throw new CVSException(e);
+		}
 						
 		// disable CVS GZIP compression
 		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
@@ -125,7 +132,7 @@ public class CVSUITestCase extends LoggingTestCase {
 		Util.processEventsUntil(100);
 	}
 	
-	protected void tearDown() throws Exception {
+	public void tearDown() throws CVSException {
 		// wait for UI to settle
 		Util.processEventsUntil(100);
 		closeAllTestWindows();
