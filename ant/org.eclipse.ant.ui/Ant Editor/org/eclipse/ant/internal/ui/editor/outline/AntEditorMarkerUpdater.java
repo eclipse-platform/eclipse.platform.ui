@@ -12,14 +12,16 @@
 package org.eclipse.ant.internal.ui.editor.outline;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-
+import java.util.Map;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.texteditor.MarkerUtilities;
 
 public class AntEditorMarkerUpdater {
 	
@@ -49,32 +51,9 @@ public class AntEditorMarkerUpdater {
 	
 	private void createMarker(IProblem problem) {
 		IFile file = getFile();
-		int lineNumber= problem.getLineNumber();
-		
-		int severity= IMarker.SEVERITY_ERROR;
-		if (problem.isWarning()) {
-			severity= IMarker.SEVERITY_WARNING;
-		}
+		Map attributes= getMarkerAttributes(problem);
 		try {
-			IMarker marker = file.createMarker(BUILDFILE_PROBLEM_MARKER);
-			marker.setAttributes(
-					new String[] { 
-							IMarker.MESSAGE, 
-							IMarker.SEVERITY, 
-							IMarker.LOCATION,
-							IMarker.CHAR_START, 
-							IMarker.CHAR_END, 
-							IMarker.LINE_NUMBER
-					},
-					new Object[] {
-							problem.getUnmodifiedMessage(),
-							new Integer(severity), 
-							problem.getMessage(),
-							new Integer(problem.getOffset()),
-							new Integer(problem.getOffset() + problem.getLength()),
-							new Integer(lineNumber)
-					}
-			);
+			MarkerUtilities.createMarker(file, attributes, BUILDFILE_PROBLEM_MARKER);
 		} catch (CoreException e) {			
 		} 
 	}
@@ -103,5 +82,27 @@ public class AntEditorMarkerUpdater {
 			fFile= fModel.getFile();
 		}
 		return fFile;
+	}
+	
+	/**
+	 * Returns the attributes with which a newly created marker will be
+	 * initialized.
+	 *
+	 * @return the initial marker attributes
+	 */
+	private Map getMarkerAttributes(IProblem problem) {
+		
+		Map attributes= new HashMap(11);
+		int severity= IMarker.SEVERITY_ERROR;
+		if (problem.isWarning()) {
+			severity= IMarker.SEVERITY_WARNING;
+		}
+		// marker line numbers are 1-based
+		MarkerUtilities.setMessage(attributes, problem.getUnmodifiedMessage());
+		MarkerUtilities.setLineNumber(attributes, problem.getLineNumber());
+		MarkerUtilities.setCharStart(attributes, problem.getOffset());
+		MarkerUtilities.setCharEnd(attributes, problem.getOffset() + problem.getLength());
+		attributes.put(IMarker.SEVERITY, new Integer(severity));
+		return attributes;
 	}
 }
