@@ -71,10 +71,28 @@ public class LazyReaderTest extends TestCase {
 		assertEquals("2.0", 4, read);
 		assertEquals("2.1", DATA.substring(11, 11 + read), new String(buffer, 3, read));
 		assertEquals("2.2", 15, stream.getOffset());
+		stream.mark(0);		
 		buffer = new char[100];
 		read = stream.read(buffer);
 		assertEquals("3.0", DATA.length() - 15, read);
 		assertEquals("3.1", DATA.substring(15, 15 + read), new String(buffer, 0, read));
+		assertFalse("3.2", stream.ready());		
+		stream.reset();
+		assertEquals("4.0", 15, stream.getOffset());
+		read = stream.read(buffer, 10, 14);
+		assertEquals("4.1", 29, stream.getOffset());
+		assertTrue("4.2", stream.ready());
+		assertEquals("4.3", 14, read);
+		assertEquals("4.4", DATA.substring(15, 15+ read), new String(buffer, 10, read));
+		read = stream.read(buffer);
+		assertEquals("5.0", 30, stream.getOffset());
+		assertFalse("5.1", stream.ready());
+		assertEquals("5.2", 1, read);
+		assertEquals("5.3", (byte) DATA.charAt(29), buffer[0]);
+		read = stream.read(buffer);
+		assertEquals("6.0", 30, stream.getOffset());
+		assertFalse("6.1", stream.ready());
+		assertEquals("6.2", -1, read);		
 	}
 
 	public void testMarkAndReset() throws UnsupportedEncodingException, IOException {
