@@ -27,6 +27,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 public class BreakpointTypeCategory extends PlatformObject implements IBreakpointTypeCategory, IWorkbenchAdapter {
 
 	private String fName;
+	private ImageDescriptor fImageDescriptor = DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_OBJS_BREAKPOINT_TYPE);
 	
 	/**
 	 * Constructs a type category for the given type name.
@@ -35,6 +36,20 @@ public class BreakpointTypeCategory extends PlatformObject implements IBreakpoin
 	 */
 	public BreakpointTypeCategory(String name) {
 		fName = name;
+	}
+	
+	/**
+	 * Constructs a type category for the given type name with the given
+	 * image.
+	 * 
+	 * @param name breakpoint type name
+	 * @param descriptor image descriptor
+	 */
+	public BreakpointTypeCategory(String name, ImageDescriptor descriptor) {
+		fName = name;
+		if (descriptor != null) {
+			fImageDescriptor = descriptor;
+		}
 	}
 	
 	/**
@@ -75,7 +90,7 @@ public class BreakpointTypeCategory extends PlatformObject implements IBreakpoin
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
 	 */
 	public ImageDescriptor getImageDescriptor(Object object) {
-		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_OBJS_BREAKPOINT_TYPE);
+		return fImageDescriptor;
 	}
 
 	/* (non-Javadoc)
