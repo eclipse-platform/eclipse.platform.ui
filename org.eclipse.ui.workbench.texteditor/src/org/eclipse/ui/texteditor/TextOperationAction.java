@@ -109,9 +109,13 @@ public final class TextOperationAction extends TextEditorAction {
 		if (editor == null)
 			return;
 
-		if (editor instanceof ITextEditorExtension2)
-			if (!fRunsOnReadOnly && ! ((ITextEditorExtension2) editor).validateEditorInputState())
-				return;
+		if (!fRunsOnReadOnly) {
+			if (editor instanceof ITextEditorExtension2) {
+				ITextEditorExtension2 extension= (ITextEditorExtension2) editor;
+				if (!extension.validateEditorInputState())
+					return;
+			}
+		}
 			
 		Display display= null;
 		
