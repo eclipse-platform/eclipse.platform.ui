@@ -12,6 +12,7 @@ import java.io.PrintStream;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildLogger;
 import org.apache.tools.ant.Project;
+import org.eclipse.ui.externaltools.internal.core.ToolMessages;
 import org.eclipse.ui.externaltools.internal.ui.LogConsoleDocument;
 
 public class NullBuildLogger implements BuildLogger {
@@ -19,6 +20,10 @@ public class NullBuildLogger implements BuildLogger {
 	private int fMessageOutputLevel = LogConsoleDocument.MSG_INFO;
 	private PrintStream fErr= null;
 	private PrintStream fOut= null;
+	
+	/**
+	 * An exception that has already been logged.	 */
+	private Throwable fHandledException= null;
 	
 	/**
 	 * @see org.apache.tools.ant.BuildLogger#setMessageOutputLevel(int)
@@ -47,6 +52,8 @@ public class NullBuildLogger implements BuildLogger {
 	 * @see org.apache.tools.ant.BuildListener#buildFinished(org.apache.tools.ant.BuildEvent)
 	 */
 	public void buildFinished(BuildEvent event) {
+		handleException(event);
+		fHandledException= null;
 	}
 
 	/**
@@ -59,6 +66,7 @@ public class NullBuildLogger implements BuildLogger {
 	 * @see org.apache.tools.ant.BuildListener#targetFinished(org.apache.tools.ant.BuildEvent)
 	 */
 	public void targetFinished(BuildEvent event) {
+		handleException(event);
 	}
 
 	/**
@@ -71,6 +79,7 @@ public class NullBuildLogger implements BuildLogger {
 	 * @see org.apache.tools.ant.BuildListener#taskFinished(org.apache.tools.ant.BuildEvent)
 	 */
 	public void taskFinished(BuildEvent event) {
+		handleException(event);
 	}
 
 	/**
@@ -130,6 +139,19 @@ public class NullBuildLogger implements BuildLogger {
 				getOutputPrintStream().println(message);
 			} 
 		}
+	}
+	
+	protected void handleException(BuildEvent event) {
+		Throwable exception = event.getException();
+		if (exception == null || exception == fHandledException) {
+			return;
+		}
+		fHandledException= exception;
+		logMessage(
+			ToolMessages.format(
+				"NullBuildLogger.buildException", // $NON-NLS-1$
+				new String[] { exception.toString()}),
+				LogConsoleDocument.MSG_ERR);	
 	}
 	
 	/**

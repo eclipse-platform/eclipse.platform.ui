@@ -11,7 +11,6 @@ import org.apache.tools.ant.BuildEvent;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.externaltools.internal.core.ToolMessages;
 import org.eclipse.ui.externaltools.internal.ui.LogConsoleDocument;
 import org.eclipse.ui.externaltools.internal.ui.OutputStructureElement;
 
@@ -21,25 +20,6 @@ public class AntBuildLogger extends NullBuildLogger {
 	private int fLastTargetEndIndex = 0;
 	
 	public AntBuildLogger() {
-	}
-
-	/**
-	 * @see BuildListener#buildFinished(BuildEvent)
-	 */
-	public void buildFinished(BuildEvent event) {
-		handleException(event);
-	}
-
-	protected void handleException(BuildEvent event) {
-		Throwable exception = event.getException();
-		if (exception == null) {
-			return;
-		}
-		logMessage(
-			ToolMessages.format(
-				"AntBuildLogger.buildException", // $NON-NLS-1$
-				new String[] { exception.toString()}),
-				LogConsoleDocument.MSG_ERR);	
 	}
 
 	/**
