@@ -26,8 +26,6 @@ import org.osgi.service.prefs.Preferences;
  */
 public class PreferencesServiceTest extends RuntimeTest {
 
-	private static Random random = new Random();
-
 	class ExportVerifier {
 
 		private IEclipsePreferences node;
@@ -379,10 +377,6 @@ public class PreferencesServiceTest extends RuntimeTest {
 		actual = service.get(key, null, new Preferences[] {null, null, defaultNode, null, node, null});
 		assertNotNull("8.6", actual);
 		assertEquals("8.7", defaultValue, actual);
-	}
-
-	private String getRandomString() {
-		return Long.toString(random.nextLong());
 	}
 
 	public void testSearchingStringBasics() {
