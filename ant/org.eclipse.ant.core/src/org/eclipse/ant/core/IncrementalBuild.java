@@ -52,9 +52,18 @@ public class IncrementalBuild extends Task {
 	public class Argument {
 		private String name;
 
+		/**
+		 * Sets the name of this argument. 
+		 * @param name the name of this argument
+		 */
 		public void setName(String value) {
 			name= value;
 		}
+
+		/**
+		 * Sets the value of this argument. 
+		 * @param value the value of this argument
+		 */
 		public void setValue(String value) {
 			if (value == null)
 				args.remove(name);

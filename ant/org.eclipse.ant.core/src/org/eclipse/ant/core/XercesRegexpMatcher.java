@@ -26,7 +26,13 @@ import org.apache.tools.ant.BuildException;
 
 public class XercesRegexpMatcher implements RegexpMatcher {
 	private RegularExpression regexp;
-	
+
+/**
+ * Creates a new Xerces based regular expression matcher.
+ */
+public XercesRegexpMatcher() {
+	super();
+}
 /**
  * Returns a collection of matched groups found in an argument.
  *

@@ -6,7 +6,7 @@ package org.eclipse.ant.core;
  */
 import java.util.*;
 
-public class Policy {
+class Policy {
 	private static ResourceBundle bundle;
 	private static final String bundleName = "org.eclipse.ant.core.Messages";
 

@@ -8,7 +8,7 @@ package org.eclipse.ant.internal.ui;
 import org.eclipse.core.runtime.*;
 import java.util.*;
 
-public class Policy {
+class Policy {
 	private static ResourceBundle bundle;
 	private static String bundleName = "org.eclipse.ant.internal.ui.Messages";
 
