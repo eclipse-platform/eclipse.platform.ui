@@ -52,6 +52,7 @@ import org.eclipse.jdt.launching.SocketUtil;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.program.launchConfigurations.BackgroundResourceRefresher;
 
 /**
@@ -143,6 +144,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 			return;
 		}
 		boolean captureOutput= ExternalToolsUtil.getCaptureOutput(configuration);
+		launch.setAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, captureOutput ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		int port= -1;
 		if (vmTypeID != null && captureOutput) {
 			if (userProperties == null) {
