@@ -32,7 +32,9 @@ public class SyncFileUtil {
 
 	public static ResourceSyncInfo[] readEntriesFile(File parent) throws CVSException {
 		
-		if(!getCVSSubdirectory(parent).exists()) {
+		File cvsSubDir = getCVSSubdirectory(parent);
+		
+		if(!cvsSubDir.exists()) {
 			return null;
 		}
 		
@@ -41,8 +43,8 @@ public class SyncFileUtil {
 		mergeEntriesLogFiles(parent);
 				
 		Map infos = new TreeMap();
-		String[] entries = getContents(parent, ENTRIES);
-		String[] permissions = getContents(parent, PERMISSIONS);
+		String[] entries = getContents(new File(cvsSubDir, ENTRIES));
+		String[] permissions = getContents(new File(cvsSubDir, PERMISSIONS));
 		
 		if (entries == null) {
 			return null;
@@ -93,14 +95,16 @@ public class SyncFileUtil {
 	
 	public static FolderSyncInfo readFolderConfig(File folder) throws CVSException {
 		
-		if(!getCVSSubdirectory(folder).exists()) {
+		File cvsSubDir = getCVSSubdirectory(folder);
+		
+		if(!cvsSubDir.exists()) {
 			return null;
 		}
 		
-		String staticDir = readLine(folder, STATIC);
-		String repo = readLine(folder, REPOSITORY);
-		String root = readLine(folder, ROOT);
-		String tag = readLine(folder, TAG);
+		String staticDir = readLine(new File(cvsSubDir, STATIC));
+		String repo = readLine(new File(cvsSubDir, REPOSITORY));
+		String root = readLine(new File(cvsSubDir, ROOT));
+		String tag = readLine(new File(cvsSubDir, TAG));
 							
 		boolean isStatic = false;
 		if (staticDir != null)
@@ -167,8 +171,8 @@ public class SyncFileUtil {
 		}
 	}
 	
-	protected static String readLine(File parent, String filename) throws CVSException {
-		String[] contents = getContents(parent, filename);
+	protected static String readLine(File file) throws CVSException {
+		String[] contents = getContents(file);
 		if (contents == null) {
 			return null;
 		} else if (contents.length == 0) {
@@ -178,14 +182,12 @@ public class SyncFileUtil {
 		}
 	}
 	
-	protected static String[] getContents(File parent, String filename)	throws CVSException {
-		
-		File propertyFile = new File(getCVSSubdirectory(parent), filename);
+	protected static String[] getContents(File file)	throws CVSException {
 		
 		// If the property does not exsist we return null
 		// this is specified
-		if (propertyFile.exists()) {
-			return FileUtil.readLines(propertyFile);
+		if (file.exists()) {
+			return FileUtil.readLines(file);
 		} else {
 			return null;
 		} 
@@ -207,9 +209,9 @@ public class SyncFileUtil {
 				}
 			});
 		
-		for (int i = 0; i < dirs.length; i++) {
-			mergeEntriesLogFiles(dirs[i]);
-		}
+		//for (int i = 0; i < dirs.length; i++) {
+		//	mergeEntriesLogFiles(dirs[i]);
+		//}
 
 		File logEntriesFile = new File(getCVSSubdirectory(root), ENTRIES_LOG);
 		File entriesFile = new File(getCVSSubdirectory(root), ENTRIES);
