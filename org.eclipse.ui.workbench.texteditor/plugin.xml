@@ -159,40 +159,82 @@
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
    </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+	<command
+		category="org.eclipse.ui.category.window"
+		id="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly"
+		name= "%onlyShowSelectedElement.label"
+		description="%onlyShowSelectedElement.description">
+	</command>
+	<keyBinding
+		string=""
+		scope="org.eclipse.ui.textEditorScope"
+		command="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly"
+		configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+	</keyBinding>
+   </extension>
    
 <!-- action sets -->
    <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
-            label="%textEditorNavigationActionSet.label"
+            label="%textEditorPresentationActionSet.label"
             visible="false"
+            id="org.eclipse.ui.edit.text.actionSet.presentation">
+         <action
+               label="%onlyShowSelectedElement.label"
+               tooltip="%onlyShowSelectedElement.tooltip"
+               toolbarPath="Normal/Presentation"
+               id="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly"
+               definitionId="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly"
+               retarget="true"
+               allowLabelUpdate="true"
+               style="toggle"
+               icon="icons/full/etool16/segment_edit.gif"
+               disabledIcon="icons/full/dtool16/segment_edit.gif"
+               hoverIcon="icons/full/ctool16/segment_edit.gif"
+               helpContextId="only_show_selected_element_action_context"/>
+      </actionSet>
+      <actionSet
+            label="%textEditorNavigationActionSet.label"
+            visible="true"
             id="org.eclipse.ui.edit.text.actionSet.navigation">
          <action
-               toolbarPath="org.eclipse.ui.workbench.navigate/history.group"
                id="org.eclipse.ui.edit.text.gotoLastEditPosition"
-               hoverIcon="icons/full/ctool16/last_edit_pos.gif"
+               label="%goToLastEditPosition.label"
+               tooltip="%goToLastEditPosition.tooltip"
+               toolbarPath="org.eclipse.ui.workbench.navigate/history.group"
+               menubarPath="navigate/"
                class="org.eclipse.ui.internal.texteditor.GotoLastEditPositionAction"
                definitionId="org.eclipse.ui.edit.text.gotoLastEditPosition"
-               disabledIcon="icons/full/dtool16/last_edit_pos.gif"
                icon="icons/full/etool16/last_edit_pos.gif"
-               label="%goToLastEditPosition.label"
-               menubarPath="navigate/"
-               helpContextId="goto_last_edit_position_action_context"
-               tooltip="%goToLastEditPosition.tooltip"/>
+               disabledIcon="icons/full/dtool16/last_edit_pos.gif"
+               hoverIcon="icons/full/ctool16/last_edit_pos.gif"
+               helpContextId="goto_last_edit_position_action_context"/>
+      </actionSet>
+      <actionSet
+            label="%textEditorAnnotationNavigationActionSet.label"
+            visible="false"
+            id="org.eclipse.ui.edit.text.actionSet.annotationNavigation">
 		<action id="org.eclipse.ui.edit.text.gotoPreviousAnnotation"
-			toolbarPath="org.eclipse.ui.workbench.navigate/history.group"
 			label="%goToPreviousAnnotation.label"
 			tooltip="%goToPreviousAnnotation.tooltip"
-            retarget="true"
+			toolbarPath="org.eclipse.ui.workbench.navigate/history.group"
+			retarget="true"
+			allowLabelUpdate="true"
+            definitionId="org.eclipse.ui.navigate.previous"
 			icon="icons/full/etool16/prev_nav.gif"
             disabledIcon="icons/full/dtool16/prev_nav.gif"
-            hoverIcon="icons/full/ctool16/prev_nav.gif"			
+            hoverIcon="icons/full/ctool16/prev_nav.gif"
 			class="org.eclipse.ui.internal.texteditor.NextPreviousPulldownActionDelegate"/>
 		<action id="org.eclipse.ui.edit.text.gotoNextAnnotation"
-			toolbarPath="org.eclipse.ui.workbench.navigate/history.group"
 			label="%goToNextAnnotation.label"
 			tooltip="%goToNextAnnotation.tooltip"
+			toolbarPath="org.eclipse.ui.workbench.navigate/history.group"
             retarget="true"
+			allowLabelUpdate="true"
+            definitionId="org.eclipse.ui.navigate.next"
 			icon="icons/full/etool16/next_nav.gif"
             disabledIcon="icons/full/dtool16/next_nav.gif"
             hoverIcon="icons/full/ctool16/next_nav.gif"			
