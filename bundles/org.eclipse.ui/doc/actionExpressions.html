@@ -2,7 +2,7 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Windows NT 5.0; U) [Netscape]">
+   <meta name="GENERATOR" content="Microsoft FrontPage 4.0">
    <meta name="Author" content="OTI Employee">
    <title>Eclipse Workbench Extension Point: Expressions Support</title>
 </head>
@@ -103,7 +103,11 @@ by the plugin where the object type is declared.</li>
 
 <li>
 <b>value</b> - the required value of the object attribute.&nbsp; The acceptable
-values for the object attribute should be publicly declared.</li>
+values for the object attribute should be publicly declared. This can also be
+used to determine the existance of an attribute. For instance a value of<tt>
+myplugin.myattribute=fred</tt> would return true if myplugin.myattribute existed and
+equalled fred. A value of <tt>myplugin.myattribute</tt> would return true if
+myplugin.myattribute existed at all.</li>
 </ul>
 <tt>&nbsp;&nbsp; &lt;!ELEMENT systemProperty EMPTY></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST systemProperty</tt>
