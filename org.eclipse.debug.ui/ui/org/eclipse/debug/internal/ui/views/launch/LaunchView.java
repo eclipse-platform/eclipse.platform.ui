@@ -600,6 +600,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 				} else if (fEditor instanceof IReusableEditor && editorId.equals(fEditor.getSite().getId())) {
 					((IReusableEditor)fEditor).setInput(input);
 					editor = fEditor;
+					page.bringToTop(editor);
 				} else {
 					page.closeEditor(fEditor, false);
 					editor = openEditor(page, input, editorId, false);
