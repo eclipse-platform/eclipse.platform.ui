@@ -22,7 +22,10 @@ import org.eclipse.core.internal.expressions.StandardElementHandler;
  * corresponding expression object. If the configuration element represents
  * a composite expression (like and, or, adapt, ...) then the method <code>
  * processChildren</code> should be used to convert the children as well.
- * 
+ * <p>
+ * The class should be subclassed by clients wishing to provide an element
+ * handler for special expressions.
+ * </p>
  * @since 3.0 
  */
 public abstract class ElementHandler {

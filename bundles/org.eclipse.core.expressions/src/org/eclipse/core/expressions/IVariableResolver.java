@@ -14,11 +14,11 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * A variable resolver can be used to add additional variable resolving
- * stategies to a {@link EvaluationContext}.
- * 
- * @since 3.0
+ * strategies to an {@link EvaluationContext}.
  * 
  * @see org.eclipse.core.expressions.EvaluationContext#resolveVariable(String, Object[])
+ * 
+ * @since 3.0
  */
 public interface IVariableResolver {
 

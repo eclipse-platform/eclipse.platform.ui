@@ -97,6 +97,9 @@ import org.eclipse.core.internal.expressions.Assert;
  *   </tbody>
  * </table>
  * 
+ * <p>
+ * The class is not intended to be subclassed by clients.
+ * </p>
  * @since 3.0
  */
 public class EvaluationResult {

@@ -16,7 +16,7 @@ package org.eclipse.core.expressions;
  * 
  * @since 3.0
  */
-public class ExpressionTagNames {
+public final class ExpressionTagNames {
 
 	/** The tag name of the enablement expression (value: <code>enablement</code>) */
 	public static final String ENABLEMENT= "enablement"; //$NON-NLS-1$

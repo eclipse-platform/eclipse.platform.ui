@@ -21,7 +21,7 @@ import org.eclipse.core.internal.expressions.Assert;
  * tester extension point. For the following property test extension
  * <pre>
  *   <propertyTester
- *     	namespace="org.eclipse.jdt.core"
+ *     	 namespace="org.eclipse.jdt.core"
  *       id="org.eclipse.jdt.core.IPackageFragmentTester"
  *       properties="isDefaultPackage"
  *       type="org.eclipse.jdt.core.IPackageFragment"
@@ -44,7 +44,7 @@ import org.eclipse.core.internal.expressions.Assert;
  * The property can then be used in a test expression as follows:
  * <pre>
  *   <instanceof value="org.eclipse.core.IPackageFragment"/>
- *   <test property="isDefaultPackage"/>
+ *   <test property="org.eclipse.jdt.core.isDefaultPackage"/>
  * </pre>
  * </p>
  * @since 3.0 

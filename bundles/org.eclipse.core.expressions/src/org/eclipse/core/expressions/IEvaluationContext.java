@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.CoreException;
  * referenced.
  * <p>
  * This interface is not intended to be implemented by clients. Clients
- * are allowed to instantiate and subclass <code>EvaluationContext</code>. 
+ * are allowed to instantiate <code>EvaluationContext</code>. 
  * </p>
  * 
  * @since 3.0

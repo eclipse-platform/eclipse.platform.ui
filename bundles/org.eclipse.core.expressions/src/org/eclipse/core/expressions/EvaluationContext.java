@@ -21,9 +21,11 @@ import org.eclipse.core.internal.expressions.ExpressionMessages;
 import org.eclipse.core.internal.expressions.ExpressionStatus;
 
 /**
- * A default implementation of an evaluation context. Clients may
- * instantiate this default context or subclass it to extend the
- * implementation of method {@link #resolveVariable(String, Object[])} 
+ * A default implementation of an evaluation context.
+ * <p>
+ * Clients may instantiate this default context. The class is
+ * not intended to be subclassed by clients.
+ * </p> 
  * 
  * @since 3.0
  */
