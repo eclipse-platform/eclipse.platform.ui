@@ -124,7 +124,9 @@ public class VariableContextManager implements IWindowListener, ISelectionListen
 			} 
 		}
 		
-		fSelectedResource = selectedResource;
+		if (selectedResource != null) {
+			fSelectedResource = selectedResource;
+		}
 	}
 	
 	/**
