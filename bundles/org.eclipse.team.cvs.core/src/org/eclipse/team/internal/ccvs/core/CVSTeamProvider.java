@@ -1268,7 +1268,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 			if (property == null) return CVSProviderPlugin.getPlugin().getFetchAbsentDirectories();
 			return Boolean.valueOf(property).booleanValue();
 		} catch (CoreException e) {
-			throw new CVSException(new CVSStatus(IStatus.ERROR, Policy.bind("CVSTeamProvider.errorGettingFetchProperty", project.getName()), e));
+			throw new CVSException(new CVSStatus(IStatus.ERROR, Policy.bind("CVSTeamProvider.errorGettingFetchProperty", project.getName()), e)); //$NON-NLS-1$
 		}
 	}
 	
@@ -1280,7 +1280,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 		try {
 			getProject().setPersistentProperty(FETCH_ABSENT_DIRECTORIES_PROP_KEY, fetchAbsentDirectories ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
 		} catch (CoreException e) {
-			throw new CVSException(new CVSStatus(IStatus.ERROR, Policy.bind("CVSTeamProvider.errorSettingFetchProperty", project.getName()), e));
+			throw new CVSException(new CVSStatus(IStatus.ERROR, Policy.bind("CVSTeamProvider.errorSettingFetchProperty", project.getName()), e)); //$NON-NLS-1$
 		}
 	}
 }
