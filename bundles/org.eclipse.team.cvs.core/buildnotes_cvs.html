@@ -154,6 +154,33 @@ ul
 <h1 style=""> </h1>
 
 <h1 style="">Eclipse Platform Build Notes &#8211; CVS Support</h1>
+<p class="MsoNormal">CVS build I20021116 Nov 16, 2002 (2.1 M4)</p>
+               
+<p class="MsoNormal">Build submission for Integration Build 20021116</p>
+               
+<h2>What's new in this build</h2>
+
+<p>Eclipse now supports CVS Watch/Edit. There is a CVS preference for indicating that projects should 
+be checked out as read-only and there are Edit and Unedit actions available in the Team menu. Also,
+Eclipse will automatically perform a "cvs edit" on files that are modified in an open editor.
+
+<p>The CVS Repositories view has undergone a few more changes. Modules now appear as folders 
+under HEAD with their own icon to differentiate them from regular 
+folders. Also, refreshing the tags for a module may not work properly because this feature requires the use of an 
+auto-refresh file. If your modules are not appearing in the version or branch categories, perform
+a "Configure Branches and Versions" on the module and assign the tags to the module and/or set the 
+auto-refresh file.
+
+<p>Several optimizations have also been performed on the CVS plugin. CVS now uses the new light-weight
+decorators provided by Platform UI. Also, the determination of a folder's dirty status has been optimized
+using caching. The caching scheme uses a combination of persistant and session properties (facilities
+provided by Platform Core). Persistant properties have a certain overhead so that the first query of 
+the dirty status of a folder will be longer running then subsequent queries.
+
+<p>Numerous other bugs are fixed. As always, you can check in Bugzilla.<br>
+ </p>
+ 
+<h1 style="">Eclipse Platform Build Notes &#8211; CVS Support</h1>
 <p class="MsoNormal">CVS build I20021112 Nov 12, 2002</p>
                
 <p class="MsoNormal">Build submission for Integration Build 20021112</p>
