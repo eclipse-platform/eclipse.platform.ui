@@ -196,6 +196,7 @@ public class SyncView extends ViewPart {
 	}
 	
 	private boolean isEmpty(DiffNode node) {
+		if (node == null) return true;
 		if (node.getKind() != 0) return false;
 		IDiffElement[] children = node.getChildren();
 		for (int i = 0; i < children.length; i++) {
