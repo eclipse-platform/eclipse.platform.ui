@@ -194,6 +194,7 @@ public class Status implements IStatus {
 			buf.append("severity="); //$NON-NLS-1$
 			buf.append(severity);
 		}
+		buf.append(": "); //$NON-NLS-1$
 		buf.append(pluginId);
 		buf.append(" code="); //$NON-NLS-1$
 		buf.append(code);
