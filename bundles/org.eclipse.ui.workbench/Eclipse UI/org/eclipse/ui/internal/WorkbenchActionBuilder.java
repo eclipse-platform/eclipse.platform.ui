@@ -1097,6 +1097,8 @@ public class WorkbenchActionBuilder {
 		CoolItemToolBarManager tBarMgr = coolBarItem.getToolBarManager();
 		tBarMgr.appendToGroup(IWorkbenchActionConstants.PIN_GROUP, pinEditorAction);
 		tBarMgr.update(true);
+		//flag the action so it is shown in the editor menu.
+		pinEditorAction.setVisible(true);
 	}
 	
 	/**
@@ -1108,6 +1110,7 @@ public class WorkbenchActionBuilder {
 		if (coolBarItem != null) {
 			IContributionManager tBarMgr = coolBarItem.getToolBarManager();
 			try {
+				pinEditorAction.setVisible(false);
 				tBarMgr.remove(pinEditorAction.getId());
 				tBarMgr.update(true);
 			} catch (IllegalArgumentException e) {
