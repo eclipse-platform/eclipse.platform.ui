@@ -1,0 +1,236 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.ui.intro">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui.intro" id="config" name="Intro Part Configuration"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to register an intro configuration. This configuration provides presentation implementations and content for a given intro contribution. An intro appears when the workbench is first launched and as a choice from the &quot;Help&quot; menu. The intro is typically used to introduce a user to a product built on Eclipse.
+&lt;p&gt;
+The intros are organized into pages which usually reflect a particular category of introductory material.  For instance, a What&apos;s New page may introduce new concepts or functionality since previous versions.  The content defined by one intro configuration can be referenced and extended from other plug-ins using the &lt;a href=&quot;org.eclipse.ui.intro.configExtension.exsd&quot;&gt;org.eclipse.ui.intro.configExtension&lt;/a&gt; extension point.
+&lt;p&gt;
+todo - add other APIs here such as IStandbyPart
+      </documentation>
+   </annotation>
+
+   <include schemaLocation="IntroContent.exsd"/>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="config" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="config">
+      <annotation>
+         <documentation>
+            A config element can be used to configure a customizable Intro Part. A config element must specify an id, an introId, and a content file.
+The intro content file is an XML file that describes the pages, groups and links that the intro has.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="presentation"/>
+         </sequence>
+         <attribute name="introId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the id of an intro part contribution that this configuration will be associated with.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique name that can be used to identify this intro configuration
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="content" type="string" use="required">
+            <annotation>
+               <documentation>
+                  an intro content file. The content file is an XML file that contains the specifics of the intro (&lt;a href=&quot;introContentFileSpec.html&quot;&gt;intro content file format specification)&lt;/a&gt;.
+The content file is parsed at run time by the intro framework. Based on the settings in this file, a certain number of pages, groups, and links are shown to the user when the intro is opened.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="presentation">
+      <annotation>
+         <documentation>
+            Presentation element that defines all the possible implementations of an intro part&apos;s presentation. It can have one or more implementation defined in it. Only one implementation will be chosen at startup, based the os/ws attributes of the implementations. Otherwise, the first one with no os/ws attributes defined will be chosen.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="implementation" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="home-page-id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the id of the home (root) page.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="standby-page-id" type="string">
+            <annotation>
+               <documentation>
+                  an optional attribute to define the id of the standby page. The standby page will be shown to the user when the Intro is set to standby.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="implementation">
+      <annotation>
+         <documentation>
+            The presentation of the Platform&apos;s out of the box experience has two implementations. One of them is SWT Browser based, while the other is UI Forms based. The customizable intro part can be configured to pick one of those two presentation based on the current OS and WS. The type of the implementation can be swt or html.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="head" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="kind" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="swt">
+                  </enumeration>
+                  <enumeration value="html">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="style" type="string">
+            <annotation>
+               <documentation>
+                  The shared style that will be applied to all pages presented by this intro presentation implementation.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="os" type="string">
+            <annotation>
+               <documentation>
+                  os string used when choosing the presentation&apos;s implementation based on current OS. eg: win32,linux (todo - where are the valid OS strings used by Eclipse defined?)
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="ws" type="string">
+            <annotation>
+               <documentation>
+                  ws string used when choosing the presentation&apos;s implementation based on current WS. eg: win32,gtk (todo - where are the valid WS strings used by Eclipse defined? Should we expand WS to windowing system?)
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         Here is a sample usage of the config extension point.
+
+&lt;extension id=&quot;intro&quot; point=&quot;org.eclipse.ui.intro.config&quot;&gt;
+   &lt;config
+      introId=&quot;com.org.xyz.intro&quot;
+      id=&quot;com.org.xyz.introConfig&quot;
+      content=&quot;introContent.xml&quot;&gt;
+      &lt;presentation
+         home-page-id=&quot;root&quot;
+         title=&quot;%intro.title&quot;&gt;
+         &lt;implementation
+            ws=&quot;win32&quot;
+            style=&quot;css/shared.css&quot;
+            class=&quot;org.eclipse.ui.internal.intro.impl.presentations.BrowserIntroPartImplementation&quot;
+            os=&quot;win32&quot;&gt;
+         &lt;/implementation&gt;
+         &lt;implementation
+            style=&quot;css/shared_swt.properties&quot;
+            class=&quot;org.eclipse.ui.internal.intro.impl.presentations.FormIntroPartImplementation&quot;&gt;
+         &lt;/implementation&gt;
+      &lt;/presentation&gt;
+   &lt;/config&gt;
+&lt;/extension&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         The intro contributed by the org.eclipse.platform plugin is the only implementation within Eclipse.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         /************************************************************************
+ * Copyright (c) 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *  IBM Corporation - Initial API and implementation
+ *************************************************************************/
+      </documentation>
+   </annotation>
+
+</schema>
