@@ -33,7 +33,12 @@ public class InstancePreferences extends EclipsePreferences {
 	private static IPath baseLocation;
 
 	static {
-		baseLocation = InternalPlatform.getDefault().getMetaArea().getStateLocation(Platform.PI_RUNTIME);
+		// If we are running with -data=@none we won't have an instance location.
+		// By leaving the value of baseLocation as null we still allow the users
+		// to set preferences in this scope but the values will not be persisted
+		// to disk when #flush() is called.
+		if (Platform.getInstanceLocation() != null)
+			baseLocation = InternalPlatform.getDefault().getMetaArea().getStateLocation(Platform.PI_RUNTIME);
 	}
 
 	/**
@@ -81,6 +86,12 @@ public class InstancePreferences extends EclipsePreferences {
 		IPath path = new Path(absolutePath());
 		if (path.segmentCount() != 2)
 			return;
+		// If we are running with -data=@none we won't have an instance location.
+		if (Platform.getInstanceLocation() == null) {
+			if (InternalPlatform.DEBUG_PREFERENCES)
+				Policy.debug("Cannot load Legacy plug-in preferences since instance location is not set."); //$NON-NLS-1$
+			return;
+		}
 		String bundleName = path.segment(1);
 		// the preferences file is located in the plug-in's state area at a well-known name
 		// don't need to create the directory if there are no preferences to load
@@ -88,7 +99,7 @@ public class InstancePreferences extends EclipsePreferences {
 		if (!prefFile.exists()) {
 			// no preference file - that's fine
 			if (InternalPlatform.DEBUG_PREFERENCES)
-				Policy.debug("Legacy plug-in preference file not found: " + prefFile); //$NON-NLS-1$ //$NON-NLS-2$
+				Policy.debug("Legacy plug-in preference file not found: " + prefFile); //$NON-NLS-1$
 			return;
 		}
 
