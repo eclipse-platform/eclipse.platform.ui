@@ -234,13 +234,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected static final Point DEFAULT_INITIAL_DIALOG_SIZE = new Point(620, 560);
 
 	/**
-	 * Status area messages
-	 */
-	protected static final String LAUNCH_STATUS_OK_MESSAGE = LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Ready_to_launch_2"); //$NON-NLS-1$
-	protected static final String LAUNCH_STATUS_STARTING_FROM_SCRATCH_MESSAGE 
-										= LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Select_a_configuration_to_launch_or_a_config_type_to_create_a_new_configuration_3"); //$NON-NLS-1$
-
-	/**
 	 * Constant specifying that the launch configuration dialog should not actually open,
 	 * but instead should attempt to re-launch the last configuration that was sucessfully
 	 * launched in the workspace.  If there is no last launched configuration, just open the dialog.
