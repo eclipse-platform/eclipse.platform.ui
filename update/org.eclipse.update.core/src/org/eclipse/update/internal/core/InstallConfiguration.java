@@ -191,8 +191,6 @@ public class InstallConfiguration
 				runtimeConfiguration.createSiteEntry(site.getURL(), sitePolicy);
 			runtimeConfiguration.configureSite(siteEntry);
 
-			// if the privatre marker doesn't already exist create it
-			configSite.createPrivateSiteMarker();
 		}
 
 		return configSite;

@@ -12,7 +12,6 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.model.*;
 import org.xml.sax.SAXException;
-import org.eclipse.update.internal.core.Policy;
 
 public class SiteFileFactory extends BaseSiteFactory {
 
@@ -186,6 +185,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 			String[] dir;
 			FeatureReferenceModel featureRef;
 			URL featureURL;
+			File currentFeatureDir;
 			String newFilePath = null;
 
 			try {
@@ -193,18 +193,22 @@ public class SiteFileFactory extends BaseSiteFactory {
 				dir = featureDir.list();
 				for (int index = 0; index < dir.length; index++) {
 
-					SiteFileFactory archiveFactory = new SiteFileFactory();
 					// the URL must ends with '/' for the bundle to be resolved
 					newFilePath = dir[index] + (dir[index].endsWith("/") ? "/" : "");
-					//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					featureURL = new File(featureDir, newFilePath).toURL();
-
-					featureRef = archiveFactory.createFeatureReferenceModel();
-					featureRef.setSiteModel(site);
-					featureRef.setURLString(featureURL.toExternalForm());
-					featureRef.setType(ISite.DEFAULT_INSTALLED_FEATURE_TYPE);
-					((Site) site).addFeatureReferenceModel(featureRef);
-
+					currentFeatureDir = new File(featureDir, newFilePath);
+					// check if feature.xml exists
+					File featureXMLFile = new File(currentFeatureDir,Feature.FEATURE_XML);
+					if (!featureXMLFile.exists()){
+						UpdateManagerPlugin.warn("Unable to find feature.xml in directory:"+currentFeatureDir);
+					} else {
+						SiteFileFactory archiveFactory = new SiteFileFactory();
+						featureURL = currentFeatureDir.toURL();
+						featureRef = archiveFactory.createFeatureReferenceModel();
+						featureRef.setSiteModel(site);
+						featureRef.setURLString(featureURL.toExternalForm());
+						featureRef.setType(ISite.DEFAULT_INSTALLED_FEATURE_TYPE);
+						((Site) site).addFeatureReferenceModel(featureRef);
+					}
 				}
 			} catch (MalformedURLException e) {
 				throw Utilities.newCoreException(
@@ -227,21 +231,34 @@ public class SiteFileFactory extends BaseSiteFactory {
 			String[] dir;
 			FeatureReferenceModel featureRef;
 			URL featureURL;
+			File currentFeatureFile;
 			String newFilePath = null;
 
 			try {
-				// handle the installed featuresConfigured under featuresConfigured subdirectory
+				// only list JAR files
 				dir = featureDir.list(FeaturePackagedContentProvider.filter);
 				for (int index = 0; index < dir.length; index++) {
-
-					featureURL = new File(featureDir, dir[index]).toURL();
-
-					SiteFileFactory archiveFactory = new SiteFileFactory();
-					featureRef = archiveFactory.createFeatureReferenceModel();
-					featureRef.setSiteModel(site);
-					featureRef.setURLString(featureURL.toExternalForm());
-					featureRef.setType(ISite.DEFAULT_PACKAGED_FEATURE_TYPE);
-					site.addFeatureReferenceModel(featureRef);
+					
+					// check if the JAR file contains a feature.xml
+					currentFeatureFile = new File(featureDir, dir[index]);
+					JarContentReference ref = new JarContentReference("",currentFeatureFile);
+					ContentReference result = null;
+					try {
+						result = ref.peek(Feature.FEATURE_XML,null,null);
+					} catch (IOException e) {
+						UpdateManagerPlugin.warn("Exception retrieving feature.xml in file:"+currentFeatureFile,e);												
+					};
+					if (result==null){
+						UpdateManagerPlugin.warn("Unable to find feature.xml in file:"+currentFeatureFile);						
+					} else {
+						featureURL = currentFeatureFile.toURL();
+						SiteFileFactory archiveFactory = new SiteFileFactory();
+						featureRef = archiveFactory.createFeatureReferenceModel();
+						featureRef.setSiteModel(site);
+						featureRef.setURLString(featureURL.toExternalForm());
+						featureRef.setType(ISite.DEFAULT_PACKAGED_FEATURE_TYPE);
+						site.addFeatureReferenceModel(featureRef);
+					}
 				}
 			} catch (MalformedURLException e) {
 				throw Utilities.newCoreException(
