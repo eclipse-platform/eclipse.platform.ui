@@ -30,7 +30,7 @@ public class Bug43168Test extends UITestCase {
 	 * Constructor for Bug43168Test.
 	 * 
 	 * @param name
-	 *           The name of the test
+	 *            The name of the test
 	 */
 	public Bug43168Test(String name) {
 		super(name);
@@ -41,7 +41,7 @@ public class Bug43168Test extends UITestCase {
 	 * trying to set the key sequence in a key sequence entry widget.
 	 * 
 	 * @throws ParseException
-	 *            If "CTRL+" is not recognized as a key sequence.
+	 *             If "CTRL+" is not recognized as a key sequence.
 	 */
 	public void testStackOverflow() throws ParseException {
 		Display display = Display.getCurrent();
@@ -51,11 +51,7 @@ public class Bug43168Test extends UITestCase {
 
 		shell.pack();
 		shell.open();
-		while (display.readAndDispatch());
-
 		text.setKeySequence(KeySequence.getInstance("CTRL+")); //$NON-NLS-1$
-
-		while (display.readAndDispatch());
 		shell.close();
 	}
 }

@@ -16,9 +16,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.Workbench;
@@ -38,7 +36,7 @@ public class Bug43321Test extends UITestCase {
 	 * Constructor for Bug43321Test.
 	 * 
 	 * @param name
-	 *           The name of the test
+	 *            The name of the test
 	 */
 	public Bug43321Test(String name) {
 		super(name);
@@ -49,9 +47,9 @@ public class Bug43321Test extends UITestCase {
 	 * activated from the keyboard.
 	 * 
 	 * @throws CoreException
-	 *            If the test project cannot be created and opened.
+	 *             If the test project cannot be created and opened.
 	 * @throws ParseException
-	 *            If "CTRL+C" isn't a valid key stroke.
+	 *             If "CTRL+C" isn't a valid key stroke.
 	 */
 	public void testNoCheckOnNonCheckbox() throws CoreException, ParseException {
 		IWorkbenchWindow window = openTestWindow();
@@ -61,11 +59,6 @@ public class Bug43321Test extends UITestCase {
 		testProject.open(null);
 		AbstractTextEditor editor = (AbstractTextEditor) window.getActivePage().openEditor(testProject.getFile(".project")); //$NON-NLS-1$
 		editor.selectAndReveal(0, 1);
-
-		// Update the display.
-		Shell shell = window.getShell();
-		Display display = shell.getDisplay();
-		while (display.readAndDispatch());
 
 		// Press "Ctrl+C" to perform a copy.
 		KeyStroke[] keyStrokes = { KeyStroke.getInstance("CTRL+C")}; //$NON-NLS-1$
