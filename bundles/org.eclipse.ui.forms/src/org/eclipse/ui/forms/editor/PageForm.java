@@ -37,7 +37,7 @@ public class PageForm extends ManagedForm {
  *@see IManagedForm#dirtyStateChanged
  */	
 	public void dirtyStateChanged() {
-		// change the editor dirty flag
+		page.getEditor().editorDirtyStateChanged();
 	}
 /**
  *@see IManagedForm#staleStateChanged

@@ -88,6 +88,10 @@ public abstract class FormEditor extends MultiPageEditorPart {
 		page.setIndex(index);
 		registerPage(page);
 	}
+	
+	public void editorDirtyStateChanged() {
+		firePropertyChange(PROP_DIRTY);
+	}
 	/**
 	 * Disposes the pages and the toolkit after disposing the editor itself.
 	 * Subclasses must call 'super' when reimplementing the method.
