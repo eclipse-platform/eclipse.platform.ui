@@ -22,7 +22,7 @@ var tempActive;
 function onloadFrameset()
 {
 	framesLoaded = true;
-	if(args && args["toc"])
+	if(args && (args["toc"] || args["topic"]) )
 	{
 		NavFrame.document.getElementById("toc").src = "toc.jsp"+ getQuery();
 	} else {

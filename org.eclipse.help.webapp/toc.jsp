@@ -105,17 +105,16 @@ A.active{
 	else
 		tocElement = content.loadTOC(tocHref);
 	if (tocElement == null){
-		//out.write(WebappResources.getString("Nothing_found", null));
 %>
 <body>
 <script>
-alert('<%=UrlUtil.JavaScriptEncode(WebappResources.getString("CannotSync", null))%>');
-// Restore old navigation
 if (parent.parent.temp){
+	// Restore old navigation
 	document.body.innerHTML = parent.parent.temp;
 	if (parent.parent.tempActive)
 		oldActive = parent.parent.tempActive;
 }else {
+	// Show bookshelf
 	window.location.replace("tocs.jsp");
 }
 

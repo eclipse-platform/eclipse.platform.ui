@@ -23,10 +23,12 @@ function onloadFrameset()
 {
 	framesLoaded = true;
 	
-	if(args && args["toc"])
+	if(args && (args["toc"] || args["topic"]) )
+	{
    		tocURL = "toc.jsp"+ getQuery();
-	else
+	} else {
 		tocURL = "tocs.jsp"+ getQuery();
+	}
 
 	// show the appropriate tab
 	var tab = "toc";

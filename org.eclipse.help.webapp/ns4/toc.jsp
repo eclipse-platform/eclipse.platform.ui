@@ -118,7 +118,24 @@ if (document.layers){
 	else
 		tocElement = content.loadTOC(tocHref);
 	if (tocElement == null){
-		out.write(WebappResources.getString("Nothing_found", null));
+		//out.write(WebappResources.getString("Nothing_found", null));
+%>
+<body>
+<script>
+if (parent.parent.temp){
+	// Restore old navigation
+	document.body.innerHTML = parent.parent.temp;
+	if (parent.parent.tempActive)
+		oldActive = parent.parent.tempActive;
+}else {
+	// Show bookshelf
+	window.location.replace("tocs.jsp");
+}
+
+</script>
+</body>
+</html>
+<%
 		return;
 	}
 	String tocDescription = tocElement.getAttribute("topic");
