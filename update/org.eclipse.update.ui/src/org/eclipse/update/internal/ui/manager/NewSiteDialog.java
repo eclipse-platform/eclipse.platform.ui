@@ -15,7 +15,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.update.ui.model.*;
+import org.eclipse.update.ui.internal.model.*;
 import java.net.*;
 
 public class NewSiteDialog extends Dialog {

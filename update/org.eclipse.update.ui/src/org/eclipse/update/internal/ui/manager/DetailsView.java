@@ -7,10 +7,12 @@ import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.ui.model.*;
+import org.eclipse.update.ui.internal.model.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.swt.program.Program;
+import org.eclipse.update.internal.transform.*;
+import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * Insert the type's description here.
@@ -23,8 +25,11 @@ public static final String BROWSER_PAGE = "Browser";
 public static final String HOME_URL = "update://index.html";
 
 private Action homeAction;
-private Action backAction;
-private Action forwardAction;
+private UpdateAction backAction;
+private UpdateAction forwardAction;
+
+abstract class UpdateAction extends Action implements IUpdate {
+}
 
 	/**
 	 * The constructor.
@@ -64,11 +69,25 @@ public void createPartControl(Composite parent) {
 	super.createPartControl(parent);
 	makeActions();
 	fillActionBars();
-	performHome();
 }
 
 private void showDetails(Object el) {
-//	showPage(DETAILS_PAGE, el);
+	if (SWT.getPlatform().equals("win32")) {
+		showTransformedPage(el);
+	}
+	else
+		showPage(DETAILS_PAGE, el);
+}
+
+private void showTransformedPage(Object el) {
+	TransformManager tm = UpdateUIPlugin.getDefault().getTransformManager();
+	String transURL = tm.getTransformedURL(el);
+	if (transURL!=null) {
+	   EmbeddedBrowser browser = 
+  	 		(EmbeddedBrowser)getPage(BROWSER_PAGE);
+  	   browser.setInput(el);
+	   showPage(BROWSER_PAGE, transURL);
+	}
 }
 	
 public void selectionChanged(IWorkbenchPart part, ISelection sel) {
@@ -96,9 +115,12 @@ private void makeActions() {
 	homeAction.setHoverImageDescriptor(UpdateUIPluginImages.DESC_HOME_NAV_H);
 	homeAction.setDisabledImageDescriptor(UpdateUIPluginImages.DESC_HOME_NAV_D);
 	
-	backAction = new Action () {
+	backAction = new UpdateAction () {
 		public void run() {
 			performBackward();
+		}
+		public void update() {
+			setEnabled(canPeformBackward());
 		}
 	};
 	backAction.setToolTipText("Go Back");
@@ -107,9 +129,12 @@ private void makeActions() {
 	backAction.setDisabledImageDescriptor(UpdateUIPluginImages.DESC_BACKWARD_NAV_D);
 	backAction.setEnabled(false);
 	
-	forwardAction = new Action () {
+	forwardAction = new UpdateAction () {
 		public void run() {
 			performForward();
+		}
+		public void update() {
+			setEnabled(canPerformForward());
 		}
 	};
 	forwardAction.setToolTipText("Go Forward");
@@ -117,6 +142,13 @@ private void makeActions() {
 	forwardAction.setHoverImageDescriptor(UpdateUIPluginImages.DESC_FORWARD_NAV_H);
 	forwardAction.setDisabledImageDescriptor(UpdateUIPluginImages.DESC_FORWARD_NAV_D);
 	forwardAction.setEnabled(false);
+	
+	if (SWT.getPlatform().equals("win32")) {
+		EmbeddedBrowser browser = 
+  	 		(EmbeddedBrowser)getPage(BROWSER_PAGE);
+  	 	browser.addUpdate(backAction);
+  	 	browser.addUpdate(forwardAction);
+	}
 }
 
 private void fillActionBars() {
@@ -134,10 +166,39 @@ private void performHome() {
 	   	showPage(HOME_PAGE);
 }
 
+private boolean canPeformBackward() {
+	if (SWT.getPlatform().equals("win32")) {
+		EmbeddedBrowser browser = 
+  	 		(EmbeddedBrowser)getPage(BROWSER_PAGE);
+  	 	return browser.canPerformBackward();
+	}
+	else return false;
+}
+	
+
 private void performBackward() {
+	if (SWT.getPlatform().equals("win32")) {
+		EmbeddedBrowser browser = 
+  	 		(EmbeddedBrowser)getPage(BROWSER_PAGE);
+  	 	browser.performBackward();
+	}
 }
 
 private void performForward() {
+	if (SWT.getPlatform().equals("win32")) {
+		EmbeddedBrowser browser = 
+  	 		(EmbeddedBrowser)getPage(BROWSER_PAGE);
+  	 	browser.performForward();
+	}
+}
+
+private boolean canPerformForward() {
+	if (SWT.getPlatform().equals("win32")) {
+		EmbeddedBrowser browser = 
+  	 		(EmbeddedBrowser)getPage(BROWSER_PAGE);
+  	 	return browser.canPerformForward();
+	}
+	else return false;
 }
 
 }

@@ -10,7 +10,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.ui.model.*;
+import org.eclipse.update.ui.internal.model.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.update.core.*;
@@ -20,7 +20,7 @@ import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.core.ISite;
 import org.eclipse.update.core.ISiteChangedListener;
 import org.eclipse.update.core.VersionedIdentifier;
-import java.util.Vector;
+import java.util.*;
 import org.eclipse.swt.graphics.*;
 
 /**
@@ -161,7 +161,7 @@ class FakeFeature implements IFeature {
 	}
 	
 	public VersionedIdentifier getIdentifier() {
-		return null;
+		return id;
 	}
 
 	/**

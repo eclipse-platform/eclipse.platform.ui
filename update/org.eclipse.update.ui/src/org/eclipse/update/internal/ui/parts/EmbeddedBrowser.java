@@ -8,6 +8,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.update.ui.forms.IFormPage;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.ole.win32.*;
+import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.update.internal.ui.*;
+import java.util.*;
 
 
 public class EmbeddedBrowser implements IUpdateFormPage {
@@ -15,6 +18,23 @@ public class EmbeddedBrowser implements IUpdateFormPage {
 	private WebBrowser browser;
 	private Control control;
 	private Combo addressCombo;
+	private Object input;
+	
+	public void setInput(Object input) {
+		this.input = input;
+	}
+	
+	public Object getInput() {
+		return input;
+	}
+	
+	class UninstallURLAction implements IURLAction {
+		public void run(Hashtable params) {
+			System.out.println("Uninstall: "+params.toString());
+			System.out.println("Input: "+input.toString());
+		}
+	}
+	
 	/**
 	 * @see IUpdateFormPage#contextMenuAboutToShow(IMenuManager)
 	 */
@@ -39,7 +59,7 @@ public class EmbeddedBrowser implements IUpdateFormPage {
 			navigate(url);
 		}
 	}
-
+
 	/**
 	 * @see IUpdateFormPage#performGlobalAction(String)
 	 */
@@ -50,6 +70,8 @@ public class EmbeddedBrowser implements IUpdateFormPage {
 	 * @see IUpdateFormPage#init(Object)
 	 */
 	public void init(Object model) {
+		UninstallURLAction uninstallURLAction = new UninstallURLAction();
+		UpdateUIPlugin.getDefault().registerURLAction("uninstall", uninstallURLAction);
 	}
 
 	/**
@@ -95,16 +117,24 @@ public class EmbeddedBrowser implements IUpdateFormPage {
 		Composite statusContainer = new Composite(container, SWT.NONE);
 		statusContainer.setLayoutData(
 				new GridData(GridData.FILL_HORIZONTAL));
-		BrowserControlSite site = browser.getControlSite();
+		final BrowserControlSite site = browser.getControlSite();
 		site.setStatusContainer(statusContainer);
 		site.addEventListener(WebBrowser.DownloadComplete, new OleListener() {
 			public void handleEvent(OleEvent event) {
-				String url = browser.getLocationURL();
+				String url = site.getPresentationURL();
 				if (url!=null)
-				   addressCombo.setText(url);
+			   		addressCombo.setText(url);
 			}
 		});
 		control = container;
+	}
+	
+	public void addUpdate(IUpdate update) {
+		browser.addUpdate(update);
+	}
+	
+	public void removeUpdate(IUpdate update) {
+		browser.removeUpdate(update);
 	}
 	
 	private void createNavBar(Composite parent) {
@@ -147,6 +177,22 @@ public class EmbeddedBrowser implements IUpdateFormPage {
 		}
 	}
 	
+	public boolean canPerformBackward() {
+		return browser.isBackwardEnabled();
+	}
+	
+	public void performBackward() {
+		browser.back();
+	}
+	
+	public void performForward() {
+		browser.forward();
+	}
+	
+	public boolean canPerformForward() {
+		return browser.isForwardEnabled();
+	}
+	
 	private String getNormalizedURL(String url) {
 		url = url.toLowerCase();
 		if (url.indexOf("://")== -1) {
@@ -156,6 +202,7 @@ public class EmbeddedBrowser implements IUpdateFormPage {
 	}
 	
 	public void dispose() {
+		UpdateUIPlugin.getDefault().unregisterURLAction("uninstall");
 		if (browser!=null) browser.dispose();
 	}
 	

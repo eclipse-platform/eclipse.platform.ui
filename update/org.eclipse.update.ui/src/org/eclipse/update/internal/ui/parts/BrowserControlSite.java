@@ -12,21 +12,47 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.internal.win32.OS;
 import org.eclipse.update.internal.ui.*;
 import java.net.URL;
+import org.eclipse.core.runtime.Platform;
+import java.io.IOException;
+import java.util.*;
+import org.eclipse.ui.texteditor.*;
 
 /**
  * Needed for the OLE implementation
  */
 public class BrowserControlSite extends OleControlSite {
-	public static final String HTML_ROOT = "html/";
+
 	protected boolean beenBuilt = false;
 	protected boolean startedDownload = false;
 	// Web Browser
 	private WebBrowser browser;
 	private ProgressBar webProgress;
 	private Label webStatus;
+	private String presentationURL;
+	private boolean redirection;
+	private Vector navigateUpdate = new Vector();
+	private UpdateURLParser urlParser;
 	
 	void setBrowser(WebBrowser browser) {
 		this.browser = browser;
+	}
+	
+	public void addUpdate(IUpdate update) {
+		if (navigateUpdate.contains(update)==false)
+		   navigateUpdate.add(update);
+	}
+	
+	public void removeUpdate(IUpdate update) {
+		if (navigateUpdate.contains(update))
+		   navigateUpdate.remove(update);
+	}
+	
+	void notifyUpdates() {
+		for (Iterator iter=navigateUpdate.iterator();
+			iter.hasNext();) {
+			IUpdate update = (IUpdate)iter.next();
+			update.update();
+		}
 	}
 	
 	void setStatusContainer(Composite statusContainer) {
@@ -47,12 +73,17 @@ public class BrowserControlSite extends OleControlSite {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		webStatus.setLayoutData(gd);
 	}
+	
+	public String getPresentationURL() {
+		return presentationURL;
+	}
 
 	/**
 	 * BrowserControlSite constructor
 	 */
 	public BrowserControlSite(Composite parent, int style, String progId) {
 		super(parent, style, progId);
+		urlParser = new UpdateURLParser();
 		
 		addEventListener(WebBrowser.DownloadBegin, new OleListener() {
 			public void handleEvent(OleEvent event) {
@@ -65,6 +96,11 @@ public class BrowserControlSite extends OleControlSite {
 			public void handleEvent(OleEvent event) {
 				startedDownload = false;
 				webProgress.setSelection(0);
+				if (redirection)
+				   redirection = false;
+				else
+				   presentationURL = browser.getLocationURL();
+				notifyUpdates();
 			}
 		});
 
@@ -72,16 +108,16 @@ public class BrowserControlSite extends OleControlSite {
 			public void handleEvent(OleEvent event) {
 				Variant urlVar = event.arguments[1];
                 String strUrl = urlVar.getString();
-                if (isUpdateURL(strUrl)) {
-                	final String redirURL = createUpdatePage(strUrl);
+                if (urlParser.isUpdateURL(strUrl)) {
+                	final String redirURL = urlParser.parseURL(strUrl);
                     Variant cancel = event.arguments[6];
                     int ptr = cancel.getByRef();
                     OS.MoveMemory(ptr, new int [] { 1 }, 4);
-                    getDisplay().asyncExec(new Runnable() {
-                    	public void run() {
-                    		browser.navigate(redirURL);
-                    	}
-                    });
+                    //browser.stop();
+                    if (redirURL!=null) {
+                   		redirection = true;
+               			browser.navigate(redirURL);
+                    }
                     //int ptr = urlVar.getByRef();
                     //OS.MoveMemory(ptr, redirURL.getBytes(), redirURL.length()); 
         
@@ -125,16 +161,7 @@ public class BrowserControlSite extends OleControlSite {
 		});
 	}
 	
-	private boolean isUpdateURL(String url) {
-		return url.startsWith("update://");
-	}
-	
 	private String createUpdatePage(String url) {
-		URL location = UpdateUIPlugin.getDefault().getDescriptor().getInstallURL();
-		String realURL = url.substring(8);
-		String loc = location.toString();
-		if (loc.endsWith("/")) 
-		   loc = loc.substring(0, loc.length()-1);
-		return loc + "/" + HTML_ROOT + realURL;
+		return null;
 	}
 }

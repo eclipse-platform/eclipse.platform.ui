@@ -4,6 +4,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.ole.win32.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * ActiveX based web browser control.
@@ -96,6 +97,7 @@ public class WebBrowser implements OleListener {
 		// is installed.
 		try {
 			controlSite = new BrowserControlSite(controlFrame, SWT.NONE, "Shell.Explorer");
+			controlSite.setBrowser(this);
 			oleObject = new OleAutomation(controlSite);
 
 			backwardEnabled = false;
@@ -432,7 +434,7 @@ public class WebBrowser implements OleListener {
 	 * Gets the forwardEnabled
 	 * @return Returns a boolean
 	 */
-	public boolean getForwardEnabled() {
+	public boolean isForwardEnabled() {
 		return forwardEnabled;
 	}
 
@@ -440,8 +442,15 @@ public class WebBrowser implements OleListener {
 	 * Gets the backwardEnabled
 	 * @return Returns a boolean
 	 */
-	public boolean getBackwardEnabled() {
+	public boolean isBackwardEnabled() {
 		return backwardEnabled;
+	}
+	
+	public void addUpdate(IUpdate update) {
+		controlSite.addUpdate(update);
+	}
+	public void removeUpdate(IUpdate update) {
+		controlSite.removeUpdate(update);
 	}
 }
 

@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.update.ui.forms.*;
 import org.eclipse.swt.layout.*;
-import org.eclipse.update.ui.model.*;
+import org.eclipse.update.ui.internal.model.*;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.swt.graphics.*;

@@ -6,8 +6,10 @@ import org.eclipse.core.resources.*;
 import java.util.*;
 import org.eclipse.ui.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.model.*;
+import org.eclipse.update.ui.internal.model.*;
 import org.eclipse.update.internal.ui.manager.*;
+import org.eclipse.update.internal.transform.*;
+import org.eclipse.update.core.*;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -20,8 +22,11 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
 	private UpdateAdapterFactory adapterFactory;
+	private TransformFactory transformFactory;
 	
 	private UpdateModel model;
+	private TransformManager tmanager;
+	private Hashtable urlActions = new Hashtable();
 	
 	/**
 	 * The constructor.
@@ -62,6 +67,18 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 	public static String getPluginId() {
 		return getDefault().getDescriptor().getUniqueIdentifier();
 	}
+	
+	public void registerURLAction(String id, IURLAction action) {
+		urlActions.put(id, action);
+	}
+	
+	public void unregisterURLAction(String id) {
+		urlActions.remove(id);
+	}
+	
+	public IURLAction getURLAction(String id) {
+		return (IURLAction)urlActions.get(id);
+	}
 
 	/**
 	 * Returns the workspace instance.
@@ -97,17 +114,28 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		IAdapterManager manager = Platform.getAdapterManager();
 		adapterFactory = new UpdateAdapterFactory();
 		manager.registerAdapters(adapterFactory, ModelObject.class);
+		tmanager = new TransformManager();
+		transformFactory = new TransformFactory();
+		manager.registerAdapters(transformFactory, ModelObject.class);
+		manager.registerAdapters(transformFactory, IFeature.class);
+		manager.registerAdapters(transformFactory, ISite.class);
 	}
 	
 	public void shutdown() throws CoreException {
 		IAdapterManager manager = Platform.getAdapterManager();
 		manager.unregisterAdapters(adapterFactory);
+		manager.unregisterAdapters(transformFactory);
+		tmanager.shutdown();
 		model.shutdown();
 		super.shutdown();
 	}
 	
 	public UpdateModel getUpdateModel() {
 		return model;
+	}
+	
+	public TransformManager getTransformManager() {
+		return tmanager;
 	}
 	
 	

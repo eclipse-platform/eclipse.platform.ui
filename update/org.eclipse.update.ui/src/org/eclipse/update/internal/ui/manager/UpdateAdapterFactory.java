@@ -2,7 +2,7 @@ package org.eclipse.update.internal.ui.manager;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.views.properties.*;
-import org.eclipse.update.ui.model.*;
+import org.eclipse.update.ui.internal.model.*;
 
 public class UpdateAdapterFactory implements IAdapterFactory {
 	SiteBookmarkPropertySource siteBookmarkPropertySource;

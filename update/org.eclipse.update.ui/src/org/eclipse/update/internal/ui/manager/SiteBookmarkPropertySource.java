@@ -3,7 +3,7 @@ package org.eclipse.update.internal.ui.manager;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import java.util.*;
-import org.eclipse.update.ui.model.*;
+import org.eclipse.update.ui.internal.model.*;
 import java.net.*;
 
 public class SiteBookmarkPropertySource implements IPropertySource {

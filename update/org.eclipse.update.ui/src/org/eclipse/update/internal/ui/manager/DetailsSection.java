@@ -15,7 +15,7 @@ import org.eclipse.update.internal.ui.UpdateUIPluginImages;
 import org.eclipse.jface.action.*;
 import org.eclipse.ui.*;
 import org.eclipse.swt.events.*;
-import org.eclipse.update.ui.model.*;
+import org.eclipse.update.ui.internal.model.*;
 import org.eclipse.update.internal.ui.*;
 
 public class DetailsSection extends UpdateSection {

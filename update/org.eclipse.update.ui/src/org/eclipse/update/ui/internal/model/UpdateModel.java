@@ -1,8 +1,8 @@
-package org.eclipse.update.ui.model;
-
+package org.eclipse.update.ui.internal.model;
+
 import java.util.*;
 import org.eclipse.update.core.*;
-
+
 
 public class UpdateModel {
 	private Vector jobs = new Vector();
@@ -17,7 +17,7 @@ public class UpdateModel {
 	
 	public void shutdown() {
 	}
-
+
 	public ChecklistJob [] getJobs() {
 		return (ChecklistJob[])
 			jobs.toArray(new ChecklistJob[jobs.size()]);
@@ -55,7 +55,7 @@ public class UpdateModel {
 		job.setModel(null);
 		fireObjectRemoved(null, job);
 	}
-
+
 	public void addBookmark(SiteBookmark bookmark) {
 		bookmarks.add(bookmark);
 		bookmark.setModel(this);
@@ -76,7 +76,7 @@ public class UpdateModel {
 		if (!listeners.contains(listener)) 
 		   listeners.add(listener);
 	}
-
+
 	public void removeSiteModelChangedListener(IUpdateModelChangedListener listener) {
 		if (listeners.contains(listener))
 			listeners.remove(listener);
@@ -89,7 +89,7 @@ public class UpdateModel {
 			listener.objectAdded(parent, child);
 		}
 	}
-
+
 	private void fireObjectRemoved(Object parent, Object child) {
 		for (Iterator iter=listeners.iterator();
 				iter.hasNext();) {

@@ -1,7 +1,7 @@
-package org.eclipse.update.ui.model;
-
+package org.eclipse.update.ui.internal.model;
+
 import org.eclipse.core.runtime.*;
-
+
 public class ModelObject extends PlatformObject {
 	UpdateModel model;
 	
