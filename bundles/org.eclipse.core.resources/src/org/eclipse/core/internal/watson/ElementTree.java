@@ -267,7 +267,7 @@ public class ElementTree {
 	 * @param key element key
 	 * @param data element data, or <code>null</code>
 	 */
-	public void createElement(IPath key, Object data) {
+	public synchronized void createElement(IPath key, Object data) {
 		/* don't allow modification of the implicit root */
 		if (key.isRoot())
 			return;
@@ -294,7 +294,7 @@ public class ElementTree {
 	 * @param key The path of the new subtree in this tree.
 	 * @see #getSubtree(IPath)
 	 */
-	public void createSubtree(IPath key, ElementTree subtree) {
+	public synchronized void createSubtree(IPath key, ElementTree subtree) {
 		/* don't allow creating subtrees at the root */
 		if (key.isRoot()) {
 			throw new IllegalArgumentException(Policy.bind("watson.noModify")); //$NON-NLS-1$
@@ -328,7 +328,7 @@ public class ElementTree {
 	 * Deletes the indicated element and its descendents. 
 	 * The element must be present.
 	 */
-	public void deleteElement(IPath key) {
+	public synchronized void deleteElement(IPath key) {
 		/* don't allow modification of the implicit root */
 		if (key.isRoot())
 			return;
@@ -500,7 +500,7 @@ public class ElementTree {
 	 * Returns the element data for the given element identifier.
 	 * The given element must be present in this tree.
 	 */
-	public Object getElementData(IPath key) {
+	public synchronized Object getElementData(IPath key) {
 		/* don't allow modification of the implicit root */
 		if (key.isRoot())
 			return null;
@@ -671,7 +671,7 @@ public class ElementTree {
 	 * Makes this tree immutable (read-only); ignored if it is already
 	 * immutable.
 	 */
-	public void immutable() {
+	public synchronized void immutable() {
 		if (!tree.isImmutable()) {
 			tree.immutable();
 			/* need to clear the lookup cache since it reports whether results were found
@@ -686,7 +686,7 @@ public class ElementTree {
 	 * Returns true if this element tree includes an element with the given
 	 * key, false otherwise.
 	 */
-	public boolean includes(IPath key) {
+	public synchronized boolean includes(IPath key) {
 		DataTreeLookup lookup = lookupCache; // Grab it in case it's replaced concurrently.
 		if (lookup == null || lookup.key != key) {
 			lookupCache = lookup = tree.lookup(key);
@@ -729,7 +729,7 @@ public class ElementTree {
 	 * This disconnects this tree from its parents.
 	 * The parent trees are unaffected.
 	 */
-	public void makeComplete() {
+	public synchronized void makeComplete() {
 		/* need to clear the lookup cache since it reports whether results were found
 		 in the topmost delta, and the order of deltas is changing */
 		lookupCache = null;
@@ -796,7 +796,7 @@ public class ElementTree {
 	 * Initially they have the same content.  Subsequent changes to the new
 	 * tree will not affect this one.
 	 */
-	public ElementTree newEmptyDelta() {
+	public synchronized ElementTree newEmptyDelta() {
 		lookupCache = null; // Don't want old trees hanging onto cached infos.
 		return new ElementTree(this);
 	}
@@ -865,7 +865,7 @@ public class ElementTree {
 	 * for this method to work.  If the data does not define that interface
 	 * this method will fail.
 	 */
-	public Object openElementData(IPath key) {
+	public synchronized Object openElementData(IPath key) {
 		Assert.isTrue(!isImmutable());
 
 		/* don't allow modification of the implicit root */
@@ -905,7 +905,7 @@ public class ElementTree {
 	 * @param key element identifier
 	 * @param data element info, or <code>null</code>
 	 */
-	public void setElementData(IPath key, Object data) {
+	public synchronized void setElementData(IPath key, Object data) {
 		/* don't allow modification of the implicit root */
 		if (key.isRoot())
 			return;
