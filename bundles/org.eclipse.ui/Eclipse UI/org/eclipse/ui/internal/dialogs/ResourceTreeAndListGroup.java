@@ -163,6 +163,7 @@ public void checkStateChanged(final CheckStateChangedEvent event) {
 protected void createContents(Composite parent, int width, int height, int style) {
 	// group pane
 	Composite composite = new Composite(parent,style);
+	composite.setFont(parent.getFont());
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 2;
 	layout.makeColumnsEqualWidth = true;
@@ -185,6 +186,7 @@ protected void createListViewer(Composite parent, int width, int height) {
 	data.widthHint = width;
 	data.heightHint = height;
 	listViewer.getTable().setLayoutData(data);
+	listViewer.getTable().setFont(parent.getFont());
 	listViewer.setContentProvider(listContentProvider);
 	listViewer.setLabelProvider(listLabelProvider);
 	listViewer.addCheckStateListener(this);
@@ -198,6 +200,7 @@ protected void createTreeViewer(Composite parent, int width, int height) {
 	data.widthHint = width;
 	data.heightHint = height;
 	tree.setLayoutData(data);
+	tree.setFont(parent.getFont());
 	
 	treeViewer = new CheckboxTreeViewer(tree);
 	treeViewer.setContentProvider(treeContentProvider);

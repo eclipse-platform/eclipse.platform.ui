@@ -50,14 +50,19 @@ protected WorkbenchWizardListSelectionPage(IWorkbench aWorkbench, IStructuredSel
  * Method declared on IDialogPage.
  */
 public void createControl(Composite parent) {
+	
+	Font font = parent.getFont();
 
 	// create composite for page.
 	Composite outerContainer = new Composite(parent, SWT.NONE);
 	outerContainer.setLayout(new GridLayout());
 	outerContainer.setLayoutData(new GridData(
 		GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
+	outerContainer.setFont(font);
 
-	new Label(outerContainer,SWT.NONE).setText(message);
+	Label messageLabel = new Label(outerContainer,SWT.NONE);
+	messageLabel.setText(message);
+	messageLabel.setFont(font);
 
 	//Create a table for the list
 	Table table = new Table(outerContainer, SWT.BORDER);
@@ -65,6 +70,7 @@ public void createControl(Composite parent) {
 	data.widthHint = SIZING_LISTS_WIDTH;
 	data.heightHint = SIZING_LISTS_HEIGHT;
 	table.setLayoutData(data);
+	table.setFont(font);
 
 	// the list viewer		
 	wizardSelectionViewer = new TableViewer(table);
