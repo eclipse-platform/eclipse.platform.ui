@@ -40,6 +40,8 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
  * uses the key <code>"PreferencePage.description"</code> to look up
  * the page description. In addition, it uses <code>"PreferencePage.fontEditor"</code>
  * for the editor description.
+ * 
+ * @deprecated As of 2.1 fonts are managed by the workbench
  */
 public class TextEditorPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
