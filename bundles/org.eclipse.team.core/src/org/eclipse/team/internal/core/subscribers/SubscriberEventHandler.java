@@ -262,8 +262,11 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 	
 	private void handlePendingDispatch(IProgressMonitor monitor) {
 		if (isReadyForDispatch(false /*don't wait if queue is empty*/)) {
-			dispatchEvents(Policy.subMonitorFor(monitor, 5));
-			eventsDispatched();
+			try {
+				dispatchEvents(Policy.subMonitorFor(monitor, 5));
+			} catch (TeamException e) {
+				handleException(e, null, ITeamStatus.SYNC_INFO_SET_ERROR, e.getMessage());
+			}
 		}
 	}
 
@@ -423,9 +426,12 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 	 * Execute the RunnableEvent
 	 */
 	private void executeRunnable(Event event, IProgressMonitor monitor) {
-		// Dispatch any queued results to clear pending output events
-		dispatchEvents(Policy.subMonitorFor(monitor, 1));
-		eventsDispatched();
+		try {
+			// Dispatch any queued results to clear pending output events
+			dispatchEvents(Policy.subMonitorFor(monitor, 1));
+		} catch (TeamException e) {
+			handleException(e, event.getResource(), ITeamStatus.SYNC_INFO_SET_ERROR, e.getMessage());
+		}
 		try {
 			((RunnableEvent)event).run(Policy.subMonitorFor(monitor, 1));
 		} catch (CoreException e) {
@@ -436,11 +442,13 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.subscribers.BackgroundEventHandler#dispatchEvents()
 	 */
-	protected void dispatchEvents(IProgressMonitor monitor) {
+	protected boolean  doDispatchEvents(IProgressMonitor monitor) {
 		if (!resultCache.isEmpty()) {
 			dispatchEvents((SubscriberEvent[]) resultCache.toArray(new SubscriberEvent[resultCache.size()]), monitor);
 			resultCache.clear();
+			return true;
 		}
+		return false;
 	}
 
 	/**

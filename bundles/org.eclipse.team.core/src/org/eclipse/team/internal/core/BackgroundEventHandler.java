@@ -49,14 +49,23 @@ public abstract class BackgroundEventHandler {
 	// Accumulate exceptions that occur
 	private ExceptionCollector errors;
 	
-	// time the last dispath took
-	private long processingEventsDuration = 0L;
+	// time the last dispath occured
+	private long timeOfLastDispatch = 0L;
+	
+	// the number of dispatches that have occurred since the job started
+	private int dispatchCount;
 
 	// time between event dispatches
-	private long DISPATCH_DELAY = 1500;
+	private static final long DISPATCH_DELAY = 1500;
+	
+	// time between dispatches if the dispatch threshoild has been exceeded
+	private static final long LONG_DISPATCH_DELAY = 10000;
+	
+	// the numbver of dispatches that can occur before using the long delay
+	private static final int DISPATCH_THRESHOLD = 3;
 	
 	// time to wait for messages to be queued
-	private long WAIT_DELAY = 1000;
+	private static final long WAIT_DELAY = 1000;
 
 	private String jobName;
 	
@@ -267,7 +276,8 @@ public abstract class BackgroundEventHandler {
 			subMonitor.beginTask(null, 1024);
 
 			Event event;
-			processingEventsDuration = System.currentTimeMillis();
+			timeOfLastDispatch = System.currentTimeMillis();
+			dispatchCount = 1;
 			while ((event = nextElement()) != null && ! isShutdown()) {			 	
 				try {
 					processEvent(event, subMonitor);
@@ -276,7 +286,6 @@ public abstract class BackgroundEventHandler {
 					}
 					if(isReadyForDispatch(true /*wait if queue is empty*/)) {
 						dispatchEvents(Policy.subMonitorFor(subMonitor, 1));
-						eventsDispatched();
 					}
 				} catch (CoreException e) {
 					// handle exception but keep going
@@ -289,15 +298,25 @@ public abstract class BackgroundEventHandler {
 		return errors.getStatus();
 	}
 
-	protected void eventsDispatched() {
-		processingEventsDuration = System.currentTimeMillis();
+	/**
+	 * Dispatch any accumulated events by invoking <code>doDispatchEvents</code>
+	 * and then rest the dispatch counters.
+	 * @param monitor a progress monitor
+	 * @throws TeamException
+	 */
+	protected final void dispatchEvents(IProgressMonitor monitor) throws TeamException {
+		if (doDispatchEvents(monitor)) {
+			// something was dispatched so adjust dispatch count.
+			dispatchCount++;
+		}
+		timeOfLastDispatch = System.currentTimeMillis();
 	}
 
 	/**
 	 * Notify clients of processed events.
 	 * @param monitor a progress monitor
 	 */
-	protected abstract void dispatchEvents(IProgressMonitor monitor) throws TeamException;
+	protected abstract boolean doDispatchEvents(IProgressMonitor monitor) throws TeamException;
 
 	/**
 	 * Returns <code>true</code> if processed events should be dispatched and
@@ -310,8 +329,9 @@ public abstract class BackgroundEventHandler {
 	 * <code>false</code> otherwise
 	 */
 	protected boolean isReadyForDispatch(boolean wait) {		
-		long duration = System.currentTimeMillis() - processingEventsDuration;
-		if(duration >= DISPATCH_DELAY) {
+		long duration = System.currentTimeMillis() - timeOfLastDispatch;
+		if((dispatchCount < DISPATCH_THRESHOLD && duration >= DISPATCH_DELAY) ||
+				duration >= LONG_DISPATCH_DELAY) {
 			return true;
 		}
 		synchronized(this) {
