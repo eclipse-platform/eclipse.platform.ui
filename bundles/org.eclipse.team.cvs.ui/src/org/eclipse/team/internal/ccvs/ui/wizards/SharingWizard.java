@@ -427,7 +427,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 		} catch (CVSException ex) {
 			CVSUIPlugin.log(ex.getStatus());
 		}  catch (CoreException ex) {
-			CVSUIPlugin.log(ex.getStatus());
+			// Ignore the core exception since we will get one if the key is not registered
 		} catch (IOException ex) {
 			CVSUIPlugin.log(CVSException.wrapException(ex).getStatus());
 		}
