@@ -305,10 +305,9 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 		}
 		if (getShell() != null && text != null) {
 			firstCheck = true;
-			text.setText(workingSet.getName());
 			initializeCheckedState();
 			disableClosedProjects();
-			validateInput();
+			text.setText(workingSet.getName());
 		}
 	}	
 	/**
