@@ -11,13 +11,24 @@
 package org.eclipse.ui.cheatsheets;
 
 /**
- * <p>Listener classes must subclass this class and be registered in the plugin.xml file of the implementing plugin
- * using the cheatsheetContent extension.  Also see <code>ICheatSheetLifeCycleEvent</code>.</p>
+ * For monitoring the execution of a cheat sheet.
+ * <p>
+ * This class is used in conjuction with the "listener" attribute on the
+ * "cheatsheet" element in the cheat sheet content file. Clients should declare
+ * a subclass that implements {@link #cheatSheetEvent(ICheatSheetEvent)}. The
+ * listener subclass must be public, and have a public 0-arg constructor. The
+ * listener subclass is instantiated as the cheat sheet is opened, and discarded
+ * after the cheat sheet is closed.
+ * </p>
  * 
  * @since 3.0
  */
-public class CheatSheetListener {
+public abstract class CheatSheetListener {
 
-	 public void cheatSheetEvent(ICheatSheetEvent e) {}
-
+	/**
+	 * Notifies this listener of the given cheat sheet event.
+	 * 
+	 * @param event the cheat sheet event
+	 */
+	 public abstract void cheatSheetEvent(ICheatSheetEvent event);
 }

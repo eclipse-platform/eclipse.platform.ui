@@ -10,31 +10,29 @@
  *******************************************************************************/
 package org.eclipse.ui.cheatsheets;
 
+import org.eclipse.jface.action.IAction;
+
 /**
- * <p>This interface should be implemented by action classes used by the
- * cheat sheet view, however it is not mandatory.  If action classes implement this
- * interface, parameters that have been set to be passed to this action
- * by the cheat sheet are passed when the action is run.  Furthermore, if this interface
- * is implemented, a handle to the implementation of ICheatSheetManager is passed 
- * while running the action.</p>
- * <p>The action that implements this interface is specified as the class for the class="com.org.xyz.XYZ" portion of the 
- * &lt;item&gt; tag for the cheat sheet content file to be run as the action for a step in the cheat sheet.
+ * Cheat sheet-aware action.
+ * <p>
+ * This interface should be implemented by actions designed specifically
+ * for use in cheat sheets. Unlike regular actions, these actions
+ * can be given parameters and the invoking cheat sheet manager.
+ * Note that cheat sheet actions are regular actions, and can be
+ * invoked from outside a cheat sheet via <code>IAction.run</code>.
  * </p>
- * 
+ *
+ * TODO (lorne) - n.b. ICheatSheetAction now extends IAction
  * @since 3.0
  */
-public interface ICheatSheetAction {
+public interface ICheatSheetAction extends IAction {
 
 	/**
-	 * This method will be called when the action is run.
-	 * Implementors of this method need not do anything with the 
-	 * parameters, however, this provides the CheatSheetManager object
-	 * access, as well as accomodation for retrieving parameters set in the
-	 * cheat sheet content file, or added dynamically during the cheat sheet's
-	 * lifetime.
+	 * Runs this Cheat sheet-aware action.
+	 * 
 	 * @param params an array of strings
-	 * @param csm the ICheatSheetManager used to access the items
+	 * @param manager the cheat sheet manager
 	 */
-	public void run(String [] params, ICheatSheetManager csm);
+	public void run(String [] params, ICheatSheetManager manager);
 
 }

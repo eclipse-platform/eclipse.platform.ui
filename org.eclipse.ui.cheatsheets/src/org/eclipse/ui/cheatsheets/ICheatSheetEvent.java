@@ -13,57 +13,77 @@ package org.eclipse.ui.cheatsheets;
 import org.eclipse.ui.cheatsheets.ICheatSheetManager;
 
 /**
- * ICheatSheetEvent is an interface for lifecycle events.  Lifecycle events
- * are fired by the cheat sheets when certain actions occur.
- * For example, events are fired whenever the cheat sheets is opened or closed.
+ * Event in the life cycle of a cheat sheet.
  * <p>
- * Listeners subclassing CheatSheetListener are notified of these events.
+ * Events over the life time of a running cheat sheet
+ * follow the pattern:
+ * <pre>
+ * opened { started | restarted | end_reached }* closed
+ * </pre> 
  * </p>
+ * TODO (lorne) - verify that the pattern is correct
+ * TODO (lorne) - what happens when a cheatsheet is restored after workbench shutdown and restart?
  * <p>
- * The event type may be accessed, as well as the id of the cheat sheet that
- * was open when the event was fired.  A handle to the ICheatSheetManager is
- * available from cheat sheet events.
+ * This interface is not intended to be implemented by clients.
  * </p>
  * 
+ * @see CheatSheetListener
  * @since 3.0
  */
 public interface ICheatSheetEvent {
 	
 	/**
-	 * an event type notifying that the cheat sheets view was opened.
+	 * Event type constant (value {@value}) indicating that
+	 * the cheat sheet was opened. This is the first event 
+     * in the life of a running cheat sheet.
 	 */
 	public static final int CHEATSHEET_OPENED = 0;
+	
 	/**
-	 * an event type notifying that the cheat sheets view was closed.
+	 * Event type constant (value {@value}) indicating that
+	 * the cheat sheet was closed. This is the last event 
+     * in the life of a running cheat sheet.
 	 */
 	public static final int CHEATSHEET_CLOSED = 1;
+	
 	/**
-	 * an event type notifying that the cheat sheet was started.
+	 * Event type constant (value {@value}) indicating that
+	 * the cheat sheet was started.
 	 */
 	public static final int CHEATSHEET_STARTED = 2;
+	
 	/**
-	 * an event type notifying that the cheat sheet was restarted.
+	 * Event type constant (value {@value}) indicating that
+	 * the cheat sheet was restarted.
 	 */
 	public static final int CHEATSHEET_RESTARTED = 3;
+	
 	/**
-	 * an event type notifying that the cheat sheet has reached the end and all items were either completed or skipped.
+	 * Event type constant (value {@value}) indicating that
+	 * the cheat sheet has been completed.
 	 */
 	public static final int CHEATSHEET_END_REACHED = 4;
 
 	/**
-	 * This method returns an integer that corresponds to an event type.
-	 * @return the event code
+	 * Returns the type of this cheat sheet event.
+	 * 
+	 * @return the event type code; one of the event type constants
+	 * declared on this class
 	 */
 	public int getEventType();
+	
 	/**
-	 * This method returns the id of the cheat sheet that generated the event.
-	 * @return the id of the cheat sheet that fired the event
+	 * Returns the id of the cheat sheet that generated this event.
+	 * 
+	 * @return the cheat sheet id
 	 */
 	public String getCheatSheetID();
+	
 	/**
-	 * This method returns a handle to the implementation of ICheatSheetManager.
-	 * @return a reference to the ICheatSheetManager
+	 * Returns the cheat sheet manager responsible for executing
+	 * the cheat sheet.
+	 * 
+	 * @return the cheat sheet manager
 	 */
 	public ICheatSheetManager getCheatSheetManager();
-
 }
