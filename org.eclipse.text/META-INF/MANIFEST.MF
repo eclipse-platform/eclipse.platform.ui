@@ -2,6 +2,8 @@ Legacy:
  true
 Bundle-Version: 
  3.0.0
+Export-Package:
+ org.eclipse.text.edits
 Export-Package-Split: 
  org.eclipse.jface.text
 Bundle-Name: 
