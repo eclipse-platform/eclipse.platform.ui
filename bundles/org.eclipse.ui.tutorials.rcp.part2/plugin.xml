@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin
-   id="org.eclipse.ui.tutorials.rcp.part1"
+   id="org.eclipse.ui.tutorials.rcp.part2"
    name="%pluginName"
    version="0.0.0"
    provider-name="%providerName">
 
    <runtime>
-      <library name="rcptutorial1.jar">
+      <library name="rcptutorial2.jar">
          <export name="*"/>
       </library>
    </runtime>
@@ -22,7 +22,7 @@
          point="org.eclipse.core.runtime.applications">
       <application>
          <run
-               class="org.eclipse.ui.tutorials.rcp.part1.RcpApplication">
+               class="org.eclipse.ui.tutorials.rcp.part2.RcpApplication">
          </run>
       </application>
    </extension>
@@ -30,8 +30,8 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             name="%perspectiveName"
-            class="org.eclipse.ui.tutorials.rcp.part1.RcpPerspective"
-            id="org.eclipse.ui.tutorials.rcp.part1.RcpPerspective">
+            class="org.eclipse.ui.tutorials.rcp.part2.RcpPerspective"
+            id="org.eclipse.ui.tutorials.rcp.part2.RcpPerspective">
       </perspective>
    </extension>
 
