@@ -64,7 +64,7 @@
       <command
             name="%removeTrailingWhitespace.name"
             description="%removeTrailingWhitespace.description"
-            category="org.eclipse.ui.category.file"
+            categoryId="org.eclipse.ui.category.file"
             id="org.eclipse.ui.edit.text.removeTrailingWhitespace">
       </command>
       <handlerSubmission
@@ -73,28 +73,28 @@
       </handlerSubmission>
       <command
             name="%openExternalFile.name"
-            category="org.eclipse.ui.category.file"
+            categoryId="org.eclipse.ui.category.file"
             description="%openExternalFile.description"
             id="org.eclipse.ui.edit.text.openExternalFile">
       </command>
       <command
             name="%newTextEditor.name"
-            category="org.eclipse.ui.category.file"
+            categoryId="org.eclipse.ui.category.file"
             description="%newTextEditor.description"
             id="org.eclipse.ui.edit.text.newTextEditor">
       </command>
       
       <command
             name="%ActionDefinition.quickDiff.name"
-            category="org.eclipse.ui.category.edit"
+            categoryId="org.eclipse.ui.category.edit"
             description="%ActionDefinition.quickDiff.description"
             id="org.eclipse.quickdiff.toggle">
       </command>
       <keyBinding
-            string="Ctrl+Shift+Q"
-            scope="org.eclipse.ui.textEditorScope"
-            command="org.eclipse.quickdiff.toggle"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            keySequence="Ctrl+Shift+Q"
+            contextId="org.eclipse.ui.textEditorScope"
+            commandId="org.eclipse.quickdiff.toggle"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <command
             name="%command.folding.toggle.name"

@@ -350,61 +350,61 @@
 	  <command
 	        name="%goToLastEditPosition.label"
 	        description="%goToLastEditPosition.description"
-	        category="org.eclipse.ui.category.navigate"
+	        categoryId="org.eclipse.ui.category.navigate"
 	        id="org.eclipse.ui.edit.text.gotoLastEditPosition">
 	  </command>
 	  <command
 	        name="%smartEnter.label"
 	        description="%smartEnter.description"
-	        category="org.eclipse.ui.category.textEditor"
+	        categoryId="org.eclipse.ui.category.textEditor"
 	        id="org.eclipse.ui.edit.text.smartEnter">
 	  </command>
 	  <command
 	        name="%smartEnterInverse.label"
 	        description="%smartEnterInverse.description"
-	        category="org.eclipse.ui.category.textEditor"
+	        categoryId="org.eclipse.ui.category.textEditor"
 	        id="org.eclipse.ui.edit.text.smartEnterInverse">
 	  </command>
 	  <command
 	        name="%moveLineUp.label"
 	        description="%moveLineUp.description"
-	        category="org.eclipse.ui.category.textEditor"
+	        categoryId="org.eclipse.ui.category.textEditor"
 	        id="org.eclipse.ui.edit.text.moveLineUp">
 	  </command>
 	  <command
 	        name="%moveLineDown.label"
 	        description="%moveLineDown.description"
-	        category="org.eclipse.ui.category.textEditor"
+	        categoryId="org.eclipse.ui.category.textEditor"
 	        id="org.eclipse.ui.edit.text.moveLineDown">
 	  </command>
 	  <command
 	        name="%copyLineUp.label"
 	        description="%copyLineUp.description"
-	        category="org.eclipse.ui.category.textEditor"
+	        categoryId="org.eclipse.ui.category.textEditor"
 	        id="org.eclipse.ui.edit.text.copyLineUp">
 	  </command>
 	  <command
 	        name="%copyLineDown.label"
 	        description="%copyLineDown.description"
-	        category="org.eclipse.ui.category.textEditor"
+	        categoryId="org.eclipse.ui.category.textEditor"
 	        id="org.eclipse.ui.edit.text.copyLineDown">
 	  </command>
 	  <command
 	        name="%upperCase.label"
 	        description="%upperCase.description"
-	        category="org.eclipse.ui.category.textEditor"
+	        categoryId="org.eclipse.ui.category.textEditor"
 	        id="org.eclipse.ui.edit.text.upperCase">
 	  </command>
 	  <command
 	        name="%lowerCase.label"
 	        description="%lowerCase.description"
-	        category="org.eclipse.ui.category.textEditor"
+	        categoryId="org.eclipse.ui.category.textEditor"
 	        id="org.eclipse.ui.edit.text.lowerCase">
 	  </command>
 	  <command
 	        name="%onlyShowSelectedElement.label"
 	        description="%onlyShowSelectedElement.description"
-	        category="org.eclipse.ui.category.window"
+	        categoryId="org.eclipse.ui.category.window"
 	        id="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly">
 	  </command>
       <command
@@ -517,99 +517,99 @@
 	        keySequence="Ctrl+Shift+Space">
 	  </keyBinding>
 	  <keyBinding
-	        string="Ctrl+Q"
-	        scope="org.eclipse.ui.globalScope"
-	        command="org.eclipse.ui.edit.text.gotoLastEditPosition"
+	        keySequence="Ctrl+Q"
+	        contextId="org.eclipse.ui.globalScope"
+	        commandId="org.eclipse.ui.edit.text.gotoLastEditPosition"
 			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
 	  </keyBinding>
 	  <keyBinding
-	        string="Shift+ENTER"
-	        scope="org.eclipse.ui.textEditorScope"
-	        command="org.eclipse.ui.edit.text.smartEnter"
+	        keySequence="Shift+ENTER"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        commandId="org.eclipse.ui.edit.text.smartEnter"
 	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
 	  </keyBinding>
 	  <keyBinding
-	        string="Ctrl+Shift+ENTER"
-	        scope="org.eclipse.ui.textEditorScope"
-	        command="org.eclipse.ui.edit.text.smartEnterInverse"
+	        keySequence="Ctrl+Shift+ENTER"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        commandId="org.eclipse.ui.edit.text.smartEnterInverse"
 	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
 	  </keyBinding>
 	  <keyBinding
-	        string="Alt+ARROW_UP"
-	        scope="org.eclipse.ui.textEditorScope"
-	        command="org.eclipse.ui.edit.text.moveLineUp"
+	        keySequence="Alt+ARROW_UP"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        commandId="org.eclipse.ui.edit.text.moveLineUp"
 	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
 	  </keyBinding>
 	  <keyBinding
-	        string="Alt+ARROW_DOWN"
-	        scope="org.eclipse.ui.textEditorScope"
-	        command="org.eclipse.ui.edit.text.moveLineDown"
+	        keySequence="Alt+ARROW_DOWN"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        commandId="org.eclipse.ui.edit.text.moveLineDown"
 	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
 	  </keyBinding>
 	  <keyBinding
-	        string="Alt+Ctrl+ARROW_UP"
-	        scope="org.eclipse.ui.textEditorScope"
-	        command="org.eclipse.ui.edit.text.copyLineUp"
+	        keySequence="Alt+Ctrl+ARROW_UP"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        commandId="org.eclipse.ui.edit.text.copyLineUp"
 			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
 	  </keyBinding>
 	  <keyBinding
-	        string="Alt+Ctrl+ARROW_DOWN"
-	        scope="org.eclipse.ui.textEditorScope"
-	        command="org.eclipse.ui.edit.text.copyLineDown"
+	        keySequence="Alt+Ctrl+ARROW_DOWN"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        commandId="org.eclipse.ui.edit.text.copyLineDown"
 	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
 	  </keyBinding>
 	  <keyBinding
-	        string="Ctrl+Shift+X"
-	        scope="org.eclipse.ui.textEditorScope"
-	        command="org.eclipse.ui.edit.text.upperCase"
+	        keySequence="Ctrl+Shift+X"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        commandId="org.eclipse.ui.edit.text.upperCase"
 	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
 	  </keyBinding>
 	  <keyBinding
-	        string="Ctrl+Shift+Y"
-	        scope="org.eclipse.ui.textEditorScope"
-	        command="org.eclipse.ui.edit.text.lowerCase"
+	        keySequence="Ctrl+Shift+Y"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        commandId="org.eclipse.ui.edit.text.lowerCase"
 	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
 	  </keyBinding>
 	  <keyBinding
-	        string=""
-	        scope="org.eclipse.ui.textEditorScope"
-	        command="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly"
+	        keySequence=""
+	        contextId="org.eclipse.ui.textEditorScope"
+	        commandId="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly"
 	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
 	  </keyBinding>
 	  <keyBinding
-	        string="Ctrl+Arrow_Right"
-	        scope="org.eclipse.ui.textEditorScope"
-	        command="org.eclipse.ui.edit.text.goto.wordNext"
+	        keySequence="Ctrl+Arrow_Right"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        commandId="org.eclipse.ui.edit.text.goto.wordNext"
 	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
 	  </keyBinding>
 	  <keyBinding
-	        string="Ctrl+Arrow_Left"
-	        scope="org.eclipse.ui.textEditorScope"
-	        command="org.eclipse.ui.edit.text.goto.wordPrevious"
+	        keySequence="Ctrl+Arrow_Left"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        commandId="org.eclipse.ui.edit.text.goto.wordPrevious"
 	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
 	  </keyBinding>
 	  <keyBinding
-	        string="Ctrl+Delete"
-	        scope="org.eclipse.ui.textEditorScope"
-	        command="org.eclipse.ui.edit.text.deleteNextWord"
+	        keySequence="Ctrl+Delete"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        commandId="org.eclipse.ui.edit.text.deleteNextWord"
 	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
 	  </keyBinding>
 	  <keyBinding
-	        string="Ctrl+Backspace"
-	        scope="org.eclipse.ui.textEditorScope"
-	        command="org.eclipse.ui.edit.text.deletePreviousWord"
+	        keySequence="Ctrl+Backspace"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        commandId="org.eclipse.ui.edit.text.deletePreviousWord"
 	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
 	  </keyBinding>
 	  <keyBinding
-	        string="Ctrl+Shift+Arrow_Right"
-	        scope="org.eclipse.ui.textEditorScope"
-	        command="org.eclipse.ui.edit.text.select.wordNext"
+	        keySequence="Ctrl+Shift+Arrow_Right"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        commandId="org.eclipse.ui.edit.text.select.wordNext"
 	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
 	  </keyBinding>
 	  <keyBinding
-	        string="Ctrl+Shift+Arrow_Left"
-	        scope="org.eclipse.ui.textEditorScope"
-	        command="org.eclipse.ui.edit.text.select.wordPrevious"
+	        keySequence="Ctrl+Shift+Arrow_Left"
+	        contextId="org.eclipse.ui.textEditorScope"
+	        commandId="org.eclipse.ui.edit.text.select.wordPrevious"
 	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
 	  </keyBinding>
       <keyBinding
