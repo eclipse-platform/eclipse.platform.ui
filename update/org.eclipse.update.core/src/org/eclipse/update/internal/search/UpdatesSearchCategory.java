@@ -439,7 +439,24 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 			return false;
 		try {
 			IFeature feature = ref.getFeature(null);
-			return UpdateUtils.isPatch(candidate, feature);
+			if( UpdateUtils.isPatch(candidate, feature))
+				return true;
+			// Check if patch is for children
+			try {
+				IIncludedFeatureReference[] children =
+					candidate.getIncludedFeatureReferences();
+				for (int i = 0; i < children.length; i++) {
+					IIncludedFeatureReference cref = children[i];
+					try {
+						IFeature child = cref.getFeature(null);
+						if (isPatch(child, ref))
+							return true;
+					} catch (CoreException e) {
+					}
+				}
+			} catch (CoreException e) {
+			}
+			return false;
 		} catch (CoreException e) {
 			return false;
 		}
