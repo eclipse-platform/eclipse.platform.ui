@@ -972,7 +972,7 @@ public class EclipseWorkspaceTest extends TestCase {
 	}
 
 	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, EclipseWorkspaceTest.PI_HARNESS, IStatus.ERROR, "Error", e)); //$NON-NLS-1$
+		log(new Status(IStatus.ERROR, PI_HARNESS, IStatus.ERROR, "Error", e)); //$NON-NLS-1$
 	}
 
 	
