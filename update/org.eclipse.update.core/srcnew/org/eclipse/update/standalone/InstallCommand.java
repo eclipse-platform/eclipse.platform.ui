@@ -19,21 +19,18 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.operations.*;
 
-public class Script implements IOperationListener {
+public class InstallCommand extends ScriptedCommand {
 
-	private IInstallConfiguration config;
 	private IConfiguredSite targetSite;
 	private IFeature feature;
 	private int installCount = 0;
 
-	public Script(
+	public InstallCommand(
 		String featureId,
 		String version,
 		String fromSite,
 		String toSite) {
 		try {
-			ILocalSite localSite = SiteManager.getLocalSite();
-			config = localSite.getCurrentConfiguration();
 			IConfiguredSite[] sites = config.getConfiguredSites();
 
 			// Get remote site
@@ -91,10 +88,8 @@ public class Script implements IOperationListener {
 				}
 			}
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -129,7 +124,7 @@ public class Script implements IOperationListener {
 				.createBatchInstallOperation(
 				operations);
 		try {
-			return installOperation.execute(null, Script.this);
+			return installOperation.execute(null, InstallCommand.this);
 		} catch (CoreException e) {
 			System.out.println(e.getStatus().getMessage());
 			return false;

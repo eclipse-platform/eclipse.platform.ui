@@ -22,26 +22,10 @@ public class StandaloneUpdateApplication implements IPlatformRunnable {
 			return null;
 		if (args instanceof String[]) {
 			String[] params = (String[]) args;
-			for (int i = 0; i < params.length - 1; i++) {
-				if (isValidParam(params[i]))
-					options.put(params[i], params[i + 1]);
-			}
-
-			Script script =
-				new Script(
-					(String) options.get("-installFeature"),
-					(String) options.get("-version"),
-					(String) options.get("-from"),
-					(String) options.get("-to"));
-			script.run();
+			CmdLineArgs cmdLineArgs = new CmdLineArgs(params);
+			ScriptedCommand cmd = cmdLineArgs.getCommand();
+			cmd.run();
 		}
 		return null;
-	}
-
-	private boolean isValidParam(String param) {
-		return param.equals("-installFeature")
-			|| param.equals("-version")
-			|| param.equals("-to")
-			|| param.equals("-from");
 	}
 }
