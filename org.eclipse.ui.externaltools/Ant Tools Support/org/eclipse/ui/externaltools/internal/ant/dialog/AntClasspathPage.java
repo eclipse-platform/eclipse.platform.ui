@@ -14,6 +14,7 @@ import java.net.URL;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
@@ -53,7 +54,7 @@ public class AntClasspathPage extends AntPage {
 		createButton(parent, "AntClasspathPage.addJarButtonTitle", ADD_JAR_BUTTON); //$NON-NLS-1$;
 		createButton(parent, "AntClasspathPage.addFolderButtonTitle", ADD_FOLDER_BUTTON); //$NON-NLS-1$;
 		createSeparator(parent);
-		createButton(parent, "AntClasspathPage.removeButtonTitle", REMOVE_BUTTON); //$NON-NLS-1$;
+		removeButton= createButton(parent, "AntClasspathPage.removeButtonTitle", REMOVE_BUTTON); //$NON-NLS-1$;
 	}
 	
 	/**
@@ -61,6 +62,8 @@ public class AntClasspathPage extends AntPage {
 	 */
 	private void addFolderButtonPressed() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
+		dialog.setMessage(AntDialogMessages.getString("AntClasspathPage.&Choose_a_folder_to_add_to_the_classpath__1")); //$NON-NLS-1$
+		
 		String result = dialog.open();
 		if (result != null) {
 			try {
@@ -121,6 +124,13 @@ public class AntClasspathPage extends AntPage {
 	 */
 	protected ITableLabelProvider getLabelProvider() {
 		return labelProvider;
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on AntPage.
+	 */
+	protected void tableSelectionChanged(IStructuredSelection newSelection) {
+		removeButton.setEnabled(newSelection.size() > 0);
 	}
 
 

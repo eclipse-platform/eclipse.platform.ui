@@ -17,7 +17,6 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -35,9 +34,6 @@ public class AntTasksPage extends AntPage {
 	private static final int REMOVE_BUTTON = IDialogConstants.CLIENT_ID + 3;
 
 	private final AntTasksLabelProvider labelProvider = new AntTasksLabelProvider();
-	private Button editButton;
-	private Button removeButton;
-
 	/**
 	 * Creates an instance.
 	 */

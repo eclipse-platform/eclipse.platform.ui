@@ -47,6 +47,9 @@ public abstract class AntPage {
 	private AntPreferencePage preferencePage;
 	private TableViewer tableViewer;
 	private AntPageContentProvider contentProvider;
+	
+	protected Button editButton;
+	protected Button removeButton;
 
 	/**
 	 * Creates an instance of this page.
