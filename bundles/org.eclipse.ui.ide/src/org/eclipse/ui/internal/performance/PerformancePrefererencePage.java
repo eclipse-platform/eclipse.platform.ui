@@ -18,6 +18,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.dialogs.PreferenceLinkArea;
@@ -44,9 +45,14 @@ public class PerformancePrefererencePage extends PreferencePage implements
 		setDescription("Features that can cause performance issues for users with slower machines");//$NON-NLS-1$
 
 		Composite workArea = new Composite(parent, SWT.NONE);
-		
 		workArea.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
 				true));
+		
+		Label description = new Label(workArea, SWT.WRAP);
+		description.setText("The performance preference page is intended to provide an opportunity \nto run this product in high efficiency mode by enabling or disabling options \nthat might impact performance."); //$NON-NLS-1$
+
+		Label spacing = new Label(workArea, SWT.NONE);
+		
 		codeFolding = new BooleanFieldEditor(
 				"org.eclipse.jdt.ui.code.folding", "Code Folding", SWT.CHECK,//$NON-NLS-1$//$NON-NLS-2$
 				workArea);
@@ -55,12 +61,26 @@ public class PerformancePrefererencePage extends PreferencePage implements
 				new InstanceScope(), "org.eclipse.jdt.ui"));//$NON-NLS-1$
 		codeFolding.load();
 			
-		workArea.setLayout(new GridLayout(codeFolding.getNumberOfControls() + 1, false));
-		
-		
-		new PreferenceLinkArea(workArea, SWT.END,
-				"org.eclipse.jdt.ui.preferences.JavaEditorPreferencePage", "Java Editor",//$NON-NLS-1$//$NON-NLS-2$
+		PreferenceLinkArea link = new PreferenceLinkArea(workArea, SWT.NONE,
+				"org.eclipse.jdt.ui.preferences.JavaEditorPreferencePage", //$NON-NLS-1$
+				"	**  See <a>''{0}''</a> for all Editor preferences. **", //$NON-NLS-1$
 				(IWorkbenchPreferenceContainer) getContainer(),null);
+
+		int cols = codeFolding.getNumberOfControls() + 1;
+		
+		workArea.setLayout(new GridLayout(cols, false));
+		
+		GridData labelData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		labelData.horizontalSpan = cols;
+		description.setLayoutData(labelData);
+
+		labelData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		labelData.horizontalSpan = cols;
+		spacing.setLayoutData(labelData);
+
+		link.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		
+		
 		return workArea;
 	}
 
