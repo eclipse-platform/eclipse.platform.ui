@@ -67,7 +67,7 @@ public class AntAction extends Action {
 			return;
 		}
 
-		AntLaunchWizard wizard = new AntLaunchWizard(project, file);
+		AntLaunchWizard wizard = new AntLaunchWizard(project, file, window);
 		wizard.setNeedsProgressMonitor(true);
 		WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
 		dialog.create();

@@ -14,11 +14,15 @@ import java.io.File;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * General utility class dealing with Ant scripts
  */
 public final class AntUtil {
+	// Holds the current monitor that the Ant build logger can access
+	private static IProgressMonitor monitor;
+	
 	/**
 	 * No instances allowed
 	 */
@@ -46,5 +50,21 @@ public final class AntUtil {
 		}
 		
 		return antProject;
+	}
+	
+	/**
+	 * Returns the last known progress monitor that the
+	 * Ant build logger can use
+	 */
+	public static IProgressMonitor getCurrentProgressMonitor() {
+		return AntUtil.monitor;
+	}
+	
+	/**
+	 * Sets the last known progress monitor that the
+	 * Ant build logger can use
+	 */
+	public static void setCurrentProgressMonitor(IProgressMonitor monitor) {
+		AntUtil.monitor = monitor;
 	}
 }

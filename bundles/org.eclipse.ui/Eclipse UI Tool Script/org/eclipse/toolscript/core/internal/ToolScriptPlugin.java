@@ -15,16 +15,21 @@ import java.net.URL;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.toolscript.ui.internal.LogConsoleView;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 
 /**
  * Fake plugin class until tool scripts becomes a real
  * plugin outside of eclipse ui.
  */
 public final class ToolScriptPlugin {
-	public static final String PLUGIN_ID = "org.eclipse.toolscript";
+	public static final String PLUGIN_ID = "org.eclipse.toolscript"; //$NON-NLS-1$;
+	private static final String LOG_CONSOLE_ID = PLUGIN_ID + ".LogConsoleView"; //$NON-NLS-1$;
 	
-	public static final String IMG_ANT_SCRIPT= "icons/full/eview16/ant_view.gif";
-	public static final String IMG_BUILDER= "icons/full/eview16/build_exec.gif";
+	public static final String IMG_ANT_SCRIPT= "icons/full/eview16/ant_view.gif"; //$NON-NLS-1$;
+	public static final String IMG_BUILDER= "icons/full/eview16/build_exec.gif"; //$NON-NLS-1$;
 	
 	private static ToolScriptPlugin plugin;
 	private ToolScriptRegistry registry;
@@ -52,6 +57,12 @@ public final class ToolScriptPlugin {
 		return plugin;
 	}
 
+	/**
+	 * Clears the log messages recorded so far.
+	 */
+	public void clearLogDocument() {
+	}
+	
 	/**
 	 * Returns the registry of tool scripts that the
 	 * user can run using the tool script menu. Does
@@ -99,6 +110,22 @@ public final class ToolScriptPlugin {
 		} catch (MalformedURLException e) {
 			return null;
 		}
+	}
+	
+	/**
+	 * Forces the log console view to open. Returns the view
+	 * part if successful, otherwise <code>null</code>.
+	 */
+	public LogConsoleView showLogConsole(IWorkbenchWindow window) {
+		IWorkbenchPage page = window.getActivePage();
+		LogConsoleView console = null;
+		try {
+			if (page != null)
+				console = (LogConsoleView) page.showView(LOG_CONSOLE_ID);
+		} catch (PartInitException e) {
+			getLog().log(e.getStatus());
+		}
+		return console;
 	}
 	
 	/**

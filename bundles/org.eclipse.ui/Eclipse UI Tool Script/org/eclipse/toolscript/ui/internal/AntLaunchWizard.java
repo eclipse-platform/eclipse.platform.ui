@@ -9,9 +9,21 @@ http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
 **********************************************************************/
+import java.lang.reflect.InvocationTargetException;
+
 import org.apache.tools.ant.Project;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.toolscript.core.internal.AntUtil;
+import org.eclipse.toolscript.core.internal.ToolScript;
+import org.eclipse.toolscript.core.internal.ToolScriptContext;
+import org.eclipse.toolscript.core.internal.ToolScriptPlugin;
+import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * The wizard to run an Ant script file when the Run Ant...
@@ -32,6 +44,22 @@ public class AntLaunchWizard extends Wizard {
 	private Project antProject = null;
 
 	/**
+	 * The tool script representing Ant script
+	 */
+	private ToolScript antScript = null;
+
+	/**
+	 * Whether the tool script is new for this wizard
+	 */
+	private boolean isNewScript = false;
+	
+	/**
+	 * The workbench window that the action launch
+	 * this wizard.
+	 */
+	private IWorkbenchWindow window = null;
+
+	/**
 	 * The first page of the wizard.
 	 */
 	private AntLaunchWizardPage page1 = null;
@@ -43,10 +71,19 @@ public class AntLaunchWizard extends Wizard {
 	 * @param antProject
 	 * @param antFile
 	 */
-	public AntLaunchWizard(Project antProject, IFile antFile) {
+	public AntLaunchWizard(Project antProject, IFile antFile, IWorkbenchWindow window) {
 		super();
 		this.antProject = antProject;
 		this.antFile = antFile;
+		this.window = window;
+		String name = antFile.getFullPath().toString();
+		this.antScript = ToolScriptPlugin.getDefault().getRegistry().getToolScript(name);
+		if (this.antScript == null) {
+			this.antScript = new ToolScript();
+			this.antScript.setName(name);
+			this.antScript.setType(ToolScript.SCRIPT_TYPE_ANT);
+			this.isNewScript = true;
+		}
 		setWindowTitle(ToolScriptMessages.getString("AntLaunchWizard.shellTitle")); //$NON-NLS-1$;
 	}
 	
@@ -89,72 +126,57 @@ public class AntLaunchWizard extends Wizard {
 	 * @return boolean true if the user wants to show it, false if not
 	 */
 	public boolean getInitialDisplayLog() {
-		return true;
+		return antScript.getShowLog();
 	}
 
 	/* (non-Javadoc)
 	 * Method declared on IWizard.
 	 */
 	public boolean performFinish() {
-/*		final Vector targetVect = page1.getSelectedTargets();
-		AntConsole[] consoles = null;
-		final boolean shouldLogMessages = page1.shouldLogMessages();
-		final String arguments = page1.getArguments();
-		if (shouldLogMessages) {
-			try {
-				IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-				page.showView(AntConsole.CONSOLE_ID);
-				console = (AntConsole) page.findView(AntConsole.CONSOLE_ID);
-
-				// Gets all the consoles
-				consoles = new AntConsole[AntConsole.getInstances().size()];
-				AntConsole.getInstances().toArray(consoles);
-
-				// And clears the ouput for all of them
-				for (int i = 0; i < consoles.length; i++)
-					consoles[i].clearOutput();
-			} catch (PartInitException e) {
-				AntUIPlugin.getPlugin().getLog().log(new Status(IStatus.ERROR, AntUIPlugin.PI_ANTUI, 0, Policy.bind("status.consoleNotInitialized"), e));
-			}
+		updateScript();
+		if (antScript.getShowLog()) {
+			ToolScriptPlugin.getDefault().showLogConsole(window);
+			ToolScriptPlugin.getDefault().clearLogDocument();
 		}
-
+		
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-
-				monitor.beginTask(Policy.bind("monitor.runningAnt"), targetVect.size());
 				try {
-					AntRunner runner = new AntRunner();
-					AntUIPlugin.getPlugin().setCurrentProgressMonitor(monitor);
-					runner.setMessageOutputLevel(getMessageOutputLevel());
-					runner.addBuildLogger("org.eclipse.ant.internal.ui.ant.UIBuildLogger");
-					runner.setBuildFileLocation(antFile.getLocation().toOSString());
-					runner.setArguments(arguments);
-					runner.setExecutionTargets(getTargetNames());
-					runner.run();
+					ToolScriptContext context = new ToolScriptContext(antScript, antFile.getProject(), window.getWorkbench().getWorkingSetManager());
+					context.run(monitor, window.getShell());
 				} catch (BuildCanceledException e) {
 					throw new InterruptedException();
 				} catch (Exception e) {
 					throw new InvocationTargetException(e, e.getMessage());
-				} finally {
-					monitor.done();
 				}
 			};
 		};
 
 		try {
-			this.getContainer().run(true, true, runnable);
+			getContainer().run(true, true, runnable);
 		} catch (InterruptedException e) {
 			return false;
 		} catch (InvocationTargetException e) {
-			IStatus status = new Status(IStatus.ERROR, AntUIPlugin.PI_ANTUI, EXCEPTION_ANT_EXECUTION, Policy.bind("error.antExecutionErrorGeneral"), e);
-			ErrorDialog.openError(getShell(), Policy.bind("error.antExecutionErrorTitle"), Policy.bind("error.antExecutionError"), status);
+			IStatus status = new Status(IStatus.ERROR, ToolScriptPlugin.PLUGIN_ID, 0, ToolScriptMessages.getString("AntLaunchWizard.runAntProblem"), e); //$NON-NLS-1$;
+			ErrorDialog.openError(
+				getShell(), 
+				ToolScriptMessages.getString("AntLaunchWizard.runErrorTitle"), //$NON-NLS-1$;
+				ToolScriptMessages.getString("AntLaunchWizard.runAntProblem"), //$NON-NLS-1$;
+				status);
 			return false;
 		}
 
-		storeTargetsOnFile(targetVect);
-		storeShouldLogMessages();
-		storeArguments();
-*/
 		return true;
+	}
+
+	/**
+	 * Method updateScript.
+	 */
+	private void updateScript() {
+		String args = page1.getArguments();
+		String[] targets = page1.getSelectedTargets();
+		
+		antScript.setShowLog(page1.getShowLog());
+		// save contents too here if new
 	}
 }

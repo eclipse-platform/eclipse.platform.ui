@@ -49,8 +49,8 @@ public abstract class ToolScriptRunner {
 	/**
 	 * Starts the monitor to show progress while running the script
 	 */
-	protected final void startMonitor(IProgressMonitor monitor, IToolScriptContext scriptContext) {
+	protected final void startMonitor(IProgressMonitor monitor, IToolScriptContext scriptContext, int workAmount) {
 		String label = ToolScriptMessages.format("ToolScriptRunner.runningScriptLabel", new Object[] {scriptContext.getName()}); //$NON-NLS-1$;
-		monitor.beginTask(label, IProgressMonitor.UNKNOWN);
+		monitor.beginTask(label, workAmount);
 	}
 }

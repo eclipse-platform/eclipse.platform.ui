@@ -39,7 +39,7 @@ public class ProgramScriptRunner extends ToolScriptRunner {
 	public void execute(IProgressMonitor monitor, IToolScriptContext scriptContext) throws CoreException {
 		String commandLine = scriptContext.getExpandedLocation() + " " + scriptContext.getExpandedArguments(); //$NON-NLS-1$;
 		try {
-			startMonitor(monitor, scriptContext);
+			startMonitor(monitor, scriptContext, monitor.UNKNOWN);
 			Process p = Runtime.getRuntime().exec(commandLine);
 			boolean[] finished = new boolean[1];
 			

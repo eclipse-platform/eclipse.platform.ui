@@ -35,6 +35,7 @@ public class ToolScriptMessages {
 	public static String format(String key, Object[] args) {
 		return MessageFormat.format(getString(key), args);
 	}
+	
 	/**
 	 * Returns the message with the given key in
 	 * the resource bundle. If there isn't any value under
@@ -49,5 +50,12 @@ public class ToolScriptMessages {
 		} catch (MissingResourceException e) {
 			return key;
 		}
+	}
+	
+	/**
+	 * Returns the resource bundle for the plug-in
+	 */
+	public static ResourceBundle getResourceBundle() {
+		return bundle;
 	}
 }

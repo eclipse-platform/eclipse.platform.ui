@@ -52,6 +52,20 @@ public final class ToolScriptRegistry {
 	}
 
 	/**
+	 * Returns the named tool script or <code>null</code>
+	 * if not found.
+	 */
+	public ToolScript getToolScript(String name) {
+		Iterator enum = toolScripts.iterator();
+		while (enum.hasNext()) {
+			ToolScript script = (ToolScript)enum.next();
+			if (script.getName().equals(name))
+				return script;
+		}
+		return null;
+	}
+	
+	/**
 	 * Returns the tool scripts of the registry
 	 */
 	public ArrayList getToolScripts() {

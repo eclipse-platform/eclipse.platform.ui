@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * Responsible for running ant scripts.
  */
 public class AntScriptRunner extends ToolScriptRunner {
+	private static final String LOGGER_CLASS = "org.eclipse.toolscript.ui.internal.AntBuildLogger"; //$NON-NLS-1$
 
 	/**
 	 * Creates an empty ant script runner
@@ -31,22 +32,24 @@ public class AntScriptRunner extends ToolScriptRunner {
 	 */
 	public void execute(IProgressMonitor monitor, IToolScriptContext scriptContext) throws CoreException {
 		try {
-			startMonitor(monitor, scriptContext);
+			String[] targets = scriptContext.getAntTargets();
+			startMonitor(monitor, scriptContext, targets.length);
+			AntUtil.setCurrentProgressMonitor(monitor);
 			AntRunner runner = new AntRunner();
 			runner.setArguments(scriptContext.getExpandedArguments());
 			runner.setBuildFileLocation(scriptContext.getExpandedLocation());
-			String[] targets = scriptContext.getAntTargets();
 			if (targets.length > 0)
 				runner.setExecutionTargets(targets);
 			//
 			// TO DO: This needs to be updated to use the log document support
 			//
-//			runner.addBuildListener(listener.getClass().getName());
+//			runner.addBuildListener(LOGGER_CLASS);
 			runner.run();
 		} catch (Exception e) {
 			handleException(e);
 		} finally {
 			monitor.done();
+			AntUtil.setCurrentProgressMonitor(null);
 		}
 	}
 }
