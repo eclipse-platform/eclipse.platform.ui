@@ -9,6 +9,13 @@ var isIE = navigator.userAgent.indexOf('MSIE') != -1;
 var framesLoaded = false;
 var args = parseQueryString();
 
+var tocTitle = null;
+var currentNavFrame;
+var lastTab = "";
+
+var temp;
+var tempActive;
+
 /**
  * Notification when frames are loaded
  */
@@ -18,10 +25,8 @@ function onloadFrameset()
 	if(args && args["toc"])
 	{
 		NavFrame.document.getElementById("toc").src = "toc.jsp"+ getQuery();
-		showBookshelfIcon(true);
 	} else {
 		NavFrame.document.getElementById("toc").src = "tocs.jsp"+ getQuery();
-		showBookshelfIcon(false);
 	}
 	
 	NavFrame.document.getElementById("search").src = "search_results.jsp" + getQuery();
@@ -70,8 +75,6 @@ function parseQueryString (str)
     return args;
 }
 
-var tocTitle = null;
-var currentNavFrame;
 /**
  * Needs to be called from a subframe
  */
@@ -85,6 +88,11 @@ function setToolbarTitle(title)
  */ 
 function switchTab(nav, newTitle)
 {
+	if (nav == lastTab) 
+		return;
+		
+	lastTab = nav;
+	
 	// set the title on the navigation toolbar to match the tab
   	if (newTitle)
      	NavToolbarFrame.document.getElementById("titleText").innerHTML = newTitle;
@@ -111,6 +119,12 @@ function switchTab(nav, newTitle)
 		else if (buttons[i].className == "pressed")
 			buttons[i].className = "tab";
  	 }
+ 	 
+ 	 if (nav == "toc" && 
+ 	 	 (NavFrame.toc.location.href == "about:blank" || NavFrame.toc.location.href.indexOf("tocs.jsp") >= 0 ))
+ 	 	showBookshelfIcon(false);
+ 	 else
+ 	 	showBookshelfIcon(true);
 }
  
  
@@ -119,9 +133,6 @@ function switchTab(nav, newTitle)
  */
 function displayTocFor(topic)
 {
-
-	switchTab("toc");
-
 	// remove the query, if any
 	var i = topic.indexOf('?');
 	if (i != -1)
@@ -131,9 +142,26 @@ function displayTocFor(topic)
 	if (NavFrame.toc.selectTopic)
 		selected = NavFrame.toc.selectTopic(topic);
 
-	if (!selected)
-		NavFrame.toc.location = "toc.jsp?topic="+topic;
+	if (selected) {
+		switchTab("toc");
+	} else	{
+		// save the current navigation, so we can retrieve it when synch does not work
+		saveNavigation();
+		NavFrame.toc.location = "toc.jsp?topic="+topic;		
+	}
 }
+
+function saveNavigation()
+{
+	if (NavFrame.toc.location.href.indexOf("tocs.jsp") == -1) {
+		temp = NavFrame.toc.document.body.innerHTML;
+		if (NavFrame.toc.oldActive)
+			tempActive = NavFrame.toc.oldActive;
+	}else {
+		temp = null;
+	}
+}
+
 
 function showBookshelfIcon(show)
 {
@@ -145,9 +173,7 @@ function showBookshelfIcon(show)
 }
 
 function showBookshelf()
-{ 
-	showBookshelfIcon(false);
-	
+{ 	
 	switchTab("toc");
 	// load the bookshelf
 	//window.toc.window.location.href = "tocs.jsp";
@@ -155,6 +181,7 @@ function showBookshelf()
 	// clear the content page
 	parent.MainFrame.location=help_home;
 	setToolbarTitle(" ");
+	showBookshelfIcon(false);
 }
 
 /**

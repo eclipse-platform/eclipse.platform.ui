@@ -144,7 +144,24 @@ A.book {
 	else
 		tocElement = content.loadTOC(tocHref);
 	if (tocElement == null){
-		out.write(WebappResources.getString("Nothing_found", null));
+		//out.write(WebappResources.getString("Nothing_found", null));
+%>
+<body>
+<script>
+alert('<%=WebappResources.getString("CannotSync", null)%>');
+// Restore old navigation
+if (parent.parent.temp){
+	document.body.innerHTML = parent.parent.temp;
+	if (parent.parent.tempActive)
+		oldActive = parent.parent.tempActive;
+}else {
+	window.location.replace("tocs.jsp");
+}
+
+</script>
+</body>
+</html>
+<%
 		return;
 	}
 	String tocDescription = tocElement.getAttribute("topic");
@@ -222,6 +239,9 @@ A.book {
 	</ul>
 
 	<script language="JavaScript">
+	
+	parent.parent.switchTab("toc");
+		
 	// Highlight topic
 	var topic = '<%=topicHref != null ? topicHref : ""%>';
 	if (topic != "")
@@ -230,7 +250,6 @@ A.book {
 			topic = window.location.protocol + "//" +window.location.host +"<%=request.getContextPath()%>" + "/content/help:"+ topic;
 		selectTopic(topic);
 	}
-	
 	</script>
 
 </body>
