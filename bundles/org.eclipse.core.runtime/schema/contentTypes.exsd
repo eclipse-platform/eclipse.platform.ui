@@ -110,10 +110,22 @@ a file association extends an existing content type by associating new file name
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="describer" type="string">
+            <annotation>
+               <documentation>
+                  the fully qualified name of a class that implements &lt;samp&gt;org.eclipse.core.runtime.content.IContentDescriber&lt;/samp&gt; or &lt;samp&gt;org.eclipse.core.runtime.content.ITextContentDescriber&lt;/samp&gt;, or an empty string, if this content type should not have a describer even if the parent has one
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
    <element name="describer">
+      <annotation>
+         <documentation>
+            If the describer attribute is used in the content-type element, this element is ignored.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="parameter" minOccurs="0" maxOccurs="unbounded"/>
@@ -126,6 +138,13 @@ a file association extends an existing content type by associating new file name
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.core.runtime.content.IContentDescriber"/>
                </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="plugin" type="string">
+            <annotation>
+               <documentation>
+                  the id for the plug-in providing the describer class
+               </documentation>
             </annotation>
          </attribute>
       </complexType>
