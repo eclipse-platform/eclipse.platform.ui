@@ -48,7 +48,8 @@ public class ResourceNavigatorTest extends UITestCase {
 		super(testName);
 	}
 
-	public void setUp() {
+	protected void doSetUp() throws Exception {
+		super.doSetUp();
 		workbenchWindow = openTestWindow();
 		activePage = workbenchWindow.getActivePage();
 	}

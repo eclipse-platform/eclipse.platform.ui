@@ -53,7 +53,8 @@ public class ZoomTestCase extends UITestCase {
 		super(name);
 	}
 	
-	public void setUp() {
+	protected void doSetUp() throws Exception {
+		super.doSetUp();
 		window = (WorkbenchWindow)openTestWindow();
 		page = (WorkbenchPage)window.getActivePage();
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();

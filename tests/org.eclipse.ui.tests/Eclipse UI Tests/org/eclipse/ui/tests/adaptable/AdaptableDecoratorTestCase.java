@@ -58,7 +58,8 @@ public class AdaptableDecoratorTestCase
 	/**
 	 * Sets up the hierarchy.
 	 */
-	protected void setUp() throws Exception {
+	protected void doSetUp() throws Exception {
+		super.doSetUp();
 		createTestFile();
 		showAdaptedNav();
 
@@ -88,9 +89,8 @@ public class AdaptableDecoratorTestCase
 	/**
 	 * Remove the listener.
 	 */
-
-	public void tearDown() throws Exception {
-
+	protected void doTearDown() throws Exception {
+		
 		if (testProject != null) {
 			try {
 				testProject.delete(true, null);
@@ -101,7 +101,7 @@ public class AdaptableDecoratorTestCase
 			testFolder = null;
 			testFile = null;
 		}
-		super.tearDown();
+		super.doTearDown();
 		adaptedNavigator = null;
 
 		getDecoratorManager().removeListener(this);

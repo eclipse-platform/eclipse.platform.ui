@@ -46,8 +46,8 @@ public class IWorkingSetManagerTest extends UITestCase {
 	public IWorkingSetManagerTest(String testName) {
 		super(testName);		
 	}
-	protected void setUp() throws Exception {
-		super.setUp();                                                      
+	protected void doSetUp() throws Exception {
+		super.doSetUp();
 		fWorkingSetManager = fWorkbench.getWorkingSetManager();
 		fWorkspace = ResourcesPlugin.getWorkspace();
 		fWorkingSet = fWorkingSetManager.createWorkingSet(WORKING_SET_NAME_1, new IAdaptable[] {fWorkspace.getRoot()});

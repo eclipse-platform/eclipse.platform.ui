@@ -38,7 +38,8 @@ public class IEditorActionBarContributorTest extends UITestCase {
 		super(testName);
 	}
 
-	public void setUp() {
+	protected void doSetUp() throws Exception {
+		super.doSetUp();
 		fWindow = openTestWindow();
 		fPage = fWindow.getActivePage();
 	}

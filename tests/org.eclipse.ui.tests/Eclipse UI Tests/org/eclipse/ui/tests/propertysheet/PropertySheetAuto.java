@@ -203,7 +203,8 @@ public class PropertySheetAuto extends UITestCase {
 		return new Car(modelYear, color, manufacturer, model, engineSize);
 	}	
 
-	public void setUp() {
+	protected void doSetUp() throws Exception {
+		super.doSetUp();
 		workbenchWindow = openTestWindow();
 		activePage = workbenchWindow.getActivePage();
 	}

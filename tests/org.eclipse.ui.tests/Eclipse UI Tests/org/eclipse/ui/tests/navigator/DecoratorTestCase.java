@@ -41,7 +41,8 @@ public class DecoratorTestCase
 	/**
 	 * Sets up the hierarchy.
 	 */
-	protected void setUp() throws Exception {
+	protected void doSetUp() throws Exception {
+		super.doSetUp();
 		createTestFile();
 		showNav();
 		
@@ -62,9 +63,8 @@ public class DecoratorTestCase
 	/**
 	 * Remove the listener.
 	 */
-
-	public void tearDown() throws Exception {
-		super.tearDown();
+	protected void doTearDown() throws Exception {
+		super.doTearDown();
 		getDecoratorManager().removeListener(this);
 	}
 

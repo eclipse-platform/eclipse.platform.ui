@@ -33,12 +33,9 @@ public class UINewWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 	public UINewWorkingSetWizardAuto(String name) {
 		super(name);
 	}
-	/**
-	 * @see junit.framework.TestCase#setUp()
-	 */
-	protected void setUp() throws Exception {
+	protected void doSetUp() throws Exception {
 		fWizard = new WorkingSetNewWizard();
-		super.setUp();
+		super.doSetUp();
 	}
 	public void testTypePage() throws Throwable {
 		IWizardPage page = fWizardDialog.getCurrentPage();

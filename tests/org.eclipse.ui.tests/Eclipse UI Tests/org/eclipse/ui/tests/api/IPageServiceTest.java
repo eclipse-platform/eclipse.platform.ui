@@ -37,7 +37,8 @@ public class IPageServiceTest extends UITestCase
 		super(testName);
 	}
 
-	protected void setUp() {
+	protected void doSetUp() throws Exception {
+		super.doSetUp();
 		fWindow = openTestWindow();
 		fWorkspace = ResourcesPlugin.getWorkspace();
 	}

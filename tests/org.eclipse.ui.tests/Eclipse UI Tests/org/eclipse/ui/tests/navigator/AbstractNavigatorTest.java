@@ -72,7 +72,7 @@ abstract class AbstractNavigatorTest extends UITestCase {
 		navigator = (ResourceNavigator) window.getActivePage().showView(NAVIGATOR_VIEW_ID);
 	}
 	
-	public void tearDown() throws Exception {
+	protected void doTearDown() throws Exception {
 		if (testProject != null) {
 			try {
 				testProject.delete(true, null);
@@ -84,7 +84,7 @@ abstract class AbstractNavigatorTest extends UITestCase {
 			testFolder = null;
 			testFile = null;
 		}
-		super.tearDown();
+		super.doTearDown();
 		navigator = null;
 	}
 	

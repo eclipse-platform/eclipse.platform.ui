@@ -37,16 +37,16 @@ public class IPerspectiveListenerTest extends UITestCase implements IPerspective
 		super( testName );
 	}
 	
-	public void setUp()
-	{
+	protected void doSetUp() throws Exception {
+		super.doSetUp();
 		fEvent = NONE;		
 		fWindow = openTestWindow();		
 		fWindow.addPerspectiveListener( this );
 	}
 	
-	public void tearDown()
-	{
+	protected void doTearDown() throws Exception {
 		fWindow.removePerspectiveListener( this );
+		super.doTearDown();
 	}
 	
 	public void testPerspectiveActivated()

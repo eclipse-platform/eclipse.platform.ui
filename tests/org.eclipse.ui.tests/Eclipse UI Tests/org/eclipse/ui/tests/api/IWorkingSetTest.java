@@ -32,8 +32,8 @@ public class IWorkingSetTest extends UITestCase {
 	public IWorkingSetTest(String testName) {
 		super(testName);		
 	}
-	protected void setUp() throws Exception {
-		super.setUp();                                                      
+	protected void doSetUp() throws Exception {
+		super.doSetUp();
 		IWorkingSetManager workingSetManager = fWorkbench.getWorkingSetManager();	
 		
 		fWorkspace = ResourcesPlugin.getWorkspace();		

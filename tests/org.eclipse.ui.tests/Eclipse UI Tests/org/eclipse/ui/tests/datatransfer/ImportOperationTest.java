@@ -74,7 +74,8 @@ public class ImportOperationTest
 		return "";
 	}
 	
-	public void setUp() throws Exception {
+	protected void doSetUp() throws Exception {
+		super.doSetUp();
 		Class testClass =
 			Class.forName("org.eclipse.ui.tests.datatransfer.ImportOperationTest");
 		InputStream stream = testClass.getResourceAsStream("tests.ini");
@@ -82,7 +83,6 @@ public class ImportOperationTest
 		properties.load(stream);
 		localDirectory = properties.getProperty("localSource");
 		setUpDirectory();
-		super.setUp();
 	}
 	
 	/**
@@ -102,8 +102,8 @@ public class ImportOperationTest
 	 * Tear down. Delete the project we created and all of the
 	 * files on the file system.
 	 */
-	public void tearDown() throws Exception {
-		super.tearDown();
+	protected void doTearDown() throws Exception {
+		super.doTearDown();
 		try {
 			project.delete(true,true,null);
 			File topDirectory = new File(localDirectory);

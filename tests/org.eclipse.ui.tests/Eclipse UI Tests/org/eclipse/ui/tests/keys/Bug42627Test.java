@@ -54,11 +54,8 @@ public class Bug42627Test extends UITestCase {
 		super(name);
 	}
 
-	/*
-	 * @see TestCase#setUp()
-	 */
-	protected void setUp() throws Exception {
-		super.setUp();
+	protected void doSetUp() throws Exception {
+		super.doSetUp();
 //		logged = false;
 	}
 

@@ -27,11 +27,8 @@ public class StartupTest extends UITestCase {
 		assertTrue("Startup - implicit", TestPlugin.wasEarlyStartupCalled());
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.util.UITestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	protected void doTearDown() throws Exception {
+		super.doTearDown();
 		// NOTE:  tearDown will run after each test.  Therefore, we
 		// only want one test in this suite (or the values set when
 		// this plugin started up will be lost).

@@ -113,13 +113,11 @@ public abstract class UIWorkingSetWizardsAuto extends UITestCase {
 	}
 	/**
 	 * <code>fWizard</code> must be initialized by subclasses prior to
-	 * calling setUp.
-	 * 
-	 * @see junit.framework.TestCase#setUp()
+	 * calling this.
 	 */
-	protected void setUp() throws Exception {
-		super.setUp();
-
+	protected void doSetUp() throws Exception {
+		super.doSetUp();
+		
 		fWizardDialog = new WizardDialog(getShell(), fWizard);
 		fWizardDialog.create();
 		Shell dialogShell = fWizardDialog.getShell();
@@ -154,12 +152,9 @@ public abstract class UIWorkingSetWizardsAuto extends UITestCase {
 		textWidget.setText(text);
 		textWidget.notifyListeners(SWT.Modify, new Event());
 	}
-	/**
-	 * @see junit.framework.TestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception {
+	protected void doTearDown() throws Exception {
 		deleteResources();
-		super.tearDown();
+		super.doTearDown();
 	}
 
 }

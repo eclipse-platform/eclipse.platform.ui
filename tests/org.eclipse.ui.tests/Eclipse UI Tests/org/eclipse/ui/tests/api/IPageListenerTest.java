@@ -37,15 +37,16 @@ public class IPageListenerTest extends UITestCase
 		super(testName);
 	}
 
-	public void setUp() {
+	protected void doSetUp() throws Exception {
+		super.doSetUp();
 		fWindow = openTestWindow();
 		fWorkspace = ResourcesPlugin.getWorkspace();
 		fWindow.addPageListener(this);
 	}
 	
-	public void tearDown() throws Exception {
+	protected void doTearDown() throws Exception {
 		fWindow.removePageListener(this);
-		super.tearDown();
+		super.doTearDown();
 	}
 
 	/**

@@ -46,9 +46,9 @@ public class Bug42024Test extends UITestCase {
 	/*
 	 * @see TestCase#setUp()
 	 */
-	protected void setUp() throws Exception {
-		super.setUp();
-
+	protected void doSetUp() throws Exception {
+		super.doSetUp();
+		
 		// Create a window with a KeySequenceText
 		Display display = Display.getCurrent();
 		shell = new Shell(display);
@@ -60,12 +60,9 @@ public class Bug42024Test extends UITestCase {
 		shell.open();
 	}
 
-	/*
-	 * @see TestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception {
-		super.tearDown();
-
+	protected void doTearDown() throws Exception {
+		super.doTearDown();
+		
 		// Close and destroy the window
 		shell.close();
 		shell.dispose();

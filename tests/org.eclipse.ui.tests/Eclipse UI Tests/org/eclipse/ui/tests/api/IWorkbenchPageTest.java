@@ -47,13 +47,14 @@ public class IWorkbenchPageTest extends UITestCase {
 		super(testName);
 	}
 
-	public void setUp() {
+	protected void doSetUp() throws Exception {
+		super.doSetUp();
 		fWin = openTestWindow();
 		fActivePage = fWin.getActivePage();
 	}
 
-	public void tearDown() throws Exception {
-		super.tearDown();
+	protected void doTearDown() throws Exception {
+		super.doTearDown();
 		if (proj != null) {
 			try {
 				FileUtil.deleteProject(proj);

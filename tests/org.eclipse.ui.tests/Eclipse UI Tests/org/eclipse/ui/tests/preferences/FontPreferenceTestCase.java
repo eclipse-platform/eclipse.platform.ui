@@ -47,11 +47,8 @@ public class FontPreferenceTestCase extends UITestCase {
 		super(testName);
 	}
 
-	/*
-	 * @see TestCase#setUp
-	 */
-	protected void setUp() throws Exception {
-		super.setUp();
+	protected void doSetUp() throws Exception {
+		super.doSetUp();
 		AbstractUIPlugin plugin =
 			(AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
 		preferenceStore = plugin.getPreferenceStore();

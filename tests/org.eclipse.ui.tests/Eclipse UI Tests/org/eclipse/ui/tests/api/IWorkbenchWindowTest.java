@@ -26,7 +26,8 @@ public class IWorkbenchWindowTest extends UITestCase {
 		super(testName);
 	}
 
-	public void setUp() {
+	protected void doSetUp() throws Exception {
+		super.doSetUp();
 		fWin = openTestWindow();
 	}
 

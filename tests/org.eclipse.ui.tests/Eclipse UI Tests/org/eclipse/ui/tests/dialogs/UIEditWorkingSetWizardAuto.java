@@ -43,14 +43,11 @@ public class UIEditWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 		super(name);
 	}
 	
-	/**
-	 * @see junit.framework.TestCase#setUp()
-	 */
-	protected void setUp() throws Exception {
+	protected void doSetUp() throws Exception {
 		WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
 		fDefaultEditPage = registry.getDefaultWorkingSetPage();
 		fWizard = new WorkingSetEditWizard(fDefaultEditPage);
-		super.setUp();
+		super.doSetUp();
 	}
 	public void testEditPage() throws Throwable {
 		IWizardPage page = fWizardDialog.getCurrentPage();

@@ -38,7 +38,8 @@ public class ISelectionServiceTest extends UITestCase
 		super(testName);
 	}
 
-	protected void setUp() {
+	protected void doSetUp() throws Exception {
+		super.doSetUp();
 		fWindow = openTestWindow();
 		fPage = fWindow.getActivePage();
 	}
