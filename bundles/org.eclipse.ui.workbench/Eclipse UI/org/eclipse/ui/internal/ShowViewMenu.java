@@ -87,6 +87,7 @@ public class ShowViewMenu extends ShortcutMenu implements IPartListener {
 
 		// Get visible actions.
 		List viewIds = ((WorkbenchPage) page).getShowViewActionIds();
+		viewIds = addOpenedViews(page, viewIds);
 		List actions = new ArrayList(viewIds.size());
 		for (Iterator i = viewIds.iterator(); i.hasNext();) {
 			String id = (String) i.next();
@@ -105,7 +106,22 @@ public class ShowViewMenu extends ShortcutMenu implements IPartListener {
 		innerMgr.add(showDlgAction);
 	}
 
+	private List addOpenedViews(IWorkbenchPage page, List actions) {
+		ArrayList views = getParts(page);
+		ArrayList result = new ArrayList(views.size() + actions.size());
 
+		for (int i = 0; i < actions.size(); i++) {
+			Object element = actions.get(i);
+			if (result.indexOf(element) < 0)
+				result.add(element);
+		}
+		for (int i = 0; i < views.size(); i++) {
+			Object element = views.get(i);
+			if (result.indexOf(element) < 0)
+				result.add(element);
+		}
+		return result;
+	}
 	/**
 	 * Returns the action for the given view id, or null if not found.
 	 */
