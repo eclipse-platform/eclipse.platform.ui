@@ -12,10 +12,9 @@ package org.eclipse.ui.internal.progress;
 
 import java.util.*;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.*;
-import org.eclipse.core.runtime.jobs.IJobChangeListener;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.*;
 
 /**
@@ -35,31 +34,45 @@ public class ProgressContentProvider implements ITreeContentProvider {
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#scheduled(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void scheduled(IJobChangeEvent event) {
-				jobs.put(event.getJob(), new JobInfo(event.getJob()));
-				refreshViewer(null);
+				if (shouldDisplayJob(event.getJob())) {
+					jobs.put(event.getJob(), new JobInfo(event.getJob()));
+					refreshViewer(null);
+				}
 			}
-			
+
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void aboutToRun(IJobChangeEvent event) {
-				JobInfo info = getJobInfo(event.getJob());
-				info.setRunning();
-				refreshViewer(null);
+				if (shouldDisplayJob(event.getJob())) {
+					JobInfo info = getJobInfo(event.getJob());
+					info.setRunning();
+					refreshViewer(null);
+				}
 			}
 
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void done(IJobChangeEvent event) {
-				if (event.getResult().getCode() == IStatus.ERROR) {
-					JobInfo info = getJobInfo(event.getJob());
-					info.setError(event.getResult());
-				} else {
-					jobs.remove(event.getJob());
+				if (shouldDisplayJob(event.getJob())) {
+					if (event.getResult().getCode() == IStatus.ERROR) {
+						JobInfo info = getJobInfo(event.getJob());
+						info.setError(event.getResult());
+					} else {
+						jobs.remove(event.getJob());
+					}
+					refreshViewer(null);
 				}
-				refreshViewer(null);
 
+			}
+	
+			/**
+			 * Return whether or not this is a job we show
+			 * in the view.
+			 */
+			private boolean shouldDisplayJob(Job job) {
+				return !(job instanceof AnimateJob);
 			}
 		};
 		Platform.getJobManager().addJobChangeListener(listener);
