@@ -116,14 +116,8 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 		}
 	}
 	
-	/**
-	 * Returns a watch expression delegate specified for the given debug
-	 * model via extension or <code>null</code> if no delegate is available.
-	 * 
-	 * @param debugModel the unique identifier of a debug model
-	 * @return a watch expression delegate associated with the given model
-	 * 		or <code>null</code> if none
-	 * @since 3.0
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IExpressionManager#newWatchExpressionDelegate(java.lang.String)
 	 */
 	public IWatchExpressionDelegate newWatchExpressionDelegate(String debugModel) {
 		try {
@@ -138,6 +132,14 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 		}
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.core.IExpressionManager#hasWatchExpressionDelegate(java.lang.String)
+     */
+    public boolean hasWatchExpressionDelegate(String id) {
+        IConfigurationElement element= (IConfigurationElement) fWatchExpressionDelegates.get(id);
+        return element != null;
+    }
+    
 	/**
 	 * Loads any persisted watch expresions from the preferences.
 	 * NOTE: It's important that no setter methods are called on

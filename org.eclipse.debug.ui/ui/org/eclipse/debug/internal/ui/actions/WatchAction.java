@@ -15,6 +15,7 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IVariable;
@@ -36,7 +37,7 @@ import org.eclipse.ui.PartInitException;
  */
 public class WatchAction implements IObjectActionDelegate {
 
-	private ISelection fSelection;
+	private IStructuredSelection fSelection;
 
 	/**
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
@@ -51,14 +52,10 @@ public class WatchAction implements IObjectActionDelegate {
 		if (fSelection == null) {
 			return;
 		}
-		if (fSelection instanceof IStructuredSelection) {
-			Iterator iter = ((IStructuredSelection) fSelection).iterator();
-			while (iter.hasNext()) {
-				IVariable variable = (IVariable) iter.next();
-				createExpression(variable);
-			}
-		} else if (fSelection instanceof IVariable) {
-			createExpression((IVariable) fSelection);
+		Iterator iter = fSelection.iterator();
+		while (iter.hasNext()) {
+			IVariable variable = (IVariable) iter.next();
+			createExpression(variable);
 		}
 	}
 
@@ -100,7 +97,24 @@ public class WatchAction implements IObjectActionDelegate {
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-		fSelection = selection;
+        fSelection = null;
+        int enabled = 0;
+        int size = -1;
+        if (selection instanceof IStructuredSelection) {
+            fSelection = (IStructuredSelection) selection;
+            size = fSelection.size();
+            IExpressionManager manager = DebugPlugin.getDefault().getExpressionManager();
+            Iterator iterator = fSelection.iterator();
+            while (iterator.hasNext()) {
+                IVariable variable = (IVariable) iterator.next();
+                if (manager.hasWatchExpressionDelegate(variable.getModelIdentifier())) {
+                    enabled++;
+                } else {
+                    break;
+                }
+            }
+        }
+        action.setEnabled(enabled == size);
 	}
 
 }
