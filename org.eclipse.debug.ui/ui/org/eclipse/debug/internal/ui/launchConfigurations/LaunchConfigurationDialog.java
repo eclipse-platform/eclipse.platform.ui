@@ -148,6 +148,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	private ILaunchConfigurationWorkingCopy fWorkingCopy;
 	
+	/**
+	 * The actual (non-working copy) launch configuration that underlies the current working copy
+	 */
+	private ILaunchConfiguration fUnderlyingConfig;
+	
 	private boolean fWorkingCopyVerifyState = false;
 	
 	/**
@@ -1127,6 +1132,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			} else {
 				setWorkingCopy(config.getWorkingCopy());
 			}
+			fUnderlyingConfig = getWorkingCopy().getOriginal();
+	 		
 	 		// update the name field
 	 		getNameTextWidget().setText(config.getName());
 	 		
@@ -1155,6 +1162,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  	 */
  	protected void clearLaunchConfiguration() {
  		setWorkingCopy(null);
+ 		fUnderlyingConfig = null;
  		setWorkingCopyVerifyState(false);
 		setChangesAreUserChanges(false);
  		setWorkingCopyUserDirty(false);
@@ -1565,7 +1573,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * Notification the 'save & launch' button has been pressed
 	 */
 	protected void handleSaveAndLaunchPressed() {
-		handleSavePressed();
+		doSave();
 		handleLaunchPressed();
 	}
 	
@@ -1573,20 +1581,27 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * Notification that the 'save' button has been pressed
 	 */
 	protected void handleSavePressed() {
-		ILaunchConfigurationWorkingCopy workingCopy = getWorkingCopy();
-		ILaunchConfiguration newConfig = null;
+		doSave();
+		
+		// Do the UI-related things required after a save
 		setWorkingCopy(null);
+		setLastSavedName(fUnderlyingConfig.getName());	
+		setEnableStateEditButtons();		
+		getTreeViewer().setSelection(new StructuredSelection(fUnderlyingConfig));
+	}
+	
+	/**
+	 * Do the save and return the resulting <code>ILaunchConfiguration</code>
+	 */
+	protected void doSave() {
+		ILaunchConfigurationWorkingCopy workingCopy = getWorkingCopy();
 		try {
 			setIgnoreSelectionChanges(true);
-			newConfig = workingCopy.doSave();
+			fUnderlyingConfig = workingCopy.doSave();
 			setIgnoreSelectionChanges(false);
 		} catch (CoreException ce) {						
 		}	
-		setLastSavedName(workingCopy.getName());	
-		setWorkingCopyUserDirty(false);		
-		setEnableStateEditButtons();
-		
-		getTreeViewer().setSelection(new StructuredSelection(newConfig));
+		setWorkingCopyUserDirty(false);				
 	}
 	
 	/**
@@ -1595,7 +1610,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	protected void handleLaunchPressed() {
 		
 		// If the working copy has changed or has not yet been saved, 'autosave' it
-		ILaunchConfiguration config = null;
 		ILaunchConfigurationWorkingCopy workingCopy = getWorkingCopy();
 		if (isWorkingCopyUserDirty() || !workingCopy.exists()) {
 			getWorkingCopy().setAttribute(IDebugUIConstants.ATTR_AUTOSAVED, true);
@@ -1603,23 +1617,30 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			// the existing config
 			if (workingCopy.exists()) {
 				String uniqueName = generateUniqueNameFrom(getNameTextWidget().getText());
-				workingCopy.rename(uniqueName);
+				try {
+					workingCopy = workingCopy.copy(uniqueName);
+				} catch (CoreException ce) {
+				}
+				
 			}
 			
+			// All autosaved configs must be local
+			workingCopy.setContainer(null);
+
 			try {
 				setIgnoreSelectionChanges(true);
-				config = workingCopy.doSave();
+				fUnderlyingConfig = workingCopy.doSave();
 				setIgnoreSelectionChanges(false);
 			} catch (CoreException ce) {			
+				ce.printStackTrace();
 			}	
-		} else {
-			config = workingCopy.getOriginal();
-		}
+		} 
 		
 		// Do the launch
 		try {
-			config.launch(getMode());
+			fUnderlyingConfig.launch(getMode());
 		} catch (CoreException ce) {
+			ce.printStackTrace();
 		}		
 		close();
 	}
