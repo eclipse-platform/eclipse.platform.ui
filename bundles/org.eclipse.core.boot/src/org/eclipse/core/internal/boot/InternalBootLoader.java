@@ -178,6 +178,18 @@ public static boolean containsSavedPlatform(String location) {
 	return new File(location + "/" + META_AREA).exists();
 }
 private static URL[] defaultPluginPath() {
+	// If nothing was specified by the user or the user's value could not be used
+	// use the data from the LaunchInfo.
+	if (true) {
+		LaunchInfo current = LaunchInfo.getCurrent();
+		URL[] plugins = current.getPluginPath();
+		URL[] fragments = current.getFragmentPath();
+		URL[] result = new URL[plugins.length + fragments.length];
+		System.arraycopy(plugins, 0, result, 0, plugins.length);
+		System.arraycopy(fragments, 0, result, plugins.length, fragments.length);
+		return result;
+	}
+	
 	URL[] result = new URL[1];
 	try {
 		// at this point use "real" (internal) URL to allow registry manager to discover plugins.
@@ -827,6 +839,10 @@ public static Object run(String applicationName, URL pluginPathLocation, String 
 	} catch (Exception e) {
 		throw e;
 	}
+	// if the application is still null, then the user has not specified so use the
+	// one from the launch info. This is the normal case.
+	if (applicationName == null)
+		application = applicationName;
 	IPlatformRunnable runnable = getRunnable(application);
 	if (runnable == null)
 		throw new IllegalArgumentException("Application not found: " + application);
