@@ -40,6 +40,7 @@ import org.eclipse.core.runtime.jobs.ProgressProvider;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
@@ -995,7 +996,12 @@ public class ProgressManager extends ProgressProvider
 	public void registerIconForFamily(ImageDescriptor icon, Object family) {
 		String key = IMAGE_KEY + String.valueOf(imageKeyTable.size());
 		imageKeyTable.put(family, key);
-		JFaceResources.getImageRegistry().put(key, icon);
+		ImageRegistry registry = JFaceResources.getImageRegistry();
+		
+		//Avoid registering twice
+		if(registry.getDescriptor(key) == null)
+			registry.put(key, icon);
+		
 	}
 	/*
 	 * (non-Javadoc)
