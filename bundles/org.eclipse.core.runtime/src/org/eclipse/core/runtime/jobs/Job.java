@@ -112,14 +112,14 @@ public abstract class Job extends InternalJob {
 	 */
 	public static final int NONE = -1;
 	/** 
-	 * Job state code (value 3) indicating that a job is sleeping.
+	 * Job state code (value 1) indicating that a job is sleeping.
 	 * 
 	 * @see Job#run
 	 * @see IJobManager#getState
 	 */
 	public static final int SLEEPING = 1;
 	/** 
-	 * Job state code (value 4) indicating that a job is waiting to be run.
+	 * Job state code (value 2) indicating that a job is waiting to be run.
 	 * 
 	 * @see IJobManager#getState
 	 */
