@@ -24,9 +24,12 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.internal.ide.StatusUtil;
 
 /**
- * 
+ * Represents a job that can be restarted. When a job is "restarted", the currently running
+ * instance is cancelled and a new instance is scheduled once the previous one terminates.
+ * This does not inherit from the Jobs API. Instead of subclassing this class, a pointer to
+ * a IRunnableWithProgress should be passed into the constructor. 
  */
-public class RestartableJob {
+public final class RestartableJob {
 	IRunnableWithProgress runnable;
 	
 	Job theJob;
@@ -34,6 +37,13 @@ public class RestartableJob {
 	private Object lock = new Object();
 	private IProgressMonitor currentMonitor = null;
 	
+	/**
+	 * Constructs a new RestartableJob with the given name that will run the given
+	 * runnable.
+	 * 
+	 * @param name
+	 * @param newRunnable
+	 */
 	public RestartableJob(String name, IRunnableWithProgress newRunnable) {
 		this.runnable = newRunnable;
 
@@ -51,6 +61,11 @@ public class RestartableJob {
 		});
 	}
 	
+	/**
+	 * Instantiates the actual Job object.
+	 * 
+	 * @param name
+	 */
 	private void createJob(String name) {
 		theJob = new Job(name) {
 			protected IStatus run(IProgressMonitor innerMonitor) {
@@ -61,7 +76,7 @@ public class RestartableJob {
 					}
 					runnable.run(innerMonitor);
 				} catch (InvocationTargetException e) {
-					StatusUtil.newStatus(IStatus.ERROR, e.getMessage(), e.getTargetException());
+					return StatusUtil.newStatus(IStatus.ERROR, e.toString(), e.getTargetException());
 				} catch (InterruptedException e) {
 					return Status.CANCEL_STATUS;
 				}

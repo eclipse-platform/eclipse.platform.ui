@@ -168,7 +168,7 @@ public class MarkerFilter {
 			IResource resource = resources[resourceIdx];
 			
 			// Skip resources that don't exist
-			if (!resource.exists()) {
+			if (!resource.isAccessible()) {
 				continue;
 			}
 			
