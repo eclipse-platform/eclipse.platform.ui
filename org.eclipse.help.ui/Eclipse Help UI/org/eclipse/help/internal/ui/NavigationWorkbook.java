@@ -4,7 +4,6 @@ package org.eclipse.help.internal.ui;
  * All Rights Reserved.
  */
 
-
 import java.util.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
@@ -214,10 +213,18 @@ public class NavigationWorkbook implements ISelectionProvider {
 				}
 		}
 		// inform navigation pages
+		// all except current page (right to left)
+		NavigationPage currentPage=getSelectedPage();
 		NavigationPage[] pages = getPages();
-		for (int i = 0; i < pages.length; i++) {
+		for (int i = pages.length; i-- > 0;) {
 			NavigationPage aPage = (NavigationPage) pages[i];
+			if (aPage == currentPage)
+				continue;
 			aPage.setSelection(selection);
+		}
+		// current page
+		if (currentPage != null) {
+			currentPage.setSelection(selection);
 		}
 	}
 }
