@@ -103,7 +103,7 @@ public interface IExtensionTracker {
 	public Object[] getObjects(IExtension extension);
 	
 	/**
-	 * Close the tracker. All registered objects are fred.
+	 * Close the tracker. All registered objects are fred and all handlers are being automatically removed.
 	 */
     public void close();
 }
