@@ -353,7 +353,7 @@ public class DeleteTest extends LocalStoreTest {
 		ensureExistsInWorkspace(subsubfileUnsync, true);
 
 		/* make some resources "unsync" with the workspace */
-		ensureExistsInFileSystem(fileUnsync);
+		ensureOutOfSync(fileUnsync);
 		ensureDoesNotExistInFileSystem(deletedfolderSync);
 		ensureOutOfSync(subsubfileUnsync);
 
@@ -399,10 +399,9 @@ public class DeleteTest extends LocalStoreTest {
 		ensureExistsInWorkspace(subsubfileUnsync, true);
 
 		/* make some resources "unsync" with the workspace */
-		Thread.sleep(sleepTime);
-		ensureExistsInFileSystem(fileUnsync);
+		ensureOutOfSync(fileUnsync);
 		ensureDoesNotExistInFileSystem(deletedfolderSync);
-		ensureExistsInFileSystem(subsubfileUnsync);
+		ensureOutOfSync(subsubfileUnsync);
 
 		/* delete */
 		try {
