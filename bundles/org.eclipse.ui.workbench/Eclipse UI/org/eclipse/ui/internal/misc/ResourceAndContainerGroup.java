@@ -161,7 +161,7 @@ protected void createContents(Composite parent,String resourceLabelString,int he
 	// resource name entry field
 	resourceNameField = new Text(nameGroup,SWT.BORDER);
 	resourceNameField.addListener(SWT.Modify,this);
-	data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
+	GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 	data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 	resourceNameField.setLayoutData(data);
 	resourceNameField.setFont(font);
