@@ -43,24 +43,12 @@ public interface IExternalToolConstants {
 	 */
 	public static final String EXTENSION_POINT_REFRESH_VARIABLES = "refreshVariables"; //$NON-NLS-1$
 
-	// ------- Views -------
-
-	/**
-	 * Ant View identifier (value <code>org.eclipse.ui.externaltools.AntView</code>).
-	 */
-	public static final String ANT_VIEW_ID = PLUGIN_ID + ".AntView"; //$NON-NLS-1$
-
 	// ------- Tool Types -------
 	/**
 	 * External tool type for programs such as executables, batch files, 
 	 * shell scripts, etc (value <code>programType</code>).
 	 */
 	public static final String TOOL_TYPE_PROGRAM = "programType"; //$NON-NLS-1$;
-
-	/**
-	 * External tool type for Ant build files (value <code>antBuildType</code>).
-	 */
-	public static final String TOOL_TYPE_ANT_BUILD = "antBuildType"; //$NON-NLS-1$;
 
 	// ------- Variables -------
 
@@ -209,23 +197,7 @@ public interface IExternalToolConstants {
 	 */
 	public static final String IMG_PROPERTY = PLUGIN_ID + ".IMG_PROPERTY"; //$NON-NLS-1$
 	
-	/**
-	 * Ant Targets tab image.
-	 */
-	public static final String IMG_TAB_ANT_TARGETS = PLUGIN_ID + ".IMG_TAB_ANT_TARGETS"; //$NON-NLS-1$
-
 	// ------- Launch configuration types --------
-	/**
-	 * Ant launch configuration type identifier.
-	 */
-	public static final String ID_ANT_LAUNCH_CONFIGURATION_TYPE = "org.eclipse.ant.AntLaunchConfigurationType"; //$NON-NLS-1$
-	
-	/**
-	 * Ant builder launch configuration type identifier. Ant project builders
-	 * are of this type.
-	 */
-	public static final String ID_ANT_BUILDER_LAUNCH_CONFIGURATION_TYPE = "org.eclipse.ant.AntBuilderLaunchConfigurationType"; //$NON-NLS-1$
-
 	/**
 	 * Program launch configuration type identifier.
 	 */
@@ -300,7 +272,7 @@ public interface IExternalToolConstants {
 	 * external tool builder should be run.
 	 */
 	public static final String ATTR_RUN_BUILD_KINDS = PLUGIN_ID + ".ATTR_RUN_BUILD_KINDS"; //$NON-NLS-1$
-
+	
 	/**
 	 * Boolean attribute indicating if an external tool should be run in the
 	 * background. Default value is <code>false</code>.
@@ -324,56 +296,5 @@ public interface IExternalToolConstants {
 	 * Default value is <code>null</code>, which indicates a default working
 	 * directory, which is tool specific.
 	 */
-	public static final String ATTR_WORKING_DIRECTORY = PLUGIN_ID + ".ATTR_WORKING_DIRECTORY"; //$NON-NLS-1$
-
-	// ------- Common Ant Launch Configuration Attributes -------
-	/**
-	 * String attribute indicating the Ant targets to execute. Default value is
-	 * <code>null</code> which indicates that the default target is to be
-	 * executed. Format is a comma separated listing of targets.
-	 */
-	public static final String ATTR_ANT_TARGETS = PLUGIN_ID + ".ATTR_ANT_TARGETS"; //$NON-NLS-1$
-
-	/**
-	 * Map attribute indicating the Ant properties to be defined during the
-	 * build. Default value is <code>null</code> which indicates no additional
-	 * properties will be defined.
-	 */
-	public static final String ATTR_ANT_PROPERTIES = PLUGIN_ID + ".ATTR_ANT_PROPERTIES"; //$NON-NLS-1$					
-
-	/**
-	 * String attribute indicating the Ant targets to execute. Default value is
-	 * <code>null</code> which indicates that no additional property files
-	 * will be defined. Format is a comma separated listing of property files.
-	 */
-	public static final String ATTR_ANT_PROPERTY_FILES = PLUGIN_ID + ".ATTR_ANT_PROPERTY_FILES"; //$NON-NLS-1$
-	
-	/**
- 	* String attribute indicating the custom runtime classpath to use for an Ant
- 	* build. Default value is <code>null</code> which indicates that the global
- 	* classpath is to be used. Format is a comma separated listing of URLs.
-  	*/
-	public static final String ATTR_ANT_CUSTOM_CLASSPATH = PLUGIN_ID + ".ATTR_ANT_CUSTOM_CLASSPATH"; //$NON-NLS-1$
-	
-	/**
-	 * String attribute indicating the custom Ant home to use for an Ant build.
-	 * Default value is <code>null</code> which indicates that no Ant home is to
-	 * be set 
-	 */
-	public static final String ATTR_ANT_HOME = PLUGIN_ID + ".ATTR_ANT_HOME"; //$NON-NLS-1$
-	
-	/**
-	 * Identifier for Ant processes (value <code>org.eclipse.ui.externaltools.ant</code>). This identifier is
-	 * set as the value for the <code>IProcess.ATTR_PROCESS_TYPE</code>
-	 * attribute in processes create by the Ant launch delegate.
-	 */
-	public static final String ID_ANT_PROCESS_TYPE = "org.eclipse.ui.externaltools.ant"; //$NON-NLS-1$	
-	
-	// -------- Status Codes -------------
-	
-	/**
-	 * Status code used by the 'Run Ant' status handler which is invoked when
-	 * the launch dialog is opened by the 'Run Ant' action.
-	 */
-	public static final int STATUS_INIT_RUN_ANT = 1000;								
+	public static final String ATTR_WORKING_DIRECTORY = PLUGIN_ID + ".ATTR_WORKING_DIRECTORY"; //$NON-NLS-1$	
 }

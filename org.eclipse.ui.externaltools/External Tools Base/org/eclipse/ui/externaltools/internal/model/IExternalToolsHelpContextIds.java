@@ -44,31 +44,12 @@ public interface IExternalToolsHelpContextIds {
 	public static final String VARIABLE_SELECTION_DIALOG = PREFIX + "variable_selection_dialog_context"; //$NON-NLS-1$
 	
 	// Preference Pages
-	public static final String ANT_PREFERENCE_PAGE = PREFIX + "ant_preference_page_context"; //$NON-NLS-1$
-	public static final String ANT_RUNTIME_PREFERENCE_PAGE = PREFIX + "ant_runtime_preference_page_context"; //$NON-NLS-1$
-	public static final String ANT_EDITOR_PREFERENCE_PAGE = PREFIX + "ant_editor_preference_page_context"; //$NON-NLS-1$
-	public static final String ANT_TYPES_PAGE = PREFIX + "ant_types_page_context"; //$NON-NLS-1$
-	public static final String ANT_CLASSPATH_PAGE = PREFIX + "ant_classpath_page_context"; //$NON-NLS-1$
-	
-	public static final String ANT_PROPERTIES_PAGE = PREFIX + "ant_properties_page_context"; //$NON-NLS-1$
-	public static final String ANT_TASKS_PAGE = PREFIX + "ant_tasks_page_context"; //$NON-NLS-1$
 	public static final String EXTERNAL_TOOLS_PREFERENCE_PAGE = PREFIX + "preference_page_context";  //$NON-NLS-1$
 		
 	// Property Pages
 	public static final String EXTERNAL_TOOLS_BUILDER_PROPERTY_PAGE = PREFIX + "builder_property_page_context"; //$NON-NLS-1$
-	
-	// Views
-	public static final String ANT_VIEW = PREFIX + "ant_view_context"; //$NON-NLS-1$
-	
-	// Editor
-	public static final String ANT_EDITOR = PREFIX + "ant_editor_context"; //$NON-NLS-1$
 
 	//Launch configuration dialog tabs
-	public static final String EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_ANT_MAIN_TAB = PREFIX + "ant_main_tab_context"; //$NON-NLS-1$
-	public static final String EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_ANT_TARGETS_TAB = PREFIX + "ant_targets_tab_context"; //$NON-NLS-1$
-	public static final String EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_ANT_PROPERTIES_TAB = PREFIX + "ant_properties_tab_context"; //$NON-NLS-1$
-	public static final String EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_ANT_CLASSPATH_TAB = PREFIX + "ant_classpath_tab_context"; //$NON-NLS-1$
-	
 	public static final String EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_BUILDER_TAB = PREFIX + "builders_tab_context"; //$NON-NLS-1$
 	public static final String EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_PROGRAM_MAIN_TAB = PREFIX + "program_main_tab_context"; //$NON-NLS-1$
 	public static final String EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_REFRESH_TAB = PREFIX + "refresh_tab_context"; //$NON-NLS-1$

@@ -31,8 +31,20 @@ public final class ExternalToolMigration {
 	/*
 	 * Ant tags
 	 */
-	public static final String RUN_TARGETS_ATTRIBUTE = IExternalToolConstants.TOOL_TYPE_ANT_BUILD + ".runTargets"; //$NON-NLS-1$;
+	/**
+	 * External tool type for Ant build files (value <code>antBuildType</code>).
+	 */
+	public static final String TOOL_TYPE_ANT_BUILD = "antBuildType"; //$NON-NLS-1$;
+		
+	public static final String RUN_TARGETS_ATTRIBUTE = TOOL_TYPE_ANT_BUILD + ".runTargets"; //$NON-NLS-1$;
 
+	/**
+	* String attribute indicating the Ant targets to execute. Default value is
+	 * <code>null</code> which indicates that the default target is to be
+	 * executed. Format is a comma separated listing of targets.
+	 */
+	public static final String ATTR_ANT_TARGETS = IExternalToolConstants.PLUGIN_ID + ".ATTR_ANT_TARGETS"; //$NON-NLS-1$
+	
 	/*
 	 * 2.0 External Tool Tags
 	 */
@@ -130,7 +142,7 @@ public final class ExternalToolMigration {
 				String value = tokenizer.nextToken();
 				if (key.equals(RUN_TARGETS_ATTRIBUTE)) {
 					// 2.1 implementation only defined 1 "extra attribute"
-					config.setAttribute(IExternalToolConstants.ATTR_ANT_TARGETS, value);
+					config.setAttribute(ATTR_ANT_TARGETS, value);
 				}
 			}
 		}
@@ -143,10 +155,11 @@ public final class ExternalToolMigration {
 	public static ILaunchConfigurationWorkingCopy configFrom20ArgumentMap(Map args) {
 		// Update the type...
 		String type = (String) args.get(TAG_TOOL_TYPE);
-		if (TOOL_TYPE_ANT.equals(type))
-			type = IExternalToolConstants.TOOL_TYPE_ANT_BUILD;
-		else
+		if (TOOL_TYPE_ANT.equals(type)) {
+			type = TOOL_TYPE_ANT_BUILD;
+		} else {
 			type = IExternalToolConstants.TOOL_TYPE_PROGRAM;
+		}
 
 		String name = (String) args.get(TAG_TOOL_NAME);
 		
@@ -207,7 +220,7 @@ public final class ExternalToolMigration {
 			targetNames = buffer.toString();
 		}
 		if (targetNames != null && targetNames.length() > 0) {
-			config.setAttribute(IExternalToolConstants.ATTR_ANT_TARGETS, targetNames);
+			config.setAttribute(ATTR_ANT_TARGETS, targetNames);
 		}
 
 		// Collect the rest of the information
@@ -230,9 +243,10 @@ public final class ExternalToolMigration {
 		}
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 		ILaunchConfigurationType configType;
-		if (IExternalToolConstants.TOOL_TYPE_ANT_BUILD.equals(type)) {
-			configType = manager.getLaunchConfigurationType(IExternalToolConstants.ID_ANT_BUILDER_LAUNCH_CONFIGURATION_TYPE);
-		} else if (IExternalToolConstants.TOOL_TYPE_PROGRAM.equals(type)) {
+		//if (IExternalToolConstants.TOOL_TYPE_ANT_BUILD.equals(type)) {
+			//configType = manager.getLaunchConfigurationType(IExternalToolConstants.ID_ANT_BUILDER_LAUNCH_CONFIGURATION_TYPE);
+		//} else
+		 if (IExternalToolConstants.TOOL_TYPE_PROGRAM.equals(type)) {
 			configType = manager.getLaunchConfigurationType(IExternalToolConstants.ID_PROGRAM_BUILDER_LAUNCH_CONFIGURATION_TYPE);
 		} else {
 			return null;
@@ -254,6 +268,5 @@ public final class ExternalToolMigration {
 			name= (String) commandArgs.get(TAG_TOOL_NAME);
 		}
 		return name;
-	}
-	
+	}	
 }
