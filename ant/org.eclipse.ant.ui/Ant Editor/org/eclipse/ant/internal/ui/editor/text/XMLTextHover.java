@@ -279,7 +279,11 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
         if (region != null) {
             try {
                 char c= document.getChar(region.getOffset() - 1);
-                if (c != '{') {
+				if (c == '"') {
+					if (document.get(offset, region.getLength()).indexOf(',') != -1) {
+						region = cleanRegionForNonProperty(offset, document, region);
+					}
+				} else if (c != '{') {
                 	region = cleanRegionForNonProperty(offset, document, region);
                 }
             } catch (BadLocationException e) {
