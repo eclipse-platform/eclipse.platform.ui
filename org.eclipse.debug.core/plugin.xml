@@ -111,32 +111,38 @@
       <sourceContainerType
             name="%containerName.project"
             class="org.eclipse.debug.internal.core.sourcelookup.containers.ProjectSourceContainerType"
-            id="org.eclipse.debug.core.containerType.project">
+            id="org.eclipse.debug.core.containerType.project"
+            description="%containerDescription.project">
       </sourceContainerType>
       <sourceContainerType
             name="%containerName.folder"
             class="org.eclipse.debug.internal.core.sourcelookup.containers.FolderSourceContainerType"
-            id="org.eclipse.debug.core.containerType.folder">
+            id="org.eclipse.debug.core.containerType.folder"
+            description="%containerDescription.folder">
       </sourceContainerType>
       <sourceContainerType
             name="%containerName.directory"
             class="org.eclipse.debug.internal.core.sourcelookup.containers.DirectorySourceContainerType"
-            id="org.eclipse.debug.core.containerType.directory">
+            id="org.eclipse.debug.core.containerType.directory"
+            description="%containerDescription.directory">
       </sourceContainerType>
       <sourceContainerType
             name="%containerName.workspace"
             class="org.eclipse.debug.internal.core.sourcelookup.containers.WorkspaceSourceContainerType"
-            id="org.eclipse.debug.core.containerType.workspace">
+            id="org.eclipse.debug.core.containerType.workspace"
+            description="%containerDescription.workspace">
       </sourceContainerType>      
       <sourceContainerType
             name="%containerName.default"
 			class="org.eclipse.debug.internal.core.sourcelookup.containers.DefaultSourceContainerType"
-            id="org.eclipse.debug.core.containerType.default">
+            id="org.eclipse.debug.core.containerType.default"
+            description="%containerDescription.default">
       </sourceContainerType>    
       <sourceContainerType
             name="%containerName.archive"
 			class="org.eclipse.debug.internal.core.sourcelookup.containers.ArchiveSourceContainerType"
-            id="org.eclipse.debug.core.containerType.archive">
+            id="org.eclipse.debug.core.containerType.archive"
+            description="%containerDescription.archive">
       </sourceContainerType>      
    </extension>
    

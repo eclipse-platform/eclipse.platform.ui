@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.sourcelookup;
 
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
 import org.eclipse.swt.widgets.Shell;
 
@@ -21,18 +22,18 @@ import org.eclipse.swt.widgets.Shell;
  * THIS INTERFACE IS EXPERIMENTAL AND SUBJECT TO CHANGE
  * </p>
  * 
- * TODO: issue - should we use a wizard instead of a dialog for this? 
  *@see ISourceContainerType
  *@since 3.0
  */
 public interface ISourceContainerBrowser {
 	/**
-	 * Displays a browse dialog and then uses the input to create a source container.
-	 * If user input is not required, it can just return a new source container without
-	 * displaying a browse dialog.
-	 * @param shell the shell to use to display the dialog
-	 * @return the new source container or containers (if multiple items selected by user)
+	 * Creates and returns new source containers for a source container type
+	 * the user has selected to add to the given launch configuration.
+	 * 
+	 * @param shell the shell to use to display any dialogs
+	 * @param configuration the launch configuration being edited
+	 * @return the new source container or containers
 	 */
-	public ISourceContainer[] createSourceContainers(Shell shell);
+	public ISourceContainer[] createSourceContainers(Shell shell, ILaunchConfiguration configuration);
 	
 }

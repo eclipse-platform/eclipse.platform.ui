@@ -790,6 +790,15 @@ public interface IDebugUIConstants {
 	public static final int STATUS_INVALID_EXTENSION_DEFINITION = 100;
 	
 	/**
+	 * Status code for a status handler that invokes a delegate
+	 * status handler asyncronously in the UI thread, and blocks
+	 * until the delegate status handler returns.
+	 * 
+	 * @since 3.0
+	 */
+	public static final int STATUS_HANDLER_PROMPT = 200;
+	
+	/**
 	 * Status code indicating an unexpected internal error.
 	 */
 	public static final int INTERNAL_ERROR = 120;		

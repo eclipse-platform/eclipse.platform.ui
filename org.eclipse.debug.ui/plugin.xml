@@ -1179,6 +1179,18 @@
             class="org.eclipse.debug.internal.ui.WorkingDirectoryStatusHandler"
             id="org.eclipse.debug.ui.statusHandler.workingDirectory">
       </statusHandler>
+      <statusHandler
+            code="200"
+            plugin="org.eclipse.debug.ui"
+            class="org.eclipse.debug.internal.ui.sourcelookup.Prompter"
+            id="org.eclipse.debug.ui.statusHandler.prompter">
+      </statusHandler>  
+      <statusHandler
+            code="205"
+            plugin="org.eclipse.debug.ui"
+            class="org.eclipse.debug.internal.ui.sourcelookup.ResolveDuplicatesHandler"
+            id="org.eclipse.debug.ui.statusHandler.selectSourceDialog">
+      </statusHandler>      
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchGroups">
@@ -1711,6 +1723,16 @@
             id="org.eclipse.debug.ui.containerPresentation.default">
       </sourceContainerPresentation>
    </extension>
+<!-- ========================================= -->
+<!-- Adapter factories for source lookup       -->
+<!-- ========================================= -->
+	<extension point="org.eclipse.core.runtime.adapters">
+         <factory 
+            class="org.eclipse.debug.internal.ui.sourcelookup.SourceElementAdapterFactory"
+            adaptableType="org.eclipse.debug.internal.core.sourcelookup.containers.LocalFileStorage">
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+         </factory>
+    </extension>
 <!-- ========================================= -->
 <!-- Contextual Launch Menu (Work in Progress) -->
 <!-- ========================================= -->

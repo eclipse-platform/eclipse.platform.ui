@@ -36,7 +36,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class SourceContainerLookupTab extends AbstractLaunchConfigurationTab {
 	//the panel displaying the containers
 	protected SourceContainerLookupPanel fSourceLookupPanel;
-	
+		
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(Composite)
 	 */

@@ -10,15 +10,15 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.sourcelookup;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
- * Label provider for source containers.
+ * Label provider for source containers and source container types.
  * 
  * @since 3.0
  */
@@ -29,16 +29,23 @@ public class SourceContainerLabelProvider extends LabelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
-	public Image getImage(Object element) {		
-		if (element instanceof ISourceContainer) {
-			Image image = SourceLookupUIUtils.getSourceContainerImage(((ISourceContainer) element).getType().getId());
-			if (image == null && element instanceof IAdaptable) {
-				Object object = ((IAdaptable)element).getAdapter(IAdaptable.class);
-				image = getWorkbenchLabelProvider().getImage(object);
+	public Image getImage(Object element) {
+		// first allow workbench adapter to provide image
+		Image image = getWorkbenchLabelProvider().getImage(element);
+		if (image == null) {
+			ISourceContainerType type = null;
+			if (element instanceof ISourceContainer) {
+				type = ((ISourceContainer)element).getType();
+			} else if (element instanceof ISourceContainerType) {
+				type = (ISourceContainerType) element;
 			}
-			if (image != null) {
-				return image;
+			if (type != null) {
+				// next consult contributed image
+				image = SourceLookupUIUtils.getSourceContainerImage(type.getId());
 			}
+		}		
+		if (image != null) {
+			return image;
 		}
 		return super.getImage(element);
 	}
@@ -47,8 +54,17 @@ public class SourceContainerLabelProvider extends LabelProvider {
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
 	public String getText(Object element) {
-		if (element instanceof ISourceContainer)
-			return ((ISourceContainer) element).getName();
+		// first, allo workbench adapter to provide label
+		String label = getWorkbenchLabelProvider().getText(element);
+		if (label == null || label.length() == 0) {
+			if (element instanceof ISourceContainer) {
+				return ((ISourceContainer) element).getName(); 
+			} else if (element instanceof ISourceContainerType) {
+				return ((ISourceContainerType)element).getName();
+			}
+		} else {
+			return label;
+		}
 		return super.getText(element);
 	}
 	

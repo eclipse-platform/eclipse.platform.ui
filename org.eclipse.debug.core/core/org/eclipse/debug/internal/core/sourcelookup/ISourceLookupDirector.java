@@ -63,4 +63,14 @@ public interface ISourceLookupDirector extends IPersistableSourceLocator2 {
 	 * its set of source lookup participants.
 	 */
 	public void initializeParticipants();
+	
+	/**
+	 * Returns whether this source director supports the given type
+	 * of source location. 
+	 * 
+	 * @param type source container type
+	 * @return whether this source director supports the given type
+	 * of source location
+	 */
+	public boolean supportsSourceContainerType(ISourceContainerType type);
 }

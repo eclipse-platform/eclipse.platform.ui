@@ -1,0 +1,70 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.debug.internal.ui.sourcelookup;
+
+import java.io.File;
+
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.debug.internal.core.sourcelookup.containers.LocalFileStorage;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+
+/**
+ * Workbench adapter for source elements.
+ * 
+ * @since 3.0
+ */
+public class SourceElementWorkbenchAdapter implements IWorkbenchAdapter {
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
+	 */
+	public Object[] getChildren(Object o) {
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
+	 */
+	public ImageDescriptor getImageDescriptor(Object object) {
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
+	 */
+	public String getLabel(Object o) {
+		if (o instanceof LocalFileStorage) {
+			LocalFileStorage storage = (LocalFileStorage) o;
+			IPath path = storage.getFullPath();
+			StringBuffer buffer = new StringBuffer();
+			String[] segments = path.segments();
+			if (segments.length > 0) {
+				buffer.append(path.lastSegment());
+				if (segments.length > 1) {
+					buffer.append(" - "); //$NON-NLS-1$
+					if (path.getDevice() != null) {
+						buffer.append(path.getDevice());	
+					}
+					for (int i = 0; i < segments.length - 1; i++) {
+						buffer.append(File.separatorChar);
+						buffer.append(segments[i]);
+					}
+				}
+				return buffer.toString();
+			}
+		}
+		return ""; //$NON-NLS-1$
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
+	 */
+	public Object getParent(Object o) {
+		return null;
+	}
+}

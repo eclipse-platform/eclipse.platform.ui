@@ -9,8 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.sourcelookup;
-import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.actions.SelectionListenerAction;
 
 
 /**
@@ -20,9 +23,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  */
 public class AddContainerAction extends SourceContainerAction {
 	
+	private ISourceLookupDirector fDirector;
+	
 	public AddContainerAction() {
-		super(SourceLookupUIMessages.getString("sourceTab.addButton")); //$NON-NLS-1$		
-	}	
+		super(SourceLookupUIMessages.getString("sourceTab.addButton")); //$NON-NLS-1$
+	}
 	
 	/**
 	 * Prompts for a project to add.
@@ -30,8 +35,16 @@ public class AddContainerAction extends SourceContainerAction {
 	 * @see IAction#run()
 	 */	
 	public void run() {
-		Dialog dialog = new AddSourceContainerDialog(getShell(), getViewer());
+		ILaunchConfiguration configuration = null;
+		if (fDirector != null) {
+			configuration = fDirector.getLaunchConfiguration();
+		}
+		AddSourceContainerDialog dialog = new AddSourceContainerDialog(getShell(), getViewer(), configuration, fDirector);
 		dialog.open();			
+	}
+	
+	public void setSourceLookupDirector(ISourceLookupDirector director) {
+		fDirector = director;
 	}
 	
 	/**

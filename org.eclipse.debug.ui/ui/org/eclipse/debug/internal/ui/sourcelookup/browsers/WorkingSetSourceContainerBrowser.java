@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.ui.sourcelookup.browsers;
 
 import java.util.ArrayList;
 
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser;
 import org.eclipse.debug.internal.ui.sourcelookup.containers.WorkingSetSourceContainer;
@@ -29,9 +30,9 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 public class WorkingSetSourceContainerBrowser implements ISourceContainerBrowser {
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell)
+	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public ISourceContainer[] createSourceContainers(Shell shell) {
+	public ISourceContainer[] createSourceContainers(Shell shell, ILaunchConfiguration configuration) {
 		ArrayList containers = new ArrayList();		
 		IWorkingSetSelectionDialog dialog = WorkbenchPlugin.getDefault().getWorkingSetManager().createWorkingSetSelectionDialog(shell,true);
 		

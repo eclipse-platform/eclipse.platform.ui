@@ -23,6 +23,7 @@ import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.sourcelookup.containers.WorkingSetSourceContainer;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -57,6 +58,8 @@ public class SourceContainerLookupPanel extends AbstractLaunchConfigurationTab i
 	protected List fActions = new ArrayList(5);
 	//the director that will be used by the tab to manage/store the containers
 	protected AbstractSourceLookupDirector fLocator;
+	
+	protected AddContainerAction fAddAction; 
 	
 	protected static final String DIALOG_SETTINGS_PREFIX = "sourceTab"; //$NON-NLS-1$
 	
@@ -133,13 +136,13 @@ public class SourceContainerLookupPanel extends AbstractLaunchConfigurationTab i
 		FontMetrics fontMetrics = gc.getFontMetrics();
 		gc.dispose();
 		
-		SourceContainerAction action = new AddContainerAction();
+		fAddAction = new AddContainerAction();
 		Button button =
-			createPushButton(pathButtonComp, action.getText(), fontMetrics);
-		action.setButton(button);
-		addAction(action);
+			createPushButton(pathButtonComp, fAddAction.getText(), fontMetrics);
+		fAddAction.setButton(button);
+		addAction(fAddAction);
 		
-		action = new RemoveAction();
+		SourceContainerAction  action = new RemoveAction();
 		button =
 			createPushButton(pathButtonComp, action.getText(), fontMetrics);
 		action.setButton(button);
@@ -255,9 +258,7 @@ public class SourceContainerLookupPanel extends AbstractLaunchConfigurationTab i
 			memento = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, (String)null);
 			type = configuration.getAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
 			if (type == null) {
-				// TODO: should the source locator id be API on ILaunchConfigType?
-				// TODO: spec this attribute in plug-in XML
-				type = configuration.getType().getAttribute("sourceLocatorId"); //$NON-NLS-1$
+				type = configuration.getType().getSourceLocatorId();
 			}
 		}catch(CoreException e){
 			setErrorMessage(e.getMessage());
@@ -299,6 +300,7 @@ public class SourceContainerLookupPanel extends AbstractLaunchConfigurationTab i
 		fPathViewer.setEntries(locator.getSourceContainers());		
 		fDuplicatesButton.setSelection(locator.isFindDuplicates());
 		fLocator = locator;
+		fAddAction.setSourceLookupDirector(locator);
 		setDirty(false);
 	}
 	

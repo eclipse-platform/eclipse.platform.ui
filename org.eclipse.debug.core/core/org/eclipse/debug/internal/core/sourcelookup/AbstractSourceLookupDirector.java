@@ -17,13 +17,16 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.core.sourcelookup.containers.DefaultSourceContainer;
 import org.w3c.dom.Document;
@@ -70,6 +73,9 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	protected ILaunchConfiguration fConfig;
 	//whether duplicates should be searched for or not
 	protected boolean fDuplicates = false;
+	
+	protected static final IStatus fPromptStatus = new Status(IStatus.INFO, "org.eclipse.debug.ui", 200, "", null);  //$NON-NLS-1$//$NON-NLS-2$
+	protected static final IStatus fResolveDuplicatesStatus = new Status(IStatus.INFO, "org.eclipse.debug.ui", 205, "", null);  //$NON-NLS-1$//$NON-NLS-2$
 	
 	// XML nodes & attributes for persistence
 	protected static final String DIRECTOR_ROOT_NODE = "sourceLookupDirector"; //$NON-NLS-1$
@@ -383,7 +389,16 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 * @return a single source element for the given stack frame
 	 */
 	public Object resolveSourceElement(IStackFrame frame, List sources) {
-		// TODO: use a status handler (prompter) in the UI
+		IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(fPromptStatus);
+		if (prompter != null) {
+			try {
+				Object result = prompter.handleStatus(fResolveDuplicatesStatus, new Object[]{frame, sources});
+				if (result != null) {
+					return result;
+				}
+			} catch (CoreException e) {
+			}
+		}
 		return sources.get(0);
 	}
 
@@ -468,5 +483,11 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 */
 	public ISourceLookupParticipant[] getParticipants() {
 		return (ISourceLookupParticipant[]) fParticipants.toArray(new ISourceLookupParticipant[fParticipants.size()]);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#supportsSourceContainerType(org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType)
+	 */
+	public boolean supportsSourceContainerType(ISourceContainerType type) {
+		return true;
 	}
 }

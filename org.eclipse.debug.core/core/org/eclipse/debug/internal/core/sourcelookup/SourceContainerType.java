@@ -75,4 +75,10 @@ public class SourceContainerType implements ISourceContainerType {
 		}
 		return fDelegate;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#getDescription()
+	 */
+	public String getDescription() {
+		return fElement.getAttribute("description"); //$NON-NLS-1$
+	}
 }

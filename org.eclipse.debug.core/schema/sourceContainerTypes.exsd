@@ -66,6 +66,13 @@
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  A short description of this source container for presentation purposes.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
