@@ -23,15 +23,14 @@ import org.eclipse.ui.internal.misc.Assert;
  * The ScopedPreferenceStore is an IPreferenceStore that uses the 
  * scopes provided in org.eclipse.core.runtime.preferences.
  * <p>
- * </p>
  * A ScopedPreferenceStore does the lookup of a preference based on 
  * it's search scopes and sets the value of the preference based on
  * its store scope.
- * <p>
  * </p>
+ * <p>
  * The default scope is always included in the search scopes when 
  * searching for preference values.
- *
+ * </p>
  * @see org.eclipse.core.runtime.preferences
  * @since 3.1
  */
@@ -55,12 +54,12 @@ public class ScopedPreferenceStore implements IPreferenceStore {
 	 * get methods for searching for values. 
 	 */
 	private IScopeContext[] searchContexts;
-	
+
 	/**
 	 * A boolean to indicate the property changes should not
 	 * be propagated.
 	 */
-	private boolean silentRunning = false;
+	protected boolean silentRunning = false;
 
 	/**
 	 * The listener on the IEclipsePreferences. This is used to forward
@@ -96,10 +95,10 @@ public class ScopedPreferenceStore implements IPreferenceStore {
 			 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
 			 */
 			public void preferenceChange(PreferenceChangeEvent event) {
-				
-				if(silentRunning)
+
+				if (silentRunning)
 					return;
-				
+
 				Object oldValue = event.getOldValue();
 				Object newValue = event.getNewValue();
 				String key = event.getKey();
@@ -201,10 +200,9 @@ public class ScopedPreferenceStore implements IPreferenceStore {
 	 * nodes based on the scope contexts for this store. If there are no search contexts
 	 * set, then return this store's context. 
 	 * <p>
-	 * </p>
 	 * Whether or not the default context should be included in the resulting 
 	 * list is specified by the <code>includeDefault</code> parameter.
-	 * 
+	 * </p>
 	 * @param includeDefault <code>true</code> if the default context should be
 	 * 	included and <code>false</code> otherwise
 	 * @return IEclipsePreferences[] 
@@ -445,12 +443,9 @@ public class ScopedPreferenceStore implements IPreferenceStore {
 			//Do not notify listeners
 			silentRunning = true;
 			getStorePreferences().put(name, value);
-			
-		} finally{//Be sure that an exception does not stop property updates
+		} finally {//Be sure that an exception does not stop property updates
 			silentRunning = false;
 		}
-		
-		
 	}
 
 	/* (non-Javadoc)
