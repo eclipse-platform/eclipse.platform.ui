@@ -11,6 +11,7 @@
 package org.eclipse.ui.externaltools.internal.ui;
 
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
@@ -41,6 +43,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -64,6 +67,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsMainTab;
@@ -76,6 +80,7 @@ import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.model.IPreferenceConstants;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.progress.IProgressService;
 
 /**
  * Property page to add external tools in between builders.
@@ -826,14 +831,45 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			return super.performOk();
 		}
 		userHasMadeChanges= false;
+		Table builderTable= viewer.getTable();
+		int numCommands = builderTable.getItemCount();
+		final Object[] itemData= new Object[numCommands];
+		for (int i = 0; i < numCommands; i++) {
+			itemData[i]= builderTable.getItem(i).getData();
+		}
+		IRunnableWithProgress runnable= new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor)
+					throws InvocationTargetException, InterruptedException {
+				doPerformOk(monitor, itemData);
+				if (monitor.isCanceled()) {
+					throw new InterruptedException();
+				}
+			}
+		};
+		
+		IProgressService service= PlatformUI.getWorkbench().getProgressService();
+		try {
+			service.busyCursorWhile(runnable);
+		} catch (InvocationTargetException e) {
+			return false;
+		} catch (InterruptedException e) {
+			return false;		
+		}
+		return super.performOk();
+	}
+	
+	private void doPerformOk(IProgressMonitor monitor, Object[] itemData) {
+		if (monitor.isCanceled()) {
+			return;
+		}
 		
 		IProject project = getInputProject();
 		//get all the build commands
-		Table builderTable= viewer.getTable();
-		int numCommands = builderTable.getItemCount();
+		int numCommands = itemData.length;
+		monitor.beginTask(ExternalToolsUIMessages.getString("BuilderPropertyPage.3"), numCommands + 1); //$NON-NLS-1$
 		ICommand[] commands = new ICommand[numCommands];
 		for (int i = 0; i < numCommands; i++) {
-			Object data = builderTable.getItem(i).getData();
+			Object data = itemData[i];
 			if (data instanceof ICommand) {
 				ICommand command= (ICommand)data;
 				Map args= command.getArguments();
@@ -877,6 +913,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			if (data != null) {
 				commands[i] = (ICommand) data;
 			}
+			monitor.worked(1);
 		}
 		
 		if (checkCommandsForChange(commands)) {
@@ -884,7 +921,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			try {
 				IProjectDescription desc = project.getDescription();
 				desc.setBuildSpec(commands);
-				project.setDescription(desc, IResource.FORCE, null);
+				project.setDescription(desc, IResource.FORCE, monitor);
 			} catch (CoreException e) {
 				handleException(e);
 			}
@@ -893,8 +930,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		if (configsToBeDeleted != null) {
 			deleteConfigurations();
 		}
-		
-		return super.performOk();
+		monitor.done();
 	}
 	
 	/**
