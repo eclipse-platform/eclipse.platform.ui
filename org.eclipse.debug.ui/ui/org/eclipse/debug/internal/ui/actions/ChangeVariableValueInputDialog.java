@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Text;
  * or further subclassed as required.
  * </p>
  */
-public class MultilineInputDialog extends Dialog {
+public class ChangeVariableValueInputDialog extends Dialog {
 
 	
 	/**
@@ -78,7 +78,7 @@ public class MultilineInputDialog extends Dialog {
  *  (equivalent to the empty string)
  * @param validator an input validator, or <code>null</code> if none
  */
-public MultilineInputDialog(Shell parentShell, String dialogTitle, String dialogMessage, String initialValue, IInputValidator validator) {
+public ChangeVariableValueInputDialog(Shell parentShell, String dialogTitle, String dialogMessage, String initialValue, IInputValidator validator) {
 	super(parentShell);
 	this.title = dialogTitle;
 	message = dialogMessage;

@@ -19,6 +19,7 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -30,7 +31,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class ChangeVariableValueAction extends SelectionProviderAction {
 
-	private MultilineInputDialog fInputDialog;
+	private ChangeVariableValueInputDialog fInputDialog;
 	protected IVariable fVariable;
 	
 	public ChangeVariableValueAction(Viewer viewer) {
@@ -70,7 +71,7 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 			fInputDialog= null;
 			return;
 		}
-		fInputDialog= new MultilineInputDialog(activeShell, ActionMessages.getString("ChangeVariableValueSet_Variable_Value_1"), ActionMessages.getString("ChangeVariableValueEnter_a_new_value_for__2") + name + ':', value, new IInputValidator() { //$NON-NLS-1$ //$NON-NLS-2$
+		fInputDialog= new ChangeVariableValueInputDialog(activeShell, ActionMessages.getString("ChangeVariableValueSet_Variable_Value_1"), ActionMessages.getString("ChangeVariableValueEnter_a_new_value_for__2") + name + ':', value, new IInputValidator() { //$NON-NLS-1$ //$NON-NLS-2$
 			/**
 			 * Returns an error string if the input is invalid
 			 */
@@ -92,6 +93,7 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 			// null value means cancel was pressed
 			try {
 				fVariable.setValue(newValue);
+				getSelectionProvider().setSelection(new StructuredSelection(variable));
 			} catch (DebugException de) {
 				DebugUIPlugin.errorDialog(activeShell, ActionMessages.getString("ChangeVariableValue.errorDialogTitle"),ActionMessages.getString("ChangeVariableValue.errorDialogMessage"), de);	//$NON-NLS-2$ //$NON-NLS-1$
 				fInputDialog= null;
