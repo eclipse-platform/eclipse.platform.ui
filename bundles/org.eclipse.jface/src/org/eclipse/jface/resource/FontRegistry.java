@@ -54,13 +54,117 @@ import org.eclipse.swt.widgets.Shell;
  * Since 3.0 this class extends ResourceRegistry.
  */
 public class FontRegistry extends ResourceRegistry {
+	
+	/**
+	 * FontRecord is a private helper class that holds onto a font
+	 * and can be used to generate its bold and italic version. 
+	 */
+	private class FontRecord{
+		
+		Font baseFont;
+		Font boldFont;
+		Font italicFont;
+		
+		FontData[] baseData;
+		
+		/**
+		 * Create a new instance of the receiver based on the 
+		 * plain font and the data for it.
+		 * @param plainFont The base looked up font.
+		 * @param data The data used to look it up.
+		 */
+		FontRecord(Font plainFont, FontData[] data){
+			baseFont = plainFont;
+			baseData = data;
+		}
+		
+		/**
+		 * Dispose any of the fonts created for this record.
+		 */
+		void dispose(){
+			baseFont.dispose();
+			if(boldFont != null)
+				boldFont.dispose();
+			if(italicFont != null)
+				italicFont.dispose();
+		}
+		
+		/**
+		 * Return the base Font.
+		 * @return Font
+		 */
+		public Font getBaseFont() {
+			return baseFont;
+		}
+		/**
+		 * Return the bold Font. Create a bold version
+		 * of the base font to get it.
+		 * @return Font
+		 */
+		public Font getBoldFont() {
+			if(boldFont != null)
+				return boldFont;
+			
+			FontData[] boldData = getModifiedFontData(SWT.BOLD);
+			boldFont = new Font(Display.getCurrent(),boldData);
+			return boldFont;
+		}
+		
+		/**
+		 * Get a version of the base font data with the specified 
+		 * style.
+		 * @param style
+		 * @return
+		 * @todo Generated comment
+		 */
+		private FontData[] getModifiedFontData(int style){
+			FontData[] styleData = new FontData[baseData.length];
+			for (int i = 0; i < styleData.length; i++) {
+				FontData base = baseData[i];
+				styleData[i] = new FontData(base.getName(),base.getHeight(),base.getStyle() | style);
+			}
+			
+			return styleData;
+		}
+		
+		/**
+		 * Return the italic Font. Create an italic version of the
+		 * base font to get it.
+		 * @return Font
+		 */
+		public Font getItalicFont() {
+			if(italicFont != null)
+				return italicFont;
+			
+			FontData[] italicData = getModifiedFontData(SWT.ITALIC);
+			italicFont = new Font(Display.getCurrent(),italicData);
+			return italicFont;
+		}
+		
+		/**
+		 * Add any fonts that were allocated for this record to the
+		 * stale fonts. Anything that matches the default font will
+		 * be skipped.
+		 * @param defaultFont The system default.
+		 */
+		void addAllocatedFontsToStale(Font defaultFont){
+			//Return all of the fonts allocated by the receiver.
+			//if any of them are the defaultFont then don't bother.
+			if(defaultFont != baseFont)
+				staleFonts.add(baseFont);
+			if(defaultFont != boldFont)
+				staleFonts.add(baseFont);
+			if(defaultFont != italicFont)
+				staleFonts.add(baseFont);
+		}
+	}
 
     /**
 	 * Table of known fonts, keyed by symbolic font name
 	 * (key type: <code>String</code>, 
-	 *  value type: <code>org.eclipse.swt.graphics.Font</code>.
+	 *  value type: <code>FontRecord</code>.
 	 */
-	private Map stringToFont = new HashMap(7);
+	private Map stringToFontRecord = new HashMap(7);
 	/**
 	 * Table of known font data, keyed by symbolic font name
 	 * (key type: <code>String</code>, 
@@ -275,8 +379,9 @@ public class FontRegistry extends ResourceRegistry {
 	/**
 	 * Creates a new font with the given font datas or <code>null</code>
 	 * if there is no data.
+	 * @return FontRecord for the new Font or <code>null</code>.
 	 */
-	private Font createFont(String symbolicName, FontData[] fonts) {
+	private FontRecord createFont(String symbolicName, FontData[] fonts) {
 		Display display = Display.getCurrent();
 		if(display == null)
 			return null;
@@ -288,7 +393,8 @@ public class FontRegistry extends ResourceRegistry {
 		} else {
 			//Do not fire the update from creation as it is not a property change
 			put(symbolicName, validData, false);
-			return new Font(display, validData);
+			Font newFont = new Font(display, validData);
+			return new FontRecord(newFont,validData);
 		}
 	}
 	
@@ -304,6 +410,14 @@ public class FontRegistry extends ResourceRegistry {
 			return font;
 		} else
 			return new Font(current, current.getSystemFont().getFontData());
+	}
+	
+	/**
+	 * Returns the default font record.
+	 */
+	private FontRecord defaultFontRecord() {
+		Font defaultFont = defaultFont();
+		return new FontRecord(defaultFont,defaultFont.getFontData());
 	}
 	
 	/**
@@ -341,24 +455,63 @@ public class FontRegistry extends ResourceRegistry {
 	 */
 	public Font get(String symbolicName) {
 
+		return getFontRecord(symbolicName).getBaseFont();
+	}
+	
+	/**
+	 * Returns the bold font associated with the given symbolic font name.
+	 * Returns the bolded default font if there is no special value associated
+	 * with that name.
+	 *
+	 * @param symbolicName symbolic font name
+	 * @return the font
+	 * @since 3.0
+	 */
+	public Font getBold(String symbolicName) {
+
+		return getFontRecord(symbolicName).getBoldFont();
+	}
+	
+	/**
+	 * Returns the italic font associated with the given symbolic font name.
+	 * Returns the italic default font if there is no special value associated
+	 * with that name.
+	 *
+	 * @param symbolicName symbolic font name
+	 * @return the font
+	 * @since 3.0
+	 */
+	public Font getItalic(String symbolicName) {
+
+		return getFontRecord(symbolicName).getItalicFont();
+	}
+	
+	/**
+	 * Return the font record for the key.
+	 * @param symbolicName The key for the record.
+	 * @return FontRecird
+	 */
+	private FontRecord getFontRecord(String symbolicName){
 		Assert.isNotNull(symbolicName);
-		Object result = stringToFont.get(symbolicName);
+		Object result = stringToFontRecord.get(symbolicName);
 		if (result != null)
-			return (Font) result;
+			return (FontRecord) result;
 
-		Font font = null;
 		result = stringToFontData.get(symbolicName);
-		if (result == null)
-			font = defaultFont();
-		else 
-		    font = createFont(symbolicName, (FontData[]) result);
-			
-		if (font == null) // create may have failed.  Ensure we have a valid font.
-		    font = defaultFont();
 		
-		stringToFont.put(symbolicName, font);
+		FontRecord fontRecord;
+		
+		if (result == null)
+			fontRecord = defaultFontRecord();
+		else 
+			fontRecord = createFont(symbolicName, (FontData[]) result);
+			
+		if (fontRecord == null) // create may have failed.  Ensure we have a valid font.
+			fontRecord = defaultFontRecord();
+		
+		stringToFontRecord.put(symbolicName, fontRecord);
+		return fontRecord;
 
-		return font;
 	}
 
 
@@ -381,9 +534,14 @@ public class FontRegistry extends ResourceRegistry {
 	 */
 	protected void clearCaches() {
 
-		disposeFonts(stringToFont.values().iterator());
+		Iterator iterator = stringToFontRecord.values().iterator();
+		while (iterator.hasNext()) {
+			Object next = iterator.next();
+			((FontRecord) next).dispose();
+		}
+		
 		disposeFonts(staleFonts.iterator());
-		stringToFont.clear();
+		stringToFontRecord.clear();
 		staleFonts.clear();
 	}
 	
@@ -478,16 +636,13 @@ public class FontRegistry extends ResourceRegistry {
 		if (Arrays.equals(existing, fontData))
 			return;
 
-		Font oldFont = (Font) stringToFont.remove(symbolicName);
+		FontRecord oldFont = (FontRecord) stringToFontRecord.remove(symbolicName);
 		stringToFontData.put(symbolicName, fontData);
 		if (update)
 			fireMappingChanged(symbolicName,existing,fontData);
 
-		if (oldFont == defaultFont())
-			return;
-
 		if (oldFont != null)
-			staleFonts.add(oldFont);
+			oldFont.addAllocatedFontsToStale(defaultFont());
 	}
 	/**
 	 * Reads the resource bundle.  This puts FontData[] objects
