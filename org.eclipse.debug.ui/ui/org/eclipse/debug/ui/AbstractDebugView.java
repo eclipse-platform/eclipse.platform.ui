@@ -294,8 +294,8 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 						}
 					}
 				}
+				setMemento(null);
 			}
-			setMemento(null);
 		};
 		if (getViewer().getControl().isDisposed()) {
 			return;
