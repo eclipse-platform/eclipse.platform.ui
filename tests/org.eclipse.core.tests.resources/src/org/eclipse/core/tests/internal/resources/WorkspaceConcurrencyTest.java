@@ -11,10 +11,24 @@ package org.eclipse.core.tests.internal.resources;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.tests.harness.*;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.tests.harness.CancelingProgressMonitor;
+import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.harness.TestBarrier;
 
 /**
  * Tests concurrency issues when dealing with operations on the worspace
@@ -31,6 +45,13 @@ public class WorkspaceConcurrencyTest extends EclipseWorkspaceTest {
 
 	public WorkspaceConcurrencyTest(String name) {
 		super(name);
+	}
+	private void sleep(long duration) {
+		try {
+			Thread.sleep(duration);
+		} catch (InterruptedException e) {
+			//ignore
+		}
 	}
 
 	/**
@@ -128,6 +149,136 @@ public class WorkspaceConcurrencyTest extends EclipseWorkspaceTest {
 			}, rule, IResource.NONE, getMonitor());
 		} catch (CoreException e) {
 			fail("1.99", e);
+		}
+	}
+	/**
+	 * Tests three overlapping jobs
+	 *  - Job 1 (root rule) does a build.
+	 *  - Job 2 (null rule) overlaps Job 1 and has null scheduling rule
+	 *  - Job 3 (project rule) overlaps Job 2 
+	 * 
+	 * The POST_BUILD event should occur at the end of Job 1. If it
+	 * is delayed until the end of Job 3, an appropriate scheduling rule
+	 * will not be available and it will fail.
+	 * This is a regression test for bug 	62927.
+	 */
+	public void testRunWhileBuilding() {
+		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		//create a POST_BUILD listener that will touch a project
+		final IProject touch = workspace.getRoot().getProject("ToTouch");
+		final IProject rule = workspace.getRoot().getProject("jobThree");
+		ensureExistsInWorkspace(rule, true);
+		ensureExistsInWorkspace(touch, true);
+		final Throwable[] failure = new Throwable[1];
+		IResourceChangeListener listener = new IResourceChangeListener() {
+			public void resourceChanged(IResourceChangeEvent event) {
+				try {
+					touch.touch(null);
+				} catch (CoreException e) {
+					failure[0] = e;
+				} catch (RuntimeException e) {
+					failure[0] = e;
+				}
+			}
+		};
+		workspace.addResourceChangeListener(listener, IResourceChangeEvent.POST_BUILD);
+		try {
+			//create one job that does a build, and then waits
+			final int[] status = new int[3];
+			Job jobOne = new Job("jobOne") {
+				protected IStatus run(IProgressMonitor monitor) {
+					try {
+						workspace.run(new IWorkspaceRunnable() {
+							public void run(IProgressMonitor monitor) throws CoreException {
+								//do a build
+								workspace.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
+								//signal that the job has done the build
+								status[0] = TestBarrier.STATUS_RUNNING;
+								//wait for job two to start
+								TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_DONE);
+							}
+						}, null);
+					} catch (CoreException e) {
+						return e.getStatus();
+					}
+					return Status.OK_STATUS;
+				}
+			};
+			//schedule and wait for job one to start
+			jobOne.schedule();
+			TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_RUNNING);
+			
+			//create job two that does an empty workspace operation
+			Job jobTwo = new Job("jobTwo") {
+				protected IStatus run(IProgressMonitor monitor) {
+					try {
+						workspace.run(new IWorkspaceRunnable() {
+							public void run(IProgressMonitor monitor) throws CoreException {
+								//signal that this job has started
+								status[1] = TestBarrier.STATUS_RUNNING;
+								//let job one finish
+								status[0] = TestBarrier.STATUS_WAIT_FOR_DONE;
+								//wait for job three to start
+								TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_WAIT_FOR_DONE);
+							}
+						}, null, IResource.NONE, null);
+					} catch (CoreException e) {
+						return e.getStatus();
+					}
+					return Status.OK_STATUS;
+				}
+			};
+			jobTwo.schedule();
+			//create job three that has a non-null rule
+			Job jobThree= new Job("jobTwo") {
+				protected IStatus run(IProgressMonitor monitor) {
+					try {
+						workspace.run(new IWorkspaceRunnable() {
+							public void run(IProgressMonitor monitor) throws CoreException {
+								//signal that this job has started
+								status[2] = TestBarrier.STATUS_RUNNING;
+								//let job two finish
+								status[1] = TestBarrier.STATUS_WAIT_FOR_DONE;
+								//ensure this job does something so the build listener runs
+								rule.touch(null);
+								//wait for the ok to complete
+								TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_WAIT_FOR_DONE);
+							}
+						}, rule, IResource.NONE, null);
+					} catch (CoreException e) {
+						return e.getStatus();
+					}
+					return Status.OK_STATUS;
+				}
+			};
+			jobThree.schedule();
+			//wait for job two to complete
+			waitForCompletion(jobTwo);
+			
+			//let job three complete
+			status[2] = TestBarrier.STATUS_WAIT_FOR_DONE;
+			
+			//wait for job three to complete
+			waitForCompletion(jobThree);
+
+			//ensure no jobs failed
+			assertTrue("1.0", jobOne.getResult().isOK());
+			assertTrue("1.1", jobTwo.getResult().isOK());
+			assertTrue("1.2", jobThree.getResult().isOK());
+			
+			if (failure[0] != null)
+				fail("1.3", failure[0]);
+		} finally {
+			//esure listener is removed
+			workspace.removeResourceChangeListener(listener);
+		}
+	}
+	private void waitForCompletion(Job job) {
+		int i = 0;
+		while (job.getState() != Job.NONE) {
+			sleep(100);
+			//sanity test to avoid hanging tests
+			assertTrue("Timeout waiting for job to complete", i++ < 1000);
 		}
 	}
 }
