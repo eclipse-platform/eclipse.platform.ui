@@ -10,10 +10,24 @@
  *******************************************************************************/
 package org.eclipse.ui.ide;
 
+import org.eclipse.ui.IMarkerHelpRegistry;
+
 /**
  * Placeholder for IDE-specific APIs to be factored out of existing workbench.
  * 
  * @since 3.0
  */
 public final class IDE {
+	// @issue
+	private static IMarkerHelpRegistry markerHelpRegistry;
+
+	/**
+	 * @issue get doc from IWorkbench
+	 * 
+	 * @return
+	 */	
+	public static IMarkerHelpRegistry getMarkerHelpRegistry() {
+		return markerHelpRegistry;
+	}
+	
 }
