@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.internal.commands;
 
-import org.eclipse.ui.commands.KeySequence;
 import org.eclipse.ui.commands.IKeyBinding;
+import org.eclipse.ui.commands.KeySequence;
 import org.eclipse.ui.internal.util.Util;
 
 final class KeyBinding implements Comparable, IKeyBinding {

@@ -65,20 +65,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.commands.registry.old.ActiveConfiguration;
-import org.eclipse.ui.internal.commands.registry.old.Category;
-import org.eclipse.ui.internal.commands.registry.old.Command;
-import org.eclipse.ui.internal.commands.registry.old.Configuration;
-import org.eclipse.ui.internal.commands.registry.old.Context;
-import org.eclipse.ui.internal.commands.registry.old.CoreRegistry;
-import org.eclipse.ui.internal.commands.registry.old.IMutableRegistry;
-import org.eclipse.ui.internal.commands.registry.old.IRegistry;
-import org.eclipse.ui.internal.commands.registry.old.LocalRegistry;
-import org.eclipse.ui.internal.commands.registry.old.PreferenceRegistry;
-import org.eclipse.ui.internal.commands.registry.old.SequenceBinding;
-import org.eclipse.ui.internal.commands.util.old.GestureSupport;
-import org.eclipse.ui.internal.commands.util.old.Sequence;
-import org.eclipse.ui.internal.commands.util.old.SequenceUtil;
 import org.eclipse.ui.internal.util.Util;
 
 public class GesturePreferencePage extends org.eclipse.jface.preference.PreferencePage

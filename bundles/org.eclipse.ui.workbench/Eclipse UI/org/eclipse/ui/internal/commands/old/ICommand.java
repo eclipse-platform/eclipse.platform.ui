@@ -14,7 +14,6 @@ package org.eclipse.ui.internal.commands.old;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.commands.NotDelegatedException;
 import org.eclipse.ui.handles.NotDefinedException;
-import org.eclipse.ui.internal.commands.util.old.Sequence;
 
 /**
  * <p>

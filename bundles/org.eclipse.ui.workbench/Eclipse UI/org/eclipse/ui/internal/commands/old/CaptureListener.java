@@ -9,26 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.registry.old;
+package org.eclipse.ui.internal.commands.old;
 
-/**
- * JAVADOC
- * 
- * <p>
- * This interface is not intended to be extended by clients.
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
- * </p>
- * 
- * @since 3.0
- */
-public interface IRegistryListener {
+public interface CaptureListener {
 
-	/**
-	 * JAVADOC
-	 * 
-	 * @param registryEvent
-	 */	
-	void registryChanged(RegistryEvent registryEvent);
+	void capture(CaptureEvent captureEvent);
 }

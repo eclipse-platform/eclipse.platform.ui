@@ -9,9 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.registry.old;
+package org.eclipse.ui.internal.commands.old;
 
-import org.eclipse.ui.internal.commands.util.old.Sequence;
 import org.eclipse.ui.internal.util.Util;
 
 public final class SequenceBinding implements Comparable {

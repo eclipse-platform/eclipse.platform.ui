@@ -39,8 +39,8 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.commands.old.Manager;
-import org.eclipse.ui.internal.commands.util.old.Sequence;
-import org.eclipse.ui.internal.commands.util.old.Stroke;
+import org.eclipse.ui.internal.commands.old.Sequence;
+import org.eclipse.ui.internal.commands.old.Stroke;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**

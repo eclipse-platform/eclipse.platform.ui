@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.util.old;
+package org.eclipse.ui.internal.commands.old;
 
 public final class Stroke implements Comparable {
 

@@ -52,15 +52,6 @@ import org.eclipse.ui.internal.AcceleratorMenu;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.internal.commands.registry.old.ContextBinding;
-import org.eclipse.ui.internal.commands.registry.old.CoreRegistry;
-import org.eclipse.ui.internal.commands.registry.old.IMutableRegistry;
-import org.eclipse.ui.internal.commands.registry.old.IRegistry;
-import org.eclipse.ui.internal.commands.registry.old.LocalRegistry;
-import org.eclipse.ui.internal.commands.registry.old.PreferenceRegistry;
-import org.eclipse.ui.internal.commands.util.old.KeySupport;
-import org.eclipse.ui.internal.commands.util.old.Sequence;
-import org.eclipse.ui.internal.commands.util.old.Stroke;
 
 public class ContextAndHandlerManager implements IContextResolver {
 

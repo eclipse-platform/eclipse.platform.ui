@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.util.old;
+package org.eclipse.ui.internal.commands.old;
 
 import java.util.Arrays;
 import java.util.Collections;

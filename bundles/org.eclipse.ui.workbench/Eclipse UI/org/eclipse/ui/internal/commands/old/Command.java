@@ -11,137 +11,161 @@
 
 package org.eclipse.ui.internal.commands.old;
 
-final class Command {
+import java.text.Collator;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
-	/*
-	private ICommandEvent commandEvent;
-	private List commandListeners;
-	private CommandManager commandManager;
-	private String id;
+import org.eclipse.ui.internal.util.Util;
 
-	Command(CommandManager commandManager, String id) {
-		super();
-		this.commandManager = commandManager;
-		this.id = id;
-	}
+public final class Command implements Comparable {
 
-	public void addCommandListener(ICommandListener commandListener)
+	private final static int HASH_FACTOR = 89;
+	private final static int HASH_INITIAL = Command.class.getName().hashCode();
+
+	private static Comparator nameComparator;
+	
+	public static Command create(String category, String description, String id, String name, String plugin)
 		throws IllegalArgumentException {
-		if (commandListener == null)
-			throw new IllegalArgumentException();
+		return new Command(category, description, id, name, plugin);
+	}
+
+	public static Comparator nameComparator() {
+		if (nameComparator == null)
+			nameComparator = new Comparator() {
+				public int compare(Object left, Object right) {
+					return Collator.getInstance().compare(((Command) left).name, ((Command) right).name);
+				}	
+			};		
 		
-		if (commandListeners == null)
-			commandListeners = new ArrayList();
-		
-		if (!commandListeners.contains(commandListener))
-			commandListeners.add(commandListener);
+		return nameComparator;
 	}
 
-	public ICommandDelegate getCommandHandler()
-		throws NotDelegatedException {
-		SortedMap commandHandlersById = commandManager.getCommandHandlersById();
-		ICommandDelegate commandHandler = (ICommandDelegate) commandHandlersById.get(id);
-		
-		if (commandHandlersById.containsKey(id))
-			return commandHandler;
-		else 		
-			throw new NotDelegatedException();
-	}
-
-	public String getDescription() 
-		throws NotDefinedException {
-		CommandElement commandElement = (CommandElement) commandManager.getCommandElement(id);
-
-		if (commandElement != null && commandManager.getDefinedCommandIds().contains(id))
-			return commandElement.getDescription();
-		else 
-			throw new NotDefinedException();
-	}
-
-	public SortedSet getContextBindings() {
-		return Util.EMPTY_SORTED_SET;
-	}
-
-	public SortedSet getGestureBindings() {
-		return Util.EMPTY_SORTED_SET;
-	}
-		
-	public String getId() {
-		return id;
-	}
-
-	public SortedSet getImageBindings() {
-		return Util.EMPTY_SORTED_SET;		
-	}
-
-	public SortedSet getKeyBindings() {
-		return Util.EMPTY_SORTED_SET;		
-	}
-
-	public String getName() 
-		throws NotDefinedException {
-		CommandElement commandElement = (CommandElement) commandManager.getCommandElement(id);
-
-		if (commandElement != null && commandManager.getDefinedCommandIds().contains(id))
-			return commandElement.getName();
-		else 
-			throw new NotDefinedException();
-	}
-
-	public String getParentId() 
-		throws NotDefinedException {
-		CommandElement commandElement = (CommandElement) commandManager.getCommandElement(id);
-
-		if (commandElement != null && commandManager.getDefinedCommandIds().contains(id))
-			return commandElement.getParentId();
-		else 
-			throw new NotDefinedException();
-	}
-
-	public String getPluginId() 
-		throws NotDefinedException {
-		CommandElement commandElement = (CommandElement) commandManager.getCommandElement(id);
-
-		if (commandElement != null && commandManager.getDefinedCommandIds().contains(id))
-			return commandElement.getPluginId();
-		else 
-			throw new NotDefinedException();
-	}
-
-	public boolean isDefined() {
-		return commandManager.getCommandElement(id) != null && commandManager.getDefinedCommandIds().contains(id);
-	}
-
-	public boolean isHandled() {
-		return commandManager.getCommandHandlersById().containsKey(id);
-	}
-
-	public void removeCommandListener(ICommandListener commandListener)
+	public static SortedMap sortedMapById(List commands)
 		throws IllegalArgumentException {
-		if (commandListener == null)
+		if (commands == null)
 			throw new IllegalArgumentException();
 
-		if (commandListeners != null) {
-			commandListeners.remove(commandListener);
+		SortedMap sortedMap = new TreeMap();			
+		Iterator iterator = commands.iterator();
+		
+		while (iterator.hasNext()) {
+			Object object = iterator.next();
 			
-			if (commandListeners.isEmpty())
-				commandListeners = null;
-		}
+			if (!(object instanceof Command))
+				throw new IllegalArgumentException();
+				
+			Command command = (Command) object;
+			sortedMap.put(command.id, command);									
+		}			
+		
+		return sortedMap;
+	}
+
+	public static SortedMap sortedMapByName(List commands)
+		throws IllegalArgumentException {
+		if (commands == null)
+			throw new IllegalArgumentException();
+
+		SortedMap sortedMap = new TreeMap();			
+		Iterator iterator = commands.iterator();
+		
+		while (iterator.hasNext()) {
+			Object object = iterator.next();
+			
+			if (!(object instanceof Command))
+				throw new IllegalArgumentException();
+				
+			Command command = (Command) object;
+			sortedMap.put(command.name, command);									
+		}			
+		
+		return sortedMap;
+	}
+
+	private String category;
+	private String description;
+	private String id;
+	private String name;
+	private String plugin;
+	
+	private Command(String category, String description, String id, String name, String plugin)
+		throws IllegalArgumentException {
+		super();
+		
+		if (id == null || name == null)
+			throw new IllegalArgumentException();
+		
+		this.category = category;
+		this.description = description;
+		this.id = id;
+		this.name = name;
+		this.plugin = plugin;
 	}
 	
-	void fireCommandChanged() {
-		if (commandListeners != null) {
-			// TODO copying to avoid ConcurrentModificationException
-			Iterator iterator = new ArrayList(commandListeners).iterator();
+	public int compareTo(Object object) {
+		Command command = (Command) object;
+		int compareTo = Util.compare(category, command.category);
+
+		if (compareTo == 0) {		
+			compareTo = Util.compare(description, command.description);
+		
+			if (compareTo == 0) {		
+				compareTo = id.compareTo(command.id);			
 			
-			if (iterator.hasNext()) {
-				if (commandEvent == null)
-					commandEvent = new CommandEvent(this);
-				
-				while (iterator.hasNext())	
-					((ICommandListener) iterator.next()).commandChanged(commandEvent);
-			}							
-		}			
+				if (compareTo == 0) {
+					compareTo = name.compareTo(command.name);
+						
+					if (compareTo == 0)
+						compareTo = Util.compare(plugin, command.plugin);				
+				}
+			}
+		}
+		
+		return compareTo;	
 	}
-	*/		
+	
+	public boolean equals(Object object) {
+		if (!(object instanceof Command))
+			return false;
+
+		Command command = (Command) object;	
+		return Util.equals(category, command.category) && Util.equals(description, command.description) && id.equals(command.id) && name.equals(command.name) && Util.equals(plugin, command.plugin);
+	}
+
+	public String getCategory() {
+		return category;	
+	}
+
+	public String getDescription() {
+		return description;	
+	}
+	
+	public String getId() {
+		return id;	
+	}
+	
+	public String getName() {
+		return name;
+	}	
+
+	public String getPlugin() {
+		return plugin;
+	}
+
+	public int hashCode() {
+		int result = HASH_INITIAL;
+		result = result * HASH_FACTOR + Util.hashCode(category);
+		result = result * HASH_FACTOR + Util.hashCode(description);
+		result = result * HASH_FACTOR + id.hashCode();
+		result = result * HASH_FACTOR + name.hashCode();
+		result = result * HASH_FACTOR + Util.hashCode(plugin);
+		return result;
+	}
+	
+	public String toString() {
+		return name + " (" + id + ')';	 //$NON-NLS-1$
+	}
 }

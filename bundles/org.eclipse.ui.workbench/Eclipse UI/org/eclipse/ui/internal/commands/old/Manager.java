@@ -21,17 +21,6 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.eclipse.ui.internal.commands.registry.old.ActiveConfiguration;
-import org.eclipse.ui.internal.commands.registry.old.Configuration;
-import org.eclipse.ui.internal.commands.registry.old.Context;
-import org.eclipse.ui.internal.commands.registry.old.CoreRegistry;
-import org.eclipse.ui.internal.commands.registry.old.LocalRegistry;
-import org.eclipse.ui.internal.commands.registry.old.PreferenceRegistry;
-import org.eclipse.ui.internal.commands.registry.old.SequenceBinding;
-import org.eclipse.ui.internal.commands.util.old.GestureSupport;
-import org.eclipse.ui.internal.commands.util.old.KeySupport;
-import org.eclipse.ui.internal.commands.util.old.Sequence;
-import org.eclipse.ui.internal.commands.util.old.SequenceUtil;
 import org.eclipse.ui.internal.util.Util;
 
 public class Manager {

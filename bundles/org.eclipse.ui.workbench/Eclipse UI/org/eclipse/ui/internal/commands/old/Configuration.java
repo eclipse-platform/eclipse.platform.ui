@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.registry.old;
+package org.eclipse.ui.internal.commands.old;
 
 import java.text.Collator;
 import java.util.Comparator;
@@ -20,107 +20,107 @@ import java.util.TreeMap;
 
 import org.eclipse.ui.internal.util.Util;
 
-public final class Command implements Comparable {
+public final class Configuration implements Comparable {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = Command.class.getName().hashCode();
+	private final static int HASH_INITIAL = Configuration.class.getName().hashCode();
 
 	private static Comparator nameComparator;
 	
-	public static Command create(String category, String description, String id, String name, String plugin)
+	public static Configuration create(String description, String id, String name, String parent, String plugin)
 		throws IllegalArgumentException {
-		return new Command(category, description, id, name, plugin);
+		return new Configuration(description, id, name, parent, plugin);
 	}
 
 	public static Comparator nameComparator() {
 		if (nameComparator == null)
 			nameComparator = new Comparator() {
 				public int compare(Object left, Object right) {
-					return Collator.getInstance().compare(((Command) left).name, ((Command) right).name);
+					return Collator.getInstance().compare(((Configuration) left).name, ((Configuration) right).name);
 				}	
 			};		
 		
 		return nameComparator;
 	}
 
-	public static SortedMap sortedMapById(List commands)
+	public static SortedMap sortedMapById(List configurations)
 		throws IllegalArgumentException {
-		if (commands == null)
+		if (configurations == null)
 			throw new IllegalArgumentException();
 
 		SortedMap sortedMap = new TreeMap();			
-		Iterator iterator = commands.iterator();
+		Iterator iterator = configurations.iterator();
 		
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
 			
-			if (!(object instanceof Command))
+			if (!(object instanceof Configuration))
 				throw new IllegalArgumentException();
 				
-			Command command = (Command) object;
-			sortedMap.put(command.id, command);									
+			Configuration configuration = (Configuration) object;
+			sortedMap.put(configuration.id, configuration);									
 		}			
 		
 		return sortedMap;
 	}
 
-	public static SortedMap sortedMapByName(List commands)
+	public static SortedMap sortedMapByName(List configurations)
 		throws IllegalArgumentException {
-		if (commands == null)
+		if (configurations == null)
 			throw new IllegalArgumentException();
 
 		SortedMap sortedMap = new TreeMap();			
-		Iterator iterator = commands.iterator();
+		Iterator iterator = configurations.iterator();
 		
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
 			
-			if (!(object instanceof Command))
+			if (!(object instanceof Configuration))
 				throw new IllegalArgumentException();
 				
-			Command command = (Command) object;
-			sortedMap.put(command.name, command);									
+			Configuration configuration = (Configuration) object;
+			sortedMap.put(configuration.name, configuration);									
 		}			
 		
 		return sortedMap;
 	}
 
-	private String category;
 	private String description;
 	private String id;
 	private String name;
+	private String parent;
 	private String plugin;
 	
-	private Command(String category, String description, String id, String name, String plugin)
+	private Configuration(String description, String id, String name, String parent, String plugin)
 		throws IllegalArgumentException {
 		super();
 		
 		if (id == null || name == null)
 			throw new IllegalArgumentException();
 		
-		this.category = category;
 		this.description = description;
 		this.id = id;
 		this.name = name;
+		this.parent = parent;
 		this.plugin = plugin;
 	}
 	
 	public int compareTo(Object object) {
-		Command command = (Command) object;
-		int compareTo = Util.compare(category, command.category);
-
-		if (compareTo == 0) {		
-			compareTo = Util.compare(description, command.description);
+		Configuration configuration = (Configuration) object;
+		int compareTo = id.compareTo(configuration.id);
 		
-			if (compareTo == 0) {		
-				compareTo = id.compareTo(command.id);			
-			
+		if (compareTo == 0) {		
+			compareTo = name.compareTo(configuration.name);			
+		
+			if (compareTo == 0) {
+				Util.compare(description, configuration.description);
+				
 				if (compareTo == 0) {
-					compareTo = name.compareTo(command.name);
-						
+					compareTo = Util.compare(parent, configuration.parent);
+
 					if (compareTo == 0)
-						compareTo = Util.compare(plugin, command.plugin);				
-				}
+						compareTo = Util.compare(plugin, configuration.plugin);								
+				}							
 			}
 		}
 		
@@ -128,15 +128,12 @@ public final class Command implements Comparable {
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof Command))
+		if (!(object instanceof Configuration))
 			return false;
 
-		Command command = (Command) object;	
-		return Util.equals(category, command.category) && Util.equals(description, command.description) && id.equals(command.id) && name.equals(command.name) && Util.equals(plugin, command.plugin);
-	}
-
-	public String getCategory() {
-		return category;	
+		Configuration configuration = (Configuration) object;	
+		return Util.equals(description, configuration.description) && id.equals(configuration.id) && name.equals(configuration.name) && Util.equals(parent, configuration.parent) && 
+			Util.equals(plugin, configuration.plugin);
 	}
 
 	public String getDescription() {
@@ -151,16 +148,20 @@ public final class Command implements Comparable {
 		return name;
 	}	
 
+	public String getParent() {
+		return parent;
+	}
+
 	public String getPlugin() {
 		return plugin;
 	}
 
 	public int hashCode() {
 		int result = HASH_INITIAL;
-		result = result * HASH_FACTOR + Util.hashCode(category);
 		result = result * HASH_FACTOR + Util.hashCode(description);
 		result = result * HASH_FACTOR + id.hashCode();
 		result = result * HASH_FACTOR + name.hashCode();
+		result = result * HASH_FACTOR + Util.hashCode(parent);
 		result = result * HASH_FACTOR + Util.hashCode(plugin);
 		return result;
 	}

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.registry.old;
+package org.eclipse.ui.internal.commands.old;
 
 /**
  * JAVADOC
