@@ -737,12 +737,43 @@ private ArrayList getArrayList(String[] args) {
  * Helper method to ensure an array is converted into an ArrayList.
  */
 private ArrayList getArrayList(String args) {
+	StringBuffer sb = new StringBuffer();
+	boolean missingQuote = false;
 	ArrayList result = new ArrayList();
-	for (StringTokenizer tokens = new StringTokenizer(args, ", "); tokens.hasMoreTokens();) { //$NON-NLS-1$
-		String token = tokens.nextToken().trim();
-		if (!token.equals("")) //$NON-NLS-1$
-			result.add(token);
+	for (StringTokenizer tokens = new StringTokenizer(args, ", ", true); tokens.hasMoreTokens();) { //$NON-NLS-1$
+		String token = tokens.nextToken();
+		int quotes = countChars(token, '\"'); //$NON-NLS-1$
+		if (!missingQuote) {
+			if (isEven(quotes)) {
+				if (!(token.equals(",") || token.equals(" "))) //$NON-NLS-1$ //$NON-NLS-2$
+					result.add(token);
+			} else {
+				sb.append(token);
+				missingQuote = true;
+			}
+		} else {
+			if (isEven(quotes))
+				sb.append(token);
+			else {
+				sb.append(token);
+				result.add(sb.toString());
+				sb.setLength(0);
+				missingQuote = false;
+			}
+		}
 	}
+	return result;
+}
+
+private boolean isEven(int n) {
+	return (n % 2) == 0;
+}
+
+private int countChars(String string, char target) {
+	int result = 0;
+	for (int i = 0; i < string.length(); i++)
+		if (string.charAt(i) == target)
+			result++;
 	return result;
 }
 
