@@ -45,6 +45,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -87,6 +88,11 @@ public final class BuilderPropertyPage extends PropertyPage {
 	private IDebugModelPresentation debugModelPresentation;
 	
 	private boolean userHasMadeChanges= false;
+	private SelectionListener fButtonListener= new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			handleButtonPressed((Button) e.widget);
+			}
+		};
 
 	/**
 	 * Creates an initialized property page
@@ -162,28 +168,6 @@ public final class BuilderPropertyPage extends PropertyPage {
 		}
 		item.setImage(configImage);
 	}
-
-	/**
-	 * Configures and creates a new build command
-	 * that invokes an external tool.  Returns the new command,
-	 * or <code>null</code> if no command was created.
-	 */
-	//	private ICommand createTool() {
-	//		try {
-	//			EditDialog dialog;
-	//			dialog = new EditDialog(getShell(), null);
-	//			if (dialog.open() == Window.OK) {
-	//				ExternalTool tool = dialog.getExternalTool();
-	//				ICommand command = getInputProject().getDescription().newCommand();
-	//				return tool.toBuildCommand(command);
-	//			} else {
-	//				return null;	
-	//			}
-	//		} catch(CoreException e) {
-	//			handleException(e);
-	//			return null;
-	//		}		
-	//	}
 	
 	/**
 	 * Converts the given config to a build command which is stored in the
@@ -220,21 +204,6 @@ public final class BuilderPropertyPage extends PropertyPage {
 	}
 
 	/**
-	 * Edits an exisiting build command that invokes an external tool.
-	 */
-	//	private void editTool(ICommand command) {
-	//		ExternalTool tool = ExternalToolRegistry.toolFromBuildCommandArgs(command.getArguments(), NEW_NAME);
-	//		if (tool == null)
-	//			return;
-	//		EditDialog dialog;
-	//		dialog = new EditDialog(getShell(), tool);
-	//		if (dialog.open() == Window.OK) {
-	//			tool = dialog.getExternalTool();
-	//			tool.toBuildCommand(command);
-	//		}
-	//	}
-
-	/**
 	 * Creates and returns a button with the given label, id, and enablement.
 	 */
 	private Button createButton(Composite parent, String label) {
@@ -246,11 +215,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		button.setFont(parent.getFont());
 		button.setText(label);
 		button.setEnabled(false);
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleButtonPressed((Button) e.widget);
-			}
-		});
+		button.addSelectionListener(fButtonListener);
 		return button;
 	}
 
