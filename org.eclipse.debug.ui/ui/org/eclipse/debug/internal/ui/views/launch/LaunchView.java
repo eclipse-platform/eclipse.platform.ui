@@ -670,6 +670,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		if (fSourceLookupJob == null) {
 			fSourceLookupJob = new SourceLookupJob();
 		}
+		setSourceLookupResult(null);
 		fSourceLookupJob.schedule();
 	}
 	
