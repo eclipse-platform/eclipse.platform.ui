@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -33,6 +34,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.IStorageDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IElementStateListener;
@@ -228,13 +230,17 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 				if (stream == null)
 					return;
 				
-				String encoding= getEncoding(input, provider);
+				String encoding= file.getCharset();
 				if (encoding == null)
 					return;
 				
-				setDocumentContent(doc, stream, encoding, monitor);
+				boolean skipUTF8BOM= isUTF8BOM(encoding, file);
+				
+				setDocumentContent(doc, stream, encoding, monitor, skipUTF8BOM);
 				
 			} catch (IOException e) {
+				return;
+			} catch (CoreException e) {
 				return;
 			} finally {
 				jobMgr.endRule(file);
@@ -310,23 +316,6 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 	}
 
 	/**
-	 * Returns the encoding of the file corresponding to <code>input</code>.
-	 * If no encoding can be found, the default encoding as returned by 
-	 * <code>provider.getDefaultEncoding()</code> is returned.
-	 * 
-	 * @param input the current editor input
-	 * @param provider the current document provider
-	 * @return the encoding for the file corresponding to <code>input</code>,
-	 *         or the default encoding
-	 */
-	private static String getEncoding(IFileEditorInput input, IStorageDocumentProvider provider) {
-		String encoding= provider.getEncoding(input);
-		if (encoding == null)
-			encoding= provider.getDefaultEncoding();
-		return encoding;
-	}
-
-	/**
 	 * Initializes the given document with the given stream using the given
 	 * encoding.
 	 * 
@@ -334,11 +323,20 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 	 * @param contentStream the stream which delivers the document content
 	 * @param encoding the character encoding for reading the given stream
 	 * @param monitor a progress monitor for cancellation, or <code>null</code>
+	 * @param skipUTF8BOM whether to skip three bytes before reading the stream
 	 * @exception IOException if the given stream can not be read
 	 */
-	private static void setDocumentContent(IDocument document, InputStream contentStream, String encoding, IProgressMonitor monitor) throws IOException {
+	private static void setDocumentContent(IDocument document, InputStream contentStream, String encoding, IProgressMonitor monitor, boolean skipUTF8BOM) throws IOException {
 		Reader in= null;
 		try {
+			
+			if (skipUTF8BOM) {
+				for (int i= 0; i < 3; i++)
+					if (contentStream.read() == -1) {
+						throw new IOException(QuickDiffMessages.getString("LastSaveReferenceProvider.LastSaveReferenceProvider.error.notEnoughBytesForBOM")); //$NON-NLS-1$
+				}
+			}
+			
 			final int DEFAULT_FILE_SIZE= 15 * 1024;
 			
 			in= new BufferedReader(new InputStreamReader(contentStream, encoding), DEFAULT_FILE_SIZE);
@@ -365,7 +363,35 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 			}
 		}
 	}
-
+	
+	/**
+	 * Returns <code>true</code> if the <code>encoding</code> is UTF-8 and
+	 * the file contains a BOM. Taken from ResourceTextFileBuffer.java.
+	 * 
+	 * <p>
+	 * XXX:
+	 * This is a workaround for a corresponding bug in Java readers and writer,
+	 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
+	 * </p>
+	 * @throws CoreException if
+	 * 			- reading of file's content description fails
+	 * 			- byte order mark is not valid for UTF-8
+	 */
+	private static boolean isUTF8BOM(String encoding, IFile file) throws CoreException {
+		if ("UTF-8".equals(encoding)) { //$NON-NLS-1$
+			IContentDescription description= file.getContentDescription();
+			if (description != null) {
+				byte[] bom= (byte[]) description.getProperty(IContentDescription.BYTE_ORDER_MARK);
+				if (bom != null) {
+					if (bom != IContentDescription.BOM_UTF_8)
+						throw new CoreException(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, QuickDiffMessages.getString("LastSaveReferenceProvider.LastSaveReferenceProvider.error.wrongByteOrderMark"), null)); //$NON-NLS-1$
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	/* IElementStateListener implementation */
 
 	/*
