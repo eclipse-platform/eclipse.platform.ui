@@ -113,16 +113,6 @@ protected FileSystemStore getStore() {
 protected Workspace getWorkspace() {
 	return (Workspace) rootDestination.getWorkspace();
 }
-/**
- * Returns true if this node represents the project description file,
- * and false otherwise.
- */
-protected boolean isProjectDescriptionFile(UnifiedTreeNode node) {
-	IResource resource = node.getResource();
-	return resource.getType() == IResource.FILE && 
-		resource.getFullPath().segmentCount() == 2 &&
-		resource.getName().equals(IProjectDescription.DESCRIPTION_FILE_NAME);
-}
 protected boolean isSynchronized(UnifiedTreeNode node) {
 	/* does the resource exist in workspace and file system? */
 	if (!node.existsInWorkspace() || !node.existsInFileSystem())
@@ -144,9 +134,6 @@ public boolean visit(UnifiedTreeNode node) throws CoreException {
 	Policy.checkCanceled(monitor);
 	int work = 1;
 	try {
-		//skip copying the project description file
-		if (isProjectDescriptionFile(node))
-			return false;
 		boolean wasSynchronized = isSynchronized(node);
 		if (force && !wasSynchronized) {
 			synchronize(node);
