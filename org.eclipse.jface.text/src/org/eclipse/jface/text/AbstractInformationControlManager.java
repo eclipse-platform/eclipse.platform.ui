@@ -12,6 +12,7 @@
 package org.eclipse.jface.text;
 
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.GC;
@@ -187,8 +188,17 @@ abstract public class AbstractInformationControlManager {
 	private Anchor fAnchor= ANCHOR_BOTTOM;
 	
 	/** 
-	 * A list of anchors used to layout the information control if the original anchor can not 
-	 * be used because the information control would not fit in the display client area.
+	 * The anchor sequence used to layout the information control if the original anchor 
+	 * can not be used because the information control would not fit in the display client area.
+	 * <p>
+	 * The fallback anchor for a given anchor is the one that comes directly after the given anchor or
+	 * is the first one in the sequence if the given anchor is the last one in the sequence.
+	 * <p>
+	 * </p> 
+	 * Note: This sequence is ignored if the original anchor is not contained in this sequence.
+	 * </p>
+	 * 
+	 * @see #fAnchor
 	 */
 	private Anchor[] fFallbackAnchors= ANCHORS;
 	
@@ -372,12 +382,20 @@ abstract public class AbstractInformationControlManager {
 		fAnchor= anchor;
 	}
 	
-	/**
-	 * Sets the sequence of anchors along which the information control is tried to 
-	 * be laid out until it is fully visible. This fallback is initiated when the information
-	 * control does not fit into the client area of the subject control's display.
+	/** 
+	 * Sets the anchors fallback sequence used to layout the information control if the original 
+	 * anchor can not be used because the information control would not fit in the display client
+	 * area.
+	 * <p>
+	 * The fallback anchor for a given anchor is the one that comes directly after the given anchor or
+	 * is the first one in the sequence if the given anchor is the last one in the sequence.
+	 * <p>
+	 * </p> 
+	 * Note: This sequence is ignored if the original anchor is not contained in this list.
+	 * </p>
 	 * 
-	 * @param fallbackAnchors the list of anchors to be tried
+	 * @param fallbackAnchors the array with the anchor fallback sequence
+	 * @see #setAnchor(Anchor)
 	 */
 	public void setFallbackAnchors(Anchor[] fallbackAnchors) {
 		if (fallbackAnchors != null) {
@@ -627,6 +645,10 @@ abstract public class AbstractInformationControlManager {
 			yShift= fMarginY;
 		}
 		
+		boolean isRTL= fSubjectControl != null && (fSubjectControl.getStyle() & SWT.RIGHT_TO_LEFT) != 0;
+		if (isRTL)
+			xShift += controlSize.x;
+		
 		return  fSubjectControl.toDisplay(new Point(subjectArea.x + xShift, subjectArea.y + yShift));
 	}
 	
@@ -697,11 +719,21 @@ abstract public class AbstractInformationControlManager {
 	}
 	
 	/**
-	 * Returns the next fallback anchor from this manager's list of fallback anchors.
-	 * If no more fallback anchor is available <code>null</code> is returned.
+	 * Returns the next fallback anchor as specified by this manager's
+	 * fallback anchor sequence.
+	 * <p>
+	 * The fallback anchor for the given anchor is the one that comes directly after
+	 * the given anchor or is the first one in the sequence if the given anchor is the
+	 * last one in the sequence.
+	 * </p>
+	 * <p>
+	 * Note: It is the callers responsibility to prevent an endless loop i.e. to test
+	 * whether a given anchor has already been used once.
+	 * then 
+	 * </p>
 	 * 
 	 * @param anchor the current anchor
-	 * @return the next fallback anchor or <code>null</code> if no more anchor is available
+	 * @return the next fallback anchor or <code>null</code> if no fallback anchor is available
 	 */
 	protected Anchor getNextFallbackAnchor(Anchor anchor) {
 		
