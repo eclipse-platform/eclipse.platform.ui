@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
+import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.search.*;
 import org.eclipse.update.internal.search.UpdatePolicy;
 
@@ -195,7 +196,7 @@ public class UpdateSearchRequest {
 				UpdatePolicy updatePolicy=null;
 				if (updateMapURL!=null) {
 					updatePolicy = new UpdatePolicy();
-					IStatus status =loadUpdatePolicy(updatePolicy, updateMapURL, new SubProgressMonitor(monitor, 1));
+					IStatus status =UpdateUtils.loadUpdatePolicy(updatePolicy, updateMapURL, new SubProgressMonitor(monitor, 1));
 					if (status != null)
 						statusList.add(status);
 				}
@@ -269,25 +270,7 @@ public class UpdateSearchRequest {
 		}
 	}
 
-/*
- * Load the update map using the map URL found in the scope.
- */	
-	private IStatus loadUpdatePolicy(UpdatePolicy map, URL url, IProgressMonitor monitor) throws CoreException {
-		monitor.subTask(Policy.bind("UpdateSearchRequest.loadingPolicy")); //$NON-NLS-1$
-		try {
-			map.load(url, monitor);
-			monitor.worked(1);
-		}
-		catch (CoreException e) {
-			IStatus status = e.getStatus();
-			if (status == null
-				|| status.getCode() != ISite.SITE_ACCESS_EXCEPTION)
-				throw e;
-			monitor.worked(1);
-			return status;
-		}
-		return null;
-	}
+
 /*
  * See if this query site adapter is mapped in the map file
  * to a different URL.

@@ -519,6 +519,25 @@ public class UpdateUtils {
 		return null;
 	}
 	
+	/*
+	 * Load the update map using the map URL found in the scope.
+	 */	
+	public static IStatus loadUpdatePolicy(UpdatePolicy map, URL url, IProgressMonitor monitor) throws CoreException {
+		monitor.subTask(Policy.bind("UpdateSearchRequest.loadingPolicy")); //$NON-NLS-1$
+		try {
+			map.load(url, monitor);
+			monitor.worked(1);
+		}
+		catch (CoreException e) {
+			IStatus status = e.getStatus();
+			if (status == null
+				|| status.getCode() != ISite.SITE_ACCESS_EXCEPTION)
+				throw e;
+			monitor.worked(1);
+			return status;
+		}
+		return null;
+	}
 
 	public static void downloadFeatureContent(
 		IFeature feature,

@@ -10,12 +10,19 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.model;
 
+import java.net.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.operations.*;
+import org.eclipse.update.internal.search.*;
 import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.search.*;
 
 public class DiscoveryFolder extends BookmarkFolder {
+	UpdatePolicy updatePolicy = new UpdatePolicy();
+	
 	public DiscoveryFolder() {
 		super(UpdateUI.getString("DiscoveryFolder.name")); //$NON-NLS-1$
 		setModel(UpdateUI.getDefault().getUpdateModel());
@@ -25,6 +32,22 @@ public class DiscoveryFolder extends BookmarkFolder {
 		// check if discovery sites defined by features should be exposed to the user
 		if (!UpdateUI.getDefault().getPluginPreferences().getBoolean(UpdateUI.P_DISCOVERY_SITES_ENABLED))
 			return;
+		
+		try {
+			URL updateMapURL = UpdateUtils.getUpdateMapURL();
+			if (updateMapURL!=null) {
+				updatePolicy = new UpdatePolicy();
+				// TODO may need to use a proper monitor to be able to cancel connections
+				IStatus status = UpdateUtils.loadUpdatePolicy(updatePolicy, updateMapURL, new NullProgressMonitor());
+				if (status != null) {
+					// log and continue
+					UpdateUtils.log(status);
+				}
+			}
+		} catch (CoreException e) {
+			// log and continue
+			UpdateUtils.log(e.getStatus());
+		}
 		
 		try {
 			ILocalSite site = SiteManager.getLocalSite();
@@ -38,10 +61,10 @@ public class DiscoveryFolder extends BookmarkFolder {
 					IFeature feature = ref.getFeature(null);
 					IURLEntry[] entries = feature.getDiscoverySiteEntries();
 					if (entries.length > 0) {
-						// Only add discovery sites if
-						// of root features
-						if (!isIncluded(ref, refs))
-							addBookmarks(entries);
+						// Only add discovery sites of root features
+						if (isIncluded(ref, refs))
+							continue;
+						addBookmarks(feature);
 					}
 				}
 			}
@@ -75,7 +98,24 @@ public class DiscoveryFolder extends BookmarkFolder {
 		}
 		return false;
 	}
-	private void addBookmarks(IURLEntry[] entries) {
+	private void addBookmarks(IFeature feature) {
+		// See if this query site adapter is mapped in the map file
+		// to a different URL.
+		if (updatePolicy != null && updatePolicy.isLoaded()) {
+			IUpdateSiteAdapter mappedSite = updatePolicy.getMappedDiscoverySite(feature.getVersionedIdentifier().getIdentifier());
+			if (mappedSite != null) {
+				SiteBookmark bookmark =
+					new SiteBookmark(mappedSite.getLabel(),	mappedSite.getURL(), false);
+				bookmark.setReadOnly(true);
+				if (!contains(bookmark))
+					internalAdd(bookmark);
+				return;
+			} else if (!updatePolicy.isFallbackAllowed()) {
+				// no match - use original sites if fallback allowed, or nothing.
+				return;
+			}
+		}
+		IURLEntry[] entries = feature.getDiscoverySiteEntries();
 		for (int i = 0; i < entries.length; i++) {
 			IURLEntry entry = entries[i];
 			SiteBookmark bookmark =

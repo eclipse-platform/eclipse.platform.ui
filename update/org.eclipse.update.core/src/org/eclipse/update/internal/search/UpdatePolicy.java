@@ -36,6 +36,10 @@ public class UpdatePolicy {
 	private static final String TAG_URL_MAP = "url-map"; //$NON-NLS-1$
 	private static final String ATT_URL = "url"; //$NON-NLS-1$
 	private static final String ATT_PATTERN = "pattern"; //$NON-NLS-1$
+	private static final String ATT_TYPE = "url-type"; //$NON-NLS-1$
+	private static final String ATT_TYPE_VALUE_UPDATE = "update"; //$NON-NLS-1$
+	private static final String ATT_TYPE_VALUE_BOTH = "both"; //$NON-NLS-1$
+	private static final String ATT_TYPE_VALUE_DISCOVERY = "discovery"; //$NON-NLS-1$
 
 	private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 
@@ -72,12 +76,15 @@ public class UpdatePolicy {
 	}
 
 	private ArrayList entries;
+	private ArrayList discoveryEntries;
 	private IUpdateSiteAdapter defaultSite;
+	private IUpdateSiteAdapter defaultDiscoverySite;
 	private boolean loaded = false;
 	private boolean fallbackAllowed = true;
 
 	public UpdatePolicy() {
 		entries = new ArrayList();
+		discoveryEntries = new ArrayList();
 	}
 
 	public void load(URL mapFile, IProgressMonitor monitor)
@@ -161,14 +168,49 @@ public class UpdatePolicy {
 		else
 			return defaultSite;
 	}
+	
+	/*
+	 * Given the feature ID, returns the mapped discovery URL if
+	 * found in the mappings. This URL will be used INSTEAD of
+	 * the discovery URL encoded in the feature itself during the
+	 * new search.
+	 * <p>In case of multiple matches (e.g. org.eclipse and org.eclipse.platform)
+	 * the URL for the longer pattern will be picked (i.e. org.eclipse.platform).
+	 */
+	public IUpdateSiteAdapter getMappedDiscoverySite(String id) {
+		UpdateMapEntry lastEntry = null;
+		for (int i = 0; i < discoveryEntries.size(); i++) {
+			UpdateMapEntry entry = (UpdateMapEntry) discoveryEntries.get(i);
+			if (entry.matches(id)) {
+				if (lastEntry == null)
+					lastEntry = entry;
+				else {
+					// Choose the match with longer pattern.
+					// For example, if two matches are found:
+					// 'org.eclipse' and 'org.eclipse.platform',
+					// pick 'org.eclipse.platform'.
+					String pattern = entry.getPattern();
+					String lastPattern = lastEntry.getPattern();
+					if (pattern.length() > lastPattern.length())
+						lastEntry = entry;
+				}
+			}
+		}
+		if (lastEntry != null)
+			return lastEntry.getSite();
+		else
+			return defaultDiscoverySite;
+	}
 
 	public boolean isFallbackAllowed() {
 		return fallbackAllowed;
 	}
 	
 	private void reset() {
-		if (entries.isEmpty() == false)
+		if (!entries.isEmpty())
 			entries.clear();
+		if (!discoveryEntries.isEmpty())
+			discoveryEntries.clear();
 	}
 
 	private void processUpdatePolicy(Document document) throws CoreException {
@@ -192,20 +234,21 @@ public class UpdatePolicy {
 	private void processMapNode(Node node) throws CoreException {
 		String pattern = getAttribute(node, ATT_PATTERN);
 		String urlName = getAttribute(node, ATT_URL);
+		String type = getAttribute(node, ATT_TYPE);
 		
 		assertNotNull(ATT_PATTERN, pattern);
 		assertNotNull(ATT_URL, urlName);
 		
 		// empty url means feature is not updateable
 		if (urlName.trim().length() == 0) {
-			addEntry(pattern, null);
+			addUpdateEntry(pattern, null, type);
 			return;
 		}
 
 		try {
 			String decodedValue = URLDecoder.decode(urlName, "UTF-8"); //$NON-NLS-1$
 			URL url = new URL(decodedValue);
-			addEntry(pattern, url);
+			addUpdateEntry(pattern, url, type);
 		} catch (MalformedURLException e) {
 			throwCoreException(Policy.bind("UpdatePolicy.invalidURL")+urlName, null); //$NON-NLS-1$
 		} catch (UnsupportedEncodingException e) {
@@ -224,11 +267,30 @@ public class UpdatePolicy {
 		return att.getNodeValue();
 	}
 
-	private void addEntry(String pattern, URL url) {
-		if (pattern.equalsIgnoreCase("*")) //$NON-NLS-1$
-			defaultSite = new MapSite(url);
-		else
-			entries.add(new UpdateMapEntry(pattern, url));
+	private void addUpdateEntry(String pattern, URL url, String type) {
+		if (pattern.equalsIgnoreCase("*")) {//$NON-NLS-1$
+			if (type == null)
+				defaultSite = new MapSite(url);
+			else if (type.equals(ATT_TYPE_VALUE_UPDATE))
+				defaultSite = new MapSite(url);
+			else if (type.equals(ATT_TYPE_VALUE_DISCOVERY))
+				defaultDiscoverySite = new MapSite(url);
+			else {
+				defaultSite = new MapSite(url);
+				defaultDiscoverySite = new MapSite(url);
+			}
+		} else {
+			if (type == null )
+				entries.add(new UpdateMapEntry(pattern, url));
+			else if (type.equals(ATT_TYPE_VALUE_UPDATE))
+				entries.add(new UpdateMapEntry(pattern, url));
+			else if (type.equals(ATT_TYPE_VALUE_DISCOVERY))
+				discoveryEntries.add(new UpdateMapEntry(pattern, url));
+			else {
+				entries.add(new UpdateMapEntry(pattern, url));
+				discoveryEntries.add(new UpdateMapEntry(pattern, url));
+			}
+		}
 	}
 	
 	private void throwCoreException(String message, Throwable e) throws CoreException {
