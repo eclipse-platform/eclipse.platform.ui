@@ -13,8 +13,8 @@ import java.io.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
 import org.eclipse.help.internal.base.util.*;
+import org.osgi.framework.*;
 /**
  * Table of plugins. Records all plugins, their version, corresponding fragments versions
  * The values are String in format:
@@ -53,26 +53,26 @@ public class PluginVersionInfo extends HelpProperties {
 			StringBuffer pluginVersionAndFragments = new StringBuffer();
 			pluginVersionAndFragments.append(plugin.getUniqueIdentifier());
 			pluginVersionAndFragments.append(SEPARATOR);
-			pluginVersionAndFragments.append(
-				plugin.getVersionIdentifier().toString());
-			if (plugin instanceof PluginDescriptorModel) {
-				PluginFragmentModel[] fragmentModels =
-					((PluginDescriptorModel) plugin).getFragments();
-				if (fragmentModels != null) {
-					for (int f = 0; f < fragmentModels.length; f++) {
+			pluginVersionAndFragments.append(plugin.getVersionIdentifier()
+					.toString());
+			Bundle pluginBundle = Platform.getBundle(plugin.getUniqueIdentifier());
+			if (pluginBundle != null) {
+				Bundle[] fragmentBundles = Platform.getFragments(pluginBundle);
+				if (fragmentBundles != null) {
+					for (int f = 0; f < fragmentBundles.length; f++) {
+						if (fragmentBundles[f].getState() == Bundle.UNINSTALLED)
+							continue;
 						pluginVersionAndFragments.append(SEPARATOR);
-						pluginVersionAndFragments.append(
-							fragmentModels[f].getId());
+						pluginVersionAndFragments.append(fragmentBundles[f]
+								.getSymbolicName());
 						pluginVersionAndFragments.append(SEPARATOR);
-						pluginVersionAndFragments.append(
-							fragmentModels[f].getVersion());
+						pluginVersionAndFragments.append(fragmentBundles[f]
+								.getHeaders().get(Constants.BUNDLE_VERSION));
 					}
 				}
 			}
-			this.put(
-				plugin.getUniqueIdentifier(),
-				pluginVersionAndFragments.toString());
-
+			this.put(plugin.getUniqueIdentifier(), pluginVersionAndFragments
+					.toString());
 		}
 	}
 	/**
