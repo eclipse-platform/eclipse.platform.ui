@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-    <classpathentry kind="src" path="Eclipse Debug UI"/>
+    <classpathentry kind="src" path="ui"/>
     <classpathentry kind="src" path="/org.eclipse.debug.core"/>
     <classpathentry kind="var" path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JRE_SRC"/>
     <classpathentry kind="lib" path="/org.apache.xerces/xerces.jar"/>
