@@ -35,46 +35,53 @@ public class JarVerificationResult implements IVerificationResult {
 	private String text;
 	private IFeature feature;
 	private boolean featureVerification;
+	private boolean alreadySeen;
 
-	/**
+	/*
+	 * 
 	 */
 	public int getResultCode() {
 		return resultCode;
 	}
-	/**
+	
+	/*
+	 * 
 	 */
 	public Exception getVerificationException() {
 		return resultException;
 	}
-	/**
+	
+	/*
+	 * 
 	 */
 	public void setResultCode(int newResultCode) {
 		resultCode = newResultCode;
 	}
-	/**
+	
+	/*
 	 * 
 	 */
 	public void setResultException(Exception newResultException) {
 		resultException = newResultException;
 	}
-	/**
-	 * Gets the verificationCode.
-	 * @return Returns a int
+	
+	/*
+	 * 
 	 */
 	public int getVerificationCode() {
 		return verificationCode;
 	}
 
-	/**
-	 * Sets the verificationCode.
-	 * @param verificationCode The verificationCode to set
+	/*
+	 * 
 	 */
 	public void setVerificationCode(int verificationCode) {
 		this.verificationCode = verificationCode;
 	}
 
-	/**
-	 * adds an array of Certificates
+	/*
+	 * adds an array of Certificates to the list
+	 * force recomputation of root cert
 	 */
 	public void addCertificates(Certificate[] certs) {
 		if (certificates == null)
@@ -83,16 +90,20 @@ public class JarVerificationResult implements IVerificationResult {
 		rootCertificates = null;
 	}
 
-	/**
-	 * Gets the certificates.
-	 * @return Returns a List
+	/*
+	 * 
 	 */
 	private List getCertificates() {
 		return certificates;
 	}
 
-	/**
-	 * Assume certifcates are x.509
+	/*
+	 * Returns the list of root certificates
+	 * The list of certificates we received is an array of certificates
+	 * we have to determine 
+	 * 1) how many chain do we have (a chain stops when verifier of a cert is 
+	 * not the signer of the next cert in the list 
+	 * 2) build a cert with the leaf signer and the root verifier for each chain
 	 */
 	public CertificatePair[] getRootCertificates() {
 		if (rootCertificates == null) {
@@ -141,23 +152,24 @@ public class JarVerificationResult implements IVerificationResult {
 		return rootCertificates;
 	}
 
-	/**
-	 * Gets the foundCertificate.
-	 * @return Returns a Certificate
+	/*
+	 * 
 	 */
 	private CertificatePair getFoundCertificate() {
 		return foundCertificate;
 	}
 
-	/**
-	 * Sets the foundCertificate.
-	 * @param foundCertificate The foundCertificate to set
+	/*
+	 * 
 	 */
 	public void setFoundCertificate(CertificatePair foundCertificate) {
 		this.foundCertificate = foundCertificate;
 	}
 
 
+	/*
+	 * Initializes the signerInfo and the VerifierInfo from the Certificate Pair
+	 */
 	private void initializeCertificates(){
 		X509Certificate certRoot = null;
 		X509Certificate certIssuer = null;
@@ -194,6 +206,9 @@ public class JarVerificationResult implements IVerificationResult {
 
 	}
 
+	/*
+	 * Returns a String to show if the certificate is valid
+	 */
 	private String checkValidity(X509Certificate cert) {
 
 		try {
@@ -206,8 +221,8 @@ public class JarVerificationResult implements IVerificationResult {
 		return ("\r\n" + Policy.bind("JarVerificationResult.CertificateValid")); //$NON-NLS-1$
 	}
 
-	/**
-	 * 
+	/*
+	 * Returns the label String from a X50name
 	 */
 	private String issuerString(Principal principal) {
 		try {
@@ -231,7 +246,7 @@ public class JarVerificationResult implements IVerificationResult {
 		return principal.toString();
 	}
 
-	/**
+	/*
 	 * 
 	 */
 	private String dateString(Date date) {
@@ -240,7 +255,7 @@ public class JarVerificationResult implements IVerificationResult {
 	}
 
 	/*
-	 * @see IVerificationResult#getSignerInfo()
+	 *
 	 */
 	public String getSignerInfo() {
 		if (signerInfo==null) initializeCertificates();
@@ -248,7 +263,7 @@ public class JarVerificationResult implements IVerificationResult {
 	}
 
 	/*
-	 * @see IVerificationResult#getVerifierInfo()
+	 *
 	 */
 	public String getVerifierInfo() {
 		if (signerInfo==null) initializeCertificates();		
@@ -256,34 +271,28 @@ public class JarVerificationResult implements IVerificationResult {
 	}
 
 	/*
-	 * @see IVerificationResult#getContentReference()
+	 *
 	 */
 	public ContentReference getContentReference() {
 		return contentReference;
 	}
 
 	/*
-	 * @see IVerificationResult#getFeature()
-	 */
-	public IFeature getFeature() {
-		return feature;
-	}
-
-	/**
-	 * 
-	 */
-	public void setText(String text) {
-		this.text = text;
-	}
-
-	/**
 	 * 
 	 */
 	public void setContentReference(ContentReference ref) {
 		this.contentReference = ref;
 	}
 
-	/**
+
+	/*
+	 *
+	 */
+	public IFeature getFeature() {
+		return feature;
+	}
+
+	/*
 	 * 
 	 */
 	public void setFeature(IFeature feature) {
@@ -291,26 +300,45 @@ public class JarVerificationResult implements IVerificationResult {
 	}
 
 	/*
-	 * @see IVerificationResult#getText()
+	 * 
 	 */
 	public String getText() {
 		return null;
 	}
 
-	/**
-	 * Sets the featureVerification.
-	 * @param featureVerification The featureVerification to set
+	/*
+	 * 
+	 */
+	public void setText(String text) {
+		this.text = text;
+	}
+
+	/*
+	 * 
+	 */
+	public boolean isFeatureVerification() {
+		return featureVerification;
+	}
+	
+	/*
+	 * 
 	 */
 	public void isFeatureVerification(boolean featureVerification) {
 		this.featureVerification = featureVerification;
 	}
 
-	/**
-	 * Gets the featureVerification.
-	 * @return Returns a boolean
+	/*
+	 *
 	 */
-	public boolean isFeatureVerification() {
-		return featureVerification;
+	public boolean alreadySeen() {
+		return alreadySeen;
+	}
+
+	/*
+	 * 
+	 */
+	public boolean alreadySeen(boolean seen) {
+		return this.alreadySeen = seen;
 	}
 
 }

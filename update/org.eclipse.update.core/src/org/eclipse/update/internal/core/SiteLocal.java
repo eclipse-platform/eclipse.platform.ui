@@ -480,6 +480,14 @@ public class SiteLocal
 					e);
 				//$NON-NLS-1$
 			}
+			
+			// activity
+			ConfigurationActivity activity =
+				new ConfigurationActivity(IActivity.ACTION_ADD_PRESERVED);
+			activity.setLabel(configuration.getLabel());
+			activity.setDate(new Date());			
+			activity.setStatus(IActivity.STATUS_OK);
+			((InstallConfiguration) newConfiguration).addActivityModel(activity);
 			((InstallConfiguration) newConfiguration).saveConfigurationFile(isTransient());
 
 			// add to the list			

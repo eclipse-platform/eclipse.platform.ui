@@ -613,6 +613,18 @@ public class ConfigurationView
 		//viewer.remove(feature);
 		viewer.refresh();
 	}
+	
+	/**
+	 * @see IConfiguredSiteChangedListener#featureUConfigured(IFeature)
+	 */	
+	public void featureConfigured(IFeature feature){};
+	
+	/**
+	 * @see IConfiguredSiteChangedListener#featureUConfigured(IFeature)
+	 */	
+	public void featureUnconfigured(IFeature feature){};
+	
+	
 	public void currentInstallConfigurationChanged(IInstallConfiguration configuration) {
 		viewer.refresh();
 	}

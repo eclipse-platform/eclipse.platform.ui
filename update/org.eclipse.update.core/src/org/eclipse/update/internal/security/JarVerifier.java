@@ -259,10 +259,7 @@ public class JarVerifier implements IVerifier {
 			// as verifyIntegrity already did it
 
 			//if user already said yes
-			if (alreadyValidated()) {
-				result.setVerificationCode(IVerificationResult.TYPE_ENTRY_ALREADY_ACCEPTED);			
-				return result;
-			}
+			result.alreadySeen(alreadyValidated());			
 
 			// verify source certificate
 			if (result.getVerificationCode() == IVerificationResult.TYPE_ENTRY_SIGNED_UNRECOGNIZED){

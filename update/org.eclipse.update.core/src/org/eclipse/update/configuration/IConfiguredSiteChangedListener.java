@@ -28,5 +28,21 @@ public interface IConfiguredSiteChangedListener {
 	 * @since 2.0 
 	 */
 	public void featureRemoved(IFeature feature);
+	
+	/**
+	 * Indicates the specified feature was configured.
+	 * 
+	 * @param feature the feature
+	 * @since 2.0 
+	 */
+	public void featureConfigured(IFeature feature);
+	
+	/**
+	 * Indicates the specified feature was unconfigured.
+	 * 
+	 * @param feature the feature
+	 * @since 2.0 
+	 */
+	public void featureUnconfigured(IFeature feature);
 }
 

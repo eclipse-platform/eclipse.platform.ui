@@ -62,19 +62,11 @@ public class InternalSiteManager {
 			} catch (CoreException retryException) {
 
 				IStatus firstStatus = preservedException.getStatus();
-				IStatus retry =
-					new Status(
-						IStatus.INFO,
-						firstStatus.getPlugin(),
-						IStatus.OK,
-						" ** Retry accessing site using default installed format instead of default packaged format because of previous log",
-						null);
-				//$NON-NLS-1$
-				IStatus retryStatus = retryException.getStatus();
 
-				UpdateManagerPlugin.getPlugin().getLog().log(firstStatus);
-				UpdateManagerPlugin.getPlugin().getLog().log(retry);
-				UpdateManagerPlugin.getPlugin().getLog().log(retryStatus);
+				MultiStatus multi = new MultiStatus(firstStatus.getPlugin(),IStatus.WARNING,"Failed retry accessing site using default installed format instead of default packaged format.",retryException);
+				multi.add(firstStatus);
+
+				UpdateManagerPlugin.getPlugin().getLog().log(multi);
 
 				throw preservedException;
 			}

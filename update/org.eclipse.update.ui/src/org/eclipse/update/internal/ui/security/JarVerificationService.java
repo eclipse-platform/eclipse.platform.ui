@@ -37,12 +37,6 @@ public class JarVerificationService implements IVerificationListener {
 	private Shell shell;
 
 	/**
-	 * teh result
-	 */
-	private IVerificationResult result;
-
-
-	/**
 	 * If no shell, create a new shell 
 	 */
 	public JarVerificationService() {
@@ -72,43 +66,9 @@ public class JarVerificationService implements IVerificationListener {
 	}
 
 	/**
-	 * returns an JarVerificationResult
-	 * The monitor can be null.
-	 */
-	private int okToInstall(){
-
-		switch (result.getVerificationCode()) {
-			case IVerificationResult.UNKNOWN_ERROR :
-					return CHOICE_ERROR;
-
-			case IVerificationResult.VERIFICATION_CANCELLED:
-					return CHOICE_ABORT;
-
-			case IVerificationResult.TYPE_ENTRY_ALREADY_ACCEPTED : 
-				return CHOICE_INSTALL_TRUST_ALWAYS;				
-			
-			// cannot verify it: do not prompt user.
-			case IVerificationResult.TYPE_ENTRY_UNRECOGNIZED: 
-				return CHOICE_INSTALL_TRUST_ALWAYS;				
-			
-			default :
-				{
-					final int[] wizardResult = new int[1];					
-					shell.getDisplay().syncExec(new Runnable() {
-						public void run() {
-							wizardResult[0] = openWizard();
-						}
-					});
-					return wizardResult[0];
-				}
-				
-		}
-
-	}
-	/**
 	 * 
 	 */
-	private int openWizard() {
+	private int openWizard(IVerificationResult result) {
 
 		int code;
 
@@ -127,9 +87,33 @@ public class JarVerificationService implements IVerificationListener {
 	/*
 	 * @see IVerificationListener#prompt(IVerificationResult)
 	 */
-	public int prompt(IVerificationResult verificationResult){
-		result = verificationResult;
-		return okToInstall();
+	public int prompt(final IVerificationResult verificationResult){
+
+		if (verificationResult.alreadySeen()) return CHOICE_INSTALL_TRUST_ALWAYS;
+
+		switch (verificationResult.getVerificationCode()) {
+			case IVerificationResult.UNKNOWN_ERROR :
+					return CHOICE_ERROR;
+
+			case IVerificationResult.VERIFICATION_CANCELLED:
+					return CHOICE_ABORT;
+
+			// cannot verify it: do not prompt user.
+			case IVerificationResult.TYPE_ENTRY_UNRECOGNIZED: 
+				return CHOICE_INSTALL_TRUST_ALWAYS;				
+			
+			default :
+				{
+					final int[] wizardResult = new int[1];					
+					shell.getDisplay().syncExec(new Runnable() {
+						public void run() {
+							wizardResult[0] = openWizard(verificationResult);
+						}
+					});
+					return wizardResult[0];
+				}
+				
+		}
 	}
 
 	

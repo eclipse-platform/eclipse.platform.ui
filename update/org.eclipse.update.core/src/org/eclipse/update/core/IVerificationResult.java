@@ -43,23 +43,6 @@ public interface IVerificationResult {
 	public static final int TYPE_ENTRY_SIGNED_RECOGNIZED = 3;
 
 	/**
-	 * Indicates the file being verified resulted in a verification
-	 * condition that was already accepted for some other file
-	 * verified by the verifier instance. Specifically, this applies
-	 * to the following conditions:
-	 * <ul>
-	 * <li>unrecognized file type, @see #TYPE_ENTRY_UNRECOGNIZED
-	 * <li>unsigned file, @see #TYPE_ENTRY_NOT_SIGNED
-	 * <li>recognized signer, @see #TYPE_ENTRY_SIGNED_RECOGNIZED
-	 * <li>previously accepted but unrecognized signer, 
-	 * @see #TYPE_ENTRY_SIGNED_UNRECOGNIZED
-	 * </ul>
-	 * 
-	 * @since 2.0
-	 */
-	public static final int TYPE_ENTRY_ALREADY_ACCEPTED = 4;
-
-	/**
 	 * Indicates the file is signed but the signer is not known
 	 * 
 	 * @since 2.0
@@ -154,5 +137,14 @@ public interface IVerificationResult {
 	 * @since 2.0
 	 */
 	public boolean isFeatureVerification();
-
+	
+	/**
+	 * Indicates whether the signer and verifier info have already been accepted by the user
+	 * during a previous verification of one of the file of the feature.
+	 * 
+	 * @return <code>true</code> if the result has already been accepted, <code>false</code>
+	 * if the result has not yet been accepted by the user
+	 * @since 2.0
+	 */
+	public boolean alreadySeen();
 }

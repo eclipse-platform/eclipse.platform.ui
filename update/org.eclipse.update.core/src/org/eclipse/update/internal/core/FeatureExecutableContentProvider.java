@@ -21,8 +21,6 @@ import org.eclipse.update.core.*;
 
 public class FeatureExecutableContentProvider extends FeatureContentProvider {
 
-	//private IFeature feature;
-
 	/*
 	 * Constructor 
 	 */
@@ -37,14 +35,14 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		throws IOException, CoreException {
 
 		// get the URL of the Archive file that contains the plugin entry
-		ISiteContentProvider provider= getFeature().getSite().getSiteContentProvider();
-		URL fileURL= provider.getArchiveReference(getPathID(pluginEntry));
-		String result= fileURL.getFile();
+		ISiteContentProvider provider = getFeature().getSite().getSiteContentProvider();
+		URL fileURL = provider.getArchiveReference(getPathID(pluginEntry));
+		String result = fileURL.getFile();
 
 		// return the list of all subdirectories
 		if (!result.endsWith(File.separator))
 			result += File.separator;
-		File pluginDir= new File(result);
+		File pluginDir = new File(result);
 		if (!pluginDir.exists())
 			throw new IOException(
 				Policy.bind("FeatureExecutableContentProvider.FileDoesNotExist", result));
@@ -57,12 +55,12 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 	 * Returns the path for the Feature
 	 */
 	private String getFeaturePath() throws IOException {
-		String result= getFeature().getURL().getFile();
+		String result = getFeature().getURL().getFile();
 
 		// return the list of all subdirectories
 		if (!(result.endsWith(File.separator) || result.endsWith("/"))) //$NON-NLS-1$
 			result += File.separator;
-		File pluginDir= new File(result);
+		File pluginDir = new File(result);
 		if (!pluginDir.exists())
 			throw new IOException(
 				Policy.bind("FeatureExecutableContentProvider.FileDoesNotExist", result));
@@ -76,10 +74,10 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 	 * Recursive call
 	 */
 	private List getFiles(File dir) throws IOException {
-		List result= new ArrayList();
+		List result = new ArrayList();
 
 		if (!dir.isDirectory()) {
-			String msg=
+			String msg =
 				Policy.bind(
 					"FeatureExecutableContentProvider.InvalidDirectory",
 					dir.getAbsolutePath());
@@ -88,20 +86,18 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 
 		}
 
-		File[] files= dir.listFiles();
+		File[] files = dir.listFiles();
 		if (files != null)
-			for (int i= 0; i < files.length; ++i) {
+			for (int i = 0; i < files.length; ++i) {
 				if (files[i].isDirectory()) {
 					result.addAll(getFiles(files[i]));
 				} else {
 					result.add(files[i]);
 				}
 			}
-			
+
 		return result;
 	}
-
-
 
 	/*
 	 * @see IFeatureContentProvider#getVerifier()
@@ -115,14 +111,14 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 	 */
 	public ContentReference getFeatureManifestReference(InstallMonitor monitor)
 		throws CoreException {
-		ContentReference result= null;
+		ContentReference result = null;
 		try {
-			result= new ContentReference(null, new URL(getURL(), Feature.FEATURE_XML));
+			result = new ContentReference(null, new URL(getURL(), Feature.FEATURE_XML));
 
 		} catch (MalformedURLException e) {
-			String id=
+			String id =
 				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status=
+			IStatus status =
 				new Status(
 					IStatus.ERROR,
 					id,
@@ -153,16 +149,14 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		IPluginEntry pluginEntry,
 		InstallMonitor monitor)
 		throws CoreException {
-		ContentReference[] result= new ContentReference[1];
+		ContentReference[] result = new ContentReference[1];
 		try {
-			result[0]=
-				new ContentReference(
-					getPathID(pluginEntry),
-					new File(getPath(pluginEntry)));
+			result[0] =
+				new ContentReference(getPathID(pluginEntry), new File(getPath(pluginEntry)));
 		} catch (IOException e) {
-			String id=
+			String id =
 				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status=
+			IStatus status =
 				new Status(
 					IStatus.ERROR,
 					id,
@@ -176,7 +170,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		}
 		return result;
 	}
- 
+
 	/*
 	 * @see IFeatureContentProvider#getNonPluginEntryArchiveReferences(INonPluginEntry)
 	 */
@@ -184,35 +178,33 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		INonPluginEntry nonPluginEntry,
 		InstallMonitor monitor)
 		throws CoreException {
-		ContentReference[] result= new ContentReference[1];
+
+		ContentReference[] result = new ContentReference[1];
+		URL fileURL;
+
+		//try {
+		// get the URL of the Archive file that contains the plugin entry
+		ISiteContentProvider provider = getFeature().getSite().getSiteContentProvider();
+		fileURL = provider.getArchiveReference(getPathID(nonPluginEntry));
+
+		String fileString = fileURL.getFile();
+		File nonPluginData = new File(fileString);
+		if (!nonPluginData.exists())
+			throw Utilities.newCoreException(
+				Policy.bind("FeatureExecutableContentProvider.FileDoesNotExist", fileString),
+				null);
+		//$NON-NLS-1$ //$NON-NLS-2$
+
 		try {
-			// get the URL of the Archive file that contains the plugin entry
-			ISiteContentProvider provider= getFeature().getSite().getSiteContentProvider();
-			URL fileURL= provider.getArchiveReference(getPathID(nonPluginEntry));
-			String fileString= fileURL.getFile();
-
-			File nonPluginData= new File(fileString);
-			if (!nonPluginData.exists())
-				throw new IOException(
-					Policy.bind("FeatureExecutableContentProvider.FileDoesNotExist", fileString));
-			//$NON-NLS-1$ //$NON-NLS-2$
-
-			result[0]=
+			result[0] =
 				new ContentReference(nonPluginEntry.getIdentifier(), nonPluginData.toURL());
-		} catch (Exception e) {
-			String id=
-				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status=
-				new Status(
-					IStatus.ERROR,
-					id,
-					IStatus.OK,
-					Policy.bind(
-						"FeatureExecutableContentProvider.UnableToRetrieveNonPluginEntry",
-						nonPluginEntry.getIdentifier().toString()),
-					e);
+		} catch (MalformedURLException e) {
+			throw Utilities.newCoreException(
+				Policy.bind(
+					"FeatureExecutableContentProvider.UnableToRetrieveNonPluginEntry",
+					nonPluginEntry.getIdentifier().toString()),
+				e);
 			//$NON-NLS-1$
-			throw new CoreException(status);
 		}
 		return result;
 	}
@@ -222,8 +214,8 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 	 */
 	public ContentReference[] getFeatureEntryArchiveReferences(InstallMonitor monitor)
 		throws CoreException {
-		ContentReference[] contentReferences= new ContentReference[1];
-		contentReferences[0]= new ContentReference(null, getURL());
+		ContentReference[] contentReferences = new ContentReference[1];
+		contentReferences[0] = new ContentReference(null, getURL());
 		return contentReferences;
 	}
 
@@ -232,29 +224,22 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 	 */
 	public ContentReference[] getFeatureEntryContentReferences(InstallMonitor monitor)
 		throws CoreException {
-		ContentReference[] result= new ContentReference[0];
+		ContentReference[] result = new ContentReference[0];
 		try {
-			File featureDir= new File(getFeaturePath());
-			List files= getFiles(featureDir);
-			result= new ContentReference[files.size()];
-			for (int i= 0; i < result.length; i++) {
-				File currentFile= (File) files.get(i);
-				result[i]= new ContentReference(currentFile.getName(), currentFile.toURL());
+			File featureDir = new File(getFeaturePath());
+			List files = getFiles(featureDir);
+			result = new ContentReference[files.size()];
+			for (int i = 0; i < result.length; i++) {
+				File currentFile = (File) files.get(i);
+				result[i] = new ContentReference(currentFile.getName(), currentFile.toURL());
 			}
-		} catch (Exception e) {
-			String id=
-				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status=
-				new Status(
-					IStatus.ERROR,
-					id,
-					IStatus.OK,
-					Policy.bind(
-						"FeatureExecutableContentProvider.UnableToRetrieveFeatureEntryContentRef",
-						getFeature().getVersionedIdentifier().toString()),
-					e);
+		} catch (IOException e) {
+			throw Utilities.newCoreException(
+				Policy.bind(
+					"FeatureExecutableContentProvider.UnableToRetrieveFeatureEntryContentRef",
+					getFeature().getVersionedIdentifier().toString()),
+				e);
 			//$NON-NLS-1$
-			throw new CoreException(status);
 		}
 		return result;
 	}
@@ -267,34 +252,26 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 		InstallMonitor monitor)
 		throws CoreException {
 
-		ContentReference[] result= new ContentReference[0];
+		ContentReference[] result = new ContentReference[0];
 
 		try {
 			// return the list of all subdirectories
-			File pluginDir= new File(getPath(pluginEntry));
-			List files= getFiles(pluginDir);
-			result= new ContentReference[files.size()];
-			for (int i= 0; i < result.length; i++) {
-				File currentFile= (File) files.get(i);
-				result[i]= new ContentReference(null, currentFile.toURL());
+			File pluginDir = new File(getPath(pluginEntry));
+			List files = getFiles(pluginDir);
+			result = new ContentReference[files.size()];
+			for (int i = 0; i < result.length; i++) {
+				File currentFile = (File) files.get(i);
+				result[i] = new ContentReference(null, currentFile.toURL());
 			}
-		} catch (Exception e) {
-			String id=
-				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status=
-				new Status(
-					IStatus.ERROR,
-					id,
-					IStatus.OK,
-					Policy.bind(
-						"FeatureExecutableContentProvider.UnableToRetriveArchiveContentRef")
-						+ pluginEntry.getVersionedIdentifier().toString(),
-					e);
+		} catch (IOException e) {
+			throw Utilities.newCoreException(
+				Policy.bind(
+					"FeatureExecutableContentProvider.UnableToRetriveArchiveContentRef")
+					+ pluginEntry.getVersionedIdentifier().toString(),
+				e);
 			//$NON-NLS-1$
-			throw new CoreException(status);
 		}
 		return result;
 	}
-
 
 }

@@ -78,6 +78,13 @@ public interface IActivity extends IAdaptable {
 	public static final int ACTION_RECONCILIATION = 8;
 
 	/**
+	 * Indicates adding the configuration to a preserved state
+	 * 
+	 * @since 2.0
+	 */
+	public static final int ACTION_ADD_PRESERVED = 9;
+	
+	/**
 	 * Indicates the action completed cussessfully
 	 * 
 	 * @since 2.0
