@@ -21,11 +21,18 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.team.ccvs.core.CVSTag;
+import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSLocalSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
+import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
+import org.eclipse.team.internal.ccvs.core.resources.LocalResource;
 import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
@@ -42,6 +49,9 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 	private static final int NODE_EQUAL = 0;
 	private static final int NODE_NOT_EQUAL = 1;
 	private static final int NODE_UNKNOWN = 2;
+	
+	// provider for the project being compared
+	CVSTeamProvider cvsProvider = null;
 	
 	/**
 	 * Creates a new CVSCompareEditorInput.
@@ -255,6 +265,15 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 		try {
 			monitor.beginTask(Policy.bind("CVSCompareEditorInput.comparing"), 30);
 			
+			// get the CVS provider if one exists
+			if (left instanceof ResourceNode) {
+				IResource resource = ((ResourceNode)left).getResource();
+				ITeamProvider p = TeamPlugin.getManager().getProvider(resource);
+				if(p != null && p instanceof CVSTeamProvider) {
+					cvsProvider = (CVSTeamProvider)p;
+				}
+			}
+			
 			// do the diff	
 			IProgressMonitor sub = new SubProgressMonitor(monitor, 10);
 			try {
@@ -279,22 +298,41 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 	 * NODE_UNKNOWN if comparison was not possible.
 	 */
 	protected int teamEqual(Object left, Object right) {
+		
+		// calculate the type for the left contribution
 		ICVSRemoteResource leftEdition = null;
 		if (left instanceof ResourceEditionNode) {
 			leftEdition = ((ResourceEditionNode)left).getRemoteResource();
 		} else if (left instanceof ResourceNode) {
 			IResource resource = ((ResourceNode)left).getResource();
-			// Hack
-			CVSLocalSyncElement element = new CVSLocalSyncElement(resource, null);
-			if (element.isDirty()) {
-				return NODE_NOT_EQUAL;
-			} else {
-				leftEdition = (ICVSRemoteResource)element.getBase();
+			try {
+				ICVSResource element = null;
+				if(resource.getType()==IResource.FILE) {
+					element = new LocalFile(resource.getLocation().toFile());
+					if (((LocalFile)element).isDirty()) {
+						return NODE_NOT_EQUAL;
+					}
+				} else {
+					element = new LocalFolder(resource.getLocation().toFile());
+				}
+				if(cvsProvider==null) {
+					return NODE_UNKNOWN;
+				}
+				leftEdition = cvsProvider.getRemoteResource(resource);
+			} catch(CVSException e) {
+				return NODE_UNKNOWN;
+			} catch(TeamException e) {
+				return NODE_UNKNOWN;
 			}
 		}
+		
+		// calculate the type for the right contribution
 		ICVSRemoteResource rightEdition = null;
 		if (right instanceof ResourceEditionNode)
 			rightEdition = ((ResourceEditionNode)right).getRemoteResource();
+		
+		
+		// compare them
 			
 		if (leftEdition == null || rightEdition == null) {
 			return NODE_UNKNOWN;
@@ -319,8 +357,10 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 				leftInfo.getRevision().equals(rightInfo.getRevision())) {
 				return NODE_EQUAL;
 			} else {
-				// To do: If the branch tags are different, then force a content comparison.
-				// Currently this case fails.
+				// if files are on different branches then force a content comparison.
+				if(leftInfo.getTag().getType() == CVSTag.BRANCH || rightInfo.getTag().getType() == CVSTag.BRANCH) {
+					return NODE_UNKNOWN;
+				}
 				return NODE_NOT_EQUAL;
 			}
 		} catch (TeamException e) {
