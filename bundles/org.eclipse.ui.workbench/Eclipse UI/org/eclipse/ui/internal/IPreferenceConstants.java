@@ -72,6 +72,10 @@ public interface IPreferenceConstants {
 	//not have the -refresh option
 	public static final String REFRESH_WORKSPACE_ON_STARTUP = "REFRESH_WORKSPACE_ON_STARTUP"; //$NON-NLS-1$
 	
+	//Boolean: true = close all editors before saving the workbench state when exiting
+	//Eclipse.  Will improve startup time for editors that have a long open time.
+	public static final String CLOSE_EDITORS_ON_EXIT = "CLOSE_EDITORS_ON_EXIT"; //$NON-NLS-1$
+	
 	//List of plugins but that extends "startup" extension point but are overriden by the user.
 	//String of plugin unique ids separated by ";"
 	public static final String PLUGINS_NOT_ACTIVATED_ON_STARTUP = "PLUGINS_NOT_ACTIVATED_ON_STARTUP"; //$NON-NLS-1$

@@ -34,6 +34,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 
 	private Composite editorReuseGroup;
 	private Button reuseEditors;
+	private Button closeEditorsOnExit;
 	private Composite editorReuseIndentGroup;
 	private Composite editorReuseThresholdGroup;
 	private IntegerFieldEditor reuseEditorsThreshold;	
@@ -64,8 +65,16 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		WorkbenchPreferencePage.createSpace(composite);
 		createEditorReuseGroup(composite);
 				
+		closeEditorsOnExit = new Button(composite, SWT.CHECK);
+		closeEditorsOnExit.setText(WorkbenchMessages.getString("WorkbenchPreference.closeEditorsButton")); //$NON-NLS-1$
+		closeEditorsOnExit.setFont(composite.getFont());
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		closeEditorsOnExit.setSelection(store.getBoolean(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT));
+		setButtonLayoutData(closeEditorsOnExit);
+
 		WorkbenchPreferencePage.createSpace(composite);
 		createEncodingGroup(composite);
+
 		validCheck();
 		
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.WORKBENCH_EDITOR_PREFERENCE_PAGE);
@@ -80,6 +89,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	protected void performDefaults() {
 		IPreferenceStore store = getPreferenceStore();
 		updateEncodingState(true);
+		closeEditorsOnExit.setSelection(store.getDefaultBoolean(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT));
 		reuseEditors.setSelection(store.getDefaultBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
 		dirtyEditorReuseGroup.setEnabled(reuseEditors.getSelection());
 		openNewEditor.setSelection(!store.getDefaultBoolean(IPreferenceConstants.REUSE_DIRTY_EDITORS));
@@ -104,6 +114,8 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		}
 		
 		ResourcesPlugin.getPlugin().savePluginPreferences();
+
+		store.setValue(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT,closeEditorsOnExit.getSelection());
 
 		// store the reuse editors setting
 		store.setValue(IPreferenceConstants.REUSE_EDITORS_BOOLEAN,reuseEditors.getSelection());

@@ -204,6 +204,26 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 */
 	private boolean busyClose(final boolean force) {
 		isClosing = true;
+
+		isClosing = saveAllEditors(!force);
+		if (!isClosing && !force)
+			return false;
+
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		boolean closeEditors = store.getBoolean(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT);
+		if (closeEditors) {
+			Platform.run(new SafeRunnable() {
+				public void run() {
+					IWorkbenchPage page = getActiveWorkbenchWindow().getActivePage();
+					if (page != null) {
+						isClosing = page.closeAllEditors(false);
+					}
+				}
+			});
+			if (!isClosing && !force)
+				return false;
+		}
+
 		Platform.run(new SafeRunnable() {
 			public void run() {
 				XMLMemento mem = recordWorkbenchState();
@@ -225,7 +245,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		if (!isClosing && !force)
 			return false;
 
-		isClosing = saveAllEditors(!force);
 		Platform.run(new SafeRunnable(WorkbenchMessages.getString("ErrorClosing")) { //$NON-NLS-1$
 			public void run() {
 				if(isClosing || force)
