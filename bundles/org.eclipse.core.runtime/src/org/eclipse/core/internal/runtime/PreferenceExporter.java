@@ -63,7 +63,7 @@ public class PreferenceExporter {
 	 */
 	public static void importPreferences(IPath file) throws CoreException {
 		if (!file.toFile().exists()) {
-			String msg = Policy.bind("preferences.fileNotFound", file.toOSString());
+			String msg = Policy.bind("preferences.fileNotFound", file.toOSString()); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, null));
 		}
 		Map idsToPreferences = splitPreferences(file);
@@ -265,7 +265,7 @@ public class PreferenceExporter {
 				//ensure there is a corresponding plugin version property
 				String versionId = preferences.getString(pluginId);
 				if (versionId == null || versionId.length() == 0) {
-					String msg = Policy.bind("preferences.invalidProperty", names[i], 
+					String msg = Policy.bind("preferences.invalidProperty", names[i], //$NON-NLS-1$ 
 						preferences.getString(names[i]));
 					throw new CoreException(
 						new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, msg, null));
@@ -276,7 +276,7 @@ public class PreferenceExporter {
 				//verify that the versionId has the correct format
 				String versionId = preferences.getString(pluginId);
 				if (!PluginVersionIdentifier.validateVersion(versionId).isOK()) {
-					String msg = Policy.bind("preferences.invalidProperty", names[i], 
+					String msg = Policy.bind("preferences.invalidProperty", names[i], //$NON-NLS-1$
 						preferences.getString(names[i]));
 					throw new CoreException(
 						new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, msg, null));
