@@ -1003,16 +1003,20 @@ public class EditorManager {
 	/**
 	 * @see IPersistablePart
 	 */
-	public void saveState(final IMemento memento) {
+	public IStatus saveState(final IMemento memento) {
+
+		final MultiStatus result = new MultiStatus(
+			PlatformUI.PLUGIN_ID,IStatus.OK,
+			WorkbenchMessages.getString("EditorManager.problemsSavingEditors"),null);
+
 		// Save the editor area workbooks layout/relationship
 		IMemento editorAreaMem = memento.createChild(IWorkbenchConstants.TAG_AREA);
-		editorPresentation.saveState(editorAreaMem);
+		result.add(editorPresentation.saveState(editorAreaMem));
 
 		// Save the active workbook id
 		editorAreaMem.putString(IWorkbenchConstants.TAG_ACTIVE_WORKBOOK, editorPresentation.getActiveEditorWorkbookID());
 
 		// Save each open editor.
-		final int errors[] = new int[1];
 		IEditorReference editors[] = editorPresentation.getEditors();
 		for (int i = 0; i < editors.length; i++) {
 			IEditorReference editorReference = (IEditorReference)editors[i];
@@ -1064,17 +1068,14 @@ public class EditorManager {
 					persistable.saveState(inputMem);
 				}
 				public void handleException(Throwable e) {
-					errors[0]++;
+					result.add(new Status(
+						IStatus.ERROR,PlatformUI.PLUGIN_ID,0,
+						WorkbenchMessages.format("EditorManager.unableToSaveEditor",new String[]{editor.getTitle()}),
+						e));
 				}
 			});
 		}
-		if (errors[0] > 0) {
-			String message = WorkbenchMessages.getString("EditorManager.multipleErrors"); //$NON-NLS-1$
-			if (errors[0] == 1)
-				message = WorkbenchMessages.getString("EditorManager.oneError"); //$NON-NLS-1$
-			MessageDialog.openError(null, WorkbenchMessages.getString("Error"), message); //$NON-NLS-1$
-		}
-
+		return result;
 	}
 	/**
 	 * Shows an editor.  If <code>setFocus == true</code> then

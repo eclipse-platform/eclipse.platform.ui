@@ -967,7 +967,14 @@ public void saveDesc() {
 public void saveDescAs(IPerspectiveDescriptor desc) {		
 	// Capture the layout state.	
 	XMLMemento memento = XMLMemento.createWriteRoot("perspective");//$NON-NLS-1$
-	saveState(memento, (PerspectiveDescriptor)desc, false);
+	IStatus status = saveState(memento, (PerspectiveDescriptor)desc, false);
+	if(status.getSeverity() == IStatus.ERROR) {
+		ErrorDialog.openError((Shell)null, 
+			WorkbenchMessages.getString("Perspective.problemSavingTitle"),  //$NON-NLS-1$
+			WorkbenchMessages.getString("Perspective.problemSavingMessage"), //$NON-NLS-1$
+			status);
+		return;
+	}
 
 	// Save it to a file.
 	PerspectiveDescriptor realDesc = (PerspectiveDescriptor)desc;
@@ -987,29 +994,37 @@ public void saveDescAs(IPerspectiveDescriptor desc) {
 /**
  * Save the layout.
  */
-public void saveState(IMemento memento)
-{
-	saveState(memento, descriptor, true);
+public IStatus saveState(IMemento memento) {
+	MultiStatus result = new MultiStatus(
+		PlatformUI.PLUGIN_ID,IStatus.OK,
+		WorkbenchMessages.getString("Perspective.problemsSavingPerspective"),null);
+		
+	result.merge(saveState(memento, descriptor, true));
 	// Save the toolbar layout.
 	if (toolBarLayout != null) {
 		IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
-		toolBarLayout.saveState(childMem);
+		result.add(toolBarLayout.saveState(childMem));
 	}
+	return result;
 }
 /**
  * Save the layout.
  */
-private void saveState(IMemento memento, PerspectiveDescriptor p,
+private IStatus saveState(IMemento memento, PerspectiveDescriptor p,
 	boolean saveInnerViewState)
 {
+	MultiStatus result = new MultiStatus(
+		PlatformUI.PLUGIN_ID,IStatus.OK,
+		WorkbenchMessages.getString("Perspective.problemsSavingPerspective"),null);
+
 	if(this.memento != null) {
 		memento.putMemento(this.memento);
-		return;
+		return result;
 	}
-		
+			
 	// Save the version number.
 	memento.putString(IWorkbenchConstants.TAG_VERSION, VERSION_STRING);
-	p.saveState(memento);
+	result.add(p.saveState(memento));
 	if(!saveInnerViewState) {
 		Rectangle bounds = page.getWorkbenchWindow().getShell().getBounds();
 		IMemento boundsMem = memento.createChild(IWorkbenchConstants.TAG_WINDOW);
@@ -1103,13 +1118,14 @@ private void saveState(IMemento memento, PerspectiveDescriptor p,
 	
 	// Save the layout.
 	IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_LAYOUT);
-	presentation.saveState(childMem);
+	result.add(presentation.saveState(childMem));
 
 	// Save the editor visibility state
 	if (isEditorAreaVisible())
 		memento.putInteger(IWorkbenchConstants.TAG_AREA_VISIBLE, 1);
 	else
 		memento.putInteger(IWorkbenchConstants.TAG_AREA_VISIBLE, 0);
+	return result;
 }
 /**
  * Sets the visible action sets. 

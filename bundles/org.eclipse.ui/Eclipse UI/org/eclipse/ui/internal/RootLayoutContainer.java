@@ -126,12 +126,15 @@ public IStatus restoreState(IMemento memento)
 /**
  * @see IPersistablePart
  */
-public void saveState(IMemento memento) 
-{
+public IStatus saveState(IMemento memento) {
 	RelationshipInfo[] relationships = computeRelation();
+
+	MultiStatus result = new MultiStatus(
+		PlatformUI.PLUGIN_ID,IStatus.OK,
+		WorkbenchMessages.getString("RootLayoutContainer.problemsSavingPerspective"),null);
+	
 	// Loop through the relationship array.
-	for (int i = 0; i < relationships.length; i ++) 
-	{
+	for (int i = 0; i < relationships.length; i ++) {
 		// Save the relationship info ..
 		//		private LayoutPart part;
 		// 		private int relationship;
@@ -160,8 +163,9 @@ public void saveState(IMemento memento)
 		if (folder != null) {
 			childMem.putString(IWorkbenchConstants.TAG_FOLDER, "true");//$NON-NLS-1$
 			IMemento folderMem = childMem.createChild(IWorkbenchConstants.TAG_FOLDER);
-			folder.saveState(folderMem);
+			result.add(folder.saveState(folderMem));
 		}
 	}
+	return result;
 }
 }

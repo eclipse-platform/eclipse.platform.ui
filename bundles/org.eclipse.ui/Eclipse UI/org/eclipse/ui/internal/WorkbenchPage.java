@@ -1980,17 +1980,22 @@ protected void saveToolBarLayout() {
 /**
  * Save the state of the page.
  */
-public void saveState(IMemento memento) {
+public IStatus saveState(IMemento memento) {
 	// We must unzoom to get correct layout.
 	if (isZoomed())
 		zoomOut();
-		
+
+	MultiStatus result = new MultiStatus(
+		PlatformUI.PLUGIN_ID,IStatus.OK,
+		WorkbenchMessages.format("WorkbenchPage.unableToSavePerspective",new String[]{getLabel()}),
+		null);
+				
 	// Save editor manager.
 	IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_EDITORS);
-	editorMgr.saveState(childMem);
+	result.merge(editorMgr.saveState(childMem));
 
 	childMem = memento.createChild(IWorkbenchConstants.TAG_VIEWS);
-	getViewFactory().saveState(childMem);
+	result.merge(getViewFactory().saveState(childMem));
 	
 	// Create persp block.
 	childMem = memento.createChild(IWorkbenchConstants.TAG_PERSPECTIVES);
@@ -2007,12 +2012,13 @@ public void saveState(IMemento memento) {
 	while (enum.hasNext()) {
 		Perspective persp = (Perspective)enum.next();
 		IMemento gChildMem = childMem.createChild(IWorkbenchConstants.TAG_PERSPECTIVE);
-		persp.saveState(gChildMem);
+		result.merge(persp.saveState(gChildMem));
 	}
 	// Save working set if set
 	if (workingSet != null) {
 		memento.putString(IWorkbenchConstants.TAG_WORKING_SET, workingSet.getName());
 	}
+	return result;
 }
 /**
  * Sets the active part.

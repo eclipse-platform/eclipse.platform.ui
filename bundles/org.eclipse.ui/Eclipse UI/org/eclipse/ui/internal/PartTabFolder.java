@@ -738,7 +738,7 @@ public IStatus restoreState(IMemento memento)
 /**
  * @see IPersistable
  */
-public void saveState(IMemento memento) 
+public IStatus saveState(IMemento memento) 
 {
 	
 	// Save the active tab.
@@ -790,6 +790,7 @@ public void saveState(IMemento memento)
 			}
 		}
 	}
+	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
 }
 /**
  * Sets the presentation bounds.

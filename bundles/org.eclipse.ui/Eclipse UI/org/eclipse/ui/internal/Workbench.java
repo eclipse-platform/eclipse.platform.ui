@@ -1052,7 +1052,13 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 */
 	private XMLMemento recordWorkbenchState() {
 		XMLMemento memento = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_WORKBENCH);
-		saveState(memento);
+		IStatus status = saveState(memento);
+		if(status.getSeverity() != IStatus.OK) {
+			ErrorDialog.openError((Shell)null,
+				WorkbenchMessages.getString("Workbench.problemsSaving"),  //$NON-NLS-1$
+				WorkbenchMessages.getString("Workbench.problemsSavingMsg"), //$NON-NLS-1$
+				status);
+		}
 		return memento;
 	}
 	/* (non-Javadoc)
@@ -1197,7 +1203,11 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	/**
 	 * Saves the current state of the workbench so it can be restored later on
 	 */
-	private void saveState(IMemento memento) {
+	private IStatus saveState(IMemento memento) {
+		MultiStatus result = new MultiStatus(
+			PlatformUI.PLUGIN_ID,IStatus.OK,
+			WorkbenchMessages.getString("Workbench.problemsSaving"),null);
+
 		// Save the version number.
 		memento.putString(IWorkbenchConstants.TAG_VERSION, VERSION_STRING[1]);
 
@@ -1206,11 +1216,12 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		for (int nX = 0; nX < windows.length; nX++) {
 			WorkbenchWindow window = (WorkbenchWindow) windows[nX];
 			IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_WINDOW);
-			window.saveState(childMem);
+			result.merge(window.saveState(childMem));
 		}
-		getEditorHistory().saveState(memento.createChild(IWorkbenchConstants.TAG_MRU_LIST)); //$NON-NLS-1$
+		result.add(getEditorHistory().saveState(memento.createChild(IWorkbenchConstants.TAG_MRU_LIST))); //$NON-NLS-1$
 		// Save perspective history.
-		getPerspectiveHistory().saveState(memento.createChild(IWorkbenchConstants.TAG_PERSPECTIVE_HISTORY)); //$NON-NLS-1$
+		result.add(getPerspectiveHistory().saveState(memento.createChild(IWorkbenchConstants.TAG_PERSPECTIVE_HISTORY))); //$NON-NLS-1$
+		return result;
 	}
 	/**
 	 * Save the workbench UI in a persistence file.

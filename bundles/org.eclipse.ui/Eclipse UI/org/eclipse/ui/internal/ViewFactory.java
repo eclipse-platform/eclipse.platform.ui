@@ -144,21 +144,27 @@ public IStatus restoreView(final IViewReference ref) {
 	return result[0];
 }
 
-public void saveState(IMemento memento) {
-	IViewReference refs[] = getViews();
+public IStatus saveState(IMemento memento) {
+	final MultiStatus result = new MultiStatus(
+		PlatformUI.PLUGIN_ID,IStatus.OK,
+		WorkbenchMessages.getString("ViewFactory.problemsSavingViews"),null);
+	
+	final IViewReference refs[] = getViews();
 	for (int i = 0; i < refs.length; i++) {
 		final IMemento viewMemento = memento.createChild(IWorkbenchConstants.TAG_VIEW);
 		viewMemento.putString(IWorkbenchConstants.TAG_ID, refs[i].getId());
 		final IViewPart view = (IViewPart)refs[i].getPart(false);
 		if(view != null) {
-			final boolean result[] = new boolean[1];
+			final int index = i;
 			Platform.run(new SafeRunnable() {
 				public void run() {
 					view.saveState(viewMemento.createChild(IWorkbenchConstants.TAG_VIEW_STATE));
-					result[0] = true;
 				}
 				public void handleException(Throwable e) {
-					result[0] = false;
+					result.add(new Status(
+						IStatus.ERROR,PlatformUI.PLUGIN_ID,0,
+						WorkbenchMessages.format("ViewFactory.couldNotSave",new String[]{refs[index].getTitle()}),
+						e));
 				}
 			});
 		} else {
@@ -169,6 +175,7 @@ public void saveState(IMemento memento) {
 			}
 		}
 	}
+	return result;
 }
 public IStatus restoreState(IMemento memento) {
 	IMemento mem[] = memento.getChildren(IWorkbenchConstants.TAG_VIEW);

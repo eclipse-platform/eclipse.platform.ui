@@ -131,7 +131,7 @@ public class EditorHistory {
 	 * 
 	 * @param memento the memento to save the mru history in
 	 */
-	public void saveState(IMemento memento) {
+	public IStatus saveState(IMemento memento) {
 		Iterator iterator = fifoList.iterator();
 
 		while (iterator.hasNext()) {
@@ -143,5 +143,6 @@ public class EditorHistory {
 				historyItem.saveState(itemMemento);
 			}
 		}
+		return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
 	}
 }

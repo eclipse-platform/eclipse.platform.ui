@@ -1145,7 +1145,11 @@ private boolean saveAllPages(boolean bConfirm)
 /**
  * @see IPersistable
  */
-public void saveState(IMemento memento) {
+public IStatus saveState(IMemento memento) {
+
+	MultiStatus result = new MultiStatus(
+		PlatformUI.PLUGIN_ID,IStatus.OK,
+		WorkbenchMessages.getString("WorkbenchWindow.problemsSavingWindow"),null);
 	
 	// Save the bounds.
 	if(getShell().getMaximized()) {
@@ -1164,8 +1168,7 @@ public void saveState(IMemento memento) {
 	
 	// Save each page.
 	Iterator enum = pageList.iterator();
-	while (enum.hasNext()) 
-	{
+	while (enum.hasNext()) {
 		WorkbenchPage page = (WorkbenchPage)enum.next();
 		
 		// Get the input.
@@ -1183,7 +1186,7 @@ public void saveState(IMemento memento) {
 		// Save perspective.
 		IMemento pageMem = memento.createChild(IWorkbenchConstants.TAG_PAGE);
 		pageMem.putString(IWorkbenchConstants.TAG_LABEL,page.getLabel());
-		page.saveState(pageMem);
+		result.add(page.saveState(pageMem));
 		
 		if (page == getActiveWorkbenchPage()) {
 			pageMem.putString(IWorkbenchConstants.TAG_FOCUS, "true");//$NON-NLS-1$
@@ -1194,6 +1197,7 @@ public void saveState(IMemento memento) {
 		inputMem.putString(TAG_FACTORY_ID, persistable.getFactoryId());
 		persistable.saveState(inputMem);
 	}
+	return result;
 }
 /**
  * Select the shortcut for a perspective.

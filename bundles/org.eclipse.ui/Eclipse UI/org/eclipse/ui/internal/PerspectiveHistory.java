@@ -55,12 +55,13 @@ public class PerspectiveHistory {
 		return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
 	}
 	
-	public void saveState(IMemento memento) {
+	public IStatus saveState(IMemento memento) {
 		Iterator iter = shortcuts.iterator();
 		while (iter.hasNext()) {
 			IPerspectiveDescriptor desc = (IPerspectiveDescriptor)iter.next();
 			memento.createChild("desc", desc.getId()); //$NON-NLS-1$
 		}
+		return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
 	}
 
 	public void add(String id) {

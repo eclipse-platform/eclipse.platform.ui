@@ -369,9 +369,9 @@ public IStatus restoreState(IMemento memento) {
 /**
  * @see IPersistablePart
  */
-public void saveState(IMemento memento) {
+public IStatus saveState(IMemento memento) {
 	// Save the editor area workbooks layout/relationship
-	editorArea.saveState(memento);
+	return editorArea.saveState(memento);
 }
 /**
  * @see IEditorPresentation

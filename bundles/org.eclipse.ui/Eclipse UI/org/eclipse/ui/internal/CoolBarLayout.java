@@ -65,7 +65,7 @@ public class CoolBarLayout {
 	 * 
 	 * @param memento the memento to save the object state in
 	 */
-	public void saveState(IMemento memento) {
+	public IStatus saveState(IMemento memento) {
 		for (int i = 0; i < itemSizes.length; i++) {
 			IMemento child = memento.createChild(IWorkbenchConstants.TAG_ITEM_SIZE);
 			Point pt = itemSizes[i];
@@ -83,6 +83,7 @@ public class CoolBarLayout {
 			String item = (String)iter.next();
 			child.putString(IWorkbenchConstants.TAG_ID, item);
 		}
+		return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
 	}
 	public String toString() {
 		StringBuffer buffer = new StringBuffer(20);

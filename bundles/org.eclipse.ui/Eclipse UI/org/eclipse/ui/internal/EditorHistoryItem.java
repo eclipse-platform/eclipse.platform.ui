@@ -85,7 +85,7 @@ public IStatus restoreState(IMemento memento) {
  * 
  * @param memento the memento to save the object state in
  */
-public void saveState(IMemento memento) {
+public IStatus saveState(IMemento memento) {
 	IPersistableElement persistable = input.getPersistable();
 	
 	if (persistable != null) {
@@ -101,5 +101,6 @@ public void saveState(IMemento memento) {
 			memento.putString(IWorkbenchConstants.TAG_ID, descriptor.getId());
 		}
 	}
+	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
 }
 }

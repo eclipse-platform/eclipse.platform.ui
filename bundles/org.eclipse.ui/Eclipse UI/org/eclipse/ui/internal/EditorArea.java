@@ -250,7 +250,7 @@ public IStatus restoreState(IMemento memento) {
 /**
  * @see IPersistablePart
  */
-public void saveState(IMemento memento) {
+public IStatus saveState(IMemento memento) {
 	RelationshipInfo[] relationships = computeRelation();
 	for (int i = 0; i < relationships.length; i ++) {
 		// Save the relationship info ..
@@ -267,6 +267,7 @@ public void saveState(IMemento memento) {
 			childMem.putFloat(IWorkbenchConstants.TAG_RATIO, info.ratio);
 		}
 	}
+	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
 }
 /**
  * Set the editor workbook which is active.

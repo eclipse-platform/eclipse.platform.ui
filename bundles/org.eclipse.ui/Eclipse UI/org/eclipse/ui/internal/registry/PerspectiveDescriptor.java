@@ -223,7 +223,7 @@ public void revertToPredefined() {
 /**
  * @see IPersistable
  */
-public void saveState(IMemento memento) {
+public IStatus saveState(IMemento memento) {
 	IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_DESCRIPTOR);
 	childMem.putString(IWorkbenchConstants.TAG_ID,id);
 	if(originalId != null)
@@ -233,6 +233,7 @@ public void saveState(IMemento memento) {
 	childMem.putString(IWorkbenchConstants.TAG_FILE,customFile.getName());
 	if (singleton)
 		childMem.putInteger(IWorkbenchConstants.TAG_SINGLETON, 1);
+	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
 }
 /**
  * Sets the custom file.

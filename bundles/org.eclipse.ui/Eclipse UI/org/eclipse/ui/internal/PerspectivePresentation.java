@@ -1441,10 +1441,10 @@ public IStatus restoreState(IMemento memento) {
 /**
  * @see IPersistablePart
  */
-public void saveState(IMemento memento) {
+public IStatus saveState(IMemento memento) {
 	// Persist main window.
 	IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_MAIN_WINDOW);
-	mainLayout.saveState(childMem);
+	return mainLayout.saveState(childMem);
 
 	/*
 	 * Detached window no longer supported - remove when confirmed
