@@ -436,7 +436,10 @@ private void layoutForNewMessage(){
 		messageLabel.setLayoutData(messageLabelData);
 		
 		}
-	getShell().layout(true);
+	//Do not layout before the dialog area has been created
+	//to avoid incomplete calculations.
+	if(dialogArea != null)
+		getShell().layout(true);
 	
 }
 
