@@ -14,6 +14,7 @@ import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.VersionedIdentifier;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.graphics.Image;
 import java.util.*;
@@ -131,7 +132,9 @@ public class SiteView
 			if (obj instanceof FeatureReferenceAdapter) {
 				try {
 					IFeature feature = ((FeatureReferenceAdapter) obj).getFeature();
-					String version = feature.getVersionedIdentifier().getVersion().toString();
+					VersionedIdentifier versionedIdentifier=feature.getVersionedIdentifier();
+					String version = "";
+					if (versionedIdentifier!=null) version = versionedIdentifier.getVersion().toString();
 					return feature.getLabel() + " " + version;
 				} catch (CoreException e) {
 					UpdateUIPlugin.logException(e);

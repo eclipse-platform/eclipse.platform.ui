@@ -60,5 +60,6 @@ public class TestFeatureParse extends UpdateManagerTestCase {
 		
 
 	}	
+	
 }
 

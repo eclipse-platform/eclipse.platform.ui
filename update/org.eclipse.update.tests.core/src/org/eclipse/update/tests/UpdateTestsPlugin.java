@@ -31,7 +31,7 @@ public class UpdateTestsPlugin extends Plugin {
 	 * Called by Platform after loading the plugin
 	 */
 	public void startup() throws CoreException {
-		boolean result = AppServer.add("org.eclipse.update.tests.core.updatetests", "org.eclipse.update.tests.core", "webserver");		
+		boolean result = AppServer.add("org.eclipse.update.tests.core.updatetests", "org.eclipse.update.tests.core", "webserver/");		
 		appServerHost = AppServer.getHost();
 		appServerPort = AppServer.getPort();
 		

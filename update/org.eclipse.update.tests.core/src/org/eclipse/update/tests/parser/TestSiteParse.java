@@ -149,4 +149,24 @@ public class TestSiteParse extends UpdateManagerTestCase {
 
 	}
 
+public void testParseValid5() throws Exception {
+
+		URL remoteURL = new URL(SOURCE_FILE_SITE + "parsertests/site2.xml");
+		DefaultSiteParser parser = new DefaultSiteParser(new SiteFileFactory());
+		URL resolvedURL = URLEncoder.encode(remoteURL);		
+		SiteModel remoteSite = parser.parse(resolvedURL.openStream());
+		remoteSite.resolve(remoteURL, null);
+
+		FeatureReferenceModel[] featureRef = remoteSite.getFeatureReferenceModels();
+		CategoryModel[] categories = remoteSite.getCategoryModels();
+		ArchiveReferenceModel[] archives = remoteSite.getArchiveReferenceModels();
+
+		assertTrue("Wrong number of features", featureRef.length == 1);
+		assertTrue("Wrong number of archives", archives.length == 0);
+		
+
+		IFeature feature = ((FeatureReference)featureRef[0]).getFeature();
+		
+	}
+	
 }

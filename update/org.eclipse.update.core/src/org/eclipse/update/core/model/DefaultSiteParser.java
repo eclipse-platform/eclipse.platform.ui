@@ -4,6 +4,7 @@ package org.eclipse.update.core.model;
  * All Rights Reserved.
  */
 
+import java.io.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
@@ -269,6 +270,9 @@ public class DefaultSiteParser extends DefaultHandler {
 		// used to calculate the location of features and archives
 		String siteURL = attributes.getValue("url"); //$NON-NLS-1$
 		if (siteURL !=null && !("".equals(siteURL.trim()))){
+			if (!siteURL.endsWith("/") && !siteURL.endsWith(File.separator)){
+				siteURL += "/";
+			}
 			site.setLocationURLString(siteURL);
 		}
 		
