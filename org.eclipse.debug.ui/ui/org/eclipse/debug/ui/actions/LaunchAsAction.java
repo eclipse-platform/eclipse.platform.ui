@@ -155,7 +155,7 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 		 }
 
 		 int menuCount = 1;
-		 IWorkbenchActivitySupport activitySupport = (IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(IWorkbenchActivitySupport.class);
+		 IWorkbenchActivitySupport activitySupport = PlatformUI.getWorkbench().getActivitySupport();
 		 IActivityManager activityManager = null;
 		 if (activitySupport != null) {
 		 	activityManager = activitySupport.getActivityManager();
