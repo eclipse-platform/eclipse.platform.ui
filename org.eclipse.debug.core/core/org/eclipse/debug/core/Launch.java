@@ -322,8 +322,7 @@ public class Launch extends PlatformObject implements ILaunch {
 	 */
 	public final void removeDebugTarget(IDebugTarget target) {
 		if (target != null) {
-			if (!getDebugTargets0().contains(target)) {
-				getDebugTargets0().remove(target);
+			if (getDebugTargets0().remove(target)) {
 				fireChanged();
 			}
 		}
