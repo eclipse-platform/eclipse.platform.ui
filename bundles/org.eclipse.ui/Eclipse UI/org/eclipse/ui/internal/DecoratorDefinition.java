@@ -138,12 +138,25 @@ public class DecoratorDefinition {
 	 * manager as a listener as appropriate.
 	 * @param enabled The enabled to set
 	 */
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-		DecoratorManager manager = WorkbenchPlugin.getDefault().getDecoratorManager();
+	public void setEnabled(boolean newState) {
+		
+		//Only refresh if there has been a change
+		if(this.enabled != newState){
+			this.enabled = newState;
+			refreshDecorator();
+		}
+	}
 
+	/**
+	 * Refresh the current decorator based on our enable
+	 * state.
+	 */
+	
+	private void refreshDecorator() {
+		DecoratorManager manager = WorkbenchPlugin.getDefault().getDecoratorManager();
+		
 		try {
-			if (enabled)
+			if (this.enabled)
 				getDecorator().addListener(manager);
 			else {
 				if (decorator != null) {
@@ -154,7 +167,7 @@ public class DecoratorDefinition {
 					cached.dispose();
 				}
 			}
-
+		
 		} catch (CoreException exception) {
 			handleCoreException(exception);
 		}
