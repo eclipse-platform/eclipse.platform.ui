@@ -180,8 +180,13 @@ public class RepositoriesView extends RemoteViewPart {
 		manager.add(sub);
 		super.addWorkbenchActions(manager);
 		IStructuredSelection selection = (IStructuredSelection)getViewer().getSelection();
+
+		removeRootAction.selectionChanged(selection);
+		if(removeRootAction.isEnabled()) {
+			manager.add(removeRootAction);
+		}		
+
 		if (selection.size() == 1 && selection.getFirstElement() instanceof RepositoryRoot) {
-			manager.add(removeRootAction);		
 			manager.add(new Separator());
 			manager.add(propertiesAction);
 		}
