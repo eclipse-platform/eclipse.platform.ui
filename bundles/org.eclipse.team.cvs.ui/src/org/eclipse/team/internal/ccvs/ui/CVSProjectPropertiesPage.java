@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -29,6 +30,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -55,6 +58,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 
 public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 	IProject project;
@@ -80,14 +84,36 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 	private boolean fetch;
 	private boolean watchEdit;
 
+	public static boolean isCompatible(ICVSRepositoryLocation location, ICVSRepositoryLocation oldLocation) {
+		if (!location.getHost().equals(oldLocation.getHost())) return false;
+		if (!location.getRootDirectory().equals(oldLocation.getRootDirectory())) return false;
+		if (location.equals(oldLocation)) return false;
+		return true;
+	}
+	
 	private class RepositorySelectionDialog extends Dialog {
-		ICVSRepositoryLocation[] locations;
-		ICVSRepositoryLocation location;
+		ICVSRepositoryLocation[] allLocations;
+		ICVSRepositoryLocation[] compatibleLocatons;
+		ICVSRepositoryLocation selectedLocation;
 		
 		TableViewer viewer;
 		Button okButton;
-		public RepositorySelectionDialog(Shell shell) {
+		boolean showCompatible = true;
+		
+		public RepositorySelectionDialog(Shell shell, ICVSRepositoryLocation oldLocation) {
 			super(shell);
+			initialize(oldLocation);
+		}
+		private void initialize(ICVSRepositoryLocation oldLocation) {
+			allLocations = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownRepositoryLocations();
+			List locations = new ArrayList();
+			for (int i = 0; i < allLocations.length; i++) {
+				ICVSRepositoryLocation location = allLocations[i];
+				if (isCompatible(location, oldLocation)) {
+					locations.add(location);
+				}
+			}
+			compatibleLocatons = (ICVSRepositoryLocation[]) locations.toArray(new ICVSRepositoryLocation[locations.size()]);
 		}
 		protected void createButtonsForButtonBar(Composite parent) {
 			// create OK and Cancel buttons by default
@@ -111,17 +137,21 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 			viewer.setLabelProvider(new WorkbenchLabelProvider());
 			viewer.setContentProvider(new WorkbenchContentProvider() {
 				public Object[] getElements(Object inputElement) {
-					return locations;
+					if (showCompatible) {
+						return compatibleLocatons;
+					} else {
+						return allLocations;
+					}
 				}
 			});
 			viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
 					IStructuredSelection selection = (IStructuredSelection)event.getSelection();
 					if (selection.isEmpty()) {
-						location = null;
+						selectedLocation = null;
 						okButton.setEnabled(false);
 					} else {
-						location = (ICVSRepositoryLocation)selection.getFirstElement();
+						selectedLocation = (ICVSRepositoryLocation)selection.getFirstElement();
 						okButton.setEnabled(true);
 					}
 				}
@@ -131,20 +161,26 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 					okPressed();
 				}
 			});
-			viewer.setInput(locations);
+			viewer.setInput(compatibleLocatons);
+			
+			final Button compatibleButton = createCheckBox(composite, Policy.bind("CVSProjectPropertiesPage.31")); //$NON-NLS-1$
+			compatibleButton.setSelection(showCompatible);
+			compatibleButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					showCompatible = compatibleButton.getSelection();
+					viewer.refresh();
+				}
+			});
 			return composite;
 		}
 		protected void cancelPressed() {
-			location = null;
+			selectedLocation = null;
 			super.cancelPressed();
 		}
-		public void setLocations(ICVSRepositoryLocation[] locations) {
-			this.locations = locations;
-		}
 		public ICVSRepositoryLocation getLocation() {
-			return location;
+			return selectedLocation;
 		}
-	};
+	}
 	
 	/*
 	 * @see PreferencesPage#createContents
@@ -219,19 +255,7 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 		changeButton.setLayoutData(data);
 		changeButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
-				// Find out which repo locations are appropriate
-				ICVSRepositoryLocation[] locations = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownRepositoryLocations();
-				List compatibleLocations = new ArrayList();
-				for (int i = 0; i < locations.length; i++) {
-					ICVSRepositoryLocation location = locations[i];
-					// Only locations with the same host and root are eligible
-					if (!location.getHost().equals(hostLabel.getText())) continue;
-					if (!location.getRootDirectory().equals(pathLabel.getText())) continue;
-					if (location.equals(oldLocation)) continue;
-					compatibleLocations.add(location);
-				}
-				RepositorySelectionDialog dialog = new RepositorySelectionDialog(getShell());
-				dialog.setLocations((ICVSRepositoryLocation[])compatibleLocations.toArray(new ICVSRepositoryLocation[compatibleLocations.size()]));
+				RepositorySelectionDialog dialog = new RepositorySelectionDialog(getShell(), oldLocation);
 				dialog.open();
 				ICVSRepositoryLocation location = dialog.getLocation();
 				if (location == null) return;
@@ -373,7 +397,12 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 			return true;
 		}
 		try {
-			new ProgressMonitorDialog(getShell()).run(true, false, new IRunnableWithProgress() {
+			if (newLocation != null && !isCompatible(newLocation, oldLocation)) {
+				if (!MessageDialog.openQuestion(getShell(), Policy.bind("CVSProjectPropertiesPage.32"), Policy.bind("CVSProjectPropertiesPage.33"))) { //$NON-NLS-1$ //$NON-NLS-2$
+					return false;
+				}
+			}
+			new ProgressMonitorDialog(getShell()).run(true, true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
 						monitor.beginTask(Policy.bind("CVSProjectPropertiesPage.progressTaskName"),  //$NON-NLS-1$
