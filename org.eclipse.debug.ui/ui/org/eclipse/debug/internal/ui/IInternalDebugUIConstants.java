@@ -22,7 +22,6 @@ public interface IInternalDebugUIConstants {
 	public static final String ID_TOOLS_FOLDER_VIEW= "org.eclipse.debug.internal.ui.ToolsFolderView"; //$NON-NLS-1$
 	public static final String ID_CONSOLE_FOLDER_VIEW= "org.eclipse.debug.internal.ui.ConsoleFolderView"; //$NON-NLS-1$
 	public static final String ID_OUTLINE_FOLDER_VIEW= "org.eclipse.debug.internal.ui.OutlineFolderView"; //$NON-NLS-1$
-	public static final String ID_BREAKPOINT_FOLDER_VIEW= "org.eclipse.debug.internal.ui.BreakpointFolderView"; //$NON-NLS-1$
 
 	//Current stack frame instruction pointer
 	public static final String INSTRUCTION_POINTER= "org.eclipse.debug.ui.instructionPointer"; //$NON-NLS-1$

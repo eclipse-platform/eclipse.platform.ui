@@ -33,16 +33,14 @@ public class DebugPerspectiveFactory implements IPerspectiveFactory {
 		consoleFolder.addPlaceholder(IPageLayout.ID_BOOKMARKS);
 		consoleFolder.addPlaceholder(IPageLayout.ID_PROP_SHEET);
 		
-		IFolderLayout breakpointsFolder= layout.createFolder(IInternalDebugUIConstants.ID_BREAKPOINT_FOLDER_VIEW, IPageLayout.RIGHT, (float)0.75, IInternalDebugUIConstants.ID_CONSOLE_FOLDER_VIEW);
-		breakpointsFolder.addView(IDebugUIConstants.ID_BREAKPOINT_VIEW);
-		
 		IFolderLayout navFolder= layout.createFolder(IInternalDebugUIConstants.ID_NAVIGATOR_FOLDER_VIEW, IPageLayout.TOP, (float) 0.45, layout.getEditorArea());
 		navFolder.addView(IDebugUIConstants.ID_DEBUG_VIEW);
 		navFolder.addPlaceholder(IPageLayout.ID_RES_NAV);
 		
 		IFolderLayout toolsFolder= layout.createFolder(IInternalDebugUIConstants.ID_TOOLS_FOLDER_VIEW, IPageLayout.RIGHT, (float) 0.50, IInternalDebugUIConstants.ID_NAVIGATOR_FOLDER_VIEW);
 		toolsFolder.addView(IDebugUIConstants.ID_VARIABLE_VIEW);
-		toolsFolder.addView(IDebugUIConstants.ID_EXPRESSION_VIEW);
+		toolsFolder.addView(IDebugUIConstants.ID_BREAKPOINT_VIEW);
+		toolsFolder.addPlaceholder(IDebugUIConstants.ID_EXPRESSION_VIEW);
 		toolsFolder.addPlaceholder(IDebugUIConstants.ID_REGISTER_VIEW);
 		
 		IFolderLayout outlineFolder= layout.createFolder(IInternalDebugUIConstants.ID_OUTLINE_FOLDER_VIEW, IPageLayout.RIGHT, (float) 0.75, layout.getEditorArea());
