@@ -126,7 +126,8 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 			text.setText(workingSet.getName());
 		}
 		initializeCheckedState();
-		disableClosedProjects();		
+		disableClosedProjects();
+		setPageComplete(false);
 	}
 	/**
 	 * Grays all disabled projects
