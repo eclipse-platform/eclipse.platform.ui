@@ -70,7 +70,7 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 	 * @see ICVSFile#getTimeStamp()
 	 */
 	public Date getTimeStamp() {						
-		return new Date(getIOFile().lastModified());
+		return new Date((getIOFile().lastModified()/1000)*1000);
 	}
  
 	/*
@@ -160,27 +160,28 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 	public void setContents(InputStream stream, int responseType, boolean keepLocalHistory, IProgressMonitor monitor) throws CVSException {
 		try {
 			IFile file = getIFile();
-			if (responseType == CREATED || (responseType == UPDATED && ! resource.exists())) {
-				try {
-					file.create(stream, false /*force*/, null);
-				} catch (CoreException e) {
+			if (PROJECT_META_DATA_PATH.equals(file.getFullPath().removeFirstSegments(1))) {
+				responseType = UPDATED;
+			}
+			switch (responseType) {
+				case UPDATED:
 					if (resource.exists()) {
-						if (PROJECT_META_DATA_PATH.equals(file.getFullPath().removeFirstSegments(1))) {
-							// Special handling for the .project meta-file
-							file.setContents(stream, true /*force*/, true /*keep history*/, monitor);
-							return;
-						}
+						file.setContents(stream, true /*force*/, true /*keep history*/, monitor);
+						break;
 					}
-					throw new CVSException(Policy.bind("EclipseFile_Problem_creating_resource", e.getMessage(), e.getStatus().getMessage()));  //$NON-NLS-1$
-				}
-			} else if(responseType == UPDATE_EXISTING) {
-				file.setContents(stream, false /*force*/, keepLocalHistory /*keep history*/, monitor);
-			} else {
-				// Ensure we don't leave the file in a partially written state
-				IFile tempFile = file.getParent().getFile(new Path(file.getName() + TEMP_FILE_EXTENSION));
-				tempFile.create(stream, true /*force*/, null);
-				file.delete(false, true, null);
-				tempFile.move(new Path(file.getName()), true /*force*/, false /*history*/, null);
+				case CREATED: // creating a new file so it should not exist locally
+					file.create(stream, false /*force*/, monitor);
+					break;
+				case MERGED: // merging contents into a file that exists locally
+					// Ensure we don't leave the file in a partially written state
+					IFile tempFile = file.getParent().getFile(new Path(file.getName() + TEMP_FILE_EXTENSION));
+					tempFile.create(stream, true /*force*/, monitor);
+					file.delete(false, true, monitor);
+					tempFile.move(new Path(file.getName()), true /*force*/, false /*history*/, monitor);
+					break;
+				case UPDATE_EXISTING: // creating a new file so it should exist locally
+					file.setContents(stream, true /*force*/, true /*keep history*/, monitor);
+					break;
 			}
 		} catch(CoreException e) {
 			throw new CVSException(Policy.bind("EclipseFile_Problem_writing_resource", e.getMessage(), e.getStatus().getMessage())); //$NON-NLS-1$
