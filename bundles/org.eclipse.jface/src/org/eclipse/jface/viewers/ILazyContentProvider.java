@@ -14,8 +14,6 @@ package org.eclipse.jface.viewers;
  * The ILazyContentProvider is the content provider
  * for table viewers created using the SWT.VIRTUAL flag that
  * only wish to return thier contents as they are queried.
- * <strong>Note: This API is experimental and may be changed
- * before Eclipse 3.1 is released.</strong>
  */
 public interface ILazyContentProvider extends IContentProvider {
 	/**
