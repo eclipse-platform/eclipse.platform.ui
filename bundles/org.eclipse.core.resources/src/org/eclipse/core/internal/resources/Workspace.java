@@ -300,7 +300,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			try {
 				//shutdown save manager now so a last snapshot can be taken before we close
 				//note: you can't call #save() from within a nested operation
-				saveManager.shutdown(null);				
+				saveManager.shutdown(null);
 				prepareOperation(getRoot(), monitor);
 				//shutdown notification first to avoid calling third parties during shutdown
 				notificationManager.shutdown(null);
@@ -616,7 +616,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// preserve local sync info
 		ResourceInfo oldInfo = ((Resource) source).getResourceInfo(true, false);
 		newInfo.setFlags(newInfo.getFlags() | (oldInfo.getFlags() & M_LOCAL_EXISTS));
-		
+
 		// forget content-related caching flags
 		newInfo.clear(M_CONTENT_CACHE);
 
@@ -895,7 +895,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				// At this time we need to rebalance the nested operations. It is necessary because
 				// build() and snapshot() should not fail if they are called.
 				workManager.rebalanceNestedOperations();
-				
+
 				//find out if any operation has potentially modified the tree
 				hasTreeChanges = workManager.shouldBuild();
 				//double check if the tree has actually changed
@@ -994,15 +994,14 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 		return buildOrder;
 	}
-	
+
 	public CharsetManager getCharsetManager() {
 		return charsetManager;
 	}
-	
+
 	public ContentDescriptionManager getContentDescriptionManager() {
 		return contentDescriptionManager;
-	}	
-	
+	}
 
 	/* (non-Javadoc)
 	 * @see IWorkspace#getDanglingReferences()
@@ -1097,7 +1096,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public PropertyManager getPropertyManager() {
 		return propertyManager;
 	}
-	
+
 	/**
 	 * Returns the refresh manager for this workspace
 	 */
