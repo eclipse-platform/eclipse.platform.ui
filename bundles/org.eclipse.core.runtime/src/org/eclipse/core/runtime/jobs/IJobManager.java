@@ -64,7 +64,7 @@ public interface IJobManager {
 	 * <p>
 	 * This API is experimental, and is subject to change or removal without notice.
 	 * 
-	 * @param rule the rule to begin applying in this thread, <code>null</code>
+	 * @param rule the rule to begin applying in this thread, or <code>null</code>
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
 	 * @throws IllegalArgumentException if the rule is not strictly nested within
