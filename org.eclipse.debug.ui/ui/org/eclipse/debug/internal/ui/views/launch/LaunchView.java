@@ -15,6 +15,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
@@ -726,6 +727,11 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 				} catch (DebugException de) {
 					DebugUIPlugin.log(de);
 				}
+			} else {
+				IProcess[] processes= ((ILaunch)element).getProcesses();
+				if (processes.length != 0) {
+					selectee= processes[0];
+				}		
 			}
 		}
 		if (refreshNeeded) {
