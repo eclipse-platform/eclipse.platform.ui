@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.ui" id="TThthemes" name="Themes"/>
       </appInfo>
       <documentation>
-         This extension point is used to customize the UI of tabs and views.
+         This extension point is used to customize the appearance of the UI.  It allows definition of color and font entities as well as theme entitities.  Themes allow applications to selectivly override default color and font specifications for particular uses.
       </documentation>
    </annotation>
 
@@ -48,6 +48,9 @@
          <appInfo>
             <meta.element labelAttribute="name" icon="icon"/>
          </appInfo>
+         <documentation>
+            A collection of font, color and data overrides.  Such a collection may be used to alter the appearance of the workbench.
+         </documentation>
       </annotation>
       <complexType>
          <sequence>
@@ -59,14 +62,14 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique name that will be used to identify this theme.
+                  a unique name that will be used to identify this theme
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  a translatable name that will be used in the workbench window menu bar to represent this perspective.
+                  a translatable name of the theme to be presented to the user
                </documentation>
             </annotation>
          </attribute>
@@ -76,7 +79,7 @@
    <element name="themeElementCategory">
       <annotation>
          <documentation>
-            a logical grouping of theme element definitions.  This category may include colors, fonts and gradients.
+            A logical grouping of theme element definitions.  This category may include colors and fonts.
          </documentation>
       </annotation>
       <complexType>
@@ -86,14 +89,14 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the id for this presentation category.
+                  the id for this category
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string">
             <annotation>
                <documentation>
-                  a class that implements org.eclipse.ui.IPresentationPreview.
+                  a class that implements &lt;code&gt;org.eclipse.ui.IPresentationPreview&lt;/code&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.IPresentationPreview"/>
@@ -103,7 +106,7 @@
          <attribute name="label" type="string">
             <annotation>
                <documentation>
-                  a translatable name of the presentation category to be presented to the user.
+                  a translatable name of the theme element category to be presented to the user
                </documentation>
             </annotation>
          </attribute>
@@ -113,7 +116,7 @@
    <element name="colorDefinition">
       <annotation>
          <documentation>
-            a symbolic color definition.
+            A symbolic color definition.
          </documentation>
       </annotation>
       <complexType>
@@ -140,7 +143,7 @@
                <documentation>
                   the id of another color definition that is the default setting for the receiver. When there is no preference for this color the color registry will have the value of defaultsTo set for it in the registry.
 
-Only one of defaultsTo or value may be defined.
+Only one of &lt;code&gt;defaultsTo&lt;/code&gt;, &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;colorFactory&lt;/code&gt; may be defined.
                </documentation>
             </annotation>
          </attribute>
@@ -151,23 +154,22 @@ Only one of defaultsTo or value may be defined.
 &lt;ul&gt;
 &lt;li&gt;a String containing comma seperated integers in the form red,green,blue 
 &lt;li&gt;a String that maps to an SWT color constant (ie:  COLOR_RED).
-&lt;li&gt;a String in the form blend(v1-v2).  v1 and v1 may be RGB triples, SWT constants or nested blend(v1-v2) calls.  This function will blend one color with another.
-&lt;ul&gt;
-Only one of defaultsTo or value may be defined.
+&lt;/ul&gt;
+Only one of &lt;code&gt;defaultsTo&lt;/code&gt;, &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;colorFactory&lt;/code&gt; may be defined.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="categoryId" type="string">
             <annotation>
                <documentation>
-                  the optional id of the presentation category this color belongs to.
+                  the optional id of the &lt;code&gt;themeElementCategory&lt;/code&gt; this color belongs to.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="colorFactory" type="string">
             <annotation>
                <documentation>
-                  a class that implements IColorFactory.  This may be used instead of value to specify the default value of the color.  Please be advised that this should be used with caution - usage of this attribute will cause plugin activation.
+                  a class that implements &lt;code&gt;org.eclipse.ui.themes.IColorFactory&lt;/code&gt;.  This may be used instead of &lt;code&gt;value&lt;/code&gt; to specify the default value of the color.  Please be advised that this should be used with caution - usage of this attribute will cause plugin activation.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
@@ -177,7 +179,7 @@ Only one of defaultsTo or value may be defined.
          <attribute name="isEditable" type="boolean">
             <annotation>
                <documentation>
-                  whether the user should be allowed to edit this color in the preference page.  If this is false then the contribution is not shown to the user.
+                  whether the user should be allowed to edit this color in the preference page.  If this is &lt;code&gt;false&lt;/code&gt; then the contribution is not shown to the user.
                </documentation>
             </annotation>
          </attribute>
@@ -185,6 +187,11 @@ Only one of defaultsTo or value may be defined.
    </element>
 
    <element name="fontDefinition">
+      <annotation>
+         <documentation>
+            A symbolic font definition.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="description" minOccurs="0" maxOccurs="1"/>
@@ -208,16 +215,14 @@ Only one of defaultsTo or value may be defined.
                <documentation>
                   the font value.  This is in the form: &lt;code&gt;&lt;it&gt;fontname&lt;/it&gt;-&lt;it&gt;style&lt;/it&gt;-&lt;it&gt;height&lt;/it&gt;&lt;/code&gt; where &lt;code&gt;&lt;it&gt;fontname&lt;/it&gt;&lt;/code&gt; is the name of a font, &lt;code&gt;&lt;it&gt;style&lt;/it&gt;&lt;/code&gt; is a font style (one of &lt;code&gt;&quot;regular&quot;&lt;/code&gt;, &lt;code&gt;&quot;bold&quot;&lt;/code&gt;, &lt;code&gt;&quot;italic&quot;&lt;/code&gt;, or &lt;code&gt;&quot;bold italic&quot;&lt;/code&gt;) and &lt;code&gt;&lt;it&gt;height&lt;/it&gt;&lt;/code&gt; is an integer representing the font height.&lt;/p&gt;
 &lt;p&gt;Example: &lt;code&gt;Times New Roman-bold-36&lt;/code&gt;.&lt;/p&gt;  
-&lt;p&gt;
-Only one (or neither) of value or defaultsTo may be used.
-&lt;/p&gt;
+&lt;p&gt;Only one (or neither) of &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;defaultsTo&lt;/code&gt; may be used.&lt;/p&gt;
                </documentation>
             </annotation>
          </attribute>
          <attribute name="categoryId" type="string">
             <annotation>
                <documentation>
-                  the optional id of the presentation category this font belongs to.
+                  the optional id of the &lt;code&gt;themeElementCategory&lt;/code&gt; this font belongs to.
                </documentation>
             </annotation>
          </attribute>
@@ -226,7 +231,7 @@ Only one (or neither) of value or defaultsTo may be used.
                <documentation>
                   the id of another font definition that is the default setting for the receiver. When there is no preference for this font the font registry will have the value of defaultsTo set for it in the registry.
 &lt;p&gt;
-Only one or neither of value or defaultsTo may be used.
+Only one (or neither) of &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;defaultsTo&lt;/code&gt; may be used.
 &lt;/p&gt;
                </documentation>
             </annotation>
@@ -234,7 +239,7 @@ Only one or neither of value or defaultsTo may be used.
          <attribute name="isEditable" type="boolean">
             <annotation>
                <documentation>
-                  whether the user should be allowed to edit this color in the preference page.  If this is false then the contribution is not shown to the user.
+                  whether the user should be allowed to edit this color in the preference page.  If this is &lt;code&gt;false&lt;/code&gt; then the contribution is not shown to the user.
                </documentation>
             </annotation>
          </attribute>
@@ -244,7 +249,7 @@ Only one or neither of value or defaultsTo may be used.
    <element name="colorOverride">
       <annotation>
          <documentation>
-            Allows overriding of colors defined in the org.eclipse.ui.colorDefinitions extension point.
+            Allows overriding of colors defined in &lt;code&gt;colorDefinition&lt;/code&gt; elements.  These colors will be applied when the theme is in use.
          </documentation>
       </annotation>
       <complexType>
@@ -254,22 +259,31 @@ Only one or neither of value or defaultsTo may be used.
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique id that can be used to identify this color definition override.  This should match an existing color identifier.
+                  a unique id that can be used to identify this color definition override.  This should match an existing font identifier.  Strictly speaking, you may ovverride colors that do not exist in the base theme although this practice is not recommended.  In effect, such overrides will have behaviour similar to &lt;code&gt;colorDefinition&lt;/code&gt;s that have &lt;code&gt;isEditable&lt;/code&gt; set to &lt;code&gt;false&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="value" type="string" use="required">
+         <attribute name="value" type="string">
             <annotation>
                <documentation>
-                  The overriding value of this color.  The value may be specified in the following ways:
+                  the overriding value of this color.  The value may be specified in the following ways:
 &lt;ul&gt;
 &lt;li&gt;a String containing comma seperated integers in the form red,green,blue 
 &lt;li&gt;a String that maps to an SWT color constant (ie:  COLOR_RED).
-&lt;li&gt;a String in the form blend(v1-v2).  v1 and v1 may be RGB triples, SWT constants or nested blend(v1-v2) calls.  This function will blend one color with another.
-&lt;ul&gt;
-Only one of defaultsTo or value may be defined.
-Unlike a colorDefinition, you may not supply a defaultsTo for an override.
+&lt;/ul&gt;
+Only one of &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;colorFactory&lt;/code&gt; may be defined.
+Unlike a &lt;code&gt;colorDefinition&lt;/code&gt;, you may not supply a &lt;code&gt;defaultsTo&lt;/code&gt; for an override.
                </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="colorFactory" type="string">
+            <annotation>
+               <documentation>
+                  a class that implements &lt;code&gt;org.eclipse.ui.themes.IColorFactory&lt;/code&gt;.  This may be used instead of &lt;code&gt;value&lt;/code&gt; to specify the default value of the color.  Please be advised that this should be used with caution - usage of this attribute will cause plugin activation.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -278,22 +292,24 @@ Unlike a colorDefinition, you may not supply a defaultsTo for an override.
    <element name="fontOverride">
       <annotation>
          <documentation>
-            Allows overriding of gradients defined in the org.eclipse.ui.fontDefinitions extension point.
+            Allows overriding of fonts defined in &lt;code&gt;fontsDefinition&lt;/code&gt; elements.  These fonts will be applied when the theme is in use.
          </documentation>
       </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique id that can be used to identify this font definition override.  This should match an existing font identifier.
+                  a unique id that can be used to identify this font definition override.  This should match an existing font identifier.  Strictly speaking, you may ovverride fonts that do not exist in the base theme although this practice is not recommended.  In effect, such overrides will have behaviour similar to &lt;code&gt;fontDefinition&lt;/code&gt;s that have &lt;code&gt;isEditable&lt;/code&gt; set to &lt;code&gt;false&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="value" type="string" use="required">
             <annotation>
                <documentation>
-                  the font value.  This is in the form: &lt;code&gt;&lt;it&gt;fontname&lt;/it&gt;-&lt;it&gt;style&lt;/it&gt;-&lt;it&gt;height&lt;/it&gt;&lt;/code&gt; where &lt;code&gt;&lt;it&gt;fontname&lt;/it&gt;&lt;/code&gt; is the name of a font, &lt;code&gt;&lt;it&gt;style&lt;/it&gt;&lt;/code&gt; is a font style (one of &lt;code&gt;&quot;regular&quot;&lt;/code&gt;, &lt;code&gt;&quot;bold&quot;&lt;/code&gt;, &lt;code&gt;&quot;italic&quot;&lt;/code&gt;, or &lt;code&gt;&quot;bold italic&quot;&lt;/code&gt;) and &lt;code&gt;&lt;it&gt;height&lt;/it&gt;&lt;/code&gt; is an integer representing the font height.&lt;/p&gt;
+                  the overriding value of this font.  This is in the form: &lt;code&gt;&lt;it&gt;fontname&lt;/it&gt;-&lt;it&gt;style&lt;/it&gt;-&lt;it&gt;height&lt;/it&gt;&lt;/code&gt; where &lt;code&gt;&lt;it&gt;fontname&lt;/it&gt;&lt;/code&gt; is the name of a font, &lt;code&gt;&lt;it&gt;style&lt;/it&gt;&lt;/code&gt; is a font style (one of &lt;code&gt;&quot;regular&quot;&lt;/code&gt;, &lt;code&gt;&quot;bold&quot;&lt;/code&gt;, &lt;code&gt;&quot;italic&quot;&lt;/code&gt;, or &lt;code&gt;&quot;bold italic&quot;&lt;/code&gt;) and &lt;code&gt;&lt;it&gt;height&lt;/it&gt;&lt;/code&gt; is an integer representing the font height.&lt;/p&gt;
 &lt;p&gt;Example: &lt;code&gt;Times New Roman-bold-36&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;value&lt;/code&gt; must be defined for a font override.
+Unlike a &lt;code&gt;fontDefinition&lt;/code&gt;, you may not supply a &lt;code&gt;defaultsTo&lt;/code&gt; for a &lt;code&gt;fontOverride&lt;/code&gt;.&lt;/p&gt;
                </documentation>
             </annotation>
          </attribute>
@@ -303,7 +319,7 @@ Unlike a colorDefinition, you may not supply a defaultsTo for an override.
    <element name="description" type="string">
       <annotation>
          <documentation>
-            a short description of the elements usage.
+            A short description of the elements usage.
          </documentation>
       </annotation>
    </element>
@@ -311,7 +327,7 @@ Unlike a colorDefinition, you may not supply a defaultsTo for an override.
    <element name="colorFactory">
       <annotation>
          <documentation>
-            the element version of the colorFactory attribute.
+            The element version of the &lt;code&gt;colorFactory&lt;/code&gt; attribute.  This is used when the colorFactory implements &lt;code&gt;org.eclipse.core.runtime.IExecutableExtension&lt;/code&gt; and there is parameterized data that you wish used in its initialization.
          </documentation>
       </annotation>
       <complexType>
@@ -321,7 +337,7 @@ Unlike a colorDefinition, you may not supply a defaultsTo for an override.
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  a class that implements IColorFactory.
+                  a class that implements &lt;code&gt;org.eclipse.ui.themes.IColorFactory&lt;/code&gt;.  It may also implement &lt;code&gt;org.eclipse.core.runtime.IExecutableExtension&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
@@ -331,7 +347,7 @@ Unlike a colorDefinition, you may not supply a defaultsTo for an override.
          <attribute name="plugin" type="string">
             <annotation>
                <documentation>
-                  the plugin that contains the class.
+                  the identifier of the plugin that contains the class
                </documentation>
             </annotation>
          </attribute>
@@ -339,18 +355,23 @@ Unlike a colorDefinition, you may not supply a defaultsTo for an override.
    </element>
 
    <element name="parameter">
+      <annotation>
+         <documentation>
+            A parameter element to be used within the colorFactory element.  This will be passed as initialization data to the colorFactory class.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  the parameter name
                </documentation>
             </annotation>
          </attribute>
          <attribute name="value" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  the parameter value
                </documentation>
             </annotation>
          </attribute>
@@ -360,14 +381,15 @@ Unlike a colorDefinition, you may not supply a defaultsTo for an override.
    <element name="data">
       <annotation>
          <documentation>
-            an element that allows arbitrary data to be associated with a theme (or the default theme).
+            &lt;p&gt;An element that allows arbitrary data to be associated with a theme or the default theme.  This data may be gradient directions or percentages, labels, author information, etc.&lt;/p&gt;
+&lt;p&gt;This element has behaviour similar to definitions and overrides.  If a key is present in both the default theme and an identified theme, then the identified themes value will be used when that theme is accessed.  If the identified theme does not supply a value then the default is used.&lt;/p&gt;
          </documentation>
       </annotation>
       <complexType>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  the data name.
+                  the data name,
                </documentation>
             </annotation>
          </attribute>
@@ -386,7 +408,8 @@ Unlike a colorDefinition, you may not supply a defaultsTo for an override.
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         
+         The workbench provides the font
+definitions for the text, dialog, banner, header and part title fonts.  it also supplies color definitions for the hyperlink, active hyperlink, error, active part (background gradient parts and forground) and the inactive part (background gradient parts and forground).  The workbench also provides data constants for the title gradient percentages (active and inactive) and the gradient directions (active and inactive).  The workbench does not provide any named themes.
       </documentation>
    </annotation>
 
@@ -398,6 +421,79 @@ Unlike a colorDefinition, you may not supply a defaultsTo for an override.
          &lt;p&gt;
 Copyright (c) 2003 IBM Corporation and others.
 All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The &lt;code&gt;org.eclipse.ui.IWorkbench.getThemeManager()&lt;/code&gt; provides &lt;code&gt;org.eclipse.ui.themes.IThemeManager&lt;/code&gt;.  This class may be used to obtain a named theme (by id, including the default theme which has an id of &lt;code&gt;IThemeManager.DEFAULT_THEME&lt;/code&gt;) or the current theme.  From an &lt;code&gt;org.eclipse.ui.themes.ITheme&lt;/code&gt; you may obtain a &lt;code&gt;org.eclipse.jface.resources.ColorRegistry&lt;/code&gt;, an &lt;code&gt;org.eclipse.jface.resources.FontRegistry&lt;/code&gt; and the arbitrary data associated with a theme.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of several color and font definitions as well as a theme that overrides them.
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension point=&quot;org.eclipse.ui.themes&quot;&gt;
+      &lt;colorDefinition 
+        id=&quot;com.xyz.Forground&quot;
+        label=&quot;XYZ Foreground Color&quot;
+        value=&quot;COLOR_BLACK&quot;&gt;
+        &lt;description&gt;
+        This color is used for the forground color of the XYZ plugin editor.
+        &lt;/description&gt;
+      &lt;/colorDefinition&gt;
+      &lt;colorDefinition 
+        id=&quot;com.xyz.Background&quot;
+        label=&quot;XYZ Background Color&quot;&gt;
+        &lt;colorFactory
+         class=&quot;org.eclipse.ui.themes.RGBBlendColorFactory&quot;
+         plugin=&quot;org.eclipse.ui&quot;&gt;
+         &lt;parameter
+          name=&quot;color1&quot;
+          value=&quot;COLOR_WHITE&quot;/&gt;
+         &lt;parameter
+          name=&quot;color2&quot;
+          value=&quot;COLOR_BLUE&quot;/&gt;         
+        &lt;/colorFactory&gt;
+        &lt;description&gt;
+        This color is used for the background color of the XYZ plugin editor.
+        &lt;/description&gt;
+      &lt;/colorDefinition&gt;      
+      &lt;fontDefiniton
+        id=&quot;com.xyz.TextFont&quot;
+        label=&quot;XYZ Editor Font&quot;
+        defaultsTo=&quot;org.eclipse.jface.textfont&quot;&gt;
+        &lt;description&gt;
+        This font is used by the XYY plugin editor.
+        &lt;/description&gt;
+      &lt;/fontDefintion&gt;
+      &lt;data
+       name=&quot;com.xyz.EditorMarginWidth&quot;
+       value=&quot;5&quot;/&gt;      
+      &lt;theme
+        id=&quot;com.xyz.HarshTheme&quot;
+        label=&quot;Harsh Colors for XYZ&quot;&gt;
+        &lt;colorOverride
+         id=&quot;com.xyz.Forground&quot;
+         value=&quot;COLOR_CYAN&quot;/&gt;
+        &lt;colorOverride
+         id=&quot;com.xyz.Background&quot;
+         value=&quot;COLOR_MAGENTA&quot;/&gt;
+      &lt;data
+           name=&quot;com.xyz.EditorMarginWidth&quot;
+           value=&quot;1&quot;/&gt;      
+      &lt;/theme&gt;        
+   &lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
