@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
@@ -102,7 +103,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		String example = "";
 		Map bindings = new HashMap();
 		try {
-			ICVSRepositoryLocation location = CVSProviderPlugin.getProvider().getRepository(":pserver:username@host.acme.org:/home/cvsroot");				
+			ICVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:username@host.acme.org:/home/cvsroot");				
 			bindings.put(CVSDecoratorConfiguration.RESOURCE_TAG, "v2_0");
 			bindings.put(CVSDecoratorConfiguration.FILE_KEYWORD, "-kb");
 			bindings.put(CVSDecoratorConfiguration.FILE_REVISION, "1.34");
