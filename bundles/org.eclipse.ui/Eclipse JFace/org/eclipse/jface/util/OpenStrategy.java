@@ -334,6 +334,9 @@ public class OpenStrategy {
 				Widget w = e.widget;
 				if(w.isDisposed())
 					return;
+
+				SelectionEvent selEvent = new SelectionEvent(e);
+									
 				/*ISSUE: May have to create a interface with method:
 				setSelection(Point p) so that user's custom widgets 
 				can use this class. If we keep this option. */
@@ -342,19 +345,24 @@ public class OpenStrategy {
 					TreeItem item = tree.getItem(new Point(e.x,e.y));
 					if(item != null)
 						tree.setSelection(new TreeItem[]{item});
-				} if(w instanceof Table) {
+					selEvent.item = item;
+				} else if(w instanceof Table) {
 					Table table = (Table)w;
 					TableItem item = table.getItem(new Point(e.x,e.y));
 					if(item != null)
 						table.setSelection(new TableItem[]{item});
-				} if(w instanceof TableTree) {
+					selEvent.item = item;						
+				} else if(w instanceof TableTree) {
 					TableTree table = (TableTree)w;
 					TableTreeItem item = table.getItem(new Point(e.x,e.y));
 					if(item != null)
 						table.setSelection(new TableTreeItem[]{item});
+					selEvent.item = item;
+				} else {
+					return;
 				}
-				fireSelectionEvent(new SelectionEvent(e));
-				firePostSelectionEvent(new SelectionEvent(e));
+				fireSelectionEvent(selEvent);
+				firePostSelectionEvent(selEvent);
 			}
 		};
 	}
