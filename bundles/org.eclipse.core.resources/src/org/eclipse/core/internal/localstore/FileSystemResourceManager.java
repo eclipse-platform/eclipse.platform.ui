@@ -176,7 +176,6 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 				totalWork *= 2;
 			String title = Policy.bind("localstore.deleting", resource.getFullPath().toString()); //$NON-NLS-1$
 			monitor.beginTask(title, totalWork);
-			monitor.setTaskName(title);
 			monitor.subTask(""); //$NON-NLS-1$
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Policy.bind("localstore.deleteProblem"), null); //$NON-NLS-1$
 			List skipList = null;
