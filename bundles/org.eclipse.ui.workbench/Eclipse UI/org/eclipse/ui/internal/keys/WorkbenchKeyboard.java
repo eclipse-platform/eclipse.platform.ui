@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
@@ -501,7 +502,22 @@ public final class WorkbenchKeyboard {
         if (isOutOfOrderKey(keyStrokes)) {
             if (event.type == SWT.KeyDown) {
                 Widget widget = event.widget;
-                if (widget instanceof StyledText) {
+                if ((event.character == SWT.DEL)
+                        && ((event.stateMask & SWT.MODIFIER_MASK) == 0)
+                        && (widget instanceof Text)) {
+                    /*
+                     * KLUDGE. Bug 54654. The text widget relies on no listener
+                     * doing any work before dispatching the native delete
+                     * event. This does not work, as we are restricted to
+                     * listeners. However, it can be said that pressing a delete
+                     * key in a text widget will never use key bindings. This
+                     * can be shown be considering how the event dispatching is
+                     * expected to work in a text widget. So, we should do
+                     * nothing ... ever.
+                     */
+                    return;
+
+                } else if (widget instanceof StyledText) {
                     /*
                      * KLUDGE. Some people try to do useful work in verify
                      * listeners. The way verify listeners work in SWT, we need
@@ -511,9 +527,11 @@ public final class WorkbenchKeyboard {
                     ((StyledText) widget)
                             .addVerifyKeyListener(new OutOfOrderVerifyListener(
                                     new OutOfOrderListener(this)));
+
                 } else {
                     widget.addListener(SWT.KeyDown,
                             new OutOfOrderListener(this));
+
                 }
             }
 
