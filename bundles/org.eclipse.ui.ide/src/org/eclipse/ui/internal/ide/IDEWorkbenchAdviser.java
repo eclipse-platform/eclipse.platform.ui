@@ -68,6 +68,8 @@ import org.eclipse.ui.internal.WorkbenchActionBuilder;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
+import org.eclipse.ui.internal.roles.IDERoleManager;
+import org.eclipse.ui.internal.roles.RoleManager;
 import org.eclipse.ui.part.EditorInputTransfer;
 import org.eclipse.ui.part.MarkerTransfer;
 import org.eclipse.ui.part.ResourceTransfer;
@@ -148,7 +150,10 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	public void initialize(IWorkbenchConfigurer configurer) {
 		// remember for future reference
 		this.configurer = configurer;		
-		
+
+		// setup the IDE specific role manager
+		RoleManager.setManager(new IDERoleManager());
+
 		// setup the event loop exception handler
 		exceptionHandler = new IDEExceptionHandler(configurer);
 		
