@@ -4563,15 +4563,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	private Caret createInsertCaret(StyledText styledText) {
 		Caret caret= new Caret(styledText, SWT.NULL);
-		int width= getPreferenceStore().getBoolean(PREFERENCE_WIDE_CARET) ? WIDE_CARET_WIDTH : SINGLE_CARET_WIDTH;
-		caret.setSize(width, styledText.getLineHeight());
+		caret.setSize(getCaretWidthPreference(), styledText.getLineHeight());
 		return caret;
 	}
 	
 	private Image createRawInsertModeCaretImage(StyledText styledText) {
 		
 		PaletteData caretPalette= new PaletteData(new RGB[] {new RGB (0,0,0), new RGB (255,255,255)});
-		int width= getPreferenceStore().getBoolean(PREFERENCE_WIDE_CARET) ? WIDE_CARET_WIDTH : SINGLE_CARET_WIDTH;
+		int width= getCaretWidthPreference();
 		int widthOffset= width - 1;
 		ImageData imageData = new ImageData(4 + widthOffset, styledText.getLineHeight(), 1, caretPalette);
 		Display display = styledText.getDisplay();
@@ -4599,14 +4598,20 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			return createInsertCaret(styledText);
 		
 		Caret caret= new Caret(styledText, SWT.NULL);
-		int width= getPreferenceStore().getBoolean(PREFERENCE_WIDE_CARET) ? WIDE_CARET_WIDTH : SINGLE_CARET_WIDTH;
 		Image image= createRawInsertModeCaretImage(styledText);
 		if (image != null)
 			caret.setImage(image);
 		else
-			caret.setSize(width, styledText.getLineHeight());
+			caret.setSize(getCaretWidthPreference(), styledText.getLineHeight());
 			
 		return caret;
+	}
+	
+	private int getCaretWidthPreference() {
+		if (getPreferenceStore() != null && getPreferenceStore().getBoolean(PREFERENCE_WIDE_CARET))
+			return WIDE_CARET_WIDTH;
+		
+		return SINGLE_CARET_WIDTH;
 	}
 	
 	private void updateCaret() {
@@ -4621,9 +4626,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		styledText.setCaret(null);
 		disposeNonDefaultCaret();
 		
-		if (!getPreferenceStore().getBoolean(PREFERENCE_USE_CUSTOM_CARETS)) {
+		if (getPreferenceStore() == null || !getPreferenceStore().getBoolean(PREFERENCE_USE_CUSTOM_CARETS))
 			Assert.isTrue(fNonDefaultCaret == null);
-		} else if (fIsOverwriting)
+		else if (fIsOverwriting)
 			fNonDefaultCaret= createOverwriteCaret(styledText);
 		else if (SMART_INSERT == mode)
 			fNonDefaultCaret= createInsertCaret(styledText);
