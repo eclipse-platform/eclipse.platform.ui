@@ -281,7 +281,7 @@ public class SyncView extends ViewPart implements ISaveablePart, IPropertyChange
 				error = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, Policy.bind("simpleInternal"), throwable); //$NON-NLS-1$
 			}
 			ErrorDialog.openError(getSite().getShell(), Policy.bind("SyncView.unableSynchronize"), null, error); //$NON-NLS-1$
-			TeamUIPlugin.log(error);
+			TeamUIPlugin.log(error.getSeverity(), error.getMessage(), throwable);
 		} catch (InterruptedException e) {
 		}
 		return false;
@@ -437,7 +437,7 @@ public class SyncView extends ViewPart implements ISaveablePart, IPropertyChange
 			if (page == null) page = TeamUIPlugin.getActivePage();
 			if (page != null) page.showView(VIEW_ID);
 		} catch (PartInitException e) {
-			TeamUIPlugin.log(e.getStatus());
+			TeamUIPlugin.log(e);
 		}
 	}
 	

@@ -20,14 +20,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -60,9 +56,9 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.ITeamResourceChangeListener;
-import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.core.subscribers.TeamDelta;
 import org.eclipse.team.core.subscribers.TeamProvider;
+import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
@@ -453,54 +449,9 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	}
 	
 	private static void handle(Shell shell, Exception exception, String title, String message) {
-		IStatus status = null;
-		boolean log = false;
-		boolean dialog = false;
-		if (exception instanceof TeamException) {
-			status = ((TeamException)exception).getStatus();
-			log = false;
-			dialog = true;
-		} else if (exception instanceof InvocationTargetException) {
-			Throwable t = ((InvocationTargetException)exception).getTargetException();
-			if (t instanceof TeamException) {
-				status = ((TeamException)t).getStatus();
-				log = false;
-				dialog = true;
-			} else if (t instanceof CoreException) {
-				status = ((CoreException)t).getStatus();
-				log = true;
-				dialog = true;
-			} else if (t instanceof InterruptedException) {
-				return;
-			} else {
-				status = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, "internal error", t); //$NON-NLS-1$
-				log = true;
-				dialog = true;
-			}
-		}
-		if (status == null) return;
-		if (!status.isOK()) {
-			IStatus toShow = status;
-			if (status.isMultiStatus()) {
-				IStatus[] children = status.getChildren();
-				if (children.length == 1) {
-					toShow = children[0];
-				}
-			}
-			if (title == null) {
-				title = status.getMessage();
-			}
-			if (message == null) {
-				message = status.getMessage();
-			}
-			if (dialog) {
-				ErrorDialog.openError(shell, title, message, toShow);
-			}
-			if (log) {
-				TeamUIPlugin.log(toShow);
-			}
-		}
+		TeamUIPlugin.handleError(shell, exception, title, message);
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */

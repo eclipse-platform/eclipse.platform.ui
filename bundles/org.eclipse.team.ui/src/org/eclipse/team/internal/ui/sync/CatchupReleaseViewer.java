@@ -611,7 +611,7 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer {
 				((ResourceNavigator)part).selectReveal(resourceSelection);
 			}
 		} catch (PartInitException e) {
-			TeamUIPlugin.log(e.getStatus());
+			TeamUIPlugin.log(e);
 		}
 	}
 	

@@ -389,7 +389,7 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 				error = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, Policy.bind("simpleInternal") , throwable); //$NON-NLS-1$
 			}
 			ErrorDialog.openError(shell, problemMessage, null, error);
-			TeamUIPlugin.log(error);
+			TeamUIPlugin.log(error.getSeverity(), error.getMessage(), throwable);
 			// Throw an interrupted exception so we drop out of the sync
 			throw new InterruptedException();
 		}

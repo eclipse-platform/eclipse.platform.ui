@@ -200,7 +200,7 @@ public abstract class TargetSyncAction extends Action {
 				error = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, Policy.bind("simpleInternal") , throwable); //$NON-NLS-1$
 			}
 			ErrorDialog.openError(shell, problemMessage, error.getMessage(), error);
-			TeamUIPlugin.log(error);
+			TeamUIPlugin.log(error.getSeverity(), error.getMessage(), throwable);
 		}
 	}
 	

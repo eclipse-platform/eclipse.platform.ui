@@ -21,13 +21,9 @@ import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
@@ -40,7 +36,6 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.core.target.TargetManager;
 import org.eclipse.team.internal.core.target.TargetProvider;
-import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IViewPart;
@@ -270,54 +265,9 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	 * @param shell  the shell to open the error dialog in
 	 */
 	protected void handle(Exception exception, String title, String message) {
-		IStatus status = null;
-		boolean log = false;
-		boolean dialog = false;
-		if (exception instanceof TeamException) {
-			status = ((TeamException)exception).getStatus();
-			log = false;
-			dialog = true;
-		} else if (exception instanceof InvocationTargetException) {
-			Throwable t = ((InvocationTargetException)exception).getTargetException();
-			if (t instanceof TeamException) {
-				status = ((TeamException)t).getStatus();
-				log = false;
-				dialog = true;
-			} else if (t instanceof CoreException) {
-				status = ((CoreException)t).getStatus();
-				log = true;
-				dialog = true;
-			} else if (t instanceof InterruptedException) {
-				return;
-			} else {
-				status = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, Policy.bind("TeamAction.internal"), t); //$NON-NLS-1$
-				log = true;
-				dialog = true;
-			}
-		}
-		if (status == null) return;
-		if (!status.isOK()) {
-			IStatus toShow = status;
-			if (status.isMultiStatus()) {
-				IStatus[] children = status.getChildren();
-				if (children.length == 1) {
-					toShow = children[0];
-				}
-			}
-			if (title == null) {
-				title = status.getMessage();
-			}
-			if (message == null) {
-				message = status.getMessage();
-			}
-			if (dialog) {
-				ErrorDialog.openError(getShell(), title, message, toShow);
-			}
-			if (log) {
-				TeamUIPlugin.log(toShow);
-			}
-		}
+		TeamUIPlugin.handleError(getShell(), exception, title, message);
 	}
+	
 	/**
 	 * Concrete action enablement code.
 	 * Subclasses must implement.

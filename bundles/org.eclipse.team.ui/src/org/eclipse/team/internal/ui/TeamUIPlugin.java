@@ -136,9 +136,75 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	 * stacktrace is logged as well.
 	 * @param e
 	 */
-	public static void log(TeamException e) {
+	public static void log(CoreException e) {
 		IStatus status = e.getStatus();
-		log (new Status(status.getSeverity(), status.getPlugin(), status.getCode(), status.getMessage(), e));
+		log (status.getSeverity(), status.getMessage(), e);
+	}
+	
+	/**
+	 * Log the given exception along with the provided message and severity indicator
+	 */
+	public static void log(int severity, String message, Throwable e) {
+		log(new Status(severity, ID, 0, message, e));
+	}
+	
+	/**
+	 * Shows the given errors to the user.
+	 * 
+	 * @param Exception  the exception containing the error
+	 * @param title  the title of the error dialog
+	 * @param message  the message for the error dialog
+	 * @param shell  the shell to open the error dialog in
+	 */
+	public static void handleError(Shell shell, Exception exception, String title, String message) {
+		IStatus status = null;
+		boolean log = false;
+		boolean dialog = false;
+		Throwable t = exception;
+		if (exception instanceof TeamException) {
+			status = ((TeamException)exception).getStatus();
+			log = false;
+			dialog = true;
+		} else if (exception instanceof InvocationTargetException) {
+			t = ((InvocationTargetException)exception).getTargetException();
+			if (t instanceof TeamException) {
+				status = ((TeamException)t).getStatus();
+				log = false;
+				dialog = true;
+			} else if (t instanceof CoreException) {
+				status = ((CoreException)t).getStatus();
+				log = true;
+				dialog = true;
+			} else if (t instanceof InterruptedException) {
+				return;
+			} else {
+				status = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, Policy.bind("TeamAction.internal"), t); //$NON-NLS-1$
+				log = true;
+				dialog = true;
+			}
+		}
+		if (status == null) return;
+		if (!status.isOK()) {
+			IStatus toShow = status;
+			if (status.isMultiStatus()) {
+				IStatus[] children = status.getChildren();
+				if (children.length == 1) {
+					toShow = children[0];
+				}
+			}
+			if (title == null) {
+				title = status.getMessage();
+			}
+			if (message == null) {
+				message = status.getMessage();
+			}
+			if (dialog && shell != null) {
+				ErrorDialog.openError(shell, title, message, toShow);
+			}
+			if (log || shell == null) {
+				TeamUIPlugin.log(toShow.getSeverity(), message, t);
+			}
+		}
 	}
 	
 	public static void runWithProgress(Shell parent, boolean cancelable,
@@ -238,7 +304,7 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 		shell.dispose();
 		// Let's log non-team exceptions
 		if (!(t instanceof TeamException)) {
-			TeamUIPlugin.log(error);
+			TeamUIPlugin.log(error.getSeverity(), error.getMessage(), t);
 		}
 	}
 

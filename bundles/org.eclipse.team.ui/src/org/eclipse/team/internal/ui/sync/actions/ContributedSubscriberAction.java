@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -100,7 +99,7 @@ public class ContributedSubscriberAction extends SyncViewerAction {
 			System.err.println(message + "\nReason:");
 			System.err.println(e.getStatus().getMessage());
 		}
-		TeamUIPlugin.log(new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, message, e));
+		TeamUIPlugin.log(IStatus.ERROR, message, e);
 	}
 	
 	/**

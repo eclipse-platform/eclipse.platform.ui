@@ -112,7 +112,7 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 			try {
 				provider = TargetManager.getProvider(project);
 			} catch (TeamException e) {
-				TeamUIPlugin.log(e.getStatus());
+				TeamUIPlugin.log(e);
 			}			
 			siteSelectionPage = new SiteSelectionPage("site-selection-page", Policy.bind("TargetSiteCreationWizard.siteSelectionPage"), TeamImages.getImageDescriptor(UIConstants.IMG_WIZBAN_SHARE), provider); //$NON-NLS-1$ //$NON-NLS-2$			
 			addPage(siteSelectionPage);
@@ -144,7 +144,7 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 				addPage(mainPage);
 			}
 		} catch (CoreException e) {
-			TeamUIPlugin.log(e.getStatus());
+			TeamUIPlugin.log(e);
 			return;
 		}
 	}

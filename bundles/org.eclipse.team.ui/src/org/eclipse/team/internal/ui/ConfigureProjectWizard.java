@@ -86,7 +86,7 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 					return;
 				}
 			} catch (CoreException e) {
-				TeamUIPlugin.log(e.getStatus());
+				TeamUIPlugin.log(e);
 				return;
 			}
 		}
