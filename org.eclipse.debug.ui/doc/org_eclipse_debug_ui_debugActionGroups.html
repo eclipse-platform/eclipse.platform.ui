@@ -12,9 +12,10 @@
 
 <p><b><i>Identifier: </i></b>org.eclipse.debug.ui.debugActionGroups </p>
 
-<p><b><i>Description: </i></b>This extension point provides a mechanism to remove action
-groups from the toolbars and context menus of views that return an instance of
-IDebugViewAdapter when queried with #getAdapter(IDebugViewAdapater.class).</p>
+<p><b><i>Description: </i></b>This extension point provides a mechanism to specify the visibility of action
+groups.  Any view that returns an instance of
+IDebugViewAdapter when queried with #getAdapter(IDebugViewAdapater.class) will have its context menu and toolbar
+affected by the visibility of the action groups.
 
 <p><b><i>Configuration Markup:</i></b> </p>
 
@@ -27,9 +28,9 @@ IDebugViewAdapter when queried with #getAdapter(IDebugViewAdapater.class).</p>
 </pre>
 
 <ul>
- <li><code>id</code> specifies a unique identifier for this debug action group.</li>
- <li><code>name</code> a translatable name that will be used for the debug action group label.</li>
- <li><code>visible</code> an optional attribute indicating the visibility of the group.  If omitted the group is set to be visible</li>
+ <li><code>id</code>  - specifies a unique identifier for this debug action group.</li>
+ <li><code>name</code>  - a translatable name that will be used for the debug action group label.</li>
+ <li><code>visible</code>  - an optional attribute indicating the visibility of the group.  If omitted the group is set to be visible</li>
 </ul>
 
 <pre>
@@ -39,13 +40,13 @@ IDebugViewAdapter when queried with #getAdapter(IDebugViewAdapater.class).</p>
 </pre>
 
 <ul>
- <li><code>id</code> the unique identifier of an action that will be added to the debug action group</li>
+ <li><code>id</code> - the unique identifier of an action that will be added to the debug action group</li>
 
 <p><b><i>Examples:</i></b> </p>
 
 <p>The following is an example of a debug action group extension point.  In all 
 debug views (views that return an instance of
-IDebugViewAdapter when queried with #getAdapter(IDebugViewAdapater.class)), these actions listed not be visible. </p>
+IDebugViewAdapter when queried with #getAdapter(IDebugViewAdapater.class)), the actions listed will not be visible in the toolbar or context menu of the view. </p>
 
 <pre>
 &lt;extension point = "org.eclipse.debug.ui.debugActionGroups"&gt;
