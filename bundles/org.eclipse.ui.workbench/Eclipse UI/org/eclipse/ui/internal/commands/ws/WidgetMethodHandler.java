@@ -94,10 +94,14 @@ public class WidgetMethodHandler extends AbstractHandler implements
     protected Method getMethodToExecute() {
         final Control focusControl = Display.getCurrent().getFocusControl();
         try {
-            return focusControl.getClass().getMethod(methodName, NO_PARAMETERS);
+            if (focusControl != null) {
+                return focusControl.getClass().getMethod(methodName, NO_PARAMETERS);
+            }
         } catch (NoSuchMethodException e) {
-            return null;
+            // Fall through....
         }
+        
+        return null;
     }
 
     /*
