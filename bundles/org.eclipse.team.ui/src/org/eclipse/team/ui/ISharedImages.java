@@ -14,8 +14,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * convenience.
  */
 public interface ISharedImages {
-	public final String IMG_DIRTY_OVR = "ovr/dirty_ov.gif";
-	public final String IMG_CHECKEDIN_OVR = "ovr/checkedin_ov.gif";
-	public final String IMG_CHECKEDOUT_OVR = "ovr/checkedout_ov.gif";
+	public final String IMG_DIRTY_OVR = "ovr/dirty_ov.gif"; //$NON-NLS-1$
+	public final String IMG_CHECKEDIN_OVR = "ovr/checkedin_ov.gif"; //$NON-NLS-1$
+	public final String IMG_CHECKEDOUT_OVR = "ovr/checkedout_ov.gif"; //$NON-NLS-1$
 }
 

@@ -38,7 +38,7 @@ public class ConfigureProjectAction extends TeamAction {
 					throw new InvocationTargetException(e);
 				}
 			}
-		}, Policy.bind("ConfigureProjectAction.configureProject"), PROGRESS_BUSYCURSOR);
+		}, Policy.bind("ConfigureProjectAction.configureProject"), PROGRESS_BUSYCURSOR); //$NON-NLS-1$
 	}
 	/**
 	 * @see TeamAction#isEnabled()

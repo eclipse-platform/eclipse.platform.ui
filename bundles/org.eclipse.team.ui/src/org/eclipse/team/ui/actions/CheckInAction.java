@@ -34,8 +34,8 @@ public class CheckInAction extends TeamAction {
 				try {
 					Hashtable table = getProviderMapping();
 					Set keySet = table.keySet();
-					monitor.beginTask("", keySet.size() * 1000);
-					monitor.setTaskName(Policy.bind("CheckInAction.checkingIn"));
+					monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
+					monitor.setTaskName(Policy.bind("CheckInAction.checkingIn")); //$NON-NLS-1$
 					Iterator iterator = keySet.iterator();
 					while (iterator.hasNext()) {
 						IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
@@ -50,7 +50,7 @@ public class CheckInAction extends TeamAction {
 					monitor.done();
 				}
 			}
-		}, Policy.bind("CheckInAction.checkin"), this.PROGRESS_DIALOG);
+		}, Policy.bind("CheckInAction.checkin"), this.PROGRESS_DIALOG); //$NON-NLS-1$
 	}
 	/**
 	 * @see TeamAction#isEnabled()

@@ -64,9 +64,9 @@ public class MergeResource {
 		if (name != null) {
 			int index = name.lastIndexOf('.');
 			if (index == -1)
-				return "";
+				return ""; //$NON-NLS-1$
 			if (index == (name.length() - 1))
-				return "";
+				return ""; //$NON-NLS-1$
 			return name.substring(index + 1);
 		}
 		return ITypedElement.FOLDER_TYPE;
@@ -140,23 +140,23 @@ public class MergeResource {
 	 */
 	public void setLabels(CompareConfiguration config) {
 		String name = getName();
-		config.setLeftLabel(Policy.bind("MergeResource.workspaceFile", name));
+		config.setLeftLabel(Policy.bind("MergeResource.workspaceFile", name)); //$NON-NLS-1$
 	
 	
 		IRemoteResource remote = syncTree.getRemote();
 		if (remote != null) {
-			config.setRightLabel(Policy.bind("MergeResource.repositoryFile", name));
+			config.setRightLabel(Policy.bind("MergeResource.repositoryFile", name)); //$NON-NLS-1$
 	//		config.setRightLabel(TeamUIPlugin.getResourceString("MergeResource.repositoryFile", new Object[] {name, remote.getVersionName()} ));
 		} else {
-			config.setRightLabel(Policy.bind("MergeResource.noRepositoryFile"));
+			config.setRightLabel(Policy.bind("MergeResource.noRepositoryFile")); //$NON-NLS-1$
 		}
 	
 		IRemoteResource base = syncTree.getBase();
 		if (base != null) {
-			config.setAncestorLabel(Policy.bind("MergeResource.commonFile", name));
+			config.setAncestorLabel(Policy.bind("MergeResource.commonFile", name)); //$NON-NLS-1$
 	//		config.setAncestorLabel(TeamUIPlugin.getResourceString("MergeResource.commonFile", new Object[] {name, common.getVersionName()} ));
 		} else {
-			config.setAncestorLabel(Policy.bind("MergeResource.noCommonFile"));
+			config.setAncestorLabel(Policy.bind("MergeResource.noCommonFile")); //$NON-NLS-1$
 		}
 	}
 }

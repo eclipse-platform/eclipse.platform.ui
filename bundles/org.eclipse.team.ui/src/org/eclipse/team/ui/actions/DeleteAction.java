@@ -37,15 +37,15 @@ public class DeleteAction extends TeamAction {
 					final boolean[] okToContinue = {false};
 					getShell().getDisplay().syncExec(new Runnable() {
 						public void run() {
-							okToContinue[0] = MessageDialog.openConfirm(getShell(), Policy.bind("DeleteAction.promptTitle"), Policy.bind("DeleteAction.promptMessage"));
+							okToContinue[0] = MessageDialog.openConfirm(getShell(), Policy.bind("DeleteAction.promptTitle"), Policy.bind("DeleteAction.promptMessage")); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 					});
 								
 					if (okToContinue[0]) {
 						Hashtable table = getProviderMapping();
 						Set keySet = table.keySet();
-						monitor.beginTask("", keySet.size() * 1000);
-						monitor.setTaskName(Policy.bind("DeleteAction.deleting"));
+						monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
+						monitor.setTaskName(Policy.bind("DeleteAction.deleting")); //$NON-NLS-1$
 						Iterator iterator = keySet.iterator();
 						while (iterator.hasNext()) {
 							IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
@@ -66,7 +66,7 @@ public class DeleteAction extends TeamAction {
 					monitor.done();
 				}
 			}
-		}, Policy.bind("DeleteAction.delete"), this.PROGRESS_BUSYCURSOR);
+		}, Policy.bind("DeleteAction.delete"), this.PROGRESS_BUSYCURSOR); //$NON-NLS-1$
 	}
 	/**
 	 * @see TeamAction#isEnabled()

@@ -41,7 +41,7 @@ import org.eclipse.ui.part.ViewPart;
  * between the local workspace and a repository.
  */
 public class SyncView extends ViewPart {
-	public static final String VIEW_ID = "org.eclipse.team.ui.sync.SyncView";
+	public static final String VIEW_ID = "org.eclipse.team.ui.sync.SyncView"; //$NON-NLS-1$
 	private SyncCompareInput input;
 	private TreeViewer viewer;
 	private Composite top;
@@ -54,9 +54,9 @@ public class SyncView extends ViewPart {
 	public static final int SYNC_MERGE = 4;
 	
 	// Titles cached for efficiency
-	private final String CATCHUP_TITLE = Policy.bind("SyncView.incomingModeTitle");
-	private final String RELEASE_TITLE = Policy.bind("SyncView.outgoingModeTitle");
-	private final String FREE_TITLE = Policy.bind("SyncView.freeModeTitle");
+	private final String CATCHUP_TITLE = Policy.bind("SyncView.incomingModeTitle"); //$NON-NLS-1$
+	private final String RELEASE_TITLE = Policy.bind("SyncView.outgoingModeTitle"); //$NON-NLS-1$
+	private final String FREE_TITLE = Policy.bind("SyncView.freeModeTitle"); //$NON-NLS-1$
 	
 	private int currentSyncMode = SYNC_NONE;
 	
@@ -132,24 +132,24 @@ public class SyncView extends ViewPart {
 	private void initializeSyncModes() {
 		// Create the actions
 		incomingMode = new SyncModeAction(
-			Policy.bind("SyncView.incomingModeAction"),
+			Policy.bind("SyncView.incomingModeAction"), //$NON-NLS-1$
 			TeamUIPlugin.getPlugin().getImageDescriptor(UIConstants.IMG_SYNC_MODE_CATCHUP),
 			SYNC_INCOMING);
-		incomingMode.setToolTipText(Policy.bind("SyncView.incomingModeToolTip"));
+		incomingMode.setToolTipText(Policy.bind("SyncView.incomingModeToolTip")); //$NON-NLS-1$
 		incomingMode.setChecked(false);
 		
 		outgoingMode = new SyncModeAction(
-			Policy.bind("SyncView.outgoingModeAction"),
+			Policy.bind("SyncView.outgoingModeAction"), //$NON-NLS-1$
 			TeamUIPlugin.getPlugin().getImageDescriptor(UIConstants.IMG_SYNC_MODE_RELEASE),
 			SYNC_OUTGOING);
-		outgoingMode.setToolTipText(Policy.bind("SyncView.outgoingModeToolTip"));
+		outgoingMode.setToolTipText(Policy.bind("SyncView.outgoingModeToolTip")); //$NON-NLS-1$
 		outgoingMode.setChecked(false);
 		
 		freeMode = new SyncModeAction(
-			Policy.bind("SyncView.freeModeAction"),
+			Policy.bind("SyncView.freeModeAction"), //$NON-NLS-1$
 			TeamUIPlugin.getPlugin().getImageDescriptor(UIConstants.IMG_SYNC_MODE_FREE),
 			SYNC_BOTH);
-		freeMode.setToolTipText(Policy.bind("SyncView.freeModeToolTip"));
+		freeMode.setToolTipText(Policy.bind("SyncView.freeModeToolTip")); //$NON-NLS-1$
 		freeMode.setChecked(false);
 	}
 	
@@ -190,9 +190,9 @@ public class SyncView extends ViewPart {
 			} else if (throwable instanceof CoreException) {
 				error = ((CoreException)throwable).getStatus();
 			} else {
-				error = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, Policy.bind("simpleInternal"), throwable);
+				error = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, Policy.bind("simpleInternal"), throwable); //$NON-NLS-1$
 			}
-			ErrorDialog.openError(getSite().getShell(), Policy.bind("SyncView.unableSynchronize"), null, error);
+			ErrorDialog.openError(getSite().getShell(), Policy.bind("SyncView.unableSynchronize"), null, error); //$NON-NLS-1$
 			TeamUIPlugin.log(error);
 		} catch (InterruptedException e) {
 		}
@@ -247,7 +247,7 @@ public class SyncView extends ViewPart {
 	private void showDefaultContents() {
 		Label label = new Label(top, SWT.WRAP);
 		label.setLayoutData(new GridData(GridData.FILL_BOTH));
-		label.setText(Policy.bind("SyncView.text"));
+		label.setText(Policy.bind("SyncView.text")); //$NON-NLS-1$
 	}
 	
 	/**
@@ -282,13 +282,13 @@ public class SyncView extends ViewPart {
 		
 		// Check for problem message
 		if (input.getMessage() != null) {
-			MessageDialog.openInformation(getSite().getShell(), Policy.bind("SyncView.unableSynchronize"), input.getMessage());
+			MessageDialog.openInformation(getSite().getShell(), Policy.bind("SyncView.unableSynchronize"), input.getMessage()); //$NON-NLS-1$
 			return;
 		}
 		
 		// Check for empty comparison
 		if (isEmpty(input.getDiffRoot())) {
-			MessageDialog.openInformation(getSite().getShell(), Policy.bind("nothingToSynchronize"), Policy.bind("SyncView.same"));
+			MessageDialog.openInformation(getSite().getShell(), Policy.bind("nothingToSynchronize"), Policy.bind("SyncView.same")); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 	

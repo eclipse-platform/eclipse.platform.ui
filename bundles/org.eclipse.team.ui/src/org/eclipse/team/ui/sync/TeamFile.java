@@ -225,7 +225,7 @@ public class TeamFile extends DiffElement implements ICompareInput, ITeamNode {
 			// update the UI with the sync state change.
 			fireThreeWayInputChange();
 		} catch (CoreException e) {
-			ErrorDialog.openError(WorkbenchPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(), Policy.bind("TeamFile.saveChanges", getName()), null, e.getStatus());
+			ErrorDialog.openError(WorkbenchPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(), Policy.bind("TeamFile.saveChanges", getName()), null, e.getStatus()); //$NON-NLS-1$
 		}
 	}
 	
@@ -263,7 +263,7 @@ public class TeamFile extends DiffElement implements ICompareInput, ITeamNode {
 	 * For debugging purposes only.
 	 */
 	public String toString() {
-		return "TeamFile(" + mergeResource.getName() + ")";
+		return "TeamFile(" + mergeResource.getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	private void run(IRunnableWithProgress runnable) throws CoreException {
@@ -273,7 +273,7 @@ public class TeamFile extends DiffElement implements ICompareInput, ITeamNode {
 			if (e.getTargetException() instanceof CoreException) {
 				throw (CoreException)e.getTargetException();
 			} else {
-				throw new CoreException(new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, Policy.bind("simpleInternal"), e.getTargetException()));
+				throw new CoreException(new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, Policy.bind("simpleInternal"), e.getTargetException())); //$NON-NLS-1$
 			}
 		} catch (InterruptedException e) {
 			// Ignore

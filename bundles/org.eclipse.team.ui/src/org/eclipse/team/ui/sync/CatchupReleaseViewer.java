@@ -144,7 +144,7 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 	private Action ignoreWhiteSpace;
 	
 	// Property constant for diff mode kind
-	static final String PROP_KIND = "team.ui.PropKind";
+	static final String PROP_KIND = "team.ui.PropKind"; //$NON-NLS-1$
 
 
 	/**
@@ -215,30 +215,30 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 	private void initializeActions(final SyncCompareInput diffModel) {
 		// Mask actions
 		ImageDescriptor image = TeamUIPlugin.getPlugin().getImageDescriptor(UIConstants.IMG_DLG_SYNC_INCOMING);
-		showIncoming = new FilterAction(Policy.bind("CatchupReleaseViewer.showIncomingAction"), image);
-		showIncoming.setToolTipText(Policy.bind("CatchupReleaseViewer.showIncomingAction"));
+		showIncoming = new FilterAction(Policy.bind("CatchupReleaseViewer.showIncomingAction"), image); //$NON-NLS-1$
+		showIncoming.setToolTipText(Policy.bind("CatchupReleaseViewer.showIncomingAction")); //$NON-NLS-1$
 	
 		image = TeamUIPlugin.getPlugin().getImageDescriptor(UIConstants.IMG_DLG_SYNC_OUTGOING);
-		showOutgoing = new FilterAction(Policy.bind("CatchupReleaseViewer.showOutgoingAction"), image);
-		showOutgoing.setToolTipText(Policy.bind("CatchupReleaseViewer.showOutgoingAction"));
+		showOutgoing = new FilterAction(Policy.bind("CatchupReleaseViewer.showOutgoingAction"), image); //$NON-NLS-1$
+		showOutgoing.setToolTipText(Policy.bind("CatchupReleaseViewer.showOutgoingAction")); //$NON-NLS-1$
 	
 		image = TeamUIPlugin.getPlugin().getImageDescriptor(UIConstants.IMG_DLG_SYNC_CONFLICTING);
 		
 		//show only conflicts is not a HideAction because it doesnt flip bits, it sets an exact mask
-		showOnlyConflicts = new FilterAction(Policy.bind("CatchupReleaseViewer.showOnlyConflictsAction"), image);
-		showOnlyConflicts.setToolTipText(Policy.bind("CatchupReleaseViewer.showOnlyConflictsAction"));
+		showOnlyConflicts = new FilterAction(Policy.bind("CatchupReleaseViewer.showOnlyConflictsAction"), image); //$NON-NLS-1$
+		showOnlyConflicts.setToolTipText(Policy.bind("CatchupReleaseViewer.showOnlyConflictsAction")); //$NON-NLS-1$
 	
 		//refresh action
 		image = TeamUIPlugin.getPlugin().getImageDescriptor(UIConstants.IMG_REFRESH);
-		refresh = new Action(Policy.bind("CatchupReleaseViewer.refreshAction"), image) {
+		refresh = new Action(Policy.bind("CatchupReleaseViewer.refreshAction"), image) { //$NON-NLS-1$
 			public void run() {
 				diffModel.refresh();
 			}
 		};
-		refresh.setToolTipText(Policy.bind("CatchupReleaseViewer.refreshAction"));
+		refresh.setToolTipText(Policy.bind("CatchupReleaseViewer.refreshAction")); //$NON-NLS-1$
 		
 		// Expand action
-		expandAll = new Action(Policy.bind("CatchupReleaseViewer.expand"), null) {
+		expandAll = new Action(Policy.bind("CatchupReleaseViewer.expand"), null) { //$NON-NLS-1$
 			public void run() {
 				expandSelection();
 			}
@@ -246,19 +246,19 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 		
 		// Show in navigator
 		if (diffModel.getViewSite() != null) {
-			showInNavigator = new ShowInNavigatorAction(diffModel.getViewSite(), Policy.bind("CatchupReleaseViewer.showInNavigator"));
+			showInNavigator = new ShowInNavigatorAction(diffModel.getViewSite(), Policy.bind("CatchupReleaseViewer.showInNavigator")); //$NON-NLS-1$
 			addSelectionChangedListener(showInNavigator);
 		}
 		
 		// Ignore white space
 		image = TeamUIPlugin.getPlugin().getImageDescriptor(UIConstants.IMG_IGNORE_WHITESPACE);
-		ignoreWhiteSpace = new Action(Policy.bind("CatchupReleaseViewer.ignoreWhiteSpace"), image) {
+		ignoreWhiteSpace = new Action(Policy.bind("CatchupReleaseViewer.ignoreWhiteSpace"), image) { //$NON-NLS-1$
 			public void run() {
 				Boolean value = isChecked() ? Boolean.TRUE : Boolean.FALSE;
 				diffModel.getCompareConfiguration().setProperty(CompareConfiguration.IGNORE_WHITESPACE, value);
 			}
 		};
-		ignoreWhiteSpace.setId("team.ignoreWhiteSpace");
+		ignoreWhiteSpace.setId("team.ignoreWhiteSpace"); //$NON-NLS-1$
 		ignoreWhiteSpace.setChecked(false);
 		
 		// Add a selection listener to set the left label

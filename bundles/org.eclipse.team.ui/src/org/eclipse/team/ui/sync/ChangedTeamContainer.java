@@ -58,6 +58,6 @@ public class ChangedTeamContainer extends UnchangedTeamContainer {
 	 * For debugging purposes only.
 	 */
 	public String toString() {
-		return "ChangedTeamContainer(" + getResource().getName() + ")";
+		return "ChangedTeamContainer(" + getResource().getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

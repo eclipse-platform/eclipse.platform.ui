@@ -76,7 +76,7 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 		setControl(composite);
 		
 		Label label = new Label(composite, SWT.LEFT);
-		label.setText(Policy.bind("ConfigureProjectWizardMainPage.selectRepository"));
+		label.setText(Policy.bind("ConfigureProjectWizardMainPage.selectRepository")); //$NON-NLS-1$
 		GridData data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		label.setLayoutData(data);
@@ -108,7 +108,7 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 					selectedWizard = (IConfigurationWizard)selectedElement.createExecutableExtension();
 					selectedWizard.init(workbench, project);
 				} catch (CoreException e) {
-					System.out.println(Policy.bind("exceptionCreatingWizard"));
+					System.out.println(Policy.bind("ConfigurationWizard.exceptionCreatingWizard")); //$NON-NLS-1$
 					return;
 				}
 				selectedWizard.addPages();

@@ -34,10 +34,10 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 public class TeamUIPlugin extends AbstractUIPlugin implements ISharedImages {
 
 	private static TeamUIPlugin instance;
-	public static final String ID = "org.eclipse.team.ui";
+	public static final String ID = "org.eclipse.team.ui"; //$NON-NLS-1$
 	
 	// property change types
-	public static String GLOBAL_IGNORES_CHANGED = "global_ignores_changed";
+	public static String GLOBAL_IGNORES_CHANGED = "global_ignores_changed"; //$NON-NLS-1$
 
 	private Hashtable imageDescriptors = new Hashtable(20);
 	
@@ -219,7 +219,7 @@ public class TeamUIPlugin extends AbstractUIPlugin implements ISharedImages {
 	 * @see Plugin#startup()
 	 */
 	public void startup() throws CoreException {
-		Policy.localize("org.eclipse.team.internal.ui.messages");
+		Policy.localize("org.eclipse.team.internal.ui.messages"); //$NON-NLS-1$
 		initializeImages();
 	}
 }

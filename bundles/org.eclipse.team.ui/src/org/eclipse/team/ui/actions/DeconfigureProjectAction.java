@@ -32,7 +32,7 @@ public class DeconfigureProjectAction extends TeamAction {
 					throw new InvocationTargetException(e);
 				}
 			}
-		}, Policy.bind("DeconfigureProjectAction.deconfigureProject"), PROGRESS_BUSYCURSOR);
+		}, Policy.bind("DeconfigureProjectAction.deconfigureProject"), PROGRESS_BUSYCURSOR); //$NON-NLS-1$
 	}
 	/**
 	 * @see TeamAction#isEnabled()

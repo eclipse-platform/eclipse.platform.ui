@@ -132,7 +132,7 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 	 * It is dipslayed in the CompareEditor's title bar.
 	 */
 	public String getTitle() {
-		return Policy.bind("SyncCompareInput.synchronize");
+		return Policy.bind("SyncCompareInput.synchronize"); //$NON-NLS-1$
 	}
 
 	/**
@@ -194,7 +194,7 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 		}
 	
 		try {
-			pm.beginTask(Policy.bind("SyncCompareInput.taskTitle"), 100);
+			pm.beginTask(Policy.bind("SyncCompareInput.taskTitle"), 100); //$NON-NLS-1$
 			
 			// Estimate 70% of the time is creating the sync elements
 			this.trees = createSyncElements(Policy.subMonitorFor(pm, 70));
@@ -240,8 +240,8 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 	}
 	
 	void doServerDelta(IProgressMonitor pm) throws InterruptedException {
-		pm.beginTask("", trees.length * 1000);
-		pm.setTaskName(Policy.bind("SyncCompareInput.taskTitle"));
+		pm.beginTask(null, trees.length * 1000);
+		pm.setTaskName(Policy.bind("SyncCompareInput.taskTitle")); //$NON-NLS-1$
 		for (int i = 0; i < trees.length; i++) {
 			IRemoteSyncElement tree = trees[i];
 			IProgressMonitor monitor = Policy.subMonitorFor(pm, 1000);
@@ -317,14 +317,14 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 			}
 		};
 		try {
-			run(op, Policy.bind("SyncCompareInput.refresh"));
+			run(op, Policy.bind("SyncCompareInput.refresh")); //$NON-NLS-1$
 		} catch (InterruptedException e) {
 			return;
 		}
 		
 		catchupReleaseViewer.setInput(input[0]);
 		if (input[0] == null) {
-			MessageDialog.openInformation(shell, Policy.bind("nothingToSynchronize"), Policy.bind("SyncCompareInput.nothingText"));
+			MessageDialog.openInformation(shell, Policy.bind("nothingToSynchronize"), Policy.bind("SyncCompareInput.nothingText")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -338,7 +338,7 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 			if (throwable instanceof CoreException) {
 				error = ((CoreException)throwable).getStatus();
 			} else {
-				error = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, Policy.bind("simpleInternal") , throwable);
+				error = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, Policy.bind("simpleInternal") , throwable); //$NON-NLS-1$
 			}
 			ErrorDialog.openError(shell, problemMessage, error.getMessage(), error);
 			TeamUIPlugin.log(error);

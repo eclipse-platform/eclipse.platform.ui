@@ -51,7 +51,7 @@ public class ConfigurationWizardNode implements IWizardNode {
 			try {
 				wizard = (IWizard)element.createExecutableExtension();
 			} catch (CoreException e) {
-				System.out.println(Policy.bind("exceptionCreatingWizard"));
+				System.out.println(Policy.bind("ConfigurationWizard.exceptionCreatingWizard")); //$NON-NLS-1$
 			}
 		}
 		return wizard;

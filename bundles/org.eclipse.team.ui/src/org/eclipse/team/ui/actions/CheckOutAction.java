@@ -34,8 +34,8 @@ public class CheckOutAction extends TeamAction {
 				try {
 					Hashtable table = getProviderMapping();
 					Set keySet = table.keySet();
-					monitor.beginTask("", keySet.size() * 1000);
-					monitor.setTaskName(Policy.bind("CheckOutAction.checkingOut"));
+					monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
+					monitor.setTaskName(Policy.bind("CheckOutAction.checkingOut")); //$NON-NLS-1$
 					Iterator iterator = keySet.iterator();
 					while (iterator.hasNext()) {
 						IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
@@ -50,7 +50,7 @@ public class CheckOutAction extends TeamAction {
 					monitor.done();
 				}
 			}
-		}, Policy.bind("CheckOutAction.checkout"), this.PROGRESS_BUSYCURSOR);
+		}, Policy.bind("CheckOutAction.checkout"), this.PROGRESS_BUSYCURSOR); //$NON-NLS-1$
 	}	
 	/**
 	 * @see TeamAction#isEnabled()

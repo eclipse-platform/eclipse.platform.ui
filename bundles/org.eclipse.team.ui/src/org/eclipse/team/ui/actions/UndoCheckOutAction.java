@@ -34,8 +34,8 @@ public class UndoCheckOutAction extends TeamAction {
 				try {
 					Hashtable table = getProviderMapping();
 					Set keySet = table.keySet();
-					monitor.beginTask("", keySet.size() * 1000);
-					monitor.setTaskName(Policy.bind("UndoCheckOutAction.undoing"));
+					monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
+					monitor.setTaskName(Policy.bind("UndoCheckOutAction.undoing")); //$NON-NLS-1$
 					Iterator iterator = keySet.iterator();
 					while (iterator.hasNext()) {
 						IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
@@ -50,7 +50,7 @@ public class UndoCheckOutAction extends TeamAction {
 					monitor.done();
 				}
 			}
-		}, Policy.bind("UndoCheckOutAction.undoCheckout"), this.PROGRESS_BUSYCURSOR);
+		}, Policy.bind("UndoCheckOutAction.undoCheckout"), this.PROGRESS_BUSYCURSOR); //$NON-NLS-1$
 	}	
 	/**
 	 * @see TeamAction#isEnabled()

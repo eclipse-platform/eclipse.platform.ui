@@ -31,16 +31,16 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	private String pluginId = UIConstants.PLUGIN_ID;
 	private String extensionPoint = UIConstants.PT_CONFIGURATION;
 	
-	protected final static String TAG_WIZARD = "wizard";
-	protected final static String TAG_DESCRIPTION = "description";
-	protected final static String ATT_NAME = "name";
-	protected final static String ATT_CLASS = "class";
-	protected final static String ATT_ICON = "icon";
-	protected final static String ATT_ID = "id";
+	protected final static String TAG_WIZARD = "wizard"; //$NON-NLS-1$
+	protected final static String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
+	protected final static String ATT_NAME = "name"; //$NON-NLS-1$
+	protected final static String ATT_CLASS = "class"; //$NON-NLS-1$
+	protected final static String ATT_ICON = "icon"; //$NON-NLS-1$
+	protected final static String ATT_ID = "id"; //$NON-NLS-1$
 	
 	public ConfigureProjectWizard() {
 		setNeedsProgressMonitor(true);
-		setWindowTitle(Policy.bind("ConfigureProjectWizard.title"));
+		setWindowTitle(Policy.bind("ConfigureProjectWizard.title")); //$NON-NLS-1$
 	}
 	
 	/*
@@ -69,8 +69,8 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 				return;
 			}
 		}
-		mainPage = new ConfigureProjectWizardMainPage("configurePage1", Policy.bind("ConfigureProjectWizard.configureProject"), TeamUIPlugin.getPlugin().getImageDescriptor(UIConstants.IMG_WIZBAN_SHARE), wizards);
-		mainPage.setDescription(Policy.bind("ConfigureProjectWizard.description"));
+		mainPage = new ConfigureProjectWizardMainPage("configurePage1", Policy.bind("ConfigureProjectWizard.configureProject"), TeamUIPlugin.getPlugin().getImageDescriptor(UIConstants.IMG_WIZBAN_SHARE), wizards); //$NON-NLS-1$ //$NON-NLS-2$
+		mainPage.setDescription(Policy.bind("ConfigureProjectWizard.description")); //$NON-NLS-1$
 		mainPage.setProject(project);
 		mainPage.setWorkbench(workbench);
 		addPage(mainPage);
@@ -165,7 +165,7 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	 */
 	protected boolean initializeWizard(ConfigurationWizardElement element, IConfigurationElement config) {
 		element.setID(config.getAttribute(ATT_ID));
-		String description = "";
+		String description = ""; //$NON-NLS-1$
 		IConfigurationElement [] children = config.getChildren(TAG_DESCRIPTION);
 		if (children.length >= 1) {
 			description = children[0].getValue();

@@ -112,19 +112,19 @@ public class SyncSet {
 		StringBuffer result = new StringBuffer();
 		
 		if (conflicts == 0) {
-			result.append(Policy.bind("SyncSet.noConflicts"));
+			result.append(Policy.bind("SyncSet.noConflicts")); //$NON-NLS-1$
 		} else {
-			result.append(Policy.bind("SyncSet.conflicts", new Object[] {Integer.toString(conflicts)} ));
+			result.append(Policy.bind("SyncSet.conflicts", new Object[] {Integer.toString(conflicts)} )); //$NON-NLS-1$
 		}
 		if (incoming == 0) {
-			result.append(Policy.bind("SyncSet.noIncomings"));
+			result.append(Policy.bind("SyncSet.noIncomings")); //$NON-NLS-1$
 		} else {
-			result.append(Policy.bind("SyncSet.incomings", new Object[] {Integer.toString(incoming)} ));
+			result.append(Policy.bind("SyncSet.incomings", new Object[] {Integer.toString(incoming)} )); //$NON-NLS-1$
 		}
 		if (outgoing == 0) {
-			result.append(Policy.bind("SyncSet.noOutgoings"));
+			result.append(Policy.bind("SyncSet.noOutgoings")); //$NON-NLS-1$
 		} else {
-			result.append(Policy.bind("SyncSet.outgoings", new Object[] {Integer.toString(outgoing)} ));
+			result.append(Policy.bind("SyncSet.outgoings", new Object[] {Integer.toString(outgoing)} )); //$NON-NLS-1$
 		}
 		return result.toString();
 	}
