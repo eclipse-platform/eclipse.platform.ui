@@ -19,6 +19,11 @@ minus.src = "images/minus_tree.gif";
 plus = new Image();
 plus.src = "images/plus_tree.gif";
 
+folder_img = new Image();
+folder_img.src = "images/container_obj.gif";
+topic_img = new Image();
+topic_img.src = "images/topic_obj.gif";
+
 /**
  * Returns the target node of an event
  */
