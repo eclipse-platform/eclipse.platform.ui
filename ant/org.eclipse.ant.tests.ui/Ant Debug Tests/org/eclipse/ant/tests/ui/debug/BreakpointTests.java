@@ -152,24 +152,36 @@ public class BreakpointTests extends AbstractAntDebugTest {
 	}
 	
 	public void testBreakpoint() throws Exception {
-		breakpoints(false);
+		breakpoints(false, "default", 5, 15);
 	}
 	
 	public void testBreakpointSepVM() throws Exception {
-		breakpoints(true);
+		breakpoints(true, "default", 5, 15);
 	}
 	
-	private void breakpoints(boolean sepVM) throws CoreException {
+	//TODO enable when move to Ant 1.6.3 as need target location
+//	public void testTargetBreakpoint() throws Exception {
+//		breakpoints(false, "entry2", 4, 24);
+//	}
+//	
+//	public void testTargetBreakpointSepVM() throws Exception {
+//		breakpoints(true, "entry2", 4, 24);
+//	}
+	
+	private void breakpoints(boolean sepVM, String defaultTargetName, int firstLineNumber, int secondLineNumber) throws CoreException {
 		String fileName = "breakpoints";
 		IFile file= getIFile(fileName + ".xml");
-		ILineBreakpoint bp = createLineBreakpoint(5, file);
+		ILineBreakpoint bp = createLineBreakpoint(firstLineNumber, file);
 		AntThread thread = null;
 		try {
 			if (sepVM) {
 				fileName+= "SepVM";
 			}
-		    thread= launchToLineBreakpoint(fileName, bp);
-			bp= createLineBreakpoint(15, file);
+			ILaunchConfiguration config= getLaunchConfiguration(fileName);
+			ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
+			copy.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, defaultTargetName);
+		    thread= launchToLineBreakpoint(copy, bp);
+			bp= createLineBreakpoint(secondLineNumber, file);
 		    resumeToLineBreakpoint(thread, bp);
 		} finally {
 			terminateAndRemove(thread);
