@@ -535,4 +535,47 @@ public class TocData extends ActivitiesData {
 		}
 		return childTopics;
 	}
+	private void generateTopicLinks(ITopic topic, Writer w, int indent) {
+        String topicHref = topic.getHref();
+        try {
+            if (indent == 0)
+                w.write("<b>"); //$NON-NLS-1$
+            for (int tab = 0; tab < indent; tab++) {
+                w.write("&nbsp;&nbsp;"); //$NON-NLS-1$
+            }
+            if (topicHref != null && topicHref.length() > 0) {
+                w.write("<a href=\""); //$NON-NLS-1$
+                if ('/' == topicHref.charAt(0)) {
+                    w.write("topic"); //$NON-NLS-1$
+                }
+                w.write(topicHref);
+                w.write("\">"); //$NON-NLS-1$
+                w.write(UrlUtil.htmlEncode(topic.getLabel()));
+                w.write("</a>"); //$NON-NLS-1$
+            } else {
+                w.write(UrlUtil.htmlEncode(topic.getLabel()));
+            }
+            w.write("<br>\n"); //$NON-NLS-1$
+            if (indent == 0)
+                w.write("</b>"); //$NON-NLS-1$
+        } catch (IOException ioe) {
+        }
+        ITopic[] topics = topic.getSubtopics();
+        for (int i = 0; i < topics.length; i++) {
+            generateTopicLinks(topics[i], w, indent + 1);
+        }
+    }
+
+    public void generateLinks(Writer out) {
+        for (int i = 0; i < tocs.length; i++) {
+            IToc toc = tocs[i];
+            ITopic tocTopic = toc.getTopic(null);
+            generateTopicLinks(tocTopic, out, 0);
+            ITopic[] topics = toc.getTopics();
+            for (int t = 0; t < topics.length; t++) {
+                generateTopicLinks(topics[t], out, 1);
+            }
+        }
+
+    }
 }

@@ -55,6 +55,10 @@ public class RequestData {
 		return preferences;
 	}
 
+	public boolean isBot() {
+		return UrlUtil.isBot(request);
+	}
+
 	public boolean isGecko() {
 		return UrlUtil.isGecko(request);
 	}

@@ -15,6 +15,8 @@ import java.io.*;
 
 import javax.servlet.http.*;
 
+import org.eclipse.help.internal.webapp.data.*;
+
 /**
  * This class inserts a script for showing the page inside the appropriate
  * frameset when bookmarked.
@@ -32,7 +34,7 @@ public class FramesetFilter implements IFilter {
 			return out;
 		}
 
-		if ("/nftopic".equals(req.getServletPath())) { //$NON-NLS-1$
+		if ("/nftopic".equals(req.getServletPath()) || UrlUtil.isBot(req)) { //$NON-NLS-1$
 			return out;
 		}
 
