@@ -17,6 +17,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
+import org.osgi.framework.Bundle;
 
 public class ResourceLocator {
 	private static final Hashtable zipCache = new Hashtable();
@@ -32,7 +33,7 @@ public class ResourceLocator {
 	 * @param pluginId
 	 * @return ITopicContentProvider or null
 	 */
-	private static IHelpContentProducer getContentProducer(IPluginDescriptor plugin) {
+	private static IHelpContentProducer getContentProducer(Bundle plugin) {
 		Object producer = contentProducers.get(plugin);
 		if (producer == null) {
 			// first time for the plug-in, so attempt to
@@ -56,9 +57,9 @@ public class ResourceLocator {
 	 * @param pluginId
 	 * @return ITopicContentProvider or null
 	 */
-	private static IHelpContentProducer createContentProducer(IPluginDescriptor plugin) {
+	private static IHelpContentProducer createContentProducer(Bundle plugin) {
 		IExtensionPoint xp =
-			Platform.getPluginRegistry().getExtensionPoint(
+			Platform.getExtensionRegistry().getExtensionPoint(
 				"org.eclipse.help.contentProducer");
 		if (xp == null) {
 			return null;
@@ -83,7 +84,7 @@ public class ResourceLocator {
 					HelpPlugin.logError(
 						HelpResources.getString(
 							"E044",
-							plugin.getUniqueIdentifier()),
+							plugin.getSymbolicName()),
 						ce);
 				}
 			}
@@ -96,7 +97,7 @@ public class ResourceLocator {
 	 * This includes NL lookup.
 	 */
 	public static InputStream openFromProducer(
-		IPluginDescriptor pluginDesc,
+		Bundle pluginDesc,
 		String file,
 		String locale) {
 		IHelpContentProducer producer = getContentProducer(pluginDesc);
@@ -114,7 +115,7 @@ public class ResourceLocator {
 		} else {
 			l = Locale.getDefault();
 		}
-		return producer.getInputStream(pluginDesc.getUniqueIdentifier(), file, l);
+		return producer.getInputStream(pluginDesc.getSymbolicName(), file, l);
 	}
 
 	/**
@@ -126,9 +127,7 @@ public class ResourceLocator {
 		String zip,
 		String file,
 		String locale) {
-		IPluginDescriptor pluginDesc =
-			Platform.getPluginRegistry().getPluginDescriptor(pluginId);
-		return openFromZip(pluginDesc, zip, file, locale);
+		return openFromZip(Platform.getBundle(pluginId), zip, file, locale);
 	}
 
 	/**
@@ -139,9 +138,7 @@ public class ResourceLocator {
 		String pluginId,
 		String file,
 		String locale) {
-		IPluginDescriptor pluginDesc =
-			Platform.getPluginRegistry().getPluginDescriptor(pluginId);
-		return openFromPlugin(pluginDesc, file, locale);
+		return openFromPlugin(Platform.getBundle(pluginId), file, locale);
 	}
 
 	/**
@@ -149,7 +146,7 @@ public class ResourceLocator {
 	 * This includes NL lookup.
 	 */
 	public static InputStream openFromZip(
-		IPluginDescriptor pluginDesc,
+		Bundle pluginDesc,
 		String zip,
 		String file,
 		String locale) {
@@ -166,7 +163,7 @@ public class ResourceLocator {
 	 * This includes NL lookup.
 	 */
 	public static InputStream openFromPlugin(
-		IPluginDescriptor pluginDesc,
+		Bundle pluginDesc,
 		String file,
 		String locale) {
 		InputStream is = doOpenFromPlugin(pluginDesc, "$nl$/" + file, locale);
@@ -180,7 +177,7 @@ public class ResourceLocator {
 	 * Opens an input stream to a file contained in doc.zip in a plugin
 	 */
 	private static InputStream doOpenFromZip(
-		IPluginDescriptor pluginDesc,
+		Bundle pluginDesc,
 		String zip,
 		String file,
 		String locale) {
@@ -205,25 +202,19 @@ public class ResourceLocator {
 	 * Opens an input stream to a file contained in a plugin
 	 */
 	private static InputStream doOpenFromPlugin(
-		IPluginDescriptor pluginDesc,
+		Bundle pluginDesc,
 		String file,
 		String locale) {
 		IPath flatFilePath = new Path(file);
 		Map override = new HashMap(1);
 		override.put("$nl$", locale);
-		try {
-			URL flatFileURL =
-				pluginDesc.getPlugin().find(flatFilePath, override);
-			if (flatFileURL != null)
-				try {
-					return flatFileURL.openStream();
-				} catch (IOException e) {
-					return null;
-				}
-
-		} catch (CoreException ce) {
-			return null;
-		}
+		URL flatFileURL = Platform.find(pluginDesc, flatFilePath, override);
+		if (flatFileURL != null)
+			try {
+				return flatFileURL.openStream();
+			} catch (IOException e) {
+				return null;
+			}
 		return null;
 	}
 	/**
@@ -233,10 +224,10 @@ public class ResourceLocator {
 	 * @return String form of resolved URL of a zip or null
 	 */
 	private static String findZip(
-		IPluginDescriptor pluginDesc,
+		Bundle pluginDesc,
 		String zip,
 		String locale) {
-		String pluginID = pluginDesc.getUniqueIdentifier();
+		String pluginID = pluginDesc.getSymbolicName();
 		// check cache
 		Object cached = zipCache.get(pluginID + '/' + zip + '/' + locale);
 		if (cached == null) {
@@ -246,15 +237,13 @@ public class ResourceLocator {
 			override.put("$nl$", locale);
 			try {
 				URL zipFileURL =
-					pluginDesc.getPlugin().find(zipFilePath, override);
+					Platform.find(pluginDesc, zipFilePath, override);	//PASCAL This will not activate the plugin
 				if (zipFileURL != null) {
 					URL realZipURL = Platform.asLocalURL(Platform.resolve(zipFileURL));
 					cached = realZipURL.toExternalForm();
 				} else {
 					cached = ZIP_NOT_FOUND;
 				}
-			} catch (CoreException ce) {
-				cached = ZIP_NOT_FOUND;
 			} catch (IOException ioe) {
 				cached = ZIP_NOT_FOUND;
 			}

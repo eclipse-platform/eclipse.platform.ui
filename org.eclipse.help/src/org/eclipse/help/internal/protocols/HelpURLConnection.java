@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.*;
 //import org.eclipse.help.internal.appserver.*;
 import org.eclipse.help.internal.util.*;
+import org.osgi.framework.Bundle;
 /**
  * URLConnection to help documents in plug-ins
  */
@@ -37,7 +38,7 @@ public class HelpURLConnection extends URLConnection {
 	protected String pluginAndFile; // plugin/file
 	protected String query; // after ?
 	protected HashMap arguments;
-	protected IPluginDescriptor plugin;
+	protected Bundle plugin;
 	// file in a plug-in
 	protected String file;
 	protected String locale;
@@ -79,7 +80,7 @@ public class HelpURLConnection extends URLConnection {
 	 */
 	public InputStream getInputStream() throws IOException {
 		// must override parent implementation, since it does nothing.
-		IPluginDescriptor plugin = getPlugin();
+		Bundle plugin = getPlugin();
 		if (plugin == null) {
 			throw new IOException("Resource not found.");
 		}
@@ -238,13 +239,13 @@ public class HelpURLConnection extends URLConnection {
 		}
 		return file;
 	}
-	protected IPluginDescriptor getPlugin() {
+	protected Bundle getPlugin() {
 		if (plugin == null) {
 			// Assume the url is pluginID/path_to_topic.html
 			int i = pluginAndFile.indexOf('/');
 			String pluginId = i == -1 ? "" : pluginAndFile.substring(0, i);
 			pluginId = URLCoder.decode(pluginId);
-			plugin = Platform.getPluginRegistry().getPluginDescriptor(pluginId);
+			plugin = Platform.getBundle(pluginId);
 		}
 		return plugin;
 	}
@@ -268,7 +269,7 @@ public class HelpURLConnection extends URLConnection {
 			// This part mimics AppserverPlugin.createWebappServer()
 
 			// get the app server extension from the system plugin registry
-			IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
+			IExtensionRegistry pluginRegistry = Platform.getExtensionRegistry();
 			IExtensionPoint point =
 				pluginRegistry.getExtensionPoint(
 					"org.eclipse.help.appserver.server");

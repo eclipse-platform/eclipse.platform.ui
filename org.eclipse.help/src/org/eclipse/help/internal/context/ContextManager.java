@@ -95,7 +95,7 @@ public class ContextManager {
 	private void createContextsFiles() {
 		// read extension point and retrieve all context contributions
 		IExtensionPoint xpt =
-			Platform.getPluginRegistry().getExtensionPoint(CONTEXTS_EXTENSION);
+			Platform.getExtensionRegistry().getExtensionPoint(CONTEXTS_EXTENSION);
 		if (xpt == null)
 			return; // no contributions...
 		IExtension[] extensions = xpt.getExtensions();
