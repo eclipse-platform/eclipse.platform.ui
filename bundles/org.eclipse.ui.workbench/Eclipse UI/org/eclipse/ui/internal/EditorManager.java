@@ -63,6 +63,7 @@ import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
 import org.eclipse.ui.internal.editorsupport.ComponentSupport;
 import org.eclipse.ui.internal.misc.ExternalEditor;
 import org.eclipse.ui.internal.misc.UIStats;
+import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
@@ -829,7 +830,7 @@ public class EditorManager {
 		if (window instanceof ApplicationWindow) {
 			ctx = window;
 		} else {
-			ctx = new ProgressMonitorDialog(window.getShell());
+			ctx = new ProgressMonitorJobsDialog(window.getShell());
 		}
 		final boolean[] wasCanceled = new boolean[1];
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
