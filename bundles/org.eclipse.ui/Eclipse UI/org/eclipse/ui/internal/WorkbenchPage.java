@@ -1543,8 +1543,13 @@ private IViewPart showView(final String viewID, final boolean activate)
  */
 public void toggleFastView(IViewPart part) {
 	Perspective persp = getPersp();
-	if (persp != null) 
+	if (persp != null) {
 		persp.toggleFastView(part);
+		// if the fast view has been deactivated
+		if (part != persp.getActiveFastView()) {
+			setActivePart(activationList.getPreviouslyActive());
+		}
+	}
 }
 /**
  * Zoom in on a part.  
