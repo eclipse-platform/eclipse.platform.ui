@@ -1111,7 +1111,7 @@ public class EditorManager {
 		};
 		job.addCompletionListener(listener);
 
-		JobManager.getInstance().schedule(job);
+		job.schedule();
 
 	}
 	/**

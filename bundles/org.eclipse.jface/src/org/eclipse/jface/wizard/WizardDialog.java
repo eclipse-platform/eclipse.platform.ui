@@ -770,12 +770,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 
 			}
 		};
-		
-
-		JobManager.getInstance().schedule(job);
-		
-		
-		
+		job.schedule();		
 	}
 	/**
 	 * Saves the enabled/disabled state of the given control in the
@@ -997,36 +992,6 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 
 		// update the dialog controls
 		update();
-	}
-	/**
-	 * A long running operation triggered through the wizard
-	 * was stopped either by user input or by normal end.
-	 * Hides the progress monitor and restores the enable state
-	 * wizard's buttons and controls.
-	 *
-	 * @param savedState the saved UI state as returned by <code>aboutToStart</code>
-	 * @see #aboutToStart
-	 */
-	private void stopped(Object savedState) {
-		if (getShell() != null) {
-			if (wizard.needsProgressMonitor()) {
-				progressMonitorPart.setVisible(false);
-				progressMonitorPart.removeFromCancelComponent(cancelButton);
-			}
-			Map state = (Map) savedState;
-			restoreUIState(state);
-			cancelButton.addSelectionListener(cancelListener);
-
-			setDisplayCursor(null);
-			cancelButton.setCursor(null);
-			waitCursor.dispose();
-			waitCursor = null;
-			arrowCursor.dispose();
-			arrowCursor = null;
-			Control focusControl = (Control) state.get(FOCUS_CONTROL);
-			if (focusControl != null)
-				focusControl.setFocus();
-		}
 	}
 	/**
 	 * Updates this dialog's controls to reflect the current page.

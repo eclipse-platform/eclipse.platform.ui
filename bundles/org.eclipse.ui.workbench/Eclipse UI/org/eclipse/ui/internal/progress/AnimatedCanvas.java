@@ -168,7 +168,7 @@ public class AnimatedCanvas {
 					}
 				}
 			};
-			JobManager.getInstance().schedule(animateJob, 0);
+			animateJob.schedule();
 		}
 	}
 	/*

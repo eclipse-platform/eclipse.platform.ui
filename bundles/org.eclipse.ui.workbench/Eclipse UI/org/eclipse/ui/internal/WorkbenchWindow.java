@@ -2015,7 +2015,7 @@ public class WorkbenchWindow
 			}
 
 		};
-		JobManager.getInstance().schedule(job, 0);
+		job.schedule();
 	}
 
 }

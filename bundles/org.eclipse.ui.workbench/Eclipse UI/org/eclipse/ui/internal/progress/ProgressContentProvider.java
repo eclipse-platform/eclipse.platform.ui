@@ -70,54 +70,12 @@ public class ProgressContentProvider
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.IJobListener#aboutToRun(org.eclipse.core.runtime.jobs.Job)
-	 */
-	public void aboutToRun(Job job) {
-		// XXX Auto-generated method stub
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.IJobListener#aboutToSchedule(org.eclipse.core.runtime.jobs.Job)
-	 */
-	public void aboutToSchedule(Job job) {
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.IJobListener#finished(org.eclipse.core.runtime.jobs.Job, int)
-	 */
-	public void finished(Job job, IStatus result) {
-		if (job instanceof AnimateJob)
-			return;
-		jobs.remove(job);
-		refreshViewer(null);
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.IJobListener#paused(org.eclipse.core.runtime.jobs.Job)
-	 */
-	public void paused(Job job) {
-		// XXX Auto-generated method stub
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.IJobListener#running(org.eclipse.core.runtime.jobs.Job)
-	 */
-	public void running(Job job) {
-		// XXX Auto-generated method stub
-
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IProgressListener#beginTask(org.eclipse.core.runtime.jobs.Job, java.lang.String, int)
 	 */
 	public void beginTask(Job job, String name, int totalWork) {
 		if (job instanceof AnimateJob)
 			return;
-		if(totalWork == IProgressMonitor.UNKNOWN)
+		if (totalWork == IProgressMonitor.UNKNOWN)
 			jobs.put(job, new JobInfo(name));
 		else
 			jobs.put(job, new JobInfoWithProgress(name, totalWork));
@@ -128,7 +86,6 @@ public class ProgressContentProvider
 	 * @see org.eclipse.core.runtime.jobs.IProgressListener#done(org.eclipse.core.runtime.jobs.Job)
 	 */
 	public void done(Job job) {
-		
 
 	}
 
@@ -163,33 +120,68 @@ public class ProgressContentProvider
 	public void worked(Job job, double work) {
 		if (job instanceof AnimateJob)
 			return;
-		JobInfo info =getInfo(job);
+		JobInfo info = getInfo(job);
 		info.addWork(work);
 		refreshViewer(info);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.IJobListener#resumed(org.eclipse.core.runtime.jobs.Job)
-	 */
-	public void resumed(Job job) {
-		// XXX Auto-generated method stub
-
-	}
-
 	private void refreshViewer(final JobInfo info) {
-		if(viewer.getControl().isDisposed())
+		if (viewer.getControl().isDisposed())
 			return;
-			
+
 		viewer.getControl().getDisplay().asyncExec(new Runnable() {
 			/* (non-Javadoc)
 			 * @see java.lang.Runnable#run()
 			 */
 			public void run() {
-				if(viewer.getControl().isDisposed())
+				if (viewer.getControl().isDisposed())
 					return;
 				viewer.refresh(info);
 			}
 		});
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.IJobListener#aboutToRun(org.eclipse.core.runtime.jobs.Job)
+	 */
+	public void aboutToRun(Job job) {
+		// XXX Auto-generated method stub
+
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.IJobListener#awake(org.eclipse.core.runtime.jobs.Job)
+	 */
+	public void awake(Job job) {
+		// XXX Auto-generated method stub
+
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.IJobListener#finished(org.eclipse.core.runtime.jobs.Job, org.eclipse.core.runtime.IStatus)
+	 */
+	public void finished(Job job, IStatus result) {
+		// XXX Auto-generated method stub
+
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.IJobListener#running(org.eclipse.core.runtime.jobs.Job)
+	 */
+	public void running(Job job) {
+		// XXX Auto-generated method stub
+
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.IJobListener#scheduled(org.eclipse.core.runtime.jobs.Job)
+	 */
+	public void scheduled(Job job) {
+		// XXX Auto-generated method stub
+
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.IJobListener#sleeping(org.eclipse.core.runtime.jobs.Job)
+	 */
+	public void sleeping(Job job) {
+		// XXX Auto-generated method stub
+
 	}
 
 }

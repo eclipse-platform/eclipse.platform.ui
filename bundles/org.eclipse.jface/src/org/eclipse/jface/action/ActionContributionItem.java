@@ -535,13 +535,13 @@ public class ActionContributionItem extends ContributionItem {
 				long ms = System.currentTimeMillis();
 				if (trace)
 					System.out.println("Running action: " + action.getText()); //$NON-NLS-1$
-				JobManager.getInstance().schedule(new Job() {
+				Job job = new Job() {
 					/* (non-Javadoc)
 					 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 					 */
 					public IStatus run(IProgressMonitor monitor) {
-						// XXX Auto-generated method stub
-						monitor.beginTask(action.getText(),IProgressMonitor.UNKNOWN);
+							// XXX Auto-generated method stub
+	monitor.beginTask(action.getText(), IProgressMonitor.UNKNOWN);
 						try {
 							if (action.isThreadSafe())
 								action.runWithEvent(e);
@@ -566,7 +566,8 @@ public class ActionContributionItem extends ContributionItem {
 						return Status.OK_STATUS;
 					}
 
-				});
+				};
+				job.schedule();
 
 				if (trace)
 					System.out.println((System.currentTimeMillis() - ms) + " ms to run action: " + action.getText()); //$NON-NLS-1$

@@ -111,7 +111,7 @@ public class DecorationScheduler {
 				return;
 			else {
 				scheduled = true;
-				JobManager.getInstance().schedule(decorationJob);
+				decorationJob.schedule();
 			}
 
 		}
@@ -184,7 +184,7 @@ public class DecorationScheduler {
 			};
 
 			job.setDisplay(Display.getDefault());
-			JobManager.getInstance().schedule(job);
+			job.schedule();
 
 		}
 	}
@@ -316,7 +316,7 @@ public class DecorationScheduler {
 			};
 		};
 
-		JobManager.getInstance().schedule(decorationJob);
+		decorationJob.schedule();
 	}
 
 	/**

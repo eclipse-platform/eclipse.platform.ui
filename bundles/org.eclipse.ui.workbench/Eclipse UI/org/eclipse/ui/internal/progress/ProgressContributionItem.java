@@ -24,12 +24,7 @@ public class ProgressContributionItem extends ContributionItem {
 			public void aboutToRun(Job job) {
 				incrementJobCount(job);
 			}
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.IJobListener#aboutToSchedule(org.eclipse.core.runtime.jobs.Job)
-			 */
-			public void aboutToSchedule(Job job) {
 
-			}
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.IJobListener#finished(org.eclipse.core.runtime.jobs.Job, int)
 			 */
@@ -41,22 +36,6 @@ public class ProgressContributionItem extends ContributionItem {
 			 */
 			public void paused(Job job) {
 				decrementJobCount(job);
-
-			}
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.IJobListener#resumed(org.eclipse.core.runtime.jobs.Job)
-			 */
-			public void resumed(Job job) {
-				// XXX Auto-generated method stub
-
-			}
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.IJobListener#running(org.eclipse.core.runtime.jobs.Job)
-			 */
-			public void running(Job job) {
-				// XXX Auto-generated method stub
 
 			}
 
@@ -77,6 +56,36 @@ public class ProgressContributionItem extends ContributionItem {
 				if (jobCount == 1)
 					setDisabledImage();
 				jobCount--;
+			}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.IJobListener#awake(org.eclipse.core.runtime.jobs.Job)
+			 */
+			public void awake(Job job) {
+				// XXX Auto-generated method stub
+
+			}
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.IJobListener#running(org.eclipse.core.runtime.jobs.Job)
+			 */
+			public void running(Job job) {
+				// XXX Auto-generated method stub
+
+			}
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.IJobListener#scheduled(org.eclipse.core.runtime.jobs.Job)
+			 */
+			public void scheduled(Job job) {
+				// XXX Auto-generated method stub
+
+			}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.IJobListener#sleeping(org.eclipse.core.runtime.jobs.Job)
+			 */
+			public void sleeping(Job job) {
+				// XXX Auto-generated method stub
+
 			}
 
 		});
