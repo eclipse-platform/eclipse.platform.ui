@@ -550,7 +550,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	}
 	
 	/**
-	 * Persists the state of the check box actions contributed
+	 * Persists the state of the enabled check box actions contributed
 	 * to this view.
 	 * 
 	 * @see IViewPart#saveState(IMemento)
@@ -569,7 +569,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 			if (iContributionItem instanceof ActionContributionItem) {
 				ActionContributionItem item= (ActionContributionItem)iContributionItem;
 				IAction action= item.getAction();
-				if (action.getStyle() == IAction.AS_CHECK_BOX) {
+				if (action.getStyle() == IAction.AS_CHECK_BOX && action.isEnabled()) {
 					saveActionState(memento, action);			
 				}
 			}		
