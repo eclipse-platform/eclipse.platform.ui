@@ -1,7 +1,13 @@
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.help.internal.search;
 
 import java.io.IOException;
@@ -147,7 +153,8 @@ public class SearchResults implements ISearchHitCollector {
 	/**
 	 * Returns a collection of adaptable help resources that are roots for
 	 * filtering.
-	 * @return Collection	 */
+	 * @return Collection
+	 */
 	private ArrayList getScopes() {
 		if (scopes != null)
 			return scopes;

@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
 import javax.servlet.ServletContext;
@@ -5,10 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.help.internal.webapp.servlet.*;
 
-/*
- * (c) Copyright IBM Corp. 2002.
- * All Rights Reserved.
- */
 
 public class LayoutData extends RequestData {
 
