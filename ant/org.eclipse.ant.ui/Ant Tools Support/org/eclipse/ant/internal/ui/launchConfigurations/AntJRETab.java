@@ -66,6 +66,7 @@ public class AntJRETab extends JavaJRETab {
 	private IVMInstall previousJRE;
 	protected VMArgumentsBlock fVMArgumentsBlock=  new VMArgumentsBlock();
 	protected AntWorkingDirectoryBlock fWorkingDirectoryBlock= new AntWorkingDirectoryBlock();
+	private boolean warningShown= false;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -345,6 +346,7 @@ public class AntJRETab extends JavaJRETab {
 		super.initializeFrom(configuration);
 		fVMArgumentsBlock.initializeFrom(configuration);
 		fWorkingDirectoryBlock.initializeFrom(configuration);
+		warningShown= false;
 	}
 	
 	/**
@@ -392,7 +394,8 @@ public class AntJRETab extends JavaJRETab {
 			return;
 		}
 		boolean check= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANT_CLASSPATH_WARNING);
-		if (check) {
+		if (check && !warningShown) {
+			warningShown= true;
 			MessageDialogWithToggle.openWarning(AntUIPlugin.getActiveWorkbenchWindow().getShell(),
 				AntLaunchConfigurationMessages.getString("AntJRETab.11"), //$NON-NLS-1$
 				AntLaunchConfigurationMessages.getString("AntJRETab.12"), //$NON-NLS-1$
