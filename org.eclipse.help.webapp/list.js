@@ -83,7 +83,12 @@ function highlightTopic(topic)
     
 		oldActive = a;		
   		a.className = "active";
-  		a.lastChild.firstChild.blur();
+  		if (a.lastChild.firstChild && a.lastChild.firstChild.tagName == "A")
+  		{
+  			a.lastChild.firstChild.blur();
+  			// set toolbar title
+  			a.lastChild.firstChild.onclick();
+   		}
   }
 }
 
@@ -92,11 +97,15 @@ function highlightTopic(topic)
  */
 function selectTopic(topic)
 {
+	if (!topic || topic == "") return;
+	
 	var links = document.getElementsByTagName("a");
 
 	for (var i=0; i<links.length; i++)
 	{
-		if (topic == links[i].href)
+		// take into account the extra ?toc=.. or &toc=
+		if (links[i].href.indexOf(topic+"?toc=") == 0 ||
+			links[i].href.indexOf(topic+"&toc=") == 0)
 		{
 			highlightTopic(links[i]);
 			scrollIntoView(links[i]);
