@@ -4,7 +4,7 @@
   id="org.eclipse.core.resources"
   version="1.0"
   class="org.eclipse.core.resources.ResourcesPlugin"
-  vendor-name="IBM">
+  provider-name="IBM">
 
   <requires>
     <import plugin="org.apache.xerces"/>
