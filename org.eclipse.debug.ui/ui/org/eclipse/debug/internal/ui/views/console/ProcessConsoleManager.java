@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
@@ -156,7 +157,10 @@ public class ProcessConsoleManager implements ILaunchListener {
                 IConsoleColorProvider colorProvider = getColorProvider(process.getAttribute(IProcess.ATTR_PROCESS_TYPE));
                 String encoding = null;
                 try {
-                    encoding = launch.getLaunchConfiguration().getAttribute(IDebugUIConstants.ATTR_CONSOLE_ENCODING, (String)null);
+                    ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
+                    if (launchConfiguration != null) {
+                        encoding = launchConfiguration.getAttribute(IDebugUIConstants.ATTR_CONSOLE_ENCODING, (String)null);
+                    }
                 } catch (CoreException e) {
                 }
                 ProcessConsole pc = new ProcessConsole(process, colorProvider, encoding);
