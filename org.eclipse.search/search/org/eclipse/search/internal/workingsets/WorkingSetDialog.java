@@ -42,29 +42,38 @@ class WorkingSetDialog extends InputDialog {
 
 	private static class WorkingSetNameInputValidator implements IInputValidator {
 		
-		String fInitalName;
-		boolean fFirstCheck= true;
+		private String fInitalName;
+		private boolean fFirstCheck= true;
+		private CheckboxTreeViewer fTree;
 		
 		public WorkingSetNameInputValidator(String initialName) {
 			Assert.isNotNull(initialName, "initial name must not be null"); //$NON-NLS-1$
 			fInitalName= initialName;
 		}
 		
+		private void setTree(CheckboxTreeViewer tree) {
+			fTree= tree;
+		}
+		
 		public String isValid(String newText) {
 			if (newText == null || newText.equals("")) { //$NON-NLS-1$
 				if (fInitalName.equals("") && fFirstCheck) { //$NON-NLS-1$
 					fFirstCheck= false;
-					return null;
+					return " "; //$NON-NLS-1$
 				}
 				return WorkingSetMessages.getString("WorkingSetDialog.warning.nameMustNotBeEmpty"); //$NON-NLS-1$
 			}
-			IWorkingSet[] workingSets= WorkingSet.getWorkingSets();
-			if (newText.equals(fInitalName))
-				return null;
-			for (int i= 0; i < workingSets.length; i++) {
-				if (newText.equals(workingSets[i].getName()))
-					return WorkingSetMessages.getString("WorkingSetDialog.warning.workingSetExists"); //$NON-NLS-1$
+			if (!newText.equals(fInitalName)) {
+				IWorkingSet[] workingSets= WorkingSet.getWorkingSets();
+				for (int i= 0; i < workingSets.length; i++) {
+					if (newText.equals(workingSets[i].getName()))
+						return WorkingSetMessages.getString("WorkingSetDialog.warning.workingSetExists"); //$NON-NLS-1$
+				}
 			}
+			
+			if (fTree.getCheckedElements().length == 0)
+				return WorkingSetMessages.getString("WorkingSetDialog.warning.resourceMustBeChecked"); //$NON-NLS-1$
+			
 			return null;
 		}
 	}
@@ -129,6 +138,7 @@ class WorkingSetDialog extends InputDialog {
 		});
 		
 		initializeCheckedState();
+		((WorkingSetNameInputValidator)getValidator()).setTree(fTree);
 		disableClosedProjects();
 
 		return composite;
@@ -202,6 +212,12 @@ class WorkingSetDialog extends InputDialog {
 				updateParentState(resource, state);
 			}
 		});
+		
+		String errorMessage= getValidator().isValid(getText().getText());
+		if (errorMessage == null)
+			errorMessage= "";
+		getErrorMessageLabel().setText(errorMessage);
+		getOkButton().setEnabled(errorMessage.length() == 0);
 	}
 
 	private void setSubtreeChecked(IContainer container, boolean state, boolean checkExpandedState) {
