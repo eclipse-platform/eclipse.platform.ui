@@ -238,6 +238,9 @@ public void run(IProgressMonitor monitor) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, Policy.bind("error.incorrectClasspath"), e)); //$NON-NLS-1$
 	} catch (InvocationTargetException e) {
 		Throwable realException = e.getTargetException();
+		// J9 throws NoClassDefFoundError nested in a InvocationTargetException
+		if ((realException instanceof NoClassDefFoundError) || (realException instanceof ClassNotFoundException))
+			throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, Policy.bind("error.incorrectClasspath"), realException)); //$NON-NLS-1$
 		String message = (realException.getMessage() == null) ? Policy.bind("error.buildFailed") : realException.getMessage(); //$NON-NLS-1$
 		throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, message, realException));
 	} catch (Exception e) {
@@ -250,7 +253,7 @@ public void run(IProgressMonitor monitor) throws CoreException {
  * Runs the build script.
  */
 public void run() throws CoreException {
-	run(null);
+	run((IProgressMonitor) null);
 }
 
 /**
