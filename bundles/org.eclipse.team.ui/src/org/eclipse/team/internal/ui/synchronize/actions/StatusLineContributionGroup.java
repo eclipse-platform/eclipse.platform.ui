@@ -29,7 +29,6 @@ public class StatusLineContributionGroup extends ActionGroup implements ISyncInf
 	private static final String INCOMING_ID = TeamUIPlugin.ID + "org.eclipse.team.iu.statusline.incoming"; //$NON-NLS-1$
 	private static final String OUTGOING_ID = TeamUIPlugin.ID + "org.eclipse.team.iu.statusline.outgoing"; //$NON-NLS-1$
 	private static final String CONFLICTING_ID = TeamUIPlugin.ID + "org.eclipse.team.iu.statusline.conflicting"; //$NON-NLS-1$
-	private static final String WORKINGSET_ID = TeamUIPlugin.ID + "org.eclipse.team.iu.statusline.workingset"; //$NON-NLS-1$
 	private static final String TOTALS_ID = TeamUIPlugin.ID + "org.eclipse.team.iu.statusline.totals"; //$NON-NLS-1$
 	private final static int TEXT_FIELD_MAX_SIZE = 25;
 
@@ -46,10 +45,13 @@ public class StatusLineContributionGroup extends ActionGroup implements ISyncInf
 
 	public StatusLineContributionGroup(final Shell shell, ISynchronizePageConfiguration configuration) {
 		this.configuration = configuration;
-		this.incoming = createStatusLineContribution(INCOMING_ID, ISynchronizePageConfiguration.INCOMING_MODE, "0", incomingImage); //$NON-NLS-1$
-		this.outgoing = createStatusLineContribution(OUTGOING_ID, ISynchronizePageConfiguration.OUTGOING_MODE, "0", outgoingImage); //$NON-NLS-1$
-		this.conflicting = createStatusLineContribution(CONFLICTING_ID, ISynchronizePageConfiguration.CONFLICTING_MODE, "0", conflictingImage); //$NON-NLS-1$
-		this.totalChanges = new StatusLineCLabelContribution(TOTALS_ID, TEXT_FIELD_MAX_SIZE);
+		if (isThreeWay()) {
+			this.incoming = createStatusLineContribution(INCOMING_ID, ISynchronizePageConfiguration.INCOMING_MODE, "0", incomingImage); //$NON-NLS-1$
+			this.outgoing = createStatusLineContribution(OUTGOING_ID, ISynchronizePageConfiguration.OUTGOING_MODE, "0", outgoingImage); //$NON-NLS-1$
+			this.conflicting = createStatusLineContribution(CONFLICTING_ID, ISynchronizePageConfiguration.CONFLICTING_MODE, "0", conflictingImage); //$NON-NLS-1$
+		} else {
+			this.totalChanges = new StatusLineCLabelContribution(TOTALS_ID, TEXT_FIELD_MAX_SIZE);
+		}
 		
 		// Listen to changes to update the counts
 		SyncInfoSet set = getSyncInfoSet();
@@ -58,7 +60,7 @@ public class StatusLineContributionGroup extends ActionGroup implements ISyncInf
 	}
 
 	private boolean isThreeWay() {
-		return getParticipant().getSubscriber().getResourceComparator().isThreeWay();
+		return configuration.getComparisonType() == ISynchronizePageConfiguration.THREE_WAY;
 	}
 	
 	private SubscriberParticipant getParticipant() {
@@ -79,9 +81,11 @@ public class StatusLineContributionGroup extends ActionGroup implements ISyncInf
 
 	public void dispose() {
 		getSyncInfoSet().removeSyncSetChangedListener(this);
-		incomingImage.dispose();
-		outgoingImage.dispose();
-		conflictingImage.dispose();
+		if (isThreeWay()) {
+			incomingImage.dispose();
+			outgoingImage.dispose();
+			conflictingImage.dispose();
+		}
 	}
 	
 	/*
@@ -104,14 +108,21 @@ public class StatusLineContributionGroup extends ActionGroup implements ISyncInf
 
 			TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 				public void run() {
-					conflicting.setText(new Integer(workspaceConflicting).toString()); //$NON-NLS-1$
-					incoming.setText(new Integer(workspaceIncoming).toString()); //$NON-NLS-1$
-					outgoing.setText(new Integer(workspaceOutgoing).toString()); //$NON-NLS-1$
-
-					conflicting.setTooltip(Policy.bind("StatisticsPanel.numbersTooltip", Policy.bind("StatisticsPanel.conflicting"))); //$NON-NLS-1$ //$NON-NLS-2$
-					outgoing.setTooltip(Policy.bind("StatisticsPanel.numbersTooltip", Policy.bind("StatisticsPanel.outgoing"))); //$NON-NLS-1$ //$NON-NLS-2$
-					incoming.setTooltip(Policy.bind("StatisticsPanel.numbersTooltip", Policy.bind("StatisticsPanel.incoming"))); //$NON-NLS-1$ //$NON-NLS-2$
-					totalChanges.setText(Policy.bind("StatisticsPanel.numberTotal", Integer.toString(total))); //$NON-NLS-1$
+					if (isThreeWay()) {
+						conflicting.setText(new Integer(workspaceConflicting).toString()); //$NON-NLS-1$
+						incoming.setText(new Integer(workspaceIncoming).toString()); //$NON-NLS-1$
+						outgoing.setText(new Integer(workspaceOutgoing).toString()); //$NON-NLS-1$
+	
+						conflicting.setTooltip(Policy.bind("StatisticsPanel.numbersTooltip", Policy.bind("StatisticsPanel.conflicting"))); //$NON-NLS-1$ //$NON-NLS-2$
+						outgoing.setTooltip(Policy.bind("StatisticsPanel.numbersTooltip", Policy.bind("StatisticsPanel.outgoing"))); //$NON-NLS-1$ //$NON-NLS-2$
+						incoming.setTooltip(Policy.bind("StatisticsPanel.numbersTooltip", Policy.bind("StatisticsPanel.incoming"))); //$NON-NLS-1$ //$NON-NLS-2$
+					} else {
+						if (total == 1) {
+							totalChanges.setText(Policy.bind("StatisticsPanel.numberTotalSingular", Integer.toString(total))); //$NON-NLS-1$
+						} else {
+							totalChanges.setText(Policy.bind("StatisticsPanel.numberTotalPlural", Integer.toString(total))); //$NON-NLS-1$
+						}
+					}
 				}
 			});
 		}

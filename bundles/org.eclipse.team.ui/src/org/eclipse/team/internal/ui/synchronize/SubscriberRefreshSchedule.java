@@ -169,10 +169,12 @@ public class SubscriberRefreshSchedule {
 			text.append(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(lastTimeRun));
 		}
 		SyncInfo[] changes = event.getChanges();
-		if (changes.length != 0) {
-			text.append(Policy.bind("RefreshSchedule.6", Integer.toString(changes.length))); //$NON-NLS-1$
-		} else {
+		if (changes.length == 0) {
 			text.append(Policy.bind("RefreshSchedule.7")); //$NON-NLS-1$
+		} else if (changes.length == 1) {
+			text.append(Policy.bind("RefreshSchedule.changesSingular", Integer.toString(changes.length))); //$NON-NLS-1$
+		} else {
+			text.append(Policy.bind("RefreshSchedule.changesPlural", Integer.toString(changes.length))); //$NON-NLS-1$
 		}
 		return text.toString();
 	} 

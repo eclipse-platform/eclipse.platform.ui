@@ -314,23 +314,26 @@ public final class RefreshSubscriberJob extends Job {
 		StringBuffer text = new StringBuffer();
 		int code = IStatus.OK;
 		SyncInfo[] changes = event.getChanges();
-		IResource[] resources = event.getResources();
 		SubscriberSyncInfoCollector collector = getCollector();
 		if (collector != null) {
-			SyncInfoSet set = collector.getSyncInfoSet();
 			int numChanges = refreshedResourcesContainChanges(event);
 			if (numChanges > 0) {
 				code = IRefreshEvent.STATUS_CHANGES;
-				String outgoing = Long.toString(set.countFor(SyncInfo.OUTGOING, SyncInfo.DIRECTION_MASK));
-				String incoming = Long.toString(set.countFor(SyncInfo.INCOMING, SyncInfo.DIRECTION_MASK));
-				String conflicting = Long.toString(set.countFor(SyncInfo.CONFLICTING, SyncInfo.DIRECTION_MASK));
 				if (changes.length > 0) {
 				// New changes found
 					String numNewChanges = Integer.toString(event.getChanges().length);
-					text.append(Policy.bind("RefreshCompleteDialog.5a", new Object[]{getName(), numNewChanges})); //$NON-NLS-1$
+					if (event.getChanges().length == 1) {
+							text.append(Policy.bind("RefreshCompleteDialog.newChangesSingular", new Object[]{getName(), numNewChanges})); //$NON-NLS-1$
+					} else {
+							text.append(Policy.bind("RefreshCompleteDialog.newChangesPlural", new Object[]{getName(), numNewChanges})); //$NON-NLS-1$
+						}
 				} else {
-				// Refreshed resources contain changes
-					text.append(Policy.bind("RefreshCompleteDialog.5", new Object[]{getName(), new Integer(numChanges)})); //$NON-NLS-1$
+					// Refreshed resources contain changes
+					if (numChanges == 1) {
+						text.append(Policy.bind("RefreshCompleteDialog.changesSingular", new Object[]{getName(), new Integer(numChanges)})); //$NON-NLS-1$
+					} else {
+						text.append(Policy.bind("RefreshCompleteDialog.changesPlural", new Object[]{getName(), new Integer(numChanges)})); //$NON-NLS-1$
+					}
 				}
 			} else {
 				// No changes found
