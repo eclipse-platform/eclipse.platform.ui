@@ -1,17 +1,22 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+	Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font
+ 		should be activated and used by other components.
+************************************************************************/
 package org.eclipse.ui.dialogs;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- * Contributors:  Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
- * font should be activated and used by other components.
- */
 import java.io.File;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Font;
@@ -19,20 +24,18 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.*;
 
 /**
  * The ProjectLocationSelectionDialog is the dialog used to select the name
  * and location of a project for copying.
  */
-public class ProjectLocationSelectionDialog extends SelectionDialog {
+public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 	// widgets
 	private Text projectNameField;
 	private Text locationPathField;
 	private Label locationLabel;
 	private IProject project;
-	private Label statusMessageLabel;
 	private Button browseButton;
 
 	private static String PROJECT_NAME_LABEL = WorkbenchMessages.getString("ProjectLocationSelectionDialog.nameLabel"); //$NON-NLS-1$
@@ -46,6 +49,7 @@ public class ProjectLocationSelectionDialog extends SelectionDialog {
 	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
 
 	private boolean useDefaults = true;
+	private boolean firstLocationCheck;
 
 /**
  * Create a ProjectLocationSelectionDialog on the supplied project parented by the parentShell.
@@ -56,7 +60,9 @@ public ProjectLocationSelectionDialog(
 	Shell parentShell,
 	IProject existingProject) {
 	super(parentShell);
+	setShellStyle(getShellStyle() | SWT.RESIZE);
 	setTitle(PROJECT_LOCATION_SELECTION_TITLE);
+	setStatusLineAboveButtons(true);
 	this.project = existingProject;
 	try {
 		this.useDefaults = this.getProject().getDescription().getLocation() == null;
@@ -70,17 +76,25 @@ public ProjectLocationSelectionDialog(
  * @param message - the error message to show if it is not null.
  */
 private void applyValidationResult(String errorMsg) {
-
+	int code;
+	
 	if (errorMsg == null) {
-		statusMessageLabel.setText("");//$NON-NLS-1$
-		getOkButton().setEnabled(true);
-	} else {
-		statusMessageLabel.setForeground(
-			JFaceColors.getErrorText(
-				statusMessageLabel.getDisplay()));
-		statusMessageLabel.setText(errorMsg);
+		code = IStatus.OK;
+		errorMsg = "";	//$NON-NLS-1$
+	} else if (firstLocationCheck)
+		code = IStatus.OK;
+	else
+		code = IStatus.ERROR;
+
+	updateStatus(
+		new Status(
+			code,
+			WorkbenchPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+			code,
+			errorMsg,
+			null));
+	if (errorMsg != null)
 		getOkButton().setEnabled(false);
-	}
 }
 /**
  * Check whether the entries are valid. If so return null. Otherwise
@@ -141,6 +155,21 @@ private String checkValidName() {
 
 	return null;
 }
+/**
+ * The <code>ProjectLocationSelectionDialog</code> implementation of this 
+ * <code>SelectionStatusDialog</code> method builds a two element list - 
+ * the first element is the project name and the second one is the location.
+ */
+protected void computeResult() {
+	
+	ArrayList list = new ArrayList();
+	list.add(this.projectNameField.getText());
+	if(useDefaults)
+		list.add(Platform.getLocation().toString());
+	else
+		list.add(this.locationPathField.getText());
+	setResult(list);
+}
 /* (non-Javadoc)
  * Method declared in Window.
  */
@@ -161,11 +190,6 @@ protected Control createDialogArea(Composite parent) {
 	createProjectNameGroup(composite);
 	createProjectLocationGroup(composite);
 
-	//Add in a label for status messages if required
-	statusMessageLabel = new Label(composite, SWT.NONE);
-	statusMessageLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
-	statusMessageLabel.setFont(parent.getFont());
-
 	return composite;
 }
 /**
@@ -175,7 +199,7 @@ private void createLocationListener() {
 
 	Listener listener = new Listener() {
 		public void handleEvent(Event event) {
-
+			firstLocationCheck = false;
 			applyValidationResult(checkValid());
 		}
 	};
@@ -230,8 +254,10 @@ private final void createProjectLocationGroup(Composite parent) {
 			locationPathField.setEnabled(!useDefaults);
 			locationLabel.setEnabled(!useDefaults);
 			setLocationForSelection();
-			if (!useDefaults)
-				locationPathField.setText(""); //$NON-NLS-1$
+			if (!useDefaults) {
+				firstLocationCheck = true;
+				applyValidationResult(checkValid());
+			}
 		}
 	};
 	useDefaultsButton.addSelectionListener(listener);
@@ -375,22 +401,6 @@ private void handleLocationBrowseButtonPressed() {
 	String selectedDirectory = dialog.open();
 	if (selectedDirectory != null)
 		locationPathField.setText(selectedDirectory);
-}
-/**
- * The <code>ProjectLocationSelectionDialog</code> implementation of this 
- * <code>Dialog</code> method builds a two element list - the first element
- * is the project name and the second one is the location.
- */
-protected void okPressed() {
-	
-	ArrayList list = new ArrayList();
-	list.add(this.projectNameField.getText());
-	if(useDefaults)
-		list.add(Platform.getLocation().toString());
-	else
-		list.add(this.locationPathField.getText());
-	setResult(list);
-	super.okPressed();
 }
 /**
  * Set the location to the default location if we are set to useDefaults.
