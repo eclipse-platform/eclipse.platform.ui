@@ -294,7 +294,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			for (int j=0; j<features.length; j++)
 				configFeatures.add(features[j]);
 		}
-		return (IFeatureEntry[])configFeatures.toArray(new IFeatureEntry[configFeatures.size()]);
+		return (IFeatureEntry[])configFeatures.toArray(new FeatureEntry[configFeatures.size()]);
 	}
 
 	/*
