@@ -182,6 +182,8 @@ private PluginAction createAction(int targetType, IConfigurationElement actionEl
 			actionStyle = IAction.AS_RADIO_BUTTON;
 		} else if (style.equals(STYLE_TOGGLE)) {
 			actionStyle = IAction.AS_CHECK_BOX;
+		} else if (style.equals(STYLE_PULLDOWN)) {
+			actionStyle = IAction.AS_DROP_DOWN_MENU;
 		}
 	}
 	
@@ -193,6 +195,7 @@ private PluginAction createAction(int targetType, IConfigurationElement actionEl
 		case T_WORKBENCH:
 			return new WWinPluginAction(actionElement, ATT_CLASS, (IWorkbenchWindow)target, defId, actionStyle);
 		case T_WORKBENCH_PULLDOWN:
+			actionStyle = IAction.AS_DROP_DOWN_MENU;
 			return new WWinPluginPulldown(actionElement, ATT_CLASS, (IWorkbenchWindow)target, defId, actionStyle);
 		case T_POPUP:
 			return new ObjectPluginAction(actionElement, ATT_CLASS, defId, actionStyle);

@@ -274,8 +274,10 @@ public void fill(Menu parent, int index) {
 				flags = SWT.RADIO;
 			else if (style == IAction.AS_DROP_DOWN_MENU) {
 				IMenuCreator mc = action.getMenuCreator();
-				subMenu = mc.getMenu(parent);
-				flags = SWT.CASCADE;
+				if (mc != null) {
+					subMenu = mc.getMenu(parent);
+					flags = SWT.CASCADE;
+				}
 			}
 		}
 		
@@ -380,7 +382,10 @@ private void handleWidgetDispose(Event e) {
 	if (e.widget == widget) {
 		// the item is being disposed
 		if (action.getStyle() == IAction.AS_DROP_DOWN_MENU)  {
-			action.getMenuCreator().dispose(); 
+			IMenuCreator mc = action.getMenuCreator();
+			if (mc != null) { 
+				mc.dispose(); 
+			}
 		}
 		action.removePropertyChangeListener(listener);
 		widget = null;
@@ -426,15 +431,16 @@ private void handleWidgetSelection(Event e) {
 					//Menu dummy= new Menu(ti.getParent());
 					//Menu m= mc.getMenu(dummy);
 					//dummy.dispose();
-					
-					Menu m= mc.getMenu(ti.getParent());
-					if (m != null) {
-						// position the menu below the drop down item
-						Rectangle b = ti.getBounds();
-						Point p = ti.getParent().toDisplay(new Point(b.x, b.y+b.height));
-						m.setLocation(p.x, p.y);	// waiting for SWT 0.42
-						m.setVisible(true);
-						return;	// we don't fire the action
+					if (mc != null) {
+						Menu m= mc.getMenu(ti.getParent());
+						if (m != null) {
+							// position the menu below the drop down item
+							Rectangle b = ti.getBounds();
+							Point p = ti.getParent().toDisplay(new Point(b.x, b.y+b.height));
+							m.setLocation(p.x, p.y);	// waiting for SWT 0.42
+							m.setVisible(true);
+							return;	// we don't fire the action
+						}
 					}
 				}
 			}
