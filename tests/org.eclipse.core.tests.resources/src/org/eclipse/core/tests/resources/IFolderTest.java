@@ -13,6 +13,7 @@ package org.eclipse.core.tests.resources;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
@@ -282,6 +283,10 @@ public void testLeafFolderMove() throws Exception {
 	assertDoesNotExistInWorkspace("1.1", source);
 }
 public void testReadOnlyFolderCopy() throws Exception {
+	// We need to know whether or not we can set the folder to be read-only
+	// in order to perform this test.
+	if (!CoreFileSystemLibrary.usingNatives())
+		return;
 	IProject project = getWorkspace().getRoot().getProject("Project");
 	IFolder source = project.getFolder("Folder1");
 	ensureExistsInWorkspace(source, true);

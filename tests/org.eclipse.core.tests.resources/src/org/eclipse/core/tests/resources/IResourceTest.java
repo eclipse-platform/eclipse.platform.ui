@@ -15,6 +15,8 @@ import java.util.*;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -1542,6 +1544,10 @@ public void testProjectDescriptionFileModification() throws CoreException {
 	assertEquals(stamp, file.getModificationStamp());
 }
 public void testReadOnly() {
+	// We need to know whether or not we can set the folder to be read-only
+	// in order to perform this test.
+	if (!CoreFileSystemLibrary.usingNatives())
+		return;
 	IProject project = getWorkspace().getRoot().getProject("Project");
 	IFile file = project.getFile("target");
 	try {

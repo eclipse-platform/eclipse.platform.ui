@@ -13,6 +13,7 @@ package org.eclipse.core.tests.resources;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -821,6 +822,10 @@ public void testSortNatureSet() {
 	assertTrue("4.1", first || second || third);
 }
 public void testValidateEdit() {
+	// We need to know whether or not we can set the folder to be read-only
+	// in order to perform this test.
+	if (!CoreFileSystemLibrary.usingNatives())
+		return;	
 	IProject project = getWorkspace().getRoot().getProject("MyProject");
 	IFile file = project.getFile("myfile.txt");
 	ensureExistsInWorkspace(new IResource[] {project, file}, true);

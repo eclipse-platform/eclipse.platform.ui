@@ -387,6 +387,11 @@ public void testMoveAcrossVolumes() throws Throwable {
 	Workspace.clear(tree);
 }
 public void testReadOnly() throws IOException {
+	// We need to know whether or not we can set the folder to be read-only
+	// in order to perform this test.
+	if (!CoreFileSystemLibrary.usingNatives())
+		return;
+	
 	/* evaluate test environment */
 	IPath root = getWorkspace().getRoot().getLocation().append("" + new Date().getTime());
 	IPath target = root.append("target");
