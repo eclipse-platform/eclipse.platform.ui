@@ -70,13 +70,16 @@ public class RemoteFolderMemberFetcher implements IUpdateMessageListener, IStatu
 	 * persist the children.
 	 */
 	public void fetchMembers(IProgressMonitor monitor) throws CVSException {
+		fetchMembers(monitor, tag);
+	}
+	public void fetchMembers(IProgressMonitor monitor, CVSTag tag) throws CVSException {
 		final IProgressMonitor progress = Policy.monitorFor(monitor);
 		progress.beginTask(Policy.bind("RemoteFolder.getMembers"), 100); //$NON-NLS-1$
 		try {
 			// Update the parent folder children so there are no children
 			updateParentFolderChildren();
 			// Perform an update to retrieve the child files and folders
-			IStatus status = performUpdate(Policy.subMonitorFor(progress, 50));
+			IStatus status = performUpdate(Policy.subMonitorFor(progress, 50), tag);
 			// Update the parent folder with the new children
 			updateParentFolderChildren();
 			Policy.checkCanceled(monitor);
@@ -100,13 +103,13 @@ public class RemoteFolderMemberFetcher implements IUpdateMessageListener, IStatu
 			// if the folder has no files in it (just subfolders) cvs does not respond with the subfolders...
 			// workaround: retry the request with no tag to get the directory names (if any)
 			Policy.checkCanceled(progress);
-			fetchMembers(Policy.subMonitorFor(progress, 50));
+			fetchMembers(Policy.subMonitorFor(progress, 50), null);
 		} finally {
 			progress.done();
 		}
 	}
 
-	protected IStatus performUpdate(IProgressMonitor progress) throws CVSException {
+	protected IStatus performUpdate(IProgressMonitor progress, CVSTag tag) throws CVSException {
 		progress.beginTask(null, 100);
 		Session session = new Session(parentFolder.getRepository(), parentFolder, false /* output to console */);
 		session.open(Policy.subMonitorFor(progress, 10));

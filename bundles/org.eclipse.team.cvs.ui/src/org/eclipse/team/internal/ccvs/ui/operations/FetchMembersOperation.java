@@ -68,9 +68,9 @@ public class FetchMembersOperation extends RemoteOperation {
 			long currentTime = System.currentTimeMillis();
 			return (currentTime - intervalStart) >  sendIncrement;
 		}
-		protected IStatus performUpdate(IProgressMonitor progress) throws CVSException {
+		protected IStatus performUpdate(IProgressMonitor progress, CVSTag tag) throws CVSException {
 			intervalStart = System.currentTimeMillis();
-			IStatus status = super.performUpdate(progress);
+			IStatus status = super.performUpdate(progress, tag);
 			sendFolders();
 			return status;
 		}
