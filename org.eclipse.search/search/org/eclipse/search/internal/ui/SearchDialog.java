@@ -44,6 +44,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -262,13 +263,12 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 			return getControl(fCurrentPage, parent, 0);
 		else {
 			Composite border= new Composite(parent, SWT.NONE);
-			GridLayout layout= new GridLayout();
+			FillLayout layout= new FillLayout();
 			layout.marginWidth= 7;
 			layout.marginHeight= 7;
 			border.setLayout(layout);
 			
 			TabFolder folder= new TabFolder(border, SWT.NONE);
-			folder.setLayoutData(new GridData(GridData.FILL_BOTH));
 			folder.setLayout(new TabFolderLayout());
 
 			for (int i= 0; i < numPages; i++) {			
@@ -392,6 +392,8 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 	
 	private void turnToPage(SelectionEvent event) {
 		final TabItem item= (TabItem)event.item;
+		TabFolder folder= item.getParent();
+		Control oldControl= folder.getItem(fCurrentIndex).getControl();
 		if (item.getControl() == null) {
 			final SearchPageDescriptor descriptor= (SearchPageDescriptor)item.getData();
 
@@ -406,14 +408,16 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 			
 			Control newControl= getControl(page, (Composite)event.widget, item.getParent().getSelectionIndex());
 			item.setControl(newControl);
+			
 		}
 		if (item.getData() instanceof ISearchPage) {
 			fCurrentPage= (ISearchPage)item.getData();
 			fReplaceButton.setVisible(fCurrentPage instanceof IReplacePage);
 			fCurrentIndex= item.getParent().getSelectionIndex();
-			resizeDialogIfNeeded(item.getControl());
 			fCurrentPage.setVisible(true);
 		}
+		Control newControl= item.getControl();
+		resizeDialogIfNeeded(folder, oldControl.getSize(), newControl.computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
 	}
 	
 	private int getPreferredPageIndex() {
@@ -515,41 +519,47 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 	} 
 
 	private Control getControl(ISearchPage page, Composite parent, int index) {
-		if (page.getControl() == null) {
-			// Page wrapper
-			Composite pageWrapper= new Composite(parent, SWT.NONE);
-			GridLayout layout= new GridLayout();
-			pageWrapper.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
-			layout.marginWidth= 0;
-			layout.marginHeight= 0;
-			pageWrapper.setLayout(layout);
-			
-			// The page itself
-			page.createControl(pageWrapper);
-
-			// Search scope
-			SearchPageDescriptor descriptor= getDescriptorAt(index);
-			boolean showScope= descriptor.showScopeSection();
-			if (showScope) {
-				Composite c= new Composite(pageWrapper, SWT.NONE);
-				layout= new GridLayout();
-				c.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-				c.setLayout(layout);
-				fScopeParts[index]= new ScopePart(this, descriptor.canSearchInProjects());
-				Control part= fScopeParts[index].createPart(c);
-				applyDialogFont(part);
-				fScopeParts[index].setVisible(true);
-			}
+		Control control= page.getControl();
+		if (control != null)
+			return control;
+		// Page wrapper
+		Composite pageWrapper= new Composite(parent, SWT.NONE);
+		GridLayout layout= new GridLayout();
+		layout.marginWidth= 0;
+		layout.marginHeight= 0;
+		pageWrapper.setLayout(layout);
+		
+		// The page itself
+		page.createControl(pageWrapper);
+		
+		// Search scope
+		SearchPageDescriptor descriptor= getDescriptorAt(index);
+		boolean showScope= descriptor.showScopeSection();
+		if (showScope) {
+			Composite c= new Composite(pageWrapper, SWT.NONE);
+			layout= new GridLayout();
+			c.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			c.setLayout(layout);
+			fScopeParts[index]= new ScopePart(this, descriptor.canSearchInProjects());
+			Control part= fScopeParts[index].createPart(c);
+			applyDialogFont(part);
+			fScopeParts[index].setVisible(true);
 		}
-		return page.getControl().getParent();
+		return pageWrapper;
 	}
 	
-	private void resizeDialogIfNeeded(Control newControl) {
-		Point currentSize= fCurrentPage.getControl().getSize();
-		Point newSize= newControl.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-		if (mustResize(currentSize, newSize)) {
-			Shell shell= getShell();
-			shell.setSize(shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
+	private void resizeDialogIfNeeded(TabFolder tabFolder, Point oldSize, Point newSize) {
+		if (oldSize == null || newSize == null)
+			return;
+		Shell shell= getShell();
+		Point shellSize= shell.getSize();
+		if (mustResize(oldSize, newSize)) {
+			if (newSize.x > oldSize.x)
+				shellSize.x+= (newSize.x-oldSize.x);
+			if (newSize.y > oldSize.y)
+				shellSize.y+= (newSize.y-oldSize.y);
+			shell.setSize(shellSize);
+			shell.layout(true);
 		}
 	}
 	
