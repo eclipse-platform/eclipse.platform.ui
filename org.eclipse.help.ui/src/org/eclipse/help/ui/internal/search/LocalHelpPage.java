@@ -30,12 +30,6 @@ import org.eclipse.swt.widgets.*;
  * Local Help participant in the federated search.
  */
 public class LocalHelpPage extends RootScopePage{
-
-    public final static String PAGE_TITLE = HelpUIResources
-            .getString("WorkingSetPageTitle"); //$NON-NLS-1$
-    public final static String PAGE_DESCRIPTION = HelpUIResources
-            .getString("WorkingSetPageDescription"); //$NON-NLS-1$
-
     private Button searchAll;
     private Button searchSelected;
     private CheckboxTreeViewer tree;
@@ -74,7 +68,6 @@ public class LocalHelpPage extends RootScopePage{
         searchAll = new Button(composite, SWT.RADIO);
         searchAll.setText(HelpUIResources.getString("selectAll")); //$NON-NLS-1$
         GridData gd = new GridData();
-//        gd.horizontalSpan = 3;
         searchAll.setLayoutData(gd);
         searchAll.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -86,7 +79,6 @@ public class LocalHelpPage extends RootScopePage{
         searchSelected = new Button(composite, SWT.RADIO);
         searchSelected.setText(HelpUIResources.getString("selectWorkingSet")); //$NON-NLS-1$
         gd = new GridData();
-//        gd.horizontalSpan = 3;
         searchSelected.setLayoutData(gd);
         searchSelected.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -147,66 +139,12 @@ public class LocalHelpPage extends RootScopePage{
             }
         });
         tree.getTree().setEnabled(workingSet != null);
-
-//        if (workingSet != null) {
-//            workingSetName.setText(workingSet.getName());
-//            // May need to reconcile working sets
-////            HelpIdePlugin.getDefault().getWorkingSetSynchronizer()
-////                    .addWorkingSet(workingSet);
-//        }
         initializeCheckedState();
-//        validateInput();
 
         // Set help for the page
         //WorkbenchHelp.setHelp(tree, "help_workingset_page");   
         return composite;
     }
-
-//    /**
-//     * @see org.eclipse.ui.dialogs.IWorkingSetPage#setSelection(org.eclipse.ui.IWorkingSet)
-//     */
-//    public void setSelection(IWorkingSet workingSet) {
-//        Assert.isNotNull(workingSet, "Working set must not be null"); //$NON-NLS-1$
-//        this.workingSet = workingSet;
-//        if (getContainer() != null && getShell() != null
-//                && workingSetName != null) {
-//            firstCheck = false;
-//            workingSetName.setText(workingSet.getName());
-//            initializeCheckedState();
-//            validateInput();
-//        }
-//    }
-
-//    void validateInput() {
-//        String errorMessage = null;
-//        String newText = getScopeSetName();
-//        if (newText.equals(newText.trim()) == false)
-//            errorMessage = HelpUIResources.getString("WE030"); //$NON-NLS-1$
-//        if (newText.equals("")) { //$NON-NLS-1$
-//            if (firstCheck) {
-//                firstCheck = false;
-//                return;
-//            } else
-//                errorMessage = HelpUIResources.getString("WE031"); //$NON-NLS-1$
-//        }
-//
-//        firstCheck = false;
-//
-//        if (errorMessage == null
-//                && (workingSet == null || newText.equals(workingSet.getName()) == false)) {
-//            IWorkingSet[] workingSets = PlatformUI.getWorkbench()
-//                    .getWorkingSetManager().getWorkingSets();
-//            for (int i = 0; i < workingSets.length; i++) {
-//                if (newText.equals(workingSets[i].getName())) {
-//                    errorMessage = HelpUIResources.getString("WE032"); //$NON-NLS-1$
-//                }
-//            }
-//        }
-//        if (errorMessage == null && tree.getCheckedElements().length == 0)
-//            errorMessage = HelpUIResources.getString("WE033"); //$NON-NLS-1$
-//        
-//        setErrorMessage(errorMessage);
-//    }
 
     private void initializeCheckedState() {
         if (workingSet == null)

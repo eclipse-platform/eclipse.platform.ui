@@ -13,6 +13,8 @@ package org.eclipse.help.ui.internal.search;
 
 import org.eclipse.help.ui.*;
 import org.eclipse.swt.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
@@ -20,18 +22,62 @@ import org.eclipse.swt.widgets.*;
  * Google participant in the federated search.
  */
 public class GooglePage extends RootScopePage {
+    private Button searchWeb;
+    private Button searchNewsgroups;
+    private String searchType;
+    
     /**
      * Default constructor.
      */
     public GooglePage() {
     }
-
+    
     protected Control createScopeContents(Composite parent) {
-        Composite container = new Composite(parent, SWT.NULL);
-        GridLayout layout = new GridLayout();
-        container.setLayout(layout);
-        Label label = new Label(container, SWT.NULL);
-        label.setText("Dummy content");
-        return container;
+        Font font = parent.getFont();
+        initializeDialogUnits(parent);
+
+        searchType = getPreferenceStore().getString(getEngineId());
+        
+        Composite composite = new Composite(parent, SWT.NULL);
+        composite.setLayout(new GridLayout());
+        composite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+
+        searchWeb = new Button(composite, SWT.RADIO);
+        searchWeb.setText("Search web pages"); 
+        GridData gd = new GridData();
+        searchWeb.setLayoutData(gd);
+        searchWeb.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                searchType = "web";
+            }
+        });
+        
+        searchNewsgroups = new Button(composite, SWT.RADIO);
+        searchNewsgroups.setText("Search newsgroups"); 
+        gd = new GridData();
+        searchNewsgroups.setLayoutData(gd);
+        searchNewsgroups.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                searchType = "news";
+            }
+        });
+      
+        if ("news".equals(searchType))
+            searchNewsgroups.setSelection(true);
+        else
+            searchWeb.setSelection(true);
+
+        return composite;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.preference.IPreferencePage#performOk()
+     */
+    public boolean performOk() {
+        if (searchWeb.isEnabled())
+            getPreferenceStore().setValue(getEngineId(), "web");
+        else if (searchNewsgroups.isEnabled())
+            getPreferenceStore().setValue(getEngineId(), "news");
+        return super.performOk();
     }
 }
