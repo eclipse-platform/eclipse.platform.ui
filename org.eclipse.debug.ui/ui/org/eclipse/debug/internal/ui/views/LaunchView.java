@@ -25,7 +25,6 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ControlAction;
 import org.eclipse.debug.internal.ui.actions.CopyToClipboardActionDelegate;
 import org.eclipse.debug.internal.ui.actions.RelaunchActionDelegate;
-import org.eclipse.debug.internal.ui.actions.RemoveTerminatedAction;
 import org.eclipse.debug.internal.ui.actions.TerminateAllAction;
 import org.eclipse.debug.internal.ui.actions.TerminateAndRemoveActionDelegate;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -116,13 +115,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	protected void createActions() {
 		StructuredViewer viewer = getStructuredViewer();
 		
-		IAction action;
-		
-		action = new RemoveTerminatedAction(this);
-		action.setEnabled(false);
-		setAction("RemoveAll", action); //$NON-NLS-1$
-
-		action = new ControlAction(viewer, new RelaunchActionDelegate());
+		IAction action = new ControlAction(viewer, new RelaunchActionDelegate());
 		action.setEnabled(false);
 		setAction("Relaunch",action); //$NON-NLS-1$
 
@@ -220,7 +213,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	protected void configureToolBar(IToolBarManager tbm) {
 		tbm.add(new Separator(IDebugUIConstants.THREAD_GROUP));
-		tbm.add(getAction("RemoveAll")); //$NON-NLS-1$
 		tbm.add(new Separator(IDebugUIConstants.STEP_GROUP));
 		tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 	}	
@@ -562,7 +554,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		menu.add(new Separator(IDebugUIConstants.LAUNCH_GROUP));
 		menu.add(getAction(REMOVE_ACTION));
 		menu.add(getAction("TerminateAll")); //$NON-NLS-1$
-		menu.add(getAction("RemoveAll")); //$NON-NLS-1$
 		menu.add(getAction("Relaunch")); //$NON-NLS-1$
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
 		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
