@@ -11,10 +11,15 @@
 package org.eclipse.ui;
 
 /**
+ * <p>
  * A service that is capable of nesting other services within itself.  This 
  * allows lower level components to query for a service provider in a 
  * hierarchical fashion, and for information to be resolved in a hierarchical
  * manner
+ * </p>
+ * <p>
+ * This interface is not intended to be implemented or extended by clients.
+ * </p>
  * 
  * @since 2.1.3
  */
