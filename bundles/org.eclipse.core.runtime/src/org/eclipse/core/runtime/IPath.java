@@ -187,10 +187,9 @@ public boolean isEmpty();
  * appear in the argument path in the same order,
  * and their device ids must match.
  * <p>
- * Modulo device ids, an empty path is a prefix of all paths;
- * a root path is a prefix of all absolute paths.
+ * An empty path is a prefix of all paths with the same device; a root path is a prefix of 
+ * all absolute paths with the same device.
  * </p>
- *
  * @param anotherPath the other path
  * @return <code>true</code> if this path is a prefix of the given path,
  *    and <code>false</code> otherwise
