@@ -139,6 +139,9 @@ public class AntModel {
 		}
 
 		synchronized (this) {
+			if (fDocument instanceof PartiallySynchronizedDocument) {
+				((PartiallySynchronizedDocument)fDocument).setAntModel(null);
+			}
 			fDocument= null;
 			fCore= null;
 			ProjectHelper.setAntModel(null);
