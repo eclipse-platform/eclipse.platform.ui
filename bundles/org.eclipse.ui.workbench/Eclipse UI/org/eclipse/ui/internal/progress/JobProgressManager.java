@@ -43,6 +43,7 @@ public class JobProgressManager implements IProgressProvider {
 	 */
 	private class JobMonitor implements IProgressMonitor {
 		Job job;
+		boolean cancelled = false;
 
 		/**
 		 * Create a monitor on the supplied job.
@@ -84,13 +85,14 @@ public class JobProgressManager implements IProgressProvider {
 		 * @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
 		 */
 		public boolean isCanceled() {
-			return false;
+			return cancelled;
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
 		 */
 		public void setCanceled(boolean value) {
+			cancelled = value;
 		}
 
 		/* (non-Javadoc)
