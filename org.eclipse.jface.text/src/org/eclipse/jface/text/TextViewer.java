@@ -810,14 +810,19 @@ public class TextViewer extends Viewer implements
 				int offset= document.getLineOffset(line);
 
 				// end of line
-				line= document.getLineOfOffset(point.x + point.y);
-				int length= document.getLineOffset(line) + document.getLineLength(line)	- offset;
-
+				IRegion lastLineInfo= document.getLineInformationOfOffset(point.x + point.y);
+				int lastLine= document.getLineOfOffset(point.x + point.y);
+				int length;
+				if (lastLineInfo.getOffset() == point.x + point.y && lastLine > 0)
+					length= document.getLineOffset(lastLine - 1) + document.getLineLength(lastLine - 1)	- offset;
+				else
+					length= lastLineInfo.getOffset() + lastLineInfo.getLength() - offset;
+				
 				return new Point(offset, length);
 
 			} catch (BadLocationException e) {
-				// should not happen			
-				return null;
+				// should not happen	
+				return new Point(point.x, 0);
 			}
 		}
 
