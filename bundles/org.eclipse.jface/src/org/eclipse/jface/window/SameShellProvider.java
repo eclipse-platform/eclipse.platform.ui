@@ -39,6 +39,10 @@ public class SameShellProvider implements IShellProvider {
      * @see IShellProvider#getShell()
      */
     public Shell getShell() {
+        if (targetControl instanceof Shell) {
+            return (Shell)targetControl;
+        }
+        
         return targetControl == null? null :targetControl.getShell();
     }
 
