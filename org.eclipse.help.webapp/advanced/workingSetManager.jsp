@@ -215,7 +215,7 @@ function closeWorkingSetDialog()
 </head>
 
 <body onload="onloadHandler()" onunload="closeWorkingSetDialog()">
-<form>
+<form onsubmit="selectWorkingSet()">
 <div style="overflow:auto;height:250px;width:100%;">
   	<table id="filterTable" cellspacing=0 cellpading=0 border=0 align=center  style="background:<%=prefs.getToolbarBackground()%>; font:<%=prefs.getToolbarFont()%>;margin-top:5px;width:100%;">
 		<tr><td>
@@ -278,7 +278,7 @@ for (int i=0; i<wsets.length; i++)
   			<table cellspacing=10 cellpading=0 border=0 style="background:transparent;">
 				<tr>
 					<td>
-						<input type="button" onclick="selectWorkingSet()" value='<%=ServletResources.getString("OK", request)%>' id="ok" alt='<%=ServletResources.getString("OK", request)%>'>
+						<input type="submit" onclick="selectWorkingSet()" value='<%=ServletResources.getString("OK", request)%>' id="ok" alt='<%=ServletResources.getString("OK", request)%>'>
 					</td>
 					<td>
 					  	<input type="reset" onclick="window.close()" value='<%=ServletResources.getString("Cancel", request)%>' id="cancel" alt='<%=ServletResources.getString("Cancel", request)%>'>
