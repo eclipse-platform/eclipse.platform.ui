@@ -960,8 +960,12 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 * @param height the shell height
 	 */
 	private void setShellSize(int width, int height) {
-		getShell().setSize(width, height);
-		constrainShellSize();
+		
+		Rectangle preferred = getShell().getBounds();
+		preferred.width = width;
+		preferred.height = height;
+		
+		getShell().setBounds(getConstrainedShellBounds(preferred));
 	}
 
 	
