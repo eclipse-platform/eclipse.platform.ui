@@ -6,8 +6,10 @@ package org.eclipse.ui.actions;
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.TextActionHandler;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.IHelpContextIds;
@@ -40,7 +42,8 @@ public class RenameResourceAction extends WorkspaceAction {
 	private Tree navigatorTree;
 	private Text textEditor;
 	private Composite textEditorParent;
-
+	private TextActionHandler textActionHandler;
+	
 	/**
 	 * The id of this action.
 	 */
@@ -135,6 +138,9 @@ private boolean checkReadOnlyAndNull(IResource currentResource) {
  * Close the text widget and reset the editorText field.
  */
 private void disposeTextWidget() {
+	if (textActionHandler != null)
+		textActionHandler.removeText(textEditor);
+	
 	if (textEditorParent != null) {
 		textEditorParent.dispose();
 		textEditorParent = null;
@@ -236,7 +242,9 @@ protected String queryNewResourceName(final IResource resource) {
 	InputDialog dialog = new InputDialog(
 		getShell(),
 		WorkbenchMessages.getString("RenameResourceAction.inputDialogTitle"),  //$NON-NLS-1$
-		WorkbenchMessages.getString("RenameResourceAction.inputDialogMessage"), resource.getName(), validator); //$NON-NLS-1$
+		WorkbenchMessages.getString("RenameResourceAction.inputDialogMessage"), //$NON-NLS-1$
+		resource.getName(), 
+		validator); 
 	dialog.setBlockOnOpen(true);
 	dialog.open();
 	return dialog.getValue();
@@ -298,6 +306,8 @@ private void queryNewResourceNameInline(final IResource resource) {
 			}
 		}
 	});
+	if (textActionHandler != null)
+		textActionHandler.addText(textEditor);
 	textEditor.setText(resource.getName());
 
 	// Open text editor with initial size.
@@ -400,4 +410,8 @@ protected boolean updateSelection(IStructuredSelection selection) {
 
 	return true;
 }
+public void setTextActionHandler(TextActionHandler actionHandler){
+	textActionHandler = actionHandler;
+}
+
 }

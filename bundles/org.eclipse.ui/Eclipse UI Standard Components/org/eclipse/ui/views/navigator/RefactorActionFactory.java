@@ -16,6 +16,7 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.views.navigator.*;
+import org.eclipse.ui.internal.TextActionHandler;
 
 /**
  * The RefactorActionFactory is the factory for
@@ -38,6 +39,8 @@ public class RefactorActionFactory
 
 	protected IViewSite viewSite;
 	protected TreeViewer treeViewer;
+
+	private TextActionHandler textActionHandler;
 
 	/**
 	 * Creates a new instance of the receiver using a 
@@ -64,6 +67,11 @@ public class RefactorActionFactory
 		renameResourceAction = new ResourceNavigatorRenameAction(shell, treeViewer);
 		deleteResourceAction = new DeleteResourceAction(shell);
 		addBookmarkAction = new AddBookmarkAction(shell);
+
+		textActionHandler = new TextActionHandler(viewSite.getActionBars());
+		textActionHandler.setCopyAction(copyResourceAction);
+		textActionHandler.setDeleteAction(deleteResourceAction);
+		renameResourceAction.setTextActionHandler(textActionHandler);
 	}
 
 	/**
@@ -153,13 +161,9 @@ public class RefactorActionFactory
 		copyProjectAction.selectionChanged(selection);
 		copyResourceAction.selectionChanged(selection);
 		if (copyProjectAction.isEnabled())
-			actionBars.setGlobalActionHandler(
-				IWorkbenchActionConstants.COPY,
-				copyProjectAction);
+			textActionHandler.setCopyAction(copyProjectAction);
 		else
-			actionBars.setGlobalActionHandler(
-				IWorkbenchActionConstants.COPY,
-				copyResourceAction);
+			textActionHandler.setCopyAction(copyResourceAction);
 		renameResourceAction.selectionChanged(selection);
 	}
 	

@@ -28,16 +28,19 @@ import org.eclipse.swt.widgets.*;
  * </p>
  */
 public class TextActionHandler {
+	private DeleteActionHandler textDeleteAction = new DeleteActionHandler();
 	private CutActionHandler textCutAction = new CutActionHandler();
 	private CopyActionHandler textCopyAction = new CopyActionHandler();
 	private PasteActionHandler textPasteAction = new PasteActionHandler();
 	private SelectAllActionHandler textSelectAllAction = new SelectAllActionHandler();
 	
+	private IAction deleteAction;
 	private IAction cutAction;
 	private IAction copyAction;
 	private IAction pasteAction;
 	private IAction selectAllAction;
 	
+	private IPropertyChangeListener deleteActionListener = new PropertyChangeListener(textDeleteAction);
 	private IPropertyChangeListener cutActionListener = new PropertyChangeListener(textCutAction);
 	private IPropertyChangeListener copyActionListener = new PropertyChangeListener(textCopyAction);
 	private IPropertyChangeListener pasteActionListener = new PropertyChangeListener(textPasteAction);
@@ -83,16 +86,43 @@ public class TextActionHandler {
 			}
 		}
 	};
+
+	private class DeleteActionHandler extends Action {
+		protected DeleteActionHandler() {
+			super(WorkbenchMessages.getString("Delete")); //$NON-NLS-1$
+			setId("TextDeleteActionHandler");//$NON-NLS-1$
+			setEnabled(false);
+		}
+		public void runWithEvent(Event event) {
+			if (activeTextControl != null && !activeTextControl.isDisposed()) {
+				activeTextControl.clearSelection();
+				return;
+			}
+			if (deleteAction != null) {
+				deleteAction.runWithEvent(event);
+				return;
+			}
+		}
+		public void updateEnabledState() {
+			if (activeTextControl != null && !activeTextControl.isDisposed()) {
+				setEnabled(activeTextControl.getSelectionCount() > 0 || activeTextControl.getCaretPosition() < activeTextControl.getCharCount());
+				return;
+			}
+			if (deleteAction != null) {
+				setEnabled(deleteAction.isEnabled());
+				return;
+			}
+		}
+	}
 	
 	private class CutActionHandler extends Action {
 		protected CutActionHandler() {
 			super(WorkbenchMessages.getString("Cut")); //$NON-NLS-1$
-			setId("TextCellEditorCutActionHandler");//$NON-NLS-1$
+			setId("TextCutActionHandler");//$NON-NLS-1$
 			setEnabled(false);
-			setAccelerator(SWT.CTRL |'x');
 		}
 		public void runWithEvent(Event event) {
-			if (activeTextControl != null) {
+			if (activeTextControl != null && !activeTextControl.isDisposed()) {
 				activeTextControl.cut();
 				return;
 			}
@@ -102,7 +132,7 @@ public class TextActionHandler {
 			}
 		}
 		public void updateEnabledState() {
-			if (activeTextControl != null) {
+			if (activeTextControl != null && !activeTextControl.isDisposed()) {
 				setEnabled(activeTextControl.getSelectionCount() > 0);
 				return;
 			}
@@ -116,11 +146,11 @@ public class TextActionHandler {
 	private class CopyActionHandler extends Action {
 		protected CopyActionHandler() {
 			super(WorkbenchMessages.getString("Copy")); //$NON-NLS-1$
-			setId("TextCellEditorCopyActionHandler");//$NON-NLS-1$
+			setId("TextCopyActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 		}
 		public void runWithEvent(Event event) {
-			if (activeTextControl != null) {
+			if (activeTextControl != null && !activeTextControl.isDisposed()) {
 				activeTextControl.copy();
 				return;
 			}
@@ -130,7 +160,7 @@ public class TextActionHandler {
 			}
 		}
 		public void updateEnabledState() {
-			if (activeTextControl != null) {
+			if (activeTextControl != null && !activeTextControl.isDisposed()) {
 				setEnabled(activeTextControl.getSelectionCount() > 0);
 				return;
 			}
@@ -144,11 +174,11 @@ public class TextActionHandler {
 	private class PasteActionHandler extends Action {
 		protected PasteActionHandler() {
 			super(WorkbenchMessages.getString("Paste")); //$NON-NLS-1$
-			setId("TextCellEditorPasteActionHandler");//$NON-NLS-1$
+			setId("TextPasteActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 		}
 		public void runWithEvent(Event event) {
-			if (activeTextControl != null) {
+			if (activeTextControl != null && !activeTextControl.isDisposed()) {
 				activeTextControl.paste();
 				return;
 			}
@@ -158,7 +188,7 @@ public class TextActionHandler {
 			}
 		}
 		public void updateEnabledState() {
-			if (activeTextControl != null) {
+			if (activeTextControl != null && !activeTextControl.isDisposed()) {
 				setEnabled(true);
 				return;
 			}
@@ -172,11 +202,11 @@ public class TextActionHandler {
 	private class SelectAllActionHandler extends Action {
 		protected SelectAllActionHandler() {
 			super(WorkbenchMessages.getString("TextAction.selectAll")); //$NON-NLS-1$
-			setId("TextCellEditorSelectAllActionHandler");//$NON-NLS-1$
+			setId("TextSelectAllActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 		}
 		public void runWithEvent(Event event) {
-			if (activeTextControl != null) {
+			if (activeTextControl != null && !activeTextControl.isDisposed()) {
 				activeTextControl.selectAll();
 				return;
 			}
@@ -186,7 +216,7 @@ public class TextActionHandler {
 			}
 		}
 		public void updateEnabledState() {
-			if (activeTextControl != null) {
+			if (activeTextControl != null && !activeTextControl.isDisposed()) {
 				setEnabled(true);
 				return;
 			}
@@ -198,11 +228,12 @@ public class TextActionHandler {
 	}
 /**
  * Creates a <code>Text</code> control action handler
- * for the global Cut, Copy, Paste, and Select All of
- * the action bar.
+ * for the global Cut, Copy, Paste, Delete, and Select All 
+ * of the action bar.
  *
  * @param actionBar the action bar to register global
- *    action handlers for Cut, Copy, Paste, and Select All
+ *    action handlers for Cut, Copy, Paste, Delete, 
+ * 	  and Select All
  */
 public TextActionHandler(IActionBars actionBar) {
 	super();
@@ -210,11 +241,12 @@ public TextActionHandler(IActionBars actionBar) {
 	actionBar.setGlobalActionHandler(IWorkbenchActionConstants.COPY, textCopyAction);
 	actionBar.setGlobalActionHandler(IWorkbenchActionConstants.PASTE, textPasteAction);
 	actionBar.setGlobalActionHandler(IWorkbenchActionConstants.SELECT_ALL, textSelectAllAction);
+	actionBar.setGlobalActionHandler(IWorkbenchActionConstants.DELETE, textDeleteAction);
 }
 /**
  * Add a <code>Text</code> control to the handler
- * so that the Cut, Copy, Paste, and Select All actions
- * are redirected to it when active.
+ * so that the Cut, Copy, Paste, Delete, and Select All 
+ * actions are redirected to it when active.
  *
  * @param textControl the inline <code>Text</code> control
  */
@@ -235,11 +267,12 @@ public void dispose() {
 	setCopyAction(null);
 	setPasteAction(null);
 	setSelectAllAction(null);
+	setDeleteAction(null);
 }
 /**
  * Removes a <code>Text</code> control from the handler
- * so that the Cut, Copy, Paste, and Select All actions
- * are no longer redirected to it when active.
+ * so that the Cut, Copy, Paste, Delete, and Select All 
+ * actions are no longer redirected to it when active.
  *
  * @param textControl the inline <code>Text</code> control
  */
@@ -341,13 +374,36 @@ public void setSelectAllAction(IAction action) {
 	textSelectAllAction.updateEnabledState();
 }
 /**
+ * Set the default <code>IAction</code> handler for the Delete
+ * action. This <code>IAction</code> is run only if no active
+ * inline text control.
+ *
+ * @param action the <code>IAction</code> to run for the
+ *    Delete action, or <code>null</null> if not interested.
+ */
+public void setDeleteAction(IAction action) {
+	if (deleteAction == action)
+		return;
+
+	if (deleteAction != null)
+		deleteAction.removePropertyChangeListener(deleteActionListener);
+		
+	deleteAction = action;
+
+	if (deleteAction != null)
+		deleteAction.addPropertyChangeListener(deleteActionListener);
+
+	textDeleteAction.updateEnabledState();
+}
+/**
  * Update the enable state of the Cut, Copy,
- * Paste, and Select All action handlers
+ * Paste, Delete, and Select All action handlers
  */
 private void updateActionsEnableState() {
 	textCutAction.updateEnabledState();
 	textCopyAction.updateEnabledState();
 	textPasteAction.updateEnabledState();
 	textSelectAllAction.updateEnabledState();
+	textDeleteAction.updateEnabledState();
 }
 }
