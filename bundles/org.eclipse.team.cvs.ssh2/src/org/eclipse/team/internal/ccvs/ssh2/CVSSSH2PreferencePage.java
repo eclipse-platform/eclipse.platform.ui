@@ -539,7 +539,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	public void widgetSelected(SelectionEvent e){
 	  JSch jsch=JSchSession.getJSch();
 	  boolean ok=true;
-	  String _type="";
+	  String _type=""; //$NON-NLS-1$
 
 	  try{
 	    int type=0;

@@ -46,7 +46,7 @@ public class CVSTag {
 		try {
 			return tagNameFormat.parse(name);
 		} catch (ParseException e) {
-			CVSProviderPlugin.log(new CVSException("Tag name " + name + " is not of the expected format " + DATE_TAG_NAME_FORMAT, e));
+			CVSProviderPlugin.log(new CVSException("Tag name " + name + " is not of the expected format " + DATE_TAG_NAME_FORMAT, e)); //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
 		}
 	}

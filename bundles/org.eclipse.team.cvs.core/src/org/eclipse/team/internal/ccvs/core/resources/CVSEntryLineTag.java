@@ -22,7 +22,7 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 
 public class CVSEntryLineTag extends CVSTag {
 	
-	private static final String ENTRY_LINE_DATE_TAG_FORMAT = "yyyy.MM.dd.HH.mm.ss";
+	private static final String ENTRY_LINE_DATE_TAG_FORMAT = "yyyy.MM.dd.HH.mm.ss"; //$NON-NLS-1$
 	private static SimpleDateFormat entryLineDateTagFormatter = new SimpleDateFormat(ENTRY_LINE_DATE_TAG_FORMAT, Locale.getDefault());
 	
 	private static String getNameInInternalFormat(CVSTag tag) {
@@ -47,7 +47,7 @@ public class CVSEntryLineTag extends CVSTag {
 		try {
 			 return entryLineDateTagFormatter.parse(text);
 		} catch (ParseException e) {
-			CVSProviderPlugin.log(new CVSException("Tag name " + text + " is not of the expected format " + ENTRY_LINE_DATE_TAG_FORMAT, e));
+			CVSProviderPlugin.log(new CVSException("Tag name " + text + " is not of the expected format " + ENTRY_LINE_DATE_TAG_FORMAT, e)); //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
 		}		
 	}

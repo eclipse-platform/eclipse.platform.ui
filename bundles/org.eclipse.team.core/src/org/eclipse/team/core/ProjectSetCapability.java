@@ -15,6 +15,7 @@ import java.io.File;
 import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.internal.core.Policy;
 
 /**
  * An object for serializing and deserializing
@@ -130,7 +131,7 @@ public abstract class ProjectSetCapability {
 		if (serializer != null) {
 			return serializer.asReference(providerProjects, context.getShell(), monitor);
 		}
-		throw new TeamException("Failed to create project references");
+		throw new TeamException(Policy.bind("ProjectSetCapability.0")); //$NON-NLS-1$
 	}
 
 	/**
@@ -177,7 +178,7 @@ public abstract class ProjectSetCapability {
 		if (serializer != null) {
 			return serializer.addToWorkspace(referenceStrings, null, context.getShell(), monitor);
 		}
-		throw new TeamException("Failed to load projects");
+		throw new TeamException(Policy.bind("ProjectSetCapability.1")); //$NON-NLS-1$
 	}
 	
 	////////////////////////////////////////////////////////////////////////////
