@@ -50,6 +50,10 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 			java.io.File localFile = deleteLocalFile ? new java.io.File(node.getLocalLocation()) : null;
 			// if it is a folder in the file system, delete its children first
 			if (target.getType() == IResource.FOLDER) {
+				// if this file is a POSIX symbolic link then deleting the local file before the recursion will
+				// keep its contents from being deleted on the filesystem.
+				if (localFile != null)
+					localFile.delete();
 				for (Enumeration children = node.getChildren(); children.hasMoreElements();)
 					delete((UnifiedTreeNode) children.nextElement(), deleteLocalFile, shouldKeepHistory);
 				node.removeChildrenFromTree();
