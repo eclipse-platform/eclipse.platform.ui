@@ -75,7 +75,6 @@ public class AntDebugModelPresentation extends LabelProvider implements IDebugMo
 			if (name != null) {
 				StringBuffer text= new StringBuffer(name);
 				if (thread.isSuspended()) {
-					
 					IBreakpoint[] breakpoints= thread.getBreakpoints();
 					if (breakpoints.length > 0) {
 						AntLineBreakpoint breakpoint= (AntLineBreakpoint) breakpoints[0];
@@ -92,7 +91,6 @@ public class AntDebugModelPresentation extends LabelProvider implements IDebugMo
 					} else {
 						text.append(DebugModelMessages.getString("AntDebugModelPresentation.4")); //$NON-NLS-1$
 					}
-					
 				}
 				
 				return text.toString();
