@@ -13,12 +13,13 @@ package org.eclipse.ui.internal.csm.commands;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-import org.eclipse.ui.internal.csm.commands.api.NotDefinedException;
 import org.eclipse.ui.internal.csm.commands.api.ICommand;
 import org.eclipse.ui.internal.csm.commands.api.ICommandEvent;
 import org.eclipse.ui.internal.csm.commands.api.ICommandListener;
 import org.eclipse.ui.internal.csm.commands.api.IKeySequenceBinding;
+import org.eclipse.ui.internal.csm.commands.api.NotDefinedException;
 import org.eclipse.ui.internal.util.Util;
 
 final class Command implements ICommand {
@@ -29,7 +30,7 @@ final class Command implements ICommand {
 	private boolean active;
 	private String categoryId;
 	private List commandListeners;
-	private CommandManager commandManager;
+	private Set commandsWithListeners;
 	private boolean defined;
 	private String description;
 	private boolean enabled;
@@ -42,11 +43,11 @@ final class Command implements ICommand {
 	private transient IKeySequenceBinding[] keySequenceBindingsAsArray;
 	private transient String string;
 	
-	Command(CommandManager commandManager, String id) {	
-		if (commandManager == null || id == null)
+	Command(Set commandsWithListeners, String id) {	
+		if (commandsWithListeners == null || id == null)
 			throw new NullPointerException();
 
-		this.commandManager = commandManager;
+		this.commandsWithListeners = commandsWithListeners;
 		this.id = id;
 	}
 
@@ -60,7 +61,7 @@ final class Command implements ICommand {
 		if (!commandListeners.contains(commandListener))
 			commandListeners.add(commandListener);
 		
-		commandManager.getCommandsWithListeners().add(this);
+		commandsWithListeners.add(this);
 	}
 
 	public int compareTo(Object object) {
@@ -183,7 +184,7 @@ final class Command implements ICommand {
 			commandListeners.remove(commandListener);
 		
 		if (commandListeners.isEmpty())
-			commandManager.getCommandsWithListeners().remove(this);
+			commandsWithListeners.remove(this);
 	}
 
 	public String toString() {

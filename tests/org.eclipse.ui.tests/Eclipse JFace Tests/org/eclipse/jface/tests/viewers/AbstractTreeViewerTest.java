@@ -11,11 +11,9 @@
 package org.eclipse.jface.tests.viewers;
 
 
-import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.swt.widgets.Widget;
-
 import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Widget;
 
 public abstract class AbstractTreeViewerTest extends StructuredItemViewerTest {
 	

@@ -100,7 +100,7 @@ public final class CommandManager implements ICommandManager {
 		Command command = (Command) commandsById.get(commandId);
 		
 		if (command == null) {
-			command = new Command(this, commandId);
+			command = new Command(commandsWithListeners, commandId);
 			updateCommand(command);
 			commandsById.put(commandId, command);
 		}

@@ -56,24 +56,6 @@ public interface IKeyConfiguration extends Comparable {
 
 	/**
 	 * <p>
-	 * Returns the identifier of the category of the key configuration represented by this 
-	 * handle.
-	 * </p>
-	 * <p>
-	 * Notification is set to all registered listeners if this attribute 
-	 * changes.
-	 * </p>
-	 *  
-	 * @return the identifier of the category of the key configuration represented by this 
-	 * 		   handle. May be <code>null</code>. 
-	 * @throws NotDefinedException if the key configuration represented by this 
-	 *                                    handle is not defined.
-	 */	
-	String getCategoryId()
-		throws NotDefinedException;	
-	
-	/**
-	 * <p>
 	 * Returns the description of the key configuration represented by this handle, 
 	 * suitable for display to the user.
 	 * </p>
