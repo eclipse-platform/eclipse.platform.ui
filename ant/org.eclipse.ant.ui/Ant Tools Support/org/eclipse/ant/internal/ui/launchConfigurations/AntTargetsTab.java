@@ -61,6 +61,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -486,7 +487,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 					}
 				};
 				
-				getLaunchConfigurationDialog().run(false, false, operation);
+				PlatformUI.getWorkbench().getProgressService().runInUI(getLaunchConfigurationDialog(), operation, null);
 			} catch (CoreException ce) {
 				exceptions[0]= ce;
 			} catch (InvocationTargetException e) {
