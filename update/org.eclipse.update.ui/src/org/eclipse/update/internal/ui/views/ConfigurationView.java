@@ -14,6 +14,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -916,12 +917,14 @@ public class ConfigurationView
 	}
 
 	private void asyncRefresh() {
-		Control control = viewer.getControl();
-		if (control.isDisposed())
+		Display display = SWTUtil.getStandardDisplay();
+		if (display==null) return;
+		if (viewer.getControl().isDisposed())
 			return;
-		control.getDisplay().asyncExec(new Runnable() {
+		display.asyncExec(new Runnable() {
 			public void run() {
-				viewer.refresh();
+				if (!viewer.getControl().isDisposed())
+					viewer.refresh();
 			}
 		});
 	}
