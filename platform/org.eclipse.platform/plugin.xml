@@ -132,7 +132,7 @@
                   %samples.swt.text
                </text>
                <link
-                     url="http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.pde.ui&amp;class=org.eclipse.pde.ui.internal.samples.ShowSampleAction&amp;id=com.example.xyz.swt.examples"
+                     url="http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.pde.ui&amp;class=org.eclipse.pde.ui.internal.samples.ShowSampleAction&amp;id=org.eclipse.sdk.samples.swt.examples"
                      label="%samples.swt.standalone.label"
                      id="standalone">
                   <text>
@@ -155,7 +155,7 @@
                   %samples.workbench.text
                </text>
                <link
-                     url="http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.pde.ui&amp;class=org.eclipse.pde.ui.internal.samples.ShowSampleAction&amp;id=com.example.xyz.multipageeditor"
+                     url="http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.pde.ui&amp;class=org.eclipse.pde.ui.internal.samples.ShowSampleAction&amp;id=org.eclipse.sdk.samples.multipageeditor"
                      label="%samples.workbench.multipageeditor.label"
                      id="multi-page-editor">
                   <text>
@@ -163,7 +163,7 @@
                   </text>
                </link>
                <link
-                     url="http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.pde.ui&amp;class=org.eclipse.pde.ui.internal.samples.ShowSampleAction&amp;id=com.example.xyz.propertysheet"
+                     url="http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.pde.ui&amp;class=org.eclipse.pde.ui.internal.samples.ShowSampleAction&amp;id=org.eclipse.sdk.samples.propertysheet"
                      label="%samples.workbench.propertysheet.label"
                      id="property-sheet">
                   <text>
@@ -171,7 +171,7 @@
                   </text>
                </link>
                <link
-                     url="http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.pde.ui&amp;class=org.eclipse.pde.ui.internal.samples.ShowSampleAction&amp;id=com.example.xyz.readmetool"
+                     url="http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.pde.ui&amp;class=org.eclipse.pde.ui.internal.samples.ShowSampleAction&amp;id=org.eclipse.sdk.samples.readmetool"
                      label="%samples.workbench.readmetool.label"
                      id="readmetool">
                   <text>
