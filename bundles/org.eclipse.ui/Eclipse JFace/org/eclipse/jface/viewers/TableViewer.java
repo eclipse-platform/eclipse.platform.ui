@@ -411,6 +411,13 @@ public void insert(Object element, int position) {
  * Method declared on StructuredViewer.
  */
 protected void internalRefresh(Object element) {
+	internalRefresh(element, true);
+}
+
+/* (non-Javadoc)
+ * Method declared on StructuredViewer.
+ */
+protected void internalRefresh(Object element, boolean updateLabels) {
 	tableViewerImpl.applyEditorValue();
 	if (element == null || element.equals(getRoot())) {
 		// the parent
@@ -424,9 +431,11 @@ protected void internalRefresh(Object element) {
 		TableItem[] items = table.getItems();
 		int min = Math.min(children.length, items.length);
 		for (int i = 0; i < min; ++i) {
-			// always update the item, since its label may have changed
+			// if the element is unchanged, update its label if appropriate
 			if (children[i].equals(items[i].getData())) {
-				updateItem(items[i], children[i]);
+				if (updateLabels) {
+					updateItem(items[i], children[i]);
+				}
 			}
 			else {
 				// updateItem does an associate(...), which can mess up

@@ -476,6 +476,27 @@ protected boolean hasFilters() {
  * @param element the element
  */
 protected abstract void internalRefresh(Object element);
+
+/**
+ * Refreshes this viewer starting at the given element.
+ * Labels are updated as described in <code>refresh(boolean updateLabels)</code>.
+ * <p>
+ * The default implementation simply calls <code>internalRefresh(element)</code>,
+ * ignoring <code>updateLabels</code>.
+ * <p>
+ * If this method is overridden to do the actual refresh, then
+ * <code>internalRefresh(Object element)</code> should simply 
+ * call <code>internalRefresh(element, true)</code>.
+ * 
+ * @param element the element
+ * @param updateLabels <code>true</code> to update labels for existing elements,
+ * <code>false</code> to only update labels as needed, assuming that labels
+ * for existing elements are unchanged.
+ */
+protected void internalRefresh(Object element, boolean updateLabels) {
+	internalRefresh(element);
+}
+
 /**
  * Adds the element item pair to the element map
  * <p>
@@ -566,6 +587,28 @@ protected void preservingSelection(Runnable updateCode) {
 public void refresh() {
 	refresh(getRoot());
 }
+
+/**
+ * Refreshes this viewer with information freshly obtained from this
+ * viewer's model.  If <code>updateLabels</code> is <code>true</code>
+ * then labels for otherwise unaffected elements are updated as well.
+ * Otherwise, it assumes labels for existing elements are unchanged,
+ * and labels are only obtained as needed (for example, for new elements).
+ * <p>
+ * Calling <code>refresh(true)</code> has the same effect as <code>refresh()</code>.
+ * <p>
+ * Note that the implementation may still obtain labels for existing elements
+ * even if <code>updateLabels</code> is false.  The intent is simply to allow
+ * optimization where possible.
+ * 
+ * @param updateLabels <code>true</code> to update labels for existing elements,
+ * <code>false</code> to only update labels as needed, assuming that labels
+ * for existing elements are unchanged.
+ */
+public void refresh(boolean updateLabels) {
+	refresh(getRoot(), updateLabels);
+}
+
 /**
  * Refreshes this viewer starting with the given element.
  *
@@ -578,6 +621,25 @@ public void refresh(final Object element) {
 		}
 	});
 }
+
+/**
+ * Refreshes this viewer starting with the given element.
+ * Labels are updated as described in <code>refresh(boolean updateLabels)</code>.
+ * <p>
+ * 
+ * @param element the element
+ * @param updateLabels <code>true</code> to update labels for existing elements,
+ * <code>false</code> to only update labels as needed, assuming that labels
+ * for existing elements are unchanged.
+ */
+public void refresh(final Object element, final boolean updateLabels) {
+	preservingSelection(new Runnable() {
+		public void run() {
+			internalRefresh(element, updateLabels);
+		}
+	});
+}
+
 /**
  * Refreshes the given TableItem with the given element.
  * Calls <code>doUpdateItem(..., false)</code>.

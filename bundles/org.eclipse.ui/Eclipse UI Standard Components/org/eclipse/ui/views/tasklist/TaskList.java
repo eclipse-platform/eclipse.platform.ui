@@ -429,8 +429,10 @@ void fillContextMenu(IMenuManager menu) {
  * Refreshes the viewer and title bar.
  */
 void filterChanged() {
-	// filter has already been updated by dialog; just refresh
-	getTableViewer().refresh();
+	// Filter has already been updated by dialog; just refresh.
+	// Don't need to update labels for existing elements 
+	// since changes to filter settings don't affect them.
+	getTableViewer().refresh(false);
 	// update after refresh since the content provider caches summary info
 	updateStatusMessage();
 	updateTitle();
