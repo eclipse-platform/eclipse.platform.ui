@@ -9,7 +9,6 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
@@ -88,7 +87,7 @@ public abstract class OpenLaunchConfigurationsAction extends Action implements I
 	public void run() {
 		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
 		if (window != null) {
-			LaunchConfigurationsDialog dialog = new LaunchConfigurationsDialog(window.getShell(), LaunchConfigurationManager.getDefault().getDefaultLanuchGroup(getMode()));
+			LaunchConfigurationsDialog dialog = new LaunchConfigurationsDialog(window.getShell(), DebugUIPlugin.getDefault().getLaunchConfigurationManager().getDefaultLanuchGroup(getMode()));
 			dialog.setOpenMode(LaunchConfigurationsDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_LAST_LAUNCHED);
 			dialog.open();
 		}		

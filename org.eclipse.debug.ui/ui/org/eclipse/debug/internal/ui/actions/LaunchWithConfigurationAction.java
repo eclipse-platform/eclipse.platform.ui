@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -107,13 +106,13 @@ public abstract class LaunchWithConfigurationAction extends Action implements IM
 		List shortcuts = null;
 		String activePerspID = getActivePerspectiveID();
 		if (activePerspID != null) {
-			shortcuts = LaunchConfigurationManager.getDefault().getLaunchShortcuts(activePerspID, null);
+			shortcuts = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchShortcuts(activePerspID, null);
 		}
 		
 		// If NO shortcuts are listed in the current perspective, add ALL shortcuts
 		// to avoid an empty cascading menu
 		if (shortcuts == null || shortcuts.isEmpty()) {
-			shortcuts = LaunchConfigurationManager.getDefault().getLaunchShortcuts(null);
+			shortcuts = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchShortcuts(null);
 		}
 		
 		if (getCreatedMenu() != null) {

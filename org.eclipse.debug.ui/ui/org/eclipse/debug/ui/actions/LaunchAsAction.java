@@ -68,7 +68,7 @@ public class LaunchAsAction extends Action implements IMenuCreator {
 	 * @return the launch group associatd with this action
 	 */
 	private LaunchGroupExtension getLaunchGroup() {
-		return LaunchConfigurationManager.getDefault().getLaunchGroup(fLaunchGroupIdentifier);
+		return getLaunchConfigurationManager().getLaunchGroup(fLaunchGroupIdentifier);
 	}
 
 	/**
@@ -117,13 +117,13 @@ public class LaunchAsAction extends Action implements IMenuCreator {
 		List shortcuts = null;
 		String activePerspID = getActivePerspectiveID();
 		if (activePerspID != null) {
-			shortcuts = LaunchConfigurationManager.getDefault().getLaunchShortcuts(activePerspID, getCategory());
+			shortcuts = getLaunchConfigurationManager().getLaunchShortcuts(activePerspID, getCategory());
 		}
 		
 		// If NO shortcuts are listed in the current perspective, add ALL shortcuts
 		// to avoid an empty cascading menu
 		if (shortcuts == null || shortcuts.isEmpty()) {
-			shortcuts = LaunchConfigurationManager.getDefault().getLaunchShortcuts(getCategory());
+			shortcuts = getLaunchConfigurationManager().getLaunchShortcuts(getCategory());
 		}
 		
 		if (getCreatedMenu() != null) {
@@ -196,5 +196,14 @@ public class LaunchAsAction extends Action implements IMenuCreator {
 	private void setCreatedMenu(Menu createdMenu) {
 		fCreatedMenu = createdMenu;
 	}
+	
+	/**
+	 * Returns the launch configuration manager.
+	 *
+	 * @return launch configuration manager
+	 */
+	private LaunchConfigurationManager getLaunchConfigurationManager() {
+		return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
+	}	
 }
 

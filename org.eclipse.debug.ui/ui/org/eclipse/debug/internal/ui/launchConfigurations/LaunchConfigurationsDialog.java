@@ -543,7 +543,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Return the last launched configuration in the workspace.
 	 */
 	protected ILaunchConfiguration getLastLaunchedWorkbenchConfiguration() {
-		return DebugUIPlugin.getLaunchConfigurationManager().getLastLaunch(getLaunchGroup().getIdentifier());
+		return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLastLaunch(getLaunchGroup().getIdentifier());
 	}
 	
 	/**

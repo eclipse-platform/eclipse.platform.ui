@@ -78,7 +78,7 @@ public class LaunchHistoryPreferencePage extends PreferencePage implements IWork
 		tabFolder.setLayoutData(gd);
 		
 		// create tabs (debug and run first) 
-		LaunchConfigurationManager manager = LaunchConfigurationManager.getDefault();
+		LaunchConfigurationManager manager = DebugUIPlugin.getDefault().getLaunchConfigurationManager();
 		LaunchGroupExtension[] groups = manager.getLaunchGroups();
 		List tabList = new ArrayList();
 		LaunchHistory history = manager.getLaunchHistory(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP);

@@ -109,7 +109,7 @@ public class LaunchHistory implements ILaunchListener, IPropertyChangeListener, 
 	private void save() {
 		if (isDirty()) {
 			try {
-				LaunchConfigurationManager.getDefault().persistLaunchHistory();
+				DebugUIPlugin.getDefault().getLaunchConfigurationManager().persistLaunchHistory();
 			} catch (CoreException e) {
 				DebugUIPlugin.log(e);
 			} catch (IOException e) {

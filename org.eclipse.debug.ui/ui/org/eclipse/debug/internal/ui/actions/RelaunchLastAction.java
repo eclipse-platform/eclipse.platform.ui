@@ -10,7 +10,6 @@ import java.text.MessageFormat;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.IAction;
@@ -72,7 +71,7 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 		if (dwindow == null) {
 			return;
 		}
-		LaunchConfigurationsDialog dialog = new LaunchConfigurationsDialog(DebugUIPlugin.getShell(), LaunchConfigurationManager.getDefault().getDefaultLanuchGroup(getMode()));		
+		LaunchConfigurationsDialog dialog = new LaunchConfigurationsDialog(DebugUIPlugin.getShell(), DebugUIPlugin.getDefault().getLaunchConfigurationManager().getDefaultLanuchGroup(getMode()));		
 		dialog.setOpenMode(LaunchConfigurationsDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_LAST_LAUNCHED);
 		dialog.open();
 	}
@@ -87,7 +86,7 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 	 * Return the last launch that occurred in the workspace.
 	 */
 	protected ILaunchConfiguration getLastLaunch() {
-		return DebugUIPlugin.getLaunchConfigurationManager().getLastLaunch(getLaunchGroupId());
+		return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLastLaunch(getLaunchGroupId());
 	}
 	
 	protected Shell getShell() {

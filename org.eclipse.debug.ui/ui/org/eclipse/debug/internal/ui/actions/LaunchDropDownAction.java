@@ -13,13 +13,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.ILaunchHistoryChangedListener;
-import org
-	.eclipse
-	.debug
-	.internal
-	.ui
-	.launchConfigurations
-	.LaunchConfigurationManager;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.ui.actions.*;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -97,7 +91,7 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	 * understand how to launch in the mode of this action.
 	 */
 	protected void initialize(IAction action) {
-		DebugUIPlugin.getLaunchConfigurationManager().addLaunchHistoryListener(this);
+		getLaunchConfigurationManager().addLaunchHistoryListener(this);
 		fOriginalTooltip = action.getToolTipText();
 		setActionProxy(action);
 		updateTooltip();	
@@ -148,14 +142,14 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 		if (getCreatedMenu() != null) {
 			getCreatedMenu().dispose();
 		}
-		DebugUIPlugin.getLaunchConfigurationManager().removeLaunchHistoryListener(this);
+		getLaunchConfigurationManager().removeLaunchHistoryListener(this);
 	}
 	
 	/**
 	 * Return the last launch that occurred in the workspace.
 	 */
 	protected ILaunchConfiguration getLastLaunch() {
-		return DebugUIPlugin.getLaunchConfigurationManager().getLastLaunch(getLaunchGroupId());
+		return getLaunchConfigurationManager().getLastLaunch(getLaunchGroupId());
 	}
 
 	/**
@@ -289,14 +283,14 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	 * Returns an array of previous launches applicable to this drop down.
 	 */
 	public ILaunchConfiguration[] getHistory() {
-		return LaunchConfigurationManager.getDefault().getLaunchHistory(getLaunchGroupId()).getHistory();
+		return getLaunchConfigurationManager().getLaunchHistory(getLaunchGroupId()).getHistory();
 	}
 	
 	/**
 	 * Returns an array of favorites applicable to this drop down.
 	 */
 	public ILaunchConfiguration[] getFavorites() {
-		return LaunchConfigurationManager.getDefault().getLaunchHistory(getLaunchGroupId()).getFavorites();
+		return getLaunchConfigurationManager().getLaunchHistory(getLaunchGroupId()).getFavorites();
 	}	
 	
 	/**
@@ -381,5 +375,9 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 			fRunWithAction.dispose();
 		}
 		return fRunWithAction;
+	}
+	
+	protected LaunchConfigurationManager getLaunchConfigurationManager() {
+		return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
 	}
 }

@@ -9,13 +9,6 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org
-	.eclipse
-	.debug
-	.internal
-	.ui
-	.launchConfigurations
-	.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.ui.DebugUITools;
@@ -46,7 +39,7 @@ public class OpenLaunchDialogAction extends Action {
 	 */
 	public OpenLaunchDialogAction(String identifier) {
 		fIdentifier = identifier;
-		LaunchGroupExtension extension = LaunchConfigurationManager.getDefault().getLaunchGroup(identifier);
+		LaunchGroupExtension extension = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(identifier);
 		if (extension != null) {
 			setText(extension.getLabel() + "...");
 			setImageDescriptor(extension.getImageDescriptor());
@@ -58,7 +51,7 @@ public class OpenLaunchDialogAction extends Action {
 	 * @see IAction
 	 */
 	public void run() {
-		LaunchHistory history = LaunchConfigurationManager.getDefault().getLaunchHistory(fIdentifier);
+		LaunchHistory history = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchHistory(fIdentifier);
 		ILaunchConfiguration configuration = history.getRecentLaunch();
 		IStructuredSelection selection = null;
 		if (configuration == null) {

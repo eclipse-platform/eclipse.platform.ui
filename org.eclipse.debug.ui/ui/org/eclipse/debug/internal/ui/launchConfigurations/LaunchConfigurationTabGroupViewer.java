@@ -380,7 +380,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	private void setTabIcon(TabItem tabItem, boolean error, ILaunchConfigurationTab tab) {
 		Image image = null;
 		if (error) {
-			image = LaunchConfigurationManager.getDefault().getErrorTabImage(tab);
+			image = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getErrorTabImage(tab);
 		} else {
 			image = tab.getImage();
 		}

@@ -115,7 +115,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 * understand how to launch in the mode of this action.
 	 */
 	private void initialize(IAction action) {
-		DebugUIPlugin.getLaunchConfigurationManager().addLaunchHistoryListener(this);
+		getLaunchConfigurationManager().addLaunchHistoryListener(this);
 		setAction(action);
 		updateTooltip();	
 		action.setEnabled(existsConfigTypesForMode());	
@@ -172,14 +172,14 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 */
 	public void dispose() {
 		setMenu(null);
-		DebugUIPlugin.getLaunchConfigurationManager().removeLaunchHistoryListener(this);
+		getLaunchConfigurationManager().removeLaunchHistoryListener(this);
 	}
 	
 	/**
 	 * Return the last launch in this action's launch history
 	 */
 	private ILaunchConfiguration getLastLaunch() {
-		return DebugUIPlugin.getLaunchConfigurationManager().getLastLaunch(fLaunchGroupIdentifier);
+		return getLaunchConfigurationManager().getLastLaunch(fLaunchGroupIdentifier);
 	}
 
 	/**
@@ -315,7 +315,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 * 
 	 * @return the launch history associated with this action's launch group	 */
 	private LaunchHistory getLaunchHistory() {
-		return LaunchConfigurationManager.getDefault().getLaunchHistory(fLaunchGroupIdentifier);
+		return getLaunchConfigurationManager().getLaunchHistory(fLaunchGroupIdentifier);
 	} 
 		
 	/**
@@ -325,6 +325,15 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 */
 	protected String getMode() {
 		return getLaunchHistory().getLaunchGroup().getMode();
+	}
+	
+	/**
+	 * Returns the launch configuration manager.
+	 * 
+	 * @return launch configuration manager
+	 */
+	private LaunchConfigurationManager getLaunchConfigurationManager() {
+		return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
 	}
 	
 }

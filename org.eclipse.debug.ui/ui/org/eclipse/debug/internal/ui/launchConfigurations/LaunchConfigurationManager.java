@@ -108,7 +108,7 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	private static final String HISTORY_MEMENTO_ATT = "memento"; //$NON-NLS-1$
 	private static final String HISTORY_MODE_ATT = "mode"; //$NON-NLS-1$
 	
-	private LaunchConfigurationManager() {				
+	public void startup() {				
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		launchManager.addLaunchListener(this);	
 
@@ -117,13 +117,6 @@ public class LaunchConfigurationManager implements ILaunchListener {
 		for (int i = 0; i < launches.length; i++) {
 			launchAdded(launches[i]);
 		}
-	}
-	
-	public static LaunchConfigurationManager getDefault() {
-		if (fgLaunchConfigurationManager == null) {
-			fgLaunchConfigurationManager= new LaunchConfigurationManager();
-		}
-		return fgLaunchConfigurationManager;
 	}
 	
 	/**
@@ -140,13 +133,6 @@ public class LaunchConfigurationManager implements ILaunchListener {
 			DebugUIPlugin.log(e);
 		}
 		return false;
-	}
-	
-	/**
-	 * Returns whether the singleton instance of the manager exists
-	 */
-	public static boolean defaultExists() {
-		return fgLaunchConfigurationManager != null;
 	}
 	
 	public void shutdown() throws CoreException {

@@ -547,7 +547,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 				Iterator iterator = groups.iterator();
 				while (iterator.hasNext()) {
 					String id = (String)iterator.next();
-					LaunchGroupExtension extension = LaunchConfigurationManager.getDefault().getLaunchGroup(id);
+					LaunchGroupExtension extension = getLaunchConfigurationManager().getLaunchGroup(id);
 					list.add(extension);
 				}
 				fFavoritesTable.setCheckedElements(list.toArray());
@@ -654,12 +654,12 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 				List groups = new ArrayList();
 				int num = 0;
 				if (debug) {
-					groups.add(LaunchConfigurationManager.getDefault().getLaunchGroup(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP));
+					groups.add(getLaunchConfigurationManager().getLaunchGroup(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP));
 					num++;
 				}
 				if (run) {
 					num++;
-					groups.add(LaunchConfigurationManager.getDefault().getLaunchGroup(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP));
+					groups.add(getLaunchConfigurationManager().getLaunchGroup(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP));
 				}
 				// see if there are any changes
 				if (num == checked.length) {
@@ -773,12 +773,12 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object inputElement) {
-			LaunchGroupExtension[] groups = LaunchConfigurationManager.getDefault().getLaunchGroups();
+			LaunchGroupExtension[] groups = getLaunchConfigurationManager().getLaunchGroups();
 			List possibleGroups = new ArrayList();
 			ILaunchConfiguration configuration = (ILaunchConfiguration)inputElement;
 			for (int i = 0; i < groups.length; i++) {
 				LaunchGroupExtension extension = groups[i];
-				LaunchHistory history = LaunchConfigurationManager.getDefault().getLaunchHistory(extension.getIdentifier());
+				LaunchHistory history = getLaunchConfigurationManager().getLaunchHistory(extension.getIdentifier());
 				if (history != null && history.accepts(configuration)) {
 					possibleGroups.add(extension);
 				} 
@@ -858,7 +858,14 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		 */
 		public void removeListener(ILabelProviderListener listener) {
 		}
-
+		
+	}
+	
+	/**
+	 * Convenience accessor
+	 */
+	protected LaunchConfigurationManager getLaunchConfigurationManager() {
+		return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
 	}
 }
 

@@ -31,7 +31,6 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
@@ -312,7 +311,7 @@ public class DebugUITools {
 			dialog.doInitialTreeSelection();
 			return Window.OK;
 		} else {
-			dialog = new LaunchConfigurationsDialog(shell, LaunchConfigurationManager.getDefault().getLaunchGroup(groupIdentifier));
+			dialog = new LaunchConfigurationsDialog(shell, DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier));
 			dialog.setOpenMode(LaunchConfigurationsDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION);
 			dialog.setInitialSelection(selection);
 			return dialog.open();			
@@ -332,7 +331,7 @@ public class DebugUITools {
 	 * @since 2.1
 	 */
 	public static int openLaunchConfigurationPropertiesDialog(Shell shell, ILaunchConfiguration configuration, String groupIdentifier) {
-		LaunchGroupExtension group = LaunchConfigurationManager.getDefault().getLaunchGroup(groupIdentifier);
+		LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier);
 		if (group != null) {
 			LaunchConfigurationPropertiesDialog dialog = new LaunchConfigurationPropertiesDialog(shell, configuration, group);
 			return dialog.open();

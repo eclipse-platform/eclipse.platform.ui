@@ -104,6 +104,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	private PerspectiveManager fPerspectiveManager = null;
 	
 	/**
+	 * Launch configuration manager
+	 */
+	private LaunchConfigurationManager fLaunchConfigurationManager = null;
+	
+	/**
 	 * Returns whether the debug UI plug-in is in trace
 	 * mode.
 	 * 
@@ -163,8 +168,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		return fgPresentation;
 	}
 	
-	public static LaunchConfigurationManager getLaunchConfigurationManager() {
-		return LaunchConfigurationManager.getDefault();
+	public LaunchConfigurationManager getLaunchConfigurationManager() {
+		if (fLaunchConfigurationManager == null) {
+			fLaunchConfigurationManager = new LaunchConfigurationManager();
+		} 
+		return fLaunchConfigurationManager;
 	}
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
@@ -247,8 +255,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		if (DebugActionGroupsManager.defaultExists()) {
 			DebugActionGroupsManager.getDefault().shutdown();
 		}
-		if (LaunchConfigurationManager.defaultExists()) {
-			LaunchConfigurationManager.getDefault().shutdown();
+		if (fLaunchConfigurationManager != null) {
+			fLaunchConfigurationManager.shutdown();
 		}
 		if (fConsoleDocumentManager != null) {
 			fConsoleDocumentManager.shutdown();
@@ -605,6 +613,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		fPerspectiveManager = new PerspectiveManager();
 		fPerspectiveManager.startup();
 		fPerspectiveManager.launchAdded(launch);
+		
+		getLaunchConfigurationManager().startup();
 	}
 
 	/**
