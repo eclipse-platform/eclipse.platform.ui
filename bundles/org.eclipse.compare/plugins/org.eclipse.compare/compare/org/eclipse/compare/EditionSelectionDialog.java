@@ -97,10 +97,7 @@ public class EditionSelectionDialog extends Dialog {
 		}
 		
 		Pair(IStructureCreator structureCreator, ITypedElement edition) {
-			fStructureCreator= structureCreator;
-			fEdition= edition;
-			fItem= edition;
-			fHasError= true;
+			this(structureCreator, edition, edition);
 		}
 		
 		ITypedElement getEdition() {
@@ -436,8 +433,11 @@ public class EditionSelectionDialog extends Dialog {
 	
 	private Pair createPair(IStructureCreator sc, Object path, ITypedElement input) {
 		IStructureComparator scmp= sc.locate(path, input);
-		if (scmp == null && sc.getStructure(input) == null)	// parse error
-			return new Pair(sc, input);
+		if (scmp == null && sc.getStructure(input) == null) {	// parse error
+			Pair p= new Pair(sc, input);
+			p.fHasError= true;
+			return p;
+		}
 		if (scmp instanceof ITypedElement)
 			return new Pair(sc, input, (ITypedElement) scmp);
 		return null;

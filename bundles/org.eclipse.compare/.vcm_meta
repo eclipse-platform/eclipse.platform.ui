@@ -8,4 +8,6 @@
 	<reference project-name="org.eclipse.swt"/>
 	<builder name="org.eclipse.jdt.core.javabuilder">
 	</builder>
+	<builder name="org.eclipse.jdt.debug.hcrbuilder">
+	</builder>
 </project-description>
