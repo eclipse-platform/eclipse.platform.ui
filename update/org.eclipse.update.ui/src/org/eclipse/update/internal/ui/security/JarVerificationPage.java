@@ -217,7 +217,7 @@ public class JarVerificationPage extends BannerPage {
 
 				labelInformation.setText(strb.toString());
 
-				createCautionArea(compositeClient);
+//				createCautionArea(compositeClient);
 				break;
 		}
 	}
