@@ -124,7 +124,9 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 		// ignore the monitor, there is no valuable progress to be shown when
 		// calculating the dirty state for files. It is relatively fast.
 		
-		if (!exists()) return true;
+		if (!exists()) {
+			return getSyncBytes() != null;
+		}
 		int state = EclipseSynchronizer.getInstance().getModificationState(getIFile());
 
 		if (state != UNKNOWN) {
@@ -145,12 +147,16 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 	 * info.
 	 */
 	private boolean computeModified(ResourceSyncInfo info) throws CVSException {
-		if (info == null) return true;
+		// if there is no sync info and it doesn't exist then it is a phantom we don't care
+		// about.
+		if (info == null) {
+			return exists();
+		}
 		
 		// isMerged() must be called because when a file is updated and merged by the cvs server the timestamps
 		// are equal. Merged files should however be reported as dirty because the user should take action and commit
 		// or review the merged contents.
-		if(info.isMerged() || !exists()) return true;
+		if(info.isAdded() || info.isMerged() || !exists()) return true;
 		return !getTimeStamp().equals(info.getTimeStamp());
 	}
 	
@@ -435,9 +441,11 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 			Date timeStamp = oldInfo.getTimeStamp();
 			if (timeStamp == null || oldInfo.isMergedWithConflicts()) {
 				// If the entry line has no timestamp, put the file timestamp in the entry line
-				MutableResourceSyncInfo mutable = oldInfo.cloneMutable();
-				mutable.setTimeStamp(getTimeStamp(), true /* clear merged */);
-				newInfo = mutable;
+				if(! oldInfo.isAdded()) {
+					MutableResourceSyncInfo mutable = oldInfo.cloneMutable();
+					mutable.setTimeStamp(getTimeStamp(), true /* clear merged */);
+					newInfo = mutable;
+				}
 			} else {
 				// reset the file timestamp to the one from the entry line
 				setTimeStamp(timeStamp);
