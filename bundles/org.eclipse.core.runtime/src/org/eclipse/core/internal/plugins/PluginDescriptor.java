@@ -480,20 +480,22 @@ public String getProviderName() {
 public ResourceBundle getResourceBundle() throws MissingResourceException {
 	return getResourceBundle(Locale.getDefault());
 }
-public ResourceBundle getResourceBundle(Locale locale) throws MissingResourceException {
+public ResourceBundle getResourceBundle(Locale targetLocale) throws MissingResourceException {
 	// we cache the bundle for a single locale 
-	if (bundle != null && locale.equals(locale))
+	if (bundle != null && targetLocale.equals(locale))
 		return bundle;
 
 	// check if we already tried and failed
 	if (bundleNotFound)
-		throw new MissingResourceException(Policy.bind("plugin.bundleNotFound", getId(), DEFAULT_BUNDLE_NAME + "_" + locale), DEFAULT_BUNDLE_NAME + "_" + locale, "");
+		throw new MissingResourceException(Policy.bind("plugin.bundleNotFound", getId(), DEFAULT_BUNDLE_NAME + "_" + targetLocale), DEFAULT_BUNDLE_NAME + "_" + targetLocale, "");
 
 	// try to load bundle from this plugin install directory
 	ClassLoader resourceLoader = new URLClassLoader(new URL[] { getInstallURL()}, null);
 	ResourceBundle newBundle = null;
 	try {
-		newBundle = ResourceBundle.getBundle(DEFAULT_BUNDLE_NAME, locale, resourceLoader);
+		newBundle = ResourceBundle.getBundle(DEFAULT_BUNDLE_NAME, targetLocale, resourceLoader);
+		bundle = newBundle;
+		locale = targetLocale;
 	} catch (MissingResourceException e) {
 		bundleNotFound = true;
 		throw e;
