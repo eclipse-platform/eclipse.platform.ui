@@ -74,10 +74,10 @@ public void avoidAutoBuild() {
  */
 public void checkIn() throws CoreException {
 	try {
-		boolean acquired = false;
-		while (!acquired) {
+		while (true) {
 			try {
-				acquired = getWorkspaceLock().acquire();
+				if (getWorkspaceLock().acquire())
+					return;
 				//above call should block, but sleep just in case it doesn't behave
 				Thread.sleep(50);
 			} catch (InterruptedException e) {
