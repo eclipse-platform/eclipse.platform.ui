@@ -224,7 +224,9 @@ public interface IDebugUIConstants {
 	/** Remove all action image identifier. */
 	public static final String IMG_LCL_REMOVE_ALL= "IMG_LCL_REMOVE_ALL";
 
-
+	/** Inspector action image identifier. */
+	public static final String IMG_LCL_INSPECT= "IMG_LCL_INSPECT";
+	
 	// Debug element images
 	
 	/** Debug mode launch image identifier. */

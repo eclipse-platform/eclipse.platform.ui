@@ -5,7 +5,8 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
  
-import java.util.Iterator;import org.eclipse.debug.core.DebugException;import org.eclipse.debug.core.model.IVariable;import org.eclipse.debug.ui.DebugUITools;import org.eclipse.jface.viewers.ISelectionProvider;import org.eclipse.jface.viewers.IStructuredSelection;import org.eclipse.ui.help.WorkbenchHelp;
+import java.util.Iterator;import org.eclipse.debug.core.DebugException;import org.eclipse.debug.core.model.IVariable;import org.eclipse.debug.ui.DebugUITools;import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.viewers.ISelectionProvider;import org.eclipse.jface.viewers.IStructuredSelection;import org.eclipse.ui.help.WorkbenchHelp;
 
 public class AddToInspectorAction extends InspectorAction {
 
@@ -15,6 +16,9 @@ public class AddToInspectorAction extends InspectorAction {
 		super(sp, DebugUIUtils.getResourceString(PREFIX + TEXT));
 		setToolTipText(DebugUIUtils.getResourceString(PREFIX + TOOL_TIP_TEXT));
 		setEnabled(!getStructuredSelection().isEmpty());
+		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_INSPECT));
+		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_INSPECT));
+		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_INSPECT));
 		WorkbenchHelp.setHelp(
 			this,
 			new Object[] { IDebugHelpContextIds.INSPECT_ACTION });

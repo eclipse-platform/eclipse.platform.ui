@@ -30,6 +30,7 @@ public interface IInternalDebugUIConstants {
 	public static final String IMG_DLCL_TYPE_NAMES= "IMG_DLCL_TYPE_NAMES";
 	public static final String IMG_DLCL_REMOVE= "IMG_DLCL_REMOVE";
 	public static final String IMG_DLCL_REMOVE_ALL= "IMG_DLCL_REMOVE_ALL";
+	public static final String IMG_DLCL_INSPECT= "IMG_DLCL_INSPECT";
 
 	// enabled local tool images
 	public static final String IMG_ELCL_RESUME= "IMG_ELCL_RESUME";
@@ -45,6 +46,5 @@ public interface IInternalDebugUIConstants {
 	public static final String IMG_ELCL_TYPE_NAMES= "IMG_ELCL_TYPE_NAMES";
 	public static final String IMG_ELCL_REMOVE= "IMG_ELCL_REMOVE";
 	public static final String IMG_ELCL_REMOVE_ALL= "IMG_ELCL_REMOVE_ALL";
-
-	
+	public static final String IMG_ELCL_INSPECT= "IMG_ELCL_INSPECT";
 }
