@@ -15,21 +15,15 @@ package org.eclipse.ui.texteditor;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IPluginPrerequisite;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -459,109 +453,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 			fTextEventQueue.add(event);
 			fDisplay.asyncExec(fRunnable);
-		}
-	}
-	
-	/**
-	 * Compare configuration elements according to the prerequisite relation
-	 * of their defining plug-ins.
-	 * 
-	 * @since 2.0
-	 */
-	static class ConfigurationElementComparator implements Comparator {
-		
-		private Map fDescriptorMapping;
-		private Set fDescriptorSet;
-		private Map fPrereqsMapping;
-		
-		public ConfigurationElementComparator(IConfigurationElement[] elements) {
-			Assert.isNotNull(elements);
-			initialize(elements);
-		}
-
-		/*
-		 * @see Comparator#compare(java.lang.Object, java.lang.Object)
-		 * @since 2.0
-		 */
-		public int compare(Object object0, Object object1) {
-
-			IConfigurationElement element0= (IConfigurationElement)object0;
-			IConfigurationElement element1= (IConfigurationElement)object1;	
-			
-			if (dependsOn(element0, element1))
-				return -1;
-				
-			if (dependsOn(element1, element0))
-				return +1;
-			
-			return 0;
-		}
-
-		/**
-		 * Returns whether one configuration element depends on the other element.
-		 * This is done by checking the dependency chain of the defining plug-ins.
-		 * 
-		 * @param element0 the first element
-		 * @param element1 the second element
-		 * @return <code>true</code> if <code>element0</code> depends on <code>element1</code>.
-		 * @since 2.0
-		 */
-		private boolean dependsOn(IConfigurationElement element0, IConfigurationElement element1) {
-			if (element0 == null || element1 == null)
-				return false;
-
-			IPluginDescriptor pluginDesc0= (IPluginDescriptor)fDescriptorMapping.get(element0);
-			IPluginDescriptor pluginDesc1= (IPluginDescriptor)fDescriptorMapping.get(element1);
-			
-			// performance tuning - code below would give same result
-			if (pluginDesc0.getUniqueIdentifier().equals(pluginDesc1.getUniqueIdentifier()))
-				return false;
-			
-			Set prereqUIds0= (Set)fPrereqsMapping.get(pluginDesc0);
-			
-			return prereqUIds0.contains(pluginDesc1.getUniqueIdentifier());
-		}
-		
-		/**
-		 * Initialize this comarator.
-		 * 
-		 * @param elements an array of Java editor hover descriptors
-		 */
-		private void initialize(IConfigurationElement[] elements) {
-			int length= elements.length;
-			fDescriptorMapping= new HashMap(length);
-			fPrereqsMapping= new HashMap(length);
-			fDescriptorSet= new HashSet(length);
-			
-			for (int i= 0; i < length; i++) {
-				IPluginDescriptor descriptor= elements[i].getDeclaringExtension().getDeclaringPluginDescriptor();
-				fDescriptorMapping.put(elements[i], descriptor);
-				fDescriptorSet.add(descriptor);
-			}
-			
-			Iterator iter= fDescriptorSet.iterator();
-			while (iter.hasNext()) {
-				IPluginDescriptor descriptor= (IPluginDescriptor)iter.next();
-				List toTest= new ArrayList(fDescriptorSet);
-				toTest.remove(descriptor);
-				Set prereqUIds= new HashSet(Math.max(0, toTest.size() - 1));
-				fPrereqsMapping.put(descriptor, prereqUIds);
-				
-				IPluginPrerequisite[] prereqs= descriptor.getPluginPrerequisites();
-				int i= 0;
-				while (i < prereqs.length && !toTest.isEmpty()) {
-					String prereqUId= prereqs[i].getUniqueIdentifier();
-					for (int j= 0; j < toTest.size();) {
-						IPluginDescriptor toTest_j= (IPluginDescriptor)toTest.get(j);
-						if (toTest_j.getUniqueIdentifier().equals(prereqUId)) {
-							toTest.remove(toTest_j);
-							prereqUIds.add(toTest_j.getUniqueIdentifier());
-						} else
-							j++;
-					}
-					i++;
-				}
-			}
 		}
 	}
 	
@@ -3404,11 +3295,22 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			}
 			int actionSize= actions.size();
 			if (actionSize > 0) {
+				IConfigurationElement element;
 				if (actionSize > 1) {
 					IConfigurationElement[] actionArray= (IConfigurationElement[])actions.toArray(new IConfigurationElement[actionSize]);
-					Collections.sort(actions, new ConfigurationElementComparator(actionArray));
-				}
-				IConfigurationElement element= (IConfigurationElement)actions.get(0);
+					ConfigurationElementSorter sorter= new ConfigurationElementSorter() {
+						/**
+						 * {@inheritDoc}
+						 */
+						public IConfigurationElement getConfigurationElement(Object object) {
+							return (IConfigurationElement)object;
+						}
+					};
+					sorter.sort(actionArray);
+					element= actionArray[0];
+				} else
+					element= (IConfigurationElement)actions.get(0);
+				
 				String defId = element.getAttribute(ActionDescriptor.ATT_DEFINITION_ID);
 				return new EditorPluginAction(element, "class", this, defId, IAction.AS_UNSPECIFIED); //$NON-NLS-1$			
 			}
