@@ -34,6 +34,7 @@ public class MarkerTest extends EclipseWorkspaceTest {
  * called by user code.
  */
 public MarkerTest() {
+	super();
 }
 /**
  * Creates a new markers test.
@@ -357,7 +358,7 @@ protected void assertExists(String message, IMarker[] markers) {
 protected void assertExists(String message, IMarker marker) {
 	assertTrue(message, marker.exists());
 }
-public IResource[] createLargeHierarchy() throws CoreException {
+public IResource[] createLargeHierarchy() {
 	ArrayList result = new ArrayList();
 	result.add("/");
 	new MarkerTest().addChildren(result, Path.ROOT, 3, 4);
@@ -410,11 +411,7 @@ protected static boolean equalsOrNull(Object a, Object b) {
 }
 public void setUp() throws Exception {
 	super.setUp();
-	try {
-		resources = createHierarchy();
-	} catch (CoreException e) {
-		fail("#setUp", e);
-	}
+	resources = createHierarchy();
 }
 /**
  * Configures the markers test suite.
@@ -470,6 +467,7 @@ public void testCreateMarker() {
 		} catch (CoreException e) {
 			fail("2.1." + resource.getFullPath(), e);
 		} catch (RuntimeException e) {
+			// expected
 		}
 	}
 
@@ -480,6 +478,7 @@ public void testCreateMarker() {
 		testResource.createMarker(IMarker.PROBLEM);
 		fail("3.1");
 	} catch (CoreException e) {
+		// expected
 	}
 
 	// cleanup
@@ -1336,13 +1335,14 @@ public void testMarkerSave() {
 			try {
 				fileOutput.close();
 			} catch (IOException e2) {
+				// ignore
 			}
 		fail("2.0", e);
 	}
 	final DataOutputStream output = o1;
 	final List list = new ArrayList(5);
 	IResourceVisitor visitor = new IResourceVisitor() {
-		public boolean visit(final IResource resource) throws CoreException {
+		public boolean visit(final IResource resource) {
 			try {
 				ResourceInfo info = ((Resource) resource).getResourceInfo(false, false);
 				if (info == null)
@@ -1471,13 +1471,14 @@ public void testMarkerSaveTransient() {
 			try {
 				fileOutput.close();
 			} catch (IOException e2) {
+				// ignore
 			}
 		fail("2.0", e);
 	}
 	final DataOutputStream output = o1;
 	final List list = new ArrayList(5);
 	visitor = new IResourceVisitor() {
-		public boolean visit(final IResource resource) throws CoreException {
+		public boolean visit(final IResource resource) {
 			try {
 				ResourceInfo info = ((Resource) resource).getResourceInfo(false, false);
 				if (info == null)
@@ -1667,6 +1668,7 @@ public void testSetGetAttribute() {
 		} catch (NullPointerException e) {
 			fail("4.2", e);
 		} catch (RuntimeException e) {
+			// expected
 		}
 		try {
 			marker.getAttributes(null);
@@ -1676,6 +1678,7 @@ public void testSetGetAttribute() {
 		} catch (NullPointerException e) {
 			fail("4.5", e);
 		} catch (RuntimeException e) {
+			// expected
 		}
 		try {
 			marker.setAttribute(null, getRandomString());
@@ -1685,6 +1688,7 @@ public void testSetGetAttribute() {
 		} catch (NullPointerException e) {
 			fail("4.8", e);
 		} catch (RuntimeException e) {
+			// expected
 		}
 		try {
 			marker.setAttributes(null, new String[] { getRandomString()});
@@ -1694,6 +1698,7 @@ public void testSetGetAttribute() {
 		} catch (NullPointerException e) {
 			fail("4.11", e);
 		} catch (RuntimeException e) {
+			// expected
 		}
 		try {
 			marker.setAttributes(new String[] { IMarker.MESSAGE }, null);
@@ -1703,6 +1708,7 @@ public void testSetGetAttribute() {
 		} catch (NullPointerException e) {
 			fail("4.14", e);
 		} catch (RuntimeException e) {
+			// expected
 		}
 		//set attributes on deleted marker
 		try {
@@ -1714,11 +1720,13 @@ public void testSetGetAttribute() {
 			marker.setAttribute(IMarker.MESSAGE, "Hello");
 			fail("5.1");
 		} catch (CoreException e) {
+			// expected
 		}
 		try {
 			marker.setAttributes(new String[] {IMarker.LINE_NUMBER}, new Object[] {new Integer(4)});
 			fail("5.2");
 		} catch (CoreException e) {
+			// expected
 		}
 		try {
 			HashMap attributes = new HashMap();
@@ -1726,6 +1734,7 @@ public void testSetGetAttribute() {
 			marker.setAttributes(attributes);
 			fail("5.3");
 		} catch (CoreException e) {
+			// expected
 		}
 	}
 }
@@ -1804,6 +1813,7 @@ public void testSetGetAttribute2() {
 		} catch (NullPointerException e) {
 			fail("4.2", e);
 		} catch (RuntimeException e) {
+			// expected
 		}
 		try {
 			// #getAttribute(String, String)
@@ -1812,6 +1822,7 @@ public void testSetGetAttribute2() {
 		} catch (NullPointerException e) {
 			fail("4.5", e);
 		} catch (RuntimeException e) {
+			// expected
 		}
 		try {
 			// #getAttribute(String, boolean)
@@ -1820,6 +1831,7 @@ public void testSetGetAttribute2() {
 		} catch (NullPointerException e) {
 			fail("4.8", e);
 		} catch (RuntimeException e) {
+			// expected
 		}
 		try {
 			// #getAttribute(String, int)
@@ -1828,6 +1840,7 @@ public void testSetGetAttribute2() {
 		} catch (NullPointerException e) {
 			fail("4.11", e);
 		} catch (RuntimeException e) {
+			// expected
 		}
 		try {
 			// #getAttributes(String[])
@@ -1838,6 +1851,7 @@ public void testSetGetAttribute2() {
 		} catch (NullPointerException e) {
 			fail("4.14", e);
 		} catch (RuntimeException e) {
+			// expected
 		}
 		try {
 			// #setAttribute(String, Object)
@@ -1848,6 +1862,7 @@ public void testSetGetAttribute2() {
 		} catch (NullPointerException e) {
 			fail("4.17", e);
 		} catch (RuntimeException e) {
+			// expected
 		}
 		try {
 			// #setAttributes(String[], Object[])
@@ -1858,6 +1873,7 @@ public void testSetGetAttribute2() {
 		} catch (NullPointerException e) {
 			fail("4.20", e);
 		} catch (RuntimeException e) {
+			// expected
 		}
 		try {
 			// #setAttributes(String[], Object[])
@@ -1868,6 +1884,7 @@ public void testSetGetAttribute2() {
 		} catch (NullPointerException e) {
 			fail("4.23", e);
 		} catch (RuntimeException e) {
+			// expected
 		}
 	}
 }
