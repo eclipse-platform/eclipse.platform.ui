@@ -160,7 +160,7 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 	 * @param event
 	 */
 	private void handleResumeEvent(DebugEvent event) {
-		if (event.getSource() instanceof IThread && event.isEvaluation() || event.isStepStart()) {
+		if (event.getSource() instanceof IThread && (event.isEvaluation() || event.isStepStart())) {
 			IThread thread= (IThread) event.getSource();
 			IStackFrame frame;
 			synchronized (fCurrentStackFrameLock) {
