@@ -13,20 +13,20 @@ Ignore</h1></center>
 <p><b><i>Description: </i></b>This extension point is used to register
 information about whether particular resources should be ignored; that
 is, excluded from version configuration management operations.
-<p>Providers may provide an extension for this extension point. No code
+<p>Plugins may provide an extension for this extension point. No code
 beyond the XML extension declaration is required.
 <p><b><i>Configuration Markup:</i></b>
 <p><tt>&nbsp;&nbsp; &lt;!ELEMENT ignore EMPTY></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST ignore</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pattern&nbsp;&nbsp;
 CDATA #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; enabled&nbsp;&nbsp;
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; selected&nbsp;
 CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
 
 <ul>
 <li><b>pattern -</b> the pattern against which resources will be compared.</li>
-<li><b>enabled -</b> one of "true" or "false", determines whether this ignore pattern is enabled.</li>
+<li><b>selected -</b> one of "true" or "false", determines whether this ignore pattern is enabled.</li>
 </ul>
 
 <b><i>Examples:</i></b>
@@ -34,7 +34,7 @@ CDATA #REQUIRED</tt>
 <p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.team.core.ignore"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ignore</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pattern="*.class"</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; enabled="true"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; selected="true"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/ignore></tt>
 <br><tt>&nbsp;&nbsp; &lt;/extension></tt>
 

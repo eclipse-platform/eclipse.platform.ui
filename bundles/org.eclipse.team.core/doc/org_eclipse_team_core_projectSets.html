@@ -27,8 +27,8 @@ CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
 
 <ul>
-<li><b>id -</b> the nature id of the provider for which this handler creates and reads project sets.</li>
-<li><b>type -</b> the fully-qualified name of a class implementing <code>org.eclipse.team.core.IProjectSetSerializer</code>.</li>
+<li><b>id -</b> the id of the provider for which this handler creates and reads project sets.</li>
+<li><b>class -</b> the fully-qualified name of a class implementing <code>org.eclipse.team.core.IProjectSetSerializer</code>.</li>
 </ul>
 
 <b><i>Examples:</i></b>
@@ -36,7 +36,7 @@ CDATA #REQUIRED</tt>
 <p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.team.core.projectSets"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;projectSets</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id="org.eclipse.team.cvs.core.cvsnature"</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class="org.eclipse.team.cvs.core.CVSProjectSetSerializer"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class="org.eclipse.team.cvs.core.CVSProjectSetSerializer"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/projectSets></tt>
 <br><tt>&nbsp;&nbsp; &lt;/extension></tt>
 
