@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
+import java.util.Set;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
@@ -378,6 +380,16 @@ public IObjectActivityManager getObjectActivityManager(String id, boolean create
  * @since 3.0
  */
 public IActivityManager getActivityManager();
+
+/**
+ * Sets the set of identifiers to enabled activities.
+ * 
+ * @param enabledActivityIds
+ *            the set of identifiers to enabled activities. This set may be
+ *            empty, but it must not be <code>null</code>. If this set
+ *            is not empty, it must only contain instances of <code>String</code>.
+ */
+public void setEnabledActivityIds(Set enabledActivityIds);
 
 /**
  * Returns the command manager for the workbench. 

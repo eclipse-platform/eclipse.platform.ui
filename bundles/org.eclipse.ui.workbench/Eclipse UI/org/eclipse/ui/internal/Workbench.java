@@ -21,6 +21,7 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IExtension;
@@ -293,6 +294,10 @@ public final class Workbench implements IWorkbench {
 	
 	public IActivityManager getActivityManager() {
 		return activityManager;
+	}
+	
+	public void setEnabledActivityIds(Set enabledActivityIds) {
+		activityManager.setEnabledActivityIds(enabledActivityIds);
 	}
 	
 	public ICommandManager getCommandManager() {
