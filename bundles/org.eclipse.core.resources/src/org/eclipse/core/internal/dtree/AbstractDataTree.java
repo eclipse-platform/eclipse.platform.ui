@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.dtree;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.runtime.IPath;
@@ -219,7 +224,7 @@ public String getNameOfChild (IPath parentKey, int index) {
  * method
  */
 AbstractDataTreeNode getRootNode() {
-	throw new AbstractMethodError(Policy.bind("dtree.subclassImplement"));
+	throw new AbstractMethodError(Policy.bind("dtree.subclassImplement")); //$NON-NLS-1$
 }
 /**
  * Handles the case where an attempt was made to modify
@@ -227,7 +232,7 @@ AbstractDataTreeNode getRootNode() {
  * an unchecked exception.
  */
 static void handleImmutableTree() {
-	throw new RuntimeException(Policy.bind("dtree.immutable"));
+	throw new RuntimeException(Policy.bind("dtree.immutable")); //$NON-NLS-1$
 }
 /**
  * Handles the case where an attempt was made to manipulate
@@ -235,7 +240,7 @@ static void handleImmutableTree() {
  * unchecked exception.
  */
 static void handleNotFound(IPath key) {
-	throw new ObjectNotFoundException(Policy.bind("dtree.notFound", key.toString()));
+	throw new ObjectNotFoundException(Policy.bind("dtree.notFound", key.toString())); //$NON-NLS-1$
 }
 /**
  * Makes the tree immutable
@@ -298,7 +303,7 @@ void setImmutable (boolean bool) {
  * method
  */
 void setRootNode(AbstractDataTreeNode node) {
-	throw new Error(Policy.bind("dtree.subclassImplement"));
+	throw new Error(Policy.bind("dtree.subclassImplement")); //$NON-NLS-1$
 }
 public String toDebugString() {
 	StringBuffer buffer = new StringBuffer();

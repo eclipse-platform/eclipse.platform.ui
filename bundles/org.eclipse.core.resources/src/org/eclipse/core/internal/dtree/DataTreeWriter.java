@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.dtree;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
@@ -48,7 +53,7 @@ protected void writeNode(AbstractDataTreeNode node, IPath path, int depth) throw
 	/* write the node name */
 	String name = node.getName();
 	if (name == null) {
-		name = "";
+		name = ""; //$NON-NLS-1$
 	}
 	output.writeUTF(name);
 	
@@ -110,7 +115,7 @@ protected void writeSingleNode(AbstractDataTreeNode node, IPath path) throws IOE
 	/* write the node name */
 	String name = node.getName();
 	if (name == null) {
-		name = "";
+		name = ""; //$NON-NLS-1$
 	}
 	output.writeUTF(name);
 	
@@ -169,7 +174,7 @@ public void writeTree(AbstractDataTree tree, IPath path, int depth, DataOutput o
 		}
 	}
 
-	Assert.isTrue(currentPath.equals(path), "dtree.navigationError");
+	Assert.isTrue(currentPath.equals(path), "dtree.navigationError"); //$NON-NLS-1$
 
 	/* recursively write the subtree we're interested in */
 	writeNode(node, path, depth);

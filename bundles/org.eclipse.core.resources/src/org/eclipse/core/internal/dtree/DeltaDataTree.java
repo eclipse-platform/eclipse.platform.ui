@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.dtree;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -540,7 +545,7 @@ protected AbstractDataTreeNode[] getChildNodes(IPath parentKey) {
 	if (childNodes != null) {
 		// Some deltas carry info about children, but there is
 		// no complete node against which they describe deltas.
-		Assert.isTrue(false, Policy.bind("dtree.malformedTree"));
+		Assert.isTrue(false, Policy.bind("dtree.malformedTree")); //$NON-NLS-1$
 	}
 
 	// Node is missing or has been deleted.
@@ -763,7 +768,7 @@ protected AbstractDataTreeNode naiveCopyCompleteSubtree (IPath key) {
 public DeltaDataTree newEmptyDeltaTree() {
 	
 	if (!isImmutable()) {
-		throw new IllegalArgumentException(Policy.bind("dtree.notImmutable"));
+		throw new IllegalArgumentException(Policy.bind("dtree.notImmutable")); //$NON-NLS-1$
 	}
 	
 	DeltaDataTree newTree = (DeltaDataTree) this.copy();
@@ -803,7 +808,7 @@ public DeltaDataTree reroot() {
  */
 protected void reroot(DeltaDataTree sourceTree) {
 	if (!sourceTree.isImmutable()) {
-		throw new IllegalArgumentException(Policy.bind("dtree.parentsNotImmutable"));
+		throw new IllegalArgumentException(Policy.bind("dtree.parentsNotImmutable")); //$NON-NLS-1$
 	}
 	DeltaDataTree parent = sourceTree.getParent();
 	if (parent == null) {

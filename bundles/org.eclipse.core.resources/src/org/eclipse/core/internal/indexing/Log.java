@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.indexing;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.io.*;
 import java.util.*;
@@ -18,7 +23,7 @@ class Log {
  */
 static void create(String storeName) throws PageStoreException {
 	try {
-		new RandomAccessFile(name(storeName), "rw").close();
+		new RandomAccessFile(name(storeName), "rw").close(); //$NON-NLS-1$
 	} catch (IOException e) {
 		throw new PageStoreException(PageStoreException.LogCreateFailure);
 	}
@@ -39,6 +44,6 @@ static boolean exists(String storeName) {
  * Returns the name of the log file, given the store name.
  */
 static String name(String storeName) {
-	return storeName + ".log";
+	return storeName + ".log"; //$NON-NLS-1$
 	}
 }

@@ -1,9 +1,15 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.properties;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.localstore.*;
@@ -109,7 +115,7 @@ protected IResource getPropertyHost(IResource target) {
  * the properties of the given resource.
  */
 protected ResourceName getPropertyKey(IResource target) {
-	return new ResourceName("", target.getProjectRelativePath());
+	return new ResourceName("", target.getProjectRelativePath()); //$NON-NLS-1$
 }
 /**
  * Returns the property store to use when storing a property for the 
@@ -121,7 +127,7 @@ protected PropertyStore getPropertyStore(IResource target) throws CoreException 
 		Resource host = (Resource) getPropertyHost(target);
 		ResourceInfo info = (ResourceInfo) host.getResourceInfo(false, false);
 		if (info == null) {
-			String message = Policy.bind("properties.storeNotAvaiable", target.getFullPath().toString());
+			String message = Policy.bind("properties.storeNotAvaiable", target.getFullPath().toString()); //$NON-NLS-1$
 			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
 		}
 		PropertyStore store = info.getPropertyStore();
@@ -131,7 +137,7 @@ protected PropertyStore getPropertyStore(IResource target) throws CoreException 
 	} catch (Exception e) {
 		if (e instanceof CoreException)
 			throw (CoreException)e;
-		String message = Policy.bind("properties.storeNotAvaiable", target.getFullPath().toString());
+		String message = Policy.bind("properties.storeNotAvaiable", target.getFullPath().toString()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, e);
 	}
 }

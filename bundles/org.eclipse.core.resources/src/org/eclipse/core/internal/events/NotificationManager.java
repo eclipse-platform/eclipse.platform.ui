@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.events;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.internal.resources.IManager;
 import org.eclipse.core.internal.resources.Workspace;
@@ -24,7 +29,7 @@ public class NotificationManager implements IManager {
 	protected ResourceDelta lastDelta;				// last delta we broadcast
 	protected long lastMarkerChangeId = 0;		// the marker change id the last time we broadcast
 	
-	public final static String extensionId = Platform.PI_RUNTIME + ".notification";
+	public final static String extensionId = Platform.PI_RUNTIME + ".notification"; //$NON-NLS-1$
 	
 public NotificationManager(Workspace workspace) {
 	this.workspace = workspace;

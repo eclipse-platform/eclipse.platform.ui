@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.events;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.resources.ModelObject;
@@ -12,7 +17,7 @@ import java.util.*;
 public class BuildCommand extends ModelObject implements ICommand {
 	protected HashMap arguments;
 public BuildCommand() {
-	super("");
+	super(""); //$NON-NLS-1$
 	this.arguments = new HashMap(0);
 }
 public Object clone() {
@@ -64,6 +69,6 @@ public void setArguments(Map value) {
  */
 public void setBuilderName(String value) {
 	//don't allow builder name to be null
-	setName(value == null ? "" : value);
+	setName(value == null ? "" : value); //$NON-NLS-1$
 }
 }

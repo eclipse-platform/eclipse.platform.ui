@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.utils;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.io.*;
 import java.math.BigInteger;
@@ -105,7 +110,7 @@ Java class <code>HexConverter</code>.
 */
 public UniversalUniqueIdentifier(String string) {
 	// Check to ensure it is a String of the right length.
-	Assert.isTrue(string.length() == PrintStringSize, Policy.bind("utils.wrongLength", string));
+	Assert.isTrue(string.length() == PrintStringSize, Policy.bind("utils.wrongLength", string)); //$NON-NLS-1$
 
 	char[] newChars = string.toCharArray();
 
@@ -126,7 +131,7 @@ private void appendByteString(StringBuffer buffer, byte value) {
 	
 	if (value < 0) hexString = Integer.toHexString(256 + value);
 	else hexString = Integer.toHexString(value);
-	if (hexString.length() == 1) buffer.append("0");
+	if (hexString.length() == 1) buffer.append("0"); //$NON-NLS-1$
 	buffer.append(hexString);
 }
 private static BigInteger clockValueNow() {
@@ -144,7 +149,7 @@ public Object clone() {
 	try {
 		return super.clone();
 	} catch (CloneNotSupportedException e) {
-		Assert.isTrue(false, Policy.bind("utils.clone"));
+		Assert.isTrue(false, Policy.bind("utils.clone")); //$NON-NLS-1$
 		return null;
 	}
 }
@@ -324,7 +329,7 @@ public void print(DataOutputStream outStream) {
 	try {
 		outStream.writeBytes(toString());
 	} catch (IOException e) {
-		Assert.isTrue(false, Policy.bind("utils.print"));
+		Assert.isTrue(false, Policy.bind("utils.print")); //$NON-NLS-1$
 	}
 }
 private void setClockSequence(int clockSeq) {
@@ -415,12 +420,12 @@ public String toString() {
 	return buffer.toString();
 }
 public String toStringAsBytes() {
-	String result="{";
+	String result="{"; //$NON-NLS-1$
 	
 	for(int i=0;i<fBits.length;i++) {
 		result += fBits[i];
-		if(i < fBits.length + 1) result += ",";
+		if(i < fBits.length + 1) result += ","; //$NON-NLS-1$
 	}
-	return result + "}";
+	return result + "}"; //$NON-NLS-1$
 }
 }

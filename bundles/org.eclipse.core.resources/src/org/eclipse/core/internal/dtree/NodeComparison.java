@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.dtree;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 /**
  * This class represents the changes in a single node between two data trees.
@@ -98,25 +103,25 @@ boolean isUnchanged() {
  * For debugging
  */
 public String toString() {
-	StringBuffer buf = new StringBuffer("NodeComparison(");
+	StringBuffer buf = new StringBuffer("NodeComparison("); //$NON-NLS-1$
 	switch (comparison) {
 		case K_ADDED:
-			buf.append("Added, ");
+			buf.append("Added, "); //$NON-NLS-1$
 			break;
 		case K_REMOVED:
-			buf.append("Removed, ");
+			buf.append("Removed, "); //$NON-NLS-1$
 			break;
 		case K_CHANGED:
-			buf.append("Changed, ");
+			buf.append("Changed, "); //$NON-NLS-1$
 			break;
 		case 0:
-			buf.append("No change, ");
+			buf.append("No change, "); //$NON-NLS-1$
 			break;
 		default:
-			buf.append("Corrupt(" + comparison + "), ");
+			buf.append("Corrupt(" + comparison + "), "); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	buf.append(userInt);
-	buf.append(")");
+	buf.append(")"); //$NON-NLS-1$
 	return buf.toString();
 }
 }

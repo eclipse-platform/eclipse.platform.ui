@@ -1,8 +1,15 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.localstore;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+
 import org.eclipse.core.internal.resources.ResourceStatus;
 import org.eclipse.core.internal.utils.Convert;
 import org.eclipse.core.internal.utils.Policy;
@@ -14,7 +21,7 @@ import java.io.File;
 public abstract class CoreFileSystemLibrary {
 
 	/** Indicates whether or not this FS is case sensitive */
-	private static final boolean caseSensitive = new File("a").compareTo(new File("A")) != 0;
+	private static final boolean caseSensitive = new File("a").compareTo(new File("A")) != 0; //$NON-NLS-1$ //$NON-NLS-2$
 	
 	/**
 	 * The following masks are used to represent the bits
@@ -40,9 +47,8 @@ public abstract class CoreFileSystemLibrary {
 
 	/** instance of this library */
 	// The name convention is to get the plugin version at the time
-	// the library is changed. Remember that ant.core uses the same
-	// library.
-	private static final String LIBRARY_NAME = "core_2_0_5";
+	// the library is changed. 
+	private static final String LIBRARY_NAME = "core_2_0_5"; //$NON-NLS-1$
 	private static boolean hasNatives = false;
 	
 	static {
@@ -82,7 +88,7 @@ public static long getStat(String fileName) {
 }
 private static void logMissingNativeLibrary(UnsatisfiedLinkError e) {
 	String libName = System.mapLibraryName(LIBRARY_NAME);
-	String message = Policy.bind("localstore.couldNotLoadLibrary", libName);
+	String message = Policy.bind("localstore.couldNotLoadLibrary", libName); //$NON-NLS-1$
 	ResourceStatus status = new ResourceStatus(IResourceStatus.WARNING, null, message, e);
 	ResourcesPlugin.getPlugin().getLog().log(status);
 }

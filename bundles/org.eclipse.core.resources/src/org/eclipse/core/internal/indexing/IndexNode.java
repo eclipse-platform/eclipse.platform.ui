@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.indexing;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.util.*;
 
@@ -899,26 +904,26 @@ class IndexNode extends IndexedStoreObject {
 	public String toString() {
 		StringBuffer b = new StringBuffer();
 		if (isLeaf())
-			b.append("LeafNode");
+			b.append("LeafNode"); //$NON-NLS-1$
 		if (isRoot())
-			b.append("RootNode");
+			b.append("RootNode"); //$NON-NLS-1$
 		if (isInterior())
-			b.append("InteriorNode");
-		b.append("\n  Address = ");
+			b.append("InteriorNode"); //$NON-NLS-1$
+		b.append("\n  Address = "); //$NON-NLS-1$
 		b.append(address);
-		b.append("\n  AnchorAddress = ");
+		b.append("\n  AnchorAddress = "); //$NON-NLS-1$
 		b.append(anchorAddress);
-		b.append("\n  ParentAddress = ");
+		b.append("\n  ParentAddress = "); //$NON-NLS-1$
 		b.append(parentAddress);
-		b.append("\n  PreviousAddress = ");
+		b.append("\n  PreviousAddress = "); //$NON-NLS-1$
 		b.append(previousAddress);
-		b.append("\n  NextAddress = ");
+		b.append("\n  NextAddress = "); //$NON-NLS-1$
 		b.append(nextAddress);
-		b.append("\n  NumberOfEntries = ");
+		b.append("\n  NumberOfEntries = "); //$NON-NLS-1$
 		b.append(numberOfEntries);
-		b.append("\n  UsedSpace = ");
+		b.append("\n  UsedSpace = "); //$NON-NLS-1$
 		b.append(usedSpace);
-		b.append("\n  UsedSpaceMax = ");
+		b.append("\n  UsedSpaceMax = "); //$NON-NLS-1$
 		b.append(usedSpaceMax);
 		return b.toString();
 	}

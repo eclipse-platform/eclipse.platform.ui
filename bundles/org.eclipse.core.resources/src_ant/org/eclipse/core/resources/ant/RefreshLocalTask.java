@@ -31,21 +31,21 @@ public class RefreshLocalTask extends Task {
 	 * indicating that refreshes should be performed only on the target
 	 * resource itself
 	 */
-	public static final String DEPTH_ZERO = "zero";
+	public static final String DEPTH_ZERO = "zero"; //$NON-NLS-1$
 	
 	/**
 	 * Unique identifier constant (value <code>"DEPTH_ONE"</code>)
 	 * indicating that refreshes should be performed on the target
 	 * resource and its children
 	 */
-	public static final String DEPTH_ONE = "one";
+	public static final String DEPTH_ONE = "one"; //$NON-NLS-1$
 	
 	/**
 	 * Unique identifier constant (value <code>"DEPTH_INFINITE"</code>)
 	 * indicating that refreshes should be performed on the target
 	 * resource and all of its recursive children
 	 */
-	public static final String DEPTH_INFINITE = "infinite";
+	public static final String DEPTH_INFINITE = "infinite"; //$NON-NLS-1$
 	
 	/**
 	 * The resource to refresh.
@@ -73,7 +73,7 @@ public RefreshLocalTask() {
  */
 public void execute() throws BuildException {
 	if (resource == null)
-		throw new BuildException(Policy.bind("exception.resourceNotSpecified"));
+		throw new BuildException(Policy.bind("exception.resourceNotSpecified")); //$NON-NLS-1$
 	try {
 		resource.refreshLocal(depth, null);
 	} catch (CoreException e) {
@@ -114,7 +114,7 @@ public void setResource(String value) {
 		else {
 			resource = ResourcesPlugin.getWorkspace().getRoot().getProject(value);
 			if (!resource.exists())
-				log(Policy.bind("warning.projectDoesNotExist", value), Project.MSG_WARN);
+				log(Policy.bind("warning.projectDoesNotExist", value), Project.MSG_WARN); //$NON-NLS-1$
 		}
 	}
 }

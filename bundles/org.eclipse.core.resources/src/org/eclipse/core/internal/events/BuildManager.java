@@ -82,7 +82,7 @@ public class BuildManager implements ICoreConstants, IManager {
 		protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
 			if (!hasBeenBuilt) {
 				hasBeenBuilt = true;
-				String msg = Policy.bind("events.skippingBuilder", new String[] {name, getProject().getName()});
+				String msg = Policy.bind("events.skippingBuilder", new String[] {name, getProject().getName()}); //$NON-NLS-1$
 				IStatus status = new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, 1, msg, null);
 				ResourcesPlugin.getPlugin().getLog().log(status);
 			}
@@ -110,9 +110,9 @@ protected void basicBuild(int trigger, IncrementalProjectBuilder builder, Map ar
 			String name = currentBuilder.getLabel();
 			String message;
 			if (name != null)
-				message = Policy.bind("events.invoking.2", name, builder.getProject().getFullPath().toString());
+				message = Policy.bind("events.invoking.2", name, builder.getProject().getFullPath().toString()); //$NON-NLS-1$
 			else
-				message = Policy.bind("events.invoking.1", builder.getProject().getFullPath().toString());
+				message = Policy.bind("events.invoking.1", builder.getProject().getFullPath().toString()); //$NON-NLS-1$
 			monitor.subTask(message);
 			if (Policy.DEBUG_BUILD_INVOKING) hookStartBuild(builder);
 			//do the build
@@ -150,7 +150,7 @@ protected void basicBuild(final IProject project, final int trigger, final Multi
 			// builder exceptions in core exceptions if required.
 			String message = e.getMessage();
 			if (message == null)
-				message = Policy.bind("events.unknown", e.getClass().getName(), currentBuilder.getClass().getName());
+				message = Policy.bind("events.unknown", e.getClass().getName(), currentBuilder.getClass().getName()); //$NON-NLS-1$
 			status.add(new Status(Status.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, e));
 		}
 	};
@@ -175,7 +175,7 @@ protected void basicBuild(IProject project, int trigger, String builderName, Map
 protected void basicBuild(IProject project, int trigger, ICommand[] commands, MultiStatus status, IProgressMonitor monitor) {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String message = Policy.bind("events.building.1", project.getFullPath().toString());
+		String message = Policy.bind("events.building.1", project.getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Math.max(1, commands.length));
 		for (int i = 0; i < commands.length; i++) {
 			IProgressMonitor sub = Policy.subMonitorFor(monitor, 1);
@@ -190,7 +190,7 @@ protected void basicBuild(IProject project, int trigger, ICommand[] commands, Mu
 public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask(Policy.bind("events.building.0"), Policy.totalWork);
+		monitor.beginTask(Policy.bind("events.building.0"), Policy.totalWork); //$NON-NLS-1$
 		if (!canRun(trigger))
 			return;
 		try {
@@ -202,7 +202,7 @@ public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 			leftover.removeAll(Arrays.asList(ordered));
 			unordered = (IProject[]) leftover.toArray(new IProject[leftover.size()]);
 			int num = ordered.length + unordered.length;
-			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("events.errors"), null);
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("events.errors"), null); //$NON-NLS-1$
 			for (int i = 0; i < ordered.length; i++)
 				if (ordered[i].isAccessible())
 					basicBuild(ordered[i], trigger, status, Policy.subMonitorFor(monitor, Policy.totalWork / num));
@@ -225,7 +225,7 @@ public void build(IProject project, int trigger, IProgressMonitor monitor) throw
 		return;
 	try {
 		building = true;
-		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("events.errors"), null);
+		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("events.errors"), null); //$NON-NLS-1$
 		basicBuild(project, trigger, status, monitor);
 		if (!status.isOK())
 			throw new ResourceException(status);
@@ -237,13 +237,13 @@ public void build(IProject project, int trigger, IProgressMonitor monitor) throw
 public void build(IProject project, int kind, String builderName, Map args, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String message = Policy.bind("events.building.1", project.getFullPath().toString());
+		String message = Policy.bind("events.building.1", project.getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, 1);
 		if (!canRun(kind))
 			return;
 		try {
 			building = true;
-			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("events.errors"), null);
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("events.errors"), null); //$NON-NLS-1$
 			basicBuild(project, kind, builderName, args, status, Policy.subMonitorFor(monitor, 1));
 			if (!status.isOK())
 				throw new ResourceException(status);
@@ -301,11 +301,11 @@ public Map createBuildersPersistentInfo(IProject project) throws CoreException {
 	return newInfos;
 }
 protected String debugBuilder() {
-	return currentBuilder == null ? "<no builder>" : currentBuilder.getClass().getName();
+	return currentBuilder == null ? "<no builder>" : currentBuilder.getClass().getName(); //$NON-NLS-1$
 }
 protected String debugProject() {
 	if (currentBuilder== null)
-		return "<no project>";
+		return "<no project>"; //$NON-NLS-1$
 	return currentBuilder.getProject().getFullPath().toString();
 }
 public void deleting(IProject project) {
@@ -327,7 +327,7 @@ protected IncrementalProjectBuilder getBuilder(String builderName, IProject proj
  */
 protected Hashtable getBuilders(IProject project) {
 	ProjectInfo info = (ProjectInfo) workspace.getResourceInfo(project.getFullPath(), false, false);
-	Assert.isNotNull(info, Policy.bind("events.noProject", project.getName()));
+	Assert.isNotNull(info, Policy.bind("events.noProject", project.getName())); //$NON-NLS-1$
 	return info.getBuilders();
 }
 /**
@@ -342,13 +342,13 @@ public Map getBuildersPersistentInfo(IProject project) throws CoreException {
 protected IResourceDelta getDelta(IProject project) {
 	if (currentTree == null) {
 		if (Policy.DEBUG_BUILD_FAILURE) 
-			System.out.println("Build: no tree for delta " + debugBuilder() + " [" + debugProject() + "]");
+			System.out.println("Build: no tree for delta " + debugBuilder() + " [" + debugProject() + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return null;
 	}
 	//check if this builder has indicated it cares about this project
 	if (!isInterestingProject(project)) {
 		if (Policy.DEBUG_BUILD_FAILURE) 
-			System.out.println("Build: project not interesting for this builder " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath());
+			System.out.println("Build: project not interesting for this builder " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return null;
 	}
 	//check if this project has changed
@@ -364,14 +364,14 @@ protected IResourceDelta getDelta(IProject project) {
 	long startTime = 0L;
 	if (Policy.DEBUG_BUILD_DELTA) {
 		startTime = System.currentTimeMillis();
-		System.out.println("Computing delta for project: " + project.getName());
+		System.out.println("Computing delta for project: " + project.getName()); //$NON-NLS-1$
 	}
 	result = ResourceDeltaFactory.computeDelta(workspace, lastBuiltTree, currentTree, project.getFullPath(), false);
 	deltaCache.cache(project.getFullPath(), lastBuiltTree, currentTree, result);
 	if (Policy.DEBUG_BUILD_FAILURE && result == null) 
-		System.out.println("Build: no delta " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath());
+		System.out.println("Build: no delta " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	if (Policy.DEBUG_BUILD_DELTA)
-		System.out.println("Finished computing delta, time: " + (System.currentTimeMillis()-startTime) + "ms");
+		System.out.println("Finished computing delta, time: " + (System.currentTimeMillis()-startTime) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 	return result;
 }
 /**
@@ -396,7 +396,7 @@ protected ISafeRunnable getSafeRunnable(final int trigger, final Map args, final
 				String pluginId = currentBuilder.getPluginDescriptor().getUniqueIdentifier();
 				String message = e.getMessage();
 				if (message == null)
-					message = Policy.bind("events.unknown", e.getClass().getName(), currentBuilder.getClass().getName());
+					message = Policy.bind("events.unknown", e.getClass().getName(), currentBuilder.getClass().getName()); //$NON-NLS-1$
 				status.add(new Status(IStatus.WARNING, pluginId, IResourceStatus.BUILD_FAILED, message, e));
 			}
 		}
@@ -408,7 +408,7 @@ protected ISafeRunnable getSafeRunnable(final int trigger, final Map args, final
 private void hookStartBuild(IncrementalProjectBuilder builder) {
 	ResourceStats.startBuild(builder.getClass().getName());
 	timeStamp = System.currentTimeMillis();
-	System.out.println("Invoking builder: " + toString(builder));
+	System.out.println("Invoking builder: " + toString(builder)); //$NON-NLS-1$
 }
 /**
  * Hook for adding trace options and debug information at the end of a build.
@@ -417,7 +417,7 @@ private void hookEndBuild(IncrementalProjectBuilder builder) {
 	if (timeStamp == -1)
 		return;		//builder wasn't called
 	ResourceStats.endBuild();
-	System.out.println("Builder finished: "  + toString(builder) + " time: " + (System.currentTimeMillis() - timeStamp) + "ms");
+	System.out.println("Builder finished: "  + toString(builder) + " time: " + (System.currentTimeMillis() - timeStamp) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	timeStamp = -1;
 }
 /**
@@ -450,7 +450,7 @@ protected IncrementalProjectBuilder initializeBuilder(String builderName, IProje
 		}
 		return builder;
 	} catch (CoreException e) {
-		throw new ResourceException(IResourceStatus.BUILD_FAILED, project.getFullPath(), Policy.bind("events.instantiate.0"), e);
+		throw new ResourceException(IResourceStatus.BUILD_FAILED, project.getFullPath(), Policy.bind("events.instantiate.0"), e); //$NON-NLS-1$
 	}
 }
 /**
@@ -464,7 +464,7 @@ protected IncrementalProjectBuilder instantiateBuilder(String builderName) throw
 	IConfigurationElement[] configs = extension.getConfigurationElements();
 	if (configs.length == 0)
 		return null;
-	String hasNature = configs[0].getAttribute("hasNature");
+	String hasNature = configs[0].getAttribute("hasNature"); //$NON-NLS-1$ FIXME: should this be in a field somewhere?
 	String natureId = null;
 	if (hasNature != null && hasNature.equalsIgnoreCase(Boolean.TRUE.toString())) {
 		//find the nature that owns this builder
@@ -474,7 +474,7 @@ protected IncrementalProjectBuilder instantiateBuilder(String builderName) throw
 			return null;
 	}
 	//The nature exists, or this builder doesn't specify a nature
-	InternalBuilder builder = (InternalBuilder) configs[0].createExecutableExtension("run");
+	InternalBuilder builder = (InternalBuilder) configs[0].createExecutableExtension("run"); //$NON-NLS-1$
 	builder.setPluginDescriptor(extension.getDeclaringPluginDescriptor());
 	builder.setLabel(extension.getLabel());
 	builder.setNatureId(natureId);
@@ -515,7 +515,7 @@ protected boolean needsBuild(InternalBuilder builder) {
 	//search for the builder's project
 	if (currentDelta.findNodeAt(builder.getProject().getFullPath()) != null) {
 		if (Policy.DEBUG_NEEDS_BUILD)
-			System.out.println(toString(builder) + " needs building because of changes in: " + builder.getProject().getName());
+			System.out.println(toString(builder) + " needs building because of changes in: " + builder.getProject().getName()); //$NON-NLS-1$
 		return true;
 	}
 	
@@ -524,7 +524,7 @@ protected boolean needsBuild(InternalBuilder builder) {
 	for (int i = 0; i < projects.length; i++) {
 		if (currentDelta.findNodeAt(projects[i].getFullPath()) != null) {
 			if (Policy.DEBUG_NEEDS_BUILD)
-				System.out.println(toString(builder) + " needs building because of changes in: " + projects[i].getName());
+				System.out.println(toString(builder) + " needs building because of changes in: " + projects[i].getName()); //$NON-NLS-1$
 			return true;
 		}
 	}
@@ -583,7 +583,7 @@ public void startup(IProgressMonitor monitor) {
 protected String toString(InternalBuilder builder) {
 	String name = builder.getClass().getName();
 	name = name.substring(name.lastIndexOf('.') + 1);
-	return name + "(" + builder.getProject().getName() + ")";
+	return name + "(" + builder.getProject().getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 }
 /**
  * Returns true if the nature membership rules are satisifed for the given

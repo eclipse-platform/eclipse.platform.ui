@@ -1,9 +1,15 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.indexing;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import org.eclipse.core.internal.utils.Policy;
 
 public class IndexedStoreException extends Exception {
@@ -89,40 +95,40 @@ public class IndexedStoreException extends Exception {
 	 * Initializes the messages at class load time.
 	 */
 	private static void initializeMessages() {
-		messages[GenericError] = bind("indexedStore.genericError");
-		messages[EntryKeyLengthError] = bind("indexedStore.entryKeyLengthError");
-		messages[EntryNotRemoved] = bind("indexedStore.entryNotRemoved");
-		messages[EntryValueLengthError] = bind("indexedStore.entryValueLengthError");
-		messages[EntryValueNotUpdated] = bind("indexedStore.entryValueNotUpdated");
-		messages[IndexNodeNotRetrieved] = bind("indexedStore.indexNodeNotRetrieved");
-		messages[IndexNodeNotStored] = bind("indexedStore.indexNodeNotStored");
-		messages[IndexNodeNotSplit] = bind("indexedStore.indexNodeNotSplit");
-		messages[IndexNodeNotCreated] = bind("indexedStore.indexNodeNotCreated");
-		messages[IndexExists] = bind("indexedStore.indexExists");
-		messages[IndexNotCreated] = bind("indexedStore.indexNotCreated");
-		messages[IndexNotFound] = bind("indexedStore.indexNotFound");
-		messages[IndexNotRemoved] = bind("indexedStore.indexNotRemoved");
-		messages[ObjectNotCreated] = bind("indexedStore.objectNotCreated");
-		messages[ObjectExists] = bind("indexedStore.objectExists");
-		messages[ObjectNotFound] = bind("indexedStore.objectNotFound");
-		messages[ObjectNotAcquired] = bind("indexedStore.objectNotAcquired");
-		messages[ObjectNotReleased] = bind("indexedStore.objectNotReleased");
-		messages[ObjectNotRemoved] = bind("indexedStore.objectNotRemoved");
-		messages[ObjectTypeError] = bind("indexedStore.objectTypeError");
-		messages[ObjectNotUpdated] = bind("indexedStore.objectNotUpdated");
-		messages[ObjectNotStored] = bind("indexedStore.objectNotStored");
-		messages[StoreNotCreated] = bind("indexedStore.storeNotCreated");
-		messages[StoreEmpty] = bind("indexedStore.storeEmpty");
-		messages[StoreFormatError] = bind("indexedStore.storeFormatError");
-		messages[StoreNotOpen] = bind("indexedStore.storeNotOpen");
-		messages[StoreNotReadWrite] = bind("indexedStore.storeNotReadWrite");
-		messages[StoreNotOpened] = bind("indexedStore.storeNotOpened");
-		messages[StoreNotClosed] = bind("indexedStore.storeNotClosed");
-		messages[StoreNotFlushed] = bind("indexedStore.storeNotFlushed");
-		messages[ContextNotAvailable] = bind("indexedStore.contextNotAvailable");
-		messages[ObjectIDInvalid] = bind("indexedStore.objectIDInvalid");
-		messages[EntryRemoved] = bind("indexedStore.entryRemoved");
-		messages[StoreNotConverted] = bind("indexedStore.storeNotConverted");
+		messages[GenericError] = bind("indexedStore.genericError"); //$NON-NLS-1$
+		messages[EntryKeyLengthError] = bind("indexedStore.entryKeyLengthError"); //$NON-NLS-1$
+		messages[EntryNotRemoved] = bind("indexedStore.entryNotRemoved"); //$NON-NLS-1$
+		messages[EntryValueLengthError] = bind("indexedStore.entryValueLengthError"); //$NON-NLS-1$
+		messages[EntryValueNotUpdated] = bind("indexedStore.entryValueNotUpdated"); //$NON-NLS-1$
+		messages[IndexNodeNotRetrieved] = bind("indexedStore.indexNodeNotRetrieved"); //$NON-NLS-1$
+		messages[IndexNodeNotStored] = bind("indexedStore.indexNodeNotStored"); //$NON-NLS-1$
+		messages[IndexNodeNotSplit] = bind("indexedStore.indexNodeNotSplit"); //$NON-NLS-1$
+		messages[IndexNodeNotCreated] = bind("indexedStore.indexNodeNotCreated"); //$NON-NLS-1$
+		messages[IndexExists] = bind("indexedStore.indexExists"); //$NON-NLS-1$
+		messages[IndexNotCreated] = bind("indexedStore.indexNotCreated"); //$NON-NLS-1$
+		messages[IndexNotFound] = bind("indexedStore.indexNotFound"); //$NON-NLS-1$
+		messages[IndexNotRemoved] = bind("indexedStore.indexNotRemoved"); //$NON-NLS-1$
+		messages[ObjectNotCreated] = bind("indexedStore.objectNotCreated"); //$NON-NLS-1$
+		messages[ObjectExists] = bind("indexedStore.objectExists"); //$NON-NLS-1$
+		messages[ObjectNotFound] = bind("indexedStore.objectNotFound"); //$NON-NLS-1$
+		messages[ObjectNotAcquired] = bind("indexedStore.objectNotAcquired"); //$NON-NLS-1$
+		messages[ObjectNotReleased] = bind("indexedStore.objectNotReleased"); //$NON-NLS-1$
+		messages[ObjectNotRemoved] = bind("indexedStore.objectNotRemoved"); //$NON-NLS-1$
+		messages[ObjectTypeError] = bind("indexedStore.objectTypeError"); //$NON-NLS-1$
+		messages[ObjectNotUpdated] = bind("indexedStore.objectNotUpdated"); //$NON-NLS-1$
+		messages[ObjectNotStored] = bind("indexedStore.objectNotStored"); //$NON-NLS-1$
+		messages[StoreNotCreated] = bind("indexedStore.storeNotCreated"); //$NON-NLS-1$
+		messages[StoreEmpty] = bind("indexedStore.storeEmpty"); //$NON-NLS-1$
+		messages[StoreFormatError] = bind("indexedStore.storeFormatError"); //$NON-NLS-1$
+		messages[StoreNotOpen] = bind("indexedStore.storeNotOpen"); //$NON-NLS-1$
+		messages[StoreNotReadWrite] = bind("indexedStore.storeNotReadWrite"); //$NON-NLS-1$
+		messages[StoreNotOpened] = bind("indexedStore.storeNotOpened"); //$NON-NLS-1$
+		messages[StoreNotClosed] = bind("indexedStore.storeNotClosed"); //$NON-NLS-1$
+		messages[StoreNotFlushed] = bind("indexedStore.storeNotFlushed"); //$NON-NLS-1$
+		messages[ContextNotAvailable] = bind("indexedStore.contextNotAvailable"); //$NON-NLS-1$
+		messages[ObjectIDInvalid] = bind("indexedStore.objectIDInvalid"); //$NON-NLS-1$
+		messages[EntryRemoved] = bind("indexedStore.entryRemoved"); //$NON-NLS-1$
+		messages[StoreNotConverted] = bind("indexedStore.storeNotConverted"); //$NON-NLS-1$
 	}
 	
 	private static String bind(String name) {
@@ -134,10 +140,10 @@ public class IndexedStoreException extends Exception {
 	 */
 	public String toString() {
 		StringBuffer buffer = new StringBuffer(50);
-		buffer.append("IndexedStoreException:");
+		buffer.append("IndexedStoreException:"); //$NON-NLS-1$
 		buffer.append(getMessage());
 		if (previousError != null) {
-			buffer.append("\n");
+			buffer.append("\n"); //$NON-NLS-1$
 			buffer.append(previousError.toString());
 		}
 		return buffer.toString();

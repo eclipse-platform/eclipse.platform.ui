@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.indexing;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.io.*;
 import java.util.*;
@@ -126,7 +131,7 @@ public class PageStore implements Observer {
 		metadataBuffer = new byte[SizeOfMetadataArea];
 		if (!exists(name)) create(name);
 		try {
-			this.file = new RandomAccessFile(name, "rw");
+			this.file = new RandomAccessFile(name, "rw"); //$NON-NLS-1$
 		} catch (IOException e) {
 			throw new PageStoreException(PageStoreException.OpenFailure);
 		}
@@ -508,8 +513,8 @@ public class PageStore implements Observer {
 		int m = testPages.size();
 		int n = modifiedPages.size();
 		if (m != n) {
-			throw new PageStoreException("Page set sizes do not match"
-				+ m + " " + n);
+			throw new PageStoreException("Page set sizes do not match" //$NON-NLS-1$
+				+ m + " " + n); //$NON-NLS-1$
 		}
 		Iterator testPagesStream = testPages.values().iterator();
 		Iterator modifiedPagesStream = modifiedPages.values().iterator();
@@ -517,11 +522,11 @@ public class PageStore implements Observer {
 			Page testPage = (Page) testPagesStream.next();
 			Page modifiedPage = (Page) modifiedPagesStream.next();
 			if (testPage.getPageNumber() != modifiedPage.getPageNumber()) {
-				throw new PageStoreException("Page number mismatch at " 
-					+ testPage.getPageNumber() + " " + modifiedPage.getPageNumber());
+				throw new PageStoreException("Page number mismatch at "  //$NON-NLS-1$
+					+ testPage.getPageNumber() + " " + modifiedPage.getPageNumber()); //$NON-NLS-1$
 			}
 			if (Buffer.compare(testPage.pageBuffer, modifiedPage.pageBuffer) != 0) {
-				throw new PageStoreException("Page buffer mismatch at " 
+				throw new PageStoreException("Page buffer mismatch at "  //$NON-NLS-1$
 					+ testPage.getPageNumber());
 			}
 		}

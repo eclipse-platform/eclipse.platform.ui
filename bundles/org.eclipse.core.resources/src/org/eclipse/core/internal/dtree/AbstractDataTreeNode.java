@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.dtree;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.runtime.IPath;
@@ -190,7 +195,7 @@ AbstractDataTreeNode assembleWith(AbstractDataTreeNode node, IPath key, int keyI
  	if (node != null) {
 	 	return node;
  	}
-	throw new ObjectNotFoundException(Policy.bind("dtree.missingChild", localName));
+	throw new ObjectNotFoundException(Policy.bind("dtree.missingChild", localName)); //$NON-NLS-1$
 }
 /**
  * Returns the child with the given local name.  Returns null if the child
@@ -352,7 +357,7 @@ public AbstractDataTreeNode[] getChildren () {
  * Returns the node's data
  */
 Object getData() {
-	throw new AbstractMethodError(Policy.bind("dtree.subclassImplement"));
+	throw new AbstractMethodError(Policy.bind("dtree.subclassImplement")); //$NON-NLS-1$
 }
 /**
  * return the name of the node
@@ -508,7 +513,7 @@ static void quickSort(AbstractDataTreeNode[] list, int left, int right) {
 	if (i >= 0) {
 		children[i] = node;
 	} else {
-		throw new ObjectNotFoundException(Policy.bind("dtree.missingChild", localName));
+		throw new ObjectNotFoundException(Policy.bind("dtree.missingChild", localName)); //$NON-NLS-1$
 	}
 }
 /**
@@ -569,7 +574,7 @@ public static void sort(AbstractDataTreeNode[] list) {
  * for debugging purposes only (no NLS support needed)
  */
 public String toString () {
-	return "an AbstractDataTreeNode(" + this.getName() + ") with " + getChildren().length + " children.";
+	return "an AbstractDataTreeNode(" + this.getName() + ") with " + getChildren().length + " children."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 }
 /**
  * Returns a constant describing the type of node.

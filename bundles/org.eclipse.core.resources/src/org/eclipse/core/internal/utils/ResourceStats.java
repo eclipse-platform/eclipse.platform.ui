@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.utils;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.io.*;
 import java.util.*;
@@ -49,14 +54,14 @@ private ResourceStats() {
 public static void buildException(Exception e) {
 	if (currentPlugin == null) {
 		if (DEBUG) {
-			System.out.println(Policy.bind("utils.buildException"));
+			System.out.println(Policy.bind("utils.buildException")); //$NON-NLS-1$
 		}
 		return;
 	}
 	PluginStats stats = getStats(currentPlugin);
 	if (stats == null) {
 		if (DEBUG) {
-			System.out.println(Policy.bind("utils.missing", currentPlugin));
+			System.out.println(Policy.bind("utils.missing", currentPlugin)); //$NON-NLS-1$
 		}
 		return;
 	}
@@ -89,51 +94,51 @@ public static void dumpStats(PrintWriter out) {
 		totalNotifications += stats.getNotifyCount();
 	}
 	//dump stats
-	out.println("---------------------------------------------------------------");
-	out.println(Policy.bind("utils.snapshots", Integer.toString(snapshotCount), Long.toString(snapshotTime)));
+	out.println("---------------------------------------------------------------"); //$NON-NLS-1$
+	out.println(Policy.bind("utils.snapshots", Integer.toString(snapshotCount), Long.toString(snapshotTime))); //$NON-NLS-1$
 	for (Enumeration e = pluginTable.elements(); e.hasMoreElements();) {
 		PluginStats stats = (PluginStats)e.nextElement();
-		out.println(Policy.bind("utils.stats", stats.getName()));
+		out.println(Policy.bind("utils.stats", stats.getName())); //$NON-NLS-1$
 
 		int notifyCount = stats.getNotifyCount();
 		if (notifyCount > 0) {
-			out.println(Policy.bind("utils.notifications", Integer.toString(notifyCount), Integer.toString((int)((float)notifyCount * 100.0 / (float)totalNotifications))));
+			out.println(Policy.bind("utils.notifications", Integer.toString(notifyCount), Integer.toString((int)((float)notifyCount * 100.0 / (float)totalNotifications)))); //$NON-NLS-1$
 		}
 
 		long notifyTime = stats.getNotifyRunningTime();
 		if (notifyTime > 0) {
-			out.println(Policy.bind("utils.notifyTime", Long.toString(notifyTime), Integer.toString((int)((float)notifyTime * 100.0 / (float)totalNotifyTime))));
+			out.println(Policy.bind("utils.notifyTime", Long.toString(notifyTime), Integer.toString((int)((float)notifyTime * 100.0 / (float)totalNotifyTime)))); //$NON-NLS-1$
 		}
 
 		int buildCount = stats.getBuildCount();
 		if (buildCount > 0) {
-			out.println(Policy.bind("utils.builds", Integer.toString(buildCount), Integer.toString((int)((float)buildCount * 100.0 / (float)totalBuilds))));
+			out.println(Policy.bind("utils.builds", Integer.toString(buildCount), Integer.toString((int)((float)buildCount * 100.0 / (float)totalBuilds)))); //$NON-NLS-1$
 		}
 
 		long buildTime = stats.getBuildRunningTime();
 		if (buildTime > 0) {
-			out.println(Policy.bind("utils.buildTime", Long.toString(buildTime), Integer.toString((int)((float)buildTime * 100.0 / (float)totalBuildTime))));
+			out.println(Policy.bind("utils.buildTime", Long.toString(buildTime), Integer.toString((int)((float)buildTime * 100.0 / (float)totalBuildTime)))); //$NON-NLS-1$
 		}
 
 		int exceptions = stats.getExceptionCount();
 		if (exceptions > 0) {
-			out.println(Policy.bind("utils.exceptions", Integer.toString(exceptions), Integer.toString((int)((float)exceptions * 100.0 / (float)totalExceptions))));
+			out.println(Policy.bind("utils.exceptions", Integer.toString(exceptions), Integer.toString((int)((float)exceptions * 100.0 / (float)totalExceptions)))); //$NON-NLS-1$
 		}
-		out.println("");
+		out.println(""); //$NON-NLS-1$
 	}
 }
 public static void endBuild() {
 	long end = System.currentTimeMillis();
 	if (currentPlugin == null || currentStart == -1) {
 		if (DEBUG) {
-			System.err.println(Policy.bind("utils.endBuild"));
+			System.err.println(Policy.bind("utils.endBuild")); //$NON-NLS-1$
 		}
 		return;
 	}
 	PluginStats stats = getStats(currentPlugin);
 	if (stats == null) {
 		if (DEBUG) {
-			System.out.println(Policy.bind("utils.missing", currentPlugin.toString()));
+			System.out.println(Policy.bind("utils.missing", currentPlugin.toString())); //$NON-NLS-1$
 		}
 		return;
 	}
@@ -144,14 +149,14 @@ public static void endNotify() {
 	long end = System.currentTimeMillis();
 	if (currentPlugin == null || currentStart == -1) {
 		if (DEBUG) {
-			System.err.println(Policy.bind("utils.endNotify"));
+			System.err.println(Policy.bind("utils.endNotify")); //$NON-NLS-1$
 		}
 		return;
 	}
 	PluginStats stats = getStats(currentPlugin);
 	if (stats == null) {
 		if (DEBUG) {
-			System.out.println(Policy.bind("utils.missing", currentPlugin.toString()));
+			System.out.println(Policy.bind("utils.missing", currentPlugin.toString())); //$NON-NLS-1$
 		}
 		return;
 	}
@@ -202,14 +207,14 @@ public static void listenerAdded(IResourceChangeListener listener) {
 public static void notifyException(Exception e) {
 	if (currentPlugin == null) {
 		if (DEBUG) {
-			System.out.println(Policy.bind("utils.buildException"));
+			System.out.println(Policy.bind("utils.buildException")); //$NON-NLS-1$
 		}
 		return;
 	}
 	PluginStats stats = getStats(currentPlugin);
 	if (stats == null) {
 		if (DEBUG) {
-			System.out.println(Policy.bind("utils.missing", currentPlugin.toString()));
+			System.out.println(Policy.bind("utils.missing", currentPlugin.toString())); //$NON-NLS-1$
 		}
 		return;
 	}

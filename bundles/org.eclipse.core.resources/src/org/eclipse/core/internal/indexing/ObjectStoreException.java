@@ -1,9 +1,15 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.indexing;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import org.eclipse.core.internal.utils.Policy;
 
 public class ObjectStoreException extends Exception {
@@ -47,24 +53,24 @@ public class ObjectStoreException extends Exception {
 	 * Initializes the messages at class load time.
 	 */
 	private static void initializeMessages() {
-		message[GenericFailure] = bind("objectStore.genericFailure");
-		message[InternalFailure] = bind("objectStore.internalFailure");
-		message[ObjectSizeFailure] = bind("objectStore.objectSizeFailure");
-		message[PageVacancyFailure] = bind("objectStore.pageVacancyFailure");
-		message[ObjectExistenceFailure] = bind("objectStore.objectExistenceFailure");
-		message[ObjectHeaderFailure] = bind("objectStore.objectHeaderFailure");
-		message[StoreCloseFailure] = bind("objectStore.storeCloseFailure");
-		message[StoreCreateFailure] = bind("objectStore.storeCreateFailure");
-		message[PageReadFailure] = bind("objectStore.pageReadFailure");
-		message[StoreOpenFailure] = bind("objectStore.storeOpenFailure");
-		message[ObjectInsertFailure] = bind("objectStore.objectInsertFailure");
-		message[PageWriteFailure] = bind("objectStore.pageWriteFailure");
-		message[ObjectRemoveFailure] = bind("objectStore.objectRemoveFailure");
-		message[ObjectUpdateFailure] = bind("objectStore.objectUpdateFailure");
-		message[StoreConversionFailure] = bind("objectStore.storeConversionFailure");
-		message[MetadataRequestFailure] = bind("objectStore.metadataRequestFailure");
-		message[ObjectTypeFailure] = bind("objectStore.objectTypeFailure");
-		message[ObjectIsLocked] = bind("objectStore.objectIsLocked");
+		message[GenericFailure] = bind("objectStore.genericFailure"); //$NON-NLS-1$
+		message[InternalFailure] = bind("objectStore.internalFailure"); //$NON-NLS-1$
+		message[ObjectSizeFailure] = bind("objectStore.objectSizeFailure"); //$NON-NLS-1$
+		message[PageVacancyFailure] = bind("objectStore.pageVacancyFailure"); //$NON-NLS-1$
+		message[ObjectExistenceFailure] = bind("objectStore.objectExistenceFailure"); //$NON-NLS-1$
+		message[ObjectHeaderFailure] = bind("objectStore.objectHeaderFailure"); //$NON-NLS-1$
+		message[StoreCloseFailure] = bind("objectStore.storeCloseFailure"); //$NON-NLS-1$
+		message[StoreCreateFailure] = bind("objectStore.storeCreateFailure"); //$NON-NLS-1$
+		message[PageReadFailure] = bind("objectStore.pageReadFailure"); //$NON-NLS-1$
+		message[StoreOpenFailure] = bind("objectStore.storeOpenFailure"); //$NON-NLS-1$
+		message[ObjectInsertFailure] = bind("objectStore.objectInsertFailure"); //$NON-NLS-1$
+		message[PageWriteFailure] = bind("objectStore.pageWriteFailure"); //$NON-NLS-1$
+		message[ObjectRemoveFailure] = bind("objectStore.objectRemoveFailure"); //$NON-NLS-1$
+		message[ObjectUpdateFailure] = bind("objectStore.objectUpdateFailure"); //$NON-NLS-1$
+		message[StoreConversionFailure] = bind("objectStore.storeConversionFailure"); //$NON-NLS-1$
+		message[MetadataRequestFailure] = bind("objectStore.metadataRequestFailure"); //$NON-NLS-1$
+		message[ObjectTypeFailure] = bind("objectStore.objectTypeFailure"); //$NON-NLS-1$
+		message[ObjectIsLocked] = bind("objectStore.objectIsLocked"); //$NON-NLS-1$
 	}
 
 	private static String bind(String name) {

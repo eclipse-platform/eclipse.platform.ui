@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.utils;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.util.Enumeration;
 /**
@@ -176,18 +181,18 @@ public int size() {
 }
 public String toString() {
 	StringBuffer sb = new StringBuffer();
-	sb.append("[");
+	sb.append("["); //$NON-NLS-1$
 	Enumeration enum = elements();
 	if (!isEmpty()) {
 	    while (true) {
 			sb.append(enum.nextElement());
 			if (enum.hasMoreElements())
-				sb.append(", ");
+				sb.append(", "); //$NON-NLS-1$
 			else
 				break;
 		}
 	}	    
-	sb.append("]");
+	sb.append("]"); //$NON-NLS-1$
 	return sb.toString();
 }
 }

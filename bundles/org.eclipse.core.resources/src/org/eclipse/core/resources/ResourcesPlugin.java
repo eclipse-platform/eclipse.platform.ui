@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.resources;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.resources.*;
@@ -23,7 +28,7 @@ public final class ResourcesPlugin extends Plugin {
 	 * Unique identifier constant (value <code>"org.eclipse.core.resources"</code>)
 	 * for the standard Resources plug-in.
 	 */
-	public static final String PI_RESOURCES = "org.eclipse.core.resources";
+	public static final String PI_RESOURCES = "org.eclipse.core.resources"; //$NON-NLS-1$
 
 	/*====================================================================
 	 * Constants defining the ids of the standard workspace extension points:
@@ -33,25 +38,25 @@ public final class ResourcesPlugin extends Plugin {
 	 * Simple identifier constant (value <code>"builders"</code>)
 	 * for the builders extension point.
 	 */
-	public static final String PT_BUILDERS = "builders";
+	public static final String PT_BUILDERS = "builders"; //$NON-NLS-1$
 	
 	/**
 	 * Simple identifier constant (value <code>"natures"</code>)
 	 * for the natures extension point.
 	 */
-	public static final String PT_NATURES = "natures";
+	public static final String PT_NATURES = "natures"; //$NON-NLS-1$
 
 	/**
 	 * Simple identifier constant (value <code>"markers"</code>)
 	 * for the markers extension point.
 	 */
-	public static final String PT_MARKERS = "markers";
+	public static final String PT_MARKERS = "markers"; //$NON-NLS-1$
 
 	/**
 	 * Simple identifier constant (value <code>"fileModificationValidator"</code>)
 	 * for the file modification validator extension point.
 	 */
-	public static final String PT_FILE_MODIFICATION_VALIDATOR = "fileModificationValidator";
+	public static final String PT_FILE_MODIFICATION_VALIDATOR = "fileModificationValidator"; //$NON-NLS-1$
 
 	/**
 	 * Simple identifier constant (value <code>"moveDeleteHook"</code>)
@@ -59,7 +64,7 @@ public final class ResourcesPlugin extends Plugin {
 	 * 
 	 * @since 2.0
 	 */
-	public static final String PT_MOVE_DELETE_HOOK = "moveDeleteHook";
+	public static final String PT_MOVE_DELETE_HOOK = "moveDeleteHook"; //$NON-NLS-1$
 
 	/**
 	 * Name of a preference indicating the encoding to use when reading text 
@@ -79,7 +84,7 @@ public final class ResourcesPlugin extends Plugin {
 	 * @see #getEncoding()
 	 * @see java.io.UnsupportedEncodingException
 	 */
-	public static final String PREF_ENCODING = "encoding";
+	public static final String PREF_ENCODING = "encoding"; //$NON-NLS-1$
 	
 	/**
 	 * The single instance of this plug-in runtime class.
@@ -141,7 +146,7 @@ private static void constructWorkspace() throws CoreException {
 public static String getEncoding() {
 	String enc = getPlugin().getPluginPreferences().getString(PREF_ENCODING);
 	if (enc == null || enc.length() == 0) {
-		enc = System.getProperty("file.encoding");
+		enc = System.getProperty("file.encoding"); //$NON-NLS-1$
 	}
 	return enc;
 }

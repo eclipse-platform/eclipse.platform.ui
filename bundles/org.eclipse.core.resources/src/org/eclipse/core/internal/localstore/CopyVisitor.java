@@ -1,9 +1,15 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.localstore;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.resources.*;
@@ -38,7 +44,7 @@ public CopyVisitor(IResource rootSource, IResource destination, boolean force, I
 	this.force = force;
 	this.monitor = monitor;
 	this.segmentsToDrop = rootSource.getFullPath().segmentCount();
-	status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INFO, Policy.bind("localstore.copyProblem"), null);
+	status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INFO, Policy.bind("localstore.copyProblem"), null); //$NON-NLS-1$
 }
 protected void copy(UnifiedTreeNode node) {
 	Resource source = (Resource) node.getResource();
@@ -132,7 +138,7 @@ public boolean visit(UnifiedTreeNode node) throws CoreException {
 		}
 		if (!force && !wasSynchronized) {
 			IPath path = node.getResource().getFullPath();
-			String message = Policy.bind("localstore.resourceIsOutOfSync", path.toString());
+			String message = Policy.bind("localstore.resourceIsOutOfSync", path.toString()); //$NON-NLS-1$
 			status.add(new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, path, message, null));
 			return true;
 		}

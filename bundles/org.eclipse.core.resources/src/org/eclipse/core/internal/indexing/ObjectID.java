@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.indexing;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 public class ObjectID implements Insertable {
 
@@ -42,9 +47,9 @@ public class ObjectID implements Insertable {
 
 	public String toString() {
 		StringBuffer b = new StringBuffer();
-		b.append("id(");
+		b.append("id("); //$NON-NLS-1$
 		b.append(objectNumber);
-		b.append(")");
+		b.append(")"); //$NON-NLS-1$
 		return b.toString();
 	}
 }

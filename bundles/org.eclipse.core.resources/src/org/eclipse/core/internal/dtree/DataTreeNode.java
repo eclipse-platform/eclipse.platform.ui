@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.dtree;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.internal.utils.Assert;
@@ -59,7 +64,7 @@ AbstractDataTreeNode asReverseComparisonNode(IComparator comparator) {
 	try {
 		comparison = ((NodeComparison)data).asReverseComparison(comparator);
 	} catch (ClassCastException e) {
-		Assert.isTrue(false, Policy.bind("dtree.reverse"));
+		Assert.isTrue(false, Policy.bind("dtree.reverse")); //$NON-NLS-1$
 	}
 
 	int nextChild = 0;
@@ -328,7 +333,7 @@ AbstractDataTreeNode simplifyWithParent (IPath key, DeltaDataTree parent, ICompa
  * for debugging purposes only (no NLS support needed)
  */
 public String toString () {
-	return "a DataTreeNode(" + this.getName() + ") with " + getChildren().length + " children.";
+	return "a DataTreeNode(" + this.getName() + ") with " + getChildren().length + " children."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 }
 /**
  * Returns a constant describing the type of node.

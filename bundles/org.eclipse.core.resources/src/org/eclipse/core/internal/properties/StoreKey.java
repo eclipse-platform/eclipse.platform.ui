@@ -1,9 +1,15 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.properties;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.resources.ResourceException;
@@ -79,7 +85,7 @@ private void initializeBytes() throws CoreException {
 			writeBytes(buffer, path);
 			// If prefix matching, cannot allow other fields to be specified
 			if (qualifier != null || localName != null) {
-				String message = Policy.bind("properties.invalidPropName", qualifier, localName);
+				String message = Policy.bind("properties.invalidPropName", qualifier, localName); //$NON-NLS-1$
 				throw new ResourceException(IResourceStatus.INVALID_VALUE, null, message, null);
 			}
 		} else {
@@ -95,13 +101,13 @@ private void initializeBytes() throws CoreException {
 		} else
 			if (localName != null) {
 				// Specifying a local name without a qualifier is illegal
-				String message = Policy.bind("properties.invalidPropName", qualifier, localName);
+				String message = Policy.bind("properties.invalidPropName", qualifier, localName); //$NON-NLS-1$
 				throw new ResourceException(IResourceStatus.INVALID_VALUE, null, message, null);
 			}
 		value = buffer.toByteArray();
 	} catch (IOException e) {
 		// should never happen
-		throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, Policy.bind("properties.storeProblem"), e);
+		throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, Policy.bind("properties.storeProblem"), e); //$NON-NLS-1$
 	}
 }
 /**
@@ -118,7 +124,7 @@ protected void initializeObjects() throws CoreException {
 		localName = readNullTerminated(stream);
 	} catch (IOException e) {
 		// should never happen
-		throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, Policy.bind("properties.storeProblem"), e);
+		throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, Policy.bind("properties.storeProblem"), e); //$NON-NLS-1$
 	}
 }
 public boolean isFullyDefined() {

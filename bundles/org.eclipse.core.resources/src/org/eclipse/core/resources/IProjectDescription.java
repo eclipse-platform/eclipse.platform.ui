@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.resources;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
@@ -26,7 +31,7 @@ public interface IProjectDescription {
 	 * @return the filename for the project description
 	 * @since 2.0
 	 */
-	public static final String DESCRIPTION_FILE_NAME = ".project";
+	public static final String DESCRIPTION_FILE_NAME = ".project"; //$NON-NLS-1$
 /**
  * Returns the list of build commands to run when building the described project.
  * The commands are listed in the order in which they are to be run.

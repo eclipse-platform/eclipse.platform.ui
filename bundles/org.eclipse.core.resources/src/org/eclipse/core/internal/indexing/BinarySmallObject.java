@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.indexing;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 class BinarySmallObject extends IndexedStoreObject {
 	public static final int TYPE = 5;
@@ -84,16 +89,16 @@ class BinarySmallObject extends IndexedStoreObject {
 	public String toString() {
 		int n = 10;
 		StringBuffer b = new StringBuffer();
-		b.append("BSOB(");
+		b.append("BSOB("); //$NON-NLS-1$
 		b.append(value.length);
-		b.append(" [");
+		b.append(" ["); //$NON-NLS-1$
 		for (int i = 0; i < value.length; i++) {
-			if (i > 0) b.append(" ");
+			if (i > 0) b.append(" "); //$NON-NLS-1$
 			if (i == n) break;
 			b.append(value[i]);
 		}
-		if (value.length > n) b.append(" ...");
-		b.append("])");
+		if (value.length > n) b.append(" ..."); //$NON-NLS-1$
+		b.append("])"); //$NON-NLS-1$
 		return b.toString();
 	}
 

@@ -1,9 +1,15 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.localstore;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.resources.ResourceException;
@@ -26,7 +32,7 @@ public FileSystemStore() {
 public void copy(File source, File destination, int depth, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask(Policy.bind("localstore.copying", source.getAbsolutePath()), 1);
+		monitor.beginTask(Policy.bind("localstore.copying", source.getAbsolutePath()), 1); //$NON-NLS-1$
 		Policy.checkCanceled(monitor);
 		if (source.isDirectory())
 			copyDirectory(source, destination, depth, Policy.subMonitorFor(monitor, 1));
@@ -44,7 +50,7 @@ protected void copyDirectory(File source, File destination, int depth, IProgress
 			children = new String[0];
 		}
 
-		monitor.beginTask(Policy.bind("localstore.copying", source.getAbsolutePath()), children.length);
+		monitor.beginTask(Policy.bind("localstore.copying", source.getAbsolutePath()), children.length); //$NON-NLS-1$
 		// create directory
 		writeFolder(destination);
 
@@ -65,9 +71,9 @@ protected void copyFile(File target, File destination, IProgressMonitor monitor)
 	monitor = Policy.monitorFor(monitor);
 	try {
 		int totalWork = 1 + ((int) target.length() / 8192);
-		monitor.beginTask(Policy.bind("localstore.copying", target.getAbsolutePath()), totalWork);
+		monitor.beginTask(Policy.bind("localstore.copying", target.getAbsolutePath()), totalWork); //$NON-NLS-1$
 		if (CoreFileSystemLibrary.isReadOnly(target.getAbsolutePath())) {
-			String message = Policy.bind("localstore.couldNotWriteReadOnly", target.getAbsolutePath());
+			String message = Policy.bind("localstore.couldNotWriteReadOnly", target.getAbsolutePath()); //$NON-NLS-1$
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, new Path(target.getAbsolutePath()), message, null);
 		}
 		try {
@@ -99,15 +105,15 @@ protected OutputStream createStream(File target, boolean append) throws CoreExce
 	} catch (FileNotFoundException e) {
 		String message;
 		if (target.isDirectory())
-			message = Policy.bind("localstore.notAFile", path);
+			message = Policy.bind("localstore.notAFile", path); //$NON-NLS-1$
 		else
-			message = Policy.bind("localstore.couldNotWrite", path);
+			message = Policy.bind("localstore.couldNotWrite", path); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, new Path(path), message, e);
 	}
 }
 public void delete(File target) throws CoreException {
 	if (!Workspace.clear(target)) {
-		String message = Policy.bind("localstore.couldnotDelete", target.getAbsolutePath());
+		String message = Policy.bind("localstore.couldnotDelete", target.getAbsolutePath()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_DELETE_LOCAL, new Path(target.getAbsolutePath()), message, null);
 	}
 }
@@ -148,16 +154,16 @@ protected boolean delete(File root, String filePath, MultiStatus status) {
 			failedThis = !root.delete();
 	} catch (Exception e) {
 		// we caught a runtime exception so log it
-		String message = Policy.bind("localstore.couldnotDelete", root.getAbsolutePath());
+		String message = Policy.bind("localstore.couldnotDelete", root.getAbsolutePath()); //$NON-NLS-1$
 		status.add(new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, new Path(root.getAbsolutePath()), message, e));
 		return false;
 	}
 	if (failedThis) {
 		String message = null;
 		if (CoreFileSystemLibrary.isReadOnly(root.getAbsolutePath()))
-			message = Policy.bind("localstore.couldnotDeleteReadOnly", root.getAbsolutePath());
+			message = Policy.bind("localstore.couldnotDeleteReadOnly", root.getAbsolutePath()); //$NON-NLS-1$
 		else
-			message = Policy.bind("localstore.couldnotDelete", root.getAbsolutePath());
+			message = Policy.bind("localstore.couldnotDelete", root.getAbsolutePath()); //$NON-NLS-1$
 		status.add(new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, new Path(root.getAbsolutePath()), message, null));
 	}
 	return !(failedRecursive || failedThis);
@@ -165,13 +171,13 @@ protected boolean delete(File root, String filePath, MultiStatus status) {
 public void move(File source, File destination, boolean force, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask(Policy.bind("localstore.moving", source.getAbsolutePath()), 2);
+		monitor.beginTask(Policy.bind("localstore.moving", source.getAbsolutePath()), 2); //$NON-NLS-1$
 		// are we renaming the case only?
 		boolean caseRenaming = false;
 		if (!CoreFileSystemLibrary.isCaseSensitive())
 			caseRenaming = source.getAbsolutePath().equalsIgnoreCase(destination.getAbsolutePath());
 		if (!caseRenaming && !force && destination.exists()) {
-			String message = Policy.bind("localstore.resourceExists", destination.getAbsolutePath());
+			String message = Policy.bind("localstore.resourceExists", destination.getAbsolutePath()); //$NON-NLS-1$
 			throw new ResourceException(IResourceStatus.EXISTS_LOCAL, new Path(destination.getAbsolutePath()), message, null);
 		}
 		if (source.renameTo(destination)) {
@@ -182,7 +188,7 @@ public void move(File source, File destination, boolean force, IProgressMonitor 
 					// couldn't delete the source so remove the destination
 					// and throw an error
 					Workspace.clear(destination);
-					String message = Policy.bind("localstore.couldnotDelete", source.getAbsolutePath());
+					String message = Policy.bind("localstore.couldnotDelete", source.getAbsolutePath()); //$NON-NLS-1$
 					throw new ResourceException(new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, new Path(source.getAbsolutePath()), message, null));
 				} else {
 					// source exists but destination doesn't so try to copy below
@@ -193,7 +199,7 @@ public void move(File source, File destination, boolean force, IProgressMonitor 
 					return;
 				} else {
 					// neither the source nor the destination exist. this is REALLY bad
-					String message = Policy.bind("localstore.failedMove", source.getAbsolutePath(), destination.getAbsolutePath());
+					String message = Policy.bind("localstore.failedMove", source.getAbsolutePath(), destination.getAbsolutePath()); //$NON-NLS-1$
 					throw new ResourceException(new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, new Path(source.getAbsolutePath()), message, null));
 				}
 			}
@@ -214,7 +220,7 @@ public void move(File source, File destination, boolean force, IProgressMonitor 
 					// We do not want to delete the destination in case of failure. It might
 					// the case where we already had contents in the destination, so we would
 					// be deleting resources we don't know about and the user might lose data.
-					String message = Policy.bind("localstore.couldnotMove", source.getAbsolutePath());
+					String message = Policy.bind("localstore.couldnotMove", source.getAbsolutePath()); //$NON-NLS-1$
 					throw new ResourceException(new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, new Path(source.getAbsolutePath()), message, null));
 				}
 			}
@@ -238,12 +244,12 @@ public InputStream read(File target) throws CoreException {
 	} catch (FileNotFoundException e) {
 		String message;
 		if (!target.exists())
-			message = Policy.bind("localstore.fileNotFound", target.getAbsolutePath());
+			message = Policy.bind("localstore.fileNotFound", target.getAbsolutePath()); //$NON-NLS-1$
 		else
 			if (target.isDirectory())
-				message = Policy.bind("localstore.notAFile", target.getAbsolutePath());
+				message = Policy.bind("localstore.notAFile", target.getAbsolutePath()); //$NON-NLS-1$
 			else
-				message = Policy.bind("localstore.couldNotRead", target.getAbsolutePath());
+				message = Policy.bind("localstore.couldNotRead", target.getAbsolutePath()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, new Path(target.getAbsolutePath()), message, e);
 	}
 }
@@ -266,7 +272,7 @@ public void transferStreams(InputStream source, OutputStream destination, String
 				try {
 					bytesRead = source.read(buffer);
 				} catch (IOException e) {
-					String msg = Policy.bind("localStore.failedReadDuringWrite", new String[] {path});
+					String msg = Policy.bind("localStore.failedReadDuringWrite", new String[] {path}); //$NON-NLS-1$
 					IPath p = path == null ? null : new Path(path);
 					throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, p, msg, e);
 				}
@@ -275,7 +281,7 @@ public void transferStreams(InputStream source, OutputStream destination, String
 				try {
 					destination.write(buffer, 0, bytesRead);
 				} catch (IOException e) {
-					String msg = Policy.bind("localstore.couldNotWrite", new String[] {path});
+					String msg = Policy.bind("localstore.couldNotWrite", new String[] {path}); //$NON-NLS-1$
 					IPath p = path == null ? null : new Path(path);
 					throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, p, msg, e);
 				}
@@ -317,7 +323,7 @@ public void writeFolder(File target) throws CoreException {
 	if (!target.exists())
 		target.mkdirs();
 	if (!target.isDirectory()) {
-		String message = Policy.bind("localstore.couldNotCreateFolder", target.getAbsolutePath());
+		String message = Policy.bind("localstore.couldNotCreateFolder", target.getAbsolutePath()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, new Path(target.getAbsolutePath()), message, null);
 	}
 }

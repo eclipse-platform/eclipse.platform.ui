@@ -35,19 +35,19 @@ public class IncrementalBuild extends Task {
 	 * Unique identifier constant (value <code>"KIND_INCREMENTAL"</code>)
 	 * indicating that an incremental build should be performed.
 	 */
-	public final static String KIND_INCREMENTAL = "incremental";
+	public final static String KIND_INCREMENTAL = "incremental"; //$NON-NLS-1$
 	
 	/**
 	 * Unique identifier constant (value <code>"KIND_FULL"</code>)
 	 * indicating that a full build should be performed.
 	 */
-	public final static String KIND_FULL = "full";
+	public final static String KIND_FULL = "full"; //$NON-NLS-1$
 	
 	/**
 	 * Unique identifier constant (value <code>"KIND_AUTO"</code>)
 	 * indicating that an auto build should be performed.
 	 */
-	public final static String KIND_AUTO = "auto";
+	public final static String KIND_AUTO = "auto"; //$NON-NLS-1$
 	
 	
 /**

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002 IBM Corporation and others.
+ * Copyright (c) 2000,2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -84,7 +84,7 @@ public void execute() throws BuildException {
 protected void convertFileSystemPathToResourcePath(IPath path) {
 	IResource resource = ResourcesPlugin.getWorkspace().getRoot().getContainerForLocation(path);
 	if (resource == null)
-		throw new BuildException(Policy.bind("exception.noProjectMatchThePath", fileSystemPath.toOSString()));
+		throw new BuildException(Policy.bind("exception.noProjectMatchThePath", fileSystemPath.toOSString())); //$NON-NLS-1$
 	
 	if (property != null)
 		project.setUserProperty(property, resource.getFullPath().toString());
@@ -103,7 +103,7 @@ protected void convertResourcePathToFileSystemPath(IPath path) {
 		
 	if (resource.getLocation() == null)
 		// can occur if the first segment is not a project
-		throw new BuildException(Policy.bind("exception.pathNotValid", path.toString()));
+		throw new BuildException(Policy.bind("exception.pathNotValid", path.toString())); //$NON-NLS-1$
 	
 	if (property != null)
 		project.setUserProperty(property, resource.getLocation().toOSString());
@@ -120,7 +120,7 @@ protected void convertResourcePathToFileSystemPath(IPath path) {
  */
 public void setFileSystemPath(File value) {
 	if (resourcePath != null)
-		throw new BuildException(Policy.bind("exception.cantUseBoth"));
+		throw new BuildException(Policy.bind("exception.cantUseBoth")); //$NON-NLS-1$
 	fileSystemPath = new org.eclipse.core.runtime.Path(value.toString());
 }
 
@@ -131,7 +131,7 @@ public void setFileSystemPath(File value) {
  */
 public void setResourcePath(String value) {
 	if (fileSystemPath != null)
-		throw new BuildException(Policy.bind("exception.cantUseBoth"));
+		throw new BuildException(Policy.bind("exception.cantUseBoth")); //$NON-NLS-1$
 	resourcePath = new org.eclipse.core.runtime.Path(value);
 }
 
@@ -161,15 +161,15 @@ public void setPathId(String value) {
  */
 protected void validateAttributes() throws BuildException {
 	if (property == null && pathID == null) 
-		throw new BuildException(Policy.bind("exception.propertyAndPathIdNotSpecified"));
+		throw new BuildException(Policy.bind("exception.propertyAndPathIdNotSpecified")); //$NON-NLS-1$
 
 	if (resourcePath != null && (!resourcePath.isValidPath(resourcePath.toString()) || resourcePath.isEmpty())) 
-		throw new BuildException(Policy.bind("exception.invalidPath", resourcePath.toOSString()));
+		throw new BuildException(Policy.bind("exception.invalidPath", resourcePath.toOSString())); //$NON-NLS-1$
 	else if (fileSystemPath != null && !fileSystemPath.isValidPath(fileSystemPath.toOSString())) 
-		throw new BuildException(Policy.bind("exception.invalidPath", fileSystemPath.toOSString()));
+		throw new BuildException(Policy.bind("exception.invalidPath", fileSystemPath.toOSString())); //$NON-NLS-1$
 		
 	if (resourcePath == null && fileSystemPath == null)
-		throw new BuildException(Policy.bind("exception.mustHaveOneAttribute"));
+		throw new BuildException(Policy.bind("exception.mustHaveOneAttribute")); //$NON-NLS-1$
 }
 
 }

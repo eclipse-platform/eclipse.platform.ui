@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.dtree;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.internal.utils.Policy;
@@ -39,7 +44,7 @@ AbstractDataTreeNode asBackwardDelta (DeltaDataTree myTree,
  AbstractDataTreeNode childAt (String localName) {
  	
  	/* deleted nodes do not have children */
- 	throw new ObjectNotFoundException(Policy.bind("dtree.missingChild", localName));
+ 	throw new ObjectNotFoundException(Policy.bind("dtree.missingChild", localName)); //$NON-NLS-1$
 }
 /**
  * Returns the child with the given local name
@@ -108,7 +113,7 @@ int size() {
  * is used for debugging purposes only (no NLS please)
  */
 public String toString () {
-	return "a DeletedNode(" + this.getName() + ")";
+	return "a DeletedNode(" + this.getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 }
 /**
  * Returns a string describing the type of node.

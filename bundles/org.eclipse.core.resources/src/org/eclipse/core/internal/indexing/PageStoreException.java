@@ -1,9 +1,15 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.indexing;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import org.eclipse.core.internal.utils.Policy;
 
 public class PageStoreException extends Exception {
@@ -43,20 +49,20 @@ public class PageStoreException extends Exception {
 	 * Initialize the messages at class load time.
 	 */
 	private static void initializeMessages() {
-		message[GenericFailure] = bind("pageStore.genericFailure");
-		message[CreateFailure] = bind("pageStore.createFailure");
-		message[LengthFailure] = bind("pageStore.lengthFailure");
-		message[OpenFailure] = bind("pageStore.openFailure");
-		message[ReadFailure] = bind("pageStore.readFailure");
-		message[WriteFailure] = bind("pageStore.writeFailure");
-		message[CommitFailure] = bind("pageStore.commitFailure");
-		message[MetadataRequestFailure] = bind("pageStore.metadataRequestFailure");
-		message[ConversionFailure] = bind("pageStore.conversionFailure");
-		message[IntegrityFailure] = bind("pageStore.integrityFailure");
-		message[LogOpenFailure] = bind("pageStore.logOpenFailure");
-		message[LogReadFailure] = bind("pageStore.logReadFailure");
-		message[LogWriteFailure] = bind("pageStore.logWriteFailure");
-		message[LogCreateFailure] = bind("pageStore.logCreateFailure");
+		message[GenericFailure] = bind("pageStore.genericFailure"); //$NON-NLS-1$
+		message[CreateFailure] = bind("pageStore.createFailure"); //$NON-NLS-1$
+		message[LengthFailure] = bind("pageStore.lengthFailure"); //$NON-NLS-1$
+		message[OpenFailure] = bind("pageStore.openFailure"); //$NON-NLS-1$
+		message[ReadFailure] = bind("pageStore.readFailure"); //$NON-NLS-1$
+		message[WriteFailure] = bind("pageStore.writeFailure"); //$NON-NLS-1$
+		message[CommitFailure] = bind("pageStore.commitFailure"); //$NON-NLS-1$
+		message[MetadataRequestFailure] = bind("pageStore.metadataRequestFailure"); //$NON-NLS-1$
+		message[ConversionFailure] = bind("pageStore.conversionFailure"); //$NON-NLS-1$
+		message[IntegrityFailure] = bind("pageStore.integrityFailure"); //$NON-NLS-1$
+		message[LogOpenFailure] = bind("pageStore.logOpenFailure"); //$NON-NLS-1$
+		message[LogReadFailure] = bind("pageStore.logReadFailure"); //$NON-NLS-1$
+		message[LogWriteFailure] = bind("pageStore.logWriteFailure"); //$NON-NLS-1$
+		message[LogCreateFailure] = bind("pageStore.logCreateFailure"); //$NON-NLS-1$
 	}
 
 	private static String bind(String name) {

@@ -29,7 +29,7 @@ public class IsSynchronizedVisitor extends CollectSyncStatusVisitor {
  * Creates a new IsSynchronizedVisitor.
  */
 public IsSynchronizedVisitor(IProgressMonitor monitor) {
-	super("", monitor);
+	super("", monitor); //$NON-NLS-1$
 }
 /**
  * @see CollectSyncStatusVisitor#changed(Resource)

@@ -1,9 +1,15 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.localstore;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.properties.IndexedStoreWrapper;
@@ -19,7 +25,7 @@ public class HistoryStore {
 	protected IPath location;
 	protected BlobStore blobStore;
 	private IndexedStoreWrapper store;
-	private final static String INDEX_FILE = ".index";
+	private final static String INDEX_FILE = ".index"; //$NON-NLS-1$
 
 public HistoryStore(Workspace workspace, IPath location, int limit) {
 	this.workspace = workspace;
@@ -54,7 +60,7 @@ protected void accept(byte[] key, IHistoryStoreVisitor visitor, boolean visitOnP
 		}
 		cursor.close();
 	} catch (Exception e) {
-		String message = Policy.bind("history.problemsAccessing");
+		String message = Policy.bind("history.problemsAccessing"); //$NON-NLS-1$
 		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_READ_LOCAL, null, message, e);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
@@ -92,7 +98,7 @@ protected void addState(IPath path, UniversalUniqueIdentifier uuid, long lastMod
 		store.getIndex().insert(entryToInsert.getKey(), valueID);
 	} catch (Exception e) {
 		resetIndexedStore();
-		String message = Policy.bind("history.couldNotAdd", path.toString());
+		String message = Policy.bind("history.couldNotAdd", path.toString()); //$NON-NLS-1$
 		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, path, message, e);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
@@ -165,7 +171,7 @@ public void clean() {
 		store.commit();
 		removeGarbage(blobs);
 	} catch (Exception e) {
-		String message = Policy.bind("history.problemsCleaning");
+		String message = Policy.bind("history.problemsCleaning"); //$NON-NLS-1$
 		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, null, message, e);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
@@ -189,7 +195,7 @@ public boolean exists(IFileState target) {
  */ 
 public InputStream getContents(IFileState target) throws CoreException {
 	if (!exists(target)) {
-		String message = Policy.bind("history.notValid");
+		String message = Policy.bind("history.notValid"); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
 	}
 	return blobStore.getBlob(((FileState) target).getUUID());
@@ -247,7 +253,7 @@ public void removeAll(IResource resource) {
 		cursor.close();
 		store.commit();
 	} catch (Exception e) {
-		String message = Policy.bind("history.problemsRemoving", resource.getFullPath().toString());
+		String message = Policy.bind("history.problemsRemoving", resource.getFullPath().toString()); //$NON-NLS-1$
 		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, resource.getFullPath(), message, e);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
@@ -267,7 +273,7 @@ public void removeGarbage() {
 		}
 		cursor.close();
 	} catch (Exception e) {
-		String message = Policy.bind("history.problemsCleaning");
+		String message = Policy.bind("history.problemsCleaning"); //$NON-NLS-1$
 		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, null, message, e);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
@@ -305,7 +311,7 @@ protected void resetIndexedStore() {
 	java.io.File target = location.toFile();
 	workspace.clear(target);
 	target.mkdirs();
-	String message = Policy.bind("history.corrupt");
+	String message = Policy.bind("history.corrupt"); //$NON-NLS-1$
 	ResourceStatus status = new ResourceStatus(IResourceStatus.INTERNAL_ERROR, null, message, null);
 	ResourcesPlugin.getPlugin().getLog().log(status);
 }

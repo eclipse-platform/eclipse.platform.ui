@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.indexing;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 /**
  * An IndexAnchor provides a place to hang index-wide information in a fixed spot, especially
@@ -94,11 +99,11 @@ class IndexAnchor extends IndexedStoreObject {
 	 */
 	public String toString() {
 		StringBuffer b = new StringBuffer();
-		b.append("Anchor(");
+		b.append("Anchor("); //$NON-NLS-1$
 		b.append(numberOfEntries);
-		b.append(",");
+		b.append(","); //$NON-NLS-1$
 		b.append(rootNodeAddress);
-		b.append(")");
+		b.append(")"); //$NON-NLS-1$
 		return b.toString();
 	}
 

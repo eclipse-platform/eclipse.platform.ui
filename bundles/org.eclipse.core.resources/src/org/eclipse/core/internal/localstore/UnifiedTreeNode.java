@@ -1,9 +1,15 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.localstore;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -85,8 +91,8 @@ public void setResource(IResource resource) {
 	this.resource = resource;
 }
 public String toString() {
-	String s = resource == null ? "null" : resource.getFullPath().toString();
-	return "Node: " + s;
+	String s = resource == null ? "null" : resource.getFullPath().toString(); //$NON-NLS-1$
+	return "Node: " + s; //$NON-NLS-1$
 }
 public void removeChildrenFromTree() throws CoreException {
 	tree.removeNodeChildrenFromQueue(this);

@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.watson;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -245,7 +250,7 @@ private ElementTree collapsing(int depth) {
 
 public ElementTreeDelta computeDeltaWith(ElementTree olderTree, IElementComparator comparator) {
 	if (olderTree == null || comparator == null) {
-		throw new IllegalArgumentException(Policy.bind("watson.nullArg", "ElementTree.computeDeltaWith"));
+		throw new IllegalArgumentException(Policy.bind("watson.nullArg", "ElementTree.computeDeltaWith")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	return new ElementTreeDelta((ElementTree) olderTree, this, comparator);
@@ -271,7 +276,7 @@ public ElementTreeDelta computeDeltaWith(ElementTree olderTree, IElementComparat
 
 public ElementTreeDelta computeDeltaWith(ElementTree olderTree, IElementComparator comparator, IPath path) {
 	if (olderTree == null || comparator == null) {
-		throw new IllegalArgumentException(Policy.bind("watson.nullArg", "ElementTree.computeDeltaWith"));
+		throw new IllegalArgumentException(Policy.bind("watson.nullArg", "ElementTree.computeDeltaWith")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	if (path.isRoot()) {
 		/* can optimize certain cases when computing deltas on the whole tree */
@@ -325,7 +330,7 @@ public void createElement(IPath key, Object data) {
 public void createSubtree(IPath key, ElementTree subtree) {
 	/* don't allow creating subtrees at the root */
 	if (key.isRoot()) {
-		throw new IllegalArgumentException(Policy.bind("watson.noModify"));
+		throw new IllegalArgumentException(Policy.bind("watson.noModify")); //$NON-NLS-1$
 	}
 	
 	// Clear the child IDs cache in case it's referring to this parent.
@@ -338,7 +343,7 @@ public void createSubtree(IPath key, ElementTree subtree) {
 		/* don't copy the implicit root node of the subtree */
 		IPath[] children = subtree.getChildren(subtree.getRoot());
 		if (children.length != 1) {
-			throw new IllegalArgumentException(Policy.bind("watson.illegalSubtree"));
+			throw new IllegalArgumentException(Policy.bind("watson.illegalSubtree")); //$NON-NLS-1$
 		}
 		
 		/* get the subtree for the specified key */
@@ -394,7 +399,7 @@ public int deltaDepth() {
  * Complains that an element was not found
  */
 protected void elementNotFound(IPath key) {
-	throw new IllegalArgumentException(Policy.bind("watson.elementNotFound", key.toString()));
+	throw new IllegalArgumentException(Policy.bind("watson.elementNotFound", key.toString())); //$NON-NLS-1$
 }
 /**
  * Given an array of element trees, returns the index of the 
@@ -443,7 +448,7 @@ public static int findOldest(ElementTree[] trees) {
 			return i;
 		}
 	}
-	Assert.isTrue(false, "Should not get here");
+	Assert.isTrue(false, "Should not get here"); //$NON-NLS-1$
 	return -1;
 }
 /**
@@ -551,7 +556,7 @@ public Object getElementData(IPath key) {
 public String[] getNamesOfChildren(IPath key) {
 	try {
 		if (key == null) {
-			return new String[] {""};
+			return new String[] {""}; //$NON-NLS-1$
 		} else {
 			return tree.getNamesOfChildren(key);
 		}
@@ -747,12 +752,12 @@ public void makeComplete() {
  */
 public ElementTree mergeDeltaChain(IPath path, ElementTree[] trees) {
 	if (path == null || trees == null) {
-		throw new IllegalArgumentException(Policy.bind("watson.nullArg", "ElementTree.mergeDeltaChain"));
+		throw new IllegalArgumentException(Policy.bind("watson.nullArg", "ElementTree.mergeDeltaChain")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/* The tree has to be open */
 	if (isImmutable()) {
-		throw new IllegalArgumentException(Policy.bind("watson.immutable"));
+		throw new IllegalArgumentException(Policy.bind("watson.immutable")); //$NON-NLS-1$
 	}
 	ElementTree current = this;
 	if (trees.length > 0) {
@@ -921,17 +926,17 @@ public void setTreeData(IElementTreeData data) {
  * structure suitable for debug puposes.
  */
 public String toDebugString() {
-	final StringBuffer buffer = new StringBuffer("\n");
+	final StringBuffer buffer = new StringBuffer("\n"); //$NON-NLS-1$
 	ElementTreeIterator iterator = new ElementTreeIterator();
 	IElementContentVisitor visitor = new IElementContentVisitor() {
 		public void visitElement(ElementTree tree, IPath elementID, Object elementContents) {
-			buffer.append(elementID + " " + elementContents + "\n");
+			buffer.append(elementID + " " + elementContents + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	};
 	iterator.iterate(this, visitor);
 	return buffer.toString();
 }
 public String toString() {
-	return "ElementTree(" + treeStamp + ")";
+	return "ElementTree(" + treeStamp + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 }
 }

@@ -1,12 +1,16 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.events;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-
 import java.util.*;
-
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.watson.ElementTree;
@@ -322,7 +326,7 @@ public IResource getResource() {
 		info = oldInfo;
 	else
 		info = newInfo;
-	Assert.isNotNull(info, "Do not have resource info for resource in delta");
+	Assert.isNotNull(info, "Do not have resource info for resource in delta"); //$NON-NLS-1$
 	cachedResource = deltaInfo.getWorkspace().newResource(path, info.getType());
 	return cachedResource;
 }
@@ -358,7 +362,7 @@ public String toDebugString() {
  * deep structure suitable for debug purposes.
  */
 public String toDeepDebugString() {
-	final StringBuffer buffer = new StringBuffer("\n");
+	final StringBuffer buffer = new StringBuffer("\n"); //$NON-NLS-1$
 	writeDebugString(buffer);
 	for (int i = 0; i < children.length; ++i) {
 		ResourceDelta delta = (ResourceDelta) children[i];
@@ -370,7 +374,7 @@ public String toDeepDebugString() {
  * For debugging only
  */
 public String toString() {
-	return "ResourceDelta(" + path + ")";
+	return "ResourceDelta(" + path + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 }
 /**
  * Provides a new set of markers for the delta.  This is used
@@ -386,7 +390,7 @@ public void updateMarkers(Map markers) {
  */
 public void writeDebugString(StringBuffer buffer) {
 	buffer.append(getFullPath());
-	buffer.append("[");
+	buffer.append("["); //$NON-NLS-1$
 	switch (getKind()) {
 		case ADDED :
 			buffer.append('+');
@@ -410,68 +414,68 @@ public void writeDebugString(StringBuffer buffer) {
 			buffer.append('?');
 			break;
 	}
-	buffer.append("]: {");
+	buffer.append("]: {"); //$NON-NLS-1$
 	int changeFlags = getFlags();
 	boolean prev = false;
 	if ((changeFlags & CONTENT) != 0) {
 		if (prev)
-			buffer.append(" | ");
-		buffer.append("CONTENT");
+			buffer.append(" | "); //$NON-NLS-1$
+		buffer.append("CONTENT"); //$NON-NLS-1$
 		prev = true;
 	}
 	if ((changeFlags & MOVED_FROM) != 0) {
 		if (prev)
-			buffer.append(" | ");
-		buffer.append("MOVED_FROM(" + getMovedFromPath() + ")");
+			buffer.append(" | "); //$NON-NLS-1$
+		buffer.append("MOVED_FROM(" + getMovedFromPath() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 		prev = true;
 	}
 	if ((changeFlags & MOVED_TO) != 0) {
 		if (prev)
-			buffer.append(" | ");
-		buffer.append("MOVED_TO(" + getMovedToPath() + ")");
+			buffer.append(" | "); //$NON-NLS-1$
+		buffer.append("MOVED_TO(" + getMovedToPath() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 		prev = true;
 	}
 	if ((changeFlags & OPEN) != 0) {
 		if (prev)
-			buffer.append(" | ");
-		buffer.append("OPEN");
+			buffer.append(" | "); //$NON-NLS-1$
+		buffer.append("OPEN"); //$NON-NLS-1$
 		prev = true;
 	}
 	if ((changeFlags & TYPE) != 0) {
 		if (prev)
-			buffer.append(" | ");
-		buffer.append("TYPE");
+			buffer.append(" | "); //$NON-NLS-1$
+		buffer.append("TYPE"); //$NON-NLS-1$
 		prev = true;
 	}
 	if ((changeFlags & SYNC) != 0) {
 		if (prev)
-			buffer.append(" | ");
-		buffer.append("SYNC");
+			buffer.append(" | "); //$NON-NLS-1$
+		buffer.append("SYNC"); //$NON-NLS-1$
 		prev = true;
 	}
 	if ((changeFlags & MARKERS) != 0) {
 		if (prev)
-			buffer.append(" | ");
-		buffer.append("MARKERS");
+			buffer.append(" | "); //$NON-NLS-1$
+		buffer.append("MARKERS"); //$NON-NLS-1$
 		writeMarkerDebugString(buffer);
 		prev = true;
 	}
 	if ((changeFlags & REPLACED) != 0) {
 		if (prev)
-			buffer.append(" | ");
-		buffer.append("REPLACED");
+			buffer.append(" | "); //$NON-NLS-1$
+		buffer.append("REPLACED"); //$NON-NLS-1$
 		prev = true;
 	}
 	if ((changeFlags & DESCRIPTION) != 0) {
 		if (prev)
-			buffer.append(" | ");
-		buffer.append("DESCRIPTION");
+			buffer.append(" | "); //$NON-NLS-1$
+		buffer.append("DESCRIPTION"); //$NON-NLS-1$
 		prev = true;
 	}
-	buffer.append("}");
+	buffer.append("}"); //$NON-NLS-1$
 }
 public void writeMarkerDebugString(StringBuffer buffer) {
-	buffer.append("[");
+	buffer.append("["); //$NON-NLS-1$
 	for (Iterator e = deltaInfo.getMarkerDeltas().keySet().iterator(); e.hasNext();) {
 		IPath key = (IPath) e.next();
 		if (getResource().getFullPath().equals(key)) {
@@ -480,16 +484,16 @@ public void writeMarkerDebugString(StringBuffer buffer) {
 			for (int i = 0; i < deltas.length; i++) {
 				IMarkerDelta delta = (IMarkerDelta) deltas[i];
 				if (addComma)
-					buffer.append(",");
+					buffer.append(","); //$NON-NLS-1$
 				switch (delta.getKind()) {
 					case IResourceDelta.ADDED :
-						buffer.append("+");
+						buffer.append("+"); //$NON-NLS-1$
 						break;
 					case IResourceDelta.REMOVED :
-						buffer.append("-");
+						buffer.append("-"); //$NON-NLS-1$
 						break;
 					case IResourceDelta.CHANGED :
-						buffer.append("*");
+						buffer.append("*"); //$NON-NLS-1$
 						break;
 				}
 				buffer.append(delta.getId());
@@ -497,7 +501,7 @@ public void writeMarkerDebugString(StringBuffer buffer) {
 			}
 		}
 	}
-	buffer.append("]");
+	buffer.append("]"); //$NON-NLS-1$
 }
 
 }

@@ -34,7 +34,7 @@ public CollectSyncStatusVisitor(String multiStatusTitle, IProgressMonitor monito
 	affectedResources = new ArrayList(20);
 }
 protected void changed(Resource target) {
-	String message = Policy.bind("localstore.resourceIsOutOfSync", target.getFullPath().toString());
+	String message = Policy.bind("localstore.resourceIsOutOfSync", target.getFullPath().toString()); //$NON-NLS-1$
 	status.add(new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message));
 	affectedResources.add(target);
 	resourceChanged = true;

@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.resources;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -80,35 +85,35 @@ public interface IMarker extends IAdaptable {
 	 *
 	 * @see #getType
 	 */
-	public static final String MARKER = ResourcesPlugin.PI_RESOURCES + ".marker";
+	public static final String MARKER = ResourcesPlugin.PI_RESOURCES + ".marker"; //$NON-NLS-1$
 
 	/** 
 	 * Task marker type 
 	 *
 	 * @see #getType
 	 */
-	public static final String TASK = ResourcesPlugin.PI_RESOURCES + ".taskmarker";
+	public static final String TASK = ResourcesPlugin.PI_RESOURCES + ".taskmarker"; //$NON-NLS-1$
 
 	/** 
 	 * Problem marker type 
 	 *
 	 * @see #getType
 	 */
-	public static final String PROBLEM = ResourcesPlugin.PI_RESOURCES + ".problemmarker";
+	public static final String PROBLEM = ResourcesPlugin.PI_RESOURCES + ".problemmarker"; //$NON-NLS-1$
 
 	/** 
 	 * Text marker type 
 	 *
 	 * @see #getType
 	 */
-	public static final String TEXT = ResourcesPlugin.PI_RESOURCES + ".textmarker";
+	public static final String TEXT = ResourcesPlugin.PI_RESOURCES + ".textmarker"; //$NON-NLS-1$
 
 	/** 
 	 * Bookmark marker type 
 	 *
 	 * @see #getType
 	 */
-	public static final String BOOKMARK = ResourcesPlugin.PI_RESOURCES + ".bookmark";
+	public static final String BOOKMARK = ResourcesPlugin.PI_RESOURCES + ".bookmark"; //$NON-NLS-1$
 
 	/*====================================================================
 	 * Marker attributes:
@@ -123,7 +128,7 @@ public interface IMarker extends IAdaptable {
 	 * @see #SEVERITY_INFO
 	 * @see #getAttribute
 	 */
-	public static final String SEVERITY = "severity";
+	public static final String SEVERITY = "severity"; //$NON-NLS-1$
 	
 	/** 
 	 * Message marker attribute.  A localized string describing the nature
@@ -132,7 +137,7 @@ public interface IMarker extends IAdaptable {
 	 *
 	 * @see #getAttribute
 	 */
-	public static final String MESSAGE = "message";
+	public static final String MESSAGE = "message"; //$NON-NLS-1$
 	
 	/** 
 	 * Location marker attribute.  The location is a human-readable (localized) string which
@@ -142,7 +147,7 @@ public interface IMarker extends IAdaptable {
 	 *
 	 * @see #getAttribute
 	 */
-	public static final String LOCATION = "location";
+	public static final String LOCATION = "location"; //$NON-NLS-1$
 	
 	/** 
 	 * Priority marker attribute.  A number from the set of high, normal and low 
@@ -153,7 +158,7 @@ public interface IMarker extends IAdaptable {
 	 * @see #PRIORITY_LOW
 	 * @see #getAttribute
 	 */
-	public static final String PRIORITY = "priority";
+	public static final String PRIORITY = "priority"; //$NON-NLS-1$
 	
 	/** 
 	 * Done marker attribute.  A boolean value indicating whether 
@@ -161,7 +166,7 @@ public interface IMarker extends IAdaptable {
 	 *
 	 * @see #getAttribute
 	 */
-	public static final String DONE = "done";
+	public static final String DONE = "done"; //$NON-NLS-1$
 
 	/** 
 	 * Character start marker attribute.  An integer value indicating where a text
@@ -169,7 +174,7 @@ public interface IMarker extends IAdaptable {
 	 *
 	 * @see #getAttribute
 	 */
-	public static final String CHAR_START = "charStart";
+	public static final String CHAR_START = "charStart"; //$NON-NLS-1$
 
 	/** 
 	 * Character end marker attribute.  An integer value indicating where a text
@@ -177,7 +182,7 @@ public interface IMarker extends IAdaptable {
 	 *
 	 * @see #getAttribute
 	 */
-	public static final String CHAR_END = "charEnd";
+	public static final String CHAR_END = "charEnd"; //$NON-NLS-1$
 
 	/** 
 	 * Line number marker attribute.  An integer value indicating the line number
@@ -185,7 +190,7 @@ public interface IMarker extends IAdaptable {
 	 *
 	 * @see #getAttribute
 	 */
-	public static final String LINE_NUMBER = "lineNumber";
+	public static final String LINE_NUMBER = "lineNumber"; //$NON-NLS-1$
 
 	/*====================================================================
 	 * Marker attributes values:
