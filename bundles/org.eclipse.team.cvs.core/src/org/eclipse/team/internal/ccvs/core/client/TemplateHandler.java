@@ -9,11 +9,13 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.util.Assert;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 
 /**
  * @author Administrator
@@ -38,10 +40,9 @@ public class TemplateHandler extends ResponseHandler {
 	public void handle(Session session, String localDir, IProgressMonitor monitor) throws CVSException {
 		String remoteDir = session.readLine();
 		ICVSFolder localFolder = session.getLocalRoot().getFolder(localDir);
-		Assert.isTrue(localFolder.exists());
-		ICVSFolder cvsFolder = localFolder.getFolder("CVS");
-		if (!cvsFolder.exists()) cvsFolder.mkdir();
-		ICVSFile templateFile = cvsFolder.getFile("Template");
+		IContainer container = (IContainer)localFolder.getIResource();
+		if (container == null) return;
+		ICVSFile templateFile = CVSWorkspaceRoot.getCVSFileFor(SyncFileWriter.getTemplateFile(container));
 		session.receiveFile(templateFile, false, UpdatedHandler.HANDLE_UPDATED, monitor);
 	}
 

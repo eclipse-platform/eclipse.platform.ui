@@ -635,6 +635,17 @@ public class SyncFileWriter {
 	}
 	
 	/**
+	 * Return a handle to the CVS/Template file for the given folder
+	 * @param folder
+	 * @return IFile
+	 * @throws CVSException
+	 */
+	public static IFile getTemplateFile(IContainer folder) throws CVSException {
+		IFolder cvsFolder = createCVSSubdirectory(folder);
+		return cvsFolder.getFile("Template");
+	}
+	
+	/**
 	 * Method isEdited.
 	 * @param resource
 	 * @return boolean

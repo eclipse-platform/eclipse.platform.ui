@@ -74,6 +74,7 @@ import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.MoveDeleteHook;
 import org.eclipse.team.internal.ccvs.core.util.PrepareForReplaceVisitor;
 import org.eclipse.team.internal.ccvs.core.util.ReplaceWithBaseVisitor;
+import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 import org.eclipse.team.internal.core.streams.CRLFtoLFInputStream;
 import org.eclipse.team.internal.core.streams.LFtoCRLFInputStream;
 
@@ -1389,8 +1390,9 @@ public class CVSTeamProvider extends RepositoryProvider {
 	 */
 	public String getCommitTemplate() throws CVSException {
 		ICVSFolder localFolder = getCVSWorkspaceRoot().getLocalRoot();
-		ICVSFolder cvsFolder = localFolder.getFolder("CVS");
-		ICVSFile templateFile = cvsFolder.getFile("Template");
+		ICVSFile templateFile = CVSWorkspaceRoot.getCVSFileFor(
+			SyncFileWriter.getTemplateFile(
+				(IContainer)localFolder.getIResource()));
 		if (!templateFile.exists()) return null;
 		InputStream in = new BufferedInputStream(templateFile.getContents());
 		try {
