@@ -29,6 +29,7 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 
 /**
@@ -80,6 +81,16 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
         }
         return events;
     }
+	
+	/**
+	 * Returns the parent for the given element.
+	 * 
+	 * @param element
+	 * @return parent
+	 */
+	private Object getParent(Object element) {
+		return ((ITreeContentProvider)getTreeViewer().getContentProvider()).getParent(element);
+	}
     
 	/**
 	 * @see AbstractDebugEventHandler#doHandleDebugEvents(DebugEvent[])
@@ -92,6 +103,10 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			Object source= event.getSource();
 			switch (event.getKind()) {
 				case DebugEvent.CREATE :
+					Object parent = getParent(source);
+					if (parent != null) {
+						refresh(parent);
+					}
 					refresh(source);
 					if (source instanceof IDebugTarget) {
 						getLaunchView().autoExpand(source, true);
@@ -103,13 +118,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 						fThreadTimer.getTimedOutThreads().remove(source);
 						remove(source);
 					} else {
-					    Object parent = null;
-						if (source instanceof IDebugTarget) {
-							clearSourceSelection(source);
-							parent = ((IDebugTarget)source).getLaunch();
-						} else if (source instanceof IProcess) {
-						    parent = ((IProcess)source).getLaunch();
-						}
+					    parent = getParent(source);
 						if (parent != null) {
 						    refresh(parent);
 						}
