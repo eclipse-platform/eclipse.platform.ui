@@ -217,12 +217,6 @@
             description="%Command.syncLast.description"
             id="org.eclipse.team.ui.synchronizeLast">
       </command>
-      <keyBinding
-            string=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.team.ui.synchronizeAll"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
         name="%Synchronizing.perspective"
         description="%Synchronizing.openPerspectiveDescription"
