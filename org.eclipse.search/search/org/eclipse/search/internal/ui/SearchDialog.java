@@ -40,7 +40,6 @@ import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.search.ui.ISearchPageScoreComputer;
 import org.eclipse.search.ui.IWorkingSet;
-import org.eclipse.search.ui.SearchUI;
 
 import org.eclipse.search.internal.ui.util.ExtendedDialogWindow;
 
@@ -105,7 +104,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		super.configureShell(shell);
 		shell.setText(SearchMessages.getString("SearchDialog.title")); //$NON-NLS-1$
 		shell.setImage(SearchPluginImages.get(SearchPluginImages.IMG_TOOL_SEARCH));
-		WorkbenchHelp.setHelp(shell, new Object[] { ISearchHelpContextIds.SEARCH_DIALOG });		
+		WorkbenchHelp.setHelp(shell, ISearchHelpContextIds.SEARCH_DIALOG);
 	}
 
 	public IWorkspace getWorkspace() {

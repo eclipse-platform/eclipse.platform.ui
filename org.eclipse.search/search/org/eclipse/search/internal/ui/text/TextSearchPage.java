@@ -312,7 +312,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		setControl(result);
 		
-		WorkbenchHelp.setHelp(result, new Object[] { ISearchHelpContextIds.TEXT_SEARCH_PAGE });		
+		WorkbenchHelp.setHelp(result, ISearchHelpContextIds.TEXT_SEARCH_PAGE);
 	}
 
 	private void handleWidgetSelected() {

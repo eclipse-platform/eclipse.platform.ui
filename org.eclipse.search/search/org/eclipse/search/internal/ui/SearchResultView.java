@@ -10,7 +10,6 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -27,7 +26,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.help.ViewContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
 
@@ -81,7 +79,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		fillToolBar(getViewSite().getActionBars().getToolBarManager());	
 		getSite().setSelectionProvider(fViewer);
 		
-		WorkbenchHelp.setHelp(fViewer.getControl(), new ViewContextComputer(this, ISearchHelpContextIds.SEARCH_VIEW));
+		WorkbenchHelp.setHelp(fViewer.getControl(), ISearchHelpContextIds.SEARCH_VIEW);
 	}
 	
 	/**

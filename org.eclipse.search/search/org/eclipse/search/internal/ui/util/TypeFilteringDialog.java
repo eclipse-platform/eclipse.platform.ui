@@ -169,9 +169,7 @@ public class TypeFilteringDialog extends SelectionDialog {
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		WorkbenchHelp.setHelp(
-			shell,
-			new Object[] { ISearchHelpContextIds.TYPE_FILTERING_DIALOG });
+		WorkbenchHelp.setHelp(shell, ISearchHelpContextIds.TYPE_FILTERING_DIALOG);
 	}
 
 	/* (non-Javadoc)
