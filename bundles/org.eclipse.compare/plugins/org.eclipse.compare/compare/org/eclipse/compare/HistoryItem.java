@@ -15,6 +15,7 @@ import java.io.BufferedInputStream;
 
 import org.eclipse.swt.graphics.Image;
 
+import org.eclipse.compare.internal.IResourceProvider;
 import org.eclipse.core.resources.IEncodedStorage;
 import org.eclipse.core.resources.IFileState;
 import org.eclipse.core.resources.IResource;
@@ -31,7 +32,7 @@ import org.eclipse.core.runtime.IPath;
  * Clients may instantiate this class; it is not intended to be subclassed.
  * </p>
  */
-public class HistoryItem implements IEncodedStreamContentAccessor, ITypedElement, IModificationDate {
+public class HistoryItem implements IEncodedStreamContentAccessor, ITypedElement, IModificationDate, IResourceProvider {
 	
 	private ITypedElement fBase;
 	private IFileState fFileState; 
@@ -90,12 +91,19 @@ public class HistoryItem implements IEncodedStreamContentAccessor, ITypedElement
 	public String getCharset() throws CoreException {
 	    String charset= fFileState.getCharset(); 
 	    if (charset == null) {
-		    IPath fullPath = fFileState.getFullPath();
-		    IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(fullPath);
+		    IResource resource= getResource();
 		    if (resource instanceof IEncodedStorage)
 		    	charset= ((IEncodedStorage)resource).getCharset();
 	    }
 		return charset;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.internal.IResourceProvider#getResource()
+	 */
+	public IResource getResource() {
+	    IPath fullPath= fFileState.getFullPath();
+	    return ResourcesPlugin.getWorkspace().getRoot().findMember(fullPath);
 	}
 }
 

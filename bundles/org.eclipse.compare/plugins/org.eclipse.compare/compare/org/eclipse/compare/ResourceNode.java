@@ -20,6 +20,7 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.compare.internal.IResourceProvider;
 import org.eclipse.compare.internal.Utilities;
 import org.eclipse.compare.structuremergeviewer.IStructureComparator;
 
@@ -35,7 +36,7 @@ import org.eclipse.compare.structuremergeviewer.IStructureComparator;
  */
 public class ResourceNode extends BufferedContent
 			implements IEncodedStreamContentAccessor, IStructureComparator, ITypedElement,
-							IEditableContent, IModificationDate {
+							IEditableContent, IModificationDate, IResourceProvider {
 			
 	private IResource fResource;
 	private ArrayList fChildren;
