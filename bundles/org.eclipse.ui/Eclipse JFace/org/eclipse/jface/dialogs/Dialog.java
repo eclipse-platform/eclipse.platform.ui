@@ -386,11 +386,7 @@ protected Button createButton(Composite parent, int id, String label, boolean de
 	Button button = new Button(parent, SWT.PUSH);
 
 	button.setText(label);
-	GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-	int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-	data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-	button.setLayoutData(data);
+	setButtonLayoutData(button);
 	
 	button.setData(new Integer(id));
 	button.addSelectionListener(new SelectionAdapter() {
@@ -408,6 +404,14 @@ protected Button createButton(Composite parent, int id, String label, boolean de
 	buttons.put(new Integer(id), button);
 	
 	return button;
+}
+
+protected void setButtonLayoutData(Button button) {
+	GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+	int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+	button.setLayoutData(data);
 }
 /**
  * Creates and returns the contents of this dialog's 
