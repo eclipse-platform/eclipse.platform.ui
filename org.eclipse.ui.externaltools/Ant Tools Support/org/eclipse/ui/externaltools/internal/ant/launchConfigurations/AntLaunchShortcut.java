@@ -31,6 +31,7 @@ import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -39,7 +40,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ui.externaltools.internal.model.IPreferenceConstants;
 import org.eclipse.ui.externaltools.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.model.ToolUtil;
@@ -93,7 +96,10 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	protected void launch(IResource resource, String mode) {
 		ILaunchConfiguration configuration= null;
 		if (!("xml".equalsIgnoreCase(resource.getFileExtension()))) { //$NON-NLS-1$
-			resource= findBuildFile(resource);
+			if (resource.getType() == IFile.FILE) {
+				resource= resource.getParent();
+			}
+			resource= findBuildFile((IContainer)resource);
 		} 
 		if (resource != null) {
 			if (verifyMode(mode)) {
@@ -132,20 +138,27 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	 * Returns the first build file found that matches the 
 	 * search criteria.
 	 */
-	private IFile findBuildFile(IResource parent) {
-		if (parent.getType() == IFile.FILE) {
-			parent= parent.getParent();
-		}
-		if (parent == null) {
+	private IFile findBuildFile(IContainer parent) {
+		IPreferenceStore prefs= ExternalToolsPlugin.getDefault().getPreferenceStore();
+		String buildFileNames= prefs.getString(IPreferenceConstants.ANT_FIND_BUILD_FILE_NAMES);
+		if (buildFileNames.length() == 0) {
+			//the user has not specified any names to look for
 			return null;
 		}
-		IResource file= ((IContainer)parent).findMember("build.xml");
+		String[] names= AntUtil.parseString(buildFileNames, ",");
+		IResource file= null;
 		while (file == null || file.getType() != IFile.FILE) {		
+			for (int i = 0; i < names.length; i++) {
+				String string = names[i];
+				file= parent.findMember(string);
+				if (file != null && file.getType() == IFile.FILE) {
+					break;
+				}
+			}
 			parent = parent.getParent();
 			if (parent == null) {
 				return null;
 			}
-			file= ((IContainer)parent).findMember("build.xml");
 		}
 		return (IFile)file;
 	}
