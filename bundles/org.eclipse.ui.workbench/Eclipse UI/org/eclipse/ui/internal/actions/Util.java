@@ -12,6 +12,8 @@ Contributors:
 package org.eclipse.ui.internal.actions;
 
 import java.util.List;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 public final class Util {
 
@@ -81,6 +83,19 @@ public final class Util {
 
 	public static boolean equals(Object left, Object right) {
 		return left == null ? right == null : left.equals(right);
+	}
+
+	public static String getString(ResourceBundle resourceBundle, String key)
+		throws IllegalArgumentException {
+		if (resourceBundle == null || key == null)
+			throw new IllegalArgumentException();
+
+		try {
+			return resourceBundle.getString(key);
+		} catch (MissingResourceException eMissingResource) {
+			System.err.println(eMissingResource);
+			return key;
+		}
 	}
 
 	public static boolean isChildOf(Object[] left, Object[] right, boolean equals) {

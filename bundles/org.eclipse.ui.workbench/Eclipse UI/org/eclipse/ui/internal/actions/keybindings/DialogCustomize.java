@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -58,8 +59,10 @@ import org.eclipse.ui.internal.actions.Util;
 
 final class DialogCustomize extends Dialog {
 
-	private final static String ACTION_CONFLICT = Messages.getString("DialogCustomize.ActionConflict"); //$NON-NLS-1$
-	private final static String ACTION_UNDEFINED = Messages.getString("DialogCustomize.ActionUndefined"); //$NON-NLS-1$
+	private final static ResourceBundle resourceBundle = ResourceBundle.getBundle(DialogCustomize.class.getName());
+	
+	private final static String ACTION_CONFLICT = Util.getString(resourceBundle, "ActionConflict"); //$NON-NLS-1$
+	private final static String ACTION_UNDEFINED = Util.getString(resourceBundle, "ActionUndefined"); //$NON-NLS-1$
 	private final static int DIFFERENCE_ADD = 0;	
 	private final static int DIFFERENCE_CHANGE = 1;	
 	private final static int DIFFERENCE_MINUS = 2;	
@@ -254,7 +257,7 @@ final class DialogCustomize extends Dialog {
 
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		shell.setText(Messages.getString("DialogCustomize.Title")); //$NON-NLS-1$
+		shell.setText(Util.getString(resourceBundle, "Title")); //$NON-NLS-1$
 	}
 
 	protected Control createDialogArea(Composite parent) {
@@ -629,11 +632,11 @@ final class DialogCustomize extends Dialog {
 		gridLayout.numColumns = 3;		
 		groupBrowseAction.setLayout(gridLayout);
 		groupBrowseAction.setLayoutData(new GridData(GridData.FILL_BOTH));
-		groupBrowseAction.setText(Messages.getString("DialogCustomize.GroupBrowseAction")); //$NON-NLS-1$	
+		groupBrowseAction.setText(Util.getString(resourceBundle, "GroupBrowseAction")); //$NON-NLS-1$	
 
 		labelAction = new Label(groupBrowseAction, SWT.LEFT);
 		labelAction.setFont(font);
-		labelAction.setText(Messages.getString("DialogCustomize.LabelAction")); //$NON-NLS-1$
+		labelAction.setText(Util.getString(resourceBundle, "LabelAction")); //$NON-NLS-1$
 
 		comboAction = new Combo(groupBrowseAction, SWT.READ_ONLY);
 		comboAction.setFont(font);
@@ -659,17 +662,17 @@ final class DialogCustomize extends Dialog {
 
 		tableColumn = new TableColumn(tableAction, SWT.NULL, 1);
 		tableColumn.setResizable(true);
-		tableColumn.setText(Messages.getString("DialogCustomize.HeaderKeySequence")); //$NON-NLS-1$
+		tableColumn.setText(Util.getString(resourceBundle, "HeaderKeySequence")); //$NON-NLS-1$
 		tableColumn.setWidth(350);	
 
 		tableColumn = new TableColumn(tableAction, SWT.NULL, 2);
 		tableColumn.setResizable(true);
-		tableColumn.setText(Messages.getString("DialogCustomize.HeaderScope")); //$NON-NLS-1$
+		tableColumn.setText(Util.getString(resourceBundle, "HeaderScope")); //$NON-NLS-1$
 		tableColumn.setWidth(100);
 
 		tableColumn = new TableColumn(tableAction, SWT.NULL, 3);
 		tableColumn.setResizable(true);
-		tableColumn.setText(Messages.getString("DialogCustomize.HeaderConfiguration")); //$NON-NLS-1$
+		tableColumn.setText(Util.getString(resourceBundle, "HeaderConfiguration")); //$NON-NLS-1$
 		tableColumn.setWidth(100);
 
 		/*
@@ -679,7 +682,7 @@ final class DialogCustomize extends Dialog {
 		gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		gridData.horizontalSpan = 3;				
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		buttonDetails.setText(Messages.getString("DialogCustomize.ButtonDetails")); //$NON-NLS-1$
+		buttonDetails.setText(Util.getString(resourceBundle, "ButtonDetails")); //$NON-NLS-1$
 		gridData.widthHint = Math.max(widthHint, buttonDetails.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + SPACE;
 		buttonDetails.setLayoutData(gridData);		
 		*/
@@ -690,11 +693,11 @@ final class DialogCustomize extends Dialog {
 		gridLayout.numColumns = 3;		
 		groupBrowseKeySequence.setLayout(gridLayout);
 		groupBrowseKeySequence.setLayoutData(new GridData(GridData.FILL_BOTH));
-		groupBrowseKeySequence.setText(Messages.getString("DialogCustomize.GroupBrowseKeySequence")); //$NON-NLS-1$	
+		groupBrowseKeySequence.setText(Util.getString(resourceBundle, "GroupBrowseKeySequence")); //$NON-NLS-1$	
 
 		labelKeySequence = new Label(groupBrowseKeySequence, SWT.LEFT);
 		labelKeySequence.setFont(font);
-		labelKeySequence.setText(Messages.getString("DialogCustomize.LabelKeySequence")); //$NON-NLS-1$
+		labelKeySequence.setText(Util.getString(resourceBundle, "LabelKeySequence")); //$NON-NLS-1$
 
 		comboKeySequence = new Combo(groupBrowseKeySequence, SWT.NULL);
 		comboKeySequence.setFont(font);
@@ -720,17 +723,17 @@ final class DialogCustomize extends Dialog {
 
 		tableColumn = new TableColumn(tableKeySequence, SWT.NULL, 1);
 		tableColumn.setResizable(true);
-		tableColumn.setText(Messages.getString("DialogCustomize.HeaderAction")); //$NON-NLS-1$
+		tableColumn.setText(Util.getString(resourceBundle, "HeaderAction")); //$NON-NLS-1$
 		tableColumn.setWidth(350);	
 		
 		tableColumn = new TableColumn(tableKeySequence, SWT.NULL, 2);
 		tableColumn.setResizable(true);
-		tableColumn.setText(Messages.getString("DialogCustomize.HeaderScope")); //$NON-NLS-1$
+		tableColumn.setText(Util.getString(resourceBundle, "HeaderScope")); //$NON-NLS-1$
 		tableColumn.setWidth(100);
 
 		tableColumn = new TableColumn(tableKeySequence, SWT.NULL, 3);
 		tableColumn.setResizable(true);
-		tableColumn.setText(Messages.getString("DialogCustomize.HeaderConfiguration")); //$NON-NLS-1$
+		tableColumn.setText(Util.getString(resourceBundle, "HeaderConfiguration")); //$NON-NLS-1$
 		tableColumn.setWidth(100);
 
 		/*
@@ -740,7 +743,7 @@ final class DialogCustomize extends Dialog {
 		gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		gridData.horizontalSpan = 3;				
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		buttonBrowseSelectedAction.setText(Messages.getString("DialogCustomize.ButtonBrowseSelectedAction")); //$NON-NLS-1$
+		buttonBrowseSelectedAction.setText(Util.getString(resourceBundle, "ButtonBrowseSelectedAction")); //$NON-NLS-1$
 		gridData.widthHint = Math.max(widthHint, buttonBrowseSelectedAction.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + SPACE;
 		buttonBrowseSelectedAction.setLayoutData(gridData);		
 		*/
@@ -761,11 +764,11 @@ final class DialogCustomize extends Dialog {
 		gridLayout.numColumns = 2;		
 		groupState.setLayout(gridLayout);
 		groupState.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		groupState.setText(Messages.getString("DialogCustomize.GroupState")); //$NON-NLS-1$
+		groupState.setText(Util.getString(resourceBundle, "GroupState")); //$NON-NLS-1$
 
 		labelScope = new Label(groupState, SWT.LEFT);
 		labelScope.setFont(font);
-		labelScope.setText(Messages.getString("DialogCustomize.LabelScope")); //$NON-NLS-1$
+		labelScope.setText(Util.getString(resourceBundle, "LabelScope")); //$NON-NLS-1$
 
 		comboScope = new Combo(groupState, SWT.READ_ONLY);
 		comboScope.setFont(font);
@@ -775,7 +778,7 @@ final class DialogCustomize extends Dialog {
 
 		labelConfiguration = new Label(groupState, SWT.LEFT);
 		labelConfiguration.setFont(font);
-		labelConfiguration.setText(Messages.getString("DialogCustomize.LabelConfiguration")); //$NON-NLS-1$
+		labelConfiguration.setText(Util.getString(resourceBundle, "LabelConfiguration")); //$NON-NLS-1$
 
 		comboConfiguration = new Combo(groupState, SWT.READ_ONLY);
 		comboConfiguration.setFont(font);
@@ -789,11 +792,11 @@ final class DialogCustomize extends Dialog {
 		gridLayout.numColumns = 2;		
 		groupAction.setLayout(gridLayout);
 		groupAction.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		groupAction.setText(Messages.getString("DialogCustomize.GroupAction")); //$NON-NLS-1$
+		groupAction.setText(Util.getString(resourceBundle, "GroupAction")); //$NON-NLS-1$
 
 		buttonDefault = new Button(groupAction, SWT.LEFT | SWT.RADIO);
 		buttonDefault.setFont(font);
-		buttonDefault.setText(Messages.getString("DialogCustomize.ButtonDefault")); //$NON-NLS-1$
+		buttonDefault.setText(Util.getString(resourceBundle, "ButtonDefault")); //$NON-NLS-1$
 
 		textDefault = new Text(groupAction, SWT.BORDER | SWT.READ_ONLY);
 		textDefault.setFont(font);
@@ -803,7 +806,7 @@ final class DialogCustomize extends Dialog {
 
 		buttonCustom = new Button(groupAction, SWT.LEFT | SWT.RADIO);
 		buttonCustom.setFont(font);
-		buttonCustom.setText(Messages.getString("DialogCustomize.ButtonCustom")); //$NON-NLS-1$
+		buttonCustom.setText(Util.getString(resourceBundle, "ButtonCustom")); //$NON-NLS-1$
 
 		comboCustom = new Combo(groupAction, SWT.READ_ONLY);
 		comboCustom.setFont(font);
