@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ant.ui.internal.antsupport;
 
-
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 

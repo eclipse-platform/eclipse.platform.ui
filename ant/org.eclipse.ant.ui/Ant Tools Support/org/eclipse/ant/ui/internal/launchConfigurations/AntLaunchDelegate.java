@@ -227,7 +227,9 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		process.setAttribute(AntProcess.ATTR_ANT_PROCESS_ID, idStamp);
 		
 		// create "fake" command line for the process
-		process.setAttribute(IProcess.ATTR_CMDLINE, commandLine.toString());
+		if (commandLine != null) {
+			process.setAttribute(IProcess.ATTR_CMDLINE, commandLine.toString());
+		}
 	}
 
 	private StringBuffer generateCommandLine(IPath location, String[] arguments, Map userProperties, String[] propertyFiles, String[] targets, String antHome, boolean separateVM) {
@@ -273,8 +275,8 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			commandLine.append(" -logger "); //$NON-NLS-1$
 			commandLine.append(ANT_LOGGER_CLASS);
 		}
-		commandLine.append(" -buildfile "); //$NON-NLS-1$
-		commandLine.append(location.toOSString());
+		commandLine.append(" -buildfile \""); //$NON-NLS-1$
+		commandLine.append(location.toOSString() + "\"");
 		
 		if (targets != null) {
 			for (int i = 0; i < targets.length; i++) {
@@ -293,7 +295,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		IProcess[] processes= launch.getProcesses();
 		for (int i = 0; i < processes.length; i++) {
 			IProcess process = processes[i];
-			setProcessAttributes(process, idStamp, commandLine);
+			setProcessAttributes(process, idStamp, null);
 		}
 	}
 }
