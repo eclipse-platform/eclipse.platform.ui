@@ -6,21 +6,20 @@
          <meta.schema plugin="org.eclipse.ui" id="intro" name="Intro Part"/>
       </appInfo>
       <documentation>
-         This extension point is used to register a part that is responsible for rendering the initial product experience. The part should be created on application startup and is allowed to consume most of the application window client area. The extension provider is responsible for providing the content.
-&lt;p&gt;
-Life cycle of the initial product experience is as follows:
+         &lt;p&gt;This extension point is used to register implementations of special workbench parts, called intro parts, that are responsible for introducing a product to new users. An intro part is typically shown the first time a product is started up. Rules for associating an intro part implementation with particular products are also contributed via this extension point.
+&lt;/p&gt;
+The life cycle is as follows:
 &lt;ul&gt;
-&lt;li&gt;
-Initial experience area is created on startup. The class that will be used to control its state will implement the &lt;samp&gt;org.eclipse.ui.intro.IIntroSite&lt;/samp&gt; interface.  This is similar to other workbench part site objects.&lt;/li&gt;
-&lt;li&gt;Clients will use this extension point to plug in a class that implements the&lt;samp&gt;org.eclipse.ui.intro.IIntroPart&lt;/samp&gt; interface. After creation, this interface will be initialized by passing the IIntroSite object.&lt;/li&gt;
-&lt;li&gt;During the initial experience, IIntroPart can cause the IIntroSite object to go into the stand-by state, where most of the window area is consumed by the current perspective, while only a small part on the edge is still occupied by the initial experience client.  The user is free to move this area as if it were a view.&lt;/li&gt;
-&lt;li&gt;Users can toggle IIntroPart between active and stand-by mode several times.&lt;/li&gt;
-&lt;li&gt;Eventually, IIntroPart will be closed (either programmatically or explicitly by the user). The current perspective will take over the entire application window area.&lt;/li&gt;
+&lt;li&gt;The intro area is created on workbench start up. As with editor and view areas, this area is managed by an intro site (implementing &lt;code&gt;org.eclipse.ui.intro.IIntroSite&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;The id of the current product (Platform.getProduct()) is used to choose the relevant intro part implementation.
+&lt;/li&gt;
+&lt;li&gt;The intro part class (implementing &lt;code&gt;org.eclipse.ui.intro.IIntroPart&lt;/code&gt;) is created and initialized with the intro site.
+&lt;/li&gt;
+&lt;li&gt;While the intro part is showing to the user, it can transition back and forth between full and standby mode (either programmatically or explicitly by the user).
+&lt;/li&gt;
+&lt;li&gt;Eventually the intro part is closed (either programmatically or explicitly by the user). The current perspective takes over the entire workbench window area.
+&lt;/li&gt;
 &lt;/ul&gt;
-&lt;/p&gt;
-&lt;p&gt;
-Users are free to create any kind of SWT control as a client of the IIntroPart. Typically, HTML browser widget will be used in order to provide for a rich user experience.
-&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -57,28 +56,28 @@ Users are free to create any kind of SWT control as a client of the IIntroPart. 
    <element name="intro">
       <annotation>
          <documentation>
-            Specifies an introduction element.
+            Specifies an introduction. An introduction is a product-specific presentation shown to first-time users on product start up.
          </documentation>
       </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique identifier that can be used to reference the intro element
+                  a unique identifier for this introduction
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  a translatable name that will be used in the UI for this intro
+                  a translatable name for this introduction that will be shown to the user in the UI
                </documentation>
             </annotation>
          </attribute>
          <attribute name="icon" type="string">
             <annotation>
                <documentation>
-                  a relative name of the icon that will be associated with the intro
+                  a plug-in-relative file name of the icon that will be associated with this introduction
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>
@@ -88,9 +87,9 @@ Users are free to create any kind of SWT control as a client of the IIntroPart. 
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  a fully qualified name of the class that implements &lt;samp&gt;org.eclipse.ui.intro.IIntroPart&lt;/samp&gt; interface.  A common practice 
+                  a fully qualified name of the class implementing the &lt;code&gt;org.eclipse.ui.intro.IIntroPart&lt;/code&gt; interface.  A common practice 
 is to subclass &lt;samp&gt;org.eclipse.ui.part.intro.IntroPart&lt;/samp&gt; 
-in order to inherit the default functionality.
+in order to inherit the default functionality.  This class implements the introduction.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.intro.IIntroPart"/>
@@ -103,21 +102,21 @@ in order to inherit the default functionality.
    <element name="introProductBinding">
       <annotation>
          <documentation>
-            This element creates a binding between a product and an introduction.  When the workbench is started only an introduction bound to the current product (as defined by &lt;code&gt;org.eclipse.core.runtime.Platform.getProduct()&lt;/code&gt;) will be used.
+            Specifies a binding between a product and an introduction. These bindings determine which introduction is appropriate for the current product (as defined by &lt;code&gt;org.eclipse.core.runtime.Platform.getProduct()&lt;/code&gt;).
          </documentation>
       </annotation>
       <complexType>
          <attribute name="productId" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique identifier that can be used to indicate the bound product
+                  unique id of a product
                </documentation>
             </annotation>
          </attribute>
          <attribute name="introId" type="string" use="required">
             <annotation>
                <documentation>
-                  intro identifier that specifies the intro part to use for the provided product
+                  unique id of an introduction
                </documentation>
             </annotation>
          </attribute>
@@ -138,16 +137,17 @@ in order to inherit the default functionality.
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of an intro part extension:
+         The following is an example of an intro part extension that contributes an particular introduction and associates it with a particular product:
 &lt;p&gt;
 &lt;pre&gt;
   &lt;extension point=&quot;org.eclipse.ui.intro&quot;&gt;
      &lt;intro
         id=&quot;com.example.xyz.intro.custom&quot;
+        name=&quot;Welcome to XYZ&quot;
         class=&quot;com.example.xyz.intro.IntroPart&quot;/&gt;
      &lt;introProductBinding
-     	productId=&quot;com.example.xyz.Product&quot;
-     	introId=&quot;com.example.xyz.intro.custom&quot;/&gt;
+        productId=&quot;com.example.xyz.Product&quot;
+        introId=&quot;com.example.xyz.intro.custom&quot;/&gt;
   &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
@@ -159,7 +159,9 @@ in order to inherit the default functionality.
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The value of the &lt;samp&gt;class&lt;/samp&gt; attribute must be a name of the class that implements the &lt;samp&gt;org.eclipse.ui.intro.IIntroPart&lt;/samp&gt; interface. It controls the life cycle of the initial user experience using the provided &lt;samp&gt;org.eclipse.ui.intro.IIntroSite&lt;/samp&gt; object.  It is common practice to subclass &lt;samp&gt;org.eclipse.ui.part.intro.IntroPart&lt;/samp&gt; when developing a new intro in order to inherit default behaviour.
+         The value of the &lt;code&gt;class&lt;/code&gt; attribute must be the fully qualified name of a class that implements the &lt;code&gt;org.eclipse.ui.intro.IIntroPart&lt;/code&gt; interface.  A common practice 
+is to subclass &lt;code&gt;org.eclipse.ui.part.intro.IntroPart&lt;/code&gt; 
+in order to inherit the default functionality.
       </documentation>
    </annotation>
 
@@ -177,7 +179,7 @@ in order to inherit the default functionality.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2002, 2003 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2004 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Common Public License v1.0 which accompanies 
 this distribution, and is available at 

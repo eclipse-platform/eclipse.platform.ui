@@ -8,22 +8,22 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.part.intro;
+package org.eclipse.ui.part;
 
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.intro.IIntroSite;
-import org.eclipse.ui.part.WorkbenchPart;
 
 /**
  * Abstract base implementation of an intro part.
  * <p>
  * Subclasses must implement the following methods:
  * <ul>
- *   <li><code>createPartControl</code> - to create the intro controls </li>
+ *   <li><code>createPartControl</code> - to create the intro part's
+ *     controls</li>
  *   <li><code>setFocus</code> - to accept focus</li>
- * 	 <li><code>setStandbyStateChanged</code> - to change the standby mode</li>
+ * 	 <li><code>standbyStateChanged</code> - to change the standby mode</li>
  * </ul>
  * </p>
  * <p>
@@ -37,37 +37,39 @@ import org.eclipse.ui.part.WorkbenchPart;
  *   <li><code>getAdapter</code> - reimplement to make their intro adaptable</li>
  * </ul>
  * </p>
- * 
  * @since 3.0
  */
 public abstract class IntroPart extends WorkbenchPart implements IIntroPart {
 
+	/**
+	 * Creates a new intro part.
+	 */
+	protected IntroPart() {
+		super();
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.intro.IIntroPart#getIntroSite()
 	 */
-	public IIntroSite getIntroSite() {
+	public final IIntroSite getIntroSite() {
 		return (IIntroSite) getSite();
 	}
 		
-	/* (non-Javadoc)
-	 * Initializes this intro with the given intro site.  A memento is passed to
-	 * the intro which contains a snapshot of the intro state from a previous
-	 * session.  Where possible, the intro should try to recreate that state
-	 * within the part controls.
-	 * <p>
-	 * This implementation will ignore the memento and initialize the intro in
-	 * a fresh state.  Subclasses may override the implementation to perform any
-	 * state restoration as needed.
+	/**
+	 * The base implementation of this {@link IIntroPart} method
+	 * ignores the memento and initializes the part in a fresh state. 
+	 * Subclasses may extend to perform any state restoration, but must call
+	 * the super method.
 	 */
-	public void init(IIntroSite site,IMemento memento) throws PartInitException {
+	public void init(IIntroSite site, IMemento memento) throws PartInitException {
 		setSite(site);
 	}	
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.intro.IIntroPart#saveState(org.eclipse.ui.IMemento)
+	/** 
+	 * The base implementation of this {@link IIntroPart} method does nothing.
+	 * Subclasses may override.
 	 */
 	public void saveState(IMemento memento){
 	    //no-op
-	}	
+	}
 }
