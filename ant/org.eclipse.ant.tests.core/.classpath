@@ -3,7 +3,6 @@
 	<classpathentry kind="src" path="test plugin"/>
 	<classpathentry kind="src" path="tests"/>
 	<classpathentry output="test_support_bin" kind="src" path="test support"/>
-	<classpathentry kind="src" path="buildfiles/"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
