@@ -60,7 +60,7 @@ public ConvertPath() {
 }
 
 /**
- * Performs the project copy operation.
+ * Performs the path conversion operation.
  * 
  * @exception BuildException thrown if a problem occurs during execution.
  */
