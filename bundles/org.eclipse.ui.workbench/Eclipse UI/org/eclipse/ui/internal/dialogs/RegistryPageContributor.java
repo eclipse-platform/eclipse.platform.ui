@@ -35,6 +35,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  */
 
 public class RegistryPageContributor implements IPropertyPageContributor {
+    private String pluginId;
 	private String pageName;
 	private String iconName;
 	private String pageId;
@@ -54,7 +55,8 @@ public class RegistryPageContributor implements IPropertyPageContributor {
 /**
  * PropertyPageContributor constructor.
  */
-public RegistryPageContributor(String pageId, String pageName, String iconName, HashMap filterProperties, String objectClassName, boolean adaptable, IConfigurationElement pageElement) {
+public RegistryPageContributor(String pluginId, String pageId, String pageName, String iconName, HashMap filterProperties, String objectClassName, boolean adaptable, IConfigurationElement pageElement) {
+    this.pluginId = pluginId;
 	this.pageId = pageId;
 	this.pageName = pageName;
 	this.iconName = iconName;
@@ -109,6 +111,15 @@ public ImageDescriptor getPageIcon() {
 public String getPageId() {
 	return pageId;
 }
+
+/**
+ * Returns plugin ID as defined in the registry.
+ */
+
+public String getPluginId() {
+    return pluginId;
+}
+
 /**
  * Returns page name as defined in the registry.
  */

@@ -18,13 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -34,17 +27,19 @@ import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.ViewerSorter;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.activities.ICategoryActivityBinding;
+import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.activities.IMutableActivityManager;
-import org.eclipse.ui.internal.roles.ui.RoleContentProvider;
-import org.eclipse.ui.internal.roles.ui.RoleLabelProvider;
-import org.eclipse.ui.roles.IActivityBinding;
-import org.eclipse.ui.roles.IRole;
-import org.eclipse.ui.roles.IRoleManager;
 
 /**
  * A simple control provider that will allow the user to toggle on/off the
- * activities bound to roles.
+ * activities bound to categories.
  * 
  * @since 3.0
  */
@@ -55,21 +50,16 @@ public class ActivityEnabler {
 	private CheckboxTableViewer categoryViewer;
 	private Set checkedInSession = new HashSet(7),
 		uncheckedInSession = new HashSet(7);
-	private IRoleManager roleManager;
 
 	/**
 	 * Create a new instance.
 	 * 
 	 * @param activityManager
 	 *            the activity manager that will be used.
-	 * @param roleManager
-	 *            the role manager that will be used.
 	 */
 	public ActivityEnabler(
-		IMutableActivityManager activityManager,
-		IRoleManager roleManager) {
+		IMutableActivityManager activityManager) {
 		this.activityManager = activityManager;
-		this.roleManager = roleManager;
 	}
 
 	/**
@@ -78,9 +68,9 @@ public class ActivityEnabler {
 	 * @return whether all activities in the category are enabled.
 	 */
 	private boolean categoryEnabled(String categoryId) {
-		Collection roleActivities = getCategoryActivities(categoryId);
+		Collection categoryActivities = getCategoryActivities(categoryId);
 		Set enabledActivities = activityManager.getEnabledActivityIds();
-		return enabledActivities.containsAll(roleActivities);
+		return enabledActivities.containsAll(categoryActivities);
 	}
 
 	/**
@@ -106,10 +96,10 @@ public class ActivityEnabler {
 			categoryViewer = new CheckboxTableViewer(mainComposite);
 			categoryViewer.getControl().setLayoutData(
 				new GridData(GridData.FILL_BOTH));
-			categoryViewer.setContentProvider(new RoleContentProvider());
-			categoryViewer.setLabelProvider(new RoleLabelProvider(roleManager));
+			categoryViewer.setContentProvider(new CategoryContentProvider());
+			categoryViewer.setLabelProvider(new CategoryLabelProvider(activityManager));
 			categoryViewer.setSorter(new ViewerSorter());
-			categoryViewer.setInput(roleManager);
+			categoryViewer.setInput(activityManager);
 			categoryViewer.setSelection(new StructuredSelection());
 			setCategoryStates();
 		}
@@ -131,8 +121,8 @@ public class ActivityEnabler {
 				IStructuredSelection selection =
 					(IStructuredSelection) event.getSelection();
 				if (!selection.isEmpty()) {
-					String roleId = (String) selection.getFirstElement();
-					activitiesViewer.setInput(getCategoryActivities(roleId));
+					String categoryId = (String) selection.getFirstElement();
+					activitiesViewer.setInput(getCategoryActivities(categoryId));
 				}
 			}
 		});
@@ -161,30 +151,30 @@ public class ActivityEnabler {
 	 * @return all activity ids in the category.
 	 */
 	private Collection getCategoryActivities(String categoryId) {
-		IRole category = roleManager.getRole(categoryId);
-		Set activityBindings = category.getActivityBindings();
-		List roleActivities = new ArrayList(10);
+		ICategory category = activityManager.getCategory(categoryId);
+		Set activityBindings = category.getCategoryActivityBindings();
+		List categoryActivities = new ArrayList(10);
 		for (Iterator j = activityBindings.iterator(); j.hasNext();) {
-			IActivityBinding binding = (IActivityBinding) j.next();
+			ICategoryActivityBinding binding = (ICategoryActivityBinding) j.next();
 			String activityId = binding.getActivityId();
-			roleActivities.add(activityId);
+			categoryActivities.add(activityId);
 		}
-		return roleActivities;
+		return categoryActivities;
 	}
 
 	/**
 	 * Set the enabled category states based on current activity enablement.
 	 */
 	private void setCategoryStates() {
-		Set roles = roleManager.getDefinedRoleIds();
-		List enabledRoles = new ArrayList(10);
-		for (Iterator i = roles.iterator(); i.hasNext();) {
-			String roleId = (String) i.next();
-			if (categoryEnabled(roleId)) {
-				enabledRoles.add(roleId);
+		Set categories = activityManager.getDefinedCategoryIds();
+		List enabledCategories = new ArrayList(10);
+		for (Iterator i = categories.iterator(); i.hasNext();) {
+			String categoryId = (String) i.next();
+			if (categoryEnabled(categoryId)) {
+				enabledCategories.add(categoryId);
 			}
 		}
-		categoryViewer.setCheckedElements(enabledRoles.toArray());
+		categoryViewer.setCheckedElements(enabledCategories.toArray());
 	}
 
 	/**

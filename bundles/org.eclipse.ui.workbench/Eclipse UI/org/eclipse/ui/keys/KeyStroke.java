@@ -120,6 +120,24 @@ public final class KeyStroke implements Comparable {
 		specialKeyLookup.put(SpecialKey.F7.toString(), SpecialKey.F7);
 		specialKeyLookup.put(SpecialKey.F8.toString(), SpecialKey.F8);
 		specialKeyLookup.put(SpecialKey.F9.toString(), SpecialKey.F9);
+		specialKeyLookup.put(SpecialKey.NUM_LOCK.toString(), SpecialKey.NUM_LOCK);
+		specialKeyLookup.put(SpecialKey.NUMPAD_0.toString(), SpecialKey.NUMPAD_0);
+		specialKeyLookup.put(SpecialKey.NUMPAD_1.toString(), SpecialKey.NUMPAD_1);
+		specialKeyLookup.put(SpecialKey.NUMPAD_2.toString(), SpecialKey.NUMPAD_2);
+		specialKeyLookup.put(SpecialKey.NUMPAD_3.toString(), SpecialKey.NUMPAD_3);
+		specialKeyLookup.put(SpecialKey.NUMPAD_4.toString(), SpecialKey.NUMPAD_4);
+		specialKeyLookup.put(SpecialKey.NUMPAD_5.toString(), SpecialKey.NUMPAD_5);
+		specialKeyLookup.put(SpecialKey.NUMPAD_6.toString(), SpecialKey.NUMPAD_6);
+		specialKeyLookup.put(SpecialKey.NUMPAD_7.toString(), SpecialKey.NUMPAD_7);
+		specialKeyLookup.put(SpecialKey.NUMPAD_8.toString(), SpecialKey.NUMPAD_8);
+		specialKeyLookup.put(SpecialKey.NUMPAD_9.toString(), SpecialKey.NUMPAD_9);
+		specialKeyLookup.put(SpecialKey.NUMPAD_ADD.toString(), SpecialKey.NUMPAD_ADD);
+		specialKeyLookup.put(SpecialKey.NUMPAD_DECIMAL.toString(), SpecialKey.NUMPAD_DECIMAL);
+		specialKeyLookup.put(SpecialKey.NUMPAD_DIVIDE.toString(), SpecialKey.NUMPAD_DIVIDE);
+		specialKeyLookup.put(SpecialKey.NUMPAD_ENTER.toString(), SpecialKey.NUMPAD_ENTER);
+		specialKeyLookup.put(SpecialKey.NUMPAD_EQUAL.toString(), SpecialKey.NUMPAD_EQUAL);
+		specialKeyLookup.put(SpecialKey.NUMPAD_MULTIPLY.toString(), SpecialKey.NUMPAD_MULTIPLY);
+		specialKeyLookup.put(SpecialKey.NUMPAD_SUBTRACT.toString(), SpecialKey.NUMPAD_SUBTRACT);
 		specialKeyLookup.put(SpecialKey.HOME.toString(), SpecialKey.HOME);
 		specialKeyLookup.put(SpecialKey.INSERT.toString(), SpecialKey.INSERT);
 		specialKeyLookup.put(

@@ -31,25 +31,33 @@ public final class ActivityManagerEvent {
 
 	private IActivityManager activityManager;
 	private boolean definedActivityIdsChanged;
+	private boolean definedCategoryIdsChanged;
 	private boolean enabledActivityIdsChanged;
+	private boolean enabledCategoryIdsChanged;
 
 	/**
 	 * TODO javadoc
 	 * 
 	 * @param activityManager
 	 * @param definedActivityIdsChanged
+	 * @param definedCategoryIdsChanged
 	 * @param enabledActivityIdsChanged
+	 * @param enabledCategoryIdsChanged
 	 */
 	public ActivityManagerEvent(
 		IActivityManager activityManager,
 		boolean definedActivityIdsChanged,
-		boolean enabledActivityIdsChanged) {
+		boolean definedCategoryIdsChanged,
+		boolean enabledActivityIdsChanged,
+		boolean enabledCategoryIdsChanged) {
 		if (activityManager == null)
 			throw new NullPointerException();
 
 		this.activityManager = activityManager;
 		this.definedActivityIdsChanged = definedActivityIdsChanged;
+		this.definedCategoryIdsChanged = definedCategoryIdsChanged;
 		this.enabledActivityIdsChanged = enabledActivityIdsChanged;
+		this.enabledCategoryIdsChanged = enabledCategoryIdsChanged;
 	}
 
 	/**
@@ -73,7 +81,21 @@ public final class ActivityManagerEvent {
 	/**
 	 * TODO javadoc
 	 */
+	public boolean haveDefinedCategoryIdsChanged() {
+		return definedCategoryIdsChanged;
+	}
+
+	/**
+	 * TODO javadoc
+	 */
 	public boolean haveEnabledActivityIdsChanged() {
 		return enabledActivityIdsChanged;
+	}
+
+	/**
+	 * TODO javadoc
+	 */
+	public boolean haveEnabledCategoryIdsChanged() {
+		return enabledCategoryIdsChanged;
 	}
 }

@@ -424,7 +424,6 @@ public class CyclePartAction extends PageEventAction {
 			selection = items[0].getData();
 	
 		dialog.close();
-		dispose();
 	}
 	
 	/*
@@ -433,7 +432,6 @@ public class CyclePartAction extends PageEventAction {
 	private void cancel(Shell dialog) {
 		selection = null;
 		dialog.close();
-		dispose();
 	}
 	
 	/*

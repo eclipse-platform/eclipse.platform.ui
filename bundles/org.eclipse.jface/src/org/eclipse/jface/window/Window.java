@@ -14,19 +14,10 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ShellAdapter;
-import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.events.ShellListener;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 
 /**
  * A JFace window is an object that has no visual representation (no widgets)
@@ -564,8 +555,6 @@ public int open() {
 	// limit the shell size to the display size
 	constrainShellSize();
 	
-	ColorSchemeService.setSchemeColors(getShell());
-	
 	// open the window
 	shell.open();
 
@@ -681,6 +670,5 @@ public static void setExceptionHandler(IExceptionHandler handler) {
 	if(exceptionHandler instanceof DefaultExceptionHandler)
 		exceptionHandler = handler;
 }
-
 
 }

@@ -492,19 +492,27 @@ protected void addSizeItems(Menu sizeMenu) {
 /**
  * Add the pin menu item on the editor system menu
  */
-protected void addPinEditorItem(Menu parent) {}
+protected void addPinEditorItem(Menu parent) {
+	// do nothing
+}
 /**
  * Add the move items to the Move menu.
  */
-protected void addMoveItems(Menu parent) {}
+protected void addMoveItems(Menu parent) {
+	// do nothing
+}
 /**
  * Add the Fast View menu item to the part title menu.
  */
-protected void addFastViewMenuItem(Menu parent,boolean isFastView) {}
+protected void addFastViewMenuItem(Menu parent,boolean isFastView) {
+	// do nothing
+}
 /**
  * Pin this part.
  */
-protected void doDock() {}
+protected void doDock() {
+	// do nothing
+}
 
 /**
  * Return an IJobChangeListener for jobs run in this pane.

@@ -29,6 +29,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
 
@@ -177,6 +178,16 @@ public class PreferencePageRegistryReader extends RegistryReader {
 		StringTokenizer tokenizer;
 		String currentToken;
 
+		// Make the advisor's favorite the first category
+		IPreferenceNode favorite = null;
+		String favoriteId = ((Workbench) workbench).getMainPreferencePageId();
+		if (favoriteId != null) {
+			favorite = findNode(favoriteId);
+		}
+		if (favorite != null) {
+			contributions.add(favorite);
+		}
+
 		// Sort nodes based on flattened display path composed of
 		// actual labels of nodes referenced in category attribute.
 		Object[] sortedNodes = sortByCategories(nodes);
@@ -184,6 +195,10 @@ public class PreferencePageRegistryReader extends RegistryReader {
 			//Iterate through all the nodes
 			CategoryNode categoryNode = (CategoryNode) sortedNodes[i];
 			WorkbenchPreferenceNode node = categoryNode.getNode();
+			if (node == favorite) {
+				// skip it - favorite already at the top of the list
+				continue;
+			}
 			String category = node.getCategory();
 			if (category == null) {
 				contributions.add(node);

@@ -92,7 +92,7 @@ public interface ICommandManager {
 	 * Returns the set of identifiers to defined categories.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
@@ -108,7 +108,7 @@ public interface ICommandManager {
 	 * Returns the set of identifiers to defined commands.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
@@ -124,7 +124,7 @@ public interface ICommandManager {
 	 * Returns the set of identifiers to defined key configurations.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 

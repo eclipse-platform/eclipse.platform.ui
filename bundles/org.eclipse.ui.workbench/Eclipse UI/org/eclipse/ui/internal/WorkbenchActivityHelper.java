@@ -17,9 +17,11 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
+
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.PlatformUI;
@@ -27,6 +29,8 @@ import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IMutableActivityManager;
 import org.eclipse.ui.activities.IObjectActivityManager;
+import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
+import org.eclipse.ui.internal.dialogs.RegistryPageContributor;
 import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
@@ -104,7 +108,7 @@ public class WorkbenchActivityHelper {
         for (Iterator iterator = activityIds.iterator(); iterator.hasNext();) {
             IActivity activity = activityManager.getActivity((String) iterator.next());
 
-            if (activity.match(idToMatchAgainst)) {
+            if (activity.isMatch(idToMatchAgainst)) {
                 match = true;
                 if (activity.isEnabled()) {
                     enabled = true;
@@ -124,7 +128,8 @@ public class WorkbenchActivityHelper {
     private WorkbenchActivityHelper() {
         loadEnabledStates();
 
-        boolean noRoles = PlatformUI.getWorkbench().getRoleManager().getDefinedRoleIds().isEmpty();
+        // TODO kim: shouldn't you want to check for any activities (not categories)?        
+        boolean noRoles = PlatformUI.getWorkbench().getActivityManager().getDefinedActivityIds().isEmpty();
         
         if (noRoles) {
         	// TODO cast
@@ -136,6 +141,7 @@ public class WorkbenchActivityHelper {
         createNewWizardMappings();
         createPerspectiveMappings();
         createViewMappings();
+        createPropertyContributionMappings();
     }
     
     /**
@@ -152,7 +158,7 @@ public class WorkbenchActivityHelper {
         for (Iterator i = activityManager.getDefinedActivityIds().iterator(); i.hasNext();) {
             String activityId = (String) i.next();
             IActivity activity = activityManager.getActivity(activityId);
-            if (activity.match(id)) {
+            if (activity.isMatch(id)) {
                 activities.add(activityId);
             }
         }
@@ -239,6 +245,23 @@ public class WorkbenchActivityHelper {
         // and then apply the default bindings
         objectManager.applyPatternBindings();
     }
+    
+    /**
+     * Create the mappings for the property page object activity manager.
+     * Objects of interest in this manager are RegistryPageContributor.
+     */
+    private void createPropertyContributionMappings() {
+    	Collection contributors = PropertyPageContributorManager.getManager().getContributors();
+    	IObjectActivityManager objectManager = PlatformUI.getWorkbench().getObjectActivityManager(IWorkbenchConstants.PL_PROPERTY_PAGES, true);
+    	for (Iterator i = contributors.iterator(); i.hasNext();) {
+    		for (Iterator j = ((Collection) i.next()).iterator(); j.hasNext();) {
+    			RegistryPageContributor pageContributor = (RegistryPageContributor) j.next();
+    			objectManager.addObject(pageContributor.getPluginId(), pageContributor.getPageId(), pageContributor);                
+    		}                        
+    	}
+    	// and then apply the default bindings
+    	objectManager.applyPatternBindings();        
+    }    
 
     /**
 	 * Create the mappings for the perspective object activity manager. Objects

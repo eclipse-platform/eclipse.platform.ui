@@ -22,16 +22,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.StatusLineManager;
-import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.window.ApplicationWindow;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ControlAdapter;
@@ -54,6 +45,18 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.StatusLineManager;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.window.ApplicationWindow;
+
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IElementFactory;
@@ -71,10 +74,11 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.activities.IActivityService;
+import org.eclipse.ui.activities.service.IActivityService;
 import org.eclipse.ui.application.IActionBarConfigurer;
-import org.eclipse.ui.application.WorkbenchAdviser;
+import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.help.WorkbenchHelp;
+
 import org.eclipse.ui.internal.commands.ActionHandler;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -205,9 +209,9 @@ public abstract class WorkbenchWindow extends ApplicationWindow implements IWork
 	 * 
 	 * @since 3.0
 	 */
-	private static final int FILL_ALL_ACTION_BARS = WorkbenchAdviser.FILL_MENU_BAR
-		| WorkbenchAdviser.FILL_TOOL_BAR
-		| WorkbenchAdviser.FILL_STATUS_LINE;
+	private static final int FILL_ALL_ACTION_BARS = WorkbenchAdvisor.FILL_MENU_BAR
+		| WorkbenchAdvisor.FILL_TOOL_BAR
+		| WorkbenchAdvisor.FILL_STATUS_LINE;
 
 	/**
 	 * Creates and initializes a new workbench window.
@@ -247,9 +251,9 @@ public abstract class WorkbenchWindow extends ApplicationWindow implements IWork
 		};
 		
 		// let the application do further configuration
-		getAdviser().preWindowOpen(getWindowConfigurer());
+		getAdvisor().preWindowOpen(getWindowConfigurer());
 		// Fill the action bars	
-		getAdviser().fillActionBars(this, getWindowConfigurer().getActionBarConfigurer(), FILL_ALL_ACTION_BARS);
+		getAdvisor().fillActionBars(this, getWindowConfigurer().getActionBarConfigurer(), FILL_ALL_ACTION_BARS);
 
 		workbenchWindowActivityService = new WorkbenchWindowActivityService(this);
 		workbenchWindowActivityService.start();
@@ -375,17 +379,11 @@ public abstract class WorkbenchWindow extends ApplicationWindow implements IWork
 		updateDisabled = true;
 
 		try {
-			// let the adviser cancel this operation
-			boolean okToClose = getAdviser().preWindowClose(getWindowConfigurer()); 
-			if (!okToClose && !getWindowConfigurer().getWorkbenchConfigurer().emergencyClosing()) {
-				return false;
-			}
-			
 			// Only do the check if it is OK to close if we are not closing
 			// via the workbench as the workbench will check this itself.
 			Workbench workbench = getWorkbenchImpl();
 			int count = workbench.getWorkbenchWindowCount();
-			if (count <= 1 && !workbench.isClosing()) {
+			if (!workbench.isClosing() && count <= 1) {
 				windowClosed = workbench.close();
 			} else {
 				if (okToClose()) {
@@ -435,8 +433,21 @@ public abstract class WorkbenchWindow extends ApplicationWindow implements IWork
 	public int open() {
 		int result = super.open();
 		getWorkbenchImpl().fireWindowOpened(this);
+		getAdvisor().postWindowOpen(getWindowConfigurer());
 		return result;
 	}
+	
+	/* (non-Javadoc)
+	 * Method declared on Window.
+	 */
+	protected boolean canHandleShellCloseEvent() {
+		if (!super.canHandleShellCloseEvent()) {
+			return false;
+		}
+		// let the advisor veto the user's explicit request to close the window
+		return getAdvisor().preWindowShellClose(getWindowConfigurer());
+	}
+	
 	/**
 	 * @see IWorkbenchWindow
 	 */
@@ -955,7 +966,7 @@ public abstract class WorkbenchWindow extends ApplicationWindow implements IWork
 			actionPresentation.clearActionSets();
 			closeAllPages();
 			// let the application do further deconfiguration
-			getAdviser().postWindowClose(getWindowConfigurer());
+			getAdvisor().postWindowClose(getWindowConfigurer());
 			getWorkbenchImpl().fireWindowClosed(this);
 		} finally {
 			return super.close();
@@ -965,8 +976,8 @@ public abstract class WorkbenchWindow extends ApplicationWindow implements IWork
 	 * @see IWorkbenchWindow
 	 */
 	public boolean isApplicationMenu(String menuID) {
-		// delegate this question to the workbench adviser
-		return getAdviser().isApplicationMenu(getWindowConfigurer(), menuID);
+		// delegate this question to the workbench advisor
+		return getAdvisor().isApplicationMenu(getWindowConfigurer(), menuID);
 	}
 	
 	/**
@@ -1182,7 +1193,7 @@ public abstract class WorkbenchWindow extends ApplicationWindow implements IWork
 			try {
 				String defPerspID = getWorkbenchImpl().getPerspectiveRegistry().getDefaultPerspective();
 				WorkbenchPage newPage =
-					new WorkbenchPage(this, defPerspID, getAdviser().getDefaultWindowInput());
+					new WorkbenchPage(this, defPerspID, getAdvisor().getDefaultWindowInput());
 				pageList.add(newPage);
 				firePageOpened(newPage);
 			} catch (WorkbenchException e) {
@@ -1751,17 +1762,17 @@ public abstract class WorkbenchWindow extends ApplicationWindow implements IWork
 	}
 	
 	/**
-	 * Returns the workbench adviser. Assumes the workbench
+	 * Returns the workbench advisor. Assumes the workbench
 	 * has been created already.
 	 * <p>
 	 * IMPORTANT This method is declared private to prevent regular
 	 * plug-ins from downcasting IWorkbenchWindow to WorkbenchWindow and getting
-	 * hold of the workbench adviser that would allow them to tamper with the
-	 * workbench. The workbench adviser is internal to the application.
+	 * hold of the workbench advisor that would allow them to tamper with the
+	 * workbench. The workbench advisor is internal to the application.
 	 * </p>
 	 */
-	private /* private - DO NOT CHANGE */ WorkbenchAdviser getAdviser() {
-		return getWorkbenchImpl().getAdviser();
+	private /* private - DO NOT CHANGE */ WorkbenchAdvisor getAdvisor() {
+		return getWorkbenchImpl().getAdvisor();
 	}
 	
 	/*
@@ -1777,6 +1788,6 @@ public abstract class WorkbenchWindow extends ApplicationWindow implements IWork
 	 * @param flags indicate which actions to load and whether its a proxy fill
 	 */
 	public void fillActionBars(IActionBarConfigurer configurer, int flags) {
-		getAdviser().fillActionBars(this,configurer,flags);
+		getAdvisor().fillActionBars(this,configurer,flags);
 	}
 }

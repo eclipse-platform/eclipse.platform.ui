@@ -64,6 +64,7 @@ private void processChildElement(IConfigurationElement element) {
  * Reads static property page specification.
  */
 private void processPageElement(IConfigurationElement element) {
+    String pluginId = element.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
 	String pageId = element.getAttribute(ATT_ID);
 	String pageName = element.getAttribute(ATT_NAME);
 	String iconName = element.getAttribute(ATT_ICON);
@@ -92,6 +93,7 @@ private void processPageElement(IConfigurationElement element) {
 
 	IPropertyPageContributor contributor = 
 		new RegistryPageContributor(
+            pluginId,
 			pageId, 
 			pageName, 
 			iconName, 

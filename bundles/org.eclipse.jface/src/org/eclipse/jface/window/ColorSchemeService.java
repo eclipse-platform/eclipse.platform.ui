@@ -71,7 +71,6 @@ public class ColorSchemeService {
 	}
 
 	public static void setTabColors(CTabFolder2 control) {
-
 //		Color back = control.getDisplay().getSystemColor(
 //				SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
 //		Color fore = control.getDisplay().getSystemColor(
@@ -88,20 +87,20 @@ public class ColorSchemeService {
 		
 		
 		control.setBackground(
-			control.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
+			control.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND));
 //			JFaceColors.getSchemeBackground(control.getDisplay()));
 		control.setForeground(
-			control.getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));			
+			control.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND));			
 //			JFaceColors.getSchemeForeground(control.getDisplay()));
 		control.setSelectionBackground(
-			control.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
+			control.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND));
 			//new Color(control.getDisplay(), 255,0,0));
 			//control.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 			//JFaceColors.getSchemeSelectionBackground(parent.getDisplay()));
 		control.setSelectionForeground(
-			control.getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
+			control.getDisplay().getSystemColor(SWT.COLOR_TITLE_FOREGROUND));
 		control.setBorderColor(
-				control.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND));
+				control.getDisplay().getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
 //			JFaceColors.getSchemeSelectionForeground(control.getDisplay()));
 //		Control[] children = control.getChildren();
 //		for (int i = 0; i < children.length; i++) {

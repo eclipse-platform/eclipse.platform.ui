@@ -29,7 +29,6 @@ import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;
 
 public class PropertyPageContributorManager extends ObjectContributorManager {
 	private static PropertyPageContributorManager sharedInstance=null;
-	private boolean contributorsLoaded=false;
 	
 	private static final Comparator comparer = new Comparator() {
 		private Collator collator = Collator.getInstance();
@@ -64,20 +63,19 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
  */
 public PropertyPageContributorManager() {
 	super();
+    // load contributions on startup so that getContributors() returns the
+    // proper content
+    loadContributors();    
 }
 /**
  * Given the object class, this method will find all the registered
- * matching contributors and sequentially invoke them to contribute
- * to the property page manager. Matching algorithm
- * will also check subclasses and implemented interfaces.
- * 
+ * matching contributors and sequentially invoke them to contribute to the
+ * property page manager. Matching algorithm will also check subclasses and
+ * implemented interfaces.  
  * @return true if contribution took place, false otherwise.
  */
 public boolean contribute(PropertyPageManager manager, IAdaptable object) {
-	// Lazy initialize
-	if (!contributorsLoaded)
-		loadContributors();
-	
+
 	List result = getContributors(object);	
 	
 	if (result == null || result.size() == 0)
@@ -108,11 +106,9 @@ public static PropertyPageContributorManager getManager() {
 }
 /**
  * Returns true if contributors exist in the manager for
- * this object. If contributors wer not loaded from
- * the registry, load them first.
+ * this object. 
  */
 public boolean hasContributorsFor(Object object) {
-   if (!contributorsLoaded) loadContributors();
    return super.hasContributorsFor(object);
 }
 /**
@@ -121,8 +117,5 @@ public boolean hasContributorsFor(Object object) {
 private void loadContributors() {
 	PropertyPagesRegistryReader reader = new PropertyPagesRegistryReader(this);
 	reader.registerPropertyPages(Platform.getPluginRegistry());
-	contributorsLoaded=true;
-	
-}
-	
+}	
 }

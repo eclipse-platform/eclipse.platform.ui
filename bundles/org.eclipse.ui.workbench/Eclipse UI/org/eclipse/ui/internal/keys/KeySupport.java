@@ -107,6 +107,60 @@ public final class KeySupport {
 				case SWT.INSERT :
 					naturalKey = SpecialKey.INSERT;
 					break;
+				case SWT.KEYPAD_0 :
+					naturalKey = SpecialKey.NUMPAD_0;
+					break;
+				case SWT.KEYPAD_1 :
+					naturalKey = SpecialKey.NUMPAD_1;
+					break;
+				case SWT.KEYPAD_2 :
+					naturalKey = SpecialKey.NUMPAD_2;
+					break;
+				case SWT.KEYPAD_3 :
+					naturalKey = SpecialKey.NUMPAD_3;
+					break;
+				case SWT.KEYPAD_4 :
+					naturalKey = SpecialKey.NUMPAD_4;
+					break;
+				case SWT.KEYPAD_5 :
+					naturalKey = SpecialKey.NUMPAD_5;
+					break;
+				case SWT.KEYPAD_6 :
+					naturalKey = SpecialKey.NUMPAD_6;
+					break;
+				case SWT.KEYPAD_7 :
+					naturalKey = SpecialKey.NUMPAD_7;
+					break;
+				case SWT.KEYPAD_8 :
+					naturalKey = SpecialKey.NUMPAD_8;
+					break;
+				case SWT.KEYPAD_9 :
+					naturalKey = SpecialKey.NUMPAD_9;
+					break;
+				case SWT.KEYPAD_ADD :
+					naturalKey = SpecialKey.NUMPAD_ADD;
+					break;
+				case SWT.KEYPAD_CR :
+					naturalKey = SpecialKey.NUMPAD_ENTER;
+					break;
+				case SWT.KEYPAD_DECIMAL :
+					naturalKey = SpecialKey.NUMPAD_DECIMAL;
+					break;
+				case SWT.KEYPAD_DIVIDE :
+					naturalKey = SpecialKey.NUMPAD_DIVIDE;
+					break;
+				case SWT.KEYPAD_EQUAL :
+					naturalKey = SpecialKey.NUMPAD_EQUAL;
+					break;
+				case SWT.KEYPAD_MULTIPLY :
+					naturalKey = SpecialKey.NUMPAD_MULTIPLY;
+					break;
+				case SWT.KEYPAD_SUBTRACT :
+					naturalKey = SpecialKey.NUMPAD_SUBTRACT;
+					break;
+				case SWT.NUM_LOCK :
+					naturalKey = SpecialKey.NUM_LOCK;
+					break;
 				case SWT.PAGE_DOWN :
 					naturalKey = SpecialKey.PAGE_DOWN;
 					break;
@@ -317,6 +371,12 @@ public final class KeySupport {
 	 *         itself.
 	 */
 	private static int toUpperCase(int keyCode) {
+		// Will this key code be truncated?
+		if (keyCode > 0xFFFF) {
+			return keyCode;
+		}
+
+		// Downcast in safety. Only make characters uppercase.
 		char character = (char) keyCode;
 		return Character.isLetter(character)
 			? Character.toUpperCase(character)
@@ -324,5 +384,6 @@ public final class KeySupport {
 	}
 
 	private KeySupport() {
+		// This class should never be instantiated.
 	}
 }

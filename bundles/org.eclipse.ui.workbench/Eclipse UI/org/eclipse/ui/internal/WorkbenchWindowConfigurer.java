@@ -179,12 +179,12 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 * Creates a new workbench configurer.
 	 * <p>
 	 * This method is declared package-private. Clients obtain instances
-	 * via {@link WorkbenchAdviser#getWindowConfigurer 
-	 * WorkbenchAdviser.getWindowConfigurer}
+	 * via {@link WorkbenchAdvisor#getWindowConfigurer 
+	 * WorkbenchAdvisor.getWindowConfigurer}
 	 * </p>
 	 * 
 	 * @param window the workbench window that this object configures
-	 * @see WorkbenchAdviser#getWindowConfigurer
+	 * @see WorkbenchAdvisor#getWindowConfigurer
 	 */
 	WorkbenchWindowConfigurer(WorkbenchWindow window) {
 		if (window == null) {

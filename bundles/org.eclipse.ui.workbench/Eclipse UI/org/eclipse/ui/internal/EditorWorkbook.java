@@ -221,19 +221,19 @@ public void drawGradient() {
 	switch (activeState) {
 		case ACTIVE_FOCUS :
 			if (getShellActivated()) {
-				fgColor = WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_FOREGROUND);
+				fgColor = WorkbenchColors.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
 				bgColors[0] = getControl().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
 //				WorkbenchColors.getActiveEditorGradient();
 //				bgPercents = WorkbenchColors.getActiveEditorGradientPercents();
 			}
 			else {
-				fgColor = WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
+				fgColor = WorkbenchColors.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT);
 				bgColors[0] = getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION);
 //				bgPercents = WorkbenchColors.getDeactivatedEditorGradientPercents();
 			}
 			break;
 		case ACTIVE_NOFOCUS :
-			fgColor = WorkbenchColors.getSystemColor(SWT.COLOR_LIST_FOREGROUND);
+			fgColor = WorkbenchColors.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
 			bgColors[0] = getControl().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
 
 			break;

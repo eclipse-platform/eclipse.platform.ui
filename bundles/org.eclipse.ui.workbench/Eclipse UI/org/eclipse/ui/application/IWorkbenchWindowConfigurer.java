@@ -30,7 +30,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * </p>
  * 
  * @see IWorkbenchConfigurer#getWorkbenchWindowConfigurer
- * @see WorkbenchAdviser#preWindowOpen
+ * @see WorkbenchAdvisor#preWindowOpen
  * @since 3.0
  */
 public interface IWorkbenchWindowConfigurer {
@@ -199,7 +199,7 @@ public interface IWorkbenchWindowConfigurer {
 	 * Adds the given drag and drop <code>Transfer</code> type to the ones
 	 * supported for drag and drop on the editor area of this workbench window.
 	 * <p>
-	 * The workbench adviser would ordinarily call this method from the
+	 * The workbench advisor would ordinarily call this method from the
 	 * <code>preWindowOpen</code> callback.
 	 * A newly-created workbench window supports no drag and drop transfer
 	 * types. Adding <code>EditorInputTransfer.getInstance()</code>
@@ -222,7 +222,7 @@ public interface IWorkbenchWindowConfigurer {
 	/**
 	 * Configures the drop target listener for the editor area of this workbench window.
 	 * <p>
-	 * The workbench adviser ordinarily calls this method from the
+	 * The workbench advisor ordinarily calls this method from the
 	 * <code>preWindowOpen</code> callback.
 	 * A newly-created workbench window has no configured drop target listener for its
 	 * editor area.

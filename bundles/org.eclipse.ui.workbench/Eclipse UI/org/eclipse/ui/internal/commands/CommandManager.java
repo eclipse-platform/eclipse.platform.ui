@@ -556,6 +556,7 @@ public final class CommandManager implements ICommandManager {
 				iterator.remove();
 		}
 
+		// TODO should we really filter these out?
 		for (Iterator iterator = commandDefinitionsById.values().iterator();
 			iterator.hasNext();
 			) {

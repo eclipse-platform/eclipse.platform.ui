@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -27,9 +26,13 @@ import java.util.regex.Pattern;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.activities.ActivityEvent;
 import org.eclipse.ui.activities.ActivityManagerEvent;
+import org.eclipse.ui.activities.CategoryEvent;
 import org.eclipse.ui.activities.IActivity;
+import org.eclipse.ui.activities.IActivityActivityBinding;
+import org.eclipse.ui.activities.IActivityPatternBinding;
+import org.eclipse.ui.activities.ICategory;
+import org.eclipse.ui.activities.ICategoryActivityBinding;
 import org.eclipse.ui.activities.IMutableActivityManager;
-import org.eclipse.ui.activities.IPatternBinding;
 import org.eclipse.ui.internal.util.Util;
 
 public final class MutableActivityManager
@@ -57,11 +60,18 @@ public final class MutableActivityManager
 
 	private Map activitiesById = new WeakHashMap();
 	private Set activitiesWithListeners = new HashSet();
+	private Map activityActivityBindingsByParentActivityId = new HashMap();
 	private Map activityDefinitionsById = new HashMap();
+	private Map activityPatternBindingsByActivityId = new HashMap();
 	private IActivityRegistry activityRegistry;
+	private Map categoriesById = new WeakHashMap();
+	private Set categoriesWithListeners = new HashSet();
+	private Map categoryActivityBindingsByCategoryId = new HashMap();
+	private Map categoryDefinitionsById = new HashMap();
 	private Set definedActivityIds = new HashSet();
+	private Set definedCategoryIds = new HashSet();
 	private Set enabledActivityIds = new HashSet();
-	private Map patternBindingsByActivityId = new HashMap();
+	private Set enabledCategoryIds = new HashSet();
 
 	public MutableActivityManager() {
 		this(new ExtensionActivityRegistry(Platform.getExtensionRegistry()));
@@ -103,29 +113,56 @@ public final class MutableActivityManager
 		return activity;
 	}
 
+	Set getCategoriesWithListeners() {
+		return categoriesWithListeners;
+	}
+
+	public ICategory getCategory(String categoryId) {
+		if (categoryId == null)
+			throw new NullPointerException();
+
+		Category category = (Category) categoriesById.get(categoryId);
+
+		if (category == null) {
+			category = new Category(this, categoryId);
+			updateCategory(category);
+			categoriesById.put(categoryId, category);
+		}
+
+		return category;
+	}
+
 	public Set getDefinedActivityIds() {
 		return Collections.unmodifiableSet(definedActivityIds);
+	}
+
+	public Set getDefinedCategoryIds() {
+		return Collections.unmodifiableSet(definedCategoryIds);
 	}
 
 	public Set getEnabledActivityIds() {
 		return Collections.unmodifiableSet(enabledActivityIds);
 	}
 
-	public boolean match(String string, Set activityIds) {
+	public Set getEnabledCategoryIds() {
+		return Collections.unmodifiableSet(enabledCategoryIds);
+	}
+
+	public boolean isMatch(String string, Set activityIds) {
 		activityIds = Util.safeCopy(activityIds, String.class);
 
 		for (Iterator iterator = activityIds.iterator(); iterator.hasNext();) {
 			String activityId = (String) iterator.next();
 			IActivity activity = getActivity(activityId);
 
-			if (activity.match(string))
+			if (activity.isMatch(string))
 				return true;
 		}
 
 		return false;
 	}
 
-	public Set matches(String string, Set activityIds) {
+	public Set getMatches(String string, Set activityIds) {
 		Set matches = new HashSet();
 		activityIds = Util.safeCopy(activityIds, String.class);
 
@@ -133,13 +170,17 @@ public final class MutableActivityManager
 			String activityId = (String) iterator.next();
 			IActivity activity = getActivity(activityId);
 
-			if (activity.match(string))
+			if (activity.isMatch(string))
 				matches.add(activityId);
 		}
 
 		return Collections.unmodifiableSet(matches);
 	}
 
+	public boolean match(String string, Set activityIds) {
+		return isMatch(string, activityIds);
+	}
+	
 	private void notifyActivities(Map activityEventsByActivityId) {
 		for (Iterator iterator =
 			activityEventsByActivityId.entrySet().iterator();
@@ -152,6 +193,21 @@ public final class MutableActivityManager
 
 			if (activity != null)
 				activity.fireActivityChanged(activityEvent);
+		}
+	}
+
+	private void notifyCategories(Map categoryEventsByCategoryId) {
+		for (Iterator iterator =
+			categoryEventsByCategoryId.entrySet().iterator();
+			iterator.hasNext();
+			) {
+			Map.Entry entry = (Map.Entry) iterator.next();
+			String categoryId = (String) entry.getKey();
+			CategoryEvent categoryEvent = (CategoryEvent) entry.getValue();
+			Category category = (Category) categoriesById.get(categoryId);
+
+			if (category != null)
+				category.fireCategoryChanged(categoryEvent);
 		}
 	}
 
@@ -183,72 +239,229 @@ public final class MutableActivityManager
 				activityDefinitionsById))
 				iterator.remove();
 
-		Map patternBindingDefinitionsByActivityId =
-			PatternBindingDefinition.patternBindingDefinitionsByActivityId(
-				activityRegistry.getPatternBindingDefinitions());
-		Map patternBindingsByActivityId = new HashMap();
+		Collection categoryDefinitions = new ArrayList();
+		categoryDefinitions.addAll(activityRegistry.getCategoryDefinitions());
+		Map categoryDefinitionsById =
+			new HashMap(
+				CategoryDefinition.categoryDefinitionsById(
+					categoryDefinitions,
+					false));
+
+		for (Iterator iterator = categoryDefinitionsById.values().iterator();
+			iterator.hasNext();
+			) {
+			ICategoryDefinition categoryDefinition =
+				(ICategoryDefinition) iterator.next();
+			String name = categoryDefinition.getName();
+
+			if (name == null || name.length() == 0)
+				iterator.remove();
+		}
+
+		Map activityActivityBindingDefinitionsByParentActivityId =
+			ActivityActivityBindingDefinition
+				.activityActivityBindingDefinitionsByParentActivityId(
+				activityRegistry.getActivityActivityBindingDefinitions());
+		Map activityActivityBindingsByParentActivityId = new HashMap();
 
 		for (Iterator iterator =
-			patternBindingDefinitionsByActivityId.entrySet().iterator();
+			activityActivityBindingDefinitionsByParentActivityId
+				.entrySet()
+				.iterator();
+			iterator.hasNext();
+			) {
+			Map.Entry entry = (Map.Entry) iterator.next();
+			String parentActivityId = (String) entry.getKey();
+
+			if (activityActivityBindingsByParentActivityId
+				.containsKey(parentActivityId)) {
+				Collection activityActivityBindingDefinitions =
+					(Collection) entry.getValue();
+
+				if (activityActivityBindingDefinitions != null)
+					for (Iterator iterator2 =
+						activityActivityBindingDefinitions.iterator();
+						iterator2.hasNext();
+						) {
+						IActivityActivityBindingDefinition activityActivityBindingDefinition =
+							(IActivityActivityBindingDefinition) iterator2
+								.next();
+						String childActivityId =
+							activityActivityBindingDefinition
+								.getChildActivityId();
+
+						if (childActivityId != null) {
+							IActivityActivityBinding activityActivityBinding =
+								new ActivityActivityBinding(
+									childActivityId,
+									parentActivityId);
+							Set activityActivityBindings =
+								(
+									Set) activityActivityBindingsByParentActivityId
+										.get(
+									parentActivityId);
+
+							if (activityActivityBindings == null) {
+								activityActivityBindings = new HashSet();
+								activityActivityBindingsByParentActivityId.put(
+									parentActivityId,
+									activityActivityBindings);
+							}
+
+							activityActivityBindings.add(
+								activityActivityBinding);
+						}
+					}
+			}
+		}
+
+		Map activityPatternBindingDefinitionsByActivityId =
+			ActivityPatternBindingDefinition
+				.activityPatternBindingDefinitionsByActivityId(
+				activityRegistry.getActivityPatternBindingDefinitions());
+		Map activityPatternBindingsByActivityId = new HashMap();
+
+		for (Iterator iterator =
+			activityPatternBindingDefinitionsByActivityId.entrySet().iterator();
 			iterator.hasNext();
 			) {
 			Map.Entry entry = (Map.Entry) iterator.next();
 			String activityId = (String) entry.getKey();
 
 			if (activityDefinitionsById.containsKey(activityId)) {
-				Collection patternBindingDefinitions =
+				Collection activityPatternBindingDefinitions =
 					(Collection) entry.getValue();
 
-				if (patternBindingDefinitions != null)
+				if (activityPatternBindingDefinitions != null)
 					for (Iterator iterator2 =
-						patternBindingDefinitions.iterator();
+						activityPatternBindingDefinitions.iterator();
 						iterator2.hasNext();
 						) {
-						IPatternBindingDefinition patternBindingDefinition =
-							(IPatternBindingDefinition) iterator2.next();
-						String pattern = patternBindingDefinition.getPattern();
+						IActivityPatternBindingDefinition activityPatternBindingDefinition =
+							(IActivityPatternBindingDefinition) iterator2
+								.next();
+						String pattern =
+							activityPatternBindingDefinition.getPattern();
 
 						if (pattern != null && pattern.length() != 0) {
-							IPatternBinding patternBinding =
-								new PatternBinding(
-									patternBindingDefinition.isInclusive(),
+							IActivityPatternBinding activityPatternBinding =
+								new ActivityPatternBinding(
+									activityId,
 									Pattern.compile(pattern));
-							List patternBindings =
-								(List) patternBindingsByActivityId.get(
+							Set activityPatternBindings =
+								(Set) activityPatternBindingsByActivityId.get(
 									activityId);
 
-							if (patternBindings == null) {
-								patternBindings = new ArrayList();
-								patternBindingsByActivityId.put(
+							if (activityPatternBindings == null) {
+								activityPatternBindings = new HashSet();
+								activityPatternBindingsByActivityId.put(
 									activityId,
-									patternBindings);
+									activityPatternBindings);
 							}
 
-							patternBindings.add(patternBinding);
+							activityPatternBindings.add(activityPatternBinding);
 						}
 					}
 			}
 		}
 
+		Map categoryActivityBindingDefinitionsByCategoryId =
+			CategoryActivityBindingDefinition
+				.categoryActivityBindingDefinitionsByCategoryId(
+				activityRegistry.getCategoryActivityBindingDefinitions());
+		Map categoryActivityBindingsByCategoryId = new HashMap();
+
+		for (Iterator iterator =
+			categoryActivityBindingDefinitionsByCategoryId
+				.entrySet()
+				.iterator();
+			iterator.hasNext();
+			) {
+			Map.Entry entry = (Map.Entry) iterator.next();
+			String categoryId = (String) entry.getKey();
+
+			if (categoryActivityBindingsByCategoryId.containsKey(categoryId)) {
+				Collection categoryActivityBindingDefinitions =
+					(Collection) entry.getValue();
+
+				if (categoryActivityBindingDefinitions != null)
+					for (Iterator iterator2 =
+						categoryActivityBindingDefinitions.iterator();
+						iterator2.hasNext();
+						) {
+						ICategoryActivityBindingDefinition categoryActivityBindingDefinition =
+							(ICategoryActivityBindingDefinition) iterator2
+								.next();
+						String activityId =
+							categoryActivityBindingDefinition.getActivityId();
+
+						if (activityId != null) {
+							ICategoryActivityBinding categoryActivityBinding =
+								new CategoryActivityBinding(
+									activityId,
+									categoryId);
+							Set categoryActivityBindings =
+								(Set) categoryActivityBindingsByCategoryId.get(
+									categoryId);
+
+							if (categoryActivityBindings == null) {
+								categoryActivityBindings = new HashSet();
+								categoryActivityBindingsByCategoryId.put(
+									categoryId,
+									categoryActivityBindings);
+							}
+
+							categoryActivityBindings.add(
+								categoryActivityBinding);
+						}
+					}
+			}
+		}
+
+		this.activityActivityBindingsByParentActivityId =
+			activityActivityBindingsByParentActivityId;
 		this.activityDefinitionsById = activityDefinitionsById;
-		this.patternBindingsByActivityId = patternBindingsByActivityId;
-		boolean activityManagerChanged = false;
+		this.activityPatternBindingsByActivityId =
+			activityPatternBindingsByActivityId;
+		this.categoryActivityBindingsByCategoryId =
+			categoryActivityBindingsByCategoryId;
+		this.categoryDefinitionsById = categoryDefinitionsById;
+		boolean definedActivityIdsChanged = false;
 		Set definedActivityIds = new HashSet(activityDefinitionsById.keySet());
 
 		if (!definedActivityIds.equals(this.definedActivityIds)) {
 			this.definedActivityIds = definedActivityIds;
-			activityManagerChanged = true;
+			definedActivityIdsChanged = true;
+		}
+
+		boolean definedCategoryIdsChanged = false;
+		Set definedCategoryIds = new HashSet(categoryDefinitionsById.keySet());
+
+		if (!definedCategoryIds.equals(this.definedCategoryIds)) {
+			this.definedCategoryIds = definedCategoryIds;
+			definedCategoryIdsChanged = true;
 		}
 
 		Map activityEventsByActivityId =
 			updateActivities(activitiesById.keySet());
 
-		if (activityManagerChanged)
+		Map categoryEventsByCategoryId =
+			updateCategories(categoriesById.keySet());
+
+		if (definedActivityIdsChanged || definedCategoryIdsChanged)
 			fireActivityManagerChanged(
-				new ActivityManagerEvent(this, true, false));
+				new ActivityManagerEvent(
+					this,
+					definedActivityIdsChanged,
+					definedCategoryIdsChanged,
+					false,
+					false));
 
 		if (activityEventsByActivityId != null)
 			notifyActivities(activityEventsByActivityId);
+
+		if (categoryEventsByCategoryId != null)
+			notifyCategories(categoryEventsByCategoryId);
 	}
 
 	public void setEnabledActivityIds(Set enabledActivityIds) {
@@ -265,10 +478,30 @@ public final class MutableActivityManager
 
 		if (activityManagerChanged)
 			fireActivityManagerChanged(
-				new ActivityManagerEvent(this, false, true));
+				new ActivityManagerEvent(this, false, false, true, false));
 
 		if (activityEventsByActivityId != null)
 			notifyActivities(activityEventsByActivityId);
+	}
+
+	public void setEnabledCategoryIds(Set enabledCategoryIds) {
+		enabledCategoryIds = Util.safeCopy(enabledCategoryIds, String.class);
+		boolean activityManagerChanged = false;
+		Map categoryEventsByCategoryId = null;
+
+		if (!this.enabledCategoryIds.equals(enabledCategoryIds)) {
+			this.enabledCategoryIds = enabledCategoryIds;
+			activityManagerChanged = true;
+			categoryEventsByCategoryId =
+				updateCategories(this.definedCategoryIds);
+		}
+
+		if (activityManagerChanged)
+			fireActivityManagerChanged(
+				new ActivityManagerEvent(this, false, false, false, true));
+
+		if (categoryEventsByCategoryId != null)
+			notifyCategories(categoryEventsByCategoryId);
 	}
 
 	private Map updateActivities(Collection activityIds) {
@@ -290,6 +523,20 @@ public final class MutableActivityManager
 	}
 
 	private ActivityEvent updateActivity(Activity activity) {
+		Set activityActivityBindings =
+		(Set) activityActivityBindingsByParentActivityId.get(activity.getId());
+		boolean activityActivityBindingsChanged =
+		activity.setActivityActivityBindings(
+				activityActivityBindings != null
+				? activityActivityBindings
+				: Collections.EMPTY_SET);
+		Set activityPatternBindings =
+			(Set) activityPatternBindingsByActivityId.get(activity.getId());
+		boolean activityPatternBindingsChanged =
+			activity.setActivityPatternBindings(
+				activityPatternBindings != null
+					? activityPatternBindings
+					: Collections.EMPTY_SET);
 		IActivityDefinition activityDefinition =
 			(IActivityDefinition) activityDefinitionsById.get(activity.getId());
 		boolean definedChanged =
@@ -311,28 +558,78 @@ public final class MutableActivityManager
 				activityDefinition != null
 					? activityDefinition.getParentId()
 					: null);
-		List patternBindings =
-			(List) patternBindingsByActivityId.get(activity.getId());
-		boolean patternBindingsChanged =
-			activity.setPatternBindings(
-				patternBindings != null
-					? patternBindings
-					: Collections.EMPTY_LIST);
 
-		if (definedChanged
+		if (activityActivityBindingsChanged
+			|| activityPatternBindingsChanged
+			|| definedChanged
 			|| descriptionChanged
 			|| enabledChanged
 			|| nameChanged
-			|| parentIdChanged
-			|| patternBindingsChanged)
+			|| parentIdChanged)
 			return new ActivityEvent(
 				activity,
+				activityActivityBindingsChanged,
+				activityPatternBindingsChanged,
 				definedChanged,
 				descriptionChanged,
 				enabledChanged,
 				nameChanged,
-				parentIdChanged,
-				patternBindingsChanged);
+				parentIdChanged);
+		else
+			return null;
+	}
+
+	private Map updateCategories(Collection categoryIds) {
+		Map categoryEventsByCategoryId = new TreeMap();
+
+		for (Iterator iterator = categoryIds.iterator(); iterator.hasNext();) {
+			String categoryId = (String) iterator.next();
+			Category category = (Category) categoriesById.get(categoryId);
+
+			if (category != null) {
+				CategoryEvent categoryEvent = updateCategory(category);
+
+				if (categoryEvent != null)
+					categoryEventsByCategoryId.put(categoryId, categoryEvent);
+			}
+		}
+
+		return categoryEventsByCategoryId;
+	}
+
+	private CategoryEvent updateCategory(Category category) {
+		Set categoryActivityBindings =
+			(Set) categoryActivityBindingsByCategoryId.get(category.getId());
+		boolean categoryActivityBindingsChanged =
+			category.setCategoryActivityBindings(
+				categoryActivityBindings != null
+					? categoryActivityBindings
+					: Collections.EMPTY_SET);
+		ICategoryDefinition categoryDefinition =
+			(ICategoryDefinition) categoryDefinitionsById.get(category.getId());
+		boolean definedChanged =
+			category.setDefined(categoryDefinition != null);
+		boolean descriptionChanged =
+			category.setDescription(
+				categoryDefinition != null
+					? categoryDefinition.getDescription()
+					: null);
+		boolean nameChanged =
+			category.setName(
+				categoryDefinition != null
+					? categoryDefinition.getName()
+					: null);
+
+		if (categoryActivityBindingsChanged
+			|| definedChanged
+			|| descriptionChanged
+			|| nameChanged)
+			return new CategoryEvent(
+				category,
+				categoryActivityBindingsChanged,
+				definedChanged,
+				descriptionChanged,
+				nameChanged);
 		else
 			return null;
 	}

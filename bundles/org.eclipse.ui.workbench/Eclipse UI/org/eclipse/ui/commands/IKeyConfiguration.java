@@ -61,7 +61,7 @@ public interface IKeyConfiguration extends Comparable {
 	 * handle, suitable for display to the user.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
@@ -86,7 +86,7 @@ public interface IKeyConfiguration extends Comparable {
 	 * suitable for display to the user.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
@@ -104,7 +104,7 @@ public interface IKeyConfiguration extends Comparable {
 	 * represented by this handle.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
@@ -123,7 +123,7 @@ public interface IKeyConfiguration extends Comparable {
 	 * from whence they were brokered.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 
@@ -137,7 +137,7 @@ public interface IKeyConfiguration extends Comparable {
 	 * is defined.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this attribute
 	 * changes.
 	 * </p>
 	 * 

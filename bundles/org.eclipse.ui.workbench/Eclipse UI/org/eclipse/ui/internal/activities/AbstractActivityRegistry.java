@@ -17,11 +17,13 @@ import java.util.List;
 
 abstract class AbstractActivityRegistry implements IActivityRegistry {
 
+	protected List activityActivityBindingDefinitions = Collections.EMPTY_LIST;
 	protected List activityDefinitions = Collections.EMPTY_LIST;
-
+	protected List activityPatternBindingDefinitions = Collections.EMPTY_LIST;
 	private ActivityRegistryEvent activityRegistryEvent;
 	private List activityRegistryListeners;
-	protected List patternBindingDefinitions = Collections.EMPTY_LIST;
+	protected List categoryActivityBindingDefinitions = Collections.EMPTY_LIST;
+	protected List categoryDefinitions = Collections.EMPTY_LIST;
 
 	protected AbstractActivityRegistry() {
 	}
@@ -51,12 +53,24 @@ abstract class AbstractActivityRegistry implements IActivityRegistry {
 		}
 	}
 
+	public List getActivityActivityBindingDefinitions() {
+		return activityActivityBindingDefinitions;
+	}
+
 	public List getActivityDefinitions() {
 		return activityDefinitions;
 	}
 
-	public List getPatternBindingDefinitions() {
-		return patternBindingDefinitions;
+	public List getActivityPatternBindingDefinitions() {
+		return activityPatternBindingDefinitions;
+	}
+
+	public List getCategoryActivityBindingDefinitions() {
+		return categoryActivityBindingDefinitions;
+	}
+
+	public List getCategoryDefinitions() {
+		return categoryDefinitions;
 	}
 
 	public void removeActivityRegistryListener(IActivityRegistryListener activityRegistryListener) {

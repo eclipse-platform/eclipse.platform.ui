@@ -63,9 +63,6 @@ public interface IWorkbenchConstants {
 	// Identifier for visible view parts. 
 	public static final String WORKBENCH_VISIBLE_VIEW_ID = "Workbench.visibleViewID";  //$NON-NLS-1$
 
-	// String to show in preference dialog as root node of workbench preferences
-	public static final String WORKBENCH_PREFERENCE_CATEGORY_ID = PlatformUI.PLUGIN_ID + ".preferencePages.Workbench"; //$NON-NLS-1$
-
 	// Identifier of workbench info properties page
 	public static final String WORKBENCH_PROPERTIES_PAGE_INFO = PlatformUI.PLUGIN_ID + ".propertypages.info.file"; //$NON-NLS-1$
 	

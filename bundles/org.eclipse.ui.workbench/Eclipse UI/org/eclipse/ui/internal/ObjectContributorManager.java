@@ -13,6 +13,8 @@ package org.eclipse.ui.internal;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -23,6 +25,7 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**
@@ -331,6 +334,19 @@ public abstract class ObjectContributorManager {
 			objectLookup = new HashMap();
 		objectLookup.put(objectClass, results);
 	}
+    
+    /**
+    * Get the contributions registered to this manager.
+    * 
+    * @return an unmodifiable <code>Collection</code> containing all registered
+    * contributions.  The objects in this <code>Collection</code> will be 
+    * <code>List</code>s containing the actual contributions.
+    * @since 3.0
+    */
+    public Collection getContributors() {
+        return Collections.unmodifiableCollection(contributors.values());
+    }  
+    
 	/**
 	 * Returns all the contributors registered against
 	 * the given object class.
@@ -571,5 +587,5 @@ public abstract class ObjectContributorManager {
 		}
 		
 		return null;
-	}
+	}    
 }
