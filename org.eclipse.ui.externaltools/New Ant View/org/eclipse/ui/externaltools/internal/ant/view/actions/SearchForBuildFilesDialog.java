@@ -74,7 +74,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 */
 	private Button includeErrorResultButton;
 	private static IDialogSettings settings= ExternalToolsPlugin.getDefault().getDialogSettings();
-	{
+	static {
 		if (settings.get(IPreferenceConstants.ANTVIEW_LAST_SEARCH_STRING) == null) {
 			settings.put(IPreferenceConstants.ANTVIEW_LAST_SEARCH_STRING, "");
 		}
