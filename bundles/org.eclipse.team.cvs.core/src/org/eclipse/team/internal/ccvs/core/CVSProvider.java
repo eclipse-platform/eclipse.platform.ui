@@ -446,7 +446,7 @@ public class CVSProvider implements ICVSProvider {
 		try {
 			// Get the import properties
 			String message = Policy.bind("CVSProvider.initialImport"); //$NON-NLS-1$
-			String vendor = location.getUsername();
+			String vendor = "vendor"; //$NON-NLS-1$
 			String tag = "start"; //$NON-NLS-1$
 			String projectName = project.getName();
 			if (moduleName == null)
