@@ -12,6 +12,8 @@ package org.eclipse.core.resources;
 
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * The plug-in runtime class for the Resources plug-in.  This is
@@ -83,7 +85,7 @@ public final class ResourcesPlugin extends Plugin {
 	
 	/**
 	 * Constant identifying the job family identifier for the background autobuild job.
-	 * @see org.eclipse.core.runtime.jobs.IJobManager#join(Object, IProgressMonitor)
+	 * @see IJobManager#join(Object, IProgressMonitor)
 	 * @since 3.0
 	 */
 	public static final Object FAMILY_AUTO_BUILD = new Object();
@@ -91,8 +93,8 @@ public final class ResourcesPlugin extends Plugin {
 	 * Constant identifying the job family identifier for a background build job. All clients
 	 * that schedule background jobs for performing builds should include this job
 	 * family in their implementation of <code>belongsTo</code>.
-	 * @see org.eclipse.core.runtime.jobs.IJobManager#join(Object, IProgressMonitor)
-	 * @see org.eclipse.core.runtime.jobs.Job.#belongsTo(Object)
+	 * @see IJobManager#join(Object, IProgressMonitor)
+	 * @see Job#belongsTo(Object)
 	 * @since 3.0
 	 */
 	public static final Object FAMILY_MANUAL_BUILD = new Object();
@@ -247,7 +249,6 @@ public ResourcesPlugin(IPluginDescriptor pluginDescriptor) {
  * <li> A directory could not be created at the given location in the
  *      local file system.
  * </ll>
- * @see #containsWorkspace
  */
 private static void constructWorkspace() throws CoreException {
 	new LocalMetaArea().createMetaArea();	
@@ -295,7 +296,7 @@ public static IWorkspace getWorkspace() {
 /**
  * This implementation of the corresponding <code>Plugin</code> method
  * closes the workspace (without saving).
- * @see Plugin#shutdown
+ * @see Plugin#shutdown()
  */
 public void shutdown() throws CoreException {
 	if (workspace == null) {
@@ -313,7 +314,7 @@ public void shutdown() throws CoreException {
 /**
  * This implementation of the corresponding <code>Plugin</code> method
  * opens the workspace.
- * @see Plugin#startup
+ * @see Plugin#startup()
  */
 public void startup() throws CoreException {
 	if (!new LocalMetaArea().hasSavedWorkspace()) {
