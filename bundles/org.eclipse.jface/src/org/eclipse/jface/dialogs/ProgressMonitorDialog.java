@@ -142,6 +142,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements IRunn
 		private boolean fIsCanceled;
 		protected boolean forked = false;
 		protected boolean locked = false;
+		boolean done = false;
 		
 		public void beginTask(String name, int totalWork) {
 			if (progressIndicator.isDisposed())
@@ -167,6 +168,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements IRunn
 		}
 		
 		public void done() {
+			done = true;
 			if (!progressIndicator.isDisposed()) {
 				progressIndicator.sendRemainingWork();
 				progressIndicator.done();
@@ -509,6 +511,15 @@ private void update() {
 	if (messageLabel == null || messageLabel.isDisposed())
 			return;	
 	messageLabel.update();
+}
+
+/**
+ * Return whether or not the monitor for the receiver is done. 
+ * @return
+ */
+public boolean isDone(){
+	return progressMonitor.done;
+	
 }
 
 }
