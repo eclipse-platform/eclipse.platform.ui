@@ -761,7 +761,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		while (e.hasNext()) {
 			ProjectionAnnotation annotation= (ProjectionAnnotation) e.next();
 			if (annotation.isCollapsed()) {
-				Position position= fProjectionAnnotationModel.;
+				Position position= fProjectionAnnotationModel.getPosition(annotation);
 				if (position == null) {
 					// annotation might already be deleted, we will be informed later on about this deletion
 					continue;
