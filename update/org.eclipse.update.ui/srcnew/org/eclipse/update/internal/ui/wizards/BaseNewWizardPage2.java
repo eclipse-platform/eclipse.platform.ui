@@ -18,6 +18,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.DefaultContentProvider;
@@ -212,6 +213,8 @@ public abstract class BaseNewWizardPage2 extends WizardPage {
 			parentFolder.addChild(object);
 		else {
 			model.addBookmark(object);
+			// currently the model fires notifications to listeners, so we need to tell the operations manager
+			UpdateManager.getOperationsManager().fireObjectsAdded(null, new Object[]{object});
 		}
 		model.saveBookmarks();
 	}
