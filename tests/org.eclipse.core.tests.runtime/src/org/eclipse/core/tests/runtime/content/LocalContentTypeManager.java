@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.content;
 
+import java.io.*;
 import org.eclipse.core.internal.content.*;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
@@ -41,5 +42,19 @@ public class LocalContentTypeManager extends ContentTypeManager {
 		LocalContentTypeManager contentTypeManager = new LocalContentTypeManager();
 		contentTypeManager.startup();
 		return contentTypeManager;
+	}
+
+	public IContentType findContentTypeFor(InputStream contents, IContentType[] subset) throws IOException {
+		IContentType[] result = findContentTypesFor(contents, subset);
+		return result.length > 0 ? result[0] : null;
+	}
+
+	public IContentType[] findContentTypesFor(InputStream contents, IContentType[] subset) throws IOException {
+		ByteArrayInputStream buffer = readBuffer(contents);
+		if (buffer == null)
+			return null;
+		if (subset == null)
+			subset = getAllContentTypes();
+		return internalFindContentTypesFor(buffer, subset);
 	}
 }

@@ -94,7 +94,7 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 	 * @see IContentTypeManager#getContentTypeFor
 	 */
 	public void testContentDetection() throws IOException {
-		ContentTypeManager contentTypeManager = (ContentTypeManager) LocalContentTypeManager.getLocalContentTypeManager();
+		LocalContentTypeManager contentTypeManager = (LocalContentTypeManager) LocalContentTypeManager.getLocalContentTypeManager();
 		IContentType inappropriate = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + ".sample-binary1");
 		IContentType appropriate = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + ".xml");
 		IContentType appropriateSpecific1 = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + ".xml-based-different-extension");
@@ -108,7 +108,7 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		assertEquals("3.1", appropriateSpecific2, contentTypeManager.findContentTypeFor(getInputStream(MINIMAL_XML), new IContentType[] {inappropriate, appropriate, appropriateSpecific2}));
 		// if all are provided, the more specific types will appear before the more generic types
 		IContentType[] selected = contentTypeManager.findContentTypesFor(getInputStream(MINIMAL_XML), new IContentType[] {inappropriate, appropriate, appropriateSpecific1, appropriateSpecific2});
-		assertEquals("4.0", 3, selected.length);
+		assertEquals("4.0", 3, selected.length); 
 		assertTrue("4.1", appropriateSpecific1 == selected[0] || appropriateSpecific1 == selected[1]);
 		assertTrue("4.2", appropriateSpecific2 == selected[0] || appropriateSpecific2 == selected[1]);
 		assertTrue("4.3", appropriate == selected[2]);

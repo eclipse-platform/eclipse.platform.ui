@@ -64,7 +64,7 @@ public class ContentTypeManager implements IContentTypeManager {
 	/*
 	 * Returns null if no bytes can be read
 	 */
-	static ByteArrayInputStream readBuffer(InputStream contents) throws IOException {
+	protected static ByteArrayInputStream readBuffer(InputStream contents) throws IOException {
 		boolean failed = false;
 		try {
 			if (contents.markSupported())
@@ -81,7 +81,7 @@ public class ContentTypeManager implements IContentTypeManager {
 		}
 	}
 
-	public static CharArrayReader readBuffer(Reader contents) throws IOException {
+	protected static CharArrayReader readBuffer(Reader contents) throws IOException {
 		boolean failed = false;
 		try {
 			if (contents.markSupported())
@@ -151,11 +151,6 @@ public class ContentTypeManager implements IContentTypeManager {
 		return type.isValid();
 	}
 
-	public IContentType findContentTypeFor(InputStream contents, IContentType[] subset) throws IOException {
-		IContentType[] result = findContentTypesFor(contents, subset);
-		return result.length > 0 ? result[0] : null;
-	}
-
 	/**
 	 * @see IContentTypeManager
 	 */
@@ -171,18 +166,6 @@ public class ContentTypeManager implements IContentTypeManager {
 		// basic implementation just gets all content types		
 		IContentType[] associated = findContentTypesFor(fileName);
 		return associated.length == 0 ? null : associated[0];
-	}
-
-	/*
-	 * "public" to make testing easier 
-	 */
-	public IContentType[] findContentTypesFor(InputStream contents, IContentType[] subset) throws IOException {
-		ByteArrayInputStream buffer = readBuffer(contents);
-		if (buffer == null)
-			return null;
-		if (subset == null)
-			subset = getAllContentTypes();
-		return internalFindContentTypesFor(buffer, subset);
 	}
 
 	/**
@@ -301,7 +284,7 @@ public class ContentTypeManager implements IContentTypeManager {
 		return InternalPlatform.getDefault().getPreferencesService().getRootNode().node(CONTENT_TYPE_PREF_NODE);
 	}
 
-	private IContentType[] internalFindContentTypesFor(ByteArrayInputStream buffer, IContentType[] subset) throws IOException {
+	protected IContentType[] internalFindContentTypesFor(ByteArrayInputStream buffer, IContentType[] subset) throws IOException {
 		List appropriate = new ArrayList();
 		int valid = 0;
 		for (int i = 0; i < subset.length; i++) {
