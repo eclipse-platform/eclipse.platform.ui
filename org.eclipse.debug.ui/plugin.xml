@@ -31,7 +31,7 @@
    <perspective
          name="%DebugPerspective.name"
          icon="icons/full/cview16/debug_persp.gif"
-         class="org.eclipse.debug.internal.ui.DebugPerspective"
+         class="org.eclipse.debug.internal.ui.DebugPerspectiveFactory"
          id="org.eclipse.debug.ui.DebugPerspective">
    </perspective>
 </extension>

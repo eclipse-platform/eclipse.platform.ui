@@ -6,15 +6,17 @@ package org.eclipse.debug.internal.ui;
  */
 
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IFolderLayout;
+import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IPerspectiveFactory;
 
 /**
- * The debug perspective
+ * The debug perspective factory.
  */
-public class DebugPerspective implements IPerspectiveFactory {
+public class DebugPerspectiveFactory implements IPerspectiveFactory {
 	
 	/**
-	 * @see IPerspectiveFactory
+	 * @see IPerspectiveFactory#createInitialLayout(IPageLayout)
 	 */
 	public void createInitialLayout(IPageLayout layout) {
 		
@@ -46,9 +48,11 @@ public class DebugPerspective implements IPerspectiveFactory {
 	protected void setContentsOfShowViewMenu(IPageLayout layout) {
 		layout.addShowViewShortcut(IDebugUIConstants.ID_DEBUG_VIEW);
 		layout.addShowViewShortcut(IDebugUIConstants.ID_PROCESS_VIEW);
+		layout.addShowViewShortcut(IDebugUIConstants.ID_VARIABLE_VIEW);
 		layout.addShowViewShortcut(IDebugUIConstants.ID_BREAKPOINT_VIEW);
 		layout.addShowViewShortcut(IDebugUIConstants.ID_INSPECTOR_VIEW);
-		layout.addShowViewShortcut(IDebugUIConstants.ID_VARIABLE_VIEW);
+		layout.addShowViewShortcut(IPageLayout.ID_PROP_SHEET);
+		layout.addShowViewShortcut(IPageLayout.ID_OUTLINE);
 		layout.addShowViewShortcut(IDebugUIConstants.ID_CONSOLE_VIEW);
 		layout.addShowViewShortcut(IPageLayout.ID_TASK_LIST);
 	}
