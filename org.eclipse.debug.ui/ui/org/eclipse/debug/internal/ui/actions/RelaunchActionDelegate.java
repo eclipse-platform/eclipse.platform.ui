@@ -11,13 +11,12 @@
 package org.eclipse.debug.internal.ui.actions;
 
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
+import org.eclipse.debug.ui.DebugUITools;
 
 public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 	
@@ -54,11 +53,7 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 	 * Re-launches the given configuration in the specified mode.
 	 */
 	public static void relaunch(ILaunchConfiguration config, String mode) {
-		try {
-			config.launch(mode, null);		
-		} catch (CoreException ce) {
-			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), ActionMessages.getString("RelaunchActionDelegate.Launch_Failed_1"), ActionMessages.getString("RelaunchActionDelegate.An_exception_occurred_while_launching_2"), ce); //$NON-NLS-1$ //$NON-NLS-2$
-		}
+		DebugUITools.launch(config, mode);		
 	}
 	
 	/**
