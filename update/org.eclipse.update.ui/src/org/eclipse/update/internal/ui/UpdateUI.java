@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui;
 
-
 import java.lang.reflect.*;
 import java.net.*;
 import java.util.*;
@@ -37,7 +36,6 @@ import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.AboutInfo;
 import org.eclipse.update.internal.ui.preferences.*;
 import org.eclipse.update.internal.ui.security.*;
-import org.eclipse.update.internal.ui.views.*;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -45,9 +43,9 @@ import org.eclipse.update.internal.ui.views.*;
 public class UpdateUI extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.eclipse.update.ui";
 	public static final String WEB_APP_ID = "org.eclipse.update";
-	
+
 	public static final String ID_BROWSER = PLUGIN_ID + "WebBrowser";
-	
+
 	//The shared instance.
 	private static UpdateUI plugin;
 	//Resource bundle.
@@ -67,7 +65,9 @@ public class UpdateUI extends AbstractUIPlugin {
 		super(descriptor);
 		plugin = this;
 		try {
-			resourceBundle = ResourceBundle.getBundle("org.eclipse.update.internal.ui.UpdateUIPluginResources");
+			resourceBundle =
+				ResourceBundle.getBundle(
+					"org.eclipse.update.internal.ui.UpdateUIPluginResources");
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
@@ -160,7 +160,8 @@ public class UpdateUI extends AbstractUIPlugin {
 		manager.registerAdapters(adapterFactory, UIModelObject.class);
 		authenticator = new UpdateManagerAuthenticator();
 		Authenticator.setDefault(authenticator);
-		int historyPref = getPluginPreferences().getInt(UpdateCore.P_HISTORY_SIZE);
+		int historyPref =
+			getPluginPreferences().getInt(UpdateCore.P_HISTORY_SIZE);
 		if (historyPref > 0) {
 			SiteLocalModel.DEFAULT_HISTORY = historyPref;
 		}
@@ -182,7 +183,7 @@ public class UpdateUI extends AbstractUIPlugin {
 			UpdateUI.logException(e);
 			return;
 		}
-		
+
 		appServerHost = WebappManager.getHost();
 		appServerPort = WebappManager.getPort();
 	}
@@ -240,7 +241,13 @@ public class UpdateUI extends AbstractUIPlugin {
 			String message = e.getMessage();
 			if (message == null)
 				message = e.toString();
-			status = new Status(IStatus.ERROR, getPluginId(), IStatus.OK, message, e);
+			status =
+				new Status(
+					IStatus.ERROR,
+					getPluginId(),
+					IStatus.OK,
+					message,
+					e);
 		}
 		log(status, showErrorDialog);
 	}
@@ -248,15 +255,26 @@ public class UpdateUI extends AbstractUIPlugin {
 	public static void log(IStatus status, boolean showErrorDialog) {
 		if (status.getSeverity() != IStatus.INFO) {
 			if (showErrorDialog)
-				ErrorDialog.openError(getActiveWorkbenchShell(), null, null, status);
+				ErrorDialog.openError(
+					getActiveWorkbenchShell(),
+					null,
+					null,
+					status);
 			//ResourcesPlugin.getPlugin().getLog().log(status);
 			Platform.getPlugin("org.eclipse.core.runtime").getLog().log(status);
 		} else {
-			MessageDialog.openInformation(getActiveWorkbenchShell(), null, status.getMessage());
+			MessageDialog.openInformation(
+				getActiveWorkbenchShell(),
+				null,
+				status.getMessage());
 		}
 	}
 
-	public static IFeature[] searchSite(String featureId, IConfiguredSite site, boolean onlyConfigured) throws CoreException {
+	public static IFeature[] searchSite(
+		String featureId,
+		IConfiguredSite site,
+		boolean onlyConfigured)
+		throws CoreException {
 		IFeatureReference[] references = null;
 
 		if (onlyConfigured)
@@ -279,7 +297,9 @@ public class UpdateUI extends AbstractUIPlugin {
 		return getInstalledFeatures(feature, true);
 	}
 
-	public static IFeature[] getInstalledFeatures(IFeature feature, boolean onlyConfigured) {
+	public static IFeature[] getInstalledFeatures(
+		IFeature feature,
+		boolean onlyConfigured) {
 		Vector features = new Vector();
 		try {
 			ILocalSite localSite = SiteManager.getLocalSite();
@@ -290,7 +310,8 @@ public class UpdateUI extends AbstractUIPlugin {
 
 			for (int i = 0; i < isites.length; i++) {
 				IConfiguredSite isite = isites[i];
-				IFeature[] result = UpdateUI.searchSite(id, isite, onlyConfigured);
+				IFeature[] result =
+					UpdateUI.searchSite(id, isite, onlyConfigured);
 				for (int j = 0; j < result.length; j++) {
 					IFeature installedFeature = result[j];
 					features.add(installedFeature);
@@ -301,13 +322,14 @@ public class UpdateUI extends AbstractUIPlugin {
 		}
 		return (IFeature[]) features.toArray(new IFeature[features.size()]);
 	}
-	
+
 	public static boolean isPatch(IFeature candidate) {
 		IImport[] imports = candidate.getImports();
 
 		for (int i = 0; i < imports.length; i++) {
 			IImport iimport = imports[i];
-			if (iimport.isPatch()) return true;
+			if (iimport.isPatch())
+				return true;
 		}
 		return false;
 	}
@@ -334,7 +356,8 @@ public class UpdateUI extends AbstractUIPlugin {
 		String key = "@" + vid.getIdentifier() + "_" + vid.getVersion();
 		try {
 			ILocalSite lsite = SiteManager.getLocalSite();
-			IInstallConfiguration[] configs = lsite.getPreservedConfigurations();
+			IInstallConfiguration[] configs =
+				lsite.getPreservedConfigurations();
 			for (int i = 0; i < configs.length; i++) {
 				IInstallConfiguration config = configs[i];
 				if (config.getLabel().startsWith(key))
@@ -380,7 +403,8 @@ public class UpdateUI extends AbstractUIPlugin {
 
 	private void readInfo() {
 		// determine the identifier of the "dominant" application 
-		IPlatformConfiguration conf = BootLoader.getCurrentPlatformConfiguration();
+		IPlatformConfiguration conf =
+			BootLoader.getCurrentPlatformConfiguration();
 		String versionedFeatureId = conf.getPrimaryFeatureIdentifier();
 
 		if (versionedFeatureId == null) {
@@ -393,7 +417,9 @@ public class UpdateUI extends AbstractUIPlugin {
 				String mainPluginName = versionedFeatureId.substring(0, index);
 				PluginVersionIdentifier mainPluginVersion = null;
 				try {
-					mainPluginVersion = new PluginVersionIdentifier(versionedFeatureId.substring(index + 1));
+					mainPluginVersion =
+						new PluginVersionIdentifier(
+							versionedFeatureId.substring(index + 1));
 				} catch (Exception e) {
 					IStatus iniStatus = new Status(IStatus.ERROR, WorkbenchPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 0, "Unknown plugin version " + versionedFeatureId, e); //$NON-NLS-1$
 					log(iniStatus, true); //$NON-NLS-1$
@@ -410,7 +436,11 @@ public class UpdateUI extends AbstractUIPlugin {
 	public static void requestRestart() {
 		String title = UpdateUI.getString("RestartTitle");
 		String message = UpdateUI.getString("RestartMessage");
-		boolean restart = MessageDialog.openQuestion(getActiveWorkbenchShell(), title, message);
+		boolean restart =
+			MessageDialog.openQuestion(
+				getActiveWorkbenchShell(),
+				title,
+				message);
 		if (restart)
 			PlatformUI.getWorkbench().restart();
 	}
@@ -435,50 +465,30 @@ public class UpdateUI extends AbstractUIPlugin {
 	 * @param store the preference store to fill
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
-		store.setDefault(MainPreferencePage.P_BROWSER, MainPreferencePage.EMBEDDED_VALUE);
 		store.setDefault(AppServerPreferencePage.P_MASTER_SWITCH, false);
 		store.setDefault(AppServerPreferencePage.P_ENCODE_URLS, true);
 		UpdateColors.setDefaults(store);
 	}
-	
+
 	public static boolean showURL(String url) {
 		return showURL(url, true);
 	}
 
 	public static boolean showURL(String url, boolean considerEmbedded) {
-		boolean useEmbedded = false;
 		boolean focusGrabbed = false;
 		boolean win32 = SWT.getPlatform().equals("win32");
-		
+
 		url = WebInstallHandler.getEncodedURLName(url);
-		if (win32 && considerEmbedded) {
-			useEmbedded = MainPreferencePage.getUseEmbeddedBrowser();
-		}
-		if (useEmbedded) {
-			IWorkbenchPage page = UpdateUI.getActivePage();
-			try {
-				//IViewPart part = page.findView(UpdatePerspective.ID_BROWSER);
-				//if (part == null) {
-					IViewPart part = page.showView(ID_BROWSER);
-					focusGrabbed = true;
-				//} else
-					//page.bringToTop(part);
-				((IEmbeddedWebBrowser) part).openTo(url);
-			} catch (PartInitException e) {
-				UpdateUI.logException(e);
-			}
+
+		if (win32) {
+			Program.launch(url);
 		} else {
-			if (win32) {
-				Program.launch(url);
-			} else {
-				// defect 11483
-				IBrowser browser = BrowserManager.getInstance().createBrowser();
-				try {
-					browser.displayURL(url);
-				}
-				catch (Exception e) {
-					UpdateUI.logException(e);
-				}
+			// defect 11483
+			IBrowser browser = BrowserManager.getInstance().createBrowser();
+			try {
+				browser.displayURL(url);
+			} catch (Exception e) {
+				UpdateUI.logException(e);
 			}
 		}
 		return focusGrabbed;
