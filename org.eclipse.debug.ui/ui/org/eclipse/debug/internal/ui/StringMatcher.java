@@ -36,18 +36,7 @@ public class StringMatcher {
 			return end;
 		}
 	}
-
-	/**
-	 * StringMatcher constructor takes in a String object that is a simple 
-	 * pattern which may contain ‘*’ for 0 and many characters and
-	 * ‘?’ for exactly one character. Also takes as parameter a boolean object
-	 * specifying if case should be ignored
-	 * @deprecated Use StringMatcher(pattern, ignoreCase, ignoreWildCards).
-	 */
-	public StringMatcher(String aPattern, boolean ignoreCase) {
-		this(aPattern, ignoreCase, false);
-	}
-
+	
 	/**
 	 * StringMatcher constructor takes in a String object that is a simple 
 	 * pattern which may contain ‘*’ for 0 and many characters and
