@@ -49,7 +49,6 @@ import org.eclipse.core.internal.runtime.Policy;
  * <p>
  * Clients may instantiate; not intended to be subclassed by clients.
  * </p>
- * @see IPluginDescriptor#getVersionIdentifier()
  * @see java.lang.String#compareTo(java.lang.String) 
  */
 public final class PluginVersionIdentifier {

@@ -23,7 +23,7 @@ import org.osgi.framework.Constants;
  * </p>
  *
  * @see IPluginDescriptor#getPluginPrerequisites()
- *TODO @deprecated 
+ * @deprecated 
  * In Eclipse 3.0 the plug-in prerequisite representation was changed.  Clients of 
  * <code>IPluginPrerequisite</code> are directed to the headers associated with the relevant bundle.
  * In particular, the <code>Require-Bundle</code> header contains all available information
@@ -55,7 +55,7 @@ public interface IPluginPrerequisite {
 	 * or null, if the dependency is not resolved.
 	 * 
 	 * @return the plug-in version identifier, or null
-	 * TODO @deprecated Callers of this method should interrogate the current {@link State)
+	 * @deprecated Callers of this method should interrogate the current {@link State)
 	 * of the platform.  For example, 
 	 * <pre>
 	 *     State state = Platform.getPlatformAdmin().getState();
@@ -70,7 +70,7 @@ public interface IPluginPrerequisite {
 	 * Returns the plug-in identifier of the prerequisite plug-in.
 	 * 
 	 * @return the plug-in identifier
-	 * TODO @deprecated Given a manifest element equivalent of a plug-in 
+	 * @deprecated Given a manifest element equivalent of a plug-in 
 	 * prerequisite (see the class comment), this method is replaced by:
 	 * <pre>
 	 *     element.getValue();
@@ -84,7 +84,7 @@ public interface IPluginPrerequisite {
 	 * 
 	 * @return the plug-in version identifier, or <code>null</code> if 
 	 *    none was specified
-	 * TODO @deprecated Given a manifest element equivalent of a plug-in 
+	 * @deprecated Given a manifest element equivalent of a plug-in 
 	 * prerequisite (see the class comment), this method is replaced by:
 	 * <pre>
 	 *     element.getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE);
@@ -103,7 +103,7 @@ public interface IPluginPrerequisite {
 	 * 
 	 * @return <code>true</code> if this prerequisite plug-in is exposed,
 	 *    <code>false</code> otherwise
-	 * TODO @deprecated Given a manifest element equivalent of a plug-in 
+	 * @deprecated Given a manifest element equivalent of a plug-in 
 	 * prerequisite (see the class comment), this method is replaced by:
 	 * <pre>
 	 *     element.getAttribute(Constants.REPROVIDE_ATTRIBUTE);
@@ -119,7 +119,7 @@ public interface IPluginPrerequisite {
 	 * @return <code>true</code> if greater or equal match is allowed,
 	 *   <code>false</code> otherwise.
 	 * @since 2.0
-	 * TODO @deprecated Given a manifest element equivalent of a plug-in 
+	 * @deprecated Given a manifest element equivalent of a plug-in 
 	 * prerequisite (see the class comment), this method is replaced by:
 	 * <pre>
 	 *     String match = element.getAttribute(Constants.VERSION_MATCH_ATTRIBUTE);
@@ -134,7 +134,7 @@ public interface IPluginPrerequisite {
 	 *
 	 * @return <code>true</code> if compatible match is allowed,
 	 *   <code>false</code> if exact match is required.
-	 * TODO @deprecated Given a manifest element equivalent of a plug-in 
+	 * @deprecated Given a manifest element equivalent of a plug-in 
 	 * prerequisite (see the class comment), this method is replaced by:
 	 * <pre>
 	 *     String match = element.getAttribute(Constants.VERSION_MATCH_ATTRIBUTE);
@@ -151,7 +151,7 @@ public interface IPluginPrerequisite {
 	 * @return <code>true</code> if only equivalent identifier match
 	 * satisfies this dependency, <code>false</code> otherwise.
 	 * @since 2.0
-	 * TODO @deprecated Given a manifest element equivalent of a plug-in 
+	 * @deprecated Given a manifest element equivalent of a plug-in 
 	 * prerequisite (see the class comment), this method is replaced by:
 	 * <pre>
 	 *     String match = element.getAttribute(Constants.VERSION_MATCH_ATTRIBUTE);
@@ -169,7 +169,7 @@ public interface IPluginPrerequisite {
 	 * identifier match satisfies this dependency,
 	 * <code>false</code> otherwise.
 	 * @since 2.0
-	 * TODO @deprecated Given a manifest element equivalent of a plug-in 
+	 * @deprecated Given a manifest element equivalent of a plug-in 
 	 * prerequisite (see the class comment), this method is replaced by:
 	 * <pre>
 	 *     String match = element.getAttribute(Constants.VERSION_MATCH_ATTRIBUTE);
@@ -186,7 +186,7 @@ public interface IPluginPrerequisite {
 	 * @return <code>true</code> if only exact identifier match
 	 * satisfies this dependency, <code>false</code> if compatible
 	 * plug-in will satisfy this dependency.
-	 * TODO @deprecated ??? what the heck?
+	 * @deprecated ??? what the heck?
 	 */
 	public boolean isMatchedAsExact();
 
@@ -195,7 +195,7 @@ public interface IPluginPrerequisite {
 	 * prerequisite is missing, this plugin is disabled.  
 	 *
 	 * @return <code>true</code> if this prerequisite is optional, <code>false</code> otherwise
-	 * TODO @deprecated Given a manifest element equivalent of a plug-in 
+	 * @deprecated Given a manifest element equivalent of a plug-in 
 	 * prerequisite (see the class comment), this method is replaced by:
 	 * <pre>
 	 *     "true".equals(element.getAttribute(Constants.OPTIONAL_ATTRIBUTE);

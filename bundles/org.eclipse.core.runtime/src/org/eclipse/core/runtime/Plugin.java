@@ -169,7 +169,7 @@ public abstract class Plugin implements BundleActivator {
 	 *
 	 * @param descriptor the plug-in descriptor
 	 * @see #getDescriptor()
-	 * TODO @deprecated
+	 * @deprecated
 	 * In Eclipse 3.0 this constructor has been replaced by {@link #Plugin()}.
 	 * Implementations of <code>MyPlugin(IPluginDescriptor descriptor)</code> should be changed to 
 	 * <code>MyPlugin()</code> and call <code>super()</code> instead of <code>super(descriptor)</code>.
@@ -227,7 +227,7 @@ public abstract class Plugin implements BundleActivator {
 	 * Returns the plug-in descriptor for this plug-in runtime object.
 	 *
 	 * @return the plug-in descriptor for this plug-in runtime object
-	 * TODO @deprecated 
+	 * @deprecated 
 	 * <code>IPluginDescriptor</code> was refactored in Eclipse 3.0.
 	 * The <code>getDescriptor()</code> method may only be called by plug-ins 
 	 * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.
@@ -481,7 +481,7 @@ public abstract class Plugin implements BundleActivator {
 	 *
 	 * @exception CoreException if this method fails to shut down
 	 *   this plug-in
-	 * TODO @deprecated 
+	 * @deprecated 
 	 * In Eclipse 3.0 this method has been replaced by {@link Plugin#stop(BundleContext context)}.
 	 * Implementations of <code>shutdown()</code> should be changed to override 
 	 * <code>stop(BundleContext context)</code> and call <code>super.stop(context)</code> 
@@ -548,7 +548,7 @@ public abstract class Plugin implements BundleActivator {
 	 * <p>
 	 *
 	 * @exception CoreException if this plug-in did not start up properly
-	 * TODO @deprecated 
+	 * @deprecated 
 	 * In Eclipse 3.0 this method has been replaced by {@link Plugin#start(BundleContext context)}.
 	 * Implementations of <code>startup()</code> should be changed to extend
 	 * <code>start(BundleContext context)</code> and call <code>super.start(context)</code>

@@ -26,7 +26,7 @@ import org.osgi.framework.Constants;
  * </p>
  *
  * @see IPluginDescriptor#getRuntimeLibraries() 
- * TODO @deprecated 
+ * @deprecated 
  * In Eclipse 3.0 the plug-in classpath representation was changed.  Clients of 
  * <code>ILibrary</code> are directed to the headers associated with the relevant bundle.
  * In particular, the <code>Bundle-Classpath</code> header contains all available information
@@ -58,14 +58,14 @@ import org.osgi.framework.Constants;
 public interface ILibrary {
 	/**
 	 * Constant string (value "code") indicating the code library type.
-	 * TODO @deprecated As of Eclipse 3.0 library types are obsolete.
+	 * @deprecated As of Eclipse 3.0 library types are obsolete.
 	 * There is no replacement.
 	 */
 	public static final String CODE = "code"; //$NON-NLS-1$
 
 	/**
 	 * Constant string (value "resource") indicating the resource library type.
-	 * TODO @deprecated As of Eclipse 3.0 library types are obsolete.
+	 * @deprecated As of Eclipse 3.0 library types are obsolete.
 	 * There is no replacement.
 	 */
 	public static final String RESOURCE = "resource"; //$NON-NLS-1$
@@ -80,7 +80,7 @@ public interface ILibrary {
 	 * (no filtering).
 	 *
 	 * @return the content filters, or <code>null</codel> if none
-	 * TODO @deprecated As of Eclipse 3.0 content filters are obsolete.  
+	 * @deprecated As of Eclipse 3.0 content filters are obsolete.  
 	 * There is no replacement.
 	 */
 	public String[] getContentFilters();
@@ -91,7 +91,7 @@ public interface ILibrary {
 	 *
 	 * @return the path of the library
 	 * @see IPluginDescriptor#getInstallURL()
-	 * TODO @deprecated 
+	 * @deprecated 
 	 * Given a manifest element corresponding to a classpath entry, the path
 	 * for the entry can be accessed by getting the value of the manifest element.  
 	 * For example,
@@ -107,7 +107,7 @@ public interface ILibrary {
 	 * @return the type of this library.   The valid types are: <code>CODE</code> and <code>RESOURCE</code>.
 	 * @see #CODE
 	 * @see #RESOURCE
-	 * TODO @deprecated As of Eclipse 3.0 library types are obsolete.
+	 * @deprecated As of Eclipse 3.0 library types are obsolete.
 	 * There is no replacement.
 	 */
 	public String getType();
@@ -121,7 +121,7 @@ public interface ILibrary {
 	 *
 	 * @return <code>true</code> if the library is exported, <code>false</code>
 	 *    if it is private
-	 * TODO @deprecated As of Eclipse 3.0 exporting an individual library is obsolete.
+	 * @deprecated As of Eclipse 3.0 exporting an individual library is obsolete.
 	 * There is no replacement.
 	 */
 	public boolean isExported();
@@ -132,7 +132,7 @@ public interface ILibrary {
 	 *
 	 * @return <code>true</code> if the library is fully exported, and
 	 *    <code>false</code> if it is private or has filtered content
-	 * TODO @deprecated As of Eclipse 3.0 exporting an individual library is obsolete.
+	 * @deprecated As of Eclipse 3.0 exporting an individual library is obsolete.
 	 * There is no replacement.
 	 */
 	public boolean isFullyExported();
@@ -143,7 +143,7 @@ public interface ILibrary {
 	 * 
 	 * @return the array of package prefixes or <code>null</code>
 	 * @since 2.1
-	 * TODO @deprecated As of Eclipse 3.0 package prefix filtering is obsolete.
+	 * @deprecated As of Eclipse 3.0 package prefix filtering is obsolete.
 	 * There is no replacement.
 	 */
 	public String[] getPackagePrefixes();

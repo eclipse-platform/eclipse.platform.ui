@@ -66,8 +66,6 @@ public interface IConfigurationElement {
 	 * file is automatically applied.
 	 * </p>
 	 *
-	 * @see IPluginDescriptor#getResourceString(String)
-	 *
 	 * @param name the name of the attribute
 	 * @return attribute value, or <code>null</code> if none
 	 */
@@ -199,7 +197,6 @@ public interface IConfigurationElement {
 	 * </p>
 	 *
 	 * @return the text value of this configuration element or <code>null</code>
-	 * @see IPluginDescriptor#getResourceString(String)
 	 */
 	public String getValue();
 

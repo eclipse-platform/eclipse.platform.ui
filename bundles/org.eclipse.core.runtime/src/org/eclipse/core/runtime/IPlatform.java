@@ -192,7 +192,7 @@ public interface IPlatform {
 	/**
 	 * Returns a URL which is the local equivalent of the
 	 * supplied URL. This method is expected to be used with the
-	 * plug-in-relative URLs returned by IPluginDescriptor, Bundle.getEntry()
+	 * plug-in-relative URLs returned by Bundle.getEntry()
 	 * and Platform.find().
 	 * If the specified URL is not a plug-in-relative URL, it 
 	 * is returned asis. If the specified URL is a plug-in-relative
@@ -206,7 +206,6 @@ public interface IPlatform {
 	 * @return the resolved URL
 	 * @exception IOException if unable to resolve URL
 	 * @see #resolve(URL), #find
-	 * @see IPluginDescriptor#getInstallURL()
 	 * @see Bundle#getEntry(String)
 	 */
 	public URL asLocalURL(URL url) throws IOException;
@@ -308,7 +307,7 @@ public interface IPlatform {
 	/**
 	 * Returns a URL which is the resolved equivalent of the
 	 * supplied URL. This method is expected to be used with the
-	 * plug-in-relative URLs returned by IPluginDescriptor, Bundle.getEntry()
+	 * plug-in-relative URLs returned by Bundle.getEntry()
 	 * and Platform.find().
 	 * <p>
 	 * If the specified URL is not a plug-in-relative URL, it is returned
@@ -324,7 +323,6 @@ public interface IPlatform {
 	 * @return the resolved URL
 	 * @exception IOException if unable to resolve URL
 	 * @see #asLocalURL(URL), #find
-	 * @see IPluginDescriptor#getInstallURL()
 	 * @see Bundle#getEntry(String)
 	 */
 	public URL resolve(URL url) throws IOException;

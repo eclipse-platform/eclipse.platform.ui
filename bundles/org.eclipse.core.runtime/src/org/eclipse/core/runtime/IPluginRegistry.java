@@ -21,7 +21,7 @@ package org.eclipse.core.runtime;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * TODO @deprecated 
+ * @deprecated 
  * The plug-in registry has been generalized in Eclipse 3.0.  It is now the
  * {@link IExtensionRegistry}.  Most of the <code>IPluginRegistry</code> function
  * is directly supported on the new interface without change.  Most clients
@@ -44,7 +44,7 @@ public interface IPluginRegistry {
 	 * @param extensionPointId the unique identifier of the extension point
 	 *		(e.g. <code>"org.eclipse.core.resources.builders"</code>)
 	 * @return the configuration elements
-	 * TODO @deprecated Replaced by {@link IExtensionRegistry#getConfigurationElementsFor(String)}.
+	 * @deprecated Replaced by {@link IExtensionRegistry#getConfigurationElementsFor(String)}.
 	 */
 	public IConfigurationElement[] getConfigurationElementsFor(String extensionPointId);
 
@@ -59,7 +59,7 @@ public interface IPluginRegistry {
 	 * @param extensionPointName the simple identifier of the 
 	 *		extension point (e.g. <code>"builders"</code>)
 	 * @return the configuration elements
-	 * TODO @deprecated Replaced by {@link IExtensionRegistry#getConfigurationElementsFor(String, String)}.
+	 * @deprecated Replaced by {@link IExtensionRegistry#getConfigurationElementsFor(String, String)}.
 	 */
 	public IConfigurationElement[] getConfigurationElementsFor(String pluginId, String extensionPointName);
 
@@ -75,7 +75,7 @@ public interface IPluginRegistry {
 	 * @param extensionId the unique identifier of the extension 
 	 *		(e.g. <code>"com.example.acme.coolbuilder</code>)
 	 * @return the configuration elements
-	 * TODO @deprecated Replaced by {@link IExtensionRegistry#getConfigurationElementsFor(String, String, String)}.
+	 * @deprecated Replaced by {@link IExtensionRegistry#getConfigurationElementsFor(String, String, String)}.
 	 */
 	public IConfigurationElement[] getConfigurationElementsFor(String pluginId, String extensionPointName, String extensionId);
 
@@ -90,7 +90,7 @@ public interface IPluginRegistry {
 	 * @param extensionId the unique identifier of the extension 
 	 *		(e.g. <code>"com.example.acme.coolbuilder"</code>)
 	 * @return the extension, or <code>null</code>
-	 * TODO @deprecated Replaced by {@link IExtensionRegistry#getExtension(String, String)}.
+	 * @deprecated Replaced by {@link IExtensionRegistry#getExtension(String, String)}.
 	 */
 	public IExtension getExtension(String extensionPointId, String extensionId);
 
@@ -107,7 +107,7 @@ public interface IPluginRegistry {
 	 * @param extensionId the unique identifier of the extension 
 	 *		(e.g. <code>"com.example.acme.coolbuilder"</code>)
 	 * @return the extension, or <code>null</code>
-	 * TODO @deprecated Replaced by {@link IExtensionRegistry#getExtension(String, String, String)}.
+	 * @deprecated Replaced by {@link IExtensionRegistry#getExtension(String, String, String)}.
 	 */
 	public IExtension getExtension(String pluginId, String extensionPointName, String extensionId);
 
@@ -119,7 +119,7 @@ public interface IPluginRegistry {
 	 * @param extensionPointId the unique identifier of the extension point 
 	 *    (e.g., <code>"org.eclipse.core.resources.builders"</code>)
 	 * @return the extension point, or <code>null</code>
-	 * TODO @deprecated Replaced by {@link IExtensionRegistry#getExtensionPoint(String)}.
+	 * @deprecated Replaced by {@link IExtensionRegistry#getExtensionPoint(String)}.
 	 */
 	public IExtensionPoint getExtensionPoint(String extensionPointId);
 
@@ -133,7 +133,7 @@ public interface IPluginRegistry {
 	 * @param extensionPointName the simple identifier of the 
 	 *		extension point (e.g. <code>" builders"</code>)
 	 * @return the extension point, or <code>null</code>
-	 * TODO @deprecated Replaced by {@link IExtensionRegistry#getExtensionPoint(String, String)}.
+	 * @deprecated Replaced by {@link IExtensionRegistry#getExtensionPoint(String, String)}.
 	 */
 	public IExtensionPoint getExtensionPoint(String pluginId, String extensionPointName);
 
@@ -142,7 +142,7 @@ public interface IPluginRegistry {
 	 * Returns an empty array if there are no extension points.
 	 *
 	 * @return the extension points known to this plug-in registry
-	 * TODO @deprecated Replaced by {@link IExtensionRegistry#getExtensionPoints()}.
+	 * @deprecated Replaced by {@link IExtensionRegistry#getExtensionPoints()}.
 	 */
 	public IExtensionPoint[] getExtensionPoints();
 
@@ -155,7 +155,7 @@ public interface IPluginRegistry {
 	 * @param pluginId the unique identifier of the plug-in 
 	 *		(e.g. <code>"com.example.acme"</code>).
 	 * @return the plug-in descriptor, or <code>null</code>
-	 * TODO @deprecated 
+	 * @deprecated 
 	 * <code>IPluginDescriptor</code> was refactored in Eclipse 3.0.
 	 * The <code>getPluginDescriptor()</code> method may only be called by plug-ins 
 	 * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.
@@ -174,7 +174,7 @@ public interface IPluginRegistry {
 	 * a non-deterministically chosen version of the identified plug-in (if any)
 	 * will be returned
 	 * @return the plug-in descriptor, or <code>null</code>
-	 * TODO @deprecated 
+	 * @deprecated 
 	 * <code>IPluginDescriptor</code> was refactored in Eclipse 3.0.
 	 * The <code>getPluginDescriptor()</code> method may only be called by plug-ins 
 	 * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.
@@ -187,7 +187,7 @@ public interface IPluginRegistry {
 	 * Returns an empty array if there are no installed plug-ins.
 	 *
 	 * @return the plug-in descriptors known to this plug-in registry
-	 * TODO @deprecated 
+	 * @deprecated 
 	 * <code>IPluginDescriptor</code> was refactored in Eclipse 3.0.
 	 * The <code>getPluginDescriptors()</code> method may only be called by plug-ins 
 	 * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.
@@ -204,7 +204,7 @@ public interface IPluginRegistry {
 	 * @param pluginId the unique identifier of the plug-in 
 	 *		(e.g. <code>"org.eclipse.core.resources"</code>).
 	 * @return the plug-in descriptors known to this plug-in registry
-	 * TODO @deprecated 
+	 * @deprecated 
 	 * <code>IPluginDescriptor</code> was refactored in Eclipse 3.0.
 	 * The <code>getPluginDescriptors()</code> method may only be called by plug-ins 
 	 * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.

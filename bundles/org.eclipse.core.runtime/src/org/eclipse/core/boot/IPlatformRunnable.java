@@ -18,7 +18,7 @@ package org.eclipse.core.boot;
  * <p>
  * Clients may implement this interface.
  * </p>
- * TODO @deprecated In Eclipse 3.0 the boot plug-in and packages were deprecated.
+ * @deprecated In Eclipse 3.0 the boot plug-in and packages were deprecated.
  * This class has been replaced by an equivalent class in the org.eclipse.core.runtime package.
  * 
  * @see org.eclipse.core.runtime.IPlatformRunnable

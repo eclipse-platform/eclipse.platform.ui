@@ -25,7 +25,7 @@ import java.util.*;
  * <p>This interface is not intended to be implemented by clients.
  * </p>
  *
- * TODO @deprecated 
+ * @deprecated 
  * <code>IPluginDescriptor</code> was refactored in Eclipse 3.0.
  * Most of the functionality has moved to {@link Platform} and the 
  * plug-in descriptor has been replaced with the OSGi <code>Bundle</code> 
@@ -79,7 +79,7 @@ public interface IPluginDescriptor {
 	 * @return the extension, or <code>null</code>
 	 * TODO XXX this javadoc direction is incorrect.  There is no corresponding method on 
 	 * IExtensionRegistry
-	 * TODO @deprecated 
+	 * @deprecated 
 	 * Use 
 	 * <pre>
 	 *     Platform.getExtensionRegistry().getExtension(id + "." + extensionName) 
@@ -94,7 +94,7 @@ public interface IPluginDescriptor {
 	 *
 	 * @param extensionPointId the simple identifier of the extension point (e.g. <code>"wizard"</code>).
 	 * @return the extension point, or <code>null</code>
-	 * TODO @deprecated  
+	 * @deprecated  
 	 * Use 
 	 * <pre>
 	 *     Platform.getExtensionRegistry().getExtensionPoint(id, extensionPointId) 
@@ -108,7 +108,7 @@ public interface IPluginDescriptor {
 	 * Returns an empty array if this plug-in does not declare any extension points.
 	 *
 	 * @return the extension points declared by this plug-in
-	 * TODO @deprecated 
+	 * @deprecated 
 	 * Use 
 	 * <pre>
 	 *     Platform.getExtensionRegistry().getExtensionPoints(id) 
@@ -122,7 +122,7 @@ public interface IPluginDescriptor {
 	 * Returns an empty array if this plug-in does not declare any extensions.
 	 *
 	 * @return the extensions declared by this plug-in
-	 * TODO @deprecated 
+	 * @deprecated 
 	 * Use 
 	 * <pre>
 	 *     Platform.getExtensionRegistry().getExtensions(id) 
@@ -142,7 +142,7 @@ public interface IPluginDescriptor {
 	 * @return the URL of this plug-in's install directory
 	 * @see #getPlugin()
 	 * @see Plugin#getStateLocation()
-	 * TODO @deprecated 
+	 * @deprecated 
 	 * Use 
 	 * <pre>
 	 *     bundle.getEntry("/");
@@ -164,7 +164,7 @@ public interface IPluginDescriptor {
 	 * @return a displayable string label for this plug-in,
 	 *    possibly the empty string
 	 * @see #getResourceString(String)
-	 * TODO @deprecated 
+	 * @deprecated 
 	 * Use 
 	 * <pre>
 	 *     bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME) 
@@ -187,7 +187,7 @@ public interface IPluginDescriptor {
 	 * @exception CoreException 
 	 *   if this plug-in's runtime object could not be created.
 	 * @see #isPluginActivated()
-	 * TODO @deprecated 
+	 * @deprecated 
 	 * In Eclipse 3.0 plug-in runtime objects are not globally managed and
 	 * so are not generically accessible.  Rather, each plug-in is free to declare
 	 * API which exposes the plug-in runtime object (e.g., <code>MyPlugin.getInstance()</code>).
@@ -239,7 +239,7 @@ public interface IPluginDescriptor {
 	 * @see IConfigurationElement#createExecutableExtension(String)
 	 * @see #isPluginActivated()
 	 * @see #getResourceBundle()
-	 * TODO @deprecated 
+	 * @deprecated 
 	 * Use 
 	 * <pre>
 	 *     bundle.loadClass(className)
@@ -255,7 +255,7 @@ public interface IPluginDescriptor {
 	 *
 	 * @return an array of plug-in prerequisites, or an empty array
 	 * if no prerequisites were specified
-	 * TODO @deprecated 
+	 * @deprecated 
 	 * Use 
 	 * <pre>
 	 *     import org.eclipse.osgi.util.ManifestElement;
@@ -279,7 +279,7 @@ public interface IPluginDescriptor {
 	 * </p>
 	 * @return the name of the provider, possibly the empty string
 	 * @see #getResourceString(String)
-	 * TODO @deprecated
+	 * @deprecated
 	 * Use 
 	 * <pre>
 	 *     bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VENDOR) 
@@ -300,7 +300,7 @@ public interface IPluginDescriptor {
 	 *
 	 * @return the resource bundle
 	 * @exception MissingResourceException if the resource bundle was not found
-	 * TODO @deprecated 
+	 * @deprecated 
 	 * Use 
 	 * <pre>
 	 *     Platform.getResourceBundle(bundle)
@@ -330,7 +330,7 @@ public interface IPluginDescriptor {
 	 * @param value the value
 	 * @return the resource string
 	 * @see #getResourceBundle()
-	 * TODO @deprecated 
+	 * @deprecated 
 	 * Use 
 	 * <pre>
 	 *     Platform.getResourceString(bundle, value)
@@ -371,7 +371,7 @@ public interface IPluginDescriptor {
 	 * @param resourceBundle the resource bundle
 	 * @return the resource string
 	 * @see #getResourceBundle()
-	 * TODO @deprecated 
+	 * @deprecated 
 	 * Use 
 	 * <pre>
 	 *     Platform.getResourceString(bundle, value, resourceBundle) 
@@ -386,7 +386,7 @@ public interface IPluginDescriptor {
 	 * Returns an empty array if this plug-in has no runtime libraries.
 	 *
 	 * @return the runtime libraries declared by this plug-in
-	 * TODO @deprecated 
+	 * @deprecated 
 	 * Use 
 	 * <pre>
 	 *     import org.eclipse.osgi.util.ManifestElement;
@@ -407,7 +407,7 @@ public interface IPluginDescriptor {
 	 * within the plug-in registry.
 	 *
 	 * @return the unique identifier of the plug-in (e.g. <code>"org.eclipse.core.runtime"</code>)
-	 * TODO @deprecated 
+	 * @deprecated 
 	 * Use 
 	 * <pre>
 	 *     bundle.getSymbolicName() 
@@ -421,7 +421,7 @@ public interface IPluginDescriptor {
 	 * Returns the version identifier of this plug-in.
 	 *
 	 * @return the plug-in version identifier
-	 * TODO @deprecated 
+	 * @deprecated 
 	 * Use 
 	 * <pre>
 	 *     String version = bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
@@ -440,7 +440,7 @@ public interface IPluginDescriptor {
 	 * @return <code>true</code> if this plug-in is activated, and
 	 *   <code>false</code> otherwise
 	 * @see #getPlugin()
-	 * TODO @deprecated 
+	 * @deprecated 
 	 * Use 
 	 * <pre>
 	 *     bundle.getState == org.osgi.framework.Bundle.ACTIVE 
@@ -459,7 +459,7 @@ public interface IPluginDescriptor {
 	 * necessary to perform a 'resolve' on this URL.
 	 * 
 	 * @since 2.0
-	 * TODO @deprecated 
+	 * @deprecated 
 	 * Use 
 	 * <pre>
 	 *     Platform.find(bundle, file) 
@@ -514,7 +514,7 @@ public interface IPluginDescriptor {
 	 * necessary to perform a 'resolve' on this URL.
 	 * 
 	 * @since 2.0
-	 * TODO @deprecated 
+	 * @deprecated 
 	 * Use 
 	 * <pre>
 	 *     Platform.find(bundle, path, override) 

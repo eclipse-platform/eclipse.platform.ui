@@ -35,7 +35,7 @@ public interface IExtensionPoint {
 	 * Returns the descriptor of the plug-in that declares this extension point.
 	 *
 	 * @return the plug-in that declares this extension point
-	 * TODO @deprecated IPluginDescriptor is not part of the new runtime and its function
+	 * @deprecated IPluginDescriptor is not part of the new runtime and its function
 	 * has been split over several parts of the new runtime.  This method
 	 * is not available (returns null) if the compatibility layer is not installed.  Use getNamespace()
 	 * to get the symbolic id of the declaring plugin.  See {@link IPluginDescriptor} to see how to 
@@ -94,7 +94,6 @@ public interface IExtensionPoint {
 	 *
 	 * @return a displayable string label for this extension point,
 	 *    possibly the empty string
-	 * @see IPluginDescriptor#getResourceString(String)
 	 */
 	public String getLabel();
 
