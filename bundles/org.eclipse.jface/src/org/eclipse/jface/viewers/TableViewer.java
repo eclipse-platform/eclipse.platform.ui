@@ -12,10 +12,8 @@
 package org.eclipse.jface.viewers;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
-import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.MouseAdapter;
@@ -30,6 +28,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.jface.util.Assert;
 
 /**
  * A concrete viewer based on a SWT <code>Table</code> control.
@@ -65,22 +65,42 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class TableViewer extends StructuredViewer {
 	
+	/**
+	 * The NOT_DISPLAYED_TOKEN is a placeholder for 
+	 * items that are not displayed.
+	 */
+	private static final Object NOT_DISPLAYED_TOKEN = new Object();
+	
 	private class VirtualManager{
 		
-		private int currentVisibleIndex = -1;
-		private Hashtable virtualElements = new Hashtable();
+		/**
+		 * The DISPLAYED_TOKEN is static object that 
+		 * is used to indicate that an item has been
+		 * displayed.
+		 */
+		final Object DISPLAYED_TOKEN = new Object();
 		
+		
+		private Object[] virtualElements = new Object[0];
+		
+		/**
+		 * Create a new instance of the receiver.
+		 *
+		 */
 		public VirtualManager(){
 			addTableListener();
 		}
 		
 		/**
 		 * Return whether or not index is visible.
+		 * @param index the index to check
 		 * @return <code>true</code> if the item has already
 		 * been created.
 		 */
 		public boolean isVisible(int index) {
-			return index <= currentVisibleIndex;
+			if(index >= virtualElements.length)
+				return false;
+			return virtualElements[index] == DISPLAYED_TOKEN;
 		}
 		
 		
@@ -96,26 +116,18 @@ public class TableViewer extends StructuredViewer {
 				public void handleEvent(Event event) {
 					TableItem item = (TableItem) event.item;
 					int index = table.indexOf(item);					
-					Object element = findVirtualElement(index);
+					Object element = virtualElements[index];
 					if(element == null)
 						throw new NullPointerException();
+					//If we get a call back for one we
+					//are already showing don't continue
+					if(element == DISPLAYED_TOKEN)
+						return;
 					associate(element,item);
 					updateItem(item,element);
-					if(index > currentVisibleIndex)
-						currentVisibleIndex = index;
+					virtualElements[index] = DISPLAYED_TOKEN;
 				}
 
-				/**
-				 * Find the virtualElement at index.
-				 * @param index
-				 * @return Object 
-				 */
-				private Object findVirtualElement(int index) {
-					Integer key = new Integer(index);
-					Object element = virtualElements.get(key);
-					virtualElements.remove(key);
-					return element;
-				}
 			});
 
 		}
@@ -128,18 +140,15 @@ public class TableViewer extends StructuredViewer {
 		public void notVisibleAdded(Object element, int index) {
 			
 			int requiredCount = index + 1;
-			if(requiredCount > getTable().getItemCount())
+			if(requiredCount > getTable().getItemCount()){
 				getTable().setItemCount(requiredCount);
-			Integer key = new Integer(index);
-			virtualElements.put(key,element);
-		}
-		
-		/**
-		 * Return the index of the last know visible item.
-		 *
-		 */
-		public int getVisibleIndex(){
-			return currentVisibleIndex;
+			}
+			if(requiredCount > virtualElements.length){
+				Object[] newElements = new Object[requiredCount];
+				System.arraycopy(virtualElements, 0, newElements, 0, virtualElements.length);
+				virtualElements = newElements;
+			}
+			virtualElements[index] = element;
 		}
 		
 	}
@@ -354,10 +363,11 @@ public class TableViewer extends StructuredViewer {
 	 * @see org.eclipse.jface.viewers.StructuredViewer#doFindItem(java.lang.Object)
 	 */
 	protected Widget doFindItem(Object element) {
-		//Only iterate through the created items
-		//if the table is VIRTUAL so as to avoid
-		//item creation.
-		TableItem[] children = getCreatedItems();
+		
+		if(virtualManager != null)
+			return virtualDoFindItem(element);
+		
+		TableItem[] children = table.getItems();
 		for (int i = 0; i < children.length; i++) {
 			TableItem item = children[i];
 			Object data = item.getData();
@@ -369,20 +379,22 @@ public class TableViewer extends StructuredViewer {
 	}
 
 	/**
-	 * Get the collection of currently visible table items.
-	 * @return TableItem[]
+	 * Find the item matching element using the virtual table.
+	 * @param element
+	 * @return Widget or <code>null</code> if the Widget 
+	 * does not exist or has not been created yet.
 	 */
-	private TableItem[] getCreatedItems() {
-		if(virtualManager == null)
-			return table.getItems();
-		if(virtualManager.currentVisibleIndex < 0)//Anything shown yet?
-			return new TableItem[0];
-		
-		TableItem[] visible = new TableItem[virtualManager.currentVisibleIndex + 1];
-		for (int i = 0; i < visible.length; i++) {
-			visible[i] = table.getItem(i);
+	private Widget virtualDoFindItem(Object element) {
+		for (int i = 0; i < virtualManager.virtualElements.length; i++) {
+			if(virtualManager.isVisible(i)){
+				TableItem item = getTable().getItem(i);
+				Object data = item.getData();
+				if (data != null && equals(data, element))
+					return item;
+			}
 		}
-		return visible;
+		//Not displayed yet or not there
+		return null;
 	}
 
 	/*
@@ -725,18 +737,25 @@ public class TableViewer extends StructuredViewer {
 			Object[] children = getSortedChildren(getRoot());
 			//If the receiver is SWT.VIRTUAL only update
 			//those items that have been created
-			TableItem[] items = getCreatedItems();
+			Object[] items = getCreatedItems();
 			int min = Math.min(children.length, items.length);
 			for (int i = 0; i < min; ++i) {
+				
+				// Was it created? Virtual elements may not have been
+				if(items[i] == NOT_DISPLAYED_TOKEN)
+					continue;
+				
+				TableItem item = (TableItem) items[i];
+					
 				// if the element is unchanged, update its label if appropriate
-				if (equals(children[i], items[i].getData())) {
+				if (equals(children[i], item.getData())) {
 					if (updateLabels) {
-						updateItem(items[i], children[i]);
+						updateItem(item, children[i]);
 					} else {
 						// associate the new element, even if equal to the old
 						// one,
 						// to remove stale references (see bug 31314)
-						associate(children[i], items[i]);
+						associate(children[i], item);
 					}
 				} else {
 					// updateItem does an associate(...), which can mess up
@@ -745,16 +764,20 @@ public class TableViewer extends StructuredViewer {
 					// replaces b->1 with a->1, but this actually removes b->0.
 					// So, if the object associated with this item has changed,
 					// just disassociate it for now, and update it below.
-					items[i].setText(""); //$NON-NLS-1$
-					items[i].setImage(new Image[table.getItemCount()]);//Clear all images
-					disassociate(items[i]);
+					item.setText(""); //$NON-NLS-1$
+					item.setImage(new Image[table.getItemCount()]);//Clear all images
+					disassociate(item);
 				}
 			}
 
 			// dispose of all items beyond the end of the current elements
 			if (min < items.length) {
 				for (int i = items.length; --i >= min;) {
-					disassociate(items[i]);
+					// Was it created? Virtual elements may not have been
+					if(items[i] == NOT_DISPLAYED_TOKEN) 
+						continue;
+					
+					disassociate((TableItem) items[i]);
 				}
 				table.remove(min, items.length - 1);
 			}
@@ -767,9 +790,13 @@ public class TableViewer extends StructuredViewer {
 
 			// Update items which were removed above
 			for (int i = 0; i < min; ++i) {
-				if (items[i].getData() == null) {
-					updateItem(items[i], children[i]);
-				}
+				//Was it created? Virtual elements may not have been
+				if(items[i] == NOT_DISPLAYED_TOKEN) 
+					continue;
+				
+				TableItem item = (TableItem) items[i];
+				if (item.getData() == null) 
+					updateItem(item, children[i]);
 			}
 
 			// add any remaining elements
@@ -782,6 +809,33 @@ public class TableViewer extends StructuredViewer {
 				updateItem(w, element);
 			}
 		}
+	}
+
+	/**
+	 * Get the items that have been created in their index order.
+	 * If there is no item at an index yet have a NOT_DISPLAYED_TOKEN entry in the
+	 * array.
+	 * @return TableItem
+	 */
+	private Object[] getCreatedItems() {
+		if(virtualManager == null)
+			return getTable().getItems();
+		Object[] returnValue = new Object[virtualManager.virtualElements.length];
+		Object[] virtualElements = virtualManager.virtualElements;
+		System.arraycopy(
+				virtualElements, 
+				0, returnValue, 
+				0, virtualElements.length);
+		for (int i = 0; i < virtualElements.length; i++) {
+			Object object = virtualElements[i];
+			if(object == virtualManager.DISPLAYED_TOKEN)
+				returnValue[i] = getTable().getItem(i);		
+			else 
+				returnValue[i] = NOT_DISPLAYED_TOKEN;
+		}
+		
+		//Return a collection of table items and not displayed tokens
+		return returnValue;
 	}
 
 	/**
