@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
@@ -23,6 +22,7 @@ import java.util.Set;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IKeyBindingService;
+import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.commands.ActionHandler;
 import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.IHandler;
@@ -34,13 +34,13 @@ final class KeyBindingService implements IKeyBindingService {
 
     private List enabledSubmissions = new ArrayList();
 
-    private Map handlerSubmissionsByAction = new HashMap();
+    private Map handlerSubmissionsByCommandId = new HashMap();
 
-    private String partId;
+    private IWorkbenchSite workbenchSite;
 
-    KeyBindingService(String partId) {
+    KeyBindingService(IWorkbenchSite workbenchSite) {
         super();
-        this.partId = partId;
+        this.workbenchSite = workbenchSite;
     }
 
     public String[] getScopes() {
@@ -49,18 +49,15 @@ final class KeyBindingService implements IKeyBindingService {
     }
 
     public void registerAction(IAction action) {
-        if (!handlerSubmissionsByAction.containsKey(action)) {
-            String commandId = action.getActionDefinitionId();
-
-            if (commandId != null) {
-                IHandler handler = new ActionHandler(action);
-                HandlerSubmission handlerSubmission = new HandlerSubmission(
-                        partId, null, commandId, handler, 4);
-                handlerSubmissionsByAction.put(action, handlerSubmission);
-                Workbench.getInstance().getCommandSupport()
-                        .addHandlerSubmissions(
-                                Collections.singletonList(handlerSubmission));
-            }
+        unregisterAction(action);
+        String commandId = action.getActionDefinitionId();
+        if (commandId != null) {
+            IHandler handler = new ActionHandler(action);
+            HandlerSubmission handlerSubmission = new HandlerSubmission(null,
+                    workbenchSite, commandId, handler, 4);
+            handlerSubmissionsByCommandId.put(commandId, handlerSubmission);
+            Workbench.getInstance().getCommandSupport().addHandlerSubmissions(
+                    Collections.singletonList(handlerSubmission));
         }
     }
 
@@ -69,25 +66,28 @@ final class KeyBindingService implements IKeyBindingService {
         Workbench.getInstance().getContextSupport().removeEnabledSubmissions(
                 enabledSubmissions);
         enabledSubmissions.clear();
-
         for (Iterator iterator = enabledContextIds.iterator(); iterator
                 .hasNext();) {
             String contextId = (String) iterator.next();
-            enabledSubmissions.add(new EnabledSubmission(partId, null,
+            enabledSubmissions.add(new EnabledSubmission(null, workbenchSite,
                     contextId));
         }
-
         Workbench.getInstance().getContextSupport().addEnabledSubmissions(
                 enabledSubmissions);
     }
 
     public void unregisterAction(IAction action) {
-        HandlerSubmission handlerSubmission = (HandlerSubmission) handlerSubmissionsByAction
-                .get(action);
+        String commandId = action.getActionDefinitionId();
 
-        if (handlerSubmission != null)
-                Workbench.getInstance().getCommandSupport()
-                        .removeHandlerSubmissions(
-                                Collections.singletonList(handlerSubmission));
+        if (commandId != null) {
+            HandlerSubmission handlerSubmission = (HandlerSubmission) handlerSubmissionsByCommandId
+                    .remove(commandId);
+
+            if (handlerSubmission != null)
+                    Workbench.getInstance().getCommandSupport()
+                            .removeHandlerSubmissions(
+                                    Collections
+                                            .singletonList(handlerSubmission));
+        }
     }
 }

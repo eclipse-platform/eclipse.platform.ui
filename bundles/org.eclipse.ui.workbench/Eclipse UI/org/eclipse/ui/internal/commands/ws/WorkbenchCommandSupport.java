@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.internal.commands.ws;
 
 import java.util.ArrayList;
@@ -21,7 +31,7 @@ import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.CommandManagerFactory;
 import org.eclipse.ui.commands.HandlerSubmission;
@@ -39,9 +49,9 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 
     private final static int TIME = 100;
 
-    private String activePartId;
+    private IPerspectiveDescriptor activePerspectiveDescriptor;
 
-    private String activePerspectiveId;
+    private IWorkbenchSite activeWorkbenchSite;
 
     private IWorkbenchWindow activeWorkbenchWindow;
 
@@ -211,9 +221,8 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
     }
 
     private void processHandlerSubmissionsImpl(boolean force) {
-        Map handlersByCommandId = new HashMap();
-        String activePartId = null;
-        String activePerspectiveId = null;
+        IPerspectiveDescriptor activePerspectiveDescriptor = null;
+        IWorkbenchSite activeWorkbenchSite = null;
         IWorkbenchWindow activeWorkbenchWindow = workbench
                 .getActiveWorkbenchWindow();
 
@@ -242,29 +251,24 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                     .getActivePage();
 
             if (activeWorkbenchPage != null) {
+                activePerspectiveDescriptor = activeWorkbenchPage
+                        .getPerspective();
+
                 IWorkbenchPart activeWorkbenchPart = activeWorkbenchPage
                         .getActivePart();
 
-                if (activeWorkbenchPart != null) {
-                    IWorkbenchPartSite activeWorkbenchPartSite = activeWorkbenchPart
-                            .getSite();
-
-                    if (activeWorkbenchPartSite != null)
-                            activePartId = activeWorkbenchPartSite.getId();
-                }
-
-                IPerspectiveDescriptor perspectiveDescriptor = activeWorkbenchPage
-                        .getPerspective();
-
-                if (perspectiveDescriptor != null)
-                        activePerspectiveId = perspectiveDescriptor.getId();
+                if (activeWorkbenchPart != null)
+                        activeWorkbenchSite = activeWorkbenchPart.getSite();
             }
         }
 
-        if (force || !Util.equals(this.activePartId, activePartId)
-                || !Util.equals(this.activePerspectiveId, activePerspectiveId)) {
-            this.activePartId = activePartId;
-            this.activePerspectiveId = activePerspectiveId;
+        if (force
+                || !Util.equals(this.activePerspectiveDescriptor,
+                        activePerspectiveDescriptor)
+                || !Util.equals(this.activeWorkbenchSite, activeWorkbenchSite)) {
+            this.activePerspectiveDescriptor = activePerspectiveDescriptor;
+            this.activeWorkbenchSite = activeWorkbenchSite;
+            Map handlersByCommandId = new HashMap();
 
             for (Iterator iterator = handlerSubmissionsByCommandId.entrySet()
                     .iterator(); iterator.hasNext();) {
@@ -277,15 +281,17 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                         .hasNext();) {
                     HandlerSubmission handlerSubmission = (HandlerSubmission) iterator2
                             .next();
-                    String activePartId2 = handlerSubmission.getActivePartId();
-                    String activePerspectiveId2 = handlerSubmission
-                            .getActivePerspectiveId();
+                    IPerspectiveDescriptor activePerspectiveDescriptor2 = handlerSubmission
+                            .getActivePerspectiveDescriptor();
+                    IWorkbenchSite activeWorkbenchSite2 = handlerSubmission
+                            .getActiveWorkbenchSite();
 
-                    if (activePartId2 != null && activePartId2 != activePartId)
+                    if (activePerspectiveDescriptor2 != null
+                            && activePerspectiveDescriptor2 != activePerspectiveDescriptor)
                             continue;
 
-                    if (activePerspectiveId2 != null
-                            && activePerspectiveId2 != activePerspectiveId)
+                    if (activeWorkbenchSite2 != null
+                            && activeWorkbenchSite2 != activeWorkbenchSite)
                             continue;
 
                     if (matchingHandlerSubmissions == null)

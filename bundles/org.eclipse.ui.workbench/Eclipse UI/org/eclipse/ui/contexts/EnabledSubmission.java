@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.ui.contexts;
 
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.internal.util.Util;
 
 public final class EnabledSubmission implements Comparable {
@@ -19,9 +21,9 @@ public final class EnabledSubmission implements Comparable {
     private final static int HASH_INITIAL = EnabledSubmission.class.getName()
             .hashCode();
 
-    private String activePartId;
+    private IPerspectiveDescriptor activePerspectiveDescriptor;
 
-    private String activePerspectiveId;
+    private IWorkbenchSite activeWorkbenchSite;
 
     private String contextId;
 
@@ -31,21 +33,23 @@ public final class EnabledSubmission implements Comparable {
 
     private transient String string;
 
-    public EnabledSubmission(String activePartId, String activePerspectiveId,
-            String contextId) {
+    public EnabledSubmission(
+            IPerspectiveDescriptor activePerspectiveDescriptor,
+            IWorkbenchSite activeWorkbenchSite, String contextId) {
         if (contextId == null) throw new NullPointerException();
-        this.activePartId = activePartId;
-        this.activePerspectiveId = activePerspectiveId;
+        this.activePerspectiveDescriptor = activePerspectiveDescriptor;
+        this.activeWorkbenchSite = activeWorkbenchSite;
         this.contextId = contextId;
     }
 
     public int compareTo(Object object) {
         EnabledSubmission castedObject = (EnabledSubmission) object;
-        int compareTo = Util.compare(activePartId, castedObject.activePartId);
+        int compareTo = Util.compare(activePerspectiveDescriptor,
+                castedObject.activePerspectiveDescriptor);
 
         if (compareTo == 0) {
-            compareTo = Util.compare(activePerspectiveId,
-                    castedObject.activePerspectiveId);
+            compareTo = Util.compare(activeWorkbenchSite,
+                    castedObject.activeWorkbenchSite);
 
             if (compareTo == 0)
                     compareTo = Util.compare(contextId, castedObject.contextId);
@@ -59,19 +63,20 @@ public final class EnabledSubmission implements Comparable {
 
         EnabledSubmission castedObject = (EnabledSubmission) object;
         boolean equals = true;
-        equals &= Util.equals(activePartId, castedObject.activePartId);
-        equals &= Util.equals(activePerspectiveId,
-                castedObject.activePerspectiveId);
+        equals &= Util.equals(activePerspectiveDescriptor,
+                castedObject.activePerspectiveDescriptor);
+        equals &= Util.equals(activeWorkbenchSite,
+                castedObject.activeWorkbenchSite);
         equals &= Util.equals(contextId, castedObject.contextId);
         return equals;
     }
 
-    public String getActivePartId() {
-        return activePartId;
+    public IPerspectiveDescriptor getActivePerspectiveDescriptor() {
+        return activePerspectiveDescriptor;
     }
 
-    public String getActivePerspectiveId() {
-        return activePerspectiveId;
+    public IWorkbenchSite getActiveWorkbenchSite() {
+        return activeWorkbenchSite;
     }
 
     public String getContextId() {
@@ -81,9 +86,10 @@ public final class EnabledSubmission implements Comparable {
     public int hashCode() {
         if (!hashCodeComputed) {
             hashCode = HASH_INITIAL;
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(activePartId);
             hashCode = hashCode * HASH_FACTOR
-                    + Util.hashCode(activePerspectiveId);
+                    + Util.hashCode(activePerspectiveDescriptor);
+            hashCode = hashCode * HASH_FACTOR
+                    + Util.hashCode(activeWorkbenchSite);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(contextId);
             hashCodeComputed = true;
         }
@@ -94,10 +100,10 @@ public final class EnabledSubmission implements Comparable {
     public String toString() {
         if (string == null) {
             final StringBuffer stringBuffer = new StringBuffer();
-            stringBuffer.append("[activePartId="); //$NON-NLS-1$
-            stringBuffer.append(activePartId);
-            stringBuffer.append(",activePerspectiveId="); //$NON-NLS-1$
-            stringBuffer.append(activePerspectiveId);
+            stringBuffer.append("[activePerspectiveDescriptor="); //$NON-NLS-1$
+            stringBuffer.append(activePerspectiveDescriptor);
+            stringBuffer.append(",activeWorkbenchSite="); //$NON-NLS-1$
+            stringBuffer.append(activeWorkbenchSite);
             stringBuffer.append(",contextId="); //$NON-NLS-1$
             stringBuffer.append(contextId);
             stringBuffer.append(']');

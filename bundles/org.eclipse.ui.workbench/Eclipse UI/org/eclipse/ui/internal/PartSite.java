@@ -253,7 +253,7 @@ public class PartSite implements IWorkbenchPartSite {
 	 */
 	public IKeyBindingService getKeyBindingService() {
 		if (keyBindingService == null) {
-			keyBindingService = new KeyBindingService(getId());
+			keyBindingService = new KeyBindingService(this);
 			
 			// TODO why is this here? and it should be using HandlerSubmissions directly..			
 			if (this instanceof EditorSite) {

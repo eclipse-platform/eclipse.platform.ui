@@ -26,7 +26,7 @@ import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.contexts.ContextManagerFactory;
 import org.eclipse.ui.contexts.EnabledSubmission;
@@ -41,9 +41,9 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 
     private final static int TIME = 100;
 
-    private String activePartId;
+    private IPerspectiveDescriptor activePerspectiveDescriptor;
 
-    private String activePerspectiveId;
+    private IWorkbenchSite activeWorkbenchSite;
 
     private IWorkbenchWindow activeWorkbenchWindow;
 
@@ -187,9 +187,8 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
     }
 
     private void processEnabledSubmissionsImpl(boolean force) {
-        Set enabledContextIds = new HashSet();
-        String activePartId = null;
-        String activePerspectiveId = null;
+        IPerspectiveDescriptor activePerspectiveDescriptor = null;
+        IWorkbenchSite activeWorkbenchSite = null;
         IWorkbenchWindow activeWorkbenchWindow = workbench
                 .getActiveWorkbenchWindow();
 
@@ -218,29 +217,24 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
                     .getActivePage();
 
             if (activeWorkbenchPage != null) {
+                activePerspectiveDescriptor = activeWorkbenchPage
+                        .getPerspective();
+
                 IWorkbenchPart activeWorkbenchPart = activeWorkbenchPage
                         .getActivePart();
 
-                if (activeWorkbenchPart != null) {
-                    IWorkbenchPartSite activeWorkbenchPartSite = activeWorkbenchPart
-                            .getSite();
-
-                    if (activeWorkbenchPartSite != null)
-                            activePartId = activeWorkbenchPartSite.getId();
-                }
-
-                IPerspectiveDescriptor perspectiveDescriptor = activeWorkbenchPage
-                        .getPerspective();
-
-                if (perspectiveDescriptor != null)
-                        activePerspectiveId = perspectiveDescriptor.getId();
+                if (activeWorkbenchPart != null)
+                        activeWorkbenchSite = activeWorkbenchPart.getSite();
             }
         }
 
-        if (force || !Util.equals(this.activePartId, activePartId)
-                || !Util.equals(this.activePerspectiveId, activePerspectiveId)) {
-            this.activePartId = activePartId;
-            this.activePerspectiveId = activePerspectiveId;
+        if (force
+                || !Util.equals(this.activePerspectiveDescriptor,
+                        activePerspectiveDescriptor)
+                || !Util.equals(this.activeWorkbenchSite, activeWorkbenchSite)) {
+            this.activePerspectiveDescriptor = activePerspectiveDescriptor;
+            this.activeWorkbenchSite = activeWorkbenchSite;
+            Set enabledContextIds = new HashSet();
 
             for (Iterator iterator = enabledSubmissionsByContextId.entrySet()
                     .iterator(); iterator.hasNext();) {
@@ -253,15 +247,17 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
                         .hasNext();) {
                     EnabledSubmission enabledSubmission = (EnabledSubmission) iterator2
                             .next();
-                    String activePartId2 = enabledSubmission.getActivePartId();
-                    String activePerspectiveId2 = enabledSubmission
-                            .getActivePerspectiveId();
+                    IPerspectiveDescriptor activePerspectiveDescriptor2 = enabledSubmission
+                            .getActivePerspectiveDescriptor();
+                    IWorkbenchSite activeWorkbenchSite2 = enabledSubmission
+                            .getActiveWorkbenchSite();
 
-                    if (activePartId2 != null && activePartId2 != activePartId)
+                    if (activePerspectiveDescriptor2 != null
+                            && activePerspectiveDescriptor2 != activePerspectiveDescriptor)
                             continue;
 
-                    if (activePerspectiveId2 != null
-                            && activePerspectiveId2 != activePerspectiveId)
+                    if (activeWorkbenchSite2 != null
+                            && activeWorkbenchSite2 != activeWorkbenchSite)
                             continue;
 
                     enabledContextIds.add(contextId);
