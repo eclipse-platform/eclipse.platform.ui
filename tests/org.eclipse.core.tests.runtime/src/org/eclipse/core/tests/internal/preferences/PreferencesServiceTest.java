@@ -158,7 +158,6 @@ public class PreferencesServiceTest extends RuntimeTest {
 		String[] defaultOrder = new String[]{"project", //$NON-NLS-1$ 
 				InstanceScope.SCOPE, //
 				ConfigurationScope.SCOPE, //
-				UserScope.SCOPE, //
 				DefaultScope.SCOPE};
 		String[] fullOrder = new String[]{"a", "b", "c"};
 		String[] nullKeyOrder = new String[]{"e", "f", "g"};

@@ -16,6 +16,7 @@ import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.*;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -31,7 +32,6 @@ public class PreferencesService implements IPreferencesService {
 	private static final String[] DEFAULT_DEFAULT_LOOKUP_ORDER = new String[]{"project", //$NON-NLS-1$ 
 			InstanceScope.SCOPE, //
 			ConfigurationScope.SCOPE, //
-			UserScope.SCOPE, //
 			DefaultScope.SCOPE};
 	private static IPreferencesService instance = null;
 	private static Map defaultsRegistry = new HashMap();
