@@ -14,7 +14,7 @@ package org.eclipse.debug.ui.actions;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
-
+import java.util.Map;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.IInformationControl;
@@ -435,9 +435,10 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.commands.IHandler#execute(java.lang.Object)
 		 */
-		public void execute(Object parameter) throws ExecutionException {
-			realHandler.execute(parameter);
+		public Object execute(Map parameter) throws ExecutionException {
+			Object obj = realHandler.execute(parameter);
 			shell.dispose();
+			return obj;
 		}
 		
 	}
