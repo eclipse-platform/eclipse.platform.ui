@@ -42,10 +42,18 @@ class FileSpec {
 		if (!(other instanceof FileSpec))
 			return false;
 		FileSpec otherFileSpec = (FileSpec) other;
-		return getBasicType() == otherFileSpec.getBasicType() && text.equals(otherFileSpec.text);
+		return getBasicType() == otherFileSpec.getBasicType() && text.equalsIgnoreCase(otherFileSpec.text);
 	}
+	
+	public boolean equals(String text, int basicType) {
+		return getBasicType() == basicType && this.text.equalsIgnoreCase(text);
+	}	
 
 	public int hashCode() {
 		return text.hashCode();
+	}
+	
+	public static String getMappingKeyFor(String fileSpecText) {
+		return fileSpecText.toLowerCase();
 	}
 }

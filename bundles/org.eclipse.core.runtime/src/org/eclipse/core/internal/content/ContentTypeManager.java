@@ -126,9 +126,10 @@ public class ContentTypeManager implements IContentTypeManager {
 	private void addFileSpecContributor(IContentType contentType, int fileSpecType, Map fileSpecsMap) {
 		String[] fileSpecs = contentType.getFileSpecs(fileSpecType);
 		for (int i = 0; i < fileSpecs.length; i++) {
-			Set existing = (Set) fileSpecsMap.get(fileSpecs[i]);
+			String mappingKey = FileSpec.getMappingKeyFor(fileSpecs[i]);
+			Set existing = (Set) fileSpecsMap.get(mappingKey);
 			if (existing == null)
-				fileSpecsMap.put(fileSpecs[i], existing = new TreeSet(conflictComparator));
+				fileSpecsMap.put(mappingKey, existing = new TreeSet(conflictComparator));
 			existing.add(contentType);
 		}
 	}
@@ -198,7 +199,7 @@ public class ContentTypeManager implements IContentTypeManager {
 		List result = new ArrayList(5);
 		int count = 0;
 		// files associated by name should appear before those associated by extension		
-		SortedSet allByFileName = (SortedSet) fileNames.get(fileName);
+		SortedSet allByFileName = (SortedSet) fileNames.get(FileSpec.getMappingKeyFor(fileName));
 		if (allByFileName != null && !allByFileName.isEmpty()) {
 			ContentType main = ((ContentType) allByFileName.first()).getTarget();
 			result.add(count++, main);
@@ -213,7 +214,7 @@ public class ContentTypeManager implements IContentTypeManager {
 
 		String fileExtension = getFileExtension(fileName);
 		if (fileExtension != null) {
-			SortedSet allByFileExtension = (SortedSet) fileExtensions.get(fileExtension);
+			SortedSet allByFileExtension = (SortedSet) fileExtensions.get(FileSpec.getMappingKeyFor(fileExtension));
 			if (allByFileExtension != null && !allByFileExtension.isEmpty()) {
 				ContentType main = ((ContentType) allByFileExtension.first()).getTarget();
 				if (!result.contains(main)) {

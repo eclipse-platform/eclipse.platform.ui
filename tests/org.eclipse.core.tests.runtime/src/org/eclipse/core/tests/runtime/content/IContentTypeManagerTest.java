@@ -62,19 +62,19 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		assertNotNull("4.0", xmlBasedSpecificNameContentType);
 		assertTrue("4.1", isText(contentTypeManager, xmlBasedSpecificNameContentType));
 		assertEquals("4.2", xmlContentType, xmlBasedSpecificNameContentType.getBaseType());
-		IContentType[] xmlTypes = contentTypeManager.findContentTypesFor("foo.xml");
+		IContentType[] xmlTypes = contentTypeManager.findContentTypesFor(changeCase("foo.xml"));
 		assertTrue("5.1", contains(xmlTypes, xmlContentType));
 		IContentType binaryContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "sample-binary1");
 		assertNotNull("6.0", binaryContentType);
 		assertTrue("6.1", !isText(contentTypeManager, binaryContentType));
 		assertNull("6.2", binaryContentType.getBaseType());
-		IContentType[] binaryTypes = contentTypeManager.findContentTypesFor("foo.samplebin1");
+		IContentType[] binaryTypes = contentTypeManager.findContentTypesFor(changeCase("foo.samplebin1"));
 		assertEquals("7.0", 1, binaryTypes.length);
 		assertEquals("7.1", binaryContentType, binaryTypes[0]);
 		IContentType myText = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".mytext");
 		assertNotNull("8.0", myText);
 		assertEquals("8.1", "BAR", myText.getDefaultCharset());
-		IContentType[] fooBarTypes = contentTypeManager.findContentTypesFor("foo.bar");
+		IContentType[] fooBarTypes = contentTypeManager.findContentTypesFor(changeCase("foo.bar"));
 		assertEquals("9.0", 2, fooBarTypes.length);
 		IContentType fooBar = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".fooBar");
 		assertNotNull("9.1", fooBar);
@@ -228,7 +228,7 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		IContentType subFooBarType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "subFooBar");
 		assertNotNull("1.1", subFooBarType);
 		// ensure we don't get fooBar twice 
-		IContentType[] fooBarAssociated = contentTypeManager.findContentTypesFor("foo.bar");
+		IContentType[] fooBarAssociated = contentTypeManager.findContentTypesFor(changeCase("foo.bar"));
 		assertEquals("2.1", 2, fooBarAssociated.length);
 		assertTrue("2.2", contains(fooBarAssociated, fooBarType));
 		assertTrue("2.3", contains(fooBarAssociated, subFooBarType));
@@ -254,11 +254,11 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 	public void testFindContentType() throws UnsupportedEncodingException, IOException {
 		IContentTypeManager contentTypeManager = LocalContentTypeManager.getLocalContentTypeManager();
 		IContentType textContentType = contentTypeManager.getContentType(Platform.PI_RUNTIME + '.' + "text");
-		IContentType single = contentTypeManager.findContentTypeFor(getInputStream("Just a test"), "file.txt");
+		IContentType single = contentTypeManager.findContentTypeFor(getInputStream("Just a test"), changeCase("file.txt"));
 		assertNotNull("1.0", single);
 		assertEquals("1.1", textContentType, single);
 		IContentType xmlContentType = contentTypeManager.getContentType(Platform.PI_RUNTIME + ".xml");
-		single = contentTypeManager.findContentTypeFor(getInputStream(XML_UTF_8, "UTF-8"), "foo.xml");
+		single = contentTypeManager.findContentTypeFor(getInputStream(XML_UTF_8, "UTF-8"), changeCase("foo.xml"));
 		assertNotNull("2.0", single);
 		assertEquals("2.1", xmlContentType, single);
 		IContentType[] multiple = contentTypeManager.findContentTypesFor(getInputStream(XML_UTF_8, "UTF-8"), null);
@@ -270,9 +270,9 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		// associate a user-defined file spec
 		text.addFileSpec("ini", IContentType.FILE_EXTENSION_SPEC);
 		// test associations
-		assertTrue("0.1", text.isAssociatedWith("text.txt"));
-		assertTrue("0.2", text.isAssociatedWith("text.ini"));
-		assertTrue("0.3", text.isAssociatedWith("text.tkst"));
+		assertTrue("0.1", text.isAssociatedWith(changeCase("text.txt")));
+		assertTrue("0.2", text.isAssociatedWith(changeCase("text.ini")));
+		assertTrue("0.3", text.isAssociatedWith(changeCase("text.tkst")));
 		// check provider defined settings
 		String[] providerDefinedExtensions = text.getFileSpecs(IContentType.FILE_EXTENSION_SPEC | IContentType.IGNORE_USER_DEFINED);
 		assertTrue("1.0", contains(providerDefinedExtensions, "txt"));
@@ -286,15 +286,15 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		// removing pre-defined file specs should not do anything
 		text.removeFileSpec("txt", IContentType.FILE_EXTENSION_SPEC);
 		assertTrue("3.0", contains(text.getFileSpecs(IContentType.FILE_EXTENSION_SPEC | IContentType.IGNORE_USER_DEFINED), "txt"));
-		assertTrue("3.1", text.isAssociatedWith("text.txt"));
-		assertTrue("3.2", text.isAssociatedWith("text.ini"));
-		assertTrue("3.3", text.isAssociatedWith("text.tkst"));
+		assertTrue("3.1", text.isAssociatedWith(changeCase("text.txt")));
+		assertTrue("3.2", text.isAssociatedWith(changeCase("text.ini")));
+		assertTrue("3.3", text.isAssociatedWith(changeCase("text.tkst")));
 		// removing user file specs is the normal case and has to work as expected
 		text.removeFileSpec("ini", IContentType.FILE_EXTENSION_SPEC);
 		assertTrue("4.0", !contains(text.getFileSpecs(IContentType.FILE_EXTENSION_SPEC | IContentType.IGNORE_PRE_DEFINED), "ini"));
-		assertTrue("4.1", text.isAssociatedWith("text.txt"));
-		assertTrue("4.2", !text.isAssociatedWith("text.ini"));
-		assertTrue("4.3", text.isAssociatedWith("text.tkst"));
+		assertTrue("4.1", text.isAssociatedWith(changeCase("text.txt")));
+		assertTrue("4.2", !text.isAssociatedWith(changeCase("text.ini")));
+		assertTrue("4.3", text.isAssociatedWith(changeCase("text.tkst")));
 	}
 
 	/**
@@ -434,4 +434,15 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 	public static Test suite() {
 		return new TestSuite(IContentTypeManagerTest.class);
 	}
+	/**
+	 * Helps to ensure we don't get fooled by case sensitivity in file names/specs.
+	 */
+	private String changeCase(String original) {
+		StringBuffer result = new StringBuffer(original);
+		for (int i = result.length()-1; i >= 0; i--) {
+			char originalChar = original.charAt(i);
+			result.setCharAt(i, i % 2 == 0 ? Character.toLowerCase(originalChar) : Character.toUpperCase(originalChar));			
+		}
+		return result.toString();
+	}	
 }

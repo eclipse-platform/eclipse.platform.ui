@@ -351,10 +351,8 @@ public final class ContentType implements IContentType {
 	}
 
 	/**
-	 * @param text
-	 *            the file spec string
-	 * @param typeMask
-	 *            FILE_NAME_SPEC or FILE_EXTENSION_SPEC
+	 * @param text the file spec string
+	 * @param typeMask FILE_NAME_SPEC or FILE_EXTENSION_SPEC
 	 * @return true if this file spec has already been added, false otherwise
 	 */
 	private boolean hasFileSpec(String text, int typeMask) {
@@ -362,7 +360,7 @@ public final class ContentType implements IContentType {
 			return false;
 		for (Iterator i = fileSpecs.iterator(); i.hasNext();) {
 			FileSpec spec = (FileSpec) i.next();
-			if ((spec.getBasicType() == typeMask) && text.equals(spec.getText()))
+			if (spec.equals(text, typeMask))
 				return true;
 		}
 		return false;
