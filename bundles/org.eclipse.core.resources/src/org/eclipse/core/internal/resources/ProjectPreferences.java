@@ -231,7 +231,7 @@ public class ProjectPreferences extends EclipsePreferences {
 					// ignore
 				}
 		}
-		convertFromProperties(fromDisk);
+		convertFromProperties(fromDisk, true);
 	}
 
 	public static void updatePreferences(IFile file) throws CoreException {

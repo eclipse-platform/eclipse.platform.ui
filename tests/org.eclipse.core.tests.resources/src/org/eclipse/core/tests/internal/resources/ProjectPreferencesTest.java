@@ -20,6 +20,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.preferences.*;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
@@ -28,6 +29,50 @@ import org.osgi.service.prefs.Preferences;
  * @since 3.0
  */
 public class ProjectPreferencesTest extends EclipseWorkspaceTest {
+	class Tracer implements IEclipsePreferences.IPreferenceChangeListener {
+		public StringBuffer log = new StringBuffer();
+
+		private String typeCode(Object value) {
+			if (value == null) {
+				return "";
+			}
+			if (value instanceof Boolean) {
+				return "B";
+			}
+			if (value instanceof Integer) {
+				return "I";
+			}
+			if (value instanceof Long) {
+				return "L";
+			}
+			if (value instanceof Float) {
+				return "F";
+			}
+			if (value instanceof Double) {
+				return "D";
+			}
+			if (value instanceof String) {
+				return "S";
+			}
+			assertTrue("0.0", false);
+			return null;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
+		 */
+		public void preferenceChange(PreferenceChangeEvent event) {
+			log.append("[");
+			log.append(event.getKey());
+			log.append(":");
+			log.append(typeCode(event.getOldValue()));
+			log.append(event.getOldValue() == null ? "null" : event.getOldValue());
+			log.append("->");
+			log.append(typeCode(event.getNewValue()));
+			log.append(event.getNewValue() == null ? "null" : event.getNewValue());
+			log.append("]");
+		}
+	}
 
 	public static Test suite() {
 		// all test methods are named "test..."
@@ -591,5 +636,80 @@ public class ProjectPreferencesTest extends EclipseWorkspaceTest {
 		assertNotNull("1.0", prefsType);
 		IContentType associatedType = Platform.getContentTypeManager().findContentTypeFor("some.qualifier." + EclipsePreferences.PREFS_FILE_EXTENSION);
 		assertEquals("1.1", prefsType, associatedType);
+	}
+
+	public void testListenerOnChangeFile() {
+		// setup
+		IProject project = getWorkspace().getRoot().getProject(getUniqueString());
+		String qualifier = "org.eclipse.core.tests.resources";
+		String key = "key" + getUniqueString();
+		String value = "value" + getUniqueString();
+		IScopeContext projectContext = new ProjectScope(project);
+		// create project
+		ensureExistsInWorkspace(project, true);
+		// set preferences
+		Preferences node = projectContext.getNode(qualifier);
+		node.put(key, value);
+		Tracer tracer = new Tracer();
+		((IEclipsePreferences) node).addPreferenceChangeListener(tracer);
+		String actual = node.get(key, null);
+		assertNotNull("1.0", actual);
+		assertEquals("1.1", value, actual);
+		try {
+			// flush
+			node.flush();
+		} catch (BackingStoreException e) {
+			fail("0.0", e);
+		}
+
+		// get settings filename
+		File file = project.getLocation().append(".settings").append(qualifier + ".prefs").toFile();
+		Properties props = new Properties();
+		InputStream input = null;
+		try {
+			input = new BufferedInputStream(new FileInputStream(file));
+			props.load(input);
+		} catch (IOException e) {
+			fail("1.0", e);
+		} finally {
+			if (input != null)
+				try {
+					input.close();
+				} catch (IOException e) {
+					// ignore
+				}
+		}
+
+		// reset the listener
+		tracer.log.setLength(0);
+		// change settings in the file
+		String newKey = "newKey" + getUniqueString();
+		String newValue = "newValue" + getUniqueString();
+		props.put(newKey, newValue);
+
+		// save the file via the IFile API
+		IFile workspaceFile = project.getFolder(".settings").getFile(qualifier + ".prefs");
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		try {
+			props.store(output, null);
+			// don't need to close stream since its a byte array
+		} catch (IOException e) {
+			fail("2.0", e);
+		}
+		input = new ByteArrayInputStream(output.toByteArray());
+		try {
+			workspaceFile.setContents(input, IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("2.1", e);
+		}
+
+		// validate new settings
+		actual = node.get(key, null);
+		assertEquals("4.1", value, actual);
+		actual = node.get(newKey, null);
+		assertEquals("4.2", newValue, actual);
+
+		// validate the change events
+		assertEquals("4.3", "[" + newKey + ":null->S" + newValue + "]", tracer.log.toString());
 	}
 }
