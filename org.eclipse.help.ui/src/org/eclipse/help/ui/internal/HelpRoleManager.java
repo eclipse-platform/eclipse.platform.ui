@@ -78,7 +78,7 @@ public class HelpRoleManager implements IHelpRoleManager {
         
         Set enabledIds = new HashSet(activitySupport.getActivityManager().getEnabledActivityIds());
         enabledIds.addAll(activitityIds);
-        workbench.setEnabledActivityIds(enabledIds);
+        activitySupport.setEnabledActivityIds(enabledIds);
 	}
 
 }
