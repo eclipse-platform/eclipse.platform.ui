@@ -11,25 +11,58 @@
 package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.compare.internal.INavigatable;
-import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.compare.structuremergeviewer.DiffNode;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.events.*;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IOpenListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.OpenEvent;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.MenuEvent;
+import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.ui.IPreferenceIds;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.actions.StatusLineContributionGroup;
-import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.SynchronizeModelAction;
+import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
+import org.eclipse.ui.part.ResourceTransfer;
 
 /**
  * A <code>StructuredViewerAdvisor</code> controls various UI
@@ -137,6 +170,25 @@ public abstract class StructuredViewerAdvisor implements IAdaptable {
 		Assert.isTrue(this.viewer == null, "Can only be initialized once."); //$NON-NLS-1$
 		Assert.isTrue(validateViewer(viewer));
 		this.viewer = viewer;
+		
+		final DragSourceListener listener = new DragSourceListener() {
+
+            public void dragStart(DragSourceEvent event) {}
+
+            public void dragSetData(DragSourceEvent event) {
+                
+                if (ResourceTransfer.getInstance().isSupportedType(event.dataType)) {
+                    final IStructuredSelection selection= (IStructuredSelection)viewer.getSelection();
+                    final Object [] array= selection.toArray();
+                    event.data = Utils.getResources(array);
+                }
+            }
+
+            public void dragFinished(DragSourceEvent event) {}
+		};
+		
+		final int ops = DND.DROP_COPY;
+		viewer.addDragSupport(ops, new Transfer[] { ResourceTransfer.getInstance() }, listener);
 	
 		initializeListeners(viewer);
 		viewer.setLabelProvider(getLabelProvider());
