@@ -355,10 +355,9 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 				leftInfo.getRevision().equals(rightInfo.getRevision())) {
 				return NODE_EQUAL;
 			} else {
-				// if files are on different branches then force a content comparison.
-				if(leftInfo.getTag().getType() == CVSTag.BRANCH || rightInfo.getTag().getType() == CVSTag.BRANCH) {
-					return NODE_UNKNOWN;
-				}
+				// Optimized for most common case. There are actually cases where a file is merged from
+				// one branch to another where the revision numbers are different but the file is the same.
+				// We do not handle this case properly.
 				return NODE_NOT_EQUAL;
 			}
 		} catch (TeamException e) {
