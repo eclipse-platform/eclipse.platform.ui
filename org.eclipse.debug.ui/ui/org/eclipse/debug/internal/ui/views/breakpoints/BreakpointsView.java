@@ -284,6 +284,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 						// Then, if any other breakpoints don't match the
 						// selected breakpoint, gray and check the group.
 						viewer.setGrayChecked(group, true);
+						break;
 					}
 				}
 			}
@@ -323,8 +324,10 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 				DebugUIPlugin.log(e);
 			}
 		}
+		if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
+			viewer.setGrayed(group, true);
+		}
 		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(getEventHandler());
-		
 		return;
 	}
 
