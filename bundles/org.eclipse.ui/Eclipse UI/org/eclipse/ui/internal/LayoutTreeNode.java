@@ -260,14 +260,16 @@ public void setBounds(Rectangle bounds) {
 	Rectangle sashBounds = new Rectangle(bounds.x,bounds.y,bounds.width,bounds.height);
 	if(getSash().isVertical()) {
 		//Work on x and width
-		leftBounds.width = (int)(getSash().getRatio() * bounds.width);
+		int w = bounds.width - SASH_WIDTH;
+		leftBounds.width = (int)(getSash().getRatio() * w);
 		sashBounds.x = leftBounds.x + leftBounds.width;
 		sashBounds.width = SASH_WIDTH;
 		rightBounds.x = sashBounds.x + sashBounds.width;
 		rightBounds.width = bounds.width - leftBounds.width - sashBounds.width;
 	} else {
 		//Work on y and height
-		leftBounds.height = (int)(getSash().getRatio() * bounds.height);
+		int h = bounds.height - SASH_WIDTH;
+		leftBounds.height = (int)(getSash().getRatio() * h);
 		sashBounds.y = leftBounds.y + leftBounds.height;
 		sashBounds.height = SASH_WIDTH;
 		rightBounds.y = sashBounds.y + sashBounds.height;
