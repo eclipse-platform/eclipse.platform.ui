@@ -57,6 +57,22 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 	
 	public static final String VIEW_ID = "org.eclipse.team.ccvs.ui.AnnotateView"; //$NON-NLS-1$
 	private Composite top;
+	
+	private IPartListener partListener = new IPartListener() {
+		public void partActivated(IWorkbenchPart part) {
+		}
+		public void partBroughtToTop(IWorkbenchPart part) {
+		}
+		public void partClosed(IWorkbenchPart part) {
+			if (editor != null && part == editor) {
+				disconnect();
+			}
+		}
+		public void partDeactivated(IWorkbenchPart part) {
+		}
+		public void partOpened(IWorkbenchPart part) {
+		}
+	};
 
 	public AnnotateView() {
 		super();
@@ -94,6 +110,9 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 	 */
 	public void showAnnotations(ICVSResource cvsResource, Collection cvsAnnotateBlocks, InputStream contents, boolean useHistoryView) throws InvocationTargetException {
 
+		// Disconnect from old annotation editor
+		disconnect();
+		
 		// Remove old viewer
 		Control[] oldChildren = top.getChildren();
 		if (oldChildren != null) {
@@ -121,7 +140,7 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 		IDocumentProvider provider = editor.getDocumentProvider();
 		document = provider.getDocument(editor.getEditorInput());
 
-		setTitle(Policy.bind("CVSAnnotateView.showFileAnnotation", new Object[] {cvsResource.getName()})); //$NON-NLS-1$
+		setPartName(Policy.bind("CVSAnnotateView.showFileAnnotation", new Object[] {cvsResource.getName()})); //$NON-NLS-1$
 		try {
 			IResource localResource = cvsResource.getIResource();
 			if (localResource != null) {
@@ -149,6 +168,17 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 		}
 	}
 	
+	protected void disconnect() {
+		if(editor != null) {
+			if (editor.getSelectionProvider() instanceof IPostSelectionProvider) {
+				((IPostSelectionProvider) editor.getSelectionProvider()).removePostSelectionChangedListener(this);
+			}
+			editor.getSite().getPage().removePartListener(partListener);
+			editor = null;
+			document = null;
+		}
+	}
+	
 	/**
 	 * Makes the view visible in the active perspective. If there
 	 * isn't a view registered <code>null</code> is returned.
@@ -169,8 +199,13 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 		} else if (event.getSelection() instanceof ITextSelection) {
 			textSelectionChanged((ITextSelection) event.getSelection());
 		}
-		
-		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
+	 */
+	public void dispose() {
+		disconnect();
 	}
 	
 	/**
@@ -331,7 +366,7 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 		if (editor.getSelectionProvider() instanceof IPostSelectionProvider) {
 			((IPostSelectionProvider) editor.getSelectionProvider()).addPostSelectionChangedListener(this);
 		}
-	
+		part.getSite().getPage().addPartListener(partListener);
 		return part;
 	}
 
