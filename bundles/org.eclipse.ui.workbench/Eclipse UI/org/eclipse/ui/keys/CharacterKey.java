@@ -32,6 +32,13 @@ import org.eclipse.ui.internal.util.Util;
  * @since 3.0
  */
 public final class CharacterKey extends NaturalKey {
+
+	/**
+	 * An internal cache of the CharacterKey instances representing the first
+	 * 256 unicode characters (Basic Latin and Latin-1 Supplement). This cache
+	 * is lazily created by <code>getInstance()</code>.
+	 */
+	private final static CharacterKey[] CACHE = new CharacterKey[256];
 	
 	/**
 	 * The character for BS (U+0008)
@@ -49,13 +56,6 @@ public final class CharacterKey extends NaturalKey {
 	 * The name of the 'BS' key.
 	 */
 	private final static String BS_NAME = "BS"; //$NON-NLS-1$
-
-	/**
-	 * An internal cache of the CharacterKey instances representing the first
-	 * 256 unicode characters (Basic Latin and Latin-1 Supplement). This cache
-	 * is lazily created by <code>getInstance()</code>.
-	 */
-	private final static CharacterKey[] CACHE = new CharacterKey[256];
 
 	/**
 	 * The character for CR (U+000D)
