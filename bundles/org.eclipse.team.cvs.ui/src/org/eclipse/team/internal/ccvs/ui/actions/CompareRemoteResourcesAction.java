@@ -39,7 +39,9 @@ public class CompareRemoteResourcesAction extends CVSAction {
 				}
 				ResourceEditionNode left = new ResourceEditionNode(editions[0]);
 				ResourceEditionNode right = new ResourceEditionNode(editions[1]);
-				CompareUI.openCompareEditor(new CVSCompareEditorInput(left, right));
+				CompareUI.openCompareEditorOnPage(
+				  new CVSCompareEditorInput(left, right),
+				  getTargetPage());
 			}
 		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
 	}

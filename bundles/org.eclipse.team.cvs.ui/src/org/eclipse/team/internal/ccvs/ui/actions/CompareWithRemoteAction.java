@@ -43,7 +43,9 @@ public class CompareWithRemoteAction extends WorkspaceAction {
 		// Show the compare viewer
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				CompareUI.openCompareEditor(new CVSLocalCompareEditorInput(resources, tags));
+				CompareUI.openCompareEditorOnPage(
+				  new CVSLocalCompareEditorInput(resources, tags),
+				  getTargetPage());
 			}
 		}, false /* cancelable */, PROGRESS_BUSYCURSOR);		
 	}

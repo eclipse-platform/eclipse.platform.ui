@@ -14,6 +14,9 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 
 public class MergeWizard extends Wizard {
 	MergeWizardStartPage startPage;
@@ -41,9 +44,18 @@ public class MergeWizard extends Wizard {
 	 * @see IWizard#performFinish()
 	 */
 	public boolean performFinish() {
+		
+		IWorkbenchWindow wWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchPage activePage = null;
+		if(wWindow != null) {
+			activePage = wWindow.getActivePage();
+		}
+		
 		CVSTag startTag = startPage.getTag();
 		CVSTag endTag = endPage.getTag();				
-		CompareUI.openCompareEditor(new MergeEditorInput(resources, startTag, endTag));
+		CompareUI.openCompareEditorOnPage(
+		  new MergeEditorInput(resources, startTag, endTag),
+		  activePage);
 		return true;
 	}
 	

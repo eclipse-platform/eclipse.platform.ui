@@ -38,7 +38,9 @@ public class CompareWithTagAction extends WorkspaceAction {
 		// Show the compare viewer
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				CompareUI.openCompareEditor(new CVSLocalCompareEditorInput(resources, tag));
+				CompareUI.openCompareEditorOnPage(
+				  new CVSLocalCompareEditorInput(resources, tag),
+				  getTargetPage());
 			}
 		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
 	}
