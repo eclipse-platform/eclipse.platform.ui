@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
@@ -112,17 +113,39 @@ public class EclipseSynchronizerTest extends EclipseTest {
 	 * Test get/set/delete folder sync for things that support it.
 	 * Assumes container does not already have sync info.
 	 */
-	private void _testFolderSyncValid(IContainer container) throws CVSException {
+	private void _testFolderSyncValid(IContainer container) throws CoreException, CVSException {
 		FolderSyncInfo info = sync.getFolderSync(container);
 		assertNull(info);
-		sync.deleteFolderSync(container, null);
+		sync.deleteFolderSync(container);
 		FolderSyncInfo newInfo = dummyFolderSync(container);
 		sync.setFolderSync(container, newInfo);
 		info = sync.getFolderSync(container);
 		assertEquals(newInfo, info);
-		sync.deleteFolderSync(container, null);
+		// verify that deleteFolderSync() does the right thing
+		buildResources(container, new String[] { "hassync/", "nosync", "hassync.txt", "nosync.txt" }, true);
+		IResource resource = container.getFile(new Path("hassync.txt"));
+		sync.setResourceSync(resource, dummyResourceSync(resource));
+		resource = container.getFile(new Path("hassync"));
+		sync.setResourceSync(resource, dummyResourceSync(resource));
+		assertNotNull(sync.getResourceSync(container.getFile(new Path("hassync.txt"))));
+		assertNull(sync.getResourceSync(container.getFile(new Path("nosync.txt"))));
+		assertNotNull(sync.getResourceSync(container.getFolder(new Path("hassync"))));
+		assertNull(sync.getResourceSync(container.getFolder(new Path("nosync"))));
+		if (container.getType() == IResource.FOLDER) {
+			sync.setResourceSync(container, dummyResourceSync(container));
+			assertNotNull(sync.getResourceSync(container));
+		}
+		// should delete folder sync for self, and resource sync for children
+		sync.deleteFolderSync(container);
 		info = sync.getFolderSync(container);
 		assertNull(info);
+		assertNull(sync.getResourceSync(container.getFile(new Path("hassync.txt"))));
+		assertNull(sync.getResourceSync(container.getFile(new Path("nosync.txt"))));
+		assertNull(sync.getResourceSync(container.getFolder(new Path("hassync"))));
+		assertNull(sync.getResourceSync(container.getFolder(new Path("nosync"))));
+		if (container.getType() == IResource.FOLDER) {
+			assertNotNull(sync.getResourceSync(container));
+		}
 	}
 	
 	/*
@@ -132,7 +155,7 @@ public class EclipseSynchronizerTest extends EclipseTest {
 	private void _testFolderSyncInvalid(IContainer container) throws CVSException {
 		FolderSyncInfo info = sync.getFolderSync(container);
 		assertNull(info);
-		sync.deleteFolderSync(container, null);
+		sync.deleteFolderSync(container);
 		try {
 			sync.setFolderSync(container, dummyFolderSync(container));
 			fail("Expected CVSException");
@@ -171,7 +194,7 @@ public class EclipseSynchronizerTest extends EclipseTest {
 		file.create(getRandomContents(), false /*force*/, null);
 		newInfo = sync.getResourceSync(file);
 		assertEquals(newInfo, info);
-		sync.deleteResourceSync(file, null);
+		sync.deleteResourceSync(file);
 		file.delete(false /*force*/, null);
 		_testResourceSyncValid(file);
 		
@@ -196,12 +219,12 @@ public class EclipseSynchronizerTest extends EclipseTest {
 	private void _testResourceSyncValid(IResource resource) throws CVSException {
 		ResourceSyncInfo info = sync.getResourceSync(resource);
 		assertNull(info);
-		sync.deleteResourceSync(resource, null);
+		sync.deleteResourceSync(resource);
 		ResourceSyncInfo newInfo = dummyResourceSync(resource);
 		sync.setResourceSync(resource, newInfo);
 		info = sync.getResourceSync(resource);
 		assertEquals(newInfo, info);
-		sync.deleteResourceSync(resource, null);
+		sync.deleteResourceSync(resource);
 		info = sync.getResourceSync(resource);
 		assertNull(info);
 	}
@@ -213,7 +236,7 @@ public class EclipseSynchronizerTest extends EclipseTest {
 	private void _testResourceSyncInvalid(IResource resource) throws CVSException {
 		ResourceSyncInfo info = sync.getResourceSync(resource);
 		assertNull(info);
-		sync.deleteResourceSync(resource, null);
+		sync.deleteResourceSync(resource);
 		try {
 			sync.setResourceSync(resource, dummyResourceSync(resource));
 			fail("Expected CVSException");
@@ -257,19 +280,19 @@ public class EclipseSynchronizerTest extends EclipseTest {
 		_testIgnoresValid(childFolder);
 		
 		// Deleted folder -- ignores should no longer exist
-		sync.setIgnored(folder, "*.foo");
+		sync.addIgnored(folder, "*.foo");
 		folder.delete(false /*force*/, null);
 		_testIgnoresInvalid(folder); // verifies sync info was deleted
 		
 		// Recreated folder -- sync info should not be preserved across deletions
 		folder.create(false /*force*/, true /*local*/, null);
-		sync.setIgnored(folder, "*.foo");
+		sync.addIgnored(folder, "*.foo");
 		folder.delete(false /*force*/, null);
 		folder.create(false /*force*/, true /*local*/, null);
 		_testIgnoresValid(folder); // verifies sync info has not reappeared
 		
 		// Deleted project
-		sync.setIgnored(project, "*.foo");
+		sync.addIgnored(project, "*.foo");
 		project.delete(false /*force*/, null);
 		_testIgnoresInvalid(project);
 	}
@@ -280,12 +303,12 @@ public class EclipseSynchronizerTest extends EclipseTest {
 	 */
 	private void _testIgnoresValid(IContainer container) throws CVSException {
 		String[] ignored = sync.getIgnored(container);
-		assertNull(ignored);
-		sync.setIgnored(container, "*.xyz");
+		assertTrue(ignored.length == 0);
+		sync.addIgnored(container, "*.xyz");
 		ignored = sync.getIgnored(container);
 		assertBijection(ignored, new String[] { "*.xyz" }, null);
-		sync.setIgnored(container, "*.abc");
-		sync.setIgnored(container, "*.def");
+		sync.addIgnored(container, "*.abc");
+		sync.addIgnored(container, "*.def");
 		ignored = sync.getIgnored(container);
 		assertBijection(ignored, new String[] { "*.abc", "*.def", "*.xyz" }, null);
 	}
@@ -296,14 +319,14 @@ public class EclipseSynchronizerTest extends EclipseTest {
 	 */
 	private void _testIgnoresInvalid(IContainer container) throws CVSException {
 		String[] ignored = sync.getIgnored(container);
-		assertNull(ignored);
+		assertTrue(ignored.length == 0);
 		try {
-			sync.setIgnored(container, "*.xyz");
+			sync.addIgnored(container, "*.xyz");
 			fail("Expected CVSException");
 		} catch (CVSException e) {
 		}
 		ignored = sync.getIgnored(container);
-		assertNull(ignored);
+		assertTrue(ignored.length == 0);
 	}
 	
 	public void testMembers() throws CoreException, CVSException {
@@ -373,30 +396,19 @@ public class EclipseSynchronizerTest extends EclipseTest {
 		
 		// delete sync info, only those that exist should appear
 		resource = project1.getFile("hassync.txt");
-		sync.deleteResourceSync(resource, null);
+		sync.deleteResourceSync(resource);
 		resource = project1.getFolder("hassync");
-		sync.deleteResourceSync(resource, null);
+		sync.deleteResourceSync(resource);
 
 		resource = project1.getFile("deleted.txt");
-		sync.deleteResourceSync(resource, null);
+		sync.deleteResourceSync(resource);
 		expectedMembers.remove(resource);
 		resource = project1.getFolder("deleted");
-		sync.deleteResourceSync(resource, null);
+		sync.deleteResourceSync(resource);
 		expectedMembers.remove(resource);
 
 		members = sync.members(project1);
 		assertBijection(expectedMembers.toArray(), members, ignores);
-	}
-	
-	/**
-	 * More rigorous tests for deleteFolderSync().
-	 */
-	public void testDeleteFolderSync() throws CoreException, CVSException {
-		
-	}
-	
-	public void testFlush() throws CoreException, CVSException {
-		
 	}
 	
 	private FolderSyncInfo dummyFolderSync(IContainer container) {

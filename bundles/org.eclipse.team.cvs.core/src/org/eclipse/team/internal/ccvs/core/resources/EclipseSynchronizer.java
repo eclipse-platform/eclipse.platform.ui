@@ -341,11 +341,11 @@ public class EclipseSynchronizer {
 	 * May flush more sync information than strictly needed, but never less.
 	 * </p>
 	 * 
-	 * @param monitor the progress monitor, may be null
 	 * @param root the root of the subtree to flush
 	 * @param purgeCache if true, purges the cache from memory as well
+	 * @param monitor the progress monitor, may be null
 	 */
-	public void flush(IProgressMonitor monitor, IContainer root, boolean purgeCache)
+	public void flush(IContainer root, boolean purgeCache, IProgressMonitor monitor)
 		throws CVSException {
 		// flush unwritten sync info to disk
 		if (nestingCount != 0) commitCache(monitor);
