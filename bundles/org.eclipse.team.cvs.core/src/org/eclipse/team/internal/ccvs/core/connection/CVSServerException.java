@@ -14,7 +14,6 @@ package org.eclipse.team.internal.ccvs.core.connection;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 
 /**
@@ -56,24 +55,7 @@ public class CVSServerException extends CVSException {
 		return false;
 	}
 	
-	/**
-	 * Return the CVSServerException for the given error message and error list
-	 * 
-	 * This is public due to packaging and should not be used by clients.
-	 */	
-	public static CVSServerException forError(String message, IStatus[] children) {
-		if (children.length > 0) {
-			return new CVSServerException(message, children);
-		} else {
-			return new CVSServerException(new CVSStatus(IStatus.ERROR, CVSStatus.SERVER_ERROR, message, null));
-		}
-	}
-	
 	public CVSServerException(IStatus status) {
 		super(status);
-	}
-	
-	private CVSServerException(String message, IStatus[] children) {
-		super(new MultiStatus(CVSProviderPlugin.ID, CVSStatus.SERVER_ERROR, children, message, null));
 	}
 }

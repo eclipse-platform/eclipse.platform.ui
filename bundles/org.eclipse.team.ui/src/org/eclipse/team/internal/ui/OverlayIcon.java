@@ -55,22 +55,6 @@ public class OverlayIcon extends CompositeImageDescriptor {
 		this.size = size;
 	}
 	
-	/**
-	 * OverlayIcon constructor.
-	 * 
-	 * @param base the base image
-	 * @param overlays the overlay images
-	 * @param locations the location of each image
-	 * @param size the size
-	 */
-	public OverlayIcon(ImageDescriptor descriptorBase, ImageDescriptor[] overlays, int[] locations, Point size) {
-		this.descriptorBase = descriptorBase;
-		this.base = null;
-		this.overlays = overlays;
-		this.locations = locations;
-		this.size = size;
-	}
-	
 	protected void drawOverlays(ImageDescriptor[] overlays, int[] locations) {
 			Point size = getSize();
 			for (int i = 0; i < overlays.length; i++) {

@@ -43,11 +43,6 @@ public class CVSDateFormatter {
 		Date date = serverFormat.parse(text);
 		return date;
 	}
-
-	static synchronized public String dateToServerStamp(Date date) {
-		serverFormat.setTimeZone(TimeZone.getTimeZone("GMT"));//$NON-NLS-1$
-		return serverFormat.format(date) + " -0000"; //$NON-NLS-1$
-	}	
 	
 	static synchronized public Date entryLineToDate(String text) throws ParseException {
 		try {

@@ -38,12 +38,10 @@ public abstract class CVSSyncTreeSubscriber extends ResourceVariantTreeSubscribe
 	
 	private QualifiedName id;
 	private String name;
-	private String description;
 	
-	CVSSyncTreeSubscriber(QualifiedName id, String name, String description) {
+	CVSSyncTreeSubscriber(QualifiedName id, String name) {
 		this.id = id;
 		this.name = name;
-		this.description = description;
 		this.comparisonCriteria = new CVSRevisionNumberCompareCriteria(isThreeWay());
 	}
 
@@ -59,13 +57,6 @@ public abstract class CVSSyncTreeSubscriber extends ResourceVariantTreeSubscribe
 	 */
 	public String getName() {
 		return name;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.sync.ISyncTreeSubscriber#getDescription()
-	 */
-	public String getDescription() {
-		return description;
 	}
 
 	/* (non-Javadoc)

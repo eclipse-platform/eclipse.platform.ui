@@ -67,16 +67,12 @@ public class CVSProviderPlugin extends Plugin {
 	private int communicationsTimeout = DEFAULT_TIMEOUT;
 	private boolean pruneEmptyDirectories = DEFAULT_PRUNE;
 	private boolean fetchAbsentDirectories = DEFAULT_FETCH;
-	private boolean promptOnFileDelete = true;
-	private boolean promptOnFolderDelete = true;
 	private boolean replaceUnmanaged = true;
 	private boolean repositoriesAreBinary = false;
 	private String cvsRshCommand = DEFAULT_CVS_RSH;
 	private String cvsRshParameters = DEFAULT_CVS_RSH_PARAMETERS;
 	private String cvsServer = DEFAULT_CVS_SERVER;
-	private IConsoleListener consoleListener;
 	private boolean determineVersionEnabled = true;
-	private boolean confirmMoveTagEnabled = true;
 	
 	private static volatile CVSProviderPlugin instance;
 	
@@ -110,24 +106,9 @@ public class CVSProviderPlugin extends Plugin {
 		if (cvsWorkspaceSubscriber == null) {
 			cvsWorkspaceSubscriber = new CVSWorkspaceSubscriber(
 					CVS_WORKSPACE_SUBSCRIBER_ID, 
-					Policy.bind("CVSProviderPlugin.20"),   //$NON-NLS-1$
-					Policy.bind("CVSProviderPlugin.21")); //$NON-NLS-1$
+					Policy.bind("CVSProviderPlugin.20")); //$NON-NLS-1$
 		}
 		return cvsWorkspaceSubscriber;
-	}
-
-	/**
-	 * @return
-	 */
-	public boolean isConfirmMoveTagEnabled() {
-		return confirmMoveTagEnabled;
-	}
-
-	/**
-	 * @param confirmMoveTag
-	 */
-	public void setConfirmMoveTagEnabled(boolean confirmMoveTag) {
-		this.confirmMoveTagEnabled = confirmMoveTag;
 	}
 
 	/**
@@ -380,24 +361,8 @@ public class CVSProviderPlugin extends Plugin {
 		this.fetchAbsentDirectories = fetchAbsentDirectories;
 	}
 	
-	public boolean getPromptOnFileDelete() {
-		return promptOnFileDelete;
-	}
-	
-	public void setPromptOnFileDelete(boolean prompt) {
-		promptOnFileDelete = prompt;
-	}
-	
 	public void setRepositoriesAreBinary(boolean binary) {
 		repositoriesAreBinary = binary;
-	}
-	
-	public boolean getPromptOnFolderDelete() {
-		return promptOnFolderDelete;
-	}
-	
-	public void setPromptOnFolderDelete(boolean prompt) {
-		promptOnFolderDelete = prompt;
 	}
 	
 	public static void broadcastDecoratorEnablementChanged(final boolean enabled) {

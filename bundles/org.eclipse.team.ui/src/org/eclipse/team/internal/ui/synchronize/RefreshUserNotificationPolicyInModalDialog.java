@@ -11,7 +11,6 @@
 package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -63,10 +62,6 @@ public class RefreshUserNotificationPolicyInModalDialog implements IRefreshSubsc
 				}
 			}
 		};
-	}
-
-	protected boolean isSingleFileCompare(IResource[] resources) {
-		return resources.length == 1 && resources[0].getType() == IResource.FILE;
 	}
 
 	protected void compareAndOpenDialog(final IRefreshEvent event, final SubscriberParticipant participant) {

@@ -263,13 +263,6 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 		return true;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.core.resources.SyncInfoCache#isDirtyCacheFlushed(org.eclipse.core.resources.IContainer)
-	 */
-	boolean isDirtyCacheFlushed(IContainer resource) throws CVSException {
-		return false;
-	}
-	
 	/*
 	 * Calculate the dirty count for the given phantom folder, performing any
 	 * necessary calculations on the childen as well

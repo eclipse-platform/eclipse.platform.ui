@@ -38,14 +38,14 @@ public class CVSCompareSubscriber extends CVSSyncTreeSubscriber implements ISubs
 	private CVSResourceVariantTree tree;
 	
 	public CVSCompareSubscriber(IResource[] resources, CVSTag tag) {
-		super(getUniqueId(), Policy.bind("CVSCompareSubscriber.2", tag.getName()), Policy.bind("CVSCompareSubscriber.3")); //$NON-NLS-1$ //$NON-NLS-2$
+		super(getUniqueId(), Policy.bind("CVSCompareSubscriber.2", tag.getName())); //$NON-NLS-1$ //$NON-NLS-2$
 		this.resources = resources;
 		tree = new CVSResourceVariantTree(new SessionResourceVariantByteStore(), tag, getCacheFileContentsHint());
 		initialize();
 	}
 
 	public CVSCompareSubscriber(IResource[] resources, CVSTag[] tags, String name) {
-		super(getUniqueId(), Policy.bind("CVSCompareSubscriber.2", name), Policy.bind("CVSCompareSubscriber.3")); //$NON-NLS-1$ //$NON-NLS-2$
+		super(getUniqueId(), Policy.bind("CVSCompareSubscriber.2", name)); //$NON-NLS-1$ //$NON-NLS-2$
 		resetRoots(resources, tags);
 		initialize();
 	}

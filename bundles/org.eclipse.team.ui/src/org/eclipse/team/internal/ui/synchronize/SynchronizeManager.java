@@ -139,7 +139,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 	 * only when the participant is required.
 	 */
 	private class ParticipantInstance implements ISynchronizeParticipantReference {
-		private ReferenceCounter counter;
+		private Map participants;
 		private IMemento savedState;
 		private SynchronizeParticipantDescriptor descriptor;
 		private String secondaryId;
@@ -147,7 +147,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 		private boolean dead;
 		
 		public ParticipantInstance(SynchronizeParticipantDescriptor descriptor, String secondaryId, String displayName, IMemento savedState) {
-			this.counter = new ReferenceCounter();
+			this.participants = new HashMap();
 			this.secondaryId = secondaryId;
 			this.savedState = savedState;
 			this.descriptor = descriptor;
@@ -157,7 +157,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 		public void save(IMemento memento) {
 			if (dead) return;
 			String key = Utils.getKey(descriptor.getId(), getSecondaryId());
-			ISynchronizeParticipant ref = (ISynchronizeParticipant) counter.get(key);
+			ISynchronizeParticipant ref = (ISynchronizeParticipant) participants.get(key);
 			if(ref != null) {
 				ref.saveState(memento);
 			} else if(savedState != null) {
@@ -193,7 +193,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 		 */
 		public String getDisplayName() {
 			String key = Utils.getKey(descriptor.getId(), getSecondaryId());
-			ISynchronizeParticipant participant = (ISynchronizeParticipant) counter.get(key);
+			ISynchronizeParticipant participant = (ISynchronizeParticipant) participants.get(key);
 			if(participant != null) {
 				return participant.getName();
 			}
@@ -202,7 +202,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 		
 		public boolean isInstantiated() {
 			String key = Utils.getKey(descriptor.getId(), getSecondaryId());
-			return (ISynchronizeParticipant) counter.get(key) != null;
+			return (ISynchronizeParticipant) participants.get(key) != null;
 		}
 
 		/* (non-Javadoc)
@@ -212,11 +212,11 @@ public class SynchronizeManager implements ISynchronizeManager {
 			if (dead) return null;
 			String key = Utils.getKey(descriptor.getId(), getSecondaryId());
 			try {
-				ISynchronizeParticipant participant = (ISynchronizeParticipant) counter.get(key);
+				ISynchronizeParticipant participant = (ISynchronizeParticipant) participants.get(key);
 				if (participant == null) {
 					participant = instantiate();
 					if(participant != null)
-						counter.put(key, participant);
+						participants.put(key, participant);
 				}
 				return participant;
 			} catch (TeamException e) {
@@ -228,7 +228,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 
 		public void setParticipant(ISynchronizeParticipant participant) {
 			String key = Utils.getKey(descriptor.getId(), getSecondaryId());
-			counter.put(key, participant);
+			participants.put(key, participant);
 		}
 		
 		/* (non-Javadoc)

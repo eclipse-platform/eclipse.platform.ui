@@ -142,14 +142,6 @@ public abstract class RemoteResource extends CachedResourceVariant implements IC
 	 */
 	public abstract ResourceSyncInfo getSyncInfo();
 	
-	/*
-	 * @see ICVSResource#setSyncInfo(ResourceSyncInfo)
-	 */
-	public void setSyncInfo(ResourceSyncInfo info, int modificationState) {
-		// ensure that clients are not trying to set sync info on remote handles.
-		Assert.isTrue(false);
-	}
-	
 	public boolean equals(Object target) {
 		if (this == target)
 			return true;

@@ -115,23 +115,6 @@ public class OpenInCompareAction extends Action {
 		}
 		return null;
 	}
-	
-	/**
-	 * Close a compare editor that is opened on the given IResource.
-	 * 
-	 * @param site the view site in which to close the editors 
-	 * @param resource the resource to use to find the compare editor
-	 */
-	public static void closeCompareEditorFor(final IWorkbenchPartSite site, final IResource resource) {
-		site.getShell().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				IEditorPart editor = findOpenCompareEditor(site, resource);
-				if(editor != null) {
-					site.getPage().closeEditor(editor, true /*save changes if required */);
-				}
-			}
-		});
-	}
 
 	/**
 	 * Returns an editor handle if a SyncInfoCompareInput compare editor is opened on 

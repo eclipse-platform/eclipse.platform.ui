@@ -24,13 +24,6 @@ public abstract class TeamWizardPage extends WizardPage {
 	/**
 	 * CVSWizardPage constructor comment.
 	 * @param pageName  the name of the page
-	 */
-	public TeamWizardPage(String pageName) {
-		super(pageName);
-	}
-	/**
-	 * CVSWizardPage constructor comment.
-	 * @param pageName  the name of the page
 	 * @param title  the title of the page
 	 * @param titleImage  the image for the page
 	 */

@@ -129,18 +129,6 @@ public class TagSourceWorkbenchAdapter implements IAdaptable, IWorkbenchAdapter 
 		}
 		return children.toArray(new Object[children.size()]);
 	}
-	public int getIncludeFlags() {
-		return includeFlags;
-	}
-	public TagRootElement getBranches() {
-		return branches;
-	}
-	public TagRootElement getVersions() {
-		return versions;
-	}
-	public TagRootElement getDates(){
-		return dates;
-	}
 	public Object getAdapter(Class adapter) {
 		if (adapter == IWorkbenchAdapter.class) return this;
 		return null;

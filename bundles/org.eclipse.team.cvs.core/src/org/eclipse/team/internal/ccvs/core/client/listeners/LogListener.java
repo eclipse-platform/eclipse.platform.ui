@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client.listeners;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -24,6 +26,13 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
  * server but delegates the handling of the entries to a subclass.
  */
 public class LogListener extends CommandOutputListener {
+    
+    /*
+     * A new format for log dates was introduced in 1.12.9
+     */
+    private static final String LOG_TIMESTAMP_FORMAT_OLD= "yyyy/MM/dd HH:mm:ss zzz";//$NON-NLS-1$
+    private static final String LOG_TIMESTAMP_FORMAT= "yyyy-MM-dd HH:mm:ss zzz";//$NON-NLS-1$
+    private static final Locale LOG_TIMESTAMP_LOCALE= Locale.US;
     
     // Server message prefix used for error detection
     private static final String NOTHING_KNOWN_ABOUT = "nothing known about "; //$NON-NLS-1$
@@ -177,7 +186,7 @@ public class LogListener extends CommandOutputListener {
     				thisRevisionTags.add(new CVSTag(tagName, type));
     			}
     		}
-    		Date date = DateUtil.convertFromLogTime(creationDate);
+    		Date date = convertFromLogTime(creationDate);
     		if (currentFile != null) {
     			LogEntry entry = new LogEntry(currentFile, revision, author, date,
     				comment.toString(), fileState, (CVSTag[]) thisRevisionTags.toArray(new CVSTag[0]));
@@ -222,5 +231,24 @@ public class LogListener extends CommandOutputListener {
     	if (tagName.charAt(lastDot - 1) == '0' && tagName.charAt(lastDot - 2) == '.') return true;
     	return false;
     }
-
+    
+    /**
+     * Converts a time stamp as sent from a cvs server for a "log" command into a
+     * <code>Date</code>.
+     */
+    private Date convertFromLogTime(String modTime) {
+        String timestampFormat = LOG_TIMESTAMP_FORMAT;
+        // Compatibility for older cvs version (pre 1.12.9)
+        if (modTime.length() > 4 && modTime.charAt(4) == '/')
+            timestampFormat = LOG_TIMESTAMP_FORMAT_OLD;
+            
+        SimpleDateFormat format= new SimpleDateFormat(timestampFormat, 
+            LOG_TIMESTAMP_LOCALE);
+        try {
+            return format.parse(modTime);
+        } catch (ParseException e) {
+            // fallback is to return null
+            return null;
+        }
+    }
 }

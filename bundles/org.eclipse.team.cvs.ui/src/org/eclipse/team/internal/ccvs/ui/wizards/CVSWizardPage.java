@@ -14,34 +14,19 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.DecoratingLabelProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.ListViewer;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.model.WorkbenchViewerSorter;
 import org.eclipse.ui.views.navigator.ResourceSorter;
 
 /**
@@ -234,56 +219,6 @@ public abstract class CVSWizardPage extends WizardPage {
 		button.setLayoutData(data);
 		return button;
 	}
-	/**
-	 * Utility method to create a full width separator preceeded by a blank space
-	 * 
-	 * @param parent  the parent of the separator
-	 * @param verticalSpace  the vertical whitespace to insert before the label
-	 */
-	protected void createSeparator(Composite parent, int verticalSpace) {
-		// space
-		Label label = new Label(parent, SWT.NONE);
-		GridData data = new GridData();
-		data.heightHint = verticalSpace;
-		label.setLayoutData(data);
-		// separator
-		label = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		label.setLayoutData(data);
-	}
-	
-	/**
-	 * Creates a ListViewer whose input is an array of IFiles.
-	 * 
-	 * @param parent  the parent of the viewer
-	 * @param title  the text for the title label
-	 * @param heightHint  the nominal height of the list
-	 * @return the created list viewer
-	 */
-	public ListViewer createFileListViewer(Composite parent, String title, int heightHint) {
-		createLabel(parent, title);
-		ListViewer listViewer = new ListViewer(parent, SWT.READ_ONLY | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
-		listViewer.setContentProvider(new IStructuredContentProvider() {
-			public Object[] getElements(Object inputElement) {
-				return (Object[]) inputElement;
-			}
-			public void dispose() {
-			}
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			}
-		});
-		listViewer.setLabelProvider(new LabelProvider() {
-			public String getText(Object element) {
-				return ((IFile) element).getFullPath().toString();
-			}
-		});
-		listViewer.setSorter(new WorkbenchViewerSorter());
-
-		GridData data = new GridData(GridData.FILL_BOTH);
-		data.heightHint = heightHint;
-		listViewer.getList().setLayoutData(data);
-		return listViewer;
-	}
 
 	protected TreeViewer createResourceSelectionTree(Composite composite, int types, int span) {
 		TreeViewer tree = new TreeViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
@@ -332,10 +267,6 @@ public abstract class CVSWizardPage extends WizardPage {
 				}
 			}
 		};
-	}
-	
-	protected RepositoryManager getRepositoryManager() {
-		return CVSUIPlugin.getPlugin().getRepositoryManager();
 	}
 	
 	protected ICVSWizard getCVSWizard() {

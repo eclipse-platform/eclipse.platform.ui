@@ -38,10 +38,6 @@ public class PartNavigator implements INavigatable {
 	public PartNavigator(Object[] panes) {
 		fPanes= panes;
 	}
-
-	public Object[] getPanes() {
-		return fPanes;
-	}
 	
 	public boolean gotoDifference(boolean next) {
 

@@ -1408,17 +1408,6 @@ public class EclipseSynchronizer implements IFlushOperation {
 	}
 	
 	/**
-	 * This method is invoked from the IMoveDeleteHook to batch the resulting sync file
-	 * changes.
-	 */
-	public void run(ICVSRunnable runnable, IProgressMonitor monitor) throws CVSException {
-		// Use the root resource as the rule.
-		// Note: This will not lock the workspace due to behavior in ReentrantLock
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		run(root, runnable, monitor);
-	}
-	
-	/**
 	 * Method isEdited returns true if a "cvs edit" was performed on the given
 	 * file and no commit or unedit has yet been performed.
 	 * @param iResource
@@ -1506,16 +1495,6 @@ public class EclipseSynchronizer implements IFlushOperation {
 	private byte[] convertToDeletion(byte[] syncBytes) throws CVSException {
 		return ResourceSyncInfo.convertToDeletion(syncBytes);
 	}
-	
-	/**
-	 * Method createdByMove clears any session properties on the file so it
-	 * appears as an ADDED file.
-	 * 
-	 * @param destination
-	 */
-	public void createdByMove(IFile file) throws CVSException {
-		deleteResourceSync(file);
-	}
 
 	static public void debug(IResource resource, String indicator, String string) {
 		String di = EclipseSynchronizer.IS_DIRTY_INDICATOR;
@@ -1527,10 +1506,6 @@ public class EclipseSynchronizer implements IFlushOperation {
 			di = "needs recomputing";	//$NON-NLS-1$
 		} 
 		System.out.println("["+string + ":" + di + "]  "  + resource.getFullPath()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	}
-
-	static public void debug(IResource resource, boolean modified, String string) {
-		debug(resource, modified ? IS_DIRTY_INDICATOR : NOT_DIRTY_INDICATOR, string);
 	}
 	
 	/**

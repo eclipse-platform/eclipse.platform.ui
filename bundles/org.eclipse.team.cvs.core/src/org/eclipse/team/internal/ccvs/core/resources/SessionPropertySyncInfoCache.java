@@ -364,16 +364,6 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 			synchronizerCache.setCachedSyncBytes(resource, null, canModifyWorkspace);
 		}
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.core.resources.SyncInfoCache#isDirtyCacheFlushed(org.eclipse.core.resources.IContainer)
-	 */
-	boolean isDirtyCacheFlushed(IContainer resource) throws CVSException {
-		if (resource.exists()) {
-			return getDirtyIndicator(resource) == RECOMPUTE_INDICATOR;					
-		}
-		return false;
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.ISaveParticipant#doneSaving(org.eclipse.core.resources.ISaveContext)

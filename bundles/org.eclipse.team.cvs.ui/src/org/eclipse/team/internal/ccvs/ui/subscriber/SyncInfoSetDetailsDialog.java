@@ -142,10 +142,6 @@ public abstract class SyncInfoSetDetailsDialog extends DetailsDialog {
 		}
 	}
 	
-	protected void resetViewerInput() {
-		selectedResources = null;
-		setViewerInput();
-	}
 	/**
 	 * Return a list of all the resources that are currently under consideration by the dialog
 	 */

@@ -424,10 +424,6 @@ public abstract class SafeUpdateOperation extends CVSSubscriberOperation {
 		return result[0];
 	}
 	
-	public void setPromptBeforeUpdate(boolean prompt) {
-		this.promptBeforeUpdate = prompt;
-	}
-	
 	public boolean getPromptBeforeUpdate() {
 		return promptBeforeUpdate;
 	}

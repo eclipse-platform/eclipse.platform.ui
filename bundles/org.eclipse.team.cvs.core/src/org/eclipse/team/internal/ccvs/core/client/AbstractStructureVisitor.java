@@ -285,7 +285,4 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
     public boolean isRecurse() {
         return recurse;
     }
-    public void setRecurse(boolean recurse) {
-        this.recurse = recurse;
-    }
 }

@@ -128,10 +128,6 @@ public class ConfigurationWizardAutoconnectPage extends CVSWizardPage {
 		}
 	}
 	
-	public FolderSyncInfo getSharing() {
-		return info;
-	}
-	
 	/**
 	 * Gets the location.
 	 * @return Returns a ICVSRepositoryLocation

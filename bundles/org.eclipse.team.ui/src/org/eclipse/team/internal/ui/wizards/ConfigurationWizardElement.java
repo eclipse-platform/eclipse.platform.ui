@@ -65,14 +65,6 @@ public class ConfigurationWizardElement extends WorkbenchAdapter implements IAda
 		return configurationElement;
 	}
 	/**
-	 * Returns the description parameter of this element
-	 *
-	 * @return the description of this elemnet
-	 */
-	public String getDescription() {
-		return description;
-	}
-	/**
 	 * Returns the image for the given element
 	 * 
 	 * @param element  the element to get the image for

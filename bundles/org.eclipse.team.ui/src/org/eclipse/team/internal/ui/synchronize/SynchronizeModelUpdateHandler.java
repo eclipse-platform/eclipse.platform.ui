@@ -115,17 +115,12 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
 	 */
 	class RunnableEvent extends Event {
 		private IWorkspaceRunnable runnable;
-		private boolean preemtive;
-		public RunnableEvent(IWorkspaceRunnable runnable, boolean preemtive) {
+		public RunnableEvent(IWorkspaceRunnable runnable) {
 			super(RUNNABLE);
 			this.runnable = runnable;
-			this.preemtive = preemtive;
 		}
 		public void run(IProgressMonitor monitor) throws CoreException {
 			runnable.run(monitor);
-		}
-		public boolean isPreemtive() {
-			return preemtive;
 		}
 	}
 	
@@ -614,9 +609,9 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
      */
     public void performUpdate(final IWorkspaceRunnable runnable, boolean preserveExpansion, boolean updateInUIThread) {
         if (updateInUIThread) {
-            queueEvent(new RunnableEvent(getUIUpdateRunnable(runnable, preserveExpansion), true), true);
+            queueEvent(new RunnableEvent(getUIUpdateRunnable(runnable, preserveExpansion)), true);
         } else {
-	        queueEvent(new RunnableEvent(getBackgroundUpdateRunnable(runnable, preserveExpansion), true), true);
+	        queueEvent(new RunnableEvent(getBackgroundUpdateRunnable(runnable, preserveExpansion)), true);
         }
     }
 

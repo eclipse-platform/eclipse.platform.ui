@@ -60,8 +60,4 @@ public class RefreshChangeListener implements ISubscriberChangeListener {
 	private boolean isThreeWay() {
 		return collector.getSubscriber().getResourceComparator().isThreeWay();
 	}
-	
-	public void clear() {
-		changes.clear();
-	}
 }

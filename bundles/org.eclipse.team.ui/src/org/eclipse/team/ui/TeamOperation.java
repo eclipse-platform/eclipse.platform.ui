@@ -353,7 +353,7 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 			context.setSchedulingRule(getSchedulingRule());
 			return context;
 		} else {
-			ProgressDialogRunnableContext context = new ProgressDialogRunnableContext(getShell());
+			ProgressDialogRunnableContext context = new ProgressDialogRunnableContext();
 			context.setPostponeBuild(isPostponeAutobuild());
 			context.setSchedulingRule(getSchedulingRule());
 			if (this.context != null) {

@@ -114,13 +114,6 @@ public class Policy {
 			return monitor;
 		return new SubProgressMonitor(monitor, ticks);
 	}
-	public static IProgressMonitor subMonitorFor(IProgressMonitor monitor, int ticks, int style) {
-	if (monitor == null)
-		return new NullProgressMonitor();
-	if (monitor instanceof NullProgressMonitor)
-		return monitor;
-	return new SubProgressMonitor(monitor, ticks, style);
-	}
 	
 	public static IProgressMonitor infiniteSubMonitorFor(IProgressMonitor monitor, int ticks) {
 		if (monitor == null)

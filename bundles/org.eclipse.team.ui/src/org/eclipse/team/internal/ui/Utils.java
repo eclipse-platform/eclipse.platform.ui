@@ -220,23 +220,6 @@ public class Utils {
 		}
 	}
 
-	/**
-	 * Creates a progress monitor and runs the specified runnable.
-	 * @param parent
-	 *            the parent Shell for the dialog
-	 * @param cancelable
-	 *            if true, the dialog will support cancelation
-	 * @param runnable
-	 *            the runnable
-	 * @exception InvocationTargetException
-	 *                when an exception is thrown from the runnable
-	 * @exception InterruptedException
-	 *                when the progress monitor is cancelled
-	 */
-	public static void runWithProgressDialog(Shell parent, boolean cancelable, final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
-		new ProgressMonitorDialog(parent).run(cancelable, cancelable, runnable);
-	}
-
 	public static Shell getShell(IWorkbenchSite site) {
 		if(site != null) {
 			Shell shell = site.getShell();
@@ -296,30 +279,6 @@ public class Utils {
 			return activeShell;
 		// worst case, just create our own.
 		return new Shell(display);
-	}
-	
-	public static IWorkbenchPartSite findSite(Control c) {
-		while (c != null && !c.isDisposed()) {
-			Object data = c.getData();
-			if (data instanceof IWorkbenchPart)
-				return ((IWorkbenchPart) data).getSite();
-			c = c.getParent();
-		}
-		return null;
-	}
-
-	public static IWorkbenchPartSite findSite() {
-		IWorkbench workbench = TeamUIPlugin.getPlugin().getWorkbench();
-		IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-		if (window != null) {
-			IWorkbenchPage page = window.getActivePage();
-			if (page != null) {
-				IWorkbenchPart part = page.getActivePart();
-				if (part != null)
-					return part.getSite();
-			}
-		}
-		return null;
 	}
 
 	public static void initAction(IAction a, String prefix) {
@@ -416,17 +375,6 @@ public class Utils {
 				return Policy.bind("Utils.25"); //$NON-NLS-1$
 		}
 		return Policy.bind("Utils.26"); //$NON-NLS-1$
-	}
-
-	public static String workingSetToString(IWorkingSet set, int maxLength) {
-		String text = Policy.bind("StatisticsPanel.noWorkingSet"); //$NON-NLS-1$
-		if (set != null) {
-			text = set.getName();
-			if (text.length() > maxLength) {
-				text = text.substring(0, maxLength - 3) + "..."; //$NON-NLS-1$
-			}
-		}
-		return text;
 	}
 
 	/**
@@ -591,21 +539,6 @@ public class Utils {
 
 	public static String getKey(String id, String secondaryId) {
 	    return secondaryId == null ? id : id + '/' + secondaryId;
-	}
-	
-	public static String stripAmpersand(String string) {
-		if( string.indexOf('&') != -1)  { 
-			StringBuffer buffer = new StringBuffer(string);
-			for (int i = string.length()-1; i > -1; i--) {
-				char c = string.charAt(i);
-				if(c == '&') {
-					buffer.deleteCharAt(i);
-					break;
-				}
-			}
-			return buffer.toString();
-		}
-		return string;
 	}
 	
 	public static String convertSelection(IResource[] resources) {

@@ -15,14 +15,10 @@ package org.eclipse.team.internal.ccvs.core.syncinfo;
 import java.text.ParseException;
 import java.util.Date;
 
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
-import org.eclipse.team.internal.ccvs.core.util.Assert;
-import org.eclipse.team.internal.ccvs.core.util.CVSDateFormatter;
-import org.eclipse.team.internal.ccvs.core.util.Util;
+import org.eclipse.team.internal.ccvs.core.util.*;
 
 /**
  * Value (immutable) object that represents workspace state information about a resource contained in
@@ -89,7 +85,6 @@ public class ResourceSyncInfo {
 	protected Date timeStamp;
 	protected KSubstOption keywordMode;
 	protected CVSEntryLineTag tag;
-	protected String permissions;
 	
 	// type of sync
 	protected int syncType = TYPE_REGULAR;
@@ -98,7 +93,7 @@ public class ResourceSyncInfo {
 	}
 	
 	public ResourceSyncInfo(byte[] entryLine) throws CVSException {
-		this(new String(entryLine), null, null);
+		this(new String(entryLine), null);
 	}
 	
 	/**
@@ -111,13 +106,10 @@ public class ResourceSyncInfo {
 	 * 
 	 * @exception CVSException is thrown if the entry cannot be parsed.
 	 */
-	public ResourceSyncInfo(String entryLine, String permissions, Date timestamp) throws CVSException {
+	public ResourceSyncInfo(String entryLine, Date timestamp) throws CVSException {
 		Assert.isNotNull(entryLine);
 		setEntryLine(entryLine);
 		
-		if (permissions != null)  {
-			this.permissions = permissions;
-		}
 		// override the timestamp that may of been in entryLine. In some cases the timestamp is not in the
 		// entry line (e.g. receiving entry lines from the server versus reading them from the Entry file).
 		if(timestamp!=null) {
@@ -237,40 +229,6 @@ public class ResourceSyncInfo {
 		}		
 	}
 	
-	/**
-	 * Anwsers a compatible permissions line for files.
-	 * 
-	 * @return a permission line for files and <code>null</code> if this sync object is
-	 * a directory.
-	 */
-	public String getPermissionLine() {
-		if(isDirectory) {
-			return null;
-		} else {
-			String permissions = this.permissions;
-			if (permissions == null)
-				permissions = DEFAULT_PERMISSIONS;
-			return SEPARATOR + name + SEPARATOR + permissions;
-		}
-	}
-	
-	/**
-	 * Gets the permissions. Returns <code>null</code> for directories and
-	 * a non-null permission for files.
-	 * 
-	 * @return a string of the format "u=rw,g=rw,o=r"
-	 */
-	public String getPermissions() {
-		if(isDirectory) {
-			return null;
-		} else {
-			if(permissions==null) {
-				return DEFAULT_PERMISSIONS;
-			} else {
-				return permissions;
-			}
-		}
-	}
 	/**
 	 * Gets the tag or <code>null</code> if a tag is not available.
 	 * 
@@ -535,14 +493,6 @@ public class ResourceSyncInfo {
 			}
 		}
 		return result.toString();
-	}
-	
-	public boolean needsReporting() {
-		return false;
-	}
-	
-	public void reported() {
-		// do nothing
 	}
 	
 	/**

@@ -17,12 +17,9 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.internal.dialogs.PreferenceLinkArea;
+import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 
 
@@ -35,14 +32,12 @@ public class SWTUtils {
 	public static final int MARGINS_NONE= 0;
 	public static final int MARGINS_DIALOG= 1;
 
-	//TODO: Change to the new API that will be introduced around M5
-	public static PreferenceLinkArea createPreferenceLink(Composite parent, String pageId, String text) {
-		return createPreferenceLink(parent, pageId, text, 1);
+	public static PreferenceLinkArea createPreferenceLink(IWorkbenchPreferenceContainer container, Composite parent, String pageId, String text) {
+		return createPreferenceLink(container, parent, pageId, text, 1);
 	}
 	
-	//TODO: Change to the new API that will be introduced around M5
-	public static PreferenceLinkArea createPreferenceLink(Composite parent, String pageId, String text, int span) {
-		final PreferenceLinkArea area = new PreferenceLinkArea(parent, SWT.BORDER, pageId, text);
+	public static PreferenceLinkArea createPreferenceLink(IWorkbenchPreferenceContainer container, Composite parent, String pageId, String text, int span) {
+		final PreferenceLinkArea area = new PreferenceLinkArea(parent, SWT.BORDER, pageId, text, container, null);
 		area.setLayoutData(createHFillGridData(span));
 		return area;
 	}

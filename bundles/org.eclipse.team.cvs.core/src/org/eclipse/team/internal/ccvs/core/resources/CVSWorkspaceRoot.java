@@ -10,31 +10,12 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.resources;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.ccvs.core.client.Request;
-import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
@@ -78,45 +59,7 @@ public class CVSWorkspaceRoot {
 		// Register the project with Team
 		RepositoryProvider.map(project, CVSProviderPlugin.getTypeId());
 	}
-	
-	/**
-	 * Answer the list of directories that a checkout of the given resources would expand to.
-	 * In other words, the returned strings represent the root paths that the given resources would 
-	 * be loaded into.
-	 */
-	public static String[] getExpansions(ICVSRemoteFolder[] resources, IProgressMonitor monitor) throws CVSException {
-		
-		if (resources.length == 0) return new String[0];
-		
-		// Get the location of the workspace root
-		ICVSFolder root = CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot());
-		
-		// Get the command arguments
-		String[] arguments = new String[resources.length];
-		for (int i = 0; i < resources.length; i++) {
-			if (resources[i] instanceof RemoteModule) {
-				arguments[i] = ((RemoteModule)resources[i]).getName();
-			} else {
-				arguments[i]  = resources[i].getRepositoryRelativePath();
-			}
-		}
-		
-		// Perform the Expand-Modules command
-		IStatus status;
-		Session s = new Session(resources[0].getRepository(), root);
-		s.open(monitor, false /* read-only */);
-		try {
-			status = Request.EXPAND_MODULES.execute(s, arguments, monitor);
-		} finally {
-			s.close();
-		}
-		if (status.getCode() == CVSStatus.SERVER_ERROR) {
-			throw new CVSServerException(status);
-		}
-		
-		return s.getModuleExpansions();
-	}
-					
+				
 	public static ICVSFolder getCVSFolderFor(IContainer resource) {
 		return new EclipseFolder(resource);
 	}

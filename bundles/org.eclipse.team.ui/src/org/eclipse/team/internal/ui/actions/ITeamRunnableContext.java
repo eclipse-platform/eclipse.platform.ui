@@ -13,7 +13,6 @@ package org.eclipse.team.internal.ui.actions;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.widgets.Shell;
 
 /**
  * An ITeamRunnableContext is used to provide the context for a Team operation.
@@ -31,10 +30,4 @@ public interface ITeamRunnableContext {
 	 * job).
 	 */
 	public abstract void run(IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException;
-		
-	/**
-	 * Get a shell that can be used to prompt the user.
-	 * @return a shell
-	 */
-	public abstract Shell getShell();
 }

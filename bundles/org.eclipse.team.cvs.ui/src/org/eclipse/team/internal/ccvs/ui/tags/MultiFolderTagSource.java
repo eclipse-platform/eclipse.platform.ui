@@ -35,14 +35,6 @@ public class MultiFolderTagSource extends SingleFolderTagSource {
     public String getShortDescription() {
         return Policy.bind("MultiFolderTagSource.0", Integer.toString(folders.length)); //$NON-NLS-1$
     }
-
-    /**
-     * Return the folders of this tag source
-     * @return
-     */
-    public ICVSFolder[] getFolders() {
-        return folders;
-    }
     
     /* (non-Javadoc)
      * @see org.eclipse.team.internal.ccvs.ui.tags.SingleFolderTagSource#getCVSResources()

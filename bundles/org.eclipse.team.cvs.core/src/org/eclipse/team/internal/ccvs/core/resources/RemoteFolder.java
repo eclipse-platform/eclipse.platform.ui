@@ -11,7 +11,6 @@
 package org.eclipse.team.internal.ccvs.core.resources;
 
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,11 +24,10 @@ import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.IUpdateMessageListener;
 import org.eclipse.team.internal.ccvs.core.client.listeners.UpdateListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
+import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.*;
-import org.eclipse.team.internal.ccvs.core.util.Assert;
-import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
  * This class provides the implementation of ICVSRemoteFolder
@@ -416,13 +414,6 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	}
 
 	/*
-	 * @see IRemoteResource#getContents(IProgressMonitor)
-	 */
-	public InputStream getContents(IProgressMonitor progress) {
-		return null;
-	}
-
-	/*
 	 * Answers the immediate cached children of this remote folder or null if the remote folder
 	 * handle has not yet queried the server for the its children.
 	 */	
@@ -439,7 +430,9 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	 * @see ICVSRemoteFolder#setTag(String)
 	 */
 	public void setTag(CVSTag tag) {
-		this.folderInfo = new FolderSyncInfo(folderInfo.getRepository(), folderInfo.getRoot(), tag, folderInfo.getIsStatic());
+        MutableFolderSyncInfo newInfo = folderInfo.cloneMutable();
+        newInfo.setTag(tag);
+        setFolderSyncInfo(newInfo);
 	}
 
 	/*
@@ -452,21 +445,14 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	/*
 	 * @see ICVSFolder#setFolderInfo(FolderSyncInfo)
 	 */
-	public void setFolderSyncInfo(FolderSyncInfo folderInfo) throws CVSException {
-		this.folderInfo = folderInfo;
+	public void setFolderSyncInfo(FolderSyncInfo folderInfo) {
+		this.folderInfo = folderInfo.asImmutable();
 	}
 	
 	/*
 	 * @see ICVSFolder#run(ICVSRunnable, IProgressMonitor)
 	 */
 	public void run(ICVSRunnable job, IProgressMonitor monitor) throws CVSException {
-		job.run(monitor);
-	}
-	
-	/*
-	 * @see ICVSFolder#run(ICVSRunnable, int, IProgressMonitor)
-	 */
-	public void run(ICVSRunnable job, int flags, IProgressMonitor monitor) throws CVSException {
 		job.run(monitor);
 	}
 	
@@ -578,24 +564,10 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.sync.IRemoteResource#getComment()
-	 */
-	public String getComment() {
-		return null;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.sync.IRemoteResource#getContentIdentifier()
 	 */
 	public String getContentIdentifier() {
 		return getTag().getName();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.sync.IRemoteResource#getCreatorDisplayName()
-	 */
-	public String getCreatorDisplayName() {
-		return null;
 	}
 	
 	/* (non-Javadoc)

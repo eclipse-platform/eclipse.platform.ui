@@ -136,12 +136,6 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 	/*package*/ abstract void setResourceSyncInfoCached(IContainer container) throws CVSException;
 
 	/**
-	 * @param resource
-	 * @return boolean
-	 */
-	/*package*/ abstract boolean isDirtyCacheFlushed(IContainer resource) throws CVSException;
-
-	/**
 	 * Return whether the cache also caches dirty state or recomputes it
 	 * each time it is requested.
 	 */

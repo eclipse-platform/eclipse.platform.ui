@@ -87,9 +87,6 @@ public class RepositoriesView extends RemoteViewPart {
 				}
 			});
 		}
-		public void repositoryRemoved(ICVSRepositoryLocation root) {
-			refresh();
-		}
 		public void repositoriesChanged(ICVSRepositoryLocation[] roots) {
 			refresh();
 		}

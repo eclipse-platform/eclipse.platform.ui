@@ -46,11 +46,6 @@ public class LocalResourceTypedElement extends ResourceNode {
 		public void setContent(byte[] contents) {
 			fDirty= true;
 			super.setContent(contents);
-		}	
-
-		public void update(IResource resource) {
-			this.discardBuffer();
-			fireContentChanged();
 		}
 		
 		/**
@@ -162,4 +157,5 @@ public class LocalResourceTypedElement extends ResourceNode {
 			return super.getContents();
 		return null;
 	}
+    
 }

@@ -63,13 +63,11 @@ public class ModeWizard extends ResizableWizard {
         private final KSubstOption fMode;
         
         private KSubstOption fNewMode;
-        private final boolean fShared;
         
-        public ModeChange(IFile file, KSubstOption mode, boolean shared) {
+        public ModeChange(IFile file, KSubstOption mode) {
             fFile = file;
             fMode= mode;
             fNewMode= mode;
-            fShared= shared;
         }
         
         public IFile getFile() {
@@ -90,10 +88,6 @@ public class ModeWizard extends ResizableWizard {
         
         public void setNewMode(KSubstOption mode) {
             fNewMode= mode;
-        }
-        
-        public boolean isShared() {
-            return fShared;
         }
         
         public int compareTo(Object o) {
@@ -168,7 +162,7 @@ public class ModeWizard extends ResizableWizard {
                             final ResourceSyncInfo info = cvsFile.getSyncInfo();
                             final KSubstOption mode = info.getKeywordMode();
                             
-                            changes.add(new ModeChange(file, mode, !info.isAdded()));
+                            changes.add(new ModeChange(file, mode));
                             
                         } catch (TeamException e) {
                             throw new CoreException(e.getStatus());

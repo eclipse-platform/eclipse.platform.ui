@@ -67,6 +67,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.IDE.SharedImages;
+import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 public class CVSDecoratorPreferencesPage extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -250,22 +251,6 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
-
-		public boolean getDirty() {
-			return fDirty.getSelection();
-		}
-
-		public boolean showAdded() {
-			return fAdded.getSelection();
-		}
-
-		public boolean showNewResource() {
-			return fNewResource.getSelection();
-		}
-
-		public boolean showHasRemote() {
-			return fHasRemote.getSelection();
-		}
 	}	
 	
 	private class TextDecoratorTab extends Tab implements ModifyListener {
@@ -377,7 +362,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 			
 			fUseFontDecorations= SWTUtils.createCheckBox(composite, Policy.bind("CVSDecoratorPreferencesPage.18")); //$NON-NLS-1$
 
-			SWTUtils.createPreferenceLink(composite, Policy.bind("CVSDecoratorPreferencesPage.19"), Policy.bind("CVSDecoratorPreferencesPage.20")); //$NON-NLS-1$ //$NON-NLS-2$
+			SWTUtils.createPreferenceLink((IWorkbenchPreferenceContainer) getContainer(), composite, Policy.bind("CVSDecoratorPreferencesPage.19"), Policy.bind("CVSDecoratorPreferencesPage.20")); //$NON-NLS-1$ //$NON-NLS-2$
 
 			fShowDirty.addSelectionListener(this);
 			fUseFontDecorations.addSelectionListener(this);
@@ -413,14 +398,6 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		public void setPreferences(Preferences preferences) {
 			preferences.setValue(ICVSUIConstants.PREF_CALCULATE_DIRTY, fShowDirty.getSelection());
 			preferences.setValue(ICVSUIConstants.PREF_USE_FONT_DECORATORS, fUseFontDecorations.getSelection());
-		}
-		
-		public boolean showDirty() {
-			return fShowDirty.getSelection();
-		}
-		
-		public boolean useFontDecorations() {
-			return fUseFontDecorations.getSelection();
 		}
 	}
 	

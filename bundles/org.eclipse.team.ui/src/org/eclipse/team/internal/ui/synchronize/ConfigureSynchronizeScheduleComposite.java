@@ -33,7 +33,6 @@ public class ConfigureSynchronizeScheduleComposite extends Composite {
 	private Button enableBackgroundRefresh;
 	private Text time;
 	private Combo hoursOrSeconds;
-	private String errorMessage;
 	private IPageValidator validator;
 	
 	public ConfigureSynchronizeScheduleComposite(Composite parent, SubscriberRefreshSchedule schedule, IPageValidator validator) {
@@ -185,14 +184,6 @@ public class ConfigureSynchronizeScheduleComposite extends Composite {
 		}	
 		time.setEnabled(enableBackgroundRefresh.getSelection());
 		hoursOrSeconds.setEnabled(enableBackgroundRefresh.getSelection());
-	}
-	
-	protected void setErrorMessage(String error) {
-		this.errorMessage = error;
-	}
-	
-	public String getErrorMessage() {
-		return errorMessage;
 	}
 	
 	private Label createWrappingLabel(Composite parent, String text, int indent, int horizontalSpan) {

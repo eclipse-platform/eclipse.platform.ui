@@ -44,9 +44,5 @@ public class SynchronizeWizardRegistry extends RegistryReader {
 	public SynchronizeWizardDescription[] getSynchronizeWizards() {
 		return (SynchronizeWizardDescription[])wizards.values().toArray(new SynchronizeWizardDescription[wizards.size()]);
 	}
-	
-	public SynchronizeWizardDescription find(String id) {
-		return (SynchronizeWizardDescription)wizards.get(id);
-	}
 
 }

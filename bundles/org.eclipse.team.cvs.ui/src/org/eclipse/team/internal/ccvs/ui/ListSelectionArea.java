@@ -160,26 +160,7 @@ public class ListSelectionArea extends DialogArea {
 	protected List getInitialElementSelections(){
 		return initialSelections;
 	}
-	
-	/**
-	 * Sets the initial selection in this selection dialog to the given elements.
-	 *
-	 * @param selectedElements the array of elements to select
-	 */
-	public void setInitialSelections(Object[] selectedElements) {
-		initialSelections = new ArrayList(selectedElements.length);
-		for (int i = 0; i < selectedElements.length; i++)
-			initialSelections.add(selectedElements[i]);
-	}
-
-	/**
-	 * Sets the initial selection in this selection dialog to the given elements.
-	 *
-	 * @param selectedElements the List of elements to select
-	 */
-	public void setInitialElementSelections(List selectedElements) {
-		initialSelections = selectedElements;
-	}
+    
 	/**
 	 * Returns the listViewer.
 	 * @return CheckboxTableViewer

@@ -192,7 +192,7 @@ public class CVSProviderTest extends EclipseTest {
 
 		// Checkout a copy from the branch and version and compare
 		IProject branchCopy = checkoutCopy(project, branch);
-		IProject versionCopy = checkoutCopy(project, branch);
+		IProject versionCopy = checkoutCopy(project, version);
 		assertEquals(branchCopy, versionCopy, true, false);
 		
 		// Commit the project, update the branch and compare

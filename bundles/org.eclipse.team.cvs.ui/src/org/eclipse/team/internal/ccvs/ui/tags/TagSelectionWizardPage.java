@@ -47,7 +47,6 @@ public class TagSelectionWizardPage extends CVSWizardPage {
 	private boolean useResourceTag = false;
 	private String helpContextId;
     private TagSelectionArea tagArea;
-    private String tagLabel;
     private TagSource tagSource;
 	
 	public TagSelectionWizardPage(String pageName, String title, ImageDescriptor titleImage, String description, TagSource tagSource, int includeFlags) {
@@ -64,16 +63,6 @@ public class TagSelectionWizardPage extends CVSWizardPage {
 	public void setHelpContxtId(String helpContextId) {
 		this.helpContextId = helpContextId;
 	}
-	
-	/**
-	 * Set the label to appear over the tag list/tree.
-	 * If not set, a default will be used.
-	 * 	 * This method must be invoked before <code>createControl</code>
-	 * @param tagLabel the label to appear over the tag list/tree
-	 */
-    public void setTagLabel(String tagLabel) {
-        this.tagLabel = tagLabel;
-    }
     
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
@@ -114,8 +103,6 @@ public class TagSelectionWizardPage extends CVSWizardPage {
 	
 	private void createTagArea() {
 		tagArea = new TagSelectionArea(getShell(), tagSource, includeFlags, null);
-	    if (tagLabel != null)
-	        tagArea.setTagAreaLabel(tagLabel);
 	    tagArea.setRunnableContext(getContainer());
 		tagArea.createArea(composite);
 		tagArea.addPropertyChangeListener(new IPropertyChangeListener() {

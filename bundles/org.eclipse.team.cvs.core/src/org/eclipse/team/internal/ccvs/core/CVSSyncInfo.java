@@ -239,17 +239,6 @@ public class CVSSyncInfo extends SyncInfo {
 	}
 	
 	/*
-	 * Update the sync info of the local resource in such a way that the remote resource can be loaded 
-	 * ignore any local changes. 
-	 */
-	public void makeIncoming(IProgressMonitor monitor) throws TeamException {
-		// To make outgoing deletions incoming, the local will not exist but
-		// it is still important to unmanage (e.g. delete all meta info) for the
-		// deletion.
-		CVSWorkspaceRoot.getCVSResourceFor(getLocal()).unmanage(monitor);
-	}
-	
-	/*
 	 * Load the resource and folder sync info into the local from the remote
 	 * 
 	 * This method can be used on incoming folder additions to set the folder sync info properly
@@ -323,7 +312,10 @@ public class CVSSyncInfo extends SyncInfo {
 		// It is also impossible for an incomming folder to be static.
 		FolderSyncInfo remoteInfo = remote.getFolderSyncInfo();
 		FolderSyncInfo localInfo = local.getParent().getFolderSyncInfo();
-		local.setFolderSyncInfo(new FolderSyncInfo(remoteInfo.getRepository(), remoteInfo.getRoot(), localInfo.getTag(), false));
+        MutableFolderSyncInfo newInfo = remoteInfo.cloneMutable();
+        newInfo.setTag(localInfo.getTag());
+        newInfo.setStatic(false);
+		local.setFolderSyncInfo(newInfo);
 		return Status.OK_STATUS;
 	}
 	

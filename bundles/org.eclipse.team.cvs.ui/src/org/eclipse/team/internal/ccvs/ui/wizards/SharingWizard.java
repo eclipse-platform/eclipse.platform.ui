@@ -155,14 +155,6 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 		return (page == autoconnectPage || page == syncPage);
 	}
 	
-	protected String getMainPageDescription() {
-		return Policy.bind("SharingWizard.description"); //$NON-NLS-1$
-	}
-	
-	protected String getMainPageTitle() {
-		return Policy.bind("SharingWizard.heading"); //$NON-NLS-1$
-	}
-	
 	public IWizardPage getNextPage(IWizardPage page) {
 		// Assume the page is about to be shown when this method is
 		// invoked

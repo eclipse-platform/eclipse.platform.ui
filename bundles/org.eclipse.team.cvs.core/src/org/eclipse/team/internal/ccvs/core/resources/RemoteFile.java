@@ -582,26 +582,10 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.sync.IRemoteResource#getComment()
-	 */
-	public String getComment() throws CVSException {
-		ILogEntry entry = getLogEntry(new NullProgressMonitor());
-		return entry.getComment();
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.sync.IRemoteResource#getContentIdentifier()
 	 */
 	public String getContentIdentifier() {
 		return getRevision();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.sync.IRemoteResource#getCreatorDisplayName()
-	 */
-	public String getCreatorDisplayName() throws CVSException {
-		ILogEntry entry = getLogEntry(new NullProgressMonitor());
-		return entry.getAuthor();
 	}
 
 	/**

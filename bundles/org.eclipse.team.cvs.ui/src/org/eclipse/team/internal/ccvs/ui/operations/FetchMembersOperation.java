@@ -136,10 +136,6 @@ public class FetchMembersOperation extends RemoteOperation {
 		return (ICVSRemoteFolder)getRemoteResources()[0];
 	}
 
-	public RemoteFolderFilter getFilter() {
-		return filter;
-	}
-
 	public void setFilter(RemoteFolderFilter filter) {
 		this.filter = filter;
 	}

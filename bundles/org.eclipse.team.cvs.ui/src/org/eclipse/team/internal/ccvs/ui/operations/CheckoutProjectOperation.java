@@ -432,14 +432,6 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 		}
 		return true;
 	}
-
-	protected String getOverwritePromptMessage(ICVSRemoteFolder remoteFolder, IProject project) {
-		if(project.exists()) {
-			return Policy.bind("CheckoutOperation.thisResourceExists", project.getName(), getRemoteModuleName(remoteFolder));//$NON-NLS-1$
-		} else {
-			return Policy.bind("CheckoutOperation.thisExternalFileExists", project.getName(), getRemoteModuleName(remoteFolder));//$NON-NLS-1$
-		}
-	}
 	
 	/*
 	 * Bring the provied projects into the workspace

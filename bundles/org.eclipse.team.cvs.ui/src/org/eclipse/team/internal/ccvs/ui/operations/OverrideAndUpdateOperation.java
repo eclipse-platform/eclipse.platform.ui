@@ -13,7 +13,6 @@ package org.eclipse.team.internal.ccvs.ui.operations;
 import java.util.*;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -40,13 +39,6 @@ public class OverrideAndUpdateOperation extends ReplaceOperation {
 		update.addAll(Arrays.asList(conflicts));
 		update.addAll(Arrays.asList(super.getResourcesToUpdate(resources)));
 		return (ICVSResource[]) update.toArray(new ICVSResource[update.size()]);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#updateWorkspaceSubscriber(org.eclipse.team.internal.ccvs.core.CVSTeamProvider, org.eclipse.team.internal.ccvs.core.ICVSResource[], org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	protected void updateWorkspaceSubscriber(CVSTeamProvider provider, ICVSResource[] resources, IProgressMonitor monitor) {
-		// No need to update the workspace subscriber since we know this operation will do it properly by itself
 	}
 
 }

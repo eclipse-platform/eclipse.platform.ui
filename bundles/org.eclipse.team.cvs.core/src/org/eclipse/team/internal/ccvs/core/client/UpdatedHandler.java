@@ -122,7 +122,7 @@ public class UpdatedHandler extends ResponseHandler {
 		// in the sync info. The os may not actually set the time we provided :)
 		mFile.setTimeStamp(modTime);
 		modTime = mFile.getTimeStamp();
-		ResourceSyncInfo info = new ResourceSyncInfo(entryLine, null, null);
+		ResourceSyncInfo info = new ResourceSyncInfo(entryLine, null);
 		MutableResourceSyncInfo newInfoWithTimestamp = info.cloneMutable();
 		newInfoWithTimestamp.setTimeStamp(modTime);
 		int modificationState = ICVSFile.UNKNOWN;

@@ -215,22 +215,6 @@ public abstract class StructuredViewerAdvisor implements IAdaptable {
 	 * @return <code>true</code> if the end is reached, and <code>false</code> otherwise.
 	 */
 	public abstract boolean navigate(boolean next);
-
-	/**
-	 * Sets a new selection for this viewer and optionally makes it visible.
-	 * This is required because the model
-	 * provider controls the actual model elements in the viewer and must be consulted in order to
-	 * understand what objects can be selected in the viewer.
-	 * 
-	 * @param object the objects to select
-	 * @param reveal <code>true</code> if the selection is to be made visible, and
-	 *                  <code>false</code> otherwise
-	 */
-	public void setSelection(ISelection selection, boolean reveal) {
-		if (!selection.isEmpty()) {
-			viewer.setSelection(selection, reveal);
-		}
-	}
 	
 	/**
 	 * Method invoked from <code>initializeViewer(Composite, StructuredViewer)</code>

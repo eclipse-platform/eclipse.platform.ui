@@ -474,13 +474,6 @@ public class GenerateDiffFileWizard extends Wizard {
         /**
          * Constructor for PatchFileCreationOptionsPage.
          */
-        protected OptionsPage(String pageName) {
-            super(pageName);
-        }
-        
-        /**
-         * Constructor for PatchFileCreationOptionsPage.
-         */
         protected OptionsPage(String pageName, String title, ImageDescriptor titleImage) {
             super(pageName, title, titleImage);
         }
@@ -523,13 +516,6 @@ public class GenerateDiffFileWizard extends Wizard {
             regularDiffOption.setText(Policy.bind("Standard_15")); //$NON-NLS-1$
             
             Dialog.applyDialogFont(parent);
-        }
-        
-        /**
-         * Answers if the difference operation should be run recursively.
-         */
-        public boolean isRecursive() {
-            return !recurseOption.getSelection();
         }
         
         /**

@@ -481,7 +481,7 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 			// (modified = false) the file will be no longer modified
 		} else if (oldInfo == null) {
 			// cvs add: addition of a file
-			newInfo = new ResourceSyncInfo(entryLine, null, null);
+			newInfo = new ResourceSyncInfo(entryLine, null);
 			// an added file should show up as modified
 			modificationState = ICVSFile.DIRTY;
 		} else {
@@ -500,7 +500,7 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 		            setTimeStamp(timeStamp);
 		        }
 		    }
-	        newInfo = new ResourceSyncInfo(entryLine, oldInfo.getPermissions(), timeStamp);
+	        newInfo = new ResourceSyncInfo(entryLine, timeStamp);
 			
 		}
 		if (newInfo != null) setSyncInfo(newInfo, modificationState);

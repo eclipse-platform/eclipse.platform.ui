@@ -91,9 +91,4 @@ public class ServerMessageLineMatcher {
 		return result;
 	}
 
-	public boolean matches(String line) {
-		Matcher matcher = pattern.matcher(line);
-		return (matcher.find());
-	}
-
 }

@@ -600,10 +600,6 @@ public class Session {
 		 * @param isBinary is true if the file should be sent without translation
 		 * @param monitor the progress monitor
 		 */
-		public void sendFile(ICVSFile file, boolean isBinary, IProgressMonitor monitor) throws CVSException {
-			sendFile(file, isBinary, true, monitor);
-		}
-		
 		public void sendFile(ICVSStorage file, boolean isBinary, boolean sendBinary, IProgressMonitor monitor) throws CVSException {
 			// check overrides
 			if (textTransferOverrideSet != null &&

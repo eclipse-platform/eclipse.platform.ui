@@ -40,14 +40,14 @@ public class FolderSyncInfo {
 	protected String repository;
 	
 	// :pserver:user@host:/home/user/repo
-	private String root;
+    protected String root;
 	
 	// sticky tag (e.g. version, date, or branch tag applied to folder)
 	private CVSEntryLineTag tag;
 	
 	// if true then it means only part of the folder was fetched from the repository, and CVS will not create 
 	// additional files in that folder.
-	private boolean isStatic;
+    protected boolean isStatic;
 
 	/**
 	 * Construct a folder sync object.
@@ -321,4 +321,8 @@ public class FolderSyncInfo {
 	public boolean isVirtualDirectory() {
 		return getRepository().equals(VIRTUAL_DIRECTORY);
 	}
+
+    public FolderSyncInfo asImmutable() {
+        return this;
+    }
 }

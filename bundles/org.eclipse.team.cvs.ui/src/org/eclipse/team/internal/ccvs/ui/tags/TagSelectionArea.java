@@ -585,14 +585,6 @@ public class TagSelectionArea extends DialogArea {
     }
     
     /**
-     * Get the tag source for the tags being displayed
-     * @return the tag source for the tags being displayed
-     */
-    public TagSource getTagSource() {
-        return tagSource;
-    }
-    
-    /**
      * Set the tag source from which the displayed tags are determined
      * @param tagSource the source of the tags being displayed
      */

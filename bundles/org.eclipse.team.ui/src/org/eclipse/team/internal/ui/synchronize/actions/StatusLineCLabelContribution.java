@@ -35,10 +35,6 @@ public class StatusLineCLabelContribution extends ContributionItem {
 	private int eventType;
 	private String tooltip;
 	
-	public StatusLineCLabelContribution(String id) {
-		this(id, DEFAULT_CHAR_WIDTH);
-	}
-	
 	public StatusLineCLabelContribution(String id, int charWidth) {
 		super(id);
 		this.charWidth = charWidth;
@@ -78,10 +74,6 @@ public class StatusLineCLabelContribution extends ContributionItem {
 	public void addListener(int eventType, Listener listener) {
 		this.eventType = eventType;
 		this.listener = listener;
-	}
-	
-	public String getText() {
-		return text;
 	}
 	
 	public void setText(String text) {

@@ -20,12 +20,10 @@ public class SynchronizeParticipantDescriptor implements ISynchronizeParticipant
 	public  static final String ATT_NAME = "name"; //$NON-NLS-1$
 	public  static final String ATT_ICON = "icon"; //$NON-NLS-1$
 	public  static final String ATT_CLASS = "class"; //$NON-NLS-1$
-	private static final String ATT_TYPE = "type"; //$NON-NLS-1$	
 	private static final String ATT_PERSISTENT = "persistent"; //$NON-NLS-1$
 	
 	private String label;
 	private String className;
-	private String type;
 	private String id;
 	private boolean persistent;
 	private ImageDescriptor imageDescriptor;
@@ -59,10 +57,6 @@ public class SynchronizeParticipantDescriptor implements ISynchronizeParticipant
 	public String getId() {
 		return id;
 	}
-
-	public String getType() {
-		return type;
-	}
 	
 	public ImageDescriptor getImageDescriptor() {
 		if (imageDescriptor != null)
@@ -92,7 +86,6 @@ public class SynchronizeParticipantDescriptor implements ISynchronizeParticipant
 		String identifier = configElement.getAttribute(ATT_ID);
 		label = configElement.getAttribute(ATT_NAME);
 		className = configElement.getAttribute(ATT_CLASS);
-		type = configElement.getAttribute(ATT_TYPE);
 		String persistentString = configElement.getAttribute(ATT_PERSISTENT);
 		if(persistentString == null) {
 			persistent = true;

@@ -546,14 +546,6 @@ public final class RefreshSubscriberJob extends Job {
 		}
 	}
 	
-	/**
-	 * Returns the interval of this job in seconds. 
-	 * @return
-	 */
-	public long getRefreshInterval() {
-		return scheduleDelay / 1000;
-	}
-	
 	public void setRestartOnCancel(boolean restartOnCancel) {
 		this.restartOnCancel = restartOnCancel;
 	}

@@ -188,13 +188,6 @@ public class SubscriberRefreshSchedule {
 		return text.toString();
 	} 
 	
-	public String getScheduleAsString() {
-		if(! isEnabled()) {
-			return Policy.bind("RefreshSchedule.8"); //$NON-NLS-1$
-		}		
-		return getRefreshIntervalAsString();
-	}
-	
 	public IRefreshEvent getLastRefreshEvent() {
 		return lastRefreshEvent;
 	}

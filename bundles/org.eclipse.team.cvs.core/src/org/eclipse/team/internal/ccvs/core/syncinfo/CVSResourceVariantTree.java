@@ -172,7 +172,9 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 			bytes = null;
 		} else {
 			// Use the folder sync from the workspace and the tag from the store
-			FolderSyncInfo newInfo = new FolderSyncInfo(info.getRepository(), info.getRoot(), tag, false);
+            MutableFolderSyncInfo newInfo = info.cloneMutable();
+            newInfo.setTag(tag);
+            newInfo.setStatic(false);
 			bytes = newInfo.getBytes();
 		}
 		return bytes;
@@ -210,7 +212,8 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 			// Use the info from the remote except get the tag from the locla parent
 			CVSTag tag = CVSWorkspaceRoot.getCVSFolderFor(local.getParent()).getFolderSyncInfo().getTag();
 			FolderSyncInfo info = FolderSyncInfo.getFolderSyncInfo(remote.asBytes());
-			FolderSyncInfo newInfo = new FolderSyncInfo(info.getRepository(), info.getRoot(), tag, info.getIsStatic());
+            MutableFolderSyncInfo newInfo = info.cloneMutable();
+            newInfo.setTag(tag);
 			ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor((IFolder)local);
 			cvsFolder.setFolderSyncInfo(newInfo);
 		}

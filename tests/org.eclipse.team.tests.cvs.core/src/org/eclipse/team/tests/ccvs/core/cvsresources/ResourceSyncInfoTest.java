@@ -41,25 +41,25 @@ public class ResourceSyncInfoTest extends EclipseTest {
 		
 		// testing malformed entry lines first
 		try {
-			new ResourceSyncInfo("//////", null, null);			
+			new ResourceSyncInfo("//////", null);			
 			fail();
 		} catch(CVSException e) {
 			// Error expected
 		}
 		try {
-			new ResourceSyncInfo("//1.1///", null, null);			
+			new ResourceSyncInfo("//1.1///", null);			
 			fail();
 		} catch(CVSException e) {
 			// Error expected
 		}
 		try {
-			new ResourceSyncInfo("/file.txt////", null, null);			
+			new ResourceSyncInfo("/file.txt////", null);			
 			fail();
 		} catch(CVSException e) {
 			// Error expected
 		}
 		try {
-			new ResourceSyncInfo("/file.txt//////////", null, null);			
+			new ResourceSyncInfo("/file.txt//////////", null);			
 			fail();
 		} catch(CVSException e) {
 			// Error expected
@@ -68,27 +68,23 @@ public class ResourceSyncInfoTest extends EclipseTest {
 	
 	public void testEntryLineConstructor() throws CVSException {		
 		ResourceSyncInfo info;
-		info = new ResourceSyncInfo("/file.java/-1.1/Mon Feb 25 21:44:02 2002/-k/", null, null);
+		info = new ResourceSyncInfo("/file.java/-1.1/Mon Feb 25 21:44:02 2002/-k/", null);
 		assertTrue(info.isDeleted());
 		
-		info = new ResourceSyncInfo("/file.java/0/something/-k/", null, null);
+		info = new ResourceSyncInfo("/file.java/0/something/-k/", null);
 		assertTrue(info.isAdded());
 		
-		info = new ResourceSyncInfo("/file.java/1.0/Mon Feb 25 21:44:02 2002/-k/Tv1", null, null);
+		info = new ResourceSyncInfo("/file.java/1.0/Mon Feb 25 21:44:02 2002/-k/Tv1", null);
 		assertTrue(info.getTag() != null);
 		
 		Date timestamp = new Date(123000);
-		info = new ResourceSyncInfo("/file.java/1.0/Mon Feb 25 21:44:02 2002/-k/Tv1", null, timestamp);
+		info = new ResourceSyncInfo("/file.java/1.0/Mon Feb 25 21:44:02 2002/-k/Tv1", timestamp);
 		assertTrue(info.getTimeStamp().equals(timestamp));
 		
-		info = new ResourceSyncInfo("/file.java/0/Mon Feb 25 21:44:02 2002/-k/", null, timestamp);
+		info = new ResourceSyncInfo("/file.java/0/Mon Feb 25 21:44:02 2002/-k/", timestamp);
 		assertTrue(info.getTimeStamp().equals(timestamp));
 		
-		String permissions = "u=rwx,g=rwx,o=rwx";
-		info = new ResourceSyncInfo("/file.java/2.0/Mon Feb 25 21:44:02 2002/-k/Tv1", permissions, null);
-		assertTrue(info.getPermissions().equals(permissions));
-		
-		info = new ResourceSyncInfo("D/file.java////", null, null);
+		info = new ResourceSyncInfo("D/file.java////", null);
 		assertTrue(info.isDirectory());
 	}
 	
@@ -98,11 +94,11 @@ public class ResourceSyncInfoTest extends EclipseTest {
 		info = new ResourceSyncInfo("folder");
 		assertTrue(info.isDirectory());
 		
-		info = new ResourceSyncInfo("/file.java/-2.34/Mon Feb 25 21:44:02 2002/-k/Tv1", null, null);
+		info = new ResourceSyncInfo("/file.java/-2.34/Mon Feb 25 21:44:02 2002/-k/Tv1", null);
 		assertTrue(info.isDeleted());
 		assertTrue(info.getRevision().equals("2.34"));
 		
-		info = new ResourceSyncInfo("/file.java/0/Mon Feb 25 21:44:02 2002/-k/Tv1", null, null);
+		info = new ResourceSyncInfo("/file.java/0/Mon Feb 25 21:44:02 2002/-k/Tv1", null);
 		assertTrue(info.isAdded());
 	}
 	
@@ -111,22 +107,22 @@ public class ResourceSyncInfoTest extends EclipseTest {
 		Date timestamp = new Date(123000);
 		Date timestamp2 = new Date(654000);
 				
-		info = new ResourceSyncInfo("/file.java/1.1//-kb/", null, timestamp);
+		info = new ResourceSyncInfo("/file.java/1.1//-kb/", timestamp);
 		assertTrue(!info.isMerged());
 		assertTrue(!info.isNeedsMerge(timestamp));		
 		
 		// test merged entry lines the server and ensure that their entry line format is compatible
-		info = new ResourceSyncInfo("/file.java/1.1/+=/-kb/", null, timestamp);
+		info = new ResourceSyncInfo("/file.java/1.1/+=/-kb/", timestamp);
 		String entryLine = info.getEntryLine();
-		info2 = new ResourceSyncInfo(entryLine, null, null);
+		info2 = new ResourceSyncInfo(entryLine, null);
 		assertTrue(info.isMerged() && info2.isMerged());
 		assertTrue(info.isNeedsMerge(timestamp) && info2.isNeedsMerge(timestamp));
 		assertTrue(!info.isNeedsMerge(timestamp2) && !info2.isNeedsMerge(timestamp2));
 		assertTrue(info.getTimeStamp().equals(timestamp) && info2.getTimeStamp().equals(timestamp));		
 
-		info = new ResourceSyncInfo("/file.java/1.1/+modified/-kb/", null, null);
+		info = new ResourceSyncInfo("/file.java/1.1/+modified/-kb/", null);
 		entryLine = info.getEntryLine();
-		info2 = new ResourceSyncInfo(entryLine, null, null);	
+		info2 = new ResourceSyncInfo(entryLine, null);	
 		assertTrue(info.isMerged() && info2.isMerged());
 		assertTrue(!info.isNeedsMerge(timestamp) && !info2.isNeedsMerge(timestamp));
 		assertTrue(!info.isNeedsMerge(timestamp2) && !info2.isNeedsMerge(timestamp2));
@@ -137,9 +133,9 @@ public class ResourceSyncInfoTest extends EclipseTest {
 		String entryLine1 = "/a.bin/1.1/Mon Feb  9 21:44:02 2002/-kb/";
 		String entryLine2 = "/a.bin/1.1/Mon Feb 9 21:44:02 2002/-kb/";
 		String entryLine3 = "/a.bin/1.1/Mon Feb 09 21:44:02 2002/-kb/";		
-		ResourceSyncInfo info1 = new ResourceSyncInfo(entryLine1, null, null);
-		ResourceSyncInfo info2 = new ResourceSyncInfo(entryLine2, null, null);
-		ResourceSyncInfo info3 = new ResourceSyncInfo(entryLine3, null, null);
+		ResourceSyncInfo info1 = new ResourceSyncInfo(entryLine1, null);
+		ResourceSyncInfo info2 = new ResourceSyncInfo(entryLine2, null);
+		ResourceSyncInfo info3 = new ResourceSyncInfo(entryLine3, null);
 		Date date1 = info1.getTimeStamp();
 		Date date2 = info2.getTimeStamp();
 		Date date3 = info3.getTimeStamp();
@@ -162,13 +158,13 @@ public class ResourceSyncInfoTest extends EclipseTest {
 	}
 	
 	public void testRevisionOnBranchComparison() throws CVSException {
-		ResourceSyncInfo syncInfo1 = new ResourceSyncInfo("/name/1.5/dummy timestamp//", null, null);
-		ResourceSyncInfo syncInfo2 = new ResourceSyncInfo("/name/1.4/dummy timestamp//", null, null);
+		ResourceSyncInfo syncInfo1 = new ResourceSyncInfo("/name/1.5/dummy timestamp//", null);
+		ResourceSyncInfo syncInfo2 = new ResourceSyncInfo("/name/1.4/dummy timestamp//", null);
 		
-		ResourceSyncInfo syncInfo3 = new ResourceSyncInfo("/name/1.4.1.2/dummy timestamp//Nb1", null, null);
-		ResourceSyncInfo syncInfo4 = new ResourceSyncInfo("/name/1.4/dummy timestamp//Nb1", null, null);
+		ResourceSyncInfo syncInfo3 = new ResourceSyncInfo("/name/1.4.1.2/dummy timestamp//Nb1", null);
+		ResourceSyncInfo syncInfo4 = new ResourceSyncInfo("/name/1.4/dummy timestamp//Nb1", null);
 		
-		ResourceSyncInfo syncInfo5 = new ResourceSyncInfo("/name/1.4.1.2/dummy timestamp//Tv1", null, null);
+		ResourceSyncInfo syncInfo5 = new ResourceSyncInfo("/name/1.4.1.2/dummy timestamp//Tv1", null);
 		
 		assertTrue(ResourceSyncInfo.isLaterRevisionOnSameBranch(syncInfo1.getBytes(), syncInfo2.getBytes()));
 		assertTrue( ! ResourceSyncInfo.isLaterRevisionOnSameBranch(syncInfo2.getBytes(), syncInfo1.getBytes()));

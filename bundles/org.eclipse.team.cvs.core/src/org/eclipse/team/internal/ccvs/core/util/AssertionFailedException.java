@@ -23,10 +23,6 @@ package org.eclipse.team.internal.ccvs.core.util;
 /* package */
 class AssertionFailedException extends RuntimeException {
 private static final long serialVersionUID = 1L;
-/** Constructs a new exception.
- */
-public AssertionFailedException() {
-}
 /** Constructs a new exception with the given message.
  */
 public AssertionFailedException(String detail) {

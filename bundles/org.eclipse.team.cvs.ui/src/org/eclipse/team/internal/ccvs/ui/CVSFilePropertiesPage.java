@@ -86,15 +86,6 @@ public class CVSFilePropertiesPage extends CVSPropertiesPage {
 			createLabel(composite, Policy.bind("CVSFilePropertiesPage.tag")); //$NON-NLS-1$
 			CVSTag tag = Util.getAccurateFileTag(cvsResource);
 			createLabel(composite, getTagLabel(tag));
-			
-			// Permissions
-			createLabel(composite, Policy.bind("CVSFilePropertiesPage.permissions")); //$NON-NLS-1$
-			String permissions = syncInfo.getPermissions();
-			if (permissions == null) {
-				createLabel(composite, Policy.bind("CVSFilePropertiesPage.notAvailable")); //$NON-NLS-1$
-			} else {
-				createLabel(composite, syncInfo.getPermissions());
-			}
 		} catch (TeamException e) {
 			// Display error text
 			createLabel(composite, Policy.bind("CVSFilePropertiesPage.error")); //$NON-NLS-1$

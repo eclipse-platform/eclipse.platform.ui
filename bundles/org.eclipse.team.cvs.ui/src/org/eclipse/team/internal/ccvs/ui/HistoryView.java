@@ -601,18 +601,7 @@ public class HistoryView extends ViewPart {
 		manager.add(copyAction);
 		manager.add(selectAllAction);
 	}
-	/**
-	 * Makes the history view visible in the active perspective. If there
-	 * isn't a history view registered <code>null</code> is returned.
-	 * Otherwise the opened view part is returned.
-	 */
-	public static HistoryView openInActivePerspective() {
-		try {
-			return (HistoryView)CVSUIPlugin.getActivePage().showView(VIEW_ID);
-		} catch (PartInitException pe) {
-			return null;
-		}
-	}
+
 	/** (Non-javadoc)
 	 * Method declared on IWorkbenchPart
 	 */

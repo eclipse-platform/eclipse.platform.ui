@@ -79,10 +79,6 @@ public class WorkingSetSelectionArea extends DialogArea {
 	};
     private final IDialogSettings settings;
     private final Shell shell;
-	
-	public WorkingSetSelectionArea(Shell shell) {
-		this(shell, null, null, null);
-	}
 		
 	public WorkingSetSelectionArea(Shell shell, String noWorkingSetText, String workingSetText, IDialogSettings settings) {
 		this.shell = shell;
@@ -261,26 +257,6 @@ public class WorkingSetSelectionArea extends DialogArea {
 			mruList.setText(workingSet.getName());
 		}
 		handleWorkingSetChange();
-	}
-	
-	/**
-	 * Returns the selected working set or null if none is selected.
-	 *
-	 * @return the selected working set or null if none is selected.
-	 */
-	public IWorkingSet getWorkingSet() {
-		return workingSet;
-	}
-	
-	/**
-	 * Indicate that the selected working set is actually being used so it can
-	 * be added to the "most recently used" list.
-	 */
-	public void useSelectedWorkingSet() {
-		// Add the selected working set to the MRU list before returning it
-		if (workingSet != null) {
-			PlatformUI.getWorkbench().getWorkingSetManager().addRecentWorkingSet(workingSet);
-		}
 	}
 	
 	/**

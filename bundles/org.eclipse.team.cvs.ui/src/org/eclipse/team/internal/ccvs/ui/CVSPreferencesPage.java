@@ -574,7 +574,6 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		CVSProviderPlugin.getPlugin().setDefaultTextKSubstOption(newKSubst);
 		CVSProviderPlugin.getPlugin().setUsePlatformLineend(store.getBoolean(ICVSUIConstants.PREF_USE_PLATFORM_LINEEND));
 		CVSProviderPlugin.getPlugin().setDetermineVersionEnabled(store.getBoolean(ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION));
-		CVSProviderPlugin.getPlugin().setConfirmMoveTagEnabled(store.getBoolean(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG));
 		
 		// changing the default keyword substitution mode for text files may affect
 		// information displayed in the decorators

@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 
@@ -29,23 +28,11 @@ import org.eclipse.ui.progress.IProgressService;
  */
 public class ProgressDialogRunnableContext implements ITeamRunnableContext {
 
-	private Shell shell;
 	private IRunnableContext runnableContext;
 	private ISchedulingRule schedulingRule;
 	private boolean postponeBuild;
 	
-	public ProgressDialogRunnableContext(Shell shell) {
-		this.shell = shell;
-	}
-
-	/**
-	 * Returns whether the auto-build will be postponed while this
-	 * context is executing a runnable.
-	 * @return whether the auto-build will be postponed while this
-	 * context is executing a runnable.
-	 */
-	public boolean isPostponeBuild() {
-		return postponeBuild;
+	public ProgressDialogRunnableContext() {
 	}
 	
 	/**
@@ -58,28 +45,12 @@ public class ProgressDialogRunnableContext implements ITeamRunnableContext {
 	}
 	
 	/**
-	 * Return the scheduling rule that will be obtained before the context
-	 * executes a runnable or <code>null</code> if no scheduling rule is to be onbtained.
-	 * @return the schedulingRule to be obtained or <code>null</code>.
-	 */
-	public ISchedulingRule getSchedulingRule() {
-		return schedulingRule;
-	}
-	
-	/**
 	 * Set the scheduling rule that will be obtained before the context
 	 * executes a runnable or <code>null</code> if no scheduling rule is to be onbtained.
 	 * @param schedulingRule The schedulingRule to be obtained or <code>null</code>.
 	 */
 	public void setSchedulingRule(ISchedulingRule schedulingRule) {
 		this.schedulingRule = schedulingRule;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSRunnableContext#getShell()
-	 */
-	public Shell getShell() {
-		return shell;
 	}
 
 	/**

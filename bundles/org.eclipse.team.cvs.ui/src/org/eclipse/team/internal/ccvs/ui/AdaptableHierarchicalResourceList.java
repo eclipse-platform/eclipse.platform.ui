@@ -83,13 +83,6 @@ public class AdaptableHierarchicalResourceList extends AdaptableResourceList {
 	public void setResources(IResource[] resources) {
 		this.resources = resources;
 	}
-	/**
-	 * Returns the root.
-	 * @return IContainer
-	 */
-	public IContainer getRoot() {
-		return root;
-	}
 
 	/**
 	 * Sets the root.

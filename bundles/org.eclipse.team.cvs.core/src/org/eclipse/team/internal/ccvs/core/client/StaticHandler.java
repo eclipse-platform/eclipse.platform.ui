@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.MutableFolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 /**
@@ -61,8 +62,8 @@ class StaticHandler extends ResponseHandler {
             FolderSyncInfo syncInfo = folder.getFolderSyncInfo();
             // Added to ignore sync info for workspace root
             if (syncInfo == null) return;
-            FolderSyncInfo newInfo = new FolderSyncInfo(syncInfo.getRepository(),
-            	syncInfo.getRoot(), syncInfo.getTag(), setStaticDirectory);
+            MutableFolderSyncInfo newInfo = syncInfo.cloneMutable();
+            newInfo.setStatic(setStaticDirectory);
             // only set the sync info if it has changed
             if (!syncInfo.equals(newInfo))
             	folder.setFolderSyncInfo(newInfo);

@@ -168,10 +168,6 @@ public class CVSDecoration {
 		this.suffix = suffix;
 	}
 
-	public void addOverlay(ImageDescriptor overlay) {
-		this.overlay = overlay;
-	}
-
 	public void setForegroundColor(Color fgColor) {
 		this.fgColor = fgColor;
 	}
@@ -370,10 +366,6 @@ public class CVSDecoration {
 
 	public void setNewResource(boolean isNewResource) {
 		this.isNewResource = isNewResource;
-	}
-
-	public ICVSRepositoryLocation getLocation() {
-		return location;
 	}
 
 	public void setLocation(ICVSRepositoryLocation location) {

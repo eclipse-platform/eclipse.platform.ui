@@ -114,10 +114,6 @@ public class ReleaseCommentDialog extends DetailsDialog {
 	public String getComment() {
 		return commitCommentArea.getComment(true);
 	}
-	
-	public IResource[] getResourcesToCommit() {
-		return null;
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.dialogs.DetailsDialog#createDropDownDialogArea(org.eclipse.swt.widgets.Composite)

@@ -20,11 +20,6 @@ import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListen
 
 
 public class Import extends Command {
-	/*** Local options: specific to import ***/
-	public static LocalOption makeBinaryWrapperOption(String pattern) {
-		return new LocalOption("-W", pattern + " -k 'b'"); //$NON-NLS-1$  //$NON-NLS-2$
-	}
-
 	protected Import() { }
 	protected String getRequestId() {
 		return "import"; //$NON-NLS-1$

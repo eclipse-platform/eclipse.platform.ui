@@ -174,23 +174,6 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	}
 	
 	/**
-	 * Validate whether the given string is a valid registered connection method
-	 * name.
-	 * @param methodName the method name
-	 * @return whether the given string is a valid registered connection method
-	 * name
-	 */
-	public static boolean validateConnectionMethod(String methodName) {
-		Assert.isNotNull(methodName);
-		IConnectionMethod[] methods = getPluggedInConnectionMethods();
-		for (int i=0;i<methods.length;i++) {
-			if (methodName.equals(methods[i].getName()))
-				return true;
-		}
-		return false;
-	}
-	
-	/**
 	 * Create a repository location instance from the given properties.
 	 * The supported properties are:
 	 * 
@@ -377,59 +360,6 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			// We'll get here if we couldn't parse a number
 			throw new CVSException(Policy.bind(partId));
 		}
-	}
-	
-	/**
-	 * Validate that the given string could be used to succesfully create
-	 * a CVS repository location
-	 * 
-	 * This method performs some initial checks to provide displayable
-	 * feedback and also tries a more in-depth parse using 
-	 * <code>fromString(String, boolean)</code>.
-	 */
-	public static IStatus validate(String location) {
-		
-		// Check some simple things that are not checked in creation
-		if (location == null)
-			return new CVSStatus(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.nullLocation"));//$NON-NLS-1$ 
-		if (location.equals(""))//$NON-NLS-1$ 
-			return new CVSStatus(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.emptyLocation"));//$NON-NLS-1$ 
-		if (location.endsWith(" ") || location.endsWith("\t"))//$NON-NLS-1$  //$NON-NLS-2$ 
-			return new CVSStatus(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.endWhitespace"));//$NON-NLS-1$ 
-		if (!location.startsWith(":") || location.indexOf(COLON, 1) == -1)//$NON-NLS-1$ 
-			return new CVSStatus(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.startOfLocation"));//$NON-NLS-1$ 
-
-		// Do some quick checks to provide geberal feedback
-		String formatError = Policy.bind("CVSRepositoryLocation.locationForm");//$NON-NLS-1$ 
-		int secondColon = location.indexOf(COLON, 1);
-		int at = location.indexOf(HOST_SEPARATOR);
-		if (at != -1) {
-			String user = location.substring(secondColon + 1, at);
-			if (user.equals(""))//$NON-NLS-1$ 
-				return new CVSStatus(IStatus.ERROR, formatError);
-		} else
-			at = secondColon;
-		int colon = location.indexOf(COLON, at + 1);
-		if (colon == -1)
-			return new CVSStatus(IStatus.ERROR, formatError);
-		String host = location.substring(at + 1, colon);
-		if (host.equals(""))//$NON-NLS-1$ 
-			return new CVSStatus(IStatus.ERROR, formatError);
-		String path = location.substring(colon + 1, location.length());
-		if (path.equals(""))//$NON-NLS-1$ 
-			return new CVSStatus(IStatus.ERROR, formatError);
-				
-		// Do a full parse and see if it passes
-		try {
-			fromString(location, true);
-		} catch (CVSException e) {
-			// An exception is always throw. Return the status
-			return e.getStatus();
-		}
-				
-		// Looks ok (we'll actually never get here because above 
-		// fromString(String, boolean) will always throw an exception).
-		return Status.OK_STATUS; 
 	}
 	
 	/**
@@ -627,14 +557,6 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 */
 	public IConnectionMethod getMethod() {
 		return method;
-	}
-	
-	public boolean setMethod(String methodName) {
-		IConnectionMethod newMethod = getPluggedInConnectionMethod(methodName);
-		if (newMethod == null)
-			return false;
-		method = newMethod;
-		return true;
 	}
 
 	/*
@@ -955,10 +877,6 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		this.password = password;
 	}
 	
-	public void setUserInfo(IUserInfo userinfo) {
-		user = userinfo.getUsername();
-		password = ((UserInfo)userinfo).getPassword();
-	}
 	/*
 	 * @see IUserInfo#setUsername(String)
 	 */

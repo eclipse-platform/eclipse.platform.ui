@@ -38,11 +38,8 @@ import org.eclipse.team.internal.ccvs.ui.console.CVSOutputConsole;
 import org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryRoot;
-import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipantReference;
 import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -155,20 +152,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	}
 	
 	/**
-	 * Extract or convert to a TeamException
-	 */
-	public static TeamException asTeamException(InvocationTargetException e) {
-		Throwable exception = e.getTargetException();
-		if (exception instanceof TeamException) {
-			return (TeamException)exception;
-		} else if (exception instanceof CoreException) {
-			return new TeamException(((CoreException)exception).getStatus());
-		} else {
-			return new TeamException(new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, Policy.bind("internal"), exception)); //$NON-NLS-1$
-		}
-	}
-	
-	/**
 	 * Run an operation involving the given resource. If an exception is thrown
 	 * and the code on the status is IResourceStatus.OUT_OF_SYNC_LOCAL then
 	 * the user will be prompted to refresh and try again. If they agree, then the
@@ -251,66 +234,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	public static void runWithProgress(Shell parent, boolean cancelable,
 									   final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
 		Utils.runWithProgress(parent, cancelable, runnable);
-	}
-	
-	/**
-	 * Creates a busy cursor and runs the specified runnable.
-	 * May be called from a non-UI thread.
-	 * 
-	 * @param parent the parent Shell for the dialog
-	 * @param cancelable if true, the dialog will support cancelation
-	 * @param runnable the runnable
-	 * @param flags customizing attributes for the error handling
-	 * 
-	 * @exception InvocationTargetException when an exception is thrown from the runnable
-	 * @exception InterruptedException when the progress monitor is cancelled
-	 */
-	public static void runWithProgress(final Shell parent, final boolean cancelable,
-									   final IRunnableWithProgress runnable, int flags) throws InvocationTargetException, InterruptedException {
-		
-		if ((flags & PERFORM_SYNC_EXEC) > 0) {
-			
-			// create a runnable that deals with exceptions
-			final Exception exception[] = new Exception[] { null };
-			Runnable outerRunnable = new Runnable() {
-				public void run() {
-					try {
-						Utils.runWithProgress(parent, cancelable, runnable);
-					} catch (InvocationTargetException e) {
-						exception[0] = e;
-					} catch (InterruptedException e) {
-						exception[0] = e;
-					}
-				}
-			};
-			
-			// get a Display and perform the syncExec
-			Display display;
-			if (parent == null) {
-				display = Display.getCurrent();
-				if (display == null) {
-					display = Display.getDefault();
-				}
-			} else {
-				display = parent.getDisplay();
-			}
-			display.syncExec(outerRunnable);
-			
-			// handle any exception
-			if (exception[0] != null) {
-				Exception e = exception[0];
-				if (e instanceof InvocationTargetException) {
-					throw (InvocationTargetException) e;
-				} else if (e instanceof InterruptedException) {
-					throw (InterruptedException) e;
-				} else {
-					// impossible but we'll handle it anyway
-					throw new InvocationTargetException(e);
-				}
-			}
-		} else {
-			Utils.runWithProgress(parent, cancelable, runnable);
-		}
 	}
 	
 	/**
@@ -660,7 +583,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		CVSProviderPlugin.getPlugin().setUsePlatformLineend(store.getBoolean(ICVSUIConstants.PREF_USE_PLATFORM_LINEEND));
 		CVSProviderPlugin.getPlugin().setRepositoriesAreBinary(store.getBoolean(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY));
 		CVSProviderPlugin.getPlugin().setDetermineVersionEnabled(store.getBoolean(ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION));
-		CVSProviderPlugin.getPlugin().setConfirmMoveTagEnabled(store.getBoolean(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG));
 		CVSProviderPlugin.getPlugin().setDebugProtocol(CVSProviderPlugin.getPlugin().isDebugProtocol() || store.getBoolean(ICVSUIConstants.PREF_DEBUG_PROTOCOL));
 	}
 	
@@ -703,17 +625,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 
 	}
 	
-	public static IWorkingSet getWorkingSet(IResource[] resources, String name) {
-		IWorkingSet workingSet = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(name);
-		if (workingSet == null) {
-			workingSet = PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSet(name, resources);
-			PlatformUI.getWorkbench().getWorkingSetManager().addWorkingSet(workingSet);
-		} else {
-			workingSet.setElements(resources);
-		}
-		return workingSet;
-	}
-	
 	/**
 	 * @see Plugin#stop(BundleContext)
 	 */
@@ -739,21 +650,5 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 */
 	public CVSOutputConsole getConsole() {
 		return console;
-	}
-	
-	/**
-	 * @return Returns the cvsWorkspaceSynchronizeViewPage.
-	 */
-	public WorkspaceSynchronizeParticipant getCvsWorkspaceSynchronizeParticipant() {
-		ISynchronizeParticipantReference reference = TeamUI.getSynchronizeManager().get(WorkspaceSynchronizeParticipant.ID, null);
-		try {
-			if(reference != null) {
-				return (WorkspaceSynchronizeParticipant)reference.getParticipant();
-			} else {
-				return null;
-			}
-		} catch (TeamException e) {
-			return null;
-		}
 	}
 }

@@ -18,20 +18,11 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
-import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ui.PixelConverter;
 import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.dialogs.DialogArea;
@@ -147,23 +138,6 @@ public class TagRefreshButtonArea extends DialogArea {
 			});
     }
 	
-	/*
-	 * Returns a button that implements the standard refresh tags operation. The
-	 * runnable is run immediatly after the tags are fetched from the server. A
-	 * client should refresh their widgets that show tags because they may of
-	 * changed.
-	 */
-	private Button createTagRefreshButton(Composite composite, String title) {
-		Button refreshButton = new Button(composite, SWT.PUSH);
-		refreshButton.setText (title);
-		refreshButton.addListener(SWT.Selection, new Listener() {
-				public void handleEvent(Event event) {
-					refresh(false);						
-				}
-			});
-		return refreshButton;		
-	 }
-	
     private boolean promptForBestEffort() {
         final boolean[] prompt = new boolean[] { false };
         shell.getDisplay().syncExec(new Runnable() {
@@ -193,14 +167,6 @@ public class TagRefreshButtonArea extends DialogArea {
         return Policy.bind("TagRefreshButtonArea.4", tagSource.getShortDescription()); //$NON-NLS-1$
     }
     
-	protected static ICVSFolder getSingleFolder(TagSource tagSource) {
-	    if (tagSource instanceof SingleFolderTagSource)
-	        return ((SingleFolderTagSource)tagSource).getFolder();
-	    return null;
-	}
-    public TagSource getTagSource() {
-        return tagSource;
-    }
     public void setTagSource(TagSource tagSource) {
         Assert.isNotNull(tagSource);
         this.tagSource = tagSource;

@@ -45,10 +45,6 @@ public class SynchronizeParticipantRegistry extends RegistryReader {
 		return false;
 	}
 	
-	public SynchronizeParticipantDescriptor[] getSynchronizeParticipants() {
-		return (SynchronizeParticipantDescriptor[])participants.values().toArray(new SynchronizeParticipantDescriptor[participants.size()]);
-	}
-	
 	public SynchronizeParticipantDescriptor find(String id) {
 		return (SynchronizeParticipantDescriptor)participants.get(id);
 	}

@@ -14,7 +14,6 @@ import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 
 public interface IRepositoryListener {
 	public void repositoryAdded(ICVSRepositoryLocation root);
-	public void repositoryRemoved(ICVSRepositoryLocation root);
 	public void repositoriesChanged(ICVSRepositoryLocation[] roots);
 }
 

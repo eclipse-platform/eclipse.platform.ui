@@ -21,6 +21,7 @@ import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
@@ -221,7 +222,9 @@ public class BranchOperation extends RepositoryProviderOperation {
 								FolderSyncInfo info = folder.getFolderSyncInfo();
 								if (info != null) {
 									monitor.subTask(Policy.bind("CVSTeamProvider.updatingFolder", info.getRepository())); //$NON-NLS-1$
-									folder.setFolderSyncInfo(new FolderSyncInfo(info.getRepository(), info.getRoot(), tag, info.getIsStatic()));
+                                    MutableFolderSyncInfo newInfo = info.cloneMutable();
+                                    newInfo.setTag(tag);
+									folder.setFolderSyncInfo(newInfo);
 								}
 							}
 						}, recurse);

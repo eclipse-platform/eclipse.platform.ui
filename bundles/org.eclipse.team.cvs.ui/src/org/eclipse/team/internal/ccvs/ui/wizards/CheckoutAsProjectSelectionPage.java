@@ -190,14 +190,6 @@ public class CheckoutAsProjectSelectionPage extends CVSWizardPage {
 		return selection;
 	}
 
-	/**
-	 * Returns the folderName.
-	 * @return String
-	 */
-	public String getFolderName() {
-		return folderName;
-	}
-
 	private void updateTreeContents(int selected) {
 		try {
 			if (selected == 0) {

@@ -567,20 +567,6 @@ public class RepositoryRoot extends PlatformObject {
 		if (ICVSRepositoryLocation.class.equals(adapter)) return getRoot();
 		return super.getAdapter(adapter);
 	}
-
-	public ICVSRemoteResource[] filterResources(ICVSRemoteResource[] resource) {
-		List result = new ArrayList();
-		for (int i = 0; i < resource.length; i++) {
-			ICVSRemoteResource remoteResource = resource[i];
-			if (remoteResource instanceof ICVSRemoteFolder) {
-				ICVSRemoteFolder folder = (ICVSRemoteFolder) remoteResource;
-				if (tagIsKnown(remoteResource)) {
-					result.add(folder);
-				}
-			}
-		}
-		return (ICVSRemoteResource[]) result.toArray(new ICVSRemoteResource[result.size()]);
-	}
 	
 	/**
 	 * Method tagIsKnown.

@@ -11,41 +11,14 @@
 package org.eclipse.team.internal.ccvs.core.util;
 
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.io.*;
+import java.util.*;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
-import org.eclipse.team.internal.ccvs.core.syncinfo.BaserevInfo;
-import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
-import org.eclipse.team.internal.ccvs.core.syncinfo.NotifyInfo;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 
 /*
  * This is a helper class that knows the format of the CVS metafiles. It
@@ -104,7 +77,7 @@ public class SyncFileWriter {
 			String line = entries[i];
 			if(!FOLDER_TAG.equals(line) && !"".equals(line)) { //$NON-NLS-1$
 				try {
-					ResourceSyncInfo info = new ResourceSyncInfo(line, null, null);
+					ResourceSyncInfo info = new ResourceSyncInfo(line, null);
 					infos.put(info.getName(), info);
 				} catch (CVSException e) {
 					// There was a problem parsing the entry line.
@@ -121,11 +94,11 @@ public class SyncFileWriter {
 				String line = entriesLog[i];
 				if (line.startsWith(ADD_TAG)) {
 					line = line.substring(ADD_TAG.length());
-					ResourceSyncInfo info = new ResourceSyncInfo(line, null, null);
+					ResourceSyncInfo info = new ResourceSyncInfo(line, null);
 					infos.put(info.getName(), info);
 				} else if (line.startsWith(REMOVE_TAG)) {
 					line = line.substring(REMOVE_TAG.length());
-					ResourceSyncInfo info = new ResourceSyncInfo(line, null, null);
+					ResourceSyncInfo info = new ResourceSyncInfo(line, null);
 					infos.remove(info.getName());
 				}
 			}
@@ -494,28 +467,6 @@ public class SyncFileWriter {
 			if (e.getStatus().getCode() == IResourceStatus.RESOURCE_NOT_FOUND
 					|| e.getStatus().getCode() == IResourceStatus.FAILED_READ_LOCAL)
 				return null;
-			throw CVSException.wrapException(e);
-		}
-	}
-	
-	/*
-	 * Reads all lines of the specified file.
-	 * Returns null if the file does not exist.
-	 */
-	public static byte[][] readLines(InputStream stream) throws CVSException {
-		try {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-			List fileContentStore = new ArrayList();
-			try {
-				String line;
-				while ((line = reader.readLine()) != null) {
-					fileContentStore.add(line.getBytes());
-				}
-				return (byte[][]) fileContentStore.toArray(new byte[fileContentStore.size()][]);
-			} finally {
-				reader.close();
-			}
-		} catch (IOException e) {
 			throw CVSException.wrapException(e);
 		}
 	}

@@ -33,14 +33,10 @@ import org.eclipse.team.internal.ccvs.core.util.Assert;
  */
 public class MutableResourceSyncInfo extends ResourceSyncInfo {
 	
-	boolean reported;
-	boolean changed;
-	
 	protected MutableResourceSyncInfo(ResourceSyncInfo info) {
 		this.name = info.getName();
 		setRevision(info.getRevision());
 		setTag(info.getTag());
-		this.permissions = info.getPermissions();
 		this.timeStamp = info.getTimeStamp();
 		this.isDirectory = info.isDirectory();
 		this.keywordMode = info.getKeywordMode();
@@ -62,12 +58,6 @@ public class MutableResourceSyncInfo extends ResourceSyncInfo {
 		Assert.isNotNull(name);
 		this.name = name;
 		setRevision(revision);
-		this.reported = false;
-		this.changed = false;
-	}
-	
-	void setResourceInfoType(int type) {
-		this.syncType = type;
 	}
 	
 	/**
@@ -84,7 +74,6 @@ public class MutableResourceSyncInfo extends ResourceSyncInfo {
 	 */
 	public void setTimeStamp(Date timeStamp) {
 		this.timeStamp = timeStamp;
-		this.changed = true;
 	}
 	
 	/**
@@ -102,7 +91,6 @@ public class MutableResourceSyncInfo extends ResourceSyncInfo {
 	 */
 	public void setKeywordMode(KSubstOption keywordMode) {
 		this.keywordMode = keywordMode;
-		this.changed = true;
 	}
 
 	/**
@@ -114,20 +102,11 @@ public class MutableResourceSyncInfo extends ResourceSyncInfo {
 	}
 	
 	/**
-	 * Sets the permissions.
-	 * @param permissions The permissions to set
-	 */
-	public void setPermissions(String permissions) {
-		this.permissions = permissions;
-	}
-	
-	/**
 	 * Sets the deleted state.
 	 * @param isDeleted The deleted state of this resource sync
 	 */
 	public void setDeleted(boolean isDeleted) {
-		this.isDeleted = isDeleted;
-		this.changed = true;
+		this.isDeleted = isDeleted;;
 	}
 	
 	/**
@@ -135,7 +114,6 @@ public class MutableResourceSyncInfo extends ResourceSyncInfo {
 	 */
 	public void setAdded() {
 		setRevision(ADDED_REVISION);
-		this.changed = true;
 	}
 	
 	/**
@@ -145,22 +123,13 @@ public class MutableResourceSyncInfo extends ResourceSyncInfo {
 		// if already merged state then ignore
 		if(syncType==TYPE_REGULAR) {			
 			this.syncType = TYPE_MERGED;
-			this.changed = true;
 		}
 	}
 	
-	public boolean needsReporting() {
-		return changed && !reported;
-	}
-	
-	public void reported() {
-		this.reported = true;
-	}
 	/**
 	 * @see org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo#setEntryLine(java.lang.String)
 	 */
 	public void setEntryLine(String entryLine) throws CVSException {
 		super.setEntryLine(entryLine);
-		this.changed = true;
 	}
 }

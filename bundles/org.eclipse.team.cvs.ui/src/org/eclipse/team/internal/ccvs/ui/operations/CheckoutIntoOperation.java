@@ -421,10 +421,6 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 				throw CVSException.wrapException(e);
 			}
 	}
-
-	public String getName() {
-		return getTaskName();
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getSchedulingRule()

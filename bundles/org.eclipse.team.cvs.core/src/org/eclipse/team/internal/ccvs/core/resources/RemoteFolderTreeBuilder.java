@@ -141,17 +141,6 @@ public class RemoteFolderTreeBuilder {
 		RemoteFolderTreeBuilder builder = new RemoteFolderTreeBuilder(repository, file.getParent(), tag);
  		return builder.buildTree(file, monitor);
 	}
-		
-	/*
-	 * The provided resources must all be children of the same project
-	 */
-	public static RemoteFolderTree buildRemoteTree(CVSRepositoryLocation repository, ICVSFolder root, ICVSResource[] resources, CVSTag tag, IProgressMonitor monitor) throws CVSException {
-		if (resources.length == 0) {
-			resources = new ICVSResource[] { root };
-		}
-		RemoteFolderTreeBuilder builder = new RemoteFolderTreeBuilder(repository, root, tag);
- 		return builder.buildTree(resources, monitor);
-	}
 	
 	/* package */ RemoteFolderTree buildTree(ICVSResource[] resources, IProgressMonitor monitor) throws CVSException {
 		

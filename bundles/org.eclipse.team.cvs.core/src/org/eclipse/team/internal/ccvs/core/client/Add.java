@@ -21,6 +21,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.MutableFolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 public class Add extends Command {
@@ -68,8 +69,10 @@ public class Add extends Command {
 				if (info == null) {
 					status = mergeStatus(status, new CVSStatus(CVSStatus.ERROR, Policy.bind("Add.invalidParent", mFolder.getRelativePath(session.getLocalRoot())))); //$NON-NLS-1$
 				} else {
-					String repository = info.getRepository() + "/" + mFolder.getName();	 //$NON-NLS-1$	
-					mFolder.setFolderSyncInfo(new FolderSyncInfo(repository, info.getRoot(), info.getTag(), info.getIsStatic()));
+					String repository = info.getRepository() + "/" + mFolder.getName();	 //$NON-NLS-1$
+                    MutableFolderSyncInfo newInfo = info.cloneMutable();
+                    newInfo.setRepository(repository);
+					mFolder.setFolderSyncInfo(newInfo);
 				}
 			}
 		}

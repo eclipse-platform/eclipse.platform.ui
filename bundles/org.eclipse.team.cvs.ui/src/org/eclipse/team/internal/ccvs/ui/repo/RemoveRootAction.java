@@ -71,10 +71,6 @@ public class RemoveRootAction extends SelectionListenerAction {
 		}
 		return new ICVSRepositoryLocation[0];
 	}
-	
-	protected String getErrorTitle() {
-		return Policy.bind("RemoveRootAction.removeRoot_3"); //$NON-NLS-1$
-	}
 
 	public void run() {
 		ICVSRepositoryLocation[] roots = getSelectedRemoteRoots();

@@ -54,8 +54,8 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 	// qualified name for remote sync info
 	private static final String REMOTE_RESOURCE_KEY = "remote-resource-key"; //$NON-NLS-1$
 
-	CVSWorkspaceSubscriber(QualifiedName id, String name, String description) {
-		super(id, name, description);
+	CVSWorkspaceSubscriber(QualifiedName id, String name) {
+		super(id, name);
 		
 		// install sync info participant
 		ResourceVariantByteStore baseSynchronizer = new CVSBaseResourceVariantTree();

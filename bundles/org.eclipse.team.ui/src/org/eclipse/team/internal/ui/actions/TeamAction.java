@@ -344,16 +344,6 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	abstract protected boolean isEnabled() throws TeamException;
 	
 	/**
-	 * Convenience method that maps the selected resources to their providers.
-	 * The returned Hashtable has keys which are ITeamProviders, and values
-	 * which are Lists of IResources that are shared with that provider.
-	 * 
-	 * @return a hashtable mapping providers to their selected resources
-	 */
-	protected Hashtable getProviderMapping() {
-		return getProviderMapping(getSelectedResources());
-	}
-	/**
 	 * Convenience method that maps the given resources to their providers.
 	 * The returned Hashtable has keys which are ITeamProviders, and values
 	 * which are Lists of IResources that are shared with that provider.

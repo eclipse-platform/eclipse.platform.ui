@@ -27,18 +27,6 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 	public CVSRevisionNumberCompareCriteria(boolean isThreeWay) {
 		this.isThreeWay = isThreeWay;
 	}
-
-	/* (non-Javadoc)
-	 * @see ComparisonCriteria#compare(Object, Object, IProgressMonitor)
-	 */
-	public boolean compare(Object e1, Object e2) {
-		if(e1 instanceof IResource && e2 instanceof ICVSRemoteResource) {
-			return compare((IResource)e1, (ICVSRemoteResource)e2);
-		} else if(e1 instanceof ICVSRemoteResource && e2 instanceof ICVSRemoteResource) {
-			return compare((ICVSRemoteResource)e1, (ICVSRemoteResource)e2);
-		}
-		return false;
-	}
 	
 	/**
 	 * @see RemoteSyncElement#timestampEquals(IResourceVariant, IResourceVariant)

@@ -42,7 +42,6 @@ public class UserValidationDialog extends Dialog {
 	
 	// whether or not the username can be changed
 	protected boolean isUsernameMutable = true;
-	protected boolean showAllowCachingButton = true;
 	protected String username = null;
 	protected String message = null;
 
@@ -142,7 +141,7 @@ public class UserValidationDialog extends Dialog {
 		createUsernameFields(main);
 		createPasswordFields(main);
 		
-		if(domain != null && showAllowCachingButton) {
+		if(domain != null) {
 			allowCachingButton = new Button(main, SWT.CHECK);
 			allowCachingButton.setText(Policy.bind("UserValidationDialog.6")); //$NON-NLS-1$
 			data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
@@ -175,16 +174,6 @@ public class UserValidationDialog extends Dialog {
         Dialog.applyDialogFont(parent);
         
 		return main;
-	}
-	/**
-	 * Create a spacer.
-	 */
-	protected void createSpacer(Composite top, int columnSpan, int vertSpan) {
-		Label l = new Label(top, SWT.NONE);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
-		data.horizontalSpan = columnSpan;
-		data.verticalSpan = vertSpan;
-		l.setLayoutData(data);
 	}
 	
 	/**
@@ -268,10 +257,6 @@ public class UserValidationDialog extends Dialog {
 	 */
 	public void setUsernameMutable(boolean value) {
 		isUsernameMutable = value;
-	}
-	
-	public void setShowAllowCachingButton(boolean value) {
-		showAllowCachingButton = value;
 	}
 	
 	/* (non-Javadoc)

@@ -28,36 +28,31 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
  */
 public class MutableFolderSyncInfo extends FolderSyncInfo {
 	
-	/**
-	 * Constructor MutableFolderSyncInfo.
-	 * @param folderSyncInfo
-	 */
 	public MutableFolderSyncInfo(FolderSyncInfo info) {
 		this(info.getRepository(), info.getRoot(), info.getTag(), info.getIsStatic());
 	}
 
-	/**
-	 * Constructor for MutableFolderSyncInfo.
-	 * @param repo
-	 * @param root
-	 * @param tag
-	 * @param isStatic
-	 */
 	public MutableFolderSyncInfo(String repo, String root, CVSTag tag, boolean isStatic) {
 		super(repo, root, tag, isStatic);
 	}
 
-	/**
-	 * @see org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo#setTag(org.eclipse.team.internal.ccvs.core.CVSTag)
-	 */
 	public void setTag(CVSTag tag) {
 		super.setTag(tag);
 	}
-	/**
-	 * Method setRepository.
-	 * @param string
-	 */
+
 	public void setRepository(String repository) {
 		this.repository = repository;
 	}
+
+    public void setStatic(boolean isStatic) {
+        this.isStatic = isStatic;
+    }
+    
+    public FolderSyncInfo asImmutable() {
+        return new FolderSyncInfo(getRepository(), getRoot(), getTag(), getIsStatic());
+    }
+
+    public void setRoot(String root) {
+        this.root = root;
+    }
 }

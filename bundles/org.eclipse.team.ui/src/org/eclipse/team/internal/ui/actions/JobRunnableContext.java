@@ -16,8 +16,6 @@ import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.IWorkbenchSite;
@@ -115,31 +113,7 @@ public class JobRunnableContext implements ITeamRunnableContext {
 		}
 	    job.setUser(isUser());
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.ui.operations.ITeamRunnableContext#getShell()
-	 */
-	public Shell getShell() {
-		final Shell[] newShell = new Shell[] { null };
-		Display.getDefault().syncExec(
-			new Runnable() {
-				public void run() {
-					newShell[0] = Utils.getShell(site);
-				}
-			});
-		return newShell[0];
-	}
-	
-	/**
-	 * Returns whether the auto-build will be postponed while this
-	 * context is executing a runnable.
-	 * @return whether the auto-build will be postponed while this
-	 * context is executing a runnable.
-	 */
-	public boolean isPostponeBuild() {
-		return postponeBuild;
-	}
-	
+    
 	/**
 	 * Set whether the auto-build will be postponed while this
 	 * context is executing a runnable.
@@ -147,15 +121,6 @@ public class JobRunnableContext implements ITeamRunnableContext {
 	 */
 	public void setPostponeBuild(boolean postponeBuild) {
 		this.postponeBuild = postponeBuild;
-	}
-	
-	/**
-	 * Return the scheduling rule that will be obtained before the context
-	 * executes a runnable or <code>null</code> if no scheduling rule is to be onbtained.
-	 * @return the schedulingRule to be obtained or <code>null</code>.
-	 */
-	public ISchedulingRule getSchedulingRule() {
-		return schedulingRule;
 	}
 	
 	/**

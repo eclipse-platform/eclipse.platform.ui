@@ -42,7 +42,6 @@ public final class FileModificationValidator implements IFileModificationValidat
 	 * This method will convert any exceptions thrown by the SimpleAccessOperations.chechout() to a Status.
 	 * @param resources the resources that are to be checked out
 	 * @return IStatus a status indicator that reports whether the operation went smoothly or not.
-	 * @see org.eclipse.team.internal.core.simpleAccess.SimpleAccessOperations#chechout(IResource[] resources, int depth, IProgressMonitor progress)
 	 */
 	private IStatus checkout(IResource[] resources) {
 		try {

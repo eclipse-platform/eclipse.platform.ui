@@ -16,7 +16,6 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.team.internal.core.*;
 
 /**
  * Policy implements NLS convenience methods for the plugin and
@@ -72,20 +71,6 @@ public class Policy {
 	 */
 	public static String bind(String id, String binding1, String binding2) {
 		return bind(id, new String[] { binding1, binding2 });
-	}
-	
-	/**
-	 * Lookup the message with the given ID in this catalog and bind its
-	 * substitution locations with the given strings.
-	 * 
-	 * @param id  the id to look up
-	 * @param binding1  the first string to bind to the result
-	 * @param binding2  the second string to bind to the result
-	 * @param binding3  the third string to bind to the result
-	 * @return the bound string
-	 */
-	public static String bind(String id, String binding1, String binding2,String binding3) {
-		return bind(id, new String[] { binding1, binding2, binding3 });
 	}
 	
 	/**
@@ -150,18 +135,6 @@ public class Policy {
 		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
 		}
-	}
-	/**
-	 * Returns a monitor for the given monitor
-	 * 
-	 * @param monitor  the monitor to return a monitor for
-	 * @return a monitor for the given monitor
-	 */
-	public static IProgressMonitor monitorFor(IProgressMonitor monitor) {
-		if (monitor == null) {
-			return new NullProgressMonitor();
-		}
-		return monitor;
 	}	
 	
 	public static IProgressMonitor subMonitorFor(IProgressMonitor monitor, int ticks) {
@@ -170,37 +143,6 @@ public class Policy {
 		if (monitor instanceof NullProgressMonitor)
 			return monitor;
 		return new SubProgressMonitor(monitor, ticks);
-	}
-	
-	public static IProgressMonitor subInfiniteMonitorFor(IProgressMonitor monitor, int ticks) {
-		if (monitor == null)
-			return new NullProgressMonitor();
-		if (monitor instanceof NullProgressMonitor)
-			return monitor;
-		return new InfiniteSubProgressMonitor(monitor, ticks);
-	}
-	
-	public static IProgressMonitor subNullMonitorFor(IProgressMonitor monitor) {
-		if (monitor == null)
-			return new NullProgressMonitor();
-		if (monitor instanceof NullProgressMonitor)
-			return monitor;
-		return new NullSubProgressMonitor(monitor);
-	}
-	
-	public static String toTruncatedPath(IPath path, int split) {
-		// Search backwards until split separators are found
-		int count = 0;
-		String stringPath = path.toString();
-		int index = stringPath.length();
-		while (count++ < split && index != -1) {
-			index = stringPath.lastIndexOf(IPath.SEPARATOR, index - 1);
-		}
-		if (index == -1) {
-			return stringPath;
-		} else {
-			return "..." + stringPath.substring(index); //$NON-NLS-1$
-		}
 	}
 
 	public static ResourceBundle getBundle() {
