@@ -12,11 +12,14 @@ package org.eclipse.ui;
 
 
 /**
+ * WARNING: EXPERIMENTAL! THIS OBJECT IS STILL UNDER DEVELOPMENT AND MAY BE REMOVED. IT HAS BEEN
+ * INCLUDED HERE IN ORDER TO OBTAIN FEEDBACK, BUT CLIENTS SHOULD NOT RELY ON THIS INTERFACE
+ * UNTIL THIS TEXT IS REMOVED.
+ * 
  * Interface implemented by objects that are capable of computing 
  * a preferred size
  * 
- * Not intended to be directly implemented by clients. Clients should subclass
- * an existing API class that implements this interface.
+ * Not intended to be implemented by clients.
  * 
  * @since 3.1
  */
