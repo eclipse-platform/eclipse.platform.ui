@@ -198,8 +198,7 @@ public class SearchIndex {
 		boolean fieldSearch,
 		int maxhits,
 		SearchResult searchResult) {
-		ArrayList list = new ArrayList();
-		String[] results;
+
 		try {
 			Searcher searcher = new IndexSearcher(indexDir.getAbsolutePath());
 			Analyzer analyzer = new StopAnalyzer();

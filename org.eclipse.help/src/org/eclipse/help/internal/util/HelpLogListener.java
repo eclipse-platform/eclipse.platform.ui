@@ -87,7 +87,6 @@ class HelpLogListener implements ILogListener {
 	 * @param tmp org.eclipse.core.runtime.IStatus
 	 */
 	private void loggingChild(IStatus status) {
-		int severity = status.getSeverity();
 		log.print("\t");
 		log.println(status.getMessage());
 		if (status.getException() != null)
