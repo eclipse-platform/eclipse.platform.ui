@@ -56,7 +56,7 @@ public interface IPropertySource {
  * This behavior is important for another reason. When the property sheet is
  * showing properties for more than one object (multiple selection), a property 
  * sheet entry will display and edit a single value (typically coming from
- * the first selected obejct). After a property has been edited in a cell editor,
+ * the first selected object). After a property has been edited in a cell editor,
  * the same value is set as the property value for all of the objects. This is 
  * fine for primitive types but otherwise all of the objects end up with a
  * reference to the same value. Thus by creating an editable value and using it
