@@ -132,6 +132,15 @@ public class CompareEditor extends EditorPart implements IPropertyChangeListener
 		
 		final IEditorInput input= getEditorInput();
 		
+		// flush changes in any dirty viewer
+		Object adapter= input.getAdapter(CompareNavigator.class);
+		if (adapter instanceof CompareNavigator) {
+			CompareViewerSwitchingPane[] panes= ((CompareNavigator) adapter).getPanes();
+			for (int i= panes.length-1; i >= 0; i--)
+				if (panes[i] != null)
+					panes[i].setInput(null);
+		}
+		
 		WorkspaceModifyOperation operation= new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor pm) throws CoreException {
 				if (input instanceof CompareEditorInput)
