@@ -58,13 +58,13 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 	private final String[][] fAnnotationColorListModel;
 
 	
-	/**
-	 * List of master/slave listeners when there's a dependency.
-	 * 
-	 * @see #createDependency(Button, String, Control)
-	 * @since 3.0
-	 */
-	private ArrayList fMasterSlaveListeners= new ArrayList();
+//	/**
+//	 * List of master/slave listeners when there's a dependency.
+//	 * 
+//	 * @see #createDependency(Button, String, Control)
+//	 * @since 3.0
+//	 */
+//	private ArrayList fMasterSlaveListeners= new ArrayList();
 
 	private final String[][] fAnnotationDecorationListModel= new String[][] {
 			{TextEditorMessages.getString("AnnotationConfigurationBlock.NONE"), AnnotationPreference.STYLE_NONE}, //$NON-NLS-1$
@@ -424,26 +424,26 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		return false;
 	}
 	
-	private static void indent(Control control) {
-		GridData gridData= new GridData();
-		gridData.horizontalIndent= 20;
-		control.setLayoutData(gridData);		
-	}
+//	private static void indent(Control control) {
+//		GridData gridData= new GridData();
+//		gridData.horizontalIndent= 20;
+//		control.setLayoutData(gridData);		
+//	}
 	
-	private void createDependency(final Button master, String masterKey, final Control slave) {
-		indent(slave);
-		boolean masterState= fStore.getBoolean(masterKey);
-		slave.setEnabled(masterState);
-		SelectionListener listener= new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				slave.setEnabled(master.getSelection());
-			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {}
-		};
-		master.addSelectionListener(listener);
-		fMasterSlaveListeners.add(listener);
-	}
+//	private void createDependency(final Button master, String masterKey, final Control slave) {
+//		indent(slave);
+//		boolean masterState= fStore.getBoolean(masterKey);
+//		slave.setEnabled(masterState);
+//		SelectionListener listener= new SelectionListener() {
+//			public void widgetSelected(SelectionEvent e) {
+//				slave.setEnabled(master.getSelection());
+//			}
+//
+//			public void widgetDefaultSelected(SelectionEvent e) {}
+//		};
+//		master.addSelectionListener(listener);
+//		fMasterSlaveListeners.add(listener);
+//	}
 
 	/*
 	 * @see IPreferenceConfigurationBlock#dispose()

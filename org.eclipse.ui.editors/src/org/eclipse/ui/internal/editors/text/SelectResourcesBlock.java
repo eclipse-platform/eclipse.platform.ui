@@ -119,38 +119,6 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	}
 
 	/**
-	 * Return a boolean indicating whether all children of the passed tree
-	 * element are currently white-checked
-	 * 
-	 * @return boolean
-	 * @param treeElement java.lang.Object
-	 */
-	private boolean areAllChildrenWhiteChecked(Object treeElement) {
-		Object[] children= treeContentProvider.getChildren(treeElement);
-		for (int i= 0; i < children.length; ++i) {
-			if (!whiteCheckedTreeItems.contains(children[i]))
-				return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * Checks whether all list elements associated with the
-	 * passed tree element are checked.
-	 * 
-	 * @param treeElement the tree element
-	 * @return <code>true</code> if all elements are checked, <code>false</code> otherwise
-	 */
-	private boolean areAllElementsChecked(Object treeElement) {
-		List checkedElements= (List) checkedStateStore.get(treeElement);
-		if (checkedElements == null) // ie.- tree item not even gray-checked
-			return false;
-
-		return getListItemsSize(treeElement) == checkedElements.size();
-	}
-
-	/**
 	 * Iterates over the passed elements which are being realized for the
 	 * first time and check each one in the tree viewer as appropriate.
 	 * 
@@ -257,12 +225,10 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 * LEAST gray-checked. Note that this method does not consider whether it
 	 * should be white-checked, so a specified tree item which should be
 	 * white-checked will result in a <code>true</code> answer from this
-	 * method. To determine whether a tree item should be white-checked use
-	 * method #determineShouldBeWhiteChecked(Object).
+	 * method.
 	 * 
 	 * @param treeElement java.lang.Object
 	 * @return boolean
-	 * @see #determineShouldBeWhiteChecked(Object)
 	 */
 	private boolean determineShouldBeAtLeastGrayChecked(Object treeElement) {
 		// if any list items associated with treeElement are checked then it
@@ -283,17 +249,6 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 		}
 
 		return false;
-	}
-
-	/**
-	 * Returns a boolean indicating whether the passed tree item should be
-	 * white-checked.
-	 * 
-	 * @return boolean
-	 * @param treeElement java.lang.Object
-	 */
-	private boolean determineShouldBeWhiteChecked(Object treeElement) {
-		return areAllChildrenWhiteChecked(treeElement) && areAllElementsChecked(treeElement);
 	}
 
 	/**
@@ -494,19 +449,6 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 			return parentName;
 		return parentName + elementText;
 	}
-
-	/**
-	 * Return a count of the number of list items associated with a given tree
-	 * item.
-	 * 
-	 * @return int
-	 * @param treeElement java.lang.Object
-	 */
-	private int getListItemsSize(Object treeElement) {
-		Object[] elements= listContentProvider.getElements(treeElement);
-		return elements.length;
-	}
-
 
 	/**
 	 * Logically gray-check all ancestors of <code>treeElement</code> by ensuring that they
