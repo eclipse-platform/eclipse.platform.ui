@@ -127,11 +127,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 		
 		createVerticalSpacer(mainComposite, 1);
 		
-		fRefreshButton = new Button(mainComposite, SWT.CHECK);
-		fRefreshButton.setFont(mainComposite.getFont());
-		fRefreshButton.setText(StringSubstitutionMessages.getString("RefreshTab.31")); //$NON-NLS-1$
-		gd = new GridData(GridData.BEGINNING);
-		fRefreshButton.setLayoutData(gd);
+		fRefreshButton = createCheckButton(mainComposite, StringSubstitutionMessages.getString("RefreshTab.31")); //$NON-NLS-1$
 		fRefreshButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateEnabledState();
@@ -228,12 +224,10 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	 * @param parent the composite to create the controls in
 	 */
 	private void createRecursiveComponent(Composite parent) {
-		fRecursiveButton = new Button(parent, SWT.CHECK);
-		fRecursiveButton.setText(StringSubstitutionMessages.getString("RefreshTab.0")); //$NON-NLS-1$
+		fRecursiveButton = createCheckButton(parent, StringSubstitutionMessages.getString("RefreshTab.0")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.horizontalSpan = 2;
 		fRecursiveButton.setLayoutData(data);
-		fRecursiveButton.setFont(parent.getFont());
 		fRecursiveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();

@@ -89,12 +89,10 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	 * @param parent the composite to create the controls in
 	 */
 	protected void createLaunchInBackgroundComposite(Composite parent) {
-		fLaunchInBackgroundButton = new Button(parent, SWT.CHECK);
-		fLaunchInBackgroundButton.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.14")); //$NON-NLS-1$
+		fLaunchInBackgroundButton = createCheckButton(parent, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.14")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.horizontalSpan = 2;
 		fLaunchInBackgroundButton.setLayoutData(data);
-		fLaunchInBackgroundButton.setFont(parent.getFont());
 		fLaunchInBackgroundButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
@@ -127,11 +125,9 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	 * Creates a check button in the given composite with the given text
 	 */
 	private Button createButton(Composite parent, SelectionListener listener, String text, String tooltipText, int columns) {
-		Button button= new Button(parent, SWT.CHECK);
-		button.setText(text);
+		Button button= createCheckButton(parent, text);
 		button.setToolTipText(tooltipText);
 		button.addSelectionListener(listener);
-		button.setFont(parent.getFont());
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = columns;
 		button.setLayoutData(gd);

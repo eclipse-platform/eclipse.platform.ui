@@ -214,8 +214,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * @param parent the composite to create the controls in
 	 */
 	protected void createLaunchInBackgroundComponent(Composite parent) {
-		fLaunchInBackgroundButton = new Button(parent, SWT.CHECK);
-		fLaunchInBackgroundButton.setText(LaunchConfigurationsMessages.getString("CommonTab.10")); //$NON-NLS-1$
+		fLaunchInBackgroundButton = createCheckButton(parent, LaunchConfigurationsMessages.getString("CommonTab.10")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.horizontalSpan = 2;
 		fLaunchInBackgroundButton.setLayoutData(data);

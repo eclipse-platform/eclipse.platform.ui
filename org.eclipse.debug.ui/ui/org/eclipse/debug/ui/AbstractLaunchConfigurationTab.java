@@ -213,6 +213,25 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	}	
 	
 	/**
+	 * Creates and returns a new check button with the given
+	 * label.
+	 * 
+	 * @param parent the parent composite
+	 * @param label the button label
+	 * @return a new check button
+	 * @since 3.0
+	 */
+	protected Button createCheckButton(Composite parent, String label) {
+		Button button = new Button(parent, SWT.CHECK);
+		button.setText(label);
+		GridData data = new GridData();
+		button.setLayoutData(data);
+		button.setFont(parent.getFont());
+		SWTUtil.setButtonDimensionHint(button);
+		return button;
+	}
+	
+	/**
 	 * @see ILaunchConfigurationTab#canSave()
 	 */
 	public boolean canSave() {
