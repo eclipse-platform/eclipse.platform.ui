@@ -10,15 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.core.sync;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -27,8 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
@@ -47,10 +39,12 @@ public class RemoteContentsCache {
 	private static Map caches = new HashMap(); // String (local name) > RemoteContentsCache
 	
 	private String name;
-	private Map cacheFileNames;
-	private Map cacheFileTimes;
+	private Map cacheEntries;
 	private long lastCacheCleanup;
 	private int cacheDirSize;
+
+	// Lock used to serialize the writting of cache contents
+	private ILock lock = Platform.getJobManager().newLock(); 
 	
 	/**
 	 * Enables the use of remote contents caching for the given cacheId. The cache ID must be unique.
@@ -89,31 +83,19 @@ public class RemoteContentsCache {
 	 * @param cacheId the unique Id of the cache
 	 * @throws TeamException if the cached contents could not be deleted from disk
 	 */
-	public static void disableCache(String cacheId) throws TeamException {
+	public static void disableCache(String cacheId) {
 		RemoteContentsCache cache = getCache(cacheId);
 		if (cache == null) {
-			// There is no cahce to dispose of
+			// There is no cache to dispose of
 			return;
 		}
-		cache.deleteCacheDirectory();
 		caches.remove(cacheId);
-	}
-	
-	/**
-	 * Return the <code>java.io.File</code> that contains the same contents as the remote resource 
-	 * identified by the <local name, qualified name> pair. It is up to the owner of the cache to use
-	 * an appropriate qualified name that uniquely identified remote versions of a file.
-	 * 
-	 * @param id
-	 * @return
-	 * @throws TeamException if the cache is not enabled
-	 */
-	public static synchronized File getFile(QualifiedName id) throws TeamException {
-		RemoteContentsCache cache = getCache(id.getLocalName());
-		if (cache == null) {
-			throw new TeamException(Policy.bind("RemoteContentsCache.cacheNotEnabled", id.getLocalName())); //$NON-NLS-1$
+		try {
+			cache.deleteCacheDirectory();
+		} catch (TeamException e) {
+			// Log the exception and continue
+			TeamPlugin.log(e);
 		}
-		return cache.getFile(id.getQualifier());
 	}
 	
 	/**
@@ -130,179 +112,49 @@ public class RemoteContentsCache {
 	}
 	
 	/**
-	 * Return the <code>java.io.File</code> that contains the same contents as the remote resource 
-	 * identified by the given unique id. It is up to the owner of the cache to use
-	 * an appropriate id that uniquely identified remote versions of a file.
-	 * @param id
-	 * @return
-	 */
-	public synchronized File getFile(String id) {
-		if (cacheFileNames == null) {
-			// This probably means that the cache has been disposed
-			throw new IllegalStateException(Policy.bind("RemoteContentsCache.cacheDisposed", name)); //$NON-NLS-1$
-		}
-		String physicalPath;
-		if (cacheFileNames.containsKey(id)) {
-			// cache hit
-			physicalPath = (String)cacheFileNames.get(id);
-			registerHit(id);
-		} else {
-			// cache miss
-			physicalPath = String.valueOf(cacheDirSize++);
-			cacheFileNames.put(id, physicalPath);
-			registerHit(id);
-			clearOldCacheEntries();
-		}
-		return getCacheFileForPhysicalPath(physicalPath);
-	}
-	
-	/**
-	 * Return the InputStream that contains the cached contents for the given id. If an error occurs
-	 * reading the cached contents then the cache entry is automatically removed to allow the contents
-	 * to be refetched.
-	 * 
-	 * @param id
-	 * @return an InputStream containing the cached contents or null if no contents are cached
-	 * @throws TeamException
-	 */
-	public synchronized InputStream getContents(String id) throws TeamException {
-		if (!cacheFileNames.containsKey(id)) {
-			// The contents are not cached
-			return null;
-		}
-		File ioFile = getFile(id);
-		try {
-			try {
-				if (ioFile.exists()) {
-					return new FileInputStream(ioFile);
-				}
-			} catch (IOException e) {
-				// Try to purge the cache and continue
-				purgeCacheFile(id);
-				throw e;
-			}
-		} catch (IOException e) {
-			// We will end up here if we couldn't read or delete the cache file
-			throw new TeamException(Policy.bind("RemoteContentsCache.fileError", ioFile.getAbsolutePath()), e); //$NON-NLS-1$
-		}
-		// This can occur when there is no remote contents
-		return new ByteArrayInputStream(new byte[0]);
-	}
-	
-	/**
-	 * Set the contents for the cache entry at the given id to the contents provided in the given input stream. Upon
-	 * completion of this method the input stream will be closed even if an error occurred. If an error did occur, the
-	 * cache entry for the given id will be cleared.
-	 * 
-	 * @param id
-	 * @param stream
-	 * @param monitor
-	 * @throws TeamException if an error occured opening or writing to the cache file
-	 */
-	public synchronized void setContents(String id, InputStream stream, IProgressMonitor monitor) throws TeamException {
-		File ioFile = getFile(id);
-		try {
-			
-			// Open the cache file for writing
-			OutputStream out;
-			try {
-				out = new BufferedOutputStream(new FileOutputStream(ioFile));
-			} catch (FileNotFoundException e) {
-				throw new TeamException(Policy.bind("RemoteContentsCache.fileError", ioFile.getAbsolutePath()), e); //$NON-NLS-1$
-			}
-	
-			// Transfer the contents
-			try {
-				try {
-					byte[] buffer = new byte[1024];
-					int read;
-					while ((read = stream.read(buffer)) >= 0) {
-						Policy.checkCanceled(monitor);
-						out.write(buffer, 0, read);
-					}
-				} finally {
-					out.close();
-				}
-			} catch (IOException e) {
-				// Make sure we don't leave the cache file around as it may not have the right contents
-				purgeCacheFile(id);
-				throw e;
-			}
-		} catch (IOException e) {
-			throw new TeamException(Policy.bind("RemoteContentsCache.fileError", ioFile.getAbsolutePath()), e); //$NON-NLS-1$
-		} finally {
-			try {
-				stream.close();
-			} catch (IOException e1) {
-				// Ignore close errors
-			}
-		}
-	}
-	
-	/**
 	 * Return whether the cache contains an entry for the given id. Register a hit if it does.
 	 * @param id the id of the cache entry
 	 * @return true if there are contents cached for the id
 	 */
-	public boolean hasContents(String id) {
-		boolean contains = cacheFileNames.containsKey(id);
-		if (contains) {
-			registerHit(id);
-		} 
-		return contains;
+	public boolean hasEntry(String id) {
+		return internalGetCacheEntry(id) != null;
 	}
-	
-	/**
-	 * Purge the cache entry for the given id.
-	 * @param id
-	 */
-	public synchronized void purge(String id) {
-		purgeCacheFile(id);
-	}
-	
-	private File getCacheFileForPhysicalPath(String physicalPath) {
-		return new File(getCachePath().toFile(), physicalPath);
-	}
-	
-	private IPath getCachePath() {
+
+	protected IPath getCachePath() {
 		return getStateLocation().append(CACHE_DIRECTORY).append(name);
 	}
 
 	private IPath getStateLocation() {
 		return TeamPlugin.getPlugin().getStateLocation();
 	}
-
-	private void registerHit(String path) {
-		cacheFileTimes.put(path, Long.toString(new Date().getTime()));
-	}
 	
 	private void clearOldCacheEntries() {
 		long current = new Date().getTime();
 		if ((lastCacheCleanup!=-1) && (current - lastCacheCleanup < CACHE_FILE_LIFESPAN)) return;
 		List stale = new ArrayList();
-		for (Iterator iter = cacheFileTimes.keySet().iterator(); iter.hasNext();) {
-			String f = (String) iter.next();
-			long lastHit = Long.valueOf((String)cacheFileTimes.get(f)).longValue();
+		for (Iterator iter = cacheEntries.values().iterator(); iter.hasNext();) {
+			RemoteContentsCacheEntry entry = (RemoteContentsCacheEntry) iter.next();
+			long lastHit = entry.getLastAccessTimeStamp();
 			if ((current - lastHit) > CACHE_FILE_LIFESPAN){
-				stale.add(f);
+				stale.add(entry);
 			}
 		}
 		for (Iterator iter = stale.iterator(); iter.hasNext();) {
-			String f = (String) iter.next();
-			purgeCacheFile(f);
+			RemoteContentsCacheEntry entry = (RemoteContentsCacheEntry) iter.next();
+			entry.dispose();
 		}
 	}
 	
-	private void purgeCacheFile(String path) {
-		File f = getCacheFileForPhysicalPath((String)cacheFileNames.get(path));
+	private void purgeFromCache(String id) {
+		RemoteContentsCacheEntry entry = (RemoteContentsCacheEntry)cacheEntries.get(id);
+		File f = entry.getFile();
 		try {
 			deleteFile(f);
 		} catch (TeamException e) {
-			// log the falied delete and continue
-			TeamPlugin.log(e);
+			// Ignore the deletion failure.
+			// A failure only really matters when purging the directory on startup
 		}
-		cacheFileTimes.remove(path);
-		cacheFileNames.remove(path);
+		cacheEntries.remove(id);
 	}
 	
 	private void createCacheDirectory() throws TeamException {
@@ -314,21 +166,25 @@ public class RemoteContentsCache {
 		if (! file.mkdirs()) {
 			throw new TeamException(Policy.bind("RemoteContentsCache.fileError", file.getAbsolutePath())); //$NON-NLS-1$
 		}
-		cacheFileNames = new HashMap();
-		cacheFileTimes = new HashMap();
+		cacheEntries = new HashMap();
 		lastCacheCleanup = -1;
 		cacheDirSize = 0;
 	}
 			
 	private void deleteCacheDirectory() throws TeamException {
+		cacheEntries = null;
+		lastCacheCleanup = -1;
+		cacheDirSize = 0;
 		IPath cacheLocation = getCachePath();
 		File file = cacheLocation.toFile();
 		if (file.exists()) {
-			deleteFile(file);
+			try {
+				deleteFile(file);
+			} catch (TeamException e) {
+				// Don't worry about problems deleting.
+				// The only case that matters is when the cache directory is created
+			}
 		}
-		cacheFileNames = cacheFileTimes = null;
-		lastCacheCleanup = -1;
-		cacheDirSize = 0;
 	}
 	
 	private void deleteFile(File file) throws TeamException {
@@ -342,4 +198,59 @@ public class RemoteContentsCache {
 			throw new TeamException(Policy.bind("RemoteContentsCache.fileError", file.getAbsolutePath())); //$NON-NLS-1$
 		}
 	}
+
+	/**
+	 * Purge the given cache entry from the cache. This method should only be invoked from
+	 * an instance of RemoteContentsCacheEntry after it has set it's state to DISPOSED.
+	 * @param entry
+	 */
+	protected void purgeFromCache(RemoteContentsCacheEntry entry) {
+		purgeFromCache(entry.getId());
+	}
+
+	private RemoteContentsCacheEntry internalGetCacheEntry(String id) {
+		RemoteContentsCacheEntry entry = (RemoteContentsCacheEntry)cacheEntries.get(id);
+		if (entry != null) {
+			entry.registerHit();
+		}
+		return entry;
+	}
+	
+	/**
+	 * @param id the id that uniquely identifes the remote resource that is cached.
+	 * @return
+	 */
+	public synchronized RemoteContentsCacheEntry getCacheEntry(String id) {
+		if (cacheEntries == null) {
+			// This probably means that the cache has been disposed
+			throw new IllegalStateException(Policy.bind("RemoteContentsCache.cacheDisposed", name)); //$NON-NLS-1$
+		}
+		RemoteContentsCacheEntry entry = internalGetCacheEntry(id);
+		if (entry == null) {
+			// cache miss
+			entry = createCacheEntry(id);
+		}
+		return entry;
+	}
+	
+	private RemoteContentsCacheEntry createCacheEntry(String id) {
+		clearOldCacheEntries();
+		String filePath = String.valueOf(cacheDirSize++);
+		RemoteContentsCacheEntry entry = new RemoteContentsCacheEntry(this, id, filePath);
+		cacheEntries.put(id, entry);
+		return entry;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	/**
+	* Provide access to the lock for the cache. This method should only be used by a cache entry.
+	 * @return Returns the lock.
+	 */
+	protected ILock getLock() {
+		return lock;
+	}
+
 }

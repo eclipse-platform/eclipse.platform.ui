@@ -185,7 +185,7 @@ public class CVSSyncInfo extends SyncInfo {
 				} else {
 					// We have conflictin additions.
 					// We need to fetch the contents of the remote to get all the relevant information (timestamp, permissions)
-					// TODO: Do we really need to fetch the contents here?
+					// The most important thing we get is the keyword substitution mode which must be right to perform the commit
 					remote.getContents(Policy.monitorFor(monitor));
 					info = remote.getSyncInfo().cloneMutable();
 				}

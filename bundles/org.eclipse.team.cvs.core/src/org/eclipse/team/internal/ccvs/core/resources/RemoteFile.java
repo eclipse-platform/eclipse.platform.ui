@@ -11,7 +11,6 @@
 package org.eclipse.team.internal.ccvs.core.resources;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,6 +28,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.RemoteContentsCache;
+import org.eclipse.team.core.sync.RemoteContentsCacheEntry;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
@@ -67,6 +67,8 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	private byte[] syncBytes;
 	// cache the log entry for the remote file
 	private ILogEntry entry;
+	// state that indicates that the handle is actively fetching content
+	private boolean fetching = false;
 			
 	/**
 	 * Static method which creates a file as a single child of its parent.
@@ -179,6 +181,14 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	}
 	
 	/* package*/ void fetchContents(IProgressMonitor monitor) throws CVSException {
+		try {
+			fetching = true;
+			internalFetchContents(monitor);
+		} finally {
+			fetching = false;
+		}
+	}
+	/* package*/ void internalFetchContents(IProgressMonitor monitor) throws CVSException {
 		monitor.beginTask(Policy.bind("RemoteFile.getContents"), 100);//$NON-NLS-1$
 		if (getRevision().equals(ResourceSyncInfo.ADDED_REVISION)) {
 			// The revision of the remote file is not known so we need to use the tag to get the status of the file
@@ -313,11 +323,12 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 * @see ICVSFile#getSize()
 	 */
 	public long getSize() {
-		File ioFile = getRemoteContentsCache().getFile(getCacheRelativePath());
-		if (ioFile.exists()) {
-			return ioFile.length();
+		if (fetching) return 0;
+		RemoteContentsCacheEntry entry = getCacheEntry();
+		if (entry == null) {
+			return 0;
 		}
-		return 0;
+		return entry.getSize();
 	}
 
 	/**
@@ -358,7 +369,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 * @see IManagedFile#setFileInfo(FileProperties)
 	 */
 	public void setSyncInfo(ResourceSyncInfo fileInfo, int modificationState) {
-		syncBytes = fileInfo.getBytes();
+		setSyncBytes(fileInfo.getBytes(),modificationState);
 	}
 
 	/**
@@ -371,10 +382,14 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	}		
 	
 	public InputStream getContents() throws CVSException {
-		// Return the cached contents
-		InputStream cached = getCachedContents();
-		if (cached != null) {
-			return cached;
+		if (!fetching) {
+			// Return the cached contents
+			if (isContentsCached()) {
+				InputStream cached = getCachedContents();
+				if (cached != null) {
+					return cached;
+				}
+			}
 		}
 		// There was nothing cached so return an empty stream.
 		// This is done to allow the contents to be fetched
@@ -384,7 +399,13 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 
 	private InputStream getCachedContents() throws CVSException {
 		try {
-			return getRemoteContentsCache().getContents(getCacheRelativePath());
+			RemoteContentsCacheEntry entry = getCacheEntry();
+			byte[] newSyncBytes = entry.getSyncBytes();
+			if (newSyncBytes != null) {
+				// Make sure the sync bytes match the content that is being accessed
+				syncBytes = newSyncBytes;
+			}
+			return entry.getContents();
 		} catch (TeamException e) {
 			throw CVSException.wrapException(e);
 		}
@@ -392,7 +413,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	
 	public void setContents(InputStream stream, int responseType, boolean keepLocalHistory, IProgressMonitor monitor) throws CVSException {
 		try {
-			getRemoteContentsCache().setContents(getCacheRelativePath(), stream, monitor);
+			getCacheEntry().setContents(stream, monitor);
 		} catch (TeamException e) {
 			throw CVSException.wrapException(e);
 		}
@@ -420,7 +441,12 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 */
 	public boolean isContentsCached() {
 		if (getRevision().equals(ResourceSyncInfo.ADDED_REVISION)) return false;
-		return getRemoteContentsCache().hasContents(getCacheRelativePath());
+		String cacheRelativePath = getCacheRelativePath();
+		if (!getRemoteContentsCache().hasEntry(cacheRelativePath)) {
+			return false;
+		}
+		RemoteContentsCacheEntry entry = getRemoteContentsCache().getCacheEntry(cacheRelativePath);
+		return entry.getState() == RemoteContentsCacheEntry.READY;
 	}
 	
 	/*
@@ -579,8 +605,16 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	/**
 	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#setSyncBytes(byte[])
 	 */
-	public void setSyncBytes(byte[] syncBytes, int modificationState) throws CVSException {
-		setSyncInfo(new ResourceSyncInfo(syncBytes), ICVSFile.UNKNOWN);
+	public void setSyncBytes(byte[] syncBytes, int modificationState) {
+		if (fetching) {
+			RemoteContentsCacheEntry entry = getCacheEntry();
+			entry.setSyncBytes(syncBytes);
+		}
+		this.syncBytes = syncBytes;
+	}
+
+	private RemoteContentsCacheEntry getCacheEntry() {
+		return getRemoteContentsCache().getCacheEntry(getCacheRelativePath());
 	}
 
 	public String toString() {

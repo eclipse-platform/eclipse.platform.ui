@@ -1270,9 +1270,46 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		assertSyncEquals("testNestedMarkAsMerged sync check", project,
 				new String[] { "folder2/", "folder2/file.txt", "folder2/file2.txt"},
 				true, new int[] { 
-				SyncInfo.IN_SYNC,
-				SyncInfo.OUTGOING | SyncInfo.CHANGE,
+					SyncInfo.IN_SYNC,
+					SyncInfo.OUTGOING | SyncInfo.CHANGE,
+					SyncInfo.CONFLICTING | SyncInfo.ADDITION
+		});
+	}
+	
+	public void testMarkAsMergedOnBinaryFile() throws TeamException, CoreException, InvocationTargetException, InterruptedException {
+		// Create a project and checkout a copy
+		IProject project = createProject(new String[] { "file1.txt"});
+		IProject copy = checkoutCopy(project, "-copy");
+		// Add the same binary file to both projects to create a conflicting addition
+		buildResources(project, new String[] {"binary.gif"}, false);
+		addResources(copy, new String[] {"binary.gif"}, true);
+		assertIsBinary(copy.getFile("binary.gif"));
+		assertSyncEquals("testMarkAsMergedOnBinaryFile sync check", project,
+				new String[] {"binary.gif"},
+				true, new int[] { 
+						SyncInfo.CONFLICTING | SyncInfo.ADDITION
+		});
+		markAsMerged(getSubscriber(), project, new String[] {"binary.gif"});
+		assertSyncEquals("testMarkAsMergedOnBinaryFile sync check", project,
+				new String[] {"binary.gif"},
+				true, new int[] { 
+				SyncInfo.OUTGOING | SyncInfo.CHANGE
+		});
+		assertIsBinary(project.getFile("binary.gif"));
+		// Unmanage the file and do it again
+		// This tests the case were the contents are already cached locally
+		CVSWorkspaceRoot.getCVSFileFor(project.getFile("binary.gif")).unmanage(DEFAULT_MONITOR);
+		assertSyncEquals("testMarkAsMergedOnBinaryFile sync check", project,
+				new String[] {"binary.gif"},
+				true, new int[] { 
 				SyncInfo.CONFLICTING | SyncInfo.ADDITION
 		});
+		markAsMerged(getSubscriber(), project, new String[] {"binary.gif"});
+		assertSyncEquals("testMarkAsMergedOnBinaryFile sync check", project,
+				new String[] {"binary.gif"},
+				true, new int[] { 
+				SyncInfo.OUTGOING | SyncInfo.CHANGE
+		});
+		assertIsBinary(project.getFile("binary.gif"));
 	}
 }
