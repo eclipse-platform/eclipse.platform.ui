@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolderAdapter;
@@ -78,7 +77,6 @@ public class EditorWorkbook extends LayoutPart
 	private boolean isZoomed = false;
 	private Composite parent;
 	private CTabFolder tabFolder;
-	private IPropertyChangeListener tabFolderListener;
 	private EditorArea editorArea;
 	private EditorPane visibleEditor;
 	private Map mapPartToDragMonitor = new HashMap();
@@ -147,9 +145,6 @@ public void createControl(Composite parent) {
 
 	this.parent = parent;
 	tabFolder = new CTabFolder(parent, SWT.BORDER | tabLocation);
-
-	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-	store.addPropertyChangeListener(tabFolderListener);
 
 	// prevent close button and scroll buttons from taking focus
 	tabFolder.setTabList(new Control[0]);
@@ -244,6 +239,7 @@ public void createControl(Composite parent) {
 	});
 
 	// Present the editorList pull-down if requested
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 	if (store.getBoolean(IPreferenceConstants.EDITORLIST_PULLDOWN_ACTIVE)) {
 		tabFolder.setTopRight(pullDownBar);
 		pullDownBar.setVisible(true);
@@ -445,8 +441,6 @@ public void dispose() {
 	mouseDownListenerAdded = false;
 
 	mapTabToEditor.clear();
-	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-	store.removePropertyChangeListener(tabFolderListener);
 }
 /**
  * Zooms in on the active page in this workbook.
