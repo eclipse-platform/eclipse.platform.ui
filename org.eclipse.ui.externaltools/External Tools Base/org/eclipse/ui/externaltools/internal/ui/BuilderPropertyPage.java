@@ -264,7 +264,6 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		Button button = new Button(parent, SWT.PUSH);
 		GridData data = new GridData();
 		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		button.setLayoutData(data);
 		button.setFont(parent.getFont());
 		button.setText(label);
