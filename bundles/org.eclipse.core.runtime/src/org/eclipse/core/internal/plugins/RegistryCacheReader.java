@@ -36,7 +36,7 @@ public class RegistryCacheReader {
 
 	public MultiStatus cacheReadProblems = null;
 
-	public static final byte REGISTRY_CACHE_VERSION = 6;
+	public static final byte REGISTRY_CACHE_VERSION = 7;
 
 	public static final byte NONLABEL = 0;
 
