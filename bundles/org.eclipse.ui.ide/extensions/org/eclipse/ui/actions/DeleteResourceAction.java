@@ -12,19 +12,40 @@ package org.eclipse.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.viewers.IStructuredSelection;
+
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
+
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
@@ -287,7 +308,7 @@ boolean confirmDeleteProjects() {
  * Deletes the given resources.
  */
 void delete(IResource[] resourcesToDelete, IProgressMonitor monitor) throws CoreException {
-    MultiStatus multiStatus = null;
+    final List exceptions = new ArrayList();
 	forceOutOfSyncDelete = false;
 	monitor.beginTask("", resourcesToDelete.length); //$NON-NLS-1$
 	for (int i = 0; i < resourcesToDelete.length; ++i) {
@@ -297,17 +318,25 @@ void delete(IResource[] resourcesToDelete, IProgressMonitor monitor) throws Core
 		try {
 		    delete(resourcesToDelete[i], new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 		} catch (CoreException e) {
-		    if (multiStatus == null) {
-		        IStatus status = e.getStatus();
-		        multiStatus = new MultiStatus(status.getPlugin(), status.getCode(), status.getMessage(), status.getException());
-		    } else {
-		        multiStatus.add(e.getStatus());
-		    }
+		    exceptions.add(e);
 		}
 	}
-	if (multiStatus != null) {
-	    throw new CoreException(multiStatus);
+	
+	// Check to see if any problems occurred during processing.
+	final int exceptionCount = exceptions.size();
+	if (exceptionCount == 1) {
+	    throw (CoreException) exceptions.get(0);
+	} else if (exceptionCount > 1) {
+	    final MultiStatus multi = new MultiStatus(IDEWorkbenchPlugin.IDE_WORKBENCH, 0, IDEWorkbenchMessages.getString("DeleteResourceAction.deletionExceptionMessage"), new Exception()); //$NON-NLS-1$
+	    for (int i = 0; i < exceptionCount; i++) {
+	        CoreException exception = (CoreException) exceptions.get(0);
+	        IStatus status = exception.getStatus();
+	        multi.add(new Status(status.getSeverity(), status.getPlugin(), status.getCode(), status.getMessage(), exception));
+	    }
+	    throw new CoreException(multi);
 	}
+	
+	// Signal that the job has completed successfully.
 	monitor.done();
 }
 /**
