@@ -12,7 +12,6 @@ package org.eclipse.core.tests.resources.regression;
 
 import java.io.IOException;
 import java.io.InputStream;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.boot.BootLoader;
@@ -502,5 +501,24 @@ public void testBug25686() {
 		fail("0.99", e);
 	}
 	assertTrue("0.1", destination.exists());
+}
+/**
+ * Bug 31750 states that an OperationCancelledException is
+ * not handled correctly if it occurs within a proxy visitor.
+ */
+public void testBug31750() {
+	IResourceProxyVisitor visitor = new IResourceProxyVisitor() {
+		public boolean visit(IResourceProxy proxy) {
+			throw new OperationCanceledException();
+		}
+	};
+	try {
+		getWorkspace().getRoot().accept(visitor, IResource.NONE);
+		fail("1.0");
+	} catch (OperationCanceledException e) {
+		// expected results
+	} catch (CoreException e) {
+		fail("2.0", e);
+	}
 }
 }
