@@ -5,10 +5,7 @@
                style="css/root.css"
                id="root"
                class-id="page"> 
-            <title
-            	  class-id="intro-header">
-	   	       Welcome to Eclipse Platform 3.0
-	   	    </title>
+            <title class-id="intro-header">Welcome to Eclipse Platform 3.0</title>
             <div
                   id="root-background">
                <div
@@ -64,10 +61,7 @@
                title="OVERVIEW"
                id="overview"
                class-id="page">
-			<title
-            	  class-id="intro-header">
-	   	       Welcome to Eclipse Platform 3.0
-	   		</title>
+			<title class-id="intro-header">Welcome to Eclipse Platform 3.0</title>
             <div
                   id="background-image">
                <div
@@ -111,10 +105,7 @@
                title="TUTORIALS"
                id="tutorials"
                class-id="page">
-		    <title
-            	class-id="intro-header">
-	   	      Welcome to Eclipse Platform 3.0
-	   	    </title>
+		  <title class-id="intro-header">Welcome to Eclipse Platform 3.0</title>
             <div
                   id="background-image">
                <div
@@ -138,10 +129,7 @@
                title="SAMPLES"
                id="samples"
                class-id="page">
-            <title
-            	  class-id="intro-header">
-	   	      Welcome to Eclipse Platform 3.0
-	   	    </title>
+            <title class-id="intro-header">Welcome to Eclipse Platform 3.0</title>
             <div
                   id="background-image">
                <div
@@ -214,10 +202,7 @@
                title="WHAT&apos;S NEW"
                id="news"
                class-id="page">
-            <title
-            	  class-id="intro-header">
-	   	       Welcome to Eclipse Platform 3.0
-	   	    </title>            
+            <title class-id="intro-header">Welcome to Eclipse Platform 3.0</title>
             <div
                   id="background-image">
                <div
