@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.internal.ui.views;
+package org.eclipse.update.internal.ui.win32.views;
 
 public interface IEmbeddedWebBrowser {
 	public void openTo(String url);
