@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Build AntUI Ant support JAR" default="build" basedir="..">
+<project name="Build AntUI Remote Ant support JAR" default="build" basedir="..">
 
 	<target name="build" description="Cleans, builds and refreshes" depends="clean, lib/remoteAntLib.jar"/>
 
@@ -17,7 +17,8 @@
 		<delete dir="${temp.folder}/lib/remoteAnt.jar.bin"/>
 		<mkdir dir="${temp.folder}/lib/remoteAnt.jar.bin"/>
 		<!-- compile the source code -->
-		<javac target="1.1" destdir="${temp.folder}/lib/remoteAnt.jar.bin" failonerror="true" verbose="false" debug="on" includeJavaRuntime= "yes" includeAntRuntime="yes">
+		<javac target="1.1" destdir="${temp.folder}/lib/remoteAnt.jar.bin" failonerror="true" verbose="false" debug="on" includeJavaRuntime= "yes" includeAntRuntime="yes"
+			excludes="org/eclipse/ant/internal/ui/antsupport/inputhandler/**">
 			<src path="Remote Ant Support/"/>
 		</javac>
 		<!-- copy necessary resources -->
