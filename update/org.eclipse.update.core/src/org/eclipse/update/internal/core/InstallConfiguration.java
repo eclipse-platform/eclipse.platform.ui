@@ -339,8 +339,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		//check sites
 		checkSites(configurationSites, runtimeConfiguration);
 
-		// Write the plugin path, primary feature and platform
-		// into platform.cfg
+		// Save the plugin path, primary feature and platform
 		for (int i = 0; i < configurationSites.length; i++) {
 			ConfiguredSite cSite = ((ConfiguredSite) configurationSites[i]);
 			ConfigurationPolicy configurationPolicy = cSite.getConfigurationPolicy();
@@ -419,8 +418,8 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			if (tempConfig != null) // [19958] remove reused entries from list
 				tempConfig.unconfigureSite(siteEntry);
 		}
-		runtimeConfiguration.configureSite(siteEntry, true /*replace if exists*/
-		);
+		((SiteEntry)siteEntry).setEnabled(cSite.isEnabled());
+		runtimeConfiguration.configureSite(siteEntry, true /*replace if exists*/);
 	}
 
 	/*
@@ -467,7 +466,6 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			featureEntry.setURL(getFeatureRelativeURL(feature));
 			SiteEntry siteEntry = (SiteEntry)runtimeConfiguration.findConfiguredSite(cSite.getSite().getURL());
 			siteEntry.addFeatureEntry(featureEntry);
-			runtimeConfiguration.configureFeatureEntry(featureEntry);
 		} else {
 			// write non-primary feature entries
 			String version = feature.getVersionedIdentifier().getVersion().toString();
@@ -476,7 +474,6 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			featureEntry.setURL(getFeatureRelativeURL(feature));
 			SiteEntry siteEntry = (SiteEntry)runtimeConfiguration.findConfiguredSite(cSite.getSite().getURL());
 			siteEntry.addFeatureEntry(featureEntry);
-			runtimeConfiguration.configureFeatureEntry(featureEntry);
 		}
 
 		// write the platform features (features that contain special platform plugins)
