@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.ide.IDE;
@@ -185,7 +184,7 @@ public class ChooseWorkspaceData {
 	 */
 	public void writePersistedData() {
 		// 1. get config pref node
-		Preferences node = new ConfigurationScope().getNode(PlatformUI.PLUGIN_ID);
+		Preferences node = new ConfigurationScope().getNode(IDEWorkbenchPlugin.IDE_WORKBENCH);
 
 		// 2. get value for showDialog
 		node.putBoolean(
@@ -349,7 +348,7 @@ public class ChooseWorkspaceData {
 	 */
 	public boolean readPersistedData() {
 		IPreferenceStore store = new ScopedPreferenceStore(
-				new ConfigurationScope(), PlatformUI.PLUGIN_ID);
+				new ConfigurationScope(), IDEWorkbenchPlugin.IDE_WORKBENCH);
 
 		// The old way was to store this information in a file, the new is to
 		// use the configuration area preference store. To help users with the
