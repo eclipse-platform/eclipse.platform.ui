@@ -60,7 +60,10 @@ public class ElementTreeIterator implements IPathRequestor {
 		this.tree = tree;
 		this.path = path;
 		//treeRoot can be null if deleted concurrently
-		treeRoot = (DataTreeNode) tree.getDataTree().safeCopyCompleteSubtree(path);
+		//must copy the tree while owning the tree's monitor to prevent concurrent deletion while creating visitor's copy
+		synchronized (tree) {
+			treeRoot = (DataTreeNode) tree.getDataTree().safeCopyCompleteSubtree(path);
+		}
 	}
 
 	/**
