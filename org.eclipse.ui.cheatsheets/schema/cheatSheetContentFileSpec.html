@@ -35,11 +35,11 @@ be displayed. The &lt;description&gt; subelement contains the body of the
 introduction. &lt;intro&gt; attributes are as follows:</p>
 <ul>
   <li><b>contextId</b> - The optional help context id of the documentation for
-    this cheat sheet. If supplied, context help for the given id is shown to the
-    user (typically in a small pop-up window) when they clicks the
-    introduction's help link. If this attribute is supplied, the <b>href</b>
-    attribute should not be supplied (<b>href</b> will be ignored if both are
-    present).</li>
+    this cheat sheet. If supplied, context help for the given fully-qualified
+    context id is shown to the user (typically in a small pop-up window) when
+    they clicks the introduction's help link. If this attribute is supplied, the
+    <b>href</b> attribute should not be supplied (<b>href</b> will be ignored if
+    both are present).</li>
   <li><b>href</b> - The optional help document describing this cheat sheet. If
     supplied, this help document is shown to the user (typically in a help
     browser shown in a separate window) when they clicks the introduction's help
@@ -83,10 +83,11 @@ follows:</p>
     skipped; the UI generally shows a button that the user can press to indicate
     that they are skipping this step</li>
   <li><b>contextId</b> - The optional help context id of the documentation for
-    this cheat sheet step. If supplied, context help for the given id is shown
-    to the user (typically in a small pop-up window) when they clicks the step's
-    help link. If this attribute is supplied, the <b>href</b> attribute should
-    not be supplied (<b>href</b> will be ignored if both are present).</li>
+    this cheat sheet step. If supplied, context help for the given&nbsp;
+    fully-qualified context id is shown to the user (typically in a small pop-up
+    window) when they clicks the step's help link. If this attribute is
+    supplied, the <b>href</b> attribute should not be supplied (<b>href</b> will
+    be ignored if both are present).</li>
   <li><b>href</b> - The optional help document describing this cheat sheet step.
     If supplied, this help document is shown to the user (typically in a help
     browser shown in a separate window) when they clicks the step's help link.
