@@ -42,7 +42,6 @@ if (data.isMozilla()){
 	padding:0px;
 	border:1px solid <%=prefs.getToolbarBackground()%>;
 	cursor:default;
-	align:center;
 }
 
 .pressed {
@@ -50,7 +49,6 @@ if (data.isMozilla()){
 	padding:0px;
 	border:1px solid ThreeDHighlight;
 	cursor:default;
-	align:center;
 }
 
 .separator {
@@ -65,17 +63,16 @@ if (data.isMozilla()){
 
 A {
 	text-decoration:none;
-	margin:0px;
-	padding:0px;
-	border:0px;
-	align:center;
+	writing-mode:tb-rl;
+	vertical-align:middle;
+	height:16px;
 }
 
 IMG {
 	border:0px;
 	margin:0px;
 	padding:0px;
-	align:center;
+	height:16px;
 }
 
 </style>
@@ -124,7 +121,7 @@ function showTab(tab)
    
 <body>
 
-  <table cellspacing="0" cellpadding="0" border="0" width="100%" height="100%">
+  <table cellspacing="0" cellpadding="0" border="0" width="100%" height="100%" valign="middle">
    <tr>
 
 <%
@@ -139,6 +136,7 @@ function showTab(tab)
 %>
 	<td  title="<%=views[i].getName()%>" 
 	     align="center"  
+	     valign="middle"
 	     class="tab" 
 	     id="<%=views[i].getName()%>" 
 	     onclick="parent.showView('<%=views[i].getName()%>')" 
@@ -151,6 +149,8 @@ function showTab(tab)
 	         <img alt="<%=title%>" 
 	              title="<%=title%>" 
 	              src="<%=views[i].getImageURL()%>"
+	              width="16"
+	              height="16"
 	         >
 	     </a>
 	</td>
