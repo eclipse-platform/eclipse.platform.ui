@@ -252,12 +252,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 
         createTable(outer);
         createInfoArea(outer);
-
-        GridData gridData = new GridData(GridData.FILL, GridData.FILL, true,
-                true);
-        gridData.heightHint = convertVerticalDLUsToPixels(TABLE_HEIGHT);
-        table.setLayoutData(gridData);
-
+        
         return outer;
     }
 
@@ -268,20 +263,20 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
         Font font = parent.getFont();
 
         infoArea = new Composite(parent, SWT.NULL);
+        GridData data = new GridData(GridData.FILL, GridData.CENTER, true, false);
+        // need to provide space for arbitrary feature infos, not just the
+        // one selected by default
+        data.heightHint = convertVerticalDLUsToPixels(INFO_HEIGHT);
+        infoArea.setLayoutData(data);
+
         GridLayout layout = new GridLayout();
         layout.numColumns = 2;
         infoArea.setLayout(layout);
-        GridData data = new GridData(GridData.FILL_BOTH);
-        int infoAreaHeight = convertVerticalDLUsToPixels(INFO_HEIGHT);
-        data.heightHint = infoAreaHeight;
-        infoArea.setLayoutData(data);
 
         imageLabel = new Label(infoArea, SWT.NONE);
-        data = new GridData();
-        data.horizontalAlignment = GridData.FILL;
-        data.verticalAlignment = GridData.BEGINNING;
-        data.heightHint = 32;
+        data = new GridData(GridData.FILL, GridData.BEGINNING, false, false);
         data.widthHint = 32;
+        data.heightHint = 32;
         imageLabel.setLayoutData(data);
         imageLabel.setFont(font);
 
@@ -289,11 +284,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
         text = new StyledText(infoArea, SWT.MULTI | SWT.READ_ONLY);
         text.setCaret(null);
         text.setFont(parent.getFont());
-        data = new GridData();
-        data.horizontalAlignment = GridData.FILL;
-        data.verticalAlignment = GridData.BEGINNING;
-        data.grabExcessHorizontalSpace = true;
-        data.heightHint = infoAreaHeight;
+        data = new GridData(GridData.FILL, GridData.BEGINNING, true, true);
         text.setLayoutData(data);
         text.setFont(font);
         text.setCursor(null);
@@ -313,7 +304,13 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
     protected void createTable(Composite parent) {
         table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE
                 | SWT.FULL_SELECTION | SWT.BORDER);
+        
+        GridData gridData = new GridData(GridData.FILL, GridData.FILL, true,
+                true);
+        gridData.heightHint = convertVerticalDLUsToPixels(TABLE_HEIGHT);
+        table.setLayoutData(gridData);
         table.setHeaderVisible(true);
+        
         table.setLinesVisible(true);
         table.setFont(parent.getFont());
         table.addSelectionListener(new SelectionAdapter() {
@@ -324,7 +321,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
                 updateButtons(info);
             }
         });
-
+        
         int[] columnWidths = { convertHorizontalDLUsToPixels(120),
                 convertHorizontalDLUsToPixels(120),
                 convertHorizontalDLUsToPixels(70),
