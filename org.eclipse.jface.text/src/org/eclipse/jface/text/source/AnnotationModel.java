@@ -625,6 +625,25 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		}
 	}
 	
+	/**
+	 * Modifies the given annotation if the annotation is managed by this
+	 * annotation model.
+	 * <p>
+	 * If requested, all annotation model change listeners will be informed
+	 * about the change.
+	 * 
+	 * @param annotation the annotation to be modified
+	 * @param fireModelChanged indicates whether to notify all model listeners
+	 * @since 3.0
+	 */
+	protected void modifyAnnotation(Annotation annotation, boolean fireModelChanged) {
+		if (fAnnotations.containsKey(annotation)) {
+			getAnnotationModelEvent().annotationChanged(annotation);
+			if (fireModelChanged)
+				fireModelChanged();
+		}
+	}
+	
 	/*
 	 * @see IAnnotationModel#removeAnnotationModelListener(IAnnotationModelListener)
 	 */

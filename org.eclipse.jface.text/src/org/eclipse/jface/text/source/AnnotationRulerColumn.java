@@ -218,6 +218,8 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		
 		fCanvas.addMouseListener(new MouseListener() {
 			public void mouseUp(MouseEvent event) {
+				fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
+				mouseClicked(fParentRuler.getLineOfLastMouseButtonActivity());				
 			}
 			
 			public void mouseDown(MouseEvent event) {
@@ -244,6 +246,14 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 * @param rulerLine the ruler line
 	 */
 	protected void mouseDoubleClicked(int rulerLine) {
+	}
+
+	/**
+	 * Hook method for a mouse click event on the given ruler line.
+	 * 
+	 * @param rulerLine the ruler line
+	 */
+	protected void mouseClicked(int rulerLine) {
 	}
 	
 	/**
