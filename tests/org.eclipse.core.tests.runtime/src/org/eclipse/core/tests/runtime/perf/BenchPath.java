@@ -29,10 +29,7 @@ public class BenchPath extends RuntimeTest {
 	public static Test suite() {
 		return new TestSuite(BenchPath.class);
 		//	TestSuite suite = new TestSuite(BenchPath.class.getName());
-		//	suite.addTest(new BenchPath("benchHash"));
-		//	suite.addTest(new BenchPath("benchPathCreation"));
-		//	suite.addTest(new BenchPath("benchToOSString"));
-		//	suite.addTest(new BenchPath("benchToString"));
+		//	suite.addTest(new BenchPath("testToString"));
 		//	return suite;
 	}
 
@@ -47,13 +44,12 @@ public class BenchPath extends RuntimeTest {
 		for (int i = 0; i < paths.length; i++)
 			map.put(paths[i], "");
 		final int numPaths = paths.length;
-		Runnable job = new Runnable() {
-			public void run() {
+		new CorePerformanceTest() {
+			protected void operation() {
 				for (int p = 0; p < numPaths; p++)
 					map.get(paths[p]);
 			}
-		};
-		runPerformanceTest(this, job, 10, REPEAT);
+		}.run(this, 10, REPEAT);
 	}
 
 	/**
@@ -61,8 +57,8 @@ public class BenchPath extends RuntimeTest {
 	 */
 	public void testPathCreation() {
 		final int REPEAT = 50000;
-		Runnable job = new Runnable() {
-			public void run() {
+		new CorePerformanceTest() {
+			protected void operation() {
 				//folders (5)
 				new Path("/");
 				new Path("/Foo");
@@ -87,8 +83,7 @@ public class BenchPath extends RuntimeTest {
 				new Path("/Foo/bar/baz/blap/blam/abc.txt");
 				new Path("/Foo/bar/baz/blap/blam/blip/boop/abc.txt");
 			}
-		};
-		runPerformanceTest(this, job, 20, REPEAT);
+		}.run(this, 20, REPEAT);
 	}
 
 	/**
@@ -97,13 +92,12 @@ public class BenchPath extends RuntimeTest {
 	public void testToOSString() {
 		final int REPEAT = 50000;
 		final IPath[] paths = generateVariousPaths();
-		Runnable job = new Runnable() {
-			public void run() {
+		new CorePerformanceTest() {
+			protected void operation() {
 				for (int p = paths.length; --p >= 0;)
 					paths[p].toOSString();
 			}
-		};
-		runPerformanceTest(this, job, 10, REPEAT);
+		}.run(this, 10, REPEAT);
 	}
 
 	/**
@@ -112,13 +106,12 @@ public class BenchPath extends RuntimeTest {
 	public void testToString() {
 		final int REPEAT = 50000;
 		final IPath[] paths = generateVariousPaths();
-		Runnable job = new Runnable() {
-			public void run() {
+		new CorePerformanceTest() {
+			protected void operation() {
 				for (int p = paths.length; --p >= 0;)
 					paths[p].toString();
 			}
-		};
-		runPerformanceTest(this, job, 10, REPEAT);
+		}.run(this, 10, REPEAT);
 	}
 
 	/**
