@@ -875,15 +875,7 @@ public interface IDebugUIConstants {
 	 * @since 2.1
 	 */
 	public static final String ATTR_FAVORITE_GROUPS = PLUGIN_ID + ".favoriteGroups"; //$NON-NLS-1$
-	
-	/**
-	 * Launch configuration attribute - a map of variables passed into
-	 * Runtime.exec(...) when a launch configuration is launched.
-	 * 
-	 * @since 3.0
-	 */
-	public static final String ATTR_ENVIRONMENT_VARIABLES = PLUGIN_ID + ".environmentVariables"; //$NON-NLS-1$
-	
+		
 	/**
 	 * Launch configuration attribute - a boolean value indicating whether a
 	 * configuration should be launched in the background. Default value is <code>true</code>.
