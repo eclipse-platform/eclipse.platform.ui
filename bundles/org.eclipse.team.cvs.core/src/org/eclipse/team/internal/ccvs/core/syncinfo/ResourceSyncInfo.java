@@ -472,7 +472,7 @@ public class ResourceSyncInfo {
 			result.append(DIRECTORY_PREFIX);
 			result.append(SEPARATOR);
 			result.append(name);
-			for (int i = 0; i <=4; i++) {
+			for (int i = 0; i < 4; i++) {
 				result.append(SEPARATOR);
 			}
 		} else {
