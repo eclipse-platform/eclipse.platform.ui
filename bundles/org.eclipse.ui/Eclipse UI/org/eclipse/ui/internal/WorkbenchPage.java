@@ -1017,8 +1017,8 @@ public void addNavigationHistoryEntry(IEditorPart part, NavigationLocation entry
  * (non-Javadoc)
  * Method declared on IWorkbenchPage
  */
-public NavigationLocation[] getNavigationHistoryEntries(IEditorPart part) {
-	return getNavigationHistory().getEntries(part);
+public NavigationLocation[] getNavigationHistoryEntries(IEditorInput input) {
+	return getNavigationHistory().getEntries(input);
 }
 
 /**

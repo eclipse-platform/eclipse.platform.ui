@@ -88,6 +88,7 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextEvent;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -112,6 +113,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IKeyBindingService;
+import org.eclipse.ui.INavigationLocationProvider;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.IWorkbenchPage;
@@ -120,7 +122,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.NavigationLocation;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.SelectionNavigationLocation;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.EditorPluginAction;
@@ -159,7 +160,7 @@ import org.eclipse.ui.part.EditorPart;
  *
  * @see org.eclipse.ui.editors.text.TextEditor
  */
-public abstract class AbstractTextEditor extends EditorPart implements ITextEditor, IReusableEditor, ITextEditorExtension {
+public abstract class AbstractTextEditor extends EditorPart implements ITextEditor, IReusableEditor, ITextEditorExtension, INavigationLocationProvider {
 
 	/**
 	 * Tag used in xml configuration files to specify editor action contributions.
@@ -748,6 +749,26 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			viewer.setTopIndex(newTopIndex);
 		}
 	};
+	
+	/**
+	 *  @since 2.1
+	 */
+	class ToggleInsertModeAction extends TextNavigationAction {
+		
+		public ToggleInsertModeAction(StyledText textWidget) {
+			super(textWidget, ST.TOGGLE_OVERWRITE);
+		}
+		
+		/*
+		 * @see org.eclipse.jface.action.IAction#run()
+		 */
+		public void run() {
+			super.run();
+			fOverwriting= !fOverwriting;
+			handleInsertModeChanged();
+		}
+
+	};
 
 	/**
 	 * Internal action to show the editor's ruler context menu (accessibility).
@@ -781,7 +802,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/** 
 	 * Editor specific selection provider which wraps the source viewer's selection provider.
-	 * 	 */
+	 * 
+	 */
 	class SelectionProvider implements ISelectionProvider {
 	
 		/*
@@ -898,9 +920,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		new IdMapEntry(ITextEditorActionDefinitionIds.COPY, ST.COPY),
 		new IdMapEntry(ITextEditorActionDefinitionIds.PASTE, ST.PASTE),
 		new IdMapEntry(ITextEditorActionDefinitionIds.DELETE_PREVIOUS, ST.DELETE_PREVIOUS),
-		new IdMapEntry(ITextEditorActionDefinitionIds.DELETE_NEXT, ST.DELETE_NEXT),
-		// miscellaneous
-		new IdMapEntry(ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE, ST.TOGGLE_OVERWRITE)
+		new IdMapEntry(ITextEditorActionDefinitionIds.DELETE_NEXT, ST.DELETE_NEXT)
 	};
 	
 	
@@ -1322,7 +1342,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Sets the given selection.	 * @param selection	 */
+	 * Sets the given selection.
+	 * @param selection
+	 */
 	protected void doSetSelection(ISelection selection) {
 		if (selection instanceof ITextSelection) {
 			ITextSelection textSelection= (ITextSelection) selection;
@@ -1449,16 +1471,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fCursorListener= new ICursorListener() {
 				
 				public void keyPressed(KeyEvent e) {
-					if (e.keyCode != 0) {
-						StyledText styledText= (StyledText) e.widget;
-						if (!styledText.isDisposed()) {
-							int action = styledText.getKeyBinding(e.keyCode | e.stateMask);
-							if (ST.TOGGLE_OVERWRITE == action) {
-								fOverwriting= !fOverwriting;
-								handleInsertModeChanged();
-							}
-						}
-					}
 				}
 				
 				public void keyReleased(KeyEvent e) {
@@ -2780,6 +2792,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			setAction(entry.getActionId(), action);
 		}
 		
+		action= new ToggleInsertModeAction(textWidget);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE);
+		setAction(ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE, action);
+		
 		action=  new ScrollLinesAction(-1);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SCROLL_LINE_UP);
 		setAction(ITextEditorActionDefinitionIds.SCROLL_LINE_UP, action);
@@ -3293,8 +3309,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	public void selectAndReveal(int start, int length) {
 		if (fSourceViewer == null)
 			return;
-		
-		
+			
+		ISelection selection= getSelectionProvider().getSelection();
+		if (selection instanceof TextSelection) {
+			TextSelection textSelection= (TextSelection) selection;
+			if (textSelection.getOffset() != 0 || textSelection.getLength() != 0)
+				markInNavigationHistory();
+		}
+				
 		StyledText widget= fSourceViewer.getTextWidget();
 		widget.setRedraw(false);
 		{
@@ -3308,19 +3330,30 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		widget.setRedraw(true);
 	}
 	
-	/**
-	 * Writes a check mark of the given situation into the navigation history.
+	/*
+	 * @see org.eclipse.ui.INavigationLocationProvider#createNavigationLocation()
+	 * 2.1 - WORK_IN_PROGRESS do not use.
 	 */
-	protected void markInNavigationHistory() {
-		IWorkbenchPage page= getEditorSite().getPage();
-		page.addNavigationHistoryEntry(this, new TextSelectionNavigationLocation(this));
+	public NavigationLocation createNavigationLocation() {
+		return new TextSelectionNavigationLocation(this);
 	}
 	
 	/**
-	 * Subclasses may extend.	 */
+	 * Writes a check mark of the given situation into the navigation history.
+	 * 2.1 - WORK_IN_PROGRESS do not use.
+	 */
+	protected void markInNavigationHistory() {
+		IWorkbenchPage page= getEditorSite().getPage();
+		page.addNavigationHistoryEntry(this, createNavigationLocation());
+	}
+	
+	/**
+	 * Subclasses may extend.
+	 * 2.1 - WORK_IN_PROGRESS do not use.
+	 */
 	protected void editorSaved() {
 		IWorkbenchPage page= getEditorSite().getPage();
-		NavigationLocation[] locations= page.getNavigationHistoryEntries(this);
+		NavigationLocation[] locations= page.getNavigationHistoryEntries(getEditorInput());
 		for (int i= 0; i < locations.length; i++) {
 			if (locations[i] instanceof TextSelectionNavigationLocation) {
 				TextSelectionNavigationLocation location= (TextSelectionNavigationLocation) locations[i];

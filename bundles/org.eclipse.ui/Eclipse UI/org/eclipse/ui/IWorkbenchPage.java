@@ -653,5 +653,5 @@ public void addNavigationHistoryEntry(IEditorPart part, NavigationLocation entry
 /**
  * 2.1 - WORK_IN_PROGRESS do not use.
  */
-public NavigationLocation[] getNavigationHistoryEntries(IEditorPart part);
+public NavigationLocation[] getNavigationHistoryEntries(IEditorInput input);
 }
