@@ -687,14 +687,14 @@ public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor)
  */
 public void deleteMarkers(String type, boolean includeSubtypes, int depth) throws CoreException {
 	try {
-		workspace.prepareOperation(this, null);
+		workspace.prepareOperation(null, null);
 		ResourceInfo info = getResourceInfo(false, false);
 		checkAccessible(getFlags(info));
 
 		workspace.beginOperation(true);
 		workspace.getMarkerManager().removeMarkers(this, type, includeSubtypes, depth);
 	} finally {
-		workspace.endOperation(this, false, null);
+		workspace.endOperation(null, false, null);
 	}
 }
 /**

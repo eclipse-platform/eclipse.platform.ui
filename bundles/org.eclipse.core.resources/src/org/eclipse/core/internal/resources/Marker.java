@@ -58,11 +58,11 @@ private void checkInfo(MarkerInfo info) throws CoreException {
  */
 public void delete() throws CoreException {
 	try {
-		getWorkspace().prepareOperation(resource, null);
+		getWorkspace().prepareOperation(null, null);
 		getWorkspace().beginOperation(true);
 		getWorkspace().getMarkerManager().removeMarker(getResource(), getId());
 	} finally {
-		getWorkspace().endOperation(resource, false, null);
+		getWorkspace().endOperation(null, false, null);
 	}
 }
 /**
