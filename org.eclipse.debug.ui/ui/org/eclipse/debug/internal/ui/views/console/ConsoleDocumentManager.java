@@ -312,26 +312,23 @@ public class ConsoleDocumentManager implements ILaunchListener {
 			fContentProviders = new HashMap();
 			IPluginDescriptor descriptor = DebugUIPlugin.getDefault().getDescriptor();
 			IExtensionPoint extensionPoint = descriptor.getExtensionPoint(IDebugUIConstants.EXTENSION_POINT_CONSOLE_DOCUMENT_CONTENT_PROVIDERS);
-			IExtension[] extensions = extensionPoint.getExtensions();
-			for (int i = 0; i < extensions.length; i++) {
-				IExtension extension = extensions[i];
-				fContentProviders.put(extension.getUniqueIdentifier(), extension);
+			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
+			for (int i = 0; i < elements.length; i++) {
+				IConfigurationElement extension = elements[i];
+				fContentProviders.put(extension.getAttributeAsIs("id"), extension);
 			}
 		}
-		IExtension extension = (IExtension)fContentProviders.get(identifier);
+		IConfigurationElement extension = (IConfigurationElement)fContentProviders.get(identifier);
 		if (extension != null) {
-			IConfigurationElement[] elements = extension.getConfigurationElements();
-			if (elements.length > 0) {
-				try {
-					Object contentProvider = elements[0].createExecutableExtension("class"); //$NON-NLS-1$
-					if (contentProvider instanceof IConsoleDocumentContentProvider) {
-						return (IConsoleDocumentContentProvider)contentProvider;
-					} else {
-						DebugUIPlugin.logErrorMessage(MessageFormat.format(DebugUIViewsMessages.getString("ConsoleDocumentManager.Invalid_extension_{0}_-_class_must_be_an_instance_of_IConsoleDocumentContentProvider._1"),new String[]{extension.getUniqueIdentifier()} )); //$NON-NLS-1$
-					}
-				} catch (CoreException e) {
-					DebugUIPlugin.log(e);
+			try {
+				Object contentProvider = extension.createExecutableExtension("class"); //$NON-NLS-1$
+				if (contentProvider instanceof IConsoleDocumentContentProvider) {
+					return (IConsoleDocumentContentProvider)contentProvider;
+				} else {
+					DebugUIPlugin.logErrorMessage(MessageFormat.format(DebugUIViewsMessages.getString("ConsoleDocumentManager.Invalid_extension_{0}_-_class_must_be_an_instance_of_IConsoleDocumentContentProvider._1"),new String[]{extension.getDeclaringExtension().getUniqueIdentifier()} )); //$NON-NLS-1$
 				}
+			} catch (CoreException e) {
+				DebugUIPlugin.log(e);
 			}
 		}
 		return null;
