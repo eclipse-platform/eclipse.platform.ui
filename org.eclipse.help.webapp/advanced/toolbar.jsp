@@ -56,6 +56,18 @@ BODY {
 	border-bottom:1px solid ButtonShadow;
 }
 
+.separator {
+	background-color: ThreeDShadow;
+	xpadding-left:2px;
+	height:100%;
+	width: 1px;
+	border-top:2px solid <%=prefs.getToolbarBackground()%>;
+	border-bottom:2px solid <%=prefs.getToolbarBackground()%>;
+	border-left:3px solid <%=prefs.getToolbarBackground()%>;
+	border-right:3px solid <%=prefs.getToolbarBackground()%>;
+	
+}
+
 #container {
 	border-bottom:1px solid ThreeDShadow;
 <%
@@ -184,7 +196,7 @@ if(buttons.length > 0){
 	for (int i=0; i<buttons.length; i++) {
 		if (buttons[i].isSeparator()) {
 %>
-						<td align="middle" valign="middle" width="9">
+						<td align="middle" class="separator" valign="middle">
 						</td>
 <%
 		} else {
