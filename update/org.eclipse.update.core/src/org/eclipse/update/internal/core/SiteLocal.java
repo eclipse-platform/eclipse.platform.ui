@@ -9,6 +9,7 @@ import java.net.URL;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.IInstallConfiguration;
 import org.eclipse.update.core.ILocalSiteChangedListener;
 
 /**
@@ -52,10 +53,10 @@ public class SiteLocal implements ILocalSite {
 	 * is shared between the workspaces.
 	 */
 	private void initialize() throws CoreException {
-		String home = System.getProperty("user.home");
-		File config = new File(home + File.separator + INSTALL_CONFIGURATION_FILE);
+		File config = UpdateManagerPlugin.getPlugin().getStateLocation().append( INSTALL_CONFIGURATION_FILE).toFile();
 		if (config.exists()) {
 			//if the file exists, parse it
+			
 		} else {
 			// FIXME: VK: in the first pass, we always return as the only install
 			// site the install tree we are executing from. Once install 
@@ -101,6 +102,20 @@ public class SiteLocal implements ILocalSite {
 		synchronized (listeners) {
 			listeners.add(listener);
 		}
+	}
+
+	/*
+	 * @see ILocalSite#setCurrentConfiguration(IInstallConfiguration)
+	 */
+	public void setCurrentConfiguration(IInstallConfiguration configuration) {
+		//FIXME: revert
+	}
+
+	/*
+	 * @see ILocalSite#importConfiguration(File)
+	 */
+	public IInstallConfiguration importConfiguration(File importFile) {
+		return null;
 	}
 
 }

@@ -31,8 +31,17 @@ public class SiteManager {
 	
 	/** 
 	 * Returns an site based on the protocol of the URL
+	 * 
 	 * If the Site has a different Type/Site Handler not known up to now,
 	 * it will be discovered when parsing the <code>site.xml</code> file.
+	 * 
+	 * If there is no XML file, and the site is on the file system, we will attempt to 
+	 * discover any feature or archives.
+	 * 
+	 * If a site doesn't exists, it will be created in memory. use <code>ISite.save()</code>
+	 * to persist the site.
+	 * 
+	 * The site is not created in the LocalSite.
 	 * 
 	 * @return the site which maps to this URL
 	 */	

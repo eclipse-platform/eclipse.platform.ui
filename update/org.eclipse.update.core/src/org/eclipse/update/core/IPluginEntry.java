@@ -76,5 +76,27 @@ public interface IPluginEntry {
 	 */
 	String getNL();
 	
+	
+	/**
+	 * Returns the downloadSize
+	 * optional hint supplied by the feature
+	 *  packager, indicating the download size
+	 *  in KBytes of the referenced data archive.
+	 *  If not specified, the download size is not known 
+	 * @return Returns a int
+	 */
+	int getDownloadSize();
+
+
+	/**
+	 * Returns the installSize
+	 * optional hint supplied by the feature
+	 *  packager, indicating the install size in
+	 *  KBytes of the referenced data archive.
+	 *  If not specified, the install size is not known 
+	 * @return Returns a int
+	 */
+	int getInstallSize(); 
+	
 }
 

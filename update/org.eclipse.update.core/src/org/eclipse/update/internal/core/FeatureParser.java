@@ -160,11 +160,16 @@ public class FeatureParser extends DefaultHandler {
 		String nl = attributes.getValue("nl");
 		feature.setNL(nl);
 		
+		//feature.setApplication
+		String application = attributes.getValue("application"); 
+		feature.setApplication(application);		
+		
+		
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
 			UpdateManagerPlugin.getPlugin().debug("End process Feature tag: id:"+id+" ver:"+ver+" label:"+label+" provider:"+provider);
 			UpdateManagerPlugin.getPlugin().debug("End process Feature tag: image:"+imageURL);
-			UpdateManagerPlugin.getPlugin().debug("End process Feature tag: ws:"+ws+" os:"+os+" nl:"+nl); 
+			UpdateManagerPlugin.getPlugin().debug("End process Feature tag: ws:"+ws+" os:"+os+" nl:"+nl+" application:"+application); 
 		}
 	}
 	
@@ -221,12 +226,12 @@ public class FeatureParser extends DefaultHandler {
 		} else {
 		if (match.trim().equalsIgnoreCase("compatible")) 
 			rule = IImport.RULE_COMPATIBLE;
-			else if (match.trim().equalsIgnoreCase("equal")) 
-				rule = IImport.RULE_EQUAL;
+			else if (match.trim().equalsIgnoreCase("perfect")) 
+				rule = IImport.RULE_PERFECT;
 				else	if (match.trim().equalsIgnoreCase("equivalent"))
 					rule = IImport.RULE_EQUIVALENT ;
-					else if (match.trim().equalsIgnoreCase("higher"))
-						rule = IImport.RULE_HIGER; 
+					else if (match.trim().equalsIgnoreCase("greaterOrHigher"))
+						rule = IImport.RULE_GRATER_OR_EQUAL; 
 		}
 		
 		feature.addImport(new DefaultImport(id,ver,rule));

@@ -62,6 +62,11 @@ public abstract class Feature implements IFeature {
 	 * Url and label of site where other informations related to this feature can be found
 	 */
 	private List discoveryInfos;
+	
+	/**
+	 * The primary application 
+	 */
+	private String application;
 
 	/**
 	 * provider of the Feature
@@ -228,6 +233,13 @@ public abstract class Feature implements IFeature {
 		}
 		return result;
 	}
+	
+	/*
+	 * @see IFeature#getApplication()
+	 */
+	public String getApplication() {
+		return application;
+	}
 
 	/**
 	 * @see IFeature#getProvider()
@@ -361,6 +373,14 @@ public abstract class Feature implements IFeature {
 		if (discoveryInfos == null)
 			discoveryInfos = new ArrayList(0);
 		discoveryInfos.add(discoveryInfo);
+	}
+
+	/**
+	 *  Sets the application
+	 * @param application the application to set
+	 */
+	public void setApplication(String application) {
+		this.application = application;
 	}
 
 	/**

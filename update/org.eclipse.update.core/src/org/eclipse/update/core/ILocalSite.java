@@ -1,5 +1,7 @@
 package org.eclipse.update.core;
 
+import java.io.File;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -25,7 +27,7 @@ public interface ILocalSite {
 	 * 
 	 * @return IInstallConfiguration
 	 */	
-	public IInstallConfiguration getCurrentConfiguration();
+	IInstallConfiguration getCurrentConfiguration();
 	
 	/**
 	 * Returns an array of configuration objects representing the local
@@ -34,7 +36,19 @@ public interface ILocalSite {
 	 * @return IInstallConfiguration[] configuration history. Returns
 	 * an empty array is there is no history
 	 */
-	public IInstallConfiguration [] getConfigurationHistory();
+	IInstallConfiguration [] getConfigurationHistory();
+	
+	/**
+	 * Reverts the Current Configuration to the 
+	 * 
+	 * @param IInstallConfiguration the configuration to use
+	 */
+	void setCurrentConfiguration(IInstallConfiguration configuration);
+	
+	/**
+	 * Creates a configuration from a File
+	 */
+	IInstallConfiguration importConfiguration(File importFile);
 	
 	void addLocalSiteChangedListener(ILocalSiteChangedListener listener);
 	void removeLocalSiteChangedListener(ILocalSiteChangedListener listener);

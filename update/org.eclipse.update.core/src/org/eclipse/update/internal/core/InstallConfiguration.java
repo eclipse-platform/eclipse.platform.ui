@@ -3,12 +3,17 @@ package org.eclipse.update.internal.core;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.IActivity;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IFeatureReference;
 import org.eclipse.update.core.IInstallConfigurationChangedListener;
 
 public class InstallConfiguration implements IInstallConfiguration {
@@ -181,6 +186,55 @@ public class InstallConfiguration implements IInstallConfiguration {
 		synchronized (listeners) {
 			listeners.remove(listener);
 		}
+	}
+
+	/*
+	 * @see IInstallConfiguration#getConfiguredFeatures()
+	 */
+	public IFeatureReference[] getConfiguredFeatures() {
+		// FIXME: 
+		return getFeatures();
+	}
+
+	/*
+	 * @see IInstallConfiguration#getUnconfiguredFeatures()
+	 */
+	public IFeatureReference[] getUnconfiguredFeatures() {
+		IFeatureReference[] result = new IFeatureReference[0];
+		// FIXME:
+		return result;
+	}
+
+	/*
+	 * @see IInstallConfiguration#export(File)
+	 */
+	public void export(File exportFile) {
+	}
+
+	/*
+	 * @see IInstallConfiguration#getActivities()
+	 */
+	public IActivity[] getActivities() {
+		return null;
+	}
+
+	/*
+	 * @see IInstallConfiguration#getCreationDate()
+	 */
+	public Date getCreationDate() {
+		return null;
+	}
+
+	/*
+	 * @see IInstallConfiguration#configure(IFeature)
+	 */
+	public void configure(IFeature feature) {
+	}
+
+	/*
+	 * @see IInstallConfiguration#unconfigure(IFeature)
+	 */
+	public void unconfigure(IFeature feature) {
 	}
 
 }

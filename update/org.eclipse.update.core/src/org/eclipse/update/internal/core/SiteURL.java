@@ -120,7 +120,7 @@ public class SiteURL extends Site {
 	}
 
 	/**
-	 * @see AbstractSite#getDefaultFeature(URL)
+	 * @see Site#getDefaultFeature(URL)
 	 */
 	public IFeature getDefaultFeature(URL featureURL) throws CoreException {
 		return new FeaturePackaged(featureURL,this);

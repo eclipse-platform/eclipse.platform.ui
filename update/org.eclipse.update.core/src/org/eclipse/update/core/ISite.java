@@ -68,6 +68,11 @@ public interface ISite extends IPluginContainer {
 	 */
 	void addCategory(ICategory category);
 	
+	/**
+	 * Saves the site in a persitent form
+	 */
+	void save() throws CoreException;
+	
 	
 	
 }

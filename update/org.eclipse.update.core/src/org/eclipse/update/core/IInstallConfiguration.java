@@ -1,5 +1,8 @@
 package org.eclipse.update.core;
 
+import java.io.File;
+import java.util.Date;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -18,12 +21,23 @@ public interface IInstallConfiguration {
 	public boolean isCurrent();
 	
 	/**
-	 * Returns an array of features accessible through this configuration.
+	 * Returns an array of features configured through this configuration.
 	 * 
-	 * @return IFeatureReference[] accessible features. Returns an empty array
-	 * if there are no accessible features
+	 * @return IFeatureReference[] configured features. Returns an empty array
+	 * if there are no configured features
 	 */
-	public IFeatureReference[] getFeatures();
+	public IFeatureReference[] getConfiguredFeatures();
+	
+	/**
+	 * Returns an array of unconfigured features  through this configuration.
+	 * 
+	 * unconfigured Features are accessible by the user but will not be executed.
+	 * 
+	 * @return IFeatureReference[] unconfigured features. Returns an empty array
+	 * if there are no unconfigured features
+	 */
+	public IFeatureReference[] getUnconfiguredFeatures();
+	
 	
 	/**
 	 * Returns an array of local install sites that can be used as 
@@ -80,6 +94,36 @@ public interface IInstallConfiguration {
 	void addInstallConfigurationChangedListener(IInstallConfigurationChangedListener listener);
 	void removeInstallConfigurationChangedListener(IInstallConfigurationChangedListener listener);
 	
+	/**
+	 * Export the configuration to a file
+	 */
+	void export(File exportFile);
+	
+	/**
+	 * Returns the Activities that were performed to get this InstallConfiguration.
+	 * 
+	 * There is always at least one Activity
+	 * 
+	 * 
+	 */
+	IActivity[] getActivities();
+	
+	/**
+	 * retruns the Date at which the Configuration was created
+	 * The date is the local date from the machine that created the Configuration.
+	 */
+	Date getCreationDate();
+	
+	
+	/**
+	 * Configure the Feature to be available at next startup
+	 */
+	void configure(IFeature feature);
+	
+	/**
+	 * Unconfigure the feature from the execution path
+	 */
+	void unconfigure(IFeature feature);
 
 }
 

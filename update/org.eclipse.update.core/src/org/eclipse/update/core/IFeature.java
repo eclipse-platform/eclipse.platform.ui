@@ -230,7 +230,7 @@ public interface IFeature extends IPluginContainer {
 	String[] getArchives();
 	
 	
-		/**
+	/**
 	 * returns the download size
 	 * of the feature to be installed on the site.
 	 * If the site is <code>null</code> returns the maximum size
@@ -250,6 +250,15 @@ public interface IFeature extends IPluginContainer {
 	 * then the install size is unknown and equal to <code>-1</code>.
 	 */
 	long getInstallSize(ISite site) throws CoreException;
+	
+	/**
+	 * optional identifier of the Eclipse application that is to be used during
+     * startup when the declaring feature is the primary feature.
+     *  The application identifier must represent a valid application registered
+     *  in the <code>org.eclipse.core.runtime.applications</code> extension point.
+     *  Default is <code>org.eclipse.ui.workbench</code>.
+     */
+	String getApplication();
 		
 }
 
