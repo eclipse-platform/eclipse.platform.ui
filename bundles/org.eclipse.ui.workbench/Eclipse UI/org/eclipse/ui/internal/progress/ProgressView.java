@@ -11,10 +11,6 @@
 
 package org.eclipse.ui.internal.progress;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Menu;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -25,18 +21,17 @@ import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.internal.ViewSite;
 import org.eclipse.ui.part.ViewPart;
 
-import org.eclipse.ui.internal.ViewSite;
-
 /**
- * The ProgressView is the class that shows the details of the
- * current workbench progress.
+ * The ProgressView is the class that shows the details of the current
+ * workbench progress.
  */
 
 public class ProgressView extends ViewPart implements IViewPart {
@@ -45,11 +40,16 @@ public class ProgressView extends ViewPart implements IViewPart {
 	Action cancelAction;
 	Action deleteAction;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
-		viewer = new ProgressTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer =
+			new ProgressTreeViewer(
+				parent,
+				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setUseHashlookup(true);
 		viewer.setSorter(ProgressManagerUtil.getProgressViewerSorter());
 
@@ -60,7 +60,9 @@ public class ProgressView extends ViewPart implements IViewPart {
 		getSite().setSelectionProvider(viewer);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
@@ -70,7 +72,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 	 * Sets the content provider for the viewer.
 	 */
 	protected void initContentProvider() {
-		IContentProvider provider = new ProgressContentProvider(viewer);
+		IContentProvider provider = new ProgressTreeContentProvider(viewer);
 		viewer.setContentProvider(provider);
 		viewer.setInput(provider);
 	}
@@ -106,14 +108,18 @@ public class ProgressView extends ViewPart implements IViewPart {
 	}
 
 	private void initPulldownMenu() {
-		IMenuManager menuMgr = ((ViewSite) getSite()).getActionBars().getMenuManager();
+		IMenuManager menuMgr =
+			((ViewSite) getSite()).getActionBars().getMenuManager();
 		menuMgr.add(new Action(ProgressMessages.getString("ProgressView.VerboseAction"), IAction.AS_CHECK_BOX) { //$NON-NLS-1$
 
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.jface.action.Action#run()
 			 */
 			public void run() {
-				ProgressViewUpdater updater = ProgressViewUpdater.getSingleton();
+				ProgressViewUpdater updater =
+					ProgressViewUpdater.getSingleton();
 				updater.debug = !updater.debug;
 				setChecked(updater.debug);
 				updater.refreshAll();
@@ -124,8 +130,9 @@ public class ProgressView extends ViewPart implements IViewPart {
 	}
 
 	/**
-	 * Return the selected objects. If any of the selections are 
-	 * not JobInfos or there is no selection then return null.
+	 * Return the selected objects. If any of the selections are not JobInfos
+	 * or there is no selection then return null.
+	 * 
 	 * @return JobInfo[] or <code>null</code>.
 	 */
 	private IStructuredSelection getSelection() {
@@ -142,15 +149,16 @@ public class ProgressView extends ViewPart implements IViewPart {
 	}
 
 	/**
-	 * Get the currently selected job info. Only return 
-	 * it if it is the only item selected and it is a
-	 * JobInfo.
+	 * Get the currently selected job info. Only return it if it is the only
+	 * item selected and it is a JobInfo.
+	 * 
 	 * @return
 	 */
 	JobInfo getSelectedInfo() {
 		IStructuredSelection selection = getSelection();
 		if (selection != null && selection.size() == 1) {
-			JobTreeElement element = (JobTreeElement) selection.getFirstElement();
+			JobTreeElement element =
+				(JobTreeElement) selection.getFirstElement();
 			if (element.isJobInfo())
 				return (JobInfo) element;
 		}
@@ -160,12 +168,15 @@ public class ProgressView extends ViewPart implements IViewPart {
 
 	/**
 	 * Create the cancel action for the receiver.
+	 * 
 	 * @return Action
 	 */
 	private void createCancelAction() {
 			cancelAction = new Action(ProgressMessages.getString("ProgressView.CancelAction")) {//$NON-NLS-1$
-	/* (non-Javadoc)
-	  * @see org.eclipse.jface.action.Action#run()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.action.Action#run()
 	 */
 			public void run() {
 				JobInfo element = getSelectedInfo();
@@ -183,11 +194,14 @@ public class ProgressView extends ViewPart implements IViewPart {
 
 	/**
 	 * Create the delete action for the receiver.
+	 * 
 	 * @return Action
 	 */
 	private void createDeleteAction() {
 			deleteAction = new Action(ProgressMessages.getString("ProgressView.DeleteAction")) {//$NON-NLS-1$
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
 			public void run() {

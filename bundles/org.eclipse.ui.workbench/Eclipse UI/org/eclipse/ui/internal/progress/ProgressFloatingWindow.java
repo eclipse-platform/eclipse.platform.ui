@@ -11,14 +11,13 @@
 package org.eclipse.ui.internal.progress;
 
 import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.internal.AssociatedWindow;
@@ -29,9 +28,8 @@ import org.eclipse.ui.internal.WorkbenchWindow;
  */
 class ProgressFloatingWindow extends AssociatedWindow {
 
-	ProgressTreeViewer viewer;
+	TableViewer viewer;
 	WorkbenchWindow window;
-	boolean verbose = false;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -51,39 +49,15 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	 */
 	protected Control createContents(Composite root) {
 
-		viewer = new ProgressTreeViewer(root, SWT.MULTI) {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.internal.progress.ProgressTreeViewer#createChildren(org.eclipse.swt.widgets.Widget)
+		viewer = new TableViewer(root, SWT.MULTI) {
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.TableViewer#doUpdateItem(org.eclipse.swt.widgets.Widget, java.lang.Object, boolean)
 			 */
-			protected void createChildren(Widget widget) {
-				super.createChildren(widget);
-				adjustSize();
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.AbstractTreeViewer#createTreeItem(org.eclipse.swt.widgets.Widget,
-			 *      java.lang.Object, int)
-			 */
-			protected void createTreeItem(
-				Widget parent,
+			protected void doUpdateItem(
+				Widget widget,
 				Object element,
-				int index) {
-				super.createTreeItem(parent, element, index);
-				adjustSize();
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.internal.progress.ProgressTreeViewer#doUpdateItem(org.eclipse.swt.widgets.Item,
-			 *      java.lang.Object)
-			 */
-			protected void doUpdateItem(Item item, Object element) {
-				super.doUpdateItem(item, element);
+				boolean fullMap) {
+				super.doUpdateItem(widget, element, fullMap);
 				adjustSize();
 			}
 
@@ -91,20 +65,18 @@ class ProgressFloatingWindow extends AssociatedWindow {
 		viewer.setUseHashlookup(true);
 		viewer.setSorter(ProgressManagerUtil.getProgressViewerSorter());
 
-		viewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
+		viewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
 		initContentProvider();
-		ProgressManagerUtil.initLabelProvider(viewer);
-
-		viewer.getTree().addMouseListener(new MouseAdapter() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.MouseAdapter#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
+		viewer.setLabelProvider(new LabelProvider(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 			 */
-			public void mouseDoubleClick(MouseEvent e) {
-				//Toggle the verbosity
-				verbose = !verbose;
-				initContentProvider();
+			public String getText(Object element) {
+				JobInfo info = (JobInfo) element;
+				if(info.hasTaskInfo())
+					return info.getTaskInfo().getDisplayStringWithoutTask();
+				else
+					return info.getJob().getName();
 			}
 		});
 
@@ -116,7 +88,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	 */
 	private void adjustSize() {
 
-		Point size = viewer.getTree().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		Point size = viewer.getTable().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 
 		size.x += 5;
 		size.y += 5;
@@ -132,11 +104,8 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	 * Sets the content provider for the viewer.
 	 */
 	protected void initContentProvider() {
-		IContentProvider provider;
-		if (verbose)
-			provider = new ProgressContentProvider(viewer);
-		else
-			provider = new CondensedProgressContentProvider(viewer);
+		IContentProvider provider = new ProgressTableContentProvider(viewer);
+		
 		viewer.setContentProvider(provider);
 		viewer.setInput(provider);
 	}
