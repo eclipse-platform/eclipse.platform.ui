@@ -65,9 +65,8 @@ public abstract class AbstractElementListSelectionDialog
 
 	/**
 	 * Constructs a list selection dialog.
-	 * @param renderer The label renderer used
-	 * @param ignoreCase Decides if the match string ignores lower/upppr case
-	 * @param multipleSelection Allow multiple selection	 
+	 * @param parent The parent for the list.
+	 * @param renderer ILabelProvider for the list
 	 */
 	protected AbstractElementListSelectionDialog(
 		Shell parent,
@@ -90,6 +89,7 @@ public abstract class AbstractElementListSelectionDialog
 
 	/**
 	 * Specifies if sorting, filtering and folding is case sensitive.
+	 * @param ignoreCase
 	 */
 	public void setIgnoreCase(boolean ignoreCase) {
 		fIgnoreCase = ignoreCase;
@@ -97,6 +97,7 @@ public abstract class AbstractElementListSelectionDialog
 
 	/**
 	 * Returns if sorting, filtering and folding is case sensitive.
+	 * @return boolean
 	 */
 	public boolean isCaseIgnored() {
 		return fIgnoreCase;
@@ -105,6 +106,7 @@ public abstract class AbstractElementListSelectionDialog
 	/**
 	 * Specifies whether everything or nothing should be filtered on
 	 * empty filter string.
+	 * @param matchEmptyString boolean
 	 */
 	public void setMatchEmptyString(boolean matchEmptyString) {
 		fMatchEmptyString = matchEmptyString;
@@ -112,6 +114,7 @@ public abstract class AbstractElementListSelectionDialog
 
 	/**
 	 * Specifies if multiple selection is allowed.
+	 * @param multipleSelection
 	 */
 	public void setMultipleSelection(boolean multipleSelection) {
 		fIsMultipleSelection = multipleSelection;
@@ -119,6 +122,7 @@ public abstract class AbstractElementListSelectionDialog
 
 	/**
 	 * Specifies whether duplicate entries are displayed or not.
+	 * @param allowDuplicates
 	 */
 	public void setAllowDuplicates(boolean allowDuplicates) {
 		fAllowDuplicates = allowDuplicates;
@@ -272,6 +276,8 @@ public abstract class AbstractElementListSelectionDialog
 	/**
 	 * Validates the current selection and updates the status line
 	 * accordingly.
+	 * @return boolean <code>true</code> if the current selection is
+	 * valid.
 	 */
 	protected boolean validateCurrentSelection() {
 		Assert.isNotNull(fFilteredList);

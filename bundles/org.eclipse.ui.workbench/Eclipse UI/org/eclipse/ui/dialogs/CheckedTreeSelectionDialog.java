@@ -1,5 +1,5 @@
 /******************************************************************************* 
- * Copyright (c) 2000, 2003 IBM Corporation and others. 
+ * Copyright (c) 2000, 2004 IBM Corporation and others. 
  * All rights reserved. This program and the accompanying materials! 
  * are made available under the terms of the Common Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -65,6 +65,8 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 	/**
 	 * Constructs an instance of <code>ElementTreeSelectionDialog</code>.
 	 * 
+	 * @param parent
+	 *            The shell to parent from.
 	 * @param labelProvider
 	 *            the label provider to render the entries
 	 * @param contentProvider
@@ -112,6 +114,8 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 	}
 	/**
 	 * Sets the sorter used by the tree viewer.
+	 * 
+	 * @param sorter
 	 */
 	public void setSorter(ViewerSorter sorter) {
 		fSorter = sorter;
@@ -147,7 +151,10 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 		fInput = input;
 	}
 	/**
-	 * Expands the tree
+	 * Expands elements in the tree.
+	 * 
+	 * @param elements
+	 *            The elements that will be expanded.
 	 */
 	public void setExpandedElements(Object[] elements) {
 		fExpandedElements = elements;
@@ -282,6 +289,7 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 	 * 
 	 * @param composite
 	 *            the parent composite
+	 * @return Composite the composite the buttons were created in.
 	 */
 	protected Composite createSelectionButtons(Composite composite) {
 		Composite buttonComposite = new Composite(composite, SWT.RIGHT);
@@ -313,7 +321,7 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 		Button deselectButton = createButton(buttonComposite,
 				IDialogConstants.DESELECT_ALL_ID, WorkbenchMessages
 						.getString("CheckedTreeSelectionDialog.deselect_all"),//$NON-NLS-1$	
-				false); 
+				false);
 		listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fViewer.setCheckedElements(new Object[0]);

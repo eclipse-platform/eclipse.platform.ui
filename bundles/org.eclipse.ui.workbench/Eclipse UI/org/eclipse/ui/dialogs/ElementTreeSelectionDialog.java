@@ -1,5 +1,5 @@
 /******************************************************************************* 
- * Copyright (c) 2000, 2003 IBM Corporation and others. 
+ * Copyright (c) 2000, 2004 IBM Corporation and others. 
  * All rights reserved. This program and the accompanying materials! 
  * are made available under the terms of the Common Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -56,6 +56,7 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Constructs an instance of <code>ElementTreeSelectionDialog</code>.
+	 * @param parent The parent shell for the dialog
 	 * @param labelProvider   the label provider to render the entries
 	 * @param contentProvider the content provider to evaluate the tree structure
 	 */
@@ -94,6 +95,7 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Specifies if multiple selection is allowed.
+	 * @param allowMultiple
 	 */
 	public void setAllowMultiple(boolean allowMultiple) {
 		fAllowMultiple = allowMultiple;
@@ -101,6 +103,7 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Specifies if default selected events (double click) are created.
+	 * @param doubleClickSelects
 	 */
 	public void setDoubleClickSelects(boolean doubleClickSelects) {
 		fDoubleClickSelects = doubleClickSelects;
@@ -108,6 +111,7 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Sets the sorter used by the tree viewer.
+	 * @param sorter
 	 */
 	public void setSorter(ViewerSorter sorter) {
 		fSorter = sorter;
