@@ -104,6 +104,16 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 		} catch (CVSException e) {
 			tree.failed(e.getStatus());
 		}
+		
+		// Move the CVS folder if appropriate (delta listeners will handle removal if required)
+		if (destination != null) {
+			IFolder cvsFolder = source.getFolder(SyncFileWriter.CVS_DIRNAME);
+			if (cvsFolder.exists()) {
+				tree.standardMoveFolder(cvsFolder, destination.getFolder(SyncFileWriter.CVS_DIRNAME), updateFlags, monitor);
+			}
+		}
+		
+		// delete the orginal folder
 		tree.standardDeleteFolder(source, updateFlags, monitor);
 				
 		return;

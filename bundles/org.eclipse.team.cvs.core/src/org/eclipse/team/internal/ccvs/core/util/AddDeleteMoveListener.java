@@ -28,6 +28,7 @@ import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
@@ -37,6 +38,7 @@ import org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
@@ -106,7 +108,16 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 		try {
 			ICVSFolder mFolder = CVSWorkspaceRoot.getCVSFolderFor((IContainer)resource);
 			if (mFolder.isCVSFolder() && ! mFolder.isManaged() && mFolder.getIResource().getParent().getType() != IResource.ROOT) {
-				mFolder.unmanage(null);
+				// Determine whether the new folder can be managed by the parent
+				ICVSFolder projectFolder = CVSWorkspaceRoot.getCVSFolderFor(resource.getProject());
+				String root = projectFolder.getFolderSyncInfo().getRoot();
+				if (root.equals(mFolder.getFolderSyncInfo().getRoot())
+					&& promptToManageFolder(mFolder)) {
+					// The user indicated that they would like the new folder managed
+					manageFolder(mFolder, root);
+				} else {
+					mFolder.unmanage(null);
+				}
 				return true;
 			}
 		} catch (CVSException e) {
@@ -114,8 +125,43 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 		}
 		return false;
 	}
+
+	/**
+	 * Method manageFolder.
+	 * @param mFolder
+	 */
+	private void manageFolder(ICVSFolder mFolder, String root) throws CVSException {
+		ICVSFolder parent = mFolder.getParent();
+		if (!parent.isCVSFolder()) {
+			// set the folder sync appropriately and manage the parent folder
+			parent.setFolderSyncInfo(new FolderSyncInfo(FolderSyncInfo.VIRTUAL_DIRECTORY, root, CVSTag.DEFAULT, true));
+			manageFolder(parent, root);
+		}
+		mFolder.setSyncInfo(new ResourceSyncInfo(mFolder.getName()));
+	}
 	
+	public interface IManageFolderPrompter {
+		public boolean promptToManageFolder(ICVSFolder mFolder);
+	}
 	
+	private IManageFolderPrompter manageFolderPrompter;
+	
+	public void setManageFolderPrompter(IManageFolderPrompter manageFolderPrompter) {
+		this.manageFolderPrompter = manageFolderPrompter;
+	}
+
+	/**
+	 * Method promptToManageFolder.
+	 * @param mFolder
+	 * @return boolean
+	 */
+	private boolean promptToManageFolder(ICVSFolder mFolder) {
+		if (manageFolderPrompter == null)
+			return false;
+		else
+			return manageFolderPrompter.promptToManageFolder(mFolder);
+	}
+
 	/*
 	 * Mark deleted managed files as outgoing deletions
 	 */
