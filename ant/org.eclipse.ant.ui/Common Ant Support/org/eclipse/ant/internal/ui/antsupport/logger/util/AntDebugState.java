@@ -161,8 +161,11 @@ public class AntDebugState implements IDebugBuildLogger {
 	public Map getProperties() {
 		return fProperties;
 	}
-
-	public void updateProperties() {
-		fProperties= ((Task)getTasks().peek()).getProject().getProperties();
+	
+	public void marshalProperties(StringBuffer propertiesRepresentation, boolean marshalLineSeparator) {
+		if (!getTasks().isEmpty()) {
+			AntDebugUtil.marshallProperties(propertiesRepresentation, this, marshalLineSeparator);
+			fProperties= ((Task)getTasks().peek()).getProject().getProperties();
+		}
 	}
 }

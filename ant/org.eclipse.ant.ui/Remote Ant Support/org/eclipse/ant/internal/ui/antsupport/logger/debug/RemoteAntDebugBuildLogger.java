@@ -289,10 +289,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 	
 	protected void marshallProperties() {
 	    StringBuffer propertiesRepresentation= new StringBuffer();
-        if (!fDebugState.getTasks().isEmpty()) {
-            AntDebugUtil.marshallProperties(propertiesRepresentation, fDebugState, false);
-            fDebugState.updateProperties();
-        }
+		fDebugState.marshalProperties(propertiesRepresentation, false);
 	    sendRequestResponse(propertiesRepresentation.toString());
 	}
 	

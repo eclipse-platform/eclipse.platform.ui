@@ -155,10 +155,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 			return;
 		}
 	    StringBuffer propertiesRepresentation= new StringBuffer();
-	    if (!fDebugState.getTasks().isEmpty()) {
-	        AntDebugUtil.marshallProperties(propertiesRepresentation, fDebugState, true);
-	        fDebugState.updateProperties();
-	    }
+		fDebugState.marshalProperties(propertiesRepresentation, true);
 		if (fAntDebugTarget.getThreads().length > 0) {
 			((AntThread) fAntDebugTarget.getThreads()[0]).newProperties(propertiesRepresentation.toString());
 		}
