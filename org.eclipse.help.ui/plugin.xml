@@ -8,7 +8,7 @@
 	name = "%help_system_plugin_name"
 	id = "org.eclipse.help.ui"
 	version = "2.0.0"
-	provider-name = "International Business Machines Corp."
+	provider-name = "%providerName"
 	class="org.eclipse.help.internal.ui.WorkbenchHelpPlugin">
 
 	<requires>

@@ -10,7 +10,7 @@
    name = "%help_plugin_name"
    id = "org.eclipse.help.webapp"
    version = "2.0.0"
-   provider-name = "International Business Machines Corp.">
+   provider-name = "%providerName">
 
    <requires>
       <import plugin="org.eclipse.core.runtime"/>
