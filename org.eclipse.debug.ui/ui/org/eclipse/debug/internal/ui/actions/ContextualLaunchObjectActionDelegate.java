@@ -239,7 +239,7 @@ public class ContextualLaunchObjectActionDelegate
 			Pair pair = (Pair) iter.next();
 			String name = pair.firstAsString();
 			String value= pair.secondAsString();
-			Object target = (Object) fSelection;
+			Object target = fSelection;
 			// any filter that returns false makes the shortcut non-visible
 			if (!actionFilter.testAttribute(target,name,value)) {
 				return false;
