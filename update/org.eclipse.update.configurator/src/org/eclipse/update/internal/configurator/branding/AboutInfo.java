@@ -67,10 +67,11 @@ public final class AboutInfo {
 //		Assert.isNotNull(pluginId);
 		IniFileReader reader = new IniFileReader(featureId, pluginId, INI_FILENAME, PROPERTIES_FILENAME, MAPPINGS_FILENAME);
 		IStatus status = reader.load();
-		if (!status.isOK()) {
-			//return null;
-			return new AboutInfo(featureId); // dummy about info
-		}
+// bug 78031
+//		if (!status.isOK()) {
+//			//return null;
+//			return new AboutInfo(featureId); // dummy about info
+//		}
 		
 		AboutInfo info = new AboutInfo(featureId);
 		Hashtable runtimeMappings  = new Hashtable();
