@@ -86,7 +86,8 @@ public class WorkingSetDescriptor {
 			return null;
 		URL url;
 		try {
-			url= new URL(WorkbenchPlugin.getDefault().getDescriptor().getInstallURL(), icon);
+			URL pluginInstallUrl = configElement.getDeclaringExtension().getDeclaringPluginDescriptor().getInstallURL();			
+			url= new URL(pluginInstallUrl, icon);
 		} catch (MalformedURLException exception) {
 			WorkbenchPlugin.log("Unable to load working set icon"); //$NON-NLS-1$
 			return null;
