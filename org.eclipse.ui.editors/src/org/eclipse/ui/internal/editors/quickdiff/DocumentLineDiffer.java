@@ -20,6 +20,7 @@ import java.util.SortedMap;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.swt.graphics.GC;
@@ -548,7 +549,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			public IStatus run(IProgressMonitor monitor) {
 				final IDocument reference= fReferenceProvider == null ? null : fReferenceProvider.getReference();
 				if (monitor != null && monitor.isCanceled())
-					return ASYNC_FINISH;
+					return Status.CANCEL_STATUS;
 
 				if (reference == null)
 					return signalDone();
@@ -583,8 +584,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			}
 			
 			private IStatus signalDone() {
-				done(ASYNC_FINISH);
-				return ASYNC_FINISH;
+				return Status.OK_STATUS;
+//				done(ASYNC_FINISH);
+//				return ASYNC_FINISH;
 			}
 			
 		};
