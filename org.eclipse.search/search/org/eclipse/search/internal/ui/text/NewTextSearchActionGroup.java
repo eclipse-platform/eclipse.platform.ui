@@ -11,26 +11,23 @@
 package org.eclipse.search.internal.ui.text;
 
 import org.eclipse.core.runtime.IAdaptable;
-
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-
+import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.ui.actions.OpenFileAction;
 import org.eclipse.ui.actions.OpenWithMenu;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
-
-import org.eclipse.search.ui.IContextMenuConstants;
-
-import org.eclipse.search.internal.ui.SearchMessages;
 
 /**
  * Action group that adds the Text search actions to a context menu and
@@ -46,6 +43,7 @@ class NewTextSearchActionGroup extends ActionGroup {
 
 	private ISelectionProvider fSelectionProvider;		
 	private IWorkbenchPage fPage;
+	private OpenFileAction fOpenAction;
 	private PropertyDialogAction fOpenPropertiesDialog;
 
 	public NewTextSearchActionGroup(IViewPart part) {
@@ -54,13 +52,14 @@ class NewTextSearchActionGroup extends ActionGroup {
 		fSelectionProvider= site.getSelectionProvider();
 		fPage= site.getPage();
 		fOpenPropertiesDialog= new PropertyDialogAction(site.getShell(), fSelectionProvider);
-
+		fOpenAction= new OpenFileAction(fPage);
 		ISelection selection= fSelectionProvider.getSelection();
 
 		if (selection instanceof IStructuredSelection)
 			fOpenPropertiesDialog.selectionChanged((IStructuredSelection)selection);
 		else
 			fOpenPropertiesDialog.selectionChanged(selection);
+		
 	}
 	
 	public void fillContextMenu(IMenuManager menu) {
@@ -83,6 +82,9 @@ class NewTextSearchActionGroup extends ActionGroup {
 	
 		if (!(o instanceof IAdaptable))
 			return; 
+	
+		fOpenAction.selectionChanged(selection);
+		menu.appendToGroup(IContextMenuConstants.GROUP_OPEN, fOpenAction);
 	
 		// Create menu
 		IMenuManager submenu= new MenuManager(SearchMessages.getString("OpenWithMenu.label")); //$NON-NLS-1$
