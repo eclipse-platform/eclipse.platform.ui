@@ -110,6 +110,47 @@ public class LogConsoleDocument {
 		for(int i=0; i<views.size(); i++) {
 			((LogConsoleView)views.get(i)).refreshTree();
 		}
+	}	
+	
+	/**
+	 * Returns the color used for error messages on the log console.
+	 */
+	private static Color getErrorColor() {
+		if (ERROR_COLOR == null || ERROR_COLOR.isDisposed())
+			ERROR_COLOR = new Color(null, PreferenceConverter.getColor(ExternalToolsPlugin.getDefault().getPreferenceStore(),IPreferenceConstants.CONSOLE_ERROR_RGB));
+		return ERROR_COLOR;
+	}
+	/**
+	 * Returns the color used for warning messages on the log console.
+	 */
+	private static Color getWarnColor() {
+		if (WARN_COLOR == null || WARN_COLOR.isDisposed())
+			WARN_COLOR = new Color(null, PreferenceConverter.getColor(ExternalToolsPlugin.getDefault().getPreferenceStore(),IPreferenceConstants.CONSOLE_WARNING_RGB));	
+		return WARN_COLOR;
+	}
+	/**
+	 * Returns the color used for info (normal) messages on the log console.
+	 */
+	private static Color getInfoColor() {
+		if (INFO_COLOR == null || INFO_COLOR.isDisposed())
+			INFO_COLOR = new Color(null, PreferenceConverter.getColor(ExternalToolsPlugin.getDefault().getPreferenceStore(),IPreferenceConstants.CONSOLE_INFO_RGB));		
+		return INFO_COLOR;
+	}
+	/**
+	 * Returns the color used for verbose messages on the log console.
+	 */
+	private static Color getVerboseColor() {
+		if (VERBOSE_COLOR == null || VERBOSE_COLOR.isDisposed())
+			VERBOSE_COLOR = new Color(null, PreferenceConverter.getColor(ExternalToolsPlugin.getDefault().getPreferenceStore(),IPreferenceConstants.CONSOLE_VERBOSE_RGB));		
+		return VERBOSE_COLOR;
+	}
+	/**
+	 * Returns the color used for debug messages on the log console.
+	 */
+	private static Color getDebugColor() {
+		if (DEBUG_COLOR == null || DEBUG_COLOR.isDisposed())
+			DEBUG_COLOR = new Color(null, PreferenceConverter.getColor(ExternalToolsPlugin.getDefault().getPreferenceStore(),IPreferenceConstants.CONSOLE_DEBUG_RGB));	
+		return DEBUG_COLOR;
 	}
 	
 	public Display getDisplay() {
@@ -152,30 +193,18 @@ public class LogConsoleDocument {
 	
 	public void registerView(LogConsoleView view) {
 		if (!hasViews()) {
-		// first time there is an instance of this class: intantiate the colors and register the listener
-		ERROR_COLOR = new Color(null, PreferenceConverter.getColor(ExternalToolsPlugin.getDefault().getPreferenceStore(),IPreferenceConstants.CONSOLE_ERROR_RGB));
-		WARN_COLOR = new Color(null, PreferenceConverter.getColor(ExternalToolsPlugin.getDefault().getPreferenceStore(),IPreferenceConstants.CONSOLE_WARNING_RGB));
-		INFO_COLOR = new Color(null, PreferenceConverter.getColor(ExternalToolsPlugin.getDefault().getPreferenceStore(),IPreferenceConstants.CONSOLE_INFO_RGB));
-		VERBOSE_COLOR = new Color(null, PreferenceConverter.getColor(ExternalToolsPlugin.getDefault().getPreferenceStore(),IPreferenceConstants.CONSOLE_VERBOSE_RGB));
-		DEBUG_COLOR = new Color(null, PreferenceConverter.getColor(ExternalToolsPlugin.getDefault().getPreferenceStore(),IPreferenceConstants.CONSOLE_DEBUG_RGB));
-		ANT_FONT = new Font(null, PreferenceConverter.getFontData(ExternalToolsPlugin.getDefault().getPreferenceStore(),IPreferenceConstants.CONSOLE_FONT));
-	
-		ExternalToolsPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(changeListener);
-	}
+			// first time there is an instance of this class: intantiate the font and register the listener
+			ANT_FONT = new Font(null, PreferenceConverter.getFontData(ExternalToolsPlugin.getDefault().getPreferenceStore(),IPreferenceConstants.CONSOLE_FONT));
+			ExternalToolsPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(changeListener);
+		}
 		views.add(view);	
 	}
 	
 	public void unregisterView(LogConsoleView view) {
 		views.remove(view);	
 		if (! hasViews()) {
-			// all the consoles are diposed: we can dispose the colors as well and remove the property listener
-			ERROR_COLOR.dispose();
-			WARN_COLOR.dispose();
-			INFO_COLOR.dispose();
-			VERBOSE_COLOR.dispose();
-			DEBUG_COLOR.dispose();
+			// all the consoles are diposed: we can dispose the font and remove the property listener
 			ANT_FONT.dispose();
-			
 			ExternalToolsPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(changeListener);
 		}
 	}
@@ -193,22 +222,33 @@ public class LogConsoleDocument {
 	/*package*/ void setOutputLevelColor(int level, int start, int end) {
 		switch (level) {
 			case LogConsoleDocument.MSG_ERR: 
-				addRangeStyle(start, end, LogConsoleDocument.ERROR_COLOR); 
+				addRangeStyle(start, end, getErrorColor()); 
 				break;
 			case LogConsoleDocument.MSG_WARN: 
-				addRangeStyle(start, end, LogConsoleDocument.WARN_COLOR); 
+				addRangeStyle(start, end, getWarnColor()); 
 				break;
 			case LogConsoleDocument.MSG_INFO: 
-				addRangeStyle(start, end, LogConsoleDocument.INFO_COLOR); 
+				addRangeStyle(start, end, getInfoColor()); 
 				break;
 			case LogConsoleDocument.MSG_VERBOSE: 
-				addRangeStyle(start, end, LogConsoleDocument.VERBOSE_COLOR); 
+				addRangeStyle(start, end, getVerboseColor()); 
 				break;
 			case LogConsoleDocument.MSG_DEBUG: 
-				addRangeStyle(start, end, LogConsoleDocument.DEBUG_COLOR); 
+				addRangeStyle(start, end, getDebugColor()); 
 				break;
 			default: 
-				addRangeStyle(start, end, LogConsoleDocument.INFO_COLOR);
+				addRangeStyle(start, end, getInfoColor());
+		}
+	}
+	
+	/**
+	 * Replaces the old color with the new one in all style ranges,
+	 */
+	private void updateStyleRanges(Color oldColor, Color newColor) {
+		for (int i=0; i<styleRanges.size(); i++) {
+			StyleRange range = (StyleRange)styleRanges.get(i);
+			if (range.foreground == oldColor)
+				range.foreground = newColor;
 		}
 	}
 
@@ -225,30 +265,40 @@ public class LogConsoleDocument {
 				String propertyName= event.getProperty();
 			
 				if (propertyName.equals(IPreferenceConstants.CONSOLE_ERROR_RGB)) {
-					Color temp = LogConsoleDocument.ERROR_COLOR;
+					if (LogConsoleDocument.ERROR_COLOR == null)
+						return;
+					Color temp = getErrorColor();
 					LogConsoleDocument.ERROR_COLOR = ToolsPreferencePage.getPreferenceColor(IPreferenceConstants.CONSOLE_ERROR_RGB);
+					updateStyleRanges(temp, getErrorColor());
 					temp.dispose();
-					clearOutput();
 				} else if (propertyName.equals(IPreferenceConstants.CONSOLE_WARNING_RGB)) {
-					Color temp = LogConsoleDocument.WARN_COLOR;
+					if (LogConsoleDocument.WARN_COLOR == null)
+						return;
+					Color temp = getWarnColor();
 					LogConsoleDocument.WARN_COLOR = ToolsPreferencePage.getPreferenceColor(IPreferenceConstants.CONSOLE_WARNING_RGB);
+					updateStyleRanges(temp, getWarnColor());
 					temp.dispose();
-					clearOutput();
 				} else if (propertyName.equals(IPreferenceConstants.CONSOLE_INFO_RGB)) {
-					Color temp = LogConsoleDocument.INFO_COLOR;
+					if (LogConsoleDocument.INFO_COLOR == null)
+						return;
+					Color temp = getInfoColor();
 					LogConsoleDocument.INFO_COLOR = ToolsPreferencePage.getPreferenceColor(IPreferenceConstants.CONSOLE_INFO_RGB);
+					updateStyleRanges(temp, getInfoColor());
 					temp.dispose();
-					clearOutput();
 				} else if (propertyName.equals(IPreferenceConstants.CONSOLE_VERBOSE_RGB)) {
-					Color temp = LogConsoleDocument.VERBOSE_COLOR;
+					if (LogConsoleDocument.VERBOSE_COLOR == null)
+						return;
+					Color temp = getVerboseColor();
 					LogConsoleDocument.VERBOSE_COLOR = ToolsPreferencePage.getPreferenceColor(IPreferenceConstants.CONSOLE_VERBOSE_RGB);
+					updateStyleRanges(temp, getVerboseColor());
 					temp.dispose();
-					clearOutput();
 				} else if (propertyName.equals(IPreferenceConstants.CONSOLE_DEBUG_RGB)) {
-					Color temp = LogConsoleDocument.DEBUG_COLOR;
+					if (LogConsoleDocument.DEBUG_COLOR == null)
+						return;
+					Color temp = getDebugColor();
 					LogConsoleDocument.DEBUG_COLOR = ToolsPreferencePage.getPreferenceColor(IPreferenceConstants.CONSOLE_DEBUG_RGB);
+					updateStyleRanges(temp, getDebugColor());
 					temp.dispose();
-					clearOutput();
 				} else if (propertyName.equals(IPreferenceConstants.CONSOLE_FONT)) {
 					FontData data= ToolsPreferencePage.getConsoleFontData();
 					Font temp= LogConsoleDocument.ANT_FONT;
