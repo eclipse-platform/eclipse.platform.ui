@@ -43,9 +43,8 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 	/**
 	 * Property key used in the property change event fired when the pinned
 	 * state of a participant changes.
-	 * TODO: Make public once approval is recieved
 	 */
-	private static final String P_PINNED = "org.eclipse.team.pinned"; //$NON-NLS-1$
+	public static final String P_PINNED = "org.eclipse.team.pinned"; //$NON-NLS-1$
 	
 	private final static String CTX_PINNED = "root"; //$NON-NLS-1$
 	
