@@ -4,27 +4,29 @@
  */
 package org.eclipse.search.internal.ui;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
-
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.StringConverter;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 
-import org.eclipse.search.internal.ui.util.ExceptionHandler;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
+
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.StringConverter;
+
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageScoreComputer;
 import org.eclipse.search.ui.ISearchResultViewEntry;
+
+import org.eclipse.search.internal.ui.util.ExceptionHandler;
 
 /**
  * Proxy that represents a search page.
@@ -42,6 +44,12 @@ class SearchPageDescriptor implements Comparable {
 	private final static String SHOW_SCOPE_SECTION_ATTRIBUTE= "showScopeSection"; //$NON-NLS-1$
 	
 	public final static Point UNKNOWN_SIZE= new Point(SWT.DEFAULT, SWT.DEFAULT);
+
+	// dialog store id constants
+	private final static String SECTION_ID= "Search"; //$NON-NLS-1$
+	private final static String STORE_ENABLED_PAGE_IDS= SECTION_ID + ".enabledPageIds"; //$NON-NLS-1$
+	
+	private static List fgEnabledPageIds;
 	
 	private IConfigurationElement fElement;
 	
@@ -149,6 +157,40 @@ class SearchPageDescriptor implements Comparable {
 			// position is Integer.MAX_VALUE;
 		}
 		return position;
+	}
+
+	boolean isEnabled() {
+		return getEnabledPageIds().contains(getId());
+	}
+
+	static void setEnabled(Object[] enabledDescriptors) {
+		fgEnabledPageIds= new ArrayList(5);
+		for (int i= 0; i < enabledDescriptors.length; i++) {
+			if (enabledDescriptors[i] instanceof SearchPageDescriptor)
+				fgEnabledPageIds.add(((SearchPageDescriptor)enabledDescriptors[i]).getId());
+		}
+		getDialogSettings().put(STORE_ENABLED_PAGE_IDS, (String[])fgEnabledPageIds.toArray(new String[fgEnabledPageIds.size()]));
+	}
+
+	private static List getEnabledPageIds() {
+		if (fgEnabledPageIds == null) {
+			String[] pageIds= getDialogSettings().getArray(STORE_ENABLED_PAGE_IDS);
+			if (pageIds == null)
+				// Enable all pages
+				setEnabled(SearchPlugin.getDefault().getSearchPageDescriptors().toArray());
+			else
+				fgEnabledPageIds= Arrays.asList(pageIds);
+		}
+		return fgEnabledPageIds;
+	}
+
+	private static IDialogSettings getDialogSettings() {
+		IDialogSettings settings= SearchPlugin.getDefault().getDialogSettings();
+		IDialogSettings section= settings.getSection(SECTION_ID);
+		if (section == null)
+			// create new section
+			section= settings.addNewSection(SECTION_ID);
+		return section;
 	}
 
 	/* 

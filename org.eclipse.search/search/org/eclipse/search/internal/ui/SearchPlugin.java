@@ -6,6 +6,7 @@ package org.eclipse.search.internal.ui;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IWorkspace;
@@ -200,6 +201,20 @@ public class SearchPlugin extends AbstractUIPlugin {
 			fPageDescriptors= createSearchPageDescriptors(elements);
 		}	
 		return fPageDescriptors;
+	} 
+
+	/**
+	 * Returns all search pages contributed to the workbench.
+	 */
+	public List getEnabledSearchPageDescriptors() {
+		Iterator iter= getSearchPageDescriptors().iterator();
+		List enabledDescriptors= new ArrayList(5);
+		while (iter.hasNext()) {
+			SearchPageDescriptor desc= (SearchPageDescriptor)iter.next();
+			if (desc.isEnabled())
+				enabledDescriptors.add(desc);
+		}
+		return enabledDescriptors;
 	} 
 
 	/**
