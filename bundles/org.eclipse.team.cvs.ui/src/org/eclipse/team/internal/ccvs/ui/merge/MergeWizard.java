@@ -26,7 +26,8 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ui.sync.views.SyncViewer;
+import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.sync.ISyncViewer;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -80,7 +81,8 @@ public class MergeWizard extends Wizard {
 						TeamProvider.registerSubscriber(s);
 				}
 			});
-			SyncViewer.showInActivePage(null /* no default page */, s);
+			ISyncViewer view = TeamUI.showSyncViewInActivePage(null /* no default page */);
+			view.setSelection(s, new IResource[0], view.getCurrentViewType());
 		} catch (InvocationTargetException e) {
 			CVSUIPlugin.openError(getContainer().getShell(), null, null, e);
 			return false;

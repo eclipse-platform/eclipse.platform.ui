@@ -51,10 +51,10 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareUnsharedInput;
-import org.eclipse.team.internal.ui.sync.SyncView;
 import org.eclipse.team.ui.IConfigurationWizard;
+import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.sync.ISyncViewer;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
 
 /**
  * This wizard helps the user to import a new project in their workspace
@@ -274,38 +274,37 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 			});
 			if (doSync[0]) {
 				// Sync of the project
-				IWorkbenchPage activePage = null; /* not sure how to get the active page */
-				SyncView view = SyncView.findViewInActivePage(activePage);
-				if (view != null) {
-					CVSSyncCompareInput input;
-					if (projectExists[0]) {
-						try {
-							String moduleName = getModuleName();
-							CVSTag tag;
-							if (autoconnectPage == null) {
-								TagSelectionDialog dialog = new TagSelectionDialog(getShell(), 
-									new ICVSFolder[] {(ICVSFolder)getLocation().getRemoteFolder(moduleName, null)}, 
-									Policy.bind("SharingWizard.selectTagTitle"),  //$NON-NLS-1$
-									Policy.bind("SharingWizard.selectTag"), //$NON-NLS-1$
-									TagSelectionDialog.INCLUDE_HEAD_TAG | TagSelectionDialog.INCLUDE_BRANCHES, 
-									false, /*don't show recurse option*/
-									IHelpContextIds.SHARE_WITH_EXISTING_TAG_SELETION_DIALOG);
-								dialog.setBlockOnOpen(true);
-								if (dialog.open() == Dialog.CANCEL) {
-									return false;
-								}
-								tag = dialog.getResult();
-							} else {
-								tag = autoconnectPage.getSharing().getTag();
+				CVSSyncCompareInput input;
+				if (projectExists[0]) {
+					try {
+						String moduleName = getModuleName();
+						CVSTag tag;
+						if (autoconnectPage == null) {
+							TagSelectionDialog dialog = new TagSelectionDialog(getShell(), 
+								new ICVSFolder[] {(ICVSFolder)getLocation().getRemoteFolder(moduleName, null)}, 
+								Policy.bind("SharingWizard.selectTagTitle"),  //$NON-NLS-1$
+								Policy.bind("SharingWizard.selectTag"), //$NON-NLS-1$
+								TagSelectionDialog.INCLUDE_HEAD_TAG | TagSelectionDialog.INCLUDE_BRANCHES, 
+								false, /*don't show recurse option*/
+								IHelpContextIds.SHARE_WITH_EXISTING_TAG_SELETION_DIALOG);
+							dialog.setBlockOnOpen(true);
+							if (dialog.open() == Dialog.CANCEL) {
+								return false;
 							}
-							input = new CVSSyncCompareUnsharedInput(project, getLocation(), moduleName, tag);
-						} catch (TeamException e) {
-							throw new InvocationTargetException(e);
+							tag = dialog.getResult();
+						} else {
+							tag = autoconnectPage.getSharing().getTag();
 						}
-					} else {
-						input = new CVSSyncCompareInput(new IResource[] {project});
+						input = new CVSSyncCompareUnsharedInput(project, getLocation(), moduleName, tag);
+					} catch (TeamException e) {
+						throw new InvocationTargetException(e);
 					}
-					view.showSync(input, activePage);
+				} else {
+					input = new CVSSyncCompareInput(new IResource[] {project});
+				}
+				ISyncViewer view = TeamUI.showSyncViewInActivePage(null);
+				if(view != null) {
+					view.setSelection(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), new IResource[] {project}, ISyncViewer.TREE_VIEW);
 				}
 			}
 		} catch (InterruptedException e) {

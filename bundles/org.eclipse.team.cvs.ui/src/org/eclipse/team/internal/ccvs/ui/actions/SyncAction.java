@@ -15,10 +15,11 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSWorkspaceSubscriber;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
-import org.eclipse.team.internal.ui.sync.SyncCompareInput;
-import org.eclipse.team.internal.ui.sync.SyncView;
+import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.sync.ISyncViewer;
 
 /**
  * Action for catchup/release in popup menus.
@@ -26,22 +27,15 @@ import org.eclipse.team.internal.ui.sync.SyncView;
 public class SyncAction extends WorkspaceAction {
 	
 	public void execute(IAction action) throws InvocationTargetException {
-		try {
-			IResource[] resources = getResourcesToSync();
-			if (resources == null || resources.length == 0) return;
-			SyncCompareInput input = getCompareInput(resources);
-			if (input == null) return;
-			SyncView view = SyncView.findViewInActivePage(getTargetPage());
-			if (view != null) {
-				view.showSync(input, getTargetPage());
-			}
-		} catch (CVSException e) {
-			throw new InvocationTargetException(e);
+		IResource[] resources = getResourcesToSync();
+		if (resources == null || resources.length == 0) return;
+		
+		ISyncViewer view = TeamUI.showSyncViewInActivePage(null);
+		if(view != null) {
+			CVSWorkspaceSubscriber cvsWorkspaceSubscriber = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
+			view.setSelection(cvsWorkspaceSubscriber, resources, view.getCurrentViewType());
+			view.refreshWithRemote(cvsWorkspaceSubscriber, resources);
 		}
-	}
-	
-	protected SyncCompareInput getCompareInput(IResource[] resources) throws CVSException {
-		return new CVSSyncCompareInput(resources);
 	}
 	
 	protected IResource[] getResourcesToSync() {

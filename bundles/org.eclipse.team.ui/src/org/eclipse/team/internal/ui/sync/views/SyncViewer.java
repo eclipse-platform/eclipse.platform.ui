@@ -831,7 +831,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	public int getCurrentViewType() {
 		return currentViewType;
 	}
-}
+
 	public void selectAll() {
 		if (getViewerType() == TABLE_VIEW) {
 			TableViewer table = (TableViewer)getViewer();

@@ -105,12 +105,6 @@
       </category>
       <command
 			category="org.eclipse.team.cvs.ui.actionSet"
-            name="%CVSActionSet.syncLabel"
-            description="%CVSActionSet.syncTooltip"
-            id="org.eclipse.team.cvs.ui.sync.all">
-      </command>
-      <command
-			category="org.eclipse.team.cvs.ui.actionSet"
             name="%CVSActionSet.newLabel"
             description="%CVSActionSet.newTooltip"
             id="org.eclipse.team.cvs.ui.new.location">
@@ -832,17 +826,10 @@
 	  		 id="org.eclipse.team.cvs.ui.actions.NewRepositoryAction"
 	  		 definitionId="org.eclipse.team.cvs.ui.new.location"> 
 	  	    </action>
-	  	   <action
-	  	  	toolbarPath="Normal/CVS"
-	  		 label="%CVSActionSet.syncLabel"
-	  		 tooltip="%CVSActionSet.syncTooltip"
-	  		 icon="icons/full/wizards/cvs_synch.gif"
-	  		 class="org.eclipse.team.internal.ccvs.ui.actions.SyncAllAction"
-	  		 id="org.eclipse.team.cvs.ui.actions.SyncAllAction"
-	  		 definitionId="org.eclipse.team.cvs.ui.sync.all"> 
-	  	    </action>
 	  </actionSet>
 	</extension>
+
+	<!-- ********** Font Definitions ************** -->
 	<extension
          point="org.eclipse.ui.fontDefinitions">
       <fontDefinition
