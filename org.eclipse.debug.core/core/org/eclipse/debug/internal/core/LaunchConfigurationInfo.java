@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.core.runtime.CoreException;
@@ -67,6 +68,26 @@ public class LaunchConfigurationInfo {
 	 */	
 	private void setAttributeTable(HashMap table) {
 		fAttributes = table;
+	}
+	
+	/**
+	 * Sets the attributes in this info to those in the given map.
+	 * 
+	 * @param map
+	 */
+	protected void setAttributes(Map map) {
+		if (map == null) {
+			setAttributeTable(new HashMap());
+			return;
+		}
+		Set entrySet = map.entrySet();
+		HashMap attributes = new HashMap(entrySet.size());
+		Iterator iter = entrySet.iterator();
+		while (iter.hasNext()) {
+			Map.Entry entry = (Map.Entry)iter.next();
+			attributes.put(entry.getKey(), entry.getValue());
+		}
+		setAttributeTable(attributes);
 	}
 	
 	/**
@@ -226,8 +247,17 @@ public class LaunchConfigurationInfo {
 	protected LaunchConfigurationInfo getCopy() {
 		LaunchConfigurationInfo copy = new LaunchConfigurationInfo();
 		copy.setType(getType());
-		copy.setAttributeTable((HashMap)getAttributeTable().clone());
+		copy.setAttributeTable(getAttributes());
 		return copy;
+	}
+	
+	/**
+	 * Returns a copy of this info's attriubte map.
+	 * 
+	 * @return a copy of this info's attribute map
+	 */
+	protected HashMap getAttributes() {
+		return (HashMap)getAttributeTable().clone();
 	}
 	
 	/**

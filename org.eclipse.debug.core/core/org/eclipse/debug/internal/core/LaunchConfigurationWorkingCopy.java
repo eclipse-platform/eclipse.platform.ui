@@ -491,5 +491,13 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	protected IContainer getContainer() {
 		return fContainer;
 	}	
+	
+	/**
+	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#setAttributes(java.util.Map)
+	 */
+	public void setAttributes(Map attributes) {
+		getInfo().setAttributes(attributes);
+	}
+
 }
 

@@ -140,4 +140,18 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 *  configuration is to be stored locally
 	 */
 	public void setContainer(IContainer container);	
+	
+	/**
+	 * Sets the attributes of this launch configuration to be the ones contained
+	 * in the given map. The values must be an instance of one of the following
+	 * classes: <code>String</code>, <code>Integer</code>, or
+	 * <code>Boolean</code>, <code>List</code>, <code>Map</code>. Attributes
+	 * previously set on this launch configuration but not included in the given
+	 * map are considered to be removals. Setting the given map to be
+	 * <code>null</code> is equivalent to removing all attributes.
+	 *
+	 * @param attributes a map of attribute names to attribute values
+	 * @since 2.1
+	 */
+	public void setAttributes(Map attributes);
 }

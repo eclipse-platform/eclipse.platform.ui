@@ -351,5 +351,14 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @since 2.1
 	 */
 	public String getCategory() throws CoreException;	
-
+	
+	/**
+	 * Returns a map containing the attributes in this launch configuration.
+	 * Returns an empty map if this configuration has no attributes.
+	 *
+	 * @return a map of attribute keys and values
+	 * @exception CoreException unable to generate/retrieve an attribute map
+	 * @since 2.1
+	 */
+	public Map getAttributes() throws CoreException;
 }

@@ -470,5 +470,13 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		return getType().getCategory();
 	}
 
+	/**
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#getAttributes()
+	 */
+	public Map getAttributes() throws CoreException {
+		LaunchConfigurationInfo info = getInfo();
+		return info.getAttributes();
+	}
+
 }
 
