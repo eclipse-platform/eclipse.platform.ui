@@ -444,7 +444,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 	public int getSelectedScope() {
 		if (fScopeParts[fCurrentIndex] == null)
 			// safe code - should not happen
-			return ScopePart.WORKSPACE_SCOPE;
+			return ISearchPageContainer.WORKSPACE_SCOPE;
 		else
 			return fScopeParts[fCurrentIndex].getSelectedScope();
 	}

@@ -128,7 +128,10 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 				scope= TextSearchScope.newWorkspaceScope();
 				break;
 			case ISearchPageContainer.SELECTION_SCOPE:
-				scope= getSelectedResourcesScope();
+				scope= getSelectedResourcesScope(false);
+				break;
+			case ISearchPageContainer.SELECTED_PROJECTS_SCOPE:
+				scope= getSelectedResourcesScope(true);
 				break;
 			case ISearchPageContainer.WORKING_SET_SCOPE:
 				IWorkingSet[] workingSets= getContainer().getSelectedWorkingSets();
@@ -529,7 +532,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		return fContainer.getSelection();
 	}
 
-	private TextSearchScope getSelectedResourcesScope() {
+	private TextSearchScope getSelectedResourcesScope(boolean isProjectScope) {
 		TextSearchScope scope= new TextSearchScope(SearchMessages.getString("SelectionScope")); //$NON-NLS-1$
 		if (getSelection() instanceof IStructuredSelection && !getSelection().isEmpty()) {
 			Iterator iter= ((IStructuredSelection)getSelection()).iterator();
@@ -539,13 +542,22 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 				//Unpack search result entry
 				if (selection instanceof ISearchResultViewEntry)
 					selection= ((ISearchResultViewEntry)selection).getGroupByKey();
-			
+
+				IResource resource= null;			
 				if (selection instanceof IResource)
-					scope.add((IResource)selection);
-				else if (selection instanceof IAdaptable) {
-					IResource resource= (IResource)((IAdaptable)selection).getAdapter(IResource.class);
-					if (resource != null)
-						scope.add(resource);
+					resource= (IResource)selection;
+				else if (selection instanceof IAdaptable)
+					resource= (IResource)((IAdaptable)selection).getAdapter(IResource.class);
+
+				if (resource != null) {
+
+					if (isProjectScope) {
+						resource= resource.getProject();
+						if (isProjectScope && scope.encloses(resource))
+							continue;
+					}
+				
+					scope.add(resource);
 				}
 			}
 		}

@@ -40,11 +40,6 @@ import org.eclipse.search.internal.ui.util.SWTUtil;
 
 public class ScopePart {
 
-	// The possible scopes
-	public static final int WORKSPACE_SCOPE= 0;
-	public static final int SELECTION_SCOPE= 1;
-	public static final int WORKING_SET_SCOPE= 2;
-
 	// Settings store
 	private static final String DIALOG_SETTINGS_KEY= "SearchDialog.ScopePart"; //$NON-NLS-1$
 	private static final String STORE_SCOPE= "scope"; //$NON-NLS-1$
@@ -63,6 +58,7 @@ public class ScopePart {
 	// Scope radio buttons
 	private Button fUseWorkspace;
 	private Button fUseSelection;
+	private Button fUseProject;
 	private Button fUseWorkingSet;
 
 
@@ -78,7 +74,7 @@ public class ScopePart {
 	 * The part is not yet created.
 	 */
 	public ScopePart() {
-		this(WORKSPACE_SCOPE);
+		this(ISearchPageContainer.WORKSPACE_SCOPE);
 	}
 
 	/**
@@ -95,10 +91,10 @@ public class ScopePart {
 		try {
 			scope= fgSettingsStore.getInt(STORE_SCOPE);
 		} catch (NumberFormatException ex) {
-			scope= WORKSPACE_SCOPE;
+			scope= ISearchPageContainer.WORKSPACE_SCOPE;
 		}
-		if (scope != WORKING_SET_SCOPE && scope != SELECTION_SCOPE && scope != WORKSPACE_SCOPE)
-			scope= WORKSPACE_SCOPE;
+		if (scope != ISearchPageContainer.WORKING_SET_SCOPE && scope != ISearchPageContainer.SELECTION_SCOPE && scope != ISearchPageContainer.SELECTED_PROJECTS_SCOPE && scope != ISearchPageContainer.WORKSPACE_SCOPE)
+			scope= ISearchPageContainer.WORKSPACE_SCOPE;
 		return scope;
 	}
 
@@ -150,7 +146,7 @@ public class ScopePart {
 	 */
 	public ScopePart(IWorkingSet[] workingSets) {
 		Assert.isNotNull(workingSets);
-		fScope= WORKING_SET_SCOPE;
+		fScope= ISearchPageContainer.WORKING_SET_SCOPE;
 		fWorkingSets= workingSets;
 	}
 
@@ -176,20 +172,29 @@ public class ScopePart {
 		Assert.isNotNull(fUseWorkingSet);
 		fScope= scope;
 		switch (fScope) {
-			case WORKSPACE_SCOPE:
+			case ISearchPageContainer.WORKSPACE_SCOPE:
 				fUseWorkspace.setSelection(true);
 				fUseSelection.setSelection(false);
+				fUseProject.setSelection(false);
 				fUseWorkingSet.setSelection(false);
 				break;
-			case SELECTION_SCOPE:
+			case ISearchPageContainer.SELECTION_SCOPE:
 				fUseWorkspace.setSelection(false);
 				fUseSelection.setSelection(true);				
+				fUseProject.setSelection(false);
 				fUseWorkingSet.setSelection(false);
 				break;
-			case WORKING_SET_SCOPE:
+			case ISearchPageContainer.WORKING_SET_SCOPE:
 				fUseWorkspace.setSelection(false);
 				fUseSelection.setSelection(false);
+				fUseProject.setSelection(false);
 				fUseWorkingSet.setSelection(true);
+				break;
+			case ISearchPageContainer.SELECTED_PROJECTS_SCOPE:
+				fUseWorkspace.setSelection(false);
+				fUseSelection.setSelection(false);
+				fUseProject.setSelection(true);
+				fUseWorkingSet.setSelection(false);
 				break;
 		}
 
@@ -198,7 +203,7 @@ public class ScopePart {
 	}
 
 	private void updateSearchPageContainerActionPerformedEnablement() {
-		boolean newState= fScope != WORKING_SET_SCOPE || fWorkingSets != null;
+		boolean newState= fScope != ISearchPageContainer.WORKING_SET_SCOPE || fWorkingSets != null;
 		if (fSearchPageContainer instanceof SearchDialog)
 			((SearchDialog)fSearchPageContainer).setPerformActionEnabledFromScopePart(newState);
 		else if (fSearchPageContainer != null)
@@ -213,7 +218,7 @@ public class ScopePart {
 	 * 			- if there is no working set selected
 	 */
 	public IWorkingSet[] getSelectedWorkingSets() {
-		if (getSelectedScope() == WORKING_SET_SCOPE)
+		if (getSelectedScope() == ISearchPageContainer.WORKING_SET_SCOPE)
 			return fWorkingSets;
 		else
 			return null;
@@ -227,7 +232,7 @@ public class ScopePart {
 	 */
 	public void setSelectedWorkingSets(IWorkingSet[] workingSets) {
 		Assert.isNotNull(workingSets);
-		setSelectedScope(WORKING_SET_SCOPE);
+		setSelectedScope(ISearchPageContainer.WORKING_SET_SCOPE);
 		fWorkingSets= null;
 		Set existingWorkingSets= new HashSet(workingSets.length);
 		for (int i= 0; i < workingSets.length; i++) {
@@ -268,27 +273,36 @@ public class ScopePart {
 		fPart.setText(SearchMessages.getString("ScopePart.group.text")); //$NON-NLS-1$
 
 		GridLayout layout= new GridLayout();
-		layout.numColumns= 3;
+		layout.numColumns= 4;
 		fPart.setLayout(layout);
 		fPart.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		fUseWorkspace= new Button(fPart, SWT.RADIO);
-		fUseWorkspace.setData(new Integer(WORKSPACE_SCOPE));
+		fUseWorkspace.setData(new Integer(ISearchPageContainer.WORKSPACE_SCOPE));
 		fUseWorkspace.setText(SearchMessages.getString("ScopePart.workspaceScope.text")); //$NON-NLS-1$
 
 		fUseSelection= new Button(fPart, SWT.RADIO);
-		fUseSelection.setData(new Integer(SELECTION_SCOPE));
+		fUseSelection.setData(new Integer(ISearchPageContainer.SELECTION_SCOPE));
 		fUseSelection.setText(SearchMessages.getString("ScopePart.selectedResourcesScope.text")); //$NON-NLS-1$
 		ISelection selection= fSearchPageContainer.getSelection();
 		fUseSelection.setEnabled(selection instanceof IStructuredSelection && !fSearchPageContainer.getSelection().isEmpty());
 		
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalSpan= 2;
 		gd.horizontalIndent= 8;
 		fUseSelection.setLayoutData(gd);
 
+		fUseProject= new Button(fPart, SWT.RADIO);
+		fUseProject.setData(new Integer(ISearchPageContainer.SELECTED_PROJECTS_SCOPE));
+		fUseProject.setText(SearchMessages.getString("ScopePart.selectedProjectsScope.text"));  //$NON-NLS-1$
+		fUseProject.setEnabled(selection instanceof IStructuredSelection && !fSearchPageContainer.getSelection().isEmpty());
+		
+		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalSpan=2;
+		gd.horizontalIndent= 8;
+		fUseProject.setLayoutData(gd);
+
 		fUseWorkingSet= new Button(fPart, SWT.RADIO);
-		fUseWorkingSet.setData(new Integer(WORKING_SET_SCOPE));
+		fUseWorkingSet.setData(new Integer(ISearchPageContainer.WORKING_SET_SCOPE));
 		fUseWorkingSet.setText(SearchMessages.getString("ScopePart.workingSetScope.text")); //$NON-NLS-1$
 		fWorkingSetText= new Text(fPart, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		Button chooseWorkingSet= new Button(fPart, SWT.PUSH);
@@ -298,12 +312,13 @@ public class ScopePart {
 		chooseWorkingSet.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (handleChooseWorkingSet()) {
-					setSelectedScope(WORKING_SET_SCOPE);
+					setSelectedScope(ISearchPageContainer.WORKING_SET_SCOPE);
 				}
 			}
 		});
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalIndent= 8;
+		gd.horizontalSpan= 2;
 		gd.widthHint= SWTUtil.convertWidthInCharsToPixels(30, fWorkingSetText);
 		fWorkingSetText.setLayoutData(gd);
 
@@ -315,6 +330,7 @@ public class ScopePart {
 		};
 		fUseWorkspace.addSelectionListener(scopeChangedLister);
 		fUseSelection.addSelectionListener(scopeChangedLister);
+		fUseProject.addSelectionListener(scopeChangedLister);
 		fUseWorkingSet.addSelectionListener(scopeChangedLister);
 
 		// Set initial scope
@@ -349,8 +365,8 @@ public class ScopePart {
 			}
 			fWorkingSetText.setText(""); //$NON-NLS-1$
 			fWorkingSets= null;
-			if (fScope == WORKING_SET_SCOPE)
-				setSelectedScope(WORKSPACE_SCOPE);
+			if (fScope == ISearchPageContainer.WORKING_SET_SCOPE)
+				setSelectedScope(ISearchPageContainer.WORKSPACE_SCOPE);
 			return false;
 		} else {
 			if (fWorkingSets != null) {

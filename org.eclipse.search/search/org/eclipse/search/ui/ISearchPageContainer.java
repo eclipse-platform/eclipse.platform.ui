@@ -48,6 +48,12 @@ public interface ISearchPageContainer {
 	public static final int WORKING_SET_SCOPE= 2;
 
 	/**
+	 * Current Project scope (value <code>3</code>).
+	 * 
+	 * @since 3.0
+	 */	
+	public static final int SELECTED_PROJECTS_SCOPE= 3;
+	/**
 	 * Returns the selection with which this container was opened.
 	 *
 	 * @return the selection passed to this container when it was opened
