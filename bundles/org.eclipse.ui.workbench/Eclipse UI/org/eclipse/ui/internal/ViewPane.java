@@ -41,15 +41,9 @@ import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.StackPresentation;
 
 /**
- * Provides support for a title bar where the
- * title and icon of the view can be displayed.
- * Along with an X icon to close the view, and
- * a pin icon to attach the view back to the
- * main layout.
- *
- * Also provides support to add tool icons and menu
- * icon on the system bar if required by the view
- * part.
+ * Provides a wrapper for the view's widgetry.
+ * 
+ * TODO: Delete ViewPane and EditorPane, and make PartPane non-abstract.
  */
 public class ViewPane extends PartPane implements IPropertyListener {
 	private boolean busy = false;

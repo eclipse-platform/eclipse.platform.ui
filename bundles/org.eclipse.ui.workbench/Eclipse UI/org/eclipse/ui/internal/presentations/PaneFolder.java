@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.presentations;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -22,6 +23,8 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -31,6 +34,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.internal.dnd.DragUtil;
+import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.internal.layout.SizeCache;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
@@ -52,6 +56,8 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
  * a ViewForm. It encapsulates the details of moving the toolbar between the CTabFolder and
  * the ViewForm, and provides a simpler interface to the ViewForm/CTabFolder. 
  * </p>
+ * To be consistent with SWT composites, this object can deal with its children being disposed
+ * without warning. This is treated like a removal.
  * 
  * @since 3.0
  */
@@ -83,6 +89,33 @@ public final class PaneFolder {
 	private boolean useTopRightOptimization = false;
 	private int lastWidth = 0;
 	// END OF HACK
+	
+	/**
+	 * Listens for its children being disposed, and removes them if this happens (although this
+	 * may indicate a programming error, this behavior is consistent with SWT composites).
+	 */
+	private DisposeListener prematureDisposeListener = new DisposeListener() {
+
+		public void widgetDisposed(DisposeEvent e) {
+			Control disposedControl = (Control)e.widget;
+			
+			// Probably unnecessary, but it can't hurt garbage collection
+			disposedControl.removeDisposeListener(this);			
+			
+			if (disposedControl == viewFormTopLeftProxy.getControl()) {
+				setTopLeft(null);
+			}
+			
+			if (disposedControl == viewFormTopRightProxy.getControl()) {
+				setTopRight(null);
+			}
+			
+			if (disposedControl == viewFormTopCenterProxy.getControl()) {
+				setTopCenter(null);
+			}
+		}
+		
+	};
 	
 	/**
 	 * List of PaneFolderButtonListener
@@ -209,8 +242,15 @@ public final class PaneFolder {
 	 * @param topCenter the top-center control or null if none
 	 */
 	public void setTopCenter(Control topCenter) {
+		if (topCenter == topCenterCache.getControl()) {
+			return;
+		}
+		
+		removeDisposeListener(topCenterCache.getControl());
+		
 		topCenterCache.setControl(topCenter);
 		if (topCenter != null) {
+			topCenter.addDisposeListener(prematureDisposeListener);
 			if (!putTrimOnTop) {
 				viewFormTopCenterProxy.setTarget(topCenterCache);
 				viewForm.setTopCenter(viewFormTopCenterProxy.getControl());
@@ -228,8 +268,15 @@ public final class PaneFolder {
 	 * @param topRight
 	 */
 	public void setTopRight(Control topRight) {
+		if (topRightCache.getControl() == topRight) {
+			return;
+		}
+		
+		removeDisposeListener(topRightCache.getControl());
+		
 		topRightCache.setControl(topRight);
 		if (topRight != null) {
+			topRight.addDisposeListener(prematureDisposeListener);
 			if (!putTrimOnTop) {
 				viewFormTopRightProxy.setTarget(topRightCache);
 				viewForm.setTopRight(viewFormTopRightProxy.getControl());
@@ -247,16 +294,21 @@ public final class PaneFolder {
 	 * @param topLeft
 	 */
 	public void setTopLeft(Control topLeft) {
-		if (topLeftCache.getControl() != topLeft) {
-			topLeftCache.setControl(topLeft);
-			// The top-left control always goes directly in the ViewForm
-			if (topLeft != null) {
-				viewFormTopLeftProxy.setTarget(topLeftCache);
-				viewForm.setTopLeft(viewFormTopLeftProxy.getControl());
-			} else {
-				viewFormTopLeftProxy.setTarget(null);
-				viewForm.setTopLeft(null);
-			}
+		if (topLeftCache.getControl() == topLeft) {
+			return;
+		}
+		
+		removeDisposeListener(topLeftCache.getControl());
+		
+		topLeftCache.setControl(topLeft);
+		// The top-left control always goes directly in the ViewForm
+		if (topLeft != null) {
+			topLeft.addDisposeListener(prematureDisposeListener);
+			viewFormTopLeftProxy.setTarget(topLeftCache);
+			viewForm.setTopLeft(viewFormTopLeftProxy.getControl());
+		} else {
+			viewFormTopLeftProxy.setTarget(null);
+			viewForm.setTopLeft(null);
 		}
 	}
 	
@@ -277,7 +329,7 @@ public final class PaneFolder {
 			topRightCache.flush();
 			topCenterCache.flush();
 		}
-				
+		
 		// HACK: Force the tab folder to do a layout, since it doesn't always
 		// resize its title area each time setBounds is called.
 		if (!(useTopRightOptimization && (topRightResized || lastWidth == getControl().getBounds().width))) {
@@ -464,7 +516,19 @@ public final class PaneFolder {
 		return result;
 	}
 	
+	/**
+	 * Removes the dispose listener from the given control, unless the given
+	 * control is null or disposed.
+	 * 
+	 * @param oldControl control to detach the dispose listener from
+	 */
+	private void removeDisposeListener(Control oldControl) {		
+		if (!SwtUtil.isDisposed(oldControl)) {
+			oldControl.removeDisposeListener(prematureDisposeListener);
+		}
+	}
 	
+	///////////////////////////////////////////////////////////////////////////////////////
 	// The remainder of the methods in this class redirect directly to CTabFolder methods
 	
 	public void setSelection(int selection) {
@@ -585,4 +649,5 @@ public final class PaneFolder {
 	public void hideTitle() {
 	    tabFolder.setTabHeight(0);
 	}
+
 }

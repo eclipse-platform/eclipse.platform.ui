@@ -29,6 +29,16 @@ public class SwtUtil {
 	}
 	
 	/**
+	 * Returns true if the given control is null or has been disposed
+	 * 
+	 * @param toTest the control to test
+	 * @return false if it is safe to invoke methods on the given control
+	 */
+	public static boolean isDisposed(Control toTest) {
+		return toTest == null || toTest.isDisposed();
+	}
+	
+	/**
 	 * Determines if one control is a child of another. Returns true iff the second
 	 * argument is a child of the first (or the same object).
 	 * 

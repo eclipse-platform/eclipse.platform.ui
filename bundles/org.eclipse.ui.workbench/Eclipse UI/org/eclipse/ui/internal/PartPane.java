@@ -47,6 +47,13 @@ import org.eclipse.ui.presentations.IPresentablePart;
 /**
  * Provides the common behavior for both views
  * and editor panes.
+ * 
+ * TODO: Delete ViewPane and EditorPane, and make this class non-abstract.
+ * 
+ * TODO: Stop subclassing LayoutPart. This class cannot be interchanged with other LayoutParts.
+ * Pointers that refer to PartPane instances should do so directly rather than referring to
+ * LayoutPart and downcasting. The getPresentablePart() method only applies to PartPanes, and
+ * should be removed from LayoutPart.
  */
 public abstract class PartPane extends LayoutPart
 	implements Listener

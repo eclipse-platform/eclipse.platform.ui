@@ -192,7 +192,6 @@ public class DefaultPartPresentation extends StackPresentation {
             updateGradient();
         }
 
-
         public void shellDeactivated(ShellEvent e) {
             shellActive = false;
             updateGradient();            
@@ -632,7 +631,7 @@ public class DefaultPartPresentation extends StackPresentation {
 		
 		return result;
 	}
-
+	
 	protected void layout(boolean changed) {
 		if (changed) {
 			String currentTitle = getCurrentTitle();
@@ -819,8 +818,9 @@ public class DefaultPartPresentation extends StackPresentation {
 	 * @see org.eclipse.ui.internal.skins.StackPresentation#removePart(org.eclipse.ui.internal.skins.IPresentablePart)
 	 */
 	public void removePart(IPresentablePart oldPart) {
-	    if (current == oldPart)
-	        current = null;
+	    if (current == oldPart) {
+	    	selectPart(null);
+	    }
 	    
 		CTabItem item = getTab(oldPart);
 		if (item == null) {
@@ -835,6 +835,8 @@ public class DefaultPartPresentation extends StackPresentation {
 	 * @see org.eclipse.ui.internal.skins.StackPresentation#selectPart(org.eclipse.ui.internal.skins.IPresentablePart)
 	 */
 	public void selectPart(IPresentablePart toSelect) {
+		// Note: we permit null selections here. We use this to indicate that we
+		// should clear all references to the currently selected part.
 		if (toSelect == current) {
 			return;
 		}
@@ -856,6 +858,13 @@ public class DefaultPartPresentation extends StackPresentation {
 			tabFolder.setSelection(indexOf(current));
 			current.setVisible(true);
 			setControlSize();		
+		} else {
+			// Remove any references to the old widget
+			current = null;
+			
+			tabFolder.setTopLeft(null);
+			tabFolder.setTopCenter(null);
+			tabFolder.setTopRight(null);
 		}
 		if (oldPart != null) {
 			oldPart.setVisible(false);
