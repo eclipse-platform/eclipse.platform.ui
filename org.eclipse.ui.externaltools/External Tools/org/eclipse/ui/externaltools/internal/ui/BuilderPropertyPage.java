@@ -146,6 +146,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		button.setLayoutData(data); 
 		button.setText(label);
+		button.setEnabled(false);
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleButtonPressed((Button)e.widget);
@@ -210,6 +211,8 @@ public final class BuilderPropertyPage extends PropertyPage {
 		upButton = createButton(buttonArea, ToolMessages.getString("BuilderPropertyPage.upButton")); //$NON-NLS-1$
 		downButton = createButton(buttonArea, ToolMessages.getString("BuilderPropertyPage.downButton")); //$NON-NLS-1$
 	
+		newButton.setEnabled(true);
+		
 		//populate widget contents	
 		addBuildersToTable();
 		

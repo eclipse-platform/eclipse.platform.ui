@@ -21,6 +21,14 @@
 <!-- extension point definitions -->
 
 <!-- Extensions -->
+	<extension point="org.eclipse.core.resources.builders"
+		id="ExternalToolBuilder"
+		name="%Builder.externalTools">
+		<builder> 
+			<run class="org.eclipse.ui.externaltools.internal.core.ExternalToolsBuilder"/> 
+		</builder> 
+	</extension>
+
 	<extension point="org.eclipse.ui.popupMenus">
 		<objectContribution
 			id="org.eclipse.ui.externaltools.RunAnt"
