@@ -2,7 +2,7 @@
 <!-- File written by PDE 1.0 -->
 <plugin
    id="org.eclipse.update.ui.forms"
-   name="Install/Update Forms"
+   name="%name"
    version="2.0.0"
    provider-name="International Business Machines Corp."
    class="">
