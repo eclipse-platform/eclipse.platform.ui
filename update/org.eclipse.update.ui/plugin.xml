@@ -168,9 +168,5 @@
             class="org.eclipse.update.internal.ui.wizards.InstallDeltaWizard">
       </display>
    </extension>
-
-	<!-- Context Help contribution --> 
-	<extension point="org.eclipse.help.contexts"> 
-		<contexts file="contexts.xml"/> 
-	</extension>
+   
 </plugin>
