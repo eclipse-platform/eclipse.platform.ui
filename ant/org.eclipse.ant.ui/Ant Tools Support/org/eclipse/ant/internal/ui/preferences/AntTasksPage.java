@@ -67,7 +67,7 @@ public class AntTasksPage extends AntPage {
 		Task task = new Task();
 		task.setTaskName(dialog.getName());
 		task.setClassName(dialog.getClassName());
-		task.setLibrary(dialog.getLibrary().getEntryURL());
+		task.setLibraryEntry(dialog.getLibraryEntry());
 		addContent(task);
 	}
 	
@@ -128,14 +128,14 @@ public class AntTasksPage extends AntPage {
 		AddCustomDialog dialog = getCustomDialog(title, IAntUIHelpContextIds.EDIT_TASK_DIALOG);
 		dialog.setClassName(task.getClassName());
 		dialog.setName(task.getTaskName());
-		dialog.setLibrary(new ClasspathEntry(task.getLibrary(), null));
+		dialog.setLibraryEntry(task.getLibraryEntry());
 		if (dialog.open() == Window.CANCEL) {
 			return;
 		}
 
 		task.setTaskName(dialog.getName());
 		task.setClassName(dialog.getClassName());
-		task.setLibrary(dialog.getLibrary().getEntryURL());
+		task.setLibraryEntry(dialog.getLibraryEntry());
 		updateContent(task);
 	}
 	

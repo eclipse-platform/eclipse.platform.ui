@@ -67,7 +67,7 @@ public class AntTypesPage extends AntPage {
 		Type type = new Type();
 		type.setTypeName(dialog.getName());
 		type.setClassName(dialog.getClassName());
-		type.setLibrary(dialog.getLibrary().getEntryURL());
+		type.setLibraryEntry(dialog.getLibraryEntry());
 		addContent(type);
 	}
 	
@@ -114,14 +114,14 @@ public class AntTypesPage extends AntPage {
 		AddCustomDialog dialog = getCustomDialog(title, IAntUIHelpContextIds.EDIT_TYPE_DIALOG);
 		dialog.setClassName(type.getClassName());
 		dialog.setName(type.getTypeName());
-		dialog.setLibrary(new ClasspathEntry(type.getLibrary(), null));
+		dialog.setLibraryEntry(type.getLibraryEntry());
 		if (dialog.open() == Window.CANCEL) {
 			return;
 		}
 
 		type.setTypeName(dialog.getName());
 		type.setClassName(dialog.getClassName());
-		type.setLibrary(dialog.getLibrary().getEntryURL());
+		type.setLibraryEntry(dialog.getLibraryEntry());
 		updateContent(type);
 	}
 	

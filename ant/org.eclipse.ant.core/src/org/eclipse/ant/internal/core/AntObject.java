@@ -13,10 +13,13 @@ package org.eclipse.ant.internal.core;
 
 import java.net.URL;
 
+import org.eclipse.ant.core.IAntClasspathEntry;
+
 public abstract class AntObject {
 
 	protected String fClassName;
 	protected URL fLibrary;
+	protected IAntClasspathEntry fLibraryEntry;
 	protected String fName;
 	private String fPluginLabel;
 	
@@ -39,17 +42,42 @@ public abstract class AntObject {
 	 * @return Returns a URL
 	 */
 	public URL getLibrary() {
-		return fLibrary;
+		if (fLibrary != null) {
+			return fLibrary;
+		} else {
+			return fLibraryEntry.getEntryURL();	
+		}
 	}
 	/**
 	 * Sets the library.
 	 * @param library The library to set
+	 * @deprecated use #setLibraryEntry(IAntClasspathEntry)
 	 */
 	public void setLibrary(URL library) {
 		fLibrary = library;
 	}
 	
 	/**
+	 * Gets the library classpath entry.
+	 * @return Returns a classpath entry for the library of this Ant object
+	 */
+	public IAntClasspathEntry getLibraryEntry() {
+		if (fLibraryEntry != null) {
+			return fLibraryEntry;
+		} else {
+			fLibraryEntry= new AntClasspathEntry(fLibrary.getFile());
+			return fLibraryEntry;
+		}
+	}
+	/**
+	 * Sets the library classpath entry.
+	 * @param libraryEntry The library entry to set
+	 */
+	public void setLibraryEntry(IAntClasspathEntry libraryEntry) {
+		fLibraryEntry = libraryEntry;
+	}
+	
+	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
