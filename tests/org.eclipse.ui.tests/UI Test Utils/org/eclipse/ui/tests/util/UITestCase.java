@@ -140,7 +140,7 @@ public abstract class UITestCase extends TestCase
 	}
 
 	protected void processEvents() {
-		Display display = Display.getDefault();
+		Display display = PlatformUI.getWorkbench().getDisplay();
 		if (display != null)
 				while (display.readAndDispatch())
 					;
