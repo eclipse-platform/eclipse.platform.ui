@@ -48,9 +48,11 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.dialogs.WizardNewProjectReferencePage;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.dialogs.MessageDialogWithToggle;
+
+// @issue illegal reference to RoleManager (internal to org.eclipse.ui plug-in)
 import org.eclipse.ui.internal.roles.RoleManager;
 
 /**
