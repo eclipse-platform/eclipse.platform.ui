@@ -85,7 +85,6 @@ public class SearchIndex {
 	 */
 	public boolean addDocument(String name, URL url) {
 		try {
-			System.out.println("adding document " + name + " " + url);
 			Document doc = new Document();
 			doc.add(Field.Keyword("name", name));
 
@@ -180,7 +179,6 @@ public class SearchIndex {
 	 * @return true if success
 	 */
 	public boolean removeDocument(String name) {
-		System.out.println("adding document " + name);
 		Term term = new Term("name", name);
 		try {
 			ir.delete(term);
