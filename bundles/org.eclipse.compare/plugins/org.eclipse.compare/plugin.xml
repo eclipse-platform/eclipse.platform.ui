@@ -90,6 +90,7 @@
 				label="%CompareWithPatchAction.label"
 				tooltip="%CompareWithPatchAction.tooltip"
 				menubarPath="compareWithMenu/compareWithGroup"
+				enablesFor="1"
 				class="org.eclipse.compare.patch.CompareWithPatchAction">
 			</action>
 		</objectContribution>
