@@ -102,15 +102,15 @@ public final class PaneFolder {
 			// Probably unnecessary, but it can't hurt garbage collection
 			disposedControl.removeDisposeListener(this);			
 			
-			if (disposedControl == viewFormTopLeftProxy.getControl()) {
+			if (disposedControl == topLeftCache.getControl()) {
 				setTopLeft(null);
 			}
 			
-			if (disposedControl == viewFormTopRightProxy.getControl()) {
+			if (disposedControl == topRightCache.getControl()) {
 				setTopRight(null);
 			}
 			
-			if (disposedControl == viewFormTopCenterProxy.getControl()) {
+			if (disposedControl == topCenterCache.getControl()) {
 				setTopCenter(null);
 			}
 		}
