@@ -488,7 +488,8 @@ public class DebugUITools {
 	/**
 	 * Saves and builds the workspace according to current preference settings, and
 	 * launches the given launch configuration in the specified mode in a background
-	 * Job with progress reported via the Job. Reports any exceptions that occurr in an error dilaog.
+	 * Job with progress reported via the Job. Exceptions are reported in the Progress
+	 * view.
 	 * 
 	 * @param configuration the configuration to launch
 	 * @param mode launch mode - run or debug
@@ -510,7 +511,6 @@ public class DebugUITools {
 								return Status.OK_STATUS;
 							}
 						}
-						DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIMessages.getString("DebugUITools.Error_1"), DebugUIMessages.getString("DebugUITools.Exception_occurred_during_launch_2"), e); //$NON-NLS-1$ //$NON-NLS-2$
 						return status;
 					}
 					return Status.OK_STATUS;

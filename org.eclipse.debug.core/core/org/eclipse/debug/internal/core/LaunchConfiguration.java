@@ -142,7 +142,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	/**
 	 * @see ILaunchConfiguration#launch(String, IProgressMonitor)
 	 */
-	public ILaunch launch(final String mode, IProgressMonitor monitor) throws CoreException {
+	public ILaunch launch(String mode, IProgressMonitor monitor) throws CoreException {
 		// bug 28245 - force the delegate to load in case it is interested in launch notifications
 		ILaunchConfigurationDelegate delegate= getDelegate(mode);
 		
@@ -164,7 +164,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		if (monitor.isCanceled()) {
 			getLaunchManager().removeLaunch(launch);
 		}
-
 		return launch;
 	}
 	
