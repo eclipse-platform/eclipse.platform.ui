@@ -62,54 +62,6 @@ public class WorkbenchEncoding {
 	}
 
 	/**
-	 * Workbench constant for ISO-8859-1
-	 * 
-	 * @deprecated Use #getDefinedEncodings. This API will be deleted before 3.1
-	 *             M2.
-	 */
-	public static String ISO_8859_1 = "ISO-8859-1";//$NON-NLS-1$
-
-	/**
-	 * Workbench constant for UTF-8
-	 * 
-	 * @deprecated Use #getDefinedEncodings. This API will be deleted before 3.1
-	 *             M2.
-	 */
-	public static String UTF_8 = "UTF-8";//$NON-NLS-1$
-
-	/**
-	 * Workbench constant for UTF-16
-	 * 
-	 * @deprecated Use #getDefinedEncodings. This API will be deleted before 3.1
-	 *             M2.
-	 */
-	public static String UTF_16 = "UTF-16";//$NON-NLS-1$
-
-	/**
-	 * Workbench constant for UTF-16 big endian
-	 * 
-	 * @deprecated Use #getDefinedEncodings. This API will be deleted before 3.1
-	 *             M2.
-	 */
-	public static String UTF_16_BIG_ENDIAN = "UTF-16BE";//$NON-NLS-1$
-
-	/**
-	 * Workbench constant for UTF-16 little endian
-	 * 
-	 * @deprecated Use #getDefinedEncodings. This API will be deleted before 3.1
-	 *             M2.
-	 */
-	public static String UTF_16_LITTLE_ENDIAN = "UTF-16LE";//$NON-NLS-1$
-
-	/**
-	 * Workbench constant for US ASCII
-	 * 
-	 * @deprecated Use #getDefinedEncodings. This API will be deleted before 3.1
-	 *             M2.
-	 */
-	public static String US_ASCII = "US-ASCII";//$NON-NLS-1$
-
-	/**
 	 * Get the default encoding from the virtual machine.
 	 * 
 	 * @return String
