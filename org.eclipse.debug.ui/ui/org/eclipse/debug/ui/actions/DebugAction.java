@@ -6,10 +6,7 @@ package org.eclipse.debug.ui.actions;
  */
 
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.ExecutionAction;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
-import org.eclipse.ui.IViewActionDelegate;
 
 /**
  * Action to launch a program in debug mode.
