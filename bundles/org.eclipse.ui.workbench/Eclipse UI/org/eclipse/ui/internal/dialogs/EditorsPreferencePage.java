@@ -34,6 +34,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.EditorHistory;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -243,13 +244,12 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		
 		recentFilesEditor = new IntegerFieldEditor(IPreferenceConstants.RECENT_FILES, WorkbenchMessages.getString("WorkbenchPreference.recentFiles"), groupComposite); //$NON-NLS-1$
 
-		int recentFilesMax = IPreferenceConstants.MAX_RECENT_FILES_SIZE;
 		recentFilesEditor.setPreferenceStore(WorkbenchPlugin.getDefault().getPreferenceStore());
 		recentFilesEditor.setPreferencePage(this);
-		recentFilesEditor.setTextLimit(Integer.toString(recentFilesMax).length());
-		recentFilesEditor.setErrorMessage(WorkbenchMessages.format("WorkbenchPreference.recentFilesError", new Object[] { new Integer(recentFilesMax)})); //$NON-NLS-1$
+		recentFilesEditor.setTextLimit(Integer.toString(EditorHistory.MAX_SIZE).length());
+		recentFilesEditor.setErrorMessage(WorkbenchMessages.format("WorkbenchPreference.recentFilesError", new Object[] { new Integer(EditorHistory.MAX_SIZE)})); //$NON-NLS-1$
 		recentFilesEditor.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
-		recentFilesEditor.setValidRange(0, recentFilesMax);
+		recentFilesEditor.setValidRange(0, EditorHistory.MAX_SIZE);
 		recentFilesEditor.load();
 		recentFilesEditor.setPropertyChangeListener(validityChangeListener);
 		

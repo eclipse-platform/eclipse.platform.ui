@@ -48,7 +48,6 @@ public interface IPreferenceConstants {
 	
 	// (int) N recently viewed files will be listed in the File->Open Recent menu.
 	public static final String RECENT_FILES = "RECENT_FILES"; //$NON-NLS-1$
-	public static final int MAX_RECENT_FILES_SIZE = 15;
 
 	// (integer) Mode for opening a view.
 	public static final String OPEN_VIEW_MODE = "OPEN_VIEW_MODE"; //$NON-NLS-1$
