@@ -393,8 +393,8 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	 * Validates the content of the location field.
 	 */
 	protected boolean validateLocation(boolean newConfig) {
-		String value = locationField.getText().trim();
-		if (value.length() < 1) {
+		String location = locationField.getText().trim();
+		if (location.length() < 1) {
 			if (newConfig) {
 				setErrorMessage(null);
 				setMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.30"));  //$NON-NLS-1$
@@ -405,15 +405,18 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 			return false;
 		}
 		
-		String location = null;
+		String expandedLocation= null;
 		try {
-			location= getValue(value);
+			expandedLocation= resolveValue(location);
+			if (expandedLocation == null) { //a variable that needs to be resolved at runtime
+				return true;
+			}
 		} catch (CoreException e) {
-			setErrorMessage(e.getMessage());
+			setErrorMessage(e.getStatus().getMessage());
 			return false;
 		}
 		
-		File file = new File(location);
+		File file = new File(expandedLocation);
 		if (!file.exists()) { // The file does not exist.
 			if (!newConfig) {
 				setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.External_tool_location_does_not_exist_19")); //$NON-NLS-1$
@@ -430,11 +433,33 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	}
 	
 	/**
-	 * Returns the value of the given string with all variables substituted (if any).
+	 * Validates the variables of the given string to determine if all variables are valid
 	 * 
 	 * @param expression expression with variables
-	 * @return resolved value of expression
-	 * @exception CoreException if variable substitution fails
+	 * @exception CoreException if a variable is specified that does not exist
+	 */
+	private void validateVaribles(String expression) throws CoreException {
+		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+		manager.validateStringVariables(expression);
+	}
+	
+	private String resolveValue(String expression) throws CoreException {
+		String expanded= null;
+		try {
+			expanded= getValue(expression);
+		} catch (CoreException e) { //possibly just a variable that needs to be resolved at runtime
+			validateVaribles(expression);
+			return null;
+		}
+		return expanded;
+	}
+	
+	/**
+	 * Validates the value of the given string to determine if any/all variables are valid
+	 * 
+	 * @param expression expression with variables
+	 * @return whether the expression contained any variable values
+	 * @exception CoreException if variable resolution fails
 	 */
 	private String getValue(String expression) throws CoreException {
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
@@ -445,20 +470,23 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	 * Validates the content of the working directory field.
 	 */
 	protected boolean validateWorkDirectory() {
-		String value = workDirectoryField.getText().trim();
-		if (value.length() <= 0) {
+		String dir = workDirectoryField.getText().trim();
+		if (dir.length() <= 0) {
 			return true;
 		}
 
-		String dir = null;
+		String expandedDir= null;
 		try {
-			dir= getValue(value);
+			expandedDir= resolveValue(dir);
+			if (expandedDir == null) { //a variable that needs to be resolved at runtime
+				return true;
+			}
 		} catch (CoreException e) {
-			setErrorMessage(e.getMessage());
+			setErrorMessage(e.getStatus().getMessage());
 			return false;
 		}
 			
-		File file = new File(dir);
+		File file = new File(expandedDir);
 		if (!file.exists()) { // The directory does not exist.
 			setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.External_tool_working_directory_does_not_exist_or_is_invalid_21")); //$NON-NLS-1$
 			return false;

@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -44,7 +43,7 @@ public class StringSubstitutionEngine {
 	private StringBuffer fResult;
 	
 	/**
-	 * whether substitutions were performed
+	 * Whether substitutions were performed
 	 */
 	private boolean fSubs;
 	
@@ -83,11 +82,11 @@ public class StringSubstitutionEngine {
 	 * @exception CoreException if unable to resolve a referenced variable or if a cycle exists
 	 *  in referenced variables
 	 */
-	public String performStringSubstitution(String expression, boolean reportUndefinedVariables, IStringVariableManager manager) throws CoreException {
-		substitute(expression, reportUndefinedVariables, manager);
+	public String performStringSubstitution(String expression, boolean reportUndefinedVariables, boolean resolveVariables, IStringVariableManager manager) throws CoreException {
+		substitute(expression, reportUndefinedVariables, resolveVariables, manager);
 		List resolvedVariableSets = new ArrayList();
 		while (fSubs) {
-			HashSet resolved = substitute(fResult.toString(), reportUndefinedVariables, manager);			
+			HashSet resolved = substitute(fResult.toString(), reportUndefinedVariables, true, manager);			
 			
 			for(int i=resolvedVariableSets.size()-1; i>=0; i--) {
 				
@@ -114,14 +113,27 @@ public class StringSubstitutionEngine {
 	}
 	
 	/**
+	 * Performs recursive string validation to ensure that all of the variables
+	 * contained in the expression exist
+	 * @param expression expression to validate
+	 * @param manager registry of variables
+	 * @exception CoreException if a referenced variable does not exist or if a cycle exists
+	 *  in referenced variables
+	 */
+	public void validateStringVariables(String expression, IStringVariableManager manager) throws CoreException {
+		performStringSubstitution(expression, true, false, manager);
+	}
+	
+	/**
 	 * Makes a substitution pass of the given expression returns a Set of the variables that were resolved in this
 	 *  pass
 	 *  
 	 * @param expression source expression
 	 * @param reportUndefinedVariables whether to report undefined variables as an error
+	 * @param resolveVariables whether to resolve the value of any variables
 	 * @exception CoreException if unable to resolve a variable
 	 */
-	private HashSet substitute(String expression, boolean reportUndefinedVariables, IStringVariableManager manager) throws CoreException {
+	private HashSet substitute(String expression, boolean reportUndefinedVariables, boolean resolveVariables, IStringVariableManager manager) throws CoreException {
 		fResult = new StringBuffer(expression.length());
 		fStack = new Stack();
 		fSubs = false;
@@ -177,7 +189,7 @@ public class StringSubstitutionEngine {
 							resolvedVariables.add(substring);
 							
 							pos = end + 1;
-							String value = resolve(tos, reportUndefinedVariables, manager);
+							String value= resolve(tos, reportUndefinedVariables, resolveVariables, manager);
 							if (value == null) {
 								value = ""; //$NON-NLS-1$
 							}
@@ -219,11 +231,12 @@ public class StringSubstitutionEngine {
 	 * @param var
 	 * @param reportUndefinedVariables whether to report undefined variables as
 	 *  an error
+	 * @param resolveVariables whether to resolve the variables value or just to validate that this variable is valid
 	 * @param manager variable registry
 	 * @return variable value, possibly <code>null</code>
 	 * @exception CoreException if unable to resolve a value
 	 */
-	private String resolve(VariableReference var, boolean reportUndefinedVariables, IStringVariableManager manager) throws CoreException {
+	private String resolve(VariableReference var, boolean reportUndefinedVariables, boolean resolveVariables, IStringVariableManager manager) throws CoreException {
 		String text = var.getText();
 		int pos = text.indexOf(VARIABLE_ARG);
 		String name = null;
@@ -246,23 +259,37 @@ public class StringSubstitutionEngine {
 					throw new CoreException(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, MessageFormat.format(VariablesMessages.getString("StringSubstitutionEngine.3"), new String[]{name}), null)); //$NON-NLS-1$
 				} else {
 					// leave as is
-					StringBuffer res = new StringBuffer(var.getText());
-					res.insert(0, VARIABLE_START);
-					res.append(VARIABLE_END);
-					return res.toString();
+					return getOriginalVarText(var);
 				}
 			} else {
-				fSubs = true;
-				return dynamicVariable.getValue(arg);
+				if (resolveVariables) {
+					fSubs = true;
+					return dynamicVariable.getValue(arg);
+				} else {
+					//leave as is
+					return getOriginalVarText(var);
+				}
 			}
 		} else {
 			if (arg == null) {
-				fSubs = true;
-				return valueVariable.getValue();
+				if (resolveVariables) {
+					fSubs = true;
+					return valueVariable.getValue();
+				} else {
+					//leave as is
+					return getOriginalVarText(var);
+				}
 			} else {
 				// error - an argument specified for a value variable
 				throw new CoreException(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, MessageFormat.format(VariablesMessages.getString("StringSubstitutionEngine.4"), new String[]{valueVariable.getName()}), null)); //$NON-NLS-1$
 			}
 		}
+	}
+
+	private String getOriginalVarText(VariableReference var) {
+		StringBuffer res = new StringBuffer(var.getText());
+		res.insert(0, VARIABLE_START);
+		res.append(VARIABLE_END);
+		return res.toString();
 	}
 }

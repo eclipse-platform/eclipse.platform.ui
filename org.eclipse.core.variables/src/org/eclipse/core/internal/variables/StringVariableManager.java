@@ -527,11 +527,18 @@ public class StringVariableManager implements IStringVariableManager {
 		buffer.append("}"); //$NON-NLS-1$
 		return buffer.toString();
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#performStringSubstitution(java.lang.String, boolean)
 	 */
 	public String performStringSubstitution(String expression,	boolean reportUndefinedVariables) throws CoreException {
-		return new StringSubstitutionEngine().performStringSubstitution(expression, reportUndefinedVariables, this);
+		return new StringSubstitutionEngine().performStringSubstitution(expression, reportUndefinedVariables, true, this);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.variables.IStringVariableManager#validateStringVariables(java.lang.String)
+	 */
+	public void validateStringVariables(String expression) throws CoreException {
+		new StringSubstitutionEngine().validateStringVariables(expression, this);
+	}
 }

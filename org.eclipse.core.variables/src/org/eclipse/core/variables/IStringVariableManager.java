@@ -99,6 +99,15 @@ public interface IStringVariableManager {
 	public String performStringSubstitution(String expression, boolean reportUndefinedVariables) throws CoreException;	
 	
 	/**
+	 * Recursively determines the validity of all variables references in the given
+	 * expression and reports errors for references to undefined variables.
+	 * 
+	 * @param expression expression referencing variables
+	 * @throws CoreException if one or more variables does not exist
+	 */
+	public void validateStringVariables(String expression) throws CoreException;
+	
+	/**
 	 * Returns a new value variable with the given name and description.
 	 * 
 	 * @param name variable name, cannot be <code>null</code>
