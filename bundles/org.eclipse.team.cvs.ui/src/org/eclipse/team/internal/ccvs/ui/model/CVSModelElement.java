@@ -18,10 +18,12 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
+import org.eclipse.ui.progress.IElementCollector;
 
 public abstract class CVSModelElement implements IWorkbenchAdapter, IAdaptable {
 	
@@ -101,9 +103,31 @@ public abstract class CVSModelElement implements IWorkbenchAdapter, IAdaptable {
 	abstract protected Object[] fetchChildren(Object o, IProgressMonitor monitor) throws TeamException;
 		
 	/**
-	 * Handles exceptions that occur in CVS model elements.
+	 * Handle an exception that occurred in CVS model elements by displaying an error dialog.
+	 * @param title the title of the error dialog
+	 * @param description the description to be displayed
+	 * @param e the exception that occurred
 	 */
-	protected void handle(Throwable t) {
-		CVSUIPlugin.openError(null, null, null, t, CVSUIPlugin.LOG_NONTEAM_EXCEPTIONS);
-	}		
+    protected void handle(final String title, final String description, final Throwable e) {
+       CVSUIPlugin.openError(null, title, description, e, CVSUIPlugin.LOG_NONTEAM_EXCEPTIONS | CVSUIPlugin.PERFORM_SYNC_EXEC);
+    }
+    
+    /**
+     * Helper methed error handler that displayes a generic dialog title and message when displaying an error to the user.
+     * @param t the exception that occurred.
+     */
+    protected void handle(Throwable t) {
+        handle(Policy.bind("CVSModelElement.0"), Policy.bind("CVSModelElement.1"), t); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+    
+    /**
+     * Handle an exception that occurred while fetching the children for a deferred workbench adapter.
+     * @param collector the collector for the adapter
+     * @param e the exception that occurred
+     */
+    protected void handle(IElementCollector collector, Throwable t) {
+        // TODO: For now, just display a dialog (see bug 65008 and 65741)
+        handle(t);
+    }
+
 }

@@ -51,7 +51,7 @@ public class CVSFileElement extends CVSResourceElement {
 				return file.getName();
 			}
 		} catch (TeamException e) {
-			handle(e);
+			handle(null, null, e);
 			return null;
 		}
 	}

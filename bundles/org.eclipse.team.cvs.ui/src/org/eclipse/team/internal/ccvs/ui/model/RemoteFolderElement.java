@@ -70,7 +70,7 @@ public class RemoteFolderElement extends RemoteResourceElement implements IDefer
 			FetchMembersOperation operation = new FetchMembersOperation(null, (ICVSRemoteFolder)o, collector);
 			operation.run(Policy.subMonitorFor(monitor, 100));
         } catch (InvocationTargetException e) {
-			CVSUIPlugin.log(CVSException.wrapException(e));
+            handle(collector, e);
 		} catch (InterruptedException e) {
 			// Cancelled by the user;
 		} finally {

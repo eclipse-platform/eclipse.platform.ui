@@ -41,7 +41,7 @@ public class RemoteFileElement extends RemoteResourceElement {
 		try {
 			return Policy.bind("nameAndRevision", file.getName(), file.getRevision()); //$NON-NLS-1$
 		} catch (TeamException e) {
-			handle(e);
+		    handle(null, null, e);
 			return null;
 		}
 	}

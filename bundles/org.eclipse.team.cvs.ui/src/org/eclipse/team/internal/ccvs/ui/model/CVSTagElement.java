@@ -13,10 +13,10 @@ package org.eclipse.team.internal.ccvs.ui.model;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
@@ -24,7 +24,6 @@ import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.FetchMembersOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.FetchMembersOperation.RemoteFolderFilter;
-import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.progress.IElementCollector;
 
@@ -133,12 +132,7 @@ public class CVSTagElement extends CVSModelElement implements IDeferredWorkbench
 				});
 				operation.run(Policy.subMonitorFor(monitor, 100));
 			} catch (final InvocationTargetException e) {
-				Display d = CVSUIPlugin.getStandardDisplay();
-				d.asyncExec(new Runnable() {
-					public void run() {
-						CVSUIPlugin.openError(Utils.getShell(null), Policy.bind("CVSTagElement.0"), Policy.bind("CVSTagElement.1"), e); //$NON-NLS-1$ //$NON-NLS-2$
-					}
-				});
+				handle(collector, e);
 			} catch (InterruptedException e) {
 				// Cancelled by the user;
 			} finally {
@@ -148,12 +142,12 @@ public class CVSTagElement extends CVSModelElement implements IDeferredWorkbench
 			try {
 				collector.add(fetchChildren(o, monitor), monitor);
 			} catch (TeamException e) {
-				CVSUIPlugin.log(e);
+			    handle(collector, e);
 			}
 		}
 	}
 
-	public ISchedulingRule getRule(Object element) {
+    public ISchedulingRule getRule(Object element) {
 		return new RepositoryLocationSchedulingRule(root); //$NON-NLS-1$
 	}
 	

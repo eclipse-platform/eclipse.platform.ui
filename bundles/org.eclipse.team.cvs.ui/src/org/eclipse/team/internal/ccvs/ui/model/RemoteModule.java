@@ -24,129 +24,125 @@ import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.progress.IElementCollector;
 
 /**
- * This class represents an IProject resource in a repository.  The
- * children of a RemoteModule are its versions. A RemoteModule is
- * a child of the VersionsCategory.
+ * This class represents an IProject resource in a repository. The children of a
+ * RemoteModule are its versions. A RemoteModule is a child of the
+ * VersionsCategory.
  */
-public class RemoteModule
- extends CVSModelElement
- implements IAdaptable, IDeferredWorkbenchAdapter {
- ICVSRemoteFolder folder;
- VersionCategory parent;
+public class RemoteModule extends CVSModelElement implements IAdaptable,
+        IDeferredWorkbenchAdapter {
+    ICVSRemoteFolder folder;
 
- /**
-  * RemoteProject constructor.
-  */
- public RemoteModule(ICVSRemoteFolder folder, VersionCategory parent) {
-  this.folder = folder;
-  this.parent = parent;
- }
+    VersionCategory parent;
 
- /**
-  * Returns an object which is an instance of the given class
-  * associated with this object. Returns <code>null</code> if
-  * no such object can be found.
-  */
- public Object getAdapter(Class adapter) {
-  if (adapter == IWorkbenchAdapter.class)
-   return this;
-  if (adapter == IDeferredWorkbenchAdapter.class)
-   return this;
-  return null;
- }
+    /**
+     * RemoteProject constructor.
+     */
+    public RemoteModule(ICVSRemoteFolder folder, VersionCategory parent) {
+        this.folder = folder;
+        this.parent = parent;
+    }
 
- /**
-  * Returns an image to be used for displaying an object in the desktop.
-  * @param object The object to get an image for.
-  * @param owner The viewer that the image will be used in.  The image will
-  * be disposed when this viewer is closed.  If the owner is null, a new 
-  * image is returned, and the caller is responsible for disposing it.
-  */
- public ImageDescriptor getImageDescriptor(Object object) {
-  return CVSUIPlugin.getPlugin().getImageDescriptor(
-   ICVSUIConstants.IMG_PROJECT_VERSION);
- }
+    /**
+     * Returns an object which is an instance of the given class associated with
+     * this object. Returns <code>null</code> if no such object can be found.
+     */
+    public Object getAdapter(Class adapter) {
+        if (adapter == IWorkbenchAdapter.class)
+            return this;
+        if (adapter == IDeferredWorkbenchAdapter.class)
+            return this;
+        return null;
+    }
 
- /**
-  * Returns the name of this element.  This will typically
-  * be used to assign a label to this object when displayed
-  * in the UI.
-  */
- public String getLabel(Object o) {
-  return folder.getName();
- }
+    /**
+     * Returns an image to be used for displaying an object in the desktop.
+     * 
+     * @param object The object to get an image for.
+     * @param owner The viewer that the image will be used in. The image will be
+     *            disposed when this viewer is closed. If the owner is null, a
+     *            new image is returned, and the caller is responsible for
+     *            disposing it.
+     */
+    public ImageDescriptor getImageDescriptor(Object object) {
+        return CVSUIPlugin.getPlugin().getImageDescriptor(
+                ICVSUIConstants.IMG_PROJECT_VERSION);
+    }
 
- /**
-  * Returns the logical parent of the given object in its tree.
-  */
- public Object getParent(Object o) {
-  return parent;
- }
+    /**
+     * Returns the name of this element. This will typically be used to assign a
+     * label to this object when displayed in the UI.
+     */
+    public String getLabel(Object o) {
+        return folder.getName();
+    }
 
- /**
-  * Return the repository the given element belongs to.
-  */
- public ICVSRepositoryLocation getRepository(Object o) {
-  return folder.getRepository();
- }
+    /**
+     * Returns the logical parent of the given object in its tree.
+     */
+    public Object getParent(Object o) {
+        return parent;
+    }
 
- /** (Non-javadoc)
-  * For debugging purposes only.
-  */
- public String toString() {
-  return "RemoteModule(" + folder.getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
- }
+    /**
+     * Return the repository the given element belongs to.
+     */
+    public ICVSRepositoryLocation getRepository(Object o) {
+        return folder.getRepository();
+    }
 
- public ICVSRemoteResource getCVSResource() {
-  return folder;
- }
+    /**
+     * (Non-javadoc) For debugging purposes only.
+     */
+    public String toString() {
+        return "RemoteModule(" + folder.getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+    }
 
- /**
-  * Returns the children of this object.  When this object
-  * is displayed in a tree, the returned objects will be this
-  * element's children.  Returns an empty enumeration if this
-  * object has no children. The children of the RemoteModule
-  * are the versions for that module.
-  *
-  * @see org.eclipse.team.internal.ccvs.ui.model.CVSModelElement#internalGetChildren(java.lang.Object, org.eclipse.core.runtime.IProgressMonitor)
-  */
- public Object[] fetchChildren(Object o, IProgressMonitor monitor)
-  throws TeamException {
-  RepositoryManager manager =
-   CVSUIPlugin.getPlugin().getRepositoryManager();
-  try {
-   manager.refreshDefinedTags(folder, false /* replace */
-   , false, monitor);
-  } catch (TeamException e) {
-   // continue
-  }
-  CVSTag[] tags =
-   CVSUIPlugin.getPlugin().getRepositoryManager().getKnownTags(
-    folder,
-    CVSTag.VERSION);
-  Object[] versions = new Object[tags.length];
-  for (int i = 0; i < versions.length; i++) {
-   versions[i] = folder.forTag(tags[i]);
-  }
-  return versions;
- }
+    public ICVSRemoteResource getCVSResource() {
+        return folder;
+    }
 
- public void fetchDeferredChildren(
-  Object o,
-  IElementCollector collector,
-  IProgressMonitor monitor) {
-		try {
-			collector.add(fetchChildren(o, monitor), monitor);
-		} catch (TeamException e) {
-			CVSUIPlugin.log(e);
-  }
- }
+    /**
+     * Returns the children of this object. When this object is displayed in a
+     * tree, the returned objects will be this element's children. Returns an
+     * empty enumeration if this object has no children. The children of the
+     * RemoteModule are the versions for that module.
+     * 
+     * @see org.eclipse.team.internal.ccvs.ui.model.CVSModelElement#internalGetChildren(java.lang.Object,
+     *      org.eclipse.core.runtime.IProgressMonitor)
+     */
+    public Object[] fetchChildren(Object o, IProgressMonitor monitor)
+            throws TeamException {
+        RepositoryManager manager = CVSUIPlugin.getPlugin()
+                .getRepositoryManager();
+        try {
+            manager.refreshDefinedTags(folder, false /* replace */
+            , false, monitor);
+        } catch (TeamException e) {
+            // continue
+        }
+        CVSTag[] tags = CVSUIPlugin.getPlugin().getRepositoryManager()
+                .getKnownTags(folder, CVSTag.VERSION);
+        Object[] versions = new Object[tags.length];
+        for (int i = 0; i < versions.length; i++) {
+            versions[i] = folder.forTag(tags[i]);
+        }
+        return versions;
+    }
 
- public boolean isContainer() {
-  return true;
- }
+    public void fetchDeferredChildren(Object o, IElementCollector collector,
+            IProgressMonitor monitor) {
+        try {
+            collector.add(fetchChildren(o, monitor), monitor);
+        } catch (TeamException e) {
+            handle(collector, e);
+        }
+    }
 
- public ISchedulingRule getRule(Object element) {
-  return new RepositoryLocationSchedulingRule(folder.getRepository()); //$NON-NLS-1$
- }
+    public boolean isContainer() {
+        return true;
+    }
+
+    public ISchedulingRule getRule(Object element) {
+        return new RepositoryLocationSchedulingRule(folder.getRepository()); //$NON-NLS-1$
+    }
 }
