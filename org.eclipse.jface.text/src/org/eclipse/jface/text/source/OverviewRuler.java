@@ -686,6 +686,10 @@ public class OverviewRuler implements IOverviewRuler {
 			Iterator e= new FilterIterator();
 			while (e.hasNext()) {
 				Annotation a= (Annotation) e.next();
+				
+				if (skip(fAnnotationAccess.getType(a)))
+					continue;
+				
 				Position p= fModel.getPosition(a);
 				if (start <= p.getOffset() && p.getOffset() < end) {
 					if (found == null || p.getOffset() < found.getOffset())
