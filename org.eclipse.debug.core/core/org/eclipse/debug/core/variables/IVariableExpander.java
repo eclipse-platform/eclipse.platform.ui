@@ -14,6 +14,14 @@ package org.eclipse.debug.core.variables;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
+/**
+ * Variable expanders provide a value for context launch variables.
+ * An expander is provided for a variable via extension and
+ * is automatically loaded and queried by the platform to compute
+ * the variable's value.
+ * 
+ * @see org.eclipse.debug.core.variables.IContextLaunchVariable
+ */
 public interface IVariableExpander {
 	/**
 	 * Returns the <code>IResource</code> list
