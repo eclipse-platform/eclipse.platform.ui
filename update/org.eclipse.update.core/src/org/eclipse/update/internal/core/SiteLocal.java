@@ -23,6 +23,7 @@ import org.xml.sax.SAXException;
 
 public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 
+	
 	private static IPluginEntry[] allRunningPluginEntry;
 	private ListenersList listeners = new ListenersList();
 
@@ -246,7 +247,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	/**
 	 * @since 2.0
 	 */
-	public IInstallConfiguration cloneConfigurationSite(IInstallConfiguration installConfig, URL newFile, String name) throws CoreException {
+	private IInstallConfiguration cloneConfigurationSite(IInstallConfiguration installConfig, URL newFile, String name) throws CoreException {
 
 		// save previous current configuration
 		if (getCurrentConfiguration() != null)
@@ -293,7 +294,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		try {
 			// create a configuration
 			newConfiguration = cloneCurrentConfiguration();
-			newConfiguration.setLabel( configuration.getLabel());
+			newConfiguration.setLabel(configuration.getLabel());
 
 			// process delta
 			// the Configured featuresConfigured are the same as the old configuration
@@ -370,8 +371,6 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		return (IInstallConfiguration) preservedConfig;
 	}
 
-
-
 	/*
 	 * @see ILocalSite#getCurrentConfiguration()
 	 * LocalSiteModel#getCurrentConfigurationModel() may return null if
@@ -408,19 +407,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			 ((InstallConfiguration) configuration).remove();
 	}
 
-	/**
-	 * 
-	 */
-	public IInstallConfiguration importConfiguration(URL importURL, String label) throws CoreException {
-		InstallConfiguration config = null;
-		try {
-			config = new InstallConfiguration(importURL, label);
-		} catch (MalformedURLException e) {
-			throw newCoreException("Unable to import Configuration " + importURL.toExternalForm(), e);
-		}
-		return config;
-	}
-
+	
 	/*
 	 * @see ILocalSite#getConfigurationHistory()
 	 */
@@ -431,7 +418,25 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	}
 
 	/*
-	 * @see ILocalSite#reconcile()
+	 * Reconciliation is the comparison between the old preserved state and the new one from platform.cfg
+	 * 
+	 * If the old state contained sites that are not in the new state, the old sites are not added to the state
+	 * 
+	 * If the new state contains sites that were not in the old state, configure the site and configure all the found features
+	 * 
+	 * If the sites are in both states, verify the features
+	 * 
+	 * if the old site contained features that are not in the new site, the features are not added to the site
+	 * 
+	 * if the new site contains feature that were not in the old site, configure the new feature
+	 * 
+	 * if the feature is in both site (old and new), use old feature state
+	 * 
+	 * When adding a feature to a site, we will check if the feature is broken or not. 
+	 * A feature is broken when at least one of its plugin is not installed on the site.
+	 * 
+	 * At the end, go over all the site, get the configured features and make sure that if we find duplicates
+	 * only one feature is configured
 	 */
 	public void reconcile() throws CoreException {
 		try {
@@ -442,30 +447,25 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			// new site only exist in platformConfig
 			List modified = new ArrayList();
 			List toInstall = new ArrayList();
-			List brokenLink = new ArrayList();
 			IConfiguredSite[] configured = new IConfiguredSite[0];
 
 			// sites from the current configuration
 			if (getCurrentConfiguration() != null)
 				configured = getCurrentConfiguration().getConfiguredSites();
 
-			// sites from the platform			
+			// check if sites from the platform are new or modified
 			for (int siteIndex = 0; siteIndex < siteEntries.length; siteIndex++) {
 
 				URL resolvedURL = Platform.resolve(siteEntries[siteIndex].getURL());
 				boolean found = false;
 				for (int index = 0; index < configured.length && !found; index++) {
-
-					// the array may have hole as we set found site to null
-					if (configured[index] != null) {
-						if (configured[index].getSite().getURL().equals(resolvedURL)) {
-							found = true;
-							((ConfiguredSite) configured[index]).setPreviousPluginPath(siteEntries[siteIndex].getSitePolicy().getList());
-							modified.add(configured[index]);
-							configured[index] = null;
-						}
+					if (configured[index].getSite().getURL().equals(resolvedURL)) {
+						found = true;
+						((ConfiguredSite) configured[index]).setPreviousPluginPath(siteEntries[siteIndex].getSitePolicy().getList());
+						modified.add(configured[index]);
 					}
 				}
+
 				// new site not found, create it
 				if (!found) {
 					ISite site = SiteManager.getSite(resolvedURL);
@@ -478,23 +478,9 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 					//the site may not be read-write
 					configSite.isUpdateable(siteEntries[siteIndex].isUpdateable());
 
-					// check if the features are configured
-					IFeatureReference[] ref = configSite.getSite().getFeatureReferences();
-					for (int i = 0; i < ref.length; i++) {
-						checkConfigure(ref[i], configSite);
-					}
-
 					toInstall.add(configSite);
 				}
 			}
-
-			// get the broken sites.... teh one that are not setup and not modified
-			for (int g = 0; g < configured.length; g++) {
-				if (configured[g] != null)
-					brokenLink.add(configured[g]);
-			}
-
-			// we now have three lists
 
 			// create new InstallConfiguration
 			IInstallConfiguration newDefaultConfiguration = cloneConfigurationSite(null, null, null);
@@ -514,9 +500,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				newDefaultConfiguration.addConfiguredSite(element);
 			}
 
-			// do not add the broken one 
-			// in future implementations we may ask the user
-			
+			// add the configuration as the currentConfig
 			this.addConfiguration(newDefaultConfiguration);
 
 		} catch (IOException e) {
@@ -524,12 +508,17 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		}
 	}
 
+	
+	/**
+	 * Compare the old version of the configuration Site with the new one.
+	 * 
+	 */
 	private IConfiguredSite reconcile(IConfiguredSite toReconcile) throws CoreException {
 
 		// create a copy of the ConfigSite without any feature
 		// this is not a clone
 		SiteModel siteModel = (SiteModel) toReconcile.getSite();
-		ConfiguredSite cSiteToReconcile = (ConfiguredSite)toReconcile;
+		ConfiguredSite cSiteToReconcile = (ConfiguredSite) toReconcile;
 		int policy = cSiteToReconcile.getConfigurationPolicy().getPolicy();
 		ConfiguredSiteModel newSiteModel = new BaseSiteLocalFactory().createConfigurationSiteModel(siteModel, policy);
 
@@ -540,7 +529,6 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 
 		// check the Features that are still here
 		List toCheck = new ArrayList();
-		List brokenFeature = new ArrayList();
 		IFeatureReference[] configured = toReconcile.getSite().getFeatureReferences();
 		FeatureReferenceModel[] found = newSiteModel.getSiteModel().getFeatureReferenceModels();
 
@@ -548,77 +536,36 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			for (int j = 0; j < configured.length; j++) {
 				if (configured[j] != null && configured[j].equals(found[i])) {
 					toCheck.add(configured[j]);
-					configured[j] = null;
 				}
 			}
 		}
 
-		// the features that are still in the array are broken
-		for (int k = 0; k < configured.length; k++) {
-			if (configured[k] != null)
-				brokenFeature.add(configured[k]);
-		}
-
-		// check the Plugins of all the features
-		// every plugin of the feature must be on the site
+		// Configure all features
 		ISite currentSite = null;
 		IPluginEntry[] siteEntries = null;
 		Iterator featureIter = toCheck.iterator();
 		while (featureIter.hasNext()) {
 			IFeatureReference element = (IFeatureReference) featureIter.next();
-			checkConfigure(element, (ConfiguredSite) newSiteModel);
-		}
-
-		//Add the featuresReferences of features that do not exist anymore
-		//When we realize the feature is null
-		// we should recover the updateURL that was cache to reinstall it
-		Iterator brokenIter = brokenFeature.iterator();
-		while (brokenIter.hasNext()) {
-			// if the feature does not exist, we 
-			//cannot check the plugins... 
-			//consider the feature as unconfigured)			
-			IFeatureReference element = (IFeatureReference) featureIter.next();
-			((IConfiguredSite) newSiteModel).unconfigure(element.getFeature(), null);
+			(newSiteModel.getConfigurationPolicyModel()).addUnconfiguredFeatureReference((FeatureReferenceModel) element);
 		}
 
 		return (IConfiguredSite) newSiteModel;
 	}
 
-	
 	/**
-	 * Check if all the plugins of the feature are configured in the runtime
-	 * depending on teh answer add it to the newSite as either configured or unconfigured
-	 * We have to check all the running plugin, even if they come from different site
-	 * A feature may be broken because all the plugins are not in the Site, but may be configured
-	 * because soem of the needed plugins come from other site
+	 * Validate we have only one configured feature across the different sites
+	 * even if we found multiples
+	 * 
+	 * If we find 2 features, the one with a higher version is configured
+	 * If they have teh same version, the first feature is configured
 	 */
-	private void checkConfigure(IFeatureReference ref, ConfiguredSite newConfigSite) throws CoreException {
-		// check if all the needed plugins are part of all plugin
-		boolean configured = false;
-		//FIXME right now we figure the exact match
-		// but a feature can be running b/c a *compatible* plugin 
-		// match has been found
-		// we should check the id only, forget about version ???
-		// algorithm has to be reviewed...
-		IPluginEntry[] allPlugins = getAllRunningPlugin();
-		IFeature feature = ref.getFeature();
-		IPluginEntry[] result = new IPluginEntry[0];
-		if (feature != null) {
-			IPluginEntry[] featurePlugins = ref.getFeature().getPluginEntries();
-			result = UpdateManagerUtils.diff(featurePlugins, allPlugins);
-			if (result.length == 0) {
-				configured = true;
-			}
-
-			// there are some plugins the feature need that are not present
-			if (!configured) {
-				(newConfigSite.getConfigurationPolicyModel()).addUnconfiguredFeatureReference((FeatureReferenceModel) ref);
-			} else {
-				(newConfigSite.getConfigurationPolicyModel()).addConfiguredFeatureReference((FeatureReferenceModel) ref);
-			}
-		}
+	private void checkConfiguredFeatures(IInstallConfiguration newDefaultConfiguration) {
 	}
 
+
+	/**
+	 * Returns all the plugins currently configured in the pluginRegistry
+	 */
 	private static IPluginEntry[] getAllRunningPlugin() throws CoreException {
 		if (allRunningPluginEntry == null) {
 			// get all the running plugins
@@ -641,8 +588,10 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	}
 
 	/**
-	 * Add teh list of plugins the platform found for each site. This list will ba preserved in 
-	 * a transient way so we do not lose explicitly set plugins
+	 * Add the list of plugins the platform found for each site. This list will be preserved in 
+	 * a transient way. 
+	 * 
+	 * We do not lose explicitly set plugins found in platform.cfg.
 	 */
 	private void preserveRuntimePluginPath() throws CoreException {
 		try {

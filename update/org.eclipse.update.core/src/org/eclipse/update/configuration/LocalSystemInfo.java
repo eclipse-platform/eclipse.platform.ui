@@ -67,12 +67,12 @@ public class LocalSystemInfo {
 	private static boolean hasNatives = false;	
 	static {
 		try {
-			System.loadLibrary("update");
+			System.loadLibrary("update"); //$NON-NLS-1$
 			hasNatives = true;
 		} catch (UnsatisfiedLinkError e) {
 			//DEBUG
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
-				UpdateManagerPlugin.getPlugin().debug("Unable to load native library 'update'.");
+				UpdateManagerPlugin.getPlugin().debug("Unable to load native library 'update'."); //$NON-NLS-1$
 			}
 			hasNatives = false;
 		}

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<site id="org.eclipse.update.core.tests" name="Tests" version="0.0.1">
+<site id="org.eclipse.update.core.tests" name="Tests" version="0.0.1" type="org.eclipse.update.core.file">
   <handler>
   	<boo class ="unknown"/>
   </handler>

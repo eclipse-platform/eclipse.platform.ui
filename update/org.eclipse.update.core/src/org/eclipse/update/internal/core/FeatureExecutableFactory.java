@@ -9,8 +9,10 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.model.*;
 import org.eclipse.update.core.model.FeatureModel;
 import org.eclipse.update.core.model.FeatureModelFactory;
+import org.eclipse.update.internal.core.Policy;
 
 public class FeatureExecutableFactory extends BaseFeatureFactory {
 
@@ -49,12 +51,12 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 			// We should not stop the execution 
 			// but we must Log it all the time, not only when debugging...
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "Error opening feature.xml in the feature archive:" + url.toExternalForm(), e);
+			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "IOException opening the 'feature.xml' stream in the feature archive:" + url.toExternalForm(), e); //$NON-NLS-1$
 			UpdateManagerPlugin.getPlugin().getLog().log(status);
-		} catch (Exception e) {
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "Error parsing feature.xml in the feature archive:" + url.toExternalForm(), e);
-			throw new CoreException(status);
+		} catch (Exception e){
+			//catch (SAXException e) parseFeature
+			//catch (ParsingException)  parerFeature
+			throw newCoreException(Policy.bind("FeatureExecutableFactory.ParsingError", url.toExternalForm()), e); //$NON-NLS-1$
 		} finally {
 			try {
 				featureStream.close();
@@ -94,21 +96,22 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 	private URL validate(URL url) throws CoreException {
 		
 		if (url==null) 
-			throw newCoreException("URL is null",null);		
+			throw newCoreException(Policy.bind("FeatureExecutableFactory.NullURL"),null);		 //$NON-NLS-1$
 		
-		if (!(url.getFile().endsWith("/") || url.getFile().endsWith(File.separator) || url.getFile().endsWith(Feature.FEATURE_XML))){
+		if (!(url.getFile().endsWith("/") || url.getFile().endsWith(File.separator) || url.getFile().endsWith(Feature.FEATURE_XML))){ //$NON-NLS-1$
 			try {
-				String path = url.getFile() + "/";
+				String path = url.getFile() + "/"; //$NON-NLS-1$
 				url = new URL(url.getProtocol(),url.getHost(),url.getPort(),path);
 			} catch (MalformedURLException e){
-				throw newCoreException("Unable to create new URL for url"+url.toExternalForm(),e);				
+				throw newCoreException(Policy.bind("FeatureExecutableFactory.CannotCreateURL",url.toExternalForm()),e);				 //$NON-NLS-1$
 			}
 		}
 		return url;
 	}
 
 	private CoreException newCoreException(String s, Throwable e) throws CoreException {
-		return new CoreException(new Status(IStatus.ERROR,"org.eclipse.update.core",0,s,e));
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();		
+		return new CoreException(new Status(IStatus.ERROR,id,0,s,e)); //$NON-NLS-1$
 	}
 
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<site >
+<site type="org.eclipse.update.core.file">
 <description url="info/siteInfo.html"/>
   <feature url="install/features/feature3">
   </feature>

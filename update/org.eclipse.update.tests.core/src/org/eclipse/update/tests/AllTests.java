@@ -33,7 +33,7 @@ public class AllTests extends TestSuite {
 		suite.addTest(AllConfigurationsTests.suite());
 		suite.addTest(AllTypesTests.suite());
 		suite.addTest(AllRegularRemoveTests.suite());	
-		suite.addTest(AllReconciliationTests.suite());					
+		//suite.addTest(AllReconciliationTests.suite());					
 		return suite;
 	}
 }

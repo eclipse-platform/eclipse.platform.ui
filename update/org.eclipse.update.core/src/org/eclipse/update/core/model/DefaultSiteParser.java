@@ -269,9 +269,9 @@ public class DefaultSiteParser extends DefaultHandler {
 		// if URL is specified, it replaces the URL of the site
 		// used to calculate the location of features and archives
 		String siteURL = attributes.getValue("url"); //$NON-NLS-1$
-		if (siteURL !=null && !("".equals(siteURL.trim()))){
-			if (!siteURL.endsWith("/") && !siteURL.endsWith(File.separator)){
-				siteURL += "/";
+		if (siteURL !=null && !("".equals(siteURL.trim()))){ //$NON-NLS-1$
+			if (!siteURL.endsWith("/") && !siteURL.endsWith(File.separator)){ //$NON-NLS-1$
+				siteURL += "/"; //$NON-NLS-1$
 			}
 			site.setLocationURLString(siteURL);
 		}

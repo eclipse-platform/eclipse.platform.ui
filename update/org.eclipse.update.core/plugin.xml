@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- File written by PDE 1.0 -->
 <plugin
    id="org.eclipse.update.core"
    name="%name"
    version="2.0.0"
    provider-name="%provider-name"
    class="org.eclipse.update.internal.core.UpdateManagerPlugin">
+
+<runtime>
+   <library name="updatecore.jar">
+      <export name="*"/>
+   </library>
+</runtime>
 <requires>
    <import plugin="org.eclipse.core.runtime"/>
    <import plugin="org.eclipse.help"/>
@@ -13,30 +18,37 @@
    <import plugin="org.eclipse.core.boot"/>
 </requires>
 
-<runtime>
-   <library name="updatecore.jar">
-      <export name="*"/>
-   </library>
-</runtime>
 
 <extension-point id="featureTypes" name="Install/Update Concrete Feature Type Implementation Factory"/>
-
-<extension 	id="packaged" point="org.eclipse.update.core.featureTypes">
-	<feature-factory class="org.eclipse.update.internal.core.FeaturePackagedFactory"/>
-</extension>
-
-<extension 	id="installed" point="org.eclipse.update.core.featureTypes">
-	<feature-factory class="org.eclipse.update.internal.core.FeatureExecutableFactory"/>
-</extension>
-
 <extension-point id="siteTypes" name="Install/Update Concrete Site Type Implementation Factory"/>
 
-<extension 	id="http" point="org.eclipse.update.core.siteTypes">
-	<site-factory class="org.eclipse.update.internal.core.SiteURLFactory"/>
+<extension
+      id="packaged"
+      point="org.eclipse.update.core.featureTypes">
+   <feature-factory
+         class="org.eclipse.update.internal.core.FeaturePackagedFactory">
+   </feature-factory>
 </extension>
-
-<extension 	id="file" point="org.eclipse.update.core.siteTypes">
-	<site-factory class="org.eclipse.update.internal.core.SiteFileFactory"/>
+<extension
+      id="installed"
+      point="org.eclipse.update.core.featureTypes">
+   <feature-factory
+         class="org.eclipse.update.internal.core.FeatureExecutableFactory">
+   </feature-factory>
+</extension>
+<extension
+      id="http"
+      point="org.eclipse.update.core.siteTypes">
+   <site-factory
+         class="org.eclipse.update.internal.core.SiteURLFactory">
+   </site-factory>
+</extension>
+<extension
+      id="file"
+      point="org.eclipse.update.core.siteTypes">
+   <site-factory
+         class="org.eclipse.update.internal.core.SiteFileFactory">
+   </site-factory>
 </extension>
 
 </plugin>

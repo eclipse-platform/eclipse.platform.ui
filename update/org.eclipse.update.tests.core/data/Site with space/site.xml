@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<site>
+<site type="org.eclipse.update.core.file">
 <description url="info/siteInfo.html"/>
   <feature url="features space/helpFeature.jar" type="org.eclipse.update.core.packaged">
     <category name="eclipse/UML"/>

@@ -132,7 +132,7 @@ public class SiteView
 			if (obj instanceof FeatureReferenceAdapter) {
 				try {
 					IFeature feature = ((FeatureReferenceAdapter) obj).getFeature();
-					VersionedIdentifier versionedIdentifier=feature.getVersionedIdentifier();
+					VersionedIdentifier versionedIdentifier=(feature!=null)?feature.getVersionedIdentifier():null;
 					String version = "";
 					if (versionedIdentifier!=null) version = versionedIdentifier.getVersion().toString();
 					return feature.getLabel() + " " + version;
