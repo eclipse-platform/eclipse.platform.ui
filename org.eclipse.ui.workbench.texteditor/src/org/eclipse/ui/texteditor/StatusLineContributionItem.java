@@ -199,8 +199,7 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 		data.heightHint= getHeightHint(parent);
 		sep.setLayoutData(data);
 		
-		if (fText != null)
-			fLabel.setText(fText);
+		updateMessageLabel();
 	}
 	
 	public void setActionHandler(IAction actionHandler) {
