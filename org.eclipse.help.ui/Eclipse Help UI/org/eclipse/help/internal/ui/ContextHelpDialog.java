@@ -31,7 +31,7 @@ public class ContextHelpDialog implements Runnable {
 	private Cursor waitCursor = null;
 	private ContextManager cmgr = HelpSystem.getContextManager();
 	private Object contexts[];
-	private IHelpTopic farRelatedTopics[] = null;
+	private IHelpTopic farRelatedTopics[] = new IHelpTopic[0];
 	private Thread getMoreRelatedTopicsThread = null;
 	private Map menuItems;
 	private IHelpTopic relatedTopics[] = null;
@@ -76,7 +76,9 @@ public class ContextHelpDialog implements Runnable {
 	class ShowMoreListener implements Listener {
 		public void handleEvent(Event e) {
 			if (e.type == SWT.MouseDown) {
-				if (getMoreRelatedTopicsThread.isAlive()) {
+				if (getMoreRelatedTopicsThread != null &&
+				    getMoreRelatedTopicsThread.isAlive()) 
+				{
 					Display d = shell.getDisplay();
 					if (waitCursor == null)
 						waitCursor = new Cursor(d, SWT.CURSOR_WAIT);
@@ -374,7 +376,9 @@ public class ContextHelpDialog implements Runnable {
 	 */
 	protected void launchFullViewHelp(IHelpTopic selectedTopic) {
 		// wait for more related links
-		if (getMoreRelatedTopicsThread.isAlive()) {
+		if (getMoreRelatedTopicsThread != null &&
+		    getMoreRelatedTopicsThread.isAlive()) 
+		{
 			Display d = Display.getCurrent();
 			if (waitCursor == null)
 				waitCursor = new Cursor(d, SWT.CURSOR_WAIT);
