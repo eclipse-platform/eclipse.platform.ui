@@ -95,7 +95,13 @@ public class TestRevert extends UpdateManagerTestCase {
 		if (newConfigSite==null) fail("Cannot find configuration site");
 
 		int oldNumber = oldConfigSite.getConfiguredFeatures().length;
-		int newNumber = newConfigSite.getConfiguredFeatures().length;		
+		int newNumber = newConfigSite.getConfiguredFeatures().length;
+		
+		//
+		IFeatureReference[] configFeatures = newConfigSite.getConfiguredFeatures();
+		for (int i = 0; i < configFeatures.length; i++) {
+			System.out.println(configFeatures[i]);
+		}		
 		assertTrue("Wrong number of configured features old:"+oldNumber+" new:"+newNumber,oldNumber==newNumber);
 		
 		// test only 2 install config in local site
