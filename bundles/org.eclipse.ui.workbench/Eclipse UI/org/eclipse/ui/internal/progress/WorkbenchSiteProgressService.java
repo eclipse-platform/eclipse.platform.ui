@@ -132,11 +132,13 @@ public class WorkbenchSiteProgressService
 	public void dispose() {
 		if (updateJob != null)
 			updateJob.cancel();
+		
+		ProgressManager.getInstance().removeListener(this);
+		
 		if (waitCursor == null)
 			return;
 		waitCursor.dispose();
 		waitCursor = null;
-		ProgressManager.getInstance().removeListener(this);
 	}
 	/*
 	 * (non-Javadoc)
