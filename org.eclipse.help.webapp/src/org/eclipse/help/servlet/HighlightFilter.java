@@ -75,14 +75,16 @@ public class HighlightFilter implements IFilter {
 		return buf.toString().getBytes();
 	}
 	/**
-	 * Extracts keywords from query 
+	 * Extracts keywords from query that contains
+	 * keywords dobule quoted and separated by space
 	 * @return Collection of String
 	 */
 	private Collection getWords() {
-		Collection tokens = new ArrayList();
-		//Divide along quotation marks and brackets
+		// Collect words to hash set to eliminate duplcates
+		Collection tokens = new HashSet();
+		//Divide along quotation marks
 		StringTokenizer qTokenizer =
-			new StringTokenizer(searchWord.trim(), "\"()", true);
+			new StringTokenizer(searchWord.trim(), "\"", true);
 		boolean withinQuotation = false;
 		String quotedString = "";
 		while (qTokenizer.hasMoreTokens()) {
@@ -99,28 +101,11 @@ public class HighlightFilter implements IFilter {
 				continue;
 			}
 			if (withinQuotation) {
-				quotedString += (curToken);
-			} else {
-				//divide not quoted strings along white space
-				StringTokenizer parser = new StringTokenizer(curToken.trim());
-				while (parser.hasMoreTokens()) {
-					tokens.add(parser.nextToken());
-				}
+				tokens.add(curToken);
 			}
-
 		}
 
-		Collection words = new HashSet(); // to eliminate duplicate words
-		for (Iterator it = tokens.iterator(); it.hasNext();) {
-			String token = (String) it.next();
-			String tokenLowerCase = token.toLowerCase(Locale.US);
-			if (!tokenLowerCase.equals("\"")
-				&& !tokenLowerCase.equals("and")
-				&& !tokenLowerCase.equals("or")
-				&& !tokenLowerCase.equals("not"))
-				words.add(token);
-		}
-		return words;
+		return tokens;
 
 	}
 	/**
