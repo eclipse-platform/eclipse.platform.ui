@@ -69,31 +69,38 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
+		// Create main composite
 		Composite mainComposite = new Composite(parent, SWT.NONE);
 		setControl(mainComposite);
-		
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		mainComposite.setLayout(layout);
 		mainComposite.setLayoutData(gridData);
 		mainComposite.setFont(parent.getFont());
-		
-		Composite composite = new Composite(mainComposite, SWT.NONE);
+		// Create table composite
+		Composite tableComposite = new Composite(mainComposite, SWT.NONE);
 		GridLayout glayout = new GridLayout();
 		glayout.marginHeight = 0;
 		glayout.marginWidth = 0;
 		glayout.numColumns = 1;
 		GridData gdata = new GridData(GridData.FILL_HORIZONTAL);
 		gdata.heightHint = 150;
-		composite.setLayout(glayout);
-		composite.setLayoutData(gdata);
-		
-		Label label = new Label(composite, SWT.NONE);
+		tableComposite.setLayout(glayout);
+		tableComposite.setLayoutData(gdata);
+		// Create label
+		Label label = new Label(tableComposite, SWT.NONE);
 		label.setText("Environment");
 		gdata = new GridData(GridData.FILL_HORIZONTAL);
 		label.setLayoutData(gdata);
-		environmentTable = new TableViewer(composite);
+		// Create table
+		environmentTable = new TableViewer(tableComposite);
+		Table table = environmentTable.getTable();
+		TableLayout tableLayout = new TableLayout();
+		table.setLayout(tableLayout);
+		table.setHeaderVisible(true);
+		gdata = new GridData(GridData.FILL_BOTH);
+		environmentTable.getControl().setLayoutData(gdata);
 		environmentTable.setContentProvider(new EnvironmentVariableContentProvider());
 		environmentTable.setLabelProvider(new EnvironmentVariableLabelProvider());
 		environmentTable.setColumnProperties(envTableColumnProperties);
@@ -106,12 +113,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 				envRemoveButton.setEnabled(enabled);
 			}
 		});
-		
 		// Create columns
-		Table table = environmentTable.getTable();
-		TableLayout tableLayout = new TableLayout();
-		table.setLayout(tableLayout);
-		table.setHeaderVisible(true);
 		for (int i = 0; i < envTableColumnHeaders.length; i++)
 		{
 			tableLayout.addColumnData(envTableColumnLayouts[i]);
@@ -119,8 +121,6 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			tc.setResizable(envTableColumnLayouts[i].resizable);
 			tc.setText(envTableColumnHeaders[i]);
 		}
-		gdata = new GridData(GridData.FILL_BOTH);
-		environmentTable.getControl().setLayoutData(gdata);
 		// Cell Editors
 		TextCellEditor[] cellEditors = new TextCellEditor[envTableColumnHeaders.length];
 		cellEditors[0] = new TextCellEditor(table);
@@ -155,19 +155,19 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		// Create buttons
-		Composite bComposite = new Composite(mainComposite, SWT.NONE);
+		// Create button composite
+		Composite buttonComposite = new Composite(mainComposite, SWT.NONE);
 		glayout = new GridLayout();
 		glayout.marginHeight = 0;
 		glayout.marginWidth = 0;
 		glayout.numColumns = 1;
 		gdata = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-		bComposite.setLayout(glayout);
-		bComposite.setLayoutData(gdata);
-		
-		createVerticalSpacer(bComposite, 1);
-		
-		envAddButton = createPushButton(bComposite, "New", null);
+		buttonComposite.setLayout(glayout);
+		buttonComposite.setLayoutData(gdata);
+
+		createVerticalSpacer(buttonComposite, 1);
+		// Create buttons
+		envAddButton = createPushButton(buttonComposite, "New", null);
 		envAddButton.addSelectionListener(new SelectionAdapter()
 		{
 			public void widgetSelected(SelectionEvent event)
@@ -175,7 +175,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 				handleEnvAddButtonSelected();
 			}
 		});
-		envEditButton = createPushButton(bComposite, "Edit", null);
+		envEditButton = createPushButton(buttonComposite, "Edit", null);
 		envEditButton.addSelectionListener(new SelectionAdapter()
 		{
 			public void widgetSelected(SelectionEvent event)
@@ -184,7 +184,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 		envEditButton.setEnabled(false);
-		envRemoveButton = createPushButton(bComposite, "Remove", null);
+		envRemoveButton = createPushButton(buttonComposite, "Remove", null);
 		envRemoveButton.addSelectionListener(new SelectionAdapter()
 		{
 			public void widgetSelected(SelectionEvent event)
