@@ -1669,7 +1669,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		styleText = fTextViewer.getTextWidget();
 		
 		if (styleText != null)
-			styleText.setText(DebugUIMessages.getString(ERROR) + e);	
+			styleText.setText(DebugUIMessages.getString(ERROR) + e.getMessage());	
 	}
 	
 	/* (non-Javadoc)
