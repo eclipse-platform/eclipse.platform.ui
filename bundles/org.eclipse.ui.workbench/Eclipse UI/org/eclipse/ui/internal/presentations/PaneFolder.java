@@ -41,25 +41,28 @@ import org.eclipse.ui.internal.presentations.newapi.ProxyControl;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
 /**
- * This class implements the tab folders that contains can contain two toolbars and
- * status text. Wherever possible, the toolbars are aligned with the tabs. 
- * If there is not enough room beside the tabs, the toolbars are aligned with the status text. This
- * is the same tab folder that is used to arrange views and editors in Eclipse. 
+ * This class implements the tab folders that contains can contain two toolbars
+ * and status text. Wherever possible, the toolbars are aligned with the tabs.
+ * If there is not enough room beside the tabs, the toolbars are aligned with
+ * the status text. This is the same tab folder that is used to arrange views
+ * and editors in Eclipse.
  * <p>
- * This is closely related to DefaultPartPresentation, but they have different responsibilities. This
- * is essentially a CTabFolder that can manage a toolbar. It should not depend on 
- * data structures from the workbench, and its public interface should only use SWT objects or
- * listeners. DefaultPartPresentation uses a PaneFolder to arrange views or editors. Knowledge
- * of higher-level data structures should go there. 
+ * This is closely related to DefaultPartPresentation, but they have different
+ * responsibilities. This is essentially a CTabFolder that can manage a toolbar.
+ * It should not depend on data structures from the workbench, and its public
+ * interface should only use SWT objects or listeners. DefaultPartPresentation
+ * uses a PaneFolder to arrange views or editors. Knowledge of higher-level data
+ * structures should go there.
  * </p>
  * <p>
- * Although it is not actually a control, the public interface is much like 
- * an SWT control. Implementation-wise, this is actually a combination of a CTabFolder and 
- * a ViewForm. It encapsulates the details of moving the toolbar between the CTabFolder and
- * the ViewForm, and provides a simpler interface to the ViewForm/CTabFolder. 
+ * Although it is not actually a control, the public interface is much like an
+ * SWT control. Implementation-wise, this is actually a combination of a
+ * CTabFolder and a ViewForm. It encapsulates the details of moving the toolbar
+ * between the CTabFolder and the ViewForm, and provides a simpler interface to
+ * the ViewForm/CTabFolder.
  * </p>
- * To be consistent with SWT composites, this object can deal with its children being disposed
- * without warning. This is treated like a removal.
+ * To be consistent with SWT composites, this object can deal with its children
+ * being disposed without warning. This is treated like a removal.
  * 
  * @since 3.0
  */
@@ -91,8 +94,10 @@ public final class PaneFolder {
 
     private boolean putTrimOnTop = true;
 
-    // HACK: Sometimes the topright control isn't resized when CTabFolder.setBounds is called.
-    // We use the following data structures to detect if this has happened and force a layout when necessary.
+    // HACK: Sometimes the topright control isn't resized when
+    // CTabFolder.setBounds is called.
+    // We use the following data structures to detect if this has happened and
+    // force a layout when necessary.
     private boolean topRightResized = false;
 
     private boolean useTopRightOptimization = false;
@@ -102,7 +107,9 @@ public final class PaneFolder {
     // END OF HACK
 
     private DisposeListener tabFolderDisposeListener = new DisposeListener() {
-        /* (non-Javadoc)
+        /*
+         * (non-Javadoc)
+         * 
          * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
          */
         public void widgetDisposed(DisposeEvent e) {
@@ -111,8 +118,9 @@ public final class PaneFolder {
     };
 
     /**
-     * Listens for its children being disposed, and removes them if this happens (although this
-     * may indicate a programming error, this behavior is consistent with SWT composites).
+     * Listens for its children being disposed, and removes them if this happens
+     * (although this may indicate a programming error, this behavior is
+     * consistent with SWT composites).
      */
     private DisposeListener prematureDisposeListener = new DisposeListener() {
 
@@ -150,8 +158,8 @@ public final class PaneFolder {
 
     /**
      * State of the folder at the last mousedown event. This is used to prevent
-     * a mouseup over the minimize or maximize buttons from undoing a state change 
-     * that was caused by the mousedown.
+     * a mouseup over the minimize or maximize buttons from undoing a state
+     * change that was caused by the mousedown.
      */
     private int mousedownState = -1;
 
@@ -172,7 +180,9 @@ public final class PaneFolder {
             notifyButtonListeners(IStackPresentationSite.STATE_MAXIMIZED);
         }
 
-        /* (non-Javadoc)
+        /*
+         * (non-Javadoc)
+         * 
          * @see org.eclipse.swt.custom.CTabFolder2Adapter#close(org.eclipse.swt.custom.CTabFolderEvent)
          */
         public void close(CTabFolderEvent event) {
@@ -195,9 +205,9 @@ public final class PaneFolder {
         }
     };
 
-	private boolean minimizeVisible = false;
+    private boolean minimizeVisible = false;
 
-	private boolean maximizeVisible = false;
+    private boolean maximizeVisible = false;
 
     /**
      * Creates a pane folder. This will create exactly one child control in the
@@ -238,7 +248,8 @@ public final class PaneFolder {
         {
             viewForm = new ViewForm(tabFolder, SWT.NO_BACKGROUND);
 
-            // Only attach these to the viewForm when there's actually a control to display
+            // Only attach these to the viewForm when there's actually a control
+            // to display
             viewFormTopLeftProxy = new ProxyControl(viewForm);
             viewFormTopCenterProxy = new ProxyControl(viewForm);
             viewFormTopRightProxy = new ProxyControl(viewForm);
@@ -249,8 +260,8 @@ public final class PaneFolder {
     }
 
     /**
-     * Returns the title area (the empty region to the right of the tabs), in the tab folder's coordinate
-     * system.  
+     * Returns the title area (the empty region to the right of the tabs), in
+     * the tab folder's coordinate system.
      * 
      * @return the title area (the empty region to the right of the tabs)
      */
@@ -268,10 +279,11 @@ public final class PaneFolder {
     }
 
     /**
-     * Sets the top-center control (usually a toolbar), or null if none.
-     * Note that the control can have any parent.
+     * Sets the top-center control (usually a toolbar), or null if none. Note
+     * that the control can have any parent.
      * 
-     * @param topCenter the top-center control or null if none
+     * @param topCenter
+     *            the top-center control or null if none
      */
     public void setTopCenter(Control topCenter) {
         if (topCenter == topCenterCache.getControl()) {
@@ -349,8 +361,8 @@ public final class PaneFolder {
     }
 
     /**
-     * Optimization: calling this method immediately before setting the control's
-     * bounds will allow for improved caching.
+     * Optimization: calling this method immediately before setting the
+     * control's bounds will allow for improved caching.
      */
     public void aboutToResize() {
         useTopRightOptimization = true;
@@ -360,16 +372,16 @@ public final class PaneFolder {
 
     public void layout(boolean flushCache) {
         boolean showButtons = true;
-        
-		Point minSize = computeMinimumSize();
-    	Rectangle bounds = tabFolder.getBounds();
-//    	if (bounds.width - minSize.x < 1233) {
-//    		showButtons = false;	
-//    	}
-        
+
+        Point minSize = computeMinimumSize();
+        Rectangle bounds = tabFolder.getBounds();
+        //    	if (bounds.width - minSize.x < 1233) {
+        //    		showButtons = false;
+        //    	}
+
         tabFolder.setMinimizeVisible(showButtons && minimizeVisible);
         tabFolder.setMaximizeVisible(showButtons && maximizeVisible);
-    	
+
         // Flush the cached sizes if necessary
         if (flushCache) {
             topLeftCache.flush();
@@ -381,7 +393,8 @@ public final class PaneFolder {
         // resize its title area each time setBounds is called.
         if (!(useTopRightOptimization && (topRightResized || lastWidth == getControl()
                 .getBounds().width))) {
-            // If we can't use the optimization, then we need to force a layout of the tab folder
+            // If we can't use the optimization, then we need to force a layout
+            // of the tab folder
             tabFolder.setTopRight(titleAreaProxy, SWT.FILL);
         }
         useTopRightOptimization = false;
@@ -405,7 +418,8 @@ public final class PaneFolder {
         Control topCenter = topCenterCache.getControl();
 
         if (putTrimOnTop) {
-            // Try to avoid calling setTop* whenever possible, since this will trigger a layout
+            // Try to avoid calling setTop* whenever possible, since this will
+            // trigger a layout
             // of the viewForm.
             if (!lastTrimOnTop) {
                 //	Arrange controls in the title bar
@@ -451,14 +465,13 @@ public final class PaneFolder {
         }
 
         Rectangle oldBounds = viewForm.getBounds();
-        Rectangle newBounds = tabFolder.getClientArea(); 
+        Rectangle newBounds = tabFolder.getClientArea();
         viewForm.setBounds(newBounds);
 
-        if (newBounds.equals(oldBounds) && 
-                flushCache) {
+        if (newBounds.equals(oldBounds) && flushCache) {
             viewForm.layout(true);
         }
-        
+
         viewFormTopRightProxy.layout();
         viewFormTopLeftProxy.layout();
         viewFormTopCenterProxy.layout();
@@ -467,11 +480,11 @@ public final class PaneFolder {
     public Composite getContentParent() {
         return viewForm;
     }
-    
+
     public void setContent(Control newContent) {
         viewForm.setContent(newContent);
     }
-    
+
     /**
      * Returns the current state of the folder (as shown on the button icons)
      * 
@@ -482,7 +495,8 @@ public final class PaneFolder {
     }
 
     /**
-     * @param buttonId one of the IStackPresentationSite.STATE_* constants
+     * @param buttonId
+     *            one of the IStackPresentationSite.STATE_* constants
      */
     protected void notifyButtonListeners(int buttonId) {
         if (mousedownState == getState()) {
@@ -500,7 +514,7 @@ public final class PaneFolder {
     public Control getContent() {
         return viewForm.getContent();
     }
-    
+
     /**
      * Notifies all listeners that the user clicked on the chevron
      * 
@@ -536,7 +550,8 @@ public final class PaneFolder {
     /**
      * Sets the state that will be shown on the CTabFolder's buttons
      * 
-     * @param state one of the IStackPresentationSite.STATE_* constants
+     * @param state
+     *            one of the IStackPresentationSite.STATE_* constants
      */
     public void setState(int state) {
         this.state = state;
@@ -574,7 +589,8 @@ public final class PaneFolder {
         Point result = Geometry.getSize(tabFolder.computeTrim(0, 0, 0, 0));
 
         // Add some space for the minimize and maximize buttons plus a tab.
-        // Right now this isn't exposed from SWT as API, so we just add 50 pixels.
+        // Right now this isn't exposed from SWT as API, so we just add 50
+        // pixels.
         result.x += 100;
         return result;
     }
@@ -583,7 +599,8 @@ public final class PaneFolder {
      * Removes the dispose listener from the given control, unless the given
      * control is null or disposed.
      * 
-     * @param oldControl control to detach the dispose listener from
+     * @param oldControl
+     *            control to detach the dispose listener from
      */
     private void removeDisposeListener(Control oldControl) {
         if (!SwtUtil.isDisposed(oldControl)) {
@@ -599,7 +616,7 @@ public final class PaneFolder {
         removeDisposeListener(topLeftCache.getControl());
         topLeftCache.setControl(null);
     }
-    
+
     public Point getChevronLocation() {
         Shell shell = getControl().getShell();
 
@@ -614,7 +631,7 @@ public final class PaneFolder {
 
         // if we have no visible tabs, abort.
         if (item == null)
-            return new Point(0,0);
+            return new Point(0, 0);
 
         Rectangle itemBounds = item.getBounds();
         int x = itemBounds.x + itemBounds.width;
@@ -623,7 +640,8 @@ public final class PaneFolder {
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////
-    // The remainder of the methods in this class redirect directly to CTabFolder methods
+    // The remainder of the methods in this class redirect directly to
+    // CTabFolder methods
 
     public void setSelection(int selection) {
         tabFolder.setSelection(selection);
@@ -712,6 +730,20 @@ public final class PaneFolder {
     public void setMinimizeVisible(boolean isVisible) {
         tabFolder.setMinimizeVisible(isVisible);
         minimizeVisible = isVisible;
+    }
+
+    /**
+     * Changes the minimum number of characters to display in a pane folder tab.
+     * This control how much information will be displayed to the user.
+     * 
+     * @param count
+     *            The number of characters to display in the tab folder; this
+     *            value should be a positive integer.
+     * @see org.eclipse.swt.custom.CTabFolder#setMinimumCharacters(int)
+     * @since 3.1
+     */
+    public void setMinimumCharacters(int count) {
+        tabFolder.setMinimumCharacters(count);
     }
 
     /**

@@ -131,6 +131,20 @@ public class DefaultTabFolder extends AbstractTabFolder {
         
         viewToolBar.moveAbove(null);
     }
+
+    /**
+     * Changes the minimum number of characters to display in the pane folder
+     * tab. This control how much information will be displayed to the user.
+     * 
+     * @param count
+     *            The number of characters to display in the tab folder; this
+     *            value should be a positive integer.
+     * @see org.eclipse.swt.custom.CTabFolder#setMinimumCharacters(int)
+     * @since 3.1
+     */
+    public void setMinimumCharacters(int count) {
+        paneFolder.setMinimumCharacters(count);
+    }
     
     public void setSimpleTabs(boolean simple) {
         paneFolder.setSimpleTab(simple);

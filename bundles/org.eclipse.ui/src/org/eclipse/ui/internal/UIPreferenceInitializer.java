@@ -67,6 +67,14 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 
         // default to showing intro on startup
         store.setDefault(IWorkbenchPreferenceConstants.SHOW_INTRO, true);
+        
+        // Default to the standard key configuration.
+        store.setDefault(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID,
+                "org.eclipse.ui.defaultAcceleratorConfiguration"); //$NON-NLS-1$
+        
+        // The default character width is undefined (i.e., -1)
+        store.setDefault(
+                IWorkbenchPreferenceConstants.EDITOR_MINIMUM_CHARACTERS, -1);
 
         store.addPropertyChangeListener(new PlatformUIPreferenceListener());
     }

@@ -285,4 +285,19 @@ public interface IWorkbenchPreferenceConstants {
      * @since 3.1
      */
     public static final String KEY_CONFIGURATION_ID = "KEY_CONFIGURATION_ID"; //$NON-NLS-1$
+    
+    /**
+     * <p>
+     * Workbench preference identifier for the minimum width of editor tabs. By
+     * default, Eclipse does not define this value and allows SWT to determine
+     * this constant. We use <code>-1</code> internally to signify "use
+     * default".
+     * </p>
+     * <p>
+     * The default value for this preference is <code>-1</code>.
+     * </p>
+     * 
+     * @since 3.1
+     */
+    public static final String EDITOR_MINIMUM_CHARACTERS = "EDITOR_MINIMUM_CHARACTERS"; //$NON-NLS-1$
 }

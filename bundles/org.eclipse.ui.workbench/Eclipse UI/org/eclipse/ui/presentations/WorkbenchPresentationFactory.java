@@ -11,9 +11,11 @@
 
 package org.eclipse.ui.presentations;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.preferences.IDynamicPropertyMap;
@@ -42,6 +44,25 @@ public class WorkbenchPresentationFactory extends AbstractPresentationFactory {
         DefaultTabFolder folder = new DefaultTabFolder(parent, SWT.BORDER, 
                 site.supportsState(IStackPresentationSite.STATE_MINIMIZED), 
                 site.supportsState(IStackPresentationSite.STATE_MAXIMIZED));
+        
+        /*
+         * Set the minimum characters to display, if the preference is something
+         * other than the default. This is mainly intended for RCP applications
+         * or for expert users (i.e., via the plug-in customization file).
+         * 
+         * Bug 32789.
+         */
+        final IPreferenceStore store = PlatformUI.getPreferenceStore();
+        if (store
+                .contains(IWorkbenchPreferenceConstants.EDITOR_MINIMUM_CHARACTERS)) {
+            final int actualMinimumCharacters = store
+                    .getInt(IWorkbenchPreferenceConstants.EDITOR_MINIMUM_CHARACTERS);
+            final int defaultMinimumCharacters = store
+                    .getDefaultInt(IWorkbenchPreferenceConstants.EDITOR_MINIMUM_CHARACTERS);
+            if (actualMinimumCharacters != defaultMinimumCharacters) {
+                folder.setMinimumCharacters(actualMinimumCharacters);
+            }
+        }
         
         PresentablePartFolder partFolder = new PresentablePartFolder(folder);
         
