@@ -56,8 +56,20 @@ public interface ICompletionProposalExtension3 {
 	 */
 	void updateReplacementOffset(int offset);
 
+	/**
+	 * Returns the replacement string that would be inserted at the replacement offset if
+	 * the proposal were applied.
+	 * 
+	 * @return the replacement string that would be inserted at the replacement offset
+	 */
 	String getReplacementString();
 
+	/**
+	 * Updates the replacement length of a completion proposal. Implementations 
+	 * may use the length to ajust the amount of code they would 'eat' when inserted.
+	 * 
+	 * @param length the new replacement length hint
+	 */
 	void updateReplacementLength(int length);
 	
 }
