@@ -36,6 +36,7 @@ import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.swt.SWT;
@@ -347,9 +348,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * because the default values are not stored in the preference store.
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
-		
-		//Reset the colors for ViewForms
-		ViewForm.borderInsideRGB = new RGB(255, 255, 255);
 		
 		JFacePreferences.setPreferenceStore(store);
 

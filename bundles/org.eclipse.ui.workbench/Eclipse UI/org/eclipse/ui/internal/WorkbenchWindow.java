@@ -36,11 +36,13 @@ import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.jface.window.ColorSchemeService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CBanner;
+import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -242,7 +244,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		// Make sure there is a workbench. This call will throw
 		// an exception if workbench not created yet. 
 		PlatformUI.getWorkbench();
-
+		
 		// Setup window.
 		addMenuBar();
 		addCoolBar(SWT.FLAT);
@@ -585,6 +587,11 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
+		
+		//Reset the colors for ViewForms
+		ViewForm.borderInsideRGB = 
+			JFaceColors.getTabFolderSelectionBackground(shell.getDisplay()).getRGB();
+		
 		
 		WorkbenchHelp.setHelp(shell, IHelpContextIds.WORKBENCH_WINDOW);
 
