@@ -29,10 +29,7 @@ import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 
 public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
@@ -45,7 +42,7 @@ public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
 		if (selection.isEmpty()) {
 			return;
 		}
-		final Object newSelection= computeNewSelection(selection);
+		final List state = ((BreakpointsView)getView()).getSelectionState();
 		final Iterator itr= selection.iterator();
 		final CoreException[] exception= new CoreException[1];
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
@@ -77,6 +74,16 @@ public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
                     protected IStatus run(IProgressMonitor pmonitor) {
                         try {
                             DebugPlugin.getDefault().getBreakpointManager().removeBreakpoints(breakpoints, true);
+                            if (state != null) {
+                            	Runnable r = new Runnable() {
+								
+									public void run() {
+										// TODO Auto-generated method stub
+										((BreakpointsView) getView()).preserveSelectionState(state);
+									}
+								};
+								DebugUIPlugin.getStandardDisplay().asyncExec(r);
+                            }
                             return Status.OK_STATUS;
                         } catch (CoreException e) {
                             DebugUIPlugin.log(e);
@@ -84,10 +91,6 @@ public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
                         return Status.CANCEL_STATUS;
                     }   
                 }.schedule();
-                
-                if (newSelection != null) {
-                	((BreakpointsView) getView()).getCheckboxViewer().setSelection(new StructuredSelection(newSelection));
-                }
 			}
 		};
 		try {
@@ -105,80 +108,6 @@ public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
 		}
 	}
 	
-	/**
-	 * Computes the selection that should be set after the given selection is
-	 * removed.
-	 * @param selection the current selection
-	 * @return the selection that should be set after the given selection is
-	 *  removed
-	 */
-	protected Object computeNewSelection(IStructuredSelection selection) {
-		Object newSelection= null;
-		Object[] selected = selection.toArray();
-		Object firstSelection= selected[0];
-		BreakpointsView view = ((BreakpointsView) getView());
-		CheckboxTreeViewer viewer= view.getCheckboxViewer();
-		ITreeContentProvider provider = view.getTreeContentProvider();
-		Object parent = provider.getParent(firstSelection);
-		if (parent != null) {
-			Object[] peers = provider.getChildren(parent); // elements at the same level
-			// Sort the array so it matches the viewer's tree
-			viewer.getSorter().sort(viewer, peers);
-			for (int i = 0; i < peers.length; i++) {
-				Object peer = peers[i];
-				if (peer == firstSelection) {
-					newSelection= findUnselected(peers, i, selected);
-					break;
-				}
-			}
-			if (newSelection == null) {
-				// If no unselected peer elements could be found, the parent is
-				// going to end up disappearing too. If the parent has a parent,
-				// try selecting it (although it might end up getting deleted too).
-				parent= provider.getParent(parent);
-				if (parent != null) {
-					newSelection= parent;
-				}
-			}
-		}
-		return newSelection;
-	}
-	
-	/**
-	 * Finds the first unselected element in the given set of peer elements
-	 * starting at the given index. The returned element will not be one
-	 * of the given selected elements.
-	 * @param peers the set of elements to search
-	 * @param fromIndex the index to start searching at. This index corresponds to
-	 *  the index of the first selected elements in the given collection of peers
-	 * @param selected the currently selected elements
-	 * @return the first unseleced element in the given set
-	 */
-	private Object findUnselected(Object[] peers, int fromIndex, Object[] selected) {
-		if (fromIndex < peers.length - 1) {
-			// First, look for an element after the given index
-			for (int i = fromIndex + 1; i < peers.length; i++) {
-				Object candidate= peers[i];
-				boolean unselected= true;
-				for (int j = 0; j < selected.length; j++) {
-					if (selected[j] == candidate) {
-						unselected= false;
-						break;
-					}
-				}
-				if (unselected) {
-					return candidate;
-				}
-			}
-		}
-		if (fromIndex > 0) {
-			// If no unselected elements are found *after* the given index,
-			// return the first element before it.
-			return peers[fromIndex - 1];
-		}
-		return null;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate#doAction(java.lang.Object)
 	 */

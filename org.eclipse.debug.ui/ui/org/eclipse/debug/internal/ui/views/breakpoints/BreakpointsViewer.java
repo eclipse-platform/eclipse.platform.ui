@@ -104,4 +104,13 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
         }
     }
 
+    /**
+     * Sets the selection to a specific tree item
+     * 
+     * @param item
+     */
+    protected void setSelection(TreeItem item) {
+    	getTree().setSelection(new TreeItem[]{item});
+    	updateSelection(getSelection());
+    }
 }

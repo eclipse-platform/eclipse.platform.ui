@@ -65,6 +65,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
@@ -879,5 +880,103 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		
 	}
     
+	/**
+	 * Returns a list containing a point indicating the breakpoint to attempt to
+	 * select a list of groups to select, or <code>null</code> if none.
+	 * 
+	 * @return
+	 */
+	public List getSelectionState() {
+		Tree tree = ((BreakpointsViewer)getViewer()).getTree();
+		TreeItem[] selection = tree.getSelection();
+		if (selection.length > 0) {
+			List list = new ArrayList();
+			TreeItem[] roots = tree.getItems();
+			TreeItem first = getFirstSelectedItem(roots, selection);
+			if (first.getData() instanceof IBreakpoint) {
+				TreeItem parentItem = first.getParentItem();
+				if (parentItem == null) {
+					list.add(new Point(0, indexOf(roots, first)));
+				} else {
+					int breakpointIndex = indexOf(parentItem.getItems(),first);
+					while (parentItem.getParentItem() != null) {
+						parentItem = parentItem.getParentItem();
+					}
+					int groupIndex = indexOf(roots, parentItem);
+					list.add(new Point(groupIndex, breakpointIndex));
+				}
+			} else {
+				for (int i = 0; i < selection.length; i++) {
+					TreeItem item = selection[i];
+					list.add(item.getData());
+				}
+			}
+			return list;
+		}
+		return null;
+	}
+	
+	private TreeItem getFirstSelectedItem(TreeItem[] items, TreeItem[] selection) {
+		for (int i = 0; i < items.length; i++) {
+			TreeItem item = items[i];
+			if (indexOf(selection, item) >= 0) {
+				return item;
+			}
+			TreeItem first = getFirstSelectedItem(item.getItems(), selection);
+			if (first != null) {
+				return first;
+			}
+		}
+		return null;
+	}
+	
+	private int indexOf(Object[] list, Object object) {
+		for (int i = 0; i < list.length; i++) {
+			if (object.equals(list[i])) {
+				return i;
+			}
+		}
+		return -1;
+	}
     
+	public void preserveSelectionState(List state) {
+		if (state != null) {
+			if (state.get(0) instanceof Point) {
+				Point p = (Point) state.get(0);
+				int groupIndex = p.x;
+				int bpIndex = p.y;
+				Tree tree = ((BreakpointsViewer)getViewer()).getTree();
+				TreeItem[] roots = tree.getItems();
+				TreeItem selection = null;
+				if (roots.length > 0 && groupIndex < roots.length) {
+					TreeItem group = roots[groupIndex];
+					if (group.getData() instanceof IBreakpoint) {
+						if (bpIndex < roots.length) {
+							selection = roots[bpIndex];
+						} else {
+							selection = roots[roots.length -1];
+						}
+					} else {
+						TreeItem[] bps = group.getItems();
+						while (bps.length > 0 && !(bps[0].getData() instanceof IBreakpoint)) {
+							group = bps[0];
+							bps = group.getItems();
+						}
+						if (bpIndex < bps.length) {
+							selection = bps[bpIndex];
+						} else if (bps.length > 0) {
+							selection = bps[bps.length - 1];
+						} else {
+							selection = group;
+						}
+					}
+				}
+				if (selection != null) {
+					((BreakpointsViewer)getViewer()).setSelection(selection);
+				}
+			} else {
+				getViewer().setSelection(new StructuredSelection(state));
+			}
+		}
+	}
 }
