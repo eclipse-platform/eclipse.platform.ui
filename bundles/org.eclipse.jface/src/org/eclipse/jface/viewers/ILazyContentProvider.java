@@ -23,6 +23,9 @@ public interface ILazyContentProvider extends IContentProvider {
 	 * finish index.
 	 * @param start The beginning index to populate.
 	 * @param finish The end index to populate.
+	 * @see TableViewer#replace(Object[], int) for details
+	 * on how to insert the updated elements back into the
+	 * TableViewer.
 	 */
 	public void updateElements(int start, int finish);
 	
