@@ -315,7 +315,9 @@ public class EclipseWorkspaceTest extends TestCase {
 		try {
 			if (a == null || b == null)
 				return false;
-			while ((c = a.read()) == (d = b.read()) && (c != -1 && d != -1));
+			while ((c = a.read()) == (d = b.read()) && (c != -1 && d != -1)) {
+				//body not needed
+			}
 			return (c == -1 && d == -1);
 		} catch (IOException e) {
 			return false;
@@ -788,7 +790,10 @@ public class EclipseWorkspaceTest extends TestCase {
 	protected void modifyInFileSystem(IFile file) {
 		String m = getClassName() + ".modifyInFileSystem(IFile): ";
 		String newContent = readStringInFileSystem(file) + "f";
-		java.io.File osFile = file.getLocation().toFile();
+		IPath location = file.getLocation();
+		if (location == null) 
+			fail("0.1 - null location for file: " + file);
+		java.io.File osFile = location.toFile();
 		try {
 			FileOutputStream os = null;
 			try {
@@ -963,7 +968,7 @@ public class EclipseWorkspaceTest extends TestCase {
 	}
 	
 	public static void log(IStatus status) {
-		Platform.getPlugin(PI_HARNESS).getLog().log(status);
+		Platform.getLog(Platform.getBundle(PI_HARNESS)).log(status);
 	}
 
 	public static void log(Throwable e) {
