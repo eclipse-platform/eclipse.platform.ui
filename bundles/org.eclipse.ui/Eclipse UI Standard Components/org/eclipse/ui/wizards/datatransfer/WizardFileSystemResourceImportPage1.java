@@ -229,6 +229,7 @@ protected void createRootDirectoryGroup(Composite parent) {
 			setSourceName(sourceNameField.getText());
 			//Update enablements when this is selected
 			updateWidgetEnablements();
+			selectionGroup.setFocus();
 		}
 	});
 
@@ -501,6 +502,7 @@ protected void handleSourceBrowseButtonPressed() {
 		else { //If it is valid then proceed to populate
 			setErrorMessage(null);
 			setSourceName(selectedDirectory);
+			selectionGroup.setFocus();
 		}
 	}
 }

@@ -858,6 +858,15 @@ public void updateSelections(final Map items) {
 				listViewer.setCheckedElements(((List) displayItems).toArray());
 		}
 	}
+}
+/** 
+ * Set the focus on to the list widget.
+ */
+public void setFocus(){
+	
+	this.treeViewer.getTree().setFocus();
+}
 
 }
-}
+
+
