@@ -20,9 +20,11 @@ import junit.extensions.TestSetup;
 import junit.framework.Test;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.team.internal.ftp.FTPException;
 import org.eclipse.team.internal.ftp.FTPServerLocation;
 import org.eclipse.team.internal.ftp.client.FTPClient;
+import org.eclipse.team.internal.ftp.client.FTPDirectoryEntry;
 import org.eclipse.team.internal.ftp.client.IFTPClientListener;
 
 /**
@@ -79,7 +81,17 @@ public class FTPTestSetup extends TestSetup {
 			ftpURL = setupURL(FTP_URL);
 	}
 
-	protected void scrubURL(URL url) {
+	protected void scrubCurrentDirectory(FTPClient client) throws FTPException {
+		FTPDirectoryEntry[] entries = client.listFiles(null, DEFAULT_PROGRESS_MONITOR);
+		for (int i = 0; i < entries.length; i++) {
+			FTPDirectoryEntry entry = entries[i];
+			if (entry.hasFileSemantics()) {
+				client.deleteFile(entry.getName(), DEFAULT_PROGRESS_MONITOR);
+			}
+			if (entry.hasDirectorySemantics()) {
+				client.deleteDirectory(entry.getName(), DEFAULT_PROGRESS_MONITOR);
+			}
+		}
 	}
 	
 	protected URL setupURL(String urlString) throws MalformedURLException, FTPException {
@@ -92,11 +104,14 @@ public class FTPTestSetup extends TestSetup {
 		URL url = new URL(urlString);
 		FTPServerLocation location = FTPServerLocation.fromURL(url, false);
 		FTPClient client = openFTPConnection(url);
-		client.close(DEFAULT_PROGRESS_MONITOR);
-		
-		// Initialize the repo if requested (requires rsh access)
-		if( SCRUB_URL ) {
-			scrubURL(url);
+		try {
+			// Initialize the repo if requested
+			// For safety, do not scrub if no path is provided
+			if( SCRUB_URL && ! new Path(url.getPath()).isEmpty()) {
+				scrubCurrentDirectory(client);
+			}
+		} finally {
+			client.close(DEFAULT_PROGRESS_MONITOR);
 		}
 		
 		return url;
@@ -110,6 +125,12 @@ public class FTPTestSetup extends TestSetup {
 		FTPServerLocation location = FTPServerLocation.fromURL(url, false);
 		FTPClient client = new FTPClient(location, null, getListener());
 		client.open(DEFAULT_PROGRESS_MONITOR);
+		try {
+			client.createDirectory(url.getPath(), DEFAULT_PROGRESS_MONITOR);
+		} catch (FTPException e) {
+			// Ignore the exception
+		}
+		client.changeDirectory(url.getPath(), DEFAULT_PROGRESS_MONITOR);
 		return client;
 	}
 	

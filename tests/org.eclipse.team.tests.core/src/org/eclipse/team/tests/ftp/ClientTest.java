@@ -48,12 +48,21 @@ public class ClientTest extends TeamTest {
 		return FTPTestSetup.openFTPConnection(getURL());
 	}
 	
-
-	
 	public void testCreateDirectory() throws FTPException {
 		FTPClient client = openFTPConnection();
 		try {
-			client.createDirectory("test1", DEFAULT_PROGRESS_MONITOR);
+			client.createDirectory("testCreateDirectory", DEFAULT_PROGRESS_MONITOR);
+			client.deleteDirectory("testCreateDirectory", DEFAULT_PROGRESS_MONITOR);
+		} finally {
+			client.close(DEFAULT_PROGRESS_MONITOR);
+		}
+	}
+	
+	public void testSimpleTransfer() throws FTPException {
+		FTPClient client = openFTPConnection();
+		try {
+			client.createDirectory("testCreateDirectory", DEFAULT_PROGRESS_MONITOR);
+			client.deleteDirectory("testCreateDirectory", DEFAULT_PROGRESS_MONITOR);
 		} finally {
 			client.close(DEFAULT_PROGRESS_MONITOR);
 		}
