@@ -66,7 +66,7 @@ public class IEBrowserAdapter implements IBrowser, Runnable {
 				IE_CLASS };
 		String cmd=cmdarray[0];
 		for(int i=1; i<cmdarray.length;i++)
-				cmd+=cmdarray[i];
+				cmd+=" " + cmdarray[i];
 		if(Logger.LOG_DEBUG==Logger.getDebugLevel()){
 			Logger.logInfo("IEBrowserAdapter launch command is: "+cmd);
 		}
