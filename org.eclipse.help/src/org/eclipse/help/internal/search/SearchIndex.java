@@ -18,6 +18,7 @@ import java.util.zip.*;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
 
@@ -38,11 +39,14 @@ public class SearchIndex {
 	private static final String INDEXED_CONTRIBUTION_INFO_FILE =
 		"indexed_contributions";
 	public static final String INDEXED_DOCS_FILE = "indexed_docs";
-	private static final String ANALYZER_VERSION_FILENAME = "indexed_analyzer";
-	private File analyzerVersionFile;
+	private static final String DEPENDENCIES_VERSION_FILENAME =
+		"indexed_dependencies";
+	private static final String LUCENE_PLUGIN_ID = "org.apache.lucene";
+	private String dependenciesVersionFile;
 	private File inconsistencyFile;
 	private HTMLDocParser parser;
 	private IndexSearcher searcher;
+	private HelpProperties dependencies;
 	/**
 	 * Constructor.
 	 * @param locale the locale this index uses
@@ -74,7 +78,12 @@ public class SearchIndex {
 		this.analyzerDescriptor = analyzerDesc;
 		inconsistencyFile =
 			new File(indexDir.getParentFile(), locale + ".inconsistent");
-		analyzerVersionFile = new File(indexDir, ANALYZER_VERSION_FILENAME);
+		dependenciesVersionFile =
+			"nl"
+				+ File.separator
+				+ locale
+				+ File.separator
+				+ DEPENDENCIES_VERSION_FILENAME;
 		indexedDocsFile =
 			"nl" + File.separator + locale + File.separator + INDEXED_DOCS_FILE;
 		parser = new HTMLDocParser();
@@ -223,7 +232,7 @@ public class SearchIndex {
 			indexedDocs.save();
 			indexedDocs = null;
 			getDocPlugins().save();
-			saveAnalyzerId();
+			saveDependencies();
 			setInconsistent(false);
 			return true;
 		} catch (IOException e) {
@@ -246,7 +255,7 @@ public class SearchIndex {
 			indexedDocs.save();
 			indexedDocs = null;
 			getDocPlugins().save();
-			saveAnalyzerId();
+			saveDependencies();
 			setInconsistent(false);
 			return true;
 		} catch (IOException e) {
@@ -337,33 +346,61 @@ public class SearchIndex {
 		return indexedDocs;
 	}
 	/**
+	 * Gets properties with versions of Lucene plugin and Analyzer
+	 * used for indexing
+	 */
+	private HelpProperties getDependencies() {
+		if (dependencies == null) {
+			dependencies =
+				new HelpProperties(
+					dependenciesVersionFile,
+					HelpPlugin.getDefault());
+			dependencies.restore();
+		}
+		return dependencies;
+	}
+	/**
 	 * Gets analyzer identifier from a file.
 	 */
 	private String readAnalyzerId() {
-		if (!analyzerVersionFile.exists())
+		String analyzerVersion = getDependencies().getProperty("analyzer");
+		if (analyzerVersion == null) {
 			return "";
-		try {
-			DataInputStream dis =
-				new DataInputStream(new FileInputStream(analyzerVersionFile));
-			String id = dis.readUTF();
-			dis.close();
-			return id;
-		} catch (IOException ioe) {
 		}
-		return "";
+		return analyzerVersion;
 	}
 	/**
-	 * Saves analyzer identifier to a file.
+	 * Gets Lucene plugin version from a file.
 	 */
-	private void saveAnalyzerId() {
-		try {
-			DataOutputStream dos =
-				new DataOutputStream(new FileOutputStream(analyzerVersionFile));
-			dos.writeUTF(analyzerDescriptor.getId());
-			dos.flush();
-			dos.close();
-		} catch (IOException ioe) {
+	private boolean isLuceneCompatible() {
+		String usedLuceneVersion = getDependencies().getProperty("lucene");
+		String currentLuceneVersion = "";
+		IPluginDescriptor lucenePluginDescriptor =
+			Platform.getPluginRegistry().getPluginDescriptor(LUCENE_PLUGIN_ID);
+		if (lucenePluginDescriptor != null) {
+			currentLuceneVersion =
+				lucenePluginDescriptor.getVersionIdentifier().toString();
 		}
+		// Later might add code to return true for other known cases
+		// of compatibility between post 1.2.1 versions.
+		return currentLuceneVersion.equals(usedLuceneVersion);
+	}
+	/**
+	 * Saves Lucene version and analyzer identifier to a file.
+	 */
+	private void saveDependencies() {
+		getDependencies().put("analyzer", analyzerDescriptor.getId());
+
+		IPluginDescriptor lucenePluginDescriptor =
+			Platform.getPluginRegistry().getPluginDescriptor(LUCENE_PLUGIN_ID);
+		if (lucenePluginDescriptor != null) {
+			getDependencies().put(
+				"lucene",
+				lucenePluginDescriptor.getVersionIdentifier().toString());
+		} else {
+			getDependencies().put("lucene", "");
+		}
+		getDependencies().save();
 	}
 	/**
 	 * @return Returns true if index has been left in inconsistent state
@@ -374,7 +411,8 @@ public class SearchIndex {
 		if (inconsistencyFile.exists()) {
 			return true;
 		}
-		return !analyzerDescriptor.isCompatible(readAnalyzerId());
+		return !isLuceneCompatible()
+			|| !analyzerDescriptor.isCompatible(readAnalyzerId());
 	}
 	/**
 	 * Writes or deletes inconsistency flag file
