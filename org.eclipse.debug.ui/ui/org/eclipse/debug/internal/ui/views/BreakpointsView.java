@@ -18,7 +18,7 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.actions.OpenBreakpointMarkerAction;
 import org.eclipse.debug.internal.ui.actions.RemoveAllBreakpointsAction;
 import org.eclipse.debug.internal.ui.actions.RemoveBreakpointAction;
-import org.eclipse.debug.internal.ui.actions.ShowBreakpointsForModelAction;
+import org.eclipse.debug.internal.ui.actions.ShowSupportedBreakpointsAction;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
@@ -170,7 +170,7 @@ public class BreakpointsView extends AbstractDebugView {
 	public void dispose() {
 		IAction action= getAction("ShowBreakpointsForModel"); //$NON-NLS-1$
 		if (action != null) {
-			((ShowBreakpointsForModelAction)action).dispose(); 
+			((ShowSupportedBreakpointsAction)action).dispose(); 
 		}
 		
 		super.dispose();
@@ -187,7 +187,7 @@ public class BreakpointsView extends AbstractDebugView {
 		IAction action = new OpenBreakpointMarkerAction(getViewer());
 		setAction("GotoMarker", action); //$NON-NLS-1$
 		setAction(DOUBLE_CLICK_ACTION, action);
-		setAction("ShowBreakpointsForModel", new ShowBreakpointsForModelAction(getStructuredViewer(),this)); //$NON-NLS-1$
+		setAction("ShowBreakpointsForModel", new ShowSupportedBreakpointsAction(getStructuredViewer(),this)); //$NON-NLS-1$
 	}
 
 	/**
