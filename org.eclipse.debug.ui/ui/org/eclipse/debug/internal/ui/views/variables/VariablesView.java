@@ -1069,7 +1069,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
                 DebugUIPlugin.getStandardDisplay().asyncExec(runnable);
 			} 
 		} catch (DebugException de) {
-			DebugUIPlugin.log(de);
             DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
                 public void run() {
                     getDetailDocument().set(VariablesViewMessages.getString("VariablesView.<error_occurred_retrieving_value>_18")); //$NON-NLS-1$
