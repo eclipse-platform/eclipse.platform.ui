@@ -115,11 +115,13 @@ a#news:hover p .text { left : -245px; }
 a#workbench { 
 	position : absolute; 
 	top : 100px;
-	width : 150px; 
+	width : 200px; 
 	left : 50%;
-	margin-left : -75px;
+	margin-left : -100px;
 	text-align : center;  
 }
+
+a#workbench .link-label { display : inline; }
 
 a#workbench img {
 	background-image : url(graphics/obj_48/workbench_obj.gif); 
