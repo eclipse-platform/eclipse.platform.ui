@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -199,42 +198,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 */
 	protected void savePressed() {
 
-		IPath filePath = getFilePath(false);
-		if (filePath == null)
-			return;
-		exportPreferences(filePath);
-		close();
-	}
-
-	/**
-	 * Export the preferences to a file.
-	 * 
-	 * @param path
-	 *            The file path.
-	 * @return true if successful.
-	 */
-	private boolean exportPreferences(IPath path) {
-		File selectedFile = path.toFile();
-		if (selectedFile.exists()) {
-			if (!MessageDialog.openConfirm(getShell(), WorkbenchMessages
-					.getString("WorkbenchPreferenceDialog.saveTitle"), //$NON-NLS-1$
-					WorkbenchMessages.format(
-							"WorkbenchPreferenceDialog.existsErrorMessage", //$NON-NLS-1$
-							new Object[] { path.toOSString() })))
-				return false;
-		}
-
-		try {
-			Preferences.exportPreferences(path);
-		} catch (CoreException e) {
-			ErrorDialog.openError(getShell(), WorkbenchMessages
-					.getString("WorkbenchPreferenceDialog.saveErrorTitle"), //$NON-NLS-1$
-					WorkbenchMessages.format(
-							"WorkbenchPreferenceDialog.saveErrorMessage", //$NON-NLS-1$
-							new Object[] { path.toOSString() }), e.getStatus());
-			return false;
-		}
-		return true;
+		new PreferencesExportDialog(getShell()).open();
 	}
 
 	/**
