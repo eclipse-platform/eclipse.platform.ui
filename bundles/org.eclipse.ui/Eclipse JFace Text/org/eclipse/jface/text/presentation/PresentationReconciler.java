@@ -16,6 +16,7 @@ import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IDocumentPartitioningListener;
+import org.eclipse.jface.text.IDocumentPartitioningListenerExtension;
 import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextInputListener;
@@ -47,7 +48,8 @@ public class PresentationReconciler implements IPresentationReconciler {
 	/**
 	 * Internal listener class.
 	 */
-	class InternalListener implements ITextInputListener, IDocumentListener, ITextListener, IDocumentPartitioningListener {
+	class InternalListener implements ITextInputListener, IDocumentListener, ITextListener, 
+										IDocumentPartitioningListener, IDocumentPartitioningListenerExtension {
 		
 		/*
 		 * @see ITextInputListener#inputDocumentAboutToBeChanged
@@ -96,6 +98,14 @@ public class PresentationReconciler implements IPresentationReconciler {
 		}
 		
 		/*
+		 * @see IDocumentPartitioningListenerExtension#documentPartitioningChanged
+		 */
+		public void documentPartitioningChanged(IDocument document, IRegion changedRegion) {
+			fDocumentPartitioningChanged= true;
+			fChangedDocumentPartitions= changedRegion;
+		}
+				
+		/*
 		 * @see IDocumentListener#documentAboutToBeChanged
 		 */
 		public void documentAboutToBeChanged(DocumentEvent e) {
@@ -141,6 +151,7 @@ public class PresentationReconciler implements IPresentationReconciler {
 		 	}
 		 	
 			fDocumentPartitioningChanged= false;
+			fChangedDocumentPartitions= null;
 		}
 	};
 	
@@ -158,6 +169,7 @@ public class PresentationReconciler implements IPresentationReconciler {
 	private TypedPosition fRememberedPosition;
 	
 	private boolean fDocumentPartitioningChanged= false;
+	private IRegion fChangedDocumentPartitions= null;
 	
 	
 	/**
@@ -338,8 +350,16 @@ public class PresentationReconciler implements IPresentationReconciler {
 			if (!fDocumentPartitioningChanged) {
 				damage= r;
 			} else {
+				
 				int damageEnd= getDamageEndOffset(e);
-				damage= damageEnd == -1 ? r : new Region(r.getOffset(), damageEnd - r.getOffset());
+				
+				int parititionDamageEnd= -1;
+				if (fChangedDocumentPartitions != null)
+					parititionDamageEnd= fChangedDocumentPartitions.getOffset() + fChangedDocumentPartitions.getLength();
+					
+				int end= Math.max(damageEnd, parititionDamageEnd);
+				
+				damage= end == -1 ? r : new Region(r.getOffset(), end - r.getOffset());
 			}
 			
 		} catch (BadLocationException x) {

@@ -243,11 +243,15 @@ class ContextInformationPopup implements IContentAssistListener {
 			return;
 		
 		Control control= fViewer.getTextWidget();
-		fContextSelectorShell= new Shell(control.getShell(), SWT.NO_TRIM /* | SWT.ON_TOP */);
-		fContextSelectorTable= new Table(fContextSelectorShell, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		fContextSelectorShell= new Shell(control.getShell(), SWT.NO_TRIM | SWT.ON_TOP);
+		fContextSelectorTable= new Table(fContextSelectorShell, SWT.H_SCROLL | SWT.V_SCROLL);
 
-		fContextSelectorShell.setSize(300, fContextSelectorTable.getItemHeight() * 10);
-		fContextSelectorTable.setBounds(fContextSelectorShell.getClientArea());
+		int height= fContextSelectorTable.getItemHeight() * 10;
+		fContextSelectorShell.setSize(302, height + 2);
+		fContextSelectorTable.setSize(300, height);
+		fContextSelectorTable.setLocation(1, 1);
+		
+		fContextSelectorShell.setBackground(control.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 		
 		Color c= fContentAssistant.getContextSelectorBackground();
 		if (c == null)
@@ -257,7 +261,7 @@ class ContextInformationPopup implements IContentAssistListener {
 		c= fContentAssistant.getContextSelectorForeground();
 		if (c == null)
 			c= control.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
-		fContextSelectorTable.setForeground(c);				
+		fContextSelectorTable.setForeground(c);
 		
 		fContextSelectorTable.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
@@ -292,8 +296,6 @@ class ContextInformationPopup implements IContentAssistListener {
 
 			fContextSelectorTable.setRedraw(false);
 			fContextSelectorTable.removeAll();
-
-			Display display= fContextSelectorTable.getDisplay();
 
 			TableItem item;
 			IContextInformation t;
@@ -473,7 +475,6 @@ class ContextInformationPopup implements IContentAssistListener {
 			
 			public void run() {
 				if (Helper.okToUse(fContextInfoPopup) && fFrame == fContextFrameStack.peek()) {
-					IDocument doc= fViewer.getDocument();
 					int offset= fViewer.getSelectedRange().x;
 					if (fFrame.fValidator == null || !fFrame.fValidator.isContextInformationValid(offset)) {
 						hideContextInfoPopup();

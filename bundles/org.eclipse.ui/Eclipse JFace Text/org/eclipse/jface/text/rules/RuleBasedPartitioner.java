@@ -14,8 +14,11 @@ import org.eclipse.jface.text.DefaultPositionUpdater;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.jface.text.IDocumentPartitionerExtension;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TypedPosition;
 import org.eclipse.jface.text.TypedRegion;
 import org.eclipse.jface.util.Assert;
@@ -33,7 +36,7 @@ import org.eclipse.jface.util.Assert;
  * @see IRule
  * @see RuleBasedScanner
  */
-public class RuleBasedPartitioner implements IDocumentPartitioner {
+public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPartitionerExtension {
 	
 	/** The position category this partitioner uses to store the document's partitioning information */
 	public final static String CONTENT_TYPES_CATEGORY= "__content_types_category"; //$NON-NLS-1$
@@ -49,6 +52,10 @@ public class RuleBasedPartitioner implements IDocumentPartitioner {
 	protected int fPreviousDocumentLength;
 	/** The position updater used to for the default updating of partitions */
 	protected DefaultPositionUpdater fPositionUpdater= new DefaultPositionUpdater(CONTENT_TYPES_CATEGORY);
+	/** The offset at which the first changed partition starts */
+	protected int fStartOffset;
+	/** The offset at which the last changed partition ends */
+	protected int fEndOffset;
 	
 	
 	/**
@@ -125,16 +132,44 @@ public class RuleBasedPartitioner implements IDocumentPartitioner {
 		Assert.isTrue(e.getDocument() == fDocument);
 		
 		fPreviousDocumentLength= e.getDocument().getLength();
+		fStartOffset= -1;
+		fEndOffset= -1;
 	}
 	
 	/*
 	 * @see IDocumentPartitioner#documentChanged
 	 */
 	public boolean documentChanged(DocumentEvent e) {
+		IRegion region= documentChanged2(e);
+		return (region != null);
+	}
 		
-		
-		boolean changed= false;
-				
+	private void rememberRegion(int offset, int length) {
+		// remember start offset
+		if (fStartOffset == -1)
+			fStartOffset= offset;
+		else if (offset < fStartOffset)
+			fStartOffset= offset;
+			
+		// remember end offset
+		int endOffset= offset + length;
+		if (fEndOffset == -1)
+			fEndOffset= endOffset;
+		else if (endOffset > fEndOffset)
+			fEndOffset= endOffset;
+	}
+	
+	private IRegion createRegion() {
+		if (fStartOffset == -1 || fEndOffset == -1)
+			return null;
+		return new Region(fStartOffset, fEndOffset - fStartOffset);
+	}
+
+	/*
+	 * @see IDocumentPartitionerExtension#documentChanged2(DocumentEvent)
+	 */
+	public IRegion documentChanged2(DocumentEvent e) {
+						
 		try {
 		
 			IDocument d= e.getDocument();
@@ -145,8 +180,10 @@ public class RuleBasedPartitioner implements IDocumentPartitioner {
 			
 			if (originalSize > 0) {
 				
-				// determine character position at which the scanner starts:
-				// first position behind the last comment the actual position is not involved with
+				/*
+				 * determine character position at which the scanner starts:
+				 * first position behind the last non-default partition the actual position is not involved with
+				 */
 				
 				first= d.computeIndexInCategory(CONTENT_TYPES_CATEGORY, e.getOffset());
 				
@@ -163,8 +200,12 @@ public class RuleBasedPartitioner implements IDocumentPartitioner {
 							 (p.getOffset() + p.getLength() == fPreviousDocumentLength)));
 				
 				fPositionUpdater.update(e);
+				for (int i= 0; i < category.length; i++) {
+					p= category[i];
+					if (p.isDeleted)
+						rememberRegion(p.offset, p.length);
+				}
 				category= d.getPositions(CONTENT_TYPES_CATEGORY);
-				changed= (originalSize != category.length);
 
 				if (first >= 0) {
 					p= category[first];
@@ -197,25 +238,27 @@ public class RuleBasedPartitioner implements IDocumentPartitioner {
 				// remove all affected positions
 				while (first < category.length) {
 					TypedPosition p= (TypedPosition) category[first];
-					if (lastScannedPosition >= p.getOffset() + p.getLength() || 
+					if (lastScannedPosition >= p.offset + p.length || 
 							(p.overlapsWith(start, length) && 
 							 	(!d.containsPosition(CONTENT_TYPES_CATEGORY, start, length) || 
 							 	 !contentType.equals(p.getType())))) {
+								
+						rememberRegion(p.offset, p.length);
 						d.removePosition(CONTENT_TYPES_CATEGORY, p);
-						changed= true;
 						++ first;
+						
 					} else
 						break;
 				}
 				
 				// if position already exists we are done
 				if (d.containsPosition(CONTENT_TYPES_CATEGORY, start, length))
-					return changed;
+					return createRegion();
 				
 				// insert the new type position
 				try {
 					d.addPosition(CONTENT_TYPES_CATEGORY, new TypedPosition(start, length, contentType));
-					changed= true;
+					rememberRegion(start, length);
 				} catch (BadPositionCategoryException x) {
 				} catch (BadLocationException x) {
 				}
@@ -230,7 +273,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner {
 			while (first < category.length) {
 				p= (TypedPosition) category[first++];
 				d.removePosition(CONTENT_TYPES_CATEGORY, p);
-				changed= true;
+				rememberRegion(p.offset, p.length);
 			}
 			
 		} catch (BadPositionCategoryException x) {
@@ -238,8 +281,9 @@ public class RuleBasedPartitioner implements IDocumentPartitioner {
 		} catch (BadLocationException x) {
 		}
 		
-		return changed;
+		return createRegion();
 	}
+
 	
 	/**
 	 * Returns the position in the partitoner's position category which is

@@ -228,8 +228,6 @@ class CompletionProposalPopup implements IContentAssistListener {
 			fProposalTable.setRedraw(false);
 			fProposalTable.removeAll();
 
-			Display display= fProposalTable.getDisplay();
-
 			TableItem item;
 			ICompletionProposal p;
 			for (int i= 0; i < proposals.length; i++) {

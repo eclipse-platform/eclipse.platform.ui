@@ -38,6 +38,8 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 	private ILineTracker fTracker;
 	/** The document's partitioner */
 	private IDocumentPartitioner fDocumentPartitioner;
+	/** The document's partitioner casted to <code>IDocumentPartitionerExtension</code>. */
+	private IDocumentPartitionerExtension fDocumentPartitionerExtension;
 	/** The registered document listeners */
 	private List fDocumentListeners;
 	/** The registered prenotified document listeners */
@@ -153,7 +155,10 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 	 */
 	public void setDocumentPartitioner(IDocumentPartitioner partitioner) {
 		fDocumentPartitioner= partitioner;
-		fireDocumentPartitioningChanged();
+		if (fDocumentPartitioner instanceof IDocumentPartitionerExtension)
+			fDocumentPartitionerExtension= (IDocumentPartitionerExtension) fDocumentPartitioner;
+			
+		fireDocumentPartitioningChanged(new Region(0, getLength()));
 	}
 			
 	/**
@@ -396,6 +401,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 	/**
 	 * Fires the document partitioning changed notification to all registered 
 	 * document partitioning listeners. Uses a robust iterator.
+	 * @deprecated use <code>fireDocumentPartitioningChanged(IRegion)</code> instead
 	 */
 	protected void fireDocumentPartitioningChanged() {
 		
@@ -406,6 +412,28 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 			while (e.hasNext()) {
 				IDocumentPartitioningListener l= (IDocumentPartitioningListener) e.next();
 				l.documentPartitioningChanged(this);
+			}
+		}
+	}
+	
+	/**
+	 * Fires the document partitioning changed notification to all registered 
+	 * document partitioning listeners. Uses a robust iterator.
+	 * 
+	 * @param region the region in which partitioning has changed
+	 */
+	protected void fireDocumentPartitioningChanged(IRegion region) {
+		
+		if (fDocumentPartitioningListeners != null && fDocumentPartitioningListeners.size() > 0) {
+			
+			List list= new ArrayList(fDocumentPartitioningListeners);
+			Iterator e= list.iterator();
+			while (e.hasNext()) {
+				IDocumentPartitioningListener l= (IDocumentPartitioningListener) e.next();
+				if (l instanceof IDocumentPartitioningListenerExtension)
+					((IDocumentPartitioningListenerExtension) l).documentPartitioningChanged(this, region);
+				else
+					l.documentPartitioningChanged(this);
 			}
 		}
 	}
@@ -454,14 +482,21 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 	 */
 	protected void updateDocumentStructures(DocumentEvent event) {
 		boolean partitioningChanged= false;
-		if (fDocumentPartitioner != null)
-			partitioningChanged= fDocumentPartitioner.documentChanged(event);
+		IRegion changedRegion= null;
+		
+		if (fDocumentPartitioner != null) {
+			if (fDocumentPartitionerExtension != null) {
+				changedRegion= fDocumentPartitionerExtension.documentChanged2(event);
+				partitioningChanged= (changedRegion != null);
+			} else
+				partitioningChanged= fDocumentPartitioner.documentChanged(event);
+		}
 			
 		if (fPositions.size() > 0)
 			updatePositions(event);
 			
 		if (partitioningChanged)
-			fireDocumentPartitioningChanged();
+			fireDocumentPartitioningChanged(changedRegion);
 	}
 		
 	/**

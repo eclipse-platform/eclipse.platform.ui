@@ -925,7 +925,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		styledText.addKeyListener(getCursorListener());
 		
 		if (getHelpContextId() != null)
-			WorkbenchHelp.setHelp(styledText, new Object[] { getHelpContextId() });
+			WorkbenchHelp.setHelp(styledText, getHelpContextId());
 			
 		
 		String id= fEditorContextMenuId != null ?  fEditorContextMenuId : DEFAULT_EDITOR_CONTEXT_MENU_ID;
@@ -1418,7 +1418,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * Changed Behavior to make sure that if called inside a regular save (because
 		 * of deletion of input element) there is a way to report back to the caller.
 		 */
-		performSaveAs(null);
+		performSaveAs(new NullProgressMonitor());
 	}
 	
 	/**
@@ -1595,9 +1595,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					 * Set progress monitor to canceled in order to report back 
 					 * to enclosing operations. 
 					 */
-					if (progressMonitor != null) {
+					if (progressMonitor != null)
 						progressMonitor.setCanceled(true);
-					}
 				}
 			} else {
 				
@@ -1610,9 +1609,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				 * Set progress monitor to canceled in order to report back 
 				 * to enclosing operations. 
 				 */
-				if (progressMonitor != null) {
+				if (progressMonitor != null)
 					progressMonitor.setCanceled(true);
-				}
 			}
 			
 		} finally {

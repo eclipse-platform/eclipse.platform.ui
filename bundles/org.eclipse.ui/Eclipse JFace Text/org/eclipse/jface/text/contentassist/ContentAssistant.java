@@ -50,7 +50,7 @@ import org.eclipse.jface.util.Assert;
 public class ContentAssistant implements IContentAssistant {
 	
 	/**
-	 * A generic closer class used to monitor various
+	 * A generic closer class used to monitor various 
 	 * interface events in order to determine whether
 	 * content-assist should be terminated and all
 	 * associated windows closed.
