@@ -15,8 +15,7 @@ import java.util.List;
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.*;
@@ -92,12 +91,9 @@ private IResource getTarget() {
  * 	resources are linked
  */
 private boolean isLinked(IResource[] resources) {
-	if (resources != null) {
-		for (int i = 0; i < resources.length; i++) {
-			if (resources[i].isLinked()) {
-				return true;
-			}
-		}
+	for (int i = 0; i < resources.length; i++) {
+		if (resources[i].isLinked())
+			return true;
 	}
 	return false;
 }
@@ -152,6 +148,12 @@ private IContainer getContainer() {
  * The <code>PasteAction</code> implementation of this
  * <code>SelectionListenerAction</code> method enables this action if 
  * a resource compatible with what is on the clipboard is selected.
+ * 
+ * -Clipboard must have IResource or java.io.File
+ * -Projects can always be pasted if they are open
+ * -Workspace folder may not be copied into itself
+ * -Files and folders may be pasted to a single selected folder in open 
+ * 	project or multiple selected files in the same folder 
  */
 protected boolean updateSelection(IStructuredSelection selection) {
 	if (!super.updateSelection(selection)) 
@@ -160,43 +162,33 @@ protected boolean updateSelection(IStructuredSelection selection) {
 	// clipboard must have resources or files
 	ResourceTransfer resTransfer = ResourceTransfer.getInstance();
 	IResource[] resourceData = (IResource[])clipboard.getContents(resTransfer);
-	FileTransfer fileTransfer = FileTransfer.getInstance();
-	String[] fileData = (String[])clipboard.getContents(fileTransfer);
-	if (resourceData == null && fileData == null)
-		return false;
-
-	// can paste open projects regardless of selection
 	boolean isProjectRes = resourceData != null
 		&& resourceData.length > 0
 		&& resourceData[0].getType() == IResource.PROJECT;
+
 	if (isProjectRes) {
 		for (int i = 0; i < resourceData.length; i++) {
 			// make sure all resource data are open projects
+			// can paste open projects regardless of selection
 			if (resourceData[i].getType() != IResource.PROJECT || ((IProject) resourceData[i]).isOpen() == false)
 				return false;
 		}
 		return true;
 	} 
 	 
-	// can paste files and folders to a single selection (project must be open)
-	// or multiple file selection with the same parent
 	if (getSelectedNonResources().size() > 0) 
 		return false;
-	List selectedResources = getSelectedResources();
+	
 	IResource targetResource = getTarget();
-
-	// targetResource is null if no valid target is selected or 
-	// selection is empty	
+	// targetResource is null if no valid target is selected (e.g., open project) 
+	// or selection is empty	
 	if (targetResource == null)
 		return false;
 
-	// linked resources can only be pasted into projects
-	if (isLinked(resourceData) && targetResource.getType() != IResource.PROJECT) 
-		return false;
-		
+	// can paste files and folders to a single selection (file, folder, 
+	// open project) or multiple file selection with the same parent
+	List selectedResources = getSelectedResources();
 	if (selectedResources.size() > 1) {
-		// if more than one resource is selected the selection has 
-		// to be all files with the same parent
 		for (int i = 0; i < selectedResources.size(); i++) {
 			IResource resource = (IResource)selectedResources.get(i);
 			if (resource.getType() != IResource.FILE)
@@ -205,17 +197,27 @@ protected boolean updateSelection(IStructuredSelection selection) {
 				return false;
 		}
 	}
-	
-	if (targetResource.getType() == IResource.FOLDER && 
-		resourceData != null) {
-		// don't try to copy folder to self
-		for (int i = 0; i < resourceData.length; i++) {
-			if (targetResource.equals(resourceData[i]))
-				return false;
+	if (resourceData != null)  {
+		// linked resources can only be pasted into projects
+		if (isLinked(resourceData) && targetResource.getType() != IResource.PROJECT) 
+			return false;
+			
+		if (targetResource.getType() == IResource.FOLDER) {
+			// don't try to copy folder to self
+			for (int i = 0; i < resourceData.length; i++) {
+				if (targetResource.equals(resourceData[i]))
+					return false;
+			}
 		}
+		return true;
+	}		
+	TransferData[] transfers = clipboard.getAvailableTypes();
+	FileTransfer fileTransfer = FileTransfer.getInstance();
+	for (int i = 0; i < transfers.length; i++) {
+		if (fileTransfer.isSupportedType(transfers[i])) 
+			return true;		
 	}
-		
-	return true;
+	return false;
 }
 }
 
