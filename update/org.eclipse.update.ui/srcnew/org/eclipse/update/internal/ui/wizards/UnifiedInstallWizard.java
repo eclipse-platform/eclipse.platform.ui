@@ -53,22 +53,10 @@ public class UnifiedInstallWizard
 	 * @see Wizard#performFinish()
 	 */
 	public boolean performFinish() {
-		final PendingOperation[] selectedJobs = reviewPage.getSelectedJobs();
+		final IInstallFeatureOperation[] selectedJobs = reviewPage.getSelectedJobs();
 		installCount = 0;
 
 		saveSettings();
-
-		// Check for duplication conflicts
-		ArrayList conflicts =
-			DuplicateConflictsValidator.computeDuplicateConflicts(
-				targetPage.getJobTargetSites(),
-				config);
-		if (conflicts != null) {
-			DuplicateConflictsDialog2 dialog =
-				new DuplicateConflictsDialog2(getShell(), conflicts);
-			if (dialog.open() != 0)
-				return false;
-		}
 
 		// ok to continue		
 		IRunnableWithProgress operation = new IRunnableWithProgress() {
@@ -78,7 +66,7 @@ public class UnifiedInstallWizard
 	IInstallFeatureOperation[] operations =
 		new IInstallFeatureOperation[selectedJobs.length];
 				for (int i = 0; i < selectedJobs.length; i++) {
-					PendingOperation job = selectedJobs[i];
+					IInstallFeatureOperation job = selectedJobs[i];
 					IFeature[] unconfiguredOptionalFeatures = null;
 					IFeatureReference[] optionalFeatures = null;
 					if (optionalFeaturesPage != null) {
@@ -92,7 +80,7 @@ public class UnifiedInstallWizard
 								targetPage.getTargetSite(job));
 					}
 					IInstallFeatureOperation op =
-						(IInstallFeatureOperation) OperationsManager
+						OperationsManager
 							.getOperationFactory()
 							.createInstallOperation(
 								config,
@@ -213,19 +201,19 @@ public class UnifiedInstallWizard
 
 	private void updateDynamicPages() {
 		if (licensePage != null) {
-			PendingOperation[] licenseJobs =
+			IInstallFeatureOperation[] licenseJobs =
 				OperationsManager.getSelectedJobsWithLicenses(
 					reviewPage.getSelectedJobs());
 			licensePage.setJobs(licenseJobs);
 		}
 		if (optionalFeaturesPage != null) {
-			PendingOperation[] optionalJobs =
+			IInstallFeatureOperation[] optionalJobs =
 				OperationsManager.getSelectedJobsWithOptionalFeatures(
 					reviewPage.getSelectedJobs());
 			optionalFeaturesPage.setJobs(optionalJobs);
 		}
 		if (targetPage != null) {
-			PendingOperation[] installJobs = reviewPage.getSelectedJobs();
+			IInstallFeatureOperation[] installJobs = reviewPage.getSelectedJobs();
 			targetPage.setJobs(installJobs);
 		}
 	}
@@ -285,7 +273,7 @@ public class UnifiedInstallWizard
 	/* (non-Javadoc)
 	 * @see org.eclipse.update.operations.IOperationListener#afterExecute(org.eclipse.update.operations.IOperation)
 	 */
-	public boolean afterExecute(IOperation operation) {
+	public boolean afterExecute(IOperation operation, Object data) {
 		if (!(operation instanceof IInstallFeatureOperation))
 			return true;
 		IInstallFeatureOperation job = (IInstallFeatureOperation) operation;
@@ -302,7 +290,16 @@ public class UnifiedInstallWizard
 	/* (non-Javadoc)
 	 * @see org.eclipse.update.operations.IOperationListener#beforeExecute(org.eclipse.update.operations.IOperation)
 	 */
-	public boolean beforeExecute(IOperation operation) {
+	public boolean beforeExecute(IOperation operation, Object data) {
+		if (operation instanceof IBatchOperation
+			&& data != null
+			&& data instanceof ArrayList) {
+
+			DuplicateConflictsDialog2 dialog =
+				new DuplicateConflictsDialog2(getShell(), (ArrayList) data);
+			if (dialog.open() != 0)
+				return false;
+		}
 		return true;
 	}
 

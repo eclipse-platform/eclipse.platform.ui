@@ -18,29 +18,29 @@ import org.eclipse.update.core.*;
  * IOperation
  */
 public interface IOperationFactory {
-	public IOperation createConfigOperation(
+	public IConfigFeatureOperation createConfigOperation(
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,
 		IFeature feature);
-	public IOperation createUnconfigOperation(
+	public IUnconfigFeatureOperation createUnconfigOperation(
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,
 		IFeature feature);
-	public IOperation createInstallOperation(
+	public IInstallFeatureOperation createInstallOperation(
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,
 		IFeature feature,
 		IFeatureReference[] optionalFeatures,
 		IFeature[] unconfiguredOptionalFeatures,
 		IVerificationListener verifier);
-	public IOperation createUninstallOperation(
+	public IUninstallFeatureOperation createUninstallOperation(
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,
 		IFeature feature);
-	public IOperation createBatchInstallOperation(IInstallFeatureOperation[] operations);
-	public IOperation createToggleSiteOperation(
+	public IBatchOperation createBatchInstallOperation(IInstallFeatureOperation[] operations);
+	public IToggleSiteOperation createToggleSiteOperation(
 		IConfiguredSite site);
-	public IOperation createRevertConfigurationOperation(
+	public IRevertConfigurationOperation createRevertConfigurationOperation(
 		IInstallConfiguration config,
 		IProblemHandler problemHandler);
 }

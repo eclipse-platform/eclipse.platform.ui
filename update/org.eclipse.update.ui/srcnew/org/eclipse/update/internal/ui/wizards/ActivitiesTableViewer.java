@@ -6,23 +6,15 @@
  */
 package org.eclipse.update.internal.ui.wizards;
 
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.update.configuration.IActivity;
-import org.eclipse.update.configuration.IInstallConfiguration;
-import org.eclipse.update.core.Utilities;
-import org.eclipse.update.internal.ui.UpdateLabelProvider;
-import org.eclipse.update.internal.ui.UpdateUI;
-import org.eclipse.update.internal.ui.UpdateUIImages;
-import org.eclipse.update.internal.ui.parts.DefaultContentProvider;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.internal.ui.parts.*;
 
 
 /**

@@ -6,8 +6,8 @@
  */
 package org.eclipse.update.internal.ui.wizards;
 
-import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.update.internal.ui.UpdateUIImages;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.update.internal.ui.*;
 
 /**
  * @author Wassim Melhem

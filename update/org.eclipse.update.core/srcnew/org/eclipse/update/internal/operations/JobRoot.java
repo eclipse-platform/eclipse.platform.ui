@@ -15,18 +15,19 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.operations.*;
 
 public class JobRoot {
 	private IInstallConfiguration config;
-	private PendingOperation job;
+	private IInstallFeatureOperation job;
 	private FeatureHierarchyElement2[] elements;
 
-	public JobRoot(IInstallConfiguration config, PendingOperation job) {
+	public JobRoot(IInstallConfiguration config, IInstallFeatureOperation job) {
 		this.config = config;
 		this.job = job;
 	}
 
-	public PendingOperation getJob() {
+	public IInstallFeatureOperation getJob() {
 		return job;
 	}
 

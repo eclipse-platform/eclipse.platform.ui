@@ -83,15 +83,15 @@ public class OperationsManager {
 		}
 	}
 
-	public static boolean hasSelectedJobsWithLicenses(PendingOperation[] jobs) {
+	public static boolean hasSelectedJobsWithLicenses(IInstallFeatureOperation[] jobs) {
 		for (int i = 0; i < jobs.length; i++) {
-			if (UpdateManager.hasLicense(jobs[i]))
+			if (UpdateManager.hasLicense(jobs[i].getFeature()))
 				return true;
 		}
 		return false;
 	}
 
-	public static boolean hasSelectedJobsWithOptionalFeatures(PendingOperation[] jobs) {
+	public static boolean hasSelectedJobsWithOptionalFeatures(IInstallFeatureOperation[] jobs) {
 		for (int i = 0; i < jobs.length; i++) {
 			if (UpdateManager.hasOptionalFeatures(jobs[i].getFeature()))
 				return true;
@@ -99,23 +99,23 @@ public class OperationsManager {
 		return false;
 	}
 
-	public static PendingOperation[] getSelectedJobsWithLicenses(PendingOperation[] jobs) {
+	public static IInstallFeatureOperation[] getSelectedJobsWithLicenses(IInstallFeatureOperation[] jobs) {
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < jobs.length; i++) {
-			if (UpdateManager.hasLicense(jobs[i]))
+			if (UpdateManager.hasLicense(jobs[i].getFeature()))
 				list.add(jobs[i]);
 		}
-		return (PendingOperation[]) list.toArray(
-			new PendingOperation[list.size()]);
+		return (IInstallFeatureOperation[]) list.toArray(
+			new IInstallFeatureOperation[list.size()]);
 	}
 
-	public static PendingOperation[] getSelectedJobsWithOptionalFeatures(PendingOperation[] jobs) {
+	public static IInstallFeatureOperation[] getSelectedJobsWithOptionalFeatures(IInstallFeatureOperation[] jobs) {
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < jobs.length; i++) {
 			if (UpdateManager.hasOptionalFeatures(jobs[i].getFeature()))
 				list.add(jobs[i]);
 		}
-		return (PendingOperation[]) list.toArray(
-			new PendingOperation[list.size()]);
+		return (IInstallFeatureOperation[]) list.toArray(
+			new IInstallFeatureOperation[list.size()]);
 	}
 }

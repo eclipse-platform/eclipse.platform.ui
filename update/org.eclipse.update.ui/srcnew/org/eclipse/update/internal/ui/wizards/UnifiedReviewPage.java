@@ -9,29 +9,30 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
-import java.net.URL;
-import java.util.ArrayList;
+import java.net.*;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.*;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
-import org.eclipse.swt.program.Program;
+import org.eclipse.swt.program.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.dialogs.PropertyDialogAction;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.help.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.model.SimpleFeatureAdapter;
+import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.internal.ui.views.FeatureSorter;
+import org.eclipse.update.internal.ui.views.*;
+import org.eclipse.update.operations.*;
 import org.eclipse.update.search.*;
 
 public class UnifiedReviewPage
@@ -78,7 +79,7 @@ public class UnifiedReviewPage
 		extends LabelProvider
 		implements ITableLabelProvider {
 		public String getColumnText(Object obj, int column) {
-			PendingOperation job = (PendingOperation) obj;
+			IInstallFeatureOperation job = (IInstallFeatureOperation) obj;
 			IFeature feature = job.getFeature();
 
 			switch (column) {
@@ -96,7 +97,7 @@ public class UnifiedReviewPage
 		}
 		public Image getColumnImage(Object obj, int column) {
 			if (column == 0) {
-				IFeature feature = ((PendingOperation) obj).getFeature();
+				IFeature feature = ((IInstallFeatureOperation) obj).getFeature();
 				boolean patch = feature.isPatch();
 				UpdateLabelProvider provider =
 					UpdateUI.getDefault().getLabelProvider();
@@ -111,13 +112,13 @@ public class UnifiedReviewPage
 
 	class ContainmentFilter extends ViewerFilter {
 		public boolean select(Viewer v, Object parent, Object child) {
-			return !isContained((PendingOperation) child);
+			return !isContained((IInstallFeatureOperation) child);
 		}
-		private boolean isContained(PendingOperation job) {
+		private boolean isContained(IInstallFeatureOperation job) {
 			VersionedIdentifier vid = job.getFeature().getVersionedIdentifier();
 
 			for (int i = 0; i < jobs.size(); i++) {
-				PendingOperation candidate = (PendingOperation) jobs.get(i);
+				IInstallFeatureOperation candidate = (IInstallFeatureOperation) jobs.get(i);
 				if (candidate.equals(job))
 					continue;
 				IFeature feature = candidate.getFeature();
@@ -210,7 +211,7 @@ public class UnifiedReviewPage
 	private void selectTrueUpdates() {
 		ArrayList trueUpdates = new ArrayList();
 		for (int i=0; i<jobs.size(); i++) {
-			PendingOperation job = (PendingOperation)jobs.get(i);
+			IInstallFeatureOperation job = (IInstallFeatureOperation)jobs.get(i);
 			if (!UpdateUI.isPatch(job.getFeature()))
 				trueUpdates.add(job);
 		}
@@ -408,7 +409,7 @@ public class UnifiedReviewPage
 		});
 		tableViewer.setSorter(new FeatureSorter() {
 			public int category(Object obj) {
-				PendingOperation job = (PendingOperation) obj;
+				IInstallFeatureOperation job = (IInstallFeatureOperation) obj;
 				if (UpdateUI.isPatch(job.getFeature()))
 					return 1;
 				return 0;
@@ -441,7 +442,7 @@ public class UnifiedReviewPage
 	public void accept(final IFeature feature) {
 		getShell().getDisplay().syncExec(new Runnable() {
 			public void run() {
-				PendingOperation job = new PendingOperation(feature);
+				IInstallFeatureOperation job = (IInstallFeatureOperation)OperationsManager.getOperationFactory().createInstallOperation(null, null, feature,null, null, null);
 				ViewerFilter[] filters = tableViewer.getFilters();
 				boolean visible = true;
 
@@ -462,7 +463,7 @@ public class UnifiedReviewPage
 	}
 
 	private void jobSelected(IStructuredSelection selection) {
-		PendingOperation job = (PendingOperation) selection.getFirstElement();
+		IInstallFeatureOperation job = (IInstallFeatureOperation) selection.getFirstElement();
 		IFeature feature = job != null ? job.getFeature() : null;
 		IURLEntry descEntry = feature != null ? feature.getDescription() : null;
 		String desc = null;
@@ -519,8 +520,8 @@ public class UnifiedReviewPage
 		final IStructuredSelection selection =
 			(IStructuredSelection) tableViewer.getSelection();
 
-		final PendingOperation job =
-			(PendingOperation) selection.getFirstElement();
+		final IInstallFeatureOperation job =
+			(IInstallFeatureOperation) selection.getFirstElement();
 		if (propertiesAction == null) {
 			propertiesAction =
 				new FeaturePropertyDialogAction(getShell(), tableViewer);
@@ -538,7 +539,7 @@ public class UnifiedReviewPage
 		});
 	}
 
-	private String getMoreInfoURL(PendingOperation job) {
+	private String getMoreInfoURL(IInstallFeatureOperation job) {
 		IURLEntry desc = job.getFeature().getDescription();
 		if (desc != null) {
 			URL url = desc.getURL();
@@ -550,8 +551,8 @@ public class UnifiedReviewPage
 	private void handleMoreInfo() {
 		IStructuredSelection selection =
 			(IStructuredSelection) tableViewer.getSelection();
-		final PendingOperation selectedJob =
-			(PendingOperation) selection.getFirstElement();
+		final IInstallFeatureOperation selectedJob =
+			(IInstallFeatureOperation) selection.getFirstElement();
 		BusyIndicator
 			.showWhile(tableViewer.getControl().getDisplay(), new Runnable() {
 			public void run() {
@@ -560,15 +561,15 @@ public class UnifiedReviewPage
 		});
 	}
 
-	public PendingOperation[] getSelectedJobs() {
+	public IInstallFeatureOperation[] getSelectedJobs() {
 		Object[] selected = tableViewer.getCheckedElements();
-		PendingOperation[] result = new PendingOperation[selected.length];
+		IInstallFeatureOperation[] result = new IInstallFeatureOperation[selected.length];
 		System.arraycopy(selected, 0, result, 0, selected.length);
 		return result;
 	}
 
 	public void validateSelection() {
-		PendingOperation[] jobs = getSelectedJobs();
+		IInstallFeatureOperation[] jobs = getSelectedJobs();
 		validationStatus =
 			UpdateManager.getValidator().validatePendingChanges(jobs);
 		setPageComplete(validationStatus == null);

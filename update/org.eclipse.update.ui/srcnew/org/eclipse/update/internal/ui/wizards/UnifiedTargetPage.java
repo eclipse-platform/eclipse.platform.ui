@@ -14,9 +14,8 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.*;
@@ -31,6 +30,7 @@ import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.parts.*;
+import org.eclipse.update.operations.*;
 
 public class UnifiedTargetPage extends UnifiedBannerPage implements IUnifiedDynamicPage {
 	// NL keys
@@ -68,11 +68,11 @@ public class UnifiedTargetPage extends UnifiedBannerPage implements IUnifiedDyna
 	private ConfigListener configListener;
 	private Label requiredSpaceLabel;
 	private Label availableSpaceLabel;
-	private PendingOperation[] jobs;
-	private Hashtable targetSites;  // keys are PendingOperation
+	private IInstallFeatureOperation[] jobs;
 	private Button addButton;
 	private Button deleteButton;
 	private HashSet added;
+	private JobTargetSites targetSites;
 
 	class JobsContentProvider
 		extends DefaultContentProvider
@@ -102,8 +102,8 @@ public class UnifiedTargetPage extends UnifiedBannerPage implements IUnifiedDyna
 			UpdateLabelProvider provider = UpdateUI.getDefault().getLabelProvider();
 			if (obj instanceof IConfiguredSite)
 				return provider.getLocalSiteImage((IConfiguredSite) obj);
-			if (obj instanceof PendingOperation) {
-				PendingOperation job = (PendingOperation) obj;
+			if (obj instanceof IInstallFeatureOperation) {
+				IInstallFeatureOperation job = (IInstallFeatureOperation) obj;
 				ImageDescriptor base =
 					job.getFeature().isPatch()
 						? UpdateUIImages.DESC_EFIX_OBJ
@@ -118,8 +118,8 @@ public class UnifiedTargetPage extends UnifiedBannerPage implements IUnifiedDyna
 		}
 
 		public String getColumnText(Object obj, int col) {
-			if (obj instanceof PendingOperation && col == 0) {
-				IFeature feature = ((PendingOperation) obj).getFeature();
+			if (obj instanceof IInstallFeatureOperation && col == 0) {
+				IFeature feature = ((IInstallFeatureOperation) obj).getFeature();
 				return feature.getLabel()
 					+ " "
 					+ feature.getVersionedIdentifier().getVersion().toString();
@@ -147,10 +147,10 @@ public class UnifiedTargetPage extends UnifiedBannerPage implements IUnifiedDyna
 			siteViewer.remove(csite);
 			if (added != null)
 				added.remove(csite);
-			PendingOperation job = (PendingOperation) siteViewer.getInput();
+			IInstallFeatureOperation job = (IInstallFeatureOperation) siteViewer.getInput();
 			if (job != null) {
 				JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
-				IConfiguredSite defaultSite = computeTargetSite(jobSite);
+				IConfiguredSite defaultSite = targetSites.computeTargetSite(jobSite);
 				if (defaultSite != null)
 					siteViewer.setSelection(new StructuredSelection(defaultSite));
 			}
@@ -168,11 +168,12 @@ public class UnifiedTargetPage extends UnifiedBannerPage implements IUnifiedDyna
 		this.config = config;
 		UpdateUI.getDefault().getLabelProvider().connect(this);
 		configListener = new ConfigListener();
-		targetSites = new Hashtable();
+		targetSites = new JobTargetSites(config);
 	}
 
-	public void setJobs(PendingOperation[] jobs) {
+	public void setJobs(IInstallFeatureOperation[] jobs) {
 		this.jobs = jobs;
+		targetSites.setJobs(jobs);
 	}
 
 	public void dispose() {
@@ -277,7 +278,7 @@ public class UnifiedTargetPage extends UnifiedBannerPage implements IUnifiedDyna
 	}
 
 	private void handleJobsSelected(IStructuredSelection selection) {
-		PendingOperation job = (PendingOperation) selection.getFirstElement();
+		IInstallFeatureOperation job = (IInstallFeatureOperation) selection.getFirstElement();
 		siteViewer.setInput(job);
 		JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
 		addButton.setEnabled(jobSite.affinitySite == null);
@@ -286,27 +287,6 @@ public class UnifiedTargetPage extends UnifiedBannerPage implements IUnifiedDyna
 		}
 	}
 
-	private void computeDefaultTargetSites() {
-		targetSites.clear();
-		for (int i = 0; i < jobs.length; i++) {
-			JobTargetSite jobSite = new JobTargetSite();
-			jobSite.job = jobs[i];
-			jobSite.defaultSite =
-				UpdateManager.getDefaultTargetSite(config, jobs[i], false);
-			jobSite.affinitySite =
-				UpdateManager.getAffinitySite(config, jobs[i].getFeature());
-			if (jobSite.affinitySite == null)
-				jobSite.affinitySite = jobs[i].getTargetSite();
-			jobSite.targetSite = computeTargetSite(jobSite);
-			targetSites.put(jobs[i], jobSite);
-		}
-	}
-
-	private IConfiguredSite computeTargetSite(JobTargetSite jobSite) {
-		IConfiguredSite csite =
-			jobSite.affinitySite != null ? jobSite.affinitySite : jobSite.defaultSite;
-		return (csite == null) ? getFirstTarget(jobSite) : csite;
-	}
 
 	private void createSiteViewer(Composite parent) {
 		siteViewer = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
@@ -315,9 +295,9 @@ public class UnifiedTargetPage extends UnifiedBannerPage implements IUnifiedDyna
 		siteViewer.setLabelProvider(new TableLabelProvider());
 		siteViewer.addFilter(new ViewerFilter() {
 			public boolean select(Viewer v, Object parent, Object obj) {
-				PendingOperation job = (PendingOperation) siteViewer.getInput();
+				IInstallFeatureOperation job = (IInstallFeatureOperation) siteViewer.getInput();
 				JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
-				return getSiteVisibility((IConfiguredSite) obj, jobSite);
+				return targetSites.getSiteVisibility((IConfiguredSite) obj, jobSite);
 			}
 		});
 		siteViewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -347,7 +327,7 @@ public class UnifiedTargetPage extends UnifiedBannerPage implements IUnifiedDyna
 
 	public void setVisible(boolean visible) {
 		if (visible) {
-			computeDefaultTargetSites();
+			targetSites.computeDefaultTargetSites();
 			jobViewer.setInput(jobs);
 		}
 		super.setVisible(visible);
@@ -358,30 +338,6 @@ public class UnifiedTargetPage extends UnifiedBannerPage implements IUnifiedDyna
 		}
 	}
 
-	private boolean getSiteVisibility(IConfiguredSite site, JobTargetSite jobSite) {
-		// If affinity site is known, only it should be shown
-		if (jobSite.affinitySite != null) {
-			// Must compare referenced sites because
-			// configured sites themselves may come from 
-			// different configurations
-			return site.getSite().equals(jobSite.affinitySite.getSite());
-		}
-
-		// If this is the default target site, let it show
-		if (site.equals(jobSite.defaultSite))
-			return true;
-			
-		// Not the default. If update, show only private sites.
-		// If install, allow product site + private sites.
-		if (site.isPrivateSite() && site.isUpdatable())
-			return true;
-			
-		if (jobSite.job.getOldFeature() == null && site.isProductSite())
-			return true;
-			
-		return false;
-	}
-
 	private void verifyNotEmpty(boolean empty) {
 		String errorMessage = null;
 		if (empty)
@@ -390,24 +346,9 @@ public class UnifiedTargetPage extends UnifiedBannerPage implements IUnifiedDyna
 		setPageComplete(!empty);
 	}
 
-	private IConfiguredSite getFirstTarget(JobTargetSite jobSite) {
-		IConfiguredSite firstSite = jobSite.targetSite;
-		if (firstSite == null) {
-			IConfiguredSite[] sites = config.getConfiguredSites();
-			for (int i = 0; i < sites.length; i++) {
-				IConfiguredSite csite = sites[i];
-				if (getSiteVisibility(csite, jobSite)) {
-					firstSite = csite;
-					break;
-				}
-			}
-		}
-		return firstSite;
-	}
-
 	private void selectTargetSite(IStructuredSelection selection) {
 		IConfiguredSite site = (IConfiguredSite) selection.getFirstElement();
-		PendingOperation job = (PendingOperation) siteViewer.getInput();
+		IInstallFeatureOperation job = (IInstallFeatureOperation) siteViewer.getInput();
 		if (job != null) {
 			JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
 			jobSite.targetSite = site;
@@ -515,8 +456,8 @@ public class UnifiedTargetPage extends UnifiedBannerPage implements IUnifiedDyna
 
 	private void pageChanged() {
 		boolean empty = false;
-		for (Enumeration enum = targetSites.elements(); enum.hasMoreElements();) {
-			JobTargetSite jobSite = (JobTargetSite) enum.nextElement();
+		for (Iterator enum = targetSites.keySet().iterator(); enum.hasNext();) {
+			JobTargetSite jobSite = (JobTargetSite) targetSites.get(enum.next());
 			if (jobSite.targetSite == null) {
 				empty = true;
 				break;
@@ -525,7 +466,7 @@ public class UnifiedTargetPage extends UnifiedBannerPage implements IUnifiedDyna
 			if (feature.isPatch()) {
 				// Patches must go together with the features
 				// they are patching.
-				JobTargetSite patchedSite = findPatchedFeature(feature);
+				JobTargetSite patchedSite = targetSites.findPatchedFeature(feature);
 				if (patchedSite != null
 					&& jobSite.targetSite != null
 					&& patchedSite.targetSite != null
@@ -543,41 +484,7 @@ public class UnifiedTargetPage extends UnifiedBannerPage implements IUnifiedDyna
 		}
 		verifyNotEmpty(empty);
 	}
-
-	private JobTargetSite findPatchedFeature(IFeature patch) {
-		for (Enumeration enum = targetSites.elements(); enum.hasMoreElements();) {
-			JobTargetSite jobSite = (JobTargetSite) enum.nextElement();
-			IFeature target = jobSite.job.getFeature();
-			if (!target.equals(patch) && UpdateUI.isPatch(target, patch))
-				return jobSite;
-		}
-		return null;
-	}
-
-	public JobTargetSite[] getJobTargetSites() {
-		JobTargetSite[] sites = new JobTargetSite[jobs.length];
-		for (int i = 0; i < jobs.length; i++) {
-			JobTargetSite jobSite = (JobTargetSite) targetSites.get(jobs[i]);
-			sites[i] = jobSite;
-		}
-		return sites;
-	}
-
-	public IConfiguredSite getTargetSite(PendingOperation job) {
-		PendingOperation target = null;
-		for (int i = 0; jobs != null && i < jobs.length; i++)
-			if (job == jobs[i]) {
-				target = jobs[i];
-				break;
-			}
-		if (target != null) {
-			JobTargetSite jobSite = (JobTargetSite) targetSites.get(target);
-			if (jobSite != null)
-				return jobSite.targetSite;
-		}
-		return null;
-	}
-
+	
 	private static boolean ensureUnique(File file, IInstallConfiguration config) {
 		IConfiguredSite[] sites = config.getConfiguredSites();
 		URL fileURL;
@@ -592,5 +499,9 @@ public class UnifiedTargetPage extends UnifiedBannerPage implements IUnifiedDyna
 				return false;
 		}
 		return true;
+	}
+	
+	public IConfiguredSite getTargetSite(IInstallFeatureOperation job) {
+		return targetSites.getTargetSite(job);
 	}
 }

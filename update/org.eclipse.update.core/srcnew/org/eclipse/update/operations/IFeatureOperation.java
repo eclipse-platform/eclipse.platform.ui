@@ -22,4 +22,6 @@ public interface IFeatureOperation extends IOperation {
 	public abstract IConfiguredSite getTargetSite();
 	public abstract IInstallConfiguration getInstallConfiguration();
 	public abstract IFeature getOldFeature();
+	public abstract void setTargetSite(IConfiguredSite targetSite);
+	public abstract void setInstallConfiguration(IInstallConfiguration config);
 }

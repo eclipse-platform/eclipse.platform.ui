@@ -24,6 +24,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.parts.*;
+import org.eclipse.update.operations.*;
 
 public class UnifiedOptionalFeaturesPage extends UnifiedBannerPage implements IUnifiedDynamicPage {
 	// NL keys
@@ -54,7 +55,7 @@ public class UnifiedOptionalFeaturesPage extends UnifiedBannerPage implements IU
 				Object root = fe.getRoot();
 				boolean oldFeature = false;
 				if (root instanceof JobRoot) {
-					PendingOperation job = ((JobRoot)root).getJob();
+					IInstallFeatureOperation job = ((JobRoot)root).getJob();
 					boolean patch = UpdateUI.isPatch(job.getFeature());
 					oldFeature = job.getOldFeature() != null;
 					return fe.getChildren(oldFeature, patch, config);
@@ -111,7 +112,7 @@ public class UnifiedOptionalFeaturesPage extends UnifiedBannerPage implements IU
 		UpdateUI.getDefault().getLabelProvider().connect(this);
 	}
 
-	public void setJobs(PendingOperation[] jobs) {
+	public void setJobs(IInstallFeatureOperation[] jobs) {
 		jobRoots = new JobRoot[jobs.length];
 		for (int i = 0; i < jobs.length; i++) {
 			jobRoots[i] = new JobRoot(config, jobs[i]);
@@ -234,7 +235,7 @@ public class UnifiedOptionalFeaturesPage extends UnifiedBannerPage implements IU
 	private void selectAll(boolean value) {
 		ArrayList selected = new ArrayList();
 		for (int i = 0; i < jobRoots.length; i++) {
-			PendingOperation job = jobRoots[i].getJob();
+			IInstallFeatureOperation job = jobRoots[i].getJob();
 			selected.add(job);
 			Object[] elements = jobRoots[i].getElements();
 			for (int j = 0; j < elements.length; j++) {
@@ -283,7 +284,7 @@ public class UnifiedOptionalFeaturesPage extends UnifiedBannerPage implements IU
 		}
 	}
 	
-	public FeatureHierarchyElement2[] getOptionalElements(PendingOperation job) {
+	public FeatureHierarchyElement2[] getOptionalElements(IInstallFeatureOperation job) {
 		for (int i = 0; i < jobRoots.length; i++) {
 			if (job.equals(jobRoots[i].getJob())) {
 				return jobRoots[i].getElements();
@@ -292,7 +293,7 @@ public class UnifiedOptionalFeaturesPage extends UnifiedBannerPage implements IU
 		return null;
 	}
 	
-	public IFeature[] getUnconfiguredOptionalFeatures(PendingOperation job, IConfiguredSite targetSite) {
+	public IFeature[] getUnconfiguredOptionalFeatures(IInstallFeatureOperation job, IConfiguredSite targetSite) {
 		for (int i = 0; i < jobRoots.length; i++) {
 			if (job.equals(jobRoots[i].getJob())) {
 				return jobRoots[i].getUnconfiguredOptionalFeatures(config, targetSite);
@@ -301,7 +302,7 @@ public class UnifiedOptionalFeaturesPage extends UnifiedBannerPage implements IU
 		return null;
 	}
 	
-	public IFeatureReference[] getCheckedOptionalFeatures(PendingOperation currentJob) {
+	public IFeatureReference[] getCheckedOptionalFeatures(IInstallFeatureOperation currentJob) {
 		HashSet set = new HashSet();
 		JobRoot jobRoot = null;
 
@@ -314,7 +315,7 @@ public class UnifiedOptionalFeaturesPage extends UnifiedBannerPage implements IU
 		if (jobRoot == null)
 			return new IFeatureReference[0];
 
-		PendingOperation job = jobRoot.getJob();
+		IInstallFeatureOperation job = jobRoot.getJob();
 		boolean update = job.getOldFeature() != null;
 		boolean patch = UpdateUI.isPatch(job.getFeature());
 		FeatureHierarchyElement2[] elements = jobRoot.getElements();

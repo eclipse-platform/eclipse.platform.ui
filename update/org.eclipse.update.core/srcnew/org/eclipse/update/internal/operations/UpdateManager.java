@@ -197,11 +197,6 @@ public class UpdateManager {
 	}
 	
 	
-	public static boolean hasLicense(PendingOperation job) {
-		IFeature feature = job.getFeature();
-		return hasLicense(feature);
-	}
-	
 	public static boolean hasLicense(IFeature feature) {
 		IURLEntry info = feature.getLicense();
 		if (info == null)
@@ -265,13 +260,13 @@ public class UpdateManager {
 	
 	public static IConfiguredSite getDefaultTargetSite(
 		IInstallConfiguration config,
-		PendingOperation pendingChange) {
+		IInstallFeatureOperation pendingChange) {
 		return getDefaultTargetSite(config, pendingChange, true);
 	}
 
 	public  static IConfiguredSite getDefaultTargetSite(
 		IInstallConfiguration config,
-		PendingOperation pendingChange,
+		IInstallFeatureOperation pendingChange,
 		boolean checkAffinityFeature) {
 		IFeature oldFeature = pendingChange.getOldFeature();
 		IFeature newFeature = pendingChange.getFeature();
@@ -399,7 +394,7 @@ public class UpdateManager {
 
 	public static void makeConfigurationCurrent(
 		IInstallConfiguration config,
-		PendingOperation job)
+		IInstallFeatureOperation job)
 		throws CoreException {
 		ILocalSite localSite = SiteManager.getLocalSite();
 		if (job != null && job.getFeature().isPatch()) {

@@ -27,7 +27,9 @@
          id="reconciler"
          point="org.eclipse.core.runtime.applications">
       <application>
-         <run class="org.eclipse.update.internal.core.UpdateManagerReconciler"/>
+         <run
+               class="org.eclipse.update.internal.core.UpdateManagerReconciler">
+         </run>
       </application>
    </extension>
    <extension
@@ -64,6 +66,15 @@
       <install-handler
             class="org.eclipse.update.internal.core.DefaultInstallHandler">
       </install-handler>
+   </extension>
+   <extension
+	    id="standaloneUpdate"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="org.eclipse.update.standalone.StandaloneUpdateApplication">
+         </run>
+      </application>
    </extension>
 
 </plugin>

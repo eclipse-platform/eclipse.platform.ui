@@ -54,7 +54,15 @@ public abstract class FeatureOperation extends Operation implements IFeatureOper
 	public IInstallConfiguration getInstallConfiguration() {
 		return config;
 	}
-		
+	
+	public void setInstallConfiguration(IInstallConfiguration config) {
+		this.config = config;
+	}
+
+	public void setTargetSite(IConfiguredSite targetSite) {
+		this.targetSite = targetSite;
+	}
+	
 	void ensureUnique()
 		throws CoreException {
 		

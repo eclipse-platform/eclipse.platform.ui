@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
 
-import org.eclipse.update.internal.operations.*;
+
+import org.eclipse.update.operations.*;
 
 /**
  * @author dejan
@@ -21,6 +22,6 @@ import org.eclipse.update.internal.operations.*;
  * Window>Preferences>Java>Code Generation.
  */
 public interface IUnifiedDynamicPage {
-	public void setJobs(PendingOperation [] jobs);
+	public void setJobs(IInstallFeatureOperation [] jobs);
 
 }

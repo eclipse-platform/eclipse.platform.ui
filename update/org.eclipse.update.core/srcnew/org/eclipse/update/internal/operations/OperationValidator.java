@@ -155,7 +155,7 @@ public class OperationValidator implements IOperationValidator{
 	 * Called by the UI before doing a batched processing of
 	 * several pending changes.
 	 */
-	public IStatus validatePendingChanges(PendingOperation[] jobs) {
+	public IStatus validatePendingChanges(IInstallFeatureOperation[] jobs) {
 		// check initial state
 		ArrayList beforeStatus = new ArrayList();
 		validateInitialState(beforeStatus);
@@ -317,7 +317,7 @@ public class OperationValidator implements IOperationValidator{
 	 * Handle one-click changes as a batch
 	 */
 	private static void validatePendingChanges(
-		PendingOperation[] jobs,
+		IInstallFeatureOperation[] jobs,
 		ArrayList status) {
 		try {
 			ArrayList features = computeFeatures();
@@ -327,7 +327,7 @@ public class OperationValidator implements IOperationValidator{
 			// pass 1: see if we can process the entire "batch"
 			ArrayList tmpStatus = new ArrayList();
 			for (int i = 0; i < jobs.length; i++) {
-				PendingOperation job = jobs[i];
+				IInstallFeatureOperation job = jobs[i];
 
 				IFeature newFeature = job.getFeature();
 				IFeature oldFeature = job.getOldFeature();
@@ -355,7 +355,7 @@ public class OperationValidator implements IOperationValidator{
 			// pass 2: we have conflicts
 			features = savedFeatures;
 			for (int i = 0; i < jobs.length; i++) {
-				PendingOperation job = jobs[i];
+				IInstallFeatureOperation job = jobs[i];
 				IFeature newFeature = job.getFeature();
 				IFeature oldFeature = job.getOldFeature();
 

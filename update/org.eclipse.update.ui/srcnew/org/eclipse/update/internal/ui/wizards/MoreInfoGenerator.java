@@ -11,8 +11,8 @@ import java.net.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.operations.*;
 
 /**
  * @author dejan
@@ -30,7 +30,7 @@ public class MoreInfoGenerator {
 		return tempFile;
 	}
 	
-	public String createURL(PendingOperation job) {
+	public String createURL(IInstallFeatureOperation job) {
 		try {
 			File file = getTempFile();
 			OutputStream stream = new FileOutputStream(file);
@@ -45,7 +45,7 @@ public class MoreInfoGenerator {
 		}
 	}
 	
-	private void createMoreInfoContent(PendingOperation job, PrintWriter out) {
+	private void createMoreInfoContent(IInstallFeatureOperation job, PrintWriter out) {
 		IFeature feature = job.getFeature();
 		out.println(
 			"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">");
@@ -90,7 +90,7 @@ public class MoreInfoGenerator {
 		out.println("</HTML>");
 	}
 	
-	private void createProfileTable(PendingOperation job, PrintWriter out) {
+	private void createProfileTable(IInstallFeatureOperation job, PrintWriter out) {
 		IFeature feature =job.getFeature();
 		PluginVersionIdentifier version = feature.getVersionedIdentifier().getVersion();
 		IFeature oldFeature = job.getOldFeature();
@@ -109,7 +109,7 @@ public class MoreInfoGenerator {
 		out.println("</tr>");
 		out.println("</table>");
 	}
-	private void createEnvironmentTable(PendingOperation job, PrintWriter out) {
+	private void createEnvironmentTable(IInstallFeatureOperation job, PrintWriter out) {
 		IFeature feature = job.getFeature();
 		out.println("<table border=\"0\" width=\"100%\">");
 		out.println("<tr>");

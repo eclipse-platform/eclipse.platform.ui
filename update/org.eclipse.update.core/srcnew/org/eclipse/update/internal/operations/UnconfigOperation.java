@@ -61,7 +61,7 @@ public class UnconfigOperation
 
 			markProcessed();
 			if (listener != null)
-				listener.afterExecute(this);
+				listener.afterExecute(this, null);
 
 			SiteManager.getLocalSite().save();
 

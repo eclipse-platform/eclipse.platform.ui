@@ -17,8 +17,8 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.operations.*;
 
 public class UnifiedLicensePage extends WizardPage implements IUnifiedDynamicPage {
 	private static final String KEY_TITLE = "InstallWizard.LicensePage.title"; //$NON-NLS-1$
@@ -29,7 +29,7 @@ public class UnifiedLicensePage extends WizardPage implements IUnifiedDynamicPag
 	private static final String KEY_ACCEPT2 = "InstallWizard.LicensePage.accept2"; //$NON-NLS-1$
 	private static final String KEY_DECLINE2 = "InstallWizard.LicensePage.decline2"; //$NON-NLS-1$
 	private boolean multiLicenseMode = false;
-	private PendingOperation[] jobs;
+	private IInstallFeatureOperation[] jobs;
 	private Text text;
 	private Table table;
 
@@ -51,12 +51,12 @@ public class UnifiedLicensePage extends WizardPage implements IUnifiedDynamicPag
 		super.dispose();
 	}
 
-	public UnifiedLicensePage(PendingOperation job) {
+	public UnifiedLicensePage(IInstallFeatureOperation job) {
 		this(false);
-		setJobs(new PendingOperation[] { job });
+		setJobs(new IInstallFeatureOperation[] { job });
 	}
 
-	public void setJobs(PendingOperation[] jobs) {
+	public void setJobs(IInstallFeatureOperation[] jobs) {
 		this.jobs = jobs;
 	}
 

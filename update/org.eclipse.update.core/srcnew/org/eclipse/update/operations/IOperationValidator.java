@@ -57,7 +57,7 @@ public interface IOperationValidator {
 	 * several pending changes.
 	 * Returns null when status cannot be reported.
 	 */
-	public IStatus validatePendingChanges(PendingOperation[] jobs);
+	public IStatus validatePendingChanges(IInstallFeatureOperation[] jobs);
 
 	/**
 	 * Check the current state.

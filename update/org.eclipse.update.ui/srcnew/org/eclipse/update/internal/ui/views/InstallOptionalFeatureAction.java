@@ -1,28 +1,19 @@
 package org.eclipse.update.internal.ui.views;
 
-import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
+import java.lang.reflect.*;
+import java.net.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.IFeatureReference;
-import org.eclipse.update.core.ISite;
-import org.eclipse.update.core.SiteManager;
-import org.eclipse.update.core.VersionedIdentifier;
-import org.eclipse.update.internal.operations.PendingOperation;
-import org.eclipse.update.internal.operations.UpdateManager;
-import org.eclipse.update.internal.ui.UpdateUI;
-import org.eclipse.update.internal.ui.model.MissingFeature;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.operation.*;
+import org.eclipse.swt.custom.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.operations.*;
+import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.update.operations.*;
 
 /**
  * @author wassimm
@@ -55,7 +46,7 @@ public class InstallOptionalFeatureAction extends Action {
 
 		if (feature != null) {
 			IFeature parent = missingFeature.getParent();
-			PendingOperation op = new PendingOperation(feature);
+			IInstallFeatureOperation op = OperationsManager.getOperationFactory().createInstallOperation(null, null,feature, null, null, null);
 			op.setTargetSite((parent == null) ? null : parent.getSite().getCurrentConfiguredSite());
 //			op.setVerificationListener(new JarVerificationService(UpdateUI.getActiveWorkbenchShell()));
 			executeJob(
@@ -177,7 +168,7 @@ public class InstallOptionalFeatureAction extends Action {
 	
 	private boolean executeJob(
 		Shell shell,
-		final PendingOperation job,
+		final IInstallFeatureOperation job,
 		final boolean needLicensePage) {
 		
 		IStatus validationStatus = UpdateManager.getValidator().validatePendingInstall(job.getOldFeature(), job.getFeature());

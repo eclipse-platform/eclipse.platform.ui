@@ -30,7 +30,7 @@ public class FeatureStateAction extends Action {
 			boolean isConfigured = adapter.isConfigured();
 			IOperation toggleOperation =
 				isConfigured
-					? OperationsManager
+					? (IOperation)OperationsManager
 						.getOperationFactory()
 						.createUnconfigOperation(
 						adapter.getInstallConfiguration(),

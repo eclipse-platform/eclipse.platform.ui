@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.operations.*;
 
 
 /**
@@ -69,7 +70,7 @@ public class DuplicateConflictsValidator  {
 	}
 
 	public static ArrayList computeDuplicateConflicts(
-		PendingOperation job,
+		IInstallFeatureOperation job,
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,
 		IFeatureReference[] optionalFeatures) {
@@ -88,7 +89,7 @@ public class DuplicateConflictsValidator  {
 	}
 
 	public static ArrayList computeDuplicateConflicts(
-		PendingOperation[] jobs,
+		IInstallFeatureOperation[] jobs,
 		IInstallConfiguration config) {
 		Hashtable featureTable = new Hashtable();
 		computePresentState(featureTable, config);
@@ -153,11 +154,11 @@ public class DuplicateConflictsValidator  {
 	}
 
 	private static void computeNewFeatures(
-		PendingOperation[] jobs,
+		IInstallFeatureOperation[] jobs,
 		IInstallConfiguration config,
 		Hashtable featureTable) {
 		for (int i = 0; i < jobs.length; i++) {
-			PendingOperation job = jobs[i];
+			IInstallFeatureOperation job = jobs[i];
 			IConfiguredSite targetSite =
 				UpdateManager.getDefaultTargetSite(config, job);
 			IFeature newFeature = job.getFeature();
@@ -173,7 +174,7 @@ public class DuplicateConflictsValidator  {
 		Hashtable featureTable) {
 		for (int i = 0; i < jobSites.length; i++) {
 			JobTargetSite jobSite = jobSites[i];
-			PendingOperation job = jobSite.job;
+			IInstallFeatureOperation job = jobSite.job;
 			IConfiguredSite targetSite = jobSite.targetSite;
 			IFeature newFeature = job.getFeature();
 			try {

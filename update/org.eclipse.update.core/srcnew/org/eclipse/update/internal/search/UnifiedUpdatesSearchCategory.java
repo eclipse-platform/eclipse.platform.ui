@@ -17,6 +17,7 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.UpdateCore;
 import org.eclipse.update.internal.operations.*;
+import org.eclipse.update.operations.*;
 import org.eclipse.update.search.*;
 
 public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
@@ -147,10 +148,10 @@ public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 			this.patch = patch;
 		}
 
-		public PendingOperation getJob() {
+		public IInstallFeatureOperation getJob() {
 			try {
 				IFeature feature = ref.getFeature(null);
-				return new PendingOperation(feature);
+				return (IInstallFeatureOperation)OperationsManager.getOperationFactory().createInstallOperation(null, null, feature, null, null, null);
 			} catch (CoreException e) {
 				return null;
 			}
@@ -306,11 +307,11 @@ public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < array.length; i++) {
 			Hit hit = (Hit) array[i];
-			PendingOperation job = hit.getJob();
+			IInstallFeatureOperation job = hit.getJob();
 			if (job == null)
 				continue;
 			// do not accept updates without a license
-			if (!UpdateManager.hasLicense(job))
+			if (!UpdateManager.hasLicense(job.getFeature()))
 				continue;
 			IStatus status = UpdateManager.getValidator().validatePendingInstall(job.getOldFeature(), job.getFeature());
 			if (status == null) {

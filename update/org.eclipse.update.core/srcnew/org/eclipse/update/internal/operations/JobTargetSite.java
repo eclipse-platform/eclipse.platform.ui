@@ -11,10 +11,11 @@
 package org.eclipse.update.internal.operations;
 
 import org.eclipse.update.configuration.*;
+import org.eclipse.update.operations.*;
 
 
 public class JobTargetSite {
-	public PendingOperation job;
+	public IInstallFeatureOperation job;
 	public IConfiguredSite affinitySite;
 	public IConfiguredSite defaultSite;
 	public IConfiguredSite targetSite;

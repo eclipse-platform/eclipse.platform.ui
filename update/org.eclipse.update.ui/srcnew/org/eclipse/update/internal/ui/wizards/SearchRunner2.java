@@ -6,14 +6,14 @@
  */
 package org.eclipse.update.internal.ui.wizards;
 
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.*;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.update.core.ISite;
-import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.search.*;
 
 /**

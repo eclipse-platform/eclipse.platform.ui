@@ -11,8 +11,10 @@
 package org.eclipse.update.internal.operations;
 
 import java.lang.reflect.*;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.operations.*;
 
@@ -41,14 +43,33 @@ public class BatchInstallOperation
 	public boolean execute(IProgressMonitor monitor, IOperationListener listener) throws CoreException, InvocationTargetException {
 		int installCount = 0;
 
+		if (operations == null || operations.length == 0)
+			return false;
+			
+		IInstallConfiguration config = operations[0].getInstallConfiguration();
+		
+		// Check for duplication conflicts
+		ArrayList conflicts =
+			DuplicateConflictsValidator.computeDuplicateConflicts(
+				operations,
+				config);
+		if (conflicts != null) {
+			boolean continueProcessing = false;
+			if (listener != null)
+				continueProcessing = listener.beforeExecute(this, conflicts);
+			if (!continueProcessing)
+				return false;
+		}
+		
 		if (monitor == null) 
 			monitor = new NullProgressMonitor();
 			
-		try {
-			if (operations == null || operations.length == 0)
-				return false;
+		try {			
+			if (listener != null)
+				listener.beforeExecute(this, null);
+			
 			UpdateManager.makeConfigurationCurrent(
-				operations[0].getInstallConfiguration(),
+				config,
 				null);
 			monitor.beginTask(
 				UpdateManager.getString(KEY_INSTALLING),
@@ -65,7 +86,7 @@ public class BatchInstallOperation
 
 				operations[i].markProcessed();
 				if (listener != null)
-					listener.afterExecute(operations[i]);
+					listener.afterExecute(operations[i], null);
 
 				//monitor.worked(1);
 				UpdateManager.saveLocalSite();

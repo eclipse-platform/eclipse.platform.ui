@@ -24,18 +24,18 @@ public class OperationFactory implements IOperationFactory {
 	public OperationFactory() {
 	}
 
-	public IOperation createConfigOperation(
+	public IConfigFeatureOperation createConfigOperation(
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,
 		IFeature feature) {
 		return new ConfigOperation(config, targetSite, feature);
 	}
 
-	public IOperation createBatchInstallOperation(IInstallFeatureOperation[] operations) {
+	public IBatchOperation createBatchInstallOperation(IInstallFeatureOperation[] operations) {
 		return new BatchInstallOperation(operations);
 	}
 
-	public IOperation createInstallOperation(
+	public IInstallFeatureOperation createInstallOperation(
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,
 		IFeature feature,
@@ -51,21 +51,21 @@ public class OperationFactory implements IOperationFactory {
 			verifier);
 	}
 
-	public IOperation createUnconfigOperation(
+	public IUnconfigFeatureOperation createUnconfigOperation(
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,
 		IFeature feature) {
 		return new UnconfigOperation(config, targetSite, feature);
 	}
 
-	public IOperation createUninstallOperation(
+	public IUninstallFeatureOperation createUninstallOperation(
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,
 		IFeature feature) {
 		return new UninstallOperation(config, targetSite, feature);
 	}
 
-	public IOperation createRevertConfigurationOperation(
+	public IRevertConfigurationOperation createRevertConfigurationOperation(
 		IInstallConfiguration config,
 		IProblemHandler problemHandler) {
 		return new RevertConfigurationOperation(
@@ -73,7 +73,7 @@ public class OperationFactory implements IOperationFactory {
 			problemHandler);
 	}
 
-	public IOperation createToggleSiteOperation(
+	public IToggleSiteOperation createToggleSiteOperation(
 		IConfiguredSite site) {
 		return new ToggleSiteOperation(site);
 	}

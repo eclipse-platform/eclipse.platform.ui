@@ -10,17 +10,17 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
 
-import java.util.ArrayList;
+import java.util.*;
 
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.internal.operations.DuplicateConflictsValidator;
+import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.parts.DefaultContentProvider;
+import org.eclipse.update.internal.ui.parts.*;
 
 /**
  * 
