@@ -137,38 +137,46 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
 		WorkbenchHelp.setHelp(getControl(), IAntUIHelpContextIds.ANT_TARGETS_TAB);
-		 
 		GridLayout topLayout = new GridLayout();
 		comp.setLayout(topLayout);		
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		comp.setLayoutData(gd);
 		comp.setFont(font);
 		
-		createFilterInternalTargets(comp);
-		createSortTargets(comp);
-		
-		Label label = new Label(comp, SWT.NONE);
-		label.setFont(font);
-		label.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.Check_targets_to_e&xecute__1")); //$NON-NLS-1$
-				
 		createTargetsTable(comp);
-		
-		fSelectionCountLabel = new Label(comp, SWT.NONE);
-		fSelectionCountLabel.setFont(font);
+		createSelectionCount(comp);
+		createSortTargets(comp);
+		createFilterInternalTargets(comp);
+		createVerticalSpacer(comp, 1);
+		createTargetOrder(comp);
+	}
+	
+	/**
+	 * Creates the selection count widget
+	 * @param parent the parent composite
+	 */
+	private void createSelectionCount(Composite parent) {
+		GridData gd;
+		fSelectionCountLabel = new Label(parent, SWT.NONE);
+		fSelectionCountLabel.setFont(parent.getFont());
 		fSelectionCountLabel.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.0_out_of_0_selected_2")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fSelectionCountLabel.setLayoutData(gd);
+	}
+
+	/**
+	 * Creates the widgets that display the target order
+	 * @param parent the parent composite
+	 */
+	private void createTargetOrder(Composite parent) {
+		Font font= parent.getFont();
 		
-		// spacer
-		label = new Label(comp, SWT.NONE);
-		label.setFont(font);
-		
-		label = new Label(comp, SWT.NONE);
+		Label label = new Label(parent, SWT.NONE);
 		label.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.Target_execution_order__3")); //$NON-NLS-1$
 		label.setFont(font);
 		
-		Composite orderComposite = new Composite(comp, SWT.NONE);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		Composite orderComposite = new Composite(parent, SWT.NONE);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		orderComposite.setLayoutData(gd);
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginHeight = 0;
@@ -193,7 +201,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 	}
-	
+
 	private void createFilterInternalTargets(Composite parent) {
 		fFilterInternalTargets= new Button(parent, SWT.CHECK);
 		fFilterInternalTargets.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.12")); //$NON-NLS-1$
@@ -271,13 +279,18 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	private void createTargetsTable(Composite parent) {
+		Font font= parent.getFont();
+		Label label = new Label(parent, SWT.NONE);
+		label.setFont(font);
+		label.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.Check_targets_to_e&xecute__1")); //$NON-NLS-1$
+				
 		Table table= new Table(parent, SWT.CHECK | SWT.BORDER | SWT.FULL_SELECTION | SWT.RESIZE);
 		
 		GridData data= new GridData(GridData.FILL_BOTH);
 		data.heightHint = 200;
 		data.widthHint = 250;
 		table.setLayoutData(data);
-		table.setFont(parent.getFont());
+		table.setFont(font);
 				
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);		
