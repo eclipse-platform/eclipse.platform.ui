@@ -101,6 +101,9 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		
 		int offset = Math.max(size, 0) + 1;
 		String label= labelBuff.toString();
+		if (event.getMessage() == null) {
+			return;
+		}
 		try {
 			BufferedReader r = new BufferedReader(new StringReader(event.getMessage()));
 			String line = r.readLine();
@@ -112,7 +115,9 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 				line = r.readLine();
 			}
 		} catch (IOException e) {
-			fullMessage.append(label).append(event.getMessage());
+			if (event.getMessage() != null) {
+				fullMessage.append(label).append(event.getMessage());
+			}
 		}
 	}
 	
