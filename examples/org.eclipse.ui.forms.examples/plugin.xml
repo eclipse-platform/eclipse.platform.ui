@@ -64,6 +64,12 @@
                menubarPath="org.eclipse.ui.forms.examples.menu/group"
                id="org.eclipse.ui.forms.examples.editor-wizard">
          </action>
+         <action
+               label="Assisted Wizard"
+               class="org.eclipse.ui.forms.examples.wizards.OpenAssistedWizardAction"
+               menubarPath="org.eclipse.ui.forms.examples.menu/group"
+               id="org.eclipse.ui.forms.examples.assisted-wizard">
+         </action>
         <action
                label="Existing Wizard"
                class="org.eclipse.ui.forms.examples.wizards.OpenExistingEditorWizardAction"
