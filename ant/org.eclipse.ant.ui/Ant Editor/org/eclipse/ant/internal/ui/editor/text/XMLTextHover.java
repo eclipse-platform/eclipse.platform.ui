@@ -187,7 +187,7 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 			
 			while (pos >= 0) {
 				c= document.getChar(pos);
-				if (c != '.' && c != '-' && !Character.isJavaIdentifierPart(c))
+				if (c != '.' && c != '-' && c != '/' &&  c != '\\' && !Character.isJavaIdentifierPart(c))
 					break;
 				--pos;
 			}
