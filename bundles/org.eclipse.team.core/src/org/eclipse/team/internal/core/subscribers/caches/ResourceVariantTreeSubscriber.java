@@ -35,10 +35,11 @@ import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
 
 /**
- * A specialization of Subscriber that provides some additional logic for creating
- * <code>SyncInfo</code> from <code>IResourceVariant</code> instances. 
- * The <code>members()</code> also assumes that remote 
- * instances are stored in the <code>ISynchronizer</code>.
+ * A specialization of Subscriber that uses <code>IResourceVariantTree</code> objects
+ * to manage the base (for three-way) and remote trees. Refreshing and obtaining the subscriber
+ * members and resource variants is delegated to the resource variant trees.
+ * 
+ * @since 3.0
  */
 public abstract class ResourceVariantTreeSubscriber extends Subscriber {
 
@@ -72,6 +73,9 @@ public abstract class ResourceVariantTreeSubscriber extends Subscriber {
 		return info;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.subscribers.Subscriber#members(org.eclipse.core.resources.IResource)
+	 */
 	public IResource[] members(IResource resource) throws TeamException {
 		if(resource.getType() == IResource.FILE) {
 			return new IResource[0];
@@ -131,8 +135,18 @@ public abstract class ResourceVariantTreeSubscriber extends Subscriber {
 					Policy.bind("ResourceVariantTreeSubscriber.1", getName()), null)); //$NON-NLS-1$
 		}
 	}
+	
+	/**
+	 * Return the base resource variant tree.
+	 */
+	protected abstract IResourceVariantTree getBaseTree();
 
-	protected IStatus refresh(IResource resource, int depth, IProgressMonitor monitor) {
+	/**
+	 * Return the remote resource variant tree.
+	 */
+	protected abstract IResourceVariantTree getRemoteTree();
+	
+	private IStatus refresh(IResource resource, int depth, IProgressMonitor monitor) {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			monitor.beginTask(null, IProgressMonitor.UNKNOWN);
@@ -152,16 +166,6 @@ public abstract class ResourceVariantTreeSubscriber extends Subscriber {
 			monitor.done();
 		} 
 	}
-	
-	/**
-	 * Return the base resource variant tree.
-	 */
-	protected abstract IResourceVariantTree getBaseTree();
-
-	/**
-	 * Return the remote resource variant tree.
-	 */
-	protected abstract IResourceVariantTree getRemoteTree();
 	
 	private IResource[] internalMembers(IResourceVariantTree tree, IResource resource) throws TeamException, CoreException {
 		// Filter and return only phantoms associated with the remote synchronizer.
