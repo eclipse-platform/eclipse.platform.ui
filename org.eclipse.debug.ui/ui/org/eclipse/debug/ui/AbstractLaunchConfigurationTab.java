@@ -59,9 +59,9 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	
 	/**
 	 * Whether this tab needs to apply changes. This attribute is initialized to
-	 * <code>true</code> to be backwards compatible. If clients want to take adavantage
+	 * <code>true</code> to be backwards compatible. If clients want to take advantage
 	 * of such a feature, they should set the flag to false, and check it before
-	 * applying changes to the lanuch configuration working copy.
+	 * applying changes to the launch configuration working copy.
 	 * 
 	 * @since 2.1
 	 */
@@ -83,8 +83,8 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	 */
 	protected void updateLaunchConfigurationDialog() {
 		if (getLaunchConfigurationDialog() != null) {
-			getLaunchConfigurationDialog().updateMessage();
 			getLaunchConfigurationDialog().updateButtons();
+			getLaunchConfigurationDialog().updateMessage();
 		}
 	}
 				
