@@ -23,7 +23,7 @@ public class URLHandler extends URLStreamHandler {
 			return new SearchURLConnection(url);
 		else if (protocol.equals("links"))
 			return new LinksURLConnection(url);
-		else if (protocol.equals("search"))
+		else if (protocol.equals("livehelp"))
 			return new LiveHelpURLConnection(url);
 		else
 			return null;
