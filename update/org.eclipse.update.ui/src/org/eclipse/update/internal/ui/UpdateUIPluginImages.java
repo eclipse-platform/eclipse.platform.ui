@@ -122,6 +122,9 @@ public class UpdateUIPluginImages {
 	 * WIZ
 	 */
 	public static final ImageDescriptor DESC_INSTALL_WIZ  = create(PATH_WIZBAN, "install_wiz.gif");
+	public static final ImageDescriptor DESC_UPDATE_WIZ  = create(PATH_WIZBAN, "update_wiz.gif");
+	public static final ImageDescriptor DESC_CONFIG_WIZ  = create(PATH_WIZBAN, "config_wiz.gif");
+	public static final ImageDescriptor DESC_UNINSTALL_WIZ  = create(PATH_WIZBAN, "uninstall_wiz.gif");
 	public static final ImageDescriptor DESC_INSTALL_BANNER  = create(PATH_WIZBAN, "def_wizban.jpg");
 	public static final ImageDescriptor DESC_FORM_BANNER  = create(PATH_FORMS, "form_banner.gif");
 	public static final ImageDescriptor DESC_FORM_UNDERLINE  = create(PATH_FORMS, "form_underline.gif");
