@@ -181,6 +181,26 @@ public class MainPreferencePage
 
 		httpProxyPortText = new Text(group, SWT.SINGLE | SWT.BORDER);
 		httpProxyPortText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		// Validation of port field
+		httpProxyPortText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				try {
+					int num = Integer.valueOf(httpProxyPortText.getText())
+							.intValue();
+					if (0 <= num && num <= 0xFFFF) {
+						// port is valid
+						MainPreferencePage.this.setValid(true);
+						setErrorMessage(null);
+						return;
+					}
+
+					// port is invalid
+				} catch (NumberFormatException nfe) {
+				}
+				MainPreferencePage.this.setValid(false);
+				setErrorMessage(UpdateUI.getString("MainPreferencePage.invalidPort")); //$NON-NLS-1$
+			}
+		});
 
 		enableHttpProxy.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
