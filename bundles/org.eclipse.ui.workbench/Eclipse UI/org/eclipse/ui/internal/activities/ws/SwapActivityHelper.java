@@ -178,11 +178,7 @@ public class SwapActivityHelper {
 
 		createSwapButtons(swapComposite);
 
-		IWorkbenchActivitySupport support =
-			(IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(
-				IWorkbenchActivitySupport.class);
-		if (support == null)
-			return;
+		IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
 
 		IActivityManager activityManager = support.getActivityManager();
 		Set activityIds = activityManager.getDefinedActivityIds();
@@ -239,11 +235,7 @@ public class SwapActivityHelper {
 		ListViewer viewer = new ListViewer(group);
 
 		IActivityManager manager = null;
-		IWorkbenchActivitySupport support =
-			(IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(
-				IWorkbenchActivitySupport.class);
-		if (support != null)
-			manager = support.getActivityManager();
+		manager = PlatformUI.getWorkbench().getActivitySupport().getActivityManager();
 
 		viewer.setLabelProvider(new ActivityLabelProvider(manager));
 		viewer.setContentProvider(new ActivityContentProvider());

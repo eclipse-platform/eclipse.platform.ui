@@ -97,12 +97,7 @@ class ActivityPersistanceHelper {
 		//        if (!store.isDefault(PREFIX + FILTERING_ENABLED))
 		//            setFiltering(store.getBoolean(PREFIX + FILTERING_ENABLED));
 
-		IWorkbenchActivitySupport support =
-			(IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(
-				IWorkbenchActivitySupport.class);
-
-		if (support == null)
-			return;
+		IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
 
 		IActivityManager activityManager = support.getActivityManager();
 

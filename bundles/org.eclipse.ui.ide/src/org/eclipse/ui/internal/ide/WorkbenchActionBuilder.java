@@ -1171,16 +1171,15 @@ public final class WorkbenchActionBuilder {
 
 		//Only add the role manager action if we are using role support
 		
-		IWorkbenchActivitySupport workbenchActivitySupport = (IWorkbenchActivitySupport) getWindow().getWorkbench().getAdapter(IWorkbenchActivitySupport.class);
+		IWorkbenchActivitySupport workbenchActivitySupport = getWindow().getWorkbench().getActivitySupport();
 
-		if (workbenchActivitySupport != null) {
-			IActivityManager activityManager = workbenchActivitySupport.getActivityManager();
-					
-			if (!activityManager.getDefinedCategoryIds().isEmpty()) { 
-				categoryAction = ActionFactory.CONFIGURE_ACTIVITIES.create(getWindow());
-            	registerGlobalAction(categoryAction);
-			}
-		}
+		
+		IActivityManager activityManager = workbenchActivitySupport.getActivityManager();
+				
+		if (!activityManager.getDefinedCategoryIds().isEmpty()) { 
+			categoryAction = ActionFactory.CONFIGURE_ACTIVITIES.create(getWindow());
+        	registerGlobalAction(categoryAction);
+		}		
 
 		if (EditorWorkbook.usingNewDropDown()) {
 			editorsDropDownAction = new EditorsDropDownAction(window);

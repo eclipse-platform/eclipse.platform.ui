@@ -105,12 +105,7 @@ public class ImportWizard extends Wizard {
 		SelectionPage first = (SelectionPage) getPages()[0];
 		first.saveWidgetValues();
 
-		IWorkbenchActivitySupport support =
-			(IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(
-				IWorkbenchActivitySupport.class);
-		if (support == null)
-			return true;
-
+		IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
 		IActivityManager activityManager = support.getActivityManager();
 
 		if (first.getSelectedNode() instanceof IPluginContribution) {
