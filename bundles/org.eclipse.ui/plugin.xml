@@ -1931,7 +1931,6 @@
       </fontDefinition>
       <fontDefinition
             label="%FontsPreference.HeaderFontLabel"
-            registryKey="org.eclipse.jface.headerfont"
             id="org.eclipse.jface.headerfont">
          <description>
             %FontsPreference.HeaderFontDescription
