@@ -107,7 +107,14 @@ public class WorkingSetManager implements IWorkingSetManager, IResourceChangeLis
 	 * 	working sets. false otherwise
 	 */
 	public boolean equals(Object object) {
-		return (object instanceof WorkingSetManager) && ((WorkingSetManager) object).getWorkingSets().equals(getWorkingSets());
+		if (this == object) {
+			return true;
+		}
+		if (object instanceof WorkingSetManager) {
+			WorkingSetManager workingSetManager = (WorkingSetManager) object;
+			return workingSetManager.workingSets.equals(workingSets);
+		}
+		return false;
 	}
 	/**
 	 * Notify property change listeners about a change to the list of 
