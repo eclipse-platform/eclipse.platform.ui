@@ -144,7 +144,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 				patternFlags |= Pattern.MULTILINE;
 			
 			if (!caseSensitive)
-				patternFlags |= Pattern.CASE_INSENSITIVE; 
+				patternFlags |= Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE; 
 
 			if (wholeWord)
 				findString= "\\b" + findString + "\\b"; //$NON-NLS-1$ //$NON-NLS-2$

@@ -52,7 +52,8 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 		"		// comment2\n" + //$NON-NLS-1$
 		"		public void method2() {\n" + //$NON-NLS-1$
 		"		}\n" + //$NON-NLS-1$
-		"	}\n"; //$NON-NLS-1$S
+		"	}\n" + //$NON-NLS-1$S
+		"// Gelöst"; //$NON-NLS-1$S
 	
 		fDocument.set(text);
 	}
@@ -81,6 +82,28 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 			assertEquals(r, result);
 			r= findReplaceDocumentAdapter.find(0, "testpackage", true, false, false, false); //$NON-NLS-1$
 			assertEquals(r, result);
+			
+		} catch (BadLocationException e) {
+			Assert.assertTrue(false);
+		}
+	}
+	
+	public void testUTF8Pattern() {
+		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
+		try {
+			IRegion result= new Region(153, 6);
+			
+			// Find case-sensitive
+			IRegion r= findReplaceDocumentAdapter.find(0, "Gelöst", true, true, false, false); //$NON-NLS-1$
+			assertEquals(result, r);
+			r= findReplaceDocumentAdapter.find(0, "Gelöst", true, true, false, false); //$NON-NLS-1$
+			assertEquals(result, r);
+			
+			// Find non-case-sensitive
+			r= findReplaceDocumentAdapter.find(0, "GelÖst", true, false, false, false); //$NON-NLS-1$
+			assertEquals(result, r);
+			r= findReplaceDocumentAdapter.find(0, "GelÖst", true, false, false, false); //$NON-NLS-1$
+			assertEquals(result, r);
 			
 		} catch (BadLocationException e) {
 			Assert.assertTrue(false);
@@ -122,7 +145,8 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 				"		// comment2\n" + //$NON-NLS-1$
 				"		private void method2() {\n" + //$NON-NLS-1$
 				"		}\n" + //$NON-NLS-1$
-				"	}\n"; //$NON-NLS-1$
+				"	}\n" + //$NON-NLS-1$
+				"// Gelöst"; //$NON-NLS-1$S
 			assertEquals(text, fDocument.get());
 			
 		} catch (BadLocationException e) {
