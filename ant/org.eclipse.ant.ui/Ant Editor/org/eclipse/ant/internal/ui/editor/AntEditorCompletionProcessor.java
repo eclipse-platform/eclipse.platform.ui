@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -117,7 +118,9 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 	private final static int PROPOSAL_MODE_TASK_PROPOSAL_CLOSING = 3;
 	private final static int PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL = 4;
 	private final static int PROPOSAL_MODE_PROPERTY_PROPOSAL = 5;
-    
+	
+	private final static ICompletionProposal[] NO_PROPOSALS= new ICompletionProposal[0];
+	
     /**
      * The line where the cursor sits now.
      * <P>
@@ -295,7 +298,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
                 ICompletionProposal proposal= getClosingTaskProposal(getOpenElementName(), prefix, true);
             	if (proposal == null) {
 				   errorMessage= AntEditorMessages.getString("AntEditorCompletionProcessor.30"); //$NON-NLS-1$
-				   proposals= new ICompletionProposal[0];
+				   proposals= NO_PROPOSALS;
             	} else {
 	            	proposals= new ICompletionProposal[]{proposal};
             	}
@@ -324,8 +327,8 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 				break;
 			case PROPOSAL_MODE_NONE :
             default :
-                proposals= new ICompletionProposal[0];
-				   errorMessage= AntEditorMessages.getString("AntEditorCompletionProcessor.33"); //$NON-NLS-1$
+                proposals= NO_PROPOSALS;
+				errorMessage= AntEditorMessages.getString("AntEditorCompletionProcessor.33"); //$NON-NLS-1$
         }
         Arrays.sort(proposals, proposalComparator);
         if (proposals.length > 0) {
@@ -340,7 +343,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 		Map references= project.getReferences();
 		Set refIds= references.keySet();
 		if (refIds.isEmpty()) {
-			return new ICompletionProposal[0];
+			return NO_PROPOSALS;
 		}
 			
 		List proposals= new ArrayList(refIds.size());
@@ -364,14 +367,14 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 			}
 		}
 		
-		return new ICompletionProposal[0];
+		return NO_PROPOSALS;
 	}
 
 	private ICompletionProposal[] getDependsValueProposals(IDocument document, String prefix) {
 		List possibleDependencies = new ArrayList();
 		String currentTargetName= getEnclosingTargetName(document, lineNumber, columnNumber);
 		if(currentTargetName == null) {
-			return new ICompletionProposal[0];
+			return NO_PROPOSALS;
 		}
 			
 		Map targets= getTargets();
@@ -592,16 +595,20 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      * may be an empty string.
      */
     protected ICompletionProposal[] getTaskProposals(IDocument document, String parentName, String prefix) {
-        List proposals = new ArrayList(250);
+       
         ICompletionProposal proposal;
         if (parentName == null) {
             String rootElementName= "project"; //$NON-NLS-1$
 			IElement rootElement = dtd.getElement(rootElementName);
-			if(rootElement != null && rootElementName.toLowerCase().startsWith(prefix)) {
+			if (rootElement != null && rootElementName.toLowerCase().startsWith(prefix)) {
 				proposal = newCompletionProposal(document, prefix, rootElementName);
-				proposals.add(proposal);
+				return new ICompletionProposal[] {proposal};
+			} else {
+				return NO_PROPOSALS;
 			}
-       } else if (parentName == "project" || parentName == "target") { //$NON-NLS-1$ //$NON-NLS-2$
+       } 
+       List proposals = new ArrayList(250);
+       if (parentName == "project" || parentName == "target") { //$NON-NLS-1$ //$NON-NLS-2$
         	//use the definitions in the project as that includes more than what is defined in the DTD
 			Project project= antModel.getProjectNode().getProject();
 			Map tasksAndTypes= ComponentHelper.getComponentHelper(project).getAntTypeTable();
@@ -672,16 +679,17 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      *         {@link org.eclipse.jface.text.templates.TemplateProposal}s
      */
     protected Collection getTemplateProposals(IDocument document, String prefix) {
-
-        List proposals = new ArrayList();
-
+   
         Point selection = viewer.getSelectedRange();
-        IRegion selectedRegion = new Region(selection.x - (prefix.length() + 1), selection.y + prefix.length() + 1);		
-        
+        IRegion selectedRegion = new Region(selection.x - (prefix.length() + 1), selection.y + prefix.length() + 1);
+        if (selectedRegion.getOffset() == -1) {
+        	return Collections.EMPTY_LIST;
+        }
         TemplateContext templateContext = new DocumentTemplateContext(
                 AntTemplates.CONTEXT, document, selectedRegion.getOffset(), selectedRegion.getLength()); //$NON-NLS-1$
 
        Template[] templates= AntTemplates.getAntTemplates();
+       List proposals = new ArrayList(templates.length);
        TemplateProposal templateProposal;
        for (int i = 0; i < templates.length; i++) {
 			Template template = templates[i];

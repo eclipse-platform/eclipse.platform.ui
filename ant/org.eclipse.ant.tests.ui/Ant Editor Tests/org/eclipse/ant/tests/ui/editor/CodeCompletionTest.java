@@ -568,4 +568,16 @@ public class CodeCompletionTest extends AbstractAntUITest {
 		mode= processor.determineProposalMode("<project default=\"hey\"><target name=", 37, "name=");
 		assertEquals(0, mode);
 	}
+    
+    /**
+     * Tests the code completion for tasks in an empty build file (no parent).
+     */
+    public void testTaskProposalsForEmptyBuildFile() {
+		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("empty.xml"));
+
+        ICompletionProposal[] proposals = processor.getTaskProposals("", null, "");
+        assertEquals(1, proposals.length);
+        assertEquals("project", proposals[0].getDisplayString());
+    }
+
 }
