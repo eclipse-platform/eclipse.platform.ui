@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.browser;
 
+import org.eclipse.ui.PartInitException;
+
 /**
  * Implements <code>IWorkbenchBrowserSupport</code> while leaving some methods
  * to the implementors. Classes that extend this abstract class are meant to be
@@ -19,10 +21,22 @@ package org.eclipse.ui.browser;
  */
 public abstract class AbstractWorkbenchBrowserSupport implements
 		IWorkbenchBrowserSupport {
+		
+	private static final String SHARED_EXTERNAL_BROWSER_ID = "org.eclipse.ui.externalBrowser"; //$NON-NLS-1$
 
 	/**
 	 * The default constructor.
 	 */
 	public AbstractWorkbenchBrowserSupport() {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.browser.IWorkbenchBrowserSupport#getExternalBrowser()
+	 */
+	public IWebBrowser getExternalBrowser() throws PartInitException {
+		return createBrowser(AS_EXTERNAL, SHARED_EXTERNAL_BROWSER_ID, null,
+				null);
 	}
 }

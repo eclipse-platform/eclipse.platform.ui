@@ -99,12 +99,6 @@ public interface IWorkbenchBrowserSupport {
 	 * browsers and the user didn't set the preference to external browsers.
 	 */
 	int AS_EXTERNAL = 1 << 7;
-	
-	/**
-	 * A unique identifier that can be used when reusing an shared default web
-	 * browser is desirable (value &quot;org.eclipse.ui.defualtBrowser&quot;).
-	 */
-	String DEFAULT_BROWSER_ID = "org.eclipse.ui.defaultBrowser"; //$NON-NLS-1$
 
 	/**
 	 * Creates the new web browser instance. If the user has chosen to use the
@@ -166,4 +160,19 @@ public interface IWorkbenchBrowserSupport {
 	 *                if the operation failed for some reason
 	 */
 	IWebBrowser createBrowser(String browserId) throws PartInitException;
+
+	/**
+	 * Returns a shared instance of the external web browser. Clients can use it
+	 * to share one external browser. The external browser that will be used is
+	 * subject to browser support implementation. A suggested implementation is
+	 * to use the operating system's default browser. Implementations that offer
+	 * users a choice of the web browser should honour the users choice of
+	 * external browser, with the initial selection being the system default
+	 * browser.
+	 * 
+	 * @return the shared instance of the external browser
+	 * @exception PartInitException
+	 *                if the operation failed for some reason
+	 */
+	IWebBrowser getExternalBrowser() throws PartInitException;
 }
