@@ -7,6 +7,7 @@
  * Contributors: IBM Corporation - initial API and implementation
  ******************************************************************************/
 package org.eclipse.search.ui;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.part.IPageBookViewPage;
 /**
  * Extensions of extension point org.eclipse.search.ui.searchResultViewPages
@@ -47,4 +48,23 @@ public interface ISearchResultPage extends IPageBookViewPage {
 	 * @param part The parent search view.
 	 */
 	void setViewPart(ISearchResultViewPart part);
+	
+	/**
+	 * Restores the page state from a memento. Note that this applies to state to be saved across
+	 * sessions.
+	 * @see #setInput(ISearchResult, Object)
+	 *
+	 * @param memento a memento to restore the page state from or <code>null</code> if not
+	 * 		previous state exists
+	 */
+	public void restoreState(IMemento memento);
+	
+	/**
+	 * Saves the page state within a memento. Note that this applies to state to be saved across
+	 * sessions.
+	 * @see #getUIState()
+	 *
+	 * @param memento a memento to receive the object state
+	 */
+	public void saveState(IMemento memento);
 }

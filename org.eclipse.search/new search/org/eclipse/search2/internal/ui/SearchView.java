@@ -1,6 +1,7 @@
 package org.eclipse.search2.internal.ui;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -14,10 +15,13 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.IPageSite;
@@ -62,6 +66,8 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	private long fLastUpdateTime= 0;
 	private SearchAgainAction fSearchAgainAction;
 	private CancelSearchAction fCancelAction;
+	
+	private IMemento fPageState;
 	
 	private static void createStandardGroups(IContributionManager menu) {
 		menu.add(new Separator(IContextMenuConstants.GROUP_NEW));
@@ -134,6 +140,21 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		public void init(IPageSite pageSite) {
 			super.init(pageSite);
 			getSite().setSelectionProvider(null);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.search.ui.ISearchResultPage#saveState(org.eclipse.ui.IMemento)
+		 */
+		public void saveState(IMemento memento) {
+			// do nothing
+			
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.search.ui.ISearchResultPage#restoreState(org.eclipse.ui.IMemento)
+		 */
+		public void restoreState(IMemento memento) {
+			// do nothing
 		}
 	}
 
@@ -322,6 +343,33 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 
 	public void searchQueryFinished(ISearchQuery query) {
 		updateTitle();
+	}
+	
+	// Methods related to saving page state. -------------------------------------------
+	/**
+	 * { @inheritDoc }
+	 */
+	public void saveState(IMemento memento) {
+		for (Iterator pages = fPagesToParts.keySet().iterator(); pages.hasNext(); ) {
+			ISearchResultPage page = (ISearchResultPage) pages.next();
+			page.saveState(memento);
+		}
+	}
+	
+	/**
+	 * { @inheritDoc }
+	 */
+	public void init(IViewSite site, IMemento memento) throws PartInitException {
+		super.init(site, memento);
+		fPageState= memento;
+	}
+	
+	/**
+	 * { @inheritDoc }
+	 */
+	protected void initPage(IPageBookViewPage page) {
+		super.initPage(page);
+		((ISearchResultPage)page).restoreState(fPageState);
 	}
 	
 	/*

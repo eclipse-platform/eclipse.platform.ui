@@ -36,6 +36,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.text.Position;
 
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
@@ -550,4 +551,19 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		}
 	}
 
+	/**
+	 * Default implementation that doesn't restore any state. Subclasses may override.
+	 * { @inheritDoc }
+	 */
+	public void restoreState(IMemento memento) {
+		// do nothing by default.
+	}
+	
+	/**
+	 * Default implementation that doesn't rememgber any state. Subclasses my override.
+	 * { @inheritDoc }
+	 */
+	public void saveState(IMemento memento) {
+		// do nothing by default.
+	}
 }
