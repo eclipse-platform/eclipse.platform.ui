@@ -40,32 +40,27 @@ import org.eclipse.team.internal.core.simpleAccess.SimpleAccessOperations;
  * project that is associated with a repository provider. The lifecycle of these
  * instances is managed by the platform's 'nature' mechanism.
  * <p>
- * To create a repository provider and have it registered with the platform a client
+ * To create a repository provider and have it registered with the platform, a client
  * must minimally:
  * <ol>
  * 	<li>extend <code>RepositoryProvider<code>
- * 	<li>define a nature extension in <code>plugin.xml</code> that is
- * 	part of the "org.eclipse.team.repository-provider" set. Having the repository nature
- * 	assigned to the team set allows cardinality restrictions to be inforced by the platform 
- * 	(e.g. one repository provider can assigned to a project at a time). Here is an
- * 	example extension point definition:
- * 		<code>
- * 		<extension point="org.eclipse.core.resources.natures" id="myprovidernature" name="MyRepositoryType">
- *		 	<runtime>
- *		 		<run class="org.eclipse.myprovider.MyRepositoryProvider"/>
- *		 	</runtime>
- *		 	<one-of-nature id="org.eclipse.team.repository-provider"/>
- *		    </extension>
- *		    </p>
- *		    </code>
+ * 	<li>define a repository extension in <code>plugin.xml</code>. 
+ *     Here is an example extension point definition:
+ * 
+ *  <code>
+ *	&lt;extension point="org.eclipse.team.core.repository"&gt;
+ *      &lt;repository
+ *            class="org.eclipse.myprovider.MyRepositoryProvider"
+ *            id="org.eclipse.myprovider.myProviderID"&gt;
+ *      &lt;/repository&gt;
+ *	&lt;/extension&gt;
+ *  </code>
  * </ol></p>
  * <p>
- * Once a repository provider is registered as a nature and is in the team set, then you
- * can associate a repository provider with a project by assigning to the project the 
- * nature id of the repository provider.
+ * Once a repository provider is registered with Team, then you
+ * can associate a repository provider with a project by invoking <code>RepositoryProvider.map()</code>.
  * </p>
- * @see IProjectNature
- * @see RepositoryProviderType
+ * @see RepositoryProvider.map(IProject, String)
  *
  * @since 2.0
  */
@@ -84,12 +79,16 @@ public abstract class RepositoryProvider implements IProjectNature {
 	/**
 	 * Instantiate a new RepositoryProvider with concrete class by given providerID
 	 * and associate it with project.
-	 * @throws TeamException
+	 * 
+	 * @param project the project to be mapped
+	 * @param id the ID of the provider to be mapped to the project
+	 * @throws TeamException if
 	 * <ul>
 	 * <li>There is no provider by that ID.</li>
-	 * <li>The project is already associated with a repository provider.</li>
+	 * <li>The project is already associated with a repository provider and that provider
+	 * prevented its unmapping.</li>
 	 * </ul>
-	 * @see unmap(IProject)
+	 * @see RepositoryProvider#unmap(IProject)
 	 */
 	public static void map(IProject project, String id) throws TeamException {
 		try {
@@ -114,7 +113,7 @@ public abstract class RepositoryProvider implements IProjectNature {
 			provider.configure();	//xxx not sure if needed since they control with wiz page and can configure all they want
 
 			//adding the nature would've caused project description delta, so trigger one
-			project.setDescription(project.getDescription(), null);	
+			project.touch(null);
 		} catch (CoreException e) {
 			throw TeamPlugin.wrapException(e);
 		}
@@ -123,7 +122,10 @@ public abstract class RepositoryProvider implements IProjectNature {
 	/*
 	 * Instantiate the provider denoted by ID and store it in the session property.
 	 * Return the new provider instance.
-	 * @throws TeamException if the we can't instantiate the provider,
+	 * @param project
+	 * @param id
+	 * @return RepositoryProvider
+	 * @throws TeamException Tthe we can't instantiate the provider,
 	 * or if the set session property fails from core
 	 */
 	private static RepositoryProvider mapNewProvider(IProject project, String id) throws TeamException {
@@ -144,25 +146,35 @@ public abstract class RepositoryProvider implements IProjectNature {
 
 	/**
 	 * Disassoociates project with the repository provider its currently mapped to.
+	 * @param project
 	 * @throws TeamException The project isn't associated with any repository provider.
 	 */
 	public static void unmap(IProject project) throws TeamException {
 		try{
-			boolean hasProviderAssociated = project.getPersistentProperty(PROVIDER_PROP_KEY) != null;
+			String id = project.getPersistentProperty(PROVIDER_PROP_KEY);
 			
 			//If you tried to remove a non-existance nature it would fail, so we need to as well with the persistent prop
-			if(! hasProviderAssociated)
+			if(id == null)
 				throw new TeamException(Policy.bind("RepositoryProvider.No_Provider_Registered", project.getName())); //$NON-NLS-1$
 
 			//This will instantiate one if it didn't already exist,
 			//which is ok since we need to call deconfigure() on it for proper lifecycle
-			getProvider(project).deconfigure();
+			RepositoryProvider provider = getProvider(project);
+			if (provider == null) {
+				// There is a persistant property but the provider cannot be obtained.
+				// The reason could be that the provider's plugin is no longer available.
+				// Better log it just in case this is unexpected.
+				TeamPlugin.log(new Status(IStatus.ERROR, TeamPlugin.ID, 0, 
+					Policy.bind("RepositoryProvider.couldNotInstantiateProvider", project.getName(), id), null)); 
+			} else {
+				provider.deconfigure();
+			}
 							
 			project.setSessionProperty(PROVIDER_PROP_KEY, null);
 			project.setPersistentProperty(PROVIDER_PROP_KEY, null);
 			
 			//removing the nature would've caused project description delta, so trigger one
-			project.setDescription(project.getDescription(), null);	
+			project.touch(null);	
 		} catch (CoreException e) {
 			throw TeamPlugin.wrapException(e);
 		}
@@ -184,22 +196,22 @@ public abstract class RepositoryProvider implements IProjectNature {
 	}
 
 	/**
-	 * Configures the nature for the given project. This method is called after <code>setProject</code>
-	 * and before the nature is added to the project. If an exception is generated during configuration
-	 * of the project, the nature will not be assigned to the project.
+	 * Configures the provider for the given project. This method is called after <code>setProject</code>. 
+	 * If an exception is generated during configuration
+	 * of the project, the provider will not be assigned to the project.
 	 * 
 	 * @throws CoreException if the configuration fails. 
 	 */
 	abstract public void configureProject() throws CoreException;
 	
 	/**
-	 * Configures the nature for the given project. This is called by the platform when a nature is assigned
-	 * to a project. It is not intended to be called by clients.
+	 * Configures the nature for the given project. This is called by <code>RepositoryProvider.map()</code>
+	 * the first time a provider is mapped to a project. It is not intended to be called by clients.
 	 * 
-	 * @throws CoreException if this method fails. If the configuration fails the nature will not be added 
-	 * to the project.
+	 * @throws CoreException if this method fails. If the configuration fails the provider will not be
+	 * associated with the project.
 	 * 
-	 * @see IProjectNature#configure
+	 * @see RepositoryProvider#configureProject()
 	 */
 	final public void configure() throws CoreException {
 		try {
@@ -216,7 +228,7 @@ public abstract class RepositoryProvider implements IProjectNature {
 
 	/**
 	 * Answer the id of this provider instance. The id should be the repository provider's 
-	 * nature id.
+	 * id as defined in the provider plugin's plugin.xml.
 	 * 
 	 * @return the nature id of this provider
 	 */
@@ -288,7 +300,7 @@ public abstract class RepositoryProvider implements IProjectNature {
 	 * Returns the provider for a given IProject or <code>null</code> if a provider is not associated with 
 	 * the project or if the project is closed or does not exist. This method should be called if the caller 
 	 * is looking for <b>any</b> repository provider. Otherwise call <code>getProvider(project, id)</code>
-	 * yo look for a specific repository provider type.
+	 * to look for a specific repository provider type.
 	 * </p>
 	 * @param project the project to query for a provider
 	 * @return the repository provider associated with the project
