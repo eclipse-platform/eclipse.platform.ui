@@ -286,27 +286,20 @@ public void _loadManifest(URL url, UMRegistryModel parent, IUMFactory factory) {
 		componentEntryDescriptor._setUMRegistry(parent);
 		_addToComponentEntryProxysRel(componentEntryDescriptor);
 
-		// see if it is installed physically 
-		try {
-			URL path = UMEclipseTree.getComponentURL(parent._getRegistryBase());
-			String comp_dir = componentEntryDescriptor._getId()+"_"+componentEntryDescriptor._getVersion()+"/";
-			path = new URL(path, comp_dir);
-			File check = new File( path.getFile());
-			if (check.exists()) {
-				// load the corresponding component descriptor and add this 
-				// product to the list of containing products
-				ComponentDescriptorModel comp = parent._loadComponentManifest(UMEclipseTree.getComponentURL().toString(), comp_dir, factory);
-				if (comp != null) {
-					comp._addToContainingProductsRel(this);
-					componentEntryDescriptor._isInstalled(true);
-					componentEntryDescriptor._setCompInstallURL(path.toString());
-				}
-			}
-			componentEntryDescriptor._setDirName(comp_dir);	
-		} catch (java.net.MalformedURLException ex) {
-					// LINDA -error condition		
-		} 
-
+		// see if it is installed physically 		
+		URL path = UMEclipseTree.getComponentURL(parent._getRegistryBase());
+		String comp_dir = componentEntryDescriptor._getId()+"_"+componentEntryDescriptor._getVersion()+"/";
+			
+		// load the corresponding component descriptor and add this 
+		// product to the list of containing products
+		ComponentDescriptorModel comp = parent._loadComponentManifest(UMEclipseTree.getComponentURL().toString(), comp_dir, factory);
+		if (comp != null) {
+			comp._addToContainingProductsRel(this);
+			componentEntryDescriptor._isInstalled(true);
+			componentEntryDescriptor._setCompInstallURL(path.toString());
+		}
+			
+		componentEntryDescriptor._setDirName(comp_dir);	
 	}
 
 	// Register

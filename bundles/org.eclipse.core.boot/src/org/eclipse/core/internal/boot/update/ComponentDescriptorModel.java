@@ -279,20 +279,13 @@ public void _loadManifest(URL url, UMRegistryModel parent, IUMFactory factory) {
 		_addToPluginEntriesRel(pluginDescriptor);
 
 		// for each plugin, check to see if it's installed (can be found on path)
-		try {
-			URL path = UMEclipseTree.getPluginsURL(parent._getRegistryBase());
-			String plugin_dir = pluginDescriptor._getId() + "_" + pluginDescriptor._getVersion();
-			path = new URL(path, plugin_dir);
-			File check = new File( path.getFile());
-			if (check.exists())
-				pluginDescriptor._isInstalled(true);
-
-			// where to install it locally (if selected for download)
-			pluginDescriptor._setInstallURL(UMEclipseTree.getBaseInstallURL().toString() + plugin_dir + "/");	
+		URL path = UMEclipseTree.getPluginsURL(parent._getRegistryBase());
+		String plugin_dir = pluginDescriptor._getId() + "_" + pluginDescriptor._getVersion();
 		
-		} catch (java.net.MalformedURLException e) {
-					// LINDA -error condition		
-		} 
+//		pluginDescriptor._isInstalled(true);
+
+		// where to install it locally (if selected for download)
+		pluginDescriptor._setInstallURL(UMEclipseTree.getBaseInstallURL().toString() + plugin_dir + "/");	
 	}
 	
 	// Fragments
@@ -322,27 +315,18 @@ public void _loadManifest(URL url, UMRegistryModel parent, IUMFactory factory) {
 			}
 			fragmentDescriptor._setVersion( attribute.getValue() );
 		}	  
-	
 		
 		fragmentDescriptor._setComponentId( componentID );
 		fragmentDescriptor._setCompInstallURL(_getInstallURL());
 		_addToFragmentEntriesRel(fragmentDescriptor);
 
 		// for each fragment, check to see if it's installed (can be found on path)
-		try {
-			URL path = UMEclipseTree.getPluginsURL(parent._getRegistryBase());
-			String plugin_dir = fragmentDescriptor._getId() + "_" + fragmentDescriptor._getVersion();
-			path = new URL(path, plugin_dir);
-			File check = new File( path.getFile());
-			if (check.exists())
-				fragmentDescriptor._isInstalled(true);
+		URL path = UMEclipseTree.getPluginsURL(parent._getRegistryBase());
+		String plugin_dir = fragmentDescriptor._getId() + "_" + fragmentDescriptor._getVersion();
+//		fragmentDescriptor._isInstalled(true);
 
-			// where to install it locally (if selected for download)
-			fragmentDescriptor._setInstallURL(UMEclipseTree.getBaseInstallURL().toString() + plugin_dir + "/");	
-		
-		} catch (java.net.MalformedURLException e) {
-					// LINDA -error condition		
-		} 
+		// where to install it locally (if selected for download)
+		fragmentDescriptor._setInstallURL(UMEclipseTree.getBaseInstallURL().toString() + plugin_dir + "/");			
 	}
 
 	// Register
