@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,13 +73,20 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.RuntimeConfigurable;
+import org.apache.tools.ant.Target;
+import org.apache.tools.ant.Task;
+import org.apache.tools.ant.UnknownElement;
 import org.apache.tools.ant.helper.AntXMLContext;
 import org.apache.tools.ant.helper.ProjectHelper2;
 import org.apache.tools.ant.util.FileUtils;
 import org.apache.tools.ant.util.JAXPUtils;
+import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
+import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
@@ -101,6 +108,11 @@ public class ProjectHelper extends ProjectHelper2 {
 	 * be successful.
 	 */
 	private File buildFile= null;
+	
+	/**
+	 * Helper for generating <code>IProblem</code>s
+	 */
+	private static AntModel fAntModel;
 
 	private static AntHandler elementHandler = new ElementHandler();
 	private static AntHandler projectHandler = new ProjectHandler();
@@ -108,11 +120,126 @@ public class ProjectHelper extends ProjectHelper2 {
 	
 	
 	public static class ElementHandler extends ProjectHelper2.ElementHandler {
+		
+		private UnknownElement task= null;
+		private Task currentTask= null;
+		
 		/* (non-Javadoc)
 		 * @see org.apache.tools.ant.helper.ProjectHelper2.AntHandler#onStartChild(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes, org.apache.tools.ant.helper.AntXMLContext)
 		 */
 		public AntHandler onStartChild(String uri, String tag, String qname, Attributes attrs, AntXMLContext context) {
 			return ProjectHelper.elementHandler;
+		}
+		/* (non-Javadoc)
+		 * @see org.apache.tools.ant.helper.ProjectHelper2.AntHandler#onStartElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes, org.apache.tools.ant.helper.AntXMLContext)
+		 */
+		public void onStartElement(String uri, String tag, String qname, Attributes attrs, AntXMLContext context) {
+			try {
+				RuntimeConfigurable wrapper= context.currentWrapper();
+				currentTask= null;
+				task= null;
+				if (wrapper != null) {
+					currentTask= (Task)wrapper.getProxy();
+				}
+				onStartElement0(uri, tag, qname, attrs, context);
+				if (fAntModel != null) {
+					//Task newTask= (Task)context.currentWrapper().getProxy();
+					Locator locator= context.getLocator();
+					fAntModel.addTask(task, currentTask, attrs, locator.getLineNumber(), locator.getColumnNumber());
+				}
+			} catch (BuildException be) {
+				if (fAntModel != null) {
+					Locator locator= context.getLocator();
+					fAntModel.addTask(task, currentTask, attrs, locator.getLineNumber(), locator.getColumnNumber());
+					fAntModel.error(be);
+				}
+			}
+		}
+
+		/* (non-Javadoc)
+		 * @see org.apache.tools.ant.helper.ProjectHelper2.AntHandler#onEndElement(java.lang.String, java.lang.String, org.apache.tools.ant.helper.AntXMLContext)
+		 */
+		public void onEndElement(String uri, String tag, AntXMLContext context) {
+			super.onEndElement(uri, tag, context);
+			if (fAntModel != null) {
+				Locator locator= context.getLocator();
+				fAntModel.setCurrentElementLength(locator.getLineNumber(), locator.getColumnNumber());
+			}
+		}
+		
+		private void onStartElement0(String uri, String tag, String qname, Attributes attrs, AntXMLContext context) {
+			
+			RuntimeConfigurable parentWrapper = context.currentWrapper();
+            Object parent = null;
+
+            if (parentWrapper != null) {
+                parent = parentWrapper.getProxy();
+            }
+
+            /* UnknownElement is used for tasks and data types - with
+               delayed eval */
+            task = new UnknownElement(tag);
+            task.setProject(context.getProject());
+            task.setNamespace(uri);
+            task.setQName(qname);
+            task.setTaskType(org.apache.tools.ant.ProjectHelper.genComponentName(task.getNamespace(), tag));
+            task.setTaskName(qname);
+
+            Location location = new Location(context.getLocator().getSystemId(),
+                    context.getLocator().getLineNumber(),
+                    context.getLocator().getColumnNumber());
+            task.setLocation(location);
+            task.setOwningTarget(context.getCurrentTarget());
+
+            context.configureId(task, attrs);
+
+            if (parent != null) {
+                // Nested element
+                ((UnknownElement) parent).addChild(task);
+            }  else {
+                // Task included in a target ( including the default one ).
+                context.getCurrentTarget().addTask(task);
+            }
+
+            // container.addTask(task);
+            // This is a nop in UE: task.init();
+
+            RuntimeConfigurable wrapper
+                = new RuntimeConfigurable(task, task.getTaskName());
+
+            for (int i = 0; i < attrs.getLength(); i++) {
+                String attrUri = attrs.getURI(i);
+                if (attrUri != null
+                    && !attrUri.equals("") //$NON-NLS-1$
+                    && !attrUri.equals(uri)) {
+                    continue; // Ignore attributes from unknown uris
+                }
+                String name = attrs.getLocalName(i);
+                String value = attrs.getValue(i);
+                // PR: Hack for ant-type value
+                //  an ant-type is a component name which can
+                // be namespaced, need to extract the name
+                // and convert from qualified name to uri/name
+                if (name.equals("ant-type")) { //$NON-NLS-1$
+                    int index = value.indexOf(':');
+                    if (index != -1) {
+                        String prefix = value.substring(0, index);
+                        String mappedUri = context.getPrefixMapping(prefix);
+                        if (mappedUri == null) {
+                            throw new BuildException(
+                                "Unable to find XML NS prefix " + prefix); //$NON-NLS-1$
+                        }
+                        value = org.apache.tools.ant.ProjectHelper.genComponentName(mappedUri, value.substring(index + 1));
+                    }
+                }
+                wrapper.setAttribute(name, value);
+            }
+
+            if (parentWrapper != null) {
+                parentWrapper.addChild(wrapper);
+            }
+
+            context.pushWrapper(wrapper);
 		}
 	}
 	
@@ -126,7 +253,14 @@ public class ProjectHelper extends ProjectHelper2 {
 					&& (uri.equals("") || uri.equals(ANT_CORE_URI))) { //$NON-NLS-1$
 				return ProjectHelper.projectHandler;
 			} else {
-               return super.onStartChild(uri, name, qname, attrs, context);
+				try {
+					return super.onStartChild(uri, name, qname, attrs, context);
+				} catch (SAXParseException e) {
+					if (fAntModel != null) {
+						fAntModel.error(e);
+					} 
+					throw e;
+				}
 			}
 		}
 	}
@@ -144,6 +278,36 @@ public class ProjectHelper extends ProjectHelper2 {
 				return ProjectHelper.elementHandler;
 			}
 		}
+		/* (non-Javadoc)
+		 * @see org.apache.tools.ant.helper.ProjectHelper2.AntHandler#onEndElement(java.lang.String, java.lang.String, org.apache.tools.ant.helper.AntXMLContext)
+		 */
+		public void onEndElement(String uri, String tag, AntXMLContext context) {
+			super.onEndElement(uri, tag, context);
+			if (fAntModel != null) {
+				Locator locator= context.getLocator();
+				fAntModel.setCurrentElementLength(locator.getLineNumber(), locator.getColumnNumber());
+			}
+		}
+		/* (non-Javadoc)
+		 * @see org.apache.tools.ant.helper.ProjectHelper2.AntHandler#onStartElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes, org.apache.tools.ant.helper.AntXMLContext)
+		 */
+		public void onStartElement(String uri, String tag, String qname, Attributes attrs, AntXMLContext context) {
+			try {
+				super.onStartElement(uri, tag, qname, attrs, context);
+				if (fAntModel != null) {
+					Locator locator= context.getLocator();
+					fAntModel.addProject(context.getProject(), locator.getLineNumber(), locator.getColumnNumber());
+				}
+			} catch (SAXParseException e) {
+				if (fAntModel != null) {
+					fAntModel.error(e);
+				}
+			} catch (BuildException be) {
+				if (fAntModel != null) {
+					fAntModel.error(be);
+				}
+			}
+		}
 	}
 	
 	public static class TargetHandler extends ProjectHelper2.TargetHandler {
@@ -159,13 +323,71 @@ public class ProjectHelper extends ProjectHelper2 {
 		public void onStartElement(String uri, String tag, String qname, Attributes attrs, AntXMLContext context) {
 			try {
 				super.onStartElement(uri, tag, qname, attrs, context);
+				if (fAntModel != null) {
+					Target newTarget= context.getCurrentTarget();
+					Locator locator= context.getLocator();
+					fAntModel.addTarget(newTarget, locator.getLineNumber(), locator.getColumnNumber());
+				}
 			} catch (SAXParseException e) {
-				
+				if (fAntModel != null) {
+					Target newTarget= context.getCurrentTarget();
+					Locator locator= context.getLocator();
+					fAntModel.addTarget(newTarget, locator.getLineNumber(), locator.getColumnNumber());
+					fAntModel.error(e);
+				}
 			} catch (BuildException be) {
-				
+				if (fAntModel != null) {
+					Target newTarget= context.getCurrentTarget();
+					Locator locator= context.getLocator();
+					fAntModel.addTarget(newTarget, locator.getLineNumber(), locator.getColumnNumber());
+					fAntModel.error(be);
+				}
+			}
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.apache.tools.ant.helper.ProjectHelper2.AntHandler#onEndElement(java.lang.String, java.lang.String, org.apache.tools.ant.helper.AntXMLContext)
+		 */
+		public void onEndElement(String uri, String tag, AntXMLContext context) {
+			super.onEndElement(uri, tag, context);
+			if (fAntModel != null) {
+				Locator locator= context.getLocator();
+				fAntModel.setCurrentElementLength(locator.getLineNumber(), locator.getColumnNumber());
 			}
 		}
 	}
+	
+	 public static class RootHandler extends ProjectHelper2.RootHandler {
+
+		public RootHandler(AntXMLContext context, AntHandler rootHandler) {
+			super(context, rootHandler);
+		}
+	
+		/* (non-Javadoc)
+		 * @see org.xml.sax.ErrorHandler#error(org.xml.sax.SAXParseException)
+		 */
+		public void error(SAXParseException e) {
+			if (fAntModel != null) {
+				fAntModel.error(e);
+			}
+		}
+		/* (non-Javadoc)
+		 * @see org.xml.sax.ErrorHandler#fatalError(org.xml.sax.SAXParseException)
+		 */
+		public void fatalError(SAXParseException e) {
+			if (fAntModel != null) {
+				fAntModel.error(e);
+			}
+		}
+		/* (non-Javadoc)
+		 * @see org.xml.sax.ErrorHandler#warning(org.xml.sax.SAXParseException)
+		 */
+		public void warning(SAXParseException e) {
+			if (fAntModel != null) {
+				fAntModel.warning(e);
+			}
+		}
+	 }
 	
      /**
      * Parses the project file, configuring the project as it goes.
@@ -176,7 +398,7 @@ public class ProjectHelper extends ProjectHelper2 {
      * @exception BuildException if the configuration is invalid or cannot
      *                           be read
      */
-    public void parse(Project project, Object source, RootHandler handler) throws BuildException {
+    public void parse(Project project, Object source, org.apache.tools.ant.helper.ProjectHelper2.RootHandler handler) throws BuildException {
     	
     	if (!(source instanceof String)) {
     		super.parse(project, source, handler);
@@ -241,5 +463,12 @@ public class ProjectHelper extends ProjectHelper2 {
 	 */
 	public void setBuildFile(File file) {
 		buildFile= file;
+	}
+
+	/**
+	 * @param model2
+	 */
+	public void setAntModel(AntModel model2) {
+		fAntModel= model2;	
 	}
 }

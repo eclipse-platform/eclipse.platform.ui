@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49380
  *******************************************************************************/
-package org.eclipse.ant.internal.ui.editor.xml;
+package org.eclipse.ant.internal.ui.editor.model;
 
 /**
  * Constants used by the Ant editor
@@ -17,9 +17,10 @@ package org.eclipse.ant.internal.ui.editor.xml;
 public interface IAntEditorConstants {
 	
 	/**
-	 * Attributes stored in XmlElements
+	 * Attributes of Ant elements
 	 */
 	public static final String ATTR_NAME= "name"; //$NON-NLS-1$
+	public static final String ATTR_VALUE= "value"; //$NON-NLS-1$
 	public static final String ATTR_DEFAULT= "default"; //$NON-NLS-1$
 	public static final String ATTR_RESOURCE= "resource"; //$NON-NLS-1$
 	public static final String ATTR_ENVIRONMENT= "environment"; //$NON-NLS-1$

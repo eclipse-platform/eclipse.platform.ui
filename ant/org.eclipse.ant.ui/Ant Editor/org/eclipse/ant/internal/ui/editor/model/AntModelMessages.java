@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,20 +8,20 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ant.internal.ui.editor.xml;
+package org.eclipse.ant.internal.ui.editor.model;
 
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-public class AntEditorXMLMessages {
+public class AntModelMessages {
 
-	private static final String BUNDLE_NAME = "org.eclipse.ant.internal.ui.editor.xml.AntEditorXMLMessages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.ant.internal.ui.editor.model.AntModelMessages"; //$NON-NLS-1$
 
 	private static final ResourceBundle RESOURCE_BUNDLE =
 		ResourceBundle.getBundle(BUNDLE_NAME);
 
-	private AntEditorXMLMessages() {
+	private AntModelMessages() {
 	}
 
 	public static String getString(String key) {

@@ -130,7 +130,7 @@ public abstract class AbstractAntUITest extends TestCase {
 		
 	protected AntModel getAntModel(String fileName) {
 		currentDocument= getDocument(fileName);
-		AntModel model= new AntModel(XMLCore.getDefault(), currentDocument, null, new TestLocationProvider(fileName));
+		AntModel model= new AntModel(XMLCore.getDefault(), currentDocument, null, new TestLocationProvider(getBuildFile(fileName)));
 		model.reconcile();
 		return model;
 	}

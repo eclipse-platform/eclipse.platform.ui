@@ -19,9 +19,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.ant.internal.ui.editor.xml.IAntEditorConstants;
-import org.eclipse.ant.internal.ui.editor.xml.XmlAttribute;
-import org.eclipse.ant.internal.ui.editor.xml.XmlElement;
+import org.apache.tools.ant.Target;
+import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
+import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
+import org.eclipse.ant.internal.ui.editor.model.AntTargetNode;
+import org.eclipse.ant.internal.ui.editor.model.AntTaskNode;
 import org.eclipse.ant.internal.ui.model.AntImageDescriptor;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
@@ -90,11 +92,11 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
 		public int compare(Viewer viewer, Object e1, Object e2) {
-			if (!(e1 instanceof XmlElement && e2 instanceof XmlElement)) {
+			if (!(e1 instanceof AntElementNode && e2 instanceof AntElementNode)) {
 				return super.compare(viewer, e1, e2);
 			}
-			String name1= ((XmlElement) e1).getDisplayName();
-			String name2= ((XmlElement) e2).getDisplayName();
+			String name1= ((AntElementNode) e1).getLabel();
+			String name2= ((AntElementNode) e2).getLabel();
 			return getCollator().compare(name1, name2);
 		}
 	}
@@ -121,7 +123,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(Object)
 		 */
 		public Object[] getChildren(Object parentNode) {
-			XmlElement tempParentElement = (XmlElement)parentNode;
+			AntElementNode tempParentElement = (AntElementNode)parentNode;
 			List tempChilds = new ArrayList();
 			List children= tempParentElement.getChildNodes();
 			if (!isFilterInternalTargets()) {
@@ -130,7 +132,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 				// Filter out private targets
 				Iterator iter= children.iterator();
 				while (iter.hasNext()) {
-					XmlElement element = (XmlElement) iter.next();
+					AntElementNode element = (AntElementNode) iter.next();
 					if (!isInternalTarget(element)) {
 						tempChilds.add(element);
 					}
@@ -150,8 +152,13 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		 * @param element the target to examine
 		 * @return whether the given target is an internal target
 		 */
-		private boolean isInternalTarget(XmlElement element) {
-			return !isDefaultTargetNode(element) && "target".equals(element.getName()) && element.getAttributeNamed(IAntEditorConstants.ATTR_DESCRIPTION) == null; //$NON-NLS-1$
+		private boolean isInternalTarget(AntElementNode element) {
+			if (element instanceof AntTargetNode) {
+				Target target= ((AntTargetNode)element).getTarget();
+				String targetName= target.getName();
+				return target.getDescription() == null && targetName != null && !targetName.equals(target.getProject().getDefaultTarget());
+			} 
+			return false;
 		}
 
 
@@ -159,7 +166,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(Object)
 		 */
 		public Object getParent(Object aNode) {
-			XmlElement tempElement = (XmlElement)aNode;
+			AntElementNode tempElement = (AntElementNode)aNode;
 			return tempElement.getParentNode();
 		}
 
@@ -167,7 +174,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(Object)
 		 */
 		public boolean hasChildren(Object aNode) {
-			return ((XmlElement)aNode).getChildNodes().size() > 0;
+			return ((AntElementNode)aNode).getChildNodes().size() > 0;
 		}
 
 		/* (non-Javadoc)
@@ -213,8 +220,8 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(Object)
 		 */
 		public Image getImage(Object anElement) {
-			XmlElement tempElement = (XmlElement)anElement;
-			if("target".equalsIgnoreCase(tempElement.getName())) { //$NON-NLS-1$
+			AntElementNode tempElement = (AntElementNode)anElement;
+			if(tempElement instanceof AntTargetNode) { //$NON-NLS-1$
 				ImageDescriptor base = null;
 				int flags = 0;
 				
@@ -224,15 +231,15 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 				if (isDefaultTargetNode(tempElement)) {
 					flags = flags | AntImageDescriptor.DEFAULT_TARGET;
 					base = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_DEFAULT_TARGET);
-				} else if (tempElement.getAttributeNamed(IAntEditorConstants.ATTR_DESCRIPTION) == null) {
+				} else if (((AntTargetNode)tempElement).getTarget().getDescription() == null) {
 					base = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_TARGET_INTERNAL);
 				} else {
 					base = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_TARGET);
 				}
 				return AntUIImages.getImage(new AntImageDescriptor(base, flags));				
 			}
-			if("project".equalsIgnoreCase(tempElement.getName())) { //$NON-NLS-1$
-				return getProjectImage(tempElement);
+			if(tempElement instanceof AntProjectNode) { //$NON-NLS-1$
+				return getProjectImage((AntProjectNode)tempElement);
 			}
 			if("macrodef".equalsIgnoreCase(tempElement.getName()) //$NON-NLS-1$
 				|| "presetdef".equalsIgnoreCase(tempElement.getName())) {  //$NON-NLS-1$
@@ -247,12 +254,12 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
                 return AntUIImages.getImage(IAntUIConstants.IMG_ANT_IMPORT);
             }
 			
-			XmlAttribute attribute= tempElement.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
-			if (attribute != null && IAntEditorConstants.TYPE_EXTERNAL.equals(attribute.getValue())) {
-				return getProjectImage(tempElement);
-			}
+//			XmlAttribute attribute= tempElement.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
+//			if (attribute != null && IAntEditorConstants.TYPE_EXTERNAL.equals(attribute.getValue())) {
+//				return getProjectImage(tempElement);
+//			}
 
-			if (attribute != null && IAntEditorConstants.TYPE_UNKNOWN.equals(attribute.getValue())) {
+			if (tempElement instanceof AntTaskNode) {
 				int flags= 0;
 				ImageDescriptor base= AntUIImages.getImageDescriptor(IAntUIConstants.IMG_TASK_PROPOSAL);
 				if (tempElement.isErrorNode()) {
@@ -267,7 +274,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			return AntUIImages.getImage(IAntUIConstants.IMG_TASK_PROPOSAL);
 		}
 		
-		private Image getProjectImage(XmlElement tempElement) {
+		private Image getProjectImage(AntProjectNode tempElement) {
 			int flags = 0;
 			ImageDescriptor base = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_PROJECT);
 			if (tempElement.isErrorNode()) {
@@ -280,8 +287,8 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(Object)
 		 */
 		public String getText(Object aNode) {
-			XmlElement element= (XmlElement) aNode;
-			StringBuffer displayName= new StringBuffer(element.getDisplayName());
+			AntElementNode element= (AntElementNode) aNode;
+			StringBuffer displayName= new StringBuffer(element.getLabel());
 			if (element.isExternal() && (!element.isRootExternal() || (element.getParentNode() != null && element.getParentNode().isExternal()))) {
 				displayName.append(AntOutlineMessages.getString("AntEditorContentOutlinePage._[external]_1")); //$NON-NLS-1$
 			}
@@ -289,7 +296,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		}
 
 		public Color getForeground(Object element) {
-			if (isDefaultTargetNode((XmlElement) element)) {
+			if (isDefaultTargetNode((AntElementNode) element)) {
 				return Display.getDefault().getSystemColor(SWT.COLOR_BLUE);
 			}
 			return null;
@@ -354,28 +361,15 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	 * @param node the node to examine
 	 * @return whether the given node is a default target
 	 */
-	private boolean isDefaultTargetNode(XmlElement node) {
-		XmlAttribute type= node.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
-		if (type == null || !type.getValue().equals(IAntEditorConstants.TYPE_TARGET)) {
-			return false;
-		}
-		XmlElement parent= node.getParentNode();
-		if (parent != null) {
-			type= parent.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
-			while (parent != null && (type == null || !type.getValue().equals(IAntEditorConstants.TYPE_PROJECT))) {
-				parent= parent.getParentNode();
-				if (parent != null) {
-					type= parent.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
-				}
+	private boolean isDefaultTargetNode(AntElementNode node) {
+		if (node instanceof AntTargetNode) {
+			Target target= ((AntTargetNode)node).getTarget();
+			String targetName= target.getName();
+			if (targetName != null) {
+				return targetName.equals(target.getProject().getDefaultTarget());
 			}
-		} 
-		if (parent == null) {
-			return false;
 		}
-		
-		XmlAttribute defaultTarget= parent.getAttributeNamed(IAntEditorConstants.ATTR_DEFAULT);
-		XmlAttribute nameAttribute= node.getAttributeNamed(IAntEditorConstants.ATTR_NAME);
-		return defaultTarget != null && nameAttribute != null && defaultTarget.getValue().equals(nameAttribute.getValue());
+		return false;
 	}
    
 	/**
@@ -546,7 +540,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	
 	private void addOpenWithMenu(IMenuManager menuManager) {
 		IStructuredSelection selection= (IStructuredSelection)getSelection();
-		XmlElement element= (XmlElement)selection.getFirstElement();
+		AntElementNode element= (AntElementNode)selection.getFirstElement();
 		String path = getElementPath(element);
 		if (path != null) {
 			IFile file= AntUtil.getFileForLocation(path, null);
@@ -571,25 +565,20 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			IStructuredSelection selection= (IStructuredSelection)iselection;
 			if (selection.size() == 1) {
 				Object selected= selection.getFirstElement();
-				if (selected instanceof XmlElement) {
-					XmlElement element= (XmlElement)selected;
-					if ("target".equalsIgnoreCase( element.getName())) { //$NON-NLS-1$
-						return true;                        
-					} else if ("project".equalsIgnoreCase( element.getName())) { //$NON-NLS-1$
-						return true;
-					}
+				if (selected instanceof AntProjectNode || selected instanceof AntTargetNode) {
+					return true;
 				}
 			}
 		}
 		return false;
 	}
 
-	private String getElementPath(XmlElement element) {
+	private String getElementPath(AntElementNode element) {
 		String path= element.getFilePath();
 		if (element.isRootExternal()){
 			List children= element.getChildNodes();
 			if (!children.isEmpty()) {
-				XmlElement child= (XmlElement)children.get(0);
+				AntElementNode child= (AntElementNode)children.get(0);
 				path= child.getFilePath();
 			}
 		}
@@ -602,15 +591,15 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			IStructuredSelection selection= (IStructuredSelection)iselection;
 			if (selection.size() == 1) {
 				Object selected= selection.getFirstElement();
-				if (selected instanceof XmlElement) {
-					XmlElement element= (XmlElement)selected;
+				if (selected instanceof AntElementNode) {
+					AntElementNode element= (AntElementNode)selected;
 					if (element.isExternal()) {
 						String path = getElementPath(element);
 						if (path.length() == 0) {
 							return false;
 						}
 						
-						XmlElement parent= element.getParentNode();
+						AntElementNode parent= element.getParentNode();
 						while (parent != null) {
 							String parentPath= getElementPath(parent);
 							if (path != null && !path.equals(parentPath)) {

@@ -22,9 +22,7 @@ import org.eclipse.ant.internal.ui.editor.outline.XMLCore;
 import org.eclipse.ant.internal.ui.editor.text.AnnotationAccess;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorDocumentProvider;
 import org.eclipse.ant.internal.ui.editor.text.IAntEditorColorConstants;
-import org.eclipse.ant.internal.ui.editor.xml.IAntEditorConstants;
-import org.eclipse.ant.internal.ui.editor.xml.XmlAttribute;
-import org.eclipse.ant.internal.ui.editor.xml.XmlElement;
+import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.core.runtime.CoreException;
@@ -165,7 +163,7 @@ public class AntEditor extends TextEditor {
          * Here the according ISourceReference should be determined and
          * then passed to setSelection.
          */
-        XmlElement selectedXmlElement = (XmlElement)selection.getFirstElement(); 
+        AntElementNode selectedXmlElement = (AntElementNode)selection.getFirstElement(); 
         if(selectedXmlElement != null) {
 			setSelection(selectedXmlElement, !isActivePart());
         }
@@ -181,7 +179,7 @@ public class AntEditor extends TextEditor {
         return part != null && part.equals(this);
     }
     
-    private void setSelection(XmlElement reference, boolean moveCursor) {
+    private void setSelection(AntElementNode reference, boolean moveCursor) {
         if (reference != null) {
         	if (reference.isExternal()) {
         		while (!reference.isRootExternal() || (reference.getParentNode() != null && reference.getParentNode().isExternal())) {
@@ -221,15 +219,15 @@ public class AntEditor extends TextEditor {
                     return;
                 }
 
-				XmlAttribute attrType= reference.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
-				if (!reference.isErrorNode() ||
-					 (attrType != null &&
-					  IAntEditorConstants.TYPE_PROJECT.equalsIgnoreCase(attrType.getValue()))) {
-					//NOTE: type is checked because isErrorNode() is true for an error node *and*
-					// the root node, which - in this case - should be handled as an normal node  
-	                offset= reference.getOffset()+1;
-	                length= reference.getName().length();
-				}
+//				XmlAttribute attrType= reference.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
+//				if (!reference.isErrorNode() ||
+//					 (attrType != null &&
+//					  IAntEditorConstants.TYPE_PROJECT.equalsIgnoreCase(attrType.getValue()))) {
+//					//NOTE: type is checked because isErrorNode() is true for an error node *and*
+//					// the root node, which - in this case - should be handled as an normal node  
+//	                offset= reference.getOffset()+1;
+//	                length= reference.getName().length();
+//				}
                                             
                 if (offset > -1 && length > 0) {
                     sourceViewer.revealRange(offset, length);

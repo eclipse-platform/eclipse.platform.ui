@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.editor.outline;
 
-import org.eclipse.ant.internal.ui.editor.xml.XmlElement;
+import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
+import org.eclipse.ant.internal.ui.editor.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.launchConfigurations.AntLaunchShortcut;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
@@ -135,13 +136,10 @@ public class AntRunTargetAction extends Action {
 			IStructuredSelection structuredSelection = (IStructuredSelection)selection;
 			if (structuredSelection.size() == 1) {
 				Object selectedResource = structuredSelection.getFirstElement();
-				if (selectedResource instanceof XmlElement) {
-					XmlElement element= (XmlElement) selectedResource;
-					if ("target".equalsIgnoreCase(element.getName())) { //$NON-NLS-1$
-						selectedTarget = element.getAttributeNamed("name").getValue();  //$NON-NLS-1$
-					} else if ("project".equalsIgnoreCase(element.getName())) { //$NON-NLS-1$
-						selectedTarget = ""; //$NON-NLS-1$
-					}
+				if (selectedResource instanceof AntTargetNode) {
+					selectedTarget = ((AntTargetNode)selectedResource).getLabel();
+				} else if (selectedResource instanceof AntProjectNode) {
+					selectedTarget = ""; //$NON-NLS-1$
 				}
 			}
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2003 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2004 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -12,7 +12,7 @@
  * 	   IBM Corporation - bug fixes
  *******************************************************************************/
 
-package org.eclipse.ant.internal.ui.editor.xml;
+package org.eclipse.ant.internal.ui.editor.model;
 
 import java.io.File;
 import java.text.MessageFormat;
@@ -26,21 +26,10 @@ import org.eclipse.ant.internal.ui.editor.AntEditorException;
 import org.eclipse.core.runtime.Path;
 
 /**
- * General representation of an xml element.
- * <P>
- * Here an xml element is refered to as what is specified using like
- * '<elementName>' in an xml file.
+ * General representation of an Ant buildfile element.
  * 
  */
-public class XmlElement {
-	
-	/*
-	 * (T)
-	 * Eventually extract an interface XmlSourceRange in respect to 
-	 * ISourceReference that contains the two methods getOffset and
-	 * getLength
-	 */
-	
+public class AntElementNode {
     
 	/**
 	 * The offset of the corresponding source.
@@ -59,14 +48,7 @@ public class XmlElement {
     /**
      * The parent node.
      */
-    protected XmlElement parent;
-    
-
-    /**
-     * The attributes.
-     */
-    protected List attributes = new ArrayList();
-
+    protected AntElementNode parent;
 
     /**
      * The child nodes.
@@ -115,8 +97,14 @@ public class XmlElement {
 	/**
      * Creates an instance with the specified name.
      */
-    public XmlElement(String aName) {
+    public AntElementNode(String aName) {
        name = aName;
+    }
+    
+    /**
+     * Creates an instance with the specified name.
+     */
+    public AntElementNode() {
     }
     
     
@@ -129,13 +117,13 @@ public class XmlElement {
     
     
     /**
-     * Returns the name that is used for display in outline view.
+     * Returns the label that is used for display in outline view.
      * <P>
      * The default implementation returns just the same as the method <code>getName()</code>.
      * Override this method in your own subclass for special elements in order to provide a
-     * custom display name.
+     * custom label.
      */
-    public String getDisplayName() {
+    public String getLabel() {
     	return getName();
     }
     
@@ -153,7 +141,7 @@ public class XmlElement {
      * 
      * @return the parent or <code>null</code> if this element has no parent.
      */
-    public XmlElement getParentNode() {
+    public AntElementNode getParentNode() {
         return parent;
     }    
     
@@ -166,43 +154,12 @@ public class XmlElement {
      * @throws AntEditorException if the specified child element allready
      * has a parent.
      */
-    public void addChildNode(XmlElement aChildElement) {
-        if(aChildElement.getParentNode() != null) {
-            throw new AntEditorException(MessageFormat.format(AntEditorXMLMessages.getString("XmlElement.XmlElement_cannot_be_added_as_a_child"), new String[]{aChildElement.toString(), aChildElement.getParentNode().toString()})); //$NON-NLS-1$
+    public void addChildNode(AntElementNode childElement) {
+        if(childElement.getParentNode() != null) {
+            throw new AntEditorException(MessageFormat.format(AntModelMessages.getString("XmlElement.XmlElement_cannot_be_added_as_a_child"), new String[]{childElement.toString(), childElement.getParentNode().toString()})); //$NON-NLS-1$
         }
-        aChildElement.parent = this;
-        childNodes.add(aChildElement);
-    }
-
-
-    /**
-     * Returns all attributes.
-     */
-    public List getAttributes() {
-        return attributes;
-    }   
-
-    
-    /**
-     * Adds the specified attribute.
-     */
-    public void addAttribute(XmlAttribute anAttribute) {
-        attributes.add(anAttribute);
-    }
-
-
-    /**
-     * Returns the attribute with the specified name or <code>null</code>,
-     * if non existing.
-     */
-    public XmlAttribute getAttributeNamed(String anAttributeName) {
-        for (Iterator i = attributes.iterator(); i.hasNext();) {
-            XmlAttribute anAttribute = (XmlAttribute) i.next();
-            if(anAttributeName.equals(anAttribute.name)) {
-                return anAttribute;
-            }
-        }
-        return null;
+        childElement.parent = this;
+        childNodes.add(childElement);
     }
 
 
@@ -274,7 +231,7 @@ public class XmlElement {
 	 * Returns a string representation of this element.
 	 */
 	public String toString() {
-		return MessageFormat.format(AntEditorXMLMessages.getString("XmlElement.XmlElement_toString"), new String[]{name, Integer.toString(offset), Integer.toString(length)}); //$NON-NLS-1$
+		return "Ant Element Node: Offset: " + getOffset() + " Length: " + getLength();  //$NON-NLS-1$//$NON-NLS-2$
 	}
 	
 	/**
@@ -322,7 +279,7 @@ public class XmlElement {
 		return isRootExternal;
 	}
 
-	public String getElementPath() {
+	private String getElementPath() {
 		if (fElementPath == null) {
 			StringBuffer buffer= new StringBuffer(getParentNode() != null ? getParentNode().getElementPath() : ""); //$NON-NLS-1$
 			buffer.append('/');
@@ -340,7 +297,7 @@ public class XmlElement {
 		if (fElementIdentifier == null) {
 			StringBuffer buffer= escape(new StringBuffer(getName() != null ? getName() : ""), '\\', "$/[]\\"); //$NON-NLS-1$ //$NON-NLS-2$
 			buffer.append('$');
-			buffer.append(escape(new StringBuffer(getDisplayName() != null ? getDisplayName() : ""), '\\', "$/[]\\").toString()); //$NON-NLS-1$ //$NON-NLS-2$
+			buffer.append(escape(new StringBuffer(getLabel() != null ? getLabel() : ""), '\\', "$/[]\\").toString()); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			fElementIdentifier= buffer.toString();
 		}
@@ -357,7 +314,7 @@ public class XmlElement {
 		return sb;
 	}
 
-	private int getElementIndexOf(XmlElement child) {
+	private int getElementIndexOf(AntElementNode child) {
 		if (getChildNodes() == null) {
 			return -1;
 		}
@@ -365,9 +322,9 @@ public class XmlElement {
 		int result= -1;
 		
 		Iterator iter= getChildNodes().iterator();
-		XmlElement current= null;
+		AntElementNode current= null;
 		while (current != child && iter.hasNext()) {
-			current= (XmlElement) iter.next();
+			current= (AntElementNode) iter.next();
 			if (child.getElementIdentifier().equals(current.getElementIdentifier()))
 				result++;
 		}
@@ -392,15 +349,15 @@ public class XmlElement {
 		if (o1 == null || o2 == null) {
 			return false;
 		}
-		if (!(o1 instanceof XmlElement || o2 instanceof XmlElement)) {
+		if (!(o1 instanceof AntElementNode || o2 instanceof AntElementNode)) {
 			return o2.equals(o1);
 		}
-		if (!(o1 instanceof XmlElement && o2 instanceof XmlElement)) {
+		if (!(o1 instanceof AntElementNode && o2 instanceof AntElementNode)) {
 			return false;
 		}
 		
-		XmlElement e1= (XmlElement) o1;
-		XmlElement e2= (XmlElement) o2;
+		AntElementNode e1= (AntElementNode) o1;
+		AntElementNode e2= (AntElementNode) o2;
 	
 		if (e1.getElementPath().equals(e2.getElementPath())) {
 			return true;
@@ -419,11 +376,11 @@ public class XmlElement {
 		if (o1 == null) {
 			return 0;
 		}
-		if (!(o1 instanceof XmlElement)) {
+		if (!(o1 instanceof AntElementNode)) {
 			return o1.hashCode();
 		}
 
-		XmlElement e1= (XmlElement) o1;
+		AntElementNode e1= (AntElementNode) o1;
 		
 		return e1.getElementPath().hashCode();
 	}

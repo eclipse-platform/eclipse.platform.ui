@@ -11,6 +11,8 @@
 
 package org.eclipse.ant.tests.ui.editor.support;
 
+import java.io.File;
+
 import org.eclipse.ant.internal.ui.editor.outline.ILocationProvider;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -18,16 +20,16 @@ import org.eclipse.core.runtime.Path;
 
 public class TestLocationProvider implements ILocationProvider {
 
-	private String buildFileName;
+	private File buildFile;
 	
-	public TestLocationProvider(String buildFileName) {
-		this.buildFileName= buildFileName;
+	public TestLocationProvider(File buildFile) {
+		this.buildFile= buildFile;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.editor.outline.ILocationProvider#getLocation()
 	 */
 	public IPath getLocation() {
-		return new Path(buildFileName);
+		return new Path(buildFile.getAbsolutePath());
 	}
 }
