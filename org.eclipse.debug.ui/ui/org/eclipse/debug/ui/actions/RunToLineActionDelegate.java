@@ -21,6 +21,7 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IActionDelegate2;
@@ -28,6 +29,7 @@ import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 
 /**
  * A run to line action that can be contributed to a an editor. The action
@@ -104,12 +106,18 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 		if (fAction == null) {
 			return;
 		}
+		boolean enabled = false;
 		if (fPartTarget != null && fTargetElement != null) {
-			fAction.setEnabled(fTargetElement.isSuspended() &&
-				fPartTarget.canRunToLine(fActivePart, fActivePart.getSite().getSelectionProvider().getSelection(), fTargetElement));
-		} else {
-			fAction.setEnabled(false);
+			IWorkbenchPartSite site = fActivePart.getSite();
+			if (site != null) {
+			    ISelectionProvider selectionProvider = site.getSelectionProvider();
+			    if (selectionProvider != null) {
+			        ISelection selection = selectionProvider.getSelection();
+			        enabled = fTargetElement.isSuspended() && fPartTarget.canRunToLine(fActivePart, selection, fTargetElement);
+			    }
+			}
 		}
+		fAction.setEnabled(enabled);
 	}
 		
 	/* (non-Javadoc)
