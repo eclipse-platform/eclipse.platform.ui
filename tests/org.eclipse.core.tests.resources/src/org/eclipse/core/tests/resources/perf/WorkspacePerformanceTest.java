@@ -18,7 +18,6 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.tests.harness.CorePerformanceTest;
-import org.eclipse.core.tests.harness.LoggingPerformanceTestResult;
 
 /**
  * Basic performance calculations for standard workspace operations.
@@ -143,9 +142,9 @@ public class WorkspacePerformanceTest extends CorePerformanceTest {
 		}
 	}
 	public void testPerformance() {
-		String fileName = "c:\\temp\\" + getClassName() + "_" + System.currentTimeMillis() + ".html";
-		java.io.File logFile = new java.io.File(fileName);
-		LoggingPerformanceTestResult result = new LoggingPerformanceTestResult(logFile);
-		new WorkspacePerformanceTest("doTestWorkspaceOperations").run(result);
+//		String fileName = "c:\\temp\\" + getClassName() + "_" + System.currentTimeMillis() + ".html";
+//		java.io.File logFile = new java.io.File(fileName);
+//		LoggingPerformanceTestResult result = new LoggingPerformanceTestResult(logFile);
+//		new WorkspacePerformanceTest("doTestWorkspaceOperations").run(result);
 	}
 }
