@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
+
+import org.eclipse.jface.text.hyperlink.DefaultHyperlinkController;
 
 
 /**
@@ -262,6 +266,52 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	public final static String EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR= AbstractTextEditor.PREFERENCE_COLOR_SELECTION_BACKGROUND_SYSTEM_DEFAULT;
 
 	/**
+	 * A named preference that controls if hyperlinks are turned on or off.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.1
+	 */
+	public static final String EDITOR_HYPERLINKS_ENABLED= AbstractTextEditor.PREFERENCE_HYPERLINKS_ENABLED;
+
+	/**
+	 * A named preference that controls the key modifier for hyperlinks.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * </p>
+	 * 
+	 * @since 3.1
+	 */
+	public static final String EDITOR_HYPERLINK_KEY_MODIFIER= AbstractTextEditor.PREFERENCE_HYPERLINK_KEY_MODIFIER;
+
+	/**
+	 * A named preference that controls the key modifier mask for hyperlinks.
+	 * The value is only used if the value of <code>EDITOR_HYPERLINK_KEY_MODIFIER</code>
+	 * cannot be resolved to valid SWT modifier bits.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * </p>
+	 * 
+	 * @see #EDITOR_HYPERLINK_KEY_MODIFIER
+	 * @since 3.1
+	 */
+	public static final String EDITOR_HYPERLINK_KEY_MODIFIER_MASK= AbstractTextEditor.PREFERENCE_HYPERLINK_KEY_MODIFIER_MASK;
+	
+	/**
+	 * A named preference that holds the color used for hyperlinks.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 *
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @since 3.1
+	 */
+	public final static String EDITOR_HYPERLINK_COLOR= DefaultHyperlinkController.HYPERLINK_COLOR;
+	
+	/**
   	* Initializes the given preference store with the default values.
 	 * 
   	* @param store the preference store to be initialized
@@ -300,12 +350,18 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR, true);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR, true);
-		
+
 		PreferenceConverter.setDefault(store, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, new RGB(255, 255, 255));
 		store.setDefault(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, true);
 		PreferenceConverter.setDefault(store, AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND, new RGB(0, 0, 0));
 		store.setDefault(AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT, true);
 
+		String mod1Name= Action.findModifierString(SWT.MOD1);	// SWT.COMMAND on MAC; SWT.CONTROL elsewhere
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINKS_ENABLED, true);
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER, mod1Name);
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER_MASK, SWT.MOD1);
+		PreferenceConverter.setDefault(store, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_COLOR, new RGB(0, 0, 255));
+		
 		MarkerAnnotationPreferences.initializeDefaultValues(store);
 	}
 }

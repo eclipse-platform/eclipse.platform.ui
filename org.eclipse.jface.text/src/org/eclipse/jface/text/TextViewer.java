@@ -63,6 +63,10 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 
+import org.eclipse.jface.text.hyperlink.DefaultHyperlinkManager;
+import org.eclipse.jface.text.hyperlink.IHyperlinkController;
+import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
+import org.eclipse.jface.text.hyperlink.IHyperlinkManager;
 import org.eclipse.jface.text.projection.ChildDocument;
 import org.eclipse.jface.text.projection.ChildDocumentManager;
 
@@ -88,7 +92,7 @@ import org.eclipse.jface.text.projection.ChildDocumentManager;
  * will be broken by future releases.
  */
 public class TextViewer extends Viewer implements
-					ITextViewer, ITextViewerExtension, ITextViewerExtension2, ITextViewerExtension4, IEditorHelperRegistry,
+					ITextViewer, ITextViewerExtension, ITextViewerExtension2, ITextViewerExtension4, ITextViewerExtension6, IEditorHelperRegistry,
 					ITextOperationTarget, ITextOperationTargetExtension,
 					IWidgetTokenOwner, IWidgetTokenOwnerExtension, IPostSelectionProvider {
 	
@@ -1355,7 +1359,28 @@ public class TextViewer extends Viewer implements
 	 * @since 3.0
 	 */
 	protected FindReplaceDocumentAdapter fFindReplaceDocumentAdapter;
-
+	
+	/**
+	 * The text viewer's hyperlink detectors.
+	 * @since 3.1
+	 */
+	protected IHyperlinkDetector[] fHyperlinkDetectors;
+	/**
+	 * The text viewer's hyperlink controller.
+	 * @since 3.1
+	 */
+	protected IHyperlinkController fHyperlinkController;
+	/**
+	 * The text viewer's hyperlink manager.
+	 * @since 3.1
+	 */
+	protected IHyperlinkManager fHyperlinkManager;
+	/**
+	 * The SWT key modifier mask which in combination
+	 * with the left mouse button triggers the hyperlink mode.
+	 * @since 3.1
+	 */
+	protected int fHyperlinkStateMask;
 	
 	
 	
@@ -1472,6 +1497,7 @@ public class TextViewer extends Viewer implements
 		}
 
 		ensureHoverControlManagerInstalled();
+		ensureHyperlinkManagerInstalled();
 		
 		if (fUndoManager != null) {
 			fUndoManager.connect(this);
@@ -1580,7 +1606,13 @@ public class TextViewer extends Viewer implements
 			fCursorListener.uninstall();
 			fCursorListener= null;
 		}
-		
+
+		if (fHyperlinkManager != null) {
+			fHyperlinkManager.uninstall();
+			fHyperlinkManager= null;
+		}
+
+		fHyperlinkDetectors= null;
 		fVisibleDocument= null;
 		fDocument= null;
 		fScroller= null;
@@ -5029,5 +5061,74 @@ public class TextViewer extends Viewer implements
 	 */
 	public IEditorHelper[] getCurrentHelpers() {
 		return (IEditorHelper[]) fEditorHelpers.toArray(new IEditorHelper[fEditorHelpers.size()]);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.ITextViewerExtension6#setHyperlinkDetectors(org.eclipse.jface.text.hyperlink.IHyperlinkDetector[])
+	 * @since 3.1
+	 */
+	public void setHyperlinkDetectors(IHyperlinkDetector[] hyperlinkDetectors) throws IllegalArgumentException {
+		Assert.isLegal(hyperlinkDetectors != null && hyperlinkDetectors.length > 0);
+		fHyperlinkDetectors= hyperlinkDetectors;
+		if (fHyperlinkManager != null)
+			fHyperlinkManager.setHyperlinkDetectors(fHyperlinkDetectors);
+		else
+			ensureHyperlinkManagerInstalled();
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.ITextViewerExtension6#removeHyperlinkDetectors()
+	 * @since 3.1
+	 */
+	public void setHyperlinksEnabled(boolean state) {
+		if (state)
+			ensureHyperlinkManagerInstalled();
+		else {
+			if (fHyperlinkManager != null)
+				fHyperlinkManager.uninstall();
+			fHyperlinkManager= null;
+		}
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.ITextViewerExtension6#setHyperlinkStateMask(int)
+	 * @since 3.1
+	 */
+	public void setHyperlinkStateMask(int hyperlinkStateMask) {
+		fHyperlinkStateMask= hyperlinkStateMask;
+		if (fHyperlinkManager != null)
+			fHyperlinkManager.setKeyModifierMask(hyperlinkStateMask);
+	}
+	
+	/**
+	 * Sets the hyperlink controller.
+	 * <p>
+	 * This is only valid as long as the hyperlink manager hasn't
+	 * been created yet.
+	 * </p>
+	 *  
+	 * @param hyperlinkController the hyperlink controller
+	 * @throws IllegalStateException if the hyperlink manager has already been created
+	 * @since 3.1
+	 */
+	public void setHyperlinkController(IHyperlinkController hyperlinkController) throws IllegalStateException {
+		if (fHyperlinkManager != null)
+			throw new IllegalStateException();
+		
+		fHyperlinkController= hyperlinkController;
+		ensureHyperlinkManagerInstalled();
+	}
+
+	/**
+	 * Ensures that the hyperlink manager has been
+	 * installed if a hyperlink detector is available.
+	 *
+	 * @since 3.1
+	 */
+	private void ensureHyperlinkManagerInstalled() {
+		if (fHyperlinkDetectors != null && fHyperlinkDetectors.length > 0 && fHyperlinkController != null && fHyperlinkManager == null) {	
+			fHyperlinkManager= new DefaultHyperlinkManager(DefaultHyperlinkManager.FIRST);
+			fHyperlinkManager.install(this, fHyperlinkController, fHyperlinkDetectors, fHyperlinkStateMask);
+		}
 	}
 }
