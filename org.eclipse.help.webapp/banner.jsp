@@ -74,14 +74,19 @@ INPUT {
 
 #go {
 	height:17px;
-	padding-left:4px;
-	padding-right:4px;
 	border:1px solid black;
 }
 
 </style>
 
 <script language="JavaScript">
+var isIE = navigator.userAgent.toLowerCase().indexOf('msie') != -1;
+
+var extraStyle = "";
+if (isIE)
+ 	 extraStyle = "<style type='text/css'>#go{padding-left:4px;padding-right:4px;} </style>";
+document.write(extraStyle);
+	
 var advancedDialog;
 function openAdvanced()
 {
