@@ -63,7 +63,6 @@ private PluginModel processManifestFile(URL manifest) {
 	try {
 		is = manifest.openStream();
 	} catch (IOException e) {
-		factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "No plugin found for: " + manifest, null));
 		if (debug)
 			debug("No plugin found for: " + manifest);
 		return null;
