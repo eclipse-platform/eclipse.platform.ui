@@ -824,10 +824,11 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// and release the workspace lock.  This must be done at the end because snapshot
 		// and "hasChanges" comparison have to happen without interference from other threads.
 		boolean hasTreeChanges = false;
+		boolean depthOne = false;
 		try {
 			workManager.setBuild(build);
 			// if we are not exiting a top level operation then just decrement the count and return
-			boolean depthOne = workManager.getPreparedOperationDepth() == 1;
+			depthOne = workManager.getPreparedOperationDepth() == 1;
 			if (!(notificationManager.shouldNotify() || depthOne)) {
 				notificationManager.endOperation();
 				return;
@@ -835,7 +836,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			// do the following in a try/finally to ensure that the operation tree is nulled at the end
 			// as we are completing a top level operation.
 			try {
-				workManager.beginNotify(rule);
 				notificationManager.beginNotify();
 				// check for a programming error on using beginOperation/endOperation
 				Assert.isTrue(workManager.getPreparedOperationDepth() > 0, "Mismatched begin/endOperation"); //$NON-NLS-1$
@@ -853,7 +853,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				// Perform a snapshot if we are sufficiently out of date.  Be sure to make the tree immutable first
 				saveManager.snapshotIfNeeded(hasTreeChanges);
 			} finally {
-				workManager.endNotify();
 				// make sure the tree is immutable if we are ending a top-level operation.
 				if (depthOne) {
 					tree.immutable();
@@ -864,7 +863,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		} finally {
 			workManager.checkOut(rule);
 		}
-		buildManager.endTopLevel(hasTreeChanges);
+		if (depthOne)
+			buildManager.endTopLevel(hasTreeChanges);
 	}
 
 	/**
