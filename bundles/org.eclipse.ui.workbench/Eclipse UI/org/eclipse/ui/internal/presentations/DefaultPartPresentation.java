@@ -772,7 +772,7 @@ public class DefaultPartPresentation extends StackPresentation {
 		if(part.isBusy())
 			tabItem.setFont(registry.getItalic(IWorkbenchThemeConstants.TAB_TEXT_FONT));
 		else{
-			tabItem.setFont(registry.get(IWorkbenchThemeConstants.TAB_TEXT_FONT));
+			tabItem.setFont(null);
 		}			
 
 	}
