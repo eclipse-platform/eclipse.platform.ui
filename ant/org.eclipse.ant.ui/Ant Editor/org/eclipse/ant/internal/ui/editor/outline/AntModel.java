@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Nico Seessle - bug 51332
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.editor.outline;
@@ -449,7 +450,7 @@ public class AntModel {
 				} else {
 					offset= getOffset(line, column);
 					//lastExternalEntityOffset= offset - 1; 
-					IRegion result= fFindReplaceAdapter.search(offset - 1, prefix, true, false, false, false);
+					IRegion result= fFindReplaceAdapter.search(offset - 1, prefix, false, false, false, false);
 					offset= result.getOffset();
 				}
 		//	}
