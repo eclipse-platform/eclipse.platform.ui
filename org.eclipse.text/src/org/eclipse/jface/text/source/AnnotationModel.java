@@ -139,18 +139,20 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
     
     /**
      * Returns the current annotation model event. This is the event that will be sent out
-     * when calling <code>fireModelChanged</code>.
+     * when calling <code>fireModelChanged</code>. This method is not intended to be overridden.
      * 
      * @return the current annotation model event
      * @since 3.0
      */
     protected AnnotationModelEvent getAnnotationModelEvent() {
-    	if (fModelEvent == null) {
-    		fModelEvent= createAnnotationModelEvent();
-    		fModelEvent.markWorldChange(false);
-    		fModificationStamp= fModelEvent;
+    	synchronized (getLockObject()) {
+    		if (fModelEvent == null) {
+    			fModelEvent= createAnnotationModelEvent();
+    			fModelEvent.markWorldChange(false);
+    			fModificationStamp= fModelEvent;
+    		}
+    		return fModelEvent;
     	}
-    	return fModelEvent;
     }
 
 	/*
@@ -224,7 +226,9 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			
 			addPosition(fDocument, position);
 			fAnnotations.put(annotation, position);
-			getAnnotationModelEvent().annotationAdded(annotation);
+			synchronized (getLockObject()) {
+				getAnnotationModelEvent().annotationAdded(annotation);
+			}
 
 			if (fireModelChanged)
 				fireModelChanged();
@@ -350,10 +354,17 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * Informs all annotation model listeners that this model has been changed.
 	 */
 	protected void fireModelChanged() {
-		if (fModelEvent != null) {
-			fireModelChanged(fModelEvent);
-			fModelEvent= null;
+		AnnotationModelEvent modelEvent= null;
+		
+		synchronized(getLockObject()) {
+			if (fModelEvent != null) {
+				modelEvent= fModelEvent;
+				fModelEvent= null;
+			}
 		}
+		
+		if (modelEvent != null)
+			fireModelChanged(modelEvent);
 	}
 	
 	/**
@@ -421,6 +432,18 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * @param fireModelChanged indicates whether to notify all model listeners
 	 */
 	protected void cleanup(boolean fireModelChanged) {
+		cleanup(fireModelChanged, true);
+	}
+	
+	/**
+	 * Removes all annotations from the model whose associated positions have been
+	 * deleted. If requested inform all model listeners about the change. If requested
+	 * a new thread is created for the notification of the model listeners.
+	 *
+	 * @param fireModelChanged indicates whether to notify all model listeners
+	 * @param forkNotification <code>true</code> iff notification should be done in a new thread
+	 */
+	private void cleanup(boolean fireModelChanged, boolean forkNotification) {
 		if (fDocumentChanged) {
 			fDocumentChanged= false;
 			
@@ -433,7 +456,18 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 					deleted.add(a);
 			}
 			
-			removeAnnotations(deleted, fireModelChanged, false);
+			if (fireModelChanged && forkNotification) {
+				removeAnnotations(deleted, false, false);
+				synchronized (getLockObject()) {
+					if (fModelEvent != null)
+						new Thread() {
+							public void run() {
+								fireModelChanged();
+							}
+						}.start();
+				}
+			} else
+				removeAnnotations(deleted, fireModelChanged, false);
 		}
 	}
 	
@@ -558,7 +592,9 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 				Position p= (Position) fAnnotations.get(a);
 				removePosition(fDocument, p);
 //				p.delete();
-				getAnnotationModelEvent().annotationRemoved(a, p);
+				synchronized (getLockObject()) {
+					getAnnotationModelEvent().annotationRemoved(a, p);
+				}
 			}
 		}
 		
@@ -593,7 +629,9 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			}
 				
 			fAnnotations.remove(annotation);
-			getAnnotationModelEvent().annotationRemoved(annotation, p);
+			synchronized (getLockObject()) {
+				getAnnotationModelEvent().annotationRemoved(annotation, p);
+			}
 			
 			if (fireModelChanged)
 				fireModelChanged();
@@ -635,7 +673,9 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 					p.setOffset(position.getOffset());
 					p.setLength(position.getLength());
 				}
-				getAnnotationModelEvent().annotationChanged(annotation);
+				synchronized (getLockObject()) {
+					getAnnotationModelEvent().annotationChanged(annotation);
+				}
 				if (fireModelChanged)
 					fireModelChanged();
 				
@@ -662,7 +702,9 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 */
 	protected void modifyAnnotation(Annotation annotation, boolean fireModelChanged) {
 		if (fAnnotations.containsKey(annotation)) {
-			getAnnotationModelEvent().annotationChanged(annotation);
+			synchronized (getLockObject()) {
+				getAnnotationModelEvent().annotationChanged(annotation);
+			}
 			if (fireModelChanged)
 				fireModelChanged();
 		}
