@@ -346,16 +346,25 @@ public abstract class TextChange extends Change {
 	//---- Method to access the current content of the text change ---------
 
 	/**
-	 * Returns the document this text change is applied to. The returned
-	 * document must not be modified by the client. Doing so will result
-	 * in an unexpected behaviour when the change is performed.
+	 * Returns the document this text change is associated to. The 
+	 * document returned is computed at the point in time when this
+	 * method is called. So calling this method multiple times may
+	 * return different document instances.  
+	 * <p>
+	 * The returned document must not be modified by the client. Doing 
+	 * so will result in an unexpected behaviour when the change is 
+	 * performed.
+	 * </p>
 	 * 
-	 * @param pm a progress monitor to report progress
+	 * @param pm a progress monitor to report progress or <code>null</code>
+	 *  if no progress reporting is desired
 	 * @return the document this change is working on
 	 * 
 	 * @throws CoreException if the document can't be acquired
 	 */
 	public IDocument getCurrentDocument(IProgressMonitor pm) throws CoreException {
+		if (pm == null)
+			pm= new NullProgressMonitor();
 		IDocument result= null;
 		pm.beginTask("", 2); //$NON-NLS-1$
 		try{
@@ -369,46 +378,17 @@ public abstract class TextChange extends Change {
 	}
 	
 	/**
-	 * @deprecated Use {@link #getCurrentContent(IProgressMonitor)}
-	 * 
-	 * @return the current content of the text change
-	 * 
-	 * @exception CoreException if the content can't be accessed
-	 */
-	public String getCurrentContent() throws CoreException {
-		return getCurrentContent(new NullProgressMonitor());
-	}
-	
-	/**
 	 * Returns the current content of the document this text
-	 * change is applied to.
+	 * change is associated with.
 	 * 
-	 * @param pm a progress monitor to report progress
+	 * @param pm a progress monitor to report progress or <code>null</code>
+	 *  if no progress reporting is desired
 	 * @return the current content of the text change
 	 * 
 	 * @exception CoreException if the content can't be accessed
 	 */
 	public String getCurrentContent(IProgressMonitor pm) throws CoreException {
 		return getCurrentDocument(pm).get();
-	}
-	
-	/**
-	 * @deprecated Use {@link #getCurrentContent(IRegion, boolean, int, IProgressMonitor)}.
-	 * 
-	 * @param region the starting region for the clipping
-	 * @param expandRegionToFullLine if <code>true</code> is passed the region
-	 *  is extended to cover full lines
-	 * @param surroundingLines the number of surrounding lines to be added to 
-	 *  the clipping region. Is only considered if <code>expandRegionToFullLine
-	 *  </code> is <code>true</code>
-	 * 
-	 * @return the current content of the text change clipped to a region
-	 *  determined by the given parameters.
-	 * 
-	 * @throws CoreException if an exception occurs while accessing the current content
-	 */
-	public String getCurrentContent(IRegion region, boolean expandRegionToFullLine, int surroundingLines) throws CoreException {
-		return getCurrentContent(region, expandRegionToFullLine, surroundingLines, new NullProgressMonitor());
 	}
 	
 	/**
@@ -435,7 +415,8 @@ public abstract class TextChange extends Change {
 	 * @param surroundingLines the number of surrounding lines to be added to 
 	 *  the clipping region. Is only considered if <code>expandRegionToFullLine
 	 *  </code> is <code>true</code>
-	 * @param pm a progress monitor to report progress
+	 * @param pm a progress monitor to report progress or <code>null</code>
+	 *  if no progress reporting is desired
 	 * 
 	 * @return the current content of the text change clipped to a region
 	 *  determined by the given parameters.
@@ -526,23 +507,13 @@ public abstract class TextChange extends Change {
 	}
 	
 	/**
-	 * @deprecated Use {@link #getPreviewContent(IProgressMonitor)}.
-	 *  
-	 * @return a document containing the preview of the text change
-	 * 
-	 * @throws CoreException if the preview can't be created
-	 */
-	public IDocument getPreviewDocument() throws CoreException {
-		return getPreviewDocument(new NullProgressMonitor());
-	}
-	
-	/**
 	 * Returns a document containing a preview of the text change. The
 	 * preview is computed by executing the all managed text edits. The
 	 * method considers the active state of the added {@link TextEditChangeGroup
 	 * text edit change groups}.
 	 * 
-	 * @param pm a progress monitor to report progress
+	 * @param pm a progress monitor to report progress or <code>null</code>
+	 *  if no progress reporting is desired
 	 * @return a document containing the preview of the text change
 	 * 
 	 * @throws CoreException if the preview can't be created
@@ -553,21 +524,11 @@ public abstract class TextChange extends Change {
 	}
 	
 	/**
-	 * @deprecated Use {@link #getPreviewContent(IProgressMonitor)}.
-	 *  
-	 * @return the preview 
-	 * 
-	 * @throws CoreException if the preview can't be created
-	 */
-	public String getPreviewContent() throws CoreException {
-		return getPreviewDocument(new NullProgressMonitor()).get();
-	}
-	
-	/**
 	 * Returns the preview content as a string. This is a convenient
 	 * method for calling <code>getPreviewDocument(IProgressMonitor).get()</code>.
 	 * 
-	 * @param pm a progress monitor to report progress
+	 * @param pm a progress monitor to report progress or <code>null</code>
+	 *  if no progress reporting is desired
 	 * @return the preview 
 	 * 
 	 * @throws CoreException if the preview can't be created
@@ -576,29 +537,6 @@ public abstract class TextChange extends Change {
 		return getPreviewDocument(pm).get();
 	}
 	
-	/**
-	 * @deprecated Use {@link #getPreviewContent(TextEditChangeGroup[], IRegion, boolean, int, IProgressMonitor)).
-	 *  
-	 * @param changeGroups a set of change groups for which a preview is to be
-	 *  generated
-	 * @param region the starting region for the clipping
-	 * @param expandRegionToFullLine if <code>true</code> is passed the region
-	 *  is extended to cover full lines
-	 * @param surroundingLines the number of surrounding lines to be added to 
-	 *  the clipping region. Is only considered if <code>expandRegionToFullLine
-	 *  </code> is <code>true</code>
-	 * 
-	 * @return the current content of the text change clipped to a region
-	 *  determined by the given parameters.
-	 * 
-	 * @throws CoreException if an exception occurs while generating the preview
-	 * 
-	 * @see #getCurrentContent(IRegion, boolean, int, IProgressMonitor)
-	 */
-	public String getPreviewContent(TextEditChangeGroup[] changeGroups, IRegion region, boolean expandRegionToFullLine, int surroundingLines) throws CoreException {
-		return getPreviewContent(changeGroups, region, expandRegionToFullLine, surroundingLines, new NullProgressMonitor());
-	}
-
 	/**
 	 * Returns a preview of the text change clipped to a specific region.
 	 * The preview is created by applying the text edits managed by the
@@ -627,7 +565,8 @@ public abstract class TextChange extends Change {
 	 * @param surroundingLines the number of surrounding lines to be added to 
 	 *  the clipping region. Is only considered if <code>expandRegionToFullLine
 	 *  </code> is <code>true</code>
-	 * @param pm a progress monitor to report progress
+	 * @param pm a progress monitor to report progress or <code>null</code>
+	 *  if no progress reporting is desired
 	 * 
 	 * @return the current content of the text change clipped to a region
 	 *  determined by the given parameters.
