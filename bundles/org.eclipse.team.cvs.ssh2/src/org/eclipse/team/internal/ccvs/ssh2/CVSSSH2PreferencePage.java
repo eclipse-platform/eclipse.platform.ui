@@ -386,12 +386,6 @@ public class CVSSSH2PreferencePage extends PreferencePage
     gd.grabExcessVerticalSpace = true;
     publicKeyText.setLayoutData(gd);
     
-    keyExport=new Button(group, SWT.NULL);
-    keyExport.setText(Policy.bind("CVSSSH2PreferencePage.105")); //$NON-NLS-1$
-    gd=new GridData(GridData.HORIZONTAL_ALIGN_END);
-    gd.horizontalSpan=columnSpan;
-    keyExport.setLayoutData(gd);
-
     keyFingerPrintLabel=new Label(group, SWT.NONE);
     keyFingerPrintLabel.setText(Policy.bind("CVSSSH2PreferencePage.41")); //$NON-NLS-1$
     keyFingerPrintText=new Text(group, SWT.SINGLE | SWT.BORDER);
@@ -522,12 +516,24 @@ public class CVSSSH2PreferencePage extends PreferencePage
     	}
     });
 
-    saveKeyPair=new Button(group, SWT.NULL);
-    saveKeyPair.setText(Policy.bind("CVSSSH2PreferencePage.45")); //$NON-NLS-1$
+    Composite buttons=new Composite(group, SWT.NONE);
+    layout=new GridLayout(2, true);
+    layout.marginWidth=0;
+    buttons.setLayout(layout);
     gd=new GridData(GridData.HORIZONTAL_ALIGN_END);
     gd.horizontalSpan=columnSpan;
+    buttons.setLayoutData(gd);
+    
+    keyExport=new Button(buttons, SWT.NULL);
+    keyExport.setText(Policy.bind("CVSSSH2PreferencePage.105")); //$NON-NLS-1$
+    gd=new GridData(GridData.FILL_BOTH);
+    keyExport.setLayoutData(gd);
+    
+    saveKeyPair=new Button(buttons, SWT.NULL);
+    saveKeyPair.setText(Policy.bind("CVSSSH2PreferencePage.45")); //$NON-NLS-1$
+    gd=new GridData(GridData.FILL_BOTH);
     saveKeyPair.setLayoutData(gd);
-
+    
     SelectionAdapter keygenadapter=new SelectionAdapter(){
 	public void widgetSelected(SelectionEvent e){
 	  JSch jsch=JSchSession.getJSch();
