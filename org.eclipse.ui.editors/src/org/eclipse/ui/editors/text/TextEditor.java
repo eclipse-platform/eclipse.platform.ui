@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.IStatus;
 
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -372,16 +371,6 @@ public class TextEditor extends ExtendedTextEditor {
 		if (IEncodingSupport.class.equals(adapter))
 			return fEncodingSupport;
 		return super.getAdapter(adapter);
-	}
-	
-	/*
-	 * @see AbstractTextEditor#editorContextMenuAboutToShow(IMenuManager)
-	 * @since 2.0
-	 */
-	protected void editorContextMenuAboutToShow(IMenuManager menu) {
-		super.editorContextMenuAboutToShow(menu);
-		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, ITextEditorActionConstants.SHIFT_RIGHT);
-		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, ITextEditorActionConstants.SHIFT_LEFT);
 	}
 	
 	/*
