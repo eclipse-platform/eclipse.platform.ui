@@ -8,7 +8,7 @@
    <runtime>
       <library name="text.jar">
         <export name="*"/>
-		<packages prefixes="org.eclipse.jface.text"/>
+		<packages prefixes="org.eclipse.jface.text,org.eclipse.text.edits"/>
       </library>
    </runtime>
 
