@@ -39,6 +39,9 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.IActivity;
+import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.IActivityPatternBinding;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.contexts.ContextManagerEvent;
 import org.eclipse.ui.contexts.EnabledSubmission;
@@ -50,17 +53,23 @@ import org.eclipse.ui.contexts.NotDefinedException;
 
 /**
  * A context listener which automatically opens/closes/activates views in
- * response to debug context changes.
+ * response to debug context changes and automatically enables activities
+ * as appropriate.
  * 
- * The context listener also updates for selection changes in the LaunchView,
+ * The context listener updates for selection changes in the LaunchView,
  * enabling/disabling contexts and enabling activities based on the
  * org.eclipse.debug.ui.debugModelContextBindings and
- * org.eclipse.debug.ui.debugModelActivityBindings extension points.
+ * org.eclipse.ui.activities extension points.
+ * 
+ * Activity pattern bindings with patterns of the form:
+ *   <debug model identifier>/debugModel
+ * are treated as bindings between a debug model and an activity. When
+ * an element with the specified debug model identifier is selected,
+ * the specified activity will be enabled.
  */
 public class LaunchViewContextListener implements IPartListener2, IPageListener, IPerspectiveListener, IContextManagerListener {
-	
-	public static final String ATTR_ACTIVITY_ID = "activityId"; //$NON-NLS-1$
-	public static final String ID_DEBUG_MODEL_ACTIVITY_BINDINGS = "debugModelActivityBindings"; //$NON-NLS-1$
+
+	public static final String DEBUG_MODEL_ACTIVITY_SUFFIX = "debugModel"; //$NON-NLS-1$
 	public static final String ID_CONTEXT_VIEW_BINDINGS= "contextViewBindings"; //$NON-NLS-1$
 	public static final String ID_DEBUG_MODEL_CONTEXT_BINDINGS= "debugModelContextBindings"; //$NON-NLS-1$
 	public static final String ATTR_CONTEXT_ID= "contextId"; //$NON-NLS-1$
@@ -169,7 +178,21 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 	 * identifiers in the modelToContexts map as well
 	 */
 	private void loadDebugModelContextExtensions() {
-		loadDebugModelExtensions(ID_DEBUG_MODEL_CONTEXT_BINDINGS, ATTR_CONTEXT_ID, modelsToContexts);
+		IExtensionPoint extensionPoint = DebugUIPlugin.getDefault().getDescriptor().getExtensionPoint(ID_DEBUG_MODEL_CONTEXT_BINDINGS);
+		IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
+		for (int i = 0; i < configurationElements.length; i++) {
+			IConfigurationElement element = configurationElements[i];
+			String modelIdentifier = element.getAttribute(ATTR_DEBUG_MODEL_ID);
+			String contextId = element.getAttribute(ATTR_CONTEXT_ID);
+			if (modelIdentifier != null && contextId != null) {
+				List contextIds = (List) modelsToContexts.get(modelIdentifier);
+				if (contextIds == null) {
+					contextIds = new ArrayList();
+					modelsToContexts.put(modelIdentifier, contextIds);
+				}
+				contextIds.add(contextId);
+			}
+		}
 		// add parent contexts
 		Iterator modelIds = modelsToContexts.keySet().iterator();
 		IContextManager manager = PlatformUI.getWorkbench().getContextSupport().getContextManager();
@@ -206,29 +229,24 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 	 * appropriate activities when a debug element is selected.
 	 */
 	private void loadDebugModelActivityExtensions() {
-		loadDebugModelExtensions(ID_DEBUG_MODEL_ACTIVITY_BINDINGS, ATTR_ACTIVITY_ID, modelsToActivities);
-	}
-
-	/**
-	 * Loads extensions of the given extension point which map
-	 * debug model identifiers to some value keyed to the given attributeId.
-	 * A collection of these values is stored into the given map, keyed
-	 * to the model ids.
-	 */
-	private void loadDebugModelExtensions(String extensionPointId, String attributeId, Map map) {
-		IExtensionPoint extensionPoint = DebugUIPlugin.getDefault().getDescriptor().getExtensionPoint(extensionPointId);
-		IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
-		for (int i = 0; i < configurationElements.length; i++) {
-			IConfigurationElement element = configurationElements[i];
-			String modelIdentifier = element.getAttribute(ATTR_DEBUG_MODEL_ID);
-			String value = element.getAttribute(attributeId);
-			if (modelIdentifier != null && value != null) {
-				List values = (List) map.get(modelIdentifier);
-				if (values == null) {
-					values = new ArrayList();
-					map.put(modelIdentifier, values);
+		IActivityManager activityManager = PlatformUI.getWorkbench().getActivitySupport().getActivityManager();
+		Set activityIds = activityManager.getDefinedActivityIds();
+		Iterator activityIterator = activityIds.iterator();
+		while (activityIterator.hasNext()) {
+			String activityId= (String) activityIterator.next();
+			IActivity activity = activityManager.getActivity(activityId);
+			if (activity != null) {
+				Set patternBindings = activity.getActivityPatternBindings();
+				Iterator patternIterator= patternBindings.iterator();
+				while (patternIterator.hasNext()) {
+					IActivityPatternBinding patternBinding= (IActivityPatternBinding) patternIterator.next();
+					String pattern = patternBinding.getPattern().toString();
+					int index = pattern.lastIndexOf(DEBUG_MODEL_ACTIVITY_SUFFIX);
+					if (index > 0) {
+						String debugModel= pattern.substring(0, index);
+						modelsToActivities.put(debugModel, activityId);
+					}
 				}
-				values.add(value);
 			}
 		}
 	}
