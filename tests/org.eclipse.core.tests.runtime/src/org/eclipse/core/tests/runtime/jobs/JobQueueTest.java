@@ -31,7 +31,7 @@ public class JobQueueTest extends TestCase {
 	}
 	protected void setUp() throws Exception {
 		super.setUp();
-		this.queue = new JobQueue();
+		this.queue = new JobQueue(false);
 	}
 
 	protected void tearDown() throws Exception {
