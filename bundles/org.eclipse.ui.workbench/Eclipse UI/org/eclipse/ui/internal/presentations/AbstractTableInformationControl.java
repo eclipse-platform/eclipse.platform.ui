@@ -50,6 +50,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.StringMatcher;
+import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultTabItem;
 
 /**
  * @since 3.0
@@ -83,7 +84,7 @@ public abstract class AbstractTableInformationControl {
             	return false;
             // A dirty editor's label will start with dirty prefix, this prefix 
             // should not be taken in consideration when matching with a pattern
-            String prefix = DefaultEditorPresentation.DIRTY_PREFIX;
+            String prefix = DefaultTabItem.DIRTY_PREFIX;
             if (matchName.startsWith(prefix))
                 matchName = matchName.substring(prefix.length());
             return matchName != null && matcher.match(matchName);
@@ -482,7 +483,7 @@ public abstract class AbstractTableInformationControl {
                 if(label == null)
                 	return null;
                 // remove the dirty prefix from the editor's label
-                String prefix = DefaultEditorPresentation.DIRTY_PREFIX;
+                String prefix = DefaultTabItem.DIRTY_PREFIX;
                 if (label.startsWith(prefix))
                     label = label.substring(prefix.length());
                 if (fStringMatcher.match(label))

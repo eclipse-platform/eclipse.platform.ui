@@ -1365,14 +1365,6 @@
             id="org.eclipse.ui.presentations.default">
       </factory>
    </extension>
-      <extension
-         point="org.eclipse.ui.presentationFactories">
-      <factory
-            name="%Presentation.olddefault.name"
-            class="org.eclipse.ui.internal.presentations.defaultpresentation.DefaultPresentationFactory2"
-            id="org.eclipse.ui.presentations.olddefault">
-      </factory>
-   </extension>
    <!--
       <extension
          point="org.eclipse.ui.presentationFactories">
