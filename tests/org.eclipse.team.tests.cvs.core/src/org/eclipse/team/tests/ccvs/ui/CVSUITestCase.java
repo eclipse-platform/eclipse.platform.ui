@@ -22,9 +22,9 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
@@ -32,9 +32,9 @@ import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.actions.AddToWorkspaceAction;
 import org.eclipse.team.internal.ccvs.ui.actions.CommitAction;
@@ -96,6 +96,19 @@ public class CVSUITestCase extends LoggingTestCase {
 		// disable CVS console
 		CVSProviderPlugin.getPlugin().setConsoleListener(null);
 		
+  // disable CVS markers and prompts
+  IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
+  store.setValue(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE, false);
+  CVSProviderPlugin.getPlugin().setPromptOnFileDelete(false);
+  store.setValue(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE, false);
+  CVSProviderPlugin.getPlugin().setPromptOnFolderDelete(false);
+  store.setValue(ICVSUIConstants.PREF_SHOW_MARKERS, false);
+  CVSProviderPlugin.getPlugin().setShowTasksOnAddAndDelete(false);
+
+  // disable CVS GZIP compression
+  store.setValue(ICVSUIConstants.PREF_COMPRESSION_LEVEL, 0);
+  CVSProviderPlugin.getPlugin().setCompressionLevel(0);
+
 		// wait for UI to settle
 		Util.processEventsUntil(100);
 	}
