@@ -18,10 +18,10 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
-import org.eclipse.debug.internal.core.sourcelookup.containers.ExternalArchiveSourceContainerType;
 
 /**
  * Archive source container. Returns instances of <code>ZipEntryStorage</code>
@@ -34,6 +34,11 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	private boolean fDetectRoot = false;
 	private String fRoot = null;
 	private String fArchivePath = null;
+	/**
+	 * Unique identifier for the external archive source container type
+	 * (value <code>org.eclipse.debug.core.containerType.externalArchive</code>).
+	 */
+	public static final String TYPE_ID = DebugPlugin.getUniqueIdentifier() + ".containerType.externalArchive";	 //$NON-NLS-1$
 	
 	/**
 	 * Creates an archive source container on the archive at the 
@@ -160,7 +165,7 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getType()
 	 */
 	public ISourceContainerType getType() {
-		return SourceLookupUtils.getSourceContainerType(ExternalArchiveSourceContainerType.TYPE_ID);
+		return SourceLookupUtils.getSourceContainerType(ExternalArchiveSourceContainer.TYPE_ID);
 	}
 	
 	/**

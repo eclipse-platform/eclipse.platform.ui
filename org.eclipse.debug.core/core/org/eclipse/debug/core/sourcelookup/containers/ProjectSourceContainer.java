@@ -14,10 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
-import org.eclipse.debug.internal.core.sourcelookup.containers.ProjectSourceContainerType;
 
 /**
  * A project in the workspace. Source is searched for in the root project
@@ -31,6 +31,11 @@ import org.eclipse.debug.internal.core.sourcelookup.containers.ProjectSourceCont
 public class ProjectSourceContainer extends ContainerSourceContainer {
 
 	boolean fReferencedProjects=false;
+	/**
+	 * Unique identifier for the project source container type
+	 * (value <code>org.eclipse.debug.core.containerType.project</code>).
+	 */	
+	public static final String TYPE_ID = DebugPlugin.getUniqueIdentifier() + ".containerType.project"; //$NON-NLS-1$
 	
 	/**
 	 * Constructs a project source container.
@@ -65,7 +70,7 @@ public class ProjectSourceContainer extends ContainerSourceContainer {
 	* @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getType()
 	*/
 	public ISourceContainerType getType() {
-		return SourceLookupUtils.getSourceContainerType(ProjectSourceContainerType.TYPE_ID);
+		return SourceLookupUtils.getSourceContainerType(ProjectSourceContainer.TYPE_ID);
 	}
 
 	/* (non-Javadoc)

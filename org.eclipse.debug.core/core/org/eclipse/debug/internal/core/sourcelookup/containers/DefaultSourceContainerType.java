@@ -11,9 +11,8 @@
 package org.eclipse.debug.internal.core.sourcelookup.containers;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
-import org.eclipse.debug.core.sourcelookup.containers.*;
+import org.eclipse.debug.core.sourcelookup.containers.DefaultSourceContainer;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 import org.w3c.dom.Document;
@@ -27,12 +26,6 @@ import org.w3c.dom.Node;
  * @since 3.0
  */
 public class DefaultSourceContainerType extends AbstractSourceContainerTypeDelegate {
-	
-	/**
-	 * Unique identifier for the directory source container type
-	 * (value <code>org.eclipse.debug.core.containerType.default</code>).
-	 */
-	public static final String TYPE_ID = DebugPlugin.getUniqueIdentifier() + ".containerType.default"; //$NON-NLS-1$
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#getMemento(org.eclipse.debug.internal.core.sourcelookup.ISourceContainer)

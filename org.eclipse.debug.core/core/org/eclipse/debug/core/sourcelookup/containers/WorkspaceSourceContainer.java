@@ -13,11 +13,11 @@ package org.eclipse.debug.core.sourcelookup.containers;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
-import org.eclipse.debug.internal.core.sourcelookup.containers.WorkspaceSourceContainerType;
 
 /**
  * All projects in the workspace.
@@ -28,6 +28,12 @@ import org.eclipse.debug.internal.core.sourcelookup.containers.WorkspaceSourceCo
  */
 public class WorkspaceSourceContainer extends CompositeSourceContainer {
 	
+	/**
+	 * Unique identifier for the workspace source container type
+	 * (value <code>org.eclipse.debug.core.containerType.workspace</code>).
+	 */
+	public static final String TYPE_ID = DebugPlugin.getUniqueIdentifier() + ".containerType.workspace"; //$NON-NLS-1$
+
 	public WorkspaceSourceContainer() {
 	}	
 
@@ -56,7 +62,7 @@ public class WorkspaceSourceContainer extends CompositeSourceContainer {
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getType()
 	 */
 	public ISourceContainerType getType() {
-		return SourceLookupUtils.getSourceContainerType(WorkspaceSourceContainerType.TYPE_ID);
+		return SourceLookupUtils.getSourceContainerType(WorkspaceSourceContainer.TYPE_ID);
 	}
 
 	/* (non-Javadoc)

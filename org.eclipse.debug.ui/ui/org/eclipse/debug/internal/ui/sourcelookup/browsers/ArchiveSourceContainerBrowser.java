@@ -13,7 +13,6 @@ package org.eclipse.debug.internal.ui.sourcelookup.browsers;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
@@ -21,7 +20,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.containers.ArchiveSourceContainer;
-import org.eclipse.debug.internal.core.sourcelookup.containers.ArchiveSourceContainerType;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;
@@ -66,7 +64,7 @@ public class ArchiveSourceContainerBrowser implements ISourceContainerBrowser {
 		List jars = new ArrayList();
 		for (int i = 0; i < containers.length; i++) {
 			ISourceContainer container = containers[i];
-			if (container.getType().getId().equals(ArchiveSourceContainerType.TYPE_ID)) {
+			if (container.getType().getId().equals(ArchiveSourceContainer.TYPE_ID)) {
 				jars.add(container);
 			}
 		}

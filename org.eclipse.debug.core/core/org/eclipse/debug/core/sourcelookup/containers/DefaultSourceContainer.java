@@ -19,7 +19,6 @@ import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
-import org.eclipse.debug.internal.core.sourcelookup.containers.DefaultSourceContainerType;
 
 /**
  * A source container that can be used as the root container for default source containers.
@@ -30,6 +29,12 @@ import org.eclipse.debug.internal.core.sourcelookup.containers.DefaultSourceCont
  */
 public class DefaultSourceContainer extends CompositeSourceContainer {  
 	
+	/**
+	 * Unique identifier for the default source container type
+	 * (value <code>org.eclipse.debug.core.containerType.default</code>).
+	 */
+	public static final String TYPE_ID = DebugPlugin.getUniqueIdentifier() + ".containerType.default"; //$NON-NLS-1$
+
 	/**
 	 * Constructs a default source container. 
 	 */
@@ -69,7 +74,7 @@ public class DefaultSourceContainer extends CompositeSourceContainer {
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getType()
 	 */
 	public ISourceContainerType getType() {
-		return SourceLookupUtils.getSourceContainerType(DefaultSourceContainerType.TYPE_ID);
+		return SourceLookupUtils.getSourceContainerType(DefaultSourceContainer.TYPE_ID);
 	}
 	
 	/**

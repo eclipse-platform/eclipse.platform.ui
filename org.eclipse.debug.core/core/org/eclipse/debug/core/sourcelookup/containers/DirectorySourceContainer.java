@@ -15,10 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
-import org.eclipse.debug.internal.core.sourcelookup.containers.DirectorySourceContainerType;
 
 /**
  * A folder in the local file system. Source elements returned
@@ -34,6 +34,11 @@ public class DirectorySourceContainer extends CompositeSourceContainer {
 	private File fDirectory;
 	// whether to search subfolders
 	private boolean fSubfolders = false;
+	/**
+	 * Unique identifier for the directory source container type
+	 * (value <code>org.eclipse.debug.core.containerType.directory</code>).
+	 */
+	public static final String TYPE_ID = DebugPlugin.getUniqueIdentifier() + ".containerType.directory"; //$NON-NLS-1$
 	
 	/**
 	 * Consutructs an external folder container for the
@@ -82,7 +87,7 @@ public class DirectorySourceContainer extends CompositeSourceContainer {
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getType()
 	 */
 	public ISourceContainerType getType() {
-		return SourceLookupUtils.getSourceContainerType(DirectorySourceContainerType.TYPE_ID);
+		return SourceLookupUtils.getSourceContainerType(DirectorySourceContainer.TYPE_ID);
 	}
 
 	/* (non-Javadoc)

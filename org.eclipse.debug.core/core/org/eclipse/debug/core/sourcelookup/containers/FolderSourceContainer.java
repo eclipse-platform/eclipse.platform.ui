@@ -11,9 +11,9 @@
 package org.eclipse.debug.core.sourcelookup.containers;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
-import org.eclipse.debug.internal.core.sourcelookup.containers.FolderSourceContainerType;
 
 /**
  * A folder in the workspace. Source elements are searched
@@ -22,6 +22,13 @@ import org.eclipse.debug.internal.core.sourcelookup.containers.FolderSourceConta
  * @since 3.0
  */
 public class FolderSourceContainer extends ContainerSourceContainer {
+
+	/**
+	 * Unique identifier for the folder source container type
+	 * (value <code>org.eclipse.debug.core.containerType.folder</code>).
+	 */
+	public static final String TYPE_ID = DebugPlugin.getUniqueIdentifier() + ".containerType.folder";	 //$NON-NLS-1$
+
 
 	/**
 	 * Constructs a source container on the given folder. 
@@ -38,7 +45,7 @@ public class FolderSourceContainer extends ContainerSourceContainer {
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getType()
 	 */
 	public ISourceContainerType getType() {
-		return SourceLookupUtils.getSourceContainerType(FolderSourceContainerType.TYPE_ID);
+		return SourceLookupUtils.getSourceContainerType(FolderSourceContainer.TYPE_ID);
 	}
 	
 }

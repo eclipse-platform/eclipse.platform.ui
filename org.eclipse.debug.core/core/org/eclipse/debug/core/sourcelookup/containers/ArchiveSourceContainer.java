@@ -11,9 +11,9 @@
 package org.eclipse.debug.core.sourcelookup.containers;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
-import org.eclipse.debug.internal.core.sourcelookup.containers.ArchiveSourceContainerType;
 
 /**
  * Archive source container for an archive in the workspace. Returns instances
@@ -24,6 +24,11 @@ import org.eclipse.debug.internal.core.sourcelookup.containers.ArchiveSourceCont
 public class ArchiveSourceContainer extends ExternalArchiveSourceContainer {
 	
 	private IFile fFile;
+	/**
+	 * Unique identifier for the archive source container type
+	 * (value <code>org.eclipse.debug.core.containerType.archive</code>).
+	 */
+	public static final String TYPE_ID = DebugPlugin.getUniqueIdentifier() + ".containerType.archive";	 //$NON-NLS-1$
 	
 	/**
 	 * Creates an archive source container on the given file. 
@@ -65,7 +70,7 @@ public class ArchiveSourceContainer extends ExternalArchiveSourceContainer {
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#getType()
 	 */
 	public ISourceContainerType getType() {
-		return SourceLookupUtils.getSourceContainerType(ArchiveSourceContainerType.TYPE_ID);
+		return SourceLookupUtils.getSourceContainerType(ArchiveSourceContainer.TYPE_ID);
 	}
 	
 	/* (non-Javadoc)
