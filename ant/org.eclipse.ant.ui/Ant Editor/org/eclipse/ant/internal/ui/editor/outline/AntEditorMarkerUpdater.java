@@ -16,17 +16,42 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 
 public class AntEditorMarkerUpdater {
+	
+	class AntEditorMarkerUpdaterJob extends WorkspaceJob {
+		
+		private final List fProblems;
+
+		public AntEditorMarkerUpdaterJob (List problems) {
+			super("Ant editor marker updater job"); //$NON-NLS-1$
+			fProblems= problems;
+			setSystem(true);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.internal.resources.WorkspaceJob#runInWorkspace(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		public IStatus runInWorkspace(IProgressMonitor monitor) {
+			updateMarkers0(fProblems);
+			return new Status(IStatus.OK, AntUIPlugin.getUniqueIdentifier(), IStatus.OK, "", null); //$NON-NLS-1$
+		}
+	}
 	
 	private AntModel fModel= null;
 	private List fCollectedProblems= new ArrayList();
@@ -55,7 +80,7 @@ public class AntEditorMarkerUpdater {
 		try {
 			file.deleteMarkers(BUILDFILE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 		} catch (CoreException e) {
-			// assume there were no problems
+			AntUIPlugin.log(e);
 		}
 	}
 	
@@ -64,7 +89,8 @@ public class AntEditorMarkerUpdater {
 		Map attributes= getMarkerAttributes(problem);
 		try {
 			MarkerUtilities.createMarker(file, attributes, BUILDFILE_PROBLEM_MARKER);
-		} catch (CoreException e) {			
+		} catch (CoreException e) {
+			AntUIPlugin.log(e);
 		} 
 	}
 	
@@ -73,18 +99,32 @@ public class AntEditorMarkerUpdater {
 	}
 	
 	public synchronized void updateMarkers() {
+		IFile file = getFile();
+		if (file != null) {
+			List problems = new ArrayList(fCollectedProblems.size());
+			Iterator e= fCollectedProblems.iterator();
+			while (e.hasNext()) {
+				problems.add(e.next());
+			}
+			fCollectedProblems.clear();
+			AntEditorMarkerUpdaterJob job = new AntEditorMarkerUpdaterJob(problems);
+			job.setRule(ResourcesPlugin.getWorkspace().getRuleFactory().markerRule(file));
+			job.schedule();
+		}
+	}
+	
+	private void updateMarkers0(List problems) {
 		removeProblems();
 		if (!shouldAddMarkers()) {
 			return;
 		}
 
-		if (fCollectedProblems.size() > 0) {
-			Iterator e= fCollectedProblems.iterator();
+		if (problems.size() > 0) {
+			Iterator e= problems.iterator();
 			while (e.hasNext()) {
 				IProblem problem= (IProblem) e.next();
 				createMarker(problem);
 			}
-			fCollectedProblems.clear();
 		}
 	}
 	
