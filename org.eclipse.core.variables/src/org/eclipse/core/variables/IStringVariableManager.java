@@ -13,7 +13,7 @@ package org.eclipse.core.variables;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Regisitry for string variables.
+ * Registry for string variables.
  * 
  * @since 3.0
  */
@@ -21,7 +21,7 @@ public interface IStringVariableManager {
 
 	/**
 	 * Simple identifier constant (value <code>"dynamicVariables"</code>) for the
-	 * context variables extension point.
+	 * dynamic variables extension point.
 	 */
 	public static final String EXTENSION_POINT_DYNAMIC_VARIABLES = "dynamicVariables"; //$NON-NLS-1$
 	
@@ -87,7 +87,7 @@ public interface IStringVariableManager {
 	/**
 	 * Recursively resolves and replaces all variable references in the given
 	 * expression with their corresponding values. Allows the client to control
-	 * whether references to undefeind variables are reported as an error (i.e.
+	 * whether references to undefined variables are reported as an error (i.e.
 	 * an exception is thrown).  
 	 * 
 	 * @param expression expression referencing variables
