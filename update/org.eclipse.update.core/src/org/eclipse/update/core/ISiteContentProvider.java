@@ -38,7 +38,7 @@ public interface ISiteContentProvider {
 	 * Returns a URL for the identified archive. 
 	 * 
 	 * @param id archive identifier
-	 * @return archive URL
+	 * @return archive URL, or <code>null</code>.
 	 * @exception CoreException 
 	 * @since 2.0 
 	 */
