@@ -126,7 +126,7 @@ public class TreeViewerNavigator implements INavigate {
 		if (children.length == 0)
 			return null;
 		TreeItem child= children[0];
-		;
+
 		if (hasMatches(child))
 			return child;
 		return getFirstChildWithMatches(child);
