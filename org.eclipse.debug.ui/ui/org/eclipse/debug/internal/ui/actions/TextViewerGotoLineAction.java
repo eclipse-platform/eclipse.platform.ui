@@ -14,7 +14,6 @@ package org.eclipse.debug.internal.ui.actions;
 import java.text.MessageFormat;
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.views.console.ConsoleViewer;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.text.BadLocationException;
@@ -53,7 +52,7 @@ public class TextViewerGotoLineAction extends TextViewerAction {
 	/**
 	 * Constructs a goto line action for the console using the provided resource bundle
 	 */
-	public TextViewerGotoLineAction(ConsoleViewer viewer) {
+	public TextViewerGotoLineAction(ITextViewer viewer) {
 		super(viewer, -1);
 		fTextViewer= viewer;
 		setText(ActionMessages.getString("TextViewerGotoLineAction.Go_to_&Line...@Ctrl+L_4")); //$NON-NLS-1$
