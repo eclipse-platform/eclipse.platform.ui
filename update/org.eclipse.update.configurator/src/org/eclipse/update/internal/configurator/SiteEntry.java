@@ -132,11 +132,52 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 			}
 			return (String[]) detectedPlugins.toArray(new String[0]);
 		}
+		
+		if (policy.getType() == ISitePolicy.MANAGED_ONLY) {
+			PluginEntry[] managedPlugins = getManagedPlugins();
+			String[] managedPluginsURLs = new String[managedPlugins.length];
+			for (int i=0; i<managedPlugins.length; i++)
+				managedPluginsURLs[i] = managedPlugins[i].getURL();
+			
+			return managedPluginsURLs;
+		}
 
 		// bad policy type
 		return new String[0];
 	}
 
+	private PluginEntry[] getManagedPlugins() {
+		// Note:
+		// We detect all the plugins on the site, but it would be faster
+		// to just lookup the plugins that correspond to the entries found in each feature.
+		// TODO fix the above
+		if (pluginEntries == null)
+			detectPlugins();
+		if (featureEntries == null)
+			detectFeatures();
+		
+		// cache all the plugin entries for faster lookup later
+		Map cachedPlugins = new HashMap(pluginEntries.size());
+		for (int i=0; i<pluginEntries.size(); i++) {
+			PluginEntry p = (PluginEntry)pluginEntries.get(i);
+			cachedPlugins.put(p.getVersionedIdentifier(), p);
+		}
+		
+		ArrayList managedPlugins = new ArrayList();
+		for (Iterator iterator=featureEntries.values().iterator(); iterator.hasNext();) {
+			Object feature = iterator.next();
+			if (!(feature instanceof FeatureEntry))
+				continue;
+			
+			PluginEntry[] plugins = ((FeatureEntry)feature).getPluginEntries();
+			for (int i=0; i<plugins.length; i++)
+				if (cachedPlugins.containsKey(plugins[i].getVersionedIdentifier()))
+					managedPlugins.add(cachedPlugins.get(plugins[i].getVersionedIdentifier()));
+					
+		}
+		return (PluginEntry[])managedPlugins.toArray(new PluginEntry[managedPlugins.size()]);
+	}
+	
 	public PluginEntry[] getPluginEntries() {
 		String[] pluginURLs = getPlugins();
 		// hash the array, for faster lookups

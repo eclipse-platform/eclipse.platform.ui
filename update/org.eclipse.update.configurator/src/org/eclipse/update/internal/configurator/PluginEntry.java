@@ -154,4 +154,11 @@ public class PluginEntry {
 		PluginEntry e = (PluginEntry) object;
 		return getVersionedIdentifier().equals(e.getVersionedIdentifier());
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return getVersionedIdentifier().hashCode();
+	}
 }

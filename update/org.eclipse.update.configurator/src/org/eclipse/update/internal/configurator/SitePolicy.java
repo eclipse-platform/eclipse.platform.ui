@@ -22,7 +22,7 @@ public class SitePolicy implements IPlatformConfiguration.ISitePolicy {
 	public SitePolicy() {
 	}
 	public SitePolicy(int type, String[] list) {
-		if (type != ISitePolicy.USER_INCLUDE && type != ISitePolicy.USER_EXCLUDE)
+		if (type != ISitePolicy.USER_INCLUDE && type != ISitePolicy.USER_EXCLUDE && type != ISitePolicy.MANAGED_ONLY)
 			throw new IllegalArgumentException();
 		this.type = type;
 

@@ -271,6 +271,10 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 	 * are not referenced by any configured features.
 	 */
 	public String[] getPluginPath(ISite site) throws CoreException {
+		// TODO we may need to exclude patched plugins here, but this should be good enough for now
+		if (getPolicy() == IPlatformConfiguration.ISitePolicy.MANAGED_ONLY)
+			return new String[0];
+			
 		String[] pluginPaths;
 		// Note: Since 3.0M7 we leave patched features configured,
 		// and take this into account when computing configured plugins

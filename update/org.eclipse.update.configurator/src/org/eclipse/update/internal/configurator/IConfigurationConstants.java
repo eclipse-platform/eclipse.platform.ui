@@ -23,7 +23,7 @@ public interface IConfigurationConstants {
 	public static final String CFG_SITE = "site"; //$NON-NLS-1$
 	public static final String CFG_URL = "url"; //$NON-NLS-1$
 	public static final String CFG_POLICY = "policy"; //$NON-NLS-1$
-	public static final String[] CFG_POLICY_TYPE = { "USER-INCLUDE", "USER-EXCLUDE" }; //$NON-NLS-1$ //$NON-NLS-2$
+	public static final String[] CFG_POLICY_TYPE = { "USER-INCLUDE", "USER-EXCLUDE", "MANAGED-ONLY" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	public static final String CFG_POLICY_TYPE_UNKNOWN = "UNKNOWN"; //$NON-NLS-1$
 	public static final String CFG_LIST = "list"; //$NON-NLS-1$
 	public static final String CFG_STAMP = "stamp"; //$NON-NLS-1$

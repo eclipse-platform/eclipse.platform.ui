@@ -178,6 +178,12 @@ public interface IPlatformConfiguration {
 		 * or fragment.xml <b>relative</b> to the site URL
 		 */
 		public static final int USER_EXCLUDE = 1;
+		
+		/**
+		 * When this site policy is used, only plug-ins specified by the configured features
+		 * are contributed to the runtime.
+		 */
+		public static final int MANAGED_ONLY = 2;
 
 		/**
 		 * Return policy type

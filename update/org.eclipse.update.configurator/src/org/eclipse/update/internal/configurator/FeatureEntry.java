@@ -78,6 +78,12 @@ public class FeatureEntry
 		plugins.add(plugin);
 	}
 	
+	public PluginEntry[] getPluginEntries() {
+		if (plugins == null)
+			fullParse();
+		return (PluginEntry[])plugins.toArray(new PluginEntry[plugins.size()]);
+	}
+	
 	/**
 	 * Sets the url string (relative to the site url)
 	 * @param url

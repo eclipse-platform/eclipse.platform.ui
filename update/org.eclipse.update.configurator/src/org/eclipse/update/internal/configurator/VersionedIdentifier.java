@@ -150,4 +150,17 @@ public class VersionedIdentifier {
 			this.service == other.service &&
 			compareQualifiers(this.qualifier, other.qualifier) == EQUAL;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return (identifier + "_" + version).hashCode();
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return identifier + "_" + version;
+	}
 }
