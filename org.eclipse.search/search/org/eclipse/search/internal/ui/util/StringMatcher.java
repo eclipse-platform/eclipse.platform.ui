@@ -110,8 +110,9 @@ public class StringMatcher {
 			return new Position (start, end);
 					
 		int curPos = start;
-		int matchStart = -1;  
-		for (int i = 0; i < segCount && curPos < end; ++i) {
+		int matchStart = -1;
+		int i;
+		for (i= 0; i < segCount && curPos < end; ++i) {
 			String current = fSegments[i];
 			int nextMatch = regExpPosIn(text, curPos, end, current);
 			if (nextMatch < 0 )
@@ -120,6 +121,8 @@ public class StringMatcher {
 				matchStart = nextMatch;
 			curPos = nextMatch + current.length();
 		}
+		if (i < segCount)
+			return null;
 		return new Position(matchStart, curPos);
 	}
 	/**
