@@ -214,6 +214,26 @@ public interface IWorkbenchPage extends IPartService, ISelectionService, ICompat
 	 *         <code>false</code> if at least one is still open
 	 */
 	public boolean closeAllEditors(boolean save);
+	
+	/**
+	 * Closes the given <code>Array</code> of editor references. The editors must 
+	 * belong to this workbench page.  
+	 * <p>
+	 * If any of the editors have unsaved content and <code>save</code> is <code>true</code>,
+	 * the user will be given the opportunity to save them.
+	 * </p>
+	 * 
+	 * @param editorRefs
+	 *            the editors to close
+	 * @param save
+	 *            <code>true</code> to save the editor contents if required
+	 *            (recommended), and <code>false</code> to discard any
+	 *            unsaved changes
+	 * @return <code>true</code> if the editors were successfully closed, and
+	 *         <code>false</code> if the editors are still open
+	 */
+	public boolean closeEditors(IEditorReference[] editorRefs, boolean save);
+	
 	/**
 	 * Closes the given editor. The editor must belong to this workbench page.
 	 * <p>
