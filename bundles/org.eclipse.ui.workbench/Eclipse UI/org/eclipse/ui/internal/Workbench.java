@@ -546,7 +546,7 @@ public final class Workbench implements IWorkbench {
                                 IEditorPart editors[] = page.getDirtyEditors();
                                 for (int k = 0; k < editors.length; k++) {
                                     IEditorPart editor = editors[k];
-                                    if (editor.isDirty()) {
+                                    if (editor.isSaveOnCloseNeeded()) {
                                         if (!dirtyEditorsInput.contains(editor
                                                 .getEditorInput())) {
                                             dirtyEditors.add(editor);
