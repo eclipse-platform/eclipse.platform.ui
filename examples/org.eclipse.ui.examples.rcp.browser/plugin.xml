@@ -3,11 +3,11 @@
 <plugin
    id="org.eclipse.ui.examples.rcp.browser"
    name="Browser Example"
-   version="3.0.0">
+   version="3.0.0"
+   provider-name="Eclipse.org">
 
    <runtime>
       <library name="browser.jar">
-         <export name="*"/>
       </library>
    </runtime>
    <requires>
@@ -17,7 +17,7 @@
 
    <extension
          id="app"
-         name="Browse Example App"
+         name="%appName"
          point="org.eclipse.core.runtime.applications">
       <application>
          <run
@@ -28,7 +28,7 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            name="Browser Example"
+            name="%perspectives.browser.name"
             class="org.eclipse.ui.examples.rcp.browser.BrowserPerspectiveFactory"
             id="org.eclipse.ui.examples.rcp.browser.browserPerspective"
             fixed="true">
@@ -37,7 +37,7 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            name="Browser"
+            name="%views.browser.name"
             icon="icons/sample.gif"
             class="org.eclipse.ui.examples.rcp.browser.BrowserView"
             id="org.eclipse.ui.examples.rcp.browser.browserView">
