@@ -18,7 +18,6 @@ public class BuildManager implements ICoreConstants, IManager {
 	protected ElementTree currentTree;
 	protected ElementTree lastBuiltTree;
 	protected InternalBuilder currentBuilder;
-	protected List createdDeltas = new ArrayList(5);
 	protected boolean needNextTree;
 
 	public static boolean DEBUG_BUILD = false;
@@ -84,7 +83,6 @@ void basicBuild(final IProject project, final int trigger, final IncrementalProj
 			}
 		}
 	} finally {
-		destroyDeltas();
 		currentBuilder = null;
 		currentTree = null;
 		lastBuiltTree = null;
@@ -224,12 +222,7 @@ public Map createBuildersPersistentInfo(IProject project) throws CoreException {
 }
 public void deleting(IProject project) {
 }
-protected void destroyDeltas() {
-	for (Iterator i = createdDeltas.iterator(); i.hasNext();) {
-		((ResourceDelta) i.next()).destroy();
-	}
-	createdDeltas.clear();
-}
+
 public IncrementalProjectBuilder getBuilder(String builderName, IProject project) throws CoreException {
 	Hashtable builders = getBuilders(project);
 	IncrementalProjectBuilder result = (IncrementalProjectBuilder) builders.get(builderName);
@@ -275,7 +268,6 @@ public IResourceDelta getDelta(IProject project) {
 	}
 	
 	IResourceDelta result = ResourceDeltaFactory.computeDelta(workspace, lastBuiltTree, currentTree, interestingProject.getFullPath(), false);
-	createdDeltas.add(result);
 	if (DEBUG_BUILD && result == null) 
 		System.out.println("Build: no delta " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath());
 	return result;
