@@ -16,7 +16,6 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.update.internal.ui.UpdateUI;
 
 /**
  * @author wassimm
