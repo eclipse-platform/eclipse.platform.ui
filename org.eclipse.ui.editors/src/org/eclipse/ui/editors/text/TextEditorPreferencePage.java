@@ -12,15 +12,15 @@ Contributors:
 package org.eclipse.ui.editors.text;
 
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FontFieldEditor;
@@ -75,7 +75,7 @@ public class TextEditorPreferencePage extends FieldEditorPreferencePage implemen
 	 * @see FieldEditorPreferencePage#createFieldEditors
 	 */
 	public void createFieldEditors() {
-		addField(new FontFieldEditor(AbstractTextEditor.PREFERENCE_FONT, TextEditorMessages.getString("PreferencePage.fontEditor"), getFieldEditorParent())); //$NON-NLS-1$
+		addField(new FontFieldEditor(JFaceResources.TEXT_FONT, TextEditorMessages.getString("PreferencePage.fontEditor"), getFieldEditorParent())); //$NON-NLS-1$
 	}
 
 	/*
@@ -100,7 +100,7 @@ public class TextEditorPreferencePage extends FieldEditorPreferencePage implemen
 		if (font != null) {
 			FontData[] data= font.getFontData();
 			if (data != null && data.length > 0)
-				PreferenceConverter.setDefault(store, AbstractTextEditor.PREFERENCE_FONT, data[0]);
+				PreferenceConverter.setDefault(store, JFaceResources.TEXT_FONT, data[0]);
 		}
 		
 		Display display= Display.getDefault();
