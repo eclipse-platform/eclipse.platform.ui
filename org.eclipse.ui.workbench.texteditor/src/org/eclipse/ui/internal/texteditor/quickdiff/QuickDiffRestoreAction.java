@@ -39,6 +39,7 @@ import org.eclipse.ui.texteditor.TextEditorAction;
 public abstract class QuickDiffRestoreAction extends TextEditorAction {
 	
 	private int fLastLine= -1;
+	private final boolean fIsRulerAction;
 
 	/**
 	 * Creates a new instance.
@@ -46,9 +47,11 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 	 * @param bundle the resource bundle
 	 * @param prefix a prefix to be prepended to the various resource keys
 	 * @param editor the editor this action belongs to
+	 * @param isRulerAction <code>true</code> if this is a ruler action
 	 */
-	QuickDiffRestoreAction(ResourceBundle bundle, String prefix, ITextEditor editor) {
+	QuickDiffRestoreAction(ResourceBundle bundle, String prefix, ITextEditor editor, boolean isRulerAction) {
 		super(bundle, prefix, editor);
+		fIsRulerAction= isRulerAction;
 	}
 	
 	/**
@@ -78,26 +81,40 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 	/*
 	 * @see org.eclipse.jface.action.IAction#isEnabled()
 	 */
-	public final boolean isEnabled() {
-		return isEnabled(false);
+	public boolean isEnabled() {
+		if (!fIsRulerAction)
+			setEnabled(computeEnablement());
+		
+		return super.isEnabled();
+	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.IUpdate#update()
+	 */
+	public void update() {
+		/*
+		 * Update only works if we're updated from the ruler action
+		 * (see AbstractDecoratedTextEditor.rulerContextMenuAboutToShow).
+		 */
+		super.update();
+		
+		setEnabled(computeEnablement());
 	}
 	
 	/**
 	 * Computes, caches and returns the internal state, including enablement.
 	 * 
-	 * @param useRulerInfo <code>true</code> if the last ruler activity line
-	 *        should be taken into account
 	 * @return <code>true</code> if the action is enabled, <code>false</code>
 	 *         if it is not
 	 */
-	public boolean isEnabled(boolean useRulerInfo) {
+	protected boolean computeEnablement() {
 		if (!super.isEnabled())
 			return false;
 
 		if (!canModifyEditor())
 			return false;
 		
-		fLastLine= computeLine(useRulerInfo);
+		fLastLine= computeLine(fIsRulerAction);
 		return true;
 	}
 

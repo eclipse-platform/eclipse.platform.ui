@@ -37,23 +37,25 @@ public class RestoreAction extends QuickDiffRestoreAction {
 	 * Creates a new instance.
 	 * 
 	 * @param editor the editor this action belongs to
+	 * @param isRulerAction <code>true</code> if this is a ruler action
 	 */
-	public RestoreAction(ITextEditor editor) {
-		super(QuickDiffMessages.getResourceBundle(), PREFIX, editor);
+	public RestoreAction(ITextEditor editor, boolean isRulerAction) {
+		super(QuickDiffMessages.getResourceBundle(), PREFIX, editor, isRulerAction);
 	}
 
 	/*
-	 * @see org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffRestoreAction#isEnabled(boolean)
+	 * @see org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffRestoreAction#computeEnablement()
 	 */
-	public boolean isEnabled(boolean useRulerInfo) {
-		if (!super.isEnabled(useRulerInfo))
-			return false;
-		
-		ILineDiffer differ= getDiffer();
-		if (differ == null)
+	public boolean computeEnablement() {
+		if (!super.computeEnablement())
 			return false;
 		
 		fLine= getLastLine();
+		if (fLine == -1)
+			return false;
+		ILineDiffer differ= getDiffer();
+		if (differ == null)
+			return false;
 		ILineDiffInfo info= differ.getLineInfo(fLine);
 		if (info == null || (info.getRemovedLinesAbove() <= 0 && info.getRemovedLinesBelow() <= 0))
 			return false;
@@ -67,7 +69,7 @@ public class RestoreAction extends QuickDiffRestoreAction {
 //			&& fMousePosition.y % lineHeight <= lineHeight / 2) {
 //			fLine--;
 //			}
-			// take the one below for now TODO adjust to old viewer-dependent behaviour
+			// take the one below for now TODO adjust to old viewer-dependent behavior
 		}
 		info= differ.getLineInfo(fLine);
 		if (info.getRemovedLinesBelow() == 1)

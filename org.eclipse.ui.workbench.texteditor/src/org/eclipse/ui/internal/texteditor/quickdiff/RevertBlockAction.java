@@ -34,23 +34,25 @@ public class RevertBlockAction extends QuickDiffRestoreAction {
 	 * Creates a new instance.
 	 * 
 	 * @param editor the editor this action belongs to
+	 * @param isRulerAction <code>true</code> if this is a ruler action
 	 */	
-	public RevertBlockAction(ITextEditor editor) {
-		super(QuickDiffMessages.getResourceBundle(), PREFIX, editor);
+	public RevertBlockAction(ITextEditor editor, boolean isRulerAction) {
+		super(QuickDiffMessages.getResourceBundle(), PREFIX, editor, isRulerAction);
 	}
 
 	/*
-	 * @see org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffRestoreAction#isEnabled(boolean)
+	 * @see org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffRestoreAction#computeEnablement()
 	 */
-	public boolean isEnabled(boolean useRulerInfo) {
-		if (!super.isEnabled(useRulerInfo))
-			return false;
-		
-		ILineDiffer differ= getDiffer();
-		if (differ == null)
+	public boolean computeEnablement() {
+		if (!super.computeEnablement())
 			return false;
 		
 		fLine= getLastLine();
+		if (fLine == -1)
+			return false;
+		ILineDiffer differ= getDiffer();
+		if (differ == null)
+			return false;
 		ILineDiffInfo info= differ.getLineInfo(fLine);
 		if (info == null || info.getChangeType() == ILineDiffInfo.UNCHANGED)
 			return false;

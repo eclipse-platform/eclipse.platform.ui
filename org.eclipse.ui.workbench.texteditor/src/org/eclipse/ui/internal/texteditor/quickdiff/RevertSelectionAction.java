@@ -34,16 +34,17 @@ public class RevertSelectionAction extends QuickDiffRestoreAction {
 	 * Creates a new instance.
 	 * 
 	 * @param editor the editor this action belongs to
+	 * @param isRulerAction <code>true</code> if this is a ruler action
 	 */
-	public RevertSelectionAction(ITextEditor editor) {
-		super(QuickDiffMessages.getResourceBundle(), "RevertSelectionAction.", editor); //$NON-NLS-1$
+	public RevertSelectionAction(ITextEditor editor, boolean isRulerAction) {
+		super(QuickDiffMessages.getResourceBundle(), "RevertSelectionAction.", editor, isRulerAction); //$NON-NLS-1$
 	}
 
 	/*
-	 * @see org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffRestoreAction#isEnabled(boolean)
+	 * @see org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffRestoreAction#computeEnablement()
 	 */
-	public boolean isEnabled(boolean useRulerInfo) {
-		if (!super.isEnabled(useRulerInfo))
+	public boolean computeEnablement() {
+		if (!super.computeEnablement())
 			return false;
 
 		ITextSelection selection= getSelection();
@@ -53,7 +54,7 @@ public class RevertSelectionAction extends QuickDiffRestoreAction {
 		fEndLine= selection.getEndLine();
 		// only enable if mouse activity is inside line range
 		int activityLine= getLastLine();
-		if (activityLine < fStartLine || activityLine > fEndLine + 1)
+		if (activityLine == -1 || activityLine < fStartLine || activityLine > fEndLine + 1)
 			// + 1 to cover the case where the selection goes to the offset of the next line
 			return false;
 		ILineDiffer differ= getDiffer();

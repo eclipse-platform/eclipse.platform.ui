@@ -54,10 +54,10 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 	/** The restore actions associated with this toggle action. */
 	QuickDiffRestoreAction[] fRestoreActions= 
 		new QuickDiffRestoreAction[] { 
-			new RevertSelectionAction(fEditor), 
-			new RevertBlockAction(fEditor), 
-			new RevertLineAction(fEditor), 
-			new RestoreAction(fEditor)
+			new RevertSelectionAction(fEditor, true), 
+			new RevertBlockAction(fEditor, true), 
+			new RevertLineAction(fEditor, true), 
+			new RestoreAction(fEditor, true),
 		};
 		
 	/** The menu listener that adds the ruler context menu. */

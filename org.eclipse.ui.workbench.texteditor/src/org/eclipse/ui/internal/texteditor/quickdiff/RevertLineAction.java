@@ -38,16 +38,17 @@ public class RevertLineAction extends QuickDiffRestoreAction {
 	 * Creates a new instance.
 	 * 
 	 * @param editor the editor this action belongs to
+	 * @param isRulerAction <code>true</code> if this is a ruler action
 	 */
-	public RevertLineAction(ITextEditor editor) {
-		super(QuickDiffMessages.getResourceBundle(), PREFIX, editor);
+	public RevertLineAction(ITextEditor editor, boolean isRulerAction) {
+		super(QuickDiffMessages.getResourceBundle(), PREFIX, editor, isRulerAction);
 	}
 
 	/*
-	 * @see org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffRestoreAction#isEnabled(boolean)
+	 * @see org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffRestoreAction#computeEnablement()
 	 */
-	public boolean isEnabled(boolean useRulerInfo) {
-		if (!super.isEnabled(useRulerInfo))
+	public boolean computeEnablement() {
+		if (!super.computeEnablement())
 			return false;
 
 		fLine= getLastLine();
