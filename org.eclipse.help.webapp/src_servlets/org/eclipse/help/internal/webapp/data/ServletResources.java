@@ -44,7 +44,7 @@ public class ServletResources {
 		if (amp <= 0) {
 			return property;
 		}
-		return property.substring(0, amp - 1)
+		return property.substring(0, amp)
 			+ property.substring(amp + 1, property.length());
 	}
 
