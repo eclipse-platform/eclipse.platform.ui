@@ -24,6 +24,11 @@ public class UrlUtil {
 	private static final String invalidXML[] = { "&", ">", "<", "\"" };
 	private static final String escapedXML[] =
 		{ "&amp;", "&gt;", "&lt;", "&quot;" };
+	// Default locale to use for serving requests to help
+	private static String defaultLocale;
+	// Locales that infocenter can serve in addition to the default locale.
+	// null indicates that infocenter can serve every possible client locale.
+	private static Collection locales;
 
 	/**
 	 * Encodes string for embedding in JavaScript source
@@ -156,16 +161,107 @@ public class UrlUtil {
 	}
 
 	public static String getLocale(HttpServletRequest request) {
-		String locale = null;
-		if ((HelpSystem.getMode() == HelpSystem.MODE_INFOCENTER)
-			&& request != null)
-			locale = request.getLocale().toString();
-		else
-			locale = BootLoader.getNL();
+		if (defaultLocale == null) {
+			initializeLocales();
+		}
+		if ((HelpSystem.getMode() != HelpSystem.MODE_INFOCENTER)
+			|| request == null) {
+			return defaultLocale;
+		}
+		if (locales == null) {
+			// serving in client locale
+			return request.getLocale().toString();
+		}
 
-		if (locale == null)
-			locale = Locale.getDefault().toString();
+		// match client locales with one of infocenter locales
+		for (Enumeration e = request.getLocales(); e.hasMoreElements();) {
+			String locale = ((Locale) e.nextElement()).toString();
+			if (locale.length() >= 5) {
+				String ll_CC = locale.substring(0, 5);
+				if (locales.contains(ll_CC)) {
+					// client locale available
+					return ll_CC;
+				}
+			}
+			if (locale.length() >= 2) {
+				String ll = locale.substring(0, 2);
+				if (locales.contains(ll)) {
+					// client language available
+					return ll;
+				}
+			}
+		}
+		// no match
+		return defaultLocale;
+	}
+	/**
+	 * If locales for infocenter specified in prefernces
+	 * or as command line parameters, this methods
+	 * stores these locales in locales local variable for later access.
+	 */
+	private static synchronized void initializeLocales() {
+		if (defaultLocale != null) {
+			// already initialized
+			return;
+		}
+		// initialize default locale
+		defaultLocale = BootLoader.getNL();
+		if (defaultLocale == null) {
+			defaultLocale = Locale.getDefault().toString();
+		}
+		if (HelpSystem.getMode() != HelpSystem.MODE_INFOCENTER) {
+			return;
+		}
 
-		return locale;
+		// locale strings as passed in command line or in preferences
+		List infocenterLocales = null;
+
+		// first check if locales passed as command line arguments
+		String[] args = BootLoader.getCommandLineArgs();
+		boolean localeOption = false;
+		for (int i = 0; i < args.length; i++) {
+			if ("-locales".equalsIgnoreCase(args[i])) {
+				localeOption = true;
+				infocenterLocales = new ArrayList();
+				continue;
+			} else if (args[i].startsWith("-")) {
+				localeOption = false;
+				continue;
+			}
+			if (localeOption) {
+				infocenterLocales.add(args[i]);
+			}
+		}
+		// if no locales from command line, get them from preferences
+		if (infocenterLocales == null) {
+			StringTokenizer tokenizer =
+				new StringTokenizer(
+					HelpPlugin.getDefault().getPluginPreferences().getString(
+						"locales"),
+					" ,\t");
+			while (tokenizer.hasMoreTokens()) {
+				if (infocenterLocales == null) {
+					infocenterLocales = new ArrayList();
+				}
+				infocenterLocales.add(tokenizer.nextToken());
+			}
+		}
+
+		// format locales and collect in a set for lookup
+		if (infocenterLocales != null) {
+			locales = new HashSet(10, 0.4f);
+			for (Iterator it = infocenterLocales.iterator(); it.hasNext();) {
+				String locale = (String) it.next();
+				if (locale.length() >= 5) {
+					locales.add(
+						locale.substring(0, 2).toLowerCase()
+							+ "_"
+							+ locale.substring(3, 5).toUpperCase());
+
+				} else if (locale.length() >= 2) {
+					locales.add(locale.substring(0, 2).toLowerCase());
+				}
+			}
+		}
 	}
 }
