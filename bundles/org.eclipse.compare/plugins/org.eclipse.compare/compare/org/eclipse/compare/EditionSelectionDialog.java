@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.HashSet;
+import java.io.InputStream;
 import java.text.*;
 
 import org.eclipse.swt.SWT;
@@ -39,6 +40,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFileState;
+import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.compare.internal.*;
 import org.eclipse.compare.structuremergeviewer.*;
@@ -186,7 +188,23 @@ public class EditionSelectionDialog extends Dialog {
 		if (id != null)
 			fTimeImage= id.createImage();
 	}
-		
+	
+	private String getContent(ITypedElement e) {
+		String content= null;
+		if (e instanceof IStreamContentAccessor) {
+			IStreamContentAccessor sca= (IStreamContentAccessor) e;
+			try {
+				InputStream is= sca.getContents();
+				if (is != null)
+					content= Utilities.readString(is);
+			} catch (CoreException ex) {
+			}
+		}
+		if (content == null)
+			content= "";
+		return content;
+	}
+	
 	/**
 	 * Presents this modal dialog with the functionality described in the class comment above.
 	 *
@@ -201,7 +219,7 @@ public class EditionSelectionDialog extends Dialog {
 	public ITypedElement selectEdition(final ITypedElement target, ITypedElement[] inputEditions, Object ppath) {
 		
 		Assert.isNotNull(target);
-		fTargetPair= new Pair(target, target, null);
+		fTargetPair= new Pair(target, target, getContent(target));
 
 		// sort input editions
 		final int count= inputEditions.length;
@@ -270,8 +288,10 @@ public class EditionSelectionDialog extends Dialog {
 				create();
 				
 				// from front (newest) to back (oldest)
-				for (int i= 0; i < count; i++)
-					addMemberEdition(new Pair((ITypedElement) editions[i], (ITypedElement) editions[i], null));
+				for (int i= 0; i < count; i++) {
+					ITypedElement te= (ITypedElement) editions[i];
+					addMemberEdition(new Pair(te, te, getContent(te)));
+				}
 			}
 			
 		} else {

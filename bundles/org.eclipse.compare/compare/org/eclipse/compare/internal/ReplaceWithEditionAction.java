@@ -64,7 +64,7 @@ public class ReplaceWithEditionAction implements IActionDelegate {
 		}
 		
 		if (states != null && states.length > 0) {
-
+			
 			ITypedElement base= new ResourceNode(file);
 		
 			ITypedElement[] editions= new ITypedElement[states.length];
