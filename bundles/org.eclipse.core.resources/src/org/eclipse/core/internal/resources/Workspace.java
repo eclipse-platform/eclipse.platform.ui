@@ -51,9 +51,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	protected boolean treeLocked;
 
-	// temporary slot for the root info
-	protected ResourceInfo rootInfo = null;
-
 	/** indicates if the workspace crashed in a previous session */
 	protected boolean crashed = false;
 public Workspace() {
@@ -64,7 +61,7 @@ public Workspace() {
 	/* tree should only be modified during operations */
 	tree.immutable();
 	treeLocked = true;
-	rootInfo = newElement(IResource.ROOT);
+	tree.setTreeData(newElement(IResource.ROOT));
 }
 /**
  * @see IWorkspace
@@ -824,9 +821,8 @@ public PropertyManager getPropertyManager() {
  */
 public ResourceInfo getResourceInfo(IPath path, boolean phantom, boolean mutable) {
 	try {
-		// XXX: sort out how to get the root info in the tree
 		if (path.isRoot())
-			return rootInfo;
+			return (ResourceInfo)tree.getTreeData();
 		ResourceInfo result = null;
 		if (!tree.includes(path))
 			return null;
