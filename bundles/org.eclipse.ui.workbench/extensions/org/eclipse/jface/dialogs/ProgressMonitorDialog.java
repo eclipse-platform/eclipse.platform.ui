@@ -312,7 +312,11 @@ protected Control createDialogArea(Composite parent) {
  * Method declared in Window.
  */
 protected Point getInitialSize() {
-	return getShell().computeSize(450, SWT.DEFAULT);
+	
+	Point calculatedSize = super.getInitialSize();
+	if(calculatedSize.x < 450)
+		calculatedSize.x = 450;
+	return calculatedSize;
 }
 /**
  * Returns the progress monitor to use for operations run in 
