@@ -578,7 +578,7 @@ public IWorkbenchPage openPage(final String perspID, final IAdaptable input)
 	// If "reuse" and a window already exists for the input reuse it.
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 	boolean version2 = store.getBoolean(IPreferenceConstants.VERSION_2_PERSPECTIVES);
-	if (version2) {
+	if (version2 && (input != null)) {
 		IWorkbenchPage page = findPage(input);
 		if (page != null) {
 			IWorkbenchWindow win = page.getWorkbenchWindow();
@@ -599,7 +599,7 @@ public IWorkbenchPage openPage(final String perspID, final IAdaptable input)
 		return window.getActivePage();
 	}
 	
-	// The page does not already exists.  Open it for real.	
+	// The page is non-existent.  Open it.	
 	String setting = store.getString(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
 	if (setting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE)) {
 		IWorkbenchWindow window = getActiveWorkbenchWindow();
