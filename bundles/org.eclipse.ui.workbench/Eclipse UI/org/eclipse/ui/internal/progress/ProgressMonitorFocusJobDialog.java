@@ -352,6 +352,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
             //the listener, just remove the listener and return
             job.removeJobChangeListener(listener);
             finishedRun();
+            cleanUpFinishedJob();
         }
 
         return result;
@@ -393,9 +394,11 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
             public IStatus runInUIThread(IProgressMonitor monitor) {
 
                 //if the job is done at this point, we don't need the dialog
-                if (job.getState() == Job.NONE)
-                    return Status.CANCEL_STATUS;
-
+                if (job.getState() == Job.NONE){
+                	cleanUpFinishedJob();
+                	return Status.CANCEL_STATUS;
+                }
+             
                 //now open the progress dialog if nothing else is
                 if (!ProgressManagerUtil
                         .safeToOpen(ProgressMonitorFocusJobDialog.this))
@@ -414,4 +417,12 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
         openJob.schedule();
 
     }
+
+	/**
+	 * The job finished before we did anything so clean up
+	 * the finished reference.
+	 */
+	private void cleanUpFinishedJob() {
+		ProgressManager.getInstance().checkForStaleness(job);
+	}
 }

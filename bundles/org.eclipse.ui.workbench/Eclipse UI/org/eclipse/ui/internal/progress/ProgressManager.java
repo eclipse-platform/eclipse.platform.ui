@@ -1164,11 +1164,10 @@ public class ProgressManager extends ProgressProvider implements
         boolean pruned = false;
         for (int i = 0; i < jobsToCheck.length; i++) {
             Job job = (Job) jobsToCheck[i];
-            if (job.getState() == Job.NONE) {
-                if (Policy.DEBUG_STALE_JOBS)
-                    WorkbenchPlugin.log("Stale Job " + job.getName()); //$NON-NLS-1$
-                removeJobInfo(getJobInfo(job));
-                pruned = true;
+            if(checkForStaleness(job)){
+            	if (Policy.DEBUG_STALE_JOBS)
+    		        WorkbenchPlugin.log("Stale Job " + job.getName()); //$NON-NLS-1$
+            	pruned = true;
             }
         }
 
@@ -1176,6 +1175,20 @@ public class ProgressManager extends ProgressProvider implements
     }
 
     /**
+     * Check the if the job should be removed from the
+     * list as it may be stale.
+	 * @param job
+	 * @return boolean
+	 */
+	boolean checkForStaleness(Job job) {
+		if (job.getState() == Job.NONE) {
+		    removeJobInfo(getJobInfo(job));
+		   return true;
+		}
+		return false;
+	}
+
+	/**
      * Return whether or not dialogs should be run in the background
      * @return <code>true</code> if the dialog should not be shown.
      */
