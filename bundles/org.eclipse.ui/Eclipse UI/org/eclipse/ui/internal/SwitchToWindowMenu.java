@@ -64,7 +64,8 @@ public class SwitchToWindowMenu extends ContributionItem {
 		// Get workbench windows.
 		IWorkbench workbench = workbenchWindow.getWorkbench();
 		IWorkbenchWindow[] array = workbench.getWorkbenchWindows();
-		if (array.length < 1)
+		// avoid showing the separator and list for 0 or 1 items
+		if (array.length < 2)
 			return;
 			
 		// Add separator.
