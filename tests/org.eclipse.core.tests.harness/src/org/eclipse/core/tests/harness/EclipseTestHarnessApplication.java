@@ -29,10 +29,10 @@ public class EclipseTestHarnessApplication implements IPlatformRunnable {
 	private static boolean deltas = false;
 
 	/** The id of the test harness plug-in */
-	private static final String PI_TESTHARNESS = "org.eclipse.core.tests.harness";
+	private static final String PI_TESTHARNESS = "org.eclipse.core.tests.harness"; //$NON-NLS-1$
 
 	/** the simple id of the tests extension point in the test harness plug-in */
-	private static final String PT_TESTS = "tests";
+	private static final String PT_TESTS = "tests"; //$NON-NLS-1$
 public EclipseTestHarnessApplication() {
 	tests = new ArrayList(5);
 }
@@ -84,9 +84,9 @@ protected String[] processCommandLine(String[] args) {
 		}
 
 		// check for args with parameters
-		if (i == args.length - 1 || args[i + 1].startsWith("-")) {
+		if (i == args.length - 1 || args[i + 1].startsWith("-"))
 			continue;
-		}
+
 		String arg = args[++i];
 		// check for the which test to run
 		if (args[i - 1].equalsIgnoreCase("-test")) {
@@ -132,7 +132,7 @@ protected Object run(String testName) throws Exception {
 	if (testObject == null)
 		return null;
 	Class testClass = testObject.getClass();
-	Method method = testClass.getDeclaredMethod("suite", new Class[0]);
+	Method method = testClass.getDeclaredMethod("suite", new Class[0]); //$NON-NLS-1$
 	Test suite = null;
 	try {
 		suite = (Test) method.invoke(testClass, new Object[0]);

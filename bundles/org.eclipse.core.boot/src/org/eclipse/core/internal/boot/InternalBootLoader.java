@@ -49,7 +49,6 @@ public final class InternalBootLoader {
 	private static String debugOptionsFilename = null;
 	private static Properties options = null;
 	private static boolean inDevelopmentMode = false;	
-	private static PlatformConfiguration currentPlatformConfiguration = null;
 	
 	// state for tracking the Platform context (e.g., the OS, Window system, locale, architecture, ...)
 	private static String nl = null;
@@ -58,13 +57,8 @@ public final class InternalBootLoader {
 	private static String arch = null;
 	
 	private static final String PLATFORM_ENTRYPOINT = "org.eclipse.core.internal.runtime.InternalPlatform"; //$NON-NLS-1$
-	private static final String BOOTNAME = "org.eclipse.core.boot"; //$NON-NLS-1$
 	/*package*/ static final String RUNTIMENAME = "org.eclipse.core.runtime"; //$NON-NLS-1$
 	private static final String PLUGINSDIR = "plugins/"; //$NON-NLS-1$
-	private static final String LIBRARY = "library"; //$NON-NLS-1$
-	private static final String EXPORT = "export"; //$NON-NLS-1$
-	private static final String EXPORT_PUBLIC = "public"; //$NON-NLS-1$
-	private static final String EXPORT_PROTECTED = "protected"; //$NON-NLS-1$
 	private static final String META_AREA = ".metadata"; //$NON-NLS-1$
 	private static final String WORKSPACE = "workspace"; //$NON-NLS-1$
 	private static final String PLUGIN_PATH = ".plugin-path"; //$NON-NLS-1$
@@ -107,7 +101,6 @@ public final class InternalBootLoader {
 	private static final String OPTION_URL_DEBUG_CONNECT = PI_RUNTIME+ "/url/debug/connect"; //$NON-NLS-1$
 	private static final String OPTION_URL_DEBUG_CACHE_LOOKUP = PI_RUNTIME+ "/url/debug/cachelookup"; //$NON-NLS-1$
 	private static final String OPTION_URL_DEBUG_CACHE_COPY = PI_RUNTIME+ "/url/debug/cachecopy"; //$NON-NLS-1$
-	private static final String OPTION_UPDATE_DEBUG = PI_RUNTIME+ "/update/debug"; //$NON-NLS-1$
 	private static final String OPTION_CONFIGURATION_DEBUG = PI_RUNTIME+ "/config/debug"; //$NON-NLS-1$
 
 	// option names for spy
@@ -135,6 +128,7 @@ public final class InternalBootLoader {
  * Private constructor to block instance creation.
  */
 private InternalBootLoader() {
+	// not allowed
 }
 private static void assertNotRunning() {
 	if (running)

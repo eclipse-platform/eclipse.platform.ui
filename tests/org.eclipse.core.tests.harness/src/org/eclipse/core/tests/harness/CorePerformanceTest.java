@@ -48,6 +48,7 @@ public abstract class CorePerformanceTest extends EclipseWorkspaceTest {
 	protected PerformanceTestResult result = null;
 
 	public CorePerformanceTest() {
+		super();
 	}
 	public CorePerformanceTest(String name) {
 		super(name);
@@ -59,11 +60,10 @@ public abstract class CorePerformanceTest extends EclipseWorkspaceTest {
 	 * Logs or writes string to console.
 	 */
 	public void perfLog(String s) {
-		if (logger != null) {
+		if (logger != null)
 			logger.log(s);
-		} else {
+		else
 			System.out.println(s);
-		}
 	}
 	/**
 	 * A convenience method to run this test, collecting the results with a
@@ -83,17 +83,13 @@ public abstract class CorePerformanceTest extends EclipseWorkspaceTest {
 	 */
 	public void run(PerformanceTestResult test) {
 		result = test;
-
-		if (test instanceof LoggingPerformanceTestResult) {
+		if (test instanceof LoggingPerformanceTestResult)
 			logger = (LoggingPerformanceTestResult) test;
-		}
-
 		super.run(test);
 	}
 	protected void startBench() {
-		for (int i = 0; i < 20; ++i) {
+		for (int i = 0; i < 20; ++i)
 			System.gc();
-		}
 		benchStart = System.currentTimeMillis();
 	}
 	/**
@@ -107,16 +103,13 @@ public abstract class CorePerformanceTest extends EclipseWorkspaceTest {
 	protected void stopBench(String benchName, int numOperations) {
 		long duration = System.currentTimeMillis() - benchStart;
 		double perOp = (double) duration / (double) numOperations;
-
 		String opString;
-		if (perOp > 100.0) {
-			opString = "(" + perOp + "ms per operation)";
-		} else {
+		if (perOp > 100.0)
+			opString = "(" + perOp + "ms per operation)"; //$NON-NLS-1$ //$NON-NLS-2$
+		else
 			//Note us == microseconds
-			opString = "(" + (perOp * 1000.0) + "us per operation)";
-		}
-
-		System.out.println(benchName + " took " + duration + "ms " + opString);
+			opString = "(" + (perOp * 1000.0) + "us per operation)"; //$NON-NLS-1$ //$NON-NLS-2$
+		System.out.println(benchName + " took " + duration + "ms " + opString); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	/**
 	 * Tell the result to stop the timer with the given name.

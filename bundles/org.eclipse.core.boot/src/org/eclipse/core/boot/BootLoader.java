@@ -180,6 +180,7 @@ public final class BootLoader {
  * Private constructor to block instance creation.
  */
 private BootLoader() {
+	// not allowed
 }
 /**
  * Returns whether the given location (typically a directory in the

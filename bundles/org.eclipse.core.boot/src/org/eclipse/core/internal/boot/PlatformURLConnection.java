@@ -44,7 +44,7 @@ public abstract class PlatformURLConnection extends URLConnection {
 	private static final String CACHE_INDEX_PROP = "index"; //$NON-NLS-1$
 	private static final String CACHE_PREFIX_PROP = "prefix"; //$NON-NLS-1$
 	private static final String CACHE_INDEX = ".index.properties"; //$NON-NLS-1$
-	private static final String CACHE_DIR = ".eclipse-" + PlatformURLHandler.PROTOCOL + File.separator;
+	private static final String CACHE_DIR = ".eclipse-" + PlatformURLHandler.PROTOCOL + File.separator; //$NON-NLS-1$
 
 	// debug tracing
 	public static boolean DEBUG = false;
@@ -65,22 +65,24 @@ private synchronized void connect(boolean asLocal) throws IOException {
 		if (shouldCache(asLocal)) {
 			try {				
 				URL inCache = getURLInCache();
-				if (inCache!=null) connection = inCache.openConnection();
+				if (inCache!=null) 
+					connection = inCache.openConnection();
 			} catch(IOException e) {
 				// failed to cache ... will use resolved URL instead
 			}
 		}
 
 		// use resolved URL
-		if (connection==null) connection = resolvedURL.openConnection();
+		if (connection==null) 
+			connection = resolvedURL.openConnection();
 		connected = true;
 		if (DEBUG && DEBUG_CONNECT)
 			debug("Connected as "+connection.getURL()); //$NON-NLS-1$
 	}
 }
 private void copyToCache() throws IOException {
-
-	if (isInCache | cachedURL==null) return;
+	if (isInCache | cachedURL==null) 
+		return;
 	String tmp;
 	int ix;
 		
@@ -91,8 +93,8 @@ private void copyToCache() throws IOException {
 		ix = tmp.lastIndexOf(PlatformURLHandler.JAR_SEPARATOR);
 		if (ix!=-1) tmp = tmp.substring(0,ix);
 		key = tmp;
-	}
-	else key = url.getFile();
+	} else 
+		key = url.getFile();
 		
 	// source url
 	URL src;
@@ -101,8 +103,8 @@ private void copyToCache() throws IOException {
 		ix = tmp.lastIndexOf(PlatformURLHandler.JAR_SEPARATOR);
 		if (ix!=-1) tmp = tmp.substring(0,ix);
 		src = new URL(tmp);
-	}
-	else src = resolvedURL;
+	} else 
+		src = resolvedURL;
 	InputStream srcis = null;
 	
 	// cache target
@@ -114,8 +116,8 @@ private void copyToCache() throws IOException {
 		ix = tmp.lastIndexOf(PlatformURLHandler.JAR_SEPARATOR);
 		if (ix!=-1) tmp = tmp.substring(0,ix);
 		tgt = tmp;
-	}
-	else tgt = cachedURL.getFile();	
+	} else 
+		tgt = cachedURL.getFile();	
 	File tgtFile = null;
 	FileOutputStream tgtos = null;
 	
@@ -124,8 +126,10 @@ private void copyToCache() throws IOException {
 
 	try {
 		if (DEBUG && DEBUG_CACHE_COPY) {
-			if (isJar) debug ("Caching jar as "+tgt); //$NON-NLS-1$
-			else debug("Caching as "+tgt); //$NON-NLS-1$
+			if (isJar) 
+				debug ("Caching jar as "+tgt); //$NON-NLS-1$
+			else 
+				debug("Caching as "+tgt); //$NON-NLS-1$
 		}
 			
 		srcis = src.openStream();
@@ -149,19 +153,19 @@ private void copyToCache() throws IOException {
 		// add cache entry
 		cacheIndex.put(key,tgt);
 		isInCache = true;
-	}
-	catch(IOException e) {
+	} catch(IOException e) {
 		error = true;
 		cacheIndex.put(key,NOT_FOUND);	// mark cache entry for this execution
 		if (DEBUG && DEBUG_CACHE_COPY)
 			debug("Failed to cache due to "+e); //$NON-NLS-1$
 		throw e;		
-	}
-	finally {		
+	} finally {		
 		if (!error && DEBUG && DEBUG_CACHE_COPY)
 			debug(total + " bytes copied"); //$NON-NLS-1$
-		if (srcis!=null) srcis.close();
-		if (tgtos!=null) tgtos.close();
+		if (srcis!=null) 
+			srcis.close();
+		if (tgtos!=null) 
+			tgtos.close();
 	}
 }
 protected void debug(String s) {
@@ -174,7 +178,8 @@ public URL[] getAuxillaryURLs () throws IOException {
 	return null;
 }
 public synchronized InputStream getInputStream() throws IOException {
-	if (!connected) connect();
+	if (!connected) 
+		connect();
 	return connection.getInputStream();
 }
 public URL getResolvedURL() {
@@ -184,18 +189,17 @@ public URL getURLAsLocal() throws IOException {
 	connect(true);	// connect and force caching if necessary
 	URL u = connection.getURL();
 	String up = u.getProtocol();
-	if (!up.equals(PlatformURLHandler.FILE) && !up.equals(PlatformURLHandler.JAR)) {
+	if (!up.equals(PlatformURLHandler.FILE) && !up.equals(PlatformURLHandler.JAR))
 		throw new IOException(Policy.bind("url.noaccess", url.toString())); //$NON-NLS-1$
-	}
 	return u;
 }
 private URL getURLInCache() throws IOException {
-
-	if (!allowCaching()) return null;	// target should not be cached
-	
-	if (isInCache) return cachedURL;
-
-	if (cacheLocation==null | cacheIndex==null) return null;	// not caching
+	if (!allowCaching()) 
+		return null;	// target should not be cached
+	if (isInCache) 
+		return cachedURL;
+	if (cacheLocation==null | cacheIndex==null) 
+		return null;	// not caching
 	
 	// check if we are dealing with a .jar/ .zip
 	String file = ""; //$NON-NLS-1$
@@ -207,8 +211,7 @@ private URL getURLInCache() throws IOException {
 			jarEntry = file.substring(ix+PlatformURLHandler.JAR_SEPARATOR.length());
 			file = file.substring(0,ix);
 		}
-	}
-	else {
+	} else {
 		file = url.getFile();
 		jarEntry = null;
 	}
@@ -217,7 +220,8 @@ private URL getURLInCache() throws IOException {
 	String tmp = (String)cacheIndex.get(file);
 
 	// check for "not found" marker
-	if (tmp!=null && tmp==NOT_FOUND) throw new IOException();
+	if (tmp!=null && tmp==NOT_FOUND) 
+		throw new IOException();
 
 	// validate cache entry
 	if (tmp!=null && !(new File(tmp)).exists()) {
@@ -232,15 +236,13 @@ private URL getURLInCache() throws IOException {
 				debug("Jar located in cache as "+tmp); //$NON-NLS-1$
 			tmp = PlatformURLHandler.FILE + PlatformURLHandler.PROTOCOL_SEPARATOR + tmp + PlatformURLHandler.JAR_SEPARATOR + jarEntry;
 			cachedURL = new URL(PlatformURLHandler.JAR,null,-1,tmp);
-		}
-		else {
+		} else {
 			if (DEBUG && DEBUG_CACHE_LOOKUP)
 				debug("Located in cache as "+tmp); //$NON-NLS-1$
 			cachedURL = new URL(PlatformURLHandler.FILE,null,-1,tmp);
 		}
 		isInCache = true;
-	}
-	else {
+	} else {
 		// attemp to cache
 		int ix = file.lastIndexOf("/"); //$NON-NLS-1$
 		tmp = file.substring(ix+1);
@@ -249,8 +251,8 @@ private URL getURLInCache() throws IOException {
 		if (isJar) {
 			tmp = PlatformURLHandler.FILE + PlatformURLHandler.PROTOCOL_SEPARATOR + tmp + PlatformURLHandler.JAR_SEPARATOR + jarEntry;
 			cachedURL = new URL(PlatformURLHandler.JAR,null,-1,tmp);
-		}
-		else cachedURL = new URL(PlatformURLHandler.FILE,null,-1,tmp);
+		} else 
+			cachedURL = new URL(PlatformURLHandler.FILE,null,-1,tmp);
 		copyToCache();
 	}
 	
@@ -263,30 +265,6 @@ private URL getURLInCache() throws IOException {
  
 protected URL resolve() throws IOException {
 	throw new IOException();
-}
-
-private String resolvePath(String spec) {
-	if (spec.length() == 0 || spec.charAt(0) != '$')
-		return spec;
-	int i = spec.indexOf('/', 1);
-	String first = ""; //$NON-NLS-1$
-	String rest = ""; //$NON-NLS-1$
-	if (i == -1)
-		first = spec;
-	else {	
-		first = spec.substring(0, i);
-		rest = spec.substring(i);
-	}
-	if (first.equalsIgnoreCase("$ws$")) //$NON-NLS-1$
-		return "ws/" + InternalBootLoader.getWS() + rest; //$NON-NLS-1$
-	if (first.equalsIgnoreCase("$os$")) //$NON-NLS-1$
-		return "os/" + InternalBootLoader.getOS() + rest; //$NON-NLS-1$
-	if (first.equalsIgnoreCase("$nl$")) { //$NON-NLS-1$
-		String nl = InternalBootLoader.getNL();
-		nl = nl.replace('_', '/');
-		return "nl/" + nl + rest; //$NON-NLS-1$
-	}
-	return spec;
 }
 
 protected String getId(String spec) {
@@ -315,11 +293,14 @@ private boolean shouldCache(boolean asLocal) {
 	// don't cache files that are known to be local
 	String rp = resolvedURL.getProtocol();
 	String rf = resolvedURL.getFile();
-	if (rp.equals(PlatformURLHandler.FILE)) return false;
-	if (rp.equals(PlatformURLHandler.JAR) && (rf.startsWith(PlatformURLHandler.FILE))) return false;
+	if (rp.equals(PlatformURLHandler.FILE)) 
+		return false;
+	if (rp.equals(PlatformURLHandler.JAR) && (rf.startsWith(PlatformURLHandler.FILE))) 
+		return false;
 
 	// for other files force caching if local connection was requested
-	if (asLocal) return true;
+	if (asLocal) 
+		return true;
 	
 	// for now cache all files
 	// XXX: add cache policy support
@@ -348,18 +329,16 @@ static void shutdown() {
 			} finally {
 				fos.close();
 			}
-		}
-		catch(IOException e) {
+		} catch(IOException e) {
 			// failed to store cache index ... ignore
 		}
 	}	
 }
 static void startup(String location) {
-
-	
 	verifyLocation(location); // check for platform location, ignore errors
 	String cacheProps = location.trim();
-	if (!cacheProps.endsWith(File.separator)) cacheProps += File.separator;
+	if (!cacheProps.endsWith(File.separator)) 
+		cacheProps += File.separator;
 	cacheProps += CACHE_PROP;
 	File cachePropFile = new File(cacheProps);
 	Properties props = null;	
@@ -376,8 +355,7 @@ static void startup(String location) {
 			finally {
 				fis.close();
 			}
-		}
-		catch(IOException e) {
+		} catch(IOException e) {
 			props = null;
 		}
 	}
@@ -387,7 +365,8 @@ static void startup(String location) {
 		props = new Properties();
 
 		String tmp = System.getProperty("user.home"); //$NON-NLS-1$
-		if (!tmp.endsWith(File.separator)) tmp += File.separator;
+		if (!tmp.endsWith(File.separator)) 
+			tmp += File.separator;
 		tmp += CACHE_DIR;
 		props.put(CACHE_LOCATION_PROP,tmp);
 		
@@ -403,12 +382,10 @@ static void startup(String location) {
 			fos = new FileOutputStream(cachePropFile);
 			try {
 				props.store(fos,null);
-			}
-			finally {
+			} finally {
 				fos.close();
 			}
-		}
-		catch(IOException e) {
+		} catch(IOException e) {
 			// failed to store cache location metadata ... ignore
 		}
 	}
@@ -439,12 +416,10 @@ static void startup(String location) {
 			fis = new FileInputStream(cacheLocation+indexName);
 			try {
 				cacheIndex.load(fis);
-			}
-			finally {
+			} finally {
 				fis.close();
 			}
-		}
-		catch(IOException e) {				
+		} catch(IOException e) {				
 			if (DEBUG) 
 				debugStartup("Failed to initialize cache"); //$NON-NLS-1$
 		}
