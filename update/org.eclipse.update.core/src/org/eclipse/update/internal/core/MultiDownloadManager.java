@@ -13,7 +13,7 @@ public class MultiDownloadManager {
 	private final static int WAIT_INTERVAL = 1000; // milliseconds
 	private static int threadsInUse = 0;
 	
-	public static void releaseThread(Thread t){
+	public static synchronized void releaseThread(Thread t){
 		threadsInUse--;
 	}
 	

@@ -17,6 +17,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
+import org.eclipse.update.internal.operations.*;
 
 /**
  * Convenience implementation of a feature.
@@ -325,7 +326,7 @@ public class Feature extends FeatureModel implements IFeature {
 							abortedException = e;
 							MultiDownloadManager.stopThreads(tgroup);
 						} catch (CoreException e) {
-							e.printStackTrace();
+							UpdateUtils.logException(e);
 						} finally {
 							MultiDownloadManager.releaseThread(Thread.currentThread());
 						}
