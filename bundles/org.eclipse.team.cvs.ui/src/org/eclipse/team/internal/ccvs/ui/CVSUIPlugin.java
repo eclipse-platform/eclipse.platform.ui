@@ -8,6 +8,7 @@ package org.eclipse.team.internal.ccvs.ui;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Hashtable;
+import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
@@ -217,6 +218,8 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 */
 	public void shutdown() throws CoreException {
 		super.shutdown();
+		// We must notify all running decorators to shut down.
+		CVSDecorator.shutdownAll();
 		try {
 			repositoryManager.shutdown();
 		} catch (TeamException e) {

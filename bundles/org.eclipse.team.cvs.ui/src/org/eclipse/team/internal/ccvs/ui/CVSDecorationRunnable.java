@@ -83,7 +83,11 @@ public class CVSDecorationRunnable implements Runnable {
 		while (true) {
 			// will block if there are no resources to be decorated
 			IResource resource = notifier.next();
-
+			
+			// if next() returned null, we are done and should shut down.
+			if (resource == null) {
+				return;
+			}
 			// it is possible that the resource to be decorated is no longer associated
 			// with a CVS provider. This could happen if the team nature was removed
 			// between the time the decoration event was posted to the thread and the time

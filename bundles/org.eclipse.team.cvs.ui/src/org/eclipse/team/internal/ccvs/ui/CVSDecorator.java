@@ -48,6 +48,8 @@ import org.eclipse.team.core.TeamPlugin;
  */
 public class CVSDecorator extends LabelProvider implements ILabelDecorator, IResourceStateChangeListener, IDecorationNotifier {
 
+	public static List decorators = new ArrayList();
+	
 	// Resources that need an icon and text computed for display to the user, no order
 	private Set decoratorNeedsUpdating = Collections.synchronizedSet(new HashSet());
 
@@ -57,10 +59,12 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 	// Updater thread, computes decoration labels and images
 	private Thread decoratorUpdateThread;
 
+	private boolean shutdown = false;
+	
 	public CVSDecorator() {
 		decoratorUpdateThread = new Thread(new CVSDecorationRunnable(this), "CVS");
 		decoratorUpdateThread.start();
-		
+		decorators.add(this);
 		TeamPlugin.getManager().addResourceStateChangeListener(this);
 	}
 
@@ -113,8 +117,15 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 	 */
 	public synchronized IResource next() {
 		try {
+			if (shutdown) return null;
+			
 			if (decoratorNeedsUpdating.isEmpty()) {
 				wait();
+			}
+			// We were awakened.
+			if (shutdown) {
+				// The decorator was awakened by the plug-in as it was shutting down.
+				return null;
 			}
 			Iterator iterator = decoratorNeedsUpdating.iterator();
 			IResource resource = (IResource) iterator.next();
@@ -249,7 +260,6 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 	 */
 	private void postLabelEvents(final LabelProviderChangedEvent[] events) {
 		// now post the change events to the UI thread
-		// now post the change events to the UI thread
 		if (events.length > 0) {
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
@@ -260,4 +270,23 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 			});
 		}
 	} 
+	
+	public static void shutdownAll() {
+		Iterator it = CVSDecorator.decorators.iterator();
+		while (it.hasNext()) {
+			((CVSDecorator)it.next()).shutdown();
+		}
+	}
+	public void shutdown() {
+		shutdown = true;
+		// Wake the thread up if it is asleep.
+		synchronized (this) {
+			notifyAll();
+		}
+		try {
+			// Wait for the decorator thread to finish before returning.
+			decoratorUpdateThread.join();
+		} catch (InterruptedException e) {
+		}
+	}
 }
