@@ -455,12 +455,19 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		waitForStart(jobs[0]);
 			
 		//try finding all jobs by supplying the NULL parameter
+		//note that this might find other jobs that are running as a side-effect of the test
+		//suites running, such as snapshot
+		HashSet allJobs = new HashSet();
+		allJobs.addAll(Arrays.asList(jobs));
 		Job [] result = manager.find(null);
-		assertEquals("1.0", NUM_JOBS, result.length);
+		assertTrue("1.0", result.length >= NUM_JOBS);
 		for(int i = 0; i < result.length; i++) {
-				assertTrue("1." +(i+1), (result[i].belongsTo(first) || result[i].belongsTo(second) || result[i].belongsTo(third) || 
+			//only test jobs that we know about
+			if (allJobs.remove(result[i]))
+				assertTrue("1." + i, (result[i].belongsTo(first) || result[i].belongsTo(second) || result[i].belongsTo(third) || 
 						result[i].belongsTo(fourth) || result[i].belongsTo(fifth)));
 		}
+		assertEquals("1.2", 0, allJobs.size());
 		
 		//try finding all jobs from the first family
 		result = manager.find(first);
