@@ -82,9 +82,7 @@ if(data.getBookmarks().length == 0) {
 		   onclick='parent.parent.parent.setContentToolbarTitle(" ")' 
 		   oncontextmenu="contextMenuHandler(event);return false;"
 		   title="<%=UrlUtil.htmlEncode(bookmarks[i].getLabel())%>">
-		   <img src="<%=prefs.getImagesDirectory()%>/topic.gif">
-		   		<%=UrlUtil.htmlEncode(bookmarks[i].getLabel())%>
-		</a>
+		   <img src="<%=prefs.getImagesDirectory()%>/topic.gif"><%=UrlUtil.htmlEncode(bookmarks[i].getLabel())%></a>
 	</td>
 </tr>
 
