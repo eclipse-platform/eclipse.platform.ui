@@ -22,6 +22,7 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.NotifyInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
  * An ICVSResourceVisitor that is superclass to all ICVSResourceVisitor's used
@@ -91,7 +92,7 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 
 		String localPath = mFolder.getRelativePath(session.getLocalRoot());
 		
-		monitor.subTask(Policy.bind("AbstractStructureVisitor.sendingFolder", localPath)); //$NON-NLS-1$
+		monitor.subTask(Policy.bind("AbstractStructureVisitor.sendingFolder", Util.toTruncatedPath(mFolder, session.getLocalRoot(), 3))); //$NON-NLS-1$
 		
 		// Deal with questionable directories
 		boolean isQuestionable = exists && (! isCVSFolder || isOrphanedSubtree(mFolder));

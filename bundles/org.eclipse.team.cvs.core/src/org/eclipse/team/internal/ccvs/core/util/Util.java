@@ -82,7 +82,11 @@ public class Util {
 	 */
 	public static String toTruncatedPath(ICVSResource resource, ICVSFolder root, int split) {
 		try {
-			IPath path = new Path(resource.getRelativePath(root));
+			String stringPath = resource.getRelativePath(root);
+			if (stringPath.equals(Session.CURRENT_LOCAL_FOLDER)) {
+				return resource.getName();
+			}
+			IPath path = new Path(stringPath);
 			int segments = path.segmentCount();
 			if(segments>split) {				
 				IPath last = path.removeFirstSegments(segments - split);
