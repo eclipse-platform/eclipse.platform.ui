@@ -22,6 +22,8 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.console.ConsolePlugin;
@@ -513,7 +515,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
 	 */
 	public void partActivated(IWorkbenchPartReference partRef) {
-		if (partRef.getId().equals(getViewSite().getId())) {
+		if (isThisPart(partRef)) {
 			fActive = true;
 			activateParticipants(fActiveConsole); 
 		}
@@ -535,11 +537,29 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
 	 */
 	public void partDeactivated(IWorkbenchPartReference partRef) {
-		if (partRef.getId().equals(getViewSite().getId())) {
+        if (isThisPart(partRef)) {
 			fActive = false;
 			deactivateParticipants(fActiveConsole);
-		}
+        }
 	}
+    
+    protected boolean isThisPart(IWorkbenchPartReference partRef) {
+        if (partRef instanceof IViewReference) {
+            IViewReference viewRef = (IViewReference) partRef;
+            if (viewRef.getId().equals(getViewSite().getId())) {
+                String secId = viewRef.getSecondaryId();
+                String mySec = null;
+                if (getSite() instanceof IViewSite) {
+                    mySec = ((IViewSite)getSite()).getSecondaryId();
+                }
+                if (secId == null) {
+                    return secId == mySec;
+                }
+                return secId.equals(mySec);
+            }
+        }
+        return false;
+    }
 
 	/**
 	 * Deactivates participants for the given console, if any.
