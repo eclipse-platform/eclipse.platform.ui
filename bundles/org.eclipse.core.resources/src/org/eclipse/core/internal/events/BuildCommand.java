@@ -72,4 +72,10 @@ public void setBuilderName(String value) {
 	//don't allow builder name to be null
 	setName(value == null ? "" : value); //$NON-NLS-1$
 }
+/**
+ * For debugging purposes only
+ */
+public String toString() {
+	return "BuildCommand(" + getName() + ")";//$NON-NLS-1$ //$NON-NLS-2$
+}
 }
