@@ -149,6 +149,8 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 			boolean useRunnable= true;
 			if (isLocal()) {
 				if (isMoved()) {
+					// If this config was moved from a shared location, saving
+					// it will delete the original from the workspace. Use runnable.
 					useRunnable= !isNew() && !getOriginal().isLocal();
 				} else {
 					useRunnable= false;
