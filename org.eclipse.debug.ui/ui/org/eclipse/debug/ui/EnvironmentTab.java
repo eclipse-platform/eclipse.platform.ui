@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -29,10 +28,9 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DialogSettingsHelper;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.MultipleInputDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.EnvironmentVariable;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
-import org.eclipse.debug.internal.ui.launchConfigurations.NewEnvironmentVariableDialog;
-import org.eclipse.debug.internal.ui.preferences.MultipleInputDialog;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -356,19 +354,22 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * Adds a new environment variable to the table.
 	 */
 	protected void handleEnvAddButtonSelected() {
-		NewEnvironmentVariableDialog dialog= new NewEnvironmentVariableDialog(getShell(), new String[] {NAME_LABEL, VALUE_LABEL});
+		MultipleInputDialog dialog = new MultipleInputDialog(getShell(), "New Environment Variable");
+		dialog.addTextField(NAME_LABEL, null, false);
+		dialog.addVariablesField(VALUE_LABEL, null, true);
 		
 		if (dialog.open() != Window.OK) {
 			return;
 		}
 		
-		EnvironmentVariable newVariable = dialog.getEnviromentVariable();
-		if (newVariable == null) {
-			return;
-		}
+		String name = dialog.getStringValue(NAME_LABEL);
+		String value = dialog.getStringValue(VALUE_LABEL);
 		
-		addVariable(newVariable);
-		updateAppendReplace();
+		EnvironmentVariable envVar = null;
+		if (name != null && value != null && name.length() > 0 && value.length() >0) {
+			addVariable(new EnvironmentVariable(name.trim(), value.trim()));
+			updateAppendReplace();
+		}
 	}
 	
 	/**
@@ -513,12 +514,15 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		}
 		String originalName= var.getName();
 		String value= var.getValue();
-		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), LaunchConfigurationsMessages.getString("EnvironmentTab.11"), new String[] {NAME_LABEL, VALUE_LABEL}, new String[] {originalName, value}); //$NON-NLS-1$
+		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), LaunchConfigurationsMessages.getString("EnvironmentTab.11"));
+		dialog.addTextField(NAME_LABEL, originalName, false);
+		dialog.addVariablesField(VALUE_LABEL, value, true);
+		
 		if (dialog.open() != Window.OK) {
 			return;
 		}
-		String name= dialog.getValue(NAME_LABEL);
-		value= dialog.getValue(VALUE_LABEL);
+		String name= dialog.getStringValue(NAME_LABEL);
+		value= dialog.getStringValue(VALUE_LABEL);
 		if (!originalName.equals(name)) {
 			if (addVariable(new EnvironmentVariable(name, value))) {
 				environmentTable.remove(var);

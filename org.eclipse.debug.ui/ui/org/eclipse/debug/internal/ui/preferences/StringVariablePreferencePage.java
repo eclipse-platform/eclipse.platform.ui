@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.IValueVariable;
 import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.debug.internal.ui.*;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.SWTUtil;
@@ -242,16 +243,20 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 	}
 	
 	private void handleAddButtonPressed() {
-		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), DebugPreferencesMessages.getString("SimpleVariablePreferencePage.13"), new String[] {NAME_LABEL, VALUE_LABEL, DESCRIPTION_LABEL}, null); //$NON-NLS-1$
-		dialog.disallowEmpty(NAME_LABEL);
+		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), DebugPreferencesMessages.getString("SimpleVariablePreferencePage.13")); //$NON-NLS-1$
+		dialog.addTextField(NAME_LABEL, null, false);
+		dialog.addBrowseField(VALUE_LABEL, null, true);
+		dialog.addTextField(DESCRIPTION_LABEL, null, true);
+
 		if (dialog.open() != Window.OK) {
 			return;
 		}
-		String name= dialog.getValue(NAME_LABEL).trim();
+
+		String name= dialog.getStringValue(NAME_LABEL).trim();
 		if (name != null && name.length() > 0) {
-			String description= dialog.getValue(DESCRIPTION_LABEL);
+			String description= dialog.getStringValue(DESCRIPTION_LABEL);
 			IValueVariable variable= getVariableManager().newValueVariable(name, description);
-			variable.setValue(dialog.getValue(VALUE_LABEL));	
+			variable.setValue(dialog.getStringValue(VALUE_LABEL));	
 			addVariable(variable);
 		}
 	}
@@ -299,11 +304,15 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 			description= ""; //$NON-NLS-1$
 		}
 		String originalName= variable.getName();
-		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), DebugPreferencesMessages.getString("SimpleVariablePreferencePage.14"), new String[] {NAME_LABEL, VALUE_LABEL, DESCRIPTION_LABEL}, new String[] {originalName, value, description}); //$NON-NLS-1$
+		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), DebugPreferencesMessages.getString("SimpleVariablePreferencePage.14")); //$NON-NLS-1$
+		dialog.addTextField(NAME_LABEL, originalName, false);
+		dialog.addBrowseField(VALUE_LABEL, value, true);
+		dialog.addTextField(DESCRIPTION_LABEL, description, true);
+	
 		if (dialog.open() == Window.OK) {
-			String name= dialog.getValue(NAME_LABEL);
-			value= dialog.getValue(VALUE_LABEL);
-			description= dialog.getValue(DESCRIPTION_LABEL);
+			String name= dialog.getStringValue(NAME_LABEL);
+			value= dialog.getStringValue(VALUE_LABEL);
+			description= dialog.getStringValue(DESCRIPTION_LABEL);
 			if (!name.equals(originalName)) {
 				IValueVariable newVariable = getVariableManager().newValueVariable(name, description);
 				newVariable.setValue(value);
