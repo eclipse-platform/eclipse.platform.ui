@@ -292,12 +292,22 @@ public final class Platform {
 	public static final String ARCH_SPARC = "sparc";//$NON-NLS-1$
 
 	/**
+	 * Constant string (value "x86_64") indicating the platform is running on an
+	 * x86 64bit-based architecture.
+	 * 
+	 * @since 3.1
+	 */
+	public static final String ARCH_X86_64 = "x86_64";//$NON-NLS-1$
+
+	/**
 	 * Constant string (value "amd64") indicating the platform is running on an
 	 * AMD64-based architecture.
 	 * 
 	 * @since 3.0
+	 * @deprecated use <code>ARCH_X86_64</code> instead. Note the values
+	 * has been changed to be the value of the <code>ARCH_X86_64</code> constant.
 	 */
-	public static final String ARCH_AMD64 = "amd64";//$NON-NLS-1$
+	public static final String ARCH_AMD64 = ARCH_X86_64;
 
 	/**
 	 * Constant string (value "ia64") indicating the platform is running on an
