@@ -63,6 +63,8 @@ public interface IWorkbenchGraphicConstants {
 	public final static String IMG_ETOOL_DEF_PERSPECTIVE = "IMG_ETOOL_DEF_PERSPECTIVE"; //$NON-NLS-1$
 	public final static String IMG_ETOOL_DEF_PERSPECTIVE_HOVER = "IMG_ETOOL_DEF_PERSPECTIVE_HOVER"; //$NON-NLS-1$
 	
+	public final static String IMG_ETOOL_HELP_CONTENTS = "IMG_ETOOL_HELP_CONTENTS"; //$NON-NLS-1$
+	
 	// local toolbars
 	public final static String IMG_LCL_CLOSE_VIEW = "IMG_LCL_CLOSE_VIEW" ; //$NON-NLS-1$
 	public final static String IMG_LCL_CLOSE_VIEW_HOVER = "IMG_LCL_CLOSE_VIEW_HOVER"; //$NON-NLS-1$	

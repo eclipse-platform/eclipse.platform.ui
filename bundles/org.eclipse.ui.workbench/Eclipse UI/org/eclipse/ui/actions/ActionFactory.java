@@ -46,6 +46,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.WorkbookEditorsAction;
 import org.eclipse.ui.internal.about.AboutAction;
+import org.eclipse.ui.internal.actions.HelpContentsAction;
 
 /**
  * Access to standard actions provided by the workbench.
@@ -1109,6 +1110,22 @@ public abstract class ActionFactory {
 			action.setToolTipText(WorkbenchMessages.getString("Workbench.upToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.navigate.up"); //$NON-NLS-1$
+			return action;
+		}
+	};
+
+	/**
+	 * Workbench action (id "helpContents"): Open the help contents. This action
+	 * is always enabled.
+	 */
+	public static final ActionFactory HELP_CONTENTS = new ActionFactory("helpContents") {//$NON-NLS-1$
+	/* (non-javadoc) method declared on ActionFactory */
+		public IWorkbenchAction create(IWorkbenchWindow window) {
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			IWorkbenchAction action = new HelpContentsAction(window);
+			action.setId(getId());
 			return action;
 		}
 	};

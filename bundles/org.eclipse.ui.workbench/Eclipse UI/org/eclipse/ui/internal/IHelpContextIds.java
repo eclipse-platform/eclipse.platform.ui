@@ -113,6 +113,7 @@ public interface IHelpContextIds {
 	public static final String SHOW_IN_ACTION = PREFIX + "show_in_action_context"; //$NON-NLS-1$
 	public static final String NAVIGATION_HISTORY_FORWARD = PREFIX + "navigation_history_forward"; //$NON-NLS-1$
 	public static final String NAVIGATION_HISTORY_BACKWARD = PREFIX + "navigation_history_backward"; //$NON-NLS-1$
+	public static final String HELP_CONTENTS_ACTION = PREFIX + "help_contents_action_context"; //$NON-NLS-1$
 		
 	// Dialogs
 	public static final String ABOUT_DIALOG = PREFIX + "about_dialog_context"; //$NON-NLS-1$

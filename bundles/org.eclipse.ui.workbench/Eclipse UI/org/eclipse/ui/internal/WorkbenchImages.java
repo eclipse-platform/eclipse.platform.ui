@@ -123,7 +123,7 @@ private final static void declareImage(String key, String path, boolean shared) 
 private final static void declareImages() {
 							
 	declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_PIN_EDITOR, PATH_ETOOL+"pin_editor.gif", false); //$NON-NLS-1$
-declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_PIN_EDITOR_DISABLED, PATH_DTOOL+"pin_editor.gif", false); //$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_PIN_EDITOR_DISABLED, PATH_DTOOL+"pin_editor.gif", false); //$NON-NLS-1$
 
 	// other toolbar buttons
 
@@ -167,6 +167,8 @@ declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_PIN_EDITOR_DISABLED, PATH_DTOO
 	declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_PRINT_EDIT_HOVER, PATH_ETOOL+"print_edit.gif", false); //$NON-NLS-1$
 	declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_PRINT_EDIT_DISABLED, PATH_DTOOL+"print_edit.gif", false); //$NON-NLS-1$
 
+	declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_HELP_CONTENTS, PATH_ETOOL+"help_contents.gif", true); //$NON-NLS-1$
+		
 	declareImage(ISharedImages.IMG_TOOL_FORWARD, PATH_ELOCALTOOL+"forward_nav.gif", true); //$NON-NLS-1$
 	declareImage(ISharedImages.IMG_TOOL_FORWARD_HOVER, PATH_ELOCALTOOL+"forward_nav.gif", true); //$NON-NLS-1$
 	declareImage(ISharedImages.IMG_TOOL_FORWARD_DISABLED, PATH_DLOCALTOOL+"forward_nav.gif", true); //$NON-NLS-1$
@@ -192,7 +194,7 @@ declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_PIN_EDITOR_DISABLED, PATH_DTOO
 	declareImage(IWorkbenchGraphicConstants.IMG_VIEW_DEFAULTVIEW_MISC, PATH_EVIEW+"defaultview_misc.gif", false); //$NON-NLS-1$
 
 	declareImage(IWorkbenchGraphicConstants.IMG_DLGBAN_SAVEAS_DLG, PATH_WIZBAN+"saveas_wiz.gif", false); //$NON-NLS-1$
-
+	
 	declareImage(IWorkbenchGraphicConstants.IMG_OBJ_FONT, PATH_OBJECT+"font.gif", true); //$NON-NLS-1$
 	declareImage(IWorkbenchGraphicConstants.IMG_OBJ_THEME_CATEGORY, PATH_OBJECT+"theme_category.gif", true); //$NON-NLS-1$
 	declareImage(IWorkbenchGraphicConstants.IMG_OBJ_ACTIVITY, PATH_OBJECT+"activity.gif", true); //$NON-NLS-1$

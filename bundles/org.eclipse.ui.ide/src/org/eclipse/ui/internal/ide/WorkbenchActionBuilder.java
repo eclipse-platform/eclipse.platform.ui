@@ -61,6 +61,7 @@ public final class WorkbenchActionBuilder {
 	private IWorkbenchAction closeAllSavedAction;
 	private IWorkbenchAction saveAction;
 	private IWorkbenchAction saveAllAction;
+	private IWorkbenchAction helpContentsAction;
 	private IWorkbenchAction aboutAction;
 	private IWorkbenchAction openPreferencesAction;
 	private IWorkbenchAction saveAsAction;
@@ -562,6 +563,7 @@ public final class WorkbenchActionBuilder {
 			menu.add(introAction);
 		else if (quickStartAction != null)
 			menu.add(quickStartAction);
+		menu.add(helpContentsAction);
 		
         // See if a tips and tricks page is specified
 		if (tipsAndTricksAction != null)
@@ -1006,6 +1008,9 @@ public final class WorkbenchActionBuilder {
 
 		closeAllSavedAction = ActionFactory.CLOSE_ALL_SAVED.create(getWindow());
 		registerGlobalAction(closeAllSavedAction);
+
+		helpContentsAction = ActionFactory.HELP_CONTENTS.create(getWindow());
+		registerGlobalAction(helpContentsAction);
 
 		aboutAction = ActionFactory.ABOUT.create(getWindow());
 		aboutAction

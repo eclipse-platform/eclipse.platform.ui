@@ -125,6 +125,12 @@
             id="org.eclipse.ui.category.help">
       </category>
       <command
+            name="%command.helpContents.name"
+            description="%command.helpContents.description"
+            categoryId="org.eclipse.ui.category.help"
+            id="org.eclipse.ui.help.helpContents">
+      </command>
+      <command
             name="%command.quickStart.name"
             description="%command.quickStart.description"
             categoryId="org.eclipse.ui.category.help"
