@@ -14,7 +14,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.*;
-import org.eclipse.ui.internal.OpenNewWindowAction;
 
 /**
  * @since 2.0
@@ -88,7 +87,7 @@ public class OpenActionFactory extends ActionFactory {
 
 		// Add the open New Window action
 		// Create a menu flyout.
-		menu.add(new OpenNewWindowAction(site.getWorkbenchWindow(), element));
+		menu.add(new OpenInNewWindowAction(site.getWorkbenchWindow(), element));
 	}
 	
 	/**

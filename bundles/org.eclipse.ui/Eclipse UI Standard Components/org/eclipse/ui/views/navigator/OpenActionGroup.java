@@ -8,7 +8,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.*;
-import org.eclipse.ui.internal.OpenNewWindowAction;
 
 /**
  * This is the action group for the open actions.
@@ -90,7 +89,7 @@ public class OpenActionGroup extends ActionGroup {
 		if (!(element instanceof IContainer))
 			return;
 
-		menu.add(new OpenNewWindowAction(navigator.getSite().getWorkbenchWindow(), (IContainer) element));
+		menu.add(new OpenInNewWindowAction(navigator.getSite().getWorkbenchWindow(), (IContainer) element));
 	}
 
 	/**

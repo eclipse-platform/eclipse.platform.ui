@@ -514,7 +514,9 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.window"), IWorkbenchActionConstants.M_WINDOW); //$NON-NLS-1$
 		
 		if (usingMenuReorg) {
-			menu.add(new OpenNewWindowAction(window));
+			OpenInNewWindowAction action = new OpenInNewWindowAction(window);
+			action.setText(WorkbenchMessages.getString("Workbench.openNewWindow"));
+			menu.add(action);
 			menu.add(new Separator());
 			addPerspectiveActions(menu);
 			menu.add(new Separator());
@@ -527,7 +529,9 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			menu.add(new SwitchToWindowMenu(window, true));
 		}
 		else {
-			menu.add(new OpenNewWindowAction(window));
+			OpenInNewWindowAction action = new OpenInNewWindowAction(window);
+			action.setText(WorkbenchMessages.getString("Workbench.openNewWindow"));			
+			menu.add(action);
 			MenuManager launchWindowMenu = new MenuManager(WorkbenchMessages.getString("Workbench.launch"), IWorkbenchActionConstants.M_LAUNCH); //$NON-NLS-1$
 			launchWindowMenu.add(new GroupMarker(IWorkbenchActionConstants.LAUNCH_EXT));
 			menu.add(launchWindowMenu);
