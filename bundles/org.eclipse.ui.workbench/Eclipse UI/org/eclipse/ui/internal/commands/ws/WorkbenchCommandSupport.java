@@ -38,6 +38,8 @@ import org.eclipse.ui.keys.SWTKeySupport;
 
 public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 
+    private final static int TIME = 100;
+
     private String activePartId;
 
     private String activePerspectiveId;
@@ -104,8 +106,6 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
             processHandlerSubmissions(false);
         }
     };
-
-    private final static int TIME = 100;
 
     private boolean processingHandlerSubmissions;
 

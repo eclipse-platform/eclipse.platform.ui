@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -39,6 +40,8 @@ import org.eclipse.ui.internal.contexts.ProxyContextManager;
 import org.eclipse.ui.internal.util.Util;
 
 public class WorkbenchContextSupport implements IWorkbenchContextSupport {
+
+    private final static int TIME = 100;
 
     private String activePartId;
 
@@ -106,6 +109,16 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
     private boolean processingEnabledSubmissions;
 
     private ProxyContextManager proxyContextManager;
+
+    private boolean request = false;
+
+    private Runnable timer = new Runnable() {
+
+        public void run() {
+            request = false;
+            processEnabledSubmissionsImpl(true);
+        }
+    };
 
     private IWindowListener windowListener = new IWindowListener() {
 
@@ -177,6 +190,13 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
     private void processEnabledSubmissions(boolean force) {
         if (!processingEnabledSubmissions) return;
 
+        if (!request) {
+            request = true;
+            Display.getCurrent().timerExec(TIME, timer);
+        }
+    }
+
+    private void processEnabledSubmissionsImpl(boolean force) {
         Set enabledContextIds = new HashSet();
         String activePartId = null;
         String activePerspectiveId = null;

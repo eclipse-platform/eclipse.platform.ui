@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Shell;
 public interface IWorkbenchCommandSupport {
 
     /**
-     * TODO
+     * TODO - sends request only; command manager not necessarily updated right away
      * 
      * @param handlerSubmissions
      */
@@ -88,7 +88,7 @@ public interface IWorkbenchCommandSupport {
     void registerForKeyBindings(Shell shell, boolean dialogOnly);
 
     /**
-     * TODO
+     * TODO - sends request only; command manager not necessarily updated right away
      * 
      * @param handlerSubmissions
      */
