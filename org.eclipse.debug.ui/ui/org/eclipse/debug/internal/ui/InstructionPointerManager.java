@@ -93,6 +93,9 @@ public class InstructionPointerManager {
 		}
 		if (charStart < 0) {
 			IDocument doc = docProvider.getDocument(editorInput);
+			if (doc == null) {
+				return;
+			}
 			try {
 				int lineNumber = stackFrame.getLineNumber() - 1;
 				IRegion region = doc.getLineInformation(lineNumber);
