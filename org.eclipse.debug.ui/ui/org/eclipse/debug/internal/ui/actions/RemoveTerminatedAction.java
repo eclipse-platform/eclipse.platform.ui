@@ -217,6 +217,9 @@ public class RemoveTerminatedAction extends ListenerActionDelegate implements IL
 			update();
 		}
 	}
-
+	
+	protected void update(IAction action, ISelection s) {
+		update();
+	}
 }
 
