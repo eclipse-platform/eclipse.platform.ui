@@ -30,7 +30,10 @@ import org.eclipse.team.internal.ccvs.ui.model.AllRootsElement;
 import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
 import org.eclipse.team.internal.ccvs.ui.wizards.NewLocationWizard;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
@@ -202,5 +205,22 @@ public class RepositoriesView extends ViewPart {
 	 */
 	public void setFocus() {
 		viewer.getControl().setFocus();
+	}
+	
+	/**
+	 * Ask all open repositories views to refresh.
+	 */
+	public static void refreshAll() {
+		IWorkbench workbench = CVSUIPlugin.getPlugin().getWorkbench();
+		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
+		for (int i = 0; i < windows.length; i++) {
+			IWorkbenchPage[] pages = windows[i].getPages();
+			for (int j = 0; j < pages.length; j++) {
+				RepositoriesView view = (RepositoriesView)pages[j].findView(VIEW_ID);
+				if (view != null) {
+					view.viewer.refresh();
+				}
+			}
+		}
 	}
 }
