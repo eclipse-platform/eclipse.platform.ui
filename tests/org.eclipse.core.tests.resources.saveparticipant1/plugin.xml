@@ -9,6 +9,7 @@
   <requires>
     <import plugin="org.eclipse.core.resources"/>
     <import plugin="org.eclipse.core.tests.resources"/>
+    <import plugin="org.junit"/>
   </requires>
 
   <runtime>
