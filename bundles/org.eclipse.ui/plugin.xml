@@ -1615,6 +1615,13 @@
          </action>
       </actionSet>
    </extension>
+   <extension point="org.eclipse.ui.actionSetPartAssociations">
+      <actionSetPartAssociation
+            targetID="org.eclipse.ui.NavigateActionSet">
+         <part id="org.eclipse.ui.views.ResourceNavigator"/>
+      </actionSetPartAssociation>
+   </extension>
+   
    <extension
          point="org.eclipse.ui.decorators">
       <decorator
