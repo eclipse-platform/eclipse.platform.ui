@@ -103,6 +103,8 @@ public class RemoteAntBuildListener implements ILaunchesListener{
 	/**
 	 * Start listening to an Ant build. Start a server connection that
 	 * the RemoteAntBuildLogger can connect to.
+	 * 
+	 * @param port The port number to create the server connection on
 	 */
 	public synchronized void startListening(int port) {
 		fPort = port;
@@ -137,10 +139,6 @@ public class RemoteAntBuildListener implements ILaunchesListener{
 			}
 		} catch(IOException e) {
 		}
-	}
-	
-	public boolean isRunning() {
-		return fSocket != null;
 	}
 		
 	private void receiveMessage(String message) {
@@ -289,7 +287,6 @@ public class RemoteAntBuildListener implements ILaunchesListener{
 				shutDown();
 				return;
 			}
-			
 		}
 	}
 }
