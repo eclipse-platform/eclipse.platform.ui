@@ -549,11 +549,11 @@ public interface IPreferencesService {
 
 	/**
 	 * Export the preference tree rooted at the given node, to the specified output
-	 * stream. Apply the given list of preference transfers as filters, only exporting
-	 * preference node and keys which are applicable to at least one transfer in the list.
+	 * stream. Apply the given list of preference filters, only exporting
+	 * preference node and keys which are applicable to at least one filter in the list.
 	 * <p>
 	 * The given node and output stream must not be <code>null</code>.
-	 * If the list of transfers is <code>null</code> or empty then do nothing.
+	 * If the list of filters is <code>null</code> or empty then do nothing.
 	 * </p>
 	 * <p>
 	 * It is the responsibility of the client to close the given output stream.
@@ -564,42 +564,42 @@ public interface IPreferencesService {
 	 * </p>
 	 * 
 	 * @param node the tree to export
-	 * @param transfers the list of transfers to export
+	 * @param filters the list of filters to export
 	 * @param output the stream to export to
 	 * @throws CoreException
 	 * @see #exportPreferences(IEclipsePreferences, OutputStream, String[])
-	 * @see #importPreferences(InputStream)
 	 * @see #readPreferences(InputStream)
-	 * @see #applyPreferences(IEclipsePreferences, IPreferenceTransfer[])
+	 * @see #applyPreferences(IEclipsePreferences, IPreferenceFilter[])
 	 * @see #applyPreferences(IExportedPreferences)
-	 * @see IPreferenceTransfer
+	 * @see IPreferenceFilter
 	 * @since 3.1
 	 */
-	public void exportPreferences(IEclipsePreferences node, IPreferenceTransfer[] transfers, OutputStream output) throws CoreException;
+	public void exportPreferences(IEclipsePreferences node, IPreferenceFilter[] filters, OutputStream output) throws CoreException;
 
 	/**
-	 * Return a list of transfers which match the given tree. If the specified list of transfers is
-	 * <code>null</code>, empty, or there are no matches, then return an empty list.
+	 * Return a list of filters which match the given tree and is a subset of the given
+	 * filter list. If the specified list of filters is <code>null</code>, empty, or there 
+	 * are no matches, then return an empty list.
 	 * <p>
 	 * <em>Note:</em> This is interim API and will likely change shape before the 
 	 * final 3.1 release.
 	 * </p>
 	 * 
 	 * @param node the tree to match against
-	 * @param transfers the list of transfers to match against
+	 * @param filters the list of filters to match against
 	 * @return the array of matching transfers
 	 * @throws CoreException
-	 * @see IPreferenceTransfer
+	 * @see IPreferenceFilter
 	 * @since 3.1
 	 */
-	public IPreferenceTransfer[] matches(IEclipsePreferences node, IPreferenceTransfer[] transfers) throws CoreException;
+	public IPreferenceFilter[] matches(IEclipsePreferences node, IPreferenceFilter[] filters) throws CoreException;
 
 	/**
 	 * Apply the preference tree rooted at the given node, to the system's preference tree.
-	 * The list of preference transfers will act as a filter and only preferences in the tree which
-	 * apply to at least one transfer in the list, will be applied.
+	 * The list of preference filters will act as a filter and only preferences in the tree which
+	 * apply to at least one filter in the list, will be applied.
 	 * <p>
-	 * If the list of transfers is <code>null</code> or empty then do nothing.
+	 * If the list of filters is <code>null</code> or empty then do nothing.
 	 * </p>
 	 * <p>
 	 * <em>Note:</em> This is interim API and will likely change shape before the 
@@ -607,12 +607,12 @@ public interface IPreferencesService {
 	 * </p>
 	 * 
 	 * @param node the tree to consider applying
-	 * @param transfers the filters to use
+	 * @param filters the filters to use
 	 * @throws CoreException
 	 * @see #applyPreferences(IExportedPreferences)
 	 * @see #readPreferences(InputStream)
-	 * @see IPreferenceTransfer
+	 * @see IPreferenceFilter
 	 * @since 3.1
 	 */
-	public void applyPreferences(IEclipsePreferences node, IPreferenceTransfer[] transfers) throws CoreException;
+	public void applyPreferences(IEclipsePreferences node, IPreferenceFilter[] filters) throws CoreException;
 }

@@ -13,10 +13,10 @@ package org.eclipse.core.runtime.preferences;
 import java.util.Map;
 
 /**
- * Preference Transfers are used to describe the relationship between the
+ * Preference filters are used to describe the relationship between the
  * preference tree and a data set when importing/exporting preferences.
  * <p>
- * For instance, a client is able to create a preference transfer describing
+ * For instance, a client is able to create a preference filter describing
  * which preference nodes/keys should be used when exporting the
  * "Key Bindings" preferences. When the export happens, the tree is
  * trimmed and only the applicable preferences will be exported.
@@ -28,10 +28,10 @@ import java.util.Map;
  * 
  * @since 3.1
  */
-public interface IPreferenceTransfer {
+public interface IPreferenceFilter {
 
 	/**
-	 * Return an array of scopes that this preference transfer is applicable for. The list
+	 * Return an array of scopes that this preference filter is applicable for. The list
 	 * of scopes must not be <code>null</code>.
 	 * <p>
 	 * For example: 
@@ -43,12 +43,12 @@ public interface IPreferenceTransfer {
 	public String[] getScopes();
 	
 	/**
-	 * Return a mapping which defines the nodes and keys that this transfer
+	 * Return a mapping which defines the nodes and keys that this filter
 	 * applies to. 
 	 * <p>
-	 * If the map is <code>null</code> then this transfer is applicable for all
-	 * nodes within the defined scopes. If it is non-<code>null</code> then the
-	 * mapping applies to each scope.
+	 * If the map is <code>null</code> then this filter is applicable for all
+	 * nodes within the scope. The map can also be <code>null</code> if 
+	 * the given scope is not known to this filter.
 	 * </p>
 	 * <p>
 	 * The keys in the table are Strings and describe the node path. The values are 
@@ -69,6 +69,6 @@ public interface IPreferenceTransfer {
 	 * 
 	 * @return the mapping table
 	 */
-	public Map getMapping();
+	public Map getMapping(String scope);
 
 }

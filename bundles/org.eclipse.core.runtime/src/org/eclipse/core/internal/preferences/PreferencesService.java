@@ -123,7 +123,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	 * @see org.eclipse.core.runtime.preferences.IPreferencesService#applyPreferences(org.eclipse.core.runtime.preferences.IExportedPreferences)
 	 */
 	public IStatus applyPreferences(IExportedPreferences preferences) throws CoreException {
-		// TODO investigate refactoring to merge with new #apply(IEclipsePreferences, IPreferenceTransfer[]) APIs
+		// TODO investigate refactoring to merge with new #apply(IEclipsePreferences, IPreferenceFilter[]) APIs
 		if (preferences == null)
 			throw new IllegalArgumentException();
 
@@ -353,7 +353,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	 * @see org.eclipse.core.runtime.preferences.IPreferencesService#exportPreferences(org.eclipse.core.runtime.preferences.IEclipsePreferences, java.io.OutputStream, java.lang.String[])
 	 */
 	public IStatus exportPreferences(IEclipsePreferences node, OutputStream output, String[] excludesList) throws CoreException {
-		// TODO investigate refactoring to merge with new #expor(IEclipsePreferences, IPreferenceTransfer[]) APIs
+		// TODO investigate refactoring to merge with new #export(IEclipsePreferences, IPreferenceFilter[]) APIs
 		if (node == null || output == null)
 			throw new IllegalArgumentException();
 		Properties properties = null;
@@ -746,7 +746,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
 			public boolean visit(IEclipsePreferences node) throws BackingStoreException {
 				Preferences destination = result.node(node.absolutePath());
-				copyFromTo(node, destination, null);
+				copyFromTo(node, destination, null, 0);
 				return true;
 			}
 		};
@@ -756,19 +756,28 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	}
 
 	/*
-	 * Return a tree which contains only nodes and keys which are applicable to the given transfer.
+	 * Return a tree which contains only nodes and keys which are applicable to the given filter.
 	 */
-	private IEclipsePreferences trimTree(IEclipsePreferences tree, IPreferenceTransfer transfer) throws BackingStoreException {
+	private IEclipsePreferences trimTree(IEclipsePreferences tree, IPreferenceFilter filter) throws BackingStoreException {
 		IEclipsePreferences result = (IEclipsePreferences) ExportedRootPreferences.newRoot().node(tree.absolutePath());
-		String[] scopes = transfer.getScopes();
+		String[] scopes = filter.getScopes();
 		if (scopes == null)
 			throw new IllegalArgumentException();
-		Map mapping = transfer.getMapping();
-		// todo handle mapping==null case
 		String treePath = tree.absolutePath();
 		// see if this node is applicable by going over all our scopes
 		for (int i = 0; i < scopes.length; i++) {
 			String scope = scopes[i];
+			Map mapping = filter.getMapping(scope);
+			// if the mapping is null then copy everything if the scope matches
+			if (mapping == null) {
+				// if we are the root node then check our children
+				if (tree.parent() == null && tree.nodeExists(scope))
+					copyFromTo(tree.node(scope), result.node(scope), null, -1);
+				// ensure we are in the correct scope
+				else if (scopeMatches(scope, tree))
+					copyFromTo(tree, result, null, -1);
+				continue;
+			}
 			// iterate over the list of declared nodes
 			for (Iterator iter = mapping.keySet().iterator(); iter.hasNext();) {
 				String nodePath = (String) iter.next();
@@ -780,17 +789,36 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 				String childPath = nodeFullPath.substring(treePath.length());
 				// todo make relative
 				if (tree.nodeExists(childPath))
-					copyFromTo(tree.node(childPath), result.node(childPath), (String[]) mapping.get(nodePath));
+					copyFromTo(tree.node(childPath), result.node(childPath), (String[]) mapping.get(nodePath), 0);
 			}
 		}
 		return result;
 	}
 
 	/**
-	 * Copy key/value pairs from the source to the destination. If the key list is null
-	 * then copy all associations. This is a DEPTH_ZERO operation.
+	 * Return true if the given node is in the specified scope and false othewise.
 	 */
-	void copyFromTo(Preferences source, Preferences destination, String[] keys) throws BackingStoreException {
+	private boolean scopeMatches(String scope, IEclipsePreferences tree) {
+		// the root isn't in any scope
+		if (tree.parent() == null)
+			return false;
+		// fancy math to get the first segment of the path
+		String path = tree.absolutePath();
+		int index = path.indexOf('/', 1);
+		String sub = path.substring(1, index);
+		return scope.equals(sub);
+	}
+
+	/**
+	 * Copy key/value pairs from the source to the destination. If the key list is null
+	 * then copy all associations. 
+	 * 
+	 * If the depth is 0, then this operation is performed only on the source node. Otherwise
+	 * it is performed on the source node's subtree.
+	 * 
+	 * @param depth one of 0 or -1
+	 */
+	void copyFromTo(Preferences source, Preferences destination, String[] keys, int depth) throws BackingStoreException {
 		if (keys == null)
 			keys = source.keys();
 		for (int i = 0; i < keys.length; i++) {
@@ -798,71 +826,85 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 			if (value != null)
 				destination.put(keys[i], value);
 		}
+		if (depth == 0)
+			return;
+		String[] children = source.childrenNames();
+		for (int i = 0; i < children.length; i++)
+			copyFromTo(source.node(children[i]), destination.node(children[i]), keys, depth);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.preferences.IPreferencesService#exportPreferences(IEclipsePreferences, IPreferenceTransfer[], OutputStream)
+	 * @see org.eclipse.core.runtime.preferences.IPreferencesService#exportPreferences(IEclipsePreferences, IPreferenceFilter[], OutputStream)
 	 */
-	public void exportPreferences(IEclipsePreferences node, IPreferenceTransfer[] transfers, OutputStream stream) throws CoreException {
-		if (transfers == null || transfers.length == 0)
+	public void exportPreferences(IEclipsePreferences node, IPreferenceFilter[] filters, OutputStream stream) throws CoreException {
+		if (filters == null || filters.length == 0)
 			return;
 		try {
-			internalExport(node, transfers, stream);
+			internalExport(node, filters, stream);
 		} catch (BackingStoreException e) {
 			throw new CoreException(createStatusError(Messages.preferences_exportProblems, e));
 		}
 	}
 
 	/**
-	 * Take the preference tree and trim it so it only holds values applying to the given transfers.
+	 * Take the preference tree and trim it so it only holds values applying to the given filters.
 	 * Then export the resulting tree to the given output stream.
 	 */
-	private void internalExport(IEclipsePreferences node, IPreferenceTransfer transfers[], OutputStream output) throws BackingStoreException, CoreException {
+	private void internalExport(IEclipsePreferences node, IPreferenceFilter filters[], OutputStream output) throws BackingStoreException, CoreException {
 		ArrayList trees = new ArrayList();
-		for (int i = 0; i < transfers.length; i++)
-			trees.add(trimTree(node, transfers[i]));
+		for (int i = 0; i < filters.length; i++)
+			trees.add(trimTree(node, filters[i]));
 		IEclipsePreferences toExport = mergeTrees((IEclipsePreferences[]) trees.toArray(new IEclipsePreferences[trees.size()]));
 		exportPreferences(toExport, output, (String[]) null);
 	}
 
 	/* (non-Javadoc)
-	 * @see IPreferencesService#matches(IEclipsePreferences, IPreferenceTransfer[])
+	 * @see IPreferencesService#matches(IEclipsePreferences, IPreferenceFilter[])
 	 */
-	public IPreferenceTransfer[] matches(IEclipsePreferences tree, IPreferenceTransfer[] transfers) throws CoreException {
-		if (transfers == null || transfers.length == 0)
-			return new IPreferenceTransfer[0];
+	public IPreferenceFilter[] matches(IEclipsePreferences tree, IPreferenceFilter[] filters) throws CoreException {
+		if (filters == null || filters.length == 0)
+			return new IPreferenceFilter[0];
 		try {
-			return internalMatches(tree, transfers);
+			return internalMatches(tree, filters);
 		} catch (BackingStoreException e) {
 			throw new CoreException(createStatusError("exception matching", e));
 		}
 	}
 
 	/*
-	 * Internal method that collects the matching transfers for the given tree and returns them.
+	 * Internal method that collects the matching filters for the given tree and returns them.
 	 */
-	private IPreferenceTransfer[] internalMatches(IEclipsePreferences tree, IPreferenceTransfer[] transfers) throws BackingStoreException {
+	private IPreferenceFilter[] internalMatches(IEclipsePreferences tree, IPreferenceFilter[] filters) throws BackingStoreException {
 		ArrayList result = new ArrayList();
-		for (int i = 0; i < transfers.length; i++)
-			if (internalMatches(tree, transfers[i]))
-				result.add(transfers[i]);
-		return (IPreferenceTransfer[]) result.toArray(new IPreferenceTransfer[result.size()]);
+		for (int i = 0; i < filters.length; i++)
+			if (internalMatches(tree, filters[i]))
+				result.add(filters[i]);
+		return (IPreferenceFilter[]) result.toArray(new IPreferenceFilter[result.size()]);
 	}
 
 	/*
-	 * Return true if the given tree contains information that the specified transfer is interested
+	 * Return true if the given tree contains information that the specified filter is interested
 	 * in, and false otherwise.
 	 */
-	private boolean internalMatches(IEclipsePreferences tree, IPreferenceTransfer transfer) throws BackingStoreException {
-		String[] scopes = transfer.getScopes();
+	private boolean internalMatches(IEclipsePreferences tree, IPreferenceFilter filter) throws BackingStoreException {
+		String[] scopes = filter.getScopes();
 		if (scopes == null)
 			throw new IllegalArgumentException();
-		Map mapping = transfer.getMapping();
-		// TODO handle mapping=null case
 		String treePath = tree.absolutePath();
 		// see if this node is applicable by going over all our scopes
 		for (int i = 0; i < scopes.length; i++) {
 			String scope = scopes[i];
+			Map mapping = filter.getMapping(scope);
+			// if the mapping is null then we match everything
+			if (mapping == null) {
+				// if we are the root check to see if the scope exists
+				if (tree.parent() == null && tree.nodeExists(scope))
+					return true;
+				// otherwise check to see if we are in the right scope
+				if (scopeMatches(scope, tree))
+					return true;
+				continue;
+			}
 			// iterate over the list of declared nodes
 			for (Iterator iter = mapping.keySet().iterator(); iter.hasNext();) {
 				String nodePath = (String) iter.next();
@@ -892,33 +934,33 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.preferences.IPreferencesService#applyPreferences(org.eclipse.core.runtime.preferences.IEclipsePreferences, org.eclipse.core.runtime.preferences.IPreferenceTransfer[])
+	 * @see org.eclipse.core.runtime.preferences.IPreferencesService#applyPreferences(org.eclipse.core.runtime.preferences.IEclipsePreferences, org.eclipse.core.runtime.preferences.IPreferenceFilter[])
 	 */
-	public void applyPreferences(IEclipsePreferences tree, IPreferenceTransfer[] transfers) throws CoreException {
-		if (transfers == null || transfers.length == 0)
+	public void applyPreferences(IEclipsePreferences tree, IPreferenceFilter[] filters) throws CoreException {
+		if (filters == null || filters.length == 0)
 			return;
 		try {
-			internalApply(tree, transfers);
+			internalApply(tree, filters);
 		} catch (BackingStoreException e) {
 			throw new CoreException(createStatusError(Messages.preferences_applyProblems, e));
 		}
 	}
 
 	/**
-	 * Filter the given tree so it only contains values which apply to the specified transfers
+	 * Filter the given tree so it only contains values which apply to the specified filters
 	 * then apply the resulting tree to the main preference tree.
 	 */
-	private void internalApply(IEclipsePreferences tree, IPreferenceTransfer[] transfers) throws BackingStoreException {
+	private void internalApply(IEclipsePreferences tree, IPreferenceFilter[] filters) throws BackingStoreException {
 		ArrayList trees = new ArrayList();
-		for (int i = 0; i < transfers.length; i++)
-			trees.add(trimTree(getRootNode(), transfers[i]));
+		for (int i = 0; i < filters.length; i++)
+			trees.add(trimTree(getRootNode(), filters[i]));
 		IEclipsePreferences toApply = mergeTrees((IEclipsePreferences[]) trees.toArray(new IEclipsePreferences[trees.size()]));
 		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
 			public boolean visit(IEclipsePreferences node) throws BackingStoreException {
 				String[] keys = node.keys();
 				if (keys.length == 0)
 					return true;
-				copyFromTo(node, getRootNode().node(node.absolutePath()), keys);
+				copyFromTo(node, getRootNode().node(node.absolutePath()), keys, 0);
 				return true;
 			}
 		};

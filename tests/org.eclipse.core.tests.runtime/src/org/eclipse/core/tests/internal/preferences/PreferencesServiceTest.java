@@ -32,12 +32,22 @@ public class PreferencesServiceTest extends RuntimeTest {
 		private ByteArrayOutputStream output;
 		private Set expected;
 		private String[] excludes;
+		private IPreferenceFilter[] transfers;
+		private boolean useTransfers;
 
 		public ExportVerifier(IEclipsePreferences node, String[] excludes) {
 			super();
 			this.node = node;
 			this.excludes = excludes;
 			this.expected = new HashSet();
+		}
+
+		public ExportVerifier(IEclipsePreferences node, IPreferenceFilter[] transfers) {
+			super();
+			this.node = node;
+			this.transfers = transfers;
+			this.expected = new HashSet();
+			this.useTransfers = true;
 		}
 
 		void addExpected(String path, String key) {
@@ -60,7 +70,10 @@ public class PreferencesServiceTest extends RuntimeTest {
 			IPreferencesService service = Platform.getPreferencesService();
 			this.output = new ByteArrayOutputStream();
 			try {
-				service.exportPreferences(node, output, excludes);
+				if (useTransfers)
+					service.exportPreferences(node, transfers, output);
+				else
+					service.exportPreferences(node, output, excludes);
 			} catch (CoreException e) {
 				fail("0.0", e);
 			}
@@ -97,9 +110,9 @@ public class PreferencesServiceTest extends RuntimeTest {
 	public static Test suite() {
 		// all test methods are named "test..."
 		return new TestSuite(PreferencesServiceTest.class);
-//				TestSuite suite = new TestSuite();
-//				suite.addTest(new PreferencesServiceTest("testValidateVersions"));
-//				return suite;
+		//				TestSuite suite = new TestSuite();
+		//				suite.addTest(new PreferencesServiceTest("testValidateVersions"));
+		//				return suite;
 	}
 
 	public void testImportExportBasic() {
@@ -124,7 +137,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 		// export it
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		try {
-			service.exportPreferences(test, output, null);
+			service.exportPreferences(test, output, (String[]) null);
 		} catch (CoreException e) {
 			fail("2.0", e);
 		} finally {
@@ -693,7 +706,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 		for (int i = 0; i < 10; i++)
 			node.put(Integer.toString(i), getRandomString());
 
-		ExportVerifier verifier = new ExportVerifier(node, null);
+		ExportVerifier verifier = new ExportVerifier(node, (String[]) null);
 		verifier.verify();
 	}
 
@@ -727,7 +740,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 
 	public void testValidateVersions() {
 		final char BUNDLE_VERSION_PREFIX = '@';
-		
+
 		// ensure that there is at least one value in the prefs
 		Preferences scopeRoot = Platform.getPreferencesService().getRootNode().node(Plugin.PLUGIN_PREFERENCE_SCOPE);
 		scopeRoot.node("org.eclipse.core.tests.runtime").put("key", "value");
@@ -805,4 +818,128 @@ public class PreferencesServiceTest extends RuntimeTest {
 		assertTrue("4.2", !result.isOK());
 
 	}
+
+	public void testMatches() {
+		IPreferencesService service = Platform.getPreferencesService();
+		IPreferenceFilter[] matching = null;
+		final String QUALIFIER = getUniqueString();
+
+		// an empty transfer list matches nothing
+		try {
+			matching = service.matches(service.getRootNode(), new IPreferenceFilter[0]);
+		} catch (CoreException e) {
+			fail("1.00", e);
+		}
+		assertEquals("1.1", 0, matching.length);
+
+		// don't match this filter
+		IPreferenceFilter filter = new IPreferenceFilter() {
+			public Map getMapping(String scope) {
+				Map result = new HashMap();
+				result.put(QUALIFIER, null);
+				return result;
+			}
+
+			public String[] getScopes() {
+				return new String[] {InstanceScope.SCOPE};
+			}
+		};
+		try {
+			matching = service.matches(service.getRootNode(), new IPreferenceFilter[] {filter});
+		} catch (CoreException e) {
+			fail("2.00", e);
+		}
+		assertEquals("2.1", 0, matching.length);
+
+		// add some values so it does match
+		new InstanceScope().getNode(QUALIFIER).put("key", "value");
+		try {
+			matching = service.matches(service.getRootNode(), new IPreferenceFilter[] {filter});
+		} catch (CoreException e) {
+			fail("3.00", e);
+		}
+		assertEquals("3.1", 1, matching.length);
+
+		// should match on the exact node too
+		try {
+			matching = service.matches(new InstanceScope().getNode(QUALIFIER), new IPreferenceFilter[] {filter});
+		} catch (CoreException e) {
+			fail("4.00", e);
+		}
+		assertEquals("4.1", 1, matching.length);
+
+		// shouldn't match a different scope
+		try {
+			matching = service.matches(new ConfigurationScope().getNode(QUALIFIER), new IPreferenceFilter[] {filter});
+		} catch (CoreException e) {
+			fail("5.00", e);
+		}
+		assertEquals("5.1", 0, matching.length);
+
+		// try matching on the root node for a filter which matches all nodes in the scope
+		filter = new IPreferenceFilter() {
+			public Map getMapping(String scope) {
+				return null;
+			}
+
+			public String[] getScopes() {
+				return new String[] {InstanceScope.SCOPE};
+			}
+		};
+		try {
+			matching = service.matches(new InstanceScope().getNode(QUALIFIER), new IPreferenceFilter[] {filter});
+		} catch (CoreException e) {
+			fail("6.0", e);
+		}
+		assertEquals("6.1", 1, matching.length);
+		
+		// shouldn't match
+		try {
+			matching = service.matches(new ConfigurationScope().getNode(QUALIFIER), new IPreferenceFilter[] {filter});
+		} catch (CoreException e) {
+			fail("7.0", e);
+		}
+		assertEquals("7.1", 0, matching.length);
+	}
+
+	public void testExportWithTransfers() {
+
+		final String VALID_QUALIFIER = getUniqueString();
+		IPreferenceFilter transfer = new IPreferenceFilter() {
+			public Map getMapping(String scope) {
+				Map result = new HashMap();
+				result.put(VALID_QUALIFIER, null);
+				return result;
+			}
+
+			public String[] getScopes() {
+				return new String[] {InstanceScope.SCOPE};
+			}
+		};
+
+		IPreferencesService service = Platform.getPreferencesService();
+		ExportVerifier verifier = new ExportVerifier(service.getRootNode(), new IPreferenceFilter[] {transfer});
+
+		IEclipsePreferences node = new InstanceScope().getNode(VALID_QUALIFIER);
+		String VALID_KEY_1 = "key1";
+		String VALID_KEY_2 = "key2";
+		node.put(VALID_KEY_1, "value1");
+		node.put(VALID_KEY_2, "value2");
+
+		verifier.addVersion();
+		verifier.addExportRoot(service.getRootNode());
+		verifier.addExpected(node.absolutePath(), VALID_KEY_1);
+		verifier.addExpected(node.absolutePath(), VALID_KEY_2);
+
+		node = new InstanceScope().getNode(getUniqueString());
+		node.put("invalidkey1", "value1");
+		node.put("invalidkey2", "value2");
+
+		verifier.verify();
+	}
+
+	public void testApplyWithTransfers() {
+		// todo
+	}
+
 }
