@@ -22,6 +22,7 @@ import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
+import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -33,9 +34,11 @@ import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.ant.editor.derived.HTMLTextPresenter;
 import org.eclipse.ui.externaltools.internal.ant.editor.text.NonRuleBasedDamagerRepairer;
 import org.eclipse.ui.externaltools.internal.ant.editor.text.IAntEditorColorConstants;
+import org.eclipse.ui.externaltools.internal.ant.editor.text.NotifyingReconciler;
 import org.eclipse.ui.externaltools.internal.ant.editor.text.PlantyPartitionScanner;
 import org.eclipse.ui.externaltools.internal.ant.editor.text.PlantyProcInstrScanner;
 import org.eclipse.ui.externaltools.internal.ant.editor.text.PlantyTagScanner;
+import org.eclipse.ui.externaltools.internal.ant.editor.text.XMLReconcilingStrategy;
 
 
 
@@ -51,12 +54,15 @@ public class PlantySourceViewerConfiguration extends SourceViewerConfiguration {
     private PlantyProcInstrScanner instructionScanner;
 	private NonRuleBasedDamagerRepairer damageRepairer;
         
+    private PlantyEditor fEditor;
+
     /**
      * Creates an instance with the specified color manager.
      */
-    public PlantySourceViewerConfiguration() {
-    }
-    
+    public PlantySourceViewerConfiguration(PlantyEditor editor) {
+	    super();
+	    fEditor= editor;
+    }    
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getContentAssistant(ISourceViewer)
@@ -158,4 +164,13 @@ public class PlantySourceViewerConfiguration extends SourceViewerConfiguration {
 				   
 		damageRepairer.setDefaultTextAttribute(new TextAttribute(ExternalToolsPlugin.getPreferenceColor(IAntEditorColorConstants.P_XML_COMMENT)));				  
 	}
+
+    /*
+     * @see SourceViewerConfiguration#getReconciler(ISourceViewer)
+     */
+    public IReconciler getReconciler(ISourceViewer sourceViewer) {
+	    NotifyingReconciler reconciler= new NotifyingReconciler(new XMLReconcilingStrategy(fEditor), false);
+	    reconciler.setDelay(500);
+	    return reconciler;
+    }
 }

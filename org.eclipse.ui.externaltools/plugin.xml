@@ -166,6 +166,12 @@
 			class="org.eclipse.ui.externaltools.internal.ant.preferences.AntRuntimePreferencePage"
 			category="org.eclipse.ui.externaltools.AntPreferencePage">
 		</page>
+		<page
+			id="org.eclipse.ui.externaltools.AntEditorPreferencePage"
+			name="%PreferencePage.antEditorPreferences"
+			class="org.eclipse.ui.externaltools.internal.ant.preferences.AntEditorPreferencePage"
+			category="org.eclipse.ui.externaltools.AntPreferencePage">
+		</page>
 	</extension>
 	
 	<extension point="org.eclipse.ui.popupMenus">

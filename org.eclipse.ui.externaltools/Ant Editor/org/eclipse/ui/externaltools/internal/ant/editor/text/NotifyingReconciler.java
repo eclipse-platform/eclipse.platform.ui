@@ -9,35 +9,28 @@ Contributors:
     IBM Corporation - Initial implementation
 **********************************************************************/
 
-package org.eclipse.ui.externaltools.internal.ant.editor.outline;
+package org.eclipse.ui.externaltools.internal.ant.editor.text;
 
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
-import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.jface.text.reconciler.MonoReconciler;
-import org.eclipse.ui.externaltools.internal.ant.editor.IOutlineCreationListener;
-import org.eclipse.ui.externaltools.internal.ant.editor.PlantyEditor;
 
 
-public class NotifyingReconciler extends MonoReconciler implements IOutlineCreationListener {
+public class NotifyingReconciler extends MonoReconciler {
 
-	private List fReconcilingParticipants= new ArrayList();
-	
-	private PlantyEditor fEditor;
+	private ArrayList fReconcilingParticipants= new ArrayList();
 	
 	/**
 	 * Constructor for NotifyingReconciler.
 	 * @param strategy
 	 * @param isIncremental
 	 */
-	public NotifyingReconciler(PlantyEditor editor, IReconcilingStrategy strategy, boolean isIncremental) {
+	public NotifyingReconciler(IReconcilingStrategy strategy, boolean isIncremental) {
 		super(strategy, isIncremental);
-		fEditor= editor;
 	}
 
 	/*
@@ -62,32 +55,4 @@ public class NotifyingReconciler extends MonoReconciler implements IOutlineCreat
 			((IReconcilingParticipant) i.next()).reconciled();
 		}
 	}
-
-	/*
-	 * @see org.eclipse.ui.externaltools.internal.ant.editor.IOutlineCreationListener#outlineCreated()
-	 */
-	public void outlineCreated() {
-		IReconcilingStrategy reconcilingStrategy= getReconcilingStrategy(""); //$NON-NLS-1$
-		if (reconcilingStrategy instanceof IOutlineCreationListener) {
-			((IOutlineCreationListener) reconcilingStrategy).outlineCreated();
-		}
-		forceReconciling();
-	}
-	
-	/*
-	 * @see org.eclipse.jface.text.reconciler.IReconciler#install(org.eclipse.jface.text.ITextViewer)
-	 */
-	public void install(ITextViewer textViewer) {
-		super.install(textViewer);
-		fEditor.addOutlineCreationListener(this);
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.reconciler.IReconciler#uninstall()
-	 */
-	public void uninstall() {
-		fEditor.removeOutlineCreationListener(this);
-		super.uninstall();
-	}
-
 }

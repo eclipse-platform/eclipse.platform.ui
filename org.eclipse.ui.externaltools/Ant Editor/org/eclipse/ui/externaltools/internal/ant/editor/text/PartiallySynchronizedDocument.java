@@ -11,7 +11,6 @@ Contributors:
 
 package org.eclipse.ui.externaltools.internal.ant.editor.text;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 
@@ -19,8 +18,6 @@ import org.eclipse.jface.text.Document;
  * Document that can also be used by a background reconciler.
  */
 public class PartiallySynchronizedDocument extends Document {
-	
-	IPath location= null;
 			
 	/*
 	 * @see IDocumentExtension#startSequentialRewrite(boolean)
@@ -70,18 +67,4 @@ public class PartiallySynchronizedDocument extends Document {
 	synchronized public void set(String text) {
 		super.set(text);
 	}
-
-	/**
-	 * @param path
-	 */
-	protected void setLocation(IPath path) {
-		location= path;
-	}
-	
-	/**
-	 * @param path
-	 */
-	public IPath getLocation() {
-		return location;
-	}
-}
+};

@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
@@ -18,7 +19,7 @@ import org.eclipse.swt.widgets.Display;
 /**
  * Generic color manager.
  */
-public class ColorManager {	
+public class ColorManager implements ISharedTextColors {	
 	
 	private static ColorManager fgColorManager;
 	

@@ -13,39 +13,48 @@ http://www.eclipse.org/legal/cpl-v10.html
 // Berlin, Duesseldorf, Frankfurt (Germany) 2002
 // All rights reserved.
 //
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.ResourceBundle;
 
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.source.IAnnotationAccess;
+import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.OverviewRuler;
+import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.externaltools.internal.ant.editor.outline.AntModel;
 import org.eclipse.ui.externaltools.internal.ant.editor.outline.PlantyContentOutlinePage;
-import org.eclipse.ui.externaltools.internal.ant.editor.outline.PlantyContentOutlinePageNew;
+import org.eclipse.ui.externaltools.internal.ant.editor.outline.XMLCore;
+import org.eclipse.ui.externaltools.internal.ant.editor.text.AnnotationAccess;
+import org.eclipse.ui.externaltools.internal.ant.editor.text.AnnotationType;
 import org.eclipse.ui.externaltools.internal.ant.editor.text.IAntEditorColorConstants;
 import org.eclipse.ui.externaltools.internal.ant.editor.text.PlantyDocumentProvider;
-import org.eclipse.ui.externaltools.internal.ant.editor.text.PlantyDocumentProviderNew;
+import org.eclipse.ui.externaltools.internal.ant.editor.xml.IAntEditorConstants;
+import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlAttribute;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlElement;
+import org.eclipse.ui.externaltools.internal.ant.preferences.AntEditorPreferenceConstants;
+import org.eclipse.ui.externaltools.internal.model.ColorManager;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.texteditor.ContentAssistAction;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
+import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 /**
  * The actual editor implementation for Planty.
  * 
- * @version 3. Nov. 2002
  * @author Alf Schiefelbein
  */
 public class PlantyEditor extends TextEditor {
@@ -70,8 +79,6 @@ public class PlantyEditor extends TextEditor {
      * The page that shows the outline.
      */
     protected PlantyContentOutlinePage page;
-    private List fOutlineCreationListeners;
-    private Object fPageLock;
 
 
     /**
@@ -79,14 +86,8 @@ public class PlantyEditor extends TextEditor {
      */
     public PlantyEditor() {
         super();
-        if (DynamicReconciling.NEW_CODE_PATHS) {
-			fOutlineCreationListeners= new ArrayList();
-			fPageLock= new Object();
-			setDocumentProvider(new PlantyDocumentProviderNew());
-        } else {
-			setDocumentProvider(new PlantyDocumentProvider());
-        }
-        setPreferenceStore(ExternalToolsPlugin.getDefault().getPreferenceStore());
+	setDocumentProvider(new PlantyDocumentProvider(XMLCore.getDefault()));
+	setPreferenceStore(ExternalToolsPlugin.getDefault().getPreferenceStore());
     }
 
 
@@ -106,39 +107,26 @@ public class PlantyEditor extends TextEditor {
 
     public void initializeEditor() {
         // That is where the assistant and its processor is defined
-        if (DynamicReconciling.NEW_CODE_PATHS) {
-			setSourceViewerConfiguration(new PlantySourceViewerConfigurationNew(this));
-        } else {
-			setSourceViewerConfiguration(new PlantySourceViewerConfiguration());
-        }
+	setSourceViewerConfiguration(new PlantySourceViewerConfiguration(this));
     }
    
 	/* (non-Javadoc)
      * Method declared on IAdaptable
      */
     public Object getAdapter(Class key) {
-
-		// Comment this in to get the outline view
-        if (key.equals(IContentOutlinePage.class)) {
-            IEditorInput input = getEditorInput();
-            if (input instanceof IFileEditorInput) {
-            	if (DynamicReconciling.NEW_CODE_PATHS) {
-            		synchronized (fPageLock) {
-						page= new PlantyContentOutlinePageNew();
-						page.addSelectionChangedListener(selectionChangedListener);
-						notifyOutlineCreationListeners();
-            		}
-            	} else {
-					page= new PlantyContentOutlinePage(((IFileEditorInput) input).getFile());
-                	page.addSelectionChangedListener(selectionChangedListener);
-            	}
-                return page;
-            }
-        }
-
+        if (key.equals(IContentOutlinePage.class))
+		return getOutlinePage();
         return super.getAdapter(key);
     }
 
+	protected PlantyContentOutlinePage getOutlinePage() {
+		if (page == null) {
+			page= new PlantyContentOutlinePage(XMLCore.getDefault(), this);
+			page.addPostSelectionChangedListener(selectionChangedListener);
+			setOutlinePageInput(page, getEditorInput());
+		}
+		return page;
+	}
 
     protected void doSelectionChanged(SelectionChangedEvent aSelectionChangedEvent) {
         IStructuredSelection selection= (IStructuredSelection)aSelectionChangedEvent.getSelection();
@@ -213,8 +201,11 @@ public class PlantyEditor extends TextEditor {
                     return;
                 }
 
-                offset= reference.getOffset()+1;
-                length= reference.getName().length();
+		XmlAttribute attrType= reference.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
+		if (!reference.isErrorNode() || (attrType != null && IAntEditorConstants.TYPE_PROJECT.equalsIgnoreCase(attrType.getValue()))) { //NOTE: type is checked because isErrorNode() is true for an error node *and* the root node, which - in this case - should be handled as an normal node  
+	                offset= reference.getOffset()+1;
+	                length= reference.getName().length();
+		}
                                             
                 if (offset > -1 && length > 0) {
                     sourceViewer.revealRange(offset, length);
@@ -235,22 +226,6 @@ public class PlantyEditor extends TextEditor {
     }
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IEditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void doSave(IProgressMonitor monitor) {
-		super.doSave(monitor);
-		if (!DynamicReconciling.NEW_CODE_PATHS && page != null) {
-			page.update();
-		}
-	}
-	
-	public PlantyContentOutlinePage getOutlinePage() {
-		synchronized (fPageLock) {
-			return page;
-		}
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#affectsTextPresentation(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
@@ -273,20 +248,121 @@ public class PlantyEditor extends TextEditor {
 		super.handlePreferenceStoreChanged(event);
 	}
 
-	public void addOutlineCreationListener(IOutlineCreationListener listener) {
-		fOutlineCreationListeners.add(listener);
+	/*
+	 * @see org.eclipse.ui.editors.text.TextEditor#doSetInput(org.eclipse.ui.IEditorInput)
+	 */
+	protected void doSetInput(IEditorInput input) throws CoreException {
+		super.doSetInput(input);
+		setOutlinePageInput(page, input);
 	}
 
-
-	public void removeOutlineCreationListener(IOutlineCreationListener listener) {
-		fOutlineCreationListeners.remove(listener);
-	}
-	
-	public void notifyOutlineCreationListeners() {
-		Iterator i= new ArrayList(fOutlineCreationListeners).iterator();
-		while (i.hasNext()) {
-			((IOutlineCreationListener) i.next()).outlineCreated();
+	protected void setOutlinePageInput(PlantyContentOutlinePage page, IEditorInput input) {
+		if (page != null) {
+			IDocumentProvider provider= getDocumentProvider();
+			if (provider instanceof PlantyDocumentProvider) {
+				PlantyDocumentProvider documentProvider= (PlantyDocumentProvider) provider;
+				AntModel model= documentProvider.getAntModel(input);
+				page.setPageInput(model);
+			}
 		}
 	}
+	
+	/** Preference key for showing the line number ruler */
+	//private final static String LINE_NUMBER_RULER= AntEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER;
+	/** Preference key for the foreground color of the line numbers */
+	//private final static String LINE_NUMBER_COLOR= AntEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR;
+	/** Preference key for showing the overview ruler */
+	//private final static String OVERVIEW_RULER= AntEditorPreferenceConstants.EDITOR_OVERVIEW_RULER;
+	/** Preference key for error indication in overview ruler */
+	private final static String ERROR_INDICATION_IN_OVERVIEW_RULER= AntEditorPreferenceConstants.EDITOR_ERROR_INDICATION_IN_OVERVIEW_RULER;
+	/** Preference key for warning indication in overview ruler */
+	private final static String WARNING_INDICATION_IN_OVERVIEW_RULER= AntEditorPreferenceConstants.EDITOR_WARNING_INDICATION_IN_OVERVIEW_RULER;
+	/** Preference key for info indication in overview ruler */
+	private final static String INFO_INDICATION_IN_OVERVIEW_RULER= AntEditorPreferenceConstants.EDITOR_INFO_INDICATION_IN_OVERVIEW_RULER;
+	/** Preference key for task indication in overview ruler */
+	private final static String TASK_INDICATION_IN_OVERVIEW_RULER= AntEditorPreferenceConstants.EDITOR_TASK_INDICATION_IN_OVERVIEW_RULER;
+	/** Preference key for bookmark indication in overview ruler */
+	private final static String BOOKMARK_INDICATION_IN_OVERVIEW_RULER= AntEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION_IN_OVERVIEW_RULER;
+	/** Preference key for search result indication in overview ruler */
+	private final static String SEARCH_RESULT_INDICATION_IN_OVERVIEW_RULER= AntEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION_IN_OVERVIEW_RULER;
+	/** Preference key for unknown annotation indication in overview ruler */
+	private final static String UNKNOWN_INDICATION_IN_OVERVIEW_RULER= AntEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_IN_OVERVIEW_RULER;
 
+	/** Preference key for error indication */
+	private final static String ERROR_INDICATION= AntEditorPreferenceConstants.EDITOR_PROBLEM_INDICATION;
+	/** Preference key for error color */
+	private final static String ERROR_INDICATION_COLOR= AntEditorPreferenceConstants.EDITOR_PROBLEM_INDICATION_COLOR;
+	/** Preference key for warning indication */
+	private final static String WARNING_INDICATION= AntEditorPreferenceConstants.EDITOR_WARNING_INDICATION;
+	/** Preference key for warning color */
+	private final static String WARNING_INDICATION_COLOR= AntEditorPreferenceConstants.EDITOR_WARNING_INDICATION_COLOR;
+	/** Preference key for info indication */
+	private final static String INFO_INDICATION= AntEditorPreferenceConstants.EDITOR_INFO_INDICATION;
+	/** Preference key for info color */
+	private final static String INFO_INDICATION_COLOR= AntEditorPreferenceConstants.EDITOR_INFO_INDICATION_COLOR;
+	/** Preference key for task indication */
+	private final static String TASK_INDICATION= AntEditorPreferenceConstants.EDITOR_TASK_INDICATION;
+	/** Preference key for task color */
+	private final static String TASK_INDICATION_COLOR= AntEditorPreferenceConstants.EDITOR_TASK_INDICATION_COLOR;
+	/** Preference key for bookmark indication */
+	private final static String BOOKMARK_INDICATION= AntEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION;
+	/** Preference key for bookmark color */
+	private final static String BOOKMARK_INDICATION_COLOR= AntEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION_COLOR;
+	/** Preference key for search result indication */
+	private final static String SEARCH_RESULT_INDICATION= AntEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION;
+	/** Preference key for search result color */
+	private final static String SEARCH_RESULT_INDICATION_COLOR= AntEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION_COLOR;
+	/** Preference key for unknown annotation indication */
+	private final static String UNKNOWN_INDICATION= AntEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION;
+	/** Preference key for unknown annotation color */
+	private final static String UNKNOWN_INDICATION_COLOR= AntEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_COLOR;
+
+	/** Preference key for highlighting current line */
+	private final static String CURRENT_LINE= AntEditorPreferenceConstants.EDITOR_CURRENT_LINE;
+	/** Preference key for highlight color of current line */
+	private final static String CURRENT_LINE_COLOR= AntEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR;
+	/** Preference key for showing print marging ruler */
+	private final static String PRINT_MARGIN= AntEditorPreferenceConstants.EDITOR_PRINT_MARGIN;
+	/** Preference key for print margin ruler color */
+	private final static String PRINT_MARGIN_COLOR= AntEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR;
+	/** Preference key for print margin ruler column */
+	private final static String PRINT_MARGIN_COLUMN= AntEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN;
+
+
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler, int)
+	 */
+	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
+		fAnnotationAccess= createAnnotationAccess();
+		ISharedTextColors sharedColors= ColorManager.getDefault();
+		fOverviewRuler= new OverviewRuler(fAnnotationAccess, VERTICAL_RULER_WIDTH, sharedColors);
+		fOverviewRuler.addHeaderAnnotationType(AnnotationType.WARNING);
+		fOverviewRuler.addHeaderAnnotationType(AnnotationType.ERROR);
+		
+		ISourceViewer sourceViewer= new SourceViewer(parent, ruler, fOverviewRuler, isOverviewRulerVisible(), styles);
+		fSourceViewerDecorationSupport= new SourceViewerDecorationSupport(sourceViewer, fOverviewRuler, fAnnotationAccess, sharedColors);
+		configureSourceViewerDecorationSupport();
+		
+		return sourceViewer;
+	}
+
+	protected IAnnotationAccess createAnnotationAccess() {
+		return new AnnotationAccess();
+	}
+
+	protected void configureSourceViewerDecorationSupport() {
+		
+		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.UNKNOWN, UNKNOWN_INDICATION_COLOR, UNKNOWN_INDICATION, UNKNOWN_INDICATION_IN_OVERVIEW_RULER, 0);
+		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.BOOKMARK, BOOKMARK_INDICATION_COLOR, BOOKMARK_INDICATION, BOOKMARK_INDICATION_IN_OVERVIEW_RULER, 1);
+		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.TASK, TASK_INDICATION_COLOR, TASK_INDICATION, TASK_INDICATION_IN_OVERVIEW_RULER, 2);
+		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.SEARCH, SEARCH_RESULT_INDICATION_COLOR, SEARCH_RESULT_INDICATION, SEARCH_RESULT_INDICATION_IN_OVERVIEW_RULER, 3);
+		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.INFO, INFO_INDICATION_COLOR, INFO_INDICATION, INFO_INDICATION_IN_OVERVIEW_RULER, 4);
+		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.WARNING, WARNING_INDICATION_COLOR, WARNING_INDICATION, WARNING_INDICATION_IN_OVERVIEW_RULER, 5);
+		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.ERROR, ERROR_INDICATION_COLOR, ERROR_INDICATION, ERROR_INDICATION_IN_OVERVIEW_RULER, 6);
+		
+		fSourceViewerDecorationSupport.setCursorLinePainterPreferenceKeys(CURRENT_LINE, CURRENT_LINE_COLOR);
+		fSourceViewerDecorationSupport.setMarginPainterPreferenceKeys(PRINT_MARGIN, PRINT_MARGIN_COLOR, PRINT_MARGIN_COLUMN);
+		
+		fSourceViewerDecorationSupport.setSymbolicFontName(getFontPropertyPreferenceKey());
+	}
 }

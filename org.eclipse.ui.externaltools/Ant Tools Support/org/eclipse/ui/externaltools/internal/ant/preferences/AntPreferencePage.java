@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.externaltools.internal.ant.editor.text.IAntEditorColorConstants;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.model.IPreferenceConstants;
@@ -47,11 +46,6 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		{AntPreferencesMessages.getString("AntPreferencePage.I&nformation__4"), IPreferenceConstants.CONSOLE_INFO_RGB, null}, //$NON-NLS-1$
 		{AntPreferencesMessages.getString("AntPreferencePage.Ve&rbose__5"), IPreferenceConstants.CONSOLE_VERBOSE_RGB, null}, //$NON-NLS-1$
 		{AntPreferencesMessages.getString("AntPreferencePage.Deb&ug__6"), IPreferenceConstants.CONSOLE_DEBUG_RGB, null}, //$NON-NLS-1$
-		{AntPreferencesMessages.getString("AntPreferencePage.Ant_editor_text_1"), IAntEditorColorConstants.P_DEFAULT, null}, //$NON-NLS-1$
-		{AntPreferencesMessages.getString("AntPreferencePage.Ant_editor_processing_instuctions_2"),  IAntEditorColorConstants.P_PROC_INSTR, null}, //$NON-NLS-1$
-		{AntPreferencesMessages.getString("AntPreferencePage.Ant_editor_constant_strings_3"),  IAntEditorColorConstants.P_STRING, null},  //$NON-NLS-1$
-		{AntPreferencesMessages.getString("AntPreferencePage.Ant_editor_tags_4"),    IAntEditorColorConstants.P_TAG, null},  //$NON-NLS-1$
-		{AntPreferencesMessages.getString("AntPreferencePage.Ant_editor_comments_5"), IAntEditorColorConstants.P_XML_COMMENT, null} //$NON-NLS-1$
 	};
 
 	/**

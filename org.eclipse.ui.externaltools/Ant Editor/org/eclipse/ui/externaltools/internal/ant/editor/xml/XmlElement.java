@@ -1,6 +1,9 @@
-//
-// XmlElement.java
-//
+/**********************************************************************
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
+
 // Copyright:
 // GEBIT Gesellschaft fuer EDV-Beratung
 // und Informatik-Technologien mbH, 
@@ -127,7 +130,18 @@ public class XmlElement {
 	 */
 	private boolean isRootExternal = false;
 
-    /**
+	/**
+	 * The unique (in the corresponding element tree) path of this element.
+	 */
+	private String fElementPath;
+	
+	/**
+	 * The (not necessarily unique) identifier of this element.
+	 */
+	private String fElementIdentifier;
+
+
+	/**
      * Creates an instance with the specified name.
      */
     public XmlElement(String aName) {
@@ -414,5 +428,111 @@ public class XmlElement {
 	 */
 	public boolean isRootExternal() {
 		return isRootExternal;
+	}
+
+	public String getElementPath() {
+		if (fElementPath == null) {
+			StringBuffer buffer= new StringBuffer(getParentNode() != null ? getParentNode().getElementPath() : ""); //$NON-NLS-1$
+			buffer.append('/');
+			buffer.append(getElementIdentifier());
+			buffer.append('[');
+			buffer.append(getParentNode() != null ? getParentNode().getElementIndexOf(this) : 0);
+			buffer.append(']');
+			
+			fElementPath= buffer.toString();
+		}
+		return fElementPath;
+	}
+
+	private String getElementIdentifier() {
+		if (fElementIdentifier == null) {
+			StringBuffer buffer= escape(new StringBuffer(getName() != null ? getName() : ""), '\\', "$/[]\\"); //$NON-NLS-1$ //$NON-NLS-2$
+			buffer.append('$');
+			buffer.append(escape(new StringBuffer(getDisplayName() != null ? getDisplayName() : ""), '\\', "$/[]\\")); //$NON-NLS-1$ //$NON-NLS-2$
+			
+			fElementIdentifier= buffer.toString();
+		}
+		return fElementIdentifier;
+	}
+
+	private StringBuffer escape(StringBuffer sb, char esc, String special) {
+		for (int i= 0; i < sb.length(); i++) {
+			if (special.indexOf(sb.charAt(i)) >= 0) {
+				sb.insert(i++, esc);
+			}
+		}
+
+		return sb;
+	}
+
+	private int getElementIndexOf(XmlElement child) {
+		if (getChildNodes() == null) {
+			return -1;
+		}
+		
+		int result= -1;
+		
+		Iterator iter= getChildNodes().iterator();
+		XmlElement current= null;
+		while (current != child && iter.hasNext()) {
+			current= (XmlElement) iter.next();
+			if (child.getElementIdentifier().equals(current.getElementIdentifier()))
+				result++;
+		}
+		
+		if (current != child) {
+			return -1;
+		}
+		
+		return result;
+	}
+
+	/*
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object o2) {
+		// prepared to be used in an IElementComparer, depends on http://dev.eclipse.org/bugs/show_bug.cgi?id=32254
+		Object o1= this;
+		
+		if (o1 == o2) {
+			return true;
+		}
+		if (o1 == null || o2 == null) {
+			return false;
+		}
+		if (!(o1 instanceof XmlElement || o2 instanceof XmlElement)) {
+			return o2.equals(o1);
+		}
+		if (!(o1 instanceof XmlElement && o2 instanceof XmlElement)) {
+			return false;
+		}
+		
+		XmlElement e1= (XmlElement) o1;
+		XmlElement e2= (XmlElement) o2;
+	
+		if (e1.getElementPath().equals(e2.getElementPath())) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/*
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		// prepared to be used in an IElementComparer, depends on http://dev.eclipse.org/bugs/show_bug.cgi?id=32254
+		Object o1= this;
+
+		if (o1 == null) {
+			return 0;
+		}
+		if (!(o1 instanceof XmlElement)) {
+			return o1.hashCode();
+		}
+
+		XmlElement e1= (XmlElement) o1;
+		
+		return e1.getElementPath().hashCode();
 	}
 }

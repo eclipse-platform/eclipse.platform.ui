@@ -25,10 +25,13 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.externaltools.internal.ant.editor.PlantyException;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.IAntEditorConstants;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlAttribute;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlElement;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
@@ -79,6 +82,16 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
      */
     private File mainFileContainer;
 
+    /**
+     * Helper for generating <code>IProblem</code>s
+     */
+    private XEErrorHandler errorHandler;
+
+    /**
+     * The parsed document
+     */
+    private IDocument document;
+
 
     /**
      * Creates an instance.
@@ -104,8 +117,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
         XmlElement tempElement = createXmlElement(aLocalName, aQualifiedName, anAttributes);
 
         // set starting the location
-        tempElement.setStartingRow(locator.getLineNumber());
-        tempElement.setStartingColumn(locator.getColumnNumber());
+        computeStartLocation(tempElement);
         
         // Is it our root
         if(rootElement == null) {
@@ -147,7 +159,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
                     if(tempXmlAttr != null) {
                     	StringBuffer name= new StringBuffer(tempXmlAttr.getValue());
 						XmlElement parent= getParentNode();
-						XmlAttribute type= parent.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
+						XmlAttribute type= parent != null ? parent.getAttributeNamed(IAntEditorConstants.ATTR_TYPE) : null;
 						while (parent != null && (type == null || !type.getValue().equals(IAntEditorConstants.TYPE_PROJECT))){
 							parent= parent.getParentNode();
 							if (parent != null) {
@@ -354,8 +366,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
         
         XmlElement tempLastStillOpenElement = (XmlElement)stillOpenElements.peek(); 
         if(tempLastStillOpenElement != null && tempLastStillOpenElement.getName().equalsIgnoreCase(tempTagName)) {
-            tempLastStillOpenElement.setEndingRow(locator.getLineNumber());
-            tempLastStillOpenElement.setEndingColumn(locator.getColumnNumber());
+	    	computeEndLocation(tempLastStillOpenElement);
             stillOpenElements.pop();
         }
     }
@@ -370,6 +381,8 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
     public void setDocumentLocator(Locator aLocator) {
         locator = aLocator;
         super.setDocumentLocator(aLocator);
+        if (errorHandler != null)
+        	errorHandler.setDocumentLocator(aLocator);
     }
 
 
@@ -388,11 +401,24 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
     }
 
 
+    /*
+     * @see org.xml.sax.ErrorHandler#warning(org.xml.sax.SAXParseException)
+     */
+    public void warning(SAXParseException anException) throws SAXException {
+		if (errorHandler != null) {
+			XmlElement element= new XmlElement(""); //$NON-NLS-1$
+			computeErrorLocation(element, anException);
+			errorHandler.warning(anException, element);
+		}
+    }
+
     /* (non-Javadoc)
      * @see org.xml.sax.ErrorHandler#error(SAXParseException)
      */
     public void error(SAXParseException anException) throws SAXException {
-		generateErrorElementHierarchy(anException);
+		XmlElement errorElement= generateErrorElementHierarchy(anException);
+		if (errorHandler != null)
+			errorHandler.error(anException, errorElement);
     }
 
     /**
@@ -402,28 +428,23 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
      * @see org.xml.sax.ErrorHandler#fatalError(SAXParseException)
      */
     public void fatalError(SAXParseException anException) throws SAXException {
-    	generateErrorElementHierarchy(anException);
+		XmlElement errorElement= generateErrorElementHierarchy(anException);
+		if (errorHandler != null) {
+			errorHandler.fatalError(anException, errorElement);
+		}
     }
 
-	protected void generateErrorElementHierarchy(SAXParseException exception) {
+	private XmlElement generateErrorElementHierarchy(SAXParseException exception) {
 		if (rootElement == null) {
-			rootElement= new XmlElement(exception.getSystemId());
+			rootElement= new XmlElement(exception.getSystemId() != null ? exception.getSystemId() : ""); //$NON-NLS-1$
 		}
 		rootElement.setIsErrorNode(true);
 		
 		if (rootElement.getStartingRow() == 0) {
 			//an error occurred attempting to create the root element
-			if(locator != null) {
-				rootElement.setStartingColumn(locator.getColumnNumber());
-				rootElement.setStartingRow(locator.getLineNumber());
-			}
+			computeErrorLocation(rootElement, exception);
 		}
 		
-		XmlElement errorNode= generateErrorNode(exception);
-		rootElement.addChildNode(errorNode);
-	}
-
-	protected XmlElement generateErrorNode(SAXParseException exception) {
 		int lineNumber= exception.getLineNumber();
 		StringBuffer message= new StringBuffer(exception.getMessage());
 		if (lineNumber != -1){
@@ -432,10 +453,9 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 
 		XmlElement errorNode= new XmlElement(message.toString());
 		errorNode.setIsErrorNode(true);
-		if(locator != null) {
-			errorNode.setStartingColumn(locator.getColumnNumber());
-			errorNode.setStartingRow(locator.getLineNumber());
-		}
+		computeErrorLocation(errorNode, exception);		
+		rootElement.addChildNode(errorNode);
+		
 		return errorNode;
 	}
 	
@@ -525,8 +545,170 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 		external.addAttribute(new XmlAttribute(IAntEditorConstants.ATTR_TYPE, IAntEditorConstants.TYPE_EXTERNAL));
 	}
 
-	protected void setRootElement(XmlElement rootElement) {
-		this.rootElement= rootElement;
+	private void computeStartLocation(XmlElement element) {
+		try {
+			int offset;
+			
+			int locatorLine= locator.getLineNumber();
+			int locatorColumn= locator.getColumnNumber();
+			
+			if (locatorColumn <= 0) {
+				offset= getOffset(locatorLine, getLastCharColumn(locatorLine));
+				offset= document.search(offset, "<" + element.getName(), false, false, false); //$NON-NLS-1$
+			} else {
+				offset= getOffset(locatorLine, locatorColumn);
+				offset= document.search(offset, "<", false, true, false); //$NON-NLS-1$
+			}
+			
+			int line= getLine(offset);
+			int column= getColumn(offset, line);
+			
+			element.setOffset(offset);
+			element.setStartingRow(line);
+			element.setStartingColumn(column);
+		} catch (BadLocationException e) {
+			ExternalToolsPlugin.getDefault().log(e);
+		}
 	}
 
+	private void computeEndLocation(XmlElement element) {
+		try {
+			int offset;
+			int line= locator.getLineNumber();
+			int column= locator.getColumnNumber();
+			
+			if (column <= 0) {
+				int lineOffset= getOffset(line, 1);
+				offset= document.search(lineOffset, element.getName(), true, false, false);
+				if (offset < 0 || getLine(offset) != line)
+					offset= lineOffset;
+				offset= document.search(lineOffset, ">", true, true, false); //$NON-NLS-1$
+				if (offset < 0 || getLine(offset) != line) {
+					offset= lineOffset;
+					column= 1;
+				} else
+					offset++;
+					column= getColumn(offset, line);
+			} else {
+				offset= getOffset(line, column);
+			}
+			
+			element.setLength(offset - element.getOffset());
+			element.setEndingRow(line);
+			element.setEndingColumn(column);
+		} catch (BadLocationException e) {
+			ExternalToolsPlugin.getDefault().log(e);
+		}
+	}
+
+	private void computeErrorLocation(XmlElement element, SAXParseException exception) {
+		try {
+			int line= exception.getLineNumber();
+			int startColumn= exception.getColumnNumber();
+			int endColumn;
+			
+			if (line <= 0) {
+				line= locator.getLineNumber();
+				startColumn= locator.getColumnNumber();
+			}
+
+			if (startColumn <= 0) {
+				startColumn= 1;
+				endColumn= getLastCharColumn(line) + 1;
+			} else
+				endColumn= startColumn + 1;
+			
+			int offset= getOffset(line, startColumn);
+
+			element.setStartingRow(line);
+			element.setStartingColumn(startColumn);
+			element.setOffset(offset);
+			
+			element.setEndingRow(line);
+			element.setEndingColumn(endColumn);
+			element.setLength(endColumn - startColumn);
+		} catch (BadLocationException e) {
+			ExternalToolsPlugin.getDefault().log(e);
+		}		
+	}
+
+	public void fixEndLocations() {
+		fixEndLocations(null);
+	}
+	
+	public void fixEndLocations(SAXParseException e) {
+		if (stillOpenElements.empty())
+			return;
+		
+		try {
+			int offset, line, column;
+			
+			if (e == null) { //unlikely
+				XmlElement element= (XmlElement) stillOpenElements.peek();			
+				offset= element.getOffset();
+				line= element.getStartingRow();
+				column= element.getStartingColumn();
+			} else {
+				line= e.getLineNumber();
+				column= e.getColumnNumber();
+				
+				if (column <= 0) {
+					column= 1;
+				}
+
+				offset= getOffset(line, column);
+			}			
+			
+			while (!stillOpenElements.empty()) {
+				XmlElement element= (XmlElement) stillOpenElements.pop();			
+				element.setLength(offset - element.getOffset());
+				element.setEndingRow(line);
+				element.setEndingColumn(column);
+			}
+		} catch (BadLocationException ble) {
+			ExternalToolsPlugin.getDefault().log(ble);
+		}
+	}
+
+	private int getLastCharColumn(int line) throws BadLocationException {
+		String lineDelimiter= document.getLineDelimiter(line - 1);
+		int lineDelimiterLength= lineDelimiter != null ? lineDelimiter.length() : 0;
+		return document.getLineLength(line - 1) - lineDelimiterLength;
+	}
+
+	private int getOffset(int line, int column) throws BadLocationException {
+		return document.getLineOffset(line - 1) + column - 1;
+	}
+
+	private int getLine(int offset) throws BadLocationException {
+		return document.getLineOfOffset(offset) + 1;
+	}
+
+	private int getColumn(int offset, int line) throws BadLocationException {
+		return offset - document.getLineOffset(line - 1) + 1;
+	}
+
+	public void begin() {
+		if (errorHandler != null) {
+			errorHandler.beginReporting();
+		}
+	}
+
+	public void end() {
+		if (errorHandler != null) {
+			errorHandler.endReporting();
+		}
+	}
+
+	public void setDocument(IDocument document) {
+		this.document= document;
+	}
+
+	public void setProblemRequestor(IProblemRequestor requestor) {
+		if (requestor != null) {
+			errorHandler= new XEErrorHandler(requestor);
+		} else {
+			errorHandler= null;
+		}
+	}
 }

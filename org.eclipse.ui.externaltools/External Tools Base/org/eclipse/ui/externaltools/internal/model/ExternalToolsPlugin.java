@@ -30,6 +30,7 @@ import org.eclipse.ui.externaltools.internal.registry.RefreshScopeVariableRegist
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import org.eclipse.ui.externaltools.internal.ant.editor.text.IAntEditorColorConstants;
+import org.eclipse.ui.externaltools.internal.ant.preferences.AntEditorPreferenceConstants;
 
 /**
  * External tools plug-in class
@@ -149,6 +150,7 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 		PreferenceConverter.setDefault(prefs, IAntEditorColorConstants.P_STRING, IAntEditorColorConstants.STRING);
 		PreferenceConverter.setDefault(prefs, IAntEditorColorConstants.P_TAG, IAntEditorColorConstants.TAG);
 		PreferenceConverter.setDefault(prefs, IAntEditorColorConstants.P_XML_COMMENT, IAntEditorColorConstants.XML_COMMENT);
+		AntEditorPreferenceConstants.initializeDefaultValues(prefs);
 	}
 
 	/**
