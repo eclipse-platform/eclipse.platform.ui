@@ -95,6 +95,18 @@ public class JobManager implements IJobManager {
 	 * jobs that are waiting to be run. Should only be modified from changeState
 	 */
 	private final JobQueue waiting;
+	
+	/**
+	 * Scheduling rule used for validation of client-defined rules.
+	 */
+	private static final ISchedulingRule nullRule = new ISchedulingRule() {
+		public boolean contains(ISchedulingRule rule) {
+			return rule == this;
+		}
+		public boolean isConflicting(ISchedulingRule rule) {
+			return rule == this;
+		}
+	};
 
 	public static void debug(String msg) {
 		StringBuffer msgBuf = new StringBuffer(msg.length() + 40);
@@ -167,6 +179,7 @@ public class JobManager implements IJobManager {
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#beginRule(org.eclipse.core.runtime.jobs.ISchedulingRule, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void beginRule(ISchedulingRule rule, IProgressMonitor monitor) {
+		validateRule(rule);
 		implicitJobs.begin(rule, monitorFor(monitor), false);
 	}
 
@@ -901,6 +914,7 @@ public class JobManager implements IJobManager {
 		synchronized (lock) {
 			//cannot change the rule of a job that is already running
 			Assert.isLegal(job.getState() == Job.NONE);
+			validateRule(rule);
 			job.internalSetRule(rule);
 		}
 	}
@@ -1019,7 +1033,26 @@ public class JobManager implements IJobManager {
 		Assert.isNotNull(rule);
 		implicitJobs.suspend(rule, monitorFor(monitor));
 	}
-
+	
+	/**
+	 * Validates that the given scheduling rule obeys the constraints of
+	 * scheduling rules as described in the <code>ISchedulingRule</code>
+	 * javadoc specification.
+	 */
+	private void validateRule(ISchedulingRule rule) {
+		//null rule always valid
+		if (rule == null)
+			return;
+		//contains method must be reflexive
+		Assert.isLegal(rule.contains(rule));
+		//contains method must return false when given an unknown rule
+		Assert.isLegal(!rule.contains(nullRule));
+		//isConflicting method must be reflexive
+		Assert.isLegal(rule.isConflicting(rule));
+		//isConflicting method must return false when given an unknown rule
+		Assert.isLegal(!rule.isConflicting(nullRule));
+	}
+	
 	/* (non-Javadoc)
 	 * @see Job#wakeUp(long)
 	 */
