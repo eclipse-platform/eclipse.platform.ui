@@ -2848,7 +2848,7 @@ public class TextViewer extends Viewer implements
 					internalRevealRange(pos, pos + length);
 					selectionChanged(pos, length);
 				} else {
-					setSelectedRange(pos, length);
+					setSelectedRange(pos + getVisibleRegionOffset(), length);
 				}
 			}
 			return pos + getVisibleRegionOffset();
@@ -2891,7 +2891,7 @@ public class TextViewer extends Viewer implements
 					internalRevealRange(pos, pos + length);
 					selectionChanged(pos, length);
 				} else {
-					setSelectedRange(pos, length);
+					setSelectedRange(pos + getVisibleRegionOffset(), length);
 				}
 			}
 			return pos + getVisibleRegionOffset();
