@@ -73,8 +73,10 @@ public class SiteElement implements IWorkbenchAdapter, IAdaptable {
 	}
 	
 	public boolean equals(Object obj) {
-		if(obj == null) return false;
-		if(!(obj instanceof SiteElement)) return false;
+		if(this == obj)
+			return true;
+		if(!(obj instanceof SiteElement))
+			return false;
 		Site otherSite = ((SiteElement)obj).getSite();
 		return getSite().equals(otherSite);
 	}

@@ -102,6 +102,10 @@ public abstract class Site {
 				getURL().equals(location.getURL());
 	}
 	
+	public int hashCode() {
+		return getURL().hashCode();
+	}
+
 	/**
 	 * Debugging helper
 	 * 

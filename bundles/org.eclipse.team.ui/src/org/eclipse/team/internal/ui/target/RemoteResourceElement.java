@@ -104,10 +104,16 @@ public class RemoteResourceElement implements IWorkbenchAdapter, IAdaptable {
 	public Object getParent(Object o) {
 		return null;
 	}
+	
+	public int hashCode() {
+		return getRemoteResource().hashCode();
+	}
+	
 	public boolean equals(Object obj) {
-		if(obj == null) return false;
-		if(!(obj instanceof RemoteResourceElement)) return false;
-		RemoteResourceElement otherElement = ((RemoteResourceElement)obj);
-		return otherElement.getRemoteResource().getURL().equals(getRemoteResource().getURL());
+		if(this == obj)
+			return true;
+		if(!(obj instanceof RemoteResourceElement))
+			return false;
+		return ((RemoteResourceElement)obj).getRemoteResource().equals(getRemoteResource());
 	}
 }
