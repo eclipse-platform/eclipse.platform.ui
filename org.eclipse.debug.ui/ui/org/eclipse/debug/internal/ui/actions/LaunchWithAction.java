@@ -63,10 +63,13 @@ public class LaunchWithAction extends Action implements IMenuCreator, IWorkbench
 	}
 	
 	private void createMenuForAction(Menu parent, Action action, int count) {
+		StringBuffer label= new StringBuffer();
 		//add the numerical accelerator
-		StringBuffer label= new StringBuffer("&"); //$NON-NLS-1$
-		label.append(count);
-		label.append(' ');
+		if (count < 10) {
+			label.append('&');
+			label.append(count);
+			label.append(' ');
+		}
 		label.append(action.getText());
 		action.setText(label.toString());
 		ActionContributionItem item= new ActionContributionItem(action);
