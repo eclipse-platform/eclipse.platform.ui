@@ -24,7 +24,7 @@ public class Utilities {
 	private static final int BUFFER_SIZE = 4096;
 	private static final DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.getDefault());	
 	private static long tmpseed = (new Date()).getTime();
-	private static final long dirroot = tmpseed;
+	private static String dirRoot = null;
 
 	/**
 	 * Returns a new working directory (in temporary space). Ensures
@@ -36,19 +36,26 @@ public class Utilities {
 	 * @since 2.0
 	 */
 	public static synchronized File createWorkingDirectory() throws IOException {
-		String tmpName = System.getProperty("java.io.tmpdir"); //$NON-NLS-1$
-		// in Linux, returns '/tmp', we must add '/'
-		if (!tmpName.endsWith(File.separator))
-			tmpName += File.separator;
-		tmpName += "eclipse"
-			+ File.separator
-			+ ".update"
-			+ File.separator
-			+ Long.toString(dirroot)
-			+ File.separator
+		
+		if (dirRoot == null) {
+			dirRoot = System.getProperty("java.io.tmpdir"); //$NON-NLS-1$
+			// in Linux, returns '/tmp', we must add '/'
+			if (!dirRoot.endsWith(File.separator))
+				dirRoot += File.separator;
+				
+			dirRoot += "eclipse"
+				+ File.separator
+				+ ".update"
+				+ File.separator
+				+ Long.toString(tmpseed)
+				+ File.separator;
+			//$NON-NLS-1$ //$NON-NLS-2$
+		}
+		
+		String tmpName = dirRoot
 			+ Long.toString(++tmpseed)
 			+ File.separator;
-		//$NON-NLS-1$ //$NON-NLS-2$
+		
 		File tmpDir = new File(tmpName);
 		verifyPath(tmpDir, false);
 		if (!tmpDir.exists())
@@ -269,6 +276,31 @@ public class Utilities {
 	public static String format(Date date){
 		if (date==null) return "";
 		return dateFormat.format(date);
+	}
+	
+	/**
+	 * Perform shutdown processing for temporary file handling.
+	 * This method is called when platform is shutting down.
+	 * It is not intended to be called at any other time under
+	 * normal circumstances. A side-effect of calling this method
+	 * is that the contents of the temporary directory managed 
+	 * by this class are deleted. 
+	 * 
+	 * @since 2.0
+	 */
+	public static void shutdown() {
+		File temp = new File(dirRoot); // temp directory root for this run
+		cleanupTemp(temp);
+		temp.delete();
+	}
+	
+	private static void cleanupTemp(File root) {
+		File[] files = root.listFiles();
+		for (int i=0; files!=null && i<files.length; i++) {
+			if (files[i].isDirectory())
+				cleanupTemp(files[i]);
+			files[i].delete();				
+		}
 	}
 	
 	private static void verifyPath(File path, boolean isFile) {

@@ -99,6 +99,7 @@ public class UpdateManagerPlugin extends Plugin {
 		super.shutdown();
 		
 		JarContentReference.shutdown(); // make sure we are not leaving jars open
+		Utilities.shutdown(); // cleanup temp area
 	}
 
 	private void startupWebInstallHandler() throws CoreException {
