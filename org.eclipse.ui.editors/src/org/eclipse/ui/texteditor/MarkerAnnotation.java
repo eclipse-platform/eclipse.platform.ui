@@ -47,7 +47,7 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 	 * The layer in which markers representing problem are located.
 	 * 
 	 * @since 2.0
-	 * @deprecated As of 3.0, replaced by {@link org.eclipse.jface.text.source.IAnnotationAccessExtension}
+	 * @deprecated As of 3.0, replaced by {@link IAnnotationAccessExtension}
 
 	 */
 	public final static int PROBLEM_LAYER= 5;

@@ -47,7 +47,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * using class <code>PreferenceConverter</code>.
 	 * </p>
 	 * @see org.eclipse.jface.resource.StringConverter
-	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @see PreferenceConverter
 	 */
 	public final static String EDITOR_CURRENT_LINE_COLOR= "currentLineColor"; //$NON-NLS-1$
 
@@ -77,7 +77,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * using class <code>PreferenceConverter</code>.
 	 * </p>
 	 * @see org.eclipse.jface.resource.StringConverter
-	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @see PreferenceConverter
 	 */
 	public final static String EDITOR_PRINT_MARGIN_COLOR= "printMarginColor"; //$NON-NLS-1$
 
@@ -110,7 +110,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * </p>
 	 * @see #EDITOR_UNKNOWN_INDICATION
 	 * @see org.eclipse.jface.resource.StringConverter
-	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @see PreferenceConverter
 	 * @deprecated As of 3.0, there are no UNKNOWN annotations any more
 	 */
 	public final static String EDITOR_UNKNOWN_INDICATION_COLOR= "othersIndicationColor"; //$NON-NLS-1$
@@ -151,7 +151,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * using class <code>PreferenceConverter</code>.
 	 * </p>
 	 * @see org.eclipse.jface.resource.StringConverter
-	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @see PreferenceConverter
 	 * @see #EDITOR_LINE_NUMBER_RULER
 	 */
 	public final static String EDITOR_LINE_NUMBER_RULER_COLOR= "lineNumberColor"; //$NON-NLS-1$
@@ -226,7 +226,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * </p>
 	 * 
 	 * @see org.eclipse.jface.resource.StringConverter
-	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @see PreferenceConverter
 	 */
 	public final static String EDITOR_SELECTION_FOREGROUND_COLOR= AbstractTextEditor.PREFERENCE_COLOR_SELECTION_FOREGROUND;
 
@@ -248,7 +248,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * </p>
 	 * 
 	 * @see org.eclipse.jface.resource.StringConverter
-	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @see PreferenceConverter
 	 */
 	public final static String EDITOR_SELECTION_BACKGROUND_COLOR= AbstractTextEditor.PREFERENCE_COLOR_SELECTION_BACKGROUND;
 

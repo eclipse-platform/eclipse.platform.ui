@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
-
 package org.eclipse.ui.texteditor;
-
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -58,21 +55,21 @@ import org.eclipse.ui.PlatformUI;
  * A ruler action which can select the textual range of a marker 
  * that has a visual representation in a vertical ruler.
  * <p>
- * This class may be instantiated but is not intended for subclassing.
+ * This class may be instantiated but is not intended for sub-classing.
  * </p>
  * @since 2.0
  */
 public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 
-	/** The vertical ruler info of the action's editor */
+	/** The vertical ruler info of the action's editor. */
 	private IVerticalRulerInfo fRuler;
-	/** The associated editor */
+	/** The associated editor. */
 	private ITextEditor fTextEditor;
-	/** The cached list of markers including a given vertical ruler location */
+	/** The cached list of markers including a given vertical ruler location. */
 	private List fMarkers;
-	/** The action's resource bundle */
+	/** The action's resource bundle. */
 	private ResourceBundle fBundle;
-	/** The prefix for resource bundle lookups */
+	/** The prefix for resource bundle lookups. */
 	private String fPrefix;
 
 	/**
@@ -98,7 +95,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	
 	/**
 	 * @see #SelectMarkerRulerAction(ResourceBundle, String, ITextEditor, IVerticalRulerInfo)
-	 * @deprecated use <code>SelectMarkerRulerInfoAction(ResourceBundle, String, IVerticalRulerInfo, ITextEditor)</code>
+	 * @deprecated As of 3.0, replaced by {@link #SelectMarkerRulerAction(ResourceBundle, String, ITextEditor, IVerticalRulerInfo)}
 	 */
 	public SelectMarkerRulerAction(ResourceBundle bundle, String prefix, IVerticalRuler ruler, ITextEditor editor) {
 		this(bundle, prefix, editor, ruler);
@@ -257,7 +254,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 				int line= fRuler.getLineOfLastMouseButtonActivity();
 				if (line == markerLine)
 					return true;
-				// commented because of "1GEUOZ9: ITPJUI:ALL - Confusing UI for multiline Bookmarks and Tasks"
+				// commented because of "1GEUOZ9: ITPJUI:ALL - Confusing UI for multi-line Bookmarks and Tasks"
 				// return (markerLine <= line && line <= document.getLineOfOffset(position.getOffset() + position.getLength()));
 			} catch (BadLocationException x) {
 			}

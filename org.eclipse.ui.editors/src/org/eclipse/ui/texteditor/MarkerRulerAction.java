@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids <sdavids@gmx.de> bug 38745
  *******************************************************************************/
-
 package org.eclipse.ui.texteditor;
-
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,38 +50,35 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PlatformUI;
 
 
-
 /**
  * A ruler action which can add and remove markers which have a visual 
  * representation in the ruler.
  * <p>
- * This class may be instantiated but is not intended for subclassing.
+ * This class may be instantiated but is not intended for sub-classing.
  * </p>
- *
- * @since 3.0
  */
 public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	
 	/** The maximum length of an proposed label. */
 	private static final int MAX_LABEL_LENGTH= 80;
 	
-	/** The vertical ruler info of the editor */
+	/** The vertical ruler info of the editor. */
 	private IVerticalRulerInfo fRuler;
 	/** The associated editor */
 	private ITextEditor fTextEditor;
-	/** The of the marker to be created/removed */
+	/** The of the marker to be created/removed. */
 	private String fMarkerType;
-	/** The cached list of markers covering a particular vertical ruler position */
+	/** The cached list of markers covering a particular vertical ruler position. */
 	private List fMarkers;
 	/** The flag indicating whether user interaction is required. */
 	private boolean fAskForLabel;
-	/** The action's resource bundle */
+	/** The action's resource bundle. */
 	private ResourceBundle fBundle;
-	/** The prefix used for resource bundle look ups */
+	/** The prefix used for resource bundle look ups. */
 	private String fPrefix;
-	/** The cached action label when adding a marker */
+	/** The cached action label when adding a marker. */
 	private String fAddLabel;
-	/** The cached action label when removing a marker */
+	/** The cached action label when removing a marker. */
 	private String fRemoveLabel;
 
 	
@@ -93,7 +88,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	 *
 	 * @param bundle the resource bundle
 	 * @param prefix a prefix to be prepended to the various resource keys
-	 *   (described in <code>ResourceAction</code> constructor), or  <code>null</code> if none
+	 *   (described in {@link org.eclipse.ui.texteditor.ResourceAction} constructor), or  <code>null</code> if none
 	 * @param editor the editor
 	 * @param ruler the ruler
 	 * @param markerType the type of marker
@@ -256,7 +251,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 				int line= fRuler.getLineOfLastMouseButtonActivity();
 				if (line == markerLine)
 					return true;
-				// commented because of "1GEUOZ9: ITPJUI:ALL - Confusing UI for multiline Bookmarks and Tasks"
+				// commented because of "1GEUOZ9: ITPJUI:ALL - Confusing UI for multi-line Bookmarks and Tasks"
 				// return (markerLine <= line && line <= document.getLineOfOffset(position.getOffset() + position.getLength()));
 			} catch (BadLocationException x) {
 			}
@@ -267,7 +262,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 
 	/**
 	 * Handles core exceptions. This implementation logs the exceptions
-	 * with the workbech plugin and shows an error dialog.
+	 * with the workbench plug-in and shows an error dialog.
 	 *
 	 * @param exception the exception to be handled
 	 * @param message the message to be logged with the given exception

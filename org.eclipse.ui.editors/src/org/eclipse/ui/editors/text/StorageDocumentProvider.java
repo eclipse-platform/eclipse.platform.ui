@@ -94,7 +94,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	 *
 	 * @param document the document to be initialized
 	 * @param contentStream the stream which delivers the document content
-	 * @exception CoreException if the given stream can not be read
+	 * @throws CoreException if the given stream can not be read
 	 * 
 	 * @deprecated use encoding based version instead
 	 */
@@ -108,7 +108,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	 * @param document the document to be initialized
 	 * @param contentStream the stream which delivers the document content
 	 * @param encoding the character encoding for reading the given stream
-	 * @exception CoreException if the given stream can not be read
+	 * @throws CoreException if the given stream can not be read
 	 * @since 2.0
 	 */
 	protected void setDocumentContent(IDocument document, InputStream contentStream, String encoding) throws CoreException {
@@ -151,7 +151,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	 * @param document the document to be initialized
 	 * @param editorInput the input from which to derive the content of the document
 	 * @return <code>true</code> if the document content could be set, <code>false</code> otherwise
-	 * @exception CoreException if the given editor input cannot be accessed
+	 * @throws CoreException if the given editor input cannot be accessed
 	 * @deprecated use the encoding based version instead
 	 * @since 2.0
 	 */
@@ -166,7 +166,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	 * @param editorInput the input from which to derive the content of the document
 	 * @param encoding the character encoding used to read the editor input
 	 * @return <code>true</code> if the document content could be set, <code>false</code> otherwise
-	 * @exception CoreException if the given editor input cannot be accessed
+	 * @throws CoreException if the given editor input cannot be accessed
 	 * @since 2.0
 	 */
 	protected boolean setDocumentContent(IDocument document, IEditorInput editorInput, String encoding) throws CoreException {
@@ -278,7 +278,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	 * Updates the internal cache for the given input.
 	 * 
 	 * @param input the input whose cache will be updated
-	 * @exception CoreException if the storage cannot be retrieved from the input
+	 * @throws CoreException if the storage cannot be retrieved from the input
 	 * @since 2.0
 	 */
 	protected void updateCache(IStorageEditorInput input) throws CoreException {
@@ -420,7 +420,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	 * 
 	 * @param element the element for which to store the persisted encoding
 	 * @param encoding the encoding
-	 * @exception CoreException if the operation fails
+	 * @throws CoreException if the operation fails
 	 * @since 2.1
 	 */
 	protected void persistEncoding(Object element, String encoding) throws CoreException {

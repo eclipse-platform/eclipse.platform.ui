@@ -78,7 +78,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 	 * Subclasses must implement this method.</p>
 	 *
 	 * @return the list of markers
-	 * @exception CoreException if there is a problem getting the markers
+	 * @throws CoreException if there is a problem getting the markers
 	 */
 	protected abstract IMarker[] retrieveMarkers() throws CoreException;
 
@@ -88,7 +88,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 	 * Subclasses must implement this method.</p>
 	 *
 	 * @param markers the array of markers
-	 * @exception CoreException if there are problems deleting the markers
+	 * @throws CoreException if there are problems deleting the markers
 	 */
 	protected abstract void deleteMarkers(IMarker[] markers) throws CoreException;
 
@@ -388,7 +388,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 	 * Re-populates this model with annotations for all markers retrieved
 	 * from the maker source via <code>retrieveMarkers</code>.
 	 *
-	 * @exception CoreException if there is a problem getting the markers
+	 * @throws CoreException if there is a problem getting the markers
 	 */
 	private void catchupWithMarkers() throws CoreException {
 		
@@ -477,7 +477,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 	 * @param document the document into which the given position points
 	 * @param position the current position of the marker inside the given document
 	 * @return <code>false</code> if the marker is invalid
-	 * @exception CoreException if there is a problem updating the marker  
+	 * @throws CoreException if there is a problem updating the marker  
 	 * @since 2.0
 	 * @deprecated use <code>updateMarker(IDocument, IMarker, Position)</code> instead. This method will be changed to protected.
 	 */

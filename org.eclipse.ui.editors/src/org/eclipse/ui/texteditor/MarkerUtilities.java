@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.texteditor;
-
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,7 +31,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.ui.PlatformUI;
-
 
 
 /**
@@ -382,7 +379,7 @@ public final class MarkerUtilities {
 	 * @param attributes the attribute map (key type: <code>String</code>, 
 	 *   value type: <code>Object</code>)
 	 * @param markerType the type of marker
-	 * @exception CoreException if this method fails
+	 * @throws CoreException if this method fails
 	 * @see IResource#createMarker(java.lang.String)
 	 */
 	public static void createMarker(final IResource resource, final Map attributes, final String markerType) throws CoreException {

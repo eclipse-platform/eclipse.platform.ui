@@ -117,7 +117,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		 * Subclass responsibility.
 		 * 
 		 * @param input the input
-		 * @exception Exception an exception in case of error
+		 * @throws Exception an exception in case of error
 		 */
 		protected void execute(IFileEditorInput input) throws Exception {
 		}
@@ -388,7 +388,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * 
 	 * @param cachedModificationStamp the cached modification stamp
 	 * @param resource the resource to check
-	 * @exception org.eclipse.core.runtime.CoreException if resource has been changed on the file system
+	 * @throws org.eclipse.core.runtime.CoreException if resource has been changed on the file system
 	 */
 	protected void checkSynchronizationState(long cachedModificationStamp, IResource resource) throws CoreException {
 		if (cachedModificationStamp != computeModificationStamp(resource)) {

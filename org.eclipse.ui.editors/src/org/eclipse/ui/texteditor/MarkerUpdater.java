@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 
 import org.eclipse.core.resources.IMarker;
+
 
 /**
  * Updates a marker's positional attributes which are start position, end position, 
@@ -61,5 +61,4 @@ class MarkerUpdater implements IMarkerUpdater {
 
 		return true;
 	}
-
 }
