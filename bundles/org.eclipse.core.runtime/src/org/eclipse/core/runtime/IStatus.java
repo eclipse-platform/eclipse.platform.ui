@@ -57,11 +57,19 @@ public interface IStatus {
  	 */
 	public static final int WARNING = 2;
 
+	/** Status type severity (bit mask, value 3) indicating this status represents a
+	 * cancelation
+	 * @see #getSeverity
+	 * @see #matches
+	 */
+	public static final int CANCEL= 3;
+
 	/** Status type severity (bit mask, value 4) indicating this status represents an error.
 	 * @see #getSeverity
 	 * @see #matches
  	 */
 	public static final int ERROR = 4;
+
 /**
  * Returns a list of status object immediately contained in this
  * multi-status, or an empty list if this is not a multi-status.

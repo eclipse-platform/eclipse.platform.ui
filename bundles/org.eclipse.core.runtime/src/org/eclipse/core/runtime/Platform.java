@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.model.Factory;
 import org.eclipse.core.runtime.model.PluginRegistryModel;
 
@@ -270,6 +271,12 @@ public static String[] getCommandLineArgs() {
  */
 public static String getDebugOption(String option) {
 	return InternalPlatform.getDebugOption(option);
+}
+/**
+ * Returns the platform job manager.
+ */
+public static IJobManager getJobManager() {
+	return InternalPlatform.getJobManager();
 }
 /**
  * Returns the location of the platform working directory.  This 

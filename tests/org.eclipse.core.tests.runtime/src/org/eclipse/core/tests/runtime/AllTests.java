@@ -39,6 +39,7 @@ public static Test suite() {
 	suite.addTest(ConfigurationElementModelTest.suite());
 	suite.addTest(org.eclipse.core.tests.internal.plugins.AllTests.suite());
 	suite.addTest(org.eclipse.core.tests.internal.registrycache.AllTests.suite());
+	suite.addTest(org.eclipse.core.tests.runtime.locks.AllTests.suite());
 	return suite;
 }
 }

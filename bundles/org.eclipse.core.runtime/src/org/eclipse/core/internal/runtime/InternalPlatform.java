@@ -16,8 +16,10 @@ import java.util.*;
 
 import org.eclipse.core.boot.*;
 import org.eclipse.core.internal.boot.*;
+import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.internal.plugins.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.model.*;
 
 /**
@@ -26,6 +28,7 @@ import org.eclipse.core.runtime.model.*;
  */
 public final class InternalPlatform {
 	private static IAdapterManager adapterManager;
+	private static JobManager jobManager;
 	private static PluginRegistry registry;
 	// registry index - used to store last modified times for
 	// registry caching
@@ -82,7 +85,7 @@ public final class InternalPlatform {
 	// default plugin data
 	private static final String PI_XML = "org.apache.xerces"; //$NON-NLS-1$
 	private static final String PLUGINSDIR = "plugins/"; //$NON-NLS-1$
-	private static final String XML_LOCATION = "plugins/" + PI_XML + "/"; //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String XML_LOCATION = PLUGINSDIR + PI_XML + "/"; //$NON-NLS-1$ //$NON-NLS-2$
 	
 	// execution options
 	private static final String OPTION_DEBUG = Platform.PI_RUNTIME + "/debug"; //$NON-NLS-1$
@@ -362,6 +365,9 @@ public static int getIntegerOption(String option, int defaultValue) {
 		return defaultValue;
 	}
 }
+public static IJobManager getJobManager() {
+	return jobManager;
+}
 /**
  * @see Platform#getLocation
  */
@@ -625,6 +631,8 @@ public static IPlatformRunnable loaderGetRunnable(String pluginId, String classN
  */
 public static void loaderShutdown() {
 	assertInitialized();
+	//shutdown all running jobs
+	JobManager.shutdown();
 	if (writeVersion)
 		writeVersion();
 	registry.shutdown(null);
@@ -679,6 +687,7 @@ public static void loaderStartup(URL[] pluginPath, String locationString, Proper
 	setupMetaArea(locationString);
 	createLockFile();
 	adapterManager = new AdapterManager();
+	jobManager = JobManager.getInstance();
 	loadOptions(bootOptions);
 	createXMLClassLoader();
 	MultiStatus problems = loadRegistry(pluginPath);

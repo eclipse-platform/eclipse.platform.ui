@@ -18,9 +18,18 @@ import org.eclipse.core.internal.runtime.Assert;
  */
 public class Status implements IStatus {
 	/**
+	 * A standard OK status with no message.
+	 */
+	public static final IStatus OK_STATUS = new Status(OK, Platform.PI_RUNTIME, 1, "", null); //$NON-NLS-1$
+	/**
+	 * A standard CANCEL status with no message.
+	 */
+	public static final IStatus CANCEL_STATUS = new Status(CANCEL, Platform.PI_RUNTIME, 1, "", null); //$NON-NLS-1$
+	/**
 	 * The severity. One of
 	 * <ul>
 	 * <li><code>ERROR</code></li>
+	 * <li><code>CANCEL</code></li>
 	 * <li><code>WARNING</code></li>
 	 * <li><code>INFO</code></li>
 	 * <li>or <code>OK</code> (0)</li>
@@ -163,7 +172,7 @@ protected void setPlugin(String pluginId) {
  *   <code>ERROR</code>, <code>INFO</code>, or <code>WARNING</code>
  */
 protected void setSeverity(int severity) {
-	Assert.isLegal(severity == OK || severity == ERROR || severity == WARNING || severity == INFO);
+	Assert.isLegal(severity == OK || severity == ERROR || severity == WARNING || severity == INFO || severity == CANCEL);
 	this.severity = severity;
 }
 /**
