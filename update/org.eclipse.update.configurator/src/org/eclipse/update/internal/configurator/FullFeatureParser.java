@@ -13,6 +13,7 @@ package org.eclipse.update.internal.configurator;
 
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
 import javax.xml.parsers.*;
 
@@ -24,9 +25,11 @@ import org.xml.sax.helpers.*;
  */
 public class FullFeatureParser extends DefaultHandler implements IConfigurationConstants{
 
-	protected SAXParser parser;
-	protected FeatureEntry feature;
-	protected URL url;
+	private SAXParser parser;
+	private FeatureEntry feature;
+	private URL url;
+	private boolean isDescription;
+	private StringBuffer description = new StringBuffer();
 
 	private final static SAXParserFactory parserFactory =
 		SAXParserFactory.newInstance();
@@ -80,7 +83,8 @@ public class FullFeatureParser extends DefaultHandler implements IConfigurationC
 
 		if ("plugin".equals(localName)) {
 			processPlugin(attributes);
-		} else {
+		} else if ("description".equals(localName)){
+			isDescription = true;
 		}
 		
 	}
@@ -101,9 +105,9 @@ public class FullFeatureParser extends DefaultHandler implements IConfigurationC
 		} else {
 //			String label = attributes.getValue("label"); //$NON-NLS-1$
 //			String provider = attributes.getValue("provider-name"); //$NON-NLS-1$
+//			String nl = attributes.getValue("nl"); //$NON-NLS-1$
 			String os = attributes.getValue("os"); //$NON-NLS-1$
 			String ws = attributes.getValue("ws"); //$NON-NLS-1$
-			String nl = attributes.getValue("nl"); //$NON-NLS-1$
 			String arch = attributes.getValue("arch"); //$NON-NLS-1$
 			if (!Utils.isValidEnvironment(os, ws, arch))
 				return;
@@ -116,6 +120,27 @@ public class FullFeatureParser extends DefaultHandler implements IConfigurationC
 			
 			Utils.
 				debug("End process DefaultFeature tag: id:" +id + " ver:" +ver + " url:" + feature.getURL()); 	
+		}
+	}
+	/* (non-Javadoc)
+	 * @see org.xml.sax.ContentHandler#characters(char[], int, int)
+	 */
+	public void characters(char[] ch, int start, int length)
+			throws SAXException {
+		if (!isDescription)
+			return;
+		description.append(ch, start, length);
+	}
+	/* (non-Javadoc)
+	 * @see org.xml.sax.ContentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public void endElement(String uri, String localName, String qName)
+			throws SAXException {
+		if ("description".equals(localName)) {
+			isDescription = false;
+			String d = description.toString().trim();
+			ResourceBundle bundle = feature.getResourceBundle();
+			feature.setDescription(Utils.getResourceString(bundle, d));
 		}
 	}
 }

@@ -698,14 +698,15 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 					if (System.getProperty("osgi.dev") != null) {
 						// try loading form configuration/platform.xml
 						try {
-							configFileURL = new URL(platformConfigLocation.getURL(), PLATFORM_XML);
-							config = loadConfig(configFileURL);
-							Utils.debug("Using configuration " + configFileURL.toString()); //$NON-NLS-1$
+							URL configFileURL2 = new URL(platformConfigLocation.getURL(), PLATFORM_XML);
+							config = loadConfig(configFileURL2);
+							Utils.debug("Using configuration " + configFileURL2.toString()); //$NON-NLS-1$
+							return;
 						} catch (Exception tempEx) {
-							createDefaultConfiguration(configFileURL);
+							//createDefaultConfiguration(configFileURL);
 						}
-					} else 
-						createDefaultConfiguration(configFileURL);
+					} 
+					createDefaultConfiguration(configFileURL);
 				}
 			}
 		} finally {

@@ -44,6 +44,7 @@ public class FeatureEntry
 	private ArrayList plugins;
 	private AboutInfo branding;
 	private SiteEntry site;
+	private ResourceBundle resourceBundle;
 
 	public FeatureEntry(String id, String version, String pluginIdentifier, String pluginVersion, boolean primary, String application, URL[] root) {
 		if (id == null)
@@ -173,6 +174,11 @@ public class FeatureEntry
 		
 		return featureElement;
 	}
+	
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IBundleGroup#getBundles()
 	 */
@@ -197,8 +203,13 @@ public class FeatureEntry
 	 * @see org.eclipse.core.runtime.IBundleGroup#getDescription()
 	 */
 	public String getDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		if (description == null) {
+			if (plugins == null) 
+				plugins = new ArrayList();
+			FullFeatureParser parser = new FullFeatureParser(this);
+			parser.parse();
+		}
+		return description;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IBundleGroup#getIdentifier()
@@ -282,5 +293,26 @@ public class FeatureEntry
 	 */
 	public String getId() {
 		return id;
+	}
+	
+	public ResourceBundle getResourceBundle(){
+		if (resourceBundle != null)
+			return resourceBundle;
+		
+		// Determine the properties file location
+		if (site == null)
+			return null;
+		
+		ResourceBundle bundle = null;
+		try {
+			URL propertiesURL = new URL(site.getResolvedURL(), getURL());
+			ClassLoader l = new URLClassLoader(new URL[] { propertiesURL }, null);
+			bundle = ResourceBundle.getBundle(IConfigurationConstants.CFG_FEATURE_ENTRY, Utils.getDefaultLocale(), l);
+		} catch (MissingResourceException e) {
+			Utils.log(e.getLocalizedMessage()); 
+		} catch (MalformedURLException e) {
+			Utils.log(e.getLocalizedMessage()); 
+		}
+		return bundle;
 	}
 }

@@ -19,6 +19,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.framework.log.*;
 
 public class Utils {
+	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
+	private static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
 	static FrameworkLog log;
 	
 	public static void debug(String s) {
@@ -131,4 +133,86 @@ public class Utils {
 		}
 		return false;
 	}
+	
+	public static Locale getDefaultLocale() {
+		String nl = Platform.getNL();
+		// sanity test
+		if (nl == null)
+			return Locale.getDefault();
+		
+		// break the string into tokens to get the Locale object
+		StringTokenizer locales = new StringTokenizer(nl,"_");
+		if (locales.countTokens() == 1)
+			return new Locale(locales.nextToken(), "");
+		else if (locales.countTokens() == 2)
+			return new Locale(locales.nextToken(), locales.nextToken());
+		else if (locales.countTokens() == 3)
+			return new Locale(locales.nextToken(), locales.nextToken(), locales.nextToken());
+		else
+			return Locale.getDefault();
+	}
+	
+	
+	/**
+	 * Returns a resource string corresponding to the given argument 
+	 * value and bundle.
+	 * If the argument value specifies a resource key, the string
+	 * is looked up in the given resource bundle. If the argument does not
+	 * specify a valid key, the argument itself is returned as the
+	 * resource string. The key lookup is performed against the
+	 * specified resource bundle. If a resource string 
+	 * corresponding to the key is not found in the resource bundle
+	 * the key value, or any default text following the key in the
+	 * argument value is returned as the resource string.
+	 * A key is identified as a string begining with the "%" character.
+	 * Note that the "%" character is stripped off prior to lookup
+	 * in the resource bundle.
+	 * <p>
+	 * For example, assume resource bundle plugin.properties contains
+	 * name = Project Name
+	 * <pre>
+	 *     resolveNLString(b,"Hello World") returns "Hello World"</li>
+	 *     resolveNLString(b,"%name") returns "Project Name"</li>
+	 *     resolveNLString(b,"%name Hello World") returns "Project Name"</li>
+	 *     resolveNLString(b,"%abcd Hello World") returns "Hello World"</li>
+	 *     resolveNLString(b,"%abcd") returns "%abcd"</li>
+	 *     resolveNLString(b,"%%name") returns "%name"</li>
+	 * </pre>
+	 * </p>
+	 * 
+	 * @param bundle resource bundle.
+	 * @param s translatable string from model
+	 * @return string, or <code>null</code>
+	 * @since 2.0
+	 */
+	public static String getResourceString(ResourceBundle resourceBundle, String string) {
+
+		if (string == null)
+			return null;
+
+		String s = string.trim();
+
+		if (s.equals("")) //$NON-NLS-1$
+			return string;
+
+		if (!s.startsWith(KEY_PREFIX))
+			return string;
+
+		if (s.startsWith(KEY_DOUBLE_PREFIX))
+			return s.substring(1);
+
+		int ix = s.indexOf(" "); //$NON-NLS-1$
+		String key = ix == -1 ? s : s.substring(0, ix);
+		String dflt = ix == -1 ? s : s.substring(ix + 1);
+
+		if (resourceBundle == null)
+			return dflt;
+
+		try {
+			return resourceBundle.getString(key.substring(1));
+		} catch (MissingResourceException e) {
+			return dflt;
+		}
+	}
+
 }
