@@ -14,7 +14,6 @@ package org.eclipse.ui.internal;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginDescriptor;
@@ -316,7 +315,6 @@ public class ActionExpression {
 		}
 	}
 
-	// @issue adaptable attribute has IDE specific semantics
 	private static class ObjectStateExpression extends AbstractExpression {
 		private String name;
 		private String value;
@@ -338,23 +336,31 @@ public class ActionExpression {
 		 * Method declared on AbstractExpression.
 		 */
 		public boolean isEnabledFor(Object object) {
-			if (object == null)
+			if (object == null) {
 				return false;
+			}
 				
 			// Try out the object first.
-			if (preciselyMatches(object))
+			if (preciselyMatches(object)) {
 				return true;
+			}
 
 			// Try out the underlying resource.
-			// @issue adaptable = true problem
-			if (object instanceof IResource) {
+			Class resourceClass = ObjectContributorManager.getResourceClass();
+			if (resourceClass == null) {
+				return false;
+			}
+			
+			if (resourceClass.isInstance(object)) {
 				return false;
 			} else {
-				IResource res = null;
-				if (object instanceof IAdaptable)
-					res = (IResource) ((IAdaptable) object).getAdapter(IResource.class);
-				if (res == null)
+				Object res = null;
+				if (object instanceof IAdaptable) {
+					res = ((IAdaptable) object).getAdapter(resourceClass);
+				}
+				if (res == null) {
 					return false;
+				}
 				return preciselyMatches(res);
 			}
 		}

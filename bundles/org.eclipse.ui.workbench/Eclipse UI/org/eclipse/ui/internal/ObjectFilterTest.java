@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.util.HashMap;
+import java.util.Iterator;
 
-import java.util.*;
-
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.IActionFilter;
 
 /**
@@ -75,14 +75,20 @@ public class ObjectFilterTest {
 		// If not adaptable, or the object is a resource, just return.
 		if (!adaptable)
 			return false;
-		if (object instanceof IResource)
+		
+		// be careful to avoid dependence on IResource.class, which may not be present
+		Class resourceClass = ObjectContributorManager.getResourceClass();
+		if (resourceClass == null) {
 			return false;
+		}
+		if (resourceClass.isInstance(object)) {
+			return false;
+		}
 			
 		// Try out the underlying resource.
-		// @issue adaptable = true problem
-		IResource res = null;
+		Object res = null;
 		if (object instanceof IAdaptable)
-			res = (IResource)((IAdaptable)object).getAdapter(IResource.class);
+			res = ((IAdaptable)object).getAdapter(resourceClass);
 		if (res == null)
 			return false;
 		return this.preciselyMatches(res);

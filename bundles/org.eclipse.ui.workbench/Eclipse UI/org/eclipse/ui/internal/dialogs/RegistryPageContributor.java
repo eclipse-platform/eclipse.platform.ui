@@ -13,12 +13,16 @@ package org.eclipse.ui.internal.dialogs;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.IWorkbenchPropertyPage;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.ObjectContributorManager;
+import org.eclipse.ui.internal.SelectionEnabler;
+import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -39,11 +43,11 @@ public class RegistryPageContributor implements IPropertyPageContributor {
 	
 	private static String [] resourceClassNames =
 		{
-			IResource.class.getName(),
-			IContainer.class.getName(),
-			IFolder.class.getName(),
-			IProject.class.getName(),
-			IFile.class.getName()
+			"org.eclipse.core.resources.IResource", //$NON-NLS-1$
+			"org.eclipse.core.resources.IContainer", //$NON-NLS-1$
+			"org.eclipse.core.resources.IFolder", //$NON-NLS-1$
+			"org.eclipse.core.resources.IProject", //$NON-NLS-1$
+			"org.eclipse.core.resources.IFile", //$NON-NLS-1$
 		};
 			
 /**
@@ -77,11 +81,12 @@ public IWorkbenchPropertyPage createPage(IAdaptable element) throws CoreExceptio
 	ppage = (IWorkbenchPropertyPage)WorkbenchPlugin.createExtension(
 		pageElement, PropertyPagesRegistryReader.ATT_CLASS);
 
-	// @issue adaptable = true problem		
-	if(isResourceContributor)
-		ppage.setElement((IAdaptable) element.getAdapter(IResource.class));
-	else
+	Class resourceClass = ObjectContributorManager.getResourceClass();
+	if (isResourceContributor && resourceClass != null) {
+		ppage.setElement((IAdaptable) element.getAdapter(resourceClass));
+	} else {
 		ppage.setElement(element);
+	}
 	ppage.setTitle(pageName);
 	return ppage;
 }
@@ -136,23 +141,28 @@ public boolean isApplicableTo(Object object) {
 	// If this is a resource contributor and the object is not a resource but
 	// is an adaptable then get the object's resource via the adaptable mechanism.
 	Object testObject = object;
-	if (isResourceContributor 
-		&& !(object instanceof IResource)
+	Class resourceClass = ObjectContributorManager.getResourceClass();
+	if (isResourceContributor
+	    && resourceClass != null
+		&& !(resourceClass.isInstance(object))
 		&& (object instanceof IAdaptable)) { 
-			Object result = ((IAdaptable)object).getAdapter(IResource.class);
-			if (result != null) 
+			Object result = ((IAdaptable)object).getAdapter(resourceClass);
+			if (result != null) {
 				testObject = result;
+			}
 	}
 	
-	if (testObject instanceof IActionFilter)
+	if (testObject instanceof IActionFilter) {
 		filter = (IActionFilter)testObject;
-	else if (testObject instanceof IAdaptable)
+	} else if (testObject instanceof IAdaptable) {
 		filter = (IActionFilter)((IAdaptable)testObject).getAdapter(IActionFilter.class);
+	}
 
-	if (filter != null)
+	if (filter != null) {
 		return testCustom(testObject, filter);
-	else
+	} else {
 		return true;
+	}
 }
 /**
  * Returns whether the object passes a custom key value filter

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IContributorResourceAdapter;
@@ -57,6 +55,50 @@ public abstract class ObjectContributorManager {
 
 	/** Cache of resource adapter class contributor search paths; <code>null</code> if none. */
 	protected Map adapterLookup;
+
+	/**
+	 * Cached value of
+	 * <code>Class.forName("org.eclipse.core.resources.IResource")</code>;
+	 * <code>null</code> if not initialized or not present.
+	 */
+	private static Class iresourceClass = null;
+
+	/**
+	 * Indicates whether the resources plug-in is even around.
+	 * Without the resources plug-in, adapting to resource is moot.
+	 */
+	private static boolean resourcesPossible = true;
+
+	/**
+	 * Returns <code>IResource.class</code> or <code>null</code> if the
+	 * resources plug-in is not present.
+	 * 
+	 * @return <code>IResource.class</code> or <code>null</code> if class
+	 * not available
+	 * @since 3.0
+	 */
+	public static Class getResourceClass() {
+		if (iresourceClass != null) {
+			// tried before and succeeded
+			return iresourceClass;
+		}
+		if (!resourcesPossible) {
+			// tried before and failed
+			return null;
+		}
+		
+		// use Java reflection to avoid dependence on IResource (which is not
+		// part of generic workbench and many not even be present)
+		try {
+			// @issue generic wb plug-in class loader will NEVER find org.eclipse.core.resources.IResource (not on prereq chain)
+			iresourceClass = Class.forName("org.eclipse.core.resources.IResource"); //$NON-NLS-1$
+			return iresourceClass;
+		} catch (ClassNotFoundException e) {
+			// IResource is not around
+			resourcesPossible = false;
+			return null;
+		}
+	}
 
 	/** 
 	 * Constructs a new contributor manager.
@@ -180,8 +222,7 @@ public abstract class ObjectContributorManager {
 	protected List getContributors(Object object) {
 
 		Class objectClass = object.getClass();
-		// @issue adaptable = true problem
-		IResource adapted = getAdaptedResource(object);
+		Object adapted = getAdaptedResource(object);
 
 		if (adapted == null)
 			return getContributors(objectClass);
@@ -325,20 +366,27 @@ public abstract class ObjectContributorManager {
 	 * object is an instance of IResource or is not an instance
 	 * of IAdaptable return null. Otherwise see if it adapts
 	 * to IResource via IContributorResourceAdapter.
-	 * @return IResource or null
+	 * 
 	 * @param object Object 
+	 * @return an <code>IResource</code> or null
+	 * @issue revised return type from IResource to Object
 	 */
-	protected IResource getAdaptedResource(Object object) {
-
-		if (object instanceof IResource)
+	protected Object getAdaptedResource(Object object) {
+		Class resourceClass = getResourceClass();
+		if (resourceClass == null) {
 			return null;
+		}
+		if (resourceClass.isInstance(object)) {
+			return null;
+		}
 
 		if (object instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) object;
 
 			Object resourceAdapter = adaptable.getAdapter(IContributorResourceAdapter.class);
-			if (resourceAdapter == null)
+			if (resourceAdapter == null) {
 				resourceAdapter = DefaultContributorResourceAdapter.getDefault();
+			}
 
 			return ((IContributorResourceAdapter) resourceAdapter).getAdaptedResource(adaptable);
 		}
