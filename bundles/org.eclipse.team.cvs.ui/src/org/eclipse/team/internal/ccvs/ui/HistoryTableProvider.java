@@ -14,6 +14,8 @@ import java.text.DateFormat;
 import java.util.Date;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.IColorProvider;
@@ -24,9 +26,11 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -48,6 +52,8 @@ public class HistoryTableProvider {
 
 	private ICVSFile currentFile;
 	private String currentRevision;
+	private TableViewer viewer;
+	private Font currentRevisionFont;
 	
 	/**
 	 * Constructor for HistoryTableProvider.
@@ -66,7 +72,7 @@ public class HistoryTableProvider {
 	/**
 	 * The history label provider.
 	 */
-	class HistoryLabelProvider extends LabelProvider implements ITableLabelProvider, IColorProvider {
+	class HistoryLabelProvider extends LabelProvider implements ITableLabelProvider, IColorProvider, IFontProvider {
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
@@ -126,6 +132,29 @@ public class HistoryTableProvider {
 		 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
 		 */
 		public Color getBackground(Object element) {
+			return null;
+		}
+		/*
+		 * (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
+		 */
+		public Font getFont(Object element) {
+			ILogEntry entry = adaptToLogEntry(element);
+			if (entry == null)
+				return null;
+			String revision = entry.getRevision();
+			String currentRevision = getCurrentRevision();
+			if (currentRevision != null && currentRevision.equals(revision)) {
+				if (currentRevisionFont == null) {
+					Font defaultFont = JFaceResources.getDefaultFont();
+					FontData[] data = defaultFont.getFontData();
+					for (int i = 0; i < data.length; i++) {
+						data[i].setStyle(SWT.BOLD);
+					}				
+					currentRevisionFont = new Font(viewer.getTable().getDisplay(), data);
+				}
+				return currentRevisionFont;
+			}
 			return null;
 		}
 	}
@@ -265,6 +294,15 @@ public class HistoryTableProvider {
 		sorter.setReversed(true);
 		viewer.setSorter(sorter);
 		
+		table.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				if(currentRevisionFont != null) {
+					currentRevisionFont.dispose();
+				}
+			}
+		});
+		
+		this.viewer = viewer;
 		return viewer;
 	}
 
@@ -296,6 +334,15 @@ public class HistoryTableProvider {
 		sorter.setReversed(true);
 		viewer.setSorter(sorter);
 		
+		table.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				if(currentRevisionFont != null) {
+					currentRevisionFont.dispose();
+				}
+			}
+		});
+		
+		this.viewer = viewer;
 		return viewer;
 	}
 	
