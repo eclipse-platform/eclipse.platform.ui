@@ -84,7 +84,7 @@ public class ServletFacade implements IPlatformRunnable {
 			InputStream is = iniPathURL.openStream();
 			ini.load(is);
 
-			int debug_level = Integer.getInteger(ini.getProperty("log_level")).intValue();
+			int debug_level = new Integer(ini.getProperty("log_level")).intValue();
 			HelpSystem.setDebugLevel(debug_level);
 
 			is.close();
