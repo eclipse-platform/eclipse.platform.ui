@@ -12,16 +12,23 @@ package org.eclipse.jface.viewers;
 
 
 /**
- * The IViewerLabelProvider  is the interface that allows for an update to be collected by
- * a set of ViewEntrySettings rather than set on a widget directly.
+ * Extends <code>IBaseLabelProvider</code> with the methods
+ * to update the label given element represented by a ViewerLabel.
+ * Used by the TreeViewer and TableViewer to support updates of 
+ * labels without setting the widgets contents if there is no change.
+ * 
  * @see IDelayedLabelDecorator
+ * @see ViewerLabel
+ * @since 3.0
  */
 public interface IViewerLabelProvider extends IBaseLabelProvider {
 
 	/**
-	 * Update the given label with the information derived from the given element.
-	 * @param settings The current settings for the element
-	 * @param element the element being displayed
+	 * Update the given label with the information derived from the 
+	 * given element.
+	 * @param settings The current ViewerLabel for the element
+	 * @param element the element for which to provide the ViewerLabels
+	 * entries.
 	 */
 	public void updateLabel(ViewerLabel settings, Object element);
 }
