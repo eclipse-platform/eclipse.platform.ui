@@ -19,6 +19,7 @@ import org.eclipse.help.internal.base.*;
  * Creates browser by delegating to appropriate browser adapter
  */
 public class BrowserManager {
+	public static final String ALWAYS_EXTERNAL_BROWSER_KEY = "always_external_browser";
 	public static final String DEFAULT_BROWSER_ID_KEY = "default_browser";
 	private static BrowserManager instance;
 	private boolean initialized = false;
@@ -27,6 +28,7 @@ public class BrowserManager {
 	private BrowserDescriptor[] browsersDescriptors;
 	private BrowserDescriptor internalBrowserDesc;
 	private Collection browsers = new ArrayList();
+	private boolean alwaysUseExternal = false;
 	/**
 	 * Private Constructor
 	 */
@@ -141,6 +143,10 @@ public class BrowserManager {
 		if (currentBrowserDesc == null) {
 			setCurrentBrowserID(getDefaultBrowserID());
 		}
+		setAlwaysUseExternal(HelpBasePlugin
+				.getDefault()
+				.getPluginPreferences()
+				.getBoolean(ALWAYS_EXTERNAL_BROWSER_KEY));
 
 	}
 	/**
@@ -274,11 +280,10 @@ public class BrowserManager {
 		if (!initialized) {
 			init();
 		}
-		if (forceExternal)
-			return createBrowserAdapter(forceExternal);
-		else
-			return new CurrentBrowser(createBrowserAdapter(forceExternal),
-					getCurrentBrowserID());
+		forceExternal = forceExternal || alwaysUseExternal;
+		return createBrowserAdapter(forceExternal);
+		// TODO fix and use CurrentBrowser
+		//	return new CurrentBrowser(createBrowserAdapter(forceExternal), getCurrentBrowserID());
 	}
 	/**
 	 * Creates web browser
@@ -291,6 +296,9 @@ public class BrowserManager {
 	 * Creates web browser
 	 */
 	private IBrowser createBrowserAdapter(boolean forceExternal) {
+		if (!initialized) {
+			init();
+		}
 		IBrowser browser = null;
 		if(! forceExternal && internalBrowserDesc != null){
 			browser = internalBrowserDesc.getFactory().createBrowser();
@@ -312,5 +320,27 @@ public class BrowserManager {
 			IBrowser browser = (IBrowser) it.next();
 			browser.close();
 		}
+	}
+	public boolean isEmbeddedBrowserPresent(){
+		if (!initialized) {
+			init();
+		}
+		return internalBrowserDesc != null;
+	}
+	public void setAlwaysUseExternal(boolean alwaysExternal){
+		if (!initialized) {
+			init();
+		}
+		
+		alwaysUseExternal = alwaysExternal || !isEmbeddedBrowserPresent();
+	}
+	public boolean isAlwaysUseExternal(){
+		if (!initialized) {
+			init();
+		}
+		if(!isEmbeddedBrowserPresent()){
+			return true;
+		}
+		return alwaysUseExternal;
 	}
 }

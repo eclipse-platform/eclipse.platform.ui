@@ -29,6 +29,8 @@ import org.eclipse.ui.help.*;
 public class BrowsersPreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage {
+	protected Button useBoth;
+	protected Button useExternal;
 	protected Table browsersTable;
 	private Label customBrowserPathLabel;
 	protected Text customBrowserPath;
@@ -59,7 +61,30 @@ public class BrowsersPreferencePage
 		description.setFont(font);
 		description.setText(HelpUIResources.getString("select_browser"));
 		createSpacer(mainComposite);
-
+		
+		if (BrowserManager.getInstance().isEmbeddedBrowserPresent()) {
+			Group group = new Group(mainComposite, SWT.NONE);
+			group.setFont(font);
+			group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			group.setFont(font);
+			group.setText(HelpUIResources.getString("embedded_browser")
+					+ " (work in progress, requires restart)");
+			layout = new GridLayout();
+			group.setLayout(layout);
+			useBoth = new Button(group, SWT.RADIO);
+			useBoth.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL));
+			useBoth.setText(HelpUIResources.getString("use_embedded_browser"));
+			useBoth.setSelection(!HelpBasePlugin
+					.getDefault()
+					.getPluginPreferences()
+					.getBoolean(BrowserManager.ALWAYS_EXTERNAL_BROWSER_KEY));
+			useExternal = new Button(group, SWT.RADIO);
+			useExternal.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL));
+			useExternal.setText(HelpUIResources
+					.getString("use_only_external_browser"));
+			useExternal.setSelection(!useBoth.getSelection());
+			createSpacer(mainComposite);
+		}
 		Label tableDescription = new Label(mainComposite, SWT.NULL);
 		tableDescription.setFont(font);
 		tableDescription.setText(
@@ -198,6 +223,14 @@ public class BrowsersPreferencePage
 			HelpBasePlugin.getDefault().getPluginPreferences().getDefaultString(
 				CustomBrowser.CUSTOM_BROWSER_PATH_KEY));
 		setEnabledCustomBrowserPath();
+		if(useBoth!=null){
+			useBoth.setSelection(!HelpBasePlugin
+					.getDefault()
+					.getPluginPreferences()
+					.getDefaultBoolean(BrowserManager.ALWAYS_EXTERNAL_BROWSER_KEY));
+			useExternal.setSelection(!useBoth.getSelection());
+
+		}
 		super.performDefaults();
 	}
 	/**
@@ -223,6 +256,9 @@ public class BrowsersPreferencePage
 		pref.setValue(
 			CustomBrowser.CUSTOM_BROWSER_PATH_KEY,
 			customBrowserPath.getText());
+		if(useExternal!=null){
+			pref.setValue(BrowserManager.ALWAYS_EXTERNAL_BROWSER_KEY, useExternal.getSelection());
+		}
 		HelpBasePlugin.getDefault().savePluginPreferences();
 		return true;
 	}
