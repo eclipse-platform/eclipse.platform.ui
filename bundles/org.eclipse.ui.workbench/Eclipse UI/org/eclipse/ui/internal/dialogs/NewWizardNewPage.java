@@ -4,20 +4,40 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.ui.INewWizard;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.model.WorkbenchAdapter;
-import org.eclipse.ui.model.*;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  *New wizard selection tab that allows the user to select a registered
@@ -228,6 +248,11 @@ class NewWizardNewPage
 		if (currentSelection != selectedCategory) {
 			page.selectWizardNode(null);
 			wizardSelectionViewer.setInput(selectedCategory);
+			if(selectedCategory instanceof WizardCollectionElement){
+				Object[] children = ((WizardCollectionElement) selectedCategory).getWizards();
+				if(children.length == 1)
+					selectWizard(children[0]);	
+			}
 		}
 	}
 	/**
@@ -329,6 +354,16 @@ class NewWizardNewPage
 		if (wizard == null)
 			return; // wizard no longer exists, or has moved
 
+		selectWizard(wizard);
+	}
+	/**
+	 * Select the supplied wizard element.
+	 * @param wizard. Defined to be Object but really a 
+	 * <code>WorkbenchWizardElement</code>.If it is not 
+	 * in the list nothing will happen.
+	 */
+	private void selectWizard(Object wizard) {
+		StructuredSelection selection;
 		selection = new StructuredSelection(wizard);
 		wizardSelectionViewer.setSelection(selection);
 		selectionChanged(
