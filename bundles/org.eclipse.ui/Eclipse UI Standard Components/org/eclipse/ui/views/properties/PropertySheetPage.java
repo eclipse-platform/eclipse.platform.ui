@@ -214,7 +214,8 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 	 * @param selection the new selection
 	 */
 	public void handleEntrySelection(ISelection selection) {
-		defaultsAction.setEnabled(!selection.isEmpty());
+		if (defaultsAction != null)
+			defaultsAction.setEnabled(!selection.isEmpty());
 	}
 	/**
 	 * Adds drag and drop support.
