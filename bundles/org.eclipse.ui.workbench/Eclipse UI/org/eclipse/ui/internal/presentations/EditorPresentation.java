@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.presentations;
 
 import java.util.Map;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
@@ -20,13 +21,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.AbstractHandler;
@@ -160,40 +155,6 @@ public class EditorPresentation extends BasicStackPresentation {
         }
     }
 
-    String getLabelText(IPresentablePart presentablePart,
-            boolean includePath) {
-        String title = presentablePart.getTitle().trim();
-        String text = title;
-
-        if (includePath) {
-            String titleTooltip = presentablePart.getTitleToolTip().trim();
-
-            if (titleTooltip.endsWith(title))
-                    titleTooltip = titleTooltip.substring(0,
-                            titleTooltip.lastIndexOf(title)).trim();
-
-            if (titleTooltip.endsWith("\\")) //$NON-NLS-1$
-                    titleTooltip = titleTooltip.substring(0,
-                            titleTooltip.lastIndexOf("\\")).trim(); //$NON-NLS-1$
-
-            if (titleTooltip.endsWith("/")) //$NON-NLS-1$
-                    titleTooltip = titleTooltip.substring(0,
-                            titleTooltip.lastIndexOf("/")).trim(); //$NON-NLS-1$
-
-            if (titleTooltip.length() >= 1) text += " - " + titleTooltip; //$NON-NLS-1$
-        }
-
-        if (presentablePart.isDirty()) {
-                text = "* " + text; //$NON-NLS-1$
-        }
-
-        return text;
-    }
-
-    Image getLabelImage(IPresentablePart presentablePart) {
-        return presentablePart.getTitleImage();
-    }
-
     /*
      * (non-Javadoc)
      * 
@@ -227,43 +188,6 @@ public class EditorPresentation extends BasicStackPresentation {
     protected void setTabStyle(boolean traditionalTab) {
         // set the tab style to non-simple
         getTabFolder().setSimpleTab(traditionalTab);
-    }
-
-    private void showList(Shell parentShell, int x, int y) {
-        final PaneFolder tabFolder = getTabFolder();
-
-        int shellStyle = SWT.RESIZE | SWT.ON_TOP | SWT.NO_TRIM;
-        int tableStyle = SWT.V_SCROLL | SWT.H_SCROLL;
-        final EditorList editorList = new EditorList(tabFolder.getControl().getShell(),
-                shellStyle, tableStyle);
-        editorList.setInput(this);
-        Point size = editorList.computeSizeHint();
-        
-        Rectangle bounds = Display.getCurrent().getBounds();
-        if (x + size.x > bounds.width) x = bounds.width - size.x;
-        if (y + size.y > bounds.height) y = bounds.height - size.y;
-        editorList.setLocation(new Point(x, y));
-        editorList.setVisible(true);
-        editorList.setFocus();
-        editorList.getTableViewer().getTable().getShell().addListener(
-                SWT.Deactivate, new Listener() {
-
-                    public void handleEvent(Event event) {
-                        editorList.setVisible(false);
-                    }
-                });
-    }
-    
-    /*
-     * Shows the list of tabs at the top left corner of the editor
-     */
-    private void showListDefaultLocation() {
-    	PaneFolder tabFolder = getTabFolder();
-    	Shell shell = tabFolder.getControl().getShell();
-        Rectangle clientArea = tabFolder.getClientArea();
-        Point location = tabFolder.getControl().getDisplay().map(tabFolder.getControl(), null,
-                clientArea.x, clientArea.y);
-        showList(shell, location.x, location.y);
     }
 
     /**
@@ -310,14 +234,6 @@ public class EditorPresentation extends BasicStackPresentation {
         drawGradient(fgColor, bgColors, percent, vertical);
     }
 
-    void setSelection(CTabItem tabItem) {
-        getSite().selectPart(getPartForTab(tabItem));
-    }
-
-    void close(IPresentablePart presentablePart) {
-        getSite().close(presentablePart);
-    }
-
     /*
      * (non-Javadoc)
      * 
@@ -332,5 +248,36 @@ public class EditorPresentation extends BasicStackPresentation {
 	 */
 	protected String getPaneName() {		
 		return WorkbenchMessages.getString("EditorPane.moveEditor"); //$NON-NLS-1$ 
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.presentations.BasicStackPresentation#getLabelText(org.eclipse.ui.presentations.IPresentablePart, boolean)
+	 */
+	String getLabelText(IPresentablePart presentablePart, boolean includePath) {
+	    String title = super.getLabelText(presentablePart, includePath); 
+		String text = title;
+
+        if (includePath) {
+            String titleTooltip = presentablePart.getTitleToolTip().trim();
+
+            if (titleTooltip.endsWith(title))
+                    titleTooltip = titleTooltip.substring(0,
+                            titleTooltip.lastIndexOf(title)).trim();
+
+            if (titleTooltip.endsWith("\\")) //$NON-NLS-1$
+                    titleTooltip = titleTooltip.substring(0,
+                            titleTooltip.lastIndexOf("\\")).trim(); //$NON-NLS-1$
+
+            if (titleTooltip.endsWith("/")) //$NON-NLS-1$
+                    titleTooltip = titleTooltip.substring(0,
+                            titleTooltip.lastIndexOf("/")).trim(); //$NON-NLS-1$
+
+            if (titleTooltip.length() >= 1) text += " - " + titleTooltip; //$NON-NLS-1$
+        }
+
+        if (presentablePart.isDirty()) {
+                text = "* " + text; //$NON-NLS-1$
+        }
+
+        return text;
 	}
 }

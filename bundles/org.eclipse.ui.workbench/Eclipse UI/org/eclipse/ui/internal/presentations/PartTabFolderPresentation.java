@@ -16,6 +16,7 @@ import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -50,10 +51,20 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
 		}
 	};
 	
+	private PaneFolderButtonListener showListListener = new PaneFolderButtonListener () {
+
+        public void showList(CTabFolderEvent event) {
+            event.doit = false;
+            showListDefaultLocation();
+        }
+    };
+	
 	public PartTabFolderPresentation(Composite parent, IStackPresentationSite newSite) {
 		
 		super(new PaneFolder(parent, SWT.BORDER), newSite);
 		PaneFolder tabFolder = getTabFolder();
+		
+        tabFolder.addButtonListener(showListListener);
 		
 		preferenceStore.addPropertyChangeListener(propertyChangeListener);
 		int tabLocation = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION); 

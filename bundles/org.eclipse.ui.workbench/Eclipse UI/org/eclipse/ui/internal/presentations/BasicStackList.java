@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.presentations;
 
 import java.text.Collator;
 import java.util.Iterator;
+
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IFontProvider;
@@ -35,23 +36,23 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.presentations.IPresentablePart;
 
-public class EditorList extends AbstractTableInformationControl {
+public class BasicStackList extends AbstractTableInformationControl {
 
-    private class EditorListContentProvider implements IStructuredContentProvider {
+    private class BasicStackListContentProvider implements IStructuredContentProvider {
 
-        private EditorPresentation editorPresentation;
+        private BasicStackPresentation basicStackPresentation;
 
-        public EditorListContentProvider() {
+        public BasicStackListContentProvider() {
             //no-op
         }
 
         public void dispose() {
-            //no-op
+            //no-op 
         }
 
-        public Object[] getElements(Object inputElement) {
-            if (editorPresentation == null) { return new CTabItem[0]; }                         
-            final PaneFolder tabFolder = editorPresentation.getTabFolder();
+        public Object[] getElements(Object inputElement) {  
+        	if (basicStackPresentation == null) { return new CTabItem[0]; }                  
+            final PaneFolder tabFolder = basicStackPresentation.getTabFolder();
 
             /* TODO
             ArrayList items = new ArrayList(Arrays.asList(tabFolder.getItems()));
@@ -69,32 +70,33 @@ public class EditorList extends AbstractTableInformationControl {
         }
 
         public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-            editorPresentation = (EditorPresentation) newInput;
+        	basicStackPresentation = (BasicStackPresentation) newInput;
         }
     }
     
-    private class EditorListLabelProvider extends LabelProvider implements IFontProvider {
+    private class BasicStackListLabelProvider extends LabelProvider implements IFontProvider {
 
     	private Font boldFont = null;
 
-		public EditorListLabelProvider() {
+		public BasicStackListLabelProvider() { 
 		    //no-op
     	}
 
     	public String getText(Object element) {
     	    CTabItem tabItem = (CTabItem) element;
-            EditorPresentation editorPresentation = (EditorPresentation) getTableViewer()
+            BasicStackPresentation basicStackPresentation = (BasicStackPresentation) getTableViewer()
             .getInput();
-            IPresentablePart presentablePart = editorPresentation.getPartForTab(tabItem);    	    
-    	    return editorPresentation.getLabelText(presentablePart, true); 
+            IPresentablePart presentablePart = basicStackPresentation.getPartForTab(tabItem);
+            // TODO: the 'true' parameter should be removed
+    	    return basicStackPresentation.getLabelText(presentablePart, true); 
     	}
 
     	public Image getImage(Object element) {
     	    CTabItem tabItem = (CTabItem) element;
-            EditorPresentation editorPresentation = (EditorPresentation) getTableViewer()
+            BasicStackPresentation basicStackPresentation = (BasicStackPresentation) getTableViewer()
             .getInput();
-            IPresentablePart presentablePart = editorPresentation.getPartForTab(tabItem);    	    
-    	    return editorPresentation.getLabelImage(presentablePart);
+            IPresentablePart presentablePart = basicStackPresentation.getPartForTab(tabItem);    	    
+    	    return basicStackPresentation.getLabelImage(presentablePart);
     	}
     	
 		public Font getFont(Object element) {
@@ -120,13 +122,13 @@ public class EditorList extends AbstractTableInformationControl {
 		}
     }    
     
-    private class EditorListViewerSorter extends ViewerSorter {
+    private class BasicStackListViewerSorter extends ViewerSorter {
     	
-    	public EditorListViewerSorter(){
+    	public BasicStackListViewerSorter(){
     	    //no-op
     	}
     	
-    	public EditorListViewerSorter(Collator collator) {
+    	public BasicStackListViewerSorter(Collator collator) {
     		super(collator);
     	}
     	
@@ -154,7 +156,7 @@ public class EditorList extends AbstractTableInformationControl {
     				ILabelProvider lprov = (ILabelProvider) prov;
     				name1 = lprov.getText(e1);
     				name2 = lprov.getText(e2);
-    				// ILabelProvider's implementation in EditorList calls 
+    				// ILabelProvider's implementation in BasicStackList calls 
     				// EditorPresentation.getLabelText which returns the name of dirty 
     				// files begining with "* ", sorting should not take "* " in consideration
     				if (name1.startsWith("* ")) //$NON-NLS-1$
@@ -184,7 +186,7 @@ public class EditorList extends AbstractTableInformationControl {
 		}
     }
     
-    public EditorList(Shell parent, int shellStyle, int treeStyle) {
+    public BasicStackList(Shell parent, int shellStyle, int treeStyle) {
         super(parent, shellStyle, treeStyle);
         setBackgroundColor(new Color(parent.getDisplay(), 255, 255, 255));
     }
@@ -194,15 +196,15 @@ public class EditorList extends AbstractTableInformationControl {
         table.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
         TableViewer tableViewer = new TableViewer(table);
         tableViewer.addFilter(new NamePatternFilter());
-        tableViewer.setContentProvider(new EditorListContentProvider());
-        tableViewer.setSorter(new EditorListViewerSorter());
-        tableViewer.setLabelProvider(new EditorListLabelProvider());
+        tableViewer.setContentProvider(new BasicStackListContentProvider());
+        tableViewer.setSorter(new BasicStackListViewerSorter());
+        tableViewer.setLabelProvider(new BasicStackListLabelProvider());
         return tableViewer;
     }
 
     public void setInput(Object information) {
-        EditorPresentation editorPresentation = (EditorPresentation) information;
-        inputChanged(editorPresentation, editorPresentation.getTabFolder()
+    	BasicStackPresentation basicStackPresentation = (BasicStackPresentation) information;
+        inputChanged(basicStackPresentation, basicStackPresentation.getTabFolder()
                 .getSelection());
     }
 
@@ -210,24 +212,25 @@ public class EditorList extends AbstractTableInformationControl {
         Object selectedElement = getSelectedElement();
 
         if (selectedElement != null) {
-            EditorPresentation editorPresentation = (EditorPresentation) getTableViewer()
+        	BasicStackPresentation basicStackPresentation = (BasicStackPresentation) getTableViewer()
                     .getInput();
-            editorPresentation.setSelection((CTabItem) selectedElement);
+            basicStackPresentation.setSelection((CTabItem) selectedElement);
         }
         
         dispose();
     }
     
     protected void deleteSelectedElements() {
+    	
         IStructuredSelection structuredSelection = getSelectedElements();
         
         if (structuredSelection != null) {
-            EditorPresentation editorPresentation = (EditorPresentation) getTableViewer()
+        	BasicStackPresentation basicStackPresentation = (BasicStackPresentation) getTableViewer()
             .getInput();
             
             for (Iterator iterator = structuredSelection.iterator(); iterator.hasNext();) {
-    			IPresentablePart presentablePart = editorPresentation.getPartForTab((CTabItem) iterator.next());    			
-    			editorPresentation.close(presentablePart);                
+    			IPresentablePart presentablePart = basicStackPresentation.getPartForTab((CTabItem) iterator.next());    			
+    			basicStackPresentation.close(presentablePart);                
             }
         }
     }

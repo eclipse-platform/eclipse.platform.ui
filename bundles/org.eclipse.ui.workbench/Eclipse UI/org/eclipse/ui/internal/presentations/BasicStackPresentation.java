@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.presentations;
 
 import java.util.ArrayList;
+
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -31,10 +32,12 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPropertyListener;
@@ -588,7 +591,8 @@ public class BasicStackPresentation extends StackPresentation {
 	 */
 	public void addPart(IPresentablePart newPart, IPresentablePart position) {
 		int idx = indexOf(position);
-		
+		if (idx == tabFolder.getItemCount())
+			idx = 0;
 		createPartTab(newPart, idx);
 		
 		setControlSize();
@@ -625,7 +629,15 @@ public class BasicStackPresentation extends StackPresentation {
 		current = toSelect;
 		
 		if (current != null) {
-			tabFolder.setSelection(indexOf(current));
+			CTabItem item = getTab(toSelect);
+			if (item != null)
+				if (!item.isShowing()) {
+					removePart(toSelect);
+					addPart(toSelect, null);
+					current = toSelect;
+				}
+			int ind = indexOf(current);
+			tabFolder.setSelection(ind);
 			current.setVisible(true);
 			setControlSize();		
 		}
@@ -777,5 +789,59 @@ public class BasicStackPresentation extends StackPresentation {
 		}
 		return (Control[]) list.toArray(new Control[list.size()]);
 	}
+	
+    protected void showList(Shell parentShell, int x, int y) {
+        final PaneFolder tabFolder = getTabFolder();
 
+        int shellStyle = SWT.RESIZE | SWT.ON_TOP | SWT.NO_TRIM;
+        int tableStyle = SWT.V_SCROLL | SWT.H_SCROLL;
+        final BasicStackList editorList = new BasicStackList(tabFolder.getControl().getShell(),
+                shellStyle, tableStyle);
+        editorList.setInput(this);
+        Point size = editorList.computeSizeHint();
+        
+        Rectangle bounds = Display.getCurrent().getBounds();
+        if (x + size.x > bounds.width) x = bounds.width - size.x;
+        if (y + size.y > bounds.height) y = bounds.height - size.y;
+        editorList.setLocation(new Point(x, y));
+        editorList.setVisible(true);
+        editorList.setFocus();
+        editorList.getTableViewer().getTable().getShell().addListener(
+                SWT.Deactivate, new Listener() {
+
+                    public void handleEvent(Event event) {
+                        editorList.setVisible(false);
+                    }
+                });
+    }
+    
+    /*
+     * Shows the list of tabs at the top left corner of the editor
+     */
+    protected void showListDefaultLocation() {
+    	PaneFolder tabFolder = getTabFolder();
+    	Shell shell = tabFolder.getControl().getShell();
+        Rectangle clientArea = tabFolder.getClientArea();
+        Point location = tabFolder.getControl().getDisplay().map(tabFolder.getControl(), null,
+                clientArea.x, clientArea.y);
+        showList(shell, location.x, location.y);
+    }
+    
+	void setSelection(CTabItem tabItem) {
+        getSite().selectPart(getPartForTab(tabItem));
+    }
+
+    void close(IPresentablePart presentablePart) {
+        getSite().close(presentablePart);
+    }
+    
+    Image getLabelImage(IPresentablePart presentablePart) {
+        return presentablePart.getTitleImage();
+    }
+    
+    String getLabelText(IPresentablePart presentablePart,
+            boolean includePath) {
+        String title = presentablePart.getTitle().trim();
+        return title;
+    }
 }
