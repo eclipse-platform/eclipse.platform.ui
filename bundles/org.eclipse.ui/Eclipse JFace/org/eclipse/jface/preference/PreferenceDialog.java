@@ -314,7 +314,7 @@ private Composite createTitleArea(Composite parent) {
 	
 	// Get the background color for the title area
 	Display display = parent.getDisplay();
-	Color bg = display.getSystemColor(SWT.COLOR_WHITE);
+	Color bg = display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 	
 	GridData layoutData = new GridData(GridData.FILL_BOTH);
 	titleArea.setLayout(layout);

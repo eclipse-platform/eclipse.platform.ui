@@ -711,7 +711,7 @@ public void tabFocusShow(boolean hasFocus) {
 	if (hasFocus) {
 		if (activeState != ACTIVE_FOCUS) {
 			activeState = ACTIVE_FOCUS;
-			tabFolder.setSelectionForeground(WorkbenchColors.getSystemColor(SWT.COLOR_WHITE));
+			tabFolder.setSelectionForeground(WorkbenchColors.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 			tabFolder.setSelectionBackground(WorkbenchColors.getActiveEditorGradient(), WorkbenchColors.getActiveEditorGradientPercents());
 			tabFolder.update();
 		}

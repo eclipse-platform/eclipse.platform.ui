@@ -244,7 +244,7 @@ static public void startup() {
 	activeEditorPercentages = new int[] {50, 90, 100};
 	
 	// Define active no focus editor gradient
-	activeNoFocusEditorGradient = new Color[] {getSystemColor(SWT.COLOR_WHITE)};
+	activeNoFocusEditorGradient = new Color[] {getSystemColor(SWT.COLOR_LIST_BACKGROUND)};
 	activeNoFocusEditorPercentages = new int[0];
 	
 	// Preload.

@@ -229,7 +229,7 @@ private Composite createTitleArea(Composite parent) {
 		titleAreaColor = new Color(display, titleAreaRGB);
 		bg = titleAreaColor;
 	} else {
-		bg = display.getSystemColor(SWT.COLOR_WHITE);
+		bg = display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 	}	
 	titleArea.setBackground(bg);
 

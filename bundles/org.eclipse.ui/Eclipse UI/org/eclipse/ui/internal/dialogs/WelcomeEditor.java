@@ -117,7 +117,7 @@ private Composite createInfoArea(Composite parent) {
 
 	// Get the background color for the title area
 	Display display = parent.getDisplay();
-	Color bg = display.getSystemColor(SWT.COLOR_WHITE);
+	Color bg = display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 	infoArea.setBackground(bg);
 
 	StyledText sampleStyledText = null;
@@ -270,7 +270,7 @@ public void createPartControl(Composite parent) {
 private Composite createTitleArea(Composite parent) {
 	// Get the background color for the title area
 	Display display = parent.getDisplay();
-	Color bg = display.getSystemColor(SWT.COLOR_WHITE);
+	Color bg = display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 
 	// Create the title area which will contain
 	// a title, message, and image.

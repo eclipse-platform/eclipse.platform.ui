@@ -4,25 +4,25 @@ package org.eclipse.ui.internal.editorsupport;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Vector;
+
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.part.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.model.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.ole.win32.*;
 import org.eclipse.swt.widgets.*;
-import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.part.EditorPart;
 
 /**
  */
@@ -86,7 +86,7 @@ public void createPartControl(Composite parent) {
 	// Create a frame.
 	clientFrame = new OleFrame(parent, SWT.CLIP_CHILDREN);
 	clientFrame.setBackground(
-		clientFrame.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		clientFrame.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 	initializeWorkbenchMenus();
 
 	// Set the input file.
@@ -98,7 +98,7 @@ public void createPartControl(Composite parent) {
 	// Create a OLE client site.
 	clientSite = new OleClientSite(clientFrame, SWT.NONE, source);
 	clientSite.setBackground(
-		clientFrame.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		clientFrame.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 }
 private void deactivateClient(IWorkbenchPart part) {
 	//Check the client active flag. Set it to false when we have deactivated
