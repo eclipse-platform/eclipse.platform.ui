@@ -26,7 +26,7 @@ public abstract class SelectionDialog extends Dialog {
 	private Object[] result;
 
 	// a collection of the initially-selected elements
-	private List initialSelections;
+	private List initialSelections = new ArrayList();
 
 	// title of dialog
 	private String title;
