@@ -11,7 +11,6 @@
 package org.eclipse.update.internal.operations;
 
 import java.lang.reflect.*;
-import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
@@ -48,18 +47,18 @@ public class BatchInstallOperation
 			
 		IInstallConfiguration config = operations[0].getInstallConfiguration();
 		
-		// Check for duplication conflicts
-		ArrayList conflicts =
-			DuplicateConflictsValidator.computeDuplicateConflicts(
-				operations,
-				config);
-		if (conflicts != null) {
-			boolean continueProcessing = false;
-			if (listener != null)
-				continueProcessing = listener.beforeExecute(this, conflicts);
-			if (!continueProcessing)
-				return false;
-		}
+//		// Check for duplication conflicts
+//		ArrayList conflicts =
+//			DuplicateConflictsValidator.computeDuplicateConflicts(
+//				operations,
+//				config);
+//		if (conflicts != null) {
+//			boolean continueProcessing = false;
+//			if (listener != null)
+//				continueProcessing = listener.beforeExecute(this, conflicts);
+//			if (!continueProcessing)
+//				return false;
+//		}
 		
 		if (monitor == null) 
 			monitor = new NullProgressMonitor();

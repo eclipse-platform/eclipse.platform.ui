@@ -504,4 +504,13 @@ public class UnifiedTargetPage extends UnifiedBannerPage implements IUnifiedDyna
 	public IConfiguredSite getTargetSite(IInstallFeatureOperation job) {
 		return targetSites.getTargetSite(job);
 	}
+	
+	public JobTargetSite[] getTargetSites() {
+		JobTargetSite[] sites = new JobTargetSite[jobs.length];
+		for (int i = 0; i < jobs.length; i++) {
+			JobTargetSite jobSite = (JobTargetSite) targetSites.get(jobs[i]);
+			sites[i] = jobSite;
+		}
+		return sites;
+	}
 }

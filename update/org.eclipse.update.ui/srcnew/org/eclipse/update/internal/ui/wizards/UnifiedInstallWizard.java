@@ -58,12 +58,24 @@ public class UnifiedInstallWizard
 
 		saveSettings();
 
+		// Check for duplication conflicts
+		ArrayList conflicts =
+			DuplicateConflictsValidator.computeDuplicateConflicts(
+				targetPage.getTargetSites(),
+				config);
+		if (conflicts != null) {
+			DuplicateConflictsDialog2 dialog =
+				new DuplicateConflictsDialog2(getShell(), conflicts);
+			if (dialog.open() != 0)
+				return false;
+		}
+		
 		// ok to continue		
 		IRunnableWithProgress operation = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException {
 					// setup jobs with the correct environment
-	IInstallFeatureOperation[] operations =
+		IInstallFeatureOperation[] operations =
 		new IInstallFeatureOperation[selectedJobs.length];
 				for (int i = 0; i < selectedJobs.length; i++) {
 					IInstallFeatureOperation job = selectedJobs[i];
@@ -291,15 +303,15 @@ public class UnifiedInstallWizard
 	 * @see org.eclipse.update.operations.IOperationListener#beforeExecute(org.eclipse.update.operations.IOperation)
 	 */
 	public boolean beforeExecute(IOperation operation, Object data) {
-		if (operation instanceof IBatchOperation
-			&& data != null
-			&& data instanceof ArrayList) {
-
-			DuplicateConflictsDialog2 dialog =
-				new DuplicateConflictsDialog2(getShell(), (ArrayList) data);
-			if (dialog.open() != 0)
-				return false;
-		}
+//		if (operation instanceof IBatchOperation
+//			&& data != null
+//			&& data instanceof ArrayList) {
+//
+//			DuplicateConflictsDialog2 dialog =
+//				new DuplicateConflictsDialog2(getShell(), (ArrayList) data);
+//			if (dialog.open() != 0)
+//				return false;
+//		}
 		return true;
 	}
 
