@@ -162,6 +162,10 @@ private final static void declareImages() {
 	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_DELETE_EDIT_HOVER, PATH_CTOOL+"delete_edit.gif");//$NON-NLS-1$
 	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_DELETE_EDIT_DISABLED, PATH_DTOOL+"delete_edit.gif");//$NON-NLS-1$
 
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT, PATH_ETOOL+"print_edit.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT_HOVER, PATH_CTOOL+"print_edit.gif");//$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT_DISABLED, PATH_DTOOL+"print_edit.gif");//$NON-NLS-1$
+
 	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC, PATH_ETOOL+"search_src.gif");//$NON-NLS-1$
 	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC_HOVER, PATH_CTOOL+"search_src.gif");//$NON-NLS-1$
 	declareImage(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC_DISABLED, PATH_DTOOL+"search_src.gif");//$NON-NLS-1$
