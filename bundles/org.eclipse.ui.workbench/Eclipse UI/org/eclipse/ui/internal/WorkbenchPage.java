@@ -2923,6 +2923,8 @@ public IWorkbenchPartReference[] getSortedParts() {
 }
 
 public IWorkbenchPartReference getReference(IWorkbenchPart part) {
+	if(part == null)
+		return null;
 	PartPane pane = ((PartSite)part.getSite()).getPane();
 	if(pane instanceof MultiEditorInnerPane) {
 		MultiEditorInnerPane innerPane = (MultiEditorInnerPane)pane;
