@@ -29,7 +29,7 @@ public interface IRegistryChangeEvent {
 	/** 
 	 * Returns all extension deltas for the given host. Returns an empty array if there are
 	 * no deltas in this event for any extension points provided by the given host. 
-	 *
+	 * 
 	 * @param hostId the host identifier 
 	 * @return all extension deltas for the given host 
 	 */

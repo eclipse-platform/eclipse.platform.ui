@@ -25,7 +25,7 @@ public class ExtensionPointWrapper implements IExtensionPoint {
 	public IExtension[] getExtensions() {
 		return Utils.convertExtensions(toAdapt.getExtensions());
 	}
-	public String getHostIdentifier() {
+	public String getParentIdentifier() {
 		return toAdapt.getDeclaringPluginDescriptor().getUniqueIdentifier();
 	}
 	public String getLabel() {

@@ -21,10 +21,10 @@ public class ExtensionWrapper implements IExtension {
 	public IConfigurationElement[] getConfigurationElements() {
 		return Utils.convertConfigurationElements(toAdapt.getConfigurationElements());
 	}
-	public String getExtensionPointUniqueIdentifier() {
+	public String getExtensionPointIdentifier() {
 		return toAdapt.getExtensionPointUniqueIdentifier();
 	}
-	public String getHostIdentifier() {
+	public String getParentIdentifier() {
 		return toAdapt.getDeclaringPluginDescriptor().getUniqueIdentifier();
 	}
 	public String getLabel() {

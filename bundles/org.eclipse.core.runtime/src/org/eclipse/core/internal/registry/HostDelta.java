@@ -35,7 +35,7 @@ public class HostDelta {
 		Collection selectedExtDeltas = new LinkedList();
 		for (Iterator extDeltasIter = extensionDeltas.iterator(); extDeltasIter.hasNext();) {
 			IExtensionDelta extensionDelta = (IExtensionDelta) extDeltasIter.next();
-			if (extensionDelta.getExtension().getExtensionPointUniqueIdentifier().equals(extensionPoint))
+			if (extensionDelta.getExtension().getExtensionPointIdentifier().equals(extensionPoint))
 				selectedExtDeltas.add(extensionDelta);
 		}
 		return (IExtensionDelta[]) selectedExtDeltas.toArray(new IExtensionDelta[selectedExtDeltas.size()]);
@@ -48,7 +48,7 @@ public class HostDelta {
 		for (Iterator extDeltasIter = extensionDeltas.iterator(); extDeltasIter.hasNext();) {
 			IExtensionDelta extensionDelta = (IExtensionDelta) extDeltasIter.next();
 			IExtension extension = extensionDelta.getExtension();
-			if (extension.getExtensionPointUniqueIdentifier().equals(extensionPointId) && extension.getUniqueIdentifier() != null && extension.getUniqueIdentifier().equals(extensionId))
+			if (extension.getExtensionPointIdentifier().equals(extensionPointId) && extension.getUniqueIdentifier() != null && extension.getUniqueIdentifier().equals(extensionId))
 				return extensionDelta;
 		}
 		return null;

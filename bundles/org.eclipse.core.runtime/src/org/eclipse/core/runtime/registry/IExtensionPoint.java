@@ -40,11 +40,11 @@ public interface IExtensionPoint {
 	 */
 	public IExtension[] getExtensions();
 	/** 
-	 * Returns the identifier of the host that declares this extension.
+	 * Returns the identifier of the parent that declares this extension.
 	 *
-	 * @return the name of the host that declares this extension
+	 * @return the name of the parent that declares this extension
 	 */	
-	public String getHostIdentifier();	
+	public String getParentIdentifier();	
 	/**
 	 * Returns the simple identifier of this extension point.
 	 * This identifier is a non-empty string containing no

@@ -97,20 +97,20 @@ public class ExtensionRegistry implements IExtensionRegistry {
 		return result;
 	}
 	private void addExtension(IExtension extension) {
-		IExtensionPoint extPoint = getExtensionPoint(extension.getExtensionPointUniqueIdentifier());
+		IExtensionPoint extPoint = getExtensionPoint(extension.getExtensionPointIdentifier());
 		//orphan extension
 		if (extPoint == null) {
 			// are there any other orphan extensions
-			IExtension[] existingOrphanExtensions = (IExtension[]) orphanExtensions.get(extension.getExtensionPointUniqueIdentifier());
+			IExtension[] existingOrphanExtensions = (IExtension[]) orphanExtensions.get(extension.getExtensionPointIdentifier());
 			if (existingOrphanExtensions != null) {
 				// just add					 
 				IExtension[] newOrphanExtensions = new IExtension[existingOrphanExtensions.length + 1];
 				System.arraycopy(existingOrphanExtensions, 0, newOrphanExtensions, 0, existingOrphanExtensions.length);
 				newOrphanExtensions[newOrphanExtensions.length - 1] = extension;
-				orphanExtensions.put(extension.getExtensionPointUniqueIdentifier(), newOrphanExtensions);
+				orphanExtensions.put(extension.getExtensionPointIdentifier(), newOrphanExtensions);
 			} else
 				// otherwise this is the first one
-				orphanExtensions.put(extension.getExtensionPointUniqueIdentifier(), new IExtension[] { extension });
+				orphanExtensions.put(extension.getExtensionPointIdentifier(), new IExtension[] { extension });
 			return;
 		}
 		// otherwise, link them
@@ -182,7 +182,7 @@ public class ExtensionRegistry implements IExtensionRegistry {
 		deltas.put(hostName, delta);
 		return delta;
 	}
-	public String[] getHostIdentifiers() {
+	public String[] getElementIdentifiers() {
 		return (String[]) hostsByName.keySet().toArray(new String[hostsByName.size()]);
 	}
 	public IConfigurationElement[] getConfigurationElementsFor(String extensionPointId) {
@@ -266,7 +266,7 @@ public class ExtensionRegistry implements IExtensionRegistry {
 		extensionDelta.setExtension(extension);
 		extensionDelta.setExtensionPoint(extPoint);
 		extensionDelta.setKind(kind);
-		getHostDelta(extPoint.getHostIdentifier()).addExtensionDelta(extensionDelta);
+		getHostDelta(extPoint.getParentIdentifier()).addExtensionDelta(extensionDelta);
 	}
 	/*
 	 * Records a set of extension additions/removals.
@@ -274,7 +274,7 @@ public class ExtensionRegistry implements IExtensionRegistry {
 	private void recordChange(IExtensionPoint extPoint, IExtension[] extensions, int kind) {
 		if (extensions.length == 0)
 			return;
-		HostDelta pluginDelta = getHostDelta(extPoint.getHostIdentifier());
+		HostDelta pluginDelta = getHostDelta(extPoint.getParentIdentifier());
 		for (int i = 0; i < extensions.length; i++) {
 			ExtensionDelta extensionDelta = new ExtensionDelta();
 			extensionDelta.setExtension(extensions[i]);
@@ -330,10 +330,10 @@ public class ExtensionRegistry implements IExtensionRegistry {
 		}
 	}
 	private void removeExtension(IExtension extension) {
-		IExtensionPoint extPoint = getExtensionPoint(extension.getExtensionPointUniqueIdentifier());
+		IExtensionPoint extPoint = getExtensionPoint(extension.getExtensionPointIdentifier());
 		if (extPoint == null) {
 			// not found - maybe it was an orphan extension 				
-			IExtension[] existingOrphanExtensions = (IExtension[]) orphanExtensions.get(extension.getExtensionPointUniqueIdentifier());
+			IExtension[] existingOrphanExtensions = (IExtension[]) orphanExtensions.get(extension.getExtensionPointIdentifier());
 			if (existingOrphanExtensions == null)
 				// nope, this extension is unknown
 				return;
@@ -342,7 +342,7 @@ public class ExtensionRegistry implements IExtensionRegistry {
 			for (int i = 0, j = 0; i < existingOrphanExtensions.length; i++)
 				if (extension != existingOrphanExtensions[i])
 					newOrphanExtensions[j++] = existingOrphanExtensions[i];
-			orphanExtensions.put(extension.getExtensionPointUniqueIdentifier(), newOrphanExtensions);
+			orphanExtensions.put(extension.getExtensionPointIdentifier(), newOrphanExtensions);
 			return;
 		}
 		// otherwise, unlink the extension from the extension point

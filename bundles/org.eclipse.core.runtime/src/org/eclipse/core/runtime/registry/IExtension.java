@@ -33,18 +33,18 @@ public interface IExtension {
 	 */
 	public IConfigurationElement[] getConfigurationElements();
 	/** 
-	 * Returns the identifier of the host that declares this extension.
+	 * Returns the identifier of the parent that declares this extension.
 	 *
-	 * @return the name of the host that declares this extension
+	 * @return the name of the parent that declares this extension
 	 */
-	public String getHostIdentifier();
+	public String getParentIdentifier();
 	/**
 	 * Returns the unique identifier of the extension point
 	 * that this extension gets plugged into.
 	 *
 	 * @return the unique identifier of the relevant extension point
 	 */
-	public String getExtensionPointUniqueIdentifier();
+	public String getExtensionPointIdentifier();
 
 	/**
 	 * Returns the simple identifier of this extension, or <code>null</code>

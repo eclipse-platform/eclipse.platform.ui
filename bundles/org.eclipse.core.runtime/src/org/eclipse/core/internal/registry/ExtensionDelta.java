@@ -39,7 +39,7 @@ public class ExtensionDelta implements IExtensionDelta {
 		this.kind = kind;
 	}
 	public String toString() {
-		return "\n\t\t"+ this.extension.getExtensionPointUniqueIdentifier() + " - " + this.extension.getUniqueIdentifier() + " (" + getKindString(this.getKind()) + ")";  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
+		return "\n\t\t"+ this.extension.getExtensionPointIdentifier() + " - " + this.extension.getUniqueIdentifier() + " (" + getKindString(this.getKind()) + ")";  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
 	}
 	public static String getKindString(int kind) {
 		switch (kind) {
