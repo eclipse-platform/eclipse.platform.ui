@@ -51,19 +51,18 @@ public class IntroPartPresentation extends AbstractIntroElement {
      * type attribute can only be org.eclipse.platform.intro.FormsPresentation
      * or org.eclipse.platform.intro.BrowserPresentation
      */
-    private static final String ATT_TYPE = "type"; //$NON-NLS-1$
-    private static final String ATT_TITLE = "title"; //$NON-NLS-1$
+    private static final String ATT_KIND = "kind"; //$NON-NLS-1$
     private static final String ATT_STYLE = "style"; //$NON-NLS-1$
     private static final String ATT_OS = "os"; //$NON-NLS-1$
     private static final String ATT_WS = "ws"; //$NON-NLS-1$
     protected static final String ATT_HOME_PAGE_ID = "home-page-id"; //$NON-NLS-1$
 
-    private static final String BROWSER_IMPL_TYPE = "org.eclipse.platform.intro.BrowserPresentation"; //$NON-NLS-1$
-    private static final String FORMS_IMPL_TYPE = "org.eclipse.platform.intro.FormsPresentation"; //$NON-NLS-1$
+    private static final String BROWSER_IMPL_KIND = "html"; //$NON-NLS-1$
+    private static final String FORMS_IMPL_KIND = "swt"; //$NON-NLS-1$
 
     private String title;
     private String implementationStyle;
-    private String implementationType;
+    private String implementationKind;
     private String homePageId;
 
     // The Head contributions to this preentation (inherited from child
@@ -80,7 +79,6 @@ public class IntroPartPresentation extends AbstractIntroElement {
      */
     IntroPartPresentation(IConfigurationElement element) {
         super(element);
-        title = element.getAttribute(ATT_TITLE);
         homePageId = element.getAttribute(ATT_HOME_PAGE_ID);
     }
 
@@ -89,7 +87,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
             // reset (ie: inherit) type and style to be implementation type and
             // style. Then handle HEAD content for the case of HTML Browser.
             implementationStyle = element.getAttribute(ATT_STYLE);
-            implementationType = element.getAttribute(ATT_TYPE);
+            implementationKind = element.getAttribute(ATT_KIND);
             // get Head contribution, regardless of implementation class.
             // Implementation class is created lazily by UI.
             head = getHead(element);
@@ -113,10 +111,10 @@ public class IntroPartPresentation extends AbstractIntroElement {
      * Returns the type attribute of the implementation picked by this
      * presentation.
      * 
-     * @return Returns the implementationType.
+     * @return Returns the implementationKind.
      */
-    public String getImplementationType() {
-        return implementationType;
+    public String getImplementationKind() {
+        return implementationKind;
     }
 
 
@@ -157,16 +155,6 @@ public class IntroPartPresentation extends AbstractIntroElement {
     }
 
     /**
-     * Returns the title associated with the Presentation. May be null if no
-     * title is defined
-     * 
-     * @return Returns the presentation title
-     */
-    public String getTitle() {
-        return title;
-    }
-
-    /**
      * Creates the UI based on the implementation class.
      * 
      * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
@@ -181,7 +169,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
             // you want to pass primed model.
             updatePresentationAttributes(implementationElement);
             try {
-                implementation = createIntroPartImplementation(getImplementationType());
+                implementation = createIntroPartImplementation(getImplementationKind());
                 if (implementation == null)
                     // failed to create executable.
                     continue;
@@ -340,13 +328,13 @@ public class IntroPartPresentation extends AbstractIntroElement {
         // quick exits
         if (implementationType == null)
             return null;
-        if (!implementationType.equals(BROWSER_IMPL_TYPE)
-                && !implementationType.equals(FORMS_IMPL_TYPE))
+        if (!implementationType.equals(BROWSER_IMPL_KIND)
+                && !implementationType.equals(FORMS_IMPL_KIND))
             return null;
 
         AbstractIntroPartImplementation implementation = null;
         try {
-            if (implementationType.equals(BROWSER_IMPL_TYPE))
+            if (implementationType.equals(BROWSER_IMPL_KIND))
                 implementation = new BrowserIntroPartImplementation();
             else
                 implementation = new FormIntroPartImplementation();

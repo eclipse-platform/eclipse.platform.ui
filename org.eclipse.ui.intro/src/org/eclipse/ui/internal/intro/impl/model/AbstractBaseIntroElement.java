@@ -17,9 +17,9 @@ import org.w3c.dom.*;
 
 
 /**
- * An Intro Config component that has an id attribute and a class-id attribute. It
- * is used as a base class for all config elements that can take id and class as
- * attribute.
+ * An Intro Config component that has an id attribute and a class-id attribute.
+ * It is used as a base class for all config elements that can take id and class
+ * as attribute.
  * 
  * Note: since some model classes do not have class-id attribute, the attribute
  * is loaded in this base class, but subclasses are responsible for exposing the

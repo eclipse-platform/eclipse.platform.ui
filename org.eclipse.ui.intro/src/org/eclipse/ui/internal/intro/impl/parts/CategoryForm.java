@@ -94,9 +94,10 @@ public class CategoryForm implements IIntroConstants {
         layout.bottomMargin = 15;
         layout.verticalSpacing = 15;
         categoriesComposite.setLayout(layout);
-        if (page.getText() != null) {
+        
+        if (page.getPageDescription() != null) {
             Label label = toolkit.createLabel(categoriesComposite, page
-                    .getText(), SWT.WRAP);
+                    .getPageDescription(), SWT.WRAP);
             label.setFont(DEFAULT_FONT);
             TableWrapData td = new TableWrapData();
             td.align = TableWrapData.FILL;

@@ -26,7 +26,8 @@ public class SharedConfigExtensionsManager {
 
     private IExtensionRegistry registry;
 
-    // Holds all standbyPart extensions. Key is id, value is IntroStandbyPart.
+    // Holds all standbyPart extensions. Key is id, value is
+    // IntroStandbyContentPart.
     private Hashtable standbyParts = new Hashtable();
 
     // Holds all command extensions. Key is name, value is IntroURLCommand.
@@ -50,7 +51,7 @@ public class SharedConfigExtensionsManager {
         for (int i = 0; i < configExtensionElements.length; i++) {
             IConfigurationElement element = configExtensionElements[i];
             if (!ModelLoaderUtil.isValidElementName(element,
-                    IntroStandbyPart.TAG_STANDBY_PART)
+                    IntroStandbyContentPart.TAG_STANDBY_CONTENT_PART)
                     && !ModelLoaderUtil.isValidElementName(element,
                             IntroURLCommand.TAG_COMMAND))
                 // if extension is not a standbypart or command, ignore.
@@ -66,8 +67,10 @@ public class SharedConfigExtensionsManager {
      * @param element
      */
     private void createModelClass(IConfigurationElement element) {
-        if (element.getName().equals(IntroStandbyPart.TAG_STANDBY_PART)) {
-            IntroStandbyPart standbyPartContent = new IntroStandbyPart(element);
+        if (element.getName().equals(
+                IntroStandbyContentPart.TAG_STANDBY_CONTENT_PART)) {
+            IntroStandbyContentPart standbyPartContent = new IntroStandbyContentPart(
+                    element);
             if (standbyPartContent.getId() == null)
                 // no id, ignore.
                 return;
@@ -87,10 +90,10 @@ public class SharedConfigExtensionsManager {
     /**
      * @return Returns a standbyPart basd on its registred id.
      */
-    public IntroStandbyPart getStandbyPart(String partId) {
+    public IntroStandbyContentPart getStandbyPart(String partId) {
         if (partId == null)
             return null;
-        return (IntroStandbyPart) standbyParts.get(partId);
+        return (IntroStandbyContentPart) standbyParts.get(partId);
     }
 
     /**

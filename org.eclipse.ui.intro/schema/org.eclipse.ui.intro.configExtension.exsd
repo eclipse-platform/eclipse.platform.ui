@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.ui.intro" id="configExtension" name="Intro Part Configuration Extension"/>
       </appInfo>
       <documentation>
-         This extension point is used to extend an existing intro configuration by provide either more content or additional StandbyParts.
+         This extension point is used to extend an existing intro configuration by providing more content, additional StandbyContentParts or additional IntroUrl actions.
       </documentation>
    </annotation>
 
@@ -14,7 +14,8 @@
       <complexType>
          <sequence>
             <element ref="configExtension" minOccurs="1" maxOccurs="unbounded"/>
-            <element ref="standbyPart" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="standbyContentPart" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="command" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -65,12 +66,12 @@ The content file is parsed at run time by the intro framework. Based on the sett
       </complexType>
    </element>
 
-   <element name="standbyPart">
+   <element name="standbyContentPart">
       <annotation>
          <documentation>
-            standby part registration. Once registered, standby parts can be launched through an introURL action of the following format:
+            standby content part registration. Once registered, standby parts can be launched through an introURL action of the following format:
 &lt;pre&gt; 
-http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.ui.intro.contextHelp
+http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.ui.intro.config.contextHelp
 &lt;/pre&gt;
          </documentation>
       </annotation>

@@ -89,13 +89,6 @@ The content file is parsed at run time by the intro framework. Based on the sett
          <sequence>
             <element ref="implementation" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
-         <attribute name="title" type="string">
-            <annotation>
-               <documentation>
-                  the title of the intro presentation (todo - is this still valid?)
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="home-page-id" type="string" use="required">
             <annotation>
                <documentation>
@@ -109,14 +102,14 @@ The content file is parsed at run time by the intro framework. Based on the sett
    <element name="implementation">
       <annotation>
          <documentation>
-            The presentation of the Platform&apos;s out of the box experience has two implementations. One of them is SWT Browser based, while the other is UI Forms based. The customizable intro part can be configured to pick one of those two presentation based on the current OS and WS. The type of the implementation can be either org.eclipse.platform.intro.BrowserPresentation or org.eclipse.platform.intro.FormsPresentation
+            The presentation of the Platform&apos;s out of the box experience has two implementations. One of them is SWT Browser based, while the other is UI Forms based. The customizable intro part can be configured to pick one of those two presentation based on the current OS and WS. The type of the implementation can be swt or html.
          </documentation>
       </annotation>
       <complexType>
          <sequence>
             <element ref="head" minOccurs="0" maxOccurs="1"/>
          </sequence>
-         <attribute name="type" use="required">
+         <attribute name="kind" use="required">
             <annotation>
                <documentation>
                   
@@ -124,9 +117,9 @@ The content file is parsed at run time by the intro framework. Based on the sett
             </annotation>
             <simpleType>
                <restriction base="string">
-                  <enumeration value="org.eclipse.platform.intro.BrowserPresentation">
+                  <enumeration value="swt">
                   </enumeration>
-                  <enumeration value="org.eclipse.platform.intro.FormsPresentation">
+                  <enumeration value="html">
                   </enumeration>
                </restriction>
             </simpleType>

@@ -17,7 +17,7 @@ import org.eclipse.ui.internal.intro.impl.model.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
 public class IntroHTMLGenerator {
 	private AbstractIntroPage introPage;
-	private String introTitle;
+	
 	/**
 	 * Generates the HTML code that will be presented in the browser widget for
 	 * the provided intro page.
@@ -27,11 +27,10 @@ public class IntroHTMLGenerator {
 	 * @param title
 	 *            the title of the intro presentation, or null
 	 */
-	public HTMLElement generateHTMLforPage(AbstractIntroPage page, String title) {
+	public HTMLElement generateHTMLforPage(AbstractIntroPage page) {
 		if (page == null)
 			return null;
 		this.introPage = page;
-		this.introTitle = title;
 		// generate and add the appropriate encoding to the top of the document
 		// generateEncoding();
 		// create the main HTML element, and all of its contents

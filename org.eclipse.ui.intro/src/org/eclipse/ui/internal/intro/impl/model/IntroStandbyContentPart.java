@@ -14,13 +14,13 @@ package org.eclipse.ui.internal.intro.impl.model;
 import org.eclipse.core.runtime.*;
 
 /**
- * An intro standby part registration. This model class does not appear as a
- * child under any of the other model classes. It is returned by the
+ * An intro standby content part registration. This model class does not appear
+ * as a child under any of the other model classes. It is returned by the
  * ExtensionPointManager when asked for registration parts.
  */
-public class IntroStandbyPart extends AbstractBaseIntroElement {
+public class IntroStandbyContentPart extends AbstractBaseIntroElement {
 
-    public static final String TAG_STANDBY_PART = "standbyPart"; //$NON-NLS-1$
+    public static final String TAG_STANDBY_CONTENT_PART = "standbyContentPart"; //$NON-NLS-1$
 
     private static final String ATT_PLUGIN_ID = "pluginId"; //$NON-NLS-1$
     private static final String ATT_CLASS = "class"; //$NON-NLS-1$
@@ -34,7 +34,7 @@ public class IntroStandbyPart extends AbstractBaseIntroElement {
      * 
      * @param element
      */
-    public IntroStandbyPart(IConfigurationElement element) {
+    public IntroStandbyContentPart(IConfigurationElement element) {
         super(element);
         pluginId = element.getAttribute(ATT_PLUGIN_ID);
         className = element.getAttribute(ATT_CLASS);

@@ -87,9 +87,9 @@ public class PageForm implements IIntroConstants, IPropertyListener {
     public void createPartControl(ScrolledPageBook mainPageBook,
             FormStyleManager sharedStyleManager) {
 
-        // Create a *root* page style manager from shared style manager
-        // because we need it for the UI navigation composite. And we need to
-        // pass it around to category forms. So, do not null it.
+        // Create a style manager from shared style manager because we need it
+        // for the UI navigation composite. And we need to pass it around to
+        // category forms. So, do not null it.
         this.styleManager = new FormStyleManager(model.getHomePage(),
                 sharedStyleManager.getProperties());
 
@@ -101,7 +101,7 @@ public class PageForm implements IIntroConstants, IPropertyListener {
         formContent.getBody().setLayout(layout);
         layout.marginWidth = 0;
         layout.marginHeight = 0;
-       // Util.highlight(formContent.getBody(), SWT.COLOR_RED);
+        Util.highlight(formContent.getBody(), SWT.COLOR_RED);
 
         // Get form body. Form body is one column grid layout. Add page book
         // and navigation UI to it.
@@ -121,7 +121,7 @@ public class PageForm implements IIntroConstants, IPropertyListener {
         // add image hyperlinks for all links.
         createSmallNavigator(navigationComposite, model.getHomePage()
                 .getLinks());
-        formContent.setText(model.getCurrentPage().getTitle());
+        formContent.setText(model.getCurrentPage().getPageSubtitle());
     }
 
     private void createSmallNavigator(Composite parent, IntroLink[] links) {
@@ -182,7 +182,7 @@ public class PageForm implements IIntroConstants, IPropertyListener {
         if (propId == IntroModelRoot.CURRENT_PAGE_PROPERTY_ID) {
             // update Form title.
             String pageId = model.getCurrentPageId();
-            formContent.setText(model.getCurrentPage().getTitle());
+            formContent.setText(model.getCurrentPage().getPageSubtitle());
 
             // update page book with a Category Form.
             if (!categoryPageBook.hasPage(pageId)) {

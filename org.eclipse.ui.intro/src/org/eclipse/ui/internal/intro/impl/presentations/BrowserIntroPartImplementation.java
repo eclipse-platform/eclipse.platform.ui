@@ -176,8 +176,7 @@ public class BrowserIntroPartImplementation extends
      */
     private void generateDynamicContentForPage(AbstractIntroPage page) {
 
-        HTMLElement html = getHTMLGenerator().generateHTMLforPage(page,
-                getModelRoot().getPresentation().getTitle());
+        HTMLElement html = getHTMLGenerator().generateHTMLforPage(page);
 
         if (html == null) {
             // there was an error generating the html. log an error

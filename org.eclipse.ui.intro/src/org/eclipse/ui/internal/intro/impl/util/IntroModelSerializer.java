@@ -29,7 +29,7 @@ public class IntroModelSerializer {
         // Root Page
         IntroHomePage rootPage = root.getHomePage();
         printHomePage(rootPage, buffer);
-        printPageChildren(rootPage, buffer);
+        printPageChildren(rootPage, buffer);  
 
         IntroPage[] pages = root.getPages();
         printPages(pages, buffer);
@@ -42,11 +42,12 @@ public class IntroModelSerializer {
         text.append("\nIntro Model Content:"); //$NON-NLS-1$
         text.append("\n======================"); //$NON-NLS-1$
         text.append("\n\nModel has valid config = " + model.hasValidConfig()); //$NON-NLS-1$
-        text.append("\nPresentation Title = " //$NON-NLS-1$
-                + model.getPresentation().getTitle());
+        text.append("\nPresentation Kind = " //$NON-NLS-1$
+                + model.getPresentation().getImplementationKind());
         text.append("\nPresentation Shared Style = " //$NON-NLS-1$
                 + model.getPresentation().getImplementationStyle());
-        text.append("\nPresentation type = " + model.getPresentation().getType()); //$NON-NLS-1$
+        text.append("\nPresentation type = " //$NON-NLS-1$
+                + model.getPresentation().getType());
         text.append("\nHome page id = " //$NON-NLS-1$
                 + model.getPresentation().getHomePageId());
         IntroHead headContent = model.getPresentation().getHead();
@@ -77,7 +78,7 @@ public class IntroModelSerializer {
         text.append("\n\talt-style = " + rootPage.getAltStyle()); //$NON-NLS-1$
         text.append("\n\tstandby style = " + rootPage.getStandbyStyle()); //$NON-NLS-1$
         text.append("\n\tstandby alt-style = " + rootPage.getStandbyAltStyle()); //$NON-NLS-1$
-        text.append("\n\ttext = " + rootPage.getText()); //$NON-NLS-1$
+        text.append("\n\ttext = " + rootPage.getPageDescription()); //$NON-NLS-1$
         text.append("\n\turl = " + rootPage.getUrl()); //$NON-NLS-1$
         text.append("\n\tstandby-url = " + rootPage.getStandbyUrl()); //$NON-NLS-1$
         text.append("\n\tclass-id = " + rootPage.getClassId()); //$NON-NLS-1$
@@ -228,7 +229,7 @@ public class IntroModelSerializer {
             text.append("\n\ttitle = " + pages[i].getTitle()); //$NON-NLS-1$
             text.append("\n\tstyle = " + pages[i].getStyle()); //$NON-NLS-1$
             text.append("\n\talt-style = " + pages[i].getAltStyle()); //$NON-NLS-1$
-            text.append("\n\ttext = " + pages[i].getText()); //$NON-NLS-1$
+            text.append("\n\ttext = " + pages[i].getPageDescription()); //$NON-NLS-1$
             text.append("\n\tclass-id = " + pages[i].getClassId()); //$NON-NLS-1$
             printPageStyles(pages[i], text);
             printPageChildren(pages[i], text);

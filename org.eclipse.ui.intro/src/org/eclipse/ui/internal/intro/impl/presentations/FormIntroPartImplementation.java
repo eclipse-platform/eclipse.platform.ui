@@ -31,7 +31,6 @@ public class FormIntroPartImplementation extends
 
     private FormToolkit toolkit = null;
 
-    //private Form mainForm = null;
     private ScrolledPageBook mainPageBook = null;
 
     // cache model instance for reuse.
@@ -44,7 +43,8 @@ public class FormIntroPartImplementation extends
         // implementation is created again, the images will remain in plugin
         // registry.
         ImageUtil.registerImage(ImageUtil.DEFAULT_ROOT_LINK, "overview_96.gif"); //$NON-NLS-1$
-        ImageUtil.registerImage(ImageUtil.DEFAULT_SMALL_ROOT_LINK, "overview_64.gif"); //$NON-NLS-1$
+        ImageUtil.registerImage(ImageUtil.DEFAULT_SMALL_ROOT_LINK,
+                "overview_64.gif"); //$NON-NLS-1$
         ImageUtil.registerImage(ImageUtil.DEFAULT_FORM_BG, "form_banner.gif"); //$NON-NLS-1$
         ImageUtil.registerImage(ImageUtil.DEFAULT_LINK, "bpel_16.gif"); //$NON-NLS-1$
     }
@@ -69,7 +69,8 @@ public class FormIntroPartImplementation extends
     }
 
     public void createPartControl(Composite container) {
-        // Create single toolkit instance, which is disposed of on dispose of intro part. 
+        // Create single toolkit instance, which is disposed of on dispose of
+        // intro part.
         // also define bacjgrounf of all presentation.
         toolkit = new FormToolkit(container.getDisplay());
         // Define presentation title color
@@ -93,7 +94,7 @@ public class FormIntroPartImplementation extends
             if (repeat != null && repeat.toLowerCase().equals("true")) //$NON-NLS-1$
                 mainForm.setBackgroundImageTiled(true);
         }
-        mainForm.setText(getModelRoot().getPresentation().getTitle());
+        mainForm.setText(getModelRoot().getHomePage().getTitle());
 
         mainPageBook = createMainPageBook(toolkit, mainForm);
         // Add this presentation as a listener to model.

@@ -22,13 +22,14 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
 
     protected static final String TAG_PAGE = "page"; //$NON-NLS-1$
 
-    private static final String ATT_TITLE = "title"; //$NON-NLS-1$
     private static final String ATT_STYLE = "style"; //$NON-NLS-1$
     private static final String ATT_ALT_STYLE = "alt-style"; //$NON-NLS-1$
 
-    private String title;
     private String style;
     private String altStyle;
+
+    private IntroPageTitle title;
+
 
     /**
      * The vectors to hold all inhertied styles and alt styles from included
@@ -61,7 +62,6 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      */
     AbstractIntroPage(Element element, Bundle bundle) {
         super(element, bundle);
-        title = getAttribute(element, ATT_TITLE);
         style = getAttribute(element, ATT_STYLE);
         altStyle = getAttribute(element, ATT_ALT_STYLE);
 
@@ -73,10 +73,18 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
 
 
     /**
-     * @return Returns the title.
+     * The page's title. Each page can have one title.
+     * 
+     * @return Returns the title of this page.
      */
     public String getTitle() {
-        return title;
+        // title is a child of the page, and so we have to load children first.
+        // We also have to resolve children because someone migyt be including a
+        // title.
+        getChildren();
+        if (title == null)
+            return null;
+        return title.getTitle();
     }
 
     /**
@@ -200,7 +208,12 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
             child = new IntroHead(childElement, bundle);
         } else if (childElement.getNodeName().equalsIgnoreCase(
                 IntroPageTitle.TAG_TITLE)) {
-            child = new IntroPageTitle(childElement, bundle);
+            // if we have a title, only add it as a child if we did not load one
+            // before. A page can only have one title.
+            if (title == null) {
+                title = new IntroPageTitle(childElement, bundle);
+                child = title;
+            }
         }
         if (child != null)
             return child;
@@ -229,7 +242,6 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * now. Hack.
      */
     public static boolean isFilteredDiv(IntroDiv aDiv) {
-
         if (aDiv.getId().equals("navigation-links") //$NON-NLS-1$
                 || aDiv.getId().equals("background-image") //$NON-NLS-1$
                 || aDiv.getId().equals("root-background")) //$NON-NLS-1$
@@ -241,34 +253,52 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
 
 
     /**
-     * Returns the first child with the given class-id.
+     * Returns the first child text element with the "page-description" as
+     * class-id.
      * 
      * @return
      */
-    public String getText() {
-        String text = doGetText(this);
+    public String getPageDescription() {
+        return findTextWithClassId("page-description");
+    }
+
+    /**
+     * Returns the first child text element with the given class-id.
+     * 
+     * @return
+     */
+    public String getPageSubtitle() {
+        return findTextWithClassId("page-title");
+    }
+
+
+    private String findTextWithClassId(String classId) {
+        String text = doFindTextWithClassId(this, classId);
         if (text != null)
             return text;
 
         AbstractIntroContainer[] containers = (AbstractIntroContainer[]) getChildrenOfType(AbstractIntroElement.ABSTRACT_CONTAINER);
         for (int i = 0; i < containers.length; i++) {
-            text = doGetText(containers[i]);
+            text = doFindTextWithClassId(containers[i], classId);
             if (text != null)
                 return text;
         }
         return null;
     }
 
+
     /**
-     * Returns the first child with the given class-id.
+     * Returns the first child text element with the given class-id.
+     * "page-description" as class-id.
      * 
      * @return
      */
-    private String doGetText(AbstractIntroContainer container) {
+    private String doFindTextWithClassId(AbstractIntroContainer container,
+            String classId) {
         IntroText[] allText = (IntroText[]) container
                 .getChildrenOfType(AbstractIntroElement.TEXT);
         for (int i = 0; i < allText.length; i++) {
-            if (allText[i].getClassId().equals("page-description")) //$NON-NLS-1$
+            if (allText[i].getClassId().equals(classId))
                 return allText[i].getText();
         }
         return null;

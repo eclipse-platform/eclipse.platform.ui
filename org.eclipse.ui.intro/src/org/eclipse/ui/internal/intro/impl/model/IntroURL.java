@@ -162,8 +162,8 @@ public class IntroURL implements IIntroURL {
         StandbyPart standbyPart = (StandbyPart) introPart
                 .getAdapter(StandbyPart.class);
 
-        // Get the IntroStandbyPart that maps to the given partId.
-        IntroStandbyPart standbyPartContent = ExtensionPointManager.getInst()
+        // Get the IntroStandbyContentPart that maps to the given partId.
+        IntroStandbyContentPart standbyPartContent = ExtensionPointManager.getInst()
                 .getSharedConfigExtensionsManager().getStandbyPart(partId);
 
         if (standbyPartContent != null) {

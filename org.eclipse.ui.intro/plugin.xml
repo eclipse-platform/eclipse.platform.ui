@@ -36,11 +36,11 @@
 
    <extension
          point="org.eclipse.ui.intro.configExtension">
-      <standbyPart
+      <standbyContentPart
             pluginId="org.eclipse.ui.intro"
             class="org.eclipse.ui.internal.intro.impl.parts.ContextHelpStandbyPart"
-            id="org.eclipse.ui.intro.contextHelp">
-      </standbyPart> 
-   </extension>  
+            id="org.eclipse.ui.intro.config.contextHelp">
+      </standbyContentPart> 
+   </extension>       
 
 </plugin>

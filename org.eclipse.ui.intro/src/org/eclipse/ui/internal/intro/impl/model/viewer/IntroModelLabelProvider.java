@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004 IBM Corporation and others. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Common Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 
 package org.eclipse.ui.internal.intro.impl.model.viewer;
 
@@ -93,7 +91,8 @@ public class IntroModelLabelProvider extends LabelProvider {
             break;
         case AbstractIntroElement.PRESENTATION:
             label = "PRESENTATION: " //$NON-NLS-1$
-                    + ((IntroPartPresentation) introElement).getTitle();
+                    + ((IntroPartPresentation) introElement)
+                            .getImplementationKind();
             break;
         case AbstractIntroElement.CONTAINER_EXTENSION:
             label = "Unresolved ConfigExtension: " //$NON-NLS-1$
