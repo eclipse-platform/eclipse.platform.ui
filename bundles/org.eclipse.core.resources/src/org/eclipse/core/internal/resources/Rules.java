@@ -105,6 +105,15 @@ class Rules implements IResourceRuleFactory, ILifecycleListener {
 	}
 
 	/**
+	 * Obtains the scheduling rule from the appropriate factory for a charset change operation.
+	 */
+	public ISchedulingRule charsetRule(IResource resource) {
+		if (resource.getType() == IResource.ROOT)
+			return null;
+		return factoryFor(resource).charsetRule(resource);
+	}
+
+	/**
 	 * Obtains the scheduling rule from the appropriate factory for a marker change operation.
 	 */
 	public ISchedulingRule markerRule(IResource resource) {

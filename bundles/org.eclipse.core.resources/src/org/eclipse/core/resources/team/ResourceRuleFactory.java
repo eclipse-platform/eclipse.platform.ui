@@ -45,6 +45,25 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	public final ISchedulingRule buildRule() {
 		return workspace.getRoot();
 	}
+	
+	/**
+	 * Default implementation of <code>IResourceRuleFactory#charsetRule</code>.
+	 * This default implementation always returns the project of the resource 
+	 * whose charset setting is being changed, or <code>null</code> if the 
+	 * resource is the workspace root.
+	 * <p>
+	 * Subclasses may override this method. The rule provided by an overriding 
+	 * method must at least contain the rule from this default implementation.
+	 * 
+	 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
+	 * @see org.eclipse.core.resources.IResourceRuleFactory#charsetRule(IResource)
+	 * @since 3.1
+	 */
+	public ISchedulingRule charsetRule(IResource resource) {
+		if (resource.getType() == IResource.ROOT)
+			return null;		
+		return resource.getProject();
+	}	
 
 	/**
 	 * Default implementation of <code>IResourceRuleFactory#copyRule</code>.

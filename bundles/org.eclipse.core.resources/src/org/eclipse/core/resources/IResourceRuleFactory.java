@@ -60,6 +60,16 @@ public interface IResourceRuleFactory {
 	 * @return a scheduling rule, or <code>null</code>
 	 */
 	public ISchedulingRule buildRule();
+	
+	/**
+	 * Returns the scheduling rule that is required for changing the charset 
+	 * setting for a file or the default charset setting for a container.
+	 *
+	 * @param resource the resource the charset will be changed
+	 * @return a scheduling rule, or <code>null</code>
+	 * @since 3.1
+	 */
+	public ISchedulingRule charsetRule(IResource resource);	
 
 	/**
 	 * Returns the scheduling rule that is required for copying a resource.

@@ -722,6 +722,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 *       event notification. See {@link IResourceChangeEvent} for more details.</li>
 	 * </ul>
 	 * @see #getCharset()
+	 * @see IResourceRuleFactory#charsetRule(IResource)
 	 * @since 3.0
 	 */
 	public void setCharset(String newCharset, IProgressMonitor monitor) throws CoreException;

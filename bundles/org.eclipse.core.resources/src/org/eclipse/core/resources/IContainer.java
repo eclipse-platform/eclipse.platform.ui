@@ -401,7 +401,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @see IContainer#getDefaultCharset()
 	 * @since 3.0
 	 * @deprecated Replaced by {@link #setDefaultCharset(String, IProgressMonitor)} which 
-	 * 	is a workspace operation and reports changes in resource deltas.
+	 * 	is a workspace operation and reports changes in resource deltas. 
 	 */
 	public void setDefaultCharset(String charset) throws CoreException;
 
@@ -431,6 +431,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 *       event notification. See {@link IResourceChangeEvent} for more details.</li>
 	 * </ul>
 	 * @see IContainer#getDefaultCharset()
+	 * @see IResourceRuleFactory#charsetRule(IResource)
 	 * @since 3.0
 	 */
 	public void setDefaultCharset(String charset, IProgressMonitor monitor) throws CoreException;

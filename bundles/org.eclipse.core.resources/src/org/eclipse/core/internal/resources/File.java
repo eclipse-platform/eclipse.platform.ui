@@ -408,7 +408,7 @@ public class File extends Resource implements IFile {
 			monitor.beginTask(message, Policy.totalWork);
 			// need to get the project as a scheduling rule because we might be creating a new folder/file to
 			// hold the project settings
-			final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(getProject());
+			final ISchedulingRule rule = workspace.getRuleFactory().charsetRule(this);
 			try {
 				workspace.prepareOperation(rule, monitor);
 				ResourceInfo info = getResourceInfo(false, false);
