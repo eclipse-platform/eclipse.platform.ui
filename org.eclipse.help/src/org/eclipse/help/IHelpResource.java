@@ -22,11 +22,11 @@ public interface IHelpResource {
 	/**
 	 * This is attribute name used for href in XML files.
 	 */
-	public final static String HREF = "href";
+	public final static String HREF = "href"; //$NON-NLS-1$
 	/**
 	 * This is attribute name used for label in XML files.
 	 */
-	public final static String LABEL = "label";
+	public final static String LABEL = "label"; //$NON-NLS-1$
 	
 	/**
 	 * Returns the URL (as a string) associated with this help resource.

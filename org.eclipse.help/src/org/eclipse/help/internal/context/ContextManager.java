@@ -17,9 +17,9 @@ import org.eclipse.help.internal.*;
  * Maintains the list of contexts and performs look-ups.
  */
 public class ContextManager implements IRegistryChangeListener {
-	public static final String CONTEXTS_XP_NAME = "contexts";
+	public static final String CONTEXTS_XP_NAME = "contexts"; //$NON-NLS-1$
 	public static final String CONTEXTS_XP_FULLNAME = HelpPlugin.PLUGIN_ID
-			+ "." + CONTEXTS_XP_NAME;
+			+ "." + CONTEXTS_XP_NAME; //$NON-NLS-1$
 	PluginsContexts pluginsContexts = new PluginsContexts();
 	/**
 	 * Context contributions
@@ -47,7 +47,7 @@ public class ContextManager implements IRegistryChangeListener {
 	 */
 	public IContext getContext(String contextId) {
 		if (HelpPlugin.DEBUG_CONTEXT) {
-			System.out.println("ContextManager.getContext(" + contextId + ")");
+			System.out.println("ContextManager.getContext(" + contextId + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (contextId == null)
 			return null;
@@ -110,17 +110,17 @@ public class ContextManager implements IRegistryChangeListener {
 		IConfigurationElement[] contextContributions = extension
 				.getConfigurationElements();
 		for (int j = 0; j < contextContributions.length; j++) {
-			if ("contexts".equals(contextContributions[j].getName())) {
-				String plugin = contextContributions[j].getAttribute("plugin");
-				if (plugin == null || "".equals(plugin))
+			if ("contexts".equals(contextContributions[j].getName())) { //$NON-NLS-1$
+				String plugin = contextContributions[j].getAttribute("plugin"); //$NON-NLS-1$
+				if (plugin == null || "".equals(plugin)) //$NON-NLS-1$
 					plugin = definingPlugin;
-				String fileName = contextContributions[j].getAttribute("file");
+				String fileName = contextContributions[j].getAttribute("file"); //$NON-NLS-1$
 				// in v1 file attribute was called name
 				if (fileName == null)
-					fileName = contextContributions[j].getAttribute("name");
+					fileName = contextContributions[j].getAttribute("name"); //$NON-NLS-1$
 				if (fileName == null) {
 					String msg = HelpResources.getString(
-							"ContextManager.FileAttribute",
+							"ContextManager.FileAttribute", //$NON-NLS-1$
 							CONTEXTS_XP_FULLNAME, definingPlugin);
 					HelpPlugin.logError(msg, null);
 					continue;
@@ -149,7 +149,7 @@ public class ContextManager implements IRegistryChangeListener {
 			// context already registered
 		} else {
 			// generate ID and register the context
-			id = "ID" + idCounter++;
+			id = "ID" + idCounter++; //$NON-NLS-1$
 			dynamicContextIDs.put(context, id);
 			PluginContexts contexts = pluginsContexts.get(plugin);
 			if (contexts == null) {
@@ -157,7 +157,7 @@ public class ContextManager implements IRegistryChangeListener {
 			}
 			contexts.put(id, context);
 		}
-		return plugin + "." + id;
+		return plugin + "." + id; //$NON-NLS-1$
 	}
 	/*
 	 * (non-Javadoc)

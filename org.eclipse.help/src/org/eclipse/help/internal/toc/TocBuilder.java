@@ -69,7 +69,7 @@ public class TocBuilder {
 			TocFileParser parser = new TocFileParser(this);
 			parser.parse(tocFile);
 		} catch (Exception e) {
-			String msg = HelpResources.getString("E033", tocFile.getHref());
+			String msg = HelpResources.getString("E033", tocFile.getHref()); //$NON-NLS-1$
 			HelpPlugin.logError(msg, e);
 		}
 	}
@@ -95,7 +95,7 @@ public class TocBuilder {
 	public void buildToc(Toc toc) {
 		// link toc if so specified
 		String href = toc.getLink_to();
-		if (href == null || href.equals(""))
+		if (href == null || href.equals("")) //$NON-NLS-1$
 			return;
 		TocFile targetTocFile = getTocFile(href);
 		if (targetTocFile == null)

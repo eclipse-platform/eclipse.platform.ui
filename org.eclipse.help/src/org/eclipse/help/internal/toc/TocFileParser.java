@@ -40,7 +40,7 @@ class TocFileParser extends DefaultHandler {
 	 * @see ErrorHandler#error(SAXParseException)
 	 */
 	public void error(SAXParseException ex) throws SAXException {
-		String message = getMessage("E024", ex);
+		String message = getMessage("E024", ex); //$NON-NLS-1$
 		//Error parsing Table of Contents file, URL: %1 at Line:%2 Column:%3 %4
 		HelpPlugin.logError(message, null);
 		RuntimeHelpStatus.getInstance().addParseError(
@@ -52,7 +52,7 @@ class TocFileParser extends DefaultHandler {
 	 */
 	public void fatalError(SAXParseException ex) throws SAXException {
 		// create message string from exception
-		String message = getMessage("E025", ex);
+		String message = getMessage("E025", ex); //$NON-NLS-1$
 		//Failed to parse Table of Contents file, URL: %1 at Line:%2 Column:%3 %4
 		HelpPlugin.logError(message, ex);
 		RuntimeHelpStatus.getInstance().addParseError(
@@ -80,7 +80,7 @@ class TocFileParser extends DefaultHandler {
 		if (is == null)
 			return;
 		InputSource inputSource = new InputSource(is);
-		String file = "/" + tocFile.getPluginID() + "/" + tocFile.getHref();
+		String file = "/" + tocFile.getPluginID() + "/" + tocFile.getHref(); //$NON-NLS-1$ //$NON-NLS-2$
 		inputSource.setSystemId(file);
 		try {
 			SAXParser parser = parserPool.obtainParser();
@@ -91,15 +91,15 @@ class TocFileParser extends DefaultHandler {
 				parserPool.releaseParser(parser);
 			}
 		} catch (ParserConfigurationException pce) {
-			String msg = HelpResources.getString("TocFileParser.PCE");
+			String msg = HelpResources.getString("TocFileParser.PCE"); //$NON-NLS-1$
 			//SAXParser implementation could not be loaded.
 			HelpPlugin.logError(msg, pce);
 		} catch (SAXException se) {
-			String msg = HelpResources.getString("E026", file);
+			String msg = HelpResources.getString("E026", file); //$NON-NLS-1$
 			//Error loading Table of Contents file %1.
 			HelpPlugin.logError(msg, se);
 		} catch (IOException ioe) {
-			String msg = HelpResources.getString("E026", file);
+			String msg = HelpResources.getString("E026", file); //$NON-NLS-1$
 			//Error loading Table of Contents file %1.
 			HelpPlugin.logError(msg, ioe);
 			// now pass it to the RuntimeHelpStatus object explicitly because we
@@ -117,14 +117,14 @@ class TocFileParser extends DefaultHandler {
 		Attributes atts)
 		throws SAXException {
 		TocNode node = null;
-		if (qName.equals("toc")) {
+		if (qName.equals("toc")) { //$NON-NLS-1$
 			node = new Toc(tocFile, atts);
 			tocFile.setToc((Toc) node);
-		} else if (qName.equals("topic")) {
+		} else if (qName.equals("topic")) { //$NON-NLS-1$
 			node = new Topic(tocFile, atts);
-		} else if (qName.equals("link")) {
+		} else if (qName.equals("link")) { //$NON-NLS-1$
 			node = new Link(tocFile, atts);
-		} else if (qName.equals("anchor")) {
+		} else if (qName.equals("anchor")) { //$NON-NLS-1$
 			node = new Anchor(tocFile, atts);
 		} else
 			return; // perhaps throw some exception

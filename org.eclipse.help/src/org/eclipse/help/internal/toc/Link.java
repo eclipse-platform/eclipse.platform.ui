@@ -23,7 +23,7 @@ class Link extends TocNode implements ILinkElement{
 	protected Link(TocFile tocFile, Attributes attrs) {
 		if (attrs == null)
 			return;
-		toc = attrs.getValue("toc");
+		toc = attrs.getValue("toc"); //$NON-NLS-1$
 		toc = HrefUtil.normalizeHref(tocFile.getPluginID(), toc);
 		parentToc = tocFile.getToc();
 	}

@@ -29,12 +29,12 @@ public class Topic extends TocNode implements ITopic, ITopicElement{
 	protected Topic(TocFile tocFile, Attributes attrs) throws SAXException {
 		if (attrs == null)
 			return;
-		href = attrs.getValue("href");
+		href = attrs.getValue("href"); //$NON-NLS-1$
 		if (href != null && href.length() > 0)
 			href = HrefUtil.normalizeHref(tocFile.getPluginID(), href);
-		label = attrs.getValue("label");
+		label = attrs.getValue("label"); //$NON-NLS-1$
 		if(label==null){
-			throw new RuntimeException("topic label==null");
+			throw new RuntimeException("topic label==null"); //$NON-NLS-1$
 		}
 		tocFile.getToc().registerTopic(this);
 	}

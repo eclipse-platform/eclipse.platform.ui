@@ -19,11 +19,11 @@ public interface IToc extends IHelpResource {
 	/**
 	 * This is element name used for TOC in XML files.
 	 */
-	public final static String TOC = "toc";
+	public final static String TOC = "toc"; //$NON-NLS-1$
 	/**
 	 * This is the attribute used for description topic in XML files.
 	 */
-	public final static String TOPIC = "topic";
+	public final static String TOPIC = "topic"; //$NON-NLS-1$
 	
 	/**
 	 * Obtains the topics directly contained by a toc.

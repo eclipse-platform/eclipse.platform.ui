@@ -27,7 +27,7 @@ public class Context extends ContextsNode implements IStyledContext {
 		super(attrs);
 		if (attrs == null)
 			return;
-		shortID = attrs.getValue("id");
+		shortID = attrs.getValue("id"); //$NON-NLS-1$
 	}
 	/**
 	 * @return plain text (without <@#$b>or </@#$b> bug 59541)
@@ -36,8 +36,8 @@ public class Context extends ContextsNode implements IStyledContext {
 		return text
 				// if there are spaces on any or both side of bold they need to be
 				// collapsed to one
-				.replaceAll("(\\s+</?@#\\$b>\\s*)|(\\s*</?@#\\$b>\\s+)", " ")
-				.replaceAll("</?@#\\$b>", "");
+				.replaceAll("(\\s+</?@#\\$b>\\s*)|(\\s*</?@#\\$b>\\s+)", " ") //$NON-NLS-1$ //$NON-NLS-2$
+				.replaceAll("</?@#\\$b>", ""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	/**
 	 * @return styled text with <@#$b> and </@#$b> to mark bold range
@@ -65,7 +65,7 @@ public class Context extends ContextsNode implements IStyledContext {
 		return shortID;
 	}
 	public String getID() {
-		return pluginID + "." + shortID;
+		return pluginID + "." + shortID; //$NON-NLS-1$
 	}
 	/**
 	 * Sets the pluginID.

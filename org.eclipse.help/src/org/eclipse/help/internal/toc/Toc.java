@@ -43,11 +43,11 @@ public class Toc extends TocNode implements IToc, ITocElement{
 		if (attrs == null)
 			return;
 		this.tocFile = tocFile;
-		this.label = attrs.getValue("label");
+		this.label = attrs.getValue("label"); //$NON-NLS-1$
 		if(label==null){
-			throw new RuntimeException("toc label==null");
+			throw new RuntimeException("toc label==null"); //$NON-NLS-1$
 		}
-		this.link_to = attrs.getValue("link_to");
+		this.link_to = attrs.getValue("link_to"); //$NON-NLS-1$
 		this.link_to = HrefUtil.normalizeHref(tocFile.getPluginID(), link_to);
 		this.href =
 			HrefUtil.normalizeHref(tocFile.getPluginID(), tocFile.getHref());
@@ -56,12 +56,12 @@ public class Toc extends TocNode implements IToc, ITocElement{
 			// create the description topic
 			this.descriptionTopic = new Topic(tocFile, null);
 			this.descriptionTopic.setLabel(this.label);
-			String topic = attrs.getValue("topic");
+			String topic = attrs.getValue("topic"); //$NON-NLS-1$
 			if (topic != null && topic.trim().length() > 0)
 				this.descriptionTopic.setHref(
 					HrefUtil.normalizeHref(tocFile.getPluginID(), topic));
 			else
-				this.descriptionTopic.setHref("");
+				this.descriptionTopic.setHref(""); //$NON-NLS-1$
 		} catch (Exception e) {
 		}
 

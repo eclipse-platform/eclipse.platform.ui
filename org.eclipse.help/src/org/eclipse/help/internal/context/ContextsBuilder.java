@@ -25,13 +25,13 @@ public class ContextsBuilder {
 		// set the href on the related topic
 		String href = relatedTopic.getHref();
 		if (href == null)
-			relatedTopic.setHref("");
+			relatedTopic.setHref(""); //$NON-NLS-1$
 		else {
-			if (!href.equals("") // no empty link
-					&& !href.startsWith("/") // no help url
+			if (!href.equals("") // no empty link //$NON-NLS-1$
+					&& !href.startsWith("/") // no help url //$NON-NLS-1$
 					&& href.indexOf(':') == -1) // no other protocols
 			{
-				relatedTopic.setHref("/" + definingPluginID + "/" + href);
+				relatedTopic.setHref("/" + definingPluginID + "/" + href); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}
@@ -65,7 +65,7 @@ public class ContextsBuilder {
 		// Merge Text
 		if (newContext.getStyledText() != null) {
 			if (existingContext.getStyledText() != null) {
-				existingContext.setStyledText(existingContext.getStyledText() + "\n"
+				existingContext.setStyledText(existingContext.getStyledText() + "\n" //$NON-NLS-1$
 						+ newContext.getStyledText());
 			} else {
 				existingContext.setStyledText(newContext.getStyledText());
@@ -107,8 +107,8 @@ public class ContextsBuilder {
 	 */
 	private boolean isValidTopic(IHelpResource topic) {
 		return topic != null && topic.getHref() != null
-				&& !"".equals(topic.getHref()) && topic.getLabel() != null
-				&& !"".equals(topic.getLabel());
+				&& !"".equals(topic.getHref()) && topic.getLabel() != null //$NON-NLS-1$
+				&& !"".equals(topic.getLabel()); //$NON-NLS-1$
 	}
 	/**
 	 * Check if two context topic are the same. They are considered the same if

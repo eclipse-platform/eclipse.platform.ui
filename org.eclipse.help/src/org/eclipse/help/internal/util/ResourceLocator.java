@@ -18,9 +18,9 @@ import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
 import org.osgi.framework.*;
 public class ResourceLocator {
-	public static final String CONTENTPRODUCER_XP_NAME = "contentProducer";
+	public static final String CONTENTPRODUCER_XP_NAME = "contentProducer"; //$NON-NLS-1$
 	public static final String CONTENTPRODUCER_XP_FULLNAME = HelpPlugin.PLUGIN_ID
-			+ "." + CONTENTPRODUCER_XP_NAME;
+			+ "." + CONTENTPRODUCER_XP_NAME; //$NON-NLS-1$
 	private static Hashtable zipCache = new Hashtable();
 	private static final Object ZIP_NOT_FOUND = new Object();
 	// Indicates there is no dynamic content provider for a particular plugin
@@ -101,12 +101,12 @@ public class ResourceLocator {
 				}
 				try {
 					Object o = elements[j]
-							.createExecutableExtension("producer");
+							.createExecutableExtension("producer"); //$NON-NLS-1$
 					if (o instanceof IHelpContentProducer) {
 						return (IHelpContentProducer) o;
 					}
 				} catch (CoreException ce) {
-					HelpPlugin.logError(HelpResources.getString("E044", pluginId), ce);
+					HelpPlugin.logError(HelpResources.getString("E044", pluginId), ce); //$NON-NLS-1$
 				}
 			}
 		}
@@ -129,7 +129,7 @@ public class ResourceLocator {
 		if (locale.length() >= 5) {
 			l = new Locale(locale.substring(0, 2), locale.substring(3, 5));
 		} else if (locale.length() >= 2) {
-			l = new Locale(locale.substring(0, 2), "");
+			l = new Locale(locale.substring(0, 2), ""); //$NON-NLS-1$
 		} else {
 			l = Locale.getDefault();
 		}
@@ -154,7 +154,7 @@ public class ResourceLocator {
 	public static InputStream openFromZip(Bundle pluginDesc, String zip,
 			String file, String locale) {
 		// First try the NL lookup
-		InputStream is = doOpenFromZip(pluginDesc, "$nl$/" + zip, file, locale);
+		InputStream is = doOpenFromZip(pluginDesc, "$nl$/" + zip, file, locale); //$NON-NLS-1$
 		if (is == null)
 			// Default location <plugin>/doc.zip
 			is = doOpenFromZip(pluginDesc, zip, file, locale);
@@ -166,7 +166,7 @@ public class ResourceLocator {
 	 */
 	public static InputStream openFromPlugin(Bundle pluginDesc, String file,
 			String locale) {
-		InputStream is = doOpenFromPlugin(pluginDesc, "$nl$/" + file, locale);
+		InputStream is = doOpenFromPlugin(pluginDesc, "$nl$/" + file, locale); //$NON-NLS-1$
 		if (is == null)
 			// Default location
 			is = doOpenFromPlugin(pluginDesc, file, locale);
@@ -182,7 +182,7 @@ public class ResourceLocator {
 			return null;
 		}
 		try {
-			URL jurl = new URL("jar", "", realZipURL + "!/" + file);
+			URL jurl = new URL("jar", "", realZipURL + "!/" + file); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			URLConnection jconnection = jurl.openConnection();
 			jconnection.setDefaultUseCaches(false);
 			jconnection.setUseCaches(false);
@@ -198,7 +198,7 @@ public class ResourceLocator {
 			String locale) {
 		IPath flatFilePath = new Path(file);
 		Map override = new HashMap(1);
-		override.put("$nl$", locale);
+		override.put("$nl$", locale); //$NON-NLS-1$
 		URL flatFileURL = Platform.find(pluginDesc, flatFilePath, override);
 		if (flatFileURL != null)
 			try {
@@ -224,7 +224,7 @@ public class ResourceLocator {
 			// not in cache find on filesystem
 			IPath zipFilePath = new Path(zip);
 			Map override = new HashMap(1);
-			override.put("$nl$", locale);
+			override.put("$nl$", locale); //$NON-NLS-1$
 			try {
 				URL zipFileURL = Platform.find(pluginDesc, zipFilePath,
 						override); //PASCAL This will not activate the plugin

@@ -20,7 +20,7 @@ import org.eclipse.help.internal.model.*;
  * Manages the navigation model. It keeps track of all the tables of contents.
  */
 public class TocManager {
-	public static final String TOC_XP_NAME = "toc";
+	public static final String TOC_XP_NAME = "toc"; //$NON-NLS-1$
 
 	/**
 	 * Map of ITocNavNode[] by String
@@ -39,7 +39,7 @@ public class TocManager {
 			// Note: this can be removed, and build on first invocation...
 			build(Platform.getNL());
 		} catch (Exception e) {
-			HelpPlugin.logError("", e);
+			HelpPlugin.logError("", e); //$NON-NLS-1$
 		}
 	}
 
@@ -70,7 +70,7 @@ public class TocManager {
 	 * Returns the navigation model for specified toc
 	 */
 	public ITocElement getToc(String href, String locale) {
-		if (href == null || href.equals(""))
+		if (href == null || href.equals("")) //$NON-NLS-1$
 			return null;
 		ITocElement[] tocs = getTocs(locale);
 
@@ -111,7 +111,7 @@ public class TocManager {
 			orderedTocs.toArray(tocs);
 		} catch (Exception e) {
 			tocs = new IToc[0];
-			HelpPlugin.logError("", e);
+			HelpPlugin.logError("", e); //$NON-NLS-1$
 		}
 		tocsByLang.put(locale, tocs);
 	}
@@ -151,14 +151,14 @@ public class TocManager {
 			String preferredTocs = pref.getString(HelpPlugin.BASE_TOCS_KEY);
 			if (preferredTocs != null) {
 				StringTokenizer suggestdOrderedInfosets =
-					new StringTokenizer(preferredTocs, " ;,");
+					new StringTokenizer(preferredTocs, " ;,"); //$NON-NLS-1$
 
 				while (suggestdOrderedInfosets.hasMoreElements()) {
 					orderedTocs.add(suggestdOrderedInfosets.nextElement());
 				}
 			}
 		} catch (Exception e) {
-			HelpPlugin.logError(HelpResources.getString("E039"), e);
+			HelpPlugin.logError(HelpResources.getString("E039"), e); //$NON-NLS-1$
 		}
 		return orderedTocs;
 	}
@@ -203,12 +203,12 @@ public class TocManager {
 						configElements[j]
 							.getDeclaringExtension()
 							.getNamespace();
-					String href = configElements[j].getAttribute("file");
+					String href = configElements[j].getAttribute("file"); //$NON-NLS-1$
 					boolean isPrimary =
-						"true".equals(
-							configElements[j].getAttribute("primary"));
+						"true".equals( //$NON-NLS-1$
+							configElements[j].getAttribute("primary")); //$NON-NLS-1$
 					String extraDir =
-						configElements[j].getAttribute("extradir");
+						configElements[j].getAttribute("extradir"); //$NON-NLS-1$
 					if (href != null) {
 						contributedTocFiles.add(
 							new TocFile(

@@ -77,22 +77,22 @@ public class DirectoryToc {
 		String directory = HrefUtil.getResourcePathFromHref(dir);
 		if (directory == null) {
 			// the root - all files in a zip should be indexed
-			directory = "";
+			directory = ""; //$NON-NLS-1$
 		}
 		// Find doc.zip file
-		IPath iPath = new Path("$nl$/doc.zip");
+		IPath iPath = new Path("$nl$/doc.zip"); //$NON-NLS-1$
 		Map override = new HashMap(1);
-		override.put("$nl$", locale);
+		override.put("$nl$", locale); //$NON-NLS-1$
 		URL url = Platform.find(pluginDesc, iPath, override);
 		if (url == null) {
-			url = Platform.find(pluginDesc, new Path("doc.zip"));
+			url = Platform.find(pluginDesc, new Path("doc.zip")); //$NON-NLS-1$
 		}
 		if (url != null) {
 			// collect topics from doc.zip file
 			ret.putAll(createExtraTopicsFromZip(pluginID, directory, url));
 		}
 		// Find directory on the filesystem
-		iPath = new Path("$nl$/" + directory);
+		iPath = new Path("$nl$/" + directory); //$NON-NLS-1$
 		url = null;
 			url = Platform.find(pluginDesc, iPath, override);
 			if (url == null) {
@@ -121,7 +121,7 @@ public class DirectoryToc {
 			realZipURL = Platform.asLocalURL(Platform.resolve(url));
 		} catch (IOException ioe) {
 			HelpPlugin.logError(
-				HelpResources.getString("E036", url.toString()),
+				HelpResources.getString("E036", url.toString()), //$NON-NLS-1$
 				ioe);
 			return new HashMap(0);
 		}
@@ -132,7 +132,7 @@ public class DirectoryToc {
 			zipFile.close();
 		} catch (IOException ioe) {
 			HelpPlugin.logError(
-				HelpResources.getString("E037", realZipURL.getFile()),
+				HelpResources.getString("E037", realZipURL.getFile()), //$NON-NLS-1$
 				ioe);
 			return new HashMap(0);
 		}
@@ -152,7 +152,7 @@ public class DirectoryToc {
 		String pluginID,
 		ZipFile zipFile,
 		String directory) {
-		String constantHrefSegment = "/" + pluginID + "/";
+		String constantHrefSegment = "/" + pluginID + "/"; //$NON-NLS-1$ //$NON-NLS-2$
 		Map ret = new HashMap();
 		for (Enumeration enum = zipFile.entries(); enum.hasMoreElements();) {
 			ZipEntry zEntry = (ZipEntry) enum.nextElement();
@@ -186,7 +186,7 @@ public class DirectoryToc {
 			realURL = Platform.asLocalURL(Platform.resolve(url));
 		} catch (IOException ioe) {
 			HelpPlugin.logError(
-				HelpResources.getString("E038", url.toString()),
+				HelpResources.getString("E038", url.toString()), //$NON-NLS-1$
 				ioe);
 			return m;
 		}
@@ -194,9 +194,9 @@ public class DirectoryToc {
 		if (dirFile.exists() && dirFile.isDirectory()) {
 			String prefix;
 			if (directory.length() > 0) {
-				prefix = "/" + pluginID + "/" + directory;
+				prefix = "/" + pluginID + "/" + directory; //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
-				prefix = "/" + pluginID;
+				prefix = "/" + pluginID; //$NON-NLS-1$
 			}
 			createExtraTopicsFromDirectoryFile(prefix, dirFile, m);
 		}
@@ -213,7 +213,7 @@ public class DirectoryToc {
 		Map m) {
 		File[] files = dir.listFiles();
 		for (int i = 0; i < files.length; i++) {
-			String href = prefix + "/" + files[i].getName();
+			String href = prefix + "/" + files[i].getName(); //$NON-NLS-1$
 			if (files[i].isDirectory()) {
 				createExtraTopicsFromDirectoryFile(href, files[i], m);
 			} else {

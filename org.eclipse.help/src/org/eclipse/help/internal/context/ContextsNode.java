@@ -16,21 +16,21 @@ import org.xml.sax.*;
  * Object in hierarchy of context contributions
  */
 public abstract class ContextsNode {
-	public static final String CONTEXTS_ELEM = "contexts";
-	public static final String CONTEXT_ELEM = "context";
-	public static final String DESC_ELEM = "description";
-	public static final String RELATED_ELEM = "topic";
-	public static final String RELATED_HREF = "href";
-	public static final String RELATED_LABEL = "label";
+	public static final String CONTEXTS_ELEM = "contexts"; //$NON-NLS-1$
+	public static final String CONTEXT_ELEM = "context"; //$NON-NLS-1$
+	public static final String DESC_ELEM = "description"; //$NON-NLS-1$
+	public static final String RELATED_ELEM = "topic"; //$NON-NLS-1$
+	public static final String RELATED_HREF = "href"; //$NON-NLS-1$
+	public static final String RELATED_LABEL = "label"; //$NON-NLS-1$
 	/**
 	 * Internal representation of &lt;b&gt; - unlikely to occur in a text
 	 */
-	public static final String BOLD_CLOSE_TAG = "</@#$b>";
+	public static final String BOLD_CLOSE_TAG = "</@#$b>"; //$NON-NLS-1$
 	/**
 	 * Internal representation of &lt;b&gt; - unlikely to occur in a text
 	 */
-	public static final String BOLD_TAG = "<@#$b>";
-	public static final String DESC_TXT_BOLD = "b";
+	public static final String BOLD_TAG = "<@#$b>"; //$NON-NLS-1$
+	public static final String DESC_TXT_BOLD = "b"; //$NON-NLS-1$
 	protected List children = new ArrayList();
 	/**
 	 * When a builder builds the contexts, each node

@@ -73,7 +73,7 @@ public final class HelpSystem {
 			// URL helpURL = new URL("help:" + href);
 			URL helpURL =
 				new URL(
-					"help",
+					"help", //$NON-NLS-1$
 					null,
 					-1,
 					href,

@@ -20,7 +20,7 @@ import org.osgi.framework.*;
  * Help System Core plug-in
  */
 public class HelpPlugin extends Plugin implements IRegistryChangeListener, BundleListener{
-	public final static String PLUGIN_ID = "org.eclipse.help";
+	public final static String PLUGIN_ID = "org.eclipse.help"; //$NON-NLS-1$
 	// debug options
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_CONTEXT = false;
@@ -29,7 +29,7 @@ public class HelpPlugin extends Plugin implements IRegistryChangeListener, Bundl
 	private static BundleContext bundleContext;
 	private List tocsChangedListeners = new Vector();
 
-	public final static String BASE_TOCS_KEY = "baseTOCS";
+	public final static String BASE_TOCS_KEY = "baseTOCS"; //$NON-NLS-1$
 
 	protected TocManager tocManager;
 	protected static Object tocManagerCreateLock = new Object();
@@ -42,7 +42,7 @@ public class HelpPlugin extends Plugin implements IRegistryChangeListener, Bundl
 	 */
 	public static synchronized void logError(String message, Throwable ex) {
 		if (message == null)
-			message = "";
+			message = ""; //$NON-NLS-1$
 		Status errorStatus =
 			new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, message, ex);
 		HelpPlugin.getDefault().getLog().log(errorStatus);
@@ -55,7 +55,7 @@ public class HelpPlugin extends Plugin implements IRegistryChangeListener, Bundl
 	public static synchronized void logWarning(String message) {
 		if (HelpPlugin.DEBUG) {
 			if (message == null)
-				message = "";
+				message = ""; //$NON-NLS-1$
 			Status warningStatus =
 				new Status(
 					IStatus.WARNING,
@@ -97,8 +97,8 @@ public class HelpPlugin extends Plugin implements IRegistryChangeListener, Bundl
 		// Setup debugging options
 		DEBUG = isDebugging();
 		if (DEBUG) {
-			DEBUG_CONTEXT = "true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID + "/debug/context")); //$NON-NLS-1$
-			DEBUG_PROTOCOLS = "true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID + "/debug/protocols")); //$NON-NLS-1$
+			DEBUG_CONTEXT = "true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID + "/debug/context")); //$NON-NLS-1$ //$NON-NLS-2$
+			DEBUG_PROTOCOLS = "true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID + "/debug/protocols")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	/**

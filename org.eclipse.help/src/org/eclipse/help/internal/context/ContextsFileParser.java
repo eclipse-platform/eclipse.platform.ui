@@ -40,7 +40,7 @@ public class ContextsFileParser extends DefaultHandler {
 			buffer.append(ch, start, length);
 		if (HelpPlugin.DEBUG_CONTEXT) {
 			System.out
-					.println("ContextsFileParser.characters(): got char from parser= "
+					.println("ContextsFileParser.characters(): got char from parser= " //$NON-NLS-1$
 							+ new StringBuffer().append(ch, start, length)
 									.toString());
 		}
@@ -69,7 +69,7 @@ public class ContextsFileParser extends DefaultHandler {
 	 * @see ErrorHandler#error(SAXParseException)
 	 */
 	public void error(SAXParseException ex) {
-		String message = getMessage("E001", ex);
+		String message = getMessage("E001", ex); //$NON-NLS-1$
 		HelpPlugin.logError(message, null);
 		RuntimeHelpStatus.getInstance()
 				.addParseError(message, ex.getSystemId());
@@ -78,7 +78,7 @@ public class ContextsFileParser extends DefaultHandler {
 	 * @see ErrorHandler#fatalError(SAXParseException)
 	 */
 	public void fatalError(SAXParseException ex) throws SAXException {
-		String message = getMessage("E002", ex);
+		String message = getMessage("E002", ex); //$NON-NLS-1$
 		HelpPlugin.logError(message, ex);
 		RuntimeHelpStatus.getInstance()
 				.addParseError(message, ex.getSystemId());
@@ -129,7 +129,7 @@ public class ContextsFileParser extends DefaultHandler {
 		}
 	}
 	public void warning(SAXParseException ex) {
-		String message = getMessage("E003", ex);
+		String message = getMessage("E003", ex); //$NON-NLS-1$
 		HelpPlugin.logWarning(message);
 	}
 	public void parse(ContextsFile contextsFile) {
@@ -138,7 +138,7 @@ public class ContextsFileParser extends DefaultHandler {
 		if (is == null)
 			return;
 		InputSource inputSource = new InputSource(is);
-		String file = "/" + contextsFile.getDefiningPluginID() + "/"
+		String file = "/" + contextsFile.getDefiningPluginID() + "/" //$NON-NLS-1$ //$NON-NLS-2$
 				+ contextsFile.getHref();
 		inputSource.setSystemId(file);
 		try {
@@ -146,11 +146,11 @@ public class ContextsFileParser extends DefaultHandler {
 			parser.parse(inputSource, this);
 		} catch (ParserConfigurationException pce) {
 			HelpPlugin.logError(HelpResources
-					.getString("ContextsFileParser.PCE"), pce);
+					.getString("ContextsFileParser.PCE"), pce); //$NON-NLS-1$
 		} catch (SAXException se) {
-			HelpPlugin.logError("", se);
+			HelpPlugin.logError("", se); //$NON-NLS-1$
 		} catch (IOException ioe) {
-			String msg = HelpResources.getString("E009", file);
+			String msg = HelpResources.getString("E009", file); //$NON-NLS-1$
 			HelpPlugin.logError(msg, ioe);
 			// now pass it to the RuntimeHelpStatus object explicitly because we
 			// still need to display errors even if Logging is turned off.

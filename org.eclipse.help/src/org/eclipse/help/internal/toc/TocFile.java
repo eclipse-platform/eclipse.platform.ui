@@ -117,7 +117,7 @@ public class TocFile {
 	 * Used by debugger
 	 */
 	public String toString() {
-		return plugin + "/" + href;
+		return plugin + "/" + href; //$NON-NLS-1$
 	}
 	/**
 	 * Checks if this file specifies a TOC.

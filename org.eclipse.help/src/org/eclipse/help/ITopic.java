@@ -19,7 +19,7 @@ public interface ITopic extends IHelpResource {
 	/**
 	 * This is element name used for topic in XML files.
 	 */
-	public final static String TOPIC = "topic";
+	public final static String TOPIC = "topic"; //$NON-NLS-1$
 	
 	/**
 	 * Obtains the topics contained in this node.

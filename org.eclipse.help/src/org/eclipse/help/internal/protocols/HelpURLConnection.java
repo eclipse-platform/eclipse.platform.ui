@@ -22,13 +22,13 @@ import org.osgi.framework.Bundle;
  * URLConnection to help documents in plug-ins
  */
 public class HelpURLConnection extends URLConnection {
-	private final static String LANG = "lang";
+	private final static String LANG = "lang"; //$NON-NLS-1$
 	// document caching - disabled if running in dev mode
 	protected static boolean cachingEnabled = true;
 	static {
 		String[] args = Platform.getCommandLineArgs();
 		for (int i = 0; i < args.length; i++) {
-			if ("-dev".equals(args[i])) {
+			if ("-dev".equals(args[i])) { //$NON-NLS-1$
 				cachingEnabled = false;
 				break;
 			}
@@ -52,10 +52,10 @@ public class HelpURLConnection extends URLConnection {
 		String urlFile = url.getFile();
 
 		// Strip off the leading "/" and the query
-		if (urlFile.startsWith("/"))
+		if (urlFile.startsWith("/")) //$NON-NLS-1$
 			urlFile = urlFile.substring(1);
 
-		int indx = urlFile.indexOf("?");
+		int indx = urlFile.indexOf("?"); //$NON-NLS-1$
 		if (indx != -1) {
 			query = urlFile.substring(indx + 1);
 			urlFile = urlFile.substring(0, indx);
@@ -65,7 +65,7 @@ public class HelpURLConnection extends URLConnection {
 
 		setDefaultUseCaches(isCacheable());
 		if (HelpPlugin.DEBUG_PROTOCOLS) {
-			System.out.println("HelpURLConnection: url=" + url);
+			System.out.println("HelpURLConnection: url=" + url); //$NON-NLS-1$
 		}
 	}
 
@@ -82,16 +82,16 @@ public class HelpURLConnection extends URLConnection {
 		// must override parent implementation, since it does nothing.
 		Bundle plugin = getPlugin();
 		if (plugin == null) {
-			throw new IOException("Resource not found.");
+			throw new IOException("Resource not found."); //$NON-NLS-1$
 		}
 
 		if (plugin.getSymbolicName().equals(getAppserverImplPluginId())) {
 			// Do not return documents from app server implementation plug-in
-			throw new IOException("Resource not found.");
+			throw new IOException("Resource not found."); //$NON-NLS-1$
 		}
 		
-		if (getFile() == null || "".equals(getFile())) {
-			throw new IOException("Resource not found.");
+		if (getFile() == null || "".equals(getFile())) { //$NON-NLS-1$
+			throw new IOException("Resource not found."); //$NON-NLS-1$
 		}
 
 		// first try using content provider
@@ -99,14 +99,14 @@ public class HelpURLConnection extends URLConnection {
 		// and then, in the file system
 		InputStream inputStream=ResourceLocator.openFromProducer(
 			plugin,
-			query == null ? getFile() : getFile() + "?" + query,
+			query == null ? getFile() : getFile() + "?" + query, //$NON-NLS-1$
 			getLocale());
 
 		if (inputStream == null) {
 			inputStream =
 				ResourceLocator.openFromZip(
 					plugin,
-					"doc.zip",
+					"doc.zip", //$NON-NLS-1$
 					getFile(),
 					getLocale());
 		}
@@ -115,7 +115,7 @@ public class HelpURLConnection extends URLConnection {
 				ResourceLocator.openFromPlugin(plugin, getFile(), getLocale());
 		}
 		if (inputStream == null) {
-			throw new IOException("Resource not found.");
+			throw new IOException("Resource not found."); //$NON-NLS-1$
 		}
 		return inputStream;
 	}
@@ -128,15 +128,15 @@ public class HelpURLConnection extends URLConnection {
 	 * Multiple values are added as vectors
 	 */
 	protected void parseQuery() {
-		if (query != null && !"".equals(query)) {
+		if (query != null && !"".equals(query)) { //$NON-NLS-1$
 			if (arguments == null) {
 				arguments = new HashMap(5);
 			}
 
-			StringTokenizer stok = new StringTokenizer(query, "&");
+			StringTokenizer stok = new StringTokenizer(query, "&"); //$NON-NLS-1$
 			while (stok.hasMoreTokens()) {
 				String aQuery = stok.nextToken();
-				int equalsPosition = aQuery.indexOf("=");
+				int equalsPosition = aQuery.indexOf("="); //$NON-NLS-1$
 				if (equalsPosition > -1) { // well formed name/value pair
 					String arg = aQuery.substring(0, equalsPosition);
 					String val = aQuery.substring(equalsPosition + 1);
@@ -160,21 +160,21 @@ public class HelpURLConnection extends URLConnection {
 	public String getContentType() {
 		// Check if the file is hypertext or plain text 
 		String file = pluginAndFile.toLowerCase(Locale.US);
-		if (file.endsWith(".html") || file.endsWith(".htm"))
-			return "text/html";
-		else if (file.endsWith(".css"))
-			return "text/css";
-		else if (file.endsWith(".gif"))
-			return "image/gif";
-		else if (file.endsWith(".jpg"))
-			return "image/jpeg";
-		else if (file.endsWith(".pdf"))
-			return "application/pdf";
-		else if (file.endsWith(".xml"))
-			return "application/xml";
-		else if (file.endsWith(".xsl"))
-			return "application/xsl";
-		return "text/plain";
+		if (file.endsWith(".html") || file.endsWith(".htm")) //$NON-NLS-1$ //$NON-NLS-2$
+			return "text/html"; //$NON-NLS-1$
+		else if (file.endsWith(".css")) //$NON-NLS-1$
+			return "text/css"; //$NON-NLS-1$
+		else if (file.endsWith(".gif")) //$NON-NLS-1$
+			return "image/gif"; //$NON-NLS-1$
+		else if (file.endsWith(".jpg")) //$NON-NLS-1$
+			return "image/jpeg"; //$NON-NLS-1$
+		else if (file.endsWith(".pdf")) //$NON-NLS-1$
+			return "application/pdf"; //$NON-NLS-1$
+		else if (file.endsWith(".xml")) //$NON-NLS-1$
+			return "application/xml"; //$NON-NLS-1$
+		else if (file.endsWith(".xsl")) //$NON-NLS-1$
+			return "application/xsl"; //$NON-NLS-1$
+		return "text/plain"; //$NON-NLS-1$
 	}
 	/**
 	 * 
@@ -227,11 +227,11 @@ public class HelpURLConnection extends URLConnection {
 	protected String getFile() {
 		if (file == null) {
 			// Strip the plugin id
-			int start = pluginAndFile.indexOf("/") + 1;
+			int start = pluginAndFile.indexOf("/") + 1; //$NON-NLS-1$
 			// Strip query string or anchor bookmark
-			int end = pluginAndFile.indexOf("?");
+			int end = pluginAndFile.indexOf("?"); //$NON-NLS-1$
 			if (end == -1)
-				end = pluginAndFile.indexOf("#");
+				end = pluginAndFile.indexOf("#"); //$NON-NLS-1$
 			if (end == -1)
 				end = pluginAndFile.length();
 			file = pluginAndFile.substring(start, end);
@@ -243,14 +243,14 @@ public class HelpURLConnection extends URLConnection {
 		if (plugin == null) {
 			// Assume the url is pluginID/path_to_topic.html
 			int i = pluginAndFile.indexOf('/');
-			String pluginId = i == -1 ? "" : pluginAndFile.substring(0, i);
+			String pluginId = i == -1 ? "" : pluginAndFile.substring(0, i); //$NON-NLS-1$
 			pluginId = URLCoder.decode(pluginId);
 			plugin = Platform.getBundle(pluginId);
 		}
 		return plugin;
 	}
 	public boolean isCacheable() {
-		if (getValue("resultof") != null)
+		if (getValue("resultof") != null) //$NON-NLS-1$
 			return false;
 		else
 			return cachingEnabled;
@@ -272,7 +272,7 @@ public class HelpURLConnection extends URLConnection {
 			IExtensionRegistry pluginRegistry = Platform.getExtensionRegistry();
 			IExtensionPoint point =
 				pluginRegistry.getExtensionPoint(
-					"org.eclipse.help.appserver.server");
+					"org.eclipse.help.appserver.server"); //$NON-NLS-1$
 			if (point != null) {
 				IExtension[] extensions = point.getExtensions();
 				if (extensions.length != 0) {
@@ -284,9 +284,9 @@ public class HelpURLConnection extends URLConnection {
 					IConfigurationElement serverElement = null;
 					for (int i = 0; i < elements.length; i++) {
 						String defaultValue =
-							elements[i].getAttribute("default");
+							elements[i].getAttribute("default"); //$NON-NLS-1$
 						if (defaultValue == null
-							|| defaultValue.equals("false")) {
+							|| defaultValue.equals("false")) { //$NON-NLS-1$
 							serverElement = elements[i];
 							break;
 						}
