@@ -580,10 +580,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	private void addLayoutMenu(IMenuManager menuManager) {
-		MenuManager subMenu= new MenuManager(SearchMessages.getString("AbstractTextSearchViewPage.layout.label")); //$NON-NLS-1$
-		subMenu.add(fFlatAction);
-		subMenu.add(fHierarchicalAction);
-		menuManager.add(subMenu);
+		menuManager.add(fFlatAction);
+		menuManager.add(fHierarchicalAction);
 	}
 
 	/**
