@@ -119,7 +119,7 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 		}
 		
 		if(project != null) {
-			mappingPage = new MappingSelectionPage(ConfigureTargetWizard.MAPPING_PAGE_NAME, Policy.bind("MappingSelectionPage.mappingTitle"), null); //$NON-NLS-1$
+			mappingPage = new MappingSelectionPage(ConfigureTargetWizard.MAPPING_PAGE_NAME, Policy.bind("MappingSelectionPage.mappingTitle"), TeamImages.getImageDescriptor(UIConstants.IMG_WIZBAN_SHARE)); //$NON-NLS-1$
 			mappingPage.setWizard(this);	
 		}	
 		
