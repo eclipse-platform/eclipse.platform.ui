@@ -13,7 +13,7 @@ import org.eclipse.ui.internal.registry.WizardsRegistryReader;
  * class a decorator definition applies to,
  */
 
-class DecoratorDefinition {
+public class DecoratorDefinition {
 
 	private String name;
 	private String objectClass;
