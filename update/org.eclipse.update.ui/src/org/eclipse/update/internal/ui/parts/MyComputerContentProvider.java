@@ -32,7 +32,7 @@ public class MyComputerContentProvider
 
 		public boolean hasChildren(Object parent) {
 			if (parent instanceof MyComputerDirectory) {
-				Object[] children = ((MyComputerDirectory) parent).getChildren(parent);
+				Object[] children = ((MyComputerDirectory) parent).getChildren(parent,false,false);
 				for (int i = 0; i < children.length; i++) {
 					if (!(children[i] instanceof MyComputerFile))
 						return true;
