@@ -258,13 +258,14 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 						CVSDecoration decoration = CVSDecorationRunnable.computeTextLabelFor(resource, false /*don't show dirty*/);
 						String format = decoration.getFormat();
 						Map bindings = decoration.getBindings();
-						
-						// don't show the revision number, it will instead be shown in 
-						// the label for the remote/base/local files editors
-						bindings.remove(CVSDecoratorConfiguration.FILE_REVISION);
-						
-						bindings.put(CVSDecoratorConfiguration.RESOURCE_NAME, oldProvider.getText(element));
-						return CVSDecoratorConfiguration.bind(format, bindings);
+						if (bindings != null) {
+							// don't show the revision number, it will instead be shown in 
+							// the label for the remote/base/local files editors
+							bindings.remove(CVSDecoratorConfiguration.FILE_REVISION);
+							
+							bindings.put(CVSDecoratorConfiguration.RESOURCE_NAME, oldProvider.getText(element));
+							return CVSDecoratorConfiguration.bind(format, bindings);
+						}
 					}
 				}								
 				return oldProvider.getText(element);
