@@ -14,8 +14,8 @@ import org.eclipse.jface.resource.JFaceResources;
  * will open a message dilog.
  */
 public abstract class SafeRunnable implements ISafeRunnable {
-	String message;
-	static boolean ignoreErrors = false;
+	private String message;
+	private static boolean ignoreErrors = false;
 /**
  * Creates a new instance of SafeRunnable.
  */
