@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.sync.views;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
@@ -86,10 +88,28 @@ public class CompressedFolderContentProvider extends SyncSetTreeContentProvider 
 
 	public Object[] getChildren(Object element) {
 		IResource resource = getResource(element);
-		if (resource != null && resource.getType() == IResource.PROJECT) {
-			return getProjectChildren((IProject)resource);
+		if (resource != null) {
+			if (resource.getType() == IResource.PROJECT) {
+				return getProjectChildren((IProject)resource);
+			} else if (resource.getType() == IResource.FOLDER) {
+				return getFolderChildren(resource);
+			}
 		}
 		return super.getChildren(element);
+	}
+
+	private Object[] getFolderChildren(IResource resource) {
+		// Folders will only contain out-of-sync children
+		IResource[] children = getSyncSet().members(resource);
+		List result = new ArrayList();
+		for (int i = 0; i < children.length; i++) {
+			IResource child = children[i];
+			SyncInfo info = getSyncSet().getSyncInfo(child);
+			if (info != null) {
+				result.add(getModelObject(info.getLocal()));
+			}
+		}
+		return (Object[]) result.toArray(new Object[result.size()]);
 	}
 
 	private Object[] getProjectChildren(IProject project) {

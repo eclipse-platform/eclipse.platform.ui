@@ -30,6 +30,7 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 	private BooleanFieldEditor bkgRefresh = null;
 	private BooleanFieldEditor bkgScheduledRefresh = null;
 	private IntegerFieldEditor2 scheduledDelay = null;
+	private BooleanFieldEditor compressFolders = null;
 	
 	class IntegerFieldEditor2 extends IntegerFieldEditor {
 			public IntegerFieldEditor2(String name, String labelText, Composite parent, int size) {
@@ -109,6 +110,9 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 		
 		scheduledDelay = new IntegerFieldEditor2(IPreferenceIds.SYNCVIEW_DELAY, "How often should the background refresh run? (in minutes)", getFieldEditorParent(), 2);
 		addField(scheduledDelay);
+		
+		compressFolders = new BooleanFieldEditor(IPreferenceIds.SYNCVIEW_COMPRESS_FOLDERS, "Compress in-sync folder paths when using the tree view", SWT.NONE, getFieldEditorParent());
+		addField(compressFolders);
 	}
 	
 	/* (non-Javadoc)

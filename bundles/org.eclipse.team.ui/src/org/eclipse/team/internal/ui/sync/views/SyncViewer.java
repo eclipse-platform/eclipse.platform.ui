@@ -31,6 +31,8 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -64,6 +66,7 @@ import org.eclipse.team.core.subscribers.TeamDelta;
 import org.eclipse.team.core.subscribers.TeamProvider;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.internal.core.Assert;
+import org.eclipse.team.internal.ui.IPreferenceIds;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
@@ -137,7 +140,17 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	
 	private static final String VIEWER_TYPE_MEMENTO_KEY = "viewerType"; // $NON-NLS-1$
 
+	private IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			if (getCurrentViewType() == TREE_VIEW &&
+				event.getProperty().equals(IPreferenceIds.SYNCVIEW_COMPRESS_FOLDERS)) {
+					setTreeViewerContentProvider();
+			}
+		}
+	};
+	
 	public SyncViewer() {
+		TeamUIPlugin.getPlugin().getPreferenceStore().addPropertyChangeListener(propertyListener);
 	}
 
 	public Image getTitleImage() {
@@ -222,11 +235,19 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 
 	private void createTreeViewerPartControl(Composite parent) {
 		viewer = new SyncTreeViewer(this, parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		viewer.setContentProvider(new SyncSetTreeContentProvider());
+		setTreeViewerContentProvider();
 		viewer.setLabelProvider(SyncViewerLabelProvider.getDecoratingLabelProvider());
 		viewer.setSorter(new SyncViewerSorter());
 	}
 	
+	private void setTreeViewerContentProvider() {
+		if (TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_COMPRESS_FOLDERS)) {
+			viewer.setContentProvider(new CompressedFolderContentProvider());
+		} else {
+			viewer.setContentProvider(new SyncSetTreeContentProvider());
+		}
+	}
+
 	private void createTableViewerPartControl(Composite parent) {
 		// Create the table
 		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
@@ -506,7 +527,9 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		for (Iterator it = subscriberInputs.values().iterator(); it.hasNext();) {
 			SubscriberInput input = (SubscriberInput) it.next();
 			input.dispose();
-		}		
+		}
+		
+		TeamUIPlugin.getPlugin().getPreferenceStore().removePropertyChangeListener(propertyListener);
 	}
 
 	public void run(IRunnableWithProgress runnable) {
