@@ -194,22 +194,20 @@ public class WorkspaceCommitOperation extends CVSSubscriberOperation {
 				}
 			}
 		}
-		// Calculate the total amount of work needed
-		int work = (makeOutgoing.size() + additions.size() + commits.size()) * 100;
-		monitor.beginTask(null, work);
+		monitor.beginTask(null, 200);
 		
 		if (makeInSync.size() > 0) {
-			makeInSync((SyncInfo[]) makeInSync.toArray(new SyncInfo[makeInSync.size()]));			
+			makeInSync((SyncInfo[]) makeInSync.toArray(new SyncInfo[makeInSync.size()]), Policy.subMonitorFor(monitor, 25));			
 		}
 
 		if (makeOutgoing.size() > 0) {
-			makeOutgoing((SyncInfo[]) makeOutgoing.toArray(new SyncInfo[makeInSync.size()]), Policy.subMonitorFor(monitor, makeOutgoing.size() * 100));			
+			makeOutgoing((SyncInfo[]) makeOutgoing.toArray(new SyncInfo[makeInSync.size()]), Policy.subMonitorFor(monitor, 25));			
 		}
 
 		if (additions.size() != 0) {
-			add((IResource[])additions.toArray(new IResource[0]), Policy.subMonitorFor(monitor, additions.size() * 100));
+			add((IResource[])additions.toArray(new IResource[0]), Policy.subMonitorFor(monitor, 50));
 		}
-		commit((IResource[])commits.toArray(new IResource[commits.size()]), Policy.subMonitorFor(monitor, commits.size() * 100));		
+		commit((IResource[])commits.toArray(new IResource[commits.size()]), Policy.subMonitorFor(monitor, 100));		
 	}	
 	
 	private void commit(IResource[] commits, IProgressMonitor monitor) throws TeamException {

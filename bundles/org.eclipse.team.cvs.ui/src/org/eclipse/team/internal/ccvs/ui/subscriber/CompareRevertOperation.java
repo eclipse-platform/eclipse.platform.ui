@@ -83,15 +83,13 @@ public class CompareRevertOperation extends CVSSubscriberOperation {
 
 		}
 		try {
-			// Calculate the total amount of work needed
-			int work = updateShallow.size() * 100;
-			monitor.beginTask(null, work);
+			monitor.beginTask(null, 100);
 
 			if (parentCreationElements.size() > 0) {
-				makeInSync((SyncInfo[]) parentCreationElements.toArray(new SyncInfo[parentCreationElements.size()]));				
+				makeInSync((SyncInfo[]) parentCreationElements.toArray(new SyncInfo[parentCreationElements.size()]), Policy.subMonitorFor(monitor, 25));				
 			}		
 			if (updateShallow.size() > 0) {
-				runUpdate((SyncInfo[])updateShallow.toArray(new SyncInfo[updateShallow.size()]), Policy.subMonitorFor(monitor, updateShallow.size() * 100));
+				runUpdate((SyncInfo[])updateShallow.toArray(new SyncInfo[updateShallow.size()]), Policy.subMonitorFor(monitor, 75));
 			}
 		} finally {
 			monitor.done();

@@ -193,6 +193,7 @@ public abstract class AbstractResourceVariantTree implements IResourceVariantTre
 		
 		IResource[] cleared = collectedMembers(local, (IResource[]) children.keySet().toArray(new IResource[children.keySet().size()]));
 		changedResources.addAll(Arrays.asList(cleared));
+		monitor.worked(1);
 	}
 
 	private Map mergedMembers(IResource local, IResourceVariant remote, IProgressMonitor progress) throws TeamException {

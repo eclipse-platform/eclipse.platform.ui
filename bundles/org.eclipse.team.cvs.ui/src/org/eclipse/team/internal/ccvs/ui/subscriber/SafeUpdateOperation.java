@@ -91,7 +91,7 @@ public abstract class SafeUpdateOperation extends CVSSubscriberOperation {
 			
 			// Run the update on the remaining nodes in the set
 			// The update will fail for conflicts that turn out to be non-automergable
-			safeUpdate(syncSet, Policy.subMonitorFor(monitor, 00));
+			safeUpdate(syncSet, Policy.subMonitorFor(monitor, 100));
 			
 			// Remove all failed conflicts from the original sync set
 			syncSet.rejectNodes(new FastSyncInfoFilter() {
@@ -221,18 +221,16 @@ public abstract class SafeUpdateOperation extends CVSSubscriberOperation {
 
 		}
 		try {
-			// Calculate the total amount of work needed
-			int work = (updateDeletions.size() + updateShallow.size()) * 100;
-			monitor.beginTask(null, work);
+			monitor.beginTask(null, 100);
 
 			if (parentCreationElements.size() > 0) {
-				makeInSync((SyncInfo[]) parentCreationElements.toArray(new SyncInfo[parentCreationElements.size()]));				
+				makeInSync((SyncInfo[]) parentCreationElements.toArray(new SyncInfo[parentCreationElements.size()]), Policy.subMonitorFor(monitor, 25));				
 			}
 			if (updateDeletions.size() > 0) {
-				runUpdateDeletions((SyncInfo[])updateDeletions.toArray(new SyncInfo[updateDeletions.size()]), Policy.subMonitorFor(monitor, updateDeletions.size() * 100));
+				runUpdateDeletions((SyncInfo[])updateDeletions.toArray(new SyncInfo[updateDeletions.size()]), Policy.subMonitorFor(monitor, 25));
 			}			
 			if (updateShallow.size() > 0) {
-				runSafeUpdate((SyncInfo[])updateShallow.toArray(new SyncInfo[updateShallow.size()]), Policy.subMonitorFor(monitor, updateShallow.size() * 100));
+				runSafeUpdate((SyncInfo[])updateShallow.toArray(new SyncInfo[updateShallow.size()]), Policy.subMonitorFor(monitor, 50));
 			}
 		} finally {
 			monitor.done();

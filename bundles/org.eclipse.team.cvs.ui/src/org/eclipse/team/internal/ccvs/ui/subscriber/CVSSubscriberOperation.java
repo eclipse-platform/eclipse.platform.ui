@@ -100,15 +100,18 @@ public abstract class CVSSubscriberOperation extends SynchronizeModelOperation {
 				(! resource.getLocal().exists() && resource.getRemote() != null));
 	}
 	
-	protected void makeInSync(SyncInfo[] folders) throws TeamException {
+	protected void makeInSync(SyncInfo[] folders, IProgressMonitor monitor) throws TeamException {
 		// If a node has a parent that is an incoming folder creation, we have to 
 		// create that folder locally and set its sync info before we can get the
 		// node itself. We must do this for all incoming folder creations (recursively)
 		// in the case where there are multiple levels of incoming folder creations.
+		monitor.beginTask(null, folders.length);
 		for (int i = 0; i < folders.length; i++) {
 			SyncInfo resource = folders[i];
 			makeInSync(resource);
+			monitor.worked(1);
 		}
+		monitor.done();
 	}
 	
 	protected boolean makeInSync(SyncInfo info) throws TeamException {

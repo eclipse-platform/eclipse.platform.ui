@@ -45,7 +45,7 @@ public class UpdateOnlyMergableOperation extends SingleCommandOperation {
 			getLocalOptions(), 
 			resources,
 			null, 
-			Policy.subMonitorFor(monitor, 90));
+			monitor);
 		if (status.getCode() != IStatus.ERROR) {
 			addSkippedFiles(update.getSkippedFiles());
 			return OK;
