@@ -6,13 +6,19 @@ package org.eclipse.team.internal.ccvs.ui.sync;
  */
  
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -23,6 +29,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.ILocalSyncElement;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
@@ -40,18 +47,21 @@ import org.eclipse.team.internal.ui.sync.TeamFile;
 public class CVSSyncCompareInput extends SyncCompareInput {
 	private IResource[] resources;
 	private TeamFile previousTeamFile = null;	
+	private boolean onlyOutgoing = false;
 	
-	/**
-	 * Creates a new catchup or release operation.
-	 */
 	public CVSSyncCompareInput(IResource[] resources) {
-		super(CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_CONSIDER_CONTENTS) ? ILocalSyncElement.GRANULARITY_CONTENTS : ILocalSyncElement.GRANULARITY_TIMESTAMP);
-		this.resources = resources;
+		this(resources, false);
 	}
 	
 	protected CVSSyncCompareInput(IResource[] resources, int granularity) {
 		super(granularity);
 		this.resources = resources;
+	}
+	
+	public CVSSyncCompareInput(IResource[] resources, boolean onlyOutgoing) {
+		super(CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_CONSIDER_CONTENTS) ? ILocalSyncElement.GRANULARITY_CONTENTS : ILocalSyncElement.GRANULARITY_TIMESTAMP);
+		this.onlyOutgoing = onlyOutgoing;
+		this.resources = resources;		
 	}
 	
 	/**
@@ -127,17 +137,61 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 //	}
 	
 	protected IRemoteSyncElement[] createSyncElements(IProgressMonitor monitor) throws TeamException {
-		IRemoteSyncElement[] trees = new IRemoteSyncElement[resources.length];
-		int work = 1000 * resources.length;
-		monitor.beginTask(null, work);
-		try {
-			for (int i = 0; i < trees.length; i++) {
-				trees[i] = CVSWorkspaceRoot.getRemoteSyncTree(resources[i], null, Policy.subMonitorFor(monitor, 1000));
+		if (onlyOutgoing) {
+			// Find the outgoing changes in each selected resource
+			final List outgoing = new ArrayList();
+			try {
+				for (int i = 0; i < resources.length; i++) {
+					resources[i].accept(new IResourceVisitor() {
+						public boolean visit(IResource resource) throws CoreException {
+							// if resource is a file and is dirty, add it to the list
+							if (resource.getType() == IResource.FILE) {
+								if (isDirty((IFile)resource)) {
+									outgoing.add(resource);
+								}
+							}
+							return true;
+						}
+					});
+				}
+			} catch (CoreException e) {
+				ErrorDialog.openError(getShell(), Policy.bind("simpleInternal"), Policy.bind("internal"), e.getStatus());
+				CVSUIPlugin.log(e.getStatus());
+				return new IRemoteSyncElement[0];
 			}
-		} finally {
-			monitor.done();
+			final TeamException[] exception = new TeamException[1];
+			final IFile[] files = (IFile[])outgoing.toArray(new IFile[outgoing.size()]);
+			final IRemoteSyncElement[] trees = new IRemoteSyncElement[files.length];
+			Session.run(null, null, true, new ICVSRunnable() {
+				public void run(IProgressMonitor monitor) throws CVSException {
+					int work = 1000 * resources.length;
+					monitor.beginTask(null, work);
+					try {
+						for (int i = 0; i < trees.length; i++) {
+							trees[i] = CVSWorkspaceRoot.getRemoteSyncTree(files[i], null, Policy.subMonitorFor(monitor, 1000));
+						}
+					} catch (TeamException e) {
+						exception[0] = e;
+					} finally {
+						monitor.done();
+					}
+				}
+			}, monitor);
+			if (exception[0] != null) throw exception[0];
+			return trees;
+		} else {
+			IRemoteSyncElement[] trees = new IRemoteSyncElement[resources.length];
+			int work = 1000 * resources.length;
+			monitor.beginTask(null, work);
+			try {
+				for (int i = 0; i < trees.length; i++) {
+					trees[i] = CVSWorkspaceRoot.getRemoteSyncTree(resources[i], null, Policy.subMonitorFor(monitor, 1000));
+				}
+			} finally {
+				monitor.done();
+			}
+			return trees;
 		}
-		return trees;
 	}
 
 	protected void updateView() {
@@ -284,4 +338,30 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 		}
 		return false;
 	}
+	
+	/*
+	 * Copied from CVSDecorator
+	 */
+	private static boolean isDirty(ICVSFile cvsFile) {
+		try {
+			// file is dirty or file has been merged by an update
+			if(!cvsFile.isIgnored()) {
+				return cvsFile.isModified();
+			} else {
+				return false;
+			} 
+		} catch (CVSException e) {
+			//if we get an error report it to the log but assume dirty
+			CVSUIPlugin.log(e.getStatus());
+			return true;
+		}
+	}
+
+	/*
+	 * Copied from CVSDecorator
+	 */
+	private static boolean isDirty(IFile file) {
+		return isDirty(CVSWorkspaceRoot.getCVSFileFor(file));
+	}
+	
 }
