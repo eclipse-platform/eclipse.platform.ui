@@ -387,7 +387,7 @@ public class UpdateManagerUtils {
 	 */
 	public static boolean sameURL(URL url1, URL url2) {
 
-		if (url1 == null)
+		if (url1 == null || url2 == null)
 			return false;
 		if (url1.equals(url2))
 			return true;
