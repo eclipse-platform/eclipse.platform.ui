@@ -40,6 +40,7 @@ public final class InternalPlatform {
 	private static String password = "";
 	private static boolean inDevelopmentMode = false;
 	private static boolean splashDown = false;
+	private static boolean cacheRegistry = false;
 
 	// default plugin data
 	private static final String PI_XML = "org.apache.xerces";
@@ -58,6 +59,7 @@ public final class InternalPlatform {
 	private static final String PASSWORD = "-password";
 	private static final String DEV = "-dev";
 	private static final String ENDSPLASH = "-endsplash";
+	private static final String REGISTRYCACHE = "-registrycache";
 
 	// debug support:  set in loadOptions()
 	public static boolean DEBUG = false;
@@ -471,6 +473,20 @@ public static IPlatformRunnable loaderGetRunnable(String pluginId, String classN
 public static void loaderShutdown() {
 	assertInitialized();
 	registry.shutdown(null);
+	if (cacheRegistry) {
+		try {
+			registry.saveRegistry();
+		} catch (IOException e) {
+			String message = Policy.bind("meta.unableToWriteRegistry");
+			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, e);
+			getRuntimePlugin().getLog().log(status);
+			if (DEBUG)
+				System.out.println(status.getMessage());
+		}
+	} else {
+		// get rid of the cache file if it exists
+		registry.flushRegistry();
+	}
 	if (platformLog != null)
 		platformLog.shutdown();
 	initialized = false;
@@ -567,24 +583,27 @@ private static MultiStatus loadRegistry(URL[] pluginPath) {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("parse.registryProblems"), null);
 	InternalFactory factory = new InternalFactory(problems);
 
-	IPath path = InternalPlatform.getMetaArea().getRegistryPath();
+	IPath path = getMetaArea().getRegistryPath();
+	IPath tempPath = getMetaArea().getBackupFilePathFor(path);
 	DataInputStream input = null;
 	registry = null;
-//	try {
-//		input = new DataInputStream(new BufferedInputStream(new FileInputStream(path.toOSString())));
-//		try {
-//			long start = System.currentTimeMillis();
-//			RegistryCacheReader cacheReader = new RegistryCacheReader(factory);
-//			registry = (PluginRegistry)cacheReader.readPluginRegistry(input);
-//			if (DEBUG)
-//				System.out.println("Read registry cache: " + (System.currentTimeMillis() - start) + "ms");
-//		} finally {
-//			input.close();
-//		}
-//	} catch (IOException ioe) {
-//		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, Policy.bind("meta.unableToReadCache"), ioe);
-//		problems.merge(status);
-//	}
+	if (cacheRegistry) {
+		try {
+			input = new DataInputStream(new BufferedInputStream(new SafeFileInputStream(path.toOSString(), tempPath.toOSString())));
+			try {
+				long start = System.currentTimeMillis();
+				RegistryCacheReader cacheReader = new RegistryCacheReader(factory);
+				registry = (PluginRegistry)cacheReader.readPluginRegistry(input);
+				if (DEBUG)
+					System.out.println("Read registry cache: " + (System.currentTimeMillis() - start) + "ms");
+			} finally {
+				input.close();
+			}
+		} catch (IOException ioe) {
+			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, Policy.bind("meta.unableToReadCache"), ioe);
+			problems.merge(status);
+		}
+	}
 	if (registry == null) {
 		URL[] augmentedPluginPath = getAugmentedPluginPath(pluginPath);	// augment the plugin path with any additional platform entries	(eg. user scripts)
 		registry = (PluginRegistry) parsePlugins(augmentedPluginPath, factory, DEBUG && DEBUG_PLUGINS);
@@ -656,6 +675,12 @@ private static String[] processCommandLine(String[] args) {
 		// look for the development mode flag
 		if (args[i].equalsIgnoreCase(DEV)) {
 			inDevelopmentMode = true;
+			found = true;
+		}
+
+		// look for the registry cache flag
+		if (args[i].equalsIgnoreCase(REGISTRYCACHE)) {
+			cacheRegistry = true;
 			found = true;
 		}
 
