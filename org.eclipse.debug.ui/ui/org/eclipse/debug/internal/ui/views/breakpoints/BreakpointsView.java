@@ -164,6 +164,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		boolean enable= event.getChecked();
 		try {
 			breakpoint.setEnabled(enable);
+			getCheckboxViewer().refresh(breakpoint);
 		} catch (CoreException e) {
 			String titleState= enable ? DebugUIViewsMessages.getString("BreakpointsView.6") : DebugUIViewsMessages.getString("BreakpointsView.7"); //$NON-NLS-1$ //$NON-NLS-2$
 			String messageState= enable ? DebugUIViewsMessages.getString("BreakpointsView.8") : DebugUIViewsMessages.getString("BreakpointsView.9");  //$NON-NLS-1$ //$NON-NLS-2$
