@@ -13,11 +13,13 @@ package org.eclipse.core.internal.runtime;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Dictionary;
 import java.util.Hashtable;
 import org.eclipse.core.internal.boot.PlatformURLBaseConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
 import org.eclipse.core.internal.registry.*;
 import org.eclipse.core.runtime.IPlatform;
+import org.eclipse.core.runtime.IPluginConverter;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.registry.IExtensionRegistry;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
@@ -34,7 +36,8 @@ public class PlatformActivator implements BundleActivator, ServiceListener {
 	private EclipseBundleListener pluginBundleListener;
 	private ExtensionRegistry registry;
 	private ServiceReference environmentServiceReference;
-
+	private ServiceRegistration converterRegistration;
+	
 	private static File cacheFile = InternalPlatform.getDefault().getConfigurationMetadataLocation().append(".registry").toFile();
 
 	public static BundleContext getContext() {
@@ -46,8 +49,6 @@ public class PlatformActivator implements BundleActivator, ServiceListener {
 		context.addServiceListener(this);
 		tryToAcquireInfoService();
 		installPlatformURLSupport();
-		//      temporary disable: see bugs 43660 and 43619		
-		//		installBackwardCompatibleURLSupport();
 	}
 
 	private void installBackwardCompatibleURLSupport() {
@@ -134,10 +135,12 @@ public class PlatformActivator implements BundleActivator, ServiceListener {
 	public void stop(BundleContext context) throws Exception {
 		// Stop the registry
 		stopRegistry(context);
+		unregisterPluginConverter();
 		environmentInfoServiceReleased(environmentServiceReference);
 		// Stop the platform orderly.		
 		InternalPlatform.getDefault().stop(context);
 	}
+
 
 	private void stopRegistry(BundleContext context) {
 		context.removeBundleListener(this.pluginBundleListener);
@@ -170,7 +173,17 @@ public class PlatformActivator implements BundleActivator, ServiceListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		registerPluginConverter();
 		startRegistry(context);
+		
+	}
+
+	private void registerPluginConverter() {
+		ServiceRegistration converterRegistration = context.registerService(IPluginConverter.class.getName(), new PluginConverter(), null);
+	}
+	
+	private void unregisterPluginConverter() {
+		converterRegistration.unregister();
 	}
 
 	private void environmentInfoServiceReleased(ServiceReference reference) {
