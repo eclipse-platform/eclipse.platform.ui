@@ -28,7 +28,7 @@ import org.eclipse.jface.text.IDocument;
  * <li> {@link org.eclipse.jface.text.contentassist.ICompletionProposalExtension} since version 2.0 introducing 
  *		the following functions:
  *			<ul>
- *				<li> handling of trigger characters other then ENTER</li>
+ *				<li> handling of trigger characters other than ENTER</li>
  *				<li> completion proposal validation for a given offset</li>
  *				<li> context information can be freely positioned</li>
  *			</ul>
@@ -74,7 +74,7 @@ public interface ICompletionProposal {
 	 * A document change can trigger other document changes, which have
 	 * to be taken into account when calculating the new selection. Typically,
 	 * this would be done by installing a document listener or by using a
-	 * document position during apply().
+	 * document position during {@link #apply(IDocument)}.
 	 *
 	 * @param document the document into which the proposed completion has been inserted
 	 * @return the new selection in absolute document coordinates

@@ -16,8 +16,8 @@ import org.eclipse.jface.text.ITextViewer;
 
 
 /**
- * Extends {@link org.eclipse.jface.text.contentassist.ICompletionProposal} with 
- * the following functions:
+ * Extends {@link org.eclipse.jface.text.contentassist.ICompletionProposal} 
+ * with the following functions:
  * <ul>
  *	<li> handling of trigger characters with modifiers</li>
  *	<li> visual indication for selection of a proposal</li>
@@ -30,8 +30,8 @@ public interface ICompletionProposalExtension2 {
 	/**
 	 * Applies the proposed completion to the given document. The insertion
 	 * has been triggered by entering the given character with a modifier at the given offset.
-	 * This method assumes that <code>isValidFor</code> returns
-	 * <code>true</code> if called for <code>offset</code>.
+	 * This method assumes that {@link #validate(IDocument, int, DocumentEvent)}
+	 * returns <code>true</code> if called for <code>offset</code>.
 	 *
 	 * @param viewer the text viewer into which to insert the proposed completion
 	 * @param trigger the trigger to apply the completion

@@ -22,11 +22,11 @@ import org.eclipse.jface.text.ITextViewer;
  */
 public final class ContextInformationValidator implements IContextInformationValidator {
 	
-	/** The content assist processor */
+	/** The content assist processor. */
 	private IContentAssistProcessor fProcessor;
-	/** The context information to be validated */
+	/** The context information to be validated. */
 	private IContextInformation fContextInformation;
-	/** The associated text viewer */
+	/** The associated text viewer. */
 	private ITextViewer fViewer;
 
 	/**

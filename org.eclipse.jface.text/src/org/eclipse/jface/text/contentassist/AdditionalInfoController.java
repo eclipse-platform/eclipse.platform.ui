@@ -52,13 +52,13 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 	}
 	
 	
-	/** The proposal table */
+	/** The proposal table. */
 	private Table fProposalTable;
-	/** The thread controlling the delayed display of the additional info */
+	/** The thread controlling the delayed display of the additional info. */
 	private Thread fThread;
-	/** Indicates whether the display delay has been reset */
+	/** Indicates whether the display delay has been reset. */
 	private boolean fIsReset= false;
-	/** Object to synchronize display thread and table selection changes */
+	/** Object to synchronize display thread and table selection changes. */
 	private final Object fMutex= new Object();
 	/**
 	 * Thread access lock.

@@ -20,11 +20,11 @@ import org.eclipse.jface.text.Assert;
  */
 public final class ContextInformation implements IContextInformation {
 	
-	/** The name of the context */
+	/** The name of the context. */
 	private String fContextDisplayString;
-	/** The information to be displayed */
+	/** The information to be displayed. */
 	private String fInformationDisplayString;
-	/** The image to be displayed */
+	/** The image to be displayed. */
 	private Image fImage;
 
 	/**

@@ -14,10 +14,10 @@ import org.eclipse.jface.text.IDocument;
 
 
 /**
- * Extends {@link org.eclipse.jface.text.contentassist.ICompletionProposal} with 
- * the following functions:
+ * Extends {@link org.eclipse.jface.text.contentassist.ICompletionProposal} 
+ * with the following functions:
  * <ul>
- * 	<li> handling of trigger characters other then ENTER</li>
+ * 	<li> handling of trigger characters other than ENTER</li>
  * 	<li> completion proposal validation for a given offset</li>
  * 	<li> context information can be freely positioned</li>
  * </ul>
@@ -29,7 +29,7 @@ public interface ICompletionProposalExtension {
 	/**
 	 * Applies the proposed completion to the given document. The insertion
 	 * has been triggered by entering the given character at the given offset.
-	 * This method assumes that <code>isValidFor</code> returns
+	 * This method assumes that {@link #isValidFor(IDocument, int)} returns
 	 * <code>true</code> if called for <code>offset</code>.
 	 *
 	 * @param document the document into which to insert the proposed completion

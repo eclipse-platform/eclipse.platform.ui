@@ -53,9 +53,9 @@ import org.eclipse.jface.text.TextPresentation;
 class ContextInformationPopup implements IContentAssistListener {
 	
 	
-	
 	/**
 	 * Represents the state necessary for embedding contexts.
+	 * 
 	 * @since 2.0
 	 */
 	static class ContextFrame {
@@ -411,6 +411,7 @@ class ContextInformationPopup implements IContentAssistListener {
 		
 	/**
 	 * Resizes the context information popup.
+	 * 
 	 * @since 2.0
 	 */
 	private void resize() {
@@ -424,7 +425,7 @@ class ContextInformationPopup implements IContentAssistListener {
 	}
 	
 	/**
-	 *Hides the context information popup.
+	 * Hides the context information popup.
 	 */
 	private void hideContextInfoPopup() {
 		

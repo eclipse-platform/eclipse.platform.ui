@@ -15,8 +15,8 @@ import org.eclipse.jface.text.IInformationControlCreator;
 
 
 /**
- * Extends {@link org.eclipse.jface.text.contentassist.ICompletionProposal} with 
- * the following functions:
+ * Extends {@link org.eclipse.jface.text.contentassist.ICompletionProposal} 
+ * with the following functions:
  * <ul>
  *	<li>provision of a custom information control creator</li>
  *	<li>provide a custom completion text and offset for prefix completion</li> 
@@ -34,7 +34,7 @@ public interface ICompletionProposalExtension3 {
 	
 	/**
 	 * Returns the string that would be inserted at the position returned from
-	 * <code>getPrefixCompletionStart(IDocument, int)</code> if this proposal was
+	 * {@link #getPrefixCompletionStart(IDocument, int)} if this proposal was
 	 * applied. If the replacement string cannot be determined,
 	 * <code>null</code> may be returned.
 	 * <p>

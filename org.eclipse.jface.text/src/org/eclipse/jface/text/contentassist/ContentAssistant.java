@@ -826,6 +826,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	
 	/**
 	 * Installs and uninstall the listeners needed for auto-activation.
+	 * 
 	 * @param start <code>true</code> if listeners must be installed,
 	 * 	<code>false</code> if they must be removed
 	 * @since 2.0
@@ -1140,11 +1141,12 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * Returns whether the widget token could be acquired.
 	 * The following are valid listener types:
 	 * <ul>
-	 *   <li>AUTO_ASSIST
-	 *   <li>CONTEXT_SELECTOR
-	 *   <li>PROPOSAL_SELECTOR
-	 *   <li>CONTEXT_INFO_POPUP
-	 * <ul>
+	 *   <li>AUTO_ASSIST</li>
+	 *   <li>CONTEXT_SELECTOR</li>
+	 *   <li>PROPOSAL_SELECTOR</li>
+	 *   <li>CONTEXT_INFO_POPUP</li>
+	 * </ul>
+	 * 
 	 * @param type the listener type for which to acquire
 	 * @return <code>true</code> if the widget token could be acquired
 	 * @since 2.0
@@ -1174,11 +1176,11 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * Registers a content assist listener.
 	 * The following are valid listener types:
 	 * <ul>
-	 *   <li>AUTO_ASSIST
-	 *   <li>CONTEXT_SELECTOR
-	 *   <li>PROPOSAL_SELECTOR
-	 *   <li>CONTEXT_INFO_POPUP
-	 * <ul>
+	 *   <li>AUTO_ASSIST</li>
+	 *   <li>CONTEXT_SELECTOR</li>
+	 *   <li>PROPOSAL_SELECTOR</li>
+	 *   <li>CONTEXT_INFO_POPUP</li>
+	 * </ul>
 	 * Returns whether the listener could be added successfully. A listener
 	 * can not be added if the widget token could not be acquired.
 	 *
@@ -1234,11 +1236,11 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * is no longer necessary.
 	 * The following are valid listener types:
 	 * <ul>
-	 *   <li>AUTO_ASSIST
-	 *   <li>CONTEXT_SELECTOR
-	 *   <li>PROPOSAL_SELECTOR
-	 *   <li>CONTEXT_INFO_POPUP
-	 * <ul>
+	 *   <li>AUTO_ASSIST</li>
+	 *   <li>CONTEXT_SELECTOR</li>
+	 *   <li>PROPOSAL_SELECTOR</li>
+	 *   <li>CONTEXT_INFO_POPUP</li>
+	 * </ul>
 	 * 
 	 * @param type the listener type
 	 * @since 2.0

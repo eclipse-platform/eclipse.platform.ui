@@ -50,7 +50,7 @@ import org.eclipse.jface.text.TextUtilities;
  * information exists for a proposal, then selecting that proposal
  * will result in the information being displayed in a secondary
  * window.
- *
+ * 
  * @see org.eclipse.jface.text.contentassist.ICompletionProposal
  * @see org.eclipse.jface.text.contentassist.AdditionalInfoController
  */
@@ -82,37 +82,37 @@ class CompletionProposalPopup implements IContentAssistListener {
 		}
 	}
 
-	/** The associated text viewer */
+	/** The associated text viewer. */
 	private ITextViewer fViewer;
-	/** The associated content assistant */
+	/** The associated content assistant. */
 	private ContentAssistant fContentAssistant;
-	/** The used additional info controller */
+	/** The used additional info controller. */
 	private AdditionalInfoController fAdditionalInfoController;
-	/** The closing strategy for this completion proposal popup */
+	/** The closing strategy for this completion proposal popup. */
 	private PopupCloser fPopupCloser= new PopupCloser();
-	/** The popup shell */
+	/** The popup shell. */
 	private Shell fProposalShell;
-	/** The proposal table */
+	/** The proposal table. */
 	private Table fProposalTable;
-	/** Indicates whether a completion proposal is being inserted */
+	/** Indicates whether a completion proposal is being inserted. */
 	private boolean fInserting= false;
-	/** The key listener to control navigation */
+	/** The key listener to control navigation. */
 	private ProposalSelectionListener fKeyListener;
-	/** List of document events used for filtering proposals */
+	/** List of document events used for filtering proposals. */
 	private List fDocumentEvents= new ArrayList();
-	/** Listener filling the document event queue */
+	/** Listener filling the document event queue. */
 	private IDocumentListener fDocumentListener;
-	/** Reentrance count for <code>filterProposals</code> */
+	/** Reentrance count for filtered proposals. */
 	private long fInvocationCounter= 0;
-	/** The filter list of proposals */
+	/** The filter list of proposals. */
 	private ICompletionProposal[] fFilteredProposals;
-	/** The computed list of proposals */
+	/** The computed list of proposals. */
 	private ICompletionProposal[] fComputedProposals;
-	/** The offset for which the proposals have been computed */
+	/** The offset for which the proposals have been computed. */
 	private int fInvocationOffset;
-	/** The offset for which the computed proposals have been filtered */
+	/** The offset for which the computed proposals have been filtered. */
 	private int fFilterOffset;
-	/** The default line delimiter of the viewer's widget */
+	/** The default line delimiter of the viewer's widget, */
 	private String fLineDelimiter;
 	/**
 	 * The most recently selected proposal.
