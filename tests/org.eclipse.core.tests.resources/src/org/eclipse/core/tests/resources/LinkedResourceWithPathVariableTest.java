@@ -226,6 +226,10 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		assertExistsInWorkspace("3.5", file);
 		// the location is null
 		assertNull("3.6", file.getLocation());
+		
+		// try validating another link location while there is a link with null location
+		IFile other = existingProject.getFile("OtherVar");
+		getWorkspace().validateLinkLocation(other, getRandomLocation());
 
 		// re-creates the variable with its previous value
 		try {
