@@ -11,9 +11,9 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.internal.SubActionBars;
 import org.eclipse.ui.internal.misc.Assert;
 /**
- * This implemetation of <code>IPageSite</code> provides
- * a site for a page within a <code>PageBookView</code>. 
- * Most methods are forwarded to the view's site.
+ * This implementation of <code>IPageSite</code> provides a site for a page
+ * within a <code>PageBookView</code>. Most methods are forwarded to the view's
+ * site.
  */
 public class PageSite implements IPageSite {
 	/**

@@ -7,8 +7,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.SortedMap;
+import java.util.Map;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -28,11 +29,13 @@ import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.keybindings.KeyManager;
-import org.eclipse.ui.internal.keybindings.KeySequence;
-import org.eclipse.ui.internal.keybindings.KeyStroke;
-import org.eclipse.ui.internal.keybindings.MatchAction;
-import org.eclipse.ui.internal.keybindings.Util;
+import org.eclipse.ui.internal.actions.Util;
+import org.eclipse.ui.internal.actions.keybindings.Binding;
+import org.eclipse.ui.internal.actions.keybindings.KeyMachine;
+import org.eclipse.ui.internal.actions.keybindings.KeyManager;
+import org.eclipse.ui.internal.actions.keybindings.KeySequence;
+import org.eclipse.ui.internal.actions.keybindings.KeyStroke;
+import org.eclipse.ui.internal.actions.keybindings.Match;
 import org.eclipse.ui.internal.registry.IActionSet;
 
 /**
@@ -90,29 +93,35 @@ public class WWinKeyBindingService {
 		window.getActionBars().getStatusLineManager().setMessage(stringBuffer.toString());
 	}
 
-	public void clear() {
-		KeyManager.getInstance().setMode(KeySequence.create());
-		setStatusLineMessage(null);			
-		updateAccelerators();
+	public void clear() {		
+		KeyManager keyManager = KeyManager.getInstance();
+		KeyMachine keyMachine = keyManager.getKeyMachine();
+		
+		/*if (*/keyMachine.setMode(KeySequence.create());//) {
+			setStatusLineMessage(null);	
+			updateAccelerators();
+		//}
 	}
 	
 	public void pressed(KeyStroke keyStroke, Event event) { 
-		//System.out.println("pressed(" + stroke.getAccelerator() + ")");
-		KeySequence keySequence = KeySequence.create(keyStroke);
-		KeyManager keyManager = KeyManager.getInstance();			
-		SortedMap keySequenceMapForMode = keyManager.getKeyMachine().getKeySequenceMapForMode();
-		MatchAction matchAction = (MatchAction) keySequenceMapForMode.get(keySequence);
+		//System.out.println("pressed(" + keyStroke.getAccelerator() + ")");
+		KeyManager keyManager = KeyManager.getInstance();
+		KeyMachine keyMachine = keyManager.getKeyMachine();
+		Map keySequenceMapForMode = keyMachine.getKeySequenceMapForMode();
+		KeySequence mode = keyMachine.getMode();
+		List keyStrokes = new ArrayList(mode.getKeyStrokes());
+		keyStrokes.add(keyStroke);
+		KeySequence keySequence = KeySequence.create(keyStrokes);
+		SortedSet matchSet = (SortedSet) keySequenceMapForMode.get(keySequence);
 		
-		if (matchAction != null) {
-			clear();				
-			invoke(matchAction.getAction(), event);					
+		if (matchSet != null && matchSet.size() == 1) {
+			clear();
+			Match match = (Match) matchSet.iterator().next();				
+			invoke(match.getBinding().getAction(), event);					
 		} else {
-			KeySequence mode = keyManager.getMode();
-			List keyStrokes = new ArrayList(mode.getKeyStrokes());
-			keyStrokes.add(keyStroke);
-			mode = KeySequence.create(keyStrokes);
-			keyManager.setMode(mode);
-			setStatusLineMessage(mode);
+			keyMachine.setMode(keySequence);
+			setStatusLineMessage(keySequence);
+			keySequenceMapForMode = keyMachine.getKeySequenceMapForMode();
 			
 			if (keySequenceMapForMode.isEmpty())
 				clear();	
@@ -250,12 +259,24 @@ public class WWinKeyBindingService {
 		clear();
 
    		String[] newScopeIds = new String[0];
-   		
+  		
    		if (activeService != null)
    			newScopeIds = activeService.getScopeIds();
 
     	if (force || Util.compare(oldScopeIds, newScopeIds) != 0) {
-	    	KeyManager.getInstance().setScopes(newScopeIds);	    	   	
+			KeyManager keyManager = KeyManager.getInstance();
+			KeyMachine keyMachine = keyManager.getKeyMachine();
+	    	
+	    	// TBD: remove this later
+	    	if (newScopeIds == null || newScopeIds.length == 0)
+	    		newScopeIds = new String[] { "org.eclipse.ui.globalScope" };
+	    	
+	    	try {
+	    		keyMachine.setScopes(newScopeIds);
+	    	} catch (IllegalArgumentException eIllegalArgument) {
+	    		System.err.println(eIllegalArgument);
+	    	}
+	    			    	   	
 	    	WorkbenchWindow w = (WorkbenchWindow) getWindow();
    	 		MenuManager menuManager = w.getMenuManager();
  			menuManager.update(IAction.TEXT);
@@ -264,28 +285,49 @@ public class WWinKeyBindingService {
     /**
      * Returns the definition id for <code>accelerator</code>
      */
-    public String getDefinitionId(int[] accelerators) {
-    	if (accelerators == null || activeService == null) 
+    public String getDefinitionId(int accelerator) {
+    	if (activeService == null) 
     		return null;
-        
-    	KeyStroke[] keyStrokes = KeyStroke.create(accelerators);   
+
+		KeyManager keyManager = KeyManager.getInstance();
+		KeyMachine keyMachine = keyManager.getKeyMachine();        
+		KeySequence mode = keyMachine.getMode();
+		List keyStrokes = new ArrayList(mode.getKeyStrokes());
+		keyStrokes.add(KeyStroke.create(accelerator));
     	KeySequence keySequence = KeySequence.create(keyStrokes);    		
-		KeyManager keyManager = KeyManager.getInstance();			
-		SortedMap keySequenceMapForMode = keyManager.getKeyMachine().getKeySequenceMapForMode();
-		MatchAction matchAction = (MatchAction) keySequenceMapForMode.get(keySequence);
+		Map keySequenceMapForMode = keyMachine.getKeySequenceMapForMode();
+		SortedSet matchSet = (SortedSet) keySequenceMapForMode.get(keySequence);
+
+		if (matchSet != null && matchSet.size() == 1) {
+			Match match = (Match) matchSet.iterator().next();				
+			return match.getBinding().getAction();
+		}
 		
-		if (matchAction == null)
-			return null;
-			
-		return matchAction.getAction();
+		return null;
     }
 
 	/**
 	 * Update the KeyBindingMenu with the current set of accelerators.
 	 */
 	public void updateAccelerators() {
-	   	SortedSet keyStrokeSetForMode = (SortedSet) KeyManager.getInstance().getKeyMachine().getKeyStrokeSetForMode();
-	   	Iterator iterator = keyStrokeSetForMode.iterator();
+		KeyManager keyManager = KeyManager.getInstance();
+		KeyMachine keyMachine = keyManager.getKeyMachine();      		
+		KeySequence mode = keyMachine.getMode();
+		List keyStrokes = mode.getKeyStrokes();
+		int size = keyStrokes.size();
+		
+		Map keySequenceMapForMode = keyMachine.getKeySequenceMapForMode();
+		SortedSet keyStrokeSetForMode = new TreeSet();
+		Iterator iterator = keySequenceMapForMode.keySet().iterator();
+
+		while (iterator.hasNext()) {
+			KeySequence keySequence = (KeySequence) iterator.next();
+			
+			if (keySequence.isChildOf(mode))
+				keyStrokeSetForMode.add(keySequence.getKeyStrokes().get(size));	
+		}
+
+	   	iterator = keyStrokeSetForMode.iterator();
 	   	int[] accelerators = new int[keyStrokeSetForMode.size()];
 		int i = 0;
 			   	
@@ -326,9 +368,7 @@ public class WWinKeyBindingService {
 			}
 		});
 
-		KeySequence keySequence = KeyManager.getInstance().getMode();
-
-		if (keySequence.getKeyStrokes().size() == 0)
+		if (mode.getKeyStrokes().size() == 0)
 			accMenu.removeVerifyListener(verifyListener);
 		else
 			accMenu.addVerifyListener(verifyListener);

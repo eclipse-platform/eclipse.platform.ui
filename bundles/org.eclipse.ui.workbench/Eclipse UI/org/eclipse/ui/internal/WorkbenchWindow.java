@@ -11,6 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 
 import org.eclipse.core.resources.IContainer;
@@ -73,10 +74,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.keybindings.KeyManager;
-import org.eclipse.ui.internal.keybindings.KeySequence;
-import org.eclipse.ui.internal.keybindings.KeyStroke;
-import org.eclipse.ui.internal.keybindings.MatchAction;
+import org.eclipse.ui.internal.actions.keybindings.KeyManager;
+import org.eclipse.ui.internal.actions.keybindings.KeySequence;
+import org.eclipse.ui.internal.actions.keybindings.KeyStroke;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.registry.IActionSet;
 
@@ -567,10 +567,9 @@ protected MenuManager createMenuManager() {
 				if (accelerator != 0) {				
 					KeySequence keySequence = KeySequence.create(KeyStroke.create(accelerator));						
 					KeyManager keyManager = KeyManager.getInstance();
-					SortedMap keySequenceMapForMode = keyManager.getKeyMachine().getKeySequenceMapForMode();
-					MatchAction matchAction = (MatchAction) keySequenceMapForMode.get(keySequence);
+					Map keySequenceMapForMode = keyManager.getKeyMachine().getKeySequenceMapForMode();
 
-					if (matchAction == null)
+					if (keySequenceMapForMode.get(keySequence) == null)
 						return null;
 				}
 
@@ -596,10 +595,9 @@ protected MenuManager createMenuManager() {
 				if (accelerator != 0) {				
 					KeySequence keySequence = KeySequence.create(KeyStroke.create(accelerator));						
 					KeyManager keyManager = KeyManager.getInstance();
-					SortedMap keySequenceMapForMode = keyManager.getKeyMachine().getKeySequenceMapForMode();
-					MatchAction matchAction = (MatchAction) keySequenceMapForMode.get(keySequence);
-					
-					if (matchAction == null)
+					Map keySequenceMapForMode = keyManager.getKeyMachine().getKeySequenceMapForMode();
+
+					if (keySequenceMapForMode.get(keySequence) == null)
 						return null;
 				}
 
@@ -631,7 +629,7 @@ protected MenuManager createMenuManager() {
 				return text;
 				
 			char altChar = Character.toUpperCase(text.charAt(index + 1));
-			String defId = keyBindingService.getDefinitionId(new int[]{SWT.ALT | altChar});
+			String defId = keyBindingService.getDefinitionId(SWT.ALT | altChar);
 			if(defId == null)
 				return text;
 				

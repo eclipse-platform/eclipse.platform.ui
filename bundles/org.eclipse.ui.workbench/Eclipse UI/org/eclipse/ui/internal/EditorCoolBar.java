@@ -693,7 +693,7 @@ public class EditorCoolBar {
 		}
 	
 		public void destroyControl() {
-			if(shortcutTable == null)
+			if(shortcutTable == null || shortcutTable.isDisposed())
 				return;
 			ViewForm parent = (ViewForm) shortcutTable.getParent();
 			parent.setContent(null);

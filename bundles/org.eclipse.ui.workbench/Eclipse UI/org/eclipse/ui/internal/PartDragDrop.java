@@ -5,10 +5,10 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
 
 /**
  * Controls the drag and drop of an editor or view
@@ -19,9 +19,7 @@ import org.eclipse.swt.widgets.*;
  * @see PartDropEvent
  * @see LayoutPart
  */
-public class PartDragDrop extends Object
-	implements MouseMoveListener, MouseListener
-{
+public class PartDragDrop extends Object {
 	// Define the relative position
 	public static final int INVALID    = 0;
 	public static final int LEFT       = 1;
@@ -46,17 +44,44 @@ public class PartDragDrop extends Object
 	
 	private int xAnchor;
 	private int yAnchor;
-	private boolean mouseDown = false;
+	private boolean isDragAllowed = false;
 
 	private IPartDropListener[] dropListeners;
+	private MouseMoveListener mouseMoveListener;
+	private MouseListener mouseListener;
+	private Listener dragListener;
 /**
  * Constructs a new drag drop.
  */
 public PartDragDrop(LayoutPart dragPart, Control dragHandle) {
 	sourcePart = dragPart;
 	dragControl = dragHandle;     
-	dragControl.addMouseListener(this);
-	dragControl.addMouseMoveListener(this);
+	dragListener = new Listener() {
+		public void handleEvent(Event event) {
+			Point position = event.display.getCursorLocation();
+			Control control = event.display.getCursorControl();
+			if (control != null) {
+				isDragAllowed(control.toControl(position));
+			}
+		}
+	};
+	dragControl.addListener(SWT.DragDetect, dragListener);
+	mouseMoveListener = new MouseMoveListener() {
+		public void mouseMove(MouseEvent event) {
+			handleMouseMove(event);
+		}
+	};
+	dragControl.addMouseMoveListener(mouseMoveListener);
+	mouseListener = new MouseListener() {
+		public void mouseDoubleClick(MouseEvent e) {
+			handleMouseDoubleClick(e);
+		}
+		public void mouseDown(MouseEvent e) {}
+		public void mouseUp(MouseEvent e) {
+			handleMouseUp(e);
+		}
+	};
+	dragControl.addMouseListener(mouseListener);
 }
 /**	 
  * Adds the listener to receive events.
@@ -148,8 +173,9 @@ private PartDropEvent createDropEvent(Tracker tracker) {
 public void dispose() {
 	// Get rid of control.
 	if (dragControl != null && !dragControl.isDisposed()){
-		dragControl.removeMouseMoveListener(this);
-		dragControl.removeMouseListener(this);
+		dragControl.removeMouseMoveListener(mouseMoveListener);
+		dragControl.removeMouseListener(mouseListener);
+		dragControl.removeListener(SWT.DragDetect, dragListener);		
 	}
 	dragControl = null;
 
@@ -263,34 +289,10 @@ protected boolean hasMovedEnough(MouseEvent e) {
 	else
 		return true;	
 }
-/**
- * @see MouseListener::mouseDoubleClick
- */
-public void mouseDoubleClick(MouseEvent e) {
-	mouseDown = false;
+protected void handleMouseDoubleClick(MouseEvent e) {
+	isDragAllowed = false;
 }
-/**
- * @see MouseListener::mouseDown
- */
-public void mouseDown(MouseEvent e) {
-	// track left button only.
-	if (e.button != 1 || sourcePart == null) 
-		return;
-	if (getSourceBounds().width == 0 || getSourceBounds().height == 0)
-		return;
-	if (!sourcePart.isDragAllowed(new Point(e.x,e.y)))
-		return;
-	// remember anchor position for hysteresis in mouseMove
-	xAnchor = e.x;
-	yAnchor = e.y;
-
-	mouseDown = true;
-}
-/**
- * @see MouseMoveListener::mouseMove
- */
-public void mouseMove(MouseEvent e) {
-	
+protected void handleMouseMove(MouseEvent e) {
 	// If the mouse is not down or the mouse has moved only a small amount
 	// ignore the move.
 	// Bug 9004: If a previous MouseDown event caused a dialog to open, 
@@ -299,7 +301,7 @@ public void mouseMove(MouseEvent e) {
 	// that the mouse button is still pressed.
 	// Can not use a focus listener since the dragControl may not actually 
 	// receive focus on a MouseDown.
-	if (!mouseDown || (e.stateMask & SWT.BUTTON1) == 0)
+	if (!isDragAllowed)
 		return;
 	if (!hasMovedEnough(e))
 		return;
@@ -310,6 +312,21 @@ public void mouseMove(MouseEvent e) {
 		return;
 		
 	openTracker();
+}
+/**
+ * Called when a drag operation has been requested.
+ *  * @param position mouse cursor location relative to the control 
+ * 	underneath the cursor */
+protected void isDragAllowed(Point position) {
+	if(sourcePart == null)
+		return;
+	if (getSourceBounds().width == 0 || getSourceBounds().height == 0)
+		return;
+	if (!sourcePart.isDragAllowed(position))
+		return;
+	isDragAllowed = true;	
+	xAnchor = position.x;
+	yAnchor = position.y;
 }
 /**
  * Open a tracker (a XOR rect on the screen) change
@@ -348,7 +365,7 @@ public void openTracker() {
 	if (!(sourceControl instanceof Shell)) {
 		sourcePos = sourceControl.getParent().toDisplay(sourcePos);
 	}	
-	if(mouseDown) {
+	if(isDragAllowed) {
 		Point anchorPos = dragControl.toDisplay(new Point(xAnchor, yAnchor));
 		Point cursorPos = display.getCursorLocation();
 		sourceBounds.x = sourcePos.x - (anchorPos.x - cursorPos.x);
@@ -362,7 +379,7 @@ public void openTracker() {
 		
 	// Run tracker until mouse up occurs or escape key pressed.
 	boolean trackingOk = tracker.open();
-	mouseDown = false;
+	isDragAllowed = false;
 		
 	// Generate drop event.  
 	PartDropEvent event = createDropEvent(tracker);
@@ -395,8 +412,8 @@ public void openTracker() {
 /**
  * @see MouseListener::mouseUp
  */
-public void mouseUp(MouseEvent e) {
-	mouseDown = false;
+protected void handleMouseUp(MouseEvent e) {
+	isDragAllowed = false;
 }
 /**	 
  * Removes the listener.

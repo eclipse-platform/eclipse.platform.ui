@@ -113,7 +113,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private ViewRegistry viewRegistry;
 	private PerspectiveRegistry perspRegistry;
 	private org.eclipse.ui.internal.actions.Registry actionRegistry;
-	private org.eclipse.ui.internal.keybindings.Registry keyBindingRegistry;
+	private org.eclipse.ui.internal.actions.keybindings.Registry keyBindingRegistry;
 	private CapabilityRegistry capabilityRegistry;
 	private ActionSetRegistry actionSetRegistry;
 	private SharedImages sharedImages;
@@ -400,7 +400,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD, false);
 		store.setDefault(IPreferenceConstants.SAVE_INTERVAL, 5); //5 minutes
 		store.setDefault(IPreferenceConstants.WELCOME_DIALOG, true);
-		store.setDefault(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, true);
 		store.setDefault(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP, false);
 		store.setDefault(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT, false);
 		store.setDefault(IPreferenceConstants.REUSE_EDITORS_BOOLEAN, false);
@@ -447,6 +446,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IWorkbenchPreferenceConstants.ALTERNATE_OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
 		store.setDefault(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
 		store.setDefault(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID, IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID);
+		store.setDefault(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, true);
 		
 		store.addPropertyChangeListener(new PlatformUIPreferenceListener());
 	}

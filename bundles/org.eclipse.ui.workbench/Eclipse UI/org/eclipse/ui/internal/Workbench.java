@@ -42,6 +42,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -89,9 +91,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.internal.actions.keybindings.Configuration;
+import org.eclipse.ui.internal.actions.keybindings.KeyManager;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
-import org.eclipse.ui.internal.keybindings.Configuration;
-import org.eclipse.ui.internal.keybindings.KeyManager;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
 import org.eclipse.update.configuration.IConfiguredSite;
@@ -777,7 +779,9 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		if (id == null)
 			id = IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID;
 
-		KeyManager.getInstance().setConfiguration(id);
+		KeyManager keyManager = KeyManager.getInstance();
+		keyManager.getKeyMachine().setConfiguration(id);
+		keyManager.update();
 	}
 	/**
 	 * Initialize the workbench fonts with the stored values.
@@ -1503,7 +1507,20 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		if (configuration != null) {
 			acceleratorConfiguration = configuration; 
  			String id = configuration.getId();						
-			KeyManager.getInstance().setConfiguration(id);
+			KeyManager keyManager = KeyManager.getInstance();
+			keyManager.getKeyMachine().setConfiguration(id);
+			keyManager.update();		
+			IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
+			
+			if (workbenchWindow != null && workbenchWindow instanceof WorkbenchWindow) {
+				WWinKeyBindingService wWinKeyBindingService = ((WorkbenchWindow) workbenchWindow).getKeyBindingService();
+			
+				if (wWinKeyBindingService != null)
+					wWinKeyBindingService.clear();					
+			
+				MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();
+ 				menuManager.update(IAction.TEXT);
+			}
 		}	
 	}
 

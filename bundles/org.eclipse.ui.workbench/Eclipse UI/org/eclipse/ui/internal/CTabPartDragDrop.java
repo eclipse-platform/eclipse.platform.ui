@@ -4,12 +4,9 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.*;
+import org.eclipse.swt.custom.*;
+import org.eclipse.swt.graphics.*;
 
 /**
  * Controls the drag and drop of the part
@@ -31,31 +28,28 @@ protected CTabFolder getCTabFolder() {
 protected Rectangle getSourceBounds() {
 	return PartTabFolder.calculatePageBounds(getCTabFolder());
 }
-/**
- * @see MouseListener::mouseDown
- */
-public void mouseDown(MouseEvent e) {
-	if (e.button != 1) return;
-
-	// Verify that the tab under the mouse pointer
-	// is the same as for this drag operation
+/** * Verifies that the tab under the mouse pointer is the same 
+ * as for this drag operation
+ * 
+ * @see org.eclipse.ui.internal.PartDragDrop#isDragAllowed(Point) */
+protected void isDragAllowed(Point position) {
 	CTabFolder tabFolder = getCTabFolder();
-	CTabItem tabUnderPointer = tabFolder.getItem(new Point(e.x, e.y));
+	CTabItem tabUnderPointer = tabFolder.getItem(position);
 	if (tabUnderPointer != tab)
 		return;
 	if(tabUnderPointer == null) {
 		//Avoid drag from the borders.
 		Rectangle clientArea = tabFolder.getClientArea();
 		if((tabFolder.getStyle() & SWT.TOP) != 0) {
-			if(e.y > clientArea.y)
+			if(position.y > clientArea.y)
 				return;
 		} else {
-			if(e.y < clientArea.y + clientArea.height)
+			if(position.y < clientArea.y + clientArea.height)
 				return;
 		}
 	}
 
-	super.mouseDown(e);
+	super.isDragAllowed(position);
 }
 public void setTab(CTabItem newTab) {
 	tab = newTab;

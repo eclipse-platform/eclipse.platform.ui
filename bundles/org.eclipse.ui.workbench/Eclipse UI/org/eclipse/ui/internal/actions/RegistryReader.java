@@ -65,22 +65,24 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 	}
 
 	private boolean readActionDefinition(IConfigurationElement element) {
-		String id = element.getAttribute(ATTRIBUTE_ID);
-		String name = element.getAttribute(ATTRIBUTE_NAME);
 		String description = element.getAttribute(ATTRIBUTE_DESCRIPTION);
 		String icon = element.getAttribute(ATTRIBUTE_ICON);
-			
-		if (id == null)
-			logMissingAttribute(element, ATTRIBUTE_ID);
-		
-		if (name == null)
-			logMissingAttribute(element, ATTRIBUTE_NAME);
-		
-		if (description == null)
-			logMissingAttribute(element, ATTRIBUTE_DESCRIPTION);
+		String id = element.getAttribute(ATTRIBUTE_ID);
 
+		if (id == null) {
+			logMissingAttribute(element, ATTRIBUTE_ID);
+			return true;
+		}
+
+		String name = element.getAttribute(ATTRIBUTE_NAME);
+		
+		if (name == null) {
+			logMissingAttribute(element, ATTRIBUTE_NAME);
+			return true;
+		}
+		
 		String plugin = getPlugin(element);
-		Action action = Action.create(id, name, description, icon, plugin);
+		Action action = Action.create(id, name, description, icon, plugin);			
 		registry.addAction(action);
 		return true;
 	}
