@@ -120,15 +120,15 @@ public Object getSessionProperty(QualifiedName name) {
 		return null;
 	return temp.get(name);
 }
-public byte[] getSyncInfo(QualifiedName id, boolean makeCopy) {
+public synchronized byte[] getSyncInfo(QualifiedName id, boolean makeCopy) {
 	// thread safety: (Concurrency001)
-	HashMap temp = syncInfo;
-	if (temp == null)
+	byte[] b;
+	if (syncInfo == null)
 		return null;
-	byte[] b = (byte[]) temp.get(id);
+	b = (byte[]) syncInfo.get(id);
 	return b == null ? null : (makeCopy ? (byte[]) b.clone() : b);
 }
-public HashMap getSyncInfo(boolean makeCopy) {
+public synchronized HashMap getSyncInfo(boolean makeCopy) {
 	if (syncInfo == null)
 		return null;
 	return makeCopy ? (HashMap) syncInfo.clone() : syncInfo;
