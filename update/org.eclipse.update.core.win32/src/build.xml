@@ -2,6 +2,9 @@
 <project name="buildlibrary" default="run" basedir="."> 
   
   <!-- The properties ${eclipse-home} ${jdk-path} should be passed into this script -->
+  <!-- The Path should point to the bin directory of BCC55 -->
+  <!-- http://www.borland.com/products/downloads/download_cbuilder.html -->
+  
   <!-- Set a meaningful default value for when it is not. -->
   <property name="eclipse-home" value="${basedir}/../.."/>
   <property name="jdk-path" value="${java.home}"/>  

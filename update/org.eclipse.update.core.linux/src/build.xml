@@ -47,7 +47,7 @@
     <property name="header-path" value="${jdk-path}/include"/>
     <property name="header-linux-path" value="${header-path}/linux" />
 
-	<echo message="gcc -o  ${library-file} -shared -I${src-path} -I${header-windows-path} ${library-file} -static -lc"/>
+	<echo message="gcc -o  ${library-file} -shared -I${src-path} -I${header-linux-path} ${library-file} -static -lc"/>
 
     <apply executable="gcc" dest="${eclipse-home}/" parallel="false">
       <arg value="-o"/>
