@@ -24,7 +24,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -264,7 +263,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	/**
 	 * Tells whether the page shows it's result as a tree or as a 
 	 * table.
-	 * @see AbstractTextSearchViewPage#configureTreeViewer(AbstractTreeViewer);
+	 * @see AbstractTextSearchViewPage#configureTreeViewer(TreeViewer);
 	 * @see AbstractTextSearchViewPage#configureTableViewer(TableViewer);
 	 * @return Whether the page shows a tree or a table.
 	 */
