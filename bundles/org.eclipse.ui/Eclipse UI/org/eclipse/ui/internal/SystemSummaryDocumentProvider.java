@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.model.PluginFragmentModel;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.AbstractDocumentProvider;
 import org.eclipse.update.configuration.IActivity;
 import org.eclipse.update.configuration.IInstallConfiguration;
@@ -91,6 +92,7 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 		PrintWriter writer = new PrintWriter(out);
 		appendTimestamp(writer);
 		appendProperties(writer);
+		appendFeatures(writer);
 		appendRegistry(writer);
 		appendUpdateManagerLog(writer);
 		appendLog(writer);
@@ -130,6 +132,34 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 		}
 	}
 	
+	/*
+	 * Appends the installed, configured features.
+	 */
+	private void appendFeatures(PrintWriter writer) {
+		writer.println();
+		writer.println("*** Features:"); //$NON-NLS-1$
+
+		AboutInfo[] featuresArray = ((Workbench)PlatformUI.getWorkbench()).getFeaturesInfo();
+		SortedSet set= new TreeSet(new Comparator() {
+			public int compare(Object o1, Object o2) {
+				String s1= ((AboutInfo)o1).getFeatureId();
+				String s2= ((AboutInfo)o2).getFeatureId();
+				return s1.compareTo(s2);
+			}
+		});
+		for(int i= 0, length= featuresArray.length; i < length; i++) {
+			set.add(featuresArray[i]);
+		}
+		Iterator i= set.iterator();
+		while(i.hasNext()) {
+			AboutInfo info = (AboutInfo)i.next();
+			writer.print(info.getFeatureId());
+			writer.print(" (");
+			writer.print(info.getVersion());
+			writer.println(")");
+		}
+	}	
+
 	/*
 	 * Appends the contents of the Plugin Registry.
 	 */
