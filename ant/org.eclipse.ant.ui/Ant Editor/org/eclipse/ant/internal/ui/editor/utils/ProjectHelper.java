@@ -62,6 +62,7 @@ public class ProjectHelper extends ProjectHelper2 {
 	private File buildFile= null;
 	
 	private static String currentEntityName= null;
+	private static String currentEntityPath= null;
 	
 	private static int currentImportStackSize= 1;
 	
@@ -370,7 +371,12 @@ public class ProjectHelper extends ProjectHelper2 {
 			InputSource source= super.resolveEntity(publicId, systemId);
 			if (source != null) {
 				String path = getFileUtils().fromURI(source.getSystemId());
-				getAntModel().addEntity(currentEntityName, path);
+				if (currentEntityName == null) {
+					currentEntityPath= path;
+				} else {
+					getAntModel().addEntity(currentEntityName, path);
+					currentEntityName= null;
+				}
 			}
 			return source;
 		}
@@ -428,7 +434,12 @@ public class ProjectHelper extends ProjectHelper2 {
 		 * @see org.xml.sax.ext.LexicalHandler#startEntity(java.lang.String)
 		 */
 		public void startEntity(String name) throws SAXException {
-			currentEntityName= name;
+			if (currentEntityPath == null) {
+				currentEntityName= name;
+			} else {
+				getAntModel().addEntity(name, currentEntityPath);
+				currentEntityPath= null;
+			}
 		}
 
 		/* (non-Javadoc)
