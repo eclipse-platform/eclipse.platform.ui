@@ -4303,9 +4303,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (!legalModes.contains(mode))
 				legalModes.add(mode);
 		} else if (legalModes.size() > 1) {
-			if (getInsertMode() == mode) {
-				
-			}
+			if (getInsertMode() == mode)
+				switchToNextInsertMode();
 			legalModes.remove(mode);
 		}
 	}
