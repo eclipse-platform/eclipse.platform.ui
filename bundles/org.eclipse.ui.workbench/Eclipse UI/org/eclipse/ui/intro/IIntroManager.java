@@ -14,16 +14,18 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * Manages the intro part that introduces the product to new users.
- * The intro part is typically shown the first time a product is started up.  
- * The basic workbench does not handle the initial behaviour of its intro part.  
- * This may be done by adding relevant code in {@link org.eclipse.ui.application.WorkbenchAdvisor#preStartup()}
- * or {@link org.eclipse.ui.application.WorkbenchAdvisor#preWindowOpen(IWorkbenchWindowConfigurer)} 
- * (among other places).  The IDE application will automatically launch the
- * intro part on first startup.
- *  
+ * The intro part is typically shown the first time a product is started up.
+ * <p>
+ * The initial behavior of the intro part is controlled by the application
+ * from its workbench adviser (typically by code in the advisor's
+ * {@link org.eclipse.ui.application.WorkbenchAdvisor#preStartup()}
+ * or {@link org.eclipse.ui.application.WorkbenchAdvisor#preWindowOpen(IWorkbenchWindowConfigurer)})
+ * methods.
+ * </p>
+ * <p>
  * See {@link org.eclipse.ui.intro.IIntroPart} for details on where intro parts
  * come from.
- * 
+ * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
@@ -83,12 +85,14 @@ public interface IIntroManager {
      * mode, the part should be partially visible to the user but otherwise
      * allow them to work. In full mode, the part should be fully visible and
      * be the center of the user's attention.
+     * <p>
+     * This method does nothing if the part is <code>null</code> or is not 
+     * the intro part returned by {@link #getIntro()}.
+     * </p>
      * 
-     * @param part the intro part
+     * @param part the intro part, or <code>null</code>
      * @param standby <code>true</code> to put the part in its partially
 	 * visible standy mode, and <code>false</code> to make it fully visible.  
-	 * This method does nothing if part is <code>null</code> or it is not 
-     * the intro part returned by {@link #getIntro()}.
      */
     public void setIntroStandby(IIntroPart part, boolean standby);
 
@@ -102,9 +106,8 @@ public interface IIntroManager {
      * @param <code>true</code> to put the intro part in its partially
 	 * visible standy mode, and <code>false</code> to make it fully visible
      * @return the newly-created or existing intro part, or <code>null</code>
-     * if no intro part is available.  <code>null</code> is returned if 
-     * preferredWindow is <code>null</code> and there is no currently active 
-     * workbench window.
+     * if no intro part is available or if <code>preferredWindow</code> is
+     * <code>null</code> and there is no currently active workbench window
      */
     public IIntroPart showIntro(IWorkbenchWindow preferredWindow,
             boolean standby);
