@@ -1085,6 +1085,29 @@ public IProject getProject();
  */
 public IPath getProjectRelativePath();
 /**
+ * Returns the file system location of this resource, or <code>null</code> if no
+ * path can be determined.  The returned path will either be an absolute file
+ * system path, or a relative path whose first segment is the name of a
+ * workspace path variable.
+ * <p>
+ * If this resource is an existing project, the returned path will be equal to
+ * the location path in the project description.  If this resource is a linked
+ * resource, the returned path will be equal to the location path supplied when
+ * the linked resource was created.  In all other cases, this method returns
+ * the same value as <code>getLocation</code>.
+ * </p>
+ * 
+ * @return the raw path of this resource in the local file system,  or
+ * <code>null</code> if no path can be determined
+ * @see #getLocation
+ * @see IFile#createLink
+ * @see IFolder#createLink
+ * @see IPathVariableManager
+ * @see IProjectDescription#getLocation
+ * @since 2.1
+ */
+public IPath getRawLocation();
+/**
  * Returns the value of the session property of this resource identified
  * by the given key, or <code>null</code> if this resource has no such property.
  *

@@ -590,11 +590,8 @@ protected void copyTree(IResource source, IPath destination, int depth, boolean 
 		newInfo.set(ICoreConstants.M_LINK);
 		//create new link location
 		Project project = (Project)destinationResource.getProject();
-		project.internalGetDescription().setLinkLocation(destinationResource.getName(), new LinkDescription(destinationResource, source.getLocation()));
-		project.writeDescription(IResource.NONE);
-		//remove old link location
-		project = (Project)source.getProject();
-		project.internalGetDescription().setLinkLocation(source.getName(), null);
+		project.internalGetDescription().setLinkLocation(destinationResource.getName(), 
+			new LinkDescription(destinationResource, source.getLocation()));
 		project.writeDescription(IResource.NONE);
 	}
 

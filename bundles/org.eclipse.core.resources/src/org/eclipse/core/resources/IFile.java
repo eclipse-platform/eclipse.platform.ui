@@ -297,14 +297,18 @@ public void create(InputStream source, int updateFlags, IProgressMonitor monitor
 /**
  * Creates a new file resource as a member of this handle's parent resource.
  * The file's contents will be located in the file specified by the given
- * file system path.
+ * file system path.  The given path must be either an absolute file system
+ * path, or a relative path whose first segment is the name of a workspace path
+ * variable.
  * <p>
  * The <code>ALLOW_MISSING_LOCAL</code> update flag controls how this 
  * method deals with cases where the local file system file to be linked does
- * not exist.  If <code>ALLOW_MISSING_LOCAL</code> is specified, the
- * operation will suceed even if the local file is missing.  If 
- * <code>ALLOW_MISSING_LOCAL</code> is not specified, the operation
- * will fail in the case where the local file system file does not exist.
+ * not exist, or is relative to a workspace path variable that is not defined.
+ * If <code>ALLOW_MISSING_LOCAL</code> is specified, the operation will suceed
+ * even if the local file is missing, or the path is relative to an undefined
+ * variable. If <code>ALLOW_MISSING_LOCAL</code> is not specified, the operation
+ * will fail in the case where the local file system file does not exist or the
+ * path is relative to an undefined variable.
  * </p>
  * <p>
  * Update flags other than <code>ALLOW_MISSING_LOCAL</code> are ignored.
@@ -337,8 +341,9 @@ public void create(InputStream source, int updateFlags, IProgressMonitor monitor
  * <li> The parent of this resource is not an open project</li>
  * <li> The name of this resource is not valid (according to 
  *    <code>IWorkspace.validateName</code>).</li>
- * <li> The corresponding location in the local file system does not exist
- * 	and <code>ALLOW_MISSING_LOCAL</code> is not specified.</li>
+ * <li> The corresponding location in the local file system does not exist, or
+ * is relative to an undefined variable, and <code>ALLOW_MISSING_LOCAL</code> is
+ * not specified.</li>
  * <li> The corresponding location in the local file system is occupied
  *    by a directory (as opposed to a file).</li>
  * <li> Resource changes are disallowed during certain types of resource change 

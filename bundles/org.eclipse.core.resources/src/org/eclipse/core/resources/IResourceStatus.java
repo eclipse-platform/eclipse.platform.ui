@@ -218,6 +218,13 @@ public interface IResourceStatus extends IStatus {
  	 * @since 2.1
  	 */
 	public static final int LINKING_NOT_ALLOWED = 378;
+
+	/** Status code constant (value 379) indicating that a workspace path 
+	 * variable unexpectedly does not exist.
+	 *  Severity: error. Category: workspace.
+	 * @since 2.1
+	 */
+	public static final int VARIABLE_NOT_DEFINED = 379;
 	
 
 	// Internal constants [500-598]

@@ -343,6 +343,13 @@ public IProject getProject() {
 public IPath getProjectRelativePath() {
 	return Path.EMPTY;
 }
+/**
+ * @see IResource#getRawLocation
+ */
+public IPath getRawLocation() {
+	ProjectDescription description = internalGetDescription();
+	return description == null ? null : description.getLocation();
+}
 /*
  * @see IProject
  */
@@ -842,6 +849,8 @@ public void writeDescription(IProjectDescription description, int updateFlags) t
 		isWritingDescription = false;
 	}
 }
+
+
 
 
 }

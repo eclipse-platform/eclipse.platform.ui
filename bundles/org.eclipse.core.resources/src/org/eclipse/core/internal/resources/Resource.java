@@ -87,16 +87,25 @@ protected void assertLinkRequirements(IPath localLocation, int updateFlags) thro
 		Assert.isLegal(false, msg);
 	}
 	parent.checkAccessible(getFlags(parent.getResourceInfo(false, false)));
-	java.io.File localFile = localLocation.toFile();
-	boolean localExists = localFile.exists();
-	if ((updateFlags & IResource.ALLOW_MISSING_LOCAL) == 0 && !localExists) {
-		String msg = Policy.bind("links.localDoesNotExist", localFile.toString());//$NON-NLS-1$
-		throw new ResourceException(IResourceStatus.NOT_FOUND_LOCAL, getFullPath(), msg, null);
-	}
-	//resource type and file system type must match
-	if (localExists && ((getType() == IResource.FOLDER) != localFile.isDirectory())) {
-		String msg = Policy.bind("links.wrongLocalType", getFullPath().toString());//$NON-NLS-1$
-		throw new ResourceException(IResourceStatus.WRONG_TYPE_LOCAL, getFullPath(), msg, null);
+	boolean allowMissingLocal = (updateFlags & IResource.ALLOW_MISSING_LOCAL) != 0;
+	if (localLocation.isAbsolute()) {
+		java.io.File localFile = localLocation.toFile();
+		boolean localExists = localFile.exists();
+		if (!allowMissingLocal && !localExists) {
+			String msg = Policy.bind("links.localDoesNotExist", localFile.toString());//$NON-NLS-1$
+			throw new ResourceException(IResourceStatus.NOT_FOUND_LOCAL, getFullPath(), msg, null);
+		}
+		//resource type and file system type must match
+		if (localExists && ((getType() == IResource.FOLDER) != localFile.isDirectory())) {
+			String msg = Policy.bind("links.wrongLocalType", getFullPath().toString());//$NON-NLS-1$
+			throw new ResourceException(IResourceStatus.WRONG_TYPE_LOCAL, getFullPath(), msg, null);
+		}
+	} else {
+		//relative paths are considered to be variable-relative paths
+		if (!allowMissingLocal) {
+			String msg = Policy.bind("links.variableNotDefined", getFullPath().toString());//$NON-NLS-1$
+			throw new ResourceException(IResourceStatus.VARIABLE_NOT_DEFINED, getFullPath(), msg, null);
+		}
 	}
 	//check nature veto
 	String[] natureIds = ((Project)getProject()).internalGetDescription().getNatureIds();
@@ -790,6 +799,14 @@ public PropertyManager getPropertyManager() {
 	return workspace.getPropertyManager();
 }
 /**
+ * @see IResource#getRawLocation
+ */
+public IPath getRawLocation() {
+	if (isLinked())
+		return ((Project)getProject()).internalGetDescription().getLinkLocation(getName());
+	return getLocation();
+}
+/**
  * Returns the resource info.  Returns null if the resource doesn't exist.
  * If the phantom flag is true, phantom resources are considered.
  * If the mutable flag is true, a mutable info is returned.
@@ -1231,7 +1248,7 @@ public boolean isDerived(int flags) {
 	return flags != NULL_FLAG && ResourceInfo.isSet(flags, ICoreConstants.M_DERIVED);
 }
 /**
- * @see org.eclipse.core.resources.IResource#isLinked()
+ * @see IResource#isLinked()
  */
 public boolean isLinked() {
 	ResourceInfo info = getResourceInfo(false, false);

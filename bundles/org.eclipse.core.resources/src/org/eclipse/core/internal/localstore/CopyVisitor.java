@@ -65,7 +65,7 @@ protected boolean copy(UnifiedTreeNode node) {
 protected boolean copyContents(UnifiedTreeNode node, Resource source, Resource destination) {
 	try {
 		if (!isDeep && source.isLinked()) {
-			destination.createLink(source.getLocation(), updateFlags, null);
+			destination.createLink(source.getLocation(), updateFlags & IResource.ALLOW_MISSING_LOCAL, null);
 			return false;
 		}
 		if (destination.getType() == IResource.FOLDER) {
@@ -78,10 +78,12 @@ protected boolean copyContents(UnifiedTreeNode node, Resource source, Resource d
 		long lastModified = node.getLastModified();
 		ResourceInfo destinationInfo = destination.getResourceInfo(false, true);
 		destinationInfo.setLocalSyncInfo(lastModified);
+		//if it's a deep copy of a link, need to clear the linked flag
 		destinationInfo.clear(ICoreConstants.M_LINK);
-		destination.getLocation().toFile().setLastModified(lastModified);
+		IPath destinationLocation = destination.getLocation();
+		destinationLocation.toFile().setLastModified(lastModified);
 		// update file attributes
-		CoreFileSystemLibrary.copyAttributes(source.getLocation().toOSString(), destination.getLocation().toOSString(), false);
+		CoreFileSystemLibrary.copyAttributes(source.getLocation().toOSString(), destinationLocation.toOSString(), false);
 	} catch (CoreException e) {
 		status.add(e.getStatus());
 	}

@@ -305,9 +305,12 @@ public boolean isSynchronized(IResource resource, int depth) {
 }
 public void link(Resource target, IPath localLocation) {
 	//resource already exists when linking -- just need to update sync info
-	long lastModified = CoreFileSystemLibrary.getLastModified(localLocation.toFile().getAbsolutePath());
+	long lastModified = 0;
+	//a relative path means location is relative to an undefined variable
+	if (localLocation.isAbsolute())
+		lastModified = CoreFileSystemLibrary.getLastModified(localLocation.toFile().getAbsolutePath());
 	ResourceInfo info = ((Resource) target).getResourceInfo(false, true);
-	updateLocalSync(info, lastModified, false);
+	updateLocalSync(info, lastModified, target.getType() == IResource.FILE);
 }
 
 public IPath locationFor(IResource target) {
@@ -320,7 +323,9 @@ public IPath locationFor(IResource target) {
 			Project project = (Project) target.getProject();
 			ProjectDescription description = project.internalGetDescription();
 			if (description != null && description.getLocation() != null) {
-				return workspace.getPathVariableManager().resolvePath(description.getLocation());
+				IPath resolved = workspace.getPathVariableManager().resolvePath(description.getLocation());
+				//if location is still relative then the variable was not defined
+				return resolved != null && resolved.isAbsolute() ? resolved : null;
 			}
 			return getProjectDefaultLocation(project);
 		default:
@@ -338,12 +343,19 @@ public IPath locationFor(IResource target) {
 				//location may have been deleted from the project description between sessions
 				if (location != null) {
 					location = workspace.getPathVariableManager().resolvePath(location);
+					//if location is still relative then the variable was not defined
+					if (!location.isAbsolute())
+						return null;
 					return location.append(targetPath.removeFirstSegments(2));
 				}
 			}
 			//not a linked resource -- get location of project
 			if (description != null && description.getLocation() != null) {
-				return workspace.getPathVariableManager().resolvePath(description.getLocation()).append(target.getProjectRelativePath());
+				IPath resolved = workspace.getPathVariableManager().resolvePath(description.getLocation());
+				//if location is still relative then the variable was not defined
+				if (!resolved.isAbsolute())
+					return null;
+				return resolved.append(target.getProjectRelativePath());
 			} else {
 				return Platform.getLocation().append(target.getFullPath());
 			}
