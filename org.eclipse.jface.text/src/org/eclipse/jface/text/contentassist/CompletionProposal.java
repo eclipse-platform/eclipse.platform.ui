@@ -66,7 +66,7 @@ public final class CompletionProposal implements ICompletionProposal {
 	 * @param cursorPosition the position of the cursor following the insert relative to replacementOffset
 	 * @param image the image to display for this proposal
 	 * @param displayString the string to be displayed for the proposal
-	 * @param contentInformation the context information associated with this proposal
+	 * @param contextInformation the context information associated with this proposal
 	 * @param additionalProposalInfo the additional information associated with this proposal
 	 */
 	public CompletionProposal(String replacementString, int replacementOffset, int replacementLength, int cursorPosition, Image image, String displayString, IContextInformation contextInformation, String additionalProposalInfo) {
