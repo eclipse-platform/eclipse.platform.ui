@@ -96,7 +96,7 @@
                value="org.eclipse.team.target=basic">
          </filter>      
          <action      
-            menubarPath="team.main/targetGroup"
+            menubarPath="replaceWithMenu/replaceWithGroup"
             class="org.eclipse.team.internal.ui.target.GetAction"
             id="org.eclipse.team.target.getAction"
             label="%Deployment.getAction">
