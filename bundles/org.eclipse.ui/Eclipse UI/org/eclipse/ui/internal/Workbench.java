@@ -1132,11 +1132,4 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		return WorkbenchPlugin.getDefault().getDecoratorManager();
 	}
 
-	/**
-	 * @see IWorkbench#getCombinedDecoratorManager()
-	 */
-	public ICombinedLabelDecorator getCombinedDecoratorManager() {
-		return (ICombinedLabelDecorator) WorkbenchPlugin.getDefault().getDecoratorManager();
-	}
-
 }

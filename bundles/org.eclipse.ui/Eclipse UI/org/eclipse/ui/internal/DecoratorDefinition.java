@@ -23,7 +23,7 @@ public class DecoratorDefinition {
 	private String name;
 	private String objectClass;
 	private String description;
-	private IBaseLabelProvider decorator;
+	private ILabelDecorator decorator;
 	private boolean enabled = false;
 	private boolean adaptable;
 	private String id;
@@ -100,12 +100,12 @@ public class DecoratorDefinition {
 	/**
 	 * Gets the decorator. Throws a CoreException if there is a problem
 	 * creating the decorator.
-	 * @return Returns a IBaseLabelProvider
+	 * @return Returns a ILabelDecorator
 	 */
-	public IBaseLabelProvider getDecorator() throws CoreException {
+	public ILabelDecorator getDecorator() throws CoreException {
 		if (decorator == null)
 			decorator =
-				(IBaseLabelProvider) WorkbenchPlugin.createExtension(
+				(ILabelDecorator) WorkbenchPlugin.createExtension(
 					element,
 					WizardsRegistryReader.ATT_CLASS);
 
@@ -117,7 +117,7 @@ public class DecoratorDefinition {
 	 * Sets the decorator.
 	 * @param decorator The decorator to set
 	 */
-	public void setDecorator(IBaseLabelProvider decorator) {
+	public void setDecorator(ILabelDecorator decorator) {
 		this.decorator = decorator;
 	}
 
@@ -143,7 +143,7 @@ public class DecoratorDefinition {
 				getDecorator().addListener(manager);
 			else {
 				if (decorator != null) {
-					IBaseLabelProvider cached = decorator;
+					ILabelDecorator cached = decorator;
 					cached.removeListener(manager);
 					//Clear the decorator before disposing
 					decorator = null;
@@ -187,8 +187,30 @@ public class DecoratorDefinition {
 		this.enabled = false;
 	}
 
-	
-
+	/**
+	 * Decorate the image provided for the element type.
+	 * Return null if there is no image or if an error occurs.
+	 */
+	Image decorateImage(Image image, Object element) {
+		try {
+			return getDecorator().decorateImage(image, element);
+		} catch (CoreException exception) {
+			handleCoreException(exception);
+		}
+		return null;
+	}	
+	/**
+	 * Decorate the text provided for the element type.
+	 * Return null if there is no text or if there is an exception.
+	 */
+	String decorateText(String text, Object element) {
+		try {
+			return getDecorator().decorateText(text, element);
+		} catch (CoreException exception) {
+			handleCoreException(exception);
+		}
+		return null;
+	}
 	/**
 	 * Decorate the text and the image provided for the element type.
 	 * If the decorator for the receiver is an instance of 
@@ -196,29 +218,26 @@ public class DecoratorDefinition {
 	 * time - otherwise call the decorateText and decorateImage
 	 * seperately. 
 	 */
-	void decorateLabel(Object element, CombinedLabel decorationResult) {
+	void decorateLabel(
+		Object element,
+		CombinedLabel decorationResult) {
 		try {
-			IBaseLabelProvider decorator = getDecorator();
+			ILabelDecorator decorator = getDecorator();
 		} catch (CoreException exception) {
 			handleCoreException(exception);
 			return;
 		}
-
-		//If it is combined do it combined
 		if (decorator instanceof ICombinedLabelDecorator)
-			((ICombinedLabelDecorator) decorator).decorateLabel(element, decorationResult);
-
+			((ICombinedLabelDecorator) decorator).decorateLabel(
+				element,
+				decorationResult);
 		else {
-			//If not do it seperate if it is an ILabelDecorator
-			if (decorator instanceof ILabelDecorator) {
-				ILabelDecorator labelDecorator = (ILabelDecorator) this.decorator;
-				String newText = labelDecorator.decorateText(decorationResult.getText(), element);
-				Image newImage = labelDecorator.decorateImage(decorationResult.getImage(), element);
-				if (newText != null)
-					decorationResult.setText(newText);
-				if (newImage != null)
-					decorationResult.setImage(newImage);
-			}
+			String newText = decorator.decorateText(decorationResult.getText(), element);
+			Image newImage = decorator.decorateImage(decorationResult.getImage(), element);
+			if (newText != null)
+				decorationResult.setText(newText);
+			if (newImage != null)
+				decorationResult.setImage(newImage);
 		}
 	}
 

@@ -192,9 +192,9 @@ public class ResourceNavigator
 		viewer.setUseHashlookup(true);
 		viewer.setContentProvider(new WorkbenchContentProvider());
 		viewer.setLabelProvider(
-			new CombinedDecoratingLabelProvider(
+			new DecoratingLabelProvider(
 				new WorkbenchLabelProvider(), 
-				getPlugin().getWorkbench().getCombinedDecoratorManager()));
+				getPlugin().getWorkbench().getDecoratorManager()));
 		viewer.addFilter(this.patternFilter);
 		
 		IWorkingSet workingSet = getSite().getPage().getWorkingSet();

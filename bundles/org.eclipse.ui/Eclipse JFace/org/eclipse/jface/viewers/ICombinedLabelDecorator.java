@@ -4,8 +4,7 @@ package org.eclipse.jface.viewers;
  * The ICombinedLabelDecorator is a label decorator that allows
  * decoration of the image and text at the same time.
  */
-
-public interface ICombinedLabelDecorator extends IBaseLabelProvider{
+public interface ICombinedLabelDecorator extends ILabelDecorator {
 
 	/**
 	 * Decorates the label for an element by modifying the text and/or 
@@ -18,6 +17,5 @@ public interface ICombinedLabelDecorator extends IBaseLabelProvider{
 	 * @param label the label to decorate
 	 */
 	public void decorateLabel(Object element, CombinedLabel label);
-
 
 }

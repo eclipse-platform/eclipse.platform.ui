@@ -93,7 +93,7 @@ public class DecoratorManager
 
 	/**
 	 * Decorate the text provided for the element type.
-	 * @return null if there are none defined for this type.
+	 * Return null if there are none defined for this type.
 	 */
 	public String decorateText(String text, Object element) {
 		return decorateText(text, element, true);
@@ -137,16 +137,29 @@ public class DecoratorManager
 	/**
 	 * Decorate the text provided for the element type.
 	 * Check for an adapted resource if checkAdapted is true.
-	 * @return null if there are none defined for this type.
+	 * Return null if there are none defined for this type.
 	 */
 	private String decorateText(
 		String text,
 		Object element,
 		boolean checkAdapted) {
 
-		CombinedLabel result = new CombinedLabel(text,null);
-		decorateLabel(element,result,checkAdapted);
-		return result.getText();
+		DecoratorDefinition[] decorators = getDecoratorsFor(element);
+		String result = text;
+		for (int i = 0; i < decorators.length; i++) {
+			String newResult = decorators[i].decorateText(result, element);
+			if (newResult != null)
+				result = newResult;
+		}
+
+		if (checkAdapted) {
+			//Get any adaptions to IResource
+			Object adapted = getResourceAdapter(element);
+			if (adapted != null)
+				result = decorateText(result, adapted, false);
+		}
+
+		return result;
 	}
 
 	/**
@@ -167,9 +180,22 @@ public class DecoratorManager
 		Object element,
 		boolean checkAdapted) {
 
-		CombinedLabel result = new CombinedLabel(null,image);
-		decorateLabel(element,result,checkAdapted);
-		return result.getImage();
+		DecoratorDefinition[] decorators = getDecoratorsFor(element);
+		Image result = image;
+		for (int i = 0; i < decorators.length; i++) {
+			Image newResult = decorators[i].decorateImage(result, element);
+			if (newResult != null)
+				result = newResult;
+		}
+
+		if (checkAdapted) {
+			//Get any adaptions to IResource
+			Object adapted = getResourceAdapter(element);
+			if (adapted != null)
+				result = decorateImage(result, adapted, false);
+		}
+
+		return result;
 	}
 
 	/**

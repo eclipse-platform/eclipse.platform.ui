@@ -362,9 +362,4 @@ public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow win
  */
 public ILabelDecorator getDecoratorManager();
 
-/**
- * Returns an ICombinedLabelDecorator version of the 
- * decorator manager
- */
-public ICombinedLabelDecorator getCombinedDecoratorManager();
 }
