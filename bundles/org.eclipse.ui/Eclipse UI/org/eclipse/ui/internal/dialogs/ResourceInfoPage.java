@@ -123,7 +123,8 @@ protected Control createContents(Composite parent) {
 	// layout the page
 	IResource resource = (IResource) getElement();
 	this.readOnlyValue = resource.isReadOnly();
-	this.derivedValue = resource.isDerived();
+	if(resource.getType()!= IResource.PROJECT)
+		this.derivedValue = resource.isDerived();
 
 	// top level group
 	Composite composite = new Composite(parent, SWT.NONE);
@@ -223,7 +224,10 @@ private void createStateGroup(Composite parent, IResource resource) {
 	timeStampValue.setText(getDateStringValue(resource));
 
 	createEditableButton(composite);
-	createDerivedButton(composite);
+	
+	//Not relevant to projects
+	if(resource.getType() != IResource.PROJECT)
+		createDerivedButton(composite);
 }
 /**
  * Return the value for the date String for the timestamp of the supplied resource.
@@ -289,8 +293,12 @@ protected void performDefaults() {
 	IResource resource = (IResource) getElement();
 	this.readOnlyValue = false;
 	this.editableBox.setSelection(this.readOnlyValue);
-	this.derivedValue = false;
-	this.derivedBox.setSelection(this.derivedValue);
+	
+	//Nothing to update if we never made the box
+	if(this.derivedBox != null){
+		this.derivedValue = false;
+		this.derivedBox.setSelection(this.derivedValue);
+	}
 }
 /** 
  * Apply the read only state to the resource.
@@ -298,14 +306,17 @@ protected void performDefaults() {
 public boolean performOk() {
 	IResource resource = (IResource) getElement();
 	resource.setReadOnly(editableBox.getSelection());
-	try{
-		resource.setDerived(derivedBox.getSelection());
-	}
-	catch (CoreException exception){
-		MessageDialog.openError(getShell(), WorkbenchMessages.getString("InternalError"), exception.getLocalizedMessage()); //$NON-NLS-1$
-		return false;
-	}
-		
+	
+	//Nothing to update if we never made the box
+	if(this.derivedBox != null){
+		try{
+			resource.setDerived(derivedBox.getSelection());
+		}
+		catch (CoreException exception){
+			MessageDialog.openError(getShell(), WorkbenchMessages.getString("InternalError"), exception.getLocalizedMessage()); //$NON-NLS-1$
+			return false;
+		}
+	}		
 	return true;
 }
 }
