@@ -4,12 +4,22 @@ package org.eclipse.jface.viewers;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.*;
-import java.util.*;
-import java.util.List; // Otherwise ambiguous
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.TreeEvent;
+import org.eclipse.swt.events.TreeListener;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.ListenerList;
 
 /**
  * Abstract base implementation for tree-structure-oriented viewers
@@ -48,7 +58,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 * the viewer's input is changed (that is, by <code>setInput</code>).
 	 * A value of 0 means that auto-expand is off.
 	 *
-	 * @see setAutoExpandLevel
+	 * @see #setAutoExpandLevel
 	 */
 	private int expandToLevel = 0;
 /**
@@ -830,7 +840,7 @@ private void internalRefresh(Widget widget, Object element, boolean doStruct) {
 		if (doStruct) {
 			updatePlus((Item)widget, element);
 		}	
-		updateItem((Item)widget, element);
+		updateItem(widget, element);
 	}
 
 	if (doStruct) {
@@ -855,7 +865,7 @@ private void internalRefresh(Widget widget, Object element, boolean doStruct) {
  */
 private void internalRemove(Object[] elements) {
 	Object input = getInput();
-	Set parentItems = new HashSet(5);
+	HashSet parentItems = new HashSet(5);
 	for (int i = 0; i < elements.length; ++i) {
 		if (elements[i].equals(input)) {
 			setInput(null);
@@ -891,7 +901,7 @@ private void internalRemove(Object[] elements) {
  * @param expandedElements the set (element type: <code>Object</code>) of elements which are expanded
  * @param widget the widget
  */
-private void internalSetExpanded(Set expandedElements, Widget widget) {
+private void internalSetExpanded(HashSet expandedElements, Widget widget) {
 	Item[] items = getChildren(widget);
 	for (int i = 0; i < items.length; i++) {
 		Item item = items[i];
@@ -1023,7 +1033,7 @@ private Item rightMostVisibleDescendent(Item item) {
  * Method declared on Viewer.
  */
 public Item scrollDown(int x, int y) {
-	Item current = (Item)getItem(x, y);
+	Item current = getItem(x, y);
 	if (current != null) {
 		Item next = getNextItem(current, true);
 		showItem(next == null ? current : next);
@@ -1035,7 +1045,7 @@ public Item scrollDown(int x, int y) {
  * Method declared on Viewer.
  */
 public Item scrollUp(int x, int y) {
-	Item current = (Item)getItem(x, y);
+	Item current = getItem(x, y);
 	if (current != null) {
 		Item previous = getPreviousItem(current);
 		showItem(previous == null ? current : previous);
@@ -1085,7 +1095,7 @@ protected abstract void setExpanded(Item item, boolean expand);
  * @see #getExpandedElements
  */
 public void setExpandedElements(Object[] elements) {
-	Set expandedElements = new HashSet(elements.length*2+1);
+	HashSet expandedElements = new HashSet(elements.length*2+1);
 	for (int i = 0; i < elements.length; ++i) {
 		// Ensure item exists for element
 		internalExpand(elements[i], false);
@@ -1145,6 +1155,8 @@ protected abstract void showItem(Item item);
 /**
  * Updates the tree items to correspond to the child elements of the given parent element.
  * If null is passed for the children, this method obtains them (only if needed).
+ * This method avoids calling <code>updatePlus</code> or <code>updateItem</code>, 
+ * leaving this to be done by the calling method (i.e. internalRefresh).
  *
  * @param widget the widget
  * @param parent the parent element
@@ -1225,7 +1237,7 @@ protected void updateChildren(Widget widget, Object parent, Object[] elementChil
 	// compare first min items, and update item if necessary
 	// need to do it in two passes:
 	// 1: disassociate old items
-	// 2: associate and update new items
+	// 2: associate new items
 	// because otherwise a later disassociate can remove a mapping made for a previous associate,
 	// making the map inconsistent
 	for (int i = 0; i < min; ++i) {
@@ -1250,8 +1262,8 @@ protected void updateChildren(Widget widget, Object parent, Object[] elementChil
 		if (item.getData() == null) {
 			Object newElement = elementChildren[i];
 			associate(newElement, item);
-			updatePlus(item, newElement);
-			updateItem(item, newElement);
+//			updatePlus(item, newElement);
+//			updateItem(item, newElement);
 			// Restore expanded state for items that changed position.
 			// Make sure setExpanded is called after updatePlus, since
 			// setExpanded(false) fails if item has no children.
@@ -1259,9 +1271,10 @@ protected void updateChildren(Widget widget, Object parent, Object[] elementChil
 		}
 	}
 	
-	// add any remaining elements
+	// add any remaining elements (without updating the items)
 	for (int i = min; i < elementChildren.length; ++i) {
-		createTreeItem(widget, elementChildren[i], i);
+		Item item = newItem(widget, SWT.NULL, i);
+		associate(elementChildren[i], item);
 	}
 	
 	// WORKAROUND
@@ -1315,10 +1328,11 @@ protected void updatePlus(Item item, Object element) {
 }
 
 /**
- * Get the expanded elements that are visible
+ * Gets the expanded elements that are visible
  * to the user. An expanded element is only
  * visible if the parent is expanded.
- * @return Collection of Object
+ * 
+ * @return the visible expanded elements
  * @since 2.0
  */
 public Object[] getVisibleExpandedElements() {
@@ -1327,7 +1341,7 @@ public Object[] getVisibleExpandedElements() {
 	return v.toArray();
 }
 	
-private void internalCollectVisibleExpanded(Collection result, Widget widget){
+private void internalCollectVisibleExpanded(ArrayList result, Widget widget){
 	Item[] items = getChildren(widget);
 	for (int i = 0; i < items.length; i++) {
 		Item item = items[i];
