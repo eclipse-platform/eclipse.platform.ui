@@ -583,11 +583,15 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		String prop = event.getProperty();
-		if(prop.equals(TeamUI.GLOBAL_IGNORES_CHANGED)) {
-			refresh();
-		} else if(prop.equals(CVSUIPlugin.P_DECORATORS_CHANGED)) {
-			refresh();
-		}		
+		if (isEventOfInterest(event)) {
+		    refresh();
+		}	
 	}
+
+    private boolean isEventOfInterest(PropertyChangeEvent event) {
+        String prop = event.getProperty();
+        return prop.equals(TeamUI.GLOBAL_IGNORES_CHANGED) 
+        	|| prop.equals(TeamUI.GLOBAL_FILE_TYPES_CHANGED) 
+        	|| prop.equals(CVSUIPlugin.P_DECORATORS_CHANGED);
+    }
 }

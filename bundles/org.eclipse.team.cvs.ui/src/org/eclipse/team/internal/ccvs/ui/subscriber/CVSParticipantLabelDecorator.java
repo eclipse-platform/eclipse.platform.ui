@@ -22,6 +22,7 @@ import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.ui.CVSLightweightDecorator;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
+import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -32,6 +33,7 @@ class CVSParticipantLabelDecorator extends LabelProvider implements IPropertyCha
 		this.configuration = configuration;
 		// Listen for decorator changed to refresh the viewer's labels.
 		CVSUIPlugin.addPropertyChangeListener(this);
+		TeamUI.addPropertyChangeListener(this);
 	}
 	
 	public String decorateText(String input, Object element) {
@@ -59,7 +61,7 @@ class CVSParticipantLabelDecorator extends LabelProvider implements IPropertyCha
 	}
 	public void propertyChange(PropertyChangeEvent event) {
 		String property = event.getProperty();
-		if(property.equals(CVSUIPlugin.P_DECORATORS_CHANGED)) {
+		if(property.equals(CVSUIPlugin.P_DECORATORS_CHANGED) || property.equals(TeamUI.GLOBAL_FILE_TYPES_CHANGED)) {
 			Viewer viewer = configuration.getPage().getViewer();
 			if(viewer instanceof StructuredViewer && !viewer.getControl().isDisposed()) {
 				((StructuredViewer)viewer).refresh(true);
@@ -68,6 +70,7 @@ class CVSParticipantLabelDecorator extends LabelProvider implements IPropertyCha
 	}
 	public void dispose() {
 		CVSUIPlugin.removePropertyChangeListener(this);
+		TeamUI.removePropertyChangeListener(this);
 	}
 	
 	protected String getRevisionNumber(ISynchronizeModelElement element) {

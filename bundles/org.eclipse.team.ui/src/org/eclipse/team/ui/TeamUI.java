@@ -27,6 +27,8 @@ public class TeamUI {
 	 * Property constant indicating the global ignores list has changed. 
 	 */
 	public static String GLOBAL_IGNORES_CHANGED = TeamUIPlugin.ID + "global_ignores_changed"; //$NON-NLS-1$
+	
+	public static String GLOBAL_FILE_TYPES_CHANGED = TeamUIPlugin.ID + "global_file_types_changed"; //$NON-NLS-1$
 
 	/**
 	 * Return the synchronize manager.

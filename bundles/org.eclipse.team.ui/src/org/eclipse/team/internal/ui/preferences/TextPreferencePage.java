@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
@@ -26,8 +27,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.IFileTypeInfo;
 import org.eclipse.team.core.Team;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.IHelpContextIds;
 import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.ui.TeamUI;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -286,6 +289,7 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 			i++;
 		}
 		Team.setAllTypes(extensions, types);
+		TeamUIPlugin.broadcastPropertyChange(new PropertyChangeEvent(this, TeamUI.GLOBAL_FILE_TYPES_CHANGED, null, null));
 		return true;
 	}
 	/**
