@@ -827,7 +827,7 @@
                relationship="stack">
          </view>
          <view
-               relative="org.eclipse.ui.views.ResourceNavigator"
+               relative="org.eclipse.team.sync.views.SynchronizeView"
                visible="false"
                id="org.eclipse.team.ccvs.ui.RepositoriesView"
                relationship="stack">

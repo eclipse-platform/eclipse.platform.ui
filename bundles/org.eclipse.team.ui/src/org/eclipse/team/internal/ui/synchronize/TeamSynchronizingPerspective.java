@@ -55,6 +55,9 @@ public class TeamSynchronizingPerspective implements IPerspectiveFactory {
 		String editorArea = layout.getEditorArea();
 		IFolderLayout top = layout.createFolder("top", IPageLayout.LEFT, 0.25f, editorArea);	//$NON-NLS-1$
 		top.addView(SynchronizeView.VIEW_ID);
+		IFolderLayout top2 = layout.createFolder("top2", IPageLayout.BOTTOM, 0.80f, editorArea);	//$NON-NLS-1$
+		top2.addView(IPageLayout.ID_TASK_LIST);
+		top2.addView(IPageLayout.ID_PROBLEM_VIEW);
 		layout.setEditorAreaVisible(true);
 	}
 }
