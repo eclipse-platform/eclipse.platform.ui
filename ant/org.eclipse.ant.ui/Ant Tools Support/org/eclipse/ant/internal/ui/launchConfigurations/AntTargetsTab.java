@@ -35,6 +35,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -487,7 +488,12 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 					}
 				};
 				
-				PlatformUI.getWorkbench().getProgressService().runInUI(getLaunchConfigurationDialog(), operation, AntUtil.getFileForLocation(expandedLocation, null));
+				IRunnableContext context= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+				if (context == null) {
+				    context= getLaunchConfigurationDialog();
+				}
+
+				PlatformUI.getWorkbench().getProgressService().runInUI(context, operation, AntUtil.getFileForLocation(expandedLocation, null));
 			} catch (CoreException ce) {
 				exceptions[0]= ce;
 			} catch (InvocationTargetException e) {
