@@ -103,7 +103,7 @@ class ChecklistLabelProvider extends LabelProvider {
  */
 public ChecklistView() {
 	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
-	model.addSiteModelChangedListener(this);
+	model.addUpdateModelChangedListener(this);
 	//eclipseImage = UpdateUIPluginImages.DESC_ECLIPSE_OBJ.createImage();
 	//uninstallsImage = UpdateUIPluginImages.DESC_UNINSTALL_OBJ.createImage();
 	folderImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
@@ -162,7 +162,7 @@ private void updateTotalSize(int size) {
 
 public void dispose() {
 	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
-	model.removeSiteModelChangedListener(this);
+	model.removeUpdateModelChangedListener(this);
 	featureImage.dispose();
 	super.dispose();
 }

@@ -11,6 +11,8 @@ import org.eclipse.swt.ole.win32.*;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.update.internal.ui.*;
 import java.util.*;
+import org.eclipse.update.ui.internal.model.*;
+import org.eclipse.update.core.IFeature;
 
 
 public class EmbeddedBrowser implements IUpdateFormPage {
@@ -28,10 +30,54 @@ public class EmbeddedBrowser implements IUpdateFormPage {
 		return input;
 	}
 	
-	class UninstallURLAction implements IURLAction {
+	ModelChangedListener modelListener = new ModelChangedListener();
+	
+	class ModelChangedListener implements IUpdateModelChangedListener {
+			/**
+		 * @see IUpdateModelChangedListener#objectAdded(Object, Object)
+		 */
+		public void objectAdded(Object parent, Object child) {
+			if (child instanceof ChecklistJob) {
+				ChecklistJob job = (ChecklistJob)child;
+				if (job.getFeature().equals(getInput()))
+				   openTo(input);
+			}
+		}
+
+		/**
+		 * @see IUpdateModelChangedListener#objectRemoved(Object, Object)
+		 */
+		public void objectRemoved(Object parent, Object child) {
+			if (child instanceof ChecklistJob) {
+				ChecklistJob job = (ChecklistJob)child;
+				if (job.getFeature().equals(getInput()))
+				   openTo(input);
+			}
+		}
+
+		/**
+		 * @see IUpdateModelChangedListener#objectChanged(Object, String)
+		 */
+		public void objectChanged(Object object, String property) {
+			if (object.equals(input))
+			   openTo(input);
+		}
+
+}	
+	
+	class ScheduleURLAction implements IURLAction {
 		public void run(Hashtable params) {
-			System.out.println("Uninstall: "+params.toString());
-			System.out.println("Input: "+input.toString());
+			String mode = (String)params.get("mode");
+			if (mode==null) mode = "install";
+			int jobMode = ChecklistJob.INSTALL;
+			if (mode.equals("uninstall")) 
+			   jobMode = ChecklistJob.UNINSTALL;
+			if (input instanceof IFeature) {
+				IFeature feature = (IFeature)input;
+				ChecklistJob job = new ChecklistJob(feature, jobMode);
+				UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+				model.addJob(job);
+			}
 		}
 	}
 	
@@ -70,8 +116,10 @@ public class EmbeddedBrowser implements IUpdateFormPage {
 	 * @see IUpdateFormPage#init(Object)
 	 */
 	public void init(Object model) {
-		UninstallURLAction uninstallURLAction = new UninstallURLAction();
-		UpdateUIPlugin.getDefault().registerURLAction("uninstall", uninstallURLAction);
+		ScheduleURLAction scheduleURLAction = new ScheduleURLAction();
+		UpdateModel updateModel = UpdateUIPlugin.getDefault().getUpdateModel();
+		updateModel.addUpdateModelChangedListener(modelListener);
+		UpdateUIPlugin.getDefault().registerURLAction("schedule", scheduleURLAction);
 	}
 
 	/**
@@ -202,7 +250,9 @@ public class EmbeddedBrowser implements IUpdateFormPage {
 	}
 	
 	public void dispose() {
-		UpdateUIPlugin.getDefault().unregisterURLAction("uninstall");
+		UpdateUIPlugin.getDefault().unregisterURLAction("schedule");
+		UpdateModel updateModel = UpdateUIPlugin.getDefault().getUpdateModel();
+		updateModel.removeUpdateModelChangedListener(modelListener);
 		if (browser!=null) browser.dispose();
 	}
 	

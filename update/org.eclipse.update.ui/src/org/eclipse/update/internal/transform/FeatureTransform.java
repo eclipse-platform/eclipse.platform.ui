@@ -1,6 +1,6 @@
 package org.eclipse.update.internal.transform;
 
-import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.*;
 import org.eclipse.update.ui.internal.model.*;
 import java.io.*;
 import java.net.URL;
@@ -13,8 +13,29 @@ public class FeatureTransform extends AbstractTransform {
 	public static final String KEY_IMAGE = "image";
 	public static final String KEY_DESCRIPTION = "description";
 	public static final String KEY_INFO_URL = "infoURL";
+	public static final String KEY_SCHEDULE_LABEL = "scheduleLabel";
+	public static final String KEY_NOW_LABEL = "nowLabel";
+	public static final String KEY_MODE_PAR = "modePar";
+	public static final int INSTALL = 0;
+	public static final int UNINSTALL = 1;
+	public static final int UPDATE = 2;
+	
+	private static final String [] modePars = { "install", "uninstall", "update" };
 	
 	private String defaultImage = getHTMLBase()+"/images/provider.gif";
+	
+	private int getMode(IFeature feature) {
+		ISite site = feature.getSite();
+		if (site instanceof ILocalSite)
+		   return UNINSTALL;
+		return INSTALL;
+	}
+	
+	public String getModeParameter(IFeature feature) {
+		int mode = getMode(feature);
+		return modePars[mode];
+	}
+		
 	
 	/**
 	 * @see AbstractTransform#getValue(String)
@@ -32,6 +53,23 @@ public class FeatureTransform extends AbstractTransform {
 		   return getFeatureImage(feature);
 		if (key.equals(KEY_DESCRIPTION))
 		   return feature.getDescription();
+		if (key.equals(KEY_SCHEDULE_LABEL)) {
+			int mode = getMode(feature);
+			if (mode == UNINSTALL)
+			   return "Schedule Uninstall";
+			else
+			   return "Schedule Install";
+		}
+		if (key.equals(KEY_NOW_LABEL)) {
+			int mode = getMode(feature);
+			if (mode == UNINSTALL)
+			   return "Uninstall Now!";
+			else
+				return "Install Now!";
+		}
+		if (key.equals(KEY_MODE_PAR)) {
+			return getModeParameter(feature);
+		}
 		return super.getValue(input, key);
 	}
 	private String getFeatureImage(IFeature feature) {

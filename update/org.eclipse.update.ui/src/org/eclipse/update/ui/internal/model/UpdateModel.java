@@ -72,12 +72,12 @@ public class UpdateModel {
 		return (SiteBookmark[])bookmarks.toArray(new SiteBookmark[bookmarks.size()]);
 	}
 	
-	public void addSiteModelChangedListener(IUpdateModelChangedListener listener) {
+	public void addUpdateModelChangedListener(IUpdateModelChangedListener listener) {
 		if (!listeners.contains(listener)) 
 		   listeners.add(listener);
 	}
 
-	public void removeSiteModelChangedListener(IUpdateModelChangedListener listener) {
+	public void removeUpdateModelChangedListener(IUpdateModelChangedListener listener) {
 		if (listeners.contains(listener))
 			listeners.remove(listener);
 	}

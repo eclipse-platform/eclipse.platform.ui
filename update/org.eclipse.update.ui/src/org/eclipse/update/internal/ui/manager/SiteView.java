@@ -66,13 +66,13 @@ class SiteLabelProvider extends LabelProvider {
  */
 public SiteView() {
 	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
-	model.addSiteModelChangedListener(this);
+	model.addUpdateModelChangedListener(this);
 	siteImage = UpdateUIPluginImages.DESC_SITE_OBJ.createImage();
 }
 
 public void dispose() {
 	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
-	model.removeSiteModelChangedListener(this);	
+	model.removeUpdateModelChangedListener(this);	
 	siteImage.dispose();
 	super.dispose();
 }
