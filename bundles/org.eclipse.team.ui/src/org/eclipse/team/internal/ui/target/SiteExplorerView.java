@@ -10,23 +10,21 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ui.target;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -45,12 +43,7 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -61,9 +54,8 @@ import org.eclipse.team.core.target.IRemoteTargetResource;
 import org.eclipse.team.core.target.ISiteListener;
 import org.eclipse.team.core.target.Site;
 import org.eclipse.team.core.target.TargetManager;
-import org.eclipse.team.core.target.TargetProvider;
-import org.eclipse.team.internal.ui.DetailsDialog;
 import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.ui.IActionBars;
@@ -257,23 +249,21 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 		
 		newFolderAction = new Action(Policy.bind("SiteExplorerView.newFolderAction"), WorkbenchImages.getImageDescriptor(org.eclipse.ui.ISharedImages.IMG_OBJ_FOLDER)) { //$NON-NLS-1$
 			public void run() {
-				Shell shell = treeViewer.getTree().getShell();
+				final Shell shell = treeViewer.getTree().getShell();
 				try {
 					// assume that only one folder is selected in the folder tree, this
 					// is enforced by isEnable() method for this action
 					IStructuredSelection selection = (IStructuredSelection)treeViewer.getSelection();
 					Object currentSelection = selection.getFirstElement();
 					
-					IRemoteTargetResource selectedFolder = getSelectedRemoteFolder(selection)[0];
+					final IRemoteTargetResource selectedFolder = getSelectedRemoteFolder(selection)[0];
+					
 					IRemoteTargetResource newFolder = CreateNewFolderAction.createDir(shell, selectedFolder);
 					treeViewer.refresh(currentSelection);
 					expandInTreeCurrentSelection(new StructuredSelection(currentSelection), false);
 					treeViewer.setSelection(new StructuredSelection(currentSelection));
 				} catch (TeamException e) {
-					ErrorDialog.openError(shell,
-								Policy.bind("Error"), //$NON-NLS-1$
-								Policy.bind("CreateNewFolderAction.errorCreatingFolder"), //$NON-NLS-1$
-								e.getStatus());
+					TeamUIPlugin.handle(e);
 					return;
 				}
 			}

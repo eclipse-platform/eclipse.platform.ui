@@ -299,7 +299,7 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 						try {
 							monitor.beginTask(Policy.bind("ConfigureTargetWizardValidating_connection_to_Site..._9"), monitor.UNKNOWN); //$NON-NLS-1$
 							IRemoteTargetResource remote = site.getRemoteResource();
-							valid[0] = remote.exists();
+							valid[0] = remote.exists(monitor);
 						} catch(TeamException e) {
 							message[0] = e.getStatus().getMessage();
 							code[0] = e.getStatus().getCode();

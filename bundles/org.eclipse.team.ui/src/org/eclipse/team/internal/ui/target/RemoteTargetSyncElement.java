@@ -118,20 +118,6 @@ public class RemoteTargetSyncElement extends RemoteSyncElement {
 	}
 
 	/**
-	 * @see ILocalSyncElement#isCheckedOut()
-	 */
-	public boolean isCheckedOut() {
-		return false;
-	}
-
-	/**
-	 * @see ILocalSyncElement#hasRemote()
-	 */
-	public boolean hasRemote() {
-		return false;
-	}
-	
-	/**
 	 * @see ILocalSyncElement#getSyncKind(int, IProgressMonitor)
 	 */
 	public int getSyncKind(int granularity, IProgressMonitor progress) {

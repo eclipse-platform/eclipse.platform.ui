@@ -13,6 +13,7 @@ package org.eclipse.team.core.target;
 import java.net.URL;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 
@@ -22,7 +23,12 @@ import org.eclipse.team.core.sync.IRemoteResource;
  * the handle is not stale or invalid.
  * <p>
  * Use <code>exists()</code> to verify is the associated server resource
- * exists.
+ * exists.</p>
+ * <p>
+ * Methods that take progress monitors are expected to be long running and
+ * may contact the server. Progress and cancellation will be provided. Clients 
+ * can assume that methods that don't take progress monitors are responsive 
+ * and won't contact the server.
  * </p>
  * 
  * @see IRemoteResource
@@ -36,24 +42,24 @@ public interface IRemoteTargetResource extends IRemoteResource {
 	/**
 	 * Returns the size of the resource. 
 	 */
-	public int getSize() throws TeamException;
+	public int getSize(IProgressMonitor monitor) throws TeamException;
 	
 	/**
 	 * Returns the last modified time
 	 */
-	public String getLastModified() throws TeamException;
+	public String getLastModified(IProgressMonitor monitor) throws TeamException;
 	
 	/**
 	 * Return a boolean value indicating whether or not this resource exists on the
 	 * remote server.
 	 */
-	public boolean exists() throws TeamException;
+	public boolean exists(IProgressMonitor monitor) throws TeamException;
 	
 	/**
 	 * Creates the directory named by this URL, including any necessary but non-existant
 	 * parent directories.
 	 */
-	public void mkdirs() throws TeamException;
+	public void mkdirs(IProgressMonitor monitor) throws TeamException;
 	
 	/**
  	 * Returns a handle to the remote file identified by the given path in this

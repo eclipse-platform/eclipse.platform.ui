@@ -10,14 +10,17 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ui.target;
 
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -37,6 +40,7 @@ import org.eclipse.team.core.target.IRemoteTargetResource;
 import org.eclipse.team.core.target.Site;
 import org.eclipse.team.internal.core.target.UrlUtil;
 import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class MappingSelectionPage extends TargetWizardPage {
@@ -84,17 +88,13 @@ public class MappingSelectionPage extends TargetWizardPage {
 					// assume that only one folder is selected in the folder tree
 					IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
 					Object currentSelection = selection.getFirstElement();
-					IRemoteTargetResource selectedFolder = getSelectedRemoteFolder(selection);
-					IRemoteTargetResource newFolder = CreateNewFolderAction.createDir(shell, selectedFolder);
+					final IRemoteTargetResource selectedFolder = getSelectedRemoteFolder(selection);					
+					IRemoteTargetResource newFolder = CreateNewFolderAction.createDir(getShell(), selectedFolder);
 					viewer.refresh(currentSelection);
 					viewer.setExpandedState(currentSelection, true);
 					viewer.setSelection(new StructuredSelection(currentSelection));
 				} catch (TeamException e) {
-					ErrorDialog.openError(shell,
-								Policy.bind("Error"), //$NON-NLS-1$
-								Policy.bind("CreateNewFolderAction.errorCreatingFolder"), //$NON-NLS-1$
-								e.getStatus());
-					return;
+					TeamUIPlugin.handle(e);
 				}
 			}			
 		});

@@ -40,51 +40,81 @@ public class CreateNewFolderAction extends TargetAction {
 	 */
 	public void run(IAction action) {
 		try {
-			createDir(getShell(), getSelectedRemoteFolders()[0]);
-		} catch (TeamException e) {
+			TeamUIPlugin.runWithProgressDialog(getShell(), true /* cancelable */, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor)
+					throws InvocationTargetException, InterruptedException {
+						try {
+							createDir(getShell(), getSelectedRemoteFolders()[0]);
+						} catch (TeamException e) {
+							throw new InvocationTargetException(e);
+						}
+				}
+			});
+		} catch (InvocationTargetException e) {
 			handle(e, Policy.bind("Error"), Policy.bind("CreateNewFolderAction.errorCreatingFolder")); //$NON-NLS-1$ //$NON-NLS-2$
+		} catch (InterruptedException e) {
 		}
 	}
 	
-	public static IRemoteTargetResource createDir(Shell shell, final IRemoteTargetResource parent) throws TeamException {
-		final String[] suggestedFolderName = new String[] {Policy.bind("CreateNewFolderAction.newFolderName")}; //$NON-NLS-1$
+	public static IRemoteTargetResource createDir(final Shell shell, final IRemoteTargetResource parent) throws TeamException {
+			final IRemoteTargetResource[] newFolder = new IRemoteTargetResource[] {null};
+			try {				
+				TeamUIPlugin.runWithProgressDialog(shell, true, new IRunnableWithProgress() {
+						public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+								try {
+									monitor.beginTask(Policy.bind("CreateNewFolderAction.creatingFolder"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+									final String[] folderName = new String[] {null};
+									shell.getDisplay().syncExec(new Runnable() {
+										public void run() {
+											InputDialog dialog = new InputDialog(shell, 
+												Policy.bind("CreateNewFolderAction.title"),  //$NON-NLS-1$
+												Policy.bind("CreateNewFolderAction.message"),  //$NON-NLS-1$
+												getSuggestedFolderName(parent, Policy.subMonitorFor(monitor, 0)), 
+												null);
+											Policy.checkCanceled(monitor);
+											if(dialog.open() == dialog.OK) {
+												folderName[0] = dialog.getValue();
+											}
+										}
+									});
+									if(folderName[0] != null) {
+										newFolder[0] = parent.getFolder(folderName[0]);
+										newFolder[0].mkdirs(Policy.subMonitorFor(monitor, 0));
+									}
+								} catch(TeamException e) {
+									throw new InvocationTargetException(e);
+								} finally {
+									monitor.done();
+								}
+						}
+				});
+			} catch(InvocationTargetException e) {
+				TeamUIPlugin.handle(e);
+			} catch(InterruptedException e) {
+			} finally {
+				return newFolder[0];
+			}
+	}
+	
+	protected static String getSuggestedFolderName(IRemoteTargetResource parent, IProgressMonitor monitor) {		
+		String suggestedFolderName = Policy.bind("CreateNewFolderAction.newFolderName"); //$NON-NLS-1$
+		IRemoteResource[] members;
 		try {
-			TeamUIPlugin.runWithProgress(shell, false, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor)
-					throws InvocationTargetException, InterruptedException {
-						IRemoteResource[] members;
-						try {
-							members = parent.members(null);
-						} catch (TeamException e) {
-							return;
-						}
-						int numNewFolders = 0;
-						for (int i = 0; i < members.length; i++) {
-							if(members[i].getName().equals(Policy.bind("CreateNewFolderAction.newFolderName"))) { //$NON-NLS-1$
-								numNewFolders++;
-							}							
-						}
-						if(numNewFolders != 0) {
-							suggestedFolderName[0] +=  " " + numNewFolders; //$NON-NLS-1$
-						}						
-				}
-			});
-		// ignore, just use the default name
-		} catch (InvocationTargetException e) {
-		} catch (InterruptedException e) {
+			monitor.subTask(Policy.bind("CreateNewFolderAction.suggestedNameProgress"));
+			members = parent.members(monitor);
+		} catch (TeamException e) {
+			// expect the mkdir to fail
+			return suggestedFolderName;
 		}
-		
-		InputDialog dialog = new InputDialog(shell, 
-					Policy.bind("CreateNewFolderAction.title"),  //$NON-NLS-1$
-					Policy.bind("CreateNewFolderAction.message"),  //$NON-NLS-1$
-					suggestedFolderName[0], 
-					null);
-		if(dialog.open() == dialog.OK) {
-			String folderName = dialog.getValue();
-			IRemoteTargetResource newFolder = parent.getFolder(folderName);
-			newFolder.mkdirs();
-			return newFolder;
+		int numNewFolders = 0;
+		for (int i = 0; i < members.length; i++) {
+			if(members[i].getName().equals(Policy.bind("CreateNewFolderAction.newFolderName"))) { //$NON-NLS-1$
+				numNewFolders++;
+			}							
 		}
-		return null;
+		if(numNewFolders != 0) {
+			suggestedFolderName +=  " " + numNewFolders; //$NON-NLS-1$
+		}
+		return suggestedFolderName;
 	}
 }
