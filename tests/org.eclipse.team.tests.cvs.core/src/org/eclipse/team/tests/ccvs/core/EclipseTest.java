@@ -267,7 +267,7 @@ public class EclipseTest extends ResourceTest {
 	 */
 	protected void commitResources(IResource[] resources, int depth, String message) throws TeamException, CoreException {
 		if (resources.length == 0) return; 
-		executeHeadless(new CommitOperation(null, resources, new Command.LocalOption[] { Commit.makeArgumentOption(Command.MESSAGE_OPTION, message) }, ""));
+		executeHeadless(new CommitOperation(null, resources, new Command.LocalOption[0], message));
 	}
 	
 	/**
