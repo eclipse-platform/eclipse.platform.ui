@@ -428,23 +428,15 @@ class SearchResultViewer extends TableViewer {
 	 * Update the title and the title's tooltip
 	 */
 	protected void updateTitle(boolean showZero) {
-		int count= SearchManager.getDefault().getCurrentItemCount();
 		boolean hasCurrentSearch= SearchManager.getDefault().getCurrentSearch() != null;
 		String title;
-		if (showZero && (count > 0 || hasCurrentSearch)) {
-			if (count == 1)
-				title= SearchMessages.getString("SearchResultView.titleWithOneMatch"); //$NON-NLS-1$
-			else
-				title= SearchMessages.getFormattedString("SearchResultView.titleWithMatches", new Integer(count)); //$NON-NLS-1$
+		if (hasCurrentSearch) {
+			String description= SearchManager.getDefault().getCurrentSearch().getFullDescription();
+			title= SearchMessages.getFormattedString("SearchResultView.titleWithDescription", description); //$NON-NLS-1$
 		} else
 			title= SearchMessages.getString("SearchResultView.title"); //$NON-NLS-1$
 		if (title == null || !title.equals(fOuterPart.getTitle()))
 			fOuterPart.setTitle(title);
-		String toolTip= null;
-		if (hasCurrentSearch)
-			toolTip= SearchManager.getDefault().getCurrentSearch().getFullDescription();
-		if (toolTip == null || !toolTip.equals(fOuterPart.getTitleToolTip()))
-			fOuterPart.setTitleToolTip(toolTip);
 	}
 
 
