@@ -35,8 +35,7 @@ import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.fonts.FontDefinition;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.*;
+import org.eclipse.update.core.SiteManager;
 
 /**
  * The workbench class represents the top of the ITP user interface.  Its primary
@@ -50,10 +49,9 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private static final int RESTORE_CODE_OK = 0;
 	private static final int RESTORE_CODE_RESET = 1;
 	private static final int RESTORE_CODE_EXIT = 2;
-	private static final String WELCOME_EDITOR_ID = "org.eclipse.ui.internal.dialogs.WelcomeEditor";  //$NON-NLS-1$
+	private static final String WELCOME_EDITOR_ID = "org.eclipse.ui.internal.dialogs.WelcomeEditor"; //$NON-NLS-1$
 	private static final String INSTALLED_FEATURES = "installedFeatures";
 	private static final String FEATURES_CHANGE_STAMP = "features_change_stamp";
-	
 
 	private WindowManager windowManager;
 	private EditorHistory editorHistory;
@@ -71,7 +69,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private Configuration acceleratorConfiguration;
 	private Object returnCode;
 	private ListenerList windowListeners = new ListenerList();
-	
+
 	/**
 	 * Workbench constructor comment.
 	 */
@@ -84,7 +82,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 */
 	public void addWindowListener(IWindowListener l) {
 		windowListeners.add(l);
-	}	
+	}
 	/**
 	 * See IWorkbench
 	 */
@@ -93,42 +91,42 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	}
 	/**
 	 * Fire window opened event.
-	 */	
+	 */
 	protected void fireWindowOpened(IWorkbenchWindow window) {
 		Object list[] = windowListeners.getListeners();
 		for (int i = 0; i < list.length; i++) {
-			((IWindowListener)list[i]).windowOpened(window);
+			((IWindowListener) list[i]).windowOpened(window);
 		}
-	}		
+	}
 	/**
 	 * Fire window closed event.
 	 */
 	protected void fireWindowClosed(IWorkbenchWindow window) {
 		Object list[] = windowListeners.getListeners();
 		for (int i = 0; i < list.length; i++) {
-			((IWindowListener)list[i]).windowClosed(window);
+			((IWindowListener) list[i]).windowClosed(window);
 		}
 	}
 	/**
 	 * Fire window activated event.
-	 */	
+	 */
 	protected void fireWindowActivated(IWorkbenchWindow window) {
 		Object list[] = windowListeners.getListeners();
 		for (int i = 0; i < list.length; i++) {
-			((IWindowListener)list[i]).windowActivated(window);
+			((IWindowListener) list[i]).windowActivated(window);
 		}
 	}
 	/**
 	 * Fire window deactivated event.
-	 */	
+	 */
 	protected void fireWindowDeactivated(IWorkbenchWindow window) {
 		Object list[] = windowListeners.getListeners();
 		for (int i = 0; i < list.length; i++) {
-			((IWindowListener)list[i]).windowDeactivated(window);
+			((IWindowListener) list[i]).windowDeactivated(window);
 		}
-	}		
+	}
 	/**
-	 * Get the extenders from the registry and adds them to the 
+	 * Get the extenders from the registry and adds them to the
 	 * extender manager.
 	 */
 	private void addAdapters() {
@@ -185,7 +183,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 
 		Platform.run(new SafeRunnable(WorkbenchMessages.getString("ErrorClosing")) { //$NON-NLS-1$
 			public void run() {
-				if(isClosing || force)
+				if (isClosing || force)
 					isClosing = windowManager.close();
 			}
 		});
@@ -199,14 +197,15 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		runEventLoop = false;
 		return true;
 	}
-	
+
 	/*
-	 * @see IWorkbench.saveAllEditors(boolean)	 */
+	 * @see IWorkbench.saveAllEditors(boolean)
+	 */
 	public boolean saveAllEditors(boolean confirm) {
 		final boolean finalConfirm = confirm;
-		final boolean [] result = new boolean[1];
+		final boolean[] result = new boolean[1];
 		result[0] = true;
-		
+
 		Platform.run(new SafeRunnable(WorkbenchMessages.getString("ErrorClosing")) { //$NON-NLS-1$
 			public void run() {
 				//Collect dirtyEditors
@@ -216,12 +215,12 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 				for (int i = 0; i < windows.length; i++) {
 					IWorkbenchPage pages[] = windows[i].getPages();
 					for (int j = 0; j < pages.length; j++) {
-						WorkbenchPage page = (WorkbenchPage)pages[j];
+						WorkbenchPage page = (WorkbenchPage) pages[j];
 						IEditorPart editors[] = page.getDirtyEditors();
 						for (int k = 0; k < editors.length; k++) {
 							IEditorPart editor = editors[k];
-							if(editor.isDirty()) {
-								if(!dirtyEditorsInput.contains(editor.getEditorInput())) {
+							if (editor.isDirty()) {
+								if (!dirtyEditorsInput.contains(editor.getEditorInput())) {
 									dirtyEditors.add(editor);
 									dirtyEditorsInput.add(editor.getEditorInput());
 								}
@@ -229,15 +228,15 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 						}
 					}
 				}
-				if(dirtyEditors.size() > 0) {
+				if (dirtyEditors.size() > 0) {
 					IWorkbenchWindow w = getActiveWorkbenchWindow();
-					if(w == null)
+					if (w == null)
 						w = windows[0];
-					result[0] = EditorManager.saveAll(dirtyEditors,finalConfirm,w);					
-				}			
+					result[0] = EditorManager.saveAll(dirtyEditors, finalConfirm, w);
+				}
 			}
 		});
-	return result[0];
+		return result[0];
 	}
 	/**
 	 * Opens a new workbench window and page with a specific perspective.
@@ -266,13 +265,13 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private void checkUpdates() {
 		boolean newUpdates = false;
 		for (int i = 0; i < commandLineArgs.length; i++) {
-			if (commandLineArgs[i].equalsIgnoreCase("-newUpdates")) {//$NON-NLS-1$
+			if (commandLineArgs[i].equalsIgnoreCase("-newUpdates")) { //$NON-NLS-1$
 				newUpdates = true;
 				break;
 			}
 		}
-		
-		if (newUpdates)		
+
+		if (newUpdates)
 			showUpdatesDialog();
 	}
 	/**
@@ -286,7 +285,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		if (MessageDialog.openQuestion(
 				shell, 
 				WorkbenchMessages.getString("Updates.title"), //$NON-NLS-1$
-				WorkbenchMessages.getString("Updates.message"))) {	 //$NON-NLS-1$
+		WorkbenchMessages.getString("Updates.message"))) { //$NON-NLS-1$
 			try {
 				SiteManager.handleNewChanges();
 			} catch (CoreException ex) {
@@ -305,12 +304,12 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * Closes the workbench, returning the given return code from the run method.
 	 */
 	public boolean close(Object returnCode) {
-		return close(returnCode,false);
+		return close(returnCode, false);
 	}
 	/**
 	 * Closes the workbench, returning the given return code from the run method.
 	 */
-	public boolean close(Object returnCode,final boolean force) {
+	public boolean close(Object returnCode, final boolean force) {
 		this.returnCode = returnCode;
 		final boolean[] ret = new boolean[1];
 		BusyIndicator.showWhile(null, new Runnable() {
@@ -422,8 +421,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		Window[] windows = windowManager.getWindows();
 		int count = windows.length;
 
-		// Create an array of booleans (size = window count).  
-		// Cross off every number found in the window list.  
+		// Create an array of booleans (size = window count).
+		// Cross off every number found in the window list.
 		boolean checkArray[] = new boolean[count];
 		for (int nX = 0; nX < count; nX++) {
 			if (windows[nX] instanceof WorkbenchWindow) {
@@ -485,7 +484,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	protected WindowManager getWindowManager() {
 		return windowManager;
 	}
-	
+
 	/**
 	 * Returns the about info.
 	 *
@@ -517,7 +516,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			readFeaturesInfo();
 		return newFeaturesInfo;
 	}
-	
+
 	/**
 	 * Returns the active AcceleratorConfiguration
 	 */
@@ -551,7 +550,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	}
 	/**
 	 * Implements IWorkbench
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWorkbench#getWorkingSetManager()
 	 * @since 2.0
 	 */
@@ -565,7 +564,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 */
 	private boolean init(String[] commandLineArgs) {
 		KeyManager.getInstance();
-		
+
 		isStarting = true;
 
 		this.commandLineArgs = commandLineArgs;
@@ -605,7 +604,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			return false;
 		if (restoreCode == RESTORE_CODE_RESET)
 			openFirstTimeWindow();
-		
+
 		forceOpenPerspective();
 		openWelcomeEditors();
 		refreshFromLocal();
@@ -615,37 +614,37 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private void refreshFromLocal() {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		boolean refresh = store.getBoolean(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP);
-		if(!refresh)
+		if (!refresh)
 			return;
 		//Do not refresh if it was already done by core on startup.
 		for (int i = 0; i < commandLineArgs.length; i++)
-			if(commandLineArgs[i].equalsIgnoreCase("-refresh"))
+			if (commandLineArgs[i].equalsIgnoreCase("-refresh"))
 				return;
 		IWorkbenchWindow windows[] = getWorkbenchWindows();
 		Shell shell = windows[windows.length - 1].getShell();
 		ProgressMonitorDialog dlg = new ProgressMonitorDialog(shell);
 		final CoreException ex[] = new CoreException[1];
 		try {
-			dlg.run(true,true,new IRunnableWithProgress() {
+			dlg.run(true, true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
 						IContainer root = ResourcesPlugin.getWorkspace().getRoot();
-						root.refreshLocal(IResource.DEPTH_INFINITE,monitor);
+						root.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 					} catch (CoreException e) {
 						ex[0] = e;
 					}
 				}
 			});
-			if(ex[0] != null) {
+			if (ex[0] != null) {
 				String errorTitle = WorkbenchMessages.getString("Workspace.problemsTitle"); //$NON-NLS-1$
 				String msg = WorkbenchMessages.getString("Workspace.problemMessage"); //$NON-NLS-1$
-				ErrorDialog.openError(shell,errorTitle,msg,ex[0].getStatus());
+				ErrorDialog.openError(shell, errorTitle, msg, ex[0].getStatus());
 			}
 		} catch (InterruptedException e) {
 			//Do nothing. Operation was canceled.
 		} catch (InvocationTargetException e) {
 			String msg = "InvocationTargetException refreshing from local on startup"; //$NON-NLS-1$
-			WorkbenchPlugin.log(msg,new Status(Status.ERROR,PlatformUI.PLUGIN_ID,0,msg,e.getTargetException()));
+			WorkbenchPlugin.log(msg, new Status(Status.ERROR, PlatformUI.PLUGIN_ID, 0, msg, e.getTargetException()));
 		}
 	}
 
@@ -655,11 +654,11 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			// one workbench window open by now.
 			return;
 		}
-		
+
 		String perspId = null;
 		for (int i = 0; i < commandLineArgs.length - 1; i++) {
 			if (commandLineArgs[i].equalsIgnoreCase("-perspective")) { //$NON-NLS-1$
-				perspId = commandLineArgs[i+1];
+				perspId = commandLineArgs[i + 1];
 				break;
 			}
 		}
@@ -676,27 +675,27 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			showPerspective(perspId, win);
 		} catch (WorkbenchException e) {
 			String msg = "Workbench exception showing specified command line perspective on startup."; //$NON-NLS-1$
-			WorkbenchPlugin.log(msg, new Status(Status.ERROR, PlatformUI.PLUGIN_ID,0, msg, e));
+			WorkbenchPlugin.log(msg, new Status(Status.ERROR, PlatformUI.PLUGIN_ID, 0, msg, e));
 		}
 	}
-	
+
 	private void initializeSingleClickOption() {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		boolean openOnSingleClick = store.getBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK);
-		boolean selectOnHover = store.getBoolean(IPreferenceConstants.SELECT_ON_HOVER); 
+		boolean selectOnHover = store.getBoolean(IPreferenceConstants.SELECT_ON_HOVER);
 		boolean openAfterDelay = store.getBoolean(IPreferenceConstants.OPEN_AFTER_DELAY);
 		int singleClickMethod = openOnSingleClick ? OpenStrategy.SINGLE_CLICK : OpenStrategy.DOUBLE_CLICK;
-		if(openOnSingleClick) {
-			if(selectOnHover)
+		if (openOnSingleClick) {
+			if (selectOnHover)
 				singleClickMethod |= OpenStrategy.SELECT_ON_HOVER;
-			if(openAfterDelay)
+			if (openAfterDelay)
 				singleClickMethod |= OpenStrategy.ARROW_KEYS_OPEN;
 		}
 		OpenStrategy.setOpenMethod(singleClickMethod);
 	}
 
 	private void initializeConfiguration() {
-		IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();		
+		IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();
 		String configuration = preferenceStore.getString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
 
 		if (configuration == null || configuration.length() == 0)
@@ -704,7 +703,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 
 		if (configuration == null)
 			configuration = ""; //$NON-NLS-1$
-		
+
 		KeyManager keyManager = KeyManager.getInstance();
 		keyManager.getKeyMachine().setConfiguration(configuration);
 		keyManager.update();
@@ -715,21 +714,21 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private void initializeFonts() {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		FontRegistry registry = JFaceResources.getFontRegistry();
-		
+
 		//Iterate through the definitions and initialize thier
 		//defaults in the preference store.
 		FontDefinition[] definitions = FontDefinition.getDefinitions();
-		for(int i = 0; i < definitions.length; i ++){
+		for (int i = 0; i < definitions.length; i++) {
 			FontDefinition definition = definitions[i];
-			initializeFont(definition.getId(),registry,store);
+			initializeFont(definition.getId(), registry, store);
 			String defaultsTo = definitions[i].getDefaultsTo();
-			if(defaultsTo != null)
+			if (defaultsTo != null)
 				PreferenceConverter.setDefault(
 					store,
 					definition.getId(),
 					PreferenceConverter.
 						getDefaultFontDataArray(store,defaultsTo));
-		}	
+		}
 	}
 	/*
 	 * *
@@ -755,7 +754,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		} else {
 			// Avoid setting a missing image as the window default image
 			WorkbenchImages.getImageRegistry().put(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD, ImageDescriptor.getMissingImageDescriptor());
-		}			
+		}
 	}
 	/**
 	 * Returns true if the workbench is in the process of closing
@@ -785,7 +784,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			newWindow.openPage(getPerspectiveRegistry().getDefaultPerspective(), root);
 		} catch (WorkbenchException e) {
 			ErrorDialog.openError(newWindow.getShell(), WorkbenchMessages.getString("Problems_Opening_Page"), //$NON-NLS-1$
-			e.getMessage(),e.getStatus());
+			e.getMessage(), e.getStatus());
 		}
 		newWindow.open();
 	}
@@ -805,27 +804,27 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 				FileInputStream input = new FileInputStream(stateFile);
 				BufferedReader reader = new BufferedReader(new InputStreamReader(input, "utf-8")); //$NON-NLS-1$
 				IMemento memento = XMLMemento.createReadRoot(reader);
-				
+
 				// Validate known version format
 				String version = memento.getString(IWorkbenchConstants.TAG_VERSION);
 				boolean valid = false;
 				for (int i = 0; i < VERSION_STRING.length; i++) {
-					if(VERSION_STRING[i].equals(version)) {
+					if (VERSION_STRING[i].equals(version)) {
 						valid = true;
 						break;
 					}
 				}
-				if(!valid) {
+				if (!valid) {
 					reader.close();
 					MessageDialog.openError(
 						(Shell) null,
 						WorkbenchMessages.getString("Restoring_Problems"), //$NON-NLS-1$
-						WorkbenchMessages.getString("Invalid_workbench_state_ve")); //$NON-NLS-1$
+					WorkbenchMessages.getString("Invalid_workbench_state_ve")); //$NON-NLS-1$
 					stateFile.delete();
 					result[0] = RESTORE_CODE_RESET;
 					return;
 				}
-				
+
 				// Validate compatible version format
 				// We no longer support the release 1.0 format
 				if (VERSION_STRING[0].equals(version)) {
@@ -846,11 +845,11 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 					}
 					return;
 				}
-				
+
 				// Restore the saved state
 				IStatus restoreResult = restoreState(memento);
 				reader.close();
-				if(restoreResult.getSeverity() == IStatus.ERROR) {
+				if (restoreResult.getSeverity() == IStatus.ERROR) {
 					ErrorDialog.openError(
 						null,
 						WorkbenchMessages.getString("Workspace.problemsTitle"),
@@ -876,14 +875,14 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	public void openSystemSummaryEditor() {
 		openEditor(new SystemSummaryEditorInput(), "org.eclipse.ui.SystemSummaryEditor", null); //$NON-NLS-1$
 	}
-		
+
 	/**
 	 * Open the Welcome editor for the primary feature or for a new feature
 	 */
 	private void openWelcomeEditors() {
 		AboutInfo info = getAboutInfo();
 		AboutInfo[] newFeatures = getNewFeaturesInfo();
-		
+
 		if (WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IPreferenceConstants.WELCOME_DIALOG)) {
 			// Show the quick start wizard the first time the workbench opens.
 
@@ -894,7 +893,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 
 			// Don't show it again
 			WorkbenchPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.WELCOME_DIALOG, false);
-	
+
 			openEditor(new WelcomeEditorInput(info), WELCOME_EDITOR_ID, null);
 		} else {
 			// Show the welcome page for any newly installed features
@@ -904,7 +903,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			IPluginRegistry registry = Platform.getPluginRegistry();
 			for (int i = 0; i < newFeatures.length; i++) {
 				if (newFeatures[i].getWelcomePageURL() != null) {
-					if(newFeatures[i].getFeatureId() != null && newFeatures[i].getWelcomePerspective() != null) {
+					if (newFeatures[i].getFeatureId() != null && newFeatures[i].getWelcomePerspective() != null) {
 						IPluginDescriptor desc = registry.getPluginDescriptor(newFeatures[i].getFeatureId());
 						//activates the feature plugin so it can run some install code.
 						try {
@@ -915,18 +914,17 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 					welcomeFeatures.add(newFeatures[i]);
 				}
 			}
-			
+
 			int wCount = getWorkbenchWindowCount();
 			for (int i = 0; i < welcomeFeatures.size(); i++) {
-				AboutInfo newInfo = (AboutInfo)welcomeFeatures.get(i);
+				AboutInfo newInfo = (AboutInfo) welcomeFeatures.get(i);
 				String id = newInfo.getWelcomePerspective();
-				if(id == null || i >= wCount) //Other editors were already opened in restoreState(..)
+				if (id == null || i >= wCount) //Other editors were already opened in restoreState(..)
 					openEditor(new WelcomeEditorInput(newInfo), WELCOME_EDITOR_ID, id);
 			}
 		}
 	}
 
-	
 	/**
 	 * Open an editor for the given input
 	 */
@@ -936,34 +934,34 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			// one workbench window open by now.
 			return;
 		}
-		
+
 		IWorkbenchWindow win = null;
-		if(perspectiveId == null) {
+		if (perspectiveId == null) {
 			win = getActiveWorkbenchWindow();
 		} else {
 			IContainer root = WorkbenchPlugin.getPluginWorkspace().getRoot();
 			try {
-				win = openWorkbenchWindow(perspectiveId,root);
+				win = openWorkbenchWindow(perspectiveId, root);
 			} catch (WorkbenchException e) {
 				if (WorkbenchPlugin.DEBUG) // only report ini problems if the -debug command line argument is used
 					WorkbenchPlugin.log("Error opening window in Workbench.openEditor(..)");
 				return;
 			}
 		}
-		
+
 		if (win == null)
 			win = getWorkbenchWindows()[0];
-		
-		WorkbenchPage page = (WorkbenchPage)win.getActivePage();
+
+		WorkbenchPage page = (WorkbenchPage) win.getActivePage();
 		String id = perspectiveId;
 		if (id == null)
 			id = WorkbenchPlugin.getDefault().getPerspectiveRegistry().getDefaultPerspective();
-				
+
 		if (page == null) {
-			// Create the page. 
+			// Create the page.
 			try {
 				IContainer root = WorkbenchPlugin.getPluginWorkspace().getRoot();
-				page = (WorkbenchPage)getActiveWorkbenchWindow().openPage(id, root);
+				page = (WorkbenchPage) getActiveWorkbenchWindow().openPage(id, root);
 			} catch (WorkbenchException e) {
 				ErrorDialog.openError(
 					win.getShell(), 
@@ -972,31 +970,31 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 					e.getStatus());
 			}
 		}
-		
+
 		if (page == null)
 			return;
-		
+
 		if (page.getActivePerspective() == null) {
 			try {
-				page = (WorkbenchPage)showPerspective(id, win);
+				page = (WorkbenchPage) showPerspective(id, win);
 			} catch (WorkbenchException e) {
 				IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("QuickStartAction.openEditorException"), e); //$NON-NLS-1$
 				ErrorDialog.openError(
 					win.getShell(),
 					WorkbenchMessages.getString("Workbench.openEditorErrorDialogTitle"),  //$NON-NLS-1$
-					WorkbenchMessages.getString("Workbench.openEditorErrorDialogMessage"),  //$NON-NLS-1$
-					status);
+				WorkbenchMessages.getString("Workbench.openEditorErrorDialogMessage"), //$NON-NLS-1$
+				status);
 				return;
 			}
 		}
-		
+
 		page.setEditorAreaVisible(true);
-		
+
 		// see if we already have an editor
 		IEditorPart editor = page.findEditor(input);
-		if (editor != null) {	
+		if (editor != null) {
 			page.activate(editor);
-				return;
+			return;
 		}
 
 		try {
@@ -1006,8 +1004,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			ErrorDialog.openError(
 				win.getShell(),
 				WorkbenchMessages.getString("Workbench.openEditorErrorDialogTitle"),  //$NON-NLS-1$
-				WorkbenchMessages.getString("Workbench.openEditorErrorDialogMessage"),  //$NON-NLS-1$
-				status);
+			WorkbenchMessages.getString("Workbench.openEditorErrorDialogMessage"), //$NON-NLS-1$
+			status);
 		}
 		return;
 	}
@@ -1039,7 +1037,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		else
 			throw new WorkbenchException(WorkbenchMessages.getString("Abnormal_Workbench_Conditi")); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Reads the about, platform and product info.
 	 * This info contains the info to show in the about dialog,
@@ -1048,31 +1046,35 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * @return true if the method succeeds 
 	 */
 	private boolean readInfo() {
-		// determine the identifier of the "dominant" application 
+		// determine the identifier of the "dominant" application
 		IPlatformConfiguration conf = BootLoader.getCurrentPlatformConfiguration();
 		String versionedFeatureId = conf.getPrimaryFeatureIdentifier();
-		
-		if (versionedFeatureId == null) {
+		IPlatformConfiguration.IFeatureEntry primaryFeature = conf.findConfiguredFeatureEntry(versionedFeatureId);
+
+		if (primaryFeature == null) {
 			aboutInfo = new AboutInfo(null, null); // Ok to pass null
-		} else {	
-			int index = versionedFeatureId.lastIndexOf("_"); //$NON-NLS-1$
-			if (index == -1)
-				aboutInfo = new AboutInfo(versionedFeatureId, null); 
-			else {
-				String mainPluginName = versionedFeatureId.substring(0, index);
-				PluginVersionIdentifier mainPluginVersion = null;
-				try {
-					mainPluginVersion =
-						new PluginVersionIdentifier(versionedFeatureId.substring(index + 1));
-				} catch (Exception e) {
-					IStatus iniStatus = new Status(IStatus.ERROR, WorkbenchPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-						0, "Unknown plugin version " + versionedFeatureId, e); //$NON-NLS-1$
-					WorkbenchPlugin.log("Problem obtaining configuration info ", iniStatus);//$NON-NLS-1$
+		} else {
+			String versionedFeaturePluginIdentifier = primaryFeature.getFeaturePluginIdentifier();
+			String versionedFeaturePluginVersion = primaryFeature.getFeaturePluginVersion();
+
+			if (versionedFeaturePluginIdentifier == null) {
+				aboutInfo = new AboutInfo(null, null); // Ok to pass null
+			} else {
+				if (versionedFeaturePluginVersion == null) {
+					aboutInfo = new AboutInfo(versionedFeaturePluginIdentifier, null);
+				} else {
+					PluginVersionIdentifier mainPluginVersion = null;
+					try {
+						mainPluginVersion = new PluginVersionIdentifier(versionedFeaturePluginVersion);
+					} catch (Exception e) {
+						IStatus iniStatus = new Status(IStatus.ERROR, WorkbenchPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 0, "Unknown plugin version " + versionedFeatureId, e); //$NON-NLS-1$
+						WorkbenchPlugin.log("Problem obtaining configuration info ", iniStatus); //$NON-NLS-1$
+					}
+					aboutInfo = new AboutInfo(versionedFeaturePluginIdentifier, mainPluginVersion);
 				}
-				aboutInfo = new AboutInfo(mainPluginName, mainPluginVersion);
-			} 
+			}
 		}
-		
+
 		boolean success = true;
 
 		try {
@@ -1085,79 +1087,49 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		return success;
 	}
 
-	private VersionedIdentifier[] collectFeatures() {
-		try {
-			ArrayList result = new ArrayList();
-			ILocalSite localSite = SiteManager.getLocalSite();
-			IInstallConfiguration config = localSite.getCurrentConfiguration();
-			IConfiguredSite[] csites = config.getConfiguredSites();
-			for (int i = 0; i < csites.length; i++) {
-				IConfiguredSite csite = csites[i];
-				// get handles to the configured features in the site
-				IFeatureReference[] crefs = csite.getConfiguredFeatures();
-				for (int j = 0; j < crefs.length; j++) {
-					IFeatureReference cref = crefs[j];
-					VersionedIdentifier vi = cref.getVersionedIdentifier();
-					result.add(vi);
-				}
-			}
-			return (VersionedIdentifier[]) result.toArray(
-				new VersionedIdentifier[result.size()]);
-		} catch (CoreException e) {
-			return new VersionedIdentifier[0];
-		}
-	}
-
 	/**
 	 * Reads the about info for all the configured features.
 	 */
 	private void readFeaturesInfo() {
-
-		long featuresStamp = BootLoader.getCurrentPlatformConfiguration().getFeaturesChangeStamp();
+ 
 		IDialogSettings settings = WorkbenchPlugin.getDefault().getDialogSettings();
-		boolean newFeatures = true;
-		try {
-			newFeatures = settings.getLong(FEATURES_CHANGE_STAMP) != featuresStamp;
-		}  catch (NumberFormatException e) {
-		}
-		if(newFeatures)
-			settings.put(FEATURES_CHANGE_STAMP,featuresStamp);
-			
+ 
 		String[] oldFeaturesArray = settings.getArray(INSTALLED_FEATURES);
 		List oldFeatures = null;
 		if (oldFeaturesArray != null)
-			 oldFeatures = Arrays.asList(oldFeaturesArray);
+			oldFeatures = Arrays.asList(oldFeaturesArray);
 
 		ArrayList aboutInfos = new ArrayList();
 		ArrayList newAboutInfos = new ArrayList();
-		
-				
-		if(newFeatures) {
-			//Keep all references to VersionedIdentifier. Do not want to activate
-			//update plugin unless needed.
-			VersionedIdentifier featureEntries[] = collectFeatures();
-			String[] idArray = new String[featureEntries.length];	
-			for (int i = 0; i < featureEntries.length; i++) {
-				VersionedIdentifier entry = (VersionedIdentifier)featureEntries[i];
-				String id = entry.getIdentifier();
-				PluginVersionIdentifier vid = entry.getVersion();
-				String versionedId = id + ":" + vid;
-				idArray[i] = versionedId;
-	
-				try {
-					AboutInfo info = new AboutInfo(id, vid);
-					aboutInfos.add(info);
-					if (oldFeatures != null && !oldFeatures.contains(versionedId))
-						// only report a feature as new if we have a previous record of old features
-						newAboutInfos.add(info);
-				} catch (RuntimeException e) {
-					if (WorkbenchPlugin.DEBUG) // only report ini problems if the -debug command line argument is used
-						WorkbenchPlugin.log("Error parsing version \"" + vid + "\" for plugin: " + id + " in Workbench.readFeaturesInfo()");
-					// continue
-				}
+
+
+		IPlatformConfiguration platformConfiguration = BootLoader.getCurrentPlatformConfiguration();
+		IPlatformConfiguration.IFeatureEntry[] features = platformConfiguration.getConfiguredFeatureEntries();
+
+		String[] idArray = new String[features.length];
+		for (int i = 0; i < features.length; i++) {
+			String id = features[i].getFeatureIdentifier();
+			String version = features[i].getFeatureVersion();
+			PluginVersionIdentifier vid = null;
+			if (version != null)
+				vid = new PluginVersionIdentifier(version);			
+			
+			String versionedId = id + ":" + vid;
+			idArray[i] = versionedId;
+
+			try {
+				AboutInfo info = new AboutInfo(id, vid);
+				aboutInfos.add(info);
+				if (oldFeatures != null && !oldFeatures.contains(versionedId))
+					// only report a feature as new if we have a previous record of old features
+					newAboutInfos.add(info);
+			} catch (RuntimeException e) {
+				if (WorkbenchPlugin.DEBUG) // only report ini problems if the -debug command line argument is used
+					WorkbenchPlugin.log("Error parsing version \"" + vid + "\" for plugin: " + id + " in Workbench.readFeaturesInfo()");
+				// continue
 			}
-			settings.put(INSTALLED_FEATURES, idArray);
 		}
+		settings.put(INSTALLED_FEATURES, idArray);
 
 		// ensure a consistent ordering
 		Collections.sort(aboutInfos, new Comparator() {
@@ -1172,11 +1144,10 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 				return c;
 			}
 		});
-		
+
 		featuresInfo = new AboutInfo[aboutInfos.size()];
 		aboutInfos.toArray(featuresInfo);
-		
-		
+
 		for (int i = 0; i < featuresInfo.length; i++) {
 			try {
 				featuresInfo[i].readINIFile();
@@ -1190,7 +1161,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 					WorkbenchPlugin.log("Error reading about info file for feature: " + featuresInfo[i].getFeatureId(), e.getStatus()); //$NON-NLS-1$
 			}
 		}
-		
+
 		newFeaturesInfo = new AboutInfo[newAboutInfos.size()];
 		newAboutInfos.toArray(newFeaturesInfo);
 		if (aboutInfos.size() < featuresInfo.length) {
@@ -1205,11 +1176,11 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private XMLMemento recordWorkbenchState() {
 		XMLMemento memento = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_WORKBENCH);
 		IStatus status = saveState(memento);
-		if(status.getSeverity() != IStatus.OK) {
+		if (status.getSeverity() != IStatus.OK) {
 			ErrorDialog.openError((Shell)null,
 				WorkbenchMessages.getString("Workbench.problemsSaving"),  //$NON-NLS-1$
-				WorkbenchMessages.getString("Workbench.problemsSavingMsg"), //$NON-NLS-1$
-				status);
+			WorkbenchMessages.getString("Workbench.problemsSavingMsg"), //$NON-NLS-1$
+			status);
 		}
 		return memento;
 	}
@@ -1217,7 +1188,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * Method declared on IWorkbench.
 	 */
 	public boolean restart() {
-		return close(EXIT_RESTART); // this is the return code from run() to trigger a restart 
+		return close(EXIT_RESTART); // this is the return code from run() to trigger a restart
 	}
 	/**
 	 * Restores the state of the previously saved workbench
@@ -1233,7 +1204,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		IMemento childMem = memento.getChild(IWorkbenchConstants.TAG_PERSPECTIVE_HISTORY);
 		if (childMem != null)
 			result.add(getPerspectiveHistory().restoreState(childMem));
-				
+
 		IMemento mruMemento = memento.getChild(IWorkbenchConstants.TAG_MRU_LIST); //$NON-NLS-1$
 		if (mruMemento != null) {
 			result.add(getEditorHistory().restoreState(mruMemento));
@@ -1250,21 +1221,21 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			WorkbenchWindow newWindow = new WorkbenchWindow(this, getNewWindowNumber());
 			newWindow.create();
 			IPerspectiveDescriptor desc = null;
-			if(x < newFeaturesWithPerspectives.length)
+			if (x < newFeaturesWithPerspectives.length)
 				desc = reg.findPerspectiveWithId(newFeaturesWithPerspectives[x].getWelcomePerspective());
 
-			result.merge(newWindow.restoreState(childMem,desc));
-			if(desc != null) {
+			result.merge(newWindow.restoreState(childMem, desc));
+			if (desc != null) {
 				IWorkbenchPage page = newWindow.getActivePage();
-				if(page == null) {
+				if (page == null) {
 					IWorkbenchPage pages[] = newWindow.getPages();
-					if(pages != null && pages.length > 0)
+					if (pages != null && pages.length > 0)
 						page = pages[0];
 				}
-				if(page == null) {
+				if (page == null) {
 					IContainer root = WorkbenchPlugin.getPluginWorkspace().getRoot();
 					try {
-						page = (WorkbenchPage)getActiveWorkbenchWindow().openPage(newFeaturesWithPerspectives[x].getWelcomePerspective(), root);				
+						page = (WorkbenchPage) getActiveWorkbenchWindow().openPage(newFeaturesWithPerspectives[x].getWelcomePerspective(), root);
 					} catch (WorkbenchException e) {
 						result.add(e.getStatus());
 					}
@@ -1272,8 +1243,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 					page.setPerspective(desc);
 				}
 				newWindow.setActivePage(page);
-				try {				
-					page.openEditor(new WelcomeEditorInput(newFeaturesWithPerspectives[x]),WELCOME_EDITOR_ID,true);
+				try {
+					page.openEditor(new WelcomeEditorInput(newFeaturesWithPerspectives[x]), WELCOME_EDITOR_ID, true);
 				} catch (PartInitException e) {
 					result.add(e.getStatus());
 				}
@@ -1292,19 +1263,19 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		AboutInfo newFeatures[] = getNewFeaturesInfo();
 		for (int i = 0; i < newFeatures.length; i++) {
 			AboutInfo info = newFeatures[i];
-			if(info.getWelcomePerspective() != null && info.getWelcomePageURL() != null)
+			if (info.getWelcomePerspective() != null && info.getWelcomePageURL() != null)
 				result.add(info);
 		}
-		return (AboutInfo[])result.toArray(new AboutInfo[result.size()]);
+		return (AboutInfo[]) result.toArray(new AboutInfo[result.size()]);
 	}
 	/**
 	 * Returns an array of all plugins that extend org.eclipse.ui.startup.
 	 */
 	public IPluginDescriptor[] getEarlyActivatedPlugins() {
 		IPluginRegistry registry = Platform.getPluginRegistry();
-		String pluginId = "org.eclipse.ui"; 
+		String pluginId = "org.eclipse.ui";
 		String extensionPoint = "startup";
-		
+
 		IExtensionPoint point = registry.getExtensionPoint(pluginId, extensionPoint);
 		IExtension[] extensions = point.getExtensions();
 		IPluginDescriptor result[] = new IPluginDescriptor[extensions.length];
@@ -1323,13 +1294,13 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			public void run() {
 				IPluginDescriptor descriptors[] = getEarlyActivatedPlugins();
 				for (int i = 0; i < descriptors.length; i++) {
-					final IPluginDescriptor pluginDescriptor = descriptors[i]; 
+					final IPluginDescriptor pluginDescriptor = descriptors[i];
 					SafeRunnable code = new SafeRunnable() {
 						public void run() throws Exception {
 							String id = pluginDescriptor.getUniqueIdentifier() + IPreferenceConstants.SEPARATOR;
-							if(pref.indexOf(id) < 0) {
+							if (pref.indexOf(id) < 0) {
 								Plugin plugin = pluginDescriptor.getPlugin();
-								IStartup startup = (IStartup)plugin;
+								IStartup startup = (IStartup) plugin;
 								startup.earlyStartup();
 							}
 						}
@@ -1341,7 +1312,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 				}
 			}
 		};
-		
+
 		Thread thread = new Thread(work);
 		thread.start();
 	}
@@ -1358,10 +1329,10 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		if (appName != null)
 			Display.setAppName(appName);
 		Display display = null;
-		if("true".equals(Platform.getDebugOption("org.eclipse.ui/trace/graphics"))) { //$NON-NLS-1$ //$NON-NLS-2$
+		if ("true".equals(Platform.getDebugOption("org.eclipse.ui/trace/graphics"))) { //$NON-NLS-1$ //$NON-NLS-2$
 			DeviceData data = new DeviceData();
 			data.tracking = true;
-			display = new Display(data);			
+			display = new Display(data);
 		} else {
 			display = new Display();
 		}
@@ -1378,7 +1349,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			boolean initOK = init(commandLineArgs);
 			Platform.endSplash();
 			runEventLoop = true;
-			if (initOK) 
+			if (initOK)
 				checkUpdates(); // may trigger a close/restart
 			if (initOK && runEventLoop) {
 				startPlugins();
@@ -1387,7 +1358,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			shutdown();
 		} finally {
 			if (!display.isDisposed())
-			  display.dispose();
+				display.dispose();
 		}
 		return returnCode;
 	}
@@ -1456,23 +1427,23 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 */
 	public void setActiveAcceleratorConfiguration(Configuration configuration) {
 		if (configuration != null) {
-			acceleratorConfiguration = configuration; 
- 			String id = configuration.getLabel().getId();						
+			acceleratorConfiguration = configuration;
+			String id = configuration.getLabel().getId();
 			KeyManager keyManager = KeyManager.getInstance();
 			keyManager.getKeyMachine().setConfiguration(id);
-			keyManager.update();		
+			keyManager.update();
 			IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
-			
+
 			if (workbenchWindow != null && workbenchWindow instanceof WorkbenchWindow) {
 				WWinKeyBindingService wWinKeyBindingService = ((WorkbenchWindow) workbenchWindow).getKeyBindingService();
-			
+
 				if (wWinKeyBindingService != null)
-					wWinKeyBindingService.clear();					
-			
+					wWinKeyBindingService.clear();
+
 				MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();
- 				menuManager.update(IAction.TEXT);
+				menuManager.update(IAction.TEXT);
 			}
-		}	
+		}
 	}
 
 	/**
@@ -1485,11 +1456,9 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	/* (non-Javadoc)
 	 * Method declared on IWorkbench.
 	 */
-	public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow window)
-		throws WorkbenchException
-	{
+	public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow window) throws WorkbenchException {
 		Assert.isNotNull(perspectiveId);
-		
+
 		// If the specified window has the requested perspective open, then the window
 		// is given focus and the perspective is shown. The page's input is ignored.
 		WorkbenchWindow win = (WorkbenchWindow) window;
@@ -1507,7 +1476,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 				}
 			}
 		}
-		
+
 		// If another window that has the workspace root as input and the requested
 		// perpective open and active, then the window is given focus.
 		IAdaptable input = WorkbenchPlugin.getPluginWorkspace().getRoot();
@@ -1532,7 +1501,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 				}
 			}
 		}
-			
+
 		// Otherwise the requested perspective is opened and shown in the specified
 		// window or in a new window depending on the current user preference for opening
 		// perspectives, and that window is given focus.
@@ -1544,7 +1513,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			IPerspectiveDescriptor persp = null;
 			if (page != null)
 				persp = page.getPerspective();
-			
+
 			// Only open a new window if user preference is set and the window
 			// has an active perspective.
 			if (IPreferenceConstants.OPM_NEW_WINDOW == mode && persp != null) {
@@ -1566,13 +1535,11 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		// Just throw an exception....
 		throw new WorkbenchException(WorkbenchMessages.format("Workbench.showPerspectiveError", new Object[] { perspectiveId })); //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on IWorkbench.
 	 */
-	public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow window, IAdaptable input) 
-		throws WorkbenchException
-	{
+	public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow window, IAdaptable input) throws WorkbenchException {
 		Assert.isNotNull(perspectiveId);
 
 		// If the specified window has the requested perspective open and the same requested
@@ -1601,7 +1568,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 				}
 			}
 		}
-		
+
 		// If another window has the requested input and the requested
 		// perpective open and active, then that window is given focus.
 		IWorkbenchWindow[] windows = getWorkbenchWindows();
@@ -1633,7 +1600,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		if (inputSameAsWindow && win != null) {
 			IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 			int mode = store.getInt(IPreferenceConstants.OPEN_PERSP_MODE);
-			
+
 			if (IPreferenceConstants.OPM_NEW_WINDOW != mode) {
 				IWorkbenchPage page = win.getActiveWorkbenchPage();
 				IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
@@ -1667,18 +1634,18 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 				return page;
 			}
 		}
-		
+
 		// Otherwise the requested perspective is opened and shown in a new window, and the
 		// window is given focus.
 		IWorkbenchWindow newWindow = openWorkbenchWindow(perspectiveId, input);
 		return newWindow.getActivePage();
 	}
-	
+
 	/**
 	 * shutdown the application.
 	 */
 	private void shutdown() {
-		WorkbenchColors.shutdown();		
+		WorkbenchColors.shutdown();
 		JFaceColors.disposeColors();
 	}
 
@@ -1686,7 +1653,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * Creates the action delegate for each action extension contributed by
 	 * a particular plugin.  The delegates are only created if the
 	 * plugin itself has been activated.
-	 * 
+	 *
 	 * @param pluginId the plugin id.
 	 */
 	public void refreshPluginActions(String pluginId) {
