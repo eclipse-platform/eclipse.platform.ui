@@ -22,6 +22,8 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.*;
+import org.eclipse.ui.internal.ide.IDEApplication;
+import org.eclipse.ui.internal.ide.dialogs.*;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.tests.util.DialogCheck;
@@ -37,10 +39,11 @@ public class UIDialogs extends TestCase {
 		return DialogCheck.getShell();
 	}
 	private IWorkbench getWorkbench() {
-		return WorkbenchPlugin.getDefault().getWorkbench();
+		return PlatformUI.getWorkbench();
 	}
 	public void testAbout() {
-		Dialog dialog = new AboutDialog(getWorkbench().getActiveWorkbenchWindow());
+		Dialog dialog = null;
+		dialog = new AboutDialog(getWorkbench().getActiveWorkbenchWindow(), IDEApplication.getPrimaryInfo(), IDEApplication.getFeatureInfos());
 		DialogCheck.assertDialog(dialog, this);
 	}
 	public void testAddProjects() {

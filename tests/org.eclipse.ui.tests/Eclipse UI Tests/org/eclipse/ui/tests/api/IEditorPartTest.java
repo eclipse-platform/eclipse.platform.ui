@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IProject;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.util.FileUtil;
 
 /**
@@ -37,7 +38,7 @@ public class IEditorPartTest extends IWorkbenchPartTest {
 	protected MockWorkbenchPart openPart(IWorkbenchPage page) throws Throwable {
 		IProject proj = FileUtil.createProject("IEditorPartTest");
 		IFile file = FileUtil.createFile("IEditorPartTest.txt", proj);
-		return (MockWorkbenchPart)page.openEditor(file, MockEditorPart.ID1);
+		return (MockWorkbenchPart)page.openEditor(new FileEditorInput(file), MockEditorPart.ID1);
 	}
 
 	/**

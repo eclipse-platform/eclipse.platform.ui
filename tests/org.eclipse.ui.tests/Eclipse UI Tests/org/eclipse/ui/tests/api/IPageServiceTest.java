@@ -17,6 +17,7 @@ import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.tests.util.EmptyPerspective;
 import org.eclipse.ui.tests.util.UITestCase;
@@ -165,7 +166,7 @@ public class IPageServiceTest extends UITestCase
 		// Open page and change persp feature.
 		// Verify no events are received.
 		perspEventReceived = false;
-		IWorkbenchPage page = fWindow.openPage(IWorkbenchConstants.DEFAULT_LAYOUT_ID,
+		IWorkbenchPage page = fWindow.openPage(IDE.RESOURCE_PERSPECTIVE_ID,
 			fWorkspace);
 		page.setEditorAreaVisible(false);
 		page.setEditorAreaVisible(true);

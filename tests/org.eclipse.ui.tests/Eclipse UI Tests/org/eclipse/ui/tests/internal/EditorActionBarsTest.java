@@ -28,6 +28,7 @@ import org.eclipse.ui.internal.CoolBarContributionItem;
 import org.eclipse.ui.internal.CoolBarManager;
 import org.eclipse.ui.internal.CoolItemToolBarManager;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.api.MockAction;
 import org.eclipse.ui.tests.api.MockEditorActionBarContributor;
 import org.eclipse.ui.tests.api.MockEditorPart;
@@ -122,7 +123,7 @@ public class EditorActionBarsTest extends UITestCase {
 	{
 		IProject proj = FileUtil.createProject("IEditorActionBarsTest");
 		IFile file = FileUtil.createFile("test" + suffix + ".txt", proj);
-		return (MockEditorPart)page.openEditor(file, EDITOR_ID);
+		return (MockEditorPart)page.openEditor(new FileEditorInput(file), EDITOR_ID);
 	}
 	
 	/**
@@ -144,7 +145,7 @@ public class EditorActionBarsTest extends UITestCase {
 		IToolBarManager tbm = ((WorkbenchWindow)fWindow).getCoolBarManager();
 		if (tbm instanceof ToolBarManager) {
 			ToolBar tb = ((ToolBarManager) tbm).getControl();
-            verfiyNullToolbar(tb, actionText, tbm);
+            verifyNullToolbar(tb, actionText, tbm);
             if (tb != null) {
     			ToolItem [] items = tb.getItems();
     			for (int i = 0; i < items.length; i ++) {
@@ -163,7 +164,7 @@ public class EditorActionBarsTest extends UITestCase {
 					CoolBarContributionItem coolItem = (CoolBarContributionItem) coolItems[i];
 					ToolBarManager citbm = coolItem.getToolBarManager();
 					ToolBar tb = ((ToolBarManager) citbm).getControl();
-                    verfiyNullToolbar(tb, actionText, citbm);
+                    verifyNullToolbar(tb, actionText, citbm);
                     if (tb != null) {
     					ToolItem [] items = tb.getItems();
     					for (int j = 0; j < items.length; j ++) {
@@ -194,7 +195,7 @@ public class EditorActionBarsTest extends UITestCase {
      * @param manager the IToolBarManager containing items
      * @since 3.0
      */
-    private void verfiyNullToolbar(ToolBar tb, String actionText, IToolBarManager manager) {        
+    private void verifyNullToolbar(ToolBar tb, String actionText, IToolBarManager manager) {        
         if (tb == null) { // toolbar should only be null if the given manager is
             if (manager instanceof CoolItemToolBarManager) {
                 // a CoolBarManager and it contains only separators or invisible 

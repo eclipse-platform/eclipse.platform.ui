@@ -17,6 +17,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.tests.util.FileUtil;
 
 public class IEditorSiteTest extends IWorkbenchPartSiteTest {
@@ -48,7 +49,7 @@ public class IEditorSiteTest extends IWorkbenchPartSiteTest {
 	protected IWorkbenchPart createTestPart(IWorkbenchPage page) throws Throwable {
 		IProject proj = FileUtil.createProject("createTestPart");
 		IFile file = FileUtil.createFile("test1.mock1", proj);
-		return page.openEditor(file);
+		return IDE.openEditor(page, file, true);
 	}
 	
 	public void testGetActionBarContributor() throws Throwable {

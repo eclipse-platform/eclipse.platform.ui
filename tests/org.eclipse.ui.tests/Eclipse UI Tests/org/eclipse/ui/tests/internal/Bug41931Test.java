@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.tests.util.UITestCase;
 
@@ -70,9 +71,9 @@ public class Bug41931Test extends UITestCase {
 
 		// Open editors on those files.
 		WorkbenchPage page = (WorkbenchPage) window.getActivePage();
-		IEditorPart editorA = page.openEditor(fileA);
-		IEditorPart editorB = page.openEditor(fileB);
-		IEditorPart editorC = page.openEditor(fileC);
+		IEditorPart editorA = IDE.openEditor(page, fileA, true);
+		IEditorPart editorB = IDE.openEditor(page, fileB, true);
+		IEditorPart editorC = IDE.openEditor(page, fileC, true);
 
 		// Test that the editors are open in the order: A, B, C
 		IEditorPart[] expectedResults = { editorA, editorB, editorC };

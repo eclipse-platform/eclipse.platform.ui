@@ -22,8 +22,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.ParseException;
@@ -66,7 +67,7 @@ public class Bug43321Test extends UITestCase {
 		String contents = "A blurb"; //$NON-NLS-1$
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(contents.getBytes());
 		textFile.create(inputStream, true, null);
-		AbstractTextEditor editor = (AbstractTextEditor) window.getActivePage().openEditor(textFile);
+		AbstractTextEditor editor = (AbstractTextEditor) IDE.openEditor(window.getActivePage(), textFile, true);
 		editor.selectAndReveal(0, 1);
 
 		// Press "Ctrl+C" to perform a copy.
@@ -76,7 +77,7 @@ public class Bug43321Test extends UITestCase {
 		((Workbench) window.getWorkbench()).workbenchActivitiesCommandsAndRoles.press(keyStrokes, event);
 
 		// Get the menu item we've just selected.
-		IAction action = editor.getEditorSite().getActionBars().getGlobalActionHandler(IWorkbenchActionConstants.COPY);
+		IAction action = editor.getEditorSite().getActionBars().getGlobalActionHandler(ActionFactory.COPY.getId());
 		assertTrue("Non-checkbox menu item is checked.", !action.isChecked()); //$NON-NLS-1$
 	}
 }

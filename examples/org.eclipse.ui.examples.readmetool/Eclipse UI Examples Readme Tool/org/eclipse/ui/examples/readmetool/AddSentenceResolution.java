@@ -17,6 +17,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.*;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 
 /**
@@ -47,7 +48,7 @@ public class AddSentenceResolution implements IMarkerResolution {
 		if (editorPart == null) {
 			// open an editor
 			try {
-				editorPart = page.openEditor((IFile)marker.getResource());
+				editorPart = IDE.openEditor(page, (IFile)marker.getResource(), true); 
 			} catch (PartInitException e) {
 				MessageDialog.openError(
 					w.getShell(),

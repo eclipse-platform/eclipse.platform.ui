@@ -15,6 +15,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.util.EmptyPerspective;
 import org.eclipse.ui.tests.util.FileUtil;
 import org.eclipse.ui.tests.util.UITestCase;
@@ -75,11 +76,11 @@ public class SessionCreateTest extends UITestCase {
 		// Open 3 editors in last page.
 		IProject proj = FileUtil.createProject(TEST_PROJ);
 		IFile file = FileUtil.createFile(TEST_FILE_1, proj);
-		page.openEditor(file, MockEditorPart.ID1);
+		page.openEditor(new FileEditorInput(file), MockEditorPart.ID1);
 		file = FileUtil.createFile(TEST_FILE_2, proj);
-		page.openEditor(file, MockEditorPart.ID1);
+		page.openEditor(new FileEditorInput(file), MockEditorPart.ID1);
 		file = FileUtil.createFile(TEST_FILE_3, proj);
-		page.openEditor(file, MockEditorPart.ID1);
+		page.openEditor(new FileEditorInput(file), MockEditorPart.ID1);
 			
 		// Close the original windows.
 		closeOriginalWindows();

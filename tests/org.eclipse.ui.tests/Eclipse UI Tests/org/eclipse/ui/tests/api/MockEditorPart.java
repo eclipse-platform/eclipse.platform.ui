@@ -17,8 +17,9 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.ide.IGotoMarker;
 
-public class MockEditorPart extends MockWorkbenchPart implements IEditorPart {
+public class MockEditorPart extends MockWorkbenchPart implements IEditorPart, IGotoMarker {
 
 	private static final String BASE = "org.eclipse.ui.tests.api.MockEditorPart";
 	public static final String ID1 = BASE + "1";
@@ -62,7 +63,7 @@ public class MockEditorPart extends MockWorkbenchPart implements IEditorPart {
 	}
 
 	/**
-	 * @see IEditorPart#gotoMarker(IMarker)
+	 * @see org.eclipse.ui.ide.IGotoMarker
 	 */
 	public void gotoMarker(IMarker marker) {
 		callTrace.add( "gotoMarker" );	
@@ -110,5 +111,6 @@ public class MockEditorPart extends MockWorkbenchPart implements IEditorPart {
 	{
 		saveNeeded = value;
 	}
+
 }
 
