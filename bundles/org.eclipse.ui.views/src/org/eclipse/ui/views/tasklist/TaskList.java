@@ -400,7 +400,7 @@ public class TaskList extends ViewPart {
 			}
 		}
 
-		boolean gtk = "gtk".equals(SWT.getPlatform());
+		boolean gtk = "gtk".equals(SWT.getPlatform()); //$NON-NLS-1$
 		TableLayout layout = new TableLayout();
 		table.setLayout(layout);
 		table.setHeaderVisible(true);
