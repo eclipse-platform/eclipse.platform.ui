@@ -246,8 +246,12 @@ public interface IResource extends IAdaptable {
  * visit method.
  * </p>
  * <p>
- * No guarantees are made about the behavior of this method if resources are
- * deleted or added during the traversal of this resource hierarchy.  If
+ * This method acquires the workspace lock during initialization of the visitor.
+ * Like other workspace changing operations, this method will block until the
+ * workspace lock becomes available.
+ * </p>
+ *  <p>No  guarantees are made about the behavior of this method if resources
+ * are deleted or added during the traversal of this resource hierarchy.  If
  * resources are deleted during the traversal, they may still be passed to the
  * visitor; if resources are created, they may not be passed to the visitor.  If
  * resources other than the one being visited are modified during the traversal,
@@ -267,7 +271,7 @@ public interface IResource extends IAdaptable {
  * flags, team private member resources are visited as well.
  * </p>
  *
- * @param fastVisitor the visitor
+ * @param visitor the visitor
  * @param memberFlags bit-wise or of member flag constants
  *   (<code>IContainer.INCLUDE_PHANTOMS</code> and <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code>)
  *   indicating which members are of interest
@@ -284,9 +288,10 @@ public interface IResource extends IAdaptable {
  * @see IResource#isPhantom
  * @see IResource#isTeamPrivateMember
  * @see IResourceProxyVisitor#visit
+ * @see WorkspaceLock
  * @since 2.1
  */
-public void accept(final IResourceProxyVisitor fastVisitor, int memberFlags) throws CoreException;
+public void accept(final IResourceProxyVisitor visitor, int memberFlags) throws CoreException;
 /**
  * Accepts the given visitor.
  * The visitor's <code>visit</code> method is called with this
