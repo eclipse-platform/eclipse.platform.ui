@@ -74,6 +74,11 @@ The supplied image is drawn over the top right corner of the base image.
    </element>
 
    <element name="description" type="string">
+      <annotation>
+         <documentation>
+            a short description of what this image represents.
+         </documentation>
+      </annotation>
    </element>
 
    <annotation>
@@ -87,9 +92,9 @@ The supplied image is drawn over the top right corner of the base image.
 &lt;pre&gt;
  &lt;extension point="org.eclipse.ui.projectNatureImages"&gt;
   &lt;image 
-   id="org.eclipse.ui.javaNatureImage"
-   natureId="Resource"
-   icon="icons/javaNature.gif"&gt;
+    id="org.eclipse.ui.javaNatureImage"
+    natureId="Resource"
+    icon="icons/javaNature.gif"&gt;
   &lt;/image&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;
@@ -120,8 +125,7 @@ The supplied image is drawn over the top right corner of the base image.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         &lt;p&gt;
-Copyright (c) 2002 IBM Corporation and others.
+         Copyright (c) 2002, 2003 IBM Corporation and others.
 All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
       </documentation>
    </annotation>

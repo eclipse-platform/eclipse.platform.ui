@@ -84,6 +84,7 @@ Wizards may optionally specify a description subelement whose body should contai
       <complexType>
          <sequence>
             <element ref="description" minOccurs="0" maxOccurs="1"/>
+            <element ref="selection" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -153,6 +154,28 @@ Also cause the wizard to appear as a choice within the "New Project Dialog".
       </annotation>
    </element>
 
+   <element name="selection">
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified class name.  If each object in the workbench selection implements this interface the selection will be passed to the wizard.  Otherwise, an empty selection is passed
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name filter.  Each object in the workbench selection must match the name filter to be passed to the wizard
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
@@ -180,6 +203,7 @@ Also cause the wizard to appear as a choice within the "New Project Dialog".
           &lt;description&gt; 
               Create a simple XYZ artifact and set initial content 
           &lt;/description&gt; 
+           &lt;selection class="org.eclipse.core.resources.IResource"/&gt;          
       &lt;/wizard&gt; 
    &lt;/extension&gt; 
 &lt;/pre&gt;
@@ -221,8 +245,7 @@ particular platform installation.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         &lt;p&gt;
-Copyright (c) 2002 IBM Corporation and others.
+         Copyright (c) 2002, 2003 IBM Corporation and others.
 All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
       </documentation>
    </annotation>

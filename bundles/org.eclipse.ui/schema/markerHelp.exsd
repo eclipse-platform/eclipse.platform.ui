@@ -87,6 +87,15 @@
 
    <annotation>
       <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         Release 2.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
@@ -126,7 +135,8 @@ That is, a context id associated with three matching attribute values will be re
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         
+         Copyright (c) 2002,2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
       </documentation>
    </annotation>
 
@@ -135,8 +145,7 @@ That is, a context id associated with three matching attribute values will be re
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         &lt;p&gt;
-Copyright (c) 2002 IBM Corporation and others.
+         Copyright (c) 2002, 2003 IBM Corporation and others.
 All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
       </documentation>
    </annotation>

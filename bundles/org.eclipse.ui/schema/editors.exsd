@@ -176,6 +176,13 @@ Attributes &lt;samp&gt;class&lt;/samp&gt;, &lt;samp&gt;command&lt;/samp&gt; and
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="symbolicFontName" type="string">
+            <annotation>
+               <documentation>
+                  the symbolic name of a font. The symbolic font name must be the id of a defined font (see org.eclipse.ui.fontDefinitions). If this attribute is missing or invalid then the font name is the value of "org.eclipse.jface.textfont" in the editor's preferences store. If there is no preference store or the key is not defined then the JFace text font will be used. The editor implementation decides if it uses this symbolic font name to set the font.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -196,6 +203,7 @@ of an internal editor extension definition:
          extensions="xml" 
          class="com.xyz.XMLEditor" 
          contributorClass="com.xyz.XMLEditorContributor" 
+         symbolicFontName="org.eclipse.jface.textfont"
          default="false"&gt; 
       &lt;/editor&gt; 
    &lt;/extension&gt; 
@@ -277,13 +285,13 @@ editor is closed, menus and actions will be removed.
          The workbench provides a "Default Text Editor". The end user product may contain other editors as part of the shipping bundle. In that case, editors will be registered as extensions using the syntax described above.
       </documentation>
    </annotation>
+
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         &lt;p&gt;
-Copyright (c) 2002 IBM Corporation and others.
+         Copyright (c) 2002,2003 IBM Corporation and others.
 All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
       </documentation>
    </annotation>

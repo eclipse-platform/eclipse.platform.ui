@@ -241,34 +241,34 @@ If no attribute is specified, the action is enabled for any number of items sele
 The following attribute formats are supported: 
     &lt;table border="0" width="80%"&gt;
       &lt;tr&gt;
-	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+ &lt;td valign="top" width="25"&gt;&lt;/td&gt;
         &lt;td valign="top" nowrap&gt;&lt;b&gt;!&lt;/b&gt;&lt;/td&gt;
         &lt;td valign="top"&gt;- 0 items selected&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
-	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+ &lt;td valign="top" width="25"&gt;&lt;/td&gt;
         &lt;td valign="top" nowrap&gt;&lt;b&gt;?&lt;/b&gt;&lt;/td&gt;
         &lt;td valign="top"&gt;- 0 or 1 items selected&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
-	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+ &lt;td valign="top" width="25"&gt;&lt;/td&gt;
         &lt;td valign="top" nowrap&gt;&lt;b&gt;+&lt;/b&gt;&lt;/td&gt;
         &lt;td valign="top"&gt;- 1 or more items selected&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
-	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+ &lt;td valign="top" width="25"&gt;&lt;/td&gt;
         &lt;td valign="top" nowrap&gt;&lt;b&gt;multiple, 2+&lt;/b&gt;&lt;/td&gt;
         &lt;td valign="top"&gt;- 2 or more items selected&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
-	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+ &lt;td valign="top" width="25"&gt;&lt;/td&gt;
         &lt;td valign="top" nowrap&gt;&lt;b&gt;n&lt;/b&gt;&lt;/td&gt;
         &lt;td valign="top"&gt;- a precise number of items selected.a precise number of items selected.&amp;nbsp;
           For example: enablesFor=&amp;quot; 4&amp;quot; enables the action only when 4
           items are selected&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
-	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+ &lt;td valign="top" width="25"&gt;&lt;/td&gt;
         &lt;td valign="top" nowrap&gt;&lt;b&gt;*&lt;/b&gt;&lt;/td&gt;
         &lt;td valign="top"&gt;- any number of items selected&lt;/td&gt;
       &lt;/tr&gt;
@@ -287,17 +287,17 @@ within its &lt;samp&gt;selectionChanged&lt;/samp&gt; method.
                   an optional attribute to define the user interface style type for the action. If defined, the attribute value will be one of the following:
     &lt;table border="0" width="80%"&gt;
       &lt;tr&gt;
-	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+ &lt;td valign="top" width="25"&gt;&lt;/td&gt;
         &lt;td valign="top" nowrap&gt;&lt;b&gt;push&lt;/b&gt;&lt;/td&gt;
         &lt;td valign="top"&gt;- as a regular menu item or tool item.&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
-	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+ &lt;td valign="top" width="25"&gt;&lt;/td&gt;
         &lt;td valign="top" nowrap&gt;&lt;b&gt;radio&lt;/b&gt;&lt;/td&gt;
         &lt;td valign="top"&gt;- as a radio style menu item or tool item. Actions with the radio style within the same menu or toolbar group behave as a radio set. The initial value is specified by the &lt;samp&gt;state&lt;/samp&gt; attribute.&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
-	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+ &lt;td valign="top" width="25"&gt;&lt;/td&gt;
         &lt;td valign="top" nowrap&gt;&lt;b&gt;toggle&lt;/b&gt;&lt;/td&gt;
         &lt;td valign="top"&gt;- as a checked style menu item or as a toggle tool item. The initial value is specified by the &lt;samp&gt;state&lt;/samp&gt; attribute.&lt;/td&gt;
       &lt;/tr&gt;
@@ -345,6 +345,11 @@ define the target object for an object action contribution.
    </element>
 
    <element name="visibility">
+      <annotation>
+         <documentation>
+            In version 2.0 of Eclipse, a visibility element may be used in an objectContribution to define the visibility for the action.  This is not a replacement for the objectClass attribute, which defines the primary target for the action.  The visibility element is used to refine the primary target.  For more information on the use of visibility element, refer to actionExpressions.html.
+         </documentation>
+      </annotation>
       <complexType>
          <choice>
             <element ref="and"/>
@@ -698,8 +703,7 @@ the end of the pop-up menu.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         &lt;p&gt;
-Copyright (c) 2002 IBM Corporation and others.
+         Copyright (c) 2002, 2003 IBM Corporation and others.
 All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
       </documentation>
    </annotation>
