@@ -42,7 +42,7 @@ public class TypedRegion extends Region implements ITypedRegion {
 	/**
 	 * Two typed positions are equal if they have the same offset, length, and type.
 	 *
-	 * @see Object#equals()
+	 * @see Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object o) {
 		if (o instanceof TypedRegion) {

@@ -31,8 +31,8 @@ public interface IVerticalRulerExtension {
 	void setFont(Font font);
 	
 	/**
-	 * Sets the location of the last mouse button activity. This method is used, e.g., by external
-	 * mouse listeners.
+	 * Sets the location of the last mouse button activity. This method is used for
+	 * example by external mouse listeners.
 	 * 
 	 * @param x the x-coordinate
 	 * @param y the y-coordinate
