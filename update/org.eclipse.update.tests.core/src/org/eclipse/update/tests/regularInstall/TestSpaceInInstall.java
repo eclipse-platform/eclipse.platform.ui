@@ -50,7 +50,7 @@ public class TestSpaceInInstall extends UpdateManagerTestCase {
 			if (remoteFeature.getFeatureContentProvider() instanceof FeatureExecutableContentProvider) execFeature = true;
 
 			// verify
-			String site = newURL.getFile();
+			String site = testURL.getFile();
 			IPluginEntry[] entries = remoteFeature.getPluginEntries();
 			assertTrue("no plugins entry", (entries != null && entries.length != 0));
 			String pluginName = entries[0].getVersionIdentifier().toString();

@@ -49,7 +49,6 @@ public abstract class UpdateManagerTestCase extends TestCase {
 		URL resolvedURL = Platform.resolve(dataDesc.getInstallURL());
 		URL dataURL = new URL(resolvedURL,DATA_PATH);
 		dataPath = dataURL.getFile();
-		//URL dataURL = new URL(resolvedURL.getProtocol(), resolvedURL.getHost(), resolvedURL.getPort(),dataPath);
 		String homePath = (System.getProperty("user.home")).replace(File.separatorChar,'/');
 
 		if (bundle == null) {
@@ -58,8 +57,7 @@ public abstract class UpdateManagerTestCase extends TestCase {
 		}
 
 		try {
-			String path = dataURL.getFile();
-			SOURCE_FILE_SITE = new File(path).toURL();
+			SOURCE_FILE_SITE = new File(dataPath).toURL();
 			SOURCE_HTTP_SITE = new URL("http", getHttpHost(),getHttpPort(), bundle.getString("HTTP_PATH_1"));
 			TARGET_FILE_SITE = new URL("file",null, homePath +"/target/");
 		} catch (Exception e) {

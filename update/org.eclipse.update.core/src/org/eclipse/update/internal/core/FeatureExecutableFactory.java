@@ -89,9 +89,10 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 		if (url==null) 
 			throw newCoreException("URL is null",null);		
 		
-		if (!(url.getFile().endsWith("/") || url.getFile().endsWith(File.separator))){
+		if (!(url.getFile().endsWith("/") || url.getFile().endsWith(File.separator) || url.getFile().endsWith(Feature.FEATURE_XML))){
 			try {
-				url = new URL(url,"/");
+				String path = url.getFile() + "/";
+				url = new URL(url.getProtocol(),url.getHost(),url.getPort(),path);
 			} catch (MalformedURLException e){
 				throw newCoreException("Unable to create new URL for url"+url.toExternalForm(),e);				
 			}

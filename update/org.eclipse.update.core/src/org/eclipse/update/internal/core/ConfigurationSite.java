@@ -31,6 +31,9 @@ public class ConfigurationSite extends ConfigurationSiteModel implements IConfig
 	public ConfigurationSite(ISite site, IConfigurationPolicy policy) {
 		setSiteModel((SiteMapModel)site);
 		setConfigurationPolicyModel((ConfigurationPolicyModel)policy);
+		// check if it is installable
+		//FIXME 
+		setInstallSite(true);
 	}
 
 	/**

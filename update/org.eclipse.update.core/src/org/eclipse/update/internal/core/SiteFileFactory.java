@@ -16,7 +16,6 @@ public class SiteFileFactory extends BaseSiteFactory {
 
 	// private when parsing file system
 	private Site site;
-	private URL url;
 
 	/**
 	 * manages the versionedIdentifier and location of parsed plugins
@@ -62,26 +61,51 @@ public class SiteFileFactory extends BaseSiteFactory {
 		SiteModelFactory factory = (SiteModelFactory) this;
 
 		try {
-			// remove site.xml from the URL
-			SiteFileContentProvider contentProvider = new SiteFileContentProvider(url);
-			try {
-				// if pointing to a directory,
-				// we shoudl not attempt to open a stream
-				if (url.getFile().endsWith("/") && forceCreation) {
-					site = parseSite(url);
+			// if url points to a directory
+			// attempt to parse site.xml
+			String path = url.getFile();
+			File siteLocation = new File(path);
+			if (siteLocation.isDirectory()) {
+				if (new File(siteLocation, Site.SITE_XML).exists()) {
+					siteStream = new FileInputStream(new File(siteLocation, Site.SITE_XML));
+					site = (Site) factory.parseSite(siteStream);
 				} else {
-
+					if (forceCreation) {
+						// parse siteLocation
+						site = parseSite(siteLocation);
+					} else {
+						throw new IOException("Cannot retrieve a SiteFile from a directory. The URL should point to a file.");
+					}
+				}
+			} else {
+				 // we are not pointing to a directory
+				 // attempt to parse the file
+				try {
 					URL resolvedURL = URLEncoder.encode(url);
 					siteStream = resolvedURL.openStream();
 					site = (Site) factory.parseSite(siteStream);
+				} catch (IOException e) {
+					if (forceCreation) {
+						// attempt to parse parent directory
+						File file = new File(url.getFile());	
+						File parentDirectory =file.getParentFile();
+						
+						// create directory if it doesn't exist						
+						if (parentDirectory!=null && !parentDirectory.exists()){
+								parentDirectory.mkdirs();
+						}
+						
+						if (parentDirectory==null || !parentDirectory.isDirectory())
+							throw new ParsingException(new Exception("Cannot obtain the parent directory from the file:"+file));
+
+
+						site = parseSite(parentDirectory);
+					} else
+						throw e;
 				}
-			} catch (IOException e) {
-				if (forceCreation) {
-					site = parseSite(url);
-				} else
-					throw e;
 			}
 
+			SiteContentProvider contentProvider = new SiteFileContentProvider(url);
 			site.setSiteContentProvider(contentProvider);
 			contentProvider.setSite(site);
 			site.resolve(url, getResourceBundle(url));
@@ -100,26 +124,27 @@ public class SiteFileFactory extends BaseSiteFactory {
 	/**
 	 * Method parseSite.
 	 */
-	public Site parseSite(URL url) throws ParsingException {
+	public Site parseSite(File directory) throws ParsingException {
 
-		this.url = url;
 		this.site = (Site) createSiteMapModel();
 
-		String path = this.url.getFile();
-		String pluginPath = path + Site.DEFAULT_PLUGIN_PATH;
-		String fragmentPath = path + Site.DEFAULT_FRAGMENT_PATH;
+		if (!directory.exists())
+			throw new ParsingException(new Exception("The file:"+directory+" does not exist. Cannot parse site"));
+
+		File pluginPath = new File(directory, Site.DEFAULT_PLUGIN_PATH);
+		File fragmentPath = new File(directory,Site.DEFAULT_FRAGMENT_PATH);
 
 		try {
 			// FIXME: fragments
 			//PACKAGED
-			parsePackagedFeature(); // in case it contains JAR files
+			parsePackagedFeature(directory); // in case it contains JAR files
 
 			parsePackagedPlugins(pluginPath);
 
 			parsePackagedPlugins(fragmentPath);
 
 			// EXECUTABLE	
-			parseExecutableFeature();
+			parseExecutableFeature(directory);
 
 			parseExecutablePlugin(pluginPath);
 
@@ -137,18 +162,9 @@ public class SiteFileFactory extends BaseSiteFactory {
 	 * Method parseFeature.
 	 * @throws CoreException
 	 */
-	private void parseExecutableFeature() throws CoreException {
-		String featurePath=null;
-		try {
-			URL newURL = new URL(url, Site.INSTALL_FEATURE_PATH);
-			featurePath = newURL.getFile();
-		} catch (MalformedURLException e) {
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error creating feature path URL:"+url.toExternalForm(), e);
-			throw new CoreException(status);
-		}
+	private void parseExecutableFeature(File directory) throws CoreException {
 
-		File featureDir = new File(featurePath);
+		File featureDir = new File(directory, Site.INSTALL_FEATURE_PATH);
 		if (featureDir.exists()) {
 			String[] dir;
 			FeatureReferenceModel featureRef;
@@ -162,8 +178,8 @@ public class SiteFileFactory extends BaseSiteFactory {
 
 					SiteFileFactory archiveFactory = new SiteFileFactory();
 					// the URL must ends with '/' for the bundle to be resolved
-					newFilePath = featurePath + dir[index] + (dir[index].endsWith("/") ? "/" : "");
-					featureURL = new File(newFilePath).toURL();
+					newFilePath = dir[index] + (dir[index].endsWith("/") ? "/" : "");
+					featureURL = new File(featureDir,newFilePath).toURL();
 					IFeature newFeature = createFeature(featureURL);
 
 					featureRef = archiveFactory.createFeatureReferenceModel();
@@ -183,13 +199,10 @@ public class SiteFileFactory extends BaseSiteFactory {
 	* Method parseFeature.
 	* @throws CoreException
 	*/
-	private void parsePackagedFeature() throws CoreException {
-
-		String path = this.url.getFile();
-		String featurePath = path + Site.DEFAULT_FEATURE_PATH;
+	private void parsePackagedFeature(File directory) throws CoreException {
 
 		// FEATURES
-		File featureDir = new File(featurePath);
+		File featureDir = new File(directory, Site.DEFAULT_FEATURE_PATH);
 		if (featureDir.exists()) {
 			String[] dir;
 			FeatureReferenceModel featureRef;
@@ -201,15 +214,14 @@ public class SiteFileFactory extends BaseSiteFactory {
 				dir = featureDir.list(FeaturePackagedContentProvider.filter);
 				for (int index = 0; index < dir.length; index++) {
 
-					SiteFileFactory archiveFactory = new SiteFileFactory();
-					newFilePath = featurePath + dir[index];
-					featureURL = new File(newFilePath).toURL();
+					featureURL = new File(featureDir, dir[index]).toURL();
 					IFeature newFeature = createFeature(featureURL);
 
+					SiteFileFactory archiveFactory = new SiteFileFactory();
 					featureRef = archiveFactory.createFeatureReferenceModel();
 					featureRef.setSiteModel(site);
 					featureRef.setURLString(featureURL.toExternalForm());
-					((Site) site).addFeatureReferenceModel(featureRef);
+					site.addFeatureReferenceModel(featureRef);
 
 				}
 			} catch (MalformedURLException e) {
@@ -229,13 +241,12 @@ public class SiteFileFactory extends BaseSiteFactory {
 	 * @return VersionedIdentifier
 	 * @throws CoreException
 	 */
-	private void parseExecutablePlugin(String path) throws CoreException {
+	private void parseExecutablePlugin(File dir) throws CoreException {
 		PluginIdentifier plugin = null;
 		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-		MultiStatus parsingStatus = new MultiStatus(id, IStatus.WARNING, "Error parsing plugin.xml in " + path, new Exception());
+		MultiStatus parsingStatus = new MultiStatus(id, IStatus.WARNING, "Error parsing plugin.xml in " + dir, new Exception());
 
 		try {
-			File dir = new File(path);
 			if (dir.exists() && dir.isDirectory()) {
 				File[] files = dir.listFiles();
 				for (int i = 0; i < files.length; i++) {
@@ -257,7 +268,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 				}
 			} // path is a directory
 		} catch (Exception e) {
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error parsing file :" + path + " \r\n" + e.getMessage(), e);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error parsing file :" + dir + " \r\n" + e.getMessage(), e);
 			throw new CoreException(status);
 		}
 
@@ -303,9 +314,8 @@ public class SiteFileFactory extends BaseSiteFactory {
 	/**
 	 * 
 	 */
-	private void parsePackagedPlugins(String pluginPath) throws CoreException {
+	private void parsePackagedPlugins(File pluginDir) throws CoreException {
 
-		File pluginDir = new File(pluginPath);
 		File file = null;
 		String[] dir;
 
@@ -318,7 +328,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 				dir = pluginDir.list(FeaturePackagedContentProvider.filter);
 				for (int i = 0; i < dir.length; i++) {
 
-					file = new File(pluginPath, dir[i]);
+					file = new File(pluginDir, dir[i]);
 					JarContentReference jarReference = new JarContentReference(null, file);
 					ContentReference ref = jarReference.peek("plugin.xml", null, null);
 					if (ref == null)

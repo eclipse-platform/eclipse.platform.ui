@@ -33,6 +33,8 @@ public interface IInstallConfiguration extends IAdaptable {
 	void setCurrent(boolean isCurrent);
 	
 	
+		
+	
 	/**
 	 * Returns an array of local configuration sites that the sites
 	 * configured.

@@ -15,7 +15,7 @@ public class ParsingException extends Exception {
 	private Throwable exception;
 	
 	public ParsingException(Throwable exception){
-		super();
+		super(exception.getMessage());
 		this.exception = exception;
 	}
 	
