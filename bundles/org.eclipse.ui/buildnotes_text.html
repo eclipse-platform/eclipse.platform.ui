@@ -14,7 +14,43 @@ Eclipse Platform Build Notes</h1>
 <h1>
 Text Editor Support (including JFace Text)</h1>
 
-<p><br>Eclipse SDK Build 20020305
+<p><br>Eclipse SDK Build 20020312
+<h2>
+Breaking API changes</h2>
+
+<h2>
+Other highlights</h2>
+
+<ul>
+<li>
+All editors based on AbstractTextEditor now support <i>Find Next</i> and
+<i>Find Previous. </i>Both actions are selection aware, i.e. having a word
+selected when invoking <i>Find Next </i>searches for the next appearance
+of the selected word.</li>
+
+<li>
+A first cut of incremental search is implemented accessible via the Find/Replace
+dialog.</li>
+</ul>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports closed</h2>
+#5191 EC DCR: Add keyboard accelerator for "Find Next"
+<br>#5710 Emacs-like isearch (aka "incremental search")
+<br>#10489 Indention a template results in NPE
+<br>#2698 Opening Default Text Editor not showing right icon in the file
+tab (1GI7GK2)
+<br>#7954 Content assist off the edge of the display
+<br>#9964&nbsp; nor P3 Syntax highlight and comments bug
+<br>#11047&nbsp; nor P2 Index out of bounds on text hover
+<br>&nbsp;
+<p>
+<hr WIDTH="100%">
+<br>&nbsp;
+<p>Eclipse SDK Build 20020305
 <h2>
 Breaking API changes</h2>
 

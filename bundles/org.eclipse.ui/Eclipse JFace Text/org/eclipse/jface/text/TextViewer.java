@@ -355,8 +355,8 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	/**
 	 * This viewer's find/replace target.
 	 */
-	class FindReplaceTarget implements IFindReplaceTarget {
-		
+	class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtension {
+
 		/*
 		 * @see IFindReplaceTarget#getSelectionText()
 		 */
@@ -396,7 +396,9 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		 * @see IFindReplaceTarget#findAndSelect(int, String, boolean, boolean, boolean)
 		 */
 		public int findAndSelect(int offset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord) {
-			offset += TextViewer.this.getVisibleRegionOffset();
+			if (offset != -1)
+				offset += TextViewer.this.getVisibleRegionOffset();
+
 			offset= TextViewer.this.findAndSelect(offset, findString, searchForward, caseSensitive, wholeWord);
 			offset -= TextViewer.this.getVisibleRegionOffset();
 			return offset;
@@ -408,8 +410,20 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		public boolean canPerformFind() {
 			return TextViewer.this.canPerformFind();
 		}	
-		
-	};
+
+		/*
+		 * @see IFindReplaceTargetExtension#beginSession()
+		 */
+		public void beginSession() {
+		}
+
+		/*
+		 * @see IFindReplaceTargetExtension#endSession()
+		 */
+		public void endSession() {
+		}
+	}
+	
 		
 	/** ID for originators of view port changes */
 	protected static final int SCROLLER=	1;
@@ -990,11 +1004,11 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	/**
 	 * Sends out a selection changed event to all registered listeners.
 	 *
-	 * @param offset the offset of the newly selected range
-	 * @param length the length of the newly selected range
+	 * @param offset the offset of the newly selected range in the visible document
+	 * @param length the length of the newly selected range in the visible document
 	 */
 	protected void selectionChanged(int offset, int length) {
-		ISelection selection= new TextSelection(getDocument(), offset, length);
+		ISelection selection= new TextSelection(getDocument(), getVisibleRegionOffset() + offset, length);
 		SelectionChangedEvent event= new SelectionChangedEvent(this, selection);
 		fireSelectionChanged(event);
 	}
@@ -1875,7 +1889,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				return true;
 			case SHIFT_RIGHT:
 			case SHIFT_LEFT:
-				return isEditable() && fIndentChars != null && isBlockSelected();
+				return isEditable() && fIndentChars != null && fTextWidget.getSelectionCount() > 0;
 			case PREFIX:
 			case STRIP_PREFIX:
 				return isEditable() && fDefaultPrefixChars != null;
@@ -2227,7 +2241,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			// ok - change the document
 			for (int i= occurrences.length - 1; i >= 0; i--) {
 				IRegion r= occurrences[i];
-				d.replace(r.getOffset(), r.getLength(), null);
+				d.replace(r.getOffset(), r.getLength(), ""); //$NON-NLS-1$
 			}
 
 		} catch (BadLocationException x) {
@@ -2298,8 +2312,43 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			int offset= (startPosition == -1 ? startPosition : startPosition - getVisibleRegionOffset());
 			int pos= getVisibleDocument().search(offset, findString, forwardSearch, caseSensitive, wholeWord);
 			if (pos > -1) {
-				fTextWidget.setSelectionRange(pos, findString.length());
-				internalRevealRange(pos, pos + findString.length());
+				int length= findString.length();
+				fTextWidget.setSelectionRange(pos, length);
+				internalRevealRange(pos, pos + length);
+				selectionChanged(pos, length);
+			}
+			return pos + getVisibleRegionOffset();
+		} catch (BadLocationException x) {
+			if (TRACE_ERRORS)
+				System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.findAndSelect")); //$NON-NLS-1$
+		}
+		
+		return -1;
+	}
+	
+	/**
+	 * Performs a search similar to <code>IFindReplaceTarget.findAndSelect()</code> within the given
+	 * range of the viewer's visible document.
+	 */
+	private int findAndSelectInRange(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, int rangeOffset, int rangeLength) {
+		if (fTextWidget == null)
+			return -1;
+			
+		try {
+
+			int offset= (startPosition == -1 ? (forwardSearch ? rangeOffset : rangeOffset + rangeLength) : startPosition);
+			offset -= getVisibleRegionOffset();
+			
+			int pos= getVisibleDocument().search(offset, findString, forwardSearch, caseSensitive, wholeWord);
+
+			int length =  findString.length();
+			if (pos + getVisibleRegionOffset() < rangeOffset || pos + getVisibleRegionOffset() + length > rangeOffset + rangeLength)
+				pos= -1;
+
+			if (pos > -1) {
+				fTextWidget.setSelectionRange(pos, length);
+				internalRevealRange(pos, pos + length);
+				selectionChanged(pos, length);
 			}
 			return pos + getVisibleRegionOffset();
 		} catch (BadLocationException x) {

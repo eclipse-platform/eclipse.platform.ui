@@ -6,8 +6,15 @@ package org.eclipse.ui.texteditor;
  */
 
 
-import java.text.MessageFormat;import java.util.ArrayList;import java.util.List;import java.util.ResourceBundle;import org.eclipse.core.runtime.Platform;import org.eclipse.swt.SWT;import org.eclipse.swt.events.ModifyEvent;import org.eclipse.swt.events.ModifyListener;import org.eclipse.swt.events.SelectionAdapter;import org.eclipse.swt.events.SelectionEvent;import org.eclipse.swt.events.SelectionListener;import org.eclipse.swt.events.ShellAdapter;import org.eclipse.swt.events.ShellEvent;import org.eclipse.swt.graphics.Image;import org.eclipse.swt.graphics.Point;import org.eclipse.swt.graphics.Rectangle;import org.eclipse.swt.layout.GridData;import org.eclipse.swt.layout.GridLayout;import org.eclipse.swt.widgets.Button;import org.eclipse.swt.widgets.Combo;import org.eclipse.swt.widgets.Composite;import org.eclipse.swt.widgets.Control;import org.eclipse.swt.widgets.Group;import org.eclipse.swt.widgets.Label;import org.eclipse.swt.widgets.Shell;import org.eclipse.jface.dialogs.Dialog;import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.text.IFindReplaceTarget;import org.eclipse.ui.PlatformUI;import org.eclipse.ui.help.WorkbenchHelp;import org.eclipse.ui.plugin.AbstractUIPlugin;
+import java.text.MessageFormat;import java.util.ArrayList;import java.util.List;import java.util.ResourceBundle;import org.eclipse.core.runtime.Platform;import org.eclipse.swt.SWT;import org.eclipse.swt.events.ModifyEvent;import org.eclipse.swt.events.ModifyListener;import org.eclipse.swt.events.SelectionAdapter;import org.eclipse.swt.events.SelectionEvent;import org.eclipse.swt.events.SelectionListener;import org.eclipse.swt.events.ShellAdapter;import org.eclipse.swt.events.ShellEvent;import org.eclipse.swt.graphics.Image;import org.eclipse.swt.graphics.Point;import org.eclipse.swt.graphics.Rectangle;import org.eclipse.swt.layout.GridData;import org.eclipse.swt.layout.GridLayout;import org.eclipse.swt.widgets.Button;import org.eclipse.swt.widgets.Combo;import org.eclipse.swt.widgets.Composite;import org.eclipse.swt.widgets.Control;import org.eclipse.swt.widgets.Group;import org.eclipse.swt.widgets.Label;import org.eclipse.swt.widgets.Shell;import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.dialogs.Dialog;import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.text.IFindReplaceTarget;import org.eclipse.jface.text.IFindReplaceTargetExtension;
+import org.eclipse.ui.IEditorActionBarContributor;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;import org.eclipse.ui.help.WorkbenchHelp;import org.eclipse.ui.part.EditorActionBarContributor;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 
 
@@ -23,6 +30,20 @@ class FindReplaceDialog extends Dialog {
 	class ActivationListener extends ShellAdapter {
 		
 		public void shellActivated(ShellEvent e) {
+			String oldText= fFindField.getText(); // XXX workaround for 10766
+			List oldList= new ArrayList();
+			oldList.addAll(fFindHistory);
+
+			readConfiguration();
+			updateCombo(fFindField, fFindHistory);
+
+			fFindField.removeModifyListener(fFindModifyListener);
+			if (!fFindHistory.equals(oldList) && !fFindHistory.isEmpty())
+				fFindField.setText((String) fFindHistory.get(0));
+			else 
+				fFindField.setText(oldText);
+			fFindField.addModifyListener(fFindModifyListener);
+
 			fActiveShell= (Shell) e.widget;
 			updateButtonState();
 			if (getShell() == fActiveShell && !fFindField.isDisposed())
@@ -30,15 +51,36 @@ class FindReplaceDialog extends Dialog {
 		}
 		
 		public void shellDeactivated(ShellEvent e) {
+			storeSettings();
 			fActiveShell= null;
 			updateButtonState();
 		}
-	};
-	
+	}
+
+	private class FindModifyListener implements ModifyListener {
+		public void modifyText(ModifyEvent e) {
+			if (isIncrementalSearch()) {
+				if (fFindField.getText().equals("") && fTarget != null) {
+					// empty selection at base location
+					int offset= isForwardSearch()
+						? fIncrementalBaseLocation.x + fIncrementalBaseLocation.y
+						: fIncrementalBaseLocation.x;
+					
+					fTarget.findAndSelect(offset, "", isForwardSearch(), isCaseSensitiveSearch(), isWholeWordSearch());
+				} else {
+					performSearch();
+				}
+			}
+			
+			updateButtonState();
+		}
+	}
+
 	private static final int HISTORY_SIZE= 5;
 
 	private Point fLocation;
-	private boolean fWrapInit, fCaseInit, fWholeWordInit, fForwardInit;
+	private Point fIncrementalBaseLocation;
+	private boolean fWrapInit, fCaseInit, fWholeWordInit, fForwardInit, fIncrementalInit;
 	private List fFindHistory;
 	private List fReplaceHistory;
 
@@ -47,16 +89,16 @@ class FindReplaceDialog extends Dialog {
 	private Shell fActiveShell;
 
 	private ActivationListener fActivationListener= new ActivationListener();
+	private ModifyListener fFindModifyListener= new FindModifyListener();
 
 	private Label fReplaceLabel, fStatusLabel;
 	private Button fForwardRadioButton;
-	private Button fCaseCheckBox, fWrapCheckBox, fWholeWordCheckBox;
+	private Button fCaseCheckBox, fWrapCheckBox, fWholeWordCheckBox, fIncrementalCheckBox;
 	private Button fReplaceSelectionButton, fReplaceFindButton, fFindNextButton, fReplaceAllButton;
 	private Combo fFindField, fReplaceField;
 	private Rectangle fDialogPositionInit;
 
 	private IDialogSettings fDialogSettings;
-		
 
 	/**
 	 * Default constructor.
@@ -74,6 +116,7 @@ class FindReplaceDialog extends Dialog {
 		fWrapInit= false;
 		fCaseInit= false;
 		fWholeWordInit= false;
+		fIncrementalInit= false;
 		fForwardInit= true;
 
 		readConfiguration();
@@ -121,7 +164,7 @@ class FindReplaceDialog extends Dialog {
 
 		// get find string
 		initFindStringFromSelection();
-
+		
 		// set dialog position
 		if (fDialogPositionInit != null)
 			shell.setBounds(fDialogPositionInit);
@@ -147,6 +190,9 @@ class FindReplaceDialog extends Dialog {
 		
 		fFindNextButton= makeButton(panel, "FindReplace.FindNextButton.label", 102, true, new SelectionAdapter() { //$NON-NLS-1$
 			public void widgetSelected(SelectionEvent e) {
+				if (isIncrementalSearch())
+					initIncrementalBaseLocation();
+
 				performSearch();
 				updateFindHistory();
 				fFindNextButton.setFocus();
@@ -257,13 +303,25 @@ class FindReplaceDialog extends Dialog {
 		GridLayout groupLayout= new GridLayout();
 		group.setLayout(groupLayout);
 
+		SelectionListener selectionListener= new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				if (isIncrementalSearch())
+					initIncrementalBaseLocation();
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		};
+
 		fForwardRadioButton= new Button(group, SWT.RADIO | SWT.LEFT);
 		fForwardRadioButton.setText(EditorMessages.getString("FindReplace.ForwardRadioButton.label")); //$NON-NLS-1$
 		setGridData(fForwardRadioButton, GridData.BEGINNING, false, GridData.CENTER, false);
+		fForwardRadioButton.addSelectionListener(selectionListener);
 
 		Button backwardRadioButton= new Button(group, SWT.RADIO | SWT.LEFT);
 		backwardRadioButton.setText(EditorMessages.getString("FindReplace.BackwardRadioButton.label")); //$NON-NLS-1$
 		setGridData(backwardRadioButton, GridData.BEGINNING, false, GridData.CENTER, false);
+		backwardRadioButton.addSelectionListener(selectionListener);
 
 		backwardRadioButton.setSelection(!fForwardInit);
 		fForwardRadioButton.setSelection(fForwardInit);
@@ -297,7 +355,7 @@ class FindReplaceDialog extends Dialog {
 
 		fFindField= new Combo(panel, SWT.DROP_DOWN | SWT.BORDER);
 		setGridData(fFindField, GridData.FILL, true, GridData.CENTER, false);
-		fFindField.addModifyListener(listener);
+		fFindField.addModifyListener(fFindModifyListener);
 
 		fReplaceLabel= new Label(panel, SWT.LEFT);
 		fReplaceLabel.setText(EditorMessages.getString("FindReplace.Replace.label")); //$NON-NLS-1$
@@ -329,20 +387,48 @@ class FindReplaceDialog extends Dialog {
 		GridLayout groupLayout= new GridLayout();
 		group.setLayout(groupLayout);
 
+		SelectionListener selectionListener= new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				storeSettings();
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		};
+
 		fCaseCheckBox= new Button(group, SWT.CHECK | SWT.LEFT);
 		fCaseCheckBox.setText(EditorMessages.getString("FindReplace.CaseCheckBox.label")); //$NON-NLS-1$
 		setGridData(fCaseCheckBox, GridData.BEGINNING, false, GridData.CENTER, false);
 		fCaseCheckBox.setSelection(fCaseInit);
+		fCaseCheckBox.addSelectionListener(selectionListener);
 
 		fWrapCheckBox= new Button(group, SWT.CHECK | SWT.LEFT);
 		fWrapCheckBox.setText(EditorMessages.getString("FindReplace.WrapCheckBox.label")); //$NON-NLS-1$
 		setGridData(fWrapCheckBox, GridData.BEGINNING, false, GridData.CENTER, false);
 		fWrapCheckBox.setSelection(fWrapInit);
+		fWrapCheckBox.addSelectionListener(selectionListener);
 
 		fWholeWordCheckBox= new Button(group, SWT.CHECK | SWT.LEFT);
 		fWholeWordCheckBox.setText(EditorMessages.getString("FindReplace.WholeWordCheckBox.label")); //$NON-NLS-1$
 		setGridData(fWholeWordCheckBox, GridData.BEGINNING, false, GridData.CENTER, false);
 		fWholeWordCheckBox.setSelection(fWholeWordInit);
+		fWholeWordCheckBox.addSelectionListener(selectionListener);
+
+		fIncrementalCheckBox= new Button(group, SWT.CHECK | SWT.LEFT);
+		fIncrementalCheckBox.setText(EditorMessages.getString("FindReplace.IncrementalCheckBox.label")); //$NON-NLS-1$
+		setGridData(fIncrementalCheckBox, GridData.BEGINNING, false, GridData.CENTER, false);
+		fIncrementalCheckBox.setSelection(fIncrementalInit);
+		fIncrementalCheckBox.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				if (isIncrementalSearch())
+					initIncrementalBaseLocation();
+					
+				storeSettings();
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
 
 		return panel;
 	}
@@ -412,12 +498,17 @@ class FindReplaceDialog extends Dialog {
 	/**
 	 * Returns whether the specified  search string can be found using the given options.
 	 */
-	private boolean findNext(String findString, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord) {
+	private boolean findNext(String findString, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean incremental) {
 
 		Point r= fTarget.getSelection();
 		int findReplacePosition= r.x;
 		if (forwardSearch)
 			findReplacePosition += r.y;
+			
+		if (incremental)
+			findReplacePosition= forwardSearch
+				? fIncrementalBaseLocation.x + fIncrementalBaseLocation.y
+				: fIncrementalBaseLocation.x;
 
 		int index= findIndex(findString, findReplacePosition, forwardSearch, caseSensitive, wrapSearch, wholeWord);
 
@@ -491,7 +582,8 @@ class FindReplaceDialog extends Dialog {
 		if (selection != null && selection.length() > 0) {
 			int[] info= TextUtilities.indexOf(TextUtilities.fgDelimiters, selection, 0);
 			if (info[0] > 0)
-				return selection.substring(0, info[0]);
+				return "";
+//				return selection.substring(0, info[0]);
 			else if (info[0] == -1)
 				return selection;
 		}
@@ -520,17 +612,25 @@ class FindReplaceDialog extends Dialog {
 		getShell().removeShellListener(fActivationListener);
 		
 		// store current settings in case of re-open
+		storeSettings();
+
+		if (fTarget != null && fTarget instanceof IFindReplaceTargetExtension)
+			((IFindReplaceTargetExtension) fTarget).endSession();
+
+		// prevent leaks
+		fActiveShell= null;
+		fTarget= null;		
+	}
+	
+	private void storeSettings() {
 		fDialogPositionInit= getDialogBoundaries();
 		fWrapInit= isWrapSearch();
 		fWholeWordInit= isWholeWordSearch();
 		fCaseInit= isCaseSensitiveSearch();
+		fIncrementalInit= isIncrementalSearch();
 		fForwardInit= isForwardSearch();
 
-		// prevent leaks
-		fActiveShell= null;
-		fTarget= null;
-
-		writeConfiguration();
+		writeConfiguration();		
 	}
 	
 	/**
@@ -541,6 +641,7 @@ class FindReplaceDialog extends Dialog {
 	private void initFindStringFromSelection() {
 		if (fTarget != null && okToUse(fFindField)) {
 			String selection= getSelectionString();
+			fFindField.removeModifyListener(fFindModifyListener);
 			if (selection != null) {
 				fFindField.setText(selection);
 			} else {
@@ -551,6 +652,15 @@ class FindReplaceDialog extends Dialog {
 						fFindField.setText(""); //$NON-NLS-1$				
 				}
 			}
+			fFindField.addModifyListener(fFindModifyListener);
+		}
+	}
+
+	private void initIncrementalBaseLocation() {
+		if (fTarget != null && isIncrementalSearch()) {
+			fIncrementalBaseLocation= fTarget.getSelection();
+		} else {
+			fIncrementalBaseLocation= new Point(0, 0);	
 		}
 	}
 
@@ -609,7 +719,18 @@ class FindReplaceDialog extends Dialog {
 		}
 		return fWrapInit;
 	}
-	
+
+	/**
+	 * Retrieves and returns the option incremental search from
+	 * the appropriate check box.
+	 */
+	private boolean isIncrementalSearch() {
+		if (okToUse(fIncrementalCheckBox)) {
+			return fIncrementalCheckBox.getSelection();
+		}
+		return fIncrementalInit;
+	}
+
 	/**
 	 * Creates a button.
 	 */
@@ -618,6 +739,51 @@ class FindReplaceDialog extends Dialog {
 		Button b= createButton(parent, id, label, dfltButton);
 		b.addSelectionListener(listener);
 		return b;
+	}
+
+	private IStatusLineManager getStatusLineManager() {
+		AbstractUIPlugin plugin= (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
+		IWorkbenchWindow window= plugin.getWorkbench().getActiveWorkbenchWindow();
+		if (window == null)
+			return null;
+
+		IWorkbenchPage page= window.getActivePage();
+		if (page == null)
+			return null;
+			
+		IEditorPart editor= page.getActiveEditor();
+		if (editor == null)
+			return null;
+			
+		IEditorActionBarContributor contributor= editor.getEditorSite().getActionBarContributor();
+		if (contributor instanceof EditorActionBarContributor) {
+			return ((EditorActionBarContributor) contributor).getActionBars().getStatusLineManager();
+		}
+		return null;
+	}
+
+	private void statusError(String message) {
+		fStatusLabel.setText(message);
+
+		IStatusLineManager manager= getStatusLineManager();
+		if (manager == null)				
+			return;
+
+		manager.setErrorMessage(message);
+		manager.setMessage(""); //$NON-NLS-1$		
+
+		getShell().getDisplay().beep();
+	}
+
+	private void statusMessage(String message) {
+		fStatusLabel.setText(message);
+
+		IStatusLineManager manager= getStatusLineManager();
+		if (manager == null)				
+			return;
+			
+		manager.setErrorMessage(""); //$NON-NLS-1$
+		manager.setMessage(message);
 	}
 
 	/**
@@ -640,15 +806,14 @@ class FindReplaceDialog extends Dialog {
 
 			if (replaceCount != 0) {
 				if (replaceCount == 1) { // not plural
-					fStatusLabel.setText(EditorMessages.getString("FindReplace.Status.replacement.label")); //$NON-NLS-1$
+					statusMessage(EditorMessages.getString("FindReplace.Status.replacement.label")); //$NON-NLS-1$
 				} else {
 					String msg= EditorMessages.getString("FindReplace.Status.replacements.label"); //$NON-NLS-1$
 					msg= MessageFormat.format(msg, new Object[] {String.valueOf(replaceCount)});
-					fStatusLabel.setText(msg);
+					statusMessage(msg);
 				}
 			} else {
-				getShell().getDisplay().beep();
-				fStatusLabel.setText(EditorMessages.getString("FindReplace.Status.noMatch.label")); //$NON-NLS-1$
+				statusError(EditorMessages.getString("FindReplace.Status.noMatch.label")); //$NON-NLS-1$
 			}
 		}
 
@@ -678,13 +843,12 @@ class FindReplaceDialog extends Dialog {
 
 		if (findString != null && findString.length() > 0) {
 
-			boolean somethingFound= findNext(findString, isForwardSearch(), isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch());
+			boolean somethingFound= findNext(findString, isForwardSearch(), isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch(), isIncrementalSearch());
 
 			if (somethingFound) {
-				fStatusLabel.setText(""); //$NON-NLS-1$
+				statusMessage(""); //$NON-NLS-1$
 			} else {
-				getShell().getDisplay().beep();
-				fStatusLabel.setText(EditorMessages.getString("FindReplace.Status.noMatch.label")); //$NON-NLS-1$
+				statusError(EditorMessages.getString("FindReplace.Status.noMatch.label")); //$NON-NLS-1$
 			}
 		}
 
@@ -710,6 +874,7 @@ class FindReplaceDialog extends Dialog {
 			}
 		}
 
+		int length= findString.length();
 		int index= 0;
 		while (index != -1) {
 			index= fTarget.findAndSelect(findReplacePosition, findString, forwardSearch, caseSensitive, wholeWord);
@@ -821,11 +986,21 @@ class FindReplaceDialog extends Dialog {
 	 * @return target the new target
 	 */
 	public void updateTarget(IFindReplaceTarget target) {
-		fTarget= target;
+		if (target != fTarget) {
+			if (fTarget != null && fTarget instanceof IFindReplaceTargetExtension)
+				((IFindReplaceTargetExtension) fTarget).endSession();
+
+			fTarget= target;
+	
+			if (fTarget != null && fTarget instanceof IFindReplaceTargetExtension)
+				((IFindReplaceTargetExtension) fTarget).beginSession();
+		}
+
 		if (okToUse(fReplaceLabel)) {
 			fReplaceLabel.setEnabled(isEditable());
 			fReplaceField.setEnabled(isEditable());
 			initFindStringFromSelection();
+			initIncrementalBaseLocation();
 			updateButtonState();
 		}
 	}
@@ -884,10 +1059,12 @@ class FindReplaceDialog extends Dialog {
 		fWrapInit= s.getBoolean("wrap"); //$NON-NLS-1$
 		fCaseInit= s.getBoolean("casesensitive"); //$NON-NLS-1$
 		fWholeWordInit= s.getBoolean("wholeword"); //$NON-NLS-1$
+		fIncrementalInit= s.getBoolean("incremental"); //$NON-NLS-1$
 		
 		String[] findHistory= s.getArray("findhistory"); //$NON-NLS-1$
 		if (findHistory != null) {
 			List history= getFindHistory();
+			history.clear();
 			for (int i= 0; i < findHistory.length; i++)
 				history.add(findHistory[i]);
 		}
@@ -895,6 +1072,7 @@ class FindReplaceDialog extends Dialog {
 		String[] replaceHistory= s.getArray("replacehistory"); //$NON-NLS-1$
 		if (replaceHistory != null) {
 			List history= getReplaceHistory();
+			history.clear();
 			for (int i= 0; i < replaceHistory.length; i++)
 				history.add(replaceHistory[i]);
 		}
@@ -913,6 +1091,7 @@ class FindReplaceDialog extends Dialog {
 		s.put("wrap", fWrapInit); //$NON-NLS-1$
 		s.put("casesensitive", fCaseInit); //$NON-NLS-1$
 		s.put("wholeword", fWholeWordInit); //$NON-NLS-1$
+		s.put("incremental", fIncrementalInit); //$NON-NLS-1$
 		
 		List history= getFindHistory();
 		while (history.size() > 8)

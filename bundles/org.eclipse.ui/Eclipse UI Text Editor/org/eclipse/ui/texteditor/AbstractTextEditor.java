@@ -83,7 +83,9 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 
+import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPartListener;
@@ -1128,7 +1130,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		String title= ""; //$NON-NLS-1$
 		
 		if (input != null) {
-			ImageDescriptor imageDesc= input.getImageDescriptor();
+			IEditorRegistry editorRegistry = getEditorSite().getPage().getWorkbenchWindow().getWorkbench().getEditorRegistry();
+			IEditorDescriptor editorDesc= editorRegistry.findEditor(getSite().getId());			
+			ImageDescriptor imageDesc= editorDesc != null ? editorDesc.getImageDescriptor() : null;
+
 			fTitleImage= imageDesc != null ? imageDesc.createImage() : null;
 			title= input.getName();
 		}
@@ -1880,6 +1885,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action= new FindReplaceAction(EditorMessages.getResourceBundle(), "Editor.FindReplace.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_ACTION);
 		setAction(ITextEditorActionConstants.FIND, action);
+
+		action= new FindNextAction(EditorMessages.getResourceBundle(), "Editor.FindNext.", this, true); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_ACTION);
+		setAction(ITextEditorActionConstants.FIND_NEXT, action);
+
+		action= new FindNextAction(EditorMessages.getResourceBundle(), "Editor.FindPrevious.", this, false); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_ACTION);
+		setAction(ITextEditorActionConstants.FIND_PREVIOUS, action);
 		
 		action= new AddMarkerAction(EditorMessages.getResourceBundle(), "Editor.AddBookmark.", this, IMarker.BOOKMARK, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.BOOKMARK_ACTION);
@@ -1909,6 +1922,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		markAsContentDependentAction(ITextEditorActionConstants.UNDO, true);
 		markAsContentDependentAction(ITextEditorActionConstants.REDO, true);
 		markAsContentDependentAction(ITextEditorActionConstants.FIND, true);
+		markAsContentDependentAction(ITextEditorActionConstants.FIND_NEXT, true);
+		markAsContentDependentAction(ITextEditorActionConstants.FIND_PREVIOUS, true);
 		
 		markAsSelectionDependentAction(ITextEditorActionConstants.CUT, true);
 		markAsSelectionDependentAction(ITextEditorActionConstants.COPY, true);

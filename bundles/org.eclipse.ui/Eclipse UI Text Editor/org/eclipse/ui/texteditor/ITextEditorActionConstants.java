@@ -72,6 +72,14 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * Name of the action to jump to a certain text line. 
 	 */
 	static final String GOTO_LINE= "GotoLine"; //$NON-NLS-1$
+	/** 
+	 * Name of the action to find next. 
+	 */
+	static final String FIND_NEXT= "FindNext"; //$NON-NLS-1$
+	/** 
+	 * Name of the action to find next. 
+	 */
+	static final String FIND_PREVIOUS= "FindPrevious"; //$NON-NLS-1$
 	
 	
 	/** 

@@ -56,6 +56,8 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	protected int fStartOffset;
 	/** The offset at which the last changed partition ends */
 	protected int fEndOffset;
+	/**The offset at which a partition has been deleted */
+	protected int fDeleteOffset;
 	
 	
 	/**
@@ -134,6 +136,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 		fPreviousDocumentLength= e.getDocument().getLength();
 		fStartOffset= -1;
 		fEndOffset= -1;
+		fDeleteOffset= -1;
 	}
 	
 	/*
@@ -159,10 +162,22 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 			fEndOffset= endOffset;
 	}
 	
+	private void rememberDeletedOffset(int offset) {
+		fDeleteOffset= offset;
+	}
+	
 	private IRegion createRegion() {
-		if (fStartOffset == -1 || fEndOffset == -1)
-			return null;
-		return new Region(fStartOffset, fEndOffset - fStartOffset);
+		if (fDeleteOffset == -1) {
+			if (fStartOffset == -1 || fEndOffset == -1)
+				return null;
+			return new Region(fStartOffset, fEndOffset - fStartOffset); 
+		} else if (fStartOffset == -1 || fEndOffset == -1) {
+			return new Region(fDeleteOffset, 0);
+		} else {
+			int offset= Math.min(fDeleteOffset, fStartOffset);
+			int endOffset= Math.max(fDeleteOffset, fEndOffset);
+			return new Region(offset, endOffset - offset);
+		}
 	}
 
 	/*
@@ -202,8 +217,10 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 				fPositionUpdater.update(e);
 				for (int i= 0; i < category.length; i++) {
 					p= category[i];
-					if (p.isDeleted)
-						rememberRegion(p.offset, p.length);
+					if (p.isDeleted) {
+						rememberDeletedOffset(e.getOffset());
+						break;
+					}
 				}
 				category= d.getPositions(CONTENT_TYPES_CATEGORY);
 

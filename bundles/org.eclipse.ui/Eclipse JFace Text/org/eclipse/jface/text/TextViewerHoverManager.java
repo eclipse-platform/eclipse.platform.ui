@@ -118,8 +118,11 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager {
 				
 		StyledText styledText= fTextViewer.getTextWidget();
 		
-		int start= region.getOffset() - fTextViewer.getVisibleRegionOffset();
+		IRegion visibleRegion= fTextViewer.getVisibleRegion();
+		int start= region.getOffset() - visibleRegion.getOffset();
 		int end= start + region.getLength();
+		if (end > visibleRegion.getLength())
+			end= visibleRegion.getLength();
 		
 		Point upperLeft= styledText.getLocationAtOffset(start);
 		Point lowerRight= new Point(upperLeft.x, upperLeft.y);

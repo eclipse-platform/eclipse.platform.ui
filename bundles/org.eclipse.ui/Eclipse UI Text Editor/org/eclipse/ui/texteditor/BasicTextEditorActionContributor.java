@@ -57,6 +57,10 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	
 	/** The active editor part */
 	private IEditorPart fActiveEditorPart;
+	/** The find next action */
+	private RetargetTextEditorAction fFindNext;
+	/** The find previous action */
+	private RetargetTextEditorAction fFindPrevious;	
 	/** The go to line action */
 	private RetargetTextEditorAction fGotoLine;
 	/** The map of status fields */
@@ -70,6 +74,8 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 * @see org.eclipse.ui.IEditorActionBarContributor#init
 	 */
 	public BasicTextEditorActionContributor() {
+		fFindNext= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "FindNext."); //$NON-NLS-1$
+		fFindPrevious= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "FindPrevious."); //$NON-NLS-1$
 		fGotoLine= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "GotoLine."); //$NON-NLS-1$
 		fStatusFields= new HashMap(3);
 		for (int i= 0; i < STATUSFIELDS.length; i++)
@@ -120,7 +126,9 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 			for (int i= 0; i < ACTIONS.length; i++)
 				actionBars.setGlobalActionHandler(ACTIONS[i], getAction(editor, ACTIONS[i]));
 		}
-		
+
+		fFindNext.setAction(getAction(editor, ITextEditorActionConstants.FIND_NEXT));
+		fFindPrevious.setAction(getAction(editor, ITextEditorActionConstants.FIND_PREVIOUS));
 		fGotoLine.setAction(getAction(editor, ITextEditorActionConstants.GOTO_LINE));
 		
 		if (fActiveEditorPart instanceof ITextEditorExtension) {
@@ -136,6 +144,8 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	public void contributeToMenu(IMenuManager menu) {
 		IMenuManager editMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
 		if (editMenu != null) {
+			editMenu.add(fFindNext);
+			editMenu.add(fFindPrevious);
 			editMenu.add(fGotoLine);
 		}
 	}
