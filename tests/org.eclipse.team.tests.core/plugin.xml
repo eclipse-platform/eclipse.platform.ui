@@ -21,7 +21,7 @@
       <import plugin="org.eclipse.ui.editors" optional="true"/>
       <import plugin="org.eclipse.core.tests.harness"/>
       <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.core.runtime.compatibility"/> 
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
       <import plugin="org.eclipse.core.boot"/>
       <import plugin="org.eclipse.team.core"/>
       <import plugin="org.eclipse.team.cvs.core"/>
@@ -90,6 +90,19 @@
             class="org.eclipse.team.tests.core.RepositoryProviderWithLinking"
             id="org.eclipse.team.tests.core.linking">
       </repository>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Team Test Views"
+            id="org.eclipse.team.tests.core">
+      </category>
+      <view
+            name="Content Provider Test View"
+            category="org.eclipse.team.tests.core"
+            class="org.eclipse.team.tests.ui.views.ContentProviderTestView"
+            id="org.eclipse.team.tests.ui.views.ContentProviderTestView">
+      </view>
    </extension>
 
 </plugin>
