@@ -86,6 +86,9 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 	 */
 	protected void compareInputChanged(ICompareInput source) {
 		super.compareInputChanged(source);
+		contentsChanged(source);
+	}
+	protected void contentsChanged(ICompareInput source) {
 		// Mark the source as merged.
 		if (source instanceof TeamFile) {
 			IRemoteSyncElement element = ((TeamFile)source).getMergeResource().getSyncElement();

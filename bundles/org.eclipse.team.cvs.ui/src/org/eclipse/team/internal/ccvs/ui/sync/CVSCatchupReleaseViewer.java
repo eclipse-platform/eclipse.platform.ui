@@ -40,7 +40,7 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 			commitAction.update();
 			manager.add(commitAction);
 		}
-		if (syncMode == SyncView.SYNC_INCOMING || syncMode == SyncView.SYNC_BOTH) {
+		if (syncMode == SyncView.SYNC_INCOMING || syncMode == SyncView.SYNC_BOTH || syncMode == SyncView.SYNC_MERGE) {
 			getAction.update();
 			manager.add(getAction);
 		}

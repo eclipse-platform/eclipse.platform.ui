@@ -44,7 +44,7 @@ public class RepositorySelectionPage extends CVSWizardPage {
 	private ICVSRepositoryLocation result;
 	
 	/**
-	 * ConfigurationWizardImportPage constructor.
+	 * RepositorySelectionPage constructor.
 	 * 
 	 * @param pageName  the name of the page
 	 * @param title  the title of the page

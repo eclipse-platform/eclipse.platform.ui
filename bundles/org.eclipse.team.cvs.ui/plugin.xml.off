@@ -135,6 +135,12 @@
 				tooltip="%CompareWithTagAction.tooltip"
 				menubarPath="compareWithMenu/compareWithGroup"
 				class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithTagAction"/>
+			<action 
+				id="org.eclipse.team.ccvs.ui.merge"
+				label="%MergeAction.label"
+				tooltip="%MergeAction.tooltip"
+				menubarPath="cvs.main/nativeGroup"
+				class="org.eclipse.team.internal.ccvs.ui.actions.MergeAction"/>
 		</objectContribution>
 		<objectContribution
 			id="org.eclipse.team.ccvs.ui.IContainerContributions"
