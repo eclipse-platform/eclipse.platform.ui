@@ -22,8 +22,9 @@ import org.eclipse.core.runtime.*;
  * optional in the plugin XML, the versioning information is ignored.
  * 
  * Scenario: pluginA requires pluginC (any version) and optionally 
- * pluginB_2.0.0, but pluginB's version is 1.0.0. Expected result: all plug-ins are
- * enabled AND pluginA's classloader does not import pluginB's classloader.
+ * pluginB_2.0.0, but pluginB's version is 1.0.0 (which by its turn
+ * requires pluginD). Expected result: all plug- ins are enabled AND pluginA's
+ * classloader does not import pluginB's classloader.
  */
 public class RegressionResolveTest_11 extends PluginResolveTest {
 	public RegressionResolveTest_11(String name) {
@@ -50,17 +51,17 @@ public class RegressionResolveTest_11 extends PluginResolveTest {
 		}
 
 		IPluginDescriptor pluginA = registry.getPluginDescriptor("tests.a");
-		IPluginDescriptor pluginB = registry.getPluginDescriptor("tests.b");
+		IPluginDescriptor pluginB = registry.getPluginDescriptor("tests.b", new PluginVersionIdentifier("1.0.0"));
 		IPluginDescriptor pluginC = registry.getPluginDescriptor("tests.c");
-		IPluginDescriptor pluginD = registry.getPluginDescriptor("tests.d");		
+		IPluginDescriptor pluginD = registry.getPluginDescriptor("tests.d");
 
 		// all plugins should have been enabled
 		assertNotNull("1.1", pluginA);
 		assertNotNull("1.2", pluginB);
-		assertNotNull("1.3", pluginC);
-		assertNotNull("1.4", pluginD);
+		assertNotNull("1.4", pluginC);
+		assertNotNull("1.5", pluginD);
 
-		// plugin A requires optionally plugin B 
+		// plugin A requires optionally plugin B_2.0.0		
 		IPluginPrerequisite[] requires = pluginA.getPluginPrerequisites();
 		assertEquals("2.1", 2, requires.length);
 		assertEquals("2.2", pluginB.getUniqueIdentifier(), requires[0].getUniqueIdentifier());
@@ -68,16 +69,16 @@ public class RegressionResolveTest_11 extends PluginResolveTest {
 		// should be null because it was not resolved (pluginB's version is 1.0.0) 
 		assertNull("2.4", requires[0].getResolvedVersionIdentifier());
 
-		// check the resolved prerequisites
+		// check the resolved prerequisites for A
 		IPluginPrerequisite[] resolvedPrereqsA = ((PluginDescriptor) pluginA).getPluginResolvedPrerequisites();
 		assertEquals("3.1", 1, resolvedPrereqsA.length);
 		assertEquals("3.2", pluginC.getUniqueIdentifier(), resolvedPrereqsA[0].getUniqueIdentifier());
-		
-		// check the resolved prerequisites
+
+		// check the resolved prerequisites for B
 		IPluginPrerequisite[] resolvedPrereqsB = ((PluginDescriptor) pluginB).getPluginResolvedPrerequisites();
 		assertEquals("4.1", 1, resolvedPrereqsB.length);
 		assertEquals("4.2", pluginD.getUniqueIdentifier(), resolvedPrereqsB[0].getUniqueIdentifier());
-		
+
 	}
 	public static Test suite() {
 		return new TestSuite(RegressionResolveTest_11.class);
