@@ -14,6 +14,7 @@ package org.eclipse.ant.ui.internal.preferences;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -54,7 +55,7 @@ import org.eclipse.ui.externaltools.internal.ui.MessageDialogWithToggle;
 
 public class AntClasspathBlock {
 
-	private static final String[] XERCES= new String[] {"xercesImpl.jar", "xml-apis.jar"}; //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String[] XERCES= new String[] {"xercesImpl.jar", "xml-apis.jar", "xmlParserAPIs.jar"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	private static final String[] TOOLS= new String[] {"tools.jar"}; //$NON-NLS-1$
 
 	private TableViewer antTableViewer;
@@ -609,12 +610,12 @@ public class AntClasspathBlock {
 	public boolean validateToolsJAR() {
 		validated++;
 		boolean check= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING);
-		if (check) {
+		if (check && !AntUIPlugin.isMacOS()) {
 			List antURLs= getAntURLs();
-			boolean valid= JARPresent(antURLs, TOOLS);
+			boolean valid= JARPresent(antURLs, TOOLS) != null;
 			if (!valid) {
 				List userURLs= getUserURLs();
-				if (!JARPresent(userURLs, TOOLS)) {
+				if (JARPresent(userURLs, TOOLS) == null) {
 					valid= MessageDialogWithToggle.openQuestion(AntUIPlugin.getActiveWorkbenchWindow().getShell(), AntPreferencesMessages.getString("AntClasspathBlock.31"), AntPreferencesMessages.getString("AntClasspathBlock.32"), IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, AntPreferencesMessages.getString("AntClasspathBlock.33"), AntUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				} else {
 					valid= true;
@@ -635,33 +636,35 @@ public class AntClasspathBlock {
 		boolean check= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING);
 		if (check) {
 			List antURLs= getAntURLs();
-			if (JARPresent(antURLs, XERCES)) {
+			String suffix= JARPresent(antURLs, XERCES);
+			if (suffix == null) {
 				List userURLs= getUserURLs();
-				if (!JARPresent(userURLs, XERCES)) {
-					valid= MessageDialogWithToggle.openQuestion(antTableViewer.getControl().getShell(), AntPreferencesMessages.getString("AntClasspathBlock.35"), AntPreferencesMessages.getString("AntClasspathBlock.36"), IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING, AntPreferencesMessages.getString("AntClasspathBlock.37"), AntUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				} else {
-					valid= true;
-				}
+				suffix= JARPresent(userURLs, XERCES);
+			}
+			if (suffix != null) {
+				valid= MessageDialogWithToggle.openQuestion(antTableViewer.getControl().getShell(), AntPreferencesMessages.getString("AntClasspathBlock.35"), MessageFormat.format(AntPreferencesMessages.getString("AntClasspathBlock.36"), new String[]{suffix}), IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING, AntPreferencesMessages.getString("AntClasspathBlock.37"), AntUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			} else {
+				valid= true;
 			}
 			if (!valid) {
-				container.setErrorMessage(AntPreferencesMessages.getString("AntClasspathBlock.38")); //$NON-NLS-1$
+				container.setErrorMessage(MessageFormat.format(AntPreferencesMessages.getString("AntClasspathBlock.38"), new String[]{suffix})); //$NON-NLS-1$
 			}
 		}
 		return valid;
 	}
 	
-	private boolean JARPresent(List URLs, String[] suffixes) {
+	private String JARPresent(List URLs, String[] suffixes) {
 		
 		for (Iterator iter = URLs.iterator(); iter.hasNext();) {
 			URL url = (URL) iter.next();
 			for (int i = 0; i < suffixes.length; i++) {
 				String suffix = suffixes[i];
 				if (url.getFile().endsWith(suffix)) {
-					return true;
+					return suffix;
 				}
 			}
 		}
-		return false;
+		return null;
 	}
 	
 	public boolean isValidated() {
