@@ -104,12 +104,11 @@ public class DefaultEditorPresentation extends DefaultPartPresentation {
         tabFolder.setUnselectedCloseVisible(true);
         // do not support icons in unselected tabs.
         tabFolder.setUnselectedImageVisible(true);
-        //tabFolder.setBorderVisible(true);
-        // set basic colors       
-        updateGradient();
 
         getSystemMenuManager().add(new UpdatingActionContributionItem(new SystemMenuCloseOthers(this)));
         getSystemMenuManager().add(new UpdatingActionContributionItem(new SystemMenuCloseAll(this)));
+        
+        init();
     }
     
     public void dispose() {
