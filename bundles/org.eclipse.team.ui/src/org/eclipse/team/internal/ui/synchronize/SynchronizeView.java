@@ -118,15 +118,11 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	protected void updateTitle() {
 		ISynchronizeParticipant participant = getParticipant();
 		if (participant == null) {
-			setTitle(getViewName()); //$NON-NLS-1$
+			setContentDescription(""); //$NON-NLS-1$
 		} else {
 			SynchronizeViewWorkbenchPart part = (SynchronizeViewWorkbenchPart)fParticipantToPart.get(participant);
-			setTitle(Policy.bind("SynchronizeView.2", getViewName(), part.getParticipant().getName())); //$NON-NLS-1$
+			setContentDescription(part.getParticipant().getName()); //$NON-NLS-1$
 		}
-	}
-
-	protected String getViewName() {
-		return Policy.bind("SynchronizeView.1"); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
