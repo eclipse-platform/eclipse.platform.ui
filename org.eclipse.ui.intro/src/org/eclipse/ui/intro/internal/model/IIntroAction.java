@@ -20,13 +20,14 @@ import org.eclipse.ui.intro.*;
  * Intro Action.
  */
 public interface IIntroAction extends IAction {
-	/**
-	 * Called right before the run method of the action. The properties
-	 * represents the key=value pairs extracted from the intro URL query.
-	 * 
-	 * @param site
-	 * @param params
-	 */
-	void initialize(IIntroSite site, Properties params);
+
+    /**
+     * Called right before the run method of the action. The properties
+     * represents the key=value pairs extracted from the intro URL query.
+     * 
+     * @param site
+     * @param params
+     */
+    void initialize(IIntroSite site, Properties params);
 
 }
