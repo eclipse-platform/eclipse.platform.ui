@@ -47,8 +47,6 @@ public class HelpContribution implements Contribution {
 	 * @param visitor com.ibm.itp.contributions.Visitor
 	 */
 	public void accept(Visitor visitor) {
-		// this should execute
-		//System.out.println(Resources.getString("contribution_accept"));
 	}
 	/**
 	 * Adds a child and returns it

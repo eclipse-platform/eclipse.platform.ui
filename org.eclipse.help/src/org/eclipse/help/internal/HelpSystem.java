@@ -177,5 +177,6 @@ public final class HelpSystem {
 					Resources.getString("E005"),
 					e));
 		}
+		Logger.logInfo(Resources.getString("I002"));
 	}
 }
