@@ -22,7 +22,12 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.internal.core.*;
 import org.eclipse.team.internal.core.Policy;
@@ -66,16 +71,118 @@ public abstract class RepositoryProvider implements IProjectNature {
 	
 	private final static String TEAM_SETID = "org.eclipse.team.repository-provider"; //$NON-NLS-1$
 	
+	private final static QualifiedName PROVIDER_PROP_KEY = 
+		new QualifiedName("org.eclipse.team.core", "repository");  //$NON-NLS-1$  //$NON-NLS-2$
+
+	private final static List AllProviderTypeIds = initializeAllProviderTypes();
+	
 	// the project instance that this nature is assigned to
 	private IProject project;	
 	
+	/**
+	 * Instantiate a new RepositoryProvider with concrete class by given providerID
+	 * and associate it with project.
+	 * @throws TeamException
+	 * <ul>
+	 * <li>There is no provider by that ID.</li>
+	 * <li>The project is already associated with a repository provider.</li>
+	 * </ul>
+	 * @see unmap(IProject)
+	 */
+	public static void map(IProject project, String id) throws TeamException {
+		try {
+			RepositoryProvider existingProvider = null;
+
+			if(project.getPersistentProperty(PROVIDER_PROP_KEY) != null)
+				existingProvider = getProvider(project);	// get the real one, not the nature one
+			
+			//if we already have a provider, and its the same ID, we're ok
+			//if the ID's differ, unmap the existing.
+			if(existingProvider != null) {
+				if(existingProvider.getID().equals(id))
+					return;	//nothing to do
+				else
+					unmap(project);
+			}
+			
+			RepositoryProvider provider = mapNewProvider(project, id);
+			project.setPersistentProperty(PROVIDER_PROP_KEY, id);
+			
+			try {	
+				provider.configureProject();	//xxx not sure if needed since they control with wiz page and can configure all they want
+			} catch (CoreException e) {
+				project.setPersistentProperty(PROVIDER_PROP_KEY, null);
+				throw e;
+			}
+			//and mark it with the persistent ID for filtering and session persistence
+		} catch (CoreException e) {
+			throw TeamPlugin.wrapException(e);
+		}
+	}	
+
+	/*
+	 * Instantiate the provider denoted by ID and store it in the session property.
+	 * Return the new provider instance.
+	 * @throws TeamException if the we can't instantiate the provider,
+	 * or if the set session property fails from core
+	 */
+	private static RepositoryProvider mapNewProvider(IProject project, String id) throws TeamException {
+		RepositoryProvider provider = newProvider(id); 	// instantiate via extension point
+
+		if(provider == null)
+			throw new TeamException(Policy.bind("RepositoryProvider.couldNotInstantiateProvider", project.getName(), id));
+			
+		provider.setProject(project);
+		//store provider instance as session property
+		try {
+			project.setSessionProperty(PROVIDER_PROP_KEY, provider);
+		} catch (CoreException e) {
+			throw TeamPlugin.wrapException(e);
+		}
+		return provider;
+	}	
+
+	/**
+	 * Disassoociates project with the repository provider its currently mapped to.
+	 * @throws TeamException The project isn't associated with any repository provider.
+	 */
+	public static void unmap(IProject project) throws TeamException {
+		try{
+			boolean hasProviderAssociated = project.getPersistentProperty(PROVIDER_PROP_KEY) != null;
+			
+			//If you tried to remove a non-existance nature it would fail, so we need to as well with the persistent prop
+			if(! hasProviderAssociated)
+				throw new TeamException(Policy.bind("RepositoryProvider.No_Provider_Registered", project.getName())); //$NON-NLS-1$
+
+			//This will instantiate one if it didn't already exist,
+			//which is ok since we need to call deconfigure() on it for proper lifecycle
+			getProvider(project).deconfigure();
+							
+			project.setSessionProperty(PROVIDER_PROP_KEY, null);
+			project.setPersistentProperty(PROVIDER_PROP_KEY, null);
+			
+			//removing the nature would've caused project description delta, so trigger one
+			project.setDescription(project.getDescription(), null);	
+		} catch (CoreException e) {
+			throw TeamPlugin.wrapException(e);
+		}
+	}	
+	
+	/*
+	 * Return the provider mapped to project, or null if none;
+	 */
+	private static RepositoryProvider lookupProviderProp(IProject project) throws CoreException {
+		return (RepositoryProvider) project.getSessionProperty(PROVIDER_PROP_KEY);
+	}	
+
+
 	/**
 	 * Default constructor required for the resources plugin to instantiate this class from
 	 * the nature extension definition.
 	 */
 	public RepositoryProvider() {
 	}
-	
+
 	/**
 	 * Configures the nature for the given project. This method is called after <code>setProject</code>
 	 * and before the nature is added to the project. If an exception is generated during configuration
@@ -99,7 +206,7 @@ public abstract class RepositoryProvider implements IProjectNature {
 			configureProject();
 		} catch(CoreException e) {
 			try {
-				Team.removeNatureFromProject(getProject(), getID(), null);
+				RepositoryProvider.unmap(getProject());
 			} catch(TeamException e2) {
 				throw new CoreException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("RepositoryProvider_Error_removing_nature_from_project___1") + getID(), e2)); //$NON-NLS-1$
 			}
@@ -151,7 +258,7 @@ public abstract class RepositoryProvider implements IProjectNature {
 	 * @return a string description of this provider
 	 */
 	public String toString() {
-		return getProject().getName() + ":" + getID(); //$NON-NLS-1$
+		return Policy.bind("RepositoryProvider.toString", getProject().getName(), getID());   //$NON-NLS-1$
 	}
 	
 	/**
@@ -162,6 +269,10 @@ public abstract class RepositoryProvider implements IProjectNature {
 	final public static String[] getAllProviderTypeIds() {
 		IProjectNatureDescriptor[] desc = ResourcesPlugin.getWorkspace().getNatureDescriptors();
 		List teamSet = new ArrayList();
+		
+		teamSet.addAll(AllProviderTypeIds);	// add in all the ones we know via extension point
+		
+		//fall back to old method of nature ID to find any for backwards compatibility
 		for (int i = 0; i < desc.length; i++) {
 			String[] setIds = desc[i].getNatureSetIds();
 			for (int j = 0; j < setIds.length; j++) {
@@ -183,8 +294,34 @@ public abstract class RepositoryProvider implements IProjectNature {
 	 * @return the repository provider associated with the project
 	 */
 	final public static RepositoryProvider getProvider(IProject project) {
-		try {
+		try {					
 			if(project.isAccessible()) {
+				
+				//-----------------------------
+				//First check if we are using the persistent property to tag the project with provider
+
+				//
+				String id = project.getPersistentProperty(PROVIDER_PROP_KEY);
+				RepositoryProvider provider = lookupProviderProp(project);  //throws core, we will reuse the catching already here
+
+				//If we have the session but not the persistent, we have a problem
+				//because we somehow got only halfway through mapping before
+				if(id == null && provider != null) {
+					TeamPlugin.log(IStatus.ERROR, Policy.bind("RepositoryProvider.propertyMismatch", project.getName()), null);
+					project.setSessionProperty(PROVIDER_PROP_KEY, null); //clears it
+					return null;
+				}
+				
+				if(provider != null)
+					return provider;
+					
+				//check if it has the ID as a persistent property, if yes then instantiate provider
+				if(id != null)
+					return mapNewProvider(project, id);
+				
+				//Couldn't find using new method, fall back to lookup using natures for backwards compatibility
+				//-----------------------------
+								
 				IProjectDescription projectDesc = project.getDescription();
 				String[] natureIds = projectDesc.getNatureIds();
 				IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -204,7 +341,9 @@ public abstract class RepositoryProvider implements IProjectNature {
 				}
 			}
 		} catch(CoreException e) {
-			TeamPlugin.log(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind(""), e)); //$NON-NLS-1$
+			TeamPlugin.log(e.getStatus());
+		} catch(TeamException e) {
+			TeamPlugin.log(e.getStatus());
 		}
 		return null;
 	}
@@ -221,9 +360,27 @@ public abstract class RepositoryProvider implements IProjectNature {
 	final public static RepositoryProvider getProvider(IProject project, String id) {
 		try {
 			if(project.isAccessible()) {
+				String existingID = project.getPersistentProperty(PROVIDER_PROP_KEY);
+
+				if(id.equals(existingID)) {
+					//if the IDs are the same then they were previously mapped
+					//see if we already instantiated one
+					RepositoryProvider provider = lookupProviderProp(project);  //throws core, we will reuse the catching already here
+					if(provider != null)
+						return provider;
+					//otherwise instantiate and map a new one					
+					return mapNewProvider(project, id);
+				}
+					
+				//couldn't find using new method, fall back to lookup using natures for backwards compatibility
+				//-----------------------------
+
 				// if the nature id given is not in the team set then return
 				// null.
 				IProjectNatureDescriptor desc = ResourcesPlugin.getWorkspace().getNatureDescriptor(id);
+				if(desc == null) //for backwards compat., may not have any nature by that ID
+					return null;
+					
 				String[] setIds = desc.getNatureSetIds();
 				for (int i = 0; i < setIds.length; i++) {
 					if(setIds[i].equals(TEAM_SETID)) {
@@ -231,9 +388,11 @@ public abstract class RepositoryProvider implements IProjectNature {
 					}			
 				}
 			}
-		} catch(CoreException ex) {
+		} catch(CoreException e) {
 			// would happen if provider nature id is not registered with the resources plugin
-			TeamPlugin.log(new Status(IStatus.WARNING, TeamPlugin.ID, 0, Policy.bind("RepositoryProviderTypeRepositoryProvider_not_registered_as_a_nature_id___3") + id, ex)); //$NON-NLS-1$
+			TeamPlugin.log(new Status(IStatus.WARNING, TeamPlugin.ID, 0, Policy.bind("RepositoryProviderTypeRepositoryProvider_not_registered_as_a_nature_id___3", id), e)); //$NON-NLS-1$
+		} catch(TeamException e) {
+			TeamPlugin.log(e.getStatus());
 		}
 		return null;
 	}
@@ -263,5 +422,69 @@ public abstract class RepositoryProvider implements IProjectNature {
 	 */
 	public void setProject(IProject project) {
 		this.project = project;
+	}
+	
+	private static List initializeAllProviderTypes() {
+		List allIDs = new ArrayList();
+		
+		TeamPlugin plugin = TeamPlugin.getPlugin();
+		if (plugin != null) {
+			IExtensionPoint extension = plugin.getDescriptor().getExtensionPoint(TeamPlugin.REPOSITORY_EXTENSION);
+			if (extension != null) {
+				IExtension[] extensions =  extension.getExtensions();
+				for (int i = 0; i < extensions.length; i++) {
+					IConfigurationElement [] configElements = extensions[i].getConfigurationElements();
+					for (int j = 0; j < configElements.length; j++) {
+						String extensionId = configElements[j].getAttribute("id"); //$NON-NLS-1$
+						allIDs.add(extensionId);
+					}
+				}
+			}
+		}
+		return allIDs;
+	}
+
+	private static RepositoryProvider newProvider(String id) {
+		TeamPlugin plugin = TeamPlugin.getPlugin();
+		if (plugin != null) {
+			IExtensionPoint extension = plugin.getDescriptor().getExtensionPoint(TeamPlugin.REPOSITORY_EXTENSION);
+			if (extension != null) {
+				IExtension[] extensions =  extension.getExtensions();
+				for (int i = 0; i < extensions.length; i++) {
+					IConfigurationElement [] configElements = extensions[i].getConfigurationElements();
+					for (int j = 0; j < configElements.length; j++) {
+						String extensionId = configElements[j].getAttribute("id"); //$NON-NLS-1$
+						if (extensionId != null && extensionId.equals(id)) {
+							try {
+								return (RepositoryProvider) configElements[j].createExecutableExtension("class"); //$NON-NLS-1$
+							} catch (CoreException e) {
+								TeamPlugin.log(e.getStatus());
+								return null;
+							}
+						}
+					}
+				}
+			}		
+		}
+		return null;
+	}	
+	
+	/*
+	 * Convert a project that are using natures to mark them as Team projects
+	 * to instead use persistent properties. Optionally remove the nature from the project.
+	 * Do nothing if the project has no Team nature.
+	 * Assume that the same ID is used for both the nature and the persistent property.
+	 */
+	public static void convertNatureToProperty(IProject project, boolean removeNature) throws TeamException {
+		RepositoryProvider provider = RepositoryProvider.getProvider(project);
+		if(provider == null)
+			return;
+			
+		String providerId = provider.getID();	
+		
+		RepositoryProvider.map(project, providerId);
+		if(removeNature) {
+			Team.removeNatureFromProject(project, providerId, new NullProgressMonitor());
+		}
 	}
 }

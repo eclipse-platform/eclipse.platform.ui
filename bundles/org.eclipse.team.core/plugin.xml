@@ -20,6 +20,7 @@
 <extension-point id="fileTypes" name="%FileTypesRegistry"/>
 <extension-point id="ignore" name="%GlobalIgnoreRegistry"/>
 <extension-point id="projectSets" name="%TeamProjectSets"/>
+<extension-point id="repository" name="%Repository"/>
 <extension-point id="targets" name="%Targets"/>
 
 <!-- Define common known file types -->
