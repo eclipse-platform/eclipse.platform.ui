@@ -122,13 +122,13 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 		String antHome= classpathPage.getAntHome();
 		prefs.setAntHome(antHome);
 		
-		contents = tasksPage.getContents();
+		contents = tasksPage.getContents(false);
 		if (contents != null) {
 			Task[] tasks = (Task[]) contents.toArray(new Task[contents.size()]);
 			prefs.setCustomTasks(tasks);
 		}
 		
-		contents = typesPage.getContents();
+		contents = typesPage.getContents(false);
 		if (contents != null) {
 			Type[] types = (Type[]) contents.toArray(new Type[contents.size()]);
 			prefs.setCustomTypes(types);

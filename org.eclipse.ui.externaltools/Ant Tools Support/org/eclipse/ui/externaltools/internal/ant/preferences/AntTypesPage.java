@@ -66,7 +66,7 @@ public class AntTypesPage extends AntPage {
 		String title = AntPreferencesMessages.getString("AntTypesPage.addTypeDialogTitle"); //$NON-NLS-1$
 		String msg = AntPreferencesMessages.getString("AntTypesPage.addTypeDialogDescription"); //$NON-NLS-1$
 		
-		Iterator types= getContents().iterator();
+		Iterator types= getContents(true).iterator();
 		List names= new ArrayList();
 		while (types.hasNext()) {
 			Type aTask = (Type) types.next();
@@ -112,6 +112,9 @@ public class AntTypesPage extends AntPage {
 		Composite top = new Composite(folder, SWT.NONE);
 		top.setFont(folder.getFont());			
 		item.setControl(createContents(top));
+		
+		connectToFolder(item, folder);
+				
 		return item;
 	}
 	
@@ -126,7 +129,7 @@ public class AntTypesPage extends AntPage {
 		String title = AntPreferencesMessages.getString("AntTypesPage.editTypeDialogTitle"); //$NON-NLS-1$
 		String msg = AntPreferencesMessages.getString("AntTypesPage.editTypeDialogDescription"); //$NON-NLS-1$
 		
-		Iterator types= getContents().iterator();
+		Iterator types= getContents(true).iterator();
 		List names= new ArrayList();
 		while (types.hasNext()) {
 			Type aTask = (Type) types.next();

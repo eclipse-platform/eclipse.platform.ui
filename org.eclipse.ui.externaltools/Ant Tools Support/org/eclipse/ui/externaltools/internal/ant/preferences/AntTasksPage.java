@@ -66,7 +66,7 @@ public class AntTasksPage extends AntPage {
 		String title = AntPreferencesMessages.getString("AntTasksPage.addTaskDialogTitle"); //$NON-NLS-1$
 		String msg = AntPreferencesMessages.getString("AntTasksPage.addTaskDialogDescription"); //$NON-NLS-1$
 
-		Iterator tasks= getContents().iterator();
+		Iterator tasks= getContents(true).iterator();
 		List names= new ArrayList();
 		while (tasks.hasNext()) {
 			Task task = (Task) tasks.next();
@@ -112,6 +112,9 @@ public class AntTasksPage extends AntPage {
 		Composite top = new Composite(folder, SWT.NONE);
 		top.setFont(folder.getFont());
 		item.setControl(createContents(top));
+		
+		connectToFolder(item, folder);
+		
 		return item;
 	}
 
@@ -126,7 +129,7 @@ public class AntTasksPage extends AntPage {
 		String title = AntPreferencesMessages.getString("AntTasksPage.editTaskDialogTitle"); //$NON-NLS-1$
 		String msg = AntPreferencesMessages.getString("AntTasksPage.editTaskDialogDescription"); //$NON-NLS-1$
 		
-		Iterator tasks= getContents().iterator();
+		Iterator tasks= getContents(true).iterator();
 		List names= new ArrayList();
 		while (tasks.hasNext()) {
 			Task aTask = (Task) tasks.next();

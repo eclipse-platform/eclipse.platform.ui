@@ -33,6 +33,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -173,16 +175,24 @@ public abstract class AntPage {
 	 * Returns the currently listed objects in the table.  Returns null
 	 * if this widget has not yet been created or has been disposed.
 	 */
-	protected List getContents() {
+	protected List getContents(boolean forDisplay) {
 		if (tableViewer == null || tableViewer.getControl().isDisposed()) {
 			return null;
 		}
+		List URLs= getPreferencePage().getLibraryURLs();
 		Object[] elements = contentProvider.getElements(tableViewer.getInput());
 		List contents= new ArrayList(elements.length);
+		Object element;
+		AntObject antObject;
 		for (int i = 0; i < elements.length; i++) {
-			Object element= elements[i];
+			element= elements[i];
 			if (element instanceof AntObject) {
-				if (((AntObject)element).isDefault()) {
+				antObject= (AntObject)element;
+				if (forDisplay) {
+					if (!antObject.isDefault() && !URLs.contains(antObject.getLibrary())) {
+						continue;
+					}
+				} else if (antObject.isDefault() || !URLs.contains(antObject.getLibrary())) {
 					continue;
 				}
 			}
@@ -190,7 +200,7 @@ public abstract class AntPage {
 		}
 		return contents;
 	}
-	
+
 	/**
 	 * Returns the label provider the sub-page wants to use
 	 * to display its content with.
@@ -314,4 +324,15 @@ public abstract class AntPage {
 	 * @return help context id
 	 */
 	protected abstract String getHelpContextId();
+
+	protected void connectToFolder(final TabItem item, TabFolder folder) {
+		folder.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (e.item == item) {
+					//remove ant objects whose library has been removed
+					setInput(getContents(true));
+				}
+			}
+		});		
+	}
 }
