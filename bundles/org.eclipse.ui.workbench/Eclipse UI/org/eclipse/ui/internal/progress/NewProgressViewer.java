@@ -365,7 +365,9 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 				if (tooltip != null && tooltip.trim().length() > 0)
 					tt= tooltip;
 			}
-			setToolTipText(tt);
+			String oldtt= getToolTipText();
+			if (oldtt == null || !oldtt.equals(tt))
+				setToolTipText(tt);
 		}
 		public void propertyChange(PropertyChangeEvent event) {
 		    if (gotoAction != null) {	    	
@@ -879,9 +881,10 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			
 			Control[] cs= getChildren();
 			for (int i= 0; i < cs.length; i++) {
-				if (!(cs[i] instanceof ProgressBar))
+				if (!(cs[i] instanceof ProgressBar)) {
 					cs[i].setForeground(fg);
-				cs[i].setBackground(bg);
+					cs[i].setBackground(bg);
+				}
 			}
 		}
 		
