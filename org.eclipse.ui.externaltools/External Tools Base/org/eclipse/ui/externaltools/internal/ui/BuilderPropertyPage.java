@@ -150,7 +150,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 	 */
 	private List newConfigList= new ArrayList();
 	
-	private SelectionListener fButtonListener= new SelectionAdapter() {
+	private SelectionListener buttonListener= new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			handleButtonPressed((Button) e.widget);
 			}
@@ -362,7 +362,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		button.setFont(parent.getFont());
 		button.setText(label);
 		button.setEnabled(false);
-		button.addSelectionListener(fButtonListener);
+		button.addSelectionListener(buttonListener);
 		return button;
 	}
 
