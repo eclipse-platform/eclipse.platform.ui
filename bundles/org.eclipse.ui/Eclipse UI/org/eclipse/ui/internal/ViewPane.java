@@ -460,6 +460,9 @@ protected void addFastViewMenuItem(Menu parent,boolean isFastView) {
  * Add the View and Tab Group items to the Move menu.
  */
 protected void addMoveItems(Menu moveMenu) {
+	boolean moveAllowed = !isZoomed() && !isFastView();
+	
+	// Add move view only menu item
 	MenuItem item = new MenuItem(moveMenu, SWT.NONE);
 	item.setText(WorkbenchMessages.getString("ViewPane.moveView")); //$NON-NLS-1$
 	item.addSelectionListener(new SelectionAdapter() {
@@ -467,7 +470,9 @@ protected void addMoveItems(Menu moveMenu) {
 			page.openTracker(ViewPane.this);
 		}
 	});
-	item.setEnabled(!isZoomed());
+	item.setEnabled(moveAllowed);
+	
+	// Add move view's tab folder menu item
 	item = new MenuItem(moveMenu, SWT.NONE);
 	item.setText(WorkbenchMessages.getString("ViewPane.moveFolder")); //$NON-NLS-1$
 	item.addSelectionListener(new SelectionAdapter() {
@@ -477,7 +482,7 @@ protected void addMoveItems(Menu moveMenu) {
 				((PartTabFolder)container).openTracker((PartTabFolder)container);
 		}
 	});
-	item.setEnabled(!isZoomed() && (getContainer() instanceof PartTabFolder));
+	item.setEnabled(moveAllowed && (getContainer() instanceof PartTabFolder));
 }
 
 /**
