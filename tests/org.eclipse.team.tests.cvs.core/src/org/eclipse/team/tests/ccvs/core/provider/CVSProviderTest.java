@@ -22,20 +22,14 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.ccvs.core.ICVSFolder;
-import org.eclipse.team.core.IFileTypeRegistry;
+import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.Session;
-import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
-import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
-import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
@@ -333,8 +327,7 @@ public class CVSProviderTest extends EclipseTest {
 
 	private void testKeywordSubstitution(KSubstOption ksubst) throws TeamException, CoreException, IOException {
 		// setup some known file types
-		TeamPlugin.getFileTypeRegistry().setValue("xbin", IFileTypeRegistry.BINARY);
-		TeamPlugin.getFileTypeRegistry().setValue("xtxt", IFileTypeRegistry.TEXT);
+		Team.setAllTypes( new String[] {"xbin", "xtxt"}, new int[] {Team.BINARY, Team.TEXT});
 		
 		// create a test project
 		IProject project = createProject("testKeywordSubstitution", new String[] { "dummy" });

@@ -20,8 +20,8 @@ import org.eclipse.core.resources.team.IResourceTree;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
 
 public class RepositoryProviderTests extends TeamTest {
@@ -51,12 +51,12 @@ public class RepositoryProviderTests extends TeamTest {
 		IProject project2 = getUniqueTestProject("testGetProviderGeneric");
 		
 		// test that adding a non-team nature will not return a provider
-		RepositoryProvider.addNatureToProject(project, RepositoryProviderOtherSport.NATURE_ID, null);
+		Team.addNatureToProject(project, RepositoryProviderOtherSport.NATURE_ID, null);
 		assertTrue(RepositoryProvider.getProvider(project) == null);
 		
 		// adding a valid team provider should be fine
-		RepositoryProvider.addNatureToProject(project, RepositoryProviderBic.NATURE_ID, null);
-		RepositoryProvider.addNatureToProject(project2, RepositoryProviderNaish.NATURE_ID, null);
+		Team.addNatureToProject(project, RepositoryProviderBic.NATURE_ID, null);
+		Team.addNatureToProject(project2, RepositoryProviderNaish.NATURE_ID, null);
 		RepositoryProvider provider1 = RepositoryProvider.getProvider(project);
 		RepositoryProvider provider2 = RepositoryProvider.getProvider(project2);
 		assertTrue(provider1 != null && provider1.getID().equals(RepositoryProviderBic.NATURE_ID));
@@ -65,7 +65,7 @@ public class RepositoryProviderTests extends TeamTest {
 		
 		// adding another provider should be prohibited by core
 		try {
-			RepositoryProvider.addNatureToProject(project, RepositoryProviderNaish.NATURE_ID, null);	
+			Team.addNatureToProject(project, RepositoryProviderNaish.NATURE_ID, null);	
 			fail("cannot add two team providers to the same project");
 		} catch(TeamException e) {
 			provider1 = RepositoryProvider.getProvider(project);
@@ -73,7 +73,7 @@ public class RepositoryProviderTests extends TeamTest {
 		}
 		
 		// adding another non-team provider should be ok but should not be returned as a provider
-		RepositoryProvider.addNatureToProject(project2, RepositoryProviderOtherSport.NATURE_ID, null);
+		Team.addNatureToProject(project2, RepositoryProviderOtherSport.NATURE_ID, null);
 		provider2 = RepositoryProvider.getProvider(project2);
 		assertTrue(provider2 != null && provider2.getID().equals(RepositoryProviderNaish.NATURE_ID));
 		
@@ -85,8 +85,8 @@ public class RepositoryProviderTests extends TeamTest {
 		assertTrue(RepositoryProvider.getProvider(nonExistantProject) == null);
 		
 		// removing the nature removes the provider association
-		RepositoryProvider.removeNatureFromProject(project, RepositoryProviderBic.NATURE_ID, null);
-		RepositoryProvider.removeNatureFromProject(project2, RepositoryProviderNaish.NATURE_ID, null);
+		Team.removeNatureFromProject(project, RepositoryProviderBic.NATURE_ID, null);
+		Team.removeNatureFromProject(project2, RepositoryProviderNaish.NATURE_ID, null);
 		assertTrue(RepositoryProvider.getProvider(project)==null);
 		assertTrue(RepositoryProvider.getProvider(project2)==null);
 	}
@@ -96,18 +96,18 @@ public class RepositoryProviderTests extends TeamTest {
 		IProject project2 = getUniqueTestProject("testGetProviderById_2");
 		
 		// test that adding a non-team nature will not return a provider
-		RepositoryProvider.addNatureToProject(project1, RepositoryProviderOtherSport.NATURE_ID, null);
+		Team.addNatureToProject(project1, RepositoryProviderOtherSport.NATURE_ID, null);
 		assertTrue(RepositoryProvider.getProvider(project1, RepositoryProviderOtherSport.NATURE_ID) == null);
 		
 		// adding a valid team provider should be fine
-		RepositoryProvider.addNatureToProject(project1, RepositoryProviderBic.NATURE_ID, null);
-		RepositoryProvider.addNatureToProject(project2, RepositoryProviderNaish.NATURE_ID, null);
+		Team.addNatureToProject(project1, RepositoryProviderBic.NATURE_ID, null);
+		Team.addNatureToProject(project2, RepositoryProviderNaish.NATURE_ID, null);
 		assertTrue(RepositoryProvider.getProvider(project1, RepositoryProviderBic.NATURE_ID)!=null);
 		assertTrue(RepositoryProvider.getProvider(project2, RepositoryProviderNaish.NATURE_ID)!=null);
 		
 		// adding another provider should be prohibited by core
 		try {
-			RepositoryProvider.addNatureToProject(project1, RepositoryProviderNaish.NATURE_ID, null);	
+			Team.addNatureToProject(project1, RepositoryProviderNaish.NATURE_ID, null);	
 			fail("cannot add two team providers to the same project");
 		} catch(TeamException e) {
 			assertTrue(RepositoryProvider.getProvider(project1, RepositoryProviderBic.NATURE_ID)!=null);
@@ -121,8 +121,8 @@ public class RepositoryProviderTests extends TeamTest {
 		assertTrue(RepositoryProvider.getProvider(nonExistantProject, "id") == null);
 		
 		// removing the nature removes the provider association
-		RepositoryProvider.removeNatureFromProject(project1, RepositoryProviderBic.NATURE_ID, null);
-		RepositoryProvider.removeNatureFromProject(project2, RepositoryProviderNaish.NATURE_ID, null);
+		Team.removeNatureFromProject(project1, RepositoryProviderBic.NATURE_ID, null);
+		Team.removeNatureFromProject(project2, RepositoryProviderNaish.NATURE_ID, null);
 		assertTrue(RepositoryProvider.getProvider(project1, RepositoryProviderBic.NATURE_ID)==null);
 		assertTrue(RepositoryProvider.getProvider(project2, RepositoryProviderNaish.NATURE_ID)==null);
 	}
@@ -131,7 +131,7 @@ public class RepositoryProviderTests extends TeamTest {
 		IProject project = getUniqueTestProject("testFileModificationValidator");
 		
 		// adding a valid team provider should be fine
-		RepositoryProvider.addNatureToProject(project, RepositoryProviderBic.NATURE_ID, null);
+		Team.addNatureToProject(project, RepositoryProviderBic.NATURE_ID, null);
 		RepositoryProviderBic bicProvider = (RepositoryProviderBic)RepositoryProvider.getProvider(project, RepositoryProviderBic.NATURE_ID);
 		assertTrue(bicProvider!=null);
 		
@@ -180,7 +180,7 @@ public class RepositoryProviderTests extends TeamTest {
 		final IProject project = getUniqueTestProject("testMoveDeleteHook");
 		
 		// adding a valid team provider should be fine
-		RepositoryProvider.addNatureToProject(project, RepositoryProviderBic.NATURE_ID, null);
+		Team.addNatureToProject(project, RepositoryProviderBic.NATURE_ID, null);
 		RepositoryProviderBic bicProvider = (RepositoryProviderBic)RepositoryProvider.getProvider(project, RepositoryProviderBic.NATURE_ID);
 		assertTrue(bicProvider!=null);
 		
@@ -239,9 +239,9 @@ public class RepositoryProviderTests extends TeamTest {
 		final IProject projectC = getUniqueTestProject("testMoveDeleteHookBetweenProjects_C");
 		
 		// adding a valid team provider should be fine
-		RepositoryProvider.addNatureToProject(projectA, RepositoryProviderBic.NATURE_ID, null);
+		Team.addNatureToProject(projectA, RepositoryProviderBic.NATURE_ID, null);
 		final RepositoryProviderBic bicProvider = (RepositoryProviderBic)RepositoryProvider.getProvider(projectA, RepositoryProviderBic.NATURE_ID);
-		RepositoryProvider.addNatureToProject(projectB, RepositoryProviderNaish.NATURE_ID, null);
+		Team.addNatureToProject(projectB, RepositoryProviderNaish.NATURE_ID, null);
 		final RepositoryProviderNaish naishProvider = (RepositoryProviderNaish)RepositoryProvider.getProvider(projectB, RepositoryProviderNaish.NATURE_ID);
 		assertTrue(bicProvider!=null && naishProvider!=null);
 		
