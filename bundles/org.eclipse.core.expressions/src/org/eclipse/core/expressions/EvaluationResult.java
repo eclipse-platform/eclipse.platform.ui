@@ -24,7 +24,16 @@ import org.eclipse.core.internal.expressions.Assert;
  * </code>, <code>or</code> and <code>not</code>. The operation are
  * defined as follows:
  * </p>
+ * <p>
+ * The and operation:
+ * </p>
  * <table border="1" cellpadding="5">
+ *   <colgroup>
+ *     <col width="120">
+ *     <col width="120">
+ *     <col width="120">
+ *     <col width="120">
+ *   </colgroup>
  *   <tbody>
  *     <tr>
  *       <td><em>AND</em></td>
@@ -52,7 +61,16 @@ import org.eclipse.core.internal.expressions.Assert;
  *     </tr>
  *   </tbody>
  * </table>
+ * <p>
+ * The or operation:
+ * </p>
  * <table border="1" cellpadding="5">
+ *   <colgroup>
+ *     <col width="120">
+ *     <col width="120">
+ *     <col width="120">
+ *     <col width="120">
+ *   </colgroup>
  *   <tbody>
  *     <tr>
  *       <td><em>OR</em></td>
@@ -80,7 +98,16 @@ import org.eclipse.core.internal.expressions.Assert;
  *     </tr>
  *   </tbody>
  * </table>
+ * <p>
+ * The not operation:
+ * </p>
  * <table border="1" cellpadding="5">
+ *   <colgroup>
+ *     <col width="120">
+ *     <col width="120">
+ *     <col width="120">
+ *     <col width="120">
+ *   </colgroup>
  *   <tbody>
  *     <tr>
  *       <td><em>NOT<em></td>
@@ -177,7 +204,7 @@ public class EvaluationResult {
 	/**
 	 * Returns an evaluation result instance representing the
 	 * given boolean value. If the given boolean value is
-	 * <code>true</code> then <code.ExpressionResult.TRUE<code>
+	 * <code>true</code> then <code>ExpressionResult.TRUE</code>
 	 * is returned. If the value is <code>false</code> then <code>
 	 * ExpressionResult.FALSE</code> is returned.
 	 * 
@@ -193,7 +220,7 @@ public class EvaluationResult {
 	/**
 	 * Returns a evaluation result instance representing the
 	 * given <code>Boolean</code> value. If the given <code>Boolean
-	 * </code> value is <code>true</code> then <code.ExpressionResult.TRUE<code>
+	 * </code> value is <code>true</code> then <code>ExpressionResult.TRUE</code>
 	 * is returned. If the value is <code>false</code> then <code>
 	 * ExpressionResult.FALSE</code> is returned.
 	 * 

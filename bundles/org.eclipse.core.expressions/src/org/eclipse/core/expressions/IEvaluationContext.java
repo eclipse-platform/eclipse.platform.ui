@@ -13,7 +13,7 @@ package org.eclipse.core.expressions;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * A evaluation context is used to manage a set of objects needed during
+ * An evaluation context is used to manage a set of objects needed during
  * XML expression evaluation. A context has a parent context, can manage
  * a set of named variables and has a default variable. The default variable 
  * is used during XML expression evaluation if no explicit variable is 
@@ -74,7 +74,8 @@ public interface IEvaluationContext {
 	 * Returns the variable managed under the given name.
 	 * 
 	 * @param name the variable's name
-	 * @return the variable's value
+	 * @return the variable's value or <code>null</code> if the content
+	 *  doesn't manage a variable with the given name 
 	 */
 	public Object getVariable(String name);
 	
@@ -87,7 +88,8 @@ public interface IEvaluationContext {
 	 * @param name the variable to resolve
 	 * @param args an object array of arguments used to resolve the
 	 *  variable
-	 * @return the variable's value 
+	 * @return the variable's value or <code>null</code> if no variable
+	 *  can be resolved for the given name and arguments
 	 * @exception CoreException if an errors occurs while resolving
 	 *  the variable
 	 */

@@ -221,10 +221,13 @@ sections.</p>
 <p><u><i>Extension Point Schema</i></u></p>
 
 <p>An extension point schema exists for the property tester extension
-point, but not yet for the common expression language itself. The
-problem is that schemas can't be included across plug-ins. This
-limitation will be resolved by the PDE team and as soon as this is
-possible a corresponding schema file will be provided.</p>
+point and for the expression language itself. The schema for the 
+expression language can be included into other schema files using
+the following include element:
+</p>
+<blockquote><pre>
+&lt;include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/&gt;
+</pre></blockquote>
 <p><a name="converting"><u><i>Converting XML elements into expressions</i></u></a></p>
 <p>XML elements con be converted into corresponding expression objects using the class ExpressionConverter. If only expression tags from the common expression language are used then the standard expression converter can be used. The following example converts the configuration element representing an enablement element into the expressions:</p>
 <blockquote>
@@ -233,7 +236,12 @@ Expression expression=
 ExpressionConverter.getDefault().perform(enablementElement);</code></p>
 </blockquote>
 <p><i><u>Evaluating an expression</u></i></p>
-<p>Expressions are evaluated by calling <code>Expression.evaluate(...);</code>. The evaluation context passed to the evaluate method has to be set up by the plug-in that reads an extension point. The plug-in is responsible to set up the default variable and all the other variable used in with expressions. If dynamic resolving of variables is supported by the plug-in providing the extension point then a sub class of evaluation context must provide a matching resolveVariable implementation. The example below creates a special evaluation context and uses this context to evaluate an expression:</p><blockquote>
+<p>Expressions are evaluated by calling <code>Expression.evaluate(...);</code>. The evaluation 
+context passed to the evaluate method has to be set up by the plug-in that reads an extension point. 
+The plug-in is responsible to set up the default variable and all the other variable used in 
+with expressions. The example below creates a special evaluation context and uses this context to 
+evaluate an expression:
+</p><blockquote>
 <pre>
 <code>
 EvaluationContext context= new EvaluationContext(null, defaultVariable) {

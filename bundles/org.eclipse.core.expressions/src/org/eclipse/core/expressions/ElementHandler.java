@@ -18,10 +18,8 @@ import org.eclipse.core.internal.expressions.StandardElementHandler;
 
 
 /**
- * An element handler converts a {@link IConfigurationElement} into a 
- * corresponding expression object. If the configuration element represents
- * a composite expression (like and, or, adapt, ...) then the method <code>
- * processChildren</code> should be used to convert the children as well.
+ * An element handler converts an {@link IConfigurationElement} into a 
+ * corresponding expression object. 
  * <p>
  * The class should be subclassed by clients wishing to provide an element
  * handler for special expressions.
@@ -59,7 +57,9 @@ public abstract class ElementHandler {
 	/**
 	 * Converts the children of the given configuration element and adds them 
 	 * to the given composite expression.
-	 * 
+	 * <p>
+	 * Note this is an internal method and should not be called by clients.
+	 * </p> 
 	 * @param converter the converter used to do the actual conversion
 	 * @param element the configuration element for which the children 
 	 *  are to be processed

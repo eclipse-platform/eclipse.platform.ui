@@ -68,7 +68,7 @@ public interface IPropertyTester {
 	 * 
 	 * @param receiver the receiver of the property test
 	 * @param property the property to test
-	 * @param args additional arguments to resolve the property. If no arguments
+	 * @param args additional arguments to evaluate the property. If no arguments
 	 *  are specified in the <code>test</code> expression an array of length 0
 	 *  is passed
 	 * @param expectedValue the expected value of the property. The value is either 

@@ -21,7 +21,7 @@ import org.eclipse.core.internal.expressions.ExpressionMessages;
 import org.eclipse.core.internal.expressions.ExpressionPlugin;
 
 /**
- * An expression converter converts an XML expression represented by a 
+ * An expression converter converts an XML expression represented by an 
  * {@link IConfigurationElement} tree into a corresponding expression tree.
  * 
  * <p>

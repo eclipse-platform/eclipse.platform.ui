@@ -25,13 +25,13 @@ import org.osgi.framework.Bundle;
  * A property tester implements the property tests enumerated in the property
  * tester extension point. For the following property test extension
  * <pre>
- *   <propertyTester
+ *   &lt;propertyTester
  *     	 namespace="org.eclipse.jdt.core"
  *       id="org.eclipse.jdt.core.IPackageFragmentTester"
  *       properties="isDefaultPackage"
  *       type="org.eclipse.jdt.core.IPackageFragment"
- *       class="org.eclipse.demo.MyPackageFragmentTester">
- *     </propertyTester>
+ *       class="org.eclipse.demo.MyPackageFragmentTester"&gt;
+ *     &lt;/propertyTester&gt;
  * </pre>
  * the corresponding implemenation class looks like:
  * <pre>
@@ -48,8 +48,8 @@ import org.osgi.framework.Bundle;
  * </pre>
  * The property can then be used in a test expression as follows:
  * <pre>
- *   <instanceof value="org.eclipse.core.IPackageFragment"/>
- *   <test property="org.eclipse.jdt.core.isDefaultPackage"/>
+ *   &lt;instanceof value="org.eclipse.core.IPackageFragment"/&gt;
+ *   &lt;test property="org.eclipse.jdt.core.isDefaultPackage"/&gt;
  * </pre>
  * </p>
  * @since 3.0 
@@ -63,7 +63,7 @@ public abstract class PropertyTester implements IPropertyTester {
 	/**
 	 * Initialize the property tester with the given name space and property.
 	 * <p>
-	 * Note: this method is for internal use only. Clients msut not call 
+	 * Note: this method is for internal use only. Clients must not call 
 	 * this method.
 	 * </p>
 	 * @param descriptor the descriptor object for this tester

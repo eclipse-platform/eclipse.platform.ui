@@ -53,7 +53,7 @@ public abstract class Expression {
 	/**
 	 * Evaluates this expression. 
 	 * 
-	 * @param context a evaluation context providing information like variable,
+	 * @param context an evaluation context providing information like variable,
 	 *  name spaces, etc. necessary to evaluate this expression
 	 * 
 	 * @return the result of the expression evaluation
