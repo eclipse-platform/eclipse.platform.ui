@@ -52,9 +52,11 @@ public class TocBuilder {
 			TocFile tocFile = (TocFile) unprocessedTocFiles.iterator().next();
 			tocFile.build(this);
 		}
-		// try processing as many toc (link_to) as possible
+		// At the end, unprocessedTocs may contain TOCs that need be build.
 		// All these toc could not be attached because the 
 		// target node was not parsed at that time
+		
+		// try processing as many toc (link_to) as possible now
 		int remaining = unprocessedTocs.size();
 		for (int i = 0; i < remaining; i++) {
 			Toc toc = (Toc) unprocessedTocs.get(i);
@@ -64,7 +66,6 @@ public class TocBuilder {
 	public void buildTocFile(TocFile tocFile) {
 		try {
 			unprocessedTocFiles.remove(tocFile);
-			//tocFile.build(this);
 			TocFileParser parser = new TocFileParser(this);
 			parser.parse(tocFile);
 		} catch (Exception e) {
