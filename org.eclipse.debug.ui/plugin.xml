@@ -457,7 +457,7 @@
 	<launchConfigurationTab
 		id="org.eclipse.debug.ui.launchConfigurationTab.common"
 		class="org.eclipse.debug.internal.ui.launchConfigurations.CommonTab"
-		name="Common">
+		name="%commonTabName">
 	</launchConfigurationTab>
 </extension>
 

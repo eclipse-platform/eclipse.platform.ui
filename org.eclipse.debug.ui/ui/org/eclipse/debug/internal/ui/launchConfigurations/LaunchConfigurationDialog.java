@@ -247,7 +247,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		setSaveAndLaunchButton(createButton(parent, ID_SAVE_AND_LAUNCH_BUTTON, "S&ave and Launch", false));
+		setSaveAndLaunchButton(createButton(parent, ID_SAVE_AND_LAUNCH_BUTTON, "Sa&ve and Launch", false));
 		setLaunchButton(createButton(parent, ID_LAUNCH_BUTTON, "&Launch", true));
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}	
@@ -577,7 +577,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		tree.addSelectionChangedListener(this);
 		
 		Button newButton = new Button(c, SWT.PUSH | SWT.CENTER);
-		newButton.setText("&New");
+		newButton.setText("Ne&w");
 		gd = new GridData(GridData.BEGINNING);
 		gd.horizontalSpan = 1;
 		newButton.setLayoutData(gd);
@@ -592,7 +592,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		);				
 		
 		Button deleteButton = new Button(c, SWT.PUSH | SWT.CENTER);
-		deleteButton.setText("&Delete");
+		deleteButton.setText("Dele&te");
 		gd = new GridData(GridData.CENTER);
 		gd.horizontalSpan = 1;
 		deleteButton.setLayoutData(gd);
@@ -607,7 +607,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		);			
 		
 		Button copyButton = new Button(c, SWT.PUSH | SWT.CENTER);
-		copyButton.setText("&Copy");
+		copyButton.setText("Cop&y");
 		gd = new GridData(GridData.END);
 		gd.horizontalSpan = 1;
 		copyButton.setLayoutData(gd);
@@ -643,7 +643,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		GridData gd;
 		
 		Label nameLabel = new Label(c, SWT.HORIZONTAL | SWT.LEFT);
-		nameLabel.setText("Name:");
+		nameLabel.setText("&Name:");
 		gd = new GridData(GridData.BEGINNING);
 		nameLabel.setLayoutData(gd);
 		

@@ -131,9 +131,9 @@ public class CommonTab implements ILaunchConfigurationTab {
 		getLocalSharedLabel().setText("Type of launch configuration:");
 		
 		setLocalRadioButton(new Button(radioComp, SWT.RADIO));
-		getLocalRadioButton().setText("Local");
+		getLocalRadioButton().setText("L&ocal");
 		setSharedRadioButton(new Button(radioComp, SWT.RADIO));
-		getSharedRadioButton().setText("Shared");
+		getSharedRadioButton().setText("S&hared");
 		getSharedRadioButton().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleSharedRadioButtonSelected();
@@ -150,7 +150,7 @@ public class CommonTab implements ILaunchConfigurationTab {
 		locationComp.setLayoutData(gd);
 		
 		setSharedLocationLabel(new Label(locationComp, SWT.NONE));
-		getSharedLocationLabel().setText("Location of shared configuration:");
+		getSharedLocationLabel().setText("Location of shared confi&guration:");
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		getSharedLocationLabel().setLayoutData(gd);
@@ -165,7 +165,7 @@ public class CommonTab implements ILaunchConfigurationTab {
 		});
 		
 		setSharedLocationButton(new Button(locationComp, SWT.PUSH));
-		getSharedLocationButton().setText("Browse");	
+		getSharedLocationButton().setText("&Browse...");	
 		getSharedLocationButton().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleSharedLocationButtonSelected();
@@ -191,7 +191,7 @@ public class CommonTab implements ILaunchConfigurationTab {
 		perspComp.setLayout(perspLayout);
 		
 		setRunPerspectiveButton(new Button(perspComp, SWT.CHECK));
-		getRunPerspectiveButton().setText("Run Mode:");
+		getRunPerspectiveButton().setText("R&un Mode:");
 		getRunPerspectiveButton().addSelectionListener(
 			new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
@@ -213,7 +213,7 @@ public class CommonTab implements ILaunchConfigurationTab {
 		fillWithPerspectives(getRunPerspectiveCombo());
 		
 		setDebugPerspectiveButton(new Button(perspComp, SWT.CHECK));
-		getDebugPerspectiveButton().setText("Debug Mode:");
+		getDebugPerspectiveButton().setText("&Debug Mode:");
 		getDebugPerspectiveButton().addSelectionListener(
 			new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
