@@ -72,7 +72,7 @@ public interface IWorkspace extends IAdaptable {
 	 * notifications should be avoided during the invocation of a compound
 	 * resource changing operation.
 	 * 
-	 * @see IWorkspace#run(IWorkspaceRunnable, IProgressMonitor)
+	 * @see IWorkspace#run(IWorkspaceRunnable, ISchedulingRule, int, IProgressMonitor)
 	 * @since 3.0
 	 */
 	public static final int AVOID_UPDATE = 1;
