@@ -83,11 +83,6 @@
 			
 	<!-- WebBrowsers -->
 	<extension point="org.eclipse.help.ui.browser">
-		<browser id="org.eclipse.help.ui.iexplorer"
-			factoryclass="org.eclipse.help.ui.internal.browser.win32.IEFactory"
-			name="%internet_explorer" />
-	</extension>
-	<extension point="org.eclipse.help.ui.browser">
 		<browser id="org.eclipse.help.ui.mozillaLinux"
 			factoryclass="org.eclipse.help.ui.internal.browser.linux.MozillaFactory"
 			name="%mozilla" />
