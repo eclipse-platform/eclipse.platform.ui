@@ -40,7 +40,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.commands.api.older.ICommand;
-import org.eclipse.ui.internal.commands.api.older.IKeyBinding;
+import org.eclipse.ui.internal.commands.api.older.IKeySequenceBinding;
 import org.eclipse.ui.internal.commands.api.older.NotDefinedException;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.commands.older.CommandManager;
@@ -319,7 +319,7 @@ public class CyclePartAction extends PageEventAction {
 							Iterator iterator = keyBindings.iterator();
 							
 							while (iterator.hasNext()) {
-								IKeyBinding keyBinding = (IKeyBinding) iterator.next();
+								IKeySequenceBinding keyBinding = (IKeySequenceBinding) iterator.next();
 								
 								if (keyBinding.getKeySequence().equals(keySequence)) {
 									acceleratorForward = true;
@@ -340,7 +340,7 @@ public class CyclePartAction extends PageEventAction {
 							Iterator iterator = keyBindings.iterator();
 								
 							while (iterator.hasNext()) {
-								IKeyBinding keyBinding = (IKeyBinding) iterator.next();
+								IKeySequenceBinding keyBinding = (IKeySequenceBinding) iterator.next();
 									
 								if (keyBinding.getKeySequence().equals(keySequence)) {
 									acceleratorBackward = true;

@@ -82,7 +82,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 	private final static class CommandAssignment implements Comparable {
 
-		private KeyBindingNode.Assignment assignment;		
+		private KeySequenceBindingNode.Assignment assignment;		
 		private String activityId;
 		private KeySequence keySequence;		
 		
@@ -115,7 +115,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		
 	private final static class KeySequenceAssignment implements Comparable {
 		
-		private KeyBindingNode.Assignment assignment;		
+		private KeySequenceBindingNode.Assignment assignment;		
 		private String activityId;
 	
 		public int compareTo(Object object) {
@@ -216,9 +216,9 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		preferenceActiveKeyConfigurationDefinitions.add(new ActiveKeyConfigurationDefinition(getKeyConfigurationId(), null));		
 		PreferenceCommandRegistry preferenceCommandRegistry = (PreferenceCommandRegistry) commandManager.getPreferenceCommandRegistry();	
 		preferenceCommandRegistry.setActiveKeyConfigurationDefinitions(preferenceActiveKeyConfigurationDefinitions);
-		List preferenceKeyBindingDefinitions = new ArrayList();
-		KeyBindingNode.getKeyBindingDefinitions(tree, KeySequence.getInstance(), 0, preferenceKeyBindingDefinitions);		
-		preferenceCommandRegistry.setKeySequenceBindingDefinitions(preferenceKeyBindingDefinitions);
+		List preferenceKeySequenceBindingDefinitions = new ArrayList();
+		KeySequenceBindingNode.getKeySequenceBindingDefinitions(tree, KeySequence.getInstance(), 0, preferenceKeySequenceBindingDefinitions);		
+		preferenceCommandRegistry.setKeySequenceBindingDefinitions(preferenceKeySequenceBindingDefinitions);
 		
 		try {
 			preferenceCommandRegistry.save();
@@ -349,14 +349,14 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 					iterator.remove();
 			}
 
-			List pluginKeyBindingDefinitions = new ArrayList(extensionCommandRegistry.getKeySequenceBindingDefinitions());
+			List pluginKeySequenceBindingDefinitions = new ArrayList(extensionCommandRegistry.getKeySequenceBindingDefinitions());
 
-			for (Iterator iterator = pluginKeyBindingDefinitions.iterator(); iterator.hasNext();) {
-				IKeySequenceBindingDefinition keyBindingDefinition = (IKeySequenceBindingDefinition) iterator.next();				
-				KeySequence keySequence = keyBindingDefinition.getKeySequence();
-				String commandId = keyBindingDefinition.getCommandId();
-				String activityId = keyBindingDefinition.getActivityId();
-				String keyConfigurationId = keyBindingDefinition.getKeyConfigurationId();
+			for (Iterator iterator = pluginKeySequenceBindingDefinitions.iterator(); iterator.hasNext();) {
+				IKeySequenceBindingDefinition keySequenceBindingDefinition = (IKeySequenceBindingDefinition) iterator.next();				
+				KeySequence keySequence = keySequenceBindingDefinition.getKeySequence();
+				String commandId = keySequenceBindingDefinition.getCommandId();
+				String activityId = keySequenceBindingDefinition.getActivityId();
+				String keyConfigurationId = keySequenceBindingDefinition.getKeyConfigurationId();
 				Set activityIds = (Set) activityIdsByCommandId.get(commandId);
 				boolean validKeySequence = keySequence != null && CommandManager.validateKeySequence(keySequence);
 				boolean validActivityId = activityId == null || activityManager.getDefinedActivityIds().contains(activityId);
@@ -368,14 +368,14 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 					iterator.remove();
 			}
 
-			List preferenceKeyBindingDefinitions = new ArrayList(preferenceCommandRegistry.getKeySequenceBindingDefinitions());
+			List preferenceKeySequenceBindingDefinitions = new ArrayList(preferenceCommandRegistry.getKeySequenceBindingDefinitions());
 
-			for (Iterator iterator = preferenceKeyBindingDefinitions.iterator(); iterator.hasNext();) {
-				IKeySequenceBindingDefinition keyBindingDefinition = (IKeySequenceBindingDefinition) iterator.next();				
-				KeySequence keySequence = keyBindingDefinition.getKeySequence();
-				String commandId = keyBindingDefinition.getCommandId();
-				String activityId = keyBindingDefinition.getActivityId();
-				String keyConfigurationId = keyBindingDefinition.getKeyConfigurationId();
+			for (Iterator iterator = preferenceKeySequenceBindingDefinitions.iterator(); iterator.hasNext();) {
+				IKeySequenceBindingDefinition keySequenceBindingDefinition = (IKeySequenceBindingDefinition) iterator.next();				
+				KeySequence keySequence = keySequenceBindingDefinition.getKeySequence();
+				String commandId = keySequenceBindingDefinition.getCommandId();
+				String activityId = keySequenceBindingDefinition.getActivityId();
+				String keyConfigurationId = keySequenceBindingDefinition.getKeyConfigurationId();
 				Set activityIds = (Set) activityIdsByCommandId.get(commandId);
 				boolean validKeySequence = keySequence != null && CommandManager.validateKeySequence(keySequence);
 				boolean validActivityId = activityId == null || activityManager.getDefinedActivityIds().contains(activityId);
@@ -389,14 +389,14 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 			tree = new TreeMap();
 			
-			for (Iterator iterator = pluginKeyBindingDefinitions.iterator(); iterator.hasNext();) {
-				IKeySequenceBindingDefinition keyBindingDefinition = (IKeySequenceBindingDefinition) iterator.next();				
-				KeyBindingNode.add(tree, keyBindingDefinition.getKeySequence(), keyBindingDefinition.getActivityId(), keyBindingDefinition.getKeyConfigurationId(), 1, keyBindingDefinition.getPlatform(), keyBindingDefinition.getLocale(), keyBindingDefinition.getCommandId());
+			for (Iterator iterator = pluginKeySequenceBindingDefinitions.iterator(); iterator.hasNext();) {
+				IKeySequenceBindingDefinition keySequenceBindingDefinition = (IKeySequenceBindingDefinition) iterator.next();				
+				KeySequenceBindingNode.add(tree, keySequenceBindingDefinition.getKeySequence(), keySequenceBindingDefinition.getActivityId(), keySequenceBindingDefinition.getKeyConfigurationId(), 1, keySequenceBindingDefinition.getPlatform(), keySequenceBindingDefinition.getLocale(), keySequenceBindingDefinition.getCommandId());
 			}
 
-			for (Iterator iterator = preferenceKeyBindingDefinitions.iterator(); iterator.hasNext();) {
-				IKeySequenceBindingDefinition keyBindingDefinition = (IKeySequenceBindingDefinition) iterator.next();				
-				KeyBindingNode.add(tree, keyBindingDefinition.getKeySequence(), keyBindingDefinition.getActivityId(), keyBindingDefinition.getKeyConfigurationId(), 0, keyBindingDefinition.getPlatform(), keyBindingDefinition.getLocale(), keyBindingDefinition.getCommandId());
+			for (Iterator iterator = preferenceKeySequenceBindingDefinitions.iterator(); iterator.hasNext();) {
+				IKeySequenceBindingDefinition keySequenceBindingDefinition = (IKeySequenceBindingDefinition) iterator.next();				
+				KeySequenceBindingNode.add(tree, keySequenceBindingDefinition.getKeySequence(), keySequenceBindingDefinition.getActivityId(), keySequenceBindingDefinition.getKeyConfigurationId(), 0, keySequenceBindingDefinition.getPlatform(), keySequenceBindingDefinition.getLocale(), keySequenceBindingDefinition.getCommandId());
 			}			
 		
 			Map categoryDefinitionsByName = CategoryDefinition.categoryDefinitionsByName(categoryDefinitionsById.values(), false);
@@ -803,21 +803,21 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 	protected void performDefaults() {
 		String activeKeyConfigurationId = getKeyConfigurationId();
-		List preferenceKeyBindingDefinitions = new ArrayList();
-		KeyBindingNode.getKeyBindingDefinitions(tree, KeySequence.getInstance(), 0, preferenceKeyBindingDefinitions);	
+		List preferenceKeySequenceBindingDefinitions = new ArrayList();
+		KeySequenceBindingNode.getKeySequenceBindingDefinitions(tree, KeySequence.getInstance(), 0, preferenceKeySequenceBindingDefinitions);	
 
-		if (activeKeyConfigurationId != null || !preferenceKeyBindingDefinitions.isEmpty()) {
+		if (activeKeyConfigurationId != null || !preferenceKeySequenceBindingDefinitions.isEmpty()) {
 			MessageBox restoreDefaultsMessageBox = new MessageBox(getShell(), SWT.YES | SWT.NO | SWT.ICON_WARNING | SWT.APPLICATION_MODAL);
 			restoreDefaultsMessageBox.setText(Util.translateString(resourceBundle, "restoreDefaultsMessageBoxText")); //$NON-NLS-1$
 			restoreDefaultsMessageBox.setMessage(Util.translateString(resourceBundle, "restoreDefaultsMessageBoxMessage")); //$NON-NLS-1$
 		
 			if (restoreDefaultsMessageBox.open() == SWT.YES) {
 				setKeyConfigurationId(null);			
-				Iterator iterator = preferenceKeyBindingDefinitions.iterator();
+				Iterator iterator = preferenceKeySequenceBindingDefinitions.iterator();
 				
 				while (iterator.hasNext()) {
-					IKeySequenceBindingDefinition keyBindingDefinition = (IKeySequenceBindingDefinition) iterator.next();
-					KeyBindingNode.remove(tree, keyBindingDefinition.getKeySequence(), keyBindingDefinition.getActivityId(), keyBindingDefinition.getKeyConfigurationId(), 0, keyBindingDefinition.getPlatform(), keyBindingDefinition.getLocale(), keyBindingDefinition.getCommandId());
+					IKeySequenceBindingDefinition keySequenceBindingDefinition = (IKeySequenceBindingDefinition) iterator.next();
+					KeySequenceBindingNode.remove(tree, keySequenceBindingDefinition.getKeySequence(), keySequenceBindingDefinition.getActivityId(), keySequenceBindingDefinition.getKeyConfigurationId(), 0, keySequenceBindingDefinition.getPlatform(), keySequenceBindingDefinition.getLocale(), keySequenceBindingDefinition.getCommandId());
 				}
 			}
 		}
@@ -830,7 +830,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		
 		for (Iterator iterator = commandAssignments.iterator(); iterator.hasNext();) {
 			CommandAssignment commandAssignment = (CommandAssignment) iterator.next();
-			KeyBindingNode.Assignment assignment = commandAssignment.assignment;
+			KeySequenceBindingNode.Assignment assignment = commandAssignment.assignment;
 			KeySequence keySequence = commandAssignment.keySequence;
 			String commandString = null;
 			int difference = DIFFERENCE_NONE;
@@ -928,7 +928,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		
 		for (Iterator iterator = keySequenceAssignments.iterator(); iterator.hasNext();) {
 			KeySequenceAssignment keySequenceAssignment = (KeySequenceAssignment) iterator.next();
-			KeyBindingNode.Assignment assignment = keySequenceAssignment.assignment;
+			KeySequenceBindingNode.Assignment assignment = keySequenceAssignment.assignment;
 			String commandString = null;
 			int difference = DIFFERENCE_NONE;
 			
@@ -1106,10 +1106,10 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		String activityId = getActivityId();
 		String keyConfigurationId = getKeyConfigurationId();
 		KeySequence keySequence = getKeySequence();
-		KeyBindingNode.remove(tree, keySequence, activityId, keyConfigurationId, 0, null, null);
-		KeyBindingNode.add(tree, keySequence, activityId, keyConfigurationId, 0, null, null, commandId);			
-		List preferenceKeyBindingDefinitions = new ArrayList();
-		KeyBindingNode.getKeyBindingDefinitions(tree, KeySequence.getInstance(), 0, preferenceKeyBindingDefinitions);		
+		KeySequenceBindingNode.remove(tree, keySequence, activityId, keyConfigurationId, 0, null, null);
+		KeySequenceBindingNode.add(tree, keySequence, activityId, keyConfigurationId, 0, null, null, commandId);			
+		List preferenceKeySequenceBindingDefinitions = new ArrayList();
+		KeySequenceBindingNode.getKeySequenceBindingDefinitions(tree, KeySequence.getInstance(), 0, preferenceKeySequenceBindingDefinitions);		
 		update();
 	}
 
@@ -1117,10 +1117,10 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		String activityId = getActivityId();
 		String keyConfigurationId = getKeyConfigurationId();
 		KeySequence keySequence = getKeySequence();		
-		KeyBindingNode.remove(tree, keySequence, activityId, keyConfigurationId, 0, null, null);
-		KeyBindingNode.add(tree, keySequence, activityId, keyConfigurationId, 0, null, null, null);
-		List preferenceKeyBindingDefinitions = new ArrayList();
-		KeyBindingNode.getKeyBindingDefinitions(tree, KeySequence.getInstance(), 0, preferenceKeyBindingDefinitions);		
+		KeySequenceBindingNode.remove(tree, keySequence, activityId, keyConfigurationId, 0, null, null);
+		KeySequenceBindingNode.add(tree, keySequence, activityId, keyConfigurationId, 0, null, null, null);
+		List preferenceKeySequenceBindingDefinitions = new ArrayList();
+		KeySequenceBindingNode.getKeySequenceBindingDefinitions(tree, KeySequence.getInstance(), 0, preferenceKeySequenceBindingDefinitions);		
 		update();		
 	}
 	
@@ -1128,9 +1128,9 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		String activityId = getActivityId();
 		String keyConfigurationId = getKeyConfigurationId();
 		KeySequence keySequence = getKeySequence();
-		KeyBindingNode.remove(tree, keySequence, activityId, keyConfigurationId, 0, null, null);
-		List preferenceKeyBindingDefinitions = new ArrayList();
-		KeyBindingNode.getKeyBindingDefinitions(tree, KeySequence.getInstance(), 0, preferenceKeyBindingDefinitions);		
+		KeySequenceBindingNode.remove(tree, keySequence, activityId, keyConfigurationId, 0, null, null);
+		List preferenceKeySequenceBindingDefinitions = new ArrayList();
+		KeySequenceBindingNode.getKeySequenceBindingDefinitions(tree, KeySequence.getInstance(), 0, preferenceKeySequenceBindingDefinitions);		
 		update();		
 	}
 
@@ -1156,7 +1156,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			
 		if (selection >= 0 && selection < commandAssignmentsAsList.size() && tableAssignmentsForCommand.getSelectionCount() == 1) {
 			CommandAssignment commandAssignment = (CommandAssignment) commandAssignmentsAsList.get(selection);
-			KeyBindingNode.Assignment assignment = commandAssignment.assignment;
+			KeySequenceBindingNode.Assignment assignment = commandAssignment.assignment;
 			String activityId = commandAssignment.activityId;
 			KeySequence keySequence = commandAssignment.keySequence;
 			setActivityId(activityId);			
@@ -1172,7 +1172,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			
 		if (selection >= 0 && selection < keySequenceAssignmentsAsList.size() && tableAssignmentsForKeySequence.getSelectionCount() == 1) {
 			KeySequenceAssignment keySequenceAssignment = (KeySequenceAssignment) keySequenceAssignmentsAsList.get(selection);
-			KeyBindingNode.Assignment assignment = keySequenceAssignment.assignment;
+			KeySequenceBindingNode.Assignment assignment = keySequenceAssignment.assignment;
 			String activityId = keySequenceAssignment.activityId;				
 			setActivityId(activityId);			
 		}
@@ -1193,7 +1193,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 				for (Iterator iterator2 = assignmentsByActivityId.entrySet().iterator(); iterator2.hasNext();) {
 					Map.Entry entry2 = (Map.Entry) iterator2.next();		
 					CommandAssignment commandAssignment = new CommandAssignment();
-					commandAssignment.assignment = (KeyBindingNode.Assignment) entry2.getValue();
+					commandAssignment.assignment = (KeySequenceBindingNode.Assignment) entry2.getValue();
 					commandAssignment.activityId	= (String) entry2.getKey();
 					commandAssignment.keySequence = keySequence;
 
@@ -1214,7 +1214,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			for (Iterator iterator = assignmentsByActivityId.entrySet().iterator(); iterator.hasNext();) {
 				Map.Entry entry = (Map.Entry) iterator.next();		
 				KeySequenceAssignment keySequenceAssignment = new KeySequenceAssignment();
-				keySequenceAssignment.assignment = (KeyBindingNode.Assignment) entry.getValue();
+				keySequenceAssignment.assignment = (KeySequenceBindingNode.Assignment) entry.getValue();
 				keySequenceAssignment.activityId	= (String) entry.getKey();
 				keySequenceAssignments.add(keySequenceAssignment);
 			}
@@ -1339,8 +1339,8 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		String[] activeKeyConfigurationIds = CommandManager.extend(CommandManager.getKeyConfigurationIds(keyConfigurationId, keyConfigurationDefinitionsById));
 		String[] activeLocales = CommandManager.extend(CommandManager.getPath(CommandManager.getInstance().getActiveLocale(), CommandManager.SEPARATOR));
 		String[] activePlatforms = CommandManager.extend(CommandManager.getPath(CommandManager.getInstance().getActivePlatform(), CommandManager.SEPARATOR));
-		KeyBindingNode.solve(tree, activeKeyConfigurationIds, activePlatforms, activeLocales);		
-		assignmentsByActivityIdByKeySequence = KeyBindingNode.getAssignmentsByContextIdKeySequence(tree, KeySequence.getInstance());
+		KeySequenceBindingNode.solve(tree, activeKeyConfigurationIds, activePlatforms, activeLocales);		
+		assignmentsByActivityIdByKeySequence = KeySequenceBindingNode.getAssignmentsByContextIdKeySequence(tree, KeySequence.getInstance());
 		setAssignmentsForKeySequence();
 		setAssignmentsForCommand();		
 		String categoryId = getCategoryId();

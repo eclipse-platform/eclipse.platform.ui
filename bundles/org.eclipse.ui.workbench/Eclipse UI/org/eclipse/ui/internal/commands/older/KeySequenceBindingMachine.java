@@ -24,7 +24,7 @@ import org.eclipse.ui.internal.commands.IKeySequenceBindingDefinition;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 
-final class KeyBindingMachine {
+final class KeySequenceBindingMachine {
 		
 	private String[] activeContextIds;
 	private String[] activeKeyConfigurationIds;
@@ -39,7 +39,7 @@ final class KeyBindingMachine {
 	private boolean solved;
 	private SortedMap tree;
 
-	KeyBindingMachine() {
+	KeySequenceBindingMachine() {
 		activeContextIds = new String[0];
 		activeKeyConfigurationIds = new String[0];
 		activeLocales = new String[0];
@@ -67,7 +67,7 @@ final class KeyBindingMachine {
 	Map getKeyBindingsByCommandId() {
 		if (keyBindingsByCommandId == null) {
 			solve();
-			keyBindingsByCommandId = Collections.unmodifiableMap(KeyBindingNode.getKeyBindingsByCommandId(getMatchesByKeySequence()));				
+			keyBindingsByCommandId = Collections.unmodifiableMap(KeySequenceBindingNode.getKeyBindingsByCommandId(getMatchesByKeySequence()));				
 		}
 		
 		return keyBindingsByCommandId;
@@ -76,12 +76,12 @@ final class KeyBindingMachine {
 	Map getKeyBindingsByCommandIdForMode() {
 		if (keyBindingsByCommandIdForMode == null) {
 			solve();
-			Map tree = KeyBindingNode.find(this.tree, mode);
+			Map tree = KeySequenceBindingNode.find(this.tree, mode);
 	
 			if (tree == null)
 				tree = new TreeMap();
 
-			keyBindingsByCommandIdForMode = Collections.unmodifiableMap(KeyBindingNode.getKeyBindingsByCommandId(getMatchesByKeySequenceForMode()));				
+			keyBindingsByCommandIdForMode = Collections.unmodifiableMap(KeySequenceBindingNode.getKeyBindingsByCommandId(getMatchesByKeySequenceForMode()));				
 		}
 		
 		return keyBindingsByCommandIdForMode;
@@ -98,7 +98,7 @@ final class KeyBindingMachine {
 	Map getMatchesByKeySequence() {
 		if (matchesByKeySequence == null) {
 			solve();
-			matchesByKeySequence = Collections.unmodifiableMap(KeyBindingNode.getMatchesByKeySequence(tree, KeySequence.getInstance()));				
+			matchesByKeySequence = Collections.unmodifiableMap(KeySequenceBindingNode.getMatchesByKeySequence(tree, KeySequence.getInstance()));				
 		}
 		
 		return matchesByKeySequence;
@@ -107,12 +107,12 @@ final class KeyBindingMachine {
 	Map getMatchesByKeySequenceForMode() {
 		if (matchesByKeySequenceForMode == null) {
 			solve();
-			Map tree = KeyBindingNode.find(this.tree, mode);
+			Map tree = KeySequenceBindingNode.find(this.tree, mode);
 	
 			if (tree == null)
 				tree = new TreeMap();
 							
-			matchesByKeySequenceForMode = Collections.unmodifiableMap(KeyBindingNode.getMatchesByKeySequence(tree, mode));				
+			matchesByKeySequenceForMode = Collections.unmodifiableMap(KeySequenceBindingNode.getMatchesByKeySequence(tree, mode));				
 		}
 		
 		return matchesByKeySequenceForMode;
@@ -228,7 +228,7 @@ final class KeyBindingMachine {
 			
 				while (iterator.hasNext()) {
 					IKeySequenceBindingDefinition keyBindingDefinition = (IKeySequenceBindingDefinition) iterator.next();
-					KeyBindingNode.add(tree, keyBindingDefinition.getKeySequence(), keyBindingDefinition.getActivityId(), keyBindingDefinition.getKeyConfigurationId(), i, keyBindingDefinition.getPlatform(), keyBindingDefinition.getLocale(), keyBindingDefinition.getCommandId());
+					KeySequenceBindingNode.add(tree, keyBindingDefinition.getKeySequence(), keyBindingDefinition.getActivityId(), keyBindingDefinition.getKeyConfigurationId(), i, keyBindingDefinition.getPlatform(), keyBindingDefinition.getLocale(), keyBindingDefinition.getCommandId());
 				}
 			}
 		}
@@ -254,7 +254,7 @@ final class KeyBindingMachine {
 	private void solve() {
 		if (!solved) {
 			build();		
-			KeyBindingNode.solve(tree, activeContextIds, activeKeyConfigurationIds, activePlatforms, activeLocales);
+			KeySequenceBindingNode.solve(tree, activeContextIds, activeKeyConfigurationIds, activePlatforms, activeLocales);
 			solved = true;
 		}
 	}

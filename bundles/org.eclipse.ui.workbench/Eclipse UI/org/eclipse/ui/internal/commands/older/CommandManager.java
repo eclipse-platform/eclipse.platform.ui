@@ -53,7 +53,7 @@ import org.eclipse.ui.internal.commands.api.older.ICommand;
 import org.eclipse.ui.internal.commands.api.older.ICommandManager;
 import org.eclipse.ui.internal.commands.api.older.ICommandManagerEvent;
 import org.eclipse.ui.internal.commands.api.older.ICommandManagerListener;
-import org.eclipse.ui.internal.commands.api.older.IKeyBinding;
+import org.eclipse.ui.internal.commands.api.older.IKeySequenceBinding;
 import org.eclipse.ui.internal.commands.api.older.IKeyConfiguration;
 import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.internal.util.Util;
@@ -161,7 +161,7 @@ public final class CommandManager implements ICommandManager {
 	private SortedSet definedKeyConfigurationIds = new TreeSet();	
 	private Map imageBindingsByCommandId = new TreeMap();
 	private Map keyBindingsByCommandId = new TreeMap();
-	private KeyBindingMachine keyBindingMachine = new KeyBindingMachine();
+	private KeySequenceBindingMachine keyBindingMachine = new KeySequenceBindingMachine();
 	private SortedMap keyConfigurationDefinitionsById = new TreeMap();
 	private SortedMap keyConfigurationsById = new TreeMap();	
 	private ExtensionCommandRegistry extensionCommandRegistry;
@@ -336,7 +336,7 @@ public final class CommandManager implements ICommandManager {
 		SortedSet keyBindings = (SortedSet) keyBindingsByCommandId.get(commandId);
 		
 		if (keyBindings != null) {
-			IKeyBinding keyBinding = (IKeyBinding) keyBindings.first();
+			IKeySequenceBinding keyBinding = (IKeySequenceBinding) keyBindings.first();
 		
 			if (keyBinding != null) {
 				KeySequence keySequence = keyBinding.getKeySequence();
@@ -368,7 +368,7 @@ public final class CommandManager implements ICommandManager {
 		SortedSet keyBindings = (SortedSet) keyBindingsByCommandId.get(commandId);
 		
 		if (keyBindings != null) {
-			IKeyBinding keyBinding = (IKeyBinding) keyBindings.first();
+			IKeySequenceBinding keyBinding = (IKeySequenceBinding) keyBindings.first();
 		
 			if (keyBinding != null)
 				acceleratorText = keyBinding.getKeySequence().format();

@@ -20,7 +20,7 @@ import org.eclipse.ui.internal.commands.api.older.ICommandEvent;
 import org.eclipse.ui.internal.commands.api.older.ICommandListener;
 import org.eclipse.ui.internal.commands.api.older.IContextBinding;
 import org.eclipse.ui.internal.commands.api.older.IImageBinding;
-import org.eclipse.ui.internal.commands.api.older.IKeyBinding;
+import org.eclipse.ui.internal.commands.api.older.IKeySequenceBinding;
 import org.eclipse.ui.internal.commands.api.older.NotDefinedException;
 import org.eclipse.ui.internal.util.Util;
 
@@ -46,7 +46,7 @@ final class Command implements ICommand {
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	private transient IImageBinding[] imageBindingsAsArray;
-	private transient IKeyBinding[] keyBindingsAsArray;
+	private transient IKeySequenceBinding[] keyBindingsAsArray;
 	private transient String string;
 	
 	Command(String id) {	
@@ -356,11 +356,11 @@ final class Command implements ICommand {
 	}
 
 	boolean setKeyBindings(SortedSet keyBindings) {
-		keyBindings = Util.safeCopy(keyBindings, IKeyBinding.class);
+		keyBindings = Util.safeCopy(keyBindings, IKeySequenceBinding.class);
 		
 		if (!Util.equals(keyBindings, this.keyBindings)) {
 			this.keyBindings = keyBindings;
-			this.keyBindingsAsArray = (IKeyBinding[]) this.keyBindings.toArray(new IKeyBinding[this.keyBindings.size()]);
+			this.keyBindingsAsArray = (IKeySequenceBinding[]) this.keyBindings.toArray(new IKeySequenceBinding[this.keyBindings.size()]);
 			hashCodeComputed = false;
 			hashCode = 0;
 			string = null;

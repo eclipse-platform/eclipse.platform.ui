@@ -11,44 +11,44 @@
 
 package org.eclipse.ui.internal.commands;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
-import java.util.SortedSet;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 
-final class KeyBindingMachine {
+final class KeySequenceBindingMachine {
 		
-	private String[] activeContextIds;
+	private String[] activeActivityIds;
 	private String[] activeKeyConfigurationIds;
 	private String[] activeLocales;
 	private String[] activePlatforms;
-	private SortedSet[] keyBindings;
-	private Map keyBindingsByCommandId;
-	private Map keyBindingsByCommandIdForMode;	
+	private List[] keySequenceBindings;
+	private Map keySequenceBindingsByCommandId;
+	private Map keySequenceBindingsByCommandIdForMode;	
 	private Map matchesByKeySequence;
 	private Map matchesByKeySequenceForMode;
 	private KeySequence mode;	
 	private boolean solved;
 	private SortedMap tree;
 
-	KeyBindingMachine() {
-		activeContextIds = new String[0];
+	KeySequenceBindingMachine() {
+		activeActivityIds = new String[0];
 		activeKeyConfigurationIds = new String[0];
 		activeLocales = new String[0];
 		activePlatforms = new String[0];
-		keyBindings = new SortedSet[] { new TreeSet(), new TreeSet() };
+		keySequenceBindings = new List[] { new ArrayList(), new ArrayList() };
 		mode = KeySequence.getInstance();	
 	}
 
-	String[] getActiveContextIds() {
-		return (String[]) activeContextIds.clone();
+	String[] getActiveActivityIds() {
+		return (String[]) activeActivityIds.clone();
 	}		
 
 	String[] getActiveKeyConfigurationIds() {
@@ -63,41 +63,41 @@ final class KeyBindingMachine {
 		return (String[]) activePlatforms.clone();
 	}
 
-	Map getKeyBindingsByCommandId() {
-		if (keyBindingsByCommandId == null) {
+	Map getKeySequenceBindingsByCommandId() {
+		if (keySequenceBindingsByCommandId == null) {
 			solve();
-			keyBindingsByCommandId = Collections.unmodifiableMap(KeyBindingNode.getKeyBindingsByCommandId(getMatchesByKeySequence()));				
+			keySequenceBindingsByCommandId = Collections.unmodifiableMap(KeySequenceBindingNode.getKeySequenceBindingsByCommandId(getMatchesByKeySequence()));				
 		}
 		
-		return keyBindingsByCommandId;
+		return keySequenceBindingsByCommandId;
 	}
 	
-	Map getKeyBindingsByCommandIdForMode() {
-		if (keyBindingsByCommandIdForMode == null) {
+	Map getKeySequenceBindingsByCommandIdForMode() {
+		if (keySequenceBindingsByCommandIdForMode == null) {
 			solve();
-			Map tree = KeyBindingNode.find(this.tree, mode);
+			Map tree = KeySequenceBindingNode.find(this.tree, mode);
 	
 			if (tree == null)
 				tree = new TreeMap();
 
-			keyBindingsByCommandIdForMode = Collections.unmodifiableMap(KeyBindingNode.getKeyBindingsByCommandId(getMatchesByKeySequenceForMode()));				
+			keySequenceBindingsByCommandIdForMode = Collections.unmodifiableMap(KeySequenceBindingNode.getKeySequenceBindingsByCommandId(getMatchesByKeySequenceForMode()));				
 		}
 		
-		return keyBindingsByCommandIdForMode;
+		return keySequenceBindingsByCommandIdForMode;
 	}
 
-	SortedSet getKeyBindings0() {
-		return keyBindings[0];	
+	List getKeySequenceBindings0() {
+		return keySequenceBindings[0];	
 	}
 
-	SortedSet getKeyBindings1() {
-		return keyBindings[1];	
+	List getKeySequenceBindings1() {
+		return keySequenceBindings[1];	
 	}
 
 	Map getMatchesByKeySequence() {
 		if (matchesByKeySequence == null) {
 			solve();
-			matchesByKeySequence = Collections.unmodifiableMap(KeyBindingNode.getMatchesByKeySequence(tree, KeySequence.getInstance()));				
+			matchesByKeySequence = Collections.unmodifiableMap(KeySequenceBindingNode.getMatchesByKeySequence(tree, KeySequence.getInstance()));				
 		}
 		
 		return matchesByKeySequence;
@@ -106,12 +106,12 @@ final class KeyBindingMachine {
 	Map getMatchesByKeySequenceForMode() {
 		if (matchesByKeySequenceForMode == null) {
 			solve();
-			Map tree = KeyBindingNode.find(this.tree, mode);
+			Map tree = KeySequenceBindingNode.find(this.tree, mode);
 	
 			if (tree == null)
 				tree = new TreeMap();
 							
-			matchesByKeySequenceForMode = Collections.unmodifiableMap(KeyBindingNode.getMatchesByKeySequence(tree, mode));				
+			matchesByKeySequenceForMode = Collections.unmodifiableMap(KeySequenceBindingNode.getMatchesByKeySequence(tree, mode));				
 		}
 		
 		return matchesByKeySequenceForMode;
@@ -121,14 +121,14 @@ final class KeyBindingMachine {
 		return mode;	
 	}
 	
-	boolean setActiveContextIds(String[] activeContextIds) {
-		if (activeContextIds == null)
+	boolean setActiveActivityIds(String[] activeActivityIds) {
+		if (activeActivityIds == null)
 			throw new NullPointerException();
 
-		activeContextIds = (String[]) activeContextIds.clone();
+		activeActivityIds = (String[]) activeActivityIds.clone();
 			
-		if (!Arrays.equals(this.activeContextIds, activeContextIds)) {
-			this.activeContextIds = activeContextIds;
+		if (!Arrays.equals(this.activeActivityIds, activeActivityIds)) {
+			this.activeActivityIds = activeActivityIds;
 			invalidateSolution();
 			return true;		
 		}
@@ -181,11 +181,11 @@ final class KeyBindingMachine {
 		return false;		
 	}	
 
-	boolean setKeyBindings0(SortedSet keyBindings0) {
-		keyBindings0 = Util.safeCopy(keyBindings0, IKeySequenceBindingDefinition.class);
+	boolean setKeySequenceBindings0(List keySequenceBindings0) {
+		keySequenceBindings0 = Util.safeCopy(keySequenceBindings0, IKeySequenceBindingDefinition.class);
 		
-		if (!this.keyBindings[0].equals(keyBindings0)) {
-			this.keyBindings[0] = keyBindings0;
+		if (!this.keySequenceBindings[0].equals(keySequenceBindings0)) {
+			this.keySequenceBindings[0] = keySequenceBindings0;
 			invalidateTree();
 			return true;
 		}			
@@ -193,11 +193,11 @@ final class KeyBindingMachine {
 		return false;		
 	}
 
-	boolean setKeyBindings1(SortedSet keyBindings1) {
-		keyBindings1 = Util.safeCopy(keyBindings1, IKeySequenceBindingDefinition.class);
+	boolean setKeySequenceBindings1(List keySequenceBindings1) {
+		keySequenceBindings1 = Util.safeCopy(keySequenceBindings1, IKeySequenceBindingDefinition.class);
 		
-		if (!this.keyBindings[1].equals(keyBindings1)) {
-			this.keyBindings[1] = keyBindings1;
+		if (!this.keySequenceBindings[1].equals(keySequenceBindings1)) {
+			this.keySequenceBindings[1] = keySequenceBindings1;
 			invalidateTree();
 			return true;
 		}			
@@ -222,25 +222,25 @@ final class KeyBindingMachine {
 		if (tree == null) {
 			tree = new TreeMap();
 		
-			for (int i = 0; i < keyBindings.length; i++) {		
-				Iterator iterator = keyBindings[i].iterator();
+			for (int i = 0; i < keySequenceBindings.length; i++) {		
+				Iterator iterator = keySequenceBindings[i].iterator();
 			
 				while (iterator.hasNext()) {
-					IKeySequenceBindingDefinition keyBindingDefinition = (IKeySequenceBindingDefinition) iterator.next();
-					KeyBindingNode.add(tree, keyBindingDefinition.getKeySequence(), keyBindingDefinition.getActivityId(), keyBindingDefinition.getKeyConfigurationId(), i, keyBindingDefinition.getPlatform(), keyBindingDefinition.getLocale(), keyBindingDefinition.getCommandId());
+					IKeySequenceBindingDefinition keySequenceBindingDefinition = (IKeySequenceBindingDefinition) iterator.next();
+					KeySequenceBindingNode.add(tree, keySequenceBindingDefinition.getKeySequence(), keySequenceBindingDefinition.getActivityId(), keySequenceBindingDefinition.getKeyConfigurationId(), i, keySequenceBindingDefinition.getPlatform(), keySequenceBindingDefinition.getLocale(), keySequenceBindingDefinition.getCommandId());
 				}
 			}
 		}
 	}
 
 	private void invalidateMode() {
-		keyBindingsByCommandIdForMode = null;
+		keySequenceBindingsByCommandIdForMode = null;
 		matchesByKeySequenceForMode = null;
 	}
 
 	private void invalidateSolution() {
 		solved = false;
-		keyBindingsByCommandId = null;	
+		keySequenceBindingsByCommandId = null;	
 		matchesByKeySequence = null;
 		invalidateMode();
 	}
@@ -253,7 +253,7 @@ final class KeyBindingMachine {
 	private void solve() {
 		if (!solved) {
 			build();		
-			KeyBindingNode.solve(tree, activeContextIds, activeKeyConfigurationIds, activePlatforms, activeLocales);
+			KeySequenceBindingNode.solve(tree, activeActivityIds, activeKeyConfigurationIds, activePlatforms, activeLocales);
 			solved = true;
 		}
 	}

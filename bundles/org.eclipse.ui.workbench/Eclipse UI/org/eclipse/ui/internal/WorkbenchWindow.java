@@ -82,7 +82,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.commands.ActionHandler;
-import org.eclipse.ui.internal.commands.api.older.IKeyBinding;
+import org.eclipse.ui.internal.commands.api.older.IKeySequenceBinding;
 import org.eclipse.ui.internal.commands.older.CommandManager;
 import org.eclipse.ui.internal.commands.older.Match;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
@@ -846,7 +846,7 @@ public class WorkbenchWindow
 					SortedSet keyBindings = (SortedSet) keyBindingsByCommandId.get(commandId);
 
 					if (keyBindings != null) {
-						IKeyBinding keyBinding = (IKeyBinding) keyBindings.first();
+						IKeySequenceBinding keyBinding = (IKeySequenceBinding) keyBindings.first();
 
 						if (keyBinding != null) {
 							KeySequence keySequence = keyBinding.getKeySequence();
@@ -886,7 +886,7 @@ public class WorkbenchWindow
 					SortedSet keyBindings = (SortedSet) keyBindingsByCommandId.get(commandId);
 
 					if (keyBindings != null) {
-						IKeyBinding keyBinding = (IKeyBinding) keyBindings.first();
+						IKeySequenceBinding keyBinding = (IKeySequenceBinding) keyBindings.first();
 
 						if (keyBinding != null)
 							return keyBinding.getKeySequence().format();

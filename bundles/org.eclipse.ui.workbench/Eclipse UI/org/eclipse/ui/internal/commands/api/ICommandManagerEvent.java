@@ -36,16 +36,31 @@ public interface ICommandManagerEvent {
 	 *         Guaranteed not to be <code>null</code>.
 	 */
 	ICommandManager getCommandManager();
+
+	/**
+	 * TODO javadoc
+	 */	
+	boolean hasActiveKeyConfigurationIdChanged();
+
+	/**
+	 * TODO javadoc
+	 */	
+	boolean hasActiveLocaleChanged();	
+
+	/**
+	 * TODO javadoc
+	 */	
+	boolean hasActivePlatformChanged();	
+	
+	/**
+	 * TODO javadoc
+	 */	
+	boolean haveActiveActivityIdsChanged();
 	
 	/**
 	 * TODO javadoc
 	 */	
 	boolean haveActiveCommandIdsChanged();
-
-	/**
-	 * TODO javadoc
-	 */	
-	boolean haveActiveKeyConfigurationIdsChanged();
 
 	/**
 	 * TODO javadoc

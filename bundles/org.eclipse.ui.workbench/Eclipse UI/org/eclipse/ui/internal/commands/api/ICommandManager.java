@@ -49,6 +49,11 @@ public interface ICommandManager {
 	void addCommandManagerListener(ICommandManagerListener commandManagerListener);
 
 	/**
+	 * TODO javadoc
+	 */
+	Set getActiveActivityIds();
+
+	/**
 	 * <p>
 	 * Returns the set of identifiers to active commands. This set is not 
 	 * necessarily a subset of the set of identifiers to defined commands.
@@ -63,25 +68,22 @@ public interface ICommandManager {
 	 *         is not empty, it is guaranteed to only contain instances of 
 	 *         <code>String</code>.
 	 */	
-	Set getActiveCommandIds();
+	Set getActiveCommandIds();	
+	
+	/**
+	 * TODO javadoc
+	 */
+	String getActiveKeyConfigurationId();
 
 	/**
-	 * <p>
-	 * Returns the set of identifiers to active key configurations. This set is 
-	 * not necessarily a subset of the set of identifiers to defined key 
-	 * configurations.
-	 * </p>
-	 * <p>
-	 * Notification is set to all registered listeners if this attribute 
-	 * changes.
-	 * </p>
-	 *
-	 * @return the set of identifiers to active key configurations. This set may 
-	 * 		   be empty, but is guaranteed not to be <code>null</code>. If this 
-	 * 		   set is not empty, it is guaranteed to only contain instances of 
-	 *         <code>String</code>.
-	 */	
-	Set getActiveKeyConfigurationIds();	
+	 * TODO javadoc
+	 */
+	String getActiveLocale();
+	
+	/**
+	 * TODO javadoc
+	 */
+	String getActivePlatform();
 
 	/**
 	 * Returns a handle to a category given an identifier.
@@ -188,6 +190,17 @@ public interface ICommandManager {
 	void removeCommandManagerListener(ICommandManagerListener commandManagerListener);
 
 	/**
+	 * Sets the set of identifiers to active activities. 
+	 *
+	 * @param activeActivityIds the set of identifiers to active activities. 
+	 *                          This set may be empty, but it must not be 
+	 *                          <code>null</code>. If this set is not empty, it 
+	 *                          must only contain instances of 
+	 *                          <code>String</code>.	
+	 */
+	void setActiveActivityIds(Set activeActivityIds);	
+	
+	/**
 	 * Sets the set of identifiers to active commands. 
 	 *
 	 * @param activeCommandIds the set of identifiers to active commands. 
@@ -199,16 +212,19 @@ public interface ICommandManager {
 	void setActiveCommandIds(Set activeCommandIds);
 
 	/**
-	 * Sets the set of identifiers to active key configurations. 
-	 *
-	 * @param activeKeyConfigurationIds the set of identifiers to active key 
-	 * 									configurations. This set may be empty, 
-	 * 									but it must not be <code>null</code>. If 
-	 * 									this set is not empty, it must only 
-	 * 									contain instances of 
-	 * 									<code>String</code>.	
+	 * TODO javadoc
 	 */
-	void setActiveKeyConfigurationIds(Set activeKeyConfigurationIds);	
+	void setActiveKeyConfigurationId(String activeKeyConfigurationId);	
+
+	/**
+	 * TODO javadoc
+	 */
+	void setActiveLocale(String activeLocale);	
+	
+	/**
+	 * TODO javadoc
+	 */
+	void setActivePlatform(String activePlatform);	
 	
 	/**
 	 * Sets the set of identifiers to enabled commands. 

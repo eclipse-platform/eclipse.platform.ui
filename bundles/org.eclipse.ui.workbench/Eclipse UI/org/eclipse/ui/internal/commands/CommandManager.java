@@ -18,12 +18,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.WeakHashMap;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.commands.api.ICategory;
 import org.eclipse.ui.internal.commands.api.ICategoryEvent;
@@ -35,12 +38,16 @@ import org.eclipse.ui.internal.commands.api.ICommandManagerListener;
 import org.eclipse.ui.internal.commands.api.IKeyConfiguration;
 import org.eclipse.ui.internal.commands.api.IKeyConfigurationEvent;
 import org.eclipse.ui.internal.commands.api.IKeySequenceBinding;
+import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
 
 public final class CommandManager implements ICommandManager {
 
-	static boolean isKeyConfigurationDefinitionChildOf(String ancestor, String id, Map keyConfigurationDefinitionsById) {
+	public final static String SEPARATOR = "_"; //$NON-NLS-1$
+	
+	private static boolean isKeyConfigurationDefinitionChildOf(String ancestor, String id, Map keyConfigurationDefinitionsById) {
 		Collection visited = new HashSet();
 
 		while (id != null && !visited.contains(id)) {
@@ -52,10 +59,61 @@ public final class CommandManager implements ICommandManager {
 		}
 
 		return false;
+	}
+
+	private static void validateActivityBindingDefinitions(Collection activityBindingDefinitions) {		
+		Iterator iterator = activityBindingDefinitions.iterator();
+		
+		while (iterator.hasNext()) {
+			IActivityBindingDefinition activityBindingDefinition = (IActivityBindingDefinition) iterator.next();
+			
+			if (activityBindingDefinition.getCommandId() == null)
+				iterator.remove();
+		}
 	}		
 	
+	private static void validateImageBindingDefinitions(Collection imageBindingDefinitions) {		
+		Iterator iterator = imageBindingDefinitions.iterator();
+		
+		while (iterator.hasNext()) {
+			IImageBindingDefinition imageBindingDefinition = (IImageBindingDefinition) iterator.next();
+			
+			if (imageBindingDefinition.getCommandId() == null || imageBindingDefinition.getImageUri() == null)
+				iterator.remove();
+		}
+	}		
+	
+	private static void validateKeySequenceBindingDefinitions(Collection keySequenceBindingDefinitions) {
+		Iterator iterator = keySequenceBindingDefinitions.iterator();
+		
+		while (iterator.hasNext()) {
+			IKeySequenceBindingDefinition keySequenceBindingDefinition = (IKeySequenceBindingDefinition) iterator.next();
+			KeySequence keySequence = keySequenceBindingDefinition.getKeySequence();
+			
+			if (keySequenceBindingDefinition.getCommandId() == null || keySequence == null || !validateKeySequence(keySequence))
+				iterator.remove();
+		}
+	}	
+
+	private static boolean validateKeySequence(KeySequence keySequence) {
+		if (keySequence == null)
+			return false;
+		
+		List keyStrokes = keySequence.getKeyStrokes();
+		int size = keyStrokes.size();
+			
+		if (size == 0 || size > 4 || !keySequence.isComplete())
+			return false;
+			
+		return true;
+	}
+	
+	private Set activeActivityIds = new HashSet();
+	// TODO does this have any use anymore?
 	private Set activeCommandIds = new HashSet();
-	private Set activeKeyConfigurationIds = new HashSet();	
+	private String activeKeyConfigurationId = null;
+	private String activeLocale = null;
+	private String activePlatform = null;
 	private Map activityBindingsByCommandId = new HashMap();		
 	private Map categoriesById = new WeakHashMap();
 	private Set categoriesWithListeners = new HashSet();
@@ -76,6 +134,22 @@ public final class CommandManager implements ICommandManager {
 	private Map keySequenceBindingsByCommandId = new HashMap();
 	private IMutableCommandRegistry mutableCommandRegistry;		
 	
+	// TODO review begin
+	
+	private Map actionsById = new HashMap();	
+	private Map commandIdsByActionIds = new HashMap();
+	private KeySequenceBindingMachine keySequenceBindingMachine = new KeySequenceBindingMachine();
+
+	private List commandRegistryActivityBindingDefinitions = Collections.EMPTY_LIST;
+	private List commandRegistryImageBindingDefinitions = Collections.EMPTY_LIST;
+	private List commandRegistryKeySequenceBindingDefinitions = Collections.EMPTY_LIST;
+
+	private List mutableCommandRegistryActivityBindingDefinitions = Collections.EMPTY_LIST;
+	private List mutableCommandRegistryImageBindingDefinitions = Collections.EMPTY_LIST;
+	private List mutableCommandRegistryKeySequenceBindingDefinitions = Collections.EMPTY_LIST;
+	
+	// TODO review end
+	
 	public CommandManager() {
 		this(new ExtensionCommandRegistry(Platform.getExtensionRegistry()), new PreferenceCommandRegistry(WorkbenchPlugin.getDefault().getPreferenceStore()));
 	}
@@ -86,6 +160,10 @@ public final class CommandManager implements ICommandManager {
 
 		this.commandRegistry = commandRegistry;
 		this.mutableCommandRegistry = mutableCommandRegistry;
+		String systemLocale = Locale.getDefault().toString();
+		activeLocale = systemLocale != null ? systemLocale : Util.ZERO_LENGTH_STRING;
+		String systemPlatform = SWT.getPlatform();
+		activePlatform = systemPlatform != null ? systemPlatform : Util.ZERO_LENGTH_STRING;	
 		
 		this.commandRegistry.addCommandRegistryListener(new ICommandRegistryListener() {
 			public void commandRegistryChanged(ICommandRegistryEvent commandRegistryEvent) {
@@ -113,13 +191,29 @@ public final class CommandManager implements ICommandManager {
 			commandManagerListeners.add(commandManagerListener);
 	}
 
+	public Map getActionsById() {
+		return Collections.unmodifiableMap(actionsById);
+	}
+
+	public Set getActiveActivityIds() {
+		return Collections.unmodifiableSet(activeActivityIds);
+	}
+
 	public Set getActiveCommandIds() {
 		return Collections.unmodifiableSet(activeCommandIds);
 	}
 
-	public Set getActiveKeyConfigurationIds() {
-		return Collections.unmodifiableSet(activeKeyConfigurationIds);
+	public String getActiveKeyConfigurationId() {		
+		return activeKeyConfigurationId;
+	}
+	
+	public String getActiveLocale() {
+		return activeLocale;
 	}	
+
+	public String getActivePlatform() {
+		return activePlatform;
+	}		
 
 	public ICategory getCategory(String categoryId) {
 		if (categoryId == null)
@@ -190,6 +284,25 @@ public final class CommandManager implements ICommandManager {
 			commandManagerListeners.remove(commandManagerListener);
 	}
 
+	public void setActiveActivityIds(Set activeActivityIds) {
+		activeActivityIds = Util.safeCopy(activeActivityIds, String.class);
+		boolean commandManagerChanged = false;
+		Map commandEventsByCommandId = null;
+
+		if (!this.activeActivityIds.equals(activeActivityIds)) {
+			this.activeActivityIds = activeActivityIds;
+			commandManagerChanged = true;
+			calculateKeySequenceBindings();	
+			commandEventsByCommandId = updateCommands(commandsById.keySet());	
+		}
+		
+		if (commandManagerChanged)
+			fireCommandManagerChanged(new CommandManagerEvent(this, false, true, false, false, false, false, false, false, false));
+
+		if (commandEventsByCommandId != null)
+			notifyCommands(commandEventsByCommandId);	
+	}	
+	
 	public void setActiveCommandIds(Set activeCommandIds) {
 		activeCommandIds = Util.safeCopy(activeCommandIds, String.class);
 		boolean commandManagerChanged = false;
@@ -202,29 +315,72 @@ public final class CommandManager implements ICommandManager {
 		}
 		
 		if (commandManagerChanged)
-			fireCommandManagerChanged(new CommandManagerEvent(this, true, false, false, false, false, false));
+			fireCommandManagerChanged(new CommandManagerEvent(this, false, true, false, false, false, false, false, false, false));
 
 		if (commandEventsByCommandId != null)
 			notifyCommands(commandEventsByCommandId);	
 	}
 	
-	public void setActiveKeyConfigurationIds(Set activeKeyConfigurationIds) {
-		activeKeyConfigurationIds = Util.safeCopy(activeKeyConfigurationIds, String.class);
+	public void setActiveKeyConfigurationId(String activeKeyConfigurationId) {
 		boolean commandManagerChanged = false;
+		Map commandEventsByCommandId = null;
 		Map keyConfigurationEventsByKeyConfigurationId = null;
 
-		if (!this.activeKeyConfigurationIds.equals(activeKeyConfigurationIds)) {
-			this.activeKeyConfigurationIds = activeKeyConfigurationIds;
-			commandManagerChanged = true;	
+		if (!Util.equals(this.activeKeyConfigurationId, activeKeyConfigurationId)) {
+			this.activeKeyConfigurationId = activeKeyConfigurationId;
+			commandManagerChanged = true;
+			calculateKeySequenceBindings();	
+			commandEventsByCommandId = updateCommands(commandsById.keySet());	
 			keyConfigurationEventsByKeyConfigurationId = updateKeyConfigurations(keyConfigurationsById.keySet());	
 		}
 		
 		if (commandManagerChanged)
-			fireCommandManagerChanged(new CommandManagerEvent(this, false, true, false, false, false, false));
+			fireCommandManagerChanged(new CommandManagerEvent(this, false, false, true, false, false, false, false, false, false));
 
+		if (commandEventsByCommandId != null)
+			notifyCommands(commandEventsByCommandId);		
+		
 		if (keyConfigurationEventsByKeyConfigurationId != null)
 			notifyKeyConfigurations(keyConfigurationEventsByKeyConfigurationId);	
 	}	
+
+	public void setActiveLocale(String activeLocale) {
+		boolean commandManagerChanged = false;
+		Map commandEventsByCommandId = null;
+
+		if (!Util.equals(this.activeLocale, activeLocale)) {
+			this.activeLocale = activeLocale;
+			commandManagerChanged = true;
+			calculateImageBindings();
+			calculateKeySequenceBindings();	
+			commandEventsByCommandId = updateCommands(commandsById.keySet());	
+		}
+		
+		if (commandManagerChanged)
+			fireCommandManagerChanged(new CommandManagerEvent(this, false, false, true, false, false, false, false, false, false));
+
+		if (commandEventsByCommandId != null)
+			notifyCommands(commandEventsByCommandId);		
+	}		
+
+	public void setActivePlatform(String activePlatform) {
+		boolean commandManagerChanged = false;
+		Map commandEventsByCommandId = null;
+
+		if (!Util.equals(this.activePlatform, activePlatform)) {
+			this.activePlatform = activePlatform;
+			commandManagerChanged = true;
+			calculateImageBindings();
+			calculateKeySequenceBindings();	
+			commandEventsByCommandId = updateCommands(commandsById.keySet());	
+		}
+		
+		if (commandManagerChanged)
+			fireCommandManagerChanged(new CommandManagerEvent(this, false, false, true, false, false, false, false, false, false));
+
+		if (commandEventsByCommandId != null)
+			notifyCommands(commandEventsByCommandId);		
+	}		
 	
 	public void setEnabledCommandIds(Set enabledCommandIds) {	
 		enabledCommandIds = Util.safeCopy(enabledCommandIds, String.class);
@@ -238,12 +394,122 @@ public final class CommandManager implements ICommandManager {
 		}
 		
 		if (commandManagerChanged)
-			fireCommandManagerChanged(new CommandManagerEvent(this, false, false, false, false, false, true));
+			fireCommandManagerChanged(new CommandManagerEvent(this, false, false, false, false, false, false, false, false, true));
 
 		if (commandEventsByCommandId != null)
 			notifyCommands(commandEventsByCommandId);	
 	}	
 
+	// TODO private?
+	public static String[] extend(String[] strings) {
+		String[] strings2 = new String[strings.length + 1];
+		System.arraycopy(strings, 0, strings2, 0, strings.length);		
+		return strings2;
+	}	
+		
+	private void calculateActivityBindings() {
+		List activityBindingDefinitions = new ArrayList();		
+		activityBindingDefinitions.addAll(commandRegistryActivityBindingDefinitions);
+		activityBindingDefinitions.addAll(mutableCommandRegistryActivityBindingDefinitions);
+		Map activityBindingsByCommandId = new HashMap();
+		
+		for (Iterator iterator = activityBindingDefinitions.iterator(); iterator.hasNext();) {
+			IActivityBindingDefinition activityBindingDefinition = (IActivityBindingDefinition) iterator.next();					
+			String activityId = activityBindingDefinition.getActivityId();			
+			String commandId = activityBindingDefinition.getCommandId();
+			Set set = (Set) activityBindingsByCommandId.get(commandId);
+						
+			if (set == null) {
+				set = new HashSet();
+				activityBindingsByCommandId.put(commandId, set);						
+			}
+						
+			set.add(new ActivityBinding(activityId));
+		}
+		
+		this.activityBindingsByCommandId = activityBindingsByCommandId;		
+	}
+
+	private void calculateImageBindings() {
+		String[] activeLocales = extend(getPath(activeLocale, SEPARATOR));
+		String[] activePlatforms = extend(getPath(activePlatform, SEPARATOR));	
+		// TODO
+	}
+	
+	private void calculateKeySequenceBindings() {
+		List list = new ArrayList(this.activeActivityIds);
+	
+		// TODO high priority. temporary fix for M3 for automatic inheritance of contexts for the specific case of the java editor scope. 
+		if (list.contains("org.eclipse.jdt.ui.javaEditorScope") && !list.contains("org.eclipse.ui.textEditorScope"))
+			list.add("org.eclipse.ui.textEditorScope");
+
+		String[] activeActivityIds = extend((String[]) list.toArray(new String[list.size()]));		
+		String[] activeKeyConfigurationIds = extend(getKeyConfigurationIds(activeKeyConfigurationId, keyConfigurationDefinitionsById));
+		String[] activeLocales = extend(getPath(activeLocale, SEPARATOR));
+		String[] activePlatforms = extend(getPath(activePlatform, SEPARATOR));
+		keySequenceBindingMachine.setActiveActivityIds(activeActivityIds);
+		keySequenceBindingMachine.setActiveKeyConfigurationIds(activeKeyConfigurationIds);
+		keySequenceBindingMachine.setActiveLocales(activeLocales);
+		keySequenceBindingMachine.setActivePlatforms(activePlatforms);
+		keySequenceBindingMachine.setKeySequenceBindings0(commandRegistryKeySequenceBindingDefinitions);
+		keySequenceBindingMachine.setKeySequenceBindings1(mutableCommandRegistryKeySequenceBindingDefinitions);		
+		keySequenceBindingsByCommandId = keySequenceBindingMachine.getKeySequenceBindingsByCommandId();
+		
+		// TODO remove
+		//System.out.println("activeContextIds: " + Arrays.asList(activeContextIds));
+		//System.out.println("activeKeyConfigurationIds: " + Arrays.asList(activeKeyConfigurationIds));
+		//System.out.println("activeLocales: " + Arrays.asList(activeLocales));
+		//System.out.println("activePlatforms: " + Arrays.asList(activePlatforms));
+		//System.out.println("keySequenceBindings0: " + preferenceKeySequenceBindingDefinitions);
+		//System.out.println("keySequenceBindings1: " + pluginKeySequenceBindingDefinitions);
+		//System.out.println(keySequenceBindingMachine.getMatchesByKeySequence());		
+		//System.out.println(keySequenceBindingsByCommandId);
+	}		
+	
+	public static String[] getKeyConfigurationIds(String keyConfigurationDefinitionId, Map keyConfigurationDefinitionsById) {
+		List strings = new ArrayList();
+
+		while (keyConfigurationDefinitionId != null) {	
+			if (strings.contains(keyConfigurationDefinitionId))
+				return new String[0];
+				
+			IKeyConfigurationDefinition keyConfigurationDefinition = (IKeyConfigurationDefinition) keyConfigurationDefinitionsById.get(keyConfigurationDefinitionId);
+			
+			if (keyConfigurationDefinition == null)
+				return new String[0];
+						
+			strings.add(keyConfigurationDefinitionId);
+			keyConfigurationDefinitionId = keyConfigurationDefinition.getParentId();
+		}
+	
+		return (String[]) strings.toArray(new String[strings.size()]);
+	}
+
+	public static String[] getPath(String string, String separator) {
+		if (string == null || separator == null)
+			return new String[0];
+
+		List strings = new ArrayList();
+		StringBuffer stringBuffer = new StringBuffer();
+		string = string.trim();
+			
+		if (string.length() > 0) {
+			StringTokenizer stringTokenizer = new StringTokenizer(string, separator);
+						
+			while (stringTokenizer.hasMoreElements()) {
+				if (stringBuffer.length() > 0)
+					stringBuffer.append(separator);
+						
+				stringBuffer.append(((String) stringTokenizer.nextElement()).trim());
+				strings.add(stringBuffer.toString());
+			}
+		}
+		
+		Collections.reverse(strings);		
+		strings.add(Util.ZERO_LENGTH_STRING);
+		return (String[]) strings.toArray(new String[strings.size()]);	
+	}	
+	
 	private void fireCommandManagerChanged(ICommandManagerEvent commandManagerEvent) {
 		if (commandManagerEvent == null)
 			throw new NullPointerException();
@@ -292,6 +558,7 @@ public final class CommandManager implements ICommandManager {
 	private void readRegistry() {
 		Collection categoryDefinitions = new ArrayList();
 		categoryDefinitions.addAll(commandRegistry.getCategoryDefinitions());				
+		categoryDefinitions.addAll(mutableCommandRegistry.getCategoryDefinitions());				
 		Map categoryDefinitionsById = new HashMap(CategoryDefinition.categoryDefinitionsById(categoryDefinitions, false));
 
 		for (Iterator iterator = categoryDefinitionsById.values().iterator(); iterator.hasNext();) {
@@ -304,6 +571,7 @@ public final class CommandManager implements ICommandManager {
 		
 		Collection commandDefinitions = new ArrayList();
 		commandDefinitions.addAll(commandRegistry.getCommandDefinitions());				
+		commandDefinitions.addAll(mutableCommandRegistry.getCommandDefinitions());				
 		Map commandDefinitionsById = new HashMap(CommandDefinition.commandDefinitionsById(commandDefinitions, false));
 
 		for (Iterator iterator = commandDefinitionsById.values().iterator(); iterator.hasNext();) {
@@ -316,6 +584,7 @@ public final class CommandManager implements ICommandManager {
 
 		Collection keyConfigurationDefinitions = new ArrayList();
 		keyConfigurationDefinitions.addAll(commandRegistry.getKeyConfigurationDefinitions());				
+		keyConfigurationDefinitions.addAll(mutableCommandRegistry.getKeyConfigurationDefinitions());				
 		Map keyConfigurationDefinitionsById = new HashMap(KeyConfigurationDefinition.keyConfigurationDefinitionsById(keyConfigurationDefinitions, false));
 
 		for (Iterator iterator = keyConfigurationDefinitionsById.values().iterator(); iterator.hasNext();) {
@@ -337,54 +606,29 @@ public final class CommandManager implements ICommandManager {
 		for (Iterator iterator = keyConfigurationDefinitionsById.keySet().iterator(); iterator.hasNext();)
 			if (!isKeyConfigurationDefinitionChildOf(null, (String) iterator.next(), keyConfigurationDefinitionsById))
 				iterator.remove();
-			
-		// TODO begin - check this.
-			
-		Map activityBindingDefinitionsByCommandId = ActivityBindingDefinition.activityBindingDefinitionsByCommandId(commandRegistry.getActivityBindingDefinitions());
-		Map activityBindingsByCommandId = new HashMap();		
-		
-		Map imageBindingDefinitionsByCommandId = ImageBindingDefinition.imageBindingDefinitionsByCommandId(commandRegistry.getImageBindingDefinitions());
-		Map imageBindingsByCommandId = new HashMap();					
-			
-		Map keySequenceBindingDefinitionsByCommandId = KeySequenceBindingDefinition.keySequenceBindingDefinitionsByCommandId(commandRegistry.getKeySequenceBindingDefinitions());
-		Map keySequenceBindingsByCommandId = new HashMap();		
 
-		for (Iterator iterator = keySequenceBindingDefinitionsByCommandId.entrySet().iterator(); iterator.hasNext();) {
-			Map.Entry entry = (Map.Entry) iterator.next();
-			String commandId = (String) entry.getKey();
+		List activeKeyConfigurationDefinitions = new ArrayList();
+		activeKeyConfigurationDefinitions.addAll(commandRegistry.getActiveKeyConfigurationDefinitions());
+		activeKeyConfigurationDefinitions.addAll(mutableCommandRegistry.getActiveKeyConfigurationDefinitions());
+		String activeKeyConfigurationId = null;
+		
+		if (!activeKeyConfigurationDefinitions.isEmpty()) {
+			IActiveKeyConfigurationDefinition activeKeyConfigurationDefinition = (IActiveKeyConfigurationDefinition) activeKeyConfigurationDefinitions.get(activeKeyConfigurationDefinitions.size() - 1);
+			activeKeyConfigurationId = activeKeyConfigurationDefinition.getKeyConfigurationId();
 			
-			if (commandDefinitionsById.containsKey(commandId)) {			
-				Collection keySequenceBindingDefinitions = (Collection) entry.getValue();
-				
-				if (keySequenceBindingDefinitions != null)
-					for (Iterator iterator2 = keySequenceBindingDefinitions.iterator(); iterator2.hasNext();) {
-						IKeySequenceBindingDefinition keySequenceBindingDefinition = (IKeySequenceBindingDefinition) iterator2.next();
-						KeySequence keySequence = keySequenceBindingDefinition.getKeySequence();
-					
-						if (keySequence != null && keySequence.isComplete()) {
-							// TODO match value
-							IKeySequenceBinding keySequenceBinding = new KeySequenceBinding(keySequence, 0);	
-							List keySequenceBindings = (List) keySequenceBindingsByCommandId.get(commandId);
-							
-							if (keySequenceBindings == null) {
-								keySequenceBindings = new ArrayList();
-								keySequenceBindingsByCommandId.put(commandId, keySequenceBindings);
-							}
-							
-							keySequenceBindings.add(keySequenceBinding);
-						}
-					}
-			}
-		}	
-		
-		// TODO end - check this.
-		
+			if (activeKeyConfigurationId != null && !keyConfigurationDefinitionsById.containsKey(activeKeyConfigurationId))
+				activeKeyConfigurationId = null;
+		}			
+
 		this.categoryDefinitionsById = categoryDefinitionsById;
 		this.commandDefinitionsById = commandDefinitionsById;
 		this.keyConfigurationDefinitionsById = keyConfigurationDefinitionsById;		
-		this.activityBindingsByCommandId = activityBindingsByCommandId;
-		this.imageBindingsByCommandId = imageBindingsByCommandId;
-		this.keySequenceBindingsByCommandId = keySequenceBindingsByCommandId;
+		boolean activeKeyConfigurationIdChanged = false;	
+		
+		if (!Util.equals(this.activeKeyConfigurationId, activeKeyConfigurationId)) {
+			this.activeKeyConfigurationId = activeKeyConfigurationId;
+			activeKeyConfigurationIdChanged = true;
+		}		
 		
 		boolean definedCategoryIdsChanged = false;			
 		Set definedCategoryIds = new HashSet(categoryDefinitionsById.keySet());		
@@ -409,13 +653,34 @@ public final class CommandManager implements ICommandManager {
 			this.definedKeyConfigurationIds = definedKeyConfigurationIds;
 			definedKeyConfigurationIdsChanged = true;	
 		}
-		
+
+		List commandRegistryActivityBindingDefinitions = new ArrayList(commandRegistry.getActivityBindingDefinitions());
+		validateActivityBindingDefinitions(commandRegistryActivityBindingDefinitions);		
+		this.commandRegistryActivityBindingDefinitions = commandRegistryActivityBindingDefinitions;
+		List mutableCommandRegistryActivityBindingDefinitions = new ArrayList(mutableCommandRegistry.getActivityBindingDefinitions());
+		validateActivityBindingDefinitions(mutableCommandRegistryActivityBindingDefinitions);
+		this.mutableCommandRegistryActivityBindingDefinitions = mutableCommandRegistryActivityBindingDefinitions;
+		List commandRegistryImageBindingDefinitions = new ArrayList(commandRegistry.getImageBindingDefinitions());
+		validateImageBindingDefinitions(commandRegistryImageBindingDefinitions);		
+		this.commandRegistryImageBindingDefinitions = commandRegistryImageBindingDefinitions;		
+		List mutableCommandRegistryImageBindingDefinitions = new ArrayList(mutableCommandRegistry.getImageBindingDefinitions());
+		validateImageBindingDefinitions(mutableCommandRegistryImageBindingDefinitions);
+		this.mutableCommandRegistryImageBindingDefinitions = mutableCommandRegistryImageBindingDefinitions;
+		List commandRegistryKeySequenceBindingDefinitions = new ArrayList(commandRegistry.getKeySequenceBindingDefinitions());
+		validateKeySequenceBindingDefinitions(commandRegistryKeySequenceBindingDefinitions);		
+		this.commandRegistryKeySequenceBindingDefinitions = commandRegistryKeySequenceBindingDefinitions;		
+		List mutableCommandRegistryKeySequenceBindingDefinitions = new ArrayList(mutableCommandRegistry.getKeySequenceBindingDefinitions());
+		validateKeySequenceBindingDefinitions(mutableCommandRegistryKeySequenceBindingDefinitions);
+		this.mutableCommandRegistryKeySequenceBindingDefinitions = mutableCommandRegistryKeySequenceBindingDefinitions;
+		calculateActivityBindings();
+		calculateImageBindings();
+		calculateKeySequenceBindings();
 		Map categoryEventsByCategoryId = updateCategories(categoriesById.keySet());	
 		Map commandEventsByCommandId = updateCommands(commandsById.keySet());	
 		Map keyConfigurationEventsByKeyConfigurationId = updateKeyConfigurations(keyConfigurationsById.keySet());	
 		
-		if (definedCategoryIdsChanged || definedCommandIdsChanged || definedKeyConfigurationIdsChanged)
-			fireCommandManagerChanged(new CommandManagerEvent(this, false, false, definedCategoryIdsChanged, definedCommandIdsChanged, definedKeyConfigurationIdsChanged, false));
+		if (activeKeyConfigurationIdChanged || definedCategoryIdsChanged || definedCommandIdsChanged || definedKeyConfigurationIdsChanged)
+			fireCommandManagerChanged(new CommandManagerEvent(this, false, false, activeKeyConfigurationIdChanged, false, false, definedCategoryIdsChanged, definedCommandIdsChanged, definedKeyConfigurationIdsChanged, false));
 
 		if (categoryEventsByCategoryId != null)
 			notifyCategories(categoryEventsByCategoryId);		
@@ -497,7 +762,7 @@ public final class CommandManager implements ICommandManager {
 	}	
 	
 	private IKeyConfigurationEvent updateKeyConfiguration(KeyConfiguration keyConfiguration) {
-		boolean activeChanged = keyConfiguration.setActive(activeKeyConfigurationIds.contains(keyConfiguration.getId()));		
+		boolean activeChanged = keyConfiguration.setActive(Util.equals(activeKeyConfigurationId, keyConfiguration.getId()));		
 		IKeyConfigurationDefinition keyConfigurationDefinition = (IKeyConfigurationDefinition) keyConfigurationDefinitionsById.get(keyConfiguration.getId());
 		boolean definedChanged = keyConfiguration.setDefined(keyConfigurationDefinition != null);
 		boolean descriptionChanged = keyConfiguration.setDescription(keyConfigurationDefinition != null ? keyConfigurationDefinition.getDescription() : null);		
@@ -527,4 +792,159 @@ public final class CommandManager implements ICommandManager {
 		
 		return keyConfigurationEventsByKeyConfigurationId;			
 	}
+
+
+
+
+	// TODO move to workbench?
+	public Integer getAccelerator(String commandId) {
+		Integer accelerator = null;
+		ICommand command = getCommand(commandId);
+		
+		if (command.isDefined()) {
+			List keySequenceBindings = command.getKeySequenceBindings();	
+
+			if (!keySequenceBindings.isEmpty()) {
+				IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) keySequenceBindings.get(0);
+		
+				if (keySequenceBinding != null) {
+					KeySequence keySequence = keySequenceBinding.getKeySequence();
+					List keyStrokes = keySequence.getKeyStrokes();
+	
+					if (keyStrokes.size() == 1) {
+						KeyStroke keyStroke = (KeyStroke) keyStrokes.get(0);
+						accelerator = new Integer(KeySupport.convertKeyStrokeToAccelerator(keyStroke));
+					}				
+				}
+			}
+		}
+
+		return accelerator;
+	}	
+	
+	// TODO move to workbench?
+	public String getAcceleratorText(String commandId) {
+		String acceleratorText = null;
+		ICommand command = getCommand(commandId);
+		
+		if (command.isDefined()) {
+			List keySequenceBindings = command.getKeySequenceBindings();	
+
+			if (!keySequenceBindings.isEmpty()) {
+				IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) keySequenceBindings.get(0);
+		
+				if (keySequenceBinding != null)
+					acceleratorText = keySequenceBinding.getKeySequence().format();
+			}
+		}
+
+		return acceleratorText;
+	}
+	 
+	public Map getKeySequenceBindingsByCommandId() {
+		return keySequenceBindingMachine.getKeySequenceBindingsByCommandId();
+	}
+	
+	public Map getKeySequenceBindingsByCommandIdForMode() {
+		return keySequenceBindingMachine.getKeySequenceBindingsByCommandIdForMode();
+	}
+
+	public Map getMatchesByKeySequence() {
+		return keySequenceBindingMachine.getMatchesByKeySequence();
+	}
+
+	public Map getMatchesByKeySequenceForMode() {
+		return keySequenceBindingMachine.getMatchesByKeySequenceForMode();
+	}
+
+	public KeySequence getMode() {
+		return keySequenceBindingMachine.getMode();	
+	}
+	
+	public boolean setMode(KeySequence mode) {
+		return keySequenceBindingMachine.setMode(mode);
+	}	 
+
+	// TODO necessary?
+	ICommandRegistry getCommandRegistry() {
+		return commandRegistry;
+	}
+
+	// TODO necessary?
+	IMutableCommandRegistry getMutableCommandRegistry() {
+		return mutableCommandRegistry;
+	}
+	 
+	/*			
+	public void setActionsById(Map actionsById) {
+		actionsById = Util.safeCopy(actionsById, String.class, IAction.class);	
+	
+		if (!Util.equals(actionsById, this.actionsById)) {	
+			this.actionsById = actionsById;
+			
+			// TODO begin temporary (?)
+			for (Iterator iterator = this.actionsById.entrySet().iterator(); iterator.hasNext();) {
+				Map.Entry entry = (Map.Entry) iterator.next();
+				String commandId = (String) entry.getKey();
+				IAction action = (IAction) entry.getValue();
+				
+				if (commandId != null && action instanceof ActionHandler) {						
+					ActionHandler actionHandler = (ActionHandler) action;
+					org.eclipse.jface.action.IAction jfaceAction = (org.eclipse.jface.action.IAction) actionHandler.getAction();	
+					
+					if (jfaceAction != null) {
+						String actionId = jfaceAction.getId();
+						
+						if (actionId != null)
+							commandIdsByActionIds.put(actionId, commandId);
+					}
+				}				
+			}
+			// TODO end temporary
+			
+			fireCommandManagerChanged();
+		}
+	}
+
+	private boolean inContext(Collection contextBindings) {
+		if (contextBindings.isEmpty())
+			return true;
+		
+		Iterator iterator = activeContextIds.iterator();
+		
+		while (iterator.hasNext()) {
+			String activeContextId = (String) iterator.next();
+			
+			if (contextBindings.contains(new ContextBinding(activeContextId)));
+				return true;			
+		}
+		
+		return false;
+	}
+	
+		HashSet categoryIdsReferencedByCommandDefinitions = new HashSet();
+
+		for (Iterator iterator = commandDefinitionsById.values().iterator(); iterator.hasNext();) {
+			ICommandDefinition commandDefinition = (ICommandDefinition) iterator.next();
+			String categoryId = commandDefinition.getCategoryId();
+			String name = commandDefinition.getName();
+
+			if (name == null || name.length() == 0 || categoryId != null && !categoryDefinitionsById.containsKey(categoryId))
+				iterator.remove();
+			else {
+				String commandId = commandDefinition.getId();
+				Set commandIds = (Set) commandIdsByCategoryId.get(categoryId);
+			
+				if (commandIds == null) {
+					commandIds = new HashSet();
+					commandIdsByCategoryId.put(categoryId, commandIds);
+				}
+			
+				commandIds.add(commandId);
+				categoryIdsReferencedByCommandDefinitions.add(categoryId);				
+			}
+		}
+		
+		categoryDefinitionsById.keySet().retainAll(categoryIdsReferencedByCommandDefinitions);			 
+	*/
 }

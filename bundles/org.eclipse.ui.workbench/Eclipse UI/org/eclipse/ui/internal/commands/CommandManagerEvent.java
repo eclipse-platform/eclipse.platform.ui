@@ -16,21 +16,27 @@ import org.eclipse.ui.internal.commands.api.ICommandManagerEvent;
 
 final class CommandManagerEvent implements ICommandManagerEvent {
 
+	private boolean activeActivityIdsChanged;
 	private boolean activeCommandIdsChanged;
-	private boolean activeKeyConfigurationIdsChanged;
+	private boolean activeKeyConfigurationIdChanged;
+	private boolean activeLocaleChanged;
+	private boolean activePlatformChanged;
 	private ICommandManager commandManager;
 	private boolean definedCategoryIdsChanged;
 	private boolean definedCommandIdsChanged;
 	private boolean definedKeyConfigurationIdsChanged;
 	private boolean enabledCommandIdsChanged;
 
-	CommandManagerEvent(ICommandManager commandManager, boolean activeCommandIdsChanged, boolean activeKeyConfigurationIdsChanged, boolean definedCategoryIdsChanged, boolean definedCommandIdsChanged, boolean definedKeyConfigurationIdsChanged, boolean enabledCommandIdsChanged) {
+	CommandManagerEvent(ICommandManager commandManager, boolean activeActivityIdsChanged, boolean activeCommandIdsChanged, boolean activeKeyConfigurationIdChanged, boolean activeLocaleChanged, boolean activePlatformChanged, boolean definedCategoryIdsChanged, boolean definedCommandIdsChanged, boolean definedKeyConfigurationIdsChanged, boolean enabledCommandIdsChanged) {
 		if (commandManager == null)
 			throw new NullPointerException();
 		
 		this.commandManager = commandManager;
+		this.activeActivityIdsChanged = activeActivityIdsChanged;
 		this.activeCommandIdsChanged = activeCommandIdsChanged;
-		this.activeKeyConfigurationIdsChanged = activeKeyConfigurationIdsChanged;
+		this.activeKeyConfigurationIdChanged = activeKeyConfigurationIdChanged;
+		this.activeLocaleChanged = activeLocaleChanged;
+		this.activePlatformChanged = activePlatformChanged;
 		this.definedCategoryIdsChanged = definedCategoryIdsChanged;		
 		this.definedCommandIdsChanged = definedCommandIdsChanged;
 		this.definedKeyConfigurationIdsChanged = definedKeyConfigurationIdsChanged;
@@ -41,12 +47,24 @@ final class CommandManagerEvent implements ICommandManagerEvent {
 		return commandManager;
 	}
 
-	public boolean haveActiveCommandIdsChanged() {
-		return activeCommandIdsChanged;
+	public boolean hasActiveKeyConfigurationIdChanged() {
+		return activeKeyConfigurationIdChanged;
 	}
 
-	public boolean haveActiveKeyConfigurationIdsChanged() {
-		return activeKeyConfigurationIdsChanged;
+	public boolean hasActiveLocaleChanged() {
+		return activeLocaleChanged;
+	}
+	
+	public boolean hasActivePlatformChanged() {
+		return activePlatformChanged;
+	}
+
+	public boolean haveActiveActivityIdsChanged() {
+		return activeActivityIdsChanged;
+	}	
+	
+	public boolean haveActiveCommandIdsChanged() {
+		return activeCommandIdsChanged;
 	}
 
 	public boolean haveDefinedCategoryIdsChanged() {

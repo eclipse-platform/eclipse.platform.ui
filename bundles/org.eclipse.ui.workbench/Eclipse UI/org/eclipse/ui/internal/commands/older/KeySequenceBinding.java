@@ -11,13 +11,13 @@
 
 package org.eclipse.ui.internal.commands.older;
 
-import org.eclipse.ui.internal.commands.api.older.IKeyBinding;
+import org.eclipse.ui.internal.commands.api.older.IKeySequenceBinding;
 import org.eclipse.ui.keys.KeySequence;
 
-final class KeyBinding implements IKeyBinding {
+final class KeySequenceBinding implements IKeySequenceBinding {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = KeyBinding.class.getName().hashCode();
+	private final static int HASH_INITIAL = KeySequenceBinding.class.getName().hashCode();
 
 	private KeySequence keySequence;
 	private int match;
@@ -26,7 +26,7 @@ final class KeyBinding implements IKeyBinding {
 	private transient boolean hashCodeComputed;
 	private transient String string;
 	
-	KeyBinding(KeySequence keySequence, int match) {	
+	KeySequenceBinding(KeySequence keySequence, int match) {	
 		if (keySequence == null)
 			throw new NullPointerException();
 			
@@ -38,7 +38,7 @@ final class KeyBinding implements IKeyBinding {
 	}
 
 	public int compareTo(Object object) {
-		KeyBinding castedObject = (KeyBinding) object;
+		KeySequenceBinding castedObject = (KeySequenceBinding) object;
 		int compareTo = match - castedObject.match;
 		
 		if (compareTo == 0)
@@ -48,10 +48,10 @@ final class KeyBinding implements IKeyBinding {
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof KeyBinding))
+		if (!(object instanceof KeySequenceBinding))
 			return false;
 
-		KeyBinding castedObject = (KeyBinding) object;	
+		KeySequenceBinding castedObject = (KeySequenceBinding) object;	
 		boolean equals = true;
 		equals &= keySequence.equals(castedObject.keySequence);
 		equals &= match == castedObject.match;
