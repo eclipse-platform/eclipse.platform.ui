@@ -214,6 +214,7 @@ class NewWizardNewPage
 	public void activate() {
 		page.setDescription(WorkbenchMessages.getString("NewWizardNewPage.description")); //$NON-NLS-1$
 	}
+	
 	/**
 	 * Create this tab's visual components
 	 * 
@@ -738,7 +739,8 @@ class NewWizardNewPage
 	        data.heightHint = DESCRIPTION_IMAGE_HEIGHT;
 		    data = (GridData) imageSeperator.getLayoutData();
 		    data.widthHint = SWT.DEFAULT;
-		    data.heightHint = SWT.DEFAULT;		    		    
+		    data.heightHint = SWT.DEFAULT;
+		    imageSeperator.setVisible(true);
 		}
 		else {
 		    GridData data = (GridData) descImageCanvas.getLayoutData(); 
@@ -746,7 +748,8 @@ class NewWizardNewPage
 		    data.heightHint = 0;
 		    data = (GridData) imageSeperator.getLayoutData();
 		    data.widthHint = 0;
-		    data.heightHint = 0;		    
+		    data.heightHint = 0;	
+		    imageSeperator.setVisible(false);
 		}
 		
 		descImageCanvas.getParent().layout();

@@ -185,7 +185,7 @@ public class ActivityEnabler {
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		label.setFont(parent.getFont());
 		
-		descriptionText = new Text(c, SWT.READ_ONLY | SWT.WRAP);
+		descriptionText = new Text(c, SWT.READ_ONLY | SWT.WRAP | SWT.BORDER);
 		descriptionText.setFont(parent.getFont());
 		descriptionText.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING));
 		setInitialStates();
