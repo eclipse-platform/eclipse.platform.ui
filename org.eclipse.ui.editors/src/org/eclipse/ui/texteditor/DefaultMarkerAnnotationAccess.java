@@ -26,6 +26,7 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.IAnnotationAccessExtension;
 import org.eclipse.jface.text.source.IAnnotationPresentation;
+import org.eclipse.jface.text.source.ImageUtilities;
 
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;

@@ -21,6 +21,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationPresentation;
+import org.eclipse.jface.text.source.ImageUtilities;
 
 /**
  * Annotation used to represent the projection of a master document onto a
@@ -84,7 +85,7 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 	public void paint(GC gc, Canvas canvas, Rectangle rectangle) {
 		Image image= getImage(canvas.getDisplay());
 		if (image != null) {
-			drawImage(image, gc, canvas, rectangle, SWT.CENTER, SWT.TOP);
+			ImageUtilities.drawImage(image, gc, canvas, rectangle, SWT.CENTER, SWT.TOP);
 			if (fIsRangeIndication)
 				drawRangeIndication(gc, canvas, rectangle);
 		}

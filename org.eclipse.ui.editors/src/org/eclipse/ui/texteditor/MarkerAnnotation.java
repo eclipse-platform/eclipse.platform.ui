@@ -30,6 +30,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationAccessExtension;
+import org.eclipse.jface.text.source.ImageUtilities;
 
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -236,7 +237,7 @@ public class MarkerAnnotation extends Annotation {
 	public void paint(GC gc, Canvas canvas, Rectangle r) {
 		Image image= getImage(canvas.getDisplay());
 		if (image != null)
-			drawImage(image, gc, canvas, r, SWT.CENTER, SWT.TOP);
+			ImageUtilities.drawImage(image, gc, canvas, r, SWT.CENTER, SWT.TOP);
 	}
 	
 	/**

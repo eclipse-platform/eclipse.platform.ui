@@ -10,78 +10,28 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 
 /**
- * Provides methods for drawing images onto a canvas.
- *
  * @since 3.0
+ * @deprecated use <code>org.eclipse.jface.text.source.ImageUtilities</code> instead
  */
 public class ImageUtilities {
 	
 	/**
-	 * Draws an image aligned inside the given rectangle on the given canvas.
-	 *
-	 * @param image the image to be drawn
-	 * @param gc the drawing GC
-	 * @param canvas the canvas on which to draw
-	 * @param r the clipping rectangle
-	 * @param halign the horizontal alignment of the image to be drawn
-	 * @param valign the vertical alignment of the image to be drawn
+	 * @deprecated use <code>org.eclipse.jface.text.source.ImageUtilities</code> instead
 	 */
 	public static void drawImage(Image image, GC gc, Canvas canvas, Rectangle r, int halign, int valign) {
-		if (image != null) {
-			
-			Rectangle bounds= image.getBounds();
-			
-			int x= 0;
-			switch(halign) {
-			case SWT.LEFT:
-				break;
-			case SWT.CENTER:
-				x= (r.width - bounds.width) / 2;
-				break;
-			case SWT.RIGHT:
-				x= r.width - bounds.width;
-				break;
-			}
-			
-			int y= 0;
-			switch (valign) {
-			case SWT.TOP: {
-				FontMetrics fontMetrics= gc.getFontMetrics();
-				y= (fontMetrics.getHeight() - bounds.height)/2;
-				break;
-			}
-			case SWT.CENTER:
-				y= (r.height - bounds.height) / 2;
-				break;
-			case SWT.BOTTOM: {
-				FontMetrics fontMetrics= gc.getFontMetrics();
-				y= r.height - (fontMetrics.getHeight() + bounds.height)/2;
-				break;
-			}
-			}
-			
-			gc.drawImage(image, r.x+x, r.y+y);
-		}
+		org.eclipse.jface.text.source.ImageUtilities.drawImage(image, gc, canvas, r, halign, valign);
 	}
 	
 	/**
-	 * Draws an image aligned inside the given rectangle on the given canvas.
-	 *
-	 * @param image the image to be drawn
-	 * @param gc the drawing GC
-	 * @param canvas the canvas on which to draw
-	 * @param r the clipping rectangle
-	 * @param align the alignment of the image to be drawn
+	 * @deprecated use <code>org.eclipse.jface.text.source.ImageUtilities</code> instead
 	 */
 	public static void drawImage(Image image, GC gc, Canvas canvas, Rectangle r, int align) {
-		drawImage(image, gc, canvas, r, align, SWT.CENTER);
+		org.eclipse.jface.text.source.ImageUtilities.drawImage(image, gc, canvas, r, align);
 	}
 }
