@@ -276,7 +276,7 @@ protected final void createResourcesGroup(Composite parent) {
  * @param message the error message
  */
 protected void displayErrorDialog(String message) {
-	MessageDialog.openError(getContainer().getShell(),"Export Problems",message); //$NON-NLS-1$
+	MessageDialog.openError(getContainer().getShell(), WorkbenchMessages.getString("WizardExportPage.errorDialogTitle"),message); //$NON-NLS-1$	
 }
 /**
  * Ensures that all resources have local contents.  Retrieves server contents 

@@ -31,7 +31,7 @@ public class NewWizardsRegistryReader extends WizardsRegistryReader {
 	private final static String		FULL_EXAMPLES_WIZARD_CATEGORY = "org.eclipse.ui.Examples";//$NON-NLS-1$
 	private final static String		TAG_CATEGORY = "category";	//$NON-NLS-1$
 	private final static String		UNCATEGORIZED_WIZARD_CATEGORY = "org.eclipse.ui.Other";//$NON-NLS-1$
-	private final static String		UNCATEGORIZED_WIZARD_CATEGORY_LABEL = "Other";//$NON-NLS-1$
+	private final static String		UNCATEGORIZED_WIZARD_CATEGORY_LABEL = WorkbenchMessages.getString("NewWizardsRegistryReader.otherCategory");
 	private final static String		CATEGORY_SEPARATOR = "/";//$NON-NLS-1$
 	private final static String		ATT_CATEGORY = "category";//$NON-NLS-1$
 	private final static String ATT_PROJECT = "project";//$NON-NLS-1$

@@ -158,7 +158,7 @@ public static EditorDescriptor getSystemEditorDescriptor() {
 	if (systemEditorDescriptor == null) {
 		systemEditorDescriptor = new EditorDescriptor();
 		systemEditorDescriptor.setID(IWorkbenchConstants.SYSTEM_EDITOR_ID);
-		systemEditorDescriptor.setName("&System Editor");//$NON-NLS-1$
+		systemEditorDescriptor.setName(WorkbenchMessages.getString("SystemEditorDescription.name"));//$NON-NLS-1$				
 	}
 	return systemEditorDescriptor;
 }
