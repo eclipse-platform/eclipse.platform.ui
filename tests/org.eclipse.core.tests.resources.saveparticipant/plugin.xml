@@ -2,7 +2,7 @@
 <plugin
   name="Eclipse Core Tests Save Participant"
   id="org.eclipse.core.tests.resources.saveparticipant"
-  version="2.0.0"
+  version="2.1.0"
   provider-name="Eclipse.org">
 
   <requires>
