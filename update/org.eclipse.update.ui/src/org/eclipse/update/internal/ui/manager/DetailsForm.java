@@ -661,6 +661,10 @@ public class DetailsForm extends PropertyWebForm {
 
 	private void executeJob(int mode) {
 		if (currentFeature != null) {
+			if (mode == PendingChange.INSTALL) {
+				if (testDependencies(currentFeature) == false)
+					return;
+			}
 			final PendingChange job = createPendingChange(mode);
 			BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
 				public void run() {
@@ -668,7 +672,7 @@ public class DetailsForm extends PropertyWebForm {
 					WizardDialog dialog =
 						new InstallWizardDialog(UpdateUIPlugin.getActiveWorkbenchShell(), wizard);
 					dialog.create();
-					dialog.getShell().setSize(500, 500);
+					dialog.getShell().setSize(600, 500);
 					dialog.open();
 					if (wizard.isSuccessfulInstall())
 						showRestartMessage(job);
@@ -691,6 +695,52 @@ public class DetailsForm extends PropertyWebForm {
 			}
 			executeJob(mode);
 		}
+	}
+
+	private boolean testDependencies(IFeature feature) {
+		IImport[] imports = feature.getImports();
+		if (imports.length == 0)
+			return true;
+		ArrayList missing = new ArrayList();
+		try {
+			ILocalSite localSite = SiteManager.getLocalSite();
+			IInstallConfiguration config = localSite.getCurrentConfiguration();
+			IConfiguredSite[] configSites = config.getConfiguredSites();
+
+			for (int i = 0; i < imports.length; i++) {
+				if (!isOnTheList(imports[i], configSites)) {
+					missing.add(imports[i]);
+				}
+			}
+		} catch (CoreException e) {
+			UpdateUIPlugin.logException(e);
+			return false;
+		}
+		if (missing.size() > 0) {
+			// show missing plug-in dialog and ask to search
+			return false;
+		} else
+			return true;
+	}
+	private boolean isOnTheList(IImport iimport, IConfiguredSite[] configSites) {
+		for (int i = 0; i < configSites.length; i++) {
+			IConfiguredSite csite = configSites[i];
+			ISite site = csite.getSite();
+			IPluginEntry[] entries = site.getPluginEntries();
+			if (isOnTheList(iimport, entries))
+				return true;
+		}
+		return false;
+	}
+	private boolean isOnTheList(IImport iimport, IPluginEntry[] entries) {
+		VersionedIdentifier importId = iimport.getVersionedIdentifier();
+		for (int i = 0; i < entries.length; i++) {
+			IPluginEntry entry = entries[i];
+			VersionedIdentifier entryId = entry.getVersionedIdentifier();
+			if (entryId.equals(importId))
+				return true;
+		}
+		return false;
 	}
 
 	private PendingChange createPendingChange(int type) {
@@ -727,9 +777,12 @@ public class DetailsForm extends PropertyWebForm {
 		}
 		String title = UpdateUIPlugin.getResourceString(titleKey);
 		String message = UpdateUIPlugin.getResourceString(messageKey);
-		MessageDialog.openInformation(
-			UpdateUIPlugin.getActiveWorkbenchShell(),
-			title,
-			message);
+		boolean restart =
+			MessageDialog.openConfirm(
+				UpdateUIPlugin.getActiveWorkbenchShell(),
+				title,
+				message);
+		if (restart)
+			PlatformUI.getWorkbench().restart();
 	}
 }

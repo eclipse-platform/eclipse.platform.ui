@@ -57,7 +57,7 @@ public abstract class BaseNewWizardPage extends WizardPage {
 			return getChildren(obj);
 		}
 	}
-	
+
 	class ContainerLabelProvider extends LabelProvider {
 		public Image getImage(Object obj) {
 			if (obj instanceof BookmarkFolder)
@@ -96,7 +96,8 @@ public abstract class BaseNewWizardPage extends WizardPage {
 		containerText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		containerText.setLayoutData(gd);
-		if (folder!=null) containerText.setText(folder.getPath().toString());
+		if (folder != null)
+			containerText.setText(folder.getPath().toString());
 		containerText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				validatePage();
@@ -110,6 +111,8 @@ public abstract class BaseNewWizardPage extends WizardPage {
 		tree = new TreeViewer(container);
 		gd = new GridData(GridData.FILL_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
+		gd.widthHint = 250;
+		gd.heightHint = 200;
 		tree.getControl().setLayoutData(gd);
 		tree.setContentProvider(new ContainerContentProvider());
 		tree.setLabelProvider(new ContainerLabelProvider());
@@ -120,38 +123,40 @@ public abstract class BaseNewWizardPage extends WizardPage {
 		});
 		tree.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
-				handleSelectionChanged((IStructuredSelection)e.getSelection());
+				handleSelectionChanged((IStructuredSelection) e.getSelection());
 			}
 		});
 		tree.setInput(UpdateUIPlugin.getDefault().getUpdateModel());
-		if (folder!=null)
+		if (folder != null)
 			tree.setSelection(new StructuredSelection(folder), true);
 		setControl(container);
 	}
-	
+
 	protected abstract void createClientControl(Composite parent, int span);
-	
+
 	protected void validatePage() {
 		String message = null;
-		boolean complete=true;
-		if (containerText.getText().length()>0) {
-			if (!isValidPath(containerText.getText())) {
+		boolean complete = true;
+		if (containerText.getText().length() > 0) {
+			folder = getFolderFromPath(containerText.getText());
+			if (folder == null) {
 				message = "Container path is invalid";
 			}
-		}
-		if (nameText.getText().length()==0) {
-			complete=false;
+		} else
+			folder = null;
+		if (nameText.getText().length() == 0) {
+			complete = false;
 		}
 		setErrorMessage(message);
-		setPageComplete(message==null && complete);
+		setPageComplete(message == null && complete);
 	}
-	private boolean isValidPath(String path) {
+	private BookmarkFolder getFolderFromPath(String path) {
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
-		return (model.getFolder(new Path(path))!=null);
+		return model.getFolder(new Path(path));
 	}
 	private void handleSelectionChanged(IStructuredSelection selection) {
-		folder = (BookmarkFolder)selection.getFirstElement();
-		if (folder!=null)
+		folder = (BookmarkFolder) selection.getFirstElement();
+		if (folder != null)
 			containerText.setText(folder.getPath().toString());
 		else
 			containerText.setText("");
@@ -167,9 +172,9 @@ public abstract class BaseNewWizardPage extends WizardPage {
 	protected void addToModel(NamedModelObject object) {
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		BookmarkFolder parentFolder = getFolder();
-		if (parentFolder!=null)
+		if (parentFolder != null)
 			parentFolder.addChild(object);
-		 else {
+		else {
 			model.addBookmark(object);
 		}
 		model.saveBookmarks();

@@ -35,8 +35,9 @@ public class NewSearchWizardPage extends BaseNewWizardPage {
 		Label label = new Label(parent, SWT.NULL);
 		label.setText("&Category:");
 		categoryCombo = new Combo(parent, SWT.READ_ONLY);
-		descriptors = SearchCategoryRegistryReader.getDefault().getCategoryDescriptors();
-		for (int i=0; i<descriptors.length; i++) {
+		descriptors =
+			SearchCategoryRegistryReader.getDefault().getCategoryDescriptors();
+		for (int i = 0; i < descriptors.length; i++) {
 			categoryCombo.add(descriptors[i].getName());
 		}
 		categoryCombo.addSelectionListener(new SelectionAdapter() {
@@ -48,10 +49,11 @@ public class NewSearchWizardPage extends BaseNewWizardPage {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		categoryCombo.setLayoutData(gd);
 	}
-	
+
 	protected void validatePage() {
-		if (descriptor==null) setPageComplete(false);
-		else super.validatePage();
+		super.validatePage();
+		if (isPageComplete())
+			setPageComplete(descriptor != null);
 	}
 
 	public boolean finish() {

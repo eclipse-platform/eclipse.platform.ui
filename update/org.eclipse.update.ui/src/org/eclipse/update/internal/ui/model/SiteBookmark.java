@@ -49,6 +49,7 @@ public class SiteBookmark extends NamedModelObject
 
 	public void setURL(URL url) {
 		this.url = url;
+		site = null;
 		notifyObjectChanged(P_URL);
 	}
 	

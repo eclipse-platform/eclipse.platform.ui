@@ -37,7 +37,8 @@ public class UpdatesView
 	private static final String KEY_NEW_SITE = "UpdatesView.Popup.newSite";
 	private static final String KEY_NEW_FOLDER = "UpdatesView.Popup.newFolder";
 	private static final String KEY_NEW_SEARCH = "UpdatesView.Popup.newSearch";
-	private static final String KEY_NEW_LOCAL_SITE = "UpdatesView.Popup.newLocalSite";
+	private static final String KEY_NEW_LOCAL_SITE =
+		"UpdatesView.Popup.newLocalSite";
 	private static final String KEY_DELETE = "UpdatesView.Popup.delete";
 	private static final String KEY_REFRESH = "UpdatesView.Popup.refresh";
 	private static final String KEY_FILTER_FILES = "UpdatesView.menu.showFiles";
@@ -113,10 +114,10 @@ public class UpdatesView
 				return getSiteCatalog((SiteBookmark) parent);
 			}
 			if (parent instanceof SearchObject) {
-				return ((SearchObject)parent).getChildren(null);
+				return ((SearchObject) parent).getChildren(null);
 			}
 			if (parent instanceof UpdateSearchSite) {
-				return ((UpdateSearchSite)parent).getChildren(null);
+				return ((UpdateSearchSite) parent).getChildren(null);
 			}
 			if (parent instanceof MyComputer) {
 				return ((MyComputer) parent).getChildren(parent);
@@ -219,7 +220,7 @@ public class UpdatesView
 					ISharedImages.IMG_OBJ_FOLDER);
 			}
 			if (obj instanceof SearchObject) {
-				return getSearchObjectImage((SearchObject)obj);
+				return getSearchObjectImage((SearchObject) obj);
 			}
 			if (obj instanceof IFeature || obj instanceof FeatureReferenceAdapter) {
 				return featureImage;
@@ -228,8 +229,9 @@ public class UpdatesView
 		}
 		private Image getSearchObjectImage(SearchObject obj) {
 			String categoryId = obj.getCategoryId();
-			SearchCategoryDescriptor desc = SearchCategoryRegistryReader.getDefault().getDescriptor(categoryId);
-			if (desc!=null) {
+			SearchCategoryDescriptor desc =
+				SearchCategoryRegistryReader.getDefault().getDescriptor(categoryId);
+			if (desc != null) {
 				return desc.getImage();
 			}
 			return null;
@@ -368,16 +370,17 @@ public class UpdatesView
 		if (obj instanceof SiteBookmark)
 			manager.add(propertiesAction);
 	}
-	
+
 	private boolean canDelete(Object obj) {
 		if (obj instanceof SiteBookmark) {
-			SiteBookmark site = (SiteBookmark)obj;
+			SiteBookmark site = (SiteBookmark) obj;
 			return (site.getType() != SiteBookmark.LOCAL);
 		}
 		if (obj instanceof BookmarkFolder && !(obj instanceof DiscoveryFolder)) {
 			return true;
 		}
-		if (obj instanceof SearchObject && !(obj instanceof DefaultUpdatesSearchObject)) {
+		if (obj instanceof SearchObject
+			&& !(obj instanceof DefaultUpdatesSearchObject)) {
 			return true;
 		}
 		return false;
@@ -387,20 +390,21 @@ public class UpdatesView
 		IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
 		return sel.getFirstElement();
 	}
-	
+
 	private void performNewBookmark() {
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		Shell shell = UpdateUIPlugin.getActiveWorkbenchShell();
-		NewSiteBookmarkWizardPage page = new NewSiteBookmarkWizardPage(getSelectedFolder());
+		NewSiteBookmarkWizardPage page =
+			new NewSiteBookmarkWizardPage(getSelectedFolder());
 		NewWizard wizard = new NewWizard(page, UpdateUIPluginImages.DESC_NEW_BOOKMARK);
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.create();
 		dialog.getShell().setText(
 			UpdateUIPlugin.getResourceString(NewFolderDialog.KEY_TITLE));
-		dialog.getShell().setSize(400, 400);
+		//dialog.getShell().setSize(400, 400);
 		dialog.open();
 	}
-	
+
 	private BookmarkFolder getSelectedFolder() {
 		Object sel = getSelectedObject();
 		if (sel instanceof BookmarkFolder && !(sel instanceof DiscoveryFolder)) {
@@ -419,10 +423,10 @@ public class UpdatesView
 		dialog.create();
 		dialog.getShell().setText(
 			UpdateUIPlugin.getResourceString(NewFolderDialog.KEY_TITLE));
-		dialog.getShell().setSize(400, 350);
+		//dialog.getShell().setSize(400, 350);
 		dialog.open();
 	}
-	
+
 	private void performNewSearch() {
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		Shell shell = UpdateUIPlugin.getActiveWorkbenchShell();
@@ -432,7 +436,7 @@ public class UpdatesView
 		dialog.create();
 		dialog.getShell().setText(
 			UpdateUIPlugin.getResourceString(NewFolderDialog.KEY_TITLE));
-		dialog.getShell().setSize(400, 350);
+		//dialog.getShell().setSize(400, 350);
 		dialog.open();
 	}
 
@@ -465,7 +469,8 @@ public class UpdatesView
 		ISelection selection = viewer.getSelection();
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
-			if (!confirmDeletion(ssel)) return;
+			if (!confirmDeletion(ssel))
+				return;
 			for (Iterator iter = ssel.iterator(); iter.hasNext();) {
 				Object obj = iter.next();
 				if (obj instanceof NamedModelObject) {
@@ -502,19 +507,21 @@ public class UpdatesView
 			});
 		}
 	}
-	
+
 	private boolean confirmDeletion(IStructuredSelection ssel) {
-		String title="Confirm Delete";
+		String title = "Confirm Delete";
 		String message;
-		
-		if (ssel.size()>1) {
-			message = "Are you sure you want to delete these "+ssel.size()+" items?";
-		}
-		else {
+
+		if (ssel.size() > 1) {
+			message = "Are you sure you want to delete these " + ssel.size() + " items?";
+		} else {
 			Object obj = ssel.getFirstElement().toString();
-			message = "Are you sure you want to delete \""+obj.toString()+"\"?";
+			message = "Are you sure you want to delete \"" + obj.toString() + "\"?";
 		}
-	 	return MessageDialog.openConfirm(viewer.getControl().getShell(), title, message);
+		return MessageDialog.openConfirm(
+			viewer.getControl().getShell(),
+			title,
+			message);
 	}
 
 	private Object[] getBookmarks(UpdateModel model) {
@@ -594,8 +601,13 @@ public class UpdatesView
 	}
 
 	public void objectChanged(Object object, String property) {
-		if (object instanceof SiteBookmark && property.equals(SiteBookmark.P_NAME)) {
-			viewer.update(object, null);
+		if (object instanceof SiteBookmark) {
+			if (property.equals(SiteBookmark.P_NAME)) {
+				viewer.update(object, null);
+			}
+			if (property.equals(SiteBookmark.P_URL)) {
+				viewer.refresh(object);
+			}
 			viewer.setSelection(viewer.getSelection());
 		}
 	}

@@ -44,15 +44,17 @@ public class NewSiteBookmarkWizardPage extends BaseNewWizardPage {
 			}
 		});
 	}
-	
+
 	protected void validatePage() {
-		try {
-			url = new URL(urlText.getText());
-			super.validatePage();
-		}
-		catch (MalformedURLException e) {
-			setErrorMessage("Invalid URL format");
-			setPageComplete(false);
+		super.validatePage();
+		if (isPageComplete()) {
+			try {
+				url = new URL(urlText.getText());
+				super.validatePage();
+			} catch (MalformedURLException e) {
+				setErrorMessage("Invalid URL format");
+				setPageComplete(false);
+			}
 		}
 	}
 

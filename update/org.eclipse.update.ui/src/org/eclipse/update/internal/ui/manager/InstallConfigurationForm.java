@@ -52,9 +52,12 @@ public void initialize(Object modelObject) {
 		public void objectsRemoved(Object parent, Object[] children) {
 		}
 		public void objectChanged(Object obj, String property) {
+			if (obj instanceof PreservedConfiguration)
+				obj = ((PreservedConfiguration)obj).getConfiguration();
 			if (obj.equals(currentConfiguration)) {
 				inputChanged(currentConfiguration);
 			}
+
 		}
 	};
 	model.addUpdateModelChangedListener(modelListener);

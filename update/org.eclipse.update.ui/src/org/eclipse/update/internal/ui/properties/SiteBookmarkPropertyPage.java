@@ -17,12 +17,15 @@ import org.eclipse.update.internal.ui.UpdateUIPlugin;
  * Insert the type's description here.
  * @see PropertyPage
  */
-public class SiteBookmarkPropertyPage extends PropertyPage implements IWorkbenchPropertyPage {
+public class SiteBookmarkPropertyPage
+	extends PropertyPage
+	implements IWorkbenchPropertyPage {
 	private static final String KEY_NAME = "SiteBookmarkPropertyPage.name";
 	private static final String KEY_ADDRESS = "SiteBookmarkPropertyPage.address";
 	private Text siteName;
 	private Text siteURL;
 	private boolean changed;
+	private boolean urlChanged;
 	/**
 	 * The constructor.
 	 */
@@ -33,43 +36,45 @@ public class SiteBookmarkPropertyPage extends PropertyPage implements IWorkbench
 	 * Insert the method's description here.
 	 * @see PropertyPage#createContents
 	 */
-	protected Control createContents(Composite parent)  {
+	protected Control createContents(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		container.setLayout(layout);
-		
+
 		Label label = new Label(container, SWT.NULL);
 		label.setText(UpdateUIPlugin.getResourceString(KEY_NAME));
-		siteName = new Text(container, SWT.SINGLE|SWT.BORDER);
+		siteName = new Text(container, SWT.SINGLE | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		siteName.setLayoutData(gd);
 		label = new Label(container, SWT.NULL);
 		label.setText(UpdateUIPlugin.getResourceString(KEY_ADDRESS));
-		siteURL = new Text(container, SWT.SINGLE|SWT.BORDER);
+		siteURL = new Text(container, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		siteURL.setLayoutData(gd);
 		initializeFields();
 		return container;
 	}
-	
+
 	public boolean performOk() {
 		if (changed) {
-			SiteBookmark site = (SiteBookmark)getElement();
+			SiteBookmark site = (SiteBookmark) getElement();
 			site.setName(siteName.getText());
-		
-			try {
-				URL url = new URL(siteURL.getText());
-				site.setURL(url);
-			}
-			catch (MalformedURLException e) {
+
+			if (urlChanged) {
+
+				try {
+					URL url = new URL(siteURL.getText());
+					site.setURL(url);
+				} catch (MalformedURLException e) {
+				}
 			}
 		}
 		return true;
 	}
-	
+
 	private void initializeFields() {
-		SiteBookmark site = (SiteBookmark)getElement();
+		SiteBookmark site = (SiteBookmark) getElement();
 		siteName.setText(site.getName());
 		siteURL.setText(site.getURL().toString());
 		siteName.addModifyListener(new ModifyListener() {
@@ -79,22 +84,23 @@ public class SiteBookmarkPropertyPage extends PropertyPage implements IWorkbench
 		});
 		siteURL.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
+				urlChanged = true;
 				checkFields();
 			}
 		});
-		siteName.setEnabled(site.getType()!=SiteBookmark.LOCAL);
-		siteURL.setEnabled(site.getType()==SiteBookmark.USER);
+		siteName.setEnabled(site.getType() != SiteBookmark.LOCAL);
+		siteURL.setEnabled(site.getType() == SiteBookmark.USER);
 	}
 	private void checkFields() {
 		boolean valid = true;
-		if (siteName.getText().length()==0) valid = false;
+		if (siteName.getText().length() == 0)
+			valid = false;
 		try {
 			new URL(siteURL.getText());
-		}
-		catch (MalformedURLException e) {
+		} catch (MalformedURLException e) {
 			valid = false;
 		}
 		setValid(valid);
-		changed=true;
+		changed = true;
 	}
 }

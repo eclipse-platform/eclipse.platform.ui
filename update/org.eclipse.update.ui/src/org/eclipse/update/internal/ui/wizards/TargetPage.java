@@ -236,8 +236,6 @@ public class TargetPage extends BannerPage {
 		}
 	}
 	
-	private Random random = new Random();
-	
 	private void updateStatus(Object element) {
 		if (element==null) {
 			requiredSpaceLabel.setText("");
@@ -250,8 +248,12 @@ public class TargetPage extends BannerPage {
 		File file = new File(fileName);
 		long available = LocalSystemInfo.getFreeSpace(file);
 		//long required = site.getSite().getInstallSizeFor(feature);
-		long required = random.nextLong();
-		requiredSpaceLabel.setText(required+"KB");
+		//long required = random.nextLong();
+		//requiredSpaceLabel.setText(required+"KB");
+		requiredSpaceLabel.setText("Unknown");
+		if (available==LocalSystemInfo.SIZE_UNKNOWN)
+		   availableSpaceLabel.setText("Unknown");
+		else
 		availableSpaceLabel.setText(available+"KB");
 	}
 

@@ -40,32 +40,32 @@
    <extension
          point="org.eclipse.ui.views">
       <category
-            name="Update Manager"
+            name="%views.category.label"
             id="org.eclipse.update.ui">
       </category>
       <view
-            name="Updates"
+            name="%views.updates.label"
             icon="icons/full/view16/sites.gif"
             category="org.eclipse.update.ui"
             class="org.eclipse.update.internal.ui.views.UpdatesView"
             id="org.eclipse.update.ui.UpdatesView">
       </view>
       <view
-            name="Configuration"
+            name="%views.configuration.label"
             icon="icons/full/view16/myEclipse.gif"
             category="org.eclipse.update.ui"
             class="org.eclipse.update.internal.ui.views.ConfigurationView"
             id="org.eclipse.update.ui.ConfigurationView">
       </view>
       <view
-            name="Preview"
+            name="%views.preview.label"
             icon="icons/full/view16/preview.gif"
             category="org.eclipse.update.ui"
             class="org.eclipse.update.internal.ui.views.DetailsView"
             id="org.eclipse.update.ui.DetailsView">
       </view>
       <view
-            name="Web Browser"
+            name="%views.webBrowser.label"
             icon="icons/full/view16/preview.gif"
             category="org.eclipse.update.ui"
             class="org.eclipse.update.internal.ui.views.WebBrowserView"
@@ -75,7 +75,7 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            name="Install/Update"
+            name="%perspective.label"
             class="org.eclipse.update.internal.ui.manager.UpdatePerspective"
             id="org.eclipse.update.ui.UpdatePerspective">
       </perspective>
@@ -84,19 +84,19 @@
          point="org.eclipse.ui.propertyPages">
       <page
             objectClass="org.eclipse.update.internal.ui.model.SiteBookmark"
-            name="Site Properties"
+            name="%properties.site.label"
             class="org.eclipse.update.internal.ui.properties.SiteBookmarkPropertyPage"
             id="org.eclipse.update.ui.sitePropertyPage">
       </page>
       <page
-            objectClass="org.eclipse.update.core.IInstallConfiguration"
-            name="Configuration Properties"
+            objectClass="org.eclipse.update.configuration.IInstallConfiguration"
+            name="%properties.configuration.label"
             class="org.eclipse.update.internal.ui.properties.ConfigurationPropertyPage"
             id="org.eclipse.update.ui.configPropertyPage">
       </page>
       <page
             objectClass="org.eclipse.update.internal.ui.model.PreservedConfiguration"
-            name="Preserved Configuration Properties"
+            name="%properties.preserved.label"
             class="org.eclipse.update.internal.ui.properties.ConfigurationPropertyPage"
             id="org.eclipse.update.ui.configPropertyPage">
       </page>
