@@ -14,6 +14,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.events.*;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.parts.SWTUtil;
 
 public class LicensePage extends WizardPage {
 private static final String KEY_TITLE = "InstallWizard.LicensePage.title";
@@ -61,6 +62,7 @@ private static final String KEY_DECLINE = "InstallWizard.LicensePage.decline";
 				setPageComplete(true);
 			}
 		});
+		SWTUtil.setButtonDimensionHint(button1);
 		final Button button2 = new Button(buttonContainer, SWT.PUSH);
 		button2.setText(UpdateUIPlugin.getResourceString(KEY_DECLINE));
 		button2.addSelectionListener(new SelectionAdapter() {
@@ -69,6 +71,7 @@ private static final String KEY_DECLINE = "InstallWizard.LicensePage.decline";
 				dialog.cancel();
 			}
 		});
+		SWTUtil.setButtonDimensionHint(button2);
 		setControl(client);
 	}
 }

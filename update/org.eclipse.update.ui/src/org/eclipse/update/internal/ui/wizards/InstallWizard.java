@@ -86,7 +86,7 @@ public class InstallWizard extends Wizard {
 			if (hasLicense()) {
 				addPage(new LicensePage(job));
 			}
-			targetPage = new TargetPage(config);
+			targetPage = new TargetPage(job.getFeature(), config);
 			addPage(targetPage);
 		}
 	}

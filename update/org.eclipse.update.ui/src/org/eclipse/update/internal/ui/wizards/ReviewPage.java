@@ -14,7 +14,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 
-public class ReviewPage extends WizardPage {
+public class ReviewPage extends BannerPage {
 // NL keys
 private static final String KEY_TITLE = "InstallWizard.ReviewPage.title";
 private static final String KEY_DESC = "InstallWizard.ReviewPage.desc";
@@ -44,10 +44,11 @@ private static final String KEY_CORRECT_UNINSTALL = "InstallWizard.ReviewPage.co
 	/**
 	 * @see DialogPage#createControl(Composite)
 	 */
-	public void createControl(Composite parent) {
+	public Control createContents(Composite parent) {
 		Composite client = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
+		layout.marginWidth = layout.marginHeight = 0;
 		client.setLayout(layout);
 		Label label = new Label(client, SWT.NULL);
 		switch (job.getJobType()) {
@@ -104,6 +105,6 @@ private static final String KEY_CORRECT_UNINSTALL = "InstallWizard.ReviewPage.co
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
-		setControl(client);
+		return client;
 	}
 }

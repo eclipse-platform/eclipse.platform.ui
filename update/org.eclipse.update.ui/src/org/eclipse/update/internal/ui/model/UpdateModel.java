@@ -4,14 +4,16 @@ package org.eclipse.update.internal.ui.model;
  * All Rights Reserved.
  */
 
-import java.util.*;
-import org.eclipse.update.core.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.update.internal.ui.*;
-import java.net.*;
-import org.eclipse.core.runtime.IPath;
+import java.util.Iterator;
+import java.util.Vector;
 
-public class UpdateModel {
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.internal.ui.UpdateUIPlugin;
+
+public class UpdateModel implements IAdaptable {
 	private Vector changes = new Vector();
 	private Vector bookmarks = new Vector();
 	private Vector listeners = new Vector();
@@ -143,5 +145,8 @@ public class UpdateModel {
 			IUpdateModelChangedListener listener = (IUpdateModelChangedListener)iter.next();
 			listener.objectChanged(object, property);
 		}
+	}
+	public Object getAdapter(Class key) {
+		return null;
 	}
 }

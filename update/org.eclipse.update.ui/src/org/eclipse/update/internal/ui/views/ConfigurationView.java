@@ -4,19 +4,46 @@ package org.eclipse.update.internal.ui.views;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.*;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.part.DrillDownAdapter;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.configuration.IConfiguredSite;
+import org.eclipse.update.configuration.IConfiguredSiteChangedListener;
+import org.eclipse.update.configuration.IInstallConfiguration;
+import org.eclipse.update.configuration.IInstallConfigurationChangedListener;
+import org.eclipse.update.configuration.ILocalSite;
+import org.eclipse.update.configuration.ILocalSiteChangedListener;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.UpdateUIPluginImages;
 import org.eclipse.update.internal.ui.manager.RevertSection;
-import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.update.internal.ui.parts.*;
+import org.eclipse.update.internal.ui.model.ConfigurationSiteAdapter;
+import org.eclipse.update.internal.ui.model.ConfiguredFeatureAdapter;
+import org.eclipse.update.internal.ui.model.IConfiguredFeatureAdapter;
+import org.eclipse.update.internal.ui.model.IConfiguredSiteAdapter;
+import org.eclipse.update.internal.ui.model.IFeatureAdapter;
+import org.eclipse.update.internal.ui.model.IUpdateModelChangedListener;
+import org.eclipse.update.internal.ui.model.MissingFeature;
+import org.eclipse.update.internal.ui.model.PreservedConfiguration;
+import org.eclipse.update.internal.ui.model.UpdateModel;
+import org.eclipse.update.internal.ui.parts.DefaultContentProvider;
+import org.eclipse.update.internal.ui.parts.OverlayIcon;
 
 /**
  * Insert the type's description here.
@@ -58,7 +85,7 @@ public class ConfigurationView
 	private static final String KEY_HISTORY_FOLDER = "ConfigurationView.historyFolder";
 	private static final String KEY_SAVED_FOLDER = "ConfigurationView.savedFolder";
 
-	abstract class ViewFolder {
+	abstract class ViewFolder implements IAdaptable {
 		private String label;
 		private Image image;
 
@@ -66,6 +93,10 @@ public class ConfigurationView
 			this.label = label;
 			String imageKey = ISharedImages.IMG_OBJ_FOLDER;
 			image = PlatformUI.getWorkbench().getSharedImages().getImage(imageKey);
+		}
+		
+		public Object getAdapter(Class key) {
+			return null;
 		}
 
 		public Image getImage() {
@@ -470,7 +501,7 @@ public class ConfigurationView
 		showUnconfFeaturesAction.setChecked(false);
 		showUnconfFeaturesAction.setToolTipText(
 			UpdateUIPlugin.getResourceString(KEY_SHOW_UNCONF_FEATURES_TOOLTIP));
-		//drillDownAdapter = new DrillDownAdapter(viewer);
+		drillDownAdapter = new DrillDownAdapter(viewer);
 		super.makeActions();
 		revertAction = new Action() {
 			public void run() {
@@ -524,8 +555,8 @@ public class ConfigurationView
 
 	protected void fillActionBars(IActionBars bars) {
 		IToolBarManager tbm = bars.getToolBarManager();
-		//drillDownAdapter.addNavigationActions(tbm);
-		//tbm.add(new Separator());
+		drillDownAdapter.addNavigationActions(tbm);
+		tbm.add(new Separator());
 		tbm.add(showUnconfFeaturesAction);
 	}
 	protected void fillContextMenu(IMenuManager manager) {
@@ -547,7 +578,7 @@ public class ConfigurationView
 			|| obj instanceof IInstallConfiguration)
 			manager.add(propertiesAction);
 		manager.add(new Separator());
-		//drillDownAdapter.addNavigationActions(manager);
+		drillDownAdapter.addNavigationActions(manager);
 		super.fillContextMenu(manager);
 	}
 

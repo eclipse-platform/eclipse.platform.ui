@@ -75,10 +75,12 @@ public class SearchForm extends UpdateWebForm {
 			return label;
 		}
 		public void expanded() {
+			getControl().getParent().layout();
 			reflow();
 			updateSize();
 		}
 		public void collapsed() {
+			getControl().getParent().layout();
 			reflow();
 			updateSize();
 		}

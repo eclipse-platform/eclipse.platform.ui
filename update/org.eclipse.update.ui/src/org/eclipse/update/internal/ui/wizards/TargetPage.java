@@ -24,11 +24,13 @@ import java.io.*;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.jface.dialogs.MessageDialog;
 
-public class TargetPage extends WizardPage {
+public class TargetPage extends BannerPage {
 	// NL keys
 	private static final String KEY_TITLE = "InstallWizard.TargetPage.title";
 	private static final String KEY_DESC = "InstallWizard.TargetPage.desc";
 	private static final String KEY_NEW = "InstallWizard.TargetPage.new";
+	private static final String KEY_REQUIRED_FREE_SPACE = "InstallWizard.TargetPage.requiredSpace";
+	private static final String KEY_AVAILABLE_FREE_SPACE = "InstallWizard.TargetPage.availableSpace";
 	private static final String KEY_LOCATION = "InstallWizard.TargetPage.location";
 	private static final String KEY_LOCATION_MESSAGE = "InstallWizard.TargetPage.location.message";
 	private static final String KEY_LOCATION_EMPTY = "InstallWizard.TargetPage.location.empty";
@@ -38,6 +40,9 @@ public class TargetPage extends WizardPage {
 	private IInstallConfiguration config;
 	private Image siteImage;
 	private ConfigListener configListener;
+	private Label requiredSpaceLabel;
+	private Label availableSpaceLabel;
+	private IFeature feature;
 
 	class TableContentProvider
 		extends DefaultContentProvider
@@ -88,11 +93,12 @@ public class TargetPage extends WizardPage {
 	/**
 	 * Constructor for ReviewPage
 	 */
-	public TargetPage(IInstallConfiguration config) {
+	public TargetPage(IFeature feature, IInstallConfiguration config) {
 		super("Target");
 		setTitle(UpdateUIPlugin.getResourceString(KEY_TITLE));
 		setDescription(UpdateUIPlugin.getResourceString(KEY_DESC));
 		this.config = config;
+		this.feature = feature;
 		siteImage = UpdateUIPluginImages.DESC_SITE_OBJ.createImage();
 		configListener = new ConfigListener();
 	}
@@ -109,10 +115,11 @@ public class TargetPage extends WizardPage {
 	/**
 	 * @see DialogPage#createControl(Composite)
 	 */
-	public void createControl(Composite parent) {
+	public Control createContents(Composite parent) {
 		Composite client = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
+		layout.marginWidth = layout.marginHeight = 0;
 		client.setLayout(layout);
 		createTableViewer(client);
 		Composite buttonContainer = new Composite(client, SWT.NULL);
@@ -130,22 +137,32 @@ public class TargetPage extends WizardPage {
 		});
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
 		button.setLayoutData(gd);
-		setControl(client);
+		SWTUtil.setButtonDimensionHint(button);
+		Composite status = new Composite(client, SWT.NULL);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 2;
+		status.setLayoutData(gd);
+		layout = new GridLayout();
+		layout.numColumns = 2;
+		status.setLayout(layout);
+		Label label = new Label(status, SWT.NULL);
+		label.setText(UpdateUIPlugin.getResourceString(KEY_REQUIRED_FREE_SPACE));
+		requiredSpaceLabel = new Label(status, SWT.NULL);
+		requiredSpaceLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		label = new Label(status, SWT.NULL);
+		label.setText(UpdateUIPlugin.getResourceString(KEY_AVAILABLE_FREE_SPACE));
+		availableSpaceLabel = new Label(status, SWT.NULL);
+		availableSpaceLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		tableViewer.setInput(UpdateUIPlugin.getDefault().getUpdateModel());
+		selectFirstTarget();
+		return client;
 	}
 	private void createTableViewer(Composite parent) {
 		tableViewer = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		Table table = tableViewer.getTable();
 		table.setLayoutData(gd);
-		table.setHeaderVisible(true);
-
-		TableColumn tc = new TableColumn(table, SWT.NULL);
-		tc.setText(UpdateUIPlugin.getResourceString(KEY_LOCATION));
-
-		TableLayout layout = new TableLayout();
-		ColumnLayoutData ld = new ColumnWeightData(100);
-		layout.addColumnData(ld);
-		table.setLayout(layout);
 		tableViewer.setContentProvider(new TableContentProvider());
 		tableViewer.setLabelProvider(new TableLabelProvider());
 		tableViewer.addFilter(new ViewerFilter() {
@@ -154,17 +171,22 @@ public class TargetPage extends WizardPage {
 				return site.isUpdateable();
 			}
 		});
-		tableViewer.setInput(tableViewer);
 		tableViewer.addSelectionChangedListener(new ISelectionChangedListener () {
 			public void selectionChanged(SelectionChangedEvent event) {
 				ISelection selection = event.getSelection();
 				boolean empty = selection.isEmpty();
 				verifyNotEmpty(empty);
+				updateStatus(((IStructuredSelection)selection).getFirstElement());
 			}
 		});
-		selectFirstTarget();
-		table.setFocus();
 		config.addInstallConfigurationChangedListener(configListener);
+	}
+	
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		if (visible) {
+			tableViewer.getTable().setFocus();
+		}
 	}
 	
 	private void verifyNotEmpty(boolean empty) {
@@ -212,6 +234,25 @@ public class TargetPage extends WizardPage {
 				UpdateUIPlugin.logException(e);
 			}
 		}
+	}
+	
+	private Random random = new Random();
+	
+	private void updateStatus(Object element) {
+		if (element==null) {
+			requiredSpaceLabel.setText("");
+			availableSpaceLabel.setText("");
+			return;
+		}
+		IConfiguredSite site = (IConfiguredSite)element;
+		URL url = site.getSite().getURL();
+		String fileName = url.getFile();
+		File file = new File(fileName);
+		long available = LocalSystemInfo.getFreeSpace(file);
+		//long required = site.getSite().getInstallSizeFor(feature);
+		long required = random.nextLong();
+		requiredSpaceLabel.setText(required+"KB");
+		availableSpaceLabel.setText(available+"KB");
 	}
 
 	public IConfiguredSite getTargetSite() {
