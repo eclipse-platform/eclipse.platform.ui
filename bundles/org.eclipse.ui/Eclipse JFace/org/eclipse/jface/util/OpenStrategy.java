@@ -361,6 +361,8 @@ public class OpenStrategy {
 				} else {
 					return;
 				}
+				if(selEvent.item == null)
+					return;
 				fireSelectionEvent(selEvent);
 				firePostSelectionEvent(selEvent);
 			}
