@@ -26,11 +26,11 @@ import java.util.Map;
  * </p>
  * <p>
  * The handle-based nature of this API allows it to work well with runtime
- * plugin activation and deactivation. If a key configuration is defined, that
- * means that its corresponding plug-in is active. If the plug-in is then
- * deactivated, the configuration will still exist but it will be undefined.
- * An attempts to use an undefined key configuration will result in a
- * <code>NotDefinedException</code> being thrown.
+ * plugin activation and deactivation. If a command is defined, that means that
+ * its corresponding plug-in is active. If the plug-in is then deactivated, the
+ * command will still exist but it will be undefined. An attempts to use an
+ * undefined command will result in a <code>NotDefinedException</code> being
+ * thrown.
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
