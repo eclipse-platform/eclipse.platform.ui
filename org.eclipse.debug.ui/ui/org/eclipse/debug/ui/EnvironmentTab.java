@@ -91,8 +91,6 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		// Create label
 		Label label = new Label(tableComposite, SWT.NONE);
 		label.setText("Environment");
-		gdata = new GridData(GridData.FILL_HORIZONTAL);
-		label.setLayoutData(gdata);
 		// Create table
 		environmentTable = new TableViewer(tableComposite);
 		Table table = environmentTable.getTable();
@@ -161,7 +159,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		glayout.marginHeight = 0;
 		glayout.marginWidth = 0;
 		glayout.numColumns = 1;
-		gdata = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+		gdata = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_END);
 		buttonComposite.setLayout(glayout);
 		buttonComposite.setLayoutData(gdata);
 
