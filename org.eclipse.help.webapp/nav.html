@@ -1,28 +1,18 @@
 
 <html>
-   <head>
-      <title>Navigation</title>
-      
-<style type="text/css">
-#toc {
-  display:block;
-  border:0;
- }
- #search {
-  display:none;
- }
- #links {
-  display:none;
- }
-</style>
+<head>
+<title>Navigation</title>
 
 <script type="text/javascript" language="JavaScript">
 
 var args = parent.parseQueryString();
 
+/**
+ * Shows the TOC frame, loads appropriate TOC, and selects the topic
+ */
 function displayTocFor(topic)
 {
-	parent.TabsFrame.showNavFrame("toc");
+	parent.TabsFrame.switchTab("toc");
 	// remove the query, if any
 	var i = topic.indexOf('?');
 	if (i != -1)
@@ -33,19 +23,42 @@ function displayTocFor(topic)
 		window.toc.location = "toc.jsp?topic="+topic;
 }
 
-</script>
-
-   </head>
-   
-   <body>
-      <div id="frames" style="top:0; width:100%;height:100%;">
-         <iframe width="100%" height="100%"  name="toc" id="toc" class="nav" title="Table of Contents"></iframe> 
-		 <iframe width="100%" height="100%"  name="search" id="search" class="nav" title="Search"></iframe> 
-		 <iframe width="100%" height="100%"   name="links" id="links" class="nav" title="Links"></iframe>
-      </div>
-     
-<script language="JavaScript">
-	
+/** 
+ * Shows the specified internal frame.
+ * To be called by the tabs.html frame.
+ */ 
+function turnToFrame(nav)
+{
+ 	var iframe = document.getElementById(nav);
+ 	if (!iframe) return;
+ 
+  	// show the appropriate frame
+ 	var iframes = document.body.getElementsByTagName("IFRAME");
+ 	for (var i=0; i<iframes.length; i++)
+ 	{
+  		if (iframes[i] != iframe)
+  		{
+   			//iframes[i].style.display = "none";
+   			iframes[i].style.visibility = "hidden";
+   			iframes[i].style.width = 0;
+   			iframes[i].style.height = 0;
+  		}
+  		else
+  		{
+   			//iframe.style.display = "block";
+   			iframes[i].style.visibility = "visible";
+   			iframes[i].style.width = "100%";
+   			iframes[i].style.height = "100%";
+   		}
+ 	}
+}
+ 
+/**
+ * Loads the frames.
+ * To be called only once
+ */
+function loadFrames()
+{
 	// load frames
 	var tocUrl="";
 	if(args["toc"])
@@ -68,9 +81,24 @@ function displayTocFor(topic)
 		document.getElementById("links").src="links.html?contextId="+args["contextId"];
 	else
 		document.getElementById("links").src="about:blank";
-		
+}
+ 
 </script>
 
-   </body>
+</head>
+   
+<body>
+      <div id="frames" style="top:0; width:100%;height:100%;">
+         <iframe width="100%" height="100%"  name="toc" id="toc" class="nav" title="Table of Contents"></iframe> 
+		 <iframe width="100%" height="100%"  name="search" id="search" class="nav" title="Search"></iframe> 
+		 <iframe width="100%" height="100%"   name="links" id="links" class="nav" title="Links"></iframe>
+      </div>
+     
+	  <script language="JavaScript">
+	  	turnToFrame("toc");
+	    loadFrames();		
+	  </script>
+
+</body>
 </html>
 

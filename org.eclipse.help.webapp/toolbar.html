@@ -71,8 +71,14 @@ function toggleNav()
 
 function resynch()
 {
-	var topic = parent.MainFrame.window.location.href;
-	parent.NavFrame.displayTocFor(topic);
+	try
+	{
+		var topic = parent.MainFrame.window.location.href;
+		parent.NavFrame.displayTocFor(topic);
+	}
+	catch(e)
+	{
+	}
 }
 
 function printContent()

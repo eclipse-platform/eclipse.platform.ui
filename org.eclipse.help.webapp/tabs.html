@@ -52,56 +52,45 @@ IMG {
      
 <script language="JavaScript">
  
-/* Shows the specified internal frame.
-   To be called by the tabs.html frame.
+/* 
+ * Switch tabs.
  */ 
-function showNavFrame(nav)
+function switchTab(nav)
 {
- var iframe = parent.NavFrame.document.getElementById(nav);
- if (!iframe) return;
+ 	parent.NavFrame.turnToFrame(nav);
  
-  // show the appropriate frame
- var iframes = parent.NavFrame.document.body.getElementsByTagName("IFRAME");
- for (var i=0; i<iframes.length; i++)
- {
-  if (iframes[i] != iframe)
-   iframes[i].style.display = "none";
-  else
-   iframe.style.display = "block";
- }
- 
- // show the appropriate pressed tab
-  var buttons = document.body.getElementsByTagName("A");
-  for (var i=0; i<buttons.length; i++)
-  {
-  	if (buttons[i].id == nav) // Note: assumes the same id shared by tabs and iframes
-		buttons[i].className = "pressed";
-	else
-		buttons[i].className = "tab";
-  }
+ 	// show the appropriate pressed tab
+  	var buttons = document.body.getElementsByTagName("A");
+  	for (var i=0; i<buttons.length; i++)
+  	{
+  		if (buttons[i].id == nav) // Note: assumes the same id shared by tabs and iframes
+			buttons[i].className = "pressed";
+		else
+			buttons[i].className = "tab";
+ 	 }
   
-  // set the images for borders
-  var tocI = document.getElementById("tocI");
-  var searchI = document.getElementById("searchI");
-  var linksI = document.getElementById("linksI");
-  if (nav == "toc")
-  {
-  	tocI.src = "images/rightBorder.gif";
-	searchI.src = "images/middleBorder.gif";
-	linksI.src = "images/noBorder.gif";
-  }
-  else if (nav == "search")
-  {
-  	tocI.src = "images/leftBorder.gif";
-	searchI.src = "images/rightBorder.gif";
-	linksI.src = "images/noBorder.gif";
-  }
-  else if (nav == "links")
-  {
-  	tocI.src = "images/middleBorder.gif";
-	searchI.src = "images/leftBorder.gif";
-	linksI.src = "images/rightBorder.gif";
-  }
+  	// set the images for borders
+  	var tocI = document.getElementById("tocI");
+  	var searchI = document.getElementById("searchI");
+  	var linksI = document.getElementById("linksI");
+  	if (nav == "toc")
+  	{
+  		tocI.src = "images/rightBorder.gif";
+		searchI.src = "images/middleBorder.gif";
+		linksI.src = "images/noBorder.gif";
+  	}
+  	else if (nav == "search")
+  	{
+  		tocI.src = "images/leftBorder.gif";
+		searchI.src = "images/rightBorder.gif";
+		linksI.src = "images/noBorder.gif";
+  	}
+  	else if (nav == "links")
+  	{
+  		tocI.src = "images/middleBorder.gif";
+		searchI.src = "images/leftBorder.gif";
+		linksI.src = "images/rightBorder.gif";
+  	}
 }
  
 </script>
@@ -112,11 +101,11 @@ function showNavFrame(nav)
 <body>
    <table cellspacing="0" cellpadding="0" border="0">
    <tr>
-   <td><a class="tab" id="toc" onclick="javascript:showNavFrame('toc')">&nbsp;Content</a></td>
+   <td><a class="tab" id="toc" onclick="javascript:switchTab('toc')">&nbsp;Content</a></td>
    <td><img id="tocI" src="images/rightBorder.gif" width="2" height="22"></td>
-   <td><a class="tab" id="search" onclick="javascript:showNavFrame('search')">Search</a></td>
+   <td><a class="tab" id="search" onclick="javascript:switchTab('search')">Search</a></td>
    <td><img id="searchI" src="images/middleBorder.gif" width="2" height="22"></td>
-   <td><a class="tab" id="links" onclick="javascript:showNavFrame('links')">Links</a></td>
+   <td><a class="tab" id="links" onclick="javascript:switchTab('links')">Links</a></td>
    <td><img id="linksI" src="images/noBorder.gif" width="2" height="22"></td>
    </tr>
    </table>
