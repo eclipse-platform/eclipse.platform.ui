@@ -129,6 +129,7 @@ import org.eclipse.ui.internal.dnd.IDropTarget;
 						edgeDockRatio,
 						null);
 					folder.add(draggedPane);
+					draggedPane.setFocus();
 				}
 
 				public Cursor getCursor() {
