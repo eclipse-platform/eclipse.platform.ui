@@ -74,7 +74,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 			StructuredViewer viewer = getViewer();
 			if (viewer != null && !viewer.getControl().isDisposed()) {
 				ChangeLogModelSorter sorter = (ChangeLogModelSorter) viewer.getSorter();
-				if (sorter != null && sorter.getCriteria() != criteria) {
+				if (isChecked() && sorter != null && sorter.getCriteria() != criteria) {
 					viewer.setSorter(new ChangeLogModelSorter(criteria));
 					update();
 				}
@@ -287,10 +287,11 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 			ILogEntry[] logEntries = logs.getLogEntries(remoteResource);
 			for (int i = 0; i < logEntries.length; i++) {
 				ILogEntry entry = logEntries[i];
-				addNewElementFor(info, entry.getRemoteFile(), entry);
+				addNewElementFor(info, remoteResource, entry);
 			}
 		} else {
 			ILogEntry logEntry = logs.getLogEntry(remoteResource);
+			addNewElementFor(info, remoteResource, logEntry);
 		}
 	}
 	
