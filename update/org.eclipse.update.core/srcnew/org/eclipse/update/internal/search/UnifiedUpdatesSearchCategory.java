@@ -43,12 +43,6 @@ public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 			child.setParent(this);
 			children.add(child);
 		}
-		public Candidate[] getChildren() {
-			if (children == null)
-				return new Candidate[0];
-			return (Candidate[]) children.toArray(
-				new Candidate[children.size()]);
-		}
 		void setParent(Candidate parent) {
 			this.parent = parent;
 		}
@@ -57,13 +51,6 @@ public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 		}
 		void setReference(IFeatureReference ref) {
 			this.ref = ref;
-		}
-		public VersionedIdentifier getVersionedIdentifier() {
-			try {
-				return ref.getVersionedIdentifier();
-			} catch (CoreException e) {
-				return new VersionedIdentifier("unknown", "0.0.0");
-			}
 		}
 		public IFeature getFeature(IProgressMonitor monitor) {
 			try {
@@ -422,7 +409,7 @@ public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 		}
 		return queries;
 	}
-
+	
 	private boolean isNewerVersion(
 		VersionedIdentifier fvi,
 		VersionedIdentifier cvi) {
