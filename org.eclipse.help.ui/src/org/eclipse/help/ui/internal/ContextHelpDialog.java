@@ -13,6 +13,7 @@ package org.eclipse.help.ui.internal;
 
 import org.eclipse.help.*;
 import org.eclipse.help.internal.base.*;
+import org.eclipse.help.internal.context.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.accessibility.*;
@@ -180,8 +181,13 @@ public class ContextHelpDialog {
 		return contents;
 	}
 	private Control createInfoArea(Composite parent) {
-		// Create the text field.    
-		String styledText = context.getText();
+		// Create the text field.
+		String styledText;
+		if(context instanceof IStyledContext){
+			styledText = ((IStyledContext)context).getStyledText();
+		} else{
+			styledText = context.getText();
+		}
 		if (styledText == null) // no description found in context objects.
 			styledText = HelpUIResources.getString("WW002");
 		Description text = new Description(parent, SWT.MULTI | SWT.READ_ONLY);

@@ -16,7 +16,7 @@ import org.xml.sax.Attributes;
 /**
  * Context object, as defined in the map.xml
  */
-public class Context extends ContextsNode implements IContext {
+public class Context extends ContextsNode implements IStyledContext {
 	private String text;
 	protected String pluginID;
 	protected String shortID;
@@ -29,7 +29,16 @@ public class Context extends ContextsNode implements IContext {
 			return;
 		shortID = attrs.getValue("id");
 	}
+	/**
+	 * @return plain text (without <@#$b> or </@#$b> bug 59541)
+	 */
 	public String getText() {
+		return text.replaceAll("\\s*</?@#\\$b>\\s*"," ");
+	}
+	/**
+	 * @return styled text with <@#$b> and </@#$b> to mark bold range
+	 */
+	public String getStyledText() {
 		return text;
 	}
 	public IHelpResource[] getRelatedTopics() {
@@ -42,7 +51,7 @@ public class Context extends ContextsNode implements IContext {
 			return null;
 		}
 	}
-	public void setText(String s) {
+	public void setStyledText(String s) {
 		text = s;
 	}
 	/**

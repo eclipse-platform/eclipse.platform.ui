@@ -63,12 +63,12 @@ public class ContextsBuilder {
 	 */
 	private void mergeContexts(Context existingContext, Context newContext) {
 		// Merge Text
-		if (newContext.getText() != null) {
-			if (existingContext.getText() != null) {
-				existingContext.setText(existingContext.getText() + "\n"
-						+ newContext.getText());
+		if (newContext.getStyledText() != null) {
+			if (existingContext.getStyledText() != null) {
+				existingContext.setStyledText(existingContext.getStyledText() + "\n"
+						+ newContext.getStyledText());
 			} else {
-				existingContext.setText(newContext.getText());
+				existingContext.setStyledText(newContext.getStyledText());
 			}
 		}
 		// Merge Related Links

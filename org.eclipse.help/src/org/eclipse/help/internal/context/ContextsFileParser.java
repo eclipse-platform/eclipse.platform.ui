@@ -53,7 +53,7 @@ public class ContextsFileParser extends DefaultHandler {
 		// make sure that no error has already occurred before adding to stack.
 		if (qName.equals(ContextsNode.DESC_ELEM)) {
 			seenDescription = false;
-			((Context) stack.peek()).setText(buffer.toString());
+			((Context) stack.peek()).setStyledText(buffer.toString());
 			buffer.setLength(0);
 		} else if (qName.equals(ContextsNode.DESC_TXT_BOLD)) {
 			// pop the starting bold tag
