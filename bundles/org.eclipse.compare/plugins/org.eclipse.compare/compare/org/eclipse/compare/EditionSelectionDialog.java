@@ -666,10 +666,10 @@ public class EditionSelectionDialog extends Dialog {
 		
 		fEditionTree= new Tree(fEditionPane, SWT.H_SCROLL + SWT.V_SCROLL);
 		fEditionTree.addSelectionListener(
-			new SelectionListener() {
-				public void widgetDefaultSelected(SelectionEvent e) {
-					handleDefaultSelected();
-				}
+			new SelectionAdapter() {
+//				public void widgetDefaultSelected(SelectionEvent e) {
+//					handleDefaultSelected();
+//				}
 				public void widgetSelected(SelectionEvent e) {
 					feedInput(e.item);
 				}
@@ -737,10 +737,10 @@ public class EditionSelectionDialog extends Dialog {
 		}
 	}
 
-	private void handleDefaultSelected() {
-		if (fSelectedItem != null)
-			okPressed();
-	}
+//	private void handleDefaultSelected() {
+//		if (fSelectedItem != null)
+//			okPressed();
+//	}
 	
 	private static void internalSort(IModificationDate[] keys, int left, int right) { 
 	
