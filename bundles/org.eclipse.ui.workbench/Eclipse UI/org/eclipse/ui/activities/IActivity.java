@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.activities;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * <p>
@@ -103,7 +103,7 @@ public interface IActivity extends Comparable {
 
 	/**
 	 * <p>
-	 * Returns the set of pattern bindings for this handle. This method will
+	 * Returns the list of pattern bindings for this handle. This method will
 	 * return all pattern bindings for this handle's identifier, whether or not 
 	 * the activity represented by this handle is defined. 
 	 * </p>
@@ -112,12 +112,12 @@ public interface IActivity extends Comparable {
 	 * changes.
 	 * </p>
 	 *
-	 * @return the set of pattern bindings. This set may be empty, but is 
-	 * 		   guaranteed not to be <code>null</code>. If this set is not empty, 
-	 *         it is guaranteed to only contain instances of 
+	 * @return the list of pattern bindings. This list may be empty, but is 
+	 * 		   guaranteed not to be <code>null</code>. If this list is not 
+	 * 		   empty, it is guaranteed to only contain instances of 
 	 *         <code>IPatternBinding</code>.
 	 */	
-	Set getPatternBindings();
+	List getPatternBindings();
 
 	/**
 	 * <p>
@@ -130,7 +130,7 @@ public interface IActivity extends Comparable {
 	 * changes.
 	 * </p>
 	 * 
-	 * @return <code>true</code>, iff the activity is active. 
+	 * @return <code>true</code>, iff this activity is active. 
 	 */	
 	boolean isActive();
 	
@@ -160,7 +160,7 @@ public interface IActivity extends Comparable {
 	 * changes.
 	 * </p>
 	 * 
-	 * @return <code>true</code>, iff the activity is active. 
+	 * @return <code>true</code>, iff this activity is enabled. 
 	 */	
 	boolean isEnabled();	
 

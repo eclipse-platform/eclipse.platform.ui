@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.csm.activities;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.SortedSet;
 
 import org.eclipse.ui.activities.ActivityNotDefinedException;
@@ -100,7 +99,7 @@ final class Activity implements IActivity {
 		return equals;
 	}
 
-	public Set getPatternBindings() {
+	public List getPatternBindings() {
 		// TODO 
 		return null;
 	}

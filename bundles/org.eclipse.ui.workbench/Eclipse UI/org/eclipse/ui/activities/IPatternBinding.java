@@ -34,4 +34,13 @@ public interface IPatternBinding extends Comparable {
 	 * @return the pattern. Guaranteed not to be <code>null</code>.
 	 */	
 	String getPattern();
+	
+	/**
+	 * <p>
+	 * Returns whether or not this pattern binding is inclusive. 
+	 * </p>
+	 * 
+	 * @return <code>true</code>, iff this pattern binding is inclusive. 
+	 */	
+	boolean isInclusive();
 }
