@@ -520,6 +520,19 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
         	if (doc != null && !monitor.isCanceled()) {
         	    boolean allDone = true;
 	        	int endOfSearch = doc.getLength();
+	        	int indexOfLastChar = endOfSearch;
+	        	if (indexOfLastChar > 0) {
+	        		indexOfLastChar--;
+	        	}
+	        	int lastLineToSearch = 0;
+	        	int offsetOfLastLineToSearch = 0;
+	        	try {
+	        		lastLineToSearch = doc.getLineOfOffset(indexOfLastChar);
+	        		offsetOfLastLineToSearch = doc.getLineOffset(lastLineToSearch);
+	        	} catch (BadLocationException e) {
+	        		// perhaps the buffer was re-set 
+	        		return Status.OK_STATUS;
+	        	}
 	        	for (int i = 0; i < patterns.size(); i++) {
 	        	    if (monitor.isCanceled()) {
 	        	        break;
@@ -559,7 +572,7 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
 								if (startOfNextSearch < lengthToSearch) {
 									if (reg.find(startOfNextSearch)) {
 										endOfLastMatch = reg.end();
-										lineOfLastMatch = doc.getLineOfOffset(baseOffset + endOfLastMatch);
+										lineOfLastMatch = doc.getLineOfOffset(baseOffset + endOfLastMatch - 1);
 										int regStart = reg.start();
 										IPatternMatchListener listener = notifier.listener;
 										if (listener != null && !monitor.isCanceled()) {
@@ -574,24 +587,26 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
 							// update start of next search to the last line searched
 							// or the end of the last match if it was on the line that
 							// was last searched
-							int lastLineSearched = doc.getLineOfOffset(endOfSearch);
-							if (lastLineSearched == lineOfLastMatch) {
+							if (lastLineToSearch == lineOfLastMatch) {
 								notifier.end = baseOffset + endOfLastMatch;
 							} else {
-								notifier.end = doc.getLineOffset(lastLineSearched);
+								notifier.end = offsetOfLastLineToSearch;
 							}
 		        		} catch (BadLocationException e) {
 		        			ConsolePlugin.log(e);
 		            	}
 					}
 					prevBaseOffset = baseOffset;
+					int lastLineOfDoc = doc.getNumberOfLines() - 1;
 					try {
-						int lastLineOfDoc = doc.getLineOfOffset(doc.getLength());
-						int lastLineOfNotifier = doc.getLineOfOffset(notifier.end);
-						allDone = allDone && (lastLineOfNotifier >= lastLineOfDoc);
+						if (doc.getLineLength(lastLineOfDoc) == 0) {
+							// if the last line is empty, do not consider it
+							lastLineOfDoc--;
+						}
 					} catch (BadLocationException e) {
-					    allDone = false;
+						allDone = false;
 					}
+					allDone = allDone && (lastLineToSearch >= lastLineOfDoc);
 		        }
 	        	if (allDone && partitionerFinished && !monitor.isCanceled()) {
 	        	    firePropertyChange(this, IOConsole.P_CONSOLE_OUTPUT_COMPLETE, null, null);
