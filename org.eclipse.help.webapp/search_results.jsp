@@ -23,8 +23,7 @@ function refresh()
 <style type="text/css">
 BODY {
 	background-color: Window;
-	/*font: 9pt ms sans serif,sans-serif;*/
-	font: 8pt Tahoma;
+	font: icon;
 	margin-top:5px;
 	margin-left:5px;
 	padding:0;
@@ -50,7 +49,7 @@ A {
 
 TABLE {
 	background-color: Window;
-	font: 8pt Tahoma;
+	font: icon;
 }
 
 .score {

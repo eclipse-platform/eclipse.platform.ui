@@ -15,8 +15,7 @@
  
  BODY {
 	background-color: Window;
-	/*font: 9pt ms sans serif,sans-serif;*/
-	font: 8pt Tahoma;
+	font: icon;
 	margin:0;
 	padding:0;
 	border-bottom:1px solid black;
@@ -34,7 +33,7 @@
 
 <body>
 
-<div id="bannerTitle" style="background:ActiveBorder; width:100%; position:absolute; left:10px; top:20; font: 14pt Tahoma;">
+<div id="bannerTitle" style="background:ActiveBorder; width:100%; position:absolute; left:10px; top:20; font: 14pt icon">
 	<%=request.getParameter("title") != null ?request.getParameter("title") : WebappResources.getString("Bookshelf", request)%>
 </div>
 

@@ -14,8 +14,7 @@
 
 BODY {
 	background-color: Window;
-	/*font: 9pt ms sans serif,sans-serif;*/
-	font: 8pt Tahoma;
+	font: icon;
 	margin:0;
 	padding:0;
 	border:0;

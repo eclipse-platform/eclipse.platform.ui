@@ -39,8 +39,8 @@ BODY {
 }
 
 TABLE {
-	font: 8pt Tahoma;
 	background:ActiveBorder;
+	font: 8pt Tahoma;
 }
 
 TD, TR {
@@ -87,6 +87,7 @@ FORM {
 }
 
 .book {
+	font: 8pt Tahoma;
 	margin:0xp;
 	border:0px;
 	padding:0px;

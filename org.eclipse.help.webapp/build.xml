@@ -117,4 +117,33 @@
     <delete file="${plugin}_${version}.doc.zip"/>
     <delete file="${plugin}_${version}.log.zip"/>
   </target>
+  
+  
+  <!-- JSPC:  pre-compile JSPs -->
+  <target name="jspc"  >
+     <java classname="org.apache.jasper.JspC">
+     	<sysproperty key="tomcat_home" value="../org.eclipse.tomcat"/>
+     	<sysproperty key="jasper_home" value="../org.eclipse.tomcat"/>
+     	<classpath>
+     		<pathelement location="d:\\java\\lib\\tools.jar"/>
+			<pathelement location="../org.apache.xerces/xerces.jar"/>
+        	<pathelement location="../org.eclipse.tomcat/catalina.jar" />
+			<pathelement location="../org.eclipse.tomcat/servlet.jar" />
+        	<pathelement location="../org.eclipse.tomcat/jasper-compiler.jar" />
+        	<pathelement location="../org.eclipse.tomcat/jasper-runtime.jar" />
+			<pathelement location="../org.eclipse.tomcat/tomcat_util.jar" />    
+			<!--
+			<pathelement location="${basedir}/WEB-INF/classes"/>
+			-->
+        </classpath>     
+
+      	<arg value="${basedir}/help.jsp"/>
+      	<!--
+      	<arg value="-webapp" />
+      	<arg file="${basedir}"/>
+     	<arg value="-v4"/>
+     	-->
+     </java>
+  </target>
+  
 </project>

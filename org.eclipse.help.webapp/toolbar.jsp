@@ -93,11 +93,10 @@ HTML {
  }
  
 BODY {
-	font: 8pt Tahoma;
+	font: icon;
 	background:ActiveBorder;
 	border-bottom:1px black solid;
 	border-right:1px black solid;
-	xxxxheight:100%;
 	/* need to set this for Mozilla */
 	height:23px;
 }
@@ -108,13 +107,25 @@ SPAN {
 	padding:0px;
 }
 
+#title {
+	position:absolute; 
+	bottom:2px; 
+	text-indent:4px; 
+	z-order:20; 
+	font-weight:bold; 
+	width:80%; 
+	overflow:hidden; 
+	white-space:nowrap;
+}
+ 
+ 
 </style>
 
    </head>
    
    <body  leftmargin="0" topmargin="0" marginheight="0" marginwidth="0">
  	  
-	  <div id="title" style="position:absolute; bottom:2px; text-indent:4px; z-order:20; font-weight:bold;">&nbsp;<%=WebappResources.getString("Bookshelf", request)%></div>
+	  <div id="title">&nbsp;<%=WebappResources.getString("Bookshelf", request)%></div>
 		
 		<div style="right:5px; top:4px; bottom:3px;position:absolute;">
 		<!--
