@@ -22,6 +22,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.actions.SelectionListenerAction;
@@ -82,7 +83,18 @@ public class EditLaunchConfigurationAction extends SelectionListenerAction {
 				}
 			}
 		}
-		return getLaunchConfiguration() != null;
+		
+		// Disable the action if the launch config is private
+		ILaunchConfiguration config = getLaunchConfiguration();
+		if (config == null) {
+			return false;
+		} else {
+			try {
+				return !config.getAttribute(IDebugUIConstants.ATTR_PRIVATE, false);
+			} catch (CoreException ce) {
+			}
+		}
+		return false;
 	}
 
 	protected void setLaunchConfiguration(ILaunchConfiguration configuration) {
