@@ -640,6 +640,9 @@ public class InternalAntRunner {
 	 */
 	public void setMessageOutputLevel(int level) {
 		messageOutputLevel = level;
+		if (buildLogger != null) {
+			buildLogger.setMessageOutputLevel(level);
+		}
 	}
 
 	/**
@@ -724,16 +727,16 @@ public class InternalAntRunner {
 		
 		if (commands.remove("-verbose") || commands.remove("-v")) { //$NON-NLS-1$ //$NON-NLS-2$
 			printVersion();
-			messageOutputLevel = Project.MSG_VERBOSE;
+			setMessageOutputLevel(Project.MSG_VERBOSE);
 		}
 		
 		if (commands.remove("-debug")) { //$NON-NLS-1$
 			printVersion();
-			messageOutputLevel = Project.MSG_DEBUG;
+			setMessageOutputLevel(Project.MSG_DEBUG);
 		}
 		
 		if (commands.remove("-quiet") || commands.remove("-q")) { //$NON-NLS-1$ //$NON-NLS-2$
-			messageOutputLevel = Project.MSG_WARN;
+			setMessageOutputLevel(Project.MSG_WARN);
 		}
 
 		if (commands.remove("-emacs")) { //$NON-NLS-1$
@@ -741,6 +744,12 @@ public class InternalAntRunner {
 		}
 		if (commands.remove("-projecthelp")) { //$NON-NLS-1$
 			projectHelp = true;
+		}
+		
+		if (commands.remove("-diagnostics")) { //$NON-NLS-1$
+			 //Diagnostics.doReport(System.out);
+			logMessage(currentProject, "-diagnostics option not yet implemented", Project.MSG_INFO); //$NON-NLS-1$
+			return false;
 		}
 		
 		String[] args = getArguments(commands, "-logfile"); //$NON-NLS-1$
