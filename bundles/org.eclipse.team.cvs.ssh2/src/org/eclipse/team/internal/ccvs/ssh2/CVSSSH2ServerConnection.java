@@ -172,14 +172,17 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 		// Start a thread to open a connection
 		final Object lock = new Object();
 		final Exception[] exception = new Exception[] {null };
+		final boolean[] timedOut = new boolean[] { false };
+		final boolean[] connected = new boolean[] { false };
 		final Thread thread = new Thread(new Runnable() {
 			public void run() {
 				try {
 					// Attemp to make a connection
 					internalOpen(monitor);
+					connected[0] = true;
 					// Ensure that we were not cancelled while waiting
 					synchronized (lock) {
-						if (Thread.interrupted()) {
+						if (timedOut[0]) {
 							try {
 								// we we're either cancelled or timed out so just close
 								close();
@@ -208,10 +211,12 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 				// I think this means the thread was interupted but not necessarily timed out
 				// so we don't need to do anything
 			}
+			if (connected[0]) break;
 			synchronized (lock) {
 				// if the user cancelled, clean up before preempting the operation
 				if (monitor.isCanceled()) {
 					if (thread.isAlive()) {
+						timedOut[0] = true;
 						thread.interrupt();
 					}
 					if (session != null) {
@@ -228,7 +233,8 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 		}
 		// If the thread is still running (i.e. we timed out) signal that it is too late
 		synchronized (lock) {
-			if (thread.isAlive()) {
+			if (thread.isAlive() && !connected[0]) {
+				timedOut[0] = true;
 				thread.interrupt();
 			}
 		}
@@ -238,7 +244,8 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 			else
 				throw (IOException)exception[0];
 		}
-		if (session == null) {
+		if (!connected[0]) {
+			close();
 			throw new InterruptedIOException(Policy.bind("Util.timeout", location.getHost())); //$NON-NLS-1$
 		}
 	}
