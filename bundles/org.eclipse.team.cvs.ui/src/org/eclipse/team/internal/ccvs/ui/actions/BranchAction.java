@@ -11,7 +11,11 @@
 package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.operations.BranchOperation;
@@ -26,10 +30,33 @@ public class BranchAction extends WorkspaceTraversalAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#execute(org.eclipse.jface.action.IAction)
 	 */
 	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
-		new BranchOperation(getTargetPart(), getCVSResourceMappings()).run();
+		ResourceMapping[] resourceMappings = getCVSResourceMappings();
+        if (resourceMappings == null || resourceMappings.length == 0) {
+            // Could be a sync element tat is selected
+            IResource[] resources = getSelectedResources();
+            resourceMappings = getResourceMappings(resources);
+        }
+        if (resourceMappings == null || resourceMappings.length == 0) {
+            // Nothing is select so just return
+            return;
+        }
+        new BranchOperation(getTargetPart(), resourceMappings).run();
 	}
 	
-	/* (non-Javadoc)
+	private ResourceMapping[] getResourceMappings(IResource[] resources) {
+        List mappings = new ArrayList();
+        for (int i = 0; i < resources.length; i++) {
+            IResource resource = resources[i];
+            Object o = getAdapter(resource, ResourceMapping.class);
+            if (o instanceof ResourceMapping) {
+                ResourceMapping mapping = (ResourceMapping) o;
+                mappings.add(mapping);
+            }
+        }
+        return (ResourceMapping[]) mappings.toArray(new ResourceMapping[mappings.size()]);
+    }
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getId()
 	 */
 	public String getId() {
