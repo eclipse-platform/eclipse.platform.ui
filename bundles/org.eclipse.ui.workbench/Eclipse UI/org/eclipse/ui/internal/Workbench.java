@@ -463,7 +463,8 @@ public class Workbench
 							try {
 								action.execute(event);
 							} catch (Exception e) {
-								// TODO 						
+								String message = "Action for command '" + commandId + "' failed to execute properly."; //$NON-NLS-1$
+								WorkbenchPlugin.log(message, new Status(Status.ERROR, WorkbenchPlugin.PI_WORKBENCH, 0, message, e));
 							}
 						}
 	
