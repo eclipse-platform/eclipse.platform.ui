@@ -79,7 +79,9 @@ import org.eclipse.ui.part.MarkerTransfer;
 import org.eclipse.ui.part.ResourceTransfer;
 
 import org.eclipse.ui.internal.AboutInfo;
+import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.ide.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.ide.model.WorkbenchAdapterBuilder;
@@ -212,6 +214,11 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor#preStartup()
 	 */
 	public void preStartup() {
+	    // Override the default for "traditional" tabs to get curvy tabs by default for the SDK.
+	    // The user can still change the actual value via the Appearance pref page.
+	    // @issue this is internal to the generic workbench
+	    WorkbenchPlugin.getDefault().getPreferenceStore().setDefault(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, false);
+	    
 		// collect the welcome perspectives of the new installed features
 		initializeFeatureSets();
 		Set s = getNewlyAddedFeatures();

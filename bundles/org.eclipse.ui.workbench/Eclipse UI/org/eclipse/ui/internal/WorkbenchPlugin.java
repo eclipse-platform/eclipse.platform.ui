@@ -464,7 +464,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.VIEW_TAB_POSITION, SWT.TOP);
 		store.setDefault(IPreferenceConstants.EDITOR_TAB_POSITION, SWT.TOP);
 		
-		store.setDefault(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, false);
+		store.setDefault(IPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, true);
 	
 		store.setDefault(IPreferenceConstants.EDITOR_TAB_WIDTH, 3); // high
 		store.setDefault(IPreferenceConstants.OPEN_VIEW_MODE, IPreferenceConstants.OVM_EMBED);
