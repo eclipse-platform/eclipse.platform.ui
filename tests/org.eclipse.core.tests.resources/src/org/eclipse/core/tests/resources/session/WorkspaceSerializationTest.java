@@ -33,7 +33,7 @@ public WorkspaceSerializationTest() {
 public WorkspaceSerializationTest(String name) {
 	super(name);
 }
-public void setUp() {
+protected void setUp() throws Exception {
 	workspace = getWorkspace();
 }
 }

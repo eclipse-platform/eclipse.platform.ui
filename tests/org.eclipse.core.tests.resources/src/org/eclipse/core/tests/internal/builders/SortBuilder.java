@@ -6,6 +6,7 @@ package org.eclipse.core.tests.internal.builders;
  */
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.eclipse.core.internal.resources.ResourceException;
@@ -24,14 +25,20 @@ import org.eclipse.core.runtime.*;
 public class SortBuilder extends TestBuilder {
 	public static final String BUILDER_NAME = "org.eclipse.core.tests.resources.sortbuilder";
 	/**
-	 * The singleton builder instance
+	 * The most recently created instance
 	 */
 	protected static SortBuilder singleton;
 	
 	/**
+	 * All instances.
+	 */
+	protected static final ArrayList allInstances = new ArrayList();
+	
+	
+	/**
 	 * Whether the last build was full, auto or incremental
 	 */
-	private int triggerForLastBuild;
+	private int triggerForLastBuild = -1;
 	
 	/**
 	 * Whether the last build provided a null delta.
@@ -52,8 +59,22 @@ public class SortBuilder extends TestBuilder {
 	 */
 	public static String DEFAULT_SORTED_FOLDER = "SortedFolder";
 	public static String DEFAULT_UNSORTED_FOLDER = "UnsortedFolder";
+	
+	/**
+	 * List of the resources that were in the last delta, if any.
+	 */
+	protected final ArrayList changedResources = new ArrayList();
+	
 public SortBuilder() {
 	singleton = this;
+	allInstances.add(this);
+}
+/**
+ * Returns all instances of the SortBuilder that have ever been instantiated.
+ * The returned array is in the order in which the builders were first instantiated.
+ */
+public static SortBuilder[] allInstances() {
+	return (SortBuilder[]) allInstances.toArray(new SortBuilder[allInstances.size()]);
 }
 /**
  * Implemements the inherited abstract method in
@@ -65,6 +86,7 @@ protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws 
 	super.build(kind, args,  monitor);
 	triggerForLastBuild = kind;
 	IResourceDelta delta = getDelta(getProject());
+	recordChangedResources(delta);
 	wasDeltaNull = delta == null;
 
 	if (delta == null || kind == IncrementalProjectBuilder.FULL_BUILD) {
@@ -76,7 +98,12 @@ protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws 
 			throw new CoreException(new Status(IStatus.ERROR, "tests", IResourceStatus.BUILD_FAILED, "Incremental build failed due to internal error", e));
 		}
 	}
-	return new IProject[0];
+	String project = (String)arguments.get(INTERESTING_PROJECT);
+	if (project != null) {
+		return new IProject[] {getProject().getWorkspace().getRoot().getProject(project)};
+	} else {
+		return new IProject[0];
+	}
 }
 /**
  * Sort the given unsorted file in either ascending or descending
@@ -225,6 +252,16 @@ private void fullBuild(IResource unsortedResource) throws Exception {
 		}
 	}
 }
+/**
+ * Returns the set of resources that were affected in the last delta.
+ * Affected means that resource changed or one of its children changed.
+ */
+public IResource[] getAffectedResources() {
+	return (IResource[]) changedResources.toArray(new IResource[changedResources.size()]);
+}
+/**
+ * Returns the most recently created instance.
+ */
 public static SortBuilder getInstance() {
 	return singleton;
 }
@@ -304,6 +341,23 @@ private boolean isSortOrderAscending() {
 	return !DESCENDING.equals(sortOrder);
 }
 /**
+ * Remember all resources that appeared in the delta.
+ */
+private void recordChangedResources(IResourceDelta delta) throws CoreException {
+	changedResources.clear();
+	if (delta == null)
+		return;
+	delta.accept(new IResourceDeltaVisitor() {
+		/*
+		 * @see IResourceDeltaVisitor#visit(IResourceDelta)
+		 */
+		public boolean visit(IResourceDelta delta) throws CoreException {
+			changedResources.add(delta.getResource());
+			return true;
+		}
+	});
+}
+/**
  * Sorts the specified bytes in either ascending or descending order.
  * @param bytes
  * @param start position of first byte
@@ -313,7 +367,7 @@ private boolean isSortOrderAscending() {
  * descending order
  */
 private void quicksort(byte[] bytes, int start, int end, boolean ascendingOrder){
-	if(start == end){
+	if(start >= end || start < 0 || end >= bytes.length){
 		return;
 	}
 
@@ -344,52 +398,14 @@ private void swap(byte[] bytes, int pos1, int pos2) {
 	bytes[pos1] = bytes[pos2];
 	bytes[pos2] = temp;
 }
-/**
- * Performs an incremental build by leveraging the result of the
- * previous build.
- * @param delta describes how the resources have changed since
- * the last build
- * @exception CoreException if the build can't proceed
- */
-protected boolean visitDelta(IResourceDelta delta) throws CoreException {
-	try {
-		IResource unsortedResource = delta.getResource();
-		IPath unsortedFolderPath = getUnsortedFolder().getFullPath();
-		IPath deltaPath = delta.getResource().getFullPath();
-
-		boolean isUnderUnsortedFolder =
-			unsortedFolderPath.isPrefixOf(deltaPath);
-
-		boolean isOverUnsortedFolder =
-			deltaPath.isPrefixOf(unsortedFolderPath);
-
-		if(isUnderUnsortedFolder){
-			int status = delta.getKind();
-			int changeFlags = delta.getFlags();
-
-			int type = unsortedResource.getType();
-
-			IResource sortedResource =
-				convertToSortedResource(unsortedResource);
-
-			if(status == IResourceDelta.REMOVED){
-				if(sortedResource.exists()){
-					sortedResource.delete(false, null);
-				}
-			} else if(type == IResource.FILE && status == IResourceDelta.ADDED){
-				build((IFile)unsortedResource);
-			} else if(type == IResource.FILE && status == IResourceDelta.CHANGED && (changeFlags & IResourceDelta.CONTENT) != 0){
-				build((IFile)unsortedResource);
-			}
-		}
-
-		return isUnderUnsortedFolder || isOverUnsortedFolder;
-	} catch(Exception e){
-		throw new ResourceException(IResourceStatus.BUILD_FAILED, null, "Sort builder failed", e);
-	}
-}
 public boolean wasAutoBuild() {
 	return triggerForLastBuild == IncrementalProjectBuilder.AUTO_BUILD;
+}
+/**
+ * Returns true if this builder has ever been built, and false otherwise.
+ */
+public boolean wasBuilt() {
+	return triggerForLastBuild != -1;
 }
 public boolean wasDeltaNull() {
 	return wasDeltaNull;

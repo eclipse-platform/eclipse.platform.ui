@@ -21,6 +21,7 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 	 * Build command parameters.
 	 */
 	public static String BUILD_ID = "BuildID";
+	public static String INTERESTING_PROJECT = "InterestingProject";
 
 	/**
 	 * Lifecycle event identifiers

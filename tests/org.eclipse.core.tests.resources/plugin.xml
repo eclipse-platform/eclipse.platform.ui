@@ -155,6 +155,9 @@
 	<test id = "org.eclipse.core.tests.resources.session.TestInterestingProjectPersistence">
 		<run class="org.eclipse.core.tests.resources.session.TestInterestingProjectPersistence"/>
 	</test>
+	<test id = "org.eclipse.core.tests.resources.session.TestBuilderDeltaSerialization">
+		<run class="org.eclipse.core.tests.resources.session.TestBuilderDeltaSerialization"/>
+	</test>
   
     <test id="usecase.AllTests">
       <run class="org.eclipse.core.tests.resources.usecase.AllTests"/>
