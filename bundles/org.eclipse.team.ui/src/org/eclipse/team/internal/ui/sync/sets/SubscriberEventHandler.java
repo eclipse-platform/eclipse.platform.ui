@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
@@ -186,8 +187,11 @@ public class SubscriberEventHandler {
 	 * the queue is empty.
 	 */
 	private void createEventHandlingJob() {
-		eventHandlerJob = new Job(Policy.bind("SubscriberEventHandler.jobName")) {//$NON-NLS-1$	
-		public IStatus run(IProgressMonitor monitor) {
+		// We need to use a WorkspaceJob since
+		// the EclipseSynchronizer currently obtains rules which causes
+		// many workers to be created (see bug 41979).
+		eventHandlerJob = new WorkspaceJob(Policy.bind("SubscriberEventHandler.jobName")) {//$NON-NLS-1$	
+		public IStatus runInWorkspace(IProgressMonitor monitor) {
 				return processEvents(monitor);
 			}
 		};
