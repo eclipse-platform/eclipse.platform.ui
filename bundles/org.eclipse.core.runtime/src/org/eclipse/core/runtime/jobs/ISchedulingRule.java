@@ -34,12 +34,10 @@ public interface ISchedulingRule {
 	 * <p>
 	 * Implementations of this method must obey the rules of a partial order relation
 	 * on the set of all scheduling rules.  In particular, implementations must be reflexive
-	 * (a.contains(a) is always true), antisymmetric (a.contains(b) and b.contains(a) iff a=b), 
+	 * (a.contains(a) is always true), antisymmetric (a.contains(b) and b.contains(a) iff a.equals(b), 
 	 * and transitive (if a.contains(b) and b.contains(c), then a.contains(c)).  Implementations
 	 * of this method must return <code>false</code> when compared to a rule they
 	 * know nothing about.
-	 * <p>
- 	 * This API is experimental, and is subject to change or removal without notice.
 	 * 
 	 * @param rule the rule to check for containment
 	 * @return <code>true</code> if this rule contains the given rule, and 
