@@ -99,7 +99,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 		tree.setLabelProvider(
 			new CombinedDecoratingLabelProvider(
 				new WorkbenchLabelProvider(), 
-				WorkbenchPlugin.getDefault().getWorkbench().getDecoratorManager()));
+				WorkbenchPlugin.getDefault().getWorkbench().getDecoratorManager().getLabelDecorator()));
 		tree.setInput(WorkbenchPlugin.getPluginWorkspace().getRoot());
 		tree.setSorter(new ResourceSorter(ResourceSorter.NAME));
 
