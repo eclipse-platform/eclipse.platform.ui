@@ -923,6 +923,7 @@
                label="%TerminateAction.label"
                icon="icons/full/elcl16/terminate_co.gif"
                helpContextId="terminate_action_context"
+               definitionId="org.eclipse.debug.ui.commands.Terminate"
                class="org.eclipse.debug.internal.ui.actions.TerminateActionDelegate"
                menubarPath="threadGroup"
                id="org.eclipse.debug.ui.debugview.popupMenu.terminate">
@@ -934,6 +935,7 @@
                label="%SuspendAction.label"
                icon="icons/full/elcl16/suspend_co.gif"
                helpContextId="suspend_action_context"
+               definitionId="org.eclipse.debug.ui.commands.Suspend"
                class="org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"
                menubarPath="threadGroup"
                enablesFor="1"
@@ -946,6 +948,7 @@
                label="%ResumeAction.label"
                icon="icons/full/elcl16/resume_co.gif"
                helpContextId="resume_action_context"
+               definitionId="org.eclipse.debug.ui.commands.Resume"
                class="org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
                menubarPath="threadGroup"
                enablesFor="1"
@@ -959,6 +962,7 @@
                label="%StepReturnAction.label"
                icon="icons/full/elcl16/stepreturn_co.gif"
                helpContextId="step_return_action_context"
+               definitionId="org.eclipse.debug.ui.commands.StepReturn"
                class="org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
                menubarPath="stepReturnGroup"
                enablesFor="1"
@@ -971,6 +975,7 @@
                label="%StepOverAction.label"
                icon="icons/full/elcl16/stepover_co.gif"
                helpContextId="step_over_action_context"
+               definitionId="org.eclipse.debug.ui.commands.StepOver"
                class="org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
                menubarPath="stepOverGroup"
                enablesFor="1"
@@ -983,6 +988,7 @@
                label="%StepIntoAction.label"
                icon="icons/full/elcl16/stepinto_co.gif"
                helpContextId="step_into_action_context"
+               definitionId="org.eclipse.debug.ui.commands.StepInto"
                class="org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
                menubarPath="stepIntoGroup"
                enablesFor="1"
@@ -1006,6 +1012,7 @@
                label="%StepWithFiltersAction.label"
                icon="icons/full/elcl16/stepbystep_co.gif"
                helpContextId="step_with_filters_action_context"
+               definitionId="org.eclipse.debug.ui.commands.ToggleStepFilters"
                class="org.eclipse.debug.internal.ui.actions.ToggleStepFiltersActionDelegate"
                menubarPath="renderGroup"
                id="org.eclipse.debug.ui.debugview.popupMenu.stepWithFilters"
@@ -1433,7 +1440,7 @@
             id="org.eclipse.debug.ui.commands.ProfileLast">
       </command>
       <keyBinding
-            string="Ctrl+F11"
+            string=""
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.debug.ui.commands.ProfileLast"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
