@@ -82,7 +82,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			String[] items = (String[]) nameToConfigurationMap.keySet().toArray(new String[nameToConfigurationMap.size()]);
 			Arrays.sort(items, Collator.getInstance());
 			comboConfiguration.setItems(items);
-			Item configuration = (Item) registryConfigurationMap.get(configurationId);
+			KeyConfiguration configuration = (KeyConfiguration) registryConfigurationMap.get(configurationId);
 
 			if (configuration != null)
 				comboConfiguration.select(comboConfiguration.indexOf(configuration.getName()));
@@ -147,13 +147,13 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		registryKeyConfigurations.addAll(coreRegistry.getKeyConfigurations());
 		registryKeyConfigurations.addAll(localRegistry.getKeyConfigurations());
 		registryKeyConfigurations.addAll(preferenceRegistry.getKeyConfigurations());
-		registryConfigurationMap = Item.sortedMap(registryKeyConfigurations);
+		registryConfigurationMap = KeyConfiguration.sortedMap(registryKeyConfigurations);
 		
 		List registryScopes = new ArrayList();
 		registryScopes.addAll(coreRegistry.getScopes());
 		registryScopes.addAll(localRegistry.getScopes());
 		registryScopes.addAll(preferenceRegistry.getScopes());
-		registryScopeMap = Item.sortedMap(registryScopes);
+		registryScopeMap = Scope.sortedMap(registryScopes);
 
 		registryBindingSet = new TreeSet();		
 		registryBindingSet.addAll(coreRegistryKeyBindingSet);
@@ -167,7 +167,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		Iterator iterator = configurations.iterator();
 
 		while (iterator.hasNext()) {
-			Item configuration = (Item) iterator.next();
+			KeyConfiguration configuration = (KeyConfiguration) iterator.next();
 			String name = configuration.getName();
 			
 			if (!nameToConfigurationMap.containsKey(name))
@@ -190,7 +190,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 				comboConfiguration.clearSelection();
 				comboConfiguration.deselectAll();
 				configurationId = preferenceStore.getDefaultString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
-				Item configuration = (Item) registryConfigurationMap.get(configurationId);
+				KeyConfiguration configuration = (KeyConfiguration) registryConfigurationMap.get(configurationId);
 
 				if (configuration != null)
 					comboConfiguration.select(comboConfiguration.indexOf(configuration.getName()));
@@ -208,7 +208,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 				String configurationName = comboConfiguration.getItem(i);
 				
 				if (configurationName != null) {				
-					Item configuration = (Item) nameToConfigurationMap.get(configurationName);
+					KeyConfiguration configuration = (KeyConfiguration) nameToConfigurationMap.get(configurationName);
 					
 					if (configuration != null) {
 						configurationId = configuration.getId();

@@ -25,22 +25,22 @@ abstract class AbstractMutableRegistry extends AbstractRegistry {
 
 	public void setActiveGestureConfigurations(List activeGestureConfigurations)
 		throws IllegalArgumentException {
-		this.activeGestureConfigurations = Util.safeCopy(activeGestureConfigurations, Item.class);
+		this.activeGestureConfigurations = Util.safeCopy(activeGestureConfigurations, ActiveGestureConfiguration.class);
 	}
 	
 	public void setActiveKeyConfigurations(List activeKeyConfigurations)
 		throws IllegalArgumentException {
-		this.activeKeyConfigurations = Util.safeCopy(activeKeyConfigurations, Item.class);
+		this.activeKeyConfigurations = Util.safeCopy(activeKeyConfigurations, ActiveKeyConfiguration.class);
 	}
 	
 	public void setCategories(List categories)
 		throws IllegalArgumentException {
-		this.categories = Util.safeCopy(categories, Item.class);	
+		this.categories = Util.safeCopy(categories, Category.class);	
 	}
 	
 	public void setCommands(List commands)
 		throws IllegalArgumentException {
-		this.commands = Util.safeCopy(commands, Item.class);	
+		this.commands = Util.safeCopy(commands, Command.class);	
 	}
 	
 	public void setGestureBindings(List gestureBindings)
@@ -50,7 +50,7 @@ abstract class AbstractMutableRegistry extends AbstractRegistry {
 	
 	public void setGestureConfigurations(List gestureConfigurations)
 		throws IllegalArgumentException {
-		this.gestureConfigurations = Util.safeCopy(gestureConfigurations, Item.class);	
+		this.gestureConfigurations = Util.safeCopy(gestureConfigurations, GestureConfiguration.class);	
 	}
 	
 	public void setKeyBindings(List keyBindings)
@@ -60,7 +60,7 @@ abstract class AbstractMutableRegistry extends AbstractRegistry {
 	
 	public void setKeyConfigurations(List keyConfigurations)
 		throws IllegalArgumentException {
-		this.keyConfigurations = Util.safeCopy(keyConfigurations, Item.class);		
+		this.keyConfigurations = Util.safeCopy(keyConfigurations, KeyConfiguration.class);		
 	}
 	
 	public void setRegionalGestureBindings(List regionalGestureBindings)
@@ -75,6 +75,6 @@ abstract class AbstractMutableRegistry extends AbstractRegistry {
 	
 	public void setScopes(List scopes)
 		throws IllegalArgumentException {
-		this.scopes = Util.safeCopy(scopes, Item.class);	
+		this.scopes = Util.safeCopy(scopes, Scope.class);	
 	}
 }

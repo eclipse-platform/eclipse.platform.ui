@@ -18,58 +18,57 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public final class Item implements Comparable {
+public final class KeyConfiguration implements Comparable {
 
 	private final static int HASH_INITIAL = 11;
 	private final static int HASH_FACTOR = 21;
 
 	private static Comparator nameComparator;
 	
-	public static Item create(String description, String icon, String id, String name, String parent, String plugin)
+	public static KeyConfiguration create(String description, String id, String name, String parent, String plugin)
 		throws IllegalArgumentException {
-		return new Item(description, icon, id, name, parent, plugin);
+		return new KeyConfiguration(description, id, name, parent, plugin);
 	}
 
 	public static Comparator nameComparator() {
 		if (nameComparator == null)
 			nameComparator = new Comparator() {
 				public int compare(Object left, Object right) {
-					return Collator.getInstance().compare(((Item) left).name, ((Item) right).name);
+					return Collator.getInstance().compare(((KeyConfiguration) left).name, ((KeyConfiguration) right).name);
 				}	
 			};		
 		
 		return nameComparator;
 	}
 
-	public static SortedMap sortedMap(List items)
+	public static SortedMap sortedMap(List keyConfigurations)
 		throws IllegalArgumentException {
-		if (items == null)
+		if (keyConfigurations == null)
 			throw new IllegalArgumentException();
 
 		SortedMap sortedMap = new TreeMap();			
-		Iterator iterator = items.iterator();
+		Iterator iterator = keyConfigurations.iterator();
 		
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
 			
-			if (!(object instanceof Item))
+			if (!(object instanceof KeyConfiguration))
 				throw new IllegalArgumentException();
 				
-			Item item = (Item) object;
-			sortedMap.put(item.id, item);									
+			KeyConfiguration keyConfiguration = (KeyConfiguration) object;
+			sortedMap.put(keyConfiguration.id, keyConfiguration);									
 		}			
 		
 		return sortedMap;
 	}
 
 	private String description;
-	private String icon;
 	private String id;
 	private String name;
 	private String parent;
 	private String plugin;
 	
-	private Item(String description, String icon, String id, String name, String parent, String plugin)
+	private KeyConfiguration(String description, String id, String name, String parent, String plugin)
 		throws IllegalArgumentException {
 		super();
 		
@@ -77,7 +76,6 @@ public final class Item implements Comparable {
 			throw new IllegalArgumentException();
 		
 		this.description = description;
-		this.icon = icon;
 		this.id = id;
 		this.name = name;
 		this.parent = parent;
@@ -85,7 +83,7 @@ public final class Item implements Comparable {
 	}
 	
 	public int compareTo(Object object) {
-		Item item = (Item) object;
+		KeyConfiguration item = (KeyConfiguration) object;
 		int compareTo = id.compareTo(item.id);
 		
 		if (compareTo == 0) {		
@@ -94,15 +92,11 @@ public final class Item implements Comparable {
 			if (compareTo == 0) {
 				Util.compare(description, item.description);
 				
-				if (compareTo == 0) {		
-					compareTo = Util.compare(icon, item.icon);
+				if (compareTo == 0) {
+					compareTo = Util.compare(parent, item.parent);
 
-					if (compareTo == 0) {
-						compareTo = Util.compare(parent, item.parent);
-
-						if (compareTo == 0)
-							compareTo = Util.compare(plugin, item.plugin);
-					}										
+					if (compareTo == 0)
+						compareTo = Util.compare(plugin, item.plugin);								
 				}							
 			}
 		}
@@ -111,20 +105,16 @@ public final class Item implements Comparable {
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof Item))
+		if (!(object instanceof KeyConfiguration))
 			return false;
 
-		Item item = (Item) object;	
-		return Util.equals(description, item.description) && Util.equals(icon, item.icon) && id.equals(item.id) && name.equals(item.name) && 
-			Util.equals(parent, item.parent) && Util.equals(plugin, item.plugin);
+		KeyConfiguration keyConfiguration = (KeyConfiguration) object;	
+		return Util.equals(description, keyConfiguration.description) && id.equals(keyConfiguration.id) && name.equals(keyConfiguration) && Util.equals(parent, keyConfiguration.parent) && 
+			Util.equals(plugin, keyConfiguration.plugin);
 	}
 
 	public String getDescription() {
 		return description;	
-	}
-	
-	public String getIcon() {
-		return icon;
 	}
 	
 	public String getId() {
@@ -146,7 +136,6 @@ public final class Item implements Comparable {
 	public int hashCode() {
 		int result = HASH_INITIAL;
 		result = result * HASH_FACTOR + Util.hashCode(description);
-		result = result * HASH_FACTOR + Util.hashCode(icon);
 		result = result * HASH_FACTOR + id.hashCode();
 		result = result * HASH_FACTOR + name.hashCode();
 		result = result * HASH_FACTOR + Util.hashCode(parent);

@@ -41,15 +41,15 @@ public class KeyManager {
 		return instance;	
 	}
 
-	private static SortedMap buildPathMap(SortedMap itemMap) {
+	private static SortedMap buildPathMapForGestureConfigurationMap(SortedMap gestureConfigurationMap) {
 		SortedMap pathMap = new TreeMap();
-		Iterator iterator = itemMap.keySet().iterator();
+		Iterator iterator = gestureConfigurationMap.keySet().iterator();
 
 		while (iterator.hasNext()) {
 			String id = (String) iterator.next();
 			
 			if (id != null) {			
-				Path path = pathForItem(id, itemMap);
+				Path path = pathForGestureConfiguration(id, gestureConfigurationMap);
 			
 				if (path != null)
 					pathMap.put(id, path);
@@ -59,7 +59,43 @@ public class KeyManager {
 		return pathMap;		
 	}
 
-	private static Path pathForItem(String id, Map itemMap) {
+	private static SortedMap buildPathMapForKeyConfigurationMap(SortedMap keyConfigurationMap) {
+		SortedMap pathMap = new TreeMap();
+		Iterator iterator = keyConfigurationMap.keySet().iterator();
+
+		while (iterator.hasNext()) {
+			String id = (String) iterator.next();
+			
+			if (id != null) {			
+				Path path = pathForKeyConfiguration(id, keyConfigurationMap);
+			
+				if (path != null)
+					pathMap.put(id, path);
+			}			
+		}
+
+		return pathMap;		
+	}
+
+	private static SortedMap buildPathMapForScopeMap(SortedMap scopeMap) {
+		SortedMap pathMap = new TreeMap();
+		Iterator iterator = scopeMap.keySet().iterator();
+
+		while (iterator.hasNext()) {
+			String id = (String) iterator.next();
+			
+			if (id != null) {			
+				Path path = pathForScope(id, scopeMap);
+			
+				if (path != null)
+					pathMap.put(id, path);
+			}			
+		}
+
+		return pathMap;		
+	}
+
+	private static Path pathForGestureConfiguration(String id, Map gestureConfigurationMap) {
 		Path path = null;
 
 		if (id != null) {
@@ -69,20 +105,45 @@ public class KeyManager {
 				if (pathItems.contains(id))
 					return null;
 							
-				Item item = (Item) itemMap.get(id);
+				GestureConfiguration gestureConfiguration = (GestureConfiguration) gestureConfigurationMap.get(id);
 				
-				if (item == null)
+				if (gestureConfiguration == null)
 					return null;
 							
 				pathItems.add(0, id);
-				id = item.getParent();
+				id = gestureConfiguration.getParent();
 			}
 		
 			path = Path.create(pathItems);
 		}
 		
 		return path;			
-	}	
+	}
+
+	private static Path pathForKeyConfiguration(String id, Map keyConfigurationMap) {
+		Path path = null;
+
+		if (id != null) {
+			List pathItems = new ArrayList();
+
+			while (id != null) {	
+				if (pathItems.contains(id))
+					return null;
+							
+				KeyConfiguration keyConfiguration = (KeyConfiguration) keyConfigurationMap.get(id);
+				
+				if (keyConfiguration == null)
+					return null;
+							
+				pathItems.add(0, id);
+				id = keyConfiguration.getParent();
+			}
+		
+			path = Path.create(pathItems);
+		}
+		
+		return path;			
+	}
 
 	private static Path pathForLocale(String locale) {
 		Path path = null;
@@ -123,6 +184,31 @@ public class KeyManager {
 			
 		return path;		
 	}
+
+	private static Path pathForScope(String id, Map scopeMap) {
+		Path path = null;
+
+		if (id != null) {
+			List pathItems = new ArrayList();
+
+			while (id != null) {	
+				if (pathItems.contains(id))
+					return null;
+							
+				Scope scope = (Scope) scopeMap.get(id);
+				
+				if (scope == null)
+					return null;
+							
+				pathItems.add(0, id);
+				id = scope.getParent();
+			}
+		
+			path = Path.create(pathItems);
+		}
+		
+		return path;			
+	}	
 
 	static SortedSet solveRegionalKeyBindingSet(SortedSet regionalBindingSet, State[] states) {
 		
@@ -333,15 +419,15 @@ public class KeyManager {
 		registryKeyConfigurations.addAll(coreRegistry.getKeyConfigurations());
 		registryKeyConfigurations.addAll(localRegistry.getKeyConfigurations());
 		registryKeyConfigurations.addAll(preferenceRegistry.getKeyConfigurations());
-		SortedMap registryKeyConfigurationMap = Item.sortedMap(registryKeyConfigurations);
-		SortedMap keyConfigurationMap = buildPathMap(registryKeyConfigurationMap);
+		SortedMap registryKeyConfigurationMap = KeyConfiguration.sortedMap(registryKeyConfigurations);
+		SortedMap keyConfigurationMap = buildPathMapForKeyConfigurationMap(registryKeyConfigurationMap);
 		
 		List registryScopes = new ArrayList();
 		registryScopes.addAll(coreRegistry.getScopes());
 		registryScopes.addAll(localRegistry.getScopes());
 		registryScopes.addAll(preferenceRegistry.getScopes());
-		SortedMap registryScopeMap = Item.sortedMap(registryScopes);
-		SortedMap scopeMap = buildPathMap(registryScopeMap);
+		SortedMap registryScopeMap = Scope.sortedMap(registryScopes);
+		SortedMap scopeMap = buildPathMapForScopeMap(registryScopeMap);
 
 		SortedSet coreRegistryKeyBindingSet = new TreeSet();
 		coreRegistryKeyBindingSet.addAll(coreRegistry.getKeyBindings());	

@@ -88,17 +88,17 @@ public final class PreferenceRegistry extends AbstractMutableRegistry {
 			
 			try {
 				IMemento memento = XMLMemento.createReadRoot(reader);
-				activeGestureConfigurations = Collections.unmodifiableList(Persistence.readItems(memento, Persistence.TAG_ACTIVE_GESTURE_CONFIGURATION, null));
-				activeKeyConfigurations = Collections.unmodifiableList(Persistence.readItems(memento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, null));
-				categories = Collections.unmodifiableList(Persistence.readItems(memento, Persistence.TAG_CATEGORY, null));
-				commands = Collections.unmodifiableList(Persistence.readItems(memento, Persistence.TAG_COMMAND, null));
+				activeGestureConfigurations = Collections.unmodifiableList(Persistence.readActiveGestureConfigurations(memento, Persistence.TAG_ACTIVE_GESTURE_CONFIGURATION, null));
+				activeKeyConfigurations = Collections.unmodifiableList(Persistence.readActiveKeyConfigurations(memento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, null));
+				categories = Collections.unmodifiableList(Persistence.readCategories(memento, Persistence.TAG_CATEGORY, null));
+				commands = Collections.unmodifiableList(Persistence.readCommands(memento, Persistence.TAG_COMMAND, null));
 				gestureBindings = Collections.unmodifiableList(Persistence.readGestureBindings(memento, Persistence.TAG_GESTURE_BINDING, null));
-				gestureConfigurations = Collections.unmodifiableList(Persistence.readItems(memento, Persistence.TAG_GESTURE_CONFIGURATION, null));
+				gestureConfigurations = Collections.unmodifiableList(Persistence.readGestureConfigurations(memento, Persistence.TAG_GESTURE_CONFIGURATION, null));
 				keyBindings = Collections.unmodifiableList(Persistence.readKeyBindings(memento, Persistence.TAG_KEY_BINDING, null));
-				keyConfigurations = Collections.unmodifiableList(Persistence.readItems(memento, Persistence.TAG_KEY_CONFIGURATION, null));
+				keyConfigurations = Collections.unmodifiableList(Persistence.readKeyConfigurations(memento, Persistence.TAG_KEY_CONFIGURATION, null));
 				regionalGestureBindings = Collections.unmodifiableList(Persistence.readRegionalGestureBindings(memento, Persistence.TAG_REGIONAL_GESTURE_BINDING, null));
 				regionalKeyBindings = Collections.unmodifiableList(Persistence.readRegionalKeyBindings(memento, Persistence.TAG_REGIONAL_KEY_BINDING, null));
-				scopes = Collections.unmodifiableList(Persistence.readItems(memento, Persistence.TAG_SCOPE, null));
+				scopes = Collections.unmodifiableList(Persistence.readScopes(memento, Persistence.TAG_SCOPE, null));
 			} catch (WorkbenchException eWorkbench) {
 				throw new IOException();
 			} finally {
@@ -115,17 +115,17 @@ public final class PreferenceRegistry extends AbstractMutableRegistry {
 	public void save()
 		throws IOException {
 		XMLMemento xmlMemento = XMLMemento.createWriteRoot(TAG_ROOT);		
-		Persistence.writeItems(xmlMemento, Persistence.TAG_ACTIVE_GESTURE_CONFIGURATION, activeGestureConfigurations);		
-		Persistence.writeItems(xmlMemento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, activeKeyConfigurations);		
-		Persistence.writeItems(xmlMemento, Persistence.TAG_CATEGORY, categories);		
-		Persistence.writeItems(xmlMemento, Persistence.TAG_COMMAND, commands);
+		Persistence.writeActiveGestureConfigurations(xmlMemento, Persistence.TAG_ACTIVE_GESTURE_CONFIGURATION, activeGestureConfigurations);		
+		Persistence.writeActiveKeyConfigurations(xmlMemento, Persistence.TAG_ACTIVE_KEY_CONFIGURATION, activeKeyConfigurations);		
+		Persistence.writeCategories(xmlMemento, Persistence.TAG_CATEGORY, categories);		
+		Persistence.writeCommands(xmlMemento, Persistence.TAG_COMMAND, commands);
 		Persistence.writeGestureBindings(xmlMemento, Persistence.TAG_GESTURE_BINDING, gestureBindings);
-		Persistence.writeItems(xmlMemento, Persistence.TAG_GESTURE_CONFIGURATION, gestureConfigurations);
+		Persistence.writeGestureConfigurations(xmlMemento, Persistence.TAG_GESTURE_CONFIGURATION, gestureConfigurations);
 		Persistence.writeKeyBindings(xmlMemento, Persistence.TAG_KEY_BINDING, keyBindings);
-		Persistence.writeItems(xmlMemento, Persistence.TAG_KEY_CONFIGURATION, keyConfigurations);
+		Persistence.writeKeyConfigurations(xmlMemento, Persistence.TAG_KEY_CONFIGURATION, keyConfigurations);
 		Persistence.writeRegionalGestureBindings(xmlMemento, Persistence.TAG_REGIONAL_GESTURE_BINDING, regionalGestureBindings);
 		Persistence.writeRegionalKeyBindings(xmlMemento, Persistence.TAG_REGIONAL_KEY_BINDING, regionalKeyBindings);
-		Persistence.writeItems(xmlMemento, Persistence.TAG_SCOPE, scopes);
+		Persistence.writeScopes(xmlMemento, Persistence.TAG_SCOPE, scopes);
 		Writer writer = new StringWriter();
 
 		try {

@@ -203,37 +203,37 @@ public final class CoreRegistry extends AbstractRegistry {
 		}
 
 		private boolean readActiveGestureConfiguration(IConfigurationElement element) {
-			Item item = Persistence.readItem(ConfigurationElementMemento.create(element), getPlugin(element));
+			ActiveGestureConfiguration activeGestureConfiguration = Persistence.readActiveGestureConfiguration(ConfigurationElementMemento.create(element), getPlugin(element));
 		
-			if (item != null)
-				activeGestureConfigurations.add(item);	
+			if (activeGestureConfiguration != null)
+				activeGestureConfigurations.add(activeGestureConfiguration);	
 			
 			return true;
 		}
 
 		private boolean readActiveKeyConfiguration(IConfigurationElement element) {
-			Item item = Persistence.readItem(ConfigurationElementMemento.create(element), getPlugin(element));
+			ActiveKeyConfiguration activeKeyConfiguration = Persistence.readActiveKeyConfiguration(ConfigurationElementMemento.create(element), getPlugin(element));
 		
-			if (item != null)
-				activeKeyConfigurations.add(item);	
+			if (activeKeyConfiguration != null)
+				activeKeyConfigurations.add(activeKeyConfiguration);	
 			
 			return true;
 		}
 
 		private boolean readCategory(IConfigurationElement element) {
-			Item item = Persistence.readItem(ConfigurationElementMemento.create(element), getPlugin(element));
+			Category category = Persistence.readCategory(ConfigurationElementMemento.create(element), getPlugin(element));
 		
-			if (item != null)
-				categories.add(item);	
+			if (category != null)
+				categories.add(category);	
 			
 			return true;
 		}
 
 		private boolean readCommand(IConfigurationElement element) {
-			Item item = Persistence.readItem(ConfigurationElementMemento.create(element), getPlugin(element));
+			Command command = Persistence.readCommand(ConfigurationElementMemento.create(element), getPlugin(element));
 		
-			if (item != null)
-				commands.add(item);	
+			if (command != null)
+				commands.add(command);	
 			
 			return true;
 		}
@@ -313,10 +313,10 @@ public final class CoreRegistry extends AbstractRegistry {
 		}
 
 		private boolean readGestureConfiguration(IConfigurationElement element) {
-			Item item = Persistence.readItem(ConfigurationElementMemento.create(element), getPlugin(element));
+			GestureConfiguration gestureConfiguration = Persistence.readGestureConfiguration(ConfigurationElementMemento.create(element), getPlugin(element));
 		
-			if (item != null)
-				gestureConfigurations.add(item);	
+			if (gestureConfiguration != null)
+				gestureConfigurations.add(gestureConfiguration);	
 			
 			return true;
 		}
@@ -331,10 +331,10 @@ public final class CoreRegistry extends AbstractRegistry {
 		}
 	
 		private boolean readKeyConfiguration(IConfigurationElement element) {
-			Item item = Persistence.readItem(ConfigurationElementMemento.create(element), getPlugin(element));
+			KeyConfiguration keyConfiguration = Persistence.readKeyConfiguration(ConfigurationElementMemento.create(element), getPlugin(element));
 		
-			if (item != null)
-				keyConfigurations.add(item);	
+			if (keyConfiguration != null)
+				keyConfigurations.add(keyConfiguration);	
 			
 			return true;
 		}
@@ -358,10 +358,10 @@ public final class CoreRegistry extends AbstractRegistry {
 		}
 
 		private boolean readScope(IConfigurationElement element) {
-			Item item = Persistence.readItem(ConfigurationElementMemento.create(element), getPlugin(element));
+			Scope scope = Persistence.readScope(ConfigurationElementMemento.create(element), getPlugin(element));
 		
-			if (item != null)
-				scopes.add(item);	
+			if (scope != null)
+				scopes.add(scope);	
 			
 			return true;
 		}

@@ -29,7 +29,6 @@ final class Persistence {
 	final static String TAG_GESTURE_STRING = "gestureString"; //$NON-NLS-1$
 	final static String TAG_GESTURE_SEQUENCE = "gestureSequence"; //$NON-NLS-1$
 	final static String TAG_GESTURE_STROKE = "gestureStroke"; //$NON-NLS-1$
-	final static String TAG_ICON = "icon"; //$NON-NLS-1$
 	final static String TAG_ID = "id"; //$NON-NLS-1$
 	final static String TAG_KEY_BINDING = "keyBinding"; //$NON-NLS-1$
 	final static String TAG_KEY_CONFIGURATION = "keyConfiguration"; //$NON-NLS-1$
@@ -53,20 +52,145 @@ final class Persistence {
 	final static KeySequence ZERO_LENGTH_KEY_SEQUENCE = KeySequence.create(); //$NON-NLS-1$
 	final static String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
 
-	static String readActiveGestureConfiguration(IMemento memento)
+	static ActiveGestureConfiguration readActiveGestureConfiguration(IMemento memento, String pluginOverride)
 		throws IllegalArgumentException {
 		if (memento == null)
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException();			
 
-		return memento.getString(TAG_ID);
+		String plugin = pluginOverride != null ? pluginOverride : memento.getString(TAG_PLUGIN);
+		String value = memento.getString(TAG_VALUE);
+
+		if (value == null)
+			value = ZERO_LENGTH_STRING;
+
+		return ActiveGestureConfiguration.create(plugin, value);
 	}
 
-	static String readActiveKeyConfiguration(IMemento memento)
+	static List readActiveGestureConfigurations(IMemento memento, String name, String pluginOverride)
+		throws IllegalArgumentException {		
+		if (memento == null || name == null)
+			throw new IllegalArgumentException();			
+	
+		IMemento[] mementos = memento.getChildren(name);
+	
+		if (mementos == null)
+			throw new IllegalArgumentException();
+	
+		List list = new ArrayList(mementos.length);
+	
+		for (int i = 0; i < mementos.length; i++)
+			list.add(readActiveGestureConfiguration(mementos[i], pluginOverride));
+	
+		return list;				
+	}
+
+	static ActiveKeyConfiguration readActiveKeyConfiguration(IMemento memento, String pluginOverride)
 		throws IllegalArgumentException {
 		if (memento == null)
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException();			
 
-		return memento.getString(TAG_ID);
+		String plugin = pluginOverride != null ? pluginOverride : memento.getString(TAG_PLUGIN);
+		String value = memento.getString(TAG_VALUE);
+
+		if (value == null)
+			value = ZERO_LENGTH_STRING;
+
+		return ActiveKeyConfiguration.create(plugin, value);
+	}
+
+	static List readActiveKeyConfigurations(IMemento memento, String name, String pluginOverride)
+		throws IllegalArgumentException {		
+		if (memento == null || name == null)
+			throw new IllegalArgumentException();			
+	
+		IMemento[] mementos = memento.getChildren(name);
+	
+		if (mementos == null)
+			throw new IllegalArgumentException();
+	
+		List list = new ArrayList(mementos.length);
+	
+		for (int i = 0; i < mementos.length; i++)
+			list.add(readActiveKeyConfiguration(mementos[i], pluginOverride));
+	
+		return list;				
+	}
+
+	static Category readCategory(IMemento memento, String pluginOverride)
+		throws IllegalArgumentException {
+		if (memento == null)
+			throw new IllegalArgumentException();			
+
+		String description = memento.getString(TAG_DESCRIPTION);
+		String id = memento.getString(TAG_ID);
+
+		if (id == null)
+			id = ZERO_LENGTH_STRING;
+		
+		String name = memento.getString(TAG_NAME);
+
+		if (name == null)
+			name = ZERO_LENGTH_STRING;
+		
+		String plugin = pluginOverride != null ? pluginOverride : memento.getString(TAG_PLUGIN);
+		return Category.create(description, id, name, plugin);
+	}
+
+	static List readCategories(IMemento memento, String name, String pluginOverride)
+		throws IllegalArgumentException {		
+		if (memento == null || name == null)
+			throw new IllegalArgumentException();			
+	
+		IMemento[] mementos = memento.getChildren(name);
+	
+		if (mementos == null)
+			throw new IllegalArgumentException();
+	
+		List list = new ArrayList(mementos.length);
+	
+		for (int i = 0; i < mementos.length; i++)
+			list.add(readCategory(mementos[i], pluginOverride));
+	
+		return list;				
+	}
+
+	static Command readCommand(IMemento memento, String pluginOverride)
+		throws IllegalArgumentException {
+		if (memento == null)
+			throw new IllegalArgumentException();			
+
+		String category = memento.getString(TAG_CATEGORY);
+		String description = memento.getString(TAG_DESCRIPTION);
+		String id = memento.getString(TAG_ID);
+
+		if (id == null)
+			id = ZERO_LENGTH_STRING;
+		
+		String name = memento.getString(TAG_NAME);
+
+		if (name == null)
+			name = ZERO_LENGTH_STRING;
+		
+		String plugin = pluginOverride != null ? pluginOverride : memento.getString(TAG_PLUGIN);
+		return Command.create(category, description, id, name, plugin);
+	}
+
+	static List readCommands(IMemento memento, String name, String pluginOverride)
+		throws IllegalArgumentException {		
+		if (memento == null || name == null)
+			throw new IllegalArgumentException();			
+	
+		IMemento[] mementos = memento.getChildren(name);
+	
+		if (mementos == null)
+			throw new IllegalArgumentException();
+	
+		List list = new ArrayList(mementos.length);
+	
+		for (int i = 0; i < mementos.length; i++)
+			list.add(readCommand(mementos[i], pluginOverride));
+	
+		return list;				
 	}
 
 	static GestureBinding readGestureBinding(IMemento memento, String pluginOverride)
@@ -129,6 +253,45 @@ final class Persistence {
 	
 		return list;				
 	}
+
+	static GestureConfiguration readGestureConfiguration(IMemento memento, String pluginOverride)
+		throws IllegalArgumentException {
+		if (memento == null)
+			throw new IllegalArgumentException();			
+
+		String description = memento.getString(TAG_DESCRIPTION);
+		String id = memento.getString(TAG_ID);
+
+		if (id == null)
+			id = ZERO_LENGTH_STRING;
+		
+		String name = memento.getString(TAG_NAME);
+
+		if (name == null)
+			name = ZERO_LENGTH_STRING;
+		
+		String parent = memento.getString(TAG_PARENT);
+		String plugin = pluginOverride != null ? pluginOverride : memento.getString(TAG_PLUGIN);
+		return GestureConfiguration.create(description, id, name, parent, plugin);
+	}
+
+	static List readGestureConfigurations(IMemento memento, String name, String pluginOverride)
+		throws IllegalArgumentException {		
+		if (memento == null || name == null)
+			throw new IllegalArgumentException();			
+	
+		IMemento[] mementos = memento.getChildren(name);
+	
+		if (mementos == null)
+			throw new IllegalArgumentException();
+	
+		List list = new ArrayList(mementos.length);
+	
+		for (int i = 0; i < mementos.length; i++)
+			list.add(readGestureConfiguration(mementos[i], pluginOverride));
+	
+		return list;				
+	}
 	
 	static GestureSequence readGestureSequence(IMemento memento)
 		throws IllegalArgumentException {
@@ -159,46 +322,6 @@ final class Persistence {
 			value = ZERO;
 		
 		return GestureStroke.create(value.intValue());
-	}
-
-	static Item readItem(IMemento memento, String pluginOverride)
-		throws IllegalArgumentException {
-		if (memento == null)
-			throw new IllegalArgumentException();			
-
-		String description = memento.getString(TAG_DESCRIPTION);
-		String icon = memento.getString(TAG_ICON);
-		String id = memento.getString(TAG_ID);
-
-		if (id == null)
-			id = ZERO_LENGTH_STRING;
-		
-		String name = memento.getString(TAG_NAME);
-
-		if (name == null)
-			name = ZERO_LENGTH_STRING;
-		
-		String parent = memento.getString(TAG_PARENT);		
-		String plugin = pluginOverride != null ? pluginOverride : memento.getString(TAG_PLUGIN);
-		return Item.create(description, icon, id, name, parent, plugin);
-	}
-
-	static List readItems(IMemento memento, String name, String pluginOverride)
-		throws IllegalArgumentException {		
-		if (memento == null || name == null)
-			throw new IllegalArgumentException();			
-	
-		IMemento[] mementos = memento.getChildren(name);
-	
-		if (mementos == null)
-			throw new IllegalArgumentException();
-	
-		List list = new ArrayList(mementos.length);
-	
-		for (int i = 0; i < mementos.length; i++)
-			list.add(readItem(mementos[i], pluginOverride));
-	
-		return list;				
 	}
 
 	static KeyBinding readKeyBinding(IMemento memento, String pluginOverride)
@@ -258,6 +381,45 @@ final class Persistence {
 	
 		for (int i = 0; i < mementos.length; i++)
 			list.add(readKeyBinding(mementos[i], pluginOverride));
+	
+		return list;				
+	}
+
+	static KeyConfiguration readKeyConfiguration(IMemento memento, String pluginOverride)
+		throws IllegalArgumentException {
+		if (memento == null)
+			throw new IllegalArgumentException();			
+
+		String description = memento.getString(TAG_DESCRIPTION);
+		String id = memento.getString(TAG_ID);
+
+		if (id == null)
+			id = ZERO_LENGTH_STRING;
+		
+		String name = memento.getString(TAG_NAME);
+
+		if (name == null)
+			name = ZERO_LENGTH_STRING;
+		
+		String parent = memento.getString(TAG_PARENT);
+		String plugin = pluginOverride != null ? pluginOverride : memento.getString(TAG_PLUGIN);
+		return KeyConfiguration.create(description, id, name, parent, plugin);
+	}
+
+	static List readKeyConfigurations(IMemento memento, String name, String pluginOverride)
+		throws IllegalArgumentException {		
+		if (memento == null || name == null)
+			throw new IllegalArgumentException();			
+	
+		IMemento[] mementos = memento.getChildren(name);
+	
+		if (mementos == null)
+			throw new IllegalArgumentException();
+	
+		List list = new ArrayList(mementos.length);
+	
+		for (int i = 0; i < mementos.length; i++)
+			list.add(readKeyConfiguration(mementos[i], pluginOverride));
 	
 		return list;				
 	}
@@ -381,6 +543,158 @@ final class Persistence {
 		return list;				
 	}
 
+	static Scope readScope(IMemento memento, String pluginOverride)
+		throws IllegalArgumentException {
+		if (memento == null)
+			throw new IllegalArgumentException();			
+
+		String description = memento.getString(TAG_DESCRIPTION);
+		String id = memento.getString(TAG_ID);
+
+		if (id == null)
+			id = ZERO_LENGTH_STRING;
+		
+		String name = memento.getString(TAG_NAME);
+
+		if (name == null)
+			name = ZERO_LENGTH_STRING;
+		
+		String parent = memento.getString(TAG_PARENT);
+		String plugin = pluginOverride != null ? pluginOverride : memento.getString(TAG_PLUGIN);
+		return Scope.create(description, id, name, parent, plugin);
+	}
+
+	static List readScopes(IMemento memento, String name, String pluginOverride)
+		throws IllegalArgumentException {		
+		if (memento == null || name == null)
+			throw new IllegalArgumentException();			
+	
+		IMemento[] mementos = memento.getChildren(name);
+	
+		if (mementos == null)
+			throw new IllegalArgumentException();
+	
+		List list = new ArrayList(mementos.length);
+	
+		for (int i = 0; i < mementos.length; i++)
+			list.add(readScope(mementos[i], pluginOverride));
+	
+		return list;				
+	}
+
+	static void writeActiveGestureConfiguration(IMemento memento, ActiveGestureConfiguration activeGestureConfiguration)
+		throws IllegalArgumentException {
+		if (memento == null || activeGestureConfiguration == null)
+			throw new IllegalArgumentException();
+
+		memento.putString(TAG_PLUGIN, activeGestureConfiguration.getPlugin());
+		memento.putString(TAG_VALUE, activeGestureConfiguration.getValue());
+	}
+
+	static void writeActiveGestureConfigurations(IMemento memento, String name, List activeGestureConfigurations)
+		throws IllegalArgumentException {
+		if (memento == null || name == null || activeGestureConfigurations == null)
+			throw new IllegalArgumentException();
+		
+		activeGestureConfigurations = new ArrayList(activeGestureConfigurations);
+		Iterator iterator = activeGestureConfigurations.iterator();
+		
+		while (iterator.hasNext()) 
+			if (!(iterator.next() instanceof ActiveGestureConfiguration))
+				throw new IllegalArgumentException();
+
+		iterator = activeGestureConfigurations.iterator();
+
+		while (iterator.hasNext()) 
+			writeActiveGestureConfiguration(memento.createChild(name), (ActiveGestureConfiguration) iterator.next());
+	}
+	
+	static void writeActiveKeyConfiguration(IMemento memento, ActiveKeyConfiguration activeKeyConfiguration)
+		throws IllegalArgumentException {
+		if (memento == null || activeKeyConfiguration == null)
+			throw new IllegalArgumentException();
+
+		memento.putString(TAG_PLUGIN, activeKeyConfiguration.getPlugin());
+		memento.putString(TAG_VALUE, activeKeyConfiguration.getValue());
+	}
+
+	static void writeActiveKeyConfigurations(IMemento memento, String name, List activeKeyConfigurations)
+		throws IllegalArgumentException {
+		if (memento == null || name == null || activeKeyConfigurations == null)
+			throw new IllegalArgumentException();
+		
+		activeKeyConfigurations = new ArrayList(activeKeyConfigurations);
+		Iterator iterator = activeKeyConfigurations.iterator();
+		
+		while (iterator.hasNext()) 
+			if (!(iterator.next() instanceof ActiveKeyConfiguration))
+				throw new IllegalArgumentException();
+
+		iterator = activeKeyConfigurations.iterator();
+
+		while (iterator.hasNext()) 
+			writeActiveKeyConfiguration(memento.createChild(name), (ActiveKeyConfiguration) iterator.next());
+	}
+
+	static void writeCategory(IMemento memento, Category category)
+		throws IllegalArgumentException {
+		if (memento == null || category == null)
+			throw new IllegalArgumentException();
+
+		memento.putString(TAG_DESCRIPTION, category.getDescription());
+		memento.putString(TAG_ID, category.getId());
+		memento.putString(TAG_NAME, category.getName());
+		memento.putString(TAG_PLUGIN, category.getPlugin());
+	}
+
+	static void writeCategories(IMemento memento, String name, List categories)
+		throws IllegalArgumentException {
+		if (memento == null || name == null || categories == null)
+			throw new IllegalArgumentException();
+		
+		categories = new ArrayList(categories);
+		Iterator iterator = categories.iterator();
+		
+		while (iterator.hasNext()) 
+			if (!(iterator.next() instanceof Category))
+				throw new IllegalArgumentException();
+
+		iterator = categories.iterator();
+
+		while (iterator.hasNext()) 
+			writeCategory(memento.createChild(name), (Category) iterator.next());
+	}
+
+	static void writeCommand(IMemento memento, Command command)
+		throws IllegalArgumentException {
+		if (memento == null || command == null)
+			throw new IllegalArgumentException();
+
+		memento.putString(TAG_CATEGORY, command.getCategory());
+		memento.putString(TAG_DESCRIPTION, command.getDescription());
+		memento.putString(TAG_ID, command.getId());
+		memento.putString(TAG_NAME, command.getName());
+		memento.putString(TAG_PLUGIN, command.getPlugin());
+	}
+
+	static void writeCommands(IMemento memento, String name, List commands)
+		throws IllegalArgumentException {
+		if (memento == null || name == null || commands == null)
+			throw new IllegalArgumentException();
+		
+		commands = new ArrayList(commands);
+		Iterator iterator = commands.iterator();
+		
+		while (iterator.hasNext()) 
+			if (!(iterator.next() instanceof Command))
+				throw new IllegalArgumentException();
+
+		iterator = commands.iterator();
+
+		while (iterator.hasNext()) 
+			writeCommand(memento.createChild(name), (Command) iterator.next());
+	}
+	
 	static void writeGestureBinding(IMemento memento, GestureBinding gestureBinding)
 		throws IllegalArgumentException {
 		if (memento == null)
@@ -412,6 +726,36 @@ final class Persistence {
 			writeGestureBinding(memento.createChild(name), (GestureBinding) iterator.next());
 	}
 
+	static void writeGestureConfiguration(IMemento memento, GestureConfiguration gestureConfiguration)
+		throws IllegalArgumentException {
+		if (memento == null || gestureConfiguration == null)
+			throw new IllegalArgumentException();
+
+		memento.putString(TAG_DESCRIPTION, gestureConfiguration.getDescription());
+		memento.putString(TAG_ID, gestureConfiguration.getId());
+		memento.putString(TAG_NAME, gestureConfiguration.getName());
+		memento.putString(TAG_PARENT, gestureConfiguration.getParent());
+		memento.putString(TAG_PLUGIN, gestureConfiguration.getPlugin());
+	}
+
+	static void writeGestureConfigurations(IMemento memento, String name, List gestureConfigurations)
+		throws IllegalArgumentException {
+		if (memento == null || name == null || gestureConfigurations == null)
+			throw new IllegalArgumentException();
+		
+		gestureConfigurations = new ArrayList(gestureConfigurations);
+		Iterator iterator = gestureConfigurations.iterator();
+		
+		while (iterator.hasNext()) 
+			if (!(iterator.next() instanceof GestureConfiguration))
+				throw new IllegalArgumentException();
+
+		iterator = gestureConfigurations.iterator();
+
+		while (iterator.hasNext()) 
+			writeGestureConfiguration(memento.createChild(name), (GestureConfiguration) iterator.next());
+	}
+
 	static void writeGestureSequence(IMemento memento, GestureSequence gestureSequence)
 		throws IllegalArgumentException {
 		if (memento == null || gestureSequence == null)
@@ -429,37 +773,6 @@ final class Persistence {
 			throw new IllegalArgumentException();
 			
 		memento.putInteger(TAG_VALUE, gestureStroke.getValue());
-	}
-
-	static void writeItem(IMemento memento, Item item)
-		throws IllegalArgumentException {
-		if (memento == null || item == null)
-			throw new IllegalArgumentException();
-
-		memento.putString(TAG_DESCRIPTION, item.getDescription());
-		memento.putString(TAG_ICON, item.getIcon());
-		memento.putString(TAG_ID, item.getId());
-		memento.putString(TAG_NAME, item.getName());
-		memento.putString(TAG_PARENT, item.getParent());
-		memento.putString(TAG_PLUGIN, item.getPlugin());
-	}
-
-	static void writeItems(IMemento memento, String name, List items)
-		throws IllegalArgumentException {
-		if (memento == null || name == null || items == null)
-			throw new IllegalArgumentException();
-		
-		items = new ArrayList(items);
-		Iterator iterator = items.iterator();
-		
-		while (iterator.hasNext()) 
-			if (!(iterator.next() instanceof Item))
-				throw new IllegalArgumentException();
-
-		iterator = items.iterator();
-
-		while (iterator.hasNext()) 
-			writeItem(memento.createChild(name), (Item) iterator.next());
 	}
 
 	static void writeKeyBinding(IMemento memento, KeyBinding keyBinding)
@@ -491,6 +804,36 @@ final class Persistence {
 
 		while (iterator.hasNext()) 
 			writeKeyBinding(memento.createChild(name), (KeyBinding) iterator.next());
+	}
+
+	static void writeKeyConfiguration(IMemento memento, KeyConfiguration keyConfiguration)
+		throws IllegalArgumentException {
+		if (memento == null || keyConfiguration == null)
+			throw new IllegalArgumentException();
+
+		memento.putString(TAG_DESCRIPTION, keyConfiguration.getDescription());
+		memento.putString(TAG_ID, keyConfiguration.getId());
+		memento.putString(TAG_NAME, keyConfiguration.getName());
+		memento.putString(TAG_PARENT, keyConfiguration.getParent());
+		memento.putString(TAG_PLUGIN, keyConfiguration.getPlugin());
+	}
+
+	static void writeKeyConfigurations(IMemento memento, String name, List keyConfigurations)
+		throws IllegalArgumentException {
+		if (memento == null || name == null || keyConfigurations == null)
+			throw new IllegalArgumentException();
+		
+		keyConfigurations = new ArrayList(keyConfigurations);
+		Iterator iterator = keyConfigurations.iterator();
+		
+		while (iterator.hasNext()) 
+			if (!(iterator.next() instanceof KeyConfiguration))
+				throw new IllegalArgumentException();
+
+		iterator = keyConfigurations.iterator();
+
+		while (iterator.hasNext()) 
+			writeKeyConfiguration(memento.createChild(name), (KeyConfiguration) iterator.next());
 	}
 
 	static void writeKeySequence(IMemento memento, KeySequence keySequence)
@@ -566,6 +909,36 @@ final class Persistence {
 
 		while (iterator.hasNext()) 
 			writeRegionalKeyBinding(memento.createChild(name), (RegionalKeyBinding) iterator.next());
+	}
+
+	static void writeScope(IMemento memento, Scope scope)
+		throws IllegalArgumentException {
+		if (memento == null || scope == null)
+			throw new IllegalArgumentException();
+
+		memento.putString(TAG_DESCRIPTION, scope.getDescription());
+		memento.putString(TAG_ID, scope.getId());
+		memento.putString(TAG_NAME, scope.getName());
+		memento.putString(TAG_PARENT, scope.getParent());
+		memento.putString(TAG_PLUGIN, scope.getPlugin());
+	}
+
+	static void writeScopes(IMemento memento, String name, List scopes)
+		throws IllegalArgumentException {
+		if (memento == null || name == null || scopes == null)
+			throw new IllegalArgumentException();
+		
+		scopes = new ArrayList(scopes);
+		Iterator iterator = scopes.iterator();
+		
+		while (iterator.hasNext()) 
+			if (!(iterator.next() instanceof Scope))
+				throw new IllegalArgumentException();
+
+		iterator = scopes.iterator();
+
+		while (iterator.hasNext()) 
+			writeScope(memento.createChild(name), (Scope) iterator.next());
 	}
 
 	private Persistence() {

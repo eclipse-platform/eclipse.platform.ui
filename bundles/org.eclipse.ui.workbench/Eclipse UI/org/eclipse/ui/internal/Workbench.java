@@ -90,7 +90,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
-import org.eclipse.ui.internal.commands.Item;
+import org.eclipse.ui.internal.commands.KeyConfiguration;
 import org.eclipse.ui.internal.commands.KeyManager;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.fonts.FontDefinition;
@@ -112,7 +112,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private boolean runEventLoop;
 	private boolean isStarting = false;
 	private boolean isClosing = false;
-	private Item acceleratorConfiguration;
+	private KeyConfiguration acceleratorConfiguration;
 	private Object returnCode;
 	private WorkbenchConfigurationInfo configurationInfo;
 	private ListenerList windowListeners = new ListenerList();
@@ -620,7 +620,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	/**
 	 * Returns the active AcceleratorConfiguration
 	 */
-	public Item getActiveAcceleratorConfiguration() {
+	public KeyConfiguration getActiveAcceleratorConfiguration() {
 		return acceleratorConfiguration;
 	}
 	/**
@@ -1291,7 +1291,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * Sets the active accelerator configuration to be the configuration
 	 * with the given id.
 	 */
-	public void setActiveAcceleratorConfiguration(Item configuration) {
+	public void setActiveAcceleratorConfiguration(KeyConfiguration configuration) {
 		if (configuration != null) {
 			acceleratorConfiguration = configuration;
 			String id = configuration.getId();
