@@ -87,15 +87,6 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	 * launch.
 	 */
 	public RuntimeProcess(ILaunch launch, Process process, String name, Map attributes) {
-		this(launch, process, name, attributes, true);
-	}
-	
-	/**
-	 * Constructs a RuntimeProcess on the given system process
-	 * with the given name, adding this process to the given
-	 * launch.
-	 */
-	protected RuntimeProcess(ILaunch launch, Process process, String name, Map attributes, boolean creationCompleted) {
 		setLaunch(launch);
 		fAttributes = attributes;
 		fProcess= process;
@@ -106,13 +97,10 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		} catch (IllegalThreadStateException e) {
 			fTerminated= false;
 		}
-		fStreamsProxy = new StreamsProxy(this);
+		fStreamsProxy= createStreamsProxy();
 		fMonitor = new ProcessMonitorJob(this);
-		
-		if (creationCompleted) {
-			launch.addProcess(this);
-			fireCreationEvent();
-		}
+		launch.addProcess(this);
+		fireCreationEvent();
 	}
 
 	/**
@@ -239,10 +227,10 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	}
 	
 	/**
-	 * Sets the underlying streams proxy for this process.
+	 * Returns the appropriate streams proxy for this process.
 	 */
-	protected void setStreamsProxy(IStreamsProxy streamsProxy) {
-		fStreamsProxy= streamsProxy;
+	protected IStreamsProxy createStreamsProxy() {
+		return new StreamsProxy(this);
 	}
 	
 	/**
