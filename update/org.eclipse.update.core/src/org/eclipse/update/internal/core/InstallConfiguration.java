@@ -233,6 +233,9 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 				listener.installSiteRemoved(site);
 			}
 
+			// remove marker and directory if we just created it
+			((ConfiguredSite)site).removePrivateSiteMarker();
+
 			//activity
 			ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_SITE_REMOVE);
 			activity.setLabel(site.getSite().getURL().toExternalForm());

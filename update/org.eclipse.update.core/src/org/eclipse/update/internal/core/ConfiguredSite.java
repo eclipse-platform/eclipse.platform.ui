@@ -34,6 +34,9 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	// verification status
 	private IStatus verifyStatus;
 
+	// transient: true if the site was just created so we can remove it
+	private transient boolean justCreated = false;
+
 	/*
 	 * Default Constructor
 	 */
@@ -90,7 +93,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		//$NON-NLS-1$ //$NON-NLS-2$
 		w.println(gap + increment + "platformURL=\"" + getPlatformURLString() + "\"");
 		//$NON-NLS-1$ //$NON-NLS-2$
-		w.println(gap + increment + "enable=\"" + (isEnabled()?"true":"false") + "\"");		
+		w.println(gap + increment + "enable=\"" + (isEnabled() ? "true" : "false") + "\"");
 		//$NON-NLS-1$ //$NON-NLS-2$
 		w.println(gap + increment + "policy=\"" + getConfigurationPolicy().getPolicy() + "\" >");
 		//$NON-NLS-1$ //$NON-NLS-2$
@@ -154,6 +157,9 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	 * @see IConfiguredSite#install(IFeature, IFeatureReference, IVerificationListener, IProgressMonitor)
 	 */
 	public IFeatureReference install(IFeature feature, IFeatureReference[] optionalFeatures, IVerificationListener verificationListener, IProgressMonitor monitor) throws InstallAbortedException, CoreException {
+
+		// change the status if justCreated
+		if (justCreated) justCreated=false;
 
 		// ConfigSite is read only 
 		if (!isUpdatable()) {
@@ -789,16 +795,17 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	 * 
 	 */
 	public boolean isConfigured(IFeature feature) {
-		if (!isEnabled()) return false;
-		
+		if (!isEnabled())
+			return false;
+
 		if (getConfigurationPolicy() == null)
 			return false;
 		IFeatureReference featureReference = getSite().getFeatureReference(feature);
-		if (featureReference == null){
+		if (featureReference == null) {
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_WARNINGS)
-				UpdateCore.warn("Unable to retrieve featureReference for feature:"+feature);
+				UpdateCore.warn("Unable to retrieve featureReference for feature:" + feature);
 			return false;
-		} 
+		}
 		return getConfigurationPolicy().isConfigured(featureReference);
 	}
 
@@ -1005,16 +1012,21 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	 * 
 	 */
 	/*package*/
-	void createPrivateSiteMarker() {
+	boolean createPrivateSiteMarker() {
 		URL siteURL = getSite().getURL();
-		if (siteURL == null)
+		if (siteURL == null) {
 			UpdateCore.warn("Unable to create marker. The Site url is null.");
+			return false;
+		}
 
-		if (!"file".equalsIgnoreCase(siteURL.getProtocol()))
+		if (!"file".equalsIgnoreCase(siteURL.getProtocol())) {
 			UpdateCore.warn("Unable to create private marker. The Site is not on the local file system.");
+			return false;
+		}
 
 		String siteLocation = siteURL.getFile();
 		File productFile = getProductFile();
+		boolean success = false;
 		if (productFile != null) {
 			String productId = getProductIdentifier("id", productFile);
 			String productName = getProductIdentifier("name", productFile);
@@ -1033,6 +1045,8 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 							w.println("name=" + productName);
 						if (productVer != null)
 							w.println("version=" + productVer);
+						success = true;
+						justCreated = true;
 					} catch (Exception e) {
 						UpdateCore.warn("Unable to create private Marker at:" + file, e);
 					} finally {
@@ -1042,6 +1056,43 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 				}
 			}
 		}
+		return success;
+	}
+
+	/*
+	 * 
+	 */
+	/*package*/
+	boolean removePrivateSiteMarker() {
+
+		if (!justCreated) {
+			UpdateCore.warn("Unable to remove marker. The site was not created during this activity.");
+			return false;
+		}
+
+		URL siteURL = getSite().getURL();
+		if (siteURL == null) {
+			UpdateCore.warn("Unable to remove marker. The Site url is null.");
+			return false;
+		}
+
+		if (!"file".equalsIgnoreCase(siteURL.getProtocol())) {
+			UpdateCore.warn("Unable to remove private marker. The Site is not on the local file system.");
+			return false;
+		}
+
+		String siteLocation = siteURL.getFile();
+		File productFile = getProductFile();
+		File file = new File(siteLocation, PRIVATE_SITE_MARKER);
+		boolean success = false;
+		if (file.exists()) {
+			try {
+				success = file.delete();
+			} catch (Exception e) {
+				UpdateCore.warn("Unable to remove private Marker at:" + file, e);
+			}
+		}
+		return success;
 	}
 
 	/*

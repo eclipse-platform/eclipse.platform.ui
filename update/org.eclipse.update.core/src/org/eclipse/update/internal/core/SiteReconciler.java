@@ -172,7 +172,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		siteLocal.addConfiguration(newInstallConfiguration);
 		siteLocal.save();
 
-		return saveNewFeatures();
+		return saveNewFeatures(newInstallConfiguration);
 	}
 
 	/**
@@ -484,7 +484,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	/*
 	 * 
 	 */
-	private boolean saveNewFeatures() throws CoreException {
+	private boolean saveNewFeatures(IInstallConfiguration installConfig) throws CoreException {
 
 		if (getFeatureReferences().length == 0) {
 			UpdateCore.warn("No new features found");
@@ -500,10 +500,21 @@ public class SiteReconciler extends ModelObject implements IWritable {
 				newFoundFeatures.add(refs[i]);
 		}
 
+
 		if (getFeatureReferences().length == 0) {
 			UpdateCore.warn("No root feature found when saving new features");
 			return false;
 		}
+
+		// remove efixes from the delta that patch disabled feature from the installConfig
+		// bug 71730
+		removeInvalidEfixes(installConfig);
+
+		if (getFeatureReferences().length == 0) {
+			UpdateCore.warn("No new features found after removing invalid efixes");
+			return false;
+		}
+
 
 		date = new Date();
 		String fileName = UpdateManagerUtils.getLocalRandomIdentifier(DEFAULT_INSTALL_CHANGE_NAME, date);
@@ -689,12 +700,14 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		// expand non efix top level features (compute full nesting structures).
 		ArrayList configuredFeatures = expandFeatures(topNonEfixFeatures, configuredSite);
 
-		// retrieve efixes that patch enable feature and add them to the list of enabled features
-		if (topFeatures.size() != topNonEfixFeatures.size()){
-			Map patches = getPatches(allPossibleConfiguredFeatures);
-			if (!patches.isEmpty()){
-				// get efixes to enable from all possibles efixes
+		// retrieve efixes that patch enable feature
+		// they must be kept enabled
+		if (topFeatures.size() != topNonEfixFeatures.size()) {
+			Map patches = getPatchesAsFeature(allPossibleConfiguredFeatures);
+			if (!patches.isEmpty()) {
+				// calculate efixes to enable
 				List efixesToEnable = getPatchesToEnable(patches, configuredFeatures);
+				// add efies to keep enable
 				//add them to the enable list
 				for (Iterator iter = efixesToEnable.iterator(); iter.hasNext();) {
 					IFeature element = (IFeature) iter.next();
@@ -920,7 +933,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	/*
 	 * get the list of enabled patches
 	 */
-	private static Map getPatches(ArrayList allConfiguredFeatures) {
+	private static Map getPatchesAsFeature(ArrayList allConfiguredFeatures) {
 		// get all efixes and the associated patched features
 		Map patches = new HashMap();
 		if (allConfiguredFeatures != null) {
@@ -992,7 +1005,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	 * returns the feature that are not patches
 	 */
 	private static ArrayList getNonEfixFeatures(ArrayList topFeatures) {
-		Map efixFeatures = getPatches(topFeatures);
+		Map efixFeatures = getPatchesAsFeature(topFeatures);
 		Set keySet = efixFeatures.keySet();
 		if (keySet == null || keySet.isEmpty())
 			return topFeatures;
@@ -1003,6 +1016,133 @@ public class SiteReconciler extends ModelObject implements IWritable {
 			IFeature element = (IFeature) iter.next();
 			if (!keySet.contains(element)) {
 				result.add(element);
+			}
+		}
+		return result;
+	}
+
+
+	/*
+	 * get the map of enabled patches (as feature reference)  or an empty map
+	 */
+	private Map getPatchesAsFeatureReference(List listOfFeatureReferences) {
+		// get all efixes and the associated patched features
+		Map patches = new HashMap();
+		if (listOfFeatureReferences != null) {
+			Iterator iter = listOfFeatureReferences.iterator();
+			while (iter.hasNext()) {
+				List patchedFeaturesID = new ArrayList();
+				IFeatureReference element = (IFeatureReference) iter.next();
+				// add the patched feature identifiers
+				try {
+					IFeature feature = element.getFeature(null);
+					if (feature != null) {
+						IImport[] imports = feature.getImports();
+						for (int i = 0; i < imports.length; i++) {
+							if (imports[i].isPatch()) {
+								VersionedIdentifier id = imports[i].getVersionedIdentifier();
+								if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER)
+								UpdateCore.debug("Found patch " + element + " for feature identifier " + id);
+								patchedFeaturesID.add(id);
+							}
+						}
+					}
+
+					if (!patchedFeaturesID.isEmpty()) {
+						patches.put(element, patchedFeaturesID);
+					}
+				} catch (CoreException e) {
+				}
+			}
+		}
+
+		return patches;
+	}
+
+
+	/*
+	 * Removes efixes from new found features if they do not patch an enable feature
+	 * either from the found delta or from the file system
+	 */
+	private void removeInvalidEfixes(IInstallConfiguration installConfig) {
+
+		// disable new found efixes if the feature is not in the list nor enabled features
+		// on the file system
+		Map newFoundEfixesAsReference = getPatchesAsFeatureReference(newFoundFeatures);
+
+		if (newFoundEfixesAsReference.size() > 0) {
+			// retrieve all enabled features on all the sites
+			ArrayList allEnabledFeatures = new ArrayList();
+			IConfiguredSite[] configSites = installConfig.getConfiguredSites();
+			for (int i = 0; i < configSites.length; i++) {
+				IFeatureReference[] references = configSites[i].getConfiguredFeatures();
+				for (int j = 0; j < references.length; j++) {
+					try {
+						allEnabledFeatures.add(references[j].getFeature(null));
+					} catch (CoreException e) {
+					}
+				}
+			}
+
+			// create a List of eFixes Features
+			List arrayOfNewFoundFeatures = new ArrayList();
+			for (Iterator iter = newFoundFeatures.iterator(); iter.hasNext();) {
+				IFeatureReference element = (IFeatureReference) iter.next();
+				try {
+					arrayOfNewFoundFeatures.add(element.getFeature(null));
+				} catch (CoreException e) {
+				}
+			}
+
+			// retrieve the efixes that patch enable features in delta and enabled features on the 
+			// file system
+			List patchesForNewFoundFeatures = getFeatureReferencePatchesToEnable(newFoundEfixesAsReference, allEnabledFeatures);
+			List patchesForEnabledFeatures = getFeatureReferencePatchesToEnable(newFoundEfixesAsReference, arrayOfNewFoundFeatures);
+
+			// IMPORTANT: add efixes first so they will be processed first
+			newFoundFeatures.removeAll(newFoundEfixesAsReference.keySet());
+			newFoundFeatures.addAll(0,patchesForEnabledFeatures);
+			newFoundFeatures.addAll(0,patchesForNewFoundFeatures);
+		}
+	}
+
+	/*
+	 * retruns the list of pathes-featureReference who patch enabled features
+	 */
+	private List getFeatureReferencePatchesToEnable(Map efixes, List configuredFeatures) {
+
+		ArrayList enabledVersionedIdentifier = new ArrayList();
+		Iterator iter = configuredFeatures.iterator();
+		while (iter.hasNext()) {
+			IFeature element = (IFeature) iter.next();
+			enabledVersionedIdentifier.add(element.getVersionedIdentifier());
+		}
+
+		// loop through the patches
+		List result = new ArrayList();
+		iter = efixes.keySet().iterator();
+		while (iter.hasNext()) {
+			boolean toEnable = false;
+			IFeatureReference efixFeatureReference = (IFeatureReference) iter.next();
+			List patchedFeatures = (List) efixes.get(efixFeatureReference);
+			// loop through the 'patched features identifier' the for this patch
+			// see if it the patch patches at least one enable feature
+			Iterator patchedFeaturesIter = patchedFeatures.iterator();
+			while (patchedFeaturesIter.hasNext() && !toEnable) {
+				VersionedIdentifier patchedFeatureID = (VersionedIdentifier) patchedFeaturesIter.next();
+				if (enabledVersionedIdentifier.contains(patchedFeatureID)) {
+					toEnable = true;
+				}
+			}
+
+			if (!toEnable) {
+				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER)
+				UpdateCore.debug("The Patch " + efixFeatureReference + " does not patch any enabled features: it will be disabled");
+			} else {
+				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER)
+				UpdateCore.debug("The patch " + efixFeatureReference + " will be enabled.");
+
+				result.add(efixFeatureReference);
 			}
 		}
 		return result;
