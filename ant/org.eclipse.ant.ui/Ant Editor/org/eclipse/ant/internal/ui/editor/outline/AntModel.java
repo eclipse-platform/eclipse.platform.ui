@@ -462,7 +462,12 @@ public class AntModel {
 		String defaultTargetName= fProjectNode.getProject().getDefaultTarget();
 		if (defaultTargetName == null || fProjectNode.getProject().getTargets().get(defaultTargetName) == null) {
 			//no default target
-			String message= MessageFormat.format(AntOutlineMessages.getString("AntModel.43"), new String[]{defaultTargetName}); //$NON-NLS-1$
+			String message;
+			if (defaultTargetName == null) {
+				message= AntOutlineMessages.getString("AntModel.0"); //$NON-NLS-1$
+			} else {
+				message= MessageFormat.format(AntOutlineMessages.getString("AntModel.43"), new String[]{defaultTargetName}); //$NON-NLS-1$
+			}
 			IProblem problem= createProblem(message, fProjectNode.getOffset(), fProjectNode.getSelectionLength(), XMLProblem.SEVERITY_ERROR);
 			acceptProblem(problem);
 			markHierarchy(fProjectNode, XMLProblem.SEVERITY_ERROR);
