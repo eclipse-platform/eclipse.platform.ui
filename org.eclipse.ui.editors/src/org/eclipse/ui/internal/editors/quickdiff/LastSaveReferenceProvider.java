@@ -102,6 +102,8 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 		fEditor.getDocumentProvider().addElementStateListener(this);
 		IDocumentProvider provider= fEditor.getDocumentProvider();
 		IEditorInput input= fEditor.getEditorInput();
+		if (!(input instanceof IFileEditorInput))
+			return;
 		if (fReference == null)
 			fReference= new Document();
 
@@ -110,7 +112,7 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 			try {
 				stream= ((IFileEditorInput)input).getFile().getContents();
 			} catch (CoreException e) {
-				// ignore
+				return;
 			}
 			StorageDocumentProvider sProvider= (StorageDocumentProvider)provider;
 			try {
@@ -119,7 +121,7 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 					encoding= sProvider.getDefaultEncoding();
 				setDocumentContent(fReference, stream, encoding);
 			} catch (CoreException e1) {
-				// ignore
+				return;
 			}
 		}
 		fDocumentRead= true;
