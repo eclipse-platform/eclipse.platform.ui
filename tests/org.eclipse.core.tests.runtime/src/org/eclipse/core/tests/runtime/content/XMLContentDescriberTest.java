@@ -17,9 +17,9 @@ import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.content.IContentDescription;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.runtime.RuntimeTest;
 
-public class XMLContentDescriberTest extends EclipseWorkspaceTest {
+public class XMLContentDescriberTest extends RuntimeTest {
 	private final static String XML_WITH_ENCODED_DATA = "<?xml version=\"1.0\" encoding=\"Shift_JIS\"?><root attribute=\"build???SJIS.xml\">";
 
 	public XMLContentDescriberTest() {

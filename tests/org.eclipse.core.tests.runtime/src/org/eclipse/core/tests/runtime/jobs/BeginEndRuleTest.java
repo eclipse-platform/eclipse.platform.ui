@@ -317,6 +317,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 			manager.endRule(rule2);
 			fail("1.2");
 		} catch (RuntimeException e) {
+			e.printStackTrace();
 			//should fail
 		}
 		//should still be able to end the original rule

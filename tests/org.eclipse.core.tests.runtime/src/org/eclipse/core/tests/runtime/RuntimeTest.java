@@ -26,6 +26,13 @@ public abstract class RuntimeTest extends TestCase {
 	}
 
 	/**
+	 * Constructor required by test framework.
+	 */
+	public RuntimeTest() {
+		super();
+	}
+
+	/**
 	 * Fails the test due to the given exception.
 	 * @param message
 	 * @param e
