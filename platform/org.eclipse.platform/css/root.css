@@ -84,6 +84,11 @@ body {
 	vertical-align : middle;
 }
 
+/* remove the hover image from the flow of the document,
+   so it doesn't take up space and change the position
+   of the link label and descriptions */
+#page-links a .background-image { position : absolute; }
+
 /* protect against very long labels in IE */
 #page-links a .link-label { word-wrap : break-word; }
 
@@ -123,25 +128,15 @@ body {
 #page-links a:active p  { margin : 0px; padding : 0px; }
 
 /* properties for each of the page-links  */
-a#overview img { background-image : url(graphics/icons/etool/overview72.gif); }
-a#overview:hover img,
-a#overview:focus img,
-a#overview:active img { background-image : url(graphics/icons/ctool/overview72.gif); }
+a#overview .background-image { background-image : url(graphics/icons/ctool/overview72.gif); visibility : hidden; }
+a#tutorials .background-image { background-image : url(graphics/icons/ctool/tutorials72.gif); visibility : hidden; }
+a#samples .background-image { background-image : url(graphics/icons/ctool/samples72.gif); visibility : hidden; }
+a#news .background-image { background-image : url(graphics/icons/ctool/whatsnew72.gif); visibility : hidden; }
 
-a#tutorials img { background-image : url(graphics/icons/etool/tutorials72.gif); }
-a#tutorials:hover img,
-a#tutorials:focus img,
-a#tutorials:active img { background-image : url(graphics/icons/ctool/tutorials72.gif); }
-
-a#samples img { background-image : url(graphics/icons/etool/samples72.gif); }
-a#samples:hover img,
-a#samples:focus img,
-a#samples:active img { background-image : url(graphics/icons/ctool/samples72.gif); }
-
-a#news img { background-image : url(graphics/icons/etool/whatsnew72.gif); }
-a#news:hover img,
-a#news:focus img,
-a#news:active img { background-image : url(graphics/icons/ctool/whatsnew72.gif); }
+/* show the hover image on hover, focus, and active */
+#page-links a:hover .background-image,
+#page-links a:focus .background-image,
+#page-links a:active .background-image { visibility : visible; }
 
 /*
  * Set up the action links
@@ -183,7 +178,7 @@ a#workbench:active img {
 
 #action-links a:hover p .text,
 #action-links a:focus p .text,
-#action-links a:active p .text {	display : block; width : 16em; }
+#action-links a:active p .text { display : block; width : 16em; }
 
 #action-links a:hover,
 #action-links a:focus,

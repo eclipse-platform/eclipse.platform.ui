@@ -8,15 +8,19 @@
     <group id="links-background">
       <group id="page-links">
         <link label="Overview" url="http://org.eclipse.ui.intro/showPage?id=overview" id="overview" style-id="left">
+          <img id="overview_img" style-id="content-img" src="css/graphics/icons/etool/overview72.gif" alt="Overview"></img>
           <text>Find out what Eclipse is all about</text>
         </link>
         <link label="Tutorials" url="http://org.eclipse.ui.intro/showPage?id=tutorials" id="tutorials" style-id="left">
+	      <img id="tutorials_img" style-id="content-img" src="css/graphics/icons/etool/tutorials72.gif" alt="Tutorials"></img>
           <text>Let us guide you through Eclipse end-to-end tutorials</text>
         </link>
         <link label="Samples" url="http://org.eclipse.ui.intro/showPage?id=samples" id="samples" style-id="right">
+          <img id="samples_img" style-id="content-img" src="css/graphics/icons/etool/samples72.gif" alt="Samples"></img>
           <text>Explore Eclipse development through code samples</text>
         </link>
         <link label="What&apos;s New" url="http://org.eclipse.ui.intro/showPage?id=news" id="news" style-id="right">
+          <img id="whatsnew_img" style-id="content-img" src="css/graphics/icons/etool/whatsnew72.gif" alt="What&apos;s New"></img>
           <text>Find out what is new in this release</text>
         </link>
       </group>
@@ -57,7 +61,20 @@
     <group id="background-image" filteredFrom="swt"/>
     <group id="curve-image" filteredFrom="swt"/>
     <group id="navigation-links" filteredFrom="swt">
-      <include path="root/links-background/page-links"/>
+      <group id="page-links">
+        <link label="Overview" url="http://org.eclipse.ui.intro/showPage?id=overview" id="overview" style-id="left">
+          <text>Find out what Eclipse is all about</text>
+        </link>
+        <link label="Tutorials" url="http://org.eclipse.ui.intro/showPage?id=tutorials" id="tutorials" style-id="left">
+          <text>Let us guide you through Eclipse end-to-end tutorials</text>
+        </link>
+        <link label="Samples" url="http://org.eclipse.ui.intro/showPage?id=samples" id="samples" style-id="right">
+          <text>Explore Eclipse development through code samples</text>
+        </link>
+        <link label="What&apos;s New" url="http://org.eclipse.ui.intro/showPage?id=news" id="news" style-id="right">
+          <text>Find out what is new in this release</text>
+        </link>
+      </group>
       <include path="root/action-links"/>
     </group>
     <!-- -->
