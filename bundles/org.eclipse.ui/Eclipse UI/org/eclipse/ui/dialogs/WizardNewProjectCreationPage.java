@@ -6,32 +6,17 @@ package org.eclipse.ui.dialogs;
  */
 import java.io.File;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.*;
 
 /**
  * Standard main page for a wizard that is creates a project resource.
@@ -96,6 +81,9 @@ public WizardNewProjectCreationPage(String pageName) {
  */
 public void createControl(Composite parent) {
 	Composite composite = new Composite(parent, SWT.NULL);
+	composite.setFont(parent.getFont());
+	
+	initializeDialogUnits(parent);
 
 	WorkbenchHelp.setHelp(composite, IHelpContextIds.NEW_PROJECT_WIZARD_PAGE);
 	
@@ -117,16 +105,20 @@ public void createControl(Composite parent) {
  */
 private final void createProjectLocationGroup(Composite parent) {
 
+
+	Font font = parent.getFont();
 	// project specification group
 	Composite projectGroup = new Composite(parent, SWT.NONE);
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 3;
 	projectGroup.setLayout(layout);
 	projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	projectGroup.setFont(font);
  
 	// new project label
 	Label projectContentsLabel = new Label(projectGroup, SWT.NONE);
 	projectContentsLabel.setText(WorkbenchMessages.getString("WizardNewProjectCreationPage.projectContentsLabel")); //$NON-NLS-1$
+	projectContentsLabel.setFont(font);
 
 	GridData labelData = new GridData();
 	labelData.horizontalSpan = 3;
@@ -135,6 +127,7 @@ private final void createProjectLocationGroup(Composite parent) {
 	final Button useDefaultsButton = new Button(projectGroup, SWT.CHECK | SWT.RIGHT);
 	useDefaultsButton.setText(WorkbenchMessages.getString("WizardNewProjectCreationPage.useDefaultLabel")); //$NON-NLS-1$
 	useDefaultsButton.setSelection(useDefaults);
+	useDefaultsButton.setFont(font);
 
 	GridData buttonData = new GridData();
 	buttonData.horizontalSpan = 3;
@@ -174,12 +167,14 @@ private final void createProjectNameGroup(Composite parent) {
 	// new project label
 	Label projectLabel = new Label(projectGroup, SWT.NONE);
 	projectLabel.setText(WorkbenchMessages.getString("WizardNewProjectCreationPage.nameLabel")); //$NON-NLS-1$
+	projectLabel.setFont(parent.getFont());
 
 	// new project name entry field
 	projectNameField = new Text(projectGroup, SWT.BORDER);
 	GridData data = new GridData(GridData.FILL_HORIZONTAL);
 	data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 	projectNameField.setLayoutData(data);
+	projectNameField.setFont(parent.getFont());
 
 	// Set the initial value first before listener
 	// to avoid handling an event during the creation.
@@ -194,11 +189,14 @@ private final void createProjectNameGroup(Composite parent) {
  * @param boolean - the initial enabled state of the widgets created
  */
 private void createUserSpecifiedProjectLocationGroup(Composite projectGroup, boolean enabled) {
+	
+	Font font = projectGroup.getFont();
 
 	// location label
 	locationLabel = new Label(projectGroup,SWT.NONE);
 	locationLabel.setText(WorkbenchMessages.getString("WizardNewProjectCreationPage.locationLabel")); //$NON-NLS-1$
 	locationLabel.setEnabled(enabled);
+	locationLabel.setFont(font);
 
 	// project location entry field
 	locationPathField = new Text(projectGroup, SWT.BORDER);
@@ -206,6 +204,7 @@ private void createUserSpecifiedProjectLocationGroup(Composite projectGroup, boo
 	data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 	locationPathField.setLayoutData(data);
 	locationPathField.setEnabled(enabled);
+	locationPathField.setFont(font);
 
 	// browse button
 	browseButton = new Button(projectGroup, SWT.PUSH);
@@ -217,6 +216,8 @@ private void createUserSpecifiedProjectLocationGroup(Composite projectGroup, boo
 	});
 
 	browseButton.setEnabled(enabled);
+	browseButton.setFont(font);
+	setButtonLayoutData(browseButton);
 
 	// Set the initial value first before listener
 	// to avoid handling an event during the creation.
