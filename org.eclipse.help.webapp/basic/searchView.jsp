@@ -72,11 +72,11 @@ if (data.isProgressRequest()) {
 
 <table border="0" cellpadding="0" cellspacing="0">
 <%
-			boolean disabledSearchResults = false;
+			//boolean disabledSearchResults = false;
 			for (int topic = 0; topic < data.getResultsCount(); topic++){
-				if(!data.isEnabled(topic)){
-					continue;
-				}
+			//	if(!data.isEnabled(topic)){
+			//		continue;
+			//	}
 %>
 <tr>
 	<td align='<%=isRTL?"left":"right"%>'><%=data.getTopicScore(topic)%></td>
