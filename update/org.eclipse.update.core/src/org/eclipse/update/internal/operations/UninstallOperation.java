@@ -20,7 +20,7 @@ import org.eclipse.update.operations.*;
  * ConfigOperation
  */
 public class UninstallOperation extends FeatureOperation implements IUninstallFeatureOperation{
-
+	
 	public UninstallOperation(IInstallConfiguration config, IConfiguredSite site, IFeature feature) {
 		super(config, site, feature);
 	}
@@ -34,30 +34,36 @@ public class UninstallOperation extends FeatureOperation implements IUninstallFe
 	}
 
 	public boolean execute(IProgressMonitor pm, IOperationListener listener) throws CoreException {
+		if (targetSite == null)
+			targetSite = UpdateUtils.getConfigSite(feature, config);
 
-		//find the  config site of this feature
-//			IConfiguredSite site = UpdateManager.getConfigSite(feature, config);
-//			if (site != null) {
-//				site.remove(feature, monitor);
-//			} else {
-//				// we should do something here
-//				String message =
-//					UpdateManager.getFormattedMessage(
-//						KEY_UNABLE,
-//						feature.getLabel());
-//				IStatus status =
-//					new Status(
-//						IStatus.ERROR,
-//						UpdateManager.getPluginId(),
-//						IStatus.OK,
-//						message,
-//						null);
-//				throw new CoreException(status);
-//			}
+			if (targetSite != null) {
+				targetSite.remove(feature, pm);
+			} else {
+				// we should do something here
+				String message =
+					UpdateUtils.getFormattedMessage(
+						"OperationsManager.error.uninstall",
+						feature.getLabel());
+				IStatus status =
+					new Status(
+						IStatus.ERROR,
+						UpdateUtils.getPluginId(),
+						IStatus.OK,
+						message,
+						null);
+				throw new CoreException(status);
+			}
 
 
 		markProcessed();
-		OperationsManager.fireObjectChanged(this, null);
+		if (listener != null)
+			listener.afterExecute(this, null);
+
+		SiteManager.getLocalSite().save();
+
+		// notify the model
+		OperationsManager.fireObjectChanged(feature, null);
 		
 		return true;
 	}

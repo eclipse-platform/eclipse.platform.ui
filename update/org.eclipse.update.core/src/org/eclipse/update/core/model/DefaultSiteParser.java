@@ -480,7 +480,8 @@ public class DefaultSiteParser extends DefaultHandler {
 		feature.setURLString(urlInfo);
 
 		String type = attributes.getValue("type"); //$NON-NLS-1$
-		feature.setType(type);
+		feature.setType(
+			type != null ? type : ISite.DEFAULT_PACKAGED_FEATURE_TYPE);
 
 		// identifier and version
 		String id = attributes.getValue("id"); //$NON-NLS-1$

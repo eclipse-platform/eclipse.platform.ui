@@ -14,9 +14,9 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.operations.*;
 
-public  abstract class ScriptedCommand implements IOperationListener {
+public abstract class ScriptedCommand implements IOperationListener {
 
-	protected IInstallConfiguration config;
+	private IInstallConfiguration config;
 	protected boolean verifyOnly;
 
 	public ScriptedCommand() {
@@ -25,14 +25,6 @@ public  abstract class ScriptedCommand implements IOperationListener {
 
 	public ScriptedCommand(String verifyOnly) {
 		this.verifyOnly = "true".equals(verifyOnly);
-		
-		try {
-			ILocalSite localSite = SiteManager.getLocalSite();
-			config = localSite.getCurrentConfiguration();
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -43,11 +35,11 @@ public  abstract class ScriptedCommand implements IOperationListener {
 	public boolean isVerifyOnly() {
 		return verifyOnly;
 	}
-	
+
 	/**
 	 */
 	public abstract boolean run();
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.update.operations.IOperationListener#afterExecute(org.eclipse.update.operations.IOperation)
 	 */
@@ -60,6 +52,19 @@ public  abstract class ScriptedCommand implements IOperationListener {
 	 */
 	public boolean beforeExecute(IOperation operation, Object data) {
 		return true;
+	}
+
+	protected IInstallConfiguration getConfiguration() {
+		if (config == null) {
+			try {
+				ILocalSite localSite = SiteManager.getLocalSite();
+				config = localSite.getCurrentConfiguration();
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return config;
 	}
 
 }

@@ -209,17 +209,17 @@ public class MirrorSite extends Site {
 			provider.getPluginEntryArchiveReferences(pluginsToInstall[i], null);
 		}
 
-		//		System.out.println(
-		//			tab
-		//				+ "Downloading non plug-in archives for "
-		//				+ sourceFeature.getVersionedIdentifier()
-		//				+ " ...");
-		//		// download non-plugin archives
-		//		for (int i = 0; i < nonPluginsToInstall.length; i++) {
-		//			provider.getNonPluginEntryArchiveReferences(
-		//				nonPluginsToInstall[i],
-		//				null);
-		//		}
+		System.out.println(
+			tab
+				+ "Downloading non plug-in archives for "
+				+ sourceFeature.getVersionedIdentifier()
+				+ " ...");
+		// download non-plugin archives
+		for (int i = 0; i < nonPluginsToInstall.length; i++) {
+			provider.getNonPluginEntryArchiveReferences(
+				nonPluginsToInstall[i],
+				null);
+		}
 
 		System.out.println(
 			tab
@@ -236,15 +236,6 @@ public class MirrorSite extends Site {
 				indent + 1);
 		}
 
-		// if feature already installed, skip installing its archives
-		//		ISiteFeatureReference existingFeatures[]=getFeatureReferences();
-		//		for(int i=0; i<existingFeatures.length; i++){
-		//			if(existingFeatures[i].getVersionedIdentifier().equals(sourceFeature.getVersionedIdentifier())){
-		//				System.out.println("Feature "+sourceFeature.getVersionedIdentifier().getIdentifier()+" "+sourceFeature.getVersionedIdentifier().getVersion()+ " already installed.");
-		//				return null;
-		//			}
-		//		}
-
 		System.out.println(
 			tab
 				+ "Storing plug-in archives for "
@@ -258,6 +249,24 @@ public class MirrorSite extends Site {
 					null);
 			storePluginArchive(references[0]);
 			addDownloadedPluginEntry(pluginsToInstall[i]);
+		}
+
+		System.out.println(
+			tab
+				+ "Storing non plug-in archives for "
+				+ sourceFeature.getVersionedIdentifier()
+				+ " ...");
+		// store non plugins' archives
+		for (int i = 0; i < nonPluginsToInstall.length; i++) {
+			ContentReference[] references =
+				provider.getNonPluginEntryArchiveReferences(
+					nonPluginsToInstall[i],
+					null);
+			for (int r = 0; r < references.length; r++) {
+				storeNonPluginArchive(
+					sourceFeature.getVersionedIdentifier(),
+					references[r]);
+			}
 		}
 
 		System.out.println(
@@ -397,6 +406,46 @@ public class MirrorSite extends Site {
 			}
 		}
 	}
+
+	private void storeNonPluginArchive(
+		VersionedIdentifier featureVersionedIdentifier,
+		ContentReference contentReference)
+		throws CoreException {
+
+		InputStream inStream = null;
+		File nonPluginArchivePath = null;
+		try {
+			URL newDirURL =
+				new URL(
+					getURL(),
+					Site.DEFAULT_INSTALLED_FEATURE_PATH
+						+ "/"
+						+ featureVersionedIdentifier);
+			File dir = new File(newDirURL.getFile());
+			dir.mkdirs();
+			inStream = contentReference.getInputStream();
+			nonPluginArchivePath =
+				new File(dir, contentReference.getIdentifier());
+			UpdateManagerUtils.copyToLocal(
+				inStream,
+				nonPluginArchivePath.getAbsolutePath(),
+				null);
+		} catch (IOException e) {
+			throw Utilities.newCoreException(
+				Policy.bind(
+					"MirrorSite.ErrorCreatingFile",
+					nonPluginArchivePath.getAbsolutePath()),
+				e);
+		} finally {
+			if (inStream != null) {
+				try {
+					inStream.close();
+				} catch (IOException e) {
+				}
+			}
+		}
+	}
+
 	private void save() {
 		FileOutputStream fos = null;
 		try {

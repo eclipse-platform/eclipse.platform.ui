@@ -967,6 +967,7 @@ public class ConfigurationView
 				} else {
 					uninstallFeatureAction.setEnabled(
 						enable && !adapter.isConfigured());
+					uninstallFeatureAction.setFeature(adapter);
 					installOptFeatureAction.setEnabled(false);
 				}
 			} catch (CoreException ex) {

@@ -36,9 +36,9 @@ public class InstallCommand extends ScriptedCommand {
 		String fromSite,
 		String toSite,
 		String verifyOnly) {
-			
+
 		super(verifyOnly);
-		
+
 		try {
 			this.featureId = featureId;
 			this.version = version;
@@ -46,7 +46,7 @@ public class InstallCommand extends ScriptedCommand {
 			this.remoteSiteURL = new URL(URLDecoder.decode(fromSite));
 
 			// Get site to install to
-			IConfiguredSite[] sites = config.getConfiguredSites();
+			IConfiguredSite[] sites = getConfiguration().getConfiguredSites();
 			if (toSite != null) {
 				URL toSiteURL = new File(toSite).toURL();
 				if (SiteManager.getSite(toSiteURL, null) == null) {
@@ -74,11 +74,12 @@ public class InstallCommand extends ScriptedCommand {
 				new String[0]);
 
 			searchRequest =
-				new UpdateSearchRequest(
-					new SiteSearchCategory(),
-					searchScope);
-			VersionedIdentifier vid = new VersionedIdentifier(featureId, version);
-			searchRequest.addFilter(new VersionedIdentifiersFilter(new VersionedIdentifier[]{vid}));
+				new UpdateSearchRequest(new SiteSearchCategory(), searchScope);
+			VersionedIdentifier vid =
+				new VersionedIdentifier(featureId, version);
+			searchRequest.addFilter(
+				new VersionedIdentifiersFilter(
+					new VersionedIdentifier[] { vid }));
 			searchRequest.addFilter(new EnvironmentFilter());
 			searchRequest.addFilter(new BackLevelFilter());
 
@@ -98,42 +99,58 @@ public class InstallCommand extends ScriptedCommand {
 			searchRequest.performSearch(collector, new NullProgressMonitor());
 			IInstallFeatureOperation[] operations = collector.getOperations();
 			if (operations == null || operations.length == 0) {
-				System.out.println("Feature " + featureId + " " + version + " cannot be found on " + remoteSiteURL + "\nor a newer version is already installed.");
+				System.out.println(
+					"Feature "
+						+ featureId
+						+ " "
+						+ version
+						+ " cannot be found on "
+						+ remoteSiteURL
+						+ "\nor a newer version is already installed.");
 				return false;
 			}
-			JobTargetSite[] jobTargetSites = new JobTargetSite[operations.length];
-			for (int i=0; i<operations.length; i++) {
+			JobTargetSite[] jobTargetSites =
+				new JobTargetSite[operations.length];
+			for (int i = 0; i < operations.length; i++) {
 				jobTargetSites[i] = new JobTargetSite();
 				jobTargetSites[i].job = operations[i];
 				jobTargetSites[i].targetSite = operations[i].getTargetSite();
 			}
-	
+
 			// Check for duplication conflicts
 			ArrayList conflicts =
 				DuplicateConflictsValidator.computeDuplicateConflicts(
 					jobTargetSites,
-					config);
+					getConfiguration());
 			if (conflicts != null) {
 				System.out.println("Duplicate conflicts");
 				return false;
 			}
-			
+
 			if (isVerifyOnly()) {
 				return (operations != null && operations.length > 1);
 			}
-			
-			IBatchOperation installOperation = OperationsManager.getOperationFactory().createBatchInstallOperation(operations);
+
+			IBatchOperation installOperation =
+				OperationsManager
+					.getOperationFactory()
+					.createBatchInstallOperation(
+					operations);
 			try {
-				installOperation.execute(
-					new NullProgressMonitor(),
-					this);
-				System.out.println("Feature " + featureId + " " + version + " has successfully been installed");
+				installOperation.execute(new NullProgressMonitor(), this);
+				System.out.println(
+					"Feature "
+						+ featureId
+						+ " "
+						+ version
+						+ " has successfully been installed");
 				return true;
 			} catch (Exception e) {
-				System.out.println("Cannot install feature " + featureId + " " + version);
+				System.out.println(
+					"Cannot install feature " + featureId + " " + version);
 				e.printStackTrace();
 				return false;
-			} 
+			}
 		} catch (CoreException ce) {
 			IStatus status = ce.getStatus();
 			if (status == null)
@@ -158,7 +175,6 @@ public class InstallCommand extends ScriptedCommand {
 		return true;
 	}
 
-
 	class UpdateSearchResultCollector implements IUpdateSearchResultCollector {
 		private ArrayList operations = new ArrayList();
 
@@ -167,13 +183,17 @@ public class InstallCommand extends ScriptedCommand {
 				.getVersionedIdentifier()
 				.getIdentifier()
 				.equals(featureId)
-				&& feature.getVersionedIdentifier().getVersion().toString().equals(
+				&& feature
+					.getVersionedIdentifier()
+					.getVersion()
+					.toString()
+					.equals(
 					version)) {
 				operations.add(
 					OperationsManager
 						.getOperationFactory()
 						.createInstallOperation(
-						config,
+						getConfiguration(),
 						targetSite,
 						feature,
 						null,
@@ -182,7 +202,8 @@ public class InstallCommand extends ScriptedCommand {
 			}
 		}
 		public IInstallFeatureOperation[] getOperations() {
-			IInstallFeatureOperation[] opsArray = new IInstallFeatureOperation[operations.size()];
+			IInstallFeatureOperation[] opsArray =
+				new IInstallFeatureOperation[operations.size()];
 			operations.toArray(opsArray);
 			return opsArray;
 		}

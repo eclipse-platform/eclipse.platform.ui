@@ -19,7 +19,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.operations.*;
 
-public  class DisableCommand extends ScriptedCommand {
+public class DisableCommand extends ScriptedCommand {
 
 	private IConfiguredSite targetSite;
 	private IFeature feature;
@@ -27,20 +27,19 @@ public  class DisableCommand extends ScriptedCommand {
 	public DisableCommand(
 		String featureId,
 		String version,
-		String toSite, 
+		String toSite,
 		String verifyOnly) {
-			
+
 		super(verifyOnly);
-		
+
 		try {
-			IConfiguredSite[] sites = config.getConfiguredSites();
+			IConfiguredSite[] sites = getConfiguration().getConfiguredSites();
 
 			// Get site to enable to
 			if (toSite != null) {
 				URL toSiteURL = new File(toSite).toURL();
 				if (SiteManager.getSite(toSiteURL, null) == null) {
-					System.out.println(
-						"Cannot find site " + toSite);
+					System.out.println("Cannot find site " + toSite);
 					return;
 				}
 				targetSite =
@@ -56,26 +55,36 @@ public  class DisableCommand extends ScriptedCommand {
 					}
 				}
 			}
-			
-			IFeature[] features = UpdateUtils.searchSite(featureId, targetSite, true);
+
+			IFeature[] features =
+				UpdateUtils.searchSite(featureId, targetSite, true);
 			if (features == null || features.length == 0) {
-				System.out.println("There are no configured features with id:" + featureId);
+				System.out.println(
+					"There are no configured features with id:" + featureId);
 				return;
 			}
 			if (version == null || version.trim().length() == 0)
 				feature = features[0]; // pick the first feature
-			else 
-				for (int i=0; features!= null && i<features.length; i++) {
-					if (features[i].getVersionedIdentifier().getVersion().toString().equals(version)) {
+			else
+				for (int i = 0; features != null && i < features.length; i++) {
+					if (features[i]
+						.getVersionedIdentifier()
+						.getVersion()
+						.toString()
+						.equals(version)) {
 						feature = features[i];
 						break;
 					}
 				}
 			if (feature == null) {
-				System.out.println("Cannot find configured feature " + featureId + " with version " + version);
+				System.out.println(
+					"Cannot find configured feature "
+						+ featureId
+						+ " with version "
+						+ version);
 				return;
 			}
-			
+
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (CoreException e) {
@@ -89,12 +98,16 @@ public  class DisableCommand extends ScriptedCommand {
 	public boolean run() {
 		if (isVerifyOnly()) {
 			IStatus status =
-				OperationsManager.getValidator().validatePendingUnconfig(feature);
+				OperationsManager.getValidator().validatePendingUnconfig(
+					feature);
 			return status == null;
 		}
-		
+
 		final IUnconfigFeatureOperation configOperation =
-			OperationsManager.getOperationFactory().createUnconfigOperation(config, targetSite,feature);
+			OperationsManager.getOperationFactory().createUnconfigOperation(
+				getConfiguration(),
+				targetSite,
+				feature);
 
 		try {
 			return configOperation.execute(null, null);

@@ -27,29 +27,35 @@ public class UpdateCommand extends ScriptedCommand {
 	private String featureId;
 	private IFeature currentFeature;
 
-	public UpdateCommand(
-		String featureId,
-		String verifyOnly) throws Exception {
-		
+	public UpdateCommand(String featureId, String verifyOnly)
+		throws Exception {
+
 		super(verifyOnly);
-		
+
 		try {
 			this.featureId = featureId;
 			if (featureId != null) {
-				this.targetSite = UpdateUtils.getSiteWithFeature(config, featureId);
+				this.targetSite =
+					UpdateUtils.getSiteWithFeature(
+						getConfiguration(),
+						featureId);
 				if (targetSite == null) {
-					System.out.println("Cannot find configured site for " + featureId);
+					System.out.println(
+						"Cannot find configured site for " + featureId);
 					throw new Exception();
 				}
-				IFeature[] currentFeatures = UpdateUtils.searchSite(featureId, targetSite, true);
+				IFeature[] currentFeatures =
+					UpdateUtils.searchSite(featureId, targetSite, true);
 				if (currentFeatures == null || currentFeatures.length == 0) {
-					System.out.println("Cannot find configured feature " + featureId);
+					System.out.println(
+						"Cannot find configured feature " + featureId);
 					throw new Exception();
 				}
 				this.currentFeature = currentFeatures[0];
 			} else {
 				// Get site to install to
-				IConfiguredSite[] sites = config.getConfiguredSites();
+				IConfiguredSite[] sites =
+					getConfiguration().getConfiguredSites();
 				for (int i = 0; i < sites.length; i++) {
 					if (sites[i].isProductSite()) {
 						targetSite = sites[i];
@@ -60,8 +66,10 @@ public class UpdateCommand extends ScriptedCommand {
 			if (currentFeature == null)
 				searchRequest = UpdateUtils.createNewUpdatesRequest(null);
 			else
-				searchRequest = UpdateUtils.createNewUpdatesRequest(new IFeature[]{currentFeature});
-				
+				searchRequest =
+					UpdateUtils.createNewUpdatesRequest(
+						new IFeature[] { currentFeature });
+
 			collector = new UpdateSearchResultCollector();
 
 		} catch (MalformedURLException e) {
@@ -78,41 +86,46 @@ public class UpdateCommand extends ScriptedCommand {
 			searchRequest.performSearch(collector, new NullProgressMonitor());
 			IInstallFeatureOperation[] operations = collector.getOperations();
 			if (operations == null || operations.length == 0) {
-				System.out.println("Feature " + featureId + " cannot be updated.");
+				System.out.println(
+					"Feature " + featureId + " cannot be updated.");
 				return false;
 			}
-			JobTargetSite[] jobTargetSites = new JobTargetSite[operations.length];
-			for (int i=0; i<operations.length; i++) {
+			JobTargetSite[] jobTargetSites =
+				new JobTargetSite[operations.length];
+			for (int i = 0; i < operations.length; i++) {
 				jobTargetSites[i] = new JobTargetSite();
 				jobTargetSites[i].job = operations[i];
 				jobTargetSites[i].targetSite = operations[i].getTargetSite();
 			}
-	
+
 			// Check for duplication conflicts
 			ArrayList conflicts =
 				DuplicateConflictsValidator.computeDuplicateConflicts(
 					jobTargetSites,
-					config);
+					getConfiguration());
 			if (conflicts != null) {
 				System.out.println("Duplicate conflicts");
 				return false;
 			}
-			
+
 			if (isVerifyOnly())
 				return true;
-				
-			IBatchOperation installOperation = OperationsManager.getOperationFactory().createBatchInstallOperation(operations);
+
+			IBatchOperation installOperation =
+				OperationsManager
+					.getOperationFactory()
+					.createBatchInstallOperation(
+					operations);
 			try {
-				installOperation.execute(
-					new NullProgressMonitor(),
-					this);
-				System.out.println("Feature " + featureId + " has successfully been updated");
+				installOperation.execute(new NullProgressMonitor(), this);
+				System.out.println(
+					"Feature " + featureId + " has successfully been updated");
 				return true;
 			} catch (Exception e) {
 				System.out.println("Cannot update feature " + featureId);
 				e.printStackTrace();
 				return false;
-			} 
+			}
 		} catch (CoreException ce) {
 			IStatus status = ce.getStatus();
 			if (status != null
@@ -143,19 +156,20 @@ public class UpdateCommand extends ScriptedCommand {
 		private ArrayList operations = new ArrayList();
 
 		public void accept(IFeature feature) {
-	
+
 			IInstallFeatureOperation op =
 				OperationsManager.getOperationFactory().createInstallOperation(
-					config,
+					getConfiguration(),
 					null,
 					feature,
 					null,
 					null,
 					null);
 
-			IConfiguredSite site = UpdateUtils.getDefaultTargetSite(config, op);
+			IConfiguredSite site =
+				UpdateUtils.getDefaultTargetSite(getConfiguration(), op);
 			if (site == null)
-				site = UpdateUtils.getAffinitySite(config, feature);
+				site = UpdateUtils.getAffinitySite(getConfiguration(), feature);
 			if (site == null)
 				site = targetSite;
 
@@ -163,7 +177,8 @@ public class UpdateCommand extends ScriptedCommand {
 			operations.add(op);
 		}
 		public IInstallFeatureOperation[] getOperations() {
-			IInstallFeatureOperation[] opsArray = new IInstallFeatureOperation[operations.size()];
+			IInstallFeatureOperation[] opsArray =
+				new IInstallFeatureOperation[operations.size()];
 			operations.toArray(opsArray);
 			return opsArray;
 		}

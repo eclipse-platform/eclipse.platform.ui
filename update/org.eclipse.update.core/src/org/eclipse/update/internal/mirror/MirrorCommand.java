@@ -49,7 +49,7 @@ public class MirrorCommand extends ScriptedCommand {
 		}
 
 		try {
-			if (getMirroSite() == null)
+			if (getMirrorSite() == null)
 				return false;
 
 			URL remoteSiteUrl = new URL(fromSiteUrl);
@@ -100,17 +100,19 @@ public class MirrorCommand extends ScriptedCommand {
 		}
 		return true;
 	}
-	private MirrorSite getMirroSite()
+	private MirrorSite getMirrorSite()
 		throws MalformedURLException, CoreException {
 		// Create mirror site
 		if (mirrorSite == null) {
 			if (toSiteDir != null) {
 				MirrorSiteFactory factory = new MirrorSiteFactory();
+				System.out.print("Analyzing features already mirrored ...");
 				try {
 					mirrorSite =
 						(MirrorSite) factory.createSite(new File(toSiteDir));
 				} catch (InvalidSiteTypeException iste) {
 				}
+				System.out.println("  Done.");
 			}
 			if (mirrorSite == null) {
 				System.out.println(
@@ -141,11 +143,11 @@ public class MirrorCommand extends ScriptedCommand {
 
 		if (featureId == null) {
 			System.out.println(
-				"Parameter feature not specified.  All features on the remote will be mirrored.");
+				"Parameter feature not specified.  All features on the remote site will be mirrored.");
 		}
 		if (featureVersion == null) {
 			System.out.println(
-				"Parameter version not specified.  All versions of features on the remote will be mirrored.");
+				"Parameter version not specified.  All versions of features on the remote site will be mirrored.");
 		} else {
 			featureVersionIdentifier =
 				new PluginVersionIdentifier(featureVersion);
@@ -178,6 +180,23 @@ public class MirrorCommand extends ScriptedCommand {
 					// feature already mirrored and exposed in site.xml
 					continue;
 				}
+			}
+
+			// Check feature type
+			String type =
+				((SiteFeatureReference) remoteSiteFeatureReferences[i])
+					.getType();
+			if (!ISite.DEFAULT_PACKAGED_FEATURE_TYPE.equals(type)) {
+				// unsupported
+				throw Utilities.newCoreException(
+					"Feature "
+						+ remoteFeatureVersionedIdentifier
+						+ " is of type "
+						+ type
+						+ ".  Only features of type "
+						+ ISite.DEFAULT_PACKAGED_FEATURE_TYPE
+						+ " are supported.",
+					null);
 			}
 
 			featureReferencesToMirror.add(remoteSiteFeatureReferences[i]);
