@@ -36,9 +36,11 @@ import org.eclipse.jface.viewers.ViewerSorter;
 
 import org.eclipse.jface.text.Position;
 
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.part.Page;
 
@@ -52,8 +54,8 @@ import org.eclipse.search.ui.text.Match;
 
 import org.eclipse.search.internal.ui.CopyToClipboardAction;
 
-import org.eclipse.search2.internal.ui.SearchMessages;
 import org.eclipse.search2.internal.ui.InternalSearchUI;
+import org.eclipse.search2.internal.ui.SearchMessages;
 import org.eclipse.search2.internal.ui.text.AnnotationManager;
 
 public class DefaultSearchViewPage extends Page implements ISearchResultPage {
@@ -456,7 +458,13 @@ public class DefaultSearchViewPage extends Page implements ISearchResultPage {
 		tbm.appendToGroup("ViewSpecificGroup", fRemoveResultsAction); //$NON-NLS-1$
 		tbm.appendToGroup("ViewSpecificGroup", fRemoveAllResultsAction); //$NON-NLS-1$
 		tbm.appendToGroup("ViewSpecificGroup", fSortDropDownAction); //$NON-NLS-1$
+		IActionBars actionBars= getSite().getActionBars();
+		if (actionBars != null) {
+			actionBars.setGlobalActionHandler(ActionFactory.NEXT.getId(), fShowNextAction);
+			actionBars.setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), fShowPreviousAction);
+		}
 	}
+	
 
 
 	private void setElementPresentation(ITextSearchResult result) {
