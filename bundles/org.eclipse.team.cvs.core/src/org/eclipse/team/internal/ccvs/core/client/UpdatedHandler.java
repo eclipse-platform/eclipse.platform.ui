@@ -125,7 +125,9 @@ class UpdatedHandler extends ResponseHandler {
 		int modificationState = ICVSFile.UNKNOWN;
 		if(handlerType==HANDLE_MERGED) {
 			newInfoWithTimestamp.setMerged();
-		} else if (!session.isIgnoringLocalChanges() && (handlerType==HANDLE_UPDATE_EXISTING || handlerType==HANDLE_CREATED)) {
+		} else if (!session.isIgnoringLocalChanges()
+			&& !info.isAdded() /* could be an added entry during a merge in which case it is dirty */
+			&& (handlerType==HANDLE_UPDATE_EXISTING || handlerType==HANDLE_CREATED)) {
 			// both these cases result in an unmodified file.
 			// reporting is handled by the FileModificationManager
 			modificationState = ICVSFile.CLEAN;
