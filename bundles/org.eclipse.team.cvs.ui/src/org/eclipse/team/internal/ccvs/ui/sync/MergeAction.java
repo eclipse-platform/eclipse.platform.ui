@@ -99,7 +99,7 @@ abstract class MergeAction extends Action {
 		if (!(s instanceof IStructuredSelection) || s.isEmpty()) {
 			return;
 		}
-		final SyncSet set = new SyncSet((IStructuredSelection)s);
+		final SyncSet set = new CVSSyncSet((IStructuredSelection)s);
 		removeNonApplicableNodes(set, syncMode);
 		final SyncSet[] result = new SyncSet[1];
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {

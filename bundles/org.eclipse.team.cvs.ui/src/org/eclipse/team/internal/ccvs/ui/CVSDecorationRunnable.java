@@ -39,10 +39,10 @@ import org.eclipse.team.ui.TeamUIPlugin;
 public class CVSDecorationRunnable implements Runnable {
 
 	// Images cached for better performance
-	private ImageDescriptor dirty;
-	private ImageDescriptor checkedIn;
-	private ImageDescriptor checkedOut;
-	private ImageDescriptor merged;
+	private static ImageDescriptor dirty;
+	private static ImageDescriptor checkedIn;
+	private static ImageDescriptor checkedOut;
+	private static ImageDescriptor merged;
 
 	// Provides resources to be decorated and is notified when decoration has been calculated
 	private IDecorationNotifier notifier;
@@ -245,7 +245,7 @@ public class CVSDecorationRunnable implements Runnable {
 		return tag;
 	}
 		
-	private List computeLabelOverlaysFor(IResource resource, boolean isDirty, CVSTeamProvider provider) {
+	public static List computeLabelOverlaysFor(IResource resource, boolean isDirty, CVSTeamProvider provider) {
 		List overlays = new ArrayList(3);
 		
 		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();

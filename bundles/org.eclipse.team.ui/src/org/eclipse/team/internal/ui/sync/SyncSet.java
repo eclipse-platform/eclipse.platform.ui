@@ -273,4 +273,8 @@ public class SyncSet {
 	public void remove(ITeamNode node) {
 		set.remove(node);
 	}
+	
+	protected HashSet getSyncSet() {
+		return set;
+	}
 }

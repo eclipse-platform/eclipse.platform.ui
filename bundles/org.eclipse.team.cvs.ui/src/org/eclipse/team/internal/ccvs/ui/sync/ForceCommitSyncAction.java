@@ -243,7 +243,7 @@ public class ForceCommitSyncAction extends MergeAction {
 
 	protected boolean isEnabled(ITeamNode node) {
 		// The force commit action is enabled only for conflicting and incoming changes
-		SyncSet set = new SyncSet(new StructuredSelection(node));
+		CVSSyncSet set = new CVSSyncSet(new StructuredSelection(node));
 		if (syncMode == SyncView.SYNC_OUTGOING) {
 			return (set.hasConflicts() && hasRealChanges(node, new int[] { ITeamNode.CONFLICTING }));
 		} else {
@@ -289,6 +289,7 @@ public class ForceCommitSyncAction extends MergeAction {
 		if (syncMode != SyncView.SYNC_BOTH) {
 			set.removeIncomingNodes();
 		}
+		((CVSSyncSet)set).removeNonAddedChanges();
 	}
 	
 	/*

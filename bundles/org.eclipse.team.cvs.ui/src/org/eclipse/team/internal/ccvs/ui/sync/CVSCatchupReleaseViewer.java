@@ -34,10 +34,13 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
@@ -60,30 +63,39 @@ import org.eclipse.team.internal.ui.sync.ITeamNode;
 import org.eclipse.team.internal.ui.sync.MergeResource;
 import org.eclipse.team.internal.ui.sync.SyncView;
 import org.eclipse.team.internal.ui.sync.TeamFile;
+import org.eclipse.team.ui.ISharedImages;
+import org.eclipse.team.ui.TeamUIPlugin;
 
 public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 	// Actions
 	private UpdateSyncAction updateAction;
 	private ForceUpdateSyncAction forceUpdateAction;
+	
 	private CommitSyncAction commitAction;
 	private ForceCommitSyncAction forceCommitAction;
+	
 	private UpdateMergeAction updateMergeAction;
 	private UpdateWithForcedJoinAction updateWithJoinAction;
+	private OverrideUpdateMergeAction forceUpdateMergeAction;
+
 	private IgnoreAction ignoreAction;
 	private HistoryAction showInHistory;
-	private OverrideUpdateMergeAction forceUpdateMergeAction;
+
 	private Action confirmMerge;
+	private AddSyncAction addAction;
 	
 	private static class DiffOverlayIcon extends OverlayIcon {
 		private static final int HEIGHT = 16;
 		private static final int WIDTH = 22;
-		public DiffOverlayIcon(Image baseImage, ImageDescriptor overlay) {
-			super(baseImage, new ImageDescriptor[] { overlay }, new Point(WIDTH, HEIGHT));
+		public DiffOverlayIcon(Image baseImage, ImageDescriptor[] overlays) {
+			super(baseImage, overlays, new Point(WIDTH, HEIGHT));
 		}
 		protected void drawOverlays(ImageDescriptor[] overlays) {
-			ImageDescriptor overlay = overlays[0];
-			ImageData overlayData = overlay.getImageData();
-			drawImage(overlayData, WIDTH - overlayData.width, (HEIGHT - overlayData.height) / 2);
+			for (int i = 0; i < overlays.length; i++) {
+				ImageDescriptor overlay = overlays[i];
+				ImageData overlayData = overlay.getImageData();
+				drawImage(overlayData, 0, 0);			
+			}
 		}
 	}
 	
@@ -155,7 +167,8 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 	
 	private void initializeLabelProvider() {
 		final ImageDescriptor conflictDescriptor = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_MERGEABLE_CONFLICT);
-		final ImageDescriptor questionableDescriptor = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_QUESTIONABLE);
+		final ImageDescriptor hasRemoteDescriptor = TeamUIPlugin.getPlugin().getImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR);
+		final ImageDescriptor addedDescriptor = TeamUIPlugin.getPlugin().getImageDescriptor(ISharedImages.IMG_CHECKEDOUT_OVR);
 		final LabelProvider oldProvider = (LabelProvider)getLabelProvider();
 		setLabelProvider(new LabelProvider() {
 			private OverlayIconCache iconCache = new OverlayIconCache();
@@ -169,21 +182,25 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 				if (element instanceof ITeamNode) {
 					ITeamNode node = (ITeamNode)element;
 					int kind = node.getKind();
-					if ((kind & IRemoteSyncElement.AUTOMERGE_CONFLICT) != 0) {
-						return iconCache.getImageFor(new DiffOverlayIcon(image, conflictDescriptor));
-					}
-					if (kind == (IRemoteSyncElement.OUTGOING | IRemoteSyncElement.ADDITION)) {
-						IResource resource = node.getResource();
-						if (resource.getType() == IResource.FILE) {
-							try {
-								ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile) resource);
-								if (cvsFile.getSyncInfo() == null) {
-									return iconCache.getImageFor(new DiffOverlayIcon(image, questionableDescriptor));
-								}
-							} catch (TeamException e) {
-								ErrorDialog.openError(getControl().getShell(), null, null, e.getStatus());
-								// Fall through and return the default image
-							}
+					IResource resource = node.getResource();
+					
+					// use the default cvs image decorations
+					if(resource.exists()) {
+						CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());
+						List overlays = new ArrayList();
+						List stdOverlays = CVSDecorationRunnable.computeLabelOverlaysFor(node.getResource(), false, provider);
+						if(stdOverlays != null) {
+							overlays.addAll(stdOverlays);
+						}						
+						if ((kind & IRemoteSyncElement.AUTOMERGE_CONFLICT) != 0) {
+							overlays.add(conflictDescriptor);
+						}
+						if(!overlays.isEmpty()) {
+							return iconCache.getImageFor(new DiffOverlayIcon(image, 
+											(ImageDescriptor[]) overlays.toArray(
+												new ImageDescriptor[overlays.size()])));
+						} else {
+							return image;
 						}
 					}
 				}
@@ -229,6 +246,8 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 				manager.add(confirmMerge);
 				break;
 			case SyncView.SYNC_OUTGOING:
+				addAction.update(SyncView.SYNC_OUTGOING);
+				manager.add(addAction);
 				commitAction.update(SyncView.SYNC_OUTGOING);
 				manager.add(commitAction);
 				forceCommitAction.update(SyncView.SYNC_OUTGOING);
@@ -239,6 +258,8 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 				manager.add(confirmMerge);
 				break;
 			case SyncView.SYNC_BOTH:
+				addAction.update(SyncView.SYNC_BOTH);
+				manager.add(addAction);
 				commitAction.update(SyncView.SYNC_BOTH);
 				manager.add(commitAction);
 				updateAction.update(SyncView.SYNC_BOTH);
@@ -275,6 +296,7 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 		ignoreAction = new IgnoreAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.ignore"), shell); //$NON-NLS-1$
 		updateWithJoinAction = new UpdateWithForcedJoinAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.mergeUpdate"), shell); //$NON-NLS-1$
 		forceUpdateMergeAction = new OverrideUpdateMergeAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.forceUpdate"), shell); //$NON-NLS-1$
+		addAction = new AddSyncAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.addAction"), shell); //$NON-NLS-1$
 		
 		// Show in history view
 		showInHistory = new HistoryAction(Policy.bind("CVSCatchupReleaseViewer.showInHistory")); //$NON-NLS-1$
