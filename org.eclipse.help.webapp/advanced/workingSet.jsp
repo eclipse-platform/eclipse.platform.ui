@@ -12,6 +12,7 @@
 
 <% 
 	WorkingSetData data = new WorkingSetData(application, request, response);
+	TocData tocData = new TocData(application,request, response);
 	WebappPreferences prefs = data.getPrefs();
 %>
 
@@ -357,6 +358,10 @@ function enableOK() {
 <% 
 for (int i=0; i<data.getTocCount(); i++)
 {
+	if(!tocData.isEnabled(i)){
+		// do not show
+		continue;
+	}
 	String label = data.getTocLabel(i);
 	short state = data.getTocState(i);
 	String checked = state == WorkingSetData.STATE_CHECKED || state == WorkingSetData.STATE_GRAYED ? "checked" : "";
