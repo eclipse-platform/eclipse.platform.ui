@@ -145,13 +145,14 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		try {
 			delegate.launch(this, mode, launch, monitor);
 		} catch (CoreException e) {
-			// if there was an exception, and the launch is empty, remove it
+			throw e;
+		} finally {
+			//if the launch is empty, remove it
 			if (!launch.hasChildren()) {
 				getLaunchManager().removeLaunch(launch);
 			}
-			throw e;
 		}
-		if (monitor != null && monitor.isCanceled()) {
+		if (monitor.isCanceled()) {
 			getLaunchManager().removeLaunch(launch);
 		} else {
 			initializeSourceLocator(launch);
