@@ -1,7 +1,7 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
  
@@ -13,20 +13,23 @@ public class CVSDecoration {
 	private String format;
 	private Map bindings;
 	private List overlays;
-
-	/* package */ CVSDecoration() {
-		this(null, null, null);
+	private int[] locations;
+	
+	public CVSDecoration() {
+		this(null, null, null, null);
 	}
 
-	/* package */ CVSDecoration(String format, Map bindings, List overlays) {
+	public CVSDecoration(String format, Map bindings, List overlays, int[] locations) {
 		setFormat(format);
 		setBindings(bindings);
 		setOverlays(overlays);
+		setLocations(locations);
 	}
 	
 	public int hashCode() {
 		return overlays.hashCode();
 	}
+	
 	public boolean equals(Object o) {
 		if (!(o instanceof CVSDecoration)) return false;
 		return overlays.equals(((CVSDecoration)o).overlays);
@@ -78,4 +81,19 @@ public class CVSDecoration {
 	public void setFormat(String format) {
 		this.format = format;
 	}			
+	/**
+	 * Gets the locations.
+	 * @return Returns a int[]
+	 */
+	public int[] getLocations() {
+		return locations;
+	}
+
+	/**
+	 * Sets the locations.
+	 * @param locations The locations to set
+	 */
+	public void setLocations(int[] locations) {
+		this.locations = locations;
+	}
 }

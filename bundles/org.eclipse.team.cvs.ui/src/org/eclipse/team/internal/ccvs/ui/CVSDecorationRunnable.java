@@ -1,7 +1,7 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
@@ -40,9 +40,13 @@ public class CVSDecorationRunnable implements Runnable {
 
 	// Images cached for better performance
 	private static ImageDescriptor dirty;
+	private static int dirtyLocation;
 	private static ImageDescriptor checkedIn;
+	private static int checkedInLocation;
 	private static ImageDescriptor checkedOut;
+	private static int checkedOutLocation;
 	private static ImageDescriptor merged;
+	private static int mergedLocation;
 
 	// Provides resources to be decorated and is notified when decoration has been calculated
 	private IDecorationNotifier notifier;
@@ -54,9 +58,13 @@ public class CVSDecorationRunnable implements Runnable {
 
 	static {
 		dirty = new CachedImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_DIRTY_OVR));
+		dirtyLocation = OverlayIcon.TOP_RIGHT;
 		checkedIn = new CachedImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR));
+		checkedInLocation = OverlayIcon.BOTTOM_RIGHT;
 		checkedOut = new CachedImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_CHECKEDOUT_OVR));
+		checkedOutLocation = OverlayIcon.BOTTOM_RIGHT;
 		merged = new CachedImageDescriptor(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_MERGED));
+		mergedLocation = OverlayIcon.BOTTOM_RIGHT;
 	}
 
 	/*
@@ -143,7 +151,7 @@ public class CVSDecorationRunnable implements Runnable {
 
 		// compute decorations						
 		CVSDecoration decoration = computeTextLabelFor(resource, isDirty);
-		decoration.setOverlays(computeLabelOverlaysFor(resource, isDirty, (CVSTeamProvider)provider));
+		computeLabelOverlaysFor(resource, decoration, isDirty, (CVSTeamProvider)provider);
 		return decoration;
 	}
 	
@@ -158,28 +166,28 @@ public class CVSDecorationRunnable implements Runnable {
 			
 			// if the resource does not have a location then return. This can happen if the resource
 			// has been deleted after we where asked to decorate it.
-			if(resourceLocation==null) {
-				return new CVSDecoration(format, bindings, null);
+			if( resourceLocation == null) {
+				return new CVSDecoration(format, bindings, null, null);
 			}
 			
-			if(type==IResource.FOLDER) {
+			if (type == IResource.FOLDER) {
 				format = store.getString(ICVSUIConstants.PREF_FOLDERTEXT_DECORATION);
-			} else if(type==IResource.PROJECT) {
+			} else if (type == IResource.PROJECT) {
 				format = store.getString(ICVSUIConstants.PREF_PROJECTTEXT_DECORATION);
 			} else {
 				format = store.getString(ICVSUIConstants.PREF_FILETEXT_DECORATION);
 			}
 			
-			if(isDirty) {
+			if (isDirty) {
 				bindings.put(CVSDecoratorConfiguration.DIRTY_FLAG, store.getString(ICVSUIConstants.PREF_DIRTY_FLAG));
 			}
 	
 			CVSTag tag = getTagToShow(resource);
-			if(tag != null) {
+			if (tag != null) {
 				bindings.put(CVSDecoratorConfiguration.RESOURCE_TAG, tag.getName());
 			}
 			
-			if(type != IResource.FILE) {
+			if (type != IResource.FILE) {
 				ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor((IContainer) resource);
 				FolderSyncInfo folderInfo = folder.getFolderSyncInfo();
 				if (folderInfo != null) {
@@ -195,7 +203,7 @@ public class CVSDecorationRunnable implements Runnable {
 				ICVSFile file = CVSWorkspaceRoot.getCVSFileFor((IFile) resource);
 				ResourceSyncInfo fileInfo = file.getSyncInfo();
 				if (fileInfo != null) {
-					if(fileInfo.isAdded()) {
+					if (fileInfo.isAdded()) {
 						bindings.put(CVSDecoratorConfiguration.ADDED_FLAG, store.getString(ICVSUIConstants.PREF_ADDED_FLAG));
 					} else {
 						bindings.put(CVSDecoratorConfiguration.FILE_REVISION, fileInfo.getRevision());
@@ -210,7 +218,7 @@ public class CVSDecorationRunnable implements Runnable {
 					bindings.put(CVSDecoratorConfiguration.FILE_KEYWORD, option.getShortDisplayText());
 				}
 			}			
-			return new CVSDecoration(format, bindings, null);
+			return new CVSDecoration(format, bindings, null, null);
 		} catch (CVSException e) {
 			CVSUIPlugin.log(e.getStatus());
 			return new CVSDecoration();
@@ -253,8 +261,9 @@ public class CVSDecorationRunnable implements Runnable {
 		return tag;
 	}
 		
-	public static List computeLabelOverlaysFor(IResource resource, boolean isDirty, CVSTeamProvider provider) {
+	public static void computeLabelOverlaysFor(IResource resource, CVSDecoration decoration, boolean isDirty, CVSTeamProvider provider) {
 		List overlays = new ArrayList(3);
+		List locations = new ArrayList(3);
 		
 		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
 		boolean showDirty = store.getBoolean(ICVSUIConstants.PREF_SHOW_DIRTY_DECORATION);
@@ -264,37 +273,45 @@ public class CVSDecorationRunnable implements Runnable {
 		if (showAdded && resource.getType() == IResource.FILE) {
 			try {
 				IPath location = resource.getLocation();
-				if(location!=null) {
+				if (location != null) {
 					ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile) resource);
 					ResourceSyncInfo info = cvsFile.getSyncInfo();
 					// show merged icon if file has been merged but has not been edited (e.g. on commit it will be ignored)
-					if(info!=null && info.isNeedsMerge(cvsFile.getTimeStamp())) {
+					if (info != null && info.isNeedsMerge(cvsFile.getTimeStamp())) {
 						overlays.add(merged);
+						locations.add(new Integer(mergedLocation));
 					// show added icon if file has been added locally.
-					} else if(info!=null && info.isAdded()) {
+					} else if (info != null && info.isAdded()) {
 						overlays.add(checkedOut);
+						locations.add(new Integer(checkedOutLocation));
 					}					
 				}
 			} catch (CVSException e) {
 				CVSUIPlugin.log(e.getStatus());
-				return null;				
+				return;				
 			}
 		}
 		
 		// show outgoing arrow
-		if(showDirty && isDirty) {
-				overlays.add(dirty);
+		if (showDirty && isDirty) {
+			overlays.add(dirty);
+			locations.add(new Integer(dirtyLocation));
 		}
 		
 		// show remote icon
 		if (showHasRemote && provider.hasRemote(resource)) {
 			overlays.add(checkedIn);
+			locations.add(new Integer(checkedInLocation));
 		}
 				
-		if(overlays.isEmpty()) {
-			return null;
-		} else {		
-			return overlays;
+		if (!overlays.isEmpty()) {
+			Integer[] integers = (Integer[])locations.toArray(new Integer[locations.size()]);
+			int[] ints = new int[integers.length];
+			for (int i = 0; i < integers.length; i++) {
+				ints[i] = integers[i].intValue();
+			}
+			decoration.setLocations(ints);
+			decoration.setOverlays(overlays);
 		}
 	}
 }

@@ -79,16 +79,28 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 	private Set deconfiguredProjects = new HashSet();
 	
 	private static class DecoratorOverlayIcon extends OverlayIcon {		
-		public DecoratorOverlayIcon(Image base, ImageDescriptor[] overlays) {
-			super(base, overlays, new Point(base.getBounds().width, base.getBounds().height));
+		public DecoratorOverlayIcon(Image base, ImageDescriptor[] overlays, int[] locations) {
+			super(base, overlays, locations, new Point(base.getBounds().width, base.getBounds().height));
 		}
-		// all cvs overlays are shown on the rightmost portion
-		// of the base image
-		protected void drawOverlays(ImageDescriptor[] overlays) {
-			for (int i = overlays.length - 1; i >= 0; --i) {
-				ImageData imageData = overlays[i].getImageData();
-				Point p = getSize();
-				drawImage(imageData, p.x-imageData.width, 0);
+		protected void drawOverlays(ImageDescriptor[] overlays, int[] locations) {
+			Point size = getSize();
+			for (int i = 0; i < overlays.length; i++) {
+				ImageDescriptor overlay = overlays[i];
+				ImageData overlayData = overlay.getImageData();
+				switch (locations[i]) {
+					case TOP_LEFT:
+						drawImage(overlayData, 0, 0);			
+						break;
+					case TOP_RIGHT:
+						drawImage(overlayData, size.x - overlayData.width, 0);			
+						break;
+					case BOTTOM_LEFT:
+						drawImage(overlayData, 0, size.y - overlayData.height);			
+						break;
+					case BOTTOM_RIGHT:
+						drawImage(overlayData, size.x - overlayData.width, size.y - overlayData.height);			
+						break;
+				}
 			}
 		}
 	}
@@ -176,9 +188,10 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 
 		if (decoration != null) {
 			List overlays = decoration.getOverlays();
+			int[] locations = decoration.getLocations();
 			if (overlays != null) {
 				return iconCache.getImageFor(new DecoratorOverlayIcon(image,
-					(ImageDescriptor[]) overlays.toArray(new ImageDescriptor[overlays.size()])));
+					(ImageDescriptor[]) overlays.toArray(new ImageDescriptor[overlays.size()]), locations));
 			}
 		} else {
 			addResourcesToBeDecorated(new IResource[] { resource });

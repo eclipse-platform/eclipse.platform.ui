@@ -89,14 +89,28 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 	private static class DiffOverlayIcon extends OverlayIcon {
 		private static final int HEIGHT = 16;
 		private static final int WIDTH = 22;
-		public DiffOverlayIcon(Image baseImage, ImageDescriptor[] overlays) {
-			super(baseImage, overlays, new Point(WIDTH, HEIGHT));
+		public DiffOverlayIcon(Image baseImage, ImageDescriptor[] overlays, int[] locations) {
+			super(baseImage, overlays, locations, new Point(WIDTH, HEIGHT));
 		}
-		protected void drawOverlays(ImageDescriptor[] overlays) {
+		protected void drawOverlays(ImageDescriptor[] overlays, int[] locations) {
+			Point size = getSize();
 			for (int i = 0; i < overlays.length; i++) {
 				ImageDescriptor overlay = overlays[i];
 				ImageData overlayData = overlay.getImageData();
-				drawImage(overlayData, 0, 0);			
+				switch (locations[i]) {
+					case TOP_LEFT:
+						drawImage(overlayData, 0, 0);			
+						break;
+					case TOP_RIGHT:
+						drawImage(overlayData, size.x - overlayData.width, 0);			
+						break;
+					case BOTTOM_LEFT:
+						drawImage(overlayData, 0, size.y - overlayData.height);			
+						break;
+					case BOTTOM_RIGHT:
+						drawImage(overlayData, size.x - overlayData.width, size.y - overlayData.height);			
+						break;
+				}
 			}
 		}
 	}
@@ -189,20 +203,35 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 					IResource resource = node.getResource();
 					
 					// use the default cvs image decorations
-					if(resource.exists()) {
+					if (resource.exists()) {
 						CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());
 						List overlays = new ArrayList();
-						List stdOverlays = CVSDecorationRunnable.computeLabelOverlaysFor(node.getResource(), false, provider);
-						if(stdOverlays != null) {
+						List locations = new ArrayList();
+						
+						CVSDecoration decoration = new CVSDecoration();
+						
+						CVSDecorationRunnable.computeLabelOverlaysFor(node.getResource(), decoration, false, provider);
+						List stdOverlays = decoration.getOverlays();
+						if (stdOverlays != null) {
 							overlays.addAll(stdOverlays);
+							int[] stdLocations = decoration.getLocations();
+							for (int i = 0; i < stdLocations.length; i++) {
+								locations.add(new Integer(stdLocations[i]));
+							}
 						}						
 						if ((kind & IRemoteSyncElement.AUTOMERGE_CONFLICT) != 0) {
 							overlays.add(conflictDescriptor);
+							locations.add(new Integer(OverlayIcon.TOP_LEFT));
 						}
-						if(!overlays.isEmpty()) {
+						if (!overlays.isEmpty()) {
+							Integer[] integers = (Integer[])locations.toArray(new Integer[locations.size()]);
+							int[] locs = new int[integers.length];
+							for (int i = 0; i < integers.length; i++) {
+								locs[i] = integers[i].intValue();
+							}
 							return iconCache.getImageFor(new DiffOverlayIcon(image, 
-											(ImageDescriptor[]) overlays.toArray(
-												new ImageDescriptor[overlays.size()])));
+								(ImageDescriptor[]) overlays.toArray(new ImageDescriptor[overlays.size()]),
+								locs));
 						} else {
 							return image;
 						}

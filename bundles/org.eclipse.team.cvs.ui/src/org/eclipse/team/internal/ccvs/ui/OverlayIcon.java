@@ -27,23 +27,32 @@ public abstract class OverlayIcon extends CompositeImageDescriptor {
 	private ImageDescriptor[] overlays;
 	// the size
 	private Point size;
-
+	// the locations
+	private int[] locations;
+	
+	public static final int TOP_LEFT = 0;
+	public static final int TOP_RIGHT = 1;
+	public static final int BOTTOM_LEFT = 2;
+	public static final int BOTTOM_RIGHT = 3;
+	
 	/**
 	 * OverlayIcon constructor.
 	 * 
 	 * @param base the base image
 	 * @param overlays the overlay images
+	 * @param locations the location of each image
 	 * @param size the size
 	 */
-	public OverlayIcon(Image base, ImageDescriptor[] overlays, Point size) {
+	public OverlayIcon(Image base, ImageDescriptor[] overlays, int[] locations, Point size) {
 		this.base = base;
 		this.overlays = overlays;
+		this.locations = locations;
 		this.size = size;
 	}
 	/**
 	 * Superclasses override to draw the overlays.
 	 */
-	protected abstract void drawOverlays(ImageDescriptor[] overlays);
+	protected abstract void drawOverlays(ImageDescriptor[] overlays, int[] locations);
 
 	public boolean equals(Object o) {
 		if (! (o instanceof OverlayIcon)) return false;
@@ -62,7 +71,7 @@ public abstract class OverlayIcon extends CompositeImageDescriptor {
 
 	protected void drawCompositeImage(int width, int height) {
 		drawImage(base.getImageData(), 0, 0);
-		drawOverlays(overlays);
+		drawOverlays(overlays, locations);
 	}
 
 	protected Point getSize() {
