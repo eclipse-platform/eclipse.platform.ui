@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fragment
+  name="WS Fragment Find Test"
+  id="wsFragmentFindTest"
+  version="1.0.0"
+  plugin-id="wsPluginFindTest"
+  plugin-version="1.2.0">
+
+</fragment>

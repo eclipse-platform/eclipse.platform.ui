@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fragment
+  name="Interesting Fragment Find Test"
+  id="interestingFragmentFindTest"
+  version="1.0.0"
+  plugin-id="interestingPluginFindTest"
+  plugin-version="1.2.0">
+
+</fragment>
