@@ -50,7 +50,7 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 	}
 
 	protected String getActionId() {
-		return AbstractDebugView.COPY;
+		return AbstractDebugView.COPY_ACTION;
 	}
 	/**
 	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)

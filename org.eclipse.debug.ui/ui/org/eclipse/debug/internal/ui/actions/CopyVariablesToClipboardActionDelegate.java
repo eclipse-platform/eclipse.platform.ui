@@ -30,6 +30,6 @@ public class CopyVariablesToClipboardActionDelegate extends CopyToClipboardActio
 	}
 	
 	protected String getActionId() {
-		return AbstractDebugView.COPY + ".Variables"; //$NON-NLS-1$
+		return AbstractDebugView.COPY_ACTION + ".Variables"; //$NON-NLS-1$
 	}
 }
