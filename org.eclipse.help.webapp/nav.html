@@ -25,34 +25,6 @@ var isMozilla = navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && pa
 var isIE = navigator.userAgent.toLowerCase().indexOf('msie') != -1;
 
 
-// Handle resize events
-window.onresize = resizeContent;
-
-
-/* Handler: resizes the internal frames */
-function resizeContent()
-{
- var w = 0;
- var h = 0;
- if (isIE)
- {
-  w = document.body.clientWidth;
-  h = document.body.clientHeight;
- } 
- else if (isMozilla)
- {
-  w = window.innerWidth;
-  h = window.innerHeight;
- }
- 
- var iframes = document.body.getElementsByTagName("IFRAME");
- for (var i=0; i<iframes.length; i++)
- {
-  iframes[i].width = w;
-  iframes[i].height = h;
- }
-}
-
 function displayTocFor(topic)
 {
 	parent.TabsFrame.showNavFrame("toc");
@@ -60,7 +32,7 @@ function displayTocFor(topic)
 	var i = topic.indexOf('?');
 	if (i != -1)
 		topic = topic.substring(0, i);
-		
+	
 	var selected = window.toc.selectTopic(topic);
 	if (!selected)
 		window.toc.location = "toc.jsp?topic="+topic;
@@ -71,37 +43,36 @@ function displayTocFor(topic)
    </head>
    
    <body>
-      <div id="frames" style="top:0;">
-         <iframe name="toc" id="toc" class="nav" title="Table of Contents"></iframe> 
-		 <iframe name="search" id="search" class="nav" title="Search"></iframe> 
-		 <iframe name="links" id="links" class="nav" title="Links"></iframe>
+      <div id="frames" style="top:0; width:100%;height:100%;">
+         <iframe width="100%" height="100%"  name="toc" id="toc" class="nav" title="Table of Contents"></iframe> 
+		 <iframe width="100%" height="100%"  name="search" id="search" class="nav" title="Search"></iframe> 
+		 <iframe width="100%" height=100%"   name="links" id="links" class="nav" title="Links"></iframe>
       </div>
       
-<script type="text/javascript" language="JavaScript">
+<script language="JavaScript">
 	
 	// load frames
 	var tocUrl="";
-	if(args.toc)
+	if(args["toc"])
 	{
-		tocUrl="toc.jsp?toc="+args.toc;
-		if(args.topic)
-			tocUrl=tocUrl+"&topic="+args.topic;
+		tocUrl="toc.jsp?toc="+args["toc"];
+		if(args["topic"])
+			tocUrl=tocUrl+"&topic="+args["topic"];
 	}
 	else
 		tocUrl="tocs.jsp";
-	toc.location=tocUrl;
 		
-	if(args.query)
-		search.location="search.html?query="+args.query;
-	else
-		search.location="search.html";
+	document.getElementById("toc").src=tocUrl;
 		
-	if(args.contextId)
-		links.location="links.html?contextId="+args.contextId;
+	if(args["query"])
+		document.getElementById("search").src="search.html?query="+args["query"];
 	else
-		links.location="links.html";
-	//
-	resizeContent();
+		document.getElementById("search").src="search.html";
+		
+	if(args["contextId"])
+		document.getElementById("links").src="links.html?contextId="+args["contextId"];
+	else
+		document.getElementById("links").src="links.html";
 		
 </script>
 
