@@ -591,17 +591,19 @@ public class OverviewRuler implements IOverviewRuler {
 			size.y= Math.max(writable - fHeader.getSize().y, 0);
 			
 		fCachedAnnotations.clear();
-		Iterator iter= fModel.getAnnotationIterator();
-		while (iter.hasNext()) {
-			Annotation annotation= (Annotation) iter.next();
-			
-			if (annotation.isMarkedDeleted())
-				continue;
-			
-			if (skip(annotation.getType()))
-				continue;
-			
-			fCachedAnnotations.add(annotation);
+		if (fModel != null) {
+			Iterator iter= fModel.getAnnotationIterator();
+			while (iter.hasNext()) {
+				Annotation annotation= (Annotation) iter.next();
+				
+				if (annotation.isMarkedDeleted())
+					continue;
+				
+				if (skip(annotation.getType()))
+					continue;
+				
+				fCachedAnnotations.add(annotation);
+			}
 		}
 		
 		for (Iterator iterator= fAnnotationsSortedByLayer.iterator(); iterator.hasNext();) {
