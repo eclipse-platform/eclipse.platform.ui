@@ -24,10 +24,12 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Event;
@@ -40,11 +42,16 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.internal.dnd.AbstractDropTarget;
+import org.eclipse.ui.internal.dnd.DragUtil;
+import org.eclipse.ui.internal.dnd.IDragOverListener;
+import org.eclipse.ui.internal.dnd.IDropTarget;
 import org.eclipse.ui.internal.layout.CacheWrapper;
 import org.eclipse.ui.internal.layout.CellLayout;
 import org.eclipse.ui.internal.layout.LayoutUtil;
 import org.eclipse.ui.internal.layout.Row;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.presentations.PresentationUtil;
 
 /**
  * A utility class to manage the perspective switcher.  At some point, it might be nice to
@@ -115,6 +122,9 @@ public class PerspectiveSwitcher {
         }
     };
 
+    private Listener  dragListener;
+    private IDragOverListener dragTarget;
+    
     private DisposeListener toolBarListener;
 
     public PerspectiveSwitcher(WorkbenchWindow window, CBanner topBar, int style) {
@@ -237,7 +247,6 @@ public class PerspectiveSwitcher {
             window.addPerspectiveBarToTrim(trimControl, SWT.LEFT);
             break;
         default:
-            // TODO log?
             return;
         }
 
@@ -296,6 +305,7 @@ public class PerspectiveSwitcher {
                     .removePropertyChangeListener(propertyChangeListener);
             propertyChangeListener = null;
         }
+        unhookDragSupport();
         toolBarListener = null;
     }
 
@@ -346,19 +356,163 @@ public class PerspectiveSwitcher {
                 return;
         }
 
-        if (perspectiveBar != null)
+        if (perspectiveBar != null) {
             perspectiveBar.getControl().removeDisposeListener(toolBarListener);
+            unhookDragSupport();
+        }
         // otherwise dispose the current controls and make new ones
         disposeChildControls();
         if (newLocation == LEFT)
             createControlForLeft();
         else
             createControlForTop();
-
+        hookDragSupport();
+        
         perspectiveBar.getControl().addDisposeListener(toolBarListener);
     }
 
-    private void setPropertyChangeListener() {
+    /**
+	 * Remove any drag and drop support and associated listeners hooked for 
+	 * the perspective switcher.
+	 */
+	private void unhookDragSupport() {
+		ToolBar bar = perspectiveBar.getControl();
+		
+		if (bar != null || !bar.isDisposed() || dragListener == null)
+			return;
+        PresentationUtil.removeDragListener(bar, dragListener);
+		DragUtil.removeDragTarget(perspectiveBar.getControl(), dragTarget);
+		dragListener = null;
+		dragTarget = null;
+	}
+
+    /**
+	 * Attach drag and drop support and associated listeners hooked for 
+	 * the perspective switcher.
+	 */
+	 private void hookDragSupport() {
+        dragListener = new Listener() {
+        	/* (non-Javadoc)
+			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+			 */
+			public void handleEvent(Event event) {
+				ToolBar toolbar = perspectiveBar.getControl();
+                ToolItem item = toolbar.getItem(new Point(event.x, event.y));
+                // ignore the first item, which remains in position Zero
+                if (item.getData() instanceof PerspectiveBarNewContributionItem)
+                	return;
+                if (item != null) {
+                	Rectangle bounds = item.getBounds();
+                	Rectangle parentBounds = toolbar.getBounds();
+                	bounds.x += parentBounds.x;
+                	bounds.y += parentBounds.y;
+                	startDragging((PerspectiveBarContributionItem)item.getData(), toolbar.getDisplay().map(toolbar, null, bounds));
+                } else { 
+                    //startDragging(toolbar, toolbar.getDisplay().map(toolbar, null, toolbar.getBounds()));
+                }
+            }
+			
+			private void startDragging(Object widget, Rectangle bounds) {
+				boolean success = DragUtil.performDrag(widget, bounds, new Point(bounds.x, bounds.y), true);
+		    }
+			
+        };
+
+        dragTarget = new IDragOverListener() {
+        	protected PerspectiveDropTarget perspectiveDropTarget;
+        	
+            class PerspectiveDropTarget extends AbstractDropTarget {
+                
+            	private PerspectiveBarContributionItem perspective;
+                private Point location;
+                
+                /**
+				 * @param location
+				 * @param draggedObject
+				 * @param dragRectangle
+				 */
+				public PerspectiveDropTarget(Object draggedObject, Point location,  Rectangle dragRectangle) {
+					update(draggedObject, location, dragRectangle);
+				}
+
+				/**
+				 * 
+				 * @param draggedObject
+				 * @param location
+				 * @param dragRectangle
+				 */
+				private void update(Object draggedObject, Point location,  Rectangle dragRectangle) {
+					this.location = location;
+					this.perspective = (PerspectiveBarContributionItem)draggedObject;
+				}
+
+				/* (non-Javadoc)
+                 * @see org.eclipse.ui.internal.dnd.IDropTarget#drop()
+                 */
+                public void drop() {
+                	ToolBar toolBar = perspectiveBar.getControl();
+                	ToolItem item = toolBar.getItem(toolBar.getDisplay().map(null, toolBar, location));
+                	if (toolBar.getItem(0) == item)
+                		return;
+                	ToolItem[] items = toolBar.getItems();
+                	ToolItem oldItem = null;
+                	int index = -1;
+                	for (int i = 0; i< items.length; i++) {
+                		if (item == items[i])
+							index = i;
+                		if (items[i].getData() == perspective)
+                			oldItem = items[i];
+                	}
+                	if (index != -1 && oldItem != null && (oldItem != item)) {
+                		perspectiveBar.relocate((PerspectiveBarContributionItem)oldItem.getData(), index);
+                	}
+                }
+
+                /* (non-Javadoc)
+                 * @see org.eclipse.ui.internal.dnd.IDropTarget#getCursor()
+                 */
+                public Cursor getCursor() {
+                    return DragCursors.getCursor(DragCursors.CENTER);
+                }
+
+                public Rectangle getSnapRectangle() {
+                	ToolBar toolBar = perspectiveBar.getControl();
+                	ToolItem item = toolBar.getItem(toolBar.getDisplay().map(null, toolBar, location));
+                	Rectangle bounds;
+                	if (item != null && item != toolBar.getItem(0)) {
+                		bounds = item.getBounds();
+                	} else {
+                		// it should not be possible to start a drag with item 0
+                		return null;
+                	}
+                	return toolBar.getDisplay().map(toolBar, null, bounds);
+                }
+            }
+
+            public IDropTarget drag(Control currentControl,
+                    Object draggedObject, Point position,
+                    Rectangle dragRectangle) {
+                if (draggedObject instanceof PerspectiveBarContributionItem) {
+                	if (perspectiveDropTarget == null) {
+                		perspectiveDropTarget = new PerspectiveDropTarget(draggedObject, position, dragRectangle);
+                	} else {
+                		perspectiveDropTarget.update(draggedObject, position, dragRectangle);
+                	}
+                	return (IDropTarget)perspectiveDropTarget;
+                }// else if (draggedObject instanceof IPerspectiveBar) {
+                //	return new PerspectiveBarDropTarget();
+                //}
+             
+                return null;
+            }
+
+        };
+
+        PresentationUtil.addDragListener(perspectiveBar.getControl(), dragListener);
+        DragUtil.addDragTarget(perspectiveBar.getControl(), dragTarget);
+	}
+
+	private void setPropertyChangeListener() {
         propertyChangeListener = new IPropertyChangeListener() {
 
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {

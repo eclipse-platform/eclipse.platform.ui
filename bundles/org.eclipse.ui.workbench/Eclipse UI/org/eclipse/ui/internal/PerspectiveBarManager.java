@@ -221,6 +221,10 @@ public class PerspectiveBarManager extends ToolBarManager {
      * @param contribItem
      */
     private void ensureVisible(PerspectiveBarContributionItem contribItem) {
+    	relocate(contribItem, 1);
+    }
+    
+    void relocate(PerspectiveBarContributionItem contribItem, int index) {
         PerspectiveBarContributionItem newItem = new PerspectiveBarContributionItem(
                 contribItem.getPerspective(), contribItem.getPage());
 
@@ -228,7 +232,7 @@ public class PerspectiveBarManager extends ToolBarManager {
         contribItem.dispose();
         contribItem = null;
 
-        insert(1, newItem);
+        insert(index, newItem);
         update(false);
     }
 
