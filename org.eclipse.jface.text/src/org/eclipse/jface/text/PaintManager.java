@@ -157,7 +157,8 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 	private void install() {
 		
 		fManager= new PositionManager();
-		fManager.install(fTextViewer.getDocument());
+		if (fTextViewer.getDocument() != null)
+			fManager.install(fTextViewer.getDocument());
 		
 		fTextViewer.addTextInputListener(this);
 		

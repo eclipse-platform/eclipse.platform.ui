@@ -180,6 +180,10 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		fAnnotationTypes.remove(annotationType);
 	}
 	
+	public void removeAllAnnotationTypes() {
+		fAnnotationTypes.clear();
+	}
+	
 	public boolean isPaintingAnnotations() {
 		return !fAnnotationTypes.isEmpty();
 	}
@@ -372,9 +376,18 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @see IPainter#paint(int)
 	 */
 	public void paint(int reason) {
+		
+		if (fSourceViewer.getDocument() == null) {
+			deactivate(false);
+			return;
+		}
+		
 		if (!fIsActive) {
-			fIsActive= true;
-			setModel(fSourceViewer.getAnnotationModel());
+			IAnnotationModel model= fSourceViewer.getAnnotationModel();
+			if (model != null) {
+				fIsActive= true;
+				setModel(fSourceViewer.getAnnotationModel());
+			}
 		} else if (CONFIGURATION == reason || INTERNAL == reason)
 			updatePainting();
 	}

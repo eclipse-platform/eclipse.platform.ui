@@ -44,7 +44,7 @@ import org.eclipse.jface.text.reconciler.IReconciler;
  * with it exclusively using the <code>ISourceViewer</code> interface. Clients should not
  * subclass this class as it is rather likely that subclasses will be broken by future releases. 
  */
-public class SourceViewer extends TextViewer implements ISourceViewer {
+public class SourceViewer extends TextViewer implements ISourceViewer, ISourceViewerExtension {
 
 
 	/**
@@ -85,9 +85,15 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 				Rectangle trim= getTextWidget().computeTrim(0, 0, 0, 0);
 				int scrollbarHeight= trim.height;
 				
-				int rulerWidth= fVerticalRuler.getWidth();
-				fVerticalRuler.getControl().setBounds(0, 0, rulerWidth, clArea.height - scrollbarHeight);
-				getTextWidget().setBounds(rulerWidth + fGap, 0, clArea.width - rulerWidth - fGap, clArea.height);
+				int verticalRulerWidth= fVerticalRuler.getWidth();
+				int overviewRulerWidth= 0;
+				if (fOverviewRuler != null && fIsOverviewRulerVisible) {
+					overviewRulerWidth= fOverviewRuler.getWidth();
+					fOverviewRuler.getControl().setBounds(clArea.width - overviewRulerWidth, scrollbarHeight, overviewRulerWidth, clArea.height - 3*scrollbarHeight);
+				}				
+				
+				getTextWidget().setBounds(verticalRulerWidth + fGap, 0, clArea.width - verticalRulerWidth - overviewRulerWidth - 2*fGap, clArea.height);
+				fVerticalRuler.getControl().setBounds(0, 0, verticalRulerWidth, clArea.height - scrollbarHeight);
 			
 			} else
 				getTextWidget().setBounds(0, 0, clArea.width, clArea.height);
@@ -128,11 +134,27 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 	private Annotation fRangeIndicator;
 	/** The viewer's vertical ruler hovering controller */
 	private AbstractHoverInformationControlManager fVerticalRulerHoveringController;
+	/** 
+	 * The viewer's overview ruler hovering controller
+	 * @since 2.1
+	 */
+	private AbstractHoverInformationControlManager fOverviewRulerHoveringController;
 	
+	/**
+	 * The overview ruler.
+	 * @since 2.1
+	 */
+	private IOverviewRuler fOverviewRuler;
+	/**
+	 * The visibility of the overview ruler 
+	 * @since 2.1
+	 */
+	private boolean fIsOverviewRulerVisible;
 	
 	
 	/** The size of the gap between the vertical ruler and the text widget */
 	protected final static int GAP_SIZE= 2;
+	
 	
 	/**
 	 * Constructs a new source viewer. The vertical ruler is initially visible.
@@ -143,10 +165,27 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 	 * @param styles the SWT style bits
 	 */
 	public SourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
+		this(parent, ruler, null, false, styles);
+	}
+	
+	/**
+	 * Constructs a new source viewer. The vertical ruler and the overview
+	 * ruler are initially visible. The viewer has not yet been initialized with
+	 * a source viewer configuration.
+	 *
+	 * @param parent the parent of the viewer's control
+	 * @param verticalRuler the vertical ruler used by this source viewer
+	 * @param overviewRuler the overview ruler
+	 * @param styles the SWT style bits
+	 */
+	public SourceViewer(Composite parent, IVerticalRuler verticalRuler, IOverviewRuler overviewRuler, boolean showAnnotationsOverview, int styles) {
 		super();
 		
-		fVerticalRuler= ruler;
-		fIsVerticalRulerVisible= (ruler != null);
+		fVerticalRuler= verticalRuler;
+		fIsVerticalRulerVisible= (verticalRuler != null);
+		fOverviewRuler= overviewRuler;
+		fIsOverviewRulerVisible= (showAnnotationsOverview && overviewRuler != null);
+		
 		createControl(parent, styles);
 	}
 	
@@ -155,7 +194,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 	 */
 	protected void createControl(Composite parent, int styles) {
 		
-		if (fVerticalRuler != null) {
+		if (fVerticalRuler != null || fOverviewRuler != null) {
 			styles= (styles & ~SWT.BORDER);
 			fComposite= new Canvas(parent, SWT.NONE);
 			fComposite.setLayout(new RulerLayout(GAP_SIZE));
@@ -164,8 +203,10 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 		
 		super.createControl(parent, styles);
 					
-		if (fComposite != null)
+		if (fVerticalRuler != null)
 			fVerticalRuler.createControl(fComposite, this);
+		if (fOverviewRuler != null)
+			fOverviewRuler.createControl(fComposite, this);
 	}
 	
 	/*
@@ -252,16 +293,26 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 		activatePlugins();
 	}
 	
+	protected void ensureAnnotationHoverManagerInstalled() {
+		if (fVerticalRuler != null && fAnnotationHover != null && fVerticalRulerHoveringController == null && fHoverControlCreator != null) {
+			fVerticalRulerHoveringController= new AnnotationBarHoverManager(fVerticalRuler, this, fAnnotationHover, fHoverControlCreator);
+			fVerticalRulerHoveringController.install(fVerticalRuler.getControl());
+		}
+	}
+	
+	protected void ensureOverviewHoverManagerInstalled() {
+		if (fOverviewRuler != null &&  fAnnotationHover != null  && fOverviewRulerHoveringController == null && fHoverControlCreator != null)	{
+			fOverviewRulerHoveringController= new OverviewRulerHoverManager(fOverviewRuler, this, fAnnotationHover, fHoverControlCreator);
+			fOverviewRulerHoveringController.install(fOverviewRuler.getControl());
+		}
+	}
+	
 	/*
 	 * @see TextViewer#activatePlugins
 	 */
 	public void activatePlugins() {
-		
-		if (fVerticalRuler != null && fAnnotationHover != null && fVerticalRulerHoveringController == null) {
-			fVerticalRulerHoveringController= new AnnotationBarHoverManager(this, fVerticalRuler, fAnnotationHover, fHoverControlCreator);
-			fVerticalRulerHoveringController.install(fVerticalRuler.getControl());
-		}
-		
+		ensureAnnotationHoverManagerInstalled();
+		ensureOverviewHoverManagerInstalled();
 		super.activatePlugins();
 	}
 	
@@ -291,7 +342,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 	 */
 	public void setDocument(IDocument document, IAnnotationModel annotationModel, int visibleRegionOffset, int visibleRegionLength) {
 		
-		if (fVerticalRuler == null) {
+		if (fVerticalRuler == null && fOverviewRuler == null) {
 			
 			if (visibleRegionOffset == -1 && visibleRegionLength == -1)
 				super.setDocument(document);
@@ -315,8 +366,12 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 				fVisualAnnotationModel= null;
 			}
 			
-			fVerticalRuler.setModel(fVisualAnnotationModel);
-		}
+			if (fVerticalRuler != null)
+				fVerticalRuler.setModel(fVisualAnnotationModel);
+			
+			if (fOverviewRuler != null)
+				fOverviewRuler.setModel(fVisualAnnotationModel);
+		}		
 	}
 	
 	/*
@@ -366,6 +421,13 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 		if (fVerticalRulerHoveringController != null) {
 			fVerticalRulerHoveringController.dispose();
 			fVerticalRulerHoveringController= null;
+		}
+		
+		fOverviewRuler= null;
+					
+		if (fOverviewRulerHoveringController != null) {
+			fOverviewRulerHoveringController.dispose();
+			fOverviewRulerHoveringController= null;
 		}
 		
 		// http://dev.eclipse.org/bugs/show_bug.cgi?id=15300
@@ -521,9 +583,32 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 		boolean old= fIsVerticalRulerVisible;
 		fIsVerticalRulerVisible= (show && fVerticalRuler != null);
 		if (old != fIsVerticalRulerVisible) {
-			// http://dev.eclipse.org/bugs/show_bug.cgi?id=15300
 			if (fComposite != null && !fComposite.isDisposed())
 				fComposite.layout();
+			if (fIsVerticalRulerVisible) {
+				ensureAnnotationHoverManagerInstalled();
+			} else if (fVerticalRulerHoveringController != null) {
+				fVerticalRulerHoveringController.dispose();
+				fVerticalRulerHoveringController= null;
+			}
 		}
-	}		
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.ISourceViewerExtension#showAnnotationsOverview(boolean)
+	 */
+	public void showAnnotationsOverview(boolean show) {
+		boolean old= fIsOverviewRulerVisible;
+		fIsOverviewRulerVisible= (show && fOverviewRuler != null);
+		if (old != fIsOverviewRulerVisible) {
+			if (fComposite != null && !fComposite.isDisposed())
+				fComposite.layout();
+			if (fIsOverviewRulerVisible) {
+				ensureOverviewHoverManagerInstalled();
+			} else if (fOverviewRulerHoveringController != null) {
+				fOverviewRulerHoveringController.dispose();
+				fOverviewRulerHoveringController= null;
+			}
+		}
+	}
 }

@@ -18,6 +18,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IPaintPositionManager;
 import org.eclipse.jface.text.IPainter;
 import org.eclipse.jface.text.IRegion;
@@ -44,7 +45,9 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	
 	/**
 	 * Creates a new MatchingCharacterPainter for the given source viewer using
-	 * the given character pair matcher.
+	 * the given character pair matcher. The character matcher is not adopted by
+	 * this painter. Thus,  it is not disposed. However, this painters requires
+	 * exlucsive access to the given pair matcher.
 	 * 
 	 * @param sourceViewer
 	 * @param matcher
@@ -64,7 +67,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	 */
 	public void dispose() {
 		if (fMatcher != null) {
-			fMatcher.dispose();
+			fMatcher.clear();
 			fMatcher= null;
 		}
 		
@@ -143,13 +146,20 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	 * @see org.eclipse.jface.text.IPainter#paint(int)
 	 */
 	public void paint(int reason) {
+
+		IDocument document= fSourceViewer.getDocument();
+		if (document == null) {
+			deactivate(false);
+			return;
+		}
+
 		Point selection= fSourceViewer.getSelectedRange();
 		if (selection.y > 0) {
 			deactivate(true);
 			return;
 		}
-			
-		IRegion pair= fMatcher.match(fSourceViewer.getDocument(), selection.x);
+		
+		IRegion pair= fMatcher.match(document, selection.x);
 		if (pair == null) {
 			deactivate(true);
 			return;

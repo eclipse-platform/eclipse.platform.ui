@@ -1456,9 +1456,9 @@ public class TextViewer extends Viewer implements
 	}
 
 	/*
-	 * @see ITextViewerExtension2#removeTextHover(String)
+	 * @see ITextViewerExtension2#removeTextHovers(String)
 	 */
-	public void removeTextHover(String contentType) {
+	public void removeTextHovers(String contentType) {
 		if (fTextHovers == null)
 			return;
 			

@@ -173,6 +173,10 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 	 * @see IPainter#paint(int)
 	 */
 	public void paint(int reason) {
+		if (fViewer.getDocument() == null) {
+			deactivate(false);
+			return;
+		}
 		
 		// check selection
 		Point selection= fViewer.getTextWidget().getSelectionRange();

@@ -109,7 +109,8 @@ public class MarginPainter implements IPainter, PaintListener {
 			if (fCachedWidgetX == -1)
 				computeWidgetX();
 			fTextWidget.redraw();
-		}
+		}  if (CONFIGURATION == reason || INTERNAL == reason)
+			fTextWidget.redraw();
 	}
 	
 	/*

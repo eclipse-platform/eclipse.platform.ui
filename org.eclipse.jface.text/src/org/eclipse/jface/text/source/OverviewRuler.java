@@ -58,7 +58,7 @@ import org.eclipse.jface.text.TextEvent;
  * viewer's annotation model in a compact format, i.e. using the same height as
  * the source viewer.
  */
-public class OverviewRuler implements IVerticalRulerInfo {
+public class OverviewRuler implements IOverviewRuler {
 	
 	/**
 	 * Internal listener class.
@@ -190,32 +190,36 @@ public class OverviewRuler implements IVerticalRulerInfo {
 	private Set fAnnotationTypes= new HashSet();
 	private Map fAnnotationTypes2Layers= new HashMap();
 	private Map fAnnotationTypes2Colors= new HashMap();
-	private Map fRGB2Colors= new HashMap();
+	private ISharedTextColors fSharedTextColors;
 	
 	/**
 	 * Constructs a vertical ruler with the given width.
 	 *
 	 * @param width the width of the vertical ruler
 	 */
-	public OverviewRuler(IAnnotationAccess annotationAccess, int width) {
+	public OverviewRuler(IAnnotationAccess annotationAccess, int width, ISharedTextColors sharedColors) {
 		fAnnotationAccess= annotationAccess;
 		fWidth= width;		
+		fSharedTextColors= sharedColors;
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.source.IVerticalRulerInfo#getControl()
 	 */
 	public Control getControl() {
 		return fCanvas;
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.source.IVerticalRulerInfo#getWidth()
 	 */
 	public int getWidth() {
 		return fWidth;
 	}
 	
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRuler#setModel(org.eclipse.jface.text.source.IAnnotationModel)
+	 */
 	public void setModel(IAnnotationModel model) {
 		if (model != fModel || model != null) {
 			
@@ -231,6 +235,9 @@ public class OverviewRuler implements IVerticalRulerInfo {
 		}
 	}	
 	
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRuler#createControl(org.eclipse.swt.widgets.Composite, org.eclipse.jface.text.ITextViewer)
+	 */
 	public Control createControl(Composite parent, ITextViewer textViewer) {
 		
 		fTextViewer= textViewer;
@@ -296,17 +303,6 @@ public class OverviewRuler implements IVerticalRulerInfo {
 		fAnnotationTypes.clear();
 		fAnnotationTypes2Layers.clear();
 		fAnnotationTypes2Colors.clear();
-		
-		disposeColors();
-	}
-	
-	private void disposeColors() {
-		Iterator e= fRGB2Colors.values().iterator();
-		while (e.hasNext()) {
-			Color color= (Color) e.next();
-			color.dispose();
-		}
-		fRGB2Colors.clear();
 	}
 
 	/**
@@ -511,11 +507,10 @@ public class OverviewRuler implements IVerticalRulerInfo {
 		}
 	}
 
-	/**
-	 * Thread-safe implementation.
-	 * Can be called from any thread.
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRuler#update()
 	 */
-	public void update() {
+	 public void update() {
 		if (fCanvas != null && !fCanvas.isDisposed()) {
 			Display d= fCanvas.getDisplay();
 			if (d != null) {
@@ -576,10 +571,6 @@ public class OverviewRuler implements IVerticalRulerInfo {
 		}
 		
 		return lines;
-	}
-	
-	private boolean hasAnnotation(int y_coordinate) {
-		return findBestMatchingLineNumber(toLineNumbers(y_coordinate)) != -1;
 	}
 	
 	private Position getAnnotationPosition(int[] lineNumbers) {
@@ -663,19 +654,15 @@ public class OverviewRuler implements IVerticalRulerInfo {
 		fLastMouseButtonActivityLine= toDocumentLineNumber(event.y);
 	}
 	
-	/**
-	 * Adds the given annotation type to this ruler.
-	 * 
-	 * @param annotationType
+	/*
+	 * @see org.eclipse.jface.text.source.IOverviewRuler#addAnnotationType(java.lang.Object)
 	 */
 	public void addAnnotationType(Object annotationType) {
 		fAnnotationTypes.add(annotationType);
 	}
 	
-	/**
-	 * Removes the given annotation type from this ruler.
-	 * 
-	 * @param annotationType
+	/*
+	 * @see org.eclipse.jface.text.source.IOverviewRuler#removeAnnotationType(java.lang.Object)
 	 */
 	public void removeAnnotationType(Object annotationType) {
 		fAnnotationTypes.remove(annotationType);
@@ -703,17 +690,13 @@ public class OverviewRuler implements IVerticalRulerInfo {
 		}
 	}
 	
-	/**
-	 * Sets the reference color for the given annotation type.
-	 * @param annotationType the annotation type
-	 * @param color the reference color for the given annotation type
+	/*
+	 * @see org.eclipse.jface.text.source.IOverviewRuler#setAnnotationTypeColor(java.lang.Object, org.eclipse.swt.graphics.Color)
 	 */
 	public void setAnnotationTypeColor(Object annotationType, Color color) {
-		if (color != null) {
-			if (fAnnotationTypes2Colors.get(annotationType) != null)
-				disposeColors();
+		if (color != null)
 			fAnnotationTypes2Colors.put(annotationType, color);
-		} else
+		else
 			fAnnotationTypes2Colors.remove(annotationType);
 	}
 	
@@ -739,15 +722,6 @@ public class OverviewRuler implements IVerticalRulerInfo {
 		return greyLevel(rgb) > 128;
 	}
 	
-	private Color getColor(RGB rgb) {
-		Color color= (Color) fRGB2Colors.get(rgb);
-		if (color == null) {
-			color= new Color(fCanvas.getDisplay(), rgb);
-			fRGB2Colors.put(rgb, color);
-		}
-		return color;
-	}
-	
 	private Color getColor(Object annotationType, double scale) {
 		Color base= (Color) fAnnotationTypes2Colors.get(annotationType);
 		if (base == null)
@@ -763,7 +737,7 @@ public class OverviewRuler implements IVerticalRulerInfo {
 		else if (!darkBase && !darkBackground)
 			background= new RGB(0, 0, 0);
 		
-		return getColor(interpolate(baseRGB, background, scale));
+		return fSharedTextColors.getColor(interpolate(baseRGB, background, scale));
 	}
 	
 	private Color getStrokeColor(Object annotationType, boolean temporary) {
@@ -795,13 +769,25 @@ public class OverviewRuler implements IVerticalRulerInfo {
 			return lineNumbers[0];
 		return	bestLine;
 	}
-
-	/**
-	 * Returns the height of the annotation rectangle.
-	 * 
-	 * @return the height of the annotation rectangle
+	
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRuler#getModel()
 	 */
-	int getAnnotationHeight() {
+	public IAnnotationModel getModel() {
+		return fModel;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.IOverviewRuler#getAnnotationHeight()
+	 */
+	public int getAnnotationHeight() {
 		return fAnnotationHeight;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.IOverviewRuler#hasAnnotation(int)
+	 */
+	public boolean hasAnnotation(int y) {
+		return findBestMatchingLineNumber(toLineNumbers(y)) != -1;
 	}
 }

@@ -60,7 +60,7 @@ public interface ITextViewerExtension2 {
 	 * @param contentType the type for which the hover is registered
 	 * @since 2.1
 	 */
-	void removeTextHover(String contentType);
+	void removeTextHovers(String contentType);
 	
 	/**
 	 * Returns the currently displayed text hover if any, <code>null</code>

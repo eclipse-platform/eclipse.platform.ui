@@ -21,10 +21,18 @@ public interface ICharacterPairMatcher {
 	int RIGHT= 0;
 	int LEFT= 1;
 
+
 	/**
-	 * Method dispose.
+	 * Disposes this pair matcher.
 	 */
 	void dispose();
+
+	/**
+	 * Clears this pair matcher. I.e. the matcher throws away all state it might
+	 * remember and prepares itself for a new call of the <code>match</code>
+	 * method.
+	 */
+	void clear();
 
 	/**
 	 * Method match.

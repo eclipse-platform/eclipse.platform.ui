@@ -1,0 +1,76 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM Corporation - Initial implementation
+**********************************************************************/
+package org.eclipse.jface.text.source;
+
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+
+import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.source.AnnotationBarHoverManager;
+import org.eclipse.jface.text.source.IAnnotationHover;
+import org.eclipse.jface.text.source.ISourceViewer;
+
+/**
+ * This manager controls the layout, content, and visibility of an information
+ * control in reaction to mouse hover events issued by the overview ruler of a
+ * source viewer.
+ * 
+ * @since 2.1
+ */
+class OverviewRulerHoverManager extends AnnotationBarHoverManager {
+
+	/**
+	 * Creates an overview hover manager with the given parameters. In addition,
+	 * the hovers anchor is RIGHT and the margin is 5 points to the right.
+	 *
+	 * @param ruler the overview ruler this manager connects to
+	 * @param sourceViewer the source viewer this manager connects to
+	 * @param annotationHover the annotation hover providing the information to be displayed
+	 * @param creator the information control creator
+	 */
+	public OverviewRulerHoverManager(IOverviewRuler ruler, ISourceViewer sourceViewer, IAnnotationHover annotationHover, IInformationControlCreator creator) {
+		super(ruler, sourceViewer, annotationHover, creator);
+	}
+	
+	/*
+	 * @see AbstractHoverInformationControlManager#computeInformation()
+	 */
+	protected void computeInformation() {
+		Point location= getHoverEventLocation();
+		int line= getVerticalRulerInfo().toDocumentLineNumber(location.y);
+		setInformation(getAnnotationHover().getHoverInfo(getSourceViewer(), line), computeArea(location.y));
+	}
+
+	/**
+	 * Determines graphical area covered for which the hover is valid.
+	 *
+	 * @param y-coordinate in the vertical ruler
+	 * @return the graphical extend where the hover is valid
+	 */
+	private Rectangle computeArea(int y) {
+		// This is ok (see constructor)
+		IOverviewRuler overviewRuler= (IOverviewRuler) getVerticalRulerInfo();
+
+		int hover_height= overviewRuler.getAnnotationHeight();
+		int hover_width= getVerticalRulerInfo().getControl().getSize().x;
+
+		// Calculate y-coordinate for hover
+		int hover_y= y;
+		boolean hasAnnotation= true;
+		while (hasAnnotation && hover_y > y - hover_height) {
+			hover_y--;
+			hasAnnotation= overviewRuler.hasAnnotation(hover_y);
+		}
+		hover_y++;
+			
+		return new Rectangle(0, hover_y, hover_width, hover_height);
+	}
+}
