@@ -89,6 +89,7 @@ if (isIE)
  	 extraStyle = "<style type='text/css'>#go{padding-left:4px;padding-right:4px;} </style>";
 document.write(extraStyle);
 	
+var books = new Array();
 var advancedDialog;
 var w = 580;
 var h = 400;

@@ -122,6 +122,8 @@ function doAdvancedSearch()
 			scope += "&scope="+escape(buttons[i].name);
 		}
 		
+		//saveSelectedBooks();
+		
 		window.opener.document.forms["searchForm"].searchWord.value = searchWord;
 		var query = "searchWord="+escape(searchWord)+"&maxHits="+maxHits + scope;
 		window.opener.parent.doSearch(query);
@@ -141,11 +143,43 @@ function fixHeights()
 	booksContainer.style.height = h;
 }
 
+function restoreSelectedBooks()
+{
+	var inputs = document.body.getElementsByTagName("INPUT");
+	for (var i=0; i<inputs.length; i++) {
+		if (inputs[i].type == "checkbox" )
+		{
+			if (!opener.books[inputs[i].id]) opener.books[inputs[i].id] = true;
+			inputs[i].checked = opener.books[inputs[i].id];
+		}
+	}
+}
+
+function saveSelectedBooks()
+{
+	opener.books = new Array();
+	var inputs = document.body.getElementsByTagName("INPUT");
+	for (var i=0; i<inputs.length; i++) {
+		if (inputs[i].type == "checkbox" )
+			opener.books[inputs[i].id] = inputs[i].checked;
+	}
+}
+
+
+function onloadHandler()
+{
+	// select the books from previous run, or all otherwise
+	restoreSelectedBooks();
+	
+	// fix the height of the books container
+	fixHeights();
+}
+
 </script>
 
 </head>
 
-<body onload="fixHeights()">
+<body onload="onloadHandler()">
 
 <form name="searchForm" onsubmit="doAdvancedSearch()">
 
