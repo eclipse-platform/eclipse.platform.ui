@@ -77,20 +77,14 @@
    <!-- ========================================================================== -->
    <extension-point id="app-server" name="%app_server" />
    
+   <!-- ========================================================================== -->
+   <!--  Help URL protocols                                                        -->
+   <!-- ========================================================================== -->
 	<extension point="org.eclipse.core.runtime.urlHandlers"> 
-		<handler protocol="help" class="org.eclipse.help.internal.protocols.HelpURLHandler"/> 
-	</extension> 
-   
-	<extension point="org.eclipse.core.runtime.urlHandlers"> 
-		<handler protocol="search" class="org.eclipse.help.internal.protocols.SearchURLHandler"/> 
-	</extension> 
-
-	<extension point="org.eclipse.core.runtime.urlHandlers"> 
-		<handler protocol="links" class="org.eclipse.help.internal.protocols.LinksURLHandler"/> 
-	</extension> 
-
-	<extension point="org.eclipse.core.runtime.urlHandlers"> 
-		<handler protocol="livehelp" class="org.eclipse.help.internal.protocols.LiveHelpURLHandler"/> 
+		<handler protocol="help" class="org.eclipse.help.internal.protocols.URLHandler"/> 
+		<handler protocol="search" class="org.eclipse.help.internal.protocols.URLHandler"/> 
+		<handler protocol="links" class="org.eclipse.help.internal.protocols.URLHandler"/> 
+		<handler protocol="livehelp" class="org.eclipse.help.internal.protocols.URLHandler"/> 
 	</extension> 
 	
 	<!-- For remote install, run this application -->
