@@ -19,6 +19,10 @@
 			jarfile="${dest}/dtui.jar"
 			basedir="bin"
 		/>
+		<!-- Create the source zip -->
+		<zip zipfile="${dest}/dtuisrc.zip">
+			<fileset dir="Eclipse Debug UI"/>
+		</zip>
 		<copy file="plugin.xml" todir="${dest}"/>
 		<copy file="plugin.jars" todir="${dest}"/>
 		<copy file="plugin.properties" todir="${dest}"/>
