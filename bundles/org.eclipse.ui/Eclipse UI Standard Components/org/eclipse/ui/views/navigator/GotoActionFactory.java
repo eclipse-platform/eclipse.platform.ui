@@ -1,18 +1,22 @@
-package org.eclipse.ui.views.internal.navigator;
+package org.eclipse.ui.views.navigator;
+
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.ui.views.internal.framelist.*;
 import org.eclipse.ui.views.navigator.*;
 
 /**
- * The GotoActionContributionFactory is the class
+ * The GotoActionFactory is the class
  * that adds the goto actions for a menu.
  */
 
-public class GotoActionContributionFactory extends ActionContributionFactory {
+public class GotoActionFactory extends ActionFactory {
 
 	protected FrameList frameList;
 	protected IResourceNavigatorPart resourceNavigator;
@@ -22,7 +26,7 @@ public class GotoActionContributionFactory extends ActionContributionFactory {
 	protected UpAction upAction;
 	protected GotoResourceAction gotoResourceAction;
 
-	public GotoActionContributionFactory(
+	public GotoActionFactory(
 		FrameList list,
 		IResourceNavigatorPart navigator) {
 		frameList = list;
@@ -30,14 +34,7 @@ public class GotoActionContributionFactory extends ActionContributionFactory {
 	}
 
 	/*
-	 * @see ActionContributionFactory#updateActions(IStructuredSelection)
-	 */
-	public void updateActions(IStructuredSelection selection) {
-		//Do nothing by default here
-	}
-
-	/*
-	 * @see ActionContributionFactory#makeActions()
+	 * @see ActionFactory#makeActions()
 	 */
 	public void makeActions() {
 
@@ -53,7 +50,7 @@ public class GotoActionContributionFactory extends ActionContributionFactory {
 	}
 
 	/*
-	* @see ActionContributionFactory#fillToolBar(IToolBarManager)
+	* @see ActionFactory#fillToolBar(IToolBarManager)
 	*/
 	public void fillToolBar(IToolBarManager toolBar) {
 		toolBar.add(backAction);
@@ -62,9 +59,9 @@ public class GotoActionContributionFactory extends ActionContributionFactory {
 	}
 
 	/*
-	 * @see ActionContributionFactory#fillMenu(IMenuManager,IStructuredSelection)
+	 * @see ActionFactory#fillPopUpMenu(IMenuManager,IStructuredSelection)
 	 */
-	public void fillMenu(IMenuManager menu, IStructuredSelection selection) {
+	public void fillPopUpMenu(IMenuManager menu, IStructuredSelection selection) {
 
 		if (selection.size() == 1
 			&& SelectionUtil.allResourcesAreOfType(
@@ -82,10 +79,10 @@ public class GotoActionContributionFactory extends ActionContributionFactory {
 		gotoMenu.add(gotoResourceAction);
 	}
 
-	/*
-	 * @see ISelectionChangedListener#selectionChanged(SelectionChangedEvent)
+	/**
+	 * Update the selection for new selection.
 	 */
-	public void selectionChanged(SelectionChangedEvent event) {
+	public void selectionChanged(IStructuredSelection selection) {
 		goIntoAction.update();
 	}
 

@@ -1,21 +1,27 @@
-package org.eclipse.ui.views.internal.navigator;
+package org.eclipse.ui.views.navigator;
+
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.views.navigator.SelectionUtil;
 
 /**
- * The WorkbenchStateActionContributionFactory is the 
+ * The WorkbenchStateActionFactory is the 
  * factory oject that handles actions that open, close and 
  * build projects or the workspace and refresh options.
  */
 
-public class WorkbenchStateActionContributionFactory
-	extends ActionContributionFactory {
+public class WorkbenchStateActionFactory
+	extends ActionFactory {
 
 	protected BuildAction buildAction;
 	protected BuildAction rebuildAllAction;
@@ -25,22 +31,12 @@ public class WorkbenchStateActionContributionFactory
 
 	protected Control control;
 
-	public WorkbenchStateActionContributionFactory(Control parentControl) {
+	public WorkbenchStateActionFactory(Control parentControl) {
 		this.control = parentControl;
 	}
 
 	/*
-	 * @see ActionContributionFactory#updateActions(IStructuredSelection)
-	 */
-	public void updateActions(IStructuredSelection selection) {
-		buildAction.selectionChanged(selection);
-		rebuildAllAction.selectionChanged(selection);
-		closeProjectAction.selectionChanged(selection);
-		localRefreshAction.selectionChanged(selection);
-	}
-
-	/*
-	 * @see ActionContributionFactory#makeActions()
+	 * @see ActionFactory#makeActions()
 	 */
 	public void makeActions() {
 
@@ -55,9 +51,17 @@ public class WorkbenchStateActionContributionFactory
 	}
 
 	/*
-	 * @see ActionContributionFactory#fillMenu(IMenuManager,IStructuredSelection)
+	 * @see ActionFactory#fillMenu(IMenuManager,IStructuredSelection)
 	 */
-	public void fillMenu(IMenuManager menu, IStructuredSelection selection) {
+	public void fillPopUpMenu(IMenuManager menu, IStructuredSelection selection) {
+		
+		//Update the selections of those who need a refresh before filling
+		
+		buildAction.selectionChanged(selection);
+		rebuildAllAction.selectionChanged(selection);
+		closeProjectAction.selectionChanged(selection);
+		localRefreshAction.selectionChanged(selection);
+		
 		boolean onlyProjectsSelected =
 			!selection.isEmpty()
 				&& SelectionUtil.allResourcesAreOfType(selection, IResource.PROJECT);
@@ -83,13 +87,10 @@ public class WorkbenchStateActionContributionFactory
 	}
 
 	/**
-	 * Add in a key listener for any actions that listen
-	 * to the key strokes.
-	 */
-
-	public void addKeyListeners() {
-
-		control.addKeyListener(localRefreshAction);
+ 	 * Handle a key release.
+ 	 */
+	public void handleKeyReleased(KeyEvent event) {
+		localRefreshAction.handleKeyReleased(event);
 	}
 
 }

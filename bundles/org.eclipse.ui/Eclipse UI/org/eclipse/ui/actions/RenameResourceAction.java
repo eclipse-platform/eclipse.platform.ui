@@ -250,11 +250,8 @@ protected String queryNewResourceName(final IResource resource) {
  */
 private void queryNewResourceNameInline(final IResource resource) {
 
-	//We assume the tree is not null as this method will not get called if it is
-	Tree tree = getTree();
-
 	// Create text editor parent.  This draws a nice bounding rect.
-	textEditorParent = new Composite (tree, SWT.NONE);
+	textEditorParent = createParent();
 	textEditorParent.setVisible(false);
 	textEditorParent.addListener(SWT.Paint, new Listener() {
 		public void handleEvent (Event e) {
@@ -302,12 +299,6 @@ private void queryNewResourceNameInline(final IResource resource) {
 	});
 	textEditor.setText(resource.getName());
 
-	// Init tree editor.
-	TreeItem[] selectedItems = tree.getSelection();
-	treeEditor.horizontalAlignment = SWT.LEFT;
-	treeEditor.grabHorizontal = true;
-	treeEditor.setEditor(textEditorParent, selectedItems[0]);
-
 	// Open text editor with initial size.
 	textEditorParent.setVisible(true);
 	Point textSize = textEditor.computeSize(SWT.DEFAULT, SWT.DEFAULT);
@@ -317,6 +308,16 @@ private void queryNewResourceNameInline(final IResource resource) {
 	textEditorParent.redraw();
 	textEditor.selectAll ();
 	textEditor.setFocus ();
+}
+Composite createParent() {
+	Tree tree = getTree();
+	TreeEditor treeEditor = new TreeEditor(tree);
+	Composite result = new Composite (tree, SWT.NONE);
+	TreeItem[] selectedItems = tree.getSelection();
+	treeEditor.horizontalAlignment = SWT.LEFT;
+	treeEditor.grabHorizontal = true;
+	treeEditor.setEditor(result, selectedItems[0]);
+	return result;
 }
 /* (non-Javadoc)
  * Method declared on IAction; overrides method on WorkspaceAction.

@@ -1,4 +1,9 @@
-package org.eclipse.ui.views.internal.navigator;
+package org.eclipse.ui.views.navigator;
+
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IAdaptable;
@@ -12,29 +17,21 @@ import org.eclipse.ui.actions.*;
 import org.eclipse.ui.views.internal.navigator.*;
 import org.eclipse.ui.views.navigator.*;
 
-public class OpenActionContributionFactory extends ActionContributionFactory {
+public class OpenActionFactory extends ActionFactory {
 
 	protected OpenFileAction openFileAction;
 	protected OpenSystemEditorAction openSystemEditorAction;
 	protected IWorkbenchPartSite site;
 	protected Shell shell;
 
-	public OpenActionContributionFactory(
+	public OpenActionFactory(
 		IWorkbenchPartSite partSite,
 		Shell shell) {
 		site = partSite;
 	}
 
 	/*
-	 * @see ActionContributionFactory#updateActions(IStructuredSelection)
-	 */
-	public void updateActions(IStructuredSelection selection) {
-		openFileAction.selectionChanged(selection);
-		openSystemEditorAction.selectionChanged(selection);
-	}
-
-	/*
-	 * @see ActionContributionFactory#makeActions()
+	 * @see ActionFactory#makeActions()
 	 */
 	public void makeActions() {
 		openFileAction = new OpenFileAction(site.getPage());
@@ -43,9 +40,11 @@ public class OpenActionContributionFactory extends ActionContributionFactory {
 	}
 
 	/*
-	 * @see ActionContributionFactory#fillMenu(IMenuManager,IStructuredSelection)
+	 * @see ActionFactory#fillPopUpMenu(IMenuManager,IStructuredSelection)
 	 */
-	public void fillMenu(IMenuManager menu, IStructuredSelection selection) {
+	public void fillPopUpMenu(IMenuManager menu, IStructuredSelection selection) {
+		
+		selectionChanged(selection);
 
 		boolean anyResourceSelected =
 			!selection.isEmpty()
@@ -119,13 +118,21 @@ public class OpenActionContributionFactory extends ActionContributionFactory {
 		menu.add(submenu);
 	}
 
+	
 	/**
-	 * Add in a mouse listener for any actions that listen
-	 * to the mouse events.
+	 * Handles double clicks in viewer.
 	 */
+	public void handleDoubleClick(IStructuredSelection selection) {
+		openFileAction.handleDoubleClick(selection);
 
-	public void addMouseListeners(StructuredViewer viewer) {
-
-		viewer.addDoubleClickListener(openFileAction);
+	}
+	
+	/**
+	 * Update the selection for new selection
+	 */
+	public void selectionChanged(IStructuredSelection selection) {
+		//Update the selections of those who need a refresh before filling
+		openFileAction.selectionChanged(selection);
+		openSystemEditorAction.selectionChanged(selection);
 	}
 }

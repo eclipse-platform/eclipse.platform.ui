@@ -8,6 +8,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -21,9 +22,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * ResourceNavigator that also allows updating after rename.
  * @since 2.0
  */
-public class ResourceNavigatorRenameAction
-	extends RenameResourceAction
-	implements KeyListener {
+public class ResourceNavigatorRenameAction extends RenameResourceAction {
 	private TreeViewer viewer;
 	/**
 	 * Create a ResourceNavigatorRenameAction and use the tree of the supplied viewer
@@ -50,17 +49,10 @@ public class ResourceNavigatorRenameAction
 				this.viewer.setSelection(new StructuredSelection(newResource), true);
 		}
 	}
-	/*
-	 * @see KeyListener#keyPressed(KeyEvent)
-	 */
-	public void keyPressed(KeyEvent event) {
-		//Do nothing 
-	}
-
-	/*
-	 * @see KeyListener#keyReleased(KeyEvent)
-	 */
-	public void keyReleased(KeyEvent event) {
+	/**
+	* Handle the key release
+	*/
+	public void handleKeyReleased(KeyEvent event) {
 		if (event.keyCode == SWT.F2 && event.stateMask == 0 && isEnabled()) {
 			run();
 		}

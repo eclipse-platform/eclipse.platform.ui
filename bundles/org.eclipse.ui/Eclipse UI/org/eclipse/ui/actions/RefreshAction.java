@@ -17,7 +17,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -31,7 +30,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */
-public class RefreshAction extends WorkspaceAction implements KeyListener {
+public class RefreshAction extends WorkspaceAction {
 
 	/**
 	 * The id of this action.
@@ -130,10 +129,10 @@ protected boolean updateSelection(IStructuredSelection s) {
 	return (super.updateSelection(s) || s.isEmpty()) && getSelectedNonResources().size() == 0;
 }
 
-/*
- * @see KeyListener#keyReleased(KeyEvent)
+/**
+ * Handle the key release.
  */
-public void keyReleased(KeyEvent event) {
+public void handleKeyReleased(KeyEvent event) {
 
 	if (event.keyCode == SWT.F5) {
 		IStructuredSelection currentSelection = getStructuredSelection();
@@ -141,14 +140,6 @@ public void keyReleased(KeyEvent event) {
 		run();
 		selectionChanged(currentSelection);
 	}
-}
-
-
-/*
- * @see KeyListener#keyPressed(KeyEvent)
- */
-public void keyPressed(KeyEvent e) {
-	//Do nothing
 }
 
 

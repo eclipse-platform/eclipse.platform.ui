@@ -16,7 +16,6 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -29,7 +28,7 @@ import org.eclipse.ui.internal.misc.Assert;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */
-public class DeleteResourceAction extends SelectionListenerAction implements KeyListener{
+public class DeleteResourceAction extends SelectionListenerAction {
 
 	/**
 	 * The id of this action.
@@ -302,18 +301,11 @@ protected boolean updateSelection(IStructuredSelection selection) {
 	return super.updateSelection(selection) && canDelete();
 }
 	
-
-/*
- * @see KeyListener#keyPressed(KeyEvent)
+/**
+ * Handle a key release.
  */
-public void keyPressed(KeyEvent event) {
-	//Do nothing 
-}
 
-/*
- * @see KeyListener#keyReleased(KeyEvent)
- */
-public void keyReleased(KeyEvent event) {
+public void handleKeyReleased(KeyEvent event) {
 	if (event.character == SWT.DEL && event.stateMask == 0 && isEnabled()) {
 		run();
 	}

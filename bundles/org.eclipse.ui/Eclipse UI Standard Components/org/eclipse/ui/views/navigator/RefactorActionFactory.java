@@ -1,9 +1,15 @@
-package org.eclipse.ui.views.internal.navigator;
+package org.eclipse.ui.views.navigator;
+
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -11,15 +17,15 @@ import org.eclipse.ui.actions.*;
 import org.eclipse.ui.views.navigator.*;
 
 /**
- * The RefactorActionContributionFactory is the factory for
+ * The RefactorActionFactory is the factory for
  * creating the actions for resources that change its physical
  * location such as rename, move and copy.
  * It also handles referencing actions like the addBookmark
  * action.
  */
 
-public class RefactorActionContributionFactory
-	extends ActionContributionFactory {
+public class RefactorActionFactory
+	extends ActionFactory {
 
 	protected CopyResourceAction copyResourceAction;
 	protected DeleteResourceAction deleteResourceAction;
@@ -36,23 +42,12 @@ public class RefactorActionContributionFactory
 	 * TreeViewer.
 	 * @param viewer TreeViewer
 	 */
-	public RefactorActionContributionFactory(TreeViewer viewer) {
+	public RefactorActionFactory(TreeViewer viewer) {
 		treeViewer = viewer;
 	}
 
 	/*
-	 * @see ActionContributionFactory#updateActions(IStructuredSelection)
-	 */
-	public void updateActions(IStructuredSelection selection) {
-		copyResourceAction.selectionChanged(selection);
-		moveResourceAction.selectionChanged(selection);
-		renameResourceAction.selectionChanged(selection);
-		copyProjectAction.selectionChanged(selection);
-		moveProjectAction.selectionChanged(selection);
-	}
-
-	/*
-	 * @see ActionContributionFactory#makeActions()
+	 * @see ActionFactory#makeActions()
 	 */
 	public void makeActions() {
 
@@ -77,9 +72,18 @@ public class RefactorActionContributionFactory
 	}
 
 	/*
-	 * @see ActionContributionFactory#fillMenu(IMenuManager,IStructuredSelection)
+	 * @see ActionFactory#fillPopUpMenu(IMenuManager,IStructuredSelection)
 	 */
-	public void fillMenu(IMenuManager menu, IStructuredSelection selection) {
+	public void fillPopUpMenu(IMenuManager menu, IStructuredSelection selection) {
+		
+		//Update the selections of those who need a refresh before filling
+		
+		copyResourceAction.selectionChanged(selection);
+		moveResourceAction.selectionChanged(selection);
+		renameResourceAction.selectionChanged(selection);
+		copyProjectAction.selectionChanged(selection);
+		moveProjectAction.selectionChanged(selection);
+		
 		boolean anyResourceSelected =
 			!selection.isEmpty()
 				&& SelectionUtil.allResourcesAreOfType(
@@ -154,14 +158,12 @@ public class RefactorActionContributionFactory
 		renameResourceAction.selectionChanged(selection);
 	}
 	
+	
 	/**
-	 * Add in a key listener for any actions that listen
-	 * to the key strokes.
-	 */
-
-	public void addKeyListeners() {
-
-		treeViewer.getControl().addKeyListener(deleteResourceAction);
-		treeViewer.getControl().addKeyListener(renameResourceAction);
+ 	 * Handle a key release.
+ 	 */
+	public void handleKeyReleased(KeyEvent event) {
+		deleteResourceAction.handleKeyReleased(event);
+		renameResourceAction.handleKeyReleased(event);
 	}
 }
