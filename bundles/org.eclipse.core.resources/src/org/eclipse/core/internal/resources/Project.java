@@ -935,8 +935,12 @@ public void move(IProjectDescription destination, boolean force, IProgressMonito
 	IProjectDescription source = getDescription();
 	if (source.getName().equals(destination.getName()) && !locationsEqual(source, destination))
 		internalMoveContent(destination, force, monitor);
-	else
-		internalMove(destination, force, monitor);
+	else {
+		if (!CoreFileSystemLibrary.isCaseSensitive() && getName().equalsIgnoreCase(destination.getName()))
+			internalChangeCase(destination, force, monitor);
+		else
+			internalMove(destination, force, monitor);
+	}
 }
 protected boolean locationsEqual(IProjectDescription desc1, IProjectDescription desc2) {
 	IPath loc1 = desc1.getLocation();
@@ -1107,6 +1111,9 @@ protected void internalChangeCase(IProjectDescription destDesc, boolean force, I
 
 			// let people know that we are deleting the project
 			workspace.deleting(this);
+
+			// Close the property store. It must be done before copying the tree.
+			getPropertyManager().closePropertyStore(this);
 
 			// set the description
 			workspace.copyTree(this, destPath, IResource.DEPTH_INFINITE, false);
