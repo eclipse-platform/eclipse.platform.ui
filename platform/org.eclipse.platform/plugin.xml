@@ -11,12 +11,10 @@
    </runtime>
    <requires>
       <import plugin="org.eclipse.ui.intro"/>
+      <import plugin="org.eclipse.ui.cheatsheets"/>
       <import plugin="org.eclipse.ui"/>
    </requires>
 
-
-
-<!-- 
    <extension
          point="org.eclipse.ui.intro">
       <intro
@@ -29,7 +27,6 @@
       		introId="org.eclipse.platform.intro"/>
    </extension>
 
--->
    <extension
          id="intro"
          point="org.eclipse.ui.intro.config">
@@ -41,7 +38,8 @@
                title="%intro.title">
             <implementation
                   style="css/shared.css"
-                  os="win32"
+                  os="win32,linux"
+                  ws="win32,gtk"
                   class="org.eclipse.ui.intro.internal.presentations.BrowserIntroPartImplementation">
             </implementation>
             <implementation
@@ -155,6 +153,18 @@
             <text id="page-description">
                %tutorials.text
             </text>
+       <!--
+            <div
+	        	label="%tutorials.div.label"
+	            id="workbench">
+	           <link
+	           	label="%tutorials.cvs.label"
+	           	url="http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.ui.cheatsheets.standbyPart&amp;input=org.eclipse.platform.cvs_1"
+	           	id="cvs">
+	           	<text>%intro.app.text</text>
+	           </link>
+	        </div>
+	   -->
          </page>
          <page
                alt-style="css/samples/swt.properties"
@@ -187,7 +197,7 @@
                   </text>
                </link>
                <link
-                     url="about:blank;"
+                     url="http://org.eclipse.ui.intro/showMessage?message=Action not implemented."
                      label="%samples.swt.views.label"
                      id="views">
                   <text>
@@ -243,7 +253,7 @@
 	        </text>
 	        <div id="page-links">
 	            <link
-	                  url="about:blank;"
+	                  url="http://org.eclipse.ui.intro/showMessage?message=Action not implemented."
 	                  label="%news.newandnoteworthy.label"
 	                  id="new-and-noteworthy">
 	               <text>
@@ -251,7 +261,7 @@
 	               </text>
 	            </link>
 	            <link
-	                  url="about:blank;"
+	                  url="http://org.eclipse.ui.intro/showMessage?message=Action not implemented."
 	                  label="%news.migration.label"
 	                  id="migration">
 	               <text>
@@ -349,5 +359,14 @@
       <primaryWizard
             id="org.eclipse.pde.ui.NewProjectWizard">
       </primaryWizard>
+   </extension>
+   
+   <extension point="org.eclipse.ui.cheatsheets.cheatSheetContent">
+      <cheatSheet
+            name="%cheatsheet.cvs.name"
+            contentFile="cheatsheets/CVS_1.xml"
+            id="org.eclipse.platform.cvs_1">
+         <description>%cheatsheet.cvs.desc</description>
+      </cheatSheet>
    </extension>
 </plugin>
