@@ -28,7 +28,8 @@ import org.osgi.framework.Bundle;
  */
 
 public class ConfigurationElement extends RegistryModelObject implements IConfigurationElement {
-
+	private static final String OLD_CONFIGURATION_ELEMENT_NAME = "org.eclipse.core.internal.plugins.ConfigurationElement"; //$NON-NLS-1$
+	
 	// DTD properties (included in plug-in manifest)
 	private String value = null;
 	private ConfigurationProperty[] properties = null;
@@ -86,8 +87,8 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 			// specified name is not a simple attribute nor child element
 			else {
 				String message = Policy.bind("plugin.extDefNotFound", attributeName); //$NON-NLS-1$
-				IStatus status = new Status(IStatus.ERROR, "org.eclipse.core.runtime", IRegistryConstants.PLUGIN_ERROR, message, null); //$NON-NLS-1$
-				InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundle("org.eclipse.core.runtime")).log(status); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IRegistryConstants.PLUGIN_ERROR, message, null); //$NON-NLS-1$
+				InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundle(IPlatform.PI_RUNTIME)).log(status); //$NON-NLS-1$
 				throw new CoreException(status);
 			}
 		} else {
@@ -109,8 +110,8 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 
 		if (className == null || className.equals("")) { //$NON-NLS-1$
 			String message = Policy.bind("plugin.extDefNoClass", attributeName); //$NON-NLS-1$
-			IStatus status = new Status(IStatus.ERROR, "org.eclipse.core.runtime", IRegistryConstants.PLUGIN_ERROR, message, null); //$NON-NLS-1$ 
-			InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundle("org.eclipse.core.runtime")).log(status); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IRegistryConstants.PLUGIN_ERROR, message, null); //$NON-NLS-1$ 
+			InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundle(IPlatform.PI_RUNTIME)).log(status); //$NON-NLS-1$
 
 			throw new CoreException(status);
 		}
@@ -156,23 +157,23 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 				 ((IExecutableExtension) result).setInitializationData(cfig, propertyName, initData);
 			} catch (CoreException ce) {
 				// user code threw exception
-				InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundle("org.eclipse.core.runtime")).log(ce.getStatus());
+				InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundle(IPlatform.PI_RUNTIME)).log(ce.getStatus());
 				throw new CoreException(ce.getStatus());
 			} catch (Exception te) {
 				// user code caused exception
 				throwException(Policy.bind("policy.initObjectError", bundle.getGlobalName(), className), te); //$NON-NLS-1$
 			}
-			return result;
 		}
+		//For backward compatibility reason we can not return here. See bug #47810. 
 
 		//Backward compatibility handling of configurationElement
 		if (oldStyleConfigurationElement != null || implementsIExecutableExtension(result)) {
 			Class oldConfigurationElement = null;
 			Method executableExtension = null;
 			try {
-				oldConfigurationElement = Class.forName("org.eclipse.core.internal.plugins.ConfigurationElement");
+				oldConfigurationElement = Class.forName(OLD_CONFIGURATION_ELEMENT_NAME);
 				try {
-					executableExtension = oldConfigurationElement.getMethod("runOldExecutableExtension", new Class[] { Object.class, String.class, Object.class });
+					executableExtension = oldConfigurationElement.getMethod("runOldExecutableExtension", new Class[] { Object.class, String.class, Object.class }); //$NON-NLS-1$
 					try {
 						if (oldStyleConfigurationElement == null)
 							oldStyleConfigurationElement = createOldStyleConfigurationElement(this);
@@ -180,7 +181,7 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 					} catch (Exception e) {
 						if (e instanceof CoreException) {
 							CoreException ce = (CoreException) e;
-							InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundle("org.eclipse.core.runtime")).log(ce.getStatus());
+							InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundle(IPlatform.PI_RUNTIME)).log(ce.getStatus());
 							throw new CoreException(ce.getStatus());
 						}
 						throwException(Policy.bind("policy.initObjectError", bundle.getGlobalName(), className), e); //$NON-NLS-1$
@@ -189,22 +190,20 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 					// TODO Auto-generated catch block
 					e3.printStackTrace();
 				} catch (NoSuchMethodException e3) {
-					// TODO Auto-generated catch block
-					e3.printStackTrace();
+					//This can never happen
 				}
 			} catch (ClassNotFoundException e2) {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
 			}
-			return result;
 		}
 
 		return result;
 	}
 
 	private void throwException(String message, Throwable exception) throws CoreException {
-		IStatus status = new Status(IStatus.ERROR, "org.eclipse.core.runtime", IRegistryConstants.PLUGIN_ERROR, message, exception); //$NON-NLS-1$
-		InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundle("org.eclipse.core.runtime")).log(status); //$NON-NLS-1$
+		IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IRegistryConstants.PLUGIN_ERROR, message, exception);
+		InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundle(IPlatform.PI_RUNTIME)).log(status);
 		throw new CoreException(status);
 	}
 
@@ -360,12 +359,13 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 	}
 
 	private boolean implementsIExecutableExtension(Object o) {
-		Bundle compatibility = InternalPlatform.getDefault().getBundle("org.eclipse.core.runtime.compatibility");
+		//Here we use reflection so the runtime code can run without the compatibility fragment
+		Bundle compatibility = InternalPlatform.getDefault().getBundle(IPlatform.PI_RUNTIME_COMPATIBILITY);
 		if (compatibility != null) {
 			Class oldConfigurationElement = null;
 			try {
-				oldConfigurationElement = compatibility.loadClass("org.eclipse.core.internal.plugins.ConfigurationElement");
-				Method testExecutableExtensionType = oldConfigurationElement.getMethod("implementsIExecutableExtension", new Class[] { Object.class });
+				oldConfigurationElement = compatibility.loadClass(OLD_CONFIGURATION_ELEMENT_NAME);
+				Method testExecutableExtensionType = oldConfigurationElement.getMethod("implementsIExecutableExtension", new Class[] { Object.class }); //$NON-NLS-1$
 				return ((Boolean) testExecutableExtensionType.invoke(oldConfigurationElement, new Object[] { o })).booleanValue();
 			} catch (Exception e) {
 				//Ignore the exceptions, return false 
@@ -378,12 +378,12 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 	private Object createOldStyleConfigurationElement(Object o) {
 		Class oldConfigurationElement = null;
 		try {
-			oldConfigurationElement = Class.forName("org.eclipse.core.internal.plugins.ConfigurationElement");
+			oldConfigurationElement = Class.forName(OLD_CONFIGURATION_ELEMENT_NAME);
 			Constructor constructor = oldConfigurationElement.getConstructor(new Class[] { org.eclipse.core.runtime.registry.IConfigurationElement.class });
 			return constructor.newInstance(new Object[] { o });
 		} catch (Exception e) {
 			e.printStackTrace();
-			//Ignore the exceptions, return the 
+			//TODO 
 		}
 		return null;
 	}
