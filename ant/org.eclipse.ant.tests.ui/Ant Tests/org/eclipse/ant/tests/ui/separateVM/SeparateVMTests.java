@@ -133,9 +133,19 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 		ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
 		copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, getJavaProject().getProject().getLocation().toOSString());
 		copy.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, "Bug42984");
-		launchAndTerminate(copy, 10000);
+		launchAndTerminate(copy, 20000);
 		ConsoleLineTracker.waitForConsole();
 		assertTrue("Incorrect number of messages logged for build. Should be 6. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 6);
 		assertTrue("Incorrect last message. Should end with " + ProjectHelper.PROJECT_NAME + ". Message: " + ConsoleLineTracker.getMessage(2), ConsoleLineTracker.getMessage(2).endsWith(ProjectHelper.PROJECT_NAME));
 	}
+	
+	 /**
+     * Tests launching Ant in a separate vm and getting messages
+     * logged to the console for project help.
+     */
+    public void testProjectHelp() throws CoreException {
+      	launch("echoingSepVM", "-p");
+      	assertTrue("Incorrect number of messages logged for build. Should be 14. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 14);
+      	assertTrue("Incorrect last message. Should start with echo2:. Message: " + ConsoleLineTracker.getMessage(12), ConsoleLineTracker.getMessage(12).trim().startsWith("echo2"));
+    }
 }

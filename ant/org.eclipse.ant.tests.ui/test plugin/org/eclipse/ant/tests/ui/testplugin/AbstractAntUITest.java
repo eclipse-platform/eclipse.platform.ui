@@ -153,13 +153,26 @@ public abstract class AbstractAntUITest extends TestCase {
 	/**
 	 * Launches the Ant build with the buildfile name (no extension).
 	 * 
-	 * @param mainTypeName the program to launch
-	 * @return thread in which the first suspend event occurred
+	 * @param buildFileName the ant buildfile name
 	 */
 	protected void launch(String buildFileName) throws CoreException {
 		ILaunchConfiguration config = getLaunchConfiguration(buildFileName);
 		assertNotNull("Could not locate launch configuration for " + buildFileName, config);
-		launchAndTerminate(config, 10000);
+		launchAndTerminate(config, 20000);
+	}
+	
+	/**
+	 * Launches the Ant build with the buildfile name (no extension).
+	 * 
+	 * @param buildFileName the buildfile
+	 * @param arguments the ant arguments
+	 */
+	protected void launch(String buildFileName, String arguments) throws CoreException {
+		ILaunchConfiguration config = getLaunchConfiguration(buildFileName);
+		assertNotNull("Could not locate launch configuration for " + buildFileName, config);
+		ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
+		copy.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, arguments);
+		launchAndTerminate(copy, 20000);
 	}
 	
 	/**

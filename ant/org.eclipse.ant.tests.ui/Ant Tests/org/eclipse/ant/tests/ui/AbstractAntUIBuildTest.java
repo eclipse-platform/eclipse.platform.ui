@@ -81,4 +81,11 @@ public abstract class AbstractAntUIBuildTest extends AbstractAntUITest {
 			}
 		});
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest#launch(java.lang.String, java.lang.String)
+	 */
+	protected void launch(String buildFileName, String arguments) throws CoreException {
+		super.launch(buildFileName, arguments);
+		ConsoleLineTracker.waitForConsole();
+	}
 }

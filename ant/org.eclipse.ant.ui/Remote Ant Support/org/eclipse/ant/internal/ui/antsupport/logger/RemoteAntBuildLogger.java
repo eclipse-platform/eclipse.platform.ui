@@ -28,6 +28,7 @@ import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
 import org.eclipse.ant.internal.ui.antsupport.AntSecurityException;
 import org.eclipse.ant.internal.ui.antsupport.InternalAntMessages;
+import org.eclipse.ant.internal.ui.antsupport.InternalAntRunner;
 
 /**
  * Parts adapted from org.eclipse.jdt.internal.junit.runner.RemoteTestRunner
@@ -214,11 +215,19 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 	 * @see org.apache.tools.ant.BuildListener#messageLogged(org.apache.tools.ant.BuildEvent)
 	 */
 	public void messageLogged(BuildEvent event) {
-		if (event.getPriority() > msgOutputLevel) {
+		if (event.getPriority() > msgOutputLevel && event.getPriority() != InternalAntRunner.MSG_PROJECT_HELP) {
 			return;
 		}
 		
 		if (!fSentProcessId) {
+			if (event.getPriority() == InternalAntRunner.MSG_PROJECT_HELP) {
+				if (Project.MSG_INFO > msgOutputLevel) {
+					return;
+				}
+				//no buildstarted or project started for project help option
+				establishConnection(event);
+				return;
+			}
 			if (fEventQueue == null){
 				fEventQueue= new ArrayList(10);
 			}
@@ -239,6 +248,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 			marshalMessage(event);
 		}
 	}
+	
 	private void marshalMessage(BuildEvent event) {
 		String eventMessage= event.getMessage().trim();
 		if (eventMessage.length() == 0) {

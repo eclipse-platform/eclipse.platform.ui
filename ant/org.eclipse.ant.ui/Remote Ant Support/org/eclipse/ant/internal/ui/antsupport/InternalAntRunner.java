@@ -69,6 +69,11 @@ import org.apache.tools.ant.util.FileUtils;
  */
 public class InternalAntRunner {
 
+	/**
+	 *  Message priority for project help messages. 
+	 */
+	public static final int MSG_PROJECT_HELP= Project.MSG_DEBUG + 1;
+	
 	private List buildListeners;
 
 	private String buildFileLocation;
@@ -212,6 +217,10 @@ public class InternalAntRunner {
 	 * @param project the project to list targets from
 	 */
 	private void printTargets(Project project) {
+		//notify the logger that project help message are coming
+		//since there is no buildstarted or targetstarted to 
+		//to be used to establish the connection
+		logMessage(project, "", MSG_PROJECT_HELP); //$NON-NLS-1$
 		// find the target with the longest name
 		int maxLength = 0;
 		Enumeration ptargets = project.getTargets().elements();
