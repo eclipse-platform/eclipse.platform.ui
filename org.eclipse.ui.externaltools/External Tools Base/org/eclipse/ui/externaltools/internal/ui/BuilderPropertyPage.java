@@ -411,6 +411,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		handleTableSelectionChanged();
 		builderTable.setFocus();
 	}
+	
 	private void createNewConfig() {
 		ILaunchConfigurationType types[] = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationTypes();
 		String category = LaunchConfigurationManager.getDefault().getLaunchGroup(IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_GROUP).getCategory();
@@ -427,21 +428,6 @@ public final class BuilderPropertyPage extends PropertyPage {
 		dialog.setMultipleSelection(false);
 		dialog.setTitle("Choose configuration type");
 		dialog.setMessage("Choose an external tool type to create");
-
-		//		ListSelectionDialog dialog= new ListSelectionDialog(getShell(), externalToolsTypes, new IStructuredContentProvider() {
-		//			public Object[] getElements(Object inputElement) {
-		//				if (inputElement instanceof List) {
-		//					return ((List)inputElement).toArray();
-		//				}
-		//				return null;
-		//			}
-		//
-		//			public void dispose() {
-		//			}
-		//
-		//			public void inputChanged(Viewer viewer,	Object oldInput, Object newInput) {
-		//			}
-		//		}, debugModelPresentation, "Choose an external tool type to create");
 		dialog.open();
 		Object result[] = dialog.getResult();
 		if (result == null || result.length == 0) {
@@ -449,8 +435,9 @@ public final class BuilderPropertyPage extends PropertyPage {
 		}
 		ILaunchConfigurationType type = (ILaunchConfigurationType) result[0];
 		ILaunchConfigurationWorkingCopy workingCopy = null;
+		String name= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom("New_Builder");
 		try {
-			workingCopy = type.newInstance(getBuilderFolder(), "New_Builder");
+			workingCopy = type.newInstance(getBuilderFolder(), name);
 		} catch (CoreException e) {
 			handleException(e);
 			return;
