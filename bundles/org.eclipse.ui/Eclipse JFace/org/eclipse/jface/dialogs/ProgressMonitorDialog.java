@@ -34,6 +34,13 @@ import java.lang.reflect.InvocationTargetException;
  * }
  * </pre>
  * </p>
+ * <p>
+ * Note that the ProgressMonitorDialog is not intended to be used
+ * with multiple runnables - this dialog should be discarded
+ * after completion of one IRunnableWithProgress and a new one instantiated
+ * for use by a second or sebsequent IRunnableWithProgress to ensure
+ * proper initialization.
+ * 
  */
 public class ProgressMonitorDialog extends Dialog implements IRunnableContext {
 
