@@ -28,7 +28,7 @@ public class PServerSSH2ServerConnection implements IServerConnection {
 	private Session session;
 	private Channel channel;
 
-	private static int localport = 2402;
+	private static int localport = 2403;
 
 	private IServerConnection psc = null;
 
