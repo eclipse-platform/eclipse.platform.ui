@@ -23,7 +23,7 @@ import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 
 /**
- * Reset the layout within the active perspective.
+ * Action to save the layout of the active perspective.
  */
 public class SavePerspectiveAction extends Action implements
         ActionFactory.IWorkbenchAction {
@@ -35,7 +35,9 @@ public class SavePerspectiveAction extends Action implements
     private IWorkbenchWindow workbenchWindow;
 
     /**
-     *	Create an instance of this class
+     * Creates an instance of this class.
+     *
+     * @param window the workbench window in which this action appears
      */
     public SavePerspectiveAction(IWorkbenchWindow window) {
         super(WorkbenchMessages.getString("SavePerspective.text")); //$NON-NLS-1$
@@ -66,9 +68,9 @@ public class SavePerspectiveAction extends Action implements
                 .getPerspective();
         if (desc != null) {
             if (desc.isSingleton()) {
-                saveSingleton();
+                saveSingleton(page);
             } else {
-                saveNonSingleton();
+                saveNonSingleton(page, desc);
             }
         }
     }
@@ -76,7 +78,7 @@ public class SavePerspectiveAction extends Action implements
     /** 
      * Save a singleton over itself.
      */
-    public void saveSingleton() {
+    private void saveSingleton(IWorkbenchPage page) {
         String[] buttons = new String[] { IDialogConstants.OK_LABEL,
                 IDialogConstants.CANCEL_LABEL };
         MessageDialog d = new MessageDialog(workbenchWindow.getShell(),
@@ -85,17 +87,14 @@ public class SavePerspectiveAction extends Action implements
                         .getString("SavePerspective.singletonQuestion"), //$NON-NLS-1$
                 MessageDialog.QUESTION, buttons, 0);
         if (d.open() == 0) {
-            IWorkbenchPage page = workbenchWindow.getActivePage();
-            if (page != null) {
-                page.savePerspective();
-            }
+            page.savePerspective();
         }
     }
 
     /**
      * Save a singleton over the user selection.
      */
-    public void saveNonSingleton() {
+    private void saveNonSingleton(IWorkbenchPage page, PerspectiveDescriptor oldDesc) {
         // Get reg.
         PerspectiveRegistry reg = (PerspectiveRegistry) WorkbenchPlugin
                 .getDefault().getPerspectiveRegistry();
@@ -103,23 +102,20 @@ public class SavePerspectiveAction extends Action implements
         // Get persp name.
         SavePerspectiveDialog dlg = new SavePerspectiveDialog(workbenchWindow
                 .getShell(), reg);
-        IPerspectiveDescriptor description = null;
-        IWorkbenchPage page = workbenchWindow.getActivePage();
-        if (page != null)
-            description = reg.findPerspectiveWithId(page.getPerspective()
-                    .getId());
+        // Look up the descriptor by id again to ensure it is still valid.
+        IPerspectiveDescriptor description = reg.findPerspectiveWithId(oldDesc.getId());
         dlg.setInitialSelection(description);
         if (dlg.open() != IDialogConstants.OK_ID) {
             return;
         }
 
         // Create descriptor.
-        PerspectiveDescriptor desc = (PerspectiveDescriptor) dlg.getPersp();
-        if (desc == null) {
+        PerspectiveDescriptor newDesc = (PerspectiveDescriptor) dlg.getPersp();
+        if (newDesc == null) {
             String name = dlg.getPerspName();
-            desc = reg.createPerspective(name,
+            newDesc = reg.createPerspective(name,
                     (PerspectiveDescriptor) description);
-            if (desc == null) {
+            if (newDesc == null) {
                 MessageDialog.openError(dlg.getShell(), WorkbenchMessages
                         .getString("SavePerspective.errorTitle"), //$NON-NLS-1$
                         WorkbenchMessages
@@ -129,9 +125,7 @@ public class SavePerspectiveAction extends Action implements
         }
 
         // Save state.
-        if (page != null) {
-            page.savePerspectiveAs(desc);
-        }
+        page.savePerspectiveAs(newDesc);
     }
 
     /* (non-Javadoc)
