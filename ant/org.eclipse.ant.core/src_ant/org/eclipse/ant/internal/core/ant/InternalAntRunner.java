@@ -291,27 +291,15 @@ public class InternalAntRunner {
 	 * project name, and the last elements is an array of dependencies.
 	 */
 	public List getTargets() {
-		// create a project and initialize it by loading the Property task
-		Project antProject = new Project();
+		Project antProject= new Project();
 		
-		if (isVersionCompatible("1.6")) { //$NON-NLS-1$
+		/*if (isVersionCompatible("1.6")) { //$NON-NLS-1$
 			//in Ant version 1.6 or greater all tasks can exist outside the scope of a target
-			antProject.init();
+			antProject= new Project();
 		} else {
-			try {
-				Class taskClass = Class.forName("org.apache.tools.ant.taskdefs.Property"); //$NON-NLS-1$
-				antProject.addTaskDefinition("property", taskClass); //$NON-NLS-1$
-				taskClass = Class.forName("org.apache.tools.ant.taskdefs.Typedef"); //$NON-NLS-1$
-				antProject.addTaskDefinition("typedef", taskClass); //$NON-NLS-1$
-				taskClass = Class.forName("org.apache.tools.ant.taskdefs.Taskdef"); //$NON-NLS-1$
-				antProject.addTaskDefinition("taskdef", taskClass); //$NON-NLS-1$
-				} catch (NoClassDefFoundError e) {
-					throw new BuildException(InternalAntMessages.getString("InternalAntRunner.Missing_Class"), e); //$NON-NLS-1$
-				} catch (ClassNotFoundException c) {
-					throw new BuildException(InternalAntMessages.getString("InternalAntRunner.Missing_Class"), c); //$NON-NLS-1$
-			   }
-		}
-		
+			antProject= new InternalProject();
+		}*/
+		antProject.init();
 		antProject.setProperty("ant.file", getBuildFileLocation()); //$NON-NLS-1$
 		parseBuildFile(antProject);
 		defaultTarget = antProject.getDefaultTarget();
