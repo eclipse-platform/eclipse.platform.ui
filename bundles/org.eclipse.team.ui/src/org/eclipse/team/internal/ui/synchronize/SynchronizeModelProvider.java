@@ -616,7 +616,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	private void asyncExec(final Runnable r) {
 		final Control ctrl = getViewer().getControl();
 		if (ctrl != null && !ctrl.isDisposed()) {
-			ctrl.getDisplay().syncExec(new Runnable() {
+			ctrl.getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					if (!ctrl.isDisposed()) {
 						BusyIndicator.showWhile(ctrl.getDisplay(), r);
