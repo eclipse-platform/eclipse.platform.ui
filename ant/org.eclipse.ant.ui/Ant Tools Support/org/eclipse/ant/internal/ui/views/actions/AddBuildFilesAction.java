@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,7 @@
 package org.eclipse.ant.internal.ui.views.actions;
 
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.ant.internal.ui.model.AntUIImages;
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.views.AntView;
@@ -22,10 +20,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.externaltools.internal.ui.FileSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -56,9 +54,9 @@ public class AddBuildFilesAction extends Action {
 		if (result == null) {
 			return;
 		}
-		final ProgressMonitorDialog progressDialog= new ProgressMonitorDialog(AntUIPlugin.getStandardDisplay().getActiveShell());
+
 		try {
-			progressDialog.run(true, true, new IRunnableWithProgress() {
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) {
 					monitor.beginTask(AntViewActionMessages.getString("AddBuildFilesAction.3"), result.size()); //$NON-NLS-1$
 					Object[] files= result.toArray();

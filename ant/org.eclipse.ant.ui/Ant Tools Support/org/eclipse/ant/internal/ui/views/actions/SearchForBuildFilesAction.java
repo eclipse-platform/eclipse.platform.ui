@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,7 @@
 package org.eclipse.ant.internal.ui.views.actions;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
-
 import org.eclipse.ant.internal.ui.model.AntUIImages;
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.views.AntView;
@@ -21,10 +19,10 @@ import org.eclipse.ant.internal.ui.views.elements.ProjectNode;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -50,10 +48,9 @@ public class SearchForBuildFilesAction extends Action {
 		if (dialog.open() != Window.CANCEL) {
 			final IFile[] files= dialog.getResults();
 			final boolean includeErrorNodes= dialog.getIncludeErrorResults();
-			final ProgressMonitorDialog progressDialog= new ProgressMonitorDialog(AntUIPlugin.getStandardDisplay().getActiveShell());
 			final ProjectNode[] existingProjects= view.getProjects();
 			try {
-				progressDialog.run(true, true, new IRunnableWithProgress() {
+				PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
 					public void run(IProgressMonitor monitor) {
 						monitor.beginTask(AntViewActionMessages.getString("SearchForBuildFilesAction.Processing_search_results_3"), files.length); //$NON-NLS-1$
 						for (int i = 0; i < files.length && !monitor.isCanceled(); i++) {

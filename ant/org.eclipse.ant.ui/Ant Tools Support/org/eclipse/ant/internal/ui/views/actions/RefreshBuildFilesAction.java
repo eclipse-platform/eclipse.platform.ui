@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
 import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
@@ -24,10 +23,9 @@ import org.eclipse.ant.internal.ui.views.elements.ProjectNode;
 import org.eclipse.ant.internal.ui.views.elements.TargetNode;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
 
@@ -67,9 +65,9 @@ public class RefreshBuildFilesAction extends Action implements IUpdate {
 		if (!iter.hasNext()) {
 			return;
 		}
-		final ProgressMonitorDialog progressDialog= new ProgressMonitorDialog(Display.getDefault().getActiveShell());
+		
 		try {
-			progressDialog.run(true, true, new IRunnableWithProgress() {
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) {
 					monitor.beginTask(AntViewActionMessages.getString("RefreshBuildFilesAction.Refreshing_buildfiles_3"), projects.size()); //$NON-NLS-1$
 					ProjectNode project;
