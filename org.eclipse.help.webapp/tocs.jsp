@@ -9,6 +9,7 @@
 <html>
 <head>
     <link rel="stylesheet" TYPE="text/css" HREF="toc.css" TITLE="nav">
+    <script language="JavaScript" src="toc.js"></script>
       
 <script language="JavaScript">
 
@@ -33,7 +34,7 @@ function selectTopic(topic)
 
 </head>
 
-<body onload="parent.parent.ToolbarFrame.setToc('Bookshelf')">
+<body onload="onloadHandler('Bookshelf')">
 
 <ul class='expanded'>
 <% 
@@ -65,7 +66,6 @@ function selectTopic(topic)
 
 %>
 </ul>
-
 
 </body>
 </html>

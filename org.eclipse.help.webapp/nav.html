@@ -3,15 +3,19 @@
 <head>
 <title>Navigation</title>
 
-<script type="text/javascript" language="JavaScript">
+<script language="JavaScript">
 
 var args = parent.parseQueryString();
+
 
 /**
  * Shows the TOC frame, loads appropriate TOC, and selects the topic
  */
 function displayTocFor(topic)
 {
+	// first ensure the TOC frame is loaded
+	// TO DO....
+	
 	parent.TabsFrame.switchTab("toc");
 	// remove the query, if any
 	var i = topic.indexOf('?');
@@ -35,70 +39,99 @@ function turnToFrame(nav)
   	// show the appropriate frame
  	var iframes = document.body.getElementsByTagName("IFRAME");
  	for (var i=0; i<iframes.length; i++)
- 	{
+ 	{			
   		if (iframes[i] != iframe)
   		{
-   			//iframes[i].style.display = "none";
    			iframes[i].style.visibility = "hidden";
    			iframes[i].style.width = 0;
    			iframes[i].style.height = 0;
+   			iframes[i].style.border = 0;
+   			iframes[i].style.margin = 0;
   		}
   		else
   		{
-   			//iframe.style.display = "block";
-   			iframes[i].style.visibility = "visible";
+   			iframe.style.visibility = "visible";
    			iframes[i].style.width = "100%";
    			iframes[i].style.height = "100%";
+   			if (!iframes[i].src)
+   				iframes[i].src = getFrameInput(nav);
    		}
  	}
 }
  
+
 /**
- * Loads the frames.
- * To be called only once
+ * Returns the input source for a frame
  */
-function loadFrames()
+function getFrameInput(nav)
 {
-	// load frames
-	var tocUrl="";
-	if(args["toc"])
+	switch(nav)
 	{
-		tocUrl="toc.jsp?toc="+args["toc"];
-		if(args["topic"])
-			tocUrl=tocUrl+"&topic="+args["topic"];
+	case "toc":
+		// load frames
+		var tocUrl="";
+
+		if(args && args["toc"])
+		{
+			tocUrl="toc.jsp?toc="+args["toc"];
+			if(args["topic"])
+				return tocUrl+"&topic="+args["topic"];
+		}
+		else
+			return "tocs.jsp";
+			
+		break;
+		
+	case "search":
+		
+		if(args && args["query"])
+			return "search.html?query="+args["query"];
+		else
+			return "search.html";
+			
+		break;
+		
+	case "links":
+	
+		if(args && args["contextId"])
+			return "links.html?contextId="+args["contextId"];
+		else
+			return "about:blank";
+		break;
+		
+	default:
+		return "about:blank";
+		break;
 	}
-	else
-		tocUrl="tocs.jsp";
-		
-	document.getElementById("toc").src=tocUrl;
-		
-	if(args["query"])
-		document.getElementById("search").src="search.html?query="+args["query"];
-	else
-		document.getElementById("search").src="search.html";
-		
-	if(args["contextId"])
-		document.getElementById("links").src="links.html?contextId="+args["contextId"];
-	else
-		document.getElementById("links").src="about:blank";
+}
+
+function onloadHandler()
+{
+	// load all the iframes
+	if (!document.getElementById("toc").src)
+		document.getElementById("toc").src = getFrameInput("toc");
+	if (!document.getElementById("search").src)
+		document.getElementById("search").src = getFrameInput("search");
+	if (document.getElementById("links").src)
+		document.getElementById("links").src = getFrameInput("links");
+	/*
+	var tab = "toc";
+	if (args && args["tab"])
+	    tab = args["tab"];
+	turnToFrame(tab);
+	*/
 }
  
 </script>
 
 </head>
    
-<body>
+<body onload="onloadHandler()">
       <div id="frames" style="top:0; width:100%;height:100%;">
-         <iframe width="100%" height="100%"  name="toc" id="toc" class="nav" title="Table of Contents"></iframe> 
-		 <iframe width="100%" height="100%"  name="search" id="search" class="nav" title="Search"></iframe> 
-		 <iframe width="100%" height="100%"   name="links" id="links" class="nav" title="Links"></iframe>
+         <iframe style="visibility:hidden" width="100%" height="100%"  name="toc" id="toc" class="nav" title="Table of Contents"></iframe> 
+		 <iframe style="visibility:hidden" width="100%" height="100%"  name="search" id="search" class="nav" title="Search"></iframe> 
+		 <iframe style="visibility:hidden" width="100%" height="100%"  name="links" id="links" class="nav" title="Links"></iframe>
       </div>
-     
-	  <script language="JavaScript">
-	  	turnToFrame("toc");
-	    loadFrames();		
-	  </script>
-
 </body>
 </html>
 

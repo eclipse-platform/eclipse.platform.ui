@@ -197,6 +197,15 @@ function selectTopic(topic)
 	return false;
 }
 
+
+/**
+ * Handles the onload event
+ */
+function onloadHandler(title)
+{
+	parent.parent.ToolbarFrame.setToc(title);
+}
+
 // listen for clicks
 if (isMozilla) {
   document.addEventListener('click', mouseClickHandler, true);

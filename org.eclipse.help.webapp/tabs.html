@@ -52,6 +52,9 @@ IMG {
      
 <script language="JavaScript">
  
+// input parameters
+var args = parent.parseQueryString();
+
 /* 
  * Switch tabs.
  */ 
@@ -93,12 +96,20 @@ function switchTab(nav)
   	}
 }
  
+function onloadHandler()
+{	
+	var tab = "toc";
+	if (args && args["tab"])
+	    tab = args["tab"];
+	switchTab(tab);
+}
+ 
 </script>
 
 
 </head>
    
-<body>
+<body onload="onloadHandler()">
    <table cellspacing="0" cellpadding="0" border="0">
    <tr>
    <td><a class="tab" id="toc" onclick="javascript:switchTab('toc')">&nbsp;Content</a></td>

@@ -43,7 +43,7 @@
 	<base target="MainFrame">
 </head>
 
-<body onload="parent.parent.ToolbarFrame.setToc('<%=label%>')">
+<body onload="onloadHandler('<%=label%>')">
 	<span style="white-space: nowrap;">
       <!-- use nobr for IE5.0 only... -->
       <nobr>
