@@ -461,9 +461,7 @@ public class SubscriberChangeSetCollector extends ChangeSetCollector implements 
 	}
 	
 	private static Preferences getTeamPreferences() {
-		IPreferencesService service = Platform.getPreferencesService();
-		IEclipsePreferences root = service.getRootNode();
-		return root.node(InstanceScope.SCOPE).node(TeamPlugin.getPlugin().getBundle().getSymbolicName());
+		return new InstanceScope().getNode(TeamPlugin.getPlugin().getBundle().getSymbolicName());
 	}
 	
     /**
