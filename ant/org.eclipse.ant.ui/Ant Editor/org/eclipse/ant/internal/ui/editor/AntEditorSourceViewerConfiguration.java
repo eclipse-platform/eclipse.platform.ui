@@ -19,7 +19,7 @@ import org.eclipse.ant.internal.ui.editor.text.AntEditorPartitionScanner;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorProcInstrScanner;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorTagScanner;
 import org.eclipse.ant.internal.ui.editor.text.IAntEditorColorConstants;
-import org.eclipse.ant.internal.ui.editor.text.NonRuleBasedDamagerRepairer;
+import org.eclipse.ant.internal.ui.editor.text.MultilineDamagerRepairer;
 import org.eclipse.ant.internal.ui.editor.text.NotifyingReconciler;
 import org.eclipse.ant.internal.ui.editor.text.XMLAnnotationHover;
 import org.eclipse.ant.internal.ui.editor.text.XMLReconcilingStrategy;
@@ -40,7 +40,6 @@ import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
-import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -58,7 +57,7 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
 
     private AntEditorTagScanner tagScanner;
     private AntEditorProcInstrScanner instructionScanner;
-	private NonRuleBasedDamagerRepairer damageRepairer;
+	private MultilineDamagerRepairer damageRepairer;
         
     private AntEditor fEditor;
 
@@ -164,15 +163,15 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
     public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
         PresentationReconciler reconciler = new PresentationReconciler();
 
-        DefaultDamagerRepairer dr = new DefaultDamagerRepairer(getDefaultScanner());
+		MultilineDamagerRepairer dr = new MultilineDamagerRepairer(getDefaultScanner(), null);
         reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
         reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 
-        dr = new DefaultDamagerRepairer(getTagScanner());
+        dr = new MultilineDamagerRepairer(getTagScanner(), null);
         reconciler.setDamager(dr, AntEditorPartitionScanner.XML_TAG);
         reconciler.setRepairer(dr, AntEditorPartitionScanner.XML_TAG);
 
-		damageRepairer= new NonRuleBasedDamagerRepairer(
+		damageRepairer= new MultilineDamagerRepairer(null,
                 new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.P_XML_COMMENT)));
         reconciler.setDamager(damageRepairer, AntEditorPartitionScanner.XML_COMMENT);
         reconciler.setRepairer(damageRepairer, AntEditorPartitionScanner.XML_COMMENT);
