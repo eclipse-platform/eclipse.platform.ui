@@ -11,21 +11,15 @@ Contributors:
 **********************************************************************/
 import java.io.PrintStream;
 
-import org.apache.tools.ant.BuildEvent;
-import org.apache.tools.ant.BuildLogger;
-import org.apache.tools.ant.Project;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.apache.tools.ant.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.externaltools.internal.core.AntUtil;
-import org.eclipse.ui.externaltools.internal.core.ToolMessages;
-import org.eclipse.ui.externaltools.internal.ui.BuildCanceledException;
-import org.eclipse.ui.externaltools.internal.ui.LogConsoleDocument;
-import org.eclipse.ui.externaltools.internal.ui.OutputStructureElement;
+import org.eclipse.ui.externaltools.internal.core.*;
+import org.eclipse.ui.externaltools.internal.ui.*;
 
 public class AntBuildLogger implements BuildLogger {
 
-	protected int priorityFilter = Project.MSG_INFO;
+	protected int priorityFilter = LogConsoleDocument.MSG_INFO;
 	protected IProgressMonitor monitor;
 	private int logLength = 0;
 	private int lastTargetEndIndex = 0;
@@ -60,7 +54,7 @@ public class AntBuildLogger implements BuildLogger {
 			ToolMessages.format(
 				"AntBuildLogger.buildException", // $NON-NLS-1$
 				new String[] { exception.toString()}),
-			Project.MSG_ERR);	
+			LogConsoleDocument.MSG_ERR);	
 	}
 
 	/**
@@ -131,7 +125,28 @@ public class AntBuildLogger implements BuildLogger {
 	 */
 	public void messageLogged(BuildEvent event) {
 		checkCanceled();
-		logMessage(event.getMessage(), event.getPriority());
+		logMessage(event.getMessage(), toConsolePriority(event.getPriority()));
+	}
+	
+	/**
+	 * Converts a Ant project's priority level to a priority
+	 * level used by the Log Console.
+	 */
+	private int toConsolePriority(int antPriority) {
+		switch (antPriority) {
+			case Project.MSG_ERR:
+				return LogConsoleDocument.MSG_ERR;
+			case Project.MSG_WARN:
+				return LogConsoleDocument.MSG_WARN;	
+			case Project.MSG_INFO:
+				return LogConsoleDocument.MSG_INFO;	
+			case Project.MSG_VERBOSE:
+				return LogConsoleDocument.MSG_VERBOSE;	
+			case Project.MSG_DEBUG:
+				return LogConsoleDocument.MSG_DEBUG;	
+			default:
+				return LogConsoleDocument.MSG_INFO;	
+		}
 	}
 
 	protected void logMessage(String message, int priority) {
@@ -164,7 +179,7 @@ public class AntBuildLogger implements BuildLogger {
 	}
 
 	public void setMessageOutputLevel(int level) {
-		this.priorityFilter = level;
+		this.priorityFilter = toConsolePriority(level);
 	}
 
 	public void setEmacsMode(boolean emacsMode) {
