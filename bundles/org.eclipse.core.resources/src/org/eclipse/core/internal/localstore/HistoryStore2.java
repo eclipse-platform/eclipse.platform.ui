@@ -106,35 +106,47 @@ public class HistoryStore2 implements IHistoryStore {
 		return allFiles;
 	}
 
-	private void clean(IPath root) {
+	/**
+	 * Applies the clean-up policy to an entry.
+	 */
+	boolean applyPolicy(Entry fileEntry, int maxStates, long minTimeStamp) {
+		boolean changed = false;
+		for (int i = 0; i < fileEntry.getOccurrences(); i++) {
+			if (i < maxStates && fileEntry.getTimestamp(i) >= minTimeStamp)
+					continue;
+			// "delete" the current uuid						
+			blobsToRemove.add(fileEntry.getUUID(i));
+			fileEntry.deleteOccurrence(i);
+			changed = true;
+		}
+		return changed;
+	}
+
+	/**
+	 * Applies the clean-up policy to a tree.
+	 */
+	private void applyPolicy(IPath root, final int maxStates, final long minimumTimestamp) throws CoreException {
+		// apply policy to destination as a separate pass, since now we want to visit the destination		
+		accept(new Visitor() {
+			public int visit(BucketIndex.Entry entry) {
+				return applyPolicy(entry, maxStates, minimumTimestamp) ? UPDATE : CONTINUE;
+			}
+		}, root, IResource.DEPTH_INFINITE);
+	}
+
+	public void clean(IProgressMonitor monitor) {
 		long start = System.currentTimeMillis();
 		try {
 			IWorkspaceDescription description = workspace.internalGetDescription();
 			final long minimumTimestamp = System.currentTimeMillis() - description.getFileStateLongevity();
-			final int max = description.getMaxFileStates();
-			final BlobStore tmpBlobStore = blobStore;
-			final Set tmpBlobsToRemove = blobsToRemove;
+			final int maxStates = description.getMaxFileStates();
 			final int[] entryCount = new int[1];
 			accept(new Visitor() {
 				public int visit(Entry fileEntry) {
-					int statesCounter = 0;
-					boolean changed = false;
-					for (int i = 0; i < fileEntry.getOccurrences(); i++) {
-						UniversalUniqueIdentifier uuidObject = fileEntry.getUUID(i);
-						if (++statesCounter <= max) {
-							File blobFile = tmpBlobStore.fileFor(uuidObject);
-							if (blobFile.lastModified() >= minimumTimestamp)
-								continue;
-						}
-						// "delete" the current uuid						
-						tmpBlobsToRemove.add(uuidObject);
-						fileEntry.deleteOccurrence(i);
-						changed = true;
-						entryCount[0]++;
-					}
-					return changed ? UPDATE : CONTINUE;
+					entryCount[0] += fileEntry.getOccurrences();
+					return applyPolicy(fileEntry, maxStates, minimumTimestamp) ? UPDATE : CONTINUE;
 				}
-			}, root, IResource.DEPTH_INFINITE);
+			}, Path.ROOT, IResource.DEPTH_INFINITE);
 			if (Policy.DEBUG_HISTORY) {
 				Policy.debug("Time to apply history store policies: " + (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$ //$NON-NLS-2$
 				Policy.debug("Total number of history store entries: " + entryCount[0]); //$NON-NLS-1$
@@ -150,10 +162,6 @@ public class HistoryStore2 implements IHistoryStore {
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, null, message, e);
 			ResourcesPlugin.getPlugin().getLog().log(status);
 		}
-	}
-
-	public void clean(IProgressMonitor monitor) {
-		clean(Path.ROOT);
 	}
 
 	public void copyHistory(IResource sourceResource, IResource destinationResource) {
@@ -178,6 +186,10 @@ public class HistoryStore2 implements IHistoryStore {
 		Assert.isLegal(destination.segmentCount() > 0);
 		Assert.isLegal(source.segmentCount() > 1 || destination.segmentCount() == 1);
 
+		IWorkspaceDescription description = workspace.internalGetDescription();
+		final long minimumTimestamp = System.currentTimeMillis() - description.getFileStateLongevity();
+		final int maxStates = description.getMaxFileStates();
+
 		boolean file = sourceResource.getType() == IResource.FILE;
 
 		final IPath baseSourceLocation = Path.fromOSString(locationFor(source.removeLastSegments(file ? 1 : 0)).toString());
@@ -192,7 +204,8 @@ public class HistoryStore2 implements IHistoryStore {
 				Entry destinationEntry = new Entry(destination, sourceEntry.getData(true));
 				currentBucket.addBlobs(destinationEntry);
 				currentBucket.save();
-				clean(destinationResource.getFullPath());
+				// apply clean-up policy to the destination tree 
+				applyPolicy(destinationResource.getFullPath(), maxStates, minimumTimestamp);
 				return;
 			}
 			final BucketIndex sourceBucket = currentBucket;
@@ -234,11 +247,11 @@ public class HistoryStore2 implements IHistoryStore {
 			}, source, IResource.DEPTH_INFINITE);
 			// the last bucket visited will not be automatically saved
 			destinationBucket.save();
+			// apply clean-up policy to the destination tree 
+			applyPolicy(destinationResource.getFullPath(), maxStates, minimumTimestamp);
 		} catch (CoreException e) {
 			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
 		}
-		// clean as a separate pass, since now we will be visiting the destination
-		clean(destinationResource.getFullPath());
 	}
 
 	BucketIndex createBucketTable() {
