@@ -586,6 +586,7 @@
 		<action
 			id="org.eclipse.debug.ui.actions.ManageBreakpointEnablement"
 			label="%DisableBreakpointsAction.label"
+			icon="icons/full/clcl16/disabled_co.gif"
 			menubarPath="breakpointGroup"
 			class="org.eclipse.debug.internal.ui.actions.DisableBreakpointsAction"
 			enablesFor="2+">
@@ -593,6 +594,7 @@
 		<action
 			id="org.eclipse.debug.ui.actions.ManageBreakpointEnablement"
 			label="%EnableBreakpointsAction.label"
+			icon="icons/full/clcl16/enabled_co.gif"
 			menubarPath="breakpointGroup"
 			class="org.eclipse.debug.internal.ui.actions.EnableBreakpointsAction"
 			enablesFor="2+">
