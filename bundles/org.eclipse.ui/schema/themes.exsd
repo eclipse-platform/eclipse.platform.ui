@@ -121,10 +121,8 @@
       </annotation>
       <complexType>
          <sequence>
-            <choice>
-               <element ref="colorFactory"/>
-               <element ref="colorValue"/>
-            </choice>
+            <element ref="colorFactory" minOccurs="0" maxOccurs="1"/>
+            <element ref="colorValue" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="description" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="id" type="string">
@@ -197,6 +195,7 @@ Only one of &lt;code&gt;defaultsTo&lt;/code&gt;, &lt;code&gt;value&lt;/code&gt; 
       </annotation>
       <complexType>
          <sequence>
+            <element ref="fontValue" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="description" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="id" type="string" use="required">
@@ -257,11 +256,8 @@ Only one (or neither) of &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;defaultsT
       </annotation>
       <complexType>
          <sequence>
-            <choice>
-               <element ref="colorFactory"/>
-               <element ref="colorValue"/>
-            </choice>
-            <element ref="description" minOccurs="0" maxOccurs="1"/>
+            <element ref="colorFactory" minOccurs="0" maxOccurs="1"/>
+            <element ref="colorValue" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -303,6 +299,9 @@ Unlike a &lt;code&gt;colorDefinition&lt;/code&gt;, you may not supply a &lt;code
          </documentation>
       </annotation>
       <complexType>
+         <sequence>
+            <element ref="fontValue" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -418,7 +417,7 @@ Unlike a &lt;code&gt;fontDefinition&lt;/code&gt;, you may not supply a &lt;code&
       </annotation>
       <complexType>
          <sequence>
-            <element ref="colorFactory" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="colorFactory" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="os" type="string">
             <annotation>
