@@ -193,15 +193,6 @@
          </showInPart>
       </perspectiveExtension>
    </extension>
-<!-- ***************** Commands ********************** -->
-   <extension
-         point="org.eclipse.ui.commands">
-      <category
-            name="%Command.category.name"
-            description="%Command.category.description"
-            id="org.eclipse.team.ui.commands.category">
-      </category>
-   </extension>
 <!-- ***************** Action sets ********************** -->
    <extension
          point="org.eclipse.ui.actionSets">
