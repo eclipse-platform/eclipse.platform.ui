@@ -10,6 +10,7 @@ Contributors:
 ====================================================================*/
 package org.eclipse.ui.externaltools.internal.ant.dtd.util;
 
+import java.text.MessageFormat;
 import java.util.Comparator;
 import java.util.Iterator;
 
@@ -157,7 +158,7 @@ public class SortedMap implements FactoryObject {
 		public Object next() {
 			Object[] array = SortedMap.this.fHolder.getKeys();
 			if (array == null)
-				throw new IllegalStateException("next() called for empty array");
+				throw new IllegalStateException(AntDTDUtilSchemaMessages.getString("SortedMap.next()_called_for_empty_array_1")); //$NON-NLS-1$
 			return array[++fIndex];
 		}
 
@@ -173,8 +174,9 @@ public class SortedMap implements FactoryObject {
 	
 	public void remove(int i) {
 		Object[] values = fHolder.getValues();
-		if (values == null)
-			throw new IllegalArgumentException("remove("+i+") in empty map");
+		if (values == null) {
+			throw new IllegalArgumentException(MessageFormat.format(AntDTDUtilSchemaMessages.getString("SortedMap.remove({0})_in_empty_map_2"), new String[]{Integer.toString(i)})); //$NON-NLS-1$
+		}
 		fSet.remove(i);
 		Object[] tmp = new Object[values.length-1];
 		System.arraycopy(values,0,tmp,0,i);

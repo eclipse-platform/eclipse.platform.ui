@@ -1,3 +1,9 @@
+/**********************************************************************
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
+
 //
 // TaskXMLFileMerger.java
 //
@@ -11,6 +17,7 @@ package org.eclipse.ui.externaltools.internal.ant.editor.tools;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -30,14 +37,12 @@ import org.xml.sax.SAXException;
  *
  * This class can be used to merge the TaskDescriptions xml
  * file containing information if attributes are required or not.
- * The xml automatically genereted from the proposed xdoclet in
- * the Apache Ant's project currently have no such information.
- * In the future the task writers hopefully will include this
- * information in the surce code comments. Our template currently
- * inserts an attriubte required="NOTDEFINED" and this class
- * replaces that field if its defined in the xml file we have
- * generated from the information based on the html files in the
- * Apache Ant's manual directory.  
+ * The xml automatically generated from the proposed xdoclet in the Apache Ant's
+ * project currently has no such information. In the future the task writers
+ * hopefully will include this information in the surce code comments. Our
+ * template currently inserts an attriubte required="NOTDEFINED" and this class
+ * replaces that field if its defined in the xml file we have generated from the
+ * information based on the html files in the Apache Ant's manual directory.
  */
 public class TaskXMLFileMerger {
 
@@ -78,9 +83,9 @@ public class TaskXMLFileMerger {
     /**
      * Parses the task description xml files and stores the information.
      */
-    protected void initialize() {
+	private void initialize() {
     	
-    	org.w3c.dom.Document tmpDocument = null;
+    	Document tmpDocument = null;
     	
     	//Get All the Tasks in the HTML XML Generated file and store in the taskNodes_HTML
     	tmpDocument = parseFile(HTML_TASKS_DESCRIPTION_XML_FILE_NAME);
@@ -134,7 +139,7 @@ public class TaskXMLFileMerger {
 		}
 	}
 	
-	protected void replaceAttributeRequiredInTaskNode(Node aTargetTaskNode) {
+	private void replaceAttributeRequiredInTaskNode(Node aTargetTaskNode) {
 		
 		String tmpTaskName = aTargetTaskNode.getAttributes().getNamedItem(XDOC_XML_TAG_NAME).getNodeValue();
 		
@@ -146,15 +151,15 @@ public class TaskXMLFileMerger {
 																		 tmpSourceNode);
 			}
 			else {
-				System.out.println("Did not find Task \"" + tmpTaskName + "\" in HTML XML file.");
+				System.out.println(MessageFormat.format(AntEditorToolsMessages.getString("TaskXMLFileMerger.No_Task"), new String[]{tmpTaskName})); //$NON-NLS-1$
 			}
 		}
 		else {
-			System.out.println("Did not find TaskName in TargetTaskNode: " + aTargetTaskNode.toString() );
+			System.out.println(MessageFormat.format(AntEditorToolsMessages.getString("TaskXMLFileMerger.No_TaskName"), new String[]{aTargetTaskNode.toString()})); //$NON-NLS-1$
 		}
 	}
 	
-	protected Node getTaskInHTMLGeneratedTaskListNamed(String aTaskName) {
+	private Node getTaskInHTMLGeneratedTaskListNamed(String aTaskName) {
 		
 		for(int i = 0; i<taskNodes_HTML.getLength(); ++i ) {
 			
@@ -174,7 +179,7 @@ public class TaskXMLFileMerger {
 		return null;
 	}
 	
-	protected void replaceAttributeRequiredInXMLTaskNodeWithAttributeRequiredInHTMLNode(Node aTargetTaskNode,
+	private void replaceAttributeRequiredInXMLTaskNodeWithAttributeRequiredInHTMLNode(Node aTargetTaskNode,
 																						  Node aSourceTaskNode) {
 		
 			Node tmpStructureNode = getChildNodeNamedWithTypeFromNode( XDOC_XML_TAG_STRUCTURE,
@@ -198,7 +203,7 @@ public class TaskXMLFileMerger {
 			}
 	}
 	
-	protected void replaceAttributeRequiredInAttributeNodeWithValueFoundInNodeVector(Node aTargetAttributeNode, Vector aSourceAttributeVector) {
+	private void replaceAttributeRequiredInAttributeNodeWithValueFoundInNodeVector(Node aTargetAttributeNode, Vector aSourceAttributeVector) {
 		
 		NamedNodeMap tmpTargetNamedNodeMap = aTargetAttributeNode.getAttributes();
 		String tmpTargetAttributeName = tmpTargetNamedNodeMap.getNamedItem(XDOC_XML_TAG_NAME).getNodeValue();
@@ -219,7 +224,7 @@ public class TaskXMLFileMerger {
 		}
 	}
 						
-	protected Vector getAttributeNodesFromXMLAttributesNode(Node anXMLAttributesNode){
+	private Vector getAttributeNodesFromXMLAttributesNode(Node anXMLAttributesNode){
 		
 		Vector allAttributes = new Vector(); 
 		NodeList tmpList = anXMLAttributesNode.getChildNodes();
@@ -234,7 +239,7 @@ public class TaskXMLFileMerger {
 		return allAttributes;
 	}
 	
-	protected Vector getAttributeNodesFromHTMLTaskNode(Node anHTTP_XML_TaskNode) {
+	private Vector getAttributeNodesFromHTMLTaskNode(Node anHTTP_XML_TaskNode) {
 		
 		Vector tmpVector = new Vector();
 		NodeList tmpList = anHTTP_XML_TaskNode.getChildNodes();
@@ -261,7 +266,7 @@ public class TaskXMLFileMerger {
      * @return The First Child Node found matching the criterias,
      * or null if none is found.
      */																		  			
-	protected Node getChildNodeNamedWithTypeFromNode(String aName, short aNodeType, Node aNode ) {
+	private Node getChildNodeNamedWithTypeFromNode(String aName, short aNodeType, Node aNode ) {
 		
 		NodeList tmpNodeList = aNode.getChildNodes();
 		for(int i=0; i<tmpNodeList.getLength(); ++i ) {
@@ -282,7 +287,7 @@ public class TaskXMLFileMerger {
      * The file will be loaded as resource, thus must begin with '/' and must
      * be relative to the classpath.
      */
-    protected Document parseFile(String aFileName) {
+	private Document parseFile(String aFileName) {
         Document tempDocument = null;
 
         DocumentBuilderFactory tempFactory = DocumentBuilderFactory.newInstance();
@@ -316,10 +321,10 @@ public class TaskXMLFileMerger {
     	
 //    	try {	
 //    		XmlDocument xmlDocument = (XmlDocument)xdocXMLDocument;
-//    		xmlDocument.write(new FileWriter(aFileName), "UTF-8");
+//    		xmlDocument.write(new FileWriter(aFileName), "UTF-8"); //$NON-NLS-1$
 //    	}
 //    	catch(IOException ioe) {
-//    		System.out.println("Coudln't print XML:" + ioe.toString());
+//    		System.out.println(MessageFormat.format(AntEditorToolsMessages.getString("TaskXMLFileMerger.Could_not_print"), new String[]{ioe.toString()})); //$NON-NLS-1$
 //    	} 
     }
 	
@@ -333,11 +338,5 @@ public class TaskXMLFileMerger {
 		TaskXMLFileMerger tmpTaskXMLFileMerger = new TaskXMLFileMerger();
 		tmpTaskXMLFileMerger.runReplaceAttributeRequiredProcess();
 		tmpTaskXMLFileMerger.writeXMLDocumentToFile("src\\anttasks_1.5b.xml"); //$NON-NLS-1$
-	}	
-
-
-
-
-
-
+	}
 }

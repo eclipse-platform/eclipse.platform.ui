@@ -10,12 +10,12 @@ Contributors:
 ====================================================================*/
 package org.eclipse.ui.externaltools.internal.ant.dtd.schema;
 
+import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.LinkedList;
 
 import org.eclipse.ui.externaltools.internal.ant.dtd.IModel;
 import org.eclipse.ui.externaltools.internal.ant.dtd.ISchema;
-import org.eclipse.ui.externaltools.internal.ant.dtd.util.Local;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.DeclHandler;
 
@@ -100,10 +100,10 @@ public class SchemaFactory implements DeclHandler {
      * i.e.: (true|false) -> true|false
      */
     private String stripSurroundingParentheses(String aString) {
-        if(aString.startsWith("(")) {
+        if(aString.startsWith("(")) { //$NON-NLS-1$
             aString = aString.substring(1);
         }
-        if(aString.endsWith(")")) {
+        if(aString.endsWith(")")) { //$NON-NLS-1$
             aString = aString.substring(0, aString.length()-1);
         }
         return aString;
@@ -144,7 +144,7 @@ public class SchemaFactory implements DeclHandler {
 		Element element = getElement(name);
 		if (!element.isUndefined()) {
 			// if the element has already been defined, this is an error
-			throw new SAXException(Local.format("Element {0} is doubly defined", name));
+			throw new SAXException(MessageFormat.format(AntDTDSchemaMessages.getString("SchemaFactory.Doubly_defined"), new String[]{name})); //$NON-NLS-1$
 		}
 		
 		fElement = element;
@@ -175,9 +175,10 @@ public class SchemaFactory implements DeclHandler {
 	private IModel parseModel(String model) throws SAXException {
 		fBuf = model.toCharArray();
 		fLen = fBuf.length;
-		if (fBuf[0] != '(')
+		if (fBuf[0] != '(') {
 			throw new SAXException(
-				Local.format("Element {0} model does not start with left parenthesis", fElement.getName()));
+				MessageFormat.format(AntDTDSchemaMessages.getString("SchemaFactory.Start_with_left_parenthesis"), new String[]{fElement.getName()})); //$NON-NLS-1$
+		}
 
 		IModel emodel;
 		boolean ortext = model.startsWith("(#PCDATA|"); //$NON-NLS-1$
@@ -214,11 +215,11 @@ public class SchemaFactory implements DeclHandler {
 		checkLen();
 		if (fBuf[fPos] != ')') {
 			char op = fBuf[fPos];
-			if (op != '|' && op != ',')
+			if (op != '|' && op != ',') {
 				throw new SAXException(
-					Local.format("Expecting operator or right parenthesis in element {0} model {1}", 
-						fElement.getName(),
-						String.valueOf(fBuf)));
+					MessageFormat.format(AntDTDSchemaMessages.getString("SchemaFactory.Expecting_operator_or_right_parenthesis"),  //$NON-NLS-1$
+						new String[]{fElement.getName(),String.valueOf(fBuf)}));
+			}
 			Model model = new Model(op == '|' ? IModel.CHOICE : IModel.SEQUENCE);
 			model.addModel(term);
 			term = model;
@@ -228,11 +229,11 @@ public class SchemaFactory implements DeclHandler {
 				IModel next = scanElement();
 				model.addModel(next);
 			}
-			if (fBuf[fPos] != ')')
+			if (fBuf[fPos] != ')') {
 				throw new SAXException(
-					Local.format("Expecting operator or right parenthesis in element {0} model {1}", 
-						fElement.getName(),
-						String.valueOf(fBuf)));
+						MessageFormat.format(AntDTDSchemaMessages.getString("SchemaFactory.Expecting_operator_or_right_parenthesis"),  //$NON-NLS-1$
+						new String[]{fElement.getName(), String.valueOf(fBuf)}));					
+			}
 			fPos++;
 		}
 		return term;
@@ -261,11 +262,12 @@ public class SchemaFactory implements DeclHandler {
 	}
 
 	private void checkLen() throws SAXException {
-		if (fPos == fLen)
+		if (fPos == fLen) {
 			throw new SAXException(
-				Local.format("Unexpected end of content model for element {0}: {1}", 
-					fElement.getName(),
-					String.valueOf(fBuf)));
+				MessageFormat.format(AntDTDSchemaMessages.getString("SchemaFactory.Unexpected_end"),  //$NON-NLS-1$
+					new String[]{fElement.getName(),
+						String.valueOf(fBuf)}));
+		}	
 	}
 
 	/**
@@ -279,12 +281,8 @@ public class SchemaFactory implements DeclHandler {
 	 */
 	public void internalEntityDecl(String name, String value) throws SAXException {
 	}
-	/**
-	 * Method setErrorException.
-	 * @param e
-	 */
+
 	public void setErrorException(Exception e) {
 		fErrorException = e;
 	}
-
 }

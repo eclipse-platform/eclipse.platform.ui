@@ -113,7 +113,7 @@ public class EnclosingTargetSearchingHandler extends PlantySaxDefaultHandler {
         // Create a Dom Element
         String tempTagName = aLocalName.length() > 0 ? aLocalName : aQualifiedName;
         if(tempTagName == null || tempTagName.length() == 0) {
-            throw new PlantyException("Error when parsing document: Neither a local name nor qualified of an element specified");
+            throw new PlantyException(AntEditorMessages.getString("EnclosingTargetSearchingHandler.Error_parsing")); //$NON-NLS-1$
         }
 		
 		if(tempTagName.equals("target")) { //$NON-NLS-1$

@@ -167,7 +167,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
             if(tempResult) {
                 Object tempObject = hashMap.remove(tempProposal.getDisplayString());
                 if(tempObject == null) {
-                    throw new NoSuchElementException("Serious error in PlantyCompletionProcessor.CompletionSet: Object was removed which should not actually exist.");
+                    throw new NoSuchElementException(AntEditorMessages.getString("PlantyCompletionProcessor.Serious_Error")); //$NON-NLS-1$
                 }
             }
             return tempResult;
@@ -308,7 +308,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getErrorMessage()
 	 */
 	public String getErrorMessage() {
-		return "No Text Completions";
+		return AntEditorMessages.getString("PlantyCompletionProcessor.No_Text_Completions_2"); //$NON-NLS-1$
 	}
 	
 
@@ -330,7 +330,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
 		
 		if (prefix == null || cursorPosition == -1) {
 			if (ExternalToolsPlugin.getDefault().isDebugging()) {
-				ExternalToolsPlugin.getDefault().log("Could not do completion", null);
+				ExternalToolsPlugin.getDefault().log(AntEditorMessages.getString("PlantyCompletionProcessor.Could_not_do_completion_3"), null); //$NON-NLS-1$
 			}
 			IWorkbenchWindow window= ExternalToolsPlugin.getActiveWorkbenchWindow();
 			if (window != null) {
@@ -439,7 +439,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
                     String tempProposalInfo = null;
                     String tempRequired = descriptionProvider.getRequiredAttributeForTaskAttribute(aTaskName, tempAttrName);
                     if(tempRequired != null && tempRequired.length() > 0) {
-                        tempProposalInfo = "Required: " + tempRequired;
+                        tempProposalInfo = AntEditorMessages.getString("PlantyCompletionProcessor.Required___4") + tempRequired; //$NON-NLS-1$
                         tempProposalInfo += "<BR><BR>"; //$NON-NLS-1$
                     }
                     String tempDescription = descriptionProvider.getDescriptionForTaskAttribute(aTaskName, tempAttrName);
@@ -529,7 +529,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
                     tempReplacementLength += 1;
                     tempReplacementOffset = aCursorPosition - aPrefix.length() - 1;                }
                 else {
-                    throw new PlantyException("Error in PlantyCompletionProcessor.getPropertyProposals");
+                    throw new PlantyException(AntEditorMessages.getString("PlantyCompletionProcessor.Error")); //$NON-NLS-1$
                 }
                 if(aDocumentText.length() > aCursorPosition && aDocumentText.charAt(aCursorPosition) == '}') {
                     tempReplacementLength += 1;
@@ -594,7 +594,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
                 tempRootElementName = lastDefaultHandler.rootElementName;
         	}
 			if (tempRootElementName == null)
-				tempRootElementName = aPrefix + "project";
+				tempRootElementName = aPrefix + "project"; //$NON-NLS-1$
 			IElement tempRootElement = dtd.getElement(tempRootElementName);
 			if(tempRootElement != null && tempRootElementName.startsWith(aPrefix)) {
 				String tempProposalInfo = null;

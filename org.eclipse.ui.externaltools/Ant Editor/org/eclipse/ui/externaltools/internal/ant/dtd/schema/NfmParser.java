@@ -10,6 +10,7 @@ Contributors:
 ====================================================================*/
 package org.eclipse.ui.externaltools.internal.ant.dtd.schema;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,7 +18,6 @@ import java.util.List;
 
 import org.eclipse.ui.externaltools.internal.ant.dtd.IAtom;
 import org.eclipse.ui.externaltools.internal.ant.dtd.ParseError;
-import org.eclipse.ui.externaltools.internal.ant.dtd.util.Local;
 import org.eclipse.ui.externaltools.internal.ant.dtd.util.SortedMap;
 
 /**
@@ -76,7 +76,7 @@ public class NfmParser {
 	}
 	
 	private void reportError(String name) throws ParseError {
-		throw new ParseError(Local.format("Ambiguous content model starting with {0}",name));
+		throw new ParseError(MessageFormat.format(AntDTDSchemaMessages.getString("NfmParser.Ambiguous"), new String[]{name})); //$NON-NLS-1$
 	}
 
 	public static void collect(Dfm dfm, List dfms) {
