@@ -237,6 +237,15 @@ public class DebugUITools {
 	 * The selection may be <code>null</code>, or contain any mix of 
 	 * <code>ILaunchConfiguration</code> or <code>ILaunchConfigurationType</code>
 	 * elements.
+	 * <p>
+	 * Before opening a new dialog, this method checks if there is an existing open
+	 * launch configuration dialog.  If there is, this dialog is used with the
+	 * specified selection.  If there is no existing dialog, a new one is created.
+	 * </p>
+	 * <p>
+	 * Note that if an existing dialog is reused, the <code>mode</code> argument is ignored
+	 * and the existing dialog keeps its original mode.
+	 * </p>
 	 * 
 	 * @param shell the parent shell for the launch configuration dialog
 	 * @param selection the initial selection for the dialog
@@ -246,10 +255,16 @@ public class DebugUITools {
 	 * @since 2.0
 	 */
 	public static int openLaunchConfigurationDialog(Shell shell, IStructuredSelection selection, String mode) {
-		LaunchConfigurationDialog dialog = new LaunchConfigurationDialog(shell, null, mode);
-		dialog.setOpenMode(LaunchConfigurationDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION);
-		dialog.setInitialSelection(selection);
-		return dialog.open();
+		LaunchConfigurationDialog dialog = (LaunchConfigurationDialog) LaunchConfigurationDialog.getCurrentlyVisibleLaunchConfigurationDialog();
+		if (dialog != null) {
+			dialog.setTreeViewerSelection(selection);
+			return LaunchConfigurationDialog.LAUNCH_CONFIGURATION_DIALOG_REUSE_OPEN;
+		} else {
+			dialog = new LaunchConfigurationDialog(shell, null, mode);
+			dialog.setOpenMode(LaunchConfigurationDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION);
+			dialog.setInitialSelection(selection);
+			return dialog.open();			
+		}
 	}
 	
 	/**

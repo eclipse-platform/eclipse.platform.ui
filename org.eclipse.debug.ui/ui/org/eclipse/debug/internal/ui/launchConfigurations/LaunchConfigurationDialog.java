@@ -52,7 +52,6 @@ import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -105,6 +104,10 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 													ILaunchConfigurationDialog, 
 													IDoubleClickListener {
 
+	/**
+	 * Keep track of the currently visible dialog instance	 */
+	private static ILaunchConfigurationDialog fgCurrentlyVisibleLaunchConfigurationDialog;
+	
 	/**
 	 * The tree of launch configurations
 	 */
@@ -358,6 +361,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	public static final int LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION = 3;
 	
 	/**
+	 * Constant specifying that a new launch configuration dialog was not opened.  Instead
+	 * an existing launch configuration dialog was used.	 */
+	public static final int LAUNCH_CONFIGURATION_DIALOG_REUSE_OPEN = 4;
+	
+	/**
 	 * Specifies how this dialog behaves when opened.  Value is one of the 
 	 * 'LAUNCH_CONFIGURATION_DIALOG' constants defined in this class.
 	 */
@@ -589,8 +597,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			getPreferenceStore().setValue(IDebugPreferenceConstants.PREF_LAUNCH_CONFIGURATION_DIALOG_WORKING_SET_NAME, workingSet.getName());
 		} else {
 			getPreferenceStore().setToDefault(IDebugPreferenceConstants.PREF_LAUNCH_CONFIGURATION_DIALOG_WORKING_SET_NAME);			
-		}
-		
+		}		
 	}
 	
 	/**
@@ -601,6 +608,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		getWorkingSetActionManager().dispose();
 		persistShellGeometry();
 		persistWorkingSet();
+		setCurrentlyVisibleLaunchConfigurationDialog(null);
 		return super.close();
 	}
 	
@@ -654,6 +662,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Configuration_Error_6"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Exception_occurred_processing_launch_configuration._See_log_for_more_information_7"), e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
+		setCurrentlyVisibleLaunchConfigurationDialog(this);
 		if (lastLaunchedConfig != null) {
 			setInitialSelection(new StructuredSelection(lastLaunchedConfig));
 		}			
@@ -673,6 +682,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		if (config != null) {
 			setInitialSelection(new StructuredSelection(config));
 		}
+		setCurrentlyVisibleLaunchConfigurationDialog(this);
 		return super.open();
 	}
 	
@@ -683,6 +693,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	protected int openDialogOnSelection() {
 		// Nothing special is required, the dialog will open and whatever was specified
 		// via setInitialSelection() will be selected in the tree
+		setCurrentlyVisibleLaunchConfigurationDialog(this);
 		return super.open();
 	}
 	
@@ -857,9 +868,10 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
-	 * Convenience method to set the selection on the configuration tree.
+	 * Set the selection for the tree control.  The selection may consist of any 
+	 * combination of configs and config types.
 	 */
-	protected void setTreeViewerSelection(ISelection selection) {
+	public void setTreeViewerSelection(ISelection selection) {
 		getTreeViewer().setSelection(selection);
 	}
 	
@@ -2500,45 +2512,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
-	 * Checks whether it is alright to close this dialog
-	 * and performed standard cancel processing. If there is a
-	 * long running operation in progress, this method posts an
-	 * alert message saying that the dialog cannot be closed.
-	 * 
-	 * @return <code>true</code> if it is alright to close this dialog, and
-	 *  <code>false</code> if it is not
-	 */
-	private boolean okToClose() {
-		if (fActiveRunningOperations > 0) {
-			synchronized (this) {
-				fWindowClosingDialog = createDialogClosingDialog();
-			}	
-			fWindowClosingDialog.open();
-			synchronized (this) {
-				fWindowClosingDialog = null;
-			}
-			return false;
-		}
-		
-		return true;
-	}
-
-	/**
-	 * Creates and return a new wizard closing dialog without opening it.
-	 */ 
-	private MessageDialog createDialogClosingDialog() {
-		MessageDialog result= new MessageDialog(
-			getShell(),
-			JFaceResources.getString("WizardClosingDialog.title"),//$NON-NLS-1$
-			null,
-			JFaceResources.getString("WizardClosingDialog.message"),//$NON-NLS-1$
-			MessageDialog.QUESTION,
-			new String[] {IDialogConstants.OK_LABEL},
-			0 ); 
-		return result;
-	}
-	
-	/**
 	 * @see ILaunchConfigurationDialog#canLaunch()
 	 */
 	public boolean canLaunch() {
@@ -2973,6 +2946,14 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 
 	private Label getTreeLabel() {
 		return fTreeLabel;
+	}
+
+	public static void setCurrentlyVisibleLaunchConfigurationDialog(ILaunchConfigurationDialog dialog) {
+		fgCurrentlyVisibleLaunchConfigurationDialog = dialog;
+	}
+
+	public static ILaunchConfigurationDialog getCurrentlyVisibleLaunchConfigurationDialog() {
+		return fgCurrentlyVisibleLaunchConfigurationDialog;
 	}
 
 	/**
