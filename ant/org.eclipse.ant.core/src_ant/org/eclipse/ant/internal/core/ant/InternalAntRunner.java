@@ -61,6 +61,7 @@ http://www.eclipse.org/legal/cpl-v10.html
  * <http://www.apache.org/>.
  */
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -68,6 +69,7 @@ import java.io.PrintStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -89,8 +91,10 @@ import org.apache.tools.ant.Target;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.internal.core.Task;
 import org.eclipse.ant.internal.core.Type;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
 
 /**
  * Eclipse application entry point into Ant. Derived from the original Ant Main class
@@ -307,9 +311,9 @@ public class InternalAntRunner {
 		if (fMonitor == null) {
 			return;
 		}
-		Vector chosenTargets = fTargets;
+		List chosenTargets = fTargets;
 		if (chosenTargets == null || chosenTargets.isEmpty()) {
-			chosenTargets = new Vector();
+			chosenTargets = new ArrayList(1);
 			chosenTargets.add(project.getDefaultTarget());
 		}
 		project.addBuildListener(new ProgressBuildListener(project, chosenTargets, fMonitor));
@@ -330,38 +334,39 @@ public class InternalAntRunner {
 		Target currentTarget;
 		// split the targets in top-level and sub-targets depending
 		// on the presence of a description
-		Vector topNames = new Vector();
-		Vector topDescriptions = new Vector();
-		Vector subNames = new Vector();
+		List topNames = new ArrayList();
+		List topDescriptions = new ArrayList();
+		List subNames = new ArrayList();
 
 		while (ptargets.hasMoreElements()) {
 			currentTarget = (Target) ptargets.nextElement();
 			targetName = currentTarget.getName();
 			targetDescription = currentTarget.getDescription();
-			// maintain a sorted list of targets
 			if (targetDescription == null) {
-				int pos = findTargetPosition(subNames, targetName);
-				subNames.insertElementAt(targetName, pos);
+				subNames.add(targetName);
 			} else {
-				int pos = findTargetPosition(topNames, targetName);
-				topNames.insertElementAt(targetName, pos);
-				topDescriptions.insertElementAt(targetDescription, pos);
+				topNames.add(targetName);
+				topDescriptions.add(targetDescription);
 				if (targetName.length() > maxLength) {
 					maxLength = targetName.length();
 				}
 			}
 		}
 
+		Collections.sort(subNames);
+		Collections.sort(topNames);
+		Collections.sort(topDescriptions);
+		
 		String defaultTarget = project.getDefaultTarget();
 		if (defaultTarget != null && !"".equals(defaultTarget)) { // shouldn't need to check but... //$NON-NLS-1$
-			Vector defaultName = new Vector();
-			Vector defaultDesc = null;
-			defaultName.addElement(defaultTarget);
+			List defaultName = new ArrayList(1);
+			List defaultDesc = null;
+			defaultName.add(defaultTarget);
 
 			int indexOfDefDesc = topNames.indexOf(defaultTarget);
 			if (indexOfDefDesc >= 0) {
-				defaultDesc = new Vector();
-				defaultDesc.addElement(topDescriptions.elementAt(indexOfDefDesc));
+				defaultDesc = new ArrayList(1);
+				defaultDesc.add(topDescriptions.get(indexOfDefDesc));
 			}
 			printTargets(project, defaultName, defaultDesc, InternalAntMessages.getString("InternalAntRunner.Default_target__3"), maxLength); //$NON-NLS-1$
 
@@ -372,23 +377,6 @@ public class InternalAntRunner {
 	}
 
 	/**
-	 * Returns the appropriate insertion index for a given string into a sorted collection.
-	 * 
-	 * @return the insertion index
-	 * @param names the initial collection of sorted strings
-	 * @param name the string whose insertion index into <code>names</code> is to be determined
-	 */
-	private int findTargetPosition(Vector names, String name) {
-		int result = names.size();
-		for (int i = 0; i < names.size() && result == names.size(); i++) {
-			if (name.compareTo((String) names.elementAt(i)) < 0) {
-				result = i;
-			}
-		}
-		return result;
-	}
-
-	/**
 	 * Logs a message with the client that lists the target names and optional descriptions
 	 * 
 	 * @param names the targets names
@@ -396,7 +384,7 @@ public class InternalAntRunner {
 	 * @param heading the message heading
 	 * @param maxlen maximum length that can be allocated for a name
 	 */
-	private void printTargets(Project project, Vector names, Vector descriptions, String heading, int maxlen) {
+	private void printTargets(Project project, List names, List descriptions, String heading, int maxlen) {
 		// now, start printing the targets and their descriptions
 		String lSep = System.getProperty("line.separator"); //$NON-NLS-1$
 		
@@ -408,10 +396,10 @@ public class InternalAntRunner {
 		msg.append(heading + lSep + lSep);
 		for (int i = 0; i < names.size(); i++) {
 			msg.append(' ');
-			msg.append(names.elementAt(i));
+			msg.append(names.get(i));
 			if (descriptions != null) {
-				msg.append(spaces.substring(0, maxlen - ((String) names.elementAt(i)).length() + 2));
-				msg.append(descriptions.elementAt(i));
+				msg.append(spaces.substring(0, maxlen - ((String) names.get(i)).length() + 2));
+				msg.append(descriptions.get(i));
 			}
 			msg.append(lSep);
 		}
@@ -434,6 +422,9 @@ public class InternalAntRunner {
 		}
 	}
 
+	/**
+	 * Note that the list passed to this method must support
+	 * List#remove(Object)	 */
 	protected void run(List argList) {
 		setCurrentProject(new Project());
 		Throwable error = null;
@@ -488,6 +479,7 @@ public class InternalAntRunner {
 		} finally {
 			System.setErr(originalErr);
 			System.setOut(originalOut);
+			//close any user specified build log
 			if (fErr != originalErr) {
 				fErr.close();
 			}
@@ -603,7 +595,7 @@ public class InternalAntRunner {
 	}
 
 	/**
-	 * 
+	 * Sets the extra user arguments
 	 */
 	public void setArguments(String[] args) {
 		fExtraArguments = args;
@@ -611,10 +603,12 @@ public class InternalAntRunner {
 
 	/**
 	 * Sets the execution targets.
-	 * 
 	 */
-	public void setExecutionTargets(Vector executionTargets) {
-		fTargets = executionTargets;
+	public void setExecutionTargets(String[] executionTargets) {
+		fTargets = new Vector(executionTargets.length);
+		for (int i = 0; i < executionTargets.length; i++) {
+			fTargets.add(executionTargets[i]);
+		}
 	}
 
 	protected static String getAntVersion() throws BuildException {
@@ -682,13 +676,7 @@ public class InternalAntRunner {
 		}
 		if (args != null) {
 			try {
-				File logFile = new File(args[0]);
-				//this stream is closed in the finally block of run(list)
-				fOut = new PrintStream(new FileOutputStream(logFile));
-				fErr = fOut;
-				logMessage(getCurrentProject(), MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Using_{0}_file_as_build_log._1"), new String[]{logFile.getCanonicalPath()}), Project.MSG_INFO); //$NON-NLS-1$
-				fBuildLogger.setErrorPrintStream(fErr);
-				fBuildLogger.setOutputPrintStream(fOut);
+				createLogFile(args[0]);
 			} catch (IOException e) {
 				// just log message and ignore exception
 				logMessage(getCurrentProject(), MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Could_not_write_to_the_specified_log_file__{0}._Make_sure_the_path_exists_and_you_have_write_permissions._2"), new String[]{args[0]}), Project.MSG_ERR); //$NON-NLS-1$
@@ -705,7 +693,7 @@ public class InternalAntRunner {
 		}
 		if (args != null) {
 			fBuildFileLocation = args[0];
-			fTargets = new Vector();
+			fTargets = new Vector(args.length - 1);
 			for (int i = 1; i < args.length; i++) {
 				fTargets.add(args[i]);
 			}
@@ -724,6 +712,25 @@ public class InternalAntRunner {
 		processProperties(commands);
 
 		return true;
+	}
+
+	protected void createLogFile(String fileName) throws FileNotFoundException, IOException {
+		IPath path= new Path(fileName);
+		if (!path.isAbsolute()) {
+			path= new Path(getBuildFileLocation());
+			path= path.removeLastSegments(1);
+			path= path.addTrailingSeparator();
+			path= path.append(fileName);
+		}
+		
+		File logFile= path.toFile();
+		
+		//this stream is closed in the finally block of run(list)
+		fOut = new PrintStream(new FileOutputStream(logFile));
+		fErr = fOut;
+		logMessage(getCurrentProject(), MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Using_{0}_file_as_build_log._1"), new String[]{logFile.getCanonicalPath()}), Project.MSG_INFO); //$NON-NLS-1$
+		fBuildLogger.setErrorPrintStream(fErr);
+		fBuildLogger.setOutputPrintStream(fOut);
 	}
 
 	protected void processProperties(List commands) {
@@ -874,8 +881,8 @@ public class InternalAntRunner {
 			return null;
 		}
 		// We could be using Arrays.asList() here, but it does not specify
-		// what kind of list it will return. We do need a list that
-		// implements the method List.remove(int) and ArrayList does.
+		// what kind of list it will return. We need a list that
+		// implements the method List.remove(Object) and ArrayList does.
 		ArrayList result = new ArrayList(args.length);
 		for (int i = 0; i < args.length; i++) {
 			result.add(args[i]);
