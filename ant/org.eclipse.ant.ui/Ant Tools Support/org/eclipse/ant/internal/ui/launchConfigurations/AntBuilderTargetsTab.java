@@ -56,7 +56,7 @@ public class AntBuilderTargetsTab extends AbstractLaunchConfigurationTab {
     
     private Map fAttributeToTargets= new HashMap();
     
-    private static final String NO_TARGETS_SELECTED= AntLaunchConfigurationMessages.getString("AntBuilderTargetsTab.0");  //$NON-NLS-1$
+    private static final String NOT_ENABLED= AntLaunchConfigurationMessages.getString("AntBuilderTargetsTab.0");  //$NON-NLS-1$
 	private static final String DEFAULT_TARGET_SELECTED= AntLaunchConfigurationMessages.getString("AntBuilderTargetsTab.10");  //$NON-NLS-1$
     
 	private SelectionListener fSelectionListener= new SelectionAdapter() {
@@ -149,18 +149,19 @@ public class AntBuilderTargetsTab extends AbstractLaunchConfigurationTab {
         }
         copy.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, (String)fAttributeToTargets.get(attribute));
 		SetTargetsDialog dialog= new SetTargetsDialog(getShell(), copy);
-        String targetsSelected= null;
-		if (dialog.open() == Window.OK) {
-		    targetsSelected= dialog.getTargetsSelected();
+		if (dialog.open() != Window.OK) {
+		    return;
         }
-        if (targetsSelected == null) {
-            return; //user cancelled
-        }
+		String targetsSelected= dialog.getTargetsSelected();
        
-        if (targetsSelected.length() == 0) {
-            fAttributeToTargets.remove(attribute);
-            text.setText(NO_TARGETS_SELECTED);
-            text.setEnabled(false);
+        if (targetsSelected == null) {//default
+			 text.setEnabled(true);
+			 fAttributeToTargets.remove(attribute);
+             setTargetsForUser(text, DEFAULT_TARGET_SELECTED, null);
+         } else if (targetsSelected.length() == 0) {
+			 text.setEnabled(false);
+			 fAttributeToTargets.remove(attribute);
+			 text.setText(NOT_ENABLED);
          } else {
              text.setEnabled(true);
              fAttributeToTargets.put(attribute, targetsSelected);
@@ -169,15 +170,16 @@ public class AntBuilderTargetsTab extends AbstractLaunchConfigurationTab {
 	}
 
     private void setTargetsForUser(Text text, String targetsSelected, String configTargets) {
+		if (!text.isEnabled()) {
+			text.setText(NOT_ENABLED);
+			return;
+		}
         if (targetsSelected == null) {
             if (configTargets == null) {
-				if (text.isEnabled()) {//build kind has been specified..see initializeBuildKinds
-					text.setText(DEFAULT_TARGET_SELECTED);
-				} else {
-					text.setText(NO_TARGETS_SELECTED);
-				}
+				//build kind has been specified..see initializeBuildKinds
+				text.setText(DEFAULT_TARGET_SELECTED);
                 return;
-            } 
+            }
             targetsSelected= configTargets;
         }
         String[] targets= AntUtil.parseRunTargets(targetsSelected);
@@ -230,15 +232,19 @@ public class AntBuilderTargetsTab extends AbstractLaunchConfigurationTab {
         String afterCleanTargets= null;
         String duringCleanTargets= null;
         try {
-            configTargets= configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, (String)null);
+			if (!configuration.getAttribute(IExternalToolConstants.ATTR_TRIGGERS_CONFIGURED, false)) {
+				//not yet migrated to new format
+				configTargets= configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, (String)null);
+			}
+            
             autoTargets= configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_AUTO_TARGETS, (String)null);
             manualTargets= configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_MANUAL_TARGETS, (String)null);
             afterCleanTargets= configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_AFTER_CLEAN_TARGETS, (String)null);
             duringCleanTargets= configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CLEAN_TARGETS, (String)null);
-            fAttributeToTargets.put(IAntLaunchConfigurationConstants.ATTR_ANT_AUTO_TARGETS, autoTargets);
-            fAttributeToTargets.put(IAntLaunchConfigurationConstants.ATTR_ANT_MANUAL_TARGETS, manualTargets);
-            fAttributeToTargets.put(IAntLaunchConfigurationConstants.ATTR_ANT_AFTER_CLEAN_TARGETS, afterCleanTargets);
-            fAttributeToTargets.put(IAntLaunchConfigurationConstants.ATTR_ANT_CLEAN_TARGETS, duringCleanTargets);
+			initializeAttributeToTargets(fAutoBuildTargetText, autoTargets, configTargets, IAntLaunchConfigurationConstants.ATTR_ANT_AUTO_TARGETS);
+			initializeAttributeToTargets(fManualBuildTargetText, manualTargets, configTargets, IAntLaunchConfigurationConstants.ATTR_ANT_MANUAL_TARGETS);
+			initializeAttributeToTargets(fDuringCleanTargetText, duringCleanTargets, configTargets, IAntLaunchConfigurationConstants.ATTR_ANT_CLEAN_TARGETS);
+			initializeAttributeToTargets(fAfterCleanTargetText, afterCleanTargets, configTargets, IAntLaunchConfigurationConstants.ATTR_ANT_AFTER_CLEAN_TARGETS);
         } catch (CoreException ce) {
             AntUIPlugin.log("Error reading configuration", ce); //$NON-NLS-1$
         }
@@ -248,6 +254,16 @@ public class AntBuilderTargetsTab extends AbstractLaunchConfigurationTab {
         setTargetsForUser(fDuringCleanTargetText, duringCleanTargets, configTargets);
         setTargetsForUser(fAutoBuildTargetText, autoTargets, configTargets);
     }
+	
+	private void initializeAttributeToTargets(Text textComponent, String specificTargets, String configTargets, String attribute) {
+		if (textComponent.isEnabled()) {
+			if (specificTargets == null && configTargets != null) {
+				fAttributeToTargets.put(attribute, configTargets);
+			} else {
+				fAttributeToTargets.put(attribute, specificTargets);
+			}
+		}
+	}
 
     private void initializeBuildKinds(ILaunchConfiguration configuration) {
         String buildKindString= null;
@@ -277,20 +293,19 @@ public class AntBuilderTargetsTab extends AbstractLaunchConfigurationTab {
 
     public void performApply(ILaunchConfigurationWorkingCopy configuration) {
         StringBuffer buffer= new StringBuffer();
-        if (!fAfterCleanTargetText.getText().equals(NO_TARGETS_SELECTED)) {
+        if (!fAfterCleanTargetText.getText().equals(NOT_ENABLED)) {
             buffer.append(IExternalToolConstants.BUILD_TYPE_FULL).append(',');
         } 
-        if (!fManualBuildTargetText.getText().equals(NO_TARGETS_SELECTED)){
+        if (!fManualBuildTargetText.getText().equals(NOT_ENABLED)){
             buffer.append(IExternalToolConstants.BUILD_TYPE_INCREMENTAL).append(','); 
         } 
-        if (!fAutoBuildTargetText.getText().equals(NO_TARGETS_SELECTED)) {
+        if (!fAutoBuildTargetText.getText().equals(NOT_ENABLED)) {
             buffer.append(IExternalToolConstants.BUILD_TYPE_AUTO).append(',');
         }
-        if (!fDuringCleanTargetText.getText().equals(NO_TARGETS_SELECTED)) {
+        if (!fDuringCleanTargetText.getText().equals(NOT_ENABLED)) {
             buffer.append(IExternalToolConstants.BUILD_TYPE_CLEAN);
         }
         configuration.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, buffer.toString());
-        
         
         String targets= (String) fAttributeToTargets.get(IAntLaunchConfigurationConstants.ATTR_ANT_AFTER_CLEAN_TARGETS);
         configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_AFTER_CLEAN_TARGETS, targets);

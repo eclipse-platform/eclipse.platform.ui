@@ -58,10 +58,14 @@ public class SetTargetsDialog extends Dialog {
 	}
 
     protected String getTargetsSelected() {
+		String defaultValue= null;
+		if (!fTargetsTab.isTargetSelected()) {
+			defaultValue= ""; //$NON-NLS-1$
+		}
         try {
-            return fConfiguration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, ""); //$NON-NLS-1$
+            return fConfiguration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, defaultValue);
         } catch (CoreException e) {
-            return ""; //$NON-NLS-1$
+            return defaultValue;
         }
     }
     

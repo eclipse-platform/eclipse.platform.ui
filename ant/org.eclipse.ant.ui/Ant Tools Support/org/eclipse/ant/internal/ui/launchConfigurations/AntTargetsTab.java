@@ -811,4 +811,8 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			return null;
 		}
 	}
+	
+	protected boolean isTargetSelected() {
+		return !fOrderedTargets.isEmpty();
+	}
 }
