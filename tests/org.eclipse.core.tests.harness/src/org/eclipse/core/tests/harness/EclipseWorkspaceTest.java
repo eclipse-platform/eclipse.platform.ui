@@ -735,7 +735,7 @@ public class EclipseWorkspaceTest extends TestCase {
 	 */
 	public IPath getRandomLocation() {
 		//low order bits are current time, high order bits are static counter
-		IPath parent = Platform.getLocation().removeLastSegments(1);
+		IPath parent = getTempDir();
 		final long mask = 0x00000000FFFFFFFFL;
 		long segment = (((long) ++nextLocationCounter) << 32) | (System.currentTimeMillis() & mask);
 		IPath path = parent.append(Long.toString(segment));
