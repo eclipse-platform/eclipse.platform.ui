@@ -28,7 +28,6 @@ public class TargetNode extends AntNode {
 		super(name);
 		this.dependencies= new DependencyNode(this);
 		this.executionPath= new ExecutionPathNode(this);
-		addToExecutionPath(getName());
 		this.description= description;
 	}
 	
