@@ -52,10 +52,6 @@ public class OperationValidator implements IOperationValidator {
 		"ActivityConstraints.prereqCompatible";
 	private static final String KEY_PREREQ_GREATER =
 		"ActivityConstraints.prereqGreaterOrEqual";
-	private static final String KEY_PATCH_UNCONFIGURE =
-		"ActivityConstraints.patchUnconfigure";
-	private static final String KEY_PATCH_UNCONFIGURE_BACKUP =
-		"ActivityConstraints.patchUnconfigureBackup";
 	private static final String KEY_OPTIONAL_CHILD =
 		"ActivityConstraints.optionalChild";
 	private static final String KEY_CYCLE = "ActivityConstraints.cycle";
