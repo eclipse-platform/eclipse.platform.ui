@@ -540,10 +540,10 @@ public void writePluginPrerequisite(PluginPrerequisiteModel requires, DataOutput
 			out.writeUTF(outString);
 		}
 		
-		byte outMatch = requires.getMatch();
+		byte outMatch = requires.getMatchByte();
 		if (outMatch != PluginPrerequisiteModel.PREREQ_MATCH_UNSPECIFIED) {
 			writeLabel(RegistryCacheReader.REQUIRES_MATCH_LABEL, out);
-			out.writeByte(requires.getMatch());
+			out.writeByte(requires.getMatchByte());
 		}
 
 		writeLabel(RegistryCacheReader.REQUIRES_EXPORT_LABEL, out);

@@ -868,7 +868,7 @@ public PluginPrerequisiteModel readPluginPrerequisite(DataInputStream in) {
 					requires.setVersion(in.readUTF());
 					break;
 				case REQUIRES_MATCH_LABEL :
-					requires.setMatch(in.readByte());
+					requires.setMatchByte(in.readByte());
 					break;
 				case REQUIRES_EXPORT_LABEL :
 					requires.setExport(in.readBoolean());

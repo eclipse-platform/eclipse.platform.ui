@@ -838,14 +838,14 @@ public void parsePluginRequiresImport(Attributes attributes) {
 				else
 					if (attrName.equals(PLUGIN_REQUIRES_MATCH)) {
 						if (PLUGIN_REQUIRES_MATCH_PERFECT.equals(attrValue))
-							current.setMatch(PluginPrerequisiteModel.PREREQ_MATCH_PERFECT);
+							current.setMatchByte(PluginPrerequisiteModel.PREREQ_MATCH_PERFECT);
 						else if ((PLUGIN_REQUIRES_MATCH_EQUIVALENT.equals(attrValue)) ||
 						          (PLUGIN_REQUIRES_MATCH_EXACT.equals(attrValue)))
-							current.setMatch(PluginPrerequisiteModel.PREREQ_MATCH_EQUIVALENT);
+							current.setMatchByte(PluginPrerequisiteModel.PREREQ_MATCH_EQUIVALENT);
 						else if (PLUGIN_REQUIRES_MATCH_COMPATIBLE.equals(attrValue))
-							current.setMatch(PluginPrerequisiteModel.PREREQ_MATCH_COMPATIBLE);
+							current.setMatchByte(PluginPrerequisiteModel.PREREQ_MATCH_COMPATIBLE);
 						else if (PLUGIN_REQUIRES_MATCH_GREATER_OR_EQUAL.equals(attrValue))
-							current.setMatch(PluginPrerequisiteModel.PREREQ_MATCH_GREATER_OR_EQUAL);
+							current.setMatchByte(PluginPrerequisiteModel.PREREQ_MATCH_GREATER_OR_EQUAL);
 						else
 							internalError(Policy.bind("parse.validMatch", attrValue));
 					} else

@@ -260,7 +260,7 @@ public void writePluginPrerequisite(PluginPrerequisiteModel req, PrintWriter w, 
 		w.print(" " + IModel.PLUGIN_REQUIRES_EXPORT + "=\"" + IModel.TRUE + "\"");
 	if (req.getOptional())
 		w.print(" " + IModel.PLUGIN_REQUIRES_OPTIONAL + "=\"" + IModel.TRUE + "\"");
-	switch (req.getMatch()) {
+	switch (req.getMatchByte()) {
 		case PluginPrerequisiteModel.PREREQ_MATCH_PERFECT:
 			w.print(" " + IModel.PLUGIN_REQUIRES_MATCH + "=\"" + IModel.PLUGIN_REQUIRES_MATCH_PERFECT + "\"");
 			break;

@@ -40,7 +40,7 @@ public class RegistryResolver {
 			this.prq = prq;
 			if (prq != null) {
 				ver = RegistryResolver.this.getVersionIdentifier(prq);
-				type = prq.getMatch();
+				type = prq.getMatchByte();
 				if ((ver != null) &&
 				    (type == PluginPrerequisiteModel.PREREQ_MATCH_UNSPECIFIED))
 					type = PluginPrerequisiteModel.PREREQ_MATCH_COMPATIBLE;
@@ -76,7 +76,7 @@ public class RegistryResolver {
 				return "(null)";
 			String s = parent.toString() + "->" + prq.getPlugin();
 			String v = prq.getVersion();
-			switch (prq.getMatch()) {
+			switch (prq.getMatchByte()) {
 				case PluginPrerequisiteModel.PREREQ_MATCH_UNSPECIFIED:
 					s += "(any)";
 					break;

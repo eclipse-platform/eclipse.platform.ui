@@ -47,6 +47,15 @@ public boolean getExport() {
 	return export;
 }
 /**
+ * Returns whether or not this pre-requisite requires an exact match.
+ *
+ * @return whether or not this pre-requisite requires an exact match
+ * @deprecated - use getMatchByte
+ */
+public boolean getMatch() {
+	return (match == PREREQ_MATCH_EQUIVALENT);
+}
+/**
  * Returns a byte code indicating the type of match this pre-requisite requires.
  * The byte code can be any one of the following:
  * PREREQ_MATCH_UNSPECIFIED			initial value
@@ -57,7 +66,7 @@ public boolean getExport() {
  *
  * @return a byte code indicating the type of match this pre-requisite requires
  */
-public byte getMatch() {
+public byte getMatchByte() {
 	return match;
 }
 /**
@@ -109,8 +118,23 @@ public void setExport(boolean value) {
  * This object must not be read-only.
  *
  * @param value whether or not this pre-requisite requires an exact match
+ * @deprecated use setMatchByte
  */
-public void setMatch(byte value) {
+public void setMatch(boolean value) {
+	assertIsWriteable();
+	if (value) {
+		setMatchByte(PREREQ_MATCH_EQUIVALENT);
+	} else {
+		setMatchByte(PREREQ_MATCH_COMPATIBLE);
+	}
+}
+/**
+ * Sets whether or not this pre-requisite requires an exact match.
+ * This object must not be read-only.
+ *
+ * @param value whether or not this pre-requisite requires an exact match
+ */
+public void setMatchByte(byte value) {
 	assertIsWriteable();
 	Assert.isTrue ((value == PREREQ_MATCH_PERFECT) ||
 	               (value == PREREQ_MATCH_EQUIVALENT) ||
