@@ -208,8 +208,13 @@ if (parent.parent.temp){
 	</ul>
 
 	<script language="JavaScript">
-	
+<%
+	if("yes".equalsIgnoreCase(request.getParameter("synch"))){
+%>
 	parent.parent.switchTab("toc");
+<%
+	}
+%>	
 		
 	// Highlight topic
 	var topic = '<%=topicHref != null ? topicHref : ""%>';
