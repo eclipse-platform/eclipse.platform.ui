@@ -48,7 +48,7 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 	private UpdateSyncAction updateAction;
 	private CommitSyncAction commitAction;
 	private UpdateMergeAction updateMergeAction;
-	private IgnoreAction ignoreAction;
+	private IgnoreAndRefreshAction ignoreAction;
 	private HistoryAction showInHistory;
 	
 	class DiffImage extends CompositeImageDescriptor {
@@ -77,6 +77,22 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 		 */
 		protected Point getSize() {
 			return new Point(WIDTH, HEIGHT);
+		}
+	}
+	class IgnoreAndRefreshAction extends Action {
+		IgnoreAction action;
+		CVSSyncCompareInput diffModel;
+		public IgnoreAndRefreshAction(CVSSyncCompareInput diffModel, Shell shell, String text) {
+			super(text);
+			this.diffModel = diffModel;
+			this.action = new IgnoreAction(diffModel, CVSCatchupReleaseViewer.this, text, shell);
+		}
+		public void run() {
+			action.run();
+			diffModel.refresh();
+		}
+		public void update() {
+			action.update();
 		}
 	}
 	class HistoryAction extends Action implements ISelectionChangedListener {
@@ -224,7 +240,7 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 		commitAction = new CommitSyncAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.commit"), shell);
 		updateAction = new UpdateSyncAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.update"), shell);
 		updateMergeAction = new UpdateMergeAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.update"), shell);
-		ignoreAction = new IgnoreAction(diffModel, this, Policy.bind("CVSCatchupReleaseViewer.ignore"), shell);
+		ignoreAction = new IgnoreAndRefreshAction(diffModel, shell, Policy.bind("CVSCatchupReleaseViewer.ignore"));
 		// Show in history view
 		showInHistory = new HistoryAction(Policy.bind("CVSCatchupReleaseViewer.showInHistory"));
 		addSelectionChangedListener(showInHistory);	
