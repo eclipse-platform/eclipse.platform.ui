@@ -285,6 +285,9 @@ private void doZoom() {
  * Draws the applicable gradient on the active tab
  */
 /* package */ void drawGradient() {
+	if (tabFolder == null)
+		return;
+		
 	Color fgColor;
 	Color[] bgColors;
 	int[] bgPercents;
