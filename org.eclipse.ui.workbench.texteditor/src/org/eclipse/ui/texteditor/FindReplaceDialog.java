@@ -1454,7 +1454,7 @@ class FindReplaceDialog extends Dialog {
 					if (forwardSearch)
 						findReplacePosition= selection.x + selection.y;					
 					else {
-						findReplacePosition= selection.x;
+						findReplacePosition= selection.x - 1;
 						if (findReplacePosition == -1)
 							break;
 					}
