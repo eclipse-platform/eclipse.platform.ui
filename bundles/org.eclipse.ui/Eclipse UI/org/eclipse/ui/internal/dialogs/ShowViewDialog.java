@@ -90,8 +90,6 @@ protected Control createDialogArea(Composite parent) {
 	// Run super.
 	Composite composite = (Composite)super.createDialogArea(parent);
 	GridLayout layout = (GridLayout)composite.getLayout();
-	layout.makeColumnsEqualWidth = false;
-	layout.numColumns = 2;
 
 	// Add perspective list.
 	tree = new TreeViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
@@ -104,9 +102,7 @@ protected Control createDialogArea(Composite parent) {
 
 	// Set tree size.
 	Control ctrl = tree.getControl();
-	GridData spec = new GridData(
-		GridData.VERTICAL_ALIGN_FILL | 
-		GridData.HORIZONTAL_ALIGN_FILL);
+	GridData spec = new GridData(GridData.FILL_BOTH);
 	spec.widthHint = LIST_WIDTH;
 	spec.heightHint = LIST_HEIGHT;
 	ctrl.setLayoutData(spec);

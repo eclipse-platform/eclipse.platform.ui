@@ -33,8 +33,8 @@ public class ActionSetSelectionDialog extends Dialog {
 	private TableViewer actionViewer;
 	
 	// sizing constants
-	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 190;
-	private final static int SIZING_SELECTION_WIDGET_WIDTH = 160;
+	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 240;
+	private final static int SIZING_SELECTION_WIDGET_WIDTH = 200;
 /**
  * Creates an action set selection dialog.
  */
@@ -105,6 +105,8 @@ protected Control createDialogArea(Composite parent) {
 	Composite composite = (Composite)super.createDialogArea(parent);
 	GridLayout layout = (GridLayout)composite.getLayout();
 	layout.numColumns = 2;
+	layout.makeColumnsEqualWidth = true;
+	
 	GridData data;
 
 	// description
@@ -121,7 +123,7 @@ protected Control createDialogArea(Composite parent) {
 	layout.marginHeight = 0;
 	layout.marginWidth = 0;
 	actionSetGroup.setLayout(layout);
-	data = new GridData(GridData.FILL_VERTICAL);
+	data = new GridData(GridData.FILL_BOTH);
 	actionSetGroup.setLayoutData(data);
 	
 	// ...second the label
@@ -168,7 +170,7 @@ protected Control createDialogArea(Composite parent) {
 	layout.marginHeight = 0;
 	layout.marginWidth = 0;
 	actionGroup.setLayout(layout);
-	data = new GridData(GridData.FILL_VERTICAL);
+	data = new GridData(GridData.FILL_BOTH);
 	actionGroup.setLayoutData(data);
 	
 	// ...second the label
