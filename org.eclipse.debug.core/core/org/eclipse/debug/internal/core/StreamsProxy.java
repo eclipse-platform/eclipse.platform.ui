@@ -46,13 +46,26 @@ public class StreamsProxy implements IStreamsProxy {
 	/**
 	 * Causes the proxy to close all
 	 * communications between it and the
-	 * underlying streams.
+	 * underlying streams after all remaining data
+	 * in the streams is read.
 	 */
 	protected void close() {
 		fClosed= true;
 		fOutputMonitor.close();
 		fErrorMonitor.close();
 		fInputMonitor.close();
+	}
+
+	/**
+	 * Causes the proxy to close all
+	 * communications between it and the
+	 * underlying streams immediately.
+	 * Data remaining in the streams is lost.
+	 */	
+	protected void kill() {
+		fClosed= true;
+		fOutputMonitor.kill();
+		fErrorMonitor.kill();
 	}
 
 	/**

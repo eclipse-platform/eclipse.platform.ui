@@ -148,6 +148,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	public void terminate() throws DebugException {
 		if (!isTerminated()) {
 			fProcess.destroy();
+			fStreamsProxy.kill();
 			int attempts = 0;
 			while (attempts < MAX_WAIT_FOR_DEATH_ATTEMPTS) {
 				try {
