@@ -18,11 +18,12 @@ import org.eclipse.search.ui.SearchUI;
 
 public class TextSearchResultCollector implements ITextSearchResultCollector {
 	
+	private static final String SPACE_MATCHES= " " + SearchPlugin.getResourceString("SearchResultCollector.matches");
+
 	private IProgressMonitor fMonitor;
 	private ISearchResultView fView;
 	private TextSearchOperation fOperation;
 	private int fMatchCount= 0;
-	private String SPACE_MATCHES= " " + SearchPlugin.getResourceString("SearchResultCollector.matches");
 		
 	/**
 	 * Returns the progress monitor used to setup and report progress.
@@ -80,6 +81,10 @@ public class TextSearchResultCollector implements ITextSearchResultCollector {
 			getProgressMonitor().setTaskName(SearchPlugin.getResourceString("SearchResultCollector.done") + ": " + fMatchCount + SPACE_MATCHES + "   ");
 		if (fView != null)
 			fView.searchFinished();
+			
+		// Cut no longer unused references because the collector might be re-used
+		fView= null;
+		fMonitor= null;
 	}
 
 	void setOperation(TextSearchOperation operation) {
