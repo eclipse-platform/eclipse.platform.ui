@@ -302,7 +302,8 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 	}
 
 	public boolean isMerged(IResource resource) throws TeamException {
-		return mergedSynchronizer.getSyncBytes(resource) != null;
+		return (mergedSynchronizer.getSyncBytes(resource) != null ||
+				mergedSynchronizer.isRemoteKnown(resource));
 	}
 
 	/* 

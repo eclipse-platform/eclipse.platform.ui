@@ -285,7 +285,6 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 
 	private void update(SyncInfo[] infos, final boolean allowOverwrite) throws TeamException {
 		TestWorkspaceUpdateAction action = new TestWorkspaceUpdateAction(allowOverwrite);
-		action.setSubscriber(getSubscriber());
 		try {
 			action.getRunnable(new SyncInfoSet(infos)).run(DEFAULT_MONITOR);
 		} catch (InvocationTargetException e) {
@@ -297,7 +296,6 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 
 	private void commitResources(SyncInfo[] syncResources) throws TeamException {
 		TestCommitAction action = new TestCommitAction();
-		action.setSubscriber(getSubscriber());
 		try {
 			action.getRunnable(new SyncInfoSet(syncResources)).run(DEFAULT_MONITOR);	
 		} catch (InvocationTargetException e) {

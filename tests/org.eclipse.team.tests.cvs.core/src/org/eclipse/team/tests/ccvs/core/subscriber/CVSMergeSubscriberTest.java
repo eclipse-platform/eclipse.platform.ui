@@ -31,6 +31,7 @@ import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberConfirmMergedAction;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.ui.sync.SyncInfoSet;
 
@@ -75,7 +76,14 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 	
 	private void mergeResources(TeamSubscriber subscriber, SyncInfo[] infos, boolean allowOverwrite) throws TeamException, InvocationTargetException, InterruptedException {
 		TestMergeUpdateAction action = new TestMergeUpdateAction(allowOverwrite);
-		action.setSubscriber(subscriber);
+		action.getRunnable(new SyncInfoSet(infos)).run(DEFAULT_MONITOR);
+	}
+	
+	
+	private void markAsMerged(CVSMergeSubscriber subscriber, IProject project, String[] resourcePaths) throws CoreException, TeamException, InvocationTargetException, InterruptedException {
+		IResource[] resources = getResources(project, resourcePaths);
+		SyncInfo[] infos = createSyncInfos(subscriber, resources);
+		TestMarkAsMergedAction action = new TestMarkAsMergedAction();
 		action.getRunnable(new SyncInfoSet(infos)).run(DEFAULT_MONITOR);
 	}
 
@@ -386,4 +394,57 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		cvsProject.unmanage(new NullProgressMonitor());
 		assertProjectRemoved(subscriber, project);
 	}
+	
+	public void testMarkAsMerged() throws IOException, TeamException, CoreException, InvocationTargetException, InterruptedException {
+		// Create a test project
+		IProject project = createProject("testMarkAsMerged", new String[] { "delete.txt", "file1.txt", "file2.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
+		setContentsAndEnsureModified(project.getFile("file1.txt"), "some text\nwith several lines\n");
+		setContentsAndEnsureModified(project.getFile("file2.txt"), "some text\nwith several lines\n");
+		commitProject(project);
+
+		// Checkout and branch a copy
+		CVSTag root = new CVSTag("root_branch1", CVSTag.VERSION);
+		CVSTag branch = new CVSTag("branch1", CVSTag.BRANCH);
+		IProject branchedProject = branchProject(project, root, branch);
+		
+		// modify the branch
+		appendText(branchedProject.getFile("file1.txt"), "first line\n", true);
+		appendText(branchedProject.getFile("file2.txt"), "last line\n", false);
+		addResources(branchedProject, new String[] {"addition.txt"}, false);
+		deleteResources(branchedProject, new String[] {"delete.txt", "folder1/a.txt"}, false);
+		setContentsAndEnsureModified(branchedProject.getFile("folder1/b.txt"));
+		commitProject(branchedProject);
+		
+		// modify local workspace
+		appendText(project.getFile("file1.txt"), "conflict line\n", true);
+		setContentsAndEnsureModified(project.getFile("folder1/a.txt"));
+		setContentsAndEnsureModified(project.getFile("delete.txt"));
+		addResources(project, new String[] {"addition.txt"}, false);
+		appendText(project.getFile("file2.txt"), "conflict line\n", false);
+		
+		// create a merge subscriber
+		CVSMergeSubscriber subscriber = createMergeSubscriber(project, root, branch);
+		
+		// check the sync states
+		assertSyncEquals("testMarkAsMergedConflicts", subscriber, project, 
+			new String[] { "delete.txt", "file1.txt", "file2.txt", "addition.txt", "folder1/a.txt"}, 
+			true, new int[] {
+				SyncInfo.CONFLICTING | SyncInfo.CHANGE,
+				SyncInfo.CONFLICTING | SyncInfo.CHANGE, 
+				SyncInfo.CONFLICTING | SyncInfo.CHANGE,
+				SyncInfo.CONFLICTING | SyncInfo.ADDITION,
+				SyncInfo.CONFLICTING | SyncInfo.CHANGE});
+
+		markAsMerged(subscriber, project, new String[] { "delete.txt", "file1.txt", "file2.txt", "addition.txt", "folder1/a.txt"});
+		
+		// check the sync states
+		assertSyncEquals("testUnmergableConflicts", subscriber, project, 
+			 new String[] { "delete.txt", "file1.txt", "file2.txt", "addition.txt", "folder1/a.txt"}, 
+			 true, new int[] {
+				SyncInfo.IN_SYNC,
+				SyncInfo.IN_SYNC, 
+				SyncInfo.IN_SYNC,
+				SyncInfo.IN_SYNC,
+				SyncInfo.IN_SYNC});				
+	} 
 }
