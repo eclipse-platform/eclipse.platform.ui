@@ -57,14 +57,9 @@ public class ExternalToolsImages {
 	}
 
 	// Use IPath and toOSString to build the names to ensure they have the slashes correct
-	//private final static String CTOOL= "ctool16/"; //basic colors - size 16x16 //$NON-NLS-1$
 	private final static String LOCALTOOL= "clcl16/"; //basic colors - size 16x16 //$NON-NLS-1$
-	//private final static String DLCL= "dlcl16/"; //disabled - size 16x16 //$NON-NLS-1$
-	//private final static String ELCL= "elcl16/"; //enabled - size 16x16 //$NON-NLS-1$
 	private final static String OBJECT= "obj16/"; //basic colors - size 16x16 //$NON-NLS-1$
-	private final static String WIZBAN= "wizban/"; //basic colors - size 16x16 //$NON-NLS-1$
 	private final static String OVR= "ovr16/"; //basic colors - size 7x8 //$NON-NLS-1$
-	//private final static String VIEW= "cview16/"; // views //$NON-NLS-1$
 	
 	/**
 	 * Declare all images
@@ -86,8 +81,6 @@ public class ExternalToolsImages {
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET_PRIVATE, OBJECT + "targetprivate_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_DEFAULT_TARGET, OBJECT + "defaulttarget_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET_ERROR, OBJECT + "ant_target_err.gif"); //$NON-NLS-1$
-		// Wizards
-		declareRegistryImage(IExternalToolConstants.IMG_WIZBAN_EXTERNAL_TOOLS, WIZBAN + "ext_tools_wiz.gif"); //$NON-NLS-1$
 		
 		// Refresh tab
 		declareRegistryImage(IExternalToolConstants.IMG_ACTION_REFRESH, LOCALTOOL + "refresh.gif"); //$NON-NLS-1$
@@ -113,7 +106,6 @@ public class ExternalToolsImages {
 		try {
 			desc= ImageDescriptor.createFromURL(makeIconFileURL(path));
 		} catch (MalformedURLException me) {
-			//ExternalToolsPlugin.log(me);
 		}
 		imageRegistry.put(key, desc);
 		imageDescriptors.put(key, desc);
@@ -256,5 +248,3 @@ public class ExternalToolsImages {
 		}
 	}
 }
-
-

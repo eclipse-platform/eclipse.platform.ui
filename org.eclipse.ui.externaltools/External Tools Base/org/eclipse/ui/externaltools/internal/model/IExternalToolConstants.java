@@ -195,11 +195,6 @@ public interface IExternalToolConstants {
 
 	// ------- Images -------
 	/**
-	 * External tools wizard banner image
-	 */
-	public static final String IMG_WIZBAN_EXTERNAL_TOOLS = PLUGIN_ID + ".IMG_WIZBAN_EXTERNAL_TOOLS"; //$NON-NLS-1$
-
-	/**
 	 * Refresh action image
 	 */
 	public static final String IMG_ACTION_REFRESH = PLUGIN_ID + ".IMG_ACTION_REFRESH"; //$NON-NLS-1$
