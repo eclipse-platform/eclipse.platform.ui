@@ -263,11 +263,14 @@ public class PerspectivesTab extends AbstractLaunchConfigurationTab implements I
 				if (IDebugUIConstants.PERSPECTIVE_NONE.equals(persp)) {
 					persp = null;
 				}
-				if (persp == null) {
+				IPerspectiveDescriptor descriptor = null;
+				if (persp != null) {
+					descriptor = registry.findPerspectiveWithId(persp);
+				}
+				if (descriptor == null) {
 					// select none
 					fCombos[i].setText(LaunchConfigurationsMessages.getString("PerspectivesTab.1")); //$NON-NLS-1$
 				} else {
-					IPerspectiveDescriptor descriptor = registry.findPerspectiveWithId(persp);
 					fCombos[i].setText(descriptor.getLabel());
 				}
 			} catch (CoreException e) {
