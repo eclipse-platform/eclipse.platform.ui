@@ -285,11 +285,11 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                         partListener);
             }
 
-            if (activeWorkbenchWindow != null) {
-                activeWorkbenchWindow.addPageListener(pageListener);
-                activeWorkbenchWindow
+            if (newWorkbenchWindow != null) {
+                newWorkbenchWindow.addPageListener(pageListener);
+                newWorkbenchWindow
                         .addPerspectiveListener(perspectiveListener);
-                activeWorkbenchWindow.getPartService().addPartListener(
+                newWorkbenchWindow.getPartService().addPartListener(
                         partListener);
             }
 

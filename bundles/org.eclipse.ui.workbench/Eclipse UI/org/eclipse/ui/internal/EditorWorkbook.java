@@ -1093,7 +1093,7 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
     public void tabFocusHide() {
         if (getControl() == null) return;
 
-        setActive(isActiveWorkbook());
+        setActive(false /*isActiveWorkbook()*/);
     }
 
     public void tabFocusShow(boolean hasFocus) {
