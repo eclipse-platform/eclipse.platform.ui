@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.debug.ui.memory;
 
+import org.eclipse.core.runtime.CoreException;
+
 /**
  * Represents a type of memory rendering contributed via the <code>memoryRenderings</code>
  * extension point.
  * <p>
  * Clients are not intended to implement this interface. Instead, clients contributing a rendering
- * implement <code>IMemoryRenderingFactory</code> and <code>IMemoryRendering</code>.
+ * implement <code>IMemoryRenderingTypeDelegate</code> and <code>IMemoryRendering</code>.
  * </p>
  * @since 3.1
  */
@@ -42,7 +44,8 @@ public interface IMemoryRenderingType {
      * Throws an exception if an error has occurred.
      * 
      * @return a new rendering of this type
+     * @exception CoreException if unable to create the rendering
      */
-    public IMemoryRendering createRendering() throws Exception;
+    public IMemoryRendering createRendering() throws CoreException;
 
 }

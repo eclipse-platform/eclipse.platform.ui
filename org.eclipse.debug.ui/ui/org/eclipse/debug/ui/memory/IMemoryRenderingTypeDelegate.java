@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.ui.memory;
 
+import org.eclipse.core.runtime.CoreException;
+
 /**
  * A factory that creates memory renderings.
  * <p>
@@ -18,16 +20,16 @@ package org.eclipse.debug.ui.memory;
  * </p>
  * @since 3.1
  */
-public interface IMemoryRenderingFactory {
+public interface IMemoryRenderingTypeDelegate {
     
     /**
-     * Creates a rendering of the given type.
-     * Return null if the rendering is not to be created.  Creation of a memory
-     * has been canceled.  No error message will be displayed.
-     * Throws an exception if an error has occurred.
+     * Creates and returns a rendering of the specified type, or <code>null</code>
+     * if none.
+     * 
      * @param id unique identifier of a memory rendering type
-     * @return a new rendering of the given type
+     * @return a new rendering of the given type or <code>null</code>
+     * @exception CoreException if unable to create the rendering
      */
-    public IMemoryRendering createRendering(String id) throws Exception;
+    public IMemoryRendering createRendering(String id) throws CoreException;
 
 }

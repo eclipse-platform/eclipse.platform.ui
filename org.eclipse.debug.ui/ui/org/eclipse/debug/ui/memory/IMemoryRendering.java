@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Control;
  * <li><code>id</code> specifies a unique identifier for a type of memory rendering</li>
  * <li><code>name</code> specifies a human readable label for a rendering type</li>
  * <li><code>class</code> specifies the fully qualified name of the Java class
- *   that implements <code>IMemoryRenderingFactory</code>. Renderings are created
+ *   that implements <code>IMemoryRenderingTypeDelegate</code>. Renderings are created
  *   via this factory.</li>
  * </ul>
  * </p>
@@ -59,7 +59,7 @@ import org.eclipse.swt.widgets.Control;
  * </p> 
  * <p>
  * Clients contributing a memory rendering type are intended to implement this interface
- * and <code>IMemoryRenderingFactory</code>. The factory will be used to create instances
+ * and <code>IMemoryRenderingTypeDelegate</code>. The factory will be used to create instances
  * of <code>IMemoryRendering</code>.
  * </p>
  * @since 3.1

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.ui.memory;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 
 
@@ -29,8 +30,9 @@ public interface IMemoryRenderingManager {
      * 
      * @param id identifier of the rendering type to create
      * @return specified rendering or <code>null</code> if none
+     * @exception CoreException if unable to create the specified rendering
      */
-    public IMemoryRendering createRendering(String id);
+    public IMemoryRendering createRendering(String id) throws CoreException;
     
     /**
      * Returns all contributed memory rendering types.
@@ -69,7 +71,7 @@ public interface IMemoryRenderingManager {
      * @return the default rendering type specified as the primary rendering
      * type for a memory block, or <code>null</code> if none
      */
-    public IMemoryRenderingType[] getPrimaryRenderingType(IMemoryBlock block);
+    public IMemoryRenderingType getPrimaryRenderingType(IMemoryBlock block);
     
     /**
      * Returns a collection of all rendering types that are bound to

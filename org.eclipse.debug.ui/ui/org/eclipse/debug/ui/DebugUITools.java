@@ -38,8 +38,10 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationMan
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
+import org.eclipse.debug.internal.ui.memory.MemoryRenderingManager;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupFacility;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
+import org.eclipse.debug.ui.memory.IMemoryRenderingManager;
 import org.eclipse.debug.ui.sourcelookup.ISourceLookupResult;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -669,5 +671,15 @@ public class DebugUITools {
      */
     public static void displaySource(ISourceLookupResult result, IWorkbenchPage page) {
     	SourceLookupFacility.getDefault().display(result, page);
+    }
+    
+    /**
+     * Returns the memory rendering manager.
+     * 
+     * @return the memory rendering manager
+     * @since 3.1
+     */
+    public IMemoryRenderingManager getMemoryRenderingManager() {
+        return MemoryRenderingManager.getDefault();
     }
 }
