@@ -28,7 +28,7 @@ HTML {
 <%
 if (data.isMozilla()){
 %>
-	padding:<%=isRTL?"0px 2px 2px 3px":"0px 3px 2px 2px"%>;
+	padding:<%=isRTL?"0px 4px 2px 4px":"0px 4px 2px 4px"%>;
 <%
 }
 %>
