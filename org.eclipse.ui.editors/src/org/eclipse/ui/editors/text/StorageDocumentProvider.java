@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.content.IContentDescription;
 
 import org.eclipse.jface.operation.IRunnableContext;
 
@@ -432,5 +433,19 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	 */
 	protected IRunnableContext getOperationRunner(IProgressMonitor monitor) {
 		return null;
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension4#getContentDescription(java.lang.Object)
+	 * @since 3.1
+	 */
+	public IContentDescription getContentDescription(Object element) {
+		if (element instanceof IStorageEditorInput)
+			try {
+				return Platform.getContentTypeManager().getDescriptionFor(((IStorageEditorInput) element).getStorage().getContents(), ((IStorageEditorInput) element).getName(), IContentDescription.ALL);
+			} catch (IOException x) {
+			} catch (CoreException x) {
+			}
+		return super.getContentDescription(element);
 	}
 }

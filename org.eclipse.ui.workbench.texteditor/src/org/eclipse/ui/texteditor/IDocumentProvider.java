@@ -52,6 +52,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * 		adding support for a global progress monitor.</li>
  * <li>{@link org.eclipse.ui.texteditor.IDocumentProviderExtension3} since version 3.0 adding
  * 		a predicate for querying synchronization state.</li>
+ * <li>{@link org.eclipse.ui.texteditor.IDocumentProviderExtension4} since version 3.1 adding
+ * 		a predicate for querying an element's the content description.</li>
  * </ul>
  * </p>
  * 
@@ -60,6 +62,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @see org.eclipse.ui.texteditor.IDocumentProviderExtension
  * @see org.eclipse.ui.texteditor.IDocumentProviderExtension2
  * @see org.eclipse.ui.texteditor.IDocumentProviderExtension3
+ * @see org.eclipse.ui.texteditor.IDocumentProviderExtension4
  */
 public interface IDocumentProvider {
 	

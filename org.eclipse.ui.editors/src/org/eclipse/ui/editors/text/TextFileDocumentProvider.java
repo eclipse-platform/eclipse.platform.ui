@@ -75,6 +75,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProviderExtension;
 import org.eclipse.ui.texteditor.IDocumentProviderExtension2;
 import org.eclipse.ui.texteditor.IDocumentProviderExtension3;
+import org.eclipse.ui.texteditor.IDocumentProviderExtension4;
 import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.IElementStateListenerExtension;
 import org.eclipse.ui.texteditor.ISchedulingRuleProvider;
@@ -103,7 +104,7 @@ import org.eclipse.ui.texteditor.ISchedulingRuleProvider;
  * 
  * @since 3.0
  */
-public class TextFileDocumentProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IStorageDocumentProvider {
+public class TextFileDocumentProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IStorageDocumentProvider, IDocumentProviderExtension4 {
 	
 	/**
 	 * Operation created by the document provider and to be executed by the providers runnable context.
@@ -1252,5 +1253,23 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		} while (parent != null && !parent.exists());
 		
 		return fResourceRuleFactory.createRule(toCreateOrModify);
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension4#getContentDescription(java.lang.Object)
+	 * @since 3.1
+	 */
+	public IContentDescription getContentDescription(Object element) {
+		try {
+			FileInfo info= (FileInfo) fFileInfoMap.get(element);
+			if (info != null)
+				return info.fTextFileBuffer.getContentDescription();
+			IDocumentProvider parent= getParentProvider();
+			if (parent instanceof IDocumentProviderExtension4)
+				return ((IDocumentProviderExtension4) parent).getContentDescription(element);
+		} catch (CoreException x) {
+			handleCoreException(x, "TextFileDocumentProvider.error.getContentDescription"); //$NON-NLS-1$
+		}
+		return null;
 	}
 }

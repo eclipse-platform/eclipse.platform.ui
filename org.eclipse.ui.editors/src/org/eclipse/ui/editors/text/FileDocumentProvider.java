@@ -1091,4 +1091,17 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		
 		return fResourceRuleFactory.createRule(toCreateOrModify);
 	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension4#getContentDescription(java.lang.Object)
+	 * @since 3.1
+	 */
+	public IContentDescription getContentDescription(Object element) {
+		if (element instanceof IFileEditorInput)
+			try {
+				return ((IFileEditorInput) element).getFile().getContentDescription();
+			} catch (CoreException x) {
+			}
+		return super.getContentDescription(element);
+	}
 }
