@@ -142,6 +142,7 @@ class WorkbenchMonitorProvider {
 			 */
 			public void done() {
 				refreshJob.clearStatusLine();
+				refreshJob.schedule(100);
 
 			}
 
