@@ -463,14 +463,14 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * @return <code>true</code> if this viewer is in projection mode,
 	 *         <code>false</code> otherwise
 	 */
-	private boolean isProjectionMode() {
+	public final boolean isProjectionMode() {
 		return getProjectionAnnotationModel() != null;
 	}
 
 	/**
 	 * Disables the projection mode. 
 	 */
-	private void disableProjection() {
+	public final void disableProjection() {
 		if (isProjectionMode()) {
 			removeProjectionAnnotationModel(getVisualAnnotationModel());
 			fProjectionAnnotationModel.removeAllAnnotations();
@@ -482,7 +482,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	/**
 	 * Enables the projection mode.
 	 */
-	private void enableProjection() {
+	public final void enableProjection() {
 		if (!isProjectionMode()) {
 			addProjectionAnnotationModel(getVisualAnnotationModel());
 			fFindReplaceDocumentAdapter= null;
@@ -1063,7 +1063,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		return false;
 	}
 
-	private void reinitializeProjection() throws BadLocationException {
+	public final void reinitializeProjection() throws BadLocationException {
 		
 		ProjectionDocument projection= null;
 		
@@ -1307,7 +1307,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				if (redraws()) {
 					try {
 						selection= getSelectedRange();
-						if (selection.y == 0)
+						Point widgetSelection= textWidget.getSelectionRange();
+						if (selection.y == 0 || selection.y == widgetSelection.y)
 							deleteText();
 						else
 							deleteTextRange(selection.x, selection.y, textWidget);
