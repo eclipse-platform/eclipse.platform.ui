@@ -626,7 +626,7 @@ protected void initializeDefaultPluginPreferences() {
 
 /** 
  * Initializes an image registry with images which are frequently used by the 
- * plugin-in.
+ * plugin.
  * <p>
  * The image registry contains the images used by this plug-in that are very
  * frequently used and so need to be globally shared within the plug-in. Since
@@ -642,7 +642,6 @@ protected void initializeDefaultPluginPreferences() {
  * Subclasses may override this method to fill the image registry.
  * </p>
  *
- * @return ImageRegistry the resulting registry.
  * @see #getImageRegistry
  */
 protected void initializeImageRegistry(ImageRegistry reg) {
