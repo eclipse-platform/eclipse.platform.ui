@@ -101,9 +101,9 @@ public final class Team {
 	 * Return the type of the given file.
 	 * 
 	 * Valid return values are:
-	 * IFileTypeRegistry.TEXT
-	 * IFileTypeRegistry.BINARY
-	 * IFileTypeRegistry.UNKNOWN
+	 * Team.TEXT
+	 * Team.BINARY
+	 * Team.UNKNOWN
 	 * 
 	 * @param file  the file
 	 * @return whether files with the given extension are TEXT, BINARY, or UNKNOWN
@@ -176,9 +176,9 @@ public final class Team {
 	 * Set the file type for the give extension to the given type.
 	 *
 	 * Valid types are:
-	 * IFileTypeRegistry.TEXT
-	 * IFileTypeRegistry.BINARY
-	 * IFileTypeRegistry.UNKNOWN
+	 * Team.TEXT
+	 * Team.BINARY
+	 * Team.UNKNOWN
 	 * 
 	 * @param extension  the file extension
 	 * @param type  the file type
