@@ -39,7 +39,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		label.setText("Run this builder for:");
 		fullBuildButton= createButton(parent, "&Full builds", "Runs whenever a full build is invoked. The \"Rebuild All\" action causes a full build.");
 		incrementalBuildButton= createButton(parent, "&Incremental builds", "Runs whenever an incremental build is invoked. The \"Build All\" action causes an incremental build.");
-		autoBuildButton= createButton(parent, "&Auto builds (Not recommended)", "Runs whenever a resource in the workspace is modified. Enabling this option will cause the builder to run very often and is not recommended.");
+		autoBuildButton= createButton(parent, "&Auto builds (Not recommended)", "Runs whenever a resource in the workspace is modified if autobuilding is enabled. Enabling this option will cause the builder to run very often and is not recommended.");
 	}
 	
 	/**
