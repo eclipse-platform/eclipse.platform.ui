@@ -33,6 +33,7 @@ public class ObjectActionContributor extends PluginActionBuilder
  */
 public ObjectActionContributor(IConfigurationElement config) {
 	this.config = config;
+	this.adaptable = P_TRUE.equals(config.getAttribute(ATT_ADAPTABLE));
 }
 /**
  * Contributes actions applicable for the current selection.
@@ -153,11 +154,6 @@ protected boolean readElement(IConfigurationElement element) {
 		filterTest.addFilterElement(element);
 		return true;
 	} 
-	
-	if(tag.equals(ATT_ADAPTABLE)){
-		adaptable = P_TRUE.equals(element.getValue());
-		return true;
-	}
 	
 	return super.readElement(element);
 }
