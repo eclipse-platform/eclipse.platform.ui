@@ -119,8 +119,13 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	 * Returns the current page index. The value is identical to the value of
 	 * 'getActivePage()' except during the page switch, when this method still
 	 * has the old active page index.
+	 * <p>Another important difference is during the editor closing. When
+	 * the tab folder is disposed, 'getActivePage()' will return -1,
+	 * while this method will still return the last active page.
 	 * 
-	 * @return
+	 * @see #getActivePage
+	 * 
+	 * @return the currently selected page or -1 if no page is currently selected
 	 */
 	protected int getCurrentPage() {
 		return currentPage;
