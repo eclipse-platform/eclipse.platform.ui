@@ -12,7 +12,8 @@ package org.eclipse.core.internal.localstore;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 import org.eclipse.core.internal.localstore.BucketIndex.Entry;
 import org.eclipse.core.internal.localstore.BucketIndex.Visitor;
 import org.eclipse.core.internal.resources.*;
@@ -113,7 +114,7 @@ public class HistoryStore2 implements IHistoryStore {
 		boolean changed = false;
 		for (int i = 0; i < fileEntry.getOccurrences(); i++) {
 			if (i < maxStates && fileEntry.getTimestamp(i) >= minTimeStamp)
-					continue;
+				continue;
 			// "delete" the current uuid						
 			blobsToRemove.add(fileEntry.getUUID(i));
 			fileEntry.deleteOccurrence(i);
@@ -201,7 +202,7 @@ public class HistoryStore2 implements IHistoryStore {
 			if (baseSourceLocation.equals(baseDestinationLocation)) {
 				currentBucket.load(baseSourceLocation.toFile());
 				Entry sourceEntry = currentBucket.getEntry(source);
-				if(sourceEntry == null)
+				if (sourceEntry == null)
 					return;
 				Entry destinationEntry = new Entry(destination, sourceEntry.getData(true));
 				currentBucket.addBlobs(destinationEntry);
@@ -280,15 +281,14 @@ public class HistoryStore2 implements IHistoryStore {
 		File bucketDir = locationFor(filePath.removeLastSegments(1));
 		try {
 			currentBucket.load(bucketDir);
-			final List states = new ArrayList();
-			accept(new Visitor() {
-				public int visit(Entry fileEntry) {
-					for (int i = 0; i < fileEntry.getOccurrences(); i++)
-						states.add(new FileState(HistoryStore2.this, fileEntry.getPath(), fileEntry.getTimestamp(i), fileEntry.getUUID(i)));
-					return CONTINUE;
-				}
-			}, filePath, IResource.DEPTH_ZERO);
-			return (IFileState[]) states.toArray(new IFileState[states.size()]);
+			BucketIndex.Entry fileEntry = currentBucket.getEntry(filePath);
+			if (fileEntry == null || fileEntry.isEmpty())
+				return new IFileState[0];
+			fileEntry.sortStates();
+			IFileState[] states = new IFileState[fileEntry.getOccurrences()];
+			for (int i = 0; i < states.length; i++)
+				states[i] = new FileState(this, fileEntry.getPath(), fileEntry.getTimestamp(i), fileEntry.getUUID(i));
+			return states;
 		} catch (CoreException ce) {
 			ResourcesPlugin.getPlugin().getLog().log(ce.getStatus());
 			return new IFileState[0];
