@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.progress;
+package org.eclipse.ui.progress;
 
 import org.eclipse.jface.progress.UIJob;
 import org.eclipse.swt.widgets.Display;
