@@ -595,10 +595,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
                 .getActiveShell());
     }
 
-    /**
-     * TODO See WorkbenchKeyboard. Switch to private when Bug 56231 is resolved.
-     */
-    public void processEnabledSubmissions(boolean force,
+    private void processEnabledSubmissions(boolean force,
             final Shell newActiveShell) {
 
         // If we are not currently processing, then wait.

@@ -394,8 +394,6 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 	}
 
 	/**
-	 * TODO See WorkbenchKeyboard. Switch to private when Bug 56231 is resolved.
-	 * 
 	 * @param force
 	 *            Whether to force reprocessing of the handlers -- regardless of
 	 *            whether the workbench has changed.
@@ -406,7 +404,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 	 *            there is no active shell currently (this can happen during
 	 *            shell transitions).
 	 */
-	public void processHandlerSubmissions(boolean force,
+	private void processHandlerSubmissions(boolean force,
 			final Shell newActiveShell) {
 
 		// We do not need to update the listeners until everything is done.

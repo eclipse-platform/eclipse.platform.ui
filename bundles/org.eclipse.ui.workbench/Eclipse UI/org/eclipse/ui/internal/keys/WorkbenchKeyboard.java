@@ -30,7 +30,6 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -43,8 +42,6 @@ import org.eclipse.ui.IWorkbenchServices;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
-import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.IBindingService;
@@ -663,22 +660,22 @@ public final class WorkbenchKeyboard {
 		/*
 		 * TODO Kludge. A partial workaround for Bug 56231. This should be
 		 * removed once SWT fixes Bug 56231 such that activation works properly
-		 * on all platforms.
+		 * on all platforms.  Commented out at the moment.
 		 */
-		if ("gtk".equals(SWT.getPlatform())) { //$NON-NLS-1$
-			final Widget widget = event.widget;
-			final Shell shell;
-			if ((widget instanceof Control) && (!widget.isDisposed())) {
-				shell = ((Control) widget).getShell();
-			} else {
-				shell = Display.getCurrent().getActiveShell();
-			}
-
-			((WorkbenchCommandSupport) workbench.getCommandSupport())
-					.processHandlerSubmissions(false, shell);
-			((WorkbenchContextSupport) workbench.getContextSupport())
-					.processEnabledSubmissions(false, shell);
-		}
+//		if ("gtk".equals(SWT.getPlatform())) { //$NON-NLS-1$
+//			final Widget widget = event.widget;
+//			final Shell shell;
+//			if ((widget instanceof Control) && (!widget.isDisposed())) {
+//				shell = ((Control) widget).getShell();
+//			} else {
+//				shell = Display.getCurrent().getActiveShell();
+//			}
+//
+//			((WorkbenchCommandSupport) workbench.getCommandSupport())
+//					.processHandlerSubmissions(false, shell);
+//			((WorkbenchContextSupport) workbench.getContextSupport())
+//					.processEnabledSubmissions(false, shell);
+//		}
 
 		KeySequence sequenceBeforeKeyStroke = state.getCurrentSequence();
 		for (Iterator iterator = potentialKeyStrokes.iterator(); iterator
