@@ -100,7 +100,10 @@ public class AddCustomDialog extends StatusDialog {
 	 */
 	protected Control createDialogArea(Composite parent) {
 		Composite topComposite = new Composite(parent, SWT.NULL);
-		topComposite.setLayout(new GridLayout());
+		GridLayout topLayout = new GridLayout();
+		topLayout.marginHeight= 15;
+		topLayout.marginWidth= 20;
+		topComposite.setLayout(topLayout);
 		topComposite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 		topComposite.setSize(topComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		topComposite.setFont(parent.getFont());
